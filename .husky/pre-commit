@@ -3,7 +3,7 @@
 
 # Run Biome lint, continue even if errors
 echo "Running Biome lint..."
-biome lint . || true
+biome lint . --fix || true
 
 # Run Biome format, continue even if it changes files
 echo "Running Biome format..."
