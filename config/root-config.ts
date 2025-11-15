@@ -8,12 +8,12 @@ import { GOOGLE_CALENDAR_SCOPES } from "@/types";
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
 export const CONFIG = {
-  baseUrl: 'http://localhost:3000',
-  redirectUrlDev: 'http://localhost:3000/api/users/callback',
-  redirectUrlProd: '',
+  baseUrl: "http://localhost:3000",
+  redirectUrlDev: "http://localhost:3000/api/users/callback",
+  redirectUrlProd: "",
   port: 3000,
-  supabaseUrl:  '',
-  supabaseServiceRoleKey: '',
+  supabaseUrl: "",
+  supabaseServiceRoleKey: "",
   openAiApiKey: process.env.OPEN_API_KEY,
   clientId: process.env.GOOGLE_CLIENT_ID,
   nodeEnv: process.env.NODE_ENV,
