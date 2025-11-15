@@ -8,25 +8,25 @@ import { GOOGLE_CALENDAR_SCOPES } from "@/types";
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
 export const CONFIG = {
-  open_ai_api_key: process.env.OPEN_API_KEY,
-  base_url: process.env.BASE_URL,
-  client_id: process.env.GOOGLE_CLIENT_ID,
-  node_env: process.env.NODE_ENV,
-  client_secret: process.env.GOOGLE_CLIENT_SECRET,
-  google_api_key: process.env.GOOGLE_API_KEY,
-  redirect_url_dev: process.env.REDIRECT_URL,
-  redirect_url_prod: process.env.REDIRECT_URL_PROD,
-  port: process.env.PORT,
-  telegram_access_token: process.env.TELEGRAM_BOT_ACCESS_TOKEN,
-  supabase_url: process.env.SUPABASE_URL,
-  supabase_service_role_key: process.env.SUPABASE_SERVICE_ROLE_KEY,
+  baseUrl: 'http://localhost:3000',
+  redirectUrlDev: 'http://localhost:3000/api/users/callback',
+  redirectUrlProd: '',
+  port: 3000,
+  supabaseUrl:  '',
+  supabaseServiceRoleKey: '',
+  openAiApiKey: process.env.OPEN_API_KEY,
+  clientId: process.env.GOOGLE_CLIENT_ID,
+  nodeEnv: process.env.NODE_ENV,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  googleApiKey: process.env.GOOGLE_API_KEY,
+  telegramAccessToken: process.env.TELEGRAM_BOT_ACCESS_TOKEN,
   testEmail: process.env.TEST_EMAIL,
   devWhatsAppAccessToken: process.env.DEV_WHATS_APP_ACCESS_TOKEN,
 };
 
-export const SUPABASE = new SupabaseClient<Database>(CONFIG.supabase_url || "", CONFIG.supabase_service_role_key || "");
+export const SUPABASE = new SupabaseClient<Database>(CONFIG.supabaseUrl, CONFIG.supabaseServiceRoleKey);
 
-export const OAUTH2CLIENT = new google.auth.OAuth2(CONFIG.client_id || "", CONFIG.client_secret || "", CONFIG.redirect_url_dev || "");
+export const OAUTH2CLIENT = new google.auth.OAuth2(CONFIG.clientId, CONFIG.clientSecret, CONFIG.redirectUrlDev);
 
 export const CALENDAR = google.calendar({
   version: "v3",

@@ -26,4 +26,15 @@ build/
 *.log
 
 coverage/
-.coverage
+.coverage.pytest_cache/
+__pycache__/
+
+*.json 
+.vscode/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+GEMINI.md
+CLAUDE.md
