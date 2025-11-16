@@ -13,6 +13,7 @@ export const CONFIG = {
   redirectUrlProd: "",
   port: 3000,
   supabaseUrl: "https://vdwjfekcsnurtjsieojv.supabase.co",
+  supabasePublicAnonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZkd2pmZWtjc251cnRqc2llb2p2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA2ODg4ODksImV4cCI6MjA2NjI2NDg4OX0.-7ovo50UBnSHl1NO2g3XAMXZ6wU1aaCZ8EkmSJESpRc',
   supabaseServiceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY || '',
   openAiApiKey: process.env.OPEN_API_KEY,
   clientId: process.env.GOOGLE_CLIENT_ID,
