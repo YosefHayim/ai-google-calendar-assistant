@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.2.3/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.3.4/schema.json",
   "extends": ["ultracite"],
   "files": {
     "includes": [
@@ -12,14 +12,12 @@
       "!**/*.json",
       "!**/package.json",
       "!**/*.yaml",
-      "!**/*.yml"
-    ],
-    "experimentalScannerIgnores": [
-      "tests",
-      "__tests__",
-      "dist",
-      "build",
-      "node_modules"
+      "!**/*.yml",
+      "!!**/tests",
+      "!!**/__tests__",
+      "!!**/dist",
+      "!!**/build",
+      "!!**/node_modules"
     ]
   },
   "formatter": {
