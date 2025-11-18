@@ -25,9 +25,9 @@
     "sort": "npx sort-package-json",
     "start": "NODE_OPTIONS='--max-old-space-size=4096' ts-node -r tsconfig-paths/register app.ts",
     "test": "jest",
-    "test:watch": "jest --watch",
+    "test:ci": "jest --ci --coverage --maxWorkers=2",
     "test:coverage": "jest --coverage",
-    "test:ci": "jest --ci --coverage --maxWorkers=2"
+    "test:watch": "jest --watch"
   },
   "dependencies": {
     "@grammyjs/commands": "^1.2.0",
