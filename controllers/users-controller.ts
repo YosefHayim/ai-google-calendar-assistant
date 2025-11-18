@@ -1,7 +1,7 @@
 import type { User } from "@supabase/supabase-js";
 import type { Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import { CONFIG, OAUTH2CLIENT, SCOPES, SUPABASE } from "@/config/root-config";
+import { CONFIG, OAUTH2CLIENT, redirectUri, SCOPES, SUPABASE } from "@/config/root-config";
 import { type GoogleIdTokenPayloadProps, PROVIDERS, STATUS_RESPONSE, type TokensProps } from "@/types";
 import { reqResAsyncHandler } from "@/utils/async-handlers";
 import sendR from "@/utils/send-response";
@@ -16,7 +16,7 @@ const generateAuthGoogleUrl = reqResAsyncHandler(async (req: Request, res: Respo
     scope: SCOPES,
     prompt: "consent",
     include_granted_scopes: true,
-    redirect_uri: CONFIG.redirect_url_dev,
+    redirect_uri: redirectUri,
   });
 
   // 1. No code yet: send user to consent screen

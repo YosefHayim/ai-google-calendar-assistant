@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { CONFIG, SCOPES_STRING, SUPABASE } from "@/config/root-config";
+import {  redirectUri, SCOPES_STRING, SUPABASE } from "@/config/root-config";
 import { type PROVIDERS, STATUS_RESPONSE } from "@/types";
 
 import { asyncHandler } from "./async-handlers";
@@ -9,7 +9,7 @@ export const thirdPartySignInOrSignUp = asyncHandler(async (_req: Request, res: 
   const { data, error } = await SUPABASE.auth.signInWithOAuth({
     provider,
     options: {
-      redirectTo: CONFIG.node_env === "production" ? CONFIG.redirect_url_prod : CONFIG.redirect_url_dev,
+      redirectTo: redirectUri,
       scopes: SCOPES_STRING,
       queryParams: {
         access_type: "offline",

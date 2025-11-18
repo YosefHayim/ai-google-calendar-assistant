@@ -1,12 +1,10 @@
-import { Agent, setDefaultOpenAIKey, setTracingExportApiKey } from "@openai/agents";
-import { CONFIG } from "@/config/root-config";
+import { Agent } from "@openai/agents";
 import { CURRENT_MODEL } from "@/types";
 import { AGENT_HANDOFFS } from "./agents-hands-off-description";
 import { AGENT_INSTRUCTIONS } from "./agents-instructions";
 import { AGENT_TOOLS } from "./agents-tools";
 
-setDefaultOpenAIKey(CONFIG.open_ai_api_key || "");
-setTracingExportApiKey(CONFIG.open_ai_api_key || "");
+
 
 export const AGENTS = {
   generateUserCbGoogleUrl: new Agent({
