@@ -1,6 +1,6 @@
 import type { calendar_v3 } from "googleapis";
 import isEmail from "validator/lib/isEmail";
-import { CONFIG, OAUTH2CLIENT, SCOPES, SUPABASE } from "@/config/root-config";
+import { OAUTH2CLIENT, redirectUri, SCOPES, SUPABASE } from "@/config/root-config";
 import { ACTION } from "@/types";
 import { asyncHandler } from "@/utils/async-handlers";
 import { fetchCredentialsByEmail } from "@/utils/get-user-calendar-tokens";
@@ -21,7 +21,7 @@ export const EXECUTION_TOOLS = {
       scope: SCOPES,
       prompt: "consent",
       include_granted_scopes: true,
-      redirect_uri: CONFIG.redirect_url_dev,
+      redirect_uri: redirectUri,
     });
 
     return url;

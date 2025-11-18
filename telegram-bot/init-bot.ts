@@ -8,7 +8,7 @@ import { authTgHandler } from "./middleware/auth-tg-handler";
 
 export type GlobalContext = SessionFlavor<SessionData> & Context;
 
-const bot = new Bot<GlobalContext>(CONFIG.telegram_access_token || "");
+const bot = new Bot<GlobalContext>(CONFIG.telegramAccessToken);
 
 bot.catch((err) => {
   const ctx = err.ctx;
