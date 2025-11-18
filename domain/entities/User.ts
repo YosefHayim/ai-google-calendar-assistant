@@ -5,6 +5,8 @@
  * Independent of external dependencies (Supabase Auth, Google OAuth, etc.)
  */
 
+import type { UserDto } from "../dto/UserDto";
+
 export interface UserProfile {
   firstName?: string;
   lastName?: string;
@@ -265,7 +267,7 @@ export class User {
   /**
    * Convert to plain object
    */
-  toObject(): Record<string, any> {
+  toObject(): UserDto {
     return {
       id: this.id,
       email: this.email,
@@ -281,7 +283,7 @@ export class User {
   /**
    * Create from plain object
    */
-  static fromObject(obj: Record<string, any>): User {
+  static fromObject(obj: UserDto): User {
     return new User(
       obj.id,
       obj.email,

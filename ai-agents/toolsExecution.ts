@@ -2,12 +2,12 @@ import type { calendar_v3 } from "googleapis";
 import isEmail from "validator/lib/isEmail";
 import { OAUTH2CLIENT, redirectUri, SCOPES, SUPABASE } from "@/config/root-config";
 import { ACTION } from "@/types";
-import { asyncHandler } from "@/utils/async-handlers";
-import { fetchCredentialsByEmail } from "@/utils/get-user-calendar-tokens";
-import { eventsHandler } from "@/utils/handle-events";
-import { initCalendarWithUserTokensAndUpdateTokens } from "@/utils/init-calendar-with-user-tokens-and-update-tokens";
+import { asyncHandler } from "@/utils/asyncHandlers";
+import { fetchCredentialsByEmail } from "@/utils/getUserCalendarTokens";
+import { eventsHandler } from "@/utils/handleEvents";
+import { initCalendarWithUserTokensAndUpdateTokens } from "@/utils/initCalendarWithUserTokens";
 import { TOKEN_FIELDS } from "@/utils/storage";
-import { coerceArgs, formatEventData, getCalendarCategoriesByEmail } from "./agent-utils";
+import { coerceArgs, formatEventData, getCalendarCategoriesByEmail } from "./agentUtils";
 
 type Event = calendar_v3.Schema$Event;
 

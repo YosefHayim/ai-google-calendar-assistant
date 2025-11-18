@@ -1,6 +1,6 @@
 import { describe, it, expect, jest, beforeEach } from "@jest/globals";
 import type { Request, Response, NextFunction } from "express";
-import { reqResAsyncHandler, asyncHandler } from "./async-handlers";
+import { reqResAsyncHandler, asyncHandler } from "./asyncHandlers";
 
 describe("async-handlers", () => {
   describe("reqResAsyncHandler", () => {

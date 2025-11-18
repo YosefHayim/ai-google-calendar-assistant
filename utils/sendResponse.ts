@@ -1,13 +1,13 @@
 import type { Response } from "express";
 
-const ERROR = 400;
+const HTTP_ERROR_THRESHOLD = 400;
 
-const sendR = (res: Response, status: number, message: string, data?: unknown) => {
+export const sendResponse = (res: Response, status: number, message: string, data?: unknown) => {
   res.status(status).json({
-    status: status >= ERROR ? "error" : "success",
+    status: status >= HTTP_ERROR_THRESHOLD ? "error" : "success",
     message,
     data,
   });
 };
 
-export default sendR;
+export default sendResponse;

@@ -1,6 +1,6 @@
 import express from "express";
-import calendarController from "@/controllers/calendar-controller";
-import { authHandler } from "@/middlewares/auth-handler";
+import calendarController from "@/controllers/calendarController";
+import { authHandler } from "@/middlewares/authHandler";
 
 const router = express.Router();
 

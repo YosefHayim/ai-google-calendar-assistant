@@ -1,7 +1,7 @@
 import { tool } from "@openai/agents";
-import { TOOLS_DESCRIPTION } from "./description-tools";
-import { EXECUTION_TOOLS } from "./execution-tools";
-import { PARAMETERS_TOOLS } from "./parameters-tools";
+import { TOOLS_DESCRIPTION } from "./toolsDescription";
+import { EXECUTION_TOOLS } from "./toolsExecution";
+import { PARAMETERS_TOOLS } from "./toolsParameters";
 
 export const AGENT_TOOLS = {
   generate_user_cb_google_url: tool({

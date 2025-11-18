@@ -1,6 +1,6 @@
 import { SUPABASE } from "@/config/root-config";
 import type { TokensProps } from "@/types";
-import { asyncHandler } from "./async-handlers";
+import { asyncHandler } from "./asyncHandlers";
 
 export const updateTokensOfUser = asyncHandler(async (oldTokens: TokensProps, newTokens: TokensProps & { token?: string | null }) => {
   const updatedTokens = {

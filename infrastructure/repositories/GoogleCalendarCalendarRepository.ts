@@ -8,6 +8,8 @@ import type { calendar_v3 } from "googleapis";
 import { ICalendarRepository } from "../../domain/repositories/ICalendarRepository";
 import { Calendar } from "../../domain/entities/Calendar";
 import { CalendarMapper } from "./mappers/CalendarMapper";
+import type { GoogleCalendarError } from "../types/errors";
+import { getErrorMessage, getErrorCode } from "../types/errors";
 
 export class GoogleCalendarCalendarRepository implements ICalendarRepository {
   constructor(private calendarClient: calendar_v3.Calendar) {}
@@ -26,8 +28,9 @@ export class GoogleCalendarCalendarRepository implements ICalendarRepository {
       }
 
       return CalendarMapper.toDomain(response.data);
-    } catch (error: any) {
-      if (error.code === 404) {
+    } catch (error: unknown) {
+      const errorCode = getErrorCode(error);
+      if (errorCode === 404) {
         return null;
       }
       throw this.handleError(error, "findById");
@@ -55,7 +58,7 @@ export class GoogleCalendarCalendarRepository implements ICalendarRepository {
       }
 
       return CalendarMapper.toDomainArray(response.data.items);
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw this.handleError(error, "findByUserId");
     }
   }
@@ -84,8 +87,9 @@ export class GoogleCalendarCalendarRepository implements ICalendarRepository {
       }
 
       return CalendarMapper.toDomain(primaryResponse.data);
-    } catch (error: any) {
-      if (error.code === 404) {
+    } catch (error: unknown) {
+      const errorCode = getErrorCode(error);
+      if (errorCode === 404) {
         return null;
       }
       throw this.handleError(error, "findDefaultByUserId");
@@ -122,7 +126,7 @@ export class GoogleCalendarCalendarRepository implements ICalendarRepository {
       }
 
       return calendars;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw this.handleError(error, "findAll");
     }
   }
@@ -143,7 +147,7 @@ export class GoogleCalendarCalendarRepository implements ICalendarRepository {
       }
 
       return CalendarMapper.toDomain(response.data);
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw this.handleError(error, "create");
     }
   }
@@ -165,8 +169,9 @@ export class GoogleCalendarCalendarRepository implements ICalendarRepository {
       }
 
       return CalendarMapper.toDomain(response.data);
-    } catch (error: any) {
-      if (error.code === 404) {
+    } catch (error: unknown) {
+      const errorCode = getErrorCode(error);
+      if (errorCode === 404) {
         throw new Error(`Calendar not found: ${calendar.id}`);
       }
       throw this.handleError(error, "update");
@@ -183,8 +188,9 @@ export class GoogleCalendarCalendarRepository implements ICalendarRepository {
       });
 
       return true;
-    } catch (error: any) {
-      if (error.code === 404) {
+    } catch (error: unknown) {
+      const errorCode = getErrorCode(error);
+      if (errorCode === 404) {
         return false;
       }
       throw this.handleError(error, "delete");
@@ -209,8 +215,9 @@ export class GoogleCalendarCalendarRepository implements ICalendarRepository {
       }
 
       return CalendarMapper.toDomain(response.data);
-    } catch (error: any) {
-      if (error.code === 404) {
+    } catch (error: unknown) {
+      const errorCode = getErrorCode(error);
+      if (errorCode === 404) {
         throw new Error(`Calendar not found: ${calendarId}`);
       }
       throw this.handleError(error, "setAsDefault");
@@ -224,8 +231,8 @@ export class GoogleCalendarCalendarRepository implements ICalendarRepository {
     try {
       const calendar = await this.findById(calendarId);
       return calendar !== null;
-    } catch (error: any) {
-      // If there's any error (including 404), user doesn't have access
+    } catch (error: unknown) {
+      // If there's an error (including 404), user doesn't have access
       return false;
     }
   }
@@ -237,7 +244,7 @@ export class GoogleCalendarCalendarRepository implements ICalendarRepository {
     try {
       const calendars = await this.findByUserId(userId);
       return calendars.length;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw this.handleError(error, "count");
     }
   }
@@ -245,9 +252,9 @@ export class GoogleCalendarCalendarRepository implements ICalendarRepository {
   /**
    * Handle and transform Google Calendar API errors
    */
-  private handleError(error: any, operation: string): Error {
-    const errorMessage = error?.message || "Unknown error";
-    const errorCode = error?.code || error?.response?.status;
+  private handleError(error: unknown, operation: string): Error {
+    const errorMessage = getErrorMessage(error);
+    const errorCode = getErrorCode(error);
 
     switch (errorCode) {
       case 400:

@@ -16,7 +16,7 @@ jest.mock("@/types", () => ({
 }));
 
 // Now import after mocks
-import errorHandler from "./error-handler";
+import errorHandler from "./errorHandler";
 
 describe("errorHandler", () => {
   let mockRequest: Partial<Request>;

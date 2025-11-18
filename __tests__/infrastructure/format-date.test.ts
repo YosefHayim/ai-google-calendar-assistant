@@ -1,5 +1,5 @@
 import { describe, it, expect } from "@jest/globals";
-import formatDate from "./format-date";
+import formatDate from "./formatDate";
 
 describe("formatDate", () => {
   describe("with valid inputs", () => {

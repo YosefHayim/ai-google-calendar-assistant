@@ -9,6 +9,7 @@ import { IUserRepository } from "../../domain/repositories/IUserRepository";
 import { User } from "../../domain/entities/User";
 import { UserMapper } from "./mappers/UserMapper";
 import type { Database } from "../../database.types.new";
+import { getErrorMessage } from "../types/errors";
 
 export class SupabaseUserRepository implements IUserRepository {
   constructor(private supabase: SupabaseClient<Database>) {}
@@ -37,8 +38,8 @@ export class SupabaseUserRepository implements IUserRepository {
       }
 
       return UserMapper.toDomain(data);
-    } catch (error: any) {
-      if (error.message?.includes("not found")) {
+    } catch (error: unknown) {
+      if (getErrorMessage(error).includes("not found")) {
         return null;
       }
       throw error;
@@ -69,8 +70,8 @@ export class SupabaseUserRepository implements IUserRepository {
       }
 
       return UserMapper.toDomain(data);
-    } catch (error: any) {
-      if (error.message?.includes("not found")) {
+    } catch (error: unknown) {
+      if (getErrorMessage(error).includes("not found")) {
         return null;
       }
       throw error;
@@ -111,7 +112,7 @@ export class SupabaseUserRepository implements IUserRepository {
       }
 
       return UserMapper.toDomainArray(data);
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw this.handleError(error, "findAll");
     }
   }
@@ -138,7 +139,7 @@ export class SupabaseUserRepository implements IUserRepository {
       }
 
       return UserMapper.toDomain(data);
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw this.handleError(error, "create");
     }
   }
@@ -166,7 +167,7 @@ export class SupabaseUserRepository implements IUserRepository {
       }
 
       return UserMapper.toDomain(data);
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw this.handleError(error, "update");
     }
   }
@@ -187,7 +188,7 @@ export class SupabaseUserRepository implements IUserRepository {
       }
 
       return true;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw this.handleError(error, "delete");
     }
   }
@@ -212,8 +213,8 @@ export class SupabaseUserRepository implements IUserRepository {
       }
 
       return Boolean(data);
-    } catch (error: any) {
-      if (error.message?.includes("not found")) {
+    } catch (error: unknown) {
+      if (getErrorMessage(error).includes("not found")) {
         return false;
       }
       throw this.handleError(error, "exists");
@@ -238,7 +239,7 @@ export class SupabaseUserRepository implements IUserRepository {
       }
 
       return count || 0;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw this.handleError(error, "count");
     }
   }
@@ -259,7 +260,7 @@ export class SupabaseUserRepository implements IUserRepository {
 
       // Save back to database
       return await this.update(currentUser);
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw this.handleError(error, "updateLastLogin");
     }
   }
@@ -267,9 +268,9 @@ export class SupabaseUserRepository implements IUserRepository {
   /**
    * Handle and transform Supabase errors
    */
-  private handleError(error: any, operation: string): Error {
-    const errorMessage = error?.message || "Unknown error";
-    const errorCode = error?.code;
+  private handleError(error: unknown, operation: string): Error {
+    const errorMessage = getErrorMessage(error);
+    const errorCode = error && typeof error === "object" && "code" in error ? error.code : undefined;
 
     switch (errorCode) {
       case "23505": // Unique violation

@@ -8,6 +8,7 @@ import type { calendar_v3 } from "googleapis";
 import { IEventRepository } from "../../domain/repositories/IEventRepository";
 import { Event } from "../../domain/entities/Event";
 import { EventMapper } from "./mappers/EventMapper";
+import { getErrorMessage, getErrorCode } from "../types/errors";
 
 export class GoogleCalendarEventRepository implements IEventRepository {
   constructor(private calendarClient: calendar_v3.Calendar) {}
@@ -27,8 +28,9 @@ export class GoogleCalendarEventRepository implements IEventRepository {
       }
 
       return EventMapper.toDomain(response.data, calendarId);
-    } catch (error: any) {
-      if (error.code === 404) {
+    } catch (error: unknown) {
+      const errorCode = getErrorCode(error);
+      if (errorCode === 404) {
         return null;
       }
       throw this.handleError(error, "findById");
@@ -63,7 +65,7 @@ export class GoogleCalendarEventRepository implements IEventRepository {
       }
 
       return EventMapper.toDomainArray(response.data.items, calendarId);
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw this.handleError(error, "findByDateRange");
     }
   }
@@ -95,7 +97,7 @@ export class GoogleCalendarEventRepository implements IEventRepository {
         events,
         nextPageToken: response.data.nextPageToken || undefined,
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw this.handleError(error, "findAll");
     }
   }
@@ -124,7 +126,7 @@ export class GoogleCalendarEventRepository implements IEventRepository {
       }
 
       return EventMapper.toDomainArray(response.data.items, calendarId);
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw this.handleError(error, "search");
     }
   }
@@ -151,7 +153,7 @@ export class GoogleCalendarEventRepository implements IEventRepository {
       }
 
       return EventMapper.toDomain(response.data, event.calendarId);
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw this.handleError(error, "create");
     }
   }
@@ -179,8 +181,9 @@ export class GoogleCalendarEventRepository implements IEventRepository {
       }
 
       return EventMapper.toDomain(response.data, event.calendarId);
-    } catch (error: any) {
-      if (error.code === 404) {
+    } catch (error: unknown) {
+      const errorCode = getErrorCode(error);
+      if (errorCode === 404) {
         throw new Error(`Event not found: ${event.id}`);
       }
       throw this.handleError(error, "update");
@@ -199,8 +202,9 @@ export class GoogleCalendarEventRepository implements IEventRepository {
       });
 
       return true;
-    } catch (error: any) {
-      if (error.code === 404) {
+    } catch (error: unknown) {
+      const errorCode = getErrorCode(error);
+      if (errorCode === 404) {
         return false;
       }
       throw this.handleError(error, "delete");
@@ -241,7 +245,7 @@ export class GoogleCalendarEventRepository implements IEventRepository {
       });
 
       return conflicts;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw this.handleError(error, "findConflicts");
     }
   }
@@ -269,7 +273,7 @@ export class GoogleCalendarEventRepository implements IEventRepository {
       }
 
       return EventMapper.toDomainArray(response.data.items, calendarId);
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw this.handleError(error, "findUpcoming");
     }
   }
@@ -286,7 +290,7 @@ export class GoogleCalendarEventRepository implements IEventRepository {
       return await this.findByDateRange(calendarId, startOfDay, endOfDay, {
         includeRecurring: true,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw this.handleError(error, "findToday");
     }
   }
@@ -294,9 +298,9 @@ export class GoogleCalendarEventRepository implements IEventRepository {
   /**
    * Handle and transform Google Calendar API errors
    */
-  private handleError(error: any, operation: string): Error {
-    const errorMessage = error?.message || "Unknown error";
-    const errorCode = error?.code || error?.response?.status;
+  private handleError(error: unknown, operation: string): Error {
+    const errorMessage = getErrorMessage(error);
+    const errorCode = getErrorCode(error);
 
     switch (errorCode) {
       case 400:

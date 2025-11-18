@@ -1,6 +1,6 @@
 import { SUPABASE } from "@/config/root-config";
 import type { TokensProps } from "@/types";
-import { asyncHandler } from "./async-handlers";
+import { asyncHandler } from "./asyncHandlers";
 import { TOKEN_FIELDS } from "./storage";
 
 export const fetchCredentialsByEmail = asyncHandler(async (email: string): Promise<TokensProps> => {

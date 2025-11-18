@@ -1,4 +1,5 @@
 import { jest } from "@jest/globals";
+import type { AgentTool, Metadata } from "./types";
 
 /**
  * Mock OpenAI Agent responses and configurations
@@ -25,8 +26,8 @@ export type MockAgentResponse = {
   status: "completed" | "requires_action" | "failed" | "in_progress";
   model: string;
   instructions?: string;
-  tools?: any[];
-  metadata?: Record<string, any>;
+  tools?: AgentTool[];
+  metadata?: Metadata;
   messages?: MockAgentMessage[];
   toolCalls?: MockAgentToolCall[];
   response?: string;
@@ -44,7 +45,7 @@ export type MockAgentConfig = {
     parallelToolCalls?: boolean;
   };
   handoffDescription?: string;
-  tools?: any[];
+  tools?: AgentTool[];
 };
 
 /**
@@ -201,7 +202,7 @@ export class MockAgent {
   public model?: string;
   public modelSettings?: MockAgentConfig["modelSettings"];
   public handoffDescription?: string;
-  public tools?: any[];
+  public tools?: AgentTool[];
   private mockResponse: MockAgentResponse;
 
   constructor(config: MockAgentConfig) {

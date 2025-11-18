@@ -5,6 +5,7 @@
  * Independent of external dependencies (Google Calendar API, Supabase, etc.)
  */
 
+import type { CalendarDto } from "../dto/CalendarDto";
 import { Event } from "./Event";
 
 export interface CalendarSettings {
@@ -193,7 +194,7 @@ export class Calendar {
   /**
    * Convert to plain object
    */
-  toObject(): Record<string, any> {
+  toObject(): CalendarDto {
     return {
       id: this.id,
       name: this.name,
@@ -209,7 +210,7 @@ export class Calendar {
   /**
    * Create from plain object
    */
-  static fromObject(obj: Record<string, any>): Calendar {
+  static fromObject(obj: CalendarDto): Calendar {
     return new Calendar(
       obj.id,
       obj.name,

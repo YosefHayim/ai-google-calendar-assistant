@@ -4,10 +4,10 @@ import cors from "cors";
 import express from "express";
 import morgan from "morgan";
 import { CONFIG } from "@/config/root-config";
-import errorHandler from "@/middlewares/error-handler";
-import calendarRoute from "@/routes/calendar-route";
+import errorHandler from "@/middlewares/errorHandler";
+import calendarRoute from "@/routes/calendarRoutes";
 import usersRoute from "@/routes/users";
-import whatsAppRoute from "@/routes/whatsapp-route";
+import whatsAppRoute from "@/routes/whatsappRoutes";
 import { startTelegramBot } from "./telegram-bot/init-bot";
 import { ROUTES, STATUS_RESPONSE } from "./types";
 

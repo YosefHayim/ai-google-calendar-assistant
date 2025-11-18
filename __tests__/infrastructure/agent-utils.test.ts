@@ -1,5 +1,5 @@
 import { describe, it, expect, jest, beforeEach } from "@jest/globals";
-import { formatEventData, coerceArgs, safeParse } from "./agent-utils";
+import { formatEventData, coerceArgs, safeParse } from "./agentUtils";
 import { TIMEZONE } from "@/types";
 
 // Mock the Supabase client

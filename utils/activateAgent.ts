@@ -1,7 +1,7 @@
 import { type Agent, run } from "@openai/agents";
 import { AGENTS } from "@/ai-agents/agents";
 import type { AGENTS_LIST } from "@/types";
-import { asyncHandler } from "./async-handlers";
+import { asyncHandler } from "./asyncHandlers";
 
 export const activateAgent = asyncHandler(async (agentKey: AGENTS_LIST | Agent, prompt: string) => {
   let agent: Agent;

@@ -1,8 +1,8 @@
 import { google } from "googleapis";
 import { OAUTH2CLIENT } from "@/config/root-config";
 import type { TokensProps } from "@/types";
-import { asyncHandler } from "./async-handlers";
-import { updateTokensOfUser } from "./update-tokens-of-user";
+import { asyncHandler } from "./asyncHandlers";
+import { updateTokensOfUser } from "./updateUserTokens";
 
 export const initCalendarWithUserTokensAndUpdateTokens = asyncHandler(async (tokens: TokensProps) => {
   OAUTH2CLIENT.setCredentials(tokens);

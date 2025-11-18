@@ -3,7 +3,7 @@ import { Bot, type Context, type SessionFlavor, session } from "grammy";
 import { ORCHESTRATOR_AGENT } from "@/ai-agents/agents";
 import { CONFIG } from "@/config/root-config";
 import type { SessionData } from "@/types";
-import { activateAgent } from "@/utils/activate-agent";
+import { activateAgent } from "@/utils/activateAgent";
 import { authTgHandler } from "./middleware/auth-tg-handler";
 
 export type GlobalContext = SessionFlavor<SessionData> & Context;

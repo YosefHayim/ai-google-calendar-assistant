@@ -26,7 +26,7 @@ jest.mock("./storage", () => ({
 }));
 
 // Now import
-import { fetchCredentialsByEmail } from "./get-user-calendar-tokens";
+import { fetchCredentialsByEmail } from "./getUserCalendarTokens";
 
 describe("fetchCredentialsByEmail", () => {
   beforeEach(() => {

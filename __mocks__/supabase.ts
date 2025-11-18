@@ -1,5 +1,6 @@
 import { jest } from "@jest/globals";
 import type { Database } from "@/database.types";
+import type { DatabaseRecord, RecordFilter, SupabaseResponse } from "./types";
 
 /**
  * Mock Supabase user data
@@ -130,49 +131,49 @@ export const createMockSupabaseError = (errorType: keyof ReturnType<typeof creat
  * In-memory data store for testing
  */
 class InMemoryDataStore {
-  private data: Map<string, any[]> = new Map();
+  private data: Map<string, DatabaseRecord[]> = new Map();
 
   constructor() {
     // Initialize with default mock data
-    this.data.set("user_calendar_tokens", [mockUserCalendarToken]);
-    this.data.set("calendar_categories", [mockCalendarCategory]);
-    this.data.set("user_telegram_links", [mockTelegramLink]);
+    this.data.set("user_calendar_tokens", [mockUserCalendarToken as unknown as DatabaseRecord]);
+    this.data.set("calendar_categories", [mockCalendarCategory as unknown as DatabaseRecord]);
+    this.data.set("user_telegram_links", [mockTelegramLink as unknown as DatabaseRecord]);
   }
 
   reset() {
     this.data.clear();
-    this.data.set("user_calendar_tokens", [mockUserCalendarToken]);
-    this.data.set("calendar_categories", [mockCalendarCategory]);
-    this.data.set("user_telegram_links", [mockTelegramLink]);
+    this.data.set("user_calendar_tokens", [mockUserCalendarToken as unknown as DatabaseRecord]);
+    this.data.set("calendar_categories", [mockCalendarCategory as unknown as DatabaseRecord]);
+    this.data.set("user_telegram_links", [mockTelegramLink as unknown as DatabaseRecord]);
   }
 
-  getTable(tableName: string): any[] {
+  getTable(tableName: string): DatabaseRecord[] {
     if (!this.data.has(tableName)) {
       this.data.set(tableName, []);
     }
     return this.data.get(tableName) || [];
   }
 
-  setTable(tableName: string, data: any[]) {
+  setTable(tableName: string, data: DatabaseRecord[]) {
     this.data.set(tableName, data);
   }
 
-  insert(tableName: string, record: any): any {
+  insert(tableName: string, record: Partial<DatabaseRecord>): DatabaseRecord {
     const table = this.getTable(tableName);
-    const newRecord = {
-      ...record,
-      id: record.id || table.length + 1,
+    const newRecord: DatabaseRecord = {
+      id: String(record.id || table.length + 1),
       created_at: record.created_at || new Date().toISOString(),
       updated_at: record.updated_at || new Date().toISOString(),
+      ...record,
     };
     table.push(newRecord);
     this.setTable(tableName, table);
     return newRecord;
   }
 
-  update(tableName: string, updates: any, filter: (record: any) => boolean): any[] {
+  update(tableName: string, updates: Partial<DatabaseRecord>, filter: RecordFilter<DatabaseRecord>): DatabaseRecord[] {
     const table = this.getTable(tableName);
-    const updatedRecords: any[] = [];
+    const updatedRecords: DatabaseRecord[] = [];
 
     const newTable = table.map((record) => {
       if (filter(record)) {
@@ -191,9 +192,9 @@ class InMemoryDataStore {
     return updatedRecords;
   }
 
-  delete(tableName: string, filter: (record: any) => boolean): any[] {
+  delete(tableName: string, filter: RecordFilter<DatabaseRecord>): DatabaseRecord[] {
     const table = this.getTable(tableName);
-    const deletedRecords: any[] = [];
+    const deletedRecords: DatabaseRecord[] = [];
 
     const newTable = table.filter((record) => {
       if (filter(record)) {
@@ -207,7 +208,7 @@ class InMemoryDataStore {
     return deletedRecords;
   }
 
-  select(tableName: string, columns: string = "*"): any[] {
+  select(tableName: string, columns: string = "*"): DatabaseRecord[] {
     return this.getTable(tableName);
   }
 }
@@ -216,16 +217,16 @@ class InMemoryDataStore {
  * Create a mock query builder with chainable methods
  */
 const createMockQueryBuilder = (tableName: string, dataStore: InMemoryDataStore) => {
-  let currentData: any[] = dataStore.getTable(tableName);
+  let currentData: DatabaseRecord[] = dataStore.getTable(tableName);
   let selectColumns = "*";
-  let filters: Array<(record: any) => boolean> = [];
+  let filters: RecordFilter<DatabaseRecord>[] = [];
   let limitCount: number | null = null;
   let shouldReturnSingle = false;
-  let updateData: any = null;
-  let insertData: any = null;
+  let updateData: Partial<DatabaseRecord> | null = null;
+  let insertData: Partial<DatabaseRecord> | null = null;
   let isDeleteOperation = false;
 
-  const applyFilters = (data: any[]) => {
+  const applyFilters = (data: DatabaseRecord[]): DatabaseRecord[] => {
     let result = data;
     for (const filter of filters) {
       result = result.filter(filter);
@@ -236,18 +237,18 @@ const createMockQueryBuilder = (tableName: string, dataStore: InMemoryDataStore)
     return result;
   };
 
-  const executeQuery = () => {
+  const executeQuery = (): SupabaseResponse<DatabaseRecord | DatabaseRecord[]> => {
     if (insertData) {
       try {
         const inserted = dataStore.insert(tableName, insertData);
         return { data: inserted, error: null };
-      } catch (error: any) {
+      } catch (error: unknown) {
         return { data: null, error: createMockSupabaseError("uniqueViolation") };
       }
     }
 
     if (updateData) {
-      const filterFn = (record: any) => {
+      const filterFn: RecordFilter<DatabaseRecord> = (record) => {
         for (const filter of filters) {
           if (!filter(record)) return false;
         }
@@ -258,7 +259,7 @@ const createMockQueryBuilder = (tableName: string, dataStore: InMemoryDataStore)
     }
 
     if (isDeleteOperation) {
-      const filterFn = (record: any) => {
+      const filterFn: RecordFilter<DatabaseRecord> = (record) => {
         for (const filter of filters) {
           if (!filter(record)) return false;
         }
@@ -279,16 +280,39 @@ const createMockQueryBuilder = (tableName: string, dataStore: InMemoryDataStore)
     return { data: result, error: null };
   };
 
-  const builder: any = {
-    select: jest.fn((columns = "*") => {
+  type QueryBuilder = {
+    select: jest.Mock;
+    insert: jest.Mock;
+    update: jest.Mock;
+    delete: jest.Mock;
+    eq: jest.Mock;
+    neq: jest.Mock;
+    gt: jest.Mock;
+    gte: jest.Mock;
+    lt: jest.Mock;
+    lte: jest.Mock;
+    like: jest.Mock;
+    ilike: jest.Mock;
+    in: jest.Mock;
+    is: jest.Mock;
+    not: jest.Mock;
+    or: jest.Mock;
+    limit: jest.Mock;
+    single: jest.Mock;
+    maybeSingle: jest.Mock;
+    then: jest.Mock;
+  };
+
+  const builder: QueryBuilder = {
+    select: jest.fn((columns: string = "*") => {
       selectColumns = columns;
       return builder;
     }),
-    insert: jest.fn((data: any) => {
+    insert: jest.fn((data: Partial<DatabaseRecord>) => {
       insertData = data;
       return builder;
     }),
-    update: jest.fn((data: any) => {
+    update: jest.fn((data: Partial<DatabaseRecord>) => {
       updateData = data;
       return builder;
     }),
@@ -296,49 +320,55 @@ const createMockQueryBuilder = (tableName: string, dataStore: InMemoryDataStore)
       isDeleteOperation = true;
       return builder;
     }),
-    eq: jest.fn((column: string, value: any) => {
+    eq: jest.fn((column: string, value: unknown) => {
       filters.push((record) => record[column] === value);
       return builder;
     }),
-    neq: jest.fn((column: string, value: any) => {
+    neq: jest.fn((column: string, value: unknown) => {
       filters.push((record) => record[column] !== value);
       return builder;
     }),
-    gt: jest.fn((column: string, value: any) => {
+    gt: jest.fn((column: string, value: unknown) => {
       filters.push((record) => record[column] > value);
       return builder;
     }),
-    gte: jest.fn((column: string, value: any) => {
+    gte: jest.fn((column: string, value: unknown) => {
       filters.push((record) => record[column] >= value);
       return builder;
     }),
-    lt: jest.fn((column: string, value: any) => {
+    lt: jest.fn((column: string, value: unknown) => {
       filters.push((record) => record[column] < value);
       return builder;
     }),
-    lte: jest.fn((column: string, value: any) => {
+    lte: jest.fn((column: string, value: unknown) => {
       filters.push((record) => record[column] <= value);
       return builder;
     }),
     like: jest.fn((column: string, pattern: string) => {
       const regex = new RegExp(pattern.replace(/%/g, ".*"), "i");
-      filters.push((record) => regex.test(record[column]));
+      filters.push((record) => {
+        const value = record[column];
+        return typeof value === "string" && regex.test(value);
+      });
       return builder;
     }),
     ilike: jest.fn((column: string, pattern: string) => {
       const regex = new RegExp(pattern.replace(/%/g, ".*"), "i");
-      filters.push((record) => regex.test(record[column]));
+      filters.push((record) => {
+        const value = record[column];
+        return typeof value === "string" && regex.test(value);
+      });
       return builder;
     }),
-    in: jest.fn((column: string, values: any[]) => {
+    in: jest.fn((column: string, values: unknown[]) => {
       filters.push((record) => values.includes(record[column]));
       return builder;
     }),
-    is: jest.fn((column: string, value: any) => {
+    is: jest.fn((column: string, value: unknown) => {
       filters.push((record) => record[column] === value);
       return builder;
     }),
-    not: jest.fn((column: string, operator: string, value: any) => {
+    not: jest.fn((column: string, operator: string, value: unknown) => {
       filters.push((record) => record[column] !== value);
       return builder;
     }),
@@ -361,7 +391,7 @@ const createMockQueryBuilder = (tableName: string, dataStore: InMemoryDataStore)
       }
       return result;
     }),
-    then: jest.fn((resolve: any) => {
+    then: jest.fn((resolve: (value: SupabaseResponse<DatabaseRecord | DatabaseRecord[]>) => unknown) => {
       return Promise.resolve(executeQuery()).then(resolve);
     }),
   };

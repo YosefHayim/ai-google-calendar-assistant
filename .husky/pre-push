@@ -1,0 +1,22 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+echo "🧪 Running tests with coverage before push..."
+echo "⚠️  This ensures 90% coverage requirement is met locally"
+echo ""
+
+# Run tests with coverage
+pnpm test:ci
+
+# Check if tests passed
+if [ $? -ne 0 ]; then
+  echo ""
+  echo "❌ Tests failed or coverage is below 90% threshold"
+  echo "📊 Please fix failing tests or improve coverage before pushing"
+  echo "💡 Run 'pnpm test:coverage' to see detailed coverage report"
+  exit 1
+fi
+
+echo ""
+echo "✅ All tests passed and coverage thresholds met!"
+echo "🚀 Proceeding with push..."

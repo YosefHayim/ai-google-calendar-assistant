@@ -20,7 +20,7 @@ jest.mock("@/utils/send-response", () => ({
 }));
 
 // Now import after mocks are set up
-import { authHandler } from "./auth-handler";
+import { authHandler } from "./authHandler";
 
 const mockUser = {
   id: "test-user-id",

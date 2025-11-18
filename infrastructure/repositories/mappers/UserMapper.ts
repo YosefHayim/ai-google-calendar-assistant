@@ -5,7 +5,7 @@
  */
 
 import { User, UserProfile, UserPreferences } from "../../../domain/entities/User";
-import type { Database } from "../../../database.types.new";
+import type { Database, Json } from "../../../database.types.new";
 
 type UserRow = Database["public"]["Tables"]["users"]["Row"];
 type UserInsert = Database["public"]["Tables"]["users"]["Insert"];
@@ -64,7 +64,7 @@ export class UserMapper {
       user_id: user.id,
       email: user.email,
       is_active: user.isActive,
-      metadata: metadata as any,
+      metadata: metadata as unknown as Json,
       created_at: user.createdAt?.toISOString() || new Date().toISOString(),
       updated_at: user.updatedAt?.toISOString() || new Date().toISOString(),
     };
@@ -83,7 +83,7 @@ export class UserMapper {
     return {
       email: user.email,
       is_active: user.isActive,
-      metadata: metadata as any,
+      metadata: metadata as unknown as Json,
       updated_at: new Date().toISOString(),
     };
   }
@@ -123,7 +123,7 @@ export class UserMapper {
         metadata.lastLoginAt = updates.lastLoginAt.toISOString();
       }
 
-      updateData.metadata = metadata as any;
+      updateData.metadata = metadata as unknown as Json;
     }
 
     return updateData;

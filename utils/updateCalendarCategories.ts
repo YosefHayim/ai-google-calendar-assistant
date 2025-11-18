@@ -1,7 +1,7 @@
 import { SUPABASE } from "@/config/root-config";
 import type { Tables, TablesInsert } from "@/database.types";
 import type { UpdateCalendarCategoriesProps } from "@/types";
-import { asyncHandler } from "./async-handlers";
+import { asyncHandler } from "./asyncHandlers";
 
 export const updateCalenderCategories = asyncHandler(
   async (payload: UpdateCalendarCategoriesProps[] | undefined, email: string, userId: string | null): Promise<Tables<"calendar_categories">[] | false> => {

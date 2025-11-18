@@ -1,8 +1,8 @@
 import { Agent } from "@openai/agents";
 import { CURRENT_MODEL } from "@/types";
-import { AGENT_HANDOFFS } from "./agents-hands-off-description";
-import { AGENT_INSTRUCTIONS } from "./agents-instructions";
-import { AGENT_TOOLS } from "./agents-tools";
+import { AGENT_HANDOFFS } from "./agentHandoffsDescription";
+import { AGENT_INSTRUCTIONS } from "./agentInstructions";
+import { AGENT_TOOLS } from "./agentTools";
 
 
 

@@ -5,6 +5,8 @@
  * Independent of external dependencies (Google Calendar API, Supabase, etc.)
  */
 
+import type { EventDto } from "../dto/EventDto";
+
 export interface EventDateTime {
   dateTime?: string;
   date?: string;
@@ -325,7 +327,7 @@ export class Event {
   /**
    * Convert to plain object
    */
-  toObject(): Record<string, any> {
+  toObject(): EventDto {
     return {
       id: this.id,
       summary: this.summary,
@@ -347,7 +349,7 @@ export class Event {
   /**
    * Create from plain object
    */
-  static fromObject(obj: Record<string, any>): Event {
+  static fromObject(obj: EventDto): Event {
     return new Event(
       obj.id,
       obj.summary,
