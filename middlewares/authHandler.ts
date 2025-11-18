@@ -3,7 +3,7 @@ import type { NextFunction, Request, Response } from "express";
 import { SUPABASE } from "@/config/root-config";
 import { STATUS_RESPONSE } from "@/types";
 import { asyncHandler } from "@/utils/asyncHandlers";
-import sendResponseesponse from "@/utils/sendResponseesponse";
+import sendResponse from "@/utils/sendResponse";
 
 export const authHandler = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
   const token = req.headers.authorization?.replace("Bearer ", "");

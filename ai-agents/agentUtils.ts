@@ -12,7 +12,7 @@ function deepClean<T extends Record<string, unknown>>(obj: T): T {
   if (!obj || typeof obj !== "object") {
     return obj;
   }
-  const out: Record<string, unknown> = Array.isArray(obj) ? [] : {};
+  const out: Record<string, unknown> | unknown[] = Array.isArray(obj) ? [] : {};
   for (const [k, v] of Object.entries(obj)) {
     if (v === "" || v === undefined || v === null) {
       continue;
@@ -20,10 +20,10 @@ function deepClean<T extends Record<string, unknown>>(obj: T): T {
     if (typeof v === "object" && v !== null) {
       const cleaned = deepClean(v as Record<string, unknown>);
       if (Array.isArray(cleaned) ? cleaned.length : Object.keys(cleaned).length) {
-        out[k] = cleaned;
+        (out as Record<string, unknown>)[k] = cleaned;
       }
     } else {
-      out[k] = v;
+      (out as Record<string, unknown>)[k] = v;
     }
   }
   return out as T;
@@ -108,7 +108,7 @@ export const formatEventData = (params: Partial<Event>): Event => {
     end,
   };
 
-  return deepClean(event);
+  return deepClean(event as Record<string, unknown>) as Event;
 };
 
 export const getCalendarCategoriesByEmail = asyncHandler(async (email: string) => {
@@ -145,7 +145,7 @@ export function coerceArgs(raw: unknown) {
   const eventId = base?.eventId ?? outer?.eventId;
 
   // 4) extract event fields (summary/start/end/…)
-  const eventLike: Partial<Event> = {
+  const eventLike: Partial<calendar_v3.Schema$Event> = {
     id: inner?.id,
     summary: inner?.summary,
     description: inner?.description,

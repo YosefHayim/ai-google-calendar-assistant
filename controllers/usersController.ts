@@ -3,13 +3,13 @@ import type { Request, Response } from "express";
 import { SUPABASE } from "@/config/root-config";
 import { PROVIDERS, STATUS_RESPONSE } from "@/types";
 import { reqResAsyncHandler } from "@/utils/asyncHandlers";
-import sendResponseesponse from "@/utils/sendResponseesponse";
 import { thirdPartySignInOrSignUp } from "@/utils/thirdPartyAuth";
 import { generateGoogleAuthUrl, handleInitialAuthRequest } from "@/utils/auth/generateAuthUrl";
 import { exchangeOAuthCode } from "@/utils/auth/exchangeOAuthToken";
 import { storeUserTokens } from "@/utils/auth/storeUserTokens";
 import { validateEmailPassword, validateEmailToken, validateEmail } from "@/utils/auth/validateAuthInput";
 import { findUserByEmail, deactivateUserByEmail } from "@/utils/auth/userOperations";
+import sendResponse from "@/utils/sendResponse";
 
 const generateAuthGoogleUrl = reqResAsyncHandler(async (req: Request, res: Response) => {
   const code = req.query.code as string | undefined;

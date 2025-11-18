@@ -12,11 +12,11 @@ export async function handleGetEvents(
   extra?: Record<string, unknown>
 ): Promise<calendar_v3.Schema$Events | ReturnType<typeof transformEventList>> {
   const { listParams, customFlag } = normalizeListParams(req, extra);
-  const events = await calendarEvents.list(listParams);
+  const eventsResponse = await calendarEvents.list(listParams);
 
   if (customFlag) {
-    return transformEventList(events.data.items ?? []);
+    return transformEventList(eventsResponse.data.items ?? []);
   }
 
-  return events;
+  return eventsResponse.data;
 }

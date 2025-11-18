@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import { OAUTH2CLIENT, redirectUri, SCOPES } from "@/config/root-config";
 import { STATUS_RESPONSE } from "@/types";
-import sendResponseesponse from "@/utils/sendResponseesponse";
+import sendResponse from "../sendResponse";
 
 /**
  * Generates Google OAuth2 authorization URL

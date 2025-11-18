@@ -7,8 +7,8 @@ import { reqResAsyncHandler } from "@/utils/asyncHandlers";
 import { fetchCredentialsByEmail } from "@/utils/getUserCalendarTokens";
 import { eventsHandler } from "@/utils/handleEvents";
 import { initCalendarWithUserTokensAndUpdateTokens } from "@/utils/initCalendarWithUserTokens";
-import sendResponseesponse from "@/utils/sendResponseesponse";
 import { updateCalenderCategories } from "@/utils/updateCalendarCategories";
+import sendResponse from "@/utils/sendResponse";
 
 const getAllCalendars = reqResAsyncHandler(async (req, res) => {
   const user = (req as Request & { user: User }).user;

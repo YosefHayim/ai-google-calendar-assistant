@@ -1,9 +1,9 @@
 import type { Request, Response } from "express";
-import {  redirectUri, SCOPES_STRING, SUPABASE } from "@/config/root-config";
+import { redirectUri, SCOPES_STRING, SUPABASE } from "@/config/root-config";
 import { type PROVIDERS, STATUS_RESPONSE } from "@/types";
 
 import { asyncHandler } from "./asyncHandlers";
-import sendResponseesponse from "./sendResponseesponse";
+import sendResponse from "./sendResponse";
 
 export const thirdPartySignInOrSignUp = asyncHandler(async (_req: Request, res: Response, provider: PROVIDERS) => {
   const { data, error } = await SUPABASE.auth.signInWithOAuth({

@@ -5,12 +5,13 @@ import { asyncHandler } from "./asyncHandlers";
 import errorTemplate from "./errorTemplate";
 import { fetchCredentialsByEmail } from "./getUserCalendarTokens";
 import { initCalendarWithUserTokensAndUpdateTokens } from "./initCalendarWithUserTokens";
-import { extractEmail } from "./events/extract-email";
-import { validateEventId } from "./events/validate-event-id";
-import { handleGetEvents } from "./events/handlers/get-events";
-import { handleInsertEvent } from "./events/handlers/insert-event";
-import { handleUpdateEvent } from "./events/handlers/update-event";
-import { handleDeleteEvent } from "./events/handlers/delete-event";
+import { extractEmail } from "./events/extractEmail";
+import { handleDeleteEvent } from "./events/handlers/deleteEvent";
+import { handleGetEvents } from "./events/handlers/getEvents";
+import { handleInsertEvent } from "./events/handlers/insertEvent";
+import { handleUpdateEvent } from "./events/handlers/updateEvent";
+import { validateEventId } from "./events/validateEventId";
+
 
 export const eventsHandler = asyncHandler(
   async (
