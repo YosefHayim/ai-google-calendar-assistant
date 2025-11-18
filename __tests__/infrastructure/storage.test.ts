@@ -1,5 +1,5 @@
+import { TOKEN_FIELDS } from "@/utils/storage";
 import { describe, it, expect } from "@jest/globals";
-import { TOKEN_FIELDS } from "./storage";
 
 describe("storage", () => {
   describe("TOKEN_FIELDS", () => {

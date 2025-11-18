@@ -21,12 +21,12 @@ jest.mock("@/config/root-config", () => ({
 }));
 
 // Mock storage
-jest.mock("./storage", () => ({
+jest.mock("./utils/storage.ts", () => ({
   TOKEN_FIELDS: "access_token, refresh_token, email",
 }));
 
 // Now import
-import { fetchCredentialsByEmail } from "./getUserCalendarTokens";
+import { fetchCredentialsByEmail } from "@/utils/getUserCalendarTokens";
 
 describe("fetchCredentialsByEmail", () => {
   beforeEach(() => {

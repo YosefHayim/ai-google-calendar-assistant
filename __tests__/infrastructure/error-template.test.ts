@@ -1,6 +1,6 @@
+import errorTemplate from "@/utils/errorTemplate";
 import { describe, it, expect, jest, beforeEach } from "@jest/globals";
 import type { Response } from "express";
-import errorTemplate from "./errorTemplate";
 
 describe("errorTemplate", () => {
   let mockResponse: Partial<Response>;

@@ -1,6 +1,6 @@
+import sendResponse from "@/utils/sendResponse";
 import { describe, it, expect, jest, beforeEach } from "@jest/globals";
 import type { Response } from "express";
-import sendResponse from "./send-response";
 
 describe("sendResponse", () => {
   let mockResponse: Partial<Response>;

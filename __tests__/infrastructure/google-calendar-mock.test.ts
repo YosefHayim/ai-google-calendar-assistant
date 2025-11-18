@@ -1,17 +1,6 @@
+import { createMockCalendarClient, createMockEventsList, createMockEvent, createMockGoogleApiError, mockCalendarEvent, mockRecurringEvent, mockAllDayEvent, mockEventsList, createMockCalendarErrors, mockDateUtils, createMockOAuth2Client } from "@/__mocks__/google-calendar";
 import { describe, it, expect, beforeEach } from "@jest/globals";
-import {
-  createMockCalendarClient,
-  createMockEvent,
-  createMockEventsList,
-  createMockGoogleApiError,
-  createMockCalendarErrors,
-  createMockOAuth2Client,
-  mockDateUtils,
-  mockCalendarEvent,
-  mockEventsList,
-  mockRecurringEvent,
-  mockAllDayEvent,
-} from "../../__mocks__/google-calendar";
+
 
 describe("Google Calendar Mock Factory", () => {
   describe("createMockCalendarClient", () => {

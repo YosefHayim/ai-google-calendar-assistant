@@ -1,6 +1,7 @@
 import { describe, it, expect, jest, beforeEach } from "@jest/globals";
-import { formatEventData, coerceArgs, safeParse } from "./agentUtils";
 import { TIMEZONE } from "@/types";
+import { coerceArgs, formatEventData } from "@/ai-agents/agentUtils";
+import { safeParse } from "zod/v4";
 
 // Mock the Supabase client
 jest.mock("@/config/root-config", () => ({

@@ -1,17 +1,6 @@
+import { MockAgent, createMockAgentResponse, mockAgentResponses, mockEventAgentResponses, mockAuthAgentResponses, mockAgentFactory, mockAgentErrors, createMockAgentError, resetMockAgentTools, mockAgentTools } from "@/__mocks__/openai-agents";
 import { describe, it, expect, beforeEach } from "@jest/globals";
-import {
-  MockAgent,
-  createMockAgent,
-  createMockAgentResponse,
-  mockAgentFactory,
-  mockAgentResponses,
-  mockEventAgentResponses,
-  mockAuthAgentResponses,
-  mockAgentErrors,
-  createMockAgentError,
-  mockAgentTools,
-  resetMockAgentTools,
-} from "../../__mocks__/openai-agents";
+
 
 describe("OpenAI Agents Mock Factory", () => {
   describe("MockAgent Class", () => {
