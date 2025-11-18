@@ -289,3 +289,7 @@ Found a better way to integrate Claude? Please submit a PR or open an issue!
 ## License
 
 Same as the main project (ISC)
+
+## Task Master AI Instructions
+**Import Task Master's development workflow commands and guidelines, treat as if import is in the main CLAUDE.md file.**
+@./.taskmaster/CLAUDE.md
