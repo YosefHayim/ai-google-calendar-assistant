@@ -53,10 +53,34 @@ const config: Config = {
   ],
   coverageThreshold: {
     global: {
+      branches: 75,
+      functions: 75,
+      lines: 75,
+      statements: 75,
+    },
+    "./__tests__/domain/**/*.ts": {
+      branches: 95,
+      functions: 95,
+      lines: 95,
+      statements: 95,
+    },
+    "./__tests__/application/**/*.ts": {
       branches: 90,
       functions: 90,
       lines: 90,
       statements: 90,
+    },
+    "./__tests__/infrastructure/**/*.ts": {
+      branches: 75,
+      functions: 75,
+      lines: 75,
+      statements: 75,
+    },
+    "./__tests__/controller/**/*.ts": {
+      branches: 80,
+      functions: 80,
+      lines: 80,
+      statements: 80,
     },
   },
   testMatch: ["**/__tests__/**/*.test.ts", "**/?(*.)+(spec|test).ts"],
