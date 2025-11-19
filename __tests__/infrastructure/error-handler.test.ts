@@ -5,8 +5,10 @@ import type { Request, Response, NextFunction } from "express";
 const mockSendR = jest.fn();
 
 // Mock modules
-jest.mock("@/utils/send-response", () => ({
+jest.mock("@/utils/sendResponse", () => ({
+  __esModule: true,
   default: mockSendR,
+  sendResponse: mockSendR,
 }));
 
 jest.mock("@/types", () => ({

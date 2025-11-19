@@ -15,8 +15,10 @@ jest.mock("@/config/root-config", () => ({
   SUPABASE: mockSupabase,
 }));
 
-jest.mock("@/utils/send-response", () => ({
+jest.mock("@/utils/sendResponse", () => ({
+  __esModule: true,
   default: mockSendR,
+  sendResponse: mockSendR,
 }));
 
 // Now import after mocks are set up
@@ -46,6 +48,10 @@ describe("authHandler", () => {
     };
     mockNext = jest.fn() as unknown as jest.Mock<NextFunction>;
     mockGetUser.mockClear();
+    mockGetUser.mockResolvedValue({
+      data: { user: null },
+      error: null,
+    });
     mockSendR.mockClear();
   });
 

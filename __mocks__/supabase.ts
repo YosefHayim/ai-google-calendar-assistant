@@ -161,7 +161,7 @@ class InMemoryDataStore {
   insert(tableName: string, record: Partial<DatabaseRecord>): DatabaseRecord {
     const table = this.getTable(tableName);
     const newRecord: DatabaseRecord = {
-      id: String(record.id || table.length + 1),
+      id: record.id !== undefined ? record.id : table.length + 1,
       created_at: record.created_at || new Date().toISOString(),
       updated_at: record.updated_at || new Date().toISOString(),
       ...record,

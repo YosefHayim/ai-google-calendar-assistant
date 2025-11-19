@@ -15,13 +15,13 @@ const mockSupabase = {
 
 // Mock Supabase
 jest.mock("@/config/root-config", () => ({
-  get SUPABASE() {
-    return mockSupabase;
-  },
+  __esModule: true,
+  SUPABASE: mockSupabase,
 }));
 
 // Mock storage
-jest.mock("./utils/storage.ts", () => ({
+jest.mock("@/utils/storage", () => ({
+  __esModule: true,
   TOKEN_FIELDS: "access_token, refresh_token, email",
 }));
 

@@ -9,7 +9,5 @@ export const reqResAsyncHandler =
 
 export const asyncHandler =
   <A extends unknown[], R>(fn: (...args: A) => R | Promise<R>) =>
-  (...args: A): Promise<R> =>
-    Promise.resolve(fn(...args)).catch((err) => {
-      throw err;
-    });
+  async (...args: A): Promise<R> =>
+    fn(...args);
