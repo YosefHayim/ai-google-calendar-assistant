@@ -451,6 +451,71 @@ describe("Event Entity", () => {
       cloned.updateSummary("Updated");
       expect(original.summary).toBe("Meeting");
     });
+
+    it("should clone event without reminders", () => {
+      const original = new Event(
+        "event-1",
+        "Meeting",
+        { dateTime: "2024-12-01T10:00:00Z" },
+        { dateTime: "2024-12-01T11:00:00Z" },
+      );
+
+      const cloned = original.clone("event-2");
+
+      expect(cloned.id).toBe("event-2");
+      expect(cloned.reminders).toBeUndefined();
+    });
+  });
+
+  describe("Time Methods", () => {
+    it("should get start time from dateTime", () => {
+      const event = new Event(
+        "event-1",
+        "Meeting",
+        { dateTime: "2024-12-01T10:00:00Z" },
+        { dateTime: "2024-12-01T11:00:00Z" },
+      );
+
+      const startTime = event.getStartTime();
+      expect(startTime).toBeInstanceOf(Date);
+    });
+
+    it("should get start time from date (all-day event)", () => {
+      const event = new Event(
+        "event-1",
+        "All Day",
+        { date: "2024-12-25" },
+        { date: "2024-12-26" },
+      );
+
+      const startTime = event.getStartTime();
+      expect(startTime).toBeInstanceOf(Date);
+    });
+
+    it("should get end time from dateTime", () => {
+      const event = new Event(
+        "event-1",
+        "Meeting",
+        { dateTime: "2024-12-01T10:00:00Z" },
+        { dateTime: "2024-12-01T11:00:00Z" },
+      );
+
+      const endTime = event.getEndTime();
+      expect(endTime).toBeInstanceOf(Date);
+    });
+
+    it("should get end time from date (all-day event)", () => {
+      const event = new Event(
+        "event-1",
+        "All Day",
+        { date: "2024-12-25" },
+        { date: "2024-12-26" },
+      );
+
+      const endTime = event.getEndTime();
+      expect(endTime).toBeInstanceOf(Date);
+    });
+
   });
 
   describe("Serialization", () => {
