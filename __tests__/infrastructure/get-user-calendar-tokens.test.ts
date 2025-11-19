@@ -1,13 +1,20 @@
-import { describe, it, expect, jest, beforeEach } from "@jest/globals";
+import { describe, it, expect, beforeEach, jest } from "@jest/globals";
 import type { TokensProps } from "@/types";
 
-// Create chain mocks
+// Create chainable mock functions
 const mockSingle = jest.fn();
-const mockLimit = jest.fn(() => ({ single: mockSingle }));
-const mockOrder = jest.fn(() => ({ limit: mockLimit }));
-const mockEq = jest.fn(() => ({ order: mockOrder }));
-const mockSelect = jest.fn(() => ({ eq: mockEq }));
-const mockFrom = jest.fn(() => ({ select: mockSelect }));
+const mockLimit = jest.fn();
+const mockOrder = jest.fn();
+const mockEq = jest.fn();
+const mockSelect = jest.fn();
+const mockFrom = jest.fn();
+
+// Set up the chain
+mockFrom.mockReturnValue({ select: mockSelect });
+mockSelect.mockReturnValue({ eq: mockEq });
+mockEq.mockReturnValue({ order: mockOrder });
+mockOrder.mockReturnValue({ limit: mockLimit });
+mockLimit.mockReturnValue({ single: mockSingle });
 
 const mockSupabase = {
   from: mockFrom,
@@ -36,6 +43,12 @@ describe("fetchCredentialsByEmail", () => {
     mockEq.mockClear();
     mockSelect.mockClear();
     mockFrom.mockClear();
+    // Reset return values
+    mockFrom.mockReturnValue({ select: mockSelect });
+    mockSelect.mockReturnValue({ eq: mockEq });
+    mockEq.mockReturnValue({ order: mockOrder });
+    mockOrder.mockReturnValue({ limit: mockLimit });
+    mockLimit.mockReturnValue({ single: mockSingle });
   });
 
   describe("successful fetch", () => {

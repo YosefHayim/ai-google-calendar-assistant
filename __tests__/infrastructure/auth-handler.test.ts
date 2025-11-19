@@ -208,17 +208,22 @@ describe("authHandler", () => {
         authorization: "just-a-token",
       };
 
+      mockGetUser.mockResolvedValue({
+        data: { user: null },
+        error: null,
+      });
+
       await authHandler(
         mockRequest as Request,
         mockResponse as Response,
         mockNext as NextFunction,
       );
 
+      expect(mockGetUser).toHaveBeenCalledWith("just-a-token");
       expect(mockSendR).toHaveBeenCalledWith(
         mockResponse,
         401,
-        "Missing authorization headers: ",
-        "just-a-token",
+        "You are not logged in, please logged in or register.",
       );
     });
 
@@ -227,17 +232,22 @@ describe("authHandler", () => {
         authorization: "InvalidFormat token-here",
       };
 
+      mockGetUser.mockResolvedValue({
+        data: { user: null },
+        error: null,
+      });
+
       await authHandler(
         mockRequest as Request,
         mockResponse as Response,
         mockNext as NextFunction,
       );
 
+      expect(mockGetUser).toHaveBeenCalledWith("InvalidFormat token-here");
       expect(mockSendR).toHaveBeenCalledWith(
         mockResponse,
         401,
-        "Missing authorization headers: ",
-        "InvalidFormat token-here",
+        "You are not logged in, please logged in or register.",
       );
     });
 

@@ -297,6 +297,7 @@ const createMockQueryBuilder = (tableName: string, dataStore: InMemoryDataStore)
     is: jest.Mock;
     not: jest.Mock;
     or: jest.Mock;
+    order: jest.Mock;
     limit: jest.Mock;
     single: jest.Mock;
     maybeSingle: jest.Mock;
@@ -373,6 +374,11 @@ const createMockQueryBuilder = (tableName: string, dataStore: InMemoryDataStore)
       return builder;
     }),
     or: jest.fn((condition: string) => {
+      return builder;
+    }),
+    order: jest.fn((column: string, options?: { ascending?: boolean }) => {
+      // For now, order is a no-op in the mock
+      // In a more complete implementation, we could sort the data
       return builder;
     }),
     limit: jest.fn((count: number) => {
