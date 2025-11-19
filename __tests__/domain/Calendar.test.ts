@@ -249,6 +249,13 @@ describe("Calendar Entity", () => {
       expect(calendar.updatedAt).toBeDefined();
     });
 
+    it("should update only foreground color", () => {
+      calendar.updateColors(undefined, "#00FF00");
+
+      expect(calendar.settings.foregroundColor).toBe("#00FF00");
+      expect(calendar.updatedAt).toBeDefined();
+    });
+
     it("should throw error for invalid background color when updating", () => {
       expect(() => {
         calendar.updateColors("invalid");
@@ -417,6 +424,25 @@ describe("Calendar Entity", () => {
       expect(restored.ownerId).toBe(original.ownerId);
       expect(restored.settings).toEqual(original.settings);
       expect(restored.isDefault).toBe(original.isDefault);
+    });
+
+    it("should create from plain object without createdAt and updatedAt", () => {
+      const obj = {
+        id: "cal-1",
+        name: "My Calendar",
+        ownerId: "user-123",
+        settings: {
+          timeZone: "UTC",
+        },
+        isDefault: false,
+        accessRole: "owner" as const,
+      };
+
+      const calendar = Calendar.fromObject(obj);
+
+      expect(calendar.id).toBe("cal-1");
+      expect(calendar.createdAt).toBeUndefined();
+      expect(calendar.updatedAt).toBeUndefined();
     });
   });
 

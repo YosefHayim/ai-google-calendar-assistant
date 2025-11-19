@@ -465,6 +465,37 @@ describe("Event Entity", () => {
       expect(cloned.id).toBe("event-2");
       expect(cloned.reminders).toBeUndefined();
     });
+
+    it("should clone event with reminders", () => {
+      const original = new Event(
+        "event-1",
+        "Meeting",
+        { dateTime: "2024-12-01T10:00:00Z" },
+        { dateTime: "2024-12-01T11:00:00Z" },
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        [
+          { method: "email", minutes: 30 },
+          { method: "popup", minutes: 10 },
+        ],
+      );
+
+      const cloned = original.clone("event-2");
+
+      expect(cloned.id).toBe("event-2");
+      expect(cloned.reminders).toHaveLength(2);
+      expect(cloned.reminders?.[0].method).toBe("email");
+      expect(cloned.reminders?.[0].minutes).toBe(30);
+      expect(cloned.reminders?.[1].method).toBe("popup");
+      expect(cloned.reminders?.[1].minutes).toBe(10);
+
+      // Ensure deep copy
+      if (cloned.reminders && original.reminders) {
+        expect(cloned.reminders).not.toBe(original.reminders);
+      }
+    });
   });
 
   describe("Time Methods", () => {
@@ -492,6 +523,20 @@ describe("Event Entity", () => {
       expect(startTime).toBeInstanceOf(Date);
     });
 
+    it("should throw error when getting start time with no valid date/dateTime", () => {
+      const event = new Event(
+        "event-1",
+        "Meeting",
+        { dateTime: "2024-12-01T10:00:00Z" },
+        { dateTime: "2024-12-01T11:00:00Z" },
+      );
+
+      // Manually remove both dateTime and date to trigger the error
+      (event as any).start = {};
+
+      expect(() => event.getStartTime()).toThrow("Event has no valid start time");
+    });
+
     it("should get end time from dateTime", () => {
       const event = new Event(
         "event-1",
@@ -514,6 +559,20 @@ describe("Event Entity", () => {
 
       const endTime = event.getEndTime();
       expect(endTime).toBeInstanceOf(Date);
+    });
+
+    it("should throw error when getting end time with no valid date/dateTime", () => {
+      const event = new Event(
+        "event-1",
+        "Meeting",
+        { dateTime: "2024-12-01T10:00:00Z" },
+        { dateTime: "2024-12-01T11:00:00Z" },
+      );
+
+      // Manually remove both dateTime and date to trigger the error
+      (event as any).end = {};
+
+      expect(() => event.getEndTime()).toThrow("Event has no valid end time");
     });
 
   });

@@ -256,6 +256,45 @@ describe("EventMapper", () => {
       expect(partial.summary).toBeUndefined();
       expect(partial.start).toBeUndefined();
     });
+
+    it("should handle visibility updates", () => {
+      const updates = {
+        visibility: "private" as const,
+      };
+
+      const partial = EventMapper.toGoogleEventPartial(updates);
+
+      expect(partial.visibility).toBe("private");
+    });
+
+    it("should handle recurrence updates", () => {
+      const updates = {
+        recurrence: { rule: "RRULE:FREQ=WEEKLY;BYDAY=MO" },
+      };
+
+      const partial = EventMapper.toGoogleEventPartial(updates);
+
+      expect(partial.recurrence).toHaveLength(1);
+      expect(partial.recurrence?.[0]).toBe("RRULE:FREQ=WEEKLY;BYDAY=MO");
+    });
+
+    it("should handle reminders updates", () => {
+      const updates = {
+        reminders: [
+          { method: "email" as const, minutes: 30 },
+          { method: "popup" as const, minutes: 10 },
+        ],
+      };
+
+      const partial = EventMapper.toGoogleEventPartial(updates);
+
+      expect(partial.reminders?.useDefault).toBe(false);
+      expect(partial.reminders?.overrides).toHaveLength(2);
+      expect(partial.reminders?.overrides?.[0].method).toBe("email");
+      expect(partial.reminders?.overrides?.[0].minutes).toBe(30);
+      expect(partial.reminders?.overrides?.[1].method).toBe("popup");
+      expect(partial.reminders?.overrides?.[1].minutes).toBe(10);
+    });
   });
 
   describe("toDomainArray", () => {

@@ -385,4 +385,47 @@ describe("EventDateTime Value Object", () => {
       expect(eventDateTime.getDateTime()).toEqual(futureDate);
     });
   });
+
+  describe("Internal State Validation", () => {
+    it("should throw error when comparing EventDateTime with invalid state", () => {
+      const validDT = EventDateTime.fromDateTime(new Date());
+      const invalidDT = EventDateTime.fromDateTime(new Date());
+
+      // Manually corrupt the state to trigger error
+      (invalidDT as any)._dateTime = undefined;
+      (invalidDT as any)._date = undefined;
+
+      expect(() => invalidDT.isBefore(validDT)).toThrow("Invalid EventDateTime state");
+    });
+
+    it("should throw error when converting invalid state to Google Calendar format", () => {
+      const eventDateTime = EventDateTime.fromDateTime(new Date());
+
+      // Manually corrupt the state
+      (eventDateTime as any)._dateTime = undefined;
+      (eventDateTime as any)._date = undefined;
+
+      expect(() => eventDateTime.toGoogleCalendarFormat()).toThrow("Invalid EventDateTime state");
+    });
+
+    it("should throw error when changing timezone on invalid state", () => {
+      const eventDateTime = EventDateTime.fromDateTime(new Date());
+
+      // Manually corrupt the state
+      (eventDateTime as any)._dateTime = undefined;
+      (eventDateTime as any)._date = undefined;
+
+      expect(() => eventDateTime.withTimeZone("UTC")).toThrow("Invalid EventDateTime state");
+    });
+
+    it("should return 'Invalid EventDateTime' string for corrupted state", () => {
+      const eventDateTime = EventDateTime.fromDateTime(new Date());
+
+      // Manually corrupt the state
+      (eventDateTime as any)._dateTime = undefined;
+      (eventDateTime as any)._date = undefined;
+
+      expect(eventDateTime.toString()).toBe("Invalid EventDateTime");
+    });
+  });
 });
