@@ -110,6 +110,9 @@ bot.on("message", async (ctx) => {
     return;
   }
 
+  // Declare typing interval outside to ensure it's accessible in catch block
+  let typingInterval: NodeJS.Timeout | null = null;
+
   try {
     // Get user_id for conversation memory
     const userId = await getUserId(ctx.session.email, ctx.session.chatId);
@@ -200,34 +203,56 @@ bot.on("message", async (ctx) => {
       }
     }
 
-    // Show typing indicator
-    await ctx.api.sendChatAction(ctx.chat.id, "typing");
-
     // Build prompt with agent name context
     let agentNameContext = "";
     if (agentName) {
       agentNameContext = `\n\nYour name is "${agentName}" - use this name when introducing yourself or signing off.`;
     }
 
-    // Activate agent with context and auto-routing enabled
-    const { finalOutput } = await activateAgent(
-      ORCHESTRATOR_AGENT,
-      `Current date and time is ${new Date().toISOString()}. User ${
-        ctx.session.email || "unknown"
-      } requesting for help with: ${userMsgText}${agentNameContext}${predictedEventsContext}`,
-      {
-        conversationContext: conversationContext || undefined,
-        vectorSearchResults: vectorSearchResults || undefined,
-        agentName: agentName || undefined,
-        chatId: chatId || undefined,
-        email: ctx.session.email || undefined,
-      },
-      {
-        autoRoute: true, // Enable automatic model routing based on task analysis
-      }
-    );
+    // Start typing indicator and keep it active while LLM processes
+    const startTypingIndicator = async () => {
+      await ctx.api.sendChatAction(ctx.chat.id, "typing");
+      // Keep typing indicator active every 4 seconds (Telegram typing indicators last ~5 seconds)
+      typingInterval = setInterval(async () => {
+        try {
+          await ctx.api.sendChatAction(ctx.chat.id, "typing");
+        } catch (error) {
+          // Ignore errors (chat might be closed, etc.)
+        }
+      }, 4000);
+    };
 
-    const agentResponse = finalOutput || "No output received from AI Agent.";
+    await startTypingIndicator();
+
+    // Activate agent with context and auto-routing enabled
+    let finalOutput: string;
+    try {
+      const result = await activateAgent(
+        ORCHESTRATOR_AGENT,
+        `Current date and time is ${new Date().toISOString()}. User ${
+          ctx.session.email || "unknown"
+        } requesting for help with: ${userMsgText}${agentNameContext}${predictedEventsContext}`,
+        {
+          conversationContext: conversationContext || undefined,
+          vectorSearchResults: vectorSearchResults || undefined,
+          agentName: agentName || undefined,
+          chatId: chatId || undefined,
+          email: ctx.session.email || undefined,
+        },
+        {
+          autoRoute: true, // Enable automatic model routing based on task analysis
+        }
+      );
+      finalOutput = result.finalOutput || "No output received from AI Agent.";
+    } finally {
+      // Stop typing indicator once response is ready
+      if (typingInterval) {
+        clearInterval(typingInterval);
+        typingInterval = null;
+      }
+    }
+
+    const agentResponse = finalOutput;
 
     // Store assistant response in conversation memory
     if (userId && chatId) {
@@ -266,6 +291,11 @@ bot.on("message", async (ctx) => {
 
     await ctx.reply(agentResponse);
   } catch (e) {
+    // Stop typing indicator on error
+    if (typingInterval) {
+      clearInterval(typingInterval);
+      typingInterval = null;
+    }
     console.error("Agent error:", e);
     await ctx.reply("Error processing your request. Please try again.");
   }
