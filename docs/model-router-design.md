@@ -332,30 +332,30 @@ export const activateAgent = asyncHandler(
 
 ### Implementation Plan
 
-#### Phase 1: Core Router Service
+#### Phase 1: Core Router Service ✅ COMPLETED
 
-1. Create `ModelRouterService` with task analysis
-2. Implement model selection logic
-3. Add agent caching mechanism
+1. ✅ Create `ModelRouterService` with task analysis (`analyzeTask` method)
+2. ✅ Implement model selection logic (`selectModel` using `getRecommendedModel` from `config/models.ts`)
+3. ✅ Add agent caching mechanism (`getAgentWithModel` with Map-based cache)
 
-#### Phase 2: Integration
+#### Phase 2: Integration ✅ COMPLETED
 
-1. Enhance `activateAgent` to support model routing
-2. Add `autoRoute` option (default: false for backward compatibility)
-3. Update Telegram bot to enable auto-routing
+1. ✅ Enhance `activateAgent` to support model routing (added `ActivateAgentOptions` interface)
+2. ✅ Add `autoRoute` option (default: false for backward compatibility)
+3. ❌ Update Telegram bot to enable auto-routing (not enabled in `telegram-bot/init-bot.ts`)
 
-#### Phase 3: Routing Logic
+#### Phase 3: Routing Logic ✅ BASIC IMPLEMENTATION
 
-1. Implement complexity analysis
-2. Add task type detection
-3. Create decision matrix for model selection
-4. Add cost/latency considerations
+1. ✅ Implement complexity analysis (basic heuristics: word count, prompt length)
+2. ✅ Add task type detection (basic keyword-based: calendar, reasoning, conversation)
+3. ✅ Create decision matrix for model selection (uses `config/models.ts` capabilities)
+4. ⚠️ Add cost/latency considerations (basic flags in TaskAnalysis, could be enhanced)
 
-#### Phase 4: Optimization
+#### Phase 4: Optimization ⚠️ PARTIAL
 
-1. Add routing metrics/logging
-2. Optimize caching strategy
-3. Fine-tune routing decisions based on usage
+1. ⚠️ Add routing metrics/logging (basic logging exists, metrics collection not implemented)
+2. ✅ Optimize caching strategy (Map-based cache with `getCacheStats` method)
+3. ❌ Fine-tune routing decisions based on usage (not implemented)
 
 ---
 
