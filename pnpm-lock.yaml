@@ -35,6 +35,9 @@ importers:
       '@supabase/supabase-js':
         specifier: ^2.80.0
         version: 2.80.0
+      '@types/node-cron':
+        specifier: ^3.0.11
+        version: 3.0.11
       cookie-parser:
         specifier: ^1.4.7
         version: 1.4.7
@@ -62,6 +65,9 @@ importers:
       morgan:
         specifier: ^1.10.1
         version: 1.10.1
+      node-cron:
+        specifier: ^4.2.1
+        version: 4.2.1
       nodemon:
         specifier: ^3.1.10
         version: 3.1.10
@@ -1860,6 +1866,9 @@ packages:
 
   '@types/ms@2.1.0':
     resolution: {integrity: sha512-GsCCIZDE/p3i96vtEqx+7dBUGXrc7zeSK3wwPHIaRThS+9OhWIXRqzs4d6k1SVU8g91DrNRWxWUGhp5KXQb2VA==}
+
+  '@types/node-cron@3.0.11':
+    resolution: {integrity: sha512-0ikrnug3/IyneSHqCBeslAhlK2aBfYek1fGo4bP4QnZPmiqSGRK+Oy7ZMisLWkesffJvQ1cqAcBnJC+8+nxIAg==}
 
   '@types/node@24.10.0':
     resolution: {integrity: sha512-qzQZRBqkFsYyaSWXuEHc2WR9c0a0CXwiE5FWUvn7ZM+vdy1uZLfCunD38UzhuB7YN/J11ndbDBcTmOdxJo9Q7A==}
@@ -3917,6 +3926,10 @@ packages:
 
   neo-async@2.6.2:
     resolution: {integrity: sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==}
+
+  node-cron@4.2.1:
+    resolution: {integrity: sha512-lgimEHPE/QDgFlywTd8yTR61ptugX3Qer29efeyWw2rv259HtGBNn1vZVmp8lB9uo9wC0t/AT4iGqXxia+CJFg==}
+    engines: {node: '>=6.0.0'}
 
   node-domexception@1.0.0:
     resolution: {integrity: sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ==}
@@ -6674,7 +6687,7 @@ snapshots:
   '@openai/codex@0.44.0':
     optional: true
 
-  '@openrouter/ai-sdk-provider@1.2.3(ai@5.0.94(zod@3.25.76))(zod@4.1.12)':
+  '@openrouter/ai-sdk-provider@1.2.3(ai@5.0.94(zod@4.1.12))(zod@4.1.12)':
     dependencies:
       '@openrouter/sdk': 0.1.13
       ai: 5.0.94(zod@4.1.12)
@@ -7455,6 +7468,8 @@ snapshots:
       '@types/node': 24.10.0
 
   '@types/ms@2.1.0': {}
+
+  '@types/node-cron@3.0.11': {}
 
   '@types/node@24.10.0':
     dependencies:
@@ -9937,6 +9952,8 @@ snapshots:
 
   neo-async@2.6.2: {}
 
+  node-cron@4.2.1: {}
+
   node-domexception@1.0.0: {}
 
   node-emoji@2.2.0:
@@ -10664,7 +10681,7 @@ snapshots:
       '@ai-sdk/xai': 2.0.33(zod@4.1.12)
       '@aws-sdk/credential-providers': 3.934.0
       '@inquirer/search': 3.2.2(@types/node@24.10.0)
-      '@openrouter/ai-sdk-provider': 1.2.3(ai@5.0.94(zod@3.25.76))(zod@4.1.12)
+      '@openrouter/ai-sdk-provider': 1.2.3(ai@5.0.94(zod@4.1.12))(zod@4.1.12)
       '@streamparser/json': 0.0.22
       '@supabase/supabase-js': 2.80.0
       ai: 5.0.94(zod@4.1.12)

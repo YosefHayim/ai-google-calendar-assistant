@@ -391,30 +391,78 @@ export class ConversationMemoryService {
     metadata: Json | null;
   }> {
     try {
-      // Use upsert to handle case where record already exists (e.g., from concurrent request)
-      const { data, error } = await this.client
+      // First try to get existing state
+      const existing = await this.getConversationState(user_id, chat_id);
+      if (existing) {
+        return existing;
+      }
+
+      // If not exists, try insert
+      const { data: insertData, error: insertError } = await this.client
         .from("conversation_state")
-        .upsert(
-          {
-            user_id,
-            chat_id,
-            message_count: 0,
-            last_summarized_at: null,
-            last_message_id: null,
-            metadata: null,
-          },
-          {
-            onConflict: "user_id,chat_id",
-          }
-        )
+        .insert({
+          user_id,
+          chat_id,
+          message_count: 0,
+          last_summarized_at: null,
+          last_message_id: null,
+          metadata: null,
+        })
         .select("message_count, last_summarized_at, last_message_id, metadata")
         .single();
 
-      if (error) {
-        throw error;
+      if (!insertError && insertData) {
+        return insertData;
       }
 
-      return data;
+      // If insert failed (e.g., duplicate), try to get the existing record
+      if (insertError && insertError.code === "23505") {
+        // Unique violation - record exists, fetch it
+        const existingAfterInsert = await this.getConversationState(user_id, chat_id);
+        if (existingAfterInsert) {
+          return existingAfterInsert;
+        }
+      }
+
+      // If we have a unique constraint, try upsert
+      try {
+        const { data: upsertData, error: upsertError } = await this.client
+          .from("conversation_state")
+          .upsert(
+            {
+              user_id,
+              chat_id,
+              message_count: 0,
+              last_summarized_at: null,
+              last_message_id: null,
+              metadata: null,
+            },
+            {
+              onConflict: "user_id,chat_id",
+            }
+          )
+          .select("message_count, last_summarized_at, last_message_id, metadata")
+          .single();
+
+        if (upsertError) {
+          throw upsertError;
+        }
+
+        if (upsertData) {
+          return upsertData;
+        }
+      } catch (upsertError: unknown) {
+        // If upsert fails due to missing constraint, fall back to insert/select pattern
+        this.logger.warn("Upsert failed, using insert/select pattern", { error: upsertError });
+      }
+
+      // Final fallback: try to get state one more time
+      const finalState = await this.getConversationState(user_id, chat_id);
+      if (finalState) {
+        return finalState;
+      }
+
+      throw new Error("Failed to create or retrieve conversation state");
     } catch (error) {
       this.logger.error("Failed to create conversation state", error);
       throw error;

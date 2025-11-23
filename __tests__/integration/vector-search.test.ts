@@ -33,7 +33,7 @@ describe("Vector Search Service Integration", () => {
     it("should generate embeddings with correct dimension", async () => {
       const embedding = await vectorSearchService.generateEmbedding("test text");
 
-      expect(embedding).toBeInstanceOf(Array);
+      expect(Array.isArray(embedding)).toBe(true);
       expect(embedding.length).toBe(1536); // OpenAI text-embedding-3-small dimension
       expect(embedding.every((val) => typeof val === "number")).toBe(true);
     });

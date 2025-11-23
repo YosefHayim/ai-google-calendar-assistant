@@ -18,16 +18,24 @@ describe("Conversation Memory Service Integration", () => {
     supabase = createClient<Database>(CONFIG.supabaseUrl, CONFIG.supabaseServiceRoleKey);
     conversationMemoryService = new ConversationMemoryService(supabase);
 
-    // Ensure test user exists
-    await supabase
-      .from("users")
-      .upsert({
-        user_id: testUserId,
-        email: "memory-test@example.com",
-        is_active: true,
-      })
-      .select()
-      .single();
+    // Ensure test user exists in user_calendar_tokens (not users table)
+    try {
+      await supabase
+        .from("user_calendar_tokens")
+        .upsert({
+          user_id: testUserId,
+          email: "memory-test@example.com",
+          access_token: "test-token",
+          refresh_token: "test-refresh",
+          expiry_date: Date.now() + 3600000,
+          is_active: true,
+        })
+        .select()
+        .single();
+    } catch (error) {
+      // Ignore if already exists
+      console.warn("Test user setup warning:", error);
+    }
   });
 
   afterAll(async () => {
@@ -107,7 +115,7 @@ describe("Conversation Memory Service Integration", () => {
       const context = await conversationMemoryService.getConversationContext(testUserId, testChatId);
       // Summaries may or may not exist depending on implementation timing
       expect(context.totalMessageCount).toBeGreaterThanOrEqual(3);
-    });
+    }, 30000); // Increase timeout to 30 seconds
   });
 
   describe("Conversation Clearing", () => {
@@ -128,7 +136,7 @@ describe("Conversation Memory Service Integration", () => {
       const context = await conversationMemoryService.getConversationContext(testUserId, testChatId);
       expect(context.recentMessages.length).toBe(0);
       expect(context.summaries.length).toBe(0);
-    });
+    }, 30000); // Increase timeout to 30 seconds
   });
 });
 

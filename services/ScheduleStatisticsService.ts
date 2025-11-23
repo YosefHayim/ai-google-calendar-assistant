@@ -1,9 +1,9 @@
 import { GoogleCalendarEventRepository } from "@/infrastructure/repositories/GoogleCalendarEventRepository";
 import { Logger } from "./logging/Logger";
+import { RoutineLearningService } from "./RoutineLearningService";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { fetchCredentialsByEmail } from "@/utils/getUserCalendarTokens";
 import { initCalendarWithUserTokensAndUpdateTokens } from "@/utils/initCalendarWithUserTokens";
-import { RoutineLearningService } from "./RoutineLearningService";
 
 /**
  * Statistics interfaces
@@ -702,7 +702,7 @@ export class ScheduleStatisticsService {
 
       // Get learned routines from RoutineLearningService
       const routineService = new RoutineLearningService(this.client);
-      const routines = await routineService.getUserRoutines(userId);
+      const routines = await routineService.getUserRoutine(userId);
 
       // Format learned routines
       const learnedRoutines = routines.map((routine) => ({

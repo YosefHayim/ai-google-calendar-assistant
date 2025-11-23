@@ -7,6 +7,7 @@ import { activateAgent } from "@/utils/activateAgent";
 import { authTgHandler } from "./middleware/auth-tg-handler";
 import { ConversationMemoryService } from "@/services/ConversationMemoryService";
 import { VectorSearchService } from "@/services/VectorSearchService";
+import { RoutineLearningService } from "@/services/RoutineLearningService";
 
 export type GlobalContext = SessionFlavor<SessionData> & Context;
 
@@ -169,13 +170,11 @@ bot.on("message", async (ctx) => {
     let predictedEventsContext = "";
     if (userId) {
       try {
-        const { RoutineLearningService } = await import("@/services/RoutineLearningService");
-        const { SUPABASE } = await import("@/infrastructure/supabase/client");
         const routineService = new RoutineLearningService(SUPABASE);
-        
+
         // Get predictions for next 7 days
         const predictions = await routineService.predictUpcomingEvents(userId, 7);
-        
+
         // Filter high-confidence predictions for next 2 days
         const relevantPredictions = predictions
           .filter((p) => {
@@ -184,7 +183,7 @@ bot.on("message", async (ctx) => {
             return p.confidence >= 0.7 && daysUntil >= 0 && daysUntil <= 2;
           })
           .slice(0, 3); // Limit to 3 most relevant
-        
+
         if (relevantPredictions.length > 0) {
           const predictionsText = relevantPredictions
             .map((p) => {
@@ -194,7 +193,7 @@ bot.on("message", async (ctx) => {
               return `- ${p.summary} (predicted for ${dateStr} at ${timeStr}, ${Math.round(p.confidence * 100)}% confidence)`;
             })
             .join("\n");
-          
+
           predictedEventsContext = `\n\n**Proactive Reminders - Predicted Upcoming Events:**\nBased on your routine patterns, I've detected these likely upcoming events:\n${predictionsText}\n\nYou can proactively mention these to the user if relevant to the conversation. Ask them to confirm if these predictions are accurate.`;
         }
       } catch (error) {

@@ -25,15 +25,23 @@ describe("Telegram Bot Integration", () => {
     vectorSearchService = new VectorSearchService(supabase);
 
     // Ensure test user exists
-    await supabase
-      .from("users")
-      .upsert({
-        user_id: testUserId,
-        email: testEmail,
-        is_active: true,
-      })
-      .select()
-      .single();
+    try {
+      await supabase
+        .from("user_calendar_tokens")
+        .upsert({
+          user_id: testUserId,
+          email: testEmail,
+          access_token: "test-token",
+          refresh_token: "test-refresh",
+          expiry_date: Date.now() + 3600000,
+          is_active: true,
+        })
+        .select()
+        .single();
+    } catch (error) {
+      // Ignore if already exists or constraint issues
+      console.warn("Test user setup warning:", error);
+    }
   });
 
   afterAll(async () => {
@@ -89,7 +97,7 @@ describe("Telegram Bot Integration", () => {
     it("should generate embeddings", async () => {
       const embedding = await vectorSearchService.generateEmbedding("test text for embedding");
 
-      expect(embedding).toBeInstanceOf(Array);
+      expect(Array.isArray(embedding)).toBe(true);
       expect(embedding.length).toBe(1536); // OpenAI text-embedding-3-small dimension
       expect(typeof embedding[0]).toBe("number");
     });
