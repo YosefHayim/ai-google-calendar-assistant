@@ -3,6 +3,7 @@ import { coerceArgs, formatEventData, getCalendarCategoriesByEmail } from "./age
 
 import { ACTION } from "@/types";
 import { ConversationMemoryService } from "@/services/ConversationMemoryService";
+import { RoutineLearningService } from "@/services/RoutineLearningService";
 import { TOKEN_FIELDS } from "@/utils/storage";
 import { asyncHandler } from "@/utils/asyncHandlers";
 import type { calendar_v3 } from "googleapis";
@@ -168,5 +169,77 @@ export const EXECUTION_TOOLS = {
     const conversationMemoryService = new ConversationMemoryService(SUPABASE);
     await conversationMemoryService.setAgentName(tokenData.user_id, params.chatId, params.agentName);
     return { success: true, agent_name: params.agentName.trim() };
+  }),
+
+  get_user_routines: asyncHandler(async (params: { email: string; routineType?: string }) => {
+    if (!(params.email && isEmail(params.email))) {
+      throw new Error("Invalid email address.");
+    }
+    const { data: tokenData } = await SUPABASE.from("user_calendar_tokens").select("user_id").eq("email", params.email).maybeSingle();
+    if (!tokenData?.user_id) {
+      throw new Error("User not found.");
+    }
+    const routineService = new RoutineLearningService(SUPABASE);
+    const routines = await routineService.getUserRoutine(tokenData.user_id, params.routineType as "daily" | "weekly" | "monthly" | "event_pattern" | "time_slot" | undefined);
+    return { routines, count: routines.length };
+  }),
+
+  get_upcoming_predictions: asyncHandler(async (params: { email: string; daysAhead?: number }) => {
+    if (!(params.email && isEmail(params.email))) {
+      throw new Error("Invalid email address.");
+    }
+    const { data: tokenData } = await SUPABASE.from("user_calendar_tokens").select("user_id").eq("email", params.email).maybeSingle();
+    if (!tokenData?.user_id) {
+      throw new Error("User not found.");
+    }
+    const routineService = new RoutineLearningService(SUPABASE);
+    const predictions = await routineService.predictUpcomingEvents(tokenData.user_id, params.daysAhead || 7);
+    return { predictions, count: predictions.length };
+  }),
+
+  suggest_optimal_time: asyncHandler(async (params: { email: string; eventDuration: number; preferredTime?: string }) => {
+    if (!(params.email && isEmail(params.email))) {
+      throw new Error("Invalid email address.");
+    }
+    if (!params.eventDuration || params.eventDuration < 15 || params.eventDuration > 480) {
+      throw new Error("Event duration must be between 15 and 480 minutes.");
+    }
+    const { data: tokenData } = await SUPABASE.from("user_calendar_tokens").select("user_id").eq("email", params.email).maybeSingle();
+    if (!tokenData?.user_id) {
+      throw new Error("User not found.");
+    }
+    const routineService = new RoutineLearningService(SUPABASE);
+    const suggestion = await routineService.suggestOptimalTime(tokenData.user_id, params.eventDuration, params.preferredTime);
+    if (!suggestion) {
+      return { message: "No optimal time suggestions available at this time." };
+    }
+    return suggestion;
+  }),
+
+  get_routine_insights: asyncHandler(async (params: { email: string }) => {
+    if (!(params.email && isEmail(params.email))) {
+      throw new Error("Invalid email address.");
+    }
+    const { data: tokenData } = await SUPABASE.from("user_calendar_tokens").select("user_id").eq("email", params.email).maybeSingle();
+    if (!tokenData?.user_id) {
+      throw new Error("User not found.");
+    }
+    const routineService = new RoutineLearningService(SUPABASE);
+    const routines = await routineService.getHighConfidenceRoutines(tokenData.user_id, 0.6);
+    const insights = {
+      total_routines: routines.length,
+      routine_types: routines.reduce((acc, r) => {
+        acc[r.routine_type] = (acc[r.routine_type] || 0) + 1;
+        return acc;
+      }, {} as Record<string, number>),
+      average_confidence: routines.length > 0 ? routines.reduce((sum, r) => sum + r.confidence_score, 0) / routines.length : 0,
+      routines: routines.map((r) => ({
+        type: r.routine_type,
+        confidence: r.confidence_score,
+        frequency: r.frequency,
+        last_observed: r.last_observed_at,
+      })),
+    };
+    return insights;
   }),
 };

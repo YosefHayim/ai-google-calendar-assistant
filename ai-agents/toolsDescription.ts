@@ -32,4 +32,12 @@ export const TOOLS_DESCRIPTION = {
   getAgentName: `Retrieves the user's personalized agent name from conversation metadata. Requires "email" and "chatId". Returns { "agent_name": string | null }.`,
 
   setAgentName: `Sets or updates the user's personalized agent name in conversation metadata. Requires "email", "chatId", and "agentName". Returns { "success": true, "agent_name": string }.`,
+
+  get_user_routines: `Retrieves learned routines for a user. Requires "email". Optional: "routineType" (daily, weekly, monthly, event_pattern, time_slot). Returns array of routine patterns with confidence scores.`,
+
+  get_upcoming_predictions: `Predicts likely upcoming events based on learned patterns. Requires "email". Optional: "daysAhead" (default 7). Returns array of predicted events with confidence scores and predicted times.`,
+
+  suggest_optimal_time: `Suggests optimal time slots for scheduling a new event. Requires "email" and "eventDuration" (minutes). Optional: "preferredTime" (ISO string). Returns best suggestion with alternatives and confidence score.`,
+
+  get_routine_insights: `Provides insights about user's routines and schedule patterns. Requires "email". Returns summary of learned routines, typical availability, and schedule patterns.`,
 } as const;

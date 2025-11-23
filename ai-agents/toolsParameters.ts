@@ -111,4 +111,32 @@ export const PARAMETERS_TOOLS = {
       agentName: requiredString("The name the user wants to call their personal assistant", "Agent name is required."),
     })
     .describe("Set or update the user's personalized agent name in conversation metadata."),
+
+  get_user_routines: z
+    .object({
+      email: emailSchema,
+      routineType: z.enum(["daily", "weekly", "monthly", "event_pattern", "time_slot"]).optional().describe("Filter by routine type"),
+    })
+    .describe("Get learned routines for a user."),
+
+  get_upcoming_predictions: z
+    .object({
+      email: emailSchema,
+      daysAhead: z.coerce.number().int().min(1).max(30).default(7).optional().describe("Number of days to predict ahead"),
+    })
+    .describe("Predict upcoming events based on learned patterns."),
+
+  suggest_optimal_time: z
+    .object({
+      email: emailSchema,
+      eventDuration: z.coerce.number().int().min(15).max(480).describe("Event duration in minutes"),
+      preferredTime: z.coerce.string().optional().describe("Preferred time in ISO format (optional)"),
+    })
+    .describe("Suggest optimal time slots for scheduling a new event."),
+
+  get_routine_insights: z
+    .object({
+      email: emailSchema,
+    })
+    .describe("Get insights about user's routines and schedule patterns."),
 };

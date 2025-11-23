@@ -628,12 +628,119 @@ export class RoutineLearningService {
     try {
       this.logger.debug(`Predicting events for user ${user_id} for next ${daysAhead} days`);
 
-      // TODO: Implement prediction logic
-      // - Get learned routines
-      // - Calculate predicted events based on patterns
-      // - Return predictions with confidence scores
-
+      // Get learned routines with high confidence
+      const routines = await this.getHighConfidenceRoutines(user_id, 0.6);
       const predictions: PredictedEvent[] = [];
+      const now = new Date();
+      const endDate = new Date(now);
+      endDate.setDate(now.getDate() + daysAhead);
+
+      for (const routine of routines) {
+        const patternData = routine.pattern_data as unknown as EventPattern | TimeSlotPattern | EventRelationshipPattern;
+
+        // Predict based on recurring event patterns
+        if (routine.routine_type === "daily" || routine.routine_type === "weekly" || routine.routine_type === "monthly") {
+          const eventPattern = patternData as EventPattern;
+          if (eventPattern.typical_start_time && eventPattern.event_summary) {
+            // Calculate occurrences based on frequency
+            const startTime = new Date(eventPattern.typical_start_time);
+            const durationMs = eventPattern.typical_duration_minutes * 60 * 1000;
+
+            // For daily patterns, predict every day
+            if (routine.routine_type === "daily") {
+              for (let day = 0; day < daysAhead; day++) {
+                const predictedDate = new Date(now);
+                predictedDate.setDate(now.getDate() + day);
+                predictedDate.setHours(startTime.getHours(), startTime.getMinutes(), 0, 0);
+
+                if (predictedDate >= now && predictedDate <= endDate) {
+                  const predictedEnd = new Date(predictedDate.getTime() + durationMs);
+                  predictions.push({
+                    summary: eventPattern.event_summary,
+                    predicted_start: predictedDate.toISOString(),
+                    predicted_end: predictedEnd.toISOString(),
+                    confidence: routine.confidence_score,
+                    pattern_key: eventPattern.key,
+                    routine_type: routine.routine_type,
+                  });
+                }
+              }
+            }
+            // For weekly patterns, predict based on day_of_week
+            else if (routine.routine_type === "weekly" && eventPattern.day_of_week && eventPattern.day_of_week.length > 0) {
+              for (let day = 0; day < daysAhead; day++) {
+                const predictedDate = new Date(now);
+                predictedDate.setDate(now.getDate() + day);
+                const dayOfWeek = predictedDate.getDay();
+
+                if (eventPattern.day_of_week.includes(dayOfWeek) && predictedDate >= now && predictedDate <= endDate) {
+                  predictedDate.setHours(startTime.getHours(), startTime.getMinutes(), 0, 0);
+                  const predictedEnd = new Date(predictedDate.getTime() + durationMs);
+                  predictions.push({
+                    summary: eventPattern.event_summary,
+                    predicted_start: predictedDate.toISOString(),
+                    predicted_end: predictedEnd.toISOString(),
+                    confidence: routine.confidence_score,
+                    pattern_key: eventPattern.key,
+                    routine_type: routine.routine_type,
+                  });
+                }
+              }
+            }
+            // For monthly patterns, predict based on day of month
+            else if (routine.routine_type === "monthly") {
+              const dayOfMonth = startTime.getDate();
+              for (let day = 0; day < daysAhead; day++) {
+                const predictedDate = new Date(now);
+                predictedDate.setDate(now.getDate() + day);
+
+                if (predictedDate.getDate() === dayOfMonth && predictedDate >= now && predictedDate <= endDate) {
+                  predictedDate.setHours(startTime.getHours(), startTime.getMinutes(), 0, 0);
+                  const predictedEnd = new Date(predictedDate.getTime() + durationMs);
+                  predictions.push({
+                    summary: eventPattern.event_summary,
+                    predicted_start: predictedDate.toISOString(),
+                    predicted_end: predictedEnd.toISOString(),
+                    confidence: routine.confidence_score,
+                    pattern_key: eventPattern.key,
+                    routine_type: routine.routine_type,
+                  });
+                }
+              }
+            }
+          }
+        }
+        // Predict based on time slot patterns
+        else if (routine.routine_type === "time_slot") {
+          const timeSlotPattern = patternData as TimeSlotPattern;
+          // For time slots, predict events that typically occur in those hours
+          // This is a simplified prediction - in a full implementation, you'd check for existing events
+          if (timeSlotPattern.day_of_week && timeSlotPattern.day_of_week.length > 0) {
+            for (let day = 0; day < daysAhead; day++) {
+              const predictedDate = new Date(now);
+              predictedDate.setDate(now.getDate() + day);
+              const dayOfWeek = predictedDate.getDay();
+
+              if (timeSlotPattern.day_of_week.includes(dayOfWeek) && predictedDate >= now && predictedDate <= endDate) {
+                predictedDate.setHours(timeSlotPattern.start_hour, 0, 0, 0);
+                const predictedEnd = new Date(predictedDate);
+                predictedEnd.setHours(timeSlotPattern.end_hour, 0, 0, 0);
+                predictions.push({
+                  summary: `Scheduled activity (${timeSlotPattern.start_hour}:00 - ${timeSlotPattern.end_hour}:00)`,
+                  predicted_start: predictedDate.toISOString(),
+                  predicted_end: predictedEnd.toISOString(),
+                  confidence: routine.confidence_score * (timeSlotPattern.availability_percentage / 100),
+                  pattern_key: timeSlotPattern.key,
+                  routine_type: routine.routine_type,
+                });
+              }
+            }
+          }
+        }
+      }
+
+      // Sort predictions by start time
+      predictions.sort((a, b) => new Date(a.predicted_start).getTime() - new Date(b.predicted_start).getTime());
 
       this.logger.info(`Predicted ${predictions.length} events for user ${user_id}`);
       return predictions;
@@ -654,11 +761,130 @@ export class RoutineLearningService {
     try {
       this.logger.debug(`Suggesting optimal time for user ${user_id}, duration: ${eventDuration} minutes`);
 
-      // TODO: Implement time optimization logic
-      // - Get user's routines and existing events
-      // - Find free time slots
-      // - Consider preferred time if provided
-      // - Return best suggestion with alternatives
+      // Get user's high-confidence routines to understand typical availability
+      const routines = await this.getHighConfidenceRoutines(user_id, 0.6);
+      const timeSlotPatterns = routines.filter((r) => r.routine_type === "time_slot") as Array<RoutinePattern & { pattern_data: TimeSlotPattern }>;
+
+      // Get user email for fetching calendar events
+      const { data: userData } = await this.client.from("user_calendar_tokens").select("email").eq("user_id", user_id).maybeSingle();
+      if (!userData?.email) {
+        this.logger.warn(`No email found for user ${user_id}`);
+        return null;
+      }
+
+      // Fetch existing events for the next 7 days
+      const now = new Date();
+      const endDate = new Date(now);
+      endDate.setDate(now.getDate() + 7);
+      const events = await this.fetchEventsForAnalysis(userData.email, {
+        start: now.toISOString(),
+        end: endDate.toISOString(),
+      });
+
+      // Convert events to time ranges
+      const busySlots: Array<{ start: Date; end: Date }> = events
+        .map((e) => {
+          const start = e.start?.dateTime ? new Date(e.start.dateTime) : e.start?.date ? new Date(e.start.date) : null;
+          const end = e.end?.dateTime ? new Date(e.end.dateTime) : e.end?.date ? new Date(e.end.date) : null;
+          return start && end ? { start, end } : null;
+        })
+        .filter((slot): slot is { start: Date; end: Date } => slot !== null);
+
+      // If preferred time is provided, check if it's available
+      if (preferredTime) {
+        const preferred = new Date(preferredTime);
+        const preferredEnd = new Date(preferred.getTime() + eventDuration * 60 * 1000);
+        const isAvailable = !busySlots.some((slot) => {
+          return (preferred >= slot.start && preferred < slot.end) || (preferredEnd > slot.start && preferredEnd <= slot.end) || (preferred <= slot.start && preferredEnd >= slot.end);
+        });
+
+        if (isAvailable) {
+          return {
+            suggested_time: preferred.toISOString(),
+            reason: "Preferred time is available",
+            confidence: 0.9,
+            alternative_times: [],
+          };
+        }
+      }
+
+      // Find optimal time slots based on routines and availability
+      const suggestions: Array<{ time: Date; confidence: number; reason: string }> = [];
+
+      // Check time slot patterns for optimal times
+      for (const routine of timeSlotPatterns) {
+        const pattern = routine.pattern_data as TimeSlotPattern;
+        if (pattern.day_of_week && pattern.day_of_week.length > 0) {
+          for (let day = 0; day < 7; day++) {
+            const checkDate = new Date(now);
+            checkDate.setDate(now.getDate() + day);
+            const dayOfWeek = checkDate.getDay();
+
+            if (pattern.day_of_week.includes(dayOfWeek)) {
+              // Try start hour
+              const slotStart = new Date(checkDate);
+              slotStart.setHours(pattern.start_hour, 0, 0, 0);
+              const slotEnd = new Date(slotStart.getTime() + eventDuration * 60 * 1000);
+
+              if (slotStart >= now && slotEnd <= endDate) {
+                const isAvailable = !busySlots.some((slot) => {
+                  return (slotStart >= slot.start && slotStart < slot.end) || (slotEnd > slot.start && slotEnd <= slot.end) || (slotStart <= slot.start && slotEnd >= slot.end);
+                });
+
+                if (isAvailable) {
+                  suggestions.push({
+                    time: slotStart,
+                    confidence: routine.confidence_score * (pattern.availability_percentage / 100),
+                    reason: `Based on your routine: typically available ${pattern.start_hour}:00-${pattern.end_hour}:00`,
+                  });
+                }
+              }
+            }
+          }
+        }
+      }
+
+      // If no routine-based suggestions, find free slots in typical working hours (9 AM - 5 PM)
+      if (suggestions.length === 0) {
+        for (let day = 0; day < 7; day++) {
+          for (let hour = 9; hour <= 16; hour++) {
+            const slotStart = new Date(now);
+            slotStart.setDate(now.getDate() + day);
+            slotStart.setHours(hour, 0, 0, 0);
+            const slotEnd = new Date(slotStart.getTime() + eventDuration * 60 * 1000);
+
+            if (slotStart >= now && slotEnd <= endDate) {
+              const isAvailable = !busySlots.some((slot) => {
+                return (slotStart >= slot.start && slotStart < slot.end) || (slotEnd > slot.start && slotEnd <= slot.end) || (slotStart <= slot.start && slotEnd >= slot.end);
+              });
+
+              if (isAvailable) {
+                suggestions.push({
+                  time: slotStart,
+                  confidence: 0.7,
+                  reason: "Available time slot in typical working hours",
+                });
+                if (suggestions.length >= 3) break; // Limit to 3 suggestions
+              }
+            }
+          }
+          if (suggestions.length >= 3) break;
+        }
+      }
+
+      // Sort by confidence and return best suggestion
+      suggestions.sort((a, b) => b.confidence - a.confidence);
+
+      if (suggestions.length > 0) {
+        const best = suggestions[0];
+        const alternatives = suggestions.slice(1, 4).map((s) => s.time.toISOString());
+        return {
+          suggested_time: best.time.toISOString(),
+          reason: best.reason,
+          confidence: best.confidence,
+          alternative_times: alternatives,
+        };
+      }
 
       return null;
     } catch (error) {
@@ -676,17 +902,117 @@ export class RoutineLearningService {
     try {
       this.logger.debug(`Getting time optimization suggestions for user ${user_id}`);
 
-      // TODO: Implement optimization suggestions
-      // - Analyze current schedule
-      // - Identify inefficiencies
-      // - Suggest improvements
-
       const suggestions: TimeOptimizationSuggestion[] = [];
+      const routines = await this.getHighConfidenceRoutines(user_id, 0.6);
+
+      // Get user email for fetching calendar events
+      const { data: userData } = await this.client.from("user_calendar_tokens").select("email").eq("user_id", user_id).maybeSingle();
+      if (!userData?.email) {
+        this.logger.warn(`No email found for user ${user_id}`);
+        return suggestions;
+      }
+
+      // Fetch existing events for the next 7 days
+      const now = new Date();
+      const endDate = new Date(now);
+      endDate.setDate(now.getDate() + 7);
+      const events = await this.fetchEventsForAnalysis(userData.email, {
+        start: now.toISOString(),
+        end: endDate.toISOString(),
+      });
+
+      // Analyze time slot patterns for optimization opportunities
+      const timeSlotPatterns = routines.filter((r) => r.routine_type === "time_slot") as Array<RoutinePattern & { pattern_data: TimeSlotPattern }>;
+      for (const routine of timeSlotPatterns) {
+        const pattern = routine.pattern_data as TimeSlotPattern;
+        if (pattern.availability_percentage < 50) {
+          // Low availability suggests potential optimization
+          suggestions.push({
+            suggested_time: new Date(now.getTime() + 24 * 60 * 60 * 1000).toISOString(), // Tomorrow
+            reason: `Your ${pattern.start_hour}:00-${pattern.end_hour}:00 time slot has low availability (${pattern.availability_percentage}%). Consider consolidating activities.`,
+            confidence: routine.confidence_score,
+            alternative_times: [],
+          });
+        }
+      }
 
       this.logger.info(`Generated ${suggestions.length} optimization suggestions for user ${user_id}`);
       return suggestions;
     } catch (error) {
       this.logger.error("Failed to get time optimization suggestions", error);
+      throw error;
+    }
+  }
+
+  /**
+   * Detect scheduling conflicts for a proposed event
+   * @param user_id - User identifier
+   * @param proposedStart - Proposed event start time (ISO string)
+   * @param proposedEnd - Proposed event end time (ISO string)
+   * @returns Conflict detection result
+   */
+  async detectConflict(user_id: string, proposedStart: string, proposedEnd: string): Promise<{ hasConflict: boolean; conflicts: Array<{ event: string; start: string; end: string }>; suggestions?: string[] }> {
+    try {
+      this.logger.debug(`Detecting conflicts for user ${user_id} from ${proposedStart} to ${proposedEnd}`);
+
+      // Get user email for fetching calendar events
+      const { data: userData } = await this.client.from("user_calendar_tokens").select("email").eq("user_id", user_id).maybeSingle();
+      if (!userData?.email) {
+        this.logger.warn(`No email found for user ${user_id}`);
+        return { hasConflict: false, conflicts: [] };
+      }
+
+      const proposedStartDate = new Date(proposedStart);
+      const proposedEndDate = new Date(proposedEnd);
+
+      // Fetch existing events for the same day
+      const dayStart = new Date(proposedStartDate);
+      dayStart.setHours(0, 0, 0, 0);
+      const dayEnd = new Date(proposedStartDate);
+      dayEnd.setHours(23, 59, 59, 999);
+
+      const events = await this.fetchEventsForAnalysis(userData.email, {
+        start: dayStart.toISOString(),
+        end: dayEnd.toISOString(),
+      });
+
+      const conflicts: Array<{ event: string; start: string; end: string }> = [];
+
+      for (const event of events) {
+        const eventStart = event.start?.dateTime ? new Date(event.start.dateTime) : event.start?.date ? new Date(event.start.date) : null;
+        const eventEnd = event.end?.dateTime ? new Date(event.end.dateTime) : event.end?.date ? new Date(event.end.date) : null;
+
+        if (eventStart && eventEnd) {
+          // Check for overlap
+          const overlaps = (proposedStartDate >= eventStart && proposedStartDate < eventEnd) || (proposedEndDate > eventStart && proposedEndDate <= eventEnd) || (proposedStartDate <= eventStart && proposedEndDate >= eventEnd);
+
+          if (overlaps) {
+            conflicts.push({
+              event: event.summary || "Untitled Event",
+              start: eventStart.toISOString(),
+              end: eventEnd.toISOString(),
+            });
+          }
+        }
+      }
+
+      // Generate suggestions if conflicts exist
+      let suggestions: string[] | undefined;
+      if (conflicts.length > 0) {
+        const duration = proposedEndDate.getTime() - proposedStartDate.getTime();
+        const optimalSuggestion = await this.suggestOptimalTime(user_id, duration / (60 * 1000), proposedStart);
+        if (optimalSuggestion) {
+          suggestions = [optimalSuggestion.suggested_time, ...(optimalSuggestion.alternative_times || [])];
+        }
+      }
+
+      return {
+        hasConflict: conflicts.length > 0,
+        conflicts,
+        suggestions,
+      };
+    } catch (error) {
+      this.logger.error("Failed to detect conflicts", error);
       throw error;
     }
   }

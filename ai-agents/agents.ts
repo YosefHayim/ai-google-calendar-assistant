@@ -148,5 +148,9 @@ export const ORCHESTRATOR_AGENT = new Agent({
     AGENTS.generateUserCbGoogleUrl.asTool({ toolName: "generate_user_cb_google_url" }),
     AGENT_TOOLS.get_agent_name,
     AGENT_TOOLS.set_agent_name,
+    AGENT_TOOLS.get_user_routines,
+    AGENT_TOOLS.get_upcoming_predictions,
+    AGENT_TOOLS.suggest_optimal_time,
+    AGENT_TOOLS.get_routine_insights,
   ],
 });

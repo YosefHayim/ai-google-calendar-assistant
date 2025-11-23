@@ -112,4 +112,40 @@ export const AGENT_TOOLS = {
       return `set_agent_name: ${error}`;
     },
   }),
+  get_user_routines: tool({
+    name: "get_user_routines",
+    description: TOOLS_DESCRIPTION.get_user_routines,
+    parameters: PARAMETERS_TOOLS.get_user_routines,
+    execute: EXECUTION_TOOLS.get_user_routines,
+    errorFunction: (_, error) => {
+      return `get_user_routines: ${error}`;
+    },
+  }),
+  get_upcoming_predictions: tool({
+    name: "get_upcoming_predictions",
+    description: TOOLS_DESCRIPTION.get_upcoming_predictions,
+    parameters: PARAMETERS_TOOLS.get_upcoming_predictions,
+    execute: EXECUTION_TOOLS.get_upcoming_predictions,
+    errorFunction: (_, error) => {
+      return `get_upcoming_predictions: ${error}`;
+    },
+  }),
+  suggest_optimal_time: tool({
+    name: "suggest_optimal_time",
+    description: TOOLS_DESCRIPTION.suggest_optimal_time,
+    parameters: PARAMETERS_TOOLS.suggest_optimal_time,
+    execute: EXECUTION_TOOLS.suggest_optimal_time,
+    errorFunction: (_, error) => {
+      return `suggest_optimal_time: ${error}`;
+    },
+  }),
+  get_routine_insights: tool({
+    name: "get_routine_insights",
+    description: TOOLS_DESCRIPTION.get_routine_insights,
+    parameters: PARAMETERS_TOOLS.get_routine_insights,
+    execute: EXECUTION_TOOLS.get_routine_insights,
+    errorFunction: (_, error) => {
+      return `get_routine_insights: ${error}`;
+    },
+  }),
 };

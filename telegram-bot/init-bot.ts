@@ -174,7 +174,7 @@ bot.on("message", async (ctx) => {
       agentNameContext = `\n\nYour name is "${agentName}" - use this name when introducing yourself or signing off.`;
     }
 
-    // Activate agent with context
+    // Activate agent with context and auto-routing enabled
     const { finalOutput } = await activateAgent(
       ORCHESTRATOR_AGENT,
       `Current date and time is ${new Date().toISOString()}. User ${
@@ -183,6 +183,10 @@ bot.on("message", async (ctx) => {
       {
         conversationContext: conversationContext || undefined,
         vectorSearchResults: vectorSearchResults || undefined,
+        agentName: agentName || undefined,
+      },
+      {
+        autoRoute: true, // Enable automatic model routing based on task analysis
       }
     );
 
