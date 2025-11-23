@@ -173,7 +173,7 @@ export const EXECUTION_TOOLS = {
     return { success: true, agent_name: params.agentName.trim() };
   }),
 
-  get_user_routines: asyncHandler(async (params: { email: string; routineType?: string }) => {
+  get_user_routines: asyncHandler(async (params: { email: string; routineType?: string | null }) => {
     if (!(params.email && isEmail(params.email))) {
       throw new Error("Invalid email address.");
     }
@@ -182,9 +182,10 @@ export const EXECUTION_TOOLS = {
       throw new Error("User not found.");
     }
     const routineService = new RoutineLearningService(SUPABASE);
+    const routineType = params.routineType ?? undefined;
     const routines = await routineService.getUserRoutine(
       tokenData.user_id,
-      params.routineType as "daily" | "weekly" | "monthly" | "event_pattern" | "time_slot" | undefined
+      routineType as "daily" | "weekly" | "monthly" | "event_pattern" | "time_slot" | undefined
     );
     return { routines, count: routines.length };
   }),
@@ -292,10 +293,10 @@ export const EXECUTION_TOOLS = {
   get_schedule_statistics: asyncHandler(
     async (params: {
       email: string;
-      startDate?: string;
-      endDate?: string;
-      periodType?: "daily" | "weekly" | "monthly" | "hourly" | "work_time" | "insights";
-      statisticsType?: "basic" | "hourly" | "work_time" | "insights";
+      startDate?: string | null;
+      endDate?: string | null;
+      periodType?: "daily" | "weekly" | "monthly" | "hourly" | "work_time" | "insights" | null;
+      statisticsType?: "basic" | "hourly" | "work_time" | "insights" | null;
     }) => {
       if (!(params.email && isEmail(params.email))) {
         throw new Error("Invalid email address.");

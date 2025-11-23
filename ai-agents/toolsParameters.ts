@@ -115,7 +115,7 @@ export const PARAMETERS_TOOLS = {
   get_user_routines: z
     .object({
       email: emailSchema,
-      routineType: z.enum(["daily", "weekly", "monthly", "event_pattern", "time_slot"]).optional().describe("Filter by routine type"),
+      routineType: z.enum(["daily", "weekly", "monthly", "event_pattern", "time_slot"]).nullish().describe("Filter by routine type"),
     })
     .describe("Get learned routines for a user."),
 
@@ -165,11 +165,11 @@ export const PARAMETERS_TOOLS = {
       endDate: z.coerce.string().optional().describe("End date in ISO format (defaults to today)"),
       periodType: z
         .enum(["daily", "weekly", "monthly", "hourly", "work_time", "insights"])
-        .optional()
+        .nullish()
         .describe("Type of statistics to retrieve (defaults to basic statistics)"),
       statisticsType: z
         .enum(["basic", "hourly", "work_time", "insights"])
-        .optional()
+        .nullish()
         .describe("Specific statistics type (defaults to basic)"),
     })
     .describe("Get schedule statistics and insights for a user."),
