@@ -9,7 +9,7 @@
  * - Handle errors and retries gracefully
  */
 
-import cron from "node-cron";
+import cron, { type ScheduledTask } from "node-cron";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { RoutineLearningService } from "./RoutineLearningService";
 import { Logger } from "./logging/Logger";
@@ -32,7 +32,7 @@ export class RoutineAnalysisJob {
   private client: SupabaseClient;
   private routineService: RoutineLearningService;
   private logger: Logger;
-  private cronJob: cron.ScheduledTask | null = null;
+  private cronJob: ScheduledTask | null = null;
   private config: Required<RoutineAnalysisJobConfig>;
   private isRunning = false;
 
