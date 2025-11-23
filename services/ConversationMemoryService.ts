@@ -330,15 +330,21 @@ export class ConversationMemoryService {
     last_message_id: number | null;
   }> {
     try {
+      // Use upsert to handle case where record already exists (e.g., from concurrent request)
       const { data, error } = await this.client
         .from("conversation_state")
-        .insert({
-          user_id,
-          chat_id,
-          message_count: 0,
-          last_summarized_at: null,
-          last_message_id: null,
-        })
+        .upsert(
+          {
+            user_id,
+            chat_id,
+            message_count: 0,
+            last_summarized_at: null,
+            last_message_id: null,
+          },
+          {
+            onConflict: "chat_id",
+          }
+        )
         .select("message_count, last_summarized_at, last_message_id")
         .single();
 
@@ -361,14 +367,21 @@ export class ConversationMemoryService {
       const state = await this.getConversationState(user_id, chat_id);
       const newCount = (state?.message_count ?? 0) + 1;
 
-      const { error } = await this.client.from("conversation_state").upsert({
-        user_id,
-        chat_id,
-        message_count: newCount,
-        last_message_id,
-        last_summarized_at: wasSummarized ? new Date().toISOString() : state?.last_summarized_at ?? null,
-        updated_at: new Date().toISOString(),
-      });
+      const { error } = await this.client
+        .from("conversation_state")
+        .upsert(
+          {
+            user_id,
+            chat_id,
+            message_count: newCount,
+            last_message_id,
+            last_summarized_at: wasSummarized ? new Date().toISOString() : state?.last_summarized_at ?? null,
+            updated_at: new Date().toISOString(),
+          },
+          {
+            onConflict: "chat_id",
+          }
+        );
 
       if (error) {
         throw error;
