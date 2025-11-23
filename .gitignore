@@ -36,8 +36,8 @@ __pycache__/
 .DS_Store
 Thumbs.db
 
-GEMINI.md
-CLAUDE.md
+# GEMINI.md
+# CLAUDE.md
 
 # Logs
 logs
