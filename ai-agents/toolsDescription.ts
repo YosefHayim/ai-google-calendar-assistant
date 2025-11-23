@@ -28,4 +28,8 @@ export const TOOLS_DESCRIPTION = {
   getConversationContext: `Retrieves conversation context including recent messages and summaries. Requires "user_id" and "chat_id". Returns formatted context ready for LLM prompts with recentMessages, summaries, and totalMessageCount.`,
 
   storeConversationMessage: `Stores a conversation message in memory. Requires "user_id", "chat_id", "message_id", "role" ("user" | "assistant" | "system"), and "content". Optional: "metadata". Automatically triggers summarization every 3 messages.`,
+
+  getAgentName: `Retrieves the user's personalized agent name from conversation metadata. Requires "email" and "chatId". Returns { "agent_name": string | null }.`,
+
+  setAgentName: `Sets or updates the user's personalized agent name in conversation metadata. Requires "email", "chatId", and "agentName". Returns { "success": true, "agent_name": string }.`,
 } as const;

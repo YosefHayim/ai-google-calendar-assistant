@@ -94,4 +94,22 @@ export const AGENT_TOOLS = {
       return `get_user_default_timezone: ${error}`;
     },
   }),
+  get_agent_name: tool({
+    name: "get_agent_name",
+    description: TOOLS_DESCRIPTION.getAgentName,
+    parameters: PARAMETERS_TOOLS.getAgentName,
+    execute: EXECUTION_TOOLS.getAgentName,
+    errorFunction: (_, error) => {
+      return `get_agent_name: ${error}`;
+    },
+  }),
+  set_agent_name: tool({
+    name: "set_agent_name",
+    description: TOOLS_DESCRIPTION.setAgentName,
+    parameters: PARAMETERS_TOOLS.setAgentName,
+    execute: EXECUTION_TOOLS.setAgentName,
+    errorFunction: (_, error) => {
+      return `set_agent_name: ${error}`;
+    },
+  }),
 };

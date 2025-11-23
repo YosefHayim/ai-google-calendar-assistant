@@ -154,13 +154,30 @@ bot.on("message", async (ctx) => {
       }
     }
 
+    // Get agent name if available
+    let agentName = null;
+    if (userId && chatId) {
+      try {
+        agentName = await conversationMemoryService.getAgentName(userId, chatId);
+      } catch (error) {
+        console.error("Failed to get agent name (non-critical):", error);
+        // Continue without agent name
+      }
+    }
+
     // Show typing indicator
     await ctx.api.sendChatAction(ctx.chat.id, "typing");
+
+    // Build prompt with agent name context
+    let agentNameContext = "";
+    if (agentName) {
+      agentNameContext = `\n\nYour name is "${agentName}" - use this name when introducing yourself or signing off.`;
+    }
 
     // Activate agent with context
     const { finalOutput } = await activateAgent(
       ORCHESTRATOR_AGENT,
-      `Current date and time is ${new Date().toISOString()}. User ${ctx.session.email || "unknown"} requesting for help with: ${userMsgText}`,
+      `Current date and time is ${new Date().toISOString()}. User ${ctx.session.email || "unknown"} requesting for help with: ${userMsgText}${agentNameContext}`,
       {
         conversationContext: conversationContext || undefined,
         vectorSearchResults: vectorSearchResults || undefined,

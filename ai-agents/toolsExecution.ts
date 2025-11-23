@@ -1,13 +1,15 @@
-import type { calendar_v3 } from "googleapis";
-import isEmail from "validator/lib/isEmail";
-import { OAUTH2CLIENT, redirectUri, SCOPES, SUPABASE } from "@/config/root-config";
-import { ACTION } from "@/types";
-import { asyncHandler } from "@/utils/asyncHandlers";
-import { fetchCredentialsByEmail } from "@/utils/getUserCalendarTokens";
-import { eventsHandler } from "@/utils/handleEvents";
-import { initCalendarWithUserTokensAndUpdateTokens } from "@/utils/initCalendarWithUserTokens";
-import { TOKEN_FIELDS } from "@/utils/storage";
+import { OAUTH2CLIENT, SCOPES, SUPABASE, redirectUri } from "@/config/root-config";
 import { coerceArgs, formatEventData, getCalendarCategoriesByEmail } from "./agentUtils";
+
+import { ACTION } from "@/types";
+import { ConversationMemoryService } from "@/services/ConversationMemoryService";
+import { TOKEN_FIELDS } from "@/utils/storage";
+import { asyncHandler } from "@/utils/asyncHandlers";
+import type { calendar_v3 } from "googleapis";
+import { eventsHandler } from "@/utils/handleEvents";
+import { fetchCredentialsByEmail } from "@/utils/getUserCalendarTokens";
+import { initCalendarWithUserTokensAndUpdateTokens } from "@/utils/initCalendarWithUserTokens";
+import isEmail from "validator/lib/isEmail";
 
 type Event = calendar_v3.Schema$Event;
 
@@ -129,5 +131,42 @@ export const EXECUTION_TOOLS = {
     const CALENDAR = await initCalendarWithUserTokensAndUpdateTokens(tokenProps);
     const r = await CALENDAR.settings.get({ setting: "timezone" });
     return r;
+  }),
+  getAgentName: asyncHandler(async (params: { email: string; chatId: number }) => {
+    if (!(params.email && isEmail(params.email))) {
+      throw new Error("Invalid email address.");
+    }
+    if (!params.chatId || typeof params.chatId !== "number") {
+      throw new Error("Valid chat ID is required.");
+    }
+    // Get user_id from email
+    const { data: tokenData } = await SUPABASE.from("user_calendar_tokens").select("user_id").eq("email", params.email).maybeSingle();
+    if (!tokenData?.user_id) {
+      throw new Error("User not found.");
+    }
+    // Import ConversationMemoryService dynamically to avoid circular dependency
+    const conversationMemoryService = new ConversationMemoryService(SUPABASE);
+    const agentName = await conversationMemoryService.getAgentName(tokenData.user_id, params.chatId);
+    return { agent_name: agentName || null };
+  }),
+  setAgentName: asyncHandler(async (params: { email: string; chatId: number; agentName: string }) => {
+    if (!(params.email && isEmail(params.email))) {
+      throw new Error("Invalid email address.");
+    }
+    if (!params.chatId || typeof params.chatId !== "number") {
+      throw new Error("Valid chat ID is required.");
+    }
+    if (!params.agentName || params.agentName.trim().length === 0) {
+      throw new Error("Agent name is required.");
+    }
+    // Get user_id from email
+    const { data: tokenData } = await SUPABASE.from("user_calendar_tokens").select("user_id").eq("email", params.email).maybeSingle();
+    if (!tokenData?.user_id) {
+      throw new Error("User not found.");
+    }
+    // Import ConversationMemoryService dynamically to avoid circular dependency
+    const conversationMemoryService = new ConversationMemoryService(SUPABASE);
+    await conversationMemoryService.setAgentName(tokenData.user_id, params.chatId, params.agentName);
+    return { success: true, agent_name: params.agentName.trim() };
   }),
 };

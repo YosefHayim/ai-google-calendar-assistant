@@ -1,6 +1,6 @@
+import { TIMEZONE } from "@/types";
 import validator from "validator";
 import { z } from "zod";
-import { TIMEZONE } from "@/types";
 
 const MIN_PW = 6;
 const MAX_PW = 72;
@@ -98,4 +98,17 @@ export const PARAMETERS_TOOLS = {
     })
     .describe("Delete an event by ID."),
   normalizedEventParams: makeFullEventParams().extend({ email: emailSchema }).describe("Normalize an event payload for insertion/update."),
+  getAgentName: z
+    .object({
+      email: emailSchema,
+      chatId: z.coerce.number({ description: "Telegram chat ID" }),
+    })
+    .describe("Get the user's personalized agent name from conversation metadata."),
+  setAgentName: z
+    .object({
+      email: emailSchema,
+      chatId: z.coerce.number({ description: "Telegram chat ID" }),
+      agentName: requiredString("The name the user wants to call their personal assistant", "Agent name is required."),
+    })
+    .describe("Set or update the user's personalized agent name in conversation metadata."),
 };

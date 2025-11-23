@@ -1,3 +1,4 @@
+import type { Json } from "@/database.types";
 import { Logger } from "./logging/Logger";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
@@ -285,6 +286,64 @@ export class ConversationMemoryService {
   }
 
   /**
+   * Get agent name from conversation metadata
+   */
+  async getAgentName(user_id: string, chat_id: number): Promise<string | null> {
+    try {
+      const { data, error } = await this.client.from("conversation_state").select("metadata").eq("user_id", user_id).eq("chat_id", chat_id).maybeSingle();
+
+      if (error) {
+        throw error;
+      }
+
+      if (data?.metadata && typeof data.metadata === "object" && "agent_name" in data.metadata) {
+        return data.metadata.agent_name as string;
+      }
+
+      return null;
+    } catch (error) {
+      this.logger.error("Failed to get agent name", error);
+      throw error;
+    }
+  }
+
+  /**
+   * Set agent name in conversation metadata
+   */
+  async setAgentName(user_id: string, chat_id: number, agent_name: string): Promise<void> {
+    try {
+      // Get current metadata or create new state
+      const state = await this.getConversationState(user_id, chat_id);
+
+      const currentMetadata = (state?.metadata as Record<string, unknown> | null) || {};
+      const updatedMetadata = {
+        ...currentMetadata,
+        agent_name: agent_name.trim(),
+        agent_name_updated_at: new Date().toISOString(),
+      };
+
+      const { error } = await this.client.from("conversation_state").upsert(
+        {
+          user_id,
+          chat_id,
+          metadata: updatedMetadata,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "user_id,chat_id" }
+      );
+
+      if (error) {
+        throw error;
+      }
+
+      this.logger.debug(`Set agent name to "${agent_name}" for user ${user_id}, chat ${chat_id}`);
+    } catch (error) {
+      this.logger.error("Failed to set agent name", error);
+      throw error;
+    }
+  }
+
+  /**
    * Get or create conversation state
    */
   private async getConversationState(
@@ -294,11 +353,12 @@ export class ConversationMemoryService {
     message_count: number;
     last_summarized_at: string | null;
     last_message_id: number | null;
+    metadata: Json | null;
   } | null> {
     try {
       const { data, error } = await this.client
         .from("conversation_state")
-        .select("message_count, last_summarized_at, last_message_id")
+        .select("message_count, last_summarized_at, last_message_id, metadata")
         .eq("user_id", user_id)
         .eq("chat_id", chat_id)
         .single();
@@ -328,6 +388,7 @@ export class ConversationMemoryService {
     message_count: number;
     last_summarized_at: string | null;
     last_message_id: number | null;
+    metadata: Json | null;
   }> {
     try {
       // Use upsert to handle case where record already exists (e.g., from concurrent request)
@@ -340,12 +401,13 @@ export class ConversationMemoryService {
             message_count: 0,
             last_summarized_at: null,
             last_message_id: null,
+            metadata: null,
           },
           {
             onConflict: "user_id,chat_id",
           }
         )
-        .select("message_count, last_summarized_at, last_message_id")
+        .select("message_count, last_summarized_at, last_message_id, metadata")
         .single();
 
       if (error) {
@@ -367,21 +429,19 @@ export class ConversationMemoryService {
       const state = await this.getConversationState(user_id, chat_id);
       const newCount = (state?.message_count ?? 0) + 1;
 
-      const { error } = await this.client
-        .from("conversation_state")
-        .upsert(
-          {
-            user_id,
-            chat_id,
-            message_count: newCount,
-            last_message_id,
-            last_summarized_at: wasSummarized ? new Date().toISOString() : state?.last_summarized_at ?? null,
-            updated_at: new Date().toISOString(),
-          },
-          {
-            onConflict: "user_id,chat_id",
-          }
-        );
+      const { error } = await this.client.from("conversation_state").upsert(
+        {
+          user_id,
+          chat_id,
+          message_count: newCount,
+          last_message_id,
+          last_summarized_at: wasSummarized ? new Date().toISOString() : state?.last_summarized_at ?? null,
+          updated_at: new Date().toISOString(),
+        },
+        {
+          onConflict: "user_id,chat_id",
+        }
+      );
 
       if (error) {
         throw error;
