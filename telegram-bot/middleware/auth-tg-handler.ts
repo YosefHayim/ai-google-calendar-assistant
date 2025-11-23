@@ -28,9 +28,6 @@ export const authTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
     if (!session.email) {
       session.email = data.email;
     }
-    if (session.messageCount === 0) {
-      await ctx.reply(`Hello there ${data.first_name}`);
-    }
     session.messageCount++;
     return next(); // single exit with next()
   }

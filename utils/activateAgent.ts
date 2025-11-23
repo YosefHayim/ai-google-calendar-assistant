@@ -97,10 +97,14 @@ export const activateAgent = asyncHandler(async (agentKey: AGENTS_LIST | Agent, 
       contextParts.push(`\n## Agent Name: ${context.agentName}\nUse this name when addressing the user if appropriate.`);
     }
     if (context.email) {
-      contextParts.push(`\n## User Email: ${context.email}\nUse this email when calling tools that require an email parameter. Do NOT ask the user for their email.`);
+      contextParts.push(
+        `\n## User Email: ${context.email}\nUse this email when calling tools that require an email parameter. Do NOT ask the user for their email.`
+      );
     }
     if (context.chatId) {
-      contextParts.push(`\n## Chat ID: ${context.chatId}\nUse this chat ID when calling tools that require a chatId parameter (e.g., set_agent_name). Do NOT ask the user for the chat ID.`);
+      contextParts.push(
+        `\n## Chat ID: ${context.chatId}\nUse this chat ID when calling tools that require a chatId parameter (e.g., set_agent_name). Do NOT ask the user for the chat ID.`
+      );
     }
     if (contextParts.length > 0) {
       enhancedPrompt = `${contextParts.join("\n\n")}\n\n## Current Request:\n${prompt}`;

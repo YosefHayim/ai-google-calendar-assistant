@@ -98,8 +98,6 @@ bot.on("message", async (ctx) => {
   // start/stop "loop" via session flag; no while(true)
   if (!ctx.session.agentActive) {
     ctx.session.agentActive = true;
-    await ctx.reply("Agent is running in background...");
-    await ctx.reply("Type /exit to stop.");
   }
 
   if (userMsgText.toLowerCase() === "/exit") {
