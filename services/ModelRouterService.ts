@@ -197,7 +197,7 @@ export class ModelRouterService {
         requiresMultimodal,
       };
 
-      this.logger.debug("Task analysis complete", analysis);
+      this.logger.debug("Task analysis complete", { ...analysis });
       return analysis;
     } catch (error) {
       this.logger.error("Failed to analyze task", error);
@@ -222,7 +222,7 @@ export class ModelRouterService {
    */
   selectModel(analysis: TaskAnalysis, agentType?: string): ModelSelection {
     try {
-      this.logger.debug("Selecting model", { analysis, agentType });
+      this.logger.debug("Selecting model", { analysis: { ...analysis }, agentType });
 
       // Use the recommended model function from config/models.ts
       const selectedModel = getRecommendedModel(analysis.complexity, analysis.type, {

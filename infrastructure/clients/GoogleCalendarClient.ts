@@ -52,7 +52,7 @@ export class GoogleCalendarClient {
   /**
    * Wraps a resource to add retry and rate limiting
    */
-  private wrapResource<T extends Record<string, unknown>>(resource: T): T {
+  private wrapResource<T extends object>(resource: T): T {
     const wrapped = {} as T;
 
     for (const [key, value] of Object.entries(resource)) {
