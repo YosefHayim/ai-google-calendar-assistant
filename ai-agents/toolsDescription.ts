@@ -40,4 +40,8 @@ export const TOOLS_DESCRIPTION = {
   suggest_optimal_time: `Suggests optimal time slots for scheduling a new event. Requires "email" and "eventDuration" (minutes). Optional: "preferredTime" (ISO string). Returns best suggestion with alternatives and confidence score.`,
 
   get_routine_insights: `Provides insights about user's routines and schedule patterns. Requires "email". Returns summary of learned routines, typical availability, and schedule patterns.`,
+
+  set_user_goal: `Sets or updates a user goal for tracking progress. Requires "email", "goalType" (e.g., "gym", "meetings"), "target" (number), and optional "current", "deadline" (ISO string), "description". Returns goal confirmation.`,
+
+  get_goal_progress: `Retrieves progress toward user goals. Requires "email". Optional: "goalType" to filter by specific goal. Returns array of goals with current progress, target, and percentage complete.`,
 } as const;

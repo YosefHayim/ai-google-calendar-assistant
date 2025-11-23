@@ -1175,4 +1175,293 @@ export class RoutineLearningService {
       throw error;
     }
   }
+
+  /**
+   * Set or update a user goal in routine metadata
+   * @param user_id - User identifier
+   * @param goal - Goal object with type, target, current, deadline
+   * @returns Updated routine pattern with goal in metadata
+   */
+  async setUserGoal(
+    user_id: string,
+    goal: {
+      type: string;
+      target: number;
+      current?: number;
+      deadline?: string;
+      description?: string;
+    }
+  ): Promise<RoutinePattern | null> {
+    try {
+      this.logger.debug(`Setting goal for user ${user_id}:`, goal);
+
+      // Get or create a goal tracking routine
+      const goalKey = `goal_${goal.type}`;
+      const { data: existing } = await this.client
+        .from("user_routines")
+        .select("*")
+        .eq("user_id", user_id)
+        .eq("routine_type", "event_pattern")
+        .eq("pattern_data->>key", goalKey)
+        .maybeSingle();
+
+      const goalData = {
+        key: goalKey,
+        goal_type: goal.type,
+        target: goal.target,
+        current: goal.current || 0,
+        deadline: goal.deadline || null,
+        description: goal.description || null,
+        created_at: new Date().toISOString(),
+      };
+
+      if (existing) {
+        // Update existing goal
+        const updatedMetadata = {
+          ...((existing.metadata as Record<string, unknown>) || {}),
+          goal: goalData,
+        };
+
+        const { data, error } = await this.client
+          .from("user_routines")
+          .update({
+            metadata: updatedMetadata as unknown as Json,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("id", existing.id)
+          .select()
+          .single();
+
+        if (error) throw error;
+        this.logger.info(`Updated goal for user ${user_id}`);
+        return data as RoutinePattern;
+      } else {
+        // Create new goal routine
+        const { data, error } = await this.client
+          .from("user_routines")
+          .insert({
+            user_id,
+            routine_type: "event_pattern",
+            pattern_data: { key: goalKey, event_summary: goal.description || goal.type } as unknown as Json,
+            confidence_score: 0.5,
+            frequency: 0,
+            metadata: { goal: goalData } as unknown as Json,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          })
+          .select()
+          .single();
+
+        if (error) throw error;
+        this.logger.info(`Created new goal for user ${user_id}`);
+        return data as RoutinePattern;
+      }
+    } catch (error) {
+      this.logger.error("Failed to set user goal", error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get goal progress for a user
+   * @param user_id - User identifier
+   * @param goalType - Optional goal type filter
+   * @returns Array of goals with progress information
+   */
+  async getGoalProgress(user_id: string, goalType?: string): Promise<Array<{ type: string; target: number; current: number; progress: number; deadline?: string; description?: string }>> {
+    try {
+      this.logger.debug(`Getting goal progress for user ${user_id}${goalType ? `, type: ${goalType}` : ""}`);
+
+      let query = this.client
+        .from("user_routines")
+        .select("*")
+        .eq("user_id", user_id)
+        .eq("routine_type", "event_pattern")
+        .like("pattern_data->>key", "goal_%");
+
+      if (goalType) {
+        query = query.eq("pattern_data->>key", `goal_${goalType}`);
+      }
+
+      const { data, error } = await query;
+
+      if (error) throw error;
+
+      const goals = (data || [])
+        .map((routine) => {
+          const metadata = (routine.metadata as Record<string, unknown>) || {};
+          const goal = metadata.goal as
+            | {
+                goal_type: string;
+                target: number;
+                current: number;
+                deadline?: string;
+                description?: string;
+              }
+            | undefined;
+
+          if (!goal) return null;
+
+          return {
+            type: goal.goal_type,
+            target: goal.target,
+            current: goal.current || 0,
+            progress: goal.target > 0 ? Math.min(100, Math.round((goal.current / goal.target) * 100)) : 0,
+            deadline: goal.deadline || undefined,
+            description: goal.description || undefined,
+          };
+        })
+        .filter((g): g is NonNullable<typeof g> => g !== null);
+
+      this.logger.info(`Retrieved ${goals.length} goals for user ${user_id}`);
+      return goals;
+    } catch (error) {
+      this.logger.error("Failed to get goal progress", error);
+      throw error;
+    }
+  }
+
+  /**
+   * Update goal progress based on calendar events
+   * @param user_id - User identifier
+   * @param goalType - Goal type to update
+   * @param increment - Amount to increment current progress
+   * @returns Updated goal
+   */
+  async updateGoalProgress(user_id: string, goalType: string, increment: number = 1): Promise<RoutinePattern | null> {
+    try {
+      this.logger.debug(`Updating goal progress for user ${user_id}, type: ${goalType}, increment: ${increment}`);
+
+      const goalKey = `goal_${goalType}`;
+      const { data: existing } = await this.client
+        .from("user_routines")
+        .select("*")
+        .eq("user_id", user_id)
+        .eq("routine_type", "event_pattern")
+        .eq("pattern_data->>key", goalKey)
+        .maybeSingle();
+
+      if (!existing) {
+        this.logger.warn(`Goal not found for user ${user_id}, type: ${goalType}`);
+        return null;
+      }
+
+      const metadata = ((existing.metadata as Record<string, unknown>) || {}) as { goal?: { current: number; target: number } };
+      const goal = metadata.goal || { current: 0, target: 0 };
+
+      const updatedGoal = {
+        ...goal,
+        current: Math.max(0, (goal.current || 0) + increment),
+      };
+
+      const updatedMetadata = {
+        ...metadata,
+        goal: updatedGoal,
+      };
+
+      const { data, error } = await this.client
+        .from("user_routines")
+        .update({
+          metadata: updatedMetadata as unknown as Json,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", existing.id)
+        .select()
+        .single();
+
+      if (error) throw error;
+      this.logger.info(`Updated goal progress for user ${user_id}, type: ${goalType}`);
+      return data as RoutinePattern;
+    } catch (error) {
+      this.logger.error("Failed to update goal progress", error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get suggestions based on user goals
+   * @param user_id - User identifier
+   * @returns Array of goal-based suggestions
+   */
+  async getGoalBasedSuggestions(user_id: string): Promise<Array<{ goal: string; suggestion: string; priority: "high" | "medium" | "low" }>> {
+    try {
+      this.logger.debug(`Getting goal-based suggestions for user ${user_id}`);
+
+      const goals = await this.getGoalProgress(user_id);
+      const suggestions: Array<{ goal: string; suggestion: string; priority: "high" | "medium" | "low" }> = [];
+
+      for (const goal of goals) {
+        const progress = goal.progress;
+        const remaining = goal.target - goal.current;
+        const daysUntilDeadline = goal.deadline ? Math.ceil((new Date(goal.deadline).getTime() - Date.now()) / (1000 * 60 * 60 * 24)) : null;
+
+        // High priority: Goal is behind schedule or deadline approaching
+        if (progress < 50 && daysUntilDeadline !== null && daysUntilDeadline < 7) {
+          suggestions.push({
+            goal: goal.type,
+            suggestion: `You're at ${progress}% of your ${goal.type} goal with ${daysUntilDeadline} days left. Consider scheduling more ${goal.type} activities to meet your target.`,
+            priority: "high",
+          });
+        }
+        // Medium priority: Goal is on track but needs attention
+        else if (progress < 75 && remaining > 0) {
+          suggestions.push({
+            goal: goal.type,
+            suggestion: `You're at ${progress}% of your ${goal.type} goal. ${remaining} more ${goal.type} activities needed to reach your target.`,
+            priority: "medium",
+          });
+        }
+        // Low priority: Goal is almost complete
+        else if (progress >= 75 && progress < 100) {
+          suggestions.push({
+            goal: goal.type,
+            suggestion: `Great progress! You're at ${progress}% of your ${goal.type} goal. Just ${remaining} more to go!`,
+            priority: "low",
+          });
+        }
+      }
+
+      this.logger.info(`Generated ${suggestions.length} goal-based suggestions for user ${user_id}`);
+      return suggestions;
+    } catch (error) {
+      this.logger.error("Failed to get goal-based suggestions", error);
+      throw error;
+    }
+  }
+
+  /**
+   * Check for goal achievements and return notifications
+   * @param user_id - User identifier
+   * @returns Array of achievement notifications
+   */
+  async checkGoalAchievements(user_id: string): Promise<Array<{ goal: string; message: string; achieved_at: string }>> {
+    try {
+      this.logger.debug(`Checking goal achievements for user ${user_id}`);
+
+      const goals = await this.getGoalProgress(user_id);
+      const achievements: Array<{ goal: string; message: string; achieved_at: string }> = [];
+
+      for (const goal of goals) {
+        if (goal.progress >= 100 && goal.current >= goal.target) {
+          achievements.push({
+            goal: goal.type,
+            message: `🎉 Congratulations! You've achieved your ${goal.type} goal! You completed ${goal.current} out of ${goal.target} target activities.`,
+            achieved_at: new Date().toISOString(),
+          });
+
+          // Optionally reset or archive the goal
+          // For now, we'll just log the achievement
+        }
+      }
+
+      if (achievements.length > 0) {
+        this.logger.info(`Found ${achievements.length} goal achievements for user ${user_id}`);
+      }
+
+      return achievements;
+    } catch (error) {
+      this.logger.error("Failed to check goal achievements", error);
+      throw error;
+    }
+  }
 }

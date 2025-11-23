@@ -50,15 +50,41 @@ export interface ModelSelection {
 }
 
 /**
+ * Routing metrics for analytics
+ */
+export interface RoutingMetrics {
+  totalRoutings: number;
+  modelUsage: Record<string, number>;
+  agentUsage: Record<string, number>;
+  averageComplexity: { simple: number; medium: number; complex: number };
+  averageResponseTime?: number;
+  cacheHits: number;
+  cacheMisses: number;
+}
+
+/**
  * Service for intelligent model routing based on task analysis
  */
 export class ModelRouterService {
   private logger: Logger;
   private agentCache: Map<string, Agent>;
+  private metrics: RoutingMetrics;
+  private cacheMaxSize: number;
+  private cacheAccessOrder: string[]; // For LRU eviction
 
-  constructor() {
+  constructor(cacheMaxSize: number = 50) {
     this.logger = new Logger("ModelRouterService");
     this.agentCache = new Map<string, Agent>();
+    this.cacheMaxSize = cacheMaxSize;
+    this.cacheAccessOrder = [];
+    this.metrics = {
+      totalRoutings: 0,
+      modelUsage: {},
+      agentUsage: {},
+      averageComplexity: { simple: 0, medium: 0, complex: 0 },
+      cacheHits: 0,
+      cacheMisses: 0,
+    };
   }
 
   /**
@@ -251,7 +277,7 @@ export class ModelRouterService {
 
   /**
    * Get or create an agent with the specified model
-   * Caches agents to avoid recreation overhead
+   * Caches agents to avoid recreation overhead (LRU eviction)
    * @param agentType - Agent type (key from AGENTS or agent name)
    * @param model - Model to use for the agent
    * @returns Agent instance with the specified model
@@ -259,11 +285,20 @@ export class ModelRouterService {
   getAgentWithModel(agentType: string, model: MODELS): Agent {
     const cacheKey = `${agentType}:${model}`;
 
-    // Check cache first
+    // Check cache first (LRU: move to end of access order)
     if (this.agentCache.has(cacheKey)) {
       this.logger.debug("Retrieved agent from cache", { cacheKey });
+      // Update access order for LRU
+      const index = this.cacheAccessOrder.indexOf(cacheKey);
+      if (index > -1) {
+        this.cacheAccessOrder.splice(index, 1);
+      }
+      this.cacheAccessOrder.push(cacheKey);
+      this.metrics.cacheHits++;
       return this.agentCache.get(cacheKey)!;
     }
+
+    this.metrics.cacheMisses++;
 
     this.logger.debug("Creating new agent", { agentType, model });
 
@@ -308,11 +343,84 @@ export class ModelRouterService {
       handoffDescription: baseAgent.handoffDescription,
     });
 
-    // Cache the agent
+    // Evict least recently used if cache is full
+    if (this.agentCache.size >= this.cacheMaxSize) {
+      const lruKey = this.cacheAccessOrder.shift();
+      if (lruKey) {
+        this.agentCache.delete(lruKey);
+        this.logger.debug("Evicted LRU agent from cache", { lruKey });
+      }
+    }
+
+    // Cache the agent (add to end of access order)
     this.agentCache.set(cacheKey, agent);
-    this.logger.debug("Cached new agent", { cacheKey });
+    this.cacheAccessOrder.push(cacheKey);
+    this.logger.debug("Cached new agent", { cacheKey, cacheSize: this.agentCache.size });
 
     return agent;
+  }
+
+  /**
+   * Record routing metrics
+   * @param analysis - Task analysis
+   * @param selection - Model selection
+   * @param agentType - Agent type used
+   * @param responseTimeMs - Optional response time in milliseconds
+   */
+  recordRouting(analysis: TaskAnalysis, selection: ModelSelection, agentType: string, responseTimeMs?: number): void {
+    this.metrics.totalRoutings++;
+
+    // Track model usage
+    this.metrics.modelUsage[selection.model] = (this.metrics.modelUsage[selection.model] || 0) + 1;
+
+    // Track agent usage
+    this.metrics.agentUsage[agentType] = (this.metrics.agentUsage[agentType] || 0) + 1;
+
+    // Track complexity distribution
+    const complexityCount = this.metrics.averageComplexity[analysis.complexity];
+    this.metrics.averageComplexity[analysis.complexity] = complexityCount + 1;
+
+    // Track response time if provided
+    if (responseTimeMs !== undefined) {
+      const currentAvg = this.metrics.averageResponseTime || 0;
+      const count = this.metrics.totalRoutings;
+      this.metrics.averageResponseTime = (currentAvg * (count - 1) + responseTimeMs) / count;
+    }
+
+    this.logger.debug("Recorded routing metrics", {
+      model: selection.model,
+      agent: agentType,
+      complexity: analysis.complexity,
+      cacheHit: this.metrics.cacheHits,
+      cacheMiss: this.metrics.cacheMisses,
+    });
+  }
+
+  /**
+   * Get current routing metrics
+   * @returns Current metrics snapshot
+   */
+  getMetrics(): RoutingMetrics {
+    return {
+      ...this.metrics,
+      cacheHits: this.metrics.cacheHits,
+      cacheMisses: this.metrics.cacheMisses,
+    };
+  }
+
+  /**
+   * Reset metrics (useful for testing or periodic resets)
+   */
+  resetMetrics(): void {
+    this.metrics = {
+      totalRoutings: 0,
+      modelUsage: {},
+      agentUsage: {},
+      averageComplexity: { simple: 0, medium: 0, complex: 0 },
+      cacheHits: 0,
+      cacheMisses: 0,
+    };
+    this.logger.info("Routing metrics reset");
   }
 
   /**
@@ -320,15 +428,20 @@ export class ModelRouterService {
    */
   clearCache(): void {
     this.agentCache.clear();
+    this.cacheAccessOrder = [];
     this.logger.debug("Agent cache cleared");
   }
 
   /**
    * Get cache statistics
    */
-  getCacheStats(): { size: number; keys: string[] } {
+  getCacheStats(): { size: number; maxSize: number; hitRate: number; keys: string[] } {
+    const totalAccesses = this.metrics.cacheHits + this.metrics.cacheMisses;
+    const hitRate = totalAccesses > 0 ? this.metrics.cacheHits / totalAccesses : 0;
     return {
       size: this.agentCache.size,
+      maxSize: this.cacheMaxSize,
+      hitRate: Math.round(hitRate * 100) / 100,
       keys: Array.from(this.agentCache.keys()),
     };
   }

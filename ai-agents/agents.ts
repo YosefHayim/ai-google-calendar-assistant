@@ -1,10 +1,8 @@
-import { Agent } from "@openai/agents";
-import { CURRENT_MODEL } from "@/types";
 import { AGENT_HANDOFFS } from "./agentHandoffsDescription";
 import { AGENT_INSTRUCTIONS } from "./agentInstructions";
 import { AGENT_TOOLS } from "./agentTools";
-
-
+import { Agent } from "@openai/agents";
+import { CURRENT_MODEL } from "@/types";
 
 export const AGENTS = {
   generateUserCbGoogleUrl: new Agent({
@@ -152,5 +150,7 @@ export const ORCHESTRATOR_AGENT = new Agent({
     AGENT_TOOLS.get_upcoming_predictions,
     AGENT_TOOLS.suggest_optimal_time,
     AGENT_TOOLS.get_routine_insights,
+    AGENT_TOOLS.set_user_goal,
+    AGENT_TOOLS.get_goal_progress,
   ],
 });

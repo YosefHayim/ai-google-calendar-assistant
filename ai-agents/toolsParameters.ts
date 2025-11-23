@@ -139,4 +139,22 @@ export const PARAMETERS_TOOLS = {
       email: emailSchema,
     })
     .describe("Get insights about user's routines and schedule patterns."),
+
+  set_user_goal: z
+    .object({
+      email: emailSchema,
+      goalType: requiredString("The type of goal (e.g., 'gym', 'meetings', 'workouts')"),
+      target: z.coerce.number().int().min(1).describe("Target number to achieve"),
+      current: z.coerce.number().int().min(0).optional().describe("Current progress (defaults to 0)"),
+      deadline: z.coerce.string().optional().describe("Deadline in ISO format (optional)"),
+      description: z.coerce.string().optional().describe("Goal description (optional)"),
+    })
+    .describe("Set or update a user goal for tracking progress."),
+
+  get_goal_progress: z
+    .object({
+      email: emailSchema,
+      goalType: z.coerce.string().optional().describe("Filter by specific goal type (optional)"),
+    })
+    .describe("Get progress toward user goals."),
 };

@@ -180,7 +180,10 @@ export const EXECUTION_TOOLS = {
       throw new Error("User not found.");
     }
     const routineService = new RoutineLearningService(SUPABASE);
-    const routines = await routineService.getUserRoutine(tokenData.user_id, params.routineType as "daily" | "weekly" | "monthly" | "event_pattern" | "time_slot" | undefined);
+    const routines = await routineService.getUserRoutine(
+      tokenData.user_id,
+      params.routineType as "daily" | "weekly" | "monthly" | "event_pattern" | "time_slot" | undefined
+    );
     return { routines, count: routines.length };
   }),
 
@@ -241,5 +244,46 @@ export const EXECUTION_TOOLS = {
       })),
     };
     return insights;
+  }),
+
+  set_user_goal: asyncHandler(async (params: { email: string; goalType: string; target: number; current?: number; deadline?: string; description?: string }) => {
+    if (!(params.email && isEmail(params.email))) {
+      throw new Error("Invalid email address.");
+    }
+    if (!params.goalType || params.goalType.trim().length === 0) {
+      throw new Error("Goal type is required.");
+    }
+    if (!params.target || params.target < 1) {
+      throw new Error("Target must be at least 1.");
+    }
+    const { data: tokenData } = await SUPABASE.from("user_calendar_tokens").select("user_id").eq("email", params.email).maybeSingle();
+    if (!tokenData?.user_id) {
+      throw new Error("User not found.");
+    }
+    const routineService = new RoutineLearningService(SUPABASE);
+    const goal = await routineService.setUserGoal(tokenData.user_id, {
+      type: params.goalType.trim(),
+      target: params.target,
+      current: params.current,
+      deadline: params.deadline,
+      description: params.description,
+    });
+    if (!goal) {
+      throw new Error("Failed to set goal.");
+    }
+    return { success: true, goal: { type: params.goalType, target: params.target, current: params.current || 0 } };
+  }),
+
+  get_goal_progress: asyncHandler(async (params: { email: string; goalType?: string }) => {
+    if (!(params.email && isEmail(params.email))) {
+      throw new Error("Invalid email address.");
+    }
+    const { data: tokenData } = await SUPABASE.from("user_calendar_tokens").select("user_id").eq("email", params.email).maybeSingle();
+    if (!tokenData?.user_id) {
+      throw new Error("User not found.");
+    }
+    const routineService = new RoutineLearningService(SUPABASE);
+    const goals = await routineService.getGoalProgress(tokenData.user_id, params.goalType);
+    return { goals, count: goals.length };
   }),
 };

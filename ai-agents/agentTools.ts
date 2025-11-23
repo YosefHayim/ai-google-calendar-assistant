@@ -148,4 +148,22 @@ export const AGENT_TOOLS = {
       return `get_routine_insights: ${error}`;
     },
   }),
+  set_user_goal: tool({
+    name: "set_user_goal",
+    description: TOOLS_DESCRIPTION.set_user_goal,
+    parameters: PARAMETERS_TOOLS.set_user_goal,
+    execute: EXECUTION_TOOLS.set_user_goal,
+    errorFunction: (_, error) => {
+      return `set_user_goal: ${error}`;
+    },
+  }),
+  get_goal_progress: tool({
+    name: "get_goal_progress",
+    description: TOOLS_DESCRIPTION.get_goal_progress,
+    parameters: PARAMETERS_TOOLS.get_goal_progress,
+    execute: EXECUTION_TOOLS.get_goal_progress,
+    errorFunction: (_, error) => {
+      return `get_goal_progress: ${error}`;
+    },
+  }),
 };
