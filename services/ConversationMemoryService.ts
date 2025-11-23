@@ -342,7 +342,7 @@ export class ConversationMemoryService {
             last_message_id: null,
           },
           {
-            onConflict: "chat_id",
+            onConflict: "user_id,chat_id",
           }
         )
         .select("message_count, last_summarized_at, last_message_id")
@@ -379,7 +379,7 @@ export class ConversationMemoryService {
             updated_at: new Date().toISOString(),
           },
           {
-            onConflict: "chat_id",
+            onConflict: "user_id,chat_id",
           }
         );
 
