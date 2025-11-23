@@ -6,6 +6,9 @@ import { describe, it, expect, beforeEach, jest } from "@jest/globals";
 import { ScheduleStatisticsService } from "@/services/ScheduleStatisticsService";
 import { createMockSupabaseClient } from "@/__mocks__/supabase";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { fetchCredentialsByEmail } from "@/utils/getUserCalendarTokens";
+import { initCalendarWithUserTokensAndUpdateTokens } from "@/utils/initCalendarWithUserTokens";
+import { GoogleCalendarEventRepository } from "@/infrastructure/repositories/GoogleCalendarEventRepository";
 
 // Mock dependencies
 jest.mock("@/utils/getUserCalendarTokens");
@@ -34,28 +37,50 @@ describe("ScheduleStatisticsService", () => {
       const startDate = new Date("2025-01-01");
       const endDate = new Date("2025-01-31");
 
-      // Mock the fetchEvents method to return sample events
-      const mockEvents = [
-        {
-          summary: "Meeting 1",
-          start: { dateTime: "2025-01-15T10:00:00Z" },
-          end: { dateTime: "2025-01-15T11:00:00Z" },
-        },
-        {
-          summary: "Meeting 2",
-          start: { dateTime: "2025-01-16T14:00:00Z" },
-          end: { dateTime: "2025-01-16T15:00:00Z" },
-        },
-      ];
+      // Mock fetchCredentialsByEmail
+      (fetchCredentialsByEmail as jest.Mock).mockResolvedValue({
+        email: "test@example.com",
+        access_token: "mock-access-token",
+        refresh_token: "mock-refresh-token",
+        expiry_date: new Date(Date.now() + 3600000).toISOString(),
+      });
 
-      // Since fetchEvents is private, we'll test through public methods
-      // For now, just verify the method exists and can be called
-      try {
-        await service.getStatistics(userId, email, startDate, endDate);
-      } catch (error) {
-        // Expected to fail without proper mocks, but structure should be correct
-        expect(error).toBeDefined();
-      }
+      // Mock initCalendarWithUserTokensAndUpdateTokens
+      (initCalendarWithUserTokensAndUpdateTokens as jest.Mock).mockResolvedValue({});
+
+      // Mock GoogleCalendarEventRepository to return Event domain objects
+      const mockRepository = {
+        findByDateRange: jest.fn().mockResolvedValue([
+          {
+            id: "event-1",
+            summary: "Meeting 1",
+            start: { dateTime: "2025-01-15T10:00:00Z" },
+            end: { dateTime: "2025-01-15T11:00:00Z" },
+            description: null,
+            location: null,
+            recurrence: null,
+            status: "confirmed" as const,
+          },
+          {
+            id: "event-2",
+            summary: "Meeting 2",
+            start: { dateTime: "2025-01-16T14:00:00Z" },
+            end: { dateTime: "2025-01-16T15:00:00Z" },
+            description: null,
+            location: null,
+            recurrence: null,
+            status: "confirmed" as const,
+          },
+        ]),
+      };
+      (GoogleCalendarEventRepository as jest.Mock).mockImplementation(() => mockRepository);
+
+      const result = await service.getStatistics(userId, email, startDate, endDate);
+
+      expect(result).toBeDefined();
+      expect(result.totalEvents).toBe(2);
+      expect(result.totalHours).toBeGreaterThan(0);
+      expect(mockRepository.findByDateRange).toHaveBeenCalled();
     });
   });
 

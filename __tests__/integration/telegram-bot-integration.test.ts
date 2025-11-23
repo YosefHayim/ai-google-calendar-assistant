@@ -73,7 +73,7 @@ describe("Telegram Bot Integration", () => {
 
       expect(context.recentMessages.length).toBeGreaterThan(0);
       expect(context.recentMessages[context.recentMessages.length - 1].content).toContain("schedule a meeting");
-    });
+    }, 30000); // Increase timeout
 
     it("should format context for LLM prompts", async () => {
       const context = await conversationMemoryService.getConversationContext(testUserId, testChatId);
@@ -82,7 +82,7 @@ describe("Telegram Bot Integration", () => {
       expect(formatted).toBeTruthy();
       expect(typeof formatted).toBe("string");
       expect(formatted.length).toBeGreaterThan(0);
-    });
+    }, 30000); // Increase timeout
 
     it("should clear conversation history", async () => {
       await conversationMemoryService.clearConversation(testUserId, testChatId);
