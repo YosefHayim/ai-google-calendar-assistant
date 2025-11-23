@@ -89,9 +89,7 @@ export class VectorSearchService {
 
       const embedding = data.data[0].embedding as number[];
       if (embedding.length !== this.embeddingDimension) {
-        this.logger.warn(
-          `Embedding dimension mismatch: expected ${this.embeddingDimension}, got ${embedding.length}`
-        );
+        this.logger.warn(`Embedding dimension mismatch: expected ${this.embeddingDimension}, got ${embedding.length}`);
       }
 
       return embedding;
@@ -106,9 +104,8 @@ export class VectorSearchService {
    */
   async storeConversationEmbedding(embedding: ConversationEmbedding): Promise<number> {
     try {
-      // pgvector expects the embedding as a string in format: "[0.1,0.2,0.3,...]"
-      const embeddingString = `[${embedding.embedding.join(",")}]`;
-
+      // pgvector expects the embedding as an array of numbers
+      // Supabase client automatically converts arrays to vector format
       const { data, error } = await this.client
         .from("conversation_embeddings")
         .insert({
@@ -116,7 +113,7 @@ export class VectorSearchService {
           chat_id: embedding.chat_id ?? null,
           message_id: embedding.message_id ?? null,
           content: embedding.content,
-          embedding: embeddingString,
+          embedding: embedding.embedding, // Pass array directly
           metadata: embedding.metadata ?? {},
         })
         .select("id")
@@ -139,8 +136,6 @@ export class VectorSearchService {
    */
   async storeEventEmbedding(embedding: EventEmbedding): Promise<number> {
     try {
-      const embeddingString = `[${embedding.embedding.join(",")}]`;
-
       const { data, error } = await this.client
         .from("event_embeddings")
         .insert({
@@ -148,7 +143,7 @@ export class VectorSearchService {
           event_id: embedding.event_id ?? null,
           calendar_id: embedding.calendar_id ?? null,
           content: embedding.content,
-          embedding: embeddingString,
+          embedding: embedding.embedding, // Pass array directly
           metadata: embedding.metadata ?? {},
         })
         .select("id")
@@ -171,15 +166,13 @@ export class VectorSearchService {
    */
   async storeUserPreferenceEmbedding(embedding: UserPreferenceEmbedding): Promise<number> {
     try {
-      const embeddingString = `[${embedding.embedding.join(",")}]`;
-
       const { data, error } = await this.client
         .from("user_preference_embeddings")
         .insert({
           user_id: embedding.user_id,
           preference_type: embedding.preference_type,
           content: embedding.content,
-          embedding: embeddingString,
+          embedding: embedding.embedding, // Pass array directly
           metadata: embedding.metadata ?? {},
         })
         .select("id")
@@ -202,11 +195,10 @@ export class VectorSearchService {
    */
   async searchSimilarConversations(user_id: string, queryEmbedding: number[], limit = 5, threshold = 0.7): Promise<VectorSearchResult[]> {
     try {
-      const embeddingString = `[${queryEmbedding.join(",")}]`;
-
       // Use pgvector's cosine distance function
+      // Pass embedding as array - Supabase client handles conversion
       const { data, error } = await this.client.rpc("match_conversation_embeddings", {
-        query_embedding: embeddingString,
+        query_embedding: queryEmbedding, // Pass array directly
         match_user_id: user_id,
         match_threshold: threshold,
         match_count: limit,
@@ -261,10 +253,8 @@ export class VectorSearchService {
    */
   async searchSimilarEvents(user_id: string, queryEmbedding: number[], limit = 5, threshold = 0.7): Promise<VectorSearchResult[]> {
     try {
-      const embeddingString = `[${queryEmbedding.join(",")}]`;
-
       const { data, error } = await this.client.rpc("match_event_embeddings", {
-        query_embedding: embeddingString,
+        query_embedding: queryEmbedding, // Pass array directly
         match_user_id: user_id,
         match_threshold: threshold,
         match_count: limit,
@@ -315,8 +305,8 @@ export class VectorSearchService {
    */
   async searchUserPreferences(user_id: string, queryEmbedding: number[], preference_type?: string, limit = 5, threshold = 0.7): Promise<VectorSearchResult[]> {
     try {
-      const embeddingString = `[${queryEmbedding.join(",")}]`;
-
+      // For now, use simple query since RPC function may not be available
+      // TODO: Implement RPC function for user preferences if needed
       let query = this.client.from("user_preference_embeddings").select("id, content, metadata").eq("user_id", user_id);
 
       if (preference_type) {

@@ -2,6 +2,7 @@
 -- These functions use pgvector's cosine distance operator for efficient similarity search
 
 -- Function to search conversation embeddings
+-- Note: In Supabase, vector type is accessed via extensions.vector or just vector
 CREATE OR REPLACE FUNCTION match_conversation_embeddings(
   query_embedding vector(1536),
   match_user_id UUID,

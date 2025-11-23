@@ -1,7 +1,7 @@
-import type { MiddlewareFn } from "grammy";
-import isEmail from "validator/lib/isEmail";
-import { SUPABASE } from "@/config/root-config";
 import type { GlobalContext } from "../init-bot";
+import type { MiddlewareFn } from "grammy";
+import { SUPABASE } from "@/config/root-config";
+import isEmail from "validator/lib/isEmail";
 
 export const authTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
   const from = ctx.from;
@@ -44,10 +44,10 @@ export const authTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
 
     // Save email
     session.email = text;
-    
+
     // Ensure user exists in users table
     const { data: existingUser } = await SUPABASE.from("users").select("user_id").eq("email", text).single();
-    
+
     let userId: string | null = null;
     if (existingUser?.user_id) {
       userId = existingUser.user_id;
@@ -65,14 +65,14 @@ export const authTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
         })
         .select("user_id")
         .single();
-      
+
       if (userError) {
         console.error("Error creating user:", userError);
       } else if (newUser?.user_id) {
         userId = newUser.user_id;
       }
     }
-    
+
     // Save telegram link with user_id
     await SUPABASE.from("user_telegram_links").upsert({
       chat_id: from.id,

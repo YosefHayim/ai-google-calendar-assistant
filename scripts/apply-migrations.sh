@@ -83,6 +83,9 @@ apply_migration "$MIGRATIONS_DIR/20250119000002_redesign_user_calendar_tokens.sq
 apply_migration "$MIGRATIONS_DIR/20250119000003_redesign_calendar_categories.sql"
 apply_migration "$MIGRATIONS_DIR/20250119000004_redesign_user_telegram_links.sql"
 apply_migration "$MIGRATIONS_DIR/20250119000005_implement_rls_policies.sql"
+apply_migration "$MIGRATIONS_DIR/20250123000001_enable_pgvector.sql"
+apply_migration "$MIGRATIONS_DIR/20250123000002_create_conversation_memory.sql"
+apply_migration "$MIGRATIONS_DIR/20250123000003_create_vector_search_functions.sql"
 
 echo -e "${GREEN}=== All migrations applied successfully! ===${NC}"
 echo ""
