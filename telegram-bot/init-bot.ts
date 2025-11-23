@@ -165,6 +165,44 @@ bot.on("message", async (ctx) => {
       }
     }
 
+    // Check for predicted events to proactively mention
+    let predictedEventsContext = "";
+    if (userId) {
+      try {
+        const { RoutineLearningService } = await import("@/services/RoutineLearningService");
+        const { SUPABASE } = await import("@/infrastructure/supabase/client");
+        const routineService = new RoutineLearningService(SUPABASE);
+        
+        // Get predictions for next 7 days
+        const predictions = await routineService.predictUpcomingEvents(userId, 7);
+        
+        // Filter high-confidence predictions for next 2 days
+        const relevantPredictions = predictions
+          .filter((p) => {
+            const predictedTime = new Date(p.predicted_start);
+            const daysUntil = (predictedTime.getTime() - Date.now()) / (1000 * 60 * 60 * 24);
+            return p.confidence >= 0.7 && daysUntil >= 0 && daysUntil <= 2;
+          })
+          .slice(0, 3); // Limit to 3 most relevant
+        
+        if (relevantPredictions.length > 0) {
+          const predictionsText = relevantPredictions
+            .map((p) => {
+              const date = new Date(p.predicted_start);
+              const dateStr = date.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+              const timeStr = date.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+              return `- ${p.summary} (predicted for ${dateStr} at ${timeStr}, ${Math.round(p.confidence * 100)}% confidence)`;
+            })
+            .join("\n");
+          
+          predictedEventsContext = `\n\n**Proactive Reminders - Predicted Upcoming Events:**\nBased on your routine patterns, I've detected these likely upcoming events:\n${predictionsText}\n\nYou can proactively mention these to the user if relevant to the conversation. Ask them to confirm if these predictions are accurate.`;
+        }
+      } catch (error) {
+        console.error("Failed to get predicted events (non-critical):", error);
+        // Continue without predictions
+      }
+    }
+
     // Show typing indicator
     await ctx.api.sendChatAction(ctx.chat.id, "typing");
 
@@ -179,7 +217,7 @@ bot.on("message", async (ctx) => {
       ORCHESTRATOR_AGENT,
       `Current date and time is ${new Date().toISOString()}. User ${
         ctx.session.email || "unknown"
-      } requesting for help with: ${userMsgText}${agentNameContext}`,
+      } requesting for help with: ${userMsgText}${agentNameContext}${predictedEventsContext}`,
       {
         conversationContext: conversationContext || undefined,
         vectorSearchResults: vectorSearchResults || undefined,
