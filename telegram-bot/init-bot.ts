@@ -177,7 +177,9 @@ bot.on("message", async (ctx) => {
     // Activate agent with context
     const { finalOutput } = await activateAgent(
       ORCHESTRATOR_AGENT,
-      `Current date and time is ${new Date().toISOString()}. User ${ctx.session.email || "unknown"} requesting for help with: ${userMsgText}${agentNameContext}`,
+      `Current date and time is ${new Date().toISOString()}. User ${
+        ctx.session.email || "unknown"
+      } requesting for help with: ${userMsgText}${agentNameContext}`,
       {
         conversationContext: conversationContext || undefined,
         vectorSearchResults: vectorSearchResults || undefined,
