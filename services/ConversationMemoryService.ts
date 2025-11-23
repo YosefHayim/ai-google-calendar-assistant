@@ -230,34 +230,58 @@ export class ConversationMemoryService {
 
   /**
    * Generate summary text from messages using LLM
-   * TODO: Implement actual LLM call
    */
   private async generateSummary(messages: Array<{ role: string; content: string }>): Promise<string> {
-    // This is a placeholder - in production, you would call an LLM API
-    // For now, return a simple concatenation
-    const conversationText = messages.map((msg) => `${msg.role}: ${msg.content}`).join("\n");
+    try {
+      const apiKey = process.env.OPEN_API_KEY || process.env.OPENAI_API_KEY;
+      if (!apiKey) {
+        this.logger.warn("OpenAI API key not found, using placeholder summary");
+        const conversationText = messages.map((msg) => `${msg.role}: ${msg.content}`).join("\n");
+        return `Previous conversation: ${conversationText.substring(0, 200)}...`;
+      }
 
-    // TODO: Call LLM API to generate actual summary
-    // Example:
-    // const response = await fetch('https://api.openai.com/v1/chat/completions', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify({
-    //     model: 'gpt-4',
-    //     messages: [
-    //       { role: 'system', content: 'Summarize this conversation, preserving key information, user intent, and preferences.' },
-    //       { role: 'user', content: conversationText },
-    //     ],
-    //   }),
-    // });
-    // const data = await response.json();
-    // return data.choices[0].message.content;
+      const conversationText = messages.map((msg) => `${msg.role}: ${msg.content}`).join("\n");
 
-    // Placeholder summary
-    return `Previous conversation: ${conversationText.substring(0, 200)}...`;
+      const response = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "gpt-4o-mini", // Using mini for cost efficiency
+          messages: [
+            {
+              role: "system",
+              content:
+                "Summarize this conversation concisely, preserving key information, user intent, preferences, and important context. Keep it brief but informative.",
+            },
+            { role: "user", content: conversationText },
+          ],
+          temperature: 0.3, // Lower temperature for more consistent summaries
+          max_tokens: 200, // Limit summary length
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: "Unknown error" }));
+        this.logger.error(`OpenAI API error: ${response.status} - ${JSON.stringify(errorData)}`);
+        // Fallback to simple summary
+        return `Previous conversation: ${conversationText.substring(0, 200)}...`;
+      }
+
+      const data = await response.json();
+      if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+        throw new Error("Invalid response from OpenAI API");
+      }
+
+      return data.choices[0].message.content as string;
+    } catch (error) {
+      this.logger.error("Failed to generate summary, using fallback", error);
+      // Fallback to simple concatenation
+      const conversationText = messages.map((msg) => `${msg.role}: ${msg.content}`).join("\n");
+      return `Previous conversation: ${conversationText.substring(0, 200)}...`;
+    }
   }
 
   /**

@@ -74,5 +74,55 @@ Example return:
   { "calendarName": "Side Projects", "calendarId": "sideproj...@group.calendar.google.com" }
 ]`,
 
-  getUserDefaultTimeZone: `Retrieves the user's default timezone from Google Calendar settings. Requires "email". Returns the provider settings response including the timezone value (e.g., { "kind": "calendar#setting", "etag": "...", "id": "timezone", "value": "Asia/Jerusalem" }).`,
+  getUserDefaultTimeZone: `Retrieves the user's default timezone from Google Calendar settings. Requires "email". Returns the provider settings response including the timezone value (e.g., { "kind": "calendar#setting", "etag": "...", "id": "timezone", "value": "Asia/Jerusalem" }).
+
+Example input:
+{ "email": "user@example.com" }
+
+Example output:
+{ "kind": "calendar#setting", "etag": "\\"1234567890\\"", "id": "timezone", "value": "Asia/Jerusalem" }`,
+
+  // Vector Search Tools (for future use)
+  searchSimilarConversations: `Searches for similar past conversations using semantic similarity. Requires "user_id" and "query_embedding" (array of 1536 numbers). Optional: "limit" (default 5), "threshold" (default 0.7). Returns array of similar conversations with similarity scores.
+
+Example input:
+{ "user_id": "123e4567-e89b-12d3-a456-426614174000", "query_embedding": [0.1, 0.2, ...], "limit": 3, "threshold": 0.6 }
+
+Example output:
+[
+  { "id": 1, "content": "User: Schedule meeting...", "similarity": 0.85, "metadata": {...} },
+  { "id": 2, "content": "User: Add event...", "similarity": 0.72, "metadata": {...} }
+]`,
+
+  // Conversation Memory Tools (for future use)
+  getConversationContext: `Retrieves conversation context including recent messages and summaries. Requires "user_id" and "chat_id". Returns formatted context ready for LLM prompts.
+
+Example input:
+{ "user_id": "123e4567-e89b-12d3-a456-426614174000", "chat_id": 12345 }
+
+Example output:
+{
+  "recentMessages": [
+    { "role": "user", "content": "Schedule a meeting", "metadata": {...} },
+    { "role": "assistant", "content": "I'll help you...", "metadata": {...} }
+  ],
+  "summaries": [
+    { "summary_text": "Previous conversation about...", "message_count": 3, ... }
+  ],
+  "totalMessageCount": 5
+}`,
+
+  storeConversationMessage: `Stores a conversation message in memory. Requires "user_id", "chat_id", "message_id", "role" ("user" | "assistant" | "system"), and "content". Optional: "metadata". Automatically triggers summarization every 3 messages.
+
+Example input:
+{
+  "user_id": "123e4567-e89b-12d3-a456-426614174000",
+  "chat_id": 12345,
+  "message_id": 1,
+  "role": "user",
+  "content": "Schedule a meeting tomorrow at 2pm",
+  "metadata": { "timestamp": "2025-01-23T12:00:00Z" }
+}
+
+Example output: void (message stored successfully)`,
 } as const;

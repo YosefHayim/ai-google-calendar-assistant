@@ -60,26 +60,41 @@ export class VectorSearchService {
    */
   async generateEmbedding(text: string): Promise<number[]> {
     try {
-      // In a real implementation, you would call OpenAI's embedding API
-      // For now, this is a placeholder that should be implemented with actual API call
-      this.logger.warn("generateEmbedding not fully implemented - requires OpenAI API integration");
+      const apiKey = process.env.OPEN_API_KEY || process.env.OPENAI_API_KEY;
+      if (!apiKey) {
+        throw new Error("OpenAI API key not found. Set OPEN_API_KEY or OPENAI_API_KEY environment variable.");
+      }
 
-      // TODO: Implement actual OpenAI embedding API call
-      // const response = await fetch('https://api.openai.com/v1/embeddings', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify({
-      //     model: 'text-embedding-3-small',
-      //     input: text,
-      //   }),
-      // });
-      // const data = await response.json();
-      // return data.data[0].embedding;
+      const response = await fetch("https://api.openai.com/v1/embeddings", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "text-embedding-3-small",
+          input: text,
+        }),
+      });
 
-      throw new Error("Embedding generation not implemented - requires OpenAI API key");
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: "Unknown error" }));
+        throw new Error(`OpenAI API error: ${response.status} - ${JSON.stringify(errorData)}`);
+      }
+
+      const data = await response.json();
+      if (!data.data || !data.data[0] || !data.data[0].embedding) {
+        throw new Error("Invalid response from OpenAI API");
+      }
+
+      const embedding = data.data[0].embedding as number[];
+      if (embedding.length !== this.embeddingDimension) {
+        this.logger.warn(
+          `Embedding dimension mismatch: expected ${this.embeddingDimension}, got ${embedding.length}`
+        );
+      }
+
+      return embedding;
     } catch (error) {
       this.logger.error("Failed to generate embedding", error);
       throw error;
@@ -91,6 +106,9 @@ export class VectorSearchService {
    */
   async storeConversationEmbedding(embedding: ConversationEmbedding): Promise<number> {
     try {
+      // pgvector expects the embedding as a string in format: "[0.1,0.2,0.3,...]"
+      const embeddingString = `[${embedding.embedding.join(",")}]`;
+
       const { data, error } = await this.client
         .from("conversation_embeddings")
         .insert({
@@ -98,7 +116,7 @@ export class VectorSearchService {
           chat_id: embedding.chat_id ?? null,
           message_id: embedding.message_id ?? null,
           content: embedding.content,
-          embedding: `[${embedding.embedding.join(",")}]`, // Convert array to PostgreSQL vector format
+          embedding: embeddingString,
           metadata: embedding.metadata ?? {},
         })
         .select("id")
@@ -121,6 +139,8 @@ export class VectorSearchService {
    */
   async storeEventEmbedding(embedding: EventEmbedding): Promise<number> {
     try {
+      const embeddingString = `[${embedding.embedding.join(",")}]`;
+
       const { data, error } = await this.client
         .from("event_embeddings")
         .insert({
@@ -128,7 +148,7 @@ export class VectorSearchService {
           event_id: embedding.event_id ?? null,
           calendar_id: embedding.calendar_id ?? null,
           content: embedding.content,
-          embedding: `[${embedding.embedding.join(",")}]`,
+          embedding: embeddingString,
           metadata: embedding.metadata ?? {},
         })
         .select("id")
@@ -151,13 +171,15 @@ export class VectorSearchService {
    */
   async storeUserPreferenceEmbedding(embedding: UserPreferenceEmbedding): Promise<number> {
     try {
+      const embeddingString = `[${embedding.embedding.join(",")}]`;
+
       const { data, error } = await this.client
         .from("user_preference_embeddings")
         .insert({
           user_id: embedding.user_id,
           preference_type: embedding.preference_type,
           content: embedding.content,
-          embedding: `[${embedding.embedding.join(",")}]`,
+          embedding: embeddingString,
           metadata: embedding.metadata ?? {},
         })
         .select("id")
