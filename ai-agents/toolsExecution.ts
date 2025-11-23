@@ -216,7 +216,8 @@ export const EXECUTION_TOOLS = {
       throw new Error("User not found.");
     }
     const routineService = new RoutineLearningService(SUPABASE);
-    const suggestion = await routineService.suggestOptimalTime(tokenData.user_id, params.eventDuration, params.preferredTime);
+    const preferredTime = params.preferredTime ?? undefined;
+    const suggestion = await routineService.suggestOptimalTime(tokenData.user_id, params.eventDuration, preferredTime);
     if (!suggestion) {
       return { message: "No optimal time suggestions available at this time." };
     }
@@ -268,9 +269,9 @@ export const EXECUTION_TOOLS = {
     const goal = await routineService.setUserGoal(tokenData.user_id, {
       type: params.goalType.trim(),
       target: params.target,
-      current: params.current,
-      deadline: params.deadline,
-      description: params.description,
+      current: params.current ?? undefined,
+      deadline: params.deadline ?? undefined,
+      description: params.description ?? undefined,
     });
     if (!goal) {
       throw new Error("Failed to set goal.");
@@ -287,7 +288,8 @@ export const EXECUTION_TOOLS = {
       throw new Error("User not found.");
     }
     const routineService = new RoutineLearningService(SUPABASE);
-    const goals = await routineService.getGoalProgress(tokenData.user_id, params.goalType);
+    const goalType = params.goalType ?? undefined;
+    const goals = await routineService.getGoalProgress(tokenData.user_id, goalType);
     return { goals, count: goals.length };
   }),
 
