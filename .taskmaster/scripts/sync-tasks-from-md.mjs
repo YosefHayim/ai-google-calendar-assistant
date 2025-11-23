@@ -147,25 +147,25 @@ function main() {
         // Update existing task - always update from markdown as source of truth
         const existing = existingTasksMap.get(taskId);
         let taskUpdated = false;
-        
+
         // Update details if markdown has content
         if (parsedTask.details && parsedTask.details.trim()) {
           existing.details = parsedTask.details;
           taskUpdated = true;
         }
-        
+
         // Update test strategy if markdown has content
         if (parsedTask.testStrategy && parsedTask.testStrategy.trim()) {
           existing.testStrategy = parsedTask.testStrategy;
           taskUpdated = true;
         }
-        
+
         // Always update priority from markdown
         if (parsedTask.priority && parsedTask.priority !== existing.priority) {
           existing.priority = parsedTask.priority;
           taskUpdated = true;
         }
-        
+
         // Always update dependencies from markdown
         const existingDeps = (existing.dependencies || []).sort();
         const newDeps = parsedTask.dependencies.sort();
@@ -173,13 +173,13 @@ function main() {
           existing.dependencies = parsedTask.dependencies;
           taskUpdated = true;
         }
-        
+
         // Update title if different (case-insensitive)
         if (parsedTask.title && parsedTask.title.toLowerCase() !== existing.title.toLowerCase()) {
           existing.title = parsedTask.title;
           taskUpdated = true;
         }
-        
+
         if (taskUpdated) updated++;
       } else {
         // Add new task
@@ -199,25 +199,25 @@ function main() {
         // Update existing task - always update from markdown as source of truth
         const existing = existingTasksMap.get(taskId);
         let taskUpdated = false;
-        
+
         // Update details if markdown has content
         if (parsedTask.details && parsedTask.details.trim()) {
           existing.details = parsedTask.details;
           taskUpdated = true;
         }
-        
+
         // Update test strategy if markdown has content
         if (parsedTask.testStrategy && parsedTask.testStrategy.trim()) {
           existing.testStrategy = parsedTask.testStrategy;
           taskUpdated = true;
         }
-        
+
         // Always update priority from markdown
         if (parsedTask.priority && parsedTask.priority !== existing.priority) {
           existing.priority = parsedTask.priority;
           taskUpdated = true;
         }
-        
+
         // Always update dependencies from markdown
         const existingDeps = (existing.dependencies || []).sort();
         const newDeps = parsedTask.dependencies.sort();
@@ -225,13 +225,13 @@ function main() {
           existing.dependencies = parsedTask.dependencies;
           taskUpdated = true;
         }
-        
+
         // Update title if different (case-insensitive)
         if (parsedTask.title && parsedTask.title.toLowerCase() !== existing.title.toLowerCase()) {
           existing.title = parsedTask.title;
           taskUpdated = true;
         }
-        
+
         if (taskUpdated) updated++;
       } else {
         // Add new task
