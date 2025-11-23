@@ -7,6 +7,7 @@
 ## 🎯 Problem Statement
 
 Modern calendar management is fragmented and time-consuming. Users struggle with:
+
 - **Manual scheduling overhead**: Creating, updating, and managing calendar events requires multiple clicks and context switching
 - **Lack of intelligence**: Traditional calendar apps don't learn from user patterns or proactively suggest optimizations
 - **Platform fragmentation**: Users are forced to switch between different apps (messaging, calendar, web) to manage their schedule
@@ -157,6 +158,7 @@ graph TB
 ## 🚀 Key Features
 
 ### 🤖 AI-Powered Natural Language Processing
+
 - **Multi-Agent Orchestration**: Sophisticated agent system with specialized agents for different tasks
 - **Intent Recognition**: Automatically infers user intent (create, update, delete, retrieve) from natural language
 - **Context Awareness**: Maintains conversation memory with vector-based semantic search for similar past interactions
@@ -165,16 +167,19 @@ graph TB
 ### 📱 Multi-Platform Integration
 
 #### WhatsApp Integration
+
 - **Webhook-based messaging**: Real-time calendar management via WhatsApp
 - **Natural language commands**: "Schedule a meeting with John tomorrow at 3pm"
 - **Event notifications**: Proactive reminders and updates
 
 #### Web UI (React/Next.js)
+
 - **Personal assistant interface**: Conversational UI for calendar management
 - **Real-time updates**: Live synchronization with Google Calendar
 - **Visual calendar view**: Traditional calendar interface with AI enhancements
 
 #### React Native Mobile App
+
 - **Native iOS/Android experience**: Full-featured mobile calendar assistant
 - **Offline support**: Cached data for offline access
 - **Push notifications**: Native reminder system
@@ -205,6 +210,7 @@ graph TB
 ## 🛠️ Tech Stack
 
 ### Backend
+
 - **Runtime**: Node.js with TypeScript
 - **Framework**: Express.js 5.x
 - **AI Framework**: OpenAI Agents SDK (`@openai/agents`, `@openai/agents-core`, `@openai/agents-realtime`)
@@ -216,18 +222,21 @@ graph TB
 - **Validation**: Zod schemas
 
 ### Frontend (Planned/In Development)
+
 - **Web**: React/Next.js with TypeScript
 - **Mobile**: React Native (iOS/Android)
 - **State Management**: TBD
 - **UI Framework**: TBD
 
 ### External Integrations
+
 - **Google Calendar API**: Full CRUD operations, OAuth 2.0
 - **OpenAI API**: GPT-4o, GPT-4o-mini, and 45+ other models
 - **WhatsApp Business API**: Webhook integration
 - **Telegram Bot API**: Grammy framework
 
 ### Development Tools
+
 - **Testing**: Jest with 900+ tests, 42 test suites
 - **Linting/Formatting**: Biome, ESLint
 - **Type Safety**: TypeScript 5.9 with strict mode
@@ -236,6 +245,7 @@ graph TB
 - **Package Manager**: npm/pnpm
 
 ### Architecture Patterns
+
 - **Domain-Driven Design (DDD)**: Clear domain layer with entities, value objects, and repositories
 - **Repository Pattern**: Abstraction layer for data access
 - **Service Layer Pattern**: Business logic encapsulation
@@ -248,6 +258,7 @@ graph TB
 ## 📊 System Capabilities
 
 ### Calendar Operations
+
 - ✅ Create events via natural language
 - ✅ Update events (time, location, attendees, description)
 - ✅ Delete single or multiple events
@@ -256,6 +267,7 @@ graph TB
 - ✅ Timezone handling with user preference detection
 
 ### AI Agent Tools
+
 - `insert_event_handoff_agent` - Create calendar events
 - `get_event_handoff_agent` - Retrieve events
 - `update_event_handoff_agent` - Update existing events
@@ -268,6 +280,7 @@ graph TB
 - `get_schedule_statistics` - Calendar analytics
 
 ### Routine Learning Capabilities
+
 - **Recurring Event Detection**: Identifies daily, weekly, monthly patterns
 - **Time Slot Analysis**: Learns user availability patterns
 - **Event Relationship Mapping**: Detects event sequences and dependencies
@@ -279,27 +292,35 @@ graph TB
 ## 🏛️ Architecture Highlights
 
 ### Domain-Driven Design
+
 The codebase follows DDD principles with clear boundaries:
+
 - **Domain Layer**: Pure business logic, no infrastructure dependencies
 - **Infrastructure Layer**: External integrations (Google Calendar, Supabase)
 - **Application Layer**: Use cases and orchestration
 - **Presentation Layer**: Controllers and routes
 
 ### Dependency Injection
+
 Using Inversify for IoC container:
+
 - Loose coupling between layers
 - Easy testing with mock implementations
 - Configuration-driven service resolution
 
 ### Repository Pattern
+
 Abstract data access through interfaces:
+
 - `IEventRepository` - Event operations
 - `ICalendarRepository` - Calendar operations
 - `IUserRepository` - User management
 - Concrete implementations for Supabase and Google Calendar
 
 ### AI Agent Architecture
+
 Multi-agent system with:
+
 - **Orchestrator Agent**: Main decision engine, routes to specialized agents
 - **Specialized Agents**: Focused on specific tasks (validation, insertion, retrieval)
 - **Handoff Agents**: Coordinate multi-step operations
@@ -341,6 +362,7 @@ Multi-agent system with:
 ## 📝 Development Workflow
 
 ### Prerequisites
+
 - Node.js 18+
 - PostgreSQL (via Supabase)
 - Google Cloud Project with Calendar API enabled
@@ -348,6 +370,7 @@ Multi-agent system with:
 - WhatsApp Business API credentials (for WhatsApp integration)
 
 ### Setup
+
 ```bash
 # Install dependencies
 npm install
@@ -364,6 +387,7 @@ npm run dev
 ```
 
 ### Testing
+
 ```bash
 # Run all tests
 npm test
@@ -380,6 +404,7 @@ npm run test:watch
 ## 🗺️ Roadmap
 
 ### Completed ✅
+
 - Core calendar CRUD operations
 - AI agent orchestration system
 - Routine learning and pattern detection
@@ -389,6 +414,7 @@ npm run test:watch
 - WhatsApp webhook infrastructure
 
 ### In Progress 🚧
+
 - WhatsApp full message processing
 - Web UI development
 - React Native app development
@@ -396,6 +422,7 @@ npm run test:watch
 - Goal tracking system
 
 ### Planned 📋
+
 - Schedule statistics dashboard
 - Conflict detection and warnings
 - Proactive reminder system
@@ -430,6 +457,7 @@ ISC
 ## 👤 Author
 
 Built with a focus on **clean architecture**, **type safety**, and **scalable design patterns**. This project demonstrates expertise in:
+
 - Domain-Driven Design
 - AI/ML integration
 - Multi-platform development
@@ -439,4 +467,3 @@ Built with a focus on **clean architecture**, **type safety**, and **scalable de
 ---
 
 **Built with ❤️ using TypeScript, Node.js, and OpenAI Agents Framework**
-
