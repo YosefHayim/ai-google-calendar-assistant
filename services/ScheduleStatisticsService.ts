@@ -1,6 +1,6 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
-import { Logger } from "./logging/Logger";
 import { GoogleCalendarEventRepository } from "@/infrastructure/repositories/GoogleCalendarEventRepository";
+import { Logger } from "./logging/Logger";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { fetchCredentialsByEmail } from "@/utils/getUserCalendarTokens";
 import { initCalendarWithUserTokensAndUpdateTokens } from "@/utils/initCalendarWithUserTokens";
 
@@ -117,6 +117,11 @@ export class ScheduleStatisticsService {
   private defaultWorkHoursStart: number = 9;
   private defaultWorkHoursEnd: number = 17;
   private defaultOvertimeThreshold: number = 40; // hours per week
+  private cacheTTL: { daily: number; weekly: number; monthly: number } = {
+    daily: 60 * 60 * 1000, // 1 hour in milliseconds
+    weekly: 6 * 60 * 60 * 1000, // 6 hours
+    monthly: 24 * 60 * 60 * 1000, // 24 hours
+  };
 
   constructor(client: SupabaseClient) {
     this.client = client;
@@ -125,26 +130,35 @@ export class ScheduleStatisticsService {
 
   /**
    * Get comprehensive statistics for a date range
+   * Uses caching when possible, falls back to real-time calculation
    */
-  async getStatistics(
-    userId: string,
-    email: string,
-    startDate: Date,
-    endDate: Date,
-    options?: StatisticsOptions
-  ): Promise<ScheduleStatistics> {
+  async getStatistics(userId: string, email: string, startDate: Date, endDate: Date, options?: StatisticsOptions): Promise<ScheduleStatistics> {
     try {
       this.logger.debug(`Getting statistics for user ${userId} from ${startDate.toISOString()} to ${endDate.toISOString()}`);
 
-      const events = await this.fetchEvents(
-        email,
-        startDate,
-        endDate,
-        options?.calendarId || "primary",
-        options?.includeCancelled || false
-      );
+      // Try to get from cache first (for common periods)
+      const periodType = this.determinePeriodType(startDate, endDate);
+      if (periodType) {
+        const cached = await this.getCachedStatistics(userId, periodType, startDate, endDate);
+        if (cached) {
+          this.logger.debug("Retrieved statistics from cache");
+          return cached;
+        }
+      }
 
-      return this.calculateStatistics(events, startDate, endDate);
+      // Calculate in real-time (with optimization for large ranges)
+      const events = await this.fetchEventsOptimized(email, startDate, endDate, options?.calendarId || "primary", options?.includeCancelled || false);
+
+      const statistics = this.calculateStatistics(events, startDate, endDate);
+
+      // Cache the result if it's a common period
+      if (periodType) {
+        await this.cacheStatistics(userId, periodType, startDate, endDate, statistics).catch((error) => {
+          this.logger.warn("Failed to cache statistics (non-critical)", error);
+        });
+      }
+
+      return statistics;
     } catch (error) {
       this.logger.error("Failed to get statistics", error);
       throw error;
@@ -154,28 +168,20 @@ export class ScheduleStatisticsService {
   /**
    * Get daily statistics for a specific date
    */
-  async getDailyStatistics(
-    userId: string,
-    email: string,
-    date: Date,
-    options?: StatisticsOptions
-  ): Promise<DailyBreakdown> {
+  async getDailyStatistics(userId: string, email: string, date: Date, options?: StatisticsOptions): Promise<DailyBreakdown> {
     try {
       const startOfDay = new Date(date);
       startOfDay.setHours(0, 0, 0, 0);
       const endOfDay = new Date(date);
       endOfDay.setHours(23, 59, 59, 999);
 
-      const events = await this.fetchEvents(
-        email,
-        startOfDay,
-        endOfDay,
-        options?.calendarId || "primary",
-        options?.includeCancelled || false
-      );
+      const events = await this.fetchEvents(email, startOfDay, endOfDay, options?.calendarId || "primary", options?.includeCancelled || false);
 
       const dateKey = date.toISOString().split("T")[0];
-      const dailyMap = new Map<string, { eventCount: number; hours: number; events: Array<{ summary: string; start: string; end: string; duration: number }> }>();
+      const dailyMap = new Map<
+        string,
+        { eventCount: number; hours: number; events: Array<{ summary: string; start: string; end: string; duration: number }> }
+      >();
 
       for (const event of events) {
         if (!event.start || !event.end) continue;
@@ -218,12 +224,7 @@ export class ScheduleStatisticsService {
   /**
    * Get weekly statistics for a week starting from weekStart
    */
-  async getWeeklyStatistics(
-    userId: string,
-    email: string,
-    weekStart: Date,
-    options?: StatisticsOptions
-  ): Promise<ScheduleStatistics> {
+  async getWeeklyStatistics(userId: string, email: string, weekStart: Date, options?: StatisticsOptions): Promise<ScheduleStatistics> {
     try {
       const start = new Date(weekStart);
       start.setHours(0, 0, 0, 0);
@@ -263,21 +264,9 @@ export class ScheduleStatisticsService {
   /**
    * Get hourly statistics for a date range
    */
-  async getHourlyStatistics(
-    userId: string,
-    email: string,
-    startDate: Date,
-    endDate: Date,
-    options?: StatisticsOptions
-  ): Promise<HourlyStatistics> {
+  async getHourlyStatistics(userId: string, email: string, startDate: Date, endDate: Date, options?: StatisticsOptions): Promise<HourlyStatistics> {
     try {
-      const events = await this.fetchEvents(
-        email,
-        startDate,
-        endDate,
-        options?.calendarId || "primary",
-        options?.includeCancelled || false
-      );
+      const events = await this.fetchEventsOptimized(email, startDate, endDate, options?.calendarId || "primary", options?.includeCancelled || false);
 
       // Initialize hourly arrays
       const hourlyEventCount = new Array(24).fill(0);
@@ -317,7 +306,7 @@ export class ScheduleStatisticsService {
           const totalHoursInEvent = Math.ceil(durationHours);
           for (let h = startHour; h <= endHour && h < 24; h++) {
             hourlyEventCount[h]++;
-            const hourDuration = h === startHour ? 1 - (start.getMinutes() / 60) : h === endHour ? end.getMinutes() / 60 : 1;
+            const hourDuration = h === startHour ? 1 - start.getMinutes() / 60 : h === endHour ? end.getMinutes() / 60 : 1;
             hourlyTotalHours[h] += hourDuration;
             hourlyDurations[h].push(hourDuration);
           }
@@ -401,21 +390,9 @@ export class ScheduleStatisticsService {
   /**
    * Get work time analysis for a date range
    */
-  async getWorkTimeAnalysis(
-    userId: string,
-    email: string,
-    startDate: Date,
-    endDate: Date,
-    options?: StatisticsOptions
-  ): Promise<WorkTimeAnalysis> {
+  async getWorkTimeAnalysis(userId: string, email: string, startDate: Date, endDate: Date, options?: StatisticsOptions): Promise<WorkTimeAnalysis> {
     try {
-      const events = await this.fetchEvents(
-        email,
-        startDate,
-        endDate,
-        options?.calendarId || "primary",
-        options?.includeCancelled || false
-      );
+      const events = await this.fetchEventsOptimized(email, startDate, endDate, options?.calendarId || "primary", options?.includeCancelled || false);
 
       const workHoursStart = options?.workHoursStart ?? this.defaultWorkHoursStart;
       const workHoursEnd = options?.workHoursEnd ?? this.defaultWorkHoursEnd;
@@ -540,21 +517,9 @@ export class ScheduleStatisticsService {
   /**
    * Get routine insights and pattern detection
    */
-  async getRoutineInsights(
-    userId: string,
-    email: string,
-    startDate: Date,
-    endDate: Date,
-    options?: StatisticsOptions
-  ): Promise<RoutineInsights> {
+  async getRoutineInsights(userId: string, email: string, startDate: Date, endDate: Date, options?: StatisticsOptions): Promise<RoutineInsights> {
     try {
-      const events = await this.fetchEvents(
-        email,
-        startDate,
-        endDate,
-        options?.calendarId || "primary",
-        options?.includeCancelled || false
-      );
+      const events = await this.fetchEventsOptimized(email, startDate, endDate, options?.calendarId || "primary", options?.includeCancelled || false);
 
       // Detect recurring patterns
       const recurringPatterns: Array<{ summary: string; frequency: string; typicalTime: string; confidence: number }> = [];
@@ -763,9 +728,7 @@ export class ScheduleStatisticsService {
       }));
 
       // Filter out cancelled events if needed
-      const filteredEvents = includeCancelled
-        ? analysisEvents
-        : analysisEvents.filter((event) => event.status !== "cancelled");
+      const filteredEvents = includeCancelled ? analysisEvents : analysisEvents.filter((event) => event.status !== "cancelled");
 
       this.logger.info(`Fetched ${filteredEvents.length} events for statistics`);
       return filteredEvents;
@@ -899,5 +862,210 @@ export class ScheduleStatisticsService {
       monthlyBreakdown,
     };
   }
-}
 
+  /**
+   * Fetch events optimized for large date ranges (batches in 30-day chunks)
+   * @private
+   */
+  private async fetchEventsOptimized(
+    email: string,
+    startDate: Date,
+    endDate: Date,
+    calendarId: string = "primary",
+    includeCancelled: boolean = false
+  ): Promise<
+    Array<{
+      summary?: string | null;
+      start?: { dateTime?: string | null; date?: string | null; timeZone?: string | null } | null;
+      end?: { dateTime?: string | null; date?: string | null; timeZone?: string | null } | null;
+      recurrence?: string[] | null;
+      description?: string | null;
+      location?: string | null;
+      status?: string | null;
+    }>
+  > {
+    const daysDiff = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+    const CHUNK_DAYS = 30;
+
+    // For small ranges, use regular fetch
+    if (daysDiff <= CHUNK_DAYS) {
+      return this.fetchEvents(email, startDate, endDate, calendarId, includeCancelled);
+    }
+
+    // For large ranges, fetch in chunks
+    this.logger.debug(`Fetching events in chunks for ${daysDiff} days`);
+    const allEvents: Array<{
+      summary?: string | null;
+      start?: { dateTime?: string | null; date?: string | null; timeZone?: string | null } | null;
+      end?: { dateTime?: string | null; date?: string | null; timeZone?: string | null } | null;
+      recurrence?: string[] | null;
+      description?: string | null;
+      location?: string | null;
+      status?: string | null;
+    }> = [];
+
+    let currentStart = new Date(startDate);
+    while (currentStart < endDate) {
+      const currentEnd = new Date(currentStart);
+      currentEnd.setDate(currentEnd.getDate() + CHUNK_DAYS);
+      if (currentEnd > endDate) {
+        currentEnd.setTime(endDate.getTime());
+      }
+
+      const chunkEvents = await this.fetchEvents(email, currentStart, currentEnd, calendarId, includeCancelled);
+      allEvents.push(...chunkEvents);
+
+      currentStart = new Date(currentEnd);
+      currentStart.setDate(currentStart.getDate() + 1); // Move to next day to avoid overlap
+    }
+
+    this.logger.info(`Fetched ${allEvents.length} events in chunks`);
+    return allEvents;
+  }
+
+  /**
+   * Determine period type for caching (daily, weekly, monthly, or null for custom ranges)
+   * @private
+   */
+  private determinePeriodType(startDate: Date, endDate: Date): "daily" | "weekly" | "monthly" | null {
+    const daysDiff = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+
+    // Daily: exactly 1 day
+    if (daysDiff === 1 && startDate.toDateString() === endDate.toDateString()) {
+      return "daily";
+    }
+
+    // Weekly: exactly 7 days, starting on Monday
+    if (daysDiff === 7) {
+      const startDay = startDate.getDay();
+      const endDay = endDate.getDay();
+      if (startDay === 1 && endDay === 0) {
+        // Monday to Sunday
+        return "weekly";
+      }
+    }
+
+    // Monthly: first day of month to last day of same month
+    if (startDate.getMonth() === endDate.getMonth() && startDate.getFullYear() === endDate.getFullYear()) {
+      const firstDay = new Date(startDate.getFullYear(), startDate.getMonth(), 1);
+      const lastDay = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 0);
+      if (startDate.getDate() === firstDay.getDate() && endDate.getDate() === lastDay.getDate()) {
+        return "monthly";
+      }
+    }
+
+    return null; // Custom range, don't cache
+  }
+
+  /**
+   * Get cached statistics from database
+   * @private
+   */
+  private async getCachedStatistics(
+    userId: string,
+    periodType: "daily" | "weekly" | "monthly",
+    startDate: Date,
+    endDate: Date
+  ): Promise<ScheduleStatistics | null> {
+    try {
+      const periodStart = startDate.toISOString().split("T")[0];
+      const periodEnd = endDate.toISOString().split("T")[0];
+
+      const { data, error } = await this.client
+        .from("user_schedule_statistics")
+        .select("statistics, calculated_at")
+        .eq("user_id", userId)
+        .eq("period_type", periodType)
+        .eq("period_start", periodStart)
+        .eq("period_end", periodEnd)
+        .maybeSingle();
+
+      if (error || !data) {
+        return null;
+      }
+
+      // Check if cache is still valid (TTL)
+      const calculatedAt = new Date(data.calculated_at);
+      const now = new Date();
+      const age = now.getTime() - calculatedAt.getTime();
+      const ttl = this.cacheTTL[periodType];
+
+      if (age > ttl) {
+        this.logger.debug("Cache expired, recalculating");
+        return null;
+      }
+
+      this.logger.debug("Cache hit");
+      return data.statistics as ScheduleStatistics;
+    } catch (error: unknown) {
+      this.logger.warn("Failed to get cached statistics (non-critical)", error);
+      return null; // Fallback to real-time calculation
+    }
+  }
+
+  /**
+   * Cache statistics in database
+   * @private
+   */
+  private async cacheStatistics(
+    userId: string,
+    periodType: "daily" | "weekly" | "monthly",
+    startDate: Date,
+    endDate: Date,
+    statistics: ScheduleStatistics
+  ): Promise<void> {
+    try {
+      const periodStart = startDate.toISOString().split("T")[0];
+      const periodEnd = endDate.toISOString().split("T")[0];
+
+      const { error } = await this.client.from("user_schedule_statistics").upsert(
+        {
+          user_id: userId,
+          period_type: periodType,
+          period_start: periodStart,
+          period_end: periodEnd,
+          statistics: statistics as unknown,
+          calculated_at: new Date().toISOString(),
+        },
+        {
+          onConflict: "user_id,period_type,period_start,period_end",
+        }
+      );
+
+      if (error) {
+        throw error;
+      }
+
+      this.logger.debug("Statistics cached successfully");
+    } catch (error: unknown) {
+      this.logger.warn("Failed to cache statistics (non-critical)", error);
+      // Don't throw - caching is optional
+    }
+  }
+
+  /**
+   * Invalidate cache for a user (call when new events are added)
+   * @public
+   */
+  async invalidateCache(userId: string, startDate?: Date, endDate?: Date): Promise<void> {
+    try {
+      let query = this.client.from("user_schedule_statistics").delete().eq("user_id", userId);
+
+      if (startDate && endDate) {
+        const periodStart = startDate.toISOString().split("T")[0];
+        const periodEnd = endDate.toISOString().split("T")[0];
+        query = query.gte("period_start", periodStart).lte("period_end", periodEnd);
+      }
+
+      const { error } = await query;
+
+      if (error) {
+        throw error;
+      }
+
+      this.logger.debug("Cache invalidated successfully");
+    } catch (error: unknown) {
+      this.logger.warn("Failed to invalidate cache (non-critical)", error);
+    }
+  }
+}
