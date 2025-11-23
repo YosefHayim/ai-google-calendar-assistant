@@ -122,7 +122,7 @@ export const PARAMETERS_TOOLS = {
   get_upcoming_predictions: z
     .object({
       email: emailSchema,
-      daysAhead: z.coerce.number().int().min(1).max(30).default(7).optional().describe("Number of days to predict ahead"),
+      daysAhead: z.coerce.number().int().min(1).max(30).default(7).nullish().describe("Number of days to predict ahead"),
     })
     .describe("Predict upcoming events based on learned patterns."),
 
@@ -130,7 +130,7 @@ export const PARAMETERS_TOOLS = {
     .object({
       email: emailSchema,
       eventDuration: z.coerce.number().int().min(15).max(480).describe("Event duration in minutes"),
-      preferredTime: z.coerce.string().optional().describe("Preferred time in ISO format (optional)"),
+      preferredTime: z.coerce.string().nullish().describe("Preferred time in ISO format (optional)"),
     })
     .describe("Suggest optimal time slots for scheduling a new event."),
 
@@ -145,24 +145,24 @@ export const PARAMETERS_TOOLS = {
       email: emailSchema,
       goalType: requiredString("The type of goal (e.g., 'gym', 'meetings', 'workouts')"),
       target: z.coerce.number().int().min(1).describe("Target number to achieve"),
-      current: z.coerce.number().int().min(0).optional().describe("Current progress (defaults to 0)"),
-      deadline: z.coerce.string().optional().describe("Deadline in ISO format (optional)"),
-      description: z.coerce.string().optional().describe("Goal description (optional)"),
+      current: z.coerce.number().int().min(0).nullish().describe("Current progress (defaults to 0)"),
+      deadline: z.coerce.string().nullish().describe("Deadline in ISO format (optional)"),
+      description: z.coerce.string().nullish().describe("Goal description (optional)"),
     })
     .describe("Set or update a user goal for tracking progress."),
 
   get_goal_progress: z
     .object({
       email: emailSchema,
-      goalType: z.coerce.string().optional().describe("Filter by specific goal type (optional)"),
+      goalType: z.coerce.string().nullish().describe("Filter by specific goal type (optional)"),
     })
     .describe("Get progress toward user goals."),
 
   get_schedule_statistics: z
     .object({
       email: emailSchema,
-      startDate: z.coerce.string().optional().describe("Start date in ISO format (defaults to 30 days ago)"),
-      endDate: z.coerce.string().optional().describe("End date in ISO format (defaults to today)"),
+      startDate: z.coerce.string().nullish().describe("Start date in ISO format (defaults to 30 days ago)"),
+      endDate: z.coerce.string().nullish().describe("End date in ISO format (defaults to today)"),
       periodType: z
         .enum(["daily", "weekly", "monthly", "hourly", "work_time", "insights"])
         .nullish()

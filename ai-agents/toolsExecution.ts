@@ -190,7 +190,7 @@ export const EXECUTION_TOOLS = {
     return { routines, count: routines.length };
   }),
 
-  get_upcoming_predictions: asyncHandler(async (params: { email: string; daysAhead?: number }) => {
+  get_upcoming_predictions: asyncHandler(async (params: { email: string; daysAhead?: number | null }) => {
     if (!(params.email && isEmail(params.email))) {
       throw new Error("Invalid email address.");
     }
@@ -199,11 +199,12 @@ export const EXECUTION_TOOLS = {
       throw new Error("User not found.");
     }
     const routineService = new RoutineLearningService(SUPABASE);
-    const predictions = await routineService.predictUpcomingEvents(tokenData.user_id, params.daysAhead || 7);
+    const daysAhead = params.daysAhead ?? 7;
+    const predictions = await routineService.predictUpcomingEvents(tokenData.user_id, daysAhead);
     return { predictions, count: predictions.length };
   }),
 
-  suggest_optimal_time: asyncHandler(async (params: { email: string; eventDuration: number; preferredTime?: string }) => {
+  suggest_optimal_time: asyncHandler(async (params: { email: string; eventDuration: number; preferredTime?: string | null }) => {
     if (!(params.email && isEmail(params.email))) {
       throw new Error("Invalid email address.");
     }
@@ -249,7 +250,7 @@ export const EXECUTION_TOOLS = {
     return insights;
   }),
 
-  set_user_goal: asyncHandler(async (params: { email: string; goalType: string; target: number; current?: number; deadline?: string; description?: string }) => {
+  set_user_goal: asyncHandler(async (params: { email: string; goalType: string; target: number; current?: number | null; deadline?: string | null; description?: string | null }) => {
     if (!(params.email && isEmail(params.email))) {
       throw new Error("Invalid email address.");
     }
@@ -277,7 +278,7 @@ export const EXECUTION_TOOLS = {
     return { success: true, goal: { type: params.goalType, target: params.target, current: params.current || 0 } };
   }),
 
-  get_goal_progress: asyncHandler(async (params: { email: string; goalType?: string }) => {
+  get_goal_progress: asyncHandler(async (params: { email: string; goalType?: string | null }) => {
     if (!(params.email && isEmail(params.email))) {
       throw new Error("Invalid email address.");
     }
