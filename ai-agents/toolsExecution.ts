@@ -5,6 +5,7 @@ import { ACTION } from "@/types";
 import { ConversationMemoryService } from "@/services/ConversationMemoryService";
 import { RoutineLearningService } from "@/services/RoutineLearningService";
 import { ScheduleStatisticsService } from "@/services/ScheduleStatisticsService";
+import { extractDateRangeFromQuery, parseNaturalLanguageDate } from "@/utils/parseNaturalLanguageDate";
 import { TOKEN_FIELDS } from "@/utils/storage";
 import { asyncHandler } from "@/utils/asyncHandlers";
 import type { calendar_v3 } from "googleapis";
@@ -309,9 +310,23 @@ export const EXECUTION_TOOLS = {
 
       const statisticsService = new ScheduleStatisticsService(SUPABASE);
 
-      // Default to last 30 days if dates not provided
-      const endDate = params.endDate ? new Date(params.endDate) : new Date();
-      const startDate = params.startDate ? new Date(params.startDate) : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+      // Parse natural language dates or use provided dates
+      let startDate: Date;
+      let endDate: Date;
+
+      if (params.startDate) {
+        const parsed = parseNaturalLanguageDate(params.startDate);
+        startDate = parsed ? parsed.start : new Date(params.startDate);
+      } else {
+        startDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000); // Default: 30 days ago
+      }
+
+      if (params.endDate) {
+        const parsed = parseNaturalLanguageDate(params.endDate);
+        endDate = parsed ? parsed.end : new Date(params.endDate);
+      } else {
+        endDate = new Date(); // Default: today
+      }
 
       const periodType = params.periodType || params.statisticsType || "basic";
 

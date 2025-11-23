@@ -3,6 +3,7 @@ import { Logger } from "./logging/Logger";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { fetchCredentialsByEmail } from "@/utils/getUserCalendarTokens";
 import { initCalendarWithUserTokensAndUpdateTokens } from "@/utils/initCalendarWithUserTokens";
+import { RoutineLearningService } from "./RoutineLearningService";
 
 /**
  * Statistics interfaces
@@ -677,6 +678,80 @@ export class ScheduleStatisticsService {
   }
 
   /**
+   * Get enhanced insights by integrating with routine learning system
+   * Cross-references statistics with learned routines for deeper insights
+   */
+  async getEnhancedInsights(
+    userId: string,
+    email: string,
+    startDate: Date,
+    endDate: Date,
+    options?: StatisticsOptions
+  ): Promise<{
+    statistics: ScheduleStatistics;
+    routineInsights: RoutineInsights;
+    learnedRoutines: Array<{ type: string; pattern: string; confidence: number }>;
+    crossReferencedInsights: string[];
+  }> {
+    try {
+      // Get basic statistics and routine insights
+      const [statistics, routineInsights] = await Promise.all([
+        this.getStatistics(userId, email, startDate, endDate, options),
+        this.getRoutineInsights(userId, email, startDate, endDate, options),
+      ]);
+
+      // Get learned routines from RoutineLearningService
+      const routineService = new RoutineLearningService(this.client);
+      const routines = await routineService.getUserRoutines(userId);
+
+      // Format learned routines
+      const learnedRoutines = routines.map((routine) => ({
+        type: routine.routine_type,
+        pattern: JSON.stringify(routine.pattern_data),
+        confidence: routine.confidence_score,
+      }));
+
+      // Cross-reference statistics with learned routines
+      const crossReferencedInsights: string[] = [];
+
+      // Compare actual statistics with routine predictions
+      if (learnedRoutines.length > 0) {
+        const avgConfidence = learnedRoutines.reduce((sum, r) => sum + r.confidence, 0) / learnedRoutines.length;
+        if (avgConfidence >= 0.7) {
+          crossReferencedInsights.push(
+            `Your schedule shows strong patterns (${learnedRoutines.length} routines learned with ${Math.round(avgConfidence * 100)}% average confidence)`
+          );
+        }
+      }
+
+      // Compare work hours with routine predictions
+      const workTime = await this.getWorkTimeAnalysis(userId, email, startDate, endDate, options);
+      if (workTime.overtimeDetected && learnedRoutines.some((r) => r.type === "weekly")) {
+        crossReferencedInsights.push(
+          `You're working ${workTime.averageWorkHoursPerWeek.toFixed(1)}h/week, which exceeds your typical routine. Consider reviewing your schedule.`
+        );
+      }
+
+      // Suggest routine optimizations based on statistics
+      if (statistics.freeTimeHours > 4) {
+        crossReferencedInsights.push(
+          `You have ${statistics.freeTimeHours.toFixed(1)} hours of free time per day on average. Consider scheduling more activities.`
+        );
+      }
+
+      return {
+        statistics,
+        routineInsights,
+        learnedRoutines,
+        crossReferencedInsights,
+      };
+    } catch (error) {
+      this.logger.error("Failed to get enhanced insights", error);
+      throw error;
+    }
+  }
+
+  /**
    * Fetch events from Google Calendar for a user within a date range
    * @private
    */
@@ -998,7 +1073,7 @@ export class ScheduleStatisticsService {
       this.logger.debug("Cache hit");
       return data.statistics as ScheduleStatistics;
     } catch (error: unknown) {
-      this.logger.warn("Failed to get cached statistics (non-critical)", error);
+      this.logger.warn("Failed to get cached statistics (non-critical)", { error: error instanceof Error ? error.message : String(error) });
       return null; // Fallback to real-time calculation
     }
   }
@@ -1038,7 +1113,7 @@ export class ScheduleStatisticsService {
 
       this.logger.debug("Statistics cached successfully");
     } catch (error: unknown) {
-      this.logger.warn("Failed to cache statistics (non-critical)", error);
+      this.logger.warn("Failed to cache statistics (non-critical)", { error: error instanceof Error ? error.message : String(error) });
       // Don't throw - caching is optional
     }
   }
@@ -1065,7 +1140,7 @@ export class ScheduleStatisticsService {
 
       this.logger.debug("Cache invalidated successfully");
     } catch (error: unknown) {
-      this.logger.warn("Failed to invalidate cache (non-critical)", error);
+      this.logger.warn("Failed to invalidate cache (non-critical)", { error: error instanceof Error ? error.message : String(error) });
     }
   }
 }
