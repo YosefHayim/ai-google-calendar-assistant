@@ -2,7 +2,7 @@ import { AGENT_HANDOFFS } from "./agentHandoffsDescription";
 import { AGENT_INSTRUCTIONS } from "./agentInstructions";
 import { AGENT_TOOLS } from "./agentTools";
 import { Agent } from "@openai/agents";
-import { CURRENT_MODEL } from "@/types";
+import { CURRENT_MODEL, MODELS } from "@/types";
 
 export const AGENTS = {
   generateUserCbGoogleUrl: new Agent({
@@ -131,6 +131,13 @@ export const HANDS_OFF_AGENTS = {
     tools: [AGENTS.validateUserAuth.asTool({ toolName: "register_user_via_db" })],
   }),
 };
+
+export const QUICK_RESPONSE_AGENT = new Agent({
+  name: "quick_response_agent",
+  model: MODELS.GPT_4O_MINI, // Use fast model for quick acknowledgments
+  instructions: AGENT_INSTRUCTIONS.quickResponseAgent,
+  // No tools needed - just provides quick text responses
+});
 
 export const ORCHESTRATOR_AGENT = new Agent({
   name: "calendar_orchestrator_agent",

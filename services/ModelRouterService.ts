@@ -12,7 +12,7 @@
 
 import { Agent } from "@openai/agents";
 import { MODELS, type AGENTS_LIST } from "@/types";
-import { AGENTS, HANDS_OFF_AGENTS, ORCHESTRATOR_AGENT } from "@/ai-agents/agents";
+import { AGENTS, HANDS_OFF_AGENTS, ORCHESTRATOR_AGENT, QUICK_RESPONSE_AGENT } from "@/ai-agents/agents";
 import { getRecommendedModel, type ModelCapabilities, getModelCapabilities } from "@/config/models";
 import { Logger } from "./logging/Logger";
 import type { AgentContext } from "@/utils/activateAgent";
@@ -317,9 +317,13 @@ export class ModelRouterService {
     else if (agentType === "calendar_orchestrator_agent" || agentType === "orchestrator") {
       baseAgent = ORCHESTRATOR_AGENT;
     }
+    // Try QUICK_RESPONSE_AGENT
+    else if (agentType === "quick_response_agent" || agentType === "quick-response") {
+      baseAgent = QUICK_RESPONSE_AGENT;
+    }
     // Try to find by name in all agents
     else {
-      const allAgents = { ...AGENTS, ...HANDS_OFF_AGENTS, orchestrator: ORCHESTRATOR_AGENT };
+      const allAgents = { ...AGENTS, ...HANDS_OFF_AGENTS, orchestrator: ORCHESTRATOR_AGENT, quickResponse: QUICK_RESPONSE_AGENT };
       for (const agent of Object.values(allAgents)) {
         if (agent.name === agentType) {
           baseAgent = agent;
