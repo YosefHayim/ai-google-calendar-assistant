@@ -1,0 +1,62 @@
+Routine Learning System and Model Router - Implementation Tasks
+
+FEATURE 1: ROUTINE LEARNING SYSTEM
+
+Phase 1: Foundation
+- Create database migration for user_routines table with fields: id, user_id, routine_type, pattern_data (JSONB), confidence_score, frequency, timestamps, metadata. Add indexes and unique constraints.
+- Create RoutineLearningService class in services/ directory with basic structure and placeholder methods
+- Implement method to fetch and analyze past calendar events from Google Calendar API
+- Implement basic pattern detection algorithm to identify recurring events and time-based patterns
+
+Phase 2: Advanced Pattern Learning  
+- Implement daily and weekly routine detection from calendar data
+- Implement time slot availability analysis to identify free time patterns
+- Implement event relationship detection to find event sequences and dependencies
+- Add confidence scoring system for pattern accuracy
+- Create background job to periodically analyze events and update routines
+
+Phase 3: Proactive Features
+- Implement event prediction based on learned patterns
+- Create reminder system for predicted events via Telegram
+- Implement time optimization suggestions when scheduling events
+- Add conflict detection and warnings for scheduling
+
+Phase 4: Goal Tracking
+- Add goal storage in user_routines metadata field
+- Implement goal progress tracking based on calendar events
+- Create suggestions based on user goals
+- Add goal achievement notifications
+
+Phase 5: Agent Integration
+- Add routine learning tools to orchestrator agent (get_user_routines, get_upcoming_predictions, suggest_optimal_time, get_routine_insights, set_user_goal, get_goal_progress)
+- Update orchestrator instructions for proactive behavior with routine insights
+- Implement routine-based reminders in conversations
+- Add routine insights to agent responses
+
+FEATURE 2: MODEL ROUTER SYSTEM
+
+Phase 1: Foundation
+- Create ModelRouterService in services/ directory with task analysis and model selection
+- Implement model selection logic with decision matrix (simple→MINI, complex→GPT_5, reasoning→O3)
+- Add agent caching mechanism using Map with (agentType, model) keys
+- Enhance activateAgent utility to accept optional model routing options
+- Add autoRoute option with default false for backward compatibility
+
+Phase 2: Routing Logic
+- Implement complexity analysis (simple <50 words, medium 50-200, complex >200)
+- Add task type detection (calendar, conversation, reasoning)
+- Create decision matrix mapping task characteristics to models
+- Add cost and latency considerations to model selection
+- Update Telegram bot to enable auto-routing option
+
+Phase 3: Optimization
+- Add routing metrics and logging for model routing decisions
+- Optimize caching strategy based on usage patterns
+- Fine-tune routing decisions based on collected metrics and usage data
+
+OPTIMIZATION TASKS
+- Test pattern detection accuracy for routine learning
+- Refine confidence scoring algorithm based on test results
+- Optimize RoutineLearningService performance
+- Add user feedback mechanism for predictions and suggestions
+
