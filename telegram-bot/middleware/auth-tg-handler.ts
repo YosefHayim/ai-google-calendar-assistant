@@ -2,6 +2,7 @@ import type { GlobalContext } from "../init-bot";
 import type { MiddlewareFn } from "grammy";
 import { SUPABASE } from "@/config/root-config";
 import isEmail from "validator/lib/isEmail";
+import { randomUUID } from "crypto";
 
 export const authTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
   const from = ctx.from;
@@ -21,7 +22,7 @@ export const authTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
   }
 
   // Try to load from DB
-  const { data } = await SUPABASE.from("user_telegram_links").select("email,first_name").eq("chat_id", session.chatId).single();
+  const { data } = await SUPABASE.from("user_telegram_links").select("email,first_name").eq("chat_id", session.chatId).maybeSingle();
 
   if (data?.email) {
     if (!session.email) {
@@ -45,42 +46,38 @@ export const authTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
     // Save email
     session.email = text;
 
-    // Ensure user exists in users table
-    const { data: existingUser } = await SUPABASE.from("users").select("user_id").eq("email", text).single();
+    // Check if user exists in user_calendar_tokens table
+    const { data: existingToken } = await SUPABASE.from("user_calendar_tokens")
+      .select("user_id")
+      .eq("email", text)
+      .maybeSingle();
 
     let userId: string | null = null;
-    if (existingUser?.user_id) {
-      userId = existingUser.user_id;
+    if (existingToken?.user_id) {
+      userId = existingToken.user_id;
     } else {
-      // Create user if doesn't exist
-      const { data: newUser, error: userError } = await SUPABASE.from("users")
+      // Create new user_id and add to user_calendar_tokens
+      userId = randomUUID();
+      const { error: tokenError } = await SUPABASE.from("user_calendar_tokens")
         .insert({
+          user_id: userId,
           email: text,
           is_active: true,
-          metadata: {
-            telegram_username: from.username,
-            telegram_first_name: from.first_name,
-            language_code: from.language_code,
-          },
-        })
-        .select("user_id")
-        .single();
+        });
 
-      if (userError) {
-        console.error("Error creating user:", userError);
-      } else if (newUser?.user_id) {
-        userId = newUser.user_id;
+      if (tokenError) {
+        console.error("Error creating user calendar token:", tokenError);
+        userId = null;
       }
     }
 
-    // Save telegram link with user_id
+    // Save telegram link (user_id field doesn't exist in user_telegram_links table)
     await SUPABASE.from("user_telegram_links").upsert({
       chat_id: from.id,
       username: from.username,
       first_name: from.first_name,
       language_code: from.language_code,
       email: text,
-      user_id: userId,
     });
     await ctx.reply("Email has been saved successfully!");
     session.messageCount++;
