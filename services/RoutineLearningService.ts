@@ -234,11 +234,14 @@ export class RoutineLearningService {
         frequency_per_week: frequency === "daily" ? 7 : frequency === "weekly" ? 1 : undefined,
       };
 
+      // Calculate confidence based on RRULE explicitness and frequency
+      const confidence = this.calculateConfidenceForRecurringPattern(frequency, daysOfWeek.length);
+
       patterns.push({
         user_id,
         routine_type: frequency,
         pattern_data: patternData as unknown as Json,
-        confidence_score: 0.9, // High confidence for explicit RRULE patterns
+        confidence_score: confidence,
         frequency: frequency === "daily" ? 7 : frequency === "weekly" ? 1 : 1,
         last_observed_at: new Date().toISOString(),
       });
@@ -285,8 +288,8 @@ export class RoutineLearningService {
       const endHour = hour + 1;
 
       // Calculate availability percentage (how often this slot is free)
-      const totalDays = this.calculateTotalDays(events);
-      const availabilityPercentage = Math.max(0, 1 - hourEvents.length / totalDays);
+      const totalDaysForSlot = this.calculateTotalDays(events);
+      const availabilityPercentage = Math.max(0, 1 - hourEvents.length / totalDaysForSlot);
 
       const patternKey = `time_slot_${dayOfWeek}_${hour}`;
       const patternData: TimeSlotPattern = {
@@ -297,11 +300,16 @@ export class RoutineLearningService {
         availability_percentage: Math.min(1, Math.max(0, availabilityPercentage)),
       };
 
+      // Calculate confidence based on frequency and consistency
+      const totalDaysForTimeSlot = this.calculateTotalDays(events);
+      const consistency = hourEvents.length / totalDaysForTimeSlot;
+      const confidence = this.calculateConfidenceForTimeSlot(hourEvents.length, consistency);
+
       patterns.push({
         user_id,
         routine_type: "time_slot",
         pattern_data: patternData as unknown as Json,
-        confidence_score: Math.min(0.8, 0.5 + hourEvents.length / 10), // Confidence based on frequency
+        confidence_score: confidence,
         frequency: hourEvents.length,
         last_observed_at: new Date().toISOString(),
       });
@@ -374,11 +382,16 @@ export class RoutineLearningService {
         frequency_per_week: Math.round((data.count / this.calculateTotalDays(events)) * 7),
       };
 
+      // Calculate confidence based on frequency and consistency
+      const totalDaysForRelationship = this.calculateTotalDays(events);
+      const consistency = data.count / totalDaysForRelationship;
+      const confidence = this.calculateConfidenceForEventRelationship(data.count, consistency);
+
       patterns.push({
         user_id,
         routine_type: "event_pattern",
         pattern_data: patternData as unknown as Json,
-        confidence_score: Math.min(0.7, 0.4 + data.count / 10), // Confidence based on frequency
+        confidence_score: confidence,
         frequency: data.count,
         last_observed_at: new Date().toISOString(),
       });
@@ -543,12 +556,7 @@ export class RoutineLearningService {
           let result;
           if (existing) {
             // Update existing routine
-            const { data, error } = await this.client
-              .from("user_routines")
-              .update(routineData)
-              .eq("id", existing.id)
-              .select()
-              .single();
+            const { data, error } = await this.client.from("user_routines").update(routineData).eq("id", existing.id).select().single();
 
             if (error) {
               this.logger.warn(`Failed to update routine pattern: ${error.message}`, { pattern });
@@ -557,11 +565,7 @@ export class RoutineLearningService {
             result = data;
           } else {
             // Insert new routine
-            const { data, error } = await this.client
-              .from("user_routines")
-              .insert(routineData)
-              .select()
-              .single();
+            const { data, error } = await this.client.from("user_routines").insert(routineData).select().single();
 
             if (error) {
               this.logger.warn(`Failed to insert routine pattern: ${error.message}`, { pattern });
@@ -688,7 +692,68 @@ export class RoutineLearningService {
   }
 
   /**
-   * Update confidence score for a routine pattern
+   * Calculate confidence score for recurring patterns
+   * Higher confidence for explicit RRULE patterns
+   */
+  private calculateConfidenceForRecurringPattern(frequency: "daily" | "weekly" | "monthly", dayCount: number): number {
+    // Base confidence for explicit RRULE patterns
+    let confidence = 0.9;
+
+    // Adjust based on frequency type
+    if (frequency === "daily") {
+      confidence = 0.95; // Daily patterns are most reliable
+    } else if (frequency === "weekly") {
+      confidence = 0.9; // Weekly patterns are reliable
+    } else {
+      confidence = 0.85; // Monthly patterns are less consistent
+    }
+
+    // Adjust based on number of days (more days = more reliable)
+    if (dayCount > 1) {
+      confidence = Math.min(0.98, confidence + dayCount * 0.01);
+    }
+
+    return Math.min(1.0, Math.max(0.0, confidence));
+  }
+
+  /**
+   * Calculate confidence score for time slot patterns
+   * Based on frequency and consistency
+   */
+  private calculateConfidenceForTimeSlot(occurrenceCount: number, consistency: number): number {
+    // Base confidence starts at 0.5
+    let confidence = 0.5;
+
+    // Increase based on occurrence count (more occurrences = more reliable)
+    confidence += Math.min(0.3, occurrenceCount * 0.05);
+
+    // Increase based on consistency (how often it occurs relative to total days)
+    confidence += Math.min(0.2, consistency * 0.4);
+
+    return Math.min(0.9, Math.max(0.0, confidence));
+  }
+
+  /**
+   * Calculate confidence score for event relationship patterns
+   * Based on frequency and consistency
+   */
+  private calculateConfidenceForEventRelationship(occurrenceCount: number, consistency: number): number {
+    // Base confidence starts at 0.4 (relationships are less reliable than explicit patterns)
+    let confidence = 0.4;
+
+    // Increase based on occurrence count
+    confidence += Math.min(0.25, occurrenceCount * 0.04);
+
+    // Increase based on consistency
+    confidence += Math.min(0.15, consistency * 0.3);
+
+    return Math.min(0.8, Math.max(0.0, confidence));
+  }
+
+  /**
+   * Update confidence score for a routine pattern based on validation
+   * Uses adaptive learning: larger adjustments for low-confidence patterns,
+   * smaller adjustments for high-confidence patterns
    * @param user_id - User identifier
    * @param routineKey - Key of the routine pattern (from pattern_data->>'key')
    * @param success - Whether the prediction was successful
@@ -715,15 +780,28 @@ export class RoutineLearningService {
         return null;
       }
 
-      // Update confidence score (increase on success, decrease on failure)
       const currentConfidence = Number(routines.confidence_score) || 0.5;
-      const adjustment = success ? 0.05 : -0.05;
+      const frequency = routines.frequency || 1;
+
+      // Adaptive confidence adjustment:
+      // - Low confidence patterns adjust faster (more learning)
+      // - High confidence patterns adjust slower (more stable)
+      // - Adjustment also considers frequency (more frequent = more reliable)
+      const baseAdjustment = success ? 0.05 : -0.05;
+      const confidenceFactor = 1 - currentConfidence; // Lower confidence = larger adjustment
+      const frequencyFactor = Math.min(1.0, frequency / 10); // More frequency = smaller adjustment
+      const adjustment = baseAdjustment * (0.5 + confidenceFactor * 0.5) * (1 - frequencyFactor * 0.3);
+
       const newConfidence = Math.max(0.0, Math.min(1.0, currentConfidence + adjustment));
+
+      // Update frequency if successful
+      const newFrequency = success ? frequency + 1 : frequency;
 
       const { data: updated, error: updateError } = await this.client
         .from("user_routines")
         .update({
           confidence_score: newConfidence,
+          frequency: newFrequency,
           last_observed_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         })
@@ -735,10 +813,39 @@ export class RoutineLearningService {
         throw updateError;
       }
 
-      this.logger.info(`Updated confidence for routine ${routineKey} to ${newConfidence}`);
+      this.logger.info(`Updated confidence for routine ${routineKey} to ${newConfidence} (frequency: ${newFrequency})`);
       return updated as RoutinePattern;
     } catch (error) {
       this.logger.error("Failed to update routine confidence", error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get routines above a confidence threshold
+   * @param user_id - User identifier
+   * @param threshold - Minimum confidence score (default: 0.7)
+   * @returns Array of high-confidence routines
+   */
+  async getHighConfidenceRoutines(user_id: string, threshold: number = 0.7): Promise<RoutinePattern[]> {
+    try {
+      this.logger.debug(`Getting high-confidence routines for user ${user_id} (threshold: ${threshold})`);
+
+      const { data, error } = await this.client
+        .from("user_routines")
+        .select("*")
+        .eq("user_id", user_id)
+        .gte("confidence_score", threshold)
+        .order("confidence_score", { ascending: false });
+
+      if (error) {
+        throw error;
+      }
+
+      this.logger.debug(`Found ${data?.length || 0} high-confidence routines`);
+      return (data as RoutinePattern[]) || [];
+    } catch (error) {
+      this.logger.error("Failed to get high-confidence routines", error);
       throw error;
     }
   }
