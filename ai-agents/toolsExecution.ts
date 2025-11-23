@@ -4,6 +4,7 @@ import { coerceArgs, formatEventData, getCalendarCategoriesByEmail } from "./age
 import { ACTION } from "@/types";
 import { ConversationMemoryService } from "@/services/ConversationMemoryService";
 import { RoutineLearningService } from "@/services/RoutineLearningService";
+import { ScheduleStatisticsService } from "@/services/ScheduleStatisticsService";
 import { TOKEN_FIELDS } from "@/utils/storage";
 import { asyncHandler } from "@/utils/asyncHandlers";
 import type { calendar_v3 } from "googleapis";
@@ -286,4 +287,66 @@ export const EXECUTION_TOOLS = {
     const goals = await routineService.getGoalProgress(tokenData.user_id, params.goalType);
     return { goals, count: goals.length };
   }),
+
+  get_schedule_statistics: asyncHandler(
+    async (params: {
+      email: string;
+      startDate?: string;
+      endDate?: string;
+      periodType?: "daily" | "weekly" | "monthly" | "hourly" | "work_time" | "insights";
+      statisticsType?: "basic" | "hourly" | "work_time" | "insights";
+    }) => {
+      if (!(params.email && isEmail(params.email))) {
+        throw new Error("Invalid email address.");
+      }
+      const { data: tokenData } = await SUPABASE.from("user_calendar_tokens")
+        .select("user_id")
+        .eq("email", params.email)
+        .maybeSingle();
+      if (!tokenData?.user_id) {
+        throw new Error("User not found.");
+      }
+
+      const statisticsService = new ScheduleStatisticsService(SUPABASE);
+
+      // Default to last 30 days if dates not provided
+      const endDate = params.endDate ? new Date(params.endDate) : new Date();
+      const startDate = params.startDate ? new Date(params.startDate) : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+
+      const periodType = params.periodType || params.statisticsType || "basic";
+
+      let result: unknown;
+      switch (periodType) {
+        case "daily": {
+          result = await statisticsService.getDailyStatistics(tokenData.user_id, params.email, startDate);
+          break;
+        }
+        case "weekly": {
+          result = await statisticsService.getWeeklyStatistics(tokenData.user_id, params.email, startDate);
+          break;
+        }
+        case "monthly": {
+          result = await statisticsService.getMonthlyStatistics(tokenData.user_id, params.email, startDate);
+          break;
+        }
+        case "hourly": {
+          result = await statisticsService.getHourlyStatistics(tokenData.user_id, params.email, startDate, endDate);
+          break;
+        }
+        case "work_time": {
+          result = await statisticsService.getWorkTimeAnalysis(tokenData.user_id, params.email, startDate, endDate);
+          break;
+        }
+        case "insights": {
+          result = await statisticsService.getRoutineInsights(tokenData.user_id, params.email, startDate, endDate);
+          break;
+        }
+        default: {
+          result = await statisticsService.getStatistics(tokenData.user_id, params.email, startDate, endDate);
+        }
+      }
+
+      return result;
+    }
+  ),
 };

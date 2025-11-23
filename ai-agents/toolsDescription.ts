@@ -44,4 +44,6 @@ export const TOOLS_DESCRIPTION = {
   set_user_goal: `Sets or updates a user goal for tracking progress. Requires "email", "goalType" (e.g., "gym", "meetings"), "target" (number), and optional "current", "deadline" (ISO string), "description". Returns goal confirmation.`,
 
   get_goal_progress: `Retrieves progress toward user goals. Requires "email". Optional: "goalType" to filter by specific goal. Returns array of goals with current progress, target, and percentage complete.`,
+
+  get_schedule_statistics: `Retrieves schedule statistics and insights for a user. Requires "email". Optional: "startDate" (ISO string), "endDate" (ISO string), "periodType" (daily, weekly, monthly, hourly, work_time, insights), "statisticsType" (basic, hourly, work_time, insights). Defaults to last 30 days if dates not provided. Returns comprehensive statistics including total events, hours, averages, breakdowns, and insights.`,
 } as const;

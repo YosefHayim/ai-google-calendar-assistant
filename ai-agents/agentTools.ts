@@ -166,4 +166,13 @@ export const AGENT_TOOLS = {
       return `get_goal_progress: ${error}`;
     },
   }),
+  get_schedule_statistics: tool({
+    name: "get_schedule_statistics",
+    description: TOOLS_DESCRIPTION.get_schedule_statistics,
+    parameters: PARAMETERS_TOOLS.get_schedule_statistics,
+    execute: EXECUTION_TOOLS.get_schedule_statistics,
+    errorFunction: (_, error) => {
+      return `get_schedule_statistics: ${error}`;
+    },
+  }),
 };

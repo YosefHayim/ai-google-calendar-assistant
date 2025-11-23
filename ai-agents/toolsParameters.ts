@@ -157,4 +157,20 @@ export const PARAMETERS_TOOLS = {
       goalType: z.coerce.string().optional().describe("Filter by specific goal type (optional)"),
     })
     .describe("Get progress toward user goals."),
+
+  get_schedule_statistics: z
+    .object({
+      email: emailSchema,
+      startDate: z.coerce.string().optional().describe("Start date in ISO format (defaults to 30 days ago)"),
+      endDate: z.coerce.string().optional().describe("End date in ISO format (defaults to today)"),
+      periodType: z
+        .enum(["daily", "weekly", "monthly", "hourly", "work_time", "insights"])
+        .optional()
+        .describe("Type of statistics to retrieve (defaults to basic statistics)"),
+      statisticsType: z
+        .enum(["basic", "hourly", "work_time", "insights"])
+        .optional()
+        .describe("Specific statistics type (defaults to basic)"),
+    })
+    .describe("Get schedule statistics and insights for a user."),
 };

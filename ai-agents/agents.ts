@@ -152,5 +152,6 @@ export const ORCHESTRATOR_AGENT = new Agent({
     AGENT_TOOLS.get_routine_insights,
     AGENT_TOOLS.set_user_goal,
     AGENT_TOOLS.get_goal_progress,
+    AGENT_TOOLS.get_schedule_statistics,
   ],
 });
