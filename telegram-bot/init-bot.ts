@@ -221,6 +221,8 @@ bot.on("message", async (ctx) => {
         conversationContext: conversationContext || undefined,
         vectorSearchResults: vectorSearchResults || undefined,
         agentName: agentName || undefined,
+        chatId: chatId || undefined,
+        email: ctx.session.email || undefined,
       },
       {
         autoRoute: true, // Enable automatic model routing based on task analysis

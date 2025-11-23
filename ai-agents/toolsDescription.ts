@@ -31,7 +31,7 @@ export const TOOLS_DESCRIPTION = {
 
   getAgentName: `Retrieves the user's personalized agent name from conversation metadata. Requires "email" and "chatId". Returns { "agent_name": string | null }.`,
 
-  setAgentName: `Sets or updates the user's personalized agent name in conversation metadata. Requires "email", "chatId", and "agentName". Returns { "success": true, "agent_name": string }.`,
+  setAgentName: `Sets or updates the user's personalized agent name in conversation metadata. Requires "email", "chatId", and "agentName". The email and chatId are automatically provided in the conversation context - use those values, do NOT ask the user for them. Returns { "success": true, "agent_name": string }.`,
 
   get_user_routines: `Retrieves learned routines for a user. Requires "email". Optional: "routineType" (daily, weekly, monthly, event_pattern, time_slot). Returns array of routine patterns with confidence scores.`,
 
