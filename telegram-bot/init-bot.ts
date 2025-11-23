@@ -45,30 +45,25 @@ bot.use(authTgHandler);
  */
 async function getUserId(email?: string, chatId?: number): Promise<string | null> {
   try {
-    // Try to get user_id from email first
+    // Try to get user_id from email first using user_calendar_tokens
     if (email) {
-      const { data: userData } = await SUPABASE.from("users").select("user_id").eq("email", email).single();
-      if (userData?.user_id) {
-        return userData.user_id;
+      const { data: tokenData } = await SUPABASE.from("user_calendar_tokens").select("user_id").eq("email", email).maybeSingle();
+
+      if (tokenData?.user_id) {
+        return tokenData.user_id;
       }
     }
 
     // Try to get user_id from telegram link
     if (chatId) {
-      const { data: linkData } = await SUPABASE.from("user_telegram_links")
-        .select("user_id, email")
-        .eq("chat_id", chatId)
-        .single();
+      const { data: linkData } = await SUPABASE.from("user_telegram_links").select("email").eq("chat_id", chatId).maybeSingle();
 
-      if (linkData?.user_id) {
-        return linkData.user_id;
-      }
-
-      // If we have email from link, try to get user_id
+      // If we have email from link, try to get user_id from user_calendar_tokens
       if (linkData?.email) {
-        const { data: userData } = await SUPABASE.from("users").select("user_id").eq("email", linkData.email).single();
-        if (userData?.user_id) {
-          return userData.user_id;
+        const { data: tokenData } = await SUPABASE.from("user_calendar_tokens").select("user_id").eq("email", linkData.email).maybeSingle();
+
+        if (tokenData?.user_id) {
+          return tokenData.user_id;
         }
       }
     }
@@ -123,17 +118,10 @@ bot.on("message", async (ctx) => {
 
     // Store user message in conversation memory
     if (userId && chatId) {
-      await conversationMemoryService.storeMessage(
-        userId,
-        chatId,
-        msgId,
-        "user",
-        userMsgText,
-        {
-          timestamp: new Date().toISOString(),
-          username: ctx.session.username,
-        }
-      );
+      await conversationMemoryService.storeMessage(userId, chatId, msgId, "user", userMsgText, {
+        timestamp: new Date().toISOString(),
+        username: ctx.session.username,
+      });
     }
 
     // Get conversation context
@@ -149,12 +137,7 @@ bot.on("message", async (ctx) => {
         // Perform vector search for similar conversations
         try {
           const queryEmbedding = await vectorSearchService.generateEmbedding(userMsgText);
-          const similarConversations = await vectorSearchService.searchSimilarConversations(
-            userId,
-            queryEmbedding,
-            3,
-            0.6
-          );
+          const similarConversations = await vectorSearchService.searchSimilarConversations(userId, queryEmbedding, 3, 0.6);
 
           if (similarConversations.length > 0) {
             vectorSearchResults = similarConversations
