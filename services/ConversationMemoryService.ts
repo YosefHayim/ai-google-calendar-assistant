@@ -322,7 +322,8 @@ export class ConversationMemoryService {
         agent_name_updated_at: new Date().toISOString(),
       };
 
-      const { error } = await this.client.from("conversation_state").upsert(
+      // Try upsert with onConflict first
+      const { error: upsertError } = await this.client.from("conversation_state").upsert(
         {
           user_id,
           chat_id,
@@ -332,8 +333,45 @@ export class ConversationMemoryService {
         { onConflict: "user_id,chat_id" }
       );
 
-      if (error) {
-        throw error;
+      // If upsert fails due to missing constraint, use update/insert pattern
+      if (upsertError && upsertError.code === "42P10") {
+        // Check if record exists
+        const { data: existing } = await this.client
+          .from("conversation_state")
+          .select("id")
+          .eq("user_id", user_id)
+          .eq("chat_id", chat_id)
+          .maybeSingle();
+
+        if (existing) {
+          // Update existing record
+          const { error: updateError } = await this.client
+            .from("conversation_state")
+            .update({
+              metadata: updatedMetadata,
+              updated_at: new Date().toISOString(),
+            })
+            .eq("user_id", user_id)
+            .eq("chat_id", chat_id);
+
+          if (updateError) {
+            throw updateError;
+          }
+        } else {
+          // Insert new record
+          const { error: insertError } = await this.client.from("conversation_state").insert({
+            user_id,
+            chat_id,
+            metadata: updatedMetadata,
+            updated_at: new Date().toISOString(),
+          });
+
+          if (insertError) {
+            throw insertError;
+          }
+        }
+      } else if (upsertError) {
+        throw upsertError;
       }
 
       this.logger.debug(`Set agent name to "${agent_name}" for user ${user_id}, chat ${chat_id}`);
@@ -477,7 +515,8 @@ export class ConversationMemoryService {
       const state = await this.getConversationState(user_id, chat_id);
       const newCount = (state?.message_count ?? 0) + 1;
 
-      const { error } = await this.client.from("conversation_state").upsert(
+      // Try upsert with onConflict first
+      const { error: upsertError } = await this.client.from("conversation_state").upsert(
         {
           user_id,
           chat_id,
@@ -491,8 +530,49 @@ export class ConversationMemoryService {
         }
       );
 
-      if (error) {
-        throw error;
+      // If upsert fails due to missing constraint, use update/insert pattern
+      if (upsertError && upsertError.code === "42P10") {
+        // Check if record exists
+        const { data: existing } = await this.client
+          .from("conversation_state")
+          .select("id")
+          .eq("user_id", user_id)
+          .eq("chat_id", chat_id)
+          .maybeSingle();
+
+        if (existing) {
+          // Update existing record
+          const { error: updateError } = await this.client
+            .from("conversation_state")
+            .update({
+              message_count: newCount,
+              last_message_id,
+              last_summarized_at: wasSummarized ? new Date().toISOString() : state?.last_summarized_at ?? null,
+              updated_at: new Date().toISOString(),
+            })
+            .eq("user_id", user_id)
+            .eq("chat_id", chat_id);
+
+          if (updateError) {
+            throw updateError;
+          }
+        } else {
+          // Insert new record
+          const { error: insertError } = await this.client.from("conversation_state").insert({
+            user_id,
+            chat_id,
+            message_count: newCount,
+            last_message_id,
+            last_summarized_at: wasSummarized ? new Date().toISOString() : null,
+            updated_at: new Date().toISOString(),
+          });
+
+          if (insertError) {
+            throw insertError;
+          }
+        }
+      } else if (upsertError) {
+        throw upsertError;
       }
     } catch (error) {
       this.logger.error("Failed to update conversation state", error);

@@ -311,6 +311,81 @@ export type Database = {
         }
         Relationships: []
       }
+      user_routines: {
+        Row: {
+          confidence_score: number | null
+          created_at: string
+          frequency: number | null
+          id: number
+          last_observed_at: string | null
+          metadata: Json | null
+          pattern_data: Json
+          routine_type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          confidence_score?: number | null
+          created_at?: string
+          frequency?: number | null
+          id?: number
+          last_observed_at?: string | null
+          metadata?: Json | null
+          pattern_data: Json
+          routine_type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          confidence_score?: number | null
+          created_at?: string
+          frequency?: number | null
+          id?: number
+          last_observed_at?: string | null
+          metadata?: Json | null
+          pattern_data?: Json
+          routine_type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_schedule_statistics: {
+        Row: {
+          calculated_at: string
+          created_at: string
+          id: number
+          period_end: string
+          period_start: string
+          period_type: string
+          statistics: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          calculated_at?: string
+          created_at?: string
+          id?: number
+          period_end: string
+          period_start: string
+          period_type: string
+          statistics: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          calculated_at?: string
+          created_at?: string
+          id?: number
+          period_end?: string
+          period_start?: string
+          period_type?: string
+          statistics?: Json
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_telegram_links: {
         Row: {
           chat_id: number | null
