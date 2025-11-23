@@ -98,9 +98,7 @@ export class RoutineLearningService {
       const patterns: RoutinePattern[] = [];
 
       // Filter out events without required data
-      const validEvents = events.filter(
-        (e) => e.summary && e.start && (e.start.dateTime || e.start.date) && e.end && (e.end.dateTime || e.end.date)
-      );
+      const validEvents = events.filter((e) => e.summary && e.start && (e.start.dateTime || e.start.date) && e.end && (e.end.dateTime || e.end.date));
 
       if (validEvents.length === 0) {
         this.logger.warn("No valid events to analyze");
@@ -506,32 +504,73 @@ export class RoutineLearningService {
 
       for (const pattern of patterns) {
         try {
-          const { data, error } = await this.client
-            .from("user_routines")
-            .upsert(
-              {
-                user_id: pattern.user_id,
-                routine_type: pattern.routine_type,
-                pattern_data: pattern.pattern_data,
-                confidence_score: pattern.confidence_score,
-                frequency: pattern.frequency,
-                last_observed_at: pattern.last_observed_at || new Date().toISOString(),
-                updated_at: new Date().toISOString(),
-                metadata: pattern.metadata,
-              },
-              {
-                onConflict: "user_id,routine_type,pattern_data->>key",
-              }
-            )
-            .select()
-            .single();
+          // Extract key from pattern_data for querying
+          const patternDataObj = pattern.pattern_data as unknown as { key?: string };
+          const patternKey = patternDataObj?.key;
 
-          if (error) {
-            this.logger.warn(`Failed to store routine pattern: ${error.message}`, { pattern });
+          if (!patternKey) {
+            this.logger.warn("Pattern data missing key, skipping", { pattern });
             continue;
           }
 
-          routines.push(data as RoutinePattern);
+          // Check if routine already exists using the unique index
+          const { data: existing, error: queryError } = await this.client
+            .from("user_routines")
+            .select("*")
+            .eq("user_id", pattern.user_id)
+            .eq("routine_type", pattern.routine_type)
+            .eq("pattern_data->>key", patternKey)
+            .maybeSingle();
+
+          if (queryError && queryError.code !== "PGRST116") {
+            // PGRST116 is "not found", which is fine
+            this.logger.warn(`Failed to query existing routine: ${queryError.message}`, { pattern });
+            continue;
+          }
+
+          // Prepare data for upsert
+          const routineData = {
+            user_id: pattern.user_id,
+            routine_type: pattern.routine_type,
+            pattern_data: pattern.pattern_data,
+            confidence_score: pattern.confidence_score,
+            frequency: pattern.frequency,
+            last_observed_at: pattern.last_observed_at || new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            metadata: pattern.metadata,
+          };
+
+          let result;
+          if (existing) {
+            // Update existing routine
+            const { data, error } = await this.client
+              .from("user_routines")
+              .update(routineData)
+              .eq("id", existing.id)
+              .select()
+              .single();
+
+            if (error) {
+              this.logger.warn(`Failed to update routine pattern: ${error.message}`, { pattern });
+              continue;
+            }
+            result = data;
+          } else {
+            // Insert new routine
+            const { data, error } = await this.client
+              .from("user_routines")
+              .insert(routineData)
+              .select()
+              .single();
+
+            if (error) {
+              this.logger.warn(`Failed to insert routine pattern: ${error.message}`, { pattern });
+              continue;
+            }
+            result = data;
+          }
+
+          routines.push(result as RoutinePattern);
         } catch (error) {
           this.logger.warn(`Error storing routine pattern`, { error, pattern });
         }
