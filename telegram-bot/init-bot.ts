@@ -1,5 +1,5 @@
 import { run } from "@grammyjs/runner";
-import { Bot, type Context, type SessionFlavor, session } from "grammy";
+import { Bot, type Context, type SessionFlavor, session, InputFile } from "grammy";
 import { ORCHESTRATOR_AGENT } from "@/ai-agents/agents";
 import { CONFIG, SUPABASE } from "@/config/root-config";
 import type { SessionData } from "@/types";
@@ -8,6 +8,7 @@ import { authTgHandler } from "./middleware/auth-tg-handler";
 import { ConversationMemoryService } from "@/services/ConversationMemoryService";
 import { VectorSearchService } from "@/services/VectorSearchService";
 import { RoutineLearningService } from "@/services/RoutineLearningService";
+import { VoiceAgentService } from "@/utils/voice/voiceAgentService";
 
 export type GlobalContext = SessionFlavor<SessionData> & Context;
 
@@ -16,6 +17,7 @@ const bot = new Bot<GlobalContext>(CONFIG.telegramAccessToken);
 // Initialize services
 const conversationMemoryService = new ConversationMemoryService(SUPABASE);
 const vectorSearchService = new VectorSearchService(SUPABASE);
+const voiceAgentService = new VoiceAgentService();
 
 bot.catch((err) => {
   const ctx = err.ctx;
@@ -76,9 +78,169 @@ async function getUserId(email?: string, chatId?: number): Promise<string | null
   }
 }
 
+// Handle voice messages
+bot.on("message:voice", async (ctx) => {
+  const msgId = ctx.message.message_id;
+  const voice = ctx.message.voice;
+
+  if (!voice) {
+    return;
+  }
+
+  // de-dupe: process each message once
+  if (ctx.session.lastProcessedMsgId === msgId) {
+    return;
+  }
+  ctx.session.lastProcessedMsgId = msgId;
+
+  // start/stop "loop" via session flag
+  if (!ctx.session.agentActive) {
+    ctx.session.agentActive = true;
+  }
+
+  if (!ctx.session.agentActive) {
+    return;
+  }
+
+  // Declare typing interval outside to ensure it's accessible in catch block
+  let typingInterval: NodeJS.Timeout | null = null;
+
+  try {
+    // Send "uploading voice" action
+    await ctx.api.sendChatAction(ctx.chat.id, "upload_voice");
+
+    // Get user_id for conversation memory
+    const userId = await getUserId(ctx.session.email, ctx.session.chatId);
+    const chatId = ctx.session.chatId;
+
+    // Get language code directly from Telegram message context (ctx.from.language_code)
+    // Fallback to session.codeLang (set in auth middleware) or default to "en"
+    const languageCode = ctx.from?.language_code || ctx.session.codeLang || "en";
+    // Download the voice file
+    const file = await ctx.api.getFile(voice.file_id);
+    const fileUrl = `https://api.telegram.org/file/bot${CONFIG.telegramAccessToken}/${file.file_path}`;
+    const response = await fetch(fileUrl);
+
+    if (!response.ok) {
+      throw new Error(`Failed to download voice file: ${response.statusText}`);
+    }
+
+    const audioBuffer = Buffer.from(await response.arrayBuffer());
+
+    // Get conversation context for voice agent
+    let conversationContext = "";
+    let vectorSearchResults = "";
+
+    if (userId && chatId) {
+      try {
+        const context = await conversationMemoryService.getConversationContext(userId, chatId);
+        conversationContext = conversationMemoryService.formatContextForPrompt(context);
+      } catch (memoryError) {
+        console.error("Conversation memory error (non-critical):", memoryError);
+      }
+    }
+
+    // Get agent name if available
+    let agentName = null;
+    if (userId && chatId) {
+      try {
+        agentName = await conversationMemoryService.getAgentName(userId, chatId);
+      } catch (error) {
+        console.error("Failed to get agent name (non-critical):", error);
+      }
+    }
+
+    // Start recording voice action
+    const startRecordingAction = async () => {
+      await ctx.api.sendChatAction(ctx.chat.id, "record_voice");
+      typingInterval = setInterval(async () => {
+        try {
+          await ctx.api.sendChatAction(ctx.chat.id, "record_voice");
+        } catch (error) {
+          // Ignore errors
+        }
+      }, 4000);
+    };
+
+    await startRecordingAction();
+
+    // Process voice message with voice agent (using language code)
+    let voiceResult;
+    try {
+      voiceResult = await voiceAgentService.processVoiceMessage(
+        audioBuffer,
+        {
+          conversationContext: conversationContext || undefined,
+          vectorSearchResults: vectorSearchResults || undefined,
+          agentName: agentName || undefined,
+          chatId: chatId || undefined,
+          email: ctx.session.email || undefined,
+        },
+        languageCode
+      );
+    } finally {
+      if (typingInterval) {
+        clearInterval(typingInterval);
+        typingInterval = null;
+      }
+    }
+
+    const transcribedText = voiceResult.transcribedText;
+    const voiceResponseBuffer = voiceResult.voiceResponseBuffer;
+    const textResponse = voiceResult.textResponse;
+
+    // Store user message (transcribed text) in conversation memory
+    if (userId && chatId && transcribedText) {
+      await conversationMemoryService.storeMessage(userId, chatId, msgId, "user", transcribedText, {
+        timestamp: new Date().toISOString(),
+        username: ctx.session.username,
+        messageType: "voice",
+      });
+    }
+
+    // Send voice response if available, otherwise send text response
+    if (voiceResponseBuffer && voiceResponseBuffer.length > 0) {
+      // Send voice response
+      await ctx.api.sendVoice(ctx.chat.id, new InputFile(voiceResponseBuffer, "response.ogg"), {
+        caption: textResponse || transcribedText ? `Transcribed: ${transcribedText}` : undefined,
+      });
+    } else if (textResponse) {
+      // Fallback to text response if no voice response
+      await ctx.reply(textResponse);
+    } else if (transcribedText) {
+      // If we have transcription but no response, acknowledge
+      await ctx.reply(`I heard: "${transcribedText}". Processing your request...`);
+    } else {
+      await ctx.reply("I received your voice message, but couldn't process it. Please try again.");
+    }
+
+    // Store assistant response in conversation memory
+    if (userId && chatId && (textResponse || voiceResponseBuffer)) {
+      await conversationMemoryService.storeMessage(userId, chatId, msgId + 1, "assistant", textResponse || "[Voice response]", {
+        timestamp: new Date().toISOString(),
+        agent: "voice_orchestrator",
+        messageType: voiceResponseBuffer ? "voice" : "text",
+      });
+    }
+  } catch (e) {
+    // Stop typing indicator on error
+    if (typingInterval) {
+      clearInterval(typingInterval);
+      typingInterval = null;
+    }
+    console.error("Voice agent error:", e);
+    await ctx.reply("Error processing your voice message. Please try again or send a text message.");
+  }
+});
+
 bot.on("message", async (ctx) => {
   const msgId = ctx.message.message_id;
   const userMsgText = ctx.message.text?.trim();
+
+  // Skip if this is a voice message (handled separately)
+  if (ctx.message.voice) {
+    return;
+  }
 
   if (userMsgText?.includes("/start")) {
     return;
