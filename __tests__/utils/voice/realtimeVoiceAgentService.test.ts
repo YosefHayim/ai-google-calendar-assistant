@@ -2,10 +2,11 @@
  * Tests for RealtimeVoiceAgentService
  */
 
-import { describe, it, expect, beforeEach, jest, afterEach } from "@jest/globals";
-import { RealtimeVoiceAgentService } from "@/utils/voice/realtimeVoiceAgentService";
 import { RealtimeAgent, RealtimeSession } from "@openai/agents-realtime";
+import { afterEach, beforeEach, describe, expect, it, jest } from "@jest/globals";
+
 import type { AgentContext } from "@/utils/activateAgent";
+import { RealtimeVoiceAgentService } from "@/utils/voice/realtimeVoiceAgentService";
 
 // Mock dependencies
 jest.mock("@openai/agents-realtime");
@@ -37,6 +38,7 @@ describe("RealtimeVoiceAgentService", () => {
     // Create mock session
     mockSession = {
       on: jest.fn(),
+      // @ts-expect-error - Jest mock types
       connect: jest.fn().mockResolvedValue(undefined),
       close: jest.fn(),
       sendAudio: jest.fn(),
@@ -44,7 +46,7 @@ describe("RealtimeVoiceAgentService", () => {
     };
 
     // Mock RealtimeSession constructor
-    (RealtimeSession as jest.Mock).mockImplementation(() => mockSession);
+    (RealtimeSession as unknown as jest.Mock).mockImplementation(() => mockSession);
 
     service = new RealtimeVoiceAgentService();
   });
@@ -73,13 +75,13 @@ describe("RealtimeVoiceAgentService", () => {
       let historyHandler: ((history: Array<unknown>) => void) | undefined;
       let agentEndHandler: (() => void) | undefined;
 
-      mockSession.on.mockImplementation((event: string, handler: () => void) => {
+      (mockSession.on as any).mockImplementation((event: string, handler: unknown) => {
         if (event === "audio") {
-          audioHandler = handler;
+          audioHandler = handler as (event: { data: ArrayBuffer }) => void;
         } else if (event === "history_updated") {
-          historyHandler = handler;
+          historyHandler = handler as (history: Array<unknown>) => void;
         } else if (event === "agent_end") {
-          agentEndHandler = handler;
+          agentEndHandler = handler as () => void;
         }
       });
 
@@ -141,7 +143,7 @@ describe("RealtimeVoiceAgentService", () => {
     it("should handle errors gracefully", async () => {
       const mockAudioBuffer = Buffer.from("mock audio data");
 
-      mockSession.connect.mockRejectedValue(new Error("Connection failed"));
+      mockSession.connect.mockRejectedValue(new Error("Connection failed") as never);
 
       await expect(service.processVoiceMessage(mockAudioBuffer)).rejects.toThrow("Connection failed");
       expect(mockSession.close).toHaveBeenCalled();
@@ -164,6 +166,37 @@ describe("RealtimeVoiceAgentService", () => {
 
       // Check that conversion was called
       expect(convertOggToPcm16).toHaveBeenCalledWith(mockAudioBuffer, expect.any(Object));
+    });
+
+    it("should use language code in session config", async () => {
+      const mockAudioBuffer = Buffer.from("mock audio");
+      const mockContext: AgentContext = {
+        email: "test@example.com",
+      };
+
+      mockSession.on.mockImplementation(() => {});
+
+      // Start processing with language code
+      const processPromise = service.processVoiceMessage(mockAudioBuffer, mockContext, { languageCode: "es" });
+
+      // Wait for connection
+      await mockSession.connect();
+
+      // Verify RealtimeSession was created with language config
+      expect(RealtimeSession).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({
+          config: expect.objectContaining({
+            audio: expect.objectContaining({
+              input: expect.objectContaining({
+                transcription: expect.objectContaining({
+                  language: "es",
+                }),
+              }),
+            }),
+          }),
+        })
+      );
     });
   });
 
@@ -194,4 +227,3 @@ describe("RealtimeVoiceAgentService", () => {
     });
   });
 });
-

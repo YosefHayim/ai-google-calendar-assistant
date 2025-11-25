@@ -198,14 +198,16 @@ bot.on("message:voice", async (ctx) => {
       });
     }
 
-    // Send voice response if available, otherwise send text response
+    // Voice message → Voice response: User sent voice, so we reply with voice
+    // Priority: Voice response > Text response (only fallback if voice generation fails)
     if (voiceResponseBuffer && voiceResponseBuffer.length > 0) {
-      // Send voice response
+      // Send voice response (user sent voice, so we reply with voice)
       await ctx.api.sendVoice(ctx.chat.id, new InputFile(voiceResponseBuffer, "response.ogg"), {
         caption: textResponse || transcribedText ? `Transcribed: ${transcribedText}` : undefined,
       });
     } else if (textResponse) {
-      // Fallback to text response if no voice response
+      // Fallback: If voice generation failed, send text response
+      // This should be rare - voice generation should normally succeed
       await ctx.reply(textResponse);
     } else if (transcribedText) {
       // If we have transcription but no response, acknowledge
@@ -423,6 +425,8 @@ bot.on("message", async (ctx) => {
 
     const agentResponse = finalOutput;
 
+    // Text message → Text response: User sent text, so we reply with text
+    // We never generate voice responses for text messages - only text replies
     // Store assistant response in conversation memory
     if (userId && chatId) {
       await conversationMemoryService.storeMessage(
@@ -434,6 +438,7 @@ bot.on("message", async (ctx) => {
         {
           timestamp: new Date().toISOString(),
           agent: "orchestrator",
+          messageType: "text", // Explicitly mark as text response
         }
       );
 

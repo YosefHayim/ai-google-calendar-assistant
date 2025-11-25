@@ -6,25 +6,24 @@ import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { convertOggToPcm16, convertPcm16ToOgg, isFfmpegAvailable } from "@/utils/voice/audioConverter";
 
 // Mock fluent-ffmpeg
-const mockFfmpegInstance = {
-  inputFormat: jest.fn().mockReturnThis(),
-  audioCodec: jest.fn().mockReturnThis(),
-  audioFrequency: jest.fn().mockReturnThis(),
-  audioChannels: jest.fn().mockReturnThis(),
-  format: jest.fn().mockReturnThis(),
-  inputOptions: jest.fn().mockReturnThis(),
-  on: jest.fn().mockReturnThis(),
-  pipe: jest.fn().mockReturnThis(),
-};
-
-const mockFfmpeg = jest.fn(() => mockFfmpegInstance);
-
 jest.mock("fluent-ffmpeg", () => {
-  const mockModule = mockFfmpeg;
-  (mockModule as unknown as { setFfmpegPath: jest.Mock }).setFfmpegPath = jest.fn();
+  const mockFfmpegInstance = {
+    inputFormat: jest.fn().mockReturnThis(),
+    audioCodec: jest.fn().mockReturnThis(),
+    audioFrequency: jest.fn().mockReturnThis(),
+    audioChannels: jest.fn().mockReturnThis(),
+    format: jest.fn().mockReturnThis(),
+    inputOptions: jest.fn().mockReturnThis(),
+    on: jest.fn().mockReturnThis(),
+    pipe: jest.fn().mockReturnThis(),
+  };
+
+  const mockFfmpeg = jest.fn(() => mockFfmpegInstance);
+  (mockFfmpeg as unknown as { setFfmpegPath: jest.Mock }).setFfmpegPath = jest.fn();
+
   return {
     __esModule: true,
-    default: mockModule,
+    default: mockFfmpeg,
   };
 });
 
