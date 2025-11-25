@@ -76,7 +76,17 @@ export const EXECUTION_TOOLS = {
       throw new Error("Invalid email address.");
     }
     const eventData: Event = formatEventData(eventLike as Event);
-    return eventsHandler(null, ACTION.INSERT, eventData, { email, calendarId: calendarId ?? "primary", customEvents: params.customEvents ?? false });
+    const finalCalendarId = calendarId ?? "primary";
+    
+    // Warn if defaulting to 'primary' - this indicates calendar selection may have been skipped
+    if (!calendarId) {
+      console.warn(
+        `[insertEvent] Defaulting to 'primary' calendar for event "${eventData.summary || 'Untitled'}" (${email}). ` +
+        `Calendar selection should be performed before insert_event to intelligently match event to appropriate calendar.`
+      );
+    }
+    
+    return eventsHandler(null, ACTION.INSERT, eventData, { email, calendarId: finalCalendarId, customEvents: params.customEvents ?? false });
   }),
 
   updateEvent: asyncHandler((params: calendar_v3.Schema$Event & { email: string; eventId: string }) => {
