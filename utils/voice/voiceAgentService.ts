@@ -47,7 +47,7 @@ export class VoiceAgentService {
 
       return transcription.text;
     } catch (error) {
-      console.error("Error transcribing audio:", error);
+      console.error("[VoiceAgentService] Error transcribing audio:", error);
       throw new Error("Failed to transcribe audio");
     }
   }
@@ -69,7 +69,7 @@ export class VoiceAgentService {
       const arrayBuffer = await mp3.arrayBuffer();
       return Buffer.from(arrayBuffer);
     } catch (error) {
-      console.error("Error generating voice response:", error);
+      console.error("[VoiceAgentService] Error generating voice response:", error);
       throw new Error("Failed to generate voice response");
     }
   }
@@ -86,6 +86,7 @@ export class VoiceAgentService {
     const transcribedText = await this.transcribeAudio(audioBuffer, languageCode);
 
     if (!transcribedText || transcribedText.trim().length === 0) {
+      console.error("[VoiceAgentService] Transcription returned empty text");
       throw new Error("No text was transcribed from the audio");
     }
 
@@ -106,7 +107,7 @@ export class VoiceAgentService {
     try {
       voiceResponseBuffer = await this.generateVoiceResponse(textResponse);
     } catch (error) {
-      console.error("Error generating voice response, will return text only:", error);
+      console.error("[VoiceAgentService] Error generating voice response, will return text only:", error);
       // Continue without voice response
     }
 

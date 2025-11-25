@@ -116,6 +116,7 @@ bot.on("message:voice", async (ctx) => {
     // Get language code directly from Telegram message context (ctx.from.language_code)
     // Fallback to session.codeLang (set in auth middleware) or default to "en"
     const languageCode = ctx.from?.language_code || ctx.session.codeLang || "en";
+
     // Download the voice file
     const file = await ctx.api.getFile(voice.file_id);
     const fileUrl = `https://api.telegram.org/file/bot${CONFIG.telegramAccessToken}/${file.file_path}`;

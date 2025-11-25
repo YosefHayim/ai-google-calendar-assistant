@@ -34,6 +34,12 @@ export const authTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
 
   // Ask for email if missing
   if (!session.email) {
+    // Allow voice messages to pass through (they don't have text)
+    // Voice handler will handle the response appropriately
+    if (ctx.message?.voice) {
+      return next();
+    }
+
     const text = ctx.message?.text?.trim();
     if (!(text && isEmail(text))) {
       await ctx.reply("First time? Please provide your email to authorize:");
@@ -44,10 +50,7 @@ export const authTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
     session.email = text;
 
     // Check if user exists in user_calendar_tokens table
-    const { data: existingToken } = await SUPABASE.from("user_calendar_tokens")
-      .select("user_id")
-      .eq("email", text)
-      .maybeSingle();
+    const { data: existingToken } = await SUPABASE.from("user_calendar_tokens").select("user_id").eq("email", text).maybeSingle();
 
     let userId: string | null = null;
     if (existingToken?.user_id) {
@@ -55,12 +58,11 @@ export const authTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
     } else {
       // Create new user_id and add to user_calendar_tokens
       userId = randomUUID();
-      const { error: tokenError } = await SUPABASE.from("user_calendar_tokens")
-        .insert({
-          user_id: userId,
-          email: text,
-          is_active: true,
-        });
+      const { error: tokenError } = await SUPABASE.from("user_calendar_tokens").insert({
+        user_id: userId,
+        email: text,
+        is_active: true,
+      });
 
       if (tokenError) {
         console.error("Error creating user calendar token:", tokenError);
