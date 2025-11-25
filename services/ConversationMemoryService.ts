@@ -39,6 +39,7 @@ export class ConversationMemoryService {
 
   /**
    * Store a new message in the conversation
+   * Uses upsert to handle duplicate message_id gracefully
    */
   async storeMessage(
     user_id: string,
@@ -49,17 +50,29 @@ export class ConversationMemoryService {
     metadata?: Record<string, unknown>
   ): Promise<void> {
     try {
-      // Store the message
-      const { error: messageError } = await this.client.from("conversation_messages").insert({
-        user_id,
-        chat_id,
-        message_id,
-        role,
-        content,
-        metadata: metadata ?? {},
-      });
+      // Use upsert to handle duplicate message_id gracefully
+      // If message already exists, update it (in case content changed)
+      const { error: messageError } = await this.client.from("conversation_messages").upsert(
+        {
+          user_id,
+          chat_id,
+          message_id,
+          role,
+          content,
+          metadata: metadata ?? {},
+        },
+        {
+          onConflict: "chat_id,message_id",
+          ignoreDuplicates: false, // Update if exists
+        }
+      );
 
       if (messageError) {
+        // Check if it's a duplicate key error (shouldn't happen with upsert, but handle it)
+        if (messageError.code === "23505") {
+          this.logger.debug(`Message ${message_id} for chat ${chat_id} already exists, skipping`);
+          return; // Message already stored, no need to throw
+        }
         throw messageError;
       }
 
@@ -74,6 +87,11 @@ export class ConversationMemoryService {
 
       this.logger.debug(`Stored message ${message_id} for chat ${chat_id}`);
     } catch (error) {
+      // If it's a duplicate key error, log and return (don't throw)
+      if (error && typeof error === "object" && "code" in error && error.code === "23505") {
+        this.logger.debug(`Message ${message_id} for chat ${chat_id} already exists, skipping`);
+        return;
+      }
       this.logger.error("Failed to store message", error);
       throw error;
     }
@@ -336,12 +354,7 @@ export class ConversationMemoryService {
       // If upsert fails due to missing constraint, use update/insert pattern
       if (upsertError && upsertError.code === "42P10") {
         // Check if record exists
-        const { data: existing } = await this.client
-          .from("conversation_state")
-          .select("id")
-          .eq("user_id", user_id)
-          .eq("chat_id", chat_id)
-          .maybeSingle();
+        const { data: existing } = await this.client.from("conversation_state").select("id").eq("user_id", user_id).eq("chat_id", chat_id).maybeSingle();
 
         if (existing) {
           // Update existing record
@@ -533,12 +546,7 @@ export class ConversationMemoryService {
       // If upsert fails due to missing constraint, use update/insert pattern
       if (upsertError && upsertError.code === "42P10") {
         // Check if record exists
-        const { data: existing } = await this.client
-          .from("conversation_state")
-          .select("id")
-          .eq("user_id", user_id)
-          .eq("chat_id", chat_id)
-          .maybeSingle();
+        const { data: existing } = await this.client.from("conversation_state").select("id").eq("user_id", user_id).eq("chat_id", chat_id).maybeSingle();
 
         if (existing) {
           // Update existing record

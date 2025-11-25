@@ -1,7 +1,7 @@
-import type { User } from "@supabase/supabase-js";
-import type { calendar_v3 } from "googleapis";
 import type { AGENTS } from "@/ai-agents/agents";
 import type { AGENT_TOOLS } from "@/ai-agents/agentTools";
+import type { User } from "@supabase/supabase-js";
+import type { calendar_v3 } from "googleapis";
 
 export type EventParametersProps = {
   summary?: string | null | undefined;
@@ -67,6 +67,7 @@ export type SessionData = {
   email: string | undefined;
   lastProcessedMsgId: number;
   agentActive: boolean;
+  agentProcessing: boolean; // Tracks if an agent is currently processing a request
 };
 
 export type TokensProps = {

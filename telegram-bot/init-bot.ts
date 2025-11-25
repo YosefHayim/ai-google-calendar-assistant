@@ -36,6 +36,7 @@ bot.use(
         username: undefined,
         lastProcessedMsgId: 0,
         agentActive: false,
+        agentProcessing: false,
       };
     },
   })
@@ -93,6 +94,12 @@ bot.on("message:voice", async (ctx) => {
   }
   ctx.session.lastProcessedMsgId = msgId;
 
+  // Check if agent is already processing - prevent concurrent requests
+  if (ctx.session.agentProcessing) {
+    await ctx.reply("Cannot reply yet, agent is running. Please wait for the current request to finish.");
+    return;
+  }
+
   // start/stop "loop" via session flag
   if (!ctx.session.agentActive) {
     ctx.session.agentActive = true;
@@ -101,6 +108,9 @@ bot.on("message:voice", async (ctx) => {
   if (!ctx.session.agentActive) {
     return;
   }
+
+  // Set processing flag to prevent concurrent agent runs
+  ctx.session.agentProcessing = true;
 
   // Declare typing interval outside to ensure it's accessible in catch block
   let typingInterval: NodeJS.Timeout | null = null;
@@ -201,25 +211,31 @@ bot.on("message:voice", async (ctx) => {
 
     // Voice message → Voice response: User sent voice, so we reply with voice
     // Priority: Voice response > Text response (only fallback if voice generation fails)
+    let assistantMessageId: number | null = null;
+
     if (voiceResponseBuffer && voiceResponseBuffer.length > 0) {
       // Send voice response (user sent voice, so we reply with voice)
-      await ctx.api.sendVoice(ctx.chat.id, new InputFile(voiceResponseBuffer, "response.ogg"), {
+      const sentMessage = await ctx.api.sendVoice(ctx.chat.id, new InputFile(voiceResponseBuffer, "response.ogg"), {
         caption: textResponse || transcribedText ? `Transcribed: ${transcribedText}` : undefined,
       });
+      assistantMessageId = sentMessage.message_id;
     } else if (textResponse) {
       // Fallback: If voice generation failed, send text response
       // This should be rare - voice generation should normally succeed
-      await ctx.reply(textResponse);
+      const sentMessage = await ctx.reply(textResponse);
+      assistantMessageId = sentMessage.message_id;
     } else if (transcribedText) {
       // If we have transcription but no response, acknowledge
-      await ctx.reply(`I heard: "${transcribedText}". Processing your request...`);
+      const sentMessage = await ctx.reply(`I heard: "${transcribedText}". Processing your request...`);
+      assistantMessageId = sentMessage.message_id;
     } else {
-      await ctx.reply("I received your voice message, but couldn't process it. Please try again.");
+      const sentMessage = await ctx.reply("I received your voice message, but couldn't process it. Please try again.");
+      assistantMessageId = sentMessage.message_id;
     }
 
-    // Store assistant response in conversation memory
-    if (userId && chatId && (textResponse || voiceResponseBuffer)) {
-      await conversationMemoryService.storeMessage(userId, chatId, msgId + 1, "assistant", textResponse || "[Voice response]", {
+    // Store assistant response in conversation memory using actual message_id from sent message
+    if (userId && chatId && assistantMessageId && (textResponse || voiceResponseBuffer)) {
+      await conversationMemoryService.storeMessage(userId, chatId, assistantMessageId, "assistant", textResponse || "[Voice response]", {
         timestamp: new Date().toISOString(),
         agent: "voice_orchestrator",
         messageType: voiceResponseBuffer ? "voice" : "text",
@@ -233,6 +249,9 @@ bot.on("message:voice", async (ctx) => {
     }
     console.error("Voice agent error:", e);
     await ctx.reply("Error processing your voice message. Please try again or send a text message.");
+  } finally {
+    // Always clear processing flag when done (success or error)
+    ctx.session.agentProcessing = false;
   }
 });
 
@@ -267,6 +286,12 @@ bot.on("message", async (ctx) => {
     return;
   }
 
+  // Check if agent is already processing - prevent concurrent requests
+  if (ctx.session.agentProcessing) {
+    await ctx.reply("Cannot reply yet, agent is running. Please wait for the current request to finish.");
+    return;
+  }
+
   // start/stop "loop" via session flag; no while(true)
   if (!ctx.session.agentActive) {
     ctx.session.agentActive = true;
@@ -274,6 +299,7 @@ bot.on("message", async (ctx) => {
 
   if (userMsgText.toLowerCase() === "/exit") {
     ctx.session.agentActive = false;
+    ctx.session.agentProcessing = false; // Clear processing flag if exiting
     await ctx.reply("Conversation ended.");
     return;
   }
@@ -281,6 +307,9 @@ bot.on("message", async (ctx) => {
   if (!ctx.session.agentActive) {
     return;
   }
+
+  // Set processing flag to prevent concurrent agent runs
+  ctx.session.agentProcessing = true;
 
   // Declare typing interval outside to ensure it's accessible in catch block
   let typingInterval: NodeJS.Timeout | null = null;
@@ -428,20 +457,16 @@ bot.on("message", async (ctx) => {
 
     // Text message → Text response: User sent text, so we reply with text
     // We never generate voice responses for text messages - only text replies
-    // Store assistant response in conversation memory
-    if (userId && chatId) {
-      await conversationMemoryService.storeMessage(
-        userId,
-        chatId,
-        msgId + 1, // Use next message ID for assistant response
-        "assistant",
-        agentResponse,
-        {
-          timestamp: new Date().toISOString(),
-          agent: "orchestrator",
-          messageType: "text", // Explicitly mark as text response
-        }
-      );
+    const sentMessage = await ctx.reply(agentResponse);
+    const assistantMessageId = sentMessage.message_id;
+
+    // Store assistant response in conversation memory using actual message_id from sent message
+    if (userId && chatId && assistantMessageId) {
+      await conversationMemoryService.storeMessage(userId, chatId, assistantMessageId, "assistant", agentResponse, {
+        timestamp: new Date().toISOString(),
+        agent: "orchestrator",
+        messageType: "text", // Explicitly mark as text response
+      });
 
       // Store conversation embedding for future searches
       try {
@@ -463,8 +488,6 @@ bot.on("message", async (ctx) => {
         // Continue without storing embedding
       }
     }
-
-    await ctx.reply(agentResponse);
   } catch (e) {
     // Stop typing indicator on error
     if (typingInterval) {
@@ -473,6 +496,9 @@ bot.on("message", async (ctx) => {
     }
     console.error("Agent error:", e);
     await ctx.reply("Error processing your request. Please try again.");
+  } finally {
+    // Always clear processing flag when done (success or error)
+    ctx.session.agentProcessing = false;
   }
 });
 

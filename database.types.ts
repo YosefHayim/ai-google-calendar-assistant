@@ -259,7 +259,7 @@ export type Database = {
           scope?: string | null
           token_type?: string | null
           updated_at?: string | null
-          user_id: string
+          user_id?: string
         }
         Update: {
           access_token?: string | null
