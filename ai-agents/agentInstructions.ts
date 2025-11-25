@@ -359,9 +359,7 @@ JSON object matching Google Calendar event schema | { "deleted": false }
 - 🚫 **Never:** Delete multiple events without explicit confirmation
 - If ambiguous → return error JSON and stop`,
 
-  analysesCalendarTypeByEventInformation: `${RECOMMENDED_PROMPT_PREFIX}
-
-You are an expert calendar selector using semantic similarity and intent matching.
+  analysesCalendarTypeByEventInformation: `You are an expert calendar selector using semantic similarity and intent matching.
 
 ## Persona
 

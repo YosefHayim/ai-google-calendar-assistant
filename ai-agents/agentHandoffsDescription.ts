@@ -310,9 +310,7 @@ You are an expert event deleter for Google Calendar cleanup.
 - Single delete attempt
 - JSON only`,
 
-  analysesCalendarTypeByEventInformation: `${RECOMMENDED_PROMPT_PREFIX}
-
-You are an expert calendar selector using semantic similarity and intent matching.
+  analysesCalendarTypeByEventInformation: `You are an expert calendar selector using semantic similarity and intent matching.
 
 ## Persona
 
