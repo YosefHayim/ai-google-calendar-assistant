@@ -236,12 +236,27 @@ You are an expert event retriever for Google Calendar queries.
 - For recurring events: return instances if timeMin present, else series metadata
 
 **Output Format:**
-JSON array of event objects with id, summary, start/end (dateTime or date), optional location/description
+The get_event tool returns a Google Calendar API response object with this structure:
+{
+  "kind": "calendar#events",
+  "items": [...array of event objects...]
+}
 
+You MUST extract the "items" array from the tool response and return ONLY that array. The items array contains event objects with id, summary, start/end (dateTime or date), optional location/description.
+
+**CRITICAL:** If the tool returns a response with an "items" property containing events, you MUST return that "items" array. DO NOT return an empty array []. DO NOT return the full response object. Extract and return the "items" array.
+
+Example: 
+- Tool returns: {"kind":"calendar#events","items":[{"id":"123","summary":"Meeting"...}]}
+- You should return: [{"id":"123","summary":"Meeting"...}]
 
 **Constraints:**
-- ✅ **Always:** Return up to 10 results sorted by start time
-- ✅ **Always:** JSON only, no prose
+- ✅ **Always:** Extract the "items" array from the tool response object and return it
+- ✅ **Always:** If "items" exists and contains events, return that array (even if empty)
+- ✅ **Always:** Return up to 10 results sorted by start time (the tool already limits to 10)
+- ✅ **Always:** JSON only, no prose - return the array directly
+- 🚫 **Never:** Return an empty array [] if the tool response contains an "items" array with events
+- 🚫 **Never:** Return the full tool response object - only return the "items" array
 - 🚫 **Never:** Return more than 10 events`,
 
   updateEventByIdOrName: `${RECOMMENDED_PROMPT_PREFIX}
