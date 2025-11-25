@@ -1,6 +1,6 @@
 import { run } from "@grammyjs/runner";
 import { Bot, type Context, type SessionFlavor, session } from "grammy";
-import { ORCHESTRATOR_AGENT, QUICK_RESPONSE_AGENT } from "@/ai-agents/agents";
+import { ORCHESTRATOR_AGENT } from "@/ai-agents/agents";
 import { CONFIG, SUPABASE } from "@/config/root-config";
 import type { SessionData } from "@/types";
 import { activateAgent } from "@/utils/activateAgent";
@@ -92,6 +92,13 @@ bot.on("message", async (ctx) => {
 
   // guard: ignore non-text updates
   if (!userMsgText) {
+    return;
+  }
+
+  // guard: check message length limit (10,000 characters)
+  const MAX_MESSAGE_LENGTH = 10_000;
+  if (userMsgText.length > MAX_MESSAGE_LENGTH) {
+    await ctx.reply("Message is too long, please shorten it.");
     return;
   }
 
@@ -224,32 +231,7 @@ bot.on("message", async (ctx) => {
 
     await startTypingIndicator();
 
-    // First, get quick acknowledgment from quick-response agent
-    let quickResponse: string | null = null;
-    try {
-      const quickResult = await activateAgent(
-        QUICK_RESPONSE_AGENT,
-        `User is asking: "${userMsgText}". Provide a brief, friendly acknowledgment (1-2 sentences max) that you're working on their request.`,
-        {
-          agentName: agentName || undefined,
-        }
-      );
-      quickResponse = quickResult.finalOutput || null;
-    } catch (quickError) {
-      console.error("Quick response agent error (non-critical):", quickError);
-      // Continue without quick response if it fails
-    }
-
-    // Send quick acknowledgment immediately if available
-    if (quickResponse) {
-      try {
-        await ctx.reply(quickResponse);
-      } catch (replyError) {
-        console.error("Failed to send quick response (non-critical):", replyError);
-      }
-    }
-
-    // Now activate main orchestrator agent with context and auto-routing enabled
+    // Activate main orchestrator agent with context and auto-routing enabled
     let finalOutput: string;
     try {
       const result = await activateAgent(
