@@ -11,7 +11,8 @@ const calendarSchema = z.coerce.string({ description: "The ID of the calendar to
 
 const emailSchema = z.coerce
   .string({
-    description: "The email address of the user, used for authentication and authorization via database and google calendar.",
+    description:
+      "REQUIRED: The authenticated user's email address from the conversation context. This is automatically provided in the conversation context - use the email value from the 'User Email' section in the context. DO NOT use placeholder emails like 'me@example.com' or ask the user for their email. The email is used for authentication and authorization via database and Google Calendar.",
   })
   .includes("@", { message: "Must include @ symbol" })
   .refine((v) => validator.isEmail(v), { message: "Invalid email address." });
@@ -68,18 +69,41 @@ export const PARAMETERS_TOOLS = {
       .describe("The password for the user account. Must be between 6 and 72 characters long."),
   }),
   validateUserDbParametersToRegisterUser: z.object({ email: emailSchema }).describe("Register user to our db."),
-  validateUserDbParameter: z.object({ email: emailSchema }).describe("Validate user by email."),
-  getUserDefaultTimeZone: z.object({ email: emailSchema }).describe("Fetch user default timezone."),
+  validateUserDbParameter: z
+    .object({
+      email: emailSchema.describe(
+        "REQUIRED: The authenticated user's email from conversation context. Use the email value from the 'User Email' section in the context. DO NOT use placeholder emails like 'me@example.com'."
+      ),
+    })
+    .describe("Validate user authentication by email. The email must come from conversation context."),
+  getUserDefaultTimeZone: z
+    .object({
+      email: emailSchema.describe(
+        "REQUIRED: The authenticated user's email from conversation context. Use the email value from the 'User Email' section in the context. DO NOT use placeholder emails like 'me@example.com'."
+      ),
+    })
+    .describe("Fetch the authenticated user's default timezone from Google Calendar settings. The email must come from conversation context."),
   getEventParameters: z
     .object({
-      email: emailSchema,
-      timeMin: z.coerce.string({ description: "The minimum date and time for events to return, formatted as RFC3339 timestamp." }).nullable(),
-      q: z.coerce.string({ description: "Optional parameter to search for text matches across all event fields in Google Calendar." }).nullable(),
+      email: emailSchema.describe(
+        "REQUIRED: The authenticated user's email from conversation context. Use the email value from the 'User Email' section in the context. DO NOT use placeholder emails like 'me@example.com'."
+      ),
+      timeMin: z.coerce
+        .string({
+          description:
+            "The minimum date and time for events to return, formatted as RFC3339 timestamp (e.g., '2025-11-25T00:00:00+02:00'). If not provided, defaults to start of current year.",
+        })
+        .nullable(),
+      q: z.coerce
+        .string({
+          description: "Optional keyword search query to match against event titles, descriptions, and locations. Case-insensitive, supports partial matches.",
+        })
+        .nullable(),
       customEvents: z.coerce
-        .boolean({ description: "Optional parameter whether we want to receive back custom event object or not, default to false." })
+        .boolean({ description: "Optional parameter to return custom event objects instead of standard Google Calendar format. Defaults to false." })
         .nullable(),
     })
-    .describe("Fetch events for the user email for the maximum date of time provided."),
+    .describe("Search and retrieve calendar events for the authenticated user. The email must come from conversation context."),
 
   getCalendarTypesByEventParameters: z
     .object({ email: emailSchema, eventInformation: makeFullEventParams() })
@@ -100,17 +124,29 @@ export const PARAMETERS_TOOLS = {
   normalizedEventParams: makeFullEventParams().extend({ email: emailSchema }).describe("Normalize an event payload for insertion/update."),
   getAgentName: z
     .object({
-      email: emailSchema,
-      chatId: z.coerce.number({ description: "Telegram chat ID" }),
+      email: emailSchema.describe(
+        "REQUIRED: The authenticated user's email from conversation context. Use the email value from the 'User Email' section in the context. DO NOT use placeholder emails like 'me@example.com'."
+      ),
+      chatId: z.coerce.number({
+        description:
+          "REQUIRED: The Telegram chat ID from conversation context. Use the chatId value from the 'Chat ID' section in the context. DO NOT ask the user for this.",
+      }),
     })
-    .describe("Get the user's personalized agent name from conversation metadata."),
+    .describe("Get the authenticated user's personalized agent name from conversation metadata. Both email and chatId must come from conversation context."),
   setAgentName: z
     .object({
-      email: emailSchema,
-      chatId: z.coerce.number({ description: "Telegram chat ID" }),
+      email: emailSchema.describe(
+        "REQUIRED: The authenticated user's email from conversation context. Use the email value from the 'User Email' section in the context. DO NOT use placeholder emails like 'me@example.com'."
+      ),
+      chatId: z.coerce.number({
+        description:
+          "REQUIRED: The Telegram chat ID from conversation context. Use the chatId value from the 'Chat ID' section in the context. DO NOT ask the user for this.",
+      }),
       agentName: requiredString("The name the user wants to call their personal assistant", "Agent name is required."),
     })
-    .describe("Set or update the user's personalized agent name in conversation metadata."),
+    .describe(
+      "Set or update the authenticated user's personalized agent name in conversation metadata. Both email and chatId must come from conversation context."
+    ),
 
   get_user_routines: z
     .object({
@@ -167,10 +203,7 @@ export const PARAMETERS_TOOLS = {
         .enum(["daily", "weekly", "monthly", "hourly", "work_time", "insights"])
         .nullish()
         .describe("Type of statistics to retrieve (defaults to basic statistics)"),
-      statisticsType: z
-        .enum(["basic", "hourly", "work_time", "insights"])
-        .nullish()
-        .describe("Specific statistics type (defaults to basic)"),
+      statisticsType: z.enum(["basic", "hourly", "work_time", "insights"]).nullish().describe("Specific statistics type (defaults to basic)"),
     })
     .describe("Get schedule statistics and insights for a user."),
 };
