@@ -11,6 +11,8 @@ import { handleGetEvents } from "./events/handlers/getEvents";
 import { handleInsertEvent } from "./events/handlers/insertEvent";
 import { handleUpdateEvent } from "./events/handlers/updateEvent";
 import { validateEventId } from "./events/validateEventId";
+import { validateTokens } from "./auth/validateTokens";
+import { TokenValidationError } from "./auth/TokenValidationError";
 
 
 export const eventsHandler = asyncHandler(
@@ -22,6 +24,18 @@ export const eventsHandler = asyncHandler(
   ) => {
     const email = extractEmail(req, extra);
     const credentials = await fetchCredentialsByEmail(email);
+    
+    // Validate tokens before attempting to use them
+    const validation = validateTokens(credentials);
+    if (validation.requiresReAuth) {
+      throw new TokenValidationError(
+        validation.message,
+        validation.status as "access_token_expired" | "refresh_token_expired" | "tokens_missing" | "tokens_invalid",
+        validation.isAccessTokenExpired,
+        validation.isRefreshTokenExpired
+      );
+    }
+    
     const calendar = await initCalendarWithUserTokensAndUpdateTokens(credentials);
     const calendarEvents = calendar.events;
 

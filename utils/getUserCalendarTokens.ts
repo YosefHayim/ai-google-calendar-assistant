@@ -3,10 +3,11 @@ import { TOKEN_FIELDS } from "./storage";
 import type { TokensProps } from "@/types";
 import { asyncHandler } from "./asyncHandlers";
 
-export const fetchCredentialsByEmail = asyncHandler(async (email: string): Promise<TokensProps> => {
+export const fetchCredentialsByEmail = asyncHandler(async (email: string): Promise<TokensProps & { created_at?: string | null }> => {
   const { data, error } = await SUPABASE.from("user_calendar_tokens")
-    .select(TOKEN_FIELDS)
+    .select(`${TOKEN_FIELDS}, created_at`)
     .eq("email", email.trim().toLowerCase())
+    .eq("is_active", true)
     .order("updated_at", { ascending: false })
     .limit(1);
 
@@ -18,5 +19,5 @@ export const fetchCredentialsByEmail = asyncHandler(async (email: string): Promi
   }
 
   // Return the most recent token record (first after ordering by updated_at desc)
-  return data[0] as TokensProps;
+  return data[0] as TokensProps & { created_at?: string | null };
 });

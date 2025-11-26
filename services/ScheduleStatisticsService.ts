@@ -778,6 +778,19 @@ export class ScheduleStatisticsService {
       // Get user's OAuth tokens
       const tokens = await fetchCredentialsByEmail(email);
 
+      // Validate tokens before using them
+      const { validateTokens } = await import("@/utils/auth/validateTokens");
+      const { TokenValidationError } = await import("@/utils/auth/TokenValidationError");
+      const validation = validateTokens(tokens);
+      if (validation.requiresReAuth) {
+        throw new TokenValidationError(
+          validation.message,
+          validation.status as "access_token_expired" | "refresh_token_expired" | "tokens_missing" | "tokens_invalid",
+          validation.isAccessTokenExpired,
+          validation.isRefreshTokenExpired
+        );
+      }
+
       // Initialize calendar client with user tokens
       const calendarClient = await initCalendarWithUserTokensAndUpdateTokens(tokens);
 

@@ -5,12 +5,14 @@ import { eventsHandler } from "@/utils/handleEvents";
 import { initCalendarWithUserTokensAndUpdateTokens } from "@/utils/initCalendarWithUserTokens";
 import { updateCalenderCategories } from "@/utils/updateCalendarCategories";
 import sendResponse from "@/utils/sendResponse";
+import { validateTokens } from "@/utils/auth/validateTokens";
 
 jest.mock("@/utils/getUserCalendarTokens");
 jest.mock("@/utils/handleEvents");
 jest.mock("@/utils/initCalendarWithUserTokens");
 jest.mock("@/utils/updateCalendarCategories");
 jest.mock("@/utils/sendResponse");
+jest.mock("@/utils/auth/validateTokens");
 
 describe("Calendar Controller", () => {
   let mockReq: any;
@@ -32,6 +34,17 @@ describe("Calendar Controller", () => {
       json: jest.fn().mockReturnThis(),
       send: jest.fn().mockReturnThis(),
     };
+    // Mock validateTokens to return valid tokens by default
+    (validateTokens as jest.Mock).mockReturnValue({
+      isValid: true,
+      requiresReAuth: false,
+      status: "valid",
+      message: "Tokens are valid and can be used.",
+      isAccessTokenExpired: false,
+      isRefreshTokenExpired: false,
+      accessTokenTimeRemaining: 3600000,
+      refreshTokenTimeRemaining: 604800000,
+    });
   });
 
   describe("Controller Structure", () => {

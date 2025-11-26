@@ -11,7 +11,7 @@ const mockFrom = jest.fn();
 // Set up the chain
 mockFrom.mockReturnValue({ select: mockSelect });
 mockSelect.mockReturnValue({ eq: mockEq });
-mockEq.mockReturnValue({ order: mockOrder });
+mockEq.mockReturnValue({ order: mockOrder, eq: mockEq });
 mockOrder.mockReturnValue({ limit: mockLimit });
 mockLimit.mockResolvedValue({ data: [], error: null });
 
@@ -44,17 +44,18 @@ describe("fetchCredentialsByEmail", () => {
     // Reset return values
     mockFrom.mockReturnValue({ select: mockSelect });
     mockSelect.mockReturnValue({ eq: mockEq });
-    mockEq.mockReturnValue({ order: mockOrder });
+    mockEq.mockReturnValue({ order: mockOrder, eq: mockEq });
     mockOrder.mockReturnValue({ limit: mockLimit });
     mockLimit.mockResolvedValue({ data: [], error: null });
   });
 
   describe("successful fetch", () => {
     it("should fetch credentials for valid email", async () => {
-      const mockData: TokensProps = {
+      const mockData: TokensProps & { created_at?: string } = {
         access_token: "test-access-token",
         refresh_token: "test-refresh-token",
         email: "test@example.com",
+        created_at: new Date().toISOString(),
       };
 
       mockLimit.mockResolvedValue({
@@ -66,14 +67,16 @@ describe("fetchCredentialsByEmail", () => {
 
       expect(mockFrom).toHaveBeenCalledWith("user_calendar_tokens");
       expect(mockEq).toHaveBeenCalledWith("email", "test@example.com");
+      expect(mockEq).toHaveBeenCalledWith("is_active", true);
       expect(result).toEqual(mockData);
     });
 
     it("should trim and lowercase email", async () => {
-      const mockData: TokensProps = {
+      const mockData: TokensProps & { created_at?: string } = {
         access_token: "token",
         refresh_token: "refresh",
         email: "test@example.com",
+        created_at: new Date().toISOString(),
       };
 
       mockLimit.mockResolvedValue({
@@ -87,10 +90,11 @@ describe("fetchCredentialsByEmail", () => {
     });
 
     it("should order by updated_at descending", async () => {
-      const mockData: TokensProps = {
+      const mockData: TokensProps & { created_at?: string } = {
         access_token: "token",
         refresh_token: "refresh",
         email: "test@example.com",
+        created_at: new Date().toISOString(),
       };
 
       mockLimit.mockResolvedValue({
@@ -104,10 +108,11 @@ describe("fetchCredentialsByEmail", () => {
     });
 
     it("should limit to 1 result", async () => {
-      const mockData: TokensProps = {
+      const mockData: TokensProps & { created_at?: string } = {
         access_token: "token",
         refresh_token: "refresh",
         email: "test@example.com",
+        created_at: new Date().toISOString(),
       };
 
       mockLimit.mockResolvedValue({
@@ -121,15 +126,17 @@ describe("fetchCredentialsByEmail", () => {
     });
 
     it("should return first result when multiple records exist (handles duplicates)", async () => {
-      const mockData1: TokensProps = {
+      const mockData1: TokensProps & { created_at?: string } = {
         access_token: "new-token",
         refresh_token: "new-refresh",
         email: "test@example.com",
+        created_at: new Date().toISOString(),
       };
-      const mockData2: TokensProps = {
+      const mockData2: TokensProps & { created_at?: string } = {
         access_token: "old-token",
         refresh_token: "old-refresh",
         email: "test@example.com",
+        created_at: new Date().toISOString(),
       };
 
       // Simulate multiple records (should return most recent first due to ordering)
@@ -192,10 +199,11 @@ describe("fetchCredentialsByEmail", () => {
 
   describe("edge cases", () => {
     it("should handle email with special characters", async () => {
-      const mockData: TokensProps = {
+      const mockData: TokensProps & { created_at?: string } = {
         access_token: "token",
         refresh_token: "refresh",
         email: "test+tag@example.com",
+        created_at: new Date().toISOString(),
       };
 
       mockLimit.mockResolvedValue({
@@ -210,10 +218,11 @@ describe("fetchCredentialsByEmail", () => {
 
     it("should handle very long email", async () => {
       const longEmail = `${"a".repeat(50)}@${"b".repeat(50)}.com`;
-      const mockData: TokensProps = {
+      const mockData: TokensProps & { created_at?: string } = {
         access_token: "token",
         refresh_token: "refresh",
         email: longEmail,
+        created_at: new Date().toISOString(),
       };
 
       mockLimit.mockResolvedValue({
@@ -227,7 +236,7 @@ describe("fetchCredentialsByEmail", () => {
     });
 
     it("should return complete token data", async () => {
-      const completeTokenData: TokensProps = {
+      const completeTokenData: TokensProps & { created_at?: string } = {
         access_token: "access-token-123",
         refresh_token: "refresh-token-456",
         scope: "calendar.readonly",
@@ -235,6 +244,7 @@ describe("fetchCredentialsByEmail", () => {
         id_token: "id-token-789",
         expiry_date: Date.now() + 3600000,
         email: "test@example.com",
+        created_at: new Date().toISOString(),
       };
 
       mockLimit.mockResolvedValue({

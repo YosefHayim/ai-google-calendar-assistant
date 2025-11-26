@@ -158,6 +158,20 @@ export const EXECUTION_TOOLS = {
       throw new Error("Invalid email address.");
     }
     const tokenProps = await fetchCredentialsByEmail(email);
+    
+    // Validate tokens before using them
+    const { validateTokens } = await import("@/utils/auth/validateTokens");
+    const { TokenValidationError } = await import("@/utils/auth/TokenValidationError");
+    const validation = validateTokens(tokenProps);
+    if (validation.requiresReAuth) {
+      throw new TokenValidationError(
+        validation.message,
+        validation.status as "access_token_expired" | "refresh_token_expired" | "tokens_missing" | "tokens_invalid",
+        validation.isAccessTokenExpired,
+        validation.isRefreshTokenExpired
+      );
+    }
+    
     const CALENDAR = await initCalendarWithUserTokensAndUpdateTokens(tokenProps);
     const r = await CALENDAR.settings.get({ setting: "timezone" });
     return r;
