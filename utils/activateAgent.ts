@@ -108,7 +108,35 @@ export const activateAgent = asyncHandler(async (agentKey: AGENTS_LIST | Agent, 
     }
     if (contextParts.length > 0) {
       enhancedPrompt = `${contextParts.join("\n\n")}\n\n## Current Request:\n${prompt}`;
+      
+      // Log context statistics for debugging
+      const totalCharCount = enhancedPrompt.length;
+      const promptCharCount = prompt.length;
+      const contextCharCount = totalCharCount - promptCharCount;
+      const approxTotalTokens = Math.ceil(totalCharCount / 4);
+      const approxContextTokens = Math.ceil(contextCharCount / 4);
+      
+      console.log(`[Context Debug] Agent: ${agent.name}`);
+      console.log(`[Context Debug] Context included:`, {
+        hasConversationContext: !!context.conversationContext,
+        hasVectorSearch: !!context.vectorSearchResults,
+        hasAgentName: !!context.agentName,
+        hasEmail: !!context.email,
+        hasChatId: !!context.chatId,
+      });
+      console.log(`[Context Debug] Size:`, {
+        promptChars: promptCharCount,
+        contextChars: contextCharCount,
+        totalChars: totalCharCount,
+        approxPromptTokens: Math.ceil(promptCharCount / 4),
+        approxContextTokens,
+        approxTotalTokens,
+      });
+    } else {
+      console.log(`[Context Debug] Agent: ${agent.name} - No context provided`);
     }
+  } else {
+    console.log(`[Context Debug] Agent: ${agent.name} - No context object provided`);
   }
 
   return await run(agent, enhancedPrompt);

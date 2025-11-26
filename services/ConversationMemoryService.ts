@@ -173,7 +173,20 @@ export class ConversationMemoryService {
       });
     }
 
-    return parts.join("\n");
+    const formattedContext = parts.join("\n");
+    
+    // Log context statistics for debugging
+    const charCount = formattedContext.length;
+    const approxTokenCount = Math.ceil(charCount / 4); // Rough estimate: ~4 chars per token
+    this.logger.info("Context formatted for prompt", {
+      recentMessagesCount: context.recentMessages.length,
+      summariesCount: context.summaries.length,
+      totalMessageCount: context.totalMessageCount,
+      contextCharCount: charCount,
+      contextApproxTokens: approxTokenCount,
+    });
+
+    return formattedContext;
   }
 
   /**
