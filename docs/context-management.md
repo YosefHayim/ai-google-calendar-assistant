@@ -38,6 +38,7 @@ ASSISTANT: [Last assistant response]
 ### 3. **Context Injection** (`utils/activateAgent.ts`)
 
 The formatted context is injected into the agent prompt along with:
+
 - Vector search results (similar past conversations)
 - Agent name (if set)
 - User email
@@ -48,6 +49,7 @@ The formatted context is injected into the agent prompt along with:
 ### What Gets Included
 
 ✅ **Always Included:**
+
 - Last 2 messages (full text)
 - All summaries (condensed versions of older messages)
 - Vector search results (top 3 similar conversations)
@@ -56,12 +58,14 @@ The formatted context is injected into the agent prompt along with:
 ### What Gets Excluded
 
 ❌ **Not Included:**
+
 - Messages older than the last 2 (they're summarized instead)
 - Messages that haven't been summarized yet (if < 3 messages total)
 
 ### Context Reset Behavior
 
 🔄 **Context Does NOT Reset Automatically:**
+
 - Context accumulates over time
 - Summaries are permanent (stored in database)
 - Old messages remain in database but are summarized
@@ -80,6 +84,7 @@ The formatted context is injected into the agent prompt along with:
 The system now logs context statistics to help you monitor:
 
 1. **In `ConversationMemoryService.formatContextForPrompt()`:**
+
    - Recent messages count
    - Summaries count
    - Total message count
@@ -130,6 +135,7 @@ private readonly RECENT_MESSAGE_COUNT = 2; // Keep last 2 messages in full
 The system uses a rough estimate: **~4 characters per token**
 
 For more accurate token counting, you could integrate:
+
 - `tiktoken` library for OpenAI models
 - Model-specific tokenizers
 
@@ -149,12 +155,11 @@ For more accurate token counting, you could integrate:
 ## Example Context Growth
 
 | Messages | Recent Messages | Summaries | Context Size |
-|----------|----------------|-----------|--------------|
-| 1-2      | 1-2            | 0         | Small        |
-| 3        | 2              | 1         | Medium       |
-| 6        | 2              | 2         | Medium       |
-| 9        | 2              | 3         | Medium       |
-| 30       | 2              | 10        | Large        |
+| -------- | --------------- | --------- | ------------ |
+| 1-2      | 1-2             | 0         | Small        |
+| 3        | 2               | 1         | Medium       |
+| 6        | 2               | 2         | Medium       |
+| 9        | 2               | 3         | Medium       |
+| 30       | 2               | 10        | Large        |
 
 The context size grows linearly with the number of summaries, but each summary is only ~200 tokens, so it remains manageable even for long conversations.
-

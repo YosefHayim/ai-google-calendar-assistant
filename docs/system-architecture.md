@@ -104,6 +104,7 @@ The system follows a **layered, domain-driven architecture** with clear separati
   - Error handling
 
 **Key Components**:
+
 - `authTgHandler`: Authentication middleware for Telegram users
 - Voice message processing with OpenAI Realtime API
 - Conversation context injection
@@ -134,6 +135,7 @@ The system follows a **layered, domain-driven architecture** with clear separati
 #### Express.js Application (`app.ts`)
 
 **Configuration**:
+
 - CORS enabled
 - JSON body parsing
 - Cookie parser
@@ -142,6 +144,7 @@ The system follows a **layered, domain-driven architecture** with clear separati
 - Error handling middleware
 
 **Routes**:
+
 - `/api/users` - User authentication and management
 - `/api/calendar` - Calendar operations
 - `/api/whatsapp` - WhatsApp webhooks
@@ -149,11 +152,13 @@ The system follows a **layered, domain-driven architecture** with clear separati
 #### Middleware
 
 **Authentication Middleware** (`middlewares/authHandler.ts`):
+
 - JWT token validation
 - User session management
 - Request authentication
 
 **Error Handler** (`middlewares/errorHandler.ts`):
+
 - Centralized error handling
 - Error sanitization
 - Status code mapping
@@ -164,6 +169,7 @@ The system follows a **layered, domain-driven architecture** with clear separati
 #### Calendar Controller (`controllers/calendarController.ts`)
 
 **Endpoints**:
+
 - `getAllCalendars` - List all user calendars
 - `getCalendarColors` - Get calendar color scheme
 - `getCalendarTimezone` - Get user timezone
@@ -172,6 +178,7 @@ The system follows a **layered, domain-driven architecture** with clear separati
 - `calendarOverview` - Get calendar summary
 
 **Responsibilities**:
+
 - Request validation
 - Response formatting
 - Error handling
@@ -180,6 +187,7 @@ The system follows a **layered, domain-driven architecture** with clear separati
 #### Users Controller (`controllers/usersController.ts`)
 
 **Endpoints**:
+
 - OAuth callback handling
 - User registration
 - Token management
@@ -188,6 +196,7 @@ The system follows a **layered, domain-driven architecture** with clear separati
 #### WhatsApp Controller (`controllers/whatsappController.ts`)
 
 **Endpoints**:
+
 - Webhook verification
 - Message processing
 - Event notifications
@@ -197,6 +206,7 @@ The system follows a **layered, domain-driven architecture** with clear separati
 #### Calendar Service (`services/CalendarService.ts`)
 
 **Responsibilities**:
+
 - Calendar CRUD operations
 - Calendar list management
 - Calendar metadata operations
@@ -204,6 +214,7 @@ The system follows a **layered, domain-driven architecture** with clear separati
 #### Event Service (`services/EventService.ts`)
 
 **Responsibilities**:
+
 - Event CRUD operations
 - Event validation
 - Event formatting
@@ -212,12 +223,14 @@ The system follows a **layered, domain-driven architecture** with clear separati
 #### Conversation Memory Service (`services/ConversationMemoryService.ts`)
 
 **Key Features**:
+
 - **Sliding Window Approach**: Keeps last 2 messages in full, summarizes older messages
 - **Automatic Summarization**: Every 3 messages, creates a summary (~200 tokens)
 - **Context Retrieval**: Builds context from recent messages + all summaries
 - **State Management**: Tracks message count and conversation state
 
 **Methods**:
+
 - `storeMessage()` - Store user/assistant messages
 - `getConversationContext()` - Retrieve formatted context
 - `formatContextForPrompt()` - Format context for LLM
@@ -225,6 +238,7 @@ The system follows a **layered, domain-driven architecture** with clear separati
 - `getConversationState()` - Get conversation metadata
 
 **Database Tables**:
+
 - `conversation_messages` - Full message history
 - `conversation_summaries` - Condensed summaries
 - `conversation_state` - Conversation metadata
@@ -232,12 +246,14 @@ The system follows a **layered, domain-driven architecture** with clear separati
 #### Vector Search Service (`services/VectorSearchService.ts`)
 
 **Features**:
+
 - Semantic similarity search
 - Embedding generation (OpenAI)
 - Similar conversation retrieval
 - Top-K search with similarity threshold
 
 **Use Cases**:
+
 - Find similar past conversations
 - Context retrieval for agent prompts
 - Pattern matching in user queries
@@ -245,6 +261,7 @@ The system follows a **layered, domain-driven architecture** with clear separati
 #### Routine Learning Service (`services/RoutineLearningService.ts`)
 
 **Capabilities**:
+
 - Pattern detection (daily, weekly, monthly)
 - Time slot analysis
 - Event relationship mapping
@@ -252,6 +269,7 @@ The system follows a **layered, domain-driven architecture** with clear separati
 - Goal tracking
 
 **Pattern Types**:
+
 - Recurring events
 - Time slot patterns
 - Event sequences
@@ -260,6 +278,7 @@ The system follows a **layered, domain-driven architecture** with clear separati
 #### Schedule Statistics Service (`services/ScheduleStatisticsService.ts`)
 
 **Features**:
+
 - Calendar analytics
 - Time distribution analysis
 - Event frequency statistics
@@ -269,6 +288,7 @@ The system follows a **layered, domain-driven architecture** with clear separati
 #### Model Router Service (`services/ModelRouterService.ts`)
 
 **Intelligent Model Selection**:
+
 - Task complexity analysis
 - Model capability mapping
 - Cost optimization
@@ -276,6 +296,7 @@ The system follows a **layered, domain-driven architecture** with clear separati
 - 47+ model support
 
 **Routing Strategy**:
+
 - Simple queries → GPT-4o-mini (fast, cheap)
 - Complex tasks → GPT-4o (powerful, accurate)
 - Specialized tasks → Domain-specific models
@@ -283,11 +304,13 @@ The system follows a **layered, domain-driven architecture** with clear separati
 #### Routine Analysis Job (`services/RoutineAnalysisJob.ts`)
 
 **Background Processing**:
+
 - **Schedule**: Daily at 2 AM (configurable)
 - **Lookback Period**: 30 days (configurable)
 - **Max Users**: 100 per run (configurable)
 
 **Process**:
+
 1. Get active users with calendar tokens
 2. For each user, analyze calendar events
 3. Detect patterns and routines
@@ -321,6 +344,7 @@ ORCHESTRATOR_AGENT (Main Decision Engine)
 #### Base Agents (`ai-agents/agents.ts`)
 
 **Core Agents**:
+
 1. **generateUserCbGoogleUrl** - OAuth URL generation
 2. **registerUserViaDb** - User registration
 3. **validateUserAuth** - Authentication validation
@@ -334,27 +358,32 @@ ORCHESTRATOR_AGENT (Main Decision Engine)
 #### Handoff Agents
 
 **insertEventHandOffAgent**:
+
 - Orchestrates event creation workflow
 - Calls: `prepare_event` → `calendar_type_by_event_details` → `insert_event`
 - Parallel tool calls enabled
 
 **updateEventOrEventsHandOffAgent**:
+
 - Orchestrates event update workflow
 - Calls: `get_event` → `update_event`
 
 **deleteEventOrEventsHandOffAgent**:
+
 - Orchestrates event deletion workflow
 - Calls: `get_event` → `delete_event`
 
 #### Orchestrator Agent
 
 **Main Decision Engine**:
+
 - Routes user requests to appropriate agents
 - Handles intent recognition
 - Manages agent delegation
 - Provides conversational responses
 
 **Tools Available** (15 tools):
+
 - Event operations (insert, get, update, delete)
 - Authentication tools
 - Calendar listing
@@ -366,6 +395,7 @@ ORCHESTRATOR_AGENT (Main Decision Engine)
 #### Quick Response Agent
 
 **Purpose**: Fast acknowledgment for simple queries
+
 - **Model**: GPT-4o-mini (fast, cheap)
 - **No Tools**: Text-only responses
 - **Use Case**: Greetings, simple questions, acknowledgments
@@ -375,6 +405,7 @@ ORCHESTRATOR_AGENT (Main Decision Engine)
 **Tool Categories**:
 
 1. **Calendar Operations**:
+
    - `insert_event` - Create calendar events
    - `get_event` - Retrieve events
    - `update_event` - Update events
@@ -382,21 +413,25 @@ ORCHESTRATOR_AGENT (Main Decision Engine)
    - `list_calendars` - List user calendars
 
 2. **Authentication**:
+
    - `validate_user_db` - Validate user authentication
    - `generate_user_cb_google_url` - OAuth URL generation
    - `register_user_via_db` - User registration
 
 3. **Routine Learning**:
+
    - `get_user_routines` - Get learned patterns
    - `get_upcoming_predictions` - Predict future events
    - `suggest_optimal_time` - Optimal scheduling suggestions
    - `get_routine_insights` - Schedule pattern analysis
 
 4. **Goal Tracking**:
+
    - `set_user_goal` - Set user goals
    - `get_goal_progress` - Get goal progress
 
 5. **Statistics**:
+
    - `get_schedule_statistics` - Calendar analytics
 
 6. **Agent Personalization**:
@@ -406,6 +441,7 @@ ORCHESTRATOR_AGENT (Main Decision Engine)
 #### Agent Instructions (`ai-agents/agentInstructions.ts`)
 
 Each agent has detailed instructions defining:
+
 - Purpose and responsibilities
 - Tool usage guidelines
 - Output format requirements
@@ -414,6 +450,7 @@ Each agent has detailed instructions defining:
 - Few-shot examples
 
 **Key Instruction Patterns**:
+
 - Clear workflow steps
 - Explicit tool calling requirements
 - Context awareness rules
@@ -425,21 +462,25 @@ Each agent has detailed instructions defining:
 #### Entities (`domain/entities/`)
 
 **Event Entity** (`domain/entities/Event.ts`):
+
 - Core calendar event representation
 - Immutable value objects
 - Business logic validation
 
 **Calendar Entity** (`domain/entities/Calendar.ts`):
+
 - Calendar representation
 - Metadata management
 
 **User Entity** (`domain/entities/User.ts`):
+
 - User domain model
 - Authentication state
 
 #### Value Objects (`domain/value-objects/`)
 
 **EventDateTime** (`domain/value-objects/EventDateTime.ts`):
+
 - Immutable date/time representation
 - Timezone handling
 - Date/time operations
@@ -447,6 +488,7 @@ Each agent has detailed instructions defining:
 #### Repository Interfaces (`domain/repositories/`)
 
 **IEventRepository**:
+
 - `create()` - Create event
 - `findById()` - Find by ID
 - `findByDateRange()` - Find by date range
@@ -454,11 +496,13 @@ Each agent has detailed instructions defining:
 - `delete()` - Delete event
 
 **ICalendarRepository**:
+
 - `findAll()` - List calendars
 - `findById()` - Find calendar
 - `getTimezone()` - Get timezone
 
 **IUserRepository**:
+
 - `findByEmail()` - Find user
 - `create()` - Create user
 - `update()` - Update user
@@ -466,6 +510,7 @@ Each agent has detailed instructions defining:
 #### DTOs (`domain/dto/`)
 
 Data Transfer Objects for API communication:
+
 - `EventDTO` - Event data transfer
 - `CalendarDTO` - Calendar data transfer
 - `UserDTO` - User data transfer
@@ -476,16 +521,19 @@ Data Transfer Objects for API communication:
 #### Repository Implementations (`infrastructure/repositories/`)
 
 **GoogleCalendarEventRepository**:
+
 - Implements `IEventRepository`
 - Google Calendar API integration
 - Event mapping and transformation
 
 **GoogleCalendarCalendarRepository**:
+
 - Implements `ICalendarRepository`
 - Calendar list management
 - Metadata operations
 
 **SupabaseUserRepository**:
+
 - Implements `IUserRepository`
 - Supabase database operations
 - User management
@@ -493,25 +541,30 @@ Data Transfer Objects for API communication:
 #### Mappers (`infrastructure/repositories/mappers/`)
 
 **EventMapper**:
+
 - Domain ↔ API model conversion
 - Date/time formatting
 - Field mapping
 
 **CalendarMapper**:
+
 - Calendar model conversion
 - Metadata mapping
 
 **UserMapper**:
+
 - User model conversion
 
 #### Clients (`infrastructure/clients/`)
 
 **GoogleCalendarClient**:
+
 - Google Calendar API wrapper
 - OAuth token management
 - Request/response handling
 
 **EnhancedSupabaseClient**:
+
 - Supabase client wrapper
 - Extended functionality
 - Connection management
@@ -519,11 +572,13 @@ Data Transfer Objects for API communication:
 #### Dependency Injection (`infrastructure/di/`)
 
 **Inversify Container**:
+
 - Service registration
 - Dependency resolution
 - Lifecycle management
 
 **Container Configuration**:
+
 - Repository bindings
 - Service bindings
 - Client bindings
@@ -650,6 +705,7 @@ Send to Agent
 Stores Google OAuth tokens for each user.
 
 **Schema**:
+
 ```sql
 - id: SERIAL PRIMARY KEY
 - user_id: UUID (references auth.users)
@@ -667,6 +723,7 @@ Stores Google OAuth tokens for each user.
 ```
 
 **Indexes**:
+
 - `user_id` index
 - `email` index
 
@@ -675,6 +732,7 @@ Stores Google OAuth tokens for each user.
 Tracks all calendars accessible to a user.
 
 **Schema**:
+
 ```sql
 - id: SERIAL PRIMARY KEY
 - email: TEXT (references user_calendar_tokens.email)
@@ -689,6 +747,7 @@ Tracks all calendars accessible to a user.
 ```
 
 **Indexes**:
+
 - `(email, calendar_id)` unique constraint
 
 #### `conversation_messages`
@@ -696,6 +755,7 @@ Tracks all calendars accessible to a user.
 Stores full conversation history.
 
 **Schema**:
+
 ```sql
 - id: SERIAL PRIMARY KEY
 - user_id: UUID
@@ -708,6 +768,7 @@ Stores full conversation history.
 ```
 
 **Indexes**:
+
 - `(chat_id, message_id)` unique constraint
 - `(user_id, chat_id, created_at)` index
 
@@ -716,6 +777,7 @@ Stores full conversation history.
 Stores condensed conversation summaries.
 
 **Schema**:
+
 ```sql
 - id: SERIAL PRIMARY KEY
 - user_id: UUID
@@ -729,6 +791,7 @@ Stores condensed conversation summaries.
 ```
 
 **Indexes**:
+
 - `(user_id, chat_id, created_at)` index
 
 #### `conversation_state`
@@ -736,6 +799,7 @@ Stores condensed conversation summaries.
 Tracks conversation metadata.
 
 **Schema**:
+
 ```sql
 - id: SERIAL PRIMARY KEY
 - user_id: UUID
@@ -746,6 +810,7 @@ Tracks conversation metadata.
 ```
 
 **Indexes**:
+
 - `(user_id, chat_id)` unique constraint
 
 #### `user_routines`
@@ -753,6 +818,7 @@ Tracks conversation metadata.
 Stores learned user patterns and routines.
 
 **Schema**:
+
 ```sql
 - id: SERIAL PRIMARY KEY
 - user_id: UUID
@@ -766,6 +832,7 @@ Stores learned user patterns and routines.
 ```
 
 **Indexes**:
+
 - `(user_id, routine_type)` index
 - `(user_id, confidence_score)` index
 
@@ -774,6 +841,7 @@ Stores learned user patterns and routines.
 Links Telegram users to email accounts.
 
 **Schema**:
+
 ```sql
 - id: SERIAL PRIMARY KEY
 - email: TEXT
@@ -784,6 +852,7 @@ Links Telegram users to email accounts.
 ```
 
 **Indexes**:
+
 - `chat_id` unique constraint
 
 #### `user_preference_embeddings`
@@ -791,6 +860,7 @@ Links Telegram users to email accounts.
 Stores vector embeddings for semantic search.
 
 **Schema**:
+
 ```sql
 - id: SERIAL PRIMARY KEY
 - user_id: UUID
@@ -801,6 +871,7 @@ Stores vector embeddings for semantic search.
 ```
 
 **Indexes**:
+
 - Vector similarity search index (Supabase)
 
 #### `user_goals`
@@ -808,6 +879,7 @@ Stores vector embeddings for semantic search.
 Stores user goals for tracking.
 
 **Schema**:
+
 ```sql
 - id: SERIAL PRIMARY KEY
 - user_id: UUID
@@ -820,6 +892,7 @@ Stores user goals for tracking.
 ```
 
 **Indexes**:
+
 - `(user_id, goal_type)` index
 
 ---
@@ -851,11 +924,13 @@ Stores user goals for tracking.
 ### Token Management
 
 **Token Storage**:
+
 - Access tokens stored in `user_calendar_tokens` table
 - Refresh tokens stored securely
 - Token expiry tracked
 
 **Token Refresh**:
+
 - Automatic refresh via `initCalendarWithUserTokensAndUpdateTokens()`
 - Updated tokens stored back to database
 - Handles `invalid_grant` errors gracefully
@@ -863,11 +938,13 @@ Stores user goals for tracking.
 ### Session Management
 
 **Telegram Sessions**:
+
 - Grammy session middleware
 - Session data stored in memory (can be persisted)
 - Includes: chatId, email, userId, messageCount, etc.
 
 **JWT Tokens** (for REST API):
+
 - JWT-based authentication
 - Token validation middleware
 - Secure session management
@@ -879,40 +956,47 @@ Stores user goals for tracking.
 ### Service Responsibilities
 
 #### CalendarService
+
 - Calendar list operations
 - Calendar metadata
 - Calendar synchronization
 
 #### EventService
+
 - Event CRUD operations
 - Event validation
 - Date/time normalization
 - Event formatting
 
 #### ConversationMemoryService
+
 - Message storage
 - Context retrieval
 - Summarization
 - State management
 
 #### VectorSearchService
+
 - Embedding generation
 - Similarity search
 - Context retrieval
 
 #### RoutineLearningService
+
 - Pattern detection
 - Routine analysis
 - Confidence scoring
 - Goal tracking
 
 #### ScheduleStatisticsService
+
 - Calendar analytics
 - Time distribution
 - Routine insights
 - Statistics generation
 
 #### ModelRouterService
+
 - Task analysis
 - Model selection
 - Cost optimization
@@ -925,6 +1009,7 @@ Stores user goals for tracking.
 ### Google Calendar API
 
 **Integration Points**:
+
 - OAuth 2.0 authentication
 - Calendar list operations
 - Event CRUD operations
@@ -938,6 +1023,7 @@ Stores user goals for tracking.
 ### Supabase
 
 **Services**:
+
 - PostgreSQL database
 - Vector search (pgvector)
 - Authentication (Supabase Auth)
@@ -948,12 +1034,14 @@ Stores user goals for tracking.
 ### OpenAI API
 
 **Services**:
+
 - GPT-4o, GPT-4o-mini models
 - Embedding generation (text-embedding-3-small)
 - Agent framework
 - Realtime API (voice)
 
 **Usage**:
+
 - Agent execution
 - Embedding generation
 - Conversation summarization
@@ -964,6 +1052,7 @@ Stores user goals for tracking.
 **Framework**: Grammy
 
 **Features**:
+
 - Message handling
 - Voice message support
 - Session management
@@ -987,6 +1076,7 @@ app.ts (Entry Point)
 ### Environment Configuration
 
 **Required Environment Variables**:
+
 - `SUPABASE_URL` - Supabase project URL
 - `SUPABASE_SERVICE_ROLE_KEY` - Service role key
 - `OPEN_API_KEY` - OpenAI API key
@@ -998,6 +1088,7 @@ app.ts (Entry Point)
 ### Background Jobs
 
 **Routine Analysis Job**:
+
 - **Schedule**: Daily at 2 AM (configurable via cron)
 - **Configuration**: `RoutineAnalysisJob` constructor
 - **Process**: Analyzes user calendars, detects patterns, stores routines
@@ -1005,6 +1096,7 @@ app.ts (Entry Point)
 ### Error Handling
 
 **Strategy**:
+
 - Centralized error handler middleware
 - Error sanitization (no sensitive data)
 - Proper HTTP status codes
@@ -1013,6 +1105,7 @@ app.ts (Entry Point)
 ### Logging
 
 **Logger Service** (`services/logging/Logger.ts`):
+
 - Structured logging
 - Log levels (debug, info, warn, error)
 - Contextual information
@@ -1042,12 +1135,14 @@ app.ts (Entry Point)
 ### Testing
 
 **Test Structure**:
+
 - Unit tests for domain logic
 - Integration tests for API endpoints
 - Service tests
 - Agent tests
 
 **Running Tests**:
+
 ```bash
 npm test              # Run all tests
 npm run test:watch    # Watch mode
@@ -1057,22 +1152,26 @@ npm run test:coverage # With coverage
 ### Code Quality
 
 **Tools**:
+
 - Biome (linting/formatting)
 - TypeScript (type checking)
 - Jest (testing)
 - Husky (git hooks)
 
 **Git Hooks**:
+
 - Pre-commit: Linting and formatting
 - Pre-push: Tests (optional)
 
 ### Database Migrations
 
 **Supabase Migrations**:
+
 - Located in `supabase/migrations/`
 - Applied via Supabase CLI or dashboard
 
 **Type Generation**:
+
 ```bash
 npm run get-updated-db-types
 ```
@@ -1201,6 +1300,7 @@ npm run get-updated-db-types
 This architecture provides a **scalable, maintainable, and extensible** foundation for an AI-powered calendar assistant. The layered architecture with DDD principles ensures clear separation of concerns, while the multi-agent system enables sophisticated natural language processing capabilities.
 
 The system is designed to:
+
 - **Scale**: Handle multiple users and platforms
 - **Learn**: Improve through routine learning
 - **Adapt**: Intelligent model routing and context management
@@ -1211,4 +1311,3 @@ The system is designed to:
 **Document Version**: 1.0  
 **Last Updated**: 2024  
 **Maintained By**: Development Team
-
