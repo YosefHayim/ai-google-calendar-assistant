@@ -18,17 +18,13 @@ const getAllCalendars = reqResAsyncHandler(async (req, res) => {
   if (!tokenData) {
     return sendResponse(res, STATUS_RESPONSE.NOT_FOUND, "User credentials not found in order to retrieve all calendars.");
   }
-  
+
   // Validate tokens before using them
   const validation = validateTokens(tokenData);
   if (validation.requiresReAuth) {
-    return sendResponse(
-      res,
-      STATUS_RESPONSE.UNAUTHORIZED,
-      validation.message + " Please re-authenticate with Google."
-    );
+    return sendResponse(res, STATUS_RESPONSE.UNAUTHORIZED, validation.message + " Please re-authenticate with Google.");
   }
-  
+
   const calendar = await initCalendarWithUserTokensAndUpdateTokens(tokenData as TokensProps);
   const r = await calendar.calendarList.list({ prettyPrint: true });
 
@@ -58,17 +54,13 @@ const getAllCalendars = reqResAsyncHandler(async (req, res) => {
 const getCalendarColors = reqResAsyncHandler(async (req, res) => {
   const user = (req as Request & { user: User }).user;
   const tokenData = await fetchCredentialsByEmail(user.email || "");
-  
+
   // Validate tokens before using them
   const validation = validateTokens(tokenData);
   if (validation.requiresReAuth) {
-    return sendResponse(
-      res,
-      STATUS_RESPONSE.UNAUTHORIZED,
-      validation.message + " Please re-authenticate with Google."
-    );
+    return sendResponse(res, STATUS_RESPONSE.UNAUTHORIZED, validation.message + " Please re-authenticate with Google.");
   }
-  
+
   const calendar = await initCalendarWithUserTokensAndUpdateTokens(tokenData as TokensProps);
   const r = await calendar.colors.get();
   sendResponse(res, STATUS_RESPONSE.SUCCESS, "Successfully received calendar colors", r.data);
@@ -77,17 +69,13 @@ const getCalendarColors = reqResAsyncHandler(async (req, res) => {
 const getCalendarTimezone = reqResAsyncHandler(async (req, res) => {
   const user = (req as Request & { user: User }).user;
   const tokenData = await fetchCredentialsByEmail(user.email || "");
-  
+
   // Validate tokens before using them
   const validation = validateTokens(tokenData);
   if (validation.requiresReAuth) {
-    return sendResponse(
-      res,
-      STATUS_RESPONSE.UNAUTHORIZED,
-      validation.message + " Please re-authenticate with Google."
-    );
+    return sendResponse(res, STATUS_RESPONSE.UNAUTHORIZED, validation.message + " Please re-authenticate with Google.");
   }
-  
+
   const calendar = await initCalendarWithUserTokensAndUpdateTokens(tokenData as TokensProps);
   const r = await calendar.settings.get({ setting: "timezone" });
   sendResponse(res, STATUS_RESPONSE.SUCCESS, "Successfully received calendar timezone", r.data);
@@ -107,11 +95,7 @@ const getSpecificEvent = reqResAsyncHandler(async (req, res) => {
   // Validate tokens before using them
   const validation = validateTokens(tokenData);
   if (validation.requiresReAuth) {
-    return sendResponse(
-      res,
-      STATUS_RESPONSE.UNAUTHORIZED,
-      validation.message + " Please re-authenticate with Google."
-    );
+    return sendResponse(res, STATUS_RESPONSE.UNAUTHORIZED, validation.message + " Please re-authenticate with Google.");
   }
 
   const calendar = await initCalendarWithUserTokensAndUpdateTokens(tokenData as TokensProps);
@@ -166,17 +150,13 @@ const deleteEvent = reqResAsyncHandler(async (req, res) => {
 const calendarOverview = reqResAsyncHandler(async (req, res) => {
   const user = (req as Request & { user: User }).user;
   const tokenData = await fetchCredentialsByEmail(user.email || "");
-  
+
   // Validate tokens before using them
   const validation = validateTokens(tokenData);
   if (validation.requiresReAuth) {
-    return sendResponse(
-      res,
-      STATUS_RESPONSE.UNAUTHORIZED,
-      validation.message + " Please re-authenticate with Google."
-    );
+    return sendResponse(res, STATUS_RESPONSE.UNAUTHORIZED, validation.message + " Please re-authenticate with Google.");
   }
-  
+
   const calendar = await initCalendarWithUserTokensAndUpdateTokens(tokenData as TokensProps);
   const r = await calendar.calendars.get({ calendarId: "primary" });
   sendResponse(res, STATUS_RESPONSE.SUCCESS, "Successfully received calendar overview", r.data);

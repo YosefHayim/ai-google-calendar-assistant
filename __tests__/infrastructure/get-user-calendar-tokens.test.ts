@@ -1,5 +1,8 @@
-import { describe, it, expect, beforeEach, jest } from "@jest/globals";
+import { beforeEach, describe, expect, it, jest } from "@jest/globals";
+
 import type { TokensProps } from "@/types";
+// Now import
+import { fetchCredentialsByEmail } from "@/utils/getUserCalendarTokens";
 
 // Create chainable mock functions
 const mockLimit = jest.fn();
@@ -30,9 +33,6 @@ jest.mock("@/utils/storage", () => ({
   __esModule: true,
   TOKEN_FIELDS: "access_token, refresh_token, email",
 }));
-
-// Now import
-import { fetchCredentialsByEmail } from "@/utils/getUserCalendarTokens";
 
 describe("fetchCredentialsByEmail", () => {
   beforeEach(() => {
@@ -159,9 +159,7 @@ describe("fetchCredentialsByEmail", () => {
         error: { message: "Database error" },
       });
 
-      await expect(
-        fetchCredentialsByEmail("test@example.com"),
-      ).rejects.toThrow("Could not fetch credentials for test@example.com: Database error");
+      await expect(fetchCredentialsByEmail("test@example.com")).rejects.toThrow("Could not fetch credentials for test@example.com: Database error");
     });
 
     it("should throw error when no data found", async () => {
@@ -170,9 +168,7 @@ describe("fetchCredentialsByEmail", () => {
         error: null,
       });
 
-      await expect(
-        fetchCredentialsByEmail("notfound@example.com"),
-      ).rejects.toThrow("No credentials found for notfound@example.com");
+      await expect(fetchCredentialsByEmail("notfound@example.com")).rejects.toThrow("No credentials found for notfound@example.com");
     });
 
     it("should throw error when data is null", async () => {
@@ -181,9 +177,7 @@ describe("fetchCredentialsByEmail", () => {
         error: null,
       });
 
-      await expect(
-        fetchCredentialsByEmail("notfound@example.com"),
-      ).rejects.toThrow("No credentials found for notfound@example.com");
+      await expect(fetchCredentialsByEmail("notfound@example.com")).rejects.toThrow("No credentials found for notfound@example.com");
     });
 
     it("should handle empty string email", async () => {

@@ -26,4 +26,3 @@ export class TokenValidationError extends Error {
     }
   }
 }
-
