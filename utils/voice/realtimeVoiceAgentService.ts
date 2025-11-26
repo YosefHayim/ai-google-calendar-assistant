@@ -87,6 +87,7 @@ export class RealtimeVoiceAgentService {
             agentName: context?.agentName,
             chatId: context?.chatId,
             email: context?.email,
+            languageCode: languageCode, // Pass language code so agent responds in same language
           },
           // Configure audio transcription with language code
           config: {

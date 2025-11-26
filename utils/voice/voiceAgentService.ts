@@ -91,10 +91,15 @@ export class VoiceAgentService {
     }
 
     // Step 2: Get agent response using the existing orchestrator agent
+    // Pass language code to context so agent responds in the same language
+    const agentContext = {
+      ...context,
+      languageCode,
+    };
     const agentResult = await activateAgent(
       ORCHESTRATOR_AGENT,
       `Current date and time is ${new Date().toISOString()}. User ${context?.email || "unknown"} requesting for help with: ${transcribedText}`,
-      context,
+      agentContext,
       {
         autoRoute: true,
       }

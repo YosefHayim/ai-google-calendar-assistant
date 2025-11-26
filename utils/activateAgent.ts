@@ -10,6 +10,7 @@ export interface AgentContext {
   agentName?: string;
   chatId?: number;
   email?: string;
+  languageCode?: string; // ISO 639-1 language code (e.g., "en", "he", "ja", "es")
 }
 
 export interface ActivateAgentOptions {
@@ -106,6 +107,11 @@ export const activateAgent = asyncHandler(async (agentKey: AGENTS_LIST | Agent, 
         `\n## Chat ID: ${context.chatId}\nUse this chat ID when calling tools that require a chatId parameter (e.g., set_agent_name). Do NOT ask the user for the chat ID.`
       );
     }
+    if (context.languageCode) {
+      contextParts.push(
+        `\n## User Language: ${context.languageCode}\n**CRITICAL:** The user's Telegram language is set to ${context.languageCode}. You MUST respond in the same language. Match the user's language automatically - if they write in Japanese, respond in Japanese; if they write in Hebrew, respond in Hebrew; if they write in Spanish, respond in Spanish, etc.`
+      );
+    }
     if (contextParts.length > 0) {
       enhancedPrompt = `${contextParts.join("\n\n")}\n\n## Current Request:\n${prompt}`;
       
@@ -123,6 +129,8 @@ export const activateAgent = asyncHandler(async (agentKey: AGENTS_LIST | Agent, 
         hasAgentName: !!context.agentName,
         hasEmail: !!context.email,
         hasChatId: !!context.chatId,
+        hasLanguageCode: !!context.languageCode,
+        languageCode: context.languageCode,
       });
       console.log(`[Context Debug] Size:`, {
         promptChars: promptCharCount,

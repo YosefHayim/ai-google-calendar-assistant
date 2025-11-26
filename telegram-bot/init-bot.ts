@@ -319,6 +319,10 @@ bot.on("message", async (ctx) => {
     const userId = await getUserId(ctx.session.email, ctx.session.chatId);
     const chatId = ctx.session.chatId;
 
+    // Get language code directly from Telegram message context (ctx.from.language_code)
+    // Fallback to session.codeLang (set in auth middleware) or default to "en"
+    const languageCode = ctx.from?.language_code || ctx.session.codeLang || "en";
+
     // Store user message in conversation memory
     if (userId && chatId) {
       await conversationMemoryService.storeMessage(userId, chatId, msgId, "user", userMsgText, {
@@ -439,6 +443,7 @@ bot.on("message", async (ctx) => {
           agentName: agentName || undefined,
           chatId: chatId || undefined,
           email: ctx.session.email || undefined,
+          languageCode: languageCode || undefined,
         },
         {
           autoRoute: true, // Enable automatic model routing based on task analysis
