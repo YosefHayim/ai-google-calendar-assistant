@@ -28,14 +28,6 @@ export const AGENTS = {
     handoffDescription: AGENT_HANDOFFS.validateUserAuth,
     tools: [AGENT_TOOLS.validate_user_db],
   }),
-  validateEventFields: new Agent({
-    name: "validate_event_fields_agent",
-    instructions: AGENT_INSTRUCTIONS.validateEventFields,
-    model: CURRENT_MODEL,
-    modelSettings: { toolChoice: "required" },
-    handoffDescription: AGENT_HANDOFFS.validateEventFields,
-    tools: [AGENT_TOOLS.validate_event_fields],
-  }),
   insertEvent: new Agent({
     name: "insert_event_agent",
     instructions: AGENT_INSTRUCTIONS.insertEvent,
@@ -76,16 +68,12 @@ export const AGENTS = {
     handoffDescription: AGENT_HANDOFFS.analysesCalendarTypeByEventInformation,
     tools: [AGENT_TOOLS.calendar_type],
   }),
-  normalizeEventAgent: new Agent({
-    name: "normalize_event_agent",
+  prepareEventAgent: new Agent({
+    name: "prepare_event_agent",
     model: CURRENT_MODEL,
-    instructions: AGENT_INSTRUCTIONS.normalizeEventAgent,
-  }),
-  getUserDefaultTimeZone: new Agent({
-    name: "get_user_default_timezone_agent",
-    model: CURRENT_MODEL,
-    instructions: AGENT_INSTRUCTIONS.getUserDefaultTimeZone,
-    tools: [AGENT_TOOLS.get_user_default_timezone],
+    instructions: AGENT_INSTRUCTIONS.prepareEventAgent,
+    modelSettings: { toolChoice: "required" },
+    tools: [AGENT_TOOLS.get_user_default_timezone, AGENT_TOOLS.validate_event_fields],
   }),
 };
 
@@ -97,9 +85,7 @@ export const HANDS_OFF_AGENTS = {
     modelSettings: { parallelToolCalls: true },
     instructions: AGENT_INSTRUCTIONS.insertEventHandOffAgent,
     tools: [
-      AGENTS.normalizeEventAgent.asTool({ toolName: "normalize_event" }),
-      AGENTS.getUserDefaultTimeZone.asTool({ toolName: "get_user_default_timezone" }),
-      AGENTS.validateEventFields.asTool({ toolName: "validate_event_fields" }),
+      AGENTS.prepareEventAgent.asTool({ toolName: "prepare_event" }),
       AGENTS.analysesCalendarTypeByEventInformation.asTool({ toolName: "calendar_type_by_event_details" }),
       AGENTS.insertEvent.asTool({ toolName: "insert_event" }),
     ],
@@ -118,18 +104,6 @@ export const HANDS_OFF_AGENTS = {
 
     tools: [AGENTS.getEventByIdOrName.asTool({ toolName: "get_event" }), AGENTS.deleteEventByIdOrName.asTool({ toolName: "delete_event" })],
   }),
-  getEventOrEventsHandOffAgent: new Agent({
-    name: "get_event_handoff_agent",
-    model: CURRENT_MODEL,
-    instructions: AGENT_INSTRUCTIONS.getEventOrEventsHandOffAgent,
-    tools: [AGENTS.getEventByIdOrName.asTool({ toolName: "get_event" })],
-  }),
-  registerUserHandOffAgent: new Agent({
-    name: "register_user_handoff_agent",
-    model: CURRENT_MODEL,
-    instructions: AGENT_INSTRUCTIONS.registerUserHandOffAgent,
-    tools: [AGENTS.validateUserAuth.asTool({ toolName: "register_user_via_db" })],
-  }),
 };
 
 export const QUICK_RESPONSE_AGENT = new Agent({
@@ -146,10 +120,10 @@ export const ORCHESTRATOR_AGENT = new Agent({
   instructions: AGENT_INSTRUCTIONS.orchestratorAgent,
   tools: [
     HANDS_OFF_AGENTS.insertEventHandOffAgent.asTool({ toolName: "insert_event_handoff_agent" }),
-    HANDS_OFF_AGENTS.getEventOrEventsHandOffAgent.asTool({ toolName: "get_event_handoff_agent" }),
+    AGENTS.getEventByIdOrName.asTool({ toolName: "get_event" }),
     HANDS_OFF_AGENTS.updateEventOrEventsHandOffAgent.asTool({ toolName: "update_event_handoff_agent" }),
     HANDS_OFF_AGENTS.deleteEventOrEventsHandOffAgent.asTool({ toolName: "delete_event_handoff_agent" }),
-    HANDS_OFF_AGENTS.registerUserHandOffAgent.asTool({ toolName: "register_user_handoff_agent" }),
+    AGENTS.validateUserAuth.asTool({ toolName: "validate_user_auth" }),
     AGENTS.generateUserCbGoogleUrl.asTool({ toolName: "generate_user_cb_google_url" }),
     AGENT_TOOLS.get_agent_name,
     AGENT_TOOLS.set_agent_name,
