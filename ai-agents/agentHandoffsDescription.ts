@@ -405,7 +405,7 @@ Error: { "status": "error", "message": "<error_description>" }
 - 🚫 **Never** return multiple calendars
 - 🚫 **Never** skip scoring and default to first calendar without evaluation
 - 🚫 **Never** return partial or malformed JSON
-- 🚫 **Never** wrap JSON in markdown code blocks (```json ... ```)
+- 🚫 **Never** wrap JSON in markdown code blocks
 - 🚫 **Never** add explanatory text before or after the JSON
 - 🚫 **Never** return text like "Here's the calendar:" or "The selected calendar is:"`,
 };

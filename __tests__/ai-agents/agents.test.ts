@@ -42,16 +42,16 @@ describe("AI Agents Configuration", () => {
       });
     });
 
-    describe("validateEventFields", () => {
+    describe("prepareEventAgent", () => {
       it("should be properly configured", () => {
-        expect(AGENTS.validateEventFields).toBeInstanceOf(Agent);
-        expect(AGENTS.validateEventFields.name).toBe("validate_event_fields_agent");
-        expect(AGENTS.validateEventFields.model).toBeDefined();
-        expect(AGENTS.validateEventFields.modelSettings).toEqual({ toolChoice: "required" });
+        expect(AGENTS.prepareEventAgent).toBeInstanceOf(Agent);
+        expect(AGENTS.prepareEventAgent.name).toBe("prepare_event_agent");
+        expect(AGENTS.prepareEventAgent.model).toBeDefined();
+        expect(AGENTS.prepareEventAgent.modelSettings).toEqual({ toolChoice: "required" });
       });
 
-      it("should have correct tools", () => {
-        expect(AGENTS.validateEventFields.tools).toHaveLength(1);
+      it("should have correct tools (2 tools: timezone and validation)", () => {
+        expect(AGENTS.prepareEventAgent.tools).toHaveLength(2);
       });
     });
 
@@ -120,25 +120,6 @@ describe("AI Agents Configuration", () => {
       });
     });
 
-    describe("normalizeEventAgent", () => {
-      it("should be properly configured", () => {
-        expect(AGENTS.normalizeEventAgent).toBeInstanceOf(Agent);
-        expect(AGENTS.normalizeEventAgent.name).toBe("normalize_event_agent");
-        expect(AGENTS.normalizeEventAgent.model).toBeDefined();
-      });
-    });
-
-    describe("getUserDefaultTimeZone", () => {
-      it("should be properly configured", () => {
-        expect(AGENTS.getUserDefaultTimeZone).toBeInstanceOf(Agent);
-        expect(AGENTS.getUserDefaultTimeZone.name).toBe("get_user_default_timezone_agent");
-        expect(AGENTS.getUserDefaultTimeZone.model).toBeDefined();
-      });
-
-      it("should have correct tools", () => {
-        expect(AGENTS.getUserDefaultTimeZone.tools).toHaveLength(1);
-      });
-    });
   });
 
   describe("HANDS_OFF_AGENTS", () => {
@@ -150,8 +131,8 @@ describe("AI Agents Configuration", () => {
         expect(HANDS_OFF_AGENTS.insertEventHandOffAgent.modelSettings).toEqual({ parallelToolCalls: true });
       });
 
-      it("should have correct tools (5 tools)", () => {
-        expect(HANDS_OFF_AGENTS.insertEventHandOffAgent.tools).toHaveLength(5);
+      it("should have correct tools (3 tools: prepare_event, calendar_type_by_event_details, insert_event)", () => {
+        expect(HANDS_OFF_AGENTS.insertEventHandOffAgent.tools).toHaveLength(3);
       });
     });
 
@@ -180,29 +161,6 @@ describe("AI Agents Configuration", () => {
       });
     });
 
-    describe("getEventOrEventsHandOffAgent", () => {
-      it("should be properly configured", () => {
-        expect(HANDS_OFF_AGENTS.getEventOrEventsHandOffAgent).toBeInstanceOf(Agent);
-        expect(HANDS_OFF_AGENTS.getEventOrEventsHandOffAgent.name).toBe("get_event_handoff_agent");
-        expect(HANDS_OFF_AGENTS.getEventOrEventsHandOffAgent.model).toBeDefined();
-      });
-
-      it("should have correct tools (1 tool)", () => {
-        expect(HANDS_OFF_AGENTS.getEventOrEventsHandOffAgent.tools).toHaveLength(1);
-      });
-    });
-
-    describe("registerUserHandOffAgent", () => {
-      it("should be properly configured", () => {
-        expect(HANDS_OFF_AGENTS.registerUserHandOffAgent).toBeInstanceOf(Agent);
-        expect(HANDS_OFF_AGENTS.registerUserHandOffAgent.name).toBe("register_user_handoff_agent");
-        expect(HANDS_OFF_AGENTS.registerUserHandOffAgent.model).toBeDefined();
-      });
-
-      it("should have correct tools (1 tool)", () => {
-        expect(HANDS_OFF_AGENTS.registerUserHandOffAgent.tools).toHaveLength(1);
-      });
-    });
   });
 
   describe("QUICK_RESPONSE_AGENT", () => {
@@ -226,17 +184,17 @@ describe("AI Agents Configuration", () => {
     });
 
     it("should have all required tools", () => {
-      // 5 handoff agents + 1 generateUserCbGoogleUrl + 8 routine/statistics tools
+      // 3 handoff agents + 1 get_event (direct) + 1 validate_user_auth (direct) + 1 generateUserCbGoogleUrl + 8 routine/statistics tools
       expect(ORCHESTRATOR_AGENT.tools).toHaveLength(14);
     });
 
-    it("should include all handoff agents as tools", () => {
+    it("should include all handoff agents and direct tools", () => {
       const toolNames = ORCHESTRATOR_AGENT.tools?.map((t: any) => t.name) || [];
       expect(toolNames).toContain("insert_event_handoff_agent");
-      expect(toolNames).toContain("get_event_handoff_agent");
+      expect(toolNames).toContain("get_event");
       expect(toolNames).toContain("update_event_handoff_agent");
       expect(toolNames).toContain("delete_event_handoff_agent");
-      expect(toolNames).toContain("register_user_handoff_agent");
+      expect(toolNames).toContain("validate_user_auth");
     });
 
     it("should include routine and statistics tools", () => {

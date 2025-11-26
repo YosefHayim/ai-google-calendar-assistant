@@ -7,20 +7,16 @@ describe("Agent Instructions", () => {
       expect(AGENT_INSTRUCTIONS).toHaveProperty("generateUserCbGoogleUrl");
       expect(AGENT_INSTRUCTIONS).toHaveProperty("registerUserViaDb");
       expect(AGENT_INSTRUCTIONS).toHaveProperty("validateUserAuth");
-      expect(AGENT_INSTRUCTIONS).toHaveProperty("validateEventFields");
       expect(AGENT_INSTRUCTIONS).toHaveProperty("insertEvent");
       expect(AGENT_INSTRUCTIONS).toHaveProperty("getEventByIdOrName");
       expect(AGENT_INSTRUCTIONS).toHaveProperty("updateEventByIdOrName");
       expect(AGENT_INSTRUCTIONS).toHaveProperty("deleteEventByIdOrName");
       expect(AGENT_INSTRUCTIONS).toHaveProperty("analysesCalendarTypeByEventInformation");
-      expect(AGENT_INSTRUCTIONS).toHaveProperty("normalizeEventAgent");
-      expect(AGENT_INSTRUCTIONS).toHaveProperty("getUserDefaultTimeZone");
+      expect(AGENT_INSTRUCTIONS).toHaveProperty("prepareEventAgent");
       expect(AGENT_INSTRUCTIONS).toHaveProperty("insertEventHandOffAgent");
-      expect(AGENT_INSTRUCTIONS).toHaveProperty("getEventOrEventsHandOffAgent");
       expect(AGENT_INSTRUCTIONS).toHaveProperty("updateEventByIdOrNameHandOffAgent");
       expect(AGENT_INSTRUCTIONS).toHaveProperty("deleteEventByIdOrNameHandOffAgent");
       expect(AGENT_INSTRUCTIONS).toHaveProperty("orchestratorAgent");
-      expect(AGENT_INSTRUCTIONS).toHaveProperty("registerUserHandOffAgent");
       expect(AGENT_INSTRUCTIONS).toHaveProperty("quickResponseAgent");
     });
   });
@@ -73,16 +69,18 @@ describe("Agent Instructions", () => {
       });
     });
 
-    describe("validateEventFields", () => {
-      it("should contain event validation content", () => {
-        expect(AGENT_INSTRUCTIONS.validateEventFields).toContain("event");
-        expect(AGENT_INSTRUCTIONS.validateEventFields).toContain("validate");
-        expect(AGENT_INSTRUCTIONS.validateEventFields).toContain("timezone");
+    describe("prepareEventAgent", () => {
+      it("should contain event preparation content", () => {
+        expect(AGENT_INSTRUCTIONS.prepareEventAgent).toContain("event");
+        expect(AGENT_INSTRUCTIONS.prepareEventAgent).toContain("prepare");
+        expect(AGENT_INSTRUCTIONS.prepareEventAgent).toContain("normalize");
+        expect(AGENT_INSTRUCTIONS.prepareEventAgent).toContain("validate");
+        expect(AGENT_INSTRUCTIONS.prepareEventAgent).toContain("timezone");
       });
 
       it("should contain persona and standards sections", () => {
-        expect(AGENT_INSTRUCTIONS.validateEventFields).toContain("## Persona");
-        expect(AGENT_INSTRUCTIONS.validateEventFields).toContain("## Standards");
+        expect(AGENT_INSTRUCTIONS.prepareEventAgent).toContain("## Persona");
+        expect(AGENT_INSTRUCTIONS.prepareEventAgent).toContain("## Standards");
       });
     });
 
@@ -110,11 +108,12 @@ describe("Agent Instructions", () => {
         expect(AGENT_INSTRUCTIONS.orchestratorAgent).toContain("## Standards");
       });
 
-      it("should mention handoff agents", () => {
+      it("should mention handoff agents and direct tools", () => {
         expect(AGENT_INSTRUCTIONS.orchestratorAgent).toContain("insert_event_handoff_agent");
-        expect(AGENT_INSTRUCTIONS.orchestratorAgent).toContain("get_event_handoff_agent");
+        expect(AGENT_INSTRUCTIONS.orchestratorAgent).toContain("get_event");
         expect(AGENT_INSTRUCTIONS.orchestratorAgent).toContain("update_event_handoff_agent");
         expect(AGENT_INSTRUCTIONS.orchestratorAgent).toContain("delete_event_handoff_agent");
+        expect(AGENT_INSTRUCTIONS.orchestratorAgent).toContain("validate_user_auth");
       });
 
       it("should mention routine and statistics tools", () => {
@@ -156,11 +155,6 @@ describe("Agent Instructions", () => {
       expect(AGENT_INSTRUCTIONS.insertEventHandOffAgent).toContain("insert");
     });
 
-    it("getEventOrEventsHandOffAgent should mention retrieval", () => {
-      expect(AGENT_INSTRUCTIONS.getEventOrEventsHandOffAgent).toContain("retriev");
-      expect(AGENT_INSTRUCTIONS.getEventOrEventsHandOffAgent).toContain("event");
-    });
-
     it("updateEventByIdOrNameHandOffAgent should mention updates", () => {
       expect(AGENT_INSTRUCTIONS.updateEventByIdOrNameHandOffAgent).toContain("update");
       expect(AGENT_INSTRUCTIONS.updateEventByIdOrNameHandOffAgent).toContain("event");
@@ -169,11 +163,6 @@ describe("Agent Instructions", () => {
     it("deleteEventByIdOrNameHandOffAgent should mention deletion", () => {
       expect(AGENT_INSTRUCTIONS.deleteEventByIdOrNameHandOffAgent).toContain("delet");
       expect(AGENT_INSTRUCTIONS.deleteEventByIdOrNameHandOffAgent).toContain("event");
-    });
-
-    it("registerUserHandOffAgent should mention registration", () => {
-      expect(AGENT_INSTRUCTIONS.registerUserHandOffAgent).toContain("register");
-      expect(AGENT_INSTRUCTIONS.registerUserHandOffAgent).toContain("user");
     });
   });
 

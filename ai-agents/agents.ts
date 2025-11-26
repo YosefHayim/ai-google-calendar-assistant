@@ -1,8 +1,9 @@
+import { CURRENT_MODEL, MODELS } from "@/types";
+
 import { AGENT_HANDOFFS } from "./agentHandoffsDescription";
 import { AGENT_INSTRUCTIONS } from "./agentInstructions";
 import { AGENT_TOOLS } from "./agentTools";
 import { Agent } from "@openai/agents";
-import { CURRENT_MODEL, MODELS } from "@/types";
 
 export const AGENTS = {
   generateUserCbGoogleUrl: new Agent({

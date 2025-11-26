@@ -7,7 +7,7 @@ describe("Agent Handoffs Description", () => {
       expect(AGENT_HANDOFFS).toHaveProperty("generateUserCbGoogleUrl");
       expect(AGENT_HANDOFFS).toHaveProperty("registerUserViaDb");
       expect(AGENT_HANDOFFS).toHaveProperty("validateUserAuth");
-      expect(AGENT_HANDOFFS).toHaveProperty("validateEventFields");
+      expect(AGENT_HANDOFFS).toHaveProperty("prepareEventAgent");
       expect(AGENT_HANDOFFS).toHaveProperty("insertEvent");
       expect(AGENT_HANDOFFS).toHaveProperty("getEventByIdOrName");
       expect(AGENT_HANDOFFS).toHaveProperty("updateEventByIdOrName");
@@ -62,14 +62,16 @@ describe("Agent Handoffs Description", () => {
       });
     });
 
-    describe("validateEventFields", () => {
-      it("should contain event validation content", () => {
-        expect(AGENT_HANDOFFS.validateEventFields).toContain("event");
-        expect(AGENT_HANDOFFS.validateEventFields).toContain("validate");
+    describe("prepareEventAgent", () => {
+      it("should contain event preparation content", () => {
+        expect(AGENT_HANDOFFS.prepareEventAgent).toContain("event");
+        expect(AGENT_HANDOFFS.prepareEventAgent).toContain("prepare");
+        expect(AGENT_HANDOFFS.prepareEventAgent).toContain("normalize");
+        expect(AGENT_HANDOFFS.prepareEventAgent).toContain("validate");
       });
 
       it("should contain persona section", () => {
-        expect(AGENT_HANDOFFS.validateEventFields).toContain("## Persona");
+        expect(AGENT_HANDOFFS.prepareEventAgent).toContain("## Persona");
       });
     });
 

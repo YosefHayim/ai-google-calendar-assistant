@@ -189,7 +189,7 @@ describe("OpenAI Agents Mock Factory", () => {
       expect(response.response).toContain("deleted successfully");
     });
 
-    it("should have validate event fields response", () => {
+    it("should have validate event fields response (used by prepareEventAgent)", () => {
       const response = mockEventAgentResponses.validateEventFieldsSuccess;
       const data = JSON.parse(response.response || "{}");
 
