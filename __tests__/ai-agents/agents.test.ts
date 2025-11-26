@@ -184,8 +184,8 @@ describe("AI Agents Configuration", () => {
     });
 
     it("should have all required tools", () => {
-      // 3 handoff agents + 1 get_event (direct) + 1 validate_user_auth (direct) + 1 generateUserCbGoogleUrl + 8 routine/statistics tools
-      expect(ORCHESTRATOR_AGENT.tools).toHaveLength(14);
+      // 3 handoff agents + 1 get_event (direct) + 1 validate_user_auth (direct) + 1 generateUserCbGoogleUrl + 1 list_calendars + 8 routine/statistics tools
+      expect(ORCHESTRATOR_AGENT.tools).toHaveLength(15);
     });
 
     it("should include all handoff agents and direct tools", () => {
@@ -195,6 +195,7 @@ describe("AI Agents Configuration", () => {
       expect(toolNames).toContain("update_event_handoff_agent");
       expect(toolNames).toContain("delete_event_handoff_agent");
       expect(toolNames).toContain("validate_user_auth");
+      expect(toolNames).toContain("list_calendars");
     });
 
     it("should include routine and statistics tools", () => {

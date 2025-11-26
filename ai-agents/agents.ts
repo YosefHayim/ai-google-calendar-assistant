@@ -126,6 +126,7 @@ export const ORCHESTRATOR_AGENT = new Agent({
     HANDS_OFF_AGENTS.deleteEventOrEventsHandOffAgent.asTool({ toolName: "delete_event_handoff_agent" }),
     AGENTS.validateUserAuth.asTool({ toolName: "validate_user_auth" }),
     AGENTS.generateUserCbGoogleUrl.asTool({ toolName: "generate_user_cb_google_url" }),
+    AGENT_TOOLS.list_calendars,
     AGENT_TOOLS.get_agent_name,
     AGENT_TOOLS.set_agent_name,
     AGENT_TOOLS.get_user_routines,

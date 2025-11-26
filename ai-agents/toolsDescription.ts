@@ -19,6 +19,8 @@ export const TOOLS_DESCRIPTION = {
 
   getCalendarTypesByEventDetails: `Lists all calendars linked to the authenticated user. The "email" parameter is REQUIRED and must be taken from the conversation context (provided in the "User Email" section) - DO NOT use placeholder emails or ask the user for their email. Returns array of { calendarName, calendarId } objects for calendar selection.`,
 
+  listCalendars: `Lists all calendars for the authenticated user with their IDs and names. The "email" parameter is REQUIRED and must be taken from the conversation context (provided in the "User Email" section) - DO NOT use placeholder emails or ask the user for their email. Returns array of { calendarId, calendarName } objects. Use this tool when the user asks about their calendars, how many calendars they have, or wants to see a list of their calendar IDs.`,
+
   getUserDefaultTimeZone: `Retrieves the authenticated user's default timezone from Google Calendar settings. The "email" parameter is REQUIRED and must be taken from the conversation context (provided in the "User Email" section) - DO NOT use placeholder emails or ask the user for their email. Returns settings response with timezone value (e.g., "Asia/Jerusalem").`,
 
   // Vector Search Tools (for future use)

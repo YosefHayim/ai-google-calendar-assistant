@@ -85,6 +85,15 @@ export const AGENT_TOOLS = {
       return `calendar_type: ${error}`;
     },
   }),
+  list_calendars: tool({
+    name: "list_calendars",
+    description: TOOLS_DESCRIPTION.listCalendars,
+    parameters: PARAMETERS_TOOLS.listCalendarsParameters,
+    execute: EXECUTION_TOOLS.listCalendars,
+    errorFunction: (_, error) => {
+      return `list_calendars: ${error}`;
+    },
+  }),
   get_user_default_timezone: tool({
     name: "get_user_default_timezone",
     description: TOOLS_DESCRIPTION.getUserDefaultTimeZone,

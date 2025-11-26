@@ -125,6 +125,23 @@ export const EXECUTION_TOOLS = {
     return calendarsTypes;
   }),
 
+  listCalendars: asyncHandler(async (params: { email: string }) => {
+    if (!(params.email && isEmail(params.email))) {
+      throw new Error("Invalid email address.");
+    }
+    const calendars = await getCalendarCategoriesByEmail(params.email);
+    const calendarsList = calendars.map((c) => {
+      return {
+        calendarId: c.calendar_id,
+        calendarName: c.calendar_name,
+      };
+    });
+    return {
+      calendars: calendarsList,
+      count: calendarsList.length,
+    };
+  }),
+
   deleteEvent: asyncHandler((params: { eventId: string; email: string }) => {
     const { email, eventId } = coerceArgs(params);
     if (!(email && isEmail(email))) {

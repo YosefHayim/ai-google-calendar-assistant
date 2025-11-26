@@ -108,6 +108,14 @@ export const PARAMETERS_TOOLS = {
   getCalendarTypesByEventParameters: z
     .object({ email: emailSchema, eventInformation: makeFullEventParams() })
     .describe("Fetch all calendars Ids for the user to find out the best matching calendar type for the event."),
+
+  listCalendarsParameters: z
+    .object({
+      email: emailSchema.describe(
+        "REQUIRED: The authenticated user's email from conversation context. Use the email value from the 'User Email' section in the context. DO NOT use placeholder emails like 'me@example.com'."
+      ),
+    })
+    .describe("List all calendars for the authenticated user. Returns array of { calendarId, calendarName } objects with the total count."),
   insertEventParameters: makeFullEventParams().describe("Insert a new event into the user calendar."),
   updateEventParameters: makeFullEventParams()
     .extend({
