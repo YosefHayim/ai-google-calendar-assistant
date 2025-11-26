@@ -114,14 +114,14 @@ export const activateAgent = asyncHandler(async (agentKey: AGENTS_LIST | Agent, 
     }
     if (contextParts.length > 0) {
       enhancedPrompt = `${contextParts.join("\n\n")}\n\n## Current Request:\n${prompt}`;
-      
+
       // Log context statistics for debugging
       const totalCharCount = enhancedPrompt.length;
       const promptCharCount = prompt.length;
       const contextCharCount = totalCharCount - promptCharCount;
       const approxTotalTokens = Math.ceil(totalCharCount / 4);
       const approxContextTokens = Math.ceil(contextCharCount / 4);
-      
+
       console.log(`[Context Debug] Agent: ${agent.name}`);
       console.log(`[Context Debug] Context included:`, {
         hasConversationContext: !!context.conversationContext,
