@@ -2,7 +2,6 @@ import { describe, it, expect, beforeEach, jest } from "@jest/globals";
 import type { TokensProps } from "@/types";
 
 // Create chainable mock functions
-const mockSingle = jest.fn();
 const mockLimit = jest.fn();
 const mockOrder = jest.fn();
 const mockEq = jest.fn();
@@ -14,7 +13,7 @@ mockFrom.mockReturnValue({ select: mockSelect });
 mockSelect.mockReturnValue({ eq: mockEq });
 mockEq.mockReturnValue({ order: mockOrder });
 mockOrder.mockReturnValue({ limit: mockLimit });
-mockLimit.mockReturnValue({ single: mockSingle });
+mockLimit.mockResolvedValue({ data: [], error: null });
 
 const mockSupabase = {
   from: mockFrom,
@@ -37,7 +36,6 @@ import { fetchCredentialsByEmail } from "@/utils/getUserCalendarTokens";
 
 describe("fetchCredentialsByEmail", () => {
   beforeEach(() => {
-    mockSingle.mockClear();
     mockLimit.mockClear();
     mockOrder.mockClear();
     mockEq.mockClear();
@@ -48,7 +46,7 @@ describe("fetchCredentialsByEmail", () => {
     mockSelect.mockReturnValue({ eq: mockEq });
     mockEq.mockReturnValue({ order: mockOrder });
     mockOrder.mockReturnValue({ limit: mockLimit });
-    mockLimit.mockReturnValue({ single: mockSingle });
+    mockLimit.mockResolvedValue({ data: [], error: null });
   });
 
   describe("successful fetch", () => {
@@ -59,8 +57,8 @@ describe("fetchCredentialsByEmail", () => {
         email: "test@example.com",
       };
 
-      mockSingle.mockResolvedValue({
-        data: mockData,
+      mockLimit.mockResolvedValue({
+        data: [mockData],
         error: null,
       });
 
@@ -78,8 +76,8 @@ describe("fetchCredentialsByEmail", () => {
         email: "test@example.com",
       };
 
-      mockSingle.mockResolvedValue({
-        data: mockData,
+      mockLimit.mockResolvedValue({
+        data: [mockData],
         error: null,
       });
 
@@ -95,8 +93,8 @@ describe("fetchCredentialsByEmail", () => {
         email: "test@example.com",
       };
 
-      mockSingle.mockResolvedValue({
-        data: mockData,
+      mockLimit.mockResolvedValue({
+        data: [mockData],
         error: null,
       });
 
@@ -112,8 +110,8 @@ describe("fetchCredentialsByEmail", () => {
         email: "test@example.com",
       };
 
-      mockSingle.mockResolvedValue({
-        data: mockData,
+      mockLimit.mockResolvedValue({
+        data: [mockData],
         error: null,
       });
 
@@ -121,11 +119,35 @@ describe("fetchCredentialsByEmail", () => {
 
       expect(mockLimit).toHaveBeenCalledWith(1);
     });
+
+    it("should return first result when multiple records exist (handles duplicates)", async () => {
+      const mockData1: TokensProps = {
+        access_token: "new-token",
+        refresh_token: "new-refresh",
+        email: "test@example.com",
+      };
+      const mockData2: TokensProps = {
+        access_token: "old-token",
+        refresh_token: "old-refresh",
+        email: "test@example.com",
+      };
+
+      // Simulate multiple records (should return most recent first due to ordering)
+      mockLimit.mockResolvedValue({
+        data: [mockData1, mockData2],
+        error: null,
+      });
+
+      const result = await fetchCredentialsByEmail("test@example.com");
+
+      // Should return the first (most recent) record
+      expect(result).toEqual(mockData1);
+    });
   });
 
   describe("error handling", () => {
     it("should throw error when Supabase returns error", async () => {
-      mockSingle.mockResolvedValue({
+      mockLimit.mockResolvedValue({
         data: null,
         error: { message: "Database error" },
       });
@@ -136,7 +158,18 @@ describe("fetchCredentialsByEmail", () => {
     });
 
     it("should throw error when no data found", async () => {
-      mockSingle.mockResolvedValue({
+      mockLimit.mockResolvedValue({
+        data: [],
+        error: null,
+      });
+
+      await expect(
+        fetchCredentialsByEmail("notfound@example.com"),
+      ).rejects.toThrow("No credentials found for notfound@example.com");
+    });
+
+    it("should throw error when data is null", async () => {
+      mockLimit.mockResolvedValue({
         data: null,
         error: null,
       });
@@ -147,8 +180,8 @@ describe("fetchCredentialsByEmail", () => {
     });
 
     it("should handle empty string email", async () => {
-      mockSingle.mockResolvedValue({
-        data: null,
+      mockLimit.mockResolvedValue({
+        data: [],
         error: null,
       });
 
@@ -165,8 +198,8 @@ describe("fetchCredentialsByEmail", () => {
         email: "test+tag@example.com",
       };
 
-      mockSingle.mockResolvedValue({
-        data: mockData,
+      mockLimit.mockResolvedValue({
+        data: [mockData],
         error: null,
       });
 
@@ -183,8 +216,8 @@ describe("fetchCredentialsByEmail", () => {
         email: longEmail,
       };
 
-      mockSingle.mockResolvedValue({
-        data: mockData,
+      mockLimit.mockResolvedValue({
+        data: [mockData],
         error: null,
       });
 
@@ -204,8 +237,8 @@ describe("fetchCredentialsByEmail", () => {
         email: "test@example.com",
       };
 
-      mockSingle.mockResolvedValue({
-        data: completeTokenData,
+      mockLimit.mockResolvedValue({
+        data: [completeTokenData],
         error: null,
       });
 
