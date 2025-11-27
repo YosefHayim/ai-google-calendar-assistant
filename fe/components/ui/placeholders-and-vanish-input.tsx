@@ -2,16 +2,19 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
+
 import { cn } from "@/lib/utils";
 
 export function PlaceholdersAndVanishInput({
   placeholders,
   onChange,
   onSubmit,
+  leftButton,
 }: {
   placeholders: string[];
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  leftButton?: React.ReactNode;
 }) {
   const [currentPlaceholder, setCurrentPlaceholder] = useState(0);
 
@@ -73,20 +76,11 @@ export function PlaceholdersAndVanishInput({
       let i = 4 * t * 800;
       for (let n = 0; n < 800; n++) {
         let e = i + 4 * n;
-        if (
-          pixelData[e] !== 0 &&
-          pixelData[e + 1] !== 0 &&
-          pixelData[e + 2] !== 0
-        ) {
+        if (pixelData[e] !== 0 && pixelData[e + 1] !== 0 && pixelData[e + 2] !== 0) {
           newData.push({
             x: n,
             y: t,
-            color: [
-              pixelData[e],
-              pixelData[e + 1],
-              pixelData[e + 2],
-              pixelData[e + 3],
-            ],
+            color: [pixelData[e], pixelData[e + 1], pixelData[e + 2], pixelData[e + 3]],
           });
         }
       }
@@ -161,10 +155,7 @@ export function PlaceholdersAndVanishInput({
 
     const value = inputRef.current?.value || "";
     if (value && inputRef.current) {
-      const maxX = newDataRef.current.reduce(
-        (prev, current) => (current.x > prev ? current.x : prev),
-        0
-      );
+      const maxX = newDataRef.current.reduce((prev, current) => (current.x > prev ? current.x : prev), 0);
       animate(maxX);
     }
   };
@@ -181,6 +172,12 @@ export function PlaceholdersAndVanishInput({
         value && "bg-gray-50"
       )}
       onSubmit={handleSubmit}
+      onClick={(e) => {
+        // Prevent form click from interfering with button clicks
+        if ((e.target as HTMLElement).closest('[data-onboard="mic-button"]')) {
+          e.stopPropagation();
+        }
+      }}
     >
       <canvas
         className={cn(
@@ -189,6 +186,15 @@ export function PlaceholdersAndVanishInput({
         )}
         ref={canvasRef}
       />
+      {leftButton && (
+        <div 
+          className="absolute left-2 top-1/2 -translate-y-1/2 z-[100] pointer-events-auto"
+          onClick={(e) => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
+        >
+          {leftButton}
+        </div>
+      )}
       <input
         onChange={(e) => {
           if (!animating) {
@@ -201,9 +207,11 @@ export function PlaceholdersAndVanishInput({
         value={value}
         type="text"
         className={cn(
-          "w-full relative text-sm sm:text-base z-50 border-none dark:text-white bg-transparent text-black h-full rounded-full focus:outline-none focus:ring-0 pl-4 sm:pl-10 pr-20",
+          "w-full relative text-sm sm:text-base z-50 border-none dark:text-white bg-transparent text-black h-full rounded-full focus:outline-none focus:ring-0 pr-20",
+          leftButton ? "pl-10 sm:pl-12" : "pl-4 sm:pl-10",
           animating && "text-transparent dark:text-transparent"
         )}
+        style={{ pointerEvents: leftButton ? 'auto' : 'auto' }}
       />
 
       <button
@@ -264,7 +272,10 @@ export function PlaceholdersAndVanishInput({
                 duration: 0.3,
                 ease: "linear",
               }}
-              className="dark:text-zinc-500 text-sm sm:text-base font-normal text-neutral-500 pl-4 sm:pl-12 text-left w-[calc(100%-2rem)] truncate"
+              className={cn(
+                "dark:text-zinc-500 text-sm sm:text-base font-normal text-neutral-500 text-left w-[calc(100%-2rem)] truncate",
+                leftButton ? "pl-10 sm:pl-12" : "pl-4 sm:pl-12"
+              )}
             >
               {placeholders[currentPlaceholder]}
             </motion.p>
@@ -274,4 +285,3 @@ export function PlaceholdersAndVanishInput({
     </form>
   );
 }
-

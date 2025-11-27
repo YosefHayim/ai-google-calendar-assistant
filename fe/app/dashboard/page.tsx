@@ -48,7 +48,9 @@ export default function DashboardPage() {
     setIsVoiceMode(false);
   };
 
-  const handleMicClick = () => {
+  const handleMicClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
     setIsVoiceMode(true);
   };
 
@@ -79,7 +81,7 @@ export default function DashboardPage() {
   }, []);
 
   const handleCompleteStep = (stepId: string) => {
-    setCompletedSteps(prev => new Set([...prev, stepId]));
+    setCompletedSteps((prev) => new Set([...prev, stepId]));
   };
 
   const handleFinish = () => {
@@ -88,8 +90,7 @@ export default function DashboardPage() {
     const animationEnd = Date.now() + duration;
     const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
 
-    const randomInRange = (min: number, max: number) =>
-      Math.random() * (max - min) + min;
+    const randomInRange = (min: number, max: number) => Math.random() * (max - min) + min;
 
     const interval = window.setInterval(() => {
       const timeLeft = animationEnd - Date.now();
@@ -150,71 +151,70 @@ export default function DashboardPage() {
     return "Ask CAL AI Anything";
   };
 
-  const completedCount = onboardingSteps.filter(step => completedSteps.has(step.id)).length;
+  const completedCount = onboardingSteps.filter((step) => completedSteps.has(step.id)).length;
   const isOnboardingComplete = completedCount === onboardingSteps.length;
 
   return (
     <>
       <div className="h-[40rem] flex flex-col justify-center items-center px-4 relative">
-        <h2 
-          data-onboard="heading"
-          className="mb-10 sm:mb-20 text-xl text-center sm:text-5xl dark:text-white text-black"
-        >
+        <h2 data-onboard="heading" className="mb-10 sm:mb-20 text-xl text-center sm:text-5xl dark:text-white text-black">
           {getHeadingText()}
         </h2>
 
-      {/* Toggle between Chat and Voice Input */}
-      <AnimatePresence mode="wait">
-        {isVoiceMode ? (
-          <motion.div
-            key="voice"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
-            className="w-full"
-          >
-            <AIVoiceInput onStart={handleVoiceStart} onStop={handleVoiceStop} visualizerBars={48} autoStart={true} />
-          </motion.div>
-        ) : (
-          <motion.div
-            key="chat"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
-            className="w-full relative max-w-xl mx-auto"
-          >
-            {/* Microphone Icon Button - Overlapping the right edge of input */}
-            <AnimatePresence>
-              {!isVoiceMode && (
-                <motion.button
-                  data-onboard="mic-button"
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.8 }}
-                  onClick={handleMicClick}
-                  className={cn(
-                    "relative ml-[0.5em] z-50",
-                    "h-8 w-8 rounded-full transition-all duration-200",
-                    "bg-black dark:bg-zinc-900 hover:bg-black/90 dark:hover:bg-zinc-800",
-                    "flex items-center justify-center",
-                    "border border-white/20",
-                    "shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),_0px_1px_0px_0px_rgba(25,28,33,0.02),_0px_0px_0px_1px_rgba(25,28,33,0.08)]"
-                  )}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <Mic className="w-4 h-4 text-white" />
-                </motion.button>
-              )}
-            </AnimatePresence>
-            <div data-onboard="input">
-              <PlaceholdersAndVanishInput placeholders={placeholders} onChange={handleChange} onSubmit={onSubmit} />
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+        {/* Toggle between Chat and Voice Input */}
+        <AnimatePresence mode="wait">
+          {isVoiceMode ? (
+            <motion.div
+              key="voice"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+              className="w-full"
+            >
+              <AIVoiceInput onStart={handleVoiceStart} onStop={handleVoiceStop} visualizerBars={48} autoStart={true} />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="chat"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+              className="w-full relative max-w-xl mx-auto"
+            >
+              <div data-onboard="input">
+                <PlaceholdersAndVanishInput
+                  placeholders={placeholders}
+                  onChange={handleChange}
+                  onSubmit={onSubmit}
+                  leftButton={
+                    !isVoiceMode ? (
+                      <motion.button
+                        data-onboard="mic-button"
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.8 }}
+                        onClick={handleMicClick}
+                        className={cn(
+                          "relative z-[100] h-8 w-8 rounded-full transition-all duration-200",
+                          "bg-black dark:bg-zinc-900 hover:bg-black/90 dark:hover:bg-zinc-800",
+                          "flex items-center justify-center",
+                          "border border-white/20",
+                          "shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),_0px_1px_0px_0px_rgba(25,28,33,0.02),_0px_0px_0px_1px_rgba(25,28,33,0.08)]"
+                        )}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <Mic className="w-4 h-4 text-white" />
+                      </motion.button>
+                    ) : undefined
+                  }
+                />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       <InteractiveOnboardingChecklist
