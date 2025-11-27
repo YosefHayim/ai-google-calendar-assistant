@@ -9,6 +9,7 @@ import { exchangeOAuthCode } from "@/utils/auth/exchangeOAuthToken";
 import { storeUserTokens } from "@/utils/auth/storeUserTokens";
 import { validateEmailPassword, validateEmailToken, validateEmail } from "@/utils/auth/validateAuthInput";
 import { findUserByEmail, deactivateUserByEmail } from "@/utils/auth/userOperations";
+import { ConversationMemoryService } from "@/services/ConversationMemoryService";
 import sendResponse from "@/utils/sendResponse";
 
 const generateAuthGoogleUrl = reqResAsyncHandler(async (req: Request, res: Response) => {
@@ -105,6 +106,33 @@ const verifyEmailByOpt = reqResAsyncHandler(async (req: Request, res: Response) 
   sendResponse(res, STATUS_RESPONSE.SUCCESS, "Email verified successfully.", data);
 });
 
+const getAgentName = reqResAsyncHandler(async (req: Request, res: Response) => {
+  const user = (req as Request & { user: User }).user;
+  if (!user || !user.email) {
+    return sendResponse(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated.");
+  }
+
+  // Get user_id from email
+  const { data: tokenData, error: tokenError } = await SUPABASE.from("user_calendar_tokens").select("user_id").eq("email", user.email).maybeSingle();
+
+  if (tokenError || !tokenData?.user_id) {
+    return sendResponse(res, STATUS_RESPONSE.NOT_FOUND, "User not found.");
+  }
+
+  // Use chatId 0 for web users (default)
+  const chatId = 0;
+  const conversationMemoryService = new ConversationMemoryService(SUPABASE);
+
+  try {
+    const agentName = await conversationMemoryService.getAgentName(tokenData.user_id, chatId);
+    return sendResponse(res, STATUS_RESPONSE.SUCCESS, "Agent name retrieved successfully.", {
+      agent_name: agentName || null,
+    });
+  } catch (error) {
+    return sendResponse(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Failed to retrieve agent name.", error);
+  }
+});
+
 export const userController = {
   verifyEmailByOpt,
   signUpUserReg,
@@ -114,4 +142,5 @@ export const userController = {
   getUserInformation,
   deActivateUser,
   generateAuthGoogleUrl,
+  getAgentName,
 };

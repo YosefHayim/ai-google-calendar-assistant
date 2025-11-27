@@ -20,4 +20,6 @@ router.get("/signup/google", userController.signUpOrSignInWithGoogle);
 
 router.get("/signup/github", userController.signUpUserViaGitHub);
 
+router.get("/agent-name", authHandler, userController.getAgentName);
+
 export default router;
