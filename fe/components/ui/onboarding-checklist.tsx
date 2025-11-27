@@ -29,14 +29,14 @@ export interface InteractiveOnboardingChecklistProps {
 const getElementPosition = (selector: string) => {
   const element = document.querySelector(selector) as HTMLElement;
   if (!element) return null;
-  
+
   const rect = element.getBoundingClientRect();
   return {
     top: rect.top + window.scrollY,
     left: rect.left + window.scrollX,
     width: rect.width,
     height: rect.height,
-    element
+    element,
   };
 };
 
@@ -49,7 +49,7 @@ const CoachmarkOverlay = ({
   isFirst,
   isLast,
   stepIndex,
-  totalSteps
+  totalSteps,
 }: {
   step: Step;
   onNext: () => void;
@@ -70,19 +70,19 @@ const CoachmarkOverlay = ({
 
   useEffect(() => {
     updatePosition();
-    
+
     const handleResize = () => updatePosition();
     const handleScroll = () => updatePosition();
-    
+
     window.addEventListener("resize", handleResize);
     window.addEventListener("scroll", handleScroll);
-    
+
     const resizeObserver = new ResizeObserver(updatePosition);
     const targetElement = document.querySelector(step.targetSelector);
     if (targetElement) {
       resizeObserver.observe(targetElement);
     }
-    
+
     return () => {
       window.removeEventListener("resize", handleResize);
       window.removeEventListener("scroll", handleScroll);
@@ -128,14 +128,12 @@ const CoachmarkOverlay = ({
           <h3 id="coachmark-title" className="font-semibold text-lg mb-2">
             {step.title}
           </h3>
-          <p className="text-muted-foreground mb-4">
-            Target element not found. Please ensure the element with selector "{step.targetSelector}" exists.
-          </p>
+          <p className="text-muted-foreground mb-4">Target element not found. Please ensure the element with selector "{step.targetSelector}" exists.</p>
           <div className="flex justify-end gap-2">
-            <Button variant="outline" size="sm" onClick={onClose}>
+            <Button variant="outline" size="sm" onClick={onClose} className="hover:bg-muted hover:text-foreground">
               Close
             </Button>
-            <Button size="sm" onClick={onComplete}>
+            <Button size="sm" onClick={onComplete} className="bg-black dark:bg-zinc-900 text-white hover:bg-black/90 dark:hover:bg-zinc-800">
               Mark Complete
             </Button>
           </div>
@@ -158,17 +156,19 @@ const CoachmarkOverlay = ({
       aria-modal="true"
       aria-labelledby="coachmark-title"
       style={{
-        background: `radial-gradient(circle at ${left + width/2}px ${top + height/2}px, transparent ${Math.max(width, height)/2 + spotlightPadding}px, rgba(0,0,0,0.7) ${Math.max(width, height)/2 + spotlightPadding + 1}px)`
+        background: `radial-gradient(circle at ${left + width / 2}px ${top + height / 2}px, transparent ${
+          Math.max(width, height) / 2 + spotlightPadding
+        }px, rgba(0,0,0,0.7) ${Math.max(width, height) / 2 + spotlightPadding + 1}px)`,
       }}
     >
       <div
-        className="absolute border-2 border-primary rounded-lg shadow-lg"
+        className="absolute border-2 border-foreground/20 rounded-lg shadow-lg"
         style={{
           top: top - spotlightPadding,
           left: left - spotlightPadding,
           width: width + spotlightPadding * 2,
           height: height + spotlightPadding * 2,
-          boxShadow: `0 0 0 2px hsl(var(--primary)), 0 0 20px rgba(0,0,0,0.3)`
+          boxShadow: `0 0 0 2px hsl(var(--foreground) / 0.3), 0 0 20px rgba(0,0,0,0.3)`,
         }}
       />
 
@@ -176,11 +176,11 @@ const CoachmarkOverlay = ({
         initial={{ scale: 0.8, opacity: 0, y: 10 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
         exit={{ scale: 0.8, opacity: 0, y: 10 }}
-        transition={{ 
-          type: "spring", 
-          damping: 25, 
+        transition={{
+          type: "spring",
+          damping: 25,
           stiffness: 400,
-          opacity: { duration: 0.15 }
+          opacity: { duration: 0.15 },
         }}
         className="absolute bg-card border rounded-xl p-4 shadow-xl max-w-sm pointer-events-auto"
         style={(() => {
@@ -189,67 +189,66 @@ const CoachmarkOverlay = ({
           const margin = 16;
           const onboardingCardWidth = 320;
           const onboardingCardHeight = 400;
-          
+
           const positions = [
             {
               top: top + height + margin,
-              left: left + (width / 2) - (cardWidth / 2),
-              priority: 1
+              left: left + width / 2 - cardWidth / 2,
+              priority: 1,
             },
             {
               top: top - cardHeight - margin,
-              left: left + (width / 2) - (cardWidth / 2),
-              priority: 2
+              left: left + width / 2 - cardWidth / 2,
+              priority: 2,
             },
             {
-              top: top + (height / 2) - (cardHeight / 2),
+              top: top + height / 2 - cardHeight / 2,
               left: left + width + margin,
-              priority: 3
+              priority: 3,
             },
             {
-              top: top + (height / 2) - (cardHeight / 2),
+              top: top + height / 2 - cardHeight / 2,
               left: left - cardWidth - margin,
-              priority: 4
-            }
+              priority: 4,
+            },
           ];
-          
+
           const bestPosition = positions
-            .map(pos => ({
+            .map((pos) => ({
               ...pos,
               fitsHorizontally: pos.left >= margin && pos.left + cardWidth <= window.innerWidth - margin,
               fitsVertically: pos.top >= margin && pos.top + cardHeight <= window.innerHeight - margin,
-              overlapsOnboarding: (
+              overlapsOnboarding:
                 pos.left + cardWidth > window.innerWidth - onboardingCardWidth - margin * 2 &&
-                pos.top + cardHeight > window.innerHeight - onboardingCardHeight - margin * 2
-              )
+                pos.top + cardHeight > window.innerHeight - onboardingCardHeight - margin * 2,
             }))
-            .filter(pos => pos.fitsHorizontally && pos.fitsVertically && !pos.overlapsOnboarding)
+            .filter((pos) => pos.fitsHorizontally && pos.fitsVertically && !pos.overlapsOnboarding)
             .sort((a, b) => a.priority - b.priority)[0];
-          
+
           if (bestPosition) {
             return {
               top: bestPosition.top,
-              left: bestPosition.left
+              left: bestPosition.left,
             };
           }
-          
+
           let fallbackTop = top + height + margin;
-          let fallbackLeft = left + (width / 2) - (cardWidth / 2);
-          
+          let fallbackLeft = left + width / 2 - cardWidth / 2;
+
           fallbackLeft = Math.max(margin, Math.min(fallbackLeft, window.innerWidth - cardWidth - margin));
-          
+
           const maxTop = window.innerHeight - cardHeight - margin;
           const onboardingTop = window.innerHeight - onboardingCardHeight - margin * 2;
-          
+
           if (fallbackTop + cardHeight > onboardingTop && fallbackLeft + cardWidth > window.innerWidth - onboardingCardWidth - margin * 2) {
             fallbackTop = Math.max(margin, top - cardHeight - margin);
           } else {
             fallbackTop = Math.max(margin, Math.min(fallbackTop, maxTop));
           }
-          
+
           return {
             top: fallbackTop,
-            left: fallbackLeft
+            left: fallbackLeft,
           };
         })()}
       >
@@ -262,33 +261,29 @@ const CoachmarkOverlay = ({
           </p>
         </div>
 
-        {step.description && (
-          <p className="text-sm text-foreground mb-4">
-            {step.description}
-          </p>
-        )}
+        {step.description && <p className="text-sm text-foreground mb-4">{step.description}</p>}
 
         <div className="flex items-center justify-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onPrev}
-            disabled={isFirst}
-            aria-label="Previous step"
-          >
+          <Button variant="outline" size="sm" onClick={onPrev} disabled={isFirst} aria-label="Previous step" className="hover:bg-muted hover:text-foreground">
             <ChevronLeft className="h-4 w-4 mr-1" />
             Prev
           </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onNext}
-            disabled={isLast}
-            aria-label="Next step"
-          >
-            Next
-            <ChevronRight className="h-4 w-4 ml-1" />
-          </Button>
+          {isLast ? (
+            <Button
+              size="sm"
+              onClick={onComplete}
+              aria-label="Finish onboarding"
+              className="bg-black dark:bg-zinc-900 text-white hover:bg-black/90 dark:hover:bg-zinc-800"
+            >
+              <Check className="h-4 w-4 mr-1" />
+              Finish
+            </Button>
+          ) : (
+            <Button variant="outline" size="sm" onClick={onNext} disabled={isLast} aria-label="Next step" className="hover:bg-muted hover:text-foreground">
+              Next
+              <ChevronRight className="h-4 w-4 ml-1" />
+            </Button>
+          )}
         </div>
       </motion.div>
     </motion.div>
@@ -303,48 +298,42 @@ export function InteractiveOnboardingChecklist({
   onCompleteStep,
   onFinish,
   accentColorVar = "--primary",
-  placement = "right"
+  placement = "right",
 }: InteractiveOnboardingChecklistProps) {
   const [internalOpen, setInternalOpen] = useState(defaultOpen);
   const [internalCompletedSteps, setInternalCompletedSteps] = useState<Set<string>>(new Set());
-  
-  const completedSteps = new Set([
-    ...steps.filter(step => step.completed).map(step => step.id),
-    ...internalCompletedSteps
-  ]);
+
+  const completedSteps = new Set([...steps.filter((step) => step.completed).map((step) => step.id), ...internalCompletedSteps]);
   const [activeCoachmark, setActiveCoachmark] = useState<string | null>(null);
-  
+
   const isControlled = controlledOpen !== undefined;
   const open = isControlled ? controlledOpen : internalOpen;
 
-  const advanceToNextStep = useCallback((completedStepId: string) => {
-    const newCompletedSteps = new Set([
-      ...steps.filter(step => step.completed).map(step => step.id),
-      ...internalCompletedSteps,
-      completedStepId
-    ]);
-    
-    const currentStepIndex = steps.findIndex(step => step.id === completedStepId);
-    const nextIncompleteStep = steps.slice(currentStepIndex + 1).find(step => !newCompletedSteps.has(step.id));
-    
-    if (nextIncompleteStep) {
-      setActiveCoachmark(nextIncompleteStep.id);
-    } else {
-      setActiveCoachmark(null);
-    }
-    
-    const completedAllSteps = steps.filter(step => 
-      newCompletedSteps.has(step.id)
-    );
-    
-    if (completedAllSteps.length === steps.length) {
-      setTimeout(() => onFinish?.(), 100);
-    }
-  }, [steps, internalCompletedSteps, onFinish]);
+  const advanceToNextStep = useCallback(
+    (completedStepId: string) => {
+      const newCompletedSteps = new Set([...steps.filter((step) => step.completed).map((step) => step.id), ...internalCompletedSteps, completedStepId]);
+
+      const currentStepIndex = steps.findIndex((step) => step.id === completedStepId);
+      const nextIncompleteStep = steps.slice(currentStepIndex + 1).find((step) => !newCompletedSteps.has(step.id));
+
+      if (nextIncompleteStep) {
+        setActiveCoachmark(nextIncompleteStep.id);
+      } else {
+        setActiveCoachmark(null);
+      }
+
+      const completedAllSteps = steps.filter((step) => newCompletedSteps.has(step.id));
+
+      if (completedAllSteps.length === steps.length) {
+        setTimeout(() => onFinish?.(), 100);
+      }
+    },
+    [steps, internalCompletedSteps, onFinish]
+  );
 
   useEffect(() => {
     if (open && !activeCoachmark) {
-      const firstIncompleteStep = steps.find(step => !completedSteps.has(step.id));
+      const firstIncompleteStep = steps.find((step) => !completedSteps.has(step.id));
       if (firstIncompleteStep) {
         const timer = setTimeout(() => {
           setActiveCoachmark(firstIncompleteStep.id);
@@ -356,7 +345,7 @@ export function InteractiveOnboardingChecklist({
 
   useEffect(() => {
     if (activeCoachmark) {
-      const activeStep = steps.find(s => s.id === activeCoachmark);
+      const activeStep = steps.find((s) => s.id === activeCoachmark);
       if (activeStep && activeStep.completed) {
         setTimeout(() => {
           advanceToNextStep(activeCoachmark);
@@ -369,21 +358,21 @@ export function InteractiveOnboardingChecklist({
     if (!newOpen && activeCoachmark) {
       return;
     }
-    
+
     if (!isControlled) {
       setInternalOpen(newOpen);
     }
     onOpenChange?.(newOpen);
-    
+
     if (!newOpen) {
       setActiveCoachmark(null);
     }
   };
 
   const handleCompleteStep = (stepId: string) => {
-    setInternalCompletedSteps(prev => new Set([...prev, stepId]));
+    setInternalCompletedSteps((prev) => new Set([...prev, stepId]));
     onCompleteStep?.(stepId);
-    
+
     setTimeout(() => {
       advanceToNextStep(stepId);
     }, 500);
@@ -394,19 +383,17 @@ export function InteractiveOnboardingChecklist({
     setActiveCoachmark(step.id);
   };
 
-  const activeStep = activeCoachmark ? steps.find(s => s.id === activeCoachmark) : null;
+  const activeStep = activeCoachmark ? steps.find((s) => s.id === activeCoachmark) : null;
   const activeStepIndex = activeStep ? steps.indexOf(activeStep) : -1;
-  
-  const completedCount = steps.filter(step => completedSteps.has(step.id)).length;
+
+  const completedCount = steps.filter((step) => completedSteps.has(step.id)).length;
   const totalSteps = steps.length;
   const progress = (completedCount / totalSteps) * 100;
 
   const allStepsCompleted = completedCount === totalSteps;
 
-  const hasPrevIncompleteStep = activeStepIndex > 0 && 
-    steps.slice(0, activeStepIndex).some(step => !completedSteps.has(step.id));
-  const hasNextIncompleteStep = activeStepIndex < totalSteps - 1 && 
-    steps.slice(activeStepIndex + 1).some(step => !completedSteps.has(step.id));
+  const hasPrevIncompleteStep = activeStepIndex > 0 && steps.slice(0, activeStepIndex).some((step) => !completedSteps.has(step.id));
+  const hasNextIncompleteStep = activeStepIndex < totalSteps - 1 && steps.slice(activeStepIndex + 1).some((step) => !completedSteps.has(step.id));
 
   return (
     <>
@@ -423,20 +410,18 @@ export function InteractiveOnboardingChecklist({
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 20, opacity: 0 }}
-              transition={{ 
+              transition={{
                 duration: 0.3,
-                ease: [0.4, 0.0, 0.2, 1]
+                ease: [0.4, 0.0, 0.2, 1],
               }}
               className="flex flex-col h-full"
             >
               <div className="p-6 border-b">
                 <div className="flex items-center justify-between mb-4">
-                  <Dialog.Title className="text-lg font-semibold">
-                    Getting Started
-                  </Dialog.Title>
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
+                  <Dialog.Title className="text-lg font-semibold">Getting Started</Dialog.Title>
+                  <Button
+                    variant="ghost"
+                    size="icon"
                     className="h-6 w-6"
                     onClick={() => {
                       setActiveCoachmark(null);
@@ -449,11 +434,13 @@ export function InteractiveOnboardingChecklist({
                     <X className="h-4 w-4" />
                   </Button>
                 </div>
-                
+
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground">Progress</span>
-                    <span className="font-medium">{completedCount}/{totalSteps}</span>
+                    <span className="font-medium">
+                      {completedCount}/{totalSteps}
+                    </span>
                   </div>
                   <div className="w-full bg-muted rounded-full h-2">
                     <motion.div
@@ -471,7 +458,7 @@ export function InteractiveOnboardingChecklist({
                   {steps.map((step, index) => {
                     const isCompleted = completedSteps.has(step.id);
                     const isActive = activeCoachmark === step.id;
-                    
+
                     return (
                       <li key={step.id}>
                         <button
@@ -479,9 +466,9 @@ export function InteractiveOnboardingChecklist({
                           disabled={isCompleted}
                           className={cn(
                             "w-full text-left p-3 rounded-lg border transition-colors",
-                            "hover:bg-accent/50 focus:outline-none focus:ring-2 focus:ring-ring",
+                            "hover:bg-muted/50 hover:text-foreground focus:outline-none focus:ring-2 focus:ring-foreground/20",
                             isCompleted && "bg-success/10 border-success/30 cursor-default",
-                            isActive && "ring-2 ring-primary"
+                            isActive && "ring-2 ring-foreground/20 border-foreground/30"
                           )}
                           aria-describedby={`step-${step.id}-description`}
                         >
@@ -497,20 +484,14 @@ export function InteractiveOnboardingChecklist({
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 mb-1">
-                                <span className={cn(
-                                  "font-medium text-sm",
-                                  isCompleted ? "text-muted-foreground line-through" : "text-foreground"
-                                )}>
+                                <span className={cn("font-medium text-sm", isCompleted ? "text-muted-foreground line-through" : "text-foreground")}>
                                   {step.title}
                                 </span>
                               </div>
                               {step.description && (
                                 <p
                                   id={`step-${step.id}-description`}
-                                  className={cn(
-                                    "text-xs",
-                                    isCompleted ? "text-muted-foreground" : "text-muted-foreground"
-                                  )}
+                                  className={cn("text-xs", isCompleted ? "text-muted-foreground" : "text-muted-foreground")}
                                 >
                                   {step.description}
                                 </p>
@@ -526,8 +507,8 @@ export function InteractiveOnboardingChecklist({
 
               {allStepsCompleted && (
                 <div className="p-6 border-t">
-                  <Button 
-                    className="w-full" 
+                  <Button
+                    className="w-full bg-black dark:bg-zinc-900 text-white hover:bg-black/90 dark:hover:bg-zinc-800"
                     onClick={() => {
                       onFinish?.();
                       handleOpenChange(false);
@@ -575,4 +556,3 @@ export function InteractiveOnboardingChecklist({
     </>
   );
 }
-
