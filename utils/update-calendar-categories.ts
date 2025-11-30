@@ -4,29 +4,38 @@ import type { UpdateCalendarCategoriesProps } from "@/types";
 import { asyncHandler } from "./async-handlers";
 
 export const updateCalenderCategories = asyncHandler(
-  async (payload: UpdateCalendarCategoriesProps[] | undefined, email: string, userId: string | null): Promise<Tables<"calendar_categories">[] | false> => {
-    if (!(payload?.length && email)) {
+  async (payload: UpdateCalendarCategoriesProps[] | undefined, email: string, userId: string | null): Promise<Tables<"user_calendars">[] | false> => {
+    if (!payload?.length || !userId) {
       return false;
     }
 
     const rows = payload
-      .filter((p) => p?.calendarId)
+      .filter((p) => p?.calendarId && p?.calendarName)
       .map((p) => ({
-        access_role: p.accessRole ?? null,
-        calendar_id: p.calendarId as string,
-        calendar_name: p.calendarName ?? null,
-        email,
-        time_zone_of_calendar: p.timeZoneForCalendar ?? null,
-        default_reminders: p.defaultReminders ?? null,
-        updated_at: new Date().toISOString(),
         user_id: userId,
-      })) as TablesInsert<"calendar_categories">[];
+        calendar_id: p.calendarId as string,
+        calendar_name: p.calendarName as string,
+        access_role: (p.accessRole as string) || "owner",
+        time_zone: p.timeZoneForCalendar || "UTC",
+        is_primary: false, // Will be set separately if needed
+        default_reminders: p.defaultReminders || null,
+        description: null,
+        location: null,
+        background_color: null,
+        foreground_color: null,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      })) as TablesInsert<"user_calendars">[];
 
     if (!rows.length) {
       return false;
     }
 
-    const { data, error } = await SUPABASE.from("calendar_categories").upsert(rows).select();
+    const { data, error } = await SUPABASE.from("user_calendars")
+      .upsert(rows, {
+        onConflict: "user_id,calendar_id",
+      })
+      .select();
 
     if (error) {
       throw error;
