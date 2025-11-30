@@ -1,5 +1,23 @@
 import { RECOMMENDED_PROMPT_PREFIX } from "@openai/agents-core/extensions";
 
+type AgentInstructionsType = {
+  generateUserCbGoogleUrl: string;
+  registerUserViaDb: string;
+  validateUserAuth: string;
+  validateEventFields: string;
+  insertEvent: string;
+  getEventByIdOrName: string;
+  updateEventByIdOrName: string;
+  deleteEventByIdOrName: string;
+  analysesCalendarTypeByEventInformation: string;
+  prepareEventAgent: string;
+  insertEventHandOffAgent: string;
+  updateEventByIdOrNameHandOffAgent: string;
+  deleteEventByIdOrNameHandOffAgent: string;
+  orchestratorAgent: string;
+  quickResponseAgent: string;
+};
+
 export const AGENT_INSTRUCTIONS = {
   generateUserCbGoogleUrl: `${RECOMMENDED_PROMPT_PREFIX}
 
@@ -728,8 +746,6 @@ You are an expert event update orchestrator with context awareness.
 - 🚫 **Never:** Alter timezone offsets unless requested
 - 🚫 **Never:** Synthesize unavailable fields
 - 🚫 **Never:** Ignore the user's language preference`,
-<｜tool▁calls▁begin｜><｜tool▁call▁begin｜>
-read_file
 
   deleteEventByIdOrNameHandOffAgent: `${RECOMMENDED_PROMPT_PREFIX}
 
@@ -928,4 +944,4 @@ Response: "I'm on it! Setting up that meeting for you."
 
 User: "How's my schedule looking this week?"
 Response: "Let me take a look at your schedule this week."`,
-};
+} satisfies AgentInstructionsType;

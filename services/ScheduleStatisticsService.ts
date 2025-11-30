@@ -4,6 +4,8 @@ import { RoutineLearningService } from "./RoutineLearningService";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { fetchCredentialsByEmail } from "@/utils/getUserCalendarTokens";
 import { initCalendarWithUserTokensAndUpdateTokens } from "@/utils/initCalendarWithUserTokens";
+import { validateTokens } from "@/utils/auth/validateTokens";
+import { TokenValidationError } from "@/utils/auth/TokenValidationError";
 
 /**
  * Statistics interfaces
@@ -779,8 +781,6 @@ export class ScheduleStatisticsService {
       const tokens = await fetchCredentialsByEmail(email);
 
       // Validate tokens before using them
-      const { validateTokens } = await import("@/utils/auth/validateTokens");
-      const { TokenValidationError } = await import("@/utils/auth/TokenValidationError");
       const validation = validateTokens(tokens);
       if (validation.requiresReAuth) {
         throw new TokenValidationError(

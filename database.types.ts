@@ -278,6 +278,57 @@ export type Database = {
         }
         Relationships: []
       }
+      user_calendars: {
+        Row: {
+          access_role: string
+          background_color: string | null
+          calendar_id: string
+          calendar_name: string
+          created_at: string
+          default_reminders: Json | null
+          description: string | null
+          foreground_color: string | null
+          id: number
+          is_primary: boolean
+          location: string | null
+          time_zone: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          access_role: string
+          background_color?: string | null
+          calendar_id: string
+          calendar_name: string
+          created_at?: string
+          default_reminders?: Json | null
+          description?: string | null
+          foreground_color?: string | null
+          id?: number
+          is_primary?: boolean
+          location?: string | null
+          time_zone: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          access_role?: string
+          background_color?: string | null
+          calendar_id?: string
+          calendar_name?: string
+          created_at?: string
+          default_reminders?: Json | null
+          description?: string | null
+          foreground_color?: string | null
+          id?: number
+          is_primary?: boolean
+          location?: string | null
+          time_zone?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_preference_embeddings: {
         Row: {
           content: string
