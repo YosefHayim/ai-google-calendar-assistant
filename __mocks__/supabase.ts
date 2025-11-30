@@ -1,5 +1,5 @@
-import { jest } from "@jest/globals";
 import type { Database } from "@/database.types";
+import { jest } from "@jest/globals";
 
 /**
  * Mock Supabase user data
@@ -44,7 +44,8 @@ export const mockUserCalendarToken: Database["public"]["Tables"]["user_calendar_
 };
 
 /**
- * Mock calendar categories data (calendar_categories table)
+ * Mock calendar categories data (calendar_categories table) - DEPRECATED
+ * @deprecated Use mockUserCalendar instead
  */
 export const mockCalendarCategory: Database["public"]["Tables"]["calendar_categories"]["Row"] = {
   id: 1,
@@ -54,6 +55,26 @@ export const mockCalendarCategory: Database["public"]["Tables"]["calendar_catego
   calendar_name: "Primary Calendar",
   access_role: "owner",
   time_zone_of_calendar: "America/New_York",
+  created_at: "2024-01-01T00:00:00Z",
+  updated_at: "2024-01-01T00:00:00Z",
+};
+
+/**
+ * Mock user calendar data (user_calendars table)
+ */
+export const mockUserCalendar: Database["public"]["Tables"]["user_calendars"]["Row"] = {
+  id: 1,
+  user_id: "test-user-id",
+  calendar_id: "primary",
+  calendar_name: "Primary Calendar",
+  access_role: "owner",
+  time_zone: "America/New_York",
+  is_primary: true,
+  default_reminders: null,
+  description: null,
+  location: null,
+  background_color: null,
+  foreground_color: null,
   created_at: "2024-01-01T00:00:00Z",
   updated_at: "2024-01-01T00:00:00Z",
 };
@@ -82,7 +103,7 @@ export const createMockSupabaseErrors = () => ({
   },
   uniqueViolation: {
     message: "duplicate key value violates unique constraint",
-    details: 'Key (email)=(test@example.com) already exists.',
+    details: "Key (email)=(test@example.com) already exists.",
     hint: null,
     code: "23505",
   },
@@ -94,7 +115,7 @@ export const createMockSupabaseErrors = () => ({
   },
   checkViolation: {
     message: "new row violates check constraint",
-    details: 'Failing row contains invalid data',
+    details: "Failing row contains invalid data",
     hint: null,
     code: "23514",
   },
@@ -135,14 +156,16 @@ class InMemoryDataStore {
   constructor() {
     // Initialize with default mock data
     this.data.set("user_calendar_tokens", [mockUserCalendarToken]);
-    this.data.set("calendar_categories", [mockCalendarCategory]);
+    this.data.set("calendar_categories", [mockCalendarCategory]); // Keep for backward compatibility
+    this.data.set("user_calendars", [mockUserCalendar]);
     this.data.set("user_telegram_links", [mockTelegramLink]);
   }
 
   reset() {
     this.data.clear();
     this.data.set("user_calendar_tokens", [mockUserCalendarToken]);
-    this.data.set("calendar_categories", [mockCalendarCategory]);
+    this.data.set("calendar_categories", [mockCalendarCategory]); // Keep for backward compatibility
+    this.data.set("user_calendars", [mockUserCalendar]);
     this.data.set("user_telegram_links", [mockTelegramLink]);
   }
 

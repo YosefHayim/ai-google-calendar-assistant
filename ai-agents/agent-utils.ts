@@ -112,11 +112,26 @@ export const formatEventData = (params: Partial<Event>): Event => {
 };
 
 export const getCalendarCategoriesByEmail = asyncHandler(async (email: string) => {
-  const { data, error } = await SUPABASE.from("calendar_categories").select("*").eq("email", email);
-  if (error) {
-    throw error;
+  // First try to get user_id from user_calendar_tokens
+  const { data: tokenData } = await SUPABASE.from("user_calendar_tokens")
+    .select("user_id")
+    .eq("email", email)
+    .single();
+
+  if (tokenData?.user_id) {
+    // Query by user_id (preferred method)
+    const { data, error } = await SUPABASE.from("user_calendars")
+      .select("*")
+      .eq("user_id", tokenData.user_id);
+    if (error) {
+      throw error;
+    }
+    return data;
   }
-  return data;
+
+  // Fallback: if no user_id found, return empty array
+  // This maintains backward compatibility but encourages using user_id
+  return [];
 });
 
 function cleanObject<T extends Record<string, unknown>>(obj: T): T {
