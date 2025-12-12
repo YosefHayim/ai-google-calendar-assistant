@@ -3,11 +3,13 @@
  * Provides authentication state and methods for Client Components
  */
 
+import type { Session, User } from "@supabase/supabase-js";
+import { getSession, signInWithOAuth, signInWithPassword, signOut } from "@/lib/supabase/auth";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+
+import { ROUTES } from "@/lib/constants";
 import { createClient } from "@/lib/supabase/client";
-import { signInWithOAuth, signInWithPassword, signOut, getSession, getUser } from "@/lib/supabase/auth";
-import type { User, Session } from "@supabase/supabase-js";
+import { useRouter } from "next/navigation";
 
 export interface UseAuthReturn {
   user: User | null;
@@ -65,7 +67,7 @@ export function useAuth(): UseAuthReturn {
 
     try {
       const { data, error: oauthError } = await signInWithOAuth(supabase, provider, {
-        next: "/dashboard",
+        next: ROUTES.DASHBOARD,
       });
 
       if (oauthError) {
@@ -99,7 +101,7 @@ export function useAuth(): UseAuthReturn {
       if (data.user) {
         setUser(data.user);
         setSession(data.session);
-        router.push("/dashboard");
+        router.push(ROUTES.DASHBOARD);
         router.refresh();
       }
     } catch (err) {
@@ -123,7 +125,7 @@ export function useAuth(): UseAuthReturn {
 
       setUser(null);
       setSession(null);
-      router.push("/login");
+      router.push(ROUTES.LOGIN);
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");

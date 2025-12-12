@@ -1,17 +1,23 @@
 /**
  * API Client Index
  * Main export file for all API clients
- * 
+ *
  * Following Next.js 15 best practices:
  * - Use calendarClient/usersClient for Client Components ('use client')
  * - Use calendarServer/usersServer for Server Components
  */
 
+import { calendarClient, usersClient } from "./client";
+import { calendarServer, usersServer } from "./server";
+
+import { calendarApi } from "./calendar";
+import { whatsappApi } from "./whatsapp";
+
 export * from "./config";
 export * from "./types";
 
 // Client-side API (for Client Components)
-export { calendarClient, usersClient } from "./client";
+export { calendarClient, usersClient, agentClient, transcriptionClient } from "./client";
 
 // Server-side API (for Server Components)
 export { calendarServer, usersServer } from "./server";
@@ -32,12 +38,12 @@ export const api = {
   server: {
     calendar: calendarServer,
     users: usersServer,
+    whatsapp: whatsappApi,
   },
   // Legacy (deprecated, use api.client or api.server instead)
   calendar: calendarApi,
-  users: usersApi,
+  users: usersClient,
   whatsapp: whatsappApi,
 };
 
 export default api;
-

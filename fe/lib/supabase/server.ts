@@ -3,6 +3,7 @@
  * Creates a Supabase client for use in Server Components and Route Handlers
  */
 
+import { COOKIE_NAMES } from "@/lib/constants";
 import type { Database } from "@/lib/supabase/database.types";
 import { SUPABASE_CONFIG } from "./config";
 import { cookies } from "next/headers";
@@ -14,8 +15,8 @@ import { createClient as createSupabaseClient } from "@supabase/supabase-js";
  */
 export async function createClient() {
   const cookieStore = await cookies();
-  const accessToken = cookieStore.get("sb-access-token")?.value;
-  const refreshToken = cookieStore.get("sb-refresh-token")?.value;
+  const accessToken = cookieStore.get(COOKIE_NAMES.ACCESS_TOKEN)?.value;
+  const refreshToken = cookieStore.get(COOKIE_NAMES.REFRESH_TOKEN)?.value;
 
   const client = createSupabaseClient<Database>(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey, {
     auth: {

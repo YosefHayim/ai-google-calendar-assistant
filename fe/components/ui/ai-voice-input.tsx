@@ -1,12 +1,13 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
+
 import { Mic } from "lucide-react";
-import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 
 interface AIVoiceInputProps {
   onStart?: () => void;
-  onStop?: (duration: number) => void;
+  onStop?: (duration: number, audioBlob?: Blob) => void;
   visualizerBars?: number;
   demoMode?: boolean;
   demoInterval?: number;
@@ -14,19 +15,16 @@ interface AIVoiceInputProps {
   autoStart?: boolean;
 }
 
-export function AIVoiceInput({
-  onStart,
-  onStop,
-  visualizerBars = 48,
-  demoMode = false,
-  demoInterval = 3000,
-  className,
-  autoStart = false
-}: AIVoiceInputProps) {
+export function AIVoiceInput({ onStart, onStop, visualizerBars = 48, demoMode = false, demoInterval = 3000, className, autoStart = false }: AIVoiceInputProps) {
   const [submitted, setSubmitted] = useState(autoStart);
   const [time, setTime] = useState(0);
   const [isClient, setIsClient] = useState(false);
   const [isDemo, setIsDemo] = useState(demoMode);
+  const [isRecording, setIsRecording] = useState(false);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
+  const streamRef = useRef<MediaStream | null>(null);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     setIsClient(true);
@@ -34,26 +32,29 @@ export function AIVoiceInput({
 
   useEffect(() => {
     if (autoStart) {
-      setSubmitted(true);
+      startRecording();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    let intervalId: NodeJS.Timeout;
-
-    if (submitted) {
-      onStart?.();
-      intervalId = setInterval(() => {
+    if (isRecording) {
+      intervalRef.current = setInterval(() => {
         setTime((t) => t + 1);
       }, 1000);
     } else {
-      onStop?.(time);
-      setTime(0);
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
     }
 
-    return () => clearInterval(intervalId);
-  }, [submitted, time, onStart, onStop]);
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [isRecording]);
 
   useEffect(() => {
     if (!isDemo) return;
@@ -80,12 +81,66 @@ export function AIVoiceInput({
     return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   };
 
+  const startRecording = async () => {
+    try {
+      // Request microphone permission
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      streamRef.current = stream;
+
+      const mediaRecorder = new MediaRecorder(stream, {
+        mimeType: MediaRecorder.isTypeSupported("audio/webm") ? "audio/webm" : "audio/mp4",
+      });
+      mediaRecorderRef.current = mediaRecorder;
+      audioChunksRef.current = [];
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          audioChunksRef.current.push(event.data);
+        }
+      };
+
+      mediaRecorder.onstop = () => {
+        const audioBlob = new Blob(audioChunksRef.current, {
+          type: mediaRecorder.mimeType || "audio/webm",
+        });
+        onStop?.(time, audioBlob);
+        // Stop all tracks
+        if (streamRef.current) {
+          streamRef.current.getTracks().forEach((track) => track.stop());
+          streamRef.current = null;
+        }
+      };
+
+      mediaRecorder.start();
+      setIsRecording(true);
+      setSubmitted(true);
+      onStart?.();
+    } catch (error) {
+      console.error("Error accessing microphone:", error);
+      setIsRecording(false);
+      setSubmitted(false);
+      alert("Microphone access denied. Please enable microphone permissions.");
+    }
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+      setSubmitted(false);
+    }
+  };
+
   const handleClick = () => {
     if (isDemo) {
       setIsDemo(false);
       setSubmitted(false);
     } else {
-      setSubmitted((prev) => !prev);
+      if (isRecording) {
+        stopRecording();
+      } else {
+        startRecording();
+      }
     }
   };
 
@@ -95,18 +150,13 @@ export function AIVoiceInput({
         <button
           className={cn(
             "group w-16 h-16 rounded-xl flex items-center justify-center transition-colors",
-            submitted
-              ? "bg-none"
-              : "bg-none hover:bg-black/10 dark:hover:bg-white/10"
+            submitted ? "bg-none" : "bg-none hover:bg-black/10 dark:hover:bg-white/10"
           )}
           type="button"
           onClick={handleClick}
         >
           {submitted ? (
-            <div
-              className="w-6 h-6 rounded-sm animate-spin bg-black dark:bg-white cursor-pointer pointer-events-auto"
-              style={{ animationDuration: "3s" }}
-            />
+            <div className="w-6 h-6 rounded-sm animate-spin bg-black dark:bg-white cursor-pointer pointer-events-auto" style={{ animationDuration: "3s" }} />
           ) : (
             <Mic className="w-6 h-6 text-black/70 dark:text-white/70" />
           )}
@@ -115,9 +165,7 @@ export function AIVoiceInput({
         <span
           className={cn(
             "font-mono text-sm transition-opacity duration-300",
-            submitted
-              ? "text-black/70 dark:text-white/70"
-              : "text-black/30 dark:text-white/30"
+            submitted ? "text-black/70 dark:text-white/70" : "text-black/30 dark:text-white/30"
           )}
         >
           {formatTime(time)}
@@ -129,9 +177,7 @@ export function AIVoiceInput({
               key={i}
               className={cn(
                 "w-0.5 rounded-full transition-all duration-300",
-                submitted
-                  ? "bg-black/50 dark:bg-white/50 animate-pulse"
-                  : "bg-black/10 dark:bg-white/10 h-1"
+                submitted ? "bg-black/50 dark:bg-white/50 animate-pulse" : "bg-black/10 dark:bg-white/10 h-1"
               )}
               style={
                 submitted && isClient
@@ -145,9 +191,7 @@ export function AIVoiceInput({
           ))}
         </div>
 
-        <p className="h-4 text-xs text-black/70 dark:text-white/70">
-          {submitted ? "Listening..." : "Click to speak"}
-        </p>
+        <p className="h-4 text-xs text-black/70 dark:text-white/70">{submitted ? "Listening..." : "Click to speak"}</p>
       </div>
     </div>
   );

@@ -9,16 +9,26 @@ import { InteractiveOnboardingChecklist, type Step } from "@/components/ui/onboa
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
-import { usersClient } from "@/lib/api/client";
+import { usersClient, agentClient, transcriptionClient } from "@/lib/api/client";
 import confetti from "canvas-confetti";
+import { useAuth } from "@/hooks/use-auth";
+import { createClient } from "@/lib/supabase/client";
+import { hasCompletedOnboarding, markOnboardingCompleted, isNewUser } from "@/lib/onboarding";
+import { ANIMATIONS, TIMEOUTS } from "@/lib/constants";
 
 export default function DashboardPage() {
+  const { user, loading: authLoading } = useAuth();
+  const supabase = createClient();
   const [isVoiceMode, setIsVoiceMode] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [agentName, setAgentName] = useState<string | null>(null);
   const [isLoadingAgentName, setIsLoadingAgentName] = useState(true);
   const [onboardingOpen, setOnboardingOpen] = useState(false);
   const [completedSteps, setCompletedSteps] = useState<Set<string>>(new Set());
+  const [isCheckingOnboarding, setIsCheckingOnboarding] = useState(true);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [agentResponse, setAgentResponse] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const placeholders = [
     "What's the first rule of Fight Club?",
@@ -39,13 +49,54 @@ export default function DashboardPage() {
 
   const handleVoiceStart = () => {
     setIsRecording(true);
+    setAgentResponse(null);
+    setError(null);
   };
 
-  const handleVoiceStop = (duration: number) => {
+  const handleVoiceStop = async (duration: number, audioBlob?: Blob) => {
     setIsRecording(false);
     console.log("Recording stopped, duration:", duration);
-    // Return to chat mode when recording stops
-    setIsVoiceMode(false);
+
+    if (!audioBlob) {
+      console.error("No audio blob received");
+      setError("No audio recorded. Please try again.");
+      setIsVoiceMode(false);
+      return;
+    }
+
+    setIsProcessing(true);
+    setError(null);
+
+    try {
+      // Step 1: Transcribe audio using OpenAI
+      console.log("Transcribing audio...");
+      const transcriptionResponse = await transcriptionClient.transcribeAudio(audioBlob);
+
+      if (transcriptionResponse.error || !transcriptionResponse.data?.text) {
+        throw new Error(transcriptionResponse.message || "Failed to transcribe audio");
+      }
+
+      const transcribedText = transcriptionResponse.data.text;
+      console.log("Transcribed text:", transcribedText);
+
+      // Step 2: Send transcribed text to backend agent
+      console.log("Sending query to agent...");
+      const agentResponse = await agentClient.queryAgent(transcribedText);
+
+      if (agentResponse.error || !agentResponse.data?.response) {
+        throw new Error(agentResponse.message || "Failed to get agent response");
+      }
+
+      setAgentResponse(agentResponse.data.response);
+      console.log("Agent response:", agentResponse.data.response);
+    } catch (err) {
+      console.error("Error processing voice input:", err);
+      setError(err instanceof Error ? err.message : "An error occurred while processing your request");
+    } finally {
+      setIsProcessing(false);
+      // Return to chat mode after processing
+      setIsVoiceMode(false);
+    }
   };
 
   const handleMicClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -72,47 +123,85 @@ export default function DashboardPage() {
     fetchAgentName();
   }, []);
 
-  // Check if user has completed onboarding
+  // Check if user has completed onboarding and show onboarding for new users
   useEffect(() => {
-    const hasCompletedOnboarding = localStorage.getItem("cal-ai-onboarding-completed");
-    if (!hasCompletedOnboarding) {
-      setOnboardingOpen(true);
-    }
-  }, []);
+    const checkOnboardingStatus = async () => {
+      if (authLoading) {
+        return; // Wait for auth to load
+      }
+
+      setIsCheckingOnboarding(true);
+
+      try {
+        const userId = user?.id;
+        const completed = await hasCompletedOnboarding(supabase, userId);
+
+        if (!completed) {
+          // Check if user is new (first time signing in)
+          const newUser = await isNewUser(supabase, userId);
+
+          // Show onboarding for new users or users who haven't completed it
+          setOnboardingOpen(true);
+        } else {
+          setOnboardingOpen(false);
+        }
+      } catch (error) {
+        console.error("Error checking onboarding status:", error);
+        // On error, don't show onboarding to avoid annoying users
+        setOnboardingOpen(false);
+      } finally {
+        setIsCheckingOnboarding(false);
+      }
+    };
+
+    checkOnboardingStatus();
+  }, [user, authLoading, supabase]);
 
   const handleCompleteStep = (stepId: string) => {
     setCompletedSteps((prev) => new Set([...prev, stepId]));
   };
 
-  const handleFinish = () => {
-    // Fire confetti celebration
-    const duration = 3 * 1000;
-    const animationEnd = Date.now() + duration;
-    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
-
+  const handleFinish = async () => {
+    // Fire confetti celebration (limited to 2-3 popups max)
+    const { DEFAULTS, ORIGIN_RANGES, MAX_POPUPS, PARTICLE_COUNT } = ANIMATIONS.CONFETTI;
+    const totalPopups = Math.min(MAX_POPUPS, 3); // Fire exactly 2-3 popups total
     const randomInRange = (min: number, max: number) => Math.random() * (max - min) + min;
 
-    const interval = window.setInterval(() => {
-      const timeLeft = animationEnd - Date.now();
+    // Fire confetti popups with slight delays for visual effect
+    // First popup - immediate
+    confetti({
+      ...DEFAULTS,
+      particleCount: PARTICLE_COUNT,
+      origin: { x: randomInRange(ORIGIN_RANGES.LEFT.min, ORIGIN_RANGES.LEFT.max), y: Math.random() + ORIGIN_RANGES.Y_OFFSET },
+    });
 
-      if (timeLeft <= 0) {
-        return clearInterval(interval);
-      }
+    // Second popup - after delay
+    if (totalPopups >= 2) {
+      setTimeout(() => {
+        confetti({
+          ...DEFAULTS,
+          particleCount: PARTICLE_COUNT,
+          origin: { x: randomInRange(ORIGIN_RANGES.RIGHT.min, ORIGIN_RANGES.RIGHT.max), y: Math.random() + ORIGIN_RANGES.Y_OFFSET },
+        });
+      }, TIMEOUTS.CONFETTI_POPUP_DELAY);
+    }
 
-      const particleCount = 50 * (timeLeft / duration);
-      confetti({
-        ...defaults,
-        particleCount,
-        origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
-      });
-      confetti({
-        ...defaults,
-        particleCount,
-        origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
-      });
-    }, 250);
+    // Third popup - after another delay (if max is 3)
+    if (totalPopups >= 3) {
+      setTimeout(() => {
+        confetti({
+          ...DEFAULTS,
+          particleCount: PARTICLE_COUNT,
+          origin: { x: randomInRange(ORIGIN_RANGES.LEFT.min, ORIGIN_RANGES.LEFT.max), y: Math.random() + ORIGIN_RANGES.Y_OFFSET },
+        });
+      }, TIMEOUTS.CONFETTI_POPUP_DELAY * 2);
+    }
 
-    localStorage.setItem("cal-ai-onboarding-completed", "true");
+    // Mark onboarding as completed in user metadata
+    if (user?.id) {
+      await markOnboardingCompleted(supabase, user.id);
+    }
+
     setOnboardingOpen(false);
   };
 
@@ -160,6 +249,37 @@ export default function DashboardPage() {
         <h2 data-onboard="heading" className="mb-10 sm:mb-20 text-xl text-center sm:text-5xl dark:text-white text-black">
           {getHeadingText()}
         </h2>
+
+        {/* Show agent response or error */}
+        {(agentResponse || error) && (
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-xl mx-auto mt-4 p-4 rounded-lg border">
+            {error ? (
+              <div className="text-red-600 dark:text-red-400">
+                <p className="font-semibold">Error:</p>
+                <p>{error}</p>
+              </div>
+            ) : (
+              <div className="text-black dark:text-white">
+                <p className="font-semibold mb-2">Response:</p>
+                <p>{agentResponse}</p>
+              </div>
+            )}
+          </motion.div>
+        )}
+
+        {/* Show processing indicator */}
+        {isProcessing && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="w-full max-w-xl mx-auto mt-4 p-4 rounded-lg border border-gray-300 dark:border-gray-700"
+          >
+            <div className="flex items-center gap-2 text-black dark:text-white">
+              <div className="w-4 h-4 border-2 border-gray-600 dark:border-gray-400 border-t-transparent rounded-full animate-spin" />
+              <p>Processing your request...</p>
+            </div>
+          </motion.div>
+        )}
 
         {/* Toggle between Chat and Voice Input */}
         <AnimatePresence mode="wait">
@@ -220,12 +340,17 @@ export default function DashboardPage() {
       <InteractiveOnboardingChecklist
         steps={onboardingSteps}
         open={onboardingOpen}
-        onOpenChange={setOnboardingOpen}
+        onOpenChange={(open) => {
+          setOnboardingOpen(open);
+          // If user manually closes onboarding without completing, don't auto-open again
+          // They can still reopen it via the button if they want
+        }}
         onCompleteStep={handleCompleteStep}
         onFinish={handleFinish}
       />
 
-      {!onboardingOpen && !isOnboardingComplete && (
+      {/* Only show the onboarding button if onboarding is not open, not complete, and user has completed onboarding check */}
+      {!onboardingOpen && !isOnboardingComplete && !isCheckingOnboarding && (
         <div className="fixed bottom-4 right-4 z-40">
           <Button
             onClick={() => setOnboardingOpen(true)}

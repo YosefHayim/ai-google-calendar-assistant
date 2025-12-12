@@ -5,7 +5,7 @@
  * - Separate server and client API functions
  */
 
-import { parseResponse, createApiErrorResponse, createApiSuccessResponse } from "./utils/proxy";
+import { createApiErrorResponse, createApiSuccessResponse, parseResponse } from "./utils/proxy";
 
 /**
  * Backend API base URL
@@ -24,6 +24,8 @@ export const API_ROUTES = {
   USERS: "/api/users",
   CALENDAR: "/api/calendars",
   WHATSAPP: "/api/whatsapp",
+  AGENT: "/api/agent",
+  TRANSCRIBE: "/api/transcribe",
 } as const;
 
 /**

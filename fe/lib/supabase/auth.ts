@@ -3,6 +3,8 @@
  * Helper functions for authentication operations
  */
 
+import { OAUTH, ROUTES } from "@/lib/constants";
+
 import type { Database } from "@/lib/supabase/database.types";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { getOAuthRedirectUrl } from "./config";
@@ -30,6 +32,11 @@ export async function signInWithOAuth(
     provider,
     options: {
       redirectTo,
+      // Use PKCE flow for better security and to get code instead of tokens in hash
+      queryParams: {
+        access_type: OAUTH.QUERY_PARAMS.ACCESS_TYPE,
+        prompt: OAUTH.QUERY_PARAMS.PROMPT,
+      },
     },
   });
 }

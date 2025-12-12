@@ -1,7 +1,7 @@
-import type { User } from "@supabase/supabase-js";
-import type { calendar_v3 } from "googleapis";
 import type { AGENTS } from "@/ai-agents/agents";
 import type { AGENT_TOOLS } from "@/ai-agents/agents-tools";
+import type { User } from "@supabase/supabase-js";
+import type { calendar_v3 } from "googleapis";
 
 export type EventParametersProps = {
   summary?: string | null | undefined;
@@ -85,6 +85,7 @@ export enum ROUTES {
   CALENDAR = "/api/calendars",
   TELEGRAM_USERS = "/api/telegram-users",
   WHATSAPP = "/api/whatsapp",
+  AGENT = "/api/agent",
 }
 
 export enum STATUS_RESPONSE {

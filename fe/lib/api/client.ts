@@ -199,3 +199,50 @@ export const usersClient = {
   },
 };
 
+/**
+ * Agent API - Client Side
+ */
+export const agentClient = {
+  /**
+   * Query the agent with a text prompt
+   */
+  async queryAgent(query: string): Promise<ApiResponse<{ response: string }>> {
+    return apiRequest<{ response: string }>(`${API_ROUTES.AGENT}/query`, {
+      method: "POST",
+      body: JSON.stringify({ query }),
+    });
+  },
+};
+
+/**
+ * Transcription API - Client Side
+ */
+export const transcriptionClient = {
+  /**
+   * Transcribe audio using OpenAI Whisper API
+   */
+  async transcribeAudio(audioBlob: Blob): Promise<ApiResponse<{ text: string }>> {
+    const formData = new FormData();
+    formData.append("audio", audioBlob, "audio.webm");
+
+    const response = await fetch(`${API_ROUTES.TRANSCRIBE}`, {
+      method: "POST",
+      body: formData,
+      credentials: "include",
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return {
+        message: data.message || "Failed to transcribe audio",
+        error: data.error,
+      };
+    }
+
+    return {
+      message: data.message || "Success",
+      data: data.data,
+    };
+  },
+};

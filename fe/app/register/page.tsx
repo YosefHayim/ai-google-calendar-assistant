@@ -1,5 +1,6 @@
 "use client";
 
+import { ERROR_MESSAGES, ROUTES } from "@/lib/constants";
 import { signInWithOAuth, signUp } from "@/lib/supabase/auth";
 
 import { Footer } from "@/components/footer";
@@ -56,15 +57,15 @@ export default function RegisterPage() {
         if (data.user) {
           // Check if email confirmation is required
           if (data.user.email_confirmed_at) {
-            router.push("/dashboard");
+            router.push(ROUTES.DASHBOARD);
             router.refresh();
           } else {
-            setError("Please check your email to confirm your account.");
+            setError(ERROR_MESSAGES.EMAIL_CONFIRMATION_REQUIRED);
             setIsLoading(false);
           }
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : "An error occurred");
+        setError(err instanceof Error ? err.message : ERROR_MESSAGES.AN_ERROR_OCCURRED);
         setIsLoading(false);
       }
     },
@@ -76,7 +77,7 @@ export default function RegisterPage() {
 
     try {
       const { data, error: oauthError } = await signInWithOAuth(supabase, provider, {
-        next: "/dashboard",
+        next: ROUTES.DASHBOARD,
       });
 
       if (oauthError) {
@@ -86,7 +87,7 @@ export default function RegisterPage() {
         window.location.href = data.url;
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
+      setError(err instanceof Error ? err.message : ERROR_MESSAGES.AN_ERROR_OCCURRED);
       setIsLoading(false);
     }
   };
@@ -266,11 +267,11 @@ export default function RegisterPage() {
                           />
                           <Label htmlFor="terms" className="text-sm font-normal cursor-pointer">
                             I agree to the{" "}
-                            <Link href="/terms" className="underline underline-offset-4 hover:text-primary">
+                            <Link href={ROUTES.TERMS} className="underline underline-offset-4 hover:text-primary">
                               Terms of Service
                             </Link>{" "}
                             and{" "}
-                            <Link href="/privacy" className="underline underline-offset-4 hover:text-primary">
+                            <Link href={ROUTES.PRIVACY} className="underline underline-offset-4 hover:text-primary">
                               Privacy Policy
                             </Link>
                           </Label>
@@ -322,7 +323,7 @@ export default function RegisterPage() {
 
                   <p className="text-center text-sm text-muted-foreground">
                     Already have an account?{" "}
-                    <Link href="/login" className="underline underline-offset-4 hover:text-primary font-medium">
+                    <Link href={ROUTES.LOGIN} className="underline underline-offset-4 hover:text-primary font-medium">
                       Sign in
                     </Link>
                   </p>

@@ -24,9 +24,11 @@ export const SUPABASE_CONFIG = {
   anonKey: getSupabaseAnonKey(),
 } as const;
 
+import { ROUTES } from "@/lib/constants";
+
 /**
  * Get OAuth redirect URL
  */
-export const getOAuthRedirectUrl = (origin: string, next = "/dashboard"): string => {
-  return `${origin}/auth/callback?next=${encodeURIComponent(next)}`;
+export const getOAuthRedirectUrl = (origin: string, next = ROUTES.DASHBOARD): string => {
+  return `${origin}${ROUTES.AUTH.CALLBACK}?next=${encodeURIComponent(next)}`;
 };
