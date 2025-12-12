@@ -12,6 +12,7 @@
 .env.test
 
 # Credentials and keys
+credentials.json
 *.pem
 *.key
 *.p12
@@ -43,20 +44,35 @@ node_modules/
 .yarn/build-state.yml
 .yarn/install-state.gz
 
+# Python (if any)
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.pytest_cache/
+.coverage
+
 # =============================================================================
 # BUILD & DISTRIBUTION
 # =============================================================================
-# Next.js
-.next/
-out/
-.vercel
-.vercel.json
-
-# Production builds
-build/
 dist/
+build/
+out/
+.next/
+*.tsbuildinfo
+*.log
+logs/
+*.log.*
 
-# TypeScript
+# Archives
+*.zip
+*.tar
+*.tar.gz
+*.rar
+app.zip
 
 # =============================================================================
 # TESTING & COVERAGE
@@ -117,6 +133,7 @@ desktop.ini
 # =============================================================================
 # Ignore all JSON files except essential ones
 *.json
+!nodemon.json
 !package.json
 !tsconfig.json
 !tsconfig.*.json
@@ -124,20 +141,23 @@ desktop.ini
 !package-lock.json
 !yarn.lock
 !.eslintrc.json
-!next.config.json
+!biome.jsonc
 
-# =============================================================================
-# LOGS & DEBUG
-# =============================================================================
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-lerna-debug.log*
-.pnpm-debug.log*
+# Supabase
+supabase/.temp
+supabase/.branches
+supabase/.env.local
+
+# Docker
+docker-compose.override.yml
 
 # =============================================================================
 # PLATFORM SPECIFIC
 # =============================================================================
+# AWS
+.aws/
+*.aws
+
 # Vercel
 .vercel
 
@@ -148,12 +168,26 @@ lerna-debug.log*
 # =============================================================================
 # MISC
 # =============================================================================
+# Compiled JavaScript (TypeScript project)
+*.js
+!jest.config.js
+*.config.js
+*.config.cjs
+*.config.mjs
+
+# Binary files
+supabase.exe
+*.exe
+*.dll
+*.dylib
+*.so
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
 # Backup files
 *.bak
 *.backup
 *.old
-
-# Cache directories
-.cache/
-.parcel-cache/
-.turbo/
