@@ -1,6 +1,6 @@
-import express from "express";
-import calendarController from "@/controllers/calendar-controller";
 import { authHandler } from "@/middlewares/auth-handler";
+import calendarController from "@/controllers/calendar-controller";
+import express from "express";
 
 const router = express.Router();
 
@@ -114,6 +114,19 @@ router.get("/timezone", calendarController.getCalendarTimezone);
  *     tags: [Calendar]
  *     security:
  *       - cookieAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: calendarId
+ *         schema:
+ *           type: string
+ *         description: Calendar ID(s) - can be comma-separated for multiple calendars (e.g., "primary,calendar2@group.calendar.google.com") or "all" to fetch events from all calendars
+ *       - in: query
+ *         name: orderBy
+ *         schema:
+ *           type: string
+ *           enum: [startTime, updated]
+ *           default: updated
+ *         description: The order of the events returned (defaults to "updated")
  *     responses:
  *       200:
  *         description: Successfully retrieved all events
@@ -144,7 +157,7 @@ router.get("/events", calendarController.getAllEvents);
  *         name: calendarId
  *         schema:
  *           type: string
- *         description: Filter by calendar ID
+ *         description: Calendar ID(s) - can be comma-separated for multiple calendars (e.g., "primary,calendar2@group.calendar.google.com") or "all" to fetch events from all calendars
  *       - in: query
  *         name: timeMin
  *         schema:
@@ -172,7 +185,8 @@ router.get("/events", calendarController.getAllEvents);
  *         schema:
  *           type: string
  *           enum: [startTime, updated]
- *         description: The order of the events returned
+ *           default: updated
+ *         description: The order of the events returned (defaults to "updated")
  *       - in: query
  *         name: q
  *         schema:

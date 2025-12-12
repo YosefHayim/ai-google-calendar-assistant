@@ -58,62 +58,91 @@ const generateAuthGoogleUrl = reqResAsyncHandler(async (req: Request, res: Respo
 
     const user = jwt.decode(id_token || "") as GoogleIdTokenPayloadProps;
 
-    const { data, error } = await SUPABASE.from("user_calendar_tokens")
-      .update({
-        refresh_token_expires_in,
-        refresh_token,
-        expiry_date,
-        access_token,
-        token_type,
-        id_token,
-        scope,
-        is_active: true,
+    if (!user.email) {
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "User email not found in OAuth token.");
+    }
+
+    // Get or create Supabase auth user
+    let authUserId: string;
+    const { data: existingAuthUser } = await SUPABASE.auth.admin.getUserById(user.sub);
+    if (existingAuthUser?.user) {
+      authUserId = existingAuthUser.user.id;
+      // Update existing user metadata
+      await SUPABASE.auth.admin.updateUserById(existingAuthUser.user.id, {
+        user_metadata: {
+          name: user.name,
+          picture: user.picture,
+          provider: "google",
+        },
+      });
+    } else {
+      // Create new Supabase auth user
+      const { data: newAuthUserData, error: signUpError } = await SUPABASE.auth.admin.createUser({
         email: user.email,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      })
-      .eq("email", user.email)
-      .select();
+        email_confirm: true,
+        user_metadata: {
+          name: user.name,
+          picture: user.picture,
+          provider: "google",
+        },
+      });
+
+      if (signUpError || !newAuthUserData?.user) {
+        console.error("Failed to create Supabase auth user:", signUpError);
+        return sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Failed to create auth user.", signUpError);
+      }
+
+      authUserId = newAuthUserData.user.id;
+    }
+
+    // Check if token record exists for this user_id
+    const { data: existingToken, error: tokenQueryError } = await SUPABASE.from("user_calendar_tokens")
+      .select("id, user_id")
+      .eq("user_id", authUserId)
+      .maybeSingle();
+
+    if (tokenQueryError) {
+      console.error("Error querying token record:", tokenQueryError);
+      return sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Failed to query token record.", tokenQueryError);
+    }
+
+    const now = new Date().toISOString();
+    const tokenData = {
+      user_id: authUserId,
+      refresh_token_expires_in,
+      refresh_token,
+      expiry_date,
+      access_token,
+      token_type,
+      id_token,
+      scope,
+      is_active: true,
+      email: user.email.trim().toLowerCase(),
+      updated_at: now,
+      ...(existingToken ? {} : { created_at: now }), // Only set created_at on insert
+    };
+
+    let data;
+    let error;
+
+    if (existingToken) {
+      // Update existing record
+      const result = await SUPABASE.from("user_calendar_tokens").update(tokenData).eq("user_id", authUserId).select().single();
+      data = result.data;
+      error = result.error;
+    } else {
+      // Insert new record
+      const result = await SUPABASE.from("user_calendar_tokens").insert(tokenData).select().single();
+      data = result.data;
+      error = result.error;
+    }
 
     if (error) {
+      console.error("Error upserting tokens:", error);
       return sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Failed to store new tokens.", error);
     }
 
-    // If this is a frontend OAuth flow, also create/update Supabase auth user
     const source = req.query.source as string | undefined;
-
-    if (source === "frontend" && user.email) {
-      // List users by email to check if user exists
-      const { data: usersList } = await SUPABASE.auth.admin.listUsers();
-      const existingUser = usersList.users.find((u) => u.email === user.email);
-
-      if (!existingUser) {
-        // Create new Supabase auth user
-        const { data: newUser, error: signUpError } = await SUPABASE.auth.admin.createUser({
-          email: user.email,
-          email_confirm: true,
-          user_metadata: {
-            name: user.name,
-            picture: user.picture,
-            provider: "google",
-          },
-        });
-
-        if (signUpError) {
-          console.error("Failed to create Supabase auth user:", signUpError);
-          // Continue anyway - tokens are saved
-        }
-      } else {
-        // Update existing user metadata
-        await SUPABASE.auth.admin.updateUserById(existingUser.id, {
-          user_metadata: {
-            name: user.name,
-            picture: user.picture,
-            provider: "google",
-          },
-        });
-      }
-    }
 
     sendR(res, STATUS_RESPONSE.SUCCESS, "Tokens has been updated successfully.", {
       data,

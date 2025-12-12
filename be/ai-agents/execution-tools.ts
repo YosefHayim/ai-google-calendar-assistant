@@ -1,13 +1,13 @@
-import type { calendar_v3 } from "googleapis";
-import isEmail from "validator/lib/isEmail";
-import { OAUTH2CLIENT, redirectUri, SCOPES, SUPABASE } from "@/config/root-config";
-import { ACTION } from "@/types";
-import { asyncHandler } from "@/utils/async-handlers";
-import { fetchCredentialsByEmail } from "@/utils/get-user-calendar-tokens";
-import { eventsHandler } from "@/utils/handle-events";
-import { initCalendarWithUserTokensAndUpdateTokens } from "@/utils/init-calendar-with-user-tokens-and-update-tokens";
-import { TOKEN_FIELDS } from "@/utils/storage";
+import { OAUTH2CLIENT, SCOPES, SUPABASE, redirectUri } from "@/config/root-config";
 import { coerceArgs, formatEventData, getCalendarCategoriesByEmail } from "./agent-utils";
+import { deleteEvent as deleteEventHandler, getEvents, insertEvent as insertEventHandler, updateEvent as updateEventHandler } from "@/utils/handle-events";
+
+import { TOKEN_FIELDS } from "@/utils/storage";
+import { asyncHandler } from "@/utils/async-handlers";
+import type { calendar_v3 } from "googleapis";
+import { fetchCredentialsByEmail } from "@/utils/get-user-calendar-tokens";
+import { initCalendarWithUserTokensAndUpdateTokens } from "@/utils/init-calendar-with-user-tokens-and-update-tokens";
+import isEmail from "validator/lib/isEmail";
 
 type Event = calendar_v3.Schema$Event;
 
@@ -71,7 +71,7 @@ export const EXECUTION_TOOLS = {
       throw new Error("Invalid email address.");
     }
     const eventData: Event = formatEventData(eventLike as Event);
-    return eventsHandler(null, ACTION.INSERT, eventData, { email, calendarId: calendarId ?? "primary", customEvents: params.customEvents ?? false });
+    return insertEventHandler({ eventData, extra: { email, calendarId: calendarId ?? "primary", customEvents: params.customEvents ?? false } });
   }),
 
   updateEvent: asyncHandler((params: calendar_v3.Schema$Event & { email: string; eventId: string }) => {
@@ -84,7 +84,7 @@ export const EXECUTION_TOOLS = {
     }
     const eventData: Event = { ...formatEventData(eventLike as Event), id: eventId };
     const insureEventDataWithEventId = { ...eventData, id: eventId };
-    return eventsHandler(null, ACTION.UPDATE, insureEventDataWithEventId, { email, calendarId: calendarId ?? "primary", eventId });
+    return updateEventHandler({ eventData: insureEventDataWithEventId, extra: { email, calendarId: calendarId ?? "primary", eventId } });
   }),
 
   getEvent: asyncHandler((params: calendar_v3.Schema$Event & { email: string; q?: string | null; timeMin?: string | null }) => {
@@ -94,7 +94,7 @@ export const EXECUTION_TOOLS = {
     if (!(email && isEmail(email))) {
       throw new Error("Invalid email address.");
     }
-    return eventsHandler(null, ACTION.GET, {}, { email, calendarId: calendarId ?? "primary", timeMin: params.timeMin ?? startOfYear, q: params.q || "" });
+    return getEvents({ extra: { email, calendarId: calendarId ?? "primary", timeMin: params.timeMin ?? startOfYear, q: params.q || "" } });
   }),
 
   getCalendarTypesByEventDetails: asyncHandler(async (params: { eventInformation: calendar_v3.Schema$Event; email: string }) => {
@@ -118,7 +118,7 @@ export const EXECUTION_TOOLS = {
     if (!eventId) {
       throw new Error("Event ID is required to delete event.");
     }
-    return eventsHandler(null, ACTION.DELETE, { id: eventId }, { email });
+    return deleteEventHandler({ eventData: { id: eventId }, extra: { email } });
   }),
   getUserDefaultTimeZone: asyncHandler(async (params: { email: string }) => {
     const { email } = coerceArgs(params);
