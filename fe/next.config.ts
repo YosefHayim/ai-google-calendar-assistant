@@ -1,5 +1,5 @@
 import type { NextConfig } from "next";
-import componentTaggerLoader from "@dhiwise/component-tagger/nextLoader";
+import componentTagger from "@dhiwise/component-tagger";
 
 const nextConfig: NextConfig = {
   webpack: (config, { isServer }) => {
@@ -7,7 +7,7 @@ const nextConfig: NextConfig = {
     if (!isServer) {
       // Find the existing rule for .tsx and .jsx files
       const rules = config.module?.rules || [];
-      
+
       // Find the rule that handles .tsx/.jsx files (usually the one with 'tsx' or 'jsx' in test)
       const tsxRule = rules.find(
         (rule: any) =>
@@ -21,7 +21,7 @@ const nextConfig: NextConfig = {
       if (tsxRule && Array.isArray(tsxRule.use)) {
         // Add the component tagger loader before the existing loaders
         tsxRule.use.unshift({
-          loader: componentTaggerLoader,
+          loader: componentTagger,
           options: {
             verbose: process.env.NODE_ENV === "development",
             excludeDirectories: ["node_modules", ".next"],
@@ -35,4 +35,3 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
-
