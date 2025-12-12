@@ -1,21 +1,22 @@
-import path from "node:path";
+import { setDefaultOpenAIKey, setTracingExportApiKey } from "@openai/agents";
+
+import type { Database } from "@/database.types";
+import { GOOGLE_CALENDAR_SCOPES } from "@/types";
 import { SupabaseClient } from "@supabase/supabase-js";
 import dotenv from "dotenv";
 import { google } from "googleapis";
-import type { Database } from "@/database.types";
-import { GOOGLE_CALENDAR_SCOPES } from "@/types";
-import { setDefaultOpenAIKey, setTracingExportApiKey } from "@openai/agents";
+import path from "node:path";
 
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
-
 
 export const CONFIG = {
   baseUrl: "http://localhost:3000",
   redirectUrlDev: "http://localhost:3000/api/users/callback",
   redirectUrlProd: "https://vdwjfekcsnurtjsieojv.supabase.co/auth/v1/callback",
-  port: 3000,
+  port: 3001,
   supabaseUrl: "https://vdwjfekcsnurtjsieojv.supabase.co",
-  supabasePublicAnonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZkd2pmZWtjc251cnRqc2llb2p2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA2ODg4ODksImV4cCI6MjA2NjI2NDg4OX0.-7ovo50UBnSHl1NO2g3XAMXZ6wU1aaCZ8EkmSJESpRc',
+  supabasePublicAnonKey:
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZkd2pmZWtjc251cnRqc2llb2p2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA2ODg4ODksImV4cCI6MjA2NjI2NDg4OX0.-7ovo50UBnSHl1NO2g3XAMXZ6wU1aaCZ8EkmSJESpRc",
   supabaseServiceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
   openAiApiKey: process.env.OPEN_API_KEY!,
   clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -27,7 +28,7 @@ export const CONFIG = {
   devWhatsAppAccessToken: process.env.DEV_WHATS_APP_ACCESS_TOKEN!,
 };
 
-export const redirectUri = CONFIG.nodeEnv === 'prod' ? CONFIG.redirectUrlProd : CONFIG.redirectUrlDev;
+export const redirectUri = CONFIG.nodeEnv === "prod" ? CONFIG.redirectUrlProd : CONFIG.redirectUrlDev;
 
 export const SUPABASE = new SupabaseClient<Database>(CONFIG.supabaseUrl, CONFIG.supabaseServiceRoleKey);
 
