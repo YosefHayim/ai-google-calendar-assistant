@@ -70,7 +70,9 @@ export default function LoginPage() {
   }, [router, searchParams]);
 
   const handleGoogleSignIn = () => {
-    signInWithOAuth("google");
+    // Redirect to frontend API route which will redirect to backend OAuth URL
+    const next = searchParams.get("next") || ROUTES.DASHBOARD;
+    window.location.href = `${ROUTES.AUTH.GOOGLE}?next=${encodeURIComponent(next)}`;
   };
 
   return (

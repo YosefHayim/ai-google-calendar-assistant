@@ -76,6 +76,13 @@ export default function RegisterPage() {
     setError(null);
 
     try {
+      // For Google, use backend OAuth URL to ensure consistent branding
+      if (provider === "google") {
+        window.location.href = `${ROUTES.AUTH.GOOGLE}?next=${encodeURIComponent(ROUTES.DASHBOARD)}`;
+        return;
+      }
+
+      // For other providers (e.g., GitHub), use Supabase OAuth
       const { data, error: oauthError } = await signInWithOAuth(supabase, provider, {
         next: ROUTES.DASHBOARD,
       });

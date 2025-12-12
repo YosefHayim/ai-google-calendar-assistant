@@ -29,7 +29,30 @@ const generateAuthGoogleUrl = reqResAsyncHandler(async (req: Request, res: Respo
   }
 
   try {
-    const { tokens } = await OAUTH2CLIENT.getToken(code);
+    // Validate credentials are present
+    if (!CONFIG.clientId || !CONFIG.clientSecret) {
+      return sendR(
+        res,
+        STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
+        "OAuth credentials are missing. Please check GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET environment variables.",
+        { clientId: !!CONFIG.clientId, clientSecret: !!CONFIG.clientSecret }
+      );
+    }
+
+    // Log for debugging (without exposing secrets)
+    console.log("Exchanging OAuth code for tokens:", {
+      hasCode: !!code,
+      codeLength: code?.length,
+      redirectUri,
+      clientId: CONFIG.clientId?.substring(0, 20) + "...",
+      hasClientSecret: !!CONFIG.clientSecret,
+    });
+
+    // Explicitly pass redirect_uri to ensure it matches the authorization request
+    const { tokens } = await OAUTH2CLIENT.getToken({
+      code,
+      redirect_uri: redirectUri,
+    });
 
     const { id_token, refresh_token, refresh_token_expires_in, expiry_date, access_token, token_type, scope } = tokens as TokensProps;
 
@@ -97,7 +120,23 @@ const generateAuthGoogleUrl = reqResAsyncHandler(async (req: Request, res: Respo
       ...(source === "frontend" && { userEmail: user.email }),
     });
   } catch (error) {
-    sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Failed to process OAuth token exchange.", error);
+    // Log detailed error for debugging
+    console.error("OAuth token exchange error:", error);
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    const errorDetails = error instanceof Error && "response" in error ? (error as { response?: { data?: unknown } }).response?.data : undefined;
+    console.error("Error details:", errorDetails);
+
+    // Provide more helpful error message for invalid_client
+    if (errorDetails && typeof errorDetails === "object" && "error" in errorDetails && errorDetails.error === "invalid_client") {
+      return sendR(
+        res,
+        STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
+        "Invalid OAuth client credentials. Please verify GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in your .env file match the credentials in Google Cloud Console. The client secret may have been regenerated.",
+        errorDetails
+      );
+    }
+
+    sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, `Failed to process OAuth token exchange: ${errorMessage}`, error);
   }
 });
 
