@@ -7,7 +7,7 @@
  *   npm run generate:types
  * 
  * Source: http://localhost:3001/api-docs.json
- * Generated at: 2025-12-12T19:31:20.584Z
+ * Generated at: 2025-12-12T20:44:29.006Z
  */
 
 export interface paths {
@@ -339,7 +339,12 @@ export interface paths {
         /** Get all events for the authenticated user */
         get: {
             parameters: {
-                query?: never;
+                query?: {
+                    /** @description Calendar ID(s) - can be comma-separated for multiple calendars (e.g., "primary,calendar2@group.calendar.google.com") or "all" to fetch events from all calendars */
+                    calendarId?: string;
+                    /** @description The order of the events returned (defaults to "startTime" - newest/upcoming first) */
+                    orderBy?: "startTime" | "updated";
+                };
                 header?: never;
                 path?: never;
                 cookie?: never;
@@ -378,7 +383,7 @@ export interface paths {
         get: {
             parameters: {
                 query?: {
-                    /** @description Filter by calendar ID */
+                    /** @description Calendar ID(s) - can be comma-separated for multiple calendars (e.g., "primary,calendar2@group.calendar.google.com") or "all" to fetch events from all calendars */
                     calendarId?: string;
                     /** @description Lower bound (exclusive) for an event's end time */
                     timeMin?: string;
@@ -388,7 +393,7 @@ export interface paths {
                     maxResults?: number;
                     /** @description Whether to expand recurring events */
                     singleEvents?: boolean;
-                    /** @description The order of the events returned */
+                    /** @description The order of the events returned (defaults to "startTime" - newest/upcoming first) */
                     orderBy?: "startTime" | "updated";
                     /** @description Free text search terms */
                     q?: string;

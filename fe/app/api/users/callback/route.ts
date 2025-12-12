@@ -8,6 +8,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { createBackendHeaders, getBackendUrl } from "@/lib/api/utils/proxy";
 
 import { ROUTES } from "@/lib/constants";
+import type { components } from "@/types";
+
+type ApiResponse = components["schemas"]["ApiResponse"];
+
+interface CallbackResponse extends ApiResponse {
+  userEmail?: string;
+  sessionToken?: string;
+}
 
 export async function GET(request: NextRequest) {
   try {
@@ -45,22 +53,15 @@ export async function GET(request: NextRequest) {
     });
 
     // Parse response
-    let data: {
-      status?: string;
-      message?: string;
-      data?: unknown;
-      userEmail?: string;
-    } = {};
+    let data: CallbackResponse = {
+      status: "error",
+      message: "",
+    };
 
     try {
       const contentType = response.headers.get("content-type");
       if (contentType && contentType.includes("application/json")) {
-        data = (await response.json()) as {
-          status?: string;
-          message?: string;
-          data?: unknown;
-          userEmail?: string;
-        };
+        data = (await response.json()) as CallbackResponse;
       } else {
         // If response is not JSON, treat as error
         throw new Error("Backend returned non-JSON response");
@@ -78,9 +79,14 @@ export async function GET(request: NextRequest) {
       if (source === "frontend" && data.userEmail) {
         // Redirect to auth callback page which will handle Supabase session creation
         const next = searchParams.get("next") || ROUTES.DASHBOARD;
-        return NextResponse.redirect(
-          new URL(`${ROUTES.AUTH.CALLBACK}?email=${encodeURIComponent(data.userEmail)}&next=${encodeURIComponent(next)}`, request.url)
-        );
+        const callbackUrl = new URL(ROUTES.AUTH.CALLBACK, request.url);
+        callbackUrl.searchParams.append("email", data.userEmail);
+        callbackUrl.searchParams.append("next", next);
+        // Add sessionToken if provided by backend
+        if (data.sessionToken && typeof data.sessionToken === "string") {
+          callbackUrl.searchParams.append("sessionToken", data.sessionToken);
+        }
+        return NextResponse.redirect(callbackUrl);
       }
 
       // For backend/Telegram bot flow, just redirect to dashboard

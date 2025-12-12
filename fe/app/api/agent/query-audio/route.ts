@@ -5,13 +5,24 @@
 
 import { NextRequest, NextResponse } from "next/server";
 
+import type { components } from "@/types";
+
+type ErrorResponse = components["schemas"]["ErrorResponse"];
+
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
     const audioFile = formData.get("audio") as File;
 
     if (!audioFile) {
-      return NextResponse.json({ message: "Audio file is required", error: "Missing audio file" }, { status: 400 });
+      const errorResponse: ErrorResponse = {
+        status: "error",
+        message: "Audio file is required",
+        data: {
+          error: "Missing audio file",
+        },
+      };
+      return NextResponse.json(errorResponse, { status: 400 });
     }
 
     // Get backend URL
@@ -47,12 +58,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(data, { status: response.status });
   } catch (error) {
     console.error("Audio query proxy error:", error);
-    return NextResponse.json(
-      {
-        message: "Error proxying audio query",
+    const errorResponse: ErrorResponse = {
+      status: "error",
+      message: "Error proxying audio query",
+      data: {
         error: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
-    );
+    };
+    return NextResponse.json(errorResponse, { status: 500 });
   }
 }

@@ -144,9 +144,41 @@ const generateAuthGoogleUrl = reqResAsyncHandler(async (req: Request, res: Respo
 
     const source = req.query.source as string | undefined;
 
+    // For frontend OAuth flow, generate a magic link to create a session
+    let sessionToken: string | undefined;
+    if (source === "frontend") {
+      try {
+        // Generate a magic link for the user to create a session
+        const { data: linkData, error: linkError } = await SUPABASE.auth.admin.generateLink({
+          type: "magiclink",
+          email: user.email,
+        });
+
+        if (linkError) {
+          console.error("Failed to generate magic link:", linkError);
+          // Continue without session token - frontend will handle it
+        } else if (linkData?.properties?.hashed_token) {
+          // Extract the token from the magic link URL
+          // The magic link contains a token that can be used to create a session
+          const magicLinkUrl = linkData.properties.action_link;
+          if (magicLinkUrl) {
+            // Extract token from URL (format: .../auth/v1/verify?token=...&type=magiclink)
+            const urlObj = new URL(magicLinkUrl);
+            const token = urlObj.searchParams.get("token");
+            if (token) {
+              sessionToken = token;
+            }
+          }
+        }
+      } catch (linkGenError) {
+        console.error("Error generating magic link:", linkGenError);
+        // Continue without session token
+      }
+    }
+
     sendR(res, STATUS_RESPONSE.SUCCESS, "Tokens has been updated successfully.", {
       data,
-      ...(source === "frontend" && { userEmail: user.email }),
+      ...(source === "frontend" && { userEmail: user.email, sessionToken }),
     });
   } catch (error) {
     // Log detailed error for debugging

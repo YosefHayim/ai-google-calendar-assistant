@@ -46,22 +46,90 @@ export default function AuthCallbackPage() {
         // Check if we have a code in query string (authorization code flow)
         const code = searchParams.get("code");
         if (code) {
-          // Exchange code for session
-          const { data, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
+          // Validate that the code is a UUID (Supabase OAuth codes are UUIDs)
+          // Google OAuth codes are not UUIDs, so we should not try to exchange them
+          const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+          const isValidSupabaseCode = uuidRegex.test(code);
 
-          if (exchangeError || !data.session) {
-            setError(exchangeError?.message || ERROR_MESSAGES.FAILED_TO_EXCHANGE_CODE);
-            setStatus("error");
-            setTimeout(() => {
-              router.replace(`${ROUTES.LOGIN}?error=${encodeURIComponent(exchangeError?.message || ERROR_MESSAGES.AUTH_FAILED)}`);
-            }, TIMEOUTS.ERROR_REDIRECT_DELAY);
+          if (isValidSupabaseCode) {
+            // Exchange Supabase code for session
+            const { data, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
+
+            if (exchangeError || !data.session) {
+              setError(exchangeError?.message || ERROR_MESSAGES.FAILED_TO_EXCHANGE_CODE);
+              setStatus("error");
+              setTimeout(() => {
+                router.replace(`${ROUTES.LOGIN}?error=${encodeURIComponent(exchangeError?.message || ERROR_MESSAGES.AUTH_FAILED)}`);
+              }, TIMEOUTS.ERROR_REDIRECT_DELAY);
+              return;
+            }
+
+            // Clear query params and redirect
+            const next = searchParams.get("next") || ROUTES.DASHBOARD;
+            window.history.replaceState(null, "", window.location.pathname);
+            router.replace(next);
+            return;
+          }
+          // If code is not a UUID, it's likely a Google OAuth code from backend flow
+          // Fall through to check for email parameter or hash fragment handling
+        }
+
+        // Check if we have an email parameter (from backend OAuth flow)
+        const email = searchParams.get("email");
+        const sessionToken = searchParams.get("sessionToken");
+
+        if (email) {
+          // Backend OAuth flow completed - user exists in Supabase
+          // If we have a session token, verify it to create a session
+          if (sessionToken) {
+            try {
+              const { data: verifyData, error: verifyError } = await supabase.auth.verifyOtp({
+                type: "magiclink",
+                token: sessionToken,
+                email: email,
+              });
+
+              if (verifyError || !verifyData.session) {
+                console.error("Failed to verify session token:", verifyError);
+                // Fall through to check for existing session
+              } else {
+                // Session created successfully
+                const next = searchParams.get("next") || ROUTES.DASHBOARD;
+                window.history.replaceState(null, "", window.location.pathname);
+                router.replace(next);
+                return;
+              }
+            } catch (verifyErr) {
+              console.error("Error verifying session token:", verifyErr);
+              // Fall through to check for existing session
+            }
+          }
+
+          // Check if there's already a session for this user
+          const {
+            data: { session: existingSession },
+            error: sessionCheckError,
+          } = await supabase.auth.getSession();
+
+          if (sessionCheckError) {
+            console.error("Error checking session:", sessionCheckError);
+          }
+
+          if (existingSession) {
+            // Session already exists
+            const next = searchParams.get("next") || ROUTES.DASHBOARD;
+            window.history.replaceState(null, "", window.location.pathname);
+            router.replace(next);
             return;
           }
 
-          // Clear query params and redirect
-          const next = searchParams.get("next") || ROUTES.DASHBOARD;
-          window.history.replaceState(null, "", window.location.pathname);
-          router.replace(next);
+          // No session found - redirect to login with a message
+          // The user was created but we couldn't establish a session
+          setError("Authentication completed but session could not be established. Please sign in.");
+          setStatus("error");
+          setTimeout(() => {
+            router.replace(`${ROUTES.LOGIN}?error=${encodeURIComponent("Please sign in to continue")}`);
+          }, TIMEOUTS.ERROR_REDIRECT_DELAY);
           return;
         }
 
