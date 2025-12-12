@@ -99,8 +99,8 @@ export const getEvents = asyncHandler(async (params: GetEventsParams) => {
   // Parse calendarId - support comma-separated string, array, or "all"
   const calendarIds = await parseCalendarIds(calendarId, calendar);
 
-  // Default orderBy to "updated" if not provided
-  const orderByValue = orderBy ?? "updated";
+  // Default orderBy to "startTime" (newest first) if not provided
+  const orderByValue = orderBy ?? "startTime";
 
   // Helper function to fetch events for a single calendar
   const fetchEventsForCalendar = async (calId: string): Promise<calendar_v3.Schema$Event[]> => {
@@ -112,6 +112,12 @@ export const getEvents = asyncHandler(async (params: GetEventsParams) => {
       orderBy: orderByValue as "startTime" | "updated",
       ...listExtraRaw,
     };
+
+    // Google Calendar API requires singleEvents: true when using orderBy: "startTime"
+    // If orderBy is "startTime" and singleEvents is not explicitly set, set it to true
+    if (orderByValue === "startTime" && listExtra.singleEvents === undefined) {
+      listExtra.singleEvents = true;
+    }
 
     // Drop falsy q instead of sending null
     if (!listExtra.q) {
@@ -127,30 +133,34 @@ export const getEvents = asyncHandler(async (params: GetEventsParams) => {
   const eventsArrays = await Promise.all(eventsPromises);
   const allEvents = eventsArrays.flat();
 
-  // Sort merged events based on orderBy
+  // Sort merged events based on orderBy (ascending order first)
   if (orderByValue === "updated") {
     allEvents.sort((a, b) => {
       const aUpdated = a.updated ? new Date(a.updated).getTime() : 0;
       const bUpdated = b.updated ? new Date(b.updated).getTime() : 0;
-      return bUpdated - aUpdated; // Descending (most recently updated first)
+      return aUpdated - bUpdated; // Ascending (oldest first)
     });
   } else if (orderByValue === "startTime") {
     allEvents.sort((a, b) => {
       const aStart = a.start?.dateTime || a.start?.date || "";
       const bStart = b.start?.dateTime || b.start?.date || "";
-      return new Date(aStart).getTime() - new Date(bStart).getTime(); // Ascending (earliest first)
+      return new Date(aStart).getTime() - new Date(bStart).getTime(); // Ascending (oldest first)
     });
   }
+
+  // Always reverse to ensure newest events (2025, 2024, etc.) come first, regardless of sort order
+  // This ensures the default behavior is newest/upcoming events first, going backwards to past
+  const reversedEvents = allEvents.reverse();
 
   // Create response object matching Google Calendar API format
   const response: calendar_v3.Schema$Events = {
     kind: "calendar#events",
     etag: `"${Date.now()}"`,
-    items: allEvents,
+    items: reversedEvents,
   };
 
   if (customFlag) {
-    const items = allEvents.slice().reverse();
+    const items = reversedEvents.slice();
     const totalEventsFound = items.map((event: calendar_v3.Schema$Event) => {
       const startDate = event.start?.date || event.start?.dateTime || null;
       const endDate = event.end?.date || event.end?.dateTime || null;

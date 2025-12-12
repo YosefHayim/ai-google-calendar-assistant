@@ -63,9 +63,11 @@ Example:
 Example:
 { "email": "user@example.com", "eventId": "abc123def456" }`,
 
-  getEvent: `Retrieves events from the user's calendar. Requires "email". Optional: "q" (keyword query), "timeMin" (RFC3339). If not provided, the implementation defaults timeMin to today's date (YYYY-MM-DD). Returns an array of event objects.
-Example:
-{ "email": "user@example.com", "q": "standup", "timeMin": "2025-01-01" }`,
+  getEvent: `Retrieves events from the user's calendar. Requires "email". Optional: "calendarId" (single ID, comma-separated IDs, or "all" for all calendars), "q" (keyword query), "timeMin" (RFC3339). If calendarId is not provided, defaults to "primary". If timeMin is not provided, defaults to today's date (YYYY-MM-DD). Use "all" for calendarId when uncertain which calendar contains the events. Returns an array of event objects.
+Examples:
+{ "email": "user@example.com", "q": "standup", "timeMin": "2025-01-01" }
+{ "email": "user@example.com", "calendarId": "all", "timeMin": "2025-01-01" }
+{ "email": "user@example.com", "calendarId": "primary,work@group.calendar.google.com", "q": "meeting" }`,
 
   getCalendarTypesByEventDetails: `Lists all calendars linked to the user. Requires "email". Returns an array of { calendarName, calendarId }.
 Example return:

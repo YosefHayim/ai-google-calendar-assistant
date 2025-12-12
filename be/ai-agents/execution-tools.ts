@@ -87,15 +87,79 @@ export const EXECUTION_TOOLS = {
     return updateEventHandler({ eventData: insureEventDataWithEventId, extra: { email, calendarId: calendarId ?? "primary", eventId } });
   }),
 
-  getEvent: asyncHandler((params: calendar_v3.Schema$Event & { email: string; q?: string | null; timeMin?: string | null }) => {
-    const startOfYear = new Date().toISOString().split("T")[0];
+  getEvent: asyncHandler(
+    async (params: { email: string; calendarId?: string | null; q?: string | null; timeMin?: string | null; customEvents?: boolean | null }) => {
+      const { email, calendarId } = coerceArgs(params);
+      if (!(email && isEmail(email))) {
+        throw new Error("Invalid email address.");
+      }
+      // If calendarId is not provided, default to "all" to search across all calendars
+      // This ensures the agent can find events regardless of which calendar they're in
+      const finalCalendarId = calendarId ?? "all";
 
-    const { email, calendarId } = coerceArgs(params);
-    if (!(email && isEmail(email))) {
-      throw new Error("Invalid email address.");
+      // Calculate time range: if timeMin is provided, use it and set timeMax to 24 hours from timeMin
+      // Otherwise, use now and set timeMax to 24 hours from now
+      // This limits results to only 24 hours worth of events to prevent large responses
+      const now = new Date();
+      const timeMinValue = params.timeMin ?? now.toISOString();
+      const timeMinDate = new Date(timeMinValue);
+      const timeMaxDate = new Date(timeMinDate.getTime() + 24 * 60 * 60 * 1000);
+      const timeMaxValue = timeMaxDate.toISOString();
+
+      const result = await getEvents({
+        extra: {
+          email,
+          calendarId: finalCalendarId,
+          timeMin: timeMinValue,
+          timeMax: timeMaxValue,
+          q: params.q || "",
+          customEvents: params.customEvents ?? true,
+        },
+      });
+
+      // Additional filtering as safety measure to ensure only events within the 24-hour window
+      if (result && typeof result === "object" && "items" in result && Array.isArray(result.items)) {
+        const filteredItems = result.items.filter((event: calendar_v3.Schema$Event) => {
+          const eventStart = event.start?.dateTime || event.start?.date;
+          if (!eventStart) return false;
+
+          const eventStartDate = new Date(eventStart);
+          const eventTime = eventStartDate.getTime();
+          const timeMinTime = timeMinDate.getTime();
+          const timeMaxTime = timeMaxDate.getTime();
+
+          // Include events that start within the 24-hour window
+          return eventTime >= timeMinTime && eventTime <= timeMaxTime;
+        });
+
+        return {
+          ...result,
+          items: filteredItems,
+        };
+      }
+
+      // Handle customEvents format
+      if (result && typeof result === "object" && "totalEventsFound" in result && Array.isArray(result.totalEventsFound)) {
+        const filteredEvents = result.totalEventsFound.filter((event: { start: string | null }) => {
+          if (!event.start) return false;
+          const eventStartDate = new Date(event.start);
+          const eventTime = eventStartDate.getTime();
+          const timeMinTime = timeMinDate.getTime();
+          const timeMaxTime = timeMaxDate.getTime();
+
+          return eventTime >= timeMinTime && eventTime <= timeMaxTime;
+        });
+
+        return {
+          ...result,
+          totalEventsFound: filteredEvents,
+          totalNumberOfEventsFound: filteredEvents.length,
+        };
+      }
+
+      return result;
     }
-    return getEvents({ extra: { email, calendarId: calendarId ?? "primary", timeMin: params.timeMin ?? startOfYear, q: params.q || "" } });
-  }),
+  ),
 
   getCalendarTypesByEventDetails: asyncHandler(async (params: { eventInformation: calendar_v3.Schema$Event; email: string }) => {
     if (!(params.email && isEmail(params.email))) {

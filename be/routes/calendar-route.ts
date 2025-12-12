@@ -125,8 +125,8 @@ router.get("/timezone", calendarController.getCalendarTimezone);
  *         schema:
  *           type: string
  *           enum: [startTime, updated]
- *           default: updated
- *         description: The order of the events returned (defaults to "updated")
+ *           default: startTime
+ *         description: The order of the events returned (defaults to "startTime" - newest/upcoming first)
  *     responses:
  *       200:
  *         description: Successfully retrieved all events
@@ -185,8 +185,8 @@ router.get("/events", calendarController.getAllEvents);
  *         schema:
  *           type: string
  *           enum: [startTime, updated]
- *           default: updated
- *         description: The order of the events returned (defaults to "updated")
+ *           default: startTime
+ *         description: The order of the events returned (defaults to "startTime" - newest/upcoming first)
  *       - in: query
  *         name: q
  *         schema:
