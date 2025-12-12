@@ -9,7 +9,15 @@ import { NextRequest, NextResponse } from "next/server";
  * Get backend API base URL from environment variables
  */
 export function getBackendUrl(): string {
-  return process.env.BACKEND_API_BASE_URL || process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL || "http://localhost:3000";
+  const backendUrl = process.env.BACKEND_API_BASE_URL || process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL || "http://localhost:3001";
+
+  // Validate that the URL is not a placeholder
+  if (backendUrl.includes("placeholder") || !backendUrl.startsWith("http")) {
+    console.error("Invalid backend URL detected:", backendUrl);
+    return "http://localhost:3001"; // Fallback to correct default
+  }
+
+  return backendUrl;
 }
 
 /**
@@ -45,7 +53,7 @@ export function createErrorResponse(error: unknown, status = 500): NextResponse 
 
 /**
  * Proxy request to backend API
- * 
+ *
  * @param request - Next.js request object
  * @param backendPath - Backend API path (e.g., "/api/calendars/")
  * @param options - Request options
@@ -64,6 +72,13 @@ export async function proxyToBackend(
 
   try {
     const backendUrl = getBackendUrl();
+
+    // Validate backend URL before constructing full URL
+    if (!backendUrl || backendUrl.includes("placeholder") || !backendUrl.startsWith("http")) {
+      console.error("Invalid backend URL:", backendUrl);
+      return createErrorResponse(new Error(`Invalid backend URL configuration: ${backendUrl}. Please set BACKEND_API_BASE_URL environment variable.`), 500);
+    }
+
     const url = new URL(backendPath, backendUrl);
 
     // Forward query parameters if requested
@@ -86,6 +101,7 @@ export async function proxyToBackend(
 
     return NextResponse.json(data, { status: response.status });
   } catch (error) {
+    console.error("Proxy error:", error);
     return createErrorResponse(error);
   }
 }
@@ -115,11 +131,7 @@ export async function parseResponse(response: Response): Promise<unknown> {
 /**
  * Create API error response
  */
-export function createApiErrorResponse(
-  error: unknown,
-  status?: number,
-  message?: string
-): { message: string; error?: unknown } {
+export function createApiErrorResponse(error: unknown, status?: number, message?: string): { message: string; error?: unknown } {
   return {
     message: message || (error instanceof Error ? error.message : "Network error occurred"),
     error,
@@ -129,13 +141,9 @@ export function createApiErrorResponse(
 /**
  * Create API success response
  */
-export function createApiSuccessResponse<T>(
-  data: unknown,
-  message?: string
-): { message: string; data?: T } {
+export function createApiSuccessResponse<T>(data: unknown, message?: string): { message: string; data?: T } {
   return {
     message: message || "Success",
     data: (data as { data?: T })?.data !== undefined ? (data as { data: T }).data : (data as T),
   };
 }
-

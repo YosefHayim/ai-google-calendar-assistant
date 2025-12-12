@@ -56,8 +56,45 @@ const generateAuthGoogleUrl = reqResAsyncHandler(async (req: Request, res: Respo
       return sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Failed to store new tokens.", error);
     }
 
+    // If this is a frontend OAuth flow, also create/update Supabase auth user
+    const source = req.query.source as string | undefined;
+
+    if (source === "frontend" && user.email) {
+      // List users by email to check if user exists
+      const { data: usersList } = await SUPABASE.auth.admin.listUsers();
+      const existingUser = usersList.users.find((u) => u.email === user.email);
+
+      if (!existingUser) {
+        // Create new Supabase auth user
+        const { data: newUser, error: signUpError } = await SUPABASE.auth.admin.createUser({
+          email: user.email,
+          email_confirm: true,
+          user_metadata: {
+            name: user.name,
+            picture: user.picture,
+            provider: "google",
+          },
+        });
+
+        if (signUpError) {
+          console.error("Failed to create Supabase auth user:", signUpError);
+          // Continue anyway - tokens are saved
+        }
+      } else {
+        // Update existing user metadata
+        await SUPABASE.auth.admin.updateUserById(existingUser.id, {
+          user_metadata: {
+            name: user.name,
+            picture: user.picture,
+            provider: "google",
+          },
+        });
+      }
+    }
+
     sendR(res, STATUS_RESPONSE.SUCCESS, "Tokens has been updated successfully.", {
       data,
+      ...(source === "frontend" && { userEmail: user.email }),
     });
   } catch (error) {
     sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Failed to process OAuth token exchange.", error);

@@ -29,6 +29,7 @@ import { ROUTES } from "@/lib/constants";
 /**
  * Get OAuth redirect URL
  */
-export const getOAuthRedirectUrl = (origin: string, next = ROUTES.DASHBOARD): string => {
-  return `${origin}${ROUTES.AUTH.CALLBACK}?next=${encodeURIComponent(next)}`;
+export const getOAuthRedirectUrl = (origin: string, next?: string): string => {
+  const nextPath = next || ROUTES.DASHBOARD;
+  return `${origin}${ROUTES.AUTH.CALLBACK}?next=${encodeURIComponent(nextPath)}`;
 };

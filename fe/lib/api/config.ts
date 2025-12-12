@@ -13,7 +13,15 @@ import { createApiErrorResponse, createApiSuccessResponse, parseResponse } from 
  */
 export const getBackendBaseUrl = (): string => {
   // Server-side only: use environment variable or default
-  return process.env.BACKEND_API_BASE_URL || process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL || "http://localhost:3000";
+  const backendUrl = process.env.BACKEND_API_BASE_URL || process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL || "http://localhost:3001";
+
+  // Validate that the URL is not a placeholder
+  if (backendUrl.includes("placeholder") || !backendUrl.startsWith("http")) {
+    console.error("Invalid backend URL detected:", backendUrl);
+    return "http://localhost:3001"; // Fallback to correct default
+  }
+
+  return backendUrl;
 };
 
 /**
@@ -83,17 +91,23 @@ export const createApiUrl = (path: string, params?: Record<string, string | numb
   }
 
   // Client-side and default: use Next.js API routes (relative paths)
-  const url = new URL(path, typeof window !== "undefined" ? window.location.origin : "http://localhost:3001");
+  // Build the path string directly without using new URL() to avoid base URL issues
+  let urlString = path;
 
   if (params) {
+    const searchParams = new URLSearchParams();
     Object.entries(params).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
-        url.searchParams.append(key, String(value));
+        searchParams.append(key, String(value));
       }
     });
+    const queryString = searchParams.toString();
+    if (queryString) {
+      urlString += `?${queryString}`;
+    }
   }
 
-  return url.pathname + url.search;
+  return urlString;
 };
 
 /**

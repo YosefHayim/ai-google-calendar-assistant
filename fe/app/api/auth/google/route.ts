@@ -1,34 +1,30 @@
 /**
  * Google OAuth Route Handler
- * Initiates Google OAuth sign-in via Supabase
+ * Initiates Google OAuth sign-in using backend's OAuth client (shows "CAL AI" in consent screen)
+ * This ensures both frontend and backend use the same OAuth client for consistent branding
  */
 
 import { ERROR_MESSAGES, ROUTES } from "@/lib/constants";
 
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
-import { signInWithOAuth } from "@/lib/supabase/auth";
+import { getBackendUrl } from "@/lib/api/utils/proxy";
 
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
   const next = requestUrl.searchParams.get("next") || ROUTES.DASHBOARD;
 
   try {
-    const supabase = await createClient();
-    const { data, error } = await signInWithOAuth(supabase, "google", {
-      origin: requestUrl.origin,
-      next,
-    });
+    // Use backend's OAuth URL generation to ensure we use the same Google OAuth client
+    // This will show "CAL AI" in the consent screen instead of Supabase domain
+    const backendUrl = getBackendUrl();
+    const backendOAuthUrl = new URL("/api/users/callback", backendUrl);
+    // Add next parameter so we can redirect after OAuth completes
+    backendOAuthUrl.searchParams.append("next", next);
+    backendOAuthUrl.searchParams.append("source", "frontend");
 
-    if (error) {
-      return NextResponse.redirect(new URL(`${ROUTES.LOGIN}?error=${encodeURIComponent(error.message)}`, request.url));
-    }
-
-    if (data.url) {
-      return NextResponse.redirect(data.url);
-    }
-
-    return NextResponse.json({ error: ERROR_MESSAGES.FAILED_TO_INITIATE_OAUTH }, { status: 500 });
+    // Redirect to backend OAuth URL generation
+    // Backend will redirect to Google OAuth consent screen
+    return NextResponse.redirect(backendOAuthUrl.toString());
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : ERROR_MESSAGES.UNKNOWN_ERROR;
     return NextResponse.redirect(new URL(`${ROUTES.LOGIN}?error=${encodeURIComponent(errorMessage)}`, request.url));

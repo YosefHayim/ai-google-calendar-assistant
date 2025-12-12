@@ -1,14 +1,26 @@
-import type { User } from "@supabase/supabase-js";
 import type { NextFunction, Request, Response } from "express";
-import { SUPABASE } from "@/config/root-config";
+
 import { STATUS_RESPONSE } from "@/types";
+import { SUPABASE } from "@/config/root-config";
+import type { User } from "@supabase/supabase-js";
 import { asyncHandler } from "@/utils/async-handlers";
 import sendR from "@/utils/send-response";
 
 export const authHandler = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-  const token = req.headers.authorization?.replace("Bearer ", "");
+  // Try to get token from Authorization header first (Bearer token)
+  let token = req.headers.authorization?.replace("Bearer ", "");
+
+  // If no Bearer token, try to get from cookie (Supabase cookie-based auth)
   if (!token) {
-    return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "Missing authorization headers: ", token);
+    token = req.cookies?.["sb-access-token"];
+  }
+
+  if (!token) {
+    return sendR(
+      res,
+      STATUS_RESPONSE.UNAUTHORIZED,
+      "Missing authorization token. Please provide Bearer token in Authorization header or sb-access-token cookie."
+    );
   }
 
   const {

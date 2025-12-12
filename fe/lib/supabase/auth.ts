@@ -1,6 +1,13 @@
 /**
  * Supabase Auth Utilities
  * Helper functions for authentication operations
+ *
+ * NOTE: To ensure Google OAuth consent screen shows "CAL AI" instead of Supabase domain:
+ * 1. Go to Supabase Dashboard > Authentication > Providers > Google
+ * 2. Configure Google OAuth to use the same Client ID and Client Secret as the backend
+ *    (from environment variable GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET)
+ * 3. Ensure the Google OAuth consent screen in Google Cloud Console is configured
+ *    with "CAL AI" as the application name for this OAuth client
  */
 
 import { OAUTH, ROUTES } from "@/lib/constants";

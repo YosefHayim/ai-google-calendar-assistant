@@ -15,7 +15,13 @@ export async function POST(request: NextRequest) {
     }
 
     // Get backend URL
-    const backendUrl = process.env.BACKEND_API_BASE_URL || process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL || "http://localhost:3000";
+    let backendUrl = process.env.BACKEND_API_BASE_URL || process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL || "http://localhost:3001";
+
+    // Validate that the URL is not a placeholder
+    if (backendUrl.includes("placeholder") || !backendUrl.startsWith("http")) {
+      console.error("Invalid backend URL detected:", backendUrl);
+      backendUrl = "http://localhost:3001"; // Fallback to correct default
+    }
     const url = new URL("/api/agent/query-audio", backendUrl);
 
     // Forward cookies from the incoming request
