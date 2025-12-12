@@ -70,8 +70,21 @@ export default function AuthCallbackPage() {
             router.replace(next);
             return;
           }
-          // If code is not a UUID, it's likely a Google OAuth code from backend flow
-          // Fall through to check for email parameter or hash fragment handling
+          // If code is not a UUID, it's a Google OAuth code from backend flow
+          // Redirect to backend callback route to handle the exchange
+          const next = searchParams.get("next") || ROUTES.DASHBOARD;
+          const backendCallbackUrl = new URL("/api/users/callback", window.location.origin);
+          backendCallbackUrl.searchParams.append("code", code);
+          backendCallbackUrl.searchParams.append("source", "frontend");
+          backendCallbackUrl.searchParams.append("next", next);
+          // Forward any other query parameters
+          searchParams.forEach((value, key) => {
+            if (key !== "code" && key !== "next") {
+              backendCallbackUrl.searchParams.append(key, value);
+            }
+          });
+          window.location.href = backendCallbackUrl.toString();
+          return;
         }
 
         // Check if we have an email parameter (from backend OAuth flow)
