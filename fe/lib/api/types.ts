@@ -1,6 +1,23 @@
 /**
  * Type definitions for API requests and responses
- * Based on backend types and Google Calendar API types
+ *
+ * NOTE: These types are maintained for backward compatibility.
+ * Once types are generated from the OpenAPI schema (run: npm run generate:types),
+ * prefer using types from '@/types/api' which are auto-generated from the backend.
+ *
+ * To generate types:
+ *   1. Start the backend server (npm run dev in be/)
+ *   2. Run: npm run generate:types
+ *   3. Import types from '@/types/api' instead
+ */
+
+// Re-export generated types when available (after running generate:types)
+// These will be available once types are generated from OpenAPI schema
+// import type { paths, components } from "@/types/api";
+
+/**
+ * Legacy type definitions (maintained for backward compatibility)
+ * These will eventually be replaced by generated types from OpenAPI schema
  */
 
 /**
@@ -183,4 +200,3 @@ export interface WhatsAppQueryParams {
   "hub.challenge"?: string;
   "hub.verify_token"?: string;
 }
-

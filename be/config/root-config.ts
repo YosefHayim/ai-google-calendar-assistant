@@ -10,7 +10,7 @@ import path from "node:path";
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
 export const CONFIG = {
-  baseUrl: "http://localhost:3000",
+  baseUrl: "http://localhost:3001",
   redirectUrlDev: "http://localhost:3000/api/users/callback",
   redirectUrlProd: "https://vdwjfekcsnurtjsieojv.supabase.co/auth/v1/callback",
   port: 3001,

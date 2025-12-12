@@ -212,6 +212,34 @@ export const agentClient = {
       body: JSON.stringify({ query }),
     });
   },
+
+  /**
+   * Query the agent with an audio file
+   */
+  async queryAgentWithAudio(audioBlob: Blob): Promise<ApiResponse<{ response: string; transcribedText?: string }>> {
+    const formData = new FormData();
+    formData.append("audio", audioBlob, "audio.webm");
+
+    const response = await fetch(`${API_ROUTES.AGENT}/query-audio`, {
+      method: "POST",
+      body: formData,
+      credentials: "include",
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return {
+        message: data.message || "Failed to process audio query",
+        error: data.error,
+      };
+    }
+
+    return {
+      message: data.message || "Success",
+      data: data.data,
+    };
+  },
 };
 
 /**

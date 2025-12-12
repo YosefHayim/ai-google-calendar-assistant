@@ -12,6 +12,8 @@ import path from "node:path";
 import { startTelegramBot } from "./telegram-bot/init-bot";
 import usersRoute from "@/routes/users";
 import whatsAppRoute from "@/routes/whatsapp-route";
+import swaggerUi from "swagger-ui-express";
+import { swaggerSpec } from "@/config/swagger";
 
 const app = express();
 const PORT = CONFIG.port;
@@ -25,6 +27,13 @@ app.use("/static", express.static(path.join(__dirname, "public")));
 
 app.get("/", (_req, res) => {
   res.status(STATUS_RESPONSE.SUCCESS).send("Server is running.");
+});
+
+// Swagger API Documentation
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.get("/api-docs.json", (_req, res) => {
+  res.setHeader("Content-Type", "application/json");
+  res.send(swaggerSpec);
 });
 
 app.use(ROUTES.USERS, usersRoute);
