@@ -1,19 +1,15 @@
 import type { NextConfig } from "next";
-import componentTagger from "@dhiwise/component-tagger";
 
 const nextConfig: NextConfig = {
   webpack: (config) => {
-    config.module.rules.push({
-      test: /\.(js|jsx|ts|tsx)$/,
-      use: [
-        {
-          loader: componentTagger,
-          options: {
-            verbose: true,
-          },
-        },
-      ],
-    });
+    if (process.env.NODE_ENV === "development") {
+      config.module.rules.push({
+        test: /\.(jsx|tsx)$/,
+        exclude: /node_modules/,
+        enforce: "pre",
+        use: "@ternary-std/nextjs-webpack-component-tagger",
+      });
+    }
     return config;
   },
 };
