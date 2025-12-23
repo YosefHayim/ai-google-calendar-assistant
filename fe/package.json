@@ -29,7 +29,6 @@
     "tailwind-merge": "^2.6.0"
   },
   "devDependencies": {
-    "@dhiwise/component-tagger": "^1.0.14",
     "@types/canvas-confetti": "^1.9.0",
     "@types/node": "^22.10.2",
     "@types/react": "^19.0.6",
@@ -39,6 +38,7 @@
     "eslint-config-next": "^15.1.0",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.17",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "@ternary-std/nextjs-webpack-component-tagger": "^0.8.1"
   }
 }
