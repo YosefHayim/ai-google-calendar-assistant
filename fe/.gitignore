@@ -104,13 +104,7 @@ desktop.ini
 # =============================================================================
 # AI & DEVELOPMENT TOOLS
 # =============================================================================
-.cursor/
-.claude/
-.gemini/
-.taskmaster/
 .mcp.json
-*.md
-!README.md
 
 # =============================================================================
 # CONFIGURATION FILES
@@ -157,3 +151,18 @@ lerna-debug.log*
 .cache/
 .parcel-cache/
 .turbo/
+
+# Logs
+logs
+*.log
+dev-debug.log
+# Dependency directories
+# Environment variables
+# Editor directories and files
+.idea
+.vscode
+# OS specific
+
+# Task files
+# tasks.json
+# tasks/ 

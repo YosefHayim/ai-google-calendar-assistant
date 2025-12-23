@@ -120,13 +120,7 @@ desktop.ini
 # =============================================================================
 # AI & DEVELOPMENT TOOLS
 # =============================================================================
-.cursor/
-.claude/
-.gemini/
-.taskmaster/
 .mcp.json
-*.md
-!README.md
 
 # =============================================================================
 # CONFIGURATION FILES
@@ -191,3 +185,20 @@ supabase.exe
 *.bak
 *.backup
 *.old
+
+# Logs
+logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+dev-debug.log
+# Dependency directories
+# Environment variables
+# Editor directories and files
+.idea
+.vscode
+# OS specific
+
+# Task files
+# tasks.json
+# tasks/ 
