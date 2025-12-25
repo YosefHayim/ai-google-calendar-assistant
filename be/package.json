@@ -18,7 +18,6 @@
   "scripts": {
     "check": "npx ultracite check",
     "dev": "nodemon",
-    "download-env": "doppler secrets  download --ai-google-calendar-assistant --no-file --format env > .env ",
     "fix": "npx ultracite fix --unsafe",
     "get-updated-db-types": "npx supabase gen types typescript --project-id vdwjfekcsnurtjsieojv --schema public > database.types.ts",
     "prepare": "husky install",

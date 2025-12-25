@@ -15,12 +15,78 @@ This service exposes a backend (Express + TypeScript) that:
 
 ## Features
 
-- Natural-language event creation and updates.
-- Smart conflict detection and resolution suggestions.
-- Multi-user support backed by Supabase.
-- Telegram bot assistant for conversational control.
-- Stripe-powered subscription / SaaS-ready billing layer.
-- Strict validation with Zod and JWT-based auth.
+### Authentication & User Management
+- Email/password signup and signin with Supabase Auth
+- OAuth authentication (Google, GitHub)
+- Email verification via OTP
+- JWT-based authentication middleware
+- User account deactivation
+- Secure Google Calendar token storage and auto-refresh
+- Third-party authentication integration
+
+### Calendar Operations
+- Retrieve all user calendars with metadata
+- Get calendar overview, colors, and timezone settings
+- Full CRUD operations for calendar events
+- Filter events by custom criteria
+- Retrieve specific events by ID
+- Calendar category management and synchronization
+
+### AI-Powered Event Management
+- Natural language event creation and updates via OpenAI Agents
+- Multi-agent orchestration system with specialized agents:
+  - Event normalization agent
+  - Event validation agent
+  - Calendar type analysis agent
+  - User timezone detection agent
+  - CRUD operation agents (insert, update, delete, get)
+- Smart event field validation
+- Automatic timezone handling
+- Event conflict detection and resolution suggestions
+- Agent handoff system for complex workflows
+
+### Event Features
+- All-day events support
+- Recurring events with RRULE format
+- Event attendees management (add, remove, validate)
+- Custom event reminders (email, popup)
+- Event visibility controls (public, private, confidential)
+- Event status management (confirmed, tentative, cancelled)
+- Event duration calculations
+- Time-based event queries (past, future, ongoing)
+
+### Telegram Bot Assistant
+- Conversational interface for calendar management
+- Natural language processing for event commands
+- Session-based user context management
+- Background agent processing
+- Command support (/start, /exit)
+- Multi-user support with authentication
+
+### Architecture & Infrastructure
+- Clean architecture with Domain-Driven Design (DDD)
+- Repository pattern for data access
+- Dependency injection with InversifyJS
+- Value objects for type safety
+- Comprehensive domain entity validation
+- Middleware for authentication and error handling
+
+### Developer Experience
+- Full TypeScript support with strict typing
+- Comprehensive Jest test suite with 80%+ coverage
+- Zod schema validation for runtime type safety
+- Environment configuration via Doppler
+- Auto-generated Supabase database types
+- Git hooks with Husky for code quality
+- Code linting and formatting with Ultracite and Biome
+- Docker containerization support
+- Hot-reload development server with nodemon
+
+### SaaS-Ready Features
+- Multi-user support with isolated data
+- Stripe payment integration for subscriptions
+- WhatsApp integration (in development)
+- Scalable architecture for production deployment
 
 ## Tech Stack
 
