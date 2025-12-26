@@ -1,9 +1,8 @@
-import type { User } from "@supabase/supabase-js";
 import type { NextFunction, Request, Response } from "express";
-import { SUPABASE } from "@/config/root-config";
-import { STATUS_RESPONSE } from "@/types";
-import { asyncHandler } from "@/utils/async-handlers";
-import sendR from "@/utils/send-response";
+import { STATUS_RESPONSE, SUPABASE } from "@/config";
+import { asyncHandler, sendR } from "@/utils/http";
+
+import type { User } from "@supabase/supabase-js";
 
 export const authHandler = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
   const token = req.headers.authorization?.replace("Bearer ", "");

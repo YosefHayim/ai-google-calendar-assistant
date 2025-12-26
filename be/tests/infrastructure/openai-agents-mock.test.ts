@@ -1,17 +1,17 @@
-import { describe, it, expect, beforeEach } from "@jest/globals";
 import {
   MockAgent,
   createMockAgent,
+  createMockAgentError,
   createMockAgentResponse,
+  mockAgentErrors,
   mockAgentFactory,
   mockAgentResponses,
-  mockEventAgentResponses,
-  mockAuthAgentResponses,
-  mockAgentErrors,
-  createMockAgentError,
   mockAgentTools,
+  mockAuthAgentResponses,
+  mockEventAgentResponses,
   resetMockAgentTools,
-} from "../../__mocks__/openai-agents";
+} from "../../mocks/openai-agents";
+import { beforeEach, describe, expect, it } from "@jest/globals";
 
 describe("OpenAI Agents Mock Factory", () => {
   describe("MockAgent Class", () => {
@@ -336,7 +336,7 @@ describe("OpenAI Agents Mock Factory", () => {
         {
           name: "validate_user_test",
         },
-        true,
+        true
       );
 
       const result = await agent.run({ input: "validate user" });
@@ -350,7 +350,7 @@ describe("OpenAI Agents Mock Factory", () => {
         {
           name: "validate_user_test",
         },
-        false,
+        false
       );
 
       const result = await agent.run({ input: "validate user" });
@@ -522,7 +522,7 @@ describe("OpenAI Agents Mock Factory", () => {
           name: "validate",
           handoffDescription: "Validates user then hands off to event agent",
         },
-        true,
+        true
       );
 
       const eventAgent = mockAgentFactory.createInsertEventAgent({

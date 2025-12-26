@@ -1,11 +1,11 @@
-import type { User } from "@supabase/supabase-js";
+import type { GoogleIdTokenPayloadProps, TokensProps } from "@/types";
+import { OAUTH2CLIENT, PROVIDERS, REDIRECT_URI, SCOPES, STATUS_RESPONSE, SUPABASE, env } from "@/config";
 import type { Request, Response } from "express";
+import { reqResAsyncHandler, sendR } from "@/utils/http";
+
+import type { User } from "@supabase/supabase-js";
 import jwt from "jsonwebtoken";
-import { CONFIG, OAUTH2CLIENT, redirectUri, SCOPES, SUPABASE } from "@/config/root-config";
-import { type GoogleIdTokenPayloadProps, PROVIDERS, STATUS_RESPONSE, type TokensProps } from "@/types";
-import { reqResAsyncHandler } from "@/utils/async-handlers";
-import sendR from "@/utils/send-response";
-import { thirdPartySignInOrSignUp } from "@/utils/third-party-signup-signin-supabase";
+import { thirdPartySignInOrSignUp } from "@/utils/auth";
 
 const generateAuthGoogleUrl = reqResAsyncHandler(async (req: Request, res: Response) => {
   const code = req.query.code as string | undefined;
@@ -16,7 +16,7 @@ const generateAuthGoogleUrl = reqResAsyncHandler(async (req: Request, res: Respo
     scope: SCOPES,
     prompt: "consent",
     include_granted_scopes: true,
-    redirect_uri: redirectUri,
+    redirect_uri: REDIRECT_URI,
   });
 
   // 1. No code yet: send user to consent screen

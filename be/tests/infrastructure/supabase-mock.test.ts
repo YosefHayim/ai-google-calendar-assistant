@@ -1,15 +1,15 @@
-import { describe, it, expect, beforeEach } from "@jest/globals";
+import { beforeEach, describe, expect, it } from "@jest/globals";
 import {
   createMockSupabaseClient,
   createMockSupabaseError,
   createMockSupabaseErrors,
-  resetMockDataStore,
-  mockUser,
-  mockUserCalendarToken,
   mockCalendarCategory,
   mockTelegramLink,
   mockTokenData,
-} from "../../__mocks__/supabase";
+  mockUser,
+  mockUserCalendarToken,
+  resetMockDataStore,
+} from "../../mocks/supabase";
 
 describe("Supabase Mock Factory", () => {
   let mockClient: ReturnType<typeof createMockSupabaseClient>;

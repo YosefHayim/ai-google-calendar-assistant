@@ -1,10 +1,10 @@
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
-import { coerceArgs, formatEventData, safeParse } from "../../ai-agents/agent-utils";
+import { parseToolArguments, formatEventData, safeParse } from "../../ai-agents/utils";
 
-import { TIMEZONE } from "@/types";
+import { TIMEZONE } from "@/config";
 
 // Mock the Supabase client
-jest.mock("@/config/root-config", () => ({
+jest.mock("@/config", () => ({
   SUPABASE: {
     from: jest.fn(() => ({
       select: jest.fn().mockReturnThis(),
@@ -45,22 +45,22 @@ describe("agent-utils", () => {
     });
   });
 
-  describe("coerceArgs", () => {
+  describe("parseToolArguments", () => {
     it("should extract email from base level", () => {
       const input = { email: "test@example.com" };
-      const result = coerceArgs(input);
+      const result = parseToolArguments(input);
       expect(result.email).toBe("test@example.com");
     });
 
     it("should extract calendarId from outer level", () => {
       const input = { calendarId: "primary" };
-      const result = coerceArgs(input);
+      const result = parseToolArguments(input);
       expect(result.calendarId).toBe("primary");
     });
 
     it("should extract eventId from base level", () => {
       const input = { eventId: "event123" };
-      const result = coerceArgs(input);
+      const result = parseToolArguments(input);
       expect(result.eventId).toBe("event123");
     });
 
@@ -71,7 +71,7 @@ describe("agent-utils", () => {
           description: "Team meeting",
         },
       };
-      const result = coerceArgs(input);
+      const result = parseToolArguments(input);
       expect(result.eventLike.summary).toBe("Meeting");
       expect(result.eventLike.description).toBe("Team meeting");
     });
@@ -84,7 +84,7 @@ describe("agent-utils", () => {
           },
         },
       };
-      const result = coerceArgs(input);
+      const result = parseToolArguments(input);
       expect(result.eventLike.summary).toBe("Event");
     });
 
@@ -92,7 +92,7 @@ describe("agent-utils", () => {
       const input = {
         input: '{"summary": "Parsed Event"}',
       };
-      const result = coerceArgs(input);
+      const result = parseToolArguments(input);
       expect(result.eventLike.summary).toBe("Parsed Event");
     });
 
@@ -104,7 +104,7 @@ describe("agent-utils", () => {
           location: "",
         },
       };
-      const result = coerceArgs(input);
+      const result = parseToolArguments(input);
       expect(result.eventLike.summary).toBe("Event");
       expect(result.eventLike.description).toBeUndefined();
       expect(result.eventLike.location).toBeUndefined();
@@ -118,7 +118,7 @@ describe("agent-utils", () => {
           attendees,
         },
       };
-      const result = coerceArgs(input);
+      const result = parseToolArguments(input);
       expect(result.eventLike.attendees).toEqual(attendees);
     });
 
@@ -134,7 +134,7 @@ describe("agent-utils", () => {
           },
         },
       };
-      const result = coerceArgs(input);
+      const result = parseToolArguments(input);
       expect(result.email).toBe("test@example.com");
       expect(result.calendarId).toBe("primary");
       expect(result.eventLike.summary).toBe("Event");

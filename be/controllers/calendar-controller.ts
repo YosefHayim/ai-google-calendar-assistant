@@ -1,14 +1,12 @@
-import type { User } from "@supabase/supabase-js";
+import { ACTION, REQUEST_CONFIG_BASE, STATUS_RESPONSE } from "@/config";
+import { eventsHandler, initCalendarWithUserTokensAndUpdateTokens, updateCalenderCategories } from "@/utils/calendar";
+import { reqResAsyncHandler, sendR } from "@/utils/http";
+
 import type { Request } from "express";
+import type { TokensProps } from "@/types";
+import type { User } from "@supabase/supabase-js";
 import type { calendar_v3 } from "googleapis";
-import { requestConfigBase } from "@/config/root-config";
-import { ACTION, STATUS_RESPONSE, type TokensProps } from "@/types";
-import { reqResAsyncHandler } from "@/utils/async-handlers";
-import { fetchCredentialsByEmail } from "@/utils/get-user-calendar-tokens";
-import { eventsHandler } from "@/utils/handle-events";
-import { initCalendarWithUserTokensAndUpdateTokens } from "@/utils/init-calendar-with-user-tokens-and-update-tokens";
-import sendR from "@/utils/send-response";
-import { updateCalenderCategories } from "@/utils/update-calendar-categories";
+import { fetchCredentialsByEmail } from "@/utils/auth";
 
 const getAllCalendars = reqResAsyncHandler(async (req, res) => {
   const user = (req as Request & { user: User }).user;
@@ -74,7 +72,7 @@ const getSpecificEvent = reqResAsyncHandler(async (req, res) => {
   const calendarId = (req.query?.calendarId as string) ?? "primary";
 
   const r = await calendar.events.get({
-    ...requestConfigBase,
+    ...REQUEST_CONFIG_BASE,
     calendarId,
     eventId: req.params.eventId,
   });

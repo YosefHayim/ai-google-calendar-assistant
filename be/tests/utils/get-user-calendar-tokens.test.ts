@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 
 import type { TokensProps } from "@/types";
 // Now import
-import { fetchCredentialsByEmail } from "../../utils/get-user-calendar-tokens";
+import { fetchCredentialsByEmail } from "../../utils/auth/get-user-calendar-tokens";
 
 // Create chain mocks
 const mockSingle = jest.fn();

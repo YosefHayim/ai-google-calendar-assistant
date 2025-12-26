@@ -1,17 +1,17 @@
-import { describe, it, expect, beforeEach } from "@jest/globals";
+import { beforeEach, describe, expect, it } from "@jest/globals";
 import {
   createMockCalendarClient,
+  createMockCalendarErrors,
   createMockEvent,
   createMockEventsList,
   createMockGoogleApiError,
-  createMockCalendarErrors,
   createMockOAuth2Client,
-  mockDateUtils,
+  mockAllDayEvent,
   mockCalendarEvent,
+  mockDateUtils,
   mockEventsList,
   mockRecurringEvent,
-  mockAllDayEvent,
-} from "../../__mocks__/google-calendar";
+} from "../../mocks/google-calendar";
 
 describe("Google Calendar Mock Factory", () => {
   describe("createMockCalendarClient", () => {
@@ -34,10 +34,7 @@ describe("Google Calendar Mock Factory", () => {
       });
 
       it("should allow custom mock implementation", async () => {
-        const customEvents = createMockEventsList([
-          createMockEvent({ summary: "Custom Event 1" }),
-          createMockEvent({ summary: "Custom Event 2" }),
-        ]);
+        const customEvents = createMockEventsList([createMockEvent({ summary: "Custom Event 1" }), createMockEvent({ summary: "Custom Event 2" })]);
 
         mockClient.events.list.mockResolvedValue({ data: customEvents });
 
@@ -72,7 +69,7 @@ describe("Google Calendar Mock Factory", () => {
           mockClient.events.get({
             calendarId: "primary",
             eventId: "non-existent-id",
-          }),
+          })
         ).rejects.toThrow("Not Found");
       });
     });
@@ -108,7 +105,7 @@ describe("Google Calendar Mock Factory", () => {
           mockClient.events.insert({
             calendarId: "primary",
             requestBody: { summary: "" }, // Invalid: empty summary
-          }),
+          })
         ).rejects.toThrow("Bad Request");
       });
     });
@@ -164,7 +161,7 @@ describe("Google Calendar Mock Factory", () => {
           mockClient.events.delete({
             calendarId: "primary",
             eventId: "non-existent-id",
-          }),
+          })
         ).rejects.toThrow("Not Found");
       });
     });
@@ -416,7 +413,7 @@ describe("Google Calendar Mock Factory", () => {
       await expect(
         mockClient.events.list({
           calendarId: "primary",
-        }),
+        })
       ).rejects.toThrow("Internal Server Error");
     });
 
@@ -427,7 +424,7 @@ describe("Google Calendar Mock Factory", () => {
         mockClient.events.get({
           calendarId: "primary",
           eventId: "test-id",
-        }),
+        })
       ).rejects.toThrow("Service Unavailable");
     });
   });
