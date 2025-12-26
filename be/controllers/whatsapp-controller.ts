@@ -1,11 +1,10 @@
 import type { Request, Response } from "express";
-import { CONFIG } from "@/config/root-config";
-import { STATUS_RESPONSE } from "@/types";
+import { env, STATUS_RESPONSE } from "@/config";
 
 const getWhatsAppNotifications = (req: Request, res: Response) => {
   const { "hub.mode": mode, "hub.challenge": challenge, "hub.verify_token": token } = req.query;
 
-  if (mode === "subscribe" && token === CONFIG.devWhatsAppAccessToken) {
+  if (mode === "subscribe" && token === env.devWhatsAppAccessToken) {
     console.log("WEBHOOK VERIFIED");
     res.status(STATUS_RESPONSE.SUCCESS).send(challenge);
   } else {

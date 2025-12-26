@@ -1,7 +1,7 @@
-import type { MiddlewareFn } from "grammy";
-import isEmail from "validator/lib/isEmail";
-import { SUPABASE } from "@/config/root-config";
 import type { GlobalContext } from "../init-bot";
+import type { MiddlewareFn } from "grammy";
+import { SUPABASE } from "@/config";
+import isEmail from "validator/lib/isEmail";
 
 export const authTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
   const from = ctx.from;
@@ -28,7 +28,7 @@ export const authTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
       session.email = data.email;
     }
     if (session.messageCount === 0) {
-      await ctx.reply(`Hello there ${data.first_name}`);
+      await ctx.reply(`Hi ${data.first_name}`);
     }
     session.messageCount++;
     return next(); // single exit with next()

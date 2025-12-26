@@ -1,6 +1,6 @@
 import { describe, expect, it } from "@jest/globals";
 
-import { TOKEN_FIELDS } from "../../utils/storage";
+import { TOKEN_FIELDS } from "../../utils/auth/constants";
 
 describe("storage", () => {
   describe("TOKEN_FIELDS", () => {

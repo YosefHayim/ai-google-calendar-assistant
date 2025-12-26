@@ -2,23 +2,7 @@
   "$schema": "https://biomejs.dev/schemas/2.3.4/schema.json",
   "extends": ["ultracite"],
   "files": {
-    "includes": [
-      "**/*.ts",
-      "!**/*.test.ts",
-      "!**/*.test.js",
-      "!**/*.js",
-      "!**/*.css",
-      "!**/*.html",
-      "!**/*.json",
-      "!**/package.json",
-      "!**/*.yaml",
-      "!**/*.yml",
-      "!!**/tests",
-      "!!**/__tests__",
-      "!!**/dist",
-      "!!**/build",
-      "!!**/node_modules"
-    ]
+    "includes": ["**/*.ts"]
   },
   "formatter": {
     "lineWidth": 160

@@ -1,14 +1,14 @@
 import { run } from "@grammyjs/runner";
 import { Bot, type Context, type SessionFlavor, session } from "grammy";
-import { ORCHESTRATOR_AGENT } from "@/ai-agents/agents";
-import { CONFIG } from "@/config/root-config";
+import { ORCHESTRATOR_AGENT } from "@/ai-agents";
+import { env } from "@/config";
 import type { SessionData } from "@/types";
-import { activateAgent } from "@/utils/activate-agent";
+import { activateAgent } from "@/utils/ai";
 import { authTgHandler } from "./middleware/auth-tg-handler";
 
 export type GlobalContext = SessionFlavor<SessionData> & Context;
 
-const bot = new Bot<GlobalContext>(CONFIG.telegramAccessToken);
+const bot = new Bot<GlobalContext>(env.telegramAccessToken);
 
 bot.catch((err) => {
   const ctx = err.ctx;

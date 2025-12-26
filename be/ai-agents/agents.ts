@@ -1,87 +1,87 @@
 import { Agent } from "@openai/agents";
-import { CURRENT_MODEL } from "@/types";
-import { AGENT_HANDOFFS } from "./agents-hands-off-description";
+import { CURRENT_MODEL } from "@/config";
+import { HANDOFF_DESCRIPTIONS } from "./agent-handoff-descriptions";
 import { AGENT_INSTRUCTIONS } from "./agents-instructions";
-import { AGENT_TOOLS } from "./agents-tools";
+import { AGENT_TOOLS } from "./tool-registry";
 
 
 
 export const AGENTS = {
-  generateUserCbGoogleUrl: new Agent({
-    name: "generate_user_cb_google_url_agent",
-    instructions: AGENT_INSTRUCTIONS.generateUserCbGoogleUrl,
+  generateGoogleAuthUrl: new Agent({
+    name: "generate_google_auth_url_agent",
+    instructions: AGENT_INSTRUCTIONS.generateGoogleAuthUrl,
     model: CURRENT_MODEL,
     modelSettings: { toolChoice: "required" },
-    handoffDescription: AGENT_HANDOFFS.generateUserCbGoogleUrl,
-    tools: [AGENT_TOOLS.generate_user_cb_google_url],
+    handoffDescription: HANDOFF_DESCRIPTIONS.generateGoogleAuthUrl,
+    tools: [AGENT_TOOLS.generate_google_auth_url],
   }),
-  registerUserViaDb: new Agent({
-    name: "register_user_via_db_agent",
-    instructions: AGENT_INSTRUCTIONS.registerUserViaDb,
+  registerUser: new Agent({
+    name: "register_user_agent",
+    instructions: AGENT_INSTRUCTIONS.registerUser,
     modelSettings: { toolChoice: "required" },
-    handoffDescription: AGENT_HANDOFFS.registerUserViaDb,
+    handoffDescription: HANDOFF_DESCRIPTIONS.registerUser,
     tools: [AGENT_TOOLS.register_user_via_db],
   }),
-  validateUserAuth: new Agent({
-    name: "validate_user_db_agent",
-    instructions: AGENT_INSTRUCTIONS.validateUserAuth,
+  validateUser: new Agent({
+    name: "validate_user_agent",
+    instructions: AGENT_INSTRUCTIONS.validateUser,
     model: CURRENT_MODEL,
     modelSettings: { toolChoice: "required" },
-    handoffDescription: AGENT_HANDOFFS.validateUserAuth,
+    handoffDescription: HANDOFF_DESCRIPTIONS.validateUser,
     tools: [AGENT_TOOLS.validate_user_db],
   }),
-  validateEventFields: new Agent({
-    name: "validate_event_fields_agent",
-    instructions: AGENT_INSTRUCTIONS.validateEventFields,
+  validateEventData: new Agent({
+    name: "validate_event_data_agent",
+    instructions: AGENT_INSTRUCTIONS.validateEventData,
     model: CURRENT_MODEL,
     modelSettings: { toolChoice: "required" },
-    handoffDescription: AGENT_HANDOFFS.validateEventFields,
+    handoffDescription: HANDOFF_DESCRIPTIONS.validateEventData,
     tools: [AGENT_TOOLS.validate_event_fields],
   }),
-  insertEvent: new Agent({
-    name: "insert_event_agent",
-    instructions: AGENT_INSTRUCTIONS.insertEvent,
+  createEvent: new Agent({
+    name: "create_event_agent",
+    instructions: AGENT_INSTRUCTIONS.createEvent,
     model: CURRENT_MODEL,
     modelSettings: { toolChoice: "required" },
-    handoffDescription: AGENT_HANDOFFS.insertEvent,
+    handoffDescription: HANDOFF_DESCRIPTIONS.createEvent,
     tools: [AGENT_TOOLS.insert_event],
   }),
-  getEventByIdOrName: new Agent({
-    instructions: AGENT_INSTRUCTIONS.getEventByIdOrName,
-    name: "get_event_by_name_agent",
+  retrieveEvent: new Agent({
+    instructions: AGENT_INSTRUCTIONS.retrieveEvent,
+    name: "retrieve_event_agent",
     model: CURRENT_MODEL,
     modelSettings: { toolChoice: "required" },
-    handoffDescription: AGENT_HANDOFFS.getEventByIdOrName,
+    handoffDescription: HANDOFF_DESCRIPTIONS.retrieveEvent,
     tools: [AGENT_TOOLS.get_event],
   }),
-  updateEventByIdOrName: new Agent({
-    instructions: AGENT_INSTRUCTIONS.updateEventByIdOrName,
-    name: "update_event_by_id_agent",
+  updateEvent: new Agent({
+    instructions: AGENT_INSTRUCTIONS.updateEvent,
+    name: "update_event_agent",
     model: CURRENT_MODEL,
     modelSettings: { toolChoice: "required" },
-    handoffDescription: AGENT_HANDOFFS.updateEventByIdOrName,
+    handoffDescription: HANDOFF_DESCRIPTIONS.updateEvent,
     tools: [AGENT_TOOLS.update_event],
   }),
-  deleteEventByIdOrName: new Agent({
-    name: "delete_event_by_id_agent",
-    instructions: AGENT_INSTRUCTIONS.deleteEventByIdOrName,
+  deleteEvent: new Agent({
+    name: "delete_event_agent",
+    instructions: AGENT_INSTRUCTIONS.deleteEvent,
     model: CURRENT_MODEL,
     modelSettings: { toolChoice: "required" },
-    handoffDescription: AGENT_HANDOFFS.deleteEventByIdOrName,
+    handoffDescription: HANDOFF_DESCRIPTIONS.deleteEvent,
     tools: [AGENT_TOOLS.delete_event],
   }),
-  analysesCalendarTypeByEventInformation: new Agent({
-    name: "analyses_calendar_type_by_event_agent",
-    instructions: AGENT_INSTRUCTIONS.analysesCalendarTypeByEventInformation,
+  selectCalendar: new Agent({
+    name: "select_calendar_agent",
+    instructions: AGENT_INSTRUCTIONS.selectCalendar,
     model: CURRENT_MODEL,
     modelSettings: { toolChoice: "required" },
-    handoffDescription: AGENT_HANDOFFS.analysesCalendarTypeByEventInformation,
-    tools: [AGENT_TOOLS.calendar_type],
+    handoffDescription: HANDOFF_DESCRIPTIONS.selectCalendar,
+    tools: [AGENT_TOOLS.select_calendar],
   }),
-  normalizeEventAgent: new Agent({
-    name: "normalize_event_agent",
+  parseEventText: new Agent({
+    name: "parse_event_text_agent",
     model: CURRENT_MODEL,
-    instructions: AGENT_INSTRUCTIONS.normalizeEventAgent,
+    instructions: AGENT_INSTRUCTIONS.parseEventText,
   }),
   getUserDefaultTimeZone: new Agent({
     name: "get_user_default_timezone_agent",
@@ -91,46 +91,44 @@ export const AGENTS = {
   }),
 };
 
-export const HANDS_OFF_AGENTS = {
-  insertEventHandOffAgent: new Agent({
-    name: "insert_event_handoff_agent",
+export const HANDOFF_AGENTS = {
+  createEventHandoff: new Agent({
+    name: "create_event_handoff_agent",
     model: CURRENT_MODEL,
-
     modelSettings: { parallelToolCalls: true },
-    instructions: AGENT_INSTRUCTIONS.insertEventHandOffAgent,
+    instructions: AGENT_INSTRUCTIONS.createEventHandoff,
     tools: [
-      AGENTS.normalizeEventAgent.asTool({ toolName: "normalize_event" }),
+      AGENTS.parseEventText.asTool({ toolName: "parse_event_text" }),
       AGENTS.getUserDefaultTimeZone.asTool({ toolName: "get_user_default_timezone" }),
-      AGENTS.validateEventFields.asTool({ toolName: "validate_event_fields" }),
-      AGENTS.analysesCalendarTypeByEventInformation.asTool({ toolName: "calendar_type_by_event_details" }),
-      AGENTS.insertEvent.asTool({ toolName: "insert_event" }),
+      AGENTS.validateEventData.asTool({ toolName: "validate_event_data" }),
+      AGENTS.selectCalendar.asTool({ toolName: "select_calendar" }),
+      AGENTS.createEvent.asTool({ toolName: "create_event" }),
     ],
   }),
-  updateEventOrEventsHandOffAgent: new Agent({
+  updateEventHandoff: new Agent({
     name: "update_event_handoff_agent",
     model: CURRENT_MODEL,
-    instructions: AGENT_INSTRUCTIONS.updateEventByIdOrNameHandOffAgent,
+    instructions: AGENT_INSTRUCTIONS.updateEventHandoff,
     modelSettings: { toolChoice: "required" },
-    tools: [AGENTS.getEventByIdOrName.asTool({ toolName: "get_event" }), AGENTS.updateEventByIdOrName.asTool({ toolName: "update_event" })],
+    tools: [AGENTS.retrieveEvent.asTool({ toolName: "retrieve_event" }), AGENTS.updateEvent.asTool({ toolName: "update_event" })],
   }),
-  deleteEventOrEventsHandOffAgent: new Agent({
+  deleteEventHandoff: new Agent({
     name: "delete_event_handoff_agent",
     model: CURRENT_MODEL,
-    instructions: AGENT_INSTRUCTIONS.deleteEventByIdOrNameHandOffAgent,
-
-    tools: [AGENTS.getEventByIdOrName.asTool({ toolName: "get_event" }), AGENTS.deleteEventByIdOrName.asTool({ toolName: "delete_event" })],
+    instructions: AGENT_INSTRUCTIONS.deleteEventHandoff,
+    tools: [AGENTS.retrieveEvent.asTool({ toolName: "retrieve_event" }), AGENTS.deleteEvent.asTool({ toolName: "delete_event" })],
   }),
-  getEventOrEventsHandOffAgent: new Agent({
-    name: "get_event_handoff_agent",
+  retrieveEventHandoff: new Agent({
+    name: "retrieve_event_handoff_agent",
     model: CURRENT_MODEL,
-    instructions: AGENT_INSTRUCTIONS.getEventOrEventsHandOffAgent,
-    tools: [AGENTS.getEventByIdOrName.asTool({ toolName: "get_event" })],
+    instructions: AGENT_INSTRUCTIONS.retrieveEventHandoff,
+    tools: [AGENTS.retrieveEvent.asTool({ toolName: "retrieve_event" })],
   }),
-  registerUserHandOffAgent: new Agent({
+  registerUserHandoff: new Agent({
     name: "register_user_handoff_agent",
     model: CURRENT_MODEL,
-    instructions: AGENT_INSTRUCTIONS.registerUserHandOffAgent,
-    tools: [AGENTS.validateUserAuth.asTool({ toolName: "register_user_via_db" })],
+    instructions: AGENT_INSTRUCTIONS.registerUserHandoff,
+    tools: [AGENTS.validateUser.asTool({ toolName: "validate_user" })],
   }),
 };
 
@@ -138,13 +136,13 @@ export const ORCHESTRATOR_AGENT = new Agent({
   name: "calendar_orchestrator_agent",
   model: CURRENT_MODEL,
   modelSettings: { parallelToolCalls: true },
-  instructions: AGENT_INSTRUCTIONS.orchestratorAgent,
+  instructions: AGENT_INSTRUCTIONS.orchestrator,
   tools: [
-    HANDS_OFF_AGENTS.insertEventHandOffAgent.asTool({ toolName: "insert_event_handoff_agent" }),
-    HANDS_OFF_AGENTS.getEventOrEventsHandOffAgent.asTool({ toolName: "get_event_handoff_agent" }),
-    HANDS_OFF_AGENTS.updateEventOrEventsHandOffAgent.asTool({ toolName: "update_event_handoff_agent" }),
-    HANDS_OFF_AGENTS.deleteEventOrEventsHandOffAgent.asTool({ toolName: "delete_event_handoff_agent" }),
-    HANDS_OFF_AGENTS.registerUserHandOffAgent.asTool({ toolName: "register_user_handoff_agent" }),
-    AGENTS.generateUserCbGoogleUrl.asTool({ toolName: "generate_user_cb_google_url" }),
+    HANDOFF_AGENTS.createEventHandoff.asTool({ toolName: "create_event_handoff" }),
+    HANDOFF_AGENTS.retrieveEventHandoff.asTool({ toolName: "retrieve_event_handoff" }),
+    HANDOFF_AGENTS.updateEventHandoff.asTool({ toolName: "update_event_handoff" }),
+    HANDOFF_AGENTS.deleteEventHandoff.asTool({ toolName: "delete_event_handoff" }),
+    HANDOFF_AGENTS.registerUserHandoff.asTool({ toolName: "register_user_handoff" }),
+    AGENTS.generateGoogleAuthUrl.asTool({ toolName: "generate_google_auth_url" }),
   ],
 });
