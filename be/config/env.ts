@@ -17,10 +17,7 @@ export const env = {
   baseUrl: process.env.BASE_URL ?? "http://localhost:3000",
 
   // Supabase
-  supabaseUrl: process.env.SUPABASE_URL ?? "https://vdwjfekcsnurtjsieojv.supabase.co",
-  supabaseAnonKey:
-    process.env.SUPABASE_ANON_KEY ??
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZkd2pmZWtjc251cnRqc2llb2p2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA2ODg4ODksImV4cCI6MjA2NjI2NDg4OX0.-7ovo50UBnSHl1NO2g3XAMXZ6wU1aaCZ8EkmSJESpRc",
+  supabaseUrl: "https://vdwjfekcsnurtjsieojv.supabase.co",
   supabaseServiceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY ?? "",
 
   // Google
