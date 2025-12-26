@@ -71,7 +71,6 @@ export const eventsHandler = asyncHandler(
           });
           return { totalNumberOfEventsFound: totalEventsFound.length, totalEventsFound };
         }
-        console.log("events", events);
         return events;
       }
 

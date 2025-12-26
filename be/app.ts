@@ -1,9 +1,10 @@
 import { ROUTES, STATUS_RESPONSE, env } from "@/config";
 
-import calendarRoute from "@/routes/calendar-route";
+import calendarRoute from "@/routes/google-calendar/calendar-route";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import errorHandler from "@/middlewares/error-handler";
+import eventsRoute from "@/routes/google-calendar/events-route";
 import express from "express";
 import morgan from "morgan";
 import path from "node:path";
@@ -27,6 +28,7 @@ app.get("/", (_req, res) => {
 
 app.use(ROUTES.USERS, usersRoute);
 app.use(ROUTES.CALENDAR, calendarRoute);
+app.use(ROUTES.EVENTS, eventsRoute);
 app.use(ROUTES.WHATSAPP, whatsAppRoute);
 
 app.use(errorHandler);
