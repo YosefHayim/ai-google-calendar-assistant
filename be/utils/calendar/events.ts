@@ -1,12 +1,13 @@
-import type { Request } from "express";
-import type { calendar_v3 } from "googleapis";
-import { REQUEST_CONFIG_BASE, ACTION, STATUS_RESPONSE } from "@/config";
+import { ACTION, REQUEST_CONFIG_BASE, STATUS_RESPONSE } from "@/config";
+
 import type { AuthedRequest } from "@/types";
+import type { Request } from "express";
 import { asyncHandler } from "../http/async-handlers";
+import type { calendar_v3 } from "googleapis";
 import errorTemplate from "../http/error-template";
+import { fetchCredentialsByEmail } from "../auth/get-user-calendar-tokens";
 import formatDate from "../date/format-date";
 import { getEventDurationString } from "./duration";
-import { fetchCredentialsByEmail } from "../auth/get-user-calendar-tokens";
 import { initCalendarWithUserTokensAndUpdateTokens } from "./init";
 
 type ListExtra = Partial<calendar_v3.Params$Resource$Events$List> & {
@@ -70,7 +71,7 @@ export const eventsHandler = asyncHandler(
           });
           return { totalNumberOfEventsFound: totalEventsFound.length, totalEventsFound };
         }
-
+        console.log("events", events);
         return events;
       }
 
