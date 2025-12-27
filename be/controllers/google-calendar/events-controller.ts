@@ -9,7 +9,7 @@ import { initCalendarWithUserTokensAndUpdateTokens } from "@/utils/calendar/init
 
 const getEventById = reqResAsyncHandler(async (req: Request, res: Response) => {
   const user = (req as Request & { user: User }).user;
-  const tokenData = await fetchCredentialsByEmail(user.email || "");
+  const tokenData = await fetchCredentialsByEmail(user.email!);
   if (!tokenData) {
     return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User token not found.");
   }
@@ -31,23 +31,23 @@ const getEventById = reqResAsyncHandler(async (req: Request, res: Response) => {
   sendR(res, STATUS_RESPONSE.SUCCESS, "Event retrieved successfully", r.data);
 });
 
-const getAllEvents = reqResAsyncHandler(async (req, res) => {
-  const r = await eventsHandler(req, ACTION.GET);
+const getAllEvents = reqResAsyncHandler(async (req: Request, res: Response) => {
+  const r = await eventsHandler(req as Request, ACTION.GET);
   sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully retrieved all events", r);
 });
 
-const getAllFilteredEvents = reqResAsyncHandler(async (req, res) => {
+const getAllFilteredEvents = reqResAsyncHandler(async (req: Request, res: Response) => {
   const r = await eventsHandler(req, ACTION.GET, undefined, req.query as Record<string, string>);
 
   sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully retrieved all filtered events", r);
 });
 
-const createEvent = reqResAsyncHandler(async (req, res) => {
+const createEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
   const r = await eventsHandler(req, ACTION.INSERT, req.body, { calendarId: req.body.calendarId, email: req.body.email });
   sendR(res, STATUS_RESPONSE.CREATED, "Event created successfully", r);
 });
 
-const updateEvent = reqResAsyncHandler(async (req, res) => {
+const updateEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
   if (!req.params.eventId) {
     return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Event ID is required in order to update event.");
   }
@@ -59,7 +59,7 @@ const updateEvent = reqResAsyncHandler(async (req, res) => {
   sendR(res, STATUS_RESPONSE.SUCCESS, "Event updated successfully", r);
 });
 
-const deleteEvent = reqResAsyncHandler(async (req, res) => {
+const deleteEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
   if (!req.params.eventId) {
     return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Event ID is required in order to delete event.");
   }
