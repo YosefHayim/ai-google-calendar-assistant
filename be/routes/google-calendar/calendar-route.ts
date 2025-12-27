@@ -9,20 +9,22 @@ router.use(authHandler);
 // get info about all the calendars the user has
 router.get("/", calendarController.getAllCalendars);
 
-// get calendar overview
-router.get("/:id", calendarController.getCalendarInfoById);
+// get settings of calendar
+router.get("/settings", calendarController.getSettingsOfCalendar);
+router.get("/settings/:id", calendarController.getSettingsOfCalendarById);
 
 // get free busy
 router.get("/freebusy", calendarController.getFreeBusy);
 
 // get calendar colors
 router.get("/colors", calendarController.getAllCalendarColors);
-
 router.get("/colors/:id", calendarController.getCalendarColorById);
 
 // get calendar timezone
 router.get("/timezones", calendarController.getAllCalendarTimezones);
-
 router.get("/timezones/:id", calendarController.getCalendarTimezoneById);
+
+// get calendar overview by id - MUST be last (catches all /:id patterns)
+router.get("/:id", calendarController.getCalendarInfoById);
 
 export default router;

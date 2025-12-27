@@ -5,11 +5,11 @@ import { reqResAsyncHandler, sendR } from "@/utils/http";
 
 import type { User } from "@supabase/supabase-js";
 import jwt from "jsonwebtoken";
-import { thirdPartySignInOrSignUp } from "@/utils/auth";
+import { supabaseThirdPartySignInOrSignUp } from "@/utils/auth";
 
 const generateAuthGoogleUrl = reqResAsyncHandler(async (req: Request, res: Response) => {
   const code = req.query.code as string | undefined;
-  const postmanHeaders = req.headers["user-agent"] || "";
+  const postmanHeaders = req.headers["user-agent"];
 
   const url = OAUTH2CLIENT.generateAuthUrl({
     access_type: "offline",
@@ -33,7 +33,7 @@ const generateAuthGoogleUrl = reqResAsyncHandler(async (req: Request, res: Respo
 
     const { id_token, refresh_token, refresh_token_expires_in, expiry_date, access_token, token_type, scope } = tokens as TokensProps;
 
-    const user = jwt.decode(id_token || "") as GoogleIdTokenPayloadProps;
+    const user = jwt.decode(id_token!) as GoogleIdTokenPayloadProps;
 
     const { data, error } = await SUPABASE.from("user_calendar_tokens")
       .update({
@@ -45,11 +45,11 @@ const generateAuthGoogleUrl = reqResAsyncHandler(async (req: Request, res: Respo
         id_token,
         scope,
         is_active: true,
-        email: user.email,
+        email: user.email!,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })
-      .eq("email", user.email)
+      .eq("email", user.email!)
       .select();
 
     if (error) {
@@ -84,11 +84,11 @@ const signUpUserReg = reqResAsyncHandler(async (req: Request, res: Response) => 
 });
 
 const signUpOrSignInWithGoogle = reqResAsyncHandler(async (req: Request, res: Response) => {
-  await thirdPartySignInOrSignUp(req, res, PROVIDERS.GOOGLE);
+  await supabaseThirdPartySignInOrSignUp(req, res, PROVIDERS.GOOGLE);
 });
 
 const signUpUserViaGitHub = reqResAsyncHandler(async (req: Request, res: Response) => {
-  await thirdPartySignInOrSignUp(req, res, PROVIDERS.GITHUB);
+  await supabaseThirdPartySignInOrSignUp(req, res, PROVIDERS.GITHUB);
 });
 
 const getUserInformation = (req: Request, res: Response) => {
