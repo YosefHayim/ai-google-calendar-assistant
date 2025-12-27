@@ -1,5 +1,5 @@
 import { SUPABASE } from "@/config";
-import { TOKEN_FIELDS } from "./constants";
+import { TOKEN_FIELDS } from "@/config/constants/sql";
 import type { TokensProps } from "@/types";
 import { asyncHandler } from "../http/async-handlers";
 

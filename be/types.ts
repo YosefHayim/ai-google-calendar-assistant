@@ -1,18 +1,7 @@
-import type { User } from "@supabase/supabase-js";
-import type { calendar_v3 } from "googleapis";
 import type { AGENTS, AGENT_TOOLS } from "@/ai-agents";
 
-// Re-export constants from config for backward compatibility
-export {
-  GOOGLE_CALENDAR_SCOPES,
-  STATUS_RESPONSE,
-  ROUTES,
-  PROVIDERS,
-  ACTION,
-  MODELS,
-  CURRENT_MODEL,
-  TIMEZONE,
-} from "@/config";
+import type { User } from "@supabase/supabase-js";
+import type { calendar_v3 } from "googleapis";
 
 export type EventParametersProps = {
   summary?: string | null | undefined;

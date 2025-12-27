@@ -1,0 +1,23 @@
+import { REQUEST_CONFIG_BASE } from "@/config";
+import type { calendar_v3 } from "googleapis";
+
+type UpdateEventParams = {
+  calendarEvents: calendar_v3.Resource$Events;
+  eventData?: calendar_v3.Schema$Event | Record<string, string>;
+  extra?: Record<string, unknown>;
+  req?: { query?: Record<string, unknown> } | null;
+};
+
+export async function updateEvent({ calendarEvents, eventData, extra, req }: UpdateEventParams) {
+  const body = (eventData as calendar_v3.Schema$Event & { calendarId?: string; email?: string }) || {};
+  const calendarId = (extra?.calendarId as string) || body.calendarId || (req?.query?.calendarId as string) || "primary";
+
+  const resp = await calendarEvents.update({
+    ...REQUEST_CONFIG_BASE,
+    eventId: (eventData?.id as string) || "",
+    requestBody: eventData,
+    calendarId,
+  });
+
+  return resp.data;
+}
