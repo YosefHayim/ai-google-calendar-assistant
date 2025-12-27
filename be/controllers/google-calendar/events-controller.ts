@@ -2,7 +2,7 @@ import { ACTION, REQUEST_CONFIG_BASE, STATUS_RESPONSE } from "@/config";
 import { Request, Response } from "express";
 import { reqResAsyncHandler, sendR } from "@/utils/http";
 
-import { User } from "../../domain/entities/User";
+import type { User } from "@supabase/supabase-js";
 import { eventsHandler } from "@/utils";
 import { fetchCredentialsByEmail } from "@/utils/auth/get-user-calendar-tokens";
 import { initCalendarWithUserTokensAndUpdateTokens } from "@/utils/calendar/init";

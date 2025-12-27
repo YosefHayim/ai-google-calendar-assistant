@@ -1,19 +1,16 @@
-import { ACTION, REQUEST_CONFIG_BASE, STATUS_RESPONSE } from "@/config";
+import { ACTION, STATUS_RESPONSE } from "@/config";
 
 import type { AuthedRequest } from "@/types";
 import type { Request } from "express";
 import { asyncHandler } from "../http/async-handlers";
 import type { calendar_v3 } from "googleapis";
+import { deleteEvent } from "./delete-event";
 import errorTemplate from "../http/error-template";
 import { fetchCredentialsByEmail } from "../auth/get-user-calendar-tokens";
-import formatDate from "../date/format-date";
-import { getEventDurationString } from "./duration";
+import { getEvents } from "./get-events";
 import { initCalendarWithUserTokensAndUpdateTokens } from "./init";
-
-type ListExtra = Partial<calendar_v3.Params$Resource$Events$List> & {
-  email?: string;
-  customEvents?: boolean;
-};
+import { insertEvent } from "./insert-event";
+import { updateEvent } from "./update-event";
 
 export const eventsHandler = asyncHandler(
   async (req?: Request | null, action?: ACTION, eventData?: calendar_v3.Schema$Event | Record<string, string>, extra?: Record<string, unknown>) => {
@@ -32,86 +29,17 @@ export const eventsHandler = asyncHandler(
     }
 
     switch (action) {
-      case ACTION.GET: {
-        // Normalize extra/list params
-        const rawExtra: ListExtra = { ...(extra as ListExtra), ...(req?.body ?? {}), ...(req?.query ?? {}) };
+      case ACTION.GET:
+        return getEvents({ calendarEvents, req, extra });
 
-        const customFlag = Boolean(rawExtra.customEvents);
-        const { email: _omitEmail, customEvents: _omitCustom, calendarId, ...listExtraRaw } = rawExtra;
+      case ACTION.INSERT:
+        return insertEvent({ calendarEvents, eventData, extra });
 
-        // Build a clean param object only with allowed fields for events.list
-        const listExtra: calendar_v3.Params$Resource$Events$List = {
-          ...REQUEST_CONFIG_BASE,
-          prettyPrint: true,
-          maxResults: 2499,
-          calendarId: calendarId ?? "primary",
-          ...listExtraRaw,
-        };
+      case ACTION.UPDATE:
+        return updateEvent({ calendarEvents, eventData, extra, req });
 
-        // Drop falsy q instead of sending null
-        if (!listExtra.q) {
-          (listExtra as Record<string, unknown>).q = undefined;
-        }
-        const events = await calendarEvents.list(listExtra);
-
-        if (customFlag) {
-          const items = (events.data.items ?? []).slice().reverse();
-          const totalEventsFound = items.map((event: calendar_v3.Schema$Event) => {
-            const startDate = event.start?.date || event.start?.dateTime || null;
-            const endDate = event.end?.date || event.end?.dateTime || null;
-            return {
-              eventId: event.id || "No ID",
-              summary: event.summary || "Untitled Event",
-              description: event.description || null,
-              location: event.location || null,
-              durationOfEvent: startDate && endDate ? getEventDurationString(startDate as string, endDate as string) : null,
-              start: formatDate(startDate, true) || null,
-              end: formatDate(endDate, true) || null,
-            };
-          });
-          return { totalNumberOfEventsFound: totalEventsFound.length, totalEventsFound };
-        }
-        return events;
-      }
-
-      case ACTION.INSERT: {
-        const body = (eventData as calendar_v3.Schema$Event & { calendarId?: string; email?: string }) || {};
-        const calendarId = (extra?.calendarId as string) || body.calendarId || "primary";
-
-        const { calendarId: _cid, email: _email, ...requestBody } = body;
-
-        const createdEvent = await calendarEvents.insert({
-          ...REQUEST_CONFIG_BASE,
-          calendarId,
-          requestBody,
-        });
-        return createdEvent.data;
-      }
-
-      case ACTION.UPDATE: {
-        const body = (eventData as calendar_v3.Schema$Event & { calendarId?: string; email?: string }) || {};
-        const calendarId = (extra?.calendarId as string) || body.calendarId || (req?.query.calendarId as string) || "primary";
-
-        const resp = await calendarEvents.update({
-          ...REQUEST_CONFIG_BASE,
-          eventId: (eventData?.id as string) || "",
-          requestBody: eventData,
-          calendarId,
-        });
-
-        return resp.data;
-      }
-
-      case ACTION.DELETE: {
-        const calendarId = (extra?.calendarId as string) || (req?.body.calendarId as string) || (req?.query.calendarId as string) || "primary";
-
-        const resp = await calendarEvents.delete({
-          ...REQUEST_CONFIG_BASE,
-          calendarId,
-          eventId: (eventData?.id as string) || "",
-        });
-        return resp.data;
-      }
+      case ACTION.DELETE:
+        return deleteEvent({ calendarEvents, eventData, extra, req });
 
       default:
         throw errorTemplate("Unsupported calendar action", STATUS_RESPONSE.BAD_REQUEST);

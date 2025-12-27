@@ -1,10 +1,11 @@
 import { ACTION, OAUTH2CLIENT, REDIRECT_URI, SCOPES, SUPABASE } from "@/config";
-import { TOKEN_FIELDS, fetchCredentialsByEmail } from "@/utils/auth";
 import { eventsHandler, initCalendarWithUserTokensAndUpdateTokens } from "@/utils/calendar";
 import { formatEventData, getCalendarCategoriesByEmail, parseToolArguments } from "./utils";
 
+import { TOKEN_FIELDS } from "@/config/constants/sql";
 import { asyncHandler } from "@/utils/http";
 import type { calendar_v3 } from "googleapis";
+import { fetchCredentialsByEmail } from "@/utils/auth";
 import isEmail from "validator/lib/isEmail";
 
 type Event = calendar_v3.Schema$Event;

@@ -1,7 +1,6 @@
-import { REDIRECT_URI, SCOPES_STRING, STATUS_RESPONSE, SUPABASE } from "@/config";
+import { PROVIDERS, REDIRECT_URI, SCOPES_STRING, STATUS_RESPONSE, SUPABASE } from "@/config";
 import type { Request, Response } from "express";
 
-import type { PROVIDERS } from "@/types";
 import { asyncHandler } from "../http/async-handlers";
 import sendR from "@/utils/send-response";
 
