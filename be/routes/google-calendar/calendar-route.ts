@@ -12,6 +12,12 @@ router.get("/", calendarController.getAllCalendars);
 // get calendar overview
 router.get("/:id", calendarController.getCalendarInfoById);
 
+// get free busy
+router.get("/freebusy", calendarController.getFreeBusy);
+
+// get settings of calendar
+router.get("/settings", calendarController.getSettingsOfCalendar);
+
 // get calendar colors
 router.get("/colors", calendarController.getAllCalendarColors);
 
