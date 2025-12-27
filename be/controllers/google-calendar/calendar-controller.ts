@@ -40,7 +40,7 @@ const getAllCalendarColors = reqResAsyncHandler(async (req, res) => {
   const tokenData = await fetchCredentialsByEmail(user.email!);
   const calendar = await initCalendarWithUserTokensAndUpdateTokens(tokenData);
   const r = await calendar.colors.get();
-  sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully received calendar colors", r.data);
+  sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully received calendar colors", r);
 });
 
 const getAllCalendarTimezones = reqResAsyncHandler(async (req, res) => {
@@ -55,7 +55,7 @@ const getCalendarInfoById = reqResAsyncHandler(async (req, res) => {
   const user = (req as Request & { user: User }).user;
   const tokenData = await fetchCredentialsByEmail(user.email!);
   const calendar = await initCalendarWithUserTokensAndUpdateTokens(tokenData);
-  const r = await calendar.calendars.get({ calendarId: req.params.calendarId });
+  const r = await calendar.calendars.get({ calendarId: req.params.id });
   sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully received calendar overview", r.data);
 });
 
@@ -63,7 +63,7 @@ const getCalendarColorById = reqResAsyncHandler(async (req, res) => {
   const user = (req as Request & { user: User }).user;
   const tokenData = await fetchCredentialsByEmail(user.email!);
   const calendar = await initCalendarWithUserTokensAndUpdateTokens(tokenData);
-  const r = await calendar.calendars.get({ calendarId: req.params.calendarId });
+  const r = await calendar.calendars.get({ calendarId: req.params.id });
   sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully received calendar color", r.data);
 });
 
@@ -91,16 +91,7 @@ const getFreeBusy = reqResAsyncHandler(async (req, res) => {
   sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully received free busy", r);
 });
 
-const getSettingsOfCalendar = reqResAsyncHandler(async (req, res) => {
-  const user = (req as Request & { user: User }).user;
-  const tokenData = await fetchCredentialsByEmail(user.email!);
-  const calendar = await initCalendarWithUserTokensAndUpdateTokens(tokenData);
-  const r = await calendar.settings.list({ prettyPrint: true });
-  sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully received calendar settings", r);
-});
-
 export default {
-  getSettingsOfCalendar,
   getFreeBusy,
   getCalendarColorById,
   getCalendarTimezoneById,

@@ -9,11 +9,9 @@ export const updateTokensOfUser = asyncHandler(async (oldTokens: TokensProps, ne
     expiry_date: newTokens.expiry_date,
     updated_at: new Date().toISOString(),
   };
-  const { error } = await SUPABASE.from("user_calendar_tokens")
-    .update(updatedTokens)
-    .eq("email", oldTokens.email || "");
+  const { error } = await SUPABASE.from("user_calendar_tokens").update(updatedTokens).eq("email", oldTokens.email!);
   if (error) {
-    throw new Error(`Failed to update Supabase tokens: ${error.message}`);
+    throw new Error(`Failed to update user calendar tokens in supabase: ${error.message}`);
   }
   return updatedTokens;
 });
