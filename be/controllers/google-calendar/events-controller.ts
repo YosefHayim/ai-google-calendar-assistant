@@ -20,11 +20,9 @@ const getEventById = reqResAsyncHandler(async (req: Request, res: Response) => {
 
   const calendar = await initCalendarWithUserTokensAndUpdateTokens(tokenData);
 
-  const calendarId = (req.query?.calendarId as string) ?? "primary";
-
   const r = await calendar.events.get({
     ...REQUEST_CONFIG_BASE,
-    calendarId,
+    calendarId: req.query?.id as string,
     eventId: req.params.eventId,
   });
 
@@ -43,7 +41,7 @@ const getAllFilteredEvents = reqResAsyncHandler(async (req: Request, res: Respon
 });
 
 const createEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const r = await eventsHandler(req, ACTION.INSERT, req.body, { calendarId: req.body.calendarId, email: req.body.email });
+  const r = await eventsHandler(req, ACTION.INSERT, req.body, { calendarId: req.body.id, email: req.body.email });
   sendR(res, STATUS_RESPONSE.CREATED, "Event created successfully", r);
 });
 
