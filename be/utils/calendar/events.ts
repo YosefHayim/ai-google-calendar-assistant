@@ -8,7 +8,7 @@ import { deleteEvent } from "./delete-event";
 import errorTemplate from "../http/error-template";
 import { fetchCredentialsByEmail } from "../auth/get-user-calendar-tokens";
 import { getEvents } from "./get-events";
-import { initCalendarWithUserTokensAndUpdateTokens } from "./init";
+import { initUserSupabaseCalendarWithTokensAndUpdateTokens } from "./init";
 import { insertEvent } from "./insert-event";
 import { updateEvent } from "./update-event";
 
@@ -21,7 +21,7 @@ export const eventsHandler = asyncHandler(
     }
 
     const credentials = await fetchCredentialsByEmail(email);
-    const calendar = await initCalendarWithUserTokensAndUpdateTokens(credentials);
+    const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(credentials);
     const calendarEvents = calendar.events;
 
     if ((action === ACTION.UPDATE || action === ACTION.DELETE) && !eventData?.id) {
