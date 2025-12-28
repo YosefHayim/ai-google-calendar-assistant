@@ -7,6 +7,17 @@ import type { User } from "@supabase/supabase-js";
 import jwt from "jsonwebtoken";
 import { supabaseThirdPartySignInOrSignUp } from "@/utils/auth";
 
+/**
+ * Generate Google Auth URL
+ *
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @returns {Promise<void>} The response object.
+ * @description Generates a Google Auth URL and sends it to the user.
+ * @example
+ * const url = await generateAuthGoogleUrl(req, res);
+ * console.log(url);
+ */
 const generateAuthGoogleUrl = reqResAsyncHandler(async (req: Request, res: Response) => {
   const code = req.query.code as string | undefined;
   const postmanHeaders = req.headers["user-agent"];
@@ -64,6 +75,17 @@ const generateAuthGoogleUrl = reqResAsyncHandler(async (req: Request, res: Respo
   }
 });
 
+/**
+ * Sign up user registration
+ *
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @returns {Promise<void>} The response object.
+ * @description Signs up a user and sends the response.
+ * @example
+ * const data = await signUpUserReg(req, res);
+ * console.log(data);
+ */
 const signUpUserReg = reqResAsyncHandler(async (req: Request, res: Response) => {
   if (!(req.body.email && req.body.password)) {
     sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Email and password are required.");
@@ -83,21 +105,65 @@ const signUpUserReg = reqResAsyncHandler(async (req: Request, res: Response) => 
   }
 });
 
+/**
+ * Sign up or sign in with Google using Supabase Third Party Sign In or Sign Up
+ *
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @returns {Promise<void>} The response object.
+ * @description Signs up or signs in a user with Google and sends the response.
+ * @example
+ * const data = await signUpOrSignInWithGoogle(req, res);
+ * console.log(data);
+ */
 const signUpOrSignInWithGoogle = reqResAsyncHandler(async (req: Request, res: Response) => {
   await supabaseThirdPartySignInOrSignUp(req, res, PROVIDERS.GOOGLE);
 });
 
+/**
+ * Sign up user via GitHub using Supabase Third Party Sign In or Sign Up
+ *
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @returns {Promise<void>} The response object.
+ * @description Signs up a user with GitHub and sends the response.
+ * @example
+ * const data = await signUpUserViaGitHub(req, res);
+ * console.log(data);
+ */
 const signUpUserViaGitHub = reqResAsyncHandler(async (req: Request, res: Response) => {
   await supabaseThirdPartySignInOrSignUp(req, res, PROVIDERS.GITHUB);
 });
 
-const getUserInformation = (req: Request, res: Response) => {
+/**
+ * Get user information
+ *
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @returns {Promise<void>} The response object.
+ * @description Gets user information and sends the response.
+ * @example
+ * const data = await getUserInformation(req, res);
+ * console.log(data);
+ */
+const getUserInformation = reqResAsyncHandler(async (req: Request, res: Response) => {
   if (!(req as Request & { user?: User }).user) {
     return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated.");
   }
   sendR(res, STATUS_RESPONSE.SUCCESS, "User fetched successfully.", (req as Request & { user?: User }).user);
-};
+});
 
+/**
+ * Deactivate user calendar tokens by email
+ *
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @returns {Promise<void>} The response object.
+ * @description Deactivates a user calendar tokens by email and sends the response.
+ * @example
+ * const data = await deActivateUser(req, res);
+ * console.log(data);
+ */
 const deActivateUser = reqResAsyncHandler(async (req: Request, res: Response) => {
   const { data, error } = await SUPABASE.from("user_calendar_tokens").select("email").eq("email", req.body.email);
   if (error) {
@@ -112,6 +178,17 @@ const deActivateUser = reqResAsyncHandler(async (req: Request, res: Response) =>
   }
 });
 
+/**
+ * Sign in user registration using Supabase Auth Sign In With Password
+ *
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @returns {Promise<void>} The response object.
+ * @description Signs in a user and sends the response.
+ * @example
+ * const data = await signInUserReg(req, res);
+ * console.log(data);
+ */
 const signInUserReg = reqResAsyncHandler(async (req: Request, res: Response) => {
   if (!(req.body.email && req.body.password)) {
     sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Email and password are required ");
@@ -129,7 +206,18 @@ const signInUserReg = reqResAsyncHandler(async (req: Request, res: Response) => 
   sendR(res, STATUS_RESPONSE.SUCCESS, "User signin successfully.", data);
 });
 
-const verifyEmailByOpt = reqResAsyncHandler(async (req: Request, res: Response) => {
+/**
+ * Verify email by OTP using Supabase Auth Verify OTP
+ *
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @returns {Promise<void>} The response object.
+ * @description Verifies an email by OTP and sends the response.
+ * @example
+ * const data = await verifyEmailByOtp(req, res);
+ * console.log(data);
+ */
+const verifyEmailByOtp = reqResAsyncHandler(async (req: Request, res: Response) => {
   if (!(req.body.email && req.body.token)) {
     sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Email and token are required.");
   }
@@ -148,7 +236,7 @@ const verifyEmailByOpt = reqResAsyncHandler(async (req: Request, res: Response) 
 });
 
 export const userController = {
-  verifyEmailByOpt,
+  verifyEmailByOtp,
   signUpUserReg,
   signUpOrSignInWithGoogle,
   signUpUserViaGitHub,

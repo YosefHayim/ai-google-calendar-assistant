@@ -3,6 +3,17 @@ import type { MiddlewareFn } from "grammy";
 import { SUPABASE } from "@/config";
 import isEmail from "validator/lib/isEmail";
 
+/**
+ * Authenticate Telegram user by token using Supabase Auth Get User
+ *
+ * @param {Context} ctx - The context object.
+ * @param {NextFunction} next - The next function.
+ * @returns {Promise<void>} The response object.
+ * @description Authenticates a Telegram user by token and sends the response.
+ * @example
+ * const data = await authTgHandler(ctx, next);
+ * console.log(data);
+ */
 export const authTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
   const from = ctx.from;
   const session = ctx.session;
@@ -15,8 +26,8 @@ export const authTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
   if (!session.chatId) {
     session.chatId = from.id;
     session.userId = from.id;
-    session.username = from.username ?? "";
-    session.codeLang = from.language_code ?? "en";
+    session.username = from.username;
+    session.codeLang = from.language_code;
     session.messageCount = 0;
   }
 
