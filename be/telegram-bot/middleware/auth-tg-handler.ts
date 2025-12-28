@@ -61,6 +61,7 @@ export const authTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
       first_name: from.first_name,
       language_code: from.language_code,
       email: text,
+      updated_at: new Date().toISOString(),
     });
     await ctx.reply("Email has been saved successfully!");
     session.messageCount++;

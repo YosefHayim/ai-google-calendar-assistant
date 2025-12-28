@@ -63,7 +63,7 @@ Example:
 Example:
 { "email": "user@example.com", "eventId": "abc123def456" }`,
 
-  getEvent: `Retrieves events from the user's calendar. Requires "email". Optional: "q" (keyword query), "timeMin" (RFC3339). If not provided, the implementation defaults timeMin to today's date (YYYY-MM-DD). Returns an array of event objects.
+  getEvent: `Retrieves events from the user's calendar. Requires "email". Optional: "q" (keyword query), "timeMin" (RFC3339). If not provided, the implementation defaults timeMin to today's date (YYYY-MM-DD). Returns an array of event objects. Always pass customEvents=true to get back the shorter event object.
 Example:
 { "email": "user@example.com", "q": "standup", "timeMin": "2025-01-01" }`,
 

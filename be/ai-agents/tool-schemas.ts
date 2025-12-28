@@ -1,6 +1,6 @@
+import { TIMEZONE } from "@/config";
 import validator from "validator";
 import { z } from "zod";
-import { TIMEZONE } from "@/config";
 
 const MIN_PW = 6;
 const MAX_PW = 72;
@@ -76,7 +76,7 @@ export const PARAMETERS_TOOLS = {
       timeMin: z.coerce.string({ description: "The minimum date and time for events to return, formatted as RFC3339 timestamp." }).nullable(),
       q: z.coerce.string({ description: "Optional parameter to search for text matches across all event fields in Google Calendar." }).nullable(),
       customEvents: z.coerce
-        .boolean({ description: "Optional parameter whether we want to receive back custom event object or not, default to false." })
+        .boolean({ description: "Optional parameter whether we want to receive back custom event object or not, default to true." })
         .nullable(),
     })
     .describe("Fetch events for the user email for the maximum date of time provided."),
