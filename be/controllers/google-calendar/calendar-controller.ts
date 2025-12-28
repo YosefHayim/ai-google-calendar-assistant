@@ -42,7 +42,7 @@ const getAllCalendars = reqResAsyncHandler(async (req: Request, res: Response) =
       };
     });
 
-    await updateUserSupabaseCalendarCategories(calendar, user.email!, user.id);
+    // await updateUserSupabaseCalendarCategories(calendar, user.email!, user.id);
 
     return sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully received all custom calendars", allCalendars);
   } else {
