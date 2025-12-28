@@ -282,14 +282,12 @@ export type Database = {
         Row: {
           access_role: string
           background_color: string | null
-          calendar_id: string
-          calendar_name: string
+          calendars: Json | null
           created_at: string
           default_reminders: Json | null
           description: string | null
           foreground_color: string | null
           id: number
-          is_primary: boolean
           location: string | null
           time_zone: string
           updated_at: string
@@ -298,14 +296,12 @@ export type Database = {
         Insert: {
           access_role: string
           background_color?: string | null
-          calendar_id: string
-          calendar_name: string
+          calendars?: Json | null
           created_at?: string
           default_reminders?: Json | null
           description?: string | null
           foreground_color?: string | null
           id?: number
-          is_primary?: boolean
           location?: string | null
           time_zone: string
           updated_at?: string
@@ -314,14 +310,12 @@ export type Database = {
         Update: {
           access_role?: string
           background_color?: string | null
-          calendar_id?: string
-          calendar_name?: string
+          calendars?: Json | null
           created_at?: string
           default_reminders?: Json | null
           description?: string | null
           foreground_color?: string | null
           id?: number
-          is_primary?: boolean
           location?: string | null
           time_zone?: string
           updated_at?: string

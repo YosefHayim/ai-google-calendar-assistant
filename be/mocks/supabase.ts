@@ -39,6 +39,10 @@ export const mockUserCalendarToken: Database["public"]["Tables"]["user_calendar_
   refresh_token_expires_in: 7776000,
   scope: "https://www.googleapis.com/auth/calendar",
   token_type: "Bearer",
+  calendars: [
+    { calendar_id: "primary", calendar_name: "Primary Calendar" },
+    { calendar_id: "work@example.com", calendar_name: "Work Calendar" },
+  ],
   created_at: "2024-01-01T00:00:00Z",
   updated_at: "2024-01-01T00:00:00Z",
 };

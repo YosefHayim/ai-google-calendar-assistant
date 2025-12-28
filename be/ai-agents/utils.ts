@@ -1,6 +1,7 @@
-import type { calendar_v3 } from "googleapis";
 import { SUPABASE, TIMEZONE } from "@/config";
+
 import { asyncHandler } from "@/utils/http";
+import type { calendar_v3 } from "googleapis";
 
 type Event = calendar_v3.Schema$Event;
 type EDT = calendar_v3.Schema$EventDateTime;
@@ -69,7 +70,7 @@ export const formatEventData = (params: Partial<Event>): Event => {
 
   // Time zone rules: only for timed events
   const tzStart = start.dateTime ? start.timeZone : undefined;
-  const tzEnd = end.dateTime ? (end.timeZone ?? tzStart) : undefined;
+  const tzEnd = end.dateTime ? end.timeZone ?? tzStart : undefined;
 
   if ((start.dateTime || end.dateTime) && !(tzStart || tzEnd)) {
     throw new Error("Event timeZone is required for timed events.");
@@ -110,26 +111,22 @@ export const formatEventData = (params: Partial<Event>): Event => {
   return deepClean(event);
 };
 
-export const getCalendarCategoriesByEmail = asyncHandler(async (email: string) => {
-  // First try to get user_id from user_calendar_tokens
-  const { data: tokenData } = await SUPABASE.from("user_calendar_tokens")
-    .select("user_id")
-    .eq("email", email)
-    .single();
+export type UserCalendar = {
+  calendar_id: string;
+  calendar_name: string;
+};
 
-  if (tokenData?.user_id) {
-    // Query by user_id (preferred method)
-    const { data, error } = await SUPABASE.from("user_calendars")
-      .select("*")
-      .eq("user_id", tokenData.user_id);
-    if (error) {
-      throw error;
-    }
-    return data;
+export const getCalendarCategoriesByEmail = asyncHandler(async (email: string): Promise<UserCalendar[]> => {
+  const { data: tokenData, error } = await SUPABASE.from("user_calendars").select("calendars").eq("email", email).single();
+
+  if (error) {
+    throw error;
   }
 
-  // Fallback: if no user_id found, return empty array
-  // This maintains backward compatibility but encourages using user_id
+  if (tokenData?.calendars && Array.isArray(tokenData.calendars)) {
+    return tokenData.calendars as UserCalendar[];
+  }
+
   return [];
 });
 
