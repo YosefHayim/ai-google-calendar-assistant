@@ -6,6 +6,7 @@ import type { User } from "@supabase/supabase-js";
 import type { calendar_v3 } from "googleapis";
 import { fetchCredentialsByEmail } from "@/utils/auth";
 import { initUserSupabaseCalendarWithTokensAndUpdateTokens } from "@/utils/calendar";
+import { updateUserSupabaseCalendarCategories } from "@/utils/calendar/update-categories";
 
 /**
  * Get all calendars
@@ -28,18 +29,21 @@ const getAllCalendars = reqResAsyncHandler(async (req: Request, res: Response) =
   const r = await calendar.calendarList.list({ prettyPrint: true });
 
   if (req.query.customCalendars === "true") {
-    const allCalendars = r.data.items?.map((item: calendar_v3.Schema$CalendarListEntry) => {
+    const allCalendars = r.data.items?.map((calendar: calendar_v3.Schema$CalendarListEntry) => {
       return {
-        calendarId: item.id,
-        calendarName: item.summary,
-        calendarDescription: item.description,
-        calendarLocation: item.location,
-        calendarColorForEvents: item.colorId,
-        accessRole: item.accessRole,
-        timeZoneForCalendar: item.timeZone,
-        defaultReminders: item.defaultReminders,
+        calendarId: calendar.id,
+        calendarName: calendar.summary,
+        calendarDescription: calendar.description,
+        calendarLocation: calendar.location,
+        calendarColorForEvents: calendar.colorId,
+        accessRole: calendar.accessRole,
+        timeZoneForCalendar: calendar.timeZone,
+        defaultReminders: calendar.defaultReminders,
       };
     });
+
+    await updateUserSupabaseCalendarCategories(calendar, user.email!, user.id);
+
     return sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully received all custom calendars", allCalendars);
   } else {
     sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully received all calendars", r);
