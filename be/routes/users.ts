@@ -1,6 +1,6 @@
+import { authHandler } from "@/middlewares/auth-handler";
 import express from "express";
 import { userController } from "@/controllers/users-controller";
-import { authHandler } from "@/middlewares/auth-handler";
 
 const router = express.Router();
 
@@ -10,7 +10,7 @@ router.delete("/", authHandler, userController.deActivateUser);
 
 router.get("/callback", userController.generateAuthGoogleUrl);
 
-router.post("/verify-user-by-email-otp", userController.verifyEmailByOpt);
+router.post("/verify-user-by-email-otp", userController.verifyEmailByOtp);
 
 router.post("/signup", userController.signUpUserReg);
 

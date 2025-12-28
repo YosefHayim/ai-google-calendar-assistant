@@ -7,6 +7,17 @@ import { eventsHandler } from "@/utils";
 import { fetchCredentialsByEmail } from "@/utils/auth/get-user-calendar-tokens";
 import { initCalendarWithUserTokensAndUpdateTokens } from "@/utils/calendar/init";
 
+/**
+ * Get event by event ID
+ *
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @returns {Promise<void>} The response object.
+ * @description Gets event by event ID from calendar and sends the response.
+ * @example
+ * const data = await getEventById(req, res);
+ * console.log(data);
+ */
 const getEventById = reqResAsyncHandler(async (req: Request, res: Response) => {
   const user = (req as Request & { user: User }).user;
   const tokenData = await fetchCredentialsByEmail(user.email!);
@@ -29,22 +40,66 @@ const getEventById = reqResAsyncHandler(async (req: Request, res: Response) => {
   sendR(res, STATUS_RESPONSE.SUCCESS, "Event retrieved successfully", r.data);
 });
 
+/**
+ * Get all events
+ *
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @returns {Promise<void>} The response object.
+ * @description Gets all events and sends the response.
+ * @example
+ * const data = await getAllEvents(req, res);
+ * console.log(data);
+ */
 const getAllEvents = reqResAsyncHandler(async (req: Request, res: Response) => {
   const r = await eventsHandler(req as Request, ACTION.GET);
   sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully retrieved all events", r);
 });
 
+/**
+ * Get all filtered events
+ *
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @returns {Promise<void>} The response object.
+ * @description Gets all filtered events and sends the response.
+ * @example
+ * const data = await getAllFilteredEvents(req, res);
+ * console.log(data);
+ */
 const getAllFilteredEvents = reqResAsyncHandler(async (req: Request, res: Response) => {
   const r = await eventsHandler(req, ACTION.GET, undefined, req.query as Record<string, string>);
 
   sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully retrieved all filtered events", r);
 });
 
+/**
+ * Create event in calendar
+ *
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @returns {Promise<void>} The response object.
+ * @description Creates an event in calendar and sends the response.
+ * @example
+ * const data = await createEvent(req, res);
+ * console.log(data);
+ */
 const createEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
   const r = await eventsHandler(req, ACTION.INSERT, req.body, { calendarId: req.body.id, email: req.body.email });
   sendR(res, STATUS_RESPONSE.CREATED, "Event created successfully", r);
 });
 
+/**
+ * Update event by event ID
+ *
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @returns {Promise<void>} The response object.
+ * @description Updates an event by event ID and sends the response.
+ * @example
+ * const data = await updateEvent(req, res);
+ * console.log(data);
+ */
 const updateEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
   if (!req.params.eventId) {
     return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Event ID is required in order to update event.");
@@ -57,6 +112,17 @@ const updateEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
   sendR(res, STATUS_RESPONSE.SUCCESS, "Event updated successfully", r);
 });
 
+/**
+ * Delete event from calendar by event ID
+ *
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @returns {Promise<void>} The response object.
+ * @description Deletes an event from calendar by event ID and sends the response.
+ * @example
+ * const data = await deleteEvent(req, res);
+ * console.log(data);
+ */
 const deleteEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
   if (!req.params.eventId) {
     return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Event ID is required in order to delete event.");

@@ -1,13 +1,24 @@
+import type { Request, Response } from "express";
 import { reqResAsyncHandler, sendR } from "@/utils/http";
 
-import type { Request } from "express";
 import { STATUS_RESPONSE } from "@/config";
 import type { User } from "@supabase/supabase-js";
 import type { calendar_v3 } from "googleapis";
 import { fetchCredentialsByEmail } from "@/utils/auth";
 import { initCalendarWithUserTokensAndUpdateTokens } from "@/utils/calendar";
 
-const getAllCalendars = reqResAsyncHandler(async (req, res) => {
+/**
+ * Get all calendars
+ *
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @returns {Promise<void>} The response object.
+ * @description Gets all calendars and sends the response.
+ * @example
+ * const data = await getAllCalendars(req, res);
+ * console.log(data);
+ */
+const getAllCalendars = reqResAsyncHandler(async (req: Request, res: Response) => {
   const user = (req as Request & { user: User }).user;
   const tokenData = await fetchCredentialsByEmail(user.email!);
   if (!tokenData) {
@@ -35,7 +46,18 @@ const getAllCalendars = reqResAsyncHandler(async (req, res) => {
   }
 });
 
-const getAllCalendarColors = reqResAsyncHandler(async (req, res) => {
+/**
+ * Get all calendar colors
+ *
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @returns {Promise<void>} The response object.
+ * @description Gets all calendar colors and sends the response.
+ * @example
+ * const data = await getAllCalendarColors(req, res);
+ * console.log(data);
+ */
+const getAllCalendarColors = reqResAsyncHandler(async (req: Request, res: Response) => {
   const user = (req as Request & { user: User }).user;
   const tokenData = await fetchCredentialsByEmail(user.email!);
   const calendar = await initCalendarWithUserTokensAndUpdateTokens(tokenData);
@@ -43,7 +65,18 @@ const getAllCalendarColors = reqResAsyncHandler(async (req, res) => {
   sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully received calendar colors", r.data);
 });
 
-const getAllCalendarTimezones = reqResAsyncHandler(async (req, res) => {
+/**
+ * Get all calendar timezones
+ *
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @returns {Promise<void>} The response object.
+ * @description Gets all calendar timezones and sends the response.
+ * @example
+ * const data = await getAllCalendarTimezones(req, res);
+ * console.log(data);
+ */
+const getAllCalendarTimezones = reqResAsyncHandler(async (req: Request, res: Response) => {
   const user = (req as Request & { user: User }).user;
   const tokenData = await fetchCredentialsByEmail(user.email!);
   const calendar = await initCalendarWithUserTokensAndUpdateTokens(tokenData);
@@ -51,7 +84,18 @@ const getAllCalendarTimezones = reqResAsyncHandler(async (req, res) => {
   sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully received calendar timezone", r.data);
 });
 
-const getCalendarInfoById = reqResAsyncHandler(async (req, res) => {
+/**
+ * Get calendar info by id
+ *
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @returns {Promise<void>} The response object.
+ * @description Gets calendar info by id and sends the response.
+ * @example
+ * const data = await getCalendarInfoById(req, res);
+ * console.log(data);
+ */
+const getCalendarInfoById = reqResAsyncHandler(async (req: Request, res: Response) => {
   const user = (req as Request & { user: User }).user;
   const tokenData = await fetchCredentialsByEmail(user.email!);
   const calendar = await initCalendarWithUserTokensAndUpdateTokens(tokenData);
@@ -59,7 +103,18 @@ const getCalendarInfoById = reqResAsyncHandler(async (req, res) => {
   sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully received calendar overview", r.data);
 });
 
-const getCalendarColorById = reqResAsyncHandler(async (req, res) => {
+/**
+ * Get calendar color by id
+ *
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @returns {Promise<void>} The response object.
+ * @description Gets calendar color by id and sends the response.
+ * @example
+ * const data = await getCalendarColorById(req, res);
+ * console.log(data);
+ */
+const getCalendarColorById = reqResAsyncHandler(async (req: Request, res: Response) => {
   const user = (req as Request & { user: User }).user;
   const tokenData = await fetchCredentialsByEmail(user.email!);
   const calendar = await initCalendarWithUserTokensAndUpdateTokens(tokenData);
@@ -67,7 +122,18 @@ const getCalendarColorById = reqResAsyncHandler(async (req, res) => {
   sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully received calendar color", r.data);
 });
 
-const getCalendarTimezoneById = reqResAsyncHandler(async (req, res) => {
+/**
+ * Get calendar timezone by id
+ *
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @returns {Promise<void>} The response object.
+ * @description Gets calendar timezone by id and sends the response.
+ * @example
+ * const data = await getCalendarTimezoneById(req, res);
+ * console.log(data);
+ */
+const getCalendarTimezoneById = reqResAsyncHandler(async (req: Request, res: Response) => {
   const user = (req as Request & { user: User }).user;
   const tokenData = await fetchCredentialsByEmail(user.email!);
   const calendar = await initCalendarWithUserTokensAndUpdateTokens(tokenData);
@@ -75,7 +141,18 @@ const getCalendarTimezoneById = reqResAsyncHandler(async (req, res) => {
   sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully received calendar timezone", r.data);
 });
 
-const getFreeBusy = reqResAsyncHandler(async (req, res) => {
+/**
+ * Get free busy
+ *
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @returns {Promise<void>} The response object.
+ * @description Gets free busy and sends the response.
+ * @example
+ * const data = await getFreeBusy(req, res);
+ * console.log(data);
+ */
+const getFreeBusy = reqResAsyncHandler(async (req: Request, res: Response) => {
   const user = (req as Request & { user: User }).user;
   const tokenData = await fetchCredentialsByEmail(user.email!);
   const calendar = await initCalendarWithUserTokensAndUpdateTokens(tokenData);
@@ -91,7 +168,18 @@ const getFreeBusy = reqResAsyncHandler(async (req, res) => {
   sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully received free busy", r);
 });
 
-const getSettingsOfCalendar = reqResAsyncHandler(async (req, res) => {
+/**
+ * Get settings of calendar
+ *
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @returns {Promise<void>} The response object.
+ * @description Gets settings of calendar and sends the response.
+ * @example
+ * const data = await getSettingsOfCalendar(req, res);
+ * console.log(data);
+ */
+const getSettingsOfCalendar = reqResAsyncHandler(async (req: Request, res: Response) => {
   const user = (req as Request & { user: User }).user;
   const tokenData = await fetchCredentialsByEmail(user.email!);
   const calendar = await initCalendarWithUserTokensAndUpdateTokens(tokenData);
@@ -99,7 +187,18 @@ const getSettingsOfCalendar = reqResAsyncHandler(async (req, res) => {
   sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully received calendar settings", r.data);
 });
 
-const getSettingsOfCalendarById = reqResAsyncHandler(async (req, res) => {
+/**
+ * Get settings of calendar by id
+ *
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @returns {Promise<void>} The response object.
+ * @description Gets settings of calendar by id and sends the response.
+ * @example
+ * const data = await getSettingsOfCalendarById(req, res);
+ * console.log(data);
+ */
+const getSettingsOfCalendarById = reqResAsyncHandler(async (req: Request, res: Response) => {
   const user = (req as Request & { user: User }).user;
   const tokenData = await fetchCredentialsByEmail(user.email!);
   const calendar = await initCalendarWithUserTokensAndUpdateTokens(tokenData);

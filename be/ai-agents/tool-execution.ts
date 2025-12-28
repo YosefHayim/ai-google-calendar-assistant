@@ -64,12 +64,15 @@ export const EXECUTION_TOOLS = {
     return { ...formatted, email };
   }),
 
-  insertEvent: asyncHandler((params: calendar_v3.Schema$Event & { email: string; customEvents?: boolean }) => {
+  insertEvent: asyncHandler(async (params: calendar_v3.Schema$Event & { email: string; customEvents?: boolean }) => {
     const { email, calendarId, eventLike } = parseToolArguments(params);
     if (!(email && isEmail(email))) {
       throw new Error("Invalid email address.");
     }
-    const eventData: Event = formatEventData(eventLike as Event);
+
+    // If timed event without timezone, fetch user's default calendar timezone
+    const eventWithTimezone = await applyDefaultTimezoneIfNeeded(eventLike as Event, email);
+    const eventData: Event = formatEventData(eventWithTimezone);
     return eventsHandler(null, ACTION.INSERT, eventData, { email, calendarId: calendarId ?? "primary", customEvents: params.customEvents ?? false });
   }),
 
