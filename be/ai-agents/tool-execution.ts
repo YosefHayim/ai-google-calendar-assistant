@@ -13,6 +13,39 @@ type Event = calendar_v3.Schema$Event;
 const MAX_PW = 72;
 const MIN_PW = 6;
 
+/**
+ * Applies the user's default calendar timezone to timed events that don't have a timezone specified.
+ * All-day events (using date instead of dateTime) don't require a timezone.
+ */
+async function applyDefaultTimezoneIfNeeded(event: Partial<Event>, email: string): Promise<Partial<Event>> {
+  const hasTimedStart = !!event.start?.dateTime;
+  const hasTimedEnd = !!event.end?.dateTime;
+  const hasStartTz = !!event.start?.timeZone;
+  const hasEndTz = !!event.end?.timeZone;
+
+  // If not a timed event or already has timezone, return as-is
+  if ((!hasTimedStart && !hasTimedEnd) || (hasStartTz || hasEndTz)) {
+    return event;
+  }
+
+  // Fetch user's default calendar timezone
+  const tokenProps = await fetchCredentialsByEmail(email);
+  const calendar = await initCalendarWithUserTokensAndUpdateTokens(tokenProps);
+  const tzResponse = await calendar.settings.get({ setting: "timezone" });
+  const defaultTimezone = tzResponse.data.value;
+
+  if (!defaultTimezone) {
+    return event;
+  }
+
+  // Apply default timezone to start and end
+  return {
+    ...event,
+    start: event.start ? { ...event.start, timeZone: defaultTimezone } : event.start,
+    end: event.end ? { ...event.end, timeZone: defaultTimezone } : event.end,
+  };
+}
+
 export const EXECUTION_TOOLS = {
   generateGoogleAuthUrl: () => {
     const url = OAUTH2CLIENT.generateAuthUrl({
@@ -76,7 +109,7 @@ export const EXECUTION_TOOLS = {
     return eventsHandler(null, ACTION.INSERT, eventData, { email, calendarId: calendarId ?? "primary", customEvents: params.customEvents ?? false });
   }),
 
-  updateEvent: asyncHandler((params: calendar_v3.Schema$Event & { email: string; eventId: string }) => {
+  updateEvent: asyncHandler(async (params: calendar_v3.Schema$Event & { email: string; eventId: string }) => {
     const { email, calendarId, eventId, eventLike } = parseToolArguments(params);
     if (!(email && isEmail(email))) {
       throw new Error("Invalid email address.");
@@ -84,9 +117,11 @@ export const EXECUTION_TOOLS = {
     if (!eventId) {
       throw new Error("eventId is required for update.");
     }
-    const eventData: Event = { ...formatEventData(eventLike as Event), id: eventId };
-    const insureEventDataWithEventId = { ...eventData, id: eventId };
-    return eventsHandler(null, ACTION.UPDATE, insureEventDataWithEventId, { email, calendarId: calendarId ?? "primary", eventId });
+
+    // If timed event without timezone, fetch user's default calendar timezone
+    const eventWithTimezone = await applyDefaultTimezoneIfNeeded(eventLike as Event, email);
+    const eventData: Event = { ...formatEventData(eventWithTimezone), id: eventId };
+    return eventsHandler(null, ACTION.UPDATE, eventData, { email, calendarId: calendarId ?? "primary", eventId });
   }),
 
   getEvent: asyncHandler((params: calendar_v3.Schema$Event & { email: string; q?: string | null; timeMin?: string | null }) => {
