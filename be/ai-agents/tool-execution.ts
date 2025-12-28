@@ -1,5 +1,5 @@
 import { ACTION, OAUTH2CLIENT, REDIRECT_URI, SCOPES, SUPABASE } from "@/config";
-import { eventsHandler, initCalendarWithUserTokensAndUpdateTokens } from "@/utils/calendar";
+import { eventsHandler, initUserSupabaseCalendarWithTokensAndUpdateTokens } from "@/utils/calendar";
 import { formatEventData, getCalendarCategoriesByEmail, parseToolArguments } from "./utils";
 
 import { TOKEN_FIELDS } from "@/config/constants/sql";
@@ -24,13 +24,13 @@ async function applyDefaultTimezoneIfNeeded(event: Partial<Event>, email: string
   const hasEndTz = !!event.end?.timeZone;
 
   // If not a timed event or already has timezone, return as-is
-  if ((!hasTimedStart && !hasTimedEnd) || (hasStartTz || hasEndTz)) {
+  if ((!hasTimedStart && !hasTimedEnd) || hasStartTz || hasEndTz) {
     return event;
   }
 
   // Fetch user's default calendar timezone
   const tokenProps = await fetchCredentialsByEmail(email);
-  const calendar = await initCalendarWithUserTokensAndUpdateTokens(tokenProps);
+  const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenProps);
   const tzResponse = await calendar.settings.get({ setting: "timezone" });
   const defaultTimezone = tzResponse.data.value;
 
@@ -163,7 +163,7 @@ export const EXECUTION_TOOLS = {
       throw new Error("Invalid email address.");
     }
     const tokenProps = await fetchCredentialsByEmail(email);
-    const CALENDAR = await initCalendarWithUserTokensAndUpdateTokens(tokenProps);
+    const CALENDAR = await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenProps);
     const r = await CALENDAR.settings.get({ setting: "timezone" });
     return r;
   }),

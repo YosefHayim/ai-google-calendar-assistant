@@ -5,7 +5,7 @@ import { STATUS_RESPONSE } from "@/config";
 import type { User } from "@supabase/supabase-js";
 import type { calendar_v3 } from "googleapis";
 import { fetchCredentialsByEmail } from "@/utils/auth";
-import { initCalendarWithUserTokensAndUpdateTokens } from "@/utils/calendar";
+import { initUserSupabaseCalendarWithTokensAndUpdateTokens } from "@/utils/calendar";
 
 /**
  * Get all calendars
@@ -24,7 +24,7 @@ const getAllCalendars = reqResAsyncHandler(async (req: Request, res: Response) =
   if (!tokenData) {
     return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User credentials not found in order to retrieve all calendars.");
   }
-  const calendar = await initCalendarWithUserTokensAndUpdateTokens(tokenData);
+  const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData);
   const r = await calendar.calendarList.list({ prettyPrint: true });
 
   if (req.query.customCalendars === "true") {
@@ -60,7 +60,7 @@ const getAllCalendars = reqResAsyncHandler(async (req: Request, res: Response) =
 const getAllCalendarColors = reqResAsyncHandler(async (req: Request, res: Response) => {
   const user = (req as Request & { user: User }).user;
   const tokenData = await fetchCredentialsByEmail(user.email!);
-  const calendar = await initCalendarWithUserTokensAndUpdateTokens(tokenData);
+  const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData);
   const r = await calendar.colors.get({ alt: "json" });
   sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully received calendar colors", r.data);
 });
@@ -79,7 +79,7 @@ const getAllCalendarColors = reqResAsyncHandler(async (req: Request, res: Respon
 const getAllCalendarTimezones = reqResAsyncHandler(async (req: Request, res: Response) => {
   const user = (req as Request & { user: User }).user;
   const tokenData = await fetchCredentialsByEmail(user.email!);
-  const calendar = await initCalendarWithUserTokensAndUpdateTokens(tokenData);
+  const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData);
   const r = await calendar.settings.get({ setting: "timezone" });
   sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully received calendar timezone", r.data);
 });
@@ -98,7 +98,7 @@ const getAllCalendarTimezones = reqResAsyncHandler(async (req: Request, res: Res
 const getCalendarInfoById = reqResAsyncHandler(async (req: Request, res: Response) => {
   const user = (req as Request & { user: User }).user;
   const tokenData = await fetchCredentialsByEmail(user.email!);
-  const calendar = await initCalendarWithUserTokensAndUpdateTokens(tokenData);
+  const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData);
   const r = await calendar.calendars.get({ calendarId: req.params.id });
   sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully received calendar overview", r.data);
 });
@@ -117,7 +117,7 @@ const getCalendarInfoById = reqResAsyncHandler(async (req: Request, res: Respons
 const getCalendarColorById = reqResAsyncHandler(async (req: Request, res: Response) => {
   const user = (req as Request & { user: User }).user;
   const tokenData = await fetchCredentialsByEmail(user.email!);
-  const calendar = await initCalendarWithUserTokensAndUpdateTokens(tokenData);
+  const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData);
   const r = await calendar.calendars.get({ calendarId: req.params.id });
   sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully received calendar color", r.data);
 });
@@ -136,7 +136,7 @@ const getCalendarColorById = reqResAsyncHandler(async (req: Request, res: Respon
 const getCalendarTimezoneById = reqResAsyncHandler(async (req: Request, res: Response) => {
   const user = (req as Request & { user: User }).user;
   const tokenData = await fetchCredentialsByEmail(user.email!);
-  const calendar = await initCalendarWithUserTokensAndUpdateTokens(tokenData);
+  const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData);
   const r = await calendar.settings.get({ setting: "timezone" });
   sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully received calendar timezone", r.data);
 });
@@ -155,7 +155,7 @@ const getCalendarTimezoneById = reqResAsyncHandler(async (req: Request, res: Res
 const getFreeBusy = reqResAsyncHandler(async (req: Request, res: Response) => {
   const user = (req as Request & { user: User }).user;
   const tokenData = await fetchCredentialsByEmail(user.email!);
-  const calendar = await initCalendarWithUserTokensAndUpdateTokens(tokenData);
+  const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData);
   const r = await calendar.freebusy.query({
     prettyPrint: true,
     requestBody: {
@@ -182,7 +182,7 @@ const getFreeBusy = reqResAsyncHandler(async (req: Request, res: Response) => {
 const getSettingsOfCalendar = reqResAsyncHandler(async (req: Request, res: Response) => {
   const user = (req as Request & { user: User }).user;
   const tokenData = await fetchCredentialsByEmail(user.email!);
-  const calendar = await initCalendarWithUserTokensAndUpdateTokens(tokenData);
+  const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData);
   const r = await calendar.settings.get({ setting: "timezone" });
   sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully received calendar settings", r.data);
 });
@@ -201,7 +201,7 @@ const getSettingsOfCalendar = reqResAsyncHandler(async (req: Request, res: Respo
 const getSettingsOfCalendarById = reqResAsyncHandler(async (req: Request, res: Response) => {
   const user = (req as Request & { user: User }).user;
   const tokenData = await fetchCredentialsByEmail(user.email!);
-  const calendar = await initCalendarWithUserTokensAndUpdateTokens(tokenData);
+  const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData);
   const r = await calendar.settings.get({ setting: "timezone" });
   sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully received calendar settings", r.data);
 });

@@ -5,7 +5,7 @@ import { reqResAsyncHandler, sendR } from "@/utils/http";
 import type { User } from "@supabase/supabase-js";
 import { eventsHandler } from "@/utils";
 import { fetchCredentialsByEmail } from "@/utils/auth/get-user-calendar-tokens";
-import { initCalendarWithUserTokensAndUpdateTokens } from "@/utils/calendar/init";
+import { initUserSupabaseCalendarWithTokensAndUpdateTokens } from "@/utils/calendar/init";
 
 /**
  * Get event by event ID
@@ -29,7 +29,7 @@ const getEventById = reqResAsyncHandler(async (req: Request, res: Response) => {
     return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Event ID is required in order to get specific event.");
   }
 
-  const calendar = await initCalendarWithUserTokensAndUpdateTokens(tokenData);
+  const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData);
 
   const r = await calendar.events.get({
     ...REQUEST_CONFIG_BASE,
