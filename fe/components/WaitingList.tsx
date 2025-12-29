@@ -2,10 +2,10 @@
 
 import React from 'react';
 import { ArrowLeft } from 'lucide-react';
-import { SparklesCore } from './ui/sparkles';
+import { SparklesCore } from '@/components/ui/sparkles';
 import Link from 'next/link';
-import { AllyLogo } from './logo';
-import { InteractiveHoverButton } from './ui/interactive-hover-button';
+import { AllyLogo } from '@/components/logo';
+import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button';
 
 const WaitingList: React.FC = () => {
   return (
