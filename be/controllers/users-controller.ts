@@ -136,21 +136,42 @@ const signUpUserViaGitHub = reqResAsyncHandler(async (req: Request, res: Respons
 });
 
 /**
- * Get user information
+ * Get current user information
+ *
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @returns {Promise<void>} The response object.
+ * @description Gets current user information and sends the response.
+ * @example
+ * const data = await getCurrentUserInformation(req, res);
+ * console.log(data);
+ */
+const getCurrentUserInformation = reqResAsyncHandler(async (req: Request, res: Response) => {
+  const user = (req as Request & { user: User }).user;
+
+  sendR(res, STATUS_RESPONSE.SUCCESS, "User fetched successfully.", user);
+});
+
+/**
+ * Get user information by user ID
  *
  * @param {Request} req - The request object.
  * @param {Response} res - The response object.
  * @returns {Promise<void>} The response object.
  * @description Gets user information and sends the response.
  * @example
- * const data = await getUserInformation(req, res);
+ * const data = await getUserInformationById(req, res);
  * console.log(data);
  */
-const getUserInformation = reqResAsyncHandler(async (req: Request, res: Response) => {
-  if (!(req as Request & { user?: User }).user) {
-    return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated.");
+const getUserInformationById = reqResAsyncHandler(async (req: Request, res: Response) => {
+  const { data, error } = await SUPABASE.from("user_calendar_tokens").select("*").eq("id", parseInt(req.params.id)).single();
+  if (error) {
+    return sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Failed to find user.", error);
   }
-  sendR(res, STATUS_RESPONSE.SUCCESS, "User fetched successfully.", (req as Request & { user?: User }).user);
+  if (!data) {
+    return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User calendar tokens not found.");
+  }
+  sendR(res, STATUS_RESPONSE.SUCCESS, "User fetched successfully.", data);
 });
 
 /**
@@ -241,7 +262,8 @@ export const userController = {
   signUpOrSignInWithGoogle,
   signUpUserViaGitHub,
   signInUserReg,
-  getUserInformation,
+  getUserInformationById,
+  getCurrentUserInformation,
   deActivateUser,
   generateAuthGoogleUrl,
 };
