@@ -19,8 +19,7 @@ import { initUserSupabaseCalendarWithTokensAndUpdateTokens } from "@/utils/calen
  * console.log(data);
  */
 const getEventById = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const user = (req as Request & { user: User }).user;
-  const tokenData = await fetchCredentialsByEmail(user.email!);
+  const tokenData = await fetchCredentialsByEmail(req.user?.email!);
   if (!tokenData) {
     return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User token not found.");
   }
@@ -52,8 +51,7 @@ const getEventById = reqResAsyncHandler(async (req: Request, res: Response) => {
  * console.log(data);
  */
 const getAllEvents = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const user = (req as Request & { user: User }).user;
-  const tokenData = await fetchCredentialsByEmail(user.email!);
+  const tokenData = await fetchCredentialsByEmail(req.user?.email!);
   if (!tokenData) {
     return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User token not found.");
   }

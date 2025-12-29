@@ -28,6 +28,7 @@ export const authHandler = asyncHandler(async (req: Request, res: Response, next
     return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "Not authorized. Please login or register to continue.");
   }
 
-  (req as Request & { user: User }).user = data.user;
+  req.user = data.user;
+
   next();
 });
