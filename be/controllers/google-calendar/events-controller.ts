@@ -25,7 +25,7 @@ const getEventById = reqResAsyncHandler(async (req: Request, res: Response) => {
     return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User token not found.");
   }
 
-  if (!req.params.eventId) {
+  if (!req.params.id) {
     return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Event ID is required in order to get specific event.");
   }
 
@@ -33,8 +33,8 @@ const getEventById = reqResAsyncHandler(async (req: Request, res: Response) => {
 
   const r = await calendar.events.get({
     ...REQUEST_CONFIG_BASE,
-    calendarId: req.query?.id as string,
-    eventId: req.params.eventId,
+    calendarId: (req?.query?.calendarId as string) ?? "primary",
+    eventId: req.params.id,
   });
 
   sendR(res, STATUS_RESPONSE.SUCCESS, "Event retrieved successfully", r.data);
@@ -52,8 +52,22 @@ const getEventById = reqResAsyncHandler(async (req: Request, res: Response) => {
  * console.log(data);
  */
 const getAllEvents = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const r = await eventsHandler(req as Request, ACTION.GET, undefined, req.query as Record<string, string>);
-  sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully retrieved all events", r);
+  const user = (req as Request & { user: User }).user;
+  const tokenData = await fetchCredentialsByEmail(user.email!);
+  if (!tokenData) {
+    return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User token not found.");
+  }
+
+  if (req.query.calendarId == "allCalendars") {
+    const initCalendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData);
+    const allCalendarsIds = (await initCalendar.calendarList.list({ prettyPrint: true }).then((r) => r.data.items?.map((calendar) => calendar.id))) || [];
+    const allEventsFromAllCalendars =
+      allCalendarsIds.length > 0 && (await Promise.all(allCalendarsIds.map((calendarId) => eventsHandler(req, ACTION.GET, undefined, { calendarId }))));
+    return sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully retrieved all events from all calendars", allEventsFromAllCalendars);
+  } else {
+    const r = await eventsHandler(req as Request, ACTION.GET, undefined, req.query as Record<string, string>);
+    sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully retrieved all events", r);
+  }
 });
 
 /**
@@ -84,12 +98,9 @@ const createEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
  * console.log(data);
  */
 const updateEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
-  if (!req.params.eventId) {
-    return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Event ID is required in order to update event.");
-  }
 
   const r = await eventsHandler(req, ACTION.UPDATE, {
-    id: req.params.eventId,
+    id: req.params.id,
     ...req.body,
   });
   sendR(res, STATUS_RESPONSE.SUCCESS, "Event updated successfully", r);
@@ -107,10 +118,8 @@ const updateEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
  * console.log(data);
  */
 const deleteEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
-  if (!req.params.eventId) {
-    return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Event ID is required in order to delete event.");
-  }
-  const r = await eventsHandler(req, ACTION.DELETE, { id: req.params.eventId });
+
+  const r = await eventsHandler(req, ACTION.DELETE, { id: req.params.id });
   sendR(res, STATUS_RESPONSE.SUCCESS, "Event deleted successfully", r);
 });
 

@@ -1,10 +1,20 @@
+import { STATUS_RESPONSE } from "@/config";
 import { authHandler } from "@/middlewares/auth-handler";
 import eventsController from "@/controllers/google-calendar/events-controller";
 import express from "express";
+import { sendR } from "@/utils/http";
 
 const router = express.Router();
 
 router.use(authHandler);
+
+router.param("id", (req, res, next, id) => {
+  if (!id) {
+    return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Event ID parameter is required.");
+  }
+
+  next();
+});
 
 // get all the events of the user
 router.get("/", eventsController.getAllEvents);
