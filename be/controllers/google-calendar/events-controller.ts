@@ -52,25 +52,8 @@ const getEventById = reqResAsyncHandler(async (req: Request, res: Response) => {
  * console.log(data);
  */
 const getAllEvents = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const r = await eventsHandler(req as Request, ACTION.GET);
+  const r = await eventsHandler(req as Request, ACTION.GET, undefined, req.query as Record<string, string>);
   sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully retrieved all events", r);
-});
-
-/**
- * Get all filtered events
- *
- * @param {Request} req - The request object.
- * @param {Response} res - The response object.
- * @returns {Promise<void>} The response object.
- * @description Gets all filtered events and sends the response.
- * @example
- * const data = await getAllFilteredEvents(req, res);
- * console.log(data);
- */
-const getAllFilteredEvents = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const r = await eventsHandler(req, ACTION.GET, undefined, req.query as Record<string, string>);
-
-  sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully retrieved all filtered events", r);
 });
 
 /**
@@ -134,7 +117,6 @@ const deleteEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
 export default {
   getEventById,
   getAllEvents,
-  getAllFilteredEvents,
   createEvent,
   updateEvent,
   deleteEvent,

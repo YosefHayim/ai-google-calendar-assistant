@@ -6,7 +6,6 @@ import type { User } from "@supabase/supabase-js";
 import type { calendar_v3 } from "googleapis";
 import { fetchCredentialsByEmail } from "@/utils/auth";
 import { initUserSupabaseCalendarWithTokensAndUpdateTokens } from "@/utils/calendar";
-import { updateUserSupabaseCalendarCategories } from "@/utils/calendar/update-categories";
 
 /**
  * Get all calendars

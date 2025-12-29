@@ -8,6 +8,16 @@ type DeleteEventParams = {
   req?: { body?: Record<string, unknown>; query?: Record<string, unknown> } | null;
 };
 
+/**
+ * Delete an event from the calendar
+ *
+ * @param {DeleteEventParams} params - The parameters for deleting an event.
+ * @returns {Promise<calendar_v3.Schema$Event>} The deleted event.
+ * @description Deletes an event from the calendar and sends the response.
+ * @example
+ * const data = await deleteEvent(params);
+ * console.log(data);
+ */
 export async function deleteEvent({ calendarEvents, eventData, extra, req }: DeleteEventParams) {
   const calendarId = (extra?.calendarId as string) || (req?.body?.calendarId as string) || (req?.query?.calendarId as string) || "primary";
 

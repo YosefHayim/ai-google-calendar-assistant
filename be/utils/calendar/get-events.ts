@@ -14,6 +14,16 @@ type GetEventsParams = {
   extra?: Record<string, unknown>;
 };
 
+/**
+ * Get events from the calendar
+ *
+ * @param {GetEventsParams} params - The parameters for getting events.
+ * @returns {Promise<calendar_v3.Schema$Event>} The events.
+ * @description Gets events from the calendar and sends the response.
+ * @example
+ * const data = await getEvents(params);
+ * console.log(data);
+ */
 export async function getEvents({ calendarEvents, req, extra }: GetEventsParams) {
   const rawExtra: ListExtra = { ...(extra as ListExtra), ...(req?.body ?? {}), ...(req?.query ?? {}) };
 

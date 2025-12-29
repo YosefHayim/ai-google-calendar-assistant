@@ -12,6 +12,16 @@ import { initUserSupabaseCalendarWithTokensAndUpdateTokens } from "./init";
 import { insertEvent } from "./insert-event";
 import { updateEvent } from "./update-event";
 
+/**
+ * Events handler
+ *
+ * @param {Request | null} req - The request object.
+ * @param {ACTION} action - The action to perform.
+ * @param {calendar_v3.Schema$Event | Record<string, string>} eventData - The event data.
+ * @param {Record<string, unknown>} extra - The extra data.
+ * @param {Record<string, string>} query - The query data.
+ * @returns {Promise<any>} The result of the action.
+ */
 export const eventsHandler = asyncHandler(
   async (req?: Request | null, action?: ACTION, eventData?: calendar_v3.Schema$Event | Record<string, string>, extra?: Record<string, unknown>) => {
     const email = (req as AuthedRequest | undefined)?.user?.email ?? (typeof extra?.email === "string" ? (extra.email as string) : undefined);
