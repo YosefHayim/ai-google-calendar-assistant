@@ -13,7 +13,7 @@ import {
   BarChart2,
   Share2
 } from 'lucide-react';
-import { AllyLogo, BetaBadge } from './logo';
+import { AllyLogo, BetaBadge } from '@/components/logo';
 
 interface SidebarProps {
   isOpen: boolean;

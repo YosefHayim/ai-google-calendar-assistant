@@ -4,9 +4,9 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import ImageCarousel from './ImageCarousel';
-import { AllyLogo, BetaBadge } from './logo';
-import { InteractiveHoverButton } from './ui/interactive-hover-button';
+import ImageCarousel from '@/components/ImageCarousel';
+import { AllyLogo, BetaBadge } from '@/components/logo';
+import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button';
 
 const carouselImages = [
   'https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', // Collaborative planning, modern tech

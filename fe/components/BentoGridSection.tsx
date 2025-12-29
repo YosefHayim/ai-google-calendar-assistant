@@ -3,9 +3,9 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Lock, Smartphone, Globe, Brain, Zap, Layout } from "lucide-react";
-import { BentoCard, BentoGrid } from "./ui/bento-grid";
-import RotatingEarth from "./ui/wireframe-dotted-globe";
-import { ThreeDWallCalendar, CalendarEvent } from "./ui/three-dwall-calendar";
+import { BentoCard, BentoGrid } from "@/components/ui/bento-grid";
+import RotatingEarth from "@/components/ui/wireframe-dotted-globe";
+import { ThreeDWallCalendar, CalendarEvent } from "@/components/ui/three-dwall-calendar";
 import { v4 as uuidv4 } from "uuid";
 
 const MOCK_EVENTS: CalendarEvent[] = [
