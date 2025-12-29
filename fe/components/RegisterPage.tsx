@@ -2,8 +2,8 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import ImageCarousel from '@/components/ImageCarousel';
 import { AllyLogo, BetaBadge } from '@/components/logo';
 import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button';

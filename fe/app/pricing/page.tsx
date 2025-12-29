@@ -1,6 +1,7 @@
 import { PricingSectionDemo } from '@/components/ui/pricing-section-demo';
 import FAQs from '@/components/FAQs';
 import { AnimatedTestimonials } from '@/components/ui/animated-testimonials';
+import MarketingLayout from '@/components/MarketingLayout';
 
 const MOCK_TESTIMONIALS = [
   {
@@ -34,18 +35,20 @@ const MOCK_TESTIMONIALS = [
 
 export default function PricingPage() {
   return (
-    <div className="flex flex-col items-center justify-center w-full">
-        <PricingSectionDemo />
-        
-        <AnimatedTestimonials 
-          title="The Standard for Strategic Execution"
-          subtitle="Join thousands of leaders who have automated their scheduling to protect their most valuable work hours."
-          badgeText="Verified Efficiency"
-          testimonials={MOCK_TESTIMONIALS}
-          autoRotateInterval={5000}
-        />
+    <MarketingLayout>
+      <div className="flex flex-col items-center justify-center w-full">
+          <PricingSectionDemo />
 
-        <FAQs />
-    </div>
+          <AnimatedTestimonials
+            title="The Standard for Strategic Execution"
+            subtitle="Join thousands of leaders who have automated their scheduling to protect their most valuable work hours."
+            badgeText="Verified Efficiency"
+            testimonials={MOCK_TESTIMONIALS}
+            autoRotateInterval={5000}
+          />
+
+          <FAQs />
+      </div>
+    </MarketingLayout>
   );
 }

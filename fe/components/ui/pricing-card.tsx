@@ -1,11 +1,10 @@
 'use client';
-
 import React, { useState, useRef, useEffect } from "react"
 import { BadgeCheck, ArrowRight, Minus, Plus, Zap } from "lucide-react"
 import NumberFlow from "@number-flow/react"
 import { motion, AnimatePresence } from "framer-motion"
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/components/../lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"

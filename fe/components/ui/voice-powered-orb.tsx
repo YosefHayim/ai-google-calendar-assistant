@@ -1,9 +1,10 @@
+'use client';
 
 "use client";
 
 import React, { useEffect, useRef, FC } from "react";
 import { Renderer, Program, Mesh, Triangle, Vec3 } from "ogl";
-import { cn } from "@/lib/utils";
+import { cn } from "@/components/../lib/utils";
 
 interface VoicePoweredOrbProps {
   className?: string;
