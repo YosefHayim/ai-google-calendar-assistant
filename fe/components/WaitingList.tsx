@@ -1,5 +1,3 @@
-'use client';
-
 import React from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { SparklesCore } from '@/components/ui/sparkles';

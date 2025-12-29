@@ -1,7 +1,7 @@
 
 import React, { ReactNode } from "react";
 import { ArrowRight } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/components/../lib/utils";
 import { Button } from "@/components/ui/button";
 
 // Changed to React.FC and made children optional to resolve "Property 'children' is missing" errors in consumers

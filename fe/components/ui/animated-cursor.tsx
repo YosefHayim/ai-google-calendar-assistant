@@ -9,7 +9,7 @@ import React, {
   ReactNode,
 } from 'react';
 import { motion, useMotionValue, useSpring, AnimatePresence } from 'framer-motion';
-import { cn } from '@/lib/utils';
+import { cn } from '@/components/../lib/utils';
 
 interface CursorContextProps {
   mouseX: any;
