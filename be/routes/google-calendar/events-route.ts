@@ -9,8 +9,6 @@ router.use(authHandler);
 // get all the events of the user
 router.get("/", eventsController.getAllEvents);
 
-router.get("/filtered", eventsController.getAllFilteredEvents);
-
 // get specific event by id
 router.get("/:id", eventsController.getEventById);
 

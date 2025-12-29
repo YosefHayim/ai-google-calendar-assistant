@@ -8,6 +8,16 @@ type UpdateEventParams = {
   req?: { query?: Record<string, unknown> } | null;
 };
 
+/**
+ * Update an event in the calendar
+ *
+ * @param {UpdateEventParams} params - The parameters for updating an event.
+ * @returns {Promise<calendar_v3.Schema$Event>} The updated event.
+ * @description Updates an event in the calendar and sends the response.
+ * @example
+ * const data = await updateEvent(params);
+ * console.log(data);
+ */
 export async function updateEvent({ calendarEvents, eventData, extra, req }: UpdateEventParams) {
   const body = (eventData as calendar_v3.Schema$Event & { calendarId?: string; email?: string }) || {};
   const calendarId = (extra?.calendarId as string) || body.calendarId || (req?.query?.calendarId as string) || "primary";
