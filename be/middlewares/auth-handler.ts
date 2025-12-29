@@ -24,7 +24,12 @@ export const authHandler = asyncHandler(async (req: Request, res: Response, next
 
   const {
     data: { user },
+    error,
   } = await SUPABASE.auth.getUser(token);
+
+  if (error) {
+    return sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Failed to authenticate user.", error);
+  }
 
   if (!user) {
     return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "Not authorized. Please login or register to continue.");

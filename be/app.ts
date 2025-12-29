@@ -33,7 +33,7 @@ app.use(ROUTES.EVENTS, eventsRoute);
 app.use(ROUTES.WHATSAPP, whatsAppRoute);
 
 app.use((_req, res, _next) => {
-  sendR(res, STATUS_RESPONSE.NOT_FOUND, "Opps! It looks like this route doesn't exist.");
+  sendR(res, STATUS_RESPONSE.NOT_FOUND, `Opps! It looks like this route doesn't exist. ${_req.originalUrl}`);
 });
 
 app.use(errorHandler);
@@ -43,7 +43,7 @@ app.listen(PORT, (error?: Error) => {
     console.error("Error starting server:", error);
     throw error;
   }
-  console.log(`AI Google Calendar Assistant Server is running on port: ${PORT}`);
+  console.log(`AI Google Calendar Assistant Server is running on port: ${PORT}\n Base URL: ${env.baseUrl}`);
 });
 
 startTelegramBot();

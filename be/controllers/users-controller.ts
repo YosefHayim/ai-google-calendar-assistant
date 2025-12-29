@@ -256,6 +256,14 @@ const verifyEmailByOtp = reqResAsyncHandler(async (req: Request, res: Response) 
   sendR(res, STATUS_RESPONSE.SUCCESS, "Email verified successfully.", data);
 });
 
+const refreshToken = reqResAsyncHandler(async (req: Request, res: Response) => {
+  const { data, error } = await SUPABASE.auth.refreshSession({ refresh_token: req.headers.authorization?.replace("Bearer ", "")! });
+  if (error) {
+    sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Failed to refresh token.", error);
+  }
+  sendR(res, STATUS_RESPONSE.SUCCESS, "Token refreshed successfully.", data);
+});
+
 export const userController = {
   verifyEmailByOtp,
   signUpUserReg,
@@ -266,4 +274,5 @@ export const userController = {
   getCurrentUserInformation,
   deActivateUser,
   generateAuthGoogleUrl,
+  refreshToken,
 };
