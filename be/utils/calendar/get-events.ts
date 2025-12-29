@@ -1,7 +1,7 @@
 import { REQUEST_CONFIG_BASE } from "@/config";
 import type { calendar_v3 } from "googleapis";
-import formatDate from "../date/format-date";
-import { getEventDurationString } from "./duration";
+import formatDate from "@/utils/date/format-date";
+import { getEventDurationString } from "@/utils/calendar/duration";
 
 type ListExtra = Partial<calendar_v3.Params$Resource$Events$List> & {
   email?: string;
@@ -33,8 +33,7 @@ export async function getEvents({ calendarEvents, req, extra }: GetEventsParams)
   const listExtra: calendar_v3.Params$Resource$Events$List = {
     ...REQUEST_CONFIG_BASE,
     prettyPrint: true,
-    maxResults: 2499,
-    calendarId: calendarId ?? "primary",
+    calendarId: calendarId,
     ...listExtraRaw,
   };
 

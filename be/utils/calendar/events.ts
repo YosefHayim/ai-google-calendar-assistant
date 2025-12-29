@@ -10,6 +10,7 @@ import { fetchCredentialsByEmail } from "../auth/get-user-calendar-tokens";
 import { getEvents } from "./get-events";
 import { initUserSupabaseCalendarWithTokensAndUpdateTokens } from "./init";
 import { insertEvent } from "./insert-event";
+import { patchEvent } from "./patch-event";
 import { updateEvent } from "./update-event";
 
 /**
@@ -44,6 +45,9 @@ export const eventsHandler = asyncHandler(
 
       case ACTION.INSERT:
         return insertEvent({ calendarEvents, eventData, extra });
+
+      case ACTION.PATCH:
+        return patchEvent({ calendarEvents, eventData, extra });
 
       case ACTION.UPDATE:
         return updateEvent({ calendarEvents, eventData, extra, req });
