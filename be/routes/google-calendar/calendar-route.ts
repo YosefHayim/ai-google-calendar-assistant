@@ -1,14 +1,15 @@
+import express, { NextFunction, Request, Response } from "express";
+
 import { STATUS_RESPONSE } from "@/config";
 import { authHandler } from "@/middlewares/auth-handler";
 import calendarController from "@/controllers/google-calendar/calendar-controller";
-import express from "express";
 import { sendR } from "@/utils/http";
 
 const router = express.Router();
 
 router.use(authHandler);
 
-router.param("id", (req, res, next, id) => {
+router.param("id", (_req: Request, res: Response, next: NextFunction, id: string) => {
   if (!id) {
     return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar ID parameter is required.");
   }
