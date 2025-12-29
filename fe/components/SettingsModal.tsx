@@ -5,8 +5,8 @@ import React, { useState } from 'react';
 import { 
   X, User, Bell, Shield, LogOut, Settings, Brain, Globe, Lock, Clock, Trash2, AlertTriangle, Share2, CheckCircle2, Circle, ArrowUpRight, Plus, Loader2, Check
 } from 'lucide-react';
-import CinematicGlowToggle from './ui/cinematic-glow-toggle';
-import { TelegramIcon, WhatsAppIcon, GoogleCalendarIcon } from './Icons';
+import CinematicGlowToggle from '@/components/ui/cinematic-glow-toggle';
+import { TelegramIcon, WhatsAppIcon, GoogleCalendarIcon } from '@/components/Icons';
 
 interface SettingsModalProps {
   isOpen: boolean;

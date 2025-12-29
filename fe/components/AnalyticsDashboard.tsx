@@ -19,8 +19,8 @@ import {
   BarChart3
 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import TimeSavedChart from './TimeSavedChart';
-import ActivityHeatmap from './ActivityHeatmap';
+import TimeSavedChart from '@/components/TimeSavedChart';
+import ActivityHeatmap from '@/components/ActivityHeatmap';
 
 interface TimeAllocationChartProps {
   data: { category: string; hours: number; color: string }[];
