@@ -23,8 +23,8 @@ import {
   Wifi,
   Battery
 } from 'lucide-react';
-import { AllyLogo } from './logo';
-import { WhatsAppIcon, TelegramIcon } from './Icons';
+import { AllyLogo } from '@/components/logo';
+import { WhatsAppIcon, TelegramIcon } from '@/components/Icons';
 
 // Fix: Use React.FC and make children optional to resolve "Property 'children' is missing" errors in consumers
 const PhoneFrame: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
