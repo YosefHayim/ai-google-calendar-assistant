@@ -257,10 +257,8 @@ const verifyEmailByOtp = reqResAsyncHandler(async (req: Request, res: Response) 
 });
 
 const refreshToken = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const { data, error } = await SUPABASE.auth.refreshSession();
-  if (error) {
-    sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Failed to refresh token.", error);
-  }
+  const { data } = await SUPABASE.auth.refreshSession({ refresh_token: req.headers.authorization?.replace("Bearer ", "")! });
+
   sendR(res, STATUS_RESPONSE.SUCCESS, "Token refreshed successfully.", data);
 });
 
