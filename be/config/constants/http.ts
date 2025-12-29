@@ -28,6 +28,7 @@ export enum PROVIDERS {
 export enum ACTION {
   GET = "get",
   INSERT = "insert",
+  PATCH = "patch",
   UPDATE = "update",
   DELETE = "delete",
 }
