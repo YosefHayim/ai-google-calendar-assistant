@@ -1,7 +1,7 @@
 
 import React from "react"
-import { PricingSection } from "./pricing-section"
-import { HandWrittenTitleDemo } from "./hand-writing-text-demo"
+import { PricingSection } from "@/components/ui/pricing-section"
+import { HandWrittenTitleDemo } from "@/components/ui/hand-writing-text-demo"
 
 export const PAYMENT_FREQUENCIES = ["monthly", "yearly", "per use"]
 

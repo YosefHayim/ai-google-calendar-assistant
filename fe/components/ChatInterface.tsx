@@ -21,12 +21,12 @@ import {
   Clock,
   BarChart2
 } from 'lucide-react';
-import { Message } from '../types';
-import MessageBubble from './MessageBubble';
-import { decodeAudioData, sendMessageToGemini, getSpeechFromGemini } from '../services/geminiService';
-import { AIVoiceInput } from './ui/ai-voice-input';
-import { VoicePoweredOrb } from './ui/voice-powered-orb';
-import { Typewriter } from './ui/typewriter';
+import { Message } from '@/types';
+import MessageBubble from '@/components/MessageBubble';
+import { decodeAudioData, sendMessageToGemini, getSpeechFromGemini } from '@/services/geminiService';
+import { AIVoiceInput } from '@/components/ui/ai-voice-input';
+import { VoicePoweredOrb } from '@/components/ui/voice-powered-orb';
+import { Typewriter } from '@/components/ui/typewriter';
 import { motion, AnimatePresence } from 'framer-motion';
 
 declare global {

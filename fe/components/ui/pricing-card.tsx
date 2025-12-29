@@ -5,10 +5,10 @@ import { BadgeCheck, ArrowRight, Minus, Plus, Zap } from "lucide-react"
 import NumberFlow from "@number-flow/react"
 import { motion, AnimatePresence } from "framer-motion"
 
-import { cn } from "../../lib/utils"
-import { Badge } from "./badge"
-import { Button } from "./button"
-import { Card } from "./card"
+import { cn } from "@/lib/utils"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card } from "@/components/ui/card"
 
 export interface PricingTier {
   id: string

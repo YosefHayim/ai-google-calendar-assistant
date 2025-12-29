@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Mic } from "lucide-react";
-import { cn } from "../../lib/utils"; // Adjusted path for cn utility
+import { cn } from "@/lib/utils";
 
 interface AIVoiceInputProps {
   onStart?: () => void;

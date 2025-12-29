@@ -1,6 +1,6 @@
-import { apiClient } from '../client';
-import { ENDPOINTS } from '../endpoints';
-import { ApiResponse, CalendarEvent, CustomEvent } from '../../../types/api';
+import { apiClient } from '@/lib/api/client';
+import { ENDPOINTS } from '@/lib/api/endpoints';
+import { ApiResponse, CalendarEvent, CustomEvent } from '@/types/api';
 
 export const eventsService = {
   async getEvents(params: any): Promise<ApiResponse<any>> {

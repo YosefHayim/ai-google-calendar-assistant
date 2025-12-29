@@ -1,6 +1,6 @@
-import { apiClient } from '../client';
-import { ENDPOINTS } from '../endpoints';
-import { ApiResponse, CustomCalendar } from '../../../types/api';
+import { apiClient } from '@/lib/api/client';
+import { ENDPOINTS } from '@/lib/api/endpoints';
+import { ApiResponse, CustomCalendar } from '@/types/api';
 
 export const calendarsService = {
   async getCalendars(custom = true): Promise<ApiResponse<CustomCalendar[] | any>> {

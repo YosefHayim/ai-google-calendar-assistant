@@ -1,4 +1,4 @@
-import { getSpeechFromGemini } from '../../../services/geminiService';
+import { getSpeechFromGemini } from '@/services/geminiService';
 import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {

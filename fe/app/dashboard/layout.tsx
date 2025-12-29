@@ -2,10 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Sidebar from '../../components/Sidebar';
-import SettingsModal from '../../components/SettingsModal';
-import { useTheme } from '../../components/ThemeProvider';
-import { OnboardingTour } from '../../components/OnboardingTour';
+import Sidebar from '@/components/Sidebar';
+import SettingsModal from '@/components/SettingsModal';
+import { useTheme } from '@/components/ThemeProvider';
+import { OnboardingTour } from '@/components/OnboardingTour';
 
 export default function DashboardLayout({
   children,

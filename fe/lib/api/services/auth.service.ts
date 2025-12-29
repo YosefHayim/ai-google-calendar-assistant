@@ -1,6 +1,6 @@
-import { apiClient } from '../client';
-import { ENDPOINTS } from '../endpoints';
-import { ApiResponse, AuthData } from '../../../types/api';
+import { apiClient } from '@/lib/api/client';
+import { ENDPOINTS } from '@/lib/api/endpoints';
+import { ApiResponse, AuthData } from '@/types/api';
 
 export const authService = {
   async signIn(email: string, password: string): Promise<ApiResponse<AuthData>> {

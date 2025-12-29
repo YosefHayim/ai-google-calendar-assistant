@@ -2,9 +2,9 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { AllyLogo, BetaBadge } from './logo';
+import { AllyLogo, BetaBadge } from '@/components/logo';
 import { Mail } from 'lucide-react';
-import { TelegramIcon, WhatsAppIcon } from './Icons';
+import { TelegramIcon, WhatsAppIcon } from '@/components/Icons';
 
 // Custom Discord Icon since it's sometimes missing from standard sets or varies in naming
 const DiscordIcon = ({ className }: { className?: string }) => (
