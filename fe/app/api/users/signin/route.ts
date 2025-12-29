@@ -1,15 +1,11 @@
+import { NextRequest } from 'next/server';
+import { proxyPost } from '@/lib/api/proxy';
+import { ENDPOINTS } from '@/lib/api/endpoints';
+
 /**
- * User Sign In Route Handler
+ * POST /api/users/signin
+ * User sign in with email/password
  */
-
-import { NextRequest } from "next/server";
-import { proxyToBackend, parseRequestBody } from "@/lib/api/utils/proxy";
-
 export async function POST(request: NextRequest) {
-  const body = await parseRequestBody(request);
-  return proxyToBackend(request, "/api/users/signin", {
-    method: "POST",
-    body,
-  });
+  return proxyPost(request, ENDPOINTS.USERS_SIGNIN);
 }
-
