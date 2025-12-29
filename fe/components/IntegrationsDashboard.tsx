@@ -4,8 +4,8 @@ import React, { useState } from 'react';
 import { 
   CheckCircle2, Circle, ArrowUpRight, X, Loader2, List, Settings, RefreshCw 
 } from 'lucide-react';
-import { TelegramIcon, WhatsAppIcon, GoogleCalendarIcon } from './Icons';
-import { useCalendars } from '../hooks/api/useCalendars';
+import { TelegramIcon, WhatsAppIcon, GoogleCalendarIcon } from '@/components/Icons';
+import { useCalendars } from '@/hooks/api/useCalendars';
 
 interface IntegrationsDashboardProps {}
 

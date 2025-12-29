@@ -1,5 +1,5 @@
 import React from "react"
-import { HandWrittenTitle } from "./hand-writing-text"
+import { HandWrittenTitle } from "@/components/ui/hand-writing-text"
 
 export const HandWrittenTitleDemo: React.FC = () => {
     return <HandWrittenTitle 

@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ThemeProvider } from "../components/ThemeProvider";
-import { CursorProvider, Cursor } from "../components/ui/animated-cursor";
+import { ThemeProvider } from "@/components/ThemeProvider";
+import { CursorProvider, Cursor } from "@/components/ui/animated-cursor";
+import { QUERY_CONFIG } from "@/lib/constants";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -11,7 +12,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       new QueryClient({
         defaultOptions: {
           queries: {
-            staleTime: 60 * 1000,
+            staleTime: QUERY_CONFIG.DEFAULT_STALE_TIME,
             refetchOnWindowFocus: false,
           },
         },

@@ -1,8 +1,8 @@
 'use client';
 
-import MarketingLayout from '../../components/MarketingLayout';
+import MarketingLayout from '@/components/MarketingLayout';
 import Link from 'next/link';
-import { InteractiveHoverButton } from '../../components/ui/interactive-hover-button';
+import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button';
 import { Users, Target, Heart, Zap } from 'lucide-react';
 
 export default function AboutPage() {

@@ -3,9 +3,9 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { ArrowRight, Link as LinkIcon, Zap, Brain, Shield, Rocket, Globe, Sparkles } from "lucide-react";
-import { Badge } from "./badge";
-import { Button } from "./button";
-import { Card, CardContent, CardHeader, CardTitle } from "./card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface TimelineItem {
   id: number;

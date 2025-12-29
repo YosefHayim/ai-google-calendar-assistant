@@ -3,8 +3,8 @@
 import * as React from "react"
 import { motion } from "framer-motion"
 
-import { cn } from "../../lib/utils"
-import { Badge } from "./badge"
+import { cn } from "@/lib/utils"
+import { Badge } from "@/components/ui/badge"
 
 interface TabProps {
   text: string

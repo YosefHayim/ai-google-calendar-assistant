@@ -4,14 +4,14 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { AllyLogo, BetaBadge } from './logo';
-import { useTheme } from './ThemeProvider';
-import { InteractiveHoverButton } from './ui/interactive-hover-button';
-import { ThemeToggle } from './ui/theme-toggle';
-import { AnimatedHamburger } from './ui/animated-hamburger';
+import { AllyLogo, BetaBadge } from '@/components/logo';
+import { useTheme } from '@/components/ThemeProvider';
+import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { AnimatedHamburger } from '@/components/ui/animated-hamburger';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Mail } from 'lucide-react';
-import { TelegramIcon, WhatsAppIcon } from './Icons';
+import { TelegramIcon, WhatsAppIcon } from '@/components/Icons';
 
 // Custom Discord Icon consistent with Footer
 const DiscordIcon = ({ className }: { className?: string }) => (

@@ -1,11 +1,11 @@
 'use client';
 
-import MarketingLayout from '../components/MarketingLayout';
-import BentoGridSection from '../components/BentoGridSection';
-import Testimonials from '../components/Testimonials';
-import FAQs from '../components/FAQs';
-import UseCaseGrid from '../components/UseCaseGrid';
-import { InteractiveHoverButton } from '../components/ui/interactive-hover-button';
+import MarketingLayout from '@/components/MarketingLayout';
+import BentoGridSection from '@/components/BentoGridSection';
+import Testimonials from '@/components/Testimonials';
+import FAQs from '@/components/FAQs';
+import UseCaseGrid from '@/components/UseCaseGrid';
+import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button';
 import Link from 'next/link';
 import { ArrowRight, Calendar, Mic, Sparkles, Clock } from 'lucide-react';
 

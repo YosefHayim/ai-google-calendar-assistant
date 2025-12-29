@@ -1,6 +1,6 @@
-import { PricingSectionDemo } from '../../components/ui/pricing-section-demo';
-import FAQs from '../../components/FAQs';
-import { AnimatedTestimonials } from '../../components/ui/animated-testimonials';
+import { PricingSectionDemo } from '@/components/ui/pricing-section-demo';
+import FAQs from '@/components/FAQs';
+import { AnimatedTestimonials } from '@/components/ui/animated-testimonials';
 
 const MOCK_TESTIMONIALS = [
   {

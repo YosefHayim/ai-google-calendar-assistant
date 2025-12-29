@@ -1,6 +1,6 @@
 import React from 'react';
-import { cn } from '../lib/utils';
-import { PatternPlaceholder } from './PatternPlaceholder';
+import { cn } from '@/lib/utils';
+import { PatternPlaceholder } from '@/components/PatternPlaceholder';
 
 interface BackgroundPattern1Props {
   className?: string;
