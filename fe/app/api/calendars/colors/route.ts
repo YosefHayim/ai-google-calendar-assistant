@@ -1,10 +1,11 @@
+import { NextRequest } from 'next/server';
+import { proxyGet } from '@/lib/api/proxy';
+import { ENDPOINTS } from '@/lib/api/endpoints';
+
 /**
- * Calendar Colors Route Handler
+ * GET /api/calendars/colors
+ * Get available calendar colors (auth required)
  */
-
-import { NextRequest } from "next/server";
-import { proxyToBackend } from "@/lib/api/utils/proxy";
-
 export async function GET(request: NextRequest) {
-  return proxyToBackend(request, "/api/calendars/colors");
+  return proxyGet(request, ENDPOINTS.CALENDARS_COLORS);
 }

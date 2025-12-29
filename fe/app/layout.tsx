@@ -1,23 +1,31 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
-import { Providers } from "@/components/providers";
+import { Inter, Playfair_Display } from "next/font/google";
+import "../styles/globals.css";
+import { Providers } from "./providers";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+});
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  variable: "--font-playfair",
+});
 
 export const metadata: Metadata = {
-  title: "CAL AI - Your AI Calendar Assistant",
-  description: "Intelligent calendar management powered by AI",
+  title: "Ally | The AI Secretary for your Google Calendar",
+  description: "Your intelligent calendar assistant powered by AI",
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+      <body className={`${inter.variable} ${playfair.variable} font-sans`}>
         <Providers>{children}</Providers>
       </body>
     </html>

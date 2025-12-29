@@ -1,84 +1,28 @@
-"use client";
+import React from 'react';
 
-import { motion } from "framer-motion";
-import { cn } from "@/lib/utils";
+/**
+ * AllyLogo component using an inline SVG to ensure perfect visibility
+ * and zero external dependencies for the brand mark.
+ */
+export const AllyLogo = ({ className = "w-6 h-6" }: { className?: string }) => (
+  <svg 
+    viewBox="0 0 40 40" 
+    fill="none" 
+    xmlns="http://www.w3.org/2000/svg" 
+    className={className}
+  >
+    <rect width="40" height="40" rx="8" fill="currentColor" />
+    <path 
+      d="M20 10L12 28H15.5L17.5 23H22.5L24.5 28H28L20 10ZM18.5 20.5L20 16.5L21.5 20.5H18.5Z" 
+      fill="white" 
+      className="dark:fill-zinc-900"
+    />
+    <circle cx="28" cy="12" r="4" fill="#f26306" />
+  </svg>
+);
 
-interface LogoProps {
-  className?: string;
-  size?: "sm" | "md" | "lg";
-  animated?: boolean;
-}
-
-export function Logo({ className, size = "md", animated = true }: LogoProps) {
-  const sizeClasses = {
-    sm: "w-8 h-8",
-    md: "w-12 h-12",
-    lg: "w-16 h-16",
-  };
-
-  const textSizes = {
-    sm: "text-lg",
-    md: "text-2xl",
-    lg: "text-4xl",
-  };
-
-  return (
-    <motion.div
-      className={cn("flex items-center gap-2", className)}
-      initial={animated ? { opacity: 0, scale: 0.8 } : false}
-      animate={animated ? { opacity: 1, scale: 1 } : false}
-      transition={{ duration: 0.5 }}
-    >
-      <motion.div
-        className={cn(
-          "relative rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center",
-          sizeClasses[size]
-        )}
-        whileHover={animated ? { rotate: 5, scale: 1.1 } : false}
-        transition={{ type: "spring", stiffness: 300 }}
-      >
-        <motion.svg
-          width="100%"
-          height="100%"
-          viewBox="0 0 100 100"
-          className="p-2"
-          initial={animated ? { rotate: -180 } : false}
-          animate={animated ? { rotate: 0 } : false}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-        >
-          <motion.path
-            d="M 20 50 Q 30 30, 50 30 Q 70 30, 80 50 Q 70 70, 50 70 Q 30 70, 20 50"
-            fill="none"
-            stroke="white"
-            strokeWidth="3"
-            strokeLinecap="round"
-            initial={animated ? { pathLength: 0 } : false}
-            animate={animated ? { pathLength: 1 } : false}
-            transition={{ duration: 1, delay: 0.2 }}
-          />
-          <motion.circle
-            cx="50"
-            cy="50"
-            r="8"
-            fill="white"
-            initial={animated ? { scale: 0 } : false}
-            animate={animated ? { scale: 1 } : false}
-            transition={{ duration: 0.3, delay: 0.8 }}
-          />
-        </motion.svg>
-      </motion.div>
-      <motion.span
-        className={cn(
-          "font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent",
-          textSizes[size]
-        )}
-        initial={animated ? { opacity: 0, x: -10 } : false}
-        animate={animated ? { opacity: 1, x: 0 } : false}
-        transition={{ duration: 0.5, delay: 0.3 }}
-      >
-        CAL AI
-      </motion.span>
-    </motion.div>
-  );
-}
-
+export const BetaBadge = () => (
+  <span className="bg-primary/10 text-primary text-[6px] font-bold px-1.5 py-0.5 rounded-sm ml-1.5 uppercase tracking-wider self-center border border-primary/20 leading-none">
+    BETA
+  </span>
+);

@@ -1,11 +1,11 @@
+import { NextRequest } from 'next/server';
+import { proxyGet } from '@/lib/api/proxy';
+import { ENDPOINTS } from '@/lib/api/endpoints';
+
 /**
- * Get User Information Route Handler
+ * GET /api/users/get-user
+ * Get authenticated user information (auth required)
  */
-
-import { NextRequest } from "next/server";
-import { proxyToBackend } from "@/lib/api/utils/proxy";
-
 export async function GET(request: NextRequest) {
-  return proxyToBackend(request, "/api/users/get-user");
+  return proxyGet(request, ENDPOINTS.USERS_GET_USER);
 }
-
