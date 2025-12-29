@@ -147,9 +147,23 @@ const signUpUserViaGitHub = reqResAsyncHandler(async (req: Request, res: Respons
  * console.log(data);
  */
 const getCurrentUserInformation = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const user = (req as Request & { user: User }).user;
-
-  sendR(res, STATUS_RESPONSE.SUCCESS, "User fetched successfully.", user);
+  if (req.query.customUser == "true") {
+    const customUser = {
+      id: req.user?.id,
+      email: req.user?.email,
+      phone: req.user?.phone,
+      first_name: req.user?.user_metadata.first_name,
+      last_name: req.user?.user_metadata.last_name,
+      avatar_url: req.user?.user_metadata.avatar_url,
+      created_at: req.user?.created_at,
+      updated_at: req.user?.updated_at,
+    };
+    sendR(res, STATUS_RESPONSE.SUCCESS, "User fetched successfully.", customUser);
+    return;
+  } else {
+    sendR(res, STATUS_RESPONSE.SUCCESS, "User fetched successfully.", req.user);
+    return;
+  }
 });
 
 /**
