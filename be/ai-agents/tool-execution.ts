@@ -1,10 +1,10 @@
-import { ACTION, OAUTH2CLIENT, REDIRECT_URI, SCOPES, SUPABASE } from "@/config";
+import { ACTION, SUPABASE } from "@/config";
 import { eventsHandler, initUserSupabaseCalendarWithTokensAndUpdateTokens } from "@/utils/calendar";
 import { getEvents } from "@/utils/calendar/get-events";
 import { formatEventData, parseToolArguments } from "./utils";
 import { asyncHandler } from "@/utils/http";
 import type { calendar_v3 } from "googleapis";
-import { fetchCredentialsByEmail } from "@/utils/auth";
+import { fetchCredentialsByEmail, generateGoogleAuthUrl } from "@/utils/auth";
 import isEmail from "validator/lib/isEmail";
 
 type Event = calendar_v3.Schema$Event;
@@ -46,17 +46,7 @@ async function applyDefaultTimezoneIfNeeded(event: Partial<Event>, email: string
 }
 
 export const EXECUTION_TOOLS = {
-  generateGoogleAuthUrl: () => {
-    const url = OAUTH2CLIENT.generateAuthUrl({
-      access_type: "offline",
-      scope: SCOPES,
-      prompt: "consent",
-      include_granted_scopes: true,
-      redirect_uri: REDIRECT_URI,
-    });
-
-    return url;
-  },
+  generateGoogleAuthUrl,
   registerUser: asyncHandler(async (params: { email: string; password: string }) => {
     if (!(params.email && params.password)) {
       throw new Error("Email and password are required in order to register.");

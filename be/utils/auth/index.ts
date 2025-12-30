@@ -1,5 +1,6 @@
 // Google token utilities
 export {
+  generateGoogleAuthUrl,
   checkTokenExpiry,
   fetchGoogleTokensByEmail,
   refreshGoogleAccessToken,
