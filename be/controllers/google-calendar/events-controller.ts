@@ -111,6 +111,17 @@ const deleteEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
   sendR(res, STATUS_RESPONSE.SUCCESS, "Event deleted successfully", r);
 });
 
+/**
+ * Get events analytics by start date and end date
+ *
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @returns {Promise<void>} The response object.
+ * @description Gets event analytics by start date and end date and sends the response.
+ * @example
+ * const data = await getEventAnalytics(req, res);
+ * console.log(data);
+ */
 const getEventAnalytics = reqResAsyncHandler(async (req: Request, res: Response) => {
   const tokenData = await fetchCredentialsByEmail(req.user?.email!);
   if (!tokenData) {
@@ -134,6 +145,17 @@ const getEventAnalytics = reqResAsyncHandler(async (req: Request, res: Response)
   );
 });
 
+/**
+ * Quick add an event to specific calendar
+ *
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @returns {Promise<void>} The response object.
+ * @description Quick adds an event and sends the response.
+ * @example
+ * const data = await quickAddEvent(req, res);
+ * console.log(data);
+ */
 const quickAddEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
   const tokenData = await fetchCredentialsByEmail(req.user?.email!);
   if (!tokenData) {
@@ -148,6 +170,17 @@ const quickAddEvent = reqResAsyncHandler(async (req: Request, res: Response) => 
   });
 });
 
+/**
+ * Watch an events
+ *
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @returns {Promise<void>} The response object.
+ * @description Watches an event and sends the response.
+ * @example
+ * const data = await watchEvents(req, res);
+ * console.log(data);
+ */
 const watchEvents = reqResAsyncHandler(async (req: Request, res: Response) => {
   const tokenData = await fetchCredentialsByEmail(req.user?.email!);
   if (!tokenData) {
@@ -163,7 +196,36 @@ const watchEvents = reqResAsyncHandler(async (req: Request, res: Response) => {
   sendR(res, STATUS_RESPONSE.SUCCESS, "Event watched successfully", r);
 });
 
+/**
+ * Move an event from one calendar to another one
+ *
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @returns {Promise<void>} The response object.
+ * @description Moves an event and sends the response.
+ * @example
+ * const data = await moveEvent(req, res);
+ * console.log(data);
+ */
+const moveEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
+  const tokenData = await fetchCredentialsByEmail(req.user?.email!);
+  if (!tokenData) {
+    return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User token not found.");
+  }
+
+  const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData);
+  const r = await calendar.events.move({
+    ...req.body,
+    ...REQUEST_CONFIG_BASE,
+    calendarId: (req.query.calendarId as string) ?? "primary",
+  });
+  sendR(res, STATUS_RESPONSE.SUCCESS, "Event moved successfully", r);
+});
+
 export default {
+  moveEvent,
+  watchEvents,
+  quickAddEvent,
   getEventById,
   getAllEvents,
   createEvent,

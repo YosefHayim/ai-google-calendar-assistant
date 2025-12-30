@@ -1,11 +1,11 @@
 import express, { NextFunction, Request, Response } from "express";
 
 import { STATUS_RESPONSE } from "@/config";
-import { supabaseAuth } from "@/middlewares/supabase-auth";
-import { googleTokenValidation } from "@/middlewares/google-token-validation";
-import { googleTokenRefresh } from "@/middlewares/google-token-refresh";
 import calendarController from "@/controllers/google-calendar/calendar-controller";
+import { googleTokenRefresh } from "@/middlewares/google-token-refresh";
+import { googleTokenValidation } from "@/middlewares/google-token-validation";
 import { sendR } from "@/utils/http";
+import { supabaseAuth } from "@/middlewares/supabase-auth";
 
 const router = express.Router();
 
@@ -40,5 +40,8 @@ router.get("/timezones/:id", calendarController.getCalendarTimezoneById);
 
 // get calendar overview by id - MUST be last (catches all /:id patterns)
 router.get("/:id", calendarController.getCalendarInfoById);
+
+// clear all events of calendar by id
+router.delete("/:id", calendarController.clearAllEventsOfCalendar);
 
 export default router;

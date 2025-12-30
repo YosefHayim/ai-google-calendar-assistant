@@ -10,7 +10,7 @@ import morgan from "morgan";
 import path from "node:path";
 import { sendR } from "./utils/http";
 import { startTelegramBot } from "./telegram-bot/init-bot";
-import usersRoute from "@/routes/users";
+import usersRoute from "@/routes/users-route";
 import whatsAppRoute from "@/routes/whatsapp-route";
 
 const app = express();
