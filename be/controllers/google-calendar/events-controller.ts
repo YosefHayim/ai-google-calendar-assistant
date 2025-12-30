@@ -1,9 +1,8 @@
 import { ACTION, REQUEST_CONFIG_BASE, STATUS_RESPONSE } from "@/config";
 import { Request, Response } from "express";
-import { eventsHandler, getEventDurationString } from "@/utils";
+import { eventsHandler, formatDate, getEventDurationString } from "@/utils";
 import { reqResAsyncHandler, sendR } from "@/utils/http";
 
-import type { User } from "@supabase/supabase-js";
 import { fetchCredentialsByEmail } from "@/utils/auth/get-user-calendar-tokens";
 import { getEvents } from "@/utils/calendar/get-events";
 import { initUserSupabaseCalendarWithTokensAndUpdateTokens } from "@/utils/calendar/init";
@@ -22,7 +21,7 @@ import { initUserSupabaseCalendarWithTokensAndUpdateTokens } from "@/utils/calen
 const getEventById = reqResAsyncHandler(async (req: Request, res: Response) => {
   const tokenData = await fetchCredentialsByEmail(req.user?.email!);
   if (!tokenData) {
-    return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User token not found.");
+    return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User tokens are not found.");
   }
 
   if (!req.params.id) {
@@ -54,7 +53,7 @@ const getEventById = reqResAsyncHandler(async (req: Request, res: Response) => {
 const getAllEvents = reqResAsyncHandler(async (req: Request, res: Response) => {
   const tokenData = await fetchCredentialsByEmail(req.user?.email!);
   if (!tokenData) {
-    return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User token not found.");
+    return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User tokens not found.");
   }
 
   const r = await eventsHandler(req as Request, ACTION.GET, undefined, req.query as Record<string, string>);
@@ -125,7 +124,14 @@ const getEventAnalytics = reqResAsyncHandler(async (req: Request, res: Response)
     allCalendarIds.map((calendarId) => getEvents({ calendarEvents: calendar.events, req: undefined, extra: { calendarId, ...req.query } }))
   );
 
-  sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully retrieved all events", { allEvents });
+  sendR(
+    res,
+    STATUS_RESPONSE.SUCCESS,
+    `${allEvents.length} events retrieved successfully from ${allCalendarIds.length} calendars ${
+      req.query.timeMin && `from ${formatDate(new Date(req.query.timeMin as string), true)} to ${formatDate(new Date(req.query.timeMax as string), true)}`
+    }`,
+    { allEvents }
+  );
 });
 
 export default {
