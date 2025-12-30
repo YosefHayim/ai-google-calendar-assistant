@@ -72,7 +72,7 @@ const getAllEvents = reqResAsyncHandler(async (req: Request, res: Response) => {
  * console.log(data);
  */
 const createEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const r = await eventsHandler(req, ACTION.INSERT, req.body, { calendarId: req.query.id ?? "primary", email: req.body.email });
+  const r = await eventsHandler(req, ACTION.INSERT, req.body, { calendarId: req.query.calendarId ?? "primary", email: req.body.email });
   sendR(res, STATUS_RESPONSE.CREATED, "Event created successfully", r);
 });
 
@@ -144,7 +144,7 @@ const quickAddEvent = reqResAsyncHandler(async (req: Request, res: Response) => 
   const r = await calendar.events.quickAdd({
     ...req.body,
     ...REQUEST_CONFIG_BASE,
-    calendarId: (req.query.id as string) ?? "primary",
+    calendarId: (req.query.calendarId as string) ?? "primary",
   });
 });
 
@@ -158,7 +158,7 @@ const watchEvents = reqResAsyncHandler(async (req: Request, res: Response) => {
   const r = await calendar.events.watch({
     ...req.body,
     ...REQUEST_CONFIG_BASE,
-    calendarId: (req.query.id as string) ?? "primary",
+    calendarId: (req.query.calendarId as string) ?? "primary",
   });
   sendR(res, STATUS_RESPONSE.SUCCESS, "Event watched successfully", r);
 });

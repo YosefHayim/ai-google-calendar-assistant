@@ -2,8 +2,6 @@ import type { NextFunction, Request, Response } from "express";
 import { STATUS_RESPONSE, SUPABASE } from "@/config";
 import { asyncHandler, sendR } from "@/utils/http";
 
-import type { User } from "@supabase/supabase-js";
-
 /**
  * Authenticate user by token using Supabase Auth Get User
  *
