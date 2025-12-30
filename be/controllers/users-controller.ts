@@ -116,8 +116,8 @@ const signUpUserReg = reqResAsyncHandler(async (req: Request, res: Response) => 
  * const data = await signUpOrSignInWithGoogle(req, res);
  * console.log(data);
  */
-const signUpOrSignInWithGoogle = reqResAsyncHandler(async (req: Request, res: Response) => {
-  await supabaseThirdPartySignInOrSignUp(req, res, PROVIDERS.GOOGLE);
+const signUpOrSignInWithGoogle = reqResAsyncHandler(async (_req: Request, res: Response) => {
+  await supabaseThirdPartySignInOrSignUp(res, PROVIDERS.GOOGLE);
 });
 
 /**
@@ -131,8 +131,8 @@ const signUpOrSignInWithGoogle = reqResAsyncHandler(async (req: Request, res: Re
  * const data = await signUpUserViaGitHub(req, res);
  * console.log(data);
  */
-const signUpUserViaGitHub = reqResAsyncHandler(async (req: Request, res: Response) => {
-  await supabaseThirdPartySignInOrSignUp(req, res, PROVIDERS.GITHUB);
+const signUpUserViaGitHub = reqResAsyncHandler(async (_req: Request, res: Response) => {
+  await supabaseThirdPartySignInOrSignUp(res, PROVIDERS.GITHUB);
 });
 
 /**

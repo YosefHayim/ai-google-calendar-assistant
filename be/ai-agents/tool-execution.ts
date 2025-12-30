@@ -1,8 +1,6 @@
 import { ACTION, OAUTH2CLIENT, REDIRECT_URI, SCOPES, SUPABASE } from "@/config";
-import { checkEventConflicts, eventsHandler, initUserSupabaseCalendarWithTokensAndUpdateTokens } from "@/utils/calendar";
-import { formatEventData, getCalendarCategoriesByEmail, parseToolArguments } from "./utils";
-
-import { TOKEN_FIELDS } from "@/config/constants/sql";
+import { eventsHandler, initUserSupabaseCalendarWithTokensAndUpdateTokens } from "@/utils/calendar";
+import { formatEventData, parseToolArguments } from "./utils";
 import { asyncHandler } from "@/utils/http";
 import type { calendar_v3 } from "googleapis";
 import { fetchCredentialsByEmail } from "@/utils/auth";
@@ -80,22 +78,6 @@ export const EXECUTION_TOOLS = {
     }
     throw error;
   }),
-  validateUser: asyncHandler(async ({ email }: { email: string }) => {
-    const { data, error } = await SUPABASE.from("user_calendar_tokens").select(TOKEN_FIELDS).eq("email", email.trim().toLowerCase());
-    if (error || !data || data.length === 0) {
-      throw new Error("User not found or no tokens available.");
-    }
-    return data[0];
-  }),
-
-  validateEventFields: asyncHandler((params: calendar_v3.Schema$Event & { email: string }) => {
-    const { email, eventLike } = parseToolArguments(params);
-    if (!(email && isEmail(email))) {
-      throw new Error("Invalid email address.");
-    }
-    const formatted = formatEventData(eventLike as Event);
-    return { ...formatted, email };
-  }),
 
   insertEvent: asyncHandler(async (params: calendar_v3.Schema$Event & { email: string; customEvents?: boolean }) => {
     const { email, calendarId, eventLike } = parseToolArguments(params);
@@ -134,19 +116,6 @@ export const EXECUTION_TOOLS = {
     return eventsHandler(null, ACTION.GET, {}, { email, calendarId: calendarId ?? "primary", timeMin: params.timeMin ?? startOfYear, q: params.q || "" });
   }),
 
-  selectCalendarByEventDetails: asyncHandler(async (params: { eventInformation: calendar_v3.Schema$Event; email: string }) => {
-    if (!(params.email && isEmail(params.email))) {
-      throw new Error("Invalid email address.");
-    }
-    const calendars = (await getCalendarCategoriesByEmail(params.email)).map((c) => {
-      return {
-        calendarId: c.calendar_id,
-        calendarName: c.calendar_name,
-      };
-    });
-    return calendars;
-  }),
-
   deleteEvent: asyncHandler((params: { eventId: string; email: string }) => {
     const { email, eventId } = parseToolArguments(params);
     if (!(email && isEmail(email))) {
@@ -157,26 +126,4 @@ export const EXECUTION_TOOLS = {
     }
     return eventsHandler(null, ACTION.DELETE, { id: eventId }, { email });
   }),
-  checkConflicts: asyncHandler(
-    async (params: { email: string; calendarId: string | null; start: calendar_v3.Schema$EventDateTime; end: calendar_v3.Schema$EventDateTime }) => {
-      const { email, calendarId } = parseToolArguments(params);
-      if (!(email && isEmail(email))) {
-        throw new Error("Invalid email address.");
-      }
-
-      const startTime = params.start?.dateTime || params.start?.date;
-      const endTime = params.end?.dateTime || params.end?.date;
-
-      if (!startTime || !endTime) {
-        throw new Error("Start and end times are required.");
-      }
-
-      return checkEventConflicts({
-        email,
-        calendarId: calendarId ?? "primary",
-        startTime,
-        endTime,
-      });
-    }
-  ),
 };

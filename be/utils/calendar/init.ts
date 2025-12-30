@@ -1,38 +1,65 @@
 import { calendar_v3, google } from "googleapis";
+import type { OAuth2Client } from "google-auth-library";
 
 import { OAUTH2CLIENT } from "@/config";
 import type { TokensProps } from "@/types";
-import { asyncHandler } from "../http/async-handlers";
 import { updateUserSupabaseTokens } from "../auth/update-tokens-of-user";
 
+type RefreshedToken = { token: string | null | undefined; expiry_date?: number | null };
+
 /**
- * Initialize calendar with user tokens and update tokens
+ * Refresh OAuth tokens and get new access token
  *
- * @param {TokensProps} tokens - The tokens of the user.
- * @returns {Promise<calendar_v3.Calendar>} The initialized calendar.
- * @description Initializes the calendar with the user tokens and updates the tokens in Supabase.
- * @example
- * const data = await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokens);
- * console.log(data);
+ * @param {OAuth2Client} client - The OAuth2 client.
+ * @returns {Promise<RefreshedToken | null>} The refreshed token data, or null if no refresh occurred.
  */
-export const initUserSupabaseCalendarWithTokensAndUpdateTokens = asyncHandler(async (tokens: TokensProps): Promise<calendar_v3.Calendar> => {
-  OAUTH2CLIENT.setCredentials(tokens);
-
-  const newTokens = await OAUTH2CLIENT.getAccessToken().catch((e) => {
-    const data = e?.response?.data;
-    const msg = data?.error || e?.message;
+export const refreshAccessToken = async (client: OAuth2Client): Promise<RefreshedToken | null> => {
+  try {
+    const result = await client.getAccessToken();
+    return result?.token ? { token: result.token, expiry_date: result.res?.data?.expiry_date } : null;
+  } catch (e: unknown) {
+    const err = e as { response?: { data?: { error?: string; error_description?: string } }; message?: string };
+    const data = err?.response?.data;
+    const msg = data?.error || err?.message;
     const desc = data?.error_description;
-    console.error("OAuth invalid_grant", {
-      msg,
-      desc,
-      client_id: OAUTH2CLIENT._clientId,
-    });
+    console.error("OAuth token refresh failed", { msg, desc });
     throw new Error(`invalid grant: ${msg}${desc ? ` - ${desc}` : ""}`);
-  });
-
-  if (newTokens?.token) {
-    await updateUserSupabaseTokens(tokens, newTokens);
   }
+};
 
-  return google.calendar({ version: "v3", auth: OAUTH2CLIENT, responseType: "json" });
-});
+/**
+ * Create Google Calendar client
+ *
+ * @param {OAuth2Client} auth - The authenticated OAuth2 client.
+ * @returns {calendar_v3.Calendar} The calendar client.
+ */
+export const createCalendarClient = (auth: OAuth2Client): calendar_v3.Calendar => {
+  return google.calendar({ version: "v3", auth, responseType: "json" });
+};
+
+/**
+ * Persist refreshed tokens to database if needed
+ *
+ * @param {TokensProps} oldTokens - The original tokens.
+ * @param {RefreshedToken | null} newTokens - The refreshed token data.
+ */
+const persistRefreshedTokens = async (oldTokens: TokensProps, newTokens: RefreshedToken | null): Promise<void> => {
+  if (newTokens?.token) {
+    await updateUserSupabaseTokens(oldTokens, newTokens as TokensProps & { token?: string | null });
+  }
+};
+
+/**
+ * Initialize calendar with user tokens
+ *
+ * Sets credentials, refreshes token if needed, updates DB, and returns calendar client.
+ *
+ * @param {TokensProps} tokens - The user's OAuth tokens.
+ * @returns {Promise<calendar_v3.Calendar>} The initialized calendar client.
+ */
+export const initUserSupabaseCalendarWithTokensAndUpdateTokens = async (tokens: TokensProps): Promise<calendar_v3.Calendar> => {
+  OAUTH2CLIENT.setCredentials(tokens);
+  const refreshedTokens = await refreshAccessToken(OAUTH2CLIENT);
+  await persistRefreshedTokens(tokens, refreshedTokens);
+  return createCalendarClient(OAUTH2CLIENT);
+};

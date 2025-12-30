@@ -67,8 +67,6 @@ export const PARAMETERS_TOOLS = {
       .max(MAX_PW, "Password cannot exceed 72 characters.")
       .describe("The password for the user account. Must be between 6 and 72 characters long."),
   }),
-  validateUserDbParametersToRegisterUser: z.object({ email: emailSchema }).describe("Register user to our db."),
-  validateUserDbParameter: z.object({ email: emailSchema }).describe("Validate user by email."),
   getEventParameters: z
     .object({
       email: emailSchema,
@@ -80,9 +78,6 @@ export const PARAMETERS_TOOLS = {
     })
     .describe("Fetch events for the user email for the maximum date of time provided."),
 
-  selectCalendarParameters: z
-    .object({ email: emailSchema, eventInformation: makeFullEventParams() })
-    .describe("Fetch all calendars Ids for the user to find out the best matching calendar type for the event."),
   insertEventParameters: makeFullEventParams().describe("Insert a new event into the user calendar."),
   updateEventParameters: makeFullEventParams()
     .extend({
@@ -96,13 +91,4 @@ export const PARAMETERS_TOOLS = {
       email: emailSchema,
     })
     .describe("Delete an event by ID."),
-  normalizedEventParams: makeFullEventParams().extend({ email: emailSchema }).describe("Normalize an event payload for insertion/update."),
-  checkConflictsParameters: z
-    .object({
-      email: emailSchema,
-      calendarId: calendarSchema,
-      start: makeEventTime(),
-      end: makeEventTime(),
-    })
-    .describe("Check for conflicting events in the specified time range before creating a new event."),
 };

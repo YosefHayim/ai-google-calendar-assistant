@@ -32,40 +32,8 @@ export const AGENTS = {
   }),
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // DEPRECATED AGENTS - Bypassed by DIRECT_TOOLS for performance
-  // These are kept for backwards compatibility but no longer used in handoffs.
-  // Use DIRECT_TOOLS.validate_user_direct instead.
+  // EVENT OPERATION AGENTS
   // ═══════════════════════════════════════════════════════════════════════════
-  /** @deprecated Use DIRECT_TOOLS.validate_user_direct instead */
-  validateUser: new Agent({
-    name: "validate_user_agent",
-    instructions: AGENT_INSTRUCTIONS.validateUser,
-    model: FAST_MODEL,
-    modelSettings: { toolChoice: "required" },
-    handoffDescription: HANDOFF_DESCRIPTIONS.validateUser,
-    tools: [AGENT_TOOLS.validate_user_db],
-  }),
-  /** @deprecated Use DIRECT_TOOLS.pre_create_validation instead */
-  validateEventData: new Agent({
-    name: "validate_event_data_agent",
-    instructions: AGENT_INSTRUCTIONS.validateEventData,
-    model: FAST_MODEL,
-    modelSettings: { toolChoice: "required" },
-    handoffDescription: HANDOFF_DESCRIPTIONS.validateEventData,
-    tools: [AGENT_TOOLS.validate_event_fields],
-  }),
-  // ═══════════════════════════════════════════════════════════════════════════
-  // ACTIVE AGENTS - Core event operations (still require LLM for validation)
-  // ═══════════════════════════════════════════════════════════════════════════
-  /** @deprecated Use DIRECT_TOOLS.insert_event_direct instead - avoids AI defaulting to placeholder emails */
-  createEvent: new Agent({
-    name: "create_event_agent",
-    instructions: AGENT_INSTRUCTIONS.createEvent,
-    model: FAST_MODEL,
-    modelSettings: { toolChoice: "required" },
-    handoffDescription: HANDOFF_DESCRIPTIONS.createEvent,
-    tools: [AGENT_TOOLS.insert_event],
-  }),
   retrieveEvent: new Agent({
     instructions: AGENT_INSTRUCTIONS.retrieveEvent,
     name: "retrieve_event_agent",
@@ -95,26 +63,6 @@ export const AGENTS = {
     name: "parse_event_text_agent",
     model: CURRENT_MODEL, // Needs smarter model for NLP
     instructions: AGENT_INSTRUCTIONS.parseEventText,
-  }),
-
-  // ═══════════════════════════════════════════════════════════════════════════
-  // DEPRECATED AGENTS - Bypassed by DIRECT_TOOLS for performance
-  // ═══════════════════════════════════════════════════════════════════════════
-  /** @deprecated Use DIRECT_TOOLS.select_calendar_direct instead */
-  selectCalendar: new Agent({
-    name: "select_calendar_agent",
-    instructions: AGENT_INSTRUCTIONS.selectCalendar,
-    model: FAST_MODEL,
-    modelSettings: { toolChoice: "required" },
-    handoffDescription: HANDOFF_DESCRIPTIONS.selectCalendar,
-    tools: [AGENT_TOOLS.select_calendar],
-  }),
-  /** @deprecated Use DIRECT_TOOLS.check_conflicts_direct instead */
-  checkConflicts: new Agent({
-    name: "check_conflicts_agent",
-    model: FAST_MODEL,
-    instructions: AGENT_INSTRUCTIONS.checkConflicts,
-    tools: [AGENT_TOOLS.check_conflicts],
   }),
 };
 

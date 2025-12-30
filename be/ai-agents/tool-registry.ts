@@ -11,96 +11,62 @@ import {
 } from "./direct-utilities";
 import { z } from "zod";
 
+/**
+ * Properly stringify an error object for tool error responses.
+ * Handles Error instances, objects with message property, and plain objects.
+ */
+function stringifyError(error: unknown): string {
+  if (error instanceof Error) {
+    return error.message;
+  }
+  if (typeof error === "object" && error !== null) {
+    if ("message" in error && typeof (error as { message: unknown }).message === "string") {
+      return (error as { message: string }).message;
+    }
+    try {
+      return JSON.stringify(error);
+    } catch {
+      return "Unknown error occurred";
+    }
+  }
+  return String(error);
+}
+
 export const AGENT_TOOLS = {
   generate_google_auth_url: tool({
     name: "generate_google_auth_url",
     description: TOOLS_DESCRIPTION.generateGoogleAuthUrlDescription,
     parameters: PARAMETERS_TOOLS.generateGoogleAuthUrlParameters,
     execute: EXECUTION_TOOLS.generateGoogleAuthUrl,
-    errorFunction: (_, error) => {
-      return `generate_google_auth_url: ${error}`;
-    },
+    errorFunction: (_, error) => `generate_google_auth_url: ${stringifyError(error)}`,
   }),
   register_user_via_db: tool({
     name: "register_user_via_db",
     description: TOOLS_DESCRIPTION.registerUserViaDb,
     parameters: PARAMETERS_TOOLS.registerUserParameters,
     execute: EXECUTION_TOOLS.registerUser,
-    errorFunction: (_, error) => {
-      return `register_user_via_db: ${error}`;
-    },
-  }),
-  validate_user_db: tool({
-    name: "validate_user",
-    description: TOOLS_DESCRIPTION.validateUser,
-    parameters: PARAMETERS_TOOLS.validateUserDbParameter,
-    execute: EXECUTION_TOOLS.validateUser,
-    errorFunction: (_, error) => {
-      return `validate_user: ${error}`;
-    },
-  }),
-  validate_event_fields: tool({
-    name: "validate_event_fields",
-    description: TOOLS_DESCRIPTION.validateEventFields,
-    parameters: PARAMETERS_TOOLS.normalizedEventParams,
-    execute: EXECUTION_TOOLS.validateEventFields,
-    errorFunction: (_, error) => {
-      return `validate_event_fields: ${error}`;
-    },
-  }),
-  insert_event: tool({
-    name: "insert_event",
-    description: TOOLS_DESCRIPTION.insertEvent,
-    parameters: PARAMETERS_TOOLS.insertEventParameters,
-    execute: EXECUTION_TOOLS.insertEvent,
-    errorFunction: (_, error) => {
-      return `insert_event: ${error}`;
-    },
+    errorFunction: (_, error) => `register_user_via_db: ${stringifyError(error)}`,
   }),
   get_event: tool({
     name: "get_event",
     description: TOOLS_DESCRIPTION.getEvent,
     parameters: PARAMETERS_TOOLS.getEventParameters,
     execute: EXECUTION_TOOLS.getEvent,
-    errorFunction: (_, error) => {
-      return `get_event: ${error}`;
-    },
+    errorFunction: (_, error) => `get_event: ${stringifyError(error)}`,
   }),
   update_event: tool({
     name: "update_event",
     description: TOOLS_DESCRIPTION.updateEvent,
     parameters: PARAMETERS_TOOLS.updateEventParameters,
     execute: EXECUTION_TOOLS.updateEvent,
-    errorFunction: (_, error) => {
-      return `update_event: ${error}`;
-    },
+    errorFunction: (_, error) => `update_event: ${stringifyError(error)}`,
   }),
   delete_event: tool({
     name: "delete_event",
     description: TOOLS_DESCRIPTION.deleteEvent,
     parameters: PARAMETERS_TOOLS.deleteEventParameter,
     execute: EXECUTION_TOOLS.deleteEvent,
-    errorFunction: (_, error) => {
-      return `delete_event: ${error}`;
-    },
-  }),
-  select_calendar: tool({
-    name: "select_calendar_by_event_details",
-    description: TOOLS_DESCRIPTION.selectCalendarByEventDetails,
-    parameters: PARAMETERS_TOOLS.selectCalendarParameters,
-    execute: EXECUTION_TOOLS.selectCalendarByEventDetails,
-    errorFunction: (_, error) => {
-      return `select_calendar: ${error}`;
-    },
-  }),
-  check_conflicts: tool({
-    name: "check_conflicts",
-    description: TOOLS_DESCRIPTION.checkConflicts,
-    parameters: PARAMETERS_TOOLS.checkConflictsParameters,
-    execute: EXECUTION_TOOLS.checkConflicts,
-    errorFunction: (_, error) => {
-      return `check_conflicts: ${error}`;
-    },
+    errorFunction: (_, error) => `delete_event: ${stringifyError(error)}`,
   }),
 };
 
@@ -117,7 +83,7 @@ export const DIRECT_TOOLS = {
     description: "Validates if user exists in database. Returns { exists: boolean, user?: object }. Fast direct DB call.",
     parameters: z.object({ email: emailSchema }),
     execute: async ({ email }) => validateUserDirect(email),
-    errorFunction: (_, error) => `validate_user_direct: ${error}`,
+    errorFunction: (_, error) => `validate_user_direct: ${stringifyError(error)}`,
   }),
 
   get_timezone_direct: tool({
@@ -125,7 +91,7 @@ export const DIRECT_TOOLS = {
     description: "Gets user's default timezone. First checks DB, then falls back to Google Calendar settings. Returns { timezone: string }.",
     parameters: z.object({ email: emailSchema }),
     execute: async ({ email }) => getUserDefaultTimezoneDirect(email),
-    errorFunction: (_, error) => `get_timezone_direct: ${error}`,
+    errorFunction: (_, error) => `get_timezone_direct: ${stringifyError(error)}`,
   }),
 
   select_calendar_direct: tool({
@@ -139,7 +105,7 @@ export const DIRECT_TOOLS = {
     }),
     execute: async ({ email, summary, description, location }) =>
       selectCalendarByRules(email, { summary, description, location }),
-    errorFunction: (_, error) => `select_calendar_direct: ${error}`,
+    errorFunction: (_, error) => `select_calendar_direct: ${stringifyError(error)}`,
   }),
 
   check_conflicts_direct: tool({
@@ -153,7 +119,7 @@ export const DIRECT_TOOLS = {
     }),
     execute: async ({ email, calendarId, start, end }) =>
       checkConflictsDirect({ email, calendarId, start, end }),
-    errorFunction: (_, error) => `check_conflicts_direct: ${error}`,
+    errorFunction: (_, error) => `check_conflicts_direct: ${stringifyError(error)}`,
   }),
 
   pre_create_validation: tool({
@@ -176,7 +142,7 @@ export const DIRECT_TOOLS = {
         start: start ?? undefined,
         end: end ?? undefined,
       }),
-    errorFunction: (_, error) => `pre_create_validation: ${error}`,
+    errorFunction: (_, error) => `pre_create_validation: ${stringifyError(error)}`,
   }),
 
   insert_event_direct: tool({
@@ -193,6 +159,6 @@ export const DIRECT_TOOLS = {
       end: makeEventTime(),
     }),
     execute: async (params) => EXECUTION_TOOLS.insertEvent(params),
-    errorFunction: (_, error) => `insert_event_direct: ${error}`,
+    errorFunction: (_, error) => `insert_event_direct: ${stringifyError(error)}`,
   }),
 };
