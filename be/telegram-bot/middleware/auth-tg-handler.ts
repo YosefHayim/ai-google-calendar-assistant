@@ -1,21 +1,8 @@
 import type { GlobalContext } from "../init-bot";
 import type { MiddlewareFn } from "grammy";
-import { OAUTH2CLIENT, REDIRECT_URI, SCOPES, SUPABASE } from "@/config";
-import { fetchGoogleTokensByEmail } from "@/utils/auth/google-token";
+import { SUPABASE } from "@/config";
+import { fetchGoogleTokensByEmail, generateGoogleAuthUrl } from "@/utils/auth";
 import isEmail from "validator/lib/isEmail";
-
-/**
- * Generate Google OAuth URL for calendar authorization
- */
-const generateGoogleAuthUrl = (): string => {
-  return OAUTH2CLIENT.generateAuthUrl({
-    access_type: "offline",
-    scope: SCOPES,
-    prompt: "consent",
-    include_granted_scopes: true,
-    redirect_uri: REDIRECT_URI,
-  });
-};
 
 /**
  * Check if user has valid Google Calendar tokens and prompt for auth if missing

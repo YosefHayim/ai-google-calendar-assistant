@@ -1,11 +1,11 @@
 import type { GoogleIdTokenPayloadProps, TokensProps } from "@/types";
-import { OAUTH2CLIENT, PROVIDERS, REDIRECT_URI, SCOPES, STATUS_RESPONSE, SUPABASE, env } from "@/config";
+import { OAUTH2CLIENT, PROVIDERS, STATUS_RESPONSE, SUPABASE } from "@/config";
 import type { Request, Response } from "express";
 import { reqResAsyncHandler, sendR } from "@/utils/http";
 
 import type { User } from "@supabase/supabase-js";
 import jwt from "jsonwebtoken";
-import { supabaseThirdPartySignInOrSignUp } from "@/utils/auth";
+import { generateGoogleAuthUrl, supabaseThirdPartySignInOrSignUp } from "@/utils/auth";
 
 /**
  * Generate Google Auth URL
@@ -22,13 +22,7 @@ const generateAuthGoogleUrl = reqResAsyncHandler(async (req: Request, res: Respo
   const code = req.query.code as string | undefined;
   const postmanHeaders = req.headers["user-agent"];
 
-  const url = OAUTH2CLIENT.generateAuthUrl({
-    access_type: "offline",
-    scope: SCOPES,
-    prompt: "consent",
-    include_granted_scopes: true,
-    redirect_uri: REDIRECT_URI,
-  });
+  const url = generateGoogleAuthUrl();
 
   // 1. No code yet: send user to consent screen
   if (!code) {

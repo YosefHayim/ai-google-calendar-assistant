@@ -1,6 +1,21 @@
-import { OAUTH2CLIENT, SUPABASE } from "@/config";
+import { OAUTH2CLIENT, REDIRECT_URI, SCOPES, SUPABASE } from "@/config";
 import { TOKEN_FIELDS } from "@/config/constants/sql";
 import type { TokensProps } from "@/types";
+
+/**
+ * Generate Google OAuth URL for calendar authorization
+ *
+ * @returns {string} The OAuth URL for Google Calendar authorization
+ */
+export const generateGoogleAuthUrl = (): string => {
+  return OAUTH2CLIENT.generateAuthUrl({
+    access_type: "offline",
+    scope: SCOPES,
+    prompt: "consent",
+    include_granted_scopes: true,
+    redirect_uri: REDIRECT_URI,
+  });
+};
 
 // Buffer time before expiry to consider token as "near expiry" (5 minutes)
 export const NEAR_EXPIRY_BUFFER_MS = 5 * 60 * 1000;
