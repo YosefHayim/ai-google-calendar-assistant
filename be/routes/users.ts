@@ -17,7 +17,7 @@ router.param("id", (_req: Request, res: Response, next: NextFunction, id: string
 
 router.get("/me", authHandler, userController.getCurrentUserInformation);
 
-router.get("/refresh", authHandler, userController.refreshToken);
+router.post("/refresh", authHandler, userController.refreshToken);
 
 router.delete("/", authHandler, userController.deActivateUser);
 
