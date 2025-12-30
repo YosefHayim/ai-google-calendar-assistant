@@ -1,8 +1,8 @@
 import express, { NextFunction, Request, Response } from "express";
 
 import { STATUS_RESPONSE } from "@/config";
-import { supabaseAuth } from "@/middlewares/supabase-auth";
 import { sendR } from "@/utils/http";
+import { supabaseAuth } from "@/middlewares/supabase-auth";
 import { userController } from "@/controllers/users-controller";
 
 const router = express.Router();
@@ -15,24 +15,34 @@ router.param("id", (_req: Request, res: Response, next: NextFunction, id: string
   next();
 });
 
+// get current user information
 router.get("/me", supabaseAuth(), userController.getCurrentUserInformation);
 
+// refresh token
 router.post("/refresh", supabaseAuth(), userController.refreshToken);
 
+// deactivate user
 router.delete("/", supabaseAuth(), userController.deActivateUser);
 
+// generate auth google url
 router.get("/callback", userController.generateAuthGoogleUrl);
 
+// verify user by email otp
 router.post("/verify-user-by-email-otp", userController.verifyEmailByOtp);
 
+// sign up user
 router.post("/signup", userController.signUpUserReg);
 
+// sign in user
 router.post("/signin", userController.signInUserReg);
 
+// sign up or sign in with google
 router.get("/signup/google", userController.signUpOrSignInWithGoogle);
 
+// sign up user via github
 router.get("/signup/github", userController.signUpUserViaGitHub);
 
+// get any user information by id
 router.get("/:id", userController.getUserInformationById);
 
 export default router;

@@ -67,6 +67,10 @@ const generateAuthGoogleUrl = reqResAsyncHandler(async (req: Request, res: Respo
       return sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Failed to store new tokens.", error);
     }
 
+    if (!data && !user) {
+      return sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Failed to store new tokens, but user decode works", user);
+    }
+
     sendR(res, STATUS_RESPONSE.SUCCESS, "Tokens has been updated successfully.", {
       data,
     });

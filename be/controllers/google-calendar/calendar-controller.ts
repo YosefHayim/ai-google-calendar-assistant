@@ -200,7 +200,26 @@ const getSettingsOfCalendarById = reqResAsyncHandler(async (req: Request, res: R
   sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully received calendar settings", r.data);
 });
 
+/**
+ * Clear all events of calendar by id
+ *
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @returns {Promise<void>} The response object.
+ * @description Clears all events of calendar by id and sends the response.
+ * @example
+ * const data = await clearAllEventsOfCalendar(req, res);
+ * console.log(data);
+ */
+const clearAllEventsOfCalendar = reqResAsyncHandler(async (req: Request, res: Response) => {
+  const tokenData = await fetchCredentialsByEmail(req.user?.email!);
+  const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData);
+  const r = await calendar.calendars.clear({ calendarId: req.params.id });
+  sendR(res, STATUS_RESPONSE.SUCCESS, `Successfully cleared all events of calendar ${req.params.calendarId}`, r.data);
+});
+
 export default {
+  clearAllEventsOfCalendar,
   getSettingsOfCalendarById,
   getSettingsOfCalendar,
   getFreeBusy,

@@ -1,11 +1,11 @@
 import express, { NextFunction, Request, Response } from "express";
 
 import { STATUS_RESPONSE } from "@/config";
-import { supabaseAuth } from "@/middlewares/supabase-auth";
-import { googleTokenValidation } from "@/middlewares/google-token-validation";
-import { googleTokenRefresh } from "@/middlewares/google-token-refresh";
 import eventsController from "@/controllers/google-calendar/events-controller";
+import { googleTokenRefresh } from "@/middlewares/google-token-refresh";
+import { googleTokenValidation } from "@/middlewares/google-token-validation";
 import { sendR } from "@/utils/http";
+import { supabaseAuth } from "@/middlewares/supabase-auth";
 
 const router = express.Router();
 
@@ -23,7 +23,17 @@ router.param("id", (_req: Request, res: Response, next: NextFunction, id: string
 // get all the events of the user
 router.get("/", eventsController.getAllEvents);
 
+// get event analytics by start date and end date 
 router.get("/analytics", eventsController.getEventAnalytics);
+
+// quick add an event
+router.post("/quick-add", eventsController.quickAddEvent);
+
+// watch an event
+router.post("/watch", eventsController.watchEvents);
+
+// move an event
+router.post("/move", eventsController.moveEvent);
 
 // get specific event by id
 router.get("/:id", eventsController.getEventById);
