@@ -122,9 +122,7 @@ const getEventAnalytics = reqResAsyncHandler(async (req: Request, res: Response)
   const allCalendarIds = (await calendar.calendarList.list({ prettyPrint: true }).then((r) => r.data.items?.map((calendar) => calendar.id))) || [];
 
   const allEvents = await Promise.all(
-    allCalendarIds.map((calendarId) =>
-      getEvents({ calendarEvents: calendar.events, req: undefined, extra: { calendarId, customEvents: Boolean(req.query.customEvents) } })
-    )
+    allCalendarIds.map((calendarId) => getEvents({ calendarEvents: calendar.events, req: undefined, extra: { calendarId, ...req.query } }))
   );
 
   sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully retrieved all events", { allEvents });
