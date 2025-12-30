@@ -89,6 +89,12 @@ export const AGENTS = {
     instructions: AGENT_INSTRUCTIONS.getUserDefaultTimeZone,
     tools: [AGENT_TOOLS.get_user_default_timezone],
   }),
+  checkConflicts: new Agent({
+    name: "check_conflicts_agent",
+    model: CURRENT_MODEL,
+    instructions: AGENT_INSTRUCTIONS.checkConflicts,
+    tools: [AGENT_TOOLS.check_conflicts],
+  }),
 };
 
 export const HANDOFF_AGENTS = {
@@ -102,6 +108,7 @@ export const HANDOFF_AGENTS = {
       AGENTS.getUserDefaultTimeZone.asTool({ toolName: "get_user_default_timezone" }),
       AGENTS.validateEventData.asTool({ toolName: "validate_event_data" }),
       AGENTS.selectCalendar.asTool({ toolName: "select_calendar" }),
+      AGENTS.checkConflicts.asTool({ toolName: "check_conflicts" }),
       AGENTS.createEvent.asTool({ toolName: "create_event" }),
     ],
   }),
