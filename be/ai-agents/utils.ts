@@ -1,6 +1,6 @@
 import { SUPABASE, TIMEZONE } from "@/config";
-
 import { asyncHandler } from "@/utils/http";
+import { isPlainObject, omitBy, isNil, isEmpty } from "lodash-es";
 import type { calendar_v3 } from "googleapis";
 
 type Event = calendar_v3.Schema$Event;
@@ -8,42 +8,45 @@ type EDT = calendar_v3.Schema$EventDateTime;
 
 const ALLOWED_TZ = new Set<string>(Object.values(TIMEZONE) as string[]);
 
-function deepClean<T extends Record<string, any>>(obj: T): T {
-  if (!obj || typeof obj !== "object") {
-    return obj;
-  }
-  const out: any = Array.isArray(obj) ? [] : {};
-  for (const [k, v] of Object.entries(obj)) {
-    if (v === "" || v === undefined || v === null) {
-      continue;
+/**
+ * Recursively remove empty strings, null, and undefined values from objects
+ */
+export function deepClean<T>(obj: T): T {
+  if (!obj || typeof obj !== "object") return obj;
+
+  const clean = (val: unknown): unknown => {
+    if (Array.isArray(val)) {
+      const arr = val.map(clean).filter((v) => !isNil(v) && v !== "");
+      return arr.length ? arr : undefined;
     }
-    if (typeof v === "object") {
-      const cleaned = deepClean(v as Record<string, unknown>);
-      if (Array.isArray(cleaned) ? cleaned.length : Object.keys(cleaned).length) {
-        out[k] = cleaned;
-      }
-    } else {
-      out[k] = v;
+    if (isPlainObject(val)) {
+      const cleaned = omitBy(
+        Object.fromEntries(Object.entries(val as object).map(([k, v]) => [k, clean(v)])),
+        (v) => isNil(v) || v === "" || (isPlainObject(v) && isEmpty(v)) || (Array.isArray(v) && !v.length)
+      );
+      return isEmpty(cleaned) ? undefined : cleaned;
     }
-  }
-  return out;
+    return val;
+  };
+
+  return clean(obj) as T;
 }
 
-function normalizeEventDateTime(input: Partial<EDT>): EDT {
+/**
+ * Normalize event date/time to ensure mutual exclusivity of date vs dateTime
+ */
+export function normalizeEventDateTime(input: Partial<EDT>): EDT {
   const e: Partial<EDT> = { ...input };
 
-  // Remove empty fields early
   for (const k of Object.keys(e) as (keyof EDT)[]) {
     if (e[k] === "" || e[k] === undefined || e[k] === null) {
       delete e[k];
     }
   }
 
-  // Enforce mutual exclusivity
   if (e.dateTime) {
     e.date = undefined;
   } else if (e.date) {
-    // All-day: no dateTime, and Google recommends omitting timeZone
     e.dateTime = undefined;
     e.timeZone = undefined;
   }
@@ -51,14 +54,11 @@ function normalizeEventDateTime(input: Partial<EDT>): EDT {
   return e as EDT;
 }
 
-export const formatEventData = (params: Partial<Event>): Event => {
-  // Clean early so required-field checks see real values
-  const cleaned = deepClean(params || {});
-
-  const start = normalizeEventDateTime((cleaned.start ?? {}) as Partial<EDT>);
-  const end = normalizeEventDateTime((cleaned.end ?? {}) as Partial<EDT>);
-
-  if (!cleaned.summary) {
+/**
+ * Validate required event fields
+ */
+export function validateEventRequired(summary: string | null | undefined, start: EDT, end: EDT): void {
+  if (!summary) {
     throw new Error("Event summary is required.");
   }
   if (!(start.dateTime || start.date)) {
@@ -67,10 +67,15 @@ export const formatEventData = (params: Partial<Event>): Event => {
   if (!(end.dateTime || end.date)) {
     throw new Error("Event end is required.");
   }
+}
 
-  // Time zone rules: only for timed events
-  const tzStart = start.dateTime ? start.timeZone : undefined;
-  const tzEnd = end.dateTime ? end.timeZone ?? tzStart : undefined;
+/**
+ * Validate and normalize event timezone
+ * Returns the resolved timezone for timed events
+ */
+export function validateAndResolveTimezone(start: EDT, end: EDT): string | undefined {
+  const tzStart = start.dateTime ? (start.timeZone ?? undefined) : undefined;
+  const tzEnd = end.dateTime ? (end.timeZone ?? tzStart ?? undefined) : undefined;
 
   if ((start.dateTime || end.dateTime) && !(tzStart || tzEnd)) {
     throw new Error("Event timeZone is required for timed events.");
@@ -86,14 +91,26 @@ export const formatEventData = (params: Partial<Event>): Event => {
     throw new Error("Start and end time zones must match.");
   }
 
+  return tzStart ?? tzEnd;
+}
+
+/**
+ * Apply resolved timezone to event date/time objects
+ */
+export function applyTimezone(start: EDT, end: EDT, timezone: string | undefined): void {
   if (start.dateTime) {
-    start.timeZone = tzStart ?? tzEnd;
+    start.timeZone = timezone;
   }
   if (end.dateTime) {
-    end.timeZone = tzStart ?? tzEnd;
+    end.timeZone = timezone;
   }
+}
 
-  const event: Event = {
+/**
+ * Build event object from cleaned data
+ */
+export function buildEvent(cleaned: Partial<Event>, start: EDT, end: EDT): Event {
+  return {
     summary: cleaned.summary,
     description: cleaned.description,
     location: cleaned.location,
@@ -107,8 +124,21 @@ export const formatEventData = (params: Partial<Event>): Event => {
     start,
     end,
   };
+}
 
-  return deepClean(event);
+/**
+ * Format and validate event data for Google Calendar API
+ */
+export const formatEventData = (params: Partial<Event>): Event => {
+  const cleaned = deepClean(params || {});
+  const start = normalizeEventDateTime((cleaned.start ?? {}) as Partial<EDT>);
+  const end = normalizeEventDateTime((cleaned.end ?? {}) as Partial<EDT>);
+
+  validateEventRequired(cleaned.summary, start, end);
+  const timezone = validateAndResolveTimezone(start, end);
+  applyTimezone(start, end, timezone);
+
+  return deepClean(buildEvent(cleaned, start, end));
 };
 
 export type UserCalendar = {
@@ -130,21 +160,11 @@ export const getCalendarCategoriesByEmail = asyncHandler(async (email: string): 
   return [];
 });
 
-function cleanObject<T extends Record<string, unknown>>(obj: T): T {
-  const newObj: Record<string, unknown> = {};
-  for (const key in obj) {
-    if (Object.hasOwn(obj, key)) {
-      const value = obj[key];
-      if (value !== null && value !== "") {
-        newObj[key] = value;
-      }
-    }
-  }
-  return newObj as T;
-}
+const cleanObject = <T extends Record<string, unknown>>(obj: T): T =>
+  omitBy(obj, (v) => isNil(v) || v === "") as T;
 export function parseToolArguments(raw: unknown) {
   // 1) accept stringified input
-  const base = typeof (raw as { input?: string })?.input === "string" ? safeParse((raw as { input: string }).input) : raw;
+  const base = typeof (raw as { input?: string })?.input === "string" ? JSON.parse((raw as { input: string }).input) : raw;
 
   // 2) unwrap common nestings
   const outer = base?.fullEventParameters ?? base;
@@ -173,8 +193,4 @@ export function parseToolArguments(raw: unknown) {
   };
 
   return { email, calendarId, eventId, eventLike: cleanObject(eventLike) };
-}
-
-export function safeParse(s: string) {
-  return JSON.parse(s);
 }
