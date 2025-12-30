@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
-import { parseToolArguments, formatEventData, safeParse } from "../../ai-agents/utils";
+import { parseToolArguments, formatEventData } from "../../ai-agents/utils";
 
 import { TIMEZONE } from "@/config";
 
@@ -14,37 +14,6 @@ jest.mock("@/config", () => ({
 }));
 
 describe("agent-utils", () => {
-  describe("safeParse", () => {
-    it("should parse valid JSON string", () => {
-      const result = safeParse('{"key": "value"}');
-      expect(result).toEqual({ key: "value" });
-    });
-
-    it("should parse array JSON", () => {
-      const result = safeParse("[1, 2, 3]");
-      expect(result).toEqual([1, 2, 3]);
-    });
-
-    it("should parse nested objects", () => {
-      const result = safeParse('{"nested": {"key": "value"}}');
-      expect(result).toEqual({ nested: { key: "value" } });
-    });
-
-    it("should throw on invalid JSON", () => {
-      expect(() => safeParse("invalid json")).toThrow();
-    });
-
-    it("should parse null", () => {
-      const result = safeParse("null");
-      expect(result).toBeNull();
-    });
-
-    it("should parse boolean", () => {
-      expect(safeParse("true")).toBe(true);
-      expect(safeParse("false")).toBe(false);
-    });
-  });
-
   describe("parseToolArguments", () => {
     it("should extract email from base level", () => {
       const input = { email: "test@example.com" };

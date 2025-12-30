@@ -14,7 +14,7 @@ export { EXECUTION_TOOLS } from "./tool-execution";
 export { PARAMETERS_TOOLS } from "./tool-schemas";
 
 // Utilities
-export { formatEventData, parseToolArguments, getCalendarCategoriesByEmail, safeParse } from "./utils";
+export { formatEventData, parseToolArguments, getCalendarCategoriesByEmail } from "./utils";
 
 // Direct utilities (bypass AI agents for faster execution)
 export {
