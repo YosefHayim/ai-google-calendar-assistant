@@ -46,6 +46,7 @@ export type SessionData = {
   email: string | undefined;
   lastProcessedMsgId: number;
   agentActive: boolean;
+  isProcessing: boolean;
 };
 
 export type TokensProps = {
