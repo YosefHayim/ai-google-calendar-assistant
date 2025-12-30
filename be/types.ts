@@ -79,6 +79,7 @@ export type TokensProps = {
   expiry_date?: number | null;
   refresh_token_expires_in?: number | null;
   email?: string | null;
+  timezone?: string | null;
 };
 
 export type userAndAiMessageProps = {

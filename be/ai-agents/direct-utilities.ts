@@ -10,6 +10,7 @@ import { checkEventConflicts, initUserSupabaseCalendarWithTokensAndUpdateTokens 
 import type { calendar_v3 } from "googleapis";
 import isEmail from "validator/lib/isEmail";
 import { formatEventData, getCalendarCategoriesByEmail, type UserCalendar } from "./utils";
+import type { TokensProps } from "@/types";
 
 type Event = calendar_v3.Schema$Event;
 
@@ -53,34 +54,52 @@ export type TimezoneResult = {
   error?: string;
 };
 
-// Simple in-memory cache for user timezones (TTL: 5 minutes)
-const timezoneCache = new Map<string, { timezone: string; expiry: number }>();
-const TIMEZONE_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+/**
+ * Updates user's timezone in the database.
+ */
+async function updateUserTimezoneInDb(email: string, timezone: string): Promise<void> {
+  try {
+    await SUPABASE.from("user_calendar_tokens")
+      .update({ timezone, updated_at: new Date().toISOString() })
+      .eq("email", email.trim().toLowerCase());
+  } catch (error) {
+    console.error("Failed to update timezone in DB:", error);
+  }
+}
 
 /**
- * Gets user's default timezone from Google Calendar - direct API call without AI agent.
+ * Gets user's default timezone - first checks DB, then falls back to Google Calendar API.
+ * If fetched from Google Calendar, saves to DB for future use.
  * Replaces: AGENTS.getUserDefaultTimeZone
- * Latency: ~1s (vs ~2-5s with agent), cached: ~0ms
+ * Latency: ~0ms from DB, ~1s from Google Calendar (first time only)
  */
 export async function getUserDefaultTimezoneDirect(email: string): Promise<TimezoneResult> {
   if (!email || !isEmail(email)) {
     return { timezone: "UTC", error: "Invalid email address." };
   }
 
-  // Check cache first
-  const cached = timezoneCache.get(email);
-  if (cached && cached.expiry > Date.now()) {
-    return { timezone: cached.timezone };
-  }
+  const normalizedEmail = email.trim().toLowerCase();
 
   try {
+    // First, check if timezone exists in DB
+    const { data: userData } = await SUPABASE.from("user_calendar_tokens")
+      .select(TOKEN_FIELDS)
+      .eq("email", normalizedEmail)
+      .single();
+
+    const dbTimezone = (userData as TokensProps | null)?.timezone;
+    if (dbTimezone) {
+      return { timezone: dbTimezone };
+    }
+
+    // Timezone not in DB - fetch from Google Calendar settings
     const tokenProps = await fetchCredentialsByEmail(email);
     const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenProps);
     const response = await calendar.settings.get({ setting: "timezone" });
     const timezone = response.data.value || "UTC";
 
-    // Cache the result
-    timezoneCache.set(email, { timezone, expiry: Date.now() + TIMEZONE_CACHE_TTL });
+    // Save timezone to DB for future use (fire and forget)
+    updateUserTimezoneInDb(normalizedEmail, timezone);
 
     return { timezone };
   } catch (error) {

@@ -36,7 +36,7 @@ Output (JSON only):
   Timed: { summary, start: { dateTime, timeZone }, end: { dateTime, timeZone }, location?, description? }
   All-day: { summary, start: { date }, end: { date }, location?, description? }
 
-Timezone: explicit IANA > getUserDefaultTimeZone(email) > "Asia/Jerusalem" > "UTC"
+Timezone: explicit IANA > user's stored timezone > "Asia/Jerusalem" > "UTC"
 Time rules: Range → start/end | Single time → 60min | Date only → all-day
 Defaults: summary="Untitled Event", duration=60min
 Constraints: Valid JSON only, no questions, no extra keys`,
@@ -108,18 +108,12 @@ Parsing rules:
 • Single time → 60min duration
 • Date + duration (no time) → starts 09:00 local
 • Date only → all-day (end = start + 1 day)
-Timezone: getUserDefaultTimeZone(email) > "Asia/Jerusalem" > "UTC"
+Timezone: user's stored timezone > "Asia/Jerusalem" > "UTC"
 Constraints: Valid JSON only, omit absent fields`,
 
   // ═══════════════════════════════════════════════════════════════════════════
   // UTILITY AGENTS (Internal helpers)
   // ═══════════════════════════════════════════════════════════════════════════
-
-  getUserDefaultTimeZone: `${RECOMMENDED_PROMPT_PREFIX}
-Role: Timezone Resolver
-Input: { email }
-Output: { timezone: IANA } or { timezone: "UTC" } if unavailable
-Constraints: JSON only`,
 
   checkConflicts: `${RECOMMENDED_PROMPT_PREFIX}
 Role: Conflict Checker
@@ -136,16 +130,19 @@ Role: Create Event Orchestrator
 Input: { email, raw_event_text }
 Special: Skip conflict check if input contains "CONFIRMED creation of event despite conflicts"
 
+CRITICAL: You MUST use the exact email from input - NEVER use placeholder emails like "user@example.com"
+
 OPTIMIZED Flow (uses direct utilities for speed):
 1) Parse event text (parse_event_text) → extract summary, start, end, location, description
    • Error: "I had trouble understanding those event details. Could you rephrase?"
-2) Call pre_create_validation with email and parsed event data
+2) Call pre_create_validation with the EXACT email from input and parsed event data
    • This single call performs IN PARALLEL: user validation, timezone lookup, calendar selection, conflict check
    • If valid=false: "I couldn't find that account. Could you double-check the email?"
 3) Handle conflicts (unless user confirmed):
    • If conflicts.hasConflicts=true: return CONFLICT_DETECTED::{jsonData}::{userMessage} and STOP
    • jsonData: { eventData: {...}, conflictingEvents: [...] }
-4) Create event using calendarId from pre_create_validation, apply timezone if missing
+4) Call insert_event_direct with the EXACT email from input, calendarId from pre_create_validation, and event data
+   • Use timezone from pre_create_validation result if event doesn't have one
    • Single attempt, fill defaults if needed
 
 Response Style:

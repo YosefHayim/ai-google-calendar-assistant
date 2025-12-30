@@ -157,16 +157,6 @@ export const EXECUTION_TOOLS = {
     }
     return eventsHandler(null, ACTION.DELETE, { id: eventId }, { email });
   }),
-  getUserDefaultTimeZone: asyncHandler(async (params: { email: string }) => {
-    const { email } = parseToolArguments(params);
-    if (!(email && isEmail(email))) {
-      throw new Error("Invalid email address.");
-    }
-    const tokenProps = await fetchCredentialsByEmail(email);
-    const CALENDAR = await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenProps);
-    const r = await CALENDAR.settings.get({ setting: "timezone" });
-    return r;
-  }),
   checkConflicts: asyncHandler(
     async (params: { email: string; calendarId: string | null; start: calendar_v3.Schema$EventDateTime; end: calendar_v3.Schema$EventDateTime }) => {
       const { email, calendarId } = parseToolArguments(params);

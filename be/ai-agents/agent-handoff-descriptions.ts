@@ -26,7 +26,7 @@ Role: Event Text Parser
 Input: Free-text with event details (summary, date, time, duration, location, description)
 Output: { summary, start, end, location?, description? }
 
-Timezone: explicit IANA > getUserDefaultTimeZone(email) > "Asia/Jerusalem" > "UTC"
+Timezone: explicit IANA > user's stored timezone > "Asia/Jerusalem" > "UTC"
 Time rules: Range → start/end | Single time → 60min | Date only → all-day
 Defaults: summary="Untitled Event"
 Constraints: JSON only, no follow-ups`,
