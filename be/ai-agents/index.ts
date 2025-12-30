@@ -15,3 +15,13 @@ export { PARAMETERS_TOOLS } from "./tool-schemas";
 
 // Utilities
 export { formatEventData, parseToolArguments, getCalendarCategoriesByEmail, safeParse } from "./utils";
+
+// Direct utilities (bypass AI agents for faster execution)
+export {
+  validateUserDirect,
+  getUserDefaultTimezoneDirect,
+  validateEventDataDirect,
+  selectCalendarByRules,
+  checkConflictsDirect,
+  preCreateValidation,
+} from "./direct-utilities";

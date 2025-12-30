@@ -2,6 +2,14 @@ import { tool } from "@openai/agents";
 import { TOOLS_DESCRIPTION } from "./tool-descriptions";
 import { EXECUTION_TOOLS } from "./tool-execution";
 import { PARAMETERS_TOOLS } from "./tool-schemas";
+import {
+  validateUserDirect,
+  getUserDefaultTimezoneDirect,
+  selectCalendarByRules,
+  checkConflictsDirect,
+  preCreateValidation,
+} from "./direct-utilities";
+import { z } from "zod";
 
 export const AGENT_TOOLS = {
   generate_google_auth_url: tool({
@@ -102,5 +110,81 @@ export const AGENT_TOOLS = {
     errorFunction: (_, error) => {
       return `check_conflicts: ${error}`;
     },
+  }),
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// DIRECT TOOLS - Bypass AI agents for faster execution
+// These tools call utilities directly without LLM overhead
+// ═══════════════════════════════════════════════════════════════════════════
+
+const emailSchema = z.coerce.string().includes("@");
+const makeEventTime = () =>
+  z.object({
+    date: z.coerce.string().nullable().optional(),
+    dateTime: z.coerce.string().nullable().optional(),
+    timeZone: z.coerce.string().nullable().optional(),
+  });
+
+export const DIRECT_TOOLS = {
+  validate_user_direct: tool({
+    name: "validate_user_direct",
+    description: "Validates if user exists in database. Returns { exists: boolean, user?: object }. Fast direct DB call.",
+    parameters: z.object({ email: emailSchema }),
+    execute: async ({ email }) => validateUserDirect(email),
+    errorFunction: (_, error) => `validate_user_direct: ${error}`,
+  }),
+
+  get_timezone_direct: tool({
+    name: "get_timezone_direct",
+    description: "Gets user's default timezone from Google Calendar. Returns { timezone: string }. Cached for performance.",
+    parameters: z.object({ email: emailSchema }),
+    execute: async ({ email }) => getUserDefaultTimezoneDirect(email),
+    errorFunction: (_, error) => `get_timezone_direct: ${error}`,
+  }),
+
+  select_calendar_direct: tool({
+    name: "select_calendar_direct",
+    description: "Selects best calendar for event using rules-based matching. Returns { calendarId, calendarName, matchReason }.",
+    parameters: z.object({
+      email: emailSchema,
+      summary: z.coerce.string().optional(),
+      description: z.coerce.string().optional(),
+      location: z.coerce.string().optional(),
+    }),
+    execute: async ({ email, summary, description, location }) =>
+      selectCalendarByRules(email, { summary, description, location }),
+    errorFunction: (_, error) => `select_calendar_direct: ${error}`,
+  }),
+
+  check_conflicts_direct: tool({
+    name: "check_conflicts_direct",
+    description: "Checks for event conflicts in time range. Returns { hasConflicts: boolean, conflictingEvents: array }.",
+    parameters: z.object({
+      email: emailSchema,
+      calendarId: z.coerce.string().default("primary"),
+      start: makeEventTime(),
+      end: makeEventTime(),
+    }),
+    execute: async ({ email, calendarId, start, end }) =>
+      checkConflictsDirect({ email, calendarId, start, end }),
+    errorFunction: (_, error) => `check_conflicts_direct: ${error}`,
+  }),
+
+  pre_create_validation: tool({
+    name: "pre_create_validation",
+    description:
+      "Combined validation: checks user, gets timezone, selects calendar, checks conflicts in PARALLEL. Much faster than sequential agent calls. Returns { valid, timezone, calendarId, calendarName, conflicts }.",
+    parameters: z.object({
+      email: emailSchema,
+      summary: z.coerce.string().optional(),
+      description: z.coerce.string().optional(),
+      location: z.coerce.string().optional(),
+      start: makeEventTime().optional(),
+      end: makeEventTime().optional(),
+    }),
+    execute: async ({ email, summary, description, location, start, end }) =>
+      preCreateValidation(email, { summary, description, location, start, end }),
+    errorFunction: (_, error) => `pre_create_validation: ${error}`,
   }),
 };
