@@ -242,6 +242,7 @@ export type Database = {
           refresh_token: string | null
           refresh_token_expires_in: number | null
           scope: string | null
+          timezone: string | null
           token_type: string | null
           updated_at: string | null
           user_id: string
@@ -257,6 +258,7 @@ export type Database = {
           refresh_token?: string | null
           refresh_token_expires_in?: number | null
           scope?: string | null
+          timezone?: string | null
           token_type?: string | null
           updated_at?: string | null
           user_id?: string
@@ -272,6 +274,7 @@ export type Database = {
           refresh_token?: string | null
           refresh_token_expires_in?: number | null
           scope?: string | null
+          timezone?: string | null
           token_type?: string | null
           updated_at?: string | null
           user_id?: string

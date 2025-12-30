@@ -34,15 +34,29 @@ export async function validateUserDirect(email: string): Promise<ValidateUserRes
     return { exists: false, error: "Invalid email address." };
   }
 
-  const { data, error } = await SUPABASE.from("user_calendar_tokens")
-    .select(TOKEN_FIELDS)
-    .eq("email", email.trim().toLowerCase());
+  try {
+    const { data, error } = await SUPABASE.from("user_calendar_tokens")
+      .select(TOKEN_FIELDS)
+      .eq("email", email.trim().toLowerCase());
 
-  if (error || !data || data.length === 0) {
-    return { exists: false };
+    // Check for database schema errors specifically
+    if (error) {
+      const categorized = categorizeError(error);
+      if (categorized.type === "database") {
+        return { exists: false, error: "Database error - please try again in a moment." };
+      }
+      return { exists: false, error: error.message };
+    }
+
+    if (!data || data.length === 0) {
+      return { exists: false, error: "No credentials found - authorization required." };
+    }
+
+    return { exists: true, user: data[0] };
+  } catch (error) {
+    const categorized = categorizeError(error);
+    return { exists: false, error: categorized.message };
   }
-
-  return { exists: true, user: data[0] };
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -68,6 +82,42 @@ async function updateUserTimezoneInDb(email: string, timezone: string): Promise<
 }
 
 /**
+ * Categorizes an error to help agents respond appropriately.
+ */
+function categorizeError(error: unknown): { type: "auth" | "database" | "other"; message: string } {
+  const errorMsg = error instanceof Error ? error.message : String(error);
+  const lowerMsg = errorMsg.toLowerCase();
+
+  // Authorization errors - user needs to re-authenticate
+  if (
+    lowerMsg.includes("no credentials found") ||
+    lowerMsg.includes("user not found") ||
+    lowerMsg.includes("no tokens available") ||
+    lowerMsg.includes("invalid_grant") ||
+    lowerMsg.includes("token has been expired") ||
+    lowerMsg.includes("token has been revoked") ||
+    lowerMsg.includes("401") ||
+    lowerMsg.includes("403") ||
+    lowerMsg.includes("unauthorized")
+  ) {
+    return { type: "auth", message: "No credentials found - authorization required." };
+  }
+
+  // Database errors - system issue, not user's fault
+  if (
+    lowerMsg.includes("column") && lowerMsg.includes("does not exist") ||
+    lowerMsg.includes("relation") && lowerMsg.includes("does not exist") ||
+    lowerMsg.includes("connection refused") ||
+    lowerMsg.includes("database") ||
+    lowerMsg.includes("could not fetch credentials")
+  ) {
+    return { type: "database", message: "Database error - please try again in a moment." };
+  }
+
+  return { type: "other", message: errorMsg };
+}
+
+/**
  * Gets user's default timezone - first checks DB, then falls back to Google Calendar API.
  * If fetched from Google Calendar, saves to DB for future use.
  * Replaces: AGENTS.getUserDefaultTimeZone
@@ -82,14 +132,20 @@ export async function getUserDefaultTimezoneDirect(email: string): Promise<Timez
 
   try {
     // First, check if timezone exists in DB
-    const { data: userData } = await SUPABASE.from("user_calendar_tokens")
+    const { data: userData, error: dbError } = await SUPABASE.from("user_calendar_tokens")
       .select(TOKEN_FIELDS)
       .eq("email", normalizedEmail)
       .single();
 
-    const dbTimezone = (userData as TokensProps | null)?.timezone;
-    if (dbTimezone) {
-      return { timezone: dbTimezone };
+    // If there's a database schema error, fall back to Google Calendar API
+    if (dbError && dbError.message?.toLowerCase().includes("column") && dbError.message?.toLowerCase().includes("does not exist")) {
+      console.warn("Timezone column not found in DB, falling back to Google Calendar API");
+      // Continue to fetch from Google Calendar
+    } else {
+      const dbTimezone = (userData as TokensProps | null)?.timezone;
+      if (dbTimezone) {
+        return { timezone: dbTimezone };
+      }
     }
 
     // Timezone not in DB - fetch from Google Calendar settings
@@ -98,13 +154,25 @@ export async function getUserDefaultTimezoneDirect(email: string): Promise<Timez
     const response = await calendar.settings.get({ setting: "timezone" });
     const timezone = response.data.value || "UTC";
 
-    // Save timezone to DB for future use (fire and forget)
-    updateUserTimezoneInDb(normalizedEmail, timezone);
+    // Save timezone to DB for future use (fire and forget) - only if column exists
+    if (!dbError) {
+      updateUserTimezoneInDb(normalizedEmail, timezone);
+    }
 
     return { timezone };
   } catch (error) {
+    const categorized = categorizeError(error);
     console.error("Failed to get user timezone:", error);
-    return { timezone: "UTC", error: "Failed to fetch timezone, using UTC." };
+
+    // Return categorized error message so agents can handle appropriately
+    return {
+      timezone: "UTC",
+      error: categorized.type === "auth"
+        ? "No credentials found - authorization required."
+        : categorized.type === "database"
+        ? "Database error - please try again in a moment."
+        : "Failed to fetch timezone, using UTC."
+    };
   }
 }
 
@@ -331,13 +399,14 @@ export async function preCreateValidation(
   ]);
 
   if (!userResult.exists) {
+    // Pass through the specific error message for proper error categorization
     return {
       valid: false,
       timezone: "UTC",
       calendarId: "primary",
       calendarName: "Primary",
       conflicts: { hasConflicts: false, conflictingEvents: [] },
-      error: "User not found or no tokens available.",
+      error: userResult.error || "User not found or no tokens available.",
     };
   }
 
