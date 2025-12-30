@@ -1,5 +1,6 @@
 import { ACTION, OAUTH2CLIENT, REDIRECT_URI, SCOPES, SUPABASE } from "@/config";
 import { eventsHandler, initUserSupabaseCalendarWithTokensAndUpdateTokens } from "@/utils/calendar";
+import { getEvents } from "@/utils/calendar/get-events";
 import { formatEventData, parseToolArguments } from "./utils";
 import { asyncHandler } from "@/utils/http";
 import type { calendar_v3 } from "googleapis";
@@ -106,15 +107,61 @@ export const EXECUTION_TOOLS = {
     return eventsHandler(null, ACTION.UPDATE, eventData, { email, calendarId: calendarId ?? "primary", eventId });
   }),
 
-  getEvent: asyncHandler((params: calendar_v3.Schema$Event & { email: string; q?: string | null; timeMin?: string | null }) => {
-    const startOfYear = new Date().toISOString().split("T")[0];
+  getEvent: asyncHandler(
+    async (params: calendar_v3.Schema$Event & { email: string; q?: string | null; timeMin?: string | null; searchAllCalendars?: boolean; calendarId?: string | null }) => {
+      const startOfYear = new Date().toISOString().split("T")[0];
 
-    const { email, calendarId } = parseToolArguments(params);
-    if (!(email && isEmail(email))) {
-      throw new Error("Invalid email address.");
+      const { email, calendarId } = parseToolArguments(params);
+      if (!(email && isEmail(email))) {
+        throw new Error("Invalid email address.");
+      }
+
+      // Default to searching all calendars (true) unless explicitly set to false
+      const searchAllCalendars = params.searchAllCalendars !== false;
+
+      if (searchAllCalendars) {
+        // Search across ALL calendars
+        const tokenData = await fetchCredentialsByEmail(email);
+        const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData);
+        const allCalendarIds = (await calendar.calendarList.list({ prettyPrint: true }).then((r) => r.data.items?.map((cal) => cal.id))) || [];
+
+        const allEventsResults = await Promise.all(
+          allCalendarIds.map((calId) =>
+            getEvents({
+              calendarEvents: calendar.events,
+              req: undefined,
+              extra: { calendarId: calId, timeMin: params.timeMin ?? startOfYear, q: params.q || "" },
+            })
+          )
+        );
+
+        // Aggregate all events from all calendars
+        const aggregatedEvents: calendar_v3.Schema$Event[] = [];
+        const calendarEventMap: { calendarId: string; events: calendar_v3.Schema$Event[] }[] = [];
+
+        for (let i = 0; i < allEventsResults.length; i++) {
+          const result = allEventsResults[i];
+          const calId = allCalendarIds[i];
+          const events = (result as { data?: calendar_v3.Schema$Events })?.data?.items || [];
+
+          if (events.length > 0) {
+            aggregatedEvents.push(...events);
+            calendarEventMap.push({ calendarId: calId || "unknown", events });
+          }
+        }
+
+        return {
+          searchedCalendars: allCalendarIds.length,
+          totalEventsFound: aggregatedEvents.length,
+          eventsByCalendar: calendarEventMap,
+          allEvents: aggregatedEvents,
+        };
+      }
+
+      // Search single calendar (original behavior)
+      return eventsHandler(null, ACTION.GET, {}, { email, calendarId: calendarId ?? "primary", timeMin: params.timeMin ?? startOfYear, q: params.q || "" });
     }
-    return eventsHandler(null, ACTION.GET, {}, { email, calendarId: calendarId ?? "primary", timeMin: params.timeMin ?? startOfYear, q: params.q || "" });
-  }),
+  ),
 
   deleteEvent: asyncHandler((params: { eventId: string; email: string }) => {
     const { email, eventId } = parseToolArguments(params);

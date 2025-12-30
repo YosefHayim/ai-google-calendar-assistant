@@ -80,6 +80,7 @@ export type TokensProps = {
   refresh_token_expires_in?: number | null;
   email?: string | null;
   timezone?: string | null;
+  is_active?: boolean | null;
 };
 
 export type userAndAiMessageProps = {

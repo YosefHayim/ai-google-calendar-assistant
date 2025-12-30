@@ -58,8 +58,8 @@ export async function fetchCalendarEvents(
   calendarEvents: calendar_v3.Resource$Events,
   params: calendar_v3.Params$Resource$Events$List
 ): Promise<calendar_v3.Schema$Events> {
-  const response = await calendarEvents.list(params);
-  return response.data;
+  const { data } = await calendarEvents.list(params);
+  return data;
 }
 
 /**

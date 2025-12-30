@@ -14,12 +14,17 @@ import { asyncHandler } from "../http/async-handlers";
  * console.log(data);
  */
 export const fetchCredentialsByEmail = asyncHandler(async (email: string): Promise<TokensProps> => {
-  const { data, error } = await SUPABASE.from("user_calendar_tokens").select(TOKEN_FIELDS).eq("email", email.trim().toLowerCase()).maybeSingle();
+  // Use ilike for safety, and maybeSingle to handle 0 or 1 result gracefully
+  const { data, error } = await SUPABASE.from("user_calendar_tokens")
+    .select(TOKEN_FIELDS)
+    .ilike("email", email.trim()) // ilike ignores case distinctions
+    .limit(1)
+    .maybeSingle();
 
-  if (error !== null) {
-    throw new Error(`Could not fetch credentials for ${email}: ${error.message}`);
+  if (error) {
+    throw new Error(`DB Error: ${error.message}`);
   }
-  if (data === null) {
+  if (!data) {
     throw new Error(`No credentials found for ${email}`);
   }
   return data as TokensProps;
