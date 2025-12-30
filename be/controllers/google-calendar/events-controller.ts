@@ -1,10 +1,11 @@
 import { ACTION, REQUEST_CONFIG_BASE, STATUS_RESPONSE } from "@/config";
 import { Request, Response } from "express";
+import { eventsHandler, getEventDurationString } from "@/utils";
 import { reqResAsyncHandler, sendR } from "@/utils/http";
 
 import type { User } from "@supabase/supabase-js";
-import { eventsHandler } from "@/utils";
 import { fetchCredentialsByEmail } from "@/utils/auth/get-user-calendar-tokens";
+import { getEvents } from "@/utils/calendar/get-events";
 import { initUserSupabaseCalendarWithTokensAndUpdateTokens } from "@/utils/calendar/init";
 
 /**
@@ -56,16 +57,8 @@ const getAllEvents = reqResAsyncHandler(async (req: Request, res: Response) => {
     return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User token not found.");
   }
 
-  if (req.query.calendarId == "allCalendars") {
-    const initCalendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData);
-    const allCalendarsIds = (await initCalendar.calendarList.list({ prettyPrint: true }).then((r) => r.data.items?.map((calendar) => calendar.id))) || [];
-    const allEventsFromAllCalendars =
-      allCalendarsIds.length > 0 && (await Promise.all(allCalendarsIds.map((calendarId) => eventsHandler(req, ACTION.GET, undefined, { calendarId }))));
-    return sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully retrieved all events from all calendars", allEventsFromAllCalendars);
-  } else {
-    const r = await eventsHandler(req as Request, ACTION.GET, undefined, req.query as Record<string, string>);
-    sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully retrieved all events", r);
-  }
+  const r = await eventsHandler(req as Request, ACTION.GET, undefined, req.query as Record<string, string>);
+  sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully retrieved all events", r);
 });
 
 /**
@@ -96,7 +89,6 @@ const createEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
  * console.log(data);
  */
 const updateEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
-
   const r = await eventsHandler(req, ACTION.UPDATE, {
     id: req.params.id,
     ...req.body,
@@ -116,9 +108,26 @@ const updateEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
  * console.log(data);
  */
 const deleteEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
-
   const r = await eventsHandler(req, ACTION.DELETE, { id: req.params.id });
   sendR(res, STATUS_RESPONSE.SUCCESS, "Event deleted successfully", r);
+});
+
+const getEventAnalytics = reqResAsyncHandler(async (req: Request, res: Response) => {
+  const tokenData = await fetchCredentialsByEmail(req.user?.email!);
+  if (!tokenData) {
+    return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User token not found.");
+  }
+
+  const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData);
+  const allCalendarIds = (await calendar.calendarList.list({ prettyPrint: true }).then((r) => r.data.items?.map((calendar) => calendar.id))) || [];
+
+  const allEvents = await Promise.all(
+    allCalendarIds.map((calendarId) =>
+      getEvents({ calendarEvents: calendar.events, req: undefined, extra: { calendarId, customEvents: Boolean(req.query.customEvents) } })
+    )
+  );
+
+  sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully retrieved all events", { allEvents });
 });
 
 export default {
@@ -127,4 +136,5 @@ export default {
   createEvent,
   updateEvent,
   deleteEvent,
+  getEventAnalytics,
 };

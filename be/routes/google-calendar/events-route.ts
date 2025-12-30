@@ -20,6 +20,8 @@ router.param("id", (_req: Request, res: Response, next: NextFunction, id: string
 // get all the events of the user
 router.get("/", eventsController.getAllEvents);
 
+router.get("/analytics", eventsController.getEventAnalytics);
+
 // get specific event by id
 router.get("/:id", eventsController.getEventById);
 
