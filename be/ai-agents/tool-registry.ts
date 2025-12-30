@@ -93,15 +93,6 @@ export const AGENT_TOOLS = {
       return `select_calendar: ${error}`;
     },
   }),
-  get_user_default_timezone: tool({
-    name: "get_user_default_timezone",
-    description: TOOLS_DESCRIPTION.getUserDefaultTimeZone,
-    parameters: PARAMETERS_TOOLS.getUserDefaultTimeZone,
-    execute: EXECUTION_TOOLS.getUserDefaultTimeZone,
-    errorFunction: (_, error) => {
-      return `get_user_default_timezone: ${error}`;
-    },
-  }),
   check_conflicts: tool({
     name: "check_conflicts",
     description: TOOLS_DESCRIPTION.checkConflicts,
@@ -131,7 +122,7 @@ export const DIRECT_TOOLS = {
 
   get_timezone_direct: tool({
     name: "get_timezone_direct",
-    description: "Gets user's default timezone from Google Calendar. Returns { timezone: string }. Cached for performance.",
+    description: "Gets user's default timezone. First checks DB, then falls back to Google Calendar settings. Returns { timezone: string }.",
     parameters: z.object({ email: emailSchema }),
     execute: async ({ email }) => getUserDefaultTimezoneDirect(email),
     errorFunction: (_, error) => `get_timezone_direct: ${error}`,
@@ -186,5 +177,22 @@ export const DIRECT_TOOLS = {
         end: end ?? undefined,
       }),
     errorFunction: (_, error) => `pre_create_validation: ${error}`,
+  }),
+
+  insert_event_direct: tool({
+    name: "insert_event_direct",
+    description:
+      "Direct event insertion - bypasses AI agent. ALWAYS use the email from context, never use placeholder emails. Returns created event from Google Calendar API.",
+    parameters: z.object({
+      email: emailSchema,
+      calendarId: z.coerce.string().default("primary"),
+      summary: z.coerce.string(),
+      description: z.coerce.string().nullable(),
+      location: z.coerce.string().nullable(),
+      start: makeEventTime(),
+      end: makeEventTime(),
+    }),
+    execute: async (params) => EXECUTION_TOOLS.insertEvent(params),
+    errorFunction: (_, error) => `insert_event_direct: ${error}`,
   }),
 };

@@ -57,6 +57,7 @@ export const AGENTS = {
   // ═══════════════════════════════════════════════════════════════════════════
   // ACTIVE AGENTS - Core event operations (still require LLM for validation)
   // ═══════════════════════════════════════════════════════════════════════════
+  /** @deprecated Use DIRECT_TOOLS.insert_event_direct instead - avoids AI defaulting to placeholder emails */
   createEvent: new Agent({
     name: "create_event_agent",
     instructions: AGENT_INSTRUCTIONS.createEvent,
@@ -108,13 +109,6 @@ export const AGENTS = {
     handoffDescription: HANDOFF_DESCRIPTIONS.selectCalendar,
     tools: [AGENT_TOOLS.select_calendar],
   }),
-  /** @deprecated Use DIRECT_TOOLS.get_timezone_direct instead */
-  getUserDefaultTimeZone: new Agent({
-    name: "get_user_default_timezone_agent",
-    model: FAST_MODEL,
-    instructions: AGENT_INSTRUCTIONS.getUserDefaultTimeZone,
-    tools: [AGENT_TOOLS.get_user_default_timezone],
-  }),
   /** @deprecated Use DIRECT_TOOLS.check_conflicts_direct instead */
   checkConflicts: new Agent({
     name: "check_conflicts_agent",
@@ -135,8 +129,7 @@ export const HANDOFF_AGENTS = {
       AGENTS.parseEventText.asTool({ toolName: "parse_event_text" }),
       // DIRECT TOOLS: bypass AI agents for faster execution
       DIRECT_TOOLS.pre_create_validation, // Combines: validate_user + get_timezone + select_calendar + check_conflicts
-      // LLM-required: final event creation with validation
-      AGENTS.createEvent.asTool({ toolName: "create_event" }),
+      DIRECT_TOOLS.insert_event_direct, // Direct event insertion - no AI overhead
     ],
   }),
   updateEventHandoff: new Agent({

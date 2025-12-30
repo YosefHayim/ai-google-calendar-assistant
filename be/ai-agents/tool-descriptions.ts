@@ -13,7 +13,7 @@ export const TOOLS_DESCRIPTION = {
 Input: { email, text }
 Output: { summary, start, end, location?, description? }
 
-Timezone precedence: explicit IANA > getUserDefaultTimeZone(email) > "Asia/Jerusalem" > "UTC"
+Timezone precedence: explicit IANA > user's stored timezone > "Asia/Jerusalem" > "UTC"
 
 Time parsing rules:
 • "9 PM–10 PM" → start/end times
@@ -28,7 +28,7 @@ Time parsing rules:
 Input: { email, calendarId, summary, start, end, location?, description? }
 Output: created event object from Google Calendar API
 
-Defaults when missing: summary="Untitled Event", duration=60min, timezone from getUserDefaultTimeZone`,
+Defaults when missing: summary="Untitled Event", duration=60min, timezone from user's stored settings`,
 
   updateEvent: `Modifies an existing event. Preserves unspecified fields.
 
@@ -49,9 +49,6 @@ Defaults: timeMin = today. Use customEvents=true for compact response.`,
 
   selectCalendarByEventDetails:
     "Lists all user calendars. Input: { email }. Output: [{ calendarName, calendarId }]",
-
-  getUserDefaultTimeZone:
-    'Gets user\'s default timezone from Google Calendar settings. Input: { email }. Output: { value: "Asia/Jerusalem" }',
 
   checkConflicts: `Checks for conflicting events before creating a new event.
 

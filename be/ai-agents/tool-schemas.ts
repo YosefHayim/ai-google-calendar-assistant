@@ -69,7 +69,6 @@ export const PARAMETERS_TOOLS = {
   }),
   validateUserDbParametersToRegisterUser: z.object({ email: emailSchema }).describe("Register user to our db."),
   validateUserDbParameter: z.object({ email: emailSchema }).describe("Validate user by email."),
-  getUserDefaultTimeZone: z.object({ email: emailSchema }).describe("Fetch user default timezone."),
   getEventParameters: z
     .object({
       email: emailSchema,
