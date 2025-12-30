@@ -87,6 +87,7 @@ export const AGENTS = {
   parseEventText: new Agent({
     name: "parse_event_text_agent",
     model: CURRENT_MODEL,
+    modelSettings: { temperature: 0.4 },
     instructions: AGENT_INSTRUCTIONS.parseEventText,
   }),
 
@@ -171,7 +172,7 @@ export const HANDOFF_AGENTS = {
 export const ORCHESTRATOR_AGENT = new Agent({
   name: "calendar_orchestrator_agent",
   model: CURRENT_MODEL,
-  modelSettings: { parallelToolCalls: true },
+  modelSettings: { parallelToolCalls: true, temperature: 0.5 },
   instructions: AGENT_INSTRUCTIONS.orchestrator,
   tools: [
     HANDOFF_AGENTS.createEventHandoff.asTool({ toolName: "create_event_handoff" }),
