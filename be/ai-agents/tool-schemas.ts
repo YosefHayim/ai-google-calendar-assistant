@@ -75,8 +75,17 @@ export const PARAMETERS_TOOLS = {
       customEvents: z.coerce
         .boolean({ description: "Optional parameter whether we want to receive back custom event object or not, default to true." })
         .nullable(),
+      searchAllCalendars: z.coerce
+        .boolean({
+          description:
+            "When true, searches across ALL user calendars instead of just the primary one. IMPORTANT: Always set to true when searching for events by name/title (q parameter) to ensure the event is found regardless of which calendar it's in. Default is true.",
+        })
+        .default(true),
+      calendarId: z.coerce
+        .string({ description: "The ID of a specific calendar to search. Only used when searchAllCalendars is false." })
+        .nullable(),
     })
-    .describe("Fetch events for the user email for the maximum date of time provided."),
+    .describe("Fetch events for the user email for the maximum date of time provided. By default searches all calendars."),
 
   insertEventParameters: makeFullEventParams().describe("Insert a new event into the user calendar."),
   updateEventParameters: makeFullEventParams()

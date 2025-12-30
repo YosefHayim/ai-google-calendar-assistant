@@ -72,7 +72,7 @@ const getAllEvents = reqResAsyncHandler(async (req: Request, res: Response) => {
  * console.log(data);
  */
 const createEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const r = await eventsHandler(req, ACTION.INSERT, req.body, { calendarId: req.body.id, email: req.body.email });
+  const r = await eventsHandler(req, ACTION.INSERT, req.body, { calendarId: req.query.id ?? "primary", email: req.body.email });
   sendR(res, STATUS_RESPONSE.CREATED, "Event created successfully", r);
 });
 
@@ -118,7 +118,7 @@ const getEventAnalytics = reqResAsyncHandler(async (req: Request, res: Response)
   }
 
   const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData);
-  const allCalendarIds = (await calendar.calendarList.list({ prettyPrint: true }).then((r) => r.data.items?.map((calendar) => calendar.id))) || [];
+  const allCalendarIds = (await calendar.calendarList.list({ prettyPrint: true }).then((r) => r.data.items?.map((calendar) => calendar.id))) || ["primary"];
 
   const allEvents = await Promise.all(
     allCalendarIds.map((calendarId) => getEvents({ calendarEvents: calendar.events, req: undefined, extra: { calendarId, ...req.query } }))
@@ -132,6 +132,35 @@ const getEventAnalytics = reqResAsyncHandler(async (req: Request, res: Response)
     }`,
     { allEvents }
   );
+});
+
+const quickAddEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
+  const tokenData = await fetchCredentialsByEmail(req.user?.email!);
+  if (!tokenData) {
+    return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User token not found.");
+  }
+
+  const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData);
+  const r = await calendar.events.quickAdd({
+    ...req.body,
+    ...REQUEST_CONFIG_BASE,
+    calendarId: (req.query.id as string) ?? "primary",
+  });
+});
+
+const watchEvents = reqResAsyncHandler(async (req: Request, res: Response) => {
+  const tokenData = await fetchCredentialsByEmail(req.user?.email!);
+  if (!tokenData) {
+    return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User token not found.");
+  }
+
+  const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData);
+  const r = await calendar.events.watch({
+    ...req.body,
+    ...REQUEST_CONFIG_BASE,
+    calendarId: (req.query.id as string) ?? "primary",
+  });
+  sendR(res, STATUS_RESPONSE.SUCCESS, "Event watched successfully", r);
 });
 
 export default {

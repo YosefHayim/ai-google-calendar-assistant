@@ -22,10 +22,14 @@ Note: If duration provided without end, calculates end = start + duration`,
   deleteEvent:
     "Deletes an event permanently. Input: { email, eventId }. Output: confirmation JSON.",
 
-  getEvent: `Retrieves events from user's calendar.
+  getEvent: `Retrieves events from user's calendars.
 
-Input: { email, q?, timeMin?, customEvents? }
-Output: array of event objects
+Input: { email, q?, timeMin?, searchAllCalendars?, calendarId? }
+Output: array of event objects with calendar information
 
-Defaults: timeMin = today. Use customEvents=true for compact response.`,
+IMPORTANT: By default (searchAllCalendars=true), this tool searches across ALL user calendars to find events.
+This ensures events are found regardless of which calendar they are in.
+Set searchAllCalendars=false and provide calendarId to search only a specific calendar.
+
+Defaults: timeMin = today, searchAllCalendars = true`,
 } as const;
