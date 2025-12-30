@@ -1,7 +1,7 @@
 import { tool } from "@openai/agents";
 import { TOOLS_DESCRIPTION } from "./tool-descriptions";
 import { EXECUTION_TOOLS } from "./tool-execution";
-import { PARAMETERS_TOOLS } from "./tool-schemas";
+import { PARAMETERS_TOOLS, makeEventTime } from "./tool-schemas";
 import {
   validateUserDirect,
   getUserDefaultTimezoneDirect,
@@ -119,12 +119,6 @@ export const AGENT_TOOLS = {
 // ═══════════════════════════════════════════════════════════════════════════
 
 const emailSchema = z.coerce.string().includes("@");
-const makeEventTime = () =>
-  z.object({
-    date: z.coerce.string().nullable().optional(),
-    dateTime: z.coerce.string().nullable().optional(),
-    timeZone: z.coerce.string().nullable().optional(),
-  });
 
 export const DIRECT_TOOLS = {
   validate_user_direct: tool({
@@ -177,14 +171,20 @@ export const DIRECT_TOOLS = {
       "Combined validation: checks user, gets timezone, selects calendar, checks conflicts in PARALLEL. Much faster than sequential agent calls. Returns { valid, timezone, calendarId, calendarName, conflicts }.",
     parameters: z.object({
       email: emailSchema,
-      summary: z.coerce.string().optional(),
-      description: z.coerce.string().optional(),
-      location: z.coerce.string().optional(),
-      start: makeEventTime().optional(),
-      end: makeEventTime().optional(),
+      summary: z.coerce.string().nullable(),
+      description: z.coerce.string().nullable(),
+      location: z.coerce.string().nullable(),
+      start: makeEventTime().nullable(),
+      end: makeEventTime().nullable(),
     }),
     execute: async ({ email, summary, description, location, start, end }) =>
-      preCreateValidation(email, { summary, description, location, start, end }),
+      preCreateValidation(email, {
+        summary: summary ?? undefined,
+        description: description ?? undefined,
+        location: location ?? undefined,
+        start: start ?? undefined,
+        end: end ?? undefined,
+      }),
     errorFunction: (_, error) => `pre_create_validation: ${error}`,
   }),
 };
