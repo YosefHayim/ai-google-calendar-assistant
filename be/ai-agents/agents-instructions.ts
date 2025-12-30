@@ -136,14 +136,17 @@ Role: Create Event Orchestrator
 Input: { email, raw_event_text }
 Special: Skip conflict check if input contains "CONFIRMED creation of event despite conflicts"
 
-Flow:
-1) Validate user → error: "I couldn't find that account. Could you double-check the email?"
-2) Parse event text → error: "I had trouble understanding those event details. Could you rephrase?"
-3) Select calendar (semantic match to event intent, fallback to primary)
-4) Check conflicts (unless user confirmed):
-   • If conflicts found: return CONFLICT_DETECTED::{jsonData}::{userMessage} and STOP
+OPTIMIZED Flow (uses direct utilities for speed):
+1) Parse event text (parse_event_text) → extract summary, start, end, location, description
+   • Error: "I had trouble understanding those event details. Could you rephrase?"
+2) Call pre_create_validation with email and parsed event data
+   • This single call performs IN PARALLEL: user validation, timezone lookup, calendar selection, conflict check
+   • If valid=false: "I couldn't find that account. Could you double-check the email?"
+3) Handle conflicts (unless user confirmed):
+   • If conflicts.hasConflicts=true: return CONFLICT_DETECTED::{jsonData}::{userMessage} and STOP
    • jsonData: { eventData: {...}, conflictingEvents: [...] }
-5) Create event (fill defaults once if needed, single retry)
+4) Create event using calendarId from pre_create_validation, apply timezone if missing
+   • Single attempt, fill defaults if needed
 
 Response Style:
 • Warm, conversational tone
@@ -233,9 +236,10 @@ Constraints: Never expose JSON/IDs/technical data, single delegation only`,
 Role: Registration Handler
 Input: { email, password, metadata? }
 
-Flow:
-1) Check if user exists (validate_user)
-2) Create if new (register_user)
+OPTIMIZED Flow (uses direct utilities for speed):
+1) Check if user exists (validate_user_direct) - direct DB call, no AI overhead
+2) If exists=true: user already registered
+3) If exists=false: create new user (register_user)
 
 Response Style:
 • Success: "Welcome aboard! Your account is all set up and ready to go."

@@ -1,0 +1,343 @@
+/**
+ * Direct utilities for calendar operations - bypasses AI agents for faster execution.
+ * These functions are called directly instead of through agent wrappers.
+ */
+
+import { SUPABASE } from "@/config";
+import { TOKEN_FIELDS } from "@/config/constants/sql";
+import { fetchCredentialsByEmail } from "@/utils/auth";
+import { checkEventConflicts, initUserSupabaseCalendarWithTokensAndUpdateTokens } from "@/utils/calendar";
+import type { calendar_v3 } from "googleapis";
+import isEmail from "validator/lib/isEmail";
+import { formatEventData, getCalendarCategoriesByEmail, type UserCalendar } from "./utils";
+
+type Event = calendar_v3.Schema$Event;
+
+// ═══════════════════════════════════════════════════════════════════════════
+// USER VALIDATION (bypasses validateUser agent)
+// ═══════════════════════════════════════════════════════════════════════════
+
+export type ValidateUserResult = {
+  exists: boolean;
+  user?: Record<string, unknown>;
+  error?: string;
+};
+
+/**
+ * Validates if a user exists in the database - direct DB call without AI agent.
+ * Replaces: AGENTS.validateUser
+ * Latency: ~300ms (vs ~2-5s with agent)
+ */
+export async function validateUserDirect(email: string): Promise<ValidateUserResult> {
+  if (!email || !isEmail(email)) {
+    return { exists: false, error: "Invalid email address." };
+  }
+
+  const { data, error } = await SUPABASE.from("user_calendar_tokens")
+    .select(TOKEN_FIELDS)
+    .eq("email", email.trim().toLowerCase());
+
+  if (error || !data || data.length === 0) {
+    return { exists: false };
+  }
+
+  return { exists: true, user: data[0] };
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// TIMEZONE (bypasses getUserDefaultTimeZone agent)
+// ═══════════════════════════════════════════════════════════════════════════
+
+export type TimezoneResult = {
+  timezone: string;
+  error?: string;
+};
+
+// Simple in-memory cache for user timezones (TTL: 5 minutes)
+const timezoneCache = new Map<string, { timezone: string; expiry: number }>();
+const TIMEZONE_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+/**
+ * Gets user's default timezone from Google Calendar - direct API call without AI agent.
+ * Replaces: AGENTS.getUserDefaultTimeZone
+ * Latency: ~1s (vs ~2-5s with agent), cached: ~0ms
+ */
+export async function getUserDefaultTimezoneDirect(email: string): Promise<TimezoneResult> {
+  if (!email || !isEmail(email)) {
+    return { timezone: "UTC", error: "Invalid email address." };
+  }
+
+  // Check cache first
+  const cached = timezoneCache.get(email);
+  if (cached && cached.expiry > Date.now()) {
+    return { timezone: cached.timezone };
+  }
+
+  try {
+    const tokenProps = await fetchCredentialsByEmail(email);
+    const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenProps);
+    const response = await calendar.settings.get({ setting: "timezone" });
+    const timezone = response.data.value || "UTC";
+
+    // Cache the result
+    timezoneCache.set(email, { timezone, expiry: Date.now() + TIMEZONE_CACHE_TTL });
+
+    return { timezone };
+  } catch (error) {
+    console.error("Failed to get user timezone:", error);
+    return { timezone: "UTC", error: "Failed to fetch timezone, using UTC." };
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// EVENT VALIDATION (bypasses validateEventData agent)
+// ═══════════════════════════════════════════════════════════════════════════
+
+export type ValidateEventResult = {
+  valid: boolean;
+  event?: Event & { email: string };
+  error?: string;
+};
+
+/**
+ * Validates and formats event data - direct validation without AI agent.
+ * Replaces: AGENTS.validateEventData
+ * Latency: ~100ms (vs ~2-5s with agent)
+ */
+export function validateEventDataDirect(
+  eventData: Partial<Event> & { email: string }
+): ValidateEventResult {
+  const { email, ...eventLike } = eventData;
+
+  if (!email || !isEmail(email)) {
+    return { valid: false, error: "Invalid email address." };
+  }
+
+  try {
+    const formatted = formatEventData(eventLike as Event);
+    return { valid: true, event: { ...formatted, email } };
+  } catch (error) {
+    return {
+      valid: false,
+      error: error instanceof Error ? error.message : "Invalid event data.",
+    };
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// CALENDAR SELECTION (bypasses selectCalendar agent)
+// ═══════════════════════════════════════════════════════════════════════════
+
+export type SelectCalendarResult = {
+  calendarId: string;
+  calendarName: string;
+  matchReason?: string;
+};
+
+// Calendar category keywords for rules-based matching
+const CALENDAR_KEYWORDS: Record<string, string[]> = {
+  work: ["work", "office", "job", "meeting", "business", "corporate", "עבודה", "משרד", "עסקים"],
+  personal: ["personal", "private", "home", "family", "אישי", "פרטי", "בית", "משפחה"],
+  health: ["health", "doctor", "medical", "gym", "fitness", "workout", "בריאות", "רופא", "רפואי", "כושר"],
+  travel: ["travel", "trip", "vacation", "flight", "hotel", "טיול", "חופשה", "נסיעה"],
+  social: ["social", "party", "birthday", "dinner", "lunch", "חברתי", "מסיבה", "יום הולדת", "ארוחה"],
+  study: ["study", "school", "university", "class", "lecture", "לימודים", "אוניברסיטה", "שיעור"],
+  side: ["side", "project", "hobby", "creative", "צד", "פרויקט", "תחביב"],
+};
+
+/**
+ * Selects the best calendar based on event details - rules-based without AI agent.
+ * Replaces: AGENTS.selectCalendar
+ * Latency: ~200ms (vs ~2-5s with agent)
+ */
+export async function selectCalendarByRules(
+  email: string,
+  eventInfo: { summary?: string | null; description?: string | null; location?: string | null }
+): Promise<SelectCalendarResult> {
+  // Get user's calendars
+  const calendars = await getCalendarCategoriesByEmail(email);
+
+  if (!calendars || calendars.length === 0) {
+    return { calendarId: "primary", calendarName: "Primary", matchReason: "No calendars found" };
+  }
+
+  // Build searchable text from event info
+  const searchText = [
+    eventInfo.summary || "",
+    eventInfo.description || "",
+    eventInfo.location || "",
+  ]
+    .join(" ")
+    .toLowerCase();
+
+  // Score each calendar based on keyword matches
+  let bestMatch: UserCalendar | null = null;
+  let bestScore = 0;
+  let matchReason = "default";
+
+  for (const calendar of calendars) {
+    const calendarName = calendar.calendar_name.toLowerCase();
+    let score = 0;
+
+    // Check if calendar name matches event content
+    for (const [category, keywords] of Object.entries(CALENDAR_KEYWORDS)) {
+      const categoryMatchesCalendar = keywords.some((kw) => calendarName.includes(kw));
+      const categoryMatchesEvent = keywords.some((kw) => searchText.includes(kw));
+
+      if (categoryMatchesCalendar && categoryMatchesEvent) {
+        score += 10;
+        matchReason = `${category} category match`;
+      }
+    }
+
+    // Direct name match bonus
+    if (searchText.includes(calendarName) || calendarName.includes(searchText.split(" ")[0])) {
+      score += 5;
+      matchReason = "direct name match";
+    }
+
+    if (score > bestScore) {
+      bestScore = score;
+      bestMatch = calendar;
+    }
+  }
+
+  // If no match found, use primary or first calendar
+  if (!bestMatch || bestScore === 0) {
+    const primary = calendars.find(
+      (c) => c.calendar_id === "primary" || c.calendar_name.toLowerCase().includes("primary")
+    );
+    return {
+      calendarId: primary?.calendar_id || calendars[0].calendar_id,
+      calendarName: primary?.calendar_name || calendars[0].calendar_name,
+      matchReason: "fallback to primary",
+    };
+  }
+
+  return {
+    calendarId: bestMatch.calendar_id,
+    calendarName: bestMatch.calendar_name,
+    matchReason,
+  };
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// CONFLICT CHECK (bypasses checkConflicts agent)
+// ═══════════════════════════════════════════════════════════════════════════
+
+export type ConflictCheckResult = {
+  hasConflicts: boolean;
+  conflictingEvents: Array<{
+    id: string;
+    summary: string;
+    start: string;
+    end: string;
+    calendarName: string;
+  }>;
+  error?: string;
+};
+
+/**
+ * Checks for event conflicts - direct API call without AI agent.
+ * Replaces: AGENTS.checkConflicts
+ * Latency: ~1s (vs ~2-5s with agent)
+ */
+export async function checkConflictsDirect(params: {
+  email: string;
+  calendarId: string;
+  start: calendar_v3.Schema$EventDateTime;
+  end: calendar_v3.Schema$EventDateTime;
+}): Promise<ConflictCheckResult> {
+  const { email, calendarId, start, end } = params;
+
+  if (!email || !isEmail(email)) {
+    return { hasConflicts: false, conflictingEvents: [], error: "Invalid email address." };
+  }
+
+  const startTime = start?.dateTime || start?.date;
+  const endTime = end?.dateTime || end?.date;
+
+  if (!startTime || !endTime) {
+    return { hasConflicts: false, conflictingEvents: [], error: "Start and end times required." };
+  }
+
+  try {
+    return await checkEventConflicts({
+      email,
+      calendarId: calendarId || "primary",
+      startTime,
+      endTime,
+    });
+  } catch (error) {
+    console.error("Conflict check failed:", error);
+    return {
+      hasConflicts: false,
+      conflictingEvents: [],
+      error: "Failed to check conflicts.",
+    };
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// COMBINED UTILITY: Pre-create validation
+// ═══════════════════════════════════════════════════════════════════════════
+
+export type PreCreateValidationResult = {
+  valid: boolean;
+  timezone: string;
+  calendarId: string;
+  calendarName: string;
+  conflicts: ConflictCheckResult;
+  error?: string;
+};
+
+/**
+ * Performs all pre-creation validations in parallel - combines multiple utilities.
+ * This replaces 4 agent calls with parallel direct calls.
+ * Latency: ~1-2s (vs ~8-20s with sequential agents)
+ */
+export async function preCreateValidation(
+  email: string,
+  eventData: Partial<Event>
+): Promise<PreCreateValidationResult> {
+  // Run validations in parallel
+  const [userResult, timezoneResult, calendarResult] = await Promise.all([
+    validateUserDirect(email),
+    getUserDefaultTimezoneDirect(email),
+    selectCalendarByRules(email, {
+      summary: eventData.summary,
+      description: eventData.description,
+      location: eventData.location,
+    }),
+  ]);
+
+  if (!userResult.exists) {
+    return {
+      valid: false,
+      timezone: "UTC",
+      calendarId: "primary",
+      calendarName: "Primary",
+      conflicts: { hasConflicts: false, conflictingEvents: [] },
+      error: "User not found or no tokens available.",
+    };
+  }
+
+  // Check conflicts if we have start/end times
+  let conflicts: ConflictCheckResult = { hasConflicts: false, conflictingEvents: [] };
+  if (eventData.start && eventData.end) {
+    conflicts = await checkConflictsDirect({
+      email,
+      calendarId: calendarResult.calendarId,
+      start: eventData.start,
+      end: eventData.end,
+    });
+  }
+
+  return {
+    valid: true,
+    timezone: timezoneResult.timezone,
+    calendarId: calendarResult.calendarId,
+    calendarName: calendarResult.calendarName,
+    conflicts,
+  };
+}

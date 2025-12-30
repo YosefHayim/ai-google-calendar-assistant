@@ -3,7 +3,7 @@ import { Bot, type Context, type SessionFlavor, session } from "grammy";
 import { ORCHESTRATOR_AGENT } from "@/ai-agents";
 import { env } from "@/config";
 import type { SessionData } from "@/types";
-import { activateAgent, generateGreeting } from "@/utils/ai";
+import { activateAgent } from "@/utils/ai";
 import { authTgHandler } from "./middleware/auth-tg-handler";
 
 export type GlobalContext = SessionFlavor<SessionData> & Context;
@@ -118,10 +118,6 @@ bot.on("message", async (ctx) => {
   ctx.session.isProcessing = true;
 
   try {
-    // Generate dynamic secretary-style greeting
-    const greeting = await generateGreeting();
-    await ctx.reply(greeting);
-
     const { finalOutput } = await activateAgent(
       ORCHESTRATOR_AGENT,
       `Current date and time is ${new Date().toISOString()}. User ${ctx.session.email} requesting for help with: ${userMsgText}`
