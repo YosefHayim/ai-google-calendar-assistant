@@ -16,7 +16,7 @@ const emailSchema = z.coerce
   .includes("@", { message: "Must include @ symbol" })
   .refine((v) => validator.isEmail(v), { message: "Invalid email address." });
 
-const makeEventTime = () =>
+export const makeEventTime = () =>
   z
     .object({
       date: z.coerce
