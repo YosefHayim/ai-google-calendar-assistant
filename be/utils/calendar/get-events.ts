@@ -4,6 +4,7 @@ import formatDate from "@/utils/date/format-date";
 import { getEventDurationString } from "@/utils/calendar/duration";
 
 type ListExtra = Partial<calendar_v3.Params$Resource$Events$List> & {
+  includeCalendarName?: boolean;
   email?: string;
   customEvents?: boolean;
 };
@@ -28,12 +29,12 @@ export async function getEvents({ calendarEvents, req, extra }: GetEventsParams)
   const rawExtra: ListExtra = { ...(extra as ListExtra), ...(req?.body ?? {}), ...(req?.query ?? {}) };
 
   const customFlag = Boolean(rawExtra.customEvents);
-  const { email: _omitEmail, customEvents: _omitCustom, calendarId, ...listExtraRaw } = rawExtra;
+  const { email: _omitEmail, customEvents: _omitCustom, calendarId, includeCalendarName: _omitIncludeCalendarName = false, ...listExtraRaw } = rawExtra;
 
   const listExtra: calendar_v3.Params$Resource$Events$List = {
     ...REQUEST_CONFIG_BASE,
     prettyPrint: true,
-    calendarId: calendarId,
+    calendarId,
     ...listExtraRaw,
   };
 
@@ -57,7 +58,7 @@ export async function getEvents({ calendarEvents, req, extra }: GetEventsParams)
         end: formatDate(endDate, true) || null,
       };
     });
-    return { totalNumberOfEventsFound: totalEventsFound.length, totalEventsFound };
+    return { calendarId, totalNumberOfEventsFound: totalEventsFound.length, totalEventsFound };
   }
   return events;
 }
