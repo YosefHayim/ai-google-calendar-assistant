@@ -1,13 +1,16 @@
 import express, { NextFunction, Request, Response } from "express";
 
 import { STATUS_RESPONSE } from "@/config";
-import { authHandler } from "@/middlewares/auth-handler";
+import { supabaseAuth } from "@/middlewares/supabase-auth";
+import { googleTokenValidation } from "@/middlewares/google-token-validation";
+import { googleTokenRefresh } from "@/middlewares/google-token-refresh";
 import eventsController from "@/controllers/google-calendar/events-controller";
 import { sendR } from "@/utils/http";
 
 const router = express.Router();
 
-router.use(authHandler);
+// Supabase auth (with auto-refresh) + Google token validation + auto-refresh
+router.use(supabaseAuth(), googleTokenValidation, googleTokenRefresh());
 
 router.param("id", (_req: Request, res: Response, next: NextFunction, id: string) => {
   if (!id) {

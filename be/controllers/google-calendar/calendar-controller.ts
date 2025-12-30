@@ -98,7 +98,7 @@ const getAllCalendarTimezones = reqResAsyncHandler(async (req: Request, res: Res
 const getCalendarInfoById = reqResAsyncHandler(async (req: Request, res: Response) => {
   const tokenData = await fetchCredentialsByEmail(req.user?.email!);
   const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData);
-  const r = await calendar.calendars.get({ calendarId: req.params.id });
+  const r = await calendar.calendars.get({ calendarId: req.params.id ?? "primary" });
   sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully received calendar overview", r.data);
 });
 

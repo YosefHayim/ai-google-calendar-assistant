@@ -1,7 +1,7 @@
 import express, { NextFunction, Request, Response } from "express";
 
 import { STATUS_RESPONSE } from "@/config";
-import { authHandler } from "@/middlewares/auth-handler";
+import { supabaseAuth } from "@/middlewares/supabase-auth";
 import { sendR } from "@/utils/http";
 import { userController } from "@/controllers/users-controller";
 
@@ -15,11 +15,11 @@ router.param("id", (_req: Request, res: Response, next: NextFunction, id: string
   next();
 });
 
-router.get("/me", authHandler, userController.getCurrentUserInformation);
+router.get("/me", supabaseAuth(), userController.getCurrentUserInformation);
 
-router.post("/refresh", authHandler, userController.refreshToken);
+router.post("/refresh", supabaseAuth(), userController.refreshToken);
 
-router.delete("/", authHandler, userController.deActivateUser);
+router.delete("/", supabaseAuth(), userController.deActivateUser);
 
 router.get("/callback", userController.generateAuthGoogleUrl);
 
