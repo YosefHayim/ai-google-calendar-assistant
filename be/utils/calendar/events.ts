@@ -5,7 +5,7 @@ import type { Request } from "express";
 import { asyncHandler } from "../http/async-handlers";
 import type { calendar_v3 } from "googleapis";
 import { deleteEvent } from "./delete-event";
-import errorTemplate from "../http/error-template";
+import { throwHttpError } from "../http/error-template";
 import { fetchCredentialsByEmail } from "../auth/get-user-calendar-tokens";
 import { getEvents } from "./get-events";
 import { initUserSupabaseCalendarWithTokensAndUpdateTokens } from "./init";
@@ -56,7 +56,7 @@ export const eventsHandler = asyncHandler(
         return deleteEvent({ calendarEvents, eventData, extra, req });
 
       default:
-        throw errorTemplate("Unsupported calendar action", STATUS_RESPONSE.BAD_REQUEST);
+        throwHttpError("Unsupported calendar action", STATUS_RESPONSE.BAD_REQUEST);
     }
   }
 );

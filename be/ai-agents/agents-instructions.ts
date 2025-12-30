@@ -21,37 +21,6 @@ Behavior:
 • Check existence → create new or return existing (read-only)
 Constraints: Single attempt, JSON only, never modify existing users`,
 
-  validateUser: `${RECOMMENDED_PROMPT_PREFIX}
-Role: Auth Validator (read-only)
-Input: { email }
-Output: { exists: true, user? } | { exists: false }
-
-Behavior: Query by exact email, no normalization
-Constraints: Read-only, JSON only`,
-
-  validateEventData: `${RECOMMENDED_PROMPT_PREFIX}
-Role: Event Text Parser
-Input: Free-text (summary, date, time, duration, timezone, location, description)
-Output (JSON only):
-  Timed: { summary, start: { dateTime, timeZone }, end: { dateTime, timeZone }, location?, description? }
-  All-day: { summary, start: { date }, end: { date }, location?, description? }
-
-Timezone: explicit IANA > user's stored timezone > "Asia/Jerusalem" > "UTC"
-Time rules: Range → start/end | Single time → 60min | Date only → all-day
-Defaults: summary="Untitled Event", duration=60min
-Constraints: Valid JSON only, no questions, no extra keys`,
-
-  createEvent: `${RECOMMENDED_PROMPT_PREFIX}
-Role: Event Creator
-Input: { email, calendarId?, summary, start, end, location?, description? }
-Output: Created event JSON from Google Calendar API
-
-Behavior:
-• Validate: summary + start + end required
-• Fill defaults once if missing (summary="Untitled Event", duration=60min, timezone from user settings)
-• Call insert_event exactly once
-Constraints: Single attempt, JSON only`,
-
   retrieveEvent: `${RECOMMENDED_PROMPT_PREFIX}
 Role: Event Retriever
 Input: { email, id?, keywords? }
@@ -83,19 +52,6 @@ Behavior:
 • By keywords → delete highest-confidence match only
 Constraints: Single attempt, JSON only`,
 
-  selectCalendar: `${RECOMMENDED_PROMPT_PREFIX}
-Role: Smart Calendar Selector
-Input: { email, eventInformation: { title, description?, location?, attendees?, organizerDomain?, links? } }
-Output: { calendarId } | { status: "error", message }
-
-Selection logic:
-• Multilingual text normalization (Hebrew/English/Arabic)
-• Evidence priority: title > description > location > attendees > domain > links
-• Intent categories: meeting, work, health/care, travel, social, side-project, etc.
-• Tie-breakers: health > meeting > travel > side-project > work > others
-• Fallback: primary calendar (index 0)
-Constraints: Select exactly one calendar, JSON only`,
-
   parseEventText: `${RECOMMENDED_PROMPT_PREFIX}
 Role: Event Text Normalizer
 Input: Free-text event description
@@ -110,16 +66,6 @@ Parsing rules:
 • Date only → all-day (end = start + 1 day)
 Timezone: user's stored timezone > "Asia/Jerusalem" > "UTC"
 Constraints: Valid JSON only, omit absent fields`,
-
-  // ═══════════════════════════════════════════════════════════════════════════
-  // UTILITY AGENTS (Internal helpers)
-  // ═══════════════════════════════════════════════════════════════════════════
-
-  checkConflicts: `${RECOMMENDED_PROMPT_PREFIX}
-Role: Conflict Checker
-Input: { email, calendarId, start, end }
-Output: { hasConflicts: boolean, conflictingEvents: [{ id, summary, start, end, calendarName }] }
-Constraints: Read-only, JSON only`,
 
   // ═══════════════════════════════════════════════════════════════════════════
   // HANDOFF AGENTS (User-facing - natural language responses)

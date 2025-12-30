@@ -1,29 +1,58 @@
 import type { Response } from "express";
 
+export type HttpError = Error & { cause: { status: number } };
+
 /**
- * Error template
+ * Create an HTTP error with status code
+ *
+ * @param {string} message - The error message.
+ * @param {number} status - The HTTP status code.
+ * @returns {HttpError} The error object with status in cause.
+ */
+export const createHttpError = (message: string, status: number): HttpError => {
+  return new Error(message, { cause: { status } }) as HttpError;
+};
+
+/**
+ * Send an error response to the client
+ *
+ * @param {Response} res - The Express response object.
+ * @param {number} status - The HTTP status code.
+ * @param {string} message - The error message.
+ */
+export const sendErrorResponse = (res: Response, status: number, message: string): void => {
+  res.status(status).json({
+    status: "error",
+    code: status,
+    message,
+  });
+};
+
+/**
+ * Throw an HTTP error (convenience function)
+ *
+ * @param {string} message - The error message.
+ * @param {number} status - The HTTP status code.
+ * @throws {HttpError} Always throws an error with status in cause.
+ */
+export const throwHttpError = (message: string, status: number): never => {
+  throw createHttpError(message, status);
+};
+
+/**
+ * Error template - sends response if provided, then throws
  *
  * @param {string} message - The message of the error.
  * @param {number} status - The status of the error.
- * @param {Response} res - The response object.
- * @returns {void} The response object.
- * @description Throws an error with a cause and sends the response.
- * @example
- * const data = await errorTemplate(message, status, res);
- * console.log(data);
+ * @param {Response} res - The response object (optional).
+ * @throws {HttpError} Always throws after optionally sending response.
+ * @deprecated Use createHttpError, sendErrorResponse, or throwHttpError for clearer intent.
  */
-const errorTemplate = (message: string, status: number, res?: Response): void => {
-  const error = new Error(message, { cause: { status } });
-
+const errorTemplate = (message: string, status: number, res?: Response): never => {
   if (res) {
-    res?.status(status).json({
-      status: "error",
-      code: status,
-      message: error.message,
-    });
+    sendErrorResponse(res, status, message);
   }
-
-  throw new Error(message, { cause: { status } });
+  throw createHttpError(message, status);
 };
 
 export default errorTemplate;

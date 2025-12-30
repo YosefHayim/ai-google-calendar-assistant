@@ -1,15 +1,13 @@
-// async-handlers.ts
 import type { NextFunction, Request, Response } from "express";
 
 /**
- * Request and response async handler
+ * Express async middleware wrapper
  *
- * @param {H} fn - The function to handle the request and response.
- * @returns {Promise<unknown>} The result of the function.
- * @description Handles a request and response and sends the response.
- * @example
- * const data = await reqResAsyncHandler(fn);
- * console.log(data);
+ * Wraps an async Express middleware to properly catch and forward errors
+ * to the Express error handler via next().
+ *
+ * @param fn - Async Express middleware function.
+ * @returns Express middleware that catches async errors.
  */
 export const reqResAsyncHandler =
   <H extends (req: Request, res: Response, next: NextFunction) => Promise<unknown>>(fn: H) =>
@@ -18,15 +16,15 @@ export const reqResAsyncHandler =
   };
 
 /**
- * Async handler
+ * Promise wrapper for functions
  *
- * @param {(...args: unknown[]) => unknown | Promise<unknown> } fn - The function to handle the request and response.
- * @returns {Promise<unknown>} The result of the function.
- * @description Handles an async function and sends the response.
+ * Ensures a function always returns a Promise, whether it's sync or async.
+ * Useful for consistent error handling and chaining.
+ *
+ * @param fn - Function to wrap.
+ * @returns Wrapped function that always returns a Promise.
  */
 export const asyncHandler =
   <A extends unknown[], R>(fn: (...args: A) => R | Promise<R>) =>
   (...args: A): Promise<R> =>
-    Promise.resolve(fn(...args)).catch((err) => {
-      throw err;
-    });
+    Promise.resolve(fn(...args));
