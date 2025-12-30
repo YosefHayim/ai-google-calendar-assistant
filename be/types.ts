@@ -37,6 +37,26 @@ export type GoogleIdTokenPayloadProps = {
   exp: number;
 };
 
+export type PendingConflictConfirmation = {
+  eventData: {
+    summary: string;
+    start: { dateTime?: string; date?: string; timeZone?: string };
+    end: { dateTime?: string; date?: string; timeZone?: string };
+    calendarId: string;
+    calendarName: string;
+    email: string;
+    location?: string;
+    description?: string;
+  };
+  conflictingEvents: Array<{
+    id: string;
+    summary: string;
+    start: string;
+    end: string;
+    calendarName: string;
+  }>;
+};
+
 export type SessionData = {
   chatId: number;
   username: string | undefined;
@@ -47,6 +67,7 @@ export type SessionData = {
   lastProcessedMsgId: number;
   agentActive: boolean;
   isProcessing: boolean;
+  pendingConfirmation?: PendingConflictConfirmation;
 };
 
 export type TokensProps = {

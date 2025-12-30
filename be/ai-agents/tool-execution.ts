@@ -1,5 +1,5 @@
 import { ACTION, OAUTH2CLIENT, REDIRECT_URI, SCOPES, SUPABASE } from "@/config";
-import { eventsHandler, initUserSupabaseCalendarWithTokensAndUpdateTokens } from "@/utils/calendar";
+import { checkEventConflicts, eventsHandler, initUserSupabaseCalendarWithTokensAndUpdateTokens } from "@/utils/calendar";
 import { formatEventData, getCalendarCategoriesByEmail, parseToolArguments } from "./utils";
 
 import { TOKEN_FIELDS } from "@/config/constants/sql";
@@ -167,4 +167,26 @@ export const EXECUTION_TOOLS = {
     const r = await CALENDAR.settings.get({ setting: "timezone" });
     return r;
   }),
+  checkConflicts: asyncHandler(
+    async (params: { email: string; calendarId: string | null; start: calendar_v3.Schema$EventDateTime; end: calendar_v3.Schema$EventDateTime }) => {
+      const { email, calendarId } = parseToolArguments(params);
+      if (!(email && isEmail(email))) {
+        throw new Error("Invalid email address.");
+      }
+
+      const startTime = params.start?.dateTime || params.start?.date;
+      const endTime = params.end?.dateTime || params.end?.date;
+
+      if (!startTime || !endTime) {
+        throw new Error("Start and end times are required.");
+      }
+
+      return checkEventConflicts({
+        email,
+        calendarId: calendarId ?? "primary",
+        startTime,
+        endTime,
+      });
+    }
+  ),
 };

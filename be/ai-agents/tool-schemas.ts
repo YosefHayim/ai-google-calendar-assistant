@@ -98,4 +98,12 @@ export const PARAMETERS_TOOLS = {
     })
     .describe("Delete an event by ID."),
   normalizedEventParams: makeFullEventParams().extend({ email: emailSchema }).describe("Normalize an event payload for insertion/update."),
+  checkConflictsParameters: z
+    .object({
+      email: emailSchema,
+      calendarId: calendarSchema,
+      start: makeEventTime(),
+      end: makeEventTime(),
+    })
+    .describe("Check for conflicting events in the specified time range before creating a new event."),
 };

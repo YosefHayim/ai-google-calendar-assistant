@@ -94,4 +94,13 @@ export const AGENT_TOOLS = {
       return `get_user_default_timezone: ${error}`;
     },
   }),
+  check_conflicts: tool({
+    name: "check_conflicts",
+    description: TOOLS_DESCRIPTION.checkConflicts,
+    parameters: PARAMETERS_TOOLS.checkConflictsParameters,
+    execute: EXECUTION_TOOLS.checkConflicts,
+    errorFunction: (_, error) => {
+      return `check_conflicts: ${error}`;
+    },
+  }),
 };

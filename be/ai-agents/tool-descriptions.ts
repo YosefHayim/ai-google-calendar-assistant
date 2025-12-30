@@ -1,78 +1,62 @@
 export const TOOLS_DESCRIPTION = {
   generateGoogleAuthUrlDescription:
-    "Generates a new Google OAuth consent URL for the user to authorize or reauthorize calendar access. No input required. Returns a single URL string that the user must visit to complete authentication.",
+    "Generates Google OAuth consent URL for calendar authorization. Input: none. Output: URL string.",
 
   registerUserViaDb:
-    'Registers a new user in the auth system. Requires "email" and "password". Validates email and password length. On success returns the auth provider’s JSON response; otherwise throws an error.',
+    "Creates a new user record. Input: { email, password }. Output: user record JSON or throws error.",
 
-  validateUser: `Checks if a user has stored Google Calendar tokens. Requires "email". Returns the single token record if found; throws "User not found or no tokens available." otherwise.
-Example input:
-{ "email": "user@example.com" }
-Example success (shape varies by storage):
-{ "email": "user@example.com", "access_token": "...", "refresh_token": "...", "expiry_date": 1720000000000 }`,
+  validateUser:
+    'Checks if user has Google Calendar tokens. Input: { email }. Output: token record or throws "User not found or no tokens available."',
 
-  validateEventFields: `Normalizes free-text into a minimal Google Calendar event object. Requires "email". Returns ONLY the normalized event fields (no calendarId). Time zone precedence: explicit IANA in text > user default (getUserDefaultTimeZone) > "Asia/Jerusalem" > "UTC".
-Accepted inputs may include: Summary, Date, Start, End, Duration, Timezone, Location, Description.
+  validateEventFields: `Parses free-text into Google Calendar event JSON.
 
-Rules:
-- Range like "9 PM–10 PM" → start/end.
-- Single time → 60m duration.
-- Date + duration (no time) → start 09:00 local; end = start + duration (timed).
-- Date only → all-day (start.date=YYYY-MM-DD; end.date=YYYY-MM-DD+1).
-- Ensure end > start; if not, roll end by +1 day.
-- Use RFC3339 for dateTime and include timeZone on start/end when dateTime is used.
-- Omit absent optional fields.
+Input: { email, text }
+Output: { summary, start, end, location?, description? }
 
-Example input:
-{ "email": "user@example.com", "text": "Lunch with Sarah tomorrow at 13:00 in Tel Aviv" }
+Timezone precedence: explicit IANA > getUserDefaultTimeZone(email) > "Asia/Jerusalem" > "UTC"
 
-Example output (timed):
-{
-  "summary": "Lunch with Sarah",
-  "start": { "dateTime": "2025-06-30T13:00:00+03:00", "timeZone": "Asia/Jerusalem" },
-  "end":   { "dateTime": "2025-06-30T14:00:00+03:00", "timeZone": "Asia/Jerusalem" },
-  "location": "Tel Aviv"
-}`,
+Time parsing rules:
+• "9 PM–10 PM" → start/end times
+• Single time → 60min duration
+• Date + duration (no time) → starts 09:00 local
+• Date only → all-day event (end = start + 1 day)
+• Ensures end > start (rolls to next day if needed)
+• Uses RFC3339 dateTime with timeZone field`,
 
-  insertEvent: `Creates a new calendar event for the specified user. Requires "email" and event details (summary, start/end in RFC3339 or all-day dates; optional description/location). If required fields are missing, applies one-time sensible defaults (summary="Untitled Event", duration=60m, timezone from getUserDefaultTimeZone→"Asia/Jerusalem"→"UTC"). Returns the created event object from the provider.
-Example:
-{
-  "email": "user@example.com",
-  "calendarId": "primary",
-  "summary": "Quick Standup Meeting",
-  "location": "Online - Google Meet",
-  "description": "Daily standup.",
-  "start": { "dateTime": "2025-06-29T15:00:00+03:00", "timeZone": "Asia/Jerusalem" },
-  "end":   { "dateTime": "2025-06-29T15:30:00+03:00", "timeZone": "Asia/Jerusalem" }
-}`,
+  insertEvent: `Creates a calendar event.
 
-  updateEvent: `Modifies an existing calendar event. Requires "email", "eventId", and an "updates" object with fields to change (summary, description, start/end, location, etc.). Preserves unspecified fields. If "duration" is supplied without "end", recomputes end = start + duration. Returns the updated event object.
-Example:
-{
-  "email": "user@example.com",
-  "calendarId": "primary",
-  "eventId": "abc123def456",
-  "updates": {
-    "summary": "Updated Meeting Title",
-    "start": { "dateTime": "2025-06-29T16:00:00+03:00", "timeZone": "Asia/Jerusalem" },
-    "end":   { "dateTime": "2025-06-29T16:30:00+03:00", "timeZone": "Asia/Jerusalem" }
-  }
-}`,
+Input: { email, calendarId, summary, start, end, location?, description? }
+Output: created event object from Google Calendar API
 
-  deleteEvent: `Deletes a calendar event permanently. Requires "email" and "eventId". Returns confirmation JSON from the provider.
-Example:
-{ "email": "user@example.com", "eventId": "abc123def456" }`,
+Defaults when missing: summary="Untitled Event", duration=60min, timezone from getUserDefaultTimeZone`,
 
-  getEvent: `Retrieves events from the user's calendar. Requires "email". Optional: "q" (keyword query), "timeMin" (RFC3339). If not provided, the implementation defaults timeMin to today's date (YYYY-MM-DD). Returns an array of event objects. Always pass customEvents=true to get back the shorter event object.
-Example:
-{ "email": "user@example.com", "q": "standup", "timeMin": "2025-01-01" }`,
+  updateEvent: `Modifies an existing event. Preserves unspecified fields.
 
-  selectCalendarByEventDetails: `Lists all calendars linked to the user. Requires "email". Returns an array of { calendarName, calendarId }.
-Example return:
-[
-  { "calendarName": "משפחה וחברים", "calendarId": "49508390...@group.calendar.google.com" },
-  { "calendarName": "Side Projects", "calendarId": "sideproj...@group.calendar.google.com" }
-]`,
+Input: { email, calendarId, eventId, updates: { summary?, start?, end?, location?, description? } }
+Output: updated event object
 
-  getUserDefaultTimeZone: `Retrieves the user's default timezone from Google Calendar settings. Requires "email". Returns the provider settings response including the timezone value (e.g., { "kind": "calendar#setting", "etag": "...", "id": "timezone", "value": "Asia/Jerusalem" }).`,
+Note: If duration provided without end, calculates end = start + duration`,
+
+  deleteEvent:
+    "Deletes an event permanently. Input: { email, eventId }. Output: confirmation JSON.",
+
+  getEvent: `Retrieves events from user's calendar.
+
+Input: { email, q?, timeMin?, customEvents? }
+Output: array of event objects
+
+Defaults: timeMin = today. Use customEvents=true for compact response.`,
+
+  selectCalendarByEventDetails:
+    "Lists all user calendars. Input: { email }. Output: [{ calendarName, calendarId }]",
+
+  getUserDefaultTimeZone:
+    'Gets user\'s default timezone from Google Calendar settings. Input: { email }. Output: { value: "Asia/Jerusalem" }',
+
+  checkConflicts: `Checks for conflicting events before creating a new event.
+
+Input: { email, calendarId, start, end }
+Output: { hasConflicts: boolean, conflictingEvents: [{ id, summary, start, end, calendarName }] }
+
+Use to warn user about scheduling conflicts before proceeding with event creation.`,
 } as const;
