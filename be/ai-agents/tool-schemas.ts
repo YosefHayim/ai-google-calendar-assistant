@@ -2,9 +2,6 @@ import { TIMEZONE } from "@/config";
 import validator from "validator";
 import { z } from "zod";
 
-const MIN_PW = 6;
-const MAX_PW = 72;
-
 const requiredString = (description: string, message = "Required.") => z.coerce.string({ description }).trim().min(1, { message });
 
 const calendarSchema = z.coerce.string({ description: "The ID of the calendar to which the event belongs to, if provided use, else pass primary." }).nullable();
@@ -61,11 +58,7 @@ export const PARAMETERS_TOOLS = {
   generateGoogleAuthUrlParameters: z.object({}),
   registerUserParameters: z.object({
     email: emailSchema.describe("The email address of the user."),
-    password: z
-      .string()
-      .min(MIN_PW, "Password must be at least 6 characters long.")
-      .max(MAX_PW, "Password cannot exceed 72 characters.")
-      .describe("The password for the user account. Must be between 6 and 72 characters long."),
+    name: z.string().optional().describe("Optional name of the user."),
   }),
   getEventParameters: z
     .object({
