@@ -1,10 +1,11 @@
 'use client';
 import React, { useState } from 'react';
-import { 
-  CheckCircle2, Circle, ArrowUpRight, X, Loader2, List, Settings, RefreshCw 
+import {
+  CheckCircle2, Circle, ArrowUpRight, X, Loader2, List, Settings, RefreshCw
 } from 'lucide-react';
 import { TelegramIcon, WhatsAppIcon, GoogleCalendarIcon } from '@/components/Icons';
 import { useCalendars } from '@/hooks/api/useCalendars';
+import { Skeleton, SkeletonIntegrationCard } from '@/components/ui/skeleton';
 
 interface IntegrationsDashboardProps {}
 
@@ -82,8 +83,12 @@ const IntegrationsDashboard: React.FC<IntegrationsDashboardProps> = () => {
             
             {isLoading ? (
               <div className="space-y-3 py-4">
-                {[1, 2, 3].map(i => (
-                  <div key={i} className="h-8 w-full bg-zinc-100 dark:bg-zinc-900 animate-pulse rounded-md" />
+                {[1, 2, 3, 4].map(i => (
+                  <div key={i} className="flex items-center gap-3">
+                    <Skeleton className="w-2.5 h-2.5 rounded-full" />
+                    <Skeleton className="flex-1 h-4" />
+                    <Skeleton className="w-12 h-4" />
+                  </div>
                 ))}
               </div>
             ) : isError ? (

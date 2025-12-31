@@ -87,3 +87,63 @@ export interface CustomEvent {
   start: string | null;
   end: string | null;
 }
+
+// Event query parameters
+export interface EventQueryParams {
+  calendarId?: string;
+  timeMin?: string;
+  timeMax?: string;
+  maxResults?: number;
+  orderBy?: string;
+  singleEvents?: boolean;
+}
+
+// Analytics response
+export interface EventAnalytics {
+  allEvents: CalendarEvent[][];
+}
+
+// Quick add request
+export interface QuickAddEventRequest {
+  text: string;
+  calendarId?: string;
+}
+
+// Move event request
+export interface MoveEventRequest {
+  eventId: string;
+  destination: string;
+  calendarId?: string;
+}
+
+// Watch events request
+export interface WatchEventsRequest {
+  id: string;
+  type: string;
+  address: string;
+  calendarId?: string;
+}
+
+// Create event request
+export interface CreateEventRequest {
+  summary: string;
+  description?: string;
+  location?: string;
+  start: EventDateTime;
+  end: EventDateTime;
+  attendees?: Attendee[];
+  reminders?: { useDefault: boolean; overrides?: EventReminder[] };
+  calendarId?: string;
+  email?: string;
+}
+
+// Update event request
+export interface UpdateEventRequest {
+  summary?: string;
+  description?: string;
+  location?: string;
+  start?: EventDateTime;
+  end?: EventDateTime;
+  attendees?: Attendee[];
+  reminders?: { useDefault: boolean; overrides?: EventReminder[] };
+}

@@ -1,9 +1,9 @@
 'use client';
 
-import React from 'react';
-import { 
-  MessageSquare, 
-  Clock, 
+import React, { useState, useEffect } from 'react';
+import {
+  MessageSquare,
+  Clock,
   Briefcase,
   TrendingUp,
   ListChecks,
@@ -21,6 +21,16 @@ import {
 import { motion } from 'framer-motion';
 import TimeSavedChart from '@/components/TimeSavedChart';
 import ActivityHeatmap from '@/components/ActivityHeatmap';
+import {
+  Skeleton,
+  SkeletonCard,
+  SkeletonChart,
+  SkeletonDonutChart,
+  SkeletonList,
+  SkeletonCalendarSources,
+  SkeletonInsightCard,
+  SkeletonHeatmap
+} from '@/components/ui/skeleton';
 
 interface TimeAllocationChartProps {
   data: { category: string; hours: number; color: string }[];
@@ -121,7 +131,22 @@ const InsightCard: React.FC<InsightCardProps> = ({ icon: Icon, title, value, des
 };
 
 
-const AnalyticsDashboard: React.FC = () => {
+interface AnalyticsDashboardProps {
+  isLoading?: boolean;
+}
+
+const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: isLoadingProp }) => {
+  // Simulate initial loading state if no prop is provided (for demonstration)
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate data fetching delay - remove this when using real API
+    const timer = setTimeout(() => setIsInitialLoading(false), 1500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const isLoading = isLoadingProp ?? isInitialLoading;
+
   const mainStats = [
     { label: 'Deep Work Ratio', value: '68%', icon: Brain, color: 'text-sky-500', bg: 'bg-sky-50 dark:bg-sky-900/30' },
     { label: 'Context Switches', value: '12', icon: ZapOff, color: 'text-rose-500', bg: 'bg-rose-50 dark:bg-rose-900/30' },
@@ -186,6 +211,64 @@ const AnalyticsDashboard: React.FC = () => {
     { name: 'Advisory Board', color: 'bg-purple-500', status: 'Synced' },
   ];
 
+  // Loading skeleton state
+  if (isLoading) {
+    return (
+      <div className="max-w-7xl mx-auto w-full p-6 animate-in fade-in duration-500 overflow-y-auto bg-zinc-50 dark:bg-zinc-950">
+        <header className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <div>
+            <Skeleton className="h-8 w-40 mb-2" />
+            <Skeleton className="h-4 w-64" />
+          </div>
+          <div className="flex gap-2">
+            <Skeleton className="h-9 w-40 rounded-md" />
+            <Skeleton className="h-9 w-36 rounded-md" />
+          </div>
+        </header>
+
+        {/* Cognitive Metrics Row Skeleton */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+          {[1, 2, 3].map((i) => (
+            <SkeletonCard key={i} />
+          ))}
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Trend Analysis Skeleton */}
+          <div className="lg:col-span-3">
+            <SkeletonChart />
+          </div>
+
+          {/* Intelligence Insights Skeleton */}
+          <div className="lg:col-span-3">
+            <Skeleton className="h-6 w-48 mb-6 ml-2" />
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+              {[1, 2, 3, 4].map((i) => (
+                <SkeletonInsightCard key={i} />
+              ))}
+            </div>
+          </div>
+
+          {/* Time Mix Skeleton */}
+          <div className="lg:col-span-2">
+            <SkeletonDonutChart />
+          </div>
+
+          {/* Ops & Calendars Skeleton */}
+          <div className="lg:col-span-1 flex flex-col gap-6">
+            <SkeletonList items={4} className="flex-1" />
+            <SkeletonCalendarSources items={4} />
+          </div>
+
+          {/* Long term heatmap Skeleton */}
+          <div className="lg:col-span-3 mt-4">
+            <SkeletonHeatmap />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-7xl mx-auto w-full p-6 animate-in fade-in duration-500 overflow-y-auto bg-zinc-50 dark:bg-zinc-950">
       <header className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
@@ -246,7 +329,7 @@ const AnalyticsDashboard: React.FC = () => {
         <div className="lg:col-span-2">
             <TimeAllocationChart data={timeAllocationData} />
         </div>
-        
+
         {/* Ops & Calendars */}
         <div className="lg:col-span-1 flex flex-col gap-6">
             <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-6 flex-1">
@@ -289,7 +372,7 @@ const AnalyticsDashboard: React.FC = () => {
                 </button>
             </div>
         </div>
-        
+
         {/* Long term heatmap */}
         <div className="lg:col-span-3 mt-4">
             <ActivityHeatmap />

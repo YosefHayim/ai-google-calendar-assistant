@@ -1,6 +1,6 @@
 import { apiClient } from '@/lib/api/client';
 import { ENDPOINTS } from '@/lib/api/endpoints';
-import { ApiResponse, AuthData } from '@/types/api';
+import { ApiResponse, AuthData, User } from '@/types/api';
 
 export const authService = {
   async signIn(email: string, password: string): Promise<ApiResponse<AuthData>> {
@@ -18,13 +18,23 @@ export const authService = {
     return data;
   },
 
-  async getUser(): Promise<ApiResponse<any>> {
-    const { data } = await apiClient.get<ApiResponse<any>>(ENDPOINTS.USERS_GET_USER);
+  async getUser(): Promise<ApiResponse<User>> {
+    const { data } = await apiClient.get<ApiResponse<User>>(ENDPOINTS.USERS_GET_USER);
+    return data;
+  },
+
+  async deactivateUser(): Promise<ApiResponse<null>> {
+    const { data } = await apiClient.delete<ApiResponse<null>>(ENDPOINTS.USERS);
     return data;
   },
 
   getGoogleAuthUrl(): string {
     const baseUrl = apiClient.defaults.baseURL;
     return `${baseUrl}${ENDPOINTS.USERS_SIGNUP_GOOGLE}`;
-  }
+  },
+
+  getGitHubAuthUrl(): string {
+    const baseUrl = apiClient.defaults.baseURL;
+    return `${baseUrl}${ENDPOINTS.USERS_SIGNUP_GITHUB}`;
+  },
 };

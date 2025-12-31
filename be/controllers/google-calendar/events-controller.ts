@@ -168,6 +168,7 @@ const quickAddEvent = reqResAsyncHandler(async (req: Request, res: Response) => 
     ...REQUEST_CONFIG_BASE,
     calendarId: (req.query.calendarId as string) ?? "primary",
   });
+  sendR(res, STATUS_RESPONSE.CREATED, "Event quick added successfully", r.data);
 });
 
 /**

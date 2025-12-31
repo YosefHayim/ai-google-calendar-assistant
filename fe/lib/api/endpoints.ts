@@ -145,6 +145,31 @@ export const ENDPOINTS = {
    */
   EVENTS_BY_ID: (id: string) => `/api/events/${id}`,
 
+  /**
+   * Get event analytics by date range
+   * Methods: GET
+   * Query params: startDate, endDate
+   */
+  EVENTS_ANALYTICS: "/api/events/analytics",
+
+  /**
+   * Quick add event from text
+   * Methods: POST
+   */
+  EVENTS_QUICK_ADD: "/api/events/quick-add",
+
+  /**
+   * Watch events for changes
+   * Methods: POST
+   */
+  EVENTS_WATCH: "/api/events/watch",
+
+  /**
+   * Move event between calendars
+   * Methods: POST
+   */
+  EVENTS_MOVE: "/api/events/move",
+
   // ============================================
   // WHATSAPP ENDPOINTS
   // ============================================
