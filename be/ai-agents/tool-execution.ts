@@ -9,8 +9,6 @@ import isEmail from "validator/lib/isEmail";
 
 type Event = calendar_v3.Schema$Event;
 
-const MAX_PW = 72;
-const MIN_PW = 6;
 
 /**
  * Applies the user's default calendar timezone to timed events that don't have a timezone specified.
@@ -47,27 +45,23 @@ async function applyDefaultTimezoneIfNeeded(event: Partial<Event>, email: string
 
 export const EXECUTION_TOOLS = {
   generateGoogleAuthUrl,
-  registerUser: asyncHandler(async (params: { email: string; password: string }) => {
-    if (!(params.email && params.password)) {
-      throw new Error("Email and password are required in order to register.");
+  registerUser: asyncHandler(async (params: { email: string; name?: string }) => {
+    if (!params.email) {
+      throw new Error("Email is required for registration.");
     }
     if (!isEmail(params.email)) {
       throw new Error("Invalid email address.");
     }
 
-    if (params.password.length < MIN_PW || params.password.length > MAX_PW) {
-      throw new Error("Password must be between 6 and maximum of 72 characters long.");
-    }
-
-    const { data, error } = await SUPABASE.auth.signUp({
+    // This app uses Google OAuth for authentication - generate OAuth URL for the user
+    const authUrl = generateGoogleAuthUrl();
+    return {
+      status: "needs_auth",
       email: params.email,
-      password: params.password,
-    });
-
-    if (data) {
-      return data;
-    }
-    throw error;
+      name: params.name,
+      authUrl,
+      message: "Please authorize access to your Google Calendar using the provided URL.",
+    };
   }),
 
   insertEvent: asyncHandler(async (params: calendar_v3.Schema$Event & { email: string; customEvents?: boolean }) => {

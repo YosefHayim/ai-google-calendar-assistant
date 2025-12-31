@@ -3,7 +3,7 @@ export const TOOLS_DESCRIPTION = {
     "Generates Google OAuth consent URL for calendar authorization. Input: none. Output: URL string.",
 
   registerUserViaDb:
-    "Creates a new user record. Input: { email, password }. Output: user record JSON or throws error.",
+    "Registers a user for Google Calendar access. Input: { email, name? }. Output: Google OAuth URL for calendar authorization. Note: This app uses Google OAuth only, no passwords.",
 
   insertEvent: `Creates a calendar event.
 
