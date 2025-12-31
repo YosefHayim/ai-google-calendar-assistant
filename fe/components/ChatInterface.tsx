@@ -28,6 +28,7 @@ import { AIVoiceInput } from "@/components/ui/ai-voice-input";
 import { Message } from "@/types";
 import MessageBubble from "@/components/MessageBubble";
 import { Typewriter } from "@/components/ui/typewriter";
+import { Skeleton } from "@/components/ui/skeleton";
 import { VoicePoweredOrb } from "@/components/ui/voice-powered-orb";
 import { useRouter } from "next/navigation";
 
@@ -464,13 +465,20 @@ const ChatInterface: React.FC = () => {
         ))}
         {isLoading && (
           <div className="flex justify-start mb-6">
-            <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-4 py-3 rounded-md rounded-tl-none shadow-sm flex items-center gap-2">
-              <div className="flex gap-1">
-                <div className="w-1.5 h-1.5 bg-zinc-400 rounded-full animate-bounce"></div>
-                <div className="w-1.5 h-1.5 bg-zinc-400 rounded-full animate-bounce [animation-delay:0.2s]"></div>
-                <div className="w-1.5 h-1.5 bg-zinc-400 rounded-full animate-bounce [animation-delay:0.4s]"></div>
+            <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-4 py-3 rounded-md rounded-tl-none shadow-sm max-w-[85%] md:max-w-[75%]">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="flex gap-1">
+                  <div className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce"></div>
+                  <div className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:0.2s]"></div>
+                  <div className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:0.4s]"></div>
+                </div>
+                <span className="text-xs font-medium text-zinc-500 italic">Ally is thinking...</span>
               </div>
-              <span className="text-xs font-medium text-zinc-500 italic">Processing request...</span>
+              <div className="space-y-2">
+                <Skeleton className="h-3 w-48" />
+                <Skeleton className="h-3 w-64" />
+                <Skeleton className="h-3 w-40" />
+              </div>
             </div>
           </div>
         )}

@@ -16,7 +16,7 @@ router.param("id", (_req: Request, res: Response, next: NextFunction, id: string
 });
 
 // get current user information
-router.get("/me", supabaseAuth(), userController.getCurrentUserInformation);
+router.get("/get-user", supabaseAuth(), userController.getCurrentUserInformation);
 
 // refresh token
 router.post("/refresh", supabaseAuth(), userController.refreshToken);
