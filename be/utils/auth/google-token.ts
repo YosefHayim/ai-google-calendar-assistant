@@ -1,4 +1,5 @@
 import { OAUTH2CLIENT, REDIRECT_URI, SCOPES, SUPABASE } from "@/config";
+
 import { TOKEN_FIELDS } from "@/config/constants/sql";
 import type { TokensProps } from "@/types";
 
@@ -66,11 +67,7 @@ export const checkTokenExpiry = (expiryDate: number | null | undefined): TokenEx
  * @returns {Promise<TokensProps | null>} Tokens or null if not found
  */
 export const fetchGoogleTokensByEmail = async (email: string): Promise<{ data: TokensProps | null; error: string | null }> => {
-  const { data, error } = await SUPABASE.from("user_calendar_tokens")
-    .select(TOKEN_FIELDS)
-    .ilike("email", email.trim())
-    .limit(1)
-    .maybeSingle();
+  const { data, error } = await SUPABASE.from("user_calendar_tokens").select(TOKEN_FIELDS).ilike("email", email.trim()).limit(1).maybeSingle();
 
   if (error) {
     return { data: null, error: error.message };
@@ -147,7 +144,9 @@ export const persistGoogleTokens = async (email: string, refreshedTokens: Refres
  * @param {string} email - User's email
  */
 export const deactivateGoogleTokens = async (email: string): Promise<void> => {
-  await SUPABASE.from("user_calendar_tokens")
-    .update({ is_active: false, updated_at: new Date().toISOString() })
-    .ilike("email", email.trim());
+  const { error } = await SUPABASE.from("user_calendar_tokens").update({ is_active: false, updated_at: new Date().toISOString() }).ilike("email", email.trim());
+  if (error) {
+    console.error("Failed to deactivate Google tokens:", error.message);
+    throw new Error(`Failed to deactivate tokens: ${error.message}`);
+  }
 };

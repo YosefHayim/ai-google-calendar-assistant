@@ -5,6 +5,7 @@ import { env } from "@/config";
 import type { SessionData } from "@/types";
 import { activateAgent } from "@/utils/ai";
 import { authTgHandler } from "./middleware/auth-tg-handler";
+import { googleTokenTgHandler } from "./middleware/google-token-tg-handler";
 
 export type GlobalContext = SessionFlavor<SessionData> & Context;
 
@@ -29,12 +30,14 @@ bot.use(
         agentActive: false,
         isProcessing: false,
         pendingConfirmation: undefined,
+        googleTokens: undefined,
       };
     },
   })
 );
 
 bot.use(authTgHandler);
+bot.use(googleTokenTgHandler);
 
 bot.on("message", async (ctx) => {
   const msgId = ctx.message.message_id;

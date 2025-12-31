@@ -88,7 +88,10 @@ export const googleTokenRefresh = (options: GoogleTokenRefreshOptions = {}) => {
       }
 
       console.error("Google token refresh error:", message);
-      return sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, `Google token refresh failed: ${message}`);
+      await deactivateGoogleTokens(email);
+      return sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, `Google token refresh failed: ${message}`, {
+        code: "GOOGLE_TOKEN_REFRESH_FAILED",
+      });
     }
   });
 };

@@ -1,40 +1,20 @@
 import type { GlobalContext } from "../init-bot";
 import type { MiddlewareFn } from "grammy";
 import { SUPABASE } from "@/config";
-import { fetchGoogleTokensByEmail, generateGoogleAuthUrl } from "@/utils/auth";
 import isEmail from "validator/lib/isEmail";
 
 /**
- * Check if user has valid Google Calendar tokens and prompt for auth if missing
- */
-const checkAndPromptCalendarAuth = async (ctx: GlobalContext, email: string): Promise<boolean> => {
-  const { data: tokens } = await fetchGoogleTokensByEmail(email);
-
-  // User has active tokens - proceed normally
-  if (tokens?.is_active && tokens?.refresh_token) {
-    return true;
-  }
-
-  // No tokens or tokens are inactive - provide OAuth URL
-  const authUrl = generateGoogleAuthUrl();
-  const message = tokens?.is_active === false
-    ? "Your Google Calendar access has been revoked. Please reconnect:"
-    : "To help you manage your calendar, I need access to your Google Calendar. Please authorize:";
-
-  await ctx.reply(`${message}\n\n${authUrl}`);
-  return false;
-};
-
-/**
- * Authenticate Telegram user by token using Supabase Auth Get User
+ * Telegram Authentication Middleware
  *
- * @param {Context} ctx - The context object.
- * @param {NextFunction} next - The next function.
- * @returns {Promise<void>} The response object.
- * @description Authenticates a Telegram user by token and sends the response.
- * @example
- * const data = await authTgHandler(ctx, next);
- * console.log(data);
+ * Handles user authentication and email verification for Telegram bot.
+ * Sets up session with user info and email from database or user input.
+ *
+ * @description
+ * This middleware:
+ * 1. Initializes session with Telegram user info (chatId, userId, username)
+ * 2. Loads email from database if user exists in user_telegram_links
+ * 3. Prompts for email and saves to database if new user
+ * 4. Must run before googleTokenTgHandler middleware
  */
 export const authTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
   const from = ctx.from;
@@ -61,13 +41,6 @@ export const authTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
       session.email = data.email;
     }
     session.messageCount++;
-
-    // Check if user has Google Calendar tokens, prompt for auth if missing
-    const hasCalendarAuth = await checkAndPromptCalendarAuth(ctx, data.email);
-    if (!hasCalendarAuth) {
-      return; // Stop here until user authorizes Google Calendar
-    }
-
     return next();
   }
 
@@ -91,13 +64,6 @@ export const authTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
     });
     await ctx.reply("Email has been saved successfully!");
     session.messageCount++;
-
-    // Check if user has Google Calendar tokens, prompt for auth if missing
-    const hasCalendarAuth = await checkAndPromptCalendarAuth(ctx, text);
-    if (!hasCalendarAuth) {
-      return; // Stop here until user authorizes Google Calendar
-    }
-
     return next();
   }
 
