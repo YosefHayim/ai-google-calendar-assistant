@@ -97,11 +97,13 @@ export const searchSimilarConversations = async (
   }
 ): Promise<SimilarConversation[]> => {
   try {
+    // 1. Generate the embedding (number[])
     const queryEmbedding = await generateEmbedding(query);
-    const embeddingString = formatEmbeddingForPgVector(queryEmbedding);
 
+    // 2. Call the RPC function
+    // Note: We pass queryEmbedding directly. Supabase converts number[] -> vector automatically.
     const { data, error } = await SUPABASE.rpc("match_conversation_embeddings", {
-      query_embedding: embeddingString,
+      query_embedding: formatEmbeddingForPgVector(queryEmbedding),
       match_user_id: userId,
       match_threshold: options?.threshold || SIMILARITY_THRESHOLD,
       match_count: options?.limit || MAX_RESULTS,

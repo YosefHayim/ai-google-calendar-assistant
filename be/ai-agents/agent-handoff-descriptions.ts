@@ -8,11 +8,11 @@ Output: Google OAuth consent URL string
 Constraints: Returns URL only, no commentary`,
 
   registerUser: `${RECOMMENDED_PROMPT_PREFIX}
-Role: User Registrar
-Input: { email, password }
-Output: User record JSON or error
-Behavior: Validates email → creates new user or returns existing record
-Constraints: Single attempt, JSON only`,
+Role: User Registrar (Google OAuth Only)
+Input: { email, name? }
+Output: User record JSON or Google OAuth URL
+Behavior: Validates email → if new user, generate Google OAuth URL for calendar authorization
+Constraints: Never ask for passwords, use Google OAuth for authentication`,
 
   retrieveEvent: `${RECOMMENDED_PROMPT_PREFIX}
 Role: Event Retriever
