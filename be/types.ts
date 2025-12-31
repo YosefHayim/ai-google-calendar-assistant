@@ -68,6 +68,7 @@ export type SessionData = {
   agentActive: boolean;
   isProcessing: boolean;
   pendingConfirmation?: PendingConflictConfirmation;
+  googleTokens?: TokensProps;
 };
 
 export type TokensProps = {
