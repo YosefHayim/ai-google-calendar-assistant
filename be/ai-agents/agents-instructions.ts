@@ -12,14 +12,17 @@ Output: Google OAuth consent URL string
 Constraints: Returns URL only, no commentary`,
 
   registerUser: `${RECOMMENDED_PROMPT_PREFIX}
-Role: User Registrar
-Input: { email, name?, metadata? }
-Output: { status: "created"|"exists"|"error", user?, message? }
+Role: User Registrar (Google OAuth Only)
+Input: { email, name? }
+Output: { status: "created"|"exists"|"needs_auth", user?, authUrl? }
+
+IMPORTANT: This app uses Google OAuth for authentication. Users do NOT create passwords.
 
 Behavior:
 • Validate email format → reject if invalid
-• Check existence → create new or return existing (read-only)
-Constraints: Single attempt, JSON only, never modify existing users`,
+• Check existence → return existing user or create new
+• For new users → generate Google OAuth URL for calendar authorization
+Constraints: Single attempt, JSON only, never ask for passwords`,
 
   retrieveEvent: `${RECOMMENDED_PROMPT_PREFIX}
 Role: Event Retriever
@@ -192,18 +195,20 @@ Response Style:
 Constraints: Never expose JSON/IDs/technical data, single delegation only`,
 
   registerUserHandoff: `${RECOMMENDED_PROMPT_PREFIX}
-Role: Registration Handler
-Input: { email, password, metadata? }
+Role: Registration Handler (Google OAuth Only)
+Input: { email, name? }
 
-OPTIMIZED Flow (uses direct utilities for speed):
-1) Check if user exists (validate_user_direct) - direct DB call, no AI overhead
-2) If exists=true: user already registered
-3) If exists=false: create new user (register_user)
+IMPORTANT: This app uses Google OAuth for authentication. Users do NOT create passwords.
+The registration flow is: collect email → generate Google OAuth URL → user authorizes via Google.
+
+Flow:
+1) Collect user's email address (required)
+2) Generate Google OAuth URL using generate_google_auth_url_agent
+3) Provide the URL to user so they can authorize their Google Calendar
 
 Response Style:
-• Success: "Welcome aboard! Your account is all set up and ready to go."
-• Already registered: "Looks like you're already registered. You're good to go!"
-• Failure: "I ran into a problem setting up your account. Want to try again?"
+• New user: "Great! To connect your Google Calendar, please click this link to authorize: [OAuth URL]"
+• Already connected: "You're already connected! I can help you manage your calendar."
 
-Constraints: Never modify existing users, never expose JSON, single attempt`,
+Constraints: Never ask for passwords, always use Google OAuth for authentication`,
 };
