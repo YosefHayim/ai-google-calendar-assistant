@@ -62,7 +62,7 @@ export type Database = {
           id: number
           message_id: number | null
           metadata: Json | null
-          user_id: string
+          user_id: string | null
         }
         Insert: {
           chat_id?: number | null
@@ -72,7 +72,7 @@ export type Database = {
           id?: number
           message_id?: number | null
           metadata?: Json | null
-          user_id: string
+          user_id?: string | null
         }
         Update: {
           chat_id?: number | null
@@ -82,7 +82,7 @@ export type Database = {
           id?: number
           message_id?: number | null
           metadata?: Json | null
-          user_id?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -117,11 +117,19 @@ export type Database = {
           role?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "conversation_messages_chat_id_fkey"
+            columns: ["chat_id"]
+            isOneToOne: false
+            referencedRelation: "user_telegram_links"
+            referencedColumns: ["chat_id"]
+          },
+        ]
       }
       conversation_state: {
         Row: {
-          chat_id: number
+          chat_id: number | null
           context_window: Json | null
           created_at: string
           id: number
@@ -129,11 +137,12 @@ export type Database = {
           last_summarized_at: string | null
           message_count: number
           metadata: Json | null
+          telegram_user_id: number | null
           updated_at: string | null
-          user_id: string
+          user_id: string | null
         }
         Insert: {
-          chat_id: number
+          chat_id?: number | null
           context_window?: Json | null
           created_at?: string
           id?: number
@@ -141,11 +150,12 @@ export type Database = {
           last_summarized_at?: string | null
           message_count?: number
           metadata?: Json | null
+          telegram_user_id?: number | null
           updated_at?: string | null
-          user_id: string
+          user_id?: string | null
         }
         Update: {
-          chat_id?: number
+          chat_id?: number | null
           context_window?: Json | null
           created_at?: string
           id?: number
@@ -153,10 +163,26 @@ export type Database = {
           last_summarized_at?: string | null
           message_count?: number
           metadata?: Json | null
+          telegram_user_id?: number | null
           updated_at?: string | null
-          user_id?: string
+          user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "conversation_state_chat_id_fkey"
+            columns: ["chat_id"]
+            isOneToOne: false
+            referencedRelation: "user_telegram_links"
+            referencedColumns: ["chat_id"]
+          },
+          {
+            foreignKeyName: "conversation_state_telegram_user_id_fkey"
+            columns: ["telegram_user_id"]
+            isOneToOne: false
+            referencedRelation: "user_telegram_links"
+            referencedColumns: ["telegram_user_id"]
+          },
+        ]
       }
       conversation_summaries: {
         Row: {
@@ -168,7 +194,8 @@ export type Database = {
           message_count: number
           metadata: Json | null
           summary_text: string
-          user_id: string
+          telegram_user_id: number | null
+          user_id: string | null
         }
         Insert: {
           chat_id: number
@@ -179,7 +206,8 @@ export type Database = {
           message_count: number
           metadata?: Json | null
           summary_text: string
-          user_id: string
+          telegram_user_id?: number | null
+          user_id?: string | null
         }
         Update: {
           chat_id?: number
@@ -190,45 +218,25 @@ export type Database = {
           message_count?: number
           metadata?: Json | null
           summary_text?: string
-          user_id?: string
+          telegram_user_id?: number | null
+          user_id?: string | null
         }
-        Relationships: []
-      }
-      event_embeddings: {
-        Row: {
-          calendar_id: string | null
-          content: string
-          created_at: string
-          embedding: string | null
-          event_id: string | null
-          id: number
-          metadata: Json | null
-          updated_at: string | null
-          user_id: string
-        }
-        Insert: {
-          calendar_id?: string | null
-          content: string
-          created_at?: string
-          embedding?: string | null
-          event_id?: string | null
-          id?: number
-          metadata?: Json | null
-          updated_at?: string | null
-          user_id: string
-        }
-        Update: {
-          calendar_id?: string | null
-          content?: string
-          created_at?: string
-          embedding?: string | null
-          event_id?: string | null
-          id?: number
-          metadata?: Json | null
-          updated_at?: string | null
-          user_id?: string
-        }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "conversation_summaries_chat_id_fkey"
+            columns: ["chat_id"]
+            isOneToOne: false
+            referencedRelation: "user_telegram_links"
+            referencedColumns: ["chat_id"]
+          },
+          {
+            foreignKeyName: "conversation_summaries_telegram_user_id_fkey"
+            columns: ["telegram_user_id"]
+            isOneToOne: false
+            referencedRelation: "user_telegram_links"
+            referencedColumns: ["telegram_user_id"]
+          },
+        ]
       }
       user_calendar_tokens: {
         Row: {
@@ -281,159 +289,6 @@ export type Database = {
         }
         Relationships: []
       }
-      user_calendars: {
-        Row: {
-          access_role: string
-          background_color: string | null
-          calendars: Json | null
-          created_at: string
-          default_reminders: Json | null
-          description: string | null
-          foreground_color: string | null
-          id: number
-          location: string | null
-          time_zone: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          access_role: string
-          background_color?: string | null
-          calendars?: Json | null
-          created_at?: string
-          default_reminders?: Json | null
-          description?: string | null
-          foreground_color?: string | null
-          id?: number
-          location?: string | null
-          time_zone: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          access_role?: string
-          background_color?: string | null
-          calendars?: Json | null
-          created_at?: string
-          default_reminders?: Json | null
-          description?: string | null
-          foreground_color?: string | null
-          id?: number
-          location?: string | null
-          time_zone?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      user_preference_embeddings: {
-        Row: {
-          content: string
-          created_at: string
-          embedding: string | null
-          id: number
-          metadata: Json | null
-          preference_type: string
-          updated_at: string | null
-          user_id: string
-        }
-        Insert: {
-          content: string
-          created_at?: string
-          embedding?: string | null
-          id?: number
-          metadata?: Json | null
-          preference_type: string
-          updated_at?: string | null
-          user_id: string
-        }
-        Update: {
-          content?: string
-          created_at?: string
-          embedding?: string | null
-          id?: number
-          metadata?: Json | null
-          preference_type?: string
-          updated_at?: string | null
-          user_id?: string
-        }
-        Relationships: []
-      }
-      user_routines: {
-        Row: {
-          confidence_score: number | null
-          created_at: string
-          frequency: number | null
-          id: number
-          last_observed_at: string | null
-          metadata: Json | null
-          pattern_data: Json
-          routine_type: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          confidence_score?: number | null
-          created_at?: string
-          frequency?: number | null
-          id?: number
-          last_observed_at?: string | null
-          metadata?: Json | null
-          pattern_data: Json
-          routine_type: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          confidence_score?: number | null
-          created_at?: string
-          frequency?: number | null
-          id?: number
-          last_observed_at?: string | null
-          metadata?: Json | null
-          pattern_data?: Json
-          routine_type?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      user_schedule_statistics: {
-        Row: {
-          calculated_at: string
-          created_at: string
-          id: number
-          period_end: string
-          period_start: string
-          period_type: string
-          statistics: Json
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          calculated_at?: string
-          created_at?: string
-          id?: number
-          period_end: string
-          period_start: string
-          period_type: string
-          statistics: Json
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          calculated_at?: string
-          created_at?: string
-          id?: number
-          period_end?: string
-          period_start?: string
-          period_type?: string
-          statistics?: Json
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
       user_telegram_links: {
         Row: {
           chat_id: number | null
@@ -442,6 +297,7 @@ export type Database = {
           first_name: string | null
           id: number
           language_code: string | null
+          telegram_user_id: number | null
           updated_at: string | null
           username: string | null
         }
@@ -452,6 +308,7 @@ export type Database = {
           first_name?: string | null
           id?: number
           language_code?: string | null
+          telegram_user_id?: number | null
           updated_at?: string | null
           username?: string | null
         }
@@ -462,10 +319,19 @@ export type Database = {
           first_name?: string | null
           id?: number
           language_code?: string | null
+          telegram_user_id?: number | null
           updated_at?: string | null
           username?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "user_telegram_links_email_fkey"
+            columns: ["email"]
+            isOneToOne: true
+            referencedRelation: "user_calendar_tokens"
+            referencedColumns: ["email"]
+          },
+        ]
       }
     }
     Views: {
@@ -474,9 +340,9 @@ export type Database = {
     Functions: {
       match_conversation_embeddings: {
         Args: {
-          match_count?: number
-          match_threshold?: number
-          match_user_id: string
+          match_count: number
+          match_threshold: number
+          match_user_id: number
           query_embedding: string
         }
         Returns: {

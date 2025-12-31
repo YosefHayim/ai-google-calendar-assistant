@@ -14,7 +14,7 @@ type ConversationContext = {
 type ConversationStateRow = {
   id: number;
   chat_id: number;
-  user_id: string;
+  telegram_user_id: number;
   context_window: ConversationContext | null;
   message_count: number;
   last_message_id: number | null;
@@ -44,12 +44,11 @@ const calculateContextLength = (messages: userAndAiMessageProps[]): number => {
   return messages.reduce((total, msg) => total + (msg.content?.length || 0), 0);
 };
 
-// Fetch today's conversation state for a user
-export const getTodayConversationState = async (chatId: number, userId: string): Promise<ConversationStateRow | null> => {
+// Fetch today's conversation state for a user (query by chat_id only)
+export const getTodayConversationState = async (chatId: number): Promise<ConversationStateRow | null> => {
   const { data, error } = await SUPABASE.from(CONVERSATION_STATE_TABLE)
     .select("*")
     .eq("chat_id", chatId)
-    .eq("user_id", userId)
     .order("created_at", { ascending: false })
     .limit(1)
     .maybeSingle();
@@ -68,7 +67,7 @@ export const getTodayConversationState = async (chatId: number, userId: string):
 };
 
 // Create a new conversation state for today
-export const createConversationState = async (chatId: number, userId: string, initialMessage?: userAndAiMessageProps): Promise<ConversationStateRow | null> => {
+export const createConversationState = async (chatId: number, userId: number, initialMessage?: userAndAiMessageProps): Promise<ConversationStateRow | null> => {
   const context: ConversationContext = {
     messages: initialMessage ? [initialMessage] : [],
     lastUpdated: new Date().toISOString(),
@@ -77,7 +76,7 @@ export const createConversationState = async (chatId: number, userId: string, in
   const { data, error } = await SUPABASE.from(CONVERSATION_STATE_TABLE)
     .insert({
       chat_id: chatId,
-      user_id: userId,
+      telegram_user_id: userId,
       context_window: context,
       message_count: initialMessage ? 1 : 0,
       last_message_id: null,
@@ -114,10 +113,10 @@ export const updateConversationState = async (stateId: number, context: Conversa
 };
 
 // Store a summary in the database
-export const storeSummary = async (chatId: number, userId: string, summaryText: string, messageCount: number): Promise<boolean> => {
+export const storeSummary = async (chatId: number, userId: number, summaryText: string, messageCount: number): Promise<boolean> => {
   const { error } = await SUPABASE.from(CONVERSATION_SUMMARIES_TABLE).insert({
     chat_id: chatId,
-    user_id: userId,
+    telegram_user_id: userId,
     summary_text: summaryText,
     message_count: messageCount,
     first_message_id: 0,
@@ -149,10 +148,10 @@ export const markAsSummarized = async (stateId: number): Promise<boolean> => {
   return true;
 };
 
-// Get or create today's conversation context
-export const getOrCreateTodayContext = async (chatId: number, userId: string): Promise<{ stateId: number; context: ConversationContext }> => {
-  // Try to get existing state for today
-  const existingState = await getTodayConversationState(chatId, userId);
+// Get or create today's conversation context (query by chat_id)
+export const getOrCreateTodayContext = async (chatId: number, userId: number): Promise<{ stateId: number; context: ConversationContext }> => {
+  // Try to get existing state for today (query by chat_id only)
+  const existingState = await getTodayConversationState(chatId);
 
   if (existingState) {
     const context = (existingState.context_window as ConversationContext) || {
@@ -162,7 +161,7 @@ export const getOrCreateTodayContext = async (chatId: number, userId: string): P
     return { stateId: existingState.id, context };
   }
 
-  // Create new state for today
+  // Create new state for today (userId needed for insert)
   const newState = await createConversationState(chatId, userId);
 
   if (!newState) {
@@ -182,7 +181,7 @@ export const getOrCreateTodayContext = async (chatId: number, userId: string): P
 // Add a message to the conversation and check if summarization is needed
 export const addMessageToContext = async (
   chatId: number,
-  userId: string,
+  userId: number,
   message: userAndAiMessageProps,
   summarizeFn: (messages: userAndAiMessageProps[]) => Promise<string>
 ): Promise<ConversationContext> => {
@@ -245,7 +244,7 @@ export const buildContextPrompt = (context: ConversationContext): string => {
 };
 
 // Get full conversation context for a user
-export const getConversationContext = async (chatId: number, userId: string): Promise<ConversationContext> => {
+export const getConversationContext = async (chatId: number, userId: number): Promise<ConversationContext> => {
   const { context } = await getOrCreateTodayContext(chatId, userId);
   return context;
 };
