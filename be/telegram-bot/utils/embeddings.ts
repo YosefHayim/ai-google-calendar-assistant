@@ -1,9 +1,9 @@
+import { CONFIG } from "@/config";
 import { MODELS } from "@/config/constants/ai";
 import OpenAI from "openai";
 import { SUPABASE } from "@/config/clients/supabase";
-import { env } from "@/config";
 
-const openai = new OpenAI({ apiKey: env.openAiApiKey });
+const openai = new OpenAI({ apiKey: CONFIG.openAiApiKey });
 
 const EMBEDDING_MODEL = MODELS.TEXT_EMBEDDING_3_SMALL;
 const CONVERSATION_EMBEDDINGS_TABLE = "conversation_embeddings";
@@ -51,7 +51,7 @@ const formatEmbeddingForPgVector = (embedding: number[]): string => {
 // Store conversation embedding in the database
 export const storeConversationEmbedding = async (
   chatId: number,
-  userId: string,
+  userId: number,
   content: string,
   role: "user" | "assistant",
   messageId?: number
@@ -68,7 +68,7 @@ export const storeConversationEmbedding = async (
 
     const { error } = await SUPABASE.from(CONVERSATION_EMBEDDINGS_TABLE).insert({
       chat_id: chatId,
-      user_id: userId,
+      user_id: null,
       content,
       embedding: embeddingString,
       message_id: messageId || null,
@@ -89,7 +89,7 @@ export const storeConversationEmbedding = async (
 
 // Search for similar conversations using vector similarity
 export const searchSimilarConversations = async (
-  userId: string,
+  userId: number,
   query: string,
   options?: {
     threshold?: number;
@@ -137,7 +137,7 @@ export const buildSemanticContext = (conversations: SimilarConversation[]): stri
 };
 
 // Store embedding in background (non-blocking)
-export const storeEmbeddingAsync = (chatId: number, userId: string, content: string, role: "user" | "assistant", messageId?: number): void => {
+export const storeEmbeddingAsync = (chatId: number, userId: number, content: string, role: "user" | "assistant", messageId?: number): void => {
   // Fire and forget - don't await
   storeConversationEmbedding(chatId, userId, content, role, messageId).catch((error) => {
     console.error("Background embedding storage failed:", error);
@@ -146,7 +146,7 @@ export const storeEmbeddingAsync = (chatId: number, userId: string, content: str
 
 // Get relevant context for a query
 export const getRelevantContext = async (
-  userId: string,
+  userId: number,
   query: string,
   options?: {
     threshold?: number;

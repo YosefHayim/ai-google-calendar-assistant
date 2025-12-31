@@ -90,7 +90,7 @@ const handleConfirmation = async (ctx: GlobalContext): Promise<void> => {
   ctx.session.isProcessing = true;
   ctx.session.pendingConfirmation = undefined;
   const chatId = ctx.chat?.id || ctx.session.chatId;
-  const userId = ctx.session.email || String(ctx.from?.id || "unknown");
+  const userId = ctx.from?.id!;
 
   try {
     // Add confirmation to conversation history
@@ -148,7 +148,7 @@ const handleConflictResponse = async (ctx: GlobalContext, output: string): Promi
 const handleAgentRequest = async (ctx: GlobalContext, message: string): Promise<void> => {
   ctx.session.isProcessing = true;
   const chatId = ctx.chat?.id || ctx.session.chatId;
-  const userId = ctx.session.email || String(ctx.from?.id || "unknown");
+  const userId = ctx.from?.id!;
 
   try {
     // Add user message to conversation history
@@ -219,9 +219,6 @@ bot.on("message", async (ctx) => {
   const msgId = ctx.message.message_id;
   const text = ctx.message.text?.trim();
   const lowerText = text?.toLowerCase();
-
-  console.log(ctx.session);
-  console.log(ctx.message.from);
 
   // Ignore /start command (handled elsewhere)
   if (text?.includes(COMMANDS.START)) return;
