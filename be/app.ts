@@ -43,7 +43,7 @@ app.listen(PORT, (error?: Error) => {
     console.error("Error starting server:", error);
     throw error;
   }
-  console.log(`AI Google Calendar Assistant Server is running on port: ${PORT}\n Base URL: ${env.baseUrl}`);
+  console.log(`AI Google Calendar Assistant Server is running on URL: ${env.baseUrl}`);
 });
 
 startTelegramBot();
