@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { eventsService } from "@/lib/api/services/events.service";
 import { queryKeys } from "@/lib/query/keys";
 import { useMutationWrapper, MutationHookOptions } from "../useMutationWrapper";
-import type { UpdateEventRequest, CalendarEvent } from "@/types/api";
+import type { UpdateEventRequest, CalendarEvent, ApiResponse } from "@/types/api";
 
 interface UpdateEventVariables {
   /** The event ID to update */
@@ -21,9 +21,8 @@ export function useUpdateEvent(
 ) {
   const queryClient = useQueryClient();
 
-  const mutation = useMutation({
-    mutationFn: ({ id, data }: UpdateEventVariables) =>
-      eventsService.updateEvent(id, data),
+  const mutation = useMutation<ApiResponse<CalendarEvent>, Error, UpdateEventVariables>({
+    mutationFn: ({ id, data }) => eventsService.updateEvent(id, data),
     onSuccess: (data, variables) => {
       // Invalidate specific event detail
       queryClient.invalidateQueries({
@@ -36,10 +35,14 @@ export function useUpdateEvent(
       queryClient.invalidateQueries({
         queryKey: queryKeys.calendars.freeBusy(),
       });
-      options?.onSuccess?.(data.data!, variables);
+      if (data.data) {
+        options?.onSuccess?.(data.data, variables);
+      }
     },
     onError: options?.onError,
-    onSettled: options?.onSettled,
+    onSettled: (data, error, variables) => {
+      options?.onSettled?.(data?.data ?? undefined, error, variables);
+    },
   });
 
   return useMutationWrapper(mutation);

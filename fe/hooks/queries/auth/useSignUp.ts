@@ -3,7 +3,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { authService } from "@/lib/api/services/auth.service";
 import { useMutationWrapper, MutationHookOptions } from "../useMutationWrapper";
-import type { AuthData } from "@/types/api";
+import type { AuthData, ApiResponse } from "@/types/api";
 
 interface SignUpVariables {
   email: string;
@@ -16,14 +16,17 @@ interface SignUpVariables {
 export function useSignUp(
   options?: MutationHookOptions<AuthData, SignUpVariables>
 ) {
-  const mutation = useMutation({
-    mutationFn: ({ email, password }: SignUpVariables) =>
-      authService.signUp(email, password),
+  const mutation = useMutation<ApiResponse<AuthData>, Error, SignUpVariables>({
+    mutationFn: ({ email, password }) => authService.signUp(email, password),
     onSuccess: (data, variables) => {
-      options?.onSuccess?.(data.data!, variables);
+      if (data.data) {
+        options?.onSuccess?.(data.data, variables);
+      }
     },
     onError: options?.onError,
-    onSettled: options?.onSettled,
+    onSettled: (data, error, variables) => {
+      options?.onSettled?.(data?.data ?? undefined, error, variables);
+    },
   });
 
   return useMutationWrapper(mutation);

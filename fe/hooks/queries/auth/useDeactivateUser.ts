@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { authService } from "@/lib/api/services/auth.service";
 import { queryKeys } from "@/lib/query/keys";
 import { useMutationWrapper, MutationHookOptions } from "../useMutationWrapper";
+import type { ApiResponse } from "@/types/api";
 
 /**
  * Hook to deactivate the current user's account
@@ -11,7 +12,7 @@ import { useMutationWrapper, MutationHookOptions } from "../useMutationWrapper";
 export function useDeactivateUser(options?: MutationHookOptions<null, void>) {
   const queryClient = useQueryClient();
 
-  const mutation = useMutation({
+  const mutation = useMutation<ApiResponse<null>, Error, void>({
     mutationFn: () => authService.deactivateUser(),
     onSuccess: () => {
       // Clear all auth-related caches
@@ -21,7 +22,9 @@ export function useDeactivateUser(options?: MutationHookOptions<null, void>) {
       options?.onSuccess?.(null, undefined);
     },
     onError: options?.onError,
-    onSettled: options?.onSettled,
+    onSettled: (data, error, variables) => {
+      options?.onSettled?.(null, error, variables);
+    },
   });
 
   return useMutationWrapper(mutation);

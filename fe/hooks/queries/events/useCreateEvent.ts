@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { eventsService } from "@/lib/api/services/events.service";
 import { queryKeys } from "@/lib/query/keys";
 import { useMutationWrapper, MutationHookOptions } from "../useMutationWrapper";
-import type { CreateEventRequest, CalendarEvent } from "@/types/api";
+import type { CreateEventRequest, CalendarEvent, ApiResponse } from "@/types/api";
 
 /**
  * Hook to create a new calendar event
@@ -14,9 +14,8 @@ export function useCreateEvent(
 ) {
   const queryClient = useQueryClient();
 
-  const mutation = useMutation({
-    mutationFn: (eventData: CreateEventRequest) =>
-      eventsService.createEvent(eventData),
+  const mutation = useMutation<ApiResponse<CalendarEvent>, Error, CreateEventRequest>({
+    mutationFn: (eventData) => eventsService.createEvent(eventData),
     onSuccess: (data, variables) => {
       // Invalidate events list to show new event
       queryClient.invalidateQueries({ queryKey: queryKeys.events.lists() });
@@ -24,10 +23,14 @@ export function useCreateEvent(
       queryClient.invalidateQueries({
         queryKey: queryKeys.calendars.freeBusy(),
       });
-      options?.onSuccess?.(data.data!, variables);
+      if (data.data) {
+        options?.onSuccess?.(data.data, variables);
+      }
     },
     onError: options?.onError,
-    onSettled: options?.onSettled,
+    onSettled: (data, error, variables) => {
+      options?.onSettled?.(data?.data ?? undefined, error, variables);
+    },
   });
 
   return useMutationWrapper(mutation);

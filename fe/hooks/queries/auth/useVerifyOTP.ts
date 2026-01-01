@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { authService } from "@/lib/api/services/auth.service";
 import { queryKeys } from "@/lib/query/keys";
 import { useMutationWrapper, MutationHookOptions } from "../useMutationWrapper";
-import type { AuthData } from "@/types/api";
+import type { AuthData, ApiResponse } from "@/types/api";
 
 interface VerifyOTPVariables {
   email: string;
@@ -19,15 +19,18 @@ export function useVerifyOTP(
 ) {
   const queryClient = useQueryClient();
 
-  const mutation = useMutation({
-    mutationFn: ({ email, token }: VerifyOTPVariables) =>
-      authService.verifyOTP(email, token),
+  const mutation = useMutation<ApiResponse<AuthData>, Error, VerifyOTPVariables>({
+    mutationFn: ({ email, token }) => authService.verifyOTP(email, token),
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.auth.user() });
-      options?.onSuccess?.(data.data!, variables);
+      if (data.data) {
+        options?.onSuccess?.(data.data, variables);
+      }
     },
     onError: options?.onError,
-    onSettled: options?.onSettled,
+    onSettled: (data, error, variables) => {
+      options?.onSettled?.(data?.data ?? undefined, error, variables);
+    },
   });
 
   return useMutationWrapper(mutation);
