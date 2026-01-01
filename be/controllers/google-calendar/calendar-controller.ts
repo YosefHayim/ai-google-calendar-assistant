@@ -326,6 +326,22 @@ const listAllSettings = reqResAsyncHandler(async (req: Request, res: Response) =
   sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully retrieved all settings", r.data);
 });
 
+const getDryCalendarInfo = reqResAsyncHandler(async (req: Request, res: Response) => {
+  const tokenData = await fetchCredentialsByEmail(req.user?.email!);
+  if (!tokenData) {
+    return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User credentials not found.");
+  }
+
+  const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData);
+  const r = await calendar.settings.list();
+  const expiryDate = new Date(tokenData.expiry_date! * 1000);
+  sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully retrieved dry calendar info", {
+    expiryDate,
+    isExpired: expiryDate < new Date(),
+    expiresInMs: expiryDate.getTime() - Date.now() + "s to expire",
+  });
+});
+
 export default {
   clearAllEventsOfCalendar,
   getSettingsOfCalendarById,
@@ -342,4 +358,5 @@ export default {
   patchCalendar,
   updateCalendar,
   listAllSettings,
+  getDryCalendarInfo,
 };
