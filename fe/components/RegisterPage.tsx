@@ -3,7 +3,6 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import ImageCarousel from '@/components/ImageCarousel';
 import { AllyLogo, BetaBadge } from '@/components/logo';
 import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button';
@@ -26,11 +25,9 @@ const GoogleIcon = () => (
 );
 
 const RegisterPage: React.FC = () => {
-  const router = useRouter();
-
   const handleGoogleSignUp = () => {
-    // Navigate to phone registration for mandatory 2FA after Google Auth
-    router.push('/phone-registration');
+    // Redirect to Google OAuth endpoint - backend handles the consent screen
+    window.location.href = '/api/users/signup/google';
   };
 
   return (
