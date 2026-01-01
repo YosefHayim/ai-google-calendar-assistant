@@ -4,7 +4,7 @@
 
 // Environment configuration
 export const ENV = {
-  API_BASE_URL: process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001",
+  API_BASE_URL: process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3000",
   IS_DEVELOPMENT: process.env.NODE_ENV === "development",
   IS_PRODUCTION: process.env.NODE_ENV === "production",
   IS_TEST: process.env.NODE_ENV === "test",
