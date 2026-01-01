@@ -132,13 +132,6 @@ export const ENDPOINTS = {
   EVENTS: "/api/events",
 
   /**
-   * Get filtered events based on query parameters
-   * Methods: GET
-   * Query params: calendarId, timeMin, timeMax, maxResults, etc.
-   */
-  EVENTS_FILTERED: "/api/events/filtered",
-
-  /**
    * Single event operations by ID
    * Methods: GET (read), PATCH (update), DELETE (remove)
    * @param id - Event ID
