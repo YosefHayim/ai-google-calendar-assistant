@@ -16,7 +16,8 @@ import {
   Brain,
   ZapOff,
   Target,
-  BarChart3
+  BarChart3,
+  Loader2
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import TimeSavedChart from '@/components/TimeSavedChart';
@@ -31,6 +32,79 @@ import {
   SkeletonInsightCard,
   SkeletonHeatmap
 } from '@/components/ui/skeleton';
+import { DatePickerWithRange } from '@/components/ui/date-range-picker';
+import { addDays, subDays } from 'date-fns';
+import { DateRange } from 'react-day-picker';
+import { useQuery } from '@tanstack/react-query';
+import { apiClient } from '@/lib/api/client';
+import { ENDPOINTS } from '@/lib/api/endpoints';
+import { z } from 'zod';
+import { toast } from 'sonner';
+
+// --- Zod Schema Definitions ---
+
+const CalendarEventSchema = z.object({
+  kind: z.string().optional(),
+  etag: z.string().optional(),
+  id: z.string(),
+  status: z.string().optional(),
+  htmlLink: z.string().optional(),
+  created: z.string().optional(),
+  updated: z.string().optional(),
+  summary: z.string().optional(),
+  description: z.string().optional(),
+  location: z.string().optional(),
+  creator: z.object({
+    email: z.string().optional(),
+    self: z.boolean().optional(),
+  }).optional(),
+  organizer: z.object({
+    email: z.string().optional(),
+    self: z.boolean().optional(),
+  }).optional(),
+  start: z.object({
+    date: z.string().optional(),
+    dateTime: z.string().optional(),
+    timeZone: z.string().optional(),
+  }),
+  end: z.object({
+    date: z.string().optional(),
+    dateTime: z.string().optional(),
+    timeZone: z.string().optional(),
+  }),
+  recurringEventId: z.string().optional(),
+  originalStartTime: z.object({
+    date: z.string().optional(),
+    dateTime: z.string().optional(),
+    timeZone: z.string().optional(),
+  }).optional(),
+  iCalUID: z.string().optional(),
+  sequence: z.number().optional(),
+  attendees: z.array(
+    z.object({
+      email: z.string().optional(),
+      organizer: z.boolean().optional(),
+      self: z.boolean().optional(),
+      responseStatus: z.string().optional(),
+    })
+  ).optional(),
+  reminders: z.object({
+    useDefault: z.boolean().optional(),
+  }).optional(),
+  eventType: z.string().optional(),
+});
+
+const AnalyticsResponseSchema = z.object({
+  status: z.string(),
+  message: z.string(),
+  data: z.object({
+    allEvents: z.array(z.array(CalendarEventSchema)),
+  }),
+});
+
+type AnalyticsData = z.infer<typeof AnalyticsResponseSchema>;
+
+// --- Components ---
 
 interface TimeAllocationChartProps {
   data: { category: string; hours: number; color: string }[];
@@ -42,6 +116,15 @@ const TimeAllocationChart: React.FC<TimeAllocationChartProps> = ({ data }) => {
   const circumference = 2 * Math.PI * radius;
   const strokeWidth = 22;
   let accumulatedPercentage = 0;
+
+  // Handle case with no data
+  if (totalHours === 0) {
+      return (
+          <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-6 flex items-center justify-center h-full">
+              <p className="text-zinc-500">No time allocation data available.</p>
+          </div>
+      )
+  }
 
   return (
     <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-6 flex flex-col xl:flex-row items-center gap-6 h-full">
@@ -74,7 +157,7 @@ const TimeAllocationChart: React.FC<TimeAllocationChartProps> = ({ data }) => {
           })}
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-3xl font-bold text-zinc-900 dark:text-zinc-100">{totalHours}h</span>
+            <span className="text-3xl font-bold text-zinc-900 dark:text-zinc-100">{totalHours.toFixed(1)}h</span>
             <span className="text-xs font-medium text-zinc-500">Tracked</span>
         </div>
       </div>
@@ -84,8 +167,8 @@ const TimeAllocationChart: React.FC<TimeAllocationChartProps> = ({ data }) => {
           {data.map((item) => (
             <li key={item.category} className="flex items-center gap-3 text-sm">
               <div className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: item.color }} />
-              <span className="flex-1 font-medium text-zinc-800 dark:text-zinc-200">{item.category}</span>
-              <span className="font-mono text-zinc-500 dark:text-zinc-400">{item.hours}h</span>
+              <span className="flex-1 font-medium text-zinc-800 dark:text-zinc-200 truncate">{item.category}</span>
+              <span className="font-mono text-zinc-500 dark:text-zinc-400">{item.hours.toFixed(1)}h</span>
               <span className="text-xs text-zinc-400 w-10 text-right">{((item.hours / totalHours) * 100).toFixed(0)}%</span>
             </li>
           ))}
@@ -132,84 +215,163 @@ const InsightCard: React.FC<InsightCardProps> = ({ icon: Icon, title, value, des
 
 
 interface AnalyticsDashboardProps {
-  isLoading?: boolean;
+  isLoading?: boolean; // Keep for compatibility if used elsewhere, but we'll use query loading mostly
 }
 
-const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: isLoadingProp }) => {
-  // Simulate initial loading state if no prop is provided (for demonstration)
-  const [isInitialLoading, setIsInitialLoading] = useState(true);
+const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: initialLoading }) => {
+  const [date, setDate] = useState<DateRange | undefined>({
+    from: subDays(new Date(), 7),
+    to: new Date(),
+  });
 
-  useEffect(() => {
-    // Simulate data fetching delay - remove this when using real API
-    const timer = setTimeout(() => setIsInitialLoading(false), 1500);
-    return () => clearTimeout(timer);
-  }, []);
+  const { data: analyticsData, isLoading: isQueryLoading, error, refetch } = useQuery({
+    queryKey: ['events-analytics', date?.from, date?.to],
+    queryFn: async () => {
+        if (!date?.from || !date?.to) return null;
 
-  const isLoading = isLoadingProp ?? isInitialLoading;
+        const params = new URLSearchParams({
+            timeMin: date.from.toISOString(),
+            timeMax: date.to.toISOString(),
+        });
+
+        const response = await apiClient.get(`${ENDPOINTS.EVENTS_ANALYTICS}?${params.toString()}`);
+
+        // Validate with Zod
+        const result = AnalyticsResponseSchema.safeParse(response.data);
+        if (!result.success) {
+            console.error("Zod Validation Error:", result.error);
+            throw new Error("Invalid API response format");
+        }
+
+        return result.data;
+    },
+    enabled: !!date?.from && !!date?.to,
+    retry: false
+  });
+
+  const isLoading = initialLoading || isQueryLoading;
+
+  // Process data for charts
+  const processData = (data: AnalyticsData | undefined | null) => {
+      if (!data) return {
+          totalEvents: 0,
+          totalDurationHours: 0,
+          calendarBreakdown: [],
+          recentActivities: []
+      };
+
+      let totalEvents = 0;
+      let totalDurationMinutes = 0;
+      const calendarMap = new Map<string, number>();
+      const recentActivities: any[] = []; // Using any for simplicity in this transformation
+
+      data.data.allEvents.forEach(calendarEvents => {
+          calendarEvents.forEach(event => {
+              totalEvents++;
+
+              // Duration calculation
+              if (event.start.dateTime && event.end.dateTime) {
+                  const start = new Date(event.start.dateTime);
+                  const end = new Date(event.end.dateTime);
+                  const duration = (end.getTime() - start.getTime()) / (1000 * 60); // minutes
+                  totalDurationMinutes += duration;
+
+                  // Simple categorization by summary or colorId (using mock colors for now as colorId isn't in schema)
+                  // In a real app we might map event color or calendar ID to category
+                  const category = event.organizer?.email || "Unknown";
+                  calendarMap.set(category, (calendarMap.get(category) || 0) + duration);
+
+                  recentActivities.push({
+                      action: event.summary || "No Title",
+                      time: new Date(event.start.dateTime).toLocaleDateString(),
+                      icon: CalendarDays, // Default icon
+                      timestamp: start.getTime()
+                  });
+              }
+          });
+      });
+
+      // Sort recent activities by time
+      recentActivities.sort((a, b) => b.timestamp - a.timestamp);
+
+      // Format calendar breakdown for chart
+      const colors = ['#f26306', '#1489b4', '#2d9663', '#6366f1', '#64748b', '#e11d48'];
+      const calendarBreakdown = Array.from(calendarMap.entries()).map(([category, minutes], index) => ({
+          category: category.split('@')[0], // Simplified name
+          hours: Math.round(minutes / 60 * 10) / 10,
+          color: colors[index % colors.length]
+      })).sort((a, b) => b.hours - a.hours).slice(0, 5); // Top 5
+
+      return {
+          totalEvents,
+          totalDurationHours: Math.round(totalDurationMinutes / 60 * 10) / 10,
+          calendarBreakdown,
+          recentActivities: recentActivities.slice(0, 5)
+      };
+  };
+
+  const { totalEvents, totalDurationHours, calendarBreakdown, recentActivities: processedActivities } = processData(analyticsData);
 
   const mainStats = [
-    { label: 'Deep Work Ratio', value: '68%', icon: Brain, color: 'text-sky-500', bg: 'bg-sky-50 dark:bg-sky-900/30' },
-    { label: 'Context Switches', value: '12', icon: ZapOff, color: 'text-rose-500', bg: 'bg-rose-50 dark:bg-rose-900/30' },
-    { label: 'Peak Performance', value: '9-11am', icon: Target, color: 'text-emerald-500', bg: 'bg-emerald-50 dark:bg-emerald-900/30' },
+    { label: 'Total Events', value: totalEvents.toString(), icon: CalendarDays, color: 'text-sky-500', bg: 'bg-sky-50 dark:bg-sky-900/30' },
+    { label: 'Total Duration', value: `${totalDurationHours}h`, icon: Clock, color: 'text-emerald-500', bg: 'bg-emerald-50 dark:bg-emerald-900/30' },
+    { label: 'Avg Event', value: totalEvents > 0 ? `${(totalDurationHours / totalEvents).toFixed(1)}h` : '0h', icon: BarChart3, color: 'text-rose-500', bg: 'bg-rose-50 dark:bg-rose-900/30' },
   ];
 
-  const timeAllocationData = [
-    { category: 'Deep Focus', hours: 45, color: '#f26306' },
-    { category: 'Client Meetings', hours: 15, color: '#1489b4' },
-    { category: 'Internal Ops', hours: 20, color: '#2d9663' },
-    { category: 'Strategic Planning', hours: 12, color: '#6366f1' },
-    { category: 'Admin/Email', hours: 8, color: '#64748b' },
-  ];
-  
   const weeklyInsights = [
-    {
-      icon: Zap,
-      title: "Focus Velocity",
-      value: "+15%",
-      description: "Your deep work output increased this week.",
-      color: "amber" as const,
-    },
-    {
-      icon: Users,
-      title: "Collaborative Load",
-      value: "14h",
-      description: "Balanced ratio of talk vs. execution time.",
-      color: "sky" as const,
-    },
-    {
-      icon: Coffee,
-      title: "Refocus Window",
-      value: "22 min",
-      description: "Avg. time to resume focus after meetings.",
-      color: "emerald" as const,
-    },
-    {
-      icon: BarChart3,
-      title: "Task Completion",
-      value: "92%",
-      description: "Nearly perfect hit rate on scheduled tasks.",
-      color: "indigo" as const,
-    }
-  ];
+      {
+        icon: Zap,
+        title: "Focus Velocity",
+        value: "+15%",
+        description: "Your deep work output increased this week.",
+        color: "amber" as const,
+      },
+      {
+        icon: Users,
+        title: "Collaborative Load",
+        value: "14h",
+        description: "Balanced ratio of talk vs. execution time.",
+        color: "sky" as const,
+      },
+      {
+        icon: Coffee,
+        title: "Refocus Window",
+        value: "22 min",
+        description: "Avg. time to resume focus after meetings.",
+        color: "emerald" as const,
+      },
+      {
+        icon: BarChart3,
+        title: "Task Completion",
+        value: "92%",
+        description: "Nearly perfect hit rate on scheduled tasks.",
+        color: "indigo" as const,
+      }
+    ];
 
-  const timeSavedData = Array.from({ length: 30 }, (_, i) => ({
-    day: `Day ${i + 1}`,
-    hours: 1 + Math.sin(i / 4) * 1.5 + Math.random() * 1 + i * 0.15,
-  })).map(d => ({...d, hours: Math.max(0, d.hours)}));
+    const timeSavedData = Array.from({ length: 30 }, (_, i) => ({
+      day: `Day ${i + 1}`,
+      hours: 1 + Math.sin(i / 4) * 1.5 + Math.random() * 1 + i * 0.15,
+    })).map(d => ({...d, hours: Math.max(0, d.hours)}));
 
-  const recentActivities = [
-    { action: 'Auto-blocked Friday PM focus', time: '1h ago', icon: Brain },
-    { action: 'Condensed Monday morning syncs', time: '3h ago', icon: Zap },
-    { action: 'Resolved Q4 strategy overlap', time: 'Yesterday', icon: Briefcase },
-    { action: 'Summarized 3 board calls', time: 'Yesterday', icon: ListChecks },
-  ];
-
-  const connectedCalendars = [
-    { name: 'Executive Main', color: 'bg-primary', status: 'Primary' },
-    { name: 'Client Facing', color: 'bg-sky-500', status: 'Active' },
-    { name: 'Personal/Health', color: 'bg-emerald-500', status: 'Private' },
-    { name: 'Advisory Board', color: 'bg-purple-500', status: 'Synced' },
-  ];
+  if (error) {
+    return (
+        <div className="max-w-7xl mx-auto w-full p-6 bg-zinc-50 dark:bg-zinc-950 flex flex-col items-center justify-center min-h-[50vh]">
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6 max-w-md text-center">
+                <h3 className="text-red-800 dark:text-red-200 font-semibold mb-2">Error Loading Analytics</h3>
+                <p className="text-red-600 dark:text-red-300 text-sm mb-4">
+                    {(error as Error).message || "Failed to fetch analytics data. Please try again."}
+                </p>
+                <button
+                    onClick={() => refetch()}
+                    className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md text-sm font-medium transition-colors"
+                >
+                    Retry
+                </button>
+            </div>
+        </div>
+    );
+  }
 
   // Loading skeleton state
   if (isLoading) {
@@ -276,17 +438,12 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: isLo
           <h1 className="text-3xl font-medium text-zinc-900 dark:text-zinc-100 tracking-tight">Intelligence</h1>
           <p className="text-zinc-500 font-medium">Quantifying your executive leverage.</p>
         </div>
-        <div className="flex gap-2">
-          <div className="relative group">
-            <select className="bg-white dark:bg-zinc-900 p-2 px-3 pr-8 rounded-md text-xs font-bold border border-zinc-300 dark:border-zinc-800 outline-none appearance-none text-zinc-900 dark:text-zinc-100 hover:border-zinc-400 transition-colors shadow-sm">
-                <option value="7d">Last 7 Days (Weekly)</option>
-                <option value="30d">Last 30 Days</option>
-                <option value="90d">Last 90 Days</option>
-                <option value="all">All Time</option>
-            </select>
-            <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-600 dark:text-zinc-400 pointer-events-none" />
-          </div>
-          <button className="bg-zinc-950 dark:bg-zinc-100 text-white dark:text-zinc-950 p-2 px-4 rounded-md text-xs font-bold hover:opacity-90 transition-opacity shadow-sm">Export Intelligence</button>
+        <div className="flex gap-2 items-center">
+          <DatePickerWithRange
+            date={date}
+            setDate={setDate}
+          />
+          <button className="bg-zinc-950 dark:bg-zinc-100 text-white dark:text-zinc-950 p-2 px-4 rounded-md text-xs font-bold hover:opacity-90 transition-opacity shadow-sm h-10">Export Intelligence</button>
         </div>
       </header>
 
@@ -327,7 +484,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: isLo
 
         {/* Time Mix */}
         <div className="lg:col-span-2">
-            <TimeAllocationChart data={timeAllocationData} />
+            <TimeAllocationChart data={calendarBreakdown} />
         </div>
 
         {/* Ops & Calendars */}
@@ -338,17 +495,19 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: isLo
                     <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest bg-emerald-50 dark:bg-emerald-950/30 px-2 py-0.5 rounded">Real-time</span>
                 </div>
                 <ul className="space-y-4">
-                  {recentActivities.map((activity, i) => (
+                  {processedActivities.length > 0 ? processedActivities.map((activity, i) => (
                     <li key={i} className="flex items-start gap-3 group">
                       <div className="w-8 h-8 rounded-md bg-zinc-100 dark:bg-zinc-900 group-hover:bg-primary/10 transition-colors flex items-center justify-center text-zinc-500 group-hover:text-primary shrink-0 mt-0.5">
                         <activity.icon className="w-4 h-4" />
                       </div>
                       <div>
-                        <p className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">{activity.action}</p>
+                        <p className="text-sm font-semibold text-zinc-800 dark:text-zinc-200 line-clamp-1">{activity.action}</p>
                         <p className="text-[10px] text-zinc-400 font-bold uppercase">{activity.time}</p>
                       </div>
                     </li>
-                  ))}
+                  )) : (
+                    <p className="text-sm text-zinc-500">No recent activities found for this period.</p>
+                  )}
                 </ul>
             </div>
 
@@ -356,13 +515,14 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: isLo
                 <div className="mb-6">
                     <h3 className="font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2"><CalendarDays className="w-4 h-4 text-zinc-400"/> Managed Sources</h3>
                 </div>
-                <div className="space-y-3">
-                  {connectedCalendars.map((calendar, i) => (
+                {/* Placeholder for managed sources as api doesn't return this yet in analytics */}
+                 <div className="space-y-3">
+                  {['Executive Main', 'Client Facing', 'Personal/Health'].map((name, i) => (
                     <div key={i} className="flex items-center gap-3 p-2 rounded-md hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors border border-transparent hover:border-zinc-200 dark:hover:border-zinc-800 group">
-                      <div className={`w-2.5 h-2.5 rounded-full ${calendar.color} shadow-sm group-hover:scale-125 transition-transform`} />
-                      <span className="flex-1 text-sm font-bold text-zinc-800 dark:text-zinc-200">{calendar.name}</span>
+                      <div className={`w-2.5 h-2.5 rounded-full bg-primary shadow-sm group-hover:scale-125 transition-transform`} />
+                      <span className="flex-1 text-sm font-bold text-zinc-800 dark:text-zinc-200">{name}</span>
                       <span className="text-[9px] font-bold text-zinc-600 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-900 px-1.5 py-0.5 rounded border border-zinc-200 dark:border-zinc-800 uppercase tracking-tighter">
-                        {calendar.status}
+                        Active
                       </span>
                     </div>
                   ))}
