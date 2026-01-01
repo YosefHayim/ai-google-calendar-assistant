@@ -14,7 +14,7 @@ for (const key of REQUIRED_ENV_VARS) {
 export const env = {
   nodeEnv: process.env.NODE_ENV ?? "development",
   port: Number(process.env.PORT) || 3000,
-  baseUrl: process.env.BASE_URL ?? "http://localhost:3000",
+  baseUrl: process.env.BASE_URL ?? `http://localhost:${Number(process.env.PORT) || 3000}`,
 
   // Supabase
   supabaseUrl: "https://vdwjfekcsnurtjsieojv.supabase.co",
@@ -34,4 +34,4 @@ export const env = {
   testEmail: process.env.TEST_EMAIL!,
 } as const;
 
-export const REDIRECT_URI = env.nodeEnv === "prod" ? `${env.supabaseUrl}/auth/v1/callback` : `${env.baseUrl}/api/users/callback`;
+export const REDIRECT_URI = env.nodeEnv === "production" ? `${env.baseUrl}/auth/v1/callback` : `${env.baseUrl}/auth/v1/callback`;
