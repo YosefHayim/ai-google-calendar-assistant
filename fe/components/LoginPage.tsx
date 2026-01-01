@@ -30,8 +30,9 @@ const LoginPage: React.FC = () => {
   const error = searchParams.get('error');
 
   const handleGoogleLogin = () => {
-    // Redirect to Google OAuth endpoint - backend handles the consent screen
-    window.location.href = '/api/users/signup/google';
+    // Redirect to Google OAuth endpoint on backend
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001';
+    window.location.href = `${backendUrl}/api/users/signup/google`;
   };
 
   return (
