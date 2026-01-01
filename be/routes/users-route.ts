@@ -24,7 +24,7 @@ router.post("/refresh", supabaseAuth(), userController.refreshToken);
 // deactivate user
 router.delete("/", supabaseAuth(), userController.deActivateUser);
 
-// generate auth google url
+// generate auth google url without using supabase 3rd party provider auth
 router.get("/callback", userController.generateAuthGoogleUrl);
 
 // verify user by email otp

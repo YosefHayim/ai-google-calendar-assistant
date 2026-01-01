@@ -7,13 +7,7 @@ dotenv.config({ path: path.resolve(__dirname, "../.env") });
 // Validation
 // ============================================================================
 
-const REQUIRED_ENV_VARS = [
-  "SUPABASE_URL",
-  "SUPABASE_SERVICE_ROLE_KEY",
-  "OPEN_API_KEY",
-  "GOOGLE_CLIENT_ID",
-  "GOOGLE_CLIENT_SECRET",
-] as const;
+const REQUIRED_ENV_VARS = ["SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY", "OPEN_API_KEY", "GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET"] as const;
 
 const missing = REQUIRED_ENV_VARS.filter((key) => !process.env[key]);
 if (missing.length > 0) {
@@ -62,9 +56,9 @@ const urls = {
     return server.baseUrl;
   },
   get authCallback(): string {
-    return `${server.baseUrl}/auth/v1/callback`;
+    return `${server.baseUrl}/api/users/callback`;
   },
-  frontend: process.env.FRONTEND_URL ?? "http://localhost:5173",
+  frontend: process.env.FRONTEND_URL ?? "http://localhost:3000",
 } as const;
 
 // ============================================================================
@@ -122,7 +116,9 @@ const atlassian = {
     url: getOptional("JIRA_URL"),
     username: getOptional("JIRA_USERNAME"),
     apiToken: getOptional("JIRA_API_TOKEN"),
-    projectsFilter: getOptional("JIRA_PROJECTS_FILTER")?.split(",").map((s) => s.trim()),
+    projectsFilter: getOptional("JIRA_PROJECTS_FILTER")
+      ?.split(",")
+      .map((s) => s.trim()),
     get isEnabled(): boolean {
       return !!(this.url && this.username && this.apiToken);
     },
