@@ -1,19 +1,16 @@
-import axios from 'axios';
-
-const getApiBaseUrl = () => {
-  return process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001";
-};
+import { ENV } from "../constants";
+import axios from "axios";
 
 export const apiClient = axios.create({
-  baseURL: getApiBaseUrl(),
+  baseURL: ENV.API_BASE_URL,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
 apiClient.interceptors.request.use((config) => {
-  if (typeof window !== 'undefined') {
-    const token = localStorage.getItem('ally_access_token');
+  if (typeof window !== "undefined") {
+    const token = localStorage.getItem("ally_access_token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -24,9 +21,9 @@ apiClient.interceptors.request.use((config) => {
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (typeof window !== 'undefined' && error.response?.status === 401) {
-      localStorage.removeItem('ally_access_token');
-      localStorage.removeItem('ally_user');
+    if (typeof window !== "undefined" && error.response?.status === 401) {
+      localStorage.removeItem("ally_access_token");
+      localStorage.removeItem("ally_user");
     }
     return Promise.reject(error);
   }
