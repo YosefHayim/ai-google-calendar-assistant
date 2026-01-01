@@ -332,7 +332,7 @@ const getDryCalendarInfo = reqResAsyncHandler(async (req: Request, res: Response
     return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User credentials not found.");
   }
 
-  const expiryDate = new Date(tokenData.expiry_date! * 1000).toISOString();
+  const expiryDate = new Date(tokenData.expiry_date!).toISOString();
   sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully retrieved dry calendar info", {
     expiryDate,
     isExpired: expiryDate < new Date().toISOString(),
