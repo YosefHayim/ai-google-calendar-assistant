@@ -1,11 +1,10 @@
 import type { GoogleIdTokenPayloadProps, TokensProps } from "@/types";
 import { OAUTH2CLIENT, PROVIDERS, STATUS_RESPONSE, SUPABASE } from "@/config";
 import type { Request, Response } from "express";
+import { generateGoogleAuthUrl, supabaseThirdPartySignInOrSignUp } from "@/utils/auth";
 import { reqResAsyncHandler, sendR } from "@/utils/http";
 
-import type { User } from "@supabase/supabase-js";
 import jwt from "jsonwebtoken";
-import { generateGoogleAuthUrl, supabaseThirdPartySignInOrSignUp } from "@/utils/auth";
 
 /**
  * Generate Google Auth URL
