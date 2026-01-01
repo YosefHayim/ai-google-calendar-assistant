@@ -223,6 +223,73 @@ const moveEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
   sendR(res, STATUS_RESPONSE.SUCCESS, "Event moved successfully", r);
 });
 
+/**
+ * Get instances of a recurring event
+ *
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @returns {Promise<void>} The response object.
+ */
+const getEventInstances = reqResAsyncHandler(async (req: Request, res: Response) => {
+  const tokenData = await fetchCredentialsByEmail(req.user?.email!);
+  if (!tokenData) {
+    return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User token not found.");
+  }
+
+  const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData);
+  const r = await calendar.events.instances({
+    ...REQUEST_CONFIG_BASE,
+    calendarId: (req.query.calendarId as string) ?? "primary",
+    eventId: req.params.id,
+    timeMin: req.query.timeMin as string,
+    timeMax: req.query.timeMax as string,
+    timeZone: req.query.timeZone as string,
+    originalStart: req.query.originalStart as string,
+    showDeleted: req.query.showDeleted === "true",
+  });
+
+  sendR(res, STATUS_RESPONSE.SUCCESS, "Event instances retrieved successfully", r.data);
+});
+
+/**
+ * Import an event (creates a private copy)
+ *
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @returns {Promise<void>} The response object.
+ */
+const importEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
+  const tokenData = await fetchCredentialsByEmail(req.user?.email!);
+  if (!tokenData) {
+    return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User token not found.");
+  }
+
+  const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData);
+  const r = await calendar.events.import({
+    ...REQUEST_CONFIG_BASE,
+    calendarId: (req.query.calendarId as string) ?? "primary",
+    conferenceDataVersion: req.query.conferenceDataVersion ? Number(req.query.conferenceDataVersion) : undefined,
+    requestBody: {
+      iCalUID: req.body.iCalUID,
+      summary: req.body.summary,
+      description: req.body.description,
+      location: req.body.location,
+      start: req.body.start,
+      end: req.body.end,
+      attendees: req.body.attendees,
+      reminders: req.body.reminders,
+      recurrence: req.body.recurrence,
+      status: req.body.status,
+      transparency: req.body.transparency,
+      visibility: req.body.visibility,
+      organizer: req.body.organizer,
+      sequence: req.body.sequence,
+    },
+  });
+
+  sendR(res, STATUS_RESPONSE.CREATED, "Event imported successfully", r.data);
+});
+
 export default {
   moveEvent,
   watchEvents,
@@ -233,4 +300,6 @@ export default {
   updateEvent,
   deleteEvent,
   getEventAnalytics,
+  getEventInstances,
+  importEvent,
 };

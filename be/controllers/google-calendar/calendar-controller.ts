@@ -218,6 +218,114 @@ const clearAllEventsOfCalendar = reqResAsyncHandler(async (req: Request, res: Re
   sendR(res, STATUS_RESPONSE.SUCCESS, `Successfully cleared all events of calendar ${req.params.calendarId}`, r.data);
 });
 
+/**
+ * Create a new secondary calendar
+ *
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @returns {Promise<void>} The response object.
+ */
+const createCalendar = reqResAsyncHandler(async (req: Request, res: Response) => {
+  const tokenData = await fetchCredentialsByEmail(req.user?.email!);
+  if (!tokenData) {
+    return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User credentials not found.");
+  }
+
+  const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData);
+  const r = await calendar.calendars.insert({
+    requestBody: {
+      summary: req.body.summary,
+      description: req.body.description,
+      location: req.body.location,
+      timeZone: req.body.timeZone,
+    },
+  });
+
+  sendR(res, STATUS_RESPONSE.CREATED, "Calendar created successfully", r.data);
+});
+
+/**
+ * Delete a secondary calendar
+ *
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @returns {Promise<void>} The response object.
+ */
+const deleteCalendar = reqResAsyncHandler(async (req: Request, res: Response) => {
+  const tokenData = await fetchCredentialsByEmail(req.user?.email!);
+  if (!tokenData) {
+    return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User credentials not found.");
+  }
+
+  const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData);
+  await calendar.calendars.delete({ calendarId: req.params.id });
+
+  sendR(res, STATUS_RESPONSE.SUCCESS, "Calendar deleted successfully");
+});
+
+/**
+ * Partial update of calendar metadata
+ *
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @returns {Promise<void>} The response object.
+ */
+const patchCalendar = reqResAsyncHandler(async (req: Request, res: Response) => {
+  const tokenData = await fetchCredentialsByEmail(req.user?.email!);
+  if (!tokenData) {
+    return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User credentials not found.");
+  }
+
+  const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData);
+  const r = await calendar.calendars.patch({
+    calendarId: req.params.id,
+    requestBody: req.body,
+  });
+
+  sendR(res, STATUS_RESPONSE.SUCCESS, "Calendar patched successfully", r.data);
+});
+
+/**
+ * Full update of calendar metadata
+ *
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @returns {Promise<void>} The response object.
+ */
+const updateCalendar = reqResAsyncHandler(async (req: Request, res: Response) => {
+  const tokenData = await fetchCredentialsByEmail(req.user?.email!);
+  if (!tokenData) {
+    return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User credentials not found.");
+  }
+
+  const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData);
+  const r = await calendar.calendars.update({
+    calendarId: req.params.id,
+    requestBody: req.body,
+  });
+
+  sendR(res, STATUS_RESPONSE.SUCCESS, "Calendar updated successfully", r.data);
+});
+
+/**
+ * List all user settings
+ *
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @returns {Promise<void>} The response object.
+ */
+const listAllSettings = reqResAsyncHandler(async (req: Request, res: Response) => {
+  const tokenData = await fetchCredentialsByEmail(req.user?.email!);
+  if (!tokenData) {
+    return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User credentials not found.");
+  }
+
+  const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData);
+  const r = await calendar.settings.list();
+
+  sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully retrieved all settings", r.data);
+});
+
 export default {
   clearAllEventsOfCalendar,
   getSettingsOfCalendarById,
@@ -229,4 +337,9 @@ export default {
   getAllCalendars,
   getAllCalendarColors,
   getAllCalendarTimezones,
+  createCalendar,
+  deleteCalendar,
+  patchCalendar,
+  updateCalendar,
+  listAllSettings,
 };

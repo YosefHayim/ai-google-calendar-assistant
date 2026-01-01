@@ -4,16 +4,16 @@ import {
   CheckCircle2, Circle, ArrowUpRight, X, Loader2, List, Settings, RefreshCw
 } from 'lucide-react';
 import { TelegramIcon, WhatsAppIcon, GoogleCalendarIcon } from '@/components/Icons';
-import { useCalendars } from '@/hooks/api/useCalendars';
+import { useCalendars } from '@/hooks/queries';
 import { Skeleton, SkeletonIntegrationCard } from '@/components/ui/skeleton';
 
 interface IntegrationsDashboardProps {}
 
 const IntegrationsDashboard: React.FC<IntegrationsDashboardProps> = () => {
   const [isWhatsAppModalOpen, setIsWhatsAppModalOpen] = useState(false);
-  const { data: calendarsResponse, isLoading, isError, refetch } = useCalendars(true);
+  const { data: calendars, isLoading, isError, refetch } = useCalendars({ custom: true });
 
-  const calendars = calendarsResponse?.data || [];
+  const calendarList = calendars || [];
 
   return (
     <div className="max-w-4xl mx-auto w-full p-2 relative">
@@ -96,13 +96,13 @@ const IntegrationsDashboard: React.FC<IntegrationsDashboardProps> = () => {
                  <p className="text-xs text-red-500 font-bold uppercase tracking-tight">Failed to load calendar data.</p>
                  <button onClick={() => refetch()} className="text-[10px] text-primary underline mt-1">Try again</button>
               </div>
-            ) : calendars.length === 0 ? (
+            ) : calendarList.length === 0 ? (
               <div className="py-8 text-center text-zinc-400 text-xs italic">
                 No active calendar sources found.
               </div>
             ) : (
               <ul className="space-y-3">
-                {calendars.map((cal: any) => (
+                {calendarList.map((cal) => (
                   <li key={cal.calendarId} className="flex items-center gap-3 text-sm">
                     <div 
                       className="w-2.5 h-2.5 rounded-full" 
