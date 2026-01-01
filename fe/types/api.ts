@@ -147,3 +147,26 @@ export interface UpdateEventRequest {
   attendees?: Attendee[];
   reminders?: { useDefault: boolean; overrides?: EventReminder[] };
 }
+
+// Calendar colors response
+export interface CalendarColors {
+  [key: string]: {
+    background: string;
+    foreground: string;
+  };
+}
+
+// Timezone info response
+export interface TimezoneInfo {
+  value: string;
+}
+
+// Free/busy response
+export interface FreeBusyResponse {
+  [calendarId: string]: {
+    busy: Array<{
+      start: string;
+      end: string;
+    }>;
+  };
+}
