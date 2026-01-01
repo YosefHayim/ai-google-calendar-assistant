@@ -23,6 +23,9 @@ router.param("id", (_req: Request, res: Response, next: NextFunction, id: string
 // get info about all the calendars the user has
 router.get("/", calendarController.getAllCalendars);
 
+// get dry calendar info like expiry date of the token
+router.get("/dry-calendar-info", calendarController.getDryCalendarInfo);
+
 // create a new secondary calendar
 router.post("/", calendarController.createCalendar);
 
