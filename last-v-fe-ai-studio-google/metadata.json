@@ -1,7 +1,0 @@
-{
-  "name": "Google AI Personal Assistant",
-  "description": "A professional SaaS-style bridge to interact with Gemini AI, featuring multi-platform integration management for WhatsApp and Telegram.",
-  "requestFramePermissions": [
-    "microphone"
-  ]
-}
