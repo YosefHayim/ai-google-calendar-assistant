@@ -35,6 +35,12 @@ router.post("/watch", eventsController.watchEvents);
 // move an event
 router.post("/move", eventsController.moveEvent);
 
+// import an event (creates a private copy)
+router.post("/import", eventsController.importEvent);
+
+// get instances of a recurring event (must be before /:id)
+router.get("/:id/instances", eventsController.getEventInstances);
+
 // get specific event by id
 router.get("/:id", eventsController.getEventById);
 

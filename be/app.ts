@@ -1,6 +1,9 @@
 import { ROUTES, STATUS_RESPONSE, env } from "@/config";
 
+import aclRoute from "@/routes/google-calendar/acl-route";
+import calendarListRoute from "@/routes/google-calendar/calendar-list-route";
 import calendarRoute from "@/routes/google-calendar/calendar-route";
+import channelsRoute from "@/routes/google-calendar/channels-route";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import errorHandler from "@/middlewares/error-handler";
@@ -28,8 +31,11 @@ app.get("/", (_req, res) => {
 });
 
 app.use(ROUTES.USERS, usersRoute);
+app.use(ROUTES.CALENDAR_LIST, calendarListRoute); // Must be before CALENDAR (more specific path)
 app.use(ROUTES.CALENDAR, calendarRoute);
 app.use(ROUTES.EVENTS, eventsRoute);
+app.use(ROUTES.ACL, aclRoute);
+app.use(ROUTES.CHANNELS, channelsRoute);
 app.use(ROUTES.WHATSAPP, whatsAppRoute);
 
 app.use((_req, res, _next) => {

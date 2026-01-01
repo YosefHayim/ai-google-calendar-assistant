@@ -14,7 +14,10 @@ export enum STATUS_RESPONSE {
 export enum ROUTES {
   USERS = "/api/users",
   CALENDAR = "/api/calendars",
+  CALENDAR_LIST = "/api/calendars/list",
   EVENTS = "/api/events",
+  ACL = "/api/acl",
+  CHANNELS = "/api/channels",
   TELEGRAM_USERS = "/api/telegram-users",
   WHATSAPP = "/api/whatsapp",
 }
