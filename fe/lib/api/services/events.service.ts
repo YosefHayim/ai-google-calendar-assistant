@@ -18,11 +18,6 @@ export const eventsService = {
     return data;
   },
 
-  async getFilteredEvents(params?: EventQueryParams): Promise<ApiResponse<CalendarEvent[]>> {
-    const { data } = await apiClient.get<ApiResponse<CalendarEvent[]>>(ENDPOINTS.EVENTS_FILTERED, { params });
-    return data;
-  },
-
   async getEventById(id: string, calendarId?: string): Promise<ApiResponse<CalendarEvent>> {
     const { data } = await apiClient.get<ApiResponse<CalendarEvent>>(ENDPOINTS.EVENTS_BY_ID(id), {
       params: calendarId ? { calendarId } : undefined,
