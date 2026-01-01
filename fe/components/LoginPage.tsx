@@ -2,6 +2,8 @@
 
 import { AllyLogo, BetaBadge } from "@/components/logo";
 
+import { ENDPOINTS } from "@/lib/api/endpoints";
+import { ENV } from "@/lib/constants";
 import ImageCarousel from "@/components/ImageCarousel";
 import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button";
 import Link from "next/link";
@@ -40,8 +42,7 @@ const LoginPage: React.FC = () => {
 
   const handleGoogleLogin = () => {
     // Redirect to Google OAuth endpoint on backend
-    const backendUrl = "http://localhost:3001";
-    window.location.href = `${backendUrl}/api/users/callback`;
+    window.location.href = `${ENV.API_BASE_URL}${ENDPOINTS.USERS_CALLBACK}`;
   };
 
   return (
