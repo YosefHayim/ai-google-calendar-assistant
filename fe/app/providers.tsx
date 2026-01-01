@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { AuthProvider } from "@/context/AuthContext";
 import { CursorProvider, Cursor } from "@/components/ui/animated-cursor";
 import { QUERY_CONFIG } from "@/lib/constants";
 
@@ -21,6 +22,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <AuthProvider>
       <ThemeProvider>
         <CursorProvider>
         <div className="noise" aria-hidden="true" />
@@ -48,6 +50,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         />
       </CursorProvider>
       </ThemeProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
