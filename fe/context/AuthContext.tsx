@@ -1,8 +1,7 @@
+"use client";
 
-'use client';
-
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { User, AuthData } from '@/types/api';
+import { AuthData, User } from "@/types/api";
+import React, { ReactNode, createContext, useContext, useEffect, useState } from "react";
 
 interface AuthContextType {
   user: User | null;
@@ -20,9 +19,9 @@ export const AuthProvider = ({ children }: { children?: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('ally_user');
-    const token = localStorage.getItem('ally_access_token');
-    
+    const storedUser = localStorage.getItem("ally_user");
+    const token = localStorage.getItem("ally_access_token");
+
     if (storedUser && token) {
       try {
         setUser(JSON.parse(storedUser));
@@ -35,27 +34,23 @@ export const AuthProvider = ({ children }: { children?: ReactNode }) => {
 
   const login = (data: AuthData) => {
     setUser(data.user);
-    localStorage.setItem('ally_user', JSON.stringify(data.user));
-    localStorage.setItem('ally_access_token', data.session.access_token);
-    localStorage.setItem('ally_refresh_token', data.session.refresh_token);
+    localStorage.setItem("ally_user", JSON.stringify(data.user));
+    localStorage.setItem("ally_access_token", data.session.access_token);
+    localStorage.setItem("ally_refresh_token", data.session.refresh_token);
   };
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('ally_user');
-    localStorage.removeItem('ally_access_token');
-    localStorage.removeItem('ally_refresh_token');
+    localStorage.removeItem("ally_user");
+    localStorage.removeItem("ally_access_token");
+    localStorage.removeItem("ally_refresh_token");
   };
 
-  return (
-    <AuthContext.Provider value={{ user, isLoading, isAuthenticated: !!user, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={{ user, isLoading, isAuthenticated: !!user, login, logout }}>{children}</AuthContext.Provider>;
 };
 
 export const useAuthContext = () => {
   const context = useContext(AuthContext);
-  if (!context) throw new Error('useAuthContext must be used within an AuthProvider');
+  if (!context) throw new Error("useAuthContext must be used within an AuthProvider");
   return context;
 };
