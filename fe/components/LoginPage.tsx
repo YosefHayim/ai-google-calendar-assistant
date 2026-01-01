@@ -3,7 +3,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import ImageCarousel from '@/components/ImageCarousel';
 import { AllyLogo, BetaBadge } from '@/components/logo';
 import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button';
@@ -26,10 +26,12 @@ const GoogleIcon = () => (
 );
 
 const LoginPage: React.FC = () => {
-  const router = useRouter();
-  
+  const searchParams = useSearchParams();
+  const error = searchParams.get('error');
+
   const handleGoogleLogin = () => {
-    router.push('/dashboard');
+    // Redirect to Google OAuth endpoint - backend handles the consent screen
+    window.location.href = '/api/users/signup/google';
   };
 
   return (
@@ -43,7 +45,7 @@ const LoginPage: React.FC = () => {
             Ally <BetaBadge />
           </span>
         </Link>
-        
+
         <div className="w-full max-w-md">
           <h1 className="text-4xl md:text-5xl font-medium tracking-normal mb-4 text-zinc-900 dark:text-zinc-100">
             Welcome Back
@@ -51,6 +53,15 @@ const LoginPage: React.FC = () => {
           <p className="text-zinc-500 dark:text-zinc-400 mb-8 text-lg font-medium">
             Access your private secretary securely.
           </p>
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+              <p className="text-red-600 dark:text-red-400 text-sm font-medium">
+                {error === 'no_token' && 'Authentication failed. Please try again.'}
+                {error === 'callback_failed' && 'OAuth callback failed. Please try again.'}
+                {error !== 'no_token' && error !== 'callback_failed' && error}
+              </p>
+            </div>
+          )}
           <div className="space-y-6">
             <InteractiveHoverButton
               text="Login with Google"

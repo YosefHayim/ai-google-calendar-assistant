@@ -14,6 +14,7 @@ import {
   Share2
 } from 'lucide-react';
 import { AllyLogo, BetaBadge } from '@/components/logo';
+import UserProfileCard from '@/components/UserProfileCard';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -128,13 +129,14 @@ const Sidebar: React.FC<SidebarProps> = ({
           </nav>
   
           {/* Footer */}
-          <div className="p-4 border-t border-zinc-200 dark:border-zinc-800">
-            <button 
-              id="tour-settings" 
+          <div className="p-4 border-t border-zinc-200 dark:border-zinc-800 space-y-2">
+            <UserProfileCard isOpen={isOpen} />
+            <button
+              id="tour-settings"
               onClick={() => {
                 onOpenSettings();
                 onClose();
-              }} 
+              }}
               className={`w-full flex items-center gap-3 p-2 rounded-md text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors ${!isOpen ? 'md:justify-center' : ''}`}
             >
               <Settings className="w-5 h-5" />
