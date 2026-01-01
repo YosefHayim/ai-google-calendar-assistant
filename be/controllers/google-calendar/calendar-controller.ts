@@ -332,11 +332,22 @@ const getDryCalendarInfo = reqResAsyncHandler(async (req: Request, res: Response
     return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User credentials not found.");
   }
 
-  const expiryDate = new Date(tokenData.expiry_date!).toISOString();
+  // 1. FIX: Do not multiply by 1000. The DB value is already in milliseconds.
+  const expiryMs = tokenData.expiry_date!;
+  const expiryDate = new Date(expiryMs).toISOString();
+
+  // 2. BETTER TIME: Calculate difference in minutes
+  const now = Date.now();
+  const diffMs = expiryMs - now;
+  const minutesLeft = Math.floor(diffMs / 1000 / 60);
+
   sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully retrieved dry calendar info", {
-    expiryDate,
-    isExpired: expiryDate < new Date().toISOString(),
-    expiresInS: new Date(expiryDate).getTime() - Date.now() + "s to expire",
+    expiryDate, // e.g., "2026-01-01T18:27:25.380Z"
+    isExpired: diffMs < 0,
+    // 3. FORMAT: Show nicely in minutes
+    expiresIn: diffMs > 0 ? `${minutesLeft} minutes` : "Expired",
+    // Optional: Keep seconds if you really need precise debugging
+    debugExpiresInSeconds: Math.floor(diffMs / 1000),
   });
 });
 
