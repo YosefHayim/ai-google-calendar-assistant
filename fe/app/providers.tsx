@@ -16,7 +16,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
       <ThemeProvider>
         <CursorProvider>
           <div className="noise" aria-hidden="true" />
