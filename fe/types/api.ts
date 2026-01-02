@@ -159,6 +159,25 @@ export interface UpdateEventRequest {
   reminders?: { useDefault: boolean; overrides?: EventReminder[] };
 }
 
+// Create calendar request
+export interface CreateCalendarRequest {
+  summary: string;
+  description?: string;
+  location?: string;
+  timeZone?: string;
+}
+
+// Create calendar response
+export interface CreateCalendarResponse {
+  kind: "calendar#calendar";
+  etag: string;
+  id: string;
+  summary: string;
+  description?: string;
+  location?: string;
+  timeZone?: string;
+}
+
 // Calendar colors response
 export interface CalendarColors {
   [key: string]: {

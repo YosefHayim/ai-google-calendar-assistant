@@ -2,6 +2,8 @@
 
 import { AllyLogo, BetaBadge } from "@/components/logo";
 
+import { ENDPOINTS } from "@/lib/api/endpoints";
+import { ENV } from "@/lib/constants";
 import ImageCarousel from "@/components/ImageCarousel";
 import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button";
 import Link from "next/link";
@@ -34,10 +36,12 @@ const GoogleIcon = () => (
 );
 
 const RegisterPage: React.FC = () => {
+  const [isLoading, setIsLoading] = React.useState(false);
+
   const handleGoogleSignUp = () => {
+    setIsLoading(true);
     // Redirect to Google OAuth endpoint on backend
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3000";
-    window.location.href = `${backendUrl}/api/users/callback`;
+    window.location.href = `${ENV.API_BASE_URL}${ENDPOINTS.USERS_CALLBACK}`;
   };
 
   return (
@@ -58,6 +62,8 @@ const RegisterPage: React.FC = () => {
           <div className="space-y-6">
             <InteractiveHoverButton
               text="Sign up with Google"
+              loadingText="Connecting..."
+              isLoading={isLoading}
               Icon={<GoogleIcon />}
               className="w-full h-14 text-lg shadow-lg border-zinc-200 dark:border-zinc-700"
               onClick={handleGoogleSignUp}

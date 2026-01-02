@@ -1,6 +1,6 @@
 import { apiClient } from '@/lib/api/client';
 import { ENDPOINTS } from '@/lib/api/endpoints';
-import { ApiResponse, CustomCalendar, CalendarListResponse } from '@/types/api';
+import { ApiResponse, CustomCalendar, CalendarListResponse, CreateCalendarRequest, CreateCalendarResponse } from '@/types/api';
 
 export const calendarsService = {
   async getCalendars(custom = true): Promise<ApiResponse<CustomCalendar[]>> {
@@ -52,6 +52,11 @@ export const calendarsService = {
         showHidden: params?.showHidden?.toString(),
       },
     });
+    return data;
+  },
+
+  async createCalendar(request: CreateCalendarRequest): Promise<ApiResponse<CreateCalendarResponse>> {
+    const { data } = await apiClient.post<ApiResponse<CreateCalendarResponse>>(ENDPOINTS.CALENDARS, request);
     return data;
   },
 };

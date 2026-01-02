@@ -1,168 +1,459 @@
 'use client';
 
-import React, { useState } from 'react';
-import { X, MessageSquare, Mic, Send, Minimize2, Maximize2 } from 'lucide-react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { X, Mic, ArrowUp, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { cn } from '@/lib/utils';
+import { VoicePoweredOrb } from '@/components/ui/voice-powered-orb';
+import { AIVoiceInput } from '@/components/ui/ai-voice-input';
+
+declare global {
+  interface Window {
+    SpeechRecognition: any;
+    webkitSpeechRecognition: any;
+  }
+}
 
 interface AIAllySidebarProps {
   isOpen: boolean;
   onClose: () => void;
+  onOpen?: () => void;
 }
 
-const AIAllySidebar: React.FC<AIAllySidebarProps> = ({ isOpen, onClose }) => {
-  const [isMinimized, setIsMinimized] = useState(false);
+// Floating Orb Button using VoicePoweredOrb
+const AllyOrbButton: React.FC<{ onClick: () => void; isOpen: boolean }> = ({ onClick, isOpen }) => {
+  return (
+    <motion.button
+      onClick={onClick}
+      className="group relative w-16 h-16 rounded-full flex items-center justify-center"
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      initial={false}
+      animate={isOpen ? { scale: 0, opacity: 0 } : { scale: 1, opacity: 1 }}
+      transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+    >
+      {/* Outer glow */}
+      <div className="absolute inset-0 rounded-full bg-primary/30 blur-xl animate-pulse" />
+
+      {/* VoicePoweredOrb as the icon */}
+      <div className="relative w-14 h-14 rounded-full overflow-hidden shadow-2xl shadow-primary/40">
+        <VoicePoweredOrb
+          enableVoiceControl={false}
+          className="w-full h-full"
+          maxRotationSpeed={0.3}
+        />
+      </div>
+
+      {/* Hover tooltip */}
+      <div className="absolute -left-28 top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-lg bg-zinc-900 dark:bg-zinc-800 text-white text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-xl">
+        Chat with Ally
+        <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1 w-2 h-2 bg-zinc-900 dark:bg-zinc-800 rotate-45" />
+      </div>
+    </motion.button>
+  );
+};
+
+// Tab-style animated header
+const ChatHeader: React.FC<{ onClose: () => void; onMinimize: () => void }> = ({ onClose, onMinimize }) => {
+  return (
+    <div className="relative flex items-center justify-between px-4 py-3 border-b border-zinc-200/50 dark:border-zinc-800/50 bg-gradient-to-r from-zinc-50/80 to-white/80 dark:from-zinc-900/80 dark:to-zinc-950/80 backdrop-blur-xl rounded-t-2xl">
+      {/* Animated tab indicator */}
+      <motion.div
+        className="absolute bottom-0 left-4 right-4 h-0.5 bg-gradient-to-r from-primary via-orange-500 to-primary rounded-full"
+        initial={{ scaleX: 0 }}
+        animate={{ scaleX: 1 }}
+        transition={{ duration: 0.5, ease: 'easeOut' }}
+      />
+
+      <div className="flex items-center gap-3">
+        {/* Small animated orb avatar */}
+        <div className="relative w-9 h-9 rounded-xl overflow-hidden shadow-lg shadow-primary/20">
+          <VoicePoweredOrb
+            enableVoiceControl={false}
+            className="w-full h-full"
+            maxRotationSpeed={0.2}
+          />
+        </div>
+        <div>
+          <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-1.5">
+            Ally
+            <span className="px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider bg-primary/10 text-primary rounded-md">AI</span>
+          </h3>
+          <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">Online</p>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-1">
+        <button
+          onClick={onMinimize}
+          className="p-1.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 transition-all"
+          title="Minimize"
+        >
+          <ChevronDown className="w-4 h-4" />
+        </button>
+        <button
+          onClick={onClose}
+          className="p-1.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 transition-all"
+          title="Close"
+        >
+          <X className="w-4 h-4" />
+        </button>
+      </div>
+    </div>
+  );
+};
+
+// Message bubble component
+const MessageBubble: React.FC<{ message: { id: number; text: string; isUser: boolean }; index: number }> = ({ message, index }) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ duration: 0.3, delay: index * 0.05 }}
+      className={cn('flex', message.isUser ? 'justify-end' : 'justify-start')}
+    >
+      <div
+        className={cn(
+          'max-w-[85%] rounded-2xl px-4 py-2.5 shadow-sm',
+          message.isUser
+            ? 'bg-gradient-to-br from-primary to-orange-500 text-white rounded-br-md'
+            : 'bg-zinc-100 dark:bg-zinc-800/80 text-zinc-900 dark:text-zinc-100 rounded-bl-md border border-zinc-200/50 dark:border-zinc-700/50'
+        )}
+      >
+        <p className="text-sm leading-relaxed">{message.text}</p>
+      </div>
+    </motion.div>
+  );
+};
+
+// Typing indicator
+const TypingIndicator: React.FC = () => (
+  <motion.div
+    initial={{ opacity: 0, y: 10 }}
+    animate={{ opacity: 1, y: 0 }}
+    exit={{ opacity: 0, y: -10 }}
+    className="flex justify-start"
+  >
+    <div className="bg-zinc-100 dark:bg-zinc-800/80 rounded-2xl rounded-bl-md px-4 py-3 border border-zinc-200/50 dark:border-zinc-700/50">
+      <div className="flex items-center gap-1.5">
+        {[0, 1, 2].map((i) => (
+          <motion.div
+            key={i}
+            className="w-2 h-2 rounded-full bg-zinc-400 dark:bg-zinc-500"
+            animate={{ y: [0, -4, 0] }}
+            transition={{ duration: 0.6, repeat: Infinity, delay: i * 0.15 }}
+          />
+        ))}
+      </div>
+    </div>
+  </motion.div>
+);
+
+const AIAllySidebar: React.FC<AIAllySidebarProps> = ({ isOpen, onClose, onOpen }) => {
   const [messages, setMessages] = useState<Array<{ id: number; text: string; isUser: boolean }>>([
-    { id: 1, text: "Hello! I'm your AI Ally. How can I help you today?", isUser: false },
+    { id: 1, text: "Hey! I'm Ally, your AI assistant. How can I help optimize your calendar today?", isUser: false },
   ]);
   const [inputText, setInputText] = useState('');
   const [isRecording, setIsRecording] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
+  const [interimTranscription, setInterimTranscription] = useState('');
+  const [speechRecognitionSupported, setSpeechRecognitionSupported] = useState(false);
+  const [speechRecognitionError, setSpeechRecognitionError] = useState<string | null>(null);
 
-  const handleSendMessage = () => {
-    if (!inputText.trim()) return;
-    setMessages([...messages, { id: messages.length + 1, text: inputText, isUser: true }]);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const speechRecognitionRef = useRef<any | null>(null);
+  const isRecognitionRunning = useRef<boolean>(false);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, isTyping]);
+
+  useEffect(() => {
+    if (isOpen && inputRef.current && !isRecording) {
+      setTimeout(() => inputRef.current?.focus(), 300);
+    }
+  }, [isOpen, isRecording]);
+
+  // Initialize speech recognition
+  useEffect(() => {
+    if (typeof window !== 'undefined' && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = true;
+      recognition.lang = 'en-US';
+
+      recognition.onresult = (event: any) => {
+        let interim = '';
+        let final = '';
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          if (event.results[i].isFinal) {
+            final += event.results[i][0].transcript;
+          } else {
+            interim += event.results[i][0].transcript;
+          }
+        }
+        setInterimTranscription(interim);
+        if (final) {
+          handleStopRecording(final);
+        }
+      };
+
+      recognition.onerror = (event: any) => {
+        if (event.error !== 'aborted') {
+          console.error('Speech recognition error:', event.error);
+          if (event.error === 'not-allowed') {
+            setSpeechRecognitionError('Microphone access denied.');
+          }
+        }
+        setIsRecording(false);
+        isRecognitionRunning.current = false;
+        setInterimTranscription('');
+      };
+
+      recognition.onend = () => {
+        isRecognitionRunning.current = false;
+        setIsRecording(false);
+      };
+
+      speechRecognitionRef.current = recognition;
+      setSpeechRecognitionSupported(true);
+    } else {
+      setSpeechRecognitionError('Speech-to-Text not supported in this browser.');
+    }
+
+    return () => {
+      if (speechRecognitionRef.current && isRecognitionRunning.current) {
+        try {
+          speechRecognitionRef.current.stop();
+        } catch (e) {}
+      }
+    };
+  }, []);
+
+  const handleSendMessage = useCallback((textToSend: string = inputText) => {
+    if (!textToSend.trim()) return;
+    const newMessage = { id: messages.length + 1, text: textToSend, isUser: true };
+    setMessages((prev) => [...prev, newMessage]);
     setInputText('');
+    setInterimTranscription('');
+    setIsTyping(true);
+
     // Simulate AI response
     setTimeout(() => {
+      setIsTyping(false);
       setMessages((prev) => [
         ...prev,
-        { id: prev.length + 1, text: "I understand. Let me help you with that!", isUser: false },
+        { id: prev.length + 1, text: "I understand! Let me analyze your calendar and suggest some optimizations.", isUser: false },
       ]);
-    }, 1000);
-  };
+    }, 1500);
+  }, [inputText, messages.length]);
 
-  const handleToggleRecording = () => {
-    setIsRecording(!isRecording);
-    // In a real implementation, this would start/stop audio recording
-  };
+  const handleStopRecording = useCallback((finalTranscription: string | null) => {
+    if (speechRecognitionRef.current && isRecognitionRunning.current) {
+      try {
+        speechRecognitionRef.current.stop();
+      } catch (e) {}
+      isRecognitionRunning.current = false;
+    }
+    setIsRecording(false);
 
-  if (!isOpen) return null;
+    const textToSend = finalTranscription || interimTranscription;
+    setInterimTranscription('');
+
+    if (textToSend.trim()) {
+      handleSendMessage(textToSend);
+    }
+  }, [interimTranscription, handleSendMessage]);
+
+  const handleStartRecording = useCallback(async () => {
+    if (isRecognitionRunning.current) return;
+
+    try {
+      await navigator.mediaDevices.getUserMedia({ audio: true });
+      setSpeechRecognitionError(null);
+
+      if (speechRecognitionRef.current) {
+        setInterimTranscription('');
+        speechRecognitionRef.current.start();
+        isRecognitionRunning.current = true;
+        setIsRecording(true);
+      }
+    } catch (err) {
+      setSpeechRecognitionError('Microphone access denied.');
+      setIsRecording(false);
+      isRecognitionRunning.current = false;
+    }
+  }, []);
+
+  const handleToggleRecording = useCallback(() => {
+    if (isRecording || isRecognitionRunning.current) {
+      handleStopRecording(interimTranscription);
+    } else {
+      handleStartRecording();
+    }
+  }, [isRecording, handleStopRecording, interimTranscription, handleStartRecording]);
+
+  const handleCancelRecording = useCallback(() => {
+    if (speechRecognitionRef.current && isRecognitionRunning.current) {
+      try {
+        speechRecognitionRef.current.stop();
+      } catch (e) {}
+      isRecognitionRunning.current = false;
+    }
+    setIsRecording(false);
+    setInterimTranscription('');
+  }, []);
+
+  const quickActions = [
+    { label: 'Optimize schedule', emoji: '📅' },
+    { label: 'Find free time', emoji: '🔍' },
+    { label: 'Reschedule meeting', emoji: '🔄' },
+  ];
 
   return (
-    <AnimatePresence>
-      <motion.div
-        initial={{ x: '100%' }}
-        animate={{ x: 0 }}
-        exit={{ x: '100%' }}
-        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        className={`fixed right-0 top-0 h-full z-50 bg-white dark:bg-zinc-950 border-l border-zinc-200 dark:border-zinc-800 shadow-2xl ${
-          isMinimized ? 'w-20' : 'w-96'
-        } flex flex-col transition-all duration-300`}
-      >
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-zinc-200 dark:border-zinc-800">
-          {!isMinimized && (
-            <div className="flex items-center gap-3">
-              {/* 2D AI Ally Avatar */}
-              <div className="relative w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center">
-                <div className="absolute inset-0 rounded-full bg-primary/20 animate-pulse" />
-                <div className="relative w-6 h-6 rounded-full bg-white/90 flex items-center justify-center">
-                  <div className="w-3 h-3 rounded-full bg-primary" />
-                </div>
-              </div>
-              <div>
-                <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">AI Ally</h3>
-                <p className="text-xs text-zinc-500 dark:text-zinc-400">Your assistant</p>
-              </div>
-            </div>
-          )}
-          <div className="flex items-center gap-2 ml-auto">
-            <button
-              onClick={() => setIsMinimized(!isMinimized)}
-              className="p-1.5 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 dark:text-zinc-400 transition-colors"
-              title={isMinimized ? 'Expand' : 'Minimize'}
-            >
-              {isMinimized ? <Maximize2 className="w-4 h-4" /> : <Minimize2 className="w-4 h-4" />}
-            </button>
-            <button
-              onClick={onClose}
-              className="p-1.5 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 dark:text-zinc-400 transition-colors"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
+    <>
+      {/* Floating Orb Button */}
+      <div className="fixed bottom-6 right-6 z-50">
+        <AllyOrbButton onClick={() => onOpen?.()} isOpen={isOpen} />
+      </div>
 
-        {!isMinimized && (
-          <>
-            {/* Chat Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
-              {messages.map((message) => (
-                <motion.div
-                  key={message.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div
-                    className={`max-w-[80%] rounded-lg px-3 py-2 ${
-                      message.isUser
-                        ? 'bg-primary text-white rounded-br-none'
-                        : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-bl-none'
-                    }`}
-                  >
-                    <p className="text-sm">{message.text}</p>
-                  </div>
-                </motion.div>
+      {/* Chat Panel */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+            className="fixed bottom-6 right-6 z-50 w-[380px] max-h-[600px] flex flex-col rounded-2xl shadow-2xl shadow-black/20 dark:shadow-black/40 border border-zinc-200/60 dark:border-zinc-800/60 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-2xl overflow-hidden"
+          >
+            {/* Header */}
+            <ChatHeader onClose={onClose} onMinimize={onClose} />
+
+            {/* Messages Area */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-3 min-h-[280px] max-h-[320px] scrollbar-thin scrollbar-thumb-zinc-300 dark:scrollbar-thumb-zinc-700 scrollbar-track-transparent">
+              {messages.map((message, index) => (
+                <MessageBubble key={message.id} message={message} index={index} />
               ))}
+              <AnimatePresence>
+                {isTyping && <TypingIndicator />}
+              </AnimatePresence>
+              <div ref={messagesEndRef} />
             </div>
+
+            {/* Quick Actions */}
+            {messages.length <= 2 && !isRecording && (
+              <motion.div
+                className="px-4 pb-2"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+              >
+                <p className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-2">Quick Actions</p>
+                <div className="flex flex-wrap gap-2">
+                  {quickActions.map((action) => (
+                    <button
+                      key={action.label}
+                      onClick={() => {
+                        setInputText(action.label);
+                        inputRef.current?.focus();
+                      }}
+                      className="px-3 py-1.5 text-xs font-medium rounded-full bg-zinc-100 dark:bg-zinc-800/80 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors border border-zinc-200/50 dark:border-zinc-700/50"
+                    >
+                      {action.emoji} {action.label}
+                    </button>
+                  ))}
+                </div>
+              </motion.div>
+            )}
 
             {/* Input Area */}
-            <div className="p-4 border-t border-zinc-200 dark:border-zinc-800 space-y-2">
-              {/* Audio Input Button */}
-              <div className="flex items-center justify-center">
-                <button
-                  onClick={handleToggleRecording}
-                  className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${
-                    isRecording
-                      ? 'bg-red-500 text-white animate-pulse'
-                      : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700'
-                  }`}
-                  title={isRecording ? 'Stop recording' : 'Start voice input'}
-                >
-                  <Mic className="w-5 h-5" />
-                </button>
-              </div>
-
-              {/* Text Input */}
-              <div className="flex items-center gap-2">
-                <input
-                  type="text"
-                  value={inputText}
-                  onChange={(e) => setInputText(e.target.value)}
-                  onKeyPress={(e) => {
-                    if (e.key === 'Enter') {
-                      handleSendMessage();
-                    }
+            <div className="p-3 border-t border-zinc-200/50 dark:border-zinc-800/50 bg-zinc-50/50 dark:bg-zinc-900/50">
+              {isRecording ? (
+                <div className="relative flex flex-col items-center justify-center bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-3">
+                  <AIVoiceInput
+                    onStart={handleStartRecording}
+                    onStop={(duration, text) => handleStopRecording(text)}
+                    onInterimResult={setInterimTranscription}
+                    isRecordingProp={isRecording}
+                    onToggleRecording={handleToggleRecording}
+                    speechRecognitionSupported={speechRecognitionSupported}
+                    speechRecognitionError={speechRecognitionError}
+                    visualizerBars={32}
+                    className="py-2"
+                  />
+                  <button
+                    onClick={handleCancelRecording}
+                    className="absolute top-2 right-2 p-1.5 rounded-full text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ) : (
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    handleSendMessage();
                   }}
-                  placeholder="Type a message..."
-                  className="flex-1 px-3 py-2 rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                />
-                <button
-                  onClick={handleSendMessage}
-                  disabled={!inputText.trim()}
-                  className="p-2 rounded-md bg-primary text-white hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="relative flex items-center bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-1.5 gap-1.5"
                 >
-                  <Send className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-          </>
-        )}
+                  {/* Voice Button */}
+                  <button
+                    type="button"
+                    onClick={handleToggleRecording}
+                    className={cn(
+                      'p-2.5 rounded-xl transition-all flex-shrink-0',
+                      'text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800'
+                    )}
+                    disabled={!speechRecognitionSupported}
+                    title="Voice input"
+                  >
+                    <Mic className="w-5 h-5" />
+                  </button>
 
-        {/* Minimized View */}
-        {isMinimized && (
-          <div className="flex-1 flex flex-col items-center justify-center p-4">
-            <div className="relative w-12 h-12 rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center mb-2">
-              <div className="absolute inset-0 rounded-full bg-primary/20 animate-pulse" />
-              <div className="relative w-8 h-8 rounded-full bg-white/90 flex items-center justify-center">
-                <div className="w-4 h-4 rounded-full bg-primary" />
-              </div>
+                  {/* Text Input */}
+                  <input
+                    ref={inputRef}
+                    type="text"
+                    value={inputText}
+                    onChange={(e) => setInputText(e.target.value)}
+                    placeholder="Ask Ally anything..."
+                    className="flex-1 bg-transparent border-none outline-none py-2.5 px-1 text-zinc-800 dark:text-zinc-100 text-sm placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
+                  />
+
+                  {/* Send Button */}
+                  <motion.button
+                    type="submit"
+                    disabled={!inputText.trim()}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className={cn(
+                      'p-2.5 rounded-xl transition-all flex-shrink-0',
+                      inputText.trim()
+                        ? 'bg-zinc-950 dark:bg-zinc-100 text-white dark:text-zinc-950'
+                        : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-300 dark:text-zinc-600 cursor-not-allowed'
+                    )}
+                  >
+                    <ArrowUp className="w-5 h-5" />
+                  </motion.button>
+                </form>
+              )}
+
+              {/* Powered by badge */}
+              <p className="text-center text-[9px] text-zinc-400 dark:text-zinc-500 mt-2 font-medium">
+                Powered by Ally AI
+              </p>
             </div>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400 text-center">AI Ally</p>
-          </div>
+          </motion.div>
         )}
-      </motion.div>
-    </AnimatePresence>
+      </AnimatePresence>
+    </>
   );
 };
 

@@ -27,8 +27,8 @@ import { decodeAudioData, getSpeechFromGemini, sendMessageToGemini } from "@/ser
 import { AIVoiceInput } from "@/components/ui/ai-voice-input";
 import { Message } from "@/types";
 import MessageBubble from "@/components/MessageBubble";
-import { Typewriter } from "@/components/ui/typewriter";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Typewriter } from "@/components/ui/typewriter";
 import { VoicePoweredOrb } from "@/components/ui/voice-powered-orb";
 import { useRouter } from "next/navigation";
 
@@ -399,7 +399,7 @@ const ChatInterface: React.FC = () => {
 
   const avatarView = useMemo(
     () => (
-      <div className="absolute inset-0 z-10 bg-white dark:bg-zinc-950 flex flex-col md:flex-row items-center justify-center p-4">
+      <div className="absolute inset-0 z-10  dark:bg-zinc-950 flex flex-col md:flex-row items-center justify-center p-4">
         <div className={`flex flex-col items-center justify-center transition-all duration-700 w-full ${hasConversation ? "md:w-1/2" : "w-full"}`}>
           <AssistantAvatar isRecording={isRecording} isSpeaking={isSpeaking} isLoading={isLoading} compact={hasConversation} />
         </div>
