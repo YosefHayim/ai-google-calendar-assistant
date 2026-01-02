@@ -50,8 +50,8 @@ const ToggleRow: React.FC<{
   const id = React.useId()
 
   return (
-    <div className="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 last:border-b-0">
-      <div className="grid grid-cols-2 items-center gap-2 ">
+    <div className="pb-2 flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800">
+      <div className="grid grid-cols-2 items-center gap-2">
         <Label className="text-zinc-900 dark:text-zinc-100" htmlFor={id}>
           {label}
         </Label>
@@ -72,10 +72,7 @@ const ToggleRow: React.FC<{
           </HoverCard>
         )}
       </div>
-
-      <div className="flex-shrink-0">
-        <CinematicGlowToggle id={id} checked={checked} onChange={onChange} />
-      </div>
+      <CinematicGlowToggle id={id} checked={checked} onChange={onChange} />
     </div>
   )
 }
@@ -132,7 +129,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
           <DialogDescription>Manage your application preferences and settings.</DialogDescription>
         </DialogHeader>
 
-        <div className="flex w-full min-h-[500px]">
+        <div className="flex w-full h-[500px] overflow-y-auto">
           <div className="w-56 bg-zinc-50 dark:bg-zinc-900/50 border-r border-zinc-200 dark:border-zinc-800 flex flex-col p-4">
             <div className="flex items-center gap-2 mb-8 px-2">
               <Settings className="w-5 h-5 text-zinc-400" />
@@ -336,7 +333,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
                   <h3 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-6 tracking-tight">
                     Notifications
                   </h3>
-                  <div className="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+                  <div className="p-4 flex flex-col gap-2 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
                     <ToggleRow
                       label="New Message Alerts"
                       checked={newMessageAlerts}
