@@ -1,5 +1,5 @@
-import { Suspense } from 'react';
-import LoginPage from '@/components/LoginPage';
+import LoginPage from "@/components/auth/LoginPage";
+import { Suspense } from "react";
 
 function LoginFallback() {
   return (

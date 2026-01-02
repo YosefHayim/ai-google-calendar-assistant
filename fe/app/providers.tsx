@@ -6,7 +6,7 @@ import { AuthProvider } from "@/context/AuthContext";
 import { ENV } from "@/lib/constants";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { ThemeProvider } from "@/components/ThemeProvider";
+import { ThemeProvider } from "@/components/shared/ThemeProvider";
 import { createQueryClient } from "@/lib/query";
 import { useState } from "react";
 

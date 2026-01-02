@@ -2,13 +2,13 @@
 
 import { ArrowRight, Calendar, Clock, Mic, Sparkles } from "lucide-react";
 
-import BentoGridSection from "@/components/BentoGridSection";
-import FAQs from "@/components/FAQs";
+import BentoGridSection from "@/components/marketing/BentoGridSection";
+import FAQs from "@/components/marketing/FAQs";
 import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button";
 import Link from "next/link";
-import MarketingLayout from "@/components/MarketingLayout";
-import Testimonials from "@/components/Testimonials";
-import UseCaseGrid from "@/components/UseCaseGrid";
+import MarketingLayout from "@/components/marketing/MarketingLayout";
+import Testimonials from "@/components/marketing/Testimonials";
+import UseCaseGrid from "@/components/marketing/UseCaseGrid";
 
 export default function HomePage() {
   return (

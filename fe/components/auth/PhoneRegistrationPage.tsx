@@ -5,9 +5,9 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ShieldCheck, Phone, ChevronDown, ArrowLeft } from 'lucide-react';
-import { AllyLogo } from '@/components/logo';
+import { AllyLogo } from '@/components/shared/logo';
 import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button';
-import { BackgroundPattern1 } from '@/components/BackgroundPattern1';
+import { BackgroundPattern1 } from '@/components/shared/BackgroundPattern1';
 
 interface Country {
   name: string;

@@ -3,7 +3,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { BrainCircuit, CalendarDays, Mic, Plane, User, Check } from 'lucide-react';
-import { AllyLogo } from '@/components/logo';
+import { AllyLogo } from '@/components/shared/logo';
 
 const useCases = [
   {

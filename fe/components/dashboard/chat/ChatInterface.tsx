@@ -26,7 +26,7 @@ import { decodeAudioData, getSpeechFromGemini, sendMessageToGemini } from "@/ser
 
 import { AIVoiceInput } from "@/components/ui/ai-voice-input";
 import { Message } from "@/types";
-import MessageBubble from "@/components/MessageBubble";
+import MessageBubble from "@/components/dashboard/chat/MessageBubble";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Typewriter } from "@/components/ui/typewriter";
 import { VoicePoweredOrb } from "@/components/ui/voice-powered-orb";

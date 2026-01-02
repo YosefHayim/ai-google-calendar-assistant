@@ -13,8 +13,8 @@ import {
   BarChart2,
   Share2
 } from 'lucide-react';
-import { AllyLogo, BetaBadge } from '@/components/logo';
-import UserProfileCard from '@/components/UserProfileCard';
+import { AllyLogo, BetaBadge } from '@/components/shared/logo';
+import UserProfileCard from '@/components/dashboard/shared/UserProfileCard';
 
 interface SidebarProps {
   isOpen: boolean;

@@ -2,11 +2,11 @@
 
 import React, { useEffect, useState } from "react";
 
-import { OnboardingTour } from "@/components/OnboardingTour";
-import SettingsModal from "@/components/SettingsModal";
-import Sidebar from "@/components/Sidebar";
+import { OnboardingTour } from "@/components/dashboard/shared/OnboardingTour";
+import SettingsModal from "@/components/dashboard/shared/SettingsModal";
+import Sidebar from "@/components/dashboard/shared/Sidebar";
 import { useRouter } from "next/navigation";
-import { useTheme } from "@/components/ThemeProvider";
+import { useTheme } from "@/components/shared/ThemeProvider";
 
 export default function DashboardLayout({ children }: { children?: React.ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);

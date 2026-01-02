@@ -2,8 +2,8 @@
 'use client';
 
 import React from 'react';
-import Navbar from '@/components/navbar';
-import Footer from '@/components/footer';
+import Navbar from '@/components/marketing/Navbar';
+import Footer from '@/components/marketing/Footer';
 
 interface MarketingLayoutProps {
   children: React.ReactNode;
