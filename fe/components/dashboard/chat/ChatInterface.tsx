@@ -108,24 +108,16 @@ const ChatInterface: React.FC = () => {
         }))
 
         await streamChatMessage(textToSend, history, {
-          onChunk: (chunk, fullText) => {
-            // Update the assistant message content in real-time
-            setMessages((prev) =>
-              prev.map((msg) => (msg.id === assistantMessageId ? { ...msg, content: fullText } : msg))
-            )
+          onChunk: () => {
+            // Not used anymore - typewriter component handles animation
           },
           onComplete: (fullText) => {
-            setIsStreaming(false)
-            setIsLoading(false)
-            setStreamingMessageId(null)
-            // Final update to ensure message is complete
+            // Set the full text immediately - typewriter will animate it
             setMessages((prev) =>
-              prev.map((msg) => (msg.id === assistantMessageId ? { ...msg, content: fullText } : msg))
+              prev.map((msg) => (msg.id === assistantMessageId ? { ...msg, content: fullText } : msg)),
             )
-            // Speak the response in avatar mode
-            if (activeTab === 'avatar' && fullText) {
-              speakText(fullText.split('\n')[0])
-            }
+            // Keep streaming flag true so typewriter animates
+            // Note: isStreaming will be set to false when typewriter completes via handleTypewriterComplete
           },
           onError: (errorMsg) => {
             setError(errorMsg || 'Communication relay failed. Please retry.')
@@ -158,6 +150,23 @@ const ChatInterface: React.FC = () => {
     setInput(text)
     textInputRef.current?.focus()
   }, [])
+
+  const handleTypewriterComplete = useCallback(() => {
+    // Get the message before clearing the streaming ID
+    const currentStreamingId = streamingMessageId
+    const lastMessage = currentStreamingId
+      ? messages.find((msg) => msg.role === 'assistant' && msg.id === currentStreamingId)
+      : null
+
+    setIsStreaming(false)
+    setIsLoading(false)
+    setStreamingMessageId(null)
+
+    // Speak the response in avatar mode
+    if (activeTab === 'avatar' && lastMessage?.content) {
+      speakText(lastMessage.content.split('\n')[0])
+    }
+  }, [messages, streamingMessageId, activeTab, speakText])
 
   const {
     isRecording,
@@ -198,6 +207,7 @@ const ChatInterface: React.FC = () => {
             onResend={handleResend}
             onEdit={handleEditMessage}
             onSpeak={speakText}
+            onTypewriterComplete={handleTypewriterComplete}
             avatarScrollRef={avatarScrollRef}
           />
         ) : activeTab === '3d' ? (
@@ -213,6 +223,7 @@ const ChatInterface: React.FC = () => {
             onResend={handleResend}
             onEdit={handleEditMessage}
             onSpeak={speakText}
+            onTypewriterComplete={handleTypewriterComplete}
             scrollRef={scrollRef}
           />
         )}

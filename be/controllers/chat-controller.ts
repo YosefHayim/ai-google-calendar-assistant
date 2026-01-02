@@ -1,8 +1,9 @@
+import type { Request, Response } from "express";
+import { reqResAsyncHandler, sendR } from "@/utils/http";
+
 import { ORCHESTRATOR_AGENT } from "@/ai-agents";
 import { STATUS_RESPONSE } from "@/config";
-import type { Request, Response } from "express";
 import { run } from "@openai/agents";
-import { reqResAsyncHandler, sendR } from "@/utils/http";
 
 interface ChatRequest {
   message: string;
@@ -10,31 +11,24 @@ interface ChatRequest {
 }
 
 /**
- * Streaming chat endpoint using Server-Sent Events (SSE)
- * Uses OpenAI Agents SDK to process messages and stream responses
+ * Chat endpoint that returns regular HTTP response
+ * Uses OpenAI Agents SDK to process messages and returns complete response
+ * Frontend will use typewriter component to simulate real-time typing
  *
  * @param {Request} req - The request object.
  * @param {Response} res - The response object.
  * @returns {Promise<void>} The response object.
- * @description Streams chat responses using SSE for real-time typewriter effect.
+ * @description Returns complete chat response for frontend typewriter simulation.
  * @example
  * const data = await streamChat(req, res);
  * console.log(data);
  */
-const streamChat = async (req: Request<unknown, unknown, ChatRequest>, res: Response): Promise<void> => {
+const streamChat = reqResAsyncHandler(async (req: Request<unknown, unknown, ChatRequest>, res: Response) => {
   const { message, history = [] } = req.body;
 
   if (!message?.trim()) {
-    res.status(400).json({ error: "Message is required" });
-    return;
+    return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Message is required");
   }
-
-  // Set up SSE headers
-  res.setHeader("Content-Type", "text/event-stream");
-  res.setHeader("Cache-Control", "no-cache");
-  res.setHeader("Connection", "keep-alive");
-  res.setHeader("X-Accel-Buffering", "no");
-  res.flushHeaders();
 
   try {
     // Build prompt with conversation history
@@ -45,25 +39,15 @@ const streamChat = async (req: Request<unknown, unknown, ChatRequest>, res: Resp
 
     const finalOutput = result.finalOutput || "";
 
-    // Simulate streaming by sending characters in chunks for typewriter effect
-    const chunkSize = 3; // Send 3 characters at a time for smooth typing
-    for (let i = 0; i < finalOutput.length; i += chunkSize) {
-      const chunk = finalOutput.slice(i, i + chunkSize);
-      res.write(`data: ${JSON.stringify({ type: "chunk", content: chunk })}\n\n`);
-
-      // Small delay for natural typing feel (10-30ms per chunk)
-      await sleep(15);
-    }
-
-    // Send completion event
-    res.write(`data: ${JSON.stringify({ type: "done", content: finalOutput })}\n\n`);
-    res.end();
+    sendR(res, STATUS_RESPONSE.SUCCESS, "Chat message processed successfully", {
+      content: finalOutput,
+      timestamp: new Date().toISOString(),
+    });
   } catch (error) {
-    console.error("Chat stream error:", error);
-    res.write(`data: ${JSON.stringify({ type: "error", content: "Error processing your request" })}\n\n`);
-    res.end();
+    console.error("Chat error:", error);
+    sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Error processing your request");
   }
-};
+});
 
 /**
  * Non-streaming chat endpoint for fallback
@@ -87,15 +71,10 @@ const sendChat = reqResAsyncHandler(async (req: Request<unknown, unknown, ChatRe
     const contextPrompt = buildChatPrompt(message, history, req.user?.email);
     const result = await run(ORCHESTRATOR_AGENT, contextPrompt);
 
-    sendR(
-      res,
-      STATUS_RESPONSE.SUCCESS,
-      "Chat message processed successfully",
-      {
-        content: result.finalOutput || "No response received",
-        timestamp: new Date().toISOString(),
-      }
-    );
+    sendR(res, STATUS_RESPONSE.SUCCESS, "Chat message processed successfully", {
+      content: result.finalOutput || "No response received",
+      timestamp: new Date().toISOString(),
+    });
   } catch (error) {
     console.error("Chat error:", error);
     sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Error processing your request");
@@ -133,16 +112,6 @@ function buildChatPrompt(message: string, history: Array<{ role: "user" | "assis
   parts.push(`User Request: ${message}`);
 
   return parts.join("\n");
-}
-
-/**
- * Sleep utility for streaming delays
- *
- * @param {number} ms - Milliseconds to sleep
- * @returns {Promise<void>} Promise that resolves after delay
- */
-function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 export const chatController = {

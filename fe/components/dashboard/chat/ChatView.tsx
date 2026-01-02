@@ -18,6 +18,7 @@ interface ChatViewProps {
   onResend: (text: string) => void
   onEdit: (text: string) => void
   onSpeak: (text: string) => void
+  onTypewriterComplete?: () => void
   scrollRef: React.RefObject<HTMLDivElement>
 }
 
@@ -31,6 +32,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
   onResend,
   onEdit,
   onSpeak,
+  onTypewriterComplete,
   scrollRef,
 }) => {
   return (
@@ -52,6 +54,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
                         className="prose prose-sm max-w-none prose-zinc dark:prose-invert"
                         cursorChar="_"
                         cursorClassName="ml-0.5 text-primary animate-pulse"
+                        onComplete={onTypewriterComplete}
                       />
                     </div>
                   </div>
