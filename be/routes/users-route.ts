@@ -21,6 +21,12 @@ router.get("/get-user", supabaseAuth(), userController.getCurrentUserInformation
 // check session (lightweight - for auto-login check)
 router.get("/session", supabaseAuth(), userController.checkSession);
 
+// get google calendar integration status
+router.get("/integrations/google-calendar", supabaseAuth(), userController.getGoogleCalendarIntegrationStatus);
+
+// disconnect google calendar integration
+router.post("/integrations/google-calendar/disconnect", supabaseAuth(), userController.disconnectGoogleCalendarIntegration);
+
 // refresh token
 router.post("/refresh", supabaseAuth(), userController.refreshToken);
 

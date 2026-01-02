@@ -180,6 +180,24 @@ export const ENDPOINTS = {
    * Query params: hub.mode, hub.challenge, hub.verify_token
    */
   WHATSAPP: '/api/whatsapp',
+
+  // ============================================
+  // INTEGRATIONS ENDPOINTS
+  // ============================================
+
+  /**
+   * Get Google Calendar integration status
+   * Methods: GET
+   * Returns: isSynced, isActive, isExpired, syncedAt, authUrl
+   */
+  INTEGRATIONS_GOOGLE_CALENDAR: '/api/users/integrations/google-calendar',
+
+  /**
+   * Disconnect Google Calendar integration
+   * Methods: POST
+   * Sets is_active to false
+   */
+  INTEGRATIONS_GOOGLE_CALENDAR_DISCONNECT: '/api/users/integrations/google-calendar/disconnect',
 } as const
 
 export type EndpointsType = typeof ENDPOINTS
