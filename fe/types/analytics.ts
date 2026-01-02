@@ -1,6 +1,7 @@
-import { z } from "zod";
-import type { CalendarEvent } from "./api";
+import type { CalendarEvent, CalendarListEntry } from "./api";
+
 import type React from "react";
+import { z } from "zod";
 
 // --- Zod Schema Definitions ---
 
@@ -231,6 +232,7 @@ export interface CalendarSettingsDialogProps {
 
 export interface CreateCalendarDialogProps {
   isOpen: boolean;
+  existingCalendars: CalendarListEntry[];
   onClose: () => void;
   onSuccess?: () => void;
 }

@@ -1,15 +1,15 @@
 "use client";
 
-import { CalendarDays, Clock, X } from "lucide-react";
+import { Calendar, CalendarDays, Clock, Hourglass, Loader2, MapPin, Minus, TrendingDown, TrendingUp } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../ui/dialog";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
-import { Minus, TrendingDown, TrendingUp } from "lucide-react";
 
 import type { CalendarEvent } from "@/types/api";
 import type { CalendarEventsDialogProps } from "@/types/analytics";
-import { Loader2 } from "lucide-react";
 import React from "react";
 import { format } from "date-fns";
 
+// Helper component (Preserved from your original code)
 const TrendBadge: React.FC<{ direction: "up" | "down" | "neutral"; percentage: number }> = ({ direction, percentage }) => {
   if (direction === "neutral") {
     return (
@@ -47,8 +47,6 @@ const CalendarEventsDialog: React.FC<CalendarEventsDialogProps> = ({
   onClose,
   onEventClick,
 }) => {
-  if (!isOpen) return null;
-
   const getEventDuration = (event: CalendarEvent): string => {
     if (!event.start || !event.end) return "N/A";
 
@@ -79,44 +77,48 @@ const CalendarEventsDialog: React.FC<CalendarEventsDialogProps> = ({
     return "N/A";
   };
 
-  // Calculate trend direction
-  const trendDirection = percentageChange !== undefined ? (percentageChange > 0 ? "up" : percentageChange < 0 ? "down" : "neutral") : undefined;
-
   return (
-    <div className="fixed inset-0 bg-black/50 dark:bg-black/80 flex items-center justify-center z-50 p-4" onClick={onClose}>
-      <div
-        className="bg-white dark:bg-zinc-900 rounded-lg shadow-xl max-w-3xl w-full relative max-h-[90vh] overflow-y-auto"
-        onClick={(e) => e.stopPropagation()}
-        style={{ borderTop: `4px solid ${calendarColor}` }}
-      >
-        <button onClick={onClose} className="absolute top-4 right-4 text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors">
-          <X className="w-5 h-5" />
-        </button>
-        <div className="p-6">
-          <div className="mb-6">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-md flex items-center justify-center shrink-0" style={{ backgroundColor: calendarColor, opacity: 0.2 }}>
-                <CalendarDays className="w-5 h-5" style={{ color: calendarColor }} />
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      {/* We use 'p-0' and 'gap-0' to control the layout manually since we have a custom 
+        top border and want a scrollable list inside.
+      */}
+      <DialogContent className="max-w-3xl max-h-[90vh] flex flex-col p-0 gap-0 overflow-hidden">
+        {/* Decorative Top Border using calendar color */}
+        <div className="h-1 w-full shrink-0" style={{ backgroundColor: calendarColor }} />
+
+        <DialogHeader className="p-6 pb-2">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-md flex items-center justify-center shrink-0" style={{ backgroundColor: calendarColor, opacity: 0.2 }}>
+              <CalendarDays size={12} style={{ color: calendarColor }} />
+            </div>
+            <div className="flex-1 text-left">
+              <DialogTitle className="text-xl font-bold text-zinc-900 dark:text-zinc-100">{calendarName}</DialogTitle>
+              {/* Description for accessibility, visually hidden or styled as subtitle */}
+              <DialogDescription className="sr-only">Details for {calendarName} events</DialogDescription>
+
+              <div className="text-xs text-zinc-500 dark:text-zinc-400 flex gap-2">
+                <Calendar size={12} style={{ color: calendarColor }} />
+                {dateRange?.from && dateRange?.to
+                  ? `Events from ${format(dateRange.from, "MMM dd, yyyy")} to ${format(dateRange.to, "MMM dd, yyyy")}`
+                  : "Events"}
               </div>
-              <div className="flex-1">
-                <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">{calendarName}</h3>
-                <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
-                  {dateRange?.from && dateRange?.to
-                    ? `Events from ${format(dateRange.from, "MMM dd, yyyy")} to ${format(dateRange.to, "MMM dd, yyyy")}`
-                    : "Events"}
-                </p>
-                <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Total hours: {totalHours?.toFixed(1) || "N/A"}h</p>
-              </div>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-2">
+                <Clock size={12} style={{ color: calendarColor }} />
+                Total hours: {totalHours?.toFixed(1) || "N/A"}h
+              </p>
             </div>
           </div>
+        </DialogHeader>
 
+        {/* Scrollable Content Area */}
+        <div className="flex-1 overflow-y-auto p-6 pt-2">
           {isLoading ? (
             <div className="flex items-center justify-center py-8">
               <Loader2 className="w-6 h-6 animate-spin text-zinc-400" />
             </div>
           ) : events.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 text-center">
-              <CalendarDays className="w-12 h-12 text-zinc-400 mb-4" />
+            <div className="flex flex-col items-center justify-center p-6 text-center">
+              <CalendarDays size={50} style={{ color: calendarColor }} />
               <p className="text-sm text-zinc-500 dark:text-zinc-400">No events found for this calendar in the selected date range.</p>
             </div>
           ) : (
@@ -141,16 +143,25 @@ const CalendarEventsDialog: React.FC<CalendarEventsDialogProps> = ({
                         >
                           <div
                             className="w-8 h-8 rounded-md group-hover:opacity-80 transition-opacity flex items-center justify-center shrink-0 mt-0.5"
-                            style={{ backgroundColor: calendarColor, opacity: 0.2 }}
+                            style={{
+                              backgroundColor: calendarColor,
+                              opacity: 0.2,
+                            }}
                           >
                             <CalendarDays className="w-4 h-4" style={{ color: calendarColor }} />
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-semibold text-zinc-800 dark:text-zinc-200 line-clamp-1">{event.summary || "No Title"}</p>
                             <div className="flex items-center gap-2 mt-1 flex-wrap">
-                              <p className="text-[10px] text-zinc-400 font-bold uppercase">{eventTime}</p>
+                              <div className="text-[10px] text-zinc-400 font-bold uppercase flex items-center gap-2">
+                                <Clock size={12} style={{ color: calendarColor }} />
+                                <span> {eventTime}</span>
+                              </div>
                               <span className="text-[9px] font-bold text-zinc-500 dark:text-zinc-400">•</span>
-                              <span className="text-[9px] font-bold text-zinc-500 dark:text-zinc-400">{duration}</span>
+                              <div className="text-[9px] font-bold text-zinc-500 dark:text-zinc-400 flex items-center gap-2">
+                                <Hourglass size={12} style={{ color: calendarColor }} />
+                                <span> {duration}</span>
+                              </div>
                               {event.status && (
                                 <>
                                   <span className="text-[9px] font-bold text-zinc-500 dark:text-zinc-400">•</span>
@@ -162,7 +173,7 @@ const CalendarEventsDialog: React.FC<CalendarEventsDialogProps> = ({
                                       backgroundColor: `${statusColor}15`,
                                     }}
                                   >
-                                    {event.status}
+                                    <span className="text-[9px] font-bold text-zinc-500 dark:text-zinc-400">{event.status}</span>
                                   </span>
                                 </>
                               )}
@@ -180,10 +191,12 @@ const CalendarEventsDialog: React.FC<CalendarEventsDialogProps> = ({
                               <span>{eventTime}</span>
                             </div>
                             <div className="flex items-center gap-2">
+                              <Hourglass className="w-3 h-3" />
                               <span>Duration: {duration}</span>
                             </div>
                             {event.location && (
                               <div className="flex items-center gap-2">
+                                <MapPin className="w-3 h-3" />
                                 <span className="truncate">{event.location}</span>
                               </div>
                             )}
@@ -194,7 +207,6 @@ const CalendarEventsDialog: React.FC<CalendarEventsDialogProps> = ({
                             )}
                             {event.description && <p className="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-2 mt-2">{event.description}</p>}
                           </div>
-                          <p className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-2 italic">Click to view full details</p>
                         </div>
                       </HoverCardContent>
                     </HoverCard>
@@ -203,8 +215,8 @@ const CalendarEventsDialog: React.FC<CalendarEventsDialogProps> = ({
             </ul>
           )}
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 
