@@ -1,18 +1,57 @@
-import { apiClient } from '@/lib/api/client';
-import { ENDPOINTS } from '@/lib/api/endpoints';
-import { ApiResponse, CustomCalendar, CalendarListResponse, CreateCalendarRequest, CreateCalendarResponse } from '@/types/api';
+import { ApiResponse, CalendarListResponse, CreateCalendarRequest, CreateCalendarResponse, CustomCalendar } from "@/types/api";
+
+import { ENDPOINTS } from "@/lib/api/endpoints";
+import { apiClient } from "@/lib/api/client";
 
 export const calendarsService = {
   async getCalendars(custom = true): Promise<ApiResponse<CustomCalendar[]>> {
     const { data } = await apiClient.get<ApiResponse<CustomCalendar[]>>(ENDPOINTS.CALENDARS, {
-      params: { customCalendars: custom ? 'true' : 'false' }
+      params: { customCalendars: custom ? "true" : "false" },
     });
     return data;
   },
 
   async getCalendarById(id: string): Promise<ApiResponse<CustomCalendar>> {
-    const { data } = await apiClient.get<ApiResponse<CustomCalendar>>(ENDPOINTS.CALENDARS_BY_ID(id));
-    return data;
+    const { data } = await apiClient.get<
+      ApiResponse<{
+        kind?: string;
+        etag?: string;
+        id?: string;
+        summary?: string;
+        description?: string;
+        location?: string;
+        timeZone?: string;
+        accessRole?: string;
+        dataOwner?: string;
+        defaultReminders?: Array<{ method: string; minutes: number }>;
+        conferenceProperties?: unknown;
+      }>
+    >(ENDPOINTS.CALENDARS_BY_ID(id));
+
+    // Transform API response to CustomCalendar format
+    const calendarData = data.data;
+    const transformedData: CustomCalendar | null = calendarData
+      ? {
+          calendarId: calendarData.id || id,
+          calendarName: calendarData.summary || null,
+          calendarDescription: calendarData.description || null,
+          calendarLocation: calendarData.location || null,
+          calendarColorForEvents: null,
+          accessRole: calendarData.accessRole || null,
+          timeZoneForCalendar: calendarData.timeZone || null,
+          dataOwner: calendarData.dataOwner || null,
+          defaultReminders: calendarData.defaultReminders?.map((r) => ({
+            method: r.method as "email" | "popup",
+            minutes: r.minutes,
+          })),
+        }
+      : null;
+
+    return {
+      status: data.status,
+      message: data.message,
+      data: transformedData,
+    };
   },
 
   async getSettings(): Promise<ApiResponse<{ value: string }>> {
@@ -40,11 +79,7 @@ export const calendarsService = {
     return data;
   },
 
-  async getCalendarList(params?: {
-    minAccessRole?: string;
-    showDeleted?: boolean;
-    showHidden?: boolean;
-  }): Promise<ApiResponse<CalendarListResponse>> {
+  async getCalendarList(params?: { minAccessRole?: string; showDeleted?: boolean; showHidden?: boolean }): Promise<ApiResponse<CalendarListResponse>> {
     const { data } = await apiClient.get<ApiResponse<CalendarListResponse>>(ENDPOINTS.CALENDARS_LIST, {
       params: {
         minAccessRole: params?.minAccessRole,

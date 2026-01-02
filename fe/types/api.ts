@@ -45,6 +45,7 @@ export interface CustomCalendar {
   calendarColorForEvents: string | null;
   accessRole: string | null;
   timeZoneForCalendar: string | null;
+  dataOwner?: string | null;
   defaultReminders?: EventReminder[];
 }
 
