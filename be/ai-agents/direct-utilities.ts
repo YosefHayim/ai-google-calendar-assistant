@@ -35,9 +35,7 @@ export async function validateUserDirect(email: string): Promise<ValidateUserRes
   }
 
   try {
-    const { data, error } = await SUPABASE.from("user_calendar_tokens")
-      .select(TOKEN_FIELDS)
-      .eq("email", email.trim().toLowerCase());
+    const { data, error } = await SUPABASE.from("user_calendar_tokens").select(TOKEN_FIELDS).eq("email", email.trim().toLowerCase());
 
     // Check for database schema errors specifically
     if (error) {
@@ -73,9 +71,7 @@ export type TimezoneResult = {
  */
 async function updateUserTimezoneInDb(email: string, timezone: string): Promise<void> {
   try {
-    await SUPABASE.from("user_calendar_tokens")
-      .update({ timezone, updated_at: new Date().toISOString() })
-      .eq("email", email.trim().toLowerCase());
+    await SUPABASE.from("user_calendar_tokens").update({ timezone }).eq("email", email.trim().toLowerCase());
   } catch (error) {
     console.error("Failed to update timezone in DB:", error);
   }
@@ -105,8 +101,8 @@ function categorizeError(error: unknown): { type: "auth" | "database" | "other";
 
   // Database errors - system issue, not user's fault
   if (
-    lowerMsg.includes("column") && lowerMsg.includes("does not exist") ||
-    lowerMsg.includes("relation") && lowerMsg.includes("does not exist") ||
+    (lowerMsg.includes("column") && lowerMsg.includes("does not exist")) ||
+    (lowerMsg.includes("relation") && lowerMsg.includes("does not exist")) ||
     lowerMsg.includes("connection refused") ||
     lowerMsg.includes("database") ||
     lowerMsg.includes("could not fetch credentials")
@@ -132,10 +128,7 @@ export async function getUserDefaultTimezoneDirect(email: string): Promise<Timez
 
   try {
     // First, check if timezone exists in DB
-    const { data: userData, error: dbError } = await SUPABASE.from("user_calendar_tokens")
-      .select(TOKEN_FIELDS)
-      .eq("email", normalizedEmail)
-      .single();
+    const { data: userData, error: dbError } = await SUPABASE.from("user_calendar_tokens").select(TOKEN_FIELDS).eq("email", normalizedEmail).single();
 
     // If there's a database schema error, fall back to Google Calendar API
     if (dbError && dbError.message?.toLowerCase().includes("column") && dbError.message?.toLowerCase().includes("does not exist")) {
@@ -167,11 +160,12 @@ export async function getUserDefaultTimezoneDirect(email: string): Promise<Timez
     // Return categorized error message so agents can handle appropriately
     return {
       timezone: "UTC",
-      error: categorized.type === "auth"
-        ? "No credentials found - authorization required."
-        : categorized.type === "database"
-        ? "Database error - please try again in a moment."
-        : "Failed to fetch timezone, using UTC."
+      error:
+        categorized.type === "auth"
+          ? "No credentials found - authorization required."
+          : categorized.type === "database"
+          ? "Database error - please try again in a moment."
+          : "Failed to fetch timezone, using UTC.",
     };
   }
 }
@@ -191,9 +185,7 @@ export type ValidateEventResult = {
  * Replaces: AGENTS.validateEventData
  * Latency: ~100ms (vs ~2-5s with agent)
  */
-export function validateEventDataDirect(
-  eventData: Partial<Event> & { email: string }
-): ValidateEventResult {
+export function validateEventDataDirect(eventData: Partial<Event> & { email: string }): ValidateEventResult {
   const { email, ...eventLike } = eventData;
 
   if (!email || !isEmail(email)) {
@@ -249,13 +241,7 @@ export async function selectCalendarByRules(
   }
 
   // Build searchable text from event info
-  const searchText = [
-    eventInfo.summary || "",
-    eventInfo.description || "",
-    eventInfo.location || "",
-  ]
-    .join(" ")
-    .toLowerCase();
+  const searchText = [eventInfo.summary || "", eventInfo.description || "", eventInfo.location || ""].join(" ").toLowerCase();
 
   // Score each calendar based on keyword matches
   let bestMatch: UserCalendar | null = null;
@@ -291,9 +277,7 @@ export async function selectCalendarByRules(
 
   // If no match found, use primary or first calendar
   if (!bestMatch || bestScore === 0) {
-    const primary = calendars.find(
-      (c) => c.calendar_id === "primary" || c.calendar_name.toLowerCase().includes("primary")
-    );
+    const primary = calendars.find((c) => c.calendar_id === "primary" || c.calendar_name.toLowerCase().includes("primary"));
     return {
       calendarId: primary?.calendar_id || calendars[0].calendar_id,
       calendarName: primary?.calendar_name || calendars[0].calendar_name,
@@ -383,10 +367,7 @@ export type PreCreateValidationResult = {
  * This replaces 4 agent calls with parallel direct calls.
  * Latency: ~1-2s (vs ~8-20s with sequential agents)
  */
-export async function preCreateValidation(
-  email: string,
-  eventData: Partial<Event>
-): Promise<PreCreateValidationResult> {
+export async function preCreateValidation(email: string, eventData: Partial<Event>): Promise<PreCreateValidationResult> {
   // Run validations in parallel
   const [userResult, timezoneResult, calendarResult] = await Promise.all([
     validateUserDirect(email),

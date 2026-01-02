@@ -147,7 +147,6 @@ export const markAsSummarized = async (stateId: number): Promise<boolean> => {
   const { error } = await SUPABASE.from(CONVERSATION_STATE_TABLE)
     .update({
       last_summarized_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
     })
     .eq("id", stateId);
 

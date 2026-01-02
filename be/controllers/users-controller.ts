@@ -1,9 +1,9 @@
 import type { GoogleIdTokenPayloadProps, TokensProps } from "@/types";
 import { OAUTH2CLIENT, PROVIDERS, REDIRECT_URI, SCOPES, SCOPES_STRING, STATUS_RESPONSE, SUPABASE, env } from "@/config";
 import type { Request, Response } from "express";
+import { clearAuthCookies, setAuthCookies } from "@/utils/auth/cookie-utils";
 import { generateGoogleAuthUrl, supabaseThirdPartySignInOrSignUp } from "@/utils/auth";
 import { reqResAsyncHandler, sendR } from "@/utils/http";
-import { clearAuthCookies, setAuthCookies } from "@/utils/auth/cookie-utils";
 
 import jwt from "jsonwebtoken";
 
@@ -57,7 +57,6 @@ const generateAuthGoogleUrl = reqResAsyncHandler(async (req: Request, res: Respo
       scope: tokens.scope,
       expiry_date: tokens.expiry_date,
       is_active: true,
-      updated_at: new Date().toISOString(),
       // We do not set created_at here; let the DB handle it or it stays as is on update
     };
 
