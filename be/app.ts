@@ -4,7 +4,7 @@ import aclRoute from "@/routes/google-calendar/acl-route";
 import calendarListRoute from "@/routes/google-calendar/calendar-list-route";
 import calendarRoute from "@/routes/google-calendar/calendar-route";
 import channelsRoute from "@/routes/google-calendar/channels-route";
-import chatRoute from "@/routes/chat-route";
+import chatRoute from "@/routes/google-calendar/chat-route";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import errorHandler from "@/middlewares/error-handler";
@@ -26,6 +26,7 @@ const PORT = env.port;
 
 app.use(
   cors({
+    origin: ["http://localhost:4000", "http://127.0.0.1:4000"],
     credentials: true,
     exposedHeaders: [ACCESS_TOKEN_HEADER, REFRESH_TOKEN_HEADER, USER_KEY],
     allowedHeaders: ["Content-Type", "Authorization", REFRESH_TOKEN_HEADER, USER_KEY, ACCESS_TOKEN_HEADER],

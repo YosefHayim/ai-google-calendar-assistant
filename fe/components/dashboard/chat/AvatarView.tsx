@@ -18,6 +18,7 @@ interface AvatarViewProps {
   onResend: (text: string) => void
   onEdit: (text: string) => void
   onSpeak: (text: string) => void
+  onTypewriterComplete?: () => void
   avatarScrollRef: React.RefObject<HTMLDivElement>
 }
 
@@ -31,6 +32,7 @@ export const AvatarView: React.FC<AvatarViewProps> = ({
   onResend,
   onEdit,
   onSpeak,
+  onTypewriterComplete,
   avatarScrollRef,
 }) => {
   const hasConversation = messages.length > 1
@@ -85,6 +87,7 @@ export const AvatarView: React.FC<AvatarViewProps> = ({
                           className="inline"
                           cursorChar="_"
                           cursorClassName="ml-0.5 text-primary"
+                          onComplete={onTypewriterComplete}
                         />
                       ) : (
                         msg.content
