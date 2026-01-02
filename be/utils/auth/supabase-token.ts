@@ -17,6 +17,7 @@ export type SupabaseSessionResult = {
 export type RefreshedSupabaseSession = {
   user: User;
   accessToken: string;
+  refreshToken: string;
 };
 
 /**
@@ -78,6 +79,7 @@ export const refreshSupabaseSession = async (refreshToken: string): Promise<Refr
   }
 
   return {
+    refreshToken: data.session.refresh_token,
     user: data.user,
     accessToken: data.session.access_token,
   };

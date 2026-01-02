@@ -131,14 +131,28 @@ const getEventAnalytics = reqResAsyncHandler(async (req: Request, res: Response)
   const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData);
   const allCalendarIds = (await calendar.calendarList.list({ prettyPrint: true }).then((r) => r.data.items?.map((calendar) => calendar.id))) || ["primary"];
 
+  let totalEventsFound = 0;
+  const totalNumberOfCalendars = allCalendarIds.length;
+
   const allEvents = await Promise.all(
-    allCalendarIds.map((calendarId) => getEvents({ calendarEvents: calendar.events, req: undefined, extra: { calendarId, ...req.query } }))
+    allCalendarIds.map(async (calendarId) => {
+      const result = await getEvents({ calendarEvents: calendar.events, req: undefined, extra: { calendarId, ...req.query } });
+      if (result.type === "custom") {
+        totalEventsFound = result.totalNumberOfEventsFound;
+        return { calendarId, events: result.totalEventsFound };
+      }
+      if (result.type === "standard") {
+        totalEventsFound += result.data.items?.length ?? 0;
+        return { calendarId, events: result.data.items ?? [] };
+      }
+      return { calendarId, events: [] };
+    })
   );
 
   sendR(
     res,
     STATUS_RESPONSE.SUCCESS,
-    `${allEvents.length} events retrieved successfully from ${allCalendarIds.length} calendars ${
+    `${totalEventsFound} events retrieved successfully from ${totalNumberOfCalendars} calendars ${
       req.query.timeMin && `from ${formatDate(new Date(req.query.timeMin as string), true)} to ${formatDate(new Date(req.query.timeMax as string), true)}`
     }`,
     { allEvents }

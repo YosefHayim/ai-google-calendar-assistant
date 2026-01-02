@@ -15,7 +15,7 @@ type GetEventsParams = {
   extra?: Record<string, unknown>;
 };
 
-type FormattedEvent = {
+export type FormattedEvent = {
   eventId: string;
   summary: string;
   description: string | null;
@@ -25,11 +25,19 @@ type FormattedEvent = {
   end: string | null;
 };
 
-type CustomEventsResponse = {
+export type CustomEventsResponse = {
+  type: "custom";
   calendarId: string | undefined;
   totalNumberOfEventsFound: number;
   totalEventsFound: FormattedEvent[];
 };
+
+export type StandardEventsResponse = {
+  type: "standard";
+  data: calendar_v3.Schema$Events;
+};
+
+export type GetEventsResponse = CustomEventsResponse | StandardEventsResponse;
 
 /**
  * Build list parameters for Google Calendar API
@@ -88,6 +96,7 @@ export function formatCustomEventsResponse(events: calendar_v3.Schema$Event[], c
   const totalEventsFound = items.map(formatSingleEvent);
 
   return {
+    type: "custom",
     calendarId,
     totalNumberOfEventsFound: totalEventsFound.length,
     totalEventsFound,
@@ -98,9 +107,9 @@ export function formatCustomEventsResponse(events: calendar_v3.Schema$Event[], c
  * Get events from the calendar
  *
  * @param {GetEventsParams} params - The parameters for getting events.
- * @returns {Promise<CustomEventsResponse | calendar_v3.Schema$Events>} The events.
+ * @returns {Promise<GetEventsResponse>} The events response with type discriminator.
  */
-export async function getEvents({ calendarEvents, req, extra }: GetEventsParams) {
+export async function getEvents({ calendarEvents, req, extra }: GetEventsParams): Promise<GetEventsResponse> {
   const rawExtra: ListExtra = { ...(extra as ListExtra), ...(req?.body ?? {}), ...(req?.query ?? {}) };
   const customFlag = Boolean(rawExtra.customEvents);
   const { listParams, calendarId } = buildListParams(rawExtra);
@@ -111,5 +120,5 @@ export async function getEvents({ calendarEvents, req, extra }: GetEventsParams)
     return formatCustomEventsResponse(eventsData.items ?? [], calendarId);
   }
 
-  return { data: eventsData };
+  return { type: "standard", data: eventsData };
 }

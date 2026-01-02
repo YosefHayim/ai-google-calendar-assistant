@@ -1,7 +1,8 @@
 import type { NextFunction, Request, Response } from "express";
-import { STATUS_RESPONSE } from "@/config";
 import { asyncHandler, sendR } from "@/utils/http";
-import { validateSupabaseToken, refreshSupabaseSession } from "@/utils/auth/supabase-token";
+import { refreshSupabaseSession, validateSupabaseToken } from "@/utils/auth/supabase-token";
+
+import { STATUS_RESPONSE } from "@/config";
 import type { User } from "@supabase/supabase-js";
 
 export type SupabaseAuthOptions = {
@@ -56,7 +57,7 @@ export const supabaseAuth = (options: SupabaseAuthOptions = {}) => {
     }
 
     // Try to refresh using refresh token from header
-    const refreshToken = req.headers["x-refresh-token"] as string | undefined;
+    const refreshToken = req.headers["refresh_token"] as string | undefined;
 
     if (!refreshToken) {
       return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "Session expired. Please login again.", {
@@ -67,14 +68,17 @@ export const supabaseAuth = (options: SupabaseAuthOptions = {}) => {
     console.log("Supabase token expired, attempting refresh...");
 
     try {
-      const refreshed = await refreshSupabaseSession(refreshToken);
+      // inside try block
+      const { accessToken: newAccessToken, refreshToken: newRefreshToken, user } = await refreshSupabaseSession(refreshToken); // passing the OLD one
 
-      req.user = refreshed.user;
+      req.user = user;
 
-      // Send new access token back to client via header
-      res.setHeader("X-New-Access-Token", refreshed.accessToken);
+      // Update current request for downstream use
+      req.headers.authorization = `Bearer ${newAccessToken}`;
 
-      console.log(`Supabase session refreshed for ${refreshed.user.email}`);
+      // Send NEW tokens to client
+      res.setHeader("access_token", newAccessToken);
+      res.setHeader("refresh_token", newRefreshToken);
 
       next();
     } catch (error) {

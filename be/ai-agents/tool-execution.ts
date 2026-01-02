@@ -1,14 +1,14 @@
 import { ACTION, SUPABASE } from "@/config";
 import { eventsHandler, initUserSupabaseCalendarWithTokensAndUpdateTokens } from "@/utils/calendar";
-import { getEvents } from "@/utils/calendar/get-events";
+import { fetchCredentialsByEmail, generateGoogleAuthUrl } from "@/utils/auth";
 import { formatEventData, parseToolArguments } from "./utils";
+
 import { asyncHandler } from "@/utils/http";
 import type { calendar_v3 } from "googleapis";
-import { fetchCredentialsByEmail, generateGoogleAuthUrl } from "@/utils/auth";
+import { getEvents } from "@/utils/calendar/get-events";
 import isEmail from "validator/lib/isEmail";
 
 type Event = calendar_v3.Schema$Event;
-
 
 /**
  * Applies the user's default calendar timezone to timed events that don't have a timezone specified.
@@ -92,7 +92,9 @@ export const EXECUTION_TOOLS = {
   }),
 
   getEvent: asyncHandler(
-    async (params: calendar_v3.Schema$Event & { email: string; q?: string | null; timeMin?: string | null; searchAllCalendars?: boolean; calendarId?: string | null }) => {
+    async (
+      params: calendar_v3.Schema$Event & { email: string; q?: string | null; timeMin?: string | null; searchAllCalendars?: boolean; calendarId?: string | null }
+    ) => {
       const startOfYear = new Date().toISOString().split("T")[0];
 
       const { email, calendarId } = parseToolArguments(params);
@@ -126,7 +128,7 @@ export const EXECUTION_TOOLS = {
         for (let i = 0; i < allEventsResults.length; i++) {
           const result = allEventsResults[i];
           const calId = allCalendarIds[i];
-          const events = (result as { data?: calendar_v3.Schema$Events })?.data?.items || [];
+          const events = result.type === "standard" ? result.data.items ?? [] : [];
 
           if (events.length > 0) {
             aggregatedEvents.push(...events);
