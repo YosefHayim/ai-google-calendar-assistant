@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import { asyncHandler, sendR } from "@/utils/http";
 import { refreshSupabaseSession, validateSupabaseToken } from "@/utils/auth/supabase-token";
+import { ACCESS_TOKEN_COOKIE, REFRESH_TOKEN_COOKIE, setAuthCookies } from "@/utils/auth/cookie-utils";
 
 import { STATUS_RESPONSE } from "@/config";
 import type { User } from "@supabase/supabase-js";
@@ -40,11 +41,13 @@ export const supabaseAuth = (options: SupabaseAuthOptions = {}) => {
   const { autoRefresh = true } = options;
 
   return asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    // Token extraction priority: Cookie first, then Authorization header
     const authHeader = req.headers.authorization;
-    const accessToken = authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : undefined;
+    const accessToken =
+      req.cookies?.[ACCESS_TOKEN_COOKIE] || (authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : undefined);
 
     if (!accessToken) {
-      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "Missing authorization header");
+      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "Missing authorization header or cookie");
     }
 
     // Validate current token
@@ -61,8 +64,9 @@ export const supabaseAuth = (options: SupabaseAuthOptions = {}) => {
       return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "Not authorized. Please login or register to continue.");
     }
 
-    // Try to refresh using refresh token from header
-    const refreshToken = req.headers[REFRESH_TOKEN_HEADER] as string | undefined;
+    // Try to refresh using refresh token from cookie first, then header
+    const refreshToken =
+      req.cookies?.[REFRESH_TOKEN_COOKIE] || (req.headers[REFRESH_TOKEN_HEADER] as string | undefined);
 
     if (!refreshToken) {
       return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "Session expired. Please login again.", {
@@ -81,7 +85,10 @@ export const supabaseAuth = (options: SupabaseAuthOptions = {}) => {
       // Update current request for downstream use
       req.headers.authorization = `Bearer ${newAccessToken}`;
 
-      // Send NEW tokens to client
+      // Set cookies for web browsers
+      setAuthCookies(res, newAccessToken, newRefreshToken, user);
+
+      // Also send tokens in headers for API/mobile clients
       res.setHeader(ACCESS_TOKEN_HEADER, newAccessToken);
       res.setHeader(REFRESH_TOKEN_HEADER, newRefreshToken);
 

@@ -7,6 +7,7 @@ import {
   CalendarDays,
   Check,
   Clock,
+  ExternalLink,
   Hourglass,
   Info,
   Link as LinkIcon,
@@ -111,7 +112,7 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
                       ) : (
                         <X size={14} />
                       )}
-                      {event.status}
+                      {event.status.toUpperCase()}
                     </span>
                   )}
                 </div>
@@ -262,7 +263,7 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
                 style={{ color: calendarColor }}
               >
                 Open in Google Calendar
-                <LinkIcon size={12} />
+                <ExternalLink size={12} />
               </a>
             )}
           </div>
