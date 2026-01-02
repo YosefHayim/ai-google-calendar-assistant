@@ -1,19 +1,24 @@
-"use client";
+'use client'
 
-import { CalendarDays, Plus } from "lucide-react";
+import { CalendarDays, Plus } from 'lucide-react'
 
-import { Button } from "@/components/ui/button";
-import type { CalendarListEntry } from "@/types/api";
-import React from "react";
+import { Button } from '@/components/ui/button'
+import type { CalendarListEntry } from '@/types/api'
+import React from 'react'
 
-interface ManagedSourcesProps {
-  calendars: CalendarListEntry[];
-  calendarMap: Map<string, { name: string; color: string }>;
-  onCalendarClick: (calendar: { id: string; name: string; color: string }) => void;
-  onCreateCalendar: () => void;
+interface ManageCalendarsProps {
+  calendars: CalendarListEntry[]
+  calendarMap: Map<string, { name: string; color: string }>
+  onCalendarClick: (calendar: { id: string; name: string; color: string }) => void
+  onCreateCalendar: () => void
 }
 
-const ManagedSources: React.FC<ManagedSourcesProps> = ({ calendars, calendarMap, onCalendarClick, onCreateCalendar }) => {
+const ManageCalendars: React.FC<ManageCalendarsProps> = ({
+  calendars,
+  calendarMap,
+  onCalendarClick,
+  onCreateCalendar,
+}) => {
   return (
     <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-6">
       <div className="mb-6 flex items-center justify-between">
@@ -32,7 +37,7 @@ const ManagedSources: React.FC<ManagedSourcesProps> = ({ calendars, calendarMap,
           title="Add new calendar"
           onClick={onCreateCalendar}
           size="icon"
-          variant={"ghost"}
+          variant={'ghost'}
           className="h-8 w-8 rounded-md border border-dashed border-zinc-300 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-900/30 hover:text-zinc-900 dark:hover:text-zinc-100 transition-all active:scale-[0.98]"
         >
           <Plus size={14} />
@@ -42,9 +47,9 @@ const ManagedSources: React.FC<ManagedSourcesProps> = ({ calendars, calendarMap,
       <div className="space-y-2">
         {calendars && calendars.length > 0 ? (
           calendars.map((calendar) => {
-            const calendarInfo = calendarMap.get(calendar.id);
-            const displayName = calendar.summary || calendar.id.split("@")[0];
-            const color = calendar.backgroundColor || calendarInfo?.color || "#6366f1";
+            const calendarInfo = calendarMap.get(calendar.id)
+            const displayName = calendar.summary || calendar.id.split('@')[0]
+            const color = calendar.backgroundColor || calendarInfo?.color || '#6366f1'
 
             return (
               <div
@@ -56,23 +61,28 @@ const ManagedSources: React.FC<ManagedSourcesProps> = ({ calendars, calendarMap,
                     id: calendar.id,
                     name: displayName,
                     color: color,
-                  });
+                  })
                 }}
               >
-                <div className="w-2.5 h-2.5 rounded-full shadow-sm group-hover:scale-125 transition-transform" style={{ backgroundColor: color }} />
-                <span className="flex-1 text-sm font-bold text-zinc-800 dark:text-zinc-200 truncate">{displayName}</span>
+                <div
+                  className="w-2.5 h-2.5 rounded-full shadow-sm group-hover:scale-125 transition-transform"
+                  style={{ backgroundColor: color }}
+                />
+                <span className="flex-1 text-sm font-bold text-zinc-800 dark:text-zinc-200 truncate">
+                  {displayName}
+                </span>
                 <span className="text-[9px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 px-1.5 py-0.5 rounded border border-emerald-200 dark:border-emerald-800 uppercase tracking-tighter">
                   Active
                 </span>
               </div>
-            );
+            )
           })
         ) : (
           <p className="text-sm text-zinc-500">No calendars found.</p>
         )}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ManagedSources;
+export default ManageCalendars

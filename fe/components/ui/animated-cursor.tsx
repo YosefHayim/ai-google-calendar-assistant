@@ -1,76 +1,69 @@
-'use client';
+'use client'
 
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  useRef,
-  ReactNode,
-} from 'react';
-import { motion, useMotionValue, useSpring, AnimatePresence } from 'framer-motion';
-import { cn } from '@/components/../lib/utils';
+import React, { createContext, useContext, useEffect, useState, useRef, ReactNode } from 'react'
+import { motion, useMotionValue, useSpring, AnimatePresence } from 'framer-motion'
+import { cn } from '@/components/../lib/utils'
 
 interface CursorContextProps {
-  mouseX: any;
-  mouseY: any;
-  isVisible: boolean;
-  isHovering: boolean;
-  setIsHovering: (val: boolean) => void;
+  mouseX: any
+  mouseY: any
+  isVisible: boolean
+  isHovering: boolean
+  setIsHovering: (val: boolean) => void
 }
 
-const CursorContext = createContext<CursorContextProps | undefined>(undefined);
+const CursorContext = createContext<CursorContextProps | undefined>(undefined)
 
 // Fix: Use PropsWithChildren or explicit React.FC for better component typing
 export const CursorProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const mouseX = useMotionValue(-100);
-  const mouseY = useMotionValue(-100);
-  const [isVisible, setIsVisible] = useState(false);
-  const [isHovering, setIsHovering] = useState(false);
+  const mouseX = useMotionValue(-100)
+  const mouseY = useMotionValue(-100)
+  const [isVisible, setIsVisible] = useState(false)
+  const [isHovering, setIsHovering] = useState(false)
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      mouseX.set(e.clientX);
-      mouseY.set(e.clientY);
-      if (!isVisible) setIsVisible(true);
-    };
+      mouseX.set(e.clientX)
+      mouseY.set(e.clientY)
+      if (!isVisible) setIsVisible(true)
+    }
 
-    const handleMouseLeave = () => setIsVisible(false);
-    const handleMouseEnter = () => setIsVisible(true);
+    const handleMouseLeave = () => setIsVisible(false)
+    const handleMouseEnter = () => setIsVisible(true)
 
-    window.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseleave', handleMouseLeave);
-    document.addEventListener('mouseenter', handleMouseEnter);
+    window.addEventListener('mousemove', handleMouseMove)
+    document.addEventListener('mouseleave', handleMouseLeave)
+    document.addEventListener('mouseenter', handleMouseEnter)
 
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseleave', handleMouseLeave);
-      document.removeEventListener('mouseenter', handleMouseEnter);
-    };
-  }, [isVisible, mouseX, mouseY]);
+      window.removeEventListener('mousemove', handleMouseMove)
+      document.removeEventListener('mouseleave', handleMouseLeave)
+      document.removeEventListener('mouseenter', handleMouseEnter)
+    }
+  }, [isVisible, mouseX, mouseY])
 
   return (
     <CursorContext.Provider value={{ mouseX, mouseY, isVisible, isHovering, setIsHovering }}>
       {children}
     </CursorContext.Provider>
-  );
-};
+  )
+}
 
 export const useCursor = () => {
-  const context = useContext(CursorContext);
-  if (!context) throw new Error('useCursor must be used within a CursorProvider');
-  return context;
-};
+  const context = useContext(CursorContext)
+  if (!context) throw new Error('useCursor must be used within a CursorProvider')
+  return context
+}
 
 /**
- * Main Cursor component. 
- * Updated to use raw MotionValues directly (mouseX, mouseY) instead of springs 
+ * Main Cursor component.
+ * Updated to use raw MotionValues directly (mouseX, mouseY) instead of springs
  * to ensure zero latency with the hardware cursor.
  * Z-index is set to 99999 to always stay on top of everything.
  */
 export const Cursor: React.FC<{ children: ReactNode; className?: string }> = ({ children, className }) => {
-  const { mouseX, mouseY, isVisible } = useCursor();
-  
+  const { mouseX, mouseY, isVisible } = useCursor()
+
   return (
     <AnimatePresence>
       {isVisible && (
@@ -85,19 +78,19 @@ export const Cursor: React.FC<{ children: ReactNode; className?: string }> = ({ 
         </motion.div>
       )}
     </AnimatePresence>
-  );
-};
+  )
+}
 
 /**
  * CursorFollow component for secondary effects.
  * Retains a spring for a smooth "trailing" feel.
  */
 export const CursorFollow: React.FC<{ children: ReactNode; className?: string }> = ({ children, className }) => {
-  const { mouseX, mouseY, isVisible } = useCursor();
-  
-  const springConfig = { damping: 30, stiffness: 150, mass: 0.8 };
-  const sx = useSpring(mouseX, springConfig);
-  const sy = useSpring(mouseY, springConfig);
+  const { mouseX, mouseY, isVisible } = useCursor()
+
+  const springConfig = { damping: 30, stiffness: 150, mass: 0.8 }
+  const sx = useSpring(mouseX, springConfig)
+  const sy = useSpring(mouseY, springConfig)
 
   return (
     <AnimatePresence>
@@ -113,5 +106,5 @@ export const CursorFollow: React.FC<{ children: ReactNode; className?: string }>
         </motion.div>
       )}
     </AnimatePresence>
-  );
-};
+  )
+}

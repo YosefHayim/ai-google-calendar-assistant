@@ -46,6 +46,7 @@ task-master generate                                         # Update task markd
 - `.env` - API keys for CLI usage
 
 **PRD File Format:** While both `.txt` and `.md` extensions work, **`.md` is recommended** because:
+
 - Markdown syntax highlighting in editors improves readability
 - Proper rendering when previewing in VS Code, GitHub, or other tools
 - Better collaboration through formatted documentation
@@ -112,38 +113,38 @@ Task Master provides an MCP server that Claude Code can connect to. Configure in
 
 Default: `core` (7 tools). Set via `TASK_MASTER_TOOLS` env var.
 
-| Tier | Count | Tools |
-|------|-------|-------|
-| `core` | 7 | `get_tasks`, `next_task`, `get_task`, `set_task_status`, `update_subtask`, `parse_prd`, `expand_task` |
-| `standard` | 14 | core + `initialize_project`, `analyze_project_complexity`, `expand_all`, `add_subtask`, `remove_task`, `add_task`, `complexity_report` |
-| `all` | 44+ | standard + dependencies, tags, research, autopilot, scoping, models, rules |
+| Tier       | Count | Tools                                                                                                                                  |
+| ---------- | ----- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `core`     | 7     | `get_tasks`, `next_task`, `get_task`, `set_task_status`, `update_subtask`, `parse_prd`, `expand_task`                                  |
+| `standard` | 14    | core + `initialize_project`, `analyze_project_complexity`, `expand_all`, `add_subtask`, `remove_task`, `add_task`, `complexity_report` |
+| `all`      | 44+   | standard + dependencies, tags, research, autopilot, scoping, models, rules                                                             |
 
 **Upgrade when tool unavailable:** Edit MCP config, change `TASK_MASTER_TOOLS` from `"core"` to `"standard"` or `"all"`, restart MCP.
 
 ### Essential MCP Tools
 
 ```javascript
-help; // = shows available taskmaster commands
+help // = shows available taskmaster commands
 // Project setup
-initialize_project; // = task-master init
-parse_prd; // = task-master parse-prd
+initialize_project // = task-master init
+parse_prd // = task-master parse-prd
 
 // Daily workflow
-get_tasks; // = task-master list
-next_task; // = task-master next
-get_task; // = task-master show <id>
-set_task_status; // = task-master set-status
+get_tasks // = task-master list
+next_task // = task-master next
+get_task // = task-master show <id>
+set_task_status // = task-master set-status
 
 // Task management
-add_task; // = task-master add-task
-expand_task; // = task-master expand
-update_task; // = task-master update-task
-update_subtask; // = task-master update-subtask
-update; // = task-master update
+add_task // = task-master add-task
+expand_task // = task-master expand
+update_task // = task-master update-task
+update_subtask // = task-master update-subtask
+update // = task-master update
 
 // Analysis
-analyze_project_complexity; // = task-master analyze-complexity
-complexity_report; // = task-master complexity-report
+analyze_project_complexity // = task-master analyze-complexity
+complexity_report // = task-master complexity-report
 ```
 
 ## Claude Code Workflow Integration

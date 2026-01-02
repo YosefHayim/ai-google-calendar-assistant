@@ -14,49 +14,49 @@ export const ENDPOINTS = {
    * User account management
    * Methods: DELETE
    */
-  USERS: "/api/users",
+  USERS: '/api/users',
 
   /**
    * Google OAuth callback handler
    * Methods: GET
    */
-  USERS_CALLBACK: "/api/users/callback",
+  USERS_CALLBACK: '/api/users/callback',
 
   /**
    * Get authenticated user information
    * Methods: GET
    */
-  USERS_GET_USER: "/api/users/get-user",
+  USERS_GET_USER: '/api/users/get-user',
 
   /**
    * User sign in with email/password
    * Methods: POST
    */
-  USERS_SIGNIN: "/api/users/signin",
+  USERS_SIGNIN: '/api/users/signin',
 
   /**
    * User registration with email/password
    * Methods: POST
    */
-  USERS_SIGNUP: "/api/users/signup",
+  USERS_SIGNUP: '/api/users/signup',
 
   /**
    * Initiate Google OAuth sign-up/sign-in flow
    * Methods: GET
    */
-  USERS_SIGNUP_GOOGLE: "/api/users/signup/google",
+  USERS_SIGNUP_GOOGLE: '/api/users/signup/google',
 
   /**
    * Initiate GitHub OAuth sign-up flow
    * Methods: GET
    */
-  USERS_SIGNUP_GITHUB: "/api/users/signup/github",
+  USERS_SIGNUP_GITHUB: '/api/users/signup/github',
 
   /**
    * Verify user email via OTP token
    * Methods: POST
    */
-  USERS_VERIFY_OTP: "/api/users/verify-user-by-email-otp",
+  USERS_VERIFY_OTP: '/api/users/verify-user-by-email-otp',
 
   // ============================================
   // CALENDAR ENDPOINTS
@@ -67,7 +67,7 @@ export const ENDPOINTS = {
    * Methods: GET
    * Query params: customCalendars=true|false
    */
-  CALENDARS: "/api/calendars",
+  CALENDARS: '/api/calendars',
 
   /**
    * Get calendar by ID
@@ -80,7 +80,7 @@ export const ENDPOINTS = {
    * Get general calendar settings (timezone)
    * Methods: GET
    */
-  CALENDARS_SETTINGS: "/api/calendars/settings",
+  CALENDARS_SETTINGS: '/api/calendars/settings',
 
   /**
    * Get calendar-specific settings by ID
@@ -93,7 +93,7 @@ export const ENDPOINTS = {
    * Get available calendar colors
    * Methods: GET
    */
-  CALENDARS_COLORS: "/api/calendars/colors",
+  CALENDARS_COLORS: '/api/calendars/colors',
 
   /**
    * Get specific color information by ID
@@ -106,7 +106,7 @@ export const ENDPOINTS = {
    * Get calendar timezone information
    * Methods: GET
    */
-  CALENDARS_TIMEZONES: "/api/calendars/timezones",
+  CALENDARS_TIMEZONES: '/api/calendars/timezones',
 
   /**
    * Get timezone for specific calendar
@@ -119,14 +119,14 @@ export const ENDPOINTS = {
    * Query free/busy information for next 24 hours
    * Methods: GET
    */
-  CALENDARS_FREEBUSY: "/api/calendars/freebusy",
+  CALENDARS_FREEBUSY: '/api/calendars/freebusy',
 
   /**
    * List all calendars on user's calendar list
    * Methods: GET
    * Query params: minAccessRole, showDeleted, showHidden
    */
-  CALENDARS_LIST: "/api/calendars/list",
+  CALENDARS_LIST: '/api/calendars/list',
 
   // ============================================
   // EVENT ENDPOINTS
@@ -136,7 +136,7 @@ export const ENDPOINTS = {
    * Events collection endpoint
    * Methods: GET (list all), POST (create)
    */
-  EVENTS: "/api/events",
+  EVENTS: '/api/events',
 
   /**
    * Single event operations by ID
@@ -150,25 +150,25 @@ export const ENDPOINTS = {
    * Methods: GET
    * Query params: startDate, endDate
    */
-  EVENTS_ANALYTICS: "/api/events/analytics",
+  EVENTS_ANALYTICS: '/api/events/analytics',
 
   /**
    * Quick add event from text
    * Methods: POST
    */
-  EVENTS_QUICK_ADD: "/api/events/quick-add",
+  EVENTS_QUICK_ADD: '/api/events/quick-add',
 
   /**
    * Watch events for changes
    * Methods: POST
    */
-  EVENTS_WATCH: "/api/events/watch",
+  EVENTS_WATCH: '/api/events/watch',
 
   /**
    * Move event between calendars
    * Methods: POST
    */
-  EVENTS_MOVE: "/api/events/move",
+  EVENTS_MOVE: '/api/events/move',
 
   // ============================================
   // WHATSAPP ENDPOINTS
@@ -179,7 +179,7 @@ export const ENDPOINTS = {
    * Methods: GET
    * Query params: hub.mode, hub.challenge, hub.verify_token
    */
-  WHATSAPP: "/api/whatsapp",
-} as const;
+  WHATSAPP: '/api/whatsapp',
+} as const
 
-export type EndpointsType = typeof ENDPOINTS;
+export type EndpointsType = typeof ENDPOINTS

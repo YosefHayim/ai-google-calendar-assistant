@@ -1,108 +1,112 @@
-"use client";
+'use client'
 
-import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight, BadgeCheck, Minus, Plus, Zap } from "lucide-react";
-import React, { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from 'framer-motion'
+import { ArrowRight, BadgeCheck, Minus, Plus, Zap } from 'lucide-react'
+import React, { useEffect, useRef, useState } from 'react'
 
-import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
-import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button";
-import NumberFlow from "@number-flow/react";
-import { cn } from "@/components/../lib/utils";
-import { useRouter } from "next/navigation";
+import { Badge } from '@/components/ui/badge'
+import { Card } from '@/components/ui/card'
+import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button'
+import NumberFlow from '@number-flow/react'
+import { cn } from '@/components/../lib/utils'
+import { useRouter } from 'next/navigation'
 
 export interface PricingTier {
-  id: string;
-  name: string;
-  price: Record<string, number | string>;
-  description: string;
-  features: string[];
-  cta: string;
-  highlighted?: boolean;
-  popular?: boolean;
-  isCustom?: boolean;
+  id: string
+  name: string
+  price: Record<string, number | string>
+  description: string
+  features: string[]
+  cta: string
+  highlighted?: boolean
+  popular?: boolean
+  isCustom?: boolean
 }
 
 interface PricingCardProps {
-  tier: PricingTier;
-  paymentFrequency: string;
+  tier: PricingTier
+  paymentFrequency: string
 }
 
-const MAX_CUSTOM_INTERACTIONS = 10000;
-const MIN_CUSTOM_INTERACTIONS = 100;
+const MAX_CUSTOM_INTERACTIONS = 10000
+const MIN_CUSTOM_INTERACTIONS = 100
 
 export const PricingCard: React.FC<PricingCardProps> = ({ tier, paymentFrequency }) => {
-  const [customAmount, setCustomAmount] = useState<number>(1000);
-  const [isEditing, setIsEditing] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const router = useRouter();
+  const [customAmount, setCustomAmount] = useState<number>(1000)
+  const [isEditing, setIsEditing] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const inputRef = useRef<HTMLInputElement>(null)
+  const router = useRouter()
 
-  const isPerUse = paymentFrequency === "per use";
-  const isCustomTier = tier.isCustom && isPerUse;
+  const isPerUse = paymentFrequency === 'per use'
+  const isCustomTier = tier.isCustom && isPerUse
 
   // Logic: $1 = 100 interactions for the Custom tier when in 'per use' mode
-  const currentPrice = isCustomTier ? customAmount / 100 : tier.price[paymentFrequency];
+  const currentPrice = isCustomTier ? customAmount / 100 : tier.price[paymentFrequency]
 
-  const isHighlighted = tier.highlighted;
-  const isPopular = tier.popular;
+  const isHighlighted = tier.highlighted
+  const isPopular = tier.popular
 
-  const getPrimaryTextColor = () => (isHighlighted ? "text-white dark:text-zinc-950" : "text-zinc-900 dark:text-zinc-100");
+  const getPrimaryTextColor = () =>
+    isHighlighted ? 'text-white dark:text-zinc-950' : 'text-zinc-900 dark:text-zinc-100'
 
-  const getSecondaryTextColor = () => (isHighlighted ? "text-white/70 dark:text-zinc-950/70" : "text-zinc-500 dark:text-zinc-400");
+  const getSecondaryTextColor = () =>
+    isHighlighted ? 'text-white/70 dark:text-zinc-950/70' : 'text-zinc-500 dark:text-zinc-400'
 
   const adjustAmount = (delta: number) => {
-    setCustomAmount((prev) => Math.max(MIN_CUSTOM_INTERACTIONS, Math.min(MAX_CUSTOM_INTERACTIONS, prev + delta)));
-  };
+    setCustomAmount((prev) => Math.max(MIN_CUSTOM_INTERACTIONS, Math.min(MAX_CUSTOM_INTERACTIONS, prev + delta)))
+  }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = parseInt(e.target.value.replace(/\D/g, ""));
+    const val = parseInt(e.target.value.replace(/\D/g, ''))
     if (!isNaN(val)) {
-      setCustomAmount(Math.min(MAX_CUSTOM_INTERACTIONS, val));
-    } else if (e.target.value === "") {
-      setCustomAmount(0);
+      setCustomAmount(Math.min(MAX_CUSTOM_INTERACTIONS, val))
+    } else if (e.target.value === '') {
+      setCustomAmount(0)
     }
-  };
+  }
 
   const handleBlur = () => {
-    setIsEditing(false);
-    if (customAmount < MIN_CUSTOM_INTERACTIONS) setCustomAmount(MIN_CUSTOM_INTERACTIONS);
-  };
+    setIsEditing(false)
+    if (customAmount < MIN_CUSTOM_INTERACTIONS) setCustomAmount(MIN_CUSTOM_INTERACTIONS)
+  }
 
   const handleGetStarted = () => {
-    setIsLoading(true);
+    setIsLoading(true)
     // Redirect to register page
-    router.push("/register");
-  };
+    router.push('/register')
+  }
 
   // Determine the subtitle label dynamically
   const getFrequencyLabel = () => {
-    if (isCustomTier) return "Custom Pack Total";
-    if (isPerUse) return "One-time Purchase";
-    return "Per month / user";
-  };
+    if (isCustomTier) return 'Custom Pack Total'
+    if (isPerUse) return 'One-time Purchase'
+    return 'Per month / user'
+  }
 
   return (
     <div className="relative">
       <Card
         className={cn(
-          "relative flex flex-col gap-8 overflow-hidden p-6 transition-all duration-300 h-full",
+          'relative flex flex-col gap-8 overflow-hidden p-6 transition-all duration-300 h-full',
           isHighlighted
-            ? "bg-zinc-950 text-white dark:bg-primary dark:text-zinc-950 border-none shadow-2xl"
-            : "bg-white text-zinc-900 dark:bg-zinc-900 dark:text-zinc-100",
-          isPopular && "ring-2 ring-primary"
+            ? 'bg-zinc-950 text-white dark:bg-primary dark:text-zinc-950 border-none shadow-2xl'
+            : 'bg-white text-zinc-900 dark:bg-zinc-900 dark:text-zinc-100',
+          isPopular && 'ring-2 ring-primary',
         )}
       >
         {isHighlighted && <HighlightedBackground />}
         {isPopular && <PopularBackground />}
 
-        <h2 className={cn("flex items-center gap-3 text-xl font-medium capitalize z-10", getPrimaryTextColor())}>
+        <h2 className={cn('flex items-center gap-3 text-xl font-medium capitalize z-10', getPrimaryTextColor())}>
           {tier.name}
           {isPopular && (
             <Badge
               className={cn(
-                "mt-1 z-10 border-primary/30",
-                isHighlighted ? "bg-white/10 text-white dark:bg-zinc-950/20 dark:text-zinc-950" : "bg-primary/20 text-primary"
+                'mt-1 z-10 border-primary/30',
+                isHighlighted
+                  ? 'bg-white/10 text-white dark:bg-zinc-950/20 dark:text-zinc-950'
+                  : 'bg-primary/20 text-primary',
               )}
             >
               🔥 Top Value
@@ -110,21 +114,28 @@ export const PricingCard: React.FC<PricingCardProps> = ({ tier, paymentFrequency
           )}
         </h2>
 
-        <div className={cn("relative z-10 h-16 flex flex-col justify-center", getPrimaryTextColor())}>
+        <div className={cn('relative z-10 h-16 flex flex-col justify-center', getPrimaryTextColor())}>
           <AnimatePresence mode="wait">
-            {typeof currentPrice === "number" ? (
-              <motion.div key={`${tier.id}-${paymentFrequency}`} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
+            {typeof currentPrice === 'number' ? (
+              <motion.div
+                key={`${tier.id}-${paymentFrequency}`}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+              >
                 <NumberFlow
                   format={{
-                    style: "currency",
-                    currency: "USD",
+                    style: 'currency',
+                    currency: 'USD',
                     minimumFractionDigits: 0,
                     maximumFractionDigits: 0,
                   }}
                   value={currentPrice}
                   className="text-4xl font-medium"
                 />
-                <p className={cn("-mt-1 text-[10px] font-medium uppercase tracking-widest", getSecondaryTextColor())}>{getFrequencyLabel()}</p>
+                <p className={cn('-mt-1 text-[10px] font-medium uppercase tracking-widest', getSecondaryTextColor())}>
+                  {getFrequencyLabel()}
+                </p>
               </motion.div>
             ) : (
               <motion.div
@@ -134,7 +145,9 @@ export const PricingCard: React.FC<PricingCardProps> = ({ tier, paymentFrequency
                 exit={{ opacity: 0, y: -10 }}
               >
                 <h1 className="text-4xl font-medium">{currentPrice}</h1>
-                <p className={cn("-mt-1 text-[10px] font-medium uppercase tracking-widest", getSecondaryTextColor())}>{getFrequencyLabel()}</p>
+                <p className={cn('-mt-1 text-[10px] font-medium uppercase tracking-widest', getSecondaryTextColor())}>
+                  {getFrequencyLabel()}
+                </p>
               </motion.div>
             )}
           </AnimatePresence>
@@ -144,7 +157,12 @@ export const PricingCard: React.FC<PricingCardProps> = ({ tier, paymentFrequency
           {isCustomTier && (
             <div className="space-y-2 p-4 rounded-2xl bg-white/5 border border-white/10 animate-in fade-in slide-in-from-bottom-2 duration-500">
               <div className="flex items-center justify-between">
-                <label className={cn("text-[10px] font-bold uppercase tracking-widest opacity-70", isHighlighted ? "text-white" : "text-zinc-500")}>
+                <label
+                  className={cn(
+                    'text-[10px] font-bold uppercase tracking-widest opacity-70',
+                    isHighlighted ? 'text-white' : 'text-zinc-500',
+                  )}
+                >
                   Custom Pack Size
                 </label>
                 <Zap className="w-3 h-3 text-amber-400 animate-pulse" />
@@ -168,8 +186,8 @@ export const PricingCard: React.FC<PricingCardProps> = ({ tier, paymentFrequency
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={() => {
-                          setIsEditing(true);
-                          setTimeout(() => inputRef.current?.focus(), 0);
+                          setIsEditing(true)
+                          setTimeout(() => inputRef.current?.focus(), 0)
                         }}
                         className="text-2xl font-bold font-mono tracking-tighter truncate w-full text-center"
                       >
@@ -181,11 +199,11 @@ export const PricingCard: React.FC<PricingCardProps> = ({ tier, paymentFrequency
                         ref={inputRef}
                         type="text"
                         inputMode="numeric"
-                        value={customAmount === 0 ? "" : customAmount}
+                        value={customAmount === 0 ? '' : customAmount}
                         onChange={handleInputChange}
                         onBlur={handleBlur}
                         onFocus={(e) => e.target.select()}
-                        onKeyDown={(e) => e.key === "Enter" && handleBlur()}
+                        onKeyDown={(e) => e.key === 'Enter' && handleBlur()}
                         className="w-full bg-transparent text-center text-2xl font-bold font-mono tracking-tighter outline-none border-b border-primary/50"
                       />
                     )}
@@ -219,42 +237,48 @@ export const PricingCard: React.FC<PricingCardProps> = ({ tier, paymentFrequency
                 />
               </div>
 
-              <p className="text-[9px] text-center font-medium text-white/50 italic">Scaling power: $1 = 100 AI actions</p>
+              <p className="text-[9px] text-center font-medium text-white/50 italic">
+                Scaling power: $1 = 100 AI actions
+              </p>
             </div>
           )}
 
-          <h3 className={cn("text-sm font-medium opacity-90 leading-relaxed", getSecondaryTextColor())}>{tier.description}</h3>
+          <h3 className={cn('text-sm font-medium opacity-90 leading-relaxed', getSecondaryTextColor())}>
+            {tier.description}
+          </h3>
           <ul className="space-y-2">
             {tier.features
               .filter((f) => {
-                if (isPerUse) return !f.toLowerCase().includes("subscription:");
-                return !f.toLowerCase().includes("per use:");
+                if (isPerUse) return !f.toLowerCase().includes('subscription:')
+                return !f.toLowerCase().includes('per use:')
               })
               .map((feature, index) => (
                 <li
                   key={index}
                   className={cn(
-                    "flex items-center gap-2 text-sm font-medium",
-                    isHighlighted ? "text-white/80 dark:text-zinc-950/80" : "text-zinc-600 dark:text-zinc-300"
+                    'flex items-center gap-2 text-sm font-medium',
+                    isHighlighted ? 'text-white/80 dark:text-zinc-950/80' : 'text-zinc-600 dark:text-zinc-300',
                   )}
                 >
-                  <BadgeCheck className={cn("h-4 w-4 shrink-0", isHighlighted ? "text-white dark:text-zinc-950" : "text-primary")} />
-                  {feature.replace(/Subscription:|Per Use:/gi, "").trim()}
+                  <BadgeCheck
+                    className={cn('h-4 w-4 shrink-0', isHighlighted ? 'text-white dark:text-zinc-950' : 'text-primary')}
+                  />
+                  {feature.replace(/Subscription:|Per Use:/gi, '').trim()}
                 </li>
               ))}
           </ul>
         </div>
 
         <InteractiveHoverButton
-          text={isPerUse ? "Buy Credit Pack" : tier.cta}
+          text={isPerUse ? 'Buy Credit Pack' : tier.cta}
           loadingText="Redirecting..."
           isLoading={isLoading}
           Icon={<ArrowRight className="w-5 h-5" />}
           className={cn(
-            "w-full z-10 font-bold h-12",
+            'w-full z-10 font-bold h-12',
             isHighlighted
-              ? "bg-white text-zinc-950 hover:bg-white/90 dark:bg-zinc-950 dark:text-white dark:hover:bg-zinc-900 border-white dark:border-zinc-950"
-              : ""
+              ? 'bg-white text-zinc-950 hover:bg-white/90 dark:bg-zinc-950 dark:text-white dark:hover:bg-zinc-900 border-white dark:border-zinc-950'
+              : '',
           )}
           onClick={handleGetStarted}
         />
@@ -290,13 +314,13 @@ export const PricingCard: React.FC<PricingCardProps> = ({ tier, paymentFrequency
         }}
       />
     </div>
-  );
-};
+  )
+}
 
 const HighlightedBackground: React.FC = () => (
   <div className="absolute inset-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:45px_45px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)] pointer-events-none opacity-20" />
-);
+)
 
 const PopularBackground: React.FC = () => (
   <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(242,99,6,0.1),rgba(255,255,255,0))] dark:bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(242,99,6,0.1),rgba(0,0,0,0))] pointer-events-none" />
-);
+)

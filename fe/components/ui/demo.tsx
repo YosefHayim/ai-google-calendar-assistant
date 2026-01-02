@@ -1,13 +1,11 @@
-"use client";
-import React from "react";
-import { SparklesCore } from "@/components/ui/sparkles" // Adjusted import path
+'use client'
+import React from 'react'
+import { SparklesCore } from '@/components/ui/sparkles' // Adjusted import path
 
 export function SparklesPreview() {
   return (
     <div className="h-[40rem] w-full bg-black flex flex-col items-center justify-center overflow-hidden rounded-md">
-      <h1 className="md:text-7xl text-3xl lg:text-9xl font-bold text-center text-white relative z-20">
-        Acme
-      </h1>
+      <h1 className="md:text-7xl text-3xl lg:text-9xl font-bold text-center text-white relative z-20">Acme</h1>
       <div className="w-[40rem] h-40 relative">
         {/* Gradients */}
         <div className="absolute inset-x-20 top-0 bg-gradient-to-r from-transparent via-indigo-500 to-transparent h-[2px] w-3/4 blur-sm" />
@@ -29,7 +27,7 @@ export function SparklesPreview() {
         <div className="absolute inset-0 w-full h-full bg-black [mask-image:radial-gradient(350px_200px_at_top,transparent_20%,white)]"></div>
       </div>
     </div>
-  );
+  )
 }
 
 export function SparklesPreviewDark() {
@@ -47,11 +45,9 @@ export function SparklesPreviewDark() {
           speed={1}
         />
       </div>
-      <h1 className="md:text-7xl text-3xl lg:text-9xl font-bold text-center text-white relative z-20">
-        Build faster
-      </h1>
+      <h1 className="md:text-7xl text-3xl lg:text-9xl font-bold text-center text-white relative z-20">Build faster</h1>
     </div>
-  );
+  )
 }
 
 export function SparklesPreviewColorful() {
@@ -73,10 +69,8 @@ export function SparklesPreviewColorful() {
         <h1 className="md:text-7xl text-3xl lg:text-9xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-400">
           The Future
         </h1>
-        <p className="text-neutral-300 cursor-default text-center">
-          is brighter than you think
-        </p>
+        <p className="text-neutral-300 cursor-default text-center">is brighter than you think</p>
       </div>
     </div>
-  );
+  )
 }

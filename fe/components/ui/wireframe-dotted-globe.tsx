@@ -1,9 +1,9 @@
-'use client';
+'use client'
 
-"use client"
+'use client'
 
-import { useEffect, useRef, useState } from "react"
-import * as d3 from "d3"
+import { useEffect, useRef, useState } from 'react'
+import * as d3 from 'd3'
 
 interface RotatingEarthProps {
   width?: number
@@ -12,11 +12,11 @@ interface RotatingEarthProps {
   hideControls?: boolean
 }
 
-export default function RotatingEarth({ 
-  width = 800, 
-  height = 600, 
-  className = "",
-  hideControls = false
+export default function RotatingEarth({
+  width = 800,
+  height = 600,
+  className = '',
+  hideControls = false,
 }: RotatingEarthProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -26,7 +26,7 @@ export default function RotatingEarth({
     if (!canvasRef.current) return
 
     const canvas = canvasRef.current
-    const context = canvas.getContext("2d")
+    const context = canvas.getContext('2d')
     if (!context) return
 
     // Set up responsive dimensions
@@ -69,7 +69,7 @@ export default function RotatingEarth({
     const pointInFeature = (point: [number, number], feature: any): boolean => {
       const geometry = feature.geometry
 
-      if (geometry.type === "Polygon") {
+      if (geometry.type === 'Polygon') {
         const coordinates = geometry.coordinates
         // Check if point is in outer ring
         if (!pointInPolygon(point, coordinates[0])) {
@@ -82,7 +82,7 @@ export default function RotatingEarth({
           }
         }
         return true
-      } else if (geometry.type === "MultiPolygon") {
+      } else if (geometry.type === 'MultiPolygon') {
         // Check each polygon in the MultiPolygon
         for (const polygon of geometry.coordinates) {
           // Check if point is in outer ring
@@ -146,13 +146,13 @@ export default function RotatingEarth({
       // Draw ocean (globe background) - make it transparent/match theme
       context.beginPath()
       context.arc(containerWidth / 2, containerHeight / 2, currentScale, 0, 2 * Math.PI)
-      context.fillStyle = "rgba(0,0,0,0)" // Fully transparent ocean for bento grid use
+      context.fillStyle = 'rgba(0,0,0,0)' // Fully transparent ocean for bento grid use
       context.fill()
-      
+
       // Globe border
       context.beginPath()
       context.arc(containerWidth / 2, containerHeight / 2, currentScale, 0, 2 * Math.PI)
-      context.strokeStyle = "#ffffff"
+      context.strokeStyle = '#ffffff'
       context.lineWidth = 1 * scaleFactor
       context.globalAlpha = 0.1
       context.stroke()
@@ -163,7 +163,7 @@ export default function RotatingEarth({
         const graticule = d3.geoGraticule()
         context.beginPath()
         path(graticule())
-        context.strokeStyle = "#ffffff"
+        context.strokeStyle = '#ffffff'
         context.lineWidth = 0.5 * scaleFactor
         context.globalAlpha = 0.1
         context.stroke()
@@ -174,7 +174,7 @@ export default function RotatingEarth({
         landFeatures.features.forEach((feature: any) => {
           path(feature)
         })
-        context.strokeStyle = "#ffffff"
+        context.strokeStyle = '#ffffff'
         context.lineWidth = 0.8 * scaleFactor
         context.globalAlpha = 0.2
         context.stroke()
@@ -192,7 +192,7 @@ export default function RotatingEarth({
           ) {
             context.beginPath()
             context.arc(projected[0], projected[1], 1.2 * scaleFactor, 0, 2 * Math.PI)
-            context.fillStyle = "#f26306" // Ally Primary Orange for dots
+            context.fillStyle = '#f26306' // Ally Primary Orange for dots
             context.globalAlpha = 0.4
             context.fill()
             context.globalAlpha = 1
@@ -206,9 +206,9 @@ export default function RotatingEarth({
         setIsLoading(true)
 
         const response = await fetch(
-          "https://raw.githubusercontent.com/martynafford/natural-earth-geojson/refs/heads/master/110m/physical/ne_110m_land.json",
+          'https://raw.githubusercontent.com/martynafford/natural-earth-geojson/refs/heads/master/110m/physical/ne_110m_land.json',
         )
-        if (!response.ok) throw new Error("Failed to load land data")
+        if (!response.ok) throw new Error('Failed to load land data')
 
         landFeatures = await response.json()
 
@@ -223,7 +223,7 @@ export default function RotatingEarth({
         render()
         setIsLoading(false)
       } catch (err) {
-        setError("Failed to load land map data")
+        setError('Failed to load land map data')
         setIsLoading(false)
       }
     }
@@ -245,7 +245,7 @@ export default function RotatingEarth({
     const rotationTimer = d3.timer(rotate)
 
     const handleMouseDown = (event: MouseEvent) => {
-      if (hideControls) return;
+      if (hideControls) return
       autoRotate = false
       const startX = event.clientX
       const startY = event.clientY
@@ -265,20 +265,20 @@ export default function RotatingEarth({
       }
 
       const handleMouseUp = () => {
-        document.removeEventListener("mousemove", handleMouseMove)
-        document.removeEventListener("mouseup", handleMouseUp)
+        document.removeEventListener('mousemove', handleMouseMove)
+        document.removeEventListener('mouseup', handleMouseUp)
 
         setTimeout(() => {
           autoRotate = true
         }, 10)
       }
 
-      document.addEventListener("mousemove", handleMouseMove)
-      document.addEventListener("mouseup", handleMouseUp)
+      document.addEventListener('mousemove', handleMouseMove)
+      document.addEventListener('mouseup', handleMouseUp)
     }
 
     const handleWheel = (event: WheelEvent) => {
-      if (hideControls) return;
+      if (hideControls) return
       event.preventDefault()
       const scaleFactor = event.deltaY > 0 ? 0.9 : 1.1
       const newRadius = Math.max(radius * 0.5, Math.min(radius * 3, projection.scale() * scaleFactor))
@@ -286,8 +286,8 @@ export default function RotatingEarth({
       render()
     }
 
-    canvas.addEventListener("mousedown", handleMouseDown)
-    canvas.addEventListener("wheel", handleWheel, { passive: false })
+    canvas.addEventListener('mousedown', handleMouseDown)
+    canvas.addEventListener('wheel', handleWheel, { passive: false })
 
     // Load the world data
     loadWorldData()
@@ -295,8 +295,8 @@ export default function RotatingEarth({
     // Cleanup
     return () => {
       rotationTimer.stop()
-      canvas.removeEventListener("mousedown", handleMouseDown)
-      canvas.removeEventListener("wheel", handleWheel)
+      canvas.removeEventListener('mousedown', handleMouseDown)
+      canvas.removeEventListener('wheel', handleWheel)
     }
   }, [width, height, hideControls])
 
@@ -313,11 +313,7 @@ export default function RotatingEarth({
 
   return (
     <div className={`relative ${className}`}>
-      <canvas
-        ref={canvasRef}
-        className="w-full h-auto"
-        style={{ maxWidth: "100%", height: "auto" }}
-      />
+      <canvas ref={canvasRef} className="w-full h-auto" style={{ maxWidth: '100%', height: 'auto' }} />
       {!hideControls && (
         <div className="absolute bottom-4 left-4 text-[10px] text-zinc-400 font-bold uppercase tracking-widest px-2 py-1 rounded bg-black/50 backdrop-blur-sm">
           Drag to rotate • Scroll to zoom

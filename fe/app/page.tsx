@@ -1,14 +1,14 @@
-"use client";
+'use client'
 
-import { ArrowRight, Calendar, Clock, Mic, Sparkles } from "lucide-react";
+import { ArrowRight, Calendar, Clock, Mic, Sparkles } from 'lucide-react'
 
-import BentoGridSection from "@/components/marketing/BentoGridSection";
-import FAQs from "@/components/marketing/FAQs";
-import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button";
-import Link from "next/link";
-import MarketingLayout from "@/components/marketing/MarketingLayout";
-import Testimonials from "@/components/marketing/Testimonials";
-import UseCaseGrid from "@/components/marketing/UseCaseGrid";
+import BentoGridSection from '@/components/marketing/BentoGridSection'
+import FAQs from '@/components/marketing/FAQs'
+import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button'
+import Link from 'next/link'
+import MarketingLayout from '@/components/marketing/MarketingLayout'
+import Testimonials from '@/components/marketing/Testimonials'
+import UseCaseGrid from '@/components/marketing/UseCaseGrid'
 
 export default function HomePage() {
   return (
@@ -27,7 +27,8 @@ export default function HomePage() {
             <span className="text-primary">AI Secretary</span>
           </h1>
           <p className="text-xl md:text-2xl text-zinc-500 dark:text-zinc-400 mb-12 max-w-2xl mx-auto font-medium">
-            Manage your Google Calendar with natural voice commands. Schedule, reschedule, and optimize your time effortlessly.
+            Manage your Google Calendar with natural voice commands. Schedule, reschedule, and optimize your time
+            effortlessly.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/register">
@@ -46,8 +47,12 @@ export default function HomePage() {
       <section className="py-24 px-6">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-medium text-zinc-900 dark:text-zinc-100 mb-4">Everything you need to manage your time</h2>
-            <p className="text-lg text-zinc-500 dark:text-zinc-400 max-w-2xl mx-auto">Ally combines AI intelligence with seamless calendar integration</p>
+            <h2 className="text-3xl md:text-4xl font-medium text-zinc-900 dark:text-zinc-100 mb-4">
+              Everything you need to manage your time
+            </h2>
+            <p className="text-lg text-zinc-500 dark:text-zinc-400 max-w-2xl mx-auto">
+              Ally combines AI intelligence with seamless calendar integration
+            </p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="p-8 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
@@ -55,21 +60,27 @@ export default function HomePage() {
                 <Mic className="w-6 h-6 text-primary" />
               </div>
               <h3 className="text-xl font-medium text-zinc-900 dark:text-zinc-100 mb-3">Voice Commands</h3>
-              <p className="text-zinc-500 dark:text-zinc-400">Schedule meetings, set reminders, and manage your calendar using natural voice commands.</p>
+              <p className="text-zinc-500 dark:text-zinc-400">
+                Schedule meetings, set reminders, and manage your calendar using natural voice commands.
+              </p>
             </div>
             <div className="p-8 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
               <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
                 <Calendar className="w-6 h-6 text-primary" />
               </div>
               <h3 className="text-xl font-medium text-zinc-900 dark:text-zinc-100 mb-3">Smart Scheduling</h3>
-              <p className="text-zinc-500 dark:text-zinc-400">AI-powered scheduling that finds the best times for your meetings and appointments.</p>
+              <p className="text-zinc-500 dark:text-zinc-400">
+                AI-powered scheduling that finds the best times for your meetings and appointments.
+              </p>
             </div>
             <div className="p-8 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
               <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
                 <Clock className="w-6 h-6 text-primary" />
               </div>
               <h3 className="text-xl font-medium text-zinc-900 dark:text-zinc-100 mb-3">Time Optimization</h3>
-              <p className="text-zinc-500 dark:text-zinc-400">Analyze your schedule patterns and get insights to maximize productivity.</p>
+              <p className="text-zinc-500 dark:text-zinc-400">
+                Analyze your schedule patterns and get insights to maximize productivity.
+              </p>
             </div>
           </div>
         </div>
@@ -90,13 +101,17 @@ export default function HomePage() {
       {/* CTA Section */}
       <section className="py-24 px-6">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-medium text-zinc-900 dark:text-zinc-100 mb-6">Ready to transform your calendar experience?</h2>
-          <p className="text-lg text-zinc-500 dark:text-zinc-400 mb-8">Join thousands of professionals who have simplified their scheduling with Ally.</p>
+          <h2 className="text-3xl md:text-4xl font-medium text-zinc-900 dark:text-zinc-100 mb-6">
+            Ready to transform your calendar experience?
+          </h2>
+          <p className="text-lg text-zinc-500 dark:text-zinc-400 mb-8">
+            Join thousands of professionals who have simplified their scheduling with Ally.
+          </p>
           <Link href="/register">
             <InteractiveHoverButton text="Start for Free" className="h-14 px-8 text-lg" />
           </Link>
         </div>
       </section>
     </MarketingLayout>
-  );
+  )
 }

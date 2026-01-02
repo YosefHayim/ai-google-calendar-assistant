@@ -1,22 +1,22 @@
-'use client';
+'use client'
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'
 
 interface ImageCarouselProps {
-  images: string[];
-  interval?: number; // Time in ms for image change, default 5000ms
+  images: string[]
+  interval?: number // Time in ms for image change, default 5000ms
 }
 
 const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, interval = 5000 }) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0)
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
-    }, interval);
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length)
+    }, interval)
 
-    return () => clearInterval(timer);
-  }, [images.length, interval]);
+    return () => clearInterval(timer)
+  }, [images.length, interval])
 
   return (
     <div className="relative h-full w-full overflow-hidden rounded-md">
@@ -41,7 +41,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, interval = 5000 }
         ))}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ImageCarousel;
+export default ImageCarousel

@@ -1,79 +1,79 @@
-"use client";
+'use client'
 
-"use client";
+'use client'
 
-import { ArrowLeft, CheckCircle2, Lock, RefreshCw } from "lucide-react";
-import React, { useEffect, useRef, useState } from "react";
+import { ArrowLeft, CheckCircle2, Lock, RefreshCw } from 'lucide-react'
+import React, { useEffect, useRef, useState } from 'react'
 
-import { AllyLogo } from "@/components/shared/logo";
-import { BackgroundPattern1 } from "@/components/shared/BackgroundPattern1";
-import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button";
-import { useRouter } from "next/navigation";
+import { AllyLogo } from '@/components/shared/logo'
+import { BackgroundPattern1 } from '@/components/shared/BackgroundPattern1'
+import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button'
+import { useRouter } from 'next/navigation'
 
 const OTPVerificationPage: React.FC = () => {
-  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
-  const [isVerifying, setIsVerifying] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [timer, setTimer] = useState(30);
-  const [canResend, setCanResend] = useState(false);
-  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
-  const router = useRouter();
-  const phone = typeof window !== "undefined" ? localStorage.getItem("temp_reg_phone") : null;
+  const [otp, setOtp] = useState(['', '', '', '', '', ''])
+  const [isVerifying, setIsVerifying] = useState(false)
+  const [isSuccess, setIsSuccess] = useState(false)
+  const [timer, setTimer] = useState(30)
+  const [canResend, setCanResend] = useState(false)
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([])
+  const router = useRouter()
+  const phone = typeof window !== 'undefined' ? localStorage.getItem('temp_reg_phone') : null
 
   useEffect(() => {
-    let interval: ReturnType<typeof setInterval>;
+    let interval: ReturnType<typeof setInterval>
     if (timer > 0) {
       interval = setInterval(() => {
-        setTimer((t) => t - 1);
-      }, 1000);
+        setTimer((t) => t - 1)
+      }, 1000)
     } else {
-      setCanResend(true);
+      setCanResend(true)
     }
-    return () => clearInterval(interval);
-  }, [timer]);
+    return () => clearInterval(interval)
+  }, [timer])
 
   const handleChange = (index: number, value: string) => {
-    if (value.length > 1) value = value.slice(-1);
-    if (!/^\d*$/.test(value)) return;
+    if (value.length > 1) value = value.slice(-1)
+    if (!/^\d*$/.test(value)) return
 
-    const newOtp = [...otp];
-    newOtp[index] = value;
-    setOtp(newOtp);
+    const newOtp = [...otp]
+    newOtp[index] = value
+    setOtp(newOtp)
 
-    if (value !== "" && index < 5) {
-      inputRefs.current[index + 1]?.focus();
+    if (value !== '' && index < 5) {
+      inputRefs.current[index + 1]?.focus()
     }
-  };
+  }
 
   const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Backspace" && otp[index] === "" && index > 0) {
-      inputRefs.current[index - 1]?.focus();
+    if (e.key === 'Backspace' && otp[index] === '' && index > 0) {
+      inputRefs.current[index - 1]?.focus()
     }
-  };
+  }
 
   const handleVerify = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const code = otp.join("");
-    if (code.length < 6) return;
+    e.preventDefault()
+    const code = otp.join('')
+    if (code.length < 6) return
 
-    setIsVerifying(true);
+    setIsVerifying(true)
     setTimeout(() => {
-      setIsVerifying(false);
-      setIsSuccess(true);
+      setIsVerifying(false)
+      setIsSuccess(true)
       setTimeout(() => {
-        router.push("/dashboard");
-      }, 1500);
-    }, 2000);
-  };
+        router.push('/dashboard')
+      }, 1500)
+    }, 2000)
+  }
 
   const handleResend = () => {
-    if (!canResend) return;
-    setOtp(["", "", "", "", "", ""]);
-    setTimer(30);
-    setCanResend(false);
-    inputRefs.current[0]?.focus();
+    if (!canResend) return
+    setOtp(['', '', '', '', '', ''])
+    setTimer(30)
+    setCanResend(false)
+    inputRefs.current[0]?.focus()
     // Simulate resend API call
-  };
+  }
 
   return (
     <div className="min-h-screen bg-white dark:bg-[#030303] flex flex-col relative overflow-hidden">
@@ -83,11 +83,13 @@ const OTPVerificationPage: React.FC = () => {
             <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mb-6 shadow-xl shadow-primary/10 border border-primary/20">
               {isSuccess ? <CheckCircle2 className="w-10 h-10 text-emerald-500" /> : <Lock className="w-10 h-10" />}
             </div>
-            <h1 className="text-4xl font-medium tracking-tight text-zinc-900 dark:text-zinc-100 mb-4">{isSuccess ? "Identity Verified" : "Verify Protocol"}</h1>
+            <h1 className="text-4xl font-medium tracking-tight text-zinc-900 dark:text-zinc-100 mb-4">
+              {isSuccess ? 'Identity Verified' : 'Verify Protocol'}
+            </h1>
             <p className="text-zinc-500 dark:text-zinc-400 text-lg font-medium leading-relaxed">
               {isSuccess
-                ? "Security handshake complete. Redirecting to your dashboard..."
-                : `Enter the 6-digit code we sent to your device ending in ${phone?.slice(-4) || "..."}`}
+                ? 'Security handshake complete. Redirecting to your dashboard...'
+                : `Enter the 6-digit code we sent to your device ending in ${phone?.slice(-4) || '...'}`}
             </p>
           </div>
 
@@ -99,7 +101,7 @@ const OTPVerificationPage: React.FC = () => {
                     <input
                       key={index}
                       ref={(el) => {
-                        inputRefs.current[index] = el;
+                        inputRefs.current[index] = el
                       }}
                       type="text"
                       inputMode="numeric"
@@ -114,20 +116,22 @@ const OTPVerificationPage: React.FC = () => {
 
                 <div className="space-y-2 text-center">
                   <InteractiveHoverButton
-                    text={isVerifying ? "Verifying..." : "Verify Identity"}
+                    text={isVerifying ? 'Verifying...' : 'Verify Identity'}
                     className="w-full h-16 text-lg shadow-xl shadow-primary/20"
-                    disabled={isVerifying || otp.join("").length < 6}
+                    disabled={isVerifying || otp.join('').length < 6}
                   />
 
                   <div className="flex flex-col items-center gap-2">
                     <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
-                      Didn't receive code?{" "}
+                      Didn't receive code?{' '}
                       {canResend ? (
                         <button onClick={handleResend} type="button" className="text-primary hover:underline font-bold">
                           Send again
                         </button>
                       ) : (
-                        <span className="text-zinc-400 dark:text-zinc-600 italic">Retry in 0:{timer.toString().padStart(2, "0")}</span>
+                        <span className="text-zinc-400 dark:text-zinc-600 italic">
+                          Retry in 0:{timer.toString().padStart(2, '0')}
+                        </span>
                       )}
                     </p>
                   </div>
@@ -135,7 +139,7 @@ const OTPVerificationPage: React.FC = () => {
               </form>
 
               <button
-                onClick={() => router.push("/phone-registration")}
+                onClick={() => router.push('/phone-registration')}
                 className="mt-12 flex items-center justify-center gap-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors font-medium text-xs uppercase tracking-widest w-full"
               >
                 <ArrowLeft className="w-3.5 h-3.5" /> Edit Phone Number
@@ -150,7 +154,7 @@ const OTPVerificationPage: React.FC = () => {
         <span className="text-[10px] font-bold uppercase tracking-[0.3em]">Encrypted Session Active</span>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default OTPVerificationPage;
+export default OTPVerificationPage

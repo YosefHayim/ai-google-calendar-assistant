@@ -1,37 +1,25 @@
-"use client";
+'use client'
 
-import { Calendar, CalendarDays, Clock, Hourglass, Loader2, MapPin, Minus, TrendingDown, TrendingUp } from "lucide-react";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../ui/dialog";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+import {
+  Calendar,
+  CalendarDays,
+  CircleCheckBig,
+  CircleX,
+  Clock,
+  Hourglass,
+  Loader2,
+  MapPin,
+  Minus,
+  TrendingDown,
+  TrendingUp,
+} from 'lucide-react'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../ui/dialog'
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
 
-import type { CalendarEvent } from "@/types/api";
-import type { CalendarEventsDialogProps } from "@/types/analytics";
-import React from "react";
-import { format } from "date-fns";
-
-// Helper component (Preserved from your original code)
-const TrendBadge: React.FC<{ direction: "up" | "down" | "neutral"; percentage: number }> = ({ direction, percentage }) => {
-  if (direction === "neutral") {
-    return (
-      <span className="inline-flex items-center gap-1 text-xs font-bold text-zinc-500">
-        <Minus className="w-3 h-3" />
-        <span>0%</span>
-      </span>
-    );
-  }
-
-  const isPositive = direction === "up";
-  const colorClass = isPositive ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400";
-  const bgClass = isPositive ? "bg-emerald-50 dark:bg-emerald-900/30" : "bg-rose-50 dark:bg-rose-900/30";
-  const borderClass = isPositive ? "border-emerald-200 dark:border-emerald-800" : "border-rose-200 dark:border-rose-800";
-
-  return (
-    <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded border text-xs font-bold ${colorClass} ${bgClass} ${borderClass}`}>
-      {isPositive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-      <span>{Math.abs(percentage).toFixed(1)}%</span>
-    </span>
-  );
-};
+import type { CalendarEvent } from '@/types/api'
+import type { CalendarEventsDialogProps } from '@/types/analytics'
+import React from 'react'
+import { format } from 'date-fns'
 
 const CalendarEventsDialog: React.FC<CalendarEventsDialogProps> = ({
   isOpen,
@@ -48,34 +36,38 @@ const CalendarEventsDialog: React.FC<CalendarEventsDialogProps> = ({
   onEventClick,
 }) => {
   const getEventDuration = (event: CalendarEvent): string => {
-    if (!event.start || !event.end) return "N/A";
+    if (!event.start || !event.end) return 'N/A'
 
-    const start = event.start.dateTime ? new Date(event.start.dateTime) : event.start.date ? new Date(event.start.date) : null;
-    const end = event.end.dateTime ? new Date(event.end.dateTime) : event.end.date ? new Date(event.end.date) : null;
+    const start = event.start.dateTime
+      ? new Date(event.start.dateTime)
+      : event.start.date
+        ? new Date(event.start.date)
+        : null
+    const end = event.end.dateTime ? new Date(event.end.dateTime) : event.end.date ? new Date(event.end.date) : null
 
-    if (!start || !end) return "N/A";
+    if (!start || !end) return 'N/A'
 
-    const durationMs = end.getTime() - start.getTime();
-    const durationHours = durationMs / (1000 * 60 * 60);
+    const durationMs = end.getTime() - start.getTime()
+    const durationHours = durationMs / (1000 * 60 * 60)
 
     if (durationHours < 1) {
-      const minutes = Math.round(durationMs / (1000 * 60));
-      return `${minutes}m`;
+      const minutes = Math.round(durationMs / (1000 * 60))
+      return `${minutes}m`
     }
-    return `${durationHours.toFixed(1)}h`;
-  };
+    return `${durationHours.toFixed(1)}h`
+  }
 
   const formatEventTime = (event: CalendarEvent): string => {
-    if (!event.start) return "N/A";
+    if (!event.start) return 'N/A'
 
     if (event.start.dateTime) {
-      return format(new Date(event.start.dateTime), "MMM dd, yyyy 'at' h:mm a");
+      return format(new Date(event.start.dateTime), "MMM dd, yyyy 'at' h:mm a")
     }
     if (event.start.date) {
-      return format(new Date(event.start.date), "MMM dd, yyyy");
+      return format(new Date(event.start.date), 'MMM dd, yyyy')
     }
-    return "N/A";
-  };
+    return 'N/A'
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -88,7 +80,10 @@ const CalendarEventsDialog: React.FC<CalendarEventsDialogProps> = ({
 
         <DialogHeader className="p-6 pb-2">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-md flex items-center justify-center shrink-0" style={{ backgroundColor: calendarColor, opacity: 0.2 }}>
+            <div
+              className="w-10 h-10 rounded-md flex items-center justify-center shrink-0"
+              style={{ backgroundColor: calendarColor, opacity: 0.2 }}
+            >
               <CalendarDays size={12} style={{ color: calendarColor }} />
             </div>
             <div className="flex-1 text-left">
@@ -99,12 +94,12 @@ const CalendarEventsDialog: React.FC<CalendarEventsDialogProps> = ({
               <div className="text-xs text-zinc-500 dark:text-zinc-400 flex gap-2">
                 <Calendar size={12} style={{ color: calendarColor }} />
                 {dateRange?.from && dateRange?.to
-                  ? `Events from ${format(dateRange.from, "MMM dd, yyyy")} to ${format(dateRange.to, "MMM dd, yyyy")}`
-                  : "Events"}
+                  ? `Events from ${format(dateRange.from, 'MMM dd, yyyy')} to ${format(dateRange.to, 'MMM dd, yyyy')}`
+                  : 'Events'}
               </div>
               <p className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-2">
                 <Clock size={12} style={{ color: calendarColor }} />
-                Total hours: {totalHours?.toFixed(1) || "N/A"}h
+                Total hours: {totalHours?.toFixed(1) || 'N/A'}h
               </p>
             </div>
           </div>
@@ -119,20 +114,31 @@ const CalendarEventsDialog: React.FC<CalendarEventsDialogProps> = ({
           ) : events.length === 0 ? (
             <div className="flex flex-col items-center justify-center p-6 text-center">
               <CalendarDays size={50} style={{ color: calendarColor }} />
-              <p className="text-sm text-zinc-500 dark:text-zinc-400">No events found for this calendar in the selected date range.</p>
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                No events found for this calendar in the selected date range.
+              </p>
             </div>
           ) : (
             <ul className="space-y-2">
               {[...events]
                 .sort((a, b) => {
-                  const aStart = a.start?.dateTime ? new Date(a.start.dateTime).getTime() : a.start?.date ? new Date(a.start.date).getTime() : 0;
-                  const bStart = b.start?.dateTime ? new Date(b.start.dateTime).getTime() : b.start?.date ? new Date(b.start.date).getTime() : 0;
-                  return aStart - bStart;
+                  const aStart = a.start?.dateTime
+                    ? new Date(a.start.dateTime).getTime()
+                    : a.start?.date
+                      ? new Date(a.start.date).getTime()
+                      : 0
+                  const bStart = b.start?.dateTime
+                    ? new Date(b.start.dateTime).getTime()
+                    : b.start?.date
+                      ? new Date(b.start.date).getTime()
+                      : 0
+                  return aStart - bStart
                 })
                 .map((event) => {
-                  const eventTime = formatEventTime(event);
-                  const duration = getEventDuration(event);
-                  const statusColor = event.status === "confirmed" ? "#10b981" : event.status === "tentative" ? "#f59e0b" : "#ef4444";
+                  const eventTime = formatEventTime(event)
+                  const duration = getEventDuration(event)
+                  const statusColor =
+                    event.status === 'confirmed' ? '#10b981' : event.status === 'tentative' ? '#f59e0b' : '#ef4444'
 
                   return (
                     <HoverCard key={event.id}>
@@ -151,7 +157,9 @@ const CalendarEventsDialog: React.FC<CalendarEventsDialogProps> = ({
                             <CalendarDays className="w-4 h-4" style={{ color: calendarColor }} />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm font-semibold text-zinc-800 dark:text-zinc-200 line-clamp-1">{event.summary || "No Title"}</p>
+                            <p className="text-sm font-semibold text-zinc-800 dark:text-zinc-200 line-clamp-1">
+                              {event.summary || 'No Title'}
+                            </p>
                             <div className="flex items-center gap-2 mt-1 flex-wrap">
                               <div className="text-[10px] text-zinc-400 font-bold uppercase flex items-center gap-2">
                                 <Clock size={12} style={{ color: calendarColor }} />
@@ -165,26 +173,31 @@ const CalendarEventsDialog: React.FC<CalendarEventsDialogProps> = ({
                               {event.status && (
                                 <>
                                   <span className="text-[9px] font-bold text-zinc-500 dark:text-zinc-400">•</span>
-                                  <span
-                                    className="text-[9px] font-bold px-1.5 py-0.5 rounded border"
-                                    style={{
-                                      color: statusColor,
-                                      borderColor: statusColor,
-                                      backgroundColor: `${statusColor}15`,
-                                    }}
-                                  >
-                                    <span className="text-[9px] font-bold text-zinc-500 dark:text-zinc-400">{event.status}</span>
+                                  <span className="text-[9px] font-bold px-1.5 py-0.5">
+                                    <span className="text-[9px] font-bold text-zinc-500 dark:text-zinc-400">
+                                      {event.status === 'confirmed' ? (
+                                        <CircleCheckBig size={12} />
+                                      ) : (
+                                        <CircleX size={12} />
+                                      )}
+                                    </span>
                                   </span>
                                 </>
                               )}
                             </div>
-                            {event.location && <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1 line-clamp-1">{event.location}</p>}
+                            {event.location && (
+                              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1 line-clamp-1">
+                                {event.location}
+                              </p>
+                            )}
                           </div>
                         </li>
                       </HoverCardTrigger>
                       <HoverCardContent className="w-80">
                         <div className="space-y-2">
-                          <h4 className="font-semibold text-sm text-zinc-900 dark:text-zinc-100">{event.summary || "No Title"}</h4>
+                          <h4 className="font-semibold text-sm text-zinc-900 dark:text-zinc-100">
+                            {event.summary || 'No Title'}
+                          </h4>
                           <div className="space-y-2 text-xs text-zinc-600 dark:text-zinc-400">
                             <div className="flex items-center gap-2">
                               <Clock className="w-3 h-3" />
@@ -205,19 +218,23 @@ const CalendarEventsDialog: React.FC<CalendarEventsDialogProps> = ({
                                 <span>Status: {event.status}</span>
                               </div>
                             )}
-                            {event.description && <p className="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-2 mt-2">{event.description}</p>}
+                            {event.description && (
+                              <p className="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-2 mt-2">
+                                {event.description}
+                              </p>
+                            )}
                           </div>
                         </div>
                       </HoverCardContent>
                     </HoverCard>
-                  );
+                  )
                 })}
             </ul>
           )}
         </div>
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}
 
-export default CalendarEventsDialog;
+export default CalendarEventsDialog

@@ -1,24 +1,24 @@
-'use client';
+'use client'
 
-import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowUp, ChevronDown, Mic, X } from 'lucide-react';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion'
+import { ArrowUp, ChevronDown, Mic, X } from 'lucide-react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 
-import { AIVoiceInput } from '@/components/ui/ai-voice-input';
-import { VoicePoweredOrb } from '@/components/ui/voice-powered-orb';
-import { cn } from '@/lib/utils';
+import { AIVoiceInput } from '@/components/ui/ai-voice-input'
+import { VoicePoweredOrb } from '@/components/ui/voice-powered-orb'
+import { cn } from '@/lib/utils'
 
 declare global {
   interface Window {
-    SpeechRecognition: any;
-    webkitSpeechRecognition: any;
+    SpeechRecognition: any
+    webkitSpeechRecognition: any
   }
 }
 
 interface AIAllySidebarProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onOpen?: () => void;
+  isOpen: boolean
+  onClose: () => void
+  onOpen?: () => void
 }
 
 // Floating Orb Button using VoicePoweredOrb
@@ -38,11 +38,7 @@ const AllyOrbButton: React.FC<{ onClick: () => void; isOpen: boolean }> = ({ onC
 
       {/* VoicePoweredOrb as the icon */}
       <div className="relative w-14 h-14 rounded-full overflow-hidden shadow-2xl shadow-primary/40">
-        <VoicePoweredOrb
-          enableVoiceControl={false}
-          className="w-full h-full"
-          maxRotationSpeed={0.3}
-        />
+        <VoicePoweredOrb enableVoiceControl={false} className="w-full h-full" maxRotationSpeed={0.3} />
       </div>
 
       {/* Hover tooltip */}
@@ -51,8 +47,8 @@ const AllyOrbButton: React.FC<{ onClick: () => void; isOpen: boolean }> = ({ onC
         <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1 w-2 h-2 bg-zinc-900 dark:bg-zinc-800 rotate-45" />
       </div>
     </motion.button>
-  );
-};
+  )
+}
 
 // Tab-style animated header
 const ChatHeader: React.FC<{ onClose: () => void; onMinimize: () => void }> = ({ onClose, onMinimize }) => {
@@ -69,16 +65,14 @@ const ChatHeader: React.FC<{ onClose: () => void; onMinimize: () => void }> = ({
       <div className="flex items-center gap-3">
         {/* Small animated orb avatar */}
         <div className="relative w-9 h-9 rounded-xl overflow-hidden shadow-lg shadow-primary/20">
-          <VoicePoweredOrb
-            enableVoiceControl={false}
-            className="w-full h-full"
-            maxRotationSpeed={0.2}
-          />
+          <VoicePoweredOrb enableVoiceControl={false} className="w-full h-full" maxRotationSpeed={0.2} />
         </div>
         <div>
           <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-1.5">
             Ally
-            <span className="px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider bg-primary/10 text-primary rounded-md">AI</span>
+            <span className="px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider bg-primary/10 text-primary rounded-md">
+              AI
+            </span>
           </h3>
           <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">Online</p>
         </div>
@@ -101,11 +95,14 @@ const ChatHeader: React.FC<{ onClose: () => void; onMinimize: () => void }> = ({
         </button>
       </div>
     </div>
-  );
-};
+  )
+}
 
 // Message bubble component
-const MessageBubble: React.FC<{ message: { id: number; text: string; isUser: boolean }; index: number }> = ({ message, index }) => {
+const MessageBubble: React.FC<{ message: { id: number; text: string; isUser: boolean }; index: number }> = ({
+  message,
+  index,
+}) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 10, scale: 0.95 }}
@@ -118,14 +115,14 @@ const MessageBubble: React.FC<{ message: { id: number; text: string; isUser: boo
           'max-w-[85%] rounded-2xl px-4 py-2.5 shadow-sm',
           message.isUser
             ? 'bg-gradient-to-br from-primary to-orange-500 text-white rounded-br-md'
-            : 'bg-zinc-100 dark:bg-zinc-800/80 text-zinc-900 dark:text-zinc-100 rounded-bl-md border border-zinc-200/50 dark:border-zinc-700/50'
+            : 'bg-zinc-100 dark:bg-zinc-800/80 text-zinc-900 dark:text-zinc-100 rounded-bl-md border border-zinc-200/50 dark:border-zinc-700/50',
         )}
       >
         <p className="text-sm leading-relaxed">{message.text}</p>
       </div>
     </motion.div>
-  );
-};
+  )
+}
 
 // Typing indicator
 const TypingIndicator: React.FC = () => (
@@ -148,174 +145,184 @@ const TypingIndicator: React.FC = () => (
       </div>
     </div>
   </motion.div>
-);
+)
 
 const AIAllySidebar: React.FC<AIAllySidebarProps> = ({ isOpen, onClose, onOpen }) => {
   const [messages, setMessages] = useState<Array<{ id: number; text: string; isUser: boolean }>>([
     { id: 1, text: "Hey! I'm Ally, your AI assistant. How can I help optimize your calendar today?", isUser: false },
-  ]);
-  const [inputText, setInputText] = useState('');
-  const [isRecording, setIsRecording] = useState(false);
-  const [isTyping, setIsTyping] = useState(false);
-  const [interimTranscription, setInterimTranscription] = useState('');
-  const [speechRecognitionSupported, setSpeechRecognitionSupported] = useState(false);
-  const [speechRecognitionError, setSpeechRecognitionError] = useState<string | null>(null);
+  ])
+  const [inputText, setInputText] = useState('')
+  const [isRecording, setIsRecording] = useState(false)
+  const [isTyping, setIsTyping] = useState(false)
+  const [interimTranscription, setInterimTranscription] = useState('')
+  const [speechRecognitionSupported, setSpeechRecognitionSupported] = useState(false)
+  const [speechRecognitionError, setSpeechRecognitionError] = useState<string | null>(null)
 
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const speechRecognitionRef = useRef<any | null>(null);
-  const isRecognitionRunning = useRef<boolean>(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
+  const speechRecognitionRef = useRef<any | null>(null)
+  const isRecognitionRunning = useRef<boolean>(false)
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages, isTyping]);
+    scrollToBottom()
+  }, [messages, isTyping])
 
   useEffect(() => {
     if (isOpen && inputRef.current && !isRecording) {
-      setTimeout(() => inputRef.current?.focus(), 300);
+      setTimeout(() => inputRef.current?.focus(), 300)
     }
-  }, [isOpen, isRecording]);
+  }, [isOpen, isRecording])
 
   // Initialize speech recognition
   useEffect(() => {
     if (typeof window !== 'undefined' && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      const recognition = new SpeechRecognition();
-      recognition.continuous = false;
-      recognition.interimResults = true;
-      recognition.lang = 'en-US';
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+      const recognition = new SpeechRecognition()
+      recognition.continuous = false
+      recognition.interimResults = true
+      recognition.lang = 'en-US'
 
       recognition.onresult = (event: any) => {
-        let interim = '';
-        let final = '';
+        let interim = ''
+        let final = ''
         for (let i = event.resultIndex; i < event.results.length; ++i) {
           if (event.results[i].isFinal) {
-            final += event.results[i][0].transcript;
+            final += event.results[i][0].transcript
           } else {
-            interim += event.results[i][0].transcript;
+            interim += event.results[i][0].transcript
           }
         }
-        setInterimTranscription(interim);
+        setInterimTranscription(interim)
         if (final) {
-          handleStopRecording(final);
+          handleStopRecording(final)
         }
-      };
+      }
 
       recognition.onerror = (event: any) => {
         if (event.error !== 'aborted') {
-          console.error('Speech recognition error:', event.error);
+          console.error('Speech recognition error:', event.error)
           if (event.error === 'not-allowed') {
-            setSpeechRecognitionError('Microphone access denied.');
+            setSpeechRecognitionError('Microphone access denied.')
           }
         }
-        setIsRecording(false);
-        isRecognitionRunning.current = false;
-        setInterimTranscription('');
-      };
+        setIsRecording(false)
+        isRecognitionRunning.current = false
+        setInterimTranscription('')
+      }
 
       recognition.onend = () => {
-        isRecognitionRunning.current = false;
-        setIsRecording(false);
-      };
+        isRecognitionRunning.current = false
+        setIsRecording(false)
+      }
 
-      speechRecognitionRef.current = recognition;
-      setSpeechRecognitionSupported(true);
+      speechRecognitionRef.current = recognition
+      setSpeechRecognitionSupported(true)
     } else {
-      setSpeechRecognitionError('Speech-to-Text not supported in this browser.');
+      setSpeechRecognitionError('Speech-to-Text not supported in this browser.')
     }
 
     return () => {
       if (speechRecognitionRef.current && isRecognitionRunning.current) {
         try {
-          speechRecognitionRef.current.stop();
+          speechRecognitionRef.current.stop()
         } catch (e) {}
       }
-    };
-  }, []);
-
-  const handleSendMessage = useCallback((textToSend: string = inputText) => {
-    if (!textToSend.trim()) return;
-    const newMessage = { id: messages.length + 1, text: textToSend, isUser: true };
-    setMessages((prev) => [...prev, newMessage]);
-    setInputText('');
-    setInterimTranscription('');
-    setIsTyping(true);
-
-    // Simulate AI response
-    setTimeout(() => {
-      setIsTyping(false);
-      setMessages((prev) => [
-        ...prev,
-        { id: prev.length + 1, text: "I understand! Let me analyze your calendar and suggest some optimizations.", isUser: false },
-      ]);
-    }, 1500);
-  }, [inputText, messages.length]);
-
-  const handleStopRecording = useCallback((finalTranscription: string | null) => {
-    if (speechRecognitionRef.current && isRecognitionRunning.current) {
-      try {
-        speechRecognitionRef.current.stop();
-      } catch (e) {}
-      isRecognitionRunning.current = false;
     }
-    setIsRecording(false);
+  }, [])
 
-    const textToSend = finalTranscription || interimTranscription;
-    setInterimTranscription('');
+  const handleSendMessage = useCallback(
+    (textToSend: string = inputText) => {
+      if (!textToSend.trim()) return
+      const newMessage = { id: messages.length + 1, text: textToSend, isUser: true }
+      setMessages((prev) => [...prev, newMessage])
+      setInputText('')
+      setInterimTranscription('')
+      setIsTyping(true)
 
-    if (textToSend.trim()) {
-      handleSendMessage(textToSend);
-    }
-  }, [interimTranscription, handleSendMessage]);
+      // Simulate AI response
+      setTimeout(() => {
+        setIsTyping(false)
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: prev.length + 1,
+            text: 'I understand! Let me analyze your calendar and suggest some optimizations.',
+            isUser: false,
+          },
+        ])
+      }, 1500)
+    },
+    [inputText, messages.length],
+  )
+
+  const handleStopRecording = useCallback(
+    (finalTranscription: string | null) => {
+      if (speechRecognitionRef.current && isRecognitionRunning.current) {
+        try {
+          speechRecognitionRef.current.stop()
+        } catch (e) {}
+        isRecognitionRunning.current = false
+      }
+      setIsRecording(false)
+
+      const textToSend = finalTranscription || interimTranscription
+      setInterimTranscription('')
+
+      if (textToSend.trim()) {
+        handleSendMessage(textToSend)
+      }
+    },
+    [interimTranscription, handleSendMessage],
+  )
 
   const handleStartRecording = useCallback(async () => {
-    if (isRecognitionRunning.current) return;
+    if (isRecognitionRunning.current) return
 
     try {
-      await navigator.mediaDevices.getUserMedia({ audio: true });
-      setSpeechRecognitionError(null);
+      await navigator.mediaDevices.getUserMedia({ audio: true })
+      setSpeechRecognitionError(null)
 
       if (speechRecognitionRef.current) {
-        setInterimTranscription('');
-        speechRecognitionRef.current.start();
-        isRecognitionRunning.current = true;
-        setIsRecording(true);
+        setInterimTranscription('')
+        speechRecognitionRef.current.start()
+        isRecognitionRunning.current = true
+        setIsRecording(true)
       }
     } catch (err) {
-      setSpeechRecognitionError('Microphone access denied.');
-      setIsRecording(false);
-      isRecognitionRunning.current = false;
+      setSpeechRecognitionError('Microphone access denied.')
+      setIsRecording(false)
+      isRecognitionRunning.current = false
     }
-  }, []);
+  }, [])
 
   const handleToggleRecording = useCallback(() => {
     if (isRecording || isRecognitionRunning.current) {
-      handleStopRecording(interimTranscription);
+      handleStopRecording(interimTranscription)
     } else {
-      handleStartRecording();
+      handleStartRecording()
     }
-  }, [isRecording, handleStopRecording, interimTranscription, handleStartRecording]);
+  }, [isRecording, handleStopRecording, interimTranscription, handleStartRecording])
 
   const handleCancelRecording = useCallback(() => {
     if (speechRecognitionRef.current && isRecognitionRunning.current) {
       try {
-        speechRecognitionRef.current.stop();
+        speechRecognitionRef.current.stop()
       } catch (e) {}
-      isRecognitionRunning.current = false;
+      isRecognitionRunning.current = false
     }
-    setIsRecording(false);
-    setInterimTranscription('');
-  }, []);
+    setIsRecording(false)
+    setInterimTranscription('')
+  }, [])
 
   const quickActions = [
     { label: 'Optimize schedule', emoji: '📅' },
     { label: 'Find free time', emoji: '🔍' },
     { label: 'Reschedule meeting', emoji: '🔄' },
-  ];
+  ]
 
   return (
     <>
@@ -342,9 +349,7 @@ const AIAllySidebar: React.FC<AIAllySidebarProps> = ({ isOpen, onClose, onOpen }
               {messages.map((message, index) => (
                 <MessageBubble key={message.id} message={message} index={index} />
               ))}
-              <AnimatePresence>
-                {isTyping && <TypingIndicator />}
-              </AnimatePresence>
+              <AnimatePresence>{isTyping && <TypingIndicator />}</AnimatePresence>
               <div ref={messagesEndRef} />
             </div>
 
@@ -362,8 +367,8 @@ const AIAllySidebar: React.FC<AIAllySidebarProps> = ({ isOpen, onClose, onOpen }
                     <button
                       key={action.label}
                       onClick={() => {
-                        setInputText(action.label);
-                        inputRef.current?.focus();
+                        setInputText(action.label)
+                        inputRef.current?.focus()
                       }}
                       className="px-3 py-1.5 text-xs font-medium rounded-full bg-zinc-100 dark:bg-zinc-800/80 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors border border-zinc-200/50 dark:border-zinc-700/50"
                     >
@@ -399,8 +404,8 @@ const AIAllySidebar: React.FC<AIAllySidebarProps> = ({ isOpen, onClose, onOpen }
               ) : (
                 <form
                   onSubmit={(e) => {
-                    e.preventDefault();
-                    handleSendMessage();
+                    e.preventDefault()
+                    handleSendMessage()
                   }}
                   className="relative flex items-center bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-1.5 gap-1.5"
                 >
@@ -410,7 +415,7 @@ const AIAllySidebar: React.FC<AIAllySidebarProps> = ({ isOpen, onClose, onOpen }
                     onClick={handleToggleRecording}
                     className={cn(
                       'p-2.5 rounded-xl transition-all flex-shrink-0',
-                      'text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800'
+                      'text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800',
                     )}
                     disabled={!speechRecognitionSupported}
                     title="Voice input"
@@ -438,7 +443,7 @@ const AIAllySidebar: React.FC<AIAllySidebarProps> = ({ isOpen, onClose, onOpen }
                       'p-2.5 rounded-xl transition-all flex-shrink-0',
                       inputText.trim()
                         ? 'bg-zinc-950 dark:bg-zinc-100 text-white dark:text-zinc-950'
-                        : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-300 dark:text-zinc-600 cursor-not-allowed'
+                        : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-300 dark:text-zinc-600 cursor-not-allowed',
                     )}
                   >
                     <ArrowUp className="w-5 h-5" />
@@ -455,7 +460,7 @@ const AIAllySidebar: React.FC<AIAllySidebarProps> = ({ isOpen, onClose, onOpen }
         )}
       </AnimatePresence>
     </>
-  );
-};
+  )
+}
 
-export default AIAllySidebar;
+export default AIAllySidebar

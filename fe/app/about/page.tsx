@@ -1,9 +1,9 @@
-'use client';
+'use client'
 
-import MarketingLayout from '@/components/marketing/MarketingLayout';
-import Link from 'next/link';
-import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button';
-import { Users, Target, Heart, Zap } from 'lucide-react';
+import MarketingLayout from '@/components/marketing/MarketingLayout'
+import Link from 'next/link'
+import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button'
+import { Users, Target, Heart, Zap } from 'lucide-react'
 
 export default function AboutPage() {
   return (
@@ -15,8 +15,7 @@ export default function AboutPage() {
             About <span className="text-primary">Ally</span>
           </h1>
           <p className="text-xl text-zinc-500 dark:text-zinc-400 max-w-2xl mx-auto">
-            We're building the future of calendar management with AI-powered intelligence
-            that understands how you work.
+            We're building the future of calendar management with AI-powered intelligence that understands how you work.
           </p>
         </div>
       </section>
@@ -26,16 +25,14 @@ export default function AboutPage() {
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-3xl font-medium text-zinc-900 dark:text-zinc-100 mb-6">
-                Our Mission
-              </h2>
+              <h2 className="text-3xl font-medium text-zinc-900 dark:text-zinc-100 mb-6">Our Mission</h2>
               <p className="text-lg text-zinc-500 dark:text-zinc-400 mb-4">
-                We believe everyone deserves a personal assistant that understands their schedule,
-                respects their time, and helps them focus on what matters most.
+                We believe everyone deserves a personal assistant that understands their schedule, respects their time,
+                and helps them focus on what matters most.
               </p>
               <p className="text-lg text-zinc-500 dark:text-zinc-400">
-                Ally combines cutting-edge AI with intuitive design to create a calendar
-                experience that feels like having a dedicated secretary at your fingertips.
+                Ally combines cutting-edge AI with intuitive design to create a calendar experience that feels like
+                having a dedicated secretary at your fingertips.
               </p>
             </div>
             <div className="grid grid-cols-2 gap-6">
@@ -67,9 +64,7 @@ export default function AboutPage() {
       {/* Values Section */}
       <section className="py-24 px-6">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-medium text-zinc-900 dark:text-zinc-100 mb-12 text-center">
-            Our Values
-          </h2>
+          <h2 className="text-3xl font-medium text-zinc-900 dark:text-zinc-100 mb-12 text-center">Our Values</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
               <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-6">
@@ -105,20 +100,15 @@ export default function AboutPage() {
       {/* CTA Section */}
       <section className="py-24 px-6 bg-zinc-50 dark:bg-zinc-900/50">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl font-medium text-zinc-900 dark:text-zinc-100 mb-6">
-            Join us on our mission
-          </h2>
+          <h2 className="text-3xl font-medium text-zinc-900 dark:text-zinc-100 mb-6">Join us on our mission</h2>
           <p className="text-lg text-zinc-500 dark:text-zinc-400 mb-8">
             Experience the future of calendar management today.
           </p>
           <Link href="/register">
-            <InteractiveHoverButton
-              text="Get Started"
-              className="h-14 px-8 text-lg"
-            />
+            <InteractiveHoverButton text="Get Started" className="h-14 px-8 text-lg" />
           </Link>
         </div>
       </section>
     </MarketingLayout>
-  );
+  )
 }

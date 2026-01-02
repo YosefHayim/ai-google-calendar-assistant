@@ -1,6 +1,6 @@
-"use client";
+'use client'
 
-import React from "react";
+import React from 'react'
 import {
   Skeleton,
   SkeletonCalendarSources,
@@ -11,11 +11,16 @@ import {
   SkeletonInsightCard,
   SkeletonLineChart,
   SkeletonList,
-} from "@/components/ui/skeleton";
+} from '@/components/ui/skeleton'
 
 const AnalyticsDashboardSkeleton: React.FC = () => {
   // Get preferred chart type from localStorage
-  const preferredChartType = typeof window !== "undefined" ? (localStorage.getItem("analytics-chart-type") === "line" ? "line" : "column") : "column";
+  const preferredChartType =
+    typeof window !== 'undefined'
+      ? localStorage.getItem('analytics-chart-type') === 'line'
+        ? 'line'
+        : 'column'
+      : 'column'
 
   return (
     <div className="max-w-7xl mx-auto w-full p-6 animate-in fade-in duration-500 overflow-y-auto bg-zinc-50 dark:bg-zinc-950">
@@ -39,7 +44,7 @@ const AnalyticsDashboardSkeleton: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Trend Analysis Skeleton */}
-        <div className="lg:col-span-3">{preferredChartType === "line" ? <SkeletonLineChart /> : <SkeletonChart />}</div>
+        <div className="lg:col-span-3">{preferredChartType === 'line' ? <SkeletonLineChart /> : <SkeletonChart />}</div>
 
         {/* Intelligence Insights Skeleton */}
         <div className="lg:col-span-3">
@@ -68,7 +73,7 @@ const AnalyticsDashboardSkeleton: React.FC = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default AnalyticsDashboardSkeleton;
+export default AnalyticsDashboardSkeleton

@@ -1,9 +1,9 @@
-"use client";
+'use client'
 
-import React from "react";
-import { CalendarDays, Clock, BarChart3, Target } from "lucide-react";
-import StatsCard from "./StatsCard";
-import type { KPICardsSectionProps } from "@/types/analytics";
+import React from 'react'
+import { CalendarDays, Clock, BarChart3, Target } from 'lucide-react'
+import StatsCard from './StatsCard'
+import type { KPICardsSectionProps } from '@/types/analytics'
 
 const KPICardsSection: React.FC<KPICardsSectionProps> = ({
   totalEvents,
@@ -13,10 +13,10 @@ const KPICardsSection: React.FC<KPICardsSectionProps> = ({
   comparison,
   isLoading = false,
 }) => {
-  const totalEventsTrend = comparison?.trends.totalEvents;
-  const totalDurationTrend = comparison?.trends.totalDuration;
-  const avgEventTrend = comparison?.trends.avgEventDuration;
-  const busiestDayTrend = comparison?.trends.busiestDay;
+  const totalEventsTrend = comparison?.trends.totalEvents
+  const totalDurationTrend = comparison?.trends.totalDuration
+  const avgEventTrend = comparison?.trends.avgEventDuration
+  const busiestDayTrend = comparison?.trends.busiestDay
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
@@ -72,7 +72,7 @@ const KPICardsSection: React.FC<KPICardsSectionProps> = ({
         isLoading={isLoading}
       />
     </div>
-  );
-};
+  )
+}
 
-export default KPICardsSection;
+export default KPICardsSection

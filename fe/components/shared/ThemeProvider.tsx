@@ -1,58 +1,54 @@
-'use client';
+'use client'
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 
-const THEME_STORAGE_KEY = 'ally_theme_mode';
+const THEME_STORAGE_KEY = 'ally_theme_mode'
 
 interface ThemeContextType {
-  isDarkMode: boolean;
-  toggleTheme: () => void;
+  isDarkMode: boolean
+  toggleTheme: () => void
 }
 
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
 // Fix: Make children optional to resolve JSX children missing error in index.tsx
 export const ThemeProvider = ({ children }: { children?: ReactNode }) => {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false)
 
   useEffect(() => {
     // Check localStorage first, then fall back to system preference
-    const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+    const savedTheme = localStorage.getItem(THEME_STORAGE_KEY)
     if (savedTheme !== null) {
-      setIsDarkMode(savedTheme === 'dark');
+      setIsDarkMode(savedTheme === 'dark')
     } else {
-      const isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-      setIsDarkMode(isDark);
+      const isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+      setIsDarkMode(isDark)
     }
-  }, []);
+  }, [])
 
   useEffect(() => {
     if (isDarkMode) {
-      document.documentElement.classList.add('dark');
+      document.documentElement.classList.add('dark')
     } else {
-      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.remove('dark')
     }
-  }, [isDarkMode]);
+  }, [isDarkMode])
 
   const toggleTheme = () => {
-    setIsDarkMode(prev => {
-      const newValue = !prev;
-      localStorage.setItem(THEME_STORAGE_KEY, newValue ? 'dark' : 'light');
-      return newValue;
-    });
-  };
+    setIsDarkMode((prev) => {
+      const newValue = !prev
+      localStorage.setItem(THEME_STORAGE_KEY, newValue ? 'dark' : 'light')
+      return newValue
+    })
+  }
 
-  return (
-    <ThemeContext.Provider value={{ isDarkMode, toggleTheme }}>
-      {children}
-    </ThemeContext.Provider>
-  );
-};
+  return <ThemeContext.Provider value={{ isDarkMode, toggleTheme }}>{children}</ThemeContext.Provider>
+}
 
 export const useTheme = () => {
-  const context = useContext(ThemeContext);
+  const context = useContext(ThemeContext)
   if (context === undefined) {
-    throw new Error('useTheme must be used within a ThemeProvider');
+    throw new Error('useTheme must be used within a ThemeProvider')
   }
-  return context;
-};
+  return context
+}
