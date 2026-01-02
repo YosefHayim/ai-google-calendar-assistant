@@ -39,8 +39,10 @@ const GoogleIcon = () => (
 const LoginPage: React.FC = () => {
   const searchParams = useSearchParams();
   const error = searchParams.get("error");
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const handleGoogleLogin = () => {
+    setIsLoading(true);
     // Redirect to Google OAuth endpoint on backend
     window.location.href = `${ENV.API_BASE_URL}${ENDPOINTS.USERS_CALLBACK}`;
   };
@@ -72,6 +74,8 @@ const LoginPage: React.FC = () => {
           <div className="space-y-6">
             <InteractiveHoverButton
               text="Login with Google"
+              loadingText="Connecting..."
+              isLoading={isLoading}
               Icon={<GoogleIcon />}
               className="w-full h-14 text-lg shadow-lg border-zinc-200 dark:border-zinc-700"
               onClick={handleGoogleLogin}

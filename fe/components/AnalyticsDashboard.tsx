@@ -36,6 +36,7 @@ import {
   SkeletonList,
 } from "@/components/ui/skeleton";
 import { addDays, format, subDays } from "date-fns";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import ActivityHeatmap from "@/components/ActivityHeatmap";
 import { DatePickerWithRange } from "@/components/ui/date-range-picker";
@@ -48,7 +49,6 @@ import { calendarsService } from "@/lib/api/services/calendars.service";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { useCalendarById } from "@/hooks/queries/calendars/useCalendarById";
-import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
 
 // --- Zod Schema Definitions ---
@@ -295,6 +295,8 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
   // Create calendar dialog state
   const [isCreateCalendarDialogOpen, setIsCreateCalendarDialogOpen] = useState(false);
   const [calendarPrompt, setCalendarPrompt] = useState("");
+  const [isCreatingCalendar, setIsCreatingCalendar] = useState(false);
+  const queryClient = useQueryClient();
 
   // Calendar settings dialog state
   const [selectedCalendarForSettings, setSelectedCalendarForSettings] = useState<{ id: string; name: string; color: string } | null>(null);
@@ -369,11 +371,6 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
 
       const response = await apiClient.get(`${ENDPOINTS.EVENTS_ANALYTICS}?${params.toString()}`);
 
-      // Debug: Log the response structure
-      console.log("Analytics API Response:", response.data);
-      console.log("Response data type:", typeof response.data);
-      console.log("Response data keys:", response.data ? Object.keys(response.data) : "null");
-
       // Toast the status message
       if (response.data?.status && response.data?.message) {
         if (response.data.status === "success") {
@@ -386,12 +383,8 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
       // Validate with Zod
       const result = AnalyticsResponseSchema.safeParse(response.data);
       if (!result.success) {
-        console.error("Zod Validation Error:", result.error);
-        console.error("Response data that failed validation:", JSON.stringify(response.data, null, 2));
-
         // Try to handle case where response might be in a different format
         if (response.data?.allEvents && Array.isArray(response.data.allEvents)) {
-          console.warn("Detected alternative response format, attempting to normalize...");
           const normalizedData = {
             status: response.data.status || "success",
             message: response.data.message || "Events retrieved",
@@ -401,23 +394,11 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
           };
           const retryResult = AnalyticsResponseSchema.safeParse(normalizedData);
           if (retryResult.success) {
-            console.log("Successfully normalized response data");
             return retryResult.data;
           }
         }
 
         throw new Error(`Invalid API response format: ${result.error.message}`);
-      }
-
-      // Debug: Log validated data structure
-      console.log("Validated Analytics Data:", result.data);
-      if (result.data?.data?.allEvents) {
-        console.log("AllEvents type:", typeof result.data.data.allEvents, Array.isArray(result.data.data.allEvents));
-        console.log("AllEvents length:", Array.isArray(result.data.data.allEvents) ? result.data.data.allEvents.length : "N/A");
-        if (Array.isArray(result.data.data.allEvents) && result.data.data.allEvents.length > 0) {
-          console.log("First calendarGroup:", result.data.data.allEvents[0]);
-          console.log("First calendarGroup.events type:", typeof result.data.data.allEvents[0]?.events, Array.isArray(result.data.data.allEvents[0]?.events));
-        }
       }
 
       return result.data;
@@ -431,7 +412,6 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
   // Process data for charts
   const processData = (data: AnalyticsData | undefined | null) => {
     if (!data) {
-      console.log("processData: No data provided");
       return {
         totalEvents: 0,
         totalDurationHours: 0,
@@ -441,7 +421,6 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
     }
 
     if (!data.data) {
-      console.warn("processData: data.data is missing", data);
       return {
         totalEvents: 0,
         totalDurationHours: 0,
@@ -451,11 +430,6 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
     }
 
     if (!Array.isArray(data.data.allEvents)) {
-      console.warn("processData: data.data.allEvents is not an array", {
-        allEvents: data.data.allEvents,
-        type: typeof data.data.allEvents,
-        isArray: Array.isArray(data.data.allEvents),
-      });
       return {
         totalEvents: 0,
         totalDurationHours: 0,
@@ -802,7 +776,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
               </button>
             </div>
           </div>
-          <div className="h-64 overflow-hidden">
+          <div className="h-64 overflow-visible">
             {chartType === "column" ? (
               <TimeSavedColumnChart data={timeSavedData} />
             ) : (
@@ -967,7 +941,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
               onClick={() => setIsCreateCalendarDialogOpen(true)}
               className="w-full mt-6 py-2 rounded-md border border-dashed border-zinc-300 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400 text-xs font-bold hover:bg-zinc-50 dark:hover:bg-zinc-900/30 hover:text-zinc-900 dark:hover:text-zinc-100 transition-all active:scale-[0.98]"
             >
-              + Add Data Source
+              Create new calendar
             </button>
           </div>
         </div>
@@ -1147,15 +1121,23 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
             >
               <X className="w-5 h-5" />
             </button>
-            <h3 className="text-lg font-medium text-zinc-900 dark:text-zinc-100 mb-2">Create New Calendar with AI</h3>
+            <h3 className="text-lg font-medium text-zinc-900 dark:text-zinc-100 mb-2">Create New Calendar</h3>
             <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-6">
-              Describe the calendar you want to create. Our AI will set it up with the right settings, events, and schedule for you.
+              Enter a name for your new calendar. It will be added to your Google Calendar account.
             </p>
-            <textarea
+            <input
+              type="text"
               value={calendarPrompt}
               onChange={(e) => setCalendarPrompt(e.target.value)}
-              placeholder="e.g., Create a calendar for workout sessions every Monday, Wednesday, Friday at 6 AM"
-              className="w-full h-32 p-3 rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              placeholder="e.g., Work Projects, Personal Goals, Fitness"
+              className="w-full p-3 rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              disabled={isCreatingCalendar}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !isCreatingCalendar && calendarPrompt.trim()) {
+                  e.preventDefault();
+                  (e.target as HTMLInputElement).form?.querySelector<HTMLButtonElement>('button[type="submit"]')?.click();
+                }
+              }}
             />
             <div className="flex gap-2 mt-4">
               <button
@@ -1163,25 +1145,52 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
                   setIsCreateCalendarDialogOpen(false);
                   setCalendarPrompt("");
                 }}
-                className="flex-1 px-4 py-2 rounded-md border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 text-sm font-medium hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
+                disabled={isCreatingCalendar}
+                className="flex-1 px-4 py-2 rounded-md border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 text-sm font-medium hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Cancel
               </button>
               <button
-                onClick={() => {
-                  if (calendarPrompt.trim()) {
-                    // TODO: Implement backend API call to create calendar
-                    console.log("Creating calendar with prompt:", calendarPrompt);
-                    toast.info("Calendar creation feature will be implemented in the backend. Your prompt: " + calendarPrompt);
-                    setIsCreateCalendarDialogOpen(false);
-                    setCalendarPrompt("");
-                  } else {
-                    toast.error("Please enter a description for your calendar");
+                onClick={async () => {
+                  if (!calendarPrompt.trim()) {
+                    toast.error("Please enter a name for your calendar");
+                    return;
+                  }
+
+                  setIsCreatingCalendar(true);
+                  try {
+                    const response = await calendarsService.createCalendar({
+                      summary: calendarPrompt.trim(),
+                      description: `Created from Analytics Dashboard`,
+                    });
+
+                    if (response.status === "success") {
+                      toast.success("Calendar created successfully!");
+                      setIsCreateCalendarDialogOpen(false);
+                      setCalendarPrompt("");
+                      // Refetch calendars to show the new one
+                      queryClient.invalidateQueries({ queryKey: ["calendars-list"] });
+                    } else {
+                      toast.error(response.message || "Failed to create calendar");
+                    }
+                  } catch (error) {
+                    console.error("Error creating calendar:", error);
+                    toast.error("Failed to create calendar. Please try again.");
+                  } finally {
+                    setIsCreatingCalendar(false);
                   }
                 }}
-                className="flex-1 px-4 py-2 rounded-md bg-zinc-950 dark:bg-zinc-100 text-white dark:text-zinc-950 text-sm font-medium hover:opacity-90 transition-opacity"
+                disabled={isCreatingCalendar}
+                className="flex-1 px-4 py-2 rounded-md bg-zinc-950 dark:bg-zinc-100 text-white dark:text-zinc-950 text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                Create Calendar
+                {isCreatingCalendar ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Creating...
+                  </>
+                ) : (
+                  "Create Calendar"
+                )}
               </button>
             </div>
           </div>
