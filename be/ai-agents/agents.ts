@@ -34,14 +34,6 @@ export const AGENTS = {
   // ═══════════════════════════════════════════════════════════════════════════
   // EVENT OPERATION AGENTS
   // ═══════════════════════════════════════════════════════════════════════════
-  retrieveEvent: new Agent({
-    instructions: AGENT_INSTRUCTIONS.retrieveEvent,
-    name: "retrieve_event_agent",
-    model: FAST_MODEL,
-    modelSettings: { toolChoice: "required" },
-    handoffDescription: HANDOFF_DESCRIPTIONS.retrieveEvent,
-    tools: [AGENT_TOOLS.get_event],
-  }),
   updateEvent: new Agent({
     instructions: AGENT_INSTRUCTIONS.updateEvent,
     name: "update_event_agent",
@@ -85,19 +77,13 @@ export const HANDOFF_AGENTS = {
     model: MEDIUM_MODEL,
     instructions: AGENT_INSTRUCTIONS.updateEventHandoff,
     modelSettings: { toolChoice: "required" },
-    tools: [AGENTS.retrieveEvent.asTool({ toolName: "retrieve_event" }), AGENTS.updateEvent.asTool({ toolName: "update_event" })],
+    tools: [AGENT_TOOLS.get_event, AGENTS.updateEvent.asTool({ toolName: "update_event" })],
   }),
   deleteEventHandoff: new Agent({
     name: "delete_event_handoff_agent",
     model: MEDIUM_MODEL,
     instructions: AGENT_INSTRUCTIONS.deleteEventHandoff,
-    tools: [AGENTS.retrieveEvent.asTool({ toolName: "retrieve_event" }), AGENTS.deleteEvent.asTool({ toolName: "delete_event" })],
-  }),
-  retrieveEventHandoff: new Agent({
-    name: "retrieve_event_handoff_agent",
-    model: FAST_MODEL, // Simple pass-through
-    instructions: AGENT_INSTRUCTIONS.retrieveEventHandoff,
-    tools: [AGENTS.retrieveEvent.asTool({ toolName: "retrieve_event" })],
+    tools: [AGENT_TOOLS.get_event, AGENTS.deleteEvent.asTool({ toolName: "delete_event" })],
   }),
   registerUserHandoff: new Agent({
     name: "register_user_handoff_agent",
@@ -117,7 +103,8 @@ export const ORCHESTRATOR_AGENT = new Agent({
   instructions: AGENT_INSTRUCTIONS.orchestrator,
   tools: [
     HANDOFF_AGENTS.createEventHandoff.asTool({ toolName: "create_event_handoff" }),
-    HANDOFF_AGENTS.retrieveEventHandoff.asTool({ toolName: "retrieve_event_handoff" }),
+    DIRECT_TOOLS.get_event_direct, // Direct event retrieval - preserves auth context
+    DIRECT_TOOLS.summarize_events, // Cheap summarization of raw event JSON
     HANDOFF_AGENTS.updateEventHandoff.asTool({ toolName: "update_event_handoff" }),
     HANDOFF_AGENTS.deleteEventHandoff.asTool({ toolName: "delete_event_handoff" }),
     HANDOFF_AGENTS.registerUserHandoff.asTool({ toolName: "register_user_handoff" }),

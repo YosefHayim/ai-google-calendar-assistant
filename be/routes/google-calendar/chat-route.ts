@@ -13,11 +13,11 @@ router.use(supabaseAuth(), googleTokenValidation, googleTokenRefresh());
  * Uses OpenAI Agents SDK to process messages and returns complete response
  * Frontend uses typewriter component to simulate real-time typing
  */
-router.post("/stream", supabaseAuth(), googleTokenValidation, chatController.streamChat);
+router.post("/stream", chatController.streamChat);
 
 /**
  * Non-streaming chat endpoint for fallback
  */
-router.post("/", supabaseAuth(), googleTokenValidation, chatController.sendChat);
+router.post("/", chatController.sendChat);
 
 export default router;
