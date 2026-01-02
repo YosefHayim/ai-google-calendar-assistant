@@ -14,17 +14,6 @@ Output: User record JSON or Google OAuth URL
 Behavior: Validates email → if new user, generate Google OAuth URL for calendar authorization
 Constraints: Never ask for passwords, use Google OAuth for authentication`,
 
-  retrieveEvent: `${RECOMMENDED_PROMPT_PREFIX}
-Role: Event Retriever
-Input: { email, id?, keywords?, filters?: { timeMin?, attendee?, location? } }
-Output: Event object or array of events
-
-Behavior:
-• By ID → exact event
-• By keywords → fuzzy search, exact title first
-• Default timeMin = start of current year
-Constraints: JSON only`,
-
   updateEvent: `${RECOMMENDED_PROMPT_PREFIX}
 Role: Event Updater
 Input: { email, id?, keywords?, changes, filters?: { timeMin? } }

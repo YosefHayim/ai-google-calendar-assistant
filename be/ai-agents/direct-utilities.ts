@@ -11,6 +11,9 @@ import type { calendar_v3 } from "googleapis";
 import isEmail from "validator/lib/isEmail";
 import { formatEventData, getCalendarCategoriesByEmail, type UserCalendar } from "./utils";
 import type { TokensProps } from "@/types";
+import { MODELS } from "@/config/constants/ai";
+import OpenAI from "openai";
+import { env } from "@/config";
 
 type Event = calendar_v3.Schema$Event;
 
@@ -409,4 +412,80 @@ export async function preCreateValidation(email: string, eventData: Partial<Even
     calendarName: calendarResult.calendarName,
     conflicts,
   };
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// EVENT SUMMARIZATION (cheap model for formatting event data)
+// ═══════════════════════════════════════════════════════════════════════════
+
+const openai = new OpenAI({ apiKey: env.openAiApiKey });
+const SUMMARIZATION_MODEL = MODELS.GPT_4O_MINI;
+
+/**
+ * Summarizes calendar events JSON into a concise, friendly format for the user.
+ * Uses a cheaper model (gpt-4o-mini) to reduce cost and latency.
+ *
+ * @param events - Array of calendar events from Google Calendar API
+ * @returns A friendly, formatted summary string
+ */
+export async function summarizeEvents(events: calendar_v3.Schema$Event[]): Promise<string> {
+  if (!events || events.length === 0) {
+    return "I couldn't find any events matching that. Would you like me to search differently?";
+  }
+
+  try {
+    const eventsJson = JSON.stringify(events, null, 2);
+
+    const response = await openai.chat.completions.create({
+      model: SUMMARIZATION_MODEL,
+      messages: [
+        {
+          role: "system",
+          content:
+            "Summarize these calendar events into a concise, friendly format for the user. Format each event with: title in quotes, natural date/time (e.g., 'Tuesday, January 14th at 3:00 PM'), and location if available. Use a warm, conversational tone. Never show raw IDs, ISO dates, or technical formats.",
+        },
+        {
+          role: "user",
+          content: `Summarize these calendar events:\n\n${eventsJson}`,
+        },
+      ],
+      max_tokens: 500,
+      temperature: 0.3,
+    });
+
+    const summary = response.choices[0]?.message?.content?.trim();
+
+    if (!summary) {
+      throw new Error("No summary generated");
+    }
+
+    return summary;
+  } catch (error) {
+    console.error("Error summarizing events:", error);
+    // Fallback: create a simple summary
+    return createFallbackEventSummary(events);
+  }
+}
+
+/**
+ * Fallback summary when AI summarization fails.
+ */
+function createFallbackEventSummary(events: calendar_v3.Schema$Event[]): string {
+  if (events.length === 1) {
+    const event = events[0];
+    const title = event.summary || "Untitled Event";
+    const start = event.start?.dateTime || event.start?.date || "Unknown time";
+    const location = event.location ? ` at ${event.location}` : "";
+    return `I found "${title}" scheduled for ${start}${location}.`;
+  }
+
+  return `I found ${events.length} events for you. Here's what I found:\n\n${events
+    .slice(0, 10)
+    .map((event, idx) => {
+      const title = event.summary || "Untitled Event";
+      const start = event.start?.dateTime || event.start?.date || "Unknown time";
+      const location = event.location ? ` - ${event.location}` : "";
+      return `${idx + 1}. "${title}" - ${start}${location}`;
+    })
+    .join("\n")}${events.length > 10 ? `\n\n...and ${events.length - 10} more events.` : ""}`;
 }

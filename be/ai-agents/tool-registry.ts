@@ -1,14 +1,16 @@
-import { tool } from "@openai/agents";
-import { TOOLS_DESCRIPTION } from "./tool-descriptions";
-import { EXECUTION_TOOLS } from "./tool-execution";
 import { PARAMETERS_TOOLS, makeEventTime } from "./tool-schemas";
 import {
-  validateUserDirect,
-  getUserDefaultTimezoneDirect,
-  selectCalendarByRules,
   checkConflictsDirect,
+  getUserDefaultTimezoneDirect,
   preCreateValidation,
+  selectCalendarByRules,
+  summarizeEvents,
+  validateUserDirect,
 } from "./direct-utilities";
+
+import { EXECUTION_TOOLS } from "./tool-execution";
+import { TOOLS_DESCRIPTION } from "./tool-descriptions";
+import { tool } from "@openai/agents";
 import { z } from "zod";
 
 /**
@@ -103,8 +105,7 @@ export const DIRECT_TOOLS = {
       description: z.coerce.string().optional(),
       location: z.coerce.string().optional(),
     }),
-    execute: async ({ email, summary, description, location }) =>
-      selectCalendarByRules(email, { summary, description, location }),
+    execute: async ({ email, summary, description, location }) => selectCalendarByRules(email, { summary, description, location }),
     errorFunction: (_, error) => `select_calendar_direct: ${stringifyError(error)}`,
   }),
 
@@ -117,8 +118,7 @@ export const DIRECT_TOOLS = {
       start: makeEventTime(),
       end: makeEventTime(),
     }),
-    execute: async ({ email, calendarId, start, end }) =>
-      checkConflictsDirect({ email, calendarId, start, end }),
+    execute: async ({ email, calendarId, start, end }) => checkConflictsDirect({ email, calendarId, start, end }),
     errorFunction: (_, error) => `check_conflicts_direct: ${stringifyError(error)}`,
   }),
 
@@ -160,5 +160,61 @@ export const DIRECT_TOOLS = {
     }),
     execute: async (params) => EXECUTION_TOOLS.insertEvent(params),
     errorFunction: (_, error) => `insert_event_direct: ${stringifyError(error)}`,
+  }),
+
+  get_event_direct: tool({
+    name: "get_event_direct",
+    description:
+      "Direct event retrieval - bypasses AI agent. Searches for events by email, optional keywords, and time range. Returns raw JSON events array. ALWAYS use the email from context, never use placeholder emails.",
+    parameters: PARAMETERS_TOOLS.getEventParameters,
+    execute: EXECUTION_TOOLS.getEvent,
+    errorFunction: (_, error) => `get_event_direct: ${stringifyError(error)}`,
+  }),
+
+  summarize_events: tool({
+    name: "summarize_events",
+    description:
+      "Summarizes raw calendar events JSON into a concise, friendly format for the user. Uses a cheaper model for cost efficiency. Input: the response object from get_event_direct. Output: friendly formatted summary string.",
+    parameters: z.object({
+      eventsData: z
+        .unknown()
+        .describe(
+          "The response object from get_event_direct. When searchAllCalendars=true, it contains 'allEvents' array. When searchAllCalendars=false, it contains { type: 'standard', data: { items: [...] } }."
+        ),
+    }),
+    execute: async ({ eventsData }) => {
+      // Extract events array from the response object
+      let events: Parameters<typeof summarizeEvents>[0] = [];
+
+      if (typeof eventsData === "object" && eventsData !== null) {
+        const data = eventsData as {
+          allEvents?: unknown[];
+          items?: unknown[];
+          events?: unknown[];
+          type?: string;
+          data?: { items?: unknown[] };
+        };
+
+        // Handle searchAllCalendars=true case: { allEvents: [...] }
+        if (data.allEvents) {
+          events = data.allEvents as Parameters<typeof summarizeEvents>[0];
+        }
+        // Handle searchAllCalendars=false case: { type: 'standard', data: { items: [...] } }
+        else if (data.type === "standard" && data.data?.items) {
+          events = data.data.items as Parameters<typeof summarizeEvents>[0];
+        }
+        // Fallback: try items or events directly
+        else if (data.items) {
+          events = data.items as Parameters<typeof summarizeEvents>[0];
+        } else if (data.events) {
+          events = data.events as Parameters<typeof summarizeEvents>[0];
+        }
+      } else if (Array.isArray(eventsData)) {
+        events = eventsData as Parameters<typeof summarizeEvents>[0];
+      }
+
+      return await summarizeEvents(events);
+    },
+    errorFunction: (_, error) => `summarize_events: ${stringifyError(error)}`,
   }),
 };

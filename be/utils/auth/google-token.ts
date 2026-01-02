@@ -85,10 +85,6 @@ export const fetchGoogleTokensByEmail = async (email: string): Promise<{ data: T
     return { data: null, error: error.message };
   }
 
-  if (!data) {
-    return { data: null, error: "No tokens found for email" };
-  }
-
   return { data: data as TokensProps | null, error: null };
 };
 
@@ -132,6 +128,7 @@ export const refreshGoogleAccessToken = async (tokens: TokensProps): Promise<Ref
     };
   } catch (e) {
     console.error("Google token refresh failed:", e);
+    throw e;
   }
 };
 
@@ -142,14 +139,17 @@ export const refreshGoogleAccessToken = async (tokens: TokensProps): Promise<Ref
  * @param {RefreshedGoogleToken} refreshedTokens - New token data
  */
 export const persistGoogleTokens = async (email: string, refreshedTokens: RefreshedGoogleToken): Promise<void> => {
-  const { error } = await SUPABASE.from("user_calendar_tokens")
-    .upsert({
+  const { error } = await SUPABASE.from("user_calendar_tokens").upsert(
+    {
       email: email,
       access_token: refreshedTokens.accessToken,
       expiry_date: refreshedTokens.expiryDate,
       is_active: true,
-    })
-    .ilike("email", email.trim());
+    },
+    {
+      onConflict: "email",
+    }
+  );
 
   if (error) {
     console.error("Failed to persist Google tokens:", error.message);
