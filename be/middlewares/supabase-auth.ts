@@ -5,6 +5,10 @@ import { refreshSupabaseSession, validateSupabaseToken } from "@/utils/auth/supa
 import { STATUS_RESPONSE } from "@/config";
 import type { User } from "@supabase/supabase-js";
 
+const REFRESH_TOKEN_HEADER = "allyRefreshToken";
+const ACCESS_TOKEN_HEADER = "allyAccessToken";
+const USER_KEY = "allyUser";
+
 export type SupabaseAuthOptions = {
   autoRefresh?: boolean;
 };
@@ -21,9 +25,9 @@ export type SupabaseAuthOptions = {
  * This middleware:
  * 1. Extracts Bearer token from Authorization header
  * 2. Validates token with Supabase
- * 3. If invalid and autoRefresh=true, attempts refresh using X-Refresh-Token header
+ * 3. If invalid and autoRefresh=true, attempts refresh using allyRefreshToken header
  * 4. Attaches user to req.user
- * 5. Returns new access token in X-New-Access-Token header if refreshed
+ * 5. Returns new access token in allyAccessToken header if refreshed
  *
  * @example
  * // With auto-refresh (default)
@@ -36,9 +40,10 @@ export const supabaseAuth = (options: SupabaseAuthOptions = {}) => {
   const { autoRefresh = true } = options;
 
   return asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-    const accessToken = req.headers.authorization?.replace("Bearer ", "");
-
-    if (!accessToken) {
+    const accessToken = req.headers[ACCESS_TOKEN_HEADER] as string | undefined;
+    const user = req.headers[USER_KEY] as User | undefined;
+    
+    if (!accessToken || !user) {
       return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "Missing authorization header");
     }
 
@@ -57,7 +62,7 @@ export const supabaseAuth = (options: SupabaseAuthOptions = {}) => {
     }
 
     // Try to refresh using refresh token from header
-    const refreshToken = req.headers["refresh_token"] as string | undefined;
+    const refreshToken = req.headers[REFRESH_TOKEN_HEADER] as string | undefined;
 
     if (!refreshToken) {
       return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "Session expired. Please login again.", {
@@ -77,8 +82,8 @@ export const supabaseAuth = (options: SupabaseAuthOptions = {}) => {
       req.headers.authorization = `Bearer ${newAccessToken}`;
 
       // Send NEW tokens to client
-      res.setHeader("access_token", newAccessToken);
-      res.setHeader("refresh_token", newRefreshToken);
+      res.setHeader(ACCESS_TOKEN_HEADER, newAccessToken);
+      res.setHeader(REFRESH_TOKEN_HEADER, newRefreshToken);
 
       next();
     } catch (error) {

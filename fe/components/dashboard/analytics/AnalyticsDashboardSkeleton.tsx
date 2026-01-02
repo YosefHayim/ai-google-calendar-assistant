@@ -1,6 +1,5 @@
 'use client'
 
-import React from 'react'
 import {
   Skeleton,
   SkeletonCalendarSources,
@@ -13,11 +12,13 @@ import {
   SkeletonList,
 } from '@/components/ui/skeleton'
 
+import React from 'react'
+
 const AnalyticsDashboardSkeleton: React.FC = () => {
   // Get preferred chart type from localStorage
   const preferredChartType =
     typeof window !== 'undefined'
-      ? localStorage.getItem('analytics-chart-type') === 'line'
+      ? localStorage.getItem('AnalyticsChartType') === 'line'
         ? 'line'
         : 'column'
       : 'column'

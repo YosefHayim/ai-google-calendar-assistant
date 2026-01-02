@@ -1,13 +1,14 @@
-import type { GlobalContext } from "../init-bot";
-import type { MiddlewareFn } from "grammy";
 import {
+  checkTokenExpiry,
+  deactivateGoogleTokens,
   fetchGoogleTokensByEmail,
   generateGoogleAuthUrl,
-  checkTokenExpiry,
-  refreshGoogleAccessToken,
   persistGoogleTokens,
-  deactivateGoogleTokens,
+  refreshGoogleAccessToken,
 } from "@/utils/auth";
+
+import type { GlobalContext } from "../init-bot";
+import type { MiddlewareFn } from "grammy";
 import type { TokensProps } from "@/types";
 
 /**
@@ -24,10 +25,7 @@ type TelegramTokenValidationResult = {
  * Validate Google Calendar tokens for Telegram user
  * Returns validated tokens or null if auth is required
  */
-const validateGoogleTokens = async (
-  ctx: GlobalContext,
-  email: string
-): Promise<TelegramTokenValidationResult | null> => {
+const validateGoogleTokens = async (ctx: GlobalContext, email: string): Promise<TelegramTokenValidationResult | null> => {
   const { data: tokens, error } = await fetchGoogleTokensByEmail(email);
 
   if (error) {
@@ -38,25 +36,19 @@ const validateGoogleTokens = async (
 
   if (!tokens) {
     const authUrl = generateGoogleAuthUrl();
-    await ctx.reply(
-      `To help you manage your calendar, I need access to your Google Calendar. Please authorize:\n\n${authUrl}`
-    );
+    await ctx.reply(`To help you manage your calendar, I need access to your Google Calendar. Please authorize:\n\n${authUrl}`);
     return null;
   }
 
   if (!tokens.is_active) {
     const authUrl = generateGoogleAuthUrl();
-    await ctx.reply(
-      `Your Google Calendar access has been revoked. Please reconnect:\n\n${authUrl}`
-    );
+    await ctx.reply(`Your Google Calendar access has been revoked. Please reconnect:\n\n${authUrl}`);
     return null;
   }
 
   if (!tokens.refresh_token) {
     const authUrl = generateGoogleAuthUrl();
-    await ctx.reply(
-      `Missing calendar permissions. Please reconnect with full access:\n\n${authUrl}`
-    );
+    await ctx.reply(`Missing calendar permissions. Please reconnect with full access:\n\n${authUrl}`);
     return null;
   }
 
@@ -72,10 +64,7 @@ const validateGoogleTokens = async (
  * Refresh Google Calendar tokens if expired or near expiry
  * Returns refreshed tokens or null if reauth is required
  */
-const refreshGoogleTokensIfNeeded = async (
-  ctx: GlobalContext,
-  validation: TelegramTokenValidationResult
-): Promise<TelegramTokenValidationResult | null> => {
+const refreshGoogleTokensIfNeeded = async (ctx: GlobalContext, validation: TelegramTokenValidationResult): Promise<TelegramTokenValidationResult | null> => {
   const { tokens, isExpired, isNearExpiry } = validation;
 
   // Token is still valid - no refresh needed
@@ -90,9 +79,7 @@ const refreshGoogleTokensIfNeeded = async (
     return null;
   }
 
-  console.log(
-    `Telegram: Google token refresh triggered for ${email} - expired: ${isExpired}, nearExpiry: ${isNearExpiry}`
-  );
+  console.log(`Telegram: Google token refresh triggered for ${email} - expired: ${isExpired}, nearExpiry: ${isNearExpiry}`);
 
   try {
     const refreshedTokens = await refreshGoogleAccessToken(tokens);
@@ -109,9 +96,7 @@ const refreshGoogleTokensIfNeeded = async (
       expiresInMs: refreshedTokens.expiryDate - Date.now(),
     };
 
-    console.log(
-      `Telegram: Google token refreshed for ${email}, expires in ${Math.round((refreshedTokens.expiryDate - Date.now()) / 1000 / 60)} min`
-    );
+    console.log(`Telegram: Google token refreshed for ${email}, expires in ${Math.round((refreshedTokens.expiryDate - Date.now()) / 1000 / 60)} min`);
 
     return result;
   } catch (error) {
@@ -121,9 +106,7 @@ const refreshGoogleTokensIfNeeded = async (
     if (message.startsWith("REAUTH_REQUIRED:")) {
       await deactivateGoogleTokens(email);
       const authUrl = generateGoogleAuthUrl();
-      await ctx.reply(
-        `Your Google Calendar session has expired. Please reconnect:\n\n${authUrl}`
-      );
+      await ctx.reply(`Your Google Calendar session has expired. Please reconnect:\n\n${authUrl}`);
       return null;
     }
 

@@ -20,9 +20,9 @@ export const TIME = {
 
 // Local storage keys
 export const STORAGE_KEYS = {
-  ACCESS_TOKEN: 'ally_access_token',
-  REFRESH_TOKEN: 'ally_refresh_token',
-  USER: 'ally_user',
+  ACCESS_TOKEN: 'allyAccessToken',
+  REFRESH_TOKEN: 'allyRefreshToken',
+  USER: 'allyUser',
 } as const
 
 // React Query configuration

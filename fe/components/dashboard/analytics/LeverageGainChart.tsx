@@ -1,8 +1,9 @@
 'use client'
 
-import React, { useState } from 'react'
-import { TrendingUp, Info, BarChart3, LineChart } from 'lucide-react'
+import { BarChart3, Info, LineChart, TrendingUp } from 'lucide-react'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
+import React, { useState } from 'react'
+
 import TimeSavedChart from './TimeSavedChart'
 import TimeSavedColumnChart from './TimeSavedColumnChart'
 import type { TimeSavedDataPoint } from '@/types/analytics'
@@ -15,7 +16,7 @@ const LeverageGainChart: React.FC<LeverageGainChartProps> = ({ data }) => {
   // Chart type state with localStorage persistence
   const [chartType, setChartType] = useState<'line' | 'column'>(() => {
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('analytics-chart-type')
+      const saved = localStorage.getItem('AnalyticsChartType')
       return saved === 'line' || saved === 'column' ? saved : 'column'
     }
     return 'column'
@@ -24,7 +25,7 @@ const LeverageGainChart: React.FC<LeverageGainChartProps> = ({ data }) => {
   const handleChartTypeChange = (type: 'line' | 'column') => {
     setChartType(type)
     if (typeof window !== 'undefined') {
-      localStorage.setItem('analytics-chart-type', type)
+      localStorage.setItem('AnalyticsChartType', type)
     }
   }
 

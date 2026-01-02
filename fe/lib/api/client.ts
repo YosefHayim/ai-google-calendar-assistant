@@ -1,6 +1,10 @@
 import { ENV } from '../constants'
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios'
 
+const ACCESS_TOKEN_HEADER = 'allyAccessToken'
+const REFRESH_TOKEN_HEADER = 'allyRefreshToken'
+const USER_KEY = 'allyUser'
+
 export const apiClient = axios.create({
   baseURL: ENV.API_BASE_URL,
   headers: {
@@ -29,8 +33,8 @@ const processQueue = (error: AxiosError | null, token: string | null = null) => 
 
 apiClient.interceptors.request.use((config) => {
   if (typeof window !== 'undefined') {
-    const token = localStorage.getItem('ally_access_token')
-    const refreshToken = localStorage.getItem('ally_refresh_token')
+    const token = localStorage.getItem(ACCESS_TOKEN_HEADER)
+    const refreshToken = localStorage.getItem(REFRESH_TOKEN_HEADER)
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
@@ -47,15 +51,15 @@ apiClient.interceptors.response.use(
   (response) => {
     // Check for new tokens in response headers
     if (typeof window !== 'undefined') {
-      const newAccessToken = response.headers['access_token'] || response.headers['access-token']
-      const newRefreshToken = response.headers['refresh_token'] || response.headers['refresh-token']
+      const newAccessToken = response.headers[ACCESS_TOKEN_HEADER]
+      const newRefreshToken = response.headers[REFRESH_TOKEN_HEADER]
 
       if (newAccessToken) {
-        localStorage.setItem('ally_access_token', newAccessToken)
+        localStorage.setItem(ACCESS_TOKEN_HEADER, newAccessToken)
       }
 
       if (newRefreshToken) {
-        localStorage.setItem('ally_refresh_token', newRefreshToken)
+        localStorage.setItem(REFRESH_TOKEN_HEADER, newRefreshToken)
       }
     }
 
@@ -86,16 +90,16 @@ apiClient.interceptors.response.use(
         originalRequest._retry = true
         isRefreshing = true
 
-        const refreshToken = localStorage.getItem('ally_refresh_token')
+        const refreshToken = localStorage.getItem(REFRESH_TOKEN_HEADER)
 
         if (!refreshToken) {
           // No refresh token available, redirect to login
           isRefreshing = false
           processQueue(error, null)
           if (typeof window !== 'undefined') {
-            localStorage.removeItem('ally_user')
-            localStorage.removeItem('ally_access_token')
-            localStorage.removeItem('ally_refresh_token')
+            localStorage.removeItem(USER_KEY)
+            localStorage.removeItem(ACCESS_TOKEN_HEADER)
+            localStorage.removeItem(REFRESH_TOKEN_HEADER)
             window.location.href = '/login?error=session_expired'
           }
           return Promise.reject(error)
@@ -107,15 +111,15 @@ apiClient.interceptors.response.use(
           const response = await apiClient(originalRequest)
 
           // Update tokens from response headers if present
-          const newAccessToken = response.headers['access_token'] || response.headers['access-token']
-          const newRefreshToken = response.headers['refresh_token'] || response.headers['refresh-token']
+          const newAccessToken = response.headers[ACCESS_TOKEN_HEADER]
+          const newRefreshToken = response.headers[REFRESH_TOKEN_HEADER]
 
           if (newAccessToken) {
-            localStorage.setItem('ally_access_token', newAccessToken)
+            localStorage.setItem(ACCESS_TOKEN_HEADER, newAccessToken)
           }
 
           if (newRefreshToken) {
-            localStorage.setItem('ally_refresh_token', newRefreshToken)
+            localStorage.setItem(REFRESH_TOKEN_HEADER, newRefreshToken)
           }
 
           isRefreshing = false
@@ -127,9 +131,9 @@ apiClient.interceptors.response.use(
 
           // Refresh failed, clear auth and redirect to login
           if (typeof window !== 'undefined') {
-            localStorage.removeItem('ally_user')
-            localStorage.removeItem('ally_access_token')
-            localStorage.removeItem('ally_refresh_token')
+            localStorage.removeItem(USER_KEY)
+            localStorage.removeItem(ACCESS_TOKEN_HEADER)
+            localStorage.removeItem(REFRESH_TOKEN_HEADER)
             window.location.href = '/login?error=session_expired'
           }
 

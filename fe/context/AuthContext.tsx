@@ -19,9 +19,9 @@ export const AuthProvider = ({ children }: { children?: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('ally_user')
-    const token = localStorage.getItem('ally_access_token')
-    const refreshToken = localStorage.getItem('ally_refresh_token')
+    const storedUser = localStorage.getItem('allyUser')
+    const token = localStorage.getItem('allyAccessToken')
+    const refreshToken = localStorage.getItem('allyRefreshToken')
 
     // Only set user if we have both access token and refresh token
     // The refresh token is needed for automatic token refresh via API client interceptor
@@ -31,32 +31,32 @@ export const AuthProvider = ({ children }: { children?: ReactNode }) => {
       } catch (e) {
         console.error('Auth: Failed to parse user data.')
         // Clear invalid data
-        localStorage.removeItem('ally_user')
-        localStorage.removeItem('ally_access_token')
-        localStorage.removeItem('ally_refresh_token')
+        localStorage.removeItem('allyUser')
+        localStorage.removeItem('allyAccessToken')
+        localStorage.removeItem('allyRefreshToken')
       }
     } else if (token && !refreshToken) {
       // If we have access token but no refresh token, clear everything
       // This prevents SESSION_EXPIRED errors on reload
       console.warn('Auth: Access token found but refresh token missing. Clearing auth data.')
-      localStorage.removeItem('ally_user')
-      localStorage.removeItem('ally_access_token')
+      localStorage.removeItem('allyUser')
+      localStorage.removeItem('allyAccessToken')
     }
     setIsLoading(false)
   }, [])
 
   const login = (data: AuthData) => {
     setUser(data.user)
-    localStorage.setItem('ally_user', JSON.stringify(data.user))
-    localStorage.setItem('ally_access_token', data.session.access_token)
-    localStorage.setItem('ally_refresh_token', data.session.refresh_token)
+    localStorage.setItem('allyUser', JSON.stringify(data.user))
+    localStorage.setItem('allyAccessToken', data.session.access_token)
+    localStorage.setItem('allyRefreshToken', data.session.refresh_token)
   }
 
   const logout = () => {
     setUser(null)
-    localStorage.removeItem('ally_user')
-    localStorage.removeItem('ally_access_token')
-    localStorage.removeItem('ally_refresh_token')
+    localStorage.removeItem('allyUser')
+    localStorage.removeItem('allyAccessToken')
+    localStorage.removeItem('allyRefreshToken')
   }
 
   return (

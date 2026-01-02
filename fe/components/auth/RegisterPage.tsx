@@ -4,6 +4,7 @@ import { AllyLogo, BetaBadge } from '@/components/shared/logo'
 
 import { ENDPOINTS } from '@/lib/api/endpoints'
 import { ENV } from '@/lib/constants'
+import { FcGoogle } from 'react-icons/fc'
 import ImageCarousel from '@/components/auth/ImageCarousel'
 import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button'
 import Link from 'next/link'
@@ -16,27 +17,6 @@ const carouselImages = [
   'https://images.unsplash.com/photo-1504384308090-c894fd241d81?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', // Team meeting, dynamic office
   'https://images.unsplash.com/photo-151906900890-a23f182c1626?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', // Abstract light/data flow
 ]
-
-const GoogleIcon = () => (
-  <svg viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor">
-    <path
-      d="M22.445 12.000c0-.737-.064-1.44-.183-2.12H12v4.08h6.143c-.24 1.157-.96 2.14-2.067 2.795v3.477h4.482c2.62-2.427 4.11-6.02 4.11-10.232z"
-      fill="#4285F4"
-    />
-    <path
-      d="M12 22.5c3.24 0 5.96-1.072 7.947-2.915l-4.482-3.477c-1.246.84-2.85 1.33-3.465 1.33-2.67 0-4.93-1.8-5.74-4.22H1.722v3.542A11.972 11.972 0 0012 22.5z"
-      fill="#34A853"
-    />
-    <path
-      d="M6.26 14.11c-.2-.596-.32-1.23-.32-1.92s.12-1.324.32-1.92V8.748H1.72A11.964 11.964 0 000 12c0 2.07.5 4.01 1.72 5.378l4.54-3.268z"
-      fill="#FBBC05"
-    />
-    <path
-      d="M12 5.535c1.785 0 3.39.613 4.656 1.788L20.12 3.65C17.93 1.54 15.01 0 12 0A11.972 11.972 0 000 12h4.54C5.07 7.33 8.16 5.535 12 5.535z"
-      fill="#EA4335"
-    />
-  </svg>
-)
 
 const RegisterPage: React.FC = () => {
   const [isLoading, setIsLoading] = React.useState(false)
@@ -74,7 +54,7 @@ const RegisterPage: React.FC = () => {
               text="Sign up with Google"
               loadingText="Connecting..."
               isLoading={isLoading}
-              Icon={<GoogleIcon />}
+              Icon={<FcGoogle size={24} />}
               className="w-full h-14 text-lg shadow-lg border-zinc-200 dark:border-zinc-700"
               onClick={handleGoogleSignUp}
             />
