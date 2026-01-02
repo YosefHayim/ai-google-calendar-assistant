@@ -2,7 +2,7 @@ import React from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { SparklesCore } from '@/components/ui/sparkles';
 import Link from 'next/link';
-import { AllyLogo } from '@/components/logo';
+import { AllyLogo } from '@/components/shared/logo';
 import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button';
 
 const WaitingList: React.FC = () => {

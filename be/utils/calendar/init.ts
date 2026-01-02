@@ -1,9 +1,22 @@
 import { calendar_v3, google } from "googleapis";
 import type { OAuth2Client } from "google-auth-library";
 
-import { OAUTH2CLIENT } from "@/config";
+import { REDIRECT_URI, env } from "@/config";
 import type { TokensProps } from "@/types";
 import { updateUserSupabaseTokens } from "../auth/update-tokens-of-user";
+
+/**
+ * Create a fresh OAuth2Client instance for per-request use
+ *
+ * This avoids issues with singleton OAuth2Client caching stale token state.
+ * Each request gets its own client to prevent credential leakage between users
+ * and ensure token refresh works correctly after expiry.
+ *
+ * @returns {OAuth2Client} A new OAuth2Client instance
+ */
+export const createOAuth2Client = (): OAuth2Client => {
+  return new google.auth.OAuth2(env.googleClientId, env.googleClientSecret, REDIRECT_URI);
+};
 
 type RefreshedToken = { token: string | null | undefined; expiry_date?: number | null };
 
@@ -52,14 +65,17 @@ const persistRefreshedTokens = async (oldTokens: TokensProps, newTokens: Refresh
 /**
  * Initialize calendar with user tokens
  *
+ * Creates a fresh OAuth2Client per request to avoid stale token state issues.
  * Sets credentials, refreshes token if needed, updates DB, and returns calendar client.
  *
  * @param {TokensProps} tokens - The user's OAuth tokens.
  * @returns {Promise<calendar_v3.Calendar>} The initialized calendar client.
  */
 export const initUserSupabaseCalendarWithTokensAndUpdateTokens = async (tokens: TokensProps): Promise<calendar_v3.Calendar> => {
-  OAUTH2CLIENT.setCredentials(tokens);
-  const refreshedTokens = await refreshAccessToken(OAUTH2CLIENT);
+  // Create fresh OAuth2Client per request to avoid singleton caching issues
+  const oauthClient = createOAuth2Client();
+  oauthClient.setCredentials(tokens);
+  const refreshedTokens = await refreshAccessToken(oauthClient);
   await persistRefreshedTokens(tokens, refreshedTokens);
-  return createCalendarClient(OAUTH2CLIENT);
+  return createCalendarClient(oauthClient);
 };

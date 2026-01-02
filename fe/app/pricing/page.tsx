@@ -1,7 +1,7 @@
 import { PricingSectionDemo } from '@/components/ui/pricing-section-demo';
-import FAQs from '@/components/FAQs';
+import FAQs from '@/components/marketing/FAQs';
 import { AnimatedTestimonials } from '@/components/ui/animated-testimonials';
-import MarketingLayout from '@/components/MarketingLayout';
+import MarketingLayout from '@/components/marketing/MarketingLayout';
 
 const MOCK_TESTIMONIALS = [
   {

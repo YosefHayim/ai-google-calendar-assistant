@@ -38,18 +38,20 @@ import {
 import { addDays, format, subDays } from "date-fns";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-import ActivityHeatmap from "@/components/ActivityHeatmap";
+import ActivityHeatmap from "@/components/dashboard/analytics/ActivityHeatmap";
 import { DatePickerWithRange } from "@/components/ui/date-range-picker";
 import { DateRange } from "react-day-picker";
 import { ENDPOINTS } from "@/lib/api/endpoints";
-import TimeSavedChart from "@/components/TimeSavedChart";
-import TimeSavedColumnChart from "@/components/TimeSavedColumnChart";
+import TimeSavedChart from "@/components/dashboard/analytics/TimeSavedChart";
+import TimeSavedColumnChart from "@/components/dashboard/analytics/TimeSavedColumnChart";
 import { apiClient } from "@/lib/api/client";
 import { calendarsService } from "@/lib/api/services/calendars.service";
+import { eventsService } from "@/lib/api/services/events.service";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { useCalendarById } from "@/hooks/queries/calendars/useCalendarById";
 import { z } from "zod";
+import type { EventQueryParams } from "@/types/api";
 
 // --- Zod Schema Definitions ---
 
@@ -133,9 +135,10 @@ type AnalyticsData = z.infer<typeof AnalyticsResponseSchema>;
 
 interface TimeAllocationChartProps {
   data: { category: string; hours: number; color: string; calendarId?: string }[];
+  onCalendarClick?: (calendarId: string, calendarName: string, calendarColor: string) => void;
 }
 
-const TimeAllocationChart: React.FC<TimeAllocationChartProps> = ({ data }) => {
+const TimeAllocationChart: React.FC<TimeAllocationChartProps> = ({ data, onCalendarClick }) => {
   const totalHours = data.reduce((acc, item) => acc + item.hours, 0);
   const radius = 70;
   const circumference = 2 * Math.PI * radius;
@@ -224,9 +227,16 @@ const TimeAllocationChart: React.FC<TimeAllocationChartProps> = ({ data }) => {
             return (
               <li
                 key={item.category}
-                className="flex items-center gap-3 text-sm rounded-md p-2 -m-2 transition-colors"
+                className={`flex items-center gap-3 text-sm rounded-md p-2 -m-2 transition-colors ${
+                  onCalendarClick && item.calendarId ? "cursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-900/50" : ""
+                }`}
                 data-calendar-id={item.calendarId || ""}
                 style={{ backgroundColor: `${safeColor}10` }}
+                onClick={() => {
+                  if (onCalendarClick && item.calendarId) {
+                    onCalendarClick(item.calendarId, item.category, safeColor);
+                  }
+                }}
               >
                 <div className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: safeColor }} />
                 <span className="flex-1 font-medium text-zinc-800 dark:text-zinc-200 truncate">{item.category}</span>
@@ -301,6 +311,10 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
   // Calendar settings dialog state
   const [selectedCalendarForSettings, setSelectedCalendarForSettings] = useState<{ id: string; name: string; color: string } | null>(null);
   const [isCalendarSettingsDialogOpen, setIsCalendarSettingsDialogOpen] = useState(false);
+
+  // Calendar events dialog state
+  const [isCalendarEventsDialogOpen, setIsCalendarEventsDialogOpen] = useState(false);
+  const [selectedCalendarForEvents, setSelectedCalendarForEvents] = useState<{ id: string; name: string; color: string } | null>(null);
 
   // Chart type state with localStorage persistence
   const [chartType, setChartType] = useState<"line" | "column">(() => {
@@ -404,6 +418,33 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
       return result.data;
     },
     enabled: !!date?.from && !!date?.to,
+    retry: false,
+  });
+
+  // Fetch events for selected calendar in dialog
+  const {
+    data: calendarEventsData,
+    isLoading: isCalendarEventsLoading,
+  } = useQuery({
+    queryKey: ["calendar-events", selectedCalendarForEvents?.id, date?.from, date?.to],
+    queryFn: async () => {
+      if (!selectedCalendarForEvents || !date?.from || !date?.to) return null;
+
+      const params: EventQueryParams = {
+        calendarId: selectedCalendarForEvents.id,
+        timeMin: date.from.toISOString(),
+        timeMax: date.to.toISOString(),
+      };
+
+      const response = await eventsService.getEvents(params);
+      
+      if (response.status === "error" || !response.data) {
+        throw new Error(response.message || "Failed to fetch events");
+      }
+
+      return response.data;
+    },
+    enabled: isCalendarEventsDialogOpen && !!selectedCalendarForEvents && !!date?.from && !!date?.to,
     retry: false,
   });
 
@@ -820,7 +861,13 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
 
         {/* Time Mix */}
         <div className="lg:col-span-2">
-          <TimeAllocationChart data={calendarBreakdown} />
+          <TimeAllocationChart
+            data={calendarBreakdown}
+            onCalendarClick={(calendarId, calendarName, calendarColor) => {
+              setSelectedCalendarForEvents({ id: calendarId, name: calendarName, color: calendarColor });
+              setIsCalendarEventsDialogOpen(true);
+            }}
+          />
         </div>
 
         {/* Ops & Calendars */}

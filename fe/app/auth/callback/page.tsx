@@ -2,7 +2,7 @@
 
 import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { AllyLogo } from '@/components/logo';
+import { AllyLogo } from '@/components/shared/logo';
 
 function CallbackContent() {
   const router = useRouter();

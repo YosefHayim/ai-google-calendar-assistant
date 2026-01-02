@@ -5,9 +5,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Lock, RefreshCw, ArrowLeft, CheckCircle2 } from 'lucide-react';
-import { AllyLogo } from '@/components/logo';
+import { AllyLogo } from '@/components/shared/logo';
 import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button';
-import { BackgroundPattern1 } from '@/components/BackgroundPattern1';
+import { BackgroundPattern1 } from '@/components/shared/BackgroundPattern1';
 
 const OTPVerificationPage: React.FC = () => {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);

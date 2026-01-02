@@ -1,7 +1,19 @@
-import { OAUTH2CLIENT, REDIRECT_URI, SCOPES, SUPABASE } from "@/config";
+import { OAUTH2CLIENT, REDIRECT_URI, SCOPES, SUPABASE, env } from "@/config";
+import { google } from "googleapis";
 
 import { TOKEN_FIELDS } from "@/config/constants/sql";
 import type { TokensProps } from "@/types";
+
+/**
+ * Create a fresh OAuth2Client instance for token refresh
+ *
+ * This avoids issues with singleton OAuth2Client caching stale token state.
+ *
+ * @returns {google.auth.OAuth2} A new OAuth2Client instance
+ */
+const createFreshOAuth2Client = () => {
+  return new google.auth.OAuth2(env.googleClientId, env.googleClientSecret, REDIRECT_URI);
+};
 
 /**
  * Generate Google OAuth URL for calendar authorization
@@ -79,19 +91,24 @@ export const fetchGoogleTokensByEmail = async (email: string): Promise<{ data: T
 /**
  * Refresh Google access token using OAuth2 client
  *
+ * Creates a fresh OAuth2Client per call to avoid singleton caching issues
+ * that cause "session expired" errors when the backend hasn't been restarted.
+ *
  * @param {TokensProps} tokens - Current tokens with refresh_token
  * @returns {Promise<RefreshedGoogleToken>} New access token and expiry
  * @throws {Error} REAUTH_REQUIRED if refresh token is invalid/expired
  * @throws {Error} TOKEN_REFRESH_FAILED for other errors
  */
 export const refreshGoogleAccessToken = async (tokens: TokensProps): Promise<RefreshedGoogleToken> => {
-  OAUTH2CLIENT.setCredentials({
+  // Create fresh OAuth2Client per request to avoid stale cached token state
+  const oauthClient = createFreshOAuth2Client();
+  oauthClient.setCredentials({
     refresh_token: tokens.refresh_token,
     access_token: tokens.access_token,
   });
 
   try {
-    const { credentials } = await OAUTH2CLIENT.refreshAccessToken();
+    const { credentials } = await oauthClient.refreshAccessToken();
 
     console.log("credentials", credentials);
 
