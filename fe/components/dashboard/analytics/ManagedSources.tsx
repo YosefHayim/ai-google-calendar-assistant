@@ -1,8 +1,8 @@
 "use client";
 
-import React from "react";
 import { CalendarDays } from "lucide-react";
 import type { CalendarListEntry } from "@/types/api";
+import React from "react";
 
 interface ManagedSourcesProps {
   calendars: CalendarListEntry[];
@@ -16,10 +16,13 @@ const ManagedSources: React.FC<ManagedSourcesProps> = ({ calendars, calendarMap,
     <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-6">
       <div className="mb-6">
         <h3 className="font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
-          <CalendarDays className="w-4 h-4 text-zinc-400" /> Managed Sources
+          <CalendarDays className="w-4 h-4 text-zinc-400" /> Managed Calendars
         </h3>
+        <div className="text-xs text-zinc-500 dark:text-zinc-400">
+          <span>Total calendars:</span> {calendars?.length}
+        </div>
       </div>
-      <div className="space-y-3">
+      <div className="space-y-2">
         {calendars && calendars.length > 0 ? (
           calendars.map((calendar) => {
             const calendarInfo = calendarMap.get(calendar.id);
@@ -29,7 +32,7 @@ const ManagedSources: React.FC<ManagedSourcesProps> = ({ calendars, calendarMap,
             return (
               <div
                 key={calendar.id}
-                className="flex items-center gap-3 p-2 rounded-md hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors border border-transparent hover:border-zinc-200 dark:hover:border-zinc-800 group cursor-pointer"
+                className="border border-transparent hover:border-black hover:border flex items-center gap-3 p-2 rounded-md hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors group cursor-pointer"
                 style={{ backgroundColor: `${color}08` }}
                 onClick={() => {
                   onCalendarClick({

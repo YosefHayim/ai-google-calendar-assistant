@@ -1,9 +1,10 @@
 "use client";
 
-import React from "react";
-import { ListChecks, Info } from "lucide-react";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+import { Info, ListChecks } from "lucide-react";
+
 import type { ProcessedActivity } from "@/types/analytics";
+import React from "react";
 
 interface RecentOperationsProps {
   activities: ProcessedActivity[];
@@ -43,7 +44,7 @@ const RecentOperations: React.FC<RecentOperationsProps> = ({ activities, onActiv
             return (
               <li
                 key={i}
-                className="flex items-start gap-3 group cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-900/50 rounded-md p-2 -m-2 transition-colors"
+                className="border border-transparent hover:border-black hover:border flex items-start gap-3 group cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-900/50 rounded-md p-2 -m-2 transition-colors"
                 data-calendar-id={activity.calendarId || ""}
                 onClick={() => onActivityClick(activity)}
               >

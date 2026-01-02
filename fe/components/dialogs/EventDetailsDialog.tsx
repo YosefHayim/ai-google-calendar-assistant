@@ -1,10 +1,10 @@
 "use client";
 
-import React from "react";
-import { X, CalendarDays } from "lucide-react";
-import { format } from "date-fns";
+import { CalendarDays, X } from "lucide-react";
+import { format, formatDistanceStrict } from "date-fns";
+
 import type { EventDetailsDialogProps } from "@/types/analytics";
-import type { CalendarEvent } from "@/types/api";
+import React from "react";
 
 const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({ isOpen, event, calendarColor, calendarName, onClose }) => {
   if (!isOpen || !event) return null;
@@ -71,7 +71,7 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({ isOpen, event, 
               </div>
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Start</h4>
                 <p className="text-sm text-zinc-600 dark:text-zinc-400">
@@ -85,6 +85,12 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({ isOpen, event, 
                   {event.end.dateTime ? format(new Date(event.end.dateTime), "PPpp") : event.end.date ? format(new Date(event.end.date), "PPP") : "N/A"}
                 </p>
                 {event.end.timeZone && <p className="text-xs text-zinc-500 dark:text-zinc-500 mt-1">Timezone: {event.end.timeZone}</p>}
+              </div>
+              <div>
+                <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Duration</h4>
+                <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                  {formatDistanceStrict(new Date(event.start.dateTime || event.start.date || ""), new Date(event.end.dateTime || event.end.date || ""))}
+                </p>
               </div>
             </div>
 
