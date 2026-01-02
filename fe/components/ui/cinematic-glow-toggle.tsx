@@ -7,14 +7,16 @@ import { cn } from '@/components/../lib/utils'
 import { motion } from 'framer-motion'
 
 interface CinematicGlowToggleProps {
+  id: string
   checked: boolean
   onChange: (checked: boolean) => void
   className?: string
 }
 
-export default function CinematicGlowToggle({ checked, onChange, className }: CinematicGlowToggleProps) {
+export default function CinematicGlowToggle({ id, checked, onChange, className }: CinematicGlowToggleProps) {
   return (
     <div
+      id={id}
       className={cn(
         'flex items-center gap-3 p-1 rounded-full bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-800 shadow-inner cursor-pointer transition-all duration-300',
         className,

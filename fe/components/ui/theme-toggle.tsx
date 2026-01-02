@@ -1,17 +1,18 @@
 'use client'
 
-import React from 'react'
 import { Moon, Sun } from 'lucide-react'
+
+import React from 'react'
 import { cn } from '@/components/../lib/utils'
-import { useTheme } from '@/components/shared/ThemeProvider'
+import { useTheme } from 'next-themes'
 
 interface ThemeToggleProps {
   className?: string
 }
 
 export function ThemeToggle({ className }: ThemeToggleProps) {
-  const { isDarkMode, toggleTheme } = useTheme()
-
+  const { theme, setTheme } = useTheme()
+  const isDarkMode = theme === 'dark'
   return (
     <div
       className={cn(
@@ -19,12 +20,12 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
         isDarkMode ? 'bg-zinc-950 border border-zinc-800' : 'bg-white border border-zinc-200',
         className,
       )}
-      onClick={toggleTheme}
+      onClick={() => setTheme(isDarkMode ? 'light' : 'dark')}
       role="button"
       tabIndex={0}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
-          toggleTheme()
+          setTheme(isDarkMode ? 'light' : 'dark')
         }
       }}
     >
