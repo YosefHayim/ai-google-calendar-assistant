@@ -121,6 +121,13 @@ export const ENDPOINTS = {
    */
   CALENDARS_FREEBUSY: "/api/calendars/freebusy",
 
+  /**
+   * List all calendars on user's calendar list
+   * Methods: GET
+   * Query params: minAccessRole, showDeleted, showHidden
+   */
+  CALENDARS_LIST: "/api/calendars/list",
+
   // ============================================
   // EVENT ENDPOINTS
   // ============================================

@@ -181,3 +181,27 @@ export interface FreeBusyResponse {
     }>;
   };
 }
+
+// Calendar list response
+export interface CalendarListResponse {
+  kind: "calendar#calendarList";
+  etag: string;
+  nextSyncToken?: string;
+  items: CalendarListEntry[];
+}
+
+export interface CalendarListEntry {
+  kind: "calendar#calendarListEntry";
+  etag: string;
+  id: string;
+  summary: string;
+  description?: string;
+  timeZone?: string;
+  colorId?: string;
+  backgroundColor?: string;
+  foregroundColor?: string;
+  selected?: boolean;
+  accessRole?: string;
+  defaultReminders?: EventReminder[];
+  primary?: boolean;
+}
