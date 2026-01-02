@@ -1,19 +1,9 @@
 // Wrapper utilities
-export { useQueryWrapper, type QueryHookOptions } from "./useQueryWrapper";
-export {
-  useMutationWrapper,
-  type MutationHookOptions,
-} from "./useMutationWrapper";
+export { useQueryWrapper, type QueryHookOptions } from './useQueryWrapper'
+export { useMutationWrapper, type MutationHookOptions } from './useMutationWrapper'
 
 // Auth hooks
-export {
-  useUser,
-  useSignIn,
-  useSignUp,
-  useVerifyOTP,
-  useDeactivateUser,
-  authService,
-} from "./auth";
+export { useUser, useSignIn, useSignUp, useVerifyOTP, useDeactivateUser, authService } from './auth'
 
 // Calendar hooks
 export {
@@ -23,7 +13,7 @@ export {
   useCalendarColors,
   useCalendarTimezones,
   useFreeBusy,
-} from "./calendars";
+} from './calendars'
 
 // Event hooks
 export {
@@ -36,4 +26,4 @@ export {
   useQuickAddEvent,
   useMoveEvent,
   useWatchEvents,
-} from "./events";
+} from './events'

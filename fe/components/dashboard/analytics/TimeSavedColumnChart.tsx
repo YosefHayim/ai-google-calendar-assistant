@@ -1,69 +1,69 @@
-"use client";
+'use client'
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from 'react'
 
-import { format } from "date-fns";
-import { motion } from "framer-motion";
+import { format } from 'date-fns'
+import { motion } from 'framer-motion'
 
 interface TimeSavedColumnChartProps {
-  data: { day: number; date: string; hours: number }[];
+  data: { day: number; date: string; hours: number }[]
 }
 
 const TimeSavedColumnChart: React.FC<TimeSavedColumnChartProps> = ({ data }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
 
   // Ally Brand Primary Color Hex
-  const PRIMARY_COLOR = "#f26306";
+  const PRIMARY_COLOR = '#f26306'
 
   useEffect(() => {
     if (containerRef.current) {
       const observer = new ResizeObserver((entries) => {
         if (entries[0]) {
-          const { width, height } = entries[0].contentRect;
-          setDimensions({ width, height });
+          const { width, height } = entries[0].contentRect
+          setDimensions({ width, height })
         }
-      });
-      observer.observe(containerRef.current);
-      return () => observer.disconnect();
+      })
+      observer.observe(containerRef.current)
+      return () => observer.disconnect()
     }
-  }, []);
+  }, [])
 
   if (!data || data.length === 0) {
-    return <div ref={containerRef} className="w-full h-full" />;
+    return <div ref={containerRef} className="w-full h-full" />
   }
 
-  const { width, height } = dimensions;
+  const { width, height } = dimensions
 
   if (width === 0 || height === 0) {
-    return <div ref={containerRef} className="w-full h-full" />;
+    return <div ref={containerRef} className="w-full h-full" />
   }
 
-  const padding = 20;
-  const SLEEP_HOURS = 7;
+  const padding = 20
+  const SLEEP_HOURS = 7
   // Calculate available hours (total 24 - sleep 7 = 17)
-  const TOTAL_AVAILABLE_HOURS = 24 - SLEEP_HOURS;
-  const maxY = Math.max(...data.map((d) => d.hours), 1) * 1.1;
-  const barSpacing = 2;
-  const availableWidth = width - padding * 2;
-  const barWidth = Math.max(2, (availableWidth - (data.length - 1) * barSpacing) / data.length);
-  const plotHeight = height - padding * 2;
+  const TOTAL_AVAILABLE_HOURS = 24 - SLEEP_HOURS
+  const maxY = Math.max(...data.map((d) => d.hours), 1) * 1.1
+  const barSpacing = 2
+  const availableWidth = width - padding * 2
+  const barWidth = Math.max(2, (availableWidth - (data.length - 1) * barSpacing) / data.length)
+  const plotHeight = height - padding * 2
 
-  const getY = (hours: number) => padding + plotHeight - (hours / maxY) * plotHeight;
-  const getBarHeight = (hours: number) => (hours / maxY) * plotHeight;
+  const getY = (hours: number) => padding + plotHeight - (hours / maxY) * plotHeight
+  const getBarHeight = (hours: number) => (hours / maxY) * plotHeight
 
   // Calculate available hours left for each data point
   const getAvailableHoursLeft = (hours: number) => {
-    return Math.max(0, TOTAL_AVAILABLE_HOURS - hours);
-  };
+    return Math.max(0, TOTAL_AVAILABLE_HOURS - hours)
+  }
 
   return (
     <div ref={containerRef} className="relative w-full">
       <svg viewBox={`0 0 ${width} ${height}`} className="w-full">
         {/* Grid lines */}
         {[0, 0.25, 0.5, 0.75, 1].map((ratio) => {
-          const y = padding + plotHeight * (1 - ratio);
+          const y = padding + plotHeight * (1 - ratio)
           return (
             <line
               key={ratio}
@@ -76,15 +76,15 @@ const TimeSavedColumnChart: React.FC<TimeSavedColumnChartProps> = ({ data }) => 
               className="text-zinc-200 dark:text-zinc-800"
               opacity={0.5}
             />
-          );
+          )
         })}
 
         {/* Bars */}
         {data.map((point, index) => {
-          const x = padding + index * (barWidth + barSpacing);
-          const barHeight = getBarHeight(point.hours);
-          const y = padding + plotHeight - barHeight;
-          const isHovered = hoveredIndex === index;
+          const x = padding + index * (barWidth + barSpacing)
+          const barHeight = getBarHeight(point.hours)
+          const y = padding + plotHeight - barHeight
+          const isHovered = hoveredIndex === index
 
           return (
             <g key={index}>
@@ -104,7 +104,7 @@ const TimeSavedColumnChart: React.FC<TimeSavedColumnChartProps> = ({ data }) => 
                 transition={{
                   duration: 0.6,
                   delay: index * 0.03,
-                  ease: "easeOut",
+                  ease: 'easeOut',
                 }}
                 onMouseEnter={() => setHoveredIndex(index)}
                 onMouseLeave={() => setHoveredIndex(null)}
@@ -112,24 +112,38 @@ const TimeSavedColumnChart: React.FC<TimeSavedColumnChartProps> = ({ data }) => 
               />
               {isHovered && (
                 <g className="pointer-events-none">
-                  <rect x={x - 2} y={y - 30} width={Math.max(barWidth + 4, 40)} height={24} fill="rgba(0, 0, 0, 0.8)" rx={4} />
-                  <text x={x + barWidth / 2} y={y - 14} textAnchor="middle" fill="white" fontSize="10" fontWeight="bold">
+                  <rect
+                    x={x - 2}
+                    y={y - 30}
+                    width={Math.max(barWidth + 4, 40)}
+                    height={24}
+                    fill="rgba(0, 0, 0, 0.8)"
+                    rx={4}
+                  />
+                  <text
+                    x={x + barWidth / 2}
+                    y={y - 14}
+                    textAnchor="middle"
+                    fill="white"
+                    fontSize="10"
+                    fontWeight="bold"
+                  >
                     {point.hours.toFixed(1)}h
                   </text>
                 </g>
               )}
             </g>
-          );
+          )
         })}
       </svg>
 
       {/* Tooltip Overlay */}
       {hoveredIndex !== null &&
         (() => {
-          const point = data[hoveredIndex];
-          const availableHoursLeft = getAvailableHoursLeft(point.hours);
-          const dateObj = new Date(point.date);
-          const formattedDate = format(dateObj, "MMM dd, yyyy");
+          const point = data[hoveredIndex]
+          const availableHoursLeft = getAvailableHoursLeft(point.hours)
+          const dateObj = new Date(point.date)
+          const formattedDate = format(dateObj, 'MMM dd, yyyy')
 
           return (
             <div
@@ -157,10 +171,10 @@ const TimeSavedColumnChart: React.FC<TimeSavedColumnChartProps> = ({ data }) => 
                 </div>
               </div>
             </div>
-          );
+          )
         })()}
     </div>
-  );
-};
+  )
+}
 
-export default TimeSavedColumnChart;
+export default TimeSavedColumnChart

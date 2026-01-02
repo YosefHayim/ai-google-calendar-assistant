@@ -1,18 +1,15 @@
-"use client";
+'use client'
 
-import { UseMutationResult } from "@tanstack/react-query";
-import type { ApiResponse } from "@/types/api";
-import {
-  NormalizedMutationState,
-  extractApiError,
-} from "@/lib/query/types";
+import { UseMutationResult } from '@tanstack/react-query'
+import type { ApiResponse } from '@/types/api'
+import { NormalizedMutationState, extractApiError } from '@/lib/query/types'
 
 /**
  * Wraps a React Query mutation result with normalized state interface.
  * Provides consistent loading, error, and data handling across all mutation hooks.
  */
 export function useMutationWrapper<TData, TVariables>(
-  mutationResult: UseMutationResult<ApiResponse<TData>, Error, TVariables>
+  mutationResult: UseMutationResult<ApiResponse<TData>, Error, TVariables>,
 ): NormalizedMutationState<TData, TVariables> {
   const {
     mutate,
@@ -24,18 +21,18 @@ export function useMutationWrapper<TData, TVariables>(
     error,
     data: response,
     reset,
-  } = mutationResult;
+  } = mutationResult
 
-  const apiError = isError ? extractApiError(error) : null;
+  const apiError = isError ? extractApiError(error) : null
 
   // Wrap mutateAsync to extract data from ApiResponse
   const mutateAsync = async (variables: TVariables): Promise<TData> => {
-    const result = await originalMutateAsync(variables);
-    if (result.status === "error") {
-      throw new Error(result.message);
+    const result = await originalMutateAsync(variables)
+    if (result.status === 'error') {
+      throw new Error(result.message)
     }
-    return result.data as TData;
-  };
+    return result.data as TData
+  }
 
   return {
     mutate,
@@ -53,7 +50,7 @@ export function useMutationWrapper<TData, TVariables>(
     data: response?.data ?? null,
 
     reset,
-  };
+  }
 }
 
 /**
@@ -61,13 +58,9 @@ export function useMutationWrapper<TData, TVariables>(
  */
 export interface MutationHookOptions<TData, TVariables> {
   /** Called when mutation succeeds */
-  onSuccess?: (data: TData, variables: TVariables) => void | Promise<void>;
+  onSuccess?: (data: TData, variables: TVariables) => void | Promise<void>
   /** Called when mutation fails */
-  onError?: (error: Error, variables: TVariables) => void;
+  onError?: (error: Error, variables: TVariables) => void
   /** Called when mutation completes (success or error) */
-  onSettled?: (
-    data: TData | undefined,
-    error: Error | null,
-    variables: TVariables
-  ) => void;
+  onSettled?: (data: TData | undefined, error: Error | null, variables: TVariables) => void
 }

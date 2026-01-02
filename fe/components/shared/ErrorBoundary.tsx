@@ -1,46 +1,39 @@
-'use client';
+'use client'
 
-import React, { Component, ErrorInfo, ReactNode } from 'react';
-import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import React, { Component, ErrorInfo, ReactNode } from 'react'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 
 interface Props {
-  children: ReactNode;
-  fallback?: ReactNode;
+  children: ReactNode
+  fallback?: ReactNode
 }
 
 interface State {
-  hasError: boolean;
-  error: Error | null;
-  errorInfo: ErrorInfo | null;
+  hasError: boolean
+  error: Error | null
+  errorInfo: ErrorInfo | null
 }
 
 export class ErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {
-    super(props);
+    super(props)
     this.state = {
       hasError: false,
       error: null,
       errorInfo: null,
-    };
+    }
   }
 
   static getDerivedStateFromError(error: Error): Partial<State> {
-    return { hasError: true, error };
+    return { hasError: true, error }
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
-    this.setState({ errorInfo });
+    this.setState({ errorInfo })
     // Log error to console in development
     if (process.env.NODE_ENV === 'development') {
-      console.error('ErrorBoundary caught an error:', error, errorInfo);
+      console.error('ErrorBoundary caught an error:', error, errorInfo)
     }
   }
 
@@ -49,13 +42,13 @@ export class ErrorBoundary extends Component<Props, State> {
       hasError: false,
       error: null,
       errorInfo: null,
-    });
-  };
+    })
+  }
 
   render(): ReactNode {
     if (this.state.hasError) {
       if (this.props.fallback) {
-        return this.props.fallback;
+        return this.props.fallback
       }
 
       return (
@@ -80,8 +73,7 @@ export class ErrorBoundary extends Component<Props, State> {
               </div>
               <CardTitle>Something went wrong</CardTitle>
               <CardDescription>
-                An unexpected error occurred. Please try again or contact support
-                if the problem persists.
+                An unexpected error occurred. Please try again or contact support if the problem persists.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -107,20 +99,17 @@ export class ErrorBoundary extends Component<Props, State> {
               <Button onClick={this.handleReset} variant="default">
                 Try again
               </Button>
-              <Button
-                onClick={() => window.location.reload()}
-                variant="outline"
-              >
+              <Button onClick={() => window.location.reload()} variant="outline">
                 Reload page
               </Button>
             </CardFooter>
           </Card>
         </div>
-      );
+      )
     }
 
-    return this.props.children;
+    return this.props.children
   }
 }
 
-export default ErrorBoundary;
+export default ErrorBoundary

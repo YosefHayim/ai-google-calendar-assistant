@@ -1,161 +1,178 @@
-"use client";
+'use client'
 
-import * as React from "react";
+import * as React from 'react'
 
-import { Calendar as CalendarIcon, Info } from "lucide-react";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { addDays, addMonths, endOfMonth, format, isSameMonth, startOfMonth, startOfWeek, startOfYear, subDays, subMonths } from "date-fns";
+import { Calendar as CalendarIcon, Info } from 'lucide-react'
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import {
+  addDays,
+  addMonths,
+  endOfMonth,
+  format,
+  isSameMonth,
+  startOfMonth,
+  startOfWeek,
+  startOfYear,
+  subDays,
+  subMonths,
+} from 'date-fns'
 
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import CinematicGlowToggle from "./cinematic-glow-toggle";
-import { DateRange } from "react-day-picker";
-import { cn } from "@/lib/utils";
-import { toast } from "sonner";
+import { Button } from '@/components/ui/button'
+import { Calendar } from '@/components/ui/calendar'
+import CinematicGlowToggle from './cinematic-glow-toggle'
+import { DateRange } from 'react-day-picker'
+import { cn } from '@/lib/utils'
+import { toast } from 'sonner'
 
 interface DatePickerWithRangeProps extends React.HTMLAttributes<HTMLDivElement> {
-  date: DateRange | undefined;
-  setDate: (date: DateRange | undefined) => void;
+  date: DateRange | undefined
+  setDate: (date: DateRange | undefined) => void
 }
 
-type PresetKey = "yesterday" | "today" | "last7" | "last30" | "thisWeek" | "thisMonth" | "prevMonth" | "thisYear";
+type PresetKey = 'yesterday' | 'today' | 'last7' | 'last30' | 'thisWeek' | 'thisMonth' | 'prevMonth' | 'thisYear'
 
 export function DatePickerWithRange({ className, date, setDate }: DatePickerWithRangeProps) {
-  const [isOpen, setIsOpen] = React.useState(false);
-  const [internalDate, setInternalDate] = React.useState<DateRange | undefined>(date);
-  const [isCompareEnabled, setIsCompareEnabled] = React.useState(false);
-  const [activePreset, setActivePreset] = React.useState<PresetKey | undefined>(undefined);
+  const [isOpen, setIsOpen] = React.useState(false)
+  const [internalDate, setInternalDate] = React.useState<DateRange | undefined>(date)
+  const [isCompareEnabled, setIsCompareEnabled] = React.useState(false)
+  const [activePreset, setActivePreset] = React.useState<PresetKey | undefined>(undefined)
 
   // --- Independent Month State ---
   // Initialize Right Month to today, Left Month to previous month
-  const [rightMonth, setRightMonth] = React.useState<Date>(new Date());
-  const [leftMonth, setLeftMonth] = React.useState<Date>(subMonths(new Date(), 1));
+  const [rightMonth, setRightMonth] = React.useState<Date>(new Date())
+  const [leftMonth, setLeftMonth] = React.useState<Date>(subMonths(new Date(), 1))
 
   // --- Effects ---
   React.useEffect(() => {
     if (!date) {
-      const defaultTo = new Date();
-      const defaultFrom = subDays(defaultTo, 7);
-      setInternalDate({ from: defaultFrom, to: defaultTo });
-      setDate({ from: defaultFrom, to: defaultTo });
-      setActivePreset("last7");
+      const defaultTo = new Date()
+      const defaultFrom = subDays(defaultTo, 7)
+      setInternalDate({ from: defaultFrom, to: defaultTo })
+      setDate({ from: defaultFrom, to: defaultTo })
+      setActivePreset('last7')
     }
-  }, []);
+  }, [])
 
   React.useEffect(() => {
-    setInternalDate(date);
+    setInternalDate(date)
     // When external date changes, snap views to that range
     if (date?.to) {
-      setRightMonth(date.to);
-      setLeftMonth(date.from && !isSameMonth(date.from, date.to) ? date.from : subMonths(date.to, 1));
+      setRightMonth(date.to)
+      setLeftMonth(date.from && !isSameMonth(date.from, date.to) ? date.from : subMonths(date.to, 1))
     }
-  }, [date]);
+  }, [date])
 
   React.useEffect(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("date-range-compare");
-      if (saved) setIsCompareEnabled(JSON.parse(saved));
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('date-range-compare')
+      if (saved) setIsCompareEnabled(JSON.parse(saved))
     }
-  }, []);
+  }, [])
 
   const handleCompareToggle = (checked: boolean) => {
-    setIsCompareEnabled(checked);
-    localStorage.setItem("date-range-compare", JSON.stringify(checked));
-  };
+    setIsCompareEnabled(checked)
+    localStorage.setItem('date-range-compare', JSON.stringify(checked))
+  }
 
   const handleSelect = (selectedDate: DateRange | undefined) => {
-    setInternalDate(selectedDate);
-    setActivePreset(undefined);
-  };
+    setInternalDate(selectedDate)
+    setActivePreset(undefined)
+  }
 
   const handleApply = () => {
     if (internalDate?.from && internalDate?.to) {
-      setDate(internalDate);
-      setIsOpen(false);
-      toast.success("Date range applied");
+      setDate(internalDate)
+      setIsOpen(false)
+      toast.success('Date range applied')
     } else {
-      toast.error("Please select both start and end dates");
+      toast.error('Please select both start and end dates')
     }
-  };
+  }
 
   const setPreset = (preset: PresetKey) => {
-    const today = new Date();
-    let newRange: DateRange | undefined;
+    const today = new Date()
+    let newRange: DateRange | undefined
 
     switch (preset) {
-      case "yesterday":
-        const yest = subDays(today, 1);
-        newRange = { from: yest, to: yest };
-        break;
-      case "last7":
-        newRange = { from: subDays(today, 7), to: today };
-        break;
-      case "last30":
-        newRange = { from: subDays(today, 30), to: today };
-        break;
-      case "thisWeek":
-        newRange = { from: startOfWeek(today), to: today };
-        break;
-      case "thisMonth":
-        newRange = { from: startOfMonth(today), to: today };
-        break;
-      case "prevMonth":
-        const prevMonthDate = subMonths(today, 1);
+      case 'yesterday':
+        const yest = subDays(today, 1)
+        newRange = { from: yest, to: yest }
+        break
+      case 'last7':
+        newRange = { from: subDays(today, 7), to: today }
+        break
+      case 'last30':
+        newRange = { from: subDays(today, 30), to: today }
+        break
+      case 'thisWeek':
+        newRange = { from: startOfWeek(today), to: today }
+        break
+      case 'thisMonth':
+        newRange = { from: startOfMonth(today), to: today }
+        break
+      case 'prevMonth':
+        const prevMonthDate = subMonths(today, 1)
         newRange = {
           from: startOfMonth(prevMonthDate),
           to: endOfMonth(prevMonthDate),
-        };
-        break;
-      case "thisYear":
-        newRange = { from: startOfYear(today), to: today };
-        break;
+        }
+        break
+      case 'thisYear':
+        newRange = { from: startOfYear(today), to: today }
+        break
     }
 
-    setInternalDate(newRange);
-    setActivePreset(preset);
+    setInternalDate(newRange)
+    setActivePreset(preset)
 
     // Smart View Update:
     // Right calendar focuses on the 'to' date (current context)
     // Left calendar focuses on the 'from' date, unless it's same month as right, then back 1 month
     if (newRange?.to) {
-      setRightMonth(newRange.to);
+      setRightMonth(newRange.to)
       if (newRange.from) {
         if (isSameMonth(newRange.from, newRange.to)) {
-          setLeftMonth(subMonths(newRange.to, 1));
+          setLeftMonth(subMonths(newRange.to, 1))
         } else {
-          setLeftMonth(newRange.from);
+          setLeftMonth(newRange.from)
         }
       }
     }
-  };
+  }
 
   const renderPresetButton = (label: string, presetKey: PresetKey) => (
     <Button
-      variant={activePreset === presetKey ? "default" : "ghost"}
+      variant={activePreset === presetKey ? 'default' : 'ghost'}
       className={cn(
-        "justify-start font-normal w-full",
-        activePreset === presetKey ? "bg-primary text-primary-foreground hover:bg-primary/90" : "hover:bg-zinc-100 dark:hover:bg-zinc-800"
+        'justify-start font-normal w-full',
+        activePreset === presetKey
+          ? 'bg-primary text-primary-foreground hover:bg-primary/90'
+          : 'hover:bg-zinc-100 dark:hover:bg-zinc-800',
       )}
       onClick={() => setPreset(presetKey)}
     >
       {label}
     </Button>
-  );
+  )
 
   return (
-    <div className={cn("grid gap-2", className)}>
+    <div className={cn('grid gap-2', className)}>
       <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger asChild>
-          <Button id="date" variant={"outline"} className={cn("w-[300px] justify-start text-left font-normal", !date && "text-muted-foreground")}>
+          <Button
+            id="date"
+            variant={'outline'}
+            className={cn('w-[300px] justify-start text-left font-normal', !date && 'text-muted-foreground')}
+          >
             <CalendarIcon className="mr-2 h-4 w-4" />
             {date?.from ? (
               date.to ? (
                 <>
-                  {format(date.from, "LLL dd, y")} - {format(date.to, "LLL dd, y")}
+                  {format(date.from, 'LLL dd, y')} - {format(date.to, 'LLL dd, y')}
                 </>
               ) : (
-                format(date.from, "LLL dd, y")
+                format(date.from, 'LLL dd, y')
               )
             ) : (
               <span>Pick a date</span>
@@ -167,14 +184,16 @@ export function DatePickerWithRange({ className, date, setDate }: DatePickerWith
           <div className="flex flex-col sm:flex-row h-full">
             {/* --- LEFT SIDEBAR (Presets) --- */}
             <div className="flex flex-col gap-1 p-3 border-r border-border min-w-[150px]">
-              <span className="text-[10px] font-semibold text-muted-foreground mb-1 uppercase tracking-wider px-2">Presets</span>
-              {renderPresetButton("Yesterday", "yesterday")}
-              {renderPresetButton("Last 7 Days", "last7")}
-              {renderPresetButton("Last 30 Days", "last30")}
-              {renderPresetButton("This Week", "thisWeek")}
-              {renderPresetButton("This Month", "thisMonth")}
-              {renderPresetButton("Previous Month", "prevMonth")}
-              {renderPresetButton("This Year", "thisYear")}
+              <span className="text-[10px] font-semibold text-muted-foreground mb-1 uppercase tracking-wider px-2">
+                Presets
+              </span>
+              {renderPresetButton('Yesterday', 'yesterday')}
+              {renderPresetButton('Last 7 Days', 'last7')}
+              {renderPresetButton('Last 30 Days', 'last30')}
+              {renderPresetButton('This Week', 'thisWeek')}
+              {renderPresetButton('This Month', 'thisMonth')}
+              {renderPresetButton('Previous Month', 'prevMonth')}
+              {renderPresetButton('This Year', 'thisYear')}
             </div>
 
             {/* --- RIGHT SIDE (Calendars) --- */}
@@ -239,8 +258,8 @@ export function DatePickerWithRange({ className, date, setDate }: DatePickerWith
                     variant="ghost"
                     size="sm"
                     onClick={() => {
-                      setInternalDate(date);
-                      setIsOpen(false);
+                      setInternalDate(date)
+                      setIsOpen(false)
                     }}
                   >
                     Cancel
@@ -250,7 +269,10 @@ export function DatePickerWithRange({ className, date, setDate }: DatePickerWith
                     size="sm"
                     onClick={handleApply}
                     disabled={!internalDate?.from || !internalDate?.to}
-                    className={cn("bg-primary hover:bg-primary/90", !internalDate?.from || (!internalDate?.to && "opacity-50 cursor-not-allowed"))}
+                    className={cn(
+                      'bg-primary hover:bg-primary/90',
+                      !internalDate?.from || (!internalDate?.to && 'opacity-50 cursor-not-allowed'),
+                    )}
                   >
                     Apply Range
                   </Button>
@@ -261,5 +283,5 @@ export function DatePickerWithRange({ className, date, setDate }: DatePickerWith
         </PopoverContent>
       </Popover>
     </div>
-  );
+  )
 }

@@ -1,2 +1,2 @@
-export { useAnalyticsData } from "./useAnalyticsData";
-export { useAnalyticsComparison } from "./useAnalyticsComparison";
+export { useAnalyticsData } from './useAnalyticsData'
+export { useAnalyticsComparison } from './useAnalyticsComparison'

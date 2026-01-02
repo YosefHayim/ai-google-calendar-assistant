@@ -1,19 +1,19 @@
-'use client';
+'use client'
 
-"use client";
+'use client'
 
-import React, { useEffect, useRef, FC } from "react";
-import { Renderer, Program, Mesh, Triangle, Vec3 } from "ogl";
-import { cn } from "@/components/../lib/utils";
+import React, { useEffect, useRef, FC } from 'react'
+import { Renderer, Program, Mesh, Triangle, Vec3 } from 'ogl'
+import { cn } from '@/components/../lib/utils'
 
 interface VoicePoweredOrbProps {
-  className?: string;
-  hue?: number;
-  enableVoiceControl?: boolean;
-  voiceSensitivity?: number;
-  maxRotationSpeed?: number;
-  maxHoverIntensity?: number;
-  onVoiceDetected?: (detected: boolean) => void;
+  className?: string
+  hue?: number
+  enableVoiceControl?: boolean
+  voiceSensitivity?: number
+  maxRotationSpeed?: number
+  maxHoverIntensity?: number
+  onVoiceDetected?: (detected: boolean) => void
 }
 
 export const VoicePoweredOrb: FC<VoicePoweredOrbProps> = ({
@@ -25,15 +25,15 @@ export const VoicePoweredOrb: FC<VoicePoweredOrbProps> = ({
   maxHoverIntensity = 0.8, // Increased for clearer visual feedback
   onVoiceDetected,
 }) => {
-  const ctnDom = useRef<HTMLDivElement>(null);
-  const audioContextRef = useRef<AudioContext | null>(null);
-  const analyserRef = useRef<AnalyserNode | null>(null);
-  const microphoneRef = useRef<MediaStreamAudioSourceNode | null>(null);
-  const dataArrayRef = useRef<Uint8Array | null>(null);
-  const mediaStreamRef = useRef<MediaStream | null>(null);
-  
-  const smoothedAudioLevel = useRef<number>(0);
-  const targetAudioLevel = useRef<number>(0);
+  const ctnDom = useRef<HTMLDivElement>(null)
+  const audioContextRef = useRef<AudioContext | null>(null)
+  const analyserRef = useRef<AnalyserNode | null>(null)
+  const microphoneRef = useRef<MediaStreamAudioSourceNode | null>(null)
+  const dataArrayRef = useRef<Uint8Array | null>(null)
+  const mediaStreamRef = useRef<MediaStream | null>(null)
+
+  const smoothedAudioLevel = useRef<number>(0)
+  const targetAudioLevel = useRef<number>(0)
 
   const vert = /* glsl */ `
     precision highp float;
@@ -44,7 +44,7 @@ export const VoicePoweredOrb: FC<VoicePoweredOrbProps> = ({
       vUv = uv;
       gl_Position = vec4(position, 0.0, 1.0);
     }
-  `;
+  `
 
   const frag = /* glsl */ `
     precision highp float;
@@ -192,79 +192,79 @@ export const VoicePoweredOrb: FC<VoicePoweredOrbProps> = ({
       vec4 col = draw(uv, iTime, hue);
       gl_FragColor = vec4(col.rgb * col.a, col.a);
     }
-  `;
+  `
 
   const stopMicrophone = () => {
     if (mediaStreamRef.current) {
-      mediaStreamRef.current.getTracks().forEach(t => t.stop());
-      mediaStreamRef.current = null;
+      mediaStreamRef.current.getTracks().forEach((t) => t.stop())
+      mediaStreamRef.current = null
     }
     if (microphoneRef.current) {
-      microphoneRef.current.disconnect();
-      microphoneRef.current = null;
+      microphoneRef.current.disconnect()
+      microphoneRef.current = null
     }
     if (analyserRef.current) {
-      analyserRef.current.disconnect();
-      analyserRef.current = null;
+      analyserRef.current.disconnect()
+      analyserRef.current = null
     }
-    targetAudioLevel.current = 0;
-  };
+    targetAudioLevel.current = 0
+  }
 
   const initMicrophone = async () => {
     try {
       if (!audioContextRef.current) {
-        audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+        audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)()
       }
-      
+
       if (audioContextRef.current.state === 'suspended') {
-        await audioContextRef.current.resume();
+        await audioContextRef.current.resume()
       }
 
       const stream = await navigator.mediaDevices.getUserMedia({
-        audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
-      });
-      
-      mediaStreamRef.current = stream;
-      analyserRef.current = audioContextRef.current.createAnalyser();
-      microphoneRef.current = audioContextRef.current.createMediaStreamSource(stream);
-      analyserRef.current.fftSize = 256; // Faster response
-      analyserRef.current.smoothingTimeConstant = 0.5; 
-      microphoneRef.current.connect(analyserRef.current);
-      dataArrayRef.current = new Uint8Array(analyserRef.current.frequencyBinCount);
-      return true;
+        audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
+      })
+
+      mediaStreamRef.current = stream
+      analyserRef.current = audioContextRef.current.createAnalyser()
+      microphoneRef.current = audioContextRef.current.createMediaStreamSource(stream)
+      analyserRef.current.fftSize = 256 // Faster response
+      analyserRef.current.smoothingTimeConstant = 0.5
+      microphoneRef.current.connect(analyserRef.current)
+      dataArrayRef.current = new Uint8Array(analyserRef.current.frequencyBinCount)
+      return true
     } catch (error) {
-      console.warn("Orb: Audio connection suppressed.", error);
-      return false;
+      console.warn('Orb: Audio connection suppressed.', error)
+      return false
     }
-  };
+  }
 
   useEffect(() => {
     if (enableVoiceControl) {
-      initMicrophone();
+      initMicrophone()
     } else {
-      stopMicrophone();
+      stopMicrophone()
     }
-    return () => stopMicrophone();
-  }, [enableVoiceControl]);
+    return () => stopMicrophone()
+  }, [enableVoiceControl])
 
   useEffect(() => {
-    const container = ctnDom.current;
-    if (!container) return;
+    const container = ctnDom.current
+    if (!container) return
 
-    let rendererInstance: Renderer | null = null;
-    let glContext: WebGLRenderingContext | WebGL2RenderingContext | null = null;
-    let rafId: number;
-    let program: Program | null = null;
+    let rendererInstance: Renderer | null = null
+    let glContext: WebGLRenderingContext | WebGL2RenderingContext | null = null
+    let rafId: number
+    let program: Program | null = null
 
     try {
-      rendererInstance = new Renderer({ alpha: true, antialias: true, dpr: window.devicePixelRatio || 1 });
-      glContext = rendererInstance.gl;
-      glContext.clearColor(0, 0, 0, 0);
-      
-      container.innerHTML = "";
-      container.appendChild(glContext.canvas as HTMLCanvasElement);
+      rendererInstance = new Renderer({ alpha: true, antialias: true, dpr: window.devicePixelRatio || 1 })
+      glContext = rendererInstance.gl
+      glContext.clearColor(0, 0, 0, 0)
 
-      const geometry = new Triangle(glContext as any);
+      container.innerHTML = ''
+      container.appendChild(glContext.canvas as HTMLCanvasElement)
+
+      const geometry = new Triangle(glContext as any)
       program = new Program(glContext as any, {
         vertex: vert,
         fragment: frag,
@@ -276,93 +276,93 @@ export const VoicePoweredOrb: FC<VoicePoweredOrbProps> = ({
           rot: { value: 0 },
           hoverIntensity: { value: 0 },
         },
-      });
+      })
 
-      const mesh = new Mesh(glContext as any, { geometry, program });
+      const mesh = new Mesh(glContext as any, { geometry, program })
 
       const resize = () => {
-        if (!container || !rendererInstance || !glContext) return;
-        const dpr = window.devicePixelRatio || 1;
-        const width = container.clientWidth;
-        const height = container.clientHeight;
-        if (width === 0 || height === 0) return;
+        if (!container || !rendererInstance || !glContext) return
+        const dpr = window.devicePixelRatio || 1
+        const width = container.clientWidth
+        const height = container.clientHeight
+        if (width === 0 || height === 0) return
 
-        rendererInstance.setSize(width * dpr, height * dpr);
-        (glContext.canvas as HTMLCanvasElement).style.width = width + "px";
-        (glContext.canvas as HTMLCanvasElement).style.height = height + "px";
+        rendererInstance.setSize(width * dpr, height * dpr)
+        ;(glContext.canvas as HTMLCanvasElement).style.width = width + 'px'
+        ;(glContext.canvas as HTMLCanvasElement).style.height = height + 'px'
 
         if (program) {
           program.uniforms.iResolution.value.set(
             glContext.canvas.width,
             glContext.canvas.height,
-            glContext.canvas.width / glContext.canvas.height
-          );
+            glContext.canvas.width / glContext.canvas.height,
+          )
         }
-      };
+      }
 
-      const resizeObserver = new ResizeObserver(resize);
-      resizeObserver.observe(container);
-      resize();
+      const resizeObserver = new ResizeObserver(resize)
+      resizeObserver.observe(container)
+      resize()
 
-      let lastTime = 0;
-      let currentRot = 0;
-      const baseRotationSpeed = 0.2;
+      let lastTime = 0
+      let currentRot = 0
+      const baseRotationSpeed = 0.2
 
       const update = (t: number) => {
-        rafId = requestAnimationFrame(update);
-        if (!program) return;
-        const dt = (t - lastTime) * 0.001;
-        lastTime = t;
-        program.uniforms.iTime.value = t * 0.001;
-        program.uniforms.hue.value = hue;
+        rafId = requestAnimationFrame(update)
+        if (!program) return
+        const dt = (t - lastTime) * 0.001
+        lastTime = t
+        program.uniforms.iTime.value = t * 0.001
+        program.uniforms.hue.value = hue
 
         if (analyserRef.current && dataArrayRef.current) {
-          analyserRef.current.getByteFrequencyData(dataArrayRef.current);
-          let sum = 0;
+          analyserRef.current.getByteFrequencyData(dataArrayRef.current)
+          let sum = 0
           for (let i = 0; i < dataArrayRef.current.length; i++) {
-            const value = dataArrayRef.current[i] / 255;
-            sum += value * value;
+            const value = dataArrayRef.current[i] / 255
+            sum += value * value
           }
-          const rms = Math.sqrt(sum / dataArrayRef.current.length);
+          const rms = Math.sqrt(sum / dataArrayRef.current.length)
           // Correspondence: Map RMS to target level with sensitivity boost
-          targetAudioLevel.current = Math.min(rms * voiceSensitivity, 1.2);
-          
-          if (onVoiceDetected) onVoiceDetected(targetAudioLevel.current > 0.05);
+          targetAudioLevel.current = Math.min(rms * voiceSensitivity, 1.2)
+
+          if (onVoiceDetected) onVoiceDetected(targetAudioLevel.current > 0.05)
         }
 
         // Correspondence: Smooth lerp but fast enough to feel real-time
-        const lerpFactor = 0.15; 
-        smoothedAudioLevel.current += (targetAudioLevel.current - smoothedAudioLevel.current) * lerpFactor;
+        const lerpFactor = 0.15
+        smoothedAudioLevel.current += (targetAudioLevel.current - smoothedAudioLevel.current) * lerpFactor
 
-        const voiceLevel = smoothedAudioLevel.current;
-        const voiceRotationSpeed = baseRotationSpeed + (voiceLevel * maxRotationSpeed);
-        currentRot += dt * (voiceLevel > 0.02 ? voiceRotationSpeed : baseRotationSpeed);
-        
-        program.uniforms.hover.value = voiceLevel;
-        program.uniforms.hoverIntensity.value = maxHoverIntensity;
-        program.uniforms.rot.value = currentRot;
+        const voiceLevel = smoothedAudioLevel.current
+        const voiceRotationSpeed = baseRotationSpeed + voiceLevel * maxRotationSpeed
+        currentRot += dt * (voiceLevel > 0.02 ? voiceRotationSpeed : baseRotationSpeed)
+
+        program.uniforms.hover.value = voiceLevel
+        program.uniforms.hoverIntensity.value = maxHoverIntensity
+        program.uniforms.rot.value = currentRot
 
         if (rendererInstance && glContext) {
-          glContext.clear(glContext.COLOR_BUFFER_BIT);
-          rendererInstance.render({ scene: mesh });
+          glContext.clear(glContext.COLOR_BUFFER_BIT)
+          rendererInstance.render({ scene: mesh })
         }
-      };
+      }
 
-      rafId = requestAnimationFrame(update);
+      rafId = requestAnimationFrame(update)
 
       return () => {
-        cancelAnimationFrame(rafId);
-        resizeObserver.disconnect();
-        stopMicrophone();
-        if (glContext) glContext.getExtension("WEBGL_lose_context")?.loseContext();
+        cancelAnimationFrame(rafId)
+        resizeObserver.disconnect()
+        stopMicrophone()
+        if (glContext) glContext.getExtension('WEBGL_lose_context')?.loseContext()
         if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
-          audioContextRef.current.close();
+          audioContextRef.current.close()
         }
-      };
+      }
     } catch (error) {
-      console.error("Orb: Failed to start render engine.", error);
+      console.error('Orb: Failed to start render engine.', error)
     }
-  }, [hue, voiceSensitivity, maxRotationSpeed, maxHoverIntensity]);
+  }, [hue, voiceSensitivity, maxRotationSpeed, maxHoverIntensity])
 
-  return <div ref={ctnDom} className={cn("w-full h-full relative cursor-pointer", className)} />;
-};
+  return <div ref={ctnDom} className={cn('w-full h-full relative cursor-pointer', className)} />
+}

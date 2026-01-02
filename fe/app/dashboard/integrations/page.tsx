@@ -1,7 +1,7 @@
-'use client';
+'use client'
 
-import IntegrationsDashboard from '@/components/dashboard/IntegrationsDashboard';
+import IntegrationsDashboard from '@/components/dashboard/IntegrationsDashboard'
 
 export default function IntegrationsPage() {
-    return <IntegrationsDashboard />;
+  return <IntegrationsDashboard />
 }

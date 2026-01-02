@@ -1,34 +1,49 @@
-"use client";
+'use client'
 
-import { CalendarDays, Info, Loader2, X } from "lucide-react";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+import { CalendarDays, Info, Loader2, X } from 'lucide-react'
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
 
-import type { CalendarSettingsDialogProps } from "@/types/analytics";
-import React from "react";
-import { useCalendarById } from "@/hooks/queries/calendars/useCalendarById";
+import type { CalendarSettingsDialogProps } from '@/types/analytics'
+import React from 'react'
+import { useCalendarById } from '@/hooks/queries/calendars/useCalendarById'
 
-const CalendarSettingsDialog: React.FC<CalendarSettingsDialogProps> = ({ isOpen, calendarId, calendarName, calendarColor, onClose }) => {
+const CalendarSettingsDialog: React.FC<CalendarSettingsDialogProps> = ({
+  isOpen,
+  calendarId,
+  calendarName,
+  calendarColor,
+  onClose,
+}) => {
   const { data: calendar, isLoading } = useCalendarById({
     id: calendarId,
     enabled: isOpen && !!calendarId,
-  });
+  })
 
-  if (!isOpen) return null;
+  if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 bg-black/50 dark:bg-black/80 flex items-center justify-center z-50 p-4" onClick={onClose}>
+    <div
+      className="fixed inset-0 bg-black/50 dark:bg-black/80 flex items-center justify-center z-50 p-4"
+      onClick={onClose}
+    >
       <div
         className="bg-white dark:bg-zinc-900 rounded-lg shadow-xl max-w-2xl w-full relative max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
         style={{ borderTop: `4px solid ${calendarColor}` }}
       >
-        <button onClick={onClose} className="absolute top-4 right-4 text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors">
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors"
+        >
           <X className="w-5 h-5" />
         </button>
         <div className="p-6">
           <div className="mb-6">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-md flex items-center justify-center shrink-0" style={{ backgroundColor: calendarColor, opacity: 0.2 }}>
+              <div
+                className="w-10 h-10 rounded-md flex items-center justify-center shrink-0"
+                style={{ backgroundColor: calendarColor, opacity: 0.2 }}
+              >
                 <CalendarDays className="w-5 h-5" style={{ color: calendarColor }} />
               </div>
               <div className="flex-1">
@@ -54,7 +69,8 @@ const CalendarSettingsDialog: React.FC<CalendarSettingsDialogProps> = ({ isOpen,
                     <HoverCardContent className="w-64 text-xs">
                       <p className="font-medium mb-1">Unique Calendar Identifier</p>
                       <p className="text-zinc-500 dark:text-zinc-400">
-                        A unique ID assigned by Google Calendar to identify this calendar. Used internally for API calls and syncing.
+                        A unique ID assigned by Google Calendar to identify this calendar. Used internally for API calls
+                        and syncing.
                       </p>
                     </HoverCardContent>
                   </HoverCard>
@@ -74,7 +90,9 @@ const CalendarSettingsDialog: React.FC<CalendarSettingsDialogProps> = ({ isOpen,
                           </HoverCardTrigger>
                           <HoverCardContent className="w-64 text-xs">
                             <p className="font-medium mb-1">Calendar Description</p>
-                            <p className="text-zinc-500 dark:text-zinc-400">A user-defined description explaining the purpose or content of this calendar.</p>
+                            <p className="text-zinc-500 dark:text-zinc-400">
+                              A user-defined description explaining the purpose or content of this calendar.
+                            </p>
                           </HoverCardContent>
                         </HoverCard>
                       </h4>
@@ -93,7 +111,8 @@ const CalendarSettingsDialog: React.FC<CalendarSettingsDialogProps> = ({ isOpen,
                           <HoverCardContent className="w-64 text-xs">
                             <p className="font-medium mb-1">Calendar Location</p>
                             <p className="text-zinc-500 dark:text-zinc-400">
-                              The geographic location associated with this calendar. Useful for region-specific calendars.
+                              The geographic location associated with this calendar. Useful for region-specific
+                              calendars.
                             </p>
                           </HoverCardContent>
                         </HoverCard>
@@ -113,7 +132,8 @@ const CalendarSettingsDialog: React.FC<CalendarSettingsDialogProps> = ({ isOpen,
                           <HoverCardContent className="w-64 text-xs">
                             <p className="font-medium mb-1">Calendar Timezone</p>
                             <p className="text-zinc-500 dark:text-zinc-400">
-                              The default timezone for events in this calendar. All-day events and recurring events use this timezone.
+                              The default timezone for events in this calendar. All-day events and recurring events use
+                              this timezone.
                             </p>
                           </HoverCardContent>
                         </HoverCard>
@@ -133,8 +153,9 @@ const CalendarSettingsDialog: React.FC<CalendarSettingsDialogProps> = ({ isOpen,
                           <HoverCardContent className="w-64 text-xs">
                             <p className="font-medium mb-1">Your Access Level</p>
                             <p className="text-zinc-500 dark:text-zinc-400">
-                              Your permission level: <strong>Owner</strong> (full control), <strong>Writer</strong> (edit events), <strong>Reader</strong> (view
-                              only), or <strong>FreeBusyReader</strong> (availability only).
+                              Your permission level: <strong>Owner</strong> (full control), <strong>Writer</strong>{' '}
+                              (edit events), <strong>Reader</strong> (view only), or <strong>FreeBusyReader</strong>{' '}
+                              (availability only).
                             </p>
                           </HoverCardContent>
                         </HoverCard>
@@ -153,7 +174,9 @@ const CalendarSettingsDialog: React.FC<CalendarSettingsDialogProps> = ({ isOpen,
                           </HoverCardTrigger>
                           <HoverCardContent className="w-64 text-xs">
                             <p className="font-medium mb-1">Calendar Data Owner</p>
-                            <p className="text-zinc-500 dark:text-zinc-400">The email address of the Google account that owns this calendar&apos;s data.</p>
+                            <p className="text-zinc-500 dark:text-zinc-400">
+                              The email address of the Google account that owns this calendar&apos;s data.
+                            </p>
                           </HoverCardContent>
                         </HoverCard>
                       </h4>
@@ -171,26 +194,34 @@ const CalendarSettingsDialog: React.FC<CalendarSettingsDialogProps> = ({ isOpen,
                         <HoverCardContent className="w-64 text-xs">
                           <p className="font-medium mb-1">Display Color</p>
                           <p className="text-zinc-500 dark:text-zinc-400">
-                            The color used to display this calendar and its events in the UI. Helps distinguish between multiple calendars.
+                            The color used to display this calendar and its events in the UI. Helps distinguish between
+                            multiple calendars.
                           </p>
                         </HoverCardContent>
                       </HoverCard>
                     </h4>
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-md border border-zinc-200 dark:border-zinc-800" style={{ backgroundColor: calendarColor }} />
+                      <div
+                        className="w-8 h-8 rounded-md border border-zinc-200 dark:border-zinc-800"
+                        style={{ backgroundColor: calendarColor }}
+                      />
                       <p className="text-sm text-zinc-600 dark:text-zinc-400 font-mono">{calendarColor}</p>
                     </div>
                   </div>
                 </>
               )}
 
-              {!calendar && !isLoading && <p className="text-sm text-zinc-500 text-center py-4">No additional settings available for this calendar.</p>}
+              {!calendar && !isLoading && (
+                <p className="text-sm text-zinc-500 text-center py-4">
+                  No additional settings available for this calendar.
+                </p>
+              )}
             </div>
           )}
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default CalendarSettingsDialog;
+export default CalendarSettingsDialog

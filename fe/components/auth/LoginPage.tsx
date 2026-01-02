@@ -1,22 +1,22 @@
-"use client";
+'use client'
 
-import { AllyLogo, BetaBadge } from "@/components/shared/logo";
+import { AllyLogo, BetaBadge } from '@/components/shared/logo'
 
-import { ENDPOINTS } from "@/lib/api/endpoints";
-import { ENV } from "@/lib/constants";
-import ImageCarousel from "@/components/auth/ImageCarousel";
-import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button";
-import Link from "next/link";
-import React from "react";
-import { useSearchParams } from "next/navigation";
+import { ENDPOINTS } from '@/lib/api/endpoints'
+import { ENV } from '@/lib/constants'
+import ImageCarousel from '@/components/auth/ImageCarousel'
+import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button'
+import Link from 'next/link'
+import React from 'react'
+import { useSearchParams } from 'next/navigation'
 
 const carouselImages = [
-  "https://images.unsplash.com/photo-1552588147-385012304918?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", // Focused work, modern laptop
-  "https://images.unsplash.com/photo-1543286386-713bdd593766?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", // Digital planning, calendar UI
-  "https://images.unsplash.com/photo-1556740738-b615950ee0b4?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", // Clean, organized tech desk
-  "https://images.unsplash.com/photo-1521737711867-ee1375d8616c?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", // Business professional looking focused
-  "https://images.unsplash.com/photo-1510519108179-ba09b7dfd4b7?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", // Abstract blue/purple tech
-];
+  'https://images.unsplash.com/photo-1552588147-385012304918?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', // Focused work, modern laptop
+  'https://images.unsplash.com/photo-1543286386-713bdd593766?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', // Digital planning, calendar UI
+  'https://images.unsplash.com/photo-1556740738-b615950ee0b4?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', // Clean, organized tech desk
+  'https://images.unsplash.com/photo-1521737711867-ee1375d8616c?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', // Business professional looking focused
+  'https://images.unsplash.com/photo-1510519108179-ba09b7dfd4b7?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', // Abstract blue/purple tech
+]
 
 const GoogleIcon = () => (
   <svg viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor">
@@ -28,29 +28,35 @@ const GoogleIcon = () => (
       d="M12 22.5c3.24 0 5.96-1.072 7.947-2.915l-4.482-3.477c-1.246.84-2.85 1.33-3.465 1.33-2.67 0-4.93-1.8-5.74-4.22H1.722v3.542A11.972 11.972 0 0012 22.5z"
       fill="#34A853"
     />
-    <path d="M6.26 14.11c-.2-.596-.32-1.23-.32-1.92s.12-1.324.32-1.92V8.748H1.72A11.964 11.964 0 000 12c0 2.07.5 4.01 1.72 5.378l4.54-3.268z" fill="#FBBC05" />
+    <path
+      d="M6.26 14.11c-.2-.596-.32-1.23-.32-1.92s.12-1.324.32-1.92V8.748H1.72A11.964 11.964 0 000 12c0 2.07.5 4.01 1.72 5.378l4.54-3.268z"
+      fill="#FBBC05"
+    />
     <path
       d="M12 5.535c1.785 0 3.39.613 4.656 1.788L20.12 3.65C17.93 1.54 15.01 0 12 0A11.972 11.972 0 000 12h4.54C5.07 7.33 8.16 5.535 12 5.535z"
       fill="#EA4335"
     />
   </svg>
-);
+)
 
 const LoginPage: React.FC = () => {
-  const searchParams = useSearchParams();
-  const error = searchParams.get("error");
-  const [isLoading, setIsLoading] = React.useState(false);
+  const searchParams = useSearchParams()
+  const error = searchParams.get('error')
+  const [isLoading, setIsLoading] = React.useState(false)
 
   const handleGoogleLogin = () => {
-    setIsLoading(true);
+    setIsLoading(true)
     // Redirect to Google OAuth endpoint on backend
-    window.location.href = `${ENV.API_BASE_URL}${ENDPOINTS.USERS_CALLBACK}`;
-  };
+    window.location.href = `${ENV.API_BASE_URL}${ENDPOINTS.USERS_CALLBACK}`
+  }
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 min-h-screen bg-white dark:bg-[#030303] animate-in fade-in duration-500">
       <div className="flex flex-col items-center justify-center p-8 lg:p-12 relative">
-        <Link href="/" className="absolute top-8 left-8 flex items-center gap-2 hover:opacity-80 transition-opacity z-50">
+        <Link
+          href="/"
+          className="absolute top-8 left-8 flex items-center gap-2 hover:opacity-80 transition-opacity z-50"
+        >
           <div className="w-9 h-9 bg-zinc-900 dark:bg-white rounded-md flex items-center justify-center shadow-lg text-white dark:text-zinc-900">
             <AllyLogo className="w-5 h-5" />
           </div>
@@ -60,14 +66,18 @@ const LoginPage: React.FC = () => {
         </Link>
 
         <div className="w-full max-w-md">
-          <h1 className="text-4xl md:text-5xl font-medium tracking-normal mb-4 text-zinc-900 dark:text-zinc-100">Welcome Back</h1>
-          <p className="text-zinc-500 dark:text-zinc-400 mb-8 text-lg font-medium">Access your private secretary securely.</p>
+          <h1 className="text-4xl md:text-5xl font-medium tracking-normal mb-4 text-zinc-900 dark:text-zinc-100">
+            Welcome Back
+          </h1>
+          <p className="text-zinc-500 dark:text-zinc-400 mb-8 text-lg font-medium">
+            Access your private secretary securely.
+          </p>
           {error && (
             <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
               <p className="text-red-600 dark:text-red-400 text-sm font-medium">
-                {error === "no_token" && "Authentication failed. Please try again."}
-                {error === "callback_failed" && "OAuth callback failed. Please try again."}
-                {error !== "no_token" && error !== "callback_failed" && error}
+                {error === 'no_token' && 'Authentication failed. Please try again.'}
+                {error === 'callback_failed' && 'OAuth callback failed. Please try again.'}
+                {error !== 'no_token' && error !== 'callback_failed' && error}
               </p>
             </div>
           )}
@@ -82,7 +92,7 @@ const LoginPage: React.FC = () => {
             />
           </div>
           <p className="mt-8 text-center text-zinc-500 dark:text-zinc-400 text-sm">
-            Don't have an account?{" "}
+            Don't have an account?{' '}
             <Link href="/register" className="text-primary font-medium hover:underline p-0">
               Sign up
             </Link>
@@ -93,7 +103,7 @@ const LoginPage: React.FC = () => {
         <ImageCarousel images={carouselImages} />
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default LoginPage;
+export default LoginPage

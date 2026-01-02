@@ -1,13 +1,13 @@
-import { AxiosError } from "axios";
+import { AxiosError } from 'axios'
 
 /**
  * Standardized API error structure
  */
 export interface ApiError {
-  status: number;
-  message: string;
-  code?: string;
-  details?: Record<string, unknown>;
+  status: number
+  message: string
+  code?: string
+  details?: Record<string, unknown>
 }
 
 /**
@@ -15,30 +15,30 @@ export interface ApiError {
  */
 export interface NormalizedQueryState<TData> {
   /** The fetched data (null if loading or error) */
-  data: TData | null;
+  data: TData | null
 
   /** True during initial load */
-  isLoading: boolean;
+  isLoading: boolean
   /** True during any fetch (includes refetch) */
-  isFetching: boolean;
+  isFetching: boolean
   /** True only during refetch */
-  isRefetching: boolean;
+  isRefetching: boolean
 
   /** True if query failed */
-  isError: boolean;
+  isError: boolean
   /** Structured error object */
-  error: ApiError | null;
+  error: ApiError | null
   /** Error message string for display */
-  errorMessage: string | null;
+  errorMessage: string | null
 
   /** True if query succeeded */
-  isSuccess: boolean;
+  isSuccess: boolean
 
   /** Current query status */
-  status: "idle" | "loading" | "error" | "success";
+  status: 'idle' | 'loading' | 'error' | 'success'
 
   /** Refetch the query */
-  refetch: () => Promise<void>;
+  refetch: () => Promise<void>
 }
 
 /**
@@ -46,31 +46,31 @@ export interface NormalizedQueryState<TData> {
  */
 export interface NormalizedMutationState<TData, TVariables> {
   /** Execute the mutation */
-  mutate: (variables: TVariables) => void;
+  mutate: (variables: TVariables) => void
   /** Execute the mutation and return a promise */
-  mutateAsync: (variables: TVariables) => Promise<TData>;
+  mutateAsync: (variables: TVariables) => Promise<TData>
 
   /** True while mutation is in progress */
-  isLoading: boolean;
+  isLoading: boolean
   /** Alias for isLoading (React Query v5 naming) */
-  isPending: boolean;
+  isPending: boolean
   /** True if mutation failed */
-  isError: boolean;
+  isError: boolean
   /** True if mutation succeeded */
-  isSuccess: boolean;
+  isSuccess: boolean
   /** True if mutation hasn't been called yet */
-  isIdle: boolean;
+  isIdle: boolean
 
   /** Structured error object */
-  error: ApiError | null;
+  error: ApiError | null
   /** Error message string for display */
-  errorMessage: string | null;
+  errorMessage: string | null
 
   /** The mutation result data */
-  data: TData | null;
+  data: TData | null
 
   /** Reset the mutation state */
-  reset: () => void;
+  reset: () => void
 }
 
 /**
@@ -78,25 +78,24 @@ export interface NormalizedMutationState<TData, TVariables> {
  */
 export function extractApiError(error: unknown): ApiError {
   if (error instanceof AxiosError) {
-    const response = error.response;
+    const response = error.response
     return {
       status: response?.status ?? 500,
-      message:
-        response?.data?.message ?? error.message ?? "An error occurred",
+      message: response?.data?.message ?? error.message ?? 'An error occurred',
       code: response?.data?.code,
       details: response?.data?.details,
-    };
+    }
   }
 
   if (error instanceof Error) {
     return {
       status: 500,
       message: error.message,
-    };
+    }
   }
 
   return {
     status: 500,
-    message: "An unknown error occurred",
-  };
+    message: 'An unknown error occurred',
+  }
 }

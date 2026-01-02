@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import {
   AlertCircle,
@@ -20,12 +20,12 @@ import {
   User,
   Users,
   Wifi,
-} from "lucide-react";
-import { AnimatePresence, motion } from "framer-motion";
-import React, { useEffect, useState } from "react";
-import { TelegramIcon, WhatsAppIcon } from "@/components/shared/Icons";
+} from 'lucide-react'
+import { AnimatePresence, motion } from 'framer-motion'
+import React, { useEffect, useState } from 'react'
+import { TelegramIcon, WhatsAppIcon } from '@/components/shared/Icons'
 
-import { AllyLogo } from "@/components/shared/logo";
+import { AllyLogo } from '@/components/shared/logo'
 
 // Fix: Use React.FC and make children optional to resolve "Property 'children' is missing" errors in consumers
 const PhoneFrame: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
@@ -58,16 +58,16 @@ const PhoneFrame: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
         <div className="flex-1 overflow-hidden p-4 relative">{children}</div>
       </div>
     </div>
-  );
-};
+  )
+}
 
 const FEATURES = [
   {
-    id: "scheduling",
-    title: "Intelligent Scheduling",
-    description: "Ally orchestrates complex meetings across teams and timezones with zero friction.",
+    id: 'scheduling',
+    title: 'Intelligent Scheduling',
+    description: 'Ally orchestrates complex meetings across teams and timezones with zero friction.',
     icon: Calendar,
-    color: "text-blue-500",
+    color: 'text-blue-500',
     content: (
       <div className="space-y-2 pt-10">
         <div className="flex justify-end">
@@ -91,11 +91,12 @@ const FEATURES = [
     ),
   },
   {
-    id: "whatsapp",
-    title: "WhatsApp Relay",
-    description: "The world's most popular messenger, now your executive command line. Private, fast, and always accessible.",
+    id: 'whatsapp',
+    title: 'WhatsApp Relay',
+    description:
+      "The world's most popular messenger, now your executive command line. Private, fast, and always accessible.",
     icon: WhatsAppIcon,
-    color: "text-emerald-500",
+    color: 'text-emerald-500',
     content: (
       <div className="space-y-2 pt-10">
         <div className="flex justify-start">
@@ -119,11 +120,11 @@ const FEATURES = [
     ),
   },
   {
-    id: "summaries",
-    title: "Executive Digests",
-    description: "Turns hour-long transcripts into 5-minute actionable summaries and next steps.",
+    id: 'summaries',
+    title: 'Executive Digests',
+    description: 'Turns hour-long transcripts into 5-minute actionable summaries and next steps.',
     icon: NotebookTabs,
-    color: "text-amber-500",
+    color: 'text-amber-500',
     content: (
       <div className="space-y-2 pt-10">
         <div className="p-3 bg-zinc-50 dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800">
@@ -148,11 +149,11 @@ const FEATURES = [
     ),
   },
   {
-    id: "logistics",
-    title: "Proactive Logistics",
-    description: "Monitors flights and car services, adjusting your schedule in real-time for delays.",
+    id: 'logistics',
+    title: 'Proactive Logistics',
+    description: 'Monitors flights and car services, adjusting your schedule in real-time for delays.',
     icon: Plane,
-    color: "text-sky-500",
+    color: 'text-sky-500',
     content: (
       <div className="flex flex-col gap-4 pt-10">
         <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-900/30 rounded-xl text-center">
@@ -170,11 +171,11 @@ const FEATURES = [
     ),
   },
   {
-    id: "focus",
-    title: "Focus Protection",
-    description: "Automatically shields your deep work sessions and blocks interruptions.",
+    id: 'focus',
+    title: 'Focus Protection',
+    description: 'Automatically shields your deep work sessions and blocks interruptions.',
     icon: ShieldCheck,
-    color: "text-primary",
+    color: 'text-primary',
     content: (
       <div className="flex flex-col items-center gap-4 pt-20">
         <div className="relative">
@@ -185,18 +186,20 @@ const FEATURES = [
           </div>
         </div>
         <div className="bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 p-3 rounded-xl shadow-sm text-center w-full">
-          <p className="text-[9px] font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-widest mb-1">Interruption Filter</p>
+          <p className="text-[9px] font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-widest mb-1">
+            Interruption Filter
+          </p>
           <p className="text-zinc-900 dark:text-zinc-100 font-bold text-[11px]">2 syncs rescheduled</p>
         </div>
       </div>
     ),
   },
   {
-    id: "conflict",
-    title: "Conflict Arbitrator",
-    description: "Ally identifies calendar overlaps and proactively suggests logical resolutions.",
+    id: 'conflict',
+    title: 'Conflict Arbitrator',
+    description: 'Ally identifies calendar overlaps and proactively suggests logical resolutions.',
     icon: AlertCircle,
-    color: "text-rose-500",
+    color: 'text-rose-500',
     content: (
       <div className="w-full space-y-2 pt-12">
         <div className="p-3 bg-rose-50 dark:bg-rose-900/20 rounded-xl border border-rose-100 dark:border-rose-900/30">
@@ -216,11 +219,11 @@ const FEATURES = [
     ),
   },
   {
-    id: "voice",
-    title: "Voice-to-Action",
-    description: "Record commands on the go. Ally executes complex tasks from simple audio.",
+    id: 'voice',
+    title: 'Voice-to-Action',
+    description: 'Record commands on the go. Ally executes complex tasks from simple audio.',
     icon: Mic,
-    color: "text-emerald-500",
+    color: 'text-emerald-500',
     content: (
       <div className="space-y-2 flex flex-col items-center w-full pt-20">
         <div className="flex items-center gap-1 h-10">
@@ -244,11 +247,11 @@ const FEATURES = [
     ),
   },
   {
-    id: "intelligence",
-    title: "Leverage Analytics",
-    description: "Quantify your impact with deep insights into your productivity patterns.",
+    id: 'intelligence',
+    title: 'Leverage Analytics',
+    description: 'Quantify your impact with deep insights into your productivity patterns.',
     icon: BarChart3,
-    color: "text-zinc-900 dark:text-white",
+    color: 'text-zinc-900 dark:text-white',
     content: (
       <div className="grid grid-cols-1 gap-3 w-full pt-10">
         <div className="bg-zinc-50 dark:bg-zinc-900 p-3 rounded-xl border border-zinc-200 dark:border-zinc-800 shadow-sm flex flex-col items-center">
@@ -273,26 +276,30 @@ const FEATURES = [
       </div>
     ),
   },
-];
+]
 
 const FeatureCarousel = () => {
-  const [active, setActive] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
+  const [active, setActive] = useState(0)
+  const [isPaused, setIsPaused] = useState(false)
 
   useEffect(() => {
-    if (isPaused) return;
+    if (isPaused) return
 
     const timer = setInterval(() => {
-      setActive((prev) => (prev + 1) % FEATURES.length);
-    }, 5000);
-    return () => clearInterval(timer);
-  }, [isPaused]);
+      setActive((prev) => (prev + 1) % FEATURES.length)
+    }, 5000)
+    return () => clearInterval(timer)
+  }, [isPaused])
 
-  const next = () => setActive((prev) => (prev + 1) % FEATURES.length);
-  const prev = () => setActive((prev) => (prev - 1 + FEATURES.length) % FEATURES.length);
+  const next = () => setActive((prev) => (prev + 1) % FEATURES.length)
+  const prev = () => setActive((prev) => (prev - 1 + FEATURES.length) % FEATURES.length)
 
   return (
-    <div className="w-full relative group/carousel" onMouseEnter={() => setIsPaused(true)} onMouseLeave={() => setIsPaused(false)}>
+    <div
+      className="w-full relative group/carousel"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+    >
       <button
         onClick={prev}
         className="absolute left-0 lg:-left-6 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-white/90 dark:bg-zinc-800/90 backdrop-blur-sm border border-zinc-200 dark:border-zinc-700 shadow-xl text-zinc-500 hover:text-primary transition-all opacity-0 group-hover/carousel:opacity-100 hover:scale-110 active:scale-95"
@@ -325,10 +332,14 @@ const FeatureCarousel = () => {
                 <div
                   className={`w-12 h-12 rounded-xl bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 flex items-center justify-center shadow-sm ${FEATURES[active].color}`}
                 >
-                  {React.createElement(FEATURES[active].icon, { className: "w-6 h-6" })}
+                  {React.createElement(FEATURES[active].icon, { className: 'w-6 h-6' })}
                 </div>
-                <h3 className="text-3xl md:text-4xl font-medium tracking-tight text-zinc-900 dark:text-zinc-100 leading-tight">{FEATURES[active].title}</h3>
-                <p className="text-lg text-zinc-500 dark:text-zinc-400 font-medium leading-relaxed">{FEATURES[active].description}</p>
+                <h3 className="text-3xl md:text-4xl font-medium tracking-tight text-zinc-900 dark:text-zinc-100 leading-tight">
+                  {FEATURES[active].title}
+                </h3>
+                <p className="text-lg text-zinc-500 dark:text-zinc-400 font-medium leading-relaxed">
+                  {FEATURES[active].description}
+                </p>
               </motion.div>
             </AnimatePresence>
           </div>
@@ -339,7 +350,7 @@ const FeatureCarousel = () => {
                 <button
                   key={i}
                   onClick={() => setActive(i)}
-                  className={`h-1.5 rounded-full transition-all duration-500 mb-2 ${i === active ? "w-8 bg-primary" : "w-2 bg-zinc-200 dark:border-zinc-700"}`}
+                  className={`h-1.5 rounded-full transition-all duration-500 mb-2 ${i === active ? 'w-8 bg-primary' : 'w-2 bg-zinc-200 dark:border-zinc-700'}`}
                 />
               ))}
             </div>
@@ -354,7 +365,7 @@ const FeatureCarousel = () => {
               initial={{ opacity: 0, scale: 0.95, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 1.05, y: -10 }}
-              transition={{ type: "spring", stiffness: 100, damping: 20 }}
+              transition={{ type: 'spring', stiffness: 100, damping: 20 }}
               className="w-full"
             >
               <PhoneFrame>{FEATURES[active].content}</PhoneFrame>
@@ -363,7 +374,7 @@ const FeatureCarousel = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default FeatureCarousel;
+export default FeatureCarousel

@@ -1,29 +1,16 @@
-'use client';
+'use client'
 
-import { useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { useEffect } from 'react'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 
-export default function Error({
-  error,
-  reset,
-}: {
-  error: Error & { digest?: string };
-  reset: () => void;
-}) {
+export default function Error({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
   useEffect(() => {
     // Log error to console in development
     if (process.env.NODE_ENV === 'development') {
-      console.error('Route error:', error);
+      console.error('Route error:', error)
     }
-  }, [error]);
+  }, [error])
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 p-4 dark:bg-zinc-950">
@@ -47,8 +34,8 @@ export default function Error({
           </div>
           <CardTitle>Something went wrong</CardTitle>
           <CardDescription>
-            An unexpected error occurred while loading this page. Please try
-            again or contact support if the problem persists.
+            An unexpected error occurred while loading this page. Please try again or contact support if the problem
+            persists.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -62,11 +49,7 @@ export default function Error({
                   {error.name}: {error.message}
                 </p>
               </div>
-              {error.digest && (
-                <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                  Error ID: {error.digest}
-                </p>
-              )}
+              {error.digest && <p className="text-xs text-zinc-500 dark:text-zinc-400">Error ID: {error.digest}</p>}
               {error.stack && process.env.NODE_ENV === 'development' && (
                 <pre className="max-h-48 overflow-auto rounded-md bg-zinc-100 p-3 text-xs text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
                   {error.stack}
@@ -85,5 +68,5 @@ export default function Error({
         </CardFooter>
       </Card>
     </div>
-  );
+  )
 }

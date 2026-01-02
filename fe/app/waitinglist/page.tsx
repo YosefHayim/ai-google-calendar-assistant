@@ -1,5 +1,5 @@
-import WaitingList from '@/components/waiting-list/WaitingList';
+import WaitingList from '@/components/waiting-list/WaitingList'
 
 export default function WaitingListPage() {
-  return <WaitingList />;
+  return <WaitingList />
 }

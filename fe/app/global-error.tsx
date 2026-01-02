@@ -1,17 +1,11 @@
-'use client';
+'use client'
 
-import { useEffect } from 'react';
+import { useEffect } from 'react'
 
-export default function GlobalError({
-  error,
-  reset,
-}: {
-  error: Error & { digest?: string };
-  reset: () => void;
-}) {
+export default function GlobalError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
   useEffect(() => {
-    console.error('Global error:', error);
-  }, [error]);
+    console.error('Global error:', error)
+  }, [error])
 
   return (
     <html lang="en">
@@ -34,12 +28,9 @@ export default function GlobalError({
                 <line x1="12" y1="16" x2="12.01" y2="16" />
               </svg>
             </div>
-            <h2 className="mb-2 text-2xl font-semibold text-zinc-900 dark:text-zinc-100">
-              Something went wrong
-            </h2>
+            <h2 className="mb-2 text-2xl font-semibold text-zinc-900 dark:text-zinc-100">Something went wrong</h2>
             <p className="mb-4 text-sm text-zinc-500 dark:text-zinc-400">
-              A critical error occurred. Please try again or contact support if
-              the problem persists.
+              A critical error occurred. Please try again or contact support if the problem persists.
             </p>
             <details className="mb-6">
               <summary className="cursor-pointer text-sm font-medium text-zinc-700 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-zinc-100">
@@ -51,11 +42,7 @@ export default function GlobalError({
                     {error.name}: {error.message}
                   </p>
                 </div>
-                {error.digest && (
-                  <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                    Error ID: {error.digest}
-                  </p>
-                )}
+                {error.digest && <p className="text-xs text-zinc-500 dark:text-zinc-400">Error ID: {error.digest}</p>}
               </div>
             </details>
             <div className="flex gap-2">
@@ -76,5 +63,5 @@ export default function GlobalError({
         </div>
       </body>
     </html>
-  );
+  )
 }

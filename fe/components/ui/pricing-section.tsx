@@ -1,18 +1,18 @@
-"use client";
+'use client'
 
-import React, { useState } from "react";
-import { PricingCard, type PricingTier } from "@/components/ui/pricing-card";
-import { Tab } from "@/components/ui/pricing-tab";
+import React, { useState } from 'react'
+import { PricingCard, type PricingTier } from '@/components/ui/pricing-card'
+import { Tab } from '@/components/ui/pricing-tab'
 
 interface PricingSectionProps {
-  title: string;
-  subtitle: string;
-  tiers: PricingTier[];
-  frequencies: string[];
+  title: string
+  subtitle: string
+  tiers: PricingTier[]
+  frequencies: string[]
 }
 
 export function PricingSection({ title, subtitle, tiers, frequencies }: PricingSectionProps) {
-  const [selectedFrequency, setSelectedFrequency] = useState(frequencies[0]);
+  const [selectedFrequency, setSelectedFrequency] = useState(frequencies[0])
 
   return (
     <section className="flex flex-col items-center gap-10 py-10 w-full">
@@ -23,7 +23,13 @@ export function PricingSection({ title, subtitle, tiers, frequencies }: PricingS
         </div>
         <div className="mx-auto flex w-fit rounded-full bg-zinc-100 dark:bg-zinc-800 p-1">
           {frequencies.map((freq) => (
-            <Tab key={freq} text={freq} selected={selectedFrequency === freq} setSelected={setSelectedFrequency} discount={freq === "yearly"} />
+            <Tab
+              key={freq}
+              text={freq}
+              selected={selectedFrequency === freq}
+              setSelected={setSelectedFrequency}
+              discount={freq === 'yearly'}
+            />
           ))}
         </div>
       </div>
@@ -34,5 +40,5 @@ export function PricingSection({ title, subtitle, tiers, frequencies }: PricingS
         ))}
       </div>
     </section>
-  );
+  )
 }

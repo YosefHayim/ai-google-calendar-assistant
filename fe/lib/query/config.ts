@@ -1,15 +1,15 @@
-import { QueryClient, QueryCache, MutationCache } from "@tanstack/react-query";
-import { QUERY_CONFIG, ENV } from "@/lib/constants";
-import { extractApiError } from "./types";
+import { QueryClient, QueryCache, MutationCache } from '@tanstack/react-query'
+import { QUERY_CONFIG, ENV } from '@/lib/constants'
+import { extractApiError } from './types'
 
 /**
  * Global error handler for queries
  */
 function handleQueryError(error: unknown) {
-  const apiError = extractApiError(error);
+  const apiError = extractApiError(error)
 
   if (ENV.IS_DEVELOPMENT) {
-    console.error("[Query Error]", apiError);
+    console.error('[Query Error]', apiError)
   }
 }
 
@@ -17,10 +17,10 @@ function handleQueryError(error: unknown) {
  * Global error handler for mutations
  */
 function handleMutationError(error: unknown) {
-  const apiError = extractApiError(error);
+  const apiError = extractApiError(error)
 
   if (ENV.IS_DEVELOPMENT) {
-    console.error("[Mutation Error]", apiError);
+    console.error('[Mutation Error]', apiError)
   }
 }
 
@@ -40,7 +40,7 @@ export function createQueryClient(): QueryClient {
         staleTime: QUERY_CONFIG.DEFAULT_STALE_TIME,
         gcTime: QUERY_CONFIG.GC_TIME,
         retry: (failureCount, error) => {
-          const apiError = extractApiError(error);
+          const apiError = extractApiError(error)
           // Don't retry on auth errors or client errors
           if (
             apiError.status === 401 ||
@@ -48,12 +48,11 @@ export function createQueryClient(): QueryClient {
             apiError.status === 400 ||
             apiError.status === 404
           ) {
-            return false;
+            return false
           }
-          return failureCount < QUERY_CONFIG.DEFAULT_RETRY;
+          return failureCount < QUERY_CONFIG.DEFAULT_RETRY
         },
-        retryDelay: (attemptIndex) =>
-          Math.min(QUERY_CONFIG.RETRY_DELAY * 2 ** attemptIndex, 30000),
+        retryDelay: (attemptIndex) => Math.min(QUERY_CONFIG.RETRY_DELAY * 2 ** attemptIndex, 30000),
         refetchOnWindowFocus: false,
         refetchOnReconnect: true,
       },
@@ -61,5 +60,5 @@ export function createQueryClient(): QueryClient {
         retry: false,
       },
     },
-  });
+  })
 }

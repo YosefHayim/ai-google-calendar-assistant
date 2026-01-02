@@ -1,15 +1,15 @@
-'use client';
-import React from 'react';
-import { motion } from 'framer-motion';
+'use client'
+import React from 'react'
+import { motion } from 'framer-motion'
 
 interface ProductivityGaugeProps {
-  score: number; // 0 to 100
+  score: number // 0 to 100
 }
 
 const ProductivityGauge: React.FC<ProductivityGaugeProps> = ({ score }) => {
-  const radius = 60;
-  const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (score / 100) * circumference;
+  const radius = 60
+  const circumference = 2 * Math.PI * radius
+  const offset = circumference - (score / 100) * circumference
 
   return (
     <div className="flex flex-col items-center justify-center h-full gap-4 p-6">
@@ -37,12 +37,12 @@ const ProductivityGauge: React.FC<ProductivityGaugeProps> = ({ score }) => {
             strokeDasharray={circumference}
             initial={{ strokeDashoffset: circumference }}
             animate={{ strokeDashoffset: offset }}
-            transition={{ duration: 1.5, ease: "easeOut" }}
+            transition={{ duration: 1.5, ease: 'easeOut' }}
           />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-4xl font-bold text-zinc-900 dark:text-zinc-100">{score}</span>
-            <span className="text-xs font-medium text-zinc-500">Score</span>
+          <span className="text-4xl font-bold text-zinc-900 dark:text-zinc-100">{score}</span>
+          <span className="text-xs font-medium text-zinc-500">Score</span>
         </div>
       </div>
       <div className="text-center">
@@ -50,7 +50,7 @@ const ProductivityGauge: React.FC<ProductivityGaugeProps> = ({ score }) => {
         <p className="text-xs text-zinc-500">Based on task completion & focus time.</p>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ProductivityGauge;
+export default ProductivityGauge

@@ -1,64 +1,64 @@
-"use client";
+'use client'
 
-"use client";
+'use client'
 
-import { ArrowLeft, ChevronDown, Phone, ShieldCheck } from "lucide-react";
-import React, { useState } from "react";
+import { ArrowLeft, ChevronDown, Phone, ShieldCheck } from 'lucide-react'
+import React, { useState } from 'react'
 
-import { AllyLogo } from "@/components/shared/logo";
-import { BackgroundPattern1 } from "@/components/shared/BackgroundPattern1";
-import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button";
-import { useRouter } from "next/navigation";
+import { AllyLogo } from '@/components/shared/logo'
+import { BackgroundPattern1 } from '@/components/shared/BackgroundPattern1'
+import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button'
+import { useRouter } from 'next/navigation'
 
 interface Country {
-  name: string;
-  code: string;
-  dialCode: string;
+  name: string
+  code: string
+  dialCode: string
 }
 
 const countries: Country[] = [
-  { name: "United States", code: "US", dialCode: "+1" },
-  { name: "United Kingdom", code: "GB", dialCode: "+44" },
-  { name: "Canada", code: "CA", dialCode: "+1" },
-  { name: "Australia", code: "AU", dialCode: "+61" },
-  { name: "Germany", code: "DE", dialCode: "+49" },
-  { name: "France", code: "FR", dialCode: "+33" },
-  { name: "Italy", code: "IT", dialCode: "+39" },
-  { name: "Spain", code: "ES", dialCode: "+34" },
-  { name: "Netherlands", code: "NL", dialCode: "+31" },
-  { name: "Switzerland", code: "CH", dialCode: "+41" },
-  { name: "Japan", code: "JP", dialCode: "+81" },
-  { name: "South Korea", code: "KR", dialCode: "+82" },
-  { name: "Singapore", code: "SG", dialCode: "+65" },
-  { name: "India", code: "IN", dialCode: "+91" },
-  { name: "China", code: "CN", dialCode: "+86" },
-  { name: "United Arab Emirates", code: "AE", dialCode: "+971" },
-  { name: "Saudi Arabia", code: "SA", dialCode: "+966" },
-  { name: "Israel", code: "IL", dialCode: "+972" },
-  { name: "Brazil", code: "BR", dialCode: "+55" },
-  { name: "Mexico", code: "MX", dialCode: "+52" },
-  { name: "South Africa", code: "ZA", dialCode: "+27" },
-];
+  { name: 'United States', code: 'US', dialCode: '+1' },
+  { name: 'United Kingdom', code: 'GB', dialCode: '+44' },
+  { name: 'Canada', code: 'CA', dialCode: '+1' },
+  { name: 'Australia', code: 'AU', dialCode: '+61' },
+  { name: 'Germany', code: 'DE', dialCode: '+49' },
+  { name: 'France', code: 'FR', dialCode: '+33' },
+  { name: 'Italy', code: 'IT', dialCode: '+39' },
+  { name: 'Spain', code: 'ES', dialCode: '+34' },
+  { name: 'Netherlands', code: 'NL', dialCode: '+31' },
+  { name: 'Switzerland', code: 'CH', dialCode: '+41' },
+  { name: 'Japan', code: 'JP', dialCode: '+81' },
+  { name: 'South Korea', code: 'KR', dialCode: '+82' },
+  { name: 'Singapore', code: 'SG', dialCode: '+65' },
+  { name: 'India', code: 'IN', dialCode: '+91' },
+  { name: 'China', code: 'CN', dialCode: '+86' },
+  { name: 'United Arab Emirates', code: 'AE', dialCode: '+971' },
+  { name: 'Saudi Arabia', code: 'SA', dialCode: '+966' },
+  { name: 'Israel', code: 'IL', dialCode: '+972' },
+  { name: 'Brazil', code: 'BR', dialCode: '+55' },
+  { name: 'Mexico', code: 'MX', dialCode: '+52' },
+  { name: 'South Africa', code: 'ZA', dialCode: '+27' },
+]
 
 const PhoneRegistrationPage: React.FC = () => {
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [selectedCountry, setSelectedCountry] = useState(countries[0]);
-  const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
+  const [phoneNumber, setPhoneNumber] = useState('')
+  const [selectedCountry, setSelectedCountry] = useState(countries[0])
+  const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter()
 
   const handleSendOTP = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!phoneNumber) return;
+    e.preventDefault()
+    if (!phoneNumber) return
 
-    setIsLoading(true);
-    const fullNumber = `${selectedCountry.dialCode}${phoneNumber.replace(/\D/g, "")}`;
+    setIsLoading(true)
+    const fullNumber = `${selectedCountry.dialCode}${phoneNumber.replace(/\D/g, '')}`
 
     setTimeout(() => {
-      setIsLoading(false);
-      localStorage.setItem("temp_reg_phone", fullNumber);
-      router.push("/otp-verification");
-    }, 1500);
-  };
+      setIsLoading(false)
+      localStorage.setItem('temp_reg_phone', fullNumber)
+      router.push('/otp-verification')
+    }, 1500)
+  }
 
   return (
     <div className="min-h-screen bg-white dark:bg-[#030303] flex flex-col relative overflow-hidden">
@@ -84,8 +84,8 @@ const PhoneRegistrationPage: React.FC = () => {
                     className="absolute inset-0 opacity-0 cursor-pointer z-10 w-full"
                     value={selectedCountry.code}
                     onChange={(e) => {
-                      const country = countries.find((c) => c.code === e.target.value);
-                      if (country) setSelectedCountry(country);
+                      const country = countries.find((c) => c.code === e.target.value)
+                      if (country) setSelectedCountry(country)
                     }}
                   >
                     {countries
@@ -97,7 +97,9 @@ const PhoneRegistrationPage: React.FC = () => {
                       ))}
                   </select>
                   <div className="px-4 py-5 flex items-center gap-2 pointer-events-none">
-                    <span className="text-lg font-bold text-zinc-900 dark:text-zinc-100 min-w-[3rem] text-center">{selectedCountry.dialCode}</span>
+                    <span className="text-lg font-bold text-zinc-900 dark:text-zinc-100 min-w-[3rem] text-center">
+                      {selectedCountry.dialCode}
+                    </span>
                     <ChevronDown className="w-4 h-4 text-zinc-400" />
                   </div>
                 </div>
@@ -116,18 +118,20 @@ const PhoneRegistrationPage: React.FC = () => {
                   />
                 </div>
               </div>
-              <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest pl-2">International Carrier Rates May Apply</p>
+              <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest pl-2">
+                International Carrier Rates May Apply
+              </p>
             </div>
 
             <InteractiveHoverButton
-              text={isLoading ? "Sending Protocol..." : "Send Verification Code"}
+              text={isLoading ? 'Sending Protocol...' : 'Send Verification Code'}
               className="w-full h-16 text-lg shadow-xl shadow-primary/20"
               disabled={isLoading || !phoneNumber}
             />
           </form>
 
           <button
-            onClick={() => router.push("/register")}
+            onClick={() => router.push('/register')}
             className="mt-8 flex items-center justify-center gap-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 w-full transition-colors font-medium text-sm"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -141,7 +145,7 @@ const PhoneRegistrationPage: React.FC = () => {
         <span className="text-[10px] font-bold uppercase tracking-[0.3em]">Ally Protocol Security</span>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default PhoneRegistrationPage;
+export default PhoneRegistrationPage

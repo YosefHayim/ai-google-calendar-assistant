@@ -1,160 +1,265 @@
-"use client";
+'use client'
 
-import { CalendarDays, X } from "lucide-react";
-import { format, formatDistanceStrict } from "date-fns";
+import {
+  AlignLeft,
+  ArrowRight,
+  CalendarClock,
+  CalendarDays,
+  Clock,
+  Hourglass,
+  Info,
+  Link as LinkIcon,
+  MapPin,
+  User,
+  Users,
+  X,
+} from 'lucide-react'
+import { format, formatDistanceStrict } from 'date-fns'
 
-import type { EventDetailsDialogProps } from "@/types/analytics";
-import React from "react";
+import type { EventDetailsDialogProps } from '@/types/analytics'
+import React from 'react'
 
-const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({ isOpen, event, calendarColor, calendarName, onClose }) => {
-  if (!isOpen || !event) return null;
+const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
+  isOpen,
+  event,
+  calendarColor,
+  calendarName,
+  onClose,
+}) => {
+  if (!isOpen || !event) return null
+
+  const formatDate = (dateStr?: string | null) => {
+    if (!dateStr) return 'N/A'
+    return format(new Date(dateStr), 'PP p') // e.g., Nov 29, 2023 10:00 AM
+  }
+
+  const getStatusColor = (status?: string) => {
+    switch (status) {
+      case 'confirmed':
+        return { text: '#10b981', bg: '#10b98120' }
+      case 'tentative':
+        return { text: '#f59e0b', bg: '#f59e0b20' }
+      case 'cancelled':
+        return { text: '#ef4444', bg: '#ef444420' }
+      default:
+        return { text: '#71717a', bg: '#71717a20' }
+    }
+  }
+
+  const statusStyle = getStatusColor(event.status)
 
   return (
-    <div className="fixed inset-0 bg-black/50 dark:bg-black/80 flex items-center justify-center z-50 p-4" onClick={onClose}>
+    <div
+      className="fixed inset-0 bg-black/50 dark:bg-black/80 flex items-center justify-center z-50 p-4 animate-in fade-in duration-200"
+      onClick={onClose}
+    >
       <div
-        className="bg-zinc-50 dark:bg-zinc-900 rounded-lg shadow-xl max-w-2xl w-full relative max-h-[90vh] overflow-y-auto"
+        className="bg-white dark:bg-zinc-900 rounded-lg shadow-xl max-w-xl w-full relative max-h-[90vh] overflow-y-auto flex flex-col"
         onClick={(e) => e.stopPropagation()}
         style={{ borderTop: `4px solid ${calendarColor}` }}
       >
-        <button onClick={onClose} className="absolute top-4 right-4 text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors">
+        {/* Close Button */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 p-1 rounded-full text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all"
+        >
           <X className="w-5 h-5" />
         </button>
-        <div className="p-6">
-          <div className="mb-6">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-md flex items-center justify-center shrink-0" style={{ backgroundColor: calendarColor, opacity: 0.2 }}>
-                <CalendarDays className="w-5 h-5" style={{ color: calendarColor }} />
-              </div>
-              <div className="flex-1">
-                <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">{event.summary || "No Title"}</h3>
+
+        <div className="p-6 space-y-6">
+          {/* Header Section */}
+          <div className="flex items-start gap-4 pr-8">
+            <div
+              className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-sm"
+              style={{ backgroundColor: `${calendarColor}20` }}
+            >
+              <CalendarDays className="w-6 h-6" style={{ color: calendarColor }} />
+            </div>
+            <div className="space-y-1.5">
+              <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 leading-tight">
+                {event.summary || 'No Title'}
+              </h3>
+
+              <div className="flex flex-wrap gap-2 items-center">
                 {calendarName && (
                   <span
-                    className="text-xs font-bold px-2 py-1 rounded border inline-block mt-1"
+                    className="text-[10px] font-bold px-2 py-0.5 rounded border uppercase tracking-wider"
                     style={{
                       color: calendarColor,
-                      borderColor: calendarColor,
-                      backgroundColor: `${calendarColor}15`,
+                      borderColor: `${calendarColor}40`,
+                      backgroundColor: `${calendarColor}10`,
                     }}
                   >
                     {calendarName}
                   </span>
                 )}
+                {event.status && (
+                  <span
+                    className="text-[10px] font-bold px-2 py-0.5 rounded border uppercase tracking-wider"
+                    style={{
+                      color: statusStyle.text,
+                      borderColor: `${statusStyle.text}40`,
+                      backgroundColor: statusStyle.bg,
+                    }}
+                  >
+                    {event.status}
+                  </span>
+                )}
               </div>
             </div>
-            {event.status && (
-              <div className="mb-4">
-                <span
-                  className="text-xs font-bold px-2 py-1 rounded"
-                  style={{
-                    color: event.status === "confirmed" ? "#10b981" : event.status === "tentative" ? "#f59e0b" : "#ef4444",
-                    backgroundColor: event.status === "confirmed" ? "#10b98120" : event.status === "tentative" ? "#f59e0b20" : "#ef444420",
-                  }}
-                >
-                  {event.status.charAt(0).toUpperCase() + event.status.slice(1)}
+          </div>
+
+          {/* Primary Info Grid (Time & Location) */}
+          <div className="bg-zinc-50 dark:bg-zinc-900/50 rounded-lg border border-zinc-100 dark:border-zinc-800 p-4 space-y-3">
+            {/* Time Range */}
+            <div className="flex items-center gap-3 text-sm">
+              <div className="w-5 flex justify-center">
+                <CalendarClock className="w-4 h-4 text-zinc-400" />
+              </div>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 text-zinc-700 dark:text-zinc-300 font-medium">
+                <span>{formatDate(event.start.dateTime || event.start.date)}</span>
+                <ArrowRight className="w-3 h-3 text-zinc-400 hidden sm:block" />
+                <span className="sm:hidden text-xs text-zinc-400">to</span>
+                <span>{formatDate(event.end.dateTime || event.end.date)}</span>
+              </div>
+            </div>
+
+            {/* Duration & Timezone */}
+            <div className="flex items-center gap-3 text-sm">
+              <div className="w-5 flex justify-center">
+                <Hourglass className="w-4 h-4 text-zinc-400" />
+              </div>
+              <div className="flex items-center gap-2 text-zinc-600 dark:text-zinc-400">
+                <span>
+                  {formatDistanceStrict(
+                    new Date(event.start.dateTime || event.start.date || ''),
+                    new Date(event.end.dateTime || event.end.date || ''),
+                  )}
                 </span>
+                {event.start.timeZone && (
+                  <span className="text-xs px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-500">
+                    {event.start.timeZone}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Location */}
+            {event.location && (
+              <div className="flex items-start gap-3 text-sm pt-1">
+                <div className="w-5 flex justify-center mt-0.5">
+                  <MapPin className="w-4 h-4 text-zinc-400" />
+                </div>
+                <a
+                  href={`https://maps.google.com/?q=${event.location}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-zinc-600 dark:text-zinc-400 hover:text-primary underline decoration-dotted underline-offset-4"
+                >
+                  {event.location}
+                </a>
               </div>
             )}
           </div>
 
-          <div className="space-y-2">
-            {event.description && (
-              <div>
-                <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Description</h4>
-                <p className="text-sm text-zinc-600 dark:text-zinc-400 whitespace-pre-wrap">{event.description}</p>
+          {/* Description */}
+          {event.description && (
+            <div className="flex gap-3">
+              <div className="w-5 flex justify-center shrink-0 mt-1">
+                <AlignLeft className="w-4 h-4 text-zinc-400" />
               </div>
-            )}
-
-            {event.location && (
-              <div>
-                <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Location</h4>
-                <p className="text-sm text-zinc-600 dark:text-zinc-400">{event.location}</p>
-              </div>
-            )}
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Start</h4>
-                <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                  {event.start.dateTime ? format(new Date(event.start.dateTime), "PPpp") : event.start.date ? format(new Date(event.start.date), "PPP") : "N/A"}
-                </p>
-                {event.start.timeZone && <p className="text-xs text-zinc-500 dark:text-zinc-500 mt-1">Timezone: {event.start.timeZone}</p>}
-              </div>
-              <div>
-                <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">End</h4>
-                <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                  {event.end.dateTime ? format(new Date(event.end.dateTime), "PPpp") : event.end.date ? format(new Date(event.end.date), "PPP") : "N/A"}
-                </p>
-                {event.end.timeZone && <p className="text-xs text-zinc-500 dark:text-zinc-500 mt-1">Timezone: {event.end.timeZone}</p>}
-              </div>
-              <div>
-                <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Duration</h4>
-                <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                  {formatDistanceStrict(new Date(event.start.dateTime || event.start.date || ""), new Date(event.end.dateTime || event.end.date || ""))}
-                </p>
+              <div className="text-sm text-zinc-600 dark:text-zinc-300 whitespace-pre-wrap leading-relaxed">
+                <div dangerouslySetInnerHTML={{ __html: event.description }} />
               </div>
             </div>
+          )}
 
-            {event.organizer && (
-              <div>
-                <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Organizer</h4>
-                <p className="text-sm text-zinc-600 dark:text-zinc-400 w-auto overflow-hidden">{event.organizer.email || "N/A"}</p>
-              </div>
-            )}
+          {/* People Section */}
+          {(event.organizer || (event.attendees && event.attendees.length > 0)) && (
+            <div className="border-t border-zinc-100 dark:border-zinc-800 pt-4 space-y-4">
+              {event.organizer && (
+                <div className="flex items-center gap-3">
+                  <div className="w-5 flex justify-center">
+                    <User className="w-4 h-4 text-zinc-400" />
+                  </div>
+                  <div className="text-sm">
+                    <span className="text-zinc-500 dark:text-zinc-500 text-xs uppercase font-bold mr-2">Organizer</span>
+                    <span className="text-zinc-700 dark:text-zinc-300 font-medium">{event.organizer.email}</span>
+                  </div>
+                </div>
+              )}
 
-            {event.creator && (
-              <div>
-                <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Creator</h4>
-                <p className="text-sm text-zinc-600 dark:text-zinc-400">{event.creator.email || "N/A"}</p>
-              </div>
-            )}
+              {event.attendees && event.attendees.length > 0 && (
+                <div className="flex items-start gap-3">
+                  <div className="w-5 flex justify-center mt-1">
+                    <Users className="w-4 h-4 text-zinc-400" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="text-zinc-500 dark:text-zinc-500 text-xs uppercase font-bold mb-2">
+                      Attendees ({event.attendees.length})
+                    </div>
+                    <div className="grid grid-cols-1 gap-2 max-h-32 overflow-y-auto pr-2 custom-scrollbar">
+                      {event.attendees.map((attendee, idx) => (
+                        <div
+                          key={idx}
+                          className="flex items-center justify-between text-sm bg-zinc-50 dark:bg-zinc-800/50 rounded px-2 py-1.5"
+                        >
+                          <span
+                            className="text-zinc-600 dark:text-zinc-400 truncate max-w-[200px]"
+                            title={attendee.email}
+                          >
+                            {attendee.email}
+                          </span>
+                          {attendee.responseStatus && (
+                            <span
+                              className={`text-[10px] px-1.5 py-0.5 rounded capitalize ${
+                                attendee.responseStatus === 'accepted'
+                                  ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
+                                  : attendee.responseStatus === 'declined'
+                                    ? 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400'
+                                    : 'bg-zinc-200 text-zinc-600 dark:bg-zinc-700 dark:text-zinc-400'
+                              }`}
+                            >
+                              {attendee.responseStatus}
+                            </span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
-            {event.attendees && event.attendees.length > 0 && (
-              <div>
-                <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Attendees ({event.attendees.length})</h4>
-                <ul className="space-y-2">
-                  {event.attendees.map((attendee, idx) => (
-                    <li key={idx} className="text-sm text-zinc-600 dark:text-zinc-400">
-                      {attendee.email}
-                      {attendee.responseStatus && <span className="ml-2 text-xs text-zinc-500 dark:text-zinc-500">({attendee.responseStatus})</span>}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+          {/* Footer Meta */}
+          <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-zinc-100 dark:border-zinc-800">
+            <div className="flex items-center gap-4 text-xs text-zinc-400">
+              {event.created && (
+                <div className="flex items-center gap-1" title="Date Created">
+                  <Info size={12} />
+                  <span>Created {format(new Date(event.created), 'MMM d')}</span>
+                </div>
+              )}
+            </div>
 
             {event.htmlLink && (
-              <div>
-                <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Event Link</h4>
-                <a
-                  href={event.htmlLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-zinc-600 dark:text-zinc-400 hover:underline"
-                  style={{ color: calendarColor }}
-                >
-                  Open in Google Calendar
-                </a>
-              </div>
-            )}
-
-            {event.created && (
-              <div>
-                <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Created</h4>
-                <p className="text-sm text-zinc-600 dark:text-zinc-400">{format(new Date(event.created), "PPpp")}</p>
-              </div>
-            )}
-
-            {event.updated && (
-              <div>
-                <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Last Updated</h4>
-                <p className="text-sm text-zinc-600 dark:text-zinc-400">{format(new Date(event.updated), "PPpp")}</p>
-              </div>
+              <a
+                href={event.htmlLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 text-xs font-semibold hover:underline transition-colors"
+                style={{ color: calendarColor }}
+              >
+                Open in Google Calendar
+                <LinkIcon size={12} />
+              </a>
             )}
           </div>
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default EventDetailsDialog;
+export default EventDetailsDialog

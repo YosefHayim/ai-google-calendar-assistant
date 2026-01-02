@@ -1,11 +1,11 @@
-'use client';
-"use client"
+'use client'
+'use client'
 
-import * as React from "react"
-import { motion } from "framer-motion"
+import * as React from 'react'
+import { motion } from 'framer-motion'
 
-import { cn } from "@/components/../lib/utils"
-import { Badge } from "@/components/ui/badge"
+import { cn } from '@/components/../lib/utils'
+import { Badge } from '@/components/ui/badge'
 
 interface TabProps {
   text: string
@@ -14,26 +14,21 @@ interface TabProps {
   discount?: boolean
 }
 
-export const Tab: React.FC<TabProps> = ({
-  text,
-  selected,
-  setSelected,
-  discount = false,
-}) => {
+export const Tab: React.FC<TabProps> = ({ text, selected, setSelected, discount = false }) => {
   return (
     <button
       onClick={() => setSelected(text)}
       className={cn(
-        "relative w-fit px-4 py-2 text-sm font-semibold capitalize",
-        "text-zinc-900 dark:text-zinc-100 transition-colors",
-        discount && "flex items-center justify-center gap-2.5"
+        'relative w-fit px-4 py-2 text-sm font-semibold capitalize',
+        'text-zinc-900 dark:text-zinc-100 transition-colors',
+        discount && 'flex items-center justify-center gap-2.5',
       )}
     >
       <span className="relative z-10 whitespace-nowrap">{text}</span>
       {selected && (
         <motion.span
           layoutId="tab"
-          transition={{ type: "spring", duration: 0.4 }}
+          transition={{ type: 'spring', duration: 0.4 }}
           className="absolute inset-0 z-0 rounded-full bg-white dark:bg-zinc-700 shadow-sm"
         />
       )}
@@ -41,8 +36,8 @@ export const Tab: React.FC<TabProps> = ({
         <Badge
           variant="secondary"
           className={cn(
-            "relative z-10 whitespace-nowrap shadow-none bg-primary/20 text-primary border-primary/30",
-            selected && "bg-zinc-200 dark:bg-zinc-800"
+            'relative z-10 whitespace-nowrap shadow-none bg-primary/20 text-primary border-primary/30',
+            selected && 'bg-zinc-200 dark:bg-zinc-800',
           )}
         >
           Save 35%
