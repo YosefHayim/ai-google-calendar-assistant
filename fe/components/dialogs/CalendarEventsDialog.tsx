@@ -120,7 +120,7 @@ const CalendarEventsDialog: React.FC<CalendarEventsDialogProps> = ({
               <p className="text-sm text-zinc-500 dark:text-zinc-400">No events found for this calendar in the selected date range.</p>
             </div>
           ) : (
-            <ul className="space-y-3">
+            <ul className="space-y-2">
               {[...events]
                 .sort((a, b) => {
                   const aStart = a.start?.dateTime ? new Date(a.start.dateTime).getTime() : a.start?.date ? new Date(a.start.date).getTime() : 0;
@@ -174,7 +174,7 @@ const CalendarEventsDialog: React.FC<CalendarEventsDialogProps> = ({
                       <HoverCardContent className="w-80">
                         <div className="space-y-2">
                           <h4 className="font-semibold text-sm text-zinc-900 dark:text-zinc-100">{event.summary || "No Title"}</h4>
-                          <div className="space-y-1 text-xs text-zinc-600 dark:text-zinc-400">
+                          <div className="space-y-2 text-xs text-zinc-600 dark:text-zinc-400">
                             <div className="flex items-center gap-2">
                               <Clock className="w-3 h-3" />
                               <span>{eventTime}</span>

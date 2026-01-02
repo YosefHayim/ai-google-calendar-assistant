@@ -71,7 +71,7 @@ const LoginPage: React.FC = () => {
               </p>
             </div>
           )}
-          <div className="space-y-6">
+          <div className="space-y-2">
             <InteractiveHoverButton
               text="Login with Google"
               loadingText="Connecting..."

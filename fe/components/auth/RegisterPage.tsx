@@ -59,7 +59,7 @@ const RegisterPage: React.FC = () => {
         <div className="w-full max-w-md">
           <h1 className="text-4xl md:text-5xl font-medium tracking-normal mb-4 text-zinc-900 dark:text-zinc-100">Join Ally</h1>
           <p className="text-zinc-500 dark:text-zinc-400 mb-8 text-lg font-medium">Start optimizing your executive operations today.</p>
-          <div className="space-y-6">
+          <div className="space-y-2">
             <InteractiveHoverButton
               text="Sign up with Google"
               loadingText="Connecting..."

@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { X, Mic, ArrowUp, ChevronDown } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { cn } from '@/lib/utils';
-import { VoicePoweredOrb } from '@/components/ui/voice-powered-orb';
+import { AnimatePresence, motion } from 'framer-motion';
+import { ArrowUp, ChevronDown, Mic, X } from 'lucide-react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+
 import { AIVoiceInput } from '@/components/ui/ai-voice-input';
+import { VoicePoweredOrb } from '@/components/ui/voice-powered-orb';
+import { cn } from '@/lib/utils';
 
 declare global {
   interface Window {
@@ -337,7 +338,7 @@ const AIAllySidebar: React.FC<AIAllySidebarProps> = ({ isOpen, onClose, onOpen }
             <ChatHeader onClose={onClose} onMinimize={onClose} />
 
             {/* Messages Area */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-3 min-h-[280px] max-h-[320px] scrollbar-thin scrollbar-thumb-zinc-300 dark:scrollbar-thumb-zinc-700 scrollbar-track-transparent">
+            <div className="flex-1 overflow-y-auto p-4 space-y-2 min-h-[280px] max-h-[320px] scrollbar-thin scrollbar-thumb-zinc-300 dark:scrollbar-thumb-zinc-700 scrollbar-track-transparent">
               {messages.map((message, index) => (
                 <MessageBubble key={message.id} message={message} index={index} />
               ))}

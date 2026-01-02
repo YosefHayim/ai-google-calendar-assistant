@@ -227,7 +227,18 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
   };
 
   return (
-    <div className="max-w-7xl mx-auto w-full p-2 animate-in fade-in duration-500 overflow-y-auto bg-zinc-50 dark:bg-zinc-950 space-2-y">
+    <div className="max-w-7xl mx-auto w-full p-2 animate-in fade-in duration-500 overflow-y-auto bg-zinc-50 dark:bg-zinc-950 space-y-2">
+      <h1>
+        {date?.from && date?.to && (
+          <div className="flex items-end gap-2 w-full">
+            <p className=" text-zinc-500 dark:text-zinc-400 mt-2">Your analytics data for dates:</p>
+            <span className=" text-zinc-900 dark:text-zinc-100">
+              {format(date.from, "MMM dd, yyyy")} - {format(date.to, "MMM dd, yyyy")}
+            </span>
+            <span className="text-zinc-500 dark:text-zinc-400">{Math.ceil((date.to.getTime() - date.from.getTime()) / (1000 * 60 * 60 * 24))} days</span>
+          </div>
+        )}
+      </h1>
       <header className=" flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div className="flex gap-2 items-center">
           <DatePickerWithRange date={date} setDate={setDate} />
@@ -240,14 +251,8 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
           />
         </div>
       </header>
-      <div>
-        {date?.from && date?.to && (
-          <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-2">
-            Your analytics data for dates between {format(date.from, "MMM dd, yyyy")} and {format(date.to, "MMM dd, yyyy")} (
-            {Math.ceil((date.to.getTime() - date.from.getTime()) / (1000 * 60 * 60 * 24))} days)
-          </p>
-        )}
-      </div>
+
+      <div></div>
 
       {/* KPI Cards Section */}
       <KPICardsSection

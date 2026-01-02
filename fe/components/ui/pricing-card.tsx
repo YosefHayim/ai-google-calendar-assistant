@@ -140,9 +140,9 @@ export const PricingCard: React.FC<PricingCardProps> = ({ tier, paymentFrequency
           </AnimatePresence>
         </div>
 
-        <div className="flex-1 space-y-4 z-10">
+        <div className="flex-1 space-y-2 z-10">
           {isCustomTier && (
-            <div className="space-y-4 p-4 rounded-2xl bg-white/5 border border-white/10 animate-in fade-in slide-in-from-bottom-2 duration-500">
+            <div className="space-y-2 p-4 rounded-2xl bg-white/5 border border-white/10 animate-in fade-in slide-in-from-bottom-2 duration-500">
               <div className="flex items-center justify-between">
                 <label className={cn("text-[10px] font-bold uppercase tracking-widest opacity-70", isHighlighted ? "text-white" : "text-zinc-500")}>
                   Custom Pack Size

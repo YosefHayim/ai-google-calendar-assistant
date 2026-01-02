@@ -1,23 +1,24 @@
-'use client';
+"use client";
 
-'use client';
+"use client";
 
-import React, { useState, useRef, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { Lock, RefreshCw, ArrowLeft, CheckCircle2 } from 'lucide-react';
-import { AllyLogo } from '@/components/shared/logo';
-import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button';
-import { BackgroundPattern1 } from '@/components/shared/BackgroundPattern1';
+import { ArrowLeft, CheckCircle2, Lock, RefreshCw } from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
+
+import { AllyLogo } from "@/components/shared/logo";
+import { BackgroundPattern1 } from "@/components/shared/BackgroundPattern1";
+import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button";
+import { useRouter } from "next/navigation";
 
 const OTPVerificationPage: React.FC = () => {
-  const [otp, setOtp] = useState(['', '', '', '', '', '']);
+  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [isVerifying, setIsVerifying] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [timer, setTimer] = useState(30);
   const [canResend, setCanResend] = useState(false);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const router = useRouter();
-  const phone = typeof window !== 'undefined' ? localStorage.getItem('temp_reg_phone') : null;
+  const phone = typeof window !== "undefined" ? localStorage.getItem("temp_reg_phone") : null;
 
   useEffect(() => {
     let interval: ReturnType<typeof setInterval>;
@@ -39,20 +40,20 @@ const OTPVerificationPage: React.FC = () => {
     newOtp[index] = value;
     setOtp(newOtp);
 
-    if (value !== '' && index < 5) {
+    if (value !== "" && index < 5) {
       inputRefs.current[index + 1]?.focus();
     }
   };
 
   const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Backspace' && otp[index] === '' && index > 0) {
+    if (e.key === "Backspace" && otp[index] === "" && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }
   };
 
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
-    const code = otp.join('');
+    const code = otp.join("");
     if (code.length < 6) return;
 
     setIsVerifying(true);
@@ -60,14 +61,14 @@ const OTPVerificationPage: React.FC = () => {
       setIsVerifying(false);
       setIsSuccess(true);
       setTimeout(() => {
-        router.push('/dashboard');
+        router.push("/dashboard");
       }, 1500);
     }, 2000);
   };
 
   const handleResend = () => {
     if (!canResend) return;
-    setOtp(['', '', '', '', '', '']);
+    setOtp(["", "", "", "", "", ""]);
     setTimer(30);
     setCanResend(false);
     inputRefs.current[0]?.focus();
@@ -82,24 +83,24 @@ const OTPVerificationPage: React.FC = () => {
             <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mb-6 shadow-xl shadow-primary/10 border border-primary/20">
               {isSuccess ? <CheckCircle2 className="w-10 h-10 text-emerald-500" /> : <Lock className="w-10 h-10" />}
             </div>
-            <h1 className="text-4xl font-medium tracking-tight text-zinc-900 dark:text-zinc-100 mb-4">
-              {isSuccess ? "Identity Verified" : "Verify Protocol"}
-            </h1>
+            <h1 className="text-4xl font-medium tracking-tight text-zinc-900 dark:text-zinc-100 mb-4">{isSuccess ? "Identity Verified" : "Verify Protocol"}</h1>
             <p className="text-zinc-500 dark:text-zinc-400 text-lg font-medium leading-relaxed">
-              {isSuccess 
-                ? "Security handshake complete. Redirecting to your dashboard..." 
-                : `Enter the 6-digit code we sent to your device ending in ${phone?.slice(-4) || '...'}`}
+              {isSuccess
+                ? "Security handshake complete. Redirecting to your dashboard..."
+                : `Enter the 6-digit code we sent to your device ending in ${phone?.slice(-4) || "..."}`}
             </p>
           </div>
 
           {!isSuccess && (
             <>
-              <form onSubmit={handleVerify} className="space-y-8">
+              <form onSubmit={handleVerify} className="space-y-2">
                 <div className="flex justify-between gap-2">
                   {otp.map((digit, index) => (
                     <input
                       key={index}
-                      ref={(el) => { inputRefs.current[index] = el; }}
+                      ref={(el) => {
+                        inputRefs.current[index] = el;
+                      }}
                       type="text"
                       inputMode="numeric"
                       required
@@ -111,36 +112,30 @@ const OTPVerificationPage: React.FC = () => {
                   ))}
                 </div>
 
-                <div className="space-y-6 text-center">
+                <div className="space-y-2 text-center">
                   <InteractiveHoverButton
                     text={isVerifying ? "Verifying..." : "Verify Identity"}
                     className="w-full h-16 text-lg shadow-xl shadow-primary/20"
-                    disabled={isVerifying || otp.join('').length < 6}
+                    disabled={isVerifying || otp.join("").length < 6}
                   />
 
                   <div className="flex flex-col items-center gap-2">
                     <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
-                      Didn't receive code?{' '}
+                      Didn't receive code?{" "}
                       {canResend ? (
-                        <button 
-                          onClick={handleResend}
-                          type="button"
-                          className="text-primary hover:underline font-bold"
-                        >
+                        <button onClick={handleResend} type="button" className="text-primary hover:underline font-bold">
                           Send again
                         </button>
                       ) : (
-                        <span className="text-zinc-400 dark:text-zinc-600 italic">
-                          Retry in 0:{timer.toString().padStart(2, '0')}
-                        </span>
+                        <span className="text-zinc-400 dark:text-zinc-600 italic">Retry in 0:{timer.toString().padStart(2, "0")}</span>
                       )}
                     </p>
                   </div>
                 </div>
               </form>
 
-              <button 
-                onClick={() => router.push('/phone-registration')}
+              <button
+                onClick={() => router.push("/phone-registration")}
                 className="mt-12 flex items-center justify-center gap-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors font-medium text-xs uppercase tracking-widest w-full"
               >
                 <ArrowLeft className="w-3.5 h-3.5" /> Edit Phone Number
