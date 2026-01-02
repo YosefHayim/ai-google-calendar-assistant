@@ -62,7 +62,8 @@ export type Database = {
           id: number
           message_id: number | null
           metadata: Json | null
-          user_id: string | null
+          source: string | null
+          user_id: number | null
         }
         Insert: {
           chat_id?: number | null
@@ -72,7 +73,8 @@ export type Database = {
           id?: number
           message_id?: number | null
           metadata?: Json | null
-          user_id?: string | null
+          source?: string | null
+          user_id?: number | null
         }
         Update: {
           chat_id?: number | null
@@ -82,48 +84,16 @@ export type Database = {
           id?: number
           message_id?: number | null
           metadata?: Json | null
-          user_id?: string | null
-        }
-        Relationships: []
-      }
-      conversation_messages: {
-        Row: {
-          chat_id: number
-          content: string
-          created_at: string
-          id: number
-          message_id: number
-          metadata: Json | null
-          role: string
-          user_id: string
-        }
-        Insert: {
-          chat_id: number
-          content: string
-          created_at?: string
-          id?: number
-          message_id: number
-          metadata?: Json | null
-          role: string
-          user_id: string
-        }
-        Update: {
-          chat_id?: number
-          content?: string
-          created_at?: string
-          id?: number
-          message_id?: number
-          metadata?: Json | null
-          role?: string
-          user_id?: string
+          source?: string | null
+          user_id?: number | null
         }
         Relationships: [
           {
-            foreignKeyName: "conversation_messages_chat_id_fkey"
-            columns: ["chat_id"]
+            foreignKeyName: "conversation_embeddings_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "user_telegram_links"
-            referencedColumns: ["chat_id"]
+            referencedColumns: ["telegram_user_id"]
           },
         ]
       }
@@ -137,6 +107,7 @@ export type Database = {
           last_summarized_at: string | null
           message_count: number
           metadata: Json | null
+          source: string | null
           telegram_user_id: number | null
           updated_at: string | null
           user_id: string | null
@@ -150,6 +121,7 @@ export type Database = {
           last_summarized_at?: string | null
           message_count?: number
           metadata?: Json | null
+          source?: string | null
           telegram_user_id?: number | null
           updated_at?: string | null
           user_id?: string | null
@@ -163,6 +135,7 @@ export type Database = {
           last_summarized_at?: string | null
           message_count?: number
           metadata?: Json | null
+          source?: string | null
           telegram_user_id?: number | null
           updated_at?: string | null
           user_id?: string | null
@@ -193,6 +166,7 @@ export type Database = {
           last_message_id: number
           message_count: number
           metadata: Json | null
+          source: string | null
           summary_text: string
           telegram_user_id: number | null
           user_id: string | null
@@ -205,6 +179,7 @@ export type Database = {
           last_message_id: number
           message_count: number
           metadata?: Json | null
+          source?: string | null
           summary_text: string
           telegram_user_id?: number | null
           user_id?: string | null
@@ -217,6 +192,7 @@ export type Database = {
           last_message_id?: number
           message_count?: number
           metadata?: Json | null
+          source?: string | null
           summary_text?: string
           telegram_user_id?: number | null
           user_id?: string | null
@@ -250,6 +226,7 @@ export type Database = {
           refresh_token: string | null
           refresh_token_expires_in: number | null
           scope: string | null
+          source: string | null
           timezone: string | null
           token_type: string | null
           updated_at: string | null
@@ -266,6 +243,7 @@ export type Database = {
           refresh_token?: string | null
           refresh_token_expires_in?: number | null
           scope?: string | null
+          source?: string | null
           timezone?: string | null
           token_type?: string | null
           updated_at?: string | null
@@ -282,6 +260,7 @@ export type Database = {
           refresh_token?: string | null
           refresh_token_expires_in?: number | null
           scope?: string | null
+          source?: string | null
           timezone?: string | null
           token_type?: string | null
           updated_at?: string | null
