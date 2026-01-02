@@ -33,7 +33,11 @@ export const googleTokenValidation = asyncHandler(async (req: Request, res: Resp
     return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User email not found. Please authenticate first.");
   }
 
-  const { data: tokens, error } = await fetchGoogleTokensByEmail(email);
+  // Normalize email for consistent lookup
+  const normalizedEmail = email.toLowerCase().trim();
+  console.log(`[Token Validation] Looking up tokens for: ${normalizedEmail}`);
+
+  const { data: tokens, error } = await fetchGoogleTokensByEmail(normalizedEmail);
 
   if (error) {
     console.error("Google token validation DB error:", error);
@@ -41,14 +45,18 @@ export const googleTokenValidation = asyncHandler(async (req: Request, res: Resp
   }
 
   if (!tokens) {
+    console.log(`[Token Validation] No tokens found for: ${normalizedEmail}`);
     return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "Google Calendar not connected. Please authorize access to your calendar.");
   }
+
+  console.log(`[Token Validation] Tokens found. is_active: ${tokens.is_active}, has_refresh_token: ${!!tokens.refresh_token}`);
 
   if (!tokens.is_active) {
     return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "Google Calendar access has been revoked. Please reconnect your calendar.");
   }
 
   if (!tokens.refresh_token) {
+    console.log(`[Token Validation] CRITICAL: refresh_token is null/undefined for: ${normalizedEmail}`);
     return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "Missing refresh token. Please reconnect your Google Calendar with full permissions.");
   }
 

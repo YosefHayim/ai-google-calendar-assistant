@@ -47,10 +47,13 @@ const generateAuthGoogleUrl = reqResAsyncHandler(async (req: Request, res: Respo
       return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Failed to decode user profile from Google token.");
     }
 
+    // Normalize email to lowercase for consistent storage and lookup
+    const normalizedEmail = user.email.toLowerCase().trim();
+
     // --- PREPARE DB PAYLOAD ---
     // We construct the payload dynamically to avoid overwriting the refresh_token with null
     const upsertPayload: any = {
-      email: user.email, // Unique key for UPSERT
+      email: normalizedEmail, // Unique key for UPSERT (normalized for consistent lookup)
       access_token: tokens.access_token,
       token_type: tokens.token_type,
       id_token: tokens.id_token,
@@ -70,12 +73,18 @@ const generateAuthGoogleUrl = reqResAsyncHandler(async (req: Request, res: Respo
     // Use upsert() instead of update().
     // - If user exists: Updates the fields provided (keeping old refresh_token if we didn't provide a new one).
     // - If user missing: Creates the row (Insert).
+    console.log(`[OAuth Callback] Upserting tokens for email: ${normalizedEmail}`);
+    console.log(`[OAuth Callback] Refresh token received: ${tokens.refresh_token ? "YES" : "NO"}`);
+
     const { data, error } = await SUPABASE.from("user_calendar_tokens").upsert(upsertPayload, { onConflict: "email" }).select().single();
 
     if (error) {
       console.error("Supabase Token Save Error:", error);
       return sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Failed to store Google tokens in database.", error);
     }
+
+    console.log(`[OAuth Callback] Upsert successful. Stored refresh_token: ${data?.refresh_token ? "YES" : "NO"}`);
+    console.log(`[OAuth Callback] is_active: ${data?.is_active}`);
 
     // --- SUPABASE AUTH SIGN IN (Optional / As per your flow) ---
     // This logs the user into Supabase Auth using the Google ID token
@@ -405,9 +414,7 @@ const disconnectGoogleCalendarIntegration = reqResAsyncHandler(async (req: Reque
     return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User email not found.");
   }
 
-  const { error } = await SUPABASE.from("user_calendar_tokens")
-    .update({ is_active: false })
-    .ilike("email", email.trim());
+  const { error } = await SUPABASE.from("user_calendar_tokens").update({ is_active: false }).ilike("email", email.trim());
 
   if (error) {
     return sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Failed to disconnect Google Calendar.", error);

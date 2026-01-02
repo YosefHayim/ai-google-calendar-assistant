@@ -52,7 +52,7 @@ export const summarizeMessages = async (messages: userAndAiMessageProps[]): Prom
           content: fullPrompt,
         },
       ],
-      max_tokens: 300,
+      // max_tokens: 300,
       temperature: 0.3,
     });
 

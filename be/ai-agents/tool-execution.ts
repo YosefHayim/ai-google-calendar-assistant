@@ -96,11 +96,26 @@ export const EXECUTION_TOOLS = {
       params: calendar_v3.Schema$Event & { email: string; q?: string | null; timeMin?: string | null; searchAllCalendars?: boolean; calendarId?: string | null }
     ) => {
       const startOfYear = new Date().toISOString().split("T")[0];
+      // Limit events to prevent context overflow
+      const MAX_EVENTS_TOTAL = 100;
+      const MAX_EVENTS_PER_CALENDAR = 50;
 
       const { email, calendarId } = parseToolArguments(params);
       if (!(email && isEmail(email))) {
         throw new Error("Invalid email address.");
       }
+
+      // Helper to slim down event data to essential fields only
+      const slimEvent = (event: calendar_v3.Schema$Event) => ({
+        id: event.id,
+        summary: event.summary,
+        description: event.description?.substring(0, 200), // Truncate long descriptions
+        start: event.start,
+        end: event.end,
+        location: event.location,
+        status: event.status,
+        htmlLink: event.htmlLink,
+      });
 
       // Default to searching all calendars (true) unless explicitly set to false
       const searchAllCalendars = params.searchAllCalendars !== false;
@@ -116,14 +131,15 @@ export const EXECUTION_TOOLS = {
             getEvents({
               calendarEvents: calendar.events,
               req: undefined,
-              extra: { calendarId: calId, timeMin: params.timeMin ?? startOfYear, q: params.q || "" },
+              extra: { calendarId: calId, timeMin: params.timeMin ?? startOfYear, q: params.q || "", maxResults: MAX_EVENTS_PER_CALENDAR },
             })
           )
         );
 
-        // Aggregate all events from all calendars
-        const aggregatedEvents: calendar_v3.Schema$Event[] = [];
-        const calendarEventMap: { calendarId: string; events: calendar_v3.Schema$Event[] }[] = [];
+        // Aggregate all events from all calendars (with limits)
+        const aggregatedEvents: ReturnType<typeof slimEvent>[] = [];
+        const calendarEventMap: { calendarId: string; eventCount: number }[] = [];
+        let truncated = false;
 
         for (let i = 0; i < allEventsResults.length; i++) {
           const result = allEventsResults[i];
@@ -131,15 +147,27 @@ export const EXECUTION_TOOLS = {
           const events = result.type === "standard" ? result.data.items ?? [] : [];
 
           if (events.length > 0) {
-            aggregatedEvents.push(...events);
-            calendarEventMap.push({ calendarId: calId || "unknown", events });
+            calendarEventMap.push({ calendarId: calId || "unknown", eventCount: events.length });
+
+            // Only add events if we haven't hit the total limit
+            const remainingSlots = MAX_EVENTS_TOTAL - aggregatedEvents.length;
+            if (remainingSlots > 0) {
+              const eventsToAdd = events.slice(0, remainingSlots).map(slimEvent);
+              aggregatedEvents.push(...eventsToAdd);
+              if (events.length > remainingSlots) {
+                truncated = true;
+              }
+            } else {
+              truncated = true;
+            }
           }
         }
 
         return {
           searchedCalendars: allCalendarIds.length,
           totalEventsFound: aggregatedEvents.length,
-          eventsByCalendar: calendarEventMap,
+          truncated,
+          calendarSummary: calendarEventMap,
           allEvents: aggregatedEvents,
         };
       }

@@ -449,7 +449,7 @@ export async function summarizeEvents(events: calendar_v3.Schema$Event[]): Promi
           content: `Summarize these calendar events:\n\n${eventsJson}`,
         },
       ],
-      max_tokens: 500,
+      // max_tokens: 500,
       temperature: 0.3,
     });
 
