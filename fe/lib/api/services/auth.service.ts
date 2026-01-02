@@ -1,6 +1,7 @@
-import { apiClient } from '@/lib/api/client';
-import { ENDPOINTS } from '@/lib/api/endpoints';
-import { ApiResponse, AuthData, User } from '@/types/api';
+import { ApiResponse, AuthData, CustomUser, User } from "@/types/api";
+
+import { ENDPOINTS } from "@/lib/api/endpoints";
+import { apiClient } from "@/lib/api/client";
 
 export const authService = {
   async signIn(email: string, password: string): Promise<ApiResponse<AuthData>> {
@@ -18,8 +19,10 @@ export const authService = {
     return data;
   },
 
-  async getUser(): Promise<ApiResponse<User>> {
-    const { data } = await apiClient.get<ApiResponse<User>>(ENDPOINTS.USERS_GET_USER);
+  async getUser(customUser = false): Promise<ApiResponse<User | CustomUser>> {
+    const { data } = await apiClient.get<ApiResponse<User | CustomUser>>(ENDPOINTS.USERS_GET_USER, {
+      params: customUser ? { customUser: "true" } : undefined,
+    });
     return data;
   },
 

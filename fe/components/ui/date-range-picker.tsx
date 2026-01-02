@@ -10,6 +10,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { DateRange } from "react-day-picker";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 export function DatePickerWithRange({
   className,
@@ -20,6 +21,7 @@ export function DatePickerWithRange({
   setDate: (date: DateRange | undefined) => void;
 }) {
   const [internalDate, setInternalDate] = React.useState<DateRange | undefined>(date);
+  const [isOpen, setIsOpen] = React.useState(false);
 
   // Update internal state when external date changes
   React.useEffect(() => {
@@ -28,15 +30,22 @@ export function DatePickerWithRange({
 
   const handleSelect = (selectedDate: DateRange | undefined) => {
     setInternalDate(selectedDate);
-    // Only call setDate when both from and to are selected
-    if (selectedDate?.from && selectedDate?.to) {
-      setDate(selectedDate);
+    // Don't call setDate here - wait for Apply button
+  };
+
+  const handleApply = () => {
+    if (internalDate?.from && internalDate?.to) {
+      setDate(internalDate);
+      setIsOpen(false);
+      toast.success("Date range applied", { duration: 2000 });
+    } else {
+      toast.error("Please select both start and end dates");
     }
   };
 
   return (
     <div className={cn("grid gap-2", className)}>
-      <Popover>
+      <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger asChild>
           <Button id="date" variant={"outline"} className={cn("w-[300px] justify-start text-left font-normal", !date && "text-muted-foreground")}>
             <CalendarIcon className="mr-2 h-4 w-4" />
@@ -70,6 +79,26 @@ export function DatePickerWithRange({
                 "relative first-of-type:before:hidden before:absolute max-sm:before:inset-x-2 max-sm:before:h-px max-sm:before:-top-2 sm:before:inset-y-2 sm:before:w-px before:bg-border sm:before:-left-4",
             }}
           />
+          <div className="p-3 border-t border-border flex justify-end gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setInternalDate(date);
+                setIsOpen(false);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="default"
+              size="sm"
+              onClick={handleApply}
+              disabled={!internalDate?.from || !internalDate?.to}
+            >
+              Apply
+            </Button>
+          </div>
         </PopoverContent>
       </Popover>
     </div>
