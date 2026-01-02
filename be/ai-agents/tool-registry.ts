@@ -174,20 +174,28 @@ export const DIRECT_TOOLS = {
   summarize_events: tool({
     name: "summarize_events",
     description:
-      "Summarizes raw calendar events JSON into a concise, friendly format for the user. Uses a cheaper model for cost efficiency. Input: the response object from get_event_direct. Output: friendly formatted summary string.",
+      "Summarizes raw calendar events JSON into a concise, friendly format for the user. Uses a cheaper model for cost efficiency. Input: the response object from get_event_direct as a JSON string. Output: friendly formatted summary string.",
     parameters: z.object({
-      eventsData: z
-        .unknown()
+      eventsData: z.coerce
+        .string()
         .describe(
-          "The response object from get_event_direct. When searchAllCalendars=true, it contains 'allEvents' array. When searchAllCalendars=false, it contains { type: 'standard', data: { items: [...] } }."
+          "The response object from get_event_direct as a JSON string. When searchAllCalendars=true, it contains 'allEvents' array. When searchAllCalendars=false, it contains { type: 'standard', data: { items: [...] } }."
         ),
     }),
     execute: async ({ eventsData }) => {
+      // Parse JSON string to object
+      let parsedData: unknown;
+      try {
+        parsedData = typeof eventsData === "string" ? JSON.parse(eventsData) : eventsData;
+      } catch {
+        return { error: "Invalid JSON string provided for eventsData" };
+      }
+
       // Extract events array from the response object
       let events: Parameters<typeof summarizeEvents>[0] = [];
 
-      if (typeof eventsData === "object" && eventsData !== null) {
-        const data = eventsData as {
+      if (typeof parsedData === "object" && parsedData !== null) {
+        const data = parsedData as {
           allEvents?: unknown[];
           items?: unknown[];
           events?: unknown[];
@@ -209,8 +217,8 @@ export const DIRECT_TOOLS = {
         } else if (data.events) {
           events = data.events as Parameters<typeof summarizeEvents>[0];
         }
-      } else if (Array.isArray(eventsData)) {
-        events = eventsData as Parameters<typeof summarizeEvents>[0];
+      } else if (Array.isArray(parsedData)) {
+        events = parsedData as Parameters<typeof summarizeEvents>[0];
       }
 
       return await summarizeEvents(events);

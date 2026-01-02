@@ -22,15 +22,7 @@ declare global {
 type ActiveTab = 'chat' | 'avatar' | '3d'
 
 const ChatInterface: React.FC = () => {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      role: 'assistant',
-      content:
-        "Good morning. I've reviewed your schedule; you are clear until 11 AM. Shall I block that time for deep work?",
-      timestamp: new Date(),
-    },
-  ])
+  const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [isStreaming, setIsStreaming] = useState(false)
