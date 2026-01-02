@@ -8,6 +8,7 @@ import { AIVoiceInput } from '@/components/ui/ai-voice-input'
 interface ChatInputProps {
   input: string
   isLoading: boolean
+  isStreaming: boolean
   isRecording: boolean
   speechRecognitionSupported: boolean
   speechRecognitionError: string | null
@@ -26,6 +27,7 @@ export const ChatInput = forwardRef<HTMLInputElement, ChatInputProps>(
     {
       input,
       isLoading,
+      isStreaming,
       isRecording,
       speechRecognitionSupported,
       speechRecognitionError,
@@ -40,6 +42,7 @@ export const ChatInput = forwardRef<HTMLInputElement, ChatInputProps>(
     },
     textInputRef,
   ) => {
+    const isDisabled = isLoading || isStreaming
     return (
       <div
         id="tour-chat-input"
@@ -74,7 +77,7 @@ export const ChatInput = forwardRef<HTMLInputElement, ChatInputProps>(
               className={`p-3 rounded-xl transition-all ${
                 isRecording ? 'text-red-500 bg-red-50' : 'text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100'
               }`}
-              disabled={isLoading || !speechRecognitionSupported}
+              disabled={isDisabled || !speechRecognitionSupported}
             >
               <Mic className="w-6 h-6" />
             </button>
@@ -85,13 +88,13 @@ export const ChatInput = forwardRef<HTMLInputElement, ChatInputProps>(
               onChange={(e) => onInputChange(e.target.value)}
               placeholder="What do you have for me today? I'm ready to help you."
               className="flex-1 bg-transparent border-none outline-none py-4 px-2 text-zinc-800 dark:text-zinc-100 font-medium text-lg placeholder:italic placeholder:font-normal"
-              disabled={isLoading}
+              disabled={isDisabled}
             />
             <button
               type="submit"
-              disabled={!input.trim() || isLoading}
+              disabled={!input.trim() || isDisabled}
               className={`p-3 rounded-xl transition-all ${
-                input.trim() && !isLoading
+                input.trim() && !isDisabled
                   ? 'bg-zinc-950 dark:bg-zinc-100 text-white dark:text-zinc-950'
                   : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-400'
               }`}

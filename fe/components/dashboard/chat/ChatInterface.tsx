@@ -225,6 +225,7 @@ const ChatInterface: React.FC = () => {
         ref={textInputRef}
         input={input}
         isLoading={isLoading}
+        isStreaming={isStreaming}
         isRecording={isRecording}
         speechRecognitionSupported={speechRecognitionSupported}
         speechRecognitionError={speechRecognitionError}
