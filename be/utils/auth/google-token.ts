@@ -93,6 +93,8 @@ export const refreshGoogleAccessToken = async (tokens: TokensProps): Promise<Ref
   try {
     const { credentials } = await OAUTH2CLIENT.refreshAccessToken();
 
+    console.log("credentials", credentials);
+
     if (!credentials.access_token) {
       throw new Error("No access token received from Google");
     }

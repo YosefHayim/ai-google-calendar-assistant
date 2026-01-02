@@ -58,7 +58,7 @@ const urls = {
   get authCallback(): string {
     return `${server.baseUrl}/api/users/callback`;
   },
-  frontend: process.env.FRONTEND_URL ?? "http://localhost:3000",
+  frontend: process.env.FRONTEND_URL ?? "http://localhost:4000",
 } as const;
 
 // ============================================================================

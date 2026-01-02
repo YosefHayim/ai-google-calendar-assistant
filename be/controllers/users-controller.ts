@@ -1,5 +1,5 @@
 import type { GoogleIdTokenPayloadProps, TokensProps } from "@/types";
-import { OAUTH2CLIENT, PROVIDERS, STATUS_RESPONSE, SUPABASE } from "@/config";
+import { OAUTH2CLIENT, PROVIDERS, REDIRECT_URI, SCOPES, SCOPES_STRING, STATUS_RESPONSE, SUPABASE } from "@/config";
 import type { Request, Response } from "express";
 import { generateGoogleAuthUrl, supabaseThirdPartySignInOrSignUp } from "@/utils/auth";
 import { reqResAsyncHandler, sendR } from "@/utils/http";
@@ -7,68 +7,111 @@ import { reqResAsyncHandler, sendR } from "@/utils/http";
 import jwt from "jsonwebtoken";
 
 /**
- * Generate Google Auth URL
+ * Generate Google Auth URL and Handle Callback
  *
  * @param {Request} req - The request object.
  * @param {Response} res - The response object.
  * @returns {Promise<void>} The response object.
- * @description Generates a Google Auth URL and sends it to the user.
- * @example
- * const url = await generateAuthGoogleUrl(req, res);
- * console.log(url);
+ * @description Generates a Google Auth URL or handles the OAuth2 callback to exchange code for tokens.
+ * Now uses UPSERT to safely handle both new and returning users.
  */
 const generateAuthGoogleUrl = reqResAsyncHandler(async (req: Request, res: Response) => {
   const code = req.query.code as string | undefined;
   const postmanHeaders = req.headers["user-agent"];
 
+  // Generate the auth URL
   const url = generateGoogleAuthUrl();
 
-  // 1. No code yet: send user to consent screen
+  // 1. No code provided? Redirect user to Google Consent Screen
   if (!code) {
-    // If from Postman, just send the URL back instead of redirecting
+    // If request is from Postman, return URL as JSON to avoid manual redirect issues
     if (postmanHeaders?.includes("Postman")) {
       return sendR(res, STATUS_RESPONSE.SUCCESS, url);
     }
     return res.redirect(url);
   }
 
+  // 2. Code provided? Exchange it for Tokens
   try {
     const { tokens } = await OAUTH2CLIENT.getToken(code);
 
-    const { id_token, refresh_token, refresh_token_expires_in, expiry_date, access_token, token_type, scope } = tokens as TokensProps;
+    // Decode ID token to get user info (email is critical)
+    const user = jwt.decode(tokens.id_token!) as GoogleIdTokenPayloadProps;
 
-    const user = jwt.decode(id_token!) as GoogleIdTokenPayloadProps;
+    if (!user || !user.email) {
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Failed to decode user profile from Google token.");
+    }
 
-    const { data, error } = await SUPABASE.from("user_calendar_tokens")
-      .update({
-        refresh_token_expires_in,
-        refresh_token,
-        expiry_date,
-        access_token,
-        token_type,
-        id_token,
-        scope,
-        is_active: true,
-        email: user.email!,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      })
-      .eq("email", user.email!)
-      .select();
+    // --- PREPARE DB PAYLOAD ---
+    // We construct the payload dynamically to avoid overwriting the refresh_token with null
+    const upsertPayload: any = {
+      email: user.email, // Unique key for UPSERT
+      access_token: tokens.access_token,
+      token_type: tokens.token_type,
+      id_token: tokens.id_token,
+      scope: tokens.scope,
+      expiry_date: tokens.expiry_date,
+      is_active: true,
+      updated_at: new Date().toISOString(),
+      // We do not set created_at here; let the DB handle it or it stays as is on update
+    };
+
+    // CRITICAL FIX: Only update refresh_token if Google sent a new one.
+    // Google often omits this on re-authentication. If we save 'undefined', we lose access.
+    if (tokens.refresh_token) {
+      upsertPayload.refresh_token = tokens.refresh_token;
+      if (tokens.refresh_token_expires_in) {
+        upsertPayload.refresh_token_expires_in = tokens.refresh_token_expires_in;
+      }
+    }
+
+    // --- DATABASE UPDATE ---
+    // Use upsert() instead of update().
+    // - If user exists: Updates the fields provided (keeping old refresh_token if we didn't provide a new one).
+    // - If user missing: Creates the row (Insert).
+    const { data, error } = await SUPABASE.from("user_calendar_tokens").upsert(upsertPayload, { onConflict: "email" }).select().single();
 
     if (error) {
-      return sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Failed to store new tokens.", error);
+      console.error("Supabase Token Save Error:", error);
+      return sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Failed to store Google tokens in database.", error);
     }
 
-    if (!data && !user) {
-      return sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Failed to store new tokens, but user decode works", user);
-    }
-
-    sendR(res, STATUS_RESPONSE.SUCCESS, "Tokens has been updated successfully.", {
-      data,
+    // --- SUPABASE AUTH SIGN IN (Optional / As per your flow) ---
+    // This logs the user into Supabase Auth using the Google ID token
+    const { data: signInData, error: signInError } = await SUPABASE.auth.signInWithIdToken({
+      provider: PROVIDERS.GOOGLE,
+      token: tokens.id_token!,
+      access_token: tokens.access_token!,
     });
+
+    if (signInError) {
+      console.error("Supabase Auth Error:", signInError);
+      return sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Failed to sign in user via Supabase Auth.", signInError);
+    }
+
+    // Set Cookies for the Client
+    if (signInData && signInData.session) {
+      const cookieOptions = {
+        httpOnly: true,
+        secure: true, // Ensure this is true in production (HTTPS)
+        maxAge: 1000 * 60 * 60 * 24 * 30, // 30 Days
+        sameSite: "strict" as const,
+      };
+
+      res.cookie("access_token", signInData.session.access_token, cookieOptions);
+      res.cookie("refresh_token", signInData.session.refresh_token, cookieOptions);
+
+      // Redirect back to frontend
+      return res.redirect(
+        `http://localhost:4000/callback?access_token=${signInData.session.access_token}&refresh_token=${signInData.session.refresh_token}&first_name=${user.given_name}&last_name=${user.family_name}&email=${user.email}`
+      );
+    }
+
+    // Fallback if no session created (shouldn't happen if signInError didn't fire)
+    return sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Session creation failed without error.");
   } catch (error) {
-    sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Failed to process OAuth token exchange.", error);
+    console.error("OAuth Exchange Error:", error);
+    return sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Failed to process OAuth token exchange.", error);
   }
 });
 

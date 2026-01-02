@@ -29,7 +29,6 @@ export type GoogleTokenValidationResult = {
  */
 export const googleTokenValidation = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
   const email = req.user?.email;
-
   if (!email) {
     return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User email not found. Please authenticate first.");
   }
@@ -62,12 +61,3 @@ export const googleTokenValidation = asyncHandler(async (req: Request, res: Resp
 
   next();
 });
-
-// Extend Express Request type
-declare global {
-  namespace Express {
-    interface Request {
-      googleTokenValidation?: GoogleTokenValidationResult;
-    }
-  }
-}
