@@ -15,6 +15,7 @@ import {
   Lock,
   LogOut,
   Plus,
+  RefreshCw,
   Settings,
   Share2,
   Shield,
@@ -25,11 +26,13 @@ import {
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { GoogleCalendarIcon, TelegramIcon, WhatsAppIcon } from '@/components/shared/Icons'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import CinematicGlowToggle from '@/components/ui/cinematic-glow-toggle'
+import type { GoogleCalendarIntegrationStatus } from '@/types/api'
 import { Label } from '@/components/ui/label'
+import { integrationsService } from '@/lib/api/services/integrations.service'
 
 interface SettingsModalProps {
   isOpen: boolean
@@ -91,6 +94,55 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
 
   const [selectedLanguage, setSelectedLanguage] = useState('en-US')
   const [timeFormat, setTimeFormat] = useState('12h')
+
+  // Google Calendar integration state
+  const [googleCalendarStatus, setGoogleCalendarStatus] = useState<GoogleCalendarIntegrationStatus | null>(null)
+  const [isGoogleCalendarLoading, setIsGoogleCalendarLoading] = useState(false)
+
+  // Fetch Google Calendar integration status
+  useEffect(() => {
+    if (isOpen && activeTab === 'integrations') {
+      fetchGoogleCalendarStatus()
+    }
+  }, [isOpen, activeTab])
+
+  const fetchGoogleCalendarStatus = async () => {
+    setIsGoogleCalendarLoading(true)
+    try {
+      const response = await integrationsService.getGoogleCalendarStatus()
+      if (response.data) {
+        setGoogleCalendarStatus(response.data)
+      }
+    } catch (error) {
+      console.error('Failed to fetch Google Calendar status:', error)
+    } finally {
+      setIsGoogleCalendarLoading(false)
+    }
+  }
+
+  const handleGoogleCalendarResync = () => {
+    if (googleCalendarStatus?.authUrl) {
+      window.location.href = googleCalendarStatus.authUrl
+    }
+  }
+
+  const handleGoogleCalendarDisconnect = async () => {
+    if (!window.confirm('Are you sure you want to disconnect Google Calendar? You will need to re-authenticate to use calendar features.')) {
+      return
+    }
+
+    setIsGoogleCalendarLoading(true)
+    try {
+      const response = await integrationsService.disconnectGoogleCalendar()
+      if (response.status === 'success') {
+        setGoogleCalendarStatus((prev) => (prev ? { ...prev, isActive: false } : null))
+      }
+    } catch (error) {
+      console.error('Failed to disconnect Google Calendar:', error)
+    } finally {
+      setIsGoogleCalendarLoading(false)
+    }
+  }
 
   const handleClearChatHistory = () => {
     if (
@@ -191,6 +243,82 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
                   </h3>
 
                   <div className="space-y-2">
+                    {/* Google Calendar */}
+                    <div className="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-blue-50 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
+                            <GoogleCalendarIcon className="w-6 h-6" />
+                          </div>
+                          <div>
+                            <h4 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">Google Calendar</h4>
+                            <p className="text-xs text-zinc-500 font-medium">
+                              {isGoogleCalendarLoading
+                                ? 'Loading...'
+                                : googleCalendarStatus?.isSynced
+                                  ? googleCalendarStatus.isActive
+                                    ? 'Synced & Active'
+                                    : 'Synced (Inactive)'
+                                  : 'Not connected'}
+                            </p>
+                          </div>
+                        </div>
+                        {isGoogleCalendarLoading ? (
+                          <div className="flex items-center gap-1.5 bg-zinc-100 dark:bg-zinc-800 text-zinc-500 p-1 px-2 rounded-full text-xs font-bold border border-zinc-200 dark:border-zinc-700">
+                            <Loader2 size={16} className="animate-spin" />
+                          </div>
+                        ) : googleCalendarStatus?.isSynced ? (
+                          googleCalendarStatus.isActive && !googleCalendarStatus.isExpired ? (
+                            <div className="flex items-center gap-1.5 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 p-1 px-2 rounded-full text-xs font-bold border border-green-100 dark:border-green-900/30">
+                              <CheckCircle2 size={16} /> Connected
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-1.5 bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 p-1 px-2 rounded-full text-xs font-bold border border-amber-100 dark:border-amber-900/30">
+                              <AlertTriangle size={16} /> {googleCalendarStatus.isExpired ? 'Expired' : 'Inactive'}
+                            </div>
+                          )
+                        ) : (
+                          <div className="flex items-center gap-1.5 bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-500 p-1 px-2 rounded-full text-xs font-bold border border-zinc-200 dark:border-zinc-700">
+                            <Circle size={16} /> Disconnected
+                          </div>
+                        )}
+                      </div>
+                      {googleCalendarStatus?.isSynced && googleCalendarStatus.isActive && !googleCalendarStatus.isExpired ? (
+                        <div className="flex gap-2 mt-2">
+                          <button
+                            onClick={handleGoogleCalendarResync}
+                            disabled={isGoogleCalendarLoading}
+                            className="flex-1 flex items-center justify-center gap-2 p-2 rounded-lg text-xs font-bold border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-white dark:hover:bg-zinc-800 transition-all"
+                          >
+                            <RefreshCw size={16} /> Re-sync
+                          </button>
+                          <button
+                            onClick={handleGoogleCalendarDisconnect}
+                            disabled={isGoogleCalendarLoading}
+                            className="flex-1 flex items-center justify-center gap-2 p-2 rounded-lg text-xs font-bold border border-red-200 dark:border-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all"
+                          >
+                            {isGoogleCalendarLoading ? <Loader2 size={16} className="animate-spin" /> : <X size={16} />}
+                            Disconnect
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={handleGoogleCalendarResync}
+                          disabled={isGoogleCalendarLoading}
+                          className="w-full mt-2 flex items-center justify-center gap-2 p-2 rounded-lg text-xs font-bold bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 hover:opacity-90 transition-all"
+                        >
+                          {isGoogleCalendarLoading ? (
+                            <Loader2 size={16} className="animate-spin" />
+                          ) : googleCalendarStatus?.isSynced ? (
+                            <RefreshCw size={16} />
+                          ) : (
+                            <Plus size={16} />
+                          )}
+                          {googleCalendarStatus?.isSynced ? 'Reconnect Calendar' : 'Connect Google Calendar'}
+                        </button>
+                      )}
+                    </div>
+
                     {/* Telegram */}
                     <div className="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
                       <div className="flex items-center justify-between mb-3">

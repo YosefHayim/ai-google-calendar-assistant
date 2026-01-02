@@ -225,3 +225,12 @@ export interface CalendarListEntry {
   defaultReminders?: EventReminder[]
   primary?: boolean
 }
+
+// Integration status types
+export interface GoogleCalendarIntegrationStatus {
+  isSynced: boolean
+  isActive: boolean
+  isExpired: boolean
+  syncedAt: string | null
+  authUrl: string
+}

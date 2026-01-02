@@ -346,6 +346,78 @@ const checkSession = reqResAsyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+/**
+ * Get Google Calendar integration status
+ *
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @returns {Promise<void>} The response object.
+ * @description Returns Google Calendar sync status, active status, and reauth URL.
+ */
+const getGoogleCalendarIntegrationStatus = reqResAsyncHandler(async (req: Request, res: Response) => {
+  const email = req.user?.email;
+
+  if (!email) {
+    return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User email not found.");
+  }
+
+  const { data, error } = await SUPABASE.from("user_calendar_tokens")
+    .select("is_active, expiry_date, created_at")
+    .ilike("email", email.trim())
+    .limit(1)
+    .maybeSingle();
+
+  if (error) {
+    return sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Failed to fetch integration status.", error);
+  }
+
+  const isSynced = !!data;
+  const isActive = data?.is_active ?? false;
+  const authUrl = generateGoogleAuthUrl();
+
+  // Check if token is expired
+  let isExpired = false;
+  if (data?.expiry_date) {
+    isExpired = Date.now() > data.expiry_date;
+  }
+
+  sendR(res, STATUS_RESPONSE.SUCCESS, "Google Calendar integration status fetched successfully.", {
+    isSynced,
+    isActive,
+    isExpired,
+    syncedAt: data?.created_at ?? null,
+    authUrl,
+  });
+});
+
+/**
+ * Disconnect Google Calendar integration
+ *
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @returns {Promise<void>} The response object.
+ * @description Sets is_active to false for the user's Google Calendar integration.
+ */
+const disconnectGoogleCalendarIntegration = reqResAsyncHandler(async (req: Request, res: Response) => {
+  const email = req.user?.email;
+
+  if (!email) {
+    return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User email not found.");
+  }
+
+  const { error } = await SUPABASE.from("user_calendar_tokens")
+    .update({ is_active: false })
+    .ilike("email", email.trim());
+
+  if (error) {
+    return sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Failed to disconnect Google Calendar.", error);
+  }
+
+  sendR(res, STATUS_RESPONSE.SUCCESS, "Google Calendar disconnected successfully.", {
+    isActive: false,
+  });
+});
+
 export const userController = {
   verifyEmailByOtp,
   signUpUserReg,
@@ -359,4 +431,6 @@ export const userController = {
   refreshToken,
   logout,
   checkSession,
+  getGoogleCalendarIntegrationStatus,
+  disconnectGoogleCalendarIntegration,
 };
