@@ -1,6 +1,6 @@
 import { apiClient } from '@/lib/api/client';
 import { ENDPOINTS } from '@/lib/api/endpoints';
-import { ApiResponse, CustomCalendar } from '@/types/api';
+import { ApiResponse, CustomCalendar, CalendarListResponse } from '@/types/api';
 
 export const calendarsService = {
   async getCalendars(custom = true): Promise<ApiResponse<CustomCalendar[]>> {
@@ -37,6 +37,21 @@ export const calendarsService = {
 
   async getFreeBusy(): Promise<ApiResponse<Record<string, { busy: Array<{ start: string; end: string }> }>>> {
     const { data } = await apiClient.get<ApiResponse<Record<string, { busy: Array<{ start: string; end: string }> }>>>(ENDPOINTS.CALENDARS_FREEBUSY);
+    return data;
+  },
+
+  async getCalendarList(params?: {
+    minAccessRole?: string;
+    showDeleted?: boolean;
+    showHidden?: boolean;
+  }): Promise<ApiResponse<CalendarListResponse>> {
+    const { data } = await apiClient.get<ApiResponse<CalendarListResponse>>(ENDPOINTS.CALENDARS_LIST, {
+      params: {
+        minAccessRole: params?.minAccessRole,
+        showDeleted: params?.showDeleted?.toString(),
+        showHidden: params?.showHidden?.toString(),
+      },
+    });
     return data;
   },
 };

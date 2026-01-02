@@ -317,30 +317,40 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
   };
 
   // Fetch calendars to match with events
-  const { data: calendarsData, isLoading: isCalendarsLoading } = useQuery({
-    queryKey: ["calendars"],
+  const { data: calendarsQueryData, isLoading: isCalendarsLoading } = useQuery({
+    queryKey: ["calendars-list"],
     queryFn: async () => {
-      const response = await calendarsService.getCalendars(true);
+      const response = await calendarsService.getCalendarList({
+        minAccessRole: "owner",
+        showDeleted: false,
+        showHidden: false,
+      });
       if (response.status === "error" || !response.data) {
         throw new Error(response.message || "Failed to fetch calendars");
       }
-      return response.data;
+
+      // Transform the calendar list items into a Map for quick lookup
+      const calendarMap = new Map<string, { name: string; color: string }>();
+      const items = response.data.items || [];
+
+      items.forEach((entry) => {
+        const calendarId = entry.id;
+        const name = entry.summary || calendarId.split("@")[0];
+        const color = entry.backgroundColor || "#6366f1";
+
+        calendarMap.set(calendarId, { name, color });
+      });
+
+      return {
+        calendarMap,
+        items,
+      };
     },
     retry: false,
   });
 
-  // Create calendar map for quick lookup
-  const calendarMap = React.useMemo(() => {
-    if (!calendarsData) return new Map<string, { name: string; color: string }>();
-    const map = new Map<string, { name: string; color: string }>();
-    calendarsData.forEach((cal) => {
-      map.set(cal.calendarId, {
-        name: cal.calendarName || cal.calendarId.split("@")[0],
-        color: cal.calendarColorForEvents || "#6366f1",
-      });
-    });
-    return map;
-  }, [calendarsData]);
+  const calendarMap = calendarsQueryData?.calendarMap || new Map<string, { name: string; color: string }>();
+  const calendarsData = calendarsQueryData?.items || [];
 
   const {
     data: analyticsData,
@@ -923,18 +933,18 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
             <div className="space-y-3">
               {calendarsData && calendarsData.length > 0 ? (
                 calendarsData.map((calendar) => {
-                  const calendarInfo = calendarMap.get(calendar.calendarId);
-                  const displayName = calendar.calendarName || calendar.calendarId.split("@")[0];
-                  const color = calendar.calendarColorForEvents || calendarInfo?.color || "#6366f1";
+                  const calendarInfo = calendarMap.get(calendar.id);
+                  const displayName = calendar.summary || calendar.id.split("@")[0];
+                  const color = calendar.backgroundColor || calendarInfo?.color || "#6366f1";
 
                   return (
                     <div
-                      key={calendar.calendarId}
+                      key={calendar.id}
                       className="flex items-center gap-3 p-2 rounded-md hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors border border-transparent hover:border-zinc-200 dark:hover:border-zinc-800 group cursor-pointer"
                       style={{ backgroundColor: `${color}08` }}
                       onClick={() => {
                         setSelectedCalendarForSettings({
-                          id: calendar.calendarId,
+                          id: calendar.id,
                           name: displayName,
                           color: color,
                         });
