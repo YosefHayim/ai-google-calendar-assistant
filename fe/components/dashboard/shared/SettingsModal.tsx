@@ -115,7 +115,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
             <Settings className="w-5 h-5 text-zinc-400" />
             <h2 className="font-semibold text-zinc-900 dark:text-zinc-100">Settings</h2>
           </div>
-          <nav className="flex-1 space-y-1">
+          <nav className="flex-1 space-y-2">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
@@ -146,7 +146,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
           </div>
           <div className="  p-8 pt-0">
             {activeTab === "general" && (
-              <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
+              <div className="space-y-2 animate-in fade-in slide-in-from-bottom-2 duration-300">
                 <h3 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-6 tracking-tight">General Preferences</h3>
                 <div className="flex items-center gap-4 p-4 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
                   <div className="w-12 h-12 bg-zinc-200 dark:bg-zinc-700 rounded-full flex items-center justify-center text-zinc-500">
@@ -169,10 +169,10 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
             )}
 
             {activeTab === "integrations" && (
-              <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300 pb-8">
+              <div className="space-y-2 animate-in fade-in slide-in-from-bottom-2 duration-300 pb-8">
                 <h3 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-6 tracking-tight">Integrations</h3>
 
-                <div className="space-y-4">
+                <div className="space-y-2">
                   {/* Telegram */}
                   <div className="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
                     <div className="flex items-center justify-between mb-3">
@@ -233,7 +233,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
             )}
 
             {activeTab === "language" && (
-              <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
+              <div className="space-y-2 animate-in fade-in slide-in-from-bottom-2 duration-300">
                 <h3 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-2 tracking-tight">Language & Region</h3>
                 <p className="text-xs text-zinc-500 mb-6 leading-relaxed">Select your preferred language for the interface and AI interactions.</p>
 
@@ -299,7 +299,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
             )}
 
             {activeTab === "notifications" && (
-              <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
+              <div className="space-y-2 animate-in fade-in slide-in-from-bottom-2 duration-300">
                 <h3 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-6 tracking-tight">Notifications</h3>
                 <div className="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
                   <ToggleRow
@@ -325,9 +325,9 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
             )}
 
             {activeTab === "security" && (
-              <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
+              <div className="space-y-2 animate-in fade-in slide-in-from-bottom-2 duration-300">
                 <h3 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-6 tracking-tight">Security</h3>
-                <div className="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-4">
+                <div className="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2">
                   <div className="flex items-center gap-3 border-b border-zinc-200 dark:border-zinc-800 pb-4">
                     <Clock className="w-4 h-4 text-zinc-400" />
                     <span className="text-xs font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider">
@@ -348,9 +348,9 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
             )}
 
             {activeTab === "memory" && (
-              <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
+              <div className="space-y-2 animate-in fade-in slide-in-from-bottom-2 duration-300">
                 <h3 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-6 tracking-tight">Memory & Data</h3>
-                <div className="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-4">
+                <div className="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2">
                   <ToggleRow
                     label="Contextual Memory"
                     checked={contextualMemory}

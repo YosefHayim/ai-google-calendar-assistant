@@ -1,10 +1,11 @@
 "use client";
 
-import React from "react";
-import { X, CalendarDays, Info, Loader2 } from "lucide-react";
+import { CalendarDays, Info, Loader2, X } from "lucide-react";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
-import { useCalendarById } from "@/hooks/queries/calendars/useCalendarById";
+
 import type { CalendarSettingsDialogProps } from "@/types/analytics";
+import React from "react";
+import { useCalendarById } from "@/hooks/queries/calendars/useCalendarById";
 
 const CalendarSettingsDialog: React.FC<CalendarSettingsDialogProps> = ({ isOpen, calendarId, calendarName, calendarColor, onClose }) => {
   const { data: calendar, isLoading } = useCalendarById({
@@ -42,7 +43,7 @@ const CalendarSettingsDialog: React.FC<CalendarSettingsDialogProps> = ({ isOpen,
               <Loader2 className="w-6 h-6 animate-spin text-zinc-400" />
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-2">
               <div>
                 <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2 flex items-center gap-1.5">
                   Calendar ID

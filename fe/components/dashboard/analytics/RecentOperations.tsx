@@ -16,7 +16,11 @@ const RecentOperations: React.FC<RecentOperationsProps> = ({ activities, onActiv
     <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-6 flex-1">
       <div className="mb-6 flex items-center justify-between">
         <h3 className="font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
-          <ListChecks className="w-4 h-4 text-zinc-400" /> Recent Operations
+          <ListChecks className="w-4 h-4 text-zinc-400" />
+          <span>Recent Events</span>
+          <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest bg-emerald-50 dark:bg-emerald-950/30 px-2 py-0.5 rounded">
+            Real-time
+          </span>
           <HoverCard>
             <HoverCardTrigger asChild>
               <button className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors">
@@ -25,7 +29,7 @@ const RecentOperations: React.FC<RecentOperationsProps> = ({ activities, onActiv
             </HoverCardTrigger>
             <HoverCardContent>
               <div className="space-y-2">
-                <h4 className="font-semibold text-sm">Recent Operations</h4>
+                <h4 className="font-semibold text-sm">Recent Events</h4>
                 <p className="text-xs text-zinc-600 dark:text-zinc-400">
                   A real-time feed of your most recent calendar events and activities. Click on any item to view detailed information about the event.
                 </p>
@@ -33,11 +37,11 @@ const RecentOperations: React.FC<RecentOperationsProps> = ({ activities, onActiv
             </HoverCardContent>
           </HoverCard>
         </h3>
-        <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest bg-emerald-50 dark:bg-emerald-950/30 px-2 py-0.5 rounded">
-          Real-time
-        </span>
+        <div className="text-xs text-zinc-500 dark:text-zinc-400">
+          <span>Recent events: {activities?.length} </span>
+        </div>
       </div>
-      <ul className="space-y-4">
+      <ul className="space-y-2">
         {activities.length > 0 ? (
           activities.map((activity, i) => {
             const Icon = activity.icon;

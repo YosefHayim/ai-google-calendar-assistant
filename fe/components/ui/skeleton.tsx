@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { cn } from '@/lib/utils';
+import { cn } from "@/lib/utils";
 
 interface SkeletonProps {
   className?: string;
@@ -8,21 +8,13 @@ interface SkeletonProps {
 }
 
 export function Skeleton({ className, style }: SkeletonProps) {
-  return (
-    <div
-      className={cn(
-        'animate-pulse rounded-md bg-zinc-200 dark:bg-zinc-800',
-        className
-      )}
-      style={style}
-    />
-  );
+  return <div className={cn("animate-pulse rounded-md bg-zinc-200 dark:bg-zinc-800", className)} style={style} />;
 }
 
 // Card skeleton with icon, title, and value
 export function SkeletonCard({ className }: SkeletonProps) {
   return (
-    <div className={cn('bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md p-6 shadow-sm', className)}>
+    <div className={cn("bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md p-6 shadow-sm", className)}>
       <Skeleton className="w-10 h-10 rounded-md mb-4" />
       <Skeleton className="h-8 w-16 mb-2" />
       <Skeleton className="h-3 w-24" />
@@ -33,7 +25,7 @@ export function SkeletonCard({ className }: SkeletonProps) {
 // Insight card skeleton
 export function SkeletonInsightCard({ className }: SkeletonProps) {
   return (
-    <div className={cn('bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-6 flex flex-col gap-4', className)}>
+    <div className={cn("bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-6 flex flex-col gap-4", className)}>
       <div className="flex items-center gap-3">
         <Skeleton className="w-8 h-8 rounded-md shrink-0" />
         <Skeleton className="h-4 w-24" />
@@ -49,7 +41,7 @@ export function SkeletonInsightCard({ className }: SkeletonProps) {
 // Chart skeleton (column chart)
 export function SkeletonChart({ className }: SkeletonProps) {
   return (
-    <div className={cn('bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-6', className)}>
+    <div className={cn("bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-6", className)}>
       <div className="mb-6">
         <div className="flex items-center gap-2 mb-2">
           <Skeleton className="w-5 h-5 rounded" />
@@ -59,11 +51,7 @@ export function SkeletonChart({ className }: SkeletonProps) {
       </div>
       <div className="h-64 flex items-end justify-between gap-2 px-4">
         {Array.from({ length: 12 }).map((_, i) => (
-          <Skeleton
-            key={i}
-            className="flex-1 rounded-t"
-            style={{ height: `${20 + Math.random() * 60}%` }}
-          />
+          <Skeleton key={i} className="flex-1 rounded-t" style={{ height: `${20 + Math.random() * 60}%` }} />
         ))}
       </div>
     </div>
@@ -73,7 +61,7 @@ export function SkeletonChart({ className }: SkeletonProps) {
 // Line chart skeleton
 export function SkeletonLineChart({ className }: SkeletonProps) {
   return (
-    <div className={cn('bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-6', className)}>
+    <div className={cn("bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-6", className)}>
       <div className="mb-6">
         <div className="flex items-center gap-2 mb-2">
           <Skeleton className="w-5 h-5 rounded" />
@@ -84,11 +72,7 @@ export function SkeletonLineChart({ className }: SkeletonProps) {
       <div className="h-64 relative px-4">
         {/* Grid lines */}
         {[0, 0.25, 0.5, 0.75, 1].map((ratio) => (
-          <div
-            key={ratio}
-            className="absolute left-4 right-4 h-px bg-zinc-200 dark:bg-zinc-800 opacity-50"
-            style={{ top: `${ratio * 100}%` }}
-          />
+          <div key={ratio} className="absolute left-4 right-4 h-px bg-zinc-200 dark:bg-zinc-800 opacity-50" style={{ top: `${ratio * 100}%` }} />
         ))}
         {/* Animated line path skeleton */}
         <svg className="absolute inset-0 w-full h-full" viewBox="0 0 400 200" preserveAspectRatio="none">
@@ -124,14 +108,19 @@ export function SkeletonLineChart({ className }: SkeletonProps) {
 // Time allocation donut skeleton
 export function SkeletonDonutChart({ className }: SkeletonProps) {
   return (
-    <div className={cn('bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-6 flex flex-col xl:flex-row items-center gap-6 h-full', className)}>
+    <div
+      className={cn(
+        "bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-6 flex flex-col xl:flex-row items-center gap-6 h-full",
+        className
+      )}
+    >
       <div className="relative w-44 h-44 flex-shrink-0">
         <Skeleton className="w-full h-full rounded-full" />
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="w-24 h-24 rounded-full bg-white dark:bg-zinc-950" />
         </div>
       </div>
-      <div className="w-full space-y-3">
+      <div className="w-full space-y-2">
         <Skeleton className="h-5 w-32 mb-4" />
         {Array.from({ length: 5 }).map((_, i) => (
           <div key={i} className="flex items-center gap-3">
@@ -149,7 +138,7 @@ export function SkeletonDonutChart({ className }: SkeletonProps) {
 // List skeleton
 export function SkeletonList({ items = 4, className }: SkeletonProps & { items?: number }) {
   return (
-    <div className={cn('bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-6', className)}>
+    <div className={cn("bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-6", className)}>
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <Skeleton className="w-4 h-4 rounded" />
@@ -157,7 +146,7 @@ export function SkeletonList({ items = 4, className }: SkeletonProps & { items?:
         </div>
         <Skeleton className="h-4 w-16 rounded" />
       </div>
-      <div className="space-y-4">
+      <div className="space-y-2">
         {Array.from({ length: items }).map((_, i) => (
           <div key={i} className="flex items-start gap-3">
             <Skeleton className="w-8 h-8 rounded-md shrink-0" />
@@ -175,14 +164,14 @@ export function SkeletonList({ items = 4, className }: SkeletonProps & { items?:
 // Calendar sources skeleton
 export function SkeletonCalendarSources({ items = 4, className }: SkeletonProps & { items?: number }) {
   return (
-    <div className={cn('bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-6', className)}>
+    <div className={cn("bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-6", className)}>
       <div className="mb-6">
         <div className="flex items-center gap-2">
           <Skeleton className="w-4 h-4 rounded" />
           <Skeleton className="h-5 w-32" />
         </div>
       </div>
-      <div className="space-y-3">
+      <div className="space-y-2">
         {Array.from({ length: items }).map((_, i) => (
           <div key={i} className="flex items-center gap-3 p-2">
             <Skeleton className="w-2.5 h-2.5 rounded-full" />
@@ -199,7 +188,7 @@ export function SkeletonCalendarSources({ items = 4, className }: SkeletonProps 
 // Heatmap skeleton
 export function SkeletonHeatmap({ className }: SkeletonProps) {
   return (
-    <div className={cn('bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-6', className)}>
+    <div className={cn("bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-6", className)}>
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <Skeleton className="w-4 h-4 rounded" />
@@ -207,14 +196,11 @@ export function SkeletonHeatmap({ className }: SkeletonProps) {
         </div>
         <Skeleton className="h-8 w-48 rounded-full" />
       </div>
-      <div className="space-y-1">
+      <div className="space-y-2">
         {Array.from({ length: 7 }).map((_, rowIdx) => (
           <div key={rowIdx} className="flex gap-1">
             {Array.from({ length: 52 }).map((_, colIdx) => (
-              <Skeleton
-                key={colIdx}
-                className="w-2.5 h-2.5 rounded-sm"
-              />
+              <Skeleton key={colIdx} className="w-2.5 h-2.5 rounded-sm" />
             ))}
           </div>
         ))}
@@ -226,7 +212,7 @@ export function SkeletonHeatmap({ className }: SkeletonProps) {
 // Integration card skeleton
 export function SkeletonIntegrationCard({ className }: SkeletonProps) {
   return (
-    <div className={cn('bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md p-6 shadow-sm', className)}>
+    <div className={cn("bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md p-6 shadow-sm", className)}>
       <div className="flex items-start justify-between mb-6">
         <Skeleton className="w-11 h-11 rounded-md" />
         <Skeleton className="w-24 h-6 rounded-full" />
@@ -244,15 +230,15 @@ export function SkeletonIntegrationCard({ className }: SkeletonProps) {
 // Message bubble skeleton for chat
 export function SkeletonMessageBubble({ isUser = false, className }: SkeletonProps & { isUser?: boolean }) {
   return (
-    <div className={cn('flex mb-6', isUser ? 'justify-end' : 'justify-start', className)}>
-      <div className={cn(
-        'px-4 py-3 rounded-md shadow-sm max-w-[85%] md:max-w-[75%]',
-        isUser
-          ? 'bg-primary/20 rounded-tr-none'
-          : 'bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-tl-none'
-      )}>
-        <Skeleton className={cn('h-4 mb-2', isUser ? 'w-32' : 'w-48')} />
-        <Skeleton className={cn('h-4', isUser ? 'w-24' : 'w-64')} />
+    <div className={cn("flex mb-6", isUser ? "justify-end" : "justify-start", className)}>
+      <div
+        className={cn(
+          "px-4 py-3 rounded-md shadow-sm max-w-[85%] md:max-w-[75%]",
+          isUser ? "bg-primary/20 rounded-tr-none" : "bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-tl-none"
+        )}
+      >
+        <Skeleton className={cn("h-4 mb-2", isUser ? "w-32" : "w-48")} />
+        <Skeleton className={cn("h-4", isUser ? "w-24" : "w-64")} />
       </div>
     </div>
   );

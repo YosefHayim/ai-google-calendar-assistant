@@ -415,7 +415,7 @@ const ChatInterface: React.FC = () => {
               <div className="flex items-center gap-2 mb-6 text-zinc-400 font-bold text-[10px] uppercase tracking-widest">
                 <MessageSquare className="w-3.5 h-3.5" /> Live Context
               </div>
-              <div className="flex-1 space-y-6">
+              <div className="flex-1 space-y-2">
                 {messages.map((msg) => (
                   <div key={msg.id} className="animate-in fade-in slide-in-from-right-2 duration-300 flex flex-col">
                     <div

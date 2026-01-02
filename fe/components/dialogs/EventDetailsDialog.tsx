@@ -56,7 +56,7 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({ isOpen, event, 
             )}
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-2">
             {event.description && (
               <div>
                 <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Description</h4>
@@ -97,7 +97,7 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({ isOpen, event, 
             {event.organizer && (
               <div>
                 <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Organizer</h4>
-                <p className="text-sm text-zinc-600 dark:text-zinc-400">{event.organizer.email || "N/A"}</p>
+                <p className="text-sm text-zinc-600 dark:text-zinc-400 w-auto overflow-hidden">{event.organizer.email || "N/A"}</p>
               </div>
             )}
 
@@ -111,7 +111,7 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({ isOpen, event, 
             {event.attendees && event.attendees.length > 0 && (
               <div>
                 <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Attendees ({event.attendees.length})</h4>
-                <ul className="space-y-1">
+                <ul className="space-y-2">
                   {event.attendees.map((attendee, idx) => (
                     <li key={idx} className="text-sm text-zinc-600 dark:text-zinc-400">
                       {attendee.email}

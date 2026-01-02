@@ -1,9 +1,10 @@
 'use client';
 
+import { BrainCircuit, CalendarDays, Check, Mic, Plane, User } from 'lucide-react';
+
+import { AllyLogo } from '@/components/shared/logo';
 import React from 'react';
 import { motion } from 'framer-motion';
-import { BrainCircuit, CalendarDays, Mic, Plane, User, Check } from 'lucide-react';
-import { AllyLogo } from '@/components/shared/logo';
 
 const useCases = [
   {
@@ -11,7 +12,7 @@ const useCases = [
     title: "Intelligent Scheduling",
     description: "Finds the perfect time for meetings, navigating complex calendars and timezones effortlessly.",
     illustration: () => (
-      <div className="space-y-3">
+      <div className="space-y-2">
         <div className="text-xs font-medium bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 p-2 rounded-md rounded-br-none self-end flex items-center gap-2 max-w-max ml-auto">
             <User className="w-3 h-3"/>
             <span>Find 30m for me, Sarah, and Alex.</span>
@@ -34,7 +35,7 @@ const useCases = [
     title: "Focus Time Protection",
     description: "Automatically shields your deep work sessions from interruptions by intelligently rescheduling conflicts.",
     illustration: () => (
-        <div className="space-y-3">
+        <div className="space-y-2">
             <div className="text-xs font-medium bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 p-2 rounded-md rounded-br-none self-end max-w-max ml-auto">
                 Protect my morning for Q4 strategy.
             </div>
@@ -50,7 +51,7 @@ const useCases = [
     title: "Proactive Travel Agent",
     description: "Monitors your travel plans, automatically adjusting to delays and keeping all stakeholders informed.",
     illustration: () => (
-        <div className="space-y-3">
+        <div className="space-y-2">
             <div className="text-xs font-medium bg-red-500 text-white p-2 rounded-md">
                 Flight to SFO delayed by 2 hours.
             </div>
@@ -66,7 +67,7 @@ const useCases = [
     title: "Voice-to-Action",
     description: "Capture thoughts and commands on the go. Ally transcribes, understands, and executes tasks instantly.",
     illustration: () => (
-        <div className="space-y-3">
+        <div className="space-y-2">
             <div className="text-xs font-medium bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 p-2 rounded-md rounded-br-none self-end max-w-max ml-auto flex items-center gap-2">
                 <div className="flex items-center gap-0.5 h-3">
                     {[...Array(5)].map((_, i) => ( <div key={i} className="w-0.5 bg-primary/80 wave-bar rounded-md" style={{ animationDelay: `${i * 0.1}s` }} /> ))}

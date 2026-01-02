@@ -1,11 +1,20 @@
 'use client';
-import React, { useState } from 'react';
+
 import {
-  CheckCircle2, Circle, ArrowUpRight, X, Loader2, List, Settings, RefreshCw
+  ArrowUpRight,
+  CheckCircle2,
+  Circle,
+  List,
+  Loader2,
+  RefreshCw,
+  Settings,
+  X
 } from 'lucide-react';
-import { TelegramIcon, WhatsAppIcon, GoogleCalendarIcon } from '@/components/shared/Icons';
-import { useCalendars } from '@/hooks/queries';
+import { GoogleCalendarIcon, TelegramIcon, WhatsAppIcon } from '@/components/shared/Icons';
+import React, { useState } from 'react';
 import { Skeleton, SkeletonIntegrationCard } from '@/components/ui/skeleton';
+
+import { useCalendars } from '@/hooks/queries';
 
 interface IntegrationsDashboardProps {}
 
@@ -82,7 +91,7 @@ const IntegrationsDashboard: React.FC<IntegrationsDashboardProps> = () => {
             </div>
             
             {isLoading ? (
-              <div className="space-y-3 py-4">
+              <div className="space-y-2 py-4">
                 {[1, 2, 3, 4].map(i => (
                   <div key={i} className="flex items-center gap-3">
                     <Skeleton className="w-2.5 h-2.5 rounded-full" />
@@ -101,7 +110,7 @@ const IntegrationsDashboard: React.FC<IntegrationsDashboardProps> = () => {
                 No active calendar sources found.
               </div>
             ) : (
-              <ul className="space-y-3">
+              <ul className="space-y-2">
                 {calendarList.map((cal) => (
                   <li key={cal.calendarId} className="flex items-center gap-3 text-sm">
                     <div 

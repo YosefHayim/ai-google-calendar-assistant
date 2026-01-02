@@ -1,11 +1,13 @@
 "use client";
 
+import { Loader2, X } from "lucide-react";
 import React, { useState } from "react";
-import { X, Loader2 } from "lucide-react";
+
+import { Button } from "../ui/button";
+import type { CreateCalendarDialogProps } from "@/types/analytics";
+import { calendarsService } from "@/lib/api/services/calendars.service";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
-import { calendarsService } from "@/lib/api/services/calendars.service";
-import type { CreateCalendarDialogProps } from "@/types/analytics";
 
 const CreateCalendarDialog: React.FC<CreateCalendarDialogProps> = ({ isOpen, onClose, onSuccess }) => {
   const [calendarPrompt, setCalendarPrompt] = useState("");
@@ -46,7 +48,7 @@ const CreateCalendarDialog: React.FC<CreateCalendarDialogProps> = ({ isOpen, onC
 
   return (
     <div className="fixed inset-0 bg-black/50 dark:bg-black/80 flex items-center justify-center z-50 p-4" onClick={onClose}>
-      <div className="bg-white dark:bg-zinc-900 rounded-lg p-6 shadow-xl max-w-md w-full relative" onClick={(e) => e.stopPropagation()}>
+      <div className="bg-white dark:bg-zinc-900 rounded-lg p-6 space-y-2 shadow-xl max-w-md w-full relative" onClick={(e) => e.stopPropagation()}>
         <button onClick={onClose} className="absolute top-3 right-3 text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors">
           <X className="w-5 h-5" />
         </button>
@@ -66,22 +68,18 @@ const CreateCalendarDialog: React.FC<CreateCalendarDialogProps> = ({ isOpen, onC
             }
           }}
         />
-        <div className="flex gap-2 mt-4">
-          <button
+        <div className="grid grid-cols-2 gap-2">
+          <Button
+            variant="outline"
             onClick={() => {
               onClose();
               setCalendarPrompt("");
             }}
             disabled={isCreatingCalendar}
-            className="flex-1 px-4 py-2 rounded-md border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 text-sm font-medium hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Cancel
-          </button>
-          <button
-            onClick={handleCreate}
-            disabled={isCreatingCalendar}
-            className="flex-1 px-4 py-2 rounded-md bg-zinc-950 dark:bg-zinc-100 text-white dark:text-zinc-950 text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-          >
+          </Button>
+          <Button onClick={handleCreate} disabled={isCreatingCalendar}>
             {isCreatingCalendar ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -90,7 +88,7 @@ const CreateCalendarDialog: React.FC<CreateCalendarDialogProps> = ({ isOpen, onC
             ) : (
               "Create Calendar"
             )}
-          </button>
+          </Button>
         </div>
       </div>
     </div>

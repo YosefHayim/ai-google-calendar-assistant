@@ -226,7 +226,7 @@ export function DatePickerWithRange({ className, date, setDate }: DatePickerWith
                       <Info className="w-4 h-4 text-muted-foreground cursor-help opacity-70 hover:opacity-100 transition-opacity" />
                     </HoverCardTrigger>
                     <HoverCardContent className="w-80">
-                      <div className="space-y-1">
+                      <div className="space-y-2">
                         <h4 className="text-sm font-semibold">Compare Mode</h4>
                         <p className="text-sm text-muted-foreground">Compare data with the previous period.</p>
                       </div>
