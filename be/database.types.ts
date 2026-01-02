@@ -63,6 +63,7 @@ export type Database = {
           message_id: number | null
           metadata: Json | null
           source: string | null
+          update_at: string | null
           user_id: number | null
         }
         Insert: {
@@ -74,6 +75,7 @@ export type Database = {
           message_id?: number | null
           metadata?: Json | null
           source?: string | null
+          update_at?: string | null
           user_id?: number | null
         }
         Update: {
@@ -85,6 +87,7 @@ export type Database = {
           message_id?: number | null
           metadata?: Json | null
           source?: string | null
+          update_at?: string | null
           user_id?: number | null
         }
         Relationships: [
@@ -109,6 +112,7 @@ export type Database = {
           metadata: Json | null
           source: string | null
           telegram_user_id: number | null
+          update_at: string | null
           updated_at: string | null
           user_id: string | null
         }
@@ -123,6 +127,7 @@ export type Database = {
           metadata?: Json | null
           source?: string | null
           telegram_user_id?: number | null
+          update_at?: string | null
           updated_at?: string | null
           user_id?: string | null
         }
@@ -137,6 +142,7 @@ export type Database = {
           metadata?: Json | null
           source?: string | null
           telegram_user_id?: number | null
+          update_at?: string | null
           updated_at?: string | null
           user_id?: string | null
         }
@@ -169,6 +175,7 @@ export type Database = {
           source: string | null
           summary_text: string
           telegram_user_id: number | null
+          update_at: string | null
           user_id: string | null
         }
         Insert: {
@@ -182,6 +189,7 @@ export type Database = {
           source?: string | null
           summary_text: string
           telegram_user_id?: number | null
+          update_at?: string | null
           user_id?: string | null
         }
         Update: {
@@ -195,6 +203,7 @@ export type Database = {
           source?: string | null
           summary_text?: string
           telegram_user_id?: number | null
+          update_at?: string | null
           user_id?: string | null
         }
         Relationships: [

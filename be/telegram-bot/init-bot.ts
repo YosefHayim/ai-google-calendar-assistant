@@ -99,12 +99,17 @@ const handleConfirmation = async (ctx: GlobalContext): Promise<void> => {
     const prompt = buildConfirmationPrompt(ctx.session.email, pending.eventData);
     const { finalOutput } = await activateAgent(ORCHESTRATOR_AGENT, prompt);
 
+    if (!finalOutput) {
+      await ctx.reply("No output received from AI Agent.");
+      return;
+    }
+
     // Add AI response to conversation history
     if (finalOutput) {
       await addMessageToContext(chatId, userId, { role: "assistant", content: finalOutput }, summarizeMessages);
     }
 
-    await ctx.reply(finalOutput || "Event created successfully!");
+    await ctx.reply(finalOutput);
   } catch (error) {
     console.error("Agent error during confirmation:", error);
     await ctx.reply("Error creating the event. Please try again.");

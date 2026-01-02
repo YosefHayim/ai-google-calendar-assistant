@@ -1,8 +1,8 @@
 import { OAUTH2CLIENT, REDIRECT_URI, SCOPES, SUPABASE, env } from "@/config";
-import { google } from "googleapis";
 
 import { TOKEN_FIELDS } from "@/config/constants/sql";
 import type { TokensProps } from "@/types";
+import { google } from "googleapis";
 
 /**
  * Create a fresh OAuth2Client instance for token refresh
@@ -85,6 +85,10 @@ export const fetchGoogleTokensByEmail = async (email: string): Promise<{ data: T
     return { data: null, error: error.message };
   }
 
+  if (!data) {
+    return { data: null, error: "No tokens found for email" };
+  }
+
   return { data: data as TokensProps | null, error: null };
 };
 
@@ -103,6 +107,10 @@ export const refreshGoogleAccessToken = async (tokens: TokensProps): Promise<Ref
   // Create fresh OAuth2Client per request to avoid stale cached token state
   const oauthClient = createFreshOAuth2Client();
   oauthClient.setCredentials({
+    expiry_date: tokens.expiry_date,
+    token_type: tokens.token_type,
+    scope: tokens.scope,
+    id_token: tokens.id_token,
     refresh_token: tokens.refresh_token,
     access_token: tokens.access_token,
   });
@@ -110,29 +118,20 @@ export const refreshGoogleAccessToken = async (tokens: TokensProps): Promise<Ref
   try {
     const { credentials } = await oauthClient.refreshAccessToken();
 
-    console.log("credentials", credentials);
-
     if (!credentials.access_token) {
       throw new Error("No access token received from Google");
     }
 
-    return {
-      accessToken: credentials.access_token,
-      expiryDate: credentials.expiry_date ?? Date.now() + 3600 * 1000,
-    };
-  } catch (e: unknown) {
-    const err = e as { response?: { data?: { error?: string; error_description?: string } }; message?: string };
-    const data = err?.response?.data;
-    const errorType = data?.error || "unknown_error";
-    const errorDesc = data?.error_description || err?.message || "Token refresh failed";
-
-    console.error("Google token refresh failed:", { errorType, errorDesc, email: tokens.email });
-
-    if (errorType === "invalid_grant") {
-      throw new Error(`REAUTH_REQUIRED: ${errorDesc}`);
+    if (!credentials.expiry_date) {
+      throw new Error("No expiry date received from Google");
     }
 
-    throw new Error(`TOKEN_REFRESH_FAILED: ${errorDesc}`);
+    return {
+      accessToken: credentials.access_token,
+      expiryDate: credentials.expiry_date,
+    };
+  } catch (e) {
+    console.error("Google token refresh failed:", e);
   }
 };
 
@@ -144,10 +143,11 @@ export const refreshGoogleAccessToken = async (tokens: TokensProps): Promise<Ref
  */
 export const persistGoogleTokens = async (email: string, refreshedTokens: RefreshedGoogleToken): Promise<void> => {
   const { error } = await SUPABASE.from("user_calendar_tokens")
-    .update({
+    .upsert({
+      email: email,
       access_token: refreshedTokens.accessToken,
       expiry_date: refreshedTokens.expiryDate,
-      updated_at: new Date().toISOString(),
+      is_active: true,
     })
     .ilike("email", email.trim());
 
@@ -163,7 +163,7 @@ export const persistGoogleTokens = async (email: string, refreshedTokens: Refres
  * @param {string} email - User's email
  */
 export const deactivateGoogleTokens = async (email: string): Promise<void> => {
-  const { error } = await SUPABASE.from("user_calendar_tokens").update({ is_active: false, updated_at: new Date().toISOString() }).ilike("email", email.trim());
+  const { error } = await SUPABASE.from("user_calendar_tokens").update({ is_active: false }).ilike("email", email.trim());
   if (error) {
     console.error("Failed to deactivate Google tokens:", error.message);
     throw new Error(`Failed to deactivate tokens: ${error.message}`);
