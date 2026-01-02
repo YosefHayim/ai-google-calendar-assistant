@@ -16,16 +16,17 @@ import { startTelegramBot } from "./telegram-bot/init-bot";
 import usersRoute from "@/routes/users-route";
 import whatsAppRoute from "@/routes/whatsapp-route";
 
-const ACCESS_TOKEN_HEADER = "allyAccessToken";
-const REFRESH_TOKEN_HEADER = "allyRefreshToken";
-const USER_KEY = "allyUser";
+const ACCESS_TOKEN_HEADER = "access_token";
+const REFRESH_TOKEN_HEADER = "refresh_token";
+const USER_KEY = "user";
 
 const app = express();
 const PORT = env.port;
 
 app.use(
   cors({
-    exposedHeaders: [ACCESS_TOKEN_HEADER, REFRESH_TOKEN_HEADER],
+    credentials: true,
+    exposedHeaders: [ACCESS_TOKEN_HEADER, REFRESH_TOKEN_HEADER, USER_KEY],
     allowedHeaders: ["Content-Type", "Authorization", REFRESH_TOKEN_HEADER, USER_KEY, ACCESS_TOKEN_HEADER],
   })
 );

@@ -5,6 +5,7 @@ import {
   ArrowRight,
   CalendarClock,
   CalendarDays,
+  Check,
   Clock,
   Hourglass,
   Info,
@@ -14,10 +15,12 @@ import {
   Users,
   X,
 } from 'lucide-react'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { format, formatDistanceStrict } from 'date-fns'
 
 import type { EventDetailsDialogProps } from '@/types/analytics'
 import React from 'react'
+// Adjust path if your UI components are elsewhere
 
 const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
   isOpen,
@@ -26,7 +29,7 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
   calendarName,
   onClose,
 }) => {
-  if (!isOpen || !event) return null
+  if (!event) return null
 
   const formatDate = (dateStr?: string | null) => {
     if (!dateStr) return 'N/A'
@@ -48,66 +51,72 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
 
   const statusStyle = getStatusColor(event.status)
 
+  // Handle Shadcn's onOpenChange
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
+      onClose()
+    }
+  }
+
   return (
-    <div
-      className="fixed inset-0 bg-black/50 dark:bg-black/80 flex items-center justify-center z-50 p-4 animate-in fade-in duration-200"
-      onClick={onClose}
-    >
-      <div
-        className="bg-white dark:bg-zinc-900 rounded-lg shadow-xl max-w-xl w-full relative max-h-[90vh] overflow-y-auto flex flex-col"
-        onClick={(e) => e.stopPropagation()}
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+      <DialogContent
+        className="max-w-xl w-full p-0 overflow-hidden gap-0 border-none shadow-xl"
+        // Applying the dynamic border color to the top of the modal content
         style={{ borderTop: `4px solid ${calendarColor}` }}
       >
-        {/* Close Button */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 p-1 rounded-full text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all"
-        >
-          <X className="w-5 h-5" />
-        </button>
-
-        <div className="p-6 space-y-6">
+        {/* Scrollable Container */}
+        <div className="max-h-[85vh] overflow-y-auto p-6 space-y-6">
           {/* Header Section */}
-          <div className="flex items-start gap-4 pr-8">
-            <div
-              className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-sm"
-              style={{ backgroundColor: `${calendarColor}20` }}
-            >
-              <CalendarDays className="w-6 h-6" style={{ color: calendarColor }} />
-            </div>
-            <div className="space-y-1.5">
-              <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 leading-tight">
-                {event.summary || 'No Title'}
-              </h3>
+          <DialogHeader className="p-0 space-y-0 text-left">
+            <div className="flex items-start gap-4 pr-8">
+              <div
+                className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-sm"
+                style={{ backgroundColor: `${calendarColor}20` }}
+              >
+                <CalendarDays className="w-6 h-6" style={{ color: calendarColor }} />
+              </div>
+              <div className="space-y-1.5">
+                <DialogTitle className="text-xl font-bold text-zinc-900 dark:text-zinc-100 leading-tight">
+                  {event.summary || 'No Title'}
+                </DialogTitle>
 
-              <div className="flex flex-wrap gap-2 items-center">
-                {calendarName && (
-                  <span
-                    className="text-[10px] font-bold px-2 py-0.5 rounded border uppercase tracking-wider"
-                    style={{
-                      color: calendarColor,
-                      borderColor: `${calendarColor}40`,
-                      backgroundColor: `${calendarColor}10`,
-                    }}
-                  >
-                    {calendarName}
-                  </span>
-                )}
-                {event.status && (
-                  <span
-                    className="text-[10px] font-bold px-2 py-0.5 rounded border uppercase tracking-wider"
-                    style={{
-                      color: statusStyle.text,
-                      borderColor: `${statusStyle.text}40`,
-                      backgroundColor: statusStyle.bg,
-                    }}
-                  >
-                    {event.status}
-                  </span>
-                )}
+                <div className="flex flex-wrap gap-2 items-center">
+                  {calendarName && (
+                    <span
+                      className="text-[10px] font-bold px-2 py-0.5 rounded border uppercase tracking-wider"
+                      style={{
+                        color: calendarColor,
+                        borderColor: `${calendarColor}40`,
+                        backgroundColor: `${calendarColor}10`,
+                      }}
+                    >
+                      {calendarName}
+                    </span>
+                  )}
+                  {event.status && (
+                    <span
+                      className="text-[10px] font-bold px-2 py-0.5 rounded border uppercase tracking-wider flex items-center gap-1"
+                      style={{
+                        color: statusStyle.text,
+                        borderColor: `${statusStyle.text}40`,
+                        backgroundColor: statusStyle.bg,
+                      }}
+                    >
+                      {event.status === 'confirmed' ? (
+                        <Check size={14} />
+                      ) : event.status === 'tentative' ? (
+                        <Clock size={14} />
+                      ) : (
+                        <X size={14} />
+                      )}
+                      {event.status}
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
+          </DialogHeader>
 
           {/* Primary Info Grid (Time & Location) */}
           <div className="bg-zinc-50 dark:bg-zinc-900/50 rounded-lg border border-zinc-100 dark:border-zinc-800 p-4 space-y-3">
@@ -151,7 +160,7 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
                   <MapPin className="w-4 h-4 text-zinc-400" />
                 </div>
                 <a
-                  href={`https://maps.google.com/?q=${event.location}`}
+                  href={`https://maps.google.com/?q=$?q=${encodeURIComponent(event.location)}`}
                   target="_blank"
                   rel="noreferrer"
                   className="text-zinc-600 dark:text-zinc-400 hover:text-primary underline decoration-dotted underline-offset-4"
@@ -168,7 +177,7 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
               <div className="w-5 flex justify-center shrink-0 mt-1">
                 <AlignLeft className="w-4 h-4 text-zinc-400" />
               </div>
-              <div className="text-sm text-zinc-600 dark:text-zinc-300 whitespace-pre-wrap leading-relaxed">
+              <div className="text-sm text-zinc-600 dark:text-zinc-300 whitespace-pre-wrap leading-relaxed overflow-hidden">
                 <div dangerouslySetInnerHTML={{ __html: event.description }} />
               </div>
             </div>
@@ -182,9 +191,9 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
                   <div className="w-5 flex justify-center">
                     <User className="w-4 h-4 text-zinc-400" />
                   </div>
-                  <div className="text-sm">
+                  <div className="text-sm w-auto overflow-hidden">
                     <span className="text-zinc-500 dark:text-zinc-500 text-xs uppercase font-bold mr-2">Organizer</span>
-                    <span className="text-zinc-700 dark:text-zinc-300 font-medium">{event.organizer.email}</span>
+                    <span className="text-zinc-700 dark:text-zinc-300 font-medium ">{event.organizer.email}</span>
                   </div>
                 </div>
               )}
@@ -257,8 +266,8 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
             )}
           </div>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   )
 }
 

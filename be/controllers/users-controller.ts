@@ -6,9 +6,9 @@ import { reqResAsyncHandler, sendR } from "@/utils/http";
 
 import jwt from "jsonwebtoken";
 
-const ACCESS_TOKEN_HEADER = "allyAccessToken";
-const REFRESH_TOKEN_HEADER = "allyRefreshToken";
-const USER_KEY = "allyUser";
+const ACCESS_TOKEN_HEADER = "access_token";
+const REFRESH_TOKEN_HEADER = "refresh_token";
+const USER_KEY = "user";
 
 /**
  * Generate Google Auth URL and Handle Callback

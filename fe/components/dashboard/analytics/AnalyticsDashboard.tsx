@@ -268,7 +268,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
             text="Refresh"
             loadingText="Refreshing..."
             isLoading={isAnalyticsLoading}
-            Icon={<RotateCw className="w-4 h-4" />}
+            Icon={<RotateCw size={16} />}
             onClick={() => refetch()}
           />
         </div>

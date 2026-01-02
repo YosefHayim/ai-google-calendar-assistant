@@ -176,9 +176,9 @@ const CalendarEventsDialog: React.FC<CalendarEventsDialogProps> = ({
                                   <span className="text-[9px] font-bold px-1.5 py-0.5">
                                     <span className="text-[9px] font-bold text-zinc-500 dark:text-zinc-400">
                                       {event.status === 'confirmed' ? (
-                                        <CircleCheckBig size={12} />
+                                        <CircleCheckBig size={12} className="text-green-500" />
                                       ) : (
-                                        <CircleX size={12} />
+                                        <CircleX size={12} className="text-red-500" />
                                       )}
                                     </span>
                                   </span>
@@ -215,7 +215,23 @@ const CalendarEventsDialog: React.FC<CalendarEventsDialogProps> = ({
                             )}
                             {event.status && (
                               <div className="flex items-center gap-2">
-                                <span>Status: {event.status}</span>
+                                <span>
+                                  Status:{' '}
+                                  {event.status === 'confirmed'
+                                    ? 'Confirmed'
+                                    : event.status === 'tentative'
+                                      ? 'Tentative'
+                                      : 'Cancelled'}
+                                </span>
+                                <span>
+                                  {event.status === 'confirmed' ? (
+                                    <CircleCheckBig size={12} className="text-green-500" />
+                                  ) : event.status === 'tentative' ? (
+                                    <CircleX size={12} className="text-red-500" />
+                                  ) : (
+                                    <CircleX size={12} className="text-red-500" />
+                                  )}
+                                </span>
                               </div>
                             )}
                             {event.description && (

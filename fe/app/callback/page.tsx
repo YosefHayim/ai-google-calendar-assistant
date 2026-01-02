@@ -14,19 +14,19 @@ const CallbackPage = () => {
 
   useEffect(() => {
     if (accessToken) {
-      localStorage.setItem('allyAccessToken', accessToken)
+      localStorage.setItem('access_token', accessToken)
     }
     if (refreshToken) {
-      localStorage.setItem('allyRefreshToken', refreshToken)
+      localStorage.setItem('refresh_token', refreshToken)
     }
     if (firstName && lastName && email) {
-      localStorage.setItem('allyUser', JSON.stringify({ firstName, lastName, email }))
+      localStorage.setItem('user', JSON.stringify({ firstName, lastName, email }))
     }
     router.push('/dashboard')
   }, [accessToken, refreshToken, firstName, lastName, email])
 
   if (firstName && lastName && email) {
-    localStorage.setItem('allyUser', JSON.stringify({ firstName, lastName, email }))
+    localStorage.setItem('user', JSON.stringify({ firstName, lastName, email }))
   }
 
   return <div>Please hold while we complete your sign in...</div>
