@@ -55,7 +55,13 @@ export default function DashboardLayout({ children }: { children?: React.ReactNo
     <div className="flex h-screen overflow-hidden bg-zinc-50 dark:bg-zinc-950">
       {showTour && <OnboardingTour onComplete={handleTourComplete} />}
 
-      <Sidebar isOpen={isSidebarOpen} onClose={closeSidebar} onToggle={toggleSidebar} onOpenSettings={openSettings} />
+      <Sidebar
+        isOpen={isSidebarOpen}
+        onClose={closeSidebar}
+        onToggle={toggleSidebar}
+        onOpenSettings={openSettings}
+        onSignOut={handleSignOut}
+      />
       <main className={`flex-1 flex flex-col transition-all duration-300 ${isSidebarOpen ? 'md:ml-64' : 'md:ml-20'}`}>
         {children}
       </main>

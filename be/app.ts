@@ -4,6 +4,7 @@ import aclRoute from "@/routes/google-calendar/acl-route";
 import calendarListRoute from "@/routes/google-calendar/calendar-list-route";
 import calendarRoute from "@/routes/google-calendar/calendar-route";
 import channelsRoute from "@/routes/google-calendar/channels-route";
+import chatRoute from "@/routes/chat-route";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import errorHandler from "@/middlewares/error-handler";
@@ -47,6 +48,7 @@ app.use(ROUTES.EVENTS, eventsRoute);
 app.use(ROUTES.ACL, aclRoute);
 app.use(ROUTES.CHANNELS, channelsRoute);
 app.use(ROUTES.WHATSAPP, whatsAppRoute);
+app.use(ROUTES.CHAT, chatRoute);
 
 app.use((_req, res, _next) => {
   sendR(res, STATUS_RESPONSE.NOT_FOUND, `Opps! It looks like this route doesn't exist. ${_req.originalUrl}`);
