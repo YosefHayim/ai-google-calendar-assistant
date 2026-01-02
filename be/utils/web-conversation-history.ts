@@ -251,3 +251,150 @@ export const getWebConversationContext = async (userId: string): Promise<Convers
   const { context } = await getOrCreateWebTodayContext(userId);
   return context;
 };
+
+// ============================================
+// Conversation List & Retrieval Functions
+// ============================================
+
+export type ConversationListItem = {
+  id: number;
+  title: string; // Summary or first message preview
+  messageCount: number;
+  lastUpdated: string;
+  createdAt: string;
+};
+
+export type FullConversation = {
+  id: number;
+  userId: string;
+  messages: userAndAiMessageProps[];
+  summary?: string;
+  messageCount: number;
+  lastUpdated: string;
+  createdAt: string;
+};
+
+// Generate title from conversation context
+const generateConversationTitle = (context: ConversationContext | null): string => {
+  if (!context) return "New Conversation";
+
+  // If there's a summary, use first line or truncate
+  if (context.summary) {
+    const firstLine = context.summary.split("\n")[0].replace(/^[-•*]\s*/, "");
+    return firstLine.length > 50 ? `${firstLine.slice(0, 47)}...` : firstLine;
+  }
+
+  // Otherwise use first user message
+  const firstUserMessage = context.messages.find((m) => m.role === "user");
+  if (firstUserMessage?.content) {
+    const content = firstUserMessage.content;
+    return content.length > 50 ? `${content.slice(0, 47)}...` : content;
+  }
+
+  return "New Conversation";
+};
+
+// Get list of user's conversations (for sidebar/list view)
+export const getWebConversationList = async (
+  userId: string,
+  options?: { limit?: number; offset?: number }
+): Promise<ConversationListItem[]> => {
+  const limit = options?.limit || 20;
+  const offset = options?.offset || 0;
+
+  const { data, error } = await SUPABASE.from(CONVERSATION_STATE_TABLE)
+    .select("id, context_window, message_count, created_at, updated_at")
+    .eq("user_id", userId)
+    .eq("source", "web")
+    .order("updated_at", { ascending: false, nullsFirst: false })
+    .range(offset, offset + limit - 1);
+
+  if (error) {
+    console.error("Error fetching web conversations:", error);
+    return [];
+  }
+
+  return (data || []).map((row) => {
+    const context = row.context_window as ConversationContext | null;
+    return {
+      id: row.id,
+      title: generateConversationTitle(context),
+      messageCount: row.message_count || 0,
+      lastUpdated: row.updated_at || row.created_at,
+      createdAt: row.created_at,
+    };
+  });
+};
+
+// Get a specific conversation by ID
+export const getWebConversationById = async (
+  conversationId: number,
+  userId: string
+): Promise<FullConversation | null> => {
+  const { data, error } = await SUPABASE.from(CONVERSATION_STATE_TABLE)
+    .select("*")
+    .eq("id", conversationId)
+    .eq("user_id", userId)
+    .eq("source", "web")
+    .single();
+
+  if (error || !data) {
+    console.error("Error fetching web conversation:", error);
+    return null;
+  }
+
+  const context = (data.context_window as ConversationContext) || {
+    messages: [],
+    lastUpdated: data.updated_at || data.created_at,
+  };
+
+  return {
+    id: data.id,
+    userId: data.user_id,
+    messages: context.messages || [],
+    summary: context.summary,
+    messageCount: data.message_count || 0,
+    lastUpdated: data.updated_at || data.created_at,
+    createdAt: data.created_at,
+  };
+};
+
+// Load a conversation into context (for continuing a conversation)
+export const loadWebConversationIntoContext = async (
+  conversationId: number,
+  userId: string
+): Promise<{ stateId: number; context: ConversationContext } | null> => {
+  const conversation = await getWebConversationById(conversationId, userId);
+
+  if (!conversation) {
+    return null;
+  }
+
+  return {
+    stateId: conversation.id,
+    context: {
+      messages: conversation.messages,
+      summary: conversation.summary,
+      lastUpdated: conversation.lastUpdated,
+    },
+  };
+};
+
+// Delete a conversation
+export const deleteWebConversation = async (
+  conversationId: number,
+  userId: string
+): Promise<boolean> => {
+  const { error } = await SUPABASE.from(CONVERSATION_STATE_TABLE)
+    .delete()
+    .eq("id", conversationId)
+    .eq("user_id", userId)
+    .eq("source", "web");
+
+  if (error) {
+    console.error("Error deleting web conversation:", error);
+    return false;
+  }
+
+  return true;
+};
