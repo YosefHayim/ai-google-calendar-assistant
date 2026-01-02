@@ -1,7 +1,8 @@
 'use client'
 
-import { useEffect, useState, Suspense } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+
 import { AllyLogo } from '@/components/shared/logo'
 
 function CallbackContent() {
@@ -33,12 +34,12 @@ function CallbackContent() {
         }
 
         // Store auth data directly in localStorage
-        localStorage.setItem('ally_access_token', accessToken)
+        localStorage.setItem('allyAccessToken', accessToken)
         if (refreshToken) {
-          localStorage.setItem('ally_refresh_token', refreshToken)
+          localStorage.setItem('allyRefreshToken', refreshToken)
         }
         if (user) {
-          localStorage.setItem('ally_user', JSON.stringify(user))
+          localStorage.setItem('allyUser', JSON.stringify(user))
         }
 
         // Redirect to dashboard

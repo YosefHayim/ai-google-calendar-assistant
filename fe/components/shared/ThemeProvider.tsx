@@ -1,6 +1,6 @@
 'use client'
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import React, { ReactNode, createContext, useContext, useEffect, useState } from 'react'
 
 const THEME_STORAGE_KEY = 'ally_theme_mode'
 
@@ -21,8 +21,7 @@ export const ThemeProvider = ({ children }: { children?: ReactNode }) => {
     if (savedTheme !== null) {
       setIsDarkMode(savedTheme === 'dark')
     } else {
-      const isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
-      setIsDarkMode(isDark)
+      setIsDarkMode(false)
     }
   }, [])
 

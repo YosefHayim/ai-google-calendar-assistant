@@ -6,6 +6,10 @@ import { reqResAsyncHandler, sendR } from "@/utils/http";
 
 import jwt from "jsonwebtoken";
 
+const ACCESS_TOKEN_HEADER = "allyAccessToken";
+const REFRESH_TOKEN_HEADER = "allyRefreshToken";
+const USER_KEY = "allyUser";
+
 /**
  * Generate Google Auth URL and Handle Callback
  *
@@ -57,12 +61,9 @@ const generateAuthGoogleUrl = reqResAsyncHandler(async (req: Request, res: Respo
     };
 
     // CRITICAL FIX: Only update refresh_token if Google sent a new one.
-    // Google often omits this on re-authentication. If we save 'undefined', we lose access.
+    // Google often omits the refresh_token on re-authentication. If we save 'undefined', we lose access.
     if (tokens.refresh_token) {
       upsertPayload.refresh_token = tokens.refresh_token;
-      if (tokens.refresh_token_expires_in) {
-        upsertPayload.refresh_token_expires_in = tokens.refresh_token_expires_in;
-      }
     }
 
     // --- DATABASE UPDATE ---
@@ -98,8 +99,9 @@ const generateAuthGoogleUrl = reqResAsyncHandler(async (req: Request, res: Respo
         sameSite: "strict" as const,
       };
 
-      res.cookie("access_token", signInData.session.access_token, cookieOptions);
-      res.cookie("refresh_token", signInData.session.refresh_token, cookieOptions);
+      res.cookie(ACCESS_TOKEN_HEADER, signInData.session.access_token, cookieOptions);
+      res.cookie(REFRESH_TOKEN_HEADER, signInData.session.refresh_token, cookieOptions);
+      res.cookie(USER_KEY, JSON.stringify(signInData.user), cookieOptions);
 
       // Redirect back to frontend
       return res.redirect(

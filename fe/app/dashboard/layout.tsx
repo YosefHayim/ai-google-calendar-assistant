@@ -8,6 +8,8 @@ import Sidebar from '@/components/dashboard/shared/Sidebar'
 import { useRouter } from 'next/navigation'
 import { useTheme } from '@/components/shared/ThemeProvider'
 
+const ONBOARDING_COMPLETE_KEY = 'allyOnBoardingComplete'
+
 export default function DashboardLayout({ children }: { children?: React.ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
   const [isSettingsOpen, setIsSettings] = useState(false)
@@ -20,7 +22,7 @@ export default function DashboardLayout({ children }: { children?: React.ReactNo
       setIsSidebarOpen(window.innerWidth >= 768)
 
       // Check if user has seen onboarding tour
-      const hasSeenTour = localStorage.getItem('ally_onboarding_complete')
+      const hasSeenTour = localStorage.getItem(ONBOARDING_COMPLETE_KEY)
       if (!hasSeenTour) {
         // Delay slightly to allow the app to render fully
         const timer = setTimeout(() => setShowTour(true), 1000)
@@ -46,7 +48,7 @@ export default function DashboardLayout({ children }: { children?: React.ReactNo
 
   const handleTourComplete = () => {
     setShowTour(false)
-    localStorage.setItem('ally_onboarding_complete', 'true')
+    localStorage.setItem(ONBOARDING_COMPLETE_KEY, 'true')
   }
 
   return (

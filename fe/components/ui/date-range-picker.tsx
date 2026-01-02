@@ -65,14 +65,14 @@ export function DatePickerWithRange({ className, date, setDate }: DatePickerWith
 
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('date-range-compare')
+      const saved = localStorage.getItem('dateRangeCompareAnalyticsPage')
       if (saved) setIsCompareEnabled(JSON.parse(saved))
     }
   }, [])
 
   const handleCompareToggle = (checked: boolean) => {
     setIsCompareEnabled(checked)
-    localStorage.setItem('date-range-compare', JSON.stringify(checked))
+    localStorage.setItem('dateRangeCompareAnalyticsPage', JSON.stringify(checked))
   }
 
   const handleSelect = (selectedDate: DateRange | undefined) => {
