@@ -30,7 +30,8 @@
   --radius: 0.5rem;
 }
 
-.dark {
+.dark,
+html.dark {
   --background: 240 10% 3.9%;
   --foreground: 0 0% 98%;
   --primary: 20 95% 49%;
@@ -59,7 +60,6 @@
 
 body {
   font-family: 'Inter', sans-serif;
-  background-color: var(--background);
   transition:
     background-color 0.3s ease,
     color 0.3s ease;

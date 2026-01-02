@@ -6,7 +6,7 @@ import { OnboardingTour } from '@/components/dashboard/shared/OnboardingTour'
 import SettingsModal from '@/components/dashboard/shared/SettingsModal'
 import Sidebar from '@/components/dashboard/shared/Sidebar'
 import { useRouter } from 'next/navigation'
-import { useTheme } from '@/components/shared/ThemeProvider'
+import { useTheme } from 'next-themes'
 
 const ONBOARDING_COMPLETE_KEY = 'allyOnBoardingComplete'
 
@@ -14,7 +14,7 @@ export default function DashboardLayout({ children }: { children?: React.ReactNo
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
   const [isSettingsOpen, setIsSettings] = useState(false)
   const [showTour, setShowTour] = useState(false)
-  const { isDarkMode, toggleTheme } = useTheme()
+  const { theme, setTheme } = useTheme()
   const router = useRouter()
 
   useEffect(() => {
@@ -69,8 +69,8 @@ export default function DashboardLayout({ children }: { children?: React.ReactNo
         isOpen={isSettingsOpen}
         onClose={closeSettings}
         onSignOut={handleSignOut}
-        isDarkMode={isDarkMode}
-        toggleTheme={toggleTheme}
+        isDarkMode={theme === 'dark'}
+        toggleTheme={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
       />
     </div>
   )

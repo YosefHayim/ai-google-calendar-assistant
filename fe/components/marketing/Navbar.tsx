@@ -1,18 +1,16 @@
 'use client'
 
-'use client'
-
-import React, { useState, useEffect } from 'react'
-import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
 import { AllyLogo, BetaBadge } from '@/components/shared/logo'
-import { useTheme } from '@/components/shared/ThemeProvider'
-import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button'
-import { ThemeToggle } from '@/components/ui/theme-toggle'
-import { AnimatedHamburger } from '@/components/ui/animated-hamburger'
-import { motion, AnimatePresence } from 'framer-motion'
-import { X, Mail } from 'lucide-react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { Mail, X } from 'lucide-react'
+import React, { useEffect, useState } from 'react'
 import { TelegramIcon, WhatsAppIcon } from '@/components/shared/Icons'
+import { usePathname, useRouter } from 'next/navigation'
+
+import { AnimatedHamburger } from '@/components/ui/animated-hamburger'
+import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button'
+import Link from 'next/link'
+import { ThemeToggle } from '../ui/theme-toggle'
 
 // Custom Discord Icon consistent with Footer
 const DiscordIcon = ({ className }: { className?: string }) => (
@@ -26,7 +24,7 @@ const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
-
+  
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20)

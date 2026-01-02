@@ -1,5 +1,6 @@
-import { QueryClient, QueryCache, MutationCache } from '@tanstack/react-query'
-import { QUERY_CONFIG, ENV } from '@/lib/constants'
+import { ENV, QUERY_CONFIG } from '@/lib/constants'
+import { MutationCache, QueryCache, QueryClient } from '@tanstack/react-query'
+
 import { extractApiError } from './types'
 
 /**

@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { decodeAudioData, getSpeechFromGemini } from '@/services/geminiService'
-import { streamChatMessage, type ChatMessage as ChatHistoryMessage } from '@/services/chatStreamService'
+import { streamChatMessage, type ChatMessage as ChatHistoryMessage } from '@/services/chatService'
 
 import { Message } from '@/types'
 import { AssistantAvatar } from './AssistantAvatar'
