@@ -1,8 +1,9 @@
 'use client'
 
+import { Calendar, Star } from 'lucide-react'
+
 import React from 'react'
 import { motion } from 'framer-motion'
-import { Star, Calendar } from 'lucide-react'
 
 const testimonials = [
   {
@@ -59,7 +60,7 @@ const Testimonials = () => {
   return (
     <div className="w-full py-20 overflow-hidden bg-white dark:bg-[#030303]">
       <div className="container mx-auto px-4 mb-12 text-center">
-        <p className="text-[10px] font-bold text-primary uppercase tracking-[0.2em] mb-4">Verification Layer</p>
+        <p className="text-xs font-bold text-primary uppercase tracking-[0.2em] mb-4">Verification Layer</p>
         <h2 className="text-4xl md:text-5xl font-medium text-zinc-900 dark:text-zinc-100 tracking-tight">
           Trusted by the world's most <br /> ambitious high-performers.
         </h2>
@@ -126,15 +127,15 @@ const TestimonialCard = ({ name, role, image, content, date }: any) => (
         />
         <div>
           <h4 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">{name}</h4>
-          <p className="text-[10px] font-medium text-zinc-500 uppercase tracking-tight">{role}</p>
+          <p className="text-xs font-medium text-zinc-500 uppercase tracking-tight">{role}</p>
         </div>
       </div>
       <div className="flex flex-col items-end gap-1 opacity-40">
         <div className="flex items-center gap-1">
           <Calendar className="w-2.5 h-2.5" />
-          <span className="text-[9px] font-bold uppercase tracking-tighter">{date}</span>
+          <span className="text-xs font-bold uppercase tracking-tighter">{date}</span>
         </div>
-        <span className="text-[7px] font-bold text-emerald-500 uppercase tracking-widest bg-emerald-500/10 px-1 rounded">
+        <span className="text-xs font-bold text-emerald-500 uppercase tracking-widest bg-emerald-500/10 px-1 rounded">
           Verified
         </span>
       </div>

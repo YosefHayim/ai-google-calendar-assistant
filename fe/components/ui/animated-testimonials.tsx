@@ -100,7 +100,7 @@ export function AnimatedTestimonials({
           <motion.div variants={itemVariants} className="flex flex-col justify-center">
             <div className="space-y-2">
               {badgeText && (
-                <div className="inline-flex items-center px-3 py-1 rounded-full text-[10px] uppercase tracking-widest font-bold bg-primary/10 text-primary">
+                <div className="inline-flex items-center px-3 py-1 rounded-full text-xs uppercase tracking-widest font-bold bg-primary/10 text-primary">
                   <Star className="mr-1 h-3.5 w-3.5 fill-primary" />
                   <span>{badgeText}</span>
                 </div>

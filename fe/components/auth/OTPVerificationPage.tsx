@@ -150,8 +150,8 @@ const OTPVerificationPage: React.FC = () => {
       </BackgroundPattern1>
 
       <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-2 opacity-30 select-none text-zinc-900 dark:text-white">
-        <AllyLogo className="w-4 h-4" />
-        <span className="text-[10px] font-bold uppercase tracking-[0.3em]">Encrypted Session Active</span>
+        <AllyLogo size={16} />
+        <span className="text-xs font-bold uppercase tracking-[0.3em]">Encrypted Session Active</span>
       </div>
     </div>
   )

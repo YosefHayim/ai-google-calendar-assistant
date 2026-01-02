@@ -106,7 +106,7 @@ const PhoneRegistrationPage: React.FC = () => {
 
                 <div className="flex-1 relative">
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-primary transition-colors">
-                    <Phone className="w-4 h-4" />
+                    <Phone size={16} />
                   </div>
                   <input
                     type="tel"
@@ -118,7 +118,7 @@ const PhoneRegistrationPage: React.FC = () => {
                   />
                 </div>
               </div>
-              <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest pl-2">
+              <p className="text-xs text-zinc-400 font-bold uppercase tracking-widest pl-2">
                 International Carrier Rates May Apply
               </p>
             </div>
@@ -134,15 +134,15 @@ const PhoneRegistrationPage: React.FC = () => {
             onClick={() => router.push('/register')}
             className="mt-8 flex items-center justify-center gap-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 w-full transition-colors font-medium text-sm"
           >
-            <ArrowLeft className="w-4 h-4" />
+            <ArrowLeft size={16} />
             Back to registration
           </button>
         </div>
       </BackgroundPattern1>
 
       <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-2 opacity-30 select-none text-zinc-900 dark:text-white">
-        <AllyLogo className="w-4 h-4" />
-        <span className="text-[10px] font-bold uppercase tracking-[0.3em]">Ally Protocol Security</span>
+        <AllyLogo size={16} />
+        <span className="text-xs font-bold uppercase tracking-[0.3em]">Ally Protocol Security</span>
       </div>
     </div>
   )

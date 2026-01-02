@@ -133,7 +133,7 @@ export const PricingCard: React.FC<PricingCardProps> = ({ tier, paymentFrequency
                   value={currentPrice}
                   className="text-4xl font-medium"
                 />
-                <p className={cn('-mt-1 text-[10px] font-medium uppercase tracking-widest', getSecondaryTextColor())}>
+                <p className={cn('-mt-1 text-xs font-medium uppercase tracking-widest', getSecondaryTextColor())}>
                   {getFrequencyLabel()}
                 </p>
               </motion.div>
@@ -145,7 +145,7 @@ export const PricingCard: React.FC<PricingCardProps> = ({ tier, paymentFrequency
                 exit={{ opacity: 0, y: -10 }}
               >
                 <h1 className="text-4xl font-medium">{currentPrice}</h1>
-                <p className={cn('-mt-1 text-[10px] font-medium uppercase tracking-widest', getSecondaryTextColor())}>
+                <p className={cn('-mt-1 text-xs font-medium uppercase tracking-widest', getSecondaryTextColor())}>
                   {getFrequencyLabel()}
                 </p>
               </motion.div>
@@ -159,7 +159,7 @@ export const PricingCard: React.FC<PricingCardProps> = ({ tier, paymentFrequency
               <div className="flex items-center justify-between">
                 <label
                   className={cn(
-                    'text-[10px] font-bold uppercase tracking-widest opacity-70',
+                    'text-xs font-bold uppercase tracking-widest opacity-70',
                     isHighlighted ? 'text-white' : 'text-zinc-500',
                   )}
                 >
@@ -174,7 +174,7 @@ export const PricingCard: React.FC<PricingCardProps> = ({ tier, paymentFrequency
                   onClick={() => adjustAmount(-100)}
                   className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors shrink-0"
                 >
-                  <Minus className="w-4 h-4" />
+                  <Minus size={16} />
                 </button>
 
                 <div className="flex flex-col items-center flex-1 relative min-w-0">
@@ -208,7 +208,7 @@ export const PricingCard: React.FC<PricingCardProps> = ({ tier, paymentFrequency
                       />
                     )}
                   </AnimatePresence>
-                  <span className="text-[9px] font-bold uppercase tracking-widest text-white/40">Interactions</span>
+                  <span className="text-xs font-bold uppercase tracking-widest text-white/40">Interactions</span>
                 </div>
 
                 <button
@@ -216,7 +216,7 @@ export const PricingCard: React.FC<PricingCardProps> = ({ tier, paymentFrequency
                   onClick={() => adjustAmount(100)}
                   className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors shrink-0"
                 >
-                  <Plus className="w-4 h-4" />
+                  <Plus size={16} />
                 </button>
               </div>
 
@@ -237,9 +237,7 @@ export const PricingCard: React.FC<PricingCardProps> = ({ tier, paymentFrequency
                 />
               </div>
 
-              <p className="text-[9px] text-center font-medium text-white/50 italic">
-                Scaling power: $1 = 100 AI actions
-              </p>
+              <p className="text-xs text-center font-medium text-white/50 italic">Scaling power: $1 = 100 AI actions</p>
             </div>
           )}
 

@@ -14,15 +14,15 @@ const useCases = [
     illustration: () => (
       <div className="space-y-2">
         <div className="text-xs font-medium bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 p-2 rounded-md rounded-br-none self-end flex items-center gap-2 max-w-max ml-auto">
-          <User className="w-3 h-3" />
+          <User size={16} />
           <span>Find 30m for me, Sarah, and Alex.</span>
         </div>
         <div className="text-xs font-medium bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 p-2 rounded-md rounded-bl-none self-start flex items-center gap-2 max-w-max mr-auto">
-          <AllyLogo className="w-4 h-4" />
+          <AllyLogo size={16} />
           <div className="flex flex-col">
             <span>Done. Tuesday at 2:30 PM.</span>
             <div className="flex items-center gap-1 text-emerald-500">
-              <Check className="w-3 h-3" />
+              <Check size={16} />
               <span>All calendars updated.</span>
             </div>
           </div>
@@ -57,7 +57,7 @@ const useCases = [
           Flight to SFO delayed by 2 hours.
         </div>
         <div className="text-xs font-medium bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 p-2 rounded-md rounded-bl-none self-start max-w-max mr-auto flex items-center gap-2">
-          <AllyLogo className="w-4 h-4" />
+          <AllyLogo size={16} />
           <span>Handled. Car service and hotel are updated.</span>
         </div>
       </div>

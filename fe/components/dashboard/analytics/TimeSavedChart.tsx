@@ -1,6 +1,7 @@
 'use client'
 
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
+
 import { motion } from 'framer-motion'
 
 interface TimeSavedChartProps {
@@ -163,7 +164,7 @@ const TimeSavedChart: React.FC<TimeSavedChartProps> = ({ data }) => {
           }}
         >
           <div className="flex flex-col gap-0.5">
-            <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider">{hoveredData.day}</span>
+            <span className="text-xs text-zinc-400 font-bold uppercase tracking-wider">{hoveredData.day}</span>
             <span className="text-sm font-bold text-white flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-primary" />
               {hoveredData.hours.toFixed(1)}h saved

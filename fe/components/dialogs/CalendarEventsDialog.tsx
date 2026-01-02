@@ -6,6 +6,7 @@ import {
   CircleCheckBig,
   CircleX,
   Clock,
+  Hash,
   Hourglass,
   Loader2,
   MapPin,
@@ -97,10 +98,14 @@ const CalendarEventsDialog: React.FC<CalendarEventsDialogProps> = ({
                   ? `Events from ${format(dateRange.from, 'MMM dd, yyyy')} to ${format(dateRange.to, 'MMM dd, yyyy')}`
                   : 'Events'}
               </div>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-2">
+              <div className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-2">
                 <Clock size={12} style={{ color: calendarColor }} />
-                Total hours: {totalHours?.toFixed(1) || 'N/A'}h
-              </p>
+                <span>Total hours: {totalHours?.toFixed(1) || 'N/A'}h</span>
+              </div>
+              <div className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-2">
+                <Hash size={12} style={{ color: calendarColor }} />
+                <span>Total events: {events.length}</span>
+              </div>
             </div>
           </div>
         </DialogHeader>
@@ -154,27 +159,27 @@ const CalendarEventsDialog: React.FC<CalendarEventsDialogProps> = ({
                               opacity: 0.2,
                             }}
                           >
-                            <CalendarDays className="w-4 h-4" style={{ color: calendarColor }} />
+                            <CalendarDays size={16} style={{ color: calendarColor }} />
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-semibold text-zinc-800 dark:text-zinc-200 line-clamp-1">
-                              {event.summary || 'No Title'}
+                              {event.summary || 'N/A'}
                             </p>
                             <div className="flex items-center gap-2 mt-1 flex-wrap">
-                              <div className="text-[10px] text-zinc-400 font-bold uppercase flex items-center gap-2">
+                              <div className="text-xs text-zinc-400 font-bold uppercase flex items-center gap-2">
                                 <Clock size={12} style={{ color: calendarColor }} />
                                 <span> {eventTime}</span>
                               </div>
-                              <span className="text-[9px] font-bold text-zinc-500 dark:text-zinc-400">•</span>
-                              <div className="text-[9px] font-bold text-zinc-500 dark:text-zinc-400 flex items-center gap-2">
+                              <span className="text-xs font-bold text-zinc-500 dark:text-zinc-400">•</span>
+                              <div className="text-xs font-bold text-zinc-500 dark:text-zinc-400 flex items-center gap-2">
                                 <Hourglass size={12} style={{ color: calendarColor }} />
                                 <span> {duration}</span>
                               </div>
                               {event.status && (
                                 <>
-                                  <span className="text-[9px] font-bold text-zinc-500 dark:text-zinc-400">•</span>
-                                  <span className="text-[9px] font-bold px-1.5 py-0.5">
-                                    <span className="text-[9px] font-bold text-zinc-500 dark:text-zinc-400">
+                                  <span className="text-xs font-bold text-zinc-500 dark:text-zinc-400">•</span>
+                                  <span className="text-xs font-bold px-1.5 py-0.5">
+                                    <span className="text-xs font-bold text-zinc-500 dark:text-zinc-400">
                                       {event.status === 'confirmed' ? (
                                         <CircleCheckBig size={12} className="text-green-500" />
                                       ) : (
@@ -200,16 +205,16 @@ const CalendarEventsDialog: React.FC<CalendarEventsDialogProps> = ({
                           </h4>
                           <div className="space-y-2 text-xs text-zinc-600 dark:text-zinc-400">
                             <div className="flex items-center gap-2">
-                              <Clock className="w-3 h-3" />
+                              <Clock size={16} />
                               <span>{eventTime}</span>
                             </div>
                             <div className="flex items-center gap-2">
-                              <Hourglass className="w-3 h-3" />
+                              <Hourglass size={16} />
                               <span>Duration: {duration}</span>
                             </div>
                             {event.location && (
                               <div className="flex items-center gap-2">
-                                <MapPin className="w-3 h-3" />
+                                <MapPin size={16} />
                                 <span className="truncate">{event.location}</span>
                               </div>
                             )}

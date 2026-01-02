@@ -38,7 +38,7 @@ const IntegrationsDashboard: React.FC<IntegrationsDashboardProps> = () => {
               <TelegramIcon />
             </div>
             <div className="flex items-center gap-1.5 bg-green-50 text-green-700 p-1 rounded-full text-xs font-medium border border-green-100">
-              <CheckCircle2 className="w-3 h-3" /> Connected
+              <CheckCircle2 size={16} /> Connected
             </div>
           </div>
           <h3 className="text-lg font-medium text-zinc-900 dark:text-zinc-100 mb-1">Telegram</h3>
@@ -57,7 +57,7 @@ const IntegrationsDashboard: React.FC<IntegrationsDashboardProps> = () => {
               <WhatsAppIcon />
             </div>
             <div className="flex items-center gap-1.5 bg-zinc-100 text-zinc-500 p-1 rounded-full text-xs font-medium border border-zinc-200">
-              <Circle className="w-3 h-3" /> Disconnected
+              <Circle size={16} /> Disconnected
             </div>
           </div>
           <h3 className="text-lg font-medium text-zinc-900 dark:text-zinc-100 mb-1">WhatsApp</h3>
@@ -67,7 +67,7 @@ const IntegrationsDashboard: React.FC<IntegrationsDashboardProps> = () => {
               onClick={() => setIsWhatsAppModalOpen(true)}
               className="w-full bg-zinc-950 dark:bg-zinc-100 text-white dark:text-zinc-950 p-1 rounded-md text-sm font-medium flex items-center justify-center gap-2"
             >
-              Connect <WhatsAppIcon className="w-4 h-4" />
+              Connect <WhatsAppIcon size={16} />
             </button>
           </div>
         </div>
@@ -78,7 +78,7 @@ const IntegrationsDashboard: React.FC<IntegrationsDashboardProps> = () => {
               <GoogleCalendarIcon className="w-5 h-5" />
             </div>
             <div className="flex items-center gap-1.5 bg-green-50 text-green-700 p-1 rounded-full text-xs font-medium border border-green-100">
-              <CheckCircle2 className="w-3 h-3" /> API Active
+              <CheckCircle2 size={16} /> API Active
             </div>
           </div>
           <h3 className="text-lg font-medium text-zinc-900 dark:text-zinc-100 mb-1">Google Calendar</h3>
@@ -109,7 +109,7 @@ const IntegrationsDashboard: React.FC<IntegrationsDashboardProps> = () => {
             ) : isError ? (
               <div className="py-4 text-center">
                 <p className="text-xs text-red-500 font-bold uppercase tracking-tight">Failed to load calendar data.</p>
-                <button onClick={() => refetch()} className="text-[10px] text-primary underline mt-1">
+                <button onClick={() => refetch()} className="text-xs text-primary underline mt-1">
                   Try again
                 </button>
               </div>
@@ -126,7 +126,7 @@ const IntegrationsDashboard: React.FC<IntegrationsDashboardProps> = () => {
                     <span className="flex-1 font-medium text-zinc-800 dark:text-zinc-200">
                       {cal.calendarName || 'Unnamed Calendar'}
                     </span>
-                    <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
+                    <span className="text-xs font-bold text-zinc-400 uppercase tracking-widest">
                       {cal.accessRole || 'reader'}
                     </span>
                   </li>

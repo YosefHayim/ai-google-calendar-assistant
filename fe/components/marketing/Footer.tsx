@@ -50,7 +50,7 @@ const Footer = () => {
           <div className="lg:col-span-2">
             <Link href="/" className="flex items-center gap-2 mb-6">
               <div className="w-7 h-7 bg-zinc-900 dark:bg-white rounded-md flex items-center justify-center text-white dark:text-zinc-900">
-                <AllyLogo className="w-4 h-4" />
+                <AllyLogo size={16} />
               </div>
               <span className="font-medium text-lg tracking-tight flex items-center text-zinc-900 dark:text-zinc-100">
                 Ally <BetaBadge />
@@ -100,7 +100,7 @@ const Footer = () => {
 
           {sections.map((section) => (
             <div key={section.title}>
-              <h4 className="font-medium text-zinc-900 dark:text-zinc-100 mb-6 uppercase text-[10px] tracking-widest">
+              <h4 className="font-medium text-zinc-900 dark:text-zinc-100 mb-6 uppercase text-xs tracking-widest">
                 {section.title}
               </h4>
               <ul className="space-y-2">
@@ -122,7 +122,7 @@ const Footer = () => {
         <div className="pt-10 border-t border-zinc-100 dark:border-zinc-800 flex flex-col md:flex-row items-center justify-between gap-6">
           <p className="text-xs text-zinc-400">© {currentYear} Ally Technologies Inc. All rights reserved.</p>
           <div className="flex items-center gap-6">
-            <span className="flex items-center gap-2 text-[10px] font-medium text-emerald-500 uppercase tracking-tight">
+            <span className="flex items-center gap-2 text-xs font-medium text-emerald-500 uppercase tracking-tight">
               <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
               All Systems Operational • High-Performance Engine
             </span>

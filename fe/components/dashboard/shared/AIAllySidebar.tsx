@@ -70,11 +70,11 @@ const ChatHeader: React.FC<{ onClose: () => void; onMinimize: () => void }> = ({
         <div>
           <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-1.5">
             Ally
-            <span className="px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider bg-primary/10 text-primary rounded-md">
+            <span className="px-1.5 py-0.5 text-xs font-bold uppercase tracking-wider bg-primary/10 text-primary rounded-md">
               AI
             </span>
           </h3>
-          <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">Online</p>
+          <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">Online</p>
         </div>
       </div>
 
@@ -84,14 +84,14 @@ const ChatHeader: React.FC<{ onClose: () => void; onMinimize: () => void }> = ({
           className="p-1.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 transition-all"
           title="Minimize"
         >
-          <ChevronDown className="w-4 h-4" />
+          <ChevronDown size={16} />
         </button>
         <button
           onClick={onClose}
           className="p-1.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 transition-all"
           title="Close"
         >
-          <X className="w-4 h-4" />
+          <X size={16} />
         </button>
       </div>
     </div>
@@ -361,7 +361,7 @@ const AIAllySidebar: React.FC<AIAllySidebarProps> = ({ isOpen, onClose, onOpen }
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
               >
-                <p className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-2">Quick Actions</p>
+                <p className="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-2">Quick Actions</p>
                 <div className="flex flex-wrap gap-2">
                   {quickActions.map((action) => (
                     <button
@@ -398,7 +398,7 @@ const AIAllySidebar: React.FC<AIAllySidebarProps> = ({ isOpen, onClose, onOpen }
                     onClick={handleCancelRecording}
                     className="absolute top-2 right-2 p-1.5 rounded-full text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
                   >
-                    <X className="w-4 h-4" />
+                    <X size={16} />
                   </button>
                 </div>
               ) : (
@@ -452,7 +452,7 @@ const AIAllySidebar: React.FC<AIAllySidebarProps> = ({ isOpen, onClose, onOpen }
               )}
 
               {/* Powered by badge */}
-              <p className="text-center text-[9px] text-zinc-400 dark:text-zinc-500 mt-2 font-medium">
+              <p className="text-center text-xs text-zinc-400 dark:text-zinc-500 mt-2 font-medium">
                 Powered by Ally AI
               </p>
             </div>

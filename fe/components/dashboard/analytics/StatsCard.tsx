@@ -1,10 +1,11 @@
 'use client'
 
-import React from 'react'
-import { TrendingUp, TrendingDown, Minus } from 'lucide-react'
+import { Minus, TrendingDown, TrendingUp } from 'lucide-react'
+
 import NumberFlow from '@number-flow/react'
-import type { StatsCardProps } from '@/types/analytics'
+import React from 'react'
 import { Skeleton } from '@/components/ui/skeleton'
+import type { StatsCardProps } from '@/types/analytics'
 
 const TrendBadge: React.FC<{ direction: 'up' | 'down' | 'neutral'; percentage: number }> = ({
   direction,
@@ -13,7 +14,7 @@ const TrendBadge: React.FC<{ direction: 'up' | 'down' | 'neutral'; percentage: n
   if (direction === 'neutral') {
     return (
       <span className="inline-flex items-center gap-1 text-xs font-bold text-zinc-500">
-        <Minus className="w-3 h-3" />
+        <Minus size={16} />
         <span>0%</span>
       </span>
     )
@@ -28,7 +29,7 @@ const TrendBadge: React.FC<{ direction: 'up' | 'down' | 'neutral'; percentage: n
     <span
       className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded border text-xs font-bold ${colorClass} ${bgClass} ${borderClass}`}
     >
-      {isPositive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+      {isPositive ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
       <span>{Math.abs(percentage).toFixed(1)}%</span>
     </span>
   )
@@ -72,9 +73,9 @@ const StatsCard: React.FC<StatsCardProps> = ({
         )}
       </div>
       <div className="flex items-center gap-2">
-        <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">{label}</span>
+        <span className="text-xs font-bold text-zinc-400 uppercase tracking-widest">{label}</span>
         {previousValue !== undefined && previousValue !== null && (
-          <span className="text-[9px] text-zinc-500">
+          <span className="text-xs text-zinc-500">
             vs {previousValue.toFixed(1)}
             {suffix} prev.
           </span>

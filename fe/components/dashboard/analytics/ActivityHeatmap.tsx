@@ -1,7 +1,7 @@
 'use client'
 
-import React, { useState, useMemo } from 'react'
-import { Dumbbell, Activity, CalendarDays } from 'lucide-react'
+import { Activity, CalendarDays, Dumbbell } from 'lucide-react'
+import React, { useMemo, useState } from 'react'
 
 type HealthActivity = 'Gym' | 'Run' | 'Swim' | 'Rest'
 
@@ -108,7 +108,7 @@ const ActivityHeatmap: React.FC = () => {
 
       <div className="p-6 overflow-x-auto">
         <div className="inline-block">
-          <div className="flex justify-between text-[10px] text-zinc-400 mb-2 pl-10">
+          <div className="flex justify-between text-xs text-zinc-400 mb-2 pl-10">
             {monthLabels.map((month) => (
               <span key={month} className="w-[calc(4.3*4*0.25rem)] text-left">
                 {month}
@@ -116,7 +116,7 @@ const ActivityHeatmap: React.FC = () => {
             ))}
           </div>
           <div className="flex gap-4">
-            <div className="flex flex-col gap-1 text-[10px] text-zinc-400">
+            <div className="flex flex-col gap-1 text-xs text-zinc-400">
               {weekDays.map((day, i) => (
                 <div key={day} className={`h-3.5 flex items-center ${i % 2 === 0 ? 'invisible' : ''}`}>
                   {day}
