@@ -37,7 +37,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
 }) => {
   return (
     <div className="h-full overflow-y-auto px-4 pt-24 pb-32">
-      <div id="tour-chat-history">
+      <div id="tour-chat-history overflow-y-auto h-[1000px]">
         {messages.map((msg) => {
           const isCurrentlyStreaming = msg.id === streamingMessageId && isStreaming
 

@@ -5,6 +5,15 @@ import { ORCHESTRATOR_AGENT } from "@/ai-agents";
 import { STATUS_RESPONSE } from "@/config";
 import { run } from "@openai/agents";
 
+// Web conversation context and embeddings
+import {
+  getOrCreateWebTodayContext,
+  addWebMessageToContext,
+  buildWebContextPrompt,
+} from "@/utils/web-conversation-history";
+import { getWebRelevantContext, storeWebEmbeddingAsync } from "@/utils/web-embeddings";
+import { summarizeMessages } from "@/telegram-bot/utils/summarize";
+
 interface ChatRequest {
   message: string;
   history?: Array<{ role: "user" | "assistant"; content: string }>;
@@ -24,20 +33,42 @@ interface ChatRequest {
  * console.log(data);
  */
 const streamChat = reqResAsyncHandler(async (req: Request<unknown, unknown, ChatRequest>, res: Response) => {
-  const { message, history = [] } = req.body;
+  const { message } = req.body;
+  const userId = req.user?.email;
 
   if (!message?.trim()) {
     return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Message is required");
   }
 
+  if (!userId) {
+    return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
+  }
+
   try {
-    // Build prompt with conversation history
-    const contextPrompt = buildChatPrompt(message, history, req.user?.email);
+    // 1. Get today's conversation context from database
+    const { context } = await getOrCreateWebTodayContext(userId);
+    const conversationContext = buildWebContextPrompt(context);
 
-    // Run the agent and get the result
-    const result = await run(ORCHESTRATOR_AGENT, contextPrompt);
+    // 2. Get semantic context from past conversations (embeddings)
+    const semanticContext = await getWebRelevantContext(userId, message, {
+      threshold: 0.75,
+      limit: 3,
+    });
 
+    // 3. Build full prompt with all context
+    const fullPrompt = buildChatPromptWithContext(message, conversationContext, semanticContext, userId);
+
+    // 4. Run the agent
+    const result = await run(ORCHESTRATOR_AGENT, fullPrompt);
     const finalOutput = result.finalOutput || "";
+
+    // 5. Store messages in context (async, includes auto-summarization)
+    addWebMessageToContext(userId, { role: "user", content: message }, summarizeMessages).catch(console.error);
+    addWebMessageToContext(userId, { role: "assistant", content: finalOutput }, summarizeMessages).catch(console.error);
+
+    // 6. Store embeddings for future semantic search (fire-and-forget)
+    storeWebEmbeddingAsync(userId, message, "user");
+    storeWebEmbeddingAsync(userId, finalOutput, "assistant");
 
     sendR(res, STATUS_RESPONSE.SUCCESS, "Chat message processed successfully", {
       content: finalOutput,
@@ -61,18 +92,38 @@ const streamChat = reqResAsyncHandler(async (req: Request<unknown, unknown, Chat
  * console.log(data);
  */
 const sendChat = reqResAsyncHandler(async (req: Request<unknown, unknown, ChatRequest>, res: Response) => {
-  const { message, history = [] } = req.body;
+  const { message } = req.body;
+  const userId = req.user?.email;
 
   if (!message?.trim()) {
     return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Message is required");
   }
 
+  if (!userId) {
+    return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
+  }
+
   try {
-    const contextPrompt = buildChatPrompt(message, history, req.user?.email);
-    const result = await run(ORCHESTRATOR_AGENT, contextPrompt);
+    // Same logic as streamChat - get context, embeddings, build prompt
+    const { context } = await getOrCreateWebTodayContext(userId);
+    const conversationContext = buildWebContextPrompt(context);
+    const semanticContext = await getWebRelevantContext(userId, message, {
+      threshold: 0.75,
+      limit: 3,
+    });
+
+    const fullPrompt = buildChatPromptWithContext(message, conversationContext, semanticContext, userId);
+    const result = await run(ORCHESTRATOR_AGENT, fullPrompt);
+    const finalOutput = result.finalOutput || "";
+
+    // Store context and embeddings
+    addWebMessageToContext(userId, { role: "user", content: message }, summarizeMessages).catch(console.error);
+    addWebMessageToContext(userId, { role: "assistant", content: finalOutput }, summarizeMessages).catch(console.error);
+    storeWebEmbeddingAsync(userId, message, "user");
+    storeWebEmbeddingAsync(userId, finalOutput, "assistant");
 
     sendR(res, STATUS_RESPONSE.SUCCESS, "Chat message processed successfully", {
-      content: result.finalOutput || "No response received",
+      content: finalOutput || "No response received",
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
@@ -82,34 +133,42 @@ const sendChat = reqResAsyncHandler(async (req: Request<unknown, unknown, ChatRe
 });
 
 /**
- * Build chat prompt with user context and conversation history
+ * Build chat prompt with full context including conversation history and semantic search results
  *
  * @param {string} message - The current user message
- * @param {Array} history - Conversation history array
- * @param {string} userEmail - Optional user email for context
+ * @param {string} conversationContext - Today's conversation context (with summaries)
+ * @param {string} semanticContext - Relevant past conversations from embeddings
+ * @param {string} userEmail - User email for context
  * @returns {string} Formatted prompt string
  */
-function buildChatPrompt(message: string, history: Array<{ role: "user" | "assistant"; content: string }>, userEmail?: string): string {
+function buildChatPromptWithContext(
+  message: string,
+  conversationContext: string,
+  semanticContext: string,
+  userEmail: string
+): string {
   const parts: string[] = [];
 
   // Add user context
-  if (userEmail) {
-    parts.push(`User Email: ${userEmail}`);
-  }
-
+  parts.push(`User Email: ${userEmail}`);
   parts.push(`Current Time: ${new Date().toISOString()}`);
 
-  // Add conversation history
-  if (history.length > 0) {
-    parts.push("\n--- Conversation History ---");
-    for (const msg of history) {
-      parts.push(`${msg.role === "user" ? "User" : "Assistant"}: ${msg.content}`);
-    }
-    parts.push("--- End History ---\n");
+  // Add today's conversation context (includes summaries)
+  if (conversationContext) {
+    parts.push("\n--- Today's Conversation ---");
+    parts.push(conversationContext);
+    parts.push("--- End Today's Conversation ---");
+  }
+
+  // Add semantic context from past conversations
+  if (semanticContext) {
+    parts.push("\n--- Related Past Conversations ---");
+    parts.push(semanticContext);
+    parts.push("--- End Past Conversations ---");
   }
 
   // Add current message
-  parts.push(`User Request: ${message}`);
+  parts.push(`\nUser Request: ${message}`);
 
   return parts.join("\n");
 }
