@@ -10,6 +10,10 @@ import {
   getOrCreateWebTodayContext,
   addWebMessageToContext,
   buildWebContextPrompt,
+  getWebConversationList,
+  getWebConversationById,
+  deleteWebConversation,
+  loadWebConversationIntoContext,
 } from "@/utils/web-conversation-history";
 import { getWebRelevantContext, storeWebEmbeddingAsync } from "@/utils/web-embeddings";
 import { summarizeMessages } from "@/telegram-bot/utils/summarize";
@@ -173,7 +177,172 @@ function buildChatPromptWithContext(
   return parts.join("\n");
 }
 
+// ============================================
+// Conversation List & Retrieval Endpoints
+// ============================================
+
+/**
+ * Get list of user's conversations
+ * Returns conversations with title (summary/preview), message count, and timestamps
+ */
+const getConversations = reqResAsyncHandler(async (req: Request, res: Response) => {
+  const userId = req.user?.email;
+
+  if (!userId) {
+    return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
+  }
+
+  try {
+    const limit = parseInt(req.query.limit as string) || 20;
+    const offset = parseInt(req.query.offset as string) || 0;
+
+    const conversations = await getWebConversationList(userId, { limit, offset });
+
+    sendR(res, STATUS_RESPONSE.SUCCESS, "Conversations retrieved successfully", {
+      conversations,
+      pagination: { limit, offset, count: conversations.length },
+    });
+  } catch (error) {
+    console.error("Error getting conversations:", error);
+    sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Error retrieving conversations");
+  }
+});
+
+/**
+ * Get a specific conversation by ID
+ * Returns full conversation with all messages
+ */
+const getConversation = reqResAsyncHandler(async (req: Request, res: Response) => {
+  const userId = req.user?.email;
+  const conversationId = parseInt(req.params.id);
+
+  if (!userId) {
+    return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
+  }
+
+  if (!conversationId || isNaN(conversationId)) {
+    return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Invalid conversation ID");
+  }
+
+  try {
+    const conversation = await getWebConversationById(conversationId, userId);
+
+    if (!conversation) {
+      return sendR(res, STATUS_RESPONSE.NOT_FOUND, "Conversation not found");
+    }
+
+    sendR(res, STATUS_RESPONSE.SUCCESS, "Conversation retrieved successfully", {
+      conversation,
+    });
+  } catch (error) {
+    console.error("Error getting conversation:", error);
+    sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Error retrieving conversation");
+  }
+});
+
+/**
+ * Delete a conversation
+ */
+const removeConversation = reqResAsyncHandler(async (req: Request, res: Response) => {
+  const userId = req.user?.email;
+  const conversationId = parseInt(req.params.id);
+
+  if (!userId) {
+    return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
+  }
+
+  if (!conversationId || isNaN(conversationId)) {
+    return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Invalid conversation ID");
+  }
+
+  try {
+    const deleted = await deleteWebConversation(conversationId, userId);
+
+    if (!deleted) {
+      return sendR(res, STATUS_RESPONSE.NOT_FOUND, "Conversation not found or already deleted");
+    }
+
+    sendR(res, STATUS_RESPONSE.SUCCESS, "Conversation deleted successfully");
+  } catch (error) {
+    console.error("Error deleting conversation:", error);
+    sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Error deleting conversation");
+  }
+});
+
+/**
+ * Continue a conversation - send message to existing conversation
+ */
+interface ContinueConversationRequest {
+  message: string;
+}
+
+const continueConversation = reqResAsyncHandler(
+  async (req: Request<{ id: string }, unknown, ContinueConversationRequest>, res: Response) => {
+    const userId = req.user?.email;
+    const conversationId = parseInt(req.params.id);
+    const { message } = req.body;
+
+    if (!userId) {
+      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
+    }
+
+    if (!conversationId || isNaN(conversationId)) {
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Invalid conversation ID");
+    }
+
+    if (!message?.trim()) {
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Message is required");
+    }
+
+    try {
+      // Load the existing conversation
+      const loaded = await loadWebConversationIntoContext(conversationId, userId);
+
+      if (!loaded) {
+        return sendR(res, STATUS_RESPONSE.NOT_FOUND, "Conversation not found");
+      }
+
+      // Build context from loaded conversation
+      const conversationContext = buildWebContextPrompt(loaded.context);
+
+      // Get semantic context
+      const semanticContext = await getWebRelevantContext(userId, message, {
+        threshold: 0.75,
+        limit: 3,
+      });
+
+      // Build full prompt
+      const fullPrompt = buildChatPromptWithContext(message, conversationContext, semanticContext, userId);
+
+      // Run agent
+      const result = await run(ORCHESTRATOR_AGENT, fullPrompt);
+      const finalOutput = result.finalOutput || "";
+
+      // Store messages in this conversation's context
+      addWebMessageToContext(userId, { role: "user", content: message }, summarizeMessages).catch(console.error);
+      addWebMessageToContext(userId, { role: "assistant", content: finalOutput }, summarizeMessages).catch(console.error);
+
+      // Store embeddings
+      storeWebEmbeddingAsync(userId, message, "user");
+      storeWebEmbeddingAsync(userId, finalOutput, "assistant");
+
+      sendR(res, STATUS_RESPONSE.SUCCESS, "Message processed successfully", {
+        content: finalOutput,
+        conversationId,
+        timestamp: new Date().toISOString(),
+      });
+    } catch (error) {
+      console.error("Error continuing conversation:", error);
+      sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Error processing your request");
+    }
+  }
+);
+
 export const chatController = {
   streamChat,
   sendChat,
+  getConversations,
+  getConversation,
+  removeConversation,
+  continueConversation,
 };

@@ -48,3 +48,91 @@ export const sendChatMessage = async (message: string, history: ChatMessage[]): 
   const response = await apiClient.post('/api/chat', { message, history })
   return response.data?.data?.content || 'No response received'
 }
+
+// ============================================
+// Conversation Management Types & Functions
+// ============================================
+
+export interface ConversationListItem {
+  id: number
+  title: string
+  messageCount: number
+  lastUpdated: string
+  createdAt: string
+}
+
+export interface FullConversation {
+  id: number
+  userId: string
+  messages: ChatMessage[]
+  summary?: string
+  messageCount: number
+  lastUpdated: string
+  createdAt: string
+}
+
+export interface ConversationListResponse {
+  conversations: ConversationListItem[]
+  pagination: {
+    limit: number
+    offset: number
+    count: number
+  }
+}
+
+/**
+ * Get list of user's conversations
+ */
+export const getConversations = async (
+  limit: number = 20,
+  offset: number = 0,
+): Promise<ConversationListResponse> => {
+  const response = await apiClient.get(`/api/chat/conversations?limit=${limit}&offset=${offset}`)
+  return response.data?.data || { conversations: [], pagination: { limit, offset, count: 0 } }
+}
+
+/**
+ * Get a specific conversation by ID
+ */
+export const getConversation = async (conversationId: number): Promise<FullConversation | null> => {
+  try {
+    const response = await apiClient.get(`/api/chat/conversations/${conversationId}`)
+    return response.data?.data?.conversation || null
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Delete a conversation
+ */
+export const deleteConversation = async (conversationId: number): Promise<boolean> => {
+  try {
+    await apiClient.delete(`/api/chat/conversations/${conversationId}`)
+    return true
+  } catch {
+    return false
+  }
+}
+
+/**
+ * Continue an existing conversation
+ */
+export const continueConversation = async (
+  conversationId: number,
+  message: string,
+  callbacks: StreamCallbacks,
+): Promise<void> => {
+  const { onComplete, onError } = callbacks
+
+  try {
+    const response = await apiClient.post(`/api/chat/conversations/${conversationId}/messages`, {
+      message,
+    })
+    const content = response.data?.data?.content || 'No response received'
+    onComplete(content)
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
+    onError(errorMessage)
+  }
+}
