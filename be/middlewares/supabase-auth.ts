@@ -5,9 +5,9 @@ import { refreshSupabaseSession, validateSupabaseToken } from "@/utils/auth/supa
 import { STATUS_RESPONSE } from "@/config";
 import type { User } from "@supabase/supabase-js";
 
-const REFRESH_TOKEN_HEADER = "allyRefreshToken";
-const ACCESS_TOKEN_HEADER = "allyAccessToken";
-const USER_KEY = "allyUser";
+const REFRESH_TOKEN_HEADER = "refresh_token";
+const ACCESS_TOKEN_HEADER = "access_token";
+const USER_KEY = "user";
 
 export type SupabaseAuthOptions = {
   autoRefresh?: boolean;
@@ -25,9 +25,9 @@ export type SupabaseAuthOptions = {
  * This middleware:
  * 1. Extracts Bearer token from Authorization header
  * 2. Validates token with Supabase
- * 3. If invalid and autoRefresh=true, attempts refresh using allyRefreshToken header
+ * 3. If invalid and autoRefresh=true, attempts refresh using refresh_token header
  * 4. Attaches user to req.user
- * 5. Returns new access token in allyAccessToken header if refreshed
+ * 5. Returns new access token in access_token header if refreshed
  *
  * @example
  * // With auto-refresh (default)
@@ -40,10 +40,10 @@ export const supabaseAuth = (options: SupabaseAuthOptions = {}) => {
   const { autoRefresh = true } = options;
 
   return asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-    const accessToken = req.headers[ACCESS_TOKEN_HEADER] as string | undefined;
-    const user = req.headers[USER_KEY] as User | undefined;
-    
-    if (!accessToken || !user) {
+    const authHeader = req.headers.authorization;
+    const accessToken = authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : undefined;
+
+    if (!accessToken) {
       return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "Missing authorization header");
     }
 

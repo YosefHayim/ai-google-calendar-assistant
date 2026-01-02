@@ -1,9 +1,9 @@
 import { ENV } from '../constants'
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios'
 
-const ACCESS_TOKEN_HEADER = 'allyAccessToken'
-const REFRESH_TOKEN_HEADER = 'allyRefreshToken'
-const USER_KEY = 'allyUser'
+const ACCESS_TOKEN_HEADER = 'access_token'
+const REFRESH_TOKEN_HEADER = 'refresh_token'
+const USER_KEY = 'user'
 
 export const apiClient = axios.create({
   baseURL: ENV.API_BASE_URL,
@@ -41,7 +41,7 @@ apiClient.interceptors.request.use((config) => {
     }
 
     if (refreshToken) {
-      config.headers['refresh_token'] = refreshToken
+      config.headers[REFRESH_TOKEN_HEADER] = refreshToken
     }
   }
   return config

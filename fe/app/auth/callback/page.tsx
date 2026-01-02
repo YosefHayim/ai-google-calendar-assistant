@@ -5,6 +5,10 @@ import { useRouter, useSearchParams } from 'next/navigation'
 
 import { AllyLogo } from '@/components/shared/logo'
 
+const ACCESS_TOKEN_HEADER = 'access_token'
+const REFRESH_TOKEN_HEADER = 'refresh_token'
+const USER_KEY = 'user'
+
 function CallbackContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -13,9 +17,9 @@ function CallbackContent() {
   useEffect(() => {
     const handleCallback = async () => {
       try {
-        const accessToken = searchParams.get('access_token')
-        const refreshToken = searchParams.get('refresh_token')
-        const userParam = searchParams.get('user')
+        const accessToken = searchParams.get(ACCESS_TOKEN_HEADER)
+        const refreshToken = searchParams.get(REFRESH_TOKEN_HEADER)
+        const userParam = searchParams.get(USER_KEY)
 
         if (!accessToken) {
           setError('No access token received')
@@ -34,12 +38,12 @@ function CallbackContent() {
         }
 
         // Store auth data directly in localStorage
-        localStorage.setItem('allyAccessToken', accessToken)
+        localStorage.setItem(ACCESS_TOKEN_HEADER, accessToken)
         if (refreshToken) {
-          localStorage.setItem('allyRefreshToken', refreshToken)
+          localStorage.setItem(REFRESH_TOKEN_HEADER, refreshToken)
         }
         if (user) {
-          localStorage.setItem('allyUser', JSON.stringify(user))
+          localStorage.setItem(USER_KEY, JSON.stringify(user))
         }
 
         // Redirect to dashboard
