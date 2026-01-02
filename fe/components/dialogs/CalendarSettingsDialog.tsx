@@ -1,6 +1,7 @@
 'use client'
 
-import { CalendarDays, Info, Loader2, X } from 'lucide-react'
+import { CalendarDays, Info, Loader2 } from 'lucide-react'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
 
 import type { CalendarSettingsDialogProps } from '@/types/analytics'
@@ -19,39 +20,39 @@ const CalendarSettingsDialog: React.FC<CalendarSettingsDialogProps> = ({
     enabled: isOpen && !!calendarId,
   })
 
-  if (!isOpen) return null
+  // Handle Shadcn's onOpenChange
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
+      onClose()
+    }
+  }
 
   return (
-    <div
-      className="fixed inset-0 bg-black/50 dark:bg-black/80 flex items-center justify-center z-50 p-4"
-      onClick={onClose}
-    >
-      <div
-        className="bg-white dark:bg-zinc-900 rounded-lg shadow-xl max-w-2xl w-full relative max-h-[90vh] overflow-y-auto"
-        onClick={(e) => e.stopPropagation()}
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+      <DialogContent
+        className="max-w-2xl w-full p-0 overflow-hidden border-none shadow-xl"
+        // Applying the dynamic border color to the top of the modal content
         style={{ borderTop: `4px solid ${calendarColor}` }}
       >
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors"
-        >
-          <X className="w-5 h-5" />
-        </button>
-        <div className="p-6">
-          <div className="mb-6">
-            <div className="flex items-center gap-3 mb-4">
+        {/* Scrollable Container */}
+        <div className="max-h-[85vh] overflow-y-auto p-6">
+          <DialogHeader className="mb-6 text-left">
+            <div className="flex items-center gap-3">
               <div
                 className="w-10 h-10 rounded-md flex items-center justify-center shrink-0"
+                // Using opacity here as per your original code.
+                // Note: This fades the icon too. If you only want the background faded,
+                // consider using hex-alpha color (e.g., `${calendarColor}33`) and removing opacity.
                 style={{ backgroundColor: calendarColor, opacity: 0.2 }}
               >
                 <CalendarDays className="w-5 h-5" style={{ color: calendarColor }} />
               </div>
               <div className="flex-1">
-                <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">{calendarName}</h3>
+                <DialogTitle className="text-xl font-bold text-zinc-900 dark:text-zinc-100">{calendarName}</DialogTitle>
                 <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Calendar Settings</p>
               </div>
             </div>
-          </div>
+          </DialogHeader>
 
           {isLoading ? (
             <div className="flex items-center justify-center py-8">
@@ -219,8 +220,8 @@ const CalendarSettingsDialog: React.FC<CalendarSettingsDialogProps> = ({
             </div>
           )}
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   )
 }
 

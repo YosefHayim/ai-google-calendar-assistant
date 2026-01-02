@@ -18,6 +18,9 @@ router.param("id", (_req: Request, res: Response, next: NextFunction, id: string
 // get current user information
 router.get("/get-user", supabaseAuth(), userController.getCurrentUserInformation);
 
+// check session (lightweight - for auto-login check)
+router.get("/session", supabaseAuth(), userController.checkSession);
+
 // refresh token
 router.post("/refresh", supabaseAuth(), userController.refreshToken);
 
@@ -35,6 +38,9 @@ router.post("/signup", userController.signUpUserReg);
 
 // sign in user
 router.post("/signin", userController.signInUserReg);
+
+// logout user (clears cookies)
+router.post("/logout", userController.logout);
 
 // sign up or sign in with google
 router.get("/signup/google", userController.signUpOrSignInWithGoogle);

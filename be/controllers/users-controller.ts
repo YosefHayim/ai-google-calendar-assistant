@@ -1,8 +1,9 @@
 import type { GoogleIdTokenPayloadProps, TokensProps } from "@/types";
-import { OAUTH2CLIENT, PROVIDERS, REDIRECT_URI, SCOPES, SCOPES_STRING, STATUS_RESPONSE, SUPABASE } from "@/config";
+import { OAUTH2CLIENT, PROVIDERS, REDIRECT_URI, SCOPES, SCOPES_STRING, STATUS_RESPONSE, SUPABASE, env } from "@/config";
 import type { Request, Response } from "express";
 import { generateGoogleAuthUrl, supabaseThirdPartySignInOrSignUp } from "@/utils/auth";
 import { reqResAsyncHandler, sendR } from "@/utils/http";
+import { clearAuthCookies, setAuthCookies } from "@/utils/auth/cookie-utils";
 
 import jwt from "jsonwebtoken";
 
@@ -92,20 +93,12 @@ const generateAuthGoogleUrl = reqResAsyncHandler(async (req: Request, res: Respo
 
     // Set Cookies for the Client
     if (signInData && signInData.session) {
-      const cookieOptions = {
-        httpOnly: true,
-        secure: true, // Ensure this is true in production (HTTPS)
-        maxAge: 1000 * 60 * 60 * 24 * 30, // 30 Days
-        sameSite: "strict" as const,
-      };
-
-      res.cookie(ACCESS_TOKEN_HEADER, signInData.session.access_token, cookieOptions);
-      res.cookie(REFRESH_TOKEN_HEADER, signInData.session.refresh_token, cookieOptions);
-      res.cookie(USER_KEY, JSON.stringify(signInData.user), cookieOptions);
+      setAuthCookies(res, signInData.session.access_token, signInData.session.refresh_token, signInData.user);
 
       // Redirect back to frontend
+      const frontendUrl = env.urls.frontend;
       return res.redirect(
-        `http://localhost:4000/callback?access_token=${signInData.session.access_token}&refresh_token=${signInData.session.refresh_token}&first_name=${user.given_name}&last_name=${user.family_name}&email=${user.email}`
+        `${frontendUrl}/callback?access_token=${signInData.session.access_token}&refresh_token=${signInData.session.refresh_token}&first_name=${user.given_name}&last_name=${user.family_name}&email=${user.email}`
       );
     }
 
@@ -268,7 +261,7 @@ const deActivateUser = reqResAsyncHandler(async (req: Request, res: Response) =>
  */
 const signInUserReg = reqResAsyncHandler(async (req: Request, res: Response) => {
   if (!(req.body.email && req.body.password)) {
-    sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Email and password are required ");
+    return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Email and password are required ");
   }
 
   const { data, error } = await SUPABASE.auth.signInWithPassword({
@@ -277,7 +270,12 @@ const signInUserReg = reqResAsyncHandler(async (req: Request, res: Response) => 
   });
 
   if (error) {
-    sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Failed to fetch user by email.", error);
+    return sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Failed to fetch user by email.", error);
+  }
+
+  // Set cookies for web browsers if session exists
+  if (data.session) {
+    setAuthCookies(res, data.session.access_token, data.session.refresh_token, data.user);
   }
 
   sendR(res, STATUS_RESPONSE.SUCCESS, "User signin successfully.", data);
@@ -318,6 +316,37 @@ const refreshToken = reqResAsyncHandler(async (req: Request, res: Response) => {
   sendR(res, STATUS_RESPONSE.SUCCESS, "Token refreshed successfully.", data);
 });
 
+/**
+ * Logout user by clearing authentication cookies
+ *
+ * @param {Request} _req - The request object.
+ * @param {Response} res - The response object.
+ * @returns {Promise<void>} The response object.
+ * @description Clears all authentication cookies and logs out the user.
+ */
+const logout = reqResAsyncHandler(async (_req: Request, res: Response) => {
+  clearAuthCookies(res);
+  sendR(res, STATUS_RESPONSE.SUCCESS, "Logged out successfully.");
+});
+
+/**
+ * Check if user has a valid session
+ *
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @returns {Promise<void>} The response object.
+ * @description Returns minimal session info if user is authenticated.
+ * Used by frontend to check if user can skip login and go to dashboard.
+ */
+const checkSession = reqResAsyncHandler(async (req: Request, res: Response) => {
+  // If we reach here, supabaseAuth middleware already validated the session
+  sendR(res, STATUS_RESPONSE.SUCCESS, "Session is valid.", {
+    authenticated: true,
+    userId: req.user?.id,
+    email: req.user?.email,
+  });
+});
+
 export const userController = {
   verifyEmailByOtp,
   signUpUserReg,
@@ -329,4 +358,6 @@ export const userController = {
   deActivateUser,
   generateAuthGoogleUrl,
   refreshToken,
+  logout,
+  checkSession,
 };
