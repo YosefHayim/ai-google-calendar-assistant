@@ -64,7 +64,7 @@ const CalendarSettingsDialog: React.FC<CalendarSettingsDialogProps> = ({
                   Calendar ID
                   <HoverCard>
                     <HoverCardTrigger asChild>
-                      <Info className="w-3.5 h-3.5 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 cursor-help" />
+                      <Info className="w-3.5 h-3.5 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 " />
                     </HoverCardTrigger>
                     <HoverCardContent className="w-64 text-xs">
                       <p className="font-medium mb-1">Unique Calendar Identifier</p>
@@ -86,7 +86,7 @@ const CalendarSettingsDialog: React.FC<CalendarSettingsDialogProps> = ({
                         Description
                         <HoverCard>
                           <HoverCardTrigger asChild>
-                            <Info className="w-3.5 h-3.5 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 cursor-help" />
+                            <Info className="w-3.5 h-3.5 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 " />
                           </HoverCardTrigger>
                           <HoverCardContent className="w-64 text-xs">
                             <p className="font-medium mb-1">Calendar Description</p>
@@ -106,7 +106,7 @@ const CalendarSettingsDialog: React.FC<CalendarSettingsDialogProps> = ({
                         Location
                         <HoverCard>
                           <HoverCardTrigger asChild>
-                            <Info className="w-3.5 h-3.5 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 cursor-help" />
+                            <Info className="w-3.5 h-3.5 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 " />
                           </HoverCardTrigger>
                           <HoverCardContent className="w-64 text-xs">
                             <p className="font-medium mb-1">Calendar Location</p>
@@ -127,7 +127,7 @@ const CalendarSettingsDialog: React.FC<CalendarSettingsDialogProps> = ({
                         Timezone
                         <HoverCard>
                           <HoverCardTrigger asChild>
-                            <Info className="w-3.5 h-3.5 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 cursor-help" />
+                            <Info className="w-3.5 h-3.5 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 " />
                           </HoverCardTrigger>
                           <HoverCardContent className="w-64 text-xs">
                             <p className="font-medium mb-1">Calendar Timezone</p>
@@ -148,7 +148,7 @@ const CalendarSettingsDialog: React.FC<CalendarSettingsDialogProps> = ({
                         Access Role
                         <HoverCard>
                           <HoverCardTrigger asChild>
-                            <Info className="w-3.5 h-3.5 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 cursor-help" />
+                            <Info className="w-3.5 h-3.5 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 " />
                           </HoverCardTrigger>
                           <HoverCardContent className="w-64 text-xs">
                             <p className="font-medium mb-1">Your Access Level</p>
@@ -170,7 +170,7 @@ const CalendarSettingsDialog: React.FC<CalendarSettingsDialogProps> = ({
                         Data Owner
                         <HoverCard>
                           <HoverCardTrigger asChild>
-                            <Info className="w-3.5 h-3.5 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 cursor-help" />
+                            <Info className="w-3.5 h-3.5 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 " />
                           </HoverCardTrigger>
                           <HoverCardContent className="w-64 text-xs">
                             <p className="font-medium mb-1">Calendar Data Owner</p>
@@ -189,7 +189,7 @@ const CalendarSettingsDialog: React.FC<CalendarSettingsDialogProps> = ({
                       Color
                       <HoverCard>
                         <HoverCardTrigger asChild>
-                          <Info className="w-3.5 h-3.5 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 cursor-help" />
+                          <Info className="w-3.5 h-3.5 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 " />
                         </HoverCardTrigger>
                         <HoverCardContent className="w-64 text-xs">
                           <p className="font-medium mb-1">Display Color</p>

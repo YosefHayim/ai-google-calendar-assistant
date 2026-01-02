@@ -21,7 +21,7 @@ const RecentEvents: React.FC<RecentEventsProps> = ({ activities, onActivityClick
           <HoverCard>
             <HoverCardTrigger asChild>
               <button className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors">
-                <Info className="w-3 h-3" />
+                <Info size={16} />
               </button>
             </HoverCardTrigger>
             <HoverCardContent>
@@ -51,17 +51,17 @@ const RecentEvents: React.FC<RecentEventsProps> = ({ activities, onActivityClick
                   className="w-8 h-8 rounded-md group-hover:opacity-80 transition-opacity flex items-center justify-center shrink-0 mt-0.5"
                   style={{ backgroundColor: activity.calendarColor || '#6366f1', opacity: 0.2 }}
                 >
-                  <Icon className="w-4 h-4" style={{ color: activity.calendarColor || '#6366f1' }} />
+                  <Icon size={16} style={{ color: activity.calendarColor || '#6366f1' }} />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold text-zinc-800 dark:text-zinc-200 line-clamp-1">
                     {activity.action}
                   </p>
                   <div className="flex items-center gap-2 mt-0.5">
-                    <p className="text-[10px] text-zinc-400 font-bold uppercase">{activity.time}</p>
+                    <p className="text-xs text-zinc-400 font-bold uppercase">{activity.time}</p>
                     {activity.calendarName && (
                       <span
-                        className="text-[9px] font-bold px-1.5 py-0.5 rounded border"
+                        className="text-xs font-bold px-1.5 py-0.5 rounded border"
                         style={{
                           color: activity.calendarColor || '#6366f1',
                           borderColor: activity.calendarColor || '#6366f1',

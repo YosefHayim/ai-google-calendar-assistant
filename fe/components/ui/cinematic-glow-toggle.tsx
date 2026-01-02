@@ -2,8 +2,8 @@
 
 'use client'
 
-import { cn } from '@/components/../lib/utils'
 import React from 'react'
+import { cn } from '@/components/../lib/utils'
 import { motion } from 'framer-motion'
 
 interface CinematicGlowToggleProps {
@@ -24,7 +24,7 @@ export default function CinematicGlowToggle({ checked, onChange, className }: Ci
       {/* 'OFF' Label */}
       <span
         className={cn(
-          'text-[10px] font-bold tracking-wider transition-colors duration-300 ml-2 select-none',
+          'text-xs font-bold tracking-wider transition-colors duration-300 ml-2 select-none',
           !checked ? 'text-zinc-500 dark:text-zinc-400' : 'text-zinc-300 dark:text-zinc-700',
         )}
       >
@@ -64,7 +64,7 @@ export default function CinematicGlowToggle({ checked, onChange, className }: Ci
       {/* 'ON' Label */}
       <span
         className={cn(
-          'text-[10px] font-bold tracking-wider transition-colors duration-300 mr-2 select-none',
+          'text-xs font-bold tracking-wider transition-colors duration-300 mr-2 select-none',
           checked ? 'text-primary drop-shadow-[0_0_8px_rgba(242,99,6,0.4)]' : 'text-zinc-300 dark:text-zinc-700',
         )}
       >

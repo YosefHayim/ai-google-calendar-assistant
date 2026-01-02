@@ -109,6 +109,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
     data: processedData,
     comparison,
     isLoading: isAnalyticsLoading,
+    isFetching: isAnalyticsFetching,
     isError,
     error,
     refetch,
@@ -267,7 +268,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
           <InteractiveHoverButton
             text="Refresh"
             loadingText="Refreshing..."
-            isLoading={isAnalyticsLoading}
+            isLoading={isAnalyticsFetching}
             Icon={<RotateCw size={16} />}
             onClick={() => refetch()}
           />
@@ -283,7 +284,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
         averageEventDuration={averageEventDuration}
         busiestDayHours={busiestDayHours}
         comparison={comparison}
-        isLoading={isAnalyticsLoading}
+        isLoading={isAnalyticsFetching}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -297,7 +298,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
             <HoverCard>
               <HoverCardTrigger asChild>
                 <button className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors">
-                  <Info className="w-4 h-4" />
+                  <Info size={16} />
                 </button>
               </HoverCardTrigger>
               <HoverCardContent>
@@ -384,7 +385,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
         previousPeriodHours={previousPeriodHours}
         percentageChange={percentageChange}
         onClose={() => {
-          setIsCalendarEventsDialogOpen(true)
+          setIsCalendarEventsDialogOpen(false)
           setSelectedCalendarForEvents(null)
         }}
         onEventClick={(event) => {

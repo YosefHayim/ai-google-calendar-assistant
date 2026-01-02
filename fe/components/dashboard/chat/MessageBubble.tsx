@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactMarkdown from 'react-markdown'
-import remarkGfm from 'remark-gfm'
 import { Role } from '@/types'
+import remarkGfm from 'remark-gfm'
 
 interface MessageBubbleProps {
   role: Role
@@ -29,7 +29,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ role, content, timestamp,
           </div>
         </div>
         {!hideTimestamp && (
-          <span className="text-[10px] text-zinc-400 mt-1 px-1">
+          <span className="text-xs text-zinc-400 mt-1 px-1">
             {timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </span>
         )}

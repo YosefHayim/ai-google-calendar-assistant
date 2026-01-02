@@ -20,6 +20,7 @@ import { format, formatDistanceStrict } from 'date-fns'
 
 import type { EventDetailsDialogProps } from '@/types/analytics'
 import React from 'react'
+
 // Adjust path if your UI components are elsewhere
 
 const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
@@ -84,7 +85,7 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
                 <div className="flex flex-wrap gap-2 items-center">
                   {calendarName && (
                     <span
-                      className="text-[10px] font-bold px-2 py-0.5 rounded border uppercase tracking-wider"
+                      className="text-xs font-bold px-2 py-0.5 rounded border uppercase tracking-wider"
                       style={{
                         color: calendarColor,
                         borderColor: `${calendarColor}40`,
@@ -96,7 +97,7 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
                   )}
                   {event.status && (
                     <span
-                      className="text-[10px] font-bold px-2 py-0.5 rounded border uppercase tracking-wider flex items-center gap-1"
+                      className="text-xs font-bold px-2 py-0.5 rounded border uppercase tracking-wider flex items-center gap-1"
                       style={{
                         color: statusStyle.text,
                         borderColor: `${statusStyle.text}40`,
@@ -221,7 +222,7 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
                           </span>
                           {attendee.responseStatus && (
                             <span
-                              className={`text-[10px] px-1.5 py-0.5 rounded capitalize ${
+                              className={`text-xs px-1.5 py-0.5 rounded capitalize ${
                                 attendee.responseStatus === 'accepted'
                                   ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
                                   : attendee.responseStatus === 'declined'

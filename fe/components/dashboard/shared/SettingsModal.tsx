@@ -130,7 +130,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
                     : 'text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800/70'
                 }`}
               >
-                <tab.icon className="w-4 h-4" /> {tab.label}
+                <tab.icon size={16} /> {tab.label}
               </button>
             ))}
           </nav>
@@ -138,7 +138,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
             onClick={onSignOut}
             className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-red-500 text-sm font-medium mt-auto hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
           >
-            <LogOut className="w-4 h-4" /> Sign Out
+            <LogOut size={16} /> Sign Out
           </button>
         </div>
 
@@ -193,15 +193,15 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
                         </div>
                         <div>
                           <h4 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">Telegram</h4>
-                          <p className="text-[10px] text-zinc-500 font-medium">@AllySyncBot</p>
+                          <p className="text-xs text-zinc-500 font-medium">@AllySyncBot</p>
                         </div>
                       </div>
-                      <div className="flex items-center gap-1.5 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 p-1 px-2 rounded-full text-[10px] font-bold border border-green-100 dark:border-green-900/30">
-                        <CheckCircle2 className="w-3 h-3" /> Connected
+                      <div className="flex items-center gap-1.5 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 p-1 px-2 rounded-full text-xs font-bold border border-green-100 dark:border-green-900/30">
+                        <CheckCircle2 size={16} /> Connected
                       </div>
                     </div>
                     <button className="w-full mt-2 flex items-center justify-center gap-2 p-2 rounded-lg text-xs font-bold border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-white dark:hover:bg-zinc-800 transition-colors">
-                      Configure Settings <ArrowUpRight className="w-3 h-3" />
+                      Configure Settings <ArrowUpRight size={16} />
                     </button>
                   </div>
 
@@ -214,11 +214,11 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
                         </div>
                         <div>
                           <h4 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">WhatsApp</h4>
-                          <p className="text-[10px] text-zinc-500 font-medium">Not linked</p>
+                          <p className="text-xs text-zinc-500 font-medium">Not linked</p>
                         </div>
                       </div>
-                      <div className="flex items-center gap-1.5 bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-500 p-1 px-2 rounded-full text-[10px] font-bold border border-zinc-200 dark:border-zinc-700">
-                        <Circle className="w-3 h-3" /> Disconnected
+                      <div className="flex items-center gap-1.5 bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-500 p-1 px-2 rounded-full text-xs font-bold border border-zinc-200 dark:border-zinc-700">
+                        <Circle size={16} /> Disconnected
                       </div>
                     </div>
                     <button
@@ -228,11 +228,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
                       }}
                       className="w-full mt-2 flex items-center justify-center gap-2 p-2 rounded-lg text-xs font-bold bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 hover:opacity-90 transition-opacity"
                     >
-                      {isWhatsAppConnecting ? (
-                        <Loader2 className="w-3 h-3 animate-spin" />
-                      ) : (
-                        <Plus className="w-3 h-3" />
-                      )}
+                      {isWhatsAppConnecting ? <Loader2 className="w-3 h-3 animate-spin" /> : <Plus size={16} />}
                       Connect WhatsApp
                     </button>
                   </div>
@@ -243,7 +239,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
                     <p className="text-xs font-bold text-zinc-400 dark:text-zinc-600 uppercase tracking-widest">
                       More Platforms Coming Soon
                     </p>
-                    <p className="text-[10px] text-zinc-400 text-center max-w-[200px]">
+                    <p className="text-xs text-zinc-400 text-center max-w-[200px]">
                       We are working on Slack, Microsoft Teams, and Zoom integrations.
                     </p>
                   </div>
@@ -277,9 +273,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
                         </span>
                         <div className="text-left">
                           <p className="text-sm font-bold text-zinc-900 dark:text-zinc-100">{lang.name}</p>
-                          <p className="text-[10px] text-zinc-500 font-medium uppercase tracking-wider">
-                            {lang.region}
-                          </p>
+                          <p className="text-xs text-zinc-500 font-medium uppercase tracking-wider">{lang.region}</p>
                         </div>
                       </div>
                       {selectedLanguage === lang.id && (
@@ -302,7 +296,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
                       <div className="flex bg-white dark:bg-zinc-800 p-1 rounded-lg border border-zinc-200 dark:border-zinc-700">
                         <button
                           onClick={() => setTimeFormat('12h')}
-                          className={`px-3 py-1 text-[10px] font-bold rounded-md transition-all ${
+                          className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${
                             timeFormat === '12h'
                               ? 'bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900'
                               : 'text-zinc-500'
@@ -312,7 +306,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
                         </button>
                         <button
                           onClick={() => setTimeFormat('24h')}
-                          className={`px-3 py-1 text-[10px] font-bold rounded-md transition-all ${
+                          className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${
                             timeFormat === '24h'
                               ? 'bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900'
                               : 'text-zinc-500'
@@ -372,7 +366,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
                     description="Secure your executive dashboard with an additional biometric layer."
                   />
                   <button className="w-full flex items-center justify-center gap-2 p-3 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-bold hover:opacity-90 transition-opacity">
-                    <Lock className="w-4 h-4" /> Change Password
+                    <Lock size={16} /> Change Password
                   </button>
                 </div>
               </div>
@@ -402,10 +396,10 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
                       onClick={handleClearChatHistory}
                       className="w-full flex items-center justify-center gap-2 p-3 rounded-lg bg-red-500 text-white text-sm font-bold hover:bg-red-600 transition-colors"
                     >
-                      <Trash2 className="w-4 h-4" /> Clear Ally's Memory
+                      <Trash2 size={16} /> Clear Ally's Memory
                     </button>
-                    <p className="text-[10px] text-red-500 mt-3 flex items-center gap-1 font-bold uppercase tracking-tight">
-                      <AlertTriangle className="w-3 h-3" /> Warning: This deletes all learned preferences.
+                    <p className="text-xs text-red-500 mt-3 flex items-center gap-1 font-bold uppercase tracking-tight">
+                      <AlertTriangle size={16} /> Warning: This deletes all learned preferences.
                     </p>
                   </div>
                 </div>

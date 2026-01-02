@@ -2,11 +2,12 @@
 
 'use client'
 
-import React, { useState, useEffect, useRef } from 'react'
-import { ArrowRight, Link as LinkIcon, Zap, Brain, Shield, Rocket, Globe, Sparkles } from 'lucide-react'
+import { ArrowRight, Brain, Globe, Link as LinkIcon, Rocket, Shield, Sparkles, Zap } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import React, { useEffect, useRef, useState } from 'react'
+
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 interface TimelineItem {
   id: number
@@ -258,7 +259,7 @@ export default function RadialOrbitalTimeline({ timelineData }: RadialOrbitalTim
                 <div
                   className={`
                   absolute top-14 left-1/2 -translate-x-1/2 whitespace-nowrap
-                  text-[10px] font-bold tracking-widest uppercase
+                  text-xs font-bold tracking-widest uppercase
                   transition-all duration-300
                   ${isExpanded || isHubHovered ? 'text-primary scale-110 opacity-100' : 'text-zinc-400 opacity-70'}
                 `}
@@ -271,16 +272,14 @@ export default function RadialOrbitalTimeline({ timelineData }: RadialOrbitalTim
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-px h-3 bg-primary/50"></div>
                     <CardHeader className="pb-2 p-4">
                       <div className="flex justify-between items-center mb-1">
-                        <Badge className={`px-2 py-0 text-[9px] font-bold ${getStatusStyles(item.status)}`}>
+                        <Badge className={`px-2 py-0 text-xs font-bold ${getStatusStyles(item.status)}`}>
                           {item.status === 'completed'
                             ? 'OPERATIONAL'
                             : item.status === 'in-progress'
                               ? 'OPTIMIZING'
                               : 'QUEUED'}
                         </Badge>
-                        <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-tighter">
-                          {item.date}
-                        </span>
+                        <span className="text-xs font-bold text-zinc-400 uppercase tracking-tighter">{item.date}</span>
                       </div>
                       <CardTitle className="text-sm font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-tight">
                         {item.title}
@@ -290,7 +289,7 @@ export default function RadialOrbitalTimeline({ timelineData }: RadialOrbitalTim
                       <p className="leading-relaxed">{item.content}</p>
 
                       <div className="mt-4 pt-3 border-t border-zinc-100 dark:border-zinc-800">
-                        <div className="flex justify-between items-center text-[10px] font-bold mb-1 uppercase tracking-wider">
+                        <div className="flex justify-between items-center text-xs font-bold mb-1 uppercase tracking-wider">
                           <span className="flex items-center text-zinc-500">
                             <Zap size={10} className="mr-1 text-primary" />
                             Efficiency Rating
@@ -309,9 +308,7 @@ export default function RadialOrbitalTimeline({ timelineData }: RadialOrbitalTim
                         <div className="mt-4 pt-3 border-t border-zinc-100 dark:border-zinc-800">
                           <div className="flex items-center mb-2">
                             <LinkIcon size={10} className="text-zinc-400 mr-1" />
-                            <h4 className="text-[10px] uppercase tracking-widest font-bold text-zinc-400">
-                              Neural Links
-                            </h4>
+                            <h4 className="text-xs uppercase tracking-widest font-bold text-zinc-400">Neural Links</h4>
                           </div>
                           <div className="flex flex-wrap gap-1">
                             {item.relatedIds.map((relatedId) => {
@@ -321,7 +318,7 @@ export default function RadialOrbitalTimeline({ timelineData }: RadialOrbitalTim
                                   key={relatedId}
                                   variant="outline"
                                   size="sm"
-                                  className="flex items-center h-6 px-2 py-0 text-[10px] rounded-md border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800/50 hover:bg-primary/10 text-zinc-600 dark:text-zinc-400 hover:text-primary transition-all"
+                                  className="flex items-center h-6 px-2 py-0 text-xs rounded-md border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800/50 hover:bg-primary/10 text-zinc-600 dark:text-zinc-400 hover:text-primary transition-all"
                                   onClick={(e) => {
                                     e.stopPropagation()
                                     toggleItem(relatedId)

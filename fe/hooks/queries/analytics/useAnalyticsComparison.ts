@@ -4,40 +4,35 @@ import { useQuery } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api/client'
 import { ENDPOINTS } from '@/lib/api/endpoints'
 import { AnalyticsResponseSchema, type ComparisonResult, type PeriodMetrics } from '@/types/analytics'
-import { toast } from 'sonner'
 
 interface UseAnalyticsComparisonOptions {
   timeMin: Date | null
   timeMax: Date | null
+  currentMetrics: PeriodMetrics | null
   enabled?: boolean
 }
 
 /**
  * Hook to fetch analytics data for the previous period and calculate trends
+ * Only fetches previous period - receives current metrics as parameter to avoid duplicate requests
  */
-export function useAnalyticsComparison({ timeMin, timeMax, enabled = true }: UseAnalyticsComparisonOptions) {
+export function useAnalyticsComparison({
+  timeMin,
+  timeMax,
+  currentMetrics,
+  enabled = true,
+}: UseAnalyticsComparisonOptions) {
   return useQuery({
     queryKey: ['analytics-comparison', timeMin, timeMax],
     queryFn: async (): Promise<ComparisonResult | null> => {
-      if (!timeMin || !timeMax) return null
+      if (!timeMin || !timeMax || !currentMetrics) return null
 
       // Calculate previous period: same duration before current period
       const duration = timeMax.getTime() - timeMin.getTime()
       const previousTimeMax = new Date(timeMin.getTime() - 1) // 1ms before current period starts
       const previousTimeMin = new Date(previousTimeMax.getTime() - duration)
 
-      // Fetch current period data
-      const currentParams = new URLSearchParams({
-        timeMin: timeMin.toISOString(),
-        timeMax: timeMax.toISOString(),
-      })
-      const currentResponse = await apiClient.get(`${ENDPOINTS.EVENTS_ANALYTICS}?${currentParams.toString()}`)
-      const currentResult = AnalyticsResponseSchema.safeParse(currentResponse.data)
-      if (!currentResult.success) {
-        throw new Error(`Invalid current period response: ${currentResult.error.message}`)
-      }
-
-      // Fetch previous period data
+      // Fetch only previous period data
       const previousParams = new URLSearchParams({
         timeMin: previousTimeMin.toISOString(),
         timeMax: previousTimeMax.toISOString(),
@@ -48,8 +43,8 @@ export function useAnalyticsComparison({ timeMin, timeMax, enabled = true }: Use
         throw new Error(`Invalid previous period response: ${previousResult.error.message}`)
       }
 
-      // Process both periods to calculate metrics
-      const calculateMetrics = (data: typeof currentResult.data): PeriodMetrics => {
+      // Process previous period to calculate metrics
+      const calculateMetrics = (data: typeof previousResult.data): PeriodMetrics => {
         let totalEvents = 0
         let totalDurationMinutes = 0
         const dayHoursMap = new Map<string, number>()
@@ -97,16 +92,14 @@ export function useAnalyticsComparison({ timeMin, timeMax, enabled = true }: Use
         }
       }
 
-      const currentMetrics = calculateMetrics(currentResult.data)
       const previousMetrics = calculateMetrics(previousResult.data)
 
-      // Calculate trends
+      // Calculate trends using passed-in current metrics
       const calculateTrend = (
         current: number,
         previous: number,
       ): { value: number; previousValue: number; percentageChange: number; direction: 'up' | 'down' | 'neutral' } => {
         if (previous === 0) {
-          // If previous is 0 and current > 0, show +100%
           if (current > 0) {
             return {
               value: current,
@@ -143,7 +136,7 @@ export function useAnalyticsComparison({ timeMin, timeMax, enabled = true }: Use
         },
       }
     },
-    enabled: enabled && !!timeMin && !!timeMax,
+    enabled: enabled && !!timeMin && !!timeMax && !!currentMetrics,
     retry: false,
   })
 }

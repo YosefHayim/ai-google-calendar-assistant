@@ -1,9 +1,9 @@
-import React from 'react'
-import { ArrowLeft } from 'lucide-react'
-import { SparklesCore } from '@/components/ui/sparkles'
-import Link from 'next/link'
 import { AllyLogo } from '@/components/shared/logo'
+import { ArrowLeft } from 'lucide-react'
 import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button'
+import Link from 'next/link'
+import React from 'react'
+import { SparklesCore } from '@/components/ui/sparkles'
 
 const WaitingList: React.FC = () => {
   return (
@@ -31,8 +31,8 @@ const WaitingList: React.FC = () => {
           </div>
           <div className="flex flex-col">
             <span className="text-lg font-bold text-zinc-900 dark:text-zinc-100 leading-none">Ally</span>
-            <span className="text-[10px] font-medium text-zinc-500 flex items-center gap-1 group-hover:text-primary transition-colors">
-              <ArrowLeft className="w-3 h-3" /> Back Home
+            <span className="text-xs font-medium text-zinc-500 flex items-center gap-1 group-hover:text-primary transition-colors">
+              <ArrowLeft size={16} /> Back Home
             </span>
           </div>
         </Link>
@@ -64,7 +64,7 @@ const WaitingList: React.FC = () => {
       </div>
 
       {/* Subtle bottom detail */}
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 text-[10px] uppercase tracking-widest text-zinc-300 dark:text-zinc-800 font-bold select-none">
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 text-xs uppercase tracking-widest text-zinc-300 dark:text-zinc-800 font-bold select-none">
         Executive Ops x Ally Node
       </div>
     </div>

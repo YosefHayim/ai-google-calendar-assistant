@@ -184,7 +184,7 @@ export function DatePickerWithRange({ className, date, setDate }: DatePickerWith
           <div className="flex flex-col sm:flex-row h-full">
             {/* --- LEFT SIDEBAR (Presets) --- */}
             <div className="flex flex-col gap-1 p-3 border-r border-border min-w-[150px]">
-              <span className="text-[10px] font-semibold text-muted-foreground mb-1 uppercase tracking-wider px-2">
+              <span className="text-xs font-semibold text-muted-foreground mb-1 uppercase tracking-wider px-2">
                 Presets
               </span>
               {renderPresetButton('Yesterday', 'yesterday')}
@@ -242,7 +242,7 @@ export function DatePickerWithRange({ className, date, setDate }: DatePickerWith
                   <CinematicGlowToggle checked={isCompareEnabled} onChange={handleCompareToggle} label="Compare" />
                   <HoverCard>
                     <HoverCardTrigger asChild>
-                      <Info className="w-4 h-4 text-muted-foreground cursor-help opacity-70 hover:opacity-100 transition-opacity" />
+                      <Info className="w-4 h-4 text-muted-foreground  opacity-70 hover:opacity-100 transition-opacity" />
                     </HoverCardTrigger>
                     <HoverCardContent className="w-80">
                       <div className="space-y-2">

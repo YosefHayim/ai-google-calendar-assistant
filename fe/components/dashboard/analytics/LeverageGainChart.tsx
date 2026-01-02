@@ -38,7 +38,7 @@ const LeverageGainChart: React.FC<LeverageGainChartProps> = ({ data }) => {
             <HoverCard>
               <HoverCardTrigger asChild>
                 <button className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors">
-                  <Info className="w-4 h-4" />
+                  <Info size={16} />
                 </button>
               </HoverCardTrigger>
               <HoverCardContent>
@@ -66,7 +66,7 @@ const LeverageGainChart: React.FC<LeverageGainChartProps> = ({ data }) => {
             }`}
             title="Column Chart"
           >
-            <BarChart3 className="w-4 h-4" />
+            <BarChart3 size={16} />
           </button>
           <button
             onClick={() => handleChartTypeChange('line')}
@@ -77,7 +77,7 @@ const LeverageGainChart: React.FC<LeverageGainChartProps> = ({ data }) => {
             }`}
             title="Line Chart"
           >
-            <LineChart className="w-4 h-4" />
+            <LineChart size={16} />
           </button>
         </div>
       </div>

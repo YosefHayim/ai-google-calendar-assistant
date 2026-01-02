@@ -1,7 +1,8 @@
 'use client'
-import React, { useState, useEffect, useCallback } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { Sparkles, ChevronRight, ChevronLeft, X } from 'lucide-react'
+
+import { AnimatePresence, motion } from 'framer-motion'
+import { ChevronLeft, ChevronRight, Sparkles, X } from 'lucide-react'
+import React, { useCallback, useEffect, useState } from 'react'
 
 interface Step {
   id: string
@@ -139,11 +140,11 @@ export const OnboardingTour: React.FC<{ onComplete: () => void }> = ({ onComplet
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-primary">
-              <Sparkles className="w-4 h-4" />
-              <span className="text-[10px] font-bold uppercase tracking-widest">Ally Protocol</span>
+              <Sparkles size={16} />
+              <span className="text-xs font-bold uppercase tracking-widest">Ally Protocol</span>
             </div>
             <button onClick={onComplete} className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 p-1">
-              <X className="w-4 h-4" />
+              <X size={16} />
             </button>
           </div>
 
@@ -170,7 +171,7 @@ export const OnboardingTour: React.FC<{ onComplete: () => void }> = ({ onComplet
                   className="p-2 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
                   aria-label="Previous step"
                 >
-                  <ChevronLeft className="w-4 h-4" />
+                  <ChevronLeft size={16} />
                 </button>
               )}
               <button
@@ -178,7 +179,7 @@ export const OnboardingTour: React.FC<{ onComplete: () => void }> = ({ onComplet
                 className="flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-lg text-sm font-bold shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
               >
                 {currentStep === TOUR_STEPS.length - 1 ? 'Start Audit' : 'Next'}
-                {currentStep < TOUR_STEPS.length - 1 && <ChevronRight className="w-4 h-4" />}
+                {currentStep < TOUR_STEPS.length - 1 && <ChevronRight size={16} />}
               </button>
             </div>
           </div>

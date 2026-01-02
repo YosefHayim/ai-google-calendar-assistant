@@ -82,7 +82,7 @@ const TimeAllocationChart: React.FC<TimeAllocationChartProps> = ({ data, onCalen
           <HoverCard>
             <HoverCardTrigger asChild>
               <button className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors">
-                <Info className="w-3 h-3" />
+                <Info size={16} />
               </button>
             </HoverCardTrigger>
             <HoverCardContent>

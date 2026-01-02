@@ -104,7 +104,7 @@ const AssistantAvatar: React.FC<AssistantAvatarProps> = ({ isRecording, isSpeaki
           </div>
 
           {isRecording && (
-            <div className="flex items-center gap-2 text-red-500 text-[10px] font-bold uppercase tracking-widest animate-pulse mt-2">
+            <div className="flex items-center gap-2 text-red-500 text-xs font-bold uppercase tracking-widest animate-pulse mt-2">
               <div className="w-1.5 h-1.5 rounded-full bg-red-500" />
               Listening...
             </div>
@@ -119,7 +119,7 @@ const ComingSoonPlaceholder: React.FC = () => (
   <div className="flex flex-col items-center justify-center h-full w-full animate-in fade-in zoom-in-95 duration-500 text-center px-6">
     <div className="w-24 h-24 bg-zinc-100 dark:bg-zinc-900 rounded-3xl flex items-center justify-center mb-8 relative">
       <Box className="w-12 h-12 text-primary" />
-      <div className="absolute -top-2 -right-2 bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-lg">
+      <div className="absolute -top-2 -right-2 bg-primary text-white text-xs font-bold px-2 py-0.5 rounded-full shadow-lg">
         NEW
       </div>
     </div>
@@ -386,7 +386,7 @@ const ChatInterface: React.FC = () => {
           >
             <Volume2 className={`w-3 h-3 ${isSpeaking ? 'animate-pulse text-primary' : ''}`} />
           </button>
-          <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-tighter">
+          <span className="text-xs font-bold text-zinc-400 uppercase tracking-tighter">
             {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </span>
         </div>
@@ -395,7 +395,7 @@ const ChatInterface: React.FC = () => {
 
     return (
       <div className="flex items-center justify-end gap-3 mt-1.5 px-1">
-        <div className="flex items-center gap-1 text-[9px] font-bold text-zinc-400 uppercase tracking-tighter">
+        <div className="flex items-center gap-1 text-xs font-bold text-zinc-400 uppercase tracking-tighter">
           <Clock className="w-2.5 h-2.5" />
           {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
         </div>
@@ -405,21 +405,21 @@ const ChatInterface: React.FC = () => {
             className="p-1 text-zinc-400 hover:text-primary transition-colors"
             title="Reset / Re-trigger"
           >
-            <RotateCcw className="w-3 h-3" />
+            <RotateCcw size={16} />
           </button>
           <button
             onClick={() => speakText(msg.content)}
             className="p-1 text-zinc-400 hover:text-primary transition-colors"
             title="Hear message"
           >
-            <Volume2 className="w-3 h-3" />
+            <Volume2 size={16} />
           </button>
           <button
             onClick={() => handleEditMessage(msg.content)}
             className="p-1 text-zinc-400 hover:text-primary transition-colors"
             title="Edit & Resend"
           >
-            <Edit2 className="w-3 h-3" />
+            <Edit2 size={16} />
           </button>
         </div>
       </div>
@@ -448,7 +448,7 @@ const ChatInterface: React.FC = () => {
               exit={{ opacity: 0, x: 20 }}
               className="hidden md:flex flex-col w-1/2 h-[70%] border-l border-zinc-200 dark:border-zinc-800 px-8 py-4 overflow-y-auto"
             >
-              <div className="flex items-center gap-2 mb-6 text-zinc-400 font-bold text-[10px] uppercase tracking-widest">
+              <div className="flex items-center gap-2 mb-6 text-zinc-400 font-bold text-xs uppercase tracking-widest">
                 <MessageSquare className="w-3.5 h-3.5" /> Live Context
               </div>
               <div className="flex-1 space-y-2">
@@ -522,7 +522,7 @@ const ChatInterface: React.FC = () => {
       {error && (
         <div className="flex justify-center mb-6">
           <div className="bg-red-50 dark:bg-red-900/20 border border-red-100 text-red-600 px-4 py-2 rounded-md flex items-center gap-2 text-sm">
-            <AlertCircle className="w-4 h-4" /> {error}
+            <AlertCircle size={16} /> {error}
           </div>
         </div>
       )}

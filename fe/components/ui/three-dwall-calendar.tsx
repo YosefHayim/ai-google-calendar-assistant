@@ -172,8 +172,8 @@ export function ThreeDWallCalendar({
                   <Card className="h-full overflow-visible bg-white/80 dark:bg-zinc-900/80 backdrop-blur-sm border-zinc-200 dark:border-zinc-800">
                     <CardContent className="p-3 h-full flex flex-col">
                       <div className="flex justify-between items-start">
-                        <div className="text-[10px] font-bold text-zinc-900 dark:text-zinc-100">{format(day, 'd')}</div>
-                        <div className="text-[8px] font-bold uppercase text-zinc-400">{format(day, 'EEE')}</div>
+                        <div className="text-xs font-bold text-zinc-900 dark:text-zinc-100">{format(day, 'd')}</div>
+                        <div className="text-xs font-bold uppercase text-zinc-400">{format(day, 'EEE')}</div>
                       </div>
 
                       {/* events */}
@@ -187,14 +187,14 @@ export function ThreeDWallCalendar({
                                 <HoverCard>
                                   <HoverCardTrigger asChild>
                                     <div
-                                      className="absolute w-5 h-5 rounded-full bg-primary flex items-center justify-center text-white text-[8px] cursor-pointer shadow-lg hover:scale-110 transition-transform"
+                                      className="absolute w-5 h-5 rounded-full bg-primary flex items-center justify-center text-white text-xs cursor-pointer shadow-lg hover:scale-110 transition-transform"
                                       style={{ left, top, transform: `translateZ(10px)` }}
                                     >
                                       •
                                     </div>
                                   </HoverCardTrigger>
                                   <HoverCardContent className="p-2 w-auto min-w-[120px]">
-                                    <p className="text-[10px] font-bold">{ev.title}</p>
+                                    <p className="text-xs font-bold">{ev.title}</p>
                                   </HoverCardContent>
                                 </HoverCard>
                               </PopoverTrigger>
@@ -202,7 +202,7 @@ export function ThreeDWallCalendar({
                                 <div className="flex justify-between items-center gap-2">
                                   <div className="flex flex-col">
                                     <span className="text-xs font-bold">{ev.title}</span>
-                                    <span className="text-[9px] text-zinc-500">{format(new Date(ev.date), 'p')}</span>
+                                    <span className="text-xs text-zinc-500">{format(new Date(ev.date), 'p')}</span>
                                   </div>
                                   {!hideControls && onRemoveEvent && (
                                     <Button
@@ -221,7 +221,7 @@ export function ThreeDWallCalendar({
                         })}
                       </div>
 
-                      <div className="mt-1 text-[8px] font-bold text-zinc-400 uppercase tracking-tighter">
+                      <div className="mt-1 text-xs font-bold text-zinc-400 uppercase tracking-tighter">
                         {dayEvents.length > 0 ? `${dayEvents.length} Tasks` : ''}
                       </div>
                     </CardContent>

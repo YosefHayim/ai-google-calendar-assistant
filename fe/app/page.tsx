@@ -18,7 +18,7 @@ export default function HomePage() {
         <div className="absolute inset-0 grid-background opacity-50" />
         <div className="relative z-10 max-w-4xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-8">
-            <Sparkles className="w-4 h-4" />
+            <Sparkles size={16} />
             AI-Powered Calendar Management
           </div>
           <h1 className="text-5xl md:text-7xl font-medium tracking-tight text-zinc-900 dark:text-zinc-100 mb-6">

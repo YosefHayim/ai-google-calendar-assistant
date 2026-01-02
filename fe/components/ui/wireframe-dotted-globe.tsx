@@ -2,8 +2,9 @@
 
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
 import * as d3 from 'd3'
+
+import { useEffect, useRef, useState } from 'react'
 
 interface RotatingEarthProps {
   width?: number
@@ -315,7 +316,7 @@ export default function RotatingEarth({
     <div className={`relative ${className}`}>
       <canvas ref={canvasRef} className="w-full h-auto" style={{ maxWidth: '100%', height: 'auto' }} />
       {!hideControls && (
-        <div className="absolute bottom-4 left-4 text-[10px] text-zinc-400 font-bold uppercase tracking-widest px-2 py-1 rounded bg-black/50 backdrop-blur-sm">
+        <div className="absolute bottom-4 left-4 text-xs text-zinc-400 font-bold uppercase tracking-widest px-2 py-1 rounded bg-black/50 backdrop-blur-sm">
           Drag to rotate • Scroll to zoom
         </div>
       )}
