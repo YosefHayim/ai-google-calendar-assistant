@@ -9,10 +9,12 @@ import {
   Clock,
   Coffee,
   Dumbbell,
+  Info,
   LineChart,
   ListChecks,
   Loader2,
   MessageSquare,
+  RotateCw,
   Target,
   TrendingUp,
   Users,
@@ -20,6 +22,7 @@ import {
   Zap,
   ZapOff,
 } from "lucide-react";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import React, { useEffect, useState } from "react";
 import {
   Skeleton,
@@ -29,6 +32,7 @@ import {
   SkeletonDonutChart,
   SkeletonHeatmap,
   SkeletonInsightCard,
+  SkeletonLineChart,
   SkeletonList,
 } from "@/components/ui/skeleton";
 import { addDays, format, subDays } from "date-fns";
@@ -43,6 +47,7 @@ import { apiClient } from "@/lib/api/client";
 import { calendarsService } from "@/lib/api/services/calendars.service";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
+import { useCalendarById } from "@/hooks/queries/calendars/useCalendarById";
 import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
 
@@ -135,7 +140,18 @@ const TimeAllocationChart: React.FC<TimeAllocationChartProps> = ({ data }) => {
   const radius = 70;
   const circumference = 2 * Math.PI * radius;
   const strokeWidth = 22;
+  const defaultColor = "#6366f1";
   let accumulatedPercentage = 0;
+
+  // Helper function to validate and ensure color is a valid hex string
+  const getValidColor = (color: string | undefined | null): string => {
+    if (!color || typeof color !== "string") return defaultColor;
+    // Check if it's a valid hex color (starts with # and has 3 or 6 hex digits)
+    if (/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(color)) {
+      return color;
+    }
+    return defaultColor;
+  };
 
   // Handle case with no data
   if (totalHours === 0) {
@@ -156,6 +172,7 @@ const TimeAllocationChart: React.FC<TimeAllocationChartProps> = ({ data }) => {
             const dashArray = percentage * circumference;
             const rotation = accumulatedPercentage * 360;
             accumulatedPercentage += percentage;
+            const safeColor = getValidColor(item.color);
 
             return (
               <motion.circle
@@ -164,7 +181,7 @@ const TimeAllocationChart: React.FC<TimeAllocationChartProps> = ({ data }) => {
                 cy="90"
                 r={radius}
                 fill="transparent"
-                stroke={item.color}
+                stroke={safeColor}
                 strokeWidth={strokeWidth}
                 strokeLinecap="butt"
                 strokeDasharray={circumference}
@@ -182,16 +199,42 @@ const TimeAllocationChart: React.FC<TimeAllocationChartProps> = ({ data }) => {
         </div>
       </div>
       <div className="w-full">
-        <h3 className="font-medium text-zinc-900 dark:text-zinc-100 mb-4">Time Allocation</h3>
+        <h3 className="font-medium text-zinc-900 dark:text-zinc-100 mb-4 flex items-center gap-2">
+          Time Allocation
+          <HoverCard>
+            <HoverCardTrigger asChild>
+              <button className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors">
+                <Info className="w-3 h-3" />
+              </button>
+            </HoverCardTrigger>
+            <HoverCardContent>
+              <div className="space-y-2">
+                <h4 className="font-semibold text-sm">Time Allocation</h4>
+                <p className="text-xs text-zinc-600 dark:text-zinc-400">
+                  Visual breakdown of how your time is distributed across different calendars. Each segment represents the total hours spent in that calendar
+                  during the selected date range.
+                </p>
+              </div>
+            </HoverCardContent>
+          </HoverCard>
+        </h3>
         <ul className="space-y-2">
-          {data.map((item) => (
-            <li key={item.category} className="flex items-center gap-3 text-sm" data-calendar-id={item.calendarId || ""}>
-              <div className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: item.color }} />
-              <span className="flex-1 font-medium text-zinc-800 dark:text-zinc-200 truncate">{item.category}</span>
-              <span className="font-mono text-zinc-500 dark:text-zinc-400">{item.hours.toFixed(1)}h</span>
-              <span className="text-xs text-zinc-400 w-10 text-right">{((item.hours / totalHours) * 100).toFixed(0)}%</span>
-            </li>
-          ))}
+          {data.map((item) => {
+            const safeColor = getValidColor(item.color);
+            return (
+              <li
+                key={item.category}
+                className="flex items-center gap-3 text-sm rounded-md p-2 -m-2 transition-colors"
+                data-calendar-id={item.calendarId || ""}
+                style={{ backgroundColor: `${safeColor}10` }}
+              >
+                <div className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: safeColor }} />
+                <span className="flex-1 font-medium text-zinc-800 dark:text-zinc-200 truncate">{item.category}</span>
+                <span className="font-mono text-zinc-500 dark:text-zinc-400">{item.hours.toFixed(1)}h</span>
+                <span className="text-xs text-zinc-400 w-10 text-right">{((item.hours / totalHours) * 100).toFixed(0)}%</span>
+              </li>
+            );
+          })}
         </ul>
       </div>
     </div>
@@ -252,6 +295,10 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
   // Create calendar dialog state
   const [isCreateCalendarDialogOpen, setIsCreateCalendarDialogOpen] = useState(false);
   const [calendarPrompt, setCalendarPrompt] = useState("");
+
+  // Calendar settings dialog state
+  const [selectedCalendarForSettings, setSelectedCalendarForSettings] = useState<{ id: string; name: string; color: string } | null>(null);
+  const [isCalendarSettingsDialogOpen, setIsCalendarSettingsDialogOpen] = useState(false);
 
   // Chart type state with localStorage persistence
   const [chartType, setChartType] = useState<"line" | "column">(() => {
@@ -484,7 +531,12 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
       .map(([calendarName, data], index) => {
         // Get color from calendar map using calendarId (not name, as names might not be unique)
         const calendarInfo = calendarMap.get(data.calendarId);
-        const color = calendarInfo?.color || defaultColors[index % defaultColors.length];
+        let color = calendarInfo?.color || defaultColors[index % defaultColors.length];
+
+        // Ensure color is a valid hex string
+        if (!color || typeof color !== "string" || !/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(color)) {
+          color = defaultColors[index % defaultColors.length];
+        }
 
         return {
           category: calendarName,
@@ -565,10 +617,14 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
     },
   ];
 
-  const timeSavedData = Array.from({ length: 30 }, (_, i) => ({
-    day: `Day ${i + 1}`,
-    hours: 1 + Math.sin(i / 4) * 1.5 + Math.random() * 1 + i * 0.15,
-  })).map((d) => ({ ...d, hours: Math.max(0, d.hours) }));
+  const timeSavedData = Array.from({ length: 30 }, (_, i) => {
+    const date = subDays(new Date(), 29 - i);
+    return {
+      day: i + 1,
+      date: date.toISOString(),
+      hours: 1 + Math.sin(i / 4) * 1.5 + Math.random() * 1 + i * 0.15,
+    };
+  }).map((d) => ({ ...d, hours: Math.max(0, d.hours) }));
 
   if (error) {
     return (
@@ -586,6 +642,9 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
 
   // Loading skeleton state
   if (isLoading) {
+    // Get preferred chart type from localStorage
+    const preferredChartType = typeof window !== "undefined" ? (localStorage.getItem("analytics-chart-type") === "line" ? "line" : "column") : "column";
+
     return (
       <div className="max-w-7xl mx-auto w-full p-6 animate-in fade-in duration-500 overflow-y-auto bg-zinc-50 dark:bg-zinc-950">
         <header className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
@@ -608,9 +667,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Trend Analysis Skeleton */}
-          <div className="lg:col-span-3">
-            <SkeletonChart />
-          </div>
+          <div className="lg:col-span-3">{preferredChartType === "line" ? <SkeletonLineChart /> : <SkeletonChart />}</div>
 
           {/* Intelligence Insights Skeleton */}
           <div className="lg:col-span-3">
@@ -657,8 +714,13 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
         </div>
         <div className="flex gap-2 items-center">
           <DatePickerWithRange date={date} setDate={setDate} />
-          <button className="bg-zinc-950 dark:bg-zinc-100 text-white dark:text-zinc-950 p-2 px-4 rounded-md text-xs font-bold hover:opacity-90 transition-opacity shadow-sm h-10">
-            Export Intelligence
+          <button
+            onClick={() => refetch()}
+            className="bg-zinc-950 dark:bg-zinc-100 text-white dark:text-zinc-950 p-2 px-4 rounded-md text-xs font-bold hover:opacity-90 transition-opacity shadow-sm h-10 flex items-center gap-2"
+            title="Refresh analytics data"
+          >
+            <RotateCw className="w-4 h-4" />
+            Refresh
           </button>
         </div>
       </header>
@@ -686,6 +748,22 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
             <div>
               <h3 className="font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2 text-lg">
                 <TrendingUp className="w-5 h-5 text-primary" /> Leverage Gain
+                <HoverCard>
+                  <HoverCardTrigger asChild>
+                    <button className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors">
+                      <Info className="w-4 h-4" />
+                    </button>
+                  </HoverCardTrigger>
+                  <HoverCardContent>
+                    <div className="space-y-2">
+                      <h4 className="font-semibold text-sm">Leverage Gain</h4>
+                      <p className="text-xs text-zinc-600 dark:text-zinc-400">
+                        This chart measures the time that Ally has returned to your deep work pool by automating calendar management tasks. Higher values
+                        indicate more time saved for focused work.
+                      </p>
+                    </div>
+                  </HoverCardContent>
+                </HoverCard>
               </h3>
               <p className="text-xs text-zinc-500 font-medium italic">Measuring the time Ally returned to your deep work pool.</p>
             </div>
@@ -715,13 +793,40 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
             </div>
           </div>
           <div className="h-64 overflow-hidden">
-            {chartType === "column" ? <TimeSavedColumnChart data={timeSavedData} /> : <TimeSavedChart data={timeSavedData} />}
+            {chartType === "column" ? (
+              <TimeSavedColumnChart data={timeSavedData} />
+            ) : (
+              <TimeSavedChart
+                data={timeSavedData.map((d) => ({
+                  day: `Day ${d.day}`,
+                  hours: d.hours,
+                }))}
+              />
+            )}
           </div>
         </div>
 
         {/* Intelligence Insights */}
         <div className="lg:col-span-3">
-          <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-6 px-2">Performance Intelligence</h3>
+          <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-6 px-2 flex items-center gap-2">
+            Performance Intelligence
+            <HoverCard>
+              <HoverCardTrigger asChild>
+                <button className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors">
+                  <Info className="w-4 h-4" />
+                </button>
+              </HoverCardTrigger>
+              <HoverCardContent>
+                <div className="space-y-2">
+                  <h4 className="font-semibold text-sm">Performance Intelligence</h4>
+                  <p className="text-xs text-zinc-600 dark:text-zinc-400">
+                    AI-powered insights about your productivity patterns, focus velocity, collaborative load, and task completion rates. These metrics help you
+                    understand your work habits and optimize your schedule.
+                  </p>
+                </div>
+              </HoverCardContent>
+            </HoverCard>
+          </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
             {weeklyInsights.map((insight) => (
               <InsightCard key={insight.title} {...insight} />
@@ -740,6 +845,21 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
             <div className="mb-6 flex items-center justify-between">
               <h3 className="font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
                 <ListChecks className="w-4 h-4 text-zinc-400" /> Recent Operations
+                <HoverCard>
+                  <HoverCardTrigger asChild>
+                    <button className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors">
+                      <Info className="w-3 h-3" />
+                    </button>
+                  </HoverCardTrigger>
+                  <HoverCardContent>
+                    <div className="space-y-2">
+                      <h4 className="font-semibold text-sm">Recent Operations</h4>
+                      <p className="text-xs text-zinc-600 dark:text-zinc-400">
+                        A real-time feed of your most recent calendar events and activities. Click on any item to view detailed information about the event.
+                      </p>
+                    </div>
+                  </HoverCardContent>
+                </HoverCard>
               </h3>
               <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest bg-emerald-50 dark:bg-emerald-950/30 px-2 py-0.5 rounded">
                 Real-time
@@ -810,7 +930,16 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
                   return (
                     <div
                       key={calendar.calendarId}
-                      className="flex items-center gap-3 p-2 rounded-md hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors border border-transparent hover:border-zinc-200 dark:hover:border-zinc-800 group"
+                      className="flex items-center gap-3 p-2 rounded-md hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors border border-transparent hover:border-zinc-200 dark:hover:border-zinc-800 group cursor-pointer"
+                      style={{ backgroundColor: `${color}08` }}
+                      onClick={() => {
+                        setSelectedCalendarForSettings({
+                          id: calendar.calendarId,
+                          name: displayName,
+                          color: color,
+                        });
+                        setIsCalendarSettingsDialogOpen(true);
+                      }}
                     >
                       <div className="w-2.5 h-2.5 rounded-full shadow-sm group-hover:scale-125 transition-transform" style={{ backgroundColor: color }} />
                       <span className="flex-1 text-sm font-bold text-zinc-800 dark:text-zinc-200 truncate">{displayName}</span>
@@ -1048,6 +1177,116 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
           </div>
         </div>
       )}
+
+      {/* Calendar Settings Dialog */}
+      {isCalendarSettingsDialogOpen && selectedCalendarForSettings && (
+        <CalendarSettingsDialog
+          calendarId={selectedCalendarForSettings.id}
+          calendarName={selectedCalendarForSettings.name}
+          calendarColor={selectedCalendarForSettings.color}
+          onClose={() => {
+            setIsCalendarSettingsDialogOpen(false);
+            setSelectedCalendarForSettings(null);
+          }}
+        />
+      )}
+    </div>
+  );
+};
+
+// Calendar Settings Dialog Component
+interface CalendarSettingsDialogProps {
+  calendarId: string;
+  calendarName: string;
+  calendarColor: string;
+  onClose: () => void;
+}
+
+const CalendarSettingsDialog: React.FC<CalendarSettingsDialogProps> = ({ calendarId, calendarName, calendarColor, onClose }) => {
+  const { data: calendar, isLoading } = useCalendarById({
+    id: calendarId,
+    enabled: !!calendarId,
+  });
+
+  return (
+    <div className="fixed inset-0 bg-black/50 dark:bg-black/80 flex items-center justify-center z-50 p-4" onClick={onClose}>
+      <div
+        className="bg-white dark:bg-zinc-900 rounded-lg shadow-xl max-w-2xl w-full relative max-h-[90vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+        style={{ borderTop: `4px solid ${calendarColor}` }}
+      >
+        <button onClick={onClose} className="absolute top-4 right-4 text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors">
+          <X className="w-5 h-5" />
+        </button>
+        <div className="p-6">
+          <div className="mb-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-md flex items-center justify-center shrink-0" style={{ backgroundColor: calendarColor, opacity: 0.2 }}>
+                <CalendarDays className="w-5 h-5" style={{ color: calendarColor }} />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">{calendarName}</h3>
+                <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Calendar Settings</p>
+              </div>
+            </div>
+          </div>
+
+          {isLoading ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="w-6 h-6 animate-spin text-zinc-400" />
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div>
+                <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Calendar ID</h4>
+                <p className="text-sm text-zinc-600 dark:text-zinc-400 font-mono break-all">{calendarId}</p>
+              </div>
+
+              {calendar && (
+                <>
+                  {calendar.calendarDescription && (
+                    <div>
+                      <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Description</h4>
+                      <p className="text-sm text-zinc-600 dark:text-zinc-400">{calendar.calendarDescription}</p>
+                    </div>
+                  )}
+
+                  {calendar.calendarLocation && (
+                    <div>
+                      <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Location</h4>
+                      <p className="text-sm text-zinc-600 dark:text-zinc-400">{calendar.calendarLocation}</p>
+                    </div>
+                  )}
+
+                  {calendar.timeZoneForCalendar && (
+                    <div>
+                      <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Timezone</h4>
+                      <p className="text-sm text-zinc-600 dark:text-zinc-400">{calendar.timeZoneForCalendar}</p>
+                    </div>
+                  )}
+
+                  {calendar.accessRole && (
+                    <div>
+                      <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Access Role</h4>
+                      <p className="text-sm text-zinc-600 dark:text-zinc-400 capitalize">{calendar.accessRole}</p>
+                    </div>
+                  )}
+
+                  <div>
+                    <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Color</h4>
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-md border border-zinc-200 dark:border-zinc-800" style={{ backgroundColor: calendarColor }} />
+                      <p className="text-sm text-zinc-600 dark:text-zinc-400 font-mono">{calendarColor}</p>
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {!calendar && !isLoading && <p className="text-sm text-zinc-500 text-center py-4">No additional settings available for this calendar.</p>}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

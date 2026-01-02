@@ -2,9 +2,10 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { format } from 'date-fns';
 
 interface TimeSavedColumnChartProps {
-  data: { day: string; hours: number }[];
+  data: { day: number; date: string; hours: number }[];
 }
 
 const TimeSavedColumnChart: React.FC<TimeSavedColumnChartProps> = ({ data }) => {
@@ -39,6 +40,9 @@ const TimeSavedColumnChart: React.FC<TimeSavedColumnChartProps> = ({ data }) => 
     }
 
     const padding = 20;
+    const SLEEP_HOURS = 7;
+    // Calculate available hours (total 24 - sleep 7 = 17)
+    const TOTAL_AVAILABLE_HOURS = 24 - SLEEP_HOURS;
     const maxY = Math.max(...data.map(d => d.hours), 1) * 1.1;
     const barSpacing = 2;
     const availableWidth = width - padding * 2;
@@ -47,6 +51,11 @@ const TimeSavedColumnChart: React.FC<TimeSavedColumnChartProps> = ({ data }) => 
 
     const getY = (hours: number) => padding + plotHeight - (hours / maxY) * plotHeight;
     const getBarHeight = (hours: number) => (hours / maxY) * plotHeight;
+    
+    // Calculate available hours left for each data point
+    const getAvailableHoursLeft = (hours: number) => {
+      return Math.max(0, TOTAL_AVAILABLE_HOURS - hours);
+    };
 
     return (
         <div ref={containerRef} className="relative w-full h-full">
@@ -131,28 +140,46 @@ const TimeSavedColumnChart: React.FC<TimeSavedColumnChartProps> = ({ data }) => 
             </svg>
 
             {/* Tooltip Overlay */}
-            {hoveredIndex !== null && (
-                <div
-                    className="absolute p-2.5 text-xs bg-zinc-900 dark:bg-zinc-800 text-white rounded-lg shadow-xl pointer-events-none border border-white/10 dark:border-zinc-700"
-                    style={{
-                        left: `${((padding + hoveredIndex * (barWidth + barSpacing) + barWidth / 2) / width) * 100}%`,
-                        top: `${((padding + plotHeight - getBarHeight(data[hoveredIndex].hours) - 40) / height) * 100}%`,
-                        transform: `translate(-50%, -100%)`,
-                        whiteSpace: 'nowrap',
-                        zIndex: 50
-                    }}
-                >
-                    <div className="flex flex-col gap-0.5">
-                        <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider">
-                            {data[hoveredIndex].day}
-                        </span>
-                        <span className="text-sm font-bold text-white flex items-center gap-1.5">
-                            <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-                            {data[hoveredIndex].hours.toFixed(1)}h saved
-                        </span>
+            {hoveredIndex !== null && (() => {
+                const point = data[hoveredIndex];
+                const availableHoursLeft = getAvailableHoursLeft(point.hours);
+                const dateObj = new Date(point.date);
+                const formattedDate = format(dateObj, 'MMM dd, yyyy');
+                
+                return (
+                    <div
+                        className="absolute p-3 text-xs bg-zinc-900 dark:bg-zinc-800 text-white rounded-lg shadow-xl pointer-events-none border border-white/10 dark:border-zinc-700 min-w-[180px]"
+                        style={{
+                            left: `${((padding + hoveredIndex * (barWidth + barSpacing) + barWidth / 2) / width) * 100}%`,
+                            top: `${((padding + plotHeight - getBarHeight(point.hours) - 60) / height) * 100}%`,
+                            transform: `translate(-50%, -100%)`,
+                            zIndex: 50
+                        }}
+                    >
+                        <div className="flex flex-col gap-1.5">
+                            <div className="flex items-center justify-between gap-2">
+                                <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider">
+                                    Day {point.day}
+                                </span>
+                                <span className="text-[10px] text-zinc-400 font-medium">
+                                    {formattedDate}
+                                </span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                                <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+                                <span className="text-sm font-bold text-white">
+                                    {point.hours.toFixed(1)}h saved
+                                </span>
+                            </div>
+                            <div className="pt-1 border-t border-zinc-700 dark:border-zinc-600">
+                                <span className="text-[10px] text-zinc-300 dark:text-zinc-400">
+                                    Available Hours Left: <span className="font-bold text-white">{availableHoursLeft.toFixed(1)}h</span>
+                                </span>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            )}
+                );
+            })()}
         </div>
     );
 };

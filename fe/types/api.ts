@@ -14,6 +14,17 @@ export interface User {
   updated_at: string;
 }
 
+export interface CustomUser {
+  id: string;
+  email: string;
+  phone?: string | null;
+  first_name?: string | null;
+  last_name?: string | null;
+  avatar_url?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface Session {
   access_token: string;
   refresh_token: string;

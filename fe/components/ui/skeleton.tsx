@@ -46,7 +46,7 @@ export function SkeletonInsightCard({ className }: SkeletonProps) {
   );
 }
 
-// Chart skeleton
+// Chart skeleton (column chart)
 export function SkeletonChart({ className }: SkeletonProps) {
   return (
     <div className={cn('bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-6', className)}>
@@ -65,6 +65,57 @@ export function SkeletonChart({ className }: SkeletonProps) {
             style={{ height: `${20 + Math.random() * 60}%` }}
           />
         ))}
+      </div>
+    </div>
+  );
+}
+
+// Line chart skeleton
+export function SkeletonLineChart({ className }: SkeletonProps) {
+  return (
+    <div className={cn('bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-6', className)}>
+      <div className="mb-6">
+        <div className="flex items-center gap-2 mb-2">
+          <Skeleton className="w-5 h-5 rounded" />
+          <Skeleton className="h-5 w-32" />
+        </div>
+        <Skeleton className="h-3 w-48" />
+      </div>
+      <div className="h-64 relative px-4">
+        {/* Grid lines */}
+        {[0, 0.25, 0.5, 0.75, 1].map((ratio) => (
+          <div
+            key={ratio}
+            className="absolute left-4 right-4 h-px bg-zinc-200 dark:bg-zinc-800 opacity-50"
+            style={{ top: `${ratio * 100}%` }}
+          />
+        ))}
+        {/* Animated line path skeleton */}
+        <svg className="absolute inset-0 w-full h-full" viewBox="0 0 400 200" preserveAspectRatio="none">
+          <path
+            d="M 20,160 Q 80,120 140,130 T 260,90 T 380,70"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            className="text-zinc-300 dark:text-zinc-700"
+            opacity="0.5"
+          />
+        </svg>
+        {/* Dots along the line */}
+        {Array.from({ length: 8 }).map((_, i) => {
+          const x = 20 + (i / 7) * 360;
+          const y = 160 - (i / 7) * 60 - Math.sin(i) * 20;
+          return (
+            <div
+              key={i}
+              className="absolute w-2 h-2 rounded-full bg-zinc-300 dark:bg-zinc-700"
+              style={{
+                left: `${(x / 400) * 100}%`,
+                top: `${(y / 200) * 100}%`,
+              }}
+            />
+          );
+        })}
       </div>
     </div>
   );
