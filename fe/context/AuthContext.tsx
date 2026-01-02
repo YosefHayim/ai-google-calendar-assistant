@@ -21,13 +21,26 @@ export const AuthProvider = ({ children }: { children?: ReactNode }) => {
   useEffect(() => {
     const storedUser = localStorage.getItem("ally_user");
     const token = localStorage.getItem("ally_access_token");
+    const refreshToken = localStorage.getItem("ally_refresh_token");
 
-    if (storedUser && token) {
+    // Only set user if we have both access token and refresh token
+    // The refresh token is needed for automatic token refresh via API client interceptor
+    if (storedUser && token && refreshToken) {
       try {
         setUser(JSON.parse(storedUser));
       } catch (e) {
         console.error("Auth: Failed to parse user data.");
+        // Clear invalid data
+        localStorage.removeItem("ally_user");
+        localStorage.removeItem("ally_access_token");
+        localStorage.removeItem("ally_refresh_token");
       }
+    } else if (token && !refreshToken) {
+      // If we have access token but no refresh token, clear everything
+      // This prevents SESSION_EXPIRED errors on reload
+      console.warn("Auth: Access token found but refresh token missing. Clearing auth data.");
+      localStorage.removeItem("ally_user");
+      localStorage.removeItem("ally_access_token");
     }
     setIsLoading(false);
   }, []);
