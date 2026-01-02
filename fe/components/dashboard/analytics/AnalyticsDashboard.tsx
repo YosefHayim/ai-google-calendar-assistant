@@ -22,6 +22,7 @@ import {
   Zap,
   ZapOff,
 } from "lucide-react";
+import type { CalendarEvent, EventQueryParams } from "@/types/api";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import React, { useEffect, useState } from "react";
 import {
@@ -51,7 +52,6 @@ import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { useCalendarById } from "@/hooks/queries/calendars/useCalendarById";
 import { z } from "zod";
-import type { EventQueryParams } from "@/types/api";
 
 // --- Zod Schema Definitions ---
 
@@ -422,10 +422,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
   });
 
   // Fetch events for selected calendar in dialog
-  const {
-    data: calendarEventsData,
-    isLoading: isCalendarEventsLoading,
-  } = useQuery({
+  const { data: calendarEventsData, isLoading: isCalendarEventsLoading } = useQuery({
     queryKey: ["calendar-events", selectedCalendarForEvents?.id, date?.from, date?.to],
     queryFn: async () => {
       if (!selectedCalendarForEvents || !date?.from || !date?.to) return null;
@@ -437,7 +434,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
       };
 
       const response = await eventsService.getEvents(params);
-      
+
       if (response.status === "error" || !response.data) {
         throw new Error(response.message || "Failed to fetch events");
       }
@@ -728,8 +725,6 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
     <div className="max-w-7xl mx-auto w-full p-6 animate-in fade-in duration-500 overflow-y-auto bg-zinc-50 dark:bg-zinc-950">
       <header className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-medium text-zinc-900 dark:text-zinc-100 tracking-tight">Intelligence</h1>
-          <p className="text-zinc-500 font-medium">Quantifying your executive leverage.</p>
           {date?.from && date?.to && (
             <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-2">
               Your analytics data for dates between {format(date.from, "MMM dd, yyyy")} and {format(date.to, "MMM dd, yyyy")} (
@@ -1244,6 +1239,31 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
         </div>
       )}
 
+      {/* Calendar Events Dialog */}
+      {isCalendarEventsDialogOpen && selectedCalendarForEvents && (
+        <CalendarEventsDialog
+          calendarId={selectedCalendarForEvents.id}
+          calendarName={selectedCalendarForEvents.name}
+          calendarColor={selectedCalendarForEvents.color}
+          dateRange={date}
+          events={Array.isArray(calendarEventsData) ? calendarEventsData : []}
+          isLoading={isCalendarEventsLoading}
+          onClose={() => {
+            setIsCalendarEventsDialogOpen(false);
+            setSelectedCalendarForEvents(null);
+          }}
+          onEventClick={(event) => {
+            // Cast CalendarEvent to Zod schema type (they're compatible)
+            setSelectedEvent(event as z.infer<typeof CalendarEventSchema>);
+            setSelectedEventCalendarColor(selectedCalendarForEvents.color);
+            setSelectedEventCalendarName(selectedCalendarForEvents.name);
+            setIsEventDialogOpen(true);
+            // Close the calendar events dialog when opening event details
+            setIsCalendarEventsDialogOpen(false);
+          }}
+        />
+      )}
+
       {/* Calendar Settings Dialog */}
       {isCalendarSettingsDialogOpen && selectedCalendarForSettings && (
         <CalendarSettingsDialog
@@ -1256,6 +1276,183 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
           }}
         />
       )}
+    </div>
+  );
+};
+
+// Calendar Events Dialog Component
+interface CalendarEventsDialogProps {
+  calendarId: string;
+  calendarName: string;
+  calendarColor: string;
+  dateRange: DateRange | undefined;
+  events: CalendarEvent[];
+  isLoading: boolean;
+  onClose: () => void;
+  onEventClick: (event: CalendarEvent) => void;
+}
+
+const CalendarEventsDialog: React.FC<CalendarEventsDialogProps> = ({
+  calendarId,
+  calendarName,
+  calendarColor,
+  dateRange,
+  events,
+  isLoading,
+  onClose,
+  onEventClick,
+}) => {
+  const getEventDuration = (event: CalendarEvent): string => {
+    if (!event.start || !event.end) return "N/A";
+
+    const start = event.start.dateTime ? new Date(event.start.dateTime) : event.start.date ? new Date(event.start.date) : null;
+    const end = event.end.dateTime ? new Date(event.end.dateTime) : event.end.date ? new Date(event.end.date) : null;
+
+    if (!start || !end) return "N/A";
+
+    const durationMs = end.getTime() - start.getTime();
+    const durationHours = durationMs / (1000 * 60 * 60);
+
+    if (durationHours < 1) {
+      const minutes = Math.round(durationMs / (1000 * 60));
+      return `${minutes}m`;
+    }
+    return `${durationHours.toFixed(1)}h`;
+  };
+
+  const formatEventTime = (event: CalendarEvent): string => {
+    if (!event.start) return "N/A";
+
+    if (event.start.dateTime) {
+      return format(new Date(event.start.dateTime), "MMM dd, yyyy 'at' h:mm a");
+    }
+    if (event.start.date) {
+      return format(new Date(event.start.date), "MMM dd, yyyy");
+    }
+    return "N/A";
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 dark:bg-black/80 flex items-center justify-center z-50 p-4" onClick={onClose}>
+      <div
+        className="bg-white dark:bg-zinc-900 rounded-lg shadow-xl max-w-3xl w-full relative max-h-[90vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+        style={{ borderTop: `4px solid ${calendarColor}` }}
+      >
+        <button onClick={onClose} className="absolute top-4 right-4 text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors">
+          <X className="w-5 h-5" />
+        </button>
+        <div className="p-6">
+          <div className="mb-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-md flex items-center justify-center shrink-0" style={{ backgroundColor: calendarColor, opacity: 0.2 }}>
+                <CalendarDays className="w-5 h-5" style={{ color: calendarColor }} />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">{calendarName}</h3>
+                <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
+                  {dateRange?.from && dateRange?.to
+                    ? `Events from ${format(dateRange.from, "MMM dd, yyyy")} to ${format(dateRange.to, "MMM dd, yyyy")}`
+                    : "Events"}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {isLoading ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="w-6 h-6 animate-spin text-zinc-400" />
+            </div>
+          ) : events.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-12 text-center">
+              <CalendarDays className="w-12 h-12 text-zinc-400 mb-4" />
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">No events found for this calendar in the selected date range.</p>
+            </div>
+          ) : (
+            <ul className="space-y-3">
+              {[...events]
+                .sort((a, b) => {
+                  const aStart = a.start?.dateTime ? new Date(a.start.dateTime).getTime() : a.start?.date ? new Date(a.start.date).getTime() : 0;
+                  const bStart = b.start?.dateTime ? new Date(b.start.dateTime).getTime() : b.start?.date ? new Date(b.start.date).getTime() : 0;
+                  return aStart - bStart;
+                })
+                .map((event) => {
+                  const eventTime = formatEventTime(event);
+                  const duration = getEventDuration(event);
+                  const statusColor = event.status === "confirmed" ? "#10b981" : event.status === "tentative" ? "#f59e0b" : "#ef4444";
+
+                  return (
+                    <HoverCard key={event.id}>
+                      <HoverCardTrigger asChild>
+                        <li
+                          className="flex items-start gap-3 group cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-900/50 rounded-md p-3 -m-3 transition-colors"
+                          onClick={() => onEventClick(event)}
+                        >
+                          <div
+                            className="w-8 h-8 rounded-md group-hover:opacity-80 transition-opacity flex items-center justify-center shrink-0 mt-0.5"
+                            style={{ backgroundColor: calendarColor, opacity: 0.2 }}
+                          >
+                            <CalendarDays className="w-4 h-4" style={{ color: calendarColor }} />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-semibold text-zinc-800 dark:text-zinc-200 line-clamp-1">{event.summary || "No Title"}</p>
+                            <div className="flex items-center gap-2 mt-1 flex-wrap">
+                              <p className="text-[10px] text-zinc-400 font-bold uppercase">{eventTime}</p>
+                              <span className="text-[9px] font-bold text-zinc-500 dark:text-zinc-400">•</span>
+                              <span className="text-[9px] font-bold text-zinc-500 dark:text-zinc-400">{duration}</span>
+                              {event.status && (
+                                <>
+                                  <span className="text-[9px] font-bold text-zinc-500 dark:text-zinc-400">•</span>
+                                  <span
+                                    className="text-[9px] font-bold px-1.5 py-0.5 rounded border"
+                                    style={{
+                                      color: statusColor,
+                                      borderColor: statusColor,
+                                      backgroundColor: `${statusColor}15`,
+                                    }}
+                                  >
+                                    {event.status}
+                                  </span>
+                                </>
+                              )}
+                            </div>
+                            {event.location && <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1 line-clamp-1">{event.location}</p>}
+                          </div>
+                        </li>
+                      </HoverCardTrigger>
+                      <HoverCardContent className="w-80">
+                        <div className="space-y-2">
+                          <h4 className="font-semibold text-sm text-zinc-900 dark:text-zinc-100">{event.summary || "No Title"}</h4>
+                          <div className="space-y-1 text-xs text-zinc-600 dark:text-zinc-400">
+                            <div className="flex items-center gap-2">
+                              <Clock className="w-3 h-3" />
+                              <span>{eventTime}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span>Duration: {duration}</span>
+                            </div>
+                            {event.location && (
+                              <div className="flex items-center gap-2">
+                                <span className="truncate">{event.location}</span>
+                              </div>
+                            )}
+                            {event.status && (
+                              <div className="flex items-center gap-2">
+                                <span>Status: {event.status}</span>
+                              </div>
+                            )}
+                            {event.description && <p className="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-2 mt-2">{event.description}</p>}
+                          </div>
+                          <p className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-2 italic">Click to view full details</p>
+                        </div>
+                      </HoverCardContent>
+                    </HoverCard>
+                  );
+                })}
+            </ul>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
@@ -1304,7 +1501,20 @@ const CalendarSettingsDialog: React.FC<CalendarSettingsDialogProps> = ({ calenda
           ) : (
             <div className="space-y-4">
               <div>
-                <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Calendar ID</h4>
+                <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2 flex items-center gap-1.5">
+                  Calendar ID
+                  <HoverCard>
+                    <HoverCardTrigger asChild>
+                      <Info className="w-3.5 h-3.5 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 cursor-help" />
+                    </HoverCardTrigger>
+                    <HoverCardContent className="w-64 text-xs">
+                      <p className="font-medium mb-1">Unique Calendar Identifier</p>
+                      <p className="text-zinc-500 dark:text-zinc-400">
+                        A unique ID assigned by Google Calendar to identify this calendar. Used internally for API calls and syncing.
+                      </p>
+                    </HoverCardContent>
+                  </HoverCard>
+                </h4>
                 <p className="text-sm text-zinc-600 dark:text-zinc-400 font-mono break-all">{calendarId}</p>
               </div>
 
@@ -1312,34 +1522,116 @@ const CalendarSettingsDialog: React.FC<CalendarSettingsDialogProps> = ({ calenda
                 <>
                   {calendar.calendarDescription && (
                     <div>
-                      <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Description</h4>
+                      <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2 flex items-center gap-1.5">
+                        Description
+                        <HoverCard>
+                          <HoverCardTrigger asChild>
+                            <Info className="w-3.5 h-3.5 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 cursor-help" />
+                          </HoverCardTrigger>
+                          <HoverCardContent className="w-64 text-xs">
+                            <p className="font-medium mb-1">Calendar Description</p>
+                            <p className="text-zinc-500 dark:text-zinc-400">A user-defined description explaining the purpose or content of this calendar.</p>
+                          </HoverCardContent>
+                        </HoverCard>
+                      </h4>
                       <p className="text-sm text-zinc-600 dark:text-zinc-400">{calendar.calendarDescription}</p>
                     </div>
                   )}
 
                   {calendar.calendarLocation && (
                     <div>
-                      <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Location</h4>
+                      <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2 flex items-center gap-1.5">
+                        Location
+                        <HoverCard>
+                          <HoverCardTrigger asChild>
+                            <Info className="w-3.5 h-3.5 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 cursor-help" />
+                          </HoverCardTrigger>
+                          <HoverCardContent className="w-64 text-xs">
+                            <p className="font-medium mb-1">Calendar Location</p>
+                            <p className="text-zinc-500 dark:text-zinc-400">
+                              The geographic location associated with this calendar. Useful for region-specific calendars.
+                            </p>
+                          </HoverCardContent>
+                        </HoverCard>
+                      </h4>
                       <p className="text-sm text-zinc-600 dark:text-zinc-400">{calendar.calendarLocation}</p>
                     </div>
                   )}
 
                   {calendar.timeZoneForCalendar && (
                     <div>
-                      <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Timezone</h4>
+                      <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2 flex items-center gap-1.5">
+                        Timezone
+                        <HoverCard>
+                          <HoverCardTrigger asChild>
+                            <Info className="w-3.5 h-3.5 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 cursor-help" />
+                          </HoverCardTrigger>
+                          <HoverCardContent className="w-64 text-xs">
+                            <p className="font-medium mb-1">Calendar Timezone</p>
+                            <p className="text-zinc-500 dark:text-zinc-400">
+                              The default timezone for events in this calendar. All-day events and recurring events use this timezone.
+                            </p>
+                          </HoverCardContent>
+                        </HoverCard>
+                      </h4>
                       <p className="text-sm text-zinc-600 dark:text-zinc-400">{calendar.timeZoneForCalendar}</p>
                     </div>
                   )}
 
                   {calendar.accessRole && (
                     <div>
-                      <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Access Role</h4>
+                      <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2 flex items-center gap-1.5">
+                        Access Role
+                        <HoverCard>
+                          <HoverCardTrigger asChild>
+                            <Info className="w-3.5 h-3.5 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 cursor-help" />
+                          </HoverCardTrigger>
+                          <HoverCardContent className="w-64 text-xs">
+                            <p className="font-medium mb-1">Your Access Level</p>
+                            <p className="text-zinc-500 dark:text-zinc-400">
+                              Your permission level: <strong>Owner</strong> (full control), <strong>Writer</strong> (edit events), <strong>Reader</strong> (view
+                              only), or <strong>FreeBusyReader</strong> (availability only).
+                            </p>
+                          </HoverCardContent>
+                        </HoverCard>
+                      </h4>
                       <p className="text-sm text-zinc-600 dark:text-zinc-400 capitalize">{calendar.accessRole}</p>
                     </div>
                   )}
 
+                  {calendar.dataOwner && (
+                    <div>
+                      <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2 flex items-center gap-1.5">
+                        Data Owner
+                        <HoverCard>
+                          <HoverCardTrigger asChild>
+                            <Info className="w-3.5 h-3.5 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 cursor-help" />
+                          </HoverCardTrigger>
+                          <HoverCardContent className="w-64 text-xs">
+                            <p className="font-medium mb-1">Calendar Data Owner</p>
+                            <p className="text-zinc-500 dark:text-zinc-400">The email address of the Google account that owns this calendar&apos;s data.</p>
+                          </HoverCardContent>
+                        </HoverCard>
+                      </h4>
+                      <p className="text-sm text-zinc-600 dark:text-zinc-400">{calendar.dataOwner}</p>
+                    </div>
+                  )}
+
                   <div>
-                    <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Color</h4>
+                    <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2 flex items-center gap-1.5">
+                      Color
+                      <HoverCard>
+                        <HoverCardTrigger asChild>
+                          <Info className="w-3.5 h-3.5 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 cursor-help" />
+                        </HoverCardTrigger>
+                        <HoverCardContent className="w-64 text-xs">
+                          <p className="font-medium mb-1">Display Color</p>
+                          <p className="text-zinc-500 dark:text-zinc-400">
+                            The color used to display this calendar and its events in the UI. Helps distinguish between multiple calendars.
+                          </p>
+                        </HoverCardContent>
+                      </HoverCard>
+                    </h4>
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-md border border-zinc-200 dark:border-zinc-800" style={{ backgroundColor: calendarColor }} />
                       <p className="text-sm text-zinc-600 dark:text-zinc-400 font-mono">{calendarColor}</p>

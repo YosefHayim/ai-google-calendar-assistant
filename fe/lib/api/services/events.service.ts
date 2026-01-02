@@ -14,8 +14,30 @@ import {
 
 export const eventsService = {
   async getEvents(params?: EventQueryParams): Promise<ApiResponse<CalendarEvent[]>> {
-    const { data } = await apiClient.get<ApiResponse<CalendarEvent[]>>(ENDPOINTS.EVENTS, { params });
-    return data;
+    const { data } = await apiClient.get<ApiResponse<{
+      type?: string;
+      data?: {
+        kind?: string;
+        etag?: string;
+        summary?: string;
+        description?: string;
+        updated?: string;
+        timeZone?: string;
+        accessRole?: string;
+        defaultReminders?: Array<{ method: string; minutes: number }>;
+        nextSyncToken?: string;
+        items?: CalendarEvent[];
+      };
+    }>>(ENDPOINTS.EVENTS, { params });
+
+    // Extract events from nested API response structure
+    const events = data.data?.data?.items || [];
+
+    return {
+      status: data.status,
+      message: data.message,
+      data: events,
+    };
   },
 
   async getEventById(id: string, calendarId?: string): Promise<ApiResponse<CalendarEvent>> {
