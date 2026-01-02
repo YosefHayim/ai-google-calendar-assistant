@@ -1,13 +1,14 @@
 "use client";
 
-import React from "react";
-import { X, CalendarDays, Clock } from "lucide-react";
-import { format } from "date-fns";
+import { CalendarDays, Clock, X } from "lucide-react";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
-import { Loader2 } from "lucide-react";
-import type { CalendarEventsDialogProps } from "@/types/analytics";
+import { Minus, TrendingDown, TrendingUp } from "lucide-react";
+
 import type { CalendarEvent } from "@/types/api";
-import { TrendingUp, TrendingDown, Minus } from "lucide-react";
+import type { CalendarEventsDialogProps } from "@/types/analytics";
+import { Loader2 } from "lucide-react";
+import React from "react";
+import { format } from "date-fns";
 
 const TrendBadge: React.FC<{ direction: "up" | "down" | "neutral"; percentage: number }> = ({ direction, percentage }) => {
   if (direction === "neutral") {
@@ -79,9 +80,7 @@ const CalendarEventsDialog: React.FC<CalendarEventsDialogProps> = ({
   };
 
   // Calculate trend direction
-  const trendDirection = percentageChange !== undefined
-    ? percentageChange > 0 ? "up" : percentageChange < 0 ? "down" : "neutral"
-    : undefined;
+  const trendDirection = percentageChange !== undefined ? (percentageChange > 0 ? "up" : percentageChange < 0 ? "down" : "neutral") : undefined;
 
   return (
     <div className="fixed inset-0 bg-black/50 dark:bg-black/80 flex items-center justify-center z-50 p-4" onClick={onClose}>
@@ -106,20 +105,9 @@ const CalendarEventsDialog: React.FC<CalendarEventsDialogProps> = ({
                     ? `Events from ${format(dateRange.from, "MMM dd, yyyy")} to ${format(dateRange.to, "MMM dd, yyyy")}`
                     : "Events"}
                 </p>
+                <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Total hours: {totalHours?.toFixed(1) || "N/A"}h</p>
               </div>
             </div>
-            {/* Enhanced: Total hours with comparison */}
-            {totalHours !== undefined && (
-              <div className="flex items-center gap-2 mt-4">
-                <span className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">{totalHours.toFixed(1)}h</span>
-                {trendDirection !== undefined && percentageChange !== undefined && (
-                  <>
-                    <TrendBadge direction={trendDirection} percentage={percentageChange} />
-                    <span className="text-xs text-zinc-500">vs prev. period</span>
-                  </>
-                )}
-              </div>
-            )}
           </div>
 
           {isLoading ? (

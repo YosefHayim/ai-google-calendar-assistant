@@ -59,8 +59,8 @@ const TimeSavedColumnChart: React.FC<TimeSavedColumnChartProps> = ({ data }) => 
   };
 
   return (
-    <div ref={containerRef} className="relative w-full h-full">
-      <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-full overflow-visible">
+    <div ref={containerRef} className="relative w-full">
+      <svg viewBox={`0 0 ${width} ${height}`} className="w-full">
         {/* Grid lines */}
         {[0, 0.25, 0.5, 0.75, 1].map((ratio) => {
           const y = padding + plotHeight * (1 - ratio);
