@@ -295,10 +295,7 @@ const generateConversationTitle = (context: ConversationContext | null): string 
 };
 
 // Get list of user's conversations (for sidebar/list view)
-export const getWebConversationList = async (
-  userId: string,
-  options?: { limit?: number; offset?: number }
-): Promise<ConversationListItem[]> => {
+export const getWebConversationList = async (userId: string, options?: { limit?: number; offset?: number }): Promise<ConversationListItem[]> => {
   const limit = options?.limit || 20;
   const offset = options?.offset || 0;
 
@@ -327,16 +324,8 @@ export const getWebConversationList = async (
 };
 
 // Get a specific conversation by ID
-export const getWebConversationById = async (
-  conversationId: number,
-  userId: string
-): Promise<FullConversation | null> => {
-  const { data, error } = await SUPABASE.from(CONVERSATION_STATE_TABLE)
-    .select("*")
-    .eq("id", conversationId)
-    .eq("user_id", userId)
-    .eq("source", "web")
-    .single();
+export const getWebConversationById = async (conversationId: number, userId: string): Promise<FullConversation | null> => {
+  const { data, error } = await SUPABASE.from(CONVERSATION_STATE_TABLE).select("*").eq("id", conversationId).eq("user_id", userId).eq("source", "web").single();
 
   if (error || !data) {
     console.error("Error fetching web conversation:", error);
@@ -381,15 +370,8 @@ export const loadWebConversationIntoContext = async (
 };
 
 // Delete a conversation
-export const deleteWebConversation = async (
-  conversationId: number,
-  userId: string
-): Promise<boolean> => {
-  const { error } = await SUPABASE.from(CONVERSATION_STATE_TABLE)
-    .delete()
-    .eq("id", conversationId)
-    .eq("user_id", userId)
-    .eq("source", "web");
+export const deleteWebConversation = async (conversationId: number, userId: string): Promise<boolean> => {
+  const { error } = await SUPABASE.from(CONVERSATION_STATE_TABLE).delete().eq("id", conversationId).eq("user_id", userId).eq("source", "web");
 
   if (error) {
     console.error("Error deleting web conversation:", error);

@@ -6,14 +6,16 @@ import {
   BarChart2,
   Bell,
   ChevronLeft,
+  Clock,
   CreditCard,
   LayoutDashboard,
   LogOut,
+  MessageSquare,
   MoreHorizontal,
   Plus,
   Settings,
-  Share2,
   Sparkles,
+  Trash2,
   X,
 } from 'lucide-react'
 import {
@@ -29,10 +31,11 @@ import {
 import { CustomUser } from '@/types/api'
 import Image from 'next/image'
 import Link from 'next/link'
-import React from 'react'
+import React, { useEffect } from 'react'
 import UserProfileCard from '@/components/dashboard/shared/UserProfileCard'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useUser } from '@/hooks/queries/auth/useUser'
+import { useChatContext } from '@/contexts/ChatContext'
 
 interface SidebarProps {
   isOpen: boolean
@@ -73,12 +76,65 @@ const NavLink: React.FC<NavLinkProps> = ({ href, activePath, isOpen, icon: Icon,
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle, onOpenSettings, onSignOut }) => {
   const pathname = usePathname()
+  const router = useRouter()
   const { data: userData } = useUser({ customUser: true })
+  const {
+    conversations,
+    isLoadingConversations,
+    selectedConversationId,
+    selectConversation,
+    startNewConversation,
+    refreshConversations,
+    removeConversation,
+  } = useChatContext()
 
   const navItems = [
     { href: '/dashboard', icon: LayoutDashboard, label: 'Assistant', id: 'tour-assistant' },
     { href: '/dashboard/analytics', icon: BarChart2, label: 'Intelligence', id: 'tour-analytics' },
   ]
+
+  // Load conversations on mount
+  useEffect(() => {
+    refreshConversations()
+  }, [refreshConversations])
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString)
+    const now = new Date()
+    const diffDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24))
+
+    if (diffDays === 0) {
+      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    } else if (diffDays === 1) {
+      return 'Yesterday'
+    } else if (diffDays < 7) {
+      return date.toLocaleDateString([], { weekday: 'short' })
+    } else {
+      return date.toLocaleDateString([], { month: 'short', day: 'numeric' })
+    }
+  }
+
+  const handleNewChat = () => {
+    startNewConversation()
+    if (pathname !== '/dashboard') {
+      router.push('/dashboard')
+    }
+    onClose()
+  }
+
+  const handleSelectConversation = async (conversation: typeof conversations[0]) => {
+    await selectConversation(conversation)
+    if (pathname !== '/dashboard') {
+      router.push('/dashboard')
+    }
+    onClose()
+  }
+
+  const handleDeleteConversation = async (e: React.MouseEvent, id: number) => {
+    e.stopPropagation()
+    if (!confirm('Delete this conversation?')) return
+    await removeConversation(id)
+  }
 
   // Extract user data similar to UserProfileCard
   const isCustomUser = userData && ('avatar_url' in userData || 'first_name' in userData)
@@ -139,10 +195,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle, onOpenSett
           {/* New Chat Button */}
           <div className="p-4">
             <button
-              onClick={() => {
-                // Logic for new chat would go here
-                onClose()
-              }}
+              onClick={handleNewChat}
               className={`w-full flex items-center gap-3 p-2 rounded-md bg-primary text-white shadow-lg shadow-primary/20 hover:bg-primary-hover transition-colors ${
                 !isOpen ? 'md:justify-center' : ''
               }`}
@@ -153,7 +206,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle, onOpenSett
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 px-4 space-y-2">
+          <nav className="px-4 space-y-2">
             {navItems.map((item) => (
               <NavLink
                 key={item.href}
@@ -168,6 +221,60 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle, onOpenSett
               </NavLink>
             ))}
           </nav>
+
+          {/* Recent Chats */}
+          {isOpen && (
+            <div className="flex-1 mt-4 px-4 overflow-y-auto">
+              <p className="text-xs font-medium text-zinc-400 dark:text-zinc-500 uppercase tracking-wider mb-2 px-2">
+                Recent Chats
+              </p>
+              {isLoadingConversations ? (
+                <div className="space-y-2">
+                  {[...Array(3)].map((_, i) => (
+                    <div key={i} className="animate-pulse h-12 bg-zinc-100 dark:bg-zinc-800 rounded-md" />
+                  ))}
+                </div>
+              ) : conversations.length === 0 ? (
+                <div className="text-center py-4 text-zinc-400 dark:text-zinc-500">
+                  <MessageSquare className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                  <p className="text-xs">No conversations yet</p>
+                </div>
+              ) : (
+                <div className="space-y-1">
+                  {conversations.slice(0, 10).map((conversation) => (
+                    <button
+                      key={conversation.id}
+                      onClick={() => handleSelectConversation(conversation)}
+                      className={`w-full text-left p-2 rounded-md transition-colors group ${
+                        selectedConversationId === conversation.id
+                          ? 'bg-zinc-100 dark:bg-zinc-800'
+                          : 'hover:bg-zinc-50 dark:hover:bg-zinc-800/50'
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">
+                            {conversation.title}
+                          </p>
+                          <div className="flex items-center gap-1 mt-0.5 text-xs text-zinc-400">
+                            <Clock className="w-3 h-3" />
+                            <span>{formatDate(conversation.lastUpdated)}</span>
+                          </div>
+                        </div>
+                        <button
+                          onClick={(e) => handleDeleteConversation(e, conversation.id)}
+                          className="p-1 rounded opacity-0 group-hover:opacity-100 hover:bg-red-100 dark:hover:bg-red-900/30 text-zinc-400 hover:text-red-500 transition-all"
+                          title="Delete"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Footer */}
           <div className="p-4 border-t border-zinc-200 dark:border-zinc-800">
