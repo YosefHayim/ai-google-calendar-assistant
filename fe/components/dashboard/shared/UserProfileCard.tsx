@@ -1,10 +1,9 @@
 'use client'
 
-import React from 'react'
-import Image from 'next/image'
-import { User as UserIcon } from 'lucide-react'
-import { useUser } from '@/hooks/queries/auth/useUser'
 import { CustomUser } from '@/types/api'
+import Image from 'next/image'
+import React from 'react'
+import { useUser } from '@/hooks/queries/auth/useUser'
 
 interface UserProfileCardProps {
   isOpen: boolean
@@ -34,12 +33,12 @@ const UserProfileCard: React.FC<UserProfileCardProps> = ({ isOpen }) => {
   const customUser = isCustomUser ? (userData as CustomUser) : null
   const standardUser = !isCustomUser ? userData : null
 
-  const firstName = customUser?.first_name || standardUser?.user_metadata?.first_name || ''
-  const lastName = customUser?.last_name || standardUser?.user_metadata?.last_name || ''
-  const avatarUrl = customUser?.avatar_url || standardUser?.user_metadata?.avatar_url
-  const email = customUser?.email || standardUser?.email || ''
-  const fullName = [firstName, lastName].filter(Boolean).join(' ') || 'User'
-  const initials = `${firstName?.[0] || ''}${lastName?.[0] || ''}`.toUpperCase() || 'U'
+  const firstName = customUser?.first_name
+  const lastName = customUser?.last_name
+  const avatarUrl = customUser?.avatar_url
+  const email = customUser?.email || standardUser?.email
+  const fullName = [firstName, lastName].filter(Boolean).join(' ')
+  const initials = `${firstName?.[0]}${lastName?.[0]}`.toUpperCase()
 
   return (
     <div className={`flex items-center gap-3 p-2 rounded-md ${!isOpen ? 'md:justify-center' : ''}`}>

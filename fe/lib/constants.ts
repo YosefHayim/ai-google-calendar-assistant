@@ -42,3 +42,21 @@ export const QUERY_CONFIG = {
   /** GC time for inactive queries (5 minutes) */
   GC_TIME: 5 * TIME.MINUTE,
 } as const
+
+// Calendar and time constants
+export const CALENDAR_CONSTANTS = {
+  /** Waking hours per day (assuming ~8 hours of sleep) */
+  WAKING_HOURS_PER_DAY: 16,
+  /** Sleep hours per day */
+  SLEEP_HOURS: 7,
+  /** Total available hours per day (24 - sleep) */
+  TOTAL_AVAILABLE_HOURS: 17,
+} as const
+
+// Date formatting constants
+export const DATE_CONSTANTS = {
+  /** Month labels for calendar displays */
+  MONTH_LABELS: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+  /** Week day labels */
+  WEEK_DAYS: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+} as const

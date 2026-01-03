@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
-import { STATUS_RESPONSE } from "@/config";
+import { STATUS_RESPONSE, SUPABASE } from "@/config";
 import { asyncHandler, sendR } from "@/utils/http";
 import { checkTokenExpiry, fetchGoogleTokensByEmail, type TokenExpiryStatus } from "@/utils/auth/google-token";
 import type { TokensProps } from "@/types";
@@ -40,12 +40,22 @@ export const googleTokenValidation = asyncHandler(async (req: Request, res: Resp
   const { data: tokens, error } = await fetchGoogleTokensByEmail(normalizedEmail);
 
   if (error) {
-    console.error("Google token validation DB error:", error);
+    console.error(`[Token Validation] DB error for ${normalizedEmail}:`, error);
     return sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, `Database error: ${error}`);
   }
 
   if (!tokens) {
     console.log(`[Token Validation] No tokens found for: ${normalizedEmail}`);
+    console.log(`[Token Validation] User email from session: ${email}`);
+    console.log(`[Token Validation] Normalized email used for lookup: ${normalizedEmail}`);
+
+    // Additional debug: Try to see if any tokens exist for this user
+    const { data: debugData } = await SUPABASE.from("user_calendar_tokens")
+      .select("email, is_active")
+      .ilike("email", `%${normalizedEmail.split("@")[0]}%`)
+      .limit(5);
+    console.log(`[Token Validation] Debug: Found ${debugData?.length || 0} similar email records`);
+
     return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "Google Calendar not connected. Please authorize access to your calendar.");
   }
 

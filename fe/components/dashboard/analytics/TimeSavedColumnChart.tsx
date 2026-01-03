@@ -1,7 +1,9 @@
 'use client'
 
 import React, { useRef, useState } from 'react'
+import { calculateAvailableHoursLeft, calculateMax } from '@/lib/dataUtils'
 
+import { CALENDAR_CONSTANTS } from '@/lib/constants'
 import { format } from 'date-fns'
 import { motion } from 'framer-motion'
 import { useContainerDimensions } from '@/hooks/useContainerDimensions'
@@ -29,10 +31,11 @@ const TimeSavedColumnChart: React.FC<TimeSavedColumnChartProps> = ({ data }) => 
   }
 
   const padding = 20
-  const SLEEP_HOURS = 7
-  // Calculate available hours (total 24 - sleep 7 = 17)
-  const TOTAL_AVAILABLE_HOURS = 24 - SLEEP_HOURS
-  const maxY = Math.max(...data.map((d) => d.hours), 1) * 1.1
+  const maxY =
+    calculateMax(
+      data.map((d) => d.hours),
+      1,
+    ) * 1.1
   const barSpacing = 2
   const availableWidth = width - padding * 2
   const barWidth = Math.max(2, (availableWidth - (data.length - 1) * barSpacing) / data.length)
@@ -40,11 +43,6 @@ const TimeSavedColumnChart: React.FC<TimeSavedColumnChartProps> = ({ data }) => 
 
   const getY = (hours: number) => padding + plotHeight - (hours / maxY) * plotHeight
   const getBarHeight = (hours: number) => (hours / maxY) * plotHeight
-
-  // Calculate available hours left for each data point
-  const getAvailableHoursLeft = (hours: number) => {
-    return Math.max(0, TOTAL_AVAILABLE_HOURS - hours)
-  }
 
   return (
     <div ref={containerRef} className="relative w-full">
@@ -129,7 +127,7 @@ const TimeSavedColumnChart: React.FC<TimeSavedColumnChartProps> = ({ data }) => 
       {hoveredIndex !== null &&
         (() => {
           const point = data[hoveredIndex]
-          const availableHoursLeft = getAvailableHoursLeft(point.hours)
+          const availableHoursLeft = calculateAvailableHoursLeft(point.hours, CALENDAR_CONSTANTS.TOTAL_AVAILABLE_HOURS)
           const dateObj = new Date(point.date)
           const formattedDate = format(dateObj, 'MMM dd, yyyy')
 

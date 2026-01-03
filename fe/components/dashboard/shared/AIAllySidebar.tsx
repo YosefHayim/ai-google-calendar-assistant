@@ -7,13 +7,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { AIVoiceInput } from '@/components/ui/ai-voice-input'
 import { VoicePoweredOrb } from '@/components/ui/voice-powered-orb'
 import { cn } from '@/lib/utils'
-
-declare global {
-  interface Window {
-    SpeechRecognition: any
-    webkitSpeechRecognition: any
-  }
-}
+import { useSpeechRecognition } from '@/components/dashboard/chat/useSpeechRecognition'
 
 interface AIAllySidebarProps {
   isOpen: boolean
@@ -152,94 +146,16 @@ const AIAllySidebar: React.FC<AIAllySidebarProps> = ({ isOpen, onClose, onOpen }
     { id: 1, text: "Hey! I'm Ally, your AI assistant. How can I help optimize your calendar today?", isUser: false },
   ])
   const [inputText, setInputText] = useState('')
-  const [isRecording, setIsRecording] = useState(false)
   const [isTyping, setIsTyping] = useState(false)
-  const [interimTranscription, setInterimTranscription] = useState('')
-  const [speechRecognitionSupported, setSpeechRecognitionSupported] = useState(false)
-  const [speechRecognitionError, setSpeechRecognitionError] = useState<string | null>(null)
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
-  const speechRecognitionRef = useRef<any | null>(null)
-  const isRecognitionRunning = useRef<boolean>(false)
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }
-
-  useEffect(() => {
-    scrollToBottom()
-  }, [messages, isTyping])
-
-  useEffect(() => {
-    if (isOpen && inputRef.current && !isRecording) {
-      setTimeout(() => inputRef.current?.focus(), 300)
-    }
-  }, [isOpen, isRecording])
-
-  // Initialize speech recognition
-  useEffect(() => {
-    if (typeof window !== 'undefined' && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
-      const recognition = new SpeechRecognition()
-      recognition.continuous = false
-      recognition.interimResults = true
-      recognition.lang = 'en-US'
-
-      recognition.onresult = (event: any) => {
-        let interim = ''
-        let final = ''
-        for (let i = event.resultIndex; i < event.results.length; ++i) {
-          if (event.results[i].isFinal) {
-            final += event.results[i][0].transcript
-          } else {
-            interim += event.results[i][0].transcript
-          }
-        }
-        setInterimTranscription(interim)
-        if (final) {
-          handleStopRecording(final)
-        }
-      }
-
-      recognition.onerror = (event: any) => {
-        if (event.error !== 'aborted') {
-          console.error('Speech recognition error:', event.error)
-          if (event.error === 'not-allowed') {
-            setSpeechRecognitionError('Microphone access denied.')
-          }
-        }
-        setIsRecording(false)
-        isRecognitionRunning.current = false
-        setInterimTranscription('')
-      }
-
-      recognition.onend = () => {
-        isRecognitionRunning.current = false
-        setIsRecording(false)
-      }
-
-      speechRecognitionRef.current = recognition
-      setSpeechRecognitionSupported(true)
-    } else {
-      setSpeechRecognitionError('Speech-to-Text not supported in this browser.')
-    }
-
-    return () => {
-      if (speechRecognitionRef.current && isRecognitionRunning.current) {
-        try {
-          speechRecognitionRef.current.stop()
-        } catch (e) {}
-      }
-    }
-  }, [])
 
   const handleSendMessage = (textToSend: string = inputText) => {
     if (!textToSend.trim()) return
     const newMessage = { id: messages.length + 1, text: textToSend, isUser: true }
     setMessages((prev) => [...prev, newMessage])
     setInputText('')
-    setInterimTranscription('')
     setIsTyping(true)
 
     // Simulate AI response
@@ -256,61 +172,51 @@ const AIAllySidebar: React.FC<AIAllySidebarProps> = ({ isOpen, onClose, onOpen }
     }, 1500)
   }
 
-  const handleStopRecording = (finalTranscription: string | null) => {
-    if (speechRecognitionRef.current && isRecognitionRunning.current) {
-      try {
-        speechRecognitionRef.current.stop()
-      } catch (e) {}
-      isRecognitionRunning.current = false
-    }
-    setIsRecording(false)
+  // Use the shared speech recognition hook
+  const {
+    isRecording,
+    speechRecognitionSupported,
+    speechRecognitionError,
+    interimTranscription,
+    startRecording,
+    stopRecording,
+    cancelRecording,
+    toggleRecording,
+  } = useSpeechRecognition(handleSendMessage)
 
-    const textToSend = finalTranscription || interimTranscription
-    setInterimTranscription('')
-
-    if (textToSend.trim()) {
-      handleSendMessage(textToSend)
-    }
+  // Handler wrappers for AIVoiceInput component
+  const handleStartRecording = () => {
+    startRecording()
   }
 
-  const handleStartRecording = async () => {
-    if (isRecognitionRunning.current) return
-
-    try {
-      await navigator.mediaDevices.getUserMedia({ audio: true })
-      setSpeechRecognitionError(null)
-
-      if (speechRecognitionRef.current) {
-        setInterimTranscription('')
-        speechRecognitionRef.current.start()
-        isRecognitionRunning.current = true
-        setIsRecording(true)
-      }
-    } catch (err) {
-      setSpeechRecognitionError('Microphone access denied.')
-      setIsRecording(false)
-      isRecognitionRunning.current = false
-    }
-  }
-
-  const handleToggleRecording = () => {
-    if (isRecording || isRecognitionRunning.current) {
-      handleStopRecording(interimTranscription)
-    } else {
-      handleStartRecording()
+  const handleStopRecording = (text: string) => {
+    stopRecording()
+    if (text.trim()) {
+      handleSendMessage(text)
     }
   }
 
   const handleCancelRecording = () => {
-    if (speechRecognitionRef.current && isRecognitionRunning.current) {
-      try {
-        speechRecognitionRef.current.stop()
-      } catch (e) {}
-      isRecognitionRunning.current = false
-    }
-    setIsRecording(false)
-    setInterimTranscription('')
+    cancelRecording()
   }
+
+  const handleToggleRecording = () => {
+    toggleRecording()
+  }
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }
+
+  useEffect(() => {
+    scrollToBottom()
+  }, [messages, isTyping])
+
+  useEffect(() => {
+    if (isOpen && inputRef.current && !isRecording) {
+      setTimeout(() => inputRef.current?.focus(), 300)
+    }
+  }, [isOpen, isRecording])
 
   const quickActions = [
     { label: 'Optimize schedule', emoji: '📅' },

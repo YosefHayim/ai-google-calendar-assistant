@@ -35,19 +35,22 @@ const validateGoogleTokens = async (ctx: GlobalContext, email: string): Promise<
   }
 
   if (!tokens) {
-    const authUrl = generateGoogleAuthUrl();
+    // First-time authentication - force consent screen
+    const authUrl = generateGoogleAuthUrl({ forceConsent: true });
     await ctx.reply(`To help you manage your calendar, I need access to your Google Calendar. Please authorize:\n\n${authUrl}`);
     return null;
   }
 
   if (!tokens.is_active) {
-    const authUrl = generateGoogleAuthUrl();
+    // Re-authentication required - force consent screen
+    const authUrl = generateGoogleAuthUrl({ forceConsent: true });
     await ctx.reply(`Your Google Calendar access has been revoked. Please reconnect:\n\n${authUrl}`);
     return null;
   }
 
   if (!tokens.refresh_token) {
-    const authUrl = generateGoogleAuthUrl();
+    // Missing refresh token - force consent screen to get one
+    const authUrl = generateGoogleAuthUrl({ forceConsent: true });
     await ctx.reply(`Missing calendar permissions. Please reconnect with full access:\n\n${authUrl}`);
     return null;
   }
@@ -105,7 +108,8 @@ const refreshGoogleTokensIfNeeded = async (ctx: GlobalContext, validation: Teleg
 
     if (message.startsWith("REAUTH_REQUIRED:")) {
       await deactivateGoogleTokens(email);
-      const authUrl = generateGoogleAuthUrl();
+      // Re-authentication required - force consent screen
+      const authUrl = generateGoogleAuthUrl({ forceConsent: true });
       await ctx.reply(`Your Google Calendar session has expired. Please reconnect:\n\n${authUrl}`);
       return null;
     }

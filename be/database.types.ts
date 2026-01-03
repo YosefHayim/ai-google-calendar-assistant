@@ -229,12 +229,15 @@ export type Database = {
       user_calendar_tokens: {
         Row: {
           access_token: string | null
+          avatar_url: string | null
           created_at: string
           email: string | null
           expiry_date: number | null
+          first_name: string | null
           id: number
           id_token: string | null
           is_active: boolean | null
+          last_name: string | null
           refresh_token: string | null
           refresh_token_expires_in: number | null
           scope: string | null
@@ -242,16 +245,19 @@ export type Database = {
           timezone: string | null
           token_type: string | null
           updated_at: string | null
-          user_id: string
+          user_id: string | null
         }
         Insert: {
           access_token?: string | null
+          avatar_url?: string | null
           created_at?: string
           email?: string | null
           expiry_date?: number | null
+          first_name?: string | null
           id?: number
           id_token?: string | null
           is_active?: boolean | null
+          last_name?: string | null
           refresh_token?: string | null
           refresh_token_expires_in?: number | null
           scope?: string | null
@@ -259,16 +265,19 @@ export type Database = {
           timezone?: string | null
           token_type?: string | null
           updated_at?: string | null
-          user_id?: string
+          user_id?: string | null
         }
         Update: {
           access_token?: string | null
+          avatar_url?: string | null
           created_at?: string
           email?: string | null
           expiry_date?: number | null
+          first_name?: string | null
           id?: number
           id_token?: string | null
           is_active?: boolean | null
+          last_name?: string | null
           refresh_token?: string | null
           refresh_token_expires_in?: number | null
           scope?: string | null
@@ -276,7 +285,7 @@ export type Database = {
           timezone?: string | null
           token_type?: string | null
           updated_at?: string | null
-          user_id?: string
+          user_id?: string | null
         }
         Relationships: []
       }
