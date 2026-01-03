@@ -2,6 +2,7 @@ import { SUPABASE } from "@/config";
 import { TOKEN_FIELDS } from "@/config/constants/sql";
 import type { TokensProps } from "@/types";
 import { asyncHandler } from "../http/async-handlers";
+import { logger } from "../logger";
 
 /**
  * Fetch credentials by email
@@ -14,6 +15,7 @@ import { asyncHandler } from "../http/async-handlers";
  *
  */
 export const fetchCredentialsByEmail = asyncHandler(async (email: string): Promise<TokensProps> => {
+  logger.info(`Auth: fetchCredentialsByEmail called: email: ${email}`);
   // Use ilike for safety, and maybeSingle to handle 0 or 1 result gracefully
   const { data, error } = await SUPABASE.from("user_calendar_tokens")
     .select(TOKEN_FIELDS)
@@ -22,10 +24,13 @@ export const fetchCredentialsByEmail = asyncHandler(async (email: string): Promi
     .maybeSingle();
 
   if (error) {
+    logger.error(`Auth: fetchCredentialsByEmail called: error: ${error}`);
     throw new Error(`DB Error: ${error.message}`);
   }
   if (!data) {
+    logger.error(`Auth: fetchCredentialsByEmail called: no data found for email: ${email}`);
     throw new Error(`No credentials found for ${email}`);
   }
+  logger.info(`Auth: fetchCredentialsByEmail called: data found for email: ${email}`);
   return data as TokensProps;
 });

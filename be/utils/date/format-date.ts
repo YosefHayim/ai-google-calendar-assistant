@@ -1,23 +1,31 @@
 // src/utils/format-date.ts
+
+import { logger } from "../logger";
+
 const formatDate = (date: Date | string | null | undefined, withTime = false, desiredLanguage = "he-IL"): string => {
   if (!date) {
+    logger.error(`Date: formatDate called: date not found`);
     return "Invalid date";
   }
 
   let parsed: Date;
+  logger.info(`Date: formatDate called: date: ${date}`);
   if (typeof date === "string") {
     parsed = new Date(date);
   } else if (date instanceof Date) {
     parsed = date;
   } else {
+    logger.error(`Date: formatDate called: invalid date`);
     return "Invalid date";
   }
 
   if (Number.isNaN(parsed.getTime())) {
+    logger.error(`Date: formatDate called: invalid date`);
     return "Invalid date";
   }
 
   if (withTime) {
+    logger.info(`Date: formatDate called: withTime: ${withTime}`);
     return parsed.toLocaleDateString(desiredLanguage, {
       weekday: "long",
       year: "numeric",
@@ -27,13 +35,15 @@ const formatDate = (date: Date | string | null | undefined, withTime = false, de
       minute: "numeric",
     });
   }
-
-  return parsed.toLocaleDateString(desiredLanguage, {
+  logger.info(`Date: formatDate called: without time`);
+  const formattedDate = parsed.toLocaleDateString(desiredLanguage, {
     weekday: "long",
     year: "numeric",
     month: "long",
     day: "numeric",
   });
+  logger.info(`Date: formatDate called: formattedDate: ${formattedDate}`);
+  return formattedDate;
 };
 
 export default formatDate;

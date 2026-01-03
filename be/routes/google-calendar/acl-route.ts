@@ -4,6 +4,7 @@ import { STATUS_RESPONSE } from "@/config";
 import aclController from "@/controllers/google-calendar/acl-controller";
 import { googleTokenRefresh } from "@/middlewares/google-token-refresh";
 import { googleTokenValidation } from "@/middlewares/google-token-validation";
+import { logger } from "@/utils/logger";
 import { sendR } from "@/utils/http";
 import { supabaseAuth } from "@/middlewares/supabase-auth";
 
@@ -13,16 +14,22 @@ const router = express.Router();
 router.use(supabaseAuth(), googleTokenValidation, googleTokenRefresh());
 
 router.param("calendarId", (_req: Request, res: Response, next: NextFunction, calendarId: string) => {
+  logger.info(`Google Calendar: ACL: calendarId: ${calendarId}`);
   if (!calendarId) {
+    logger.error(`Google Calendar: ACL: calendarId not found`);
     return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar ID parameter is required.");
   }
+  logger.info(`Google Calendar: ACL: calendarId found: ${calendarId}`);
   next();
 });
 
 router.param("ruleId", (_req: Request, res: Response, next: NextFunction, ruleId: string) => {
+  logger.info(`Google Calendar: ACL: ruleId: ${ruleId}`);
   if (!ruleId) {
+    logger.error(`Google Calendar: ACL: ruleId not found`);
     return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Rule ID parameter is required.");
   }
+  logger.info(`Google Calendar: ACL: ruleId found: ${ruleId}`);
   next();
 });
 

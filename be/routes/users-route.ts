@@ -1,6 +1,7 @@
 import express, { NextFunction, Request, Response } from "express";
 
 import { STATUS_RESPONSE } from "@/config";
+import { logger } from "@/utils/logger";
 import { sendR } from "@/utils/http";
 import { supabaseAuth } from "@/middlewares/supabase-auth";
 import { userController } from "@/controllers/users-controller";
@@ -8,10 +9,12 @@ import { userController } from "@/controllers/users-controller";
 const router = express.Router();
 
 router.param("id", (_req: Request, res: Response, next: NextFunction, id: string) => {
+  logger.info(`Users: id: ${id}`);
   if (!id) {
+    logger.error(`Users: id not found`);
     return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "User ID parameter is required in order to get user information.");
   }
-
+  logger.info(`Users: id found: ${id}`);
   next();
 });
 

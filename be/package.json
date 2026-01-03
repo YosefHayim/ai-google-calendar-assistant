@@ -8,6 +8,7 @@
     "check": "npx ultracite check",
     "dev": "bun --watch app.ts",
     "fix": "npx ultracite fix --unsafe",
+    "format": "npx biome check --write . && npx biome fix --write .",
     "sort": "npx sort-package-json",
     "start": "bun app.ts",
     "test": "bun run jest",
@@ -44,7 +45,6 @@
     "zod": "^3.25.67"
   },
   "devDependencies": {
-    "winston": "^3.19.0",
     "@biomejs/biome": "2.3.4",
     "@eslint/js": "^9.39.1",
     "@types/cookie-parser": "^1.4.10",
@@ -70,7 +70,8 @@
     "tslib": "^2.8.1",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.46.3",
-    "ultracite": "5.6.4"
+    "ultracite": "5.6.4",
+    "winston": "^3.19.0"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

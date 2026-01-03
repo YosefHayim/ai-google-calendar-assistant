@@ -3,6 +3,7 @@ import { OAUTH2CLIENT, REDIRECT_URI, SCOPES, SUPABASE, env } from "@/config";
 import { TOKEN_FIELDS } from "@/config/constants/sql";
 import type { TokensProps } from "@/types";
 import { google } from "googleapis";
+import { logger } from "../logger";
 
 /**
  * Create a fresh OAuth2Client instance for token refresh
@@ -80,14 +81,15 @@ export type RefreshedGoogleToken = {
  */
 export const checkTokenExpiry = (expiryDate: number | null | undefined): TokenExpiryStatus => {
   if (!expiryDate) {
+    logger.info(`Auth: checkTokenExpiry called: no expiry date`);
     // No expiry date means we can't validate - treat as potentially expired
     return { isExpired: true, isNearExpiry: true, expiresInMs: null };
   }
 
   const now = Date.now();
-
+  logger.info(`Auth: checkTokenExpiry called: now: ${now}`);
   const expiresInMs = expiryDate - now;
-
+  logger.info(`Auth: checkTokenExpiry called: expiresInMs: ${expiresInMs}`);
   return {
     isExpired: expiresInMs <= 0,
     isNearExpiry: expiresInMs > 0 && expiresInMs <= NEAR_EXPIRY_BUFFER_MS,
@@ -103,18 +105,16 @@ export const checkTokenExpiry = (expiryDate: number | null | undefined): TokenEx
  */
 export const fetchGoogleTokensByEmail = async (email: string): Promise<{ data: TokensProps | null; error: string | null }> => {
   const normalizedEmail = email.toLowerCase().trim();
-
+  logger.info(`Auth: fetchGoogleTokensByEmail called: normalizedEmail: ${normalizedEmail}`);
   const { data, error } = await SUPABASE.from("user_calendar_tokens").select(TOKEN_FIELDS).ilike("email", normalizedEmail).limit(1).maybeSingle();
 
   if (error) {
+    logger.error(`Auth: fetchGoogleTokensByEmail called: error: ${error}`);
     console.error(`[fetchGoogleTokensByEmail] Database error for ${normalizedEmail}:`, error);
     return { data: null, error: error.message };
   }
 
-  if (!data) {
-  } else {
-  }
-
+  logger.info(`Auth: fetchGoogleTokensByEmail called: data: ${data}`);
   return { data: data as TokensProps | null, error: null };
 };
 

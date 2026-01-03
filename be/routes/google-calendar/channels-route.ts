@@ -1,6 +1,5 @@
-import express from "express";
-
 import channelsController from "@/controllers/google-calendar/channels-controller";
+import express from "express";
 import { googleTokenRefresh } from "@/middlewares/google-token-refresh";
 import { googleTokenValidation } from "@/middlewares/google-token-validation";
 import { supabaseAuth } from "@/middlewares/supabase-auth";

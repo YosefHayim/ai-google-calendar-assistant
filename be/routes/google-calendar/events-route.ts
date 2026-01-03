@@ -4,6 +4,7 @@ import { STATUS_RESPONSE } from "@/config";
 import eventsController from "@/controllers/google-calendar/events-controller";
 import { googleTokenRefresh } from "@/middlewares/google-token-refresh";
 import { googleTokenValidation } from "@/middlewares/google-token-validation";
+import { logger } from "@/utils/logger";
 import { sendR } from "@/utils/http";
 import { supabaseAuth } from "@/middlewares/supabase-auth";
 
@@ -13,17 +14,19 @@ const router = express.Router();
 router.use(supabaseAuth(), googleTokenValidation, googleTokenRefresh());
 
 router.param("id", (_req: Request, res: Response, next: NextFunction, id: string) => {
+  logger.info(`Google Calendar: Events: id: ${id}`);
   if (!id) {
+    logger.error(`Google Calendar: Events: id not found`);
     return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Event ID parameter is required.");
   }
-
+  logger.info(`Google Calendar: Events: id found: ${id}`);
   next();
 });
 
 // get all the events of the user
 router.get("/", eventsController.getAllEvents);
 
-// get event analytics by start date and end date 
+// get event analytics by start date and end date
 router.get("/analytics", eventsController.getEventAnalytics);
 
 // quick add an event

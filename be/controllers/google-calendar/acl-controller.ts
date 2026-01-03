@@ -4,6 +4,7 @@ import { reqResAsyncHandler, sendR } from "@/utils/http";
 import { STATUS_RESPONSE } from "@/config";
 import { fetchCredentialsByEmail } from "@/utils/auth";
 import { initUserSupabaseCalendarWithTokensAndUpdateTokens } from "@/utils/calendar";
+import { logger } from "@/utils/logger";
 
 /**
 
@@ -14,8 +15,10 @@ import { initUserSupabaseCalendarWithTokensAndUpdateTokens } from "@/utils/calen
  * @returns {Promise<void>} The response object.
  */
 const listAclRules = reqResAsyncHandler(async (req: Request, res: Response) => {
+  logger.info(`Google Calendar: ACL: listAclRules called: ${req.params.calendarId}`);
   const tokenData = await fetchCredentialsByEmail(req.user?.email!);
   if (!tokenData) {
+    logger.error(`Google Calendar: ACL: listAclRules called: User credentials not found.`);
     return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User credentials not found.");
   }
 
@@ -25,6 +28,7 @@ const listAclRules = reqResAsyncHandler(async (req: Request, res: Response) => {
     showDeleted: req.query.showDeleted === "true",
   });
 
+  logger.info(`Google Calendar: ACL: listAclRules called: Successfully retrieved ACL rules: ${r.data}`);
   sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully retrieved ACL rules", r.data);
 });
 
@@ -38,6 +42,7 @@ const listAclRules = reqResAsyncHandler(async (req: Request, res: Response) => {
 const getAclRule = reqResAsyncHandler(async (req: Request, res: Response) => {
   const tokenData = await fetchCredentialsByEmail(req.user?.email!);
   if (!tokenData) {
+    logger.error(`Google Calendar: ACL: getAclRule called: User credentials not found.`);
     return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User credentials not found.");
   }
 
@@ -47,6 +52,7 @@ const getAclRule = reqResAsyncHandler(async (req: Request, res: Response) => {
     ruleId: req.params.ruleId,
   });
 
+  logger.info(`Google Calendar: ACL: getAclRule called: Successfully retrieved ACL rule: ${r.data}`);
   sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully retrieved ACL rule", r.data);
 });
 
@@ -60,6 +66,7 @@ const getAclRule = reqResAsyncHandler(async (req: Request, res: Response) => {
 const insertAclRule = reqResAsyncHandler(async (req: Request, res: Response) => {
   const tokenData = await fetchCredentialsByEmail(req.user?.email!);
   if (!tokenData) {
+    logger.error(`Google Calendar: ACL: insertAclRule called: User credentials not found.`);
     return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User credentials not found.");
   }
 
@@ -76,6 +83,7 @@ const insertAclRule = reqResAsyncHandler(async (req: Request, res: Response) => 
     },
   });
 
+  logger.info(`Google Calendar: ACL: insertAclRule called: ACL rule created successfully: ${r.data}`);
   sendR(res, STATUS_RESPONSE.CREATED, "ACL rule created successfully", r.data);
 });
 
@@ -89,6 +97,7 @@ const insertAclRule = reqResAsyncHandler(async (req: Request, res: Response) => 
 const patchAclRule = reqResAsyncHandler(async (req: Request, res: Response) => {
   const tokenData = await fetchCredentialsByEmail(req.user?.email!);
   if (!tokenData) {
+    logger.error(`Google Calendar: ACL: patchAclRule called: User credentials not found.`);
     return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User credentials not found.");
   }
 
@@ -100,6 +109,7 @@ const patchAclRule = reqResAsyncHandler(async (req: Request, res: Response) => {
     requestBody: req.body,
   });
 
+  logger.info(`Google Calendar: ACL: patchAclRule called: ACL rule patched successfully: ${r.data}`);
   sendR(res, STATUS_RESPONSE.SUCCESS, "ACL rule patched successfully", r.data);
 });
 
@@ -113,6 +123,7 @@ const patchAclRule = reqResAsyncHandler(async (req: Request, res: Response) => {
 const updateAclRule = reqResAsyncHandler(async (req: Request, res: Response) => {
   const tokenData = await fetchCredentialsByEmail(req.user?.email!);
   if (!tokenData) {
+    logger.error(`Google Calendar: ACL: updateAclRule called: User credentials not found.`);
     return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User credentials not found.");
   }
 
@@ -124,6 +135,7 @@ const updateAclRule = reqResAsyncHandler(async (req: Request, res: Response) => 
     requestBody: req.body,
   });
 
+  logger.info(`Google Calendar: ACL: updateAclRule called: ACL rule updated successfully: ${r.data}`);
   sendR(res, STATUS_RESPONSE.SUCCESS, "ACL rule updated successfully", r.data);
 });
 
@@ -137,6 +149,7 @@ const updateAclRule = reqResAsyncHandler(async (req: Request, res: Response) => 
 const deleteAclRule = reqResAsyncHandler(async (req: Request, res: Response) => {
   const tokenData = await fetchCredentialsByEmail(req.user?.email!);
   if (!tokenData) {
+    logger.error(`Google Calendar: ACL: deleteAclRule called: User credentials not found.`);
     return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User credentials not found.");
   }
 
@@ -146,6 +159,7 @@ const deleteAclRule = reqResAsyncHandler(async (req: Request, res: Response) => 
     ruleId: req.params.ruleId,
   });
 
+  logger.info(`Google Calendar: ACL: deleteAclRule called: ACL rule deleted successfully: ${req.params.ruleId}`);
   sendR(res, STATUS_RESPONSE.SUCCESS, "ACL rule deleted successfully");
 });
 
@@ -159,6 +173,7 @@ const deleteAclRule = reqResAsyncHandler(async (req: Request, res: Response) => 
 const watchAcl = reqResAsyncHandler(async (req: Request, res: Response) => {
   const tokenData = await fetchCredentialsByEmail(req.user?.email!);
   if (!tokenData) {
+    logger.error(`Google Calendar: ACL: watchAcl called: User credentials not found.`);
     return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User credentials not found.");
   }
 
@@ -176,6 +191,7 @@ const watchAcl = reqResAsyncHandler(async (req: Request, res: Response) => {
     },
   });
 
+  logger.info(`Google Calendar: ACL: watchAcl called: ACL watch created successfully: ${r.data}`);
   sendR(res, STATUS_RESPONSE.SUCCESS, "ACL watch created successfully", r.data);
 });
 

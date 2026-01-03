@@ -22,6 +22,7 @@ import {
   storeEmbeddingAsync,
   getRelevantContext,
 } from "./utils";
+import { logger } from "@/utils/logger";
 
 export type GlobalContext = SessionFlavor<SessionData> & Context;
 
@@ -232,14 +233,17 @@ const handlePendingConfirmation = async (ctx: GlobalContext, text: string): Prom
 
   switch (action) {
     case MessageAction.CONFIRM:
+      logger.info(`Telegram Bot: Pending confirmation flow: ${text}`);
       await handleConfirmation(ctx);
       break;
 
     case MessageAction.CANCEL:
+      logger.info(`Telegram Bot: Pending confirmation flow: ${text}`);
       await handleCancellation(ctx);
       break;
 
     case MessageAction.OTHER:
+      logger.info(`Telegram Bot: Pending confirmation flow: ${text}`);
       await ctx.reply("You have a pending event creation. Please reply 'yes' to create despite conflicts, or 'no' to cancel.");
       break;
   }
@@ -250,6 +254,8 @@ bot.on("message", async (ctx) => {
   const msgId = ctx.message.message_id;
   const text = ctx.message.text;
 
+  logger.info(`Telegram Bot: Message received from ${ctx.from?.username}: ${text}`);
+
   // Ignore /start command (handled elsewhere)
   if (text?.includes(COMMANDS.START)) return;
 
@@ -258,6 +264,8 @@ bot.on("message", async (ctx) => {
 
   // Ignore non-text messages
   if (!text) return;
+
+  logger.info(`Telegram Bot: Message processed: ${text}`);
 
   // Handle commands
   switch (text) {
@@ -273,23 +281,27 @@ bot.on("message", async (ctx) => {
 
   // Handle pending confirmation flow
   if (ctx.session.pendingConfirmation) {
+    logger.info(`Telegram Bot: Pending confirmation flow: ${text}`);
     await handlePendingConfirmation(ctx, text);
     return;
   }
 
   // Prevent concurrent requests
   if (ctx.session.isProcessing) {
+    logger.info(`Telegram Bot: Concurrent requests: ${text}`);
     await ctx.reply("Hold on, I'm still working on your previous request...");
     return;
   }
 
   // Activate agent session if needed
   if (!ctx.session.agentActive) {
+    logger.info(`Telegram Bot: Agent active: ${text}`);
     ctx.session.agentActive = true;
     await ctx.reply("Type /exit to stop.");
   }
 
   // Process the message
+  logger.info(`Telegram Bot: Processing message: ${text}`);
   await handleAgentRequest(ctx, text);
 });
 
@@ -313,8 +325,10 @@ export const startTelegramBot = () => {
   // Handle graceful shutdown on termination signals
   const stopBot = async () => {
     if (runnerHandle) {
+      logger.info(`Telegram Bot: Stopping bot`);
       await runnerHandle.stop();
     }
+    logger.info(`Telegram Bot: Bot stopped`);
     process.exit(0);
   };
 
@@ -325,10 +339,12 @@ export const startTelegramBot = () => {
   process.on("unhandledRejection", (reason: unknown, _promise: Promise<unknown>) => {
     // Check if this is a Telegram-related error
     if (reason instanceof Error && (reason.message.includes("getUpdates") || reason.message.includes("Network request"))) {
+      logger.error(`Telegram Bot: Unhandled network error (this is handled by auto-retry): ${reason.message}`);
       console.error("[Telegram Bot] Unhandled network error (this is handled by auto-retry):", reason.message);
       // Don't crash - the auto-retry plugin will handle this
       return;
     }
+    logger.error(`Telegram Bot: Unhandled promise rejection: ${reason}`);
     console.error("[Telegram Bot] Unhandled promise rejection:", reason);
   });
 };

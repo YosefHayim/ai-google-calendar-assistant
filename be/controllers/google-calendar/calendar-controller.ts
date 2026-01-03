@@ -6,6 +6,7 @@ import type { User } from "@supabase/supabase-js";
 import type { calendar_v3 } from "googleapis";
 import { fetchCredentialsByEmail } from "@/utils/auth";
 import { initUserSupabaseCalendarWithTokensAndUpdateTokens } from "@/utils/calendar";
+import { logger } from "@/utils/logger";
 
 /**
  * Get all calendars
@@ -40,7 +41,9 @@ const getAllCalendars = reqResAsyncHandler(async (req: Request, res: Response) =
       };
     });
 
-    // await updateUserSupabaseCalendarCategories(calendar, user.email!, user.id);
+    logger.info(`Google Calendar: Calendar Controller: getAllCalendars called: allCalendars: ${allCalendars}`);
+
+    await updateUserSupabaseCalendarCategories(calendar, req.user?.email!, req.user?.id!);
 
     return sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully received all custom calendars", allCalendars);
   } else {
