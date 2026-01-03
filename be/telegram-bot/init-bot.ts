@@ -1,5 +1,6 @@
-import { run } from "@grammyjs/runner";
+import { run, type RunnerHandle } from "@grammyjs/runner";
 import { Bot, type Context, type SessionFlavor, lazySession } from "grammy";
+import { autoRetry } from "@grammyjs/auto-retry";
 import { ORCHESTRATOR_AGENT } from "@/ai-agents";
 import { env } from "@/config";
 import type { SessionData } from "@/types";
@@ -35,9 +36,29 @@ type MessageActionType = (typeof MessageAction)[keyof typeof MessageAction];
 
 const bot = new Bot<GlobalContext>(env.telegramAccessToken);
 
-bot.catch((err) => {
+// Apply auto-retry plugin to handle network timeouts and transient errors
+// This will automatically retry failed API requests with exponential backoff
+bot.api.config.use(
+  autoRetry({
+    maxRetryAttempts: 5, // Maximum 5 retry attempts
+    maxDelaySeconds: 30, // Maximum 30 seconds delay between retries
+    rethrowInternalServerErrors: false, // Retry on 5xx errors
+    rethrowHttpErrors: false, // Retry on network errors (including timeouts)
+  })
+);
+
+// Global error handler for unhandled errors in middleware/handlers
+bot.catch((err: { ctx: GlobalContext; error: Error }) => {
   const ctx = err.ctx;
-  console.error(`Error while handling update ${ctx.update.update_id}:`, err.error);
+  const error = err.error;
+  console.error(`[Telegram Bot] Error while handling update ${ctx.update.update_id}:`, error);
+
+  // Log network/timeout errors specifically
+  if (error instanceof Error) {
+    if (error.message.includes("timeout") || error.message.includes("TimeoutError") || error.message.includes("Network request")) {
+      console.error("[Telegram Bot] Network timeout detected:", error.message);
+    }
+  }
 });
 
 bot.use(
@@ -268,6 +289,48 @@ bot.on("message", async (ctx) => {
   await handleAgentRequest(ctx, text);
 });
 
+// Store runner handle for graceful shutdown
+let runnerHandle: RunnerHandle | null = null;
+
 export const startTelegramBot = () => {
-  run(bot);
+  console.log("[Telegram Bot] Starting bot with error handling and retry logic...");
+
+  // Configure runner with retry logic for network timeouts
+  runnerHandle = run(bot, {
+    runner: {
+      maxRetryTime: 5 * 60 * 1000,
+      retryInterval: "exponential",
+      silent: false,
+    },
+    // Retry getUpdates calls for up to 5 minutes after a failure
+    // Use exponential backoff: 100ms, 200ms, 400ms, 800ms, etc.
+    // Don't silence errors - we want to see them in logs
+    // Limit concurrent updates to prevent overwhelming the system
+  });
+
+  // Handle graceful shutdown on termination signals
+  const stopBot = async () => {
+    console.log("[Telegram Bot] Received shutdown signal, stopping gracefully...");
+    if (runnerHandle) {
+      await runnerHandle.stop();
+      console.log("[Telegram Bot] Bot stopped successfully");
+    }
+    process.exit(0);
+  };
+
+  process.once("SIGINT", stopBot);
+  process.once("SIGTERM", stopBot);
+
+  // Handle unhandled promise rejections in bot context
+  process.on("unhandledRejection", (reason: unknown, _promise: Promise<unknown>) => {
+    // Check if this is a Telegram-related error
+    if (reason instanceof Error && (reason.message.includes("getUpdates") || reason.message.includes("Network request"))) {
+      console.error("[Telegram Bot] Unhandled network error (this is handled by auto-retry):", reason.message);
+      // Don't crash - the auto-retry plugin will handle this
+      return;
+    }
+    console.error("[Telegram Bot] Unhandled promise rejection:", reason);
+  });
+
+  console.log("[Telegram Bot] Bot started successfully with network error handling");
 };

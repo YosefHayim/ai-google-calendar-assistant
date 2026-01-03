@@ -7,22 +7,40 @@ import {
   Brain,
   Check,
   CheckCircle2,
+  ChevronDown,
+  ChevronRight,
   Circle,
   Clock,
+  CreditCard,
+  Database,
+  FileCode,
+  Folder,
+  Github,
   Globe,
+  Image as ImageIcon,
   Info,
+  Key,
+  Linkedin,
   Loader2,
   Lock,
   LogOut,
+  Mail,
+  Map,
+  MessageSquare,
   MessageSquareX,
+  Play,
   Plus,
   RefreshCw,
   Settings,
   Share2,
   Shield,
+  Smartphone,
+  Terminal,
   Trash2,
   User,
+  Video,
   X,
+  Zap,
 } from 'lucide-react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { GoogleCalendarIcon, TelegramIcon, WhatsAppIcon } from '@/components/shared/Icons'
@@ -44,7 +62,19 @@ interface SettingsModalProps {
   toggleTheme: () => void
 }
 
-type Tab = 'general' | 'notifications' | 'security' | 'memory' | 'integrations' | 'language'
+type Tab =
+  | 'general'
+  | 'notifications'
+  | 'data_controls'
+  | 'security'
+  | 'account'
+  | 'memory'
+  | 'integrations'
+  | 'language'
+
+// ------------------------------------------------------------------
+// Helper Components
+// ------------------------------------------------------------------
 
 const ToggleRow: React.FC<{
   label: string
@@ -60,7 +90,6 @@ const ToggleRow: React.FC<{
         <Label className="text-zinc-900 dark:text-zinc-100" htmlFor={id}>
           {label}
         </Label>
-
         {description && (
           <HoverCard>
             <HoverCardTrigger asChild>
@@ -82,20 +111,97 @@ const ToggleRow: React.FC<{
   )
 }
 
+const SelectButton: React.FC<{ label: string; value: React.ReactNode; onClick?: () => void }> = ({
+  label,
+  value,
+  onClick,
+}) => (
+  <div className="flex items-center justify-between py-3 border-b border-zinc-100 dark:border-zinc-800 last:border-0">
+    <div className="text-sm font-medium text-zinc-900 dark:text-zinc-100">{label}</div>
+    <button
+      onClick={onClick}
+      className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm bg-white dark:bg-zinc-900 border border-transparent hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors text-zinc-600 dark:text-zinc-300"
+    >
+      <span>{value}</span>
+      <ChevronDown size={14} className="opacity-50" />
+    </button>
+  </div>
+)
+
+const NotificationSettingRow: React.FC<{
+  label: string
+  value: string
+  description: React.ReactNode
+}> = ({ label, value, description }) => (
+  <div className="py-3 border-b border-zinc-100 dark:border-zinc-800 last:border-0">
+    <div className="flex items-center justify-between mb-1">
+      <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100">{label}</span>
+      <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm bg-white dark:bg-zinc-900 border border-transparent hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors text-zinc-600 dark:text-zinc-300">
+        <span>{value}</span>
+        <ChevronDown size={14} className="opacity-50" />
+      </button>
+    </div>
+    <div className="text-xs text-zinc-500 dark:text-zinc-400 pr-12 leading-relaxed">{description}</div>
+  </div>
+)
+
+const DataControlRow: React.FC<{
+  label: string
+  action: React.ReactNode
+  danger?: boolean
+}> = ({ label, action, danger }) => (
+  <div className="flex items-center justify-between py-3 border-b border-zinc-100 dark:border-zinc-800 last:border-0">
+    <div className="text-sm font-medium text-zinc-900 dark:text-zinc-100">{label}</div>
+    {action}
+  </div>
+)
+
+const SecurityToggleRow: React.FC<{
+  label: string
+  checked: boolean
+  onChange: (c: boolean) => void
+  description: string
+}> = ({ label, checked, onChange, description }) => {
+  const id = React.useId()
+  return (
+    <div className="py-3 border-b border-zinc-100 dark:border-zinc-800">
+      <div className="flex items-center justify-between mb-1">
+        <div className="flex items-center gap-2 text-sm font-medium text-zinc-900 dark:text-zinc-100">{label}</div>
+        <CinematicGlowToggle id={id} checked={checked} onChange={onChange} />
+      </div>
+      <p className="text-xs text-zinc-500 dark:text-zinc-400 pr-12 leading-relaxed">{description}</p>
+    </div>
+  )
+}
+
+const FeatureItem: React.FC<{ icon: React.ReactNode; text: string; colorClass: string }> = ({
+  icon,
+  text,
+  colorClass,
+}) => (
+  <li className="relative flex items-center gap-3.5">
+    <div className={`h-5 w-5 shrink-0 ${colorClass}`}>{icon}</div>
+    <span className="text-sm font-normal text-zinc-900 dark:text-zinc-100">{text}</span>
+  </li>
+)
+
+// ------------------------------------------------------------------
+// Main Component
+// ------------------------------------------------------------------
+
 const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOut, isDarkMode, toggleTheme }) => {
   const [activeTab, setActiveTab] = useState<Tab>('general')
   const { refreshConversations } = useChatContext()
 
-  const [newMessageAlerts, setNewMessageAlerts] = useState(true)
-  const [calendarSyncNotifications, setCalendarSyncNotifications] = useState(true)
-  const [systemUpdates, setSystemUpdates] = useState(true)
-  const [twoFactorAuth, setTwoFactorAuth] = useState(false)
-  const [lastLogin, setLastLogin] = useState('2024-07-26 10:30 AM (New York)')
+  // State management
+  const [authenticatorApp, setAuthenticatorApp] = useState(true)
+  const [pushNotifications, setPushNotifications] = useState(false)
   const [contextualMemory, setContextualMemory] = useState(true)
   const [memoryUsage, setMemoryUsage] = useState('~1.2MB of data (500+ interactions)')
   const [isWhatsAppConnecting, setIsWhatsAppConnecting] = useState(false)
   const [isDeletingConversations, setIsDeletingConversations] = useState(false)
-
+  const [voiceMode, setVoiceMode] = useState(false)
+  const [receiveFeedbackEmails, setReceiveFeedbackEmails] = useState(false)
   const [selectedLanguage, setSelectedLanguage] = useState('en-US')
   const [timeFormat, setTimeFormat] = useState('12h')
 
@@ -174,13 +280,11 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
 
     setIsDeletingConversations(true)
     try {
-      // Assuming a backend endpoint exists to handle bulk updates
       const response = await fetch('/api/conversations/all', {
-        method: 'DELETE', // or DELETE/PUT depending on your API design
+        method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
         },
-        // Sending is_active: false as requested to soft delete/archive
         body: JSON.stringify({ is_active: false }),
       })
 
@@ -192,7 +296,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
       alert('All conversations have been deleted.')
     } catch (error) {
       console.error('Error deleting conversations:', error)
-      // Fallback for demo purposes if API endpoint doesn't exist yet
       console.log('Simulating backend update: Setting all conversations is_active = false')
       await refreshConversations()
     } finally {
@@ -202,11 +305,13 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
 
   const tabs = [
     { id: 'general', label: 'General', icon: User },
+    { id: 'account', label: 'Account', icon: CreditCard },
+    { id: 'notifications', label: 'Notifications', icon: Bell },
+    { id: 'data_controls', label: 'Data controls', icon: Database },
     { id: 'integrations', label: 'Integrations', icon: Share2 },
     { id: 'language', label: 'Language', icon: Globe },
-    { id: 'memory', label: 'Memory', icon: Brain },
-    { id: 'notifications', label: 'Notifications', icon: Bell },
     { id: 'security', label: 'Security', icon: Shield },
+    { id: 'memory', label: 'Memory', icon: Brain },
   ]
 
   const languages = [
@@ -218,6 +323,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
     { id: 'ja-JP', name: '日本語', region: '日本', flag: '🇯🇵' },
   ]
 
+  const currentLangName = languages.find((l) => l.id === selectedLanguage)?.name || 'Auto-detect'
+
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-w-2xl p-0 gap-0 overflow-hidden bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 [&>button]:hidden">
@@ -227,6 +334,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
         </DialogHeader>
 
         <div className="flex w-full h-[500px] overflow-y-auto">
+          {/* Sidebar */}
           <div className="w-56 bg-zinc-50 dark:bg-zinc-900/50 border-r border-zinc-200 dark:border-zinc-800 flex flex-col p-4">
             <div className="flex items-center gap-2 mb-8 px-2">
               <Settings className="w-5 h-5 text-zinc-400" />
@@ -255,8 +363,9 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
             </button>
           </div>
 
+          {/* Content Area */}
           <div className="flex-1 flex flex-col min-w-0">
-            <div className="flex items-center justify-end p-4">
+            <div className="flex items-center justify-end p-4 pb-2">
               <button
                 onClick={onClose}
                 className="p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-full text-zinc-500 transition-colors"
@@ -264,29 +373,451 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <div className="p-6 pt-0">
+
+            <div className="px-8 pb-6">
+              {/* ----------------------------------------------------------------------------------
+                  TAB: GENERAL
+              ---------------------------------------------------------------------------------- */}
               {activeTab === 'general' && (
-                <div className="space-y-2 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                  <h3 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-6 tracking-tight">
-                    General Preferences
-                  </h3>
-                  <div className="p-6 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 light:text-zinc-900">
-                    <ToggleRow
-                      label="Dark Mode"
-                      checked={isDarkMode}
-                      onChange={() => toggleTheme()}
-                      description="Switch between light and high-contrast dark themes."
+                <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+                  <div className="min-h-header-height flex items-center py-3 border-b border-zinc-100 dark:border-zinc-800 mb-2">
+                    <h3 className="w-full text-lg font-normal text-zinc-900 dark:text-zinc-100">General</h3>
+                  </div>
+
+                  <div className="flex flex-col">
+                    <SelectButton label="Appearance" value={isDarkMode ? 'Dark' : 'Light'} onClick={toggleTheme} />
+                    <SelectButton label="Language" value={currentLangName} onClick={() => setActiveTab('language')} />
+
+                    <div className="py-3 border-b border-zinc-100 dark:border-zinc-800">
+                      <div className="flex items-center justify-between mb-1">
+                        <div className="text-sm font-medium text-zinc-900 dark:text-zinc-100">Spoken language</div>
+                        <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm bg-white dark:bg-zinc-900 border border-transparent hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors text-zinc-600 dark:text-zinc-300">
+                          <span>Auto-detect</span>
+                          <ChevronDown size={14} className="opacity-50" />
+                        </button>
+                      </div>
+                      <p className="text-xs text-zinc-500 dark:text-zinc-400 pr-12 leading-relaxed">
+                        For best results, select the language you mainly speak.
+                      </p>
+                    </div>
+
+                    <div className="py-3 border-b border-zinc-100 dark:border-zinc-800">
+                      <div className="flex items-center justify-between">
+                        <div className="text-sm font-medium text-zinc-900 dark:text-zinc-100">Voice</div>
+                        <div className="flex items-center gap-2">
+                          <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors">
+                            <Play size={14} className="fill-current" />
+                            Play
+                          </button>
+                          <div className="h-4 w-px bg-zinc-200 dark:bg-zinc-700"></div>
+                          <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm bg-white dark:bg-zinc-900 border border-transparent hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors text-zinc-600 dark:text-zinc-300">
+                            <span>Juniper</span>
+                            <ChevronDown size={14} className="opacity-50" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="py-3 last:border-0">
+                      <div className="flex items-center justify-between mb-1">
+                        <div className="text-sm font-medium text-zinc-900 dark:text-zinc-100">Separate voice mode</div>
+                        <CinematicGlowToggle id="voice-mode-toggle" checked={voiceMode} onChange={setVoiceMode} />
+                      </div>
+                      <p className="text-xs text-zinc-500 dark:text-zinc-400 pr-12 leading-relaxed">
+                        Keep Voice Mode in a separate full screen, without real time transcripts.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* ----------------------------------------------------------------------------------
+                  TAB: ACCOUNT
+              ---------------------------------------------------------------------------------- */}
+              {activeTab === 'account' && (
+                <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 pb-8">
+                  <div className="min-h-header-height flex items-center py-3 border-b border-zinc-100 dark:border-zinc-800 mb-2">
+                    <h3 className="w-full text-lg font-normal text-zinc-900 dark:text-zinc-100">Account</h3>
+                  </div>
+
+                  {/* Upgrade Section */}
+                  <div className="py-2 border-b border-zinc-100 dark:border-zinc-800">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                        Try ChatGPT Plus for free
+                      </div>
+                      <Button className="bg-primary hover:bg-primary/90 text-white rounded-full px-5 h-9 text-sm font-medium shadow-sm transition-all">
+                        Start trial
+                      </Button>
+                    </div>
+
+                    <div className="mb-4 bg-transparent">
+                      <span className="inline-block pb-4 text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+                        Get everything in Free, and more.
+                      </span>
+                      <ul className="flex flex-col gap-4 mb-2">
+                        <FeatureItem
+                          icon={<Zap className="w-5 h-5" />}
+                          text="Solve complex problems"
+                          colorClass="text-pink-500"
+                        />
+                        <FeatureItem
+                          icon={<MessageSquare className="w-5 h-5" />}
+                          text="Have long chats over multiple sessions"
+                          colorClass="text-purple-500"
+                        />
+                        <FeatureItem
+                          icon={<ImageIcon className="w-5 h-5" />}
+                          text="Create more images, faster"
+                          colorClass="text-green-600"
+                        />
+                        <FeatureItem
+                          icon={<CheckCircle2 className="w-5 h-5" />}
+                          text="Remember goals and past conversations"
+                          colorClass="text-amber-600"
+                        />
+                        <FeatureItem
+                          icon={<Map className="w-5 h-5" />}
+                          text="Plan travel and tasks with agent mode"
+                          colorClass="text-orange-500"
+                        />
+                        <FeatureItem
+                          icon={<Folder className="w-5 h-5" />}
+                          text="Organize projects and customize GPTs"
+                          colorClass="text-amber-700"
+                        />
+                        <FeatureItem
+                          icon={<Video className="w-5 h-5" />}
+                          text="Produce and share videos on Sora"
+                          colorClass="text-emerald-400"
+                        />
+                        <FeatureItem
+                          icon={<FileCode className="w-5 h-5" />}
+                          text="Write code and build apps with Codex"
+                          colorClass="text-green-500"
+                        />
+                      </ul>
+                    </div>
+                  </div>
+
+                  {/* Payment */}
+                  <div className="py-4 border-b border-zinc-100 dark:border-zinc-800">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex flex-col gap-1">
+                        <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100">Payment</span>
+                        <a href="#" className="text-xs text-blue-600 dark:text-blue-400 hover:underline">
+                          Need help with billing?
+                        </a>
+                      </div>
+                      <Button
+                        variant="secondary"
+                        className="bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 hover:bg-zinc-200 dark:hover:bg-zinc-700"
+                      >
+                        Manage
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Age Verification */}
+                  <div className="py-4 border-b border-zinc-100 dark:border-zinc-800">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex flex-1 flex-col gap-2">
+                        <div className="text-sm font-medium text-zinc-900 dark:text-zinc-100">Age verification</div>
+                        <div className="text-xs text-zinc-500 dark:text-zinc-400 pr-12 leading-relaxed">
+                          Your ChatGPT experience includes safeguards for teens. If you’re 18 or older, you can verify
+                          your age.{' '}
+                          <a href="#" className="underline hover:text-zinc-800 dark:hover:text-zinc-200">
+                            Learn more
+                          </a>
+                          .
+                        </div>
+                      </div>
+                      <Button className="bg-primary hover:bg-primary/90 text-white rounded-lg h-9 text-sm font-medium">
+                        Verify age
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Delete Account */}
+                  <div className="py-4 border-b border-zinc-100 dark:border-zinc-800">
+                    <div className="flex items-center justify-between">
+                      <div className="text-sm font-medium text-zinc-900 dark:text-zinc-100">Delete account</div>
+                      <Button
+                        variant="outline"
+                        className="border-red-200 dark:border-red-900/40 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-700 dark:hover:text-red-300"
+                      >
+                        Delete
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* GPT Builder Profile */}
+                  <div className="mt-8">
+                    <div className="min-h-header-height flex items-center py-3 border-b border-zinc-100 dark:border-zinc-800 mb-2">
+                      <h3 className="w-full text-lg font-normal text-zinc-900 dark:text-zinc-100">
+                        GPT builder profile
+                      </h3>
+                    </div>
+                    <div className="flex flex-col items-stretch pt-3">
+                      <div className="mb-4 text-sm text-zinc-600 dark:text-zinc-400">
+                        Personalize your builder profile to connect with users of your GPTs. These settings apply to
+                        publicly shared GPTs.
+                      </div>
+
+                      {/* Preview Card */}
+                      <div className="relative flex w-full flex-col items-center justify-stretch rounded-lg p-6 bg-zinc-100 dark:bg-zinc-800/50 mb-4">
+                        <div className="h-10 w-10 mb-2">
+                          <div className="bg-white dark:bg-zinc-800 text-zinc-400 flex h-full w-full items-center justify-center rounded-full shadow-sm">
+                            <User className="w-6 h-6" />
+                          </div>
+                        </div>
+                        <div className="text-zinc-900 dark:text-zinc-100 mt-1 text-center text-sm font-semibold">
+                          PlaceholderGPT
+                        </div>
+                        <div className="flex flex-row items-center gap-2 mt-1">
+                          <div className="text-zinc-500 dark:text-zinc-400 text-xs">By Yosef Sabag</div>
+                          <div className="bg-white dark:bg-zinc-700 flex items-center gap-1 rounded-full px-2 py-0.5 shadow-sm">
+                            <Linkedin size={10} className="text-zinc-500 dark:text-zinc-300" />
+                            <Github size={10} className="text-zinc-500 dark:text-zinc-300" />
+                          </div>
+                        </div>
+                        <div className="absolute right-4 top-3 text-xs text-zinc-400 uppercase tracking-wide font-medium">
+                          Preview
+                        </div>
+                      </div>
+
+                      <div className="py-2">
+                        {/* Links Header */}
+                        <div className="flex items-center gap-4 py-3">
+                          <div className="h-px flex-1 bg-zinc-200 dark:bg-zinc-800"></div>
+                          <div className="text-sm font-bold text-zinc-900 dark:text-zinc-100">Links</div>
+                          <div className="h-px flex-1 bg-zinc-200 dark:bg-zinc-800"></div>
+                        </div>
+
+                        {/* Domain Select */}
+                        <div className="flex items-center justify-between py-2">
+                          <div className="flex items-center gap-3">
+                            <Globe className="w-5 h-5 text-purple-600" />
+                            <button className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-zinc-100">
+                              Select a domain <ChevronDown size={14} />
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Social Links */}
+                        <div className="flex items-center justify-between py-2">
+                          <div className="flex items-center gap-3 text-sm">
+                            <Linkedin className="w-3.5 h-3.5 text-zinc-500" />
+                            <span className="text-zinc-900 dark:text-zinc-100">LinkedIn</span>
+                            <a
+                              href="#"
+                              className="text-zinc-500 hover:underline dark:text-zinc-400 text-sm ml-1"
+                              target="_blank"
+                            >
+                              Yosef Sabag
+                            </a>
+                          </div>
+                          <button className="p-1 text-zinc-400 hover:text-red-500 transition-colors">
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+
+                        <div className="flex items-center justify-between py-2">
+                          <div className="flex items-center gap-3 text-sm">
+                            <Github className="w-3.5 h-3.5 text-zinc-500" />
+                            <span className="text-zinc-900 dark:text-zinc-100">GitHub</span>
+                            <a
+                              href="#"
+                              className="text-zinc-500 hover:underline dark:text-zinc-400 text-sm ml-1"
+                              target="_blank"
+                            >
+                              Yosefi5009
+                            </a>
+                          </div>
+                          <button className="p-1 text-zinc-400 hover:text-red-500 transition-colors">
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+
+                        {/* Email Header */}
+                        <div className="flex items-center gap-4 py-3 mt-2">
+                          <div className="h-px flex-1 bg-zinc-200 dark:bg-zinc-800"></div>
+                          <div className="text-sm font-bold text-zinc-900 dark:text-zinc-100">Email</div>
+                          <div className="h-px flex-1 bg-zinc-200 dark:bg-zinc-800"></div>
+                        </div>
+
+                        <div className="flex items-center gap-3 py-2 text-sm">
+                          <Mail className="w-5 h-5 text-green-500" />
+                          <span className="text-zinc-900 dark:text-zinc-100">yosefisabag@gmail.com</span>
+                        </div>
+
+                        <div className="flex items-center gap-2 mt-2">
+                          <div className="flex items-center h-5">
+                            <input
+                              id="receive-emails"
+                              type="checkbox"
+                              checked={receiveFeedbackEmails}
+                              onChange={(e) => setReceiveFeedbackEmails(e.target.checked)}
+                              className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-zinc-700"
+                            />
+                          </div>
+                          <label
+                            htmlFor="receive-emails"
+                            className="text-sm text-zinc-900 dark:text-zinc-100 cursor-pointer"
+                          >
+                            Receive feedback emails
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* ----------------------------------------------------------------------------------
+                  TAB: NOTIFICATIONS
+              ---------------------------------------------------------------------------------- */}
+              {activeTab === 'notifications' && (
+                <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+                  <div className="min-h-header-height flex items-center py-3 border-b border-zinc-100 dark:border-zinc-800 mb-2">
+                    <h3 className="w-full text-lg font-normal text-zinc-900 dark:text-zinc-100">Notifications</h3>
+                  </div>
+
+                  <div className="flex flex-col">
+                    <NotificationSettingRow
+                      label="Responses"
+                      value="Push"
+                      description="Get notified when ChatGPT responds to requests that take time, like research or image generation."
+                    />
+                    <NotificationSettingRow
+                      label="Group chats"
+                      value="Push"
+                      description="You'll receive notifications for new messages from group chats."
+                    />
+                    <NotificationSettingRow
+                      label="Tasks"
+                      value="Push, Email"
+                      description={
+                        <>
+                          Get notified when tasks you’ve created have updates.{' '}
+                          <a href="#" className="underline hover:text-zinc-800 dark:hover:text-zinc-200">
+                            Manage tasks
+                          </a>
+                        </>
+                      }
+                    />
+                    <NotificationSettingRow
+                      label="Projects"
+                      value="Email"
+                      description="Get notified when you receive an email invitation to a shared project."
+                    />
+                    <NotificationSettingRow
+                      label="Recommendations"
+                      value="Push, Email"
+                      description="Stay in the loop on new tools, tips, and features from ChatGPT."
                     />
                   </div>
                 </div>
               )}
 
+              {/* ----------------------------------------------------------------------------------
+                  TAB: DATA CONTROLS
+              ---------------------------------------------------------------------------------- */}
+              {activeTab === 'data_controls' && (
+                <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+                  <div className="min-h-header-height flex items-center py-3 border-b border-zinc-100 dark:border-zinc-800 mb-2">
+                    <h3 className="w-full text-lg font-normal text-zinc-900 dark:text-zinc-100">Data controls</h3>
+                  </div>
+
+                  <div className="flex flex-col">
+                    <button className="w-full flex items-center justify-between py-3 border-b border-zinc-100 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors text-left group">
+                      <div className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                        Improve the model for everyone
+                      </div>
+                      <div className="flex items-center gap-2 text-zinc-500 group-hover:text-zinc-800 dark:group-hover:text-zinc-300 transition-colors">
+                        <span className="text-sm">On</span>
+                        <ChevronRight size={16} />
+                      </div>
+                    </button>
+
+                    <DataControlRow
+                      label="Shared links"
+                      action={
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-8 px-4 text-xs font-medium bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-100"
+                        >
+                          Manage
+                        </Button>
+                      }
+                    />
+
+                    <DataControlRow
+                      label="Archived chats"
+                      action={
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-8 px-4 text-xs font-medium bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-100"
+                        >
+                          Manage
+                        </Button>
+                      }
+                    />
+
+                    <DataControlRow
+                      label="Archive all chats"
+                      action={
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-8 px-4 text-xs font-medium bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-100"
+                        >
+                          Archive all
+                        </Button>
+                      }
+                    />
+
+                    <DataControlRow
+                      label="Delete all chats"
+                      action={
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={handleDeleteAllConversations}
+                          disabled={isDeletingConversations}
+                          className="h-8 px-4 text-xs font-medium border-red-200 dark:border-red-900/40 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-700 dark:hover:text-red-300"
+                        >
+                          {isDeletingConversations ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Delete all'}
+                        </Button>
+                      }
+                    />
+
+                    <DataControlRow
+                      label="Export data"
+                      action={
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-8 px-4 text-xs font-medium bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-100"
+                        >
+                          Export
+                        </Button>
+                      }
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* ----------------------------------------------------------------------------------
+                  TAB: INTEGRATIONS
+              ---------------------------------------------------------------------------------- */}
               {activeTab === 'integrations' && (
                 <div className="space-y-2 animate-in fade-in slide-in-from-bottom-2 duration-300 pb-8">
                   <h3 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-6 tracking-tight">
                     Integrations
                   </h3>
-
                   <div className="space-y-2">
                     {/* Google Calendar */}
                     <div className="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
@@ -365,7 +896,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
                         </button>
                       )}
                     </div>
-
                     {/* Telegram */}
                     <div className="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
                       <div className="flex items-center justify-between mb-3">
@@ -386,7 +916,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
                         Configure Settings <ArrowUpRight size={16} />
                       </button>
                     </div>
-
                     {/* WhatsApp */}
                     <div className="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
                       <div className="flex items-center justify-between mb-3">
@@ -414,21 +943,13 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
                         Connect WhatsApp
                       </button>
                     </div>
-
-                    {/* More Coming Soon */}
-                    <div className="p-4 rounded-xl border border-dashed border-zinc-200 dark:border-zinc-800 flex flex-col items-center justify-center gap-2 py-8">
-                      <Globe className="w-6 h-6 text-zinc-300 dark:text-zinc-700" />
-                      <p className="text-xs font-bold text-zinc-400 dark:text-zinc-600 uppercase tracking-widest">
-                        More Platforms Coming Soon
-                      </p>
-                      <p className="text-xs text-zinc-400 text-center max-w-[200px]">
-                        We are working on Slack, Microsoft Teams, and Zoom integrations.
-                      </p>
-                    </div>
                   </div>
                 </div>
               )}
 
+              {/* ----------------------------------------------------------------------------------
+                  TAB: LANGUAGE
+              ---------------------------------------------------------------------------------- */}
               {activeTab === 'language' && (
                 <div className="space-y-2 animate-in fade-in slide-in-from-bottom-2 duration-300">
                   <h3 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-2 tracking-tight">
@@ -503,60 +1024,138 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
                 </div>
               )}
 
-              {activeTab === 'notifications' && (
-                <div className="space-y-2 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                  <h3 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-6 tracking-tight">
-                    Notifications
-                  </h3>
-                  <div className="p-4 flex flex-col gap-2 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
-                    <ToggleRow
-                      label="New Message Alerts"
-                      checked={newMessageAlerts}
-                      onChange={setNewMessageAlerts}
-                      description="Receive real-time alerts for new interactions from your platforms."
-                    />
-                    <ToggleRow
-                      label="Calendar Sync Notifications"
-                      checked={calendarSyncNotifications}
-                      onChange={setCalendarSyncNotifications}
-                      description="Get notified when Ally resolves scheduling conflicts."
-                    />
-                    <ToggleRow
-                      label="System Updates"
-                      checked={systemUpdates}
-                      onChange={setSystemUpdates}
-                      description="Stay informed about new AI models and feature deployments."
-                    />
-                  </div>
-                </div>
-              )}
-
+              {/* ----------------------------------------------------------------------------------
+                  TAB: SECURITY
+              ---------------------------------------------------------------------------------- */}
               {activeTab === 'security' && (
-                <div className="space-y-2 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                  <h3 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-6 tracking-tight">
-                    Security
-                  </h3>
-                  <div className="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2">
-                    <div className="flex items-center gap-3 border-b border-zinc-200 dark:border-zinc-800 pb-4">
-                      <Clock className="w-4 h-4 text-zinc-400" />
-                      <span className="text-xs font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider">
-                        Last Login:{' '}
-                        <span className="text-zinc-500 dark:text-zinc-400 font-medium ml-2">{lastLogin}</span>
-                      </span>
-                    </div>
-                    <ToggleRow
-                      label="Two-Factor Authentication (2FA)"
-                      checked={twoFactorAuth}
-                      onChange={setTwoFactorAuth}
-                      description="Secure your executive dashboard with an additional biometric layer."
-                    />
-                    <button className="w-full flex items-center justify-center gap-2 p-3 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-bold hover:opacity-90 transition-opacity">
-                      <Lock size={16} /> Change Password
+                <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 pb-8">
+                  <div className="min-h-header-height flex items-center py-3 border-b border-zinc-100 dark:border-zinc-800 mb-2">
+                    <h3 className="w-full text-lg font-normal text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+                      Security
+                    </h3>
+                  </div>
+
+                  {/* Passkeys */}
+                  <div className="border-b border-zinc-100 dark:border-zinc-800">
+                    <button className="w-full flex items-center justify-between py-3 hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors text-left">
+                      <div>
+                        <div className="text-sm font-normal text-zinc-900 dark:text-zinc-100">Passkeys</div>
+                        <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
+                          Passkeys are secure and protect your account with multi-factor authentication. They don't
+                          require any extra steps.
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-1 text-zinc-500 dark:text-zinc-400">
+                        <span className="text-sm font-medium">Add</span>
+                        <ChevronRight size={16} />
+                      </div>
                     </button>
                   </div>
+
+                  {/* MFA Section */}
+                  <div className="flex flex-col mt-4">
+                    <div className="text-zinc-900 dark:text-zinc-100 mb-1.5 flex items-center gap-2 text-lg font-normal">
+                      Multi-factor authentication (MFA)
+                    </div>
+
+                    {/* Authenticator App */}
+                    <SecurityToggleRow
+                      label="Authenticator app"
+                      checked={authenticatorApp}
+                      onChange={setAuthenticatorApp}
+                      description="Use one-time codes from an authenticator app."
+                    />
+
+                    {/* Push Notifications */}
+                    <SecurityToggleRow
+                      label="Push notifications"
+                      checked={pushNotifications}
+                      onChange={setPushNotifications}
+                      description="Approve log-ins with a push sent to your trusted device"
+                    />
+                  </div>
+
+                  {/* Trusted Devices */}
+                  <div className="border-b border-zinc-100 dark:border-zinc-800 mt-2">
+                    <button className="w-full flex items-center justify-between py-3 hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors text-left">
+                      <div className="text-sm font-medium text-zinc-900 dark:text-zinc-100">Trusted Devices</div>
+                      <div className="flex items-center gap-1 text-zinc-500 dark:text-zinc-400">
+                        <span className="text-sm font-medium">1</span>
+                        <ChevronRight size={16} />
+                      </div>
+                    </button>
+                  </div>
+
+                  {/* Log out of this device */}
+                  <div className="flex items-center justify-between py-3 border-b border-zinc-100 dark:border-zinc-800">
+                    <div className="text-sm font-medium text-zinc-900 dark:text-zinc-100">Log out of this device</div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={onSignOut}
+                      className="h-8 px-4 text-xs font-medium bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-100"
+                    >
+                      Log out
+                    </Button>
+                  </div>
+
+                  {/* Log out of all devices */}
+                  <div className="flex items-start justify-between py-3 border-b border-zinc-100 dark:border-zinc-800">
+                    <div>
+                      <div className="text-sm font-medium text-zinc-900 dark:text-zinc-100">Log out of all devices</div>
+                      <div className="text-xs text-zinc-500 dark:text-zinc-400 pr-12 my-1 leading-relaxed">
+                        Log out of all active sessions across all devices, including your current session. It may take
+                        up to 30 minutes for other devices to be logged out.
+                      </div>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="shrink-0 h-8 px-4 text-xs font-medium border-red-200 dark:border-red-900/40 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-700 dark:hover:text-red-300"
+                    >
+                      Log out all
+                    </Button>
+                  </div>
+
+                  {/* Secure Sign In Section */}
+                  <div className="mt-8">
+                    <div className="min-h-header-height flex flex-col py-3 border-b border-zinc-100 dark:border-zinc-800 mb-2">
+                      <h3 className="w-full text-lg font-normal text-zinc-900 dark:text-zinc-100">
+                        Secure sign in with ChatGPT
+                      </h3>
+                      <div className="text-zinc-500 dark:text-zinc-400 mt-0.5 text-xs">
+                        Sign in to websites and apps across the internet with the trusted security of ChatGPT.{' '}
+                        <a href="#" className="underline hover:text-zinc-800 dark:hover:text-zinc-200">
+                          Learn more
+                        </a>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between py-2">
+                      <div className="flex items-center gap-3">
+                        <Terminal className="w-5 h-5 text-green-500" />
+                        <div>
+                          <div className="text-sm font-medium text-zinc-900 dark:text-zinc-100">Codex CLI</div>
+                          <div className="text-xs text-zinc-500 dark:text-zinc-400">
+                            Allow Codex CLI to use models from the API.
+                          </div>
+                        </div>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-7 px-3 text-xs font-medium border-red-200 dark:border-red-900/40 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-700 dark:hover:text-red-300"
+                      >
+                        Disconnect
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               )}
 
+              {/* ----------------------------------------------------------------------------------
+                  TAB: MEMORY
+              ---------------------------------------------------------------------------------- */}
               {activeTab === 'memory' && (
                 <div className="space-y-2 animate-in fade-in slide-in-from-bottom-2 duration-300">
                   <h3 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-6 tracking-tight">
