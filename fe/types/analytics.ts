@@ -112,6 +112,7 @@ export interface ProcessedAnalyticsData {
   busiestDayHours: number
   calendarBreakdown: CalendarBreakdownItem[]
   recentActivities: ProcessedActivity[]
+  dailyAvailableHours: DailyAvailableHoursDataPoint[]
 }
 
 // --- Comparison Types ---
@@ -246,7 +247,7 @@ export interface CalendarMap {
   }
 }
 
-export interface TimeSavedDataPoint {
+export interface DailyAvailableHoursDataPoint {
   day: number
   date: string
   hours: number

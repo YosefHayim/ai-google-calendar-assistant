@@ -12,6 +12,7 @@ import {
   type CalendarBreakdownItem,
   type ProcessedActivity,
   type PeriodMetrics,
+  type DailyAvailableHoursDataPoint,
 } from '@/types/analytics'
 import { toast } from 'sonner'
 import { useAnalyticsComparison } from './useAnalyticsComparison'
@@ -88,6 +89,7 @@ export function useAnalyticsData({ timeMin, timeMax, calendarMap, enabled = true
           busiestDayHours: 0,
           calendarBreakdown: [],
           recentActivities: [],
+          dailyAvailableHours: [],
         }
       }
 
@@ -178,6 +180,17 @@ export function useAnalyticsData({ timeMin, timeMax, calendarMap, enabled = true
       const averageEventDuration = totalEvents > 0 ? totalDurationHours / totalEvents : 0
       const busiestDayHours = Math.max(...Array.from(dayHoursMap.values()), 0)
 
+      // Calculate daily available hours (16 waking hours - event hours per day)
+      const WAKING_HOURS_PER_DAY = 16
+      const dailyAvailableHours: DailyAvailableHoursDataPoint[] = Array.from(dayHoursMap.entries())
+        .map(([dateStr, eventHours], index) => ({
+          day: index + 1,
+          date: dateStr,
+          hours: Math.max(0, Math.round((WAKING_HOURS_PER_DAY - eventHours) * 10) / 10),
+        }))
+        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+        .map((item, index) => ({ ...item, day: index + 1 }))
+
       return {
         totalEvents,
         totalDurationHours,
@@ -185,6 +198,7 @@ export function useAnalyticsData({ timeMin, timeMax, calendarMap, enabled = true
         busiestDayHours,
         calendarBreakdown,
         recentActivities: recentActivities.slice(0, 5),
+        dailyAvailableHours,
       }
     },
     [calendarMap],
@@ -204,6 +218,7 @@ export function useAnalyticsData({ timeMin, timeMax, calendarMap, enabled = true
         busiestDayHours: 0,
         calendarBreakdown: [],
         recentActivities: [],
+        dailyAvailableHours: [],
       }
     }
   }, [analyticsQuery.data, processData])

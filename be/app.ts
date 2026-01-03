@@ -43,7 +43,7 @@ app.get("/", (_req, res) => {
 });
 
 app.use(ROUTES.USERS, usersRoute);
-app.use(ROUTES.CALENDAR_LIST, calendarListRoute); // Must be before CALENDAR (more specific path)
+app.use(ROUTES.CALENDAR_LIST, calendarListRoute);
 app.use(ROUTES.CALENDAR, calendarRoute);
 app.use(ROUTES.EVENTS, eventsRoute);
 app.use(ROUTES.ACL, aclRoute);

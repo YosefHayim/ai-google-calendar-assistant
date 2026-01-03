@@ -19,6 +19,14 @@ import {
   X,
 } from 'lucide-react'
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -27,15 +35,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import React, { useEffect, useState } from 'react'
+import { usePathname, useRouter } from 'next/navigation'
 
+import { Button } from '@/components/ui/button'
 import { CustomUser } from '@/types/api'
 import Image from 'next/image'
 import Link from 'next/link'
-import React, { useEffect } from 'react'
 import UserProfileCard from '@/components/dashboard/shared/UserProfileCard'
-import { usePathname, useRouter } from 'next/navigation'
-import { useUser } from '@/hooks/queries/auth/useUser'
 import { useChatContext } from '@/contexts/ChatContext'
+import { useUser } from '@/hooks/queries/auth/useUser'
 
 interface SidebarProps {
   isOpen: boolean
@@ -88,6 +97,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle, onOpenSett
     removeConversation,
   } = useChatContext()
 
+  const [conversationToDelete, setConversationToDelete] = useState<number | null>(null)
+
   const navItems = [
     { href: '/dashboard', icon: LayoutDashboard, label: 'Assistant', id: 'tour-assistant' },
     { href: '/dashboard/analytics', icon: BarChart2, label: 'Intelligence', id: 'tour-analytics' },
@@ -125,7 +136,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle, onOpenSett
     onClose()
   }
 
-  const handleSelectConversation = async (conversation: typeof conversations[0]) => {
+  const handleSelectConversation = async (conversation: (typeof conversations)[0]) => {
     await selectConversation(conversation)
     if (pathname !== '/dashboard') {
       router.push('/dashboard')
@@ -133,10 +144,16 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle, onOpenSett
     onClose()
   }
 
-  const handleDeleteConversation = async (e: React.MouseEvent, id: number) => {
+  const initiateDelete = (e: React.MouseEvent, id: number) => {
     e.stopPropagation()
-    if (!confirm('Delete this conversation?')) return
-    await removeConversation(id)
+    setConversationToDelete(id)
+  }
+
+  const confirmDelete = async () => {
+    if (conversationToDelete) {
+      await removeConversation(conversationToDelete)
+      setConversationToDelete(null)
+    }
   }
 
   // Extract user data similar to UserProfileCard
@@ -153,6 +170,35 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle, onOpenSett
 
   return (
     <>
+      <Dialog open={!!conversationToDelete} onOpenChange={(open) => !open && setConversationToDelete(null)}>
+        <DialogContent className="sm:max-w-md bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800">
+          <DialogHeader>
+            <DialogTitle className="text-zinc-900 dark:text-zinc-100">Delete Conversation</DialogTitle>
+            <DialogDescription className="text-zinc-500 dark:text-zinc-400">
+              Are you sure you want to delete this conversation? This action cannot be reversed.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="sm:justify-end gap-2 mt-4">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setConversationToDelete(null)}
+              className="border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={confirmDelete}
+              className="bg-red-500 hover:bg-red-600 text-white"
+            >
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {isOpen && (
         <div className="fixed inset-0 bg-black/20 dark:bg-black/60 backdrop-blur-sm z-40 md:hidden" onClick={onClose} />
       )}
@@ -265,7 +311,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle, onOpenSett
                           </div>
                         </div>
                         <button
-                          onClick={(e) => handleDeleteConversation(e, conversation.id)}
+                          onClick={(e) => initiateDelete(e, conversation.id)}
                           className="p-1 rounded opacity-0 group-hover:opacity-100 hover:bg-red-100 dark:hover:bg-red-900/30 text-zinc-400 hover:text-red-500 transition-all"
                           title="Delete"
                         >
