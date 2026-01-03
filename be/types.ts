@@ -59,6 +59,7 @@ export type PendingConflictConfirmation = {
 
 export type SessionData = {
   chatId: number;
+  firstName: string | undefined;
   username: string | undefined;
   userId: number;
   codeLang: string | undefined;

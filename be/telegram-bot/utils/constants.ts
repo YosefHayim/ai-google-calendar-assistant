@@ -1,6 +1,7 @@
 export const COMMANDS = {
   START: "/start",
   EXIT: "/exit",
+  USAGE: "/usage",
 } as const;
 
 export const CONFIRM_RESPONSES = ["yes", "y", "confirm"] as const;
