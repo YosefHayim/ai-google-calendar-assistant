@@ -9,8 +9,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from '@/components/ui/chart'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
 import type { DailyAvailableHoursDataPoint } from '@/types/analytics'
-
-const WAKING_HOURS_PER_DAY = 16 // Assuming ~8 hours of sleep
+import { CALENDAR_CONSTANTS } from '@/lib/constants'
+import { calculateAverage } from '@/lib/dataUtils'
 
 interface DailyAvailableHoursChartProps {
   data: DailyAvailableHoursDataPoint[]
@@ -30,8 +30,8 @@ const DailyAvailableHoursChart: React.FC<DailyAvailableHoursChartProps> = ({ dat
   }, [data])
 
   const averageAvailableHours = React.useMemo(() => {
-    return data.length > 0 ? totalAvailableHours / data.length : 0
-  }, [data, totalAvailableHours])
+    return calculateAverage(data.map((point) => point.hours))
+  }, [data])
 
   // Transform data for the chart
   const chartData = React.useMemo(() => {
@@ -73,8 +73,8 @@ const DailyAvailableHoursChart: React.FC<DailyAvailableHoursChartProps> = ({ dat
                   <h4 className="font-semibold text-sm">Daily Available Hours</h4>
                   <p className="text-xs text-zinc-600 dark:text-zinc-400">
                     Shows your available hours remaining each day after scheduled events. Based on{' '}
-                    {WAKING_HOURS_PER_DAY} waking hours per day (assuming ~8 hours of sleep), minus time spent in
-                    calendar events.
+                    {CALENDAR_CONSTANTS.WAKING_HOURS_PER_DAY} waking hours per day (assuming ~8 hours of sleep), minus
+                    time spent in calendar events.
                   </p>
                 </div>
               </HoverCardContent>

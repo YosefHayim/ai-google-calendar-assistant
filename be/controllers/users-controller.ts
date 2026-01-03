@@ -24,8 +24,23 @@ const generateAuthGoogleUrl = reqResAsyncHandler(async (req: Request, res: Respo
   const code = req.query.code as string | undefined;
   const postmanHeaders = req.headers["user-agent"];
 
-  // Generate the auth URL
-  const url = generateGoogleAuthUrl();
+  // Check if user already has tokens with refresh_token to avoid unnecessary consent screen
+  let forceConsent = true; // Default to true for first-time auth
+  if (req.user?.email) {
+    const normalizedEmail = req.user.email.toLowerCase().trim();
+    const { data: existingTokens } = await SUPABASE.from("user_calendar_tokens")
+      .select("refresh_token, is_active")
+      .ilike("email", normalizedEmail)
+      .limit(1)
+      .maybeSingle();
+
+    // Only force consent if user doesn't have a valid refresh token
+    // This allows silent refresh for returning users
+    forceConsent = !existingTokens?.refresh_token || !existingTokens?.is_active;
+  }
+
+  // Generate the auth URL with optimized consent prompt
+  const url = generateGoogleAuthUrl({ forceConsent });
 
   // 1. No code provided? Redirect user to Google Consent Screen
   if (!code) {
@@ -49,22 +64,39 @@ const generateAuthGoogleUrl = reqResAsyncHandler(async (req: Request, res: Respo
 
     // Normalize email to lowercase for consistent storage and lookup
     const normalizedEmail = user.email.toLowerCase().trim();
-
     // --- PREPARE DB PAYLOAD ---
     // We construct the payload dynamically to avoid overwriting the refresh_token with null
-    const upsertPayload: any = {
+    // Helper to convert null to undefined for optional fields
+    const toUndefined = <T>(value: T | null | undefined): T | undefined => (value === null ? undefined : value);
+
+    const upsertPayload: {
+      email: string;
+      access_token?: string;
+      token_type?: string;
+      id_token?: string;
+      scope?: string;
+      expiry_date?: number;
+      is_active: boolean;
+      first_name?: string | null;
+      last_name?: string | null;
+      avatar_url?: string | null;
+      refresh_token?: string;
+    } = {
       email: normalizedEmail, // Unique key for UPSERT (normalized for consistent lookup)
-      access_token: tokens.access_token,
-      token_type: tokens.token_type,
-      id_token: tokens.id_token,
-      scope: tokens.scope,
-      expiry_date: tokens.expiry_date,
+      access_token: toUndefined(tokens.access_token),
+      token_type: toUndefined(tokens.token_type),
+      id_token: toUndefined(tokens.id_token),
+      scope: toUndefined(tokens.scope),
+      expiry_date: toUndefined(tokens.expiry_date),
       is_active: true,
-      // We do not set created_at here; let the DB handle it or it stays as is on update
+      first_name: user.given_name ?? undefined,
+      last_name: user.family_name ?? undefined,
+      avatar_url: user.picture ?? undefined,
     };
 
     // CRITICAL FIX: Only update refresh_token if Google sent a new one.
-    // Google often omits the refresh_token on re-authentication. If we save 'undefined', we lose access.
+    // Google often omits the refresh_token on re-authentication. If we save 'undefined' or empty string, we lose access.
+    // DO NOT set refresh_token to empty string - it will overwrite existing valid refresh tokens!
     if (tokens.refresh_token) {
       upsertPayload.refresh_token = tokens.refresh_token;
     }
@@ -191,13 +223,35 @@ const signUpUserViaGitHub = reqResAsyncHandler(async (_req: Request, res: Respon
  */
 const getCurrentUserInformation = reqResAsyncHandler(async (req: Request, res: Response) => {
   if (req.query.customUser == "true") {
+    // Try to get first_name, last_name, avatar_url from user_calendar_tokens table first
+    // Fall back to user_metadata if not found in tokens table
+    let firstName: string | null | undefined = req.user?.user_metadata?.first_name;
+    let lastName: string | null | undefined = req.user?.user_metadata?.last_name;
+    let avatarUrl: string | null | undefined = req.user?.user_metadata?.avatar_url;
+
+    if (req.user?.email) {
+      const normalizedEmail = req.user.email.toLowerCase().trim();
+      const { data: tokenData } = await SUPABASE.from("user_calendar_tokens")
+        .select("first_name, last_name, avatar_url")
+        .ilike("email", normalizedEmail)
+        .limit(1)
+        .maybeSingle();
+
+      // Prefer data from user_calendar_tokens if available (more up-to-date from OAuth callback)
+      if (tokenData) {
+        firstName = tokenData.first_name || firstName;
+        lastName = tokenData.last_name || lastName;
+        avatarUrl = tokenData.avatar_url || avatarUrl;
+      }
+    }
+
     const customUser = {
       id: req.user?.id,
       email: req.user?.email,
       phone: req.user?.phone,
-      first_name: req.user?.user_metadata.first_name,
-      last_name: req.user?.user_metadata.last_name,
-      avatar_url: req.user?.user_metadata.avatar_url,
+      first_name: firstName,
+      last_name: lastName,
+      avatar_url: avatarUrl,
       created_at: req.user?.created_at,
       updated_at: req.user?.updated_at,
     };
@@ -371,7 +425,7 @@ const getGoogleCalendarIntegrationStatus = reqResAsyncHandler(async (req: Reques
   }
 
   const { data, error } = await SUPABASE.from("user_calendar_tokens")
-    .select("is_active, expiry_date, created_at")
+    .select("is_active, expiry_date, created_at, refresh_token")
     .ilike("email", email.trim())
     .limit(1)
     .maybeSingle();
@@ -382,7 +436,13 @@ const getGoogleCalendarIntegrationStatus = reqResAsyncHandler(async (req: Reques
 
   const isSynced = !!data;
   const isActive = data?.is_active ?? false;
-  const authUrl = generateGoogleAuthUrl();
+
+  // Check if refresh token exists - if not, force consent screen
+  const hasRefreshToken = !!(data && "refresh_token" in data && data.refresh_token);
+  const needsReauth = !isActive || !hasRefreshToken;
+
+  // Generate auth URL - only force consent if refresh token is missing or tokens are inactive
+  const authUrl = generateGoogleAuthUrl({ forceConsent: needsReauth });
 
   // Check if token is expired
   let isExpired = false;

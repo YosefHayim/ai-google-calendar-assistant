@@ -3,11 +3,9 @@
 import { Activity, CalendarDays, Dumbbell } from 'lucide-react'
 import React, { useMemo, useState } from 'react'
 import { generateDateRange } from '@/lib/dateUtils'
-import {
-  getActivityLevelColor,
-  getHealthActivityColor,
-  type HealthActivity,
-} from '@/lib/colorUtils'
+import { getActivityLevelColor, getHealthActivityColor, type HealthActivity } from '@/lib/colorUtils'
+import { DATE_CONSTANTS } from '@/lib/constants'
+import { isAfter } from 'date-fns'
 
 const ToggleButton = ({
   active,
@@ -43,8 +41,10 @@ const ActivityHeatmap: React.FC = () => {
     const healthActivities: HealthActivity[] = ['Gym', 'Run', 'Swim', 'Rest', 'Rest', 'Rest']
     return days.map((date) => ({
       date,
-      activityLevel: date > today ? 0 : Math.floor(Math.random() * 20),
-      healthType: (date > today ? 'Rest' : healthActivities[Math.floor(Math.random() * healthActivities.length)]) as HealthActivity,
+      activityLevel: isAfter(date, today) ? 0 : Math.floor(Math.random() * 20),
+      healthType: (isAfter(date, today)
+        ? 'Rest'
+        : healthActivities[Math.floor(Math.random() * healthActivities.length)]) as HealthActivity,
     }))
   }, [])
 
@@ -57,9 +57,6 @@ const ActivityHeatmap: React.FC = () => {
     { label: 'Swim', color: 'bg-indigo-500' },
     { label: 'Rest', color: 'bg-zinc-100 dark:bg-zinc-800/50' },
   ]
-
-  const monthLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-  const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
   return (
     <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm">
@@ -88,7 +85,7 @@ const ActivityHeatmap: React.FC = () => {
       <div className="p-6 overflow-x-auto">
         <div className="inline-block">
           <div className="flex justify-between text-xs text-zinc-400 mb-2 pl-10">
-            {monthLabels.map((month) => (
+            {DATE_CONSTANTS.MONTH_LABELS.map((month) => (
               <span key={month} className="w-[calc(4.3*4*0.25rem)] text-left">
                 {month}
               </span>
@@ -96,7 +93,7 @@ const ActivityHeatmap: React.FC = () => {
           </div>
           <div className="flex gap-4">
             <div className="flex flex-col gap-1 text-xs text-zinc-400">
-              {weekDays.map((day, i) => (
+              {DATE_CONSTANTS.WEEK_DAYS.map((day, i) => (
                 <div key={day} className={`h-3.5 flex items-center ${i % 2 === 0 ? 'invisible' : ''}`}>
                   {day}
                 </div>

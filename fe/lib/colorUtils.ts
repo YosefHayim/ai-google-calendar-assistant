@@ -6,10 +6,7 @@ const DEFAULT_COLOR = '#6366f1'
  * @param fallback - Optional fallback color (defaults to #6366f1)
  * @returns A valid hex color string
  */
-export const getValidHexColor = (
-  color: string | undefined | null,
-  fallback: string = DEFAULT_COLOR
-): string => {
+export const getValidHexColor = (color: string | undefined | null, fallback: string = DEFAULT_COLOR): string => {
   if (!color || typeof color !== 'string') return fallback
   if (/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(color)) {
     return color
@@ -46,4 +43,23 @@ export const getHealthActivityColor = (type: HealthActivity): string => {
     default:
       return 'bg-zinc-100 dark:bg-zinc-800/50'
   }
+}
+
+/**
+ * Insight card color classes mapping
+ * Returns background and text color classes for insight cards
+ * Note: InsightColor type is defined in @/types/analytics
+ */
+export const getInsightColorClasses = (
+  color: 'amber' | 'sky' | 'emerald' | 'rose' | 'indigo' | 'orange',
+): { bg: string; text: string } => {
+  const colorClasses: Record<InsightColor, { bg: string; text: string }> = {
+    amber: { bg: 'bg-amber-100/50 dark:bg-amber-900/30', text: 'text-amber-600 dark:text-amber-500' },
+    sky: { bg: 'bg-sky-100/50 dark:bg-sky-900/30', text: 'text-sky-600 dark:text-sky-500' },
+    emerald: { bg: 'bg-emerald-100/50 dark:bg-emerald-900/30', text: 'text-emerald-600 dark:text-emerald-500' },
+    rose: { bg: 'bg-rose-100/50 dark:bg-rose-900/30', text: 'text-rose-600 dark:text-rose-500' },
+    indigo: { bg: 'bg-indigo-100/50 dark:bg-indigo-900/30', text: 'text-indigo-600 dark:text-indigo-500' },
+    orange: { bg: 'bg-orange-100/50 dark:bg-orange-900/30', text: 'text-orange-600 dark:text-orange-500' },
+  }
+  return colorClasses[color] || colorClasses.amber
 }

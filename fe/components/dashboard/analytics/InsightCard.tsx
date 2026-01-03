@@ -1,19 +1,11 @@
 'use client'
 
-import React from 'react'
 import type { InsightCardProps } from '@/types/analytics'
-
-const colorClasses = {
-  amber: { bg: 'bg-amber-100/50 dark:bg-amber-900/30', text: 'text-amber-600 dark:text-amber-500' },
-  sky: { bg: 'bg-sky-100/50 dark:bg-sky-900/30', text: 'text-sky-600 dark:text-sky-500' },
-  emerald: { bg: 'bg-emerald-100/50 dark:bg-emerald-900/30', text: 'text-emerald-600 dark:text-emerald-500' },
-  rose: { bg: 'bg-rose-100/50 dark:bg-rose-900/30', text: 'text-rose-600 dark:text-rose-500' },
-  indigo: { bg: 'bg-indigo-100/50 dark:bg-indigo-900/30', text: 'text-indigo-600 dark:text-indigo-500' },
-  orange: { bg: 'bg-orange-100/50 dark:bg-orange-900/30', text: 'text-orange-600 dark:text-orange-500' },
-}
+import React from 'react'
+import { getInsightColorClasses } from '@/lib/colorUtils'
 
 const InsightCard: React.FC<InsightCardProps> = ({ icon: Icon, title, value, description, color }) => {
-  const selectedColor = colorClasses[color] || colorClasses.amber
+  const selectedColor = getInsightColorClasses(color)
 
   return (
     <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-6 flex flex-col gap-4 transition-all hover:shadow-md hover:-translate-y-1">

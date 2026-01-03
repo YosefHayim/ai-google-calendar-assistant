@@ -1,13 +1,13 @@
 'use client'
 
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
+import { calculatePercentage, sumBy } from '@/lib/dataUtils'
 
 import { Info } from 'lucide-react'
 import React from 'react'
 import type { TimeAllocationChartProps } from '@/types/analytics'
-import { motion } from 'framer-motion'
 import { getValidHexColor } from '@/lib/colorUtils'
-import { sumBy } from '@/lib/dataUtils'
+import { motion } from 'framer-motion'
 
 const TimeAllocationChart: React.FC<TimeAllocationChartProps> = ({ data, onCalendarClick }) => {
   const totalHours = sumBy(data, 'hours')
@@ -109,7 +109,7 @@ const TimeAllocationChart: React.FC<TimeAllocationChartProps> = ({ data, onCalen
                 <span className="flex-1 font-medium text-zinc-800 dark:text-zinc-200 truncate">{item.category}</span>
                 <span className="font-mono text-zinc-500 dark:text-zinc-400">{item.hours.toFixed(1)}h</span>
                 <span className="text-xs text-zinc-400 w-10 text-right">
-                  {((item.hours / totalHours) * 100).toFixed(0)}%
+                  {calculatePercentage(item.hours, totalHours, 0)}%
                 </span>
               </li>
             )

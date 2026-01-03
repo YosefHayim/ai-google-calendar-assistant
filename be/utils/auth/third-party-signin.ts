@@ -1,7 +1,7 @@
 import { PROVIDERS, REDIRECT_URI, SCOPES_STRING, STATUS_RESPONSE, SUPABASE } from "@/config";
-import type { Response } from "express";
-import type { AuthError } from "@supabase/supabase-js";
 
+import type { AuthError } from "@supabase/supabase-js";
+import type { Response } from "express";
 import sendR from "@/utils/send-response";
 
 type OAuthResult = {
@@ -13,18 +13,37 @@ type OAuthResult = {
  * Initiate OAuth flow with Supabase
  *
  * @param provider - The OAuth provider to use.
+ * @param options - Configuration options
+ * @param options.forceConsent - Force consent screen (default: true for first-time auth)
  * @returns The OAuth result with URL or error.
+ * @description
+ * Optimized to reduce redundant consent screens:
+ * - Uses `prompt: "consent"` only when forceConsent=true (first-time auth)
+ * - Otherwise relies on refresh tokens for silent re-authentication
+ * - Always includes `access_type: "offline"` to ensure refresh_token is returned
  */
-export async function initiateOAuthFlow(provider: PROVIDERS): Promise<OAuthResult> {
+export async function initiateOAuthFlow(provider: PROVIDERS, options: { forceConsent?: boolean } = {}): Promise<OAuthResult> {
+  const { forceConsent = true } = options; // Default to true for first-time auth
+
+  const queryParams: {
+    access_type: string;
+    prompt?: string;
+  } = {
+    access_type: "offline", // CRITICAL: Required to receive refresh_token
+  };
+
+  // Only force consent screen on first-time auth or when explicitly requested
+  // This prevents redundant redirects when user already has a valid refresh token
+  if (forceConsent) {
+    queryParams.prompt = "consent";
+  }
+
   const { data, error } = await SUPABASE.auth.signInWithOAuth({
     provider,
     options: {
       redirectTo: REDIRECT_URI,
       scopes: SCOPES_STRING,
-      queryParams: {
-        access_type: "offline",
-        prompt: "consent",
-      },
+      queryParams,
     },
   });
 

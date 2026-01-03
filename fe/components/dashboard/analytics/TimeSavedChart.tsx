@@ -2,6 +2,7 @@
 
 import React, { useRef, useState } from 'react'
 
+import { calculateMax } from '@/lib/dataUtils'
 import { motion } from 'framer-motion'
 import { useContainerDimensions } from '@/hooks/useContainerDimensions'
 
@@ -29,7 +30,11 @@ const TimeSavedChart: React.FC<TimeSavedChartProps> = ({ data }) => {
 
   const padding = 10
   const maxX = data.length - 1
-  const maxY = Math.max(...data.map((d) => d.hours), 1) * 1.1 // Ensure at least 1 for division
+  const maxY =
+    calculateMax(
+      data.map((d) => d.hours),
+      1,
+    ) * 1.1
 
   const getX = (index: number) => padding + (index / maxX) * (width - padding * 2)
   const getY = (hours: number) => height - padding - (hours / maxY) * (height - padding * 2)

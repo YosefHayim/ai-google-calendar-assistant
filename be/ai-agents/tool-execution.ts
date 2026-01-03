@@ -54,7 +54,8 @@ export const EXECUTION_TOOLS = {
     }
 
     // This app uses Google OAuth for authentication - generate OAuth URL for the user
-    const authUrl = generateGoogleAuthUrl();
+    // Force consent screen for first-time authentication
+    const authUrl = generateGoogleAuthUrl({ forceConsent: true });
     return {
       status: "needs_auth",
       email: params.email,

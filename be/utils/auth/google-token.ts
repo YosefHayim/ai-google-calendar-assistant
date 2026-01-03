@@ -18,16 +18,38 @@ const createFreshOAuth2Client = () => {
 /**
  * Generate Google OAuth URL for calendar authorization
  *
+ * @param {Object} options - Configuration options
+ * @param {boolean} options.forceConsent - Force consent screen (default: false). Set to true for first-time auth or when refresh token is missing.
  * @returns {string} The OAuth URL for Google Calendar authorization
+ * @description
+ * Optimized to reduce redundant consent screens:
+ * - Uses `prompt: "consent"` only when forceConsent=true (first-time auth)
+ * - Otherwise relies on refresh tokens for silent re-authentication
+ * - Always includes `access_type: "offline"` to ensure refresh_token is returned
  */
-export const generateGoogleAuthUrl = (): string => {
-  return OAUTH2CLIENT.generateAuthUrl({
-    access_type: "offline",
+export const generateGoogleAuthUrl = (options: { forceConsent?: boolean } = {}): string => {
+  const { forceConsent = false } = options;
+
+  const authUrlOptions: {
+    access_type: string;
+    scope: string[];
+    include_granted_scopes: boolean;
+    redirect_uri: string;
+    prompt?: string;
+  } = {
+    access_type: "offline", // CRITICAL: Required to receive refresh_token
     scope: SCOPES,
-    prompt: "consent",
     include_granted_scopes: true,
     redirect_uri: REDIRECT_URI,
-  });
+  };
+
+  // Only force consent screen on first-time auth or when explicitly requested
+  // This prevents redundant redirects when user already has a valid refresh token
+  if (forceConsent) {
+    authUrlOptions.prompt = "consent";
+  }
+
+  return OAUTH2CLIENT.generateAuthUrl(authUrlOptions);
 };
 
 // Buffer time before expiry to consider token as "near expiry" (5 minutes)
@@ -79,10 +101,20 @@ export const checkTokenExpiry = (expiryDate: number | null | undefined): TokenEx
  * @returns {Promise<TokensProps | null>} Tokens or null if not found
  */
 export const fetchGoogleTokensByEmail = async (email: string): Promise<{ data: TokensProps | null; error: string | null }> => {
-  const { data, error } = await SUPABASE.from("user_calendar_tokens").select(TOKEN_FIELDS).ilike("email", email.trim()).limit(1).maybeSingle();
+  const normalizedEmail = email.toLowerCase().trim();
+  console.log(`[fetchGoogleTokensByEmail] Looking up tokens for normalized email: ${normalizedEmail}`);
+
+  const { data, error } = await SUPABASE.from("user_calendar_tokens").select(TOKEN_FIELDS).ilike("email", normalizedEmail).limit(1).maybeSingle();
 
   if (error) {
+    console.error(`[fetchGoogleTokensByEmail] Database error for ${normalizedEmail}:`, error);
     return { data: null, error: error.message };
+  }
+
+  if (!data) {
+    console.log(`[fetchGoogleTokensByEmail] No tokens found for: ${normalizedEmail}`);
+  } else {
+    console.log(`[fetchGoogleTokensByEmail] Tokens found for: ${normalizedEmail}, is_active: ${data.is_active}, has_refresh_token: ${!!data.refresh_token}`);
   }
 
   return { data: data as TokensProps | null, error: null };
@@ -100,6 +132,10 @@ export const fetchGoogleTokensByEmail = async (email: string): Promise<{ data: T
  * @throws {Error} TOKEN_REFRESH_FAILED for other errors
  */
 export const refreshGoogleAccessToken = async (tokens: TokensProps): Promise<RefreshedGoogleToken> => {
+  if (!tokens.refresh_token) {
+    throw new Error("REAUTH_REQUIRED: No refresh token available");
+  }
+
   // Create fresh OAuth2Client per request to avoid stale cached token state
   const oauthClient = createFreshOAuth2Client();
   oauthClient.setCredentials({
@@ -127,8 +163,37 @@ export const refreshGoogleAccessToken = async (tokens: TokensProps): Promise<Ref
       expiryDate: credentials.expiry_date,
     };
   } catch (e) {
-    console.error("Google token refresh failed:", e);
-    throw e;
+    const err = e as Error & { code?: string; response?: { data?: { error?: string; error_description?: string } } };
+
+    // Check for invalid_grant error (refresh token invalid/expired/revoked)
+    const errorCode = err.code || err.response?.data?.error;
+    const errorMessage = err.message || err.response?.data?.error_description || "";
+
+    // Google OAuth errors that indicate refresh token is invalid
+    const invalidGrantErrors = ["invalid_grant", "invalid_request", "unauthorized_client"];
+
+    // Check if error indicates refresh token is invalid
+    if (
+      errorCode === "invalid_grant" ||
+      invalidGrantErrors.some((code) => errorMessage.toLowerCase().includes(code)) ||
+      errorMessage.toLowerCase().includes("token has been expired or revoked") ||
+      errorMessage.toLowerCase().includes("invalid_grant") ||
+      errorMessage.toLowerCase().includes("token was not found")
+    ) {
+      console.error("Google token refresh failed: Refresh token is invalid or expired", {
+        code: errorCode,
+        message: errorMessage,
+      });
+      throw new Error("REAUTH_REQUIRED: Refresh token is invalid, expired, or revoked. User must re-authenticate.");
+    }
+
+    // For other errors, log and re-throw with context
+    console.error("Google token refresh failed:", {
+      code: errorCode,
+      message: errorMessage,
+      error: err,
+    });
+    throw new Error(`TOKEN_REFRESH_FAILED: ${errorMessage || err.message || "Unknown error occurred"}`);
   }
 };
 
