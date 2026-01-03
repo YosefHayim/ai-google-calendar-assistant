@@ -104,13 +104,16 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle, onOpenSett
     const diffDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24))
 
     if (diffDays === 0) {
-      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      // Today: show "Today, HH:MM"
+      return `Today, ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
     } else if (diffDays === 1) {
       return 'Yesterday'
     } else if (diffDays < 7) {
-      return date.toLocaleDateString([], { weekday: 'short' })
+      // Within a week: show "Mon, Jan 3"
+      return date.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' })
     } else {
-      return date.toLocaleDateString([], { month: 'short', day: 'numeric' })
+      // Older: show "Jan 3, 2026"
+      return date.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' })
     }
   }
 

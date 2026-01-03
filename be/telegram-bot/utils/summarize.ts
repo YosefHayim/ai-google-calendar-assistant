@@ -84,3 +84,48 @@ const createFallbackSummary = (messages: userAndAiMessageProps[]): string => {
 
   return `Previous topics discussed: ${topics.join("; ")}...`;
 };
+
+const TITLE_GENERATION_PROMPT = `Generate a very short title (max 5 words) for this conversation based on the user's first message.
+The title should capture the main topic or intent. Do not use quotes or punctuation. Just return the title text.
+
+User's message:`;
+
+// Generate a short title for a conversation using AI (cheapest model)
+export const generateConversationTitle = async (firstUserMessage: string): Promise<string> => {
+  if (!firstUserMessage?.trim()) {
+    return "New Conversation";
+  }
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: SUMMARIZATION_MODEL,
+      messages: [
+        {
+          role: "system",
+          content: "You are a helpful assistant that generates very short, descriptive titles for conversations.",
+        },
+        {
+          role: "user",
+          content: `${TITLE_GENERATION_PROMPT}\n\n${firstUserMessage.slice(0, 200)}`,
+        },
+      ],
+      max_tokens: 20,
+      temperature: 0.3,
+    });
+
+    const title = response.choices[0]?.message?.content?.trim();
+
+    if (!title) {
+      throw new Error("No title generated");
+    }
+
+    // Clean up the title - remove quotes and limit length
+    const cleanTitle = title.replace(/^["']|["']$/g, "").slice(0, 50);
+    return cleanTitle || "New Conversation";
+  } catch (error) {
+    console.error("Error generating conversation title:", error);
+    // Fallback: use truncated first message
+    const truncated = firstUserMessage.slice(0, 47);
+    return truncated.length < firstUserMessage.length ? `${truncated}...` : truncated;
+  }
+};

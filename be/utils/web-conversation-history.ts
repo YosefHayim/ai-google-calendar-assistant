@@ -8,6 +8,7 @@ const CONVERSATION_SUMMARIES_TABLE = "conversation_summaries";
 type ConversationContext = {
   messages: userAndAiMessageProps[];
   summary?: string;
+  title?: string;
   lastUpdated: string;
 };
 
@@ -109,6 +110,42 @@ export const updateWebConversationState = async (stateId: number, context: Conve
 
   if (error) {
     console.error("Error updating web conversation state:", error);
+    return false;
+  }
+
+  return true;
+};
+
+// Update conversation title (async, fire-and-forget)
+export const updateWebConversationTitle = async (stateId: number, title: string): Promise<boolean> => {
+  // First get current context
+  const { data, error: fetchError } = await SUPABASE.from(CONVERSATION_STATE_TABLE)
+    .select("context_window")
+    .eq("id", stateId)
+    .single();
+
+  if (fetchError || !data) {
+    console.error("Error fetching conversation for title update:", fetchError);
+    return false;
+  }
+
+  const context = (data.context_window as ConversationContext) || {
+    messages: [],
+    lastUpdated: new Date().toISOString(),
+  };
+
+  // Add title to context
+  context.title = title;
+
+  const { error } = await SUPABASE.from(CONVERSATION_STATE_TABLE)
+    .update({
+      context_window: context,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", stateId);
+
+  if (error) {
+    console.error("Error updating web conversation title:", error);
     return false;
   }
 
@@ -274,11 +311,16 @@ export type FullConversation = {
   createdAt: string;
 };
 
-// Generate title from conversation context
-const generateConversationTitle = (context: ConversationContext | null): string => {
+// Get title from conversation context (uses AI-generated title if available)
+const getConversationTitle = (context: ConversationContext | null): string => {
   if (!context) return "New Conversation";
 
-  // If there's a summary, use first line or truncate
+  // Use stored AI-generated title if available
+  if (context.title) {
+    return context.title;
+  }
+
+  // Fallback: If there's a summary, use first line or truncate
   if (context.summary) {
     const firstLine = context.summary.split("\n")[0].replace(/^[-•*]\s*/, "");
     return firstLine.length > 50 ? `${firstLine.slice(0, 47)}...` : firstLine;
@@ -315,7 +357,7 @@ export const getWebConversationList = async (userId: string, options?: { limit?:
     const context = row.context_window as ConversationContext | null;
     return {
       id: row.id,
-      title: generateConversationTitle(context),
+      title: getConversationTitle(context),
       messageCount: row.message_count || 0,
       lastUpdated: row.updated_at || row.created_at,
       createdAt: row.created_at,
