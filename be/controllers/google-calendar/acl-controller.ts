@@ -6,10 +6,11 @@ import { fetchCredentialsByEmail } from "@/utils/auth";
 import { initUserSupabaseCalendarWithTokensAndUpdateTokens } from "@/utils/calendar";
 
 /**
- * List access control rules for a calendar
+
  *
  * @param {Request} req - The request object.
  * @param {Response} res - The response object.
+ * @description -  List access control rules for a calendar
  * @returns {Promise<void>} The response object.
  */
 const listAclRules = reqResAsyncHandler(async (req: Request, res: Response) => {
