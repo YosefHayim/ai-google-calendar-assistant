@@ -68,6 +68,8 @@ app.listen(PORT, (error?: Error) => {
     console.error("Error starting server:", error);
     throw error;
   }
+  logger.info(`Server successfully started on port ${PORT}`);
+  console.log(`Server successfully started on port ${PORT}`);
 });
 
 startTelegramBot();

@@ -5,7 +5,7 @@
     "includes": ["**/*.ts"]
   },
   "formatter": {
-    "lineWidth": 160
+    "lineWidth": 80
   },
   "linter": {
     "rules": {

@@ -2,6 +2,7 @@ import { CONFIG } from "@/config";
 import { MODELS } from "@/config/constants/ai";
 import OpenAI from "openai";
 import { SUPABASE } from "@/config/clients/supabase";
+import { logger } from "@/utils/logger";
 
 const openai = new OpenAI({ apiKey: CONFIG.openAiApiKey });
 
@@ -25,6 +26,7 @@ type SimilarConversation = {
 
 // Generate embedding vector for text
 export const generateEmbedding = async (text: string): Promise<number[]> => {
+  logger.info(`Telegram Bot: Embeddings: Generating embedding: ${text}`);
   if (!text || text.trim().length === 0) {
     throw new Error("Cannot generate embedding for empty text");
   }
@@ -34,17 +36,23 @@ export const generateEmbedding = async (text: string): Promise<number[]> => {
     input: text.trim(),
   });
 
+  logger.info(`Telegram Bot: Embeddings: Response: ${response}`);
+
   const embedding = response.data[0]?.embedding;
+  logger.info(`Telegram Bot: Embeddings: Embedding generated: ${text}`);
 
   if (!embedding) {
+    logger.error(`Telegram Bot: Embeddings: Failed to generate embedding: ${text}`);
     throw new Error("Failed to generate embedding");
   }
 
+  logger.info(`Telegram Bot: Embeddings: Embedding returned: ${text}`);
   return embedding;
 };
 
 // Format embedding array to pgvector string format
 const formatEmbeddingForPgVector = (embedding: number[]): string => {
+  logger.info(`Telegram Bot: Embeddings: Formatting embedding: ${embedding}`);
   return `[${embedding.join(",")}]`;
 };
 
@@ -57,15 +65,16 @@ export const storeConversationEmbedding = async (
   messageId?: number
 ): Promise<boolean> => {
   try {
+    logger.info(`Telegram Bot: Embeddings: Storing conversation embedding: ${chatId}, ${userId}, ${content}, ${role}, ${messageId}`);
     const embedding = await generateEmbedding(content);
     const embeddingString = formatEmbeddingForPgVector(embedding);
-
+    logger.info(`Telegram Bot: Embeddings: Embedding string: ${embeddingString}`);
     const metadata: EmbeddingMetadata = {
       role,
       chatId,
       timestamp: new Date().toISOString(),
     };
-
+    logger.info(`Telegram Bot: Embeddings: Metadata: ${metadata}`);
     const { error } = await SUPABASE.from(CONVERSATION_EMBEDDINGS_TABLE).insert({
       chat_id: chatId,
       user_id: null,
@@ -76,12 +85,15 @@ export const storeConversationEmbedding = async (
     });
 
     if (error) {
+      logger.error(`Telegram Bot: Embeddings: Error storing conversation embedding: ${chatId}, ${userId}, ${content}, ${role}, ${messageId}, ${error}`);
       console.error("Error storing conversation embedding:", error);
       return false;
     }
 
+    logger.info(`Telegram Bot: Embeddings: Conversation embedding stored: ${chatId}, ${userId}, ${content}, ${role}, ${messageId}`);
     return true;
   } catch (error) {
+    logger.error(`Telegram Bot: Embeddings: Error generating/storing embedding: ${chatId}, ${userId}, ${content}, ${role}, ${messageId}, ${error}`);
     console.error("Error generating/storing embedding:", error);
     return false;
   }
@@ -97,9 +109,10 @@ export const searchSimilarConversations = async (
   }
 ): Promise<SimilarConversation[]> => {
   try {
+    logger.info(`Telegram Bot: Embeddings: Searching similar conversations: ${userId}, ${query}, ${options}`);
     // 1. Generate the embedding (number[])
     const queryEmbedding = await generateEmbedding(query);
-
+    logger.info(`Telegram Bot: Embeddings: Query embedding: ${queryEmbedding}`);
     // 2. Call the RPC function
     // Note: We pass queryEmbedding directly. Supabase converts number[] -> vector automatically.
     const { data, error } = await SUPABASE.rpc("match_conversation_embeddings", {
@@ -110,12 +123,15 @@ export const searchSimilarConversations = async (
     });
 
     if (error) {
+      logger.error(`Telegram Bot: Embeddings: Error searching similar conversations: ${userId}, ${query}, ${options}, ${error}`);
       console.error("Error searching similar conversations:", error);
       return [];
     }
 
+    logger.info(`Telegram Bot: Embeddings: Similar conversations found: ${data}`);
     return (data || []) as SimilarConversation[];
   } catch (error) {
+    logger.error(`Telegram Bot: Embeddings: Error in similarity search: ${userId}, ${query}, ${options}, ${error}`);
     console.error("Error in similarity search:", error);
     return [];
   }
@@ -123,7 +139,9 @@ export const searchSimilarConversations = async (
 
 // Build context from similar conversations
 export const buildSemanticContext = (conversations: SimilarConversation[]): string => {
+  logger.info(`Telegram Bot: Embeddings: Building semantic context: ${conversations}`);
   if (conversations.length === 0) {
+    logger.info(`Telegram Bot: Embeddings: No similar conversations found`);
     return "";
   }
 
@@ -135,13 +153,16 @@ export const buildSemanticContext = (conversations: SimilarConversation[]): stri
       return `[${similarity}% relevant] ${role}: ${conv.content}`;
     });
 
+  logger.info(`Telegram Bot: Embeddings: Semantic context: ${contextParts}`);
   return `Relevant past conversations:\n${contextParts.join("\n")}`;
 };
 
 // Store embedding in background (non-blocking)
 export const storeEmbeddingAsync = (chatId: number, userId: number, content: string, role: "user" | "assistant", messageId?: number): void => {
+  logger.info(`Telegram Bot: Embeddings: Storing embedding asynchronously: ${chatId}, ${userId}, ${content}, ${role}, ${messageId}`);
   // Fire and forget - don't await
   storeConversationEmbedding(chatId, userId, content, role, messageId).catch((error) => {
+    logger.error(`Telegram Bot: Embeddings: Error storing embedding asynchronously: ${chatId}, ${userId}, ${content}, ${role}, ${messageId}, ${error}`);
     console.error("Background embedding storage failed:", error);
   });
 };
@@ -155,6 +176,8 @@ export const getRelevantContext = async (
     limit?: number;
   }
 ): Promise<string> => {
+  logger.info(`Telegram Bot: Embeddings: Getting relevant context: ${userId}, ${query}, ${options}`);
   const similarConversations = await searchSimilarConversations(userId, query, options);
+  logger.info(`Telegram Bot: Embeddings: Similar conversations: ${similarConversations}`);
   return buildSemanticContext(similarConversations);
 };
