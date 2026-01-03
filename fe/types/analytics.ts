@@ -225,9 +225,7 @@ export interface CalendarEventsDialogProps {
 
 export interface CalendarSettingsDialogProps {
   isOpen: boolean
-  calendarId: string
-  calendarName: string
-  calendarColor: string
+  calendar: CalendarListEntry | null
   onClose: () => void
 }
 

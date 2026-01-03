@@ -14,6 +14,7 @@ import { CalendarEventSchema } from '@/types/analytics'
 import CalendarEventsDialog from '@/components/dialogs/CalendarEventsDialog'
 import CalendarSettingsDialog from '@/components/dialogs/CalendarSettingsDialog'
 import CreateCalendarDialog from '@/components/dialogs/CreateCalendarDialog'
+import DailyAvailableHoursChart from './DailyAvailableHoursChart'
 import { DatePickerWithRange } from '@/components/ui/date-range-picker'
 import { DateRange } from 'react-day-picker'
 // Dialogs
@@ -21,7 +22,6 @@ import EventDetailsDialog from '@/components/dialogs/EventDetailsDialog'
 import InsightCard from './InsightCard'
 import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button'
 import KPICardsSection from './KPICardsSection'
-import DailyAvailableHoursChart from './DailyAvailableHoursChart'
 import ManageCalendars from '@/components/dashboard/analytics/ManageCalendars'
 import RecentEvents from '@/components/dashboard/analytics/RecentEvents'
 import TimeAllocationChart from './TimeAllocationChart'
@@ -50,11 +50,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
   const [isCreateCalendarDialogOpen, setIsCreateCalendarDialogOpen] = useState(false)
 
   // Calendar settings dialog state
-  const [selectedCalendarForSettings, setSelectedCalendarForSettings] = useState<{
-    id: string
-    name: string
-    color: string
-  } | null>(null)
+  const [selectedCalendarForSettings, setSelectedCalendarForSettings] = useState<CalendarListEntry | null>(null)
   const [isCalendarSettingsDialogOpen, setIsCalendarSettingsDialogOpen] = useState(false)
 
   // Calendar events dialog state
@@ -87,7 +83,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
       items.forEach((entry) => {
         const calendarId = entry.id
         const name = entry.summary || calendarId.split('@')[0]
-        const color = entry.backgroundColor
+        const color = entry.backgroundColor || '#6366f1'
 
         calendarMap.set(calendarId, { name, color })
       })
@@ -367,9 +363,9 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
 
       <CalendarEventsDialog
         isOpen={isCalendarEventsDialogOpen}
-        calendarId={selectedCalendarForEvents?.id}
-        calendarName={selectedCalendarForEvents?.name}
-        calendarColor={selectedCalendarForEvents?.color}
+        calendarId={selectedCalendarForEvents?.id || ''}
+        calendarName={selectedCalendarForEvents?.name || ''}
+        calendarColor={selectedCalendarForEvents?.color || '#6366f1'}
         dateRange={date?.from && date?.to ? { from: date.from, to: date.to } : undefined}
         events={calendarEvents}
         isLoading={isCalendarEventsLoading}
@@ -382,8 +378,8 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
         }}
         onEventClick={(event) => {
           setSelectedEvent(event as z.infer<typeof CalendarEventSchema>)
-          setSelectedEventCalendarColor(selectedCalendarForEvents?.color)
-          setSelectedEventCalendarName(selectedCalendarForEvents?.name)
+          setSelectedEventCalendarColor(selectedCalendarForEvents?.color || '#6366f1')
+          setSelectedEventCalendarName(selectedCalendarForEvents?.name || '')
           setIsEventDialogOpen(true)
           setIsCalendarEventsDialogOpen(false)
         }}
@@ -391,9 +387,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
 
       <CalendarSettingsDialog
         isOpen={isCalendarSettingsDialogOpen}
-        calendarId={selectedCalendarForSettings?.id}
-        calendarName={selectedCalendarForSettings?.name}
-        calendarColor={selectedCalendarForSettings?.color}
+        calendar={selectedCalendarForSettings}
         onClose={() => {
           setIsCalendarSettingsDialogOpen(false)
           setSelectedCalendarForSettings(null)
@@ -402,6 +396,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
 
       <CreateCalendarDialog
         isOpen={isCreateCalendarDialogOpen}
+        existingCalendars={calendarsData}
         onClose={() => setIsCreateCalendarDialogOpen(false)}
         onSuccess={() => {
           queryClient.invalidateQueries({ queryKey: ['calendars-list'] })

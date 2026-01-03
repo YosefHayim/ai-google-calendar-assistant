@@ -9,7 +9,7 @@ import React from 'react'
 interface ManageCalendarsProps {
   calendars: CalendarListEntry[]
   calendarMap: Map<string, { name: string; color: string }>
-  onCalendarClick: (calendar: { id: string; name: string; color: string }) => void
+  onCalendarClick: (calendar: CalendarListEntry) => void
   onCreateCalendar: () => void
 }
 
@@ -57,11 +57,7 @@ const ManageCalendars: React.FC<ManageCalendarsProps> = ({
                 className="border border-transparent hover:border-black hover:border flex items-center gap-3 p-2 rounded-md hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors group cursor-pointer"
                 style={{ backgroundColor: `${color}08` }}
                 onClick={() => {
-                  onCalendarClick({
-                    id: calendar.id,
-                    name: displayName,
-                    color: color,
-                  })
+                  onCalendarClick(calendar)
                 }}
               >
                 <div
