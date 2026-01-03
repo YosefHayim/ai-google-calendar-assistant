@@ -1,5 +1,5 @@
 import { run, type RunnerHandle } from "@grammyjs/runner";
-import { Bot, BotError, type Context, type SessionFlavor, lazySession } from "grammy";
+import { Bot, BotError, type Context, type SessionFlavor, lazySession, session } from "grammy";
 import { autoRetry } from "@grammyjs/auto-retry";
 import { ORCHESTRATOR_AGENT } from "@/ai-agents";
 import { env } from "@/config";
@@ -63,7 +63,7 @@ bot.catch((err: BotError<GlobalContext>) => {
 });
 
 bot.use(
-  lazySession({
+  session({
     initial: (): SessionData => ({
       chatId: 0,
       codeLang: undefined,

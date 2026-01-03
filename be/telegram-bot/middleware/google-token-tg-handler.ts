@@ -29,7 +29,7 @@ type TelegramTokenValidationResult = {
 const validateGoogleTokens = async (ctx: GlobalContext, email: string): Promise<TelegramTokenValidationResult | null> => {
   logger.info(`Telegram Bot: Google Token: validateGoogleTokens middleware called: ${email}`);
   const { data: tokens, error } = await fetchGoogleTokensByEmail(email);
-  logger.info(`Telegram Bot: Google Token: validateGoogleTokens middleware tokens: ${tokens}`);
+  logger.info(`Telegram Bot: Google Token: validateGoogleTokens middleware tokens: ${JSON.stringify(tokens, null, 2)}`);
   if (error) {
     logger.error(`Telegram Bot: Google Token: validateGoogleTokens middleware error: ${error}`);
     console.error(`Telegram Bot: Google Token: validateGoogleTokens middleware error: ${error}`);
@@ -62,7 +62,7 @@ const validateGoogleTokens = async (ctx: GlobalContext, email: string): Promise<
   }
 
   const expiryStatus = checkTokenExpiry(tokens.expiry_date);
-  logger.info(`Telegram Bot: Google Token: validateGoogleTokens middleware expiry status: ${expiryStatus}`);
+  logger.info(`Telegram Bot: Google Token: validateGoogleTokens middleware expiry status: ${JSON.stringify(expiryStatus, null, 2)}`);
   return {
     tokens,
     ...expiryStatus,
@@ -74,9 +74,9 @@ const validateGoogleTokens = async (ctx: GlobalContext, email: string): Promise<
  * Returns refreshed tokens or null if reauth is required
  */
 const refreshGoogleTokensIfNeeded = async (ctx: GlobalContext, validation: TelegramTokenValidationResult): Promise<TelegramTokenValidationResult | null> => {
-  logger.info(`Telegram Bot: Google Token: refreshGoogleTokensIfNeeded middleware called: ${validation}`);
+  logger.info(`Telegram Bot: Google Token: refreshGoogleTokensIfNeeded middleware called: ${JSON.stringify(validation, null, 2)}`);
   const { tokens, isExpired, isNearExpiry } = validation;
-  logger.info(`Telegram Bot: Google Token: refreshGoogleTokensIfNeeded middleware tokens: ${tokens}`);
+  logger.info(`Telegram Bot: Google Token: refreshGoogleTokensIfNeeded middleware tokens: ${JSON.stringify(tokens, null, 2)}`);
   logger.info(`Telegram Bot: Google Token: refreshGoogleTokensIfNeeded middleware isExpired: ${isExpired}`);
   logger.info(`Telegram Bot: Google Token: refreshGoogleTokensIfNeeded middleware isNearExpiry: ${isNearExpiry}`);
 
@@ -96,7 +96,7 @@ const refreshGoogleTokensIfNeeded = async (ctx: GlobalContext, validation: Teleg
   try {
     logger.info(`Telegram Bot: Google Token: refreshGoogleTokensIfNeeded middleware refreshing tokens: ${email}`);
     const refreshedTokens = await refreshGoogleAccessToken(tokens);
-    logger.info(`Telegram Bot: Google Token: refreshGoogleTokensIfNeeded middleware refreshed tokens: ${refreshedTokens}`);
+    logger.info(`Telegram Bot: Google Token: refreshGoogleTokensIfNeeded middleware refreshed tokens: ${JSON.stringify(refreshedTokens, null, 2)}`);
     await persistGoogleTokens(email, refreshedTokens);
 
     const result: TelegramTokenValidationResult = {
@@ -109,11 +109,11 @@ const refreshGoogleTokensIfNeeded = async (ctx: GlobalContext, validation: Teleg
       isNearExpiry: false,
       expiresInMs: refreshedTokens.expiryDate - Date.now(),
     };
-    logger.info(`Telegram Bot: Google Token: refreshGoogleTokensIfNeeded middleware result: ${result}`);
+    logger.info(`Telegram Bot: Google Token: refreshGoogleTokensIfNeeded middleware result: ${JSON.stringify(result, null, 2)}`);
     return result;
   } catch (error) {
     const err = error as Error;
-    logger.error(`Telegram Bot: Google Token: refreshGoogleTokensIfNeeded middleware error: ${error}`);
+    logger.error(`Telegram Bot: Google Token: refreshGoogleTokensIfNeeded middleware error: ${JSON.stringify({ name: err.name, message: err.message, stack: err.stack }, null, 2)}`);
     const message = err.message || "Token refresh failed";
 
     if (message.startsWith("REAUTH_REQUIRED:")) {
@@ -173,7 +173,7 @@ export const googleTokenTgHandler: MiddlewareFn<GlobalContext> = async (ctx, nex
 
   // Step 3: Store validated tokens in session for agent usage
   ctx.session.googleTokens = refreshedValidation.tokens;
-  logger.info(`Telegram Bot: Google Token: googleTokenTgHandler middleware googleTokens: ${ctx.session.googleTokens}`);
+  logger.info(`Telegram Bot: Google Token: googleTokenTgHandler middleware googleTokens: ${JSON.stringify(ctx.session.googleTokens, null, 2)}`);
   logger.info(`Telegram Bot: Google Token: googleTokenTgHandler middleware next middleware called`);
   return next();
 };
