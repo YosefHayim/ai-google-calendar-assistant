@@ -16,7 +16,7 @@ type DeleteEventParams = {
  * @description Deletes an event from the calendar and sends the response.
  * @example
  * const data = await deleteEvent(params);
- * console.log(data);
+ *
  */
 export async function deleteEvent({ calendarEvents, eventData, extra, req }: DeleteEventParams) {
   const calendarId = (extra?.calendarId as string) || (req?.body?.calendarId as string) || (req?.query?.calendarId as string) || "primary";

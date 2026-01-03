@@ -12,7 +12,7 @@ import { asyncHandler, sendR } from "@/utils/http";
  * @description Authenticates a user by token and sends the response.
  * @example
  * const data = await authHandler(req, res, next);
- * console.log(data);
+ *
  */
 export const authHandler = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
   const token = req.headers.authorization?.replace("Bearer ", "");

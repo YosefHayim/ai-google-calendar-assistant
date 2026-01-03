@@ -1,7 +1,8 @@
 import type { NextFunction, Request, Response } from "express";
-import { STATUS_RESPONSE } from "@/config";
 import { asyncHandler, sendR } from "@/utils/http";
-import { refreshGoogleAccessToken, persistGoogleTokens, deactivateGoogleTokens } from "@/utils/auth/google-token";
+import { deactivateGoogleTokens, persistGoogleTokens, refreshGoogleAccessToken } from "@/utils/auth/google-token";
+
+import { STATUS_RESPONSE } from "@/config";
 
 export type GoogleTokenRefreshOptions = {
   force?: boolean;
@@ -56,8 +57,6 @@ export const googleTokenRefresh = (options: GoogleTokenRefreshOptions = {}) => {
       return sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "User email missing from tokens");
     }
 
-    console.log(`Google token refresh triggered for ${email} - force: ${force}, expired: ${isExpired}, nearExpiry: ${isNearExpiry}`);
-
     try {
       const refreshedTokens = await refreshGoogleAccessToken(tokens);
       await persistGoogleTokens(email, refreshedTokens);
@@ -72,8 +71,6 @@ export const googleTokenRefresh = (options: GoogleTokenRefreshOptions = {}) => {
         isNearExpiry: false,
         expiresInMs: refreshedTokens.expiryDate - Date.now(),
       };
-
-      console.log(`Google token refreshed for ${email}, expires in ${Math.round((refreshedTokens.expiryDate - Date.now()) / 1000 / 60)} min`);
 
       next();
     } catch (error) {

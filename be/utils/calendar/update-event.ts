@@ -16,7 +16,7 @@ type UpdateEventParams = {
  * @description Updates an event in the calendar and sends the response.
  * @example
  * const data = await updateEvent(params);
- * console.log(data);
+ *
  */
 export async function updateEvent({ calendarEvents, eventData, extra, req }: UpdateEventParams) {
   const body = (eventData as calendar_v3.Schema$Event & { calendarId?: string; email?: string }) || {};

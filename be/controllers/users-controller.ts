@@ -42,7 +42,6 @@ const generateAuthGoogleUrl = reqResAsyncHandler(async (req: Request, res: Respo
         }
       } catch (error) {
         // Token invalid or expired - will default to forceConsent = true
-        console.log("[OAuth Callback] Could not validate token from cookie:", error);
       }
     }
   }
@@ -126,8 +125,6 @@ const generateAuthGoogleUrl = reqResAsyncHandler(async (req: Request, res: Respo
     // Use upsert() instead of update().
     // - If user exists: Updates the fields provided (keeping old refresh_token if we didn't provide a new one).
     // - If user missing: Creates the row (Insert).
-    console.log(`[OAuth Callback] Upserting tokens for email: ${normalizedEmail}`);
-    console.log(`[OAuth Callback] Refresh token received: ${tokens.refresh_token ? "YES" : "NO"}`);
 
     const { data, error } = await SUPABASE.from("user_calendar_tokens").upsert(upsertPayload, { onConflict: "email" }).select().single();
 
@@ -135,9 +132,6 @@ const generateAuthGoogleUrl = reqResAsyncHandler(async (req: Request, res: Respo
       console.error("Supabase Token Save Error:", error);
       return sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Failed to store Google tokens in database.", error);
     }
-
-    console.log(`[OAuth Callback] Upsert successful. Stored refresh_token: ${data?.refresh_token ? "YES" : "NO"}`);
-    console.log(`[OAuth Callback] is_active: ${data?.is_active}`);
 
     // --- SUPABASE AUTH SIGN IN (Optional / As per your flow) ---
     // This logs the user into Supabase Auth using the Google ID token
@@ -180,7 +174,7 @@ const generateAuthGoogleUrl = reqResAsyncHandler(async (req: Request, res: Respo
  * @description Signs up a user and sends the response.
  * @example
  * const data = await signUpUserReg(req, res);
- * console.log(data);
+ *
  */
 const signUpUserReg = reqResAsyncHandler(async (req: Request, res: Response) => {
   if (!(req.body.email && req.body.password)) {
@@ -210,7 +204,7 @@ const signUpUserReg = reqResAsyncHandler(async (req: Request, res: Response) => 
  * @description Signs up or signs in a user with Google and sends the response.
  * @example
  * const data = await signUpOrSignInWithGoogle(req, res);
- * console.log(data);
+ *
  */
 const signUpOrSignInWithGoogle = reqResAsyncHandler(async (_req: Request, res: Response) => {
   await supabaseThirdPartySignInOrSignUp(res, PROVIDERS.GOOGLE);
@@ -225,7 +219,7 @@ const signUpOrSignInWithGoogle = reqResAsyncHandler(async (_req: Request, res: R
  * @description Signs up a user with GitHub and sends the response.
  * @example
  * const data = await signUpUserViaGitHub(req, res);
- * console.log(data);
+ *
  */
 const signUpUserViaGitHub = reqResAsyncHandler(async (_req: Request, res: Response) => {
   await supabaseThirdPartySignInOrSignUp(res, PROVIDERS.GITHUB);
@@ -240,7 +234,7 @@ const signUpUserViaGitHub = reqResAsyncHandler(async (_req: Request, res: Respon
  * @description Gets current user information and sends the response.
  * @example
  * const data = await getCurrentUserInformation(req, res);
- * console.log(data);
+ *
  */
 const getCurrentUserInformation = reqResAsyncHandler(async (req: Request, res: Response) => {
   if (req.query.customUser == "true") {
@@ -293,7 +287,7 @@ const getCurrentUserInformation = reqResAsyncHandler(async (req: Request, res: R
  * @description Gets user information and sends the response.
  * @example
  * const data = await getUserInformationById(req, res);
- * console.log(data);
+ *
  */
 const getUserInformationById = reqResAsyncHandler(async (req: Request, res: Response) => {
   const { data, error } = await SUPABASE.from("user_calendar_tokens").select("*").eq("id", parseInt(req.params.id)).single();
@@ -315,7 +309,7 @@ const getUserInformationById = reqResAsyncHandler(async (req: Request, res: Resp
  * @description Deactivates a user calendar tokens by email and sends the response.
  * @example
  * const data = await deActivateUser(req, res);
- * console.log(data);
+ *
  */
 const deActivateUser = reqResAsyncHandler(async (req: Request, res: Response) => {
   const { data, error } = await SUPABASE.from("user_calendar_tokens").select("email").eq("email", req.body.email);
@@ -340,7 +334,7 @@ const deActivateUser = reqResAsyncHandler(async (req: Request, res: Response) =>
  * @description Signs in a user and sends the response.
  * @example
  * const data = await signInUserReg(req, res);
- * console.log(data);
+ *
  */
 const signInUserReg = reqResAsyncHandler(async (req: Request, res: Response) => {
   if (!(req.body.email && req.body.password)) {
@@ -373,7 +367,7 @@ const signInUserReg = reqResAsyncHandler(async (req: Request, res: Response) => 
  * @description Verifies an email by OTP and sends the response.
  * @example
  * const data = await verifyEmailByOtp(req, res);
- * console.log(data);
+ *
  */
 const verifyEmailByOtp = reqResAsyncHandler(async (req: Request, res: Response) => {
   if (!(req.body.email && req.body.token)) {

@@ -11,7 +11,7 @@ import { asyncHandler } from "../http/async-handlers";
  * @description Fetches the credentials of the user by email and sends the response.
  * @example
  * const data = await fetchCredentialsByEmail(email);
- * console.log(data);
+ *
  */
 export const fetchCredentialsByEmail = asyncHandler(async (email: string): Promise<TokensProps> => {
   // Use ilike for safety, and maybeSingle to handle 0 or 1 result gracefully

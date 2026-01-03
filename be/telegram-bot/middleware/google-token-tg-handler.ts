@@ -82,8 +82,6 @@ const refreshGoogleTokensIfNeeded = async (ctx: GlobalContext, validation: Teleg
     return null;
   }
 
-  console.log(`Telegram: Google token refresh triggered for ${email} - expired: ${isExpired}, nearExpiry: ${isNearExpiry}`);
-
   try {
     const refreshedTokens = await refreshGoogleAccessToken(tokens);
     await persistGoogleTokens(email, refreshedTokens);
@@ -98,8 +96,6 @@ const refreshGoogleTokensIfNeeded = async (ctx: GlobalContext, validation: Teleg
       isNearExpiry: false,
       expiresInMs: refreshedTokens.expiryDate - Date.now(),
     };
-
-    console.log(`Telegram: Google token refreshed for ${email}, expires in ${Math.round((refreshedTokens.expiryDate - Date.now()) / 1000 / 60)} min`);
 
     return result;
   } catch (error) {

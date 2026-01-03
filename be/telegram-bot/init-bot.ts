@@ -1,5 +1,5 @@
 import { run, type RunnerHandle } from "@grammyjs/runner";
-import { Bot, type Context, type SessionFlavor, lazySession } from "grammy";
+import { Bot, BotError, type Context, type SessionFlavor, lazySession } from "grammy";
 import { autoRetry } from "@grammyjs/auto-retry";
 import { ORCHESTRATOR_AGENT } from "@/ai-agents";
 import { env } from "@/config";
@@ -34,7 +34,7 @@ const MessageAction = {
 
 type MessageActionType = (typeof MessageAction)[keyof typeof MessageAction];
 
-const bot = new Bot<GlobalContext>(env.telegramAccessToken);
+const bot = new Bot<GlobalContext>(env.telegramAccessToken!);
 
 // Apply auto-retry plugin to handle network timeouts and transient errors
 // This will automatically retry failed API requests with exponential backoff
@@ -48,7 +48,7 @@ bot.api.config.use(
 );
 
 // Global error handler for unhandled errors in middleware/handlers
-bot.catch((err: { ctx: GlobalContext; error: Error }) => {
+bot.catch((err: BotError<GlobalContext>) => {
   const ctx = err.ctx;
   const error = err.error;
   console.error(`[Telegram Bot] Error while handling update ${ctx.update.update_id}:`, error);
@@ -106,11 +106,16 @@ const handleExitCommand = async (ctx: GlobalContext): Promise<void> => {
 // Handler: User confirms pending action
 const handleConfirmation = async (ctx: GlobalContext): Promise<void> => {
   const pending = ctx.session.pendingConfirmation;
-  if (!pending) return;
+
+  if (!pending) {
+    return;
+  }
 
   ctx.session.isProcessing = true;
   ctx.session.pendingConfirmation = undefined;
+
   const chatId = ctx.chat?.id || ctx.session.chatId;
+
   const userId = ctx.from?.id!;
 
   try {
@@ -243,8 +248,7 @@ const handlePendingConfirmation = async (ctx: GlobalContext, text: string): Prom
 // Main message handler
 bot.on("message", async (ctx) => {
   const msgId = ctx.message.message_id;
-  const text = ctx.message.text?.trim();
-  const lowerText = text?.toLowerCase();
+  const text = ctx.message.text;
 
   // Ignore /start command (handled elsewhere)
   if (text?.includes(COMMANDS.START)) return;
@@ -253,10 +257,10 @@ bot.on("message", async (ctx) => {
   if (isDuplicateMessage(ctx, msgId)) return;
 
   // Ignore non-text messages
-  if (!text || !lowerText) return;
+  if (!text) return;
 
   // Handle commands
-  switch (lowerText) {
+  switch (text) {
     case COMMANDS.EXIT:
       await handleExitCommand(ctx);
       return;
@@ -293,8 +297,6 @@ bot.on("message", async (ctx) => {
 let runnerHandle: RunnerHandle | null = null;
 
 export const startTelegramBot = () => {
-  console.log("[Telegram Bot] Starting bot with error handling and retry logic...");
-
   // Configure runner with retry logic for network timeouts
   runnerHandle = run(bot, {
     runner: {
@@ -310,10 +312,8 @@ export const startTelegramBot = () => {
 
   // Handle graceful shutdown on termination signals
   const stopBot = async () => {
-    console.log("[Telegram Bot] Received shutdown signal, stopping gracefully...");
     if (runnerHandle) {
       await runnerHandle.stop();
-      console.log("[Telegram Bot] Bot stopped successfully");
     }
     process.exit(0);
   };
@@ -331,6 +331,4 @@ export const startTelegramBot = () => {
     }
     console.error("[Telegram Bot] Unhandled promise rejection:", reason);
   });
-
-  console.log("[Telegram Bot] Bot started successfully with network error handling");
 };

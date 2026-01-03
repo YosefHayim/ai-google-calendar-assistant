@@ -31,7 +31,7 @@ export type ConflictCheckResult = {
  * @returns {Promise<ConflictCheckResult>} The result of the conflict check.
  * @example
  * const result = await checkEventConflicts({ email: "test@example.com", calendarId: "primary", startTime: "2025-01-01", endTime: "2025-01-02" });
- * console.log(result);
+ *
  */
 export const checkEventConflicts = asyncHandler(async (params: ConflictCheckParams): Promise<ConflictCheckResult> => {
   const { email, calendarId, startTime, endTime } = params;

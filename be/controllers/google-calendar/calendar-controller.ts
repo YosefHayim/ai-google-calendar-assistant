@@ -16,7 +16,7 @@ import { initUserSupabaseCalendarWithTokensAndUpdateTokens } from "@/utils/calen
  * @description Gets all calendars and sends the response.
  * @example
  * const data = await getAllCalendars(req, res);
- * console.log(data);
+ *
  */
 const getAllCalendars = reqResAsyncHandler(async (req: Request, res: Response) => {
   const tokenData = await fetchCredentialsByEmail(req.user?.email!);
@@ -57,7 +57,7 @@ const getAllCalendars = reqResAsyncHandler(async (req: Request, res: Response) =
  * @description Gets all calendar colors and sends the response.
  * @example
  * const data = await getAllCalendarColors(req, res);
- * console.log(data);
+ *
  */
 const getAllCalendarColors = reqResAsyncHandler(async (req: Request, res: Response) => {
   const tokenData = await fetchCredentialsByEmail(req.user?.email!);
@@ -75,7 +75,7 @@ const getAllCalendarColors = reqResAsyncHandler(async (req: Request, res: Respon
  * @description Gets all calendar timezones and sends the response.
  * @example
  * const data = await getAllCalendarTimezones(req, res);
- * console.log(data);
+ *
  */
 const getAllCalendarTimezones = reqResAsyncHandler(async (req: Request, res: Response) => {
   const tokenData = await fetchCredentialsByEmail(req.user?.email!);
@@ -93,7 +93,7 @@ const getAllCalendarTimezones = reqResAsyncHandler(async (req: Request, res: Res
  * @description Gets calendar info by id and sends the response.
  * @example
  * const data = await getCalendarInfoById(req, res);
- * console.log(data);
+ *
  */
 const getCalendarInfoById = reqResAsyncHandler(async (req: Request, res: Response) => {
   const tokenData = await fetchCredentialsByEmail(req.user?.email!);
@@ -111,7 +111,7 @@ const getCalendarInfoById = reqResAsyncHandler(async (req: Request, res: Respons
  * @description Gets calendar color by id and sends the response.
  * @example
  * const data = await getCalendarColorById(req, res);
- * console.log(data);
+ *
  */
 const getCalendarColorById = reqResAsyncHandler(async (req: Request, res: Response) => {
   const tokenData = await fetchCredentialsByEmail(req.user?.email!);
@@ -129,7 +129,7 @@ const getCalendarColorById = reqResAsyncHandler(async (req: Request, res: Respon
  * @description Gets calendar timezone by id and sends the response.
  * @example
  * const data = await getCalendarTimezoneById(req, res);
- * console.log(data);
+ *
  */
 const getCalendarTimezoneById = reqResAsyncHandler(async (req: Request, res: Response) => {
   const tokenData = await fetchCredentialsByEmail(req.user?.email!);
@@ -147,7 +147,7 @@ const getCalendarTimezoneById = reqResAsyncHandler(async (req: Request, res: Res
  * @description Gets free busy and sends the response.
  * @example
  * const data = await getFreeBusy(req, res);
- * console.log(data);
+ *
  */
 const getFreeBusy = reqResAsyncHandler(async (req: Request, res: Response) => {
   const tokenData = await fetchCredentialsByEmail(req.user?.email!);
@@ -173,7 +173,7 @@ const getFreeBusy = reqResAsyncHandler(async (req: Request, res: Response) => {
  * @description Gets settings of calendar and sends the response.
  * @example
  * const data = await getSettingsOfCalendar(req, res);
- * console.log(data);
+ *
  */
 const getSettingsOfCalendar = reqResAsyncHandler(async (req: Request, res: Response) => {
   const tokenData = await fetchCredentialsByEmail(req.user?.email!);
@@ -191,7 +191,7 @@ const getSettingsOfCalendar = reqResAsyncHandler(async (req: Request, res: Respo
  * @description Gets settings of calendar by id and sends the response.
  * @example
  * const data = await getSettingsOfCalendarById(req, res);
- * console.log(data);
+ *
  */
 const getSettingsOfCalendarById = reqResAsyncHandler(async (req: Request, res: Response) => {
   const tokenData = await fetchCredentialsByEmail(req.user?.email!);
@@ -209,7 +209,7 @@ const getSettingsOfCalendarById = reqResAsyncHandler(async (req: Request, res: R
  * @description Clears all events of calendar by id and sends the response.
  * @example
  * const data = await clearAllEventsOfCalendar(req, res);
- * console.log(data);
+ *
  */
 const clearAllEventsOfCalendar = reqResAsyncHandler(async (req: Request, res: Response) => {
   const tokenData = await fetchCredentialsByEmail(req.user?.email!);

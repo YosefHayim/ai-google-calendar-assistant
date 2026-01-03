@@ -16,7 +16,7 @@ import { initUserSupabaseCalendarWithTokensAndUpdateTokens } from "@/utils/calen
  * @description Gets event by event ID from calendar and sends the response.
  * @example
  * const data = await getEventById(req, res);
- * console.log(data);
+ *
  */
 const getEventById = reqResAsyncHandler(async (req: Request, res: Response) => {
   const tokenData = await fetchCredentialsByEmail(req.user?.email!);
@@ -48,7 +48,7 @@ const getEventById = reqResAsyncHandler(async (req: Request, res: Response) => {
  * @description Gets all events and sends the response.
  * @example
  * const data = await getAllEvents(req, res);
- * console.log(data);
+ *
  */
 const getAllEvents = reqResAsyncHandler(async (req: Request, res: Response) => {
   const tokenData = await fetchCredentialsByEmail(req.user?.email!);
@@ -69,7 +69,7 @@ const getAllEvents = reqResAsyncHandler(async (req: Request, res: Response) => {
  * @description Creates an event in calendar and sends the response.
  * @example
  * const data = await createEvent(req, res);
- * console.log(data);
+ *
  */
 const createEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
   const r = await eventsHandler(req, ACTION.INSERT, req.body, { calendarId: req.query.calendarId ?? "primary", email: req.body.email });
@@ -85,7 +85,7 @@ const createEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
  * @description Updates an event by event ID and sends the response.
  * @example
  * const data = await updateEvent(req, res);
- * console.log(data);
+ *
  */
 const updateEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
   const r = await eventsHandler(req, ACTION.UPDATE, {
@@ -104,7 +104,7 @@ const updateEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
  * @description Deletes an event from calendar by event ID and sends the response.
  * @example
  * const data = await deleteEvent(req, res);
- * console.log(data);
+ *
  */
 const deleteEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
   const r = await eventsHandler(req, ACTION.DELETE, { id: req.params.id });
@@ -120,7 +120,7 @@ const deleteEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
  * @description Gets event analytics by start date and end date and sends the response.
  * @example
  * const data = await getEventAnalytics(req, res);
- * console.log(data);
+ *
  */
 const getEventAnalytics = reqResAsyncHandler(async (req: Request, res: Response) => {
   const tokenData = await fetchCredentialsByEmail(req.user?.email!);
@@ -168,7 +168,7 @@ const getEventAnalytics = reqResAsyncHandler(async (req: Request, res: Response)
  * @description Quick adds an event and sends the response.
  * @example
  * const data = await quickAddEvent(req, res);
- * console.log(data);
+ *
  */
 const quickAddEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
   const tokenData = await fetchCredentialsByEmail(req.user?.email!);
@@ -194,7 +194,7 @@ const quickAddEvent = reqResAsyncHandler(async (req: Request, res: Response) => 
  * @description Watches an event and sends the response.
  * @example
  * const data = await watchEvents(req, res);
- * console.log(data);
+ *
  */
 const watchEvents = reqResAsyncHandler(async (req: Request, res: Response) => {
   const tokenData = await fetchCredentialsByEmail(req.user?.email!);
@@ -220,7 +220,7 @@ const watchEvents = reqResAsyncHandler(async (req: Request, res: Response) => {
  * @description Moves an event and sends the response.
  * @example
  * const data = await moveEvent(req, res);
- * console.log(data);
+ *
  */
 const moveEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
   const tokenData = await fetchCredentialsByEmail(req.user?.email!);
