@@ -1,6 +1,7 @@
 'use client'
 
 import { AllyLogo, BetaBadge } from '@/components/shared/logo'
+import React, { useEffect } from 'react'
 
 import { ENDPOINTS } from '@/lib/api/endpoints'
 import { ENV } from '@/lib/constants'
@@ -8,7 +9,7 @@ import { FcGoogle } from 'react-icons/fc'
 import ImageCarousel from '@/components/auth/ImageCarousel'
 import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button'
 import Link from 'next/link'
-import React from 'react'
+import router from 'next/router'
 import { useSearchParams } from 'next/navigation'
 
 const carouselImages = [
@@ -19,10 +20,18 @@ const carouselImages = [
   'https://images.unsplash.com/photo-1510519108179-ba09b7dfd4b7?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', // Abstract blue/purple tech
 ]
 
+const USER = 'user'
+
 const LoginPage: React.FC = () => {
   const searchParams = useSearchParams()
-  const error = searchParams.get('error')
+  const error = searchParams?.get('error')
   const [isLoading, setIsLoading] = React.useState(false)
+
+  useEffect(() => {
+    if (localStorage.getItem(USER)) {
+      router.push('/dashboard')
+    }
+  })
 
   const handleGoogleLogin = () => {
     setIsLoading(true)
