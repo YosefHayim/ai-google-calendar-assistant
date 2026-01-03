@@ -178,48 +178,62 @@ const handleConflictResponse = async (ctx: GlobalContext, output: string): Promi
 
 // Handler: Process user message with AI agent
 const handleAgentRequest = async (ctx: GlobalContext, message: string): Promise<void> => {
+  logger.info(`Telegram Bot: Handle agent request: ${JSON.stringify(ctx, null, 2)}`);
+  logger.info(`Telegram Bot: Handle agent request: message: ${message}`);
   ctx.session.isProcessing = true;
   const chatId = ctx.chat?.id || ctx.session.chatId;
   const userId = ctx.from?.id!;
 
   try {
     // Add user message to conversation history
+    logger.info(`Telegram Bot: Handle agent request: Adding message to context: ${chatId}, ${userId}, ${message}`);
     await addMessageToContext(chatId, userId, { role: "user", content: message }, summarizeMessages);
-
+    logger.info(`Telegram Bot: Handle agent request: Message added to context: ${chatId}, ${userId}, ${message}`);
     // Store user message embedding asynchronously (non-blocking)
+    logger.info(`Telegram Bot: Handle agent request: Storing user message embedding: ${chatId}, ${userId}, ${message}`);
     storeEmbeddingAsync(chatId, userId, message, "user");
+    logger.info(`Telegram Bot: Handle agent request: User message embedding stored: ${chatId}, ${userId}, ${message}`);
 
     // Get conversation context (today's messages + summary)
     const conversationContext = await getConversationContext(chatId, userId);
+    logger.info(`Telegram Bot: Handle agent request: Conversation context: ${JSON.stringify(conversationContext, null, 2)}`);
     const contextPrompt = buildContextPrompt(conversationContext);
+    logger.info(`Telegram Bot: Handle agent request: Context prompt: ${contextPrompt}`);
 
     // Get semantically relevant past conversations via vector search
     const semanticContext = await getRelevantContext(userId, message, {
       threshold: 0.75,
       limit: 3,
     });
+    logger.info(`Telegram Bot: Handle agent request: Semantic context: ${semanticContext}`);
 
     // Combine both contexts
     const fullContext = [contextPrompt, semanticContext].filter(Boolean).join("\n\n");
-
+    logger.info(`Telegram Bot: Handle agent request: Full context: ${fullContext}`);
     // Build prompt with conversation history
     const prompt = buildAgentPromptWithContext(ctx.session.email, message, fullContext);
+    logger.info(`Telegram Bot: Handle agent request: Prompt: ${prompt}`);
     const { finalOutput } = await activateAgent(ORCHESTRATOR_AGENT, prompt);
+    logger.info(`Telegram Bot: Handle agent request: Final output: ${finalOutput}`);
 
     // Add AI response to conversation history
     if (finalOutput) {
       await addMessageToContext(chatId, userId, { role: "assistant", content: finalOutput }, summarizeMessages);
-
+      logger.info(`Telegram Bot: Handle agent request: AI response added to context: ${chatId}, ${userId}, ${finalOutput}`);
       // Store AI response embedding asynchronously (non-blocking)
       storeEmbeddingAsync(chatId, userId, finalOutput, "assistant");
     }
 
     if (finalOutput?.startsWith("CONFLICT_DETECTED::")) {
+      logger.info(`Telegram Bot: Handle agent request: Conflict detected: ${finalOutput}`);
       await handleConflictResponse(ctx, finalOutput);
+      logger.info(`Telegram Bot: Handle agent request: Conflict handled: ${finalOutput}`);
     } else {
+      logger.info(`Telegram Bot: Handle agent request: No conflict: ${finalOutput}`);
       await ctx.reply(finalOutput || "No output received from AI Agent.");
     }
   } catch (error) {
+    logger.error(`Telegram Bot: Handle agent request: Error: ${error}`);
     console.error("Agent error:", error);
     await ctx.reply("Error processing your request.");
   } finally {

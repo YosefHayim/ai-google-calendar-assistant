@@ -1,37 +1,22 @@
 import type { GlobalContext } from "../init-bot";
 import type { MiddlewareFn } from "grammy";
 import { SUPABASE } from "@/config";
-import isEmail from "validator/lib/isEmail";
+import { isEmail } from "validator";
 import { logger } from "@/utils/logger";
 
-/**
- * Telegram Authentication Middleware
- *
- * Handles user authentication and email verification for Telegram bot.
- * Sets up session with user info and email from database or user input.
- *
- * @description
- * This middleware:
- * 1. Initializes session with Telegram user info (chatId, userId, username)
- * 2. Loads email from database if user exists in user_telegram_links
- * 3. Prompts for email and saves to database if new user
- * 4. Must run before googleTokenTgHandler middleware
- */
 export const authTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
   logger.info(`Telegram Bot: Auth: authTgHandler middleware called`);
 
   const from = ctx.from;
   const session = ctx.session;
-  logger.info(`Telegram Bot: Auth: from: ${from}`);
-  logger.info(`Telegram Bot: Auth: session: ${session}`);
+
   if (!(from && session)) {
     logger.info(`Telegram Bot: Auth: from or session not found`);
     return next();
   }
 
-  // Initialize session once
+  // 1. Initialize session if missing
   if (!session.chatId) {
-    logger.info(`Telegram Bot: Auth: session.chatId not found`);
     session.chatId = from.id;
     session.userId = from.id;
     session.username = from.username;
@@ -39,33 +24,47 @@ export const authTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
     session.messageCount = 0;
   }
 
-  // Try to load from DB
-  const { data } = await SUPABASE.from("user_telegram_links").select("email,first_name").eq("chat_id", session.chatId).single();
-  logger.info(`Telegram Bot: Auth: data: ${data}`);
-  if (data?.email) {
-    if (!session.email) {
-      session.email = data.email;
-      logger.info(`Telegram Bot: Auth: session.email found: ${session.email}`);
+  try {
+    // 2. Try to load from DB
+    const { data, error } = await SUPABASE.from("user_telegram_links").select("email,first_name").eq("chat_id", session.chatId).single();
+
+    if (error && error.code !== "PGRST116") {
+      // Ignore "no rows found" error
+      logger.error(`Telegram Bot: Auth: DB Error: ${error.message}`);
     }
 
-    session.messageCount++;
-    logger.info(`Telegram Bot: Auth: session.messageCount incremented: ${session.messageCount}`);
-    return next();
-  }
+    // 3. Logic: If DB has email, Sync it to Session AND Context
+    if (data?.email) {
+      // Always sync session with DB (Source of Truth)
+      session.email = data.email;
 
-  // Ask for email if missing
-  if (!session.email) {
+      // CRITICAL FIX: Pass email to the temporary context for the next middleware
+      // You might need to add 'email' to your GlobalContext type definition
+      (ctx as any).email = data.email;
+
+      logger.info(`Telegram Bot: Auth: Email synced: ${session.email}`);
+      session.messageCount++;
+      return next();
+    }
+
+    // 4. If Session has email but DB failed (Edge case), pass it along
+    if (session.email) {
+      (ctx as any).email = session.email;
+      return next();
+    }
+
+    // 5. Ask for email if missing in both DB and Session
     const text = ctx.message?.text?.trim();
     if (!(text && isEmail(text))) {
-      logger.info(`Telegram Bot: Auth: text not found or not email: ${text}`);
       await ctx.reply("First time? Please provide your email to authorize:");
-      return; // do NOT call next()
+      return;
     }
 
-    // Save email
+    // 6. Save new email
     session.email = text;
-    logger.info(`Telegram Bot: Auth: session.email set: ${session.email}`);
-    const { error, data } = await SUPABASE.from("user_telegram_links")
+    (ctx as any).email = text; // Fix for current request
+
+    const insertRes = await SUPABASE.from("user_telegram_links")
       .insert({
         chat_id: from.id,
         username: from.username,
@@ -76,23 +75,19 @@ export const authTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
         telegram_user_id: from.id,
       })
       .select()
-      .limit(1)
       .maybeSingle();
 
-    if (error || !data) {
-      logger.error(`Telegram Bot: Auth: error or data not found: ${error}`);
-      console.error("[DEBUG] authTgHandler middleware error", { error });
+    if (insertRes.error || !insertRes.data) {
+      logger.error(`Telegram Bot: Auth: Save error: ${insertRes.error?.message}`);
       await ctx.reply("Error saving email. Please try again.");
       return;
     }
 
-    logger.info(`Telegram Bot: Auth: email saved successfully: ${data}`);
     await ctx.reply("Email has been saved successfully!");
     session.messageCount++;
-    logger.info(`Telegram Bot: Auth: session.messageCount incremented: ${session.messageCount}`);
     return next();
+  } catch (err) {
+    logger.error(`Telegram Bot: Auth: Unexpected error: ${err}`);
+    return next(); // Proceed or handle gracefully
   }
-
-  logger.info(`Telegram Bot: Auth: next middleware called`);
-  return next();
 };

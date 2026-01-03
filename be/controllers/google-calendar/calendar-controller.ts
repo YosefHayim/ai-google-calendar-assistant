@@ -7,6 +7,7 @@ import type { calendar_v3 } from "googleapis";
 import { fetchCredentialsByEmail } from "@/utils/auth";
 import { initUserSupabaseCalendarWithTokensAndUpdateTokens } from "@/utils/calendar";
 import { logger } from "@/utils/logger";
+import { updateUserSupabaseCalendarCategories } from "@/utils/calendar/update-categories";
 
 /**
  * Get all calendars
@@ -40,8 +41,6 @@ const getAllCalendars = reqResAsyncHandler(async (req: Request, res: Response) =
         defaultReminders: calendar.defaultReminders,
       };
     });
-
-    logger.info(`Google Calendar: Calendar Controller: getAllCalendars called: allCalendars: ${allCalendars}`);
 
     await updateUserSupabaseCalendarCategories(calendar, req.user?.email!, req.user?.id!);
 
