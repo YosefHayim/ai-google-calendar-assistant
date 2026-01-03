@@ -1,23 +1,23 @@
+import { InputGuardrailTripwireTriggered, run } from "@openai/agents";
 import type { Request, Response } from "express";
+import {
+  addWebMessageToContext,
+  buildWebContextPrompt,
+  deleteWebConversation,
+  getOrCreateWebTodayContext,
+  getWebConversationById,
+  getWebConversationList,
+  loadWebConversationIntoContext,
+  updateWebConversationTitle,
+} from "@/utils/web-conversation-history";
+import { generateConversationTitle, summarizeMessages } from "@/telegram-bot/utils/summarize";
+import { getWebRelevantContext, storeWebEmbeddingAsync } from "@/utils/web-embeddings";
 import { reqResAsyncHandler, sendR } from "@/utils/http";
 
 import { ORCHESTRATOR_AGENT } from "@/ai-agents";
 import { STATUS_RESPONSE } from "@/config";
-import { run } from "@openai/agents";
 
 // Web conversation context and embeddings
-import {
-  getOrCreateWebTodayContext,
-  addWebMessageToContext,
-  buildWebContextPrompt,
-  getWebConversationList,
-  getWebConversationById,
-  deleteWebConversation,
-  loadWebConversationIntoContext,
-  updateWebConversationTitle,
-} from "@/utils/web-conversation-history";
-import { getWebRelevantContext, storeWebEmbeddingAsync } from "@/utils/web-embeddings";
-import { summarizeMessages, generateConversationTitle } from "@/telegram-bot/utils/summarize";
 
 interface ChatRequest {
   message: string;
@@ -90,8 +90,20 @@ const streamChat = reqResAsyncHandler(async (req: Request<unknown, unknown, Chat
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
+    if (error instanceof InputGuardrailTripwireTriggered) {
+      console.warn(`[Guardrail] Blocked input: ${message}`);
+
+      // Return the friendly "userReply" we generated in the guardrail agent
+      // The 'message' property of the error contains the string we passed in the throw
+      sendR(res, STATUS_RESPONSE.FORBIDDEN, error.message, {
+        message: error.message, // e.g., "I cannot wipe your entire calendar for safety reasons."
+      });
+      return;
+    }
     console.error("Chat error:", error);
-    sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Error processing your request");
+    sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Error processing your request", {
+      message: error,
+    });
   }
 });
 
@@ -166,12 +178,7 @@ const sendChat = reqResAsyncHandler(async (req: Request<unknown, unknown, ChatRe
  * @param {string} userEmail - User email for context
  * @returns {string} Formatted prompt string
  */
-function buildChatPromptWithContext(
-  message: string,
-  conversationContext: string,
-  semanticContext: string,
-  userEmail: string
-): string {
+function buildChatPromptWithContext(message: string, conversationContext: string, semanticContext: string, userEmail: string): string {
   const parts: string[] = [];
 
   // Add user context
@@ -297,68 +304,66 @@ interface ContinueConversationRequest {
   message: string;
 }
 
-const continueConversation = reqResAsyncHandler(
-  async (req: Request<{ id: string }, unknown, ContinueConversationRequest>, res: Response) => {
-    const userId = req.user?.id;
-    const userEmail = req.user?.email;
-    const conversationId = parseInt(req.params.id);
-    const { message } = req.body;
+const continueConversation = reqResAsyncHandler(async (req: Request<{ id: string }, unknown, ContinueConversationRequest>, res: Response) => {
+  const userId = req.user?.id;
+  const userEmail = req.user?.email;
+  const conversationId = parseInt(req.params.id);
+  const { message } = req.body;
 
-    if (!userId) {
-      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
-    }
-
-    if (!conversationId || isNaN(conversationId)) {
-      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Invalid conversation ID");
-    }
-
-    if (!message?.trim()) {
-      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Message is required");
-    }
-
-    try {
-      // Load the existing conversation
-      const loaded = await loadWebConversationIntoContext(conversationId, userId);
-
-      if (!loaded) {
-        return sendR(res, STATUS_RESPONSE.NOT_FOUND, "Conversation not found");
-      }
-
-      // Build context from loaded conversation
-      const conversationContext = buildWebContextPrompt(loaded.context);
-
-      // Get semantic context
-      const semanticContext = await getWebRelevantContext(userId, message, {
-        threshold: 0.75,
-        limit: 3,
-      });
-
-      // Build full prompt
-      const fullPrompt = buildChatPromptWithContext(message, conversationContext, semanticContext, userEmail || userId);
-
-      // Run agent
-      const result = await run(ORCHESTRATOR_AGENT, fullPrompt);
-      const finalOutput = result.finalOutput || "";
-
-      // Store messages in this conversation's context
-      addWebMessageToContext(userId, { role: "user", content: message }, summarizeMessages).catch(console.error);
-      addWebMessageToContext(userId, { role: "assistant", content: finalOutput }, summarizeMessages).catch(console.error);
-
-      // Store embeddings
-      storeWebEmbeddingAsync(userId, message, "user");
-      storeWebEmbeddingAsync(userId, finalOutput, "assistant");
-
-      sendR(res, STATUS_RESPONSE.SUCCESS, "Message processed successfully", {
-        content: finalOutput,
-        conversationId,
-        timestamp: new Date().toISOString(),
-      });
-    } catch (error) {
-      console.error("Error continuing conversation:", error);
-      sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Error processing your request");
-    }
+  if (!userId) {
+    return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
   }
-);
+
+  if (!conversationId || isNaN(conversationId)) {
+    return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Invalid conversation ID");
+  }
+
+  if (!message?.trim()) {
+    return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Message is required");
+  }
+
+  try {
+    // Load the existing conversation
+    const loaded = await loadWebConversationIntoContext(conversationId, userId);
+
+    if (!loaded) {
+      return sendR(res, STATUS_RESPONSE.NOT_FOUND, "Conversation not found");
+    }
+
+    // Build context from loaded conversation
+    const conversationContext = buildWebContextPrompt(loaded.context);
+
+    // Get semantic context
+    const semanticContext = await getWebRelevantContext(userId, message, {
+      threshold: 0.75,
+      limit: 3,
+    });
+
+    // Build full prompt
+    const fullPrompt = buildChatPromptWithContext(message, conversationContext, semanticContext, userEmail || userId);
+
+    // Run agent
+    const result = await run(ORCHESTRATOR_AGENT, fullPrompt);
+    const finalOutput = result.finalOutput || "";
+
+    // Store messages in this conversation's context
+    addWebMessageToContext(userId, { role: "user", content: message }, summarizeMessages).catch(console.error);
+    addWebMessageToContext(userId, { role: "assistant", content: finalOutput }, summarizeMessages).catch(console.error);
+
+    // Store embeddings
+    storeWebEmbeddingAsync(userId, message, "user");
+    storeWebEmbeddingAsync(userId, finalOutput, "assistant");
+
+    sendR(res, STATUS_RESPONSE.SUCCESS, "Message processed successfully", {
+      content: finalOutput,
+      conversationId,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (error) {
+    console.error("Error continuing conversation:", error);
+    sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Error processing your request");
+  }
+});
 
 export const chatController = {
   streamChat,

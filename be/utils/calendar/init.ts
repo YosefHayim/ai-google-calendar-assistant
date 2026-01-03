@@ -1,7 +1,7 @@
-import { calendar_v3, google } from "googleapis";
-import type { OAuth2Client } from "google-auth-library";
-
 import { REDIRECT_URI, env } from "@/config";
+import { calendar_v3, google } from "googleapis";
+
+import type { OAuth2Client } from "google-auth-library";
 import type { TokensProps } from "@/types";
 import { updateUserSupabaseTokens } from "../auth/update-tokens-of-user";
 
@@ -65,10 +65,11 @@ const persistRefreshedTokens = async (oldTokens: TokensProps, newTokens: Refresh
 /**
  * Initialize calendar with user tokens
  *
- * Creates a fresh OAuth2Client per request to avoid stale token state issues.
- * Sets credentials, refreshes token if needed, updates DB, and returns calendar client.
+
  *
  * @param {TokensProps} tokens - The user's OAuth tokens.
+ * @description - Creates a fresh OAuth2Client per request to avoid stale token state issues.
+ * Sets credentials, refreshes token if needed, updates DB, and returns calendar client.
  * @returns {Promise<calendar_v3.Calendar>} The initialized calendar client.
  */
 export const initUserSupabaseCalendarWithTokensAndUpdateTokens = async (tokens: TokensProps): Promise<calendar_v3.Calendar> => {

@@ -4,6 +4,7 @@ import { CURRENT_MODEL, MODELS } from "@/config";
 import { AGENT_INSTRUCTIONS } from "./agents-instructions";
 import { Agent } from "@openai/agents";
 import { HANDOFF_DESCRIPTIONS } from "./agent-handoff-descriptions";
+import { calendarSafetyGuardrail } from "./guardrails";
 
 // Model tiers for different agent complexity levels
 const FAST_MODEL = MODELS.GPT_4_1_NANO; // Simple tool-calling agents (fast, cheap)
@@ -110,4 +111,5 @@ export const ORCHESTRATOR_AGENT = new Agent({
     HANDOFF_AGENTS.registerUserHandoff.asTool({ toolName: "register_user_handoff" }),
     AGENTS.generateGoogleAuthUrl.asTool({ toolName: "generate_google_auth_url" }),
   ],
+  inputGuardrails: [calendarSafetyGuardrail],
 });
