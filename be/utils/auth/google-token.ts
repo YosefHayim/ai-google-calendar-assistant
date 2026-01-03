@@ -109,12 +109,12 @@ export const fetchGoogleTokensByEmail = async (email: string): Promise<{ data: T
   const { data, error } = await SUPABASE.from("user_calendar_tokens").select(TOKEN_FIELDS).ilike("email", normalizedEmail).limit(1).maybeSingle();
 
   if (error) {
-    logger.error(`Auth: fetchGoogleTokensByEmail called: error: ${error}`);
+    logger.error(`Auth: fetchGoogleTokensByEmail called: error: ${JSON.stringify(error, null, 2)}`);
     console.error(`[fetchGoogleTokensByEmail] Database error for ${normalizedEmail}:`, error);
     return { data: null, error: error.message };
   }
 
-  logger.info(`Auth: fetchGoogleTokensByEmail called: data: ${data}`);
+  logger.info(`Auth: fetchGoogleTokensByEmail called: data: ${JSON.stringify(data, null, 2)}`);
   return { data: data as TokensProps | null, error: null };
 };
 
