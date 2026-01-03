@@ -38,7 +38,8 @@ interface ChatRequest {
  */
 const streamChat = reqResAsyncHandler(async (req: Request<unknown, unknown, ChatRequest>, res: Response) => {
   const { message } = req.body;
-  const userId = req.user?.email;
+  const userId = req.user?.id;
+  const userEmail = req.user?.email;
 
   if (!message?.trim()) {
     return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Message is required");
@@ -50,7 +51,7 @@ const streamChat = reqResAsyncHandler(async (req: Request<unknown, unknown, Chat
 
   try {
     // 1. Get today's conversation context from database
-    const { context } = await getOrCreateWebTodayContext(userId);
+    const { stateId: conversationId, context } = await getOrCreateWebTodayContext(userId);
     const conversationContext = buildWebContextPrompt(context);
 
     // 2. Get semantic context from past conversations (embeddings)
@@ -60,7 +61,7 @@ const streamChat = reqResAsyncHandler(async (req: Request<unknown, unknown, Chat
     });
 
     // 3. Build full prompt with all context
-    const fullPrompt = buildChatPromptWithContext(message, conversationContext, semanticContext, userId);
+    const fullPrompt = buildChatPromptWithContext(message, conversationContext, semanticContext, userEmail || userId);
 
     // 4. Run the agent
     const result = await run(ORCHESTRATOR_AGENT, fullPrompt);
@@ -76,6 +77,7 @@ const streamChat = reqResAsyncHandler(async (req: Request<unknown, unknown, Chat
 
     sendR(res, STATUS_RESPONSE.SUCCESS, "Chat message processed successfully", {
       content: finalOutput,
+      conversationId,
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
@@ -97,7 +99,8 @@ const streamChat = reqResAsyncHandler(async (req: Request<unknown, unknown, Chat
  */
 const sendChat = reqResAsyncHandler(async (req: Request<unknown, unknown, ChatRequest>, res: Response) => {
   const { message } = req.body;
-  const userId = req.user?.email;
+  const userId = req.user?.id;
+  const userEmail = req.user?.email;
 
   if (!message?.trim()) {
     return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Message is required");
@@ -109,14 +112,14 @@ const sendChat = reqResAsyncHandler(async (req: Request<unknown, unknown, ChatRe
 
   try {
     // Same logic as streamChat - get context, embeddings, build prompt
-    const { context } = await getOrCreateWebTodayContext(userId);
+    const { stateId: conversationId, context } = await getOrCreateWebTodayContext(userId);
     const conversationContext = buildWebContextPrompt(context);
     const semanticContext = await getWebRelevantContext(userId, message, {
       threshold: 0.75,
       limit: 3,
     });
 
-    const fullPrompt = buildChatPromptWithContext(message, conversationContext, semanticContext, userId);
+    const fullPrompt = buildChatPromptWithContext(message, conversationContext, semanticContext, userEmail || userId);
     const result = await run(ORCHESTRATOR_AGENT, fullPrompt);
     const finalOutput = result.finalOutput || "";
 
@@ -128,6 +131,7 @@ const sendChat = reqResAsyncHandler(async (req: Request<unknown, unknown, ChatRe
 
     sendR(res, STATUS_RESPONSE.SUCCESS, "Chat message processed successfully", {
       content: finalOutput || "No response received",
+      conversationId,
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
@@ -186,7 +190,7 @@ function buildChatPromptWithContext(
  * Returns conversations with title (summary/preview), message count, and timestamps
  */
 const getConversations = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const userId = req.user?.email;
+  const userId = req.user?.id;
 
   if (!userId) {
     return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
@@ -213,7 +217,7 @@ const getConversations = reqResAsyncHandler(async (req: Request, res: Response) 
  * Returns full conversation with all messages
  */
 const getConversation = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const userId = req.user?.email;
+  const userId = req.user?.id;
   const conversationId = parseInt(req.params.id);
 
   if (!userId) {
@@ -244,7 +248,7 @@ const getConversation = reqResAsyncHandler(async (req: Request, res: Response) =
  * Delete a conversation
  */
 const removeConversation = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const userId = req.user?.email;
+  const userId = req.user?.id;
   const conversationId = parseInt(req.params.id);
 
   if (!userId) {
@@ -278,7 +282,7 @@ interface ContinueConversationRequest {
 
 const continueConversation = reqResAsyncHandler(
   async (req: Request<{ id: string }, unknown, ContinueConversationRequest>, res: Response) => {
-    const userId = req.user?.email;
+    const userId = req.user?.id;
     const conversationId = parseInt(req.params.id);
     const { message } = req.body;
 

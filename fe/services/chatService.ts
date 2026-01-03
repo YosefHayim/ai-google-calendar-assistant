@@ -13,7 +13,7 @@ export interface ChatMessage {
 
 export interface StreamCallbacks {
   onChunk: (chunk: string, fullText: string) => void
-  onComplete: (fullText: string) => void
+  onComplete: (fullText: string, conversationId?: number) => void
   onError: (error: string) => void
 }
 
@@ -31,9 +31,10 @@ export const streamChatMessage = async (
   try {
     const response = await apiClient.post('/api/chat', { message, history })
     const content = response.data?.data?.content || 'No response received'
+    const conversationId = response.data?.data?.conversationId
 
     // Return the complete response - typewriter component will handle the animation
-    onComplete(content)
+    onComplete(content, conversationId)
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
     onError(errorMessage)

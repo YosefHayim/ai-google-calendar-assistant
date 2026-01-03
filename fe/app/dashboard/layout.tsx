@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 
+import { ChatProvider } from '@/contexts/ChatContext'
 import { OnboardingTour } from '@/components/dashboard/shared/OnboardingTour'
 import SettingsModal from '@/components/dashboard/shared/SettingsModal'
 import Sidebar from '@/components/dashboard/shared/Sidebar'
@@ -52,26 +53,28 @@ export default function DashboardLayout({ children }: { children?: React.ReactNo
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-zinc-50 dark:bg-zinc-950">
-      {showTour && <OnboardingTour onComplete={handleTourComplete} />}
+    <ChatProvider>
+      <div className="flex h-screen overflow-hidden bg-zinc-50 dark:bg-zinc-950">
+        {showTour && <OnboardingTour onComplete={handleTourComplete} />}
 
-      <Sidebar
-        isOpen={isSidebarOpen}
-        onClose={closeSidebar}
-        onToggle={toggleSidebar}
-        onOpenSettings={openSettings}
-        onSignOut={handleSignOut}
-      />
-      <main className={`flex-1 flex flex-col transition-all duration-300 ${isSidebarOpen ? 'md:ml-64' : 'md:ml-20'}`}>
-        {children}
-      </main>
-      <SettingsModal
-        isOpen={isSettingsOpen}
-        onClose={closeSettings}
-        onSignOut={handleSignOut}
-        isDarkMode={theme === 'dark'}
-        toggleTheme={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-      />
-    </div>
+        <Sidebar
+          isOpen={isSidebarOpen}
+          onClose={closeSidebar}
+          onToggle={toggleSidebar}
+          onOpenSettings={openSettings}
+          onSignOut={handleSignOut}
+        />
+        <main className={`flex-1 flex flex-col transition-all duration-300 ${isSidebarOpen ? 'md:ml-64' : 'md:ml-20'}`}>
+          {children}
+        </main>
+        <SettingsModal
+          isOpen={isSettingsOpen}
+          onClose={closeSettings}
+          onSignOut={handleSignOut}
+          isDarkMode={theme === 'dark'}
+          toggleTheme={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+        />
+      </div>
+    </ChatProvider>
   )
 }
