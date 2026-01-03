@@ -85,6 +85,8 @@ export interface FullConversation {
 
 export interface ConversationListResponse {
   conversations: ConversationListItem[]
+  status: string
+  message: string
   pagination: {
     limit: number
     offset: number
@@ -95,10 +97,7 @@ export interface ConversationListResponse {
 /**
  * Get list of user's conversations
  */
-export const getConversations = async (
-  limit: number = 20,
-  offset: number = 0,
-): Promise<ConversationListResponse> => {
+export const getConversations = async (limit: number = 20, offset: number = 0): Promise<ConversationListResponse> => {
   const response = await apiClient.get(`/api/chat/conversations?limit=${limit}&offset=${offset}`)
   return response.data?.data || { conversations: [], pagination: { limit, offset, count: 0 } }
 }

@@ -16,6 +16,7 @@ export const queryKeys = {
   // Calendar queries
   calendars: {
     all: ['calendars'] as const,
+    create: () => [...queryKeys.calendars.all, 'create'] as const,
     lists: () => [...queryKeys.calendars.all, 'list'] as const,
     list: (custom: boolean) => [...queryKeys.calendars.lists(), { custom }] as const,
     details: () => [...queryKeys.calendars.all, 'detail'] as const,
@@ -35,6 +36,13 @@ export const queryKeys = {
     details: () => [...queryKeys.events.all, 'detail'] as const,
     detail: (id: string, calendarId?: string) => [...queryKeys.events.details(), id, { calendarId }] as const,
     analytics: (params?: EventQueryParams) => [...queryKeys.events.all, 'analytics', params ?? {}] as const,
+  },
+
+  // Conversation queries
+  conversations: {
+    all: ['conversations'] as const,
+    list: () => [...queryKeys.conversations.all, 'list'] as const,
+    detail: (id: number) => [...queryKeys.conversations.all, 'detail', id] as const,
   },
 } as const
 

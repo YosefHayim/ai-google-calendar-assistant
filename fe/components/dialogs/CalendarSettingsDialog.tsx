@@ -320,9 +320,9 @@ const CalendarSettingsDialog: React.FC<CalendarSettingsDialogProps> = ({ isOpen,
                   </div>
                 )}
                 {calendar.colorId && (
-                  <div>
-                    <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-1">Color ID</p>
-                    <p className="text-sm text-zinc-600 dark:text-zinc-400 font-mono">{calendar.colorId}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-xs text-zinc-500 dark:text-zinc-400">Color ID</p>
+                    <p className="text-sm text-zinc-600 dark:text-zinc-400">{calendar.colorId}</p>
                   </div>
                 )}
               </div>
