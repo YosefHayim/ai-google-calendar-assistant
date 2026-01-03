@@ -14,9 +14,10 @@ import {
   getWebConversationById,
   deleteWebConversation,
   loadWebConversationIntoContext,
+  updateWebConversationTitle,
 } from "@/utils/web-conversation-history";
 import { getWebRelevantContext, storeWebEmbeddingAsync } from "@/utils/web-embeddings";
-import { summarizeMessages } from "@/telegram-bot/utils/summarize";
+import { summarizeMessages, generateConversationTitle } from "@/telegram-bot/utils/summarize";
 
 interface ChatRequest {
   message: string;
@@ -52,6 +53,7 @@ const streamChat = reqResAsyncHandler(async (req: Request<unknown, unknown, Chat
   try {
     // 1. Get today's conversation context from database
     const { stateId: conversationId, context } = await getOrCreateWebTodayContext(userId);
+    const isNewConversation = context.messages.length === 0 && !context.title;
     const conversationContext = buildWebContextPrompt(context);
 
     // 2. Get semantic context from past conversations (embeddings)
@@ -74,6 +76,13 @@ const streamChat = reqResAsyncHandler(async (req: Request<unknown, unknown, Chat
     // 6. Store embeddings for future semantic search (fire-and-forget)
     storeWebEmbeddingAsync(userId, message, "user");
     storeWebEmbeddingAsync(userId, finalOutput, "assistant");
+
+    // 7. Generate conversation title for new conversations (async, fire-and-forget)
+    if (isNewConversation && conversationId !== -1) {
+      generateConversationTitle(message)
+        .then((title) => updateWebConversationTitle(conversationId, title))
+        .catch(console.error);
+    }
 
     sendR(res, STATUS_RESPONSE.SUCCESS, "Chat message processed successfully", {
       content: finalOutput,
@@ -113,6 +122,7 @@ const sendChat = reqResAsyncHandler(async (req: Request<unknown, unknown, ChatRe
   try {
     // Same logic as streamChat - get context, embeddings, build prompt
     const { stateId: conversationId, context } = await getOrCreateWebTodayContext(userId);
+    const isNewConversation = context.messages.length === 0 && !context.title;
     const conversationContext = buildWebContextPrompt(context);
     const semanticContext = await getWebRelevantContext(userId, message, {
       threshold: 0.75,
@@ -128,6 +138,13 @@ const sendChat = reqResAsyncHandler(async (req: Request<unknown, unknown, ChatRe
     addWebMessageToContext(userId, { role: "assistant", content: finalOutput }, summarizeMessages).catch(console.error);
     storeWebEmbeddingAsync(userId, message, "user");
     storeWebEmbeddingAsync(userId, finalOutput, "assistant");
+
+    // Generate conversation title for new conversations (async, fire-and-forget)
+    if (isNewConversation && conversationId !== -1) {
+      generateConversationTitle(message)
+        .then((title) => updateWebConversationTitle(conversationId, title))
+        .catch(console.error);
+    }
 
     sendR(res, STATUS_RESPONSE.SUCCESS, "Chat message processed successfully", {
       content: finalOutput || "No response received",
