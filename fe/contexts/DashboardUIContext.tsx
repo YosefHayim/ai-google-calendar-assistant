@@ -1,6 +1,7 @@
 'use client'
 
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react'
+
 import { useRouter } from 'next/navigation'
 import { useTheme } from 'next-themes'
 
@@ -61,27 +62,21 @@ export function DashboardUIProvider({ children }: { children: React.ReactNode })
     }
   }, [])
 
-  const openSettings = useCallback(() => {
-    setIsSettingsOpen(true)
-  }, [])
+  const openSettings = () => setIsSettingsOpen(true)
 
-  const closeSettings = useCallback(() => {
-    setIsSettingsOpen(false)
-  }, [])
+  const closeSettings = () => setIsSettingsOpen(false)
 
-  const toggleTheme = useCallback(() => {
-    setTheme(theme === 'dark' ? 'light' : 'dark')
-  }, [theme, setTheme])
+  const toggleTheme = () => setTheme(theme === 'dark' ? 'light' : 'dark')
 
-  const completeTour = useCallback(() => {
+  const completeTour = () => {
     setShowTour(false)
     localStorage.setItem(ONBOARDING_COMPLETE_KEY, 'true')
-  }, [])
+  }
 
-  const handleSignOut = useCallback(() => {
+  const handleSignOut = () => {
     closeSettings()
     router.push('/login')
-  }, [closeSettings, router])
+  }
 
   const value: DashboardUIContextValue = {
     // Sidebar
