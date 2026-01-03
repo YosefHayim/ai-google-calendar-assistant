@@ -1,11 +1,12 @@
+import { ACCESS_TOKEN_COOKIE, clearAuthCookies, setAuthCookies } from "@/utils/auth/cookie-utils";
 import type { GoogleIdTokenPayloadProps, TokensProps } from "@/types";
 import { OAUTH2CLIENT, PROVIDERS, REDIRECT_URI, SCOPES, SCOPES_STRING, STATUS_RESPONSE, SUPABASE, env } from "@/config";
 import type { Request, Response } from "express";
-import { clearAuthCookies, setAuthCookies } from "@/utils/auth/cookie-utils";
 import { generateGoogleAuthUrl, supabaseThirdPartySignInOrSignUp } from "@/utils/auth";
 import { reqResAsyncHandler, sendR } from "@/utils/http";
 
 import jwt from "jsonwebtoken";
+import { validateSupabaseToken } from "@/utils/auth/supabase-token";
 
 const ACCESS_TOKEN_HEADER = "access_token";
 const REFRESH_TOKEN_HEADER = "refresh_token";
@@ -26,8 +27,28 @@ const generateAuthGoogleUrl = reqResAsyncHandler(async (req: Request, res: Respo
 
   // Check if user already has tokens with refresh_token to avoid unnecessary consent screen
   let forceConsent = true; // Default to true for first-time auth
-  if (req.user?.email) {
-    const normalizedEmail = req.user.email.toLowerCase().trim();
+
+  // Try to get user email from req.user (if middleware set it) or from cookies
+  let userEmail: string | undefined = req.user?.email;
+
+  // If no user from middleware, try to get from cookies (for unauthenticated callback route)
+  if (!userEmail) {
+    const accessToken = req.cookies?.[ACCESS_TOKEN_COOKIE];
+    if (accessToken) {
+      try {
+        const validation = await validateSupabaseToken(accessToken);
+        if (validation.user?.email) {
+          userEmail = validation.user.email;
+        }
+      } catch (error) {
+        // Token invalid or expired - will default to forceConsent = true
+        console.log("[OAuth Callback] Could not validate token from cookie:", error);
+      }
+    }
+  }
+
+  if (userEmail) {
+    const normalizedEmail = userEmail.toLowerCase().trim();
     const { data: existingTokens } = await SUPABASE.from("user_calendar_tokens")
       .select("refresh_token, is_active")
       .ilike("email", normalizedEmail)
