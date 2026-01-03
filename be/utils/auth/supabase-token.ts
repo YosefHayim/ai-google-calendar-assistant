@@ -67,22 +67,46 @@ export const validateSupabaseToken = async (token: string): Promise<SupabaseSess
  * @throws {Error} If refresh fails
  */
 export const refreshSupabaseSession = async (refreshToken: string): Promise<RefreshedSupabaseSession> => {
-  const { data, error } = await SUPABASE.auth.refreshSession({ refresh_token: refreshToken });
+  try {
+    const { data, error } = await SUPABASE.auth.refreshSession({ refresh_token: refreshToken });
 
-  if (error) {
-    console.error("Supabase session refresh failed:", error.message);
-    throw new Error(`SESSION_REFRESH_FAILED: ${error.message}`);
+    if (error) {
+      console.error("[Supabase Token] Session refresh failed:", error.message);
+      throw new Error(`SESSION_REFRESH_FAILED: ${error.message}`);
+    }
+
+    if (!data.session || !data.user) {
+      console.error("[Supabase Token] Refresh returned no session or user");
+      throw new Error("SESSION_REFRESH_FAILED: No session returned");
+    }
+
+    // Validate that the new refresh token is present (Supabase uses refresh token rotation)
+    if (!data.session.refresh_token) {
+      console.error("[Supabase Token] Refresh succeeded but no new refresh token returned");
+      throw new Error("SESSION_REFRESH_FAILED: No refresh token in response (token rotation issue)");
+    }
+
+    // Validate user has email (required for downstream Google token lookup)
+    if (!data.user.email) {
+      console.error(`[Supabase Token] Refresh succeeded but user has no email. User ID: ${data.user.id}`);
+      throw new Error("SESSION_REFRESH_FAILED: User email missing");
+    }
+
+    return {
+      refreshToken: data.session.refresh_token,
+      user: data.user,
+      accessToken: data.session.access_token,
+    };
+  } catch (e) {
+    const err = e as Error;
+    // Re-throw if it's already our formatted error
+    if (err.message.startsWith("SESSION_REFRESH_FAILED:")) {
+      throw err;
+    }
+    // Wrap unexpected errors
+    console.error("[Supabase Token] Unexpected error during refresh:", err.message);
+    throw new Error(`SESSION_REFRESH_FAILED: ${err.message}`);
   }
-
-  if (!data.session || !data.user) {
-    throw new Error("SESSION_REFRESH_FAILED: No session returned");
-  }
-
-  return {
-    refreshToken: data.session.refresh_token,
-    user: data.user,
-    accessToken: data.session.access_token,
-  };
 };
 
 /**
@@ -111,5 +135,6 @@ export const setSupabaseSession = async (accessToken: string, refreshToken: stri
   return {
     user: data.user,
     accessToken: data.session.access_token,
+    refreshToken: data.session.refresh_token,
   };
 };

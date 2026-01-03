@@ -1,7 +1,7 @@
+import { ACCESS_TOKEN_COOKIE, REFRESH_TOKEN_COOKIE, setAuthCookies } from "@/utils/auth/cookie-utils";
 import type { NextFunction, Request, Response } from "express";
 import { asyncHandler, sendR } from "@/utils/http";
 import { refreshSupabaseSession, validateSupabaseToken } from "@/utils/auth/supabase-token";
-import { ACCESS_TOKEN_COOKIE, REFRESH_TOKEN_COOKIE, setAuthCookies } from "@/utils/auth/cookie-utils";
 
 import { STATUS_RESPONSE } from "@/config";
 import type { User } from "@supabase/supabase-js";
@@ -43,8 +43,7 @@ export const supabaseAuth = (options: SupabaseAuthOptions = {}) => {
   return asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     // Token extraction priority: Cookie first, then Authorization header
     const authHeader = req.headers.authorization;
-    const accessToken =
-      req.cookies?.[ACCESS_TOKEN_COOKIE] || (authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : undefined);
+    const accessToken = req.cookies?.[ACCESS_TOKEN_COOKIE] || (authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : undefined);
 
     if (!accessToken) {
       return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "Missing authorization header or cookie");
@@ -65,8 +64,7 @@ export const supabaseAuth = (options: SupabaseAuthOptions = {}) => {
     }
 
     // Try to refresh using refresh token from cookie first, then header
-    const refreshToken =
-      req.cookies?.[REFRESH_TOKEN_COOKIE] || (req.headers[REFRESH_TOKEN_HEADER] as string | undefined);
+    const refreshToken = req.cookies?.[REFRESH_TOKEN_COOKIE] || (req.headers[REFRESH_TOKEN_HEADER] as string | undefined);
 
     if (!refreshToken) {
       return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "Session expired. Please login again.", {
@@ -74,18 +72,34 @@ export const supabaseAuth = (options: SupabaseAuthOptions = {}) => {
       });
     }
 
-    console.log("Supabase token expired, attempting refresh...");
+    const userEmail = req.user?.email;
+    console.log(`[Supabase Auth] Token expired, attempting refresh for user: ${userEmail || "unknown"}`);
 
     try {
-      // inside try block
-      const { accessToken: newAccessToken, refreshToken: newRefreshToken, user } = await refreshSupabaseSession(refreshToken); // passing the OLD one
+      // Refresh the session using the refresh token
+      const { accessToken: newAccessToken, refreshToken: newRefreshToken, user } = await refreshSupabaseSession(refreshToken);
 
+      // Validate that user and email are present after refresh
+      if (!user) {
+        console.error("[Supabase Auth] Refresh succeeded but no user returned");
+        throw new Error("No user returned from refresh");
+      }
+
+      if (!user.email) {
+        console.error(`[Supabase Auth] Refresh succeeded but user has no email. User ID: ${user.id}`);
+        throw new Error("User email missing after refresh");
+      }
+
+      // Log successful refresh with email for debugging
+      console.log(`[Supabase Auth] Token refresh successful for: ${user.email}`);
+
+      // Set user on request object for downstream middleware
       req.user = user;
 
       // Update current request for downstream use
       req.headers.authorization = `Bearer ${newAccessToken}`;
 
-      // Set cookies for web browsers
+      // Set cookies for web browsers (this includes the new refresh token)
       setAuthCookies(res, newAccessToken, newRefreshToken, user);
 
       // Also send tokens in headers for API/mobile clients
@@ -95,7 +109,11 @@ export const supabaseAuth = (options: SupabaseAuthOptions = {}) => {
       next();
     } catch (error) {
       const err = error as Error;
-      console.error("Supabase session refresh failed:", err.message);
+      console.error(`[Supabase Auth] Session refresh failed for user: ${userEmail || "unknown"}`, err.message);
+      console.error("[Supabase Auth] Refresh error details:", {
+        message: err.message,
+        stack: err.stack,
+      });
 
       return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "Session expired. Please login again.", {
         code: "SESSION_REFRESH_FAILED",
