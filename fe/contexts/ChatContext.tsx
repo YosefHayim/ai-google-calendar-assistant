@@ -1,6 +1,6 @@
 'use client'
 
-import React, { createContext, useContext, useState } from 'react'
+import React, { createContext, useContext, useEffect, useState, useCallback } from 'react'
 import {
   getConversation,
   getConversations,
@@ -41,8 +41,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   const [isPendingConversation, setIsPendingConversation] = useState(true) // Start as pending (no conversation selected)
   const [messages, setMessages] = useState<Message[]>([])
 
-  const refreshConversations = async () => {
-    setIsLoadingConversations(true)
+  const refreshConversations = useCallback(async () => {
     try {
       const response = await getConversations(20, 0)
       setConversations(response.conversations)
@@ -51,7 +50,11 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setIsLoadingConversations(false)
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    refreshConversations()
+  }, [refreshConversations])
 
   const selectConversation = async (conversation: ConversationListItem) => {
     setIsLoadingConversation(true)
@@ -100,9 +103,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   }
 
   const updateConversationTitle = (id: number, title: string) => {
-    setConversations((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, title } : c))
-    )
+    setConversations((prev) => prev.map((c) => (c.id === id ? { ...c, title } : c)))
   }
 
   const addConversationToList = (conversation: ConversationListItem) => {
