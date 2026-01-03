@@ -283,6 +283,7 @@ interface ContinueConversationRequest {
 const continueConversation = reqResAsyncHandler(
   async (req: Request<{ id: string }, unknown, ContinueConversationRequest>, res: Response) => {
     const userId = req.user?.id;
+    const userEmail = req.user?.email;
     const conversationId = parseInt(req.params.id);
     const { message } = req.body;
 
@@ -316,7 +317,7 @@ const continueConversation = reqResAsyncHandler(
       });
 
       // Build full prompt
-      const fullPrompt = buildChatPromptWithContext(message, conversationContext, semanticContext, userId);
+      const fullPrompt = buildChatPromptWithContext(message, conversationContext, semanticContext, userEmail || userId);
 
       // Run agent
       const result = await run(ORCHESTRATOR_AGENT, fullPrompt);
