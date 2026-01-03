@@ -13,7 +13,7 @@ const ERROR = 400;
  * @description Sends a response and sends the response.
  * @example
  * const data = await sendR(res, status, message, data);
- * console.log(data);
+ *
  */
 const sendR = (res: Response, status: number, message: string, data?: unknown) => {
   res.status(status).json({

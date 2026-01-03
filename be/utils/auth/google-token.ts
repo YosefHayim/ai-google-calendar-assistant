@@ -85,6 +85,7 @@ export const checkTokenExpiry = (expiryDate: number | null | undefined): TokenEx
   }
 
   const now = Date.now();
+
   const expiresInMs = expiryDate - now;
 
   return {
@@ -102,7 +103,6 @@ export const checkTokenExpiry = (expiryDate: number | null | undefined): TokenEx
  */
 export const fetchGoogleTokensByEmail = async (email: string): Promise<{ data: TokensProps | null; error: string | null }> => {
   const normalizedEmail = email.toLowerCase().trim();
-  console.log(`[fetchGoogleTokensByEmail] Looking up tokens for normalized email: ${normalizedEmail}`);
 
   const { data, error } = await SUPABASE.from("user_calendar_tokens").select(TOKEN_FIELDS).ilike("email", normalizedEmail).limit(1).maybeSingle();
 
@@ -112,9 +112,7 @@ export const fetchGoogleTokensByEmail = async (email: string): Promise<{ data: T
   }
 
   if (!data) {
-    console.log(`[fetchGoogleTokensByEmail] No tokens found for: ${normalizedEmail}`);
   } else {
-    console.log(`[fetchGoogleTokensByEmail] Tokens found for: ${normalizedEmail}, is_active: ${data.is_active}, has_refresh_token: ${!!data.refresh_token}`);
   }
 
   return { data: data as TokensProps | null, error: null };

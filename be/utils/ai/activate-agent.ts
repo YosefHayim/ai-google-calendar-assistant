@@ -12,7 +12,7 @@ import { asyncHandler } from "../http/async-handlers";
  * @description Activates an agent by key and prompt and sends the response.
  * @example
  * const data = await activateAgent(agentKey, prompt);
- * console.log(data);
+ *
  */
 export const activateAgent = asyncHandler(async (agentKey: AGENTS_LIST | Agent, prompt: string) => {
   let agent: Agent;

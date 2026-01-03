@@ -73,7 +73,6 @@ export const supabaseAuth = (options: SupabaseAuthOptions = {}) => {
     }
 
     const userEmail = req.user?.email;
-    console.log(`[Supabase Auth] Token expired, attempting refresh for user: ${userEmail || "unknown"}`);
 
     try {
       // Refresh the session using the refresh token
@@ -91,7 +90,6 @@ export const supabaseAuth = (options: SupabaseAuthOptions = {}) => {
       }
 
       // Log successful refresh with email for debugging
-      console.log(`[Supabase Auth] Token refresh successful for: ${user.email}`);
 
       // Set user on request object for downstream middleware
       req.user = user;

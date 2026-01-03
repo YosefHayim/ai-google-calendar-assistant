@@ -40,6 +40,7 @@ export const authTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
     if (!session.email) {
       session.email = data.email;
     }
+
     session.messageCount++;
     return next();
   }
@@ -54,13 +55,27 @@ export const authTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
 
     // Save email
     session.email = text;
-    await SUPABASE.from("user_telegram_links").upsert({
-      chat_id: from.id,
-      username: from.username,
-      first_name: from.first_name,
-      language_code: from.language_code,
-      email: text,
-    });
+
+    const { error, data } = await SUPABASE.from("user_telegram_links")
+      .insert({
+        chat_id: from.id,
+        username: from.username,
+        first_name: from.first_name,
+        language_code: from.language_code,
+        email: text,
+        is_bot: from.is_bot,
+        telegram_user_id: from.id,
+      })
+      .select()
+      .limit(1)
+      .maybeSingle();
+
+    if (error || !data) {
+      console.error("[DEBUG] authTgHandler middleware error", { error });
+      await ctx.reply("Error saving email. Please try again.");
+      return;
+    }
+
     await ctx.reply("Email has been saved successfully!");
     session.messageCount++;
     return next();

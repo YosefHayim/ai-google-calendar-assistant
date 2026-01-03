@@ -35,7 +35,7 @@ interface ChatRequest {
  * @description Returns complete chat response for frontend typewriter simulation.
  * @example
  * const data = await streamChat(req, res);
- * console.log(data);
+ *
  */
 const streamChat = reqResAsyncHandler(async (req: Request<unknown, unknown, ChatRequest>, res: Response) => {
   const { message } = req.body;
@@ -116,7 +116,7 @@ const streamChat = reqResAsyncHandler(async (req: Request<unknown, unknown, Chat
  * @description Processes chat messages and returns complete response.
  * @example
  * const data = await sendChat(req, res);
- * console.log(data);
+ *
  */
 const sendChat = reqResAsyncHandler(async (req: Request<unknown, unknown, ChatRequest>, res: Response) => {
   const { message } = req.body;

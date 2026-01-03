@@ -15,7 +15,7 @@ type PatchEventParams = {
  * @description Patches an event in the calendar and sends the response.
  * @example
  * const data = await patchEvent(params);
- * console.log(data);
+ *
  */
 export async function patchEvent({ calendarEvents, eventData, extra }: PatchEventParams) {
   const body = (eventData as calendar_v3.Schema$Event & { calendarId?: string; email?: string }) || {};

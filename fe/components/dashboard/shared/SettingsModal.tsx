@@ -264,7 +264,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
         'Are you sure you want to permanently delete all your chat history with Ally? This action cannot be undone.',
       )
     ) {
-      console.log('Chat history cleared!')
       alert('Chat history cleared successfully!')
     }
   }
@@ -296,7 +295,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
       alert('All conversations have been deleted.')
     } catch (error) {
       console.error('Error deleting conversations:', error)
-      console.log('Simulating backend update: Setting all conversations is_active = false')
+
       await refreshConversations()
     } finally {
       setIsDeletingConversations(false)
