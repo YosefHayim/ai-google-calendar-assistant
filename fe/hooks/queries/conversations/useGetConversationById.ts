@@ -5,12 +5,12 @@ import { queryKeys } from '@/lib/query'
 import { useQuery } from '@tanstack/react-query'
 import { useQueryWrapper } from '../useQueryWrapper'
 
-export const useGetConversationById = async (conversationId: number) => {
+export const useGetConversationById = (conversationId: number | null) => {
   const query = useQuery({
-    queryKey: queryKeys.conversations.detail(conversationId),
-    queryFn: () => getConversation(conversationId),
+    queryKey: queryKeys.conversations.detail(conversationId ?? 0),
+    queryFn: () => getConversation(conversationId!),
     staleTime: QUERY_CONFIG.DEFAULT_STALE_TIME,
-    enabled: true,
+    enabled: conversationId !== null,
   })
   return useQueryWrapper(query)
 }
