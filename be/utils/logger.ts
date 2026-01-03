@@ -10,9 +10,15 @@ const getDate = () => {
 // Define the directory
 const logDir = "logs";
 
+// Custom Formatter: Stringify JSON + add an extra Newline (\n) for the gap
+const jsonWithGap = winston.format.printf((info) => {
+  return JSON.stringify(info) + "\n";
+});
+
 export const logger = winston.createLogger({
   level: "info",
-  format: winston.format.json(),
+  // Combine timestamp first, then use our custom gap formatter
+  format: winston.format.combine(winston.format.timestamp(), jsonWithGap),
   defaultMeta: { service: "user-service" },
   transports: [
     //
@@ -35,6 +41,7 @@ export const logger = winston.createLogger({
 if (env.isDev) {
   logger.add(
     new winston.transports.Console({
+      // Keep console logs compact (no extra gaps usually needed here)
       format: winston.format.combine(winston.format.colorize(), winston.format.simple()),
     })
   );
