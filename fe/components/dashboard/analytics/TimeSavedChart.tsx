@@ -1,8 +1,9 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 
 import { motion } from 'framer-motion'
+import { useContainerDimensions } from '@/hooks/useContainerDimensions'
 
 interface TimeSavedChartProps {
   data: { day: string; hours: number }[]
@@ -10,24 +11,11 @@ interface TimeSavedChartProps {
 
 const TimeSavedChart: React.FC<TimeSavedChartProps> = ({ data }) => {
   const containerRef = useRef<HTMLDivElement>(null)
-  const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
+  const dimensions = useContainerDimensions(containerRef)
   const [hoveredData, setHoveredData] = useState<{ day: string; hours: number; x: number; y: number } | null>(null)
 
   // Ally Brand Primary Color Hex
   const PRIMARY_COLOR = '#f26306'
-
-  useEffect(() => {
-    if (containerRef.current) {
-      const observer = new ResizeObserver((entries) => {
-        if (entries[0]) {
-          const { width, height } = entries[0].contentRect
-          setDimensions({ width, height })
-        }
-      })
-      observer.observe(containerRef.current)
-      return () => observer.disconnect()
-    }
-  }, [])
 
   if (!data || data.length === 0) {
     return <div ref={containerRef} className="w-full h-full" />

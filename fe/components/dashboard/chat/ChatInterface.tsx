@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { decodeAudioData, getSpeechFromGemini } from '@/services/geminiService'
 import {
   streamChatMessage,
@@ -32,7 +32,8 @@ const ChatInterface: React.FC = () => {
     selectedConversationId,
     setConversationId,
     isLoadingConversation,
-    refreshConversations,
+    addConversationToList,
+    updateConversationTitle,
   } = useChatContext()
 
   const [input, setInput] = useState('')
@@ -48,7 +49,7 @@ const ChatInterface: React.FC = () => {
   const audioContextRef = useRef<AudioContext | null>(null)
   const textInputRef = useRef<HTMLInputElement>(null)
 
-  const speakText = useCallback(async (text: string) => {
+  const speakText = async (text: string) => {
     if (!audioContextRef.current) {
       audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 24000 })
     }
@@ -72,102 +73,105 @@ const ChatInterface: React.FC = () => {
       setError('Could not play audio response.')
       setIsSpeaking(false)
     }
-  }, [])
+  }
 
-  const handleSend = useCallback(
-    async (e?: React.FormEvent, textToSend: string = input) => {
-      e?.preventDefault()
-      if (!textToSend.trim() || isLoading || isStreaming) return
+  const handleSend = async (e?: React.FormEvent, textToSend: string = input) => {
+    e?.preventDefault()
+    if (!textToSend.trim() || isLoading || isStreaming) return
 
-      const userMessage: Message = {
-        id: Date.now().toString(),
-        role: 'user',
-        content: textToSend,
-        timestamp: new Date(),
-      }
-      setMessages((prev) => [...prev, userMessage])
-      setInput('')
-      setIsLoading(true)
-      setIsStreaming(true)
-      setError(null)
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      role: 'user',
+      content: textToSend,
+      timestamp: new Date(),
+    }
+    setMessages((prev) => [...prev, userMessage])
+    setInput('')
+    setIsLoading(true)
+    setIsStreaming(true)
+    setError(null)
 
-      // Create placeholder for streaming message
-      const assistantMessageId = (Date.now() + 1).toString()
-      setStreamingMessageId(assistantMessageId)
+    // Create placeholder for streaming message
+    const assistantMessageId = (Date.now() + 1).toString()
+    setStreamingMessageId(assistantMessageId)
 
-      // Add empty assistant message that will be updated during streaming
-      const assistantMessage: Message = {
-        id: assistantMessageId,
-        role: 'assistant',
-        content: '',
-        timestamp: new Date(),
-      }
-      setMessages((prev) => [...prev, assistantMessage])
+    // Add empty assistant message that will be updated during streaming
+    const assistantMessage: Message = {
+      id: assistantMessageId,
+      role: 'assistant',
+      content: '',
+      timestamp: new Date(),
+    }
+    setMessages((prev) => [...prev, assistantMessage])
 
-      const callbacks = {
-        onChunk: () => {
-          // Not used anymore - typewriter component handles animation
-        },
-        onComplete: (fullText: string, conversationId?: number) => {
-          // Set the full text immediately - typewriter will animate it
-          setMessages((prev) =>
-            prev.map((msg) => (msg.id === assistantMessageId ? { ...msg, content: fullText } : msg)),
-          )
-          // Set conversation ID if this was a new conversation
-          if (conversationId && !selectedConversationId) {
-            setConversationId(conversationId)
-            // Refresh conversations list to show the new one
-            refreshConversations()
-          }
-          // Keep streaming flag true so typewriter animates
-          // Note: isStreaming will be set to false when typewriter completes via handleTypewriterComplete
-        },
-        onError: (errorMsg: string) => {
-          setError(errorMsg || 'Communication relay failed. Please retry.')
-          setIsStreaming(false)
-          setIsLoading(false)
-          setStreamingMessageId(null)
-          // Remove the empty assistant message on error
-          setMessages((prev) => prev.filter((msg) => msg.id !== assistantMessageId))
-        },
-      }
-
-      try {
-        if (selectedConversationId) {
-          // Continue existing conversation
-          await continueConversation(selectedConversationId, textToSend, callbacks)
-        } else {
-          // New conversation - build history for the API
-          const history: ChatHistoryMessage[] = messages.map((m) => ({
-            role: m.role,
-            content: m.content,
-          }))
-          await streamChatMessage(textToSend, history, callbacks)
+    const callbacks = {
+      onChunk: () => {
+        // Not used anymore - typewriter component handles animation
+      },
+      onComplete: (fullText: string, conversationId?: number, title?: string) => {
+        // Set the full text immediately - typewriter will animate it
+        setMessages((prev) =>
+          prev.map((msg) => (msg.id === assistantMessageId ? { ...msg, content: fullText } : msg)),
+        )
+        // Handle new conversation creation
+        if (conversationId && !selectedConversationId) {
+          setConversationId(conversationId)
+          // Add new conversation to the list immediately with the generated title
+          addConversationToList({
+            id: conversationId,
+            title: title || 'New Conversation',
+            messageCount: 2, // user message + assistant response
+            lastUpdated: new Date().toISOString(),
+            createdAt: new Date().toISOString(),
+          })
+        } else if (conversationId && title) {
+          // Update title for existing conversation if a new title is provided
+          updateConversationTitle(conversationId, title)
         }
-      } catch (err) {
-        setError('Communication relay failed. Please retry.')
+        // Keep streaming flag true so typewriter animates
+        // Note: isStreaming will be set to false when typewriter completes via handleTypewriterComplete
+      },
+      onError: (errorMsg: string) => {
+        setError(errorMsg || 'Communication relay failed. Please retry.')
         setIsStreaming(false)
         setIsLoading(false)
         setStreamingMessageId(null)
-        console.error(err)
+        // Remove the empty assistant message on error
+        setMessages((prev) => prev.filter((msg) => msg.id !== assistantMessageId))
+      },
+    }
+
+    try {
+      if (selectedConversationId) {
+        // Continue existing conversation
+        await continueConversation(selectedConversationId, textToSend, callbacks)
+      } else {
+        // New conversation - build history for the API
+        const history: ChatHistoryMessage[] = messages.map((m) => ({
+          role: m.role,
+          content: m.content,
+        }))
+        await streamChatMessage(textToSend, history, callbacks)
       }
-    },
-    [input, isLoading, isStreaming, messages, selectedConversationId, setConversationId, refreshConversations, setMessages],
-  )
+    } catch (err) {
+      setError('Communication relay failed. Please retry.')
+      setIsStreaming(false)
+      setIsLoading(false)
+      setStreamingMessageId(null)
+      console.error(err)
+    }
+  }
 
-  const handleResend = useCallback(
-    (text: string) => {
-      handleSend(undefined, text)
-    },
-    [handleSend],
-  )
+  const handleResend = (text: string) => {
+    handleSend(undefined, text)
+  }
 
-  const handleEditMessage = useCallback((text: string) => {
+  const handleEditMessage = (text: string) => {
     setInput(text)
     textInputRef.current?.focus()
-  }, [])
+  }
 
-  const handleTypewriterComplete = useCallback(() => {
+  const handleTypewriterComplete = () => {
     // Get the message before clearing the streaming ID
     const currentStreamingId = streamingMessageId
     const lastMessage = currentStreamingId
@@ -182,7 +186,7 @@ const ChatInterface: React.FC = () => {
     if (activeTab === 'avatar' && lastMessage?.content) {
       speakText(lastMessage.content.split('\n')[0])
     }
-  }, [messages, streamingMessageId, activeTab, speakText])
+  }
 
   const {
     isRecording,

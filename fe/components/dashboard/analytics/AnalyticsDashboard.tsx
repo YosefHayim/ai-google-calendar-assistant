@@ -1,22 +1,21 @@
 'use client'
 
 import { BarChart3, Coffee, Info, RotateCw, Users, Zap } from 'lucide-react'
-import type { CalendarEvent, CalendarListEntry, EventQueryParams } from '@/types/api'
+import type { CalendarEvent } from '@/types/api'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
-import React, { useState } from 'react'
-import { format, subDays } from 'date-fns'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import React from 'react'
+import { format } from 'date-fns'
+import { getDaysBetween } from '@/lib/dateUtils'
 
 // Extracted components
 import ActivityHeatmap from './ActivityHeatmap'
 import AnalyticsDashboardSkeleton from './AnalyticsDashboardSkeleton'
-import { CalendarEventSchema } from '@/types/analytics'
 import CalendarEventsDialog from '@/components/dialogs/CalendarEventsDialog'
+import DayEventsDialog from '@/components/dialogs/DayEventsDialog'
 import CalendarSettingsDialog from '@/components/dialogs/CalendarSettingsDialog'
 import CreateCalendarDialog from '@/components/dialogs/CreateCalendarDialog'
 import DailyAvailableHoursChart from './DailyAvailableHoursChart'
 import { DatePickerWithRange } from '@/components/ui/date-range-picker'
-import { DateRange } from 'react-day-picker'
 // Dialogs
 import EventDetailsDialog from '@/components/dialogs/EventDetailsDialog'
 import InsightCard from './InsightCard'
@@ -25,142 +24,74 @@ import KPICardsSection from './KPICardsSection'
 import ManageCalendars from '@/components/dashboard/analytics/ManageCalendars'
 import RecentEvents from '@/components/dashboard/analytics/RecentEvents'
 import TimeAllocationChart from './TimeAllocationChart'
-import { calendarsService } from '@/lib/api/services/calendars.service'
-import { eventsService } from '@/lib/api/services/events.service'
-import { useAnalyticsData } from '@/hooks/queries/analytics'
-import type { z } from 'zod'
+import { useAnalyticsContext } from '@/contexts/AnalyticsContext'
 
 interface AnalyticsDashboardProps {
   isLoading?: boolean
 }
 
 const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: initialLoading }) => {
-  const [date, setDate] = useState<DateRange | undefined>({
-    from: subDays(new Date(), 7),
-    to: new Date(),
-  })
-
-  // Event details dialog state
-  const [selectedEvent, setSelectedEvent] = useState<z.infer<typeof CalendarEventSchema> | null>(null)
-  const [isEventDialogOpen, setIsEventDialogOpen] = useState(false)
-  const [selectedEventCalendarColor, setSelectedEventCalendarColor] = useState<string>('#6366f1')
-  const [selectedEventCalendarName, setSelectedEventCalendarName] = useState<string>('')
-
-  // Create calendar dialog state
-  const [isCreateCalendarDialogOpen, setIsCreateCalendarDialogOpen] = useState(false)
-
-  // Calendar settings dialog state
-  const [selectedCalendarForSettings, setSelectedCalendarForSettings] = useState<CalendarListEntry | null>(null)
-  const [isCalendarSettingsDialogOpen, setIsCalendarSettingsDialogOpen] = useState(false)
-
-  // Calendar events dialog state
-  const [isCalendarEventsDialogOpen, setIsCalendarEventsDialogOpen] = useState(false)
-  const [selectedCalendarForEvents, setSelectedCalendarForEvents] = useState<{
-    id: string
-    name: string
-    color: string
-  } | null>(null)
-
-  const queryClient = useQueryClient()
-
-  // Fetch calendars to match with events
-  const { data: calendarsQueryData, isLoading: isCalendarsLoading } = useQuery({
-    queryKey: ['calendars-list'],
-    queryFn: async () => {
-      const response = await calendarsService.getCalendarList({
-        minAccessRole: 'owner',
-        showDeleted: false,
-        showHidden: false,
-      })
-      if (response.status === 'error' || !response.data) {
-        throw new Error(response.message || 'Failed to fetch calendars')
-      }
-
-      // Transform the calendar list items into a Map for quick lookup
-      const calendarMap = new Map<string, { name: string; color: string }>()
-      const items = response.data.items || []
-
-      items.forEach((entry) => {
-        const calendarId = entry.id
-        const name = entry.summary || calendarId.split('@')[0]
-        const color = entry.backgroundColor || '#6366f1'
-
-        calendarMap.set(calendarId, { name, color })
-      })
-
-      return {
-        calendarMap,
-        items,
-      }
-    },
-    retry: false,
-  })
-
-  const calendarMap = calendarsQueryData?.calendarMap || new Map<string, { name: string; color: string }>()
-  const calendarsData = calendarsQueryData?.items || []
-
-  // Use the new analytics hook
   const {
-    data: processedData,
-    comparison,
-    isLoading: isAnalyticsLoading,
-    isFetching: isAnalyticsFetching,
-    isError,
-    error,
-    refetch,
-  } = useAnalyticsData({
-    timeMin: date?.from || null,
-    timeMax: date?.to || null,
+    // Date range
+    date,
+    setDate,
+
+    // Calendars data
+    calendarsData,
     calendarMap,
-    enabled: !!date?.from && !!date?.to,
-  })
+    isCalendarsLoading,
 
-  // Fetch events for selected calendar in dialog
-  const { data: calendarEventsData, isLoading: isCalendarEventsLoading } = useQuery({
-    queryKey: ['calendar-events', selectedCalendarForEvents?.id, date?.from, date?.to],
-    queryFn: async () => {
-      if (!selectedCalendarForEvents || !date?.from || !date?.to) return null
+    // Analytics data
+    processedData,
+    comparison,
+    isAnalyticsLoading,
+    isAnalyticsFetching,
+    isAnalyticsError,
+    analyticsError,
+    refetchAnalytics,
 
-      const params: EventQueryParams = {
-        calendarId: selectedCalendarForEvents.id,
-        timeMin: date.from.toISOString(),
-        timeMax: date.to.toISOString(),
-      }
+    // Event Details Dialog
+    selectedEvent,
+    isEventDialogOpen,
+    selectedEventCalendarColor,
+    selectedEventCalendarName,
+    closeEventDetailsDialog,
 
-      const response = await eventsService.getEvents(params)
+    // Calendar Events Dialog
+    isCalendarEventsDialogOpen,
+    selectedCalendarForEvents,
+    calendarEvents,
+    isCalendarEventsLoading,
+    calendarTotalHours,
+    openCalendarEventsDialog,
+    closeCalendarEventsDialog,
 
-      if (response.status === 'error' || !response.data) {
-        throw new Error(response.message || 'Failed to fetch events')
-      }
+    // Calendar Settings Dialog
+    isCalendarSettingsDialogOpen,
+    selectedCalendarForSettings,
+    openCalendarSettingsDialog,
+    closeCalendarSettingsDialog,
 
-      return response.data
-    },
-    enabled: isCalendarEventsDialogOpen && !!selectedCalendarForEvents && !!date?.from && !!date?.to,
-    retry: false,
-  })
+    // Create Calendar Dialog
+    isCreateCalendarDialogOpen,
+    openCreateCalendarDialog,
+    closeCreateCalendarDialog,
+    onCalendarCreated,
+
+    // Day Events Dialog
+    isDayEventsDialogOpen,
+    selectedDayDate,
+    selectedDayHours,
+    selectedDayEvents,
+    openDayEventsDialog,
+    closeDayEventsDialog,
+
+    // Helpers
+    handleActivityClick,
+    handleCalendarEventClick,
+  } = useAnalyticsContext()
 
   const isLoading = initialLoading || isAnalyticsLoading || isCalendarsLoading
-
-  // Calculate total hours for selected calendar in dialog
-  const calculateCalendarTotalHours = (events: CalendarEvent[]): number => {
-    let totalMinutes = 0
-    events.forEach((event) => {
-      if (event.start?.dateTime && event.end?.dateTime) {
-        const start = new Date(event.start.dateTime)
-        const end = new Date(event.end.dateTime)
-        const duration = (end.getTime() - start.getTime()) / (1000 * 60)
-        totalMinutes += duration
-      }
-    })
-    return Math.round((totalMinutes / 60) * 10) / 10
-  }
-
-  const calendarEvents = Array.isArray(calendarEventsData) ? calendarEventsData : []
-  const calendarTotalHours = isCalendarEventsDialogOpen ? calculateCalendarTotalHours(calendarEvents) : undefined
-
-  // Calculate previous period hours for comparison (simplified - would need to fetch previous period)
-  const previousPeriodHours = undefined // TODO: Calculate from comparison data
-  const percentageChange = undefined // TODO: Calculate from comparison data
 
   const weeklyInsights = [
     {
@@ -193,16 +124,16 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
     },
   ]
 
-  if (isError) {
+  if (isAnalyticsError) {
     return (
       <div className="max-w-7xl mx-auto w-full p-6 bg-zinc-50 dark:bg-zinc-950 flex flex-col items-center justify-center min-h-[50vh]">
         <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6 max-w-md text-center">
           <h3 className="text-red-800 dark:text-red-200 font-semibold mb-2">Error Loading Analytics</h3>
           <p className="text-red-600 dark:text-red-300 text-sm mb-4">
-            {(error as Error)?.message || 'Failed to fetch analytics data. Please try again.'}
+            {analyticsError?.message || 'Failed to fetch analytics data. Please try again.'}
           </p>
           <button
-            onClick={() => refetch()}
+            onClick={() => refetchAnalytics()}
             className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md text-sm font-medium transition-colors"
           >
             Retry
@@ -225,15 +156,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
     calendarBreakdown,
     recentActivities,
     dailyAvailableHours,
-  } = processedData || {
-    totalEvents: 0,
-    totalDurationHours: 0,
-    averageEventDuration: 0,
-    busiestDayHours: 0,
-    calendarBreakdown: [],
-    recentActivities: [],
-    dailyAvailableHours: [],
-  }
+  } = processedData
 
   return (
     <div className="max-w-7xl mx-auto w-full p-2 animate-in fade-in duration-500 overflow-y-auto bg-zinc-50 dark:bg-zinc-950 space-y-2">
@@ -244,9 +167,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
             <span className=" text-zinc-900 dark:text-zinc-100">
               {format(date.from, 'MMM dd, yyyy')} - {format(date.to, 'MMM dd, yyyy')}
             </span>
-            <span className="text-zinc-500 dark:text-zinc-400">
-              {Math.ceil((date.to.getTime() - date.from.getTime()) / (1000 * 60 * 60 * 24))} days
-            </span>
+            <span className="text-zinc-500 dark:text-zinc-400">{getDaysBetween(date.from, date.to)} days</span>
           </div>
         )}
       </h1>
@@ -258,7 +179,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
             loadingText="Refreshing..."
             isLoading={isAnalyticsFetching}
             Icon={<RotateCw size={16} />}
-            onClick={() => refetch()}
+            onClick={() => refetchAnalytics()}
           />
         </div>
       </header>
@@ -277,7 +198,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Daily Available Hours Chart */}
-        <DailyAvailableHoursChart data={dailyAvailableHours} />
+        <DailyAvailableHoursChart data={dailyAvailableHours} onDayClick={openDayEventsDialog} />
 
         {/* Intelligence Insights */}
         <div className="lg:col-span-3">
@@ -309,37 +230,18 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
 
         {/* Time Mix */}
         <div className="lg:col-span-2">
-          <TimeAllocationChart
-            data={calendarBreakdown}
-            onCalendarClick={(calendarId, calendarName, calendarColor) => {
-              setSelectedCalendarForEvents({ id: calendarId, name: calendarName, color: calendarColor })
-              setIsCalendarEventsDialogOpen(true)
-            }}
-          />
+          <TimeAllocationChart data={calendarBreakdown} onCalendarClick={openCalendarEventsDialog} />
         </div>
 
         {/* Ops & Calendars */}
         <div className="lg:col-span-1 flex flex-col gap-6">
-          <RecentEvents
-            activities={recentActivities}
-            onActivityClick={(activity) => {
-              if (activity.event) {
-                setSelectedEvent(activity.event as z.infer<typeof CalendarEventSchema>)
-                setSelectedEventCalendarColor(activity.calendarColor)
-                setSelectedEventCalendarName(activity.calendarName)
-                setIsEventDialogOpen(true)
-              }
-            }}
-          />
+          <RecentEvents activities={recentActivities} onActivityClick={handleActivityClick} />
 
           <ManageCalendars
             calendars={calendarsData}
             calendarMap={calendarMap}
-            onCalendarClick={(calendar) => {
-              setSelectedCalendarForSettings(calendar)
-              setIsCalendarSettingsDialogOpen(true)
-            }}
-            onCreateCalendar={() => setIsCreateCalendarDialogOpen(true)}
+            onCalendarClick={openCalendarSettingsDialog}
+            onCreateCalendar={openCreateCalendarDialog}
           />
         </div>
 
@@ -355,10 +257,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
         event={selectedEvent as CalendarEvent | null}
         calendarColor={selectedEventCalendarColor}
         calendarName={selectedEventCalendarName}
-        onClose={() => {
-          setIsEventDialogOpen(false)
-          setSelectedEvent(null)
-        }}
+        onClose={closeEventDetailsDialog}
       />
 
       <CalendarEventsDialog
@@ -370,36 +269,40 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
         events={calendarEvents}
         isLoading={isCalendarEventsLoading}
         totalHours={calendarTotalHours}
-        previousPeriodHours={previousPeriodHours}
-        percentageChange={percentageChange}
-        onClose={() => {
-          setIsCalendarEventsDialogOpen(false)
-          setSelectedCalendarForEvents(null)
-        }}
+        previousPeriodHours={undefined}
+        percentageChange={undefined}
+        onClose={closeCalendarEventsDialog}
         onEventClick={(event) => {
-          setSelectedEvent(event as z.infer<typeof CalendarEventSchema>)
-          setSelectedEventCalendarColor(selectedCalendarForEvents?.color || '#6366f1')
-          setSelectedEventCalendarName(selectedCalendarForEvents?.name || '')
-          setIsEventDialogOpen(true)
-          setIsCalendarEventsDialogOpen(false)
+          handleCalendarEventClick(
+            event,
+            selectedCalendarForEvents?.color || '#6366f1',
+            selectedCalendarForEvents?.name || ''
+          )
         }}
       />
 
       <CalendarSettingsDialog
         isOpen={isCalendarSettingsDialogOpen}
         calendar={selectedCalendarForSettings}
-        onClose={() => {
-          setIsCalendarSettingsDialogOpen(false)
-          setSelectedCalendarForSettings(null)
-        }}
+        onClose={closeCalendarSettingsDialog}
       />
 
       <CreateCalendarDialog
         isOpen={isCreateCalendarDialogOpen}
         existingCalendars={calendarsData}
-        onClose={() => setIsCreateCalendarDialogOpen(false)}
-        onSuccess={() => {
-          queryClient.invalidateQueries({ queryKey: ['calendars-list'] })
+        onClose={closeCreateCalendarDialog}
+        onSuccess={onCalendarCreated}
+      />
+
+      <DayEventsDialog
+        isOpen={isDayEventsDialogOpen}
+        date={selectedDayDate || ''}
+        availableHours={selectedDayHours}
+        events={selectedDayEvents}
+        calendarMap={calendarMap}
+        onClose={closeDayEventsDialog}
+        onEventClick={(event, calendarColor, calendarName) => {
+          handleCalendarEventClick(event, calendarColor, calendarName)
         }}
       />
     </div>

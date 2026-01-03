@@ -14,6 +14,7 @@ const WAKING_HOURS_PER_DAY = 16 // Assuming ~8 hours of sleep
 
 interface DailyAvailableHoursChartProps {
   data: DailyAvailableHoursDataPoint[]
+  onDayClick?: (date: string, hours: number) => void
 }
 
 const chartConfig = {
@@ -23,7 +24,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-const DailyAvailableHoursChart: React.FC<DailyAvailableHoursChartProps> = ({ data }) => {
+const DailyAvailableHoursChart: React.FC<DailyAvailableHoursChartProps> = ({ data, onDayClick }) => {
   const totalAvailableHours = React.useMemo(() => {
     return data.reduce((acc, curr) => acc + curr.hours, 0)
   }, [data])
@@ -139,7 +140,18 @@ const DailyAvailableHoursChart: React.FC<DailyAvailableHoursChartProps> = ({ dat
                 />
               }
             />
-            <Bar dataKey="hours" fill="var(--color-hours)" radius={[4, 4, 0, 0]} className="cursor-pointer" />
+            <Bar
+              dataKey="hours"
+              fill="var(--color-hours)"
+              radius={[4, 4, 0, 0]}
+              className="cursor-pointer"
+              onClick={(data) => {
+                if (onDayClick && data?.payload) {
+                  const point = data.payload as DailyAvailableHoursDataPoint & { formattedDate: string }
+                  onDayClick(point.date, point.hours)
+                }
+              }}
+            />
           </BarChart>
         </ChartContainer>
       </CardContent>

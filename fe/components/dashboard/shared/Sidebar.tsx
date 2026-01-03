@@ -39,6 +39,7 @@ import React, { useEffect, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 
 import { Button } from '@/components/ui/button'
+import { formatRelativeDate } from '@/lib/dateUtils'
 import { CustomUser } from '@/types/api'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -108,25 +109,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle, onOpenSett
   useEffect(() => {
     refreshConversations()
   }, [refreshConversations])
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
-    const now = new Date()
-    const diffDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24))
-
-    if (diffDays === 0) {
-      // Today: show "Today, HH:MM"
-      return `Today, ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
-    } else if (diffDays === 1) {
-      return 'Yesterday'
-    } else if (diffDays < 7) {
-      // Within a week: show "Mon, Jan 3"
-      return date.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' })
-    } else {
-      // Older: show "Jan 3, 2026"
-      return date.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' })
-    }
-  }
 
   const handleNewChat = () => {
     startNewConversation()
@@ -307,7 +289,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle, onOpenSett
                           </p>
                           <div className="flex items-center gap-1 mt-0.5 text-xs text-zinc-400">
                             <Clock className="w-3 h-3" />
-                            <span>{formatDate(conversation.lastUpdated)}</span>
+                            <span>{formatRelativeDate(conversation.lastUpdated)}</span>
                           </div>
                         </div>
                         <button

@@ -13,28 +13,39 @@ export interface ChatMessage {
 
 export interface StreamCallbacks {
   onChunk: (chunk: string, fullText: string) => void
-  onComplete: (fullText: string, conversationId?: number) => void
+  onComplete: (fullText: string, conversationId?: number, title?: string) => void
   onError: (error: string) => void
 }
 
 /**
  * Send a message and get the complete AI response
  * Frontend will use typewriter component to simulate real-time typing
+ * @param message - The user's message
+ * @param history - Previous messages in the conversation
+ * @param callbacks - Callbacks for streaming events
+ * @param conversationId - Optional existing conversation ID to continue
  */
 export const streamChatMessage = async (
   message: string,
   history: ChatMessage[],
   callbacks: StreamCallbacks,
+  conversationId?: number | null,
 ): Promise<void> => {
   const { onComplete, onError } = callbacks
 
   try {
-    const response = await apiClient.post('/api/chat', { message, history })
+    const response = await apiClient.post('/api/chat', {
+      message,
+      history,
+      source: 'web',
+      conversationId: conversationId || undefined,
+    })
     const content = response.data?.data?.content || 'No response received'
-    const conversationId = response.data?.data?.conversationId
+    const returnedConversationId = response.data?.data?.conversationId
+    const title = response.data?.data?.title
 
     // Return the complete response - typewriter component will handle the animation
-    onComplete(content, conversationId)
+    onComplete(content, returnedConversationId, title)
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
     onError(errorMessage)
@@ -129,9 +140,11 @@ export const continueConversation = async (
   try {
     const response = await apiClient.post(`/api/chat/conversations/${conversationId}/messages`, {
       message,
+      source: 'web',
     })
     const content = response.data?.data?.content || 'No response received'
-    onComplete(content)
+    const title = response.data?.data?.title
+    onComplete(content, conversationId, title)
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
     onError(errorMessage)

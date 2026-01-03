@@ -153,23 +153,12 @@ export const updateWebConversationTitle = async (stateId: number, title: string)
 };
 
 // Store a summary in the database (web user)
-export const storeWebSummary = async (userId: string, summaryText: string, messageCount: number): Promise<boolean> => {
-  const { error } = await SUPABASE.from(CONVERSATION_SUMMARIES_TABLE).insert({
-    chat_id: 0, // Required field, use 0 for web
-    user_id: userId,
-    telegram_user_id: null,
-    summary_text: summaryText,
-    message_count: messageCount,
-    first_message_id: 0,
-    last_message_id: 0,
-    source: "web",
-  });
-
-  if (error) {
-    console.error("Error storing web summary:", error);
-    return false;
-  }
-
+// Note: For web users, summaries are stored in the context_window of conversation_state table,
+// not in conversation_summaries (which has a FK constraint to user_telegram_links for telegram chat_id).
+// This function is kept for API compatibility but the actual storage happens via updateWebConversationState.
+export const storeWebSummary = async (_userId: string, _summaryText: string, _messageCount: number): Promise<boolean> => {
+  // Web summaries are stored in context_window of conversation_state, not in conversation_summaries
+  // The conversation_summaries table requires a valid chat_id from user_telegram_links (telegram-only)
   return true;
 };
 

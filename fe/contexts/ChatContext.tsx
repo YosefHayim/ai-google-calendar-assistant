@@ -1,6 +1,6 @@
 'use client'
 
-import React, { createContext, useCallback, useContext, useState } from 'react'
+import React, { createContext, useContext, useState } from 'react'
 import {
   getConversation,
   getConversations,
@@ -15,6 +15,7 @@ interface ChatContextValue {
   conversations: ConversationListItem[]
   isLoadingConversations: boolean
   isLoadingConversation: boolean
+  isPendingConversation: boolean // True when in a new, unsaved conversation
 
   // Actions
   selectConversation: (conversation: ConversationListItem) => Promise<void>
@@ -22,6 +23,8 @@ interface ChatContextValue {
   refreshConversations: () => Promise<void>
   removeConversation: (id: number) => Promise<boolean>
   setConversationId: (id: number | null) => void
+  updateConversationTitle: (id: number, title: string) => void
+  addConversationToList: (conversation: ConversationListItem) => void
 
   // Messages for the selected conversation
   messages: Message[]
@@ -35,9 +38,10 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   const [conversations, setConversations] = useState<ConversationListItem[]>([])
   const [isLoadingConversations, setIsLoadingConversations] = useState(false)
   const [isLoadingConversation, setIsLoadingConversation] = useState(false)
+  const [isPendingConversation, setIsPendingConversation] = useState(true) // Start as pending (no conversation selected)
   const [messages, setMessages] = useState<Message[]>([])
 
-  const refreshConversations = useCallback(async () => {
+  const refreshConversations = async () => {
     setIsLoadingConversations(true)
     try {
       const response = await getConversations(20, 0)
@@ -47,9 +51,9 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setIsLoadingConversations(false)
     }
-  }, [])
+  }
 
-  const selectConversation = useCallback(async (conversation: ConversationListItem) => {
+  const selectConversation = async (conversation: ConversationListItem) => {
     setIsLoadingConversation(true)
     try {
       const fullConversation = await getConversation(conversation.id)
@@ -62,20 +66,22 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         }))
         setMessages(loadedMessages)
         setSelectedConversationId(conversation.id)
+        setIsPendingConversation(false) // No longer pending when selecting existing conversation
       }
     } catch (error) {
       console.error('Failed to load conversation:', error)
     } finally {
       setIsLoadingConversation(false)
     }
-  }, [])
+  }
 
-  const startNewConversation = useCallback(() => {
+  const startNewConversation = () => {
     setMessages([])
     setSelectedConversationId(null)
-  }, [])
+    setIsPendingConversation(true) // Mark as pending until first message is sent
+  }
 
-  const removeConversation = useCallback(async (id: number): Promise<boolean> => {
+  const removeConversation = async (id: number): Promise<boolean> => {
     const deleted = await deleteConversation(id)
     if (deleted) {
       setConversations((prev) => prev.filter((c) => c.id !== id))
@@ -84,11 +90,33 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       }
     }
     return deleted
-  }, [selectedConversationId, startNewConversation])
+  }
 
-  const setConversationId = useCallback((id: number | null) => {
+  const setConversationId = (id: number | null) => {
     setSelectedConversationId(id)
-  }, [])
+    if (id !== null) {
+      setIsPendingConversation(false) // No longer pending when conversation ID is set
+    }
+  }
+
+  const updateConversationTitle = (id: number, title: string) => {
+    setConversations((prev) =>
+      prev.map((c) => (c.id === id ? { ...c, title } : c))
+    )
+  }
+
+  const addConversationToList = (conversation: ConversationListItem) => {
+    setConversations((prev) => {
+      // Check if conversation already exists
+      const exists = prev.some((c) => c.id === conversation.id)
+      if (exists) {
+        // Update existing conversation
+        return prev.map((c) => (c.id === conversation.id ? conversation : c))
+      }
+      // Add new conversation at the beginning
+      return [conversation, ...prev]
+    })
+  }
 
   return (
     <ChatContext.Provider
@@ -97,11 +125,14 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         conversations,
         isLoadingConversations,
         isLoadingConversation,
+        isPendingConversation,
         selectConversation,
         startNewConversation,
         refreshConversations,
         removeConversation,
         setConversationId,
+        updateConversationTitle,
+        addConversationToList,
         messages,
         setMessages,
       }}

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 declare global {
   interface Window {
@@ -31,29 +31,26 @@ export const useSpeechRecognition = (
   const speechRecognitionRef = useRef<any | null>(null)
   const isRecognitionRunning = useRef<boolean>(false)
 
-  const stopRecording = useCallback(
-    (finalTranscription?: string | null) => {
-      if (speechRecognitionRef.current && isRecognitionRunning.current) {
-        try {
-          speechRecognitionRef.current.stop()
-        } catch (e) {
-          // Silently handle if already stopped
-        }
-        isRecognitionRunning.current = false
+  const stopRecording = (finalTranscription?: string | null) => {
+    if (speechRecognitionRef.current && isRecognitionRunning.current) {
+      try {
+        speechRecognitionRef.current.stop()
+      } catch (e) {
+        // Silently handle if already stopped
       }
-      setIsRecording(false)
+      isRecognitionRunning.current = false
+    }
+    setIsRecording(false)
 
-      const textToSend = finalTranscription || interimTranscription
-      setInterimTranscription('')
+    const textToSend = finalTranscription || interimTranscription
+    setInterimTranscription('')
 
-      if (textToSend.trim()) {
-        onFinalTranscription(textToSend)
-      }
-    },
-    [interimTranscription, onFinalTranscription],
-  )
+    if (textToSend.trim()) {
+      onFinalTranscription(textToSend)
+    }
+  }
 
-  const cancelRecording = useCallback(() => {
+  const cancelRecording = () => {
     if (speechRecognitionRef.current && isRecognitionRunning.current) {
       try {
         speechRecognitionRef.current.stop()
@@ -64,9 +61,9 @@ export const useSpeechRecognition = (
     }
     setIsRecording(false)
     setInterimTranscription('')
-  }, [])
+  }
 
-  const startRecording = useCallback(async () => {
+  const startRecording = async () => {
     if (isRecognitionRunning.current) return
 
     try {
@@ -84,15 +81,15 @@ export const useSpeechRecognition = (
       setIsRecording(false)
       isRecognitionRunning.current = false
     }
-  }, [])
+  }
 
-  const toggleRecording = useCallback(() => {
+  const toggleRecording = () => {
     if (isRecording || isRecognitionRunning.current) {
       stopRecording(interimTranscription)
     } else {
       startRecording()
     }
-  }, [isRecording, stopRecording, interimTranscription, startRecording])
+  }
 
   useEffect(() => {
     if (typeof window !== 'undefined' && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {

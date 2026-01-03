@@ -6,19 +6,11 @@ import { Info } from 'lucide-react'
 import React from 'react'
 import type { TimeAllocationChartProps } from '@/types/analytics'
 import { motion } from 'framer-motion'
-
-const DEFAULT_COLOR = '#6366f1'
-
-const getValidColor = (color: string | undefined | null): string => {
-  if (!color || typeof color !== 'string') return DEFAULT_COLOR
-  if (/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(color)) {
-    return color
-  }
-  return DEFAULT_COLOR
-}
+import { getValidHexColor } from '@/lib/colorUtils'
+import { sumBy } from '@/lib/dataUtils'
 
 const TimeAllocationChart: React.FC<TimeAllocationChartProps> = ({ data, onCalendarClick }) => {
-  const totalHours = data.reduce((acc, item) => acc + item.hours, 0)
+  const totalHours = sumBy(data, 'hours')
   const radius = 70
   const circumference = 2 * Math.PI * radius
   const strokeWidth = 22
@@ -50,7 +42,7 @@ const TimeAllocationChart: React.FC<TimeAllocationChartProps> = ({ data, onCalen
             const dashArray = percentage * circumference
             const rotation = accumulatedPercentage * 360
             accumulatedPercentage += percentage
-            const safeColor = getValidColor(item.color)
+            const safeColor = getValidHexColor(item.color)
 
             return (
               <motion.circle
@@ -98,7 +90,7 @@ const TimeAllocationChart: React.FC<TimeAllocationChartProps> = ({ data, onCalen
         </h3>
         <ul className="space-y-2">
           {data.map((item) => {
-            const safeColor = getValidColor(item.color)
+            const safeColor = getValidHexColor(item.color)
             return (
               <li
                 key={item.category}
