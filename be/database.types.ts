@@ -106,6 +106,7 @@ export type Database = {
           context_window: Json | null
           created_at: string
           id: number
+          is_active: boolean | null
           last_message_id: number | null
           last_summarized_at: string | null
           message_count: number
@@ -121,6 +122,7 @@ export type Database = {
           context_window?: Json | null
           created_at?: string
           id?: number
+          is_active?: boolean | null
           last_message_id?: number | null
           last_summarized_at?: string | null
           message_count?: number
@@ -136,6 +138,7 @@ export type Database = {
           context_window?: Json | null
           created_at?: string
           id?: number
+          is_active?: boolean | null
           last_message_id?: number | null
           last_summarized_at?: string | null
           message_count?: number
@@ -331,6 +334,20 @@ export type Database = {
           match_count: number
           match_threshold: number
           match_user_id: number
+          query_embedding: string
+        }
+        Returns: {
+          content: string
+          id: number
+          metadata: Json
+          similarity: number
+        }[]
+      }
+      match_conversation_embeddings_web: {
+        Args: {
+          match_count?: number
+          match_threshold?: number
+          match_user_email: string
           query_embedding: string
         }
         Returns: {

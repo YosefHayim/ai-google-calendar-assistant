@@ -21,11 +21,10 @@ import EventDetailsDialog from '@/components/dialogs/EventDetailsDialog'
 import InsightCard from './InsightCard'
 import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button'
 import KPICardsSection from './KPICardsSection'
-import LeverageGainChart from './LeverageGainChart'
+import DailyAvailableHoursChart from './DailyAvailableHoursChart'
 import ManageCalendars from '@/components/dashboard/analytics/ManageCalendars'
 import RecentEvents from '@/components/dashboard/analytics/RecentEvents'
 import TimeAllocationChart from './TimeAllocationChart'
-import type { TimeSavedDataPoint } from '@/types/analytics'
 import { calendarsService } from '@/lib/api/services/calendars.service'
 import { eventsService } from '@/lib/api/services/events.service'
 import { useAnalyticsData } from '@/hooks/queries/analytics'
@@ -198,15 +197,6 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
     },
   ]
 
-  const timeSavedData: TimeSavedDataPoint[] = Array.from({ length: 30 }, (_, i) => {
-    const date = subDays(new Date(), 29 - i)
-    return {
-      day: i + 1,
-      date: date.toISOString(),
-      hours: 1 + Math.sin(i / 4) * 1.5 + Math.random() * 1 + i * 0.15,
-    }
-  }).map((d) => ({ ...d, hours: Math.max(0, d.hours) }))
-
   if (isError) {
     return (
       <div className="max-w-7xl mx-auto w-full p-6 bg-zinc-50 dark:bg-zinc-950 flex flex-col items-center justify-center min-h-[50vh]">
@@ -238,6 +228,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
     busiestDayHours,
     calendarBreakdown,
     recentActivities,
+    dailyAvailableHours,
   } = processedData || {
     totalEvents: 0,
     totalDurationHours: 0,
@@ -245,6 +236,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
     busiestDayHours: 0,
     calendarBreakdown: [],
     recentActivities: [],
+    dailyAvailableHours: [],
   }
 
   return (
@@ -288,8 +280,8 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Leverage Gain Chart */}
-        <LeverageGainChart data={timeSavedData} />
+        {/* Daily Available Hours Chart */}
+        <DailyAvailableHoursChart data={dailyAvailableHours} />
 
         {/* Intelligence Insights */}
         <div className="lg:col-span-3">

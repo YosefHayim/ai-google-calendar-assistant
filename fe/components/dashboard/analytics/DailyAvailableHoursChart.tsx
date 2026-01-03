@@ -2,33 +2,35 @@
 
 import * as React from 'react'
 import { Bar, BarChart, CartesianGrid, XAxis } from 'recharts'
-import { Info, TrendingUp } from 'lucide-react'
+import { Clock, Info } from 'lucide-react'
 import { format } from 'date-fns'
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from '@/components/ui/chart'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
-import type { TimeSavedDataPoint } from '@/types/analytics'
+import type { DailyAvailableHoursDataPoint } from '@/types/analytics'
 
-interface LeverageGainChartProps {
-  data: TimeSavedDataPoint[]
+const WAKING_HOURS_PER_DAY = 16 // Assuming ~8 hours of sleep
+
+interface DailyAvailableHoursChartProps {
+  data: DailyAvailableHoursDataPoint[]
 }
 
 const chartConfig = {
   hours: {
-    label: 'Hours Saved',
+    label: 'Available Hours',
     color: '#f26306',
   },
 } satisfies ChartConfig
 
-const LeverageGainChart: React.FC<LeverageGainChartProps> = ({ data }) => {
-  const totalHours = React.useMemo(() => {
+const DailyAvailableHoursChart: React.FC<DailyAvailableHoursChartProps> = ({ data }) => {
+  const totalAvailableHours = React.useMemo(() => {
     return data.reduce((acc, curr) => acc + curr.hours, 0)
   }, [data])
 
-  const averageHours = React.useMemo(() => {
-    return data.length > 0 ? totalHours / data.length : 0
-  }, [data, totalHours])
+  const averageAvailableHours = React.useMemo(() => {
+    return data.length > 0 ? totalAvailableHours / data.length : 0
+  }, [data, totalAvailableHours])
 
   // Transform data for the chart
   const chartData = React.useMemo(() => {
@@ -43,8 +45,8 @@ const LeverageGainChart: React.FC<LeverageGainChartProps> = ({ data }) => {
       <Card className="lg:col-span-3 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <TrendingUp className="w-5 h-5 text-primary" />
-            Leverage Gain
+            <Clock className="w-5 h-5 text-primary" />
+            Daily Available Hours
           </CardTitle>
           <CardDescription>No data available</CardDescription>
         </CardHeader>
@@ -57,8 +59,8 @@ const LeverageGainChart: React.FC<LeverageGainChartProps> = ({ data }) => {
       <CardHeader className="flex flex-col items-stretch border-b border-zinc-200 dark:border-zinc-800 !p-0 sm:flex-row">
         <div className="flex flex-1 flex-col justify-center gap-1 px-6 pt-4 pb-3 sm:!py-4">
           <CardTitle className="flex items-center gap-2 text-zinc-900 dark:text-zinc-100">
-            <TrendingUp className="w-5 h-5 text-primary" />
-            Leverage Gain
+            <Clock className="w-5 h-5 text-primary" />
+            Daily Available Hours
             <HoverCard>
               <HoverCardTrigger asChild>
                 <button className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors">
@@ -67,30 +69,31 @@ const LeverageGainChart: React.FC<LeverageGainChartProps> = ({ data }) => {
               </HoverCardTrigger>
               <HoverCardContent>
                 <div className="space-y-2">
-                  <h4 className="font-semibold text-sm">Leverage Gain</h4>
+                  <h4 className="font-semibold text-sm">Daily Available Hours</h4>
                   <p className="text-xs text-zinc-600 dark:text-zinc-400">
-                    This chart measures the time that Ally has returned to your deep work pool by automating calendar
-                    management tasks. Higher values indicate more time saved for focused work.
+                    Shows your available hours remaining each day after scheduled events. Based on{' '}
+                    {WAKING_HOURS_PER_DAY} waking hours per day (assuming ~8 hours of sleep), minus time spent in
+                    calendar events.
                   </p>
                 </div>
               </HoverCardContent>
             </HoverCard>
           </CardTitle>
           <CardDescription className="text-zinc-500 dark:text-zinc-400 text-xs font-medium italic">
-            Measuring the time Ally returned to your deep work pool.
+            Hours remaining after scheduled events each day.
           </CardDescription>
         </div>
         <div className="flex">
           <div className="relative z-30 flex flex-1 flex-col justify-center gap-1 border-t border-zinc-200 dark:border-zinc-800 px-6 py-4 text-left sm:border-t-0 sm:border-l sm:px-8 sm:py-6">
-            <span className="text-zinc-500 dark:text-zinc-400 text-xs">Total Saved</span>
+            <span className="text-zinc-500 dark:text-zinc-400 text-xs">Total Available</span>
             <span className="text-lg leading-none font-bold text-zinc-900 dark:text-zinc-100 sm:text-3xl">
-              {totalHours.toFixed(1)}h
+              {totalAvailableHours.toFixed(1)}h
             </span>
           </div>
           <div className="relative z-30 flex flex-1 flex-col justify-center gap-1 border-t border-l border-zinc-200 dark:border-zinc-800 px-6 py-4 text-left sm:border-t-0 sm:px-8 sm:py-6">
             <span className="text-zinc-500 dark:text-zinc-400 text-xs">Daily Avg</span>
             <span className="text-lg leading-none font-bold text-zinc-900 dark:text-zinc-100 sm:text-3xl">
-              {averageHours.toFixed(1)}h
+              {averageAvailableHours.toFixed(1)}h
             </span>
           </div>
         </div>
@@ -122,28 +125,21 @@ const LeverageGainChart: React.FC<LeverageGainChartProps> = ({ data }) => {
                   nameKey="hours"
                   labelFormatter={(value, payload) => {
                     if (payload && payload[0]) {
-                      const point = payload[0].payload as TimeSavedDataPoint
+                      const point = payload[0].payload as DailyAvailableHoursDataPoint
                       return (
                         <div className="flex flex-col gap-1">
                           <span className="text-zinc-400 text-xs">Day {point.day}</span>
-                          <span className="font-medium">
-                            {format(new Date(point.date), 'MMM dd, yyyy')}
-                          </span>
+                          <span className="font-medium">{format(new Date(point.date), 'MMM dd, yyyy')}</span>
                         </div>
                       )
                     }
                     return value
                   }}
-                  formatter={(value) => [`${Number(value).toFixed(1)}h saved`, '']}
+                  formatter={(value) => [`${Number(value).toFixed(1)}h available`, '']}
                 />
               }
             />
-            <Bar
-              dataKey="hours"
-              fill="var(--color-hours)"
-              radius={[4, 4, 0, 0]}
-              className="cursor-pointer"
-            />
+            <Bar dataKey="hours" fill="var(--color-hours)" radius={[4, 4, 0, 0]} className="cursor-pointer" />
           </BarChart>
         </ChartContainer>
       </CardContent>
@@ -151,4 +147,4 @@ const LeverageGainChart: React.FC<LeverageGainChartProps> = ({ data }) => {
   )
 }
 
-export default LeverageGainChart
+export default DailyAvailableHoursChart
