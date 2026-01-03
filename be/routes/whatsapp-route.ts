@@ -3,6 +3,9 @@ import { whatsAppController } from "@/controllers/whatsapp-controller";
 
 const router = express.Router();
 
+// ============================================
+// WhatsApp routes UNDER DEVELOPMENT (not implemented)
+// ============================================
 // router.use(authHandler);
 
 router.get("/", whatsAppController.getWhatsAppNotifications);
