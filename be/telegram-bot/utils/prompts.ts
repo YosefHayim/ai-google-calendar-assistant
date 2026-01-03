@@ -25,11 +25,11 @@ export const buildAgentPromptWithContext = (email: string | undefined, message: 
   return parts.join("\n");
 };
 
-export const buildConfirmationPrompt = (email: string | undefined, eventData: unknown): string => {
-  logger.info(`Telegram Bot: Prompts: Building confirmation prompt: ${email}, ${eventData}`);
+export const buildConfirmationPrompt = (firstName: string, email: string | undefined, eventData: unknown): string => {
+  logger.info(`Telegram Bot: Prompts: Building confirmation prompt: ${firstName}, ${email}, ${eventData}`);
   const timestamp = new Date().toISOString();
   logger.info(`Telegram Bot: Prompts: Timestamp: ${timestamp}`);
-  return `Current date and time is ${timestamp}. User ${email} CONFIRMED creation of event despite conflicts. Create the event now with these details: ${JSON.stringify(
+  return `Current date and time is ${timestamp}. User ${firstName} with the email ${email} confirmed the creation of event despite conflicts. Create the event now with these details: ${JSON.stringify(
     eventData
   )}`;
 };

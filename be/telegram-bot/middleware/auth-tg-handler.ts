@@ -19,6 +19,7 @@ export const authTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
   if (!session.chatId) {
     session.chatId = from.id;
     session.userId = from.id;
+    session.firstName = from.first_name;
     session.username = from.username;
     session.codeLang = from.language_code;
     session.messageCount = 0;

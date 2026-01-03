@@ -23,6 +23,7 @@ import {
   getRelevantContext,
 } from "./utils";
 import { logger } from "@/utils/logger";
+import { handleExitCommand, handleUsageCommand } from "./utils/commands";
 
 export type GlobalContext = SessionFlavor<SessionData> & Context;
 
@@ -70,6 +71,7 @@ bot.use(
       email: undefined,
       messageCount: 0,
       userId: 0,
+      firstName: undefined,
       username: undefined,
       lastProcessedMsgId: 0,
       agentActive: false,
@@ -98,12 +100,6 @@ const classifyConfirmationResponse = (text: string): MessageActionType => {
   return MessageAction.OTHER;
 };
 
-// Handler: Exit command
-const handleExitCommand = async (ctx: GlobalContext): Promise<void> => {
-  resetSession(ctx);
-  await ctx.reply("Conversation ended.");
-};
-
 // Handler: User confirms pending action
 const handleConfirmation = async (ctx: GlobalContext): Promise<void> => {
   const pending = ctx.session.pendingConfirmation;
@@ -123,8 +119,10 @@ const handleConfirmation = async (ctx: GlobalContext): Promise<void> => {
     // Add confirmation to conversation history
     await addMessageToContext(chatId, userId, { role: "user", content: "User confirmed event creation despite conflicts." }, summarizeMessages);
 
-    const prompt = buildConfirmationPrompt(ctx.session.email, pending.eventData);
+    const prompt = buildConfirmationPrompt(ctx.session.firstName!, ctx.session.email!, pending.eventData);
+    logger.info(`Telegram Bot: Handle confirmation: Prompt: ${prompt}`);
     const { finalOutput } = await activateAgent(ORCHESTRATOR_AGENT, prompt);
+    logger.info(`Telegram Bot: Handle confirmation: Final output: ${finalOutput}`);
 
     if (!finalOutput) {
       await ctx.reply("No output received from AI Agent.");
@@ -283,6 +281,9 @@ bot.on("message", async (ctx) => {
 
   // Handle commands
   switch (text) {
+    case COMMANDS.USAGE:
+      await handleUsageCommand(ctx);
+      return;
     case COMMANDS.EXIT:
       await handleExitCommand(ctx);
       return;
