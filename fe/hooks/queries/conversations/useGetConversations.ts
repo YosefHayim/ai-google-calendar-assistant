@@ -4,7 +4,7 @@ import { queryKeys } from '@/lib/query/keys'
 import { useQuery } from '@tanstack/react-query'
 import { useQueryWrapper } from '../useQueryWrapper'
 
-export const useRefreshConversations = () => {
+export const useGetConversations = () => {
   const query = useQuery({
     queryKey: queryKeys.conversations.list(),
     queryFn: () => getConversations(20, 0),
