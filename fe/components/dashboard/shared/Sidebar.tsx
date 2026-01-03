@@ -35,7 +35,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 
 import { Button } from '@/components/ui/button'
@@ -105,10 +105,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle, onOpenSett
     { href: '/dashboard/analytics', icon: BarChart2, label: 'Intelligence', id: 'tour-analytics' },
   ]
 
-  // Load conversations on mount
-  useEffect(() => {
-    refreshConversations()
-  }, [refreshConversations])
+  // TanStack Query automatically fetches conversations on mount, no need to manually refetch
 
   const handleNewChat = () => {
     startNewConversation()

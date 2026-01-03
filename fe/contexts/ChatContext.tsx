@@ -1,15 +1,8 @@
 'use client'
 
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react'
-import {
-  getConversation,
-  getConversations,
-  deleteConversation,
-  type ConversationListItem,
-} from '@/services/chatService'
+import React, { createContext, useContext, useState, useCallback } from 'react'
+import { deleteConversation, type ConversationListItem } from '@/services/chatService'
 import { Message } from '@/types'
-import { useUpdateConversationById } from '@/hooks/queries/conversations/useUpdateConversationById'
-import { useDeleteConversationById } from '@/hooks/queries/conversations/useDeleteConversationById'
 import { useGetConversations } from '@/hooks/queries/conversations/useGetConversations'
 import { useGetConversationById } from '@/hooks/queries/conversations/useGetConversationById'
 
@@ -51,6 +44,9 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   const isLoadingConversations = conversationsQuery.isLoading
   const isLoadingConversation = conversationQuery.isLoading
 
+  // Extract stable refetch function
+  const refetchConversations = conversationsQuery.refetch
+
   const startNewConversation = useCallback(() => {
     setMessages([])
     setSelectedConversationId(null)
@@ -65,20 +61,20 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const refreshConversations = useCallback(async () => {
-    await conversationsQuery.refetch()
-  }, [conversationsQuery])
+    await refetchConversations()
+  }, [refetchConversations])
 
   const removeConversation = useCallback(async (id: number): Promise<boolean> => {
     const deleted = await deleteConversation(id)
     if (deleted) {
       // Refetch to update the list
-      await conversationsQuery.refetch()
+      await refetchConversations()
       if (selectedConversationId === id) {
         startNewConversation()
       }
     }
     return deleted
-  }, [conversationsQuery, selectedConversationId])
+  }, [refetchConversations, selectedConversationId, startNewConversation])
 
   const setConversationId = useCallback((id: number | null) => {
     setSelectedConversationId(id)
@@ -89,13 +85,13 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
 
   const updateConversationTitle = useCallback((id: number, title: string) => {
     // Optimistically update - refetch will sync with server
-    conversationsQuery.refetch()
-  }, [conversationsQuery])
+    refetchConversations()
+  }, [refetchConversations])
 
   const addConversationToList = useCallback((conversation: ConversationListItem) => {
     // Refetch to get the latest list including the new conversation
-    conversationsQuery.refetch()
-  }, [conversationsQuery])
+    refetchConversations()
+  }, [refetchConversations])
 
   return (
     <ChatContext.Provider
