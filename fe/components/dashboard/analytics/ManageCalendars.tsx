@@ -21,10 +21,10 @@ const ManageCalendars: React.FC<ManageCalendarsProps> = ({
 }) => {
   return (
     <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-6">
-      <div className="mb-6 flex items-center justify-between">
+      <div className="gap-2 mb-6 flex items-center justify-between">
         {/* Left Side: Text Stack */}
         <div>
-          <h3 className="font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+          <h3 className="w-max font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
             <CalendarDays className="w-4 h-4 text-zinc-400" /> Managed Calendars
           </h3>
           <div className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
