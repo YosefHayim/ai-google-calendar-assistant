@@ -79,130 +79,127 @@ export function useAnalyticsData({ timeMin, timeMax, calendarMap, enabled = true
   })
 
   // Process data function
-  const processData = React.useCallback(
-    (data: AnalyticsResponse | null | undefined): ProcessedAnalyticsData => {
-      if (!data?.data?.allEvents || !Array.isArray(data.data.allEvents)) {
-        return {
-          totalEvents: 0,
-          totalDurationHours: 0,
-          averageEventDuration: 0,
-          busiestDayHours: 0,
-          calendarBreakdown: [],
-          recentActivities: [],
-          dailyAvailableHours: [],
-        }
-      }
-
-      let totalEvents = 0
-      let totalDurationMinutes = 0
-      const calendarDurationMap = new Map<string, { minutes: number; calendarId: string }>()
-      const recentActivities: ProcessedActivity[] = []
-      const dayHoursMap = new Map<string, number>()
-
-      data.data.allEvents.forEach((calendarGroup) => {
-        if (!calendarGroup?.calendarId || !Array.isArray(calendarGroup.events)) return
-
-        const calendarInfo = calendarMap.get(calendarGroup.calendarId)
-        let calendarName: string
-        if (calendarInfo?.name) {
-          calendarName = calendarInfo.name
-        } else if (calendarGroup.calendarId.includes('@')) {
-          calendarName = calendarGroup.calendarId.split('@')[0]
-        } else if (calendarGroup.calendarId.length > 20) {
-          calendarName = `Calendar ${calendarGroup.calendarId.slice(0, 8)}...`
-        } else {
-          calendarName = calendarGroup.calendarId
-        }
-        const calendarColor = calendarInfo?.color || '#6366f1'
-
-        calendarGroup.events.forEach((event) => {
-          if (!event?.start || !event?.end) return
-
-          totalEvents++
-
-          if (event.start.dateTime && event.end.dateTime) {
-            const start = new Date(event.start.dateTime)
-            const end = new Date(event.end.dateTime)
-            const durationMinutes = (end.getTime() - start.getTime()) / (1000 * 60)
-            totalDurationMinutes += durationMinutes
-
-            // Track hours per day for busiest day calculation
-            const dayKey = start.toISOString().split('T')[0]
-            const hours = durationMinutes / 60
-            dayHoursMap.set(dayKey, (dayHoursMap.get(dayKey) || 0) + hours)
-
-            const existing = calendarDurationMap.get(calendarName)
-            if (existing) {
-              existing.minutes += durationMinutes
-            } else {
-              calendarDurationMap.set(calendarName, { minutes: durationMinutes, calendarId: calendarGroup.calendarId })
-            }
-
-            recentActivities.push({
-              action: event.summary || 'No Title',
-              time: start.toLocaleDateString(),
-              icon: CalendarDays,
-              timestamp: start.getTime(),
-              calendarName,
-              calendarId: calendarGroup.calendarId,
-              calendarColor,
-              event: event as CalendarEvent,
-            })
-          }
-        })
-      })
-
-      // Sort recent activities by time
-      recentActivities.sort((a, b) => b.timestamp - a.timestamp)
-
-      // Format calendar breakdown
-      const defaultColors = ['#f26306', '#1489b4', '#2d9663', '#6366f1', '#64748b', '#e11d48']
-      const calendarBreakdown: CalendarBreakdownItem[] = Array.from(calendarDurationMap.entries())
-        .map(([calendarName, data], index) => {
-          const calendarInfo = calendarMap.get(data.calendarId)
-          let color = calendarInfo?.color || defaultColors[index % defaultColors.length]
-
-          if (!color || typeof color !== 'string' || !/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(color)) {
-            color = defaultColors[index % defaultColors.length]
-          }
-
-          return {
-            category: calendarName,
-            hours: Math.round((data.minutes / 60) * 10) / 10,
-            color,
-            calendarId: data.calendarId,
-          }
-        })
-        .sort((a, b) => b.hours - a.hours)
-        .slice(0, 5)
-
-      const totalDurationHours = Math.round((totalDurationMinutes / 60) * 10) / 10
-      const averageEventDuration = totalEvents > 0 ? totalDurationHours / totalEvents : 0
-      const busiestDayHours = Math.max(...Array.from(dayHoursMap.values()), 0)
-
-      // Calculate daily available hours (16 waking hours - event hours per day)
-      const WAKING_HOURS_PER_DAY = 16
-      const dailyAvailableHours: DailyAvailableHoursDataPoint[] = Array.from(dayHoursMap.entries())
-        .map(([dateStr, eventHours], index) => ({
-          day: index + 1,
-          date: dateStr,
-          hours: Math.max(0, Math.round((WAKING_HOURS_PER_DAY - eventHours) * 10) / 10),
-        }))
-        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-        .map((item, index) => ({ ...item, day: index + 1 }))
-
+  const processData = (data: AnalyticsResponse | null | undefined): ProcessedAnalyticsData => {
+    if (!data?.data?.allEvents || !Array.isArray(data.data.allEvents)) {
       return {
-        totalEvents,
-        totalDurationHours,
-        averageEventDuration,
-        busiestDayHours,
-        calendarBreakdown,
-        recentActivities: recentActivities.slice(0, 5),
-        dailyAvailableHours,
+        totalEvents: 0,
+        totalDurationHours: 0,
+        averageEventDuration: 0,
+        busiestDayHours: 0,
+        calendarBreakdown: [],
+        recentActivities: [],
+        dailyAvailableHours: [],
       }
-    },
-    [calendarMap],
-  )
+    }
+
+    let totalEvents = 0
+    let totalDurationMinutes = 0
+    const calendarDurationMap = new Map<string, { minutes: number; calendarId: string }>()
+    const recentActivities: ProcessedActivity[] = []
+    const dayHoursMap = new Map<string, number>()
+
+    data.data.allEvents.forEach((calendarGroup) => {
+      if (!calendarGroup?.calendarId || !Array.isArray(calendarGroup.events)) return
+
+      const calendarInfo = calendarMap.get(calendarGroup.calendarId)
+      let calendarName: string
+      if (calendarInfo?.name) {
+        calendarName = calendarInfo.name
+      } else if (calendarGroup.calendarId.includes('@')) {
+        calendarName = calendarGroup.calendarId.split('@')[0]
+      } else if (calendarGroup.calendarId.length > 20) {
+        calendarName = `Calendar ${calendarGroup.calendarId.slice(0, 8)}...`
+      } else {
+        calendarName = calendarGroup.calendarId
+      }
+      const calendarColor = calendarInfo?.color || '#6366f1'
+
+      calendarGroup.events.forEach((event) => {
+        if (!event?.start || !event?.end) return
+
+        totalEvents++
+
+        if (event.start.dateTime && event.end.dateTime) {
+          const start = new Date(event.start.dateTime)
+          const end = new Date(event.end.dateTime)
+          const durationMinutes = (end.getTime() - start.getTime()) / (1000 * 60)
+          totalDurationMinutes += durationMinutes
+
+          // Track hours per day for busiest day calculation
+          const dayKey = start.toISOString().split('T')[0]
+          const hours = durationMinutes / 60
+          dayHoursMap.set(dayKey, (dayHoursMap.get(dayKey) || 0) + hours)
+
+          const existing = calendarDurationMap.get(calendarName)
+          if (existing) {
+            existing.minutes += durationMinutes
+          } else {
+            calendarDurationMap.set(calendarName, { minutes: durationMinutes, calendarId: calendarGroup.calendarId })
+          }
+
+          recentActivities.push({
+            action: event.summary || 'No Title',
+            time: start.toLocaleDateString(),
+            icon: CalendarDays,
+            timestamp: start.getTime(),
+            calendarName,
+            calendarId: calendarGroup.calendarId,
+            calendarColor,
+            event: event as CalendarEvent,
+          })
+        }
+      })
+    })
+
+    // Sort recent activities by time
+    recentActivities.sort((a, b) => b.timestamp - a.timestamp)
+
+    // Format calendar breakdown
+    const defaultColors = ['#f26306', '#1489b4', '#2d9663', '#6366f1', '#64748b', '#e11d48']
+    const calendarBreakdown: CalendarBreakdownItem[] = Array.from(calendarDurationMap.entries())
+      .map(([calendarName, data], index) => {
+        const calendarInfo = calendarMap.get(data.calendarId)
+        let color = calendarInfo?.color || defaultColors[index % defaultColors.length]
+
+        if (!color || typeof color !== 'string' || !/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(color)) {
+          color = defaultColors[index % defaultColors.length]
+        }
+
+        return {
+          category: calendarName,
+          hours: Math.round((data.minutes / 60) * 10) / 10,
+          color,
+          calendarId: data.calendarId,
+        }
+      })
+      .sort((a, b) => b.hours - a.hours)
+      .slice(0, 5)
+
+    const totalDurationHours = Math.round((totalDurationMinutes / 60) * 10) / 10
+    const averageEventDuration = totalEvents > 0 ? totalDurationHours / totalEvents : 0
+    const busiestDayHours = Math.max(...Array.from(dayHoursMap.values()), 0)
+
+    // Calculate daily available hours (16 waking hours - event hours per day)
+    const WAKING_HOURS_PER_DAY = 16
+    const dailyAvailableHours: DailyAvailableHoursDataPoint[] = Array.from(dayHoursMap.entries())
+      .map(([dateStr, eventHours], index) => ({
+        day: index + 1,
+        date: dateStr,
+        hours: Math.max(0, Math.round((WAKING_HOURS_PER_DAY - eventHours) * 10) / 10),
+      }))
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+      .map((item, index) => ({ ...item, day: index + 1 }))
+
+    return {
+      totalEvents,
+      totalDurationHours,
+      averageEventDuration,
+      busiestDayHours,
+      calendarBreakdown,
+      recentActivities: recentActivities.slice(0, 5),
+      dailyAvailableHours,
+    }
+  }
 
   // Memoize processed data
   const processedData = React.useMemo(() => {
@@ -244,6 +241,7 @@ export function useAnalyticsData({ timeMin, timeMax, calendarMap, enabled = true
 
   return {
     data: processedData,
+    rawData: analyticsQuery.data,
     comparison: comparisonQuery.data ?? null,
     isLoading: analyticsQuery.isLoading || comparisonQuery.isLoading,
     isFetching: analyticsQuery.isFetching || comparisonQuery.isFetching,

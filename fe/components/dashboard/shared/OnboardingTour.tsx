@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight, Sparkles, X } from 'lucide-react'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 interface Step {
   id: string
@@ -66,7 +66,7 @@ export const OnboardingTour: React.FC<{ onComplete: () => void }> = ({ onComplet
     return () => window.removeEventListener('resize', checkMobile)
   }, [])
 
-  const updateSpotlight = useCallback(() => {
+  const updateSpotlight = () => {
     // CRITICAL: Disable spotlight (highlights) on mobile entirely
     if (isMobile || step.position === 'center') {
       setSpotlightRect(null)
@@ -76,7 +76,7 @@ export const OnboardingTour: React.FC<{ onComplete: () => void }> = ({ onComplet
     if (element) {
       setSpotlightRect(element.getBoundingClientRect())
     }
-  }, [step, isMobile])
+  }
 
   useEffect(() => {
     updateSpotlight()

@@ -2,8 +2,12 @@
 
 import { Activity, CalendarDays, Dumbbell } from 'lucide-react'
 import React, { useMemo, useState } from 'react'
-
-type HealthActivity = 'Gym' | 'Run' | 'Swim' | 'Rest'
+import { generateDateRange } from '@/lib/dateUtils'
+import {
+  getActivityLevelColor,
+  getHealthActivityColor,
+  type HealthActivity,
+} from '@/lib/colorUtils'
 
 const ToggleButton = ({
   active,
@@ -34,40 +38,15 @@ const ActivityHeatmap: React.FC = () => {
 
   const data = useMemo(() => {
     const today = new Date()
-    const days = Array.from({ length: 365 }, (_, i) => {
-      const date = new Date(today)
-      date.setDate(today.getDate() - (364 - i))
-      return date
-    })
+    const days = generateDateRange(365)
 
     const healthActivities: HealthActivity[] = ['Gym', 'Run', 'Swim', 'Rest', 'Rest', 'Rest']
     return days.map((date) => ({
       date,
       activityLevel: date > today ? 0 : Math.floor(Math.random() * 20),
-      healthType: date > today ? 'Rest' : healthActivities[Math.floor(Math.random() * healthActivities.length)],
+      healthType: (date > today ? 'Rest' : healthActivities[Math.floor(Math.random() * healthActivities.length)]) as HealthActivity,
     }))
   }, [])
-
-  const getActivityColor = (level: number) => {
-    if (level === 0) return 'bg-zinc-100 dark:bg-zinc-800/50'
-    if (level < 5) return 'bg-primary/20'
-    if (level < 10) return 'bg-primary/40'
-    if (level < 15) return 'bg-primary/70'
-    return 'bg-primary'
-  }
-
-  const getHealthColor = (type: HealthActivity) => {
-    switch (type) {
-      case 'Gym':
-        return 'bg-emerald-500'
-      case 'Run':
-        return 'bg-sky-500'
-      case 'Swim':
-        return 'bg-indigo-500'
-      default:
-        return 'bg-zinc-100 dark:bg-zinc-800/50'
-    }
-  }
 
   const startDay = data[0].date.getDay()
   const placeholders = Array.from({ length: startDay })
@@ -130,7 +109,7 @@ const ActivityHeatmap: React.FC = () => {
               {data.map((day, i) => (
                 <div
                   key={i}
-                  className={`w-3.5 h-3.5 rounded-sm ${view === 'activity' ? getActivityColor(day.activityLevel) : getHealthColor(day.healthType)}`}
+                  className={`w-3.5 h-3.5 rounded-sm ${view === 'activity' ? getActivityLevelColor(day.activityLevel) : getHealthActivityColor(day.healthType)}`}
                   title={`${day.date.toDateString()}: ${view === 'activity' ? `${day.activityLevel} interactions` : day.healthType}`}
                 />
               ))}

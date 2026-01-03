@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowUp, ChevronDown, Mic, X } from 'lucide-react'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 import { AIVoiceInput } from '@/components/ui/ai-voice-input'
 import { VoicePoweredOrb } from '@/components/ui/voice-powered-orb'
@@ -234,52 +234,46 @@ const AIAllySidebar: React.FC<AIAllySidebarProps> = ({ isOpen, onClose, onOpen }
     }
   }, [])
 
-  const handleSendMessage = useCallback(
-    (textToSend: string = inputText) => {
-      if (!textToSend.trim()) return
-      const newMessage = { id: messages.length + 1, text: textToSend, isUser: true }
-      setMessages((prev) => [...prev, newMessage])
-      setInputText('')
-      setInterimTranscription('')
-      setIsTyping(true)
+  const handleSendMessage = (textToSend: string = inputText) => {
+    if (!textToSend.trim()) return
+    const newMessage = { id: messages.length + 1, text: textToSend, isUser: true }
+    setMessages((prev) => [...prev, newMessage])
+    setInputText('')
+    setInterimTranscription('')
+    setIsTyping(true)
 
-      // Simulate AI response
-      setTimeout(() => {
-        setIsTyping(false)
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: prev.length + 1,
-            text: 'I understand! Let me analyze your calendar and suggest some optimizations.',
-            isUser: false,
-          },
-        ])
-      }, 1500)
-    },
-    [inputText, messages.length],
-  )
+    // Simulate AI response
+    setTimeout(() => {
+      setIsTyping(false)
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: prev.length + 1,
+          text: 'I understand! Let me analyze your calendar and suggest some optimizations.',
+          isUser: false,
+        },
+      ])
+    }, 1500)
+  }
 
-  const handleStopRecording = useCallback(
-    (finalTranscription: string | null) => {
-      if (speechRecognitionRef.current && isRecognitionRunning.current) {
-        try {
-          speechRecognitionRef.current.stop()
-        } catch (e) {}
-        isRecognitionRunning.current = false
-      }
-      setIsRecording(false)
+  const handleStopRecording = (finalTranscription: string | null) => {
+    if (speechRecognitionRef.current && isRecognitionRunning.current) {
+      try {
+        speechRecognitionRef.current.stop()
+      } catch (e) {}
+      isRecognitionRunning.current = false
+    }
+    setIsRecording(false)
 
-      const textToSend = finalTranscription || interimTranscription
-      setInterimTranscription('')
+    const textToSend = finalTranscription || interimTranscription
+    setInterimTranscription('')
 
-      if (textToSend.trim()) {
-        handleSendMessage(textToSend)
-      }
-    },
-    [interimTranscription, handleSendMessage],
-  )
+    if (textToSend.trim()) {
+      handleSendMessage(textToSend)
+    }
+  }
 
-  const handleStartRecording = useCallback(async () => {
+  const handleStartRecording = async () => {
     if (isRecognitionRunning.current) return
 
     try {
@@ -297,17 +291,17 @@ const AIAllySidebar: React.FC<AIAllySidebarProps> = ({ isOpen, onClose, onOpen }
       setIsRecording(false)
       isRecognitionRunning.current = false
     }
-  }, [])
+  }
 
-  const handleToggleRecording = useCallback(() => {
+  const handleToggleRecording = () => {
     if (isRecording || isRecognitionRunning.current) {
       handleStopRecording(interimTranscription)
     } else {
       handleStartRecording()
     }
-  }, [isRecording, handleStopRecording, interimTranscription, handleStartRecording])
+  }
 
-  const handleCancelRecording = useCallback(() => {
+  const handleCancelRecording = () => {
     if (speechRecognitionRef.current && isRecognitionRunning.current) {
       try {
         speechRecognitionRef.current.stop()
@@ -316,7 +310,7 @@ const AIAllySidebar: React.FC<AIAllySidebarProps> = ({ isOpen, onClose, onOpen }
     }
     setIsRecording(false)
     setInterimTranscription('')
-  }, [])
+  }
 
   const quickActions = [
     { label: 'Optimize schedule', emoji: '📅' },
