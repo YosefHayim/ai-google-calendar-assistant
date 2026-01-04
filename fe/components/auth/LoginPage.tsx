@@ -9,8 +9,7 @@ import { FcGoogle } from 'react-icons/fc'
 import ImageCarousel from '@/components/auth/ImageCarousel'
 import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button'
 import Link from 'next/link'
-import router from 'next/router'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 const carouselImages = [
   'https://images.unsplash.com/photo-1552588147-385012304918?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', // Focused work, modern laptop
@@ -23,6 +22,7 @@ const carouselImages = [
 const USER = 'user'
 
 const LoginPage: React.FC = () => {
+  const router = useRouter()
   const searchParams = useSearchParams()
   const error = searchParams?.get('error')
   const [isLoading, setIsLoading] = React.useState(false)

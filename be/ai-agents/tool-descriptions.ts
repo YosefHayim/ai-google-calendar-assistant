@@ -25,11 +25,12 @@ Note: If duration provided without end, calculates end = start + duration`,
   getEvent: `Retrieves events from user's calendars.
 
 Input: { email, q?, timeMin?, searchAllCalendars?, calendarId? }
-Output: array of event objects with calendar information
+Output: array of event objects with calendar information, sorted by start time
 
 IMPORTANT: By default (searchAllCalendars=true), this tool searches across ALL user calendars to find events.
 This ensures events are found regardless of which calendar they are in.
 Set searchAllCalendars=false and provide calendarId to search only a specific calendar.
 
-Defaults: timeMin = today, searchAllCalendars = true`,
+Defaults: timeMin = start of today (RFC3339 format), searchAllCalendars = true
+Events are returned in chronological order (earliest first).`,
 } as const;

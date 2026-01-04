@@ -154,11 +154,11 @@ RETRIEVE EVENTS FLOW (Optimized - Direct Tool Call):
 For retrieve/read/list events requests:
 1) Identify the target date/time range from user query
    • Convert natural language ("yesterday", "next week", "today") to RFC3339 format
-   • Default timeMin = start of current year if not specified
+   • Default timeMin = start of today if not specified (only shows upcoming events)
    • Extract keywords if user is searching by event name/title
 2) Call get_event_direct with:
    • email (from context - NEVER use placeholder emails)
-   • timeMin (RFC3339 format, e.g., "2025-01-01T00:00:00Z")
+   • timeMin (RFC3339 format, e.g., "2026-01-04T00:00:00Z")
    • q (keywords if searching by name)
    • searchAllCalendars=true (to search across all calendars)
 3) Extract the events array from the response:
