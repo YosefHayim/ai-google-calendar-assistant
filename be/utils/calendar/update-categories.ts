@@ -13,8 +13,6 @@ export const updateUserSupabaseCalendarCategories = async (calendar: calendar_v3
 
   if (items.length === 0) return;
 
-  logger.info(`Calendar: updateUserSupabaseCalendarCategories called: items: ${items}`);
-
   // 3. Map to the correct object structure matching your Supabase Row
   const calendarsToUpsert: CalendarCategoryInsert[] = items.map((cal: calendar_v3.Schema$CalendarListEntry) => {
     return {
@@ -28,18 +26,12 @@ export const updateUserSupabaseCalendarCategories = async (calendar: calendar_v3
     };
   });
 
-  logger.info(`Calendar: updateUserSupabaseCalendarCategories called: calendarsToUpsert: ${calendarsToUpsert}`);
-
   const { error } = await SUPABASE.from("calendar_categories").upsert(calendarsToUpsert, {
     onConflict: "calendar_id",
   });
-
-  logger.info(`Calendar: updateUserSupabaseCalendarCategories called: error: ${error}`);
 
   if (error) {
     logger.error(`Calendar: updateUserSupabaseCalendarCategories called: error: ${error.message}`);
     throw error;
   }
-
-  logger.info(`Calendar: updateUserSupabaseCalendarCategories called: true`);
 };

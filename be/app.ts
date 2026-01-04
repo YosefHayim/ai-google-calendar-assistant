@@ -40,7 +40,6 @@ app.use(morgan("dev", { immediate: true }));
 app.use("/static", express.static(path.join(__dirname, "public")));
 
 app.get("/", (_req, res) => {
-  logger.info("AI Google Calendar Assistant Server is running.");
   console.log("AI Google Calendar Assistant Server is running.");
   res.status(STATUS_RESPONSE.SUCCESS).json({ message: "AI Google Calendar Assistant Server is running." });
 });
@@ -68,7 +67,6 @@ app.listen(PORT, (error?: Error) => {
     console.error("Error starting server:", error);
     throw error;
   }
-  logger.info(`Server successfully started on port ${PORT}`);
   console.log(`Server successfully started on port ${PORT}`);
 });
 

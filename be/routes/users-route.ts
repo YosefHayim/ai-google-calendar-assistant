@@ -9,12 +9,10 @@ import { userController } from "@/controllers/users-controller";
 const router = express.Router();
 
 router.param("id", (_req: Request, res: Response, next: NextFunction, id: string) => {
-  logger.info(`Users: id: ${id}`);
   if (!id) {
     logger.error(`Users: id not found`);
     return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "User ID parameter is required in order to get user information.");
   }
-  logger.info(`Users: id found: ${id}`);
   next();
 });
 

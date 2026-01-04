@@ -214,7 +214,6 @@ export const addMessageToContext = async (
       context.messages = recentMessages;
 
       await markAsSummarized(stateId);
-      logger.info(`Summarized ${messagesToSummarize.length} messages for chat ${chatId}`);
     } catch (error) {
       logger.error(`Failed to summarize conversation for chat ${chatId}: ${error}`);
       // Continue without summarization if it fails

@@ -48,7 +48,6 @@ type AnyAgent = Agent<any, any>;
  */
 export const activateAgent = asyncHandler(async (agentKey: AGENTS_LIST | AnyAgent, prompt: string, options?: ActivateAgentOptions) => {
   let agent: AnyAgent;
-  logger.info(`AI: activateAgent called: agentKey: ${agentKey}`);
 
   if (typeof agentKey === "string") {
     agent = AGENTS[agentKey];
@@ -80,15 +79,11 @@ export const activateAgent = asyncHandler(async (agentKey: AGENTS_LIST | AnyAgen
     // If session config object is passed, create the session
     if ("userId" in options.session && "agentName" in options.session) {
       runOptions.session = createAgentSession(options.session as CreateSessionOptions);
-      logger.info(`AI: activateAgent: Created session for ${(options.session as CreateSessionOptions).agentName}`);
     } else {
       // It's already a Session instance
       runOptions.session = options.session as Session;
-      logger.info(`AI: activateAgent: Using provided session instance`);
     }
   }
-
-  logger.info(`AI: activateAgent: Running agent ${agent.name} with email: ${context.email}, session: ${!!runOptions.session}`);
   return await run(agent, prompt, runOptions);
 });
 
@@ -119,12 +114,9 @@ export const activateAgent = asyncHandler(async (agentKey: AGENTS_LIST | AnyAgen
 export async function runWorkerWithSession(agent: Agent, prompt: string, sessionConfig: CreateSessionOptions): Promise<string> {
   const session = createAgentSession(sessionConfig);
 
-  logger.info(`AI: runWorkerWithSession: Running ${sessionConfig.agentName} with session`);
-
   const result = await run(agent, prompt, { session });
 
   const itemCount = (await session.getItems()).length;
-  logger.info(`AI: runWorkerWithSession: Completed with ${itemCount} session items`);
 
   return result.finalOutput ?? "";
 }

@@ -25,21 +25,17 @@ type OAuthResult = {
  */
 export async function initiateOAuthFlow(provider: PROVIDERS, options: { forceConsent?: boolean } = {}): Promise<OAuthResult> {
   const { forceConsent = true } = options; // Default to true for first-time auth
-  logger.info(`Auth: initiateOAuthFlow called: provider: ${provider}`);
-  logger.info(`Auth: initiateOAuthFlow called: forceConsent: ${forceConsent}`);
   const queryParams: {
     access_type: string;
     prompt?: string;
   } = {
     access_type: "offline", // CRITICAL: Required to receive refresh_token
   };
-  logger.info(`Auth: initiateOAuthFlow called: queryParams: ${queryParams}`);
   // Only force consent screen on first-time auth or when explicitly requested
   // This prevents redundant redirects when user already has a valid refresh token
   if (forceConsent) {
     queryParams.prompt = "consent";
   }
-  logger.info(`Auth: initiateOAuthFlow called: queryParams: ${queryParams}`);
   const { data, error } = await SUPABASE.auth.signInWithOAuth({
     provider,
     options: {
@@ -48,8 +44,6 @@ export async function initiateOAuthFlow(provider: PROVIDERS, options: { forceCon
       queryParams,
     },
   });
-  logger.info(`Auth: initiateOAuthFlow called: data: ${data}`);
-  logger.info(`Auth: initiateOAuthFlow called: error: ${error}`);
   return { url: data.url, error };
 }
 
@@ -60,7 +54,6 @@ export async function initiateOAuthFlow(provider: PROVIDERS, options: { forceCon
  * @param url - The OAuth URL to redirect to.
  */
 export function redirectToOAuth(res: Response, url: string): void {
-  logger.info(`Auth: redirectToOAuth called: url: ${url}`);
   res.redirect(url);
 }
 
@@ -85,8 +78,6 @@ export function sendOAuthError(res: Response, error: AuthError): void {
  */
 export async function supabaseThirdPartySignInOrSignUp(res: Response, provider: PROVIDERS): Promise<void> {
   const { url, error } = await initiateOAuthFlow(provider);
-  logger.info(`Auth: supabaseThirdPartySignInOrSignUp called: url: ${url}`);
-  logger.info(`Auth: supabaseThirdPartySignInOrSignUp called: error: ${error}`);
   if (url) {
     redirectToOAuth(res, url);
     return;

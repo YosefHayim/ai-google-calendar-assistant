@@ -1,7 +1,8 @@
-import type { Session, AgentInputItem } from "@openai/agents";
+import type { AgentInputItem, Session } from "@openai/agents";
+import type { Tables, TablesInsert } from "@/database.types";
+
 import { SUPABASE } from "@/config/clients/supabase";
 import { logger } from "@/utils/logger";
-import type { Tables, TablesInsert } from "@/database.types";
 
 const AGENT_SESSIONS_TABLE = "agent_sessions";
 
@@ -94,7 +95,6 @@ export class SupabaseAgentSession implements Session {
       }
 
       this.itemsCache = (data?.items as AgentInputItem[]) || [];
-      logger.info(`SupabaseSession: Loaded ${this.itemsCache.length} items for session ${this.sessionId}`);
       return limit ? this.itemsCache.slice(-limit) : this.itemsCache;
     } catch (err) {
       logger.error(`SupabaseSession: Exception fetching items: ${err}`);
@@ -125,7 +125,6 @@ export class SupabaseAgentSession implements Session {
       }
 
       this.itemsCache = newItems;
-      logger.info(`SupabaseSession: Added ${items.length} items, total: ${newItems.length}`);
     } catch (err) {
       logger.error(`SupabaseSession: Exception adding items: ${err}`);
       throw err;
@@ -154,7 +153,6 @@ export class SupabaseAgentSession implements Session {
       }
 
       this.itemsCache = items;
-      logger.info(`SupabaseSession: Popped item, remaining: ${items.length}`);
       return poppedItem;
     } catch (err) {
       logger.error(`SupabaseSession: Exception popping item: ${err}`);
@@ -176,7 +174,6 @@ export class SupabaseAgentSession implements Session {
       }
 
       this.itemsCache = [];
-      logger.info(`SupabaseSession: Cleared session ${this.sessionId}`);
     } catch (err) {
       logger.error(`SupabaseSession: Exception clearing session: ${err}`);
       throw err;

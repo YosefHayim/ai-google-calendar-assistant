@@ -81,15 +81,12 @@ export type RefreshedGoogleToken = {
  */
 export const checkTokenExpiry = (expiryDate: number | null | undefined): TokenExpiryStatus => {
   if (!expiryDate) {
-    logger.info(`Auth: checkTokenExpiry called: no expiry date`);
     // No expiry date means we can't validate - treat as potentially expired
     return { isExpired: true, isNearExpiry: true, expiresInMs: null };
   }
 
   const now = Date.now();
-  logger.info(`Auth: checkTokenExpiry called: now: ${now}`);
   const expiresInMs = expiryDate - now;
-  logger.info(`Auth: checkTokenExpiry called: expiresInMs: ${expiresInMs}`);
   return {
     isExpired: expiresInMs <= 0,
     isNearExpiry: expiresInMs > 0 && expiresInMs <= NEAR_EXPIRY_BUFFER_MS,
@@ -105,7 +102,6 @@ export const checkTokenExpiry = (expiryDate: number | null | undefined): TokenEx
  */
 export const fetchGoogleTokensByEmail = async (email: string): Promise<{ data: TokensProps | null; error: string | null }> => {
   const normalizedEmail = email.toLowerCase().trim();
-  logger.info(`Auth: fetchGoogleTokensByEmail called: normalizedEmail: ${normalizedEmail}`);
   const { data, error } = await SUPABASE.from("user_calendar_tokens").select(TOKEN_FIELDS).ilike("email", normalizedEmail).limit(1).maybeSingle();
 
   if (error) {
@@ -113,8 +109,6 @@ export const fetchGoogleTokensByEmail = async (email: string): Promise<{ data: T
     console.error(`[fetchGoogleTokensByEmail] Database error for ${normalizedEmail}:`, error);
     return { data: null, error: error.message };
   }
-
-  logger.info(`Auth: fetchGoogleTokensByEmail called: data: ${JSON.stringify(data, null, 2)}`);
   return { data: data as TokensProps | null, error: null };
 };
 

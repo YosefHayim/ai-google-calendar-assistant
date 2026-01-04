@@ -231,7 +231,6 @@ export const addWebMessageToContext = async (
       context.messages = recentMessages;
 
       await markWebAsSummarized(stateId);
-      logger.info(`Summarized ${messagesToSummarize.length} messages for user ${userId}`);
     } catch (error) {
       logger.error(`Failed to summarize conversation for user ${userId}: ${error}`);
       // Continue without summarization if it fails
