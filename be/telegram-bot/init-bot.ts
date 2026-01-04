@@ -23,7 +23,22 @@ import {
   getRelevantContext,
 } from "./utils";
 import { logger } from "@/utils/logger";
-import { handleExitCommand, handleUsageCommand } from "./utils/commands";
+import {
+  handleExitCommand,
+  handleUsageCommand,
+  handleStartCommand,
+  handleHelpCommand,
+  handleTodayCommand,
+  handleTomorrowCommand,
+  handleWeekCommand,
+  handleFreeCommand,
+  handleQuickCommand,
+  handleCancelCommand,
+  handleRemindCommand,
+  handleStatusCommand,
+  handleSettingsCommand,
+  handleFeedbackCommand,
+} from "./utils/commands";
 
 export type GlobalContext = SessionFlavor<SessionData> & Context;
 
@@ -268,9 +283,6 @@ bot.on("message", async (ctx) => {
 
   logger.info(`Telegram Bot: Message received from ${ctx.from?.username}: ${text}`);
 
-  // Ignore /start command (handled elsewhere)
-  if (text?.includes(COMMANDS.START)) return;
-
   // Prevent duplicate processing
   if (isDuplicateMessage(ctx, msgId)) return;
 
@@ -279,19 +291,73 @@ bot.on("message", async (ctx) => {
 
   logger.info(`Telegram Bot: Message processed: ${text}`);
 
-  // Handle commands
+  // Handle commands - informational commands that don't pass to AI agent
   switch (text) {
+    case COMMANDS.START:
+      await handleStartCommand(ctx);
+      return;
     case COMMANDS.USAGE:
       await handleUsageCommand(ctx);
       return;
     case COMMANDS.EXIT:
       await handleExitCommand(ctx);
       return;
+    case COMMANDS.HELP:
+      await handleHelpCommand(ctx);
+      return;
+    case COMMANDS.QUICK:
+      await handleQuickCommand(ctx);
+      return;
+    case COMMANDS.CANCEL:
+      await handleCancelCommand(ctx);
+      return;
+    case COMMANDS.REMIND:
+      await handleRemindCommand(ctx);
+      return;
+    case COMMANDS.SETTINGS:
+      await handleSettingsCommand(ctx);
+      return;
+    case COMMANDS.FEEDBACK:
+      await handleFeedbackCommand(ctx);
+      return;
+  }
 
-    // Add more commands here as needed
-    // case COMMANDS.HELP:
-    //   await handleHelpCommand(ctx);
-    //   return;
+  // Commands that show info AND pass to AI agent for actual data
+  const agentCommands: Record<string, { handler: (ctx: GlobalContext) => Promise<void>; prompt: string }> = {
+    [COMMANDS.TODAY]: {
+      handler: handleTodayCommand,
+      prompt: "Show me my calendar events for today. List all events with times.",
+    },
+    [COMMANDS.TOMORROW]: {
+      handler: handleTomorrowCommand,
+      prompt: "Show me my calendar events for tomorrow. List all events with times.",
+    },
+    [COMMANDS.WEEK]: {
+      handler: handleWeekCommand,
+      prompt: "Give me an overview of my calendar for the next 7 days. Summarize each day's events.",
+    },
+    [COMMANDS.FREE]: {
+      handler: handleFreeCommand,
+      prompt: "Find my available free time slots for today and tomorrow. Show me when I'm available.",
+    },
+    [COMMANDS.STATUS]: {
+      handler: handleStatusCommand,
+      prompt: "Check my Google Calendar connection status and verify everything is working.",
+    },
+  };
+
+  if (agentCommands[text]) {
+    const { handler, prompt } = agentCommands[text];
+    await handler(ctx);
+
+    // Activate agent session if needed
+    if (!ctx.session.agentActive) {
+      ctx.session.agentActive = true;
+    }
+
+    // Process with AI agent
+    await handleAgentRequest(ctx, prompt);
+    return;
   }
 
   // Handle pending confirmation flow
@@ -323,7 +389,41 @@ bot.on("message", async (ctx) => {
 // Store runner handle for graceful shutdown
 let runnerHandle: RunnerHandle | null = null;
 
-export const startTelegramBot = () => {
+// Bot menu commands - displayed in Telegram's command menu
+const BOT_COMMANDS = [
+  // 📅 Calendar Quick Access
+  { command: "today", description: "📅 View today's schedule" },
+  { command: "tomorrow", description: "🌅 See tomorrow's agenda" },
+  { command: "week", description: "📊 Weekly overview" },
+  { command: "free", description: "🕐 Find available time slots" },
+
+  // ⚡ Event Management
+  { command: "quick", description: "⚡ Quick add an event" },
+  { command: "cancel", description: "🗑️ Cancel or reschedule" },
+  { command: "remind", description: "🔔 Set a reminder" },
+
+  // 🛠️ Account & Support
+  { command: "status", description: "🟢 Check connection status" },
+  { command: "settings", description: "⚙️ Manage preferences" },
+  { command: "help", description: "❓ All commands & tips" },
+  { command: "feedback", description: "💬 Share your thoughts" },
+  { command: "exit", description: "👋 End current session" },
+];
+
+// Register bot commands with Telegram
+const registerBotCommands = async () => {
+  try {
+    await bot.api.setMyCommands(BOT_COMMANDS);
+    logger.info("Telegram Bot: Commands menu registered successfully");
+  } catch (error) {
+    logger.error(`Telegram Bot: Failed to register commands menu: ${error}`);
+  }
+};
+
+export const startTelegramBot = async () => {
+  // Register commands menu with Telegram
+  await registerBotCommands();
+
   // Configure runner with retry logic for network timeouts
   runnerHandle = run(bot, {
     runner: {
