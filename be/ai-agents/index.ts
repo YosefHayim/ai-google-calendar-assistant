@@ -25,3 +25,15 @@ export {
   checkConflictsDirect,
   preCreateValidation,
 } from "./direct-utilities";
+
+// Session management for persistent agent memory
+export {
+  SupabaseAgentSession,
+  createAgentSession,
+  getSessionInfo,
+  type SupabaseSessionOptions,
+  type CreateSessionOptions,
+  type SessionType,
+  type CompactionStrategy,
+  type CompactionConfig,
+} from "./sessions";
