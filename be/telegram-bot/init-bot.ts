@@ -31,13 +31,21 @@ import {
   handleTodayCommand,
   handleTomorrowCommand,
   handleWeekCommand,
+  handleMonthCommand,
   handleFreeCommand,
+  handleBusyCommand,
   handleQuickCommand,
   handleCancelCommand,
   handleRemindCommand,
   handleStatusCommand,
   handleSettingsCommand,
   handleFeedbackCommand,
+  handleAnalyticsCommand,
+  handleCalendarsCommand,
+  handleSearchCommand,
+  handleCreateCommand,
+  handleUpdateCommand,
+  handleDeleteCommand,
 } from "./utils/commands";
 
 export type GlobalContext = SessionFlavor<SessionData> & Context;
@@ -320,29 +328,69 @@ bot.on("message", async (ctx) => {
     case COMMANDS.FEEDBACK:
       await handleFeedbackCommand(ctx);
       return;
+    case COMMANDS.CREATE:
+      await handleCreateCommand(ctx);
+      return;
+    case COMMANDS.UPDATE:
+      await handleUpdateCommand(ctx);
+      return;
+    case COMMANDS.DELETE:
+      await handleDeleteCommand(ctx);
+      return;
   }
 
   // Commands that show info AND pass to AI agent for actual data
   const agentCommands: Record<string, { handler: (ctx: GlobalContext) => Promise<void>; prompt: string }> = {
+    // View Schedule Commands
     [COMMANDS.TODAY]: {
       handler: handleTodayCommand,
-      prompt: "Show me my calendar events for today. List all events with times.",
+      prompt: "Show me my calendar events for today. List all events with their times and durations. Calculate total hours scheduled.",
     },
     [COMMANDS.TOMORROW]: {
       handler: handleTomorrowCommand,
-      prompt: "Show me my calendar events for tomorrow. List all events with times.",
+      prompt: "Show me my calendar events for tomorrow. List all events with their times and durations.",
     },
     [COMMANDS.WEEK]: {
       handler: handleWeekCommand,
-      prompt: "Give me an overview of my calendar for the next 7 days. Summarize each day's events.",
+      prompt: "Give me an overview of my calendar for the next 7 days. For each day, list events and show total hours. Summarize busiest days.",
+    },
+    [COMMANDS.MONTH]: {
+      handler: handleMonthCommand,
+      prompt: "Show my calendar overview for this month. Summarize events by week, show total hours per week, and highlight busy periods.",
     },
     [COMMANDS.FREE]: {
       handler: handleFreeCommand,
-      prompt: "Find my available free time slots for today and tomorrow. Show me when I'm available.",
+      prompt: "Find my available free time slots for today and tomorrow. Show gaps between events where I have at least 30 minutes free.",
     },
+    [COMMANDS.BUSY]: {
+      handler: handleBusyCommand,
+      prompt: "Show when I'm busy today and tomorrow. List all time blocks that are occupied with events.",
+    },
+
+    // Search Command
+    [COMMANDS.SEARCH]: {
+      handler: handleSearchCommand,
+      prompt: "I want to search for events. Please ask me what I'm looking for.",
+    },
+
+    // Analytics Commands
+    [COMMANDS.ANALYTICS]: {
+      handler: handleAnalyticsCommand,
+      prompt:
+        "Give me analytics for this week. Break down total hours by calendar/category. " +
+        "Show: 1) Total hours scheduled, 2) Hours per calendar (e.g., Work: 20h, Personal: 5h, Driving: 3h), " +
+        "3) Compare to last week if possible (e.g., 'You spent 2h more in meetings than last week'), " +
+        "4) Busiest day this week. Format with clear sections.",
+    },
+    [COMMANDS.CALENDARS]: {
+      handler: handleCalendarsCommand,
+      prompt: "List all my calendars with their names and colors. Show which ones are active.",
+    },
+
+    // Status Command
     [COMMANDS.STATUS]: {
       handler: handleStatusCommand,
-      prompt: "Check my Google Calendar connection status and verify everything is working.",
+      prompt: "Check my Google Calendar connection status. Verify my account is connected and show when the token expires.",
     },
   };
 
@@ -391,23 +439,30 @@ let runnerHandle: RunnerHandle | null = null;
 
 // Bot menu commands - displayed in Telegram's command menu
 const BOT_COMMANDS = [
-  // 📅 Calendar Quick Access
-  { command: "today", description: "📅 View today's schedule" },
-  { command: "tomorrow", description: "🌅 See tomorrow's agenda" },
-  { command: "week", description: "📊 Weekly overview" },
-  { command: "free", description: "🕐 Find available time slots" },
+  // 📅 View Schedule
+  { command: "today", description: "📅 Today's events" },
+  { command: "tomorrow", description: "🌅 Tomorrow's agenda" },
+  { command: "week", description: "📊 7-day overview" },
+  { command: "month", description: "📆 Monthly view" },
+  { command: "free", description: "🟢 Find free time" },
+  { command: "busy", description: "🔴 Show busy times" },
 
   // ⚡ Event Management
-  { command: "quick", description: "⚡ Quick add an event" },
-  { command: "cancel", description: "🗑️ Cancel or reschedule" },
-  { command: "remind", description: "🔔 Set a reminder" },
+  { command: "create", description: "✨ Create new event" },
+  { command: "update", description: "✏️ Modify an event" },
+  { command: "delete", description: "🗑️ Delete an event" },
+  { command: "search", description: "🔍 Find events" },
+
+  // 📊 Analytics & Insights
+  { command: "analytics", description: "📈 Time analytics & compare" },
+  { command: "calendars", description: "📚 List your calendars" },
 
   // 🛠️ Account & Support
-  { command: "status", description: "🟢 Check connection status" },
-  { command: "settings", description: "⚙️ Manage preferences" },
-  { command: "help", description: "❓ All commands & tips" },
-  { command: "feedback", description: "💬 Share your thoughts" },
-  { command: "exit", description: "👋 End current session" },
+  { command: "status", description: "🟢 Connection status" },
+  { command: "settings", description: "⚙️ Preferences" },
+  { command: "help", description: "❓ All commands" },
+  { command: "feedback", description: "💬 Share thoughts" },
+  { command: "exit", description: "👋 End session" },
 ];
 
 // Register bot commands with Telegram
