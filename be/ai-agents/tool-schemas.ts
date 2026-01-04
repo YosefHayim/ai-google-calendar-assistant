@@ -92,12 +92,21 @@ export const PARAMETERS_TOOLS = {
   // INSERT event - no email needed
   insertEventParameters: makeFullEventParams().describe("Insert a new event into the user's calendar. Email is automatically provided from user context."),
 
-  // UPDATE event - no email needed
-  updateEventParameters: makeFullEventParams()
-    .extend({
+  // UPDATE event - all fields optional except eventId and calendarId
+  // Only pass fields you want to change - unspecified fields are preserved
+  updateEventParameters: z
+    .object({
       eventId: requiredString("The ID of the event to update.", "Event ID is required."),
+      calendarId: calendarSchema,
+      summary: z.coerce.string({ description: "New title for the event. Only pass if changing the title." }).nullable().optional(),
+      description: z.coerce.string({ description: "New description. Only pass if changing." }).nullable().optional(),
+      location: z.coerce.string({ description: "New location. Only pass if changing." }).nullable().optional(),
+      start: makeEventTime().optional(),
+      end: makeEventTime().optional(),
     })
-    .describe("Update an existing event by ID. Email is automatically provided from user context."),
+    .describe(
+      "Update an existing event by ID. IMPORTANT: Only pass fields you want to change - do NOT pass summary unless renaming the event. Unspecified fields are preserved from the original event."
+    ),
 
   // DELETE event - no email needed
   deleteEventParameter: z

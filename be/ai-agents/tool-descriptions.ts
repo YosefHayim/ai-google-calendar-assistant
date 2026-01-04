@@ -14,12 +14,20 @@ Defaults when missing: summary="Untitled Event", duration=60min, timezone from u
 
   updateEvent: `Modifies an existing event. Preserves unspecified fields. Email is automatically provided from user context.
 
-Input: { calendarId, eventId, summary?, start?, end?, location?, description? }
+Input: { eventId, calendarId, summary?, start?, end?, location?, description? }
 Output: updated event object
 
-IMPORTANT: calendarId is REQUIRED - use the calendarId from the event returned by get_event.
-Example: if get_event returns { id: "abc", calendarId: "work@group.calendar.google.com", ... },
-then pass calendarId: "work@group.calendar.google.com" to update_event.
+REQUIRED: eventId and calendarId (from the event returned by get_event)
+
+CRITICAL - Only pass fields you want to change:
+• Do NOT pass "summary" unless user explicitly asks to rename the event
+• Moving an event? Only pass: eventId, calendarId, start, end
+• Renaming an event? Pass: eventId, calendarId, summary
+• NEVER use placeholder names like "Updated Event"
+
+Example - Moving event to 3pm:
+  Input: { eventId: "abc", calendarId: "work@...", start: {...}, end: {...} }
+  (No summary! The original name "Team Meeting" is preserved)
 
 Note: If duration provided without end, calculates end = start + duration`,
 

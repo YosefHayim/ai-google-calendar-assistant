@@ -86,10 +86,26 @@ export const EXECUTION_TOOLS = {
       throw new Error("eventId is required for update.");
     }
 
-    // If timed event without timezone, fetch user's default calendar timezone
-    const eventWithTimezone = await applyDefaultTimezoneIfNeeded(eventLike as Event, email);
-    const eventData: Event = { ...formatEventData(eventWithTimezone), id: eventId };
-    return eventsHandler(null, ACTION.UPDATE, eventData, { email, calendarId: calendarId ?? "primary", eventId });
+    // For updates, only include fields that are actually being changed
+    // Don't require summary/start/end - only pass what the user wants to update
+    const updateData: Partial<Event> = { id: eventId };
+
+    // Only add fields that are actually provided (not null/undefined)
+    if (eventLike.summary) updateData.summary = eventLike.summary;
+    if (eventLike.description) updateData.description = eventLike.description;
+    if (eventLike.location) updateData.location = eventLike.location;
+
+    // Handle start/end times if provided
+    if (eventLike.start?.dateTime || eventLike.start?.date) {
+      const startWithTz = await applyDefaultTimezoneIfNeeded({ start: eventLike.start } as Event, email);
+      updateData.start = startWithTz.start;
+    }
+    if (eventLike.end?.dateTime || eventLike.end?.date) {
+      const endWithTz = await applyDefaultTimezoneIfNeeded({ end: eventLike.end } as Event, email);
+      updateData.end = endWithTz.end;
+    }
+
+    return eventsHandler(null, ACTION.UPDATE, updateData as Event, { email, calendarId: calendarId ?? "primary", eventId });
   }),
 
   getEvent: asyncHandler(
