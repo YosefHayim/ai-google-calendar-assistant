@@ -30,6 +30,7 @@ export const COMMANDS = {
   STATUS: "/status",
   SETTINGS: "/settings",
   FEEDBACK: "/feedback",
+  CHANGEEMAIL: "/changeemail",
 } as const;
 
 export const CONFIRM_RESPONSES = ["yes", "y", "confirm"] as const;

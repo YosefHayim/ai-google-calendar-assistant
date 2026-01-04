@@ -4,8 +4,10 @@
  */
 
 import type { GlobalContext } from "../init-bot";
+import { InlineKeyboard } from "grammy";
 import { resetSession } from "./session";
 import { ResponseBuilder } from "../../response-system";
+import { generateGoogleAuthUrl } from "@/utils/auth";
 
 // ============================================
 // Usage & Help Commands
@@ -373,22 +375,42 @@ export const handleStatusCommand = async (ctx: GlobalContext): Promise<void> => 
 };
 
 export const handleSettingsCommand = async (ctx: GlobalContext): Promise<void> => {
+  const email = ctx.session.email || "Not set";
+
+  // Build inline keyboard with settings options
+  const keyboard = new InlineKeyboard()
+    .text("📧 Change Email", "settings:change_email")
+    .row()
+    .text("🔗 Reconnect Google Calendar", "settings:reconnect_google");
+
   const response = ResponseBuilder.telegram()
     .header("⚙️", "Settings & Preferences")
-    .text("Customize your experience:")
-    .section("🔗", "Account", [
-      { bullet: "dot", text: "Reconnect Google Calendar" },
-      { bullet: "dot", text: "Manage permissions" },
+    .text(`Current email: <code>${email}</code>`)
+    .section("🔧", "Available Options", [
+      { bullet: "dot", text: "<b>Change Email</b> - Update your linked email address" },
+      { bullet: "dot", text: "<b>Reconnect Google</b> - Re-authorize Google Calendar access" },
     ])
-    .section("🕐", "Preferences", [
-      { bullet: "dot", text: "Default meeting duration" },
-      { bullet: "dot", text: "Working hours" },
-      { bullet: "dot", text: "Notification preferences" },
-    ])
-    .footer("Tell me what you'd like to change!")
+    .footer("Select an option below:")
     .build();
 
-  await ctx.reply(response.content, { parse_mode: "HTML" });
+  await ctx.reply(response.content, {
+    parse_mode: "HTML",
+    reply_markup: keyboard,
+  });
+};
+
+// Handle /changeemail command directly
+export const handleChangeEmailCommand = async (ctx: GlobalContext): Promise<void> => {
+  if (!ctx.session.email) {
+    await ctx.reply("You must be authenticated first. Please send me your email address.");
+    return;
+  }
+
+  ctx.session.awaitingEmailChange = true;
+  await ctx.reply(
+    `Your current email is: <code>${ctx.session.email}</code>\n\n` + `Please enter your new email address:`,
+    { parse_mode: "HTML" }
+  );
 };
 
 export const handleFeedbackCommand = async (ctx: GlobalContext): Promise<void> => {

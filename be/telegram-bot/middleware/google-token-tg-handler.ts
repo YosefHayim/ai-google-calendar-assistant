@@ -11,6 +11,7 @@ import type { GlobalContext } from "../init-bot";
 import type { MiddlewareFn } from "grammy";
 import type { TokensProps } from "@/types";
 import { logger } from "@/utils/logger";
+import { auditLogger, AuditEventType } from "@/utils/audit-logger";
 
 /**
  * Validation result for Google Calendar tokens
@@ -86,6 +87,11 @@ const refreshGoogleTokensIfNeeded = async (ctx: GlobalContext, validation: Teleg
     const refreshedTokens = await refreshGoogleAccessToken(tokens);
     await persistGoogleTokens(email, refreshedTokens);
 
+    const expiresInMs = refreshedTokens.expiryDate - Date.now();
+
+    // Audit log successful token refresh
+    auditLogger.tokenRefresh(ctx.from?.id || 0, email, expiresInMs);
+
     const result: TelegramTokenValidationResult = {
       tokens: {
         ...tokens,
@@ -94,7 +100,7 @@ const refreshGoogleTokensIfNeeded = async (ctx: GlobalContext, validation: Teleg
       },
       isExpired: false,
       isNearExpiry: false,
-      expiresInMs: refreshedTokens.expiryDate - Date.now(),
+      expiresInMs,
     };
     return result;
   } catch (error) {
@@ -110,6 +116,13 @@ const refreshGoogleTokensIfNeeded = async (ctx: GlobalContext, validation: Teleg
 
     if (message.startsWith("REAUTH_REQUIRED:")) {
       await deactivateGoogleTokens(email);
+
+      // Audit log reauth required
+      auditLogger.log(AuditEventType.GOOGLE_REAUTH_REQUIRED, ctx.from?.id || 0, {
+        email,
+        reason: message,
+      });
+
       // Re-authentication required - force consent screen
       const authUrl = generateGoogleAuthUrl({ forceConsent: true });
       await ctx.reply(`Your Google Calendar session has expired. Please reconnect:\n\n${authUrl}`);

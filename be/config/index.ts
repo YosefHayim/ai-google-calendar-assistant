@@ -2,7 +2,7 @@
 export { env, REDIRECT_URI } from "./env";
 
 // Client instances
-export { SUPABASE, OAUTH2CLIENT, CALENDAR, initializeOpenAI } from "./clients";
+export { SUPABASE, OAUTH2CLIENT, CALENDAR, initializeOpenAI, redisClient, isRedisConnected, disconnectRedis } from "./clients";
 
 // Constants
 export {
