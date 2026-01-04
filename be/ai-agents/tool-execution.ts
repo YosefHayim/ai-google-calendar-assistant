@@ -105,7 +105,8 @@ export const EXECUTION_TOOLS = {
       updateData.end = endWithTz.end;
     }
 
-    return eventsHandler(null, ACTION.UPDATE, updateData as Event, { email, calendarId: calendarId ?? "primary", eventId });
+    // Use PATCH for partial updates - only updates provided fields, preserves the rest
+    return eventsHandler(null, ACTION.PATCH, updateData as Event, { email, calendarId: calendarId ?? "primary", eventId });
   }),
 
   getEvent: asyncHandler(
