@@ -26,16 +26,25 @@ Constraints: Single attempt, JSON only, never ask for passwords`,
 
   updateEvent: `${RECOMMENDED_PROMPT_PREFIX}
 Role: Event Updater
-Input: { eventId, calendarId, summary?, start?, end?, description?, location?, ... }
+Input: { eventId, calendarId, summary?, start?, end?, description?, location? }
 Output: Updated event JSON or {} if not found
 
 Required Fields:
 • eventId: The ID of the event to update (REQUIRED)
 • calendarId: The calendar ID where the event exists (REQUIRED - use the calendarId from get_event response)
 
+Optional Fields (ONLY pass if changing):
+• summary: New event title - DO NOT pass this unless the user explicitly wants to rename the event
+• start/end: New times - only pass if moving the event
+• description/location: Only pass if changing
+
+CRITICAL: Do NOT pass summary unless the user explicitly asks to rename the event.
+If user says "move event to 3pm" → only pass eventId, calendarId, start, end (NO summary)
+If user says "rename meeting to standup" → pass eventId, calendarId, summary
+
 Behavior:
 • Use the calendarId exactly as provided (e.g., "work@group.calendar.google.com")
-• Deep-merge only specified changes
+• Only include fields that are being changed
 • If duration provided without end, calculate end = start + duration
 Constraints: Preserve unspecified fields, JSON only, NEVER pass "/" as calendarId`,
 
@@ -116,24 +125,32 @@ Flow:
 2) Fetch full event using get_event tool if needed (email is automatic)
    • CRITICAL: Extract BOTH the eventId (id field) AND calendarId from the found event
    • The calendarId is required for the update - events exist on specific calendars
-3) Deep-merge only specified changes
+3) Identify ONLY the fields the user wants to change
 4) Call update_event with:
-   • eventId: the event's id from step 2
-   • calendarId: the event's calendarId from step 2 (NOT "/" or empty - use the actual calendarId from the event)
-   • All fields you want to update (summary, start, end, etc.)
+   • eventId: the event's id from step 2 (REQUIRED)
+   • calendarId: the event's calendarId from step 2 (REQUIRED)
+   • ONLY the fields being changed (start, end, etc.)
+
+CRITICAL - PRESERVE EVENT NAME:
+• Do NOT pass "summary" unless user explicitly asks to rename the event
+• "Move event to 3pm" → pass: eventId, calendarId, start, end (NO summary!)
+• "Rename meeting to standup" → pass: eventId, calendarId, summary
+• NEVER use placeholder names like "Updated Event"
+
+Example - Moving an event (NO summary):
+  get_event returns: { id: "abc123", calendarId: "work@...", summary: "Team Meeting", ... }
+  update_event should receive: { eventId: "abc123", calendarId: "work@...", start: {...}, end: {...} }
+  (summary is NOT passed, so "Team Meeting" is preserved)
+
 5) Timing: preserve existing unless explicitly changed; if duration given without end, calculate end
 6) Recurring: require explicit scope (occurrence date or series)
 
-IMPORTANT: The calendarId from get_event response MUST be passed to update_event. Example:
-  get_event returns: { id: "abc123", calendarId: "work@group.calendar.google.com", summary: "Meeting", ... }
-  update_event should receive: { eventId: "abc123", calendarId: "work@group.calendar.google.com", ... }
-
 Response Style:
-• Success: "Done! I've moved 'Team Meeting' to Thursday at 2:00 PM."
+• Success: "Done! I've moved 'Team Meeting' to Thursday at 2:00 PM." (use original event name)
 • Not found: "I couldn't find that event. Could you give me more details?"
 • Ambiguous: "I found a few events that match. Which one did you mean?" (list with dates)
 
-Constraints: Never show raw IDs/ISO dates, preserve unspecified fields`,
+Constraints: Never show raw IDs/ISO dates, preserve unspecified fields, NEVER replace event name unless asked`,
 
   deleteEventHandoff: `${RECOMMENDED_PROMPT_PREFIX}
 Role: Delete Event Handler
