@@ -216,21 +216,10 @@ export type SelectCalendarResult = {
   matchReason?: string;
 };
 
-// Calendar category keywords for rules-based matching
-const CALENDAR_KEYWORDS: Record<string, string[]> = {
-  work: ["work", "office", "job", "meeting", "business", "corporate", "עבודה", "משרד", "עסקים"],
-  personal: ["personal", "private", "home", "family", "אישי", "פרטי", "בית", "משפחה"],
-  health: ["health", "doctor", "medical", "gym", "fitness", "workout", "בריאות", "רופא", "רפואי", "כושר"],
-  travel: ["travel", "trip", "vacation", "flight", "hotel", "טיול", "חופשה", "נסיעה"],
-  social: ["social", "party", "birthday", "dinner", "lunch", "חברתי", "מסיבה", "יום הולדת", "ארוחה"],
-  study: ["study", "school", "university", "class", "lecture", "לימודים", "אוניברסיטה", "שיעור"],
-  side: ["side", "project", "hobby", "creative", "צד", "פרויקט", "תחביב"],
-};
-
 /**
- * Selects the best calendar based on event details - rules-based without AI agent.
- * Replaces: AGENTS.selectCalendar
- * Latency: ~200ms (vs ~2-5s with agent)
+ * Selects the best calendar using AI semantic matching.
+ * Uses GPT-4.1-nano for cost efficiency while providing accurate context-based matching.
+ * Latency: ~300-500ms
  */
 export async function selectCalendarByRules(
   email: string,
@@ -243,56 +232,83 @@ export async function selectCalendarByRules(
     return { calendarId: "primary", calendarName: "Primary", matchReason: "No calendars found" };
   }
 
-  // Build searchable text from event info
-  const searchText = [eventInfo.summary || "", eventInfo.description || "", eventInfo.location || ""].join(" ").toLowerCase();
-
-  // Score each calendar based on keyword matches
-  let bestMatch: UserCalendar | null = null;
-  let bestScore = 0;
-  let matchReason = "default";
-
-  for (const calendar of calendars) {
-    const calendarName = calendar.calendar_name.toLowerCase();
-    let score = 0;
-
-    // Check if calendar name matches event content
-    for (const [category, keywords] of Object.entries(CALENDAR_KEYWORDS)) {
-      const categoryMatchesCalendar = keywords.some((kw) => calendarName.includes(kw));
-      const categoryMatchesEvent = keywords.some((kw) => searchText.includes(kw));
-
-      if (categoryMatchesCalendar && categoryMatchesEvent) {
-        score += 10;
-        matchReason = `${category} category match`;
-      }
-    }
-
-    // Direct name match bonus
-    if (searchText.includes(calendarName) || calendarName.includes(searchText.split(" ")[0])) {
-      score += 5;
-      matchReason = "direct name match";
-    }
-
-    if (score > bestScore) {
-      bestScore = score;
-      bestMatch = calendar;
-    }
+  // If only one calendar, use it directly
+  if (calendars.length === 1) {
+    return {
+      calendarId: calendars[0].calendar_id,
+      calendarName: calendars[0].calendar_name,
+      matchReason: "Only calendar available",
+    };
   }
 
-  // If no match found, use primary or first calendar
-  if (!bestMatch || bestScore === 0) {
+  // Build event context
+  const eventContext = [eventInfo.summary, eventInfo.description, eventInfo.location].filter(Boolean).join(" | ") || "No event details provided";
+
+  // Build calendar options for the prompt
+  const calendarOptions = calendars.map((c, i) => `${i + 1}. "${c.calendar_name}"`).join("\n");
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: SUMMARIZATION_MODEL,
+      messages: [
+        {
+          role: "system",
+          content: `You are a calendar assistant that matches events to the most appropriate calendar.
+Given an event and available calendars, return ONLY the number of the best matching calendar.
+
+Rules:
+- Match based on semantic meaning, not just keywords
+- Consider the purpose/category each calendar name implies
+- "Learning Time" should match study, courses, tutorials, skill development
+- "Work" should match meetings, deadlines, professional tasks
+- "Friends and Family" should match social events, gatherings, personal time with loved ones
+- "Health" should match doctor visits, gym, wellness activities
+- If unclear, prefer more specific calendars over generic ones
+- Return ONLY a single number (1, 2, 3, etc.)`,
+        },
+        {
+          role: "user",
+          content: `Event: ${eventContext}
+
+Available calendars:
+${calendarOptions}
+
+Which calendar number is the best match?`,
+        },
+      ],
+      max_tokens: 10,
+      temperature: 0,
+    });
+
+    const result = response.choices[0]?.message?.content?.trim();
+    const selectedIndex = parseInt(result || "1", 10) - 1;
+
+    // Validate the selection
+    if (selectedIndex >= 0 && selectedIndex < calendars.length) {
+      return {
+        calendarId: calendars[selectedIndex].calendar_id,
+        calendarName: calendars[selectedIndex].calendar_name,
+        matchReason: "AI semantic match",
+      };
+    }
+
+    // Invalid response, fall back to first calendar
+    console.warn(`AI returned invalid calendar index: ${result}`);
+    return {
+      calendarId: calendars[0].calendar_id,
+      calendarName: calendars[0].calendar_name,
+      matchReason: "AI fallback to first",
+    };
+  } catch (error) {
+    console.error("AI calendar selection failed:", error);
+    // Fallback: use primary or first calendar
     const primary = calendars.find((c) => c.calendar_id === "primary" || c.calendar_name.toLowerCase().includes("primary"));
     return {
       calendarId: primary?.calendar_id || calendars[0].calendar_id,
       calendarName: primary?.calendar_name || calendars[0].calendar_name,
-      matchReason: "fallback to primary",
+      matchReason: "AI error fallback",
     };
   }
-
-  return {
-    calendarId: bestMatch.calendar_id,
-    calendarName: bestMatch.calendar_name,
-    matchReason,
-  };
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
