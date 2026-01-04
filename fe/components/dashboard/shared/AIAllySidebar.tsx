@@ -285,8 +285,7 @@ const AIAllySidebar: React.FC<AIAllySidebarProps> = ({ isOpen, onClose, onOpen }
                 <div className="relative flex flex-col items-center justify-center bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-3">
                   <AIVoiceInput
                     onStart={handleStartRecording}
-                    onStop={(duration, text) => handleStopRecording(text)}
-                    onInterimResult={setInterimTranscription}
+                    onStop={(duration, text) => handleStopRecording(text ?? '')}
                     isRecordingProp={isRecording}
                     onToggleRecording={handleToggleRecording}
                     speechRecognitionSupported={speechRecognitionSupported}

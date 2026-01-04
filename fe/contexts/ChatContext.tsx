@@ -40,6 +40,36 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   const [selectedConversationId, setSelectedConversationId] = useState<number | null>(null)
   const [conversations, setConversations] = useState<ConversationListItem[]>([])
   const [isPendingConversation, setIsPendingConversation] = useState(true)
+  const [isLoadingConversations, setIsLoadingConversations] = useState(false)
+  const [isLoadingConversation, setIsLoadingConversation] = useState(false)
+
+  const refreshConversations = useCallback(async () => {
+    setIsLoadingConversations(true)
+    try {
+      const data = await getConversations()
+      setConversations(data.conversations)
+    } finally {
+      setIsLoadingConversations(false)
+    }
+  }, [])
+
+  const selectConversation = useCallback(async (conversation: ConversationListItem) => {
+    setIsLoadingConversation(true)
+    try {
+      setSelectedConversationId(conversation.id)
+      setIsPendingConversation(false)
+      const data = await getConversation(conversation.id)
+      const convertedMessages: Message[] = (data?.messages || []).map((msg, index) => ({
+        id: `${conversation.id}-${index}`,
+        role: msg.role,
+        content: msg.content,
+        timestamp: new Date(),
+      }))
+      setMessages(convertedMessages)
+    } finally {
+      setIsLoadingConversation(false)
+    }
+  }, [])
 
   const startNewConversation = () => {
     setMessages([])
