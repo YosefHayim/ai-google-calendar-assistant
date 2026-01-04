@@ -18,9 +18,19 @@ type UpdateEventParams = {
  * const data = await updateEvent(params);
  *
  */
+// Helper to validate and normalize calendarId
+function normalizeCalendarId(id: unknown): string | null {
+  if (!id || typeof id !== "string") return null;
+  const trimmed = id.trim();
+  // Reject obviously invalid values
+  if (trimmed === "" || trimmed === "/") return null;
+  return trimmed;
+}
+
 export async function updateEvent({ calendarEvents, eventData, extra, req }: UpdateEventParams) {
   const body = (eventData as calendar_v3.Schema$Event & { calendarId?: string; email?: string }) || {};
-  const calendarId = (extra?.calendarId as string) || body.calendarId || (req?.query?.calendarId as string) || "primary";
+  const calendarId =
+    normalizeCalendarId(extra?.calendarId) || normalizeCalendarId(body.calendarId) || normalizeCalendarId(req?.query?.calendarId) || "primary";
 
   const resp = await calendarEvents.update({
     ...REQUEST_CONFIG_BASE,

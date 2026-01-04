@@ -14,20 +14,31 @@ Defaults when missing: summary="Untitled Event", duration=60min, timezone from u
 
   updateEvent: `Modifies an existing event. Preserves unspecified fields. Email is automatically provided from user context.
 
-Input: { calendarId, eventId, updates: { summary?, start?, end?, location?, description? } }
+Input: { calendarId, eventId, summary?, start?, end?, location?, description? }
 Output: updated event object
+
+IMPORTANT: calendarId is REQUIRED - use the calendarId from the event returned by get_event.
+Example: if get_event returns { id: "abc", calendarId: "work@group.calendar.google.com", ... },
+then pass calendarId: "work@group.calendar.google.com" to update_event.
 
 Note: If duration provided without end, calculates end = start + duration`,
 
-  deleteEvent:
-    "Deletes an event permanently. Email is automatically provided from user context. Input: { eventId }. Output: confirmation JSON.",
+  deleteEvent: `Deletes an event permanently. Email is automatically provided from user context.
+
+Input: { eventId, calendarId? }
+Output: confirmation JSON
+
+IMPORTANT: Use the calendarId from the event returned by get_event for accurate deletion.`,
 
   getEvent: `Retrieves events from user's calendars. Email is automatically provided from user context.
 
 Input: { q?, timeMin?, searchAllCalendars?, calendarId? }
-Output: array of event objects with calendar information, sorted by start time
+Output: { allEvents: [{ id, calendarId, summary, start, end, location?, description?, status?, htmlLink? }...] }
 
-IMPORTANT: By default (searchAllCalendars=true), this tool searches across ALL user calendars to find events.
+IMPORTANT: Each event includes its calendarId - use this when updating or deleting events.
+Example event: { id: "abc123", calendarId: "work@group.calendar.google.com", summary: "Meeting", ... }
+
+By default (searchAllCalendars=true), this tool searches across ALL user calendars to find events.
 This ensures events are found regardless of which calendar they are in.
 Set searchAllCalendars=false and provide calendarId to search only a specific calendar.
 

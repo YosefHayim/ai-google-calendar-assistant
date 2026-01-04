@@ -179,8 +179,10 @@ export function parseToolArguments(raw: unknown) {
 
   // 3) collect fields
   const email = base?.email ?? outer?.email ?? inner?.email;
-  const calendarId = outer?.calendarId ?? base?.calendarId;
-  const eventId = base?.eventId ?? outer?.eventId;
+  const rawCalendarId = outer?.calendarId ?? base?.calendarId ?? inner?.calendarId;
+  // Normalize calendarId - reject invalid values like "/"
+  const calendarId = rawCalendarId && typeof rawCalendarId === "string" && rawCalendarId.trim() !== "" && rawCalendarId !== "/" ? rawCalendarId.trim() : null;
+  const eventId = base?.eventId ?? outer?.eventId ?? inner?.eventId;
 
   // 4) extract event fields (summary/start/end/…)
   const eventLike: Partial<Event> = {

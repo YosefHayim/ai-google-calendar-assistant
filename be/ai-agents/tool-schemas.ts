@@ -4,7 +4,14 @@ import { z } from "zod";
 
 const requiredString = (description: string, message = "Required.") => z.coerce.string({ description }).trim().min(1, { message });
 
-const calendarSchema = z.coerce.string({ description: "The ID of the calendar to which the event belongs to, if provided use, else pass primary." }).nullable();
+const calendarSchema = z.coerce
+  .string({ description: "The ID of the calendar to which the event belongs to. Use the calendarId from the event when updating. Falls back to 'primary' if not provided." })
+  .transform((val) => {
+    // Reject obviously invalid values and normalize
+    if (!val || val === "/" || val.trim() === "") return null;
+    return val.trim();
+  })
+  .nullable();
 
 // Email schema - only used for registration where user provides email
 const emailSchema = z.coerce
@@ -96,6 +103,7 @@ export const PARAMETERS_TOOLS = {
   deleteEventParameter: z
     .object({
       eventId: requiredString("The ID of the event to delete.", "Event ID is required."),
+      calendarId: calendarSchema,
     })
-    .describe("Delete an event by ID. Email is automatically provided from user context."),
+    .describe("Delete an event by ID. Use the calendarId from the event. Email is automatically provided from user context."),
 };

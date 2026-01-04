@@ -110,8 +110,10 @@ export const EXECUTION_TOOLS = {
       }
 
       // Helper to slim down event data to essential fields only
-      const slimEvent = (event: calendar_v3.Schema$Event) => ({
+      // calendarId is added when iterating across calendars (see allEventsResults loop)
+      const slimEvent = (event: calendar_v3.Schema$Event, calendarId?: string | null) => ({
         id: event.id,
+        calendarId: calendarId ?? event.organizer?.email ?? "primary", // Include calendar ID for updates
         summary: event.summary,
         description: event.description?.substring(0, 200), // Truncate long descriptions
         start: event.start,
@@ -163,7 +165,7 @@ export const EXECUTION_TOOLS = {
             // Only add events if we haven't hit the total limit
             const remainingSlots = MAX_EVENTS_TOTAL - aggregatedEvents.length;
             if (remainingSlots > 0) {
-              const eventsToAdd = events.slice(0, remainingSlots).map(slimEvent);
+              const eventsToAdd = events.slice(0, remainingSlots).map((e) => slimEvent(e, calId));
               aggregatedEvents.push(...eventsToAdd);
               if (events.length > remainingSlots) {
                 truncated = true;
@@ -195,14 +197,14 @@ export const EXECUTION_TOOLS = {
     }
   ),
 
-  deleteEvent: asyncHandler((params: { eventId: string; email: string }) => {
-    const { email, eventId } = parseToolArguments(params);
+  deleteEvent: asyncHandler((params: { eventId: string; email: string; calendarId?: string | null }) => {
+    const { email, eventId, calendarId } = parseToolArguments(params);
     if (!(email && isEmail(email))) {
       throw new Error("Invalid email address.");
     }
     if (!eventId) {
       throw new Error("Event ID is required to delete event.");
     }
-    return eventsHandler(null, ACTION.DELETE, { id: eventId }, { email });
+    return eventsHandler(null, ACTION.DELETE, { id: eventId }, { email, calendarId: calendarId ?? "primary" });
   }),
 };
