@@ -1,351 +1,408 @@
+/**
+ * Telegram Bot Command Handlers
+ * Uses the ResponseBuilder for consistent, structured message formatting
+ */
+
 import type { GlobalContext } from "../init-bot";
 import { resetSession } from "./session";
+import { ResponseBuilder } from "../../response-system";
+
+// ============================================
+// Usage & Help Commands
+// ============================================
 
 export const handleUsageCommand = async (ctx: GlobalContext): Promise<void> => {
-  await ctx.reply(
-    "<b>👋 Here is how I can help:</b>\n\n" +
-      "📅 <b>Manage Events:</b>\n" +
-      "• <i>'Schedule a meeting with Team tomorrow at 10am'</i>\n" +
-      "• <i>'Clear my afternoon on Friday'</i>\n\n" +
-      "🔎 <b>Query Calendar:</b>\n" +
-      "• <i>'What do I have on next Tuesday?'</i>\n" +
-      "• <i>'When is my next free slot?'</i>\n\n" +
-      "⚙️ <b>Settings:</b>\n" +
-      { parse_mode: "HTML" }
-  );
+  const response = ResponseBuilder.telegram()
+    .header("👋", "Here is how I can help:")
+    .section("📅", "Manage Events", [
+      { bullet: "dot", text: "'Schedule a meeting with Team tomorrow at 10am'", emphasis: false },
+      { bullet: "dot", text: "'Clear my afternoon on Friday'", emphasis: false },
+    ])
+    .section("🔎", "Query Calendar", [
+      { bullet: "dot", text: "'What do I have on next Tuesday?'", emphasis: false },
+      { bullet: "dot", text: "'When is my next free slot?'", emphasis: false },
+    ])
+    .section("⚙️", "Settings", [
+      { bullet: "dot", text: "Type /settings to customize your experience", emphasis: false },
+    ])
+    .build();
 
-  // 🛑 STOP here. Do not pass execution to the AI agent.
+  await ctx.reply(response.content, { parse_mode: "HTML" });
   return;
 };
 
 export const handleStartCommand = async (ctx: GlobalContext): Promise<void> => {
-  await ctx.reply(
-    "👋 <b>Welcome to Your AI Calendar Assistant!</b>\n\n" +
+  const response = ResponseBuilder.telegram()
+    .header("👋", "Welcome to Your AI Calendar Assistant!")
+    .text(
       "I'm here to make managing your schedule effortless. " +
-      "Think of me as your personal secretary — always ready to help.\n\n" +
-      "🚀 <b>Get Started:</b>\n" +
-      "• Just tell me what you need in plain language\n" +
-      "• Or type /help to see all commands\n\n" +
-      "📅 <b>Try saying:</b>\n" +
-      "<i>'What's on my calendar today?'</i>\n" +
-      "<i>'Schedule a meeting tomorrow at 2pm'</i>\n\n" +
-      "✨ <b>Let's make your day more organized!</b>",
-    { parse_mode: "HTML" }
-  );
+        "Think of me as your personal secretary — always ready to help."
+    )
+    .section("🚀", "Get Started", [
+      { bullet: "dot", text: "Just tell me what you need in plain language" },
+      { bullet: "dot", text: "Or type /help to see all commands" },
+    ])
+    .section("📅", "Try saying", [
+      { bullet: "none", text: "'What's on my calendar today?'" },
+      { bullet: "none", text: "'Schedule a meeting tomorrow at 2pm'" },
+    ])
+    .footer(undefined, "Let's make your day more organized! ✨")
+    .build();
+
+  await ctx.reply(response.content, { parse_mode: "HTML" });
 };
 
-// Handler: Exit command
+export const handleHelpCommand = async (ctx: GlobalContext): Promise<void> => {
+  const response = ResponseBuilder.telegram()
+    .header("🤖", "Your AI Calendar Assistant")
+    .text("I'm here to make scheduling effortless!")
+    .section("📅", "View Schedule", [
+      { bullet: "dot", text: "/today — Today's events" },
+      { bullet: "dot", text: "/tomorrow — Tomorrow's agenda" },
+      { bullet: "dot", text: "/week — 7-day overview" },
+      { bullet: "dot", text: "/month — Monthly view" },
+      { bullet: "dot", text: "/free — Available time slots" },
+      { bullet: "dot", text: "/busy — When you're occupied" },
+    ])
+    .section("⚡", "Manage Events", [
+      { bullet: "dot", text: "/create — Add new event" },
+      { bullet: "dot", text: "/update — Modify event" },
+      { bullet: "dot", text: "/delete — Remove event" },
+      { bullet: "dot", text: "/search — Find events" },
+    ])
+    .section("📊", "Analytics & Insights", [
+      { bullet: "dot", text: "/analytics — Time breakdown" },
+      { bullet: "dot", text: "/calendars — Your calendars" },
+    ])
+    .section("🛠️", "Account", [
+      { bullet: "dot", text: "/status — Connection check" },
+      { bullet: "dot", text: "/settings — Preferences" },
+      { bullet: "dot", text: "/feedback — Share thoughts" },
+      { bullet: "dot", text: "/exit — End session" },
+    ])
+    .text("💬 Or just chat naturally!")
+    .footer("'How much time did I spend in meetings this week vs last week?'")
+    .build();
+
+  await ctx.reply(response.content, { parse_mode: "HTML" });
+};
+
+// ============================================
+// Session Commands
+// ============================================
+
 export const handleExitCommand = async (ctx: GlobalContext): Promise<void> => {
   resetSession(ctx);
-  await ctx.reply(
-    "👋 <b>Session ended</b>\n\n" +
+
+  const response = ResponseBuilder.telegram()
+    .header("👋", "Session ended")
+    .text(
       "Your conversation has been cleared. " +
-      "I'm always here when you need me — just send a message to start fresh!\n\n" +
-      "✨ <i>Have a productive day!</i>",
-    { parse_mode: "HTML" }
-  );
+        "I'm always here when you need me — just send a message to start fresh!"
+    )
+    .footer(undefined, "Have a productive day! ✨")
+    .build();
+
+  await ctx.reply(response.content, { parse_mode: "HTML" });
 };
 
-// Handler: Today command - Show today's schedule
+// ============================================
+// Calendar View Commands
+// ============================================
+
 export const handleTodayCommand = async (ctx: GlobalContext): Promise<void> => {
-  await ctx.reply(
-    "📅 <b>Today's Schedule</b>\n\n" +
-      "Let me pull up your agenda for today...\n\n" +
-      "<i>💡 Tip: You can also ask me 'What's on my calendar today?' anytime.</i>",
-    { parse_mode: "HTML" }
-  );
-  // Pass to AI agent for actual calendar fetch
+  const response = ResponseBuilder.telegram()
+    .header("📅", "Today's Schedule")
+    .text("Let me pull up your agenda for today...")
+    .footer("You can also ask me 'What's on my calendar today?' anytime.")
+    .build();
+
+  await ctx.reply(response.content, { parse_mode: "HTML" });
 };
 
-// Handler: Tomorrow command - Show tomorrow's schedule
 export const handleTomorrowCommand = async (ctx: GlobalContext): Promise<void> => {
-  await ctx.reply(
-    "🌅 <b>Tomorrow's Agenda</b>\n\n" +
-      "Checking what you have lined up for tomorrow...\n\n" +
-      "<i>💡 Tip: Stay ahead by planning your day the night before!</i>",
-    { parse_mode: "HTML" }
-  );
-  // Pass to AI agent for actual calendar fetch
+  const response = ResponseBuilder.telegram()
+    .header("🌅", "Tomorrow's Agenda")
+    .text("Checking what you have lined up for tomorrow...")
+    .footer("Stay ahead by planning your day the night before!")
+    .build();
+
+  await ctx.reply(response.content, { parse_mode: "HTML" });
 };
 
-// Handler: Week command - Show weekly overview
 export const handleWeekCommand = async (ctx: GlobalContext): Promise<void> => {
-  await ctx.reply("📊 <b>Your Week at a Glance</b>\n\n" + "Fetching your 7-day overview...\n\n" + "<i>💡 Tip: A well-planned week is a productive week!</i>", {
-    parse_mode: "HTML",
-  });
-  // Pass to AI agent for actual calendar fetch
+  const response = ResponseBuilder.telegram()
+    .header("📊", "Your Week at a Glance")
+    .text("Fetching your 7-day overview...")
+    .footer("A well-planned week is a productive week!")
+    .build();
+
+  await ctx.reply(response.content, { parse_mode: "HTML" });
 };
 
-// Handler: Free command - Find available time slots
+export const handleMonthCommand = async (ctx: GlobalContext): Promise<void> => {
+  const response = ResponseBuilder.telegram()
+    .header("📆", "Monthly Overview")
+    .text("Fetching your calendar for this month...")
+    .footer("Use /analytics for detailed time breakdowns!")
+    .build();
+
+  await ctx.reply(response.content, { parse_mode: "HTML" });
+};
+
 export const handleFreeCommand = async (ctx: GlobalContext): Promise<void> => {
-  await ctx.reply(
-    "🕐 <b>Find Free Time</b>\n\n" +
-      "Looking for open slots in your schedule...\n\n" +
-      "You can also ask:\n" +
-      "• <i>'When am I free this week?'</i>\n" +
-      "• <i>'Find me 2 hours for deep work'</i>\n" +
-      "• <i>'What's my next available slot?'</i>",
-    { parse_mode: "HTML" }
-  );
-  // Pass to AI agent for slot finding
+  const response = ResponseBuilder.telegram()
+    .header("🕐", "Find Free Time")
+    .text("Looking for open slots in your schedule...")
+    .spacing()
+    .text("You can also ask:")
+    .bulletList([
+      "'When am I free this week?'",
+      "'Find me 2 hours for deep work'",
+      "'What's my next available slot?'",
+    ])
+    .build();
+
+  await ctx.reply(response.content, { parse_mode: "HTML" });
 };
 
-// Handler: Quick command - Quick add an event
-export const handleQuickCommand = async (ctx: GlobalContext): Promise<void> => {
-  await ctx.reply(
-    "⚡ <b>Quick Add Event</b>\n\n" +
-      "Just tell me what to schedule! Try:\n\n" +
-      "• <i>'Meeting with Sarah at 3pm'</i>\n" +
-      "• <i>'Lunch tomorrow at noon'</i>\n" +
-      "• <i>'Call with client Friday 10am-11am'</i>\n\n" +
-      "I'll handle the rest ✨",
-    { parse_mode: "HTML" }
-  );
-};
-
-// Handler: Cancel command - Cancel/reschedule events
-export const handleCancelCommand = async (ctx: GlobalContext): Promise<void> => {
-  await ctx.reply(
-    "🗑️ <b>Cancel or Reschedule</b>\n\n" +
-      "Need to make changes? Just tell me:\n\n" +
-      "• <i>'Cancel my 3pm meeting'</i>\n" +
-      "• <i>'Move tomorrow's call to next week'</i>\n" +
-      "• <i>'Clear my Friday afternoon'</i>\n\n" +
-      "I'll take care of the updates for you.",
-    { parse_mode: "HTML" }
-  );
-};
-
-// Handler: Remind command - Set reminders
-export const handleRemindCommand = async (ctx: GlobalContext): Promise<void> => {
-  await ctx.reply(
-    "🔔 <b>Set a Reminder</b>\n\n" +
-      "Never miss a beat! Try:\n\n" +
-      "• <i>'Remind me to call John at 5pm'</i>\n" +
-      "• <i>'Set a reminder for tomorrow morning'</i>\n" +
-      "• <i>'Remind me 30 min before my next meeting'</i>\n\n" +
-      "I've got your back 💪",
-    { parse_mode: "HTML" }
-  );
-};
-
-// Handler: Status command - Check connection status
-export const handleStatusCommand = async (ctx: GlobalContext): Promise<void> => {
-  await ctx.reply(
-    "🟢 <b>Connection Status</b>\n\n" +
-      "Checking your calendar connection...\n\n" +
-      "• Google Calendar: <i>Verifying...</i>\n\n" +
-      "<i>If you're experiencing issues, try /settings to reconnect.</i>",
-    { parse_mode: "HTML" }
-  );
-  // Pass to AI agent for actual status check
-};
-
-// Handler: Settings command - User preferences
-export const handleSettingsCommand = async (ctx: GlobalContext): Promise<void> => {
-  await ctx.reply(
-    "⚙️ <b>Settings & Preferences</b>\n\n" +
-      "Customize your experience:\n\n" +
-      "🔗 <b>Account</b>\n" +
-      "• Reconnect Google Calendar\n" +
-      "• Manage permissions\n\n" +
-      "🕐 <b>Preferences</b>\n" +
-      "• Default meeting duration\n" +
-      "• Working hours\n" +
-      "• Notification preferences\n\n" +
-      "<i>Tell me what you'd like to change!</i>",
-    { parse_mode: "HTML" }
-  );
-};
-
-// Handler: Feedback command - Collect user feedback
-export const handleFeedbackCommand = async (ctx: GlobalContext): Promise<void> => {
-  await ctx.reply(
-    "💬 <b>We Value Your Feedback</b>\n\n" +
-      "Your input helps us improve! You can:\n\n" +
-      "• Share what's working great 🎉\n" +
-      "• Report any issues you've encountered\n" +
-      "• Suggest new features you'd love to see\n\n" +
-      "Just type your feedback and I'll make sure the team sees it.\n\n" +
-      "<i>Thank you for helping us build something amazing!</i> ✨",
-    { parse_mode: "HTML" }
-  );
-};
-
-// Handler: Analytics command - Time analytics with insights
-export const handleAnalyticsCommand = async (
-  ctx: GlobalContext
-): Promise<void> => {
-  await ctx.reply(
-    "📊 <b>Calendar Analytics</b>\n\n" +
-      "Get insights into how you spend your time!\n\n" +
-      "📈 <b>Time Period Options:</b>\n" +
-      "• <i>'Analytics for today'</i>\n" +
-      "• <i>'Analytics for this week'</i>\n" +
-      "• <i>'Analytics for this month'</i>\n" +
-      "• <i>'Analytics for last 30 days'</i>\n\n" +
-      "🔄 <b>Compare Periods:</b>\n" +
-      "• <i>'Compare this week vs last week'</i>\n" +
-      "• <i>'Compare this month vs last month'</i>\n\n" +
-      "🏷️ <b>By Calendar/Category:</b>\n" +
-      "• <i>'How much time on Work calendar?'</i>\n" +
-      "• <i>'Time spent in meetings this week'</i>\n" +
-      "• <i>'Driving time this month vs last month'</i>\n\n" +
-      "<i>💡 I'll break down hours by calendar and show trends!</i>",
-    { parse_mode: "HTML" }
-  );
-};
-
-// Handler: Month command - Monthly overview
-export const handleMonthCommand = async (
-  ctx: GlobalContext
-): Promise<void> => {
-  await ctx.reply(
-    "📆 <b>Monthly Overview</b>\n\n" +
-      "Fetching your calendar for this month...\n\n" +
-      "<i>💡 Tip: Use /analytics for detailed time breakdowns!</i>",
-    { parse_mode: "HTML" }
-  );
-};
-
-// Handler: Search command - Find events by name/keyword
-export const handleSearchCommand = async (
-  ctx: GlobalContext
-): Promise<void> => {
-  await ctx.reply(
-    "🔍 <b>Search Events</b>\n\n" +
-      "Find any event in your calendar!\n\n" +
-      "📝 <b>Try searching:</b>\n" +
-      "• <i>'Find meeting with John'</i>\n" +
-      "• <i>'Search for dentist appointment'</i>\n" +
-      "• <i>'Show all team standups'</i>\n" +
-      "• <i>'Find events about project X'</i>\n\n" +
-      "🗓️ <b>With date filters:</b>\n" +
-      "• <i>'Find meetings next week'</i>\n" +
-      "• <i>'Search calls in December'</i>\n\n" +
-      "<i>💡 Just type what you're looking for!</i>",
-    { parse_mode: "HTML" }
-  );
-};
-
-// Handler: Calendars command - List all calendars
-export const handleCalendarsCommand = async (
-  ctx: GlobalContext
-): Promise<void> => {
-  await ctx.reply(
-    "📚 <b>Your Calendars</b>\n\n" +
-      "Fetching your calendar list...\n\n" +
-      "<i>💡 You can ask me to create events in specific calendars!</i>",
-    { parse_mode: "HTML" }
-  );
-};
-
-// Handler: Create command - Create event helper
-export const handleCreateCommand = async (
-  ctx: GlobalContext
-): Promise<void> => {
-  await ctx.reply(
-    "✨ <b>Create New Event</b>\n\n" +
-      "Tell me what to schedule! I understand natural language:\n\n" +
-      "📅 <b>Basic Events:</b>\n" +
-      "• <i>'Meeting tomorrow at 2pm'</i>\n" +
-      "• <i>'Lunch with Sarah on Friday at noon'</i>\n" +
-      "• <i>'Team standup every Monday at 9am'</i>\n\n" +
-      "📍 <b>With Location:</b>\n" +
-      "• <i>'Coffee at Starbucks tomorrow 3pm'</i>\n" +
-      "• <i>'Doctor appointment at City Hospital next Tuesday'</i>\n\n" +
-      "⏱️ <b>With Duration:</b>\n" +
-      "• <i>'2-hour workshop on Wednesday at 10am'</i>\n" +
-      "• <i>'Quick 15-min call with boss at 4pm'</i>\n\n" +
-      "🎯 <b>Specific Calendar:</b>\n" +
-      "• <i>'Add to Work calendar: Client call Friday 2pm'</i>\n\n" +
-      "<i>💡 Just describe your event and I'll handle the rest!</i>",
-    { parse_mode: "HTML" }
-  );
-};
-
-// Handler: Update command - Update event helper
-export const handleUpdateCommand = async (
-  ctx: GlobalContext
-): Promise<void> => {
-  await ctx.reply(
-    "✏️ <b>Update Event</b>\n\n" +
-      "Modify any event in your calendar:\n\n" +
-      "🕐 <b>Change Time:</b>\n" +
-      "• <i>'Move my 2pm meeting to 4pm'</i>\n" +
-      "• <i>'Reschedule dentist to next week'</i>\n" +
-      "• <i>'Change Friday lunch to 1pm'</i>\n\n" +
-      "📝 <b>Change Details:</b>\n" +
-      "• <i>'Update team meeting title to Sprint Review'</i>\n" +
-      "• <i>'Add location to tomorrow's call: Zoom'</i>\n" +
-      "• <i>'Change description of project meeting'</i>\n\n" +
-      "⏱️ <b>Change Duration:</b>\n" +
-      "• <i>'Make standup 30 minutes instead of 15'</i>\n" +
-      "• <i>'Extend tomorrow's workshop by 1 hour'</i>\n\n" +
-      "<i>💡 Just tell me what to change!</i>",
-    { parse_mode: "HTML" }
-  );
-};
-
-// Handler: Delete command - Delete event helper
-export const handleDeleteCommand = async (
-  ctx: GlobalContext
-): Promise<void> => {
-  await ctx.reply(
-    "🗑️ <b>Delete Event</b>\n\n" +
-      "Remove events from your calendar:\n\n" +
-      "❌ <b>Delete by Name:</b>\n" +
-      "• <i>'Delete my 3pm meeting'</i>\n" +
-      "• <i>'Remove lunch with John tomorrow'</i>\n" +
-      "• <i>'Cancel the dentist appointment'</i>\n\n" +
-      "📅 <b>Delete Multiple:</b>\n" +
-      "• <i>'Clear all events on Friday afternoon'</i>\n" +
-      "• <i>'Remove all meetings tomorrow'</i>\n\n" +
-      "🔄 <b>Recurring Events:</b>\n" +
-      "• <i>'Delete only this week's standup'</i>\n" +
-      "• <i>'Cancel all future team meetings'</i>\n\n" +
-      "<i>⚠️ I'll confirm before deleting anything!</i>",
-    { parse_mode: "HTML" }
-  );
-};
-
-// Handler: Busy command - Show busy times
 export const handleBusyCommand = async (ctx: GlobalContext): Promise<void> => {
-  await ctx.reply(
-    "🔴 <b>Busy Times</b>\n\n" +
-      "Checking when you're occupied...\n\n" +
-      "<i>💡 Use /free to find available slots instead!</i>",
-    { parse_mode: "HTML" }
-  );
+  const response = ResponseBuilder.telegram()
+    .header("🔴", "Busy Times")
+    .text("Checking when you're occupied...")
+    .footer("Use /free to find available slots instead!")
+    .build();
+
+  await ctx.reply(response.content, { parse_mode: "HTML" });
 };
 
-// Handler: Help command - Comprehensive help
-export const handleHelpCommand = async (ctx: GlobalContext): Promise<void> => {
-  await ctx.reply(
-    "🤖 <b>Your AI Calendar Assistant</b>\n\n" +
-      "I'm here to make scheduling effortless!\n\n" +
-      "📅 <b>View Schedule</b>\n" +
-      "• /today — Today's events\n" +
-      "• /tomorrow — Tomorrow's agenda\n" +
-      "• /week — 7-day overview\n" +
-      "• /month — Monthly view\n" +
-      "• /free — Available time slots\n" +
-      "• /busy — When you're occupied\n\n" +
-      "⚡ <b>Manage Events</b>\n" +
-      "• /create — Add new event\n" +
-      "• /update — Modify event\n" +
-      "• /delete — Remove event\n" +
-      "• /search — Find events\n\n" +
-      "📊 <b>Analytics & Insights</b>\n" +
-      "• /analytics — Time breakdown\n" +
-      "• /calendars — Your calendars\n\n" +
-      "🛠️ <b>Account</b>\n" +
-      "• /status — Connection check\n" +
-      "• /settings — Preferences\n" +
-      "• /feedback — Share thoughts\n" +
-      "• /exit — End session\n\n" +
-      "💬 <b>Or just chat naturally!</b>\n" +
-      "<i>'How much time did I spend in meetings this week vs last week?'</i>",
-    { parse_mode: "HTML" }
-  );
+// ============================================
+// Event Management Commands
+// ============================================
+
+export const handleQuickCommand = async (ctx: GlobalContext): Promise<void> => {
+  const response = ResponseBuilder.telegram()
+    .header("⚡", "Quick Add Event")
+    .text("Just tell me what to schedule! Try:")
+    .bulletList([
+      "'Meeting with Sarah at 3pm'",
+      "'Lunch tomorrow at noon'",
+      "'Call with client Friday 10am-11am'",
+    ])
+    .footer(undefined, "I'll handle the rest ✨")
+    .build();
+
+  await ctx.reply(response.content, { parse_mode: "HTML" });
+};
+
+export const handleCreateCommand = async (ctx: GlobalContext): Promise<void> => {
+  const response = ResponseBuilder.telegram()
+    .header("✨", "Create New Event")
+    .text("Tell me what to schedule! I understand natural language:")
+    .section("📅", "Basic Events", [
+      { bullet: "dot", text: "'Meeting tomorrow at 2pm'" },
+      { bullet: "dot", text: "'Lunch with Sarah on Friday at noon'" },
+      { bullet: "dot", text: "'Team standup every Monday at 9am'" },
+    ])
+    .section("📍", "With Location", [
+      { bullet: "dot", text: "'Coffee at Starbucks tomorrow 3pm'" },
+      { bullet: "dot", text: "'Doctor appointment at City Hospital next Tuesday'" },
+    ])
+    .section("⏱️", "With Duration", [
+      { bullet: "dot", text: "'2-hour workshop on Wednesday at 10am'" },
+      { bullet: "dot", text: "'Quick 15-min call with boss at 4pm'" },
+    ])
+    .section("🎯", "Specific Calendar", [
+      { bullet: "dot", text: "'Add to Work calendar: Client call Friday 2pm'" },
+    ])
+    .footer("Just describe your event and I'll handle the rest!")
+    .build();
+
+  await ctx.reply(response.content, { parse_mode: "HTML" });
+};
+
+export const handleUpdateCommand = async (ctx: GlobalContext): Promise<void> => {
+  const response = ResponseBuilder.telegram()
+    .header("✏️", "Update Event")
+    .text("Modify any event in your calendar:")
+    .section("🕐", "Change Time", [
+      { bullet: "dot", text: "'Move my 2pm meeting to 4pm'" },
+      { bullet: "dot", text: "'Reschedule dentist to next week'" },
+      { bullet: "dot", text: "'Change Friday lunch to 1pm'" },
+    ])
+    .section("📝", "Change Details", [
+      { bullet: "dot", text: "'Update team meeting title to Sprint Review'" },
+      { bullet: "dot", text: "'Add location to tomorrow's call: Zoom'" },
+      { bullet: "dot", text: "'Change description of project meeting'" },
+    ])
+    .section("⏱️", "Change Duration", [
+      { bullet: "dot", text: "'Make standup 30 minutes instead of 15'" },
+      { bullet: "dot", text: "'Extend tomorrow's workshop by 1 hour'" },
+    ])
+    .footer("Just tell me what to change!")
+    .build();
+
+  await ctx.reply(response.content, { parse_mode: "HTML" });
+};
+
+export const handleDeleteCommand = async (ctx: GlobalContext): Promise<void> => {
+  const response = ResponseBuilder.telegram()
+    .header("🗑️", "Delete Event")
+    .text("Remove events from your calendar:")
+    .section("❌", "Delete by Name", [
+      { bullet: "dot", text: "'Delete my 3pm meeting'" },
+      { bullet: "dot", text: "'Remove lunch with John tomorrow'" },
+      { bullet: "dot", text: "'Cancel the dentist appointment'" },
+    ])
+    .section("📅", "Delete Multiple", [
+      { bullet: "dot", text: "'Clear all events on Friday afternoon'" },
+      { bullet: "dot", text: "'Remove all meetings tomorrow'" },
+    ])
+    .section("🔄", "Recurring Events", [
+      { bullet: "dot", text: "'Delete only this week's standup'" },
+      { bullet: "dot", text: "'Cancel all future team meetings'" },
+    ])
+    .footer("I'll confirm before deleting anything! ⚠️")
+    .build();
+
+  await ctx.reply(response.content, { parse_mode: "HTML" });
+};
+
+export const handleCancelCommand = async (ctx: GlobalContext): Promise<void> => {
+  const response = ResponseBuilder.telegram()
+    .header("🗑️", "Cancel or Reschedule")
+    .text("Need to make changes? Just tell me:")
+    .bulletList([
+      "'Cancel my 3pm meeting'",
+      "'Move tomorrow's call to next week'",
+      "'Clear my Friday afternoon'",
+    ])
+    .footer(undefined, "I'll take care of the updates for you.")
+    .build();
+
+  await ctx.reply(response.content, { parse_mode: "HTML" });
+};
+
+export const handleSearchCommand = async (ctx: GlobalContext): Promise<void> => {
+  const response = ResponseBuilder.telegram()
+    .header("🔍", "Search Events")
+    .text("Find any event in your calendar!")
+    .section("📝", "Try searching", [
+      { bullet: "dot", text: "'Find meeting with John'" },
+      { bullet: "dot", text: "'Search for dentist appointment'" },
+      { bullet: "dot", text: "'Show all team standups'" },
+      { bullet: "dot", text: "'Find events about project X'" },
+    ])
+    .section("🗓️", "With date filters", [
+      { bullet: "dot", text: "'Find meetings next week'" },
+      { bullet: "dot", text: "'Search calls in December'" },
+    ])
+    .footer("Just type what you're looking for!")
+    .build();
+
+  await ctx.reply(response.content, { parse_mode: "HTML" });
+};
+
+export const handleRemindCommand = async (ctx: GlobalContext): Promise<void> => {
+  const response = ResponseBuilder.telegram()
+    .header("🔔", "Set a Reminder")
+    .text("Never miss a beat! Try:")
+    .bulletList([
+      "'Remind me to call John at 5pm'",
+      "'Set a reminder for tomorrow morning'",
+      "'Remind me 30 min before my next meeting'",
+    ])
+    .footer(undefined, "I've got your back 💪")
+    .build();
+
+  await ctx.reply(response.content, { parse_mode: "HTML" });
+};
+
+// ============================================
+// Analytics & Info Commands
+// ============================================
+
+export const handleAnalyticsCommand = async (ctx: GlobalContext): Promise<void> => {
+  const response = ResponseBuilder.telegram()
+    .header("📊", "Calendar Analytics")
+    .text("Get insights into how you spend your time!")
+    .section("📈", "Time Period Options", [
+      { bullet: "dot", text: "'Analytics for today'" },
+      { bullet: "dot", text: "'Analytics for this week'" },
+      { bullet: "dot", text: "'Analytics for this month'" },
+      { bullet: "dot", text: "'Analytics for last 30 days'" },
+    ])
+    .section("🔄", "Compare Periods", [
+      { bullet: "dot", text: "'Compare this week vs last week'" },
+      { bullet: "dot", text: "'Compare this month vs last month'" },
+    ])
+    .section("🏷️", "By Calendar/Category", [
+      { bullet: "dot", text: "'How much time on Work calendar?'" },
+      { bullet: "dot", text: "'Time spent in meetings this week'" },
+      { bullet: "dot", text: "'Driving time this month vs last month'" },
+    ])
+    .footer("I'll break down hours by calendar and show trends!")
+    .build();
+
+  await ctx.reply(response.content, { parse_mode: "HTML" });
+};
+
+export const handleCalendarsCommand = async (ctx: GlobalContext): Promise<void> => {
+  const response = ResponseBuilder.telegram()
+    .header("📚", "Your Calendars")
+    .text("Fetching your calendar list...")
+    .footer("You can ask me to create events in specific calendars!")
+    .build();
+
+  await ctx.reply(response.content, { parse_mode: "HTML" });
+};
+
+// ============================================
+// Account & Settings Commands
+// ============================================
+
+export const handleStatusCommand = async (ctx: GlobalContext): Promise<void> => {
+  const response = ResponseBuilder.telegram()
+    .header("🟢", "Connection Status")
+    .text("Checking your calendar connection...")
+    .bulletList(["Google Calendar: Verifying..."])
+    .footer("If you're experiencing issues, try /settings to reconnect.")
+    .build();
+
+  await ctx.reply(response.content, { parse_mode: "HTML" });
+};
+
+export const handleSettingsCommand = async (ctx: GlobalContext): Promise<void> => {
+  const response = ResponseBuilder.telegram()
+    .header("⚙️", "Settings & Preferences")
+    .text("Customize your experience:")
+    .section("🔗", "Account", [
+      { bullet: "dot", text: "Reconnect Google Calendar" },
+      { bullet: "dot", text: "Manage permissions" },
+    ])
+    .section("🕐", "Preferences", [
+      { bullet: "dot", text: "Default meeting duration" },
+      { bullet: "dot", text: "Working hours" },
+      { bullet: "dot", text: "Notification preferences" },
+    ])
+    .footer("Tell me what you'd like to change!")
+    .build();
+
+  await ctx.reply(response.content, { parse_mode: "HTML" });
+};
+
+export const handleFeedbackCommand = async (ctx: GlobalContext): Promise<void> => {
+  const response = ResponseBuilder.telegram()
+    .header("💬", "We Value Your Feedback")
+    .text("Your input helps us improve! You can:")
+    .bulletList([
+      "Share what's working great 🎉",
+      "Report any issues you've encountered",
+      "Suggest new features you'd love to see",
+    ])
+    .text("Just type your feedback and I'll make sure the team sees it.")
+    .footer(undefined, "Thank you for helping us build something amazing! ✨")
+    .build();
+
+  await ctx.reply(response.content, { parse_mode: "HTML" });
 };
