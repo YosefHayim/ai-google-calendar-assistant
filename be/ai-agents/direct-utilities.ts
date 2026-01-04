@@ -419,11 +419,11 @@ export async function preCreateValidation(email: string, eventData: Partial<Even
 // ═══════════════════════════════════════════════════════════════════════════
 
 const openai = new OpenAI({ apiKey: env.openAiApiKey });
-const SUMMARIZATION_MODEL = MODELS.GPT_4O_MINI;
+const SUMMARIZATION_MODEL = MODELS.GPT_4_1_NANO;
 
 /**
- * Summarizes calendar events JSON into a concise, friendly format for the user.
- * Uses a cheaper model (gpt-4o-mini) to reduce cost and latency.
+ * Summarizes calendar events JSON into a compact Telegram-friendly format.
+ * Uses the cheapest model (gpt-4.1-nano) for cost efficiency.
  *
  * @param events - Array of calendar events from Google Calendar API
  * @returns A friendly, formatted summary string
@@ -441,12 +441,22 @@ export async function summarizeEvents(events: calendar_v3.Schema$Event[]): Promi
       messages: [
         {
           role: "system",
-          content:
-            "Summarize these calendar events into a concise, friendly format for the user. Format each event with: title in quotes, natural date/time (e.g., 'Tuesday, January 14th at 3:00 PM'), and location if available. Use a warm, conversational tone. Never show raw IDs, ISO dates, or technical formats.",
+          content: `Format calendar events as a compact Telegram list.
+
+Rules:
+- Use Telegram HTML: <b>bold</b>, <i>italic</i>
+- Each event on ONE line: 📌 Title - Day Time (Location if exists)
+- Short day names: Mon, Tue, Wed, Thu, Fri, Sat, Sun
+- 12h time: 9:00 AM, 3:30 PM. Ranges: 9:00 AM-6:00 PM
+- All-day events: just show the day
+- Location in parentheses, keep short
+- Start with: 📅 <b>Your Events</b> (or Hebrew: <b>האירועים שלך</b> if events are in Hebrew)
+- NO intro/outro text. Just the list.
+- Keep it scannable for mobile.`,
         },
         {
           role: "user",
-          content: `Summarize these calendar events:\n\n${eventsJson}`,
+          content: `Events:\n${eventsJson}`,
         },
       ],
       // max_tokens: 500,
