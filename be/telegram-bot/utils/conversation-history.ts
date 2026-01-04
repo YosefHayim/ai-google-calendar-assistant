@@ -54,14 +54,17 @@ export const getTodayConversationState = async (chatId: number): Promise<Convers
     .limit(1)
     .maybeSingle();
 
-  if (error || !data) {
+  if (error) {
+    logger.error(`Failed to fetch conversation state for chat ${chatId}: ${error.message}`);
     return null;
   }
+
+  if (!data) return null;
 
   // Check if the conversation is from today
   const updatedAt = data.updated_at || data.created_at;
   if (!isToday(updatedAt)) {
-    return null; // Not today's conversation
+    return null;
   }
 
   return data as ConversationStateRow;
@@ -69,16 +72,13 @@ export const getTodayConversationState = async (chatId: number): Promise<Convers
 
 // Create a new conversation state for today
 export const createConversationState = async (chatId: number, userId: number, initialMessage?: userAndAiMessageProps): Promise<ConversationStateRow | null> => {
-  // --- FIX START: Ensure the user exists first ---
-  const { error: userError } = await SUPABASE.from("user_telegram_links") // Make sure this matches your user table name exactly
-    .upsert({ telegram_user_id: userId }, { onConflict: "telegram_user_id" });
+  // Ensure the user exists first
+  const { error: userError } = await SUPABASE.from("user_telegram_links").upsert({ telegram_user_id: userId }, { onConflict: "telegram_user_id" });
 
   if (userError) {
-    console.error("Error ensuring user exists:", userError);
-    // You might want to return null here, or continue and risk the FK error
+    logger.error(`Failed to ensure user exists for chat ${chatId}: ${userError.message}`);
     return null;
   }
-  // --- FIX END ---
 
   const context: ConversationContext = {
     messages: initialMessage ? [initialMessage] : [],
@@ -99,7 +99,7 @@ export const createConversationState = async (chatId: number, userId: number, in
     .single();
 
   if (error) {
-    console.error("Error creating conversation state:", error);
+    logger.error(`Failed to create conversation state for chat ${chatId}: ${error.message}`);
     return null;
   }
 
@@ -108,7 +108,6 @@ export const createConversationState = async (chatId: number, userId: number, in
 
 // Update conversation state with new messages
 export const updateConversationState = async (stateId: number, context: ConversationContext, messageCount: number): Promise<boolean> => {
-  logger.info(`Telegram Bot: Conversation History: Updating conversation state: ${stateId}, ${context.messages.length}, ${messageCount}`);
   const { error } = await SUPABASE.from(CONVERSATION_STATE_TABLE)
     .update({
       context_window: context,
@@ -117,19 +116,16 @@ export const updateConversationState = async (stateId: number, context: Conversa
     })
     .eq("id", stateId);
 
-  logger.info(`Telegram Bot: Conversation History: Updating conversation state: ${stateId}, ${context.messages.length}, ${messageCount}`);
   if (error) {
-    logger.error(`Telegram Bot: Conversation History: Error updating conversation state: ${stateId}, ${context.messages.length}, ${messageCount}, ${error}`);
-    console.error("Error updating conversation state:", error);
+    logger.error(`Failed to update conversation state ${stateId}: ${error.message}`);
     return false;
   }
-  logger.info(`Telegram Bot: Conversation History: Conversation state updated: ${stateId}, ${context.messages.length}, ${messageCount}`);
+
   return true;
 };
 
 // Store a summary in the database
 export const storeSummary = async (chatId: number, userId: number, summaryText: string, messageCount: number): Promise<boolean> => {
-  logger.info(`Telegram Bot: Conversation History: Storing summary: ${chatId}, ${userId}, ${summaryText}, ${messageCount}`);
   const { error } = await SUPABASE.from(CONVERSATION_SUMMARIES_TABLE).insert({
     chat_id: chatId,
     telegram_user_id: userId,
@@ -140,18 +136,15 @@ export const storeSummary = async (chatId: number, userId: number, summaryText: 
   });
 
   if (error) {
-    logger.error(`Telegram Bot: Conversation History: Error storing summary: ${chatId}, ${userId}, ${summaryText}, ${messageCount}, ${error}`);
-    console.error("Error storing summary:", error);
+    logger.error(`Failed to store summary for chat ${chatId}: ${error.message}`);
     return false;
   }
 
-  logger.info(`Telegram Bot: Conversation History: Summary stored: ${chatId}, ${userId}, ${summaryText}, ${messageCount}`);
   return true;
 };
 
 // Mark conversation as summarized
 export const markAsSummarized = async (stateId: number): Promise<boolean> => {
-  logger.info(`Telegram Bot: Conversation History: Marking as summarized: ${stateId}`);
   const { error } = await SUPABASE.from(CONVERSATION_STATE_TABLE)
     .update({
       last_summarized_at: new Date().toISOString(),
@@ -159,19 +152,15 @@ export const markAsSummarized = async (stateId: number): Promise<boolean> => {
     .eq("id", stateId);
 
   if (error) {
-    logger.error(`Telegram Bot: Conversation History: Error marking as summarized: ${stateId}, ${error}`);
-    console.error("Error marking as summarized:", error);
+    logger.error(`Failed to mark conversation ${stateId} as summarized: ${error.message}`);
     return false;
   }
 
-  logger.info(`Telegram Bot: Conversation History: Marked as summarized: ${stateId}`);
   return true;
 };
 
 // Get or create today's conversation context (query by chat_id)
 export const getOrCreateTodayContext = async (chatId: number, userId: number): Promise<{ stateId: number; context: ConversationContext }> => {
-  logger.info(`Telegram Bot: Conversation History: Getting or creating today's context: ${chatId}, ${userId}`);
-  // Try to get existing state for today (query by chat_id only)
   const existingState = await getTodayConversationState(chatId);
 
   if (existingState) {
@@ -179,23 +168,19 @@ export const getOrCreateTodayContext = async (chatId: number, userId: number): P
       messages: [],
       lastUpdated: new Date().toISOString(),
     };
-    logger.info(`Telegram Bot: Conversation History: Existing state found: ${chatId}, ${userId}, ${existingState.id}`);
     return { stateId: existingState.id, context };
   }
 
-  // Create new state for today (userId needed for insert)
   const newState = await createConversationState(chatId, userId);
 
   if (!newState) {
-    // Fallback to empty context if creation fails
-    logger.error(`Telegram Bot: Conversation History: Error creating new state: ${chatId}, ${userId}`);
+    logger.warn(`Failed to create conversation state for chat ${chatId}, using fallback`);
     return {
       stateId: -1,
       context: { messages: [], lastUpdated: new Date().toISOString() },
     };
   }
 
-  logger.info(`Telegram Bot: Conversation History: New state created: ${chatId}, ${userId}, ${newState.id}`);
   return {
     stateId: newState.id,
     context: { messages: [], lastUpdated: new Date().toISOString() },
@@ -209,49 +194,35 @@ export const addMessageToContext = async (
   message: userAndAiMessageProps,
   summarizeFn: (messages: userAndAiMessageProps[]) => Promise<string>
 ): Promise<ConversationContext> => {
-  logger.info(`Telegram Bot: Conversation History: Adding message to context: ${chatId}, ${userId}, ${message.content}`);
   const { stateId, context } = await getOrCreateTodayContext(chatId, userId);
 
-  // Add new message
   context.messages.push(message);
-  logger.info(`Telegram Bot: Conversation History: Message added: ${chatId}, ${userId}, ${message.content}`);
   context.lastUpdated = new Date().toISOString();
-  logger.info(`Telegram Bot: Conversation History: Last updated: ${chatId}, ${userId}, ${context.lastUpdated}`);
 
   // Check if we need to summarize
   const totalLength = calculateContextLength(context.messages);
-  logger.info(`Telegram Bot: Conversation History: Total length: ${chatId}, ${userId}, ${totalLength}`);
 
   if (totalLength > MAX_CONTEXT_LENGTH && context.messages.length > 2) {
-    // Summarize older messages, keep the last 2
     const messagesToSummarize = context.messages.slice(0, -2);
     const recentMessages = context.messages.slice(-2);
-    logger.info(`Telegram Bot: Conversation History: Recent messages: ${chatId}, ${userId}, ${recentMessages}`);
 
     try {
       const summary = await summarizeFn(messagesToSummarize);
-      logger.info(`Telegram Bot: Conversation History: Summary: ${chatId}, ${userId}, ${summary}`);
-      // Store the summary
       await storeSummary(chatId, userId, summary, messagesToSummarize.length);
-      logger.info(`Telegram Bot: Conversation History: Summary stored: ${chatId}, ${userId}, ${summary}`);
-      // Update context with summary + recent messages
+
       context.summary = context.summary ? `${context.summary}\n\n${summary}` : summary;
       context.messages = recentMessages;
-      logger.info(`Telegram Bot: Conversation History: Context updated: ${chatId}, ${userId}, ${context.messages}`);
-      // Mark as summarized
+
       await markAsSummarized(stateId);
-      logger.info(`Telegram Bot: Conversation History: Marked as summarized: ${chatId}, ${userId}, ${stateId}`);
+      logger.info(`Summarized ${messagesToSummarize.length} messages for chat ${chatId}`);
     } catch (error) {
-      console.error("Error during summarization:", error);
+      logger.error(`Failed to summarize conversation for chat ${chatId}: ${error}`);
       // Continue without summarization if it fails
-      logger.error(`Telegram Bot: Conversation History: Error during summarization: ${chatId}, ${userId}, ${error}`);
     }
   }
 
-  // Save updated context
   if (stateId !== -1) {
     await updateConversationState(stateId, context, context.messages.length);
-    logger.info(`Telegram Bot: Conversation History: Context updated: ${chatId}, ${userId}, ${context.messages}`);
   }
 
   return context;
@@ -259,20 +230,14 @@ export const addMessageToContext = async (
 
 // Build prompt context from conversation history
 export const buildContextPrompt = (context: ConversationContext): string => {
-  logger.info(`Telegram Bot: Conversation History: Building context prompt: ${context.summary}, ${context.messages.length}`);
   const parts: string[] = [];
 
-  // Add summary if exists
   if (context.summary) {
-    logger.info(`Telegram Bot: Conversation History: Summary: ${context.summary}`);
     parts.push(`Previous conversation summary:\n${context.summary}`);
   }
 
-  // Add recent messages
   if (context.messages.length > 0) {
-    logger.info(`Telegram Bot: Conversation History: Recent messages: ${context.messages.length}`);
     const messageHistory = context.messages.map((msg) => `${msg.role === "user" ? "User" : "Assistant"}: ${msg.content}`).join("\n");
-    logger.info(`Telegram Bot: Conversation History: Message history: ${messageHistory}`);
     parts.push(`Recent messages:\n${messageHistory}`);
   }
 
@@ -281,7 +246,6 @@ export const buildContextPrompt = (context: ConversationContext): string => {
 
 // Get full conversation context for a user
 export const getConversationContext = async (chatId: number, userId: number): Promise<ConversationContext> => {
-  logger.info(`Telegram Bot: Conversation History: Getting conversation context: ${chatId}, ${userId}`);
   const { context } = await getOrCreateTodayContext(chatId, userId);
   return context;
 };

@@ -1,6 +1,7 @@
 import { type Agent, run, type Session } from "@openai/agents";
 import { AGENTS } from "@/ai-agents";
 import { createAgentSession, type CreateSessionOptions } from "@/ai-agents/sessions";
+import type { AgentContext } from "@/ai-agents/tool-registry";
 import type { AGENTS_LIST } from "@/types";
 import { asyncHandler } from "../http/async-handlers";
 import { logger } from "../logger";
@@ -8,9 +9,15 @@ import { logger } from "../logger";
 export interface ActivateAgentOptions {
   /** Session for persistent memory - can be a Session instance or config to create one */
   session?: Session | CreateSessionOptions;
-  /** Additional context to pass to the agent */
+  /** User email for tool authentication - REQUIRED for calendar operations */
+  email?: string;
+  /** Additional context to pass to the agent (merged with email) */
   context?: Record<string, unknown>;
 }
+
+// Type for any agent (with or without specific context type)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyAgent = Agent<any, any>;
 
 /**
  * Activate an agent by key and prompt with optional session support
@@ -39,50 +46,51 @@ export interface ActivateAgentOptions {
  * const session = createAgentSession({ userId, agentName: "my_agent" });
  * const result = await activateAgent(agent, prompt, { session });
  */
-export const activateAgent = asyncHandler(
-  async (agentKey: AGENTS_LIST | Agent, prompt: string, options?: ActivateAgentOptions) => {
-    let agent: Agent;
-    logger.info(`AI: activateAgent called: agentKey: ${agentKey}`);
+export const activateAgent = asyncHandler(async (agentKey: AGENTS_LIST | AnyAgent, prompt: string, options?: ActivateAgentOptions) => {
+  let agent: AnyAgent;
+  logger.info(`AI: activateAgent called: agentKey: ${agentKey}`);
 
-    if (typeof agentKey === "string") {
-      agent = AGENTS[agentKey];
-    } else {
-      agent = agentKey;
-    }
-
-    if (!agent) {
-      logger.error(`AI: activateAgent called: agent not found`);
-      throw new Error("The provided agent is not valid.");
-    }
-
-    if (!prompt) {
-      logger.error(`AI: activateAgent called: prompt not found`);
-      throw new Error(`Please provide the prompt for the agent: ${agent.name}`);
-    }
-
-    // Build run options
-    const runOptions: { session?: Session; context?: Record<string, unknown> } = {};
-
-    if (options?.session) {
-      // If session config object is passed, create the session
-      if ("userId" in options.session && "agentName" in options.session) {
-        runOptions.session = createAgentSession(options.session as CreateSessionOptions);
-        logger.info(`AI: activateAgent: Created session for ${(options.session as CreateSessionOptions).agentName}`);
-      } else {
-        // It's already a Session instance
-        runOptions.session = options.session as Session;
-        logger.info(`AI: activateAgent: Using provided session instance`);
-      }
-    }
-
-    if (options?.context) {
-      runOptions.context = options.context;
-    }
-
-    logger.info(`AI: activateAgent: Running agent ${agent.name} with session: ${!!runOptions.session}`);
-    return await run(agent, prompt, runOptions);
+  if (typeof agentKey === "string") {
+    agent = AGENTS[agentKey];
+  } else {
+    agent = agentKey;
   }
-);
+
+  if (!agent) {
+    logger.error(`AI: activateAgent called: agent not found`);
+    throw new Error("The provided agent is not valid.");
+  }
+
+  if (!prompt) {
+    logger.error(`AI: activateAgent called: prompt not found`);
+    throw new Error(`Please provide the prompt for the agent: ${agent.name}`);
+  }
+
+  // Build run options with context containing email
+  const runOptions: { session?: Session; context?: AgentContext } = {};
+
+  // Build context - email is REQUIRED for calendar tools
+  const context: AgentContext = {
+    email: options?.email || "",
+    ...(options?.context as Partial<AgentContext>),
+  };
+  runOptions.context = context;
+
+  if (options?.session) {
+    // If session config object is passed, create the session
+    if ("userId" in options.session && "agentName" in options.session) {
+      runOptions.session = createAgentSession(options.session as CreateSessionOptions);
+      logger.info(`AI: activateAgent: Created session for ${(options.session as CreateSessionOptions).agentName}`);
+    } else {
+      // It's already a Session instance
+      runOptions.session = options.session as Session;
+      logger.info(`AI: activateAgent: Using provided session instance`);
+    }
+  }
+
+  logger.info(`AI: activateAgent: Running agent ${agent.name} with email: ${context.email}, session: ${!!runOptions.session}`);
+  return await run(agent, prompt, runOptions);
+});
 
 /**
  * Run a worker agent with its own persistent session
@@ -108,11 +116,7 @@ export const activateAgent = asyncHandler(
  *   }
  * );
  */
-export async function runWorkerWithSession(
-  agent: Agent,
-  prompt: string,
-  sessionConfig: CreateSessionOptions
-): Promise<string> {
+export async function runWorkerWithSession(agent: Agent, prompt: string, sessionConfig: CreateSessionOptions): Promise<string> {
   const session = createAgentSession(sessionConfig);
 
   logger.info(`AI: runWorkerWithSession: Running ${sessionConfig.agentName} with session`);

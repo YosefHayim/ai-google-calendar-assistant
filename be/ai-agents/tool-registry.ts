@@ -10,8 +10,27 @@ import {
 
 import { EXECUTION_TOOLS } from "./tool-execution";
 import { TOOLS_DESCRIPTION } from "./tool-descriptions";
-import { tool } from "@openai/agents";
+import { tool, type RunContext } from "@openai/agents";
 import { z } from "zod";
+
+/**
+ * Context type for agent runs - contains user email from authenticated session
+ * This is passed to run() and accessible in tool execute functions
+ */
+export interface AgentContext {
+  email: string;
+}
+
+/**
+ * Extract email from run context - throws if not available
+ */
+function getEmailFromContext(runContext: RunContext<AgentContext> | undefined, toolName: string): string {
+  const email = runContext?.context?.email;
+  if (!email) {
+    throw new Error(`${toolName}: User email not found in context. Ensure the user is authenticated.`);
+  }
+  return email;
+}
 
 /**
  * Properly stringify an error object for tool error responses.
@@ -49,25 +68,37 @@ export const AGENT_TOOLS = {
     execute: EXECUTION_TOOLS.registerUser,
     errorFunction: (_, error) => `register_user_via_db: ${stringifyError(error)}`,
   }),
-  get_event: tool({
+  // GET event - email from context
+  get_event: tool<typeof PARAMETERS_TOOLS.getEventParameters, AgentContext>({
     name: "get_event",
     description: TOOLS_DESCRIPTION.getEvent,
     parameters: PARAMETERS_TOOLS.getEventParameters,
-    execute: EXECUTION_TOOLS.getEvent,
+    execute: async (params, runContext) => {
+      const email = getEmailFromContext(runContext, "get_event");
+      return EXECUTION_TOOLS.getEvent({ ...params, email });
+    },
     errorFunction: (_, error) => `get_event: ${stringifyError(error)}`,
   }),
-  update_event: tool({
+  // UPDATE event - email from context
+  update_event: tool<typeof PARAMETERS_TOOLS.updateEventParameters, AgentContext>({
     name: "update_event",
     description: TOOLS_DESCRIPTION.updateEvent,
     parameters: PARAMETERS_TOOLS.updateEventParameters,
-    execute: EXECUTION_TOOLS.updateEvent,
+    execute: async (params, runContext) => {
+      const email = getEmailFromContext(runContext, "update_event");
+      return EXECUTION_TOOLS.updateEvent({ ...params, email });
+    },
     errorFunction: (_, error) => `update_event: ${stringifyError(error)}`,
   }),
-  delete_event: tool({
+  // DELETE event - email from context
+  delete_event: tool<typeof PARAMETERS_TOOLS.deleteEventParameter, AgentContext>({
     name: "delete_event",
     description: TOOLS_DESCRIPTION.deleteEvent,
     parameters: PARAMETERS_TOOLS.deleteEventParameter,
-    execute: EXECUTION_TOOLS.deleteEvent,
+    execute: async (params, runContext) => {
+      const email = getEmailFromContext(runContext, "delete_event");
+      return EXECUTION_TOOLS.deleteEvent({ ...params, email });
+    },
     errorFunction: (_, error) => `delete_event: ${stringifyError(error)}`,
   }),
 };
@@ -75,82 +106,130 @@ export const AGENT_TOOLS = {
 // ═══════════════════════════════════════════════════════════════════════════
 // DIRECT TOOLS - Bypass AI agents for faster execution
 // These tools call utilities directly without LLM overhead
+// All tools get email from context instead of parameters
 // ═══════════════════════════════════════════════════════════════════════════
 
-const emailSchema = z.coerce.string().includes("@");
-
 export const DIRECT_TOOLS = {
-  validate_user_direct: tool({
+  // Validate user - email from context
+  validate_user_direct: tool<z.ZodObject<Record<string, never>>, AgentContext>({
     name: "validate_user_direct",
-    description: "Validates if user exists in database. Returns { exists: boolean, user?: object }. Fast direct DB call.",
-    parameters: z.object({ email: emailSchema }),
-    execute: async ({ email }) => validateUserDirect(email),
+    description: "Validates if user exists in database. Returns { exists: boolean, user?: object }. Fast direct DB call. Email is automatically provided from user context.",
+    parameters: z.object({}),
+    execute: async (_params, runContext) => {
+      const email = getEmailFromContext(runContext, "validate_user_direct");
+      return validateUserDirect(email);
+    },
     errorFunction: (_, error) => `validate_user_direct: ${stringifyError(error)}`,
   }),
 
-  get_timezone_direct: tool({
+  // Get timezone - email from context
+  get_timezone_direct: tool<z.ZodObject<Record<string, never>>, AgentContext>({
     name: "get_timezone_direct",
-    description: "Gets user's default timezone. First checks DB, then falls back to Google Calendar settings. Returns { timezone: string }.",
-    parameters: z.object({ email: emailSchema }),
-    execute: async ({ email }) => getUserDefaultTimezoneDirect(email),
+    description: "Gets user's default timezone. First checks DB, then falls back to Google Calendar settings. Returns { timezone: string }. Email is automatically provided from user context.",
+    parameters: z.object({}),
+    execute: async (_params, runContext) => {
+      const email = getEmailFromContext(runContext, "get_timezone_direct");
+      return getUserDefaultTimezoneDirect(email);
+    },
     errorFunction: (_, error) => `get_timezone_direct: ${stringifyError(error)}`,
   }),
 
-  select_calendar_direct: tool({
+  // Select calendar - email from context
+  select_calendar_direct: tool<
+    z.ZodObject<{
+      summary: z.ZodOptional<z.ZodString>;
+      description: z.ZodOptional<z.ZodString>;
+      location: z.ZodOptional<z.ZodString>;
+    }>,
+    AgentContext
+  >({
     name: "select_calendar_direct",
-    description: "Selects best calendar for event using rules-based matching. Returns { calendarId, calendarName, matchReason }.",
+    description: "Selects best calendar for event using rules-based matching. Returns { calendarId, calendarName, matchReason }. Email is automatically provided from user context.",
     parameters: z.object({
-      email: emailSchema,
       summary: z.coerce.string().optional(),
       description: z.coerce.string().optional(),
       location: z.coerce.string().optional(),
     }),
-    execute: async ({ email, summary, description, location }) => selectCalendarByRules(email, { summary, description, location }),
+    execute: async ({ summary, description, location }, runContext) => {
+      const email = getEmailFromContext(runContext, "select_calendar_direct");
+      return selectCalendarByRules(email, { summary, description, location });
+    },
     errorFunction: (_, error) => `select_calendar_direct: ${stringifyError(error)}`,
   }),
 
-  check_conflicts_direct: tool({
+  // Check conflicts - email from context
+  check_conflicts_direct: tool<
+    z.ZodObject<{
+      calendarId: z.ZodDefault<z.ZodString>;
+      start: ReturnType<typeof makeEventTime>;
+      end: ReturnType<typeof makeEventTime>;
+    }>,
+    AgentContext
+  >({
     name: "check_conflicts_direct",
-    description: "Checks for event conflicts in time range. Returns { hasConflicts: boolean, conflictingEvents: array }.",
+    description: "Checks for event conflicts in time range. Returns { hasConflicts: boolean, conflictingEvents: array }. Email is automatically provided from user context.",
     parameters: z.object({
-      email: emailSchema,
       calendarId: z.coerce.string().default("primary"),
       start: makeEventTime(),
       end: makeEventTime(),
     }),
-    execute: async ({ email, calendarId, start, end }) => checkConflictsDirect({ email, calendarId, start, end }),
+    execute: async ({ calendarId, start, end }, runContext) => {
+      const email = getEmailFromContext(runContext, "check_conflicts_direct");
+      return checkConflictsDirect({ email, calendarId, start, end });
+    },
     errorFunction: (_, error) => `check_conflicts_direct: ${stringifyError(error)}`,
   }),
 
-  pre_create_validation: tool({
+  // Pre-create validation - email from context
+  pre_create_validation: tool<
+    z.ZodObject<{
+      summary: z.ZodNullable<z.ZodString>;
+      description: z.ZodNullable<z.ZodString>;
+      location: z.ZodNullable<z.ZodString>;
+      start: z.ZodNullable<ReturnType<typeof makeEventTime>>;
+      end: z.ZodNullable<ReturnType<typeof makeEventTime>>;
+    }>,
+    AgentContext
+  >({
     name: "pre_create_validation",
     description:
-      "Combined validation: checks user, gets timezone, selects calendar, checks conflicts in PARALLEL. Much faster than sequential agent calls. Returns { valid, timezone, calendarId, calendarName, conflicts }.",
+      "Combined validation: checks user, gets timezone, selects calendar, checks conflicts in PARALLEL. Much faster than sequential agent calls. Returns { valid, timezone, calendarId, calendarName, conflicts }. Email is automatically provided from user context.",
     parameters: z.object({
-      email: emailSchema,
       summary: z.coerce.string().nullable(),
       description: z.coerce.string().nullable(),
       location: z.coerce.string().nullable(),
       start: makeEventTime().nullable(),
       end: makeEventTime().nullable(),
     }),
-    execute: async ({ email, summary, description, location, start, end }) =>
-      preCreateValidation(email, {
+    execute: async ({ summary, description, location, start, end }, runContext) => {
+      const email = getEmailFromContext(runContext, "pre_create_validation");
+      return preCreateValidation(email, {
         summary: summary ?? undefined,
         description: description ?? undefined,
         location: location ?? undefined,
         start: start ?? undefined,
         end: end ?? undefined,
-      }),
+      });
+    },
     errorFunction: (_, error) => `pre_create_validation: ${stringifyError(error)}`,
   }),
 
-  insert_event_direct: tool({
+  // Insert event direct - email from context
+  insert_event_direct: tool<
+    z.ZodObject<{
+      calendarId: z.ZodDefault<z.ZodString>;
+      summary: z.ZodString;
+      description: z.ZodNullable<z.ZodString>;
+      location: z.ZodNullable<z.ZodString>;
+      start: ReturnType<typeof makeEventTime>;
+      end: ReturnType<typeof makeEventTime>;
+    }>,
+    AgentContext
+  >({
     name: "insert_event_direct",
     description:
-      "Direct event insertion - bypasses AI agent. ALWAYS use the email from context, never use placeholder emails. Returns created event from Google Calendar API.",
+      "Direct event insertion - bypasses AI agent. Returns created event from Google Calendar API. Email is automatically provided from user context.",
     parameters: z.object({
-      email: emailSchema,
       calendarId: z.coerce.string().default("primary"),
       summary: z.coerce.string(),
       description: z.coerce.string().nullable(),
@@ -158,19 +237,27 @@ export const DIRECT_TOOLS = {
       start: makeEventTime(),
       end: makeEventTime(),
     }),
-    execute: async (params) => EXECUTION_TOOLS.insertEvent(params),
+    execute: async (params, runContext) => {
+      const email = getEmailFromContext(runContext, "insert_event_direct");
+      return EXECUTION_TOOLS.insertEvent({ ...params, email });
+    },
     errorFunction: (_, error) => `insert_event_direct: ${stringifyError(error)}`,
   }),
 
-  get_event_direct: tool({
+  // Get event direct - email from context
+  get_event_direct: tool<typeof PARAMETERS_TOOLS.getEventParameters, AgentContext>({
     name: "get_event_direct",
     description:
-      "Direct event retrieval - bypasses AI agent. Searches for events by email, optional keywords, and time range. Returns raw JSON events array. ALWAYS use the email from context, never use placeholder emails.",
+      "Direct event retrieval - bypasses AI agent. Searches for events by optional keywords, and time range. Returns raw JSON events array. Email is automatically provided from user context.",
     parameters: PARAMETERS_TOOLS.getEventParameters,
-    execute: EXECUTION_TOOLS.getEvent,
+    execute: async (params, runContext) => {
+      const email = getEmailFromContext(runContext, "get_event_direct");
+      return EXECUTION_TOOLS.getEvent({ ...params, email });
+    },
     errorFunction: (_, error) => `get_event_direct: ${stringifyError(error)}`,
   }),
 
+  // Summarize events - no email needed
   summarize_events: tool({
     name: "summarize_events",
     description:

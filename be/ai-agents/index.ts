@@ -2,7 +2,7 @@
 export { AGENTS, HANDOFF_AGENTS, ORCHESTRATOR_AGENT } from "./agents";
 
 // Tool registry
-export { AGENT_TOOLS } from "./tool-registry";
+export { AGENT_TOOLS, type AgentContext } from "./tool-registry";
 
 // Instructions and descriptions
 export { AGENT_INSTRUCTIONS } from "./agents-instructions";
