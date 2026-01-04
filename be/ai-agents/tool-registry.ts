@@ -1,4 +1,5 @@
 import { PARAMETERS_TOOLS, makeEventTime } from "./tool-schemas";
+import { analyzeGapsForUser, fillGap, formatGapsForDisplay } from "@/utils/calendar/gap-recovery";
 import {
   checkConflictsDirect,
   getUserDefaultTimezoneDirect,
@@ -311,5 +312,89 @@ export const DIRECT_TOOLS = {
       return await summarizeEvents(events);
     },
     errorFunction: (_, error) => `summarize_events: ${stringifyError(error)}`,
+  }),
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // GAP RECOVERY TOOLS - Analyze and fill calendar gaps
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  // Analyze gaps - email from context
+  analyze_gaps_direct: tool<typeof PARAMETERS_TOOLS.analyzeGapsParameters, AgentContext>({
+    name: "analyze_gaps_direct",
+    description: TOOLS_DESCRIPTION.analyzeGaps,
+    parameters: PARAMETERS_TOOLS.analyzeGapsParameters,
+    execute: async ({ lookbackDays, calendarId }, runContext) => {
+      const email = getEmailFromContext(runContext, "analyze_gaps_direct");
+      const gaps = await analyzeGapsForUser({
+        email,
+        lookbackDays,
+        calendarId,
+      });
+
+      // Calculate analyzed range
+      const endDate = new Date();
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - lookbackDays);
+
+      return {
+        gaps,
+        totalCount: gaps.length,
+        analyzedRange: {
+          start: startDate.toISOString().split("T")[0],
+          end: endDate.toISOString().split("T")[0],
+        },
+      };
+    },
+    errorFunction: (_, error) => `analyze_gaps_direct: ${stringifyError(error)}`,
+  }),
+
+  // Fill gap - email from context
+  fill_gap_direct: tool<typeof PARAMETERS_TOOLS.fillGapParameters, AgentContext>({
+    name: "fill_gap_direct",
+    description: TOOLS_DESCRIPTION.fillGap,
+    parameters: PARAMETERS_TOOLS.fillGapParameters,
+    execute: async ({ gapStart, gapEnd, summary, description, location, calendarId }, runContext) => {
+      const email = getEmailFromContext(runContext, "fill_gap_direct");
+      return await fillGap({
+        email,
+        gapId: "", // Not needed for direct fill
+        gapStart: new Date(gapStart),
+        gapEnd: new Date(gapEnd),
+        calendarId,
+        eventDetails: {
+          summary,
+          description: description || undefined,
+          location: location || undefined,
+          calendarId,
+        },
+      });
+    },
+    errorFunction: (_, error) => `fill_gap_direct: ${stringifyError(error)}`,
+  }),
+
+  // Format gaps for display - no email needed
+  format_gaps_display: tool({
+    name: "format_gaps_display",
+    description: TOOLS_DESCRIPTION.formatGapsForDisplay,
+    parameters: z.object({
+      gapsJson: z.coerce
+        .string()
+        .describe("The gaps array from analyze_gaps_direct as a JSON string."),
+    }),
+    execute: async ({ gapsJson }) => {
+      let gaps: Parameters<typeof formatGapsForDisplay>[0];
+      try {
+        gaps = typeof gapsJson === "string" ? JSON.parse(gapsJson) : gapsJson;
+      } catch {
+        return { error: "Invalid JSON string provided for gaps" };
+      }
+
+      const formatted = formatGapsForDisplay(gaps);
+      return {
+        formatted,
+        count: Array.isArray(gaps) ? gaps.length : 0,
+      };
+    },
+    errorFunction: (_, error) => `format_gaps_display: ${stringifyError(error)}`,
   }),
 };

@@ -256,6 +256,93 @@ export type Database = {
           },
         ]
       }
+      gap_candidates: {
+        Row: {
+          created_at: string
+          detected_at: string
+          duration_ms: number
+          end_time: string
+          following_event_calendar_id: string | null
+          following_event_id: string
+          following_event_summary: string
+          id: string
+          inferred_context: Json | null
+          preceding_event_calendar_id: string | null
+          preceding_event_id: string
+          preceding_event_summary: string
+          resolution_data: Json | null
+          resolution_status: string
+          resolved_at: string | null
+          start_time: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          detected_at?: string
+          duration_ms: number
+          end_time: string
+          following_event_calendar_id?: string | null
+          following_event_id: string
+          following_event_summary: string
+          id?: string
+          inferred_context?: Json | null
+          preceding_event_calendar_id?: string | null
+          preceding_event_id: string
+          preceding_event_summary: string
+          resolution_data?: Json | null
+          resolution_status?: string
+          resolved_at?: string | null
+          start_time: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          detected_at?: string
+          duration_ms?: number
+          end_time?: string
+          following_event_calendar_id?: string | null
+          following_event_id?: string
+          following_event_summary?: string
+          id?: string
+          inferred_context?: Json | null
+          preceding_event_calendar_id?: string | null
+          preceding_event_id?: string
+          preceding_event_summary?: string
+          resolution_data?: Json | null
+          resolution_status?: string
+          resolved_at?: string | null
+          start_time?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      gap_recovery_settings: {
+        Row: {
+          created_at: string
+          id: string
+          settings: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          settings?: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          settings?: Json
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_calendar_tokens: {
         Row: {
           access_token: string | null
@@ -371,6 +458,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      cleanup_old_pending_gaps: { Args: never; Returns: number }
       match_conversation_embeddings: {
         Args: {
           match_count: number

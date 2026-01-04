@@ -52,4 +52,46 @@ Set searchAllCalendars=false and provide calendarId to search only a specific ca
 
 Defaults: timeMin = start of today (RFC3339 format), searchAllCalendars = true
 Events are returned in chronological order (earliest first).`,
+
+  analyzeGaps: `Analyzes the user's calendar for untracked time gaps between events. Email is automatically provided from user context.
+
+Input: { lookbackDays?, calendarId? }
+Output: { gaps: [{ id, start, end, durationMinutes, durationFormatted, precedingEventSummary, followingEventSummary, suggestion?, confidence }...], totalCount, analyzedRange }
+
+Gap detection rules:
+- Only gaps between 30 minutes and 8 hours are flagged
+- All-day events are excluded from analysis
+- Gaps on ignored days (per user settings) are excluded
+
+Inference types:
+- travel_sandwich: Gap between "Drive to X" and "Drive home" events
+- work_session: Gap during work hours between work-related events
+- meal_break: Gap during typical meal times
+- standard_gap: Any other gap with generic suggestion
+
+Use this when the user asks about:
+- "What gaps are in my calendar?"
+- "Find untracked time"
+- "Check for missing events"
+- "Analyze my schedule gaps"`,
+
+  fillGap: `Creates a new calendar event to fill a detected time gap. Email is automatically provided from user context.
+
+Input: { gapStart, gapEnd, summary, description?, location?, calendarId? }
+Output: { success: boolean, eventId?: string }
+
+Use this after analyze_gaps_direct to fill in gaps the user wants to document.
+The event will be created spanning the exact gap time period.`,
+
+  formatGapsForDisplay: `Formats gap analysis results into a user-friendly message for chat interfaces.
+
+Input: { gaps: GapCandidateDTO[] }
+Output: { formatted: string, count: number }
+
+The formatted output includes:
+- Numbered list of gaps with dates and times
+- Duration of each gap
+- Events before and after each gap
+- Suggestions (if confidence >= 0.5)
+- Action instructions for the user`,
 } as const;

@@ -115,4 +115,33 @@ export const PARAMETERS_TOOLS = {
       calendarId: calendarSchema,
     })
     .describe("Delete an event by ID. Use the calendarId from the event. Email is automatically provided from user context."),
+
+  // Gap analysis parameters
+  analyzeGapsParameters: z
+    .object({
+      lookbackDays: z.coerce
+        .number()
+        .int()
+        .min(1)
+        .max(90)
+        .default(7)
+        .describe("Number of days to look back for gaps. Default is 7 days."),
+      calendarId: z.coerce
+        .string()
+        .default("primary")
+        .describe("Calendar ID to analyze. Defaults to 'primary'."),
+    })
+    .describe("Parameters for analyzing gaps in the user's calendar. Email is automatically provided from user context."),
+
+  // Fill gap parameters
+  fillGapParameters: z
+    .object({
+      gapStart: z.coerce.string().describe("Start time of the gap in ISO format."),
+      gapEnd: z.coerce.string().describe("End time of the gap in ISO format."),
+      summary: z.coerce.string().min(1).describe("Title for the new event to fill the gap."),
+      description: z.coerce.string().nullable().optional().describe("Description for the new event."),
+      location: z.coerce.string().nullable().optional().describe("Location for the new event."),
+      calendarId: z.coerce.string().default("primary").describe("Calendar ID to create the event in."),
+    })
+    .describe("Parameters for filling a gap with a new calendar event. Email is automatically provided from user context."),
 };
