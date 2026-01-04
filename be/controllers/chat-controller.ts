@@ -1,4 +1,5 @@
 import { InputGuardrailTripwireTriggered, run } from "@openai/agents";
+import type { AgentContext } from "@/ai-agents/tool-registry";
 import type { Request, Response } from "express";
 import {
   addWebMessageToContext,
@@ -65,8 +66,9 @@ const streamChat = reqResAsyncHandler(async (req: Request<unknown, unknown, Chat
     // 3. Build full prompt with all context
     const fullPrompt = buildChatPromptWithContext(message, conversationContext, semanticContext, userEmail || userId);
 
-    // 4. Run the agent
-    const result = await run(ORCHESTRATOR_AGENT, fullPrompt);
+    // 4. Run the agent with user email in context for tool authentication
+    const agentContext: AgentContext = { email: userEmail || "" };
+    const result = await run(ORCHESTRATOR_AGENT, fullPrompt, { context: agentContext });
     const finalOutput = result.finalOutput || "";
 
     // 5. Store messages in context (async, includes auto-summarization)
@@ -142,7 +144,9 @@ const sendChat = reqResAsyncHandler(async (req: Request<unknown, unknown, ChatRe
     });
 
     const fullPrompt = buildChatPromptWithContext(message, conversationContext, semanticContext, userEmail || userId);
-    const result = await run(ORCHESTRATOR_AGENT, fullPrompt);
+    // Run agent with user email in context for tool authentication
+    const agentContext: AgentContext = { email: userEmail || "" };
+    const result = await run(ORCHESTRATOR_AGENT, fullPrompt, { context: agentContext });
     const finalOutput = result.finalOutput || "";
 
     // Store context and embeddings
@@ -342,8 +346,9 @@ const continueConversation = reqResAsyncHandler(async (req: Request<{ id: string
     // Build full prompt
     const fullPrompt = buildChatPromptWithContext(message, conversationContext, semanticContext, userEmail || userId);
 
-    // Run agent
-    const result = await run(ORCHESTRATOR_AGENT, fullPrompt);
+    // Run agent with user email in context for tool authentication
+    const agentContext: AgentContext = { email: userEmail || "" };
+    const result = await run(ORCHESTRATOR_AGENT, fullPrompt, { context: agentContext });
     const finalOutput = result.finalOutput || "";
 
     // Store messages in this conversation's context

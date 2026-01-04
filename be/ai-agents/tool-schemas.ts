@@ -6,9 +6,10 @@ const requiredString = (description: string, message = "Required.") => z.coerce.
 
 const calendarSchema = z.coerce.string({ description: "The ID of the calendar to which the event belongs to, if provided use, else pass primary." }).nullable();
 
+// Email schema - only used for registration where user provides email
 const emailSchema = z.coerce
   .string({
-    description: "The email address of the user, used for authentication and authorization via database and google calendar.",
+    description: "The email address of the user.",
   })
   .includes("@", { message: "Must include @ symbol" })
   .refine((v) => validator.isEmail(v), { message: "Invalid email address." });
@@ -41,6 +42,7 @@ export const makeEventTime = () =>
     })
     .describe("Event start or end time, with optional timezone.");
 
+// Event parameters WITHOUT email - email comes from authenticated context
 const makeFullEventParams = () =>
   z
     .object({
@@ -50,19 +52,19 @@ const makeFullEventParams = () =>
       location: z.coerce.string({ description: "Geographic location of the event." }).nullable(),
       start: makeEventTime(),
       end: makeEventTime(),
-      email: emailSchema,
     })
-    .describe("Full event parameters including summary, description, location, start, and end times.");
+    .describe("Full event parameters including summary, description, location, start, and end times. Email is automatically provided from user context.");
 
 export const PARAMETERS_TOOLS = {
   generateGoogleAuthUrlParameters: z.object({}),
+  // Registration still needs email as user provides it
   registerUserParameters: z.object({
     email: emailSchema.describe("The email address of the user."),
     name: z.string().optional().describe("Optional name of the user."),
   }),
+  // GET events - no email needed, uses authenticated context
   getEventParameters: z
     .object({
-      email: emailSchema,
       timeMin: z.coerce.string({ description: "The minimum date and time for events to return, formatted as RFC3339 timestamp." }).nullable(),
       q: z.coerce.string({ description: "Optional parameter to search for text matches across all event fields in Google Calendar." }).nullable(),
       customEvents: z.coerce
@@ -78,19 +80,22 @@ export const PARAMETERS_TOOLS = {
         .string({ description: "The ID of a specific calendar to search. Only used when searchAllCalendars is false." })
         .nullable(),
     })
-    .describe("Fetch events for the user email for the maximum date of time provided. By default searches all calendars."),
+    .describe("Fetch events for the authenticated user. Email is automatically provided from user context. By default searches all calendars."),
 
-  insertEventParameters: makeFullEventParams().describe("Insert a new event into the user calendar."),
+  // INSERT event - no email needed
+  insertEventParameters: makeFullEventParams().describe("Insert a new event into the user's calendar. Email is automatically provided from user context."),
+
+  // UPDATE event - no email needed
   updateEventParameters: makeFullEventParams()
     .extend({
       eventId: requiredString("The ID of the event to update.", "Event ID is required."),
-      email: emailSchema,
     })
-    .describe("Update an existing event by ID."),
+    .describe("Update an existing event by ID. Email is automatically provided from user context."),
+
+  // DELETE event - no email needed
   deleteEventParameter: z
     .object({
       eventId: requiredString("The ID of the event to delete.", "Event ID is required."),
-      email: emailSchema,
     })
-    .describe("Delete an event by ID."),
+    .describe("Delete an event by ID. Email is automatically provided from user context."),
 };
