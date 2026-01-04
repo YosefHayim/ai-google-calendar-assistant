@@ -41,7 +41,7 @@ export const authTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
 
       // CRITICAL FIX: Pass email to the temporary context for the next middleware
       // You might need to add 'email' to your GlobalContext type definition
-      (ctx as any).email = data.email;
+      session.email = data.email;
 
       logger.info(`Telegram Bot: Auth: Email synced: ${session.email}`);
       session.messageCount++;
@@ -50,7 +50,10 @@ export const authTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
 
     // 4. If Session has email but DB failed (Edge case), pass it along
     if (session.email) {
-      (ctx as any).email = session.email;
+      session.firstName = from.first_name;
+      session.username = from.username;
+      session.codeLang = from.language_code;
+      session.email = session.email;
       return next();
     }
 
@@ -62,8 +65,10 @@ export const authTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
     }
 
     // 6. Save new email
+    session.firstName = from.first_name;
+    session.username = from.username;
+    session.codeLang = from.language_code;
     session.email = text;
-    (ctx as any).email = text; // Fix for current request
 
     const insertRes = await SUPABASE.from("user_telegram_links")
       .insert({
