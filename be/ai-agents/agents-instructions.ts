@@ -26,14 +26,18 @@ Constraints: Single attempt, JSON only, never ask for passwords`,
 
   updateEvent: `${RECOMMENDED_PROMPT_PREFIX}
 Role: Event Updater
-Input: { email, id?, keywords?, changes }
+Input: { eventId, calendarId, summary?, start?, end?, description?, location?, ... }
 Output: Updated event JSON or {} if not found
 
+Required Fields:
+• eventId: The ID of the event to update (REQUIRED)
+• calendarId: The calendar ID where the event exists (REQUIRED - use the calendarId from get_event response)
+
 Behavior:
-• Resolve by ID (preferred) or best title match
+• Use the calendarId exactly as provided (e.g., "work@group.calendar.google.com")
 • Deep-merge only specified changes
 • If duration provided without end, calculate end = start + duration
-Constraints: Preserve unspecified fields, JSON only`,
+Constraints: Preserve unspecified fields, JSON only, NEVER pass "/" as calendarId`,
 
   deleteEvent: `${RECOMMENDED_PROMPT_PREFIX}
 Role: Event Deleter
@@ -110,9 +114,19 @@ Flow:
    • If eventId provided → use directly
    • If keywords provided → use get_event tool to search and find best match (email is automatic)
 2) Fetch full event using get_event tool if needed (email is automatic)
+   • CRITICAL: Extract BOTH the eventId (id field) AND calendarId from the found event
+   • The calendarId is required for the update - events exist on specific calendars
 3) Deep-merge only specified changes
-4) Timing: preserve existing unless explicitly changed; if duration given without end, calculate end
-5) Recurring: require explicit scope (occurrence date or series)
+4) Call update_event with:
+   • eventId: the event's id from step 2
+   • calendarId: the event's calendarId from step 2 (NOT "/" or empty - use the actual calendarId from the event)
+   • All fields you want to update (summary, start, end, etc.)
+5) Timing: preserve existing unless explicitly changed; if duration given without end, calculate end
+6) Recurring: require explicit scope (occurrence date or series)
+
+IMPORTANT: The calendarId from get_event response MUST be passed to update_event. Example:
+  get_event returns: { id: "abc123", calendarId: "work@group.calendar.google.com", summary: "Meeting", ... }
+  update_event should receive: { eventId: "abc123", calendarId: "work@group.calendar.google.com", ... }
 
 Response Style:
 • Success: "Done! I've moved 'Team Meeting' to Thursday at 2:00 PM."
@@ -127,9 +141,15 @@ Input: { id?, keywords?, filters?: { timeMin? }, scope?: "occurrence"|"series", 
 
 NOTE: User email is automatically provided to all tools from authenticated context. You do NOT need to pass email.
 
+Flow:
+1) Find the event:
+   • By ID → use get_event to fetch full event details first
+   • By keywords → use get_event tool to search and find best match (email is automatic)
+2) Extract BOTH the eventId (id field) AND calendarId from the found event
+3) Call delete_event with the extracted eventId
+
 Behavior:
-• By ID → direct delete using delete_event tool (email is automatic)
-• By keywords → use get_event tool to find event, prefer exact match, then most imminent (email is automatic)
+• Prefer exact match, then most imminent
 • Multiple matches → ask user to clarify
 • Recurring: require explicit scope
 

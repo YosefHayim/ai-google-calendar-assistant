@@ -18,8 +18,18 @@ type DeleteEventParams = {
  * const data = await deleteEvent(params);
  *
  */
+// Helper to validate and normalize calendarId
+function normalizeCalendarId(id: unknown): string | null {
+  if (!id || typeof id !== "string") return null;
+  const trimmed = id.trim();
+  // Reject obviously invalid values
+  if (trimmed === "" || trimmed === "/") return null;
+  return trimmed;
+}
+
 export async function deleteEvent({ calendarEvents, eventData, extra, req }: DeleteEventParams) {
-  const calendarId = (extra?.calendarId as string) || (req?.body?.calendarId as string) || (req?.query?.calendarId as string) || "primary";
+  const calendarId =
+    normalizeCalendarId(extra?.calendarId) || normalizeCalendarId(req?.body?.calendarId) || normalizeCalendarId(req?.query?.calendarId) || "primary";
 
   const resp = await calendarEvents.delete({
     ...REQUEST_CONFIG_BASE,
