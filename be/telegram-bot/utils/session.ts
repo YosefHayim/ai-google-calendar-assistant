@@ -17,4 +17,8 @@ export const resetSession = (ctx: BotContext): void => {
   ctx.session.agentActive = false;
   ctx.session.isProcessing = false;
   ctx.session.pendingConfirmation = undefined;
+  ctx.session.pendingEmailChange = undefined;
+  ctx.session.awaitingEmailChange = undefined;
+  // Reset activity on manual reset to prevent immediate expiry
+  ctx.session.lastActivity = Date.now();
 };

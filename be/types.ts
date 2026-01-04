@@ -57,6 +57,11 @@ export type PendingConflictConfirmation = {
   }>;
 };
 
+export type PendingEmailChange = {
+  newEmail: string;
+  expiresAt: number;
+};
+
 export type SessionData = {
   chatId: number;
   firstName: string | undefined;
@@ -70,6 +75,17 @@ export type SessionData = {
   isProcessing: boolean;
   pendingConfirmation?: PendingConflictConfirmation;
   googleTokens?: TokensProps;
+  // Email verification state for Telegram
+  pendingEmailVerification?: {
+    email: string;
+    expiresAt: number;
+  };
+  // Session expiry tracking (24h TTL)
+  lastActivity: number;
+  // Email change flow state
+  pendingEmailChange?: PendingEmailChange;
+  // Flag for awaiting new email input
+  awaitingEmailChange?: boolean;
 };
 
 export type TokensProps = {

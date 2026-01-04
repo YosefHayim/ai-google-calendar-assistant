@@ -7,6 +7,8 @@ import type { SessionData } from "@/types";
 import { activateAgent } from "@/utils/ai";
 import { authTgHandler } from "./middleware/auth-tg-handler";
 import { googleTokenTgHandler } from "./middleware/google-token-tg-handler";
+import { sessionExpiryMiddleware } from "./middleware/session-expiry";
+import { authRateLimiter, messageRateLimiter } from "./middleware/rate-limiter";
 import {
   COMMANDS,
   CONFIRM_RESPONSES,
@@ -20,7 +22,10 @@ import {
   summarizeMessages,
   storeEmbeddingAsync,
   getRelevantContext,
+  handlePendingEmailChange,
+  initiateEmailChange,
 } from "./utils";
+import { generateGoogleAuthUrl } from "@/utils/auth";
 import { logger } from "@/utils/logger";
 import {
   handleExitCommand,
@@ -45,6 +50,7 @@ import {
   handleCreateCommand,
   handleUpdateCommand,
   handleDeleteCommand,
+  handleChangeEmailCommand,
 } from "./utils/commands";
 
 export type GlobalContext = SessionFlavor<SessionData> & Context;
@@ -92,12 +98,30 @@ bot.use(
       isProcessing: false,
       pendingConfirmation: undefined,
       googleTokens: undefined,
+      pendingEmailVerification: undefined,
+      // Session expiry tracking (24h TTL)
+      lastActivity: Date.now(),
+      // Email change flow state
+      pendingEmailChange: undefined,
+      awaitingEmailChange: undefined,
     }),
+    // Use telegram_user_id as session key for multi-device support
+    // This allows the same user to share session state across different devices/chats
+    getSessionKey: (ctx) => ctx.from?.id?.toString(),
   })
 );
 
+// Middleware chain order:
+// 1. Session expiry check (before auth)
+bot.use(sessionExpiryMiddleware);
+// 2. Rate limiting for auth attempts
+bot.use(authRateLimiter);
+// 3. Email/Telegram auth
 bot.use(authTgHandler);
+// 4. Google token validation
 bot.use(googleTokenTgHandler);
+// 5. Rate limiting for messages (after auth)
+bot.use(messageRateLimiter);
 
 // Classify user response for confirmation flow
 const classifyConfirmationResponse = (text: string): MessageActionType => {
@@ -267,7 +291,37 @@ const handlePendingConfirmation = async (ctx: GlobalContext, text: string): Prom
   }
 };
 
+// ============================================
+// Settings Callback Query Handlers
+// ============================================
+
+// Handle "Change Email" button from /settings
+bot.callbackQuery("settings:change_email", async (ctx) => {
+  await ctx.answerCallbackQuery();
+
+  if (!ctx.session.email) {
+    await ctx.reply("You must be authenticated first.");
+    return;
+  }
+
+  ctx.session.awaitingEmailChange = true;
+  await ctx.reply(`Your current email is: <code>${ctx.session.email}</code>\n\nPlease enter your new email address:`, { parse_mode: "HTML" });
+});
+
+// Handle "Reconnect Google Calendar" button from /settings
+bot.callbackQuery("settings:reconnect_google", async (ctx) => {
+  await ctx.answerCallbackQuery();
+
+  // Clear Google tokens to force re-auth
+  ctx.session.googleTokens = undefined;
+
+  const authUrl = generateGoogleAuthUrl({ forceConsent: true });
+  await ctx.reply(`Google Calendar access cleared.\n\nPlease re-authorize:\n${authUrl}`);
+});
+
+// ============================================
 // Main message handler
+// ============================================
 bot.on("message", async (ctx) => {
   const msgId = ctx.message.message_id;
   const text = ctx.message.text;
@@ -315,6 +369,9 @@ bot.on("message", async (ctx) => {
       return;
     case COMMANDS.DELETE:
       await handleDeleteCommand(ctx);
+      return;
+    case COMMANDS.CHANGEEMAIL:
+      await handleChangeEmailCommand(ctx);
       return;
   }
 
@@ -384,6 +441,19 @@ bot.on("message", async (ctx) => {
 
     // Process with AI agent
     await handleAgentRequest(ctx, prompt);
+    return;
+  }
+
+  // Handle email change flow (OTP verification)
+  if (ctx.session.pendingEmailChange) {
+    const handled = await handlePendingEmailChange(ctx, text);
+    if (handled) return;
+  }
+
+  // Handle awaiting email change (user is entering new email)
+  if (ctx.session.awaitingEmailChange) {
+    ctx.session.awaitingEmailChange = undefined;
+    await initiateEmailChange(ctx, text);
     return;
   }
 

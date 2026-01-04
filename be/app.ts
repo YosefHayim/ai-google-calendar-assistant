@@ -7,6 +7,7 @@ import channelsRoute from "@/routes/google-calendar/channels-route";
 import chatRoute from "@/routes/google-calendar/chat-route";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import helmet from "helmet";
 import errorHandler from "@/middlewares/error-handler";
 import eventsRoute from "@/routes/google-calendar/events-route";
 import express from "express";
@@ -17,6 +18,8 @@ import { sendR } from "@/utils/http";
 import { startTelegramBot } from "@/telegram-bot/init-bot";
 import usersRoute from "@/routes/users-route";
 import whatsAppRoute from "@/routes/whatsapp-route";
+import { apiRateLimiter } from "@/middlewares/rate-limiter";
+import { securityAuditMiddleware } from "@/middlewares/security-audit";
 
 const ACCESS_TOKEN_HEADER = "access_token";
 const REFRESH_TOKEN_HEADER = "refresh_token";
@@ -25,14 +28,38 @@ const USER_KEY = "user";
 const app = express();
 const PORT = env.port;
 
+// SECURITY: Add helmet for security headers
+// Configures various HTTP headers to protect against common attacks
+app.use(
+  helmet({
+    // Allow cross-origin requests for API
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+    // Disable CSP for API (no HTML served)
+    contentSecurityPolicy: false,
+  })
+);
+
+// SECURITY: Configure CORS from environment
+// In production, this should be set to the actual frontend URL(s)
+const corsOrigins = env.isProd
+  ? [env.urls.frontend].filter(Boolean) // Production: only allow configured frontend
+  : ["http://localhost:4000", "http://127.0.0.1:4000", env.urls.frontend].filter(Boolean); // Development: allow localhost
+
 app.use(
   cors({
-    origin: ["http://localhost:4000", "http://127.0.0.1:4000"],
+    origin: corsOrigins,
     credentials: true,
     exposedHeaders: [ACCESS_TOKEN_HEADER, REFRESH_TOKEN_HEADER, USER_KEY],
     allowedHeaders: ["Content-Type", "Authorization", REFRESH_TOKEN_HEADER, USER_KEY, ACCESS_TOKEN_HEADER],
   })
 );
+
+// SECURITY: Apply general API rate limiting
+app.use(apiRateLimiter);
+
+// SECURITY: Add security audit logging for compliance
+app.use(securityAuditMiddleware);
+
 app.use(express.json({ limit: "10mb" }));
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));

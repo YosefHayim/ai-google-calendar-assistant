@@ -4,3 +4,4 @@ export * from "./session";
 export * from "./conversation-history";
 export * from "./summarize";
 export * from "./embeddings";
+export * from "./email-change";

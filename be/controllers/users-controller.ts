@@ -1,12 +1,12 @@
 import { ACCESS_TOKEN_COOKIE, clearAuthCookies, setAuthCookies } from "@/utils/auth/cookie-utils";
-import type { GoogleIdTokenPayloadProps, TokensProps } from "@/types";
+import type { TokensProps } from "@/types";
 import { OAUTH2CLIENT, PROVIDERS, REDIRECT_URI, SCOPES, SCOPES_STRING, STATUS_RESPONSE, SUPABASE, env } from "@/config";
 import type { Request, Response } from "express";
 import { generateGoogleAuthUrl, supabaseThirdPartySignInOrSignUp } from "@/utils/auth";
 import { reqResAsyncHandler, sendR } from "@/utils/http";
 
-import jwt from "jsonwebtoken";
 import { validateSupabaseToken } from "@/utils/auth/supabase-token";
+import crypto from "node:crypto";
 
 const ACCESS_TOKEN_HEADER = "access_token";
 const REFRESH_TOKEN_HEADER = "refresh_token";
@@ -75,12 +75,29 @@ const generateAuthGoogleUrl = reqResAsyncHandler(async (req: Request, res: Respo
   try {
     const { tokens } = await OAUTH2CLIENT.getToken(code);
 
-    // Decode ID token to get user info (email is critical)
-    const user = jwt.decode(tokens.id_token!) as GoogleIdTokenPayloadProps;
-
-    if (!user || !user.email) {
-      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Failed to decode user profile from Google token.");
+    // SECURITY FIX: Verify ID token signature instead of just decoding
+    // This prevents token forgery attacks
+    if (!tokens.id_token) {
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "No ID token received from Google.");
     }
+
+    const ticket = await OAUTH2CLIENT.verifyIdToken({
+      idToken: tokens.id_token,
+      audience: env.googleClientId,
+    });
+
+    const payload = ticket.getPayload();
+    if (!payload || !payload.email) {
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Failed to verify user profile from Google token.");
+    }
+
+    // Use verified payload instead of decoded token
+    const user = {
+      email: payload.email,
+      given_name: payload.given_name,
+      family_name: payload.family_name,
+      picture: payload.picture,
+    };
 
     // Normalize email to lowercase for consistent storage and lookup
     const normalizedEmail = user.email.toLowerCase().trim();
@@ -150,11 +167,16 @@ const generateAuthGoogleUrl = reqResAsyncHandler(async (req: Request, res: Respo
     if (signInData && signInData.session) {
       setAuthCookies(res, signInData.session.access_token, signInData.session.refresh_token, signInData.user);
 
-      // Redirect back to frontend
+      // SECURITY FIX: Do NOT expose tokens in URL - they're in secure HTTP-only cookies
+      // Only pass non-sensitive display info that the frontend needs for UI
+      // Frontend should read auth state from cookies or call /api/users/session
       const frontendUrl = env.urls.frontend;
-      return res.redirect(
-        `${frontendUrl}/callback?access_token=${signInData.session.access_token}&refresh_token=${signInData.session.refresh_token}&first_name=${user.given_name}&last_name=${user.family_name}&email=${user.email}`
-      );
+      const safeParams = new URLSearchParams({
+        auth: "success",
+        first_name: user.given_name || "",
+        last_name: user.family_name || "",
+      });
+      return res.redirect(`${frontendUrl}/callback?${safeParams.toString()}`);
     }
 
     // Fallback if no session created (shouldn't happen if signInError didn't fire)
@@ -290,13 +312,33 @@ const getCurrentUserInformation = reqResAsyncHandler(async (req: Request, res: R
  *
  */
 const getUserInformationById = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const { data, error } = await SUPABASE.from("user_calendar_tokens").select("*").eq("id", parseInt(req.params.id)).single();
+  // SECURITY: Only allow users to access their own data
+  // This prevents IDOR (Insecure Direct Object Reference) attacks
+  const requestedId = parseInt(req.params.id);
+  const currentUserEmail = req.user?.email;
+
+  if (!currentUserEmail) {
+    return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "Authentication required.");
+  }
+
+  // SECURITY: Select only non-sensitive fields (exclude tokens)
+  const { data, error } = await SUPABASE.from("user_calendar_tokens")
+    .select("id, email, first_name, last_name, avatar_url, is_active, timezone, created_at")
+    .eq("id", requestedId)
+    .single();
+
   if (error) {
-    return sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Failed to find user.", error);
+    return sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Failed to find user.");
   }
   if (!data) {
-    return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User calendar tokens not found.");
+    return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User not found.");
   }
+
+  // SECURITY: Verify the user is accessing their own data
+  if (data.email?.toLowerCase() !== currentUserEmail.toLowerCase()) {
+    return sendR(res, STATUS_RESPONSE.FORBIDDEN, "You can only access your own user information.");
+  }
+
   sendR(res, STATUS_RESPONSE.SUCCESS, "User fetched successfully.", data);
 });
 
