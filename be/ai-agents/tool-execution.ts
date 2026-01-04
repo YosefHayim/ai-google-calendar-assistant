@@ -96,7 +96,10 @@ export const EXECUTION_TOOLS = {
     async (
       params: calendar_v3.Schema$Event & { email: string; q?: string | null; timeMin?: string | null; searchAllCalendars?: boolean; calendarId?: string | null }
     ) => {
-      const startOfYear = new Date().toISOString().split("T")[0];
+      // Default timeMin to start of today in RFC3339 format (required by Google Calendar API)
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const defaultTimeMin = today.toISOString();
       // Limit events to prevent context overflow
       const MAX_EVENTS_TOTAL = 100;
       const MAX_EVENTS_PER_CALENDAR = 50;
@@ -132,7 +135,14 @@ export const EXECUTION_TOOLS = {
             getEvents({
               calendarEvents: calendar.events,
               req: undefined,
-              extra: { calendarId: calId, timeMin: params.timeMin ?? startOfYear, q: params.q || "", maxResults: MAX_EVENTS_PER_CALENDAR },
+              extra: {
+                calendarId: calId,
+                timeMin: params.timeMin ?? defaultTimeMin,
+                q: params.q || "",
+                maxResults: MAX_EVENTS_PER_CALENDAR,
+                singleEvents: true,
+                orderBy: "startTime",
+              },
             })
           )
         );
@@ -174,7 +184,14 @@ export const EXECUTION_TOOLS = {
       }
 
       // Search single calendar (original behavior)
-      return eventsHandler(null, ACTION.GET, {}, { email, calendarId: calendarId ?? "primary", timeMin: params.timeMin ?? startOfYear, q: params.q || "" });
+      return eventsHandler(null, ACTION.GET, {}, {
+        email,
+        calendarId: calendarId ?? "primary",
+        timeMin: params.timeMin ?? defaultTimeMin,
+        q: params.q || "",
+        singleEvents: true,
+        orderBy: "startTime",
+      });
     }
   ),
 
