@@ -127,6 +127,20 @@ export const deleteConversation = async (conversationId: number): Promise<boolea
 }
 
 /**
+ * Delete all conversations
+ */
+export const deleteAllConversations = async (): Promise<boolean> => {
+  try {
+    await apiClient.delete('/api/conversations/all', {
+      data: { is_active: false },
+    })
+    return true
+  } catch {
+    return false
+  }
+}
+
+/**
  * Continue an existing conversation
  */
 export const continueConversation = async (

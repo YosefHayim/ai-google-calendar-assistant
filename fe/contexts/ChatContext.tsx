@@ -1,15 +1,11 @@
 'use client'
 
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react'
-import {
-  getConversation,
-  getConversations,
-  deleteConversation,
-  type ConversationListItem,
-} from '@/services/chatService'
+import React, { createContext, useContext, useState, useCallback, useEffect } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
+import { type ConversationListItem } from '@/services/chatService'
 import { Message } from '@/types'
-import { useUpdateConversationById } from '@/hooks/queries/conversations/useUpdateConversationById'
-import { useDeleteConversationById } from '@/hooks/queries/conversations/useDeleteConversationById'
+import { useConversations, useConversation, useDeleteConversationById } from '@/hooks/queries'
+import { queryKeys } from '@/lib/query'
 
 interface ChatContextValue {
   // Conversation state
@@ -20,7 +16,7 @@ interface ChatContextValue {
   isPendingConversation: boolean // True when in a new, unsaved conversation
 
   // Actions
-  selectConversation: (conversation: ConversationListItem) => Promise<void>
+  selectConversation: (conversation: ConversationListItem) => void
   startNewConversation: () => void
   refreshConversations: () => Promise<void>
   removeConversation: (id: number) => Promise<boolean>
@@ -36,87 +32,109 @@ interface ChatContextValue {
 const ChatContext = createContext<ChatContextValue | null>(null)
 
 export function ChatProvider({ children }: { children: React.ReactNode }) {
+  const queryClient = useQueryClient()
+
+  // Local state for messages and UI
   const [messages, setMessages] = useState<Message[]>([])
   const [selectedConversationId, setSelectedConversationId] = useState<number | null>(null)
-  const [conversations, setConversations] = useState<ConversationListItem[]>([])
   const [isPendingConversation, setIsPendingConversation] = useState(true)
-  const [isLoadingConversations, setIsLoadingConversations] = useState(false)
-  const [isLoadingConversation, setIsLoadingConversation] = useState(false)
+  const [localConversations, setLocalConversations] = useState<ConversationListItem[]>([])
 
-  const refreshConversations = useCallback(async () => {
-    setIsLoadingConversations(true)
-    try {
-      const data = await getConversations()
-      setConversations(data.conversations)
-    } finally {
-      setIsLoadingConversations(false)
+  // TanStack Query hooks
+  const {
+    conversations: fetchedConversations,
+    isLoading: isLoadingConversations,
+    refetch: refetchConversations,
+  } = useConversations()
+
+  const {
+    conversation: selectedConversationData,
+    isLoading: isLoadingConversation,
+  } = useConversation({
+    conversationId: selectedConversationId,
+    enabled: selectedConversationId !== null,
+  })
+
+  const { deleteConversationAsync } = useDeleteConversationById()
+
+  // Sync fetched conversations to local state for optimistic updates
+  useEffect(() => {
+    if (fetchedConversations.length > 0) {
+      setLocalConversations(fetchedConversations)
     }
-  }, [])
+  }, [fetchedConversations])
 
-  const selectConversation = useCallback(async (conversation: ConversationListItem) => {
-    setIsLoadingConversation(true)
-    try {
-      setSelectedConversationId(conversation.id)
-      setIsPendingConversation(false)
-      const data = await getConversation(conversation.id)
-      const convertedMessages: Message[] = (data?.messages || []).map((msg, index) => ({
-        id: `${conversation.id}-${index}`,
+  // Convert conversation messages when a conversation is loaded
+  useEffect(() => {
+    if (selectedConversationData && selectedConversationId) {
+      const convertedMessages: Message[] = (selectedConversationData.messages || []).map((msg, index) => ({
+        id: `${selectedConversationId}-${index}`,
         role: msg.role,
         content: msg.content,
         timestamp: new Date(),
       }))
       setMessages(convertedMessages)
-    } finally {
-      setIsLoadingConversation(false)
+    }
+  }, [selectedConversationData, selectedConversationId])
+
+  const selectConversation = useCallback((conversation: ConversationListItem) => {
+    setSelectedConversationId(conversation.id)
+    setIsPendingConversation(false)
+  }, [])
+
+  const startNewConversation = useCallback(() => {
+    setMessages([])
+    setSelectedConversationId(null)
+    setIsPendingConversation(true)
+  }, [])
+
+  const refreshConversations = useCallback(async () => {
+    await refetchConversations()
+  }, [refetchConversations])
+
+  const removeConversation = useCallback(async (id: number): Promise<boolean> => {
+    try {
+      const deleted = await deleteConversationAsync(id)
+      if (deleted) {
+        setLocalConversations((prev) => prev.filter((c) => c.id !== id))
+        if (selectedConversationId === id) {
+          startNewConversation()
+        }
+      }
+      return deleted
+    } catch {
+      return false
+    }
+  }, [deleteConversationAsync, selectedConversationId, startNewConversation])
+
+  const setConversationId = useCallback((id: number | null) => {
+    setSelectedConversationId(id)
+    if (id !== null) {
+      setIsPendingConversation(false)
     }
   }, [])
 
-  const startNewConversation = () => {
-    setMessages([])
-    setSelectedConversationId(null)
-    setIsPendingConversation(true) // Mark as pending until first message is sent
-  }
+  const updateConversationTitle = useCallback((id: number, title: string) => {
+    setLocalConversations((prev) => prev.map((c) => (c.id === id ? { ...c, title } : c)))
+    // Also update the query cache
+    queryClient.invalidateQueries({ queryKey: queryKeys.conversations.list() })
+  }, [queryClient])
 
-  const removeConversation = async (id: number): Promise<boolean> => {
-    const deleted = await deleteConversation(id)
-    if (deleted) {
-      setConversations((prev) => prev.filter((c) => c.id !== id))
-      if (selectedConversationId === id) {
-        startNewConversation()
-      }
-    }
-    return deleted
-  }
-
-  const setConversationId = (id: number | null) => {
-    setSelectedConversationId(id)
-    if (id !== null) {
-      setIsPendingConversation(false) // No longer pending when conversation ID is set
-    }
-  }
-
-  const updateConversationTitle = (id: number, title: string) => {
-    setConversations((prev) => prev.map((c) => (c.id === id ? { ...c, title } : c)))
-  }
-
-  const addConversationToList = (conversation: ConversationListItem) => {
-    setConversations((prev) => {
-      // Check if conversation already exists
+  const addConversationToList = useCallback((conversation: ConversationListItem) => {
+    setLocalConversations((prev) => {
       const exists = prev.some((c) => c.id === conversation.id)
       if (exists) {
-        // Update existing conversation
         return prev.map((c) => (c.id === conversation.id ? conversation : c))
       }
-      // Add new conversation at the beginning
       return [conversation, ...prev]
     })
-  }
+  }, [])
 
   return (
     <ChatContext.Provider
       value={{
         selectedConversationId,
-        conversations,
+        conversations: localConversations,
         isLoadingConversations,
         isLoadingConversation,
         isPendingConversation,
