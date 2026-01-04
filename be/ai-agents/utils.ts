@@ -147,14 +147,21 @@ export type UserCalendar = {
 };
 
 export const getCalendarCategoriesByEmail = asyncHandler(async (email: string): Promise<UserCalendar[]> => {
-  const { data: tokenData, error } = await SUPABASE.from("user_calendars").select("calendars").eq("email", email).single();
+  const { data, error } = await SUPABASE.from("calendar_categories")
+    .select("calendar_id, calendar_name")
+    .eq("email", email.trim().toLowerCase());
 
   if (error) {
     throw error;
   }
 
-  if (tokenData?.calendars && Array.isArray(tokenData.calendars)) {
-    return tokenData.calendars as UserCalendar[];
+  if (data && Array.isArray(data)) {
+    return data
+      .filter((row) => row.calendar_id && row.calendar_name)
+      .map((row) => ({
+        calendar_id: row.calendar_id as string,
+        calendar_name: row.calendar_name as string,
+      }));
   }
 
   return [];
