@@ -6,21 +6,16 @@ import {
   Bell,
   Brain,
   Calendar,
-  Check,
   CheckCircle2,
   ChevronDown,
   ChevronRight,
   Circle,
-  Clock,
   CreditCard,
   Database,
-  Globe,
   Info,
   LayoutDashboard,
   Loader2,
   LogOut,
-  Mail,
-  MessageSquare,
   MessageSquareX,
   Plus,
   RefreshCw,
@@ -28,21 +23,18 @@ import {
   Shield,
   Smartphone,
   Trash2,
-  User,
   X,
   Zap,
 } from 'lucide-react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { GoogleCalendarIcon, TelegramIcon, WhatsAppIcon } from '@/components/shared/Icons'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import CinematicGlowToggle from '@/components/ui/cinematic-glow-toggle'
-import type { GoogleCalendarIntegrationStatus } from '@/types/api'
 import { Label } from '@/components/ui/label'
-import { integrationsService } from '@/lib/api/services/integrations.service'
-import { useChatContext } from '@/contexts/ChatContext'
+import { useGoogleCalendarStatus, useDisconnectGoogleCalendar, useDeleteAllConversations } from '@/hooks/queries'
 
 interface SettingsModalProps {
   isOpen: boolean
@@ -180,44 +172,32 @@ const FeatureItem: React.FC<{ icon: React.ReactNode; text: string; colorClass: s
 
 const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOut, isDarkMode, toggleTheme }) => {
   const [activeTab, setActiveTab] = useState<Tab>('general')
-  const { refreshConversations } = useChatContext()
 
-  // State management
+  // TanStack Query hooks for Google Calendar integration
+  const {
+    data: googleCalendarStatus,
+    isLoading: isGoogleCalendarLoading,
+    refetch: refetchGoogleCalendarStatus,
+  } = useGoogleCalendarStatus({
+    enabled: isOpen && activeTab === 'integrations',
+  })
+
+  const { mutate: disconnectGoogleCalendar, isPending: isDisconnecting } = useDisconnectGoogleCalendar()
+
+  // TanStack Query hook for deleting all conversations
+  const { deleteAll: deleteAllConversations, isDeleting: isDeletingConversations } = useDeleteAllConversations()
+
+  // Local UI state
   const [authenticatorApp, setAuthenticatorApp] = useState(true)
-  const [pushNotifications, setPushNotifications] = useState(false)
   const [contextualMemory, setContextualMemory] = useState(true)
-  const [memoryUsage, setMemoryUsage] = useState('~1.2MB of scheduling patterns')
-  const [isWhatsAppConnecting, setIsWhatsAppConnecting] = useState(false)
-  const [isDeletingConversations, setIsDeletingConversations] = useState(false)
+  const [memoryUsage] = useState('~1.2MB of scheduling patterns')
 
   // App specific states
   const [timeFormat, setTimeFormat] = useState('12h')
-  const [timezone, setTimezone] = useState('Asia/Jerusalem (IST)')
+  const [timezone] = useState('Asia/Jerusalem (IST)')
 
-  // Google Calendar integration state
-  const [googleCalendarStatus, setGoogleCalendarStatus] = useState<GoogleCalendarIntegrationStatus | null>(null)
-  const [isGoogleCalendarLoading, setIsGoogleCalendarLoading] = useState(false)
-
-  // Fetch Google Calendar integration status
-  useEffect(() => {
-    if (isOpen && activeTab === 'integrations') {
-      fetchGoogleCalendarStatus()
-    }
-  }, [isOpen, activeTab])
-
-  const fetchGoogleCalendarStatus = async () => {
-    setIsGoogleCalendarLoading(true)
-    try {
-      const response = await integrationsService.getGoogleCalendarStatus()
-      if (response.data) {
-        setGoogleCalendarStatus(response.data)
-      }
-    } catch (error) {
-      console.error('Failed to fetch Google Calendar status:', error)
-    } finally {
-      setIsGoogleCalendarLoading(false)
-    }
-  }
+  // Combined loading state for Google Calendar operations
+  const isGoogleCalendarBusy = isGoogleCalendarLoading || isDisconnecting
 
   const handleGoogleCalendarResync = () => {
     if (googleCalendarStatus?.authUrl) {
@@ -225,7 +205,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
     }
   }
 
-  const handleGoogleCalendarDisconnect = async () => {
+  const handleGoogleCalendarDisconnect = () => {
     if (
       !window.confirm(
         'Are you sure you want to disconnect Google Calendar? The assistant will no longer be able to manage your schedule.',
@@ -234,17 +214,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
       return
     }
 
-    setIsGoogleCalendarLoading(true)
-    try {
-      const response = await integrationsService.disconnectGoogleCalendar()
-      if (response.status === 'success') {
-        setGoogleCalendarStatus((prev) => (prev ? { ...prev, isActive: false } : null))
-      }
-    } catch (error) {
-      console.error('Failed to disconnect Google Calendar:', error)
-    } finally {
-      setIsGoogleCalendarLoading(false)
-    }
+    disconnectGoogleCalendar()
   }
 
   const handleClearChatHistory = () => {
@@ -257,33 +227,19 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
     }
   }
 
-  const handleDeleteAllConversations = async () => {
+  const handleDeleteAllConversations = () => {
     if (!window.confirm('Are you sure you want to delete ALL chat logs? This cannot be undone.')) {
       return
     }
 
-    setIsDeletingConversations(true)
-    try {
-      const response = await fetch('/api/conversations/all', {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ is_active: false }),
-      })
-
-      if (!response.ok) {
-        throw new Error('Failed to delete conversations')
-      }
-
-      await refreshConversations()
-      alert('All conversation logs have been deleted.')
-    } catch (error) {
-      console.error('Error deleting conversations:', error)
-      await refreshConversations()
-    } finally {
-      setIsDeletingConversations(false)
-    }
+    deleteAllConversations(undefined, {
+      onSuccess: () => {
+        alert('All conversation logs have been deleted.')
+      },
+      onError: (error) => {
+        console.error('Error deleting conversations:', error)
+      },
+    })
   }
 
   const tabs = [
@@ -606,24 +562,24 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
                         <div className="flex gap-2 mt-2">
                           <button
                             onClick={handleGoogleCalendarResync}
-                            disabled={isGoogleCalendarLoading}
+                            disabled={isGoogleCalendarBusy}
                             className="flex-1 flex items-center justify-center gap-2 p-2 rounded-lg text-xs font-bold border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-white dark:hover:bg-zinc-800 transition-all"
                           >
                             <RefreshCw size={16} /> Re-sync
                           </button>
                           <button
                             onClick={handleGoogleCalendarDisconnect}
-                            disabled={isGoogleCalendarLoading}
+                            disabled={isGoogleCalendarBusy}
                             className="flex-1 flex items-center justify-center gap-2 p-2 rounded-lg text-xs font-bold border border-red-200 dark:border-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all"
                           >
-                            {isGoogleCalendarLoading ? <Loader2 size={16} className="animate-spin" /> : <X size={16} />}
+                            {isDisconnecting ? <Loader2 size={16} className="animate-spin" /> : <X size={16} />}
                             Disconnect
                           </button>
                         </div>
                       ) : (
                         <button
                           onClick={handleGoogleCalendarResync}
-                          disabled={isGoogleCalendarLoading}
+                          disabled={isGoogleCalendarBusy}
                           className="w-full mt-2 flex items-center justify-center gap-2 p-2 rounded-lg text-xs font-bold bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 hover:opacity-90 transition-all"
                         >
                           {isGoogleCalendarLoading ? (
@@ -679,10 +635,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
                         </div>
                       </div>
                       <button
-                        onClick={() => {
-                          setIsWhatsAppConnecting(true)
-                          setTimeout(() => setIsWhatsAppConnecting(false), 2000)
-                        }}
                         disabled={true}
                         className="w-full mt-2 flex items-center justify-center gap-2 p-2 rounded-lg text-xs font-bold bg-zinc-200 dark:bg-zinc-800 text-zinc-400 dark:text-zinc-500 cursor-not-allowed"
                       >

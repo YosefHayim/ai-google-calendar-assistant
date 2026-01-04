@@ -45,13 +45,14 @@ export const getHealthActivityColor = (type: HealthActivity): string => {
   }
 }
 
+export type InsightColor = 'amber' | 'sky' | 'emerald' | 'rose' | 'indigo' | 'orange'
+
 /**
  * Insight card color classes mapping
  * Returns background and text color classes for insight cards
- * Note: InsightColor type is defined in @/types/analytics
  */
 export const getInsightColorClasses = (
-  color: 'amber' | 'sky' | 'emerald' | 'rose' | 'indigo' | 'orange',
+  color: InsightColor,
 ): { bg: string; text: string } => {
   const colorClasses: Record<InsightColor, { bg: string; text: string }> = {
     amber: { bg: 'bg-amber-100/50 dark:bg-amber-900/30', text: 'text-amber-600 dark:text-amber-500' },

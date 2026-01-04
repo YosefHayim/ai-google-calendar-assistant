@@ -44,6 +44,12 @@ export const queryKeys = {
     list: () => [...queryKeys.conversations.all, 'list'] as const,
     detail: (id: number) => [...queryKeys.conversations.all, 'detail', id] as const,
   },
+
+  // Integration queries
+  integrations: {
+    all: ['integrations'] as const,
+    googleCalendar: () => [...queryKeys.integrations.all, 'googleCalendar'] as const,
+  },
 } as const
 
 /** Type helper for query keys */

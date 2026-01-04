@@ -1,15 +1,47 @@
-import { QUERY_CONFIG } from '@/lib/constants'
+'use client'
+
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { deleteConversation } from '@/services/chatService'
 import { queryKeys } from '@/lib/query'
-import { useQuery } from '@tanstack/react-query'
-import { useQueryWrapper } from '../useQueryWrapper'
+import type { MutationHookOptions } from '../useMutationWrapper'
 
-export const useDeleteConversationById = async (conversationId: number) => {
-  const query = useQuery({
-    queryKey: queryKeys.conversations.detail(conversationId),
-    queryFn: () => deleteConversation(conversationId),
-    staleTime: QUERY_CONFIG.DEFAULT_STALE_TIME,
-    enabled: true,
+/**
+ * Hook to delete a conversation by ID
+ * Uses mutation pattern since this is a write operation
+ */
+export function useDeleteConversationById(
+  options?: MutationHookOptions<boolean, number>,
+) {
+  const queryClient = useQueryClient()
+
+  const mutation = useMutation<boolean, Error, number>({
+    mutationFn: (conversationId: number) => deleteConversation(conversationId),
+    onSuccess: (data, conversationId) => {
+      // Invalidate conversation list to refetch
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.conversations.list(),
+      })
+      // Remove the specific conversation from cache
+      queryClient.removeQueries({
+        queryKey: queryKeys.conversations.detail(conversationId),
+      })
+      options?.onSuccess?.(data, conversationId)
+    },
+    onError: (error, variables) => {
+      options?.onError?.(error, variables)
+    },
+    onSettled: (data, error, variables) => {
+      options?.onSettled?.(data, error, variables)
+    },
   })
-  return useQueryWrapper(query)
+
+  return {
+    deleteConversation: mutation.mutate,
+    deleteConversationAsync: mutation.mutateAsync,
+    isDeleting: mutation.isPending,
+    isError: mutation.isError,
+    error: mutation.error,
+    isSuccess: mutation.isSuccess,
+    reset: mutation.reset,
+  }
 }
