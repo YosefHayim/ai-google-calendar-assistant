@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      agent_sessions: {
+        Row: {
+          agent_name: string
+          created_at: string | null
+          id: string
+          items: Json | null
+          session_id: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          agent_name: string
+          created_at?: string | null
+          id?: string
+          items?: Json | null
+          session_id: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          agent_name?: string
+          created_at?: string | null
+          id?: string
+          items?: Json | null
+          session_id?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       calendar_categories: {
         Row: {
           access_role: string | null
