@@ -22,15 +22,11 @@ export const createHttpError = (message: string, status: number): HttpError => {
  * @param {string} message - The error message.
  */
 export const sendErrorResponse = (res: Response, status: number, message: string): void => {
-  logger.info(`HTTP: sendErrorResponse called: res: ${res}`);
-  logger.info(`HTTP: sendErrorResponse called: status: ${status}`);
-  logger.info(`HTTP: sendErrorResponse called: message: ${message}`);
   res.status(status).json({
     status: "error",
     code: status,
     message,
   });
-  logger.info(`HTTP: sendErrorResponse called: response sent`);
 };
 
 /**
@@ -41,10 +37,7 @@ export const sendErrorResponse = (res: Response, status: number, message: string
  * @throws {HttpError} Always throws an error with status in cause.
  */
 export const throwHttpError = (message: string, status: number): never => {
-  logger.info(`HTTP: throwHttpError called: message: ${message}`);
-  logger.info(`HTTP: throwHttpError called: status: ${status}`);
   const error = createHttpError(message, status);
-  logger.info(`HTTP: throwHttpError called: error: ${error}`);
   throw error;
 };
 
@@ -58,18 +51,10 @@ export const throwHttpError = (message: string, status: number): never => {
  * @deprecated Use createHttpError, sendErrorResponse, or throwHttpError for clearer intent.
  */
 const errorTemplate = (message: string, status: number, res?: Response): never => {
-  logger.info(`HTTP: errorTemplate called: message: ${message}`);
-  logger.info(`HTTP: errorTemplate called: status: ${status}`);
-  logger.info(`HTTP: errorTemplate called: res: ${res}`);
   if (res) {
-    logger.info(`HTTP: errorTemplate called: res: ${res}`);
-    logger.info(`HTTP: errorTemplate called: status: ${status}`);
-    logger.info(`HTTP: errorTemplate called: message: ${message}`);
     sendErrorResponse(res, status, message);
-    logger.info(`HTTP: errorTemplate called: response sent`);
   }
   const error = createHttpError(message, status);
-  logger.info(`HTTP: errorTemplate called: error: ${error}`);
   throw error;
 };
 

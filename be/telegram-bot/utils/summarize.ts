@@ -23,7 +23,6 @@ Conversation to summarize:`;
 
 // Format messages for summarization
 const formatMessagesForSummary = (messages: userAndAiMessageProps[]): string => {
-  logger.info(`Telegram Bot: Summarize: Formatting messages for summary: ${messages.length}`);
   return messages
     .map((msg) => {
       const role = msg.role === "user" ? "User" : "Assistant";
@@ -34,16 +33,12 @@ const formatMessagesForSummary = (messages: userAndAiMessageProps[]): string => 
 
 // Summarize conversation messages using AI
 export const summarizeMessages = async (messages: userAndAiMessageProps[]): Promise<string> => {
-  logger.info(`Telegram Bot: Summarize: Summarizing messages: ${messages.length}`);
   if (messages.length === 0) {
-    logger.info(`Telegram Bot: Summarize: No messages to summarize`);
     return "";
   }
 
   const formattedMessages = formatMessagesForSummary(messages);
-  logger.info(`Telegram Bot: Summarize: Formatted messages: ${formattedMessages}`);
   const fullPrompt = `${SUMMARIZATION_PROMPT}\n\n${formattedMessages}`;
-  logger.info(`Telegram Bot: Summarize: Full prompt: ${fullPrompt}`);
 
   try {
     const response = await openai.chat.completions.create({
@@ -63,14 +58,11 @@ export const summarizeMessages = async (messages: userAndAiMessageProps[]): Prom
     });
 
     const summary = response.choices[0]?.message?.content?.trim();
-    logger.info(`Telegram Bot: Summarize: Summary: ${summary}`);
 
     if (!summary) {
       logger.error(`Telegram Bot: Summarize: No summary generated`);
       throw new Error("No summary generated");
     }
-
-    logger.info(`Telegram Bot: Summarize: Summary generated: ${summary}`);
     return summary;
   } catch (error) {
     logger.error(`Telegram Bot: Summarize: Error summarizing messages: ${error}`);
@@ -83,20 +75,14 @@ export const summarizeMessages = async (messages: userAndAiMessageProps[]): Prom
 // Fallback summary when AI fails
 const createFallbackSummary = (messages: userAndAiMessageProps[]): string => {
   const userMessages = messages.filter((m) => m.role === "user");
-  logger.info(`Telegram Bot: Summarize: User messages: ${userMessages.length}`);
   const topics = userMessages
     .slice(0, 3)
     .map((m) => m.content?.slice(0, 50))
     .filter(Boolean);
-  logger.info(`Telegram Bot: Summarize: Topics: ${topics.length}`);
   if (topics.length === 0) {
-    logger.info(`Telegram Bot: Summarize: No topics found`);
     return "Previous conversation context available.";
   }
-
-  logger.info(`Telegram Bot: Summarize: Fallback summary: ${topics.join("; ")}...`);
   const fallbackSummary = `Previous topics discussed: ${topics.join("; ")}...`;
-  logger.info(`Telegram Bot: Summarize: Fallback summary: ${fallbackSummary}`);
   return fallbackSummary;
 };
 
@@ -107,9 +93,7 @@ User's message:`;
 
 // Generate a short title for a conversation using AI (cheapest model)
 export const generateConversationTitle = async (firstUserMessage: string): Promise<string> => {
-  logger.info(`Telegram Bot: Summarize: Generating conversation title: ${firstUserMessage}`);
   if (!firstUserMessage?.trim()) {
-    logger.info(`Telegram Bot: Summarize: No user message found`);
     return "New Conversation";
   }
 
@@ -139,16 +123,13 @@ export const generateConversationTitle = async (firstUserMessage: string): Promi
 
     // Clean up the title - remove quotes and limit length
     const cleanTitle = title.replace(/^["']|["']$/g, "").slice(0, 50);
-    logger.info(`Telegram Bot: Summarize: Clean title: ${cleanTitle}`);
     return cleanTitle || "New Conversation";
   } catch (error) {
     logger.error(`Telegram Bot: Summarize: Error generating conversation title: ${error}`);
     console.error("Error generating conversation title:", error);
     // Fallback: use truncated first message
     const truncated = firstUserMessage.slice(0, 47);
-    logger.info(`Telegram Bot: Summarize: Truncated: ${truncated}`);
     const result = truncated.length < firstUserMessage.length ? `${truncated}...` : truncated;
-    logger.info(`Telegram Bot: Summarize: Result: ${result}`);
     return result;
   }
 };

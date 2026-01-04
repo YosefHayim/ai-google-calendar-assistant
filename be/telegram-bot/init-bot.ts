@@ -423,7 +423,6 @@ const BOT_COMMANDS = [
 const registerBotCommands = async () => {
   try {
     await bot.api.setMyCommands(BOT_COMMANDS);
-    logger.info("Telegram Bot: Commands menu registered");
   } catch (error) {
     logger.error(`Telegram Bot: Failed to register commands: ${error}`);
   }
@@ -442,7 +441,6 @@ export const startTelegramBot = async () => {
 
   const stopBot = async () => {
     if (runnerHandle) {
-      logger.info("Telegram Bot: Stopping");
       await runnerHandle.stop();
     }
     process.exit(0);

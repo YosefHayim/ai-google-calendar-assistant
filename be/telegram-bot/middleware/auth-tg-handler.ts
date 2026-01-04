@@ -5,13 +5,10 @@ import { isEmail } from "validator";
 import { logger } from "@/utils/logger";
 
 export const authTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
-  logger.info(`Telegram Bot: Auth: authTgHandler middleware called`);
-
   const from = ctx.from;
   const session = ctx.session;
 
   if (!(from && session)) {
-    logger.info(`Telegram Bot: Auth: from or session not found`);
     return next();
   }
 
@@ -42,8 +39,6 @@ export const authTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
       // CRITICAL FIX: Pass email to the temporary context for the next middleware
       // You might need to add 'email' to your GlobalContext type definition
       session.email = data.email;
-
-      logger.info(`Telegram Bot: Auth: Email synced: ${session.email}`);
       session.messageCount++;
       return next();
     }
