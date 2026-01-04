@@ -1,5 +1,6 @@
 import { InputGuardrailTripwireTriggered, run } from "@openai/agents";
 import type { AgentContext } from "@/ai-agents/tool-registry";
+import { createAgentSession } from "@/ai-agents/sessions";
 import type { Request, Response } from "express";
 import {
   addWebMessageToContext,
@@ -66,9 +67,16 @@ const streamChat = reqResAsyncHandler(async (req: Request<unknown, unknown, Chat
     // 3. Build full prompt with all context
     const fullPrompt = buildChatPromptWithContext(message, conversationContext, semanticContext, userEmail || userId);
 
-    // 4. Run the agent with user email in context for tool authentication
+    // 4. Create session for persistent agent memory
+    const session = createAgentSession({
+      userId,
+      agentName: ORCHESTRATOR_AGENT.name,
+      taskId: conversationId.toString(),
+    });
+
+    // 5. Run the agent with session and user email in context for tool authentication
     const agentContext: AgentContext = { email: userEmail || "" };
-    const result = await run(ORCHESTRATOR_AGENT, fullPrompt, { context: agentContext });
+    const result = await run(ORCHESTRATOR_AGENT, fullPrompt, { context: agentContext, session });
     const finalOutput = result.finalOutput || "";
 
     // 5. Store messages in context (async, includes auto-summarization)
@@ -144,9 +152,17 @@ const sendChat = reqResAsyncHandler(async (req: Request<unknown, unknown, ChatRe
     });
 
     const fullPrompt = buildChatPromptWithContext(message, conversationContext, semanticContext, userEmail || userId);
-    // Run agent with user email in context for tool authentication
+
+    // Create session for persistent agent memory
+    const session = createAgentSession({
+      userId,
+      agentName: ORCHESTRATOR_AGENT.name,
+      taskId: conversationId.toString(),
+    });
+
+    // Run agent with session and user email in context for tool authentication
     const agentContext: AgentContext = { email: userEmail || "" };
-    const result = await run(ORCHESTRATOR_AGENT, fullPrompt, { context: agentContext });
+    const result = await run(ORCHESTRATOR_AGENT, fullPrompt, { context: agentContext, session });
     const finalOutput = result.finalOutput || "";
 
     // Store context and embeddings
@@ -346,9 +362,16 @@ const continueConversation = reqResAsyncHandler(async (req: Request<{ id: string
     // Build full prompt
     const fullPrompt = buildChatPromptWithContext(message, conversationContext, semanticContext, userEmail || userId);
 
-    // Run agent with user email in context for tool authentication
+    // Create session for persistent agent memory
+    const session = createAgentSession({
+      userId,
+      agentName: ORCHESTRATOR_AGENT.name,
+      taskId: conversationId.toString(),
+    });
+
+    // Run agent with session and user email in context for tool authentication
     const agentContext: AgentContext = { email: userEmail || "" };
-    const result = await run(ORCHESTRATOR_AGENT, fullPrompt, { context: agentContext });
+    const result = await run(ORCHESTRATOR_AGENT, fullPrompt, { context: agentContext, session });
     const finalOutput = result.finalOutput || "";
 
     // Store messages in this conversation's context

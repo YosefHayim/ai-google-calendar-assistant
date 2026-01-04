@@ -132,7 +132,14 @@ const handleConfirmation = async (ctx: GlobalContext): Promise<void> => {
     await addMessageToContext(chatId, userId, { role: "user", content: "User confirmed event creation despite conflicts." }, summarizeMessages);
 
     const prompt = buildConfirmationPrompt(ctx.session.firstName!, ctx.session.email!, pending.eventData);
-    const { finalOutput } = await activateAgent(ORCHESTRATOR_AGENT, prompt, { email: ctx.session.email });
+    const { finalOutput } = await activateAgent(ORCHESTRATOR_AGENT, prompt, {
+      email: ctx.session.email,
+      session: {
+        userId: userId.toString(),
+        agentName: ORCHESTRATOR_AGENT.name,
+        taskId: chatId.toString(),
+      },
+    });
 
     if (!finalOutput) {
       await ctx.reply("No output received from AI Agent.");
@@ -212,8 +219,15 @@ const handleAgentRequest = async (ctx: GlobalContext, message: string): Promise<
     // Build prompt with conversation history
     const prompt = buildAgentPromptWithContext(ctx.session.email, message, fullContext);
 
-    // Pass email via context for tool authentication (not in prompt)
-    const { finalOutput } = await activateAgent(ORCHESTRATOR_AGENT, prompt, { email: ctx.session.email });
+    // Pass email and session for tool authentication and persistent memory
+    const { finalOutput } = await activateAgent(ORCHESTRATOR_AGENT, prompt, {
+      email: ctx.session.email,
+      session: {
+        userId: userId.toString(),
+        agentName: ORCHESTRATOR_AGENT.name,
+        taskId: chatId.toString(),
+      },
+    });
 
     // Add AI response to conversation history
     if (finalOutput) {
