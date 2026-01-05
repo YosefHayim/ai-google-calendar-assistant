@@ -47,10 +47,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     refetch: refetchConversations,
   } = useConversations()
 
-  const {
-    conversation: selectedConversationData,
-    isLoading: isLoadingConversation,
-  } = useConversation({
+  const { conversation: selectedConversationData, isLoading: isLoadingConversation } = useConversation({
     conversationId: selectedConversationId,
     enabled: selectedConversationId !== null,
   })
@@ -92,20 +89,23 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     await refetchConversations()
   }, [refetchConversations])
 
-  const removeConversation = useCallback(async (id: number): Promise<boolean> => {
-    try {
-      const deleted = await deleteConversationAsync(id)
-      if (deleted) {
-        setLocalConversations((prev) => prev.filter((c) => c.id !== id))
-        if (selectedConversationId === id) {
-          startNewConversation()
+  const removeConversation = useCallback(
+    async (id: number): Promise<boolean> => {
+      try {
+        const deleted = await deleteConversationAsync(id)
+        if (deleted) {
+          setLocalConversations((prev) => prev.filter((c) => c.id !== id))
+          if (selectedConversationId === id) {
+            startNewConversation()
+          }
         }
+        return deleted
+      } catch {
+        return false
       }
-      return deleted
-    } catch {
-      return false
-    }
-  }, [deleteConversationAsync, selectedConversationId, startNewConversation])
+    },
+    [deleteConversationAsync, selectedConversationId, startNewConversation],
+  )
 
   const setConversationId = useCallback((id: number | null) => {
     setSelectedConversationId(id)
@@ -114,11 +114,14 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     }
   }, [])
 
-  const updateConversationTitle = useCallback((id: number, title: string) => {
-    setLocalConversations((prev) => prev.map((c) => (c.id === id ? { ...c, title } : c)))
-    // Also update the query cache
-    queryClient.invalidateQueries({ queryKey: queryKeys.conversations.list() })
-  }, [queryClient])
+  const updateConversationTitle = useCallback(
+    (id: number, title: string) => {
+      setLocalConversations((prev) => prev.map((c) => (c.id === id ? { ...c, title } : c)))
+      // Also update the query cache
+      queryClient.invalidateQueries({ queryKey: queryKeys.conversations.list() })
+    },
+    [queryClient],
+  )
 
   const addConversationToList = useCallback((conversation: ConversationListItem) => {
     setLocalConversations((prev) => {

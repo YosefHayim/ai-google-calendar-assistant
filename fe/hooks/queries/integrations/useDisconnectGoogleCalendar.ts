@@ -12,9 +12,7 @@ type DisconnectResponse = { isActive: boolean }
  * Hook to disconnect Google Calendar integration
  * Replaces manual loading state management for disconnect action
  */
-export function useDisconnectGoogleCalendar(
-  options?: MutationHookOptions<DisconnectResponse, void>,
-) {
+export function useDisconnectGoogleCalendar(options?: MutationHookOptions<DisconnectResponse, void>) {
   const queryClient = useQueryClient()
 
   const mutation = useMutation<ApiResponse<DisconnectResponse>, Error, void>({

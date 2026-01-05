@@ -12,9 +12,7 @@ interface Dimensions {
  * @param containerRef - React ref to the container element
  * @returns Current dimensions { width, height }
  */
-export const useContainerDimensions = (
-  containerRef: RefObject<HTMLElement | null>
-): Dimensions => {
+export const useContainerDimensions = (containerRef: RefObject<HTMLElement | null>): Dimensions => {
   const [dimensions, setDimensions] = useState<Dimensions>({ width: 0, height: 0 })
 
   useEffect(() => {

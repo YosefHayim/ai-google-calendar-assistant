@@ -7,10 +7,7 @@ import type { QueryHookOptions } from '../useQueryWrapper'
 /**
  * @deprecated Use useConversation instead for a cleaner API
  */
-export function useGetConversationById(
-  conversationId: number,
-  options?: QueryHookOptions,
-) {
+export function useGetConversationById(conversationId: number, options?: QueryHookOptions) {
   const query = useQuery<FullConversation | null, Error>({
     queryKey: queryKeys.conversations.detail(conversationId),
     queryFn: () => getConversation(conversationId),

@@ -53,7 +53,7 @@ interface AnalyticsContextValue {
   openEventDetailsDialog: (
     event: z.infer<typeof CalendarEventSchema>,
     calendarColor: string,
-    calendarName: string
+    calendarName: string,
   ) => void
   closeEventDetailsDialog: () => void
 
@@ -253,7 +253,7 @@ export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
 
       return events
     },
-    [analyticsRawData]
+    [analyticsRawData],
   )
 
   // Memoized events for selected day
@@ -270,7 +270,7 @@ export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
       setSelectedEventCalendarName(calendarName)
       setIsEventDialogOpen(true)
     },
-    []
+    [],
   )
 
   const closeEventDetailsDialog = useCallback(() => {
@@ -328,26 +328,23 @@ export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
         openEventDetailsDialog(
           activity.event as z.infer<typeof CalendarEventSchema>,
           activity.calendarColor,
-          activity.calendarName
+          activity.calendarName,
         )
       }
     },
-    [openEventDetailsDialog]
+    [openEventDetailsDialog],
   )
 
   // Helper for calendar event click from dialogs
-  const handleCalendarEventClick = useCallback(
-    (event: CalendarEvent, calendarColor: string, calendarName: string) => {
-      setSelectedEvent(event as z.infer<typeof CalendarEventSchema>)
-      setSelectedEventCalendarColor(calendarColor)
-      setSelectedEventCalendarName(calendarName)
-      setIsEventDialogOpen(true)
-      // Close other dialogs
-      setIsCalendarEventsDialogOpen(false)
-      setIsDayEventsDialogOpen(false)
-    },
-    []
-  )
+  const handleCalendarEventClick = useCallback((event: CalendarEvent, calendarColor: string, calendarName: string) => {
+    setSelectedEvent(event as z.infer<typeof CalendarEventSchema>)
+    setSelectedEventCalendarColor(calendarColor)
+    setSelectedEventCalendarName(calendarName)
+    setIsEventDialogOpen(true)
+    // Close other dialogs
+    setIsCalendarEventsDialogOpen(false)
+    setIsDayEventsDialogOpen(false)
+  }, [])
 
   const value: AnalyticsContextValue = {
     // Date range

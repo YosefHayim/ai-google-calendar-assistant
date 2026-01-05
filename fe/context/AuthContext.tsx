@@ -11,7 +11,7 @@ interface AuthContextType {
   logout: () => void
 }
 
-const USER = 'user' 
+const USER = 'user'
 const ACCESS_TOKEN = 'access_token'
 const REFRESH_TOKEN = 'refresh_token'
 

@@ -94,7 +94,13 @@ export const AvatarView: React.FC<AvatarViewProps> = ({
                       )}
                     </div>
                     {!isCurrentlyStreaming && (
-                      <MessageActions msg={msg} isSpeaking={isSpeaking} onResend={onResend} onEdit={onEdit} onSpeak={onSpeak} />
+                      <MessageActions
+                        msg={msg}
+                        isSpeaking={isSpeaking}
+                        onResend={onResend}
+                        onEdit={onEdit}
+                        onSpeak={onSpeak}
+                      />
                     )}
                   </div>
                 )

@@ -294,7 +294,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
           handleCalendarEventClick(
             event,
             selectedCalendarForEvents?.color || '#6366f1',
-            selectedCalendarForEvents?.name || ''
+            selectedCalendarForEvents?.name || '',
           )
         }}
       />

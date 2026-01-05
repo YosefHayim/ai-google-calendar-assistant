@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express"
 import { STATUS_RESPONSE } from "@/config"
-import { asyncHandler, sendR } from "@/utils/http"
+import { reqResAsyncHandler, sendR } from "@/utils/http"
 import { checkTokenExpiry, fetchGoogleTokensByEmail, type TokenExpiryStatus } from "@/utils/auth/google-token"
 import type { TokensProps } from "@/types"
 
@@ -29,7 +29,7 @@ export type GoogleTokenValidationResult = {
  * @example
  * router.get('/calendar', supabaseAuth(), googleTokenValidation, googleTokenRefresh(), handler);
  */
-export const googleTokenValidation = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+export const googleTokenValidation = reqResAsyncHandler(async (req: Request, res: Response, next: NextFunction) => {
   const email = req.user?.email
   if (!email) {
     return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User email not found. Please authenticate first.")

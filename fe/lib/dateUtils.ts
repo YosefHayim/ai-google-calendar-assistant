@@ -1,11 +1,4 @@
-import {
-  differenceInCalendarDays,
-  format,
-  isThisWeek,
-  isToday,
-  isYesterday,
-  subDays,
-} from 'date-fns'
+import { differenceInCalendarDays, format, isThisWeek, isToday, isYesterday, subDays } from 'date-fns'
 
 /**
  * Formats a date string to a relative date format

@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import { STATUS_RESPONSE, SUPABASE } from "@/config";
-import { asyncHandler, sendR } from "@/utils/http";
+import { reqResAsyncHandler, sendR } from "@/utils/http";
 
 /**
  * Authenticate user by token using Supabase Auth Get User
@@ -14,7 +14,7 @@ import { asyncHandler, sendR } from "@/utils/http";
  * const data = await authHandler(req, res, next);
  *
  */
-export const authHandler = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+export const authHandler = reqResAsyncHandler(async (req: Request, res: Response, next: NextFunction) => {
   const token = req.headers.authorization?.replace("Bearer ", "");
   if (!token) {
     return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "Missing authorization headers: ", token);

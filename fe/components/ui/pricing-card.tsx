@@ -87,11 +87,14 @@ export const PricingCard: React.FC<PricingCardProps> = ({ tier, paymentFrequency
       // If user is not authenticated, redirect to register first
       if (!isAuthenticated) {
         // Store the plan info in localStorage so we can redirect after auth
-        localStorage.setItem('pending_plan', JSON.stringify({
-          planSlug: tier.id as PlanSlug,
-          interval: isPerUse ? 'one_time' : (paymentFrequency as PlanInterval),
-          credits: isCustomTier ? customAmount : tier.price[paymentFrequency] as number,
-        }))
+        localStorage.setItem(
+          'pending_plan',
+          JSON.stringify({
+            planSlug: tier.id as PlanSlug,
+            interval: isPerUse ? 'one_time' : (paymentFrequency as PlanInterval),
+            credits: isCustomTier ? customAmount : (tier.price[paymentFrequency] as number),
+          }),
+        )
         router.push('/register')
         return
       }
@@ -99,7 +102,7 @@ export const PricingCard: React.FC<PricingCardProps> = ({ tier, paymentFrequency
       // User is authenticated, proceed to checkout
       if (isPerUse) {
         // Credit pack purchase
-        const credits = isCustomTier ? customAmount : ((tier as any).action_pack_size || 25)
+        const credits = isCustomTier ? customAmount : (tier as any).action_pack_size || 25
         await redirectToCreditPackCheckout({
           credits,
           planSlug: tier.id as PlanSlug,

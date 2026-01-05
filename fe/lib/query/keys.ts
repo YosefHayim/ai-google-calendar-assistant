@@ -57,6 +57,14 @@ export const queryKeys = {
     list: (params?: GapQueryParams) => [...queryKeys.gaps.all, 'list', params ?? {}] as const,
     settings: () => [...queryKeys.gaps.all, 'settings'] as const,
   },
+
+  // User Preferences queries
+  preferences: {
+    all: ['preferences'] as const,
+    list: () => [...queryKeys.preferences.all, 'list'] as const,
+    allyBrain: () => [...queryKeys.preferences.all, 'ally_brain'] as const,
+    contextualScheduling: () => [...queryKeys.preferences.all, 'contextual_scheduling'] as const,
+  },
 } as const
 
 /** Type helper for query keys */

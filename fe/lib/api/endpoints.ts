@@ -319,6 +319,35 @@ export const ENDPOINTS = {
    * Methods: POST
    */
   GAPS_DISABLE: '/api/gaps/disable',
+
+  // ============================================
+  // USER PREFERENCES ENDPOINTS
+  // ============================================
+
+  /**
+   * Get all assistant preferences
+   * Methods: GET
+   */
+  USER_PREFERENCES: '/api/users/preferences',
+
+  /**
+   * Get specific preference by key
+   * Methods: GET
+   * @param key - Preference key (ally_brain, contextual_scheduling)
+   */
+  USER_PREFERENCES_BY_KEY: (key: string) => `/api/users/preferences/${key}`,
+
+  /**
+   * Update ally_brain preference
+   * Methods: PUT
+   */
+  USER_PREFERENCES_ALLY_BRAIN: '/api/users/preferences/ally_brain',
+
+  /**
+   * Update contextual_scheduling preference
+   * Methods: PUT
+   */
+  USER_PREFERENCES_CONTEXTUAL_SCHEDULING: '/api/users/preferences/contextual_scheduling',
 } as const
 
 export type EndpointsType = typeof ENDPOINTS
