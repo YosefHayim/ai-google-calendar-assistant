@@ -260,11 +260,12 @@ CREATE INDEX IF NOT EXISTS idx_conversations_updated ON conversations(user_id, u
 CREATE INDEX IF NOT EXISTS idx_conversations_external_chat ON conversations(source, external_chat_id) WHERE external_chat_id IS NOT NULL;
 
 -- =============================================================================
--- TABLE: conversation_messages (Individual messages)
+-- TABLE: conversation_messages_new (Individual messages)
 -- =============================================================================
 -- Stores individual messages within conversations
+-- Named with _new suffix to avoid conflicts with any existing table
 
-CREATE TABLE IF NOT EXISTS conversation_messages (
+CREATE TABLE IF NOT EXISTS conversation_messages_new (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     conversation_id UUID NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,
     
@@ -290,11 +291,11 @@ CREATE TABLE IF NOT EXISTS conversation_messages (
     sequence_number INTEGER NOT NULL
 );
 
--- Indexes for conversation_messages
-CREATE INDEX IF NOT EXISTS idx_conversation_messages_conversation_id ON conversation_messages(conversation_id);
-CREATE INDEX IF NOT EXISTS idx_conversation_messages_created ON conversation_messages(conversation_id, created_at);
-CREATE INDEX IF NOT EXISTS idx_conversation_messages_sequence ON conversation_messages(conversation_id, sequence_number);
-CREATE INDEX IF NOT EXISTS idx_conversation_messages_role ON conversation_messages(conversation_id, role);
+-- Indexes for conversation_messages_new
+CREATE INDEX IF NOT EXISTS idx_conversation_messages_new_conversation_id ON conversation_messages_new(conversation_id);
+CREATE INDEX IF NOT EXISTS idx_conversation_messages_new_created ON conversation_messages_new(conversation_id, created_at);
+CREATE INDEX IF NOT EXISTS idx_conversation_messages_new_sequence ON conversation_messages_new(conversation_id, sequence_number);
+CREATE INDEX IF NOT EXISTS idx_conversation_messages_new_role ON conversation_messages_new(conversation_id, role);
 
 -- =============================================================================
 -- TABLE: conversation_embeddings_new (Vector embeddings for semantic search)
@@ -305,7 +306,7 @@ CREATE TABLE IF NOT EXISTS conversation_embeddings_new (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     conversation_id UUID REFERENCES conversations(id) ON DELETE CASCADE,
-    message_id UUID REFERENCES conversation_messages(id) ON DELETE CASCADE,
+    message_id UUID REFERENCES conversation_messages_new(id) ON DELETE CASCADE,
     
     -- Embedding data
     content TEXT NOT NULL,
@@ -334,10 +335,10 @@ CREATE INDEX IF NOT EXISTS idx_conversation_embeddings_new_vector ON conversatio
     USING hnsw (embedding vector_cosine_ops);
 
 -- =============================================================================
--- TABLE: conversation_summaries (Summarized conversation chunks)
+-- TABLE: conversation_summaries_new (Summarized conversation chunks)
 -- =============================================================================
 
-CREATE TABLE IF NOT EXISTS conversation_summaries (
+CREATE TABLE IF NOT EXISTS conversation_summaries_new (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     conversation_id UUID NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,
@@ -357,15 +358,15 @@ CREATE TABLE IF NOT EXISTS conversation_summaries (
     created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
 );
 
--- Indexes for conversation_summaries
-CREATE INDEX IF NOT EXISTS idx_conversation_summaries_user_id ON conversation_summaries(user_id);
-CREATE INDEX IF NOT EXISTS idx_conversation_summaries_conversation ON conversation_summaries(conversation_id);
+-- Indexes for conversation_summaries_new
+CREATE INDEX IF NOT EXISTS idx_conversation_summaries_new_user_id ON conversation_summaries_new(user_id);
+CREATE INDEX IF NOT EXISTS idx_conversation_summaries_new_conversation ON conversation_summaries_new(conversation_id);
 
 -- =============================================================================
--- TABLE: agent_sessions (AI agent session persistence)
+-- TABLE: agent_sessions_new (AI agent session persistence)
 -- =============================================================================
 
-CREATE TABLE IF NOT EXISTS agent_sessions (
+CREATE TABLE IF NOT EXISTS agent_sessions_new (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     
@@ -388,20 +389,20 @@ CREATE TABLE IF NOT EXISTS agent_sessions (
     expires_at TIMESTAMPTZ,
     
     -- Constraints
-    CONSTRAINT agent_sessions_session_unique UNIQUE (session_id)
+    CONSTRAINT agent_sessions_new_session_unique UNIQUE (session_id)
 );
 
--- Indexes for agent_sessions
-CREATE INDEX IF NOT EXISTS idx_agent_sessions_user_id ON agent_sessions(user_id);
-CREATE INDEX IF NOT EXISTS idx_agent_sessions_session_id ON agent_sessions(session_id);
-CREATE INDEX IF NOT EXISTS idx_agent_sessions_active ON agent_sessions(user_id, is_active) WHERE is_active = TRUE;
-CREATE INDEX IF NOT EXISTS idx_agent_sessions_expires ON agent_sessions(expires_at) WHERE expires_at IS NOT NULL;
+-- Indexes for agent_sessions_new
+CREATE INDEX IF NOT EXISTS idx_agent_sessions_new_user_id ON agent_sessions_new(user_id);
+CREATE INDEX IF NOT EXISTS idx_agent_sessions_new_session_id ON agent_sessions_new(session_id);
+CREATE INDEX IF NOT EXISTS idx_agent_sessions_new_active ON agent_sessions_new(user_id, is_active) WHERE is_active = TRUE;
+CREATE INDEX IF NOT EXISTS idx_agent_sessions_new_expires ON agent_sessions_new(expires_at) WHERE expires_at IS NOT NULL;
 
 -- =============================================================================
--- TABLE: gap_candidates (Calendar gap detection)
+-- TABLE: gap_candidates_new (Calendar gap detection)
 -- =============================================================================
 
-CREATE TABLE IF NOT EXISTS gap_candidates (
+CREATE TABLE IF NOT EXISTS gap_candidates_new (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     
@@ -435,22 +436,22 @@ CREATE TABLE IF NOT EXISTS gap_candidates (
     updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
     
     -- Constraints
-    CONSTRAINT gap_candidates_valid_time_range CHECK (end_time > start_time),
-    CONSTRAINT gap_candidates_valid_confidence CHECK (confidence_score >= 0 AND confidence_score <= 1)
+    CONSTRAINT gap_candidates_new_valid_time_range CHECK (end_time > start_time),
+    CONSTRAINT gap_candidates_new_valid_confidence CHECK (confidence_score >= 0 AND confidence_score <= 1)
 );
 
--- Indexes for gap_candidates
-CREATE INDEX IF NOT EXISTS idx_gap_candidates_user_id ON gap_candidates(user_id);
-CREATE INDEX IF NOT EXISTS idx_gap_candidates_status ON gap_candidates(user_id, resolution_status);
-CREATE INDEX IF NOT EXISTS idx_gap_candidates_pending ON gap_candidates(user_id) WHERE resolution_status = 'pending';
-CREATE INDEX IF NOT EXISTS idx_gap_candidates_time_range ON gap_candidates(user_id, start_time, end_time);
-CREATE INDEX IF NOT EXISTS idx_gap_candidates_detected ON gap_candidates(detected_at DESC);
+-- Indexes for gap_candidates_new
+CREATE INDEX IF NOT EXISTS idx_gap_candidates_new_user_id ON gap_candidates_new(user_id);
+CREATE INDEX IF NOT EXISTS idx_gap_candidates_new_status ON gap_candidates_new(user_id, resolution_status);
+CREATE INDEX IF NOT EXISTS idx_gap_candidates_new_pending ON gap_candidates_new(user_id) WHERE resolution_status = 'pending';
+CREATE INDEX IF NOT EXISTS idx_gap_candidates_new_time_range ON gap_candidates_new(user_id, start_time, end_time);
+CREATE INDEX IF NOT EXISTS idx_gap_candidates_new_detected ON gap_candidates_new(detected_at DESC);
 
 -- =============================================================================
--- TABLE: gap_recovery_settings (User preferences for gap analysis)
+-- TABLE: gap_recovery_settings_new (User preferences for gap analysis)
 -- =============================================================================
 
-CREATE TABLE IF NOT EXISTS gap_recovery_settings (
+CREATE TABLE IF NOT EXISTS gap_recovery_settings_new (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     
@@ -476,12 +477,12 @@ CREATE TABLE IF NOT EXISTS gap_recovery_settings (
     updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
     
     -- Constraints
-    CONSTRAINT gap_recovery_settings_user_unique UNIQUE (user_id)
+    CONSTRAINT gap_recovery_settings_new_user_unique UNIQUE (user_id)
 );
 
--- Indexes for gap_recovery_settings
-CREATE INDEX IF NOT EXISTS idx_gap_recovery_settings_user_id ON gap_recovery_settings(user_id);
-CREATE INDEX IF NOT EXISTS idx_gap_recovery_settings_enabled ON gap_recovery_settings(user_id) WHERE is_enabled = TRUE;
+-- Indexes for gap_recovery_settings_new
+CREATE INDEX IF NOT EXISTS idx_gap_recovery_settings_new_user_id ON gap_recovery_settings_new(user_id);
+CREATE INDEX IF NOT EXISTS idx_gap_recovery_settings_new_enabled ON gap_recovery_settings_new(user_id) WHERE is_enabled = TRUE;
 
 -- =============================================================================
 -- TABLE: user_preferences (Extensible user preferences)
@@ -585,7 +586,7 @@ BEGIN
         ce.content,
         ce.metadata,
         1 - (ce.embedding <=> query_embedding) AS similarity
-    FROM conversation_embeddings ce
+    FROM conversation_embeddings_new ce
     WHERE ce.user_id = match_user_id
         AND 1 - (ce.embedding <=> query_embedding) > match_threshold
     ORDER BY ce.embedding <=> query_embedding
@@ -594,12 +595,12 @@ END;
 $$;
 
 -- Function to cleanup expired agent sessions
-CREATE OR REPLACE FUNCTION cleanup_expired_sessions()
+CREATE OR REPLACE FUNCTION cleanup_expired_sessions_v2()
 RETURNS INTEGER AS $$
 DECLARE
     deleted_count INTEGER;
 BEGIN
-    DELETE FROM agent_sessions
+    DELETE FROM agent_sessions_new
     WHERE expires_at < NOW()
     AND expires_at IS NOT NULL;
     
@@ -614,7 +615,7 @@ RETURNS INTEGER AS $$
 DECLARE
     affected_count INTEGER;
 BEGIN
-    UPDATE gap_candidates
+    UPDATE gap_candidates_new
     SET resolution_status = 'expired',
         updated_at = NOW()
     WHERE resolution_status = 'pending'
@@ -697,23 +698,23 @@ CREATE TRIGGER update_conversations_updated_at
     EXECUTE FUNCTION update_updated_at_column();
 
 -- Agent sessions table
-DROP TRIGGER IF EXISTS update_agent_sessions_updated_at ON agent_sessions;
-CREATE TRIGGER update_agent_sessions_updated_at
-    BEFORE UPDATE ON agent_sessions
+DROP TRIGGER IF EXISTS update_agent_sessions_new_updated_at ON agent_sessions_new;
+CREATE TRIGGER update_agent_sessions_new_updated_at
+    BEFORE UPDATE ON agent_sessions_new
     FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();
 
 -- Gap candidates table
-DROP TRIGGER IF EXISTS update_gap_candidates_updated_at ON gap_candidates;
-CREATE TRIGGER update_gap_candidates_updated_at
-    BEFORE UPDATE ON gap_candidates
+DROP TRIGGER IF EXISTS update_gap_candidates_new_updated_at ON gap_candidates_new;
+CREATE TRIGGER update_gap_candidates_new_updated_at
+    BEFORE UPDATE ON gap_candidates_new
     FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();
 
 -- Gap recovery settings table
-DROP TRIGGER IF EXISTS update_gap_recovery_settings_updated_at ON gap_recovery_settings;
-CREATE TRIGGER update_gap_recovery_settings_updated_at
-    BEFORE UPDATE ON gap_recovery_settings
+DROP TRIGGER IF EXISTS update_gap_recovery_settings_new_updated_at ON gap_recovery_settings_new;
+CREATE TRIGGER update_gap_recovery_settings_new_updated_at
+    BEFORE UPDATE ON gap_recovery_settings_new
     FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();
 
@@ -741,12 +742,12 @@ ALTER TABLE oauth_tokens ENABLE ROW LEVEL SECURITY;
 ALTER TABLE user_calendars ENABLE ROW LEVEL SECURITY;
 ALTER TABLE telegram_users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE conversations ENABLE ROW LEVEL SECURITY;
-ALTER TABLE conversation_messages ENABLE ROW LEVEL SECURITY;
+ALTER TABLE conversation_messages_new ENABLE ROW LEVEL SECURITY;
 ALTER TABLE conversation_embeddings_new ENABLE ROW LEVEL SECURITY;
-ALTER TABLE conversation_summaries ENABLE ROW LEVEL SECURITY;
-ALTER TABLE agent_sessions ENABLE ROW LEVEL SECURITY;
-ALTER TABLE gap_candidates ENABLE ROW LEVEL SECURITY;
-ALTER TABLE gap_recovery_settings ENABLE ROW LEVEL SECURITY;
+ALTER TABLE conversation_summaries_new ENABLE ROW LEVEL SECURITY;
+ALTER TABLE agent_sessions_new ENABLE ROW LEVEL SECURITY;
+ALTER TABLE gap_candidates_new ENABLE ROW LEVEL SECURITY;
+ALTER TABLE gap_recovery_settings_new ENABLE ROW LEVEL SECURITY;
 ALTER TABLE user_preferences ENABLE ROW LEVEL SECURITY;
 
 -- Note: RLS policies should be created based on your authentication strategy
@@ -769,8 +770,8 @@ CREATE POLICY "Service role has full access to conversations"
     ON conversations FOR ALL
     USING (auth.role() = 'service_role');
 
-CREATE POLICY "Service role has full access to conversation_messages"
-    ON conversation_messages FOR ALL
+CREATE POLICY "Service role has full access to conversation_messages_new"
+    ON conversation_messages_new FOR ALL
     USING (auth.role() = 'service_role');
 
 -- =============================================================================
@@ -816,7 +817,7 @@ SELECT
     MIN(start_time) AS earliest_gap,
     MAX(end_time) AS latest_gap,
     AVG(confidence_score) AS avg_confidence
-FROM gap_candidates
+FROM gap_candidates_new
 WHERE resolution_status = 'pending'
 GROUP BY user_id;
 
@@ -829,12 +830,12 @@ COMMENT ON TABLE oauth_tokens IS 'OAuth tokens for external providers (Google, G
 COMMENT ON TABLE user_calendars IS 'User''s connected Google Calendar accounts and preferences';
 COMMENT ON TABLE telegram_users IS 'Telegram user accounts linked to main user accounts';
 COMMENT ON TABLE conversations IS 'Conversation sessions across all platforms (web, telegram, whatsapp)';
-COMMENT ON TABLE conversation_messages IS 'Individual messages within conversations';
-COMMENT ON TABLE conversation_embeddings IS 'Vector embeddings for semantic search of conversation content';
-COMMENT ON TABLE conversation_summaries IS 'AI-generated summaries of conversation chunks';
-COMMENT ON TABLE agent_sessions IS 'Persistent state for OpenAI Agents SDK sessions';
-COMMENT ON TABLE gap_candidates IS 'Detected calendar gaps for the gap recovery feature';
-COMMENT ON TABLE gap_recovery_settings IS 'User preferences for automatic gap detection and recovery';
+COMMENT ON TABLE conversation_messages_new IS 'Individual messages within conversations';
+COMMENT ON TABLE conversation_embeddings_new IS 'Vector embeddings for semantic search of conversation content';
+COMMENT ON TABLE conversation_summaries_new IS 'AI-generated summaries of conversation chunks';
+COMMENT ON TABLE agent_sessions_new IS 'Persistent state for OpenAI Agents SDK sessions';
+COMMENT ON TABLE gap_candidates_new IS 'Detected calendar gaps for the gap recovery feature';
+COMMENT ON TABLE gap_recovery_settings_new IS 'User preferences for automatic gap detection and recovery';
 COMMENT ON TABLE user_preferences IS 'Key-value store for extensible user preferences';
 COMMENT ON TABLE audit_logs IS 'Security and change audit trail';
 

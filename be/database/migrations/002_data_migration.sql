@@ -129,7 +129,7 @@ SELECT
         ELSE 'reader'::calendar_access_role
     END AS access_role,
     cc.time_zone_of_calendar AS timezone,
-    COALESCE(cc.default_reminders, '[]'::jsonb) AS default_reminders,
+    COALESCE(cc.default_reminders::jsonb, '[]'::jsonb) AS default_reminders,
     (cc.calendar_id = cc.email OR cc.calendar_id = 'primary') AS is_primary,
     cc.created_at,
     COALESCE(cc.updated_at, cc.created_at) AS updated_at
@@ -214,7 +214,7 @@ SELECT
     COALESCE(cs.updated_at, cs.update_at, cs.created_at) AS updated_at,
     COALESCE(cs.updated_at, cs.update_at, cs.created_at) AS last_message_at
 FROM conversation_state cs
-LEFT JOIN users u ON cs.user_id = u.id::text
+LEFT JOIN users u ON cs.user_id::text = u.id::text
 LEFT JOIN telegram_users tu ON cs.telegram_user_id = tu.telegram_user_id
 WHERE COALESCE(u.id, tu.user_id) IS NOT NULL;
 
@@ -225,7 +225,7 @@ WHERE COALESCE(u.id, tu.user_id) IS NOT NULL;
 -- Note: The old gap_candidates table uses text user_id, new uses UUID
 -- This migration assumes user_id in old table matches users.id
 
-INSERT INTO gap_candidates (
+INSERT INTO gap_candidates_new (
     user_id,
     start_time,
     end_time,
@@ -278,7 +278,7 @@ ON CONFLICT DO NOTHING;
 -- STEP 7: Migrate gap_recovery_settings
 -- =============================================================================
 
-INSERT INTO gap_recovery_settings (
+INSERT INTO gap_recovery_settings_new (
     user_id,
     settings,
     is_enabled,
@@ -306,7 +306,7 @@ ON CONFLICT (user_id) DO UPDATE SET
 -- STEP 8: Migrate agent_sessions
 -- =============================================================================
 
-INSERT INTO agent_sessions (
+INSERT INTO agent_sessions_new (
     user_id,
     session_id,
     agent_name,
@@ -318,7 +318,7 @@ INSERT INTO agent_sessions (
 SELECT 
     ags.user_id::uuid AS user_id,
     ags.session_id,
-    ags.agent_name,
+    COALESCE(ags.agent_name, 'orchestrator') AS agent_name,
     ags.items,
     TRUE AS is_active,
     ags.created_at,
@@ -349,9 +349,9 @@ VALUES (
             'calendar_categories -> user_calendars',
             'user_telegram_links -> telegram_users',
             'conversation_state -> conversations',
-            'gap_candidates (updated)',
-            'gap_recovery_settings (updated)',
-            'agent_sessions (updated)'
+            'gap_candidates -> gap_candidates_new',
+            'gap_recovery_settings -> gap_recovery_settings_new',
+            'agent_sessions -> agent_sessions_new'
         ],
         'migration_timestamp', NOW()
     ),
@@ -380,10 +380,10 @@ BEGIN
     SELECT COUNT(*) INTO old_telegram_count FROM user_telegram_links WHERE telegram_user_id IS NOT NULL;
     
     -- Count new tables
-    SELECT COUNT(*) INTO new_users_count FROM users;
-    SELECT COUNT(*) INTO new_tokens_count FROM oauth_tokens;
+    SELECT COUNT(*) INTO new_users_count FROM users WHERE status = 'active';
+    SELECT COUNT(*) INTO new_tokens_count FROM oauth_tokens WHERE is_valid = TRUE;
     SELECT COUNT(*) INTO new_calendars_count FROM user_calendars;
-    SELECT COUNT(*) INTO new_telegram_count FROM telegram_users;
+    SELECT COUNT(*) INTO new_telegram_count FROM telegram_users WHERE is_linked = TRUE;
     
     -- Log results
     RAISE NOTICE 'Migration Summary:';
