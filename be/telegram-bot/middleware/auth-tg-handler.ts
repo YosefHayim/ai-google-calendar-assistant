@@ -1,9 +1,10 @@
+import { AuditEventType, auditLogger } from "@/utils/audit-logger";
+
 import type { GlobalContext } from "../init-bot";
 import type { MiddlewareFn } from "grammy";
 import { SUPABASE } from "@/config";
 import { isEmail } from "validator";
 import { logger } from "@/utils/logger";
-import { auditLogger, AuditEventType } from "@/utils/audit-logger";
 import { resetRateLimit } from "./rate-limiter";
 
 // OTP expiry time in milliseconds (10 minutes)
@@ -141,18 +142,67 @@ export const authTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
 
         // OTP verified successfully - save the email
         auditLogger.authSuccess(from.id, pendingEmail, "otp");
-        // Reset auth rate limit on successful verification
-        await resetRateLimit(from.id, "auth");
+        // Reset auth rate limit on successful verification (non-fatal if Redis is down)
+        try {
+          await resetRateLimit(from.id, "auth");
+        } catch (error) {
+          logger.warn(`Failed to reset rate limit for user ${from.id}: ${error}`);
+        }
         session.firstName = from.first_name;
         session.username = from.username;
         session.codeLang = from.language_code;
         session.email = pendingEmail;
         session.pendingEmailVerification = undefined;
 
-        // Use upsert for multi-device support (same telegram_user_id may have different chat_ids)
-        const insertRes = await SUPABASE.from("user_telegram_links")
-          .upsert(
-            {
+        // Create stub entry in user_calendar_tokens if it doesn't exist (to satisfy FK constraint)
+        const { data: existingToken } = await SUPABASE.from("user_calendar_tokens").select("email").ilike("email", pendingEmail).maybeSingle();
+
+        if (!existingToken) {
+          // Create stub entry to satisfy FK constraint
+          // Only set email and is_active - other fields will be populated during Google OAuth
+          const { error: tokenError } = await SUPABASE.from("user_calendar_tokens").insert({
+            email: pendingEmail,
+            is_active: false, // Not authenticated with Google yet
+          });
+
+          if (tokenError) {
+            logger.error(`Telegram Bot: Auth: Failed to create token stub: ${tokenError.message}`);
+            await ctx.reply("Error setting up your account. Please try again.");
+            session.email = undefined;
+            return;
+          }
+        }
+
+        // Check if user already exists by telegram_user_id OR chat_id
+        // (both should be the same in private chats, but one might be NULL in existing records)
+        const { data: existingUsers } = await SUPABASE.from("user_telegram_links")
+          .select("id, telegram_user_id, chat_id")
+          .or(`telegram_user_id.eq.${from.id},chat_id.eq.${from.id}`);
+
+        let insertRes;
+        if (existingUsers && existingUsers.length > 0) {
+          // Update existing user (use the first match, they should all be the same user)
+          const existingUser = existingUsers[0];
+          logger.debug(
+            `Updating existing user_telegram_links record: id=${existingUser.id}, telegram_user_id=${existingUser.telegram_user_id}, chat_id=${existingUser.chat_id}`
+          );
+          insertRes = await SUPABASE.from("user_telegram_links")
+            .update({
+              chat_id: from.id,
+              username: from.username,
+              first_name: from.first_name,
+              language_code: from.language_code,
+              email: pendingEmail,
+              is_bot: from.is_bot,
+              telegram_user_id: from.id, // Ensure this is set even if it was NULL before
+            })
+            .eq("id", existingUser.id) // Update by primary key to be safe
+            .select()
+            .maybeSingle();
+        } else {
+          // Insert new user
+          insertRes = await SUPABASE.from("user_telegram_links")
+            .insert({
               chat_id: from.id,
               username: from.username,
               first_name: from.first_name,
@@ -160,11 +210,10 @@ export const authTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
               email: pendingEmail,
               is_bot: from.is_bot,
               telegram_user_id: from.id,
-            },
-            { onConflict: "telegram_user_id" }
-          )
-          .select()
-          .maybeSingle();
+            })
+            .select()
+            .maybeSingle();
+        }
 
         if (insertRes.error || !insertRes.data) {
           logger.error(`Telegram Bot: Auth: Save error: ${insertRes.error?.message}`);

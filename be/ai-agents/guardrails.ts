@@ -45,7 +45,9 @@ export const preCheckInput = (input: string): { safe: boolean; reason?: string }
 // 1. Define the Schema for Safety Checks
 const SafetyCheckSchema = z.object({
   isSafe: z.boolean().describe("True if the request is safe to proceed. False if it violates safety rules."),
-  violationType: z.enum(["none", "mass_deletion", "vague_intent", "jailbreak_attempt", "pii_exposure", "rate_abuse"]).describe("The category of the violation."),
+  violationType: z
+    .enum(["none", "mass_deletion", "vague_intent", "jailbreak_attempt", "pii_exposure", "rate_abuse"])
+    .describe("The category of the violation."),
   reasoning: z.string().describe("Explanation of why this input was flagged."),
   userReply: z.string().optional().describe("A friendly error message to show the user if the guardrail trips."),
 });
@@ -93,10 +95,7 @@ export const calendarSafetyGuardrail: InputGuardrail = {
     // SECURITY: Fast pre-check before hitting the LLM
     const preCheck = preCheckInput(typeof input === "string" ? input : JSON.stringify(input));
     if (!preCheck.safe) {
-      throw new InputGuardrailTripwireTriggered(
-        preCheck.reason || "I cannot process this request.",
-        "Calendar Safety Protocols - Pre-Check"
-      );
+      throw new InputGuardrailTripwireTriggered(preCheck.reason || "I cannot process this request.", "Calendar Safety Protocols - Pre-Check");
     }
 
     // Run the safety agent against the input
@@ -106,10 +105,7 @@ export const calendarSafetyGuardrail: InputGuardrail = {
 
     // SECURITY: Fail closed - if we can't determine safety, block the request
     if (!safetyData) {
-      throw new InputGuardrailTripwireTriggered(
-        "Unable to verify request safety. Please try again.",
-        "Calendar Safety Protocols - Validation Failed"
-      );
+      throw new InputGuardrailTripwireTriggered("Unable to verify request safety. Please try again.", "Calendar Safety Protocols - Validation Failed");
     }
 
     if (!safetyData.isSafe) {
