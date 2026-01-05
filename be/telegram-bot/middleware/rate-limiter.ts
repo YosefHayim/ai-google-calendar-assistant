@@ -124,6 +124,5 @@ export const messageRateLimiter: MiddlewareFn<GlobalContext> = async (ctx, next)
     await ctx.reply(`You're sending messages too quickly. Please wait ${resetInSeconds} seconds.`);
     return; // Stop middleware chain
   }
-
   return next();
 };

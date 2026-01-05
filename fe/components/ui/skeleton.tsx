@@ -48,6 +48,9 @@ export function SkeletonInsightCard({ className }: SkeletonProps) {
   )
 }
 
+// Deterministic heights for skeleton chart bars to avoid hydration mismatch
+const CHART_BAR_HEIGHTS = [45, 72, 38, 65, 28, 55, 80, 42, 68, 35, 58, 48]
+
 // Chart skeleton (column chart)
 export function SkeletonChart({ className }: SkeletonProps) {
   return (
@@ -65,8 +68,8 @@ export function SkeletonChart({ className }: SkeletonProps) {
         <Skeleton className="h-3 w-48" />
       </div>
       <div className="h-64 flex items-end justify-between gap-2 px-4">
-        {Array.from({ length: 12 }).map((_, i) => (
-          <Skeleton key={i} className="flex-1 rounded-t" style={{ height: `${20 + Math.random() * 60}%` }} />
+        {CHART_BAR_HEIGHTS.map((height, i) => (
+          <Skeleton key={i} className="flex-1 rounded-t" style={{ height: `${height}%` }} />
         ))}
       </div>
     </div>
