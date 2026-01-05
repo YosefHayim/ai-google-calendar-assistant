@@ -72,8 +72,14 @@ export const getTodayConversationState = async (chatId: number): Promise<Convers
 
 // Create a new conversation state for today
 export const createConversationState = async (chatId: number, userId: number, initialMessage?: userAndAiMessageProps): Promise<ConversationStateRow | null> => {
-  // Ensure the user exists first
-  const { error: userError } = await SUPABASE.from("user_telegram_links").upsert({ telegram_user_id: userId }, { onConflict: "telegram_user_id" });
+  // Ensure the user exists first (set both telegram_user_id and chat_id from the start)
+  const { error: userError } = await SUPABASE.from("user_telegram_links").upsert(
+    { 
+      telegram_user_id: userId,
+      chat_id: chatId, // In private chats, chat_id === userId
+    }, 
+    { onConflict: "telegram_user_id" }
+  );
 
   if (userError) {
     logger.error(`Failed to ensure user exists for chat ${chatId}: ${userError.message}`);

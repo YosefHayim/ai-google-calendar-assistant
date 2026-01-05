@@ -1,8 +1,9 @@
-import type { MiddlewareFn } from "grammy";
+import { isRedisConnected, redisClient } from "@/config";
+
 import type { GlobalContext } from "../init-bot";
-import { redisClient, isRedisConnected } from "@/config";
-import { logger } from "@/utils/logger";
+import type { MiddlewareFn } from "grammy";
 import { auditLogger } from "@/utils/audit-logger";
+import { logger } from "@/utils/logger";
 
 // Rate limit configurations
 const RATE_LIMITS = {
