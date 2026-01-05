@@ -1,4 +1,4 @@
-import type { EventQueryParams } from '@/types/api'
+import type { EventQueryParams, GapQueryParams } from '@/types/api'
 
 /**
  * Centralized Query Keys Factory
@@ -49,6 +49,13 @@ export const queryKeys = {
   integrations: {
     all: ['integrations'] as const,
     googleCalendar: () => [...queryKeys.integrations.all, 'googleCalendar'] as const,
+  },
+
+  // Gap Recovery queries
+  gaps: {
+    all: ['gaps'] as const,
+    list: (params?: GapQueryParams) => [...queryKeys.gaps.all, 'list', params ?? {}] as const,
+    settings: () => [...queryKeys.gaps.all, 'settings'] as const,
   },
 } as const
 

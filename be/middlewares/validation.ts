@@ -24,7 +24,7 @@ export const signUpSchema = z.object({
     .max(128, "Password must be less than 128 characters")
     .regex(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-      "Password must contain at least one uppercase letter, one lowercase letter, and one number"
+      "Password must contain at least one uppercase letter, one lowercase letter, and one number",
     ),
 });
 
@@ -34,7 +34,10 @@ export const signInSchema = z.object({
     .email("Invalid email format")
     .max(255, "Email must be less than 255 characters")
     .transform((email) => email.toLowerCase().trim()),
-  password: z.string().min(1, "Password is required").max(128, "Password must be less than 128 characters"),
+  password: z
+    .string()
+    .min(1, "Password is required")
+    .max(128, "Password must be less than 128 characters"),
 });
 
 export const otpVerificationSchema = z.object({
@@ -73,21 +76,39 @@ export const calendarIdSchema = z.object({
 });
 
 export const eventIdParamSchema = z.object({
-  id: z.string().min(1, "Event ID is required").max(500, "Event ID must be less than 500 characters"),
+  id: z
+    .string()
+    .min(1, "Event ID is required")
+    .max(500, "Event ID must be less than 500 characters"),
 });
 
 export const createEventSchema = z.object({
-  summary: z.string().min(1, "Event summary is required").max(1000, "Summary must be less than 1000 characters"),
-  description: z.string().max(10000, "Description must be less than 10000 characters").optional(),
-  location: z.string().max(1000, "Location must be less than 1000 characters").optional(),
+  summary: z
+    .string()
+    .min(1, "Event summary is required")
+    .max(1000, "Summary must be less than 1000 characters"),
+  description: z
+    .string()
+    .max(10000, "Description must be less than 10000 characters")
+    .optional(),
+  location: z
+    .string()
+    .max(1000, "Location must be less than 1000 characters")
+    .optional(),
   start: z.object({
     dateTime: z.string().datetime().optional(),
-    date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format").optional(),
+    date: z
+      .string()
+      .regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format")
+      .optional(),
     timeZone: z.string().max(100).optional(),
   }),
   end: z.object({
     dateTime: z.string().datetime().optional(),
-    date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format").optional(),
+    date: z
+      .string()
+      .regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format")
+      .optional(),
     timeZone: z.string().max(100).optional(),
   }),
   attendees: z
@@ -96,7 +117,7 @@ export const createEventSchema = z.object({
         email: z.string().email("Invalid attendee email"),
         displayName: z.string().max(200).optional(),
         optional: z.boolean().optional(),
-      })
+      }),
     )
     .max(100, "Maximum 100 attendees allowed")
     .optional(),
@@ -109,7 +130,7 @@ export const createEventSchema = z.object({
           z.object({
             method: z.enum(["email", "popup"]),
             minutes: z.number().min(0).max(40320), // Max 4 weeks
-          })
+          }),
         )
         .max(5)
         .optional(),
@@ -209,14 +230,8 @@ const dayOfWeekSchema = z.enum([
 ]);
 
 export const gapAnalysisQuerySchema = z.object({
-  startDate: z
-    .string()
-    .datetime("Invalid start date format")
-    .optional(),
-  endDate: z
-    .string()
-    .datetime("Invalid end date format")
-    .optional(),
+  startDate: z.string().datetime("Invalid start date format").optional(),
+  endDate: z.string().datetime("Invalid end date format").optional(),
   calendarId: z
     .string()
     .max(500, "Calendar ID must be less than 500 characters")
@@ -239,10 +254,7 @@ export const gapAnalysisQuerySchema = z.object({
 });
 
 export const gapIdParamSchema = z.object({
-  gapId: z
-    .string()
-    .uuid("Invalid gap ID format")
-    .min(1, "Gap ID is required"),
+  gapId: z.string().uuid("Invalid gap ID format").min(1, "Gap ID is required"),
 });
 
 export const fillGapSchema = z.object({
@@ -310,3 +322,35 @@ export type GapAnalysisQuery = z.infer<typeof gapAnalysisQuerySchema>;
 export type FillGapBody = z.infer<typeof fillGapSchema>;
 export type SkipGapBody = z.infer<typeof skipGapSchema>;
 export type UpdateGapSettingsBody = z.infer<typeof updateGapSettingsSchema>;
+
+// ============================================
+// User Preferences Validation Schemas
+// ============================================
+
+export const allyBrainSchema = z.object({
+  enabled: z.boolean(),
+  instructions: z
+    .string()
+    .max(1000, "Instructions must be 1000 characters or less")
+    .transform(sanitizeString)
+    .optional()
+    .default(""),
+});
+
+export const contextualSchedulingSchema = z.object({
+  enabled: z.boolean(),
+});
+
+export const preferenceKeyParamSchema = z.object({
+  key: z.enum(["ally_brain", "contextual_scheduling"], {
+    errorMap: () => ({
+      message:
+        "Invalid preference key. Must be 'ally_brain' or 'contextual_scheduling'",
+    }),
+  }),
+});
+
+export type AllyBrainBody = z.infer<typeof allyBrainSchema>;
+export type ContextualSchedulingBody = z.infer<
+  typeof contextualSchedulingSchema
+>;

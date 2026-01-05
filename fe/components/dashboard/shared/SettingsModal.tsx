@@ -33,8 +33,16 @@ import React, { useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import CinematicGlowToggle from '@/components/ui/cinematic-glow-toggle'
+import Image from 'next/image'
 import { Label } from '@/components/ui/label'
-import { useGoogleCalendarStatus, useDisconnectGoogleCalendar, useDeleteAllConversations } from '@/hooks/queries'
+import {
+  useGoogleCalendarStatus,
+  useDisconnectGoogleCalendar,
+  useDeleteAllConversations,
+  useUser,
+} from '@/hooks/queries'
+import { toast } from 'sonner'
+import type { CustomUser } from '@/types/api'
 
 interface SettingsModalProps {
   isOpen: boolean
@@ -173,6 +181,22 @@ const FeatureItem: React.FC<{ icon: React.ReactNode; text: string; colorClass: s
 const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOut, isDarkMode, toggleTheme }) => {
   const [activeTab, setActiveTab] = useState<Tab>('general')
 
+  // User data
+  const { data: userData, isLoading: isUserLoading } = useUser({ customUser: true, enabled: isOpen })
+
+  // Extract user data
+  const isCustomUser = userData && ('avatar_url' in userData || 'first_name' in userData)
+  const customUser = isCustomUser ? (userData as CustomUser) : null
+  const standardUser = !isCustomUser && userData && 'user_metadata' in userData ? userData : null
+
+  const firstName = customUser?.first_name || (standardUser?.user_metadata as Record<string, any>)?.first_name || ''
+  const lastName = customUser?.last_name || (standardUser?.user_metadata as Record<string, any>)?.last_name || ''
+  const email = customUser?.email || standardUser?.email || ''
+  const avatarUrl = customUser?.avatar_url || (standardUser?.user_metadata as Record<string, any>)?.avatar_url
+  const fullName = [firstName, lastName].filter(Boolean).join(' ') || 'User'
+  const initials = `${firstName?.[0] || ''}${lastName?.[0] || ''}`.toUpperCase() || email?.[0]?.toUpperCase() || 'U'
+  const createdAt = customUser?.created_at || standardUser?.created_at
+
   // TanStack Query hooks for Google Calendar integration
   const {
     data: googleCalendarStatus,
@@ -223,7 +247,9 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
         "Are you sure you want to clear Ally's memory? It will forget your scheduling preferences and common meeting times.",
       )
     ) {
-      alert('Memory cleared successfully. Ally will relearn your habits over time.')
+      toast.success('Memory cleared', {
+        description: 'Ally will relearn your habits over time.',
+      })
     }
   }
 
@@ -234,10 +260,14 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
 
     deleteAllConversations(undefined, {
       onSuccess: () => {
-        alert('All conversation logs have been deleted.')
+        toast.success('Chat logs deleted', {
+          description: 'All conversation logs have been deleted.',
+        })
       },
       onError: (error) => {
-        console.error('Error deleting conversations:', error)
+        toast.error('Failed to delete conversations', {
+          description: error instanceof Error ? error.message : 'An error occurred',
+        })
       },
     })
   }
@@ -314,6 +344,37 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
                   </div>
 
                   <div className="flex flex-col">
+                    {/* User Profile Section */}
+                    <div className="py-4 border-b border-zinc-100 dark:border-zinc-800">
+                      <div className="flex items-center gap-4">
+                        {avatarUrl ? (
+                          <Image
+                            src={avatarUrl}
+                            alt={fullName}
+                            width={56}
+                            height={56}
+                            className="rounded-xl object-cover flex-shrink-0"
+                          />
+                        ) : (
+                          <div className="h-14 w-14 rounded-xl bg-zinc-200 dark:bg-zinc-700 flex items-center justify-center flex-shrink-0">
+                            <span className="text-lg font-medium text-zinc-600 dark:text-zinc-300">{initials}</span>
+                          </div>
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <h4 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 truncate">
+                            {fullName}
+                          </h4>
+                          <p className="text-sm text-zinc-500 truncate">{email}</p>
+                          {createdAt && (
+                            <p className="text-xs text-zinc-400 mt-1">
+                              Member since{' '}
+                              {new Date(createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
                     <SelectButton label="Appearance" value={isDarkMode ? 'Dark' : 'Light'} onClick={toggleTheme} />
 
                     {/* Timezone Setting - Critical for Calendar Apps */}
@@ -602,15 +663,12 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
                           </div>
                           <div>
                             <h4 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">Telegram Bot</h4>
-                            <p className="text-xs text-zinc-500 font-medium">@AllySyncBot</p>
+                            <p className="text-xs text-zinc-500 font-medium">@ai_schedule_event_server_bot</p>
                           </div>
-                        </div>
-                        <div className="flex items-center gap-1.5 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 p-1 px-2 rounded-full text-xs font-bold border border-green-100 dark:border-green-900/30">
-                          <CheckCircle2 size={16} /> Connected
                         </div>
                       </div>
                       <a
-                        href="https://t.me/AllySyncBot"
+                        href="https://t.me/ai_schedule_event_server_bot"
                         target="_blank"
                         rel="noreferrer"
                         className="w-full mt-2 flex items-center justify-center gap-2 p-2 rounded-lg text-xs font-bold border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-white dark:hover:bg-zinc-800 transition-colors"

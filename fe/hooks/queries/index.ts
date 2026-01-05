@@ -41,3 +41,14 @@ export {
 
 // Integration hooks
 export { useGoogleCalendarStatus, useDisconnectGoogleCalendar } from './integrations'
+
+// Gap Recovery hooks
+export {
+  useGaps,
+  useGapSettings,
+  useFillGap,
+  useSkipGap,
+  useDismissAllGaps,
+  useUpdateGapSettings,
+  useDisableGapAnalysis,
+} from './gaps'

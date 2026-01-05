@@ -250,3 +250,46 @@ export interface DailyAvailableHoursDataPoint {
   date: string
   hours: number
 }
+
+// --- AI Insights Types ---
+
+export const INSIGHT_ICON_NAMES = [
+  'zap',
+  'users',
+  'coffee',
+  'bar-chart',
+  'calendar',
+  'clock',
+  'trending-up',
+  'trending-down',
+  'sun',
+  'moon',
+  'target',
+  'activity',
+  'award',
+  'briefcase',
+  'check-circle',
+  'compass',
+  'flame',
+  'heart',
+  'layers',
+  'pie-chart',
+] as const
+
+export type InsightIconName = (typeof INSIGHT_ICON_NAMES)[number]
+
+export interface AIInsight {
+  id: string
+  icon: InsightIconName
+  title: string
+  value: string
+  description: string
+  color: InsightColor
+}
+
+export interface AIInsightsResponse {
+  insights: AIInsight[]
+  generatedAt: string
+  periodStart: string
+  periodEnd: string
+}

@@ -264,6 +264,61 @@ export const ENDPOINTS = {
    * Body: { reason? }
    */
   PAYMENTS_REFUND: '/api/payments/refund',
+
+  // ============================================
+  // GAP RECOVERY ENDPOINTS
+  // ============================================
+
+  /**
+   * Analyze calendar and get gaps
+   * Methods: GET
+   * Query params: startDate, endDate, calendarId, lookbackDays, limit
+   */
+  GAPS: '/api/gaps',
+
+  /**
+   * Get gaps formatted for chat display
+   * Methods: GET
+   */
+  GAPS_FORMATTED: '/api/gaps/formatted',
+
+  /**
+   * Fill a gap with a new event
+   * Methods: POST
+   * @param gapId - Gap ID
+   */
+  GAPS_FILL: (gapId: string) => `/api/gaps/${gapId}/fill`,
+
+  /**
+   * Skip a specific gap
+   * Methods: POST
+   * @param gapId - Gap ID
+   */
+  GAPS_SKIP: (gapId: string) => `/api/gaps/${gapId}/skip`,
+
+  /**
+   * Dismiss all pending gaps
+   * Methods: POST
+   */
+  GAPS_DISMISS_ALL: '/api/gaps/dismiss-all',
+
+  /**
+   * Get gap recovery settings
+   * Methods: GET
+   */
+  GAPS_SETTINGS: '/api/gaps/settings',
+
+  /**
+   * Update gap recovery settings
+   * Methods: PATCH
+   */
+  GAPS_SETTINGS_UPDATE: '/api/gaps/settings',
+
+  /**
+   * Disable gap analysis feature
+   * Methods: POST
+   */
+  GAPS_DISABLE: '/api/gaps/disable',
 } as const
 
 export type EndpointsType = typeof ENDPOINTS
