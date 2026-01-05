@@ -1,6 +1,6 @@
 import { ACCESS_TOKEN_COOKIE, REFRESH_TOKEN_COOKIE, setAuthCookies } from "@/utils/auth/cookie-utils";
 import type { NextFunction, Request, Response } from "express";
-import { asyncHandler, sendR } from "@/utils/http";
+import { reqResAsyncHandler, sendR } from "@/utils/http";
 import { refreshSupabaseSession, validateSupabaseToken } from "@/utils/auth/supabase-token";
 
 import { STATUS_RESPONSE } from "@/config";
@@ -40,7 +40,7 @@ export type SupabaseAuthOptions = {
 export const supabaseAuth = (options: SupabaseAuthOptions = {}) => {
   const { autoRefresh = true } = options;
 
-  return asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  return reqResAsyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     // Token extraction priority: Cookie first, then Authorization header
     const authHeader = req.headers.authorization;
     const accessToken = req.cookies?.[ACCESS_TOKEN_COOKIE] || (authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : undefined);

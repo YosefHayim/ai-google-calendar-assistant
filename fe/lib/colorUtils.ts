@@ -51,9 +51,7 @@ export type InsightColor = 'amber' | 'sky' | 'emerald' | 'rose' | 'indigo' | 'or
  * Insight card color classes mapping
  * Returns background and text color classes for insight cards
  */
-export const getInsightColorClasses = (
-  color: InsightColor,
-): { bg: string; text: string } => {
+export const getInsightColorClasses = (color: InsightColor): { bg: string; text: string } => {
   const colorClasses: Record<InsightColor, { bg: string; text: string }> = {
     amber: { bg: 'bg-amber-100/50 dark:bg-amber-900/30', text: 'text-amber-600 dark:text-amber-500' },
     sky: { bg: 'bg-sky-100/50 dark:bg-sky-900/30', text: 'text-sky-600 dark:text-sky-500' },

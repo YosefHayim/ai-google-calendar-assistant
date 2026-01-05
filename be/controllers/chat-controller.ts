@@ -190,11 +190,12 @@ const sendChat = reqResAsyncHandler(
         limit: 3,
       });
 
-      const fullPrompt = buildChatPromptWithContext(
+      const fullPrompt = await buildChatPromptWithContext(
         message,
         conversationContext,
         semanticContext,
         userEmail || userId,
+        userId,
       );
 
       // Create session for persistent agent memory
@@ -270,7 +271,7 @@ async function buildChatPromptWithContext(
   conversationContext: string,
   semanticContext: string,
   userEmail: string,
-  userId: string
+  userId: string,
 ): Promise<string> {
   const parts: string[] = [];
 
@@ -292,19 +293,6 @@ async function buildChatPromptWithContext(
     parts.push(conversationContext);
     parts.push("--- End Today's Conversation ---");
   }
-
-  // Add semantic context from past conversations
-  if (semanticContext) {
-    parts.push("\n--- Related Past Conversations ---");
-    parts.push(semanticContext);
-    parts.push("--- End Past Conversations ---");
-  }
-
-  // Add current message
-  parts.push(`\nUser Request: ${message}`);
-
-  return parts.join("\n");
-}
 
   // Add semantic context from past conversations
   if (semanticContext) {
@@ -495,12 +483,13 @@ const continueConversation = reqResAsyncHandler(
         limit: 3,
       });
 
-      // Build full prompt
-      const fullPrompt = buildChatPromptWithContext(
+      // Build full prompt (including user's custom instructions)
+      const fullPrompt = await buildChatPromptWithContext(
         message,
         conversationContext,
         semanticContext,
         userEmail || userId,
+        userId,
       );
 
       // Create session for persistent agent memory

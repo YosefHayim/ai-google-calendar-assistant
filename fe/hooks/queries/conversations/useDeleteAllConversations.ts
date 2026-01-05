@@ -9,9 +9,7 @@ import type { MutationHookOptions } from '../useMutationWrapper'
  * Hook to delete all conversations
  * Replaces manual fetch + loading state in SettingsModal
  */
-export function useDeleteAllConversations(
-  options?: MutationHookOptions<boolean, void>,
-) {
+export function useDeleteAllConversations(options?: MutationHookOptions<boolean, void>) {
   const queryClient = useQueryClient()
 
   const mutation = useMutation<boolean, Error, void>({

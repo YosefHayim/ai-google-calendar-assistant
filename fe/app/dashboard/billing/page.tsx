@@ -69,7 +69,11 @@ export default function BillingPage() {
   }
 
   const handleCancelSubscription = async () => {
-    if (!confirm('Are you sure you want to cancel your subscription? You will still have access until the end of your billing period.')) {
+    if (
+      !confirm(
+        'Are you sure you want to cancel your subscription? You will still have access until the end of your billing period.',
+      )
+    ) {
       return
     }
 
@@ -111,11 +115,23 @@ export default function BillingPage() {
   const getStatusBadge = (status: string | null) => {
     switch (status) {
       case 'trialing':
-        return <Badge className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"><Clock className="w-3 h-3 mr-1" /> Trial</Badge>
+        return (
+          <Badge className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+            <Clock className="w-3 h-3 mr-1" /> Trial
+          </Badge>
+        )
       case 'active':
-        return <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"><Check className="w-3 h-3 mr-1" /> Active</Badge>
+        return (
+          <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+            <Check className="w-3 h-3 mr-1" /> Active
+          </Badge>
+        )
       case 'past_due':
-        return <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"><AlertCircle className="w-3 h-3 mr-1" /> Past Due</Badge>
+        return (
+          <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
+            <AlertCircle className="w-3 h-3 mr-1" /> Past Due
+          </Badge>
+        )
       case 'canceled':
         return <Badge className="bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200">Canceled</Badge>
       default:
@@ -152,7 +168,11 @@ export default function BillingPage() {
             <p className="text-zinc-500 dark:text-zinc-400 mt-1">Manage your subscription and billing details</p>
           </div>
           <Button onClick={handleManageBilling} disabled={!access?.subscription || actionLoading === 'portal'}>
-            {actionLoading === 'portal' ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <Settings className="w-4 h-4 mr-2" />}
+            {actionLoading === 'portal' ? (
+              <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+            ) : (
+              <Settings className="w-4 h-4 mr-2" />
+            )}
             Manage Billing
           </Button>
         </div>

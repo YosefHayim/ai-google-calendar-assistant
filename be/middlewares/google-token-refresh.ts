@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
-import { asyncHandler, sendR } from "@/utils/http";
+import { reqResAsyncHandler, sendR } from "@/utils/http";
 import { deactivateGoogleTokens, persistGoogleTokens, refreshGoogleAccessToken } from "@/utils/auth/google-token";
 
 import { STATUS_RESPONSE } from "@/config";
@@ -34,7 +34,7 @@ export type GoogleTokenRefreshOptions = {
 export const googleTokenRefresh = (options: GoogleTokenRefreshOptions = {}) => {
   const { force = false } = options;
 
-  return asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  return reqResAsyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const validation = req.googleTokenValidation;
 
     if (!validation) {

@@ -15,14 +15,11 @@ interface ContinueConversationParams {
  * Hook to continue a conversation (send a message)
  * Uses mutation pattern since this is a write operation
  */
-export function useUpdateConversationById(
-  options?: MutationHookOptions<void, ContinueConversationParams>,
-) {
+export function useUpdateConversationById(options?: MutationHookOptions<void, ContinueConversationParams>) {
   const queryClient = useQueryClient()
 
   const mutation = useMutation<void, Error, ContinueConversationParams>({
-    mutationFn: ({ conversationId, message, callbacks }) =>
-      continueConversation(conversationId, message, callbacks),
+    mutationFn: ({ conversationId, message, callbacks }) => continueConversation(conversationId, message, callbacks),
     onSuccess: (data, variables) => {
       // Invalidate conversation detail to refetch
       queryClient.invalidateQueries({

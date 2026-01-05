@@ -14,7 +14,7 @@ const TwoDTabSkeleton: React.FC = () => {
           <div className="absolute inset-0 rounded-full bg-zinc-200 dark:bg-zinc-800 blur-[100px] opacity-20" />
           <Skeleton className="w-full h-full rounded-full" />
         </div>
-        
+
         {/* Text Skeleton */}
         <div className="mt-8 text-center relative z-10 px-4">
           <Skeleton className="h-8 w-64 mb-2 mx-auto" />
@@ -28,7 +28,7 @@ const TwoDTabSkeleton: React.FC = () => {
           <MessageSquare className="w-3.5 h-3.5" />
           <Skeleton className="h-3 w-24" />
         </div>
-        
+
         <div className="flex-1 space-y-4">
           {/* Assistant message skeleton */}
           <div className="flex flex-col">
@@ -38,7 +38,7 @@ const TwoDTabSkeleton: React.FC = () => {
               <Skeleton className="h-2 w-12" />
             </div>
           </div>
-          
+
           {/* User message skeleton */}
           <div className="flex flex-col items-end">
             <Skeleton className="h-12 w-[75%] rounded-xl rounded-tr-none" />
@@ -46,7 +46,7 @@ const TwoDTabSkeleton: React.FC = () => {
               <Skeleton className="h-2 w-12" />
             </div>
           </div>
-          
+
           {/* Assistant message skeleton */}
           <div className="flex flex-col">
             <Skeleton className="h-20 w-[85%] rounded-xl rounded-tl-none" />

@@ -20,9 +20,7 @@ interface UseSpeechRecognitionReturn {
   toggleRecording: () => void
 }
 
-export const useSpeechRecognition = (
-  onFinalTranscription: (text: string) => void,
-): UseSpeechRecognitionReturn => {
+export const useSpeechRecognition = (onFinalTranscription: (text: string) => void): UseSpeechRecognitionReturn => {
   const [isRecording, setIsRecording] = useState(false)
   const [speechRecognitionSupported, setSpeechRecognitionSupported] = useState(false)
   const [speechRecognitionError, setSpeechRecognitionError] = useState<string | null>(null)
