@@ -52,3 +52,6 @@ export {
   useUpdateGapSettings,
   useDisableGapAnalysis,
 } from './gaps'
+
+// User Preferences hooks
+export { useAllyBrain, useUpdateAllyBrain, useContextualScheduling, useUpdateContextualScheduling } from './preferences'

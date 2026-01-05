@@ -37,7 +37,7 @@ const tabs: { id: TabValue; label: string; icon: React.ElementType }[] = [
   { id: 'general', label: 'General', icon: Settings },
   { id: 'account', label: 'Subscription', icon: CreditCard },
   { id: 'integrations', label: 'Integrations', icon: LayoutDashboard },
-  { id: 'assistant', label: 'Assistant', icon: Brain },
+  { id: 'assistant', label: "Ally's Brain", icon: Brain },
   { id: 'notifications', label: 'Notifications', icon: Bell },
   { id: 'security', label: 'Security', icon: Shield },
   { id: 'data_controls', label: 'Data', icon: Database },
