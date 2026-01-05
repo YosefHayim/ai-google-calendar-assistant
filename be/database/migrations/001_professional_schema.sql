@@ -725,9 +725,9 @@ CREATE TRIGGER update_user_preferences_updated_at
     EXECUTE FUNCTION update_updated_at_column();
 
 -- Conversation embeddings table
-DROP TRIGGER IF EXISTS update_conversation_embeddings_updated_at ON conversation_embeddings;
-CREATE TRIGGER update_conversation_embeddings_updated_at
-    BEFORE UPDATE ON conversation_embeddings
+DROP TRIGGER IF EXISTS update_conversation_embeddings_new_updated_at ON conversation_embeddings_new;
+CREATE TRIGGER update_conversation_embeddings_new_updated_at
+    BEFORE UPDATE ON conversation_embeddings_new
     FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();
 
