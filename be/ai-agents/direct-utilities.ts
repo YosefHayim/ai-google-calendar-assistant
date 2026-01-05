@@ -3,17 +3,17 @@
  * These functions are called directly instead of through agent wrappers.
  */
 
-import { SUPABASE } from "@/config";
-import { TOKEN_FIELDS } from "@/config/constants/sql";
-import { fetchCredentialsByEmail } from "@/utils/auth";
-import { checkEventConflicts, initUserSupabaseCalendarWithTokensAndUpdateTokens } from "@/utils/calendar";
-import type { calendar_v3 } from "googleapis";
-import isEmail from "validator/lib/isEmail";
-import { formatEventData, getCalendarCategoriesByEmail, type UserCalendar } from "./utils";
-import type { TokensProps } from "@/types";
-import { MODELS } from "@/config/constants/ai";
-import OpenAI from "openai";
-import { env } from "@/config";
+import { SUPABASE } from "@/config"
+import { fetchCredentialsByEmail } from "@/utils/auth"
+import { checkEventConflicts, initUserSupabaseCalendarWithTokensAndUpdateTokens } from "@/utils/calendar"
+import type { calendar_v3 } from "googleapis"
+import isEmail from "validator/lib/isEmail"
+import { formatEventData, getCalendarCategoriesByEmail, type UserCalendar } from "./utils"
+import type { TokensProps } from "@/types"
+import { MODELS } from "@/config/constants/ai"
+import OpenAI from "openai"
+import { env } from "@/config"
+import { USER_FIELDS } from "@/config/constants/sql"
 
 type Event = calendar_v3.Schema$Event;
 
@@ -37,23 +37,44 @@ export async function validateUserDirect(email: string): Promise<ValidateUserRes
     return { exists: false, error: "Invalid email address." };
   }
 
+  const normalizedEmail = email.trim().toLowerCase();
+
   try {
-    const { data, error } = await SUPABASE.from("user_calendar_tokens").select(TOKEN_FIELDS).eq("email", email.trim().toLowerCase());
+    // Step 1: Query users table to check if user exists
+    const { data: userData, error: userError } = await SUPABASE
+      .from("users")
+      .select(USER_FIELDS)
+      .ilike("email", normalizedEmail)
+      .single();
 
-    // Check for database schema errors specifically
-    if (error) {
-      const categorized = categorizeError(error);
-      if (categorized.type === "database") {
-        return { exists: false, error: "Database error - please try again in a moment." };
+    if (userError || !userData) {
+      // Check for database schema errors specifically
+      if (userError) {
+        const categorized = categorizeError(userError);
+        if (categorized.type === "database") {
+          return { exists: false, error: "Database error - please try again in a moment." };
+        }
       }
-      return { exists: false, error: error.message };
-    }
-
-    if (!data || data.length === 0) {
       return { exists: false, error: "No credentials found - authorization required." };
     }
 
-    return { exists: true, user: data[0] };
+    // Step 2: Check if user has valid OAuth tokens
+    const { data: tokenData, error: tokenError } = await SUPABASE
+      .from("oauth_tokens")
+      .select("id, is_valid, provider")
+      .eq("user_id", userData.id)
+      .eq("provider", "google")
+      .single();
+
+    if (tokenError || !tokenData) {
+      return { exists: false, error: "No credentials found - authorization required." };
+    }
+
+    if (!tokenData.is_valid) {
+      return { exists: false, error: "Token expired - authorization required." };
+    }
+
+    return { exists: true, user: userData as Record<string, unknown> };
   } catch (error) {
     const categorized = categorizeError(error);
     return { exists: false, error: categorized.message };
@@ -74,7 +95,10 @@ export type TimezoneResult = {
  */
 async function updateUserTimezoneInDb(email: string, timezone: string): Promise<void> {
   try {
-    await SUPABASE.from("user_calendar_tokens").update({ timezone }).eq("email", email.trim().toLowerCase());
+    await SUPABASE
+      .from("users")
+      .update({ timezone, updated_at: new Date().toISOString() })
+      .ilike("email", email.trim().toLowerCase());
   } catch (error) {
     console.error("Failed to update timezone in DB:", error);
   }
@@ -130,18 +154,19 @@ export async function getUserDefaultTimezoneDirect(email: string): Promise<Timez
   const normalizedEmail = email.trim().toLowerCase();
 
   try {
-    // First, check if timezone exists in DB
-    const { data: userData, error: dbError } = await SUPABASE.from("user_calendar_tokens").select(TOKEN_FIELDS).eq("email", normalizedEmail).single();
+    // First, check if timezone exists in users table
+    const { data: userData, error: dbError } = await SUPABASE
+      .from("users")
+      .select("id, timezone")
+      .ilike("email", normalizedEmail)
+      .single();
 
     // If there's a database schema error, fall back to Google Calendar API
     if (dbError && dbError.message?.toLowerCase().includes("column") && dbError.message?.toLowerCase().includes("does not exist")) {
       console.warn("Timezone column not found in DB, falling back to Google Calendar API");
       // Continue to fetch from Google Calendar
-    } else {
-      const dbTimezone = (userData as TokensProps | null)?.timezone;
-      if (dbTimezone) {
-        return { timezone: dbTimezone };
-      }
+    } else if (userData?.timezone) {
+      return { timezone: userData.timezone };
     }
 
     // Timezone not in DB - fetch from Google Calendar settings

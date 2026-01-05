@@ -23,6 +23,7 @@ export enum ROUTES {
   TELEGRAM_USERS = "/api/telegram-users",
   WHATSAPP = "/api/whatsapp",
   CHAT = "/api/chat",
+  PAYMENTS = "/api/payments",
 }
 
 export enum PROVIDERS {

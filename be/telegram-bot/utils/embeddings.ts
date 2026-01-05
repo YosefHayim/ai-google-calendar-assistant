@@ -49,15 +49,38 @@ const formatEmbeddingForPgVector = (embedding: number[]): string => {
   return `[${embedding.join(",")}]`;
 };
 
+// Helper to get user_id from telegram_user_id
+const getUserIdFromTelegram = async (telegramUserId: number): Promise<string | null> => {
+  const { data, error } = await SUPABASE
+    .from("telegram_users")
+    .select("user_id")
+    .eq("telegram_user_id", telegramUserId)
+    .single();
+
+  if (error || !data?.user_id) {
+    return null;
+  }
+
+  return data.user_id;
+};
+
 // Store conversation embedding in the database
 export const storeConversationEmbedding = async (
   chatId: number,
-  userId: number,
+  telegramUserId: number,
   content: string,
   role: "user" | "assistant",
-  messageId?: number
+  messageId?: string,
+  conversationId?: string
 ): Promise<boolean> => {
   try {
+    // Get user_id from telegram_users table
+    const userId = await getUserIdFromTelegram(telegramUserId);
+    if (!userId) {
+      logger.error(`Telegram Bot: Embeddings: User not found for telegram_user_id=${telegramUserId}`);
+      return false;
+    }
+
     const embedding = await generateEmbedding(content);
     const embeddingString = formatEmbeddingForPgVector(embedding);
     const metadata: EmbeddingMetadata = {
@@ -66,22 +89,23 @@ export const storeConversationEmbedding = async (
       timestamp: new Date().toISOString(),
     };
     const { error } = await SUPABASE.from(CONVERSATION_EMBEDDINGS_TABLE).insert({
-      chat_id: chatId,
-      user_id: null,
+      user_id: userId,
       content,
       embedding: embeddingString,
       message_id: messageId || null,
+      conversation_id: conversationId || null,
       metadata,
+      source: "telegram",
     });
 
     if (error) {
-      logger.error(`Telegram Bot: Embeddings: Error storing conversation embedding: chatId=${chatId}, userId=${userId}, role=${role}, messageId=${messageId}, error=${error.message || error}`);
+      logger.error(`Telegram Bot: Embeddings: Error storing conversation embedding: chatId=${chatId}, telegramUserId=${telegramUserId}, role=${role}, messageId=${messageId}, error=${error.message || error}`);
       console.error("Error storing conversation embedding:", error);
       return false;
     }
     return true;
   } catch (error) {
-    logger.error(`Telegram Bot: Embeddings: Error generating/storing embedding: chatId=${chatId}, userId=${userId}, role=${role}, messageId=${messageId}, error=${error instanceof Error ? error.message : error}`);
+    logger.error(`Telegram Bot: Embeddings: Error generating/storing embedding: chatId=${chatId}, telegramUserId=${telegramUserId}, role=${role}, messageId=${messageId}, error=${error instanceof Error ? error.message : error}`);
     console.error("Error generating/storing embedding:", error);
     return false;
   }
@@ -138,10 +162,17 @@ export const buildSemanticContext = (conversations: SimilarConversation[]): stri
 };
 
 // Store embedding in background (non-blocking)
-export const storeEmbeddingAsync = (chatId: number, userId: number, content: string, role: "user" | "assistant", messageId?: number): void => {
+export const storeEmbeddingAsync = (
+  chatId: number,
+  telegramUserId: number,
+  content: string,
+  role: "user" | "assistant",
+  messageId?: string,
+  conversationId?: string
+): void => {
   // Fire and forget - don't await
-  storeConversationEmbedding(chatId, userId, content, role, messageId).catch((error) => {
-    logger.error(`Telegram Bot: Embeddings: Error storing embedding asynchronously: chatId=${chatId}, userId=${userId}, role=${role}, messageId=${messageId}, error=${error instanceof Error ? error.message : error}`);
+  storeConversationEmbedding(chatId, telegramUserId, content, role, messageId, conversationId).catch((error) => {
+    logger.error(`Telegram Bot: Embeddings: Error storing embedding asynchronously: chatId=${chatId}, telegramUserId=${telegramUserId}, role=${role}, messageId=${messageId}, error=${error instanceof Error ? error.message : error}`);
     console.error("Background embedding storage failed:", error);
   });
 };

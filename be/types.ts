@@ -88,17 +88,152 @@ export type SessionData = {
   awaitingEmailChange?: boolean;
 };
 
+/**
+ * Combined user and OAuth token data for Google Calendar operations.
+ * Maps to joined data from `users` + `oauth_tokens` tables.
+ */
 export type TokensProps = {
-  access_token?: string | null;
-  refresh_token?: string | null;
-  scope?: string;
-  token_type?: string | null;
-  id_token?: string | null;
-  expiry_date?: number | null;
-  refresh_token_expires_in?: number | null;
+  // User fields (from users table)
+  user_id?: string | null;
   email?: string | null;
   timezone?: string | null;
+  display_name?: string | null;
+  first_name?: string | null;
+  last_name?: string | null;
+  avatar_url?: string | null;
+
+  // OAuth token fields (from oauth_tokens table)
+  access_token?: string | null;
+  refresh_token?: string | null;
+  scope?: string | null;
+  token_type?: string | null;
+  id_token?: string | null;
+  expires_at?: string | null; // ISO timestamp
+  expiry_date?: number | null; // Milliseconds timestamp (for backwards compatibility)
+  refresh_token_expires_at?: string | null;
+  is_valid?: boolean | null;
+  provider?: "google" | "github" | "telegram" | "whatsapp" | null;
+
+  // Legacy field mapping (deprecated, use is_valid instead)
   is_active?: boolean | null;
+};
+
+/**
+ * User record from the `users` table
+ */
+export type UserRecord = {
+  id: string;
+  email: string;
+  display_name?: string | null;
+  first_name?: string | null;
+  last_name?: string | null;
+  avatar_url?: string | null;
+  timezone?: string | null;
+  locale?: string | null;
+  status?: "active" | "inactive" | "suspended" | "pending_verification" | null;
+  email_verified?: boolean | null;
+  last_login_at?: string | null;
+  created_at: string;
+  updated_at: string;
+  deactivated_at?: string | null;
+};
+
+/**
+ * OAuth token record from the `oauth_tokens` table
+ */
+export type OAuthTokenRecord = {
+  id: string;
+  user_id: string;
+  provider: "google" | "github" | "telegram" | "whatsapp";
+  access_token: string;
+  refresh_token?: string | null;
+  id_token?: string | null;
+  token_type?: string | null;
+  scope?: string | null;
+  expires_at?: string | null;
+  refresh_token_expires_at?: string | null;
+  is_valid?: boolean | null;
+  last_refreshed_at?: string | null;
+  refresh_error_count?: number | null;
+  provider_user_id?: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+/**
+ * User calendar record from the `user_calendars` table
+ */
+export type UserCalendarRecord = {
+  id: string;
+  user_id: string;
+  calendar_id: string;
+  calendar_name?: string | null;
+  is_primary?: boolean | null;
+  is_visible?: boolean | null;
+  access_role?: "owner" | "writer" | "reader" | "freeBusyReader" | null;
+  timezone?: string | null;
+  background_color?: string | null;
+  foreground_color?: string | null;
+  default_reminders?: unknown | null;
+  notification_enabled?: boolean | null;
+  sync_token?: string | null;
+  last_synced_at?: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+/**
+ * Telegram user record from the `telegram_users` table
+ */
+export type TelegramUserRecord = {
+  id: string;
+  telegram_user_id: number;
+  user_id?: string | null;
+  telegram_chat_id?: number | null;
+  telegram_username?: string | null;
+  first_name?: string | null;
+  language_code?: string | null;
+  is_bot?: boolean | null;
+  is_linked?: boolean | null;
+  pending_email?: string | null;
+  last_activity_at?: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+/**
+ * Conversation record from the `conversations` table
+ */
+export type ConversationRecord = {
+  id: string;
+  user_id: string;
+  source: "web" | "telegram" | "whatsapp" | "api";
+  external_chat_id?: number | null;
+  title?: string | null;
+  summary?: string | null;
+  is_active?: boolean | null;
+  message_count?: number | null;
+  last_message_at?: string | null;
+  archived_at?: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+/**
+ * Conversation message record from the `conversation_messages` table
+ */
+export type ConversationMessageRecord = {
+  id: string;
+  conversation_id: string;
+  role: "user" | "assistant" | "system" | "tool";
+  content: string;
+  sequence_number: number;
+  tool_calls?: unknown | null;
+  tool_call_id?: string | null;
+  metadata?: unknown | null;
+  prompt_tokens?: number | null;
+  completion_tokens?: number | null;
+  created_at: string;
 };
 
 export type userAndAiMessageProps = {

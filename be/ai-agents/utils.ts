@@ -147,9 +147,23 @@ export type UserCalendar = {
 };
 
 export const getCalendarCategoriesByEmail = asyncHandler(async (email: string): Promise<UserCalendar[]> => {
-  const { data, error } = await SUPABASE.from("calendar_categories")
+  // Step 1: Get user_id from users table by email
+  const { data: userData, error: userError } = await SUPABASE
+    .from("users")
+    .select("id")
+    .ilike("email", email.trim().toLowerCase())
+    .single();
+
+  if (userError || !userData) {
+    // User not found - return empty array instead of throwing
+    return [];
+  }
+
+  // Step 2: Get calendars from user_calendars table using user_id
+  const { data, error } = await SUPABASE
+    .from("user_calendars")
     .select("calendar_id, calendar_name")
-    .eq("email", email.trim().toLowerCase());
+    .eq("user_id", userData.id);
 
   if (error) {
     throw error;
