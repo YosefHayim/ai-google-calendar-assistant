@@ -6,6 +6,10 @@ import { reqResAsyncHandler, sendR } from "@/utils/http";
 import { fetchCredentialsByEmail } from "@/utils/auth/get-user-calendar-tokens";
 import { getEvents } from "@/utils/calendar/get-events";
 import { initUserSupabaseCalendarWithTokensAndUpdateTokens } from "@/utils/calendar/init";
+import { generateInsightsWithRetry } from "@/ai-agents/insights-generator";
+import { calculateInsightsMetrics } from "@/utils/ai/insights-calculator";
+import { getCachedInsights, setCachedInsights } from "@/utils/cache/insights-cache";
+import type { calendar_v3 } from "googleapis";
 
 /**
  * Get event by event ID
@@ -304,6 +308,111 @@ const importEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
   sendR(res, STATUS_RESPONSE.CREATED, "Event imported successfully", r.data);
 });
 
+/**
+ * Get AI-powered insights for calendar events
+ *
+ * @param {Request} req - The request object with timeMin and timeMax query params
+ * @param {Response} res - The response object
+ * @returns {Promise<void>} The response object with 4 AI-generated insights
+ * @description Generates AI insights based on calendar event metrics with Redis caching
+ */
+const getInsights = reqResAsyncHandler(async (req: Request, res: Response) => {
+  const { timeMin, timeMax } = req.query as { timeMin?: string; timeMax?: string };
+  const userEmail = req.user?.email;
+
+  if (!userEmail) {
+    return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
+  }
+
+  if (!timeMin || !timeMax) {
+    return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "timeMin and timeMax query parameters are required");
+  }
+
+  // Check Redis cache first
+  const cached = await getCachedInsights(userEmail, timeMin, timeMax);
+  if (cached) {
+    return sendR(res, STATUS_RESPONSE.SUCCESS, "Insights retrieved from cache", cached);
+  }
+
+  // Fetch user tokens
+  const tokenData = await fetchCredentialsByEmail(userEmail);
+  if (!tokenData) {
+    return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User token not found");
+  }
+
+  // Initialize calendar and get all calendar IDs
+  const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData);
+  const calendarListResponse = await calendar.calendarList.list({ prettyPrint: true });
+  const calendarItems = calendarListResponse.data.items || [];
+
+  // Build calendar map for metrics calculation
+  const calendarMap: Record<string, { name: string; color: string }> = {};
+  for (const cal of calendarItems) {
+    if (cal.id) {
+      calendarMap[cal.id] = {
+        name: cal.summary || cal.id,
+        color: cal.backgroundColor || "#6366f1",
+      };
+    }
+  }
+
+  const allCalendarIds = calendarItems.map((c) => c.id).filter(Boolean) as string[];
+  if (allCalendarIds.length === 0) {
+    allCalendarIds.push("primary");
+  }
+
+  // Fetch events from all calendars (use standard response for raw event data)
+  const allEventsArrays = await Promise.all(
+    allCalendarIds.map(async (calendarId) => {
+      const result = await getEvents({
+        calendarEvents: calendar.events,
+        req: undefined,
+        extra: { calendarId, timeMin, timeMax, customEvents: false },
+      });
+
+      // We only use standard response for insights (raw Google Calendar events)
+      if (result.type === "standard") {
+        const events = result.data.items ?? [];
+        // Add calendarId to each event for breakdown calculation
+        return events.map((event) => ({ ...event, calendarId }));
+      }
+
+      return [];
+    })
+  );
+
+  // Flatten all events
+  const allEvents = allEventsArrays.flat();
+
+  if (allEvents.length === 0) {
+    return sendR(res, STATUS_RESPONSE.SUCCESS, "No events found for the specified period", {
+      insights: [],
+      generatedAt: new Date().toISOString(),
+      periodStart: timeMin,
+      periodEnd: timeMax,
+    });
+  }
+
+  // Calculate metrics from events
+  const metrics = calculateInsightsMetrics(allEvents, calendarMap);
+
+  // Generate insights with retry logic (3 attempts)
+  const aiResponse = await generateInsightsWithRetry(metrics, timeMin, timeMax, 3);
+
+  // Prepare response data
+  const responseData = {
+    insights: aiResponse.insights,
+    generatedAt: new Date().toISOString(),
+    periodStart: timeMin,
+    periodEnd: timeMax,
+  };
+
+  // Cache the result
+  await setCachedInsights(userEmail, timeMin, timeMax, responseData);
+
+  sendR(res, STATUS_RESPONSE.SUCCESS, "Insights generated successfully", responseData);
+});
+
 export default {
   moveEvent,
   watchEvents,
@@ -316,4 +425,5 @@ export default {
   getEventAnalytics,
   getEventInstances,
   importEvent,
+  getInsights,
 };

@@ -5,6 +5,7 @@ import {
   BadgeCheck,
   BarChart2,
   Bell,
+  Calendar,
   ChevronLeft,
   Clock,
   CreditCard,
@@ -13,8 +14,10 @@ import {
   MessageSquare,
   MoreHorizontal,
   Plus,
+  Search,
   Settings,
   Sparkles,
+  Target,
   Trash2,
   X,
 } from 'lucide-react'
@@ -35,7 +38,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 
 import { Button } from '@/components/ui/button'
@@ -43,9 +46,11 @@ import { formatRelativeDate } from '@/lib/dateUtils'
 import { CustomUser } from '@/types/api'
 import Image from 'next/image'
 import Link from 'next/link'
+import { QuickEventDialog } from '@/components/dialogs/QuickEventDialog'
 import UserProfileCard from '@/components/dashboard/shared/UserProfileCard'
 import { useChatContext } from '@/contexts/ChatContext'
 import { useUser } from '@/hooks/queries/auth/useUser'
+import { toast } from 'sonner'
 
 interface SidebarProps {
   isOpen: boolean
@@ -99,10 +104,20 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle, onOpenSett
   } = useChatContext()
 
   const [conversationToDelete, setConversationToDelete] = useState<number | null>(null)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [isQuickEventOpen, setIsQuickEventOpen] = useState(false)
+
+  // Filter conversations based on search
+  const filteredConversations = useMemo(() => {
+    if (!searchQuery.trim()) return conversations
+    const query = searchQuery.toLowerCase()
+    return conversations.filter((c) => c.title.toLowerCase().includes(query))
+  }, [conversations, searchQuery])
 
   const navItems = [
     { href: '/dashboard', icon: LayoutDashboard, label: 'Assistant', id: 'tour-assistant' },
     { href: '/dashboard/analytics', icon: BarChart2, label: 'Intelligence', id: 'tour-analytics' },
+    { href: '/dashboard/gaps', icon: Target, label: 'Gap Recovery', id: 'tour-gaps' },
   ]
 
   // Load conversations on mount
@@ -133,7 +148,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle, onOpenSett
 
   const confirmDelete = async () => {
     if (conversationToDelete) {
-      await removeConversation(conversationToDelete)
+      const success = await removeConversation(conversationToDelete)
+      if (success) {
+        toast.success('Conversation deleted')
+      } else {
+        toast.error('Failed to delete conversation')
+      }
       setConversationToDelete(null)
     }
   }
@@ -250,26 +270,62 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle, onOpenSett
             ))}
           </nav>
 
+          {/* Quick Add Event Button */}
+          {isOpen && (
+            <div className="px-4 mt-4">
+              <button
+                onClick={() => setIsQuickEventOpen(true)}
+                className="w-full flex items-center gap-3 p-2 rounded-md bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+              >
+                <Calendar className="w-5 h-5" />
+                <span className="text-sm font-medium">Quick Add Event</span>
+              </button>
+            </div>
+          )}
+
           {/* Recent Chats */}
           {isOpen && (
-            <div className="flex-1 mt-4 px-4 overflow-y-auto">
-              <p className="text-xs font-medium text-zinc-400 dark:text-zinc-500 uppercase tracking-wider mb-2 px-2">
-                Recent Chats
-              </p>
+            <div className="flex-1 mt-4 px-4 overflow-y-auto flex flex-col">
+              <div className="flex items-center justify-between mb-2 px-2">
+                <p className="text-xs font-medium text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">
+                  Recent Chats
+                </p>
+              </div>
+
+              {/* Search Input */}
+              <div className="relative mb-3">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search conversations..."
+                  className="w-full pl-9 pr-3 py-2 text-sm bg-zinc-100 dark:bg-zinc-800 border-0 rounded-md text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary/50"
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-400"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                )}
+              </div>
+
               {isLoadingConversations ? (
                 <div className="space-y-2">
                   {[...Array(3)].map((_, i) => (
                     <div key={i} className="animate-pulse h-12 bg-zinc-100 dark:bg-zinc-800 rounded-md" />
                   ))}
                 </div>
-              ) : conversations.length === 0 ? (
+              ) : filteredConversations.length === 0 ? (
                 <div className="text-center py-4 text-zinc-400 dark:text-zinc-500">
                   <MessageSquare className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                  <p className="text-xs">No conversations yet</p>
+                  <p className="text-xs">{searchQuery ? 'No matching conversations' : 'No conversations yet'}</p>
                 </div>
               ) : (
-                <div className="space-y-1">
-                  {conversations.slice(0, 10).map((conversation) => (
+                <div className="space-y-1 flex-1 overflow-y-auto">
+                  {filteredConversations.slice(0, 15).map((conversation) => (
                     <button
                       key={conversation.id}
                       onClick={() => handleSelectConversation(conversation)}
@@ -303,6 +359,15 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle, onOpenSett
               )}
             </div>
           )}
+
+          {/* Quick Event Dialog */}
+          <QuickEventDialog
+            isOpen={isQuickEventOpen}
+            onClose={() => setIsQuickEventOpen(false)}
+            onEventCreated={() => {
+              // Optionally refresh something after event creation
+            }}
+          />
 
           {/* Footer */}
           <div className="p-4 border-t border-zinc-200 dark:border-zinc-800">

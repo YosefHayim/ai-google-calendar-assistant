@@ -234,3 +234,85 @@ export interface GoogleCalendarIntegrationStatus {
   syncedAt: string | null
   authUrl: string
 }
+
+// ============================================
+// Gap Recovery Types
+// ============================================
+
+export type DayOfWeek = 'sunday' | 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday'
+
+export interface GapRecoverySettings {
+  autoGapAnalysis: boolean
+  minGapThreshold: number
+  maxGapThreshold: number
+  ignoredDays: DayOfWeek[]
+  lookbackDays: number
+  minConfidenceThreshold: number
+  includedCalendars: string[]
+  excludedCalendars: string[]
+}
+
+export interface GapCandidate {
+  id: string
+  start: string
+  end: string
+  durationMinutes: number
+  durationFormatted: string
+  precedingEventSummary: string
+  followingEventSummary: string
+  suggestion: string | null
+  confidence: number
+}
+
+export interface GapsResponse {
+  gaps: GapCandidate[]
+  totalCount: number
+  analyzedRange: {
+    start: string
+    end: string
+  }
+  settings: GapRecoverySettings
+}
+
+export interface GapQueryParams {
+  startDate?: string
+  endDate?: string
+  calendarId?: string
+  lookbackDays?: number
+  limit?: number
+}
+
+export interface FillGapRequest {
+  summary: string
+  description?: string
+  location?: string
+  calendarId?: string
+}
+
+export interface FillGapResponse {
+  eventId: string
+  message: string
+}
+
+export interface SkipGapRequest {
+  reason?: string
+}
+
+export interface SkipGapResponse {
+  gapId: string
+  reason: string
+}
+
+export interface DismissAllGapsResponse {
+  count: number
+  message: string
+}
+
+export interface UpdateGapSettingsRequest {
+  autoGapAnalysis?: boolean
+  minGapThreshold?: number
+  maxGapThreshold?: number
+  ignoredDays?: DayOfWeek[]
+  lookbackDays?: number
+  minConfidenceThreshold?: number
+}

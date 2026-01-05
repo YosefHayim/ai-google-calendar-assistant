@@ -27,6 +27,9 @@ router.get("/", eventsController.getAllEvents);
 // get event analytics by start date and end date
 router.get("/analytics", eventsController.getEventAnalytics);
 
+// get AI-powered insights for calendar events
+router.get("/insights", eventsController.getInsights);
+
 // quick add an event
 router.post("/quick-add", eventsController.quickAddEvent);
 
