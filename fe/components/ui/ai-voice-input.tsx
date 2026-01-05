@@ -1,7 +1,6 @@
 'use client'
-'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { Mic } from 'lucide-react'
 import { cn } from '@/components/../lib/utils' // Adjusted path for cn utility
 
@@ -35,6 +34,15 @@ export function AIVoiceInput({
   const [time, setTime] = useState(0)
   const [isClient, setIsClient] = useState(false)
   const [isDemo, setIsDemo] = useState(demoMode)
+
+  // Generate deterministic heights for visualizer bars to avoid hydration mismatch
+  const barHeights = useMemo(() => {
+    return Array.from({ length: visualizerBars }, (_, i) => {
+      // Use seeded pseudo-random based on index for consistent heights
+      const seed = (i * 9301 + 49297) % 233280
+      return 20 + (seed / 233280) * 80
+    })
+  }, [visualizerBars])
 
   useEffect(() => {
     setIsClient(true)
@@ -131,7 +139,7 @@ export function AIVoiceInput({
         </span>
 
         <div className="h-4 w-64 flex items-center justify-center gap-0.5">
-          {[...Array(visualizerBars)].map((_, i) => (
+          {barHeights.map((height, i) => (
             <div
               key={i}
               className={cn(
@@ -141,7 +149,7 @@ export function AIVoiceInput({
               style={
                 isRecordingProp && isClient
                   ? {
-                      height: `${20 + Math.random() * 80}%`,
+                      height: `${height}%`,
                       animationDelay: `${i * 0.05}s`,
                     }
                   : undefined

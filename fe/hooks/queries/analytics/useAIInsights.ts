@@ -2,6 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api/client'
+import { ENDPOINTS } from '@/lib/api/endpoints'
 import type { AIInsightsResponse } from '@/types/analytics'
 
 interface UseAIInsightsOptions {
@@ -37,7 +38,7 @@ export function useAIInsights({ timeMin, timeMax, enabled = true }: UseAIInsight
         timeMax: timeMax.toISOString(),
       })
 
-      const response = await apiClient.get<APIResponse>(`/events/insights?${params.toString()}`)
+      const response = await apiClient.get<APIResponse>(`${ENDPOINTS.EVENTS_INSIGHTS}?${params.toString()}`)
 
       if (!response.data?.data) {
         throw new Error('Invalid response format from insights API')

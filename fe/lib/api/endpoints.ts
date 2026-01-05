@@ -153,6 +153,13 @@ export const ENDPOINTS = {
   EVENTS_ANALYTICS: '/api/events/analytics',
 
   /**
+   * Get AI-powered insights for calendar events
+   * Methods: GET
+   * Query params: timeMin, timeMax
+   */
+  EVENTS_INSIGHTS: '/api/events/insights',
+
+  /**
    * Quick add event from text
    * Methods: POST
    */

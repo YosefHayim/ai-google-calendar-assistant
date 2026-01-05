@@ -1,11 +1,19 @@
 'use client'
 
 import { Activity, CalendarDays, Dumbbell } from 'lucide-react'
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { generateDateRange } from '@/lib/dateUtils'
 import { getActivityLevelColor, getHealthActivityColor, type HealthActivity } from '@/lib/colorUtils'
 import { DATE_CONSTANTS } from '@/lib/constants'
 import { isAfter } from 'date-fns'
+
+// Seeded random number generator for consistent SSR/CSR output
+function seededRandom(seed: number): () => number {
+  return () => {
+    seed = (seed * 9301 + 49297) % 233280
+    return seed / 233280
+  }
+}
 
 const ToggleButton = ({
   active,
@@ -38,13 +46,15 @@ const ActivityHeatmap: React.FC = () => {
     const today = new Date()
     const days = generateDateRange(365)
 
+    // Use seeded random for deterministic output (fixes hydration mismatch)
+    const random = seededRandom(12345)
     const healthActivities: HealthActivity[] = ['Gym', 'Run', 'Swim', 'Rest', 'Rest', 'Rest']
     return days.map((date) => ({
       date,
-      activityLevel: isAfter(date, today) ? 0 : Math.floor(Math.random() * 20),
+      activityLevel: isAfter(date, today) ? 0 : Math.floor(random() * 20),
       healthType: (isAfter(date, today)
         ? 'Rest'
-        : healthActivities[Math.floor(Math.random() * healthActivities.length)]) as HealthActivity,
+        : healthActivities[Math.floor(random() * healthActivities.length)]) as HealthActivity,
     }))
   }, [])
 
