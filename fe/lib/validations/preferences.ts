@@ -6,7 +6,7 @@ import { z } from 'zod'
  */
 export const allyBrainSchema = z.object({
   enabled: z.boolean(),
-  instructions: z.string().max(1000, 'Instructions must be 1000 characters or less').optional().default(''),
+  instructions: z.string().max(1000, 'Instructions must be 1000 characters or less'),
 })
 
 /**
