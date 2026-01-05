@@ -25,40 +25,43 @@ export const mockTokenData = {
 };
 
 /**
- * Mock user calendar tokens (user_calendar_tokens table)
+ * Mock user data (users table)
  */
-export const mockUserCalendarToken: Database["public"]["Tables"]["user_calendar_tokens"]["Row"] = {
-  id: 1,
-  user_id: "test-user-id",
+export const mockUserRecord: Database["public"]["Tables"]["users"]["Row"] = {
+  id: "test-user-id",
   email: "test@example.com",
-  access_token: "mock-access-token",
-  refresh_token: "mock-refresh-token",
-  expiry_date: Date.now() + 3600000,
-  id_token: "mock-id-token",
-  is_active: true,
-  refresh_token_expires_in: 7776000,
-  scope: "https://www.googleapis.com/auth/calendar",
-  token_type: "Bearer",
-  calendars: [
-    { calendar_id: "primary", calendar_name: "Primary Calendar" },
-    { calendar_id: "work@example.com", calendar_name: "Work Calendar" },
-  ],
+  display_name: "Test User",
+  first_name: "Test",
+  last_name: "User",
+  avatar_url: null,
+  timezone: "America/New_York",
+  locale: "en",
+  status: "active",
+  email_verified: true,
+  last_login_at: "2024-01-01T00:00:00Z",
+  deactivated_at: null,
   created_at: "2024-01-01T00:00:00Z",
   updated_at: "2024-01-01T00:00:00Z",
 };
 
 /**
- * Mock calendar categories data (calendar_categories table) - DEPRECATED
- * @deprecated Use mockUserCalendar instead
+ * Mock OAuth tokens (oauth_tokens table)
  */
-export const mockCalendarCategory: Database["public"]["Tables"]["calendar_categories"]["Row"] = {
-  id: 1,
+export const mockOAuthToken: Database["public"]["Tables"]["oauth_tokens"]["Row"] = {
+  id: "test-oauth-id",
   user_id: "test-user-id",
-  email: "test@example.com",
-  calendar_id: "primary",
-  calendar_name: "Primary Calendar",
-  access_role: "owner",
-  time_zone_of_calendar: "America/New_York",
+  provider: "google",
+  provider_user_id: "google-user-id",
+  access_token: "mock-access-token",
+  refresh_token: "mock-refresh-token",
+  token_type: "Bearer",
+  id_token: "mock-id-token",
+  scope: "https://www.googleapis.com/auth/calendar",
+  expires_at: new Date(Date.now() + 3600000).toISOString(),
+  refresh_token_expires_at: null,
+  is_valid: true,
+  last_refreshed_at: "2024-01-01T00:00:00Z",
+  refresh_error_count: 0,
   created_at: "2024-01-01T00:00:00Z",
   updated_at: "2024-01-01T00:00:00Z",
 };
@@ -67,33 +70,45 @@ export const mockCalendarCategory: Database["public"]["Tables"]["calendar_catego
  * Mock user calendar data (user_calendars table)
  */
 export const mockUserCalendar: Database["public"]["Tables"]["user_calendars"]["Row"] = {
-  id: 1,
+  id: "test-calendar-id",
   user_id: "test-user-id",
   calendar_id: "primary",
   calendar_name: "Primary Calendar",
   access_role: "owner",
-  time_zone: "America/New_York",
+  timezone: "America/New_York",
   is_primary: true,
+  is_visible: true,
+  notification_enabled: true,
   default_reminders: null,
-  description: null,
-  location: null,
   background_color: null,
   foreground_color: null,
+  sync_token: null,
+  last_synced_at: null,
   created_at: "2024-01-01T00:00:00Z",
   updated_at: "2024-01-01T00:00:00Z",
 };
 
 /**
- * Mock telegram links data (user_telegram_links table)
+ * Mock telegram user data (telegram_users table)
  */
-export const mockTelegramLink = {
-  id: 1,
-  email: "test@example.com",
-  chat_id: "123456789",
-  username: "testuser",
+export const mockTelegramUser: Database["public"]["Tables"]["telegram_users"]["Row"] = {
+  id: "test-telegram-id",
+  user_id: "test-user-id",
+  telegram_user_id: 123456789,
+  telegram_chat_id: 123456789,
+  telegram_username: "testuser",
+  first_name: "Test",
+  language_code: "en",
+  is_bot: false,
+  is_linked: true,
+  pending_email: null,
+  last_activity_at: "2024-01-01T00:00:00Z",
   created_at: "2024-01-01T00:00:00Z",
   updated_at: "2024-01-01T00:00:00Z",
 };
+
+// Legacy alias for backwards compatibility
+export const mockTelegramLink = mockTelegramUser;
 
 /**
  * Supabase error types
@@ -158,19 +173,19 @@ class InMemoryDataStore {
   private data: Map<string, any[]> = new Map();
 
   constructor() {
-    // Initialize with default mock data
-    this.data.set("user_calendar_tokens", [mockUserCalendarToken]);
-    this.data.set("calendar_categories", [mockCalendarCategory]); // Keep for backward compatibility
+    // Initialize with default mock data (new schema)
+    this.data.set("users", [mockUserRecord]);
+    this.data.set("oauth_tokens", [mockOAuthToken]);
     this.data.set("user_calendars", [mockUserCalendar]);
-    this.data.set("user_telegram_links", [mockTelegramLink]);
+    this.data.set("telegram_users", [mockTelegramUser]);
   }
 
   reset() {
     this.data.clear();
-    this.data.set("user_calendar_tokens", [mockUserCalendarToken]);
-    this.data.set("calendar_categories", [mockCalendarCategory]); // Keep for backward compatibility
+    this.data.set("users", [mockUserRecord]);
+    this.data.set("oauth_tokens", [mockOAuthToken]);
     this.data.set("user_calendars", [mockUserCalendar]);
-    this.data.set("user_telegram_links", [mockTelegramLink]);
+    this.data.set("telegram_users", [mockTelegramUser]);
   }
 
   getTable(tableName: string): any[] {
@@ -307,7 +322,7 @@ const createMockQueryBuilder = (tableName: string, dataStore: InMemoryDataStore)
   };
 
   const builder: any = {
-    select: jest.fn((columns = "*") => {
+    select: jest.fn((columns: string = "*") => {
       selectColumns = columns;
       return builder;
     }),
@@ -403,15 +418,15 @@ export const createMockSupabaseClient = (dataStore?: InMemoryDataStore) => {
   const store = dataStore || new InMemoryDataStore();
 
   const mockAuth = {
-    getUser: jest.fn().mockResolvedValue({ data: { user: mockUser }, error: null }),
-    signInWithOAuth: jest.fn().mockResolvedValue({ data: { url: "https://mock-oauth-url.com" }, error: null }),
-    signOut: jest.fn().mockResolvedValue({ error: null }),
-    getSession: jest.fn().mockResolvedValue({ data: { session: { user: mockUser } }, error: null }),
-    refreshSession: jest.fn().mockResolvedValue({
+    getUser: jest.fn(() => Promise.resolve({ data: { user: mockUser }, error: null })),
+    signInWithOAuth: jest.fn(() => Promise.resolve({ data: { url: "https://mock-oauth-url.com" }, error: null })),
+    signOut: jest.fn(() => Promise.resolve({ error: null })),
+    getSession: jest.fn(() => Promise.resolve({ data: { session: { user: mockUser } }, error: null })),
+    refreshSession: jest.fn(() => Promise.resolve({
       data: { session: { user: mockUser, access_token: "new-token" } },
       error: null,
-    }),
-    setSession: jest.fn().mockResolvedValue({ data: { session: { user: mockUser } }, error: null }),
+    })),
+    setSession: jest.fn(() => Promise.resolve({ data: { session: { user: mockUser } }, error: null })),
     onAuthStateChange: jest.fn(),
   };
 

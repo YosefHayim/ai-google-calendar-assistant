@@ -205,35 +205,32 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle, onOpenSett
                 </span>
               </Link>
             )}
-            {/* Toggle button for desktop */}
-            <button
-              onClick={onToggle}
-              className="p-1 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 hidden md:block"
-            >
-              {isOpen ? <ChevronLeft className="w-5 h-5" /> : <LayoutDashboard className="w-5 h-5" />}
-            </button>
-            {/* Close button for mobile */}
-            {isOpen && (
+            <div className="flex items-center gap-1">
+              {/* New Chat button */}
               <button
-                onClick={onClose}
-                className="p-1 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 md:hidden"
+                onClick={handleNewChat}
+                className="p-1.5 rounded-md bg-primary text-white hover:bg-primary-hover transition-colors"
+                title="New Chat"
               >
-                <X className="w-5 h-5" />
+                <Plus className="w-5 h-5" />
               </button>
-            )}
-          </div>
-
-          {/* New Chat Button */}
-          <div className="p-4">
-            <button
-              onClick={handleNewChat}
-              className={`w-full flex items-center gap-3 p-2 rounded-md bg-primary text-white shadow-lg shadow-primary/20 hover:bg-primary-hover transition-colors ${
-                !isOpen ? 'md:justify-center' : ''
-              }`}
-            >
-              <Plus className="w-5 h-5" />
-              <span className={`font-bold text-sm whitespace-nowrap ${!isOpen ? 'md:hidden' : ''}`}>New Chat</span>
-            </button>
+              {/* Toggle button for desktop */}
+              <button
+                onClick={onToggle}
+                className="p-1 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 hidden md:block"
+              >
+                {isOpen ? <ChevronLeft className="w-5 h-5" /> : <LayoutDashboard className="w-5 h-5" />}
+              </button>
+              {/* Close button for mobile */}
+              {isOpen && (
+                <button
+                  onClick={onClose}
+                  className="p-1 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 md:hidden"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Navigation */}

@@ -93,20 +93,33 @@ export const authTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
 
   try {
     // 2. Try to load from DB by telegram_user_id (for multi-device support)
-    const { data, error } = await SUPABASE.from("user_telegram_links").select("email,first_name").eq("telegram_user_id", from.id).single();
+    // First check telegram_users table, then join with users to get email
+    const { data: telegramUser, error } = await SUPABASE
+      .from("telegram_users")
+      .select("user_id, first_name")
+      .eq("telegram_user_id", from.id)
+      .single();
 
     if (error && error.code !== "PGRST116") {
       // Ignore "no rows found" error
       logger.error(`Telegram Bot: Auth: DB Error: ${error.message}`);
     }
 
-    // 3. Logic: If DB has email, Sync it to Session AND Context
-    if (data?.email) {
-      // Always sync session with DB (Source of Truth)
-      session.email = data.email;
-      session.pendingEmailVerification = undefined; // Clear any pending verification
-      session.messageCount++;
-      return next();
+    // 3. Logic: If telegram user is linked to a user, get their email
+    if (telegramUser?.user_id) {
+      const { data: userData } = await SUPABASE
+        .from("users")
+        .select("email")
+        .eq("id", telegramUser.user_id)
+        .single();
+
+      if (userData?.email) {
+        // Always sync session with DB (Source of Truth)
+        session.email = userData.email;
+        session.pendingEmailVerification = undefined; // Clear any pending verification
+        session.messageCount++;
+        return next();
+      }
     }
 
     // 4. If Session has verified email but DB failed (Edge case), pass it along
@@ -154,62 +167,78 @@ export const authTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
         session.email = pendingEmail;
         session.pendingEmailVerification = undefined;
 
-        // Create stub entry in user_calendar_tokens if it doesn't exist (to satisfy FK constraint)
-        const { data: existingToken } = await SUPABASE.from("user_calendar_tokens").select("email").ilike("email", pendingEmail).maybeSingle();
+        // Create stub entry in users table if it doesn't exist
+        let userId: string | null = null;
+        const { data: existingUser } = await SUPABASE
+          .from("users")
+          .select("id")
+          .ilike("email", pendingEmail)
+          .maybeSingle();
 
-        if (!existingToken) {
-          // Create stub entry to satisfy FK constraint
-          // Only set email and is_active - other fields will be populated during Google OAuth
-          const { error: tokenError } = await SUPABASE.from("user_calendar_tokens").insert({
-            email: pendingEmail,
-            is_active: false, // Not authenticated with Google yet
-          });
+        if (!existingUser) {
+          // Create new user entry - OAuth tokens will be populated during Google OAuth flow
+          const { data: newUser, error: userError } = await SUPABASE
+            .from("users")
+            .insert({
+              email: pendingEmail,
+              status: "pending_verification",
+            })
+            .select("id")
+            .single();
 
-          if (tokenError) {
-            logger.error(`Telegram Bot: Auth: Failed to create token stub: ${tokenError.message}`);
+          if (userError || !newUser) {
+            logger.error(`Telegram Bot: Auth: Failed to create user: ${userError?.message}`);
             await ctx.reply("Error setting up your account. Please try again.");
             session.email = undefined;
             return;
           }
+          userId = newUser.id;
+        } else {
+          userId = existingUser.id;
         }
 
-        // Check if user already exists by telegram_user_id OR chat_id
-        // (both should be the same in private chats, but one might be NULL in existing records)
-        const { data: existingUsers } = await SUPABASE.from("user_telegram_links")
-          .select("id, telegram_user_id, chat_id")
-          .or(`telegram_user_id.eq.${from.id},chat_id.eq.${from.id}`);
+        // Check if telegram user already exists by telegram_user_id OR telegram_chat_id
+        const { data: existingTelegramUsers } = await SUPABASE
+          .from("telegram_users")
+          .select("id, telegram_user_id, telegram_chat_id")
+          .or(`telegram_user_id.eq.${from.id},telegram_chat_id.eq.${from.id}`);
 
         let insertRes;
-        if (existingUsers && existingUsers.length > 0) {
-          // Update existing user (use the first match, they should all be the same user)
-          const existingUser = existingUsers[0];
+        if (existingTelegramUsers && existingTelegramUsers.length > 0) {
+          // Update existing telegram user (use the first match)
+          const existingTgUser = existingTelegramUsers[0];
           logger.debug(
-            `Updating existing user_telegram_links record: id=${existingUser.id}, telegram_user_id=${existingUser.telegram_user_id}, chat_id=${existingUser.chat_id}`
+            `Updating existing telegram_users record: id=${existingTgUser.id}, telegram_user_id=${existingTgUser.telegram_user_id}, telegram_chat_id=${existingTgUser.telegram_chat_id}`
           );
-          insertRes = await SUPABASE.from("user_telegram_links")
+          insertRes = await SUPABASE
+            .from("telegram_users")
             .update({
-              chat_id: from.id,
-              username: from.username,
+              telegram_chat_id: from.id,
+              telegram_username: from.username,
               first_name: from.first_name,
               language_code: from.language_code,
-              email: pendingEmail,
               is_bot: from.is_bot,
-              telegram_user_id: from.id, // Ensure this is set even if it was NULL before
+              telegram_user_id: from.id,
+              user_id: userId, // Link to users table
+              is_linked: true,
+              last_activity_at: new Date().toISOString(),
             })
-            .eq("id", existingUser.id) // Update by primary key to be safe
+            .eq("id", existingTgUser.id)
             .select()
             .maybeSingle();
         } else {
-          // Insert new user
-          insertRes = await SUPABASE.from("user_telegram_links")
+          // Insert new telegram user
+          insertRes = await SUPABASE
+            .from("telegram_users")
             .insert({
-              chat_id: from.id,
-              username: from.username,
+              telegram_chat_id: from.id,
+              telegram_username: from.username,
               first_name: from.first_name,
               language_code: from.language_code,
-              email: pendingEmail,
               is_bot: from.is_bot,
               telegram_user_id: from.id,
+              user_id: userId, // Link to users table
+              is_linked: true,
             })
             .select()
             .maybeSingle();

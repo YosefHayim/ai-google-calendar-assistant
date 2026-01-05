@@ -82,14 +82,24 @@ export const initiateEmailChange = async (ctx: GlobalContext, newEmail: string):
   }
 
   // Check if email is already linked to another account
-  const { data: existingLink } = await SUPABASE.from("user_telegram_links")
-    .select("telegram_user_id")
+  // First find the user by email, then check if they have a telegram link
+  const { data: existingUser } = await SUPABASE
+    .from("users")
+    .select("id")
     .ilike("email", normalizedEmail)
     .single();
 
-  if (existingLink && existingLink.telegram_user_id !== userId) {
-    await ctx.reply("This email is already linked to another Telegram account.");
-    return;
+  if (existingUser) {
+    const { data: existingTelegramLink } = await SUPABASE
+      .from("telegram_users")
+      .select("telegram_user_id")
+      .eq("user_id", existingUser.id)
+      .single();
+
+    if (existingTelegramLink && existingTelegramLink.telegram_user_id !== userId) {
+      await ctx.reply("This email is already linked to another Telegram account.");
+      return;
+    }
   }
 
   // Send OTP to new email
@@ -162,12 +172,27 @@ export const handlePendingEmailChange = async (ctx: GlobalContext, text: string)
     return true;
   }
 
-  // Update email in user_telegram_links
-  const { error: updateError } = await SUPABASE.from("user_telegram_links")
+  // Get the user_id from telegram_users first
+  const { data: telegramUser } = await SUPABASE
+    .from("telegram_users")
+    .select("user_id")
+    .eq("telegram_user_id", userId)
+    .single();
+
+  if (!telegramUser?.user_id) {
+    logger.error(`Email change failed: No user found for telegram_user_id=${userId}`);
+    await ctx.reply("Failed to update email. Please try again.");
+    return true;
+  }
+
+  // Update email in users table
+  const { error: updateError } = await SUPABASE
+    .from("users")
     .update({
       email: pending.newEmail,
+      updated_at: new Date().toISOString(),
     })
-    .eq("telegram_user_id", userId);
+    .eq("id", telegramUser.user_id);
 
   if (updateError) {
     logger.error(`Email change update failed: ${updateError.message}`);

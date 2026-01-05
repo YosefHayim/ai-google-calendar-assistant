@@ -6,6 +6,7 @@ import calendarRoute from "@/routes/google-calendar/calendar-route";
 import channelsRoute from "@/routes/google-calendar/channels-route";
 import chatRoute from "@/routes/google-calendar/chat-route";
 import gapRecoveryRoute from "@/routes/google-calendar/gap-recovery-route";
+import paymentRoute from "@/routes/payment-route";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import helmet from "helmet";
@@ -81,6 +82,7 @@ app.use(ROUTES.ACL, aclRoute);
 app.use(ROUTES.CHANNELS, channelsRoute);
 app.use(ROUTES.WHATSAPP, whatsAppRoute);
 app.use(ROUTES.CHAT, chatRoute);
+app.use(ROUTES.PAYMENTS, paymentRoute);
 
 app.use((_req, res, _next) => {
   logger.error(`Opps! It looks like this route doesn't exist. ${_req.originalUrl}`);
