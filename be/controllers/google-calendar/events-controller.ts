@@ -40,7 +40,7 @@ const getEventById = reqResAsyncHandler(async (req: Request, res: Response) => {
     eventId: req.params.id,
   });
 
-  sendR(res, STATUS_RESPONSE.SUCCESS, "Event retrieved successfully", r.data);
+  return sendR(res, STATUS_RESPONSE.SUCCESS, "Event retrieved successfully", r.data);
 });
 
 /**
@@ -61,7 +61,7 @@ const getAllEvents = reqResAsyncHandler(async (req: Request, res: Response) => {
   }
 
   const r = await eventsHandler(req as Request, ACTION.GET, undefined, req.query as Record<string, string>);
-  sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully retrieved all events", r);
+  return sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully retrieved all events", r);
 });
 
 /**
@@ -77,7 +77,7 @@ const getAllEvents = reqResAsyncHandler(async (req: Request, res: Response) => {
  */
 const createEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
   const r = await eventsHandler(req, ACTION.INSERT, req.body, { calendarId: req.query.calendarId ?? "primary", email: req.body.email });
-  sendR(res, STATUS_RESPONSE.CREATED, "Event created successfully", r);
+  return sendR(res, STATUS_RESPONSE.CREATED, "Event created successfully", r);
 });
 
 /**
@@ -96,7 +96,7 @@ const updateEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
     id: req.params.id,
     ...req.body,
   });
-  sendR(res, STATUS_RESPONSE.SUCCESS, "Event updated successfully", r);
+  return sendR(res, STATUS_RESPONSE.SUCCESS, "Event updated successfully", r);
 });
 
 /**
@@ -112,7 +112,7 @@ const updateEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
  */
 const deleteEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
   const r = await eventsHandler(req, ACTION.DELETE, { id: req.params.id });
-  sendR(res, STATUS_RESPONSE.SUCCESS, "Event deleted successfully", r);
+  return sendR(res, STATUS_RESPONSE.SUCCESS, "Event deleted successfully", r);
 });
 
 /**
@@ -186,7 +186,7 @@ const quickAddEvent = reqResAsyncHandler(async (req: Request, res: Response) => 
     ...REQUEST_CONFIG_BASE,
     calendarId: (req.query.calendarId as string) ?? "primary",
   });
-  sendR(res, STATUS_RESPONSE.CREATED, "Event quick added successfully", r.data);
+  return sendR(res, STATUS_RESPONSE.CREATED, "Event quick added successfully", r.data);
 });
 
 /**
@@ -212,7 +212,7 @@ const watchEvents = reqResAsyncHandler(async (req: Request, res: Response) => {
     ...REQUEST_CONFIG_BASE,
     calendarId: (req.query.calendarId as string) ?? "primary",
   });
-  sendR(res, STATUS_RESPONSE.SUCCESS, "Event watched successfully", r);
+  return sendR(res, STATUS_RESPONSE.SUCCESS, "Event watched successfully", r);
 });
 
 /**
@@ -238,7 +238,7 @@ const moveEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
     ...REQUEST_CONFIG_BASE,
     calendarId: (req.query.calendarId as string) ?? "primary",
   });
-  sendR(res, STATUS_RESPONSE.SUCCESS, "Event moved successfully", r);
+  return sendR(res, STATUS_RESPONSE.SUCCESS, "Event moved successfully", r);
 });
 
 /**
@@ -266,7 +266,7 @@ const getEventInstances = reqResAsyncHandler(async (req: Request, res: Response)
     showDeleted: req.query.showDeleted === "true",
   });
 
-  sendR(res, STATUS_RESPONSE.SUCCESS, "Event instances retrieved successfully", r.data);
+  return sendR(res, STATUS_RESPONSE.SUCCESS, "Event instances retrieved successfully", r.data);
 });
 
 /**
@@ -305,7 +305,7 @@ const importEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
     },
   });
 
-  sendR(res, STATUS_RESPONSE.CREATED, "Event imported successfully", r.data);
+  return sendR(res, STATUS_RESPONSE.CREATED, "Event imported successfully", r.data);
 });
 
 /**
@@ -410,7 +410,7 @@ const getInsights = reqResAsyncHandler(async (req: Request, res: Response) => {
   // Cache the result
   await setCachedInsights(userEmail, timeMin, timeMax, responseData);
 
-  sendR(res, STATUS_RESPONSE.SUCCESS, "Insights generated successfully", responseData);
+  return sendR(res, STATUS_RESPONSE.SUCCESS, "Insights generated successfully", responseData);
 });
 
 export default {

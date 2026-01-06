@@ -323,7 +323,7 @@ npx sort-package-json           # Sort package.json
 - **Module System**: `"module": "NodeNext"`, `"moduleResolution": "NodeNext"`
 - **Target**: ES2022
 - **Strict mode**: Enabled
-- **Decorators**: `experimentalDecorators: true`, `emitDecoratorMetadata: true` (for Inversify DI)
+- **Decorators**: `experimentalDecorators: true`, `emitDecoratorMetadata: true`
 - **Path Aliases**: `@/*` maps to root (`be/`)
 
 #### Frontend
@@ -339,7 +339,7 @@ npx sort-package-json           # Sort package.json
 // DO
 import { SUPABASE } from "@/config";
 import { sendR } from "@/utils/http";
-import { User } from "@/domain/entities/User";
+import type { TokensProps } from "@/types";
 
 // DON'T
 import { SUPABASE } from "../../config";
@@ -453,16 +453,6 @@ import { Request, Response } from "express";
 
 ### Backend
 
-#### Dependency Injection (Inversify)
-- Use `@injectable()` decorator for services
-- Use `@inject()` for dependencies
-- Configure in `infrastructure/di/container.ts`
-
-#### Repository Pattern
-- Define interfaces in `domain/repositories/`
-- Implement in `infrastructure/repositories/`
-- Use dependency injection to inject repositories into services
-
 #### Controllers
 - One controller per resource (users, events, calendars)
 - Use `reqResAsyncHandler` for async error handling
@@ -490,13 +480,10 @@ const createEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
   sendR(res, STATUS_RESPONSE.CREATED, "Event created successfully", r);
 });
 
-// Validation
+// Validation - ALWAYS use return with sendR()
 if (!tokenData) {
   return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User tokens not found.");
 }
-
-// Throwing errors
-throw new Error("Event summary is required");
 ```
 
 ### Frontend

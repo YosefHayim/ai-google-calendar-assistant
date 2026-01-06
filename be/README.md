@@ -64,12 +64,10 @@ This service exposes a backend (Express + TypeScript) that:
 - Multi-user support with authentication
 
 ### Architecture & Infrastructure
-- Clean architecture with Domain-Driven Design (DDD)
-- Repository pattern for data access
-- Dependency injection with InversifyJS
-- Value objects for type safety
-- Comprehensive domain entity validation
+- Clean architecture with layered design
 - Middleware for authentication and error handling
+- Centralized error handling with async wrappers
+- Consistent response patterns with `sendR()` utility
 
 ### Developer Experience
 - Full TypeScript support with strict typing
