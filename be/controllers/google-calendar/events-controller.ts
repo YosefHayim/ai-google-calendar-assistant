@@ -5,6 +5,7 @@ import { getCachedInsights, setCachedInsights } from "@/utils/cache/insights-cac
 import { reqResAsyncHandler, sendR } from "@/utils/http";
 
 import { calculateInsightsMetrics } from "@/utils/ai/insights-calculator";
+import { quickAddEventWithAI } from "@/utils/ai/quick-add-parser";
 import type { calendar_v3 } from "googleapis";
 import { fetchCredentialsByEmail } from "@/utils/auth/get-user-calendar-tokens";
 import { generateInsightsWithRetry } from "@/ai-agents/insights-generator";
@@ -175,19 +176,37 @@ const getEventAnalytics = reqResAsyncHandler(async (req: Request, res: Response)
  *
  */
 const quickAddEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const tokenData = await fetchCredentialsByEmail(req.user?.email!);
-  if (!tokenData) {
-    return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User token not found.");
+  const email = req.user?.email
+  if (!email) {
+    return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated.")
   }
 
-  const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData);
-  const r = await calendar.events.quickAdd({
-    ...req.body,
-    ...REQUEST_CONFIG_BASE,
-    calendarId: (req.query.calendarId as string) ?? "primary",
-  });
-  return sendR(res, STATUS_RESPONSE.CREATED, "Event quick added successfully", r.data);
-});
+  const { text, forceCreate } = req.body as { text?: string; forceCreate?: boolean }
+  if (!text) {
+    return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Event text is required.")
+  }
+
+  const result = await quickAddEventWithAI(email, text, { forceCreate })
+
+  if (!result.success) {
+    if (result.requiresConfirmation) {
+      return sendR(res, STATUS_RESPONSE.CONFLICT, result.error ?? "Event conflicts detected", {
+        parsed: result.parsed,
+        conflicts: result.conflicts,
+        calendarId: result.calendarId,
+        calendarName: result.calendarName,
+      })
+    }
+    return sendR(res, STATUS_RESPONSE.BAD_REQUEST, result.error ?? "Failed to create event.")
+  }
+
+  return sendR(res, STATUS_RESPONSE.CREATED, "Event created successfully", {
+    event: result.event,
+    parsed: result.parsed,
+    calendarId: result.calendarId,
+    calendarName: result.calendarName,
+  })
+})
 
 /**
  * Watch an events

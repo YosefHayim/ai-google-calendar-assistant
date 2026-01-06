@@ -7,27 +7,27 @@ import React from 'react'
 import { format } from 'date-fns'
 import { getDaysBetween } from '@/lib/dateUtils'
 
-// Extracted components
-import ActivityHeatmap from './ActivityHeatmap'
 import AnalyticsDashboardSkeleton from './AnalyticsDashboardSkeleton'
+import BentoStatsGrid from './BentoStatsGrid'
 import CalendarEventsDialog from '@/components/dialogs/CalendarEventsDialog'
-import DayEventsDialog from '@/components/dialogs/DayEventsDialog'
 import CalendarSettingsDialog from '@/components/dialogs/CalendarSettingsDialog'
 import CreateCalendarDialog from '@/components/dialogs/CreateCalendarDialog'
-import DailyAvailableHoursChart from './DailyAvailableHoursChart'
+import DailyAvailableHoursDashboard from './DailyAvailableHoursDashboard'
+import DayEventsDialog from '@/components/dialogs/DayEventsDialog'
 import { DatePickerWithRange } from '@/components/ui/date-range-picker'
-// Dialogs
 import EventDetailsDialog from '@/components/dialogs/EventDetailsDialog'
+import EventDurationChart from './EventDurationChart'
 import InsightCard from './InsightCard'
 import InsightCardSkeleton from './InsightCardSkeleton'
 import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button'
-import KPICardsSection from './KPICardsSection'
 import ManageCalendars from '@/components/dashboard/analytics/ManageCalendars'
 import RecentEvents from '@/components/dashboard/analytics/RecentEvents'
-import TimeAllocationChart from './TimeAllocationChart'
-import { useAnalyticsContext } from '@/contexts/AnalyticsContext'
-import { useAIInsights } from '@/hooks/queries/analytics/useAIInsights'
+import TimeAllocationDashboard from './TimeAllocationDashboard'
+import TimeDistributionChart from './TimeDistributionChart'
+import WeeklyPatternChart from './WeeklyPatternChart'
 import { getInsightIcon } from '@/lib/iconUtils'
+import { useAIInsights } from '@/hooks/queries/analytics/useAIInsights'
+import { useAnalyticsContext } from '@/contexts/AnalyticsContext'
 
 interface AnalyticsDashboardProps {
   isLoading?: boolean
@@ -35,16 +35,11 @@ interface AnalyticsDashboardProps {
 
 const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: initialLoading }) => {
   const {
-    // Date range
     date,
     setDate,
-
-    // Calendars data
     calendarsData,
     calendarMap,
     isCalendarsLoading,
-
-    // Analytics data
     processedData,
     comparison,
     isAnalyticsLoading,
@@ -52,15 +47,11 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
     isAnalyticsError,
     analyticsError,
     refetchAnalytics,
-
-    // Event Details Dialog
     selectedEvent,
     isEventDialogOpen,
     selectedEventCalendarColor,
     selectedEventCalendarName,
     closeEventDetailsDialog,
-
-    // Calendar Events Dialog
     isCalendarEventsDialogOpen,
     selectedCalendarForEvents,
     calendarEvents,
@@ -68,35 +59,26 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
     calendarTotalHours,
     openCalendarEventsDialog,
     closeCalendarEventsDialog,
-
-    // Calendar Settings Dialog
     isCalendarSettingsDialogOpen,
     selectedCalendarForSettings,
     openCalendarSettingsDialog,
     closeCalendarSettingsDialog,
-
-    // Create Calendar Dialog
     isCreateCalendarDialogOpen,
     openCreateCalendarDialog,
     closeCreateCalendarDialog,
     onCalendarCreated,
-
-    // Day Events Dialog
     isDayEventsDialogOpen,
     selectedDayDate,
     selectedDayHours,
     selectedDayEvents,
     openDayEventsDialog,
     closeDayEventsDialog,
-
-    // Helpers
     handleActivityClick,
     handleCalendarEventClick,
   } = useAnalyticsContext()
 
   const isLoading = initialLoading || isAnalyticsLoading || isCalendarsLoading
 
-  // Fetch AI-powered insights
   const {
     data: insightsData,
     isLoading: isInsightsLoading,
@@ -127,35 +109,34 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
     )
   }
 
-  // Loading skeleton state
   if (isLoading) {
     return <AnalyticsDashboardSkeleton />
   }
 
   const {
-    totalEvents,
-    totalDurationHours,
-    averageEventDuration,
-    busiestDayHours,
     calendarBreakdown,
     recentActivities,
     dailyAvailableHours,
+    weeklyPattern,
+    timeOfDayDistribution,
+    eventDurationBreakdown,
+    totalEvents,
   } = processedData
 
   return (
-    <div className="max-w-7xl mx-auto w-full p-2 animate-in fade-in duration-500 overflow-y-auto bg-zinc-50 dark:bg-zinc-950 space-y-2">
-      <h1>
+    <div className="max-w-7xl mx-auto w-full p-4 animate-in fade-in duration-500 overflow-y-auto bg-zinc-50 dark:bg-zinc-950 space-y-6">
+      <header className="flex flex-col gap-4">
         {date?.from && date?.to && (
-          <div className="flex items-end gap-2 w-full">
-            <p className=" text-zinc-500 dark:text-zinc-400 mt-2">Your analytics data for dates:</p>
-            <span className=" text-zinc-900 dark:text-zinc-100">
+          <div className="flex flex-wrap items-baseline gap-2">
+            <span className="text-zinc-500 dark:text-zinc-400">Analytics for</span>
+            <span className="font-semibold text-zinc-900 dark:text-zinc-100">
               {format(date.from, 'MMM dd, yyyy')} - {format(date.to, 'MMM dd, yyyy')}
             </span>
-            <span className="text-zinc-500 dark:text-zinc-400">{getDaysBetween(date.from, date.to)} days</span>
+            <span className="text-sm text-zinc-400 dark:text-zinc-500">
+              ({getDaysBetween(date.from, date.to)} days)
+            </span>
           </div>
         )}
-      </h1>
-      <header className=" flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div className="flex gap-2 items-center">
           <DatePickerWithRange date={date} setDate={setDate} />
           <InteractiveHoverButton
@@ -168,26 +149,24 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
         </div>
       </header>
 
-      <div></div>
-
-      {/* KPI Cards Section */}
-      <KPICardsSection
-        totalEvents={totalEvents}
-        totalDurationHours={totalDurationHours}
-        averageEventDuration={averageEventDuration}
-        busiestDayHours={busiestDayHours}
-        comparison={comparison}
-        isLoading={isAnalyticsFetching}
-      />
+      <BentoStatsGrid data={processedData} comparison={comparison} isLoading={isAnalyticsFetching} />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Daily Available Hours Chart */}
-        <DailyAvailableHoursChart data={dailyAvailableHours} onDayClick={openDayEventsDialog} />
+        <WeeklyPatternChart data={weeklyPattern} isLoading={isAnalyticsFetching} />
+        <TimeDistributionChart data={timeOfDayDistribution} isLoading={isAnalyticsFetching} />
+        <EventDurationChart
+          data={eventDurationBreakdown}
+          totalEvents={totalEvents}
+          isLoading={isAnalyticsFetching}
+        />
+      </div>
 
-        {/* Intelligence Insights */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <DailyAvailableHoursDashboard data={dailyAvailableHours} onDayClick={openDayEventsDialog} />
+
         <div className="lg:col-span-3">
-          <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-6 px-2 flex items-center gap-2">
-            Performance Intelligence
+          <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-4 flex items-center gap-2">
+            AI Insights
             <HoverCard>
               <HoverCardTrigger asChild>
                 <button className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors">
@@ -198,16 +177,15 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
                 <div className="space-y-2">
                   <h4 className="font-semibold text-sm">Performance Intelligence</h4>
                   <p className="text-xs text-zinc-600 dark:text-zinc-400">
-                    AI-powered insights about your productivity patterns, focus velocity, collaborative load, and task
-                    completion rates. These metrics help you understand your work habits and optimize your schedule.
+                    AI-powered insights about your productivity patterns, focus velocity, and schedule optimization
+                    opportunities.
                   </p>
                 </div>
               </HoverCardContent>
             </HoverCard>
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
             {isInsightsLoading ? (
-              // Show 4 skeleton cards while loading
               <>
                 <InsightCardSkeleton />
                 <InsightCardSkeleton />
@@ -215,8 +193,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
                 <InsightCardSkeleton />
               </>
             ) : isInsightsError ? (
-              // Error state with retry button
-              <div className="col-span-full flex flex-col items-center justify-center py-8 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md">
+              <div className="col-span-full flex flex-col items-center justify-center py-8 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl">
                 <p className="text-zinc-500 dark:text-zinc-400 mb-4">Failed to load insights</p>
                 <button
                   onClick={() => refetchInsights()}
@@ -226,7 +203,6 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
                 </button>
               </div>
             ) : insightsData?.insights && insightsData.insights.length > 0 ? (
-              // Dynamic AI insights
               insightsData.insights.map((insight) => (
                 <InsightCard
                   key={insight.id}
@@ -238,23 +214,19 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
                 />
               ))
             ) : (
-              // Empty state
-              <div className="col-span-full flex flex-col items-center justify-center py-8 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md">
+              <div className="col-span-full flex flex-col items-center justify-center py-8 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl">
                 <p className="text-zinc-500 dark:text-zinc-400">No insights available for this period</p>
               </div>
             )}
           </div>
         </div>
 
-        {/* Time Mix */}
         <div className="lg:col-span-2">
-          <TimeAllocationChart data={calendarBreakdown} onCalendarClick={openCalendarEventsDialog} />
+          <TimeAllocationDashboard data={calendarBreakdown} onCalendarClick={openCalendarEventsDialog} />
         </div>
 
-        {/* Ops & Calendars */}
         <div className="lg:col-span-1 flex flex-col gap-6">
           <RecentEvents activities={recentActivities} onActivityClick={handleActivityClick} />
-
           <ManageCalendars
             calendars={calendarsData}
             calendarMap={calendarMap}
@@ -262,14 +234,8 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
             onCreateCalendar={openCreateCalendarDialog}
           />
         </div>
-
-        {/* Long term heatmap */}
-        <div className="lg:col-span-3 mt-4">
-          <ActivityHeatmap />
-        </div>
       </div>
 
-      {/* Dialogs */}
       <EventDetailsDialog
         isOpen={isEventDialogOpen}
         event={selectedEvent as CalendarEvent | null}
@@ -291,11 +257,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
         percentageChange={undefined}
         onClose={closeCalendarEventsDialog}
         onEventClick={(event) => {
-          handleCalendarEventClick(
-            event,
-            selectedCalendarForEvents?.color || '#6366f1',
-            selectedCalendarForEvents?.name || '',
-          )
+          handleCalendarEventClick(event, selectedCalendarForEvents?.color || '#6366f1', selectedCalendarForEvents?.name || '')
         }}
       />
 

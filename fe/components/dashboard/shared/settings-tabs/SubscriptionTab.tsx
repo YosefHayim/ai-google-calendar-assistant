@@ -1,9 +1,11 @@
 'use client'
 
 import React from 'react'
-import { Brain, Calendar, Smartphone, Zap } from 'lucide-react'
+import Link from 'next/link'
+import { Brain, Calendar, ExternalLink, Smartphone, Zap } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { SettingsRow, SettingsSection } from './components'
 
 const features = [
   { icon: Zap, text: 'Unlimited event creations & updates', colorClass: 'text-amber-500' },
@@ -14,7 +16,7 @@ const features = [
 
 export const SubscriptionTab: React.FC = () => {
   return (
-    <div className="grid gap-4">
+    <div className="space-y-6">
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">Subscription</CardTitle>
@@ -22,9 +24,9 @@ export const SubscriptionTab: React.FC = () => {
             Current Plan: <span className="font-medium">Free Tier</span>
           </CardDescription>
         </CardHeader>
-        <CardContent className="grid gap-4">
+        <CardContent className="space-y-4">
           <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Unlock the full power of Ally</div>
-          <ul className="grid gap-3">
+          <ul className="space-y-3">
             {features.map((feature, index) => (
               <li key={index} className="flex items-center gap-3">
                 <feature.icon className={`h-5 w-5 ${feature.colorClass}`} />
@@ -34,18 +36,33 @@ export const SubscriptionTab: React.FC = () => {
           </ul>
         </CardContent>
         <CardFooter>
-          <Button className="w-full">Upgrade to Pro</Button>
+          <Button className="w-full" asChild>
+            <Link href="/dashboard/billing">Upgrade to Pro</Link>
+          </Button>
         </CardFooter>
       </Card>
 
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">Billing Portal</CardTitle>
-          <CardDescription>Manage payment methods and invoices via Stripe.</CardDescription>
+          <CardDescription>Manage payment methods, view invoices, and update subscription.</CardDescription>
         </CardHeader>
-        <CardFooter>
-          <Button variant="outline">Manage Billing</Button>
-        </CardFooter>
+        <CardContent>
+          <SettingsSection>
+            <SettingsRow
+              id="manage-billing"
+              title="Payment & Invoices"
+              tooltip="Access Stripe billing portal to manage payment methods, view invoices, and update your subscription"
+              control={
+                <Button variant="outline" size="sm" asChild>
+                  <Link href="/dashboard/billing">
+                    Manage <ExternalLink className="w-4 h-4 ml-1" />
+                  </Link>
+                </Button>
+              }
+            />
+          </SettingsSection>
+        </CardContent>
       </Card>
     </div>
   )

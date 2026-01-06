@@ -1,33 +1,48 @@
 'use client'
 
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { eventsService } from '@/lib/api/services/events.service'
+import { eventsService, QuickAddResult } from '@/lib/api/services/events.service'
 import { queryKeys } from '@/lib/query/keys'
-import { useMutationWrapper, MutationHookOptions } from '../useMutationWrapper'
-import type { QuickAddEventRequest, CalendarEvent, ApiResponse } from '@/types/api'
+import type { QuickAddEventRequest, QuickAddResponse } from '@/types/api'
 
-/**
- * Hook to quickly add an event using natural language text
- */
-export function useQuickAddEvent(options?: MutationHookOptions<CalendarEvent, QuickAddEventRequest>) {
+export interface QuickAddMutationOptions {
+  onSuccess?: (data: QuickAddResponse, variables: QuickAddEventRequest) => void | Promise<void>
+  onConflict?: (data: QuickAddResponse, variables: QuickAddEventRequest) => void
+  onError?: (error: string, variables: QuickAddEventRequest) => void
+  onSettled?: (result: QuickAddResult | undefined, variables: QuickAddEventRequest) => void
+}
+
+export function useQuickAddEvent(options?: QuickAddMutationOptions) {
   const queryClient = useQueryClient()
 
-  const mutation = useMutation<ApiResponse<CalendarEvent>, Error, QuickAddEventRequest>({
+  const mutation = useMutation<QuickAddResult, Error, QuickAddEventRequest>({
     mutationFn: (data) => eventsService.quickAdd(data),
-    onSuccess: (data, variables) => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.events.lists() })
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.calendars.freeBusy(),
-      })
-      if (data.data) {
-        options?.onSuccess?.(data.data, variables)
+    onSuccess: (result, variables) => {
+      if (result.success) {
+        queryClient.invalidateQueries({ queryKey: queryKeys.events.lists() })
+        queryClient.invalidateQueries({ queryKey: queryKeys.calendars.freeBusy() })
+        options?.onSuccess?.(result.data, variables)
+      } else if (result.requiresConfirmation) {
+        options?.onConflict?.(result.data, variables)
+      } else {
+        options?.onError?.(result.error, variables)
       }
     },
-    onError: options?.onError,
-    onSettled: (data, error, variables) => {
-      options?.onSettled?.(data?.data ?? undefined, error, variables)
+    onError: (error, variables) => {
+      options?.onError?.(error.message, variables)
+    },
+    onSettled: (result, _error, variables) => {
+      options?.onSettled?.(result, variables)
     },
   })
 
-  return useMutationWrapper(mutation)
+  return {
+    quickAdd: mutation.mutate,
+    quickAddAsync: mutation.mutateAsync,
+    isPending: mutation.isPending,
+    isSuccess: mutation.isSuccess,
+    isError: mutation.isError,
+    result: mutation.data,
+    reset: mutation.reset,
+  }
 }

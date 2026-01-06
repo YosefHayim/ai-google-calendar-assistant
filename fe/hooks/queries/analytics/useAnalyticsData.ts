@@ -8,11 +8,16 @@ import { ENDPOINTS } from '@/lib/api/endpoints'
 import {
   AnalyticsResponseSchema,
   type AnalyticsResponse,
-  type ProcessedAnalyticsData,
   type CalendarBreakdownItem,
   type ProcessedActivity,
   type PeriodMetrics,
   type DailyAvailableHoursDataPoint,
+  type EnhancedAnalyticsData,
+  type WeeklyPatternDataPoint,
+  type TimeOfDayDistribution,
+  type EventDurationBreakdown,
+  type FocusTimeMetrics,
+  type ProductivityMetrics,
 } from '@/types/analytics'
 import { toast } from 'sonner'
 import { useAnalyticsComparison } from './useAnalyticsComparison'
@@ -25,11 +30,79 @@ interface UseAnalyticsDataOptions {
   enabled?: boolean
 }
 
-/**
- * Main hook to fetch and process analytics data
- */
+const WAKING_HOURS_PER_DAY = 16
+const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+const DAY_NAMES_SHORT = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+
+function getEmptyEnhancedData(): EnhancedAnalyticsData {
+  return {
+    totalEvents: 0,
+    totalDurationHours: 0,
+    averageEventDuration: 0,
+    busiestDayHours: 0,
+    calendarBreakdown: [],
+    recentActivities: [],
+    dailyAvailableHours: [],
+    weeklyPattern: DAY_NAMES.map((day, index) => ({
+      day,
+      dayShort: DAY_NAMES_SHORT[index],
+      dayIndex: index,
+      hours: 0,
+      eventCount: 0,
+    })),
+    timeOfDayDistribution: { morning: 0, afternoon: 0, evening: 0, night: 0 },
+    eventDurationBreakdown: { short: 0, medium: 0, long: 0, extended: 0 },
+    focusTimeMetrics: {
+      totalFocusBlocks: 0,
+      averageFocusBlockLength: 0,
+      longestFocusBlock: 0,
+      focusTimePercentage: 0,
+    },
+    productivityMetrics: {
+      productivityScore: 0,
+      meetingLoad: 0,
+      averageEventsPerDay: 0,
+      mostProductiveDay: '-',
+      leastProductiveDay: '-',
+      peakHour: 9,
+    },
+    totalDays: 0,
+    daysWithEvents: 0,
+    eventFreeDays: 0,
+    longestEvent: 0,
+    shortestEvent: 0,
+    recurringEventsCount: 0,
+    allDayEventsCount: 0,
+  }
+}
+
+function getTimeOfDayCategory(hour: number): keyof TimeOfDayDistribution {
+  if (hour >= 6 && hour < 12) return 'morning'
+  if (hour >= 12 && hour < 18) return 'afternoon'
+  if (hour >= 18 && hour < 22) return 'evening'
+  return 'night'
+}
+
+function getDurationCategory(minutes: number): keyof EventDurationBreakdown {
+  if (minutes < 30) return 'short'
+  if (minutes < 60) return 'medium'
+  if (minutes < 120) return 'long'
+  return 'extended'
+}
+
+function calculateProductivityScore(
+  meetingLoad: number,
+  focusTimePercentage: number,
+  eventDistribution: number
+): number {
+  const meetingBalance = meetingLoad > 60 ? Math.max(0, 100 - (meetingLoad - 40)) : 100
+  const focusScore = focusTimePercentage * 100
+  const distributionScore = eventDistribution * 100
+
+  return Math.round((meetingBalance * 0.4 + focusScore * 0.35 + distributionScore * 0.25))
+}
+
 export function useAnalyticsData({ timeMin, timeMax, calendarMap, enabled = true }: UseAnalyticsDataOptions) {
-  // Fetch analytics data
   const analyticsQuery = useQuery({
     queryKey: ['events-analytics', timeMin, timeMax],
     queryFn: async (): Promise<AnalyticsResponse | null> => {
@@ -42,7 +115,6 @@ export function useAnalyticsData({ timeMin, timeMax, calendarMap, enabled = true
 
       const response = await apiClient.get(`${ENDPOINTS.EVENTS_ANALYTICS}?${params.toString()}`)
 
-      // Toast the status message
       if (response.data?.status && response.data?.message) {
         if (response.data.status === 'success') {
           toast.success(response.data.message)
@@ -51,10 +123,8 @@ export function useAnalyticsData({ timeMin, timeMax, calendarMap, enabled = true
         }
       }
 
-      // Validate with Zod
       const result = AnalyticsResponseSchema.safeParse(response.data)
       if (!result.success) {
-        // Try to handle case where response might be in a different format
         if (response.data?.allEvents && Array.isArray(response.data.allEvents)) {
           const normalizedData = {
             status: response.data.status || 'success',
@@ -78,149 +148,244 @@ export function useAnalyticsData({ timeMin, timeMax, calendarMap, enabled = true
     retry: false,
   })
 
-  // Process data function
-  const processData = (data: AnalyticsResponse | null | undefined): ProcessedAnalyticsData => {
-    if (!data?.data?.allEvents || !Array.isArray(data.data.allEvents)) {
-      return {
-        totalEvents: 0,
-        totalDurationHours: 0,
-        averageEventDuration: 0,
-        busiestDayHours: 0,
-        calendarBreakdown: [],
-        recentActivities: [],
-        dailyAvailableHours: [],
+  const processData = React.useCallback(
+    (data: AnalyticsResponse | null | undefined): EnhancedAnalyticsData => {
+      if (!data?.data?.allEvents || !Array.isArray(data.data.allEvents)) {
+        return getEmptyEnhancedData()
       }
-    }
 
-    let totalEvents = 0
-    let totalDurationMinutes = 0
-    const calendarDurationMap = new Map<string, { minutes: number; calendarId: string }>()
-    const recentActivities: ProcessedActivity[] = []
-    const dayHoursMap = new Map<string, number>()
+      let totalEvents = 0
+      let totalDurationMinutes = 0
+      let recurringEventsCount = 0
+      let allDayEventsCount = 0
+      let longestEventMinutes = 0
+      let shortestEventMinutes = Infinity
 
-    data.data.allEvents.forEach((calendarGroup) => {
-      if (!calendarGroup?.calendarId || !Array.isArray(calendarGroup.events)) return
+      const calendarDurationMap = new Map<string, { minutes: number; calendarId: string }>()
+      const recentActivities: ProcessedActivity[] = []
+      const dayHoursMap = new Map<string, number>()
+      const dayEventsMap = new Map<string, number>()
 
-      const calendarInfo = calendarMap.get(calendarGroup.calendarId)
-      let calendarName: string
-      if (calendarInfo?.name) {
-        calendarName = calendarInfo.name
-      } else if (calendarGroup.calendarId.includes('@')) {
-        calendarName = calendarGroup.calendarId.split('@')[0]
-      } else if (calendarGroup.calendarId.length > 20) {
-        calendarName = `Calendar ${calendarGroup.calendarId.slice(0, 8)}...`
-      } else {
-        calendarName = calendarGroup.calendarId
-      }
-      const calendarColor = calendarInfo?.color || '#6366f1'
+      const weeklyHours = new Array(7).fill(0)
+      const weeklyEventCounts = new Array(7).fill(0)
+      const hourlyDistribution = new Array(24).fill(0)
 
-      calendarGroup.events.forEach((event) => {
-        if (!event?.start || !event?.end) return
+      const timeOfDay: TimeOfDayDistribution = { morning: 0, afternoon: 0, evening: 0, night: 0 }
+      const durationBreakdown: EventDurationBreakdown = { short: 0, medium: 0, long: 0, extended: 0 }
 
-        totalEvents++
+      const defaultColors = ['#f26306', '#1489b4', '#2d9663', '#6366f1', '#64748b', '#e11d48']
 
-        if (event.start.dateTime && event.end.dateTime) {
-          const start = new Date(event.start.dateTime)
-          const end = new Date(event.end.dateTime)
-          const durationMinutes = (end.getTime() - start.getTime()) / (1000 * 60)
-          totalDurationMinutes += durationMinutes
+      data.data.allEvents.forEach((calendarGroup) => {
+        if (!calendarGroup?.calendarId || !Array.isArray(calendarGroup.events)) return
 
-          // Track hours per day for busiest day calculation
-          const dayKey = start.toISOString().split('T')[0]
-          const hours = durationMinutes / 60
-          dayHoursMap.set(dayKey, (dayHoursMap.get(dayKey) || 0) + hours)
+        const calendarInfo = calendarMap.get(calendarGroup.calendarId)
+        let calendarName: string
+        if (calendarInfo?.name) {
+          calendarName = calendarInfo.name
+        } else if (calendarGroup.calendarId.includes('@')) {
+          calendarName = calendarGroup.calendarId.split('@')[0]
+        } else if (calendarGroup.calendarId.length > 20) {
+          calendarName = `Calendar ${calendarGroup.calendarId.slice(0, 8)}...`
+        } else {
+          calendarName = calendarGroup.calendarId
+        }
+        const calendarColor = calendarInfo?.color || '#6366f1'
 
-          const existing = calendarDurationMap.get(calendarName)
-          if (existing) {
-            existing.minutes += durationMinutes
-          } else {
-            calendarDurationMap.set(calendarName, { minutes: durationMinutes, calendarId: calendarGroup.calendarId })
+        calendarGroup.events.forEach((event) => {
+          if (!event?.start || !event?.end) return
+
+          totalEvents++
+
+          if (event.recurringEventId) {
+            recurringEventsCount++
           }
 
-          recentActivities.push({
-            action: event.summary || 'No Title',
-            time: start.toLocaleDateString(),
-            icon: CalendarDays,
-            timestamp: start.getTime(),
-            calendarName,
-            calendarId: calendarGroup.calendarId,
-            calendarColor,
-            event: event as CalendarEvent,
-          })
-        }
+          if (event.start.date && !event.start.dateTime) {
+            allDayEventsCount++
+            return
+          }
+
+          if (event.start.dateTime && event.end.dateTime) {
+            const start = new Date(event.start.dateTime)
+            const end = new Date(event.end.dateTime)
+            const durationMinutes = (end.getTime() - start.getTime()) / (1000 * 60)
+
+            if (durationMinutes > 0) {
+              totalDurationMinutes += durationMinutes
+              longestEventMinutes = Math.max(longestEventMinutes, durationMinutes)
+              if (shortestEventMinutes === Infinity || durationMinutes < shortestEventMinutes) {
+                shortestEventMinutes = durationMinutes
+              }
+            }
+
+            const dayKey = start.toISOString().split('T')[0]
+            const hours = durationMinutes / 60
+            dayHoursMap.set(dayKey, (dayHoursMap.get(dayKey) || 0) + hours)
+            dayEventsMap.set(dayKey, (dayEventsMap.get(dayKey) || 0) + 1)
+
+            const dayOfWeek = start.getDay()
+            weeklyHours[dayOfWeek] += hours
+            weeklyEventCounts[dayOfWeek]++
+
+            const startHour = start.getHours()
+            hourlyDistribution[startHour]++
+
+            const timeCategory = getTimeOfDayCategory(startHour)
+            timeOfDay[timeCategory]++
+
+            const durationCategory = getDurationCategory(durationMinutes)
+            durationBreakdown[durationCategory]++
+
+            const existing = calendarDurationMap.get(calendarName)
+            if (existing) {
+              existing.minutes += durationMinutes
+            } else {
+              calendarDurationMap.set(calendarName, {
+                minutes: durationMinutes,
+                calendarId: calendarGroup.calendarId,
+              })
+            }
+
+            recentActivities.push({
+              action: event.summary || 'No Title',
+              time: start.toLocaleDateString(),
+              icon: CalendarDays,
+              timestamp: start.getTime(),
+              calendarName,
+              calendarId: calendarGroup.calendarId,
+              calendarColor,
+              event: event as CalendarEvent,
+            })
+          }
+        })
       })
-    })
 
-    // Sort recent activities by time
-    recentActivities.sort((a, b) => b.timestamp - a.timestamp)
+      recentActivities.sort((a, b) => b.timestamp - a.timestamp)
 
-    // Format calendar breakdown
-    const defaultColors = ['#f26306', '#1489b4', '#2d9663', '#6366f1', '#64748b', '#e11d48']
-    const calendarBreakdown: CalendarBreakdownItem[] = Array.from(calendarDurationMap.entries())
-      .map(([calendarName, data], index) => {
-        const calendarInfo = calendarMap.get(data.calendarId)
-        let color = calendarInfo?.color || defaultColors[index % defaultColors.length]
+      const calendarBreakdown: CalendarBreakdownItem[] = Array.from(calendarDurationMap.entries())
+        .map(([name, calData], index) => {
+          const calInfo = calendarMap.get(calData.calendarId)
+          let color = calInfo?.color || defaultColors[index % defaultColors.length]
 
-        if (!color || typeof color !== 'string' || !/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(color)) {
-          color = defaultColors[index % defaultColors.length]
-        }
+          if (!color || typeof color !== 'string' || !/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(color)) {
+            color = defaultColors[index % defaultColors.length]
+          }
 
-        return {
-          category: calendarName,
-          hours: Math.round((data.minutes / 60) * 10) / 10,
-          color,
-          calendarId: data.calendarId,
-        }
-      })
-      .sort((a, b) => b.hours - a.hours)
-      .slice(0, 5)
+          return {
+            category: name,
+            hours: Math.round((calData.minutes / 60) * 10) / 10,
+            color,
+            calendarId: calData.calendarId,
+          }
+        })
+        .sort((a, b) => b.hours - a.hours)
+        .slice(0, 5)
 
-    const totalDurationHours = Math.round((totalDurationMinutes / 60) * 10) / 10
-    const averageEventDuration = totalEvents > 0 ? totalDurationHours / totalEvents : 0
-    const busiestDayHours = Math.max(...Array.from(dayHoursMap.values()), 0)
+      const totalDurationHours = Math.round((totalDurationMinutes / 60) * 10) / 10
+      const averageEventDuration = totalEvents > 0 ? Math.round((totalDurationHours / totalEvents) * 100) / 100 : 0
+      const busiestDayHours = Math.max(...Array.from(dayHoursMap.values()), 0)
 
-    // Calculate daily available hours (16 waking hours - event hours per day)
-    const WAKING_HOURS_PER_DAY = 16
-    const dailyAvailableHours: DailyAvailableHoursDataPoint[] = Array.from(dayHoursMap.entries())
-      .map(([dateStr, eventHours], index) => ({
-        day: index + 1,
-        date: dateStr,
-        hours: Math.max(0, Math.round((WAKING_HOURS_PER_DAY - eventHours) * 10) / 10),
+      const dailyAvailableHours: DailyAvailableHoursDataPoint[] = Array.from(dayHoursMap.entries())
+        .map(([dateStr, eventHours], index) => ({
+          day: index + 1,
+          date: dateStr,
+          hours: Math.max(0, Math.round((WAKING_HOURS_PER_DAY - eventHours) * 10) / 10),
+        }))
+        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+        .map((item, index) => ({ ...item, day: index + 1 }))
+
+      const weeklyPattern: WeeklyPatternDataPoint[] = DAY_NAMES.map((day, index) => ({
+        day,
+        dayShort: DAY_NAMES_SHORT[index],
+        dayIndex: index,
+        hours: Math.round(weeklyHours[index] * 10) / 10,
+        eventCount: weeklyEventCounts[index],
       }))
-      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-      .map((item, index) => ({ ...item, day: index + 1 }))
 
-    return {
-      totalEvents,
-      totalDurationHours,
-      averageEventDuration,
-      busiestDayHours,
-      calendarBreakdown,
-      recentActivities: recentActivities.slice(0, 5),
-      dailyAvailableHours,
-    }
-  }
+      const totalDays = timeMin && timeMax ? Math.ceil((timeMax.getTime() - timeMin.getTime()) / (1000 * 60 * 60 * 24)) : 0
+      const daysWithEvents = dayHoursMap.size
+      const eventFreeDays = Math.max(0, totalDays - daysWithEvents)
 
-  // Memoize processed data
+      const sortedDays = Array.from(dayHoursMap.entries()).sort((a, b) => b[1] - a[1])
+      const peakHour = hourlyDistribution.indexOf(Math.max(...hourlyDistribution))
+
+      let focusBlocks = 0
+      let totalFocusMinutes = 0
+      let longestFocusBlock = 0
+
+      const sortedDayEntries = Array.from(dayHoursMap.entries()).sort(
+        (a, b) => new Date(a[0]).getTime() - new Date(b[0]).getTime()
+      )
+
+      sortedDayEntries.forEach(([, eventHours]) => {
+        const freeHours = WAKING_HOURS_PER_DAY - eventHours
+        if (freeHours >= 2) {
+          focusBlocks++
+          totalFocusMinutes += freeHours * 60
+          longestFocusBlock = Math.max(longestFocusBlock, freeHours)
+        }
+      })
+
+      const totalWakingMinutes = totalDays * WAKING_HOURS_PER_DAY * 60
+      const focusTimePercentage = totalWakingMinutes > 0 ? totalFocusMinutes / totalWakingMinutes : 0
+
+      const focusTimeMetrics: FocusTimeMetrics = {
+        totalFocusBlocks: focusBlocks,
+        averageFocusBlockLength: focusBlocks > 0 ? Math.round((totalFocusMinutes / focusBlocks / 60) * 10) / 10 : 0,
+        longestFocusBlock: Math.round(longestFocusBlock * 10) / 10,
+        focusTimePercentage: Math.round(focusTimePercentage * 100),
+      }
+
+      const meetingLoad = totalWakingMinutes > 0 ? (totalDurationMinutes / totalWakingMinutes) * 100 : 0
+
+      const eventDistribution = totalEvents > 0 ? Math.min(1, daysWithEvents / Math.max(1, totalDays)) : 0
+
+      const productivityScore = calculateProductivityScore(meetingLoad, focusTimePercentage, eventDistribution)
+
+      const productivityMetrics: ProductivityMetrics = {
+        productivityScore,
+        meetingLoad: Math.round(meetingLoad * 10) / 10,
+        averageEventsPerDay: totalDays > 0 ? Math.round((totalEvents / totalDays) * 10) / 10 : 0,
+        mostProductiveDay: sortedDays.length > 0 ? new Date(sortedDays[0][0]).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' }) : '-',
+        leastProductiveDay: sortedDays.length > 0 ? new Date(sortedDays.at(-1)![0]).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' }) : '-',
+        peakHour,
+      }
+
+      return {
+        totalEvents,
+        totalDurationHours,
+        averageEventDuration,
+        busiestDayHours: Math.round(busiestDayHours * 10) / 10,
+        calendarBreakdown,
+        recentActivities: recentActivities.slice(0, 5),
+        dailyAvailableHours,
+        weeklyPattern,
+        timeOfDayDistribution: timeOfDay,
+        eventDurationBreakdown: durationBreakdown,
+        focusTimeMetrics,
+        productivityMetrics,
+        totalDays,
+        daysWithEvents,
+        eventFreeDays,
+        longestEvent: Math.round((longestEventMinutes / 60) * 10) / 10,
+        shortestEvent: shortestEventMinutes === Infinity ? 0 : Math.round((shortestEventMinutes / 60) * 10) / 10,
+        recurringEventsCount,
+        allDayEventsCount,
+      }
+    },
+    [calendarMap, timeMin, timeMax]
+  )
+
   const processedData = React.useMemo(() => {
     try {
       return processData(analyticsQuery.data ?? null)
     } catch (error) {
       console.error('Error processing analytics data:', error)
       toast.error('Failed to process analytics data. Please refresh the page.')
-      return {
-        totalEvents: 0,
-        totalDurationHours: 0,
-        averageEventDuration: 0,
-        busiestDayHours: 0,
-        calendarBreakdown: [],
-        recentActivities: [],
-        dailyAvailableHours: [],
-      }
+      return getEmptyEnhancedData()
     }
   }, [analyticsQuery.data, processData])
 
-  // Extract current metrics for comparison hook
   const currentMetrics: PeriodMetrics | null = React.useMemo(() => {
     if (!analyticsQuery.data) return null
     return {
@@ -231,7 +396,6 @@ export function useAnalyticsData({ timeMin, timeMax, calendarMap, enabled = true
     }
   }, [analyticsQuery.data, processedData])
 
-  // Fetch comparison data - only fetches previous period, uses currentMetrics for trends
   const comparisonQuery = useAnalyticsComparison({
     timeMin,
     timeMax,

@@ -1,0 +1,151 @@
+'use client'
+
+import React, { useMemo } from 'react'
+import { Clock } from 'lucide-react'
+import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts'
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
+import { Skeleton } from '@/components/ui/skeleton'
+import type { TimeOfDayDistribution } from '@/types/analytics'
+
+interface TimeDistributionChartProps {
+  data: TimeOfDayDistribution
+  isLoading?: boolean
+}
+
+const TIME_PERIODS = [
+  { key: 'morning', label: 'Morning', range: '6am - 12pm', color: '#fbbf24' },
+  { key: 'afternoon', label: 'Afternoon', range: '12pm - 6pm', color: '#38bdf8' },
+  { key: 'evening', label: 'Evening', range: '6pm - 10pm', color: '#818cf8' },
+  { key: 'night', label: 'Night', range: '10pm - 6am', color: '#64748b' },
+] as const
+
+const chartConfig = {
+  morning: { label: 'Morning', color: '#fbbf24' },
+  afternoon: { label: 'Afternoon', color: '#38bdf8' },
+  evening: { label: 'Evening', color: '#818cf8' },
+  night: { label: 'Night', color: '#64748b' },
+}
+
+const TimeDistributionChart: React.FC<TimeDistributionChartProps> = ({ data, isLoading = false }) => {
+  const chartData = useMemo(() => {
+    return TIME_PERIODS.map((period) => ({
+      name: period.label,
+      value: data[period.key],
+      color: period.color,
+      range: period.range,
+    }))
+  }, [data])
+
+  const total = useMemo(() => {
+    return data.morning + data.afternoon + data.evening + data.night
+  }, [data])
+
+  if (isLoading) {
+    return (
+      <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-sm p-6">
+        <div className="flex items-center gap-2 mb-2">
+          <Skeleton className="w-5 h-5 rounded" />
+          <Skeleton className="h-5 w-28" />
+        </div>
+        <Skeleton className="h-4 w-44 mb-6" />
+        <div className="flex justify-center">
+          <Skeleton className="h-[160px] w-[160px] rounded-full" />
+        </div>
+        <div className="grid grid-cols-2 gap-2 mt-6">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Skeleton key={i} className="h-6 w-full" />
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  const hasData = total > 0
+
+  return (
+    <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
+      <div className="flex items-center gap-2 mb-1">
+        <div className="w-8 h-8 rounded-lg bg-sky-100 dark:bg-sky-900/50 flex items-center justify-center">
+          <Clock className="w-4 h-4 text-sky-600 dark:text-sky-400" />
+        </div>
+        <h3 className="font-semibold text-zinc-900 dark:text-zinc-100">Time of Day</h3>
+      </div>
+      <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-4 ml-10">When your events are scheduled</p>
+
+      {!hasData ? (
+        <div className="h-[160px] flex items-center justify-center text-zinc-400 dark:text-zinc-600">
+          No events in this period
+        </div>
+      ) : (
+        <ChartContainer config={chartConfig} className="mx-auto">
+          <div className="relative">
+            <ResponsiveContainer width={160} height={160}>
+              <PieChart>
+                <Pie
+                  data={chartData}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={50}
+                  outerRadius={70}
+                  paddingAngle={2}
+                  dataKey="value"
+                  animationBegin={0}
+                  animationDuration={800}
+                >
+                  {chartData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} stroke="none" />
+                  ))}
+                </Pie>
+                <ChartTooltip
+                  content={
+                    <ChartTooltipContent
+                      formatter={(value, name, props) => {
+                        const payload = props.payload
+                        const percentage = total > 0 ? ((payload.value / total) * 100).toFixed(0) : 0
+                        return (
+                          <div className="flex flex-col gap-1">
+                            <span className="font-medium">{payload.name}</span>
+                            <span className="text-xs text-muted-foreground">{payload.range}</span>
+                            <span>
+                              {value} events ({percentage}%)
+                            </span>
+                          </div>
+                        )
+                      }}
+                    />
+                  }
+                />
+              </PieChart>
+            </ResponsiveContainer>
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div className="text-center">
+                <p className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">{total}</p>
+                <p className="text-xs text-zinc-500">events</p>
+              </div>
+            </div>
+          </div>
+        </ChartContainer>
+      )}
+
+      <div className="grid grid-cols-2 gap-x-4 gap-y-2 mt-4">
+        {TIME_PERIODS.map((period) => {
+          const count = data[period.key]
+          const percentage = total > 0 ? ((count / total) * 100).toFixed(0) : 0
+          return (
+            <div key={period.key} className="flex items-center gap-2 text-sm">
+              <div className="w-3 h-3 rounded-sm flex-shrink-0" style={{ backgroundColor: period.color }} />
+              <div className="flex-1 min-w-0">
+                <span className="text-zinc-700 dark:text-zinc-300 truncate">{period.label}</span>
+                <span className="text-zinc-400 dark:text-zinc-500 ml-1">
+                  {count} ({percentage}%)
+                </span>
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+export default TimeDistributionChart
