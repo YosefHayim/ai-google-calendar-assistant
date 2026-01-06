@@ -474,6 +474,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                     onClick={(e) => {
                       e.stopPropagation();
                     }}
+                    suppressHydrationWarning
                   >
                     <MoreHorizontal className="w-5 h-5" />
                     <span className="sr-only">More options</span>

@@ -1,20 +1,20 @@
-import type { calendar_v3 } from "googleapis";
 import type {
+  DayOfWeek,
+  FillGapRequest,
+  GapAnalysisOptions,
+  GapBoundaryEvent,
   GapCandidate,
   GapCandidateDTO,
   GapRecoverySettings,
-  GapAnalysisOptions,
-  InferredContext,
   InferenceType,
-  GapBoundaryEvent,
-  DayOfWeek,
-  FillGapRequest,
+  InferredContext,
 } from "@/types";
+
 import { asyncHandler } from "../http/async-handlers";
+import type { calendar_v3 } from "googleapis";
+import { fetchCalendarEvents } from "./get-events";
 import { fetchCredentialsByEmail } from "../auth/get-user-calendar-tokens";
 import { initUserSupabaseCalendarWithTokensAndUpdateTokens } from "./init";
-import { fetchCalendarEvents } from "./get-events";
-import { REQUEST_CONFIG_BASE } from "@/config";
 import { v4 as uuidv4 } from "uuid";
 
 // =============================================================================
@@ -37,24 +37,8 @@ export const DEFAULT_GAP_RECOVERY_SETTINGS: GapRecoverySettings = {
 
 // Travel pattern regexes
 const TRAVEL_PATTERNS = {
-  arrival: [
-    /^drive to (.+)$/i,
-    /^travel to (.+)$/i,
-    /^commute to (.+)$/i,
-    /^arrive at (.+)$/i,
-    /^heading to (.+)$/i,
-    /^go to (.+)$/i,
-    /^trip to (.+)$/i,
-  ],
-  departure: [
-    /^drive home$/i,
-    /^leave (.+)$/i,
-    /^depart (.+)$/i,
-    /^heading home$/i,
-    /^go home$/i,
-    /^return home$/i,
-    /^drive from (.+)$/i,
-  ],
+  arrival: [/^drive to (.+)$/i, /^travel to (.+)$/i, /^commute to (.+)$/i, /^arrive at (.+)$/i, /^heading to (.+)$/i, /^go to (.+)$/i, /^trip to (.+)$/i],
+  departure: [/^drive home$/i, /^leave (.+)$/i, /^depart (.+)$/i, /^heading home$/i, /^go home$/i, /^return home$/i, /^drive from (.+)$/i],
 };
 
 // =============================================================================
@@ -78,10 +62,7 @@ function getDayOfWeek(date: Date): DayOfWeek {
   return days[date.getDay()];
 }
 
-function matchTravelPattern(
-  summary: string,
-  type: "arrival" | "departure"
-): { matched: boolean; location: string | null } {
+function matchTravelPattern(summary: string, type: "arrival" | "departure"): { matched: boolean; location: string | null } {
   const patterns = TRAVEL_PATTERNS[type];
 
   for (const pattern of patterns) {
@@ -97,10 +78,7 @@ function matchTravelPattern(
   return { matched: false, location: null };
 }
 
-function calculateTravelSandwichConfidence(
-  arrivalLocation: string | null,
-  departureLocation: string | null
-): number {
+function calculateTravelSandwichConfidence(arrivalLocation: string | null, departureLocation: string | null): number {
   // High confidence if we have a location from arrival
   if (arrivalLocation) {
     // Extra high if departure matches or is "home"
@@ -112,10 +90,7 @@ function calculateTravelSandwichConfidence(
   return 0.7;
 }
 
-function detectTravelSandwich(
-  precedingEvent: calendar_v3.Schema$Event,
-  followingEvent: calendar_v3.Schema$Event
-): InferredContext | null {
+function detectTravelSandwich(precedingEvent: calendar_v3.Schema$Event, followingEvent: calendar_v3.Schema$Event): InferredContext | null {
   const precedingSummary = precedingEvent.summary || "";
   const followingSummary = followingEvent.summary || "";
 
@@ -180,10 +155,7 @@ function detectWorkSession(
   return null;
 }
 
-function detectMealBreak(
-  gapStart: Date,
-  gapDurationMs: number
-): InferredContext | null {
+function detectMealBreak(gapStart: Date, gapDurationMs: number): InferredContext | null {
   const startHour = gapStart.getHours();
   const durationMinutes = gapDurationMs / MS_PER_MINUTE;
 
@@ -213,11 +185,7 @@ function detectMealBreak(
   return null;
 }
 
-function createStandardGapContext(
-  precedingEvent: calendar_v3.Schema$Event,
-  followingEvent: calendar_v3.Schema$Event,
-  durationMs: number
-): InferredContext {
+function createStandardGapContext(precedingEvent: calendar_v3.Schema$Event, followingEvent: calendar_v3.Schema$Event, durationMs: number): InferredContext {
   const formattedDuration = formatDuration(durationMs);
   const precedingSummary = precedingEvent.summary || "previous event";
   const followingSummary = followingEvent.summary || "next event";
@@ -264,11 +232,7 @@ function inferGapContext(
   return createStandardGapContext(precedingEvent, followingEvent, durationMs);
 }
 
-function createGapBoundaryEvent(
-  event: calendar_v3.Schema$Event,
-  timestamp: Date,
-  calendarId: string
-): GapBoundaryEvent {
+function createGapBoundaryEvent(event: calendar_v3.Schema$Event, timestamp: Date, calendarId: string): GapBoundaryEvent {
   return {
     eventId: event.id || "",
     summary: event.summary || "Untitled Event",
@@ -318,14 +282,7 @@ type AnalyzeGapsParams = {
 };
 
 export const analyzeGaps = asyncHandler(
-  async ({
-    email,
-    startDate,
-    endDate,
-    calendarId = "primary",
-    settings: settingsOverride,
-    options,
-  }: AnalyzeGapsParams): Promise<GapCandidate[]> => {
+  async ({ email, startDate, endDate, calendarId = "primary", settings: settingsOverride, options }: AnalyzeGapsParams): Promise<GapCandidate[]> => {
     const settings: GapRecoverySettings = {
       ...DEFAULT_GAP_RECOVERY_SETTINGS,
       ...settingsOverride,
@@ -339,9 +296,7 @@ export const analyzeGaps = asyncHandler(
     const credentials = await fetchCredentialsByEmail(email);
     const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(credentials);
 
-    // Fetch events in the date range
     const listParams: calendar_v3.Params$Resource$Events$List = {
-      ...REQUEST_CONFIG_BASE,
       calendarId,
       timeMin: startDate.toISOString(),
       timeMax: endDate.toISOString(),
@@ -392,13 +347,7 @@ export const analyzeGaps = asyncHandler(
       }
 
       // Infer context for the gap
-      const inferredContext = inferGapContext(
-        currentEnd,
-        nextStart,
-        currentEvent,
-        nextEvent,
-        gapDurationMs
-      );
+      const inferredContext = inferGapContext(currentEnd, nextStart, currentEvent, nextEvent, gapDurationMs);
 
       // Skip if confidence is below threshold
       if (inferredContext && inferredContext.confidence < settings.minConfidenceThreshold) {
@@ -435,12 +384,7 @@ type AnalyzeGapsForUserParams = {
 };
 
 export const analyzeGapsForUser = asyncHandler(
-  async ({
-    email,
-    lookbackDays = 7,
-    calendarId = "primary",
-    settings,
-  }: AnalyzeGapsForUserParams): Promise<GapCandidateDTO[]> => {
+  async ({ email, lookbackDays = 7, calendarId = "primary", settings }: AnalyzeGapsForUserParams): Promise<GapCandidateDTO[]> => {
     const endDate = new Date();
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - lookbackDays);
@@ -467,13 +411,7 @@ type FillGapParams = {
 };
 
 export const fillGap = asyncHandler(
-  async ({
-    email,
-    gapStart,
-    gapEnd,
-    calendarId,
-    eventDetails,
-  }: FillGapParams): Promise<{ success: boolean; eventId?: string }> => {
+  async ({ email, gapStart, gapEnd, calendarId, eventDetails }: FillGapParams): Promise<{ success: boolean; eventId?: string }> => {
     const credentials = await fetchCredentialsByEmail(email);
     const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(credentials);
 
