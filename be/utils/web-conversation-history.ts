@@ -399,16 +399,24 @@ const getConversationTitle = (conversation: WebConversationRow, messages: userAn
 // Get list of user's conversations (for sidebar/list view)
 export const getWebConversationList = async (
   userId: string,
-  options?: { limit?: number; offset?: number }
+  options?: { limit?: number; offset?: number; search?: string }
 ): Promise<ConversationListItem[]> => {
   const limit = options?.limit || 20;
   const offset = options?.offset || 0;
+  const search = options?.search;
 
-  const { data, error } = await SUPABASE
+  let query = SUPABASE
     .from("conversations")
     .select("id, message_count, title, summary, created_at, updated_at, last_message_at")
     .eq("user_id", userId)
-    .eq("source", "web")
+    .eq("source", "web");
+
+  // Add title search filter (case-insensitive) if search is provided and has 2+ characters
+  if (search && search.length >= 2) {
+    query = query.ilike("title", `%${search}%`);
+  }
+
+  const { data, error } = await query
     .order("updated_at", { ascending: false, nullsFirst: false })
     .range(offset, offset + limit - 1);
 

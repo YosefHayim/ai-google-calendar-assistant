@@ -15,6 +15,11 @@ interface ChatContextValue {
   isLoadingConversation: boolean
   isPendingConversation: boolean // True when in a new, unsaved conversation
 
+  // Search state
+  searchQuery: string
+  setSearchQuery: (query: string) => void
+  isSearching: boolean // True when fetching search results
+
   // Actions
   selectConversation: (conversation: ConversationListItem) => void
   startNewConversation: () => void
@@ -39,13 +44,17 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   const [selectedConversationId, setSelectedConversationId] = useState<number | null>(null)
   const [isPendingConversation, setIsPendingConversation] = useState(true)
   const [localConversations, setLocalConversations] = useState<ConversationListItem[]>([])
+  const [searchQuery, setSearchQuery] = useState('')
 
-  // TanStack Query hooks
+  // TanStack Query hooks - pass search query when it has 2+ characters
   const {
     conversations: fetchedConversations,
     isLoading: isLoadingConversations,
+    isFetching: isSearching,
     refetch: refetchConversations,
-  } = useConversations()
+  } = useConversations({
+    search: searchQuery.length >= 2 ? searchQuery : undefined,
+  })
 
   const { conversation: selectedConversationData, isLoading: isLoadingConversation } = useConversation({
     conversationId: selectedConversationId,
@@ -56,9 +65,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
 
   // Sync fetched conversations to local state for optimistic updates
   useEffect(() => {
-    if (fetchedConversations.length > 0) {
-      setLocalConversations(fetchedConversations)
-    }
+    setLocalConversations(fetchedConversations)
   }, [fetchedConversations])
 
   // Convert conversation messages when a conversation is loaded
@@ -141,6 +148,9 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         isLoadingConversations,
         isLoadingConversation,
         isPendingConversation,
+        searchQuery,
+        setSearchQuery,
+        isSearching,
         selectConversation,
         startNewConversation,
         refreshConversations,

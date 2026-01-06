@@ -38,8 +38,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
+import { useDebouncedCallback } from 'use-debounce'
 
 import { Button } from '@/components/ui/button'
 import { formatRelativeDate } from '@/lib/dateUtils'
@@ -101,18 +102,30 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle, onOpenSett
     startNewConversation,
     refreshConversations,
     removeConversation,
+    searchQuery,
+    setSearchQuery,
+    isSearching,
   } = useChatContext()
 
   const [conversationToDelete, setConversationToDelete] = useState<number | null>(null)
-  const [searchQuery, setSearchQuery] = useState('')
+  const [localSearchValue, setLocalSearchValue] = useState(searchQuery)
   const [isQuickEventOpen, setIsQuickEventOpen] = useState(false)
 
-  // Filter conversations based on search
-  const filteredConversations = useMemo(() => {
-    if (!searchQuery.trim()) return conversations
-    const query = searchQuery.toLowerCase()
-    return conversations.filter((c) => c.title.toLowerCase().includes(query))
-  }, [conversations, searchQuery])
+  // Debounced search update (300ms delay)
+  const debouncedSetSearch = useDebouncedCallback((value: string) => {
+    setSearchQuery(value)
+  }, 300)
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    setLocalSearchValue(value)
+    debouncedSetSearch(value)
+  }
+
+  const handleClearSearch = () => {
+    setLocalSearchValue('')
+    setSearchQuery('')
+  }
 
   const navItems = [
     { href: '/dashboard', icon: LayoutDashboard, label: 'Assistant', id: 'tour-assistant' },
@@ -297,14 +310,14 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle, onOpenSett
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
                 <input
                   type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  value={localSearchValue}
+                  onChange={handleSearchChange}
                   placeholder="Search conversations..."
-                  className="w-full pl-9 pr-3 py-2 text-sm bg-zinc-100 dark:bg-zinc-800 border-0 rounded-md text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary/50"
+                  className="w-full pl-9 pr-8 py-2 text-sm bg-zinc-100 dark:bg-zinc-800 border-0 rounded-md text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary/50"
                 />
-                {searchQuery && (
+                {localSearchValue && (
                   <button
-                    onClick={() => setSearchQuery('')}
+                    onClick={handleClearSearch}
                     className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-400"
                   >
                     <X className="w-3 h-3" />
@@ -312,20 +325,20 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle, onOpenSett
                 )}
               </div>
 
-              {isLoadingConversations ? (
+              {isLoadingConversations || isSearching ? (
                 <div className="space-y-2">
                   {[...Array(3)].map((_, i) => (
                     <div key={i} className="animate-pulse h-12 bg-zinc-100 dark:bg-zinc-800 rounded-md" />
                   ))}
                 </div>
-              ) : filteredConversations.length === 0 ? (
+              ) : conversations.length === 0 ? (
                 <div className="text-center py-4 text-zinc-400 dark:text-zinc-500">
                   <MessageSquare className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                  <p className="text-xs">{searchQuery ? 'No matching conversations' : 'No conversations yet'}</p>
+                  <p className="text-xs">{localSearchValue ? 'No matching conversations' : 'No conversations yet'}</p>
                 </div>
               ) : (
                 <div className="space-y-1 flex-1 overflow-y-auto">
-                  {filteredConversations.slice(0, 15).map((conversation) => (
+                  {conversations.slice(0, 15).map((conversation) => (
                     <button
                       key={conversation.id}
                       onClick={() => handleSelectConversation(conversation)}
