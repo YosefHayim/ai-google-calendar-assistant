@@ -1,19 +1,11 @@
 'use client'
 
-<<<<<<< HEAD
-import React, { createContext, useContext, useState, useCallback } from 'react'
-import { deleteConversation, type ConversationListItem } from '@/services/chatService'
-import { Message } from '@/types'
-import { useGetConversations } from '@/hooks/queries/conversations/useGetConversations'
-import { useGetConversationById } from '@/hooks/queries/conversations/useGetConversationById'
-=======
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { type ConversationListItem } from '@/services/chatService'
 import { Message } from '@/types'
 import { useConversations, useConversation, useDeleteConversationById } from '@/hooks/queries'
 import { queryKeys } from '@/lib/query'
->>>>>>> eea5701c053aa731dfb90eb1ded3b1260e070945
 
 interface ChatContextValue {
   // Conversation state
@@ -54,19 +46,6 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   const [localConversations, setLocalConversations] = useState<ConversationListItem[]>([])
   const [searchQuery, setSearchQuery] = useState('')
 
-<<<<<<< HEAD
-  // Use tanstack query hooks for data fetching
-  const conversationsQuery = useGetConversations()
-  const conversationQuery = useGetConversationById(selectedConversationId)
-
-  // Derive conversations from query
-  const conversations = conversationsQuery.data ?? []
-  const isLoadingConversations = conversationsQuery.isLoading
-  const isLoadingConversation = conversationQuery.isLoading
-
-  // Extract stable refetch function
-  const refetchConversations = conversationsQuery.refetch
-=======
   // TanStack Query hooks - pass search query when it has 2+ characters
   const {
     conversations: fetchedConversations,
@@ -92,12 +71,14 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   // Convert conversation messages when a conversation is loaded
   useEffect(() => {
     if (selectedConversationData && selectedConversationId) {
-      const convertedMessages: Message[] = (selectedConversationData.messages || []).map((msg, index) => ({
-        id: `${selectedConversationId}-${index}`,
-        role: msg.role,
-        content: msg.content,
-        timestamp: new Date(),
-      }))
+      const convertedMessages: Message[] = (selectedConversationData.messages || []).map(
+        (msg: Message, index: number) => ({
+          id: `${selectedConversationId}-${index}`,
+          role: msg.role,
+          content: msg.content,
+          timestamp: new Date(),
+        }),
+      )
       setMessages(convertedMessages)
     }
   }, [selectedConversationData, selectedConversationId])
@@ -106,44 +87,17 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     setSelectedConversationId(conversation.id)
     setIsPendingConversation(false)
   }, [])
->>>>>>> eea5701c053aa731dfb90eb1ded3b1260e070945
 
   const startNewConversation = useCallback(() => {
     setMessages([])
     setSelectedConversationId(null)
-<<<<<<< HEAD
-    setIsPendingConversation(true) // Mark as pending until first message is sent
-  }, [])
-
-  const selectConversation = useCallback(async (conversation: ConversationListItem) => {
-    setSelectedConversationId(conversation.id)
-    setIsPendingConversation(false)
-    // Messages will be loaded by the conversationQuery hook
-    // You can set messages here if needed based on the conversation data
-  }, [])
-
-=======
     setIsPendingConversation(true)
   }, [])
 
->>>>>>> eea5701c053aa731dfb90eb1ded3b1260e070945
   const refreshConversations = useCallback(async () => {
     await refetchConversations()
   }, [refetchConversations])
 
-<<<<<<< HEAD
-  const removeConversation = useCallback(async (id: number): Promise<boolean> => {
-    const deleted = await deleteConversation(id)
-    if (deleted) {
-      // Refetch to update the list
-      await refetchConversations()
-      if (selectedConversationId === id) {
-        startNewConversation()
-      }
-    }
-    return deleted
-  }, [refetchConversations, selectedConversationId, startNewConversation])
-=======
   const removeConversation = useCallback(
     async (id: number): Promise<boolean> => {
       try {
@@ -161,7 +115,6 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     },
     [deleteConversationAsync, selectedConversationId, startNewConversation],
   )
->>>>>>> eea5701c053aa731dfb90eb1ded3b1260e070945
 
   const setConversationId = useCallback((id: number | null) => {
     setSelectedConversationId(id)
@@ -170,17 +123,6 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     }
   }, [])
 
-<<<<<<< HEAD
-  const updateConversationTitle = useCallback((id: number, title: string) => {
-    // Optimistically update - refetch will sync with server
-    refetchConversations()
-  }, [refetchConversations])
-
-  const addConversationToList = useCallback((conversation: ConversationListItem) => {
-    // Refetch to get the latest list including the new conversation
-    refetchConversations()
-  }, [refetchConversations])
-=======
   const updateConversationTitle = useCallback(
     (id: number, title: string) => {
       setLocalConversations((prev) => prev.map((c) => (c.id === id ? { ...c, title } : c)))
@@ -199,7 +141,6 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       return [conversation, ...prev]
     })
   }, [])
->>>>>>> eea5701c053aa731dfb90eb1ded3b1260e070945
 
   return (
     <ChatContext.Provider
