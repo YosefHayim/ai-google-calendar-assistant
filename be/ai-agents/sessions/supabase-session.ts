@@ -4,39 +4,93 @@ import type { Tables, TablesInsert } from "@/database.types";
 import { SUPABASE } from "@/config/clients/supabase";
 import { logger } from "@/utils/logger";
 
-type ItemWithType = { type?: string; role?: string };
+type ItemWithType = { type?: string; role?: string; id?: string };
 
-const isReasoningItem = (item: AgentInputItem): boolean => (item as ItemWithType).type === "reasoning";
+/**
+ * Check if an item is a reasoning item (internal model reasoning from GPT-5/o1/o3 models)
+ */
+const isReasoningItem = (item: AgentInputItem): boolean => {
+  const typedItem = item as ItemWithType;
+  // Check both type field and ID prefix (reasoning items have IDs like "rs_xxx")
+  return typedItem.type === "reasoning" || (typedItem.id?.startsWith("rs_") ?? false);
+};
 
-const hasValidFollowingItem = (items: AgentInputItem[], currentIndex: number): boolean => {
-  const nextItem = items[currentIndex + 1];
-  if (!nextItem) return false;
+const isMessageItem = (item: AgentInputItem): boolean => {
+  const typedItem = item as ItemWithType;
+  return typedItem.type === "message" || (typedItem.id?.startsWith("msg_") ?? false);
+};
 
-  const nextType = (nextItem as ItemWithType).type;
-  const nextRole = (nextItem as ItemWithType).role;
-
-  const isOrphanedByUserMessage = (nextType === "reasoning" || nextType === "message" || nextType === "user_message") && nextRole === "user";
-
-  return !isOrphanedByUserMessage;
+const isToolCallItem = (item: AgentInputItem): boolean => {
+  const typedItem = item as ItemWithType;
+  return (
+    typedItem.type === "function_call" ||
+    typedItem.type === "computer_call" ||
+    typedItem.type === "tool_call" ||
+    (typedItem.id?.startsWith("fc_") ?? false) ||
+    (typedItem.id?.startsWith("cc_") ?? false)
+  );
 };
 
 /**
- * OpenAI API requires 'reasoning' items to be followed by their output item.
- * Filters out orphaned reasoning items to prevent:
- * "Item 'rs_xxx' of type 'reasoning' was provided without its required following item."
+ * OpenAI API has a bidirectional constraint for reasoning items:
+ * 1. Reasoning items must be immediately followed by their output item (message or tool call)
+ * 2. Message items produced WITH reasoning require their preceding reasoning item
+ *
+ * When persisting conversation history and restoring it later, we must handle BOTH cases:
+ * - Error: "Item 'rs_xxx' of type 'reasoning' was provided without its required following item."
+ * - Error: "Item 'msg_xxx' of type 'message' was provided without its required 'reasoning' item: 'rs_xxx'."
+ *
+ * Strategy: Remove reasoning items AND their dependent following items (messages/tool calls)
+ * that were produced together. This safely removes the paired items while preserving
+ * independent messages (user messages, non-reasoning assistant responses).
+ *
+ * For tool-calling workflows, we preserve reasoning+tool_call pairs since they're needed
+ * for the function_call_output cycle to work correctly.
  */
-function filterOrphanedReasoningItems(items: AgentInputItem[]): AgentInputItem[] {
+function filterReasoningItems(items: AgentInputItem[]): AgentInputItem[] {
   if (!items?.length) return [];
 
-  return items.filter((item, index) => {
-    if (!isReasoningItem(item)) return true;
+  const filtered: AgentInputItem[] = [];
+  let skipNextItem = false;
+  let removedCount = 0;
 
-    const hasFollowing = hasValidFollowingItem(items, index);
-    if (!hasFollowing) {
-      logger.warn(`SupabaseSession: Filtering orphaned reasoning item`);
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
+    const nextItem = items[i + 1];
+    const typedItem = item as ItemWithType;
+
+    if (skipNextItem) {
+      skipNextItem = false;
+      logger.warn(
+        `SupabaseSession: Filtering reasoning-dependent item (id: ${typedItem.id || "unknown"}, type: ${typedItem.type || "unknown"})`
+      );
+      removedCount++;
+      continue;
     }
-    return hasFollowing;
-  });
+
+    if (isReasoningItem(item)) {
+      if (nextItem && isToolCallItem(nextItem)) {
+        filtered.push(item);
+        logger.debug(`SupabaseSession: Keeping reasoning item for tool call (id: ${typedItem.id || "unknown"})`);
+      } else if (nextItem && isMessageItem(nextItem)) {
+        skipNextItem = true;
+        logger.warn(`SupabaseSession: Filtering reasoning item with dependent message (id: ${typedItem.id || "unknown"})`);
+        removedCount++;
+      } else {
+        logger.warn(`SupabaseSession: Filtering standalone reasoning item (id: ${typedItem.id || "unknown"})`);
+        removedCount++;
+      }
+      continue;
+    }
+
+    filtered.push(item);
+  }
+
+  if (removedCount > 0) {
+    logger.info(`SupabaseSession: Filtered ${removedCount} reasoning-related item(s) from session history`);
+  }
+
+  return filtered;
 }
 
 const AGENT_SESSIONS_TABLE = "agent_sessions";
@@ -111,7 +165,7 @@ export class SupabaseAgentSession implements Session {
 
   async getItems(limit?: number): Promise<AgentInputItem[]> {
     if (this.itemsCache !== null) {
-      const items = filterOrphanedReasoningItems(this.itemsCache);
+      const items = filterReasoningItems(this.itemsCache);
       return limit ? items.slice(-limit) : items;
     }
 
@@ -129,7 +183,7 @@ export class SupabaseAgentSession implements Session {
       }
 
       const rawItems = (data?.items as AgentInputItem[]) || [];
-      this.itemsCache = filterOrphanedReasoningItems(rawItems);
+      this.itemsCache = filterReasoningItems(rawItems);
       return limit ? this.itemsCache.slice(-limit) : this.itemsCache;
     } catch (err) {
       logger.error(`SupabaseSession: Exception fetching items: ${err}`);
@@ -139,7 +193,8 @@ export class SupabaseAgentSession implements Session {
 
   async addItems(items: AgentInputItem[]): Promise<void> {
     const existingItems = await this.getItems();
-    const newItems = [...existingItems, ...items];
+    const filteredNewItems = filterReasoningItems(items);
+    const newItems = [...existingItems, ...filteredNewItems];
 
     try {
       const insertData: AgentSessionInsert = {
