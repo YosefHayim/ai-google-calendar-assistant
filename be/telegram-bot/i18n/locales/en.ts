@@ -275,6 +275,42 @@ export const en = {
   "commands.aboutme.sections.insights.title": "Insights",
   "commands.aboutme.footerTip": "I learn more about you with each interaction.",
 
+  "commands.brain.header": "Ally's Brain",
+  "commands.brain.description":
+    "Teach Ally about your preferences. These instructions will be remembered in every conversation.",
+  "commands.brain.status": "Status",
+  "commands.brain.statusEnabled": "✅ Enabled",
+  "commands.brain.statusDisabled": "❌ Disabled",
+  "commands.brain.currentInstructions": "Current Instructions",
+  "commands.brain.noInstructions": "No custom instructions set yet.",
+  "commands.brain.footerTip":
+    "Use the buttons below to manage your preferences.",
+  "commands.brain.noUser": "Unable to identify user. Please try again.",
+  "commands.brain.error": "Something went wrong. Please try again.",
+  "commands.brain.enabled": "Custom instructions enabled!",
+  "commands.brain.disabled": "Custom instructions disabled.",
+  "commands.brain.updateFailed": "Failed to update. Please try again.",
+  "commands.brain.buttons.enable": "Enable",
+  "commands.brain.buttons.disable": "Disable",
+  "commands.brain.buttons.edit": "Edit Instructions",
+  "commands.brain.buttons.clear": "Clear Instructions",
+  "commands.brain.editHeader": "Edit Instructions",
+  "commands.brain.editPrompt":
+    "Send me your custom instructions. Tell me about your preferences, scheduling habits, or anything I should remember.",
+  "commands.brain.editExample":
+    "Example: I prefer morning meetings between 9-11am. Always add a 15-minute buffer between meetings. My work days are Sunday through Thursday.",
+  "commands.brain.editCancel": "Type /cancel to abort.",
+  "commands.brain.editCancelled": "Edit cancelled.",
+  "commands.brain.tooLong":
+    "Instructions are too long. Please keep them under {{max}} characters.",
+  "commands.brain.saved": "Instructions Saved",
+  "commands.brain.savedDescription":
+    "Your preferences have been saved. Ally will remember them in all conversations.",
+  "commands.brain.saveFailed": "Failed to save instructions. Please try again.",
+  "commands.brain.cleared": "Instructions cleared.",
+  "commands.brain.clearFailed": "Failed to clear. Please try again.",
+  "botMenu.brain": "Teach Ally your preferences",
+
   "auth.welcomePrompt":
     "Welcome! To get started, please enter your email address for verification:",
   "auth.enterOtpPrompt":
