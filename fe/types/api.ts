@@ -115,10 +115,34 @@ export interface EventAnalytics {
   allEvents: CalendarEvent[][];
 }
 
-// Quick add request
-export interface QuickAddEventRequest {
+export type QuickAddEventRequest = {
   text: string;
+  forceCreate?: boolean;
+}
+
+export type ParsedEventData = {
+  summary: string;
+  date?: string;
+  time?: string;
+  duration?: string;
+  location?: string;
+  description?: string;
+}
+
+export type QuickAddConflict = {
+  id: string;
+  summary: string;
+  start: string;
+  end: string;
+  calendarName: string;
+}
+
+export type QuickAddResponse = {
+  event?: CalendarEvent;
+  parsed?: ParsedEventData;
   calendarId?: string;
+  calendarName?: string;
+  conflicts?: QuickAddConflict[];
 }
 
 // Move event request

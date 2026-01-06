@@ -1,0 +1,5 @@
+export { TimeAllocationBarChart } from './TimeAllocationBarChart'
+export { TimeAllocationPieChart } from './TimeAllocationPieChart'
+export { TimeAllocationDonutChart } from './TimeAllocationDonutChart'
+export { TimeAllocationRadarChart } from './TimeAllocationRadarChart'
+export { TimeAllocationHorizontalBarChart } from './TimeAllocationHorizontalBarChart'

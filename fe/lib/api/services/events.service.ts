@@ -1,6 +1,6 @@
 import { apiClient } from '@/lib/api/client'
 import { ENDPOINTS } from '@/lib/api/endpoints'
-import {
+import type {
   ApiResponse,
   CalendarEvent,
   EventQueryParams,
@@ -8,9 +8,15 @@ import {
   CreateEventRequest,
   UpdateEventRequest,
   QuickAddEventRequest,
+  QuickAddResponse,
   MoveEventRequest,
   WatchEventsRequest,
 } from '@/types/api'
+
+export type QuickAddResult =
+  | { success: true; data: QuickAddResponse }
+  | { success: false; requiresConfirmation: true; data: QuickAddResponse; error: string }
+  | { success: false; requiresConfirmation: false; error: string }
 
 export const eventsService = {
   async getEvents(params?: EventQueryParams): Promise<ApiResponse<CalendarEvent[]>> {
@@ -69,9 +75,32 @@ export const eventsService = {
     return data
   },
 
-  async quickAdd(requestData: QuickAddEventRequest): Promise<ApiResponse<CalendarEvent>> {
-    const { data } = await apiClient.post<ApiResponse<CalendarEvent>>(ENDPOINTS.EVENTS_QUICK_ADD, requestData)
-    return data
+  async quickAdd(requestData: QuickAddEventRequest): Promise<QuickAddResult> {
+    try {
+      const { data } = await apiClient.post<ApiResponse<QuickAddResponse>>(ENDPOINTS.EVENTS_QUICK_ADD, requestData)
+      return { success: true, data: data.data! }
+    } catch (error: unknown) {
+      if (
+        error &&
+        typeof error === 'object' &&
+        'response' in error &&
+        error.response &&
+        typeof error.response === 'object'
+      ) {
+        const axiosError = error as { response: { status: number; data?: ApiResponse<QuickAddResponse> } }
+        const HTTP_CONFLICT = 409
+        if (axiosError.response.status === HTTP_CONFLICT && axiosError.response.data?.data) {
+          return {
+            success: false,
+            requiresConfirmation: true,
+            data: axiosError.response.data.data,
+            error: axiosError.response.data.message || 'Event conflicts detected',
+          }
+        }
+      }
+      const errorMessage = error instanceof Error ? error.message : 'Failed to create event'
+      return { success: false, requiresConfirmation: false, error: errorMessage }
+    }
   },
 
   async moveEvent(requestData: MoveEventRequest): Promise<ApiResponse<CalendarEvent>> {

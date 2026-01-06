@@ -364,6 +364,17 @@ export const ENDPOINTS = {
    * Body: multipart/form-data with name, email, subject, message, attachments[]
    */
   CONTACT: "/api/contact",
+
+  // ============================================
+  // VOICE ENDPOINTS
+  // ============================================
+
+  /**
+   * Transcribe audio to text
+   * Methods: POST
+   * Body: multipart/form-data with audio file
+   */
+  VOICE_TRANSCRIBE: "/api/voice/transcribe",
 } as const;
 
 export type EndpointsType = typeof ENDPOINTS;

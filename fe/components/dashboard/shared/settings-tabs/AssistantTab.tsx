@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import CinematicGlowToggle from '@/components/ui/cinematic-glow-toggle'
+import { SettingsRow, SettingsSection } from './components'
 import {
   useAllyBrain,
   useUpdateAllyBrain,
@@ -32,22 +33,18 @@ const MAX_CHARS = 1000
 const SHOW_COUNTER_THRESHOLD = 900
 
 export const AssistantTab: React.FC<AssistantTabProps> = ({ onDeleteAllConversations, isDeletingConversations }) => {
-  const contextualToggleId = React.useId()
   const allyBrainToggleId = React.useId()
+  const contextualToggleId = React.useId()
 
-  // Fetch preferences
   const { data: allyBrainData, isLoading: isLoadingAllyBrain } = useAllyBrain()
   const { data: contextualData, isLoading: isLoadingContextual } = useContextualScheduling()
 
-  // Mutations
   const { updateAllyBrainAsync, isUpdating: isUpdatingAllyBrain, isSuccess: isAllyBrainSuccess } = useUpdateAllyBrain()
   const { updateContextualScheduling, isUpdating: isUpdatingContextual } = useUpdateContextualScheduling()
 
-  // Local state for contextual scheduling toggle
   const [contextualEnabled, setContextualEnabled] = useState(true)
   const [memoryUsage] = useState('~1.2MB of scheduling patterns')
 
-  // React Hook Form setup
   const {
     register,
     handleSubmit,
@@ -56,7 +53,7 @@ export const AssistantTab: React.FC<AssistantTabProps> = ({ onDeleteAllConversat
     reset,
     formState: { errors, isDirty },
   } = useForm<AllyBrainFormData>({
-    resolver: zodResolver(allyBrainSchema) as any,
+    resolver: zodResolver(allyBrainSchema),
     defaultValues: allyBrainDefaults,
   })
 
@@ -66,7 +63,6 @@ export const AssistantTab: React.FC<AssistantTabProps> = ({ onDeleteAllConversat
   const isOverLimit = charCount > MAX_CHARS
   const showCounter = charCount >= SHOW_COUNTER_THRESHOLD
 
-  // Load saved data into form when available
   useEffect(() => {
     if (allyBrainData?.value) {
       reset({
@@ -76,14 +72,12 @@ export const AssistantTab: React.FC<AssistantTabProps> = ({ onDeleteAllConversat
     }
   }, [allyBrainData, reset])
 
-  // Load contextual scheduling state
   useEffect(() => {
     if (contextualData?.value) {
       setContextualEnabled(contextualData.value.enabled)
     }
   }, [contextualData])
 
-  // Handle contextual scheduling toggle
   const handleContextualToggle = (checked: boolean) => {
     setContextualEnabled(checked)
     updateContextualScheduling(
@@ -93,14 +87,13 @@ export const AssistantTab: React.FC<AssistantTabProps> = ({ onDeleteAllConversat
           toast.success(checked ? 'Contextual scheduling enabled' : 'Contextual scheduling disabled')
         },
         onError: () => {
-          setContextualEnabled(!checked) // Revert on error
+          setContextualEnabled(!checked)
           toast.error('Failed to update preference')
         },
       },
     )
   }
 
-  // Handle form submission
   const onSubmit = async (data: AllyBrainFormData) => {
     try {
       await updateAllyBrainAsync(data)
@@ -112,7 +105,6 @@ export const AssistantTab: React.FC<AssistantTabProps> = ({ onDeleteAllConversat
     }
   }
 
-  // Handle clear chat history
   const handleClearChatHistory = () => {
     if (
       window.confirm(
@@ -139,7 +131,6 @@ export const AssistantTab: React.FC<AssistantTabProps> = ({ onDeleteAllConversat
 
   return (
     <div className="space-y-6">
-      {/* Ally's Brain Card */}
       <Card>
         <CardHeader>
           <div className="flex items-center gap-2">
@@ -159,24 +150,22 @@ export const AssistantTab: React.FC<AssistantTabProps> = ({ onDeleteAllConversat
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            {/* Enable Toggle */}
-            <div className="flex items-center justify-between p-3 rounded-lg bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-100 dark:border-zinc-800">
-              <div className="grid gap-0.5">
-                <Label htmlFor={allyBrainToggleId} className="font-medium">
-                  Enable Custom Instructions
-                </Label>
-                <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                  When enabled, Ally will always consider these instructions.
-                </p>
-              </div>
-              <CinematicGlowToggle
-                id={allyBrainToggleId}
-                checked={watchedEnabled}
-                onChange={(checked) => setValue('enabled', checked, { shouldDirty: true })}
+            <SettingsSection>
+              <SettingsRow
+                id="ally-brain-toggle"
+                title="Enable Custom Instructions"
+                tooltip="When enabled, Ally will always consider these instructions in all conversations"
+                variant="toggle"
+                control={
+                  <CinematicGlowToggle
+                    id={allyBrainToggleId}
+                    checked={watchedEnabled}
+                    onChange={(checked) => setValue('enabled', checked, { shouldDirty: true })}
+                  />
+                }
               />
-            </div>
+            </SettingsSection>
 
-            {/* Textarea - Animated appearance */}
             <AnimatePresence>
               {watchedEnabled && (
                 <motion.div
@@ -203,7 +192,6 @@ export const AssistantTab: React.FC<AssistantTabProps> = ({ onDeleteAllConversat
                       `}
                     />
 
-                    {/* Character counter - only shown when approaching limit */}
                     <AnimatePresence>
                       {showCounter && (
                         <motion.div
@@ -227,7 +215,6 @@ export const AssistantTab: React.FC<AssistantTabProps> = ({ onDeleteAllConversat
                       )}
                     </AnimatePresence>
 
-                    {/* Error message */}
                     {errors.instructions && (
                       <p className="text-xs text-red-500 flex items-center gap-1">
                         <AlertTriangle size={12} />
@@ -239,7 +226,6 @@ export const AssistantTab: React.FC<AssistantTabProps> = ({ onDeleteAllConversat
               )}
             </AnimatePresence>
 
-            {/* Save Button */}
             <Button type="submit" disabled={!isDirty || isOverLimit || isUpdatingAllyBrain} className="w-full">
               {isUpdatingAllyBrain ? (
                 <>
@@ -259,57 +245,55 @@ export const AssistantTab: React.FC<AssistantTabProps> = ({ onDeleteAllConversat
         </CardContent>
       </Card>
 
-      {/* Memory Management Card */}
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">Memory Management</CardTitle>
           <CardDescription>Control how Ally learns from your scheduling patterns.</CardDescription>
         </CardHeader>
-        <CardContent className="grid gap-4">
-          {/* Contextual Memory Toggle */}
-          <div className="flex items-center justify-between p-3 rounded-lg bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-100 dark:border-zinc-800">
-            <div className="grid gap-0.5">
-              <Label htmlFor={contextualToggleId} className="font-medium">
-                Contextual Scheduling
-              </Label>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                Allow Ally to remember your preferred meeting durations, buffer times, and recurring locations.
+        <CardContent className="space-y-4">
+          <SettingsSection>
+            <SettingsRow
+              id="contextual-scheduling"
+              title="Contextual Scheduling"
+              tooltip="Allow Ally to remember your preferred meeting durations, buffer times, and recurring locations"
+              variant="toggle"
+              control={
+                <CinematicGlowToggle
+                  id={contextualToggleId}
+                  checked={contextualEnabled}
+                  onChange={isUpdatingContextual ? () => {} : handleContextualToggle}
+                />
+              }
+            />
+
+            <SettingsRow
+              id="memory-stats"
+              title="Learned Patterns"
+              tooltip="Amount of scheduling patterns Ally has learned from your calendar activity"
+              control={<span className="text-sm text-zinc-500 dark:text-zinc-400">{memoryUsage}</span>}
+            />
+          </SettingsSection>
+
+          <SettingsSection showDivider className="pt-4">
+            <div className="space-y-3">
+              <Button variant="outline" onClick={onDeleteAllConversations} disabled={isDeletingConversations}>
+                {isDeletingConversations ? (
+                  <Loader2 size={16} className="mr-2 animate-spin" />
+                ) : (
+                  <MessageSquareX size={16} className="mr-2" />
+                )}
+                Delete Chat Logs
+              </Button>
+
+              <Button variant="destructive" onClick={handleClearChatHistory}>
+                <Trash2 size={16} className="mr-2" /> Reset Assistant Memory
+              </Button>
+
+              <p className="text-xs text-red-500 flex items-center gap-1 font-medium">
+                <AlertTriangle size={14} /> Warning: Ally will forget your scheduling habits.
               </p>
             </div>
-            <CinematicGlowToggle
-              id={contextualToggleId}
-              checked={contextualEnabled}
-              onChange={isUpdatingContextual ? () => {} : handleContextualToggle}
-            />
-          </div>
-
-          {/* Memory Stats */}
-          <div className="flex items-center gap-3 p-3 rounded-lg bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-100 dark:border-zinc-800">
-            <Brain className="w-4 h-4 text-primary" />
-            <span className="text-sm text-zinc-900 dark:text-zinc-100">
-              Learned Patterns: <span className="text-zinc-500 dark:text-zinc-400 font-normal">{memoryUsage}</span>
-            </span>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="pt-2 border-t border-zinc-100 dark:border-zinc-800 grid gap-3">
-            <Button variant="outline" onClick={onDeleteAllConversations} disabled={isDeletingConversations}>
-              {isDeletingConversations ? (
-                <Loader2 size={16} className="mr-2 animate-spin" />
-              ) : (
-                <MessageSquareX size={16} className="mr-2" />
-              )}
-              Delete Chat Logs
-            </Button>
-
-            <Button variant="destructive" onClick={handleClearChatHistory}>
-              <Trash2 size={16} className="mr-2" /> Reset Assistant Memory
-            </Button>
-
-            <p className="text-xs text-red-500 flex items-center gap-1 font-medium">
-              <AlertTriangle size={14} /> Warning: Ally will forget your scheduling habits.
-            </p>
-          </div>
+          </SettingsSection>
         </CardContent>
       </Card>
     </div>

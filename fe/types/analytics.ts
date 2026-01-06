@@ -251,6 +251,113 @@ export interface DailyAvailableHoursDataPoint {
   hours: number
 }
 
+// --- Enhanced Analytics Types ---
+
+export interface WeeklyPatternDataPoint {
+  day: string
+  dayShort: string
+  dayIndex: number
+  hours: number
+  eventCount: number
+}
+
+export interface TimeOfDayDistribution {
+  morning: number // 6am - 12pm
+  afternoon: number // 12pm - 6pm
+  evening: number // 6pm - 10pm
+  night: number // 10pm - 6am
+}
+
+export interface EventDurationBreakdown {
+  short: number // < 30 minutes
+  medium: number // 30 min - 1 hour
+  long: number // 1 - 2 hours
+  extended: number // > 2 hours
+}
+
+export interface FocusTimeMetrics {
+  totalFocusBlocks: number // 2+ hour blocks without meetings
+  averageFocusBlockLength: number
+  longestFocusBlock: number
+  focusTimePercentage: number
+}
+
+export interface ProductivityMetrics {
+  productivityScore: number // 0-100 calculated score
+  meetingLoad: number // percentage of time in meetings
+  averageEventsPerDay: number
+  mostProductiveDay: string
+  leastProductiveDay: string
+  peakHour: number // hour of day with most events (0-23)
+}
+
+export interface EnhancedAnalyticsData {
+  // Original metrics
+  totalEvents: number
+  totalDurationHours: number
+  averageEventDuration: number
+  busiestDayHours: number
+  calendarBreakdown: CalendarBreakdownItem[]
+  recentActivities: ProcessedActivity[]
+  dailyAvailableHours: DailyAvailableHoursDataPoint[]
+
+  // New enhanced metrics
+  weeklyPattern: WeeklyPatternDataPoint[]
+  timeOfDayDistribution: TimeOfDayDistribution
+  eventDurationBreakdown: EventDurationBreakdown
+  focusTimeMetrics: FocusTimeMetrics
+  productivityMetrics: ProductivityMetrics
+
+  // Additional stats
+  totalDays: number
+  daysWithEvents: number
+  eventFreeDays: number
+  longestEvent: number // in hours
+  shortestEvent: number // in hours
+  recurringEventsCount: number
+  allDayEventsCount: number
+}
+
+// --- Bento Stats Grid Types ---
+
+export interface BentoStatItem {
+  id: string
+  label: string
+  value: number | string
+  suffix?: string
+  icon: React.ElementType
+  iconColor: string
+  iconBg: string
+  description?: string
+  trend?: {
+    direction: 'up' | 'down' | 'neutral'
+    percentage: number
+  }
+  size: 'small' | 'medium' | 'large'
+  sparklineData?: number[]
+}
+
+export interface BentoStatsGridProps {
+  stats: BentoStatItem[]
+  isLoading?: boolean
+}
+
+export interface WeeklyPatternChartProps {
+  data: WeeklyPatternDataPoint[]
+  isLoading?: boolean
+}
+
+export interface TimeDistributionChartProps {
+  data: TimeOfDayDistribution
+  isLoading?: boolean
+}
+
+export interface EventDurationChartProps {
+  data: EventDurationBreakdown
+  totalEvents: number
+  isLoading?: boolean
+}
+
 // --- AI Insights Types ---
 
 export const INSIGHT_ICON_NAMES = [

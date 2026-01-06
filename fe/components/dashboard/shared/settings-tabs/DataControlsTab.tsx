@@ -1,38 +1,56 @@
 'use client'
 
 import React from 'react'
+import { Download, Trash2 } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { SettingsRow, SettingsSection } from './components'
 
 export const DataControlsTab: React.FC = () => {
+  const handleExport = () => {
+    console.log('Exporting calendar data...')
+  }
+
+  const handleDeleteAccount = () => {
+    if (window.confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+      console.log('Deleting account...')
+    }
+  }
+
   return (
     <Card>
       <CardHeader>
         <CardTitle className="text-lg">Data Controls</CardTitle>
         <CardDescription>Manage your data and account.</CardDescription>
       </CardHeader>
-      <CardContent className="grid gap-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="text-sm font-medium text-zinc-900 dark:text-zinc-100">Export Calendar Data</div>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Download all your calendar data as CSV.</p>
-          </div>
-          <Button variant="outline" size="sm">
-            Export CSV
-          </Button>
-        </div>
+      <CardContent>
+        <SettingsSection>
+          <SettingsRow
+            id="export-data"
+            title="Export Calendar Data"
+            tooltip="Download all your calendar data as a CSV file for backup or migration"
+            control={
+              <Button variant="outline" size="sm" onClick={handleExport} className="gap-2">
+                <Download className="w-4 h-4" />
+                Export CSV
+              </Button>
+            }
+          />
+        </SettingsSection>
 
-        <div className="flex items-center justify-between pt-4 border-t border-zinc-100 dark:border-zinc-800">
-          <div>
-            <div className="text-sm font-medium text-zinc-900 dark:text-zinc-100">Delete Account</div>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
-              Permanently delete your account and all data.
-            </p>
-          </div>
-          <Button variant="destructive" size="sm">
-            Delete
-          </Button>
-        </div>
+        <SettingsSection showDivider className="mt-4">
+          <SettingsRow
+            id="delete-account"
+            title="Delete Account"
+            tooltip="Permanently delete your account and all associated data. This cannot be undone."
+            control={
+              <Button variant="destructive" size="sm" onClick={handleDeleteAccount} className="gap-2">
+                <Trash2 className="w-4 h-4" />
+                Delete
+              </Button>
+            }
+          />
+        </SettingsSection>
       </CardContent>
     </Card>
   )

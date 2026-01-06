@@ -18,7 +18,7 @@ import { eventsService } from "@/lib/api/services/events.service";
 import { useAnalyticsData } from "@/hooks/queries/analytics";
 import {
   CalendarEventSchema,
-  type ProcessedAnalyticsData,
+  type EnhancedAnalyticsData,
   type ComparisonResult,
   type AnalyticsResponse,
   type ProcessedActivity,
@@ -47,7 +47,7 @@ interface AnalyticsContextValue {
   isCalendarsLoading: boolean;
 
   // Analytics data
-  processedData: ProcessedAnalyticsData;
+  processedData: EnhancedAnalyticsData;
   analyticsRawData: AnalyticsResponse | null | undefined;
   comparison: ComparisonResult | null;
   isAnalyticsLoading: boolean;
@@ -412,7 +412,7 @@ export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
   );
 
   // Stable reference for default processed data
-  const defaultProcessedData = useRef<ProcessedAnalyticsData>({
+  const defaultProcessedData = useRef<EnhancedAnalyticsData>({
     totalEvents: 0,
     totalDurationHours: 0,
     averageEventDuration: 0,
@@ -420,6 +420,30 @@ export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
     calendarBreakdown: [],
     recentActivities: [],
     dailyAvailableHours: [],
+    weeklyPattern: [],
+    timeOfDayDistribution: { morning: 0, afternoon: 0, evening: 0, night: 0 },
+    eventDurationBreakdown: { short: 0, medium: 0, long: 0, extended: 0 },
+    focusTimeMetrics: {
+      totalFocusBlocks: 0,
+      averageFocusBlockLength: 0,
+      longestFocusBlock: 0,
+      focusTimePercentage: 0,
+    },
+    productivityMetrics: {
+      productivityScore: 0,
+      meetingLoad: 0,
+      averageEventsPerDay: 0,
+      mostProductiveDay: '-',
+      leastProductiveDay: '-',
+      peakHour: 9,
+    },
+    totalDays: 0,
+    daysWithEvents: 0,
+    eventFreeDays: 0,
+    longestEvent: 0,
+    shortestEvent: 0,
+    recurringEventsCount: 0,
+    allDayEventsCount: 0,
   });
 
   const value = useMemo<AnalyticsContextValue>(

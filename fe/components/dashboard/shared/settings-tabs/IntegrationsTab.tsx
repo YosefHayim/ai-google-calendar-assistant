@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { GoogleCalendarIcon, TelegramIcon, WhatsAppIcon } from '@/components/shared/Icons'
+import { SettingsRow, SettingsSection } from './components'
 import type { GoogleCalendarIntegrationStatus } from '@/types/api'
 
 interface IntegrationsTabProps {
@@ -17,133 +18,10 @@ interface IntegrationsTabProps {
   onDisconnect: () => void
 }
 
-export const IntegrationsTab: React.FC<IntegrationsTabProps> = ({
-  googleCalendarStatus,
-  isGoogleCalendarLoading,
-  isGoogleCalendarBusy,
-  isDisconnecting,
-  onResync,
-  onDisconnect,
-}) => {
-  return (
-    <div className="grid gap-4">
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Connected Apps</CardTitle>
-          <CardDescription>Manage your calendar and messaging integrations.</CardDescription>
-        </CardHeader>
-        <CardContent className="grid gap-4">
-          {/* Google Calendar */}
-          <div className="p-4 rounded-lg bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-blue-50 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
-                  <GoogleCalendarIcon className="w-6 h-6" />
-                </div>
-                <div>
-                  <h4 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Google Calendar</h4>
-                  <p className="text-xs text-zinc-500">
-                    {isGoogleCalendarLoading
-                      ? 'Loading...'
-                      : googleCalendarStatus?.isSynced
-                        ? googleCalendarStatus.isActive
-                          ? 'Synced & Active'
-                          : 'Synced (Inactive)'
-                        : 'Not connected'}
-                  </p>
-                </div>
-              </div>
-              <GoogleCalendarStatusBadge isLoading={isGoogleCalendarLoading} status={googleCalendarStatus} />
-            </div>
-
-            {googleCalendarStatus?.isSynced && googleCalendarStatus.isActive && !googleCalendarStatus.isExpired ? (
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={onResync}
-                  disabled={isGoogleCalendarBusy}
-                  className="flex-1"
-                >
-                  <RefreshCw size={16} className="mr-2" /> Re-sync
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={onDisconnect}
-                  disabled={isGoogleCalendarBusy}
-                  className="flex-1 text-red-600 hover:text-red-700 border-red-200 hover:bg-red-50 dark:border-red-900/30 dark:hover:bg-red-900/20"
-                >
-                  {isDisconnecting ? (
-                    <Loader2 size={16} className="mr-2 animate-spin" />
-                  ) : (
-                    <X size={16} className="mr-2" />
-                  )}
-                  Disconnect
-                </Button>
-              </div>
-            ) : (
-              <Button onClick={onResync} disabled={isGoogleCalendarBusy} className="w-full">
-                {isGoogleCalendarLoading ? (
-                  <Loader2 size={16} className="mr-2 animate-spin" />
-                ) : googleCalendarStatus?.isSynced ? (
-                  <RefreshCw size={16} className="mr-2" />
-                ) : (
-                  <Plus size={16} className="mr-2" />
-                )}
-                {googleCalendarStatus?.isSynced ? 'Reconnect Calendar' : 'Connect Google Calendar'}
-              </Button>
-            )}
-          </div>
-
-          {/* Telegram */}
-          <div className="p-4 rounded-lg bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-blue-50 dark:bg-blue-900/30 text-blue-500 rounded-lg flex items-center justify-center">
-                  <TelegramIcon className="w-6 h-6" />
-                </div>
-                <div>
-                  <h4 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Telegram Bot</h4>
-                  <p className="text-xs text-zinc-500">@ai_schedule_event_server_bot</p>
-                </div>
-              </div>
-            </div>
-            <Button variant="outline" asChild className="w-full">
-              <a href="https://t.me/ai_schedule_event_server_bot" target="_blank" rel="noreferrer">
-                Open Telegram <ArrowUpRight size={16} className="ml-2" />
-              </a>
-            </Button>
-          </div>
-
-          {/* WhatsApp */}
-          <div className="p-4 rounded-lg bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 opacity-75">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-500 rounded-lg flex items-center justify-center">
-                  <WhatsAppIcon className="w-6 h-6" />
-                </div>
-                <div>
-                  <h4 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">WhatsApp</h4>
-                  <p className="text-xs text-zinc-500">Coming Soon</p>
-                </div>
-              </div>
-              <Badge variant="secondary">Dev Mode</Badge>
-            </div>
-            <Button variant="secondary" disabled className="w-full">
-              Join Beta Waitlist
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  )
-}
-
-const GoogleCalendarStatusBadge: React.FC<{
-  isLoading: boolean
-  status: GoogleCalendarIntegrationStatus | null | undefined
-}> = ({ isLoading, status }) => {
+const getGoogleCalendarStatusBadge = (
+  isLoading: boolean,
+  status: GoogleCalendarIntegrationStatus | null | undefined,
+) => {
   if (isLoading) {
     return (
       <Badge variant="secondary">
@@ -171,5 +49,99 @@ const GoogleCalendarStatusBadge: React.FC<{
     <Badge variant="secondary">
       <Circle size={14} className="mr-1" /> Disconnected
     </Badge>
+  )
+}
+
+export const IntegrationsTab: React.FC<IntegrationsTabProps> = ({
+  googleCalendarStatus,
+  isGoogleCalendarLoading,
+  isGoogleCalendarBusy,
+  isDisconnecting,
+  onResync,
+  onDisconnect,
+}) => {
+  const googleIsConnected =
+    googleCalendarStatus?.isSynced && googleCalendarStatus.isActive && !googleCalendarStatus.isExpired
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-lg">Integrations</CardTitle>
+        <CardDescription>Manage your calendar and messaging integrations.</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <SettingsSection>
+          <SettingsRow
+            id="google-calendar"
+            title="Google Calendar"
+            tooltip="Connect your Google Calendar to let Ally manage your events and schedule"
+            control={getGoogleCalendarStatusBadge(isGoogleCalendarLoading, googleCalendarStatus)}
+          />
+
+          <div className="flex gap-2 pl-0 py-2">
+            {googleIsConnected ? (
+              <>
+                <Button variant="outline" size="sm" onClick={onResync} disabled={isGoogleCalendarBusy}>
+                  <RefreshCw size={14} className="mr-2" /> Re-sync
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={onDisconnect}
+                  disabled={isGoogleCalendarBusy}
+                  className="text-red-600 hover:text-red-700 border-red-200 hover:bg-red-50 dark:border-red-900/30 dark:hover:bg-red-900/20"
+                >
+                  {isDisconnecting ? (
+                    <Loader2 size={14} className="mr-2 animate-spin" />
+                  ) : (
+                    <X size={14} className="mr-2" />
+                  )}
+                  Disconnect
+                </Button>
+              </>
+            ) : (
+              <Button onClick={onResync} disabled={isGoogleCalendarBusy} size="sm">
+                {isGoogleCalendarLoading ? (
+                  <Loader2 size={14} className="mr-2 animate-spin" />
+                ) : googleCalendarStatus?.isSynced ? (
+                  <RefreshCw size={14} className="mr-2" />
+                ) : (
+                  <Plus size={14} className="mr-2" />
+                )}
+                {googleCalendarStatus?.isSynced ? 'Reconnect' : 'Connect'}
+              </Button>
+            )}
+          </div>
+        </SettingsSection>
+
+        <SettingsSection showDivider className="mt-4">
+          <SettingsRow
+            id="telegram"
+            title="Telegram Bot"
+            tooltip="Chat with Ally on Telegram to manage your calendar on the go"
+            control={
+              <Button variant="outline" size="sm" asChild>
+                <a href="https://t.me/ai_schedule_event_server_bot" target="_blank" rel="noreferrer">
+                  Open <ArrowUpRight size={14} className="ml-1" />
+                </a>
+              </Button>
+            }
+          />
+        </SettingsSection>
+
+        <SettingsSection showDivider className="mt-4">
+          <SettingsRow
+            id="whatsapp"
+            title="WhatsApp"
+            tooltip="WhatsApp integration is coming soon - join the waitlist to get early access"
+            control={
+              <div className="flex items-center gap-2">
+                <Badge variant="secondary">Coming Soon</Badge>
+              </div>
+            }
+          />
+        </SettingsSection>
+      </CardContent>
+    </Card>
   )
 }
