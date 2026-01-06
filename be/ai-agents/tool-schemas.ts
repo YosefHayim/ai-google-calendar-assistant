@@ -4,11 +4,19 @@ import { z } from "zod";
 
 const requiredString = (description: string, message = "Required.") => z.coerce.string({ description }).trim().min(1, { message });
 
-const calendarSchema = z.coerce.string({ description: "The ID of the calendar to which the event belongs to, if provided use, else pass primary." }).nullable();
+const calendarSchema = z.coerce
+  .string({ description: "The ID of the calendar to which the event belongs to. Use the calendarId from the event when updating. Falls back to 'primary' if not provided." })
+  .transform((val) => {
+    // Reject obviously invalid values and normalize
+    if (!val || val === "/" || val.trim() === "") return null;
+    return val.trim();
+  })
+  .nullable();
 
+// Email schema - only used for registration where user provides email
 const emailSchema = z.coerce
   .string({
-    description: "The email address of the user, used for authentication and authorization via database and google calendar.",
+    description: "The email address of the user.",
   })
   .includes("@", { message: "Must include @ symbol" })
   .refine((v) => validator.isEmail(v), { message: "Invalid email address." });
@@ -41,6 +49,7 @@ export const makeEventTime = () =>
     })
     .describe("Event start or end time, with optional timezone.");
 
+// Event parameters WITHOUT email - email comes from authenticated context
 const makeFullEventParams = () =>
   z
     .object({
@@ -50,19 +59,19 @@ const makeFullEventParams = () =>
       location: z.coerce.string({ description: "Geographic location of the event." }).nullable(),
       start: makeEventTime(),
       end: makeEventTime(),
-      email: emailSchema,
     })
-    .describe("Full event parameters including summary, description, location, start, and end times.");
+    .describe("Full event parameters including summary, description, location, start, and end times. Email is automatically provided from user context.");
 
 export const PARAMETERS_TOOLS = {
   generateGoogleAuthUrlParameters: z.object({}),
+  // Registration still needs email as user provides it
   registerUserParameters: z.object({
     email: emailSchema.describe("The email address of the user."),
     name: z.string().optional().describe("Optional name of the user."),
   }),
+  // GET events - no email needed, uses authenticated context
   getEventParameters: z
     .object({
-      email: emailSchema,
       timeMin: z.coerce.string({ description: "The minimum date and time for events to return, formatted as RFC3339 timestamp." }).nullable(),
       q: z.coerce.string({ description: "Optional parameter to search for text matches across all event fields in Google Calendar." }).nullable(),
       customEvents: z.coerce
@@ -78,19 +87,61 @@ export const PARAMETERS_TOOLS = {
         .string({ description: "The ID of a specific calendar to search. Only used when searchAllCalendars is false." })
         .nullable(),
     })
-    .describe("Fetch events for the user email for the maximum date of time provided. By default searches all calendars."),
+    .describe("Fetch events for the authenticated user. Email is automatically provided from user context. By default searches all calendars."),
 
-  insertEventParameters: makeFullEventParams().describe("Insert a new event into the user calendar."),
-  updateEventParameters: makeFullEventParams()
-    .extend({
+  // INSERT event - no email needed
+  insertEventParameters: makeFullEventParams().describe("Insert a new event into the user's calendar. Email is automatically provided from user context."),
+
+  // UPDATE event - all fields optional except eventId and calendarId
+  // Only pass fields you want to change - unspecified fields are preserved
+  updateEventParameters: z
+    .object({
       eventId: requiredString("The ID of the event to update.", "Event ID is required."),
-      email: emailSchema,
+      calendarId: calendarSchema,
+      summary: z.coerce.string({ description: "New title for the event. Only pass if changing the title." }).nullable().optional(),
+      description: z.coerce.string({ description: "New description. Only pass if changing." }).nullable().optional(),
+      location: z.coerce.string({ description: "New location. Only pass if changing." }).nullable().optional(),
+      start: makeEventTime().optional(),
+      end: makeEventTime().optional(),
     })
-    .describe("Update an existing event by ID."),
+    .describe(
+      "Update an existing event by ID. IMPORTANT: Only pass fields you want to change - do NOT pass summary unless renaming the event. Unspecified fields are preserved from the original event."
+    ),
+
+  // DELETE event - no email needed
   deleteEventParameter: z
     .object({
       eventId: requiredString("The ID of the event to delete.", "Event ID is required."),
-      email: emailSchema,
+      calendarId: calendarSchema,
     })
-    .describe("Delete an event by ID."),
+    .describe("Delete an event by ID. Use the calendarId from the event. Email is automatically provided from user context."),
+
+  // Gap analysis parameters
+  analyzeGapsParameters: z
+    .object({
+      lookbackDays: z.coerce
+        .number()
+        .int()
+        .min(1)
+        .max(90)
+        .default(7)
+        .describe("Number of days to look back for gaps. Default is 7 days."),
+      calendarId: z.coerce
+        .string()
+        .default("primary")
+        .describe("Calendar ID to analyze. Defaults to 'primary'."),
+    })
+    .describe("Parameters for analyzing gaps in the user's calendar. Email is automatically provided from user context."),
+
+  // Fill gap parameters
+  fillGapParameters: z
+    .object({
+      gapStart: z.coerce.string().describe("Start time of the gap in ISO format."),
+      gapEnd: z.coerce.string().describe("End time of the gap in ISO format."),
+      summary: z.coerce.string().min(1).describe("Title for the new event to fill the gap."),
+      description: z.coerce.string().nullable().optional().describe("Description for the new event."),
+      location: z.coerce.string().nullable().optional().describe("Location for the new event."),
+      calendarId: z.coerce.string().default("primary").describe("Calendar ID to create the event in."),
+    })
+    .describe("Parameters for filling a gap with a new calendar event. Email is automatically provided from user context."),
 };

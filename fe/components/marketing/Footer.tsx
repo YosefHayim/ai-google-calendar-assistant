@@ -50,7 +50,7 @@ const Footer = () => {
           <div className="lg:col-span-2">
             <Link href="/" className="flex items-center gap-2 mb-6">
               <div className="w-7 h-7 bg-zinc-900 dark:bg-white rounded-md flex items-center justify-center text-white dark:text-zinc-900">
-                <AllyLogo size={16} />
+                <AllyLogo className="w-4 h-4" />
               </div>
               <span className="font-medium text-lg tracking-tight flex items-center text-zinc-900 dark:text-zinc-100">
                 Ally <BetaBadge />

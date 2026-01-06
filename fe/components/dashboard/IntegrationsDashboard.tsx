@@ -67,7 +67,7 @@ const IntegrationsDashboard: React.FC<IntegrationsDashboardProps> = () => {
               onClick={() => setIsWhatsAppModalOpen(true)}
               className="w-full bg-zinc-950 dark:bg-zinc-100 text-white dark:text-zinc-950 p-1 rounded-md text-sm font-medium flex items-center justify-center gap-2"
             >
-              Connect <WhatsAppIcon size={16} />
+              Connect <WhatsAppIcon className="w-4 h-4" />
             </button>
           </div>
         </div>

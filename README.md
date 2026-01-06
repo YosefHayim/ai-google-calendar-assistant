@@ -5,78 +5,85 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7+-blue.svg)](https://www.typescriptlang.org/)
 [![Next.js](https://img.shields.io/badge/Next.js-15.1.0-black.svg)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19.0.0-blue.svg)](https://reactjs.org/)
-[![Node.js](https://img.shields.io/badge/Node.js-Express_5.1.0-green.svg)](https://nodejs.org/)
+[![Bun](https://img.shields.io/badge/Bun-Runtime-orange.svg)](https://bun.sh/)
+[![Express](https://img.shields.io/badge/Express-5.1.0-green.svg)](https://expressjs.com/)
 [![OpenAI Agents](https://img.shields.io/badge/OpenAI-Agents_v0.3.0-412991.svg)](https://openai.com/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 ## Overview
 
-AI Google Calendar Assistant is a sophisticated calendar automation platform that leverages cutting-edge AI agents to provide intelligent calendar management through natural language processing. Originally built for personal use, the architecture is designed to scale into a multi-tenant SaaS product with subscription-based billing.
+AI Google Calendar Assistant is a sophisticated calendar automation platform that leverages cutting-edge AI agents to provide intelligent calendar management through natural language processing. Built with a modern tech stack and designed for scalability as a multi-tenant SaaS product.
 
-### What Makes This Project Stand Out
+### Key Highlights
 
-- **Multi-Agent AI Architecture**: Utilizes OpenAI's Agents framework with specialized agents for different calendar operations
-- **Natural Language Processing**: Converts free-text input into structured calendar events with smart parsing
-- **Multilingual Support**: Handles English, Hebrew, and Arabic for event processing
-- **Multi-Interface Design**: Web dashboard, Telegram bot, and WhatsApp webhook integration
+- **Multi-Agent AI Architecture**: OpenAI Agents framework with specialized agents for calendar operations
+- **Natural Language Processing**: Convert free-text to structured calendar events with smart parsing
+- **Multi-Platform Support**: Web dashboard, Telegram bot, and WhatsApp integration
+- **Gap Recovery**: AI-powered detection and filling of untracked calendar gaps
 - **Domain-Driven Design**: Clean architecture with repository pattern and dependency injection
-- **Modern Tech Stack**: Next.js 15, React 19, Express 5, TypeScript throughout
+- **Modern Stack**: Next.js 15, React 19, Express 5, TypeScript, Bun runtime
 
 ---
 
-## Key Features
+## Features
 
-### Intelligent Calendar Management
+### Web Dashboard
 
-- **Natural Language Event Creation**: "Meeting with John tomorrow at 2pm for 1 hour" → Structured calendar event
-- **Smart Calendar Selection**: AI analyzes event content to automatically select the appropriate calendar
-- **Timezone Intelligence**: Automatic timezone detection and handling with fallback strategies
-- **Duration Parsing**: Supports various formats (e.g., "1am-3am", "60 minutes", all-day events)
-- **Multi-Language Support**: Processes events in English, Hebrew, and Arabic
+| Feature | Status | Description |
+|---------|--------|-------------|
+| AI Chat Interface | Done | Natural language calendar management with streaming responses |
+| Voice Input | Done | Speech-to-text for hands-free interaction |
+| Multiple View Modes | Done | Chat, Avatar, and 3D view modes |
+| Analytics Dashboard | Done | Calendar insights with heatmaps, time allocation charts |
+| Conversation History | Done | Persistent conversations with AI-generated titles |
+| Onboarding Tour | Done | Interactive guided tour for new users |
+| Dark/Light Theme | Done | System-aware theme switching |
+| Google OAuth | Done | Secure calendar integration |
+| Integration Management | Done | Connect/disconnect Google Calendar, view status |
+
+### Telegram Bot
+
+| Feature | Status | Description |
+|---------|--------|-------------|
+| Natural Language Events | Done | Create events via chat messages |
+| Quick Commands | Done | `/today`, `/tomorrow`, `/week`, `/month` |
+| Availability Check | Done | `/free`, `/busy` commands |
+| Event Management | Done | `/create`, `/update`, `/delete` |
+| Session Management | Done | Persistent sessions with 24h TTL |
+| Email Linking | Done | Link Telegram to Google account |
+| Context Memory | Done | Conversation summarization and embeddings |
 
 ### AI Agent System
 
-**Orchestrator Agent** coordinates multiple specialized tools:
+| Feature | Status | Description |
+|---------|--------|-------------|
+| Orchestrator Agent | Done | Routes requests to specialized tools |
+| Direct Tools | Done | Fast, non-AI utilities for DB operations |
+| Handoff Agents | Done | Multi-step workflows (create, update, delete) |
+| Guardrails | Done | Safety checks for injection and mass deletion |
+| Session Persistence | Done | Supabase-backed agent state |
+| Parallel Tool Execution | Done | Efficient multi-tool calls |
 
-| Tool | Description |
-|------|-------------|
-| `generateGoogleAuthUrl` | Generates OAuth URL for Google Calendar authentication |
-| `registerUser` | Creates user accounts via Supabase Auth |
-| `validateUser` | Verifies user existence and retrieves tokens |
-| `validateEventData` | Parses and normalizes event data from natural language |
-| `createEvent` | Creates calendar events |
-| `retrieveEvent` | Fetches events by ID or keywords |
-| `updateEvent` | Modifies existing events |
-| `deleteEvent` | Removes events from calendar |
-| `selectCalendar` | Intelligently selects appropriate calendar for events |
-| `parseEventText` | Converts natural language to event structure |
-| `getUserDefaultTimeZone` | Retrieves user's configured timezone |
+### Gap Recovery
 
-**Advanced Features**:
-- Parallel tool execution enabled for efficiency
-- Handoff agents for complex multi-step workflows (e.g., `createEventHandoff`)
-- Custom error handling per tool
-- Detailed agent instructions following OpenAI's recommended prompt format
+| Feature | Status | Description |
+|---------|--------|-------------|
+| Gap Detection | Done | Identify untracked time between events |
+| Context Inference | Done | AI-powered suggestions (travel, work, meals) |
+| One-Click Fill | Done | Fill gaps with suggested activities |
+| Settings Management | Done | Customizable thresholds and ignored days |
 
-### Multi-Platform Interfaces
+### Calendar Operations
 
-1. **Web Dashboard**
-   - Voice and text input support
-   - Interactive onboarding wizard with checklist
-   - Real-time calendar management
-   - Agent name customization
-   - Modern glassmorphism UI with animations (Aurora, particles, meteors, confetti)
-
-2. **Telegram Bot** (Grammy v1.38.3)
-   - Conversational interface with session management
-   - `/start` and `/exit` commands
-   - Continuous conversation flow with context
-   - Message deduplication
-   - Error handling with user feedback
-
-3. **WhatsApp Integration** (In Development)
-   - Webhook-based communication
-   - Message processing pipeline
+| Feature | Status | Description |
+|---------|--------|-------------|
+| Event CRUD | Done | Create, read, update, delete events |
+| Multi-Calendar | Done | Support for multiple calendars |
+| Quick Add | Done | Natural language event creation |
+| Conflict Detection | Done | Check for scheduling conflicts |
+| Recurring Events | Done | Support for recurring event patterns |
+| Time Zone Handling | Done | Automatic timezone detection |
+| Free/Busy Query | Done | Check availability |
 
 ---
 
@@ -85,239 +92,238 @@ AI Google Calendar Assistant is a sophisticated calendar automation platform tha
 ### System Design
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                     Client Interfaces                        │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
-│  │ Web Dashboard│  │ Telegram Bot │  │  WhatsApp    │      │
-│  │  (Next.js)   │  │   (Grammy)   │  │   Webhook    │      │
-│  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘      │
-└─────────┼──────────────────┼──────────────────┼─────────────┘
-          │                  │                  │
-          └──────────────────┼──────────────────┘
-                             │
-┌────────────────────────────┼─────────────────────────────────┐
-│                      Express API Server                       │
-│                             │                                 │
-│  ┌──────────────────────────┼──────────────────────────┐     │
-│  │           Orchestrator Agent (OpenAI Agents)         │     │
-│  │                          │                           │     │
-│  │  ┌───────────────────────┴────────────────────┐     │     │
-│  │  │        Specialized Tools Pool              │     │     │
-│  │  ├────────────────────────────────────────────┤     │     │
-│  │  │ • createEvent      • updateEvent           │     │     │
-│  │  │ • deleteEvent      • retrieveEvent         │     │     │
-│  │  │ • validateUser     • registerUser          │     │     │
-│  │  │ • selectCalendar   • validateEventData     │     │     │
-│  │  │ • parseEventText   • getUserDefaultTimeZone│     │     │
-│  │  └────────────────────────────────────────────┘     │     │
-│  └──────────────────────────────────────────────────────┘     │
-│                             │                                 │
-│  ┌──────────────────────────┼──────────────────────────┐     │
-│  │        Domain Layer (DDD Pattern)                    │     │
-│  ├──────────────────────────────────────────────────────┤     │
-│  │  Entities: User, Calendar, Event                     │     │
-│  │  Repositories: IUserRepo, ICalendarRepo, IEventRepo  │     │
-│  └──────────────────────────────────────────────────────┘     │
-└────────────────────────────┼─────────────────────────────────┘
-                             │
-         ┌───────────────────┼───────────────────┐
-         │                   │                   │
-┌────────┴────────┐  ┌───────┴────────┐  ┌──────┴──────┐
-│   Supabase      │  │ Google Calendar│  │   OpenAI    │
-│  (PostgreSQL)   │  │      API       │  │     API     │
-└─────────────────┘  └────────────────┘  └─────────────┘
++-----------------------------------------------------------------------------------+
+|                              CLIENT INTERFACES                                      |
+|  +----------------+    +------------------+    +----------------+    +-----------+ |
+|  | Web Dashboard  |    | Telegram Bot     |    | WhatsApp       |    | REST API  | |
+|  | (Next.js 15)   |    | (Grammy v1.38)   |    | (Webhook)      |    | (Mobile)  | |
+|  +-------+--------+    +--------+---------+    +-------+--------+    +-----+-----+ |
++----------|----------------------|----------------------|-------------------|-------+
+           |                      |                      |                   |
+           +----------------------+----------------------+-------------------+
+                                  |
++-----------------------------------------------------------------------------------+
+|                            EXPRESS MIDDLEWARE CHAIN                                 |
+|  +----------+  +------+  +------------+  +----------------+  +--------------+      |
+|  | Helmet   |->| CORS |->| Rate Limit |->| Security Audit |->| JSON Parser  |      |
+|  +----------+  +------+  +------------+  +----------------+  +--------------+      |
++-----------------------------------------------------------------------------------+
+                                  |
++-----------------------------------------------------------------------------------+
+|                         AUTHENTICATION MIDDLEWARE                                   |
+|  +----------------+    +------------------------+    +----------------------+      |
+|  | Supabase Auth  |--->| Google Token Validation|--->| Google Token Refresh |      |
+|  | (JWT Verify)   |    | (Token Existence)      |    | (Auto-refresh)       |      |
+|  +----------------+    +------------------------+    +----------------------+      |
++-----------------------------------------------------------------------------------+
+                                  |
++-----------------------------------------------------------------------------------+
+|                              API ROUTES                                            |
+|  +-------+  +--------+  +----------+  +------+  +------+  +-----+  +----------+   |
+|  | Users |  | Events |  | Calendar |  | Chat |  | Gaps |  | ACL |  | Channels |   |
+|  +-------+  +--------+  +----------+  +------+  +------+  +-----+  +----------+   |
++-----------------------------------------------------------------------------------+
+                                  |
++-----------------------------------------------------------------------------------+
+|                              CONTROLLERS                                           |
+|    Business logic, input validation, response formatting, error handling           |
++-----------------------------------------------------------------------------------+
+                                  |
+           +----------------------+----------------------+
+           |                      |                      |
++----------v---------+  +---------v----------+  +--------v---------+
+|    AI AGENTS       |  |  CALENDAR UTILS    |  |   AUTH UTILS     |
+|   (OpenAI SDK)     |  |                    |  |                  |
+|                    |  | - Events CRUD      |  | - Token Refresh  |
+| - Orchestrator     |  | - Gap Recovery     |  | - OAuth Flow     |
+| - Handoff Agents   |  | - Conflict Check   |  | - Session Mgmt   |
+| - Direct Tools     |  | - Category Update  |  | - Cookie Utils   |
+| - Guardrails       |  |                    |  |                  |
++--------------------+  +--------------------+  +------------------+
+           |                      |                      |
+           +----------------------+----------------------+
+                                  |
++-----------------------------------------------------------------------------------+
+|                           EXTERNAL SERVICES                                        |
+|  +------------------+   +---------------------+   +------------------+             |
+|  | Supabase         |   | Google Calendar API |   | OpenAI API       |             |
+|  | (PostgreSQL)     |   | (Events, Calendars) |   | (GPT-4, GPT-5)   |             |
+|  +------------------+   +---------------------+   +------------------+             |
++-----------------------------------------------------------------------------------+
 ```
 
 ### Project Structure
 
 ```
 ai-google-calendar-assistant/
-├── be/                              # Backend (Express + TypeScript)
+├── be/                              # Backend (Express + TypeScript + Bun)
 │   ├── ai-agents/                   # OpenAI Agent implementations
+│   │   ├── sessions/                # Session persistence
 │   │   ├── agents.ts                # Agent definitions
-│   │   ├── agents-instructions.ts   # Detailed agent instructions
-│   │   ├── tool-registry.ts         # Tool definitions and registration
-│   │   ├── tool-execution.ts        # Tool implementation logic
-│   │   ├── tool-schemas.ts          # Zod schemas for tool parameters
-│   │   ├── tool-descriptions.ts     # User-facing tool descriptions
-│   │   ├── agent-handoff-descriptions.ts  # Handoff agent descriptions
-│   │   └── utils.ts                 # Agent utility functions
-│   ├── config/                      # Configuration management
-│   │   ├── clients/                 # External client configs
-│   │   │   └── google-oauth.ts      # Google OAuth2 client
-│   │   ├── constants/               # Application constants
-│   │   │   └── http.ts              # HTTP/route constants
-│   │   └── env.ts                   # Environment configuration
+│   │   ├── tool-registry.ts         # Tool definitions
+│   │   ├── guardrails.ts            # Safety checks
+│   │   └── direct-utilities.ts      # Fast non-AI tools
+│   ├── config/                      # Configuration
+│   │   ├── clients/                 # External clients
+│   │   └── constants/               # Application constants
 │   ├── controllers/                 # Request handlers
-│   │   ├── calendar-controller.ts   # Calendar operations
-│   │   ├── events-controller.ts     # Event operations
-│   │   └── users-controller.ts      # User management
-│   ├── domain/                      # Domain-Driven Design layer
-│   │   ├── entities/                # Core business entities
-│   │   │   ├── User.ts              # User entity with preferences
-│   │   │   ├── Event.ts             # Calendar event entity
-│   │   │   └── Calendar.ts          # Calendar entity
+│   │   └── google-calendar/         # Calendar-specific
+│   ├── database/                    # Database migrations
+│   │   └── migrations/              # SQL migration scripts
+│   ├── domain/                      # Domain-Driven Design
+│   │   ├── entities/                # Business entities
 │   │   └── repositories/            # Repository interfaces
-│   │       ├── IUserRepository.ts
-│   │       ├── ICalendarRepository.ts
-│   │       └── IEventRepository.ts
 │   ├── infrastructure/              # External integrations
-│   │   ├── di/                      # Dependency injection (Inversify)
-│   │   │   └── container.ts         # DI container configuration
-│   │   └── repositories/            # Repository implementations
-│   │       ├── SupabaseUserRepository.ts
-│   │       ├── GoogleCalendarEventRepository.ts
-│   │       ├── GoogleCalendarCalendarRepository.ts
-│   │       └── mappers/             # Data mappers
+│   │   ├── di/                      # Dependency injection
+│   │   └── repositories/            # Implementations
 │   ├── middlewares/                 # Express middleware
-│   │   ├── auth-handler.ts          # JWT authentication
-│   │   └── error-handler.ts         # Global error handling
-│   ├── routes/                      # API route definitions
-│   │   ├── users.ts                 # User routes
-│   │   ├── whatsapp-route.ts        # WhatsApp webhook
-│   │   └── google-calendar/         # Calendar routes
-│   │       ├── calendar-route.ts    # Calendar endpoints
-│   │       └── events-route.ts      # Event endpoints
+│   ├── routes/                      # API routes
 │   ├── telegram-bot/                # Telegram integration
-│   │   ├── init-bot.ts              # Bot initialization
-│   │   └── middleware/              # Bot middleware
-│   │       └── auth-tg-handler.ts   # Telegram authentication
-│   ├── utils/                       # Utility functions
-│   │   ├── ai/                      # AI utilities
-│   │   ├── auth/                    # Authentication helpers
-│   │   ├── calendar/                # Calendar utilities
-│   │   ├── date/                    # Date formatting
-│   │   └── http/                    # HTTP helpers
-│   ├── app.ts                       # Express server entry point
-│   ├── types.ts                     # TypeScript type definitions
-│   └── database.types.ts            # Supabase auto-generated types
+│   ├── tests/                       # Test files
+│   └── utils/                       # Utilities
 │
 ├── fe/                              # Frontend (Next.js 15 + React 19)
 │   ├── app/                         # Next.js App Router
-│   │   ├── page.tsx                 # Landing page
-│   │   ├── layout.tsx               # Root layout
-│   │   ├── globals.css              # Global styles
-│   │   ├── login/page.tsx           # Login page
-│   │   ├── register/page.tsx        # Registration page
-│   │   ├── dashboard/page.tsx       # Main dashboard
-│   │   ├── pricing/page.tsx         # Pricing page
-│   │   ├── contact/page.tsx         # Contact page
-│   │   ├── terms/page.tsx           # Terms of service
-│   │   ├── privacy/page.tsx         # Privacy policy
-│   │   └── api/                     # API route handlers (proxy to backend)
-│   ├── components/                  # React components (25+ components)
-│   │   ├── ui/                      # Reusable UI components
-│   │   │   ├── aurora-background.tsx
-│   │   │   ├── particles.tsx
-│   │   │   ├── meteors.tsx
-│   │   │   ├── confetti.tsx
-│   │   │   ├── ai-voice-input.tsx
-│   │   │   ├── placeholders-and-vanish-input.tsx
-│   │   │   ├── 3d-card.tsx
-│   │   │   ├── magnetic-button.tsx
-│   │   │   ├── rainbow-button.tsx
-│   │   │   ├── onboarding-wizard.tsx
-│   │   │   ├── onboarding-checklist.tsx
-│   │   │   └── ... (more components)
-│   │   ├── auth/                    # Authentication components
-│   │   ├── navbar.tsx               # Navigation bar
-│   │   ├── footer.tsx               # Footer
-│   │   ├── providers.tsx            # Context providers
-│   │   └── theme-toggle.tsx         # Dark mode toggle
-│   ├── lib/                         # Utilities and helpers
-│   │   ├── api/                     # API client functions
-│   │   │   ├── config.ts            # API configuration
-│   │   │   ├── client.ts            # Client-side API functions
-│   │   │   ├── server.ts            # Server-side API functions
-│   │   │   ├── types.ts             # TypeScript interfaces
-│   │   │   └── utils/proxy.ts       # Request proxying
-│   │   ├── supabase/                # Supabase integration
-│   │   │   ├── auth.ts              # Authentication functions
-│   │   │   ├── client.ts            # Browser client
-│   │   │   ├── server.ts            # Server client
-│   │   │   └── middleware.ts        # Auth middleware
-│   │   └── utils.ts                 # Helper functions
-│   ├── hooks/                       # React hooks
-│   │   └── use-auth.ts              # Authentication hook
-│   └── public/                      # Static assets
+│   │   ├── dashboard/               # Dashboard pages
+│   │   └── auth/                    # Auth pages
+│   ├── components/                  # React components
+│   │   ├── dashboard/               # Dashboard components
+│   │   ├── marketing/               # Marketing pages
+│   │   └── ui/                      # UI primitives
+│   ├── contexts/                    # React contexts
+│   ├── hooks/                       # Custom hooks
+│   │   └── queries/                 # TanStack Query
+│   ├── lib/                         # Utilities
+│   └── services/                    # Service layer
 │
-└── ai-design-v1/                    # AI design resources
+├── AGENTS.md                        # AI Agent guidelines
+└── README.md                        # This file
 ```
 
 ---
 
-## API Documentation
+## API Reference
 
-### User Routes (`/api/users`)
-
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
-| `GET` | `/get-user` | Required | Get current user information |
-| `DELETE` | `/` | Required | Deactivate user account |
-| `GET` | `/callback` | - | OAuth callback handler |
-| `POST` | `/verify-user-by-email-otp` | - | Email OTP verification |
-| `POST` | `/signup` | - | Register new user |
-| `POST` | `/signin` | - | Sign in existing user |
-| `GET` | `/signup/google` | - | Sign up/in with Google OAuth |
-| `GET` | `/signup/github` | - | Sign up/in with GitHub OAuth |
-
-### Calendar Routes (`/api/calendars`)
-
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
-| `GET` | `/` | Required | List all user calendars |
-| `GET` | `/:id` | Required | Get calendar info by ID |
-| `GET` | `/colors` | Required | Get available calendar colors |
-| `GET` | `/colors/:id` | Required | Get specific calendar color |
-| `GET` | `/timezones` | Required | Get available timezones |
-| `GET` | `/timezones/:id` | Required | Get calendar timezone |
-
-### Event Routes (`/api/calendars/events`)
-
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
-| `GET` | `/` | Required | List all user events |
-| `GET` | `/filtered` | Required | Get filtered events with query params |
-| `GET` | `/:id` | Required | Get specific event by ID |
-| `POST` | `/` | Required | Create new event |
-| `PATCH` | `/:id` | Required | Update event |
-| `DELETE` | `/:id` | Required | Delete event |
-
-### WhatsApp Routes (`/api/whatsapp`)
+### Authentication Endpoints (`/api/users`)
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| `POST` | `/webhook` | WhatsApp message webhook |
+| `POST` | `/signup` | Register with email/password |
+| `POST` | `/signin` | Sign in with email/password |
+| `GET` | `/signup/google` | OAuth with Google |
+| `GET` | `/callback` | OAuth callback handler |
+| `POST` | `/logout` | Clear session |
+| `GET` | `/get-user` | Get current user |
+| `GET` | `/session` | Check session validity |
+| `POST` | `/refresh` | Refresh access token |
+| `GET` | `/integrations/google-calendar` | Get Google integration status |
+| `POST` | `/integrations/google-calendar/disconnect` | Disconnect Google Calendar |
+| `DELETE` | `/` | Deactivate user account |
+
+### Calendar Endpoints (`/api/calendar`)
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/` | List all calendars |
+| `POST` | `/` | Create secondary calendar |
+| `GET` | `/:id` | Get calendar by ID |
+| `PATCH` | `/:id` | Partial update calendar |
+| `PUT` | `/:id` | Full update calendar |
+| `DELETE` | `/:id` | Clear all events |
+| `DELETE` | `/:id/delete` | Delete secondary calendar |
+| `GET` | `/freebusy` | Get free/busy info |
+| `GET` | `/colors` | Get available colors |
+| `GET` | `/timezones` | Get timezones |
+| `GET` | `/settings` | Get calendar settings |
+| `GET` | `/settings/all` | List all settings |
+
+### Event Endpoints (`/api/events`)
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/` | List all events |
+| `POST` | `/` | Create event |
+| `GET` | `/:id` | Get event by ID |
+| `PATCH` | `/:id` | Update event |
+| `DELETE` | `/:id` | Delete event |
+| `POST` | `/quick-add` | Natural language create |
+| `GET` | `/analytics` | Get analytics data |
+| `POST` | `/watch` | Watch for changes (webhook) |
+| `POST` | `/move` | Move event to another calendar |
+| `POST` | `/import` | Import event (private copy) |
+| `GET` | `/:id/instances` | Get recurring instances |
+
+### Chat Endpoints (`/api/chat`)
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/stream` | Stream chat response |
+| `POST` | `/` | Non-streaming chat |
+| `GET` | `/conversations` | List conversations |
+| `GET` | `/conversations/:id` | Get conversation |
+| `DELETE` | `/conversations/:id` | Delete conversation |
+| `POST` | `/conversations/:id/messages` | Continue conversation |
+
+### Gap Recovery Endpoints (`/api/gaps`)
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/` | Analyze calendar gaps |
+| `GET` | `/formatted` | Get formatted gaps |
+| `POST` | `/:gapId/fill` | Fill a gap |
+| `POST` | `/:gapId/skip` | Skip a gap |
+| `POST` | `/dismiss-all` | Dismiss all gaps |
+| `GET` | `/settings` | Get settings |
+| `PATCH` | `/settings` | Update settings |
+| `POST` | `/disable` | Disable gap analysis |
 
 ---
 
 ## Database Schema
 
-### Supabase Tables
+### Current Tables (Legacy)
 
 | Table | Description |
 |-------|-------------|
-| `calendar_categories` | User calendar mappings with metadata (timezone, reminders, access role) |
-| `conversation_embeddings` | Vector embeddings for semantic search of conversation history |
-| `conversation_messages` | Chat message history storage |
-| `telegram_user_links` | Links between Telegram users and system accounts |
-| `user_calendar_tokens` | Google OAuth access/refresh tokens for calendar access |
+| `user_calendar_tokens` | Google OAuth tokens, user profile, timezone |
+| `user_telegram_links` | Links Telegram users to email accounts |
+| `calendar_categories` | User calendar metadata and settings |
+| `agent_sessions` | Persistent AI agent session state |
+| `conversation_state` | Chat conversation state for web/Telegram |
+| `conversation_embeddings` | Vector embeddings for semantic search |
+| `conversation_summaries` | Summarized conversation history |
+| `gap_candidates` | Detected calendar gaps for recovery |
+| `gap_recovery_settings` | User preferences for gap recovery |
 
-### Domain Entities
+### Professional Schema (New - in `be/database/migrations/`)
 
-**User Entity**
-- Profile: `firstName`, `lastName`, `displayName`, `avatar`, `language`
-- Preferences: `defaultTimeZone`, `defaultCalendarId`, `notificationsEnabled`, `reminderDefaults`
-- Methods: `updateEmail()`, `updateProfile()`, `updatePreferences()`, `recordLogin()`, `deactivate()`
+The new schema introduces proper normalization, foreign keys, indexes, and audit fields:
 
-**Event Entity**
-- Properties: `id`, `summary`, `start`, `end`, `description`, `location`, `attendees`, `recurrence`, `reminders`, `status`, `visibility`
-- Methods: `isAllDay()`, `isRecurring()`, `isPast()`, `getDurationMinutes()`, `updateTime()`
+| Table | Description |
+|-------|-------------|
+| `users` | Core user table (single source of truth) |
+| `oauth_tokens` | Centralized OAuth token storage |
+| `user_calendars` | User's connected calendars with preferences |
+| `telegram_users` | Telegram-specific user data |
+| `conversations` | Unified conversation storage |
+| `conversation_messages` | Individual messages with metadata |
+| `conversation_embeddings` | Vector embeddings with proper FKs |
+| `conversation_summaries` | Summaries linked to conversations |
+| `agent_sessions` | Agent sessions with expiry |
+| `gap_candidates` | Gaps with confidence scores |
+| `gap_recovery_settings` | Settings with quick-access fields |
+| `user_preferences` | Extensible key-value preferences |
+| `audit_logs` | Security and change tracking |
 
-**Calendar Entity**
-- Properties: `id`, `name`, `ownerId`, `settings` (timezone, colors)
-- Access roles: `owner`, `writer`, `reader`, `freeBusyReader`
-- Methods: `canWrite()`, `isOwner()`, `validateEventAddition()`
+### Key Database Features
+
+- **UUID Primary Keys**: All tables use UUID for distributed systems
+- **Foreign Key Constraints**: Proper referential integrity
+- **Indexes**: Optimized for common query patterns
+- **Triggers**: Automatic `updated_at` timestamps
+- **RLS Policies**: Row-level security for data isolation
+- **Vector Search**: pgvector for semantic similarity
+- **Enums**: Type-safe status and role fields
 
 ---
 
@@ -327,29 +333,32 @@ ai-google-calendar-assistant/
 
 | Category | Technologies |
 |----------|-------------|
-| **Runtime & Framework** | Node.js, Express 5.1.0, TypeScript 5.7+ |
-| **AI & Agents** | OpenAI Agents Framework (`@openai/agents` v0.3.0), OpenAI API |
-| **Database & Auth** | Supabase (PostgreSQL), JWT Authentication |
-| **Google Integration** | Google Calendar API (`googleapis` v105.0.0), OAuth2 |
-| **Bot Framework** | Grammy v1.38.3 (Telegram) with plugins |
-| **Payments** | Stripe v18.5.0 |
-| **Validation** | Zod v3.25.67, Validator.js |
-| **DI Container** | Inversify v7.10.4 |
-| **Testing** | Jest v30.2.0 |
-| **Code Quality** | Biome (linting/formatting), Husky (git hooks) |
+| **Runtime** | Bun, Node.js |
+| **Framework** | Express 5.1.0 |
+| **Language** | TypeScript 5.7+ |
+| **AI/Agents** | OpenAI Agents SDK v0.3.0 |
+| **Database** | Supabase (PostgreSQL) |
+| **Auth** | Supabase Auth, Google OAuth 2.0 |
+| **Calendar** | Google Calendar API v105 |
+| **Bot** | Grammy v1.38.3 (Telegram) |
+| **Validation** | Zod v3.25 |
+| **DI** | Inversify v7.10 |
+| **Testing** | Jest v30.2 |
+| **Linting** | Biome |
 
 ### Frontend
 
 | Category | Technologies |
 |----------|-------------|
-| **Framework** | Next.js 15.1.0 (App Router), React 19.0.0 |
-| **Language** | TypeScript 5.7.2 |
-| **Styling** | Tailwind CSS 3.4.17, Framer Motion 11.11.17 |
-| **UI Components** | Radix UI, Lucide Icons, 25+ custom components |
-| **Forms** | Tanstack React Form v1.26.0 |
-| **Auth** | NextAuth v5.0.0-beta.25, Supabase Client |
-| **Effects** | Canvas Confetti, Aurora backgrounds, Particles, Meteors |
-| **Theming** | next-themes (dark/light mode) |
+| **Framework** | Next.js 15.1.0 (App Router) |
+| **UI** | React 19.0.0 |
+| **Language** | TypeScript 5.7 |
+| **Styling** | Tailwind CSS 3.4 |
+| **Animation** | Framer Motion 11.11 |
+| **Components** | Radix UI, shadcn/ui |
+| **State** | TanStack Query, React Context |
+| **Forms** | TanStack React Form |
+| **Icons** | Lucide Icons |
 
 ---
 
@@ -357,11 +366,11 @@ ai-google-calendar-assistant/
 
 ### Prerequisites
 
-- Node.js 18+ and npm/pnpm
-- Supabase account (database & auth)
-- Google Cloud project with Calendar API enabled
+- Node.js 18+ or Bun 1.0+
+- Supabase account
+- Google Cloud project with Calendar API
 - OpenAI API key
-- Telegram Bot Token (optional, for Telegram interface)
+- Telegram Bot Token (optional)
 
 ### Environment Variables
 
@@ -378,33 +387,27 @@ OPEN_API_KEY=your_openai_api_key
 # Google OAuth
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
-GOOGLE_API_KEY=your_google_api_key
 GOOGLE_REDIRECT_URI=http://localhost:3000/api/users/callback
 
 # Telegram (optional)
 TELEGRAM_BOT_ACCESS_TOKEN=your_telegram_bot_token
 
-# WhatsApp (optional)
-DEV_WHATS_APP_ACCESS_TOKEN=your_whatsapp_token
-
 # Server
 PORT=3000
 NODE_ENV=development
 BASE_URL=http://localhost:3000
+FE_BASE_URL=http://localhost:4000
 ```
 
 #### Frontend (`/fe/.env.local`)
 
 ```env
-# Supabase
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-
-# Backend API
 NEXT_PUBLIC_API_URL=http://localhost:3000
 ```
 
-### Installation & Running
+### Installation
 
 ```bash
 # Clone the repository
@@ -413,10 +416,10 @@ cd ai-google-calendar-assistant
 
 # Install backend dependencies
 cd be
-npm install
+bun install  # or npm install
 
 # Start backend development server
-npm run dev
+bun --watch app.ts  # or npm run dev
 
 # In a new terminal, install frontend dependencies
 cd ../fe
@@ -426,111 +429,104 @@ npm install
 npm run dev
 ```
 
-The backend will run on `http://localhost:3000` and frontend on `http://localhost:3001`.
+The backend runs on `http://localhost:3000` and frontend on `http://localhost:4000`.
+
+### Database Setup
+
+1. Create a Supabase project
+2. Run the migration scripts in order:
+   ```bash
+   # In Supabase SQL Editor, run:
+   # 1. be/database/migrations/001_professional_schema.sql
+   # 2. be/database/migrations/002_data_migration.sql
+   ```
+3. Generate TypeScript types:
+   ```bash
+   cd be
+   npx supabase gen types typescript --project-id YOUR_PROJECT_ID --schema public > database.types.ts
+   ```
 
 ---
 
-## Technical Highlights
+## Development
 
-### 1. Multi-Agent AI System
+### Commands
 
-The project implements a sophisticated multi-agent architecture using OpenAI's Agents framework:
+#### Backend
 
-- **Orchestrator Pattern**: A central orchestrator agent delegates tasks to specialized tools
-- **Handoff Agents**: Complex workflows use handoff agents for multi-step operations
-- **Parallel Tool Calls**: Agents can execute multiple tools simultaneously for efficiency
-- **Context Awareness**: Agents maintain conversation context and user preferences
-
-### 2. Domain-Driven Design
-
-Clean architecture following DDD principles:
-
-- **Entities**: Pure business logic (User, Calendar, Event)
-- **Repositories**: Abstract data access behind interfaces
-- **Infrastructure Layer**: Concrete implementations for Google Calendar API and Supabase
-- **Dependency Injection**: Inversify container for loose coupling
-
-### 3. Smart Calendar Categorization
-
-Evidence-based scoring system for intelligent calendar selection:
-
-```
-Weight Priority: Title (highest) > Description > Location > Attendees (lowest)
+```bash
+bun --watch app.ts          # Dev server with hot reload
+bun run jest                # Run tests
+bun run jest --coverage     # Tests with coverage
+npx biome check --write .   # Format code
 ```
 
-Categories include: meetings, work, studies, health, travel, errands, and more.
+#### Frontend
 
-### 4. Authentication Flow
+```bash
+npm run dev                 # Dev server (port 4000)
+npm run build              # Production build
+npm run lint               # Lint code
+npm run format             # Format with Prettier
+```
 
-- **Email/Password**: Supabase Auth with Zod validation (6-72 character passwords)
-- **Google OAuth**: OAuth2 with offline access for refresh tokens
-- **GitHub OAuth**: Alternative authentication provider
-- **Session Management**: JWT tokens with Bearer authentication
-- **Token Storage**: Secure storage of Google Calendar OAuth tokens in Supabase
+### Code Style
+
+- **Backend**: Biome formatter, no semicolons, double quotes
+- **Frontend**: Prettier, no semicolons, single quotes
+- **Imports**: Use `@/` path alias for internal imports
+- **Types**: Explicit types for all function parameters and returns
+
+See `AGENTS.md` for complete coding guidelines.
 
 ---
 
-## Project Status
+## Security
 
-### Implemented Features
+- **Authentication**: Supabase Auth with JWT validation
+- **OAuth 2.0**: Secure Google account integration
+- **Rate Limiting**: Configurable limits per endpoint type
+- **Input Validation**: Zod schemas for all inputs
+- **Row Level Security**: Supabase RLS for data isolation
+- **CORS**: Configured origin whitelisting
+- **Helmet**: Security headers
+- **Audit Logging**: Security event tracking
+- **Guardrails**: AI safety checks for malicious inputs
+- **ID Token Verification**: Google OAuth token signature verification
+- **IDOR Protection**: Users can only access their own data
 
-- Core AI agent system with 11+ specialized tools
-- Web dashboard with voice and text input
-- Interactive onboarding wizard with checklist
-- Telegram bot with session management
-- Natural language event processing
-- Multi-calendar support with smart selection
-- Full CRUD operations for calendar events
-- Google OAuth integration
-- User preference management (timezone, default calendar)
-- Domain-Driven Design architecture
-- Dependency injection with Inversify
-- Comprehensive test suite with Jest
+---
+
+## Roadmap
 
 ### In Development
 
-- WhatsApp bot completion
-- Stripe subscription implementation
-- Enhanced AI capabilities (conflict resolution, meeting optimization)
+- [ ] WhatsApp bot completion
+- [ ] Stripe subscription billing
+- [ ] Enhanced conflict resolution
+- [ ] Meeting optimization suggestions
 
-### Planned Features
+### Planned
 
-- Slack integration
-- Mobile app (React Native)
-- Zoom/Google Meet auto-linking
-- Email integration (Gmail)
-- Redis caching layer
-- Team collaboration features
-
----
-
-## Security Features
-
-- **Row Level Security**: Supabase RLS policies enforce data isolation
-- **JWT Validation**: All API requests validated via auth middleware
-- **OAuth 2.0**: Secure Google account integration
-- **Input Validation**: Zod schemas validate all inputs
-- **CORS**: Configured for specific origins only
-- **Environment Variables**: Sensitive data never committed
+- [ ] Slack integration
+- [ ] Mobile app (React Native)
+- [ ] Zoom/Google Meet auto-linking
+- [ ] Email integration (Gmail)
+- [ ] Redis caching layer
+- [ ] Team collaboration features
+- [ ] Calendar sharing
 
 ---
 
 ## Contributing
 
-Contributions are welcome! Please follow these guidelines:
-
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'feat: add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-### Code Style
-
-- Follow existing code patterns
-- Add tests for new features
-- Update documentation as needed
-- Run `npm run lint` before committing
+3. Follow the code style guidelines in `AGENTS.md`
+4. Add tests for new functionality
+5. Commit your changes (`git commit -m 'feat: add amazing feature'`)
+6. Push to the branch (`git push origin feature/amazing-feature`)
+7. Open a Pull Request
 
 ---
 
@@ -542,7 +538,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgments
 
-- OpenAI for the Agents framework and API
-- Google for Calendar API
-- Supabase team for the excellent backend platform
-- Next.js and React teams for amazing frameworks
+- [OpenAI](https://openai.com/) - Agents framework and API
+- [Google](https://developers.google.com/calendar) - Calendar API
+- [Supabase](https://supabase.com/) - Backend platform
+- [Vercel](https://vercel.com/) - Next.js and hosting
+- [shadcn/ui](https://ui.shadcn.com/) - UI components

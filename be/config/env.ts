@@ -89,6 +89,30 @@ const openai = {
 } as const;
 
 // ============================================================================
+// Stripe Configuration
+// ============================================================================
+
+const stripe = {
+  secretKey: getOptional("STRIPE_SECRET_KEY"),
+  publishableKey: getOptional("STRIPE_PUBLISHABLE_KEY"),
+  webhookSecret: getOptional("STRIPE_WEBHOOK_SECRET"),
+  // Price IDs for each plan and interval
+  prices: {
+    pro: {
+      monthly: getOptional("STRIPE_PRICE_PRO_MONTHLY"),
+      yearly: getOptional("STRIPE_PRICE_PRO_YEARLY"),
+    },
+    executive: {
+      monthly: getOptional("STRIPE_PRICE_EXECUTIVE_MONTHLY"),
+      yearly: getOptional("STRIPE_PRICE_EXECUTIVE_YEARLY"),
+    },
+  },
+  get isEnabled(): boolean {
+    return !!this.secretKey;
+  },
+} as const;
+
+// ============================================================================
 // Integrations Configuration
 // ============================================================================
 
@@ -165,6 +189,7 @@ export const env = {
   supabase,
   google,
   openai,
+  stripe,
   integrations,
   atlassian,
   testing,

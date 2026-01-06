@@ -2,11 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react'
 import { decodeAudioData, getSpeechFromGemini } from '@/services/geminiService'
-import {
-  streamChatMessage,
-  continueConversation,
-  type ChatMessage as ChatHistoryMessage,
-} from '@/services/chatService'
+import { streamChatMessage, continueConversation, type ChatMessage as ChatHistoryMessage } from '@/services/chatService'
 
 import { Message } from '@/types'
 import { AvatarView } from './AvatarView'
@@ -110,9 +106,7 @@ const ChatInterface: React.FC = () => {
       },
       onComplete: (fullText: string, conversationId?: number, title?: string) => {
         // Set the full text immediately - typewriter will animate it
-        setMessages((prev) =>
-          prev.map((msg) => (msg.id === assistantMessageId ? { ...msg, content: fullText } : msg)),
-        )
+        setMessages((prev) => prev.map((msg) => (msg.id === assistantMessageId ? { ...msg, content: fullText } : msg)))
         // Handle new conversation creation
         if (conversationId && !selectedConversationId) {
           setConversationId(conversationId)

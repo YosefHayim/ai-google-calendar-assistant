@@ -9,7 +9,6 @@ const formatDate = (date: Date | string | null | undefined, withTime = false, de
   }
 
   let parsed: Date;
-  logger.info(`Date: formatDate called: date: ${date}`);
   if (typeof date === "string") {
     parsed = new Date(date);
   } else if (date instanceof Date) {
@@ -25,7 +24,6 @@ const formatDate = (date: Date | string | null | undefined, withTime = false, de
   }
 
   if (withTime) {
-    logger.info(`Date: formatDate called: withTime: ${withTime}`);
     return parsed.toLocaleDateString(desiredLanguage, {
       weekday: "long",
       year: "numeric",
@@ -35,14 +33,12 @@ const formatDate = (date: Date | string | null | undefined, withTime = false, de
       minute: "numeric",
     });
   }
-  logger.info(`Date: formatDate called: without time`);
   const formattedDate = parsed.toLocaleDateString(desiredLanguage, {
     weekday: "long",
     year: "numeric",
     month: "long",
     day: "numeric",
   });
-  logger.info(`Date: formatDate called: formattedDate: ${formattedDate}`);
   return formattedDate;
 };
 

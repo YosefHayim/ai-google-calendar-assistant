@@ -1,16 +1,28 @@
-import { ConversationListItem, getConversation } from '@/services/chatService'
-
+import { getConversation, type FullConversation } from '@/services/chatService'
 import { QUERY_CONFIG } from '@/lib/constants'
 import { queryKeys } from '@/lib/query'
 import { useQuery } from '@tanstack/react-query'
-import { useQueryWrapper } from '../useQueryWrapper'
+import type { QueryHookOptions } from '../useQueryWrapper'
 
-export const useGetConversationById = (conversationId: number | null) => {
-  const query = useQuery({
-    queryKey: queryKeys.conversations.detail(conversationId ?? 0),
-    queryFn: () => getConversation(conversationId!),
-    staleTime: QUERY_CONFIG.DEFAULT_STALE_TIME,
-    enabled: conversationId !== null,
+/**
+ * @deprecated Use useConversation instead for a cleaner API
+ */
+export function useGetConversationById(conversationId: number, options?: QueryHookOptions) {
+  const query = useQuery<FullConversation | null, Error>({
+    queryKey: queryKeys.conversations.detail(conversationId),
+    queryFn: () => getConversation(conversationId),
+    staleTime: options?.staleTime ?? QUERY_CONFIG.DEFAULT_STALE_TIME,
+    enabled: options?.enabled ?? true,
+    refetchOnWindowFocus: options?.refetchOnWindowFocus ?? false,
   })
-  return useQueryWrapper(query)
+
+  return {
+    conversation: query.data,
+    isLoading: query.isLoading,
+    isFetching: query.isFetching,
+    isError: query.isError,
+    error: query.error,
+    isSuccess: query.isSuccess,
+    refetch: query.refetch,
+  }
 }

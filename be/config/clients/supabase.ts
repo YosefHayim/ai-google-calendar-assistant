@@ -1,10 +1,17 @@
 import type { Database } from "@/database.types";
-import { SupabaseClient } from "@supabase/supabase-js";
+import { createClient } from "@supabase/supabase-js";
 import { env } from "../env";
 
 /**
- * Supabase client
+ * Supabase client with service role privileges
  *
- * @description Creates a new Supabase client.
+ * @description Creates a Supabase client with service role key that bypasses RLS.
+ * The auth.persistSession and auth.autoRefreshToken are disabled since this is
+ * a server-side client that doesn't need session management.
  */
-export const SUPABASE = new SupabaseClient<Database>(env.supabaseUrl, env.supabaseServiceRoleKey);
+export const SUPABASE = createClient<Database>(env.supabaseUrl, env.supabaseServiceRoleKey, {
+  auth: {
+    autoRefreshToken: false,
+    persistSession: false,
+  },
+});

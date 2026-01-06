@@ -96,9 +96,23 @@ export interface ConversationListResponse {
 
 /**
  * Get list of user's conversations
+ * @param limit - Maximum number of conversations to return
+ * @param offset - Number of conversations to skip
+ * @param search - Optional search query to filter by title (minimum 2 characters)
  */
-export const getConversations = async (limit: number = 20, offset: number = 0): Promise<ConversationListResponse> => {
-  const response = await apiClient.get(`/api/chat/conversations?limit=${limit}&offset=${offset}`)
+export const getConversations = async (
+  limit: number = 20,
+  offset: number = 0,
+  search?: string,
+): Promise<ConversationListResponse> => {
+  const params = new URLSearchParams({
+    limit: limit.toString(),
+    offset: offset.toString(),
+  })
+  if (search && search.length >= 2) {
+    params.append('search', search)
+  }
+  const response = await apiClient.get(`/api/chat/conversations?${params.toString()}`)
   return response.data?.data || { conversations: [], pagination: { limit, offset, count: 0 } }
 }
 
@@ -120,6 +134,20 @@ export const getConversation = async (conversationId: number): Promise<FullConve
 export const deleteConversation = async (conversationId: number): Promise<boolean> => {
   try {
     await apiClient.delete(`/api/chat/conversations/${conversationId}`)
+    return true
+  } catch {
+    return false
+  }
+}
+
+/**
+ * Delete all conversations
+ */
+export const deleteAllConversations = async (): Promise<boolean> => {
+  try {
+    await apiClient.delete('/api/conversations/all', {
+      data: { is_active: false },
+    })
     return true
   } catch {
     return false

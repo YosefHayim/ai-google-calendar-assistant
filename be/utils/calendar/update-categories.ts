@@ -3,8 +3,8 @@ import { SUPABASE } from "@/config/clients/supabase";
 import { calendar_v3 } from "googleapis";
 import { logger } from "../logger";
 
-// 1. Define the specific Insert type for safety
-type CalendarCategoryInsert = Database["public"]["Tables"]["calendar_categories"]["Insert"];
+// Define the specific Insert type for user_calendars table
+type UserCalendarInsert = Database["public"]["Tables"]["user_calendars"]["Insert"];
 
 export const updateUserSupabaseCalendarCategories = async (calendar: calendar_v3.Calendar, email: string, userId: string): Promise<void> => {
   const response = await calendar.calendarList.list({ prettyPrint: true });
@@ -13,33 +13,27 @@ export const updateUserSupabaseCalendarCategories = async (calendar: calendar_v3
 
   if (items.length === 0) return;
 
-  logger.info(`Calendar: updateUserSupabaseCalendarCategories called: items: ${items}`);
-
-  // 3. Map to the correct object structure matching your Supabase Row
-  const calendarsToUpsert: CalendarCategoryInsert[] = items.map((cal: calendar_v3.Schema$CalendarListEntry) => {
+  // Map to the correct object structure matching user_calendars table
+  const calendarsToUpsert: UserCalendarInsert[] = items.map((cal: calendar_v3.Schema$CalendarListEntry, index: number) => {
     return {
-      calendar_id: cal.id ?? null,
+      calendar_id: cal.id ?? "",
       calendar_name: cal.summary ?? null,
-      access_role: cal.accessRole ?? null,
-      time_zone_of_calendar: cal.timeZone ?? null,
-      email: email,
+      access_role: (cal.accessRole as Database["public"]["Enums"]["calendar_access_role"]) ?? null,
+      timezone: cal.timeZone ?? null,
       user_id: userId,
-      // Removed 'calendar_color_for_events' as it does not exist in your provided Row definition
+      is_primary: cal.primary ?? (index === 0), // First calendar is primary if not specified
+      background_color: cal.backgroundColor ?? null,
+      foreground_color: cal.foregroundColor ?? null,
+      is_visible: !cal.hidden,
     };
   });
 
-  logger.info(`Calendar: updateUserSupabaseCalendarCategories called: calendarsToUpsert: ${calendarsToUpsert}`);
-
-  const { error } = await SUPABASE.from("calendar_categories").upsert(calendarsToUpsert, {
-    onConflict: "calendar_id",
+  const { error } = await SUPABASE.from("user_calendars").upsert(calendarsToUpsert, {
+    onConflict: "user_id,calendar_id",
   });
-
-  logger.info(`Calendar: updateUserSupabaseCalendarCategories called: error: ${error}`);
 
   if (error) {
     logger.error(`Calendar: updateUserSupabaseCalendarCategories called: error: ${error.message}`);
     throw error;
   }
-
-  logger.info(`Calendar: updateUserSupabaseCalendarCategories called: true`);
 };

@@ -35,8 +35,8 @@ export const eventsHandler = asyncHandler(
     const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(credentials);
     const calendarEvents = calendar.events;
 
-    if ((action === ACTION.UPDATE || action === ACTION.DELETE) && !eventData?.id) {
-      throw new Error("Event ID is required for update or delete action");
+    if ((action === ACTION.UPDATE || action === ACTION.DELETE || action === ACTION.PATCH) && !eventData?.id && !extra?.eventId) {
+      throw new Error("Event ID is required for update, patch, or delete action");
     }
 
     switch (action) {

@@ -3,17 +3,17 @@
  * These functions are called directly instead of through agent wrappers.
  */
 
-import { SUPABASE } from "@/config";
-import { TOKEN_FIELDS } from "@/config/constants/sql";
-import { fetchCredentialsByEmail } from "@/utils/auth";
-import { checkEventConflicts, initUserSupabaseCalendarWithTokensAndUpdateTokens } from "@/utils/calendar";
-import type { calendar_v3 } from "googleapis";
-import isEmail from "validator/lib/isEmail";
-import { formatEventData, getCalendarCategoriesByEmail, type UserCalendar } from "./utils";
-import type { TokensProps } from "@/types";
-import { MODELS } from "@/config/constants/ai";
-import OpenAI from "openai";
-import { env } from "@/config";
+import { SUPABASE } from "@/config"
+import { fetchCredentialsByEmail } from "@/utils/auth"
+import { checkEventConflicts, initUserSupabaseCalendarWithTokensAndUpdateTokens } from "@/utils/calendar"
+import type { calendar_v3 } from "googleapis"
+import isEmail from "validator/lib/isEmail"
+import { formatEventData, getCalendarCategoriesByEmail, type UserCalendar } from "./utils"
+import type { TokensProps } from "@/types"
+import { MODELS } from "@/config/constants/ai"
+import OpenAI from "openai"
+import { env } from "@/config"
+import { USER_FIELDS } from "@/config/constants/sql"
 
 type Event = calendar_v3.Schema$Event;
 
@@ -37,23 +37,44 @@ export async function validateUserDirect(email: string): Promise<ValidateUserRes
     return { exists: false, error: "Invalid email address." };
   }
 
+  const normalizedEmail = email.trim().toLowerCase();
+
   try {
-    const { data, error } = await SUPABASE.from("user_calendar_tokens").select(TOKEN_FIELDS).eq("email", email.trim().toLowerCase());
+    // Step 1: Query users table to check if user exists
+    const { data: userData, error: userError } = await SUPABASE
+      .from("users")
+      .select(USER_FIELDS)
+      .ilike("email", normalizedEmail)
+      .single();
 
-    // Check for database schema errors specifically
-    if (error) {
-      const categorized = categorizeError(error);
-      if (categorized.type === "database") {
-        return { exists: false, error: "Database error - please try again in a moment." };
+    if (userError || !userData) {
+      // Check for database schema errors specifically
+      if (userError) {
+        const categorized = categorizeError(userError);
+        if (categorized.type === "database") {
+          return { exists: false, error: "Database error - please try again in a moment." };
+        }
       }
-      return { exists: false, error: error.message };
-    }
-
-    if (!data || data.length === 0) {
       return { exists: false, error: "No credentials found - authorization required." };
     }
 
-    return { exists: true, user: data[0] };
+    // Step 2: Check if user has valid OAuth tokens
+    const { data: tokenData, error: tokenError } = await SUPABASE
+      .from("oauth_tokens")
+      .select("id, is_valid, provider")
+      .eq("user_id", userData.id)
+      .eq("provider", "google")
+      .single();
+
+    if (tokenError || !tokenData) {
+      return { exists: false, error: "No credentials found - authorization required." };
+    }
+
+    if (!tokenData.is_valid) {
+      return { exists: false, error: "Token expired - authorization required." };
+    }
+
+    return { exists: true, user: userData as Record<string, unknown> };
   } catch (error) {
     const categorized = categorizeError(error);
     return { exists: false, error: categorized.message };
@@ -74,7 +95,10 @@ export type TimezoneResult = {
  */
 async function updateUserTimezoneInDb(email: string, timezone: string): Promise<void> {
   try {
-    await SUPABASE.from("user_calendar_tokens").update({ timezone }).eq("email", email.trim().toLowerCase());
+    await SUPABASE
+      .from("users")
+      .update({ timezone, updated_at: new Date().toISOString() })
+      .ilike("email", email.trim().toLowerCase());
   } catch (error) {
     console.error("Failed to update timezone in DB:", error);
   }
@@ -130,18 +154,19 @@ export async function getUserDefaultTimezoneDirect(email: string): Promise<Timez
   const normalizedEmail = email.trim().toLowerCase();
 
   try {
-    // First, check if timezone exists in DB
-    const { data: userData, error: dbError } = await SUPABASE.from("user_calendar_tokens").select(TOKEN_FIELDS).eq("email", normalizedEmail).single();
+    // First, check if timezone exists in users table
+    const { data: userData, error: dbError } = await SUPABASE
+      .from("users")
+      .select("id, timezone")
+      .ilike("email", normalizedEmail)
+      .single();
 
     // If there's a database schema error, fall back to Google Calendar API
     if (dbError && dbError.message?.toLowerCase().includes("column") && dbError.message?.toLowerCase().includes("does not exist")) {
       console.warn("Timezone column not found in DB, falling back to Google Calendar API");
       // Continue to fetch from Google Calendar
-    } else {
-      const dbTimezone = (userData as TokensProps | null)?.timezone;
-      if (dbTimezone) {
-        return { timezone: dbTimezone };
-      }
+    } else if (userData?.timezone) {
+      return { timezone: userData.timezone };
     }
 
     // Timezone not in DB - fetch from Google Calendar settings
@@ -216,21 +241,10 @@ export type SelectCalendarResult = {
   matchReason?: string;
 };
 
-// Calendar category keywords for rules-based matching
-const CALENDAR_KEYWORDS: Record<string, string[]> = {
-  work: ["work", "office", "job", "meeting", "business", "corporate", "עבודה", "משרד", "עסקים"],
-  personal: ["personal", "private", "home", "family", "אישי", "פרטי", "בית", "משפחה"],
-  health: ["health", "doctor", "medical", "gym", "fitness", "workout", "בריאות", "רופא", "רפואי", "כושר"],
-  travel: ["travel", "trip", "vacation", "flight", "hotel", "טיול", "חופשה", "נסיעה"],
-  social: ["social", "party", "birthday", "dinner", "lunch", "חברתי", "מסיבה", "יום הולדת", "ארוחה"],
-  study: ["study", "school", "university", "class", "lecture", "לימודים", "אוניברסיטה", "שיעור"],
-  side: ["side", "project", "hobby", "creative", "צד", "פרויקט", "תחביב"],
-};
-
 /**
- * Selects the best calendar based on event details - rules-based without AI agent.
- * Replaces: AGENTS.selectCalendar
- * Latency: ~200ms (vs ~2-5s with agent)
+ * Selects the best calendar using AI semantic matching.
+ * Uses GPT-4.1-nano for cost efficiency while providing accurate context-based matching.
+ * Latency: ~300-500ms
  */
 export async function selectCalendarByRules(
   email: string,
@@ -243,56 +257,83 @@ export async function selectCalendarByRules(
     return { calendarId: "primary", calendarName: "Primary", matchReason: "No calendars found" };
   }
 
-  // Build searchable text from event info
-  const searchText = [eventInfo.summary || "", eventInfo.description || "", eventInfo.location || ""].join(" ").toLowerCase();
-
-  // Score each calendar based on keyword matches
-  let bestMatch: UserCalendar | null = null;
-  let bestScore = 0;
-  let matchReason = "default";
-
-  for (const calendar of calendars) {
-    const calendarName = calendar.calendar_name.toLowerCase();
-    let score = 0;
-
-    // Check if calendar name matches event content
-    for (const [category, keywords] of Object.entries(CALENDAR_KEYWORDS)) {
-      const categoryMatchesCalendar = keywords.some((kw) => calendarName.includes(kw));
-      const categoryMatchesEvent = keywords.some((kw) => searchText.includes(kw));
-
-      if (categoryMatchesCalendar && categoryMatchesEvent) {
-        score += 10;
-        matchReason = `${category} category match`;
-      }
-    }
-
-    // Direct name match bonus
-    if (searchText.includes(calendarName) || calendarName.includes(searchText.split(" ")[0])) {
-      score += 5;
-      matchReason = "direct name match";
-    }
-
-    if (score > bestScore) {
-      bestScore = score;
-      bestMatch = calendar;
-    }
+  // If only one calendar, use it directly
+  if (calendars.length === 1) {
+    return {
+      calendarId: calendars[0].calendar_id,
+      calendarName: calendars[0].calendar_name,
+      matchReason: "Only calendar available",
+    };
   }
 
-  // If no match found, use primary or first calendar
-  if (!bestMatch || bestScore === 0) {
+  // Build event context
+  const eventContext = [eventInfo.summary, eventInfo.description, eventInfo.location].filter(Boolean).join(" | ") || "No event details provided";
+
+  // Build calendar options for the prompt
+  const calendarOptions = calendars.map((c, i) => `${i + 1}. "${c.calendar_name}"`).join("\n");
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: SUMMARIZATION_MODEL,
+      messages: [
+        {
+          role: "system",
+          content: `You are a calendar assistant that matches events to the most appropriate calendar.
+Given an event and available calendars, return ONLY the number of the best matching calendar.
+
+Rules:
+- Match based on semantic meaning, not just keywords
+- Consider the purpose/category each calendar name implies
+- "Learning Time" should match study, courses, tutorials, skill development
+- "Work" should match meetings, deadlines, professional tasks
+- "Friends and Family" should match social events, gatherings, personal time with loved ones
+- "Health" should match doctor visits, gym, wellness activities
+- If unclear, prefer more specific calendars over generic ones
+- Return ONLY a single number (1, 2, 3, etc.)`,
+        },
+        {
+          role: "user",
+          content: `Event: ${eventContext}
+
+Available calendars:
+${calendarOptions}
+
+Which calendar number is the best match?`,
+        },
+      ],
+      max_tokens: 10,
+      temperature: 0,
+    });
+
+    const result = response.choices[0]?.message?.content?.trim();
+    const selectedIndex = parseInt(result || "1", 10) - 1;
+
+    // Validate the selection
+    if (selectedIndex >= 0 && selectedIndex < calendars.length) {
+      return {
+        calendarId: calendars[selectedIndex].calendar_id,
+        calendarName: calendars[selectedIndex].calendar_name,
+        matchReason: "AI semantic match",
+      };
+    }
+
+    // Invalid response, fall back to first calendar
+    console.warn(`AI returned invalid calendar index: ${result}`);
+    return {
+      calendarId: calendars[0].calendar_id,
+      calendarName: calendars[0].calendar_name,
+      matchReason: "AI fallback to first",
+    };
+  } catch (error) {
+    console.error("AI calendar selection failed:", error);
+    // Fallback: use primary or first calendar
     const primary = calendars.find((c) => c.calendar_id === "primary" || c.calendar_name.toLowerCase().includes("primary"));
     return {
       calendarId: primary?.calendar_id || calendars[0].calendar_id,
       calendarName: primary?.calendar_name || calendars[0].calendar_name,
-      matchReason: "fallback to primary",
+      matchReason: "AI error fallback",
     };
   }
-
-  return {
-    calendarId: bestMatch.calendar_id,
-    calendarName: bestMatch.calendar_name,
-    matchReason,
-  };
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -419,11 +460,11 @@ export async function preCreateValidation(email: string, eventData: Partial<Even
 // ═══════════════════════════════════════════════════════════════════════════
 
 const openai = new OpenAI({ apiKey: env.openAiApiKey });
-const SUMMARIZATION_MODEL = MODELS.GPT_4O_MINI;
+const SUMMARIZATION_MODEL = MODELS.GPT_4_1_NANO;
 
 /**
- * Summarizes calendar events JSON into a concise, friendly format for the user.
- * Uses a cheaper model (gpt-4o-mini) to reduce cost and latency.
+ * Summarizes calendar events JSON into a compact Telegram-friendly format.
+ * Uses the cheapest model (gpt-4.1-nano) for cost efficiency.
  *
  * @param events - Array of calendar events from Google Calendar API
  * @returns A friendly, formatted summary string
@@ -441,12 +482,22 @@ export async function summarizeEvents(events: calendar_v3.Schema$Event[]): Promi
       messages: [
         {
           role: "system",
-          content:
-            "Summarize these calendar events into a concise, friendly format for the user. Format each event with: title in quotes, natural date/time (e.g., 'Tuesday, January 14th at 3:00 PM'), and location if available. Use a warm, conversational tone. Never show raw IDs, ISO dates, or technical formats.",
+          content: `Format calendar events as a compact Telegram list.
+
+Rules:
+- Use Telegram HTML: <b>bold</b>, <i>italic</i>
+- Each event on ONE line: 📌 Title - Day Time (Location if exists)
+- Short day names: Mon, Tue, Wed, Thu, Fri, Sat, Sun
+- 12h time: 9:00 AM, 3:30 PM. Ranges: 9:00 AM-6:00 PM
+- All-day events: just show the day
+- Location in parentheses, keep short
+- Start with: 📅 <b>Your Events</b> (or Hebrew: <b>האירועים שלך</b> if events are in Hebrew)
+- NO intro/outro text. Just the list.
+- Keep it scannable for mobile.`,
         },
         {
           role: "user",
-          content: `Summarize these calendar events:\n\n${eventsJson}`,
+          content: `Events:\n${eventsJson}`,
         },
       ],
       // max_tokens: 500,

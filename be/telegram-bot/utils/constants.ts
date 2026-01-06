@@ -1,7 +1,36 @@
 export const COMMANDS = {
+  // Session
   START: "/start",
   EXIT: "/exit",
   USAGE: "/usage",
+  HELP: "/help",
+
+  // View Schedule
+  TODAY: "/today",
+  TOMORROW: "/tomorrow",
+  WEEK: "/week",
+  MONTH: "/month",
+  FREE: "/free",
+  BUSY: "/busy",
+
+  // Event Management
+  CREATE: "/create",
+  UPDATE: "/update",
+  DELETE: "/delete",
+  SEARCH: "/search",
+  QUICK: "/quick",
+  CANCEL: "/cancel",
+  REMIND: "/remind",
+
+  // Analytics & Insights
+  ANALYTICS: "/analytics",
+  CALENDARS: "/calendars",
+
+  // Account
+  STATUS: "/status",
+  SETTINGS: "/settings",
+  FEEDBACK: "/feedback",
+  CHANGEEMAIL: "/changeemail",
 } as const;
 
 export const CONFIRM_RESPONSES = ["yes", "y", "confirm"] as const;

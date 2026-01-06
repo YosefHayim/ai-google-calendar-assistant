@@ -27,3 +27,31 @@ export {
   useMoveEvent,
   useWatchEvents,
 } from './events'
+
+// Conversation hooks
+export {
+  useConversations,
+  useConversation,
+  useGetConversationById,
+  useDeleteConversationById,
+  useDeleteAllConversations,
+  useUpdateConversationById,
+  useRefreshConversations,
+} from './conversations'
+
+// Integration hooks
+export { useGoogleCalendarStatus, useDisconnectGoogleCalendar } from './integrations'
+
+// Gap Recovery hooks
+export {
+  useGaps,
+  useGapSettings,
+  useFillGap,
+  useSkipGap,
+  useDismissAllGaps,
+  useUpdateGapSettings,
+  useDisableGapAnalysis,
+} from './gaps'
+
+// User Preferences hooks
+export { useAllyBrain, useUpdateAllyBrain, useContextualScheduling, useUpdateContextualScheduling } from './preferences'

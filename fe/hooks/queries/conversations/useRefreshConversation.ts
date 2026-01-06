@@ -1,16 +1,21 @@
-import { QUERY_CONFIG } from '@/lib/constants'
-import { getConversations } from '@/services/chatService'
+'use client'
+
 import { queryKeys } from '@/lib/query/keys'
-import { useQuery } from '@tanstack/react-query'
-import { useQueryWrapper } from '../useQueryWrapper'
+import { useCallback } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
 
-export const useRefreshConversations = () => {
-  const query = useQuery({
-    queryKey: queryKeys.conversations.list(),
-    queryFn: () => getConversations(20, 0),
-    staleTime: QUERY_CONFIG.DEFAULT_STALE_TIME,
-    enabled: true,
-  })
+/**
+ * Hook to trigger a refresh of conversations list
+ * Returns a function that invalidates the conversations cache
+ */
+export function useRefreshConversations() {
+  const queryClient = useQueryClient()
 
-  return useQueryWrapper(query)
+  const refreshConversations = useCallback(async () => {
+    await queryClient.invalidateQueries({
+      queryKey: queryKeys.conversations.list(),
+    })
+  }, [queryClient])
+
+  return { refreshConversations }
 }

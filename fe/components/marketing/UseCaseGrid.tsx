@@ -18,7 +18,7 @@ const useCases = [
           <span>Find 30m for me, Sarah, and Alex.</span>
         </div>
         <div className="text-xs font-medium bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 p-2 rounded-md rounded-bl-none self-start flex items-center gap-2 max-w-max mr-auto">
-          <AllyLogo size={16} />
+          <AllyLogo className="w-4 h-4" />
           <div className="flex flex-col">
             <span>Done. Tuesday at 2:30 PM.</span>
             <div className="flex items-center gap-1 text-emerald-500">
@@ -57,7 +57,7 @@ const useCases = [
           Flight to SFO delayed by 2 hours.
         </div>
         <div className="text-xs font-medium bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 p-2 rounded-md rounded-bl-none self-start max-w-max mr-auto flex items-center gap-2">
-          <AllyLogo size={16} />
+          <AllyLogo className="w-4 h-4" />
           <span>Handled. Car service and hotel are updated.</span>
         </div>
       </div>

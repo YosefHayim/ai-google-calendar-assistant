@@ -102,7 +102,7 @@ const FEATURES = [
         <div className="flex justify-start">
           <div className="bg-emerald-500 text-white px-3 py-2 rounded-2xl rounded-tl-none text-xs font-medium shadow-lg flex flex-col gap-1 max-w-[85%]">
             <div className="flex items-center gap-2 mb-1">
-              <WhatsAppIcon size={16} />
+              <WhatsAppIcon className="w-4 h-4" />
               <span className="text-xs opacity-70 font-bold uppercase tracking-wider">Ally AI</span>
             </div>
             <span>"Move the board call back 15 mins and notify stakeholders."</span>

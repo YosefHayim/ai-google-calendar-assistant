@@ -29,11 +29,7 @@ export type RefreshedSupabaseSession = {
  */
 export const validateSupabaseToken = async (token: string): Promise<SupabaseSessionResult> => {
   try {
-    logger.info(`Auth: validateSupabaseToken called: token: ${token}`);
     const { data, error } = await SUPABASE.auth.getUser(token);
-    logger.info(`Auth: validateSupabaseToken called: token: ${token}`);
-    logger.info(`Auth: validateSupabaseToken called: data: ${data}`);
-    logger.info(`Auth: validateSupabaseToken called: error: ${error}`);
     if (error) {
       // Check if error indicates token needs refresh
       const needsRefresh = error.message.includes("expired") || error.message.includes("invalid") || error.status === 401;
@@ -73,9 +69,6 @@ export const validateSupabaseToken = async (token: string): Promise<SupabaseSess
 export const refreshSupabaseSession = async (refreshToken: string): Promise<RefreshedSupabaseSession> => {
   try {
     const { data, error } = await SUPABASE.auth.refreshSession({ refresh_token: refreshToken });
-    logger.info(`Auth: refreshSupabaseSession called: refreshToken: ${refreshToken}`);
-    logger.info(`Auth: refreshSupabaseSession called: data: ${data}`);
-    logger.info(`Auth: refreshSupabaseSession called: error: ${error}`);
     if (error) {
       console.error("[Supabase Token] Session refresh failed:", error.message);
       throw new Error(`SESSION_REFRESH_FAILED: ${error.message}`);
@@ -129,14 +122,10 @@ export const refreshSupabaseSession = async (refreshToken: string): Promise<Refr
  * @returns {Promise<RefreshedSupabaseSession>} Session data
  */
 export const setSupabaseSession = async (accessToken: string, refreshToken: string): Promise<RefreshedSupabaseSession> => {
-  logger.info(`Auth: setSupabaseSession called: accessToken: ${accessToken}`);
-  logger.info(`Auth: setSupabaseSession called: refreshToken: ${refreshToken}`);
   const { data, error } = await SUPABASE.auth.setSession({
     access_token: accessToken,
     refresh_token: refreshToken,
   });
-  logger.info(`Auth: setSupabaseSession called: data: ${data}`);
-  logger.info(`Auth: setSupabaseSession called: error: ${error}`);
   if (error) {
     logger.error(`Auth: setSupabaseSession called: error: ${error.message}`);
     throw new Error(`SESSION_SET_FAILED: ${error.message}`);
@@ -146,10 +135,6 @@ export const setSupabaseSession = async (accessToken: string, refreshToken: stri
     logger.error(`Auth: setSupabaseSession called: no session or user`);
     throw new Error("SESSION_SET_FAILED: No session returned");
   }
-
-  logger.info(`Auth: setSupabaseSession called: user: ${data.user}`);
-  logger.info(`Auth: setSupabaseSession called: accessToken: ${data.session.access_token}`);
-  logger.info(`Auth: setSupabaseSession called: refreshToken: ${data.session.refresh_token}`);
   return {
     user: data.user,
     accessToken: data.session.access_token,
