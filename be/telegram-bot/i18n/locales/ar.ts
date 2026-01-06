@@ -206,6 +206,9 @@ export const ar = {
   "commands.language.changedText": "تم تغيير اللغة إلى",
   "commands.language.languages.en": "الإنجليزية",
   "commands.language.languages.he": "العبرية (עברית)",
+  "commands.language.languages.fr": "الفرنسية (Français)",
+  "commands.language.languages.de": "الألمانية (Deutsch)",
+  "commands.language.languages.ar": "العربية",
 
   "auth.welcomePrompt": "مرحباً! للبدء، يرجى إدخال عنوان بريدك الإلكتروني للتحقق:",
   "auth.enterOtpPrompt":
