@@ -208,6 +208,9 @@ export const de = {
   "commands.language.changedText": "Sprache geändert zu",
   "commands.language.languages.en": "Englisch",
   "commands.language.languages.he": "Hebräisch (עברית)",
+  "commands.language.languages.fr": "Französisch (Français)",
+  "commands.language.languages.de": "Deutsch",
+  "commands.language.languages.ar": "Arabisch (العربية)",
 
   "auth.welcomePrompt": "Willkommen! Um zu beginnen, geben Sie bitte Ihre E-Mail-Adresse zur Verifizierung ein:",
   "auth.enterOtpPrompt":

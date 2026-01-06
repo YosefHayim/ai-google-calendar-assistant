@@ -207,6 +207,9 @@ export const he = {
   "commands.language.changedText": "השפה שונתה ל",
   "commands.language.languages.en": "English (אנגלית)",
   "commands.language.languages.he": "עברית",
+  "commands.language.languages.fr": "צרפתית (Français)",
+  "commands.language.languages.de": "גרמנית (Deutsch)",
+  "commands.language.languages.ar": "ערבית (العربية)",
 
   "auth.welcomePrompt": "ברוכים הבאים! כדי להתחיל, אנא הזן את כתובת האימייל שלך לאימות:",
   "auth.enterOtpPrompt":
