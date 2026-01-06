@@ -37,8 +37,24 @@ export const DEFAULT_GAP_RECOVERY_SETTINGS: GapRecoverySettings = {
 
 // Travel pattern regexes
 const TRAVEL_PATTERNS = {
-  arrival: [/^drive to (.+)$/i, /^travel to (.+)$/i, /^commute to (.+)$/i, /^arrive at (.+)$/i, /^heading to (.+)$/i, /^go to (.+)$/i, /^trip to (.+)$/i],
-  departure: [/^drive home$/i, /^leave (.+)$/i, /^depart (.+)$/i, /^heading home$/i, /^go home$/i, /^return home$/i, /^drive from (.+)$/i],
+  arrival: [
+    /^drive to (.+)$/i,
+    /^travel to (.+)$/i,
+    /^commute to (.+)$/i,
+    /^arrive at (.+)$/i,
+    /^heading to (.+)$/i,
+    /^go to (.+)$/i,
+    /^trip to (.+)$/i,
+  ],
+  departure: [
+    /^drive home$/i,
+    /^leave (.+)$/i,
+    /^depart (.+)$/i,
+    /^heading home$/i,
+    /^go home$/i,
+    /^return home$/i,
+    /^drive from (.+)$/i,
+  ],
 };
 
 // =============================================================================
@@ -58,11 +74,22 @@ function formatDuration(durationMs: number): string {
 }
 
 function getDayOfWeek(date: Date): DayOfWeek {
-  const days: DayOfWeek[] = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+  const days: DayOfWeek[] = [
+    "sunday",
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thursday",
+    "friday",
+    "saturday",
+  ];
   return days[date.getDay()];
 }
 
-function matchTravelPattern(summary: string, type: "arrival" | "departure"): { matched: boolean; location: string | null } {
+function matchTravelPattern(
+  summary: string,
+  type: "arrival" | "departure"
+): { matched: boolean; location: string | null } {
   const patterns = TRAVEL_PATTERNS[type];
 
   for (const pattern of patterns) {
@@ -78,11 +105,17 @@ function matchTravelPattern(summary: string, type: "arrival" | "departure"): { m
   return { matched: false, location: null };
 }
 
-function calculateTravelSandwichConfidence(arrivalLocation: string | null, departureLocation: string | null): number {
+function calculateTravelSandwichConfidence(
+  arrivalLocation: string | null,
+  departureLocation: string | null
+): number {
   // High confidence if we have a location from arrival
   if (arrivalLocation) {
     // Extra high if departure matches or is "home"
-    if (departureLocation === null || departureLocation.toLowerCase() === "home") {
+    if (
+      departureLocation === null ||
+      departureLocation.toLowerCase() === "home"
+    ) {
       return 0.9;
     }
     return 0.85;
@@ -90,7 +123,10 @@ function calculateTravelSandwichConfidence(arrivalLocation: string | null, depar
   return 0.7;
 }
 
-function detectTravelSandwich(precedingEvent: calendar_v3.Schema$Event, followingEvent: calendar_v3.Schema$Event): InferredContext | null {
+function detectTravelSandwich(
+  precedingEvent: calendar_v3.Schema$Event,
+  followingEvent: calendar_v3.Schema$Event
+): InferredContext | null {
   const precedingSummary = precedingEvent.summary || "";
   const followingSummary = followingEvent.summary || "";
 
@@ -98,14 +134,19 @@ function detectTravelSandwich(precedingEvent: calendar_v3.Schema$Event, followin
   const departure = matchTravelPattern(followingSummary, "departure");
 
   if (arrival.matched && departure.matched) {
-    const confidence = calculateTravelSandwichConfidence(arrival.location, departure.location);
+    const confidence = calculateTravelSandwichConfidence(
+      arrival.location,
+      departure.location
+    );
     const location = arrival.location || precedingEvent.location || null;
 
     return {
       type: "travel_sandwich",
       location,
       confidence,
-      suggestion: location ? `Activity at ${location}` : "Activity at destination",
+      suggestion: location
+        ? `Activity at ${location}`
+        : "Activity at destination",
     };
   }
 
@@ -116,7 +157,9 @@ function detectTravelSandwich(precedingEvent: calendar_v3.Schema$Event, followin
       type: "travel_sandwich",
       location,
       confidence: 0.6,
-      suggestion: location ? `Time spent at ${location}` : "Time at destination",
+      suggestion: location
+        ? `Time spent at ${location}`
+        : "Time at destination",
     };
   }
 
@@ -136,12 +179,25 @@ function detectWorkSession(
   const isWorkHours = startHour >= 8 && endHour <= 18;
 
   // Check if surrounding events are work-related
-  const workKeywords = ["meeting", "standup", "sync", "call", "review", "sprint", "planning", "retro"];
+  const workKeywords = [
+    "meeting",
+    "standup",
+    "sync",
+    "call",
+    "review",
+    "sprint",
+    "planning",
+    "retro",
+  ];
   const precedingSummary = (precedingEvent.summary || "").toLowerCase();
   const followingSummary = (followingEvent.summary || "").toLowerCase();
 
-  const precedingIsWork = workKeywords.some((kw) => precedingSummary.includes(kw));
-  const followingIsWork = workKeywords.some((kw) => followingSummary.includes(kw));
+  const precedingIsWork = workKeywords.some((kw) =>
+    precedingSummary.includes(kw)
+  );
+  const followingIsWork = workKeywords.some((kw) =>
+    followingSummary.includes(kw)
+  );
 
   if (isWorkHours && (precedingIsWork || followingIsWork)) {
     return {
@@ -155,7 +211,10 @@ function detectWorkSession(
   return null;
 }
 
-function detectMealBreak(gapStart: Date, gapDurationMs: number): InferredContext | null {
+function detectMealBreak(
+  gapStart: Date,
+  gapDurationMs: number
+): InferredContext | null {
   const startHour = gapStart.getHours();
   const durationMinutes = gapDurationMs / MS_PER_MINUTE;
 
@@ -164,9 +223,18 @@ function detectMealBreak(gapStart: Date, gapDurationMs: number): InferredContext
   // Dinner: 5-8 PM, 45-150 min
 
   const isMealTime =
-    (startHour >= 7 && startHour <= 9 && durationMinutes >= 30 && durationMinutes <= 90) ||
-    (startHour >= 11 && startHour <= 14 && durationMinutes >= 30 && durationMinutes <= 120) ||
-    (startHour >= 17 && startHour <= 20 && durationMinutes >= 45 && durationMinutes <= 150);
+    (startHour >= 7 &&
+      startHour <= 9 &&
+      durationMinutes >= 30 &&
+      durationMinutes <= 90) ||
+    (startHour >= 11 &&
+      startHour <= 14 &&
+      durationMinutes >= 30 &&
+      durationMinutes <= 120) ||
+    (startHour >= 17 &&
+      startHour <= 20 &&
+      durationMinutes >= 45 &&
+      durationMinutes <= 150);
 
   if (isMealTime) {
     let mealType = "Meal";
@@ -185,7 +253,11 @@ function detectMealBreak(gapStart: Date, gapDurationMs: number): InferredContext
   return null;
 }
 
-function createStandardGapContext(precedingEvent: calendar_v3.Schema$Event, followingEvent: calendar_v3.Schema$Event, durationMs: number): InferredContext {
+function createStandardGapContext(
+  precedingEvent: calendar_v3.Schema$Event,
+  followingEvent: calendar_v3.Schema$Event,
+  durationMs: number
+): InferredContext {
   const formattedDuration = formatDuration(durationMs);
   const precedingSummary = precedingEvent.summary || "previous event";
   const followingSummary = followingEvent.summary || "next event";
@@ -212,7 +284,12 @@ function inferGapContext(
   }
 
   // Try work session detection
-  const workContext = detectWorkSession(gapStart, gapEnd, precedingEvent, followingEvent);
+  const workContext = detectWorkSession(
+    gapStart,
+    gapEnd,
+    precedingEvent,
+    followingEvent
+  );
   if (workContext && workContext.confidence >= 0.55) {
     return workContext;
   }
@@ -232,13 +309,18 @@ function inferGapContext(
   return createStandardGapContext(precedingEvent, followingEvent, durationMs);
 }
 
-function createGapBoundaryEvent(event: calendar_v3.Schema$Event, timestamp: Date, calendarId: string): GapBoundaryEvent {
+function createGapBoundaryEvent(
+  event: calendar_v3.Schema$Event,
+  timestamp: Date,
+  calendarId: string
+): GapBoundaryEvent {
   return {
     eventId: event.id || "",
     summary: event.summary || "Untitled Event",
     timestamp,
     location: event.location || null,
     calendarId,
+    htmlLink: event.htmlLink || null,
   };
 }
 
@@ -262,7 +344,9 @@ function gapCandidateToDTO(gap: GapCandidate): GapCandidateDTO {
     durationMinutes: Math.round(gap.durationMs / MS_PER_MINUTE),
     durationFormatted: gap.durationFormatted,
     precedingEventSummary: gap.precedingEvent.summary,
+    precedingEventLink: gap.precedingEvent.htmlLink,
     followingEventSummary: gap.followingEvent.summary,
+    followingEventLink: gap.followingEvent.htmlLink,
     suggestion: gap.inferredContext?.suggestion || null,
     confidence: gap.inferredContext?.confidence || 0,
   };
@@ -282,7 +366,14 @@ type AnalyzeGapsParams = {
 };
 
 export const analyzeGaps = asyncHandler(
-  async ({ email, startDate, endDate, calendarId = "primary", settings: settingsOverride, options }: AnalyzeGapsParams): Promise<GapCandidate[]> => {
+  async ({
+    email,
+    startDate,
+    endDate,
+    calendarId = "primary",
+    settings: settingsOverride,
+    options,
+  }: AnalyzeGapsParams): Promise<GapCandidate[]> => {
     const settings: GapRecoverySettings = {
       ...DEFAULT_GAP_RECOVERY_SETTINGS,
       ...settingsOverride,
@@ -294,7 +385,8 @@ export const analyzeGaps = asyncHandler(
 
     // Initialize calendar client
     const credentials = await fetchCredentialsByEmail(email);
-    const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(credentials);
+    const calendar =
+      await initUserSupabaseCalendarWithTokensAndUpdateTokens(credentials);
 
     const listParams: calendar_v3.Params$Resource$Events$List = {
       calendarId,
@@ -347,10 +439,19 @@ export const analyzeGaps = asyncHandler(
       }
 
       // Infer context for the gap
-      const inferredContext = inferGapContext(currentEnd, nextStart, currentEvent, nextEvent, gapDurationMs);
+      const inferredContext = inferGapContext(
+        currentEnd,
+        nextStart,
+        currentEvent,
+        nextEvent,
+        gapDurationMs
+      );
 
       // Skip if confidence is below threshold
-      if (inferredContext && inferredContext.confidence < settings.minConfidenceThreshold) {
+      if (
+        inferredContext &&
+        inferredContext.confidence < settings.minConfidenceThreshold
+      ) {
         continue;
       }
 
@@ -361,8 +462,16 @@ export const analyzeGaps = asyncHandler(
         end: nextStart,
         durationMs: gapDurationMs,
         durationFormatted: formatDuration(gapDurationMs),
-        precedingEvent: createGapBoundaryEvent(currentEvent, currentEnd, calendarId),
-        followingEvent: createGapBoundaryEvent(nextEvent, nextStart, calendarId),
+        precedingEvent: createGapBoundaryEvent(
+          currentEvent,
+          currentEnd,
+          calendarId
+        ),
+        followingEvent: createGapBoundaryEvent(
+          nextEvent,
+          nextStart,
+          calendarId
+        ),
         inferredContext,
         resolution: { status: "pending" },
         detectedAt: new Date(),
@@ -384,7 +493,12 @@ type AnalyzeGapsForUserParams = {
 };
 
 export const analyzeGapsForUser = asyncHandler(
-  async ({ email, lookbackDays = 7, calendarId = "primary", settings }: AnalyzeGapsForUserParams): Promise<GapCandidateDTO[]> => {
+  async ({
+    email,
+    lookbackDays = 7,
+    calendarId = "primary",
+    settings,
+  }: AnalyzeGapsForUserParams): Promise<GapCandidateDTO[]> => {
     const endDate = new Date();
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - lookbackDays);
@@ -411,9 +525,16 @@ type FillGapParams = {
 };
 
 export const fillGap = asyncHandler(
-  async ({ email, gapStart, gapEnd, calendarId, eventDetails }: FillGapParams): Promise<{ success: boolean; eventId?: string }> => {
+  async ({
+    email,
+    gapStart,
+    gapEnd,
+    calendarId,
+    eventDetails,
+  }: FillGapParams): Promise<{ success: boolean; eventId?: string }> => {
     const credentials = await fetchCredentialsByEmail(email);
-    const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(credentials);
+    const calendar =
+      await initUserSupabaseCalendarWithTokensAndUpdateTokens(credentials);
 
     const event: calendar_v3.Schema$Event = {
       summary: eventDetails.summary,
@@ -462,8 +583,12 @@ export const formatGapsForDisplay = (gaps: GapCandidateDTO[]): string => {
       minute: "2-digit",
     });
 
-    lines.push(`${index + 1}. **${dateStr}** | ${startTime} - ${endTime} (${gap.durationFormatted})`);
-    lines.push(`   Between: "${gap.precedingEventSummary}" -> "${gap.followingEventSummary}"`);
+    lines.push(
+      `${index + 1}. **${dateStr}** | ${startTime} - ${endTime} (${gap.durationFormatted})`
+    );
+    lines.push(
+      `   Between: "${gap.precedingEventSummary}" -> "${gap.followingEventSummary}"`
+    );
 
     if (gap.suggestion && gap.confidence >= 0.5) {
       lines.push(`   Suggested: ${gap.suggestion}`);
@@ -473,7 +598,9 @@ export const formatGapsForDisplay = (gaps: GapCandidateDTO[]): string => {
   });
 
   lines.push("What would you like to do?");
-  lines.push('- Reply with a number + description to fill (e.g., "1 Working on project")');
+  lines.push(
+    '- Reply with a number + description to fill (e.g., "1 Working on project")'
+  );
   lines.push('- Reply "skip [number]" to ignore a specific gap');
   lines.push('- Reply "skip all" to dismiss all gaps');
 
