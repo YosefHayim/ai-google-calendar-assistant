@@ -292,6 +292,55 @@ export const ru = {
   "commands.aboutme.footerTip":
     "Я узнаю больше о вас с каждым взаимодействием.",
 
+  "commands.brain.header": "Мозг Ally",
+  "commands.brain.description":
+    "Научите Ally вашим предпочтениям. Эти инструкции будут запоминаться в каждом разговоре.",
+  "commands.brain.status": "Статус",
+  "commands.brain.statusEnabled": "✅ Включено",
+  "commands.brain.statusDisabled": "❌ Отключено",
+  "commands.brain.currentInstructions": "Текущие инструкции",
+  "commands.brain.noInstructions": "Пользовательские инструкции ещё не заданы.",
+  "commands.brain.footerTip":
+    "Используйте кнопки ниже для управления настройками.",
+  "commands.brain.noUser":
+    "Не удалось определить пользователя. Попробуйте снова.",
+  "commands.brain.error": "Что-то пошло не так. Попробуйте снова.",
+  "commands.brain.enabled": "Пользовательские инструкции включены!",
+  "commands.brain.disabled": "Пользовательские инструкции отключены.",
+  "commands.brain.updateFailed": "Не удалось обновить. Попробуйте снова.",
+  "commands.brain.buttons.enable": "Включить",
+  "commands.brain.buttons.disable": "Отключить",
+  "commands.brain.buttons.edit": "Редактировать инструкции",
+  "commands.brain.buttons.clear": "Очистить инструкции",
+  "commands.brain.editHeader": "Редактирование инструкций",
+  "commands.brain.editPrompt":
+    "Отправьте мне ваши пользовательские инструкции. Расскажите о ваших предпочтениях, привычках планирования или о чём угодно, что мне следует запомнить.",
+  "commands.brain.editExample":
+    "Пример: Я предпочитаю утренние встречи с 9 до 11. Всегда добавляй 15-минутный перерыв между встречами. Мои рабочие дни — с воскресенья по четверг.",
+  "commands.brain.editCancel": "Введите /cancel для отмены.",
+  "commands.brain.editCancelled": "Редактирование отменено.",
+  "commands.brain.tooLong":
+    "Инструкции слишком длинные. Пожалуйста, ограничьте {{max}} символами.",
+  "commands.brain.saved": "Инструкции сохранены",
+  "commands.brain.savedDescription":
+    "Ваши предпочтения сохранены. Ally запомнит их во всех разговорах.",
+  "commands.brain.saveFailed":
+    "Не удалось сохранить инструкции. Попробуйте снова.",
+  "commands.brain.cleared": "Инструкции очищены.",
+  "commands.brain.clearFailed": "Не удалось очистить. Попробуйте снова.",
+  "commands.brain.existingInstructionsPrompt":
+    "У вас уже есть пользовательские инструкции:",
+  "commands.brain.chooseMode": "Хотите добавить к ним или заменить полностью?",
+  "commands.brain.buttons.append": "Добавить к существующим",
+  "commands.brain.buttons.replace": "Заменить всё",
+  "commands.brain.appendHeader": "Добавление инструкций",
+  "commands.brain.replaceHeader": "Замена инструкций",
+  "commands.brain.appendPrompt":
+    "Отправьте мне новые инструкции для добавления. Они будут добавлены к вашим существующим.",
+  "commands.brain.appendedDescription":
+    "Новые инструкции добавлены к вашим существующим предпочтениям.",
+  "botMenu.brain": "Научить Ally вашим предпочтениям",
+
   "auth.welcomePrompt":
     "Добро пожаловать! Для начала введите ваш email для верификации:",
   "auth.enterOtpPrompt":

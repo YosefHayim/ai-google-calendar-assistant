@@ -290,6 +290,15 @@ export const skipGapSchema = z.object({
     .optional(),
 });
 
+const supportedEventLanguageSchema = z.enum([
+  "en",
+  "de",
+  "fr",
+  "he",
+  "ar",
+  "ru",
+]);
+
 export const updateGapSettingsSchema = z.object({
   autoGapAnalysis: z.boolean().optional(),
   minGapThreshold: z.coerce
@@ -319,6 +328,12 @@ export const updateGapSettingsSchema = z.object({
     .min(0, "Confidence threshold must be at least 0")
     .max(1, "Confidence threshold cannot exceed 1")
     .optional(),
+  eventLanguages: z
+    .array(supportedEventLanguageSchema)
+    .min(1, "At least one language is required")
+    .max(6, "Cannot select more than 6 languages")
+    .optional(),
+  languageSetupComplete: z.boolean().optional(),
 });
 
 export type GapAnalysisQuery = z.infer<typeof gapAnalysisQuerySchema>;

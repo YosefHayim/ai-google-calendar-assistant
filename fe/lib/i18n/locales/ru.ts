@@ -1,0 +1,56 @@
+export const ru = {
+  navbar: {
+    home: "Главная",
+    about: "О нас",
+    pricing: "Цены",
+    contact: "Контакты",
+    login: "Вход",
+    getStarted: "Начать",
+    language: "Язык",
+  },
+  hero: {
+    title: "Ваш ИИ-секретарь для Google Календаря",
+    subtitle:
+      "Расскажите, что вам нужно простым языком - я позабочусь об остальном.",
+    cta: "Начать бесплатно",
+  },
+  features: {
+    title: "Как Ally помогает",
+    schedule: "Планируйте и защищайте",
+    query: "Управляйте временем",
+    insights: "Аналитика времени",
+  },
+  footer: {
+    rights: "Все права защищены.",
+    privacy: "Политика конфиденциальности",
+    terms: "Условия использования",
+  },
+  common: {
+    loading: "Загрузка...",
+    error: "Что-то пошло не так",
+    retry: "Попробовать снова",
+    save: "Сохранить",
+    cancel: "Отмена",
+    confirm: "Подтвердить",
+    close: "Закрыть",
+  },
+  auth: {
+    signIn: "Войти",
+    signUp: "Регистрация",
+    signOut: "Выйти",
+    email: "Email",
+    password: "Пароль",
+    forgotPassword: "Забыли пароль?",
+    noAccount: "Нет аккаунта?",
+    haveAccount: "Уже есть аккаунт?",
+  },
+  dashboard: {
+    welcome: "С возвращением",
+    today: "Сегодня",
+    tomorrow: "Завтра",
+    thisWeek: "Эта неделя",
+    settings: "Настройки",
+    analytics: "Аналитика",
+    calendars: "Календари",
+  },
+} as const;

@@ -93,14 +93,25 @@ export const toggleAllyBrainEnabled = async (
   return updateAllyBrainForTelegram(telegramUserId, updated);
 };
 
+export type InstructionUpdateMode = "replace" | "append";
+
 export const updateAllyBrainInstructions = async (
   telegramUserId: number,
-  instructions: string
+  instructions: string,
+  mode: InstructionUpdateMode = "replace"
 ): Promise<boolean> => {
   const current = await getAllyBrainForTelegram(telegramUserId);
+
+  let newInstructions: string;
+  if (mode === "append" && current?.instructions?.trim()) {
+    newInstructions = `${current.instructions.trim()}\n\n${instructions.trim()}`;
+  } else {
+    newInstructions = instructions;
+  }
+
   const updated: AllyBrainPreference = {
     enabled: current?.enabled ?? true,
-    instructions,
+    instructions: newInstructions,
   };
   return updateAllyBrainForTelegram(telegramUserId, updated);
 };

@@ -304,6 +304,60 @@ export const de = {
   "commands.aboutme.footerTip":
     "Ich lerne mehr über Sie mit jeder Interaktion.",
 
+  "commands.brain.header": "Allys Gedächtnis",
+  "commands.brain.description":
+    "Bringen Sie Ally Ihre Präferenzen bei. Diese Anweisungen werden in jeder Konversation gespeichert.",
+  "commands.brain.status": "Status",
+  "commands.brain.statusEnabled": "✅ Aktiviert",
+  "commands.brain.statusDisabled": "❌ Deaktiviert",
+  "commands.brain.currentInstructions": "Aktuelle Anweisungen",
+  "commands.brain.noInstructions":
+    "Noch keine benutzerdefinierten Anweisungen festgelegt.",
+  "commands.brain.footerTip":
+    "Verwenden Sie die Schaltflächen unten, um Ihre Präferenzen zu verwalten.",
+  "commands.brain.noUser":
+    "Benutzer konnte nicht identifiziert werden. Bitte versuchen Sie es erneut.",
+  "commands.brain.error":
+    "Etwas ist schief gelaufen. Bitte versuchen Sie es erneut.",
+  "commands.brain.enabled": "Benutzerdefinierte Anweisungen aktiviert!",
+  "commands.brain.disabled": "Benutzerdefinierte Anweisungen deaktiviert.",
+  "commands.brain.updateFailed":
+    "Aktualisierung fehlgeschlagen. Bitte versuchen Sie es erneut.",
+  "commands.brain.buttons.enable": "Aktivieren",
+  "commands.brain.buttons.disable": "Deaktivieren",
+  "commands.brain.buttons.edit": "Anweisungen bearbeiten",
+  "commands.brain.buttons.clear": "Anweisungen löschen",
+  "commands.brain.editHeader": "Anweisungen bearbeiten",
+  "commands.brain.editPrompt":
+    "Senden Sie mir Ihre benutzerdefinierten Anweisungen. Erzählen Sie mir von Ihren Präferenzen, Planungsgewohnheiten oder allem, was ich mir merken sollte.",
+  "commands.brain.editExample":
+    "Beispiel: Ich bevorzuge Meetings am Morgen zwischen 9 und 11 Uhr. Fügen Sie immer 15 Minuten Puffer zwischen Meetings hinzu. Meine Arbeitstage sind Sonntag bis Donnerstag.",
+  "commands.brain.editCancel": "Tippen Sie /cancel zum Abbrechen.",
+  "commands.brain.editCancelled": "Bearbeitung abgebrochen.",
+  "commands.brain.tooLong":
+    "Anweisungen sind zu lang. Bitte beschränken Sie sich auf {{max}} Zeichen.",
+  "commands.brain.saved": "Anweisungen gespeichert",
+  "commands.brain.savedDescription":
+    "Ihre Präferenzen wurden gespeichert. Ally wird sich in allen Gesprächen daran erinnern.",
+  "commands.brain.saveFailed":
+    "Speichern der Anweisungen fehlgeschlagen. Bitte versuchen Sie es erneut.",
+  "commands.brain.cleared": "Anweisungen gelöscht.",
+  "commands.brain.clearFailed":
+    "Löschen fehlgeschlagen. Bitte versuchen Sie es erneut.",
+  "commands.brain.existingInstructionsPrompt":
+    "Sie haben bereits benutzerdefinierte Anweisungen:",
+  "commands.brain.chooseMode":
+    "Möchten Sie diese ergänzen oder vollständig ersetzen?",
+  "commands.brain.buttons.append": "Zu bestehenden hinzufügen",
+  "commands.brain.buttons.replace": "Alles ersetzen",
+  "commands.brain.appendHeader": "Anweisungen hinzufügen",
+  "commands.brain.replaceHeader": "Anweisungen ersetzen",
+  "commands.brain.appendPrompt":
+    "Senden Sie mir die neuen Anweisungen zum Hinzufügen. Sie werden zu Ihren bestehenden Anweisungen hinzugefügt.",
+  "commands.brain.appendedDescription":
+    "Neue Anweisungen wurden zu Ihren bestehenden Präferenzen hinzugefügt.",
+  "botMenu.brain": "Ally Ihre Präferenzen beibringen",
+
   "auth.welcomePrompt":
     "Willkommen! Um zu beginnen, geben Sie bitte Ihre E-Mail-Adresse zur Verifizierung ein:",
   "auth.enterOtpPrompt":

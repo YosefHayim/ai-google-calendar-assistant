@@ -918,15 +918,88 @@ export const handleBrainEditStart = async (
   ctx: GlobalContext
 ): Promise<void> => {
   const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
-
-  ctx.session.awaitingBrainInstructions = true;
+  const telegramUserId = ctx.from?.id;
 
   await ctx.answerCallbackQuery();
 
+  if (!telegramUserId) {
+    const response = ResponseBuilder.telegram()
+      .direction(direction)
+      .header("🧠", t("commands.brain.header"))
+      .text(t("commands.brain.noUser"))
+      .build();
+    await ctx.reply(response.content, { parse_mode: "HTML" });
+    return;
+  }
+
+  const { getAllyBrainForTelegram } = await import("./ally-brain");
+  const brainData = await getAllyBrainForTelegram(telegramUserId);
+
+  if (brainData?.instructions?.trim()) {
+    const keyboard = new InlineKeyboard()
+      .text(`➕ ${t("commands.brain.buttons.append")}`, "brain:edit:append")
+      .row()
+      .text(`🔄 ${t("commands.brain.buttons.replace")}`, "brain:edit:replace");
+
+    const response = ResponseBuilder.telegram()
+      .direction(direction)
+      .header("✏️", t("commands.brain.editHeader"))
+      .text(t("commands.brain.existingInstructionsPrompt"))
+      .spacing()
+      .text(
+        `<i>"${brainData.instructions.substring(0, 100)}${brainData.instructions.length > 100 ? "..." : ""}"</i>`
+      )
+      .spacing()
+      .text(t("commands.brain.chooseMode"))
+      .build();
+
+    await ctx.reply(response.content, {
+      parse_mode: "HTML",
+      reply_markup: keyboard,
+    });
+  } else {
+    ctx.session.awaitingBrainInstructions = true;
+    ctx.session.brainInstructionsMode = "replace";
+
+    const response = ResponseBuilder.telegram()
+      .direction(direction)
+      .header("✏️", t("commands.brain.editHeader"))
+      .text(t("commands.brain.editPrompt"))
+      .spacing()
+      .text(`<i>${t("commands.brain.editExample")}</i>`)
+      .spacing()
+      .footer(t("commands.brain.editCancel"))
+      .build();
+
+    await ctx.reply(response.content, { parse_mode: "HTML" });
+  }
+};
+
+export const handleBrainEditModeSelect = async (
+  ctx: GlobalContext,
+  mode: "append" | "replace"
+): Promise<void> => {
+  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
+
+  ctx.session.awaitingBrainInstructions = true;
+  ctx.session.brainInstructionsMode = mode;
+
+  await ctx.answerCallbackQuery();
+
+  const headerText =
+    mode === "append"
+      ? t("commands.brain.appendHeader")
+      : t("commands.brain.replaceHeader");
+
+  const promptText =
+    mode === "append"
+      ? t("commands.brain.appendPrompt")
+      : t("commands.brain.editPrompt");
+
   const response = ResponseBuilder.telegram()
     .direction(direction)
-    .header("✏️", t("commands.brain.editHeader"))
-    .text(t("commands.brain.editPrompt"))
+    .header("✏️", headerText)
+    .text(promptText)
     .spacing()
     .text(`<i>${t("commands.brain.editExample")}</i>`)
     .spacing()
@@ -960,12 +1033,14 @@ export const handleBrainInstructionsInput = async (
   }
 
   if (instructions.toLowerCase() === "/cancel") {
+    ctx.session.brainInstructionsMode = undefined;
     const response = ResponseBuilder.telegram()
       .direction(direction)
       .header("🧠", t("commands.brain.header"))
       .text(t("commands.brain.editCancelled"))
       .build();
     await ctx.reply(response.content, { parse_mode: "HTML" });
+    await handleBrainCommand(ctx);
     return true;
   }
 
@@ -987,18 +1062,29 @@ export const handleBrainInstructionsInput = async (
 
   try {
     const { updateAllyBrainInstructions } = await import("./ally-brain");
+    const mode = ctx.session.brainInstructionsMode || "replace";
     const success = await updateAllyBrainInstructions(
       telegramUserId,
-      instructions
+      instructions,
+      mode
     );
 
+    ctx.session.brainInstructionsMode = undefined;
+
     if (success) {
+      const savedText =
+        mode === "append"
+          ? t("commands.brain.appendedDescription")
+          : t("commands.brain.savedDescription");
+
       const response = ResponseBuilder.telegram()
         .direction(direction)
         .header("✅", t("commands.brain.saved"))
-        .text(t("commands.brain.savedDescription"))
+        .text(savedText)
         .build();
       await ctx.reply(response.content, { parse_mode: "HTML" });
+
+      await handleBrainCommand(ctx);
     } else {
       const response = ResponseBuilder.telegram()
         .direction(direction)
@@ -1009,6 +1095,7 @@ export const handleBrainInstructionsInput = async (
     }
   } catch (error) {
     logger.error(`Telegram Bot: Failed to save brain instructions: ${error}`);
+    ctx.session.brainInstructionsMode = undefined;
     const response = ResponseBuilder.telegram()
       .direction(direction)
       .header("❌", t("commands.brain.header"))

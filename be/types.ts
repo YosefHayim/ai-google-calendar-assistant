@@ -88,6 +88,8 @@ export type SessionData = {
   awaitingEmailChange?: boolean;
   // Flag for awaiting brain instructions input
   awaitingBrainInstructions?: boolean;
+  // Mode for brain instructions update (append or replace)
+  brainInstructionsMode?: "append" | "replace";
 };
 
 /**

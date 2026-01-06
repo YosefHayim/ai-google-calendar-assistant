@@ -418,6 +418,16 @@ bot.callbackQuery("brain:clear", async (ctx) => {
   await handleBrainClear(ctx);
 });
 
+bot.callbackQuery("brain:edit:append", async (ctx) => {
+  const { handleBrainEditModeSelect } = await import("./utils/commands");
+  await handleBrainEditModeSelect(ctx, "append");
+});
+
+bot.callbackQuery("brain:edit:replace", async (ctx) => {
+  const { handleBrainEditModeSelect } = await import("./utils/commands");
+  await handleBrainEditModeSelect(ctx, "replace");
+});
+
 bot.on("message", async (ctx) => {
   const msgId = ctx.message.message_id;
   const text = ctx.message.text;

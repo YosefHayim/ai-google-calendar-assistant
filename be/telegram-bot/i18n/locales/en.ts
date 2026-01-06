@@ -309,6 +309,18 @@ export const en = {
   "commands.brain.saveFailed": "Failed to save instructions. Please try again.",
   "commands.brain.cleared": "Instructions cleared.",
   "commands.brain.clearFailed": "Failed to clear. Please try again.",
+  "commands.brain.existingInstructionsPrompt":
+    "You already have custom instructions set:",
+  "commands.brain.chooseMode":
+    "Would you like to add to them or replace them entirely?",
+  "commands.brain.buttons.append": "Add to Existing",
+  "commands.brain.buttons.replace": "Replace All",
+  "commands.brain.appendHeader": "Add Instructions",
+  "commands.brain.replaceHeader": "Replace Instructions",
+  "commands.brain.appendPrompt":
+    "Send me the new instructions to add. They will be appended to your existing ones.",
+  "commands.brain.appendedDescription":
+    "New instructions have been added to your existing preferences.",
   "botMenu.brain": "Teach Ally your preferences",
 
   "auth.welcomePrompt":

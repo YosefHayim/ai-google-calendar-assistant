@@ -1,0 +1,56 @@
+export const fr = {
+  navbar: {
+    home: "Accueil",
+    about: "À propos",
+    pricing: "Tarifs",
+    contact: "Contact",
+    login: "Connexion",
+    getStarted: "Commencer",
+    language: "Langue",
+  },
+  hero: {
+    title: "Votre secrétaire IA pour Google Agenda",
+    subtitle:
+      "Dites-moi ce dont vous avez besoin en langage naturel - je me charge du reste.",
+    cta: "Commencer gratuitement",
+  },
+  features: {
+    title: "Comment Ally vous aide",
+    schedule: "Planifiez et protégez",
+    query: "Gérez votre temps",
+    insights: "Analyses du temps",
+  },
+  footer: {
+    rights: "Tous droits réservés.",
+    privacy: "Politique de confidentialité",
+    terms: "Conditions d'utilisation",
+  },
+  common: {
+    loading: "Chargement...",
+    error: "Une erreur s'est produite",
+    retry: "Réessayer",
+    save: "Enregistrer",
+    cancel: "Annuler",
+    confirm: "Confirmer",
+    close: "Fermer",
+  },
+  auth: {
+    signIn: "Se connecter",
+    signUp: "S'inscrire",
+    signOut: "Se déconnecter",
+    email: "Email",
+    password: "Mot de passe",
+    forgotPassword: "Mot de passe oublié ?",
+    noAccount: "Pas encore de compte ?",
+    haveAccount: "Déjà un compte ?",
+  },
+  dashboard: {
+    welcome: "Bon retour",
+    today: "Aujourd'hui",
+    tomorrow: "Demain",
+    thisWeek: "Cette semaine",
+    settings: "Paramètres",
+    analytics: "Analytiques",
+    calendars: "Calendriers",
+  },
+} as const;

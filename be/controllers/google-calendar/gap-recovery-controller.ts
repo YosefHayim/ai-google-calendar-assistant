@@ -2,141 +2,212 @@ import {
   analyzeGapsForUser,
   fillGap,
   formatGapsForDisplay,
-} from "@/utils/calendar/gap-recovery";
+} from "@/utils/calendar/gap-recovery"
 import type {
   FillGapBody,
   GapAnalysisQuery,
   SkipGapBody,
   UpdateGapSettingsBody,
-} from "@/middlewares/validation";
-import type { GapRecoverySettings } from "@/types";
-import type { Request, Response } from "express";
-import { reqResAsyncHandler, sendR } from "@/utils/http";
+} from "@/middlewares/validation"
+import type { GapCandidateDTO, GapRecoverySettings } from "@/types"
+import type { Request, Response } from "express"
+import { reqResAsyncHandler, sendR } from "@/utils/http"
 import {
-  getCachedGaps,
   setCachedGaps,
   getGapFromCache,
   removeGapFromCache,
   invalidateGapsCache,
-  getUserSettings,
-  saveUserSettings,
-} from "@/utils/cache/gap-recovery-cache";
+} from "@/utils/cache/gap-recovery-cache"
+import {
+  skipGapInDb,
+  dismissAllGapsInDb,
+  markGapAsFilledInDb,
+  getGapById,
+  saveGapCandidate,
+  getResolvedGapFingerprints,
+  getGapSettingsFromDb,
+  saveGapSettingsToDb,
+} from "@/utils/db/gap-repository"
 
-import { STATUS_RESPONSE } from "@/config";
+import { STATUS_RESPONSE } from "@/config"
+
+const MS_PER_MINUTE = 60_000
+
+function createGapFingerprint(
+  userId: string,
+  startTime: string,
+  precedingEventId: string,
+  followingEventId: string
+): string {
+  return `${userId}:${startTime}::${precedingEventId}:${followingEventId}`
+}
 
 const getGaps = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const userId = req.user?.id;
-  const email = req.user?.email;
+  const userId = req.user?.id
+  const email = req.user?.email
 
   if (!userId || !email) {
-    return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
+    return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated")
   }
 
-  const query = (req.validatedQuery || req.query) as GapAnalysisQuery;
-  const settings = await getUserSettings(userId);
+  const query = (req.validatedQuery || req.query) as GapAnalysisQuery
+  const settings = await getGapSettingsFromDb(userId)
 
   try {
-    const lookbackDays = query.lookbackDays || settings.lookbackDays;
+    const lookbackDays = query.lookbackDays || settings.lookbackDays
 
     const gaps = await analyzeGapsForUser({
       email,
       lookbackDays,
       calendarId: query.calendarId,
       settings,
-    });
+    })
 
-    const limitedGaps = gaps.slice(0, query.limit || 10);
+    const resolvedFingerprints = await getResolvedGapFingerprints(userId)
 
-    await setCachedGaps(userId, limitedGaps);
+    const filteredGaps = gaps.filter((gap) => {
+      const fingerprint = createGapFingerprint(
+        userId,
+        gap.start,
+        gap.precedingEventSummary,
+        gap.followingEventSummary
+      )
+      return !resolvedFingerprints.has(fingerprint)
+    })
 
-    const endDate = new Date();
-    const startDate = new Date();
-    startDate.setDate(startDate.getDate() - lookbackDays);
+    const DEFAULT_LIMIT = 10
+    const limitedGaps = filteredGaps.slice(0, query.limit || DEFAULT_LIMIT)
+
+    await persistNewGapsToDb(userId, limitedGaps)
+    await setCachedGaps(userId, limitedGaps)
+
+    const endDate = new Date()
+    const startDate = new Date()
+    startDate.setDate(startDate.getDate() - lookbackDays)
 
     sendR(
       res,
       STATUS_RESPONSE.SUCCESS,
-      `Found ${gaps.length} gaps in your calendar`,
+      `Found ${filteredGaps.length} gaps in your calendar`,
       {
         gaps: limitedGaps,
-        totalCount: gaps.length,
+        totalCount: filteredGaps.length,
         analyzedRange: {
           start: startDate.toISOString().split("T")[0],
           end: endDate.toISOString().split("T")[0],
         },
         settings,
       }
-    );
+    )
   } catch (error) {
     const errorMessage =
-      error instanceof Error ? error.message : "Failed to analyze gaps";
-    return sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, errorMessage);
+      error instanceof Error ? error.message : "Failed to analyze gaps"
+    return sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, errorMessage)
   }
-});
+})
+
+async function persistNewGapsToDb(
+  userId: string,
+  gaps: GapCandidateDTO[]
+): Promise<void> {
+  for (const gap of gaps) {
+    const existingGap = await getGapById(userId, gap.id)
+    if (!existingGap) {
+      await saveGapCandidate({
+        id: gap.id,
+        user_id: userId,
+        start_time: gap.start,
+        end_time: gap.end,
+        duration_ms: gap.durationMinutes * MS_PER_MINUTE,
+        preceding_event_id: gap.precedingEventSummary,
+        preceding_event_summary: gap.precedingEventSummary,
+        following_event_id: gap.followingEventSummary,
+        following_event_summary: gap.followingEventSummary,
+        inferred_context: gap.suggestion
+          ? { suggestion: gap.suggestion, confidence: gap.confidence }
+          : null,
+        confidence_score: gap.confidence,
+        resolution_status: "pending",
+      })
+    }
+  }
+}
 
 const getGapsFormatted = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const userId = req.user?.id;
-    const email = req.user?.email;
+    const userId = req.user?.id
+    const email = req.user?.email
 
     if (!userId || !email) {
-      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
+      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated")
     }
 
-    const query = (req.validatedQuery || req.query) as GapAnalysisQuery;
-    const settings = await getUserSettings(userId);
+    const query = (req.validatedQuery || req.query) as GapAnalysisQuery
+    const settings = await getGapSettingsFromDb(userId)
 
     try {
-      const lookbackDays = query.lookbackDays || settings.lookbackDays;
+      const lookbackDays = query.lookbackDays || settings.lookbackDays
 
       const gaps = await analyzeGapsForUser({
         email,
         lookbackDays,
         calendarId: query.calendarId,
         settings,
-      });
+      })
 
-      const limitedGaps = gaps.slice(0, query.limit || 10);
-      await setCachedGaps(userId, limitedGaps);
+      const resolvedFingerprints = await getResolvedGapFingerprints(userId)
+      const filteredGaps = gaps.filter((gap) => {
+        const fingerprint = createGapFingerprint(
+          userId,
+          gap.start,
+          gap.precedingEventSummary,
+          gap.followingEventSummary
+        )
+        return !resolvedFingerprints.has(fingerprint)
+      })
 
-      const formatted = formatGapsForDisplay(limitedGaps);
+      const DEFAULT_LIMIT = 10
+      const limitedGaps = filteredGaps.slice(0, query.limit || DEFAULT_LIMIT)
+      await setCachedGaps(userId, limitedGaps)
+
+      const formatted = formatGapsForDisplay(limitedGaps)
 
       sendR(res, STATUS_RESPONSE.SUCCESS, "Gaps formatted successfully", {
         formatted,
         count: limitedGaps.length,
-      });
+      })
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : "Failed to format gaps";
-      return sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, errorMessage);
+        error instanceof Error ? error.message : "Failed to format gaps"
+      return sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, errorMessage)
     }
   }
-);
+)
 
 const fillGapHandler = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const userId = req.user?.id;
-    const email = req.user?.email;
-    const { gapId } = req.params;
+    const userId = req.user?.id
+    const email = req.user?.email
+    const { gapId } = req.params
 
     if (!userId || !email) {
-      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
+      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated")
     }
 
     if (!gapId) {
-      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Gap ID is required");
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Gap ID is required")
     }
 
-    const gap = await getGapFromCache(userId, gapId);
+    const gap = await getGapFromCache(userId, gapId)
     if (!gap) {
       return sendR(
         res,
         STATUS_RESPONSE.NOT_FOUND,
         "Gap not found or has expired. Please refresh gaps."
-      );
+      )
     }
 
-    const body = req.body as FillGapBody;
+    const body = req.body as FillGapBody
 
     try {
       const result = await fillGap({
@@ -151,106 +222,106 @@ const fillGapHandler = reqResAsyncHandler(
           location: body.location,
           calendarId: body.calendarId,
         },
-      });
+      })
 
-      if (result.success) {
-        await removeGapFromCache(userId, gapId);
+      if (result.success && result.eventId) {
+        await markGapAsFilledInDb(userId, gapId, result.eventId)
+        await removeGapFromCache(userId, gapId)
 
         sendR(res, STATUS_RESPONSE.CREATED, "Event created successfully", {
           eventId: result.eventId,
           message: `Created "${body.summary}" from ${gap.start} to ${gap.end}`,
-        });
+        })
       } else {
         return sendR(
           res,
           STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
           "Failed to create event"
-        );
+        )
       }
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : "Failed to fill gap";
-      return sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, errorMessage);
+        error instanceof Error ? error.message : "Failed to fill gap"
+      return sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, errorMessage)
     }
   }
-);
+)
 
 const skipGap = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const userId = req.user?.id;
-  const { gapId } = req.params;
+  const userId = req.user?.id
+  const { gapId } = req.params
 
   if (!userId) {
-    return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
+    return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated")
   }
 
   if (!gapId) {
-    return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Gap ID is required");
+    return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Gap ID is required")
   }
 
-  const body = req.body as SkipGapBody;
+  const body = req.body as SkipGapBody
 
-  const removed = await removeGapFromCache(userId, gapId);
+  const dbUpdated = await skipGapInDb(userId, gapId, body.reason)
+  await removeGapFromCache(userId, gapId)
 
-  if (!removed) {
+  if (!dbUpdated) {
     return sendR(
       res,
       STATUS_RESPONSE.NOT_FOUND,
       "Gap not found or already skipped"
-    );
+    )
   }
 
   sendR(res, STATUS_RESPONSE.SUCCESS, "Gap skipped", {
     gapId,
     reason: body.reason || "User skipped",
-  });
-});
+  })
+})
 
 const dismissAllGaps = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const userId = req.user?.id;
+    const userId = req.user?.id
 
     if (!userId) {
-      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
+      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated")
     }
 
-    const cached = await getCachedGaps(userId);
-    const count = cached?.gaps.length || 0;
-
-    await invalidateGapsCache(userId);
+    const count = await dismissAllGapsInDb(userId)
+    await invalidateGapsCache(userId)
 
     sendR(res, STATUS_RESPONSE.SUCCESS, "All gaps dismissed", {
       count,
       message: `Dismissed ${count} gap(s)`,
-    });
+    })
   }
-);
+)
 
 const getSettingsHandler = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const userId = req.user?.id;
+    const userId = req.user?.id
 
     if (!userId) {
-      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
+      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated")
     }
 
-    const settings = await getUserSettings(userId);
+    const settings = await getGapSettingsFromDb(userId)
 
     return sendR(res, STATUS_RESPONSE.SUCCESS, "Settings retrieved", {
       settings,
-    });
+    })
   }
-);
+)
 
 const updateSettingsHandler = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const userId = req.user?.id;
+    const userId = req.user?.id
 
     if (!userId) {
-      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
+      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated")
     }
 
-    const body = req.body as UpdateGapSettingsBody;
-    const currentSettings = await getUserSettings(userId);
+    const body = req.body as UpdateGapSettingsBody
+    const currentSettings = await getGapSettingsFromDb(userId)
 
     const newSettings: GapRecoverySettings = {
       ...currentSettings,
@@ -270,48 +341,54 @@ const updateSettingsHandler = reqResAsyncHandler(
       ...(body.minConfidenceThreshold !== undefined && {
         minConfidenceThreshold: body.minConfidenceThreshold,
       }),
-    };
+      ...(body.eventLanguages !== undefined && {
+        eventLanguages: body.eventLanguages,
+      }),
+      ...(body.languageSetupComplete !== undefined && {
+        languageSetupComplete: body.languageSetupComplete,
+      }),
+    }
 
     if (newSettings.minGapThreshold >= newSettings.maxGapThreshold) {
       return sendR(
         res,
         STATUS_RESPONSE.BAD_REQUEST,
         "Minimum gap threshold must be less than maximum gap threshold"
-      );
+      )
     }
 
-    await saveUserSettings(userId, newSettings);
-    await invalidateGapsCache(userId);
+    await saveGapSettingsToDb(userId, newSettings)
+    await invalidateGapsCache(userId)
 
     return sendR(res, STATUS_RESPONSE.SUCCESS, "Settings updated", {
       settings: newSettings,
-    });
+    })
   }
-);
+)
 
 const disableGapAnalysis = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const userId = req.user?.id;
+    const userId = req.user?.id
 
     if (!userId) {
-      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
+      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated")
     }
 
-    const currentSettings = await getUserSettings(userId);
+    const currentSettings = await getGapSettingsFromDb(userId)
     const newSettings: GapRecoverySettings = {
       ...currentSettings,
       autoGapAnalysis: false,
-    };
+    }
 
-    await saveUserSettings(userId, newSettings);
-    await invalidateGapsCache(userId);
+    await saveGapSettingsToDb(userId, newSettings)
+    await invalidateGapsCache(userId)
 
     sendR(res, STATUS_RESPONSE.SUCCESS, "Gap analysis disabled", {
       message:
         "Gap analysis has been disabled. You can re-enable it in settings.",
-    });
+    })
   }
-);
+)
 
 export default {
   getGaps,
@@ -322,4 +399,4 @@ export default {
   getSettings: getSettingsHandler,
   updateSettings: updateSettingsHandler,
   disableGapAnalysis,
-};
+}
