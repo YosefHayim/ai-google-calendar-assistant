@@ -7,6 +7,7 @@ declare global {
     interface Request {
       user?: User;
       googleTokenValidation?: GoogleTokenValidationResult;
+      validatedQuery?: Record<string, unknown>;
     }
   }
 }

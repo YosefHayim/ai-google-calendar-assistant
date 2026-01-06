@@ -24,7 +24,7 @@ export const signUpSchema = z.object({
     .max(128, "Password must be less than 128 characters")
     .regex(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-      "Password must contain at least one uppercase letter, one lowercase letter, and one number",
+      "Password must contain at least one uppercase letter, one lowercase letter, and one number"
     ),
 });
 
@@ -117,7 +117,7 @@ export const createEventSchema = z.object({
         email: z.string().email("Invalid attendee email"),
         displayName: z.string().max(200).optional(),
         optional: z.boolean().optional(),
-      }),
+      })
     )
     .max(100, "Maximum 100 attendees allowed")
     .optional(),
@@ -130,7 +130,7 @@ export const createEventSchema = z.object({
           z.object({
             method: z.enum(["email", "popup"]),
             minutes: z.number().min(0).max(40320), // Max 4 weeks
-          }),
+          })
         )
         .max(5)
         .optional(),
@@ -171,8 +171,11 @@ export const validate =
       const dataToValidate = req[target];
       const validated = schema.parse(dataToValidate);
 
-      // Replace with validated/transformed data
-      (req as Record<string, unknown>)[target] = validated;
+      if (target === "query") {
+        (req as unknown as Record<string, unknown>).validatedQuery = validated;
+      } else {
+        (req as unknown as Record<string, unknown>)[target] = validated;
+      }
       next();
     } catch (error) {
       if (error instanceof ZodError) {
