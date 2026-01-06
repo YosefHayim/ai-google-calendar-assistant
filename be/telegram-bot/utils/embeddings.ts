@@ -10,6 +10,7 @@ const EMBEDDING_MODEL = MODELS.TEXT_EMBEDDING_3_SMALL;
 const CONVERSATION_EMBEDDINGS_TABLE = "conversation_embeddings";
 const SIMILARITY_THRESHOLD = 0.7;
 const MAX_RESULTS = 5;
+const MAX_SEMANTIC_CONTEXT_LENGTH = 800;
 
 type EmbeddingMetadata = {
   role: "user" | "assistant";
@@ -155,19 +156,32 @@ export const searchSimilarConversations = async (
   }
 };
 
-// Build context from similar conversations
 export const buildSemanticContext = (conversations: SimilarConversation[]): string => {
   if (conversations.length === 0) {
     return "";
   }
 
-  const contextParts = conversations
-    .sort((a, b) => b.similarity - a.similarity)
-    .map((conv) => {
-      const role = conv.metadata?.role === "user" ? "User" : "Assistant";
-      const similarity = Math.round(conv.similarity * 100);
-      return `[${similarity}% relevant] ${role}: ${conv.content}`;
-    });
+  const sorted = conversations.sort((a, b) => b.similarity - a.similarity);
+  const contextParts: string[] = [];
+  let totalLength = 0;
+
+  for (const conv of sorted) {
+    const role = conv.metadata?.role === "user" ? "User" : "Assistant";
+    const similarity = Math.round(conv.similarity * 100);
+    const part = `[${similarity}% relevant] ${role}: ${conv.content}`;
+
+    if (totalLength + part.length > MAX_SEMANTIC_CONTEXT_LENGTH) {
+      break;
+    }
+
+    contextParts.push(part);
+    totalLength += part.length + 1;
+  }
+
+  if (contextParts.length === 0) {
+    return "";
+  }
+
   return `Relevant past conversations:\n${contextParts.join("\n")}`;
 };
 

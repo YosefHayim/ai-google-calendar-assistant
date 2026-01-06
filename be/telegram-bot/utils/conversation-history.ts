@@ -3,7 +3,9 @@ import { SUPABASE } from "@/config/clients/supabase";
 import { logger } from "@/utils/logger";
 import type { userAndAiMessageProps } from "@/types";
 
-const MAX_CONTEXT_LENGTH = 1000;
+const MAX_CONTEXT_LENGTH = 1500;
+const MAX_SUMMARY_LENGTH = 1000;
+const MAX_MESSAGES_BEFORE_SUMMARIZE = 6;
 
 type MessageRole = Database["public"]["Enums"]["message_role"];
 
@@ -25,14 +27,12 @@ type ConversationRow = {
   last_message_at: string | null;
 };
 
-// Get start of day timestamp for comparison
 const getStartOfDay = (date: Date = new Date()): Date => {
   const start = new Date(date);
   start.setHours(0, 0, 0, 0);
   return start;
 };
 
-// Check if a date is from today
 const isToday = (dateString: string): boolean => {
   const date = new Date(dateString);
   const today = getStartOfDay();
@@ -40,17 +40,35 @@ const isToday = (dateString: string): boolean => {
   return dateStart.getTime() === today.getTime();
 };
 
-// Calculate total text length of messages
 const calculateContextLength = (messages: userAndAiMessageProps[]): number => {
   return messages.reduce((total, msg) => total + (msg.content?.length || 0), 0);
 };
 
-// Map message role from our type to database enum
 const mapRoleToDb = (role: "user" | "assistant" | "system"): MessageRole => {
   return role as MessageRole;
 };
 
-// Get user_id from telegram_users table by telegram_user_id
+const condenseSummary = async (
+  existingSummary: string,
+  newSummary: string,
+  summarizeFn: (messages: userAndAiMessageProps[]) => Promise<string>
+): Promise<string> => {
+  const combined = `${existingSummary}\n\n${newSummary}`;
+
+  if (combined.length <= MAX_SUMMARY_LENGTH) {
+    return combined;
+  }
+
+  try {
+    const condensedSummary = await summarizeFn([
+      { role: "user", content: `Please condense this conversation summary:\n${combined}` },
+    ]);
+    return condensedSummary.slice(0, MAX_SUMMARY_LENGTH);
+  } catch {
+    return combined.slice(-MAX_SUMMARY_LENGTH);
+  }
+};
+
 export const getUserIdFromTelegram = async (telegramUserId: number): Promise<string | null> => {
   const { data, error } = await SUPABASE.from("telegram_users").select("user_id").eq("telegram_user_id", telegramUserId).single();
 
@@ -61,7 +79,6 @@ export const getUserIdFromTelegram = async (telegramUserId: number): Promise<str
   return data.user_id;
 };
 
-// Fetch today's conversation for a telegram user (query by external_chat_id)
 export const getTodayConversationState = async (chatId: number): Promise<ConversationRow | null> => {
   const { data, error } = await SUPABASE.from("conversations")
     .select("*")
@@ -79,7 +96,6 @@ export const getTodayConversationState = async (chatId: number): Promise<Convers
 
   if (!data) return null;
 
-  // Check if the conversation is from today
   const updatedAt = data.updated_at || data.created_at;
   if (!isToday(updatedAt)) {
     return null;
@@ -88,7 +104,6 @@ export const getTodayConversationState = async (chatId: number): Promise<Convers
   return data as ConversationRow;
 };
 
-// Get messages for a conversation
 const getConversationMessages = async (conversationId: string): Promise<userAndAiMessageProps[]> => {
   const { data, error } = await SUPABASE.from("conversation_messages")
     .select("role, content, sequence_number")
@@ -99,7 +114,6 @@ const getConversationMessages = async (conversationId: string): Promise<userAndA
     return [];
   }
 
-  // Filter to only user/assistant roles (skip system/tool messages)
   return data
     .filter((msg) => msg.role === "user" || msg.role === "assistant")
     .map((msg) => ({
@@ -108,17 +122,14 @@ const getConversationMessages = async (conversationId: string): Promise<userAndA
     }));
 };
 
-// Create a new conversation for today
 export const createConversationState = async (
   chatId: number,
   telegramUserId: number,
   initialMessage?: userAndAiMessageProps
 ): Promise<{ id: string; context: ConversationContext } | null> => {
-  // Get the user_id from telegram_users
   const userId = await getUserIdFromTelegram(telegramUserId);
 
   if (!userId) {
-    // Create telegram user entry first if it doesn't exist
     const { data: newTgUser, error: tgError } = await SUPABASE.from("telegram_users")
       .upsert(
         {
@@ -142,7 +153,6 @@ export const createConversationState = async (
     return null;
   }
 
-  // Create conversation
   const { data: conversation, error: convError } = await SUPABASE.from("conversations")
     .insert({
       user_id: finalUserId,
@@ -159,7 +169,6 @@ export const createConversationState = async (
     return null;
   }
 
-  // Add initial message if provided
   if (initialMessage && initialMessage.content) {
     await SUPABASE.from("conversation_messages").insert({
       conversation_id: conversation.id,
@@ -178,7 +187,6 @@ export const createConversationState = async (
   };
 };
 
-// Update conversation with new message count
 export const updateConversationState = async (conversationId: string, context: ConversationContext, messageCount: number): Promise<boolean> => {
   const { error } = await SUPABASE.from("conversations")
     .update({
@@ -197,7 +205,6 @@ export const updateConversationState = async (conversationId: string, context: C
   return true;
 };
 
-// Store a summary in the database
 export const storeSummary = async (
   conversationId: string,
   userId: string,
@@ -223,7 +230,6 @@ export const storeSummary = async (
   return true;
 };
 
-// Mark conversation summary updated
 export const markAsSummarized = async (conversationId: string, summary: string): Promise<boolean> => {
   const { error } = await SUPABASE.from("conversations")
     .update({
@@ -240,7 +246,6 @@ export const markAsSummarized = async (conversationId: string, summary: string):
   return true;
 };
 
-// Get or create today's conversation context (query by external_chat_id)
 export const getOrCreateTodayContext = async (
   chatId: number,
   telegramUserId: number
@@ -273,7 +278,6 @@ export const getOrCreateTodayContext = async (
   };
 };
 
-// Add a message to the conversation and check if summarization is needed
 export const addMessageToContext = async (
   chatId: number,
   telegramUserId: number,
@@ -283,13 +287,11 @@ export const addMessageToContext = async (
   const { stateId, context, userId } = await getOrCreateTodayContext(chatId, telegramUserId);
 
   if (!stateId) {
-    // Fallback: just return context with new message
     context.messages.push(message);
     context.lastUpdated = new Date().toISOString();
     return context;
   }
 
-  // Get current sequence number
   const { data: lastMsg } = await SUPABASE.from("conversation_messages")
     .select("sequence_number")
     .eq("conversation_id", stateId)
@@ -299,7 +301,6 @@ export const addMessageToContext = async (
 
   const nextSequence = (lastMsg?.sequence_number || 0) + 1;
 
-  // Insert the new message (only if content is defined)
   if (message.content) {
     await SUPABASE.from("conversation_messages").insert({
       conversation_id: stateId,
@@ -312,28 +313,34 @@ export const addMessageToContext = async (
   context.messages.push(message);
   context.lastUpdated = new Date().toISOString();
 
-  // Check if we need to summarize
   const totalLength = calculateContextLength(context.messages);
+  const shouldSummarize =
+    (totalLength > MAX_CONTEXT_LENGTH || context.messages.length > MAX_MESSAGES_BEFORE_SUMMARIZE) &&
+    context.messages.length > 2 &&
+    userId;
 
-  if (totalLength > MAX_CONTEXT_LENGTH && context.messages.length > 2 && userId) {
+  if (shouldSummarize) {
     const messagesToSummarize = context.messages.slice(0, -2);
     const recentMessages = context.messages.slice(-2);
 
     try {
-      const summary = await summarizeFn(messagesToSummarize);
+      const newSummary = await summarizeFn(messagesToSummarize);
 
-      // Store summary with sequence range
       const firstSeq = nextSequence - context.messages.length + 1;
       const lastSeq = nextSequence - 2;
-      await storeSummary(stateId, userId, summary, messagesToSummarize.length, firstSeq, lastSeq);
+      await storeSummary(stateId, userId, newSummary, messagesToSummarize.length, firstSeq, lastSeq);
 
-      context.summary = context.summary ? `${context.summary}\n\n${summary}` : summary;
+      if (context.summary) {
+        context.summary = await condenseSummary(context.summary, newSummary, summarizeFn);
+      } else {
+        context.summary = newSummary.slice(0, MAX_SUMMARY_LENGTH);
+      }
+
       context.messages = recentMessages;
 
       await markAsSummarized(stateId, context.summary);
     } catch (error) {
       logger.error(`Failed to summarize conversation for chat ${chatId}: ${error}`);
-      // Continue without summarization if it fails
     }
   }
 
@@ -342,23 +349,37 @@ export const addMessageToContext = async (
   return context;
 };
 
-// Build prompt context from conversation history
+const MAX_CONTEXT_PROMPT_LENGTH = 2000;
+const MAX_SUMMARY_DISPLAY_LENGTH = 800;
+const MAX_MESSAGES_DISPLAY_LENGTH = 1000;
+
 export const buildContextPrompt = (context: ConversationContext): string => {
   const parts: string[] = [];
 
   if (context.summary) {
-    parts.push(`Previous conversation summary:\n${context.summary}`);
+    const truncatedSummary = context.summary.length > MAX_SUMMARY_DISPLAY_LENGTH 
+      ? context.summary.slice(-MAX_SUMMARY_DISPLAY_LENGTH) 
+      : context.summary;
+    parts.push(`Previous conversation summary:\n${truncatedSummary}`);
   }
 
   if (context.messages.length > 0) {
-    const messageHistory = context.messages.map((msg) => `${msg.role === "user" ? "User" : "Assistant"}: ${msg.content}`).join("\n");
+    let messageHistory = context.messages.map((msg) => `${msg.role === "user" ? "User" : "Assistant"}: ${msg.content}`).join("\n");
+    if (messageHistory.length > MAX_MESSAGES_DISPLAY_LENGTH) {
+      messageHistory = messageHistory.slice(-MAX_MESSAGES_DISPLAY_LENGTH);
+    }
     parts.push(`Recent messages:\n${messageHistory}`);
   }
 
-  return parts.join("\n\n");
+  const result = parts.join("\n\n");
+  
+  if (result.length > MAX_CONTEXT_PROMPT_LENGTH) {
+    return result.slice(-MAX_CONTEXT_PROMPT_LENGTH);
+  }
+  
+  return result;
 };
 
-// Get full conversation context for a user
 export const getConversationContext = async (chatId: number, telegramUserId: number): Promise<ConversationContext> => {
   const { context } = await getOrCreateTodayContext(chatId, telegramUserId);
   return context;

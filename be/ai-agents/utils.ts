@@ -1,6 +1,7 @@
 import { SUPABASE, TIMEZONE } from "@/config";
+import { isEmpty, isNil, isPlainObject, omitBy } from "lodash-es";
+
 import { asyncHandler } from "@/utils/http";
-import { isPlainObject, omitBy, isNil, isEmpty } from "lodash-es";
 import type { calendar_v3 } from "googleapis";
 
 type Event = calendar_v3.Schema$Event;
@@ -74,8 +75,8 @@ export function validateEventRequired(summary: string | null | undefined, start:
  * Returns the resolved timezone for timed events
  */
 export function validateAndResolveTimezone(start: EDT, end: EDT): string | undefined {
-  const tzStart = start.dateTime ? (start.timeZone ?? undefined) : undefined;
-  const tzEnd = end.dateTime ? (end.timeZone ?? tzStart ?? undefined) : undefined;
+  const tzStart = start.dateTime ? start.timeZone ?? undefined : undefined;
+  const tzEnd = end.dateTime ? end.timeZone ?? tzStart ?? undefined : undefined;
 
   if ((start.dateTime || end.dateTime) && !(tzStart || tzEnd)) {
     throw new Error("Event timeZone is required for timed events.");
@@ -148,11 +149,7 @@ export type UserCalendar = {
 
 export const getCalendarCategoriesByEmail = asyncHandler(async (email: string): Promise<UserCalendar[]> => {
   // Step 1: Get user_id from users table by email
-  const { data: userData, error: userError } = await SUPABASE
-    .from("users")
-    .select("id")
-    .ilike("email", email.trim().toLowerCase())
-    .single();
+  const { data: userData, error: userError } = await SUPABASE.from("users").select("id").ilike("email", email.trim().toLowerCase()).single();
 
   if (userError || !userData) {
     // User not found - return empty array instead of throwing
@@ -160,10 +157,7 @@ export const getCalendarCategoriesByEmail = asyncHandler(async (email: string): 
   }
 
   // Step 2: Get calendars from user_calendars table using user_id
-  const { data, error } = await SUPABASE
-    .from("user_calendars")
-    .select("calendar_id, calendar_name")
-    .eq("user_id", userData.id);
+  const { data, error } = await SUPABASE.from("user_calendars").select("calendar_id, calendar_name").eq("user_id", userData.id);
 
   if (error) {
     throw error;
@@ -181,8 +175,7 @@ export const getCalendarCategoriesByEmail = asyncHandler(async (email: string): 
   return [];
 });
 
-const cleanObject = <T extends Record<string, unknown>>(obj: T): T =>
-  omitBy(obj, (v) => isNil(v) || v === "") as T;
+const cleanObject = <T extends Record<string, unknown>>(obj: T): T => omitBy(obj, (v) => isNil(v) || v === "") as T;
 export function parseToolArguments(raw: unknown) {
   // 1) accept stringified input
   const base = typeof (raw as { input?: string })?.input === "string" ? JSON.parse((raw as { input: string }).input) : raw;
