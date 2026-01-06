@@ -1,6 +1,6 @@
-'use client'
+"use client";
 
-import { AllyLogo, BetaBadge } from '@/components/shared/logo'
+import { AllyLogo, BetaBadge } from "@/components/shared/logo";
 import {
   BadgeCheck,
   BarChart2,
@@ -20,7 +20,7 @@ import {
   Target,
   Trash2,
   X,
-} from 'lucide-react'
+} from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -28,7 +28,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
+} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -37,42 +37,50 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import React, { useState } from 'react'
-import { usePathname, useRouter } from 'next/navigation'
-import { useDebouncedCallback } from 'use-debounce'
+} from "@/components/ui/dropdown-menu";
+import React, { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useDebouncedCallback } from "use-debounce";
 
-import { Button } from '@/components/ui/button'
-import { formatRelativeDate } from '@/lib/dateUtils'
-import { CustomUser } from '@/types/api'
-import Image from 'next/image'
-import Link from 'next/link'
-import { QuickEventDialog } from '@/components/dialogs/QuickEventDialog'
-import UserProfileCard from '@/components/dashboard/shared/UserProfileCard'
-import { useChatContext } from '@/contexts/ChatContext'
-import { useUser } from '@/hooks/queries/auth/useUser'
-import { toast } from 'sonner'
+import { Button } from "@/components/ui/button";
+import { formatRelativeDate } from "@/lib/dateUtils";
+import { CustomUser } from "@/types/api";
+import Image from "next/image";
+import Link from "next/link";
+import { QuickEventDialog } from "@/components/dialogs/QuickEventDialog";
+import UserProfileCard from "@/components/dashboard/shared/UserProfileCard";
+import { useChatContext } from "@/contexts/ChatContext";
+import { useUser } from "@/hooks/queries/auth/useUser";
+import { toast } from "sonner";
 
 interface SidebarProps {
-  isOpen: boolean
-  onClose: () => void
-  onToggle: () => void
-  onOpenSettings: () => void
-  onSignOut?: () => void
+  isOpen: boolean;
+  onClose: () => void;
+  onToggle: () => void;
+  onOpenSettings: () => void;
+  onSignOut?: () => void;
 }
 
 interface NavLinkProps {
-  href: string
-  activePath: string
-  isOpen: boolean
-  icon: React.ElementType
-  id?: string
-  onClick?: () => void
-  children?: React.ReactNode
+  href: string;
+  activePath: string;
+  isOpen: boolean;
+  icon: React.ElementType;
+  id?: string;
+  onClick?: () => void;
+  children?: React.ReactNode;
 }
 
-const NavLink: React.FC<NavLinkProps> = ({ href, activePath, isOpen, icon: Icon, id, onClick, children }) => {
-  const isActive = activePath === href
+const NavLink: React.FC<NavLinkProps> = ({
+  href,
+  activePath,
+  isOpen,
+  icon: Icon,
+  id,
+  onClick,
+  children,
+}) => {
+  const isActive = activePath === href;
   return (
     <Link
       id={id}
@@ -80,20 +88,30 @@ const NavLink: React.FC<NavLinkProps> = ({ href, activePath, isOpen, icon: Icon,
       onClick={onClick}
       className={`w-full flex items-center gap-3 p-2 rounded-md transition-colors ${
         isActive
-          ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 font-bold'
-          : 'text-zinc-500 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-900'
-      } ${!isOpen ? 'md:justify-center' : ''}`}
+          ? "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 font-bold"
+          : "text-zinc-500 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-900"
+      } ${!isOpen ? "md:justify-center" : ""}`}
     >
-      <Icon className={`w-5 h-5 ${isActive ? 'text-primary' : ''}`} />
-      <span className={`text-sm whitespace-nowrap ${!isOpen ? 'md:hidden' : ''}`}>{children}</span>
+      <Icon className={`w-5 h-5 ${isActive ? "text-primary" : ""}`} />
+      <span
+        className={`text-sm whitespace-nowrap ${!isOpen ? "md:hidden" : ""}`}
+      >
+        {children}
+      </span>
     </Link>
-  )
-}
+  );
+};
 
-const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle, onOpenSettings, onSignOut }) => {
-  const pathname = usePathname()
-  const router = useRouter()
-  const { data: userData } = useUser({ customUser: true })
+const Sidebar: React.FC<SidebarProps> = ({
+  isOpen,
+  onClose,
+  onToggle,
+  onOpenSettings,
+  onSignOut,
+}) => {
+  const pathname = usePathname();
+  const router = useRouter();
+  const { data: userData } = useUser({ customUser: true });
   const {
     conversations,
     isLoadingConversations,
@@ -105,89 +123,125 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle, onOpenSett
     searchQuery,
     setSearchQuery,
     isSearching,
-  } = useChatContext()
+  } = useChatContext();
 
-  const [conversationToDelete, setConversationToDelete] = useState<number | null>(null)
-  const [localSearchValue, setLocalSearchValue] = useState(searchQuery)
-  const [isQuickEventOpen, setIsQuickEventOpen] = useState(false)
+  const [conversationToDelete, setConversationToDelete] = useState<
+    number | null
+  >(null);
+  const [localSearchValue, setLocalSearchValue] = useState(searchQuery);
+  const [isQuickEventOpen, setIsQuickEventOpen] = useState(false);
 
   // Debounced search update (300ms delay)
   const debouncedSetSearch = useDebouncedCallback((value: string) => {
-    setSearchQuery(value)
-  }, 300)
+    setSearchQuery(value);
+  }, 300);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value
-    setLocalSearchValue(value)
-    debouncedSetSearch(value)
-  }
+    const value = e.target.value;
+    setLocalSearchValue(value);
+    debouncedSetSearch(value);
+  };
 
   const handleClearSearch = () => {
-    setLocalSearchValue('')
-    setSearchQuery('')
-  }
+    setLocalSearchValue("");
+    setSearchQuery("");
+  };
 
   const navItems = [
-    { href: '/dashboard', icon: LayoutDashboard, label: 'Assistant', id: 'tour-assistant' },
-    { href: '/dashboard/analytics', icon: BarChart2, label: 'Intelligence', id: 'tour-analytics' },
-    { href: '/dashboard/gaps', icon: Target, label: 'Gap Recovery', id: 'tour-gaps' },
-  ]
+    {
+      href: "/dashboard",
+      icon: LayoutDashboard,
+      label: "Assistant",
+      id: "tour-assistant",
+    },
+    {
+      href: "/dashboard/analytics",
+      icon: BarChart2,
+      label: "Intelligence",
+      id: "tour-analytics",
+    },
+    {
+      href: "/dashboard/gaps",
+      icon: Target,
+      label: "Gap Recovery",
+      id: "tour-gaps",
+    },
+  ];
 
   // TanStack Query automatically fetches conversations on mount, no need to manually refetch
 
   const handleNewChat = () => {
-    startNewConversation()
-    if (pathname !== '/dashboard') {
-      router.push('/dashboard')
+    startNewConversation();
+    if (pathname !== "/dashboard") {
+      router.push("/dashboard");
     }
-    onClose()
-  }
+    onClose();
+  };
 
-  const handleSelectConversation = async (conversation: (typeof conversations)[0]) => {
-    await selectConversation(conversation)
-    if (pathname !== '/dashboard') {
-      router.push('/dashboard')
+  const handleSelectConversation = async (
+    conversation: (typeof conversations)[0]
+  ) => {
+    await selectConversation(conversation);
+    if (pathname !== "/dashboard") {
+      router.push("/dashboard");
     }
-    onClose()
-  }
+    onClose();
+  };
 
   const initiateDelete = (e: React.MouseEvent, id: number) => {
-    e.stopPropagation()
-    setConversationToDelete(id)
-  }
+    e.stopPropagation();
+    setConversationToDelete(id);
+  };
 
   const confirmDelete = async () => {
     if (conversationToDelete) {
-      const success = await removeConversation(conversationToDelete)
+      const success = await removeConversation(conversationToDelete);
       if (success) {
-        toast.success('Conversation deleted')
+        toast.success("Conversation deleted");
       } else {
-        toast.error('Failed to delete conversation')
+        toast.error("Failed to delete conversation");
       }
-      setConversationToDelete(null)
+      setConversationToDelete(null);
     }
-  }
+  };
 
   // Extract user data similar to UserProfileCard
-  const isCustomUser = userData && ('avatar_url' in userData || 'first_name' in userData)
-  const customUser = isCustomUser ? (userData as CustomUser) : null
-  const standardUser = !isCustomUser && userData && 'user_metadata' in userData ? userData : null
+  const isCustomUser =
+    userData && ("avatar_url" in userData || "first_name" in userData);
+  const customUser = isCustomUser ? (userData as CustomUser) : null;
+  const standardUser =
+    !isCustomUser && userData && "user_metadata" in userData ? userData : null;
 
-  const firstName = customUser?.first_name || (standardUser?.user_metadata as Record<string, any>)?.first_name || ''
-  const lastName = customUser?.last_name || (standardUser?.user_metadata as Record<string, any>)?.last_name || ''
-  const avatarUrl = customUser?.avatar_url || (standardUser?.user_metadata as Record<string, any>)?.avatar_url
-  const email = customUser?.email || standardUser?.email || ''
-  const fullName = [firstName, lastName].filter(Boolean).join(' ') || 'User'
-  const initials = `${firstName?.[0] || ''}${lastName?.[0] || ''}`.toUpperCase() || 'U'
+  const firstName =
+    customUser?.first_name ||
+    (standardUser?.user_metadata as Record<string, any>)?.first_name ||
+    "";
+  const lastName =
+    customUser?.last_name ||
+    (standardUser?.user_metadata as Record<string, any>)?.last_name ||
+    "";
+  const avatarUrl =
+    customUser?.avatar_url ||
+    (standardUser?.user_metadata as Record<string, any>)?.avatar_url;
+  const email = customUser?.email || standardUser?.email || "";
+  const fullName = [firstName, lastName].filter(Boolean).join(" ") || "User";
+  const initials =
+    `${firstName?.[0] || ""}${lastName?.[0] || ""}`.toUpperCase() || "U";
 
   return (
     <>
-      <Dialog open={!!conversationToDelete} onOpenChange={(open) => !open && setConversationToDelete(null)}>
+      <Dialog
+        open={!!conversationToDelete}
+        onOpenChange={(open) => !open && setConversationToDelete(null)}
+      >
         <DialogContent className="sm:max-w-md bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800">
           <DialogHeader>
-            <DialogTitle className="text-zinc-900 dark:text-zinc-100">Delete Conversation</DialogTitle>
+            <DialogTitle className="text-zinc-900 dark:text-zinc-100">
+              Delete Conversation
+            </DialogTitle>
             <DialogDescription className="text-zinc-500 dark:text-zinc-400">
-              Are you sure you want to delete this conversation? This action cannot be reversed.
+              Are you sure you want to delete this conversation? This action
+              cannot be reversed.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="sm:justify-end gap-2 mt-4">
@@ -212,21 +266,28 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle, onOpenSett
       </Dialog>
 
       {isOpen && (
-        <div className="fixed inset-0 bg-black/20 dark:bg-black/60 backdrop-blur-sm z-40 md:hidden" onClick={onClose} />
+        <div
+          className="fixed inset-0 bg-black/20 dark:bg-black/60 backdrop-blur-sm z-40 md:hidden"
+          onClick={onClose}
+        />
       )}
       <aside
         id="tour-sidebar"
         className={`fixed inset-y-0 left-0 z-50 flex flex-col bg-white dark:bg-zinc-950 border-r border-zinc-200 dark:border-zinc-800 transition-all duration-300 ${
-          isOpen ? 'w-64' : 'w-0 md:w-20'
+          isOpen ? "w-64" : "w-0 md:w-20"
         }`}
       >
         <div className="flex-1 flex flex-col min-w-0 overflow-y-auto overflow-x-hidden">
           {/* Header */}
           <div
-            className={`flex items-center p-4 border-b border-zinc-200 dark:border-zinc-800 ${isOpen ? 'justify-between' : 'justify-center'}`}
+            className={`flex items-center p-4 border-b border-zinc-200 dark:border-zinc-800 ${isOpen ? "justify-between" : "justify-center"}`}
           >
             {isOpen && (
-              <Link href="/" onClick={onClose} className="flex items-center gap-2">
+              <Link
+                href="/"
+                onClick={onClose}
+                className="flex items-center gap-2"
+              >
                 <div className="w-8 h-8 bg-zinc-900 dark:bg-white rounded-md flex items-center justify-center text-white dark:text-zinc-900">
                   <AllyLogo className="w-5 h-5" />
                 </div>
@@ -249,7 +310,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle, onOpenSett
                 onClick={onToggle}
                 className="p-1 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 hidden md:block"
               >
-                {isOpen ? <ChevronLeft className="w-5 h-5" /> : <LayoutDashboard className="w-5 h-5" />}
+                {isOpen ? (
+                  <ChevronLeft className="w-5 h-5" />
+                ) : (
+                  <LayoutDashboard className="w-5 h-5" />
+                )}
               </button>
               {/* Close button for mobile */}
               {isOpen && (
@@ -325,24 +390,37 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle, onOpenSett
               {isLoadingConversations || isSearching ? (
                 <div className="space-y-2">
                   {[...Array(3)].map((_, i) => (
-                    <div key={i} className="animate-pulse h-12 bg-zinc-100 dark:bg-zinc-800 rounded-md" />
+                    <div
+                      key={i}
+                      className="animate-pulse h-12 bg-zinc-100 dark:bg-zinc-800 rounded-md"
+                    />
                   ))}
                 </div>
               ) : conversations.length === 0 ? (
                 <div className="text-center py-4 text-zinc-400 dark:text-zinc-500">
                   <MessageSquare className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                  <p className="text-xs">{localSearchValue ? 'No matching conversations' : 'No conversations yet'}</p>
+                  <p className="text-xs">
+                    {localSearchValue
+                      ? "No matching conversations"
+                      : "No conversations yet"}
+                  </p>
                 </div>
               ) : (
                 <div className="space-y-1 flex-1 overflow-y-auto">
                   {conversations.slice(0, 15).map((conversation) => (
-                    <button
+                    <div
                       key={conversation.id}
+                      role="button"
+                      tabIndex={0}
                       onClick={() => handleSelectConversation(conversation)}
-                      className={`w-full text-left p-2 rounded-md transition-colors group ${
+                      onKeyDown={(e) =>
+                        e.key === "Enter" &&
+                        handleSelectConversation(conversation)
+                      }
+                      className={`w-full text-left p-2 rounded-md transition-colors group cursor-pointer ${
                         selectedConversationId === conversation.id
-                          ? 'bg-zinc-100 dark:bg-zinc-800'
-                          : 'hover:bg-zinc-50 dark:hover:bg-zinc-800/50'
+                          ? "bg-zinc-100 dark:bg-zinc-800"
+                          : "hover:bg-zinc-50 dark:hover:bg-zinc-800/50"
                       }`}
                     >
                       <div className="flex items-start justify-between gap-2">
@@ -352,7 +430,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle, onOpenSett
                           </p>
                           <div className="flex items-center gap-1 mt-0.5 text-xs text-zinc-400">
                             <Clock className="w-3 h-3" />
-                            <span>{formatRelativeDate(conversation.lastUpdated)}</span>
+                            <span>
+                              {formatRelativeDate(conversation.lastUpdated)}
+                            </span>
                           </div>
                         </div>
                         <button
@@ -363,7 +443,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle, onOpenSett
                           <Trash2 className="w-3 h-3" />
                         </button>
                       </div>
-                    </button>
+                    </div>
                   ))}
                 </div>
               )}
@@ -381,7 +461,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle, onOpenSett
 
           {/* Footer */}
           <div className="p-4 border-t border-zinc-200 dark:border-zinc-800">
-            <div className={`flex items-center gap-2 ${!isOpen ? 'md:justify-center' : ''}`}>
+            <div
+              className={`flex items-center gap-2 ${!isOpen ? "md:justify-center" : ""}`}
+            >
               <div className="flex-1 min-w-0">
                 <UserProfileCard isOpen={isOpen} />
               </div>
@@ -390,14 +472,18 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle, onOpenSett
                   <button
                     className="p-1.5 rounded-md text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors flex-shrink-0"
                     onClick={(e) => {
-                      e.stopPropagation()
+                      e.stopPropagation();
                     }}
                   >
                     <MoreHorizontal className="w-5 h-5" />
                     <span className="sr-only">More options</span>
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent side="top" align={isOpen ? 'end' : 'center'} className="min-w-[14rem] rounded-lg">
+                <DropdownMenuContent
+                  side="top"
+                  align={isOpen ? "end" : "center"}
+                  className="min-w-[14rem] rounded-lg"
+                >
                   {/* User Profile Section */}
                   <DropdownMenuLabel className="p-0 font-normal">
                     <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
@@ -411,12 +497,16 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle, onOpenSett
                         />
                       ) : (
                         <div className="h-8 w-8 rounded-lg bg-zinc-200 dark:bg-zinc-700 flex items-center justify-center flex-shrink-0">
-                          <span className="text-xs font-medium text-zinc-600 dark:text-zinc-300">{initials}</span>
+                          <span className="text-xs font-medium text-zinc-600 dark:text-zinc-300">
+                            {initials}
+                          </span>
                         </div>
                       )}
                       <div className="grid flex-1 text-left text-sm leading-tight min-w-0">
                         <span className="truncate font-medium">{fullName}</span>
-                        <span className="truncate text-xs text-muted-foreground">{email}</span>
+                        <span className="truncate text-xs text-muted-foreground">
+                          {email}
+                        </span>
                       </div>
                     </div>
                   </DropdownMenuLabel>
@@ -452,8 +542,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle, onOpenSett
                   <DropdownMenuItem
                     id="tour-settings"
                     onClick={() => {
-                      onOpenSettings()
-                      onClose()
+                      onOpenSettings();
+                      onClose();
                     }}
                     className="cursor-pointer"
                   >
@@ -465,7 +555,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle, onOpenSett
                   {onSignOut && (
                     <>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={onSignOut} className="cursor-pointer">
+                      <DropdownMenuItem
+                        onClick={onSignOut}
+                        className="cursor-pointer"
+                      >
                         <LogOut className="w-4 h-4" />
                         <span>Log out</span>
                       </DropdownMenuItem>
@@ -478,7 +571,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle, onOpenSett
         </div>
       </aside>
     </>
-  )
-}
+  );
+};
 
-export default Sidebar
+export default Sidebar;

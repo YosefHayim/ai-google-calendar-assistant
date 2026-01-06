@@ -1,9 +1,9 @@
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
-import { apiClient } from '@/lib/api/client'
-import { ENDPOINTS } from '@/lib/api/endpoints'
 import type { AIInsightsResponse } from '@/types/analytics'
+import { ENDPOINTS } from '@/lib/api/endpoints'
+import { apiClient } from '@/lib/api/client'
+import { useQuery } from '@tanstack/react-query'
 
 interface UseAIInsightsOptions {
   timeMin: Date | null

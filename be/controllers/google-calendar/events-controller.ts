@@ -1,15 +1,15 @@
 import { ACTION, REQUEST_CONFIG_BASE, STATUS_RESPONSE } from "@/config";
 import { Request, Response } from "express";
 import { eventsHandler, formatDate, getEventDurationString } from "@/utils";
+import { getCachedInsights, setCachedInsights } from "@/utils/cache/insights-cache";
 import { reqResAsyncHandler, sendR } from "@/utils/http";
 
+import { calculateInsightsMetrics } from "@/utils/ai/insights-calculator";
+import type { calendar_v3 } from "googleapis";
 import { fetchCredentialsByEmail } from "@/utils/auth/get-user-calendar-tokens";
+import { generateInsightsWithRetry } from "@/ai-agents/insights-generator";
 import { getEvents } from "@/utils/calendar/get-events";
 import { initUserSupabaseCalendarWithTokensAndUpdateTokens } from "@/utils/calendar/init";
-import { generateInsightsWithRetry } from "@/ai-agents/insights-generator";
-import { calculateInsightsMetrics } from "@/utils/ai/insights-calculator";
-import { getCachedInsights, setCachedInsights } from "@/utils/cache/insights-cache";
-import type { calendar_v3 } from "googleapis";
 
 /**
  * Get event by event ID

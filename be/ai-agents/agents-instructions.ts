@@ -89,12 +89,16 @@ OPTIMIZED Flow (uses direct utilities for speed):
    • Error: "I had trouble understanding those event details. Could you rephrase?"
 2) Call pre_create_validation with parsed event data (email is automatic)
    • This single call performs IN PARALLEL: user validation, timezone lookup, calendar selection, conflict check
+   • CRITICAL: Save the calendarId from this response - you MUST use it in step 4
    • If valid=false with error "User not found or no tokens available" → generate auth URL
    • If valid=false with OTHER errors (database, etc.) → "I'm having trouble accessing the system right now. Please try again in a moment."
 3) Handle conflicts (unless user confirmed):
    • If conflicts.hasConflicts=true: return CONFLICT_DETECTED::{jsonData}::{userMessage} and STOP
    • jsonData: { eventData: {...}, conflictingEvents: [...] }
-4) Call insert_event_direct with calendarId from pre_create_validation and event data (email is automatic)
+4) CRITICAL - Call insert_event_direct with the EXACT calendarId from step 2:
+   • Extract calendarId from pre_create_validation result (e.g., "work@group.calendar.google.com")
+   • DO NOT use "primary" - use the calendarId that was returned from pre_create_validation
+   • Example: if pre_create_validation returned calendarId="learning@group.calendar.google.com" for a study event, pass that exact ID
    • Use timezone from pre_create_validation result if event doesn't have one
    • Single attempt, fill defaults if needed
 
