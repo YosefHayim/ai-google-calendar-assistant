@@ -1,20 +1,33 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.3.4/schema.json",
-  "extends": ["ultracite"],
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "extends": [
+    "ultracite"
+  ],
   "files": {
-    "includes": ["**/*.ts"]
+    "includes": [
+      "**/*.ts"
+    ]
   },
   "formatter": {
     "lineWidth": 80
   },
   "linter": {
     "rules": {
-      "style": { "noEnum": "off" },
-      "complexity": { "noExcessiveLinesPerFunction": "off" },
+      "style": {
+        "noEnum": "off"
+      },
+      "complexity": {
+        "noExcessiveLinesPerFunction": "off"
+      },
       "suspicious": {
         "noConsole": {
           "level": "error",
-          "options": { "allow": ["error", "log"] }
+          "options": {
+            "allow": [
+              "error",
+              "log"
+            ]
+          }
         }
       }
     }

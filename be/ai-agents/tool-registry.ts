@@ -114,7 +114,8 @@ export const DIRECT_TOOLS = {
   // Validate user - email from context
   validate_user_direct: tool<z.ZodObject<Record<string, never>>, AgentContext>({
     name: "validate_user_direct",
-    description: "Validates if user exists in database. Returns { exists: boolean, user?: object }. Fast direct DB call. Email is automatically provided from user context.",
+    description:
+      "Validates if user exists in database. Returns { exists: boolean, user?: object }. Fast direct DB call. Email is automatically provided from user context.",
     parameters: z.object({}),
     execute: async (_params, runContext) => {
       const email = getEmailFromContext(runContext, "validate_user_direct");
@@ -126,7 +127,8 @@ export const DIRECT_TOOLS = {
   // Get timezone - email from context
   get_timezone_direct: tool<z.ZodObject<Record<string, never>>, AgentContext>({
     name: "get_timezone_direct",
-    description: "Gets user's default timezone. First checks DB, then falls back to Google Calendar settings. Returns { timezone: string }. Email is automatically provided from user context.",
+    description:
+      "Gets user's default timezone. First checks DB, then falls back to Google Calendar settings. Returns { timezone: string }. Email is automatically provided from user context.",
     parameters: z.object({}),
     execute: async (_params, runContext) => {
       const email = getEmailFromContext(runContext, "get_timezone_direct");
@@ -145,7 +147,8 @@ export const DIRECT_TOOLS = {
     AgentContext
   >({
     name: "select_calendar_direct",
-    description: "Selects best calendar for event using rules-based matching. Returns { calendarId, calendarName, matchReason }. Email is automatically provided from user context.",
+    description:
+      "Selects best calendar for event using rules-based matching. Returns { calendarId, calendarName, matchReason }. Email is automatically provided from user context.",
     parameters: z.object({
       summary: z.coerce.string().optional(),
       description: z.coerce.string().optional(),
@@ -168,7 +171,8 @@ export const DIRECT_TOOLS = {
     AgentContext
   >({
     name: "check_conflicts_direct",
-    description: "Checks for event conflicts in time range. Returns { hasConflicts: boolean, conflictingEvents: array }. Email is automatically provided from user context.",
+    description:
+      "Checks for event conflicts in time range. Returns { hasConflicts: boolean, conflictingEvents: array }. Email is automatically provided from user context.",
     parameters: z.object({
       calendarId: z.coerce.string().default("primary"),
       start: makeEventTime(),
@@ -377,9 +381,7 @@ export const DIRECT_TOOLS = {
     name: "format_gaps_display",
     description: TOOLS_DESCRIPTION.formatGapsForDisplay,
     parameters: z.object({
-      gapsJson: z.coerce
-        .string()
-        .describe("The gaps array from analyze_gaps_direct as a JSON string."),
+      gapsJson: z.coerce.string().describe("The gaps array from analyze_gaps_direct as a JSON string."),
     }),
     execute: async ({ gapsJson }) => {
       let gaps: Parameters<typeof formatGapsForDisplay>[0];
