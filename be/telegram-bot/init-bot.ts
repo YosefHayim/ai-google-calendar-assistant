@@ -1,6 +1,7 @@
 import { run, type RunnerHandle } from "@grammyjs/runner";
 import { Bot, BotError, type Context, type SessionFlavor, session } from "grammy";
 import { autoRetry } from "@grammyjs/auto-retry";
+import { InputGuardrailTripwireTriggered } from "@openai/agents";
 import { ORCHESTRATOR_AGENT } from "@/ai-agents";
 import { env } from "@/config";
 import type { SessionData } from "@/types";
@@ -18,7 +19,6 @@ import {
   isDuplicateMessage,
   addMessageToContext,
   buildContextPrompt,
-  getConversationContext,
   summarizeMessages,
   storeEmbeddingAsync,
   getRelevantContext,
@@ -227,11 +227,10 @@ const handleAgentRequest = async (ctx: GlobalContext, message: string): Promise<
   const telegramUserId = ctx.from?.id!;
 
   try {
-    await addMessageToContext(chatId, telegramUserId, { role: "user", content: message }, summarizeMessages);
+    const conversationContext = await addMessageToContext(chatId, telegramUserId, { role: "user", content: message }, summarizeMessages);
 
     storeEmbeddingAsync(chatId, telegramUserId, message, "user");
 
-    const conversationContext = await getConversationContext(chatId, telegramUserId);
     const contextPrompt = buildContextPrompt(conversationContext);
 
     const semanticContext = await getRelevantContext(telegramUserId, message, {
@@ -242,6 +241,8 @@ const handleAgentRequest = async (ctx: GlobalContext, message: string): Promise<
     const fullContext = [contextPrompt, semanticContext].filter(Boolean).join("\n\n");
 
     const prompt = buildAgentPromptWithContext(ctx.session.email, message, fullContext);
+
+    logger.info(`Telegram Bot: Prompt length for user ${telegramUserId}: ${prompt.length} chars (context: ${fullContext.length}, message: ${message.length})`);
 
     const userUuid = await getUserIdFromTelegram(telegramUserId);
 
@@ -267,6 +268,13 @@ const handleAgentRequest = async (ctx: GlobalContext, message: string): Promise<
       await ctx.reply(finalOutput || "No output received from AI Agent.");
     }
   } catch (error) {
+    // Handle guardrail trips gracefully - this is expected behavior, not an error
+    if (error instanceof InputGuardrailTripwireTriggered) {
+      logger.warn(`Telegram Bot: Guardrail triggered for user ${telegramUserId}: ${error.message}`);
+      await ctx.reply(error.message);
+      return;
+    }
+
     logger.error(`Telegram Bot: Agent request error for user ${telegramUserId}: ${JSON.stringify(error)}`);
     await ctx.reply("Error processing your request.");
   } finally {
@@ -485,24 +493,25 @@ bot.on("message", async (ctx) => {
 let runnerHandle: RunnerHandle | null = null;
 
 // Bot menu commands - displayed in Telegram's command menu
+// Ally brand voice: executive-focused, productivity-oriented, personal secretary vibe
 const BOT_COMMANDS = [
-  { command: "today", description: "Today's events" },
+  { command: "today", description: "Today's schedule" },
   { command: "tomorrow", description: "Tomorrow's agenda" },
-  { command: "week", description: "7-day overview" },
-  { command: "month", description: "Monthly view" },
-  { command: "free", description: "Find free time" },
-  { command: "busy", description: "Show busy times" },
-  { command: "create", description: "Create new event" },
-  { command: "update", description: "Modify an event" },
-  { command: "delete", description: "Delete an event" },
-  { command: "search", description: "Find events" },
-  { command: "analytics", description: "Time analytics & compare" },
-  { command: "calendars", description: "List your calendars" },
-  { command: "status", description: "Connection status" },
-  { command: "settings", description: "Preferences" },
-  { command: "help", description: "All commands" },
-  { command: "feedback", description: "Share thoughts" },
-  { command: "exit", description: "End session" },
+  { command: "week", description: "Week at a glance" },
+  { command: "month", description: "Monthly overview" },
+  { command: "free", description: "Find open slots" },
+  { command: "busy", description: "View commitments" },
+  { command: "create", description: "Schedule something" },
+  { command: "update", description: "Reschedule or edit" },
+  { command: "delete", description: "Cancel an event" },
+  { command: "search", description: "Search calendar" },
+  { command: "analytics", description: "Time insights" },
+  { command: "calendars", description: "Your calendars" },
+  { command: "status", description: "Check connection" },
+  { command: "settings", description: "Ally settings" },
+  { command: "help", description: "How Ally helps" },
+  { command: "feedback", description: "Give feedback" },
+  { command: "exit", description: "End conversation" },
 ];
 
 // Register bot commands with Telegram
