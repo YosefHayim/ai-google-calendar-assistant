@@ -308,6 +308,8 @@ export type GapBoundaryEvent = {
   location: string | null;
   /** Calendar ID this event belongs to */
   calendarId: string;
+  /** Direct link to the event in Google Calendar */
+  htmlLink: string | null;
 };
 
 /**
@@ -372,7 +374,9 @@ export type GapCandidateDTO = {
   durationMinutes: number;
   durationFormatted: string;
   precedingEventSummary: string;
+  precedingEventLink: string | null;
   followingEventSummary: string;
+  followingEventLink: string | null;
   suggestion: string | null;
   confidence: number;
 };
