@@ -32,59 +32,39 @@ const isToolCallItem = (item: AgentInputItem): boolean => {
 };
 
 /**
- * OpenAI API has a bidirectional constraint for reasoning items:
- * 1. Reasoning items must be immediately followed by their output item (message or tool call)
- * 2. Message items produced WITH reasoning require their preceding reasoning item
+ * OpenAI API has a bidirectional constraint for reasoning items (GPT-5/o1/o3 models):
+ * 1. Reasoning items (rs_xxx) must be immediately followed by their output item
+ * 2. Message items (msg_xxx) produced WITH reasoning require their preceding reasoning item
  *
- * When persisting conversation history and restoring it later, we must handle BOTH cases:
- * - Error: "Item 'rs_xxx' of type 'reasoning' was provided without its required following item."
- * - Error: "Item 'msg_xxx' of type 'message' was provided without its required 'reasoning' item: 'rs_xxx'."
+ * Errors this prevents:
+ * - "Item 'rs_xxx' of type 'reasoning' was provided without its required following item."
+ * - "Item 'msg_xxx' of type 'message' was provided without its required 'reasoning' item: 'rs_xxx'."
  *
- * Strategy: Remove reasoning items AND their dependent following items (messages/tool calls)
- * that were produced together. This safely removes the paired items while preserving
- * independent messages (user messages, non-reasoning assistant responses).
- *
- * For tool-calling workflows, we preserve reasoning+tool_call pairs since they're needed
- * for the function_call_output cycle to work correctly.
+ * Strategy: Remove ALL reasoning items and ALL assistant messages with msg_ IDs.
+ * Only keep: user messages (no msg_ prefix), tool calls, and function outputs.
+ * This is aggressive but safe - it clears any reasoning-dependent state.
  */
 function filterReasoningItems(items: AgentInputItem[]): AgentInputItem[] {
   if (!items?.length) return [];
 
-  const filtered: AgentInputItem[] = [];
-  let skipNextItem = false;
   let removedCount = 0;
-
-  for (let i = 0; i < items.length; i++) {
-    const item = items[i];
-    const nextItem = items[i + 1];
+  const filtered = items.filter((item) => {
     const typedItem = item as ItemWithType;
 
-    if (skipNextItem) {
-      skipNextItem = false;
-      logger.warn(
-        `SupabaseSession: Filtering reasoning-dependent item (id: ${typedItem.id || "unknown"}, type: ${typedItem.type || "unknown"})`
-      );
-      removedCount++;
-      continue;
-    }
-
     if (isReasoningItem(item)) {
-      if (nextItem && isToolCallItem(nextItem)) {
-        filtered.push(item);
-        logger.debug(`SupabaseSession: Keeping reasoning item for tool call (id: ${typedItem.id || "unknown"})`);
-      } else if (nextItem && isMessageItem(nextItem)) {
-        skipNextItem = true;
-        logger.warn(`SupabaseSession: Filtering reasoning item with dependent message (id: ${typedItem.id || "unknown"})`);
-        removedCount++;
-      } else {
-        logger.warn(`SupabaseSession: Filtering standalone reasoning item (id: ${typedItem.id || "unknown"})`);
-        removedCount++;
-      }
-      continue;
+      logger.warn(`SupabaseSession: Filtering reasoning item (id: ${typedItem.id || "unknown"})`);
+      removedCount++;
+      return false;
     }
 
-    filtered.push(item);
-  }
+    if (isMessageItem(item) && typedItem.role === "assistant") {
+      logger.warn(`SupabaseSession: Filtering assistant message that may require reasoning (id: ${typedItem.id || "unknown"})`);
+      removedCount++;
+      return false;
+    }
+
+    return true;
+  });
 
   if (removedCount > 0) {
     logger.info(`SupabaseSession: Filtered ${removedCount} reasoning-related item(s) from session history`);

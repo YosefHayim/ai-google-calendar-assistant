@@ -1,9 +1,13 @@
 import { SUPPORTED_LOCALES, createTranslator, getTranslatorFromLanguageCode } from "../i18n";
-import type { SupportedLocale, TranslationSection } from "../i18n";
 
 import type { GlobalContext } from "../init-bot";
 import { InlineKeyboard } from "grammy";
-import { ResponseBuilder } from "../../response-system";
+import { ORCHESTRATOR_AGENT } from "@/ai-agents";
+import { ResponseBuilder } from "../response-system";
+import { SupabaseAgentSession } from "@/ai-agents/sessions";
+import type { SupportedLocale } from "../i18n";
+import { getUserIdFromTelegram } from "./conversation-history";
+import { logger } from "@/utils/logger";
 import { resetSession } from "./session";
 
 const buildSectionsFromKeys = (
@@ -81,6 +85,27 @@ export const handleHelpCommand = async (ctx: GlobalContext): Promise<void> => {
 
 export const handleExitCommand = async (ctx: GlobalContext): Promise<void> => {
   resetSession(ctx);
+
+  const telegramUserId = ctx.from?.id;
+  const chatId = ctx.chat?.id || ctx.session.chatId;
+
+  if (telegramUserId) {
+    try {
+      const userUuid = await getUserIdFromTelegram(telegramUserId);
+      if (userUuid) {
+        const sessionId = SupabaseAgentSession.generateSessionId(userUuid, ORCHESTRATOR_AGENT.name, chatId.toString());
+        const agentSession = new SupabaseAgentSession({
+          sessionId,
+          userId: userUuid,
+          agentName: ORCHESTRATOR_AGENT.name,
+        });
+        await agentSession.clearSession();
+        logger.info(`Telegram Bot: Cleared agent session for user ${telegramUserId} (uuid: ${userUuid})`);
+      }
+    } catch (error) {
+      logger.error(`Telegram Bot: Failed to clear agent session for user ${telegramUserId}: ${error}`);
+    }
+  }
 
   const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
 
