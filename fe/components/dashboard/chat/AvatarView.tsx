@@ -1,25 +1,25 @@
-'use client'
+"use client";
 
-import React from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
-import { MessageSquare } from 'lucide-react'
-import { Message } from '@/types'
-import { AssistantAvatar } from './AssistantAvatar'
-import { StreamingTypewriter } from '@/components/ui/streaming-typewriter'
-import { MessageActions } from './MessageActions'
+import React from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { MessageSquare } from "lucide-react";
+import { Message } from "@/types";
+import { AssistantAvatar } from "./AssistantAvatar";
+import { StreamingTypewriter } from "@/components/ui/streaming-typewriter";
+import { MessageActions } from "./MessageActions";
 
 interface AvatarViewProps {
-  messages: Message[]
-  isRecording: boolean
-  isSpeaking: boolean
-  isLoading: boolean
-  isStreaming: boolean
-  streamingMessageId: string | null
-  onResend: (text: string) => void
-  onEdit: (text: string) => void
-  onSpeak: (text: string) => void
-  onTypewriterComplete?: () => void
-  avatarScrollRef: React.RefObject<HTMLDivElement>
+  messages: Message[];
+  isRecording: boolean;
+  isSpeaking: boolean;
+  isLoading: boolean;
+  isStreaming: boolean;
+  streamingMessageId: string | null;
+  onResend: (text: string) => void;
+  onEdit: (text: string) => void;
+  onSpeak: (text: string) => void;
+  onTypewriterComplete?: () => void;
+  avatarScrollRef: React.RefObject<HTMLDivElement | null>;
 }
 
 export const AvatarView: React.FC<AvatarViewProps> = ({
@@ -35,12 +35,12 @@ export const AvatarView: React.FC<AvatarViewProps> = ({
   onTypewriterComplete,
   avatarScrollRef,
 }) => {
-  const hasConversation = messages.length > 1
+  const hasConversation = messages.length > 1;
 
   return (
     <div className="absolute inset-0 z-10  dark:bg-zinc-950 flex flex-col md:flex-row items-center justify-center p-4">
       <div
-        className={`flex flex-col items-center justify-center transition-all duration-700 w-full ${hasConversation ? 'md:w-1/2' : 'w-full'}`}
+        className={`flex flex-col items-center justify-center transition-all duration-700 w-full ${hasConversation ? "md:w-1/2" : "w-full"}`}
       >
         <AssistantAvatar
           isRecording={isRecording}
@@ -69,15 +69,19 @@ export const AvatarView: React.FC<AvatarViewProps> = ({
             </div>
             <div className="flex-1 space-y-2">
               {messages.map((msg) => {
-                const isCurrentlyStreaming = msg.id === streamingMessageId && isStreaming
+                const isCurrentlyStreaming =
+                  msg.id === streamingMessageId && isStreaming;
 
                 return (
-                  <div key={msg.id} className="animate-in fade-in slide-in-from-right-2 duration-300 flex flex-col">
+                  <div
+                    key={msg.id}
+                    className="animate-in fade-in slide-in-from-right-2 duration-300 flex flex-col"
+                  >
                     <div
                       className={`p-3 rounded-xl text-xs leading-relaxed max-w-[90%] shadow-sm ${
-                        msg.role === 'assistant'
-                          ? 'bg-zinc-100 dark:bg-zinc-900 text-zinc-800 dark:text-zinc-200 ml-0 mr-auto rounded-tl-none'
-                          : 'bg-primary text-white ml-auto mr-0 rounded-tr-none'
+                        msg.role === "assistant"
+                          ? "bg-zinc-100 dark:bg-zinc-900 text-zinc-800 dark:text-zinc-200 ml-0 mr-auto rounded-tl-none"
+                          : "bg-primary text-white ml-auto mr-0 rounded-tr-none"
                       }`}
                     >
                       {isCurrentlyStreaming ? (
@@ -103,7 +107,7 @@ export const AvatarView: React.FC<AvatarViewProps> = ({
                       />
                     )}
                   </div>
-                )
+                );
               })}
               <div ref={avatarScrollRef} />
             </div>
@@ -111,5 +115,5 @@ export const AvatarView: React.FC<AvatarViewProps> = ({
         )}
       </AnimatePresence>
     </div>
-  )
-}
+  );
+};

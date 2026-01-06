@@ -1,25 +1,25 @@
-'use client'
+"use client";
 
-import { AlertCircle } from 'lucide-react'
-import { Message } from '@/types'
-import { MessageActions } from './MessageActions'
-import MessageBubble from '@/components/dashboard/chat/MessageBubble'
-import React from 'react'
-import { Skeleton } from '@/components/ui/skeleton'
-import { StreamingTypewriter } from '@/components/ui/streaming-typewriter'
+import { AlertCircle } from "lucide-react";
+import { Message } from "@/types";
+import { MessageActions } from "./MessageActions";
+import MessageBubble from "@/components/dashboard/chat/MessageBubble";
+import React from "react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { StreamingTypewriter } from "@/components/ui/streaming-typewriter";
 
 interface ChatViewProps {
-  messages: Message[]
-  isLoading: boolean
-  isStreaming: boolean
-  streamingMessageId: string | null
-  error: string | null
-  isSpeaking: boolean
-  onResend: (text: string) => void
-  onEdit: (text: string) => void
-  onSpeak: (text: string) => void
-  onTypewriterComplete?: () => void
-  scrollRef: React.RefObject<HTMLDivElement>
+  messages: Message[];
+  isLoading: boolean;
+  isStreaming: boolean;
+  streamingMessageId: string | null;
+  error: string | null;
+  isSpeaking: boolean;
+  onResend: (text: string) => void;
+  onEdit: (text: string) => void;
+  onSpeak: (text: string) => void;
+  onTypewriterComplete?: () => void;
+  scrollRef: React.RefObject<HTMLDivElement | null>;
 }
 
 export const ChatView: React.FC<ChatViewProps> = ({
@@ -39,7 +39,8 @@ export const ChatView: React.FC<ChatViewProps> = ({
     <div className="h-full overflow-y-auto px-4 pt-24 pb-32">
       <div id="tour-chat-history overflow-y-auto h-[1000px]">
         {messages.map((msg) => {
-          const isCurrentlyStreaming = msg.id === streamingMessageId && isStreaming
+          const isCurrentlyStreaming =
+            msg.id === streamingMessageId && isStreaming;
 
           return (
             <div key={msg.id} className="group mb-8">
@@ -61,9 +62,16 @@ export const ChatView: React.FC<ChatViewProps> = ({
                 </div>
               ) : (
                 // Regular message
-                <MessageBubble role={msg.role} content={msg.content} timestamp={msg.timestamp} hideTimestamp={true} />
+                <MessageBubble
+                  role={msg.role}
+                  content={msg.content}
+                  timestamp={msg.timestamp}
+                  hideTimestamp={true}
+                />
               )}
-              <div className={`flex w-full ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+              <div
+                className={`flex w-full ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+              >
                 <div className="max-w-[85%] md:max-w-[75%] w-full">
                   {!isCurrentlyStreaming && (
                     <MessageActions
@@ -77,7 +85,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
                 </div>
               </div>
             </div>
-          )
+          );
         })}
         {isLoading && !isStreaming && (
           <div className="flex justify-start mb-6">
@@ -88,7 +96,9 @@ export const ChatView: React.FC<ChatViewProps> = ({
                   <div className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:0.2s]"></div>
                   <div className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:0.4s]"></div>
                 </div>
-                <span className="text-xs font-medium text-zinc-500 italic">Ally is thinking...</span>
+                <span className="text-xs font-medium text-zinc-500 italic">
+                  Ally is thinking...
+                </span>
               </div>
               <div className="space-y-2">
                 <Skeleton className="h-3 w-48" />
@@ -108,5 +118,5 @@ export const ChatView: React.FC<ChatViewProps> = ({
       )}
       <div ref={scrollRef} />
     </div>
-  )
-}
+  );
+};

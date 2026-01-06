@@ -1,66 +1,70 @@
-'use client'
+"use client";
 
-import * as React from 'react'
-import { useState, useEffect, useRef } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import * as React from "react";
+import { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence, type Variants } from "framer-motion";
 
 interface AnimatedTextCycleProps {
-  words: string[]
-  interval?: number
-  className?: string
+  words: string[];
+  interval?: number;
+  className?: string;
 }
 
-export default function AnimatedTextCycle({ words, interval = 5000, className = '' }: AnimatedTextCycleProps) {
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const [width, setWidth] = useState('auto')
-  const measureRef = useRef<HTMLDivElement>(null)
+export default function AnimatedTextCycle({
+  words,
+  interval = 5000,
+  className = "",
+}: AnimatedTextCycleProps) {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [width, setWidth] = useState("auto");
+  const measureRef = useRef<HTMLDivElement>(null);
 
   // Get the width of the current word
   useEffect(() => {
     if (measureRef.current) {
-      const elements = measureRef.current.children
+      const elements = measureRef.current.children;
       if (elements.length > currentIndex) {
         // Add a small buffer to prevent text wrapping
-        const newWidth = elements[currentIndex].getBoundingClientRect().width
-        setWidth(`${newWidth}px`)
+        const newWidth = elements[currentIndex].getBoundingClientRect().width;
+        setWidth(`${newWidth}px`);
       }
     }
-  }, [currentIndex, words])
+  }, [currentIndex, words]);
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % words.length)
-    }, interval)
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % words.length);
+    }, interval);
 
-    return () => clearInterval(timer)
-  }, [interval, words.length])
+    return () => clearInterval(timer);
+  }, [interval, words.length]);
 
   // Container animation for the whole word
-  const containerVariants = {
+  const containerVariants: Variants = {
     hidden: {
       y: -20,
       opacity: 0,
-      filter: 'blur(8px)',
+      filter: "blur(8px)",
     },
     visible: {
       y: 0,
       opacity: 1,
-      filter: 'blur(0px)',
+      filter: "blur(0px)",
       transition: {
         duration: 0.4,
-        ease: 'easeOut',
+        ease: "easeOut" as const,
       },
     },
     exit: {
       y: 20,
       opacity: 0,
-      filter: 'blur(8px)',
+      filter: "blur(8px)",
       transition: {
         duration: 0.3,
-        ease: 'easeIn',
+        ease: "easeIn" as const,
       },
     },
-  }
+  };
 
   return (
     <>
@@ -69,7 +73,7 @@ export default function AnimatedTextCycle({ words, interval = 5000, className = 
         ref={measureRef}
         aria-hidden="true"
         className="absolute opacity-0 pointer-events-none"
-        style={{ visibility: 'hidden' }}
+        style={{ visibility: "hidden" }}
       >
         {words.map((word, i) => (
           <span key={i} className={className}>
@@ -84,7 +88,7 @@ export default function AnimatedTextCycle({ words, interval = 5000, className = 
         animate={{
           width,
           transition: {
-            type: 'spring',
+            type: "spring",
             stiffness: 150,
             damping: 15,
             mass: 1.2,
@@ -99,12 +103,12 @@ export default function AnimatedTextCycle({ words, interval = 5000, className = 
             initial="hidden"
             animate="visible"
             exit="exit"
-            style={{ whiteSpace: 'nowrap' }}
+            style={{ whiteSpace: "nowrap" }}
           >
             {words[currentIndex]}
           </motion.span>
         </AnimatePresence>
       </motion.span>
     </>
-  )
+  );
 }
