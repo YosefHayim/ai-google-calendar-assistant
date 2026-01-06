@@ -130,7 +130,7 @@ const classifyConfirmationResponse = (text: string): MessageActionType => {
 
 const handleConfirmation = async (ctx: GlobalContext): Promise<void> => {
   const pending = ctx.session.pendingConfirmation
-  const t = getTranslatorFromLanguageCode(ctx.session.codeLang)
+  const { t } = getTranslatorFromLanguageCode(ctx.session.codeLang)
 
   if (!pending) {
     return
@@ -165,7 +165,7 @@ const handleConfirmation = async (ctx: GlobalContext): Promise<void> => {
     })
 
     if (!finalOutput) {
-      await ctx.reply(t.translations.errors.noOutputFromAgent)
+      await ctx.reply(t("errors.noOutputFromAgent"))
       return
     }
 
@@ -176,16 +176,16 @@ const handleConfirmation = async (ctx: GlobalContext): Promise<void> => {
     await ctx.reply(finalOutput)
   } catch (error) {
     logger.error(`Telegram Bot: Confirmation error: ${error}`)
-    await ctx.reply(t.translations.errors.eventCreationError)
+    await ctx.reply(t("errors.eventCreationError"))
   } finally {
     ctx.session.isProcessing = false
   }
 }
 
 const handleCancellation = async (ctx: GlobalContext): Promise<void> => {
-  const t = getTranslatorFromLanguageCode(ctx.session.codeLang)
+  const { t } = getTranslatorFromLanguageCode(ctx.session.codeLang)
   ctx.session.pendingConfirmation = undefined
-  await ctx.reply(t.translations.common.eventCreationCancelled)
+  await ctx.reply(t("common.eventCreationCancelled"))
 }
 
 const handleConflictResponse = async (ctx: GlobalContext, output: string): Promise<void> => {
@@ -216,7 +216,7 @@ const handleAgentRequest = async (ctx: GlobalContext, message: string): Promise<
   ctx.session.isProcessing = true
   const chatId = ctx.chat?.id || ctx.session.chatId
   const telegramUserId = ctx.from?.id!
-  const t = getTranslatorFromLanguageCode(ctx.session.codeLang)
+  const { t } = getTranslatorFromLanguageCode(ctx.session.codeLang)
 
   try {
     const conversationContext = await addMessageToContext(
@@ -264,7 +264,7 @@ const handleAgentRequest = async (ctx: GlobalContext, message: string): Promise<
     if (finalOutput?.startsWith("CONFLICT_DETECTED::")) {
       await handleConflictResponse(ctx, finalOutput)
     } else {
-      await ctx.reply(finalOutput || t.translations.errors.noOutputFromAgent)
+      await ctx.reply(finalOutput || t("errors.noOutputFromAgent"))
     }
   } catch (error) {
     if (error instanceof InputGuardrailTripwireTriggered) {
@@ -274,7 +274,7 @@ const handleAgentRequest = async (ctx: GlobalContext, message: string): Promise<
     }
 
     logger.error(`Telegram Bot: Agent request error for user ${telegramUserId}: ${JSON.stringify(error)}`)
-    await ctx.reply(t.translations.errors.processingError)
+    await ctx.reply(t("errors.processingError"))
   } finally {
     ctx.session.isProcessing = false
   }
@@ -282,7 +282,7 @@ const handleAgentRequest = async (ctx: GlobalContext, message: string): Promise<
 
 const handlePendingConfirmation = async (ctx: GlobalContext, text: string): Promise<void> => {
   const action = classifyConfirmationResponse(text)
-  const t = getTranslatorFromLanguageCode(ctx.session.codeLang)
+  const { t } = getTranslatorFromLanguageCode(ctx.session.codeLang)
 
   switch (action) {
     case MessageAction.CONFIRM:
@@ -294,25 +294,27 @@ const handlePendingConfirmation = async (ctx: GlobalContext, text: string): Prom
       break
 
     case MessageAction.OTHER:
-      await ctx.reply(t.translations.errors.pendingEventPrompt)
+      await ctx.reply(t("errors.pendingEventPrompt"))
       break
   }
 }
 
 bot.callbackQuery("settings:change_email", async (ctx) => {
   await ctx.answerCallbackQuery()
-  const t = getTranslatorFromLanguageCode(ctx.session.codeLang)
-  const strings = t.translations.commands.changeEmail
+  const { t } = getTranslatorFromLanguageCode(ctx.session.codeLang)
 
   if (!ctx.session.email) {
-    await ctx.reply(strings.notAuthenticatedError)
+    await ctx.reply(t("commands.changeEmail.notAuthenticatedError"))
     return
   }
 
   ctx.session.awaitingEmailChange = true
-  await ctx.reply(`${strings.currentEmailText} <code>${ctx.session.email}</code>\n\n${strings.enterNewEmailPrompt}`, {
-    parse_mode: "HTML",
-  })
+  await ctx.reply(
+    `${t("commands.changeEmail.currentEmailText")} <code>${ctx.session.email}</code>\n\n${t("commands.changeEmail.enterNewEmailPrompt")}`,
+    {
+      parse_mode: "HTML",
+    }
+  )
 })
 
 bot.callbackQuery("settings:reconnect_google", async (ctx) => {
@@ -338,7 +340,7 @@ bot.callbackQuery(/^language:(.+)$/, async (ctx) => {
 bot.on("message", async (ctx) => {
   const msgId = ctx.message.message_id
   const text = ctx.message.text
-  const t = getTranslatorFromLanguageCode(ctx.session.codeLang)
+  const { t } = getTranslatorFromLanguageCode(ctx.session.codeLang)
 
   if (isDuplicateMessage(ctx, msgId)) return
 
@@ -473,13 +475,13 @@ bot.on("message", async (ctx) => {
   }
 
   if (ctx.session.isProcessing) {
-    await ctx.reply(t.translations.errors.processingPreviousRequest)
+    await ctx.reply(t("errors.processingPreviousRequest"))
     return
   }
 
   if (!ctx.session.agentActive) {
     ctx.session.agentActive = true
-    await ctx.reply(t.translations.common.typeExitToStop)
+    await ctx.reply(t("common.typeExitToStop"))
   }
 
   await handleAgentRequest(ctx, text)

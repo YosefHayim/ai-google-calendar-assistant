@@ -1,16 +1,4 @@
-export type {
-  SupportedLocale,
-  TextDirection,
-  TranslatedListItem,
-  TranslatedSection,
-  CommandTranslations,
-  AuthTranslations,
-  ErrorTranslations,
-  CommonTranslations,
-  BotMenuTranslations,
-  LocaleTranslations,
-  Translator,
-} from "./types"
+export type { SupportedLocale, TextDirection, I18nTranslator, TranslationSection } from "./types"
 
 export {
   createTranslator,
@@ -18,7 +6,14 @@ export {
   getLocaleFromLanguageCode,
   getDirection,
   SUPPORTED_LOCALES,
+  initI18n,
+  initI18nSync,
+  getI18nInstance,
 } from "./translator"
+
+export { LOCALE_CONFIG, DEFAULT_LOCALE, LANGUAGE_CODE_MAP, I18N_RESOURCES } from "./config"
 
 export { en } from "./locales/en"
 export { he } from "./locales/he"
+export { de } from "./locales/de"
+export { ar } from "./locales/ar"

@@ -10,10 +10,6 @@ import { getTranslatorFromLanguageCode } from "../i18n"
 
 const OTP_EXPIRY_MS = 10 * 60 * 1000
 
-const interpolate = (template: string, params: Record<string, string>): string => {
-  return template.replace(/\{\{(\w+)\}\}/g, (_, key) => params[key] || `{{${key}}}`)
-}
-
 const sendEmailOtp = async (email: string): Promise<{ success: boolean; error?: string }> => {
   try {
     const { error } = await SUPABASE.auth.signInWithOtp({
@@ -84,8 +80,7 @@ export const authTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
     session.messageCount = 0
   }
 
-  const t = getTranslatorFromLanguageCode(session.codeLang)
-  const authStrings = t.translations.auth
+  const { t } = getTranslatorFromLanguageCode(session.codeLang)
 
   try {
     const { data: telegramUser, error } = await SUPABASE
@@ -127,7 +122,7 @@ export const authTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
 
       if (Date.now() > expiresAt) {
         session.pendingEmailVerification = undefined
-        await ctx.reply(authStrings.otpExpired)
+        await ctx.reply(t("auth.otpExpired"))
         return
       }
 
@@ -137,7 +132,7 @@ export const authTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
         if (!verification.success) {
           auditLogger.authFail(from.id, verification.error || "OTP verification failed", pendingEmail)
           await ctx.reply(
-            `${authStrings.otpInvalidError}\n\n${interpolate(authStrings.otpInvalidWithNewEmail, { error: verification.error || "" })}`
+            `${t("auth.otpInvalidError")}\n\n${t("auth.otpInvalidWithNewEmail", { error: verification.error || "" })}`
           )
           return
         }
@@ -173,7 +168,7 @@ export const authTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
 
           if (userError || !newUser) {
             logger.error(`Telegram Bot: Auth: Failed to create user: ${userError?.message}`)
-            await ctx.reply(authStrings.dbSaveError)
+            await ctx.reply(t("auth.dbSaveError"))
             session.email = undefined
             return
           }
@@ -228,12 +223,12 @@ export const authTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
 
         if (insertRes.error || !insertRes.data) {
           logger.error(`Telegram Bot: Auth: Save error: ${insertRes.error?.message}`)
-          await ctx.reply(authStrings.dbSaveError)
+          await ctx.reply(t("auth.dbSaveError"))
           session.email = undefined
           return
         }
 
-        await ctx.reply(authStrings.emailVerifiedSuccess)
+        await ctx.reply(t("auth.emailVerifiedSuccess"))
         session.messageCount++
         return next()
       }
@@ -243,7 +238,7 @@ export const authTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
         const otpResult = await sendEmailOtp(newEmail)
 
         if (!otpResult.success) {
-          await ctx.reply(interpolate(authStrings.otpSendFailed, { error: otpResult.error || "" }))
+          await ctx.reply(t("auth.otpSendFailed", { error: otpResult.error || "" }))
           return
         }
 
@@ -252,16 +247,16 @@ export const authTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
           expiresAt: Date.now() + OTP_EXPIRY_MS,
         }
 
-        await ctx.reply(interpolate(authStrings.otpSentToNewEmail, { email: newEmail }))
+        await ctx.reply(t("auth.otpSentToNewEmail", { email: newEmail }))
         return
       }
 
-      await ctx.reply(authStrings.enterOtpOrNewEmail)
+      await ctx.reply(t("auth.enterOtpOrNewEmail"))
       return
     }
 
     if (!(text && isEmail(text))) {
-      await ctx.reply(authStrings.welcomePrompt)
+      await ctx.reply(t("auth.welcomePrompt"))
       return
     }
 
@@ -269,7 +264,7 @@ export const authTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
     const otpResult = await sendEmailOtp(emailToVerify)
 
     if (!otpResult.success) {
-      await ctx.reply(interpolate(authStrings.otpSendFailed, { error: otpResult.error || "" }))
+      await ctx.reply(t("auth.otpSendFailed", { error: otpResult.error || "" }))
       return
     }
 
@@ -278,7 +273,7 @@ export const authTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
       expiresAt: Date.now() + OTP_EXPIRY_MS,
     }
 
-    await ctx.reply(interpolate(authStrings.enterOtpPrompt, { email: emailToVerify }))
+    await ctx.reply(t("auth.enterOtpPrompt", { email: emailToVerify }))
     return
   } catch (err) {
     logger.error(`Telegram Bot: Auth: Unexpected error: ${err}`)
