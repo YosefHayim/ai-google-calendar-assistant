@@ -1,15 +1,15 @@
-import { run, type RunnerHandle } from "@grammyjs/runner";
-import { Bot, BotError, type Context, type SessionFlavor, session } from "grammy";
-import { autoRetry } from "@grammyjs/auto-retry";
-import { InputGuardrailTripwireTriggered } from "@openai/agents";
-import { ORCHESTRATOR_AGENT } from "@/ai-agents";
-import { env } from "@/config";
-import type { SessionData } from "@/types";
-import { activateAgent } from "@/utils/ai";
-import { authTgHandler } from "./middleware/auth-tg-handler";
-import { googleTokenTgHandler } from "./middleware/google-token-tg-handler";
-import { sessionExpiryMiddleware } from "./middleware/session-expiry";
-import { authRateLimiter, messageRateLimiter } from "./middleware/rate-limiter";
+import { run, type RunnerHandle } from "@grammyjs/runner"
+import { Bot, BotError, type Context, type SessionFlavor, session } from "grammy"
+import { autoRetry } from "@grammyjs/auto-retry"
+import { InputGuardrailTripwireTriggered } from "@openai/agents"
+import { ORCHESTRATOR_AGENT } from "@/ai-agents"
+import { env } from "@/config"
+import type { SessionData } from "@/types"
+import { activateAgent } from "@/utils/ai"
+import { authTgHandler } from "./middleware/auth-tg-handler"
+import { googleTokenTgHandler } from "./middleware/google-token-tg-handler"
+import { sessionExpiryMiddleware } from "./middleware/session-expiry"
+import { authRateLimiter, messageRateLimiter } from "./middleware/rate-limiter"
 import {
   COMMANDS,
   CONFIRM_RESPONSES,
@@ -25,9 +25,9 @@ import {
   handlePendingEmailChange,
   initiateEmailChange,
   getUserIdFromTelegram,
-} from "./utils";
-import { generateGoogleAuthUrl } from "@/utils/auth";
-import { logger } from "@/utils/logger";
+} from "./utils"
+import { generateGoogleAuthUrl } from "@/utils/auth"
+import { logger } from "@/utils/logger"
 import {
   handleExitCommand,
   handleUsageCommand,
@@ -52,22 +52,23 @@ import {
   handleUpdateCommand,
   handleDeleteCommand,
   handleChangeEmailCommand,
-} from "./utils/commands";
+  handleLanguageCommand,
+  handleLanguageSelection,
+} from "./utils/commands"
+import { getTranslatorFromLanguageCode, SUPPORTED_LOCALES, type SupportedLocale } from "./i18n"
 
-export type GlobalContext = SessionFlavor<SessionData> & Context;
+export type GlobalContext = SessionFlavor<SessionData> & Context
 
-// Message action types for switch handling
 const MessageAction = {
   CONFIRM: "confirm",
   CANCEL: "cancel",
   OTHER: "other",
-} as const;
+} as const
 
-type MessageActionType = (typeof MessageAction)[keyof typeof MessageAction];
+type MessageActionType = (typeof MessageAction)[keyof typeof MessageAction]
 
-const bot = new Bot<GlobalContext>(env.telegramAccessToken!);
+const bot = new Bot<GlobalContext>(env.telegramAccessToken!)
 
-// Apply auto-retry plugin to handle network timeouts and transient errors
 bot.api.config.use(
   autoRetry({
     maxRetryAttempts: 5,
@@ -75,14 +76,13 @@ bot.api.config.use(
     rethrowInternalServerErrors: false,
     rethrowHttpErrors: false,
   })
-);
+)
 
-// Global error handler for unhandled errors in middleware/handlers
 bot.catch((err: BotError<GlobalContext>) => {
-  const ctx = err.ctx;
-  const error = err.error;
-  logger.error(`Telegram Bot: Error handling update ${ctx.update.update_id}: ${error}`);
-});
+  const ctx = err.ctx
+  const error = err.error
+  logger.error(`Telegram Bot: Error handling update ${ctx.update.update_id}: ${error}`)
+})
 
 bot.use(
   session({
@@ -100,66 +100,59 @@ bot.use(
       pendingConfirmation: undefined,
       googleTokens: undefined,
       pendingEmailVerification: undefined,
-      // Session expiry tracking (24h TTL)
       lastActivity: Date.now(),
-      // Email change flow state
       pendingEmailChange: undefined,
       awaitingEmailChange: undefined,
     }),
-    // Use telegram_user_id as session key for multi-device support
-    // This allows the same user to share session state across different devices/chats
     getSessionKey: (ctx) => ctx.from?.id?.toString(),
   })
-);
+)
 
-// Middleware chain order:
-// 1. Session expiry check (before auth)
-bot.use(sessionExpiryMiddleware);
-// 2. Rate limiting for auth attempts
-bot.use(authRateLimiter);
-// 3. Email/Telegram auth
-bot.use(authTgHandler);
-// 4. Google token validation
-bot.use(googleTokenTgHandler);
-// 5. Rate limiting for messages (after auth)
-bot.use(messageRateLimiter);
+bot.use(sessionExpiryMiddleware)
+bot.use(authRateLimiter)
+bot.use(authTgHandler)
+bot.use(googleTokenTgHandler)
+bot.use(messageRateLimiter)
 
-// Classify user response for confirmation flow
 const classifyConfirmationResponse = (text: string): MessageActionType => {
-  const lowerText = text.toLowerCase();
+  const lowerText = text.toLowerCase()
 
   if (CONFIRM_RESPONSES.includes(lowerText as (typeof CONFIRM_RESPONSES)[number])) {
-    return MessageAction.CONFIRM;
+    return MessageAction.CONFIRM
   }
 
   if (CANCEL_RESPONSES.includes(lowerText as (typeof CANCEL_RESPONSES)[number])) {
-    return MessageAction.CANCEL;
+    return MessageAction.CANCEL
   }
 
-  return MessageAction.OTHER;
-};
+  return MessageAction.OTHER
+}
 
-// Handler: User confirms pending action
 const handleConfirmation = async (ctx: GlobalContext): Promise<void> => {
-  const pending = ctx.session.pendingConfirmation;
+  const pending = ctx.session.pendingConfirmation
+  const t = getTranslatorFromLanguageCode(ctx.session.codeLang)
 
   if (!pending) {
-    return;
+    return
   }
 
-  ctx.session.isProcessing = true;
-  ctx.session.pendingConfirmation = undefined;
+  ctx.session.isProcessing = true
+  ctx.session.pendingConfirmation = undefined
 
-  const chatId = ctx.chat?.id || ctx.session.chatId;
-  const telegramUserId = ctx.from?.id!;
+  const chatId = ctx.chat?.id || ctx.session.chatId
+  const telegramUserId = ctx.from?.id!
 
   try {
-    await addMessageToContext(chatId, telegramUserId, { role: "user", content: "User confirmed event creation despite conflicts." }, summarizeMessages);
+    await addMessageToContext(
+      chatId,
+      telegramUserId,
+      { role: "user", content: "User confirmed event creation despite conflicts." },
+      summarizeMessages
+    )
 
-    // Get actual UUID from telegram_users table for session storage
-    const userUuid = await getUserIdFromTelegram(telegramUserId);
+    const userUuid = await getUserIdFromTelegram(telegramUserId)
 
-    const prompt = buildConfirmationPrompt(ctx.session.firstName!, ctx.session.email!, pending.eventData);
+    const prompt = buildConfirmationPrompt(ctx.session.firstName!, ctx.session.email!, pending.eventData)
     const { finalOutput } = await activateAgent(ORCHESTRATOR_AGENT, prompt, {
       email: ctx.session.email,
       session: userUuid
@@ -169,82 +162,88 @@ const handleConfirmation = async (ctx: GlobalContext): Promise<void> => {
             taskId: chatId.toString(),
           }
         : undefined,
-    });
+    })
 
     if (!finalOutput) {
-      await ctx.reply("No output received from AI Agent.");
-      return;
+      await ctx.reply(t.translations.errors.noOutputFromAgent)
+      return
     }
 
     if (finalOutput) {
-      await addMessageToContext(chatId, telegramUserId, { role: "assistant", content: finalOutput }, summarizeMessages);
+      await addMessageToContext(chatId, telegramUserId, { role: "assistant", content: finalOutput }, summarizeMessages)
     }
 
-    await ctx.reply(finalOutput);
+    await ctx.reply(finalOutput)
   } catch (error) {
-    logger.error(`Telegram Bot: Confirmation error: ${error}`);
-    await ctx.reply("Error creating the event. Please try again.");
+    logger.error(`Telegram Bot: Confirmation error: ${error}`)
+    await ctx.reply(t.translations.errors.eventCreationError)
   } finally {
-    ctx.session.isProcessing = false;
+    ctx.session.isProcessing = false
   }
-};
+}
 
-// Handler: User cancels pending action
 const handleCancellation = async (ctx: GlobalContext): Promise<void> => {
-  ctx.session.pendingConfirmation = undefined;
-  await ctx.reply("Event creation cancelled.");
-};
+  const t = getTranslatorFromLanguageCode(ctx.session.codeLang)
+  ctx.session.pendingConfirmation = undefined
+  await ctx.reply(t.translations.common.eventCreationCancelled)
+}
 
-// Handler: Parse and handle conflict response from agent
 const handleConflictResponse = async (ctx: GlobalContext, output: string): Promise<void> => {
-  const parts = output.split("::");
+  const parts = output.split("::")
 
   if (parts.length < 3) {
-    await ctx.reply(output);
-    return;
+    await ctx.reply(output)
+    return
   }
 
   try {
-    const conflictData = JSON.parse(parts[1]);
-    const userMessage = parts.slice(2).join("::");
+    const conflictData = JSON.parse(parts[1])
+    const userMessage = parts.slice(2).join("::")
 
     ctx.session.pendingConfirmation = {
       eventData: conflictData.eventData,
       conflictingEvents: conflictData.conflictingEvents,
-    };
+    }
 
-    await ctx.reply(userMessage);
+    await ctx.reply(userMessage)
   } catch (parseError) {
-    logger.error(`Telegram Bot: Failed to parse conflict data: ${parseError}`);
-    await ctx.reply(output);
+    logger.error(`Telegram Bot: Failed to parse conflict data: ${parseError}`)
+    await ctx.reply(output)
   }
-};
+}
 
-// Handler: Process user message with AI agent
 const handleAgentRequest = async (ctx: GlobalContext, message: string): Promise<void> => {
-  ctx.session.isProcessing = true;
-  const chatId = ctx.chat?.id || ctx.session.chatId;
-  const telegramUserId = ctx.from?.id!;
+  ctx.session.isProcessing = true
+  const chatId = ctx.chat?.id || ctx.session.chatId
+  const telegramUserId = ctx.from?.id!
+  const t = getTranslatorFromLanguageCode(ctx.session.codeLang)
 
   try {
-    const conversationContext = await addMessageToContext(chatId, telegramUserId, { role: "user", content: message }, summarizeMessages);
+    const conversationContext = await addMessageToContext(
+      chatId,
+      telegramUserId,
+      { role: "user", content: message },
+      summarizeMessages
+    )
 
-    storeEmbeddingAsync(chatId, telegramUserId, message, "user");
+    storeEmbeddingAsync(chatId, telegramUserId, message, "user")
 
-    const contextPrompt = buildContextPrompt(conversationContext);
+    const contextPrompt = buildContextPrompt(conversationContext)
 
     const semanticContext = await getRelevantContext(telegramUserId, message, {
       threshold: 0.75,
       limit: 3,
-    });
+    })
 
-    const fullContext = [contextPrompt, semanticContext].filter(Boolean).join("\n\n");
+    const fullContext = [contextPrompt, semanticContext].filter(Boolean).join("\n\n")
 
-    const prompt = buildAgentPromptWithContext(ctx.session.email, message, fullContext);
+    const prompt = buildAgentPromptWithContext(ctx.session.email, message, fullContext)
 
-    logger.info(`Telegram Bot: Prompt length for user ${telegramUserId}: ${prompt.length} chars (context: ${fullContext.length}, message: ${message.length})`);
+    logger.info(
+      `Telegram Bot: Prompt length for user ${telegramUserId}: ${prompt.length} chars (context: ${fullContext.length}, message: ${message.length})`
+    )
 
-    const userUuid = await getUserIdFromTelegram(telegramUserId);
+    const userUuid = await getUserIdFromTelegram(telegramUserId)
 
     const { finalOutput } = await activateAgent(ORCHESTRATOR_AGENT, prompt, {
       email: ctx.session.email,
@@ -255,142 +254,146 @@ const handleAgentRequest = async (ctx: GlobalContext, message: string): Promise<
             taskId: chatId.toString(),
           }
         : undefined,
-    });
+    })
 
     if (finalOutput) {
-      await addMessageToContext(chatId, telegramUserId, { role: "assistant", content: finalOutput }, summarizeMessages);
-      storeEmbeddingAsync(chatId, telegramUserId, finalOutput, "assistant");
+      await addMessageToContext(chatId, telegramUserId, { role: "assistant", content: finalOutput }, summarizeMessages)
+      storeEmbeddingAsync(chatId, telegramUserId, finalOutput, "assistant")
     }
 
     if (finalOutput?.startsWith("CONFLICT_DETECTED::")) {
-      await handleConflictResponse(ctx, finalOutput);
+      await handleConflictResponse(ctx, finalOutput)
     } else {
-      await ctx.reply(finalOutput || "No output received from AI Agent.");
+      await ctx.reply(finalOutput || t.translations.errors.noOutputFromAgent)
     }
   } catch (error) {
-    // Handle guardrail trips gracefully - this is expected behavior, not an error
     if (error instanceof InputGuardrailTripwireTriggered) {
-      logger.warn(`Telegram Bot: Guardrail triggered for user ${telegramUserId}: ${error.message}`);
-      await ctx.reply(error.message);
-      return;
+      logger.warn(`Telegram Bot: Guardrail triggered for user ${telegramUserId}: ${error.message}`)
+      await ctx.reply(error.message)
+      return
     }
 
-    logger.error(`Telegram Bot: Agent request error for user ${telegramUserId}: ${JSON.stringify(error)}`);
-    await ctx.reply("Error processing your request.");
+    logger.error(`Telegram Bot: Agent request error for user ${telegramUserId}: ${JSON.stringify(error)}`)
+    await ctx.reply(t.translations.errors.processingError)
   } finally {
-    ctx.session.isProcessing = false;
+    ctx.session.isProcessing = false
   }
-};
+}
 
-// Handler: Pending confirmation flow
 const handlePendingConfirmation = async (ctx: GlobalContext, text: string): Promise<void> => {
-  const action = classifyConfirmationResponse(text);
+  const action = classifyConfirmationResponse(text)
+  const t = getTranslatorFromLanguageCode(ctx.session.codeLang)
 
   switch (action) {
     case MessageAction.CONFIRM:
-      await handleConfirmation(ctx);
-      break;
+      await handleConfirmation(ctx)
+      break
 
     case MessageAction.CANCEL:
-      await handleCancellation(ctx);
-      break;
+      await handleCancellation(ctx)
+      break
 
     case MessageAction.OTHER:
-      await ctx.reply("You have a pending event creation. Please reply 'yes' to create despite conflicts, or 'no' to cancel.");
-      break;
+      await ctx.reply(t.translations.errors.pendingEventPrompt)
+      break
   }
-};
+}
 
-// ============================================
-// Settings Callback Query Handlers
-// ============================================
-
-// Handle "Change Email" button from /settings
 bot.callbackQuery("settings:change_email", async (ctx) => {
-  await ctx.answerCallbackQuery();
+  await ctx.answerCallbackQuery()
+  const t = getTranslatorFromLanguageCode(ctx.session.codeLang)
+  const strings = t.translations.commands.changeEmail
 
   if (!ctx.session.email) {
-    await ctx.reply("You must be authenticated first.");
-    return;
+    await ctx.reply(strings.notAuthenticatedError)
+    return
   }
 
-  ctx.session.awaitingEmailChange = true;
-  await ctx.reply(`Your current email is: <code>${ctx.session.email}</code>\n\nPlease enter your new email address:`, { parse_mode: "HTML" });
-});
+  ctx.session.awaitingEmailChange = true
+  await ctx.reply(`${strings.currentEmailText} <code>${ctx.session.email}</code>\n\n${strings.enterNewEmailPrompt}`, {
+    parse_mode: "HTML",
+  })
+})
 
-// Handle "Reconnect Google Calendar" button from /settings
 bot.callbackQuery("settings:reconnect_google", async (ctx) => {
-  await ctx.answerCallbackQuery();
+  await ctx.answerCallbackQuery()
 
-  // Clear Google tokens to force re-auth
-  ctx.session.googleTokens = undefined;
+  ctx.session.googleTokens = undefined
 
-  const authUrl = generateGoogleAuthUrl({ forceConsent: true });
-  await ctx.reply(`Google Calendar access cleared.\n\nPlease re-authorize:\n${authUrl}`);
-});
+  const authUrl = generateGoogleAuthUrl({ forceConsent: true })
+  await ctx.reply(`Google Calendar access cleared.\n\nPlease re-authorize:\n${authUrl}`)
+})
 
-// ============================================
-// Main message handler
-// ============================================
+bot.callbackQuery(/^language:(.+)$/, async (ctx) => {
+  await ctx.answerCallbackQuery()
+
+  const locale = ctx.match[1] as SupportedLocale
+  if (!SUPPORTED_LOCALES.includes(locale)) {
+    return
+  }
+
+  await handleLanguageSelection(ctx, locale)
+})
+
 bot.on("message", async (ctx) => {
-  const msgId = ctx.message.message_id;
-  const text = ctx.message.text;
+  const msgId = ctx.message.message_id
+  const text = ctx.message.text
+  const t = getTranslatorFromLanguageCode(ctx.session.codeLang)
 
-  // Prevent duplicate processing
-  if (isDuplicateMessage(ctx, msgId)) return;
+  if (isDuplicateMessage(ctx, msgId)) return
 
-  // Ignore non-text messages
-  if (!text) return;
+  if (!text) return
 
-  // Handle commands - informational commands that don't pass to AI agent
   switch (text) {
     case COMMANDS.START:
-      await handleStartCommand(ctx);
-      return;
+      await handleStartCommand(ctx)
+      return
     case COMMANDS.USAGE:
-      await handleUsageCommand(ctx);
-      return;
+      await handleUsageCommand(ctx)
+      return
     case COMMANDS.EXIT:
-      await handleExitCommand(ctx);
-      return;
+      await handleExitCommand(ctx)
+      return
     case COMMANDS.HELP:
-      await handleHelpCommand(ctx);
-      return;
+      await handleHelpCommand(ctx)
+      return
     case COMMANDS.QUICK:
-      await handleQuickCommand(ctx);
-      return;
+      await handleQuickCommand(ctx)
+      return
     case COMMANDS.CANCEL:
-      await handleCancelCommand(ctx);
-      return;
+      await handleCancelCommand(ctx)
+      return
     case COMMANDS.REMIND:
-      await handleRemindCommand(ctx);
-      return;
+      await handleRemindCommand(ctx)
+      return
     case COMMANDS.SETTINGS:
-      await handleSettingsCommand(ctx);
-      return;
+      await handleSettingsCommand(ctx)
+      return
     case COMMANDS.FEEDBACK:
-      await handleFeedbackCommand(ctx);
-      return;
+      await handleFeedbackCommand(ctx)
+      return
     case COMMANDS.CREATE:
-      await handleCreateCommand(ctx);
-      return;
+      await handleCreateCommand(ctx)
+      return
     case COMMANDS.UPDATE:
-      await handleUpdateCommand(ctx);
-      return;
+      await handleUpdateCommand(ctx)
+      return
     case COMMANDS.DELETE:
-      await handleDeleteCommand(ctx);
-      return;
+      await handleDeleteCommand(ctx)
+      return
     case COMMANDS.CHANGEEMAIL:
-      await handleChangeEmailCommand(ctx);
-      return;
+      await handleChangeEmailCommand(ctx)
+      return
+    case COMMANDS.LANGUAGE:
+      await handleLanguageCommand(ctx)
+      return
   }
 
-  // Commands that show info AND pass to AI agent for actual data
   const agentCommands: Record<string, { handler: (ctx: GlobalContext) => Promise<void>; prompt: string }> = {
-    // View Schedule Commands
     [COMMANDS.TODAY]: {
       handler: handleTodayCommand,
-      prompt: "Show me my calendar events for today. List all events with their times and durations. Calculate total hours scheduled.",
+      prompt:
+        "Show me my calendar events for today. List all events with their times and durations. Calculate total hours scheduled.",
     },
     [COMMANDS.TOMORROW]: {
       handler: handleTomorrowCommand,
@@ -398,28 +401,29 @@ bot.on("message", async (ctx) => {
     },
     [COMMANDS.WEEK]: {
       handler: handleWeekCommand,
-      prompt: "Give me an overview of my calendar for the next 7 days. For each day, list events and show total hours. Summarize busiest days.",
+      prompt:
+        "Give me an overview of my calendar for the next 7 days. For each day, list events and show total hours. Summarize busiest days.",
     },
     [COMMANDS.MONTH]: {
       handler: handleMonthCommand,
-      prompt: "Show my calendar overview for this month. Summarize events by week, show total hours per week, and highlight busy periods.",
+      prompt:
+        "Show my calendar overview for this month. Summarize events by week, show total hours per week, and highlight busy periods.",
     },
     [COMMANDS.FREE]: {
       handler: handleFreeCommand,
-      prompt: "Find my available free time slots for today and tomorrow. Show gaps between events where I have at least 30 minutes free.",
+      prompt:
+        "Find my available free time slots for today and tomorrow. Show gaps between events where I have at least 30 minutes free.",
     },
     [COMMANDS.BUSY]: {
       handler: handleBusyCommand,
       prompt: "Show when I'm busy today and tomorrow. List all time blocks that are occupied with events.",
     },
 
-    // Search Command
     [COMMANDS.SEARCH]: {
       handler: handleSearchCommand,
       prompt: "I want to search for events. Please ask me what I'm looking for.",
     },
 
-    // Analytics Commands
     [COMMANDS.ANALYTICS]: {
       handler: handleAnalyticsCommand,
       prompt:
@@ -433,67 +437,56 @@ bot.on("message", async (ctx) => {
       prompt: "List all my calendars with their names and colors. Show which ones are active.",
     },
 
-    // Status Command
     [COMMANDS.STATUS]: {
       handler: handleStatusCommand,
-      prompt: "Check my Google Calendar connection status. Verify my account is connected and show when the token expires.",
+      prompt:
+        "Check my Google Calendar connection status. Verify my account is connected and show when the token expires.",
     },
-  };
+  }
 
   if (agentCommands[text]) {
-    const { handler, prompt } = agentCommands[text];
-    await handler(ctx);
+    const { handler, prompt } = agentCommands[text]
+    await handler(ctx)
 
-    // Activate agent session if needed
     if (!ctx.session.agentActive) {
-      ctx.session.agentActive = true;
+      ctx.session.agentActive = true
     }
 
-    // Process with AI agent
-    await handleAgentRequest(ctx, prompt);
-    return;
+    await handleAgentRequest(ctx, prompt)
+    return
   }
 
-  // Handle email change flow (OTP verification)
   if (ctx.session.pendingEmailChange) {
-    const handled = await handlePendingEmailChange(ctx, text);
-    if (handled) return;
+    const handled = await handlePendingEmailChange(ctx, text)
+    if (handled) return
   }
 
-  // Handle awaiting email change (user is entering new email)
   if (ctx.session.awaitingEmailChange) {
-    ctx.session.awaitingEmailChange = undefined;
-    await initiateEmailChange(ctx, text);
-    return;
+    ctx.session.awaitingEmailChange = undefined
+    await initiateEmailChange(ctx, text)
+    return
   }
 
-  // Handle pending confirmation flow
   if (ctx.session.pendingConfirmation) {
-    await handlePendingConfirmation(ctx, text);
-    return;
+    await handlePendingConfirmation(ctx, text)
+    return
   }
 
-  // Prevent concurrent requests
   if (ctx.session.isProcessing) {
-    await ctx.reply("Hold on, I'm still working on your previous request...");
-    return;
+    await ctx.reply(t.translations.errors.processingPreviousRequest)
+    return
   }
 
-  // Activate agent session if needed
   if (!ctx.session.agentActive) {
-    ctx.session.agentActive = true;
-    await ctx.reply("Type /exit to stop.");
+    ctx.session.agentActive = true
+    await ctx.reply(t.translations.common.typeExitToStop)
   }
 
-  // Process the message
-  await handleAgentRequest(ctx, text);
-});
+  await handleAgentRequest(ctx, text)
+})
 
-// Store runner handle for graceful shutdown
-let runnerHandle: RunnerHandle | null = null;
+let runnerHandle: RunnerHandle | null = null
 
-// Bot menu commands - displayed in Telegram's command menu
-// Ally brand voice: executive-focused, productivity-oriented, personal secretary vibe
 const BOT_COMMANDS = [
   { command: "today", description: "Today's schedule" },
   { command: "tomorrow", description: "Tomorrow's agenda" },
@@ -509,22 +502,22 @@ const BOT_COMMANDS = [
   { command: "calendars", description: "Your calendars" },
   { command: "status", description: "Check connection" },
   { command: "settings", description: "Ally settings" },
+  { command: "language", description: "Change language" },
   { command: "help", description: "How Ally helps" },
   { command: "feedback", description: "Give feedback" },
   { command: "exit", description: "End conversation" },
-];
+]
 
-// Register bot commands with Telegram
 const registerBotCommands = async () => {
   try {
-    await bot.api.setMyCommands(BOT_COMMANDS);
+    await bot.api.setMyCommands(BOT_COMMANDS)
   } catch (error) {
-    logger.error(`Telegram Bot: Failed to register commands: ${error}`);
+    logger.error(`Telegram Bot: Failed to register commands: ${error}`)
   }
-};
+}
 
 export const startTelegramBot = async () => {
-  await registerBotCommands();
+  await registerBotCommands()
 
   runnerHandle = run(bot, {
     runner: {
@@ -532,23 +525,25 @@ export const startTelegramBot = async () => {
       retryInterval: "exponential",
       silent: false,
     },
-  });
+  })
 
   const stopBot = async () => {
     if (runnerHandle) {
-      await runnerHandle.stop();
+      await runnerHandle.stop()
     }
-    process.exit(0);
-  };
+    process.exit(0)
+  }
 
-  process.once("SIGINT", stopBot);
-  process.once("SIGTERM", stopBot);
+  process.once("SIGINT", stopBot)
+  process.once("SIGTERM", stopBot)
 
   process.on("unhandledRejection", (reason: unknown) => {
-    if (reason instanceof Error && (reason.message.includes("getUpdates") || reason.message.includes("Network request"))) {
-      // Don't crash - auto-retry plugin handles this
-      return;
+    if (
+      reason instanceof Error &&
+      (reason.message.includes("getUpdates") || reason.message.includes("Network request"))
+    ) {
+      return
     }
-    logger.error(`Telegram Bot: Unhandled rejection: ${reason}`);
-  });
-};
+    logger.error(`Telegram Bot: Unhandled rejection: ${reason}`)
+  })
+}
