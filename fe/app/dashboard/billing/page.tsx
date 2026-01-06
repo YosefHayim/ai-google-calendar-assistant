@@ -16,6 +16,7 @@ import {
   Zap,
   Crown,
   Settings,
+  Receipt,
 } from "lucide-react";
 import {
   getSubscriptionStatus,
@@ -26,6 +27,9 @@ import {
   type UserAccess,
   type Plan,
 } from "@/services/payment.service";
+import { PaymentMethodCard } from "@/components/dashboard/billing/PaymentMethodCard";
+import { TransactionHistoryTable } from "@/components/dashboard/billing/TransactionHistoryTable";
+import { MOCK_PAYMENT_METHOD, MOCK_TRANSACTIONS } from "@/types/billing";
 
 export default function BillingPage() {
   return (
@@ -311,33 +315,53 @@ function BillingPageContent() {
           )}
         </Card>
 
-        {/* Usage Stats */}
-        <Card className="p-6">
-          <h3 className="text-lg font-semibold text-zinc-900 dark:text-white mb-4">
-            Usage This Period
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-4 rounded-lg bg-zinc-50 dark:bg-zinc-800">
-              <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                AI Interactions
-              </p>
-              <p className="text-2xl font-bold text-zinc-900 dark:text-white mt-1">
-                {access?.interactions_remaining === null ? (
-                  <span className="text-green-600">Unlimited</span>
-                ) : (
-                  `${access?.interactions_remaining || 0} remaining`
-                )}
-              </p>
+        {/* Usage Stats & Payment Method Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <Card className="p-6">
+            <h3 className="text-lg font-semibold text-zinc-900 dark:text-white mb-4">
+              Usage This Period
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="p-4 rounded-lg bg-zinc-50 dark:bg-zinc-800">
+                <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                  AI Interactions
+                </p>
+                <p className="text-2xl font-bold text-zinc-900 dark:text-white mt-1">
+                  {access?.interactions_remaining === null ? (
+                    <span className="text-green-600">Unlimited</span>
+                  ) : (
+                    `${access?.interactions_remaining || 0} remaining`
+                  )}
+                </p>
+              </div>
+              <div className="p-4 rounded-lg bg-zinc-50 dark:bg-zinc-800">
+                <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                  Credit Balance
+                </p>
+                <p className="text-2xl font-bold text-zinc-900 dark:text-white mt-1">
+                  {access?.credits_remaining || 0} credits
+                </p>
+              </div>
             </div>
-            <div className="p-4 rounded-lg bg-zinc-50 dark:bg-zinc-800">
-              <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                Credit Balance
-              </p>
-              <p className="text-2xl font-bold text-zinc-900 dark:text-white mt-1">
-                {access?.credits_remaining || 0} credits
-              </p>
+          </Card>
+
+          <PaymentMethodCard
+            paymentMethod={MOCK_PAYMENT_METHOD}
+            onUpdate={handleManageBilling}
+          />
+        </div>
+
+        {/* Transaction History */}
+        <Card className="p-6">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-2">
+              <Receipt className="w-5 h-5 text-zinc-500" />
+              <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">
+                Transaction History
+              </h3>
             </div>
           </div>
+          <TransactionHistoryTable transactions={MOCK_TRANSACTIONS} />
         </Card>
 
         {/* Plan Comparison */}

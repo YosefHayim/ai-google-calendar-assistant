@@ -311,6 +311,57 @@ export const fr = {
   "commands.aboutme.footerTip":
     "J'en apprends plus sur vous à chaque interaction.",
 
+  "commands.brain.header": "Le cerveau d'Ally",
+  "commands.brain.description":
+    "Apprenez à Ally vos préférences. Ces instructions seront mémorisées dans chaque conversation.",
+  "commands.brain.status": "Statut",
+  "commands.brain.statusEnabled": "✅ Activé",
+  "commands.brain.statusDisabled": "❌ Désactivé",
+  "commands.brain.currentInstructions": "Instructions actuelles",
+  "commands.brain.noInstructions":
+    "Aucune instruction personnalisée définie pour le moment.",
+  "commands.brain.footerTip":
+    "Utilisez les boutons ci-dessous pour gérer vos préférences.",
+  "commands.brain.noUser":
+    "Impossible d'identifier l'utilisateur. Veuillez réessayer.",
+  "commands.brain.error": "Une erreur s'est produite. Veuillez réessayer.",
+  "commands.brain.enabled": "Instructions personnalisées activées !",
+  "commands.brain.disabled": "Instructions personnalisées désactivées.",
+  "commands.brain.updateFailed": "Échec de la mise à jour. Veuillez réessayer.",
+  "commands.brain.buttons.enable": "Activer",
+  "commands.brain.buttons.disable": "Désactiver",
+  "commands.brain.buttons.edit": "Modifier les instructions",
+  "commands.brain.buttons.clear": "Effacer les instructions",
+  "commands.brain.editHeader": "Modifier les instructions",
+  "commands.brain.editPrompt":
+    "Envoyez-moi vos instructions personnalisées. Parlez-moi de vos préférences, habitudes de planification ou tout ce que je devrais retenir.",
+  "commands.brain.editExample":
+    "Exemple : Je préfère les réunions le matin entre 9h et 11h. Ajoutez toujours 15 minutes de pause entre les réunions. Mes jours de travail sont du dimanche au jeudi.",
+  "commands.brain.editCancel": "Tapez /cancel pour annuler.",
+  "commands.brain.editCancelled": "Modification annulée.",
+  "commands.brain.tooLong":
+    "Les instructions sont trop longues. Veuillez les limiter à {{max}} caractères.",
+  "commands.brain.saved": "Instructions enregistrées",
+  "commands.brain.savedDescription":
+    "Vos préférences ont été enregistrées. Ally s'en souviendra dans toutes les conversations.",
+  "commands.brain.saveFailed":
+    "Échec de l'enregistrement des instructions. Veuillez réessayer.",
+  "commands.brain.cleared": "Instructions effacées.",
+  "commands.brain.clearFailed": "Échec de l'effacement. Veuillez réessayer.",
+  "commands.brain.existingInstructionsPrompt":
+    "Vous avez déjà des instructions personnalisées :",
+  "commands.brain.chooseMode":
+    "Souhaitez-vous les compléter ou les remplacer entièrement ?",
+  "commands.brain.buttons.append": "Ajouter aux existantes",
+  "commands.brain.buttons.replace": "Tout remplacer",
+  "commands.brain.appendHeader": "Ajouter des instructions",
+  "commands.brain.replaceHeader": "Remplacer les instructions",
+  "commands.brain.appendPrompt":
+    "Envoyez-moi les nouvelles instructions à ajouter. Elles seront ajoutées à vos instructions existantes.",
+  "commands.brain.appendedDescription":
+    "De nouvelles instructions ont été ajoutées à vos préférences existantes.",
+  "botMenu.brain": "Apprendre vos préférences à Ally",
+
   "auth.welcomePrompt":
     "Bienvenue ! Pour commencer, veuillez entrer votre adresse e-mail pour vérification :",
   "auth.enterOtpPrompt":

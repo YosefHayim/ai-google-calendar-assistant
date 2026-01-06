@@ -24,6 +24,8 @@ export enum ROUTES {
   WHATSAPP = "/api/whatsapp",
   CHAT = "/api/chat",
   PAYMENTS = "/api/payments",
+  CONTACT = "/api/contact",
+  WEBHOOKS = "/webhooks",
 }
 
 export enum PROVIDERS {

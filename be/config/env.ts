@@ -7,18 +7,27 @@ dotenv.config({ path: path.resolve(__dirname, "../.env") });
 // Validation
 // ============================================================================
 
-const REQUIRED_ENV_VARS = ["SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY", "OPEN_API_KEY", "GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET"] as const;
+const REQUIRED_ENV_VARS = [
+  "SUPABASE_URL",
+  "SUPABASE_SERVICE_ROLE_KEY",
+  "OPEN_API_KEY",
+  "GOOGLE_CLIENT_ID",
+  "GOOGLE_CLIENT_SECRET",
+] as const;
 
 const missing = REQUIRED_ENV_VARS.filter((key) => !process.env[key]);
 if (missing.length > 0) {
-  throw new Error(`Missing required environment variables: ${missing.join(", ")}`);
+  throw new Error(
+    `Missing required environment variables: ${missing.join(", ")}`
+  );
 }
 
 // ============================================================================
 // Helper to get optional env vars with type safety
 // ============================================================================
 
-const getOptional = (key: string): string | undefined => process.env[key] || undefined;
+const getOptional = (key: string): string | undefined =>
+  process.env[key] || undefined;
 const getRequired = (key: string): string => process.env[key]!;
 
 // ============================================================================
@@ -158,6 +167,21 @@ const atlassian = {
 } as const;
 
 // ============================================================================
+// Resend Email Configuration
+// ============================================================================
+
+const resend = {
+  apiKey: getOptional("RESEND_API_KEY"),
+  webhookSecret: getOptional("RESEND_WEBHOOK_SECRET"),
+  fromEmail: getOptional("RESEND_FROM_EMAIL") ?? "onboarding@resend.dev",
+  supportEmail: getOptional("SUPPORT_EMAIL") ?? "support@ally.sh",
+  storeInboundAttachments: process.env.STORE_INBOUND_ATTACHMENTS === "true",
+  get isEnabled(): boolean {
+    return !!this.apiKey;
+  },
+} as const;
+
+// ============================================================================
 // Testing Configuration
 // ============================================================================
 
@@ -192,6 +216,7 @@ export const env = {
   stripe,
   integrations,
   atlassian,
+  resend,
   testing,
 
   // Legacy flat accessors (for backwards compatibility)

@@ -272,6 +272,50 @@ export const ar = {
   "commands.aboutme.sections.insights.title": "الاستنتاجات",
   "commands.aboutme.footerTip": "أتعلم المزيد عنك مع كل تفاعل.",
 
+  "commands.brain.header": "عقل Ally",
+  "commands.brain.description":
+    "علّم Ally تفضيلاتك. سيتم تذكر هذه التعليمات في كل محادثة.",
+  "commands.brain.status": "الحالة",
+  "commands.brain.statusEnabled": "✅ مُفعّل",
+  "commands.brain.statusDisabled": "❌ مُعطّل",
+  "commands.brain.currentInstructions": "التعليمات الحالية",
+  "commands.brain.noInstructions": "لم يتم تعيين تعليمات مخصصة بعد.",
+  "commands.brain.footerTip": "استخدم الأزرار أدناه لإدارة تفضيلاتك.",
+  "commands.brain.noUser": "تعذر تحديد المستخدم. يرجى المحاولة مرة أخرى.",
+  "commands.brain.error": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
+  "commands.brain.enabled": "تم تفعيل التعليمات المخصصة!",
+  "commands.brain.disabled": "تم تعطيل التعليمات المخصصة.",
+  "commands.brain.updateFailed": "فشل التحديث. يرجى المحاولة مرة أخرى.",
+  "commands.brain.buttons.enable": "تفعيل",
+  "commands.brain.buttons.disable": "تعطيل",
+  "commands.brain.buttons.edit": "تعديل التعليمات",
+  "commands.brain.buttons.clear": "مسح التعليمات",
+  "commands.brain.editHeader": "تعديل التعليمات",
+  "commands.brain.editPrompt":
+    "أرسل لي تعليماتك المخصصة. أخبرني عن تفضيلاتك، عادات الجدولة، أو أي شيء يجب أن أتذكره.",
+  "commands.brain.editExample":
+    "مثال: أفضل الاجتماعات في الصباح بين الساعة 9 و11. أضف دائماً 15 دقيقة فاصلة بين الاجتماعات. أيام عملي من الأحد إلى الخميس.",
+  "commands.brain.editCancel": "اكتب /cancel للإلغاء.",
+  "commands.brain.editCancelled": "تم إلغاء التعديل.",
+  "commands.brain.tooLong": "التعليمات طويلة جداً. يرجى تحديدها بـ {{max}} حرف.",
+  "commands.brain.saved": "تم حفظ التعليمات",
+  "commands.brain.savedDescription":
+    "تم حفظ تفضيلاتك. سيتذكرها Ally في جميع المحادثات.",
+  "commands.brain.saveFailed": "فشل حفظ التعليمات. يرجى المحاولة مرة أخرى.",
+  "commands.brain.cleared": "تم مسح التعليمات.",
+  "commands.brain.clearFailed": "فشل المسح. يرجى المحاولة مرة أخرى.",
+  "commands.brain.existingInstructionsPrompt": "لديك بالفعل تعليمات مخصصة:",
+  "commands.brain.chooseMode": "هل تريد الإضافة إليها أو استبدالها بالكامل؟",
+  "commands.brain.buttons.append": "إضافة إلى الموجود",
+  "commands.brain.buttons.replace": "استبدال الكل",
+  "commands.brain.appendHeader": "إضافة تعليمات",
+  "commands.brain.replaceHeader": "استبدال التعليمات",
+  "commands.brain.appendPrompt":
+    "أرسل لي التعليمات الجديدة لإضافتها. سيتم إضافتها إلى تعليماتك الموجودة.",
+  "commands.brain.appendedDescription":
+    "تمت إضافة تعليمات جديدة إلى تفضيلاتك الموجودة.",
+  "botMenu.brain": "علّم Ally تفضيلاتك",
+
   "auth.welcomePrompt":
     "مرحباً! للبدء، يرجى إدخال عنوان بريدك الإلكتروني للتحقق:",
   "auth.enterOtpPrompt":

@@ -1,27 +1,29 @@
 import { ROUTES, STATUS_RESPONSE, env } from "@/config";
 
 import aclRoute from "@/routes/google-calendar/acl-route";
+import { apiRateLimiter } from "@/middlewares/rate-limiter";
 import calendarListRoute from "@/routes/google-calendar/calendar-list-route";
 import calendarRoute from "@/routes/google-calendar/calendar-route";
 import channelsRoute from "@/routes/google-calendar/channels-route";
 import chatRoute from "@/routes/google-calendar/chat-route";
-import gapRecoveryRoute from "@/routes/google-calendar/gap-recovery-route";
-import paymentRoute from "@/routes/payment-route";
+import contactRoute from "@/routes/contact-route";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import helmet from "helmet";
 import errorHandler from "@/middlewares/error-handler";
 import eventsRoute from "@/routes/google-calendar/events-route";
 import express from "express";
+import gapRecoveryRoute from "@/routes/google-calendar/gap-recovery-route";
+import helmet from "helmet";
 import { logger } from "@/utils/logger";
 import morgan from "morgan";
 import path from "node:path";
+import paymentRoute from "@/routes/payment-route";
+import { securityAuditMiddleware } from "@/middlewares/security-audit";
 import { sendR } from "@/utils/http";
 import { startTelegramBot } from "@/telegram-bot/init-bot";
 import usersRoute from "@/routes/users-route";
+import webhooksRoute from "@/routes/webhooks-route";
 import whatsAppRoute from "@/routes/whatsapp-route";
-import { apiRateLimiter } from "@/middlewares/rate-limiter";
-import { securityAuditMiddleware } from "@/middlewares/security-audit";
 
 const ACCESS_TOKEN_HEADER = "access_token";
 const REFRESH_TOKEN_HEADER = "refresh_token";
@@ -83,6 +85,8 @@ app.use(ROUTES.CHANNELS, channelsRoute);
 app.use(ROUTES.WHATSAPP, whatsAppRoute);
 app.use(ROUTES.CHAT, chatRoute);
 app.use(ROUTES.PAYMENTS, paymentRoute);
+app.use(ROUTES.CONTACT, contactRoute);
+app.use(ROUTES.WEBHOOKS, webhooksRoute);
 
 app.use((_req, res, _next) => {
   logger.error(`Opps! It looks like this route doesn't exist. ${_req.originalUrl}`);

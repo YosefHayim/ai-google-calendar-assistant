@@ -261,6 +261,50 @@ export const he = {
   "commands.aboutme.sections.insights.title": "תובנות",
   "commands.aboutme.footerTip": "אני לומד יותר עליך עם כל אינטראקציה.",
 
+  "commands.brain.header": "המוח של Ally",
+  "commands.brain.description":
+    "למד את Ally על ההעדפות שלך. ההנחיות האלה יזכרו בכל שיחה.",
+  "commands.brain.status": "סטטוס",
+  "commands.brain.statusEnabled": "✅ פעיל",
+  "commands.brain.statusDisabled": "❌ לא פעיל",
+  "commands.brain.currentInstructions": "הנחיות נוכחיות",
+  "commands.brain.noInstructions": "לא הוגדרו הנחיות מותאמות אישית עדיין.",
+  "commands.brain.footerTip": "השתמש בכפתורים למטה לניהול ההעדפות שלך.",
+  "commands.brain.noUser": "לא ניתן לזהות משתמש. אנא נסה שוב.",
+  "commands.brain.error": "משהו השתבש. אנא נסה שוב.",
+  "commands.brain.enabled": "הנחיות מותאמות אישית הופעלו!",
+  "commands.brain.disabled": "הנחיות מותאמות אישית כובו.",
+  "commands.brain.updateFailed": "העדכון נכשל. אנא נסה שוב.",
+  "commands.brain.buttons.enable": "הפעל",
+  "commands.brain.buttons.disable": "כבה",
+  "commands.brain.buttons.edit": "ערוך הנחיות",
+  "commands.brain.buttons.clear": "נקה הנחיות",
+  "commands.brain.editHeader": "עריכת הנחיות",
+  "commands.brain.editPrompt":
+    "שלח לי את ההנחיות המותאמות שלך. ספר לי על ההעדפות שלך, הרגלי התזמון שלך, או כל דבר שכדאי שאזכור.",
+  "commands.brain.editExample":
+    "דוגמה: אני מעדיף פגישות בבוקר בין 9-11. תמיד הוסף 15 דקות מרווח בין פגישות. ימי העבודה שלי הם ראשון עד חמישי.",
+  "commands.brain.editCancel": "הקלד /cancel לביטול.",
+  "commands.brain.editCancelled": "העריכה בוטלה.",
+  "commands.brain.tooLong": "ההנחיות ארוכות מדי. אנא הגבל ל-{{max}} תווים.",
+  "commands.brain.saved": "ההנחיות נשמרו",
+  "commands.brain.savedDescription":
+    "ההעדפות שלך נשמרו. Ally יזכור אותן בכל השיחות.",
+  "commands.brain.saveFailed": "שמירת ההנחיות נכשלה. אנא נסה שוב.",
+  "commands.brain.cleared": "ההנחיות נמחקו.",
+  "commands.brain.clearFailed": "הניקוי נכשל. אנא נסה שוב.",
+  "commands.brain.existingInstructionsPrompt": "כבר יש לך הנחיות מותאמות:",
+  "commands.brain.chooseMode": "האם תרצה להוסיף אליהן או להחליף אותן לגמרי?",
+  "commands.brain.buttons.append": "הוסף לקיים",
+  "commands.brain.buttons.replace": "החלף הכל",
+  "commands.brain.appendHeader": "הוספת הנחיות",
+  "commands.brain.replaceHeader": "החלפת הנחיות",
+  "commands.brain.appendPrompt":
+    "שלח לי את ההנחיות החדשות להוספה. הן יתווספו להנחיות הקיימות שלך.",
+  "commands.brain.appendedDescription":
+    "הנחיות חדשות נוספו להעדפות הקיימות שלך.",
+  "botMenu.brain": "למד את Ally את ההעדפות שלך",
+
   "auth.welcomePrompt":
     "ברוכים הבאים! כדי להתחיל, אנא הזן את כתובת האימייל שלך לאימות:",
   "auth.enterOtpPrompt":

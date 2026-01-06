@@ -30,6 +30,7 @@ const SUPPORTED_LANGUAGES: {
   { code: "fr", name: "French", nativeName: "Français", flag: "🇫🇷" },
   { code: "he", name: "Hebrew", nativeName: "עברית", flag: "🇮🇱" },
   { code: "ar", name: "Arabic", nativeName: "العربية", flag: "🇸🇦" },
+  { code: "ru", name: "Russian", nativeName: "Русский", flag: "🇷🇺" },
 ];
 
 const gapSettingsSchema = z.object({
@@ -152,7 +153,7 @@ export const GapSettingsTab: React.FC = () => {
               <Label className="text-sm font-medium">
                 I write my calendar events in:
               </Label>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-2 max-h-[280px] overflow-y-auto pr-1">
                 {SUPPORTED_LANGUAGES.map((lang) => {
                   const isSelected = selectedLanguages.includes(lang.code);
                   return (
