@@ -4,7 +4,19 @@ import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { AllyLogo } from '@/components/shared/logo'
-import { Calendar, Clock, MapPin, FileText, Loader2, Check, Sparkles, AlertCircle, Mic, MicOff } from 'lucide-react'
+import {
+  Calendar,
+  Clock,
+  MapPin,
+  FileText,
+  Loader2,
+  Check,
+  Sparkles,
+  AlertCircle,
+  Mic,
+  MicOff,
+  ExternalLink,
+} from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { eventsService } from '@/lib/api/services/events.service'
 import { voiceService } from '@/lib/api/services/voice.service'
@@ -34,6 +46,7 @@ export const QuickEventDialog: React.FC<QuickEventDialogProps> = ({ isOpen, onCl
   const [parsedEvent, setParsedEvent] = useState<ParsedEventData | null>(null)
   const [conflicts, setConflicts] = useState<QuickAddConflict[]>([])
   const [calendarName, setCalendarName] = useState<string>('')
+  const [eventUrl, setEventUrl] = useState<string>('')
   const [allyMessage, setAllyMessage] = useState<string>('')
   const [, setErrorMessage] = useState<string>('')
 
@@ -47,6 +60,7 @@ export const QuickEventDialog: React.FC<QuickEventDialogProps> = ({ isOpen, onCl
       setParsedEvent(null)
       setConflicts([])
       setCalendarName('')
+      setEventUrl('')
       setAllyMessage('')
       setErrorMessage('')
     }
@@ -137,10 +151,9 @@ export const QuickEventDialog: React.FC<QuickEventDialogProps> = ({ isOpen, onCl
           setAllyMessage('Event added to your calendar!')
           setParsedEvent(data.parsed ?? null)
           setCalendarName(data.calendarName ?? '')
+          setEventUrl(data.eventUrl ?? '')
           toast.success('Event created successfully')
           onEventCreated?.()
-          const closeDelay = 1500
-          setTimeout(() => onClose(), closeDelay)
         }
       } else if (response.requiresConfirmation) {
         const conflictData = response.data
@@ -167,17 +180,16 @@ export const QuickEventDialog: React.FC<QuickEventDialogProps> = ({ isOpen, onCl
     if (response.success) {
       setState('success')
       setAllyMessage('Event added to your calendar!')
+      setEventUrl(response.data.eventUrl ?? '')
       toast.success('Event created successfully')
       onEventCreated?.()
-      const closeDelay = 1500
-      setTimeout(() => onClose(), closeDelay)
     } else {
       setState('error')
       const errorMsg = response.requiresConfirmation ? 'Unexpected conflict' : response.error
       setAllyMessage(errorMsg || 'Failed to create event.')
       setErrorMessage(errorMsg || 'Unknown error')
     }
-  }, [text, onClose, onEventCreated])
+  }, [text, onEventCreated])
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setText(e.target.value)
@@ -391,6 +403,20 @@ Examples:
                   </div>
                   <p className="text-sm font-medium text-green-600 dark:text-green-400">{allyMessage}</p>
                   {calendarName && <p className="text-xs text-zinc-500 mt-1">Added to {calendarName}</p>}
+                  {eventUrl && (
+                    <a
+                      href={eventUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-3 text-sm text-primary hover:underline flex items-center gap-1"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                      View in Google Calendar
+                    </a>
+                  )}
+                  <Button onClick={onClose} variant="outline" size="sm" className="mt-4">
+                    Close
+                  </Button>
                 </motion.div>
               )}
 

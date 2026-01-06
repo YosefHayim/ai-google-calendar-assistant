@@ -142,6 +142,7 @@ export type QuickAddResponse = {
   parsed?: ParsedEventData;
   calendarId?: string;
   calendarName?: string;
+  eventUrl?: string;
   conflicts?: QuickAddConflict[];
 }
 
