@@ -18,8 +18,12 @@ export const SCOPES = Object.values(GOOGLE_CALENDAR_SCOPES);
 
 export const SCOPES_STRING = SCOPES.join(" ");
 
-export const REQUEST_CONFIG_BASE = {
+export const REQUEST_CONFIG_BASE: {
+  maxResults: number;
+  sendUpdates: string;
+  supportsAttachments: boolean;
+} = {
   maxResults: MAX_RESULTS,
   sendUpdates: "all",
   supportsAttachments: true,
-} as const;
+};

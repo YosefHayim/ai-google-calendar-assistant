@@ -1,22 +1,25 @@
-'use client'
+"use client";
 
-import { AnimatePresence, motion } from 'framer-motion'
-import { ArrowUp, ChevronDown, Mic, X } from 'lucide-react'
-import React, { useEffect, useRef, useState } from 'react'
+import { AnimatePresence, motion } from "framer-motion";
+import { ArrowUp, ChevronDown, Mic, X } from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
 
-import { AIVoiceInput } from '@/components/ui/ai-voice-input'
-import { VoicePoweredOrb } from '@/components/ui/voice-powered-orb'
-import { cn } from '@/lib/utils'
-import { useSpeechRecognition } from '@/components/dashboard/chat/useSpeechRecognition'
+import { AIVoiceInput } from "@/components/ui/ai-voice-input";
+import { VoicePoweredOrb } from "@/components/ui/voice-powered-orb";
+import { cn } from "@/lib/utils";
+import { useSpeechRecognition } from "@/components/dashboard/chat/useSpeechRecognition";
 
 interface AIAllySidebarProps {
-  isOpen: boolean
-  onClose: () => void
-  onOpen?: () => void
+  isOpen: boolean;
+  onClose: () => void;
+  onOpen?: () => void;
 }
 
 // Floating Orb Button using VoicePoweredOrb
-const AllyOrbButton: React.FC<{ onClick: () => void; isOpen: boolean }> = ({ onClick, isOpen }) => {
+const AllyOrbButton: React.FC<{ onClick: () => void; isOpen: boolean }> = ({
+  onClick,
+  isOpen,
+}) => {
   return (
     <motion.button
       onClick={onClick}
@@ -25,14 +28,19 @@ const AllyOrbButton: React.FC<{ onClick: () => void; isOpen: boolean }> = ({ onC
       whileTap={{ scale: 0.95 }}
       initial={false}
       animate={isOpen ? { scale: 0, opacity: 0 } : { scale: 1, opacity: 1 }}
-      transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+      transition={{ type: "spring", stiffness: 400, damping: 25 }}
+      suppressHydrationWarning
     >
       {/* Outer glow */}
       <div className="absolute inset-0 rounded-full bg-primary/30 blur-xl animate-pulse" />
 
       {/* VoicePoweredOrb as the icon */}
       <div className="relative w-14 h-14 rounded-full overflow-hidden shadow-2xl shadow-primary/40">
-        <VoicePoweredOrb enableVoiceControl={false} className="w-full h-full" maxRotationSpeed={0.3} />
+        <VoicePoweredOrb
+          enableVoiceControl={false}
+          className="w-full h-full"
+          maxRotationSpeed={0.3}
+        />
       </div>
 
       {/* Hover tooltip */}
@@ -41,11 +49,14 @@ const AllyOrbButton: React.FC<{ onClick: () => void; isOpen: boolean }> = ({ onC
         <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1 w-2 h-2 bg-zinc-900 dark:bg-zinc-800 rotate-45" />
       </div>
     </motion.button>
-  )
-}
+  );
+};
 
 // Tab-style animated header
-const ChatHeader: React.FC<{ onClose: () => void; onMinimize: () => void }> = ({ onClose, onMinimize }) => {
+const ChatHeader: React.FC<{ onClose: () => void; onMinimize: () => void }> = ({
+  onClose,
+  onMinimize,
+}) => {
   return (
     <div className="relative flex items-center justify-between px-4 py-3 border-b border-zinc-200/50 dark:border-zinc-800/50 bg-gradient-to-r from-zinc-50/80 to-white/80 dark:from-zinc-900/80 dark:to-zinc-950/80 backdrop-blur-xl rounded-t-2xl">
       {/* Animated tab indicator */}
@@ -53,13 +64,17 @@ const ChatHeader: React.FC<{ onClose: () => void; onMinimize: () => void }> = ({
         className="absolute bottom-0 left-4 right-4 h-0.5 bg-gradient-to-r from-primary via-orange-500 to-primary rounded-full"
         initial={{ scaleX: 0 }}
         animate={{ scaleX: 1 }}
-        transition={{ duration: 0.5, ease: 'easeOut' }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
       />
 
       <div className="flex items-center gap-3">
         {/* Small animated orb avatar */}
         <div className="relative w-9 h-9 rounded-xl overflow-hidden shadow-lg shadow-primary/20">
-          <VoicePoweredOrb enableVoiceControl={false} className="w-full h-full" maxRotationSpeed={0.2} />
+          <VoicePoweredOrb
+            enableVoiceControl={false}
+            className="w-full h-full"
+            maxRotationSpeed={0.2}
+          />
         </div>
         <div>
           <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-1.5">
@@ -68,7 +83,9 @@ const ChatHeader: React.FC<{ onClose: () => void; onMinimize: () => void }> = ({
               AI
             </span>
           </h3>
-          <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">Online</p>
+          <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">
+            Online
+          </p>
         </div>
       </div>
 
@@ -89,34 +106,34 @@ const ChatHeader: React.FC<{ onClose: () => void; onMinimize: () => void }> = ({
         </button>
       </div>
     </div>
-  )
-}
+  );
+};
 
 // Message bubble component
-const MessageBubble: React.FC<{ message: { id: number; text: string; isUser: boolean }; index: number }> = ({
-  message,
-  index,
-}) => {
+const MessageBubble: React.FC<{
+  message: { id: number; text: string; isUser: boolean };
+  index: number;
+}> = ({ message, index }) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 10, scale: 0.95 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.3, delay: index * 0.05 }}
-      className={cn('flex', message.isUser ? 'justify-end' : 'justify-start')}
+      className={cn("flex", message.isUser ? "justify-end" : "justify-start")}
     >
       <div
         className={cn(
-          'max-w-[85%] rounded-2xl px-4 py-2.5 shadow-sm',
+          "max-w-[85%] rounded-2xl px-4 py-2.5 shadow-sm",
           message.isUser
-            ? 'bg-gradient-to-br from-primary to-orange-500 text-white rounded-br-md'
-            : 'bg-zinc-100 dark:bg-zinc-800/80 text-zinc-900 dark:text-zinc-100 rounded-bl-md border border-zinc-200/50 dark:border-zinc-700/50',
+            ? "bg-gradient-to-br from-primary to-orange-500 text-white rounded-br-md"
+            : "bg-zinc-100 dark:bg-zinc-800/80 text-zinc-900 dark:text-zinc-100 rounded-bl-md border border-zinc-200/50 dark:border-zinc-700/50"
         )}
       >
         <p className="text-sm leading-relaxed">{message.text}</p>
       </div>
     </motion.div>
-  )
-}
+  );
+};
 
 // Typing indicator
 const TypingIndicator: React.FC = () => (
@@ -139,38 +156,52 @@ const TypingIndicator: React.FC = () => (
       </div>
     </div>
   </motion.div>
-)
+);
 
-const AIAllySidebar: React.FC<AIAllySidebarProps> = ({ isOpen, onClose, onOpen }) => {
-  const [messages, setMessages] = useState<Array<{ id: number; text: string; isUser: boolean }>>([
-    { id: 1, text: "Hey! I'm Ally, your AI assistant. How can I help optimize your calendar today?", isUser: false },
-  ])
-  const [inputText, setInputText] = useState('')
-  const [isTyping, setIsTyping] = useState(false)
+const AIAllySidebar: React.FC<AIAllySidebarProps> = ({
+  isOpen,
+  onClose,
+  onOpen,
+}) => {
+  const [messages, setMessages] = useState<
+    Array<{ id: number; text: string; isUser: boolean }>
+  >([
+    {
+      id: 1,
+      text: "Hey! I'm Ally, your AI assistant. How can I help optimize your calendar today?",
+      isUser: false,
+    },
+  ]);
+  const [inputText, setInputText] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
 
-  const messagesEndRef = useRef<HTMLDivElement>(null)
-  const inputRef = useRef<HTMLInputElement>(null)
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleSendMessage = (textToSend: string = inputText) => {
-    if (!textToSend.trim()) return
-    const newMessage = { id: messages.length + 1, text: textToSend, isUser: true }
-    setMessages((prev) => [...prev, newMessage])
-    setInputText('')
-    setIsTyping(true)
+    if (!textToSend.trim()) return;
+    const newMessage = {
+      id: messages.length + 1,
+      text: textToSend,
+      isUser: true,
+    };
+    setMessages((prev) => [...prev, newMessage]);
+    setInputText("");
+    setIsTyping(true);
 
     // Simulate AI response
     setTimeout(() => {
-      setIsTyping(false)
+      setIsTyping(false);
       setMessages((prev) => [
         ...prev,
         {
           id: prev.length + 1,
-          text: 'I understand! Let me analyze your calendar and suggest some optimizations.',
+          text: "I understand! Let me analyze your calendar and suggest some optimizations.",
           isUser: false,
         },
-      ])
-    }, 1500)
-  }
+      ]);
+    }, 1500);
+  };
 
   // Use the shared speech recognition hook
   const {
@@ -182,47 +213,47 @@ const AIAllySidebar: React.FC<AIAllySidebarProps> = ({ isOpen, onClose, onOpen }
     stopRecording,
     cancelRecording,
     toggleRecording,
-  } = useSpeechRecognition(handleSendMessage)
+  } = useSpeechRecognition(handleSendMessage);
 
   // Handler wrappers for AIVoiceInput component
   const handleStartRecording = () => {
-    startRecording()
-  }
+    startRecording();
+  };
 
   const handleStopRecording = (text: string) => {
-    stopRecording()
+    stopRecording();
     if (text.trim()) {
-      handleSendMessage(text)
+      handleSendMessage(text);
     }
-  }
+  };
 
   const handleCancelRecording = () => {
-    cancelRecording()
-  }
+    cancelRecording();
+  };
 
   const handleToggleRecording = () => {
-    toggleRecording()
-  }
+    toggleRecording();
+  };
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   useEffect(() => {
-    scrollToBottom()
-  }, [messages, isTyping])
+    scrollToBottom();
+  }, [messages, isTyping]);
 
   useEffect(() => {
     if (isOpen && inputRef.current && !isRecording) {
-      setTimeout(() => inputRef.current?.focus(), 300)
+      setTimeout(() => inputRef.current?.focus(), 300);
     }
-  }, [isOpen, isRecording])
+  }, [isOpen, isRecording]);
 
   const quickActions = [
-    { label: 'Optimize schedule', emoji: '📅' },
-    { label: 'Find free time', emoji: '🔍' },
-    { label: 'Reschedule meeting', emoji: '🔄' },
-  ]
+    { label: "Optimize schedule", emoji: "📅" },
+    { label: "Find free time", emoji: "🔍" },
+    { label: "Reschedule meeting", emoji: "🔄" },
+  ];
 
   return (
     <>
@@ -238,7 +269,7 @@ const AIAllySidebar: React.FC<AIAllySidebarProps> = ({ isOpen, onClose, onOpen }
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+            transition={{ type: "spring", stiffness: 400, damping: 30 }}
             className="fixed bottom-6 right-6 z-50 w-[380px] max-h-[600px] flex flex-col rounded-2xl shadow-2xl shadow-black/20 dark:shadow-black/40 border border-zinc-200/60 dark:border-zinc-800/60 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-2xl overflow-hidden"
           >
             {/* Header */}
@@ -247,9 +278,15 @@ const AIAllySidebar: React.FC<AIAllySidebarProps> = ({ isOpen, onClose, onOpen }
             {/* Messages Area */}
             <div className="flex-1 overflow-y-auto p-4 space-y-2 min-h-[280px] max-h-[320px] scrollbar-thin scrollbar-thumb-zinc-300 dark:scrollbar-thumb-zinc-700 scrollbar-track-transparent">
               {messages.map((message, index) => (
-                <MessageBubble key={message.id} message={message} index={index} />
+                <MessageBubble
+                  key={message.id}
+                  message={message}
+                  index={index}
+                />
               ))}
-              <AnimatePresence>{isTyping && <TypingIndicator />}</AnimatePresence>
+              <AnimatePresence>
+                {isTyping && <TypingIndicator />}
+              </AnimatePresence>
               <div ref={messagesEndRef} />
             </div>
 
@@ -261,14 +298,16 @@ const AIAllySidebar: React.FC<AIAllySidebarProps> = ({ isOpen, onClose, onOpen }
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
               >
-                <p className="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-2">Quick Actions</p>
+                <p className="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-2">
+                  Quick Actions
+                </p>
                 <div className="flex flex-wrap gap-2">
                   {quickActions.map((action) => (
                     <button
                       key={action.label}
                       onClick={() => {
-                        setInputText(action.label)
-                        inputRef.current?.focus()
+                        setInputText(action.label);
+                        inputRef.current?.focus();
                       }}
                       className="px-3 py-1.5 text-xs font-medium rounded-full bg-zinc-100 dark:bg-zinc-800/80 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors border border-zinc-200/50 dark:border-zinc-700/50"
                     >
@@ -285,7 +324,7 @@ const AIAllySidebar: React.FC<AIAllySidebarProps> = ({ isOpen, onClose, onOpen }
                 <div className="relative flex flex-col items-center justify-center bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-3">
                   <AIVoiceInput
                     onStart={handleStartRecording}
-                    onStop={(duration, text) => handleStopRecording(text ?? '')}
+                    onStop={(duration, text) => handleStopRecording(text ?? "")}
                     isRecordingProp={isRecording}
                     onToggleRecording={handleToggleRecording}
                     speechRecognitionSupported={speechRecognitionSupported}
@@ -303,8 +342,8 @@ const AIAllySidebar: React.FC<AIAllySidebarProps> = ({ isOpen, onClose, onOpen }
               ) : (
                 <form
                   onSubmit={(e) => {
-                    e.preventDefault()
-                    handleSendMessage()
+                    e.preventDefault();
+                    handleSendMessage();
                   }}
                   className="relative flex items-center bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-1.5 gap-1.5"
                 >
@@ -313,8 +352,8 @@ const AIAllySidebar: React.FC<AIAllySidebarProps> = ({ isOpen, onClose, onOpen }
                     type="button"
                     onClick={handleToggleRecording}
                     className={cn(
-                      'p-2.5 rounded-xl transition-all flex-shrink-0',
-                      'text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800',
+                      "p-2.5 rounded-xl transition-all flex-shrink-0",
+                      "text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800"
                     )}
                     disabled={!speechRecognitionSupported}
                     title="Voice input"
@@ -339,10 +378,10 @@ const AIAllySidebar: React.FC<AIAllySidebarProps> = ({ isOpen, onClose, onOpen }
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     className={cn(
-                      'p-2.5 rounded-xl transition-all flex-shrink-0',
+                      "p-2.5 rounded-xl transition-all flex-shrink-0",
                       inputText.trim()
-                        ? 'bg-zinc-950 dark:bg-zinc-100 text-white dark:text-zinc-950'
-                        : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-300 dark:text-zinc-600 cursor-not-allowed',
+                        ? "bg-zinc-950 dark:bg-zinc-100 text-white dark:text-zinc-950"
+                        : "bg-zinc-100 dark:bg-zinc-800 text-zinc-300 dark:text-zinc-600 cursor-not-allowed"
                     )}
                   >
                     <ArrowUp className="w-5 h-5" />
@@ -359,7 +398,7 @@ const AIAllySidebar: React.FC<AIAllySidebarProps> = ({ isOpen, onClose, onOpen }
         )}
       </AnimatePresence>
     </>
-  )
-}
+  );
+};
 
-export default AIAllySidebar
+export default AIAllySidebar;
