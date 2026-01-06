@@ -51,11 +51,7 @@ const formatEmbeddingForPgVector = (embedding: number[]): string => {
 
 // Helper to get user_id from telegram_user_id
 const getUserIdFromTelegram = async (telegramUserId: number): Promise<string | null> => {
-  const { data, error } = await SUPABASE
-    .from("telegram_users")
-    .select("user_id")
-    .eq("telegram_user_id", telegramUserId)
-    .single();
+  const { data, error } = await SUPABASE.from("telegram_users").select("user_id").eq("telegram_user_id", telegramUserId).single();
 
   if (error || !data?.user_id) {
     return null;
@@ -99,13 +95,21 @@ export const storeConversationEmbedding = async (
     });
 
     if (error) {
-      logger.error(`Telegram Bot: Embeddings: Error storing conversation embedding: chatId=${chatId}, telegramUserId=${telegramUserId}, role=${role}, messageId=${messageId}, error=${error.message || error}`);
+      logger.error(
+        `Telegram Bot: Embeddings: Error storing conversation embedding: chatId=${chatId}, telegramUserId=${telegramUserId}, role=${role}, messageId=${messageId}, error=${
+          error.message || error
+        }`
+      );
       console.error("Error storing conversation embedding:", error);
       return false;
     }
     return true;
   } catch (error) {
-    logger.error(`Telegram Bot: Embeddings: Error generating/storing embedding: chatId=${chatId}, telegramUserId=${telegramUserId}, role=${role}, messageId=${messageId}, error=${error instanceof Error ? error.message : error}`);
+    logger.error(
+      `Telegram Bot: Embeddings: Error generating/storing embedding: chatId=${chatId}, telegramUserId=${telegramUserId}, role=${role}, messageId=${messageId}, error=${
+        error instanceof Error ? error.message : error
+      }`
+    );
     console.error("Error generating/storing embedding:", error);
     return false;
   }
@@ -133,13 +137,19 @@ export const searchSimilarConversations = async (
     });
 
     if (error) {
-      logger.error(`Telegram Bot: Embeddings: Error searching similar conversations: userId=${userId}, queryLength=${query.length}, error=${error.message || error}`);
+      logger.error(
+        `Telegram Bot: Embeddings: Error searching similar conversations: userId=${userId}, queryLength=${query.length}, error=${error.message || error}`
+      );
       console.error("Error searching similar conversations:", error);
       return [];
     }
     return (data || []) as SimilarConversation[];
   } catch (error) {
-    logger.error(`Telegram Bot: Embeddings: Error in similarity search: userId=${userId}, queryLength=${query.length}, error=${error instanceof Error ? error.message : error}`);
+    logger.error(
+      `Telegram Bot: Embeddings: Error in similarity search: userId=${userId}, queryLength=${query.length}, error=${
+        error instanceof Error ? error.message : error
+      }`
+    );
     console.error("Error in similarity search:", error);
     return [];
   }
@@ -172,7 +182,11 @@ export const storeEmbeddingAsync = (
 ): void => {
   // Fire and forget - don't await
   storeConversationEmbedding(chatId, telegramUserId, content, role, messageId, conversationId).catch((error) => {
-    logger.error(`Telegram Bot: Embeddings: Error storing embedding asynchronously: chatId=${chatId}, telegramUserId=${telegramUserId}, role=${role}, messageId=${messageId}, error=${error instanceof Error ? error.message : error}`);
+    logger.error(
+      `Telegram Bot: Embeddings: Error storing embedding asynchronously: chatId=${chatId}, telegramUserId=${telegramUserId}, role=${role}, messageId=${messageId}, error=${
+        error instanceof Error ? error.message : error
+      }`
+    );
     console.error("Background embedding storage failed:", error);
   });
 };

@@ -4,6 +4,7 @@
   "version": "5.27.0",
   "scripts": {
     "build": "next build",
+    "redis": "redis-server",
     "dev": "next dev --port 4000",
     "format": "prettier --write .",
     "lint": "next lint",

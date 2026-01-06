@@ -73,6 +73,12 @@ export const PARAMETERS_TOOLS = {
   getEventParameters: z
     .object({
       timeMin: z.coerce.string({ description: "The minimum date and time for events to return, formatted as RFC3339 timestamp." }).nullable(),
+      timeMax: z.coerce
+        .string({
+          description:
+            "The maximum date and time for events to return, formatted as RFC3339 timestamp. IMPORTANT: Always set this to limit the query scope. Default behavior: if timeMax is not provided, it will be automatically set to 1 day after timeMin to prevent fetching too many events. For 'today' queries, set timeMax to end of today. For 'tomorrow' queries, set timeMax to end of tomorrow. For 'this week' queries, set timeMax to end of the week.",
+        })
+        .nullable(),
       q: z.coerce.string({ description: "Optional parameter to search for text matches across all event fields in Google Calendar." }).nullable(),
       customEvents: z.coerce
         .boolean({ description: "Optional parameter whether we want to receive back custom event object or not, default to true." })
@@ -87,7 +93,7 @@ export const PARAMETERS_TOOLS = {
         .string({ description: "The ID of a specific calendar to search. Only used when searchAllCalendars is false." })
         .nullable(),
     })
-    .describe("Fetch events for the authenticated user. Email is automatically provided from user context. By default searches all calendars."),
+    .describe("Fetch events for the authenticated user. Email is automatically provided from user context. By default searches all calendars. IMPORTANT: Always provide timeMax to limit query scope."),
 
   // INSERT event - no email needed
   insertEventParameters: makeFullEventParams().describe("Insert a new event into the user's calendar. Email is automatically provided from user context."),
