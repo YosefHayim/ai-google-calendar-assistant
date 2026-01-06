@@ -1,9 +1,10 @@
-import { STATUS_RESPONSE } from "@/config";
+import { DEFAULT_GAP_RECOVERY_SETTINGS, analyzeGapsForUser, fillGap, formatGapsForDisplay } from "@/utils/calendar/gap-recovery";
+import type { FillGapBody, GapAnalysisQuery, SkipGapBody, UpdateGapSettingsBody } from "@/middlewares/validation";
+import type { GapCandidateDTO, GapRecoverySettings } from "@/types";
 import type { Request, Response } from "express";
 import { reqResAsyncHandler, sendR } from "@/utils/http";
-import { analyzeGapsForUser, fillGap, formatGapsForDisplay, DEFAULT_GAP_RECOVERY_SETTINGS } from "@/utils/calendar/gap-recovery";
-import type { GapCandidateDTO, GapRecoverySettings } from "@/types";
-import type { GapAnalysisQuery, FillGapBody, SkipGapBody, UpdateGapSettingsBody } from "@/middlewares/validation";
+
+import { STATUS_RESPONSE } from "@/config";
 
 // In-memory store for gap candidates (per user session)
 // In production, this should be stored in Redis or database
