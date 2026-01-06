@@ -4,6 +4,41 @@ import type { Tables, TablesInsert } from "@/database.types";
 import { SUPABASE } from "@/config/clients/supabase";
 import { logger } from "@/utils/logger";
 
+type ItemWithType = { type?: string; role?: string };
+
+const isReasoningItem = (item: AgentInputItem): boolean => (item as ItemWithType).type === "reasoning";
+
+const hasValidFollowingItem = (items: AgentInputItem[], currentIndex: number): boolean => {
+  const nextItem = items[currentIndex + 1];
+  if (!nextItem) return false;
+
+  const nextType = (nextItem as ItemWithType).type;
+  const nextRole = (nextItem as ItemWithType).role;
+
+  const isOrphanedByUserMessage = (nextType === "reasoning" || nextType === "message" || nextType === "user_message") && nextRole === "user";
+
+  return !isOrphanedByUserMessage;
+};
+
+/**
+ * OpenAI API requires 'reasoning' items to be followed by their output item.
+ * Filters out orphaned reasoning items to prevent:
+ * "Item 'rs_xxx' of type 'reasoning' was provided without its required following item."
+ */
+function filterOrphanedReasoningItems(items: AgentInputItem[]): AgentInputItem[] {
+  if (!items?.length) return [];
+
+  return items.filter((item, index) => {
+    if (!isReasoningItem(item)) return true;
+
+    const hasFollowing = hasValidFollowingItem(items, index);
+    if (!hasFollowing) {
+      logger.warn(`SupabaseSession: Filtering orphaned reasoning item`);
+    }
+    return hasFollowing;
+  });
+}
+
 const AGENT_SESSIONS_TABLE = "agent_sessions";
 
 type AgentSessionRow = Tables<"agent_sessions">;
@@ -75,9 +110,8 @@ export class SupabaseAgentSession implements Session {
   }
 
   async getItems(limit?: number): Promise<AgentInputItem[]> {
-    // Return cached items if available
     if (this.itemsCache !== null) {
-      const items = this.itemsCache;
+      const items = filterOrphanedReasoningItems(this.itemsCache);
       return limit ? items.slice(-limit) : items;
     }
 
@@ -94,7 +128,8 @@ export class SupabaseAgentSession implements Session {
         return [];
       }
 
-      this.itemsCache = (data?.items as AgentInputItem[]) || [];
+      const rawItems = (data?.items as AgentInputItem[]) || [];
+      this.itemsCache = filterOrphanedReasoningItems(rawItems);
       return limit ? this.itemsCache.slice(-limit) : this.itemsCache;
     } catch (err) {
       logger.error(`SupabaseSession: Exception fetching items: ${err}`);
