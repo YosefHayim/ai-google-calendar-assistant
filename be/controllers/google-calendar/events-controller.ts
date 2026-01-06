@@ -1,12 +1,11 @@
 import { ACTION, REQUEST_CONFIG_BASE, STATUS_RESPONSE } from "@/config";
-import { Request, Response } from "express";
-import { eventsHandler, formatDate, getEventDurationString } from "@/utils";
+import type { Request, Response } from "express";
+import { eventsHandler, formatDate } from "@/utils";
 import { getCachedInsights, setCachedInsights } from "@/utils/cache/insights-cache";
 import { reqResAsyncHandler, sendR } from "@/utils/http";
 
 import { calculateInsightsMetrics } from "@/utils/ai/insights-calculator";
-import { quickAddEventWithAI } from "@/utils/ai/quick-add-parser";
-import type { calendar_v3 } from "googleapis";
+import { quickAddWithOrchestrator } from "@/utils/ai/quick-add-orchestrator";
 import { fetchCredentialsByEmail } from "@/utils/auth/get-user-calendar-tokens";
 import { generateInsightsWithRetry } from "@/ai-agents/insights-generator";
 import { getEvents } from "@/utils/calendar/get-events";
@@ -186,7 +185,7 @@ const quickAddEvent = reqResAsyncHandler(async (req: Request, res: Response) => 
     return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Event text is required.")
   }
 
-  const result = await quickAddEventWithAI(email, text, { forceCreate })
+  const result = await quickAddWithOrchestrator(email, text, { forceCreate })
 
   if (!result.success) {
     if (result.requiresConfirmation) {
@@ -205,6 +204,7 @@ const quickAddEvent = reqResAsyncHandler(async (req: Request, res: Response) => 
     parsed: result.parsed,
     calendarId: result.calendarId,
     calendarName: result.calendarName,
+    eventUrl: result.eventUrl,
   })
 })
 
