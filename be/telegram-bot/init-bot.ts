@@ -62,7 +62,13 @@ import {
   handleLanguageSelection,
   handleMyCalendarsCommand,
   handleAboutMeCommand,
+  handleBrainCommand,
+  handleBrainToggle,
+  handleBrainEditStart,
+  handleBrainInstructionsInput,
+  handleBrainClear,
 } from "./utils/commands";
+import { getAllyBrainForTelegram } from "./utils/ally-brain";
 import {
   getTranslatorFromLanguageCode,
   SUPPORTED_LOCALES,
@@ -275,10 +281,13 @@ const handleAgentRequest = async (
       .filter(Boolean)
       .join("\n\n");
 
+    const allyBrain = await getAllyBrainForTelegram(telegramUserId);
+
     const prompt = buildAgentPromptWithContext(
       ctx.session.email,
       message,
-      fullContext
+      fullContext,
+      { allyBrain }
     );
 
     logger.info(
@@ -393,6 +402,22 @@ bot.callbackQuery(/^language:(.+)$/, async (ctx) => {
   await handleLanguageSelection(ctx, locale);
 });
 
+bot.callbackQuery("brain:enable", async (ctx) => {
+  await handleBrainToggle(ctx, true);
+});
+
+bot.callbackQuery("brain:disable", async (ctx) => {
+  await handleBrainToggle(ctx, false);
+});
+
+bot.callbackQuery("brain:edit", async (ctx) => {
+  await handleBrainEditStart(ctx);
+});
+
+bot.callbackQuery("brain:clear", async (ctx) => {
+  await handleBrainClear(ctx);
+});
+
 bot.on("message", async (ctx) => {
   const msgId = ctx.message.message_id;
   const text = ctx.message.text;
@@ -450,6 +475,9 @@ bot.on("message", async (ctx) => {
       return;
     case COMMANDS.ABOUTME:
       await handleAboutMeCommand(ctx);
+      return;
+    case COMMANDS.BRAIN:
+      await handleBrainCommand(ctx);
       return;
   }
 
@@ -538,6 +566,11 @@ bot.on("message", async (ctx) => {
     return;
   }
 
+  if (ctx.session.awaitingBrainInstructions) {
+    const handled = await handleBrainInstructionsInput(ctx, text);
+    if (handled) return;
+  }
+
   if (ctx.session.pendingConfirmation) {
     await handlePendingConfirmation(ctx, text);
     return;
@@ -573,6 +606,7 @@ const BOT_COMMANDS = [
   { command: "calendars", description: "Your calendars" },
   { command: "mycalendars", description: "My calendars list" },
   { command: "aboutme", description: "What do you know about me?" },
+  { command: "brain", description: "Teach Ally your preferences" },
   { command: "status", description: "Check connection" },
   { command: "settings", description: "Ally settings" },
   { command: "language", description: "Change language" },

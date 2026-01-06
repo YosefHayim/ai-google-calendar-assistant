@@ -810,3 +810,237 @@ export const handleAboutMeCommand = async (
     await ctx.reply(response.content, { parse_mode: "HTML" });
   }
 };
+
+export const handleBrainCommand = async (ctx: GlobalContext): Promise<void> => {
+  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
+  const telegramUserId = ctx.from?.id;
+
+  if (!telegramUserId) {
+    const response = ResponseBuilder.telegram()
+      .direction(direction)
+      .header("🧠", t("commands.brain.header"))
+      .text(t("commands.brain.noUser"))
+      .build();
+    await ctx.reply(response.content, { parse_mode: "HTML" });
+    return;
+  }
+
+  try {
+    const { getAllyBrainForTelegram } = await import("./ally-brain");
+    const brainData = await getAllyBrainForTelegram(telegramUserId);
+
+    const statusText = brainData?.enabled
+      ? t("commands.brain.statusEnabled")
+      : t("commands.brain.statusDisabled");
+
+    const instructionsText = brainData?.instructions?.trim()
+      ? brainData.instructions
+      : t("commands.brain.noInstructions");
+
+    const keyboard = new InlineKeyboard();
+
+    if (brainData?.enabled) {
+      keyboard.text(
+        `❌ ${t("commands.brain.buttons.disable")}`,
+        "brain:disable"
+      );
+    } else {
+      keyboard.text(`✅ ${t("commands.brain.buttons.enable")}`, "brain:enable");
+    }
+
+    keyboard.row();
+    keyboard.text(`✏️ ${t("commands.brain.buttons.edit")}`, "brain:edit");
+
+    if (brainData?.instructions?.trim()) {
+      keyboard.row();
+      keyboard.text(`🗑️ ${t("commands.brain.buttons.clear")}`, "brain:clear");
+    }
+
+    const builder = ResponseBuilder.telegram()
+      .direction(direction)
+      .header("🧠", t("commands.brain.header"))
+      .text(t("commands.brain.description"))
+      .spacing()
+      .text(`<b>${t("commands.brain.status")}:</b> ${statusText}`)
+      .spacing()
+      .text(`<b>${t("commands.brain.currentInstructions")}:</b>`)
+      .text(`<i>${instructionsText}</i>`)
+      .spacing()
+      .footer(t("commands.brain.footerTip"));
+
+    const response = builder.build();
+    await ctx.reply(response.content, {
+      parse_mode: "HTML",
+      reply_markup: keyboard,
+    });
+  } catch (error) {
+    logger.error(`Telegram Bot: Failed to get brain settings: ${error}`);
+    const response = ResponseBuilder.telegram()
+      .direction(direction)
+      .header("🧠", t("commands.brain.header"))
+      .text(t("commands.brain.error"))
+      .build();
+    await ctx.reply(response.content, { parse_mode: "HTML" });
+  }
+};
+
+export const handleBrainToggle = async (
+  ctx: GlobalContext,
+  enable: boolean
+): Promise<void> => {
+  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
+  const telegramUserId = ctx.from?.id;
+
+  if (!telegramUserId) {
+    await ctx.answerCallbackQuery(t("commands.brain.noUser"));
+    return;
+  }
+
+  try {
+    const { toggleAllyBrainEnabled } = await import("./ally-brain");
+    const success = await toggleAllyBrainEnabled(telegramUserId, enable);
+
+    if (success) {
+      await ctx.answerCallbackQuery(
+        enable ? t("commands.brain.enabled") : t("commands.brain.disabled")
+      );
+      await handleBrainCommand(ctx);
+    } else {
+      await ctx.answerCallbackQuery(t("commands.brain.updateFailed"));
+    }
+  } catch (error) {
+    logger.error(`Telegram Bot: Failed to toggle brain: ${error}`);
+    await ctx.answerCallbackQuery(t("commands.brain.error"));
+  }
+};
+
+export const handleBrainEditStart = async (
+  ctx: GlobalContext
+): Promise<void> => {
+  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
+
+  ctx.session.awaitingBrainInstructions = true;
+
+  await ctx.answerCallbackQuery();
+
+  const response = ResponseBuilder.telegram()
+    .direction(direction)
+    .header("✏️", t("commands.brain.editHeader"))
+    .text(t("commands.brain.editPrompt"))
+    .spacing()
+    .text(`<i>${t("commands.brain.editExample")}</i>`)
+    .spacing()
+    .footer(t("commands.brain.editCancel"))
+    .build();
+
+  await ctx.reply(response.content, { parse_mode: "HTML" });
+};
+
+export const handleBrainInstructionsInput = async (
+  ctx: GlobalContext,
+  instructions: string
+): Promise<boolean> => {
+  if (!ctx.session.awaitingBrainInstructions) {
+    return false;
+  }
+
+  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
+  const telegramUserId = ctx.from?.id;
+
+  ctx.session.awaitingBrainInstructions = undefined;
+
+  if (!telegramUserId) {
+    const response = ResponseBuilder.telegram()
+      .direction(direction)
+      .header("🧠", t("commands.brain.header"))
+      .text(t("commands.brain.noUser"))
+      .build();
+    await ctx.reply(response.content, { parse_mode: "HTML" });
+    return true;
+  }
+
+  if (instructions.toLowerCase() === "/cancel") {
+    const response = ResponseBuilder.telegram()
+      .direction(direction)
+      .header("🧠", t("commands.brain.header"))
+      .text(t("commands.brain.editCancelled"))
+      .build();
+    await ctx.reply(response.content, { parse_mode: "HTML" });
+    return true;
+  }
+
+  const MAX_INSTRUCTIONS_LENGTH = 1000;
+  if (instructions.length > MAX_INSTRUCTIONS_LENGTH) {
+    const response = ResponseBuilder.telegram()
+      .direction(direction)
+      .header("🧠", t("commands.brain.header"))
+      .text(
+        t("commands.brain.tooLong").replace(
+          "{{max}}",
+          MAX_INSTRUCTIONS_LENGTH.toString()
+        )
+      )
+      .build();
+    await ctx.reply(response.content, { parse_mode: "HTML" });
+    return true;
+  }
+
+  try {
+    const { updateAllyBrainInstructions } = await import("./ally-brain");
+    const success = await updateAllyBrainInstructions(
+      telegramUserId,
+      instructions
+    );
+
+    if (success) {
+      const response = ResponseBuilder.telegram()
+        .direction(direction)
+        .header("✅", t("commands.brain.saved"))
+        .text(t("commands.brain.savedDescription"))
+        .build();
+      await ctx.reply(response.content, { parse_mode: "HTML" });
+    } else {
+      const response = ResponseBuilder.telegram()
+        .direction(direction)
+        .header("❌", t("commands.brain.header"))
+        .text(t("commands.brain.saveFailed"))
+        .build();
+      await ctx.reply(response.content, { parse_mode: "HTML" });
+    }
+  } catch (error) {
+    logger.error(`Telegram Bot: Failed to save brain instructions: ${error}`);
+    const response = ResponseBuilder.telegram()
+      .direction(direction)
+      .header("❌", t("commands.brain.header"))
+      .text(t("commands.brain.error"))
+      .build();
+    await ctx.reply(response.content, { parse_mode: "HTML" });
+  }
+
+  return true;
+};
+
+export const handleBrainClear = async (ctx: GlobalContext): Promise<void> => {
+  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
+  const telegramUserId = ctx.from?.id;
+
+  if (!telegramUserId) {
+    await ctx.answerCallbackQuery(t("commands.brain.noUser"));
+    return;
+  }
+
+  try {
+    const { clearAllyBrainInstructions } = await import("./ally-brain");
+    const success = await clearAllyBrainInstructions(telegramUserId);
+
+    if (success) {
+      await ctx.answerCallbackQuery(t("commands.brain.cleared"));
+      await handleBrainCommand(ctx);
+    } else {
+      await ctx.answerCallbackQuery(t("commands.brain.clearFailed"));
+    }
+  } catch (error) {
+    logger.error(`Telegram Bot: Failed to clear brain: ${error}`);
+    await ctx.answerCallbackQuery(t("commands.brain.error"));
+  }
+};

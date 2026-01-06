@@ -86,6 +86,8 @@ export type SessionData = {
   pendingEmailChange?: PendingEmailChange;
   // Flag for awaiting new email input
   awaitingEmailChange?: boolean;
+  // Flag for awaiting brain instructions input
+  awaitingBrainInstructions?: boolean;
 };
 
 /**

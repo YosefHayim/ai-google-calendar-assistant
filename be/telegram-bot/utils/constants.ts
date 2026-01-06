@@ -34,6 +34,7 @@ export const COMMANDS = {
   FEEDBACK: "/feedback",
   CHANGEEMAIL: "/changeemail",
   LANGUAGE: "/language",
+  BRAIN: "/brain",
 } as const;
 
 export const CONFIRM_RESPONSES = ["yes", "y", "confirm"] as const;
