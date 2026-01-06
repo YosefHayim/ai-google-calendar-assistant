@@ -51,29 +51,7 @@ export type Database = {
           updated_at?: string
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "agent_sessions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "agent_sessions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_active_users_with_calendar"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "agent_sessions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_user_conversation_stats"
-            referencedColumns: ["user_id"]
-          },
-        ]
+        Relationships: []
       }
       audit_logs: {
         Row: {
@@ -118,29 +96,7 @@ export type Database = {
           user_agent?: string | null
           user_id?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "audit_logs_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "audit_logs_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_active_users_with_calendar"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "audit_logs_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_user_conversation_stats"
-            referencedColumns: ["user_id"]
-          },
-        ]
+        Relationships: []
       }
       conversation_embeddings: {
         Row: {
@@ -206,6 +162,13 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "v_active_users_with_calendar"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "conversation_embeddings_new_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "v_user_billing_summary"
             referencedColumns: ["user_id"]
           },
           {
@@ -327,6 +290,13 @@ export type Database = {
             foreignKeyName: "conversation_summaries_new_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "v_user_billing_summary"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "conversation_summaries_new_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "v_user_conversation_stats"
             referencedColumns: ["user_id"]
           },
@@ -375,23 +345,75 @@ export type Database = {
           updated_at?: string
           user_id?: string
         }
+        Relationships: []
+      }
+      credit_packs: {
+        Row: {
+          created_at: string | null
+          credits_purchased: number
+          credits_remaining: number
+          expires_at: string | null
+          id: string
+          price_cents: number
+          purchased_at: string | null
+          status: Database["public"]["Enums"]["payment_status"] | null
+          stripe_checkout_session_id: string | null
+          stripe_payment_intent_id: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          credits_purchased: number
+          credits_remaining: number
+          expires_at?: string | null
+          id?: string
+          price_cents: number
+          purchased_at?: string | null
+          status?: Database["public"]["Enums"]["payment_status"] | null
+          stripe_checkout_session_id?: string | null
+          stripe_payment_intent_id?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          credits_purchased?: number
+          credits_remaining?: number
+          expires_at?: string | null
+          id?: string
+          price_cents?: number
+          purchased_at?: string | null
+          status?: Database["public"]["Enums"]["payment_status"] | null
+          stripe_checkout_session_id?: string | null
+          stripe_payment_intent_id?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
         Relationships: [
           {
-            foreignKeyName: "conversations_user_id_fkey"
+            foreignKeyName: "credit_packs_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "conversations_user_id_fkey"
+            foreignKeyName: "credit_packs_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "v_active_users_with_calendar"
             referencedColumns: ["user_id"]
           },
           {
-            foreignKeyName: "conversations_user_id_fkey"
+            foreignKeyName: "credit_packs_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "v_user_billing_summary"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "credit_packs_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "v_user_conversation_stats"
@@ -472,29 +494,7 @@ export type Database = {
           updated_at?: string
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "gap_candidates_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "gap_candidates_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_active_users_with_calendar"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "gap_candidates_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_user_conversation_stats"
-            referencedColumns: ["user_id"]
-          },
-        ]
+        Relationships: []
       }
       gap_recovery_settings: {
         Row: {
@@ -527,29 +527,7 @@ export type Database = {
           updated_at?: string
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "gap_recovery_settings_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: true
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "gap_recovery_settings_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: true
-            referencedRelation: "v_active_users_with_calendar"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "gap_recovery_settings_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: true
-            referencedRelation: "v_user_conversation_stats"
-            referencedColumns: ["user_id"]
-          },
-        ]
+        Relationships: []
       }
       oauth_tokens: {
         Row: {
@@ -625,6 +603,339 @@ export type Database = {
             foreignKeyName: "oauth_tokens_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "v_user_billing_summary"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "oauth_tokens_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "v_user_conversation_stats"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      payment_history: {
+        Row: {
+          amount_cents: number
+          created_at: string | null
+          credit_pack_id: string | null
+          currency: string | null
+          description: string | null
+          id: string
+          invoice_url: string | null
+          receipt_url: string | null
+          refund_reason: string | null
+          refunded_amount_cents: number | null
+          refunded_at: string | null
+          status: Database["public"]["Enums"]["payment_status"] | null
+          stripe_charge_id: string | null
+          stripe_invoice_id: string | null
+          stripe_payment_intent_id: string | null
+          subscription_id: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          amount_cents: number
+          created_at?: string | null
+          credit_pack_id?: string | null
+          currency?: string | null
+          description?: string | null
+          id?: string
+          invoice_url?: string | null
+          receipt_url?: string | null
+          refund_reason?: string | null
+          refunded_amount_cents?: number | null
+          refunded_at?: string | null
+          status?: Database["public"]["Enums"]["payment_status"] | null
+          stripe_charge_id?: string | null
+          stripe_invoice_id?: string | null
+          stripe_payment_intent_id?: string | null
+          subscription_id?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          amount_cents?: number
+          created_at?: string | null
+          credit_pack_id?: string | null
+          currency?: string | null
+          description?: string | null
+          id?: string
+          invoice_url?: string | null
+          receipt_url?: string | null
+          refund_reason?: string | null
+          refunded_amount_cents?: number | null
+          refunded_at?: string | null
+          status?: Database["public"]["Enums"]["payment_status"] | null
+          stripe_charge_id?: string | null
+          stripe_invoice_id?: string | null
+          stripe_payment_intent_id?: string | null
+          subscription_id?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_history_credit_pack_id_fkey"
+            columns: ["credit_pack_id"]
+            isOneToOne: false
+            referencedRelation: "credit_packs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_history_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "subscriptions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_history_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "v_active_subscriptions"
+            referencedColumns: ["subscription_id"]
+          },
+          {
+            foreignKeyName: "payment_history_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_history_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "v_active_users_with_calendar"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "payment_history_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "v_user_billing_summary"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "payment_history_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "v_user_conversation_stats"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      plans: {
+        Row: {
+          action_pack_size: number | null
+          ai_interactions_monthly: number | null
+          created_at: string | null
+          description: string | null
+          display_order: number | null
+          features: Json | null
+          id: string
+          is_active: boolean | null
+          is_highlighted: boolean | null
+          is_popular: boolean | null
+          name: string
+          price_monthly_cents: number | null
+          price_per_use_cents: number | null
+          price_yearly_cents: number | null
+          slug: string
+          stripe_price_id_monthly: string | null
+          stripe_price_id_yearly: string | null
+          stripe_product_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          action_pack_size?: number | null
+          ai_interactions_monthly?: number | null
+          created_at?: string | null
+          description?: string | null
+          display_order?: number | null
+          features?: Json | null
+          id?: string
+          is_active?: boolean | null
+          is_highlighted?: boolean | null
+          is_popular?: boolean | null
+          name: string
+          price_monthly_cents?: number | null
+          price_per_use_cents?: number | null
+          price_yearly_cents?: number | null
+          slug: string
+          stripe_price_id_monthly?: string | null
+          stripe_price_id_yearly?: string | null
+          stripe_product_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          action_pack_size?: number | null
+          ai_interactions_monthly?: number | null
+          created_at?: string | null
+          description?: string | null
+          display_order?: number | null
+          features?: Json | null
+          id?: string
+          is_active?: boolean | null
+          is_highlighted?: boolean | null
+          is_popular?: boolean | null
+          name?: string
+          price_monthly_cents?: number | null
+          price_per_use_cents?: number | null
+          price_yearly_cents?: number | null
+          slug?: string
+          stripe_price_id_monthly?: string | null
+          stripe_price_id_yearly?: string | null
+          stripe_product_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      stripe_webhook_events: {
+        Row: {
+          created_at: string | null
+          error_message: string | null
+          event_type: string
+          id: string
+          payload: Json
+          processed: boolean | null
+          processed_at: string | null
+          retry_count: number | null
+          stripe_event_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          error_message?: string | null
+          event_type: string
+          id?: string
+          payload: Json
+          processed?: boolean | null
+          processed_at?: string | null
+          retry_count?: number | null
+          stripe_event_id: string
+        }
+        Update: {
+          created_at?: string | null
+          error_message?: string | null
+          event_type?: string
+          id?: string
+          payload?: Json
+          processed?: boolean | null
+          processed_at?: string | null
+          retry_count?: number | null
+          stripe_event_id?: string
+        }
+        Relationships: []
+      }
+      subscriptions: {
+        Row: {
+          ai_interactions_used: number | null
+          cancel_at_period_end: boolean | null
+          canceled_at: string | null
+          cancellation_reason: string | null
+          created_at: string | null
+          credits_remaining: number | null
+          current_period_end: string | null
+          current_period_start: string | null
+          first_payment_at: string | null
+          id: string
+          interval: Database["public"]["Enums"]["plan_interval"] | null
+          metadata: Json | null
+          money_back_eligible_until: string | null
+          plan_id: string
+          status: Database["public"]["Enums"]["subscription_status"] | null
+          stripe_customer_id: string | null
+          stripe_price_id: string | null
+          stripe_subscription_id: string | null
+          trial_end: string | null
+          trial_start: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          ai_interactions_used?: number | null
+          cancel_at_period_end?: boolean | null
+          canceled_at?: string | null
+          cancellation_reason?: string | null
+          created_at?: string | null
+          credits_remaining?: number | null
+          current_period_end?: string | null
+          current_period_start?: string | null
+          first_payment_at?: string | null
+          id?: string
+          interval?: Database["public"]["Enums"]["plan_interval"] | null
+          metadata?: Json | null
+          money_back_eligible_until?: string | null
+          plan_id: string
+          status?: Database["public"]["Enums"]["subscription_status"] | null
+          stripe_customer_id?: string | null
+          stripe_price_id?: string | null
+          stripe_subscription_id?: string | null
+          trial_end?: string | null
+          trial_start?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          ai_interactions_used?: number | null
+          cancel_at_period_end?: boolean | null
+          canceled_at?: string | null
+          cancellation_reason?: string | null
+          created_at?: string | null
+          credits_remaining?: number | null
+          current_period_end?: string | null
+          current_period_start?: string | null
+          first_payment_at?: string | null
+          id?: string
+          interval?: Database["public"]["Enums"]["plan_interval"] | null
+          metadata?: Json | null
+          money_back_eligible_until?: string | null
+          plan_id?: string
+          status?: Database["public"]["Enums"]["subscription_status"] | null
+          stripe_customer_id?: string | null
+          stripe_price_id?: string | null
+          stripe_subscription_id?: string | null
+          trial_end?: string | null
+          trial_start?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "v_active_users_with_calendar"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "v_user_billing_summary"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "v_user_conversation_stats"
             referencedColumns: ["user_id"]
           },
@@ -693,6 +1004,92 @@ export type Database = {
           },
           {
             foreignKeyName: "telegram_users_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "v_user_billing_summary"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "telegram_users_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "v_user_conversation_stats"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      usage_records: {
+        Row: {
+          action_type: string
+          id: string
+          metadata: Json | null
+          period_end: string
+          period_start: string
+          quantity: number | null
+          recorded_at: string | null
+          subscription_id: string | null
+          user_id: string
+        }
+        Insert: {
+          action_type: string
+          id?: string
+          metadata?: Json | null
+          period_end: string
+          period_start: string
+          quantity?: number | null
+          recorded_at?: string | null
+          subscription_id?: string | null
+          user_id: string
+        }
+        Update: {
+          action_type?: string
+          id?: string
+          metadata?: Json | null
+          period_end?: string
+          period_start?: string
+          quantity?: number | null
+          recorded_at?: string | null
+          subscription_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "usage_records_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "subscriptions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "usage_records_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "v_active_subscriptions"
+            referencedColumns: ["subscription_id"]
+          },
+          {
+            foreignKeyName: "usage_records_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "usage_records_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "v_active_users_with_calendar"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "usage_records_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "v_user_billing_summary"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "usage_records_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "v_user_conversation_stats"
@@ -780,6 +1177,13 @@ export type Database = {
             foreignKeyName: "user_calendars_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "v_user_billing_summary"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "user_calendars_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "v_user_conversation_stats"
             referencedColumns: ["user_id"]
           },
@@ -813,29 +1217,7 @@ export type Database = {
           updated_at?: string
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "user_preferences_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "user_preferences_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_active_users_with_calendar"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "user_preferences_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_user_conversation_stats"
-            referencedColumns: ["user_id"]
-          },
-        ]
+        Relationships: []
       }
       users: {
         Row: {
@@ -890,6 +1272,62 @@ export type Database = {
       }
     }
     Views: {
+      v_active_subscriptions: {
+        Row: {
+          ai_interactions_limit: number | null
+          ai_interactions_remaining: number | null
+          ai_interactions_used: number | null
+          cancel_at_period_end: boolean | null
+          canceled_at: string | null
+          current_period_end: string | null
+          current_period_start: string | null
+          display_name: string | null
+          email: string | null
+          first_payment_at: string | null
+          interval: Database["public"]["Enums"]["plan_interval"] | null
+          money_back_eligible_until: string | null
+          plan_name: string | null
+          plan_slug: string | null
+          status: Database["public"]["Enums"]["subscription_status"] | null
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          subscription_created_at: string | null
+          subscription_id: string | null
+          trial_end: string | null
+          trial_start: string | null
+          user_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "v_active_users_with_calendar"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "v_user_billing_summary"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "v_user_conversation_stats"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       v_active_users_with_calendar: {
         Row: {
           display_name: string | null
@@ -912,29 +1350,22 @@ export type Database = {
           total_minutes_untracked: number | null
           user_id: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "gap_candidates_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "gap_candidates_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_active_users_with_calendar"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "gap_candidates_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_user_conversation_stats"
-            referencedColumns: ["user_id"]
-          },
-        ]
+        Relationships: []
+      }
+      v_user_billing_summary: {
+        Row: {
+          credit_packs_purchased: number | null
+          current_plan: string | null
+          current_status:
+            | Database["public"]["Enums"]["subscription_status"]
+            | null
+          email: string | null
+          total_credits_remaining: number | null
+          total_paid_cents: number | null
+          total_subscriptions: number | null
+          user_id: string | null
+        }
+        Relationships: []
       }
       v_user_conversation_stats: {
         Row: {
@@ -950,6 +1381,19 @@ export type Database = {
       }
     }
     Functions: {
+      check_trial_expirations: { Args: never; Returns: number }
+      check_user_access: {
+        Args: { p_user_id: string }
+        Returns: {
+          credits_remaining: number
+          has_access: boolean
+          interactions_remaining: number
+          money_back_eligible: boolean
+          plan_name: string
+          subscription_status: Database["public"]["Enums"]["subscription_status"]
+          trial_days_left: number
+        }[]
+      }
       cleanup_expired_sessions: { Args: never; Returns: number }
       cleanup_expired_sessions_v2: { Args: never; Returns: number }
       cleanup_old_pending_gaps:
@@ -976,34 +1420,20 @@ export type Database = {
             }
             Returns: string
           }
-      match_conversation_embeddings:
-        | {
-            Args: {
-              match_count?: number
-              p_source?: string
-              p_telegram_user_id?: number
-              query_embedding: string
-            }
-            Returns: {
-              content: string
-              id: string
-              similarity: number
-            }[]
-          }
-        | {
-            Args: {
-              match_count: number
-              match_threshold: number
-              match_user_id: number
-              query_embedding: string
-            }
-            Returns: {
-              content: string
-              id: number
-              metadata: Json
-              similarity: number
-            }[]
-          }
+      match_conversation_embeddings: {
+        Args: {
+          match_count?: number
+          match_threshold?: number
+          match_user_id?: number
+          query_embedding: string
+        }
+        Returns: {
+          content: string
+          id: string
+          metadata: Json
+          similarity: number
+        }[]
+      }
       match_conversation_embeddings_v2: {
         Args: {
           match_count?: number
@@ -1074,6 +1504,14 @@ export type Database = {
           similarity: number
         }[]
       }
+      record_usage: {
+        Args: { p_action_type: string; p_quantity?: number; p_user_id: string }
+        Returns: boolean
+      }
+      reset_subscription_usage: {
+        Args: { p_subscription_id: string }
+        Returns: undefined
+      }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
     }
@@ -1088,6 +1526,23 @@ export type Database = {
         | "expired"
       message_role: "user" | "assistant" | "system" | "tool"
       oauth_provider: "google" | "github" | "telegram" | "whatsapp"
+      payment_status:
+        | "pending"
+        | "succeeded"
+        | "failed"
+        | "refunded"
+        | "partially_refunded"
+        | "disputed"
+      plan_interval: "monthly" | "yearly" | "one_time"
+      subscription_status:
+        | "trialing"
+        | "active"
+        | "past_due"
+        | "canceled"
+        | "unpaid"
+        | "incomplete"
+        | "incomplete_expired"
+        | "paused"
       user_status: "active" | "inactive" | "suspended" | "pending_verification"
     }
     CompositeTypes: {
@@ -1227,6 +1682,25 @@ export const Constants = {
       ],
       message_role: ["user", "assistant", "system", "tool"],
       oauth_provider: ["google", "github", "telegram", "whatsapp"],
+      payment_status: [
+        "pending",
+        "succeeded",
+        "failed",
+        "refunded",
+        "partially_refunded",
+        "disputed",
+      ],
+      plan_interval: ["monthly", "yearly", "one_time"],
+      subscription_status: [
+        "trialing",
+        "active",
+        "past_due",
+        "canceled",
+        "unpaid",
+        "incomplete",
+        "incomplete_expired",
+        "paused",
+      ],
       user_status: ["active", "inactive", "suspended", "pending_verification"],
     },
   },
