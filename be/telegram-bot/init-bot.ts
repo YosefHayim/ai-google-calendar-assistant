@@ -24,6 +24,7 @@ import {
   getRelevantContext,
   handlePendingEmailChange,
   initiateEmailChange,
+  getUserIdFromTelegram,
 } from "./utils";
 import { generateGoogleAuthUrl } from "@/utils/auth";
 import { logger } from "@/utils/logger";
@@ -150,19 +151,24 @@ const handleConfirmation = async (ctx: GlobalContext): Promise<void> => {
   ctx.session.pendingConfirmation = undefined;
 
   const chatId = ctx.chat?.id || ctx.session.chatId;
-  const userId = ctx.from?.id!;
+  const telegramUserId = ctx.from?.id!;
 
   try {
-    await addMessageToContext(chatId, userId, { role: "user", content: "User confirmed event creation despite conflicts." }, summarizeMessages);
+    await addMessageToContext(chatId, telegramUserId, { role: "user", content: "User confirmed event creation despite conflicts." }, summarizeMessages);
+
+    // Get actual UUID from telegram_users table for session storage
+    const userUuid = await getUserIdFromTelegram(telegramUserId);
 
     const prompt = buildConfirmationPrompt(ctx.session.firstName!, ctx.session.email!, pending.eventData);
     const { finalOutput } = await activateAgent(ORCHESTRATOR_AGENT, prompt, {
       email: ctx.session.email,
-      session: {
-        userId: userId.toString(),
-        agentName: ORCHESTRATOR_AGENT.name,
-        taskId: chatId.toString(),
-      },
+      session: userUuid
+        ? {
+            userId: userUuid,
+            agentName: ORCHESTRATOR_AGENT.name,
+            taskId: chatId.toString(),
+          }
+        : undefined,
     });
 
     if (!finalOutput) {
@@ -171,7 +177,7 @@ const handleConfirmation = async (ctx: GlobalContext): Promise<void> => {
     }
 
     if (finalOutput) {
-      await addMessageToContext(chatId, userId, { role: "assistant", content: finalOutput }, summarizeMessages);
+      await addMessageToContext(chatId, telegramUserId, { role: "assistant", content: finalOutput }, summarizeMessages);
     }
 
     await ctx.reply(finalOutput);
@@ -218,45 +224,41 @@ const handleConflictResponse = async (ctx: GlobalContext, output: string): Promi
 const handleAgentRequest = async (ctx: GlobalContext, message: string): Promise<void> => {
   ctx.session.isProcessing = true;
   const chatId = ctx.chat?.id || ctx.session.chatId;
-  const userId = ctx.from?.id!;
+  const telegramUserId = ctx.from?.id!;
 
   try {
-    // Add user message to conversation history
-    await addMessageToContext(chatId, userId, { role: "user", content: message }, summarizeMessages);
+    await addMessageToContext(chatId, telegramUserId, { role: "user", content: message }, summarizeMessages);
 
-    // Store user message embedding asynchronously (non-blocking)
-    storeEmbeddingAsync(chatId, userId, message, "user");
+    storeEmbeddingAsync(chatId, telegramUserId, message, "user");
 
-    // Get conversation context (today's messages + summary)
-    const conversationContext = await getConversationContext(chatId, userId);
+    const conversationContext = await getConversationContext(chatId, telegramUserId);
     const contextPrompt = buildContextPrompt(conversationContext);
 
-    // Get semantically relevant past conversations via vector search
-    const semanticContext = await getRelevantContext(userId, message, {
+    const semanticContext = await getRelevantContext(telegramUserId, message, {
       threshold: 0.75,
       limit: 3,
     });
 
-    // Combine both contexts
     const fullContext = [contextPrompt, semanticContext].filter(Boolean).join("\n\n");
 
-    // Build prompt with conversation history
     const prompt = buildAgentPromptWithContext(ctx.session.email, message, fullContext);
 
-    // Pass email and session for tool authentication and persistent memory
+    const userUuid = await getUserIdFromTelegram(telegramUserId);
+
     const { finalOutput } = await activateAgent(ORCHESTRATOR_AGENT, prompt, {
       email: ctx.session.email,
-      session: {
-        userId: userId.toString(),
-        agentName: ORCHESTRATOR_AGENT.name,
-        taskId: chatId.toString(),
-      },
+      session: userUuid
+        ? {
+            userId: userUuid,
+            agentName: ORCHESTRATOR_AGENT.name,
+            taskId: chatId.toString(),
+          }
+        : undefined,
     });
 
-    // Add AI response to conversation history
     if (finalOutput) {
-      await addMessageToContext(chatId, userId, { role: "assistant", content: finalOutput }, summarizeMessages);
-      storeEmbeddingAsync(chatId, userId, finalOutput, "assistant");
+      await addMessageToContext(chatId, telegramUserId, { role: "assistant", content: finalOutput }, summarizeMessages);
+      storeEmbeddingAsync(chatId, telegramUserId, finalOutput, "assistant");
     }
 
     if (finalOutput?.startsWith("CONFLICT_DETECTED::")) {
@@ -265,7 +267,7 @@ const handleAgentRequest = async (ctx: GlobalContext, message: string): Promise<
       await ctx.reply(finalOutput || "No output received from AI Agent.");
     }
   } catch (error) {
-    logger.error(`Telegram Bot: Agent request error for user ${userId}: ${error}`);
+    logger.error(`Telegram Bot: Agent request error for user ${telegramUserId}: ${JSON.stringify(error)}`);
     await ctx.reply("Error processing your request.");
   } finally {
     ctx.session.isProcessing = false;

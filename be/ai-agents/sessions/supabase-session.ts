@@ -126,7 +126,7 @@ export class SupabaseAgentSession implements Session {
 
       this.itemsCache = newItems;
     } catch (err) {
-      logger.error(`SupabaseSession: Exception adding items: ${err}`);
+      logger.error(`SupabaseSession: Exception adding items: ${JSON.stringify(err)}`);
       throw err;
     }
   }

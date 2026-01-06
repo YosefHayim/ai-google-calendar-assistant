@@ -1,7 +1,7 @@
+import type { Database } from "@/database.types";
 import { SUPABASE } from "@/config/clients/supabase";
 import { logger } from "@/utils/logger";
 import type { userAndAiMessageProps } from "@/types";
-import type { Database } from "@/database.types";
 
 const MAX_CONTEXT_LENGTH = 1000;
 
@@ -51,12 +51,8 @@ const mapRoleToDb = (role: "user" | "assistant" | "system"): MessageRole => {
 };
 
 // Get user_id from telegram_users table by telegram_user_id
-const getUserIdFromTelegram = async (telegramUserId: number): Promise<string | null> => {
-  const { data, error } = await SUPABASE
-    .from("telegram_users")
-    .select("user_id")
-    .eq("telegram_user_id", telegramUserId)
-    .single();
+export const getUserIdFromTelegram = async (telegramUserId: number): Promise<string | null> => {
+  const { data, error } = await SUPABASE.from("telegram_users").select("user_id").eq("telegram_user_id", telegramUserId).single();
 
   if (error || !data?.user_id) {
     return null;
@@ -67,8 +63,7 @@ const getUserIdFromTelegram = async (telegramUserId: number): Promise<string | n
 
 // Fetch today's conversation for a telegram user (query by external_chat_id)
 export const getTodayConversationState = async (chatId: number): Promise<ConversationRow | null> => {
-  const { data, error } = await SUPABASE
-    .from("conversations")
+  const { data, error } = await SUPABASE.from("conversations")
     .select("*")
     .eq("external_chat_id", chatId)
     .eq("source", "telegram")
@@ -95,8 +90,7 @@ export const getTodayConversationState = async (chatId: number): Promise<Convers
 
 // Get messages for a conversation
 const getConversationMessages = async (conversationId: string): Promise<userAndAiMessageProps[]> => {
-  const { data, error } = await SUPABASE
-    .from("conversation_messages")
+  const { data, error } = await SUPABASE.from("conversation_messages")
     .select("role, content, sequence_number")
     .eq("conversation_id", conversationId)
     .order("sequence_number", { ascending: true });
@@ -125,8 +119,7 @@ export const createConversationState = async (
 
   if (!userId) {
     // Create telegram user entry first if it doesn't exist
-    const { data: newTgUser, error: tgError } = await SUPABASE
-      .from("telegram_users")
+    const { data: newTgUser, error: tgError } = await SUPABASE.from("telegram_users")
       .upsert(
         {
           telegram_user_id: telegramUserId,
@@ -150,8 +143,7 @@ export const createConversationState = async (
   }
 
   // Create conversation
-  const { data: conversation, error: convError } = await SUPABASE
-    .from("conversations")
+  const { data: conversation, error: convError } = await SUPABASE.from("conversations")
     .insert({
       user_id: finalUserId,
       source: "telegram",
@@ -187,13 +179,8 @@ export const createConversationState = async (
 };
 
 // Update conversation with new message count
-export const updateConversationState = async (
-  conversationId: string,
-  context: ConversationContext,
-  messageCount: number
-): Promise<boolean> => {
-  const { error } = await SUPABASE
-    .from("conversations")
+export const updateConversationState = async (conversationId: string, context: ConversationContext, messageCount: number): Promise<boolean> => {
+  const { error } = await SUPABASE.from("conversations")
     .update({
       message_count: messageCount,
       summary: context.summary,
@@ -238,8 +225,7 @@ export const storeSummary = async (
 
 // Mark conversation summary updated
 export const markAsSummarized = async (conversationId: string, summary: string): Promise<boolean> => {
-  const { error } = await SUPABASE
-    .from("conversations")
+  const { error } = await SUPABASE.from("conversations")
     .update({
       summary,
       updated_at: new Date().toISOString(),
@@ -304,8 +290,7 @@ export const addMessageToContext = async (
   }
 
   // Get current sequence number
-  const { data: lastMsg } = await SUPABASE
-    .from("conversation_messages")
+  const { data: lastMsg } = await SUPABASE.from("conversation_messages")
     .select("sequence_number")
     .eq("conversation_id", stateId)
     .order("sequence_number", { ascending: false })
@@ -336,7 +321,7 @@ export const addMessageToContext = async (
 
     try {
       const summary = await summarizeFn(messagesToSummarize);
-      
+
       // Store summary with sequence range
       const firstSeq = nextSequence - context.messages.length + 1;
       const lastSeq = nextSequence - 2;
@@ -366,9 +351,7 @@ export const buildContextPrompt = (context: ConversationContext): string => {
   }
 
   if (context.messages.length > 0) {
-    const messageHistory = context.messages
-      .map((msg) => `${msg.role === "user" ? "User" : "Assistant"}: ${msg.content}`)
-      .join("\n");
+    const messageHistory = context.messages.map((msg) => `${msg.role === "user" ? "User" : "Assistant"}: ${msg.content}`).join("\n");
     parts.push(`Recent messages:\n${messageHistory}`);
   }
 

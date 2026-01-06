@@ -111,12 +111,33 @@ export const EXECUTION_TOOLS = {
 
   getEvent: asyncHandler(
     async (
-      params: calendar_v3.Schema$Event & { email: string; q?: string | null; timeMin?: string | null; searchAllCalendars?: boolean; calendarId?: string | null }
+      params: calendar_v3.Schema$Event & {
+        email: string;
+        q?: string | null;
+        timeMin?: string | null;
+        timeMax?: string | null;
+        searchAllCalendars?: boolean;
+        calendarId?: string | null;
+      }
     ) => {
       // Default timeMin to start of today in RFC3339 format (required by Google Calendar API)
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       const defaultTimeMin = today.toISOString();
+
+      // Default timeMax to 1 day after timeMin if not provided
+      // This prevents fetching too many events when user asks for "today" or "tomorrow"
+      const computeDefaultTimeMax = (timeMin: string): string => {
+        const minDate = new Date(timeMin);
+        const maxDate = new Date(minDate);
+        maxDate.setDate(maxDate.getDate() + 1);
+        maxDate.setHours(23, 59, 59, 999);
+        return maxDate.toISOString();
+      };
+
+      const effectiveTimeMin = params.timeMin ?? defaultTimeMin;
+      const effectiveTimeMax = params.timeMax ?? computeDefaultTimeMax(effectiveTimeMin);
+
       // Limit events to prevent context overflow
       const MAX_EVENTS_TOTAL = 100;
       const MAX_EVENTS_PER_CALENDAR = 50;
@@ -156,7 +177,8 @@ export const EXECUTION_TOOLS = {
               req: undefined,
               extra: {
                 calendarId: calId,
-                timeMin: params.timeMin ?? defaultTimeMin,
+                timeMin: effectiveTimeMin,
+                timeMax: effectiveTimeMax,
                 q: params.q || "",
                 maxResults: MAX_EVENTS_PER_CALENDAR,
                 singleEvents: true,
@@ -206,7 +228,8 @@ export const EXECUTION_TOOLS = {
       return eventsHandler(null, ACTION.GET, {}, {
         email,
         calendarId: calendarId ?? "primary",
-        timeMin: params.timeMin ?? defaultTimeMin,
+        timeMin: effectiveTimeMin,
+        timeMax: effectiveTimeMax,
         q: params.q || "",
         singleEvents: true,
         orderBy: "startTime",

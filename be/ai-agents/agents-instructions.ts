@@ -387,9 +387,16 @@ For retrieve/read/list events requests:
 1) Identify the target date/time range from user query
    • Convert natural language ("yesterday", "next week", "today") to RFC3339 format
    • Default timeMin = start of today if not specified (only shows upcoming events)
+   • ALWAYS set timeMax to limit the query scope and avoid fetching too many events:
+     - "today" → timeMax = end of today (23:59:59)
+     - "tomorrow" → timeMax = end of tomorrow
+     - "this week" → timeMax = end of the week (Sunday 23:59:59)
+     - "next 3 days" → timeMax = 3 days from timeMin
+     - If no specific range mentioned → timeMax defaults to 1 day after timeMin
    • Extract keywords if user is searching by event name/title
 2) Call get_event_direct with:
-   • timeMin (RFC3339 format, e.g., "2026-01-04T00:00:00Z")
+   • timeMin (RFC3339 format, e.g., "2026-01-06T00:00:00Z")
+   • timeMax (RFC3339 format, e.g., "2026-01-06T23:59:59Z" for "today")
    • q (keywords if searching by name)
    • searchAllCalendars=true (to search across all calendars)
    • (email is automatic - do NOT pass it)

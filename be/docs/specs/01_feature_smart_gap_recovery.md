@@ -49,12 +49,12 @@ The system proactively analyzes the user's calendar to:
 
 ### 1.4 Success Metrics
 
-| Metric                  | Target                            |
-| ----------------------- | --------------------------------- |
-| Gap Detection Accuracy  | > 95% of valid gaps identified    |
-| Inference Relevance     | > 70% of inferences marked helpful |
-| User Engagement Rate    | > 40% of presented gaps resolved  |
-| Feature Retention       | < 15% disable rate after 30 days  |
+| Metric                 | Target                             |
+| ---------------------- | ---------------------------------- |
+| Gap Detection Accuracy | > 95% of valid gaps identified     |
+| Inference Relevance    | > 70% of inferences marked helpful |
+| User Engagement Rate   | > 40% of presented gaps resolved   |
+| Feature Retention      | < 15% disable rate after 30 days   |
 
 ---
 
@@ -113,19 +113,13 @@ THEN Gap = "Activity at [Location]"
 
 ```typescript
 interface TravelEvent {
-  type: 'arrival' | 'departure';
+  type: "arrival" | "departure";
   location: string | null;
   timestamp: Date;
 }
 
 const TRAVEL_PATTERNS = {
-  arrival: [
-    /^drive to (.+)$/i,
-    /^travel to (.+)$/i,
-    /^commute to (.+)$/i,
-    /^arrive at (.+)$/i,
-    /^heading to (.+)$/i,
-  ],
+  arrival: [/^drive to (.+)$/i, /^travel to (.+)$/i, /^commute to (.+)$/i, /^arrive at (.+)$/i, /^heading to (.+)$/i],
   departure: [
     /^drive home$/i,
     /^leave (.+)$/i,
@@ -135,16 +129,13 @@ const TRAVEL_PATTERNS = {
   ],
 };
 
-function detectTravelSandwich(
-  eventBefore: CalendarEvent,
-  eventAfter: CalendarEvent
-): InferredContext | null {
-  const arrival = matchTravelPattern(eventBefore, 'arrival');
-  const departure = matchTravelPattern(eventAfter, 'departure');
+function detectTravelSandwich(eventBefore: CalendarEvent, eventAfter: CalendarEvent): InferredContext | null {
+  const arrival = matchTravelPattern(eventBefore, "arrival");
+  const departure = matchTravelPattern(eventAfter, "departure");
 
   if (arrival && departure) {
     return {
-      type: 'travel_sandwich',
+      type: "travel_sandwich",
       location: arrival.location,
       confidence: calculateConfidence(arrival, departure),
       suggestion: `Activity at ${arrival.location}`,
@@ -165,24 +156,16 @@ function detectTravelSandwich(
 **Handling:**
 
 ```typescript
-function createStandardGapContext(
-  eventBefore: CalendarEvent,
-  eventAfter: CalendarEvent,
-  gapDuration: number
-): InferredContext {
+function createStandardGapContext(eventBefore: CalendarEvent, eventAfter: CalendarEvent, gapDuration: number): InferredContext {
   return {
-    type: 'standard_gap',
+    type: "standard_gap",
     location: null,
     confidence: 0.5, // Neutral confidence for unpatternized gaps
     suggestion: generateStandardSuggestion(eventBefore, eventAfter, gapDuration),
   };
 }
 
-function generateStandardSuggestion(
-  before: CalendarEvent,
-  after: CalendarEvent,
-  durationMs: number
-): string {
+function generateStandardSuggestion(before: CalendarEvent, after: CalendarEvent, durationMs: number): string {
   const hours = Math.floor(durationMs / (60 * 60 * 1000));
   const minutes = Math.floor((durationMs % (60 * 60 * 1000)) / (60 * 1000));
 
@@ -197,12 +180,12 @@ function generateStandardSuggestion(
 
 Each inferred context includes a confidence score (0.0 - 1.0):
 
-| Score Range | Interpretation    | UI Treatment                       |
-| ----------- | ----------------- | ---------------------------------- |
-| 0.8 - 1.0   | High confidence   | Show with pre-filled suggestion    |
+| Score Range | Interpretation    | UI Treatment                        |
+| ----------- | ----------------- | ----------------------------------- |
+| 0.8 - 1.0   | High confidence   | Show with pre-filled suggestion     |
 | 0.5 - 0.79  | Medium confidence | Show with suggestion as placeholder |
-| 0.3 - 0.49  | Low confidence    | Show without suggestion            |
-| < 0.3       | Very low          | Do not present to user             |
+| 0.3 - 0.49  | Low confidence    | Show without suggestion             |
+| < 0.3       | Very low          | Do not present to user              |
 
 ---
 
@@ -262,8 +245,8 @@ What would you like to do?
 
 ### 3.3 User Actions
 
-| Action       | Input Format            | Result                                                   |
-| ------------ | ----------------------- | -------------------------------------------------------- |
+| Action       | Input Format             | Result                                                   |
+| ------------ | ------------------------ | -------------------------------------------------------- |
 | **FILL**     | `[number] [description]` | Creates calendar event with description                  |
 | **SKIP**     | `skip [number]`          | Marks gap as skipped (won't re-prompt for this instance) |
 | **SKIP ALL** | `skip all`               | Dismisses all current candidates                         |
@@ -354,27 +337,20 @@ const DEFAULT_GAP_RECOVERY_SETTINGS: GapRecoverySettings = {
 ### 4.3 Day of Week Type
 
 ```typescript
-type DayOfWeek =
-  | 'sunday'
-  | 'monday'
-  | 'tuesday'
-  | 'wednesday'
-  | 'thursday'
-  | 'friday'
-  | 'saturday';
+type DayOfWeek = "sunday" | "monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday";
 ```
 
 ### 4.4 Configuration Commands
 
 Users can modify settings via natural language:
 
-| Command                               | Effect                               |
-| ------------------------------------- | ------------------------------------ |
-| "Set minimum gap to 1 hour"           | `minGapThreshold = 60`               |
-| "Ignore weekends for gap detection"   | `ignoredDays = ['saturday', 'sunday']` |
-| "Look back 14 days for gaps"          | `lookbackDays = 14`                  |
-| "Disable gap detection"               | `autoGapAnalysis = false`            |
-| "Enable gap detection"                | `autoGapAnalysis = true`             |
+| Command                             | Effect                                 |
+| ----------------------------------- | -------------------------------------- |
+| "Set minimum gap to 1 hour"         | `minGapThreshold = 60`                 |
+| "Ignore weekends for gap detection" | `ignoredDays = ['saturday', 'sunday']` |
+| "Look back 14 days for gaps"        | `lookbackDays = 14`                    |
+| "Disable gap detection"             | `autoGapAnalysis = false`              |
+| "Enable gap detection"              | `autoGapAnalysis = true`               |
 
 ---
 
@@ -468,19 +444,19 @@ interface InferredContext {
  * Types of inference patterns
  */
 type InferenceType =
-  | 'travel_sandwich' // Gap between travel events
-  | 'work_session' // Gap during work hours
-  | 'meal_break' // Gap around typical meal times
-  | 'standard_gap'; // Unpatternized gap
+  | "travel_sandwich" // Gap between travel events
+  | "work_session" // Gap during work hours
+  | "meal_break" // Gap around typical meal times
+  | "standard_gap"; // Unpatternized gap
 
 /**
  * Resolution status of a gap
  */
 type GapResolution =
-  | { status: 'pending' }
-  | { status: 'filled'; eventId: string; filledAt: Date }
-  | { status: 'skipped'; skippedAt: Date; reason?: string }
-  | { status: 'dismissed'; dismissedAt: Date };
+  | { status: "pending" }
+  | { status: "filled"; eventId: string; filledAt: Date }
+  | { status: "skipped"; skippedAt: Date; reason?: string }
+  | { status: "dismissed"; dismissedAt: Date };
 ```
 
 ### 5.2 Service Interface
@@ -490,12 +466,7 @@ interface GapRecoveryService {
   /**
    * Analyze calendar for gaps within the specified time range
    */
-  analyzeGaps(
-    userId: string,
-    startDate: Date,
-    endDate: Date,
-    options?: GapAnalysisOptions
-  ): Promise<GapCandidate[]>;
+  analyzeGaps(userId: string, startDate: Date, endDate: Date, options?: GapAnalysisOptions): Promise<GapCandidate[]>;
 
   /**
    * Get pending gap candidates for a user
@@ -505,10 +476,7 @@ interface GapRecoveryService {
   /**
    * Fill a gap with a new calendar event
    */
-  fillGap(
-    gapId: string,
-    eventDetails: CreateEventParams
-  ): Promise<{ success: boolean; eventId?: string }>;
+  fillGap(gapId: string, eventDetails: CreateEventParams): Promise<{ success: boolean; eventId?: string }>;
 
   /**
    * Skip a specific gap instance
@@ -523,10 +491,7 @@ interface GapRecoveryService {
   /**
    * Update gap recovery settings
    */
-  updateSettings(
-    userId: string,
-    settings: Partial<GapRecoverySettings>
-  ): Promise<GapRecoverySettings>;
+  updateSettings(userId: string, settings: Partial<GapRecoverySettings>): Promise<GapRecoverySettings>;
 
   /**
    * Get current settings for a user
@@ -618,11 +583,11 @@ Retrieve pending gap candidates for the authenticated user.
 
 **Query Parameters:**
 
-| Parameter   | Type     | Default     | Description          |
-| ----------- | -------- | ----------- | -------------------- |
-| `startDate` | ISO date | 7 days ago  | Analysis start date  |
-| `endDate`   | ISO date | today       | Analysis end date    |
-| `limit`     | number   | 10          | Max gaps to return   |
+| Parameter   | Type     | Default    | Description         |
+| ----------- | -------- | ---------- | ------------------- |
+| `startDate` | ISO date | 7 days ago | Analysis start date |
+| `endDate`   | ISO date | today      | Analysis end date   |
+| `limit`     | number   | 10         | Max gaps to return  |
 
 **Response:**
 
@@ -799,12 +764,12 @@ ADD COLUMN gap_recovery_settings JSONB DEFAULT '{
 
 ### 7.2 Retention Policy
 
-| Gap State     | Retention Period | Action                     |
-| ------------- | ---------------- | -------------------------- |
-| Pending       | 30 days          | Auto-dismissed             |
-| Filled        | 90 days          | Retained for analytics     |
-| Skipped       | 30 days          | Prevents re-prompting      |
-| Dismissed     | 7 days           | Soft deleted               |
+| Gap State | Retention Period | Action                 |
+| --------- | ---------------- | ---------------------- |
+| Pending   | 30 days          | Auto-dismissed         |
+| Filled    | 90 days          | Retained for analytics |
+| Skipped   | 30 days          | Prevents re-prompting  |
+| Dismissed | 7 days           | Soft deleted           |
 
 ---
 
@@ -814,35 +779,31 @@ ADD COLUMN gap_recovery_settings JSONB DEFAULT '{
 
 ```typescript
 class GapRecoveryError extends Error {
-  constructor(
-    message: string,
-    public code: GapErrorCode,
-    public details?: Record<string, unknown>
-  ) {
+  constructor(message: string, public code: GapErrorCode, public details?: Record<string, unknown>) {
     super(message);
-    this.name = 'GapRecoveryError';
+    this.name = "GapRecoveryError";
   }
 }
 
 type GapErrorCode =
-  | 'GAP_NOT_FOUND'
-  | 'GAP_ALREADY_RESOLVED'
-  | 'CALENDAR_ACCESS_DENIED'
-  | 'EVENT_CREATION_FAILED'
-  | 'INVALID_TIME_RANGE'
-  | 'SETTINGS_VALIDATION_FAILED';
+  | "GAP_NOT_FOUND"
+  | "GAP_ALREADY_RESOLVED"
+  | "CALENDAR_ACCESS_DENIED"
+  | "EVENT_CREATION_FAILED"
+  | "INVALID_TIME_RANGE"
+  | "SETTINGS_VALIDATION_FAILED";
 ```
 
 ### 8.2 Error Responses
 
-| Code                       | HTTP Status | Message                                   |
-| -------------------------- | ----------- | ----------------------------------------- |
-| `GAP_NOT_FOUND`            | 404         | Gap candidate not found                   |
-| `GAP_ALREADY_RESOLVED`     | 409         | Gap has already been resolved             |
-| `CALENDAR_ACCESS_DENIED`   | 403         | Calendar access token expired or revoked  |
-| `EVENT_CREATION_FAILED`    | 500         | Failed to create calendar event           |
-| `INVALID_TIME_RANGE`       | 400         | Invalid date range specified              |
-| `SETTINGS_VALIDATION_FAILED` | 400       | Invalid settings values provided          |
+| Code                         | HTTP Status | Message                                  |
+| ---------------------------- | ----------- | ---------------------------------------- |
+| `GAP_NOT_FOUND`              | 404         | Gap candidate not found                  |
+| `GAP_ALREADY_RESOLVED`       | 409         | Gap has already been resolved            |
+| `CALENDAR_ACCESS_DENIED`     | 403         | Calendar access token expired or revoked |
+| `EVENT_CREATION_FAILED`      | 500         | Failed to create calendar event          |
+| `INVALID_TIME_RANGE`         | 400         | Invalid date range specified             |
+| `SETTINGS_VALIDATION_FAILED` | 400         | Invalid settings values provided         |
 
 ---
 
@@ -857,11 +818,11 @@ type GapErrorCode =
 
 ### 9.2 Rate Limiting
 
-| Operation        | Limit                   |
-| ---------------- | ----------------------- |
-| Gap analysis     | 10 requests/hour/user   |
-| Gap fill         | 30 requests/hour/user   |
-| Settings update  | 20 requests/hour/user   |
+| Operation       | Limit                 |
+| --------------- | --------------------- |
+| Gap analysis    | 10 requests/hour/user |
+| Gap fill        | 30 requests/hour/user |
+| Settings update | 20 requests/hour/user |
 
 ### 9.3 Input Validation
 
