@@ -5,18 +5,23 @@ export const en = {
   "commands.start.footer": "Let's reclaim your time",
   "commands.start.sections.getStarted.title": "Get Started",
   "commands.start.sections.getStarted.items.0": "Just message me naturally",
-  "commands.start.sections.getStarted.items.1": "Or type /help to see what I can do",
+  "commands.start.sections.getStarted.items.1":
+    "Or type /help to see what I can do",
   "commands.start.sections.trySaying.title": "Try saying",
   "commands.start.sections.trySaying.items.0": "'What's on my schedule today?'",
-  "commands.start.sections.trySaying.items.1": "'Block 2 hours for deep work tomorrow'",
+  "commands.start.sections.trySaying.items.1":
+    "'Block 2 hours for deep work tomorrow'",
 
   "commands.help.header": "How Ally Helps",
-  "commands.help.description": "Your private AI secretary for calendar mastery.",
+  "commands.help.description":
+    "Your private AI secretary for calendar mastery.",
   "commands.help.naturalLanguageTip": "Or just message me naturally!",
-  "commands.help.footerTip": "'How much deep work did I get this week vs last week?'",
+  "commands.help.footerTip":
+    "'How much deep work did I get this week vs last week?'",
   "commands.help.sections.viewSchedule.title": "View Your Schedule",
   "commands.help.sections.viewSchedule.items.0": "/today - Today's schedule",
-  "commands.help.sections.viewSchedule.items.1": "/tomorrow - Tomorrow's agenda",
+  "commands.help.sections.viewSchedule.items.1":
+    "/tomorrow - Tomorrow's agenda",
   "commands.help.sections.viewSchedule.items.2": "/week - Week at a glance",
   "commands.help.sections.viewSchedule.items.3": "/month - Monthly overview",
   "commands.help.sections.viewSchedule.items.4": "/free - Find open slots",
@@ -27,7 +32,8 @@ export const en = {
   "commands.help.sections.manageEvents.items.2": "/delete - Cancel an event",
   "commands.help.sections.manageEvents.items.3": "/search - Search calendar",
   "commands.help.sections.timeInsights.title": "Time Insights",
-  "commands.help.sections.timeInsights.items.0": "/analytics - Understand your time",
+  "commands.help.sections.timeInsights.items.0":
+    "/analytics - Understand your time",
   "commands.help.sections.timeInsights.items.1": "/calendars - Your calendars",
   "commands.help.sections.settings.title": "Settings",
   "commands.help.sections.settings.items.0": "/status - Check connection",
@@ -38,13 +44,17 @@ export const en = {
 
   "commands.usage.header": "Here's how Ally helps:",
   "commands.usage.sections.scheduleProtect.title": "Schedule & Protect",
-  "commands.usage.sections.scheduleProtect.items.0": "'Block 2 hours for deep work tomorrow morning'",
-  "commands.usage.sections.scheduleProtect.items.1": "'Schedule a call with Sarah at 3pm'",
+  "commands.usage.sections.scheduleProtect.items.0":
+    "'Block 2 hours for deep work tomorrow morning'",
+  "commands.usage.sections.scheduleProtect.items.1":
+    "'Schedule a call with Sarah at 3pm'",
   "commands.usage.sections.queryTime.title": "Query Your Time",
   "commands.usage.sections.queryTime.items.0": "'What's on my schedule today?'",
-  "commands.usage.sections.queryTime.items.1": "'Find me an open slot this week'",
+  "commands.usage.sections.queryTime.items.1":
+    "'Find me an open slot this week'",
   "commands.usage.sections.customize.title": "Customize",
-  "commands.usage.sections.customize.items.0": "Type /settings to personalize Ally",
+  "commands.usage.sections.customize.items.0":
+    "Type /settings to personalize Ally",
 
   "commands.exit.header": "Until next time",
   "commands.exit.text":
@@ -53,7 +63,8 @@ export const en = {
 
   "commands.today.header": "Today's Schedule",
   "commands.today.text": "Pulling up your agenda for today...",
-  "commands.today.footerTip": "You can also ask 'What's on my schedule today?' anytime.",
+  "commands.today.footerTip":
+    "You can also ask 'What's on my schedule today?' anytime.",
 
   "commands.tomorrow.header": "Tomorrow's Agenda",
   "commands.tomorrow.text": "Checking what's lined up for tomorrow...",
@@ -86,49 +97,69 @@ export const en = {
   "commands.quick.footer": "I'll handle the rest",
 
   "commands.create.header": "Schedule Something",
-  "commands.create.text": "Just describe what you need - I understand natural language:",
+  "commands.create.text":
+    "Just describe what you need - I understand natural language:",
   "commands.create.footerTip": "Describe your event and I'll handle the rest.",
   "commands.create.sections.eventsMeetings.title": "Events & Meetings",
-  "commands.create.sections.eventsMeetings.items.0": "'Call with Sarah tomorrow at 2pm'",
-  "commands.create.sections.eventsMeetings.items.1": "'Team sync every Monday at 9am'",
-  "commands.create.sections.eventsMeetings.items.2": "'Lunch with investor on Friday at noon'",
+  "commands.create.sections.eventsMeetings.items.0":
+    "'Call with Sarah tomorrow at 2pm'",
+  "commands.create.sections.eventsMeetings.items.1":
+    "'Team sync every Monday at 9am'",
+  "commands.create.sections.eventsMeetings.items.2":
+    "'Lunch with investor on Friday at noon'",
   "commands.create.sections.focusDeepWork.title": "Focus & Deep Work",
-  "commands.create.sections.focusDeepWork.items.0": "'Block 3 hours for deep work tomorrow morning'",
-  "commands.create.sections.focusDeepWork.items.1": "'Reserve Friday afternoon for strategy'",
+  "commands.create.sections.focusDeepWork.items.0":
+    "'Block 3 hours for deep work tomorrow morning'",
+  "commands.create.sections.focusDeepWork.items.1":
+    "'Reserve Friday afternoon for strategy'",
   "commands.create.sections.withDuration.title": "With Duration",
-  "commands.create.sections.withDuration.items.0": "'2-hour workshop on Wednesday at 10am'",
-  "commands.create.sections.withDuration.items.1": "'Quick 15-min check-in at 4pm'",
+  "commands.create.sections.withDuration.items.0":
+    "'2-hour workshop on Wednesday at 10am'",
+  "commands.create.sections.withDuration.items.1":
+    "'Quick 15-min check-in at 4pm'",
   "commands.create.sections.specificCalendar.title": "Specific Calendar",
-  "commands.create.sections.specificCalendar.items.0": "'Add to Work: Client call Friday 2pm'",
+  "commands.create.sections.specificCalendar.items.0":
+    "'Add to Work: Client call Friday 2pm'",
 
   "commands.update.header": "Reschedule or Edit",
   "commands.update.text": "Modify any event on your calendar:",
   "commands.update.footerTip": "Just tell me what to change.",
   "commands.update.sections.reschedule.title": "Reschedule",
   "commands.update.sections.reschedule.items.0": "'Move my 2pm meeting to 4pm'",
-  "commands.update.sections.reschedule.items.1": "'Push the dentist to next week'",
+  "commands.update.sections.reschedule.items.1":
+    "'Push the dentist to next week'",
   "commands.update.sections.reschedule.items.2": "'Shift Friday lunch to 1pm'",
   "commands.update.sections.editDetails.title": "Edit Details",
-  "commands.update.sections.editDetails.items.0": "'Rename team meeting to Sprint Review'",
-  "commands.update.sections.editDetails.items.1": "'Add Zoom link to tomorrow's call'",
-  "commands.update.sections.editDetails.items.2": "'Update the project meeting description'",
+  "commands.update.sections.editDetails.items.0":
+    "'Rename team meeting to Sprint Review'",
+  "commands.update.sections.editDetails.items.1":
+    "'Add Zoom link to tomorrow's call'",
+  "commands.update.sections.editDetails.items.2":
+    "'Update the project meeting description'",
   "commands.update.sections.adjustDuration.title": "Adjust Duration",
-  "commands.update.sections.adjustDuration.items.0": "'Make standup 30 minutes instead of 15'",
-  "commands.update.sections.adjustDuration.items.1": "'Extend tomorrow's workshop by 1 hour'",
+  "commands.update.sections.adjustDuration.items.0":
+    "'Make standup 30 minutes instead of 15'",
+  "commands.update.sections.adjustDuration.items.1":
+    "'Extend tomorrow's workshop by 1 hour'",
 
   "commands.delete.header": "Cancel an Event",
   "commands.delete.text": "Remove events from your calendar:",
   "commands.delete.footerWarning": "I'll confirm before removing anything",
   "commands.delete.sections.cancelByName.title": "Cancel by Name",
   "commands.delete.sections.cancelByName.items.0": "'Cancel my 3pm meeting'",
-  "commands.delete.sections.cancelByName.items.1": "'Remove lunch with John tomorrow'",
-  "commands.delete.sections.cancelByName.items.2": "'Delete the dentist appointment'",
+  "commands.delete.sections.cancelByName.items.1":
+    "'Remove lunch with John tomorrow'",
+  "commands.delete.sections.cancelByName.items.2":
+    "'Delete the dentist appointment'",
   "commands.delete.sections.clearMultiple.title": "Clear Multiple",
   "commands.delete.sections.clearMultiple.items.0": "'Clear Friday afternoon'",
-  "commands.delete.sections.clearMultiple.items.1": "'Remove all meetings tomorrow'",
+  "commands.delete.sections.clearMultiple.items.1":
+    "'Remove all meetings tomorrow'",
   "commands.delete.sections.recurringEvents.title": "Recurring Events",
-  "commands.delete.sections.recurringEvents.items.0": "'Skip this week's standup'",
-  "commands.delete.sections.recurringEvents.items.1": "'Cancel all future team meetings'",
+  "commands.delete.sections.recurringEvents.items.0":
+    "'Skip this week's standup'",
+  "commands.delete.sections.recurringEvents.items.1":
+    "'Cancel all future team meetings'",
 
   "commands.cancel.header": "Cancel or Reschedule",
   "commands.cancel.text": "Need to make changes? Just tell me:",
@@ -141,10 +172,12 @@ export const en = {
   "commands.search.text": "Find any event on your calendar:",
   "commands.search.footerTip": "Just describe what you're looking for.",
   "commands.search.sections.searchByKeyword.title": "Search by keyword",
-  "commands.search.sections.searchByKeyword.items.0": "'Find meetings with John'",
+  "commands.search.sections.searchByKeyword.items.0":
+    "'Find meetings with John'",
   "commands.search.sections.searchByKeyword.items.1": "'Search for dentist'",
   "commands.search.sections.searchByKeyword.items.2": "'Show all standups'",
-  "commands.search.sections.searchByKeyword.items.3": "'Find events about Project Alpha'",
+  "commands.search.sections.searchByKeyword.items.3":
+    "'Find events about Project Alpha'",
   "commands.search.sections.filterByDate.title": "Filter by date",
   "commands.search.sections.filterByDate.items.0": "'Find meetings next week'",
   "commands.search.sections.filterByDate.items.1": "'Search calls in December'",
@@ -165,16 +198,22 @@ export const en = {
   "commands.analytics.sections.timePeriod.items.2": "'Insights for this month'",
   "commands.analytics.sections.timePeriod.items.3": "'Last 30 days breakdown'",
   "commands.analytics.sections.comparePeriods.title": "Compare Periods",
-  "commands.analytics.sections.comparePeriods.items.0": "'Compare this week vs last week'",
-  "commands.analytics.sections.comparePeriods.items.1": "'How does this month compare to last?'",
+  "commands.analytics.sections.comparePeriods.items.0":
+    "'Compare this week vs last week'",
+  "commands.analytics.sections.comparePeriods.items.1":
+    "'How does this month compare to last?'",
   "commands.analytics.sections.deepWorkFocus.title": "Deep Work & Focus",
-  "commands.analytics.sections.deepWorkFocus.items.0": "'How much deep work did I get this week?'",
-  "commands.analytics.sections.deepWorkFocus.items.1": "'Time in meetings vs focus time'",
-  "commands.analytics.sections.deepWorkFocus.items.2": "'My productivity trends this month'",
+  "commands.analytics.sections.deepWorkFocus.items.0":
+    "'How much deep work did I get this week?'",
+  "commands.analytics.sections.deepWorkFocus.items.1":
+    "'Time in meetings vs focus time'",
+  "commands.analytics.sections.deepWorkFocus.items.2":
+    "'My productivity trends this month'",
 
   "commands.calendars.header": "Your Calendars",
   "commands.calendars.text": "Fetching your connected calendars...",
-  "commands.calendars.footerTip": "You can schedule events to specific calendars by name.",
+  "commands.calendars.footerTip":
+    "You can schedule events to specific calendars by name.",
 
   "commands.status.header": "Connection Status",
   "commands.status.text": "Checking your Google Calendar connection...",
@@ -185,21 +224,26 @@ export const en = {
   "commands.settings.connectedAsText": "Connected as:",
   "commands.settings.footerText": "Select an option below:",
   "commands.settings.sections.options.title": "Options",
-  "commands.settings.sections.options.items.0": "<b>Change Email</b> - Update your linked email",
-  "commands.settings.sections.options.items.1": "<b>Reconnect Google</b> - Re-authorize calendar access",
+  "commands.settings.sections.options.items.0":
+    "<b>Change Email</b> - Update your linked email",
+  "commands.settings.sections.options.items.1":
+    "<b>Reconnect Google</b> - Re-authorize calendar access",
   "commands.settings.buttons.changeEmail": "Change Email",
   "commands.settings.buttons.reconnectGoogle": "Reconnect Google Calendar",
 
-  "commands.changeEmail.notAuthenticatedError": "You must be authenticated first. Please send me your email address.",
+  "commands.changeEmail.notAuthenticatedError":
+    "You must be authenticated first. Please send me your email address.",
   "commands.changeEmail.currentEmailText": "Your current email is:",
-  "commands.changeEmail.enterNewEmailPrompt": "Please enter your new email address:",
+  "commands.changeEmail.enterNewEmailPrompt":
+    "Please enter your new email address:",
 
   "commands.feedback.header": "Share Your Feedback",
   "commands.feedback.text": "Your input shapes how Ally evolves. You can:",
   "commands.feedback.options.0": "Tell us what's working well",
   "commands.feedback.options.1": "Report any issues you've hit",
   "commands.feedback.options.2": "Suggest features you'd love to see",
-  "commands.feedback.instructionText": "Just type your feedback - the team will see it.",
+  "commands.feedback.instructionText":
+    "Just type your feedback - the team will see it.",
   "commands.feedback.footer": "Thanks for helping us build something great",
 
   "commands.language.header": "Language Settings",
@@ -211,20 +255,44 @@ export const en = {
   "commands.language.languages.fr": "French (Français)",
   "commands.language.languages.de": "German (Deutsch)",
   "commands.language.languages.ar": "Arabic (العربية)",
+  "commands.language.languages.ru": "Russian (Русский)",
 
-  "auth.welcomePrompt": "Welcome! To get started, please enter your email address for verification:",
+  "commands.mycalendars.header": "My Calendars",
+  "commands.mycalendars.loading": "Fetching your calendars...",
+  "commands.mycalendars.noCalendars":
+    "No calendars found. Please connect your Google Calendar first.",
+  "commands.mycalendars.calendarCount": "You have {{count}} calendar(s):",
+  "commands.mycalendars.footerTip":
+    "Use calendar names when creating events for specific calendars.",
+
+  "commands.aboutme.header": "What I Know About You",
+  "commands.aboutme.loading": "Analyzing your profile and activity...",
+  "commands.aboutme.noData":
+    "I don't have enough data about you yet. Use me more and I'll learn your preferences!",
+  "commands.aboutme.sections.profile.title": "Profile",
+  "commands.aboutme.sections.calendars.title": "Your Calendars",
+  "commands.aboutme.sections.activity.title": "Activity",
+  "commands.aboutme.sections.insights.title": "Insights",
+  "commands.aboutme.footerTip": "I learn more about you with each interaction.",
+
+  "auth.welcomePrompt":
+    "Welcome! To get started, please enter your email address for verification:",
   "auth.enterOtpPrompt":
     "A verification code has been sent to {{email}}.\n\nPlease enter the 6-digit code from your email (valid for 10 minutes).\n\nIf you entered the wrong email, just type the correct one.",
-  "auth.otpExpired": "Verification code expired. Please enter your email again:",
-  "auth.otpInvalidError": "Invalid verification code. Please try again or type a new email address.",
+  "auth.otpExpired":
+    "Verification code expired. Please enter your email again:",
+  "auth.otpInvalidError":
+    "Invalid verification code. Please try again or type a new email address.",
   "auth.otpInvalidWithNewEmail": "Error: {{error}}",
-  "auth.emailVerifiedSuccess": "Email verified and saved successfully! You can now use the bot.",
+  "auth.emailVerifiedSuccess":
+    "Email verified and saved successfully! You can now use the bot.",
   "auth.dbSaveError": "Error saving email. Please try again.",
   "auth.enterOtpOrNewEmail":
     "Please enter the 6-digit verification code from your email, or enter a different email address:",
   "auth.otpSentToNewEmail":
     "Verification code sent to {{email}}.\n\nPlease enter the 6-digit code from your email (valid for 10 minutes):",
-  "auth.otpSendFailed": "Failed to send verification code: {{error}}\n\nPlease try again with a different email.",
+  "auth.otpSendFailed":
+    "Failed to send verification code: {{error}}\n\nPlease try again with a different email.",
 
   "errors.processingError": "Error processing your request.",
   "errors.noOutputFromAgent": "No output received from AI Agent.",
@@ -232,7 +300,8 @@ export const en = {
   "errors.confirmationError": "Error during confirmation. Please try again.",
   "errors.pendingEventPrompt":
     "You have a pending event creation. Please reply 'yes' to create despite conflicts, or 'no' to cancel.",
-  "errors.processingPreviousRequest": "Hold on, I'm still working on your previous request...",
+  "errors.processingPreviousRequest":
+    "Hold on, I'm still working on your previous request...",
 
   "common.confirm": "Confirm",
   "common.cancel": "Cancel",
@@ -259,6 +328,8 @@ export const en = {
   "botMenu.feedback": "Give feedback",
   "botMenu.exit": "End conversation",
   "botMenu.language": "Change language",
-} as const
+  "botMenu.mycalendars": "My calendars list",
+  "botMenu.aboutme": "What do you know about me?",
+} as const;
 
-export type TranslationKey = keyof typeof en
+export type TranslationKey = keyof typeof en;

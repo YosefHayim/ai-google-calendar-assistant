@@ -248,6 +248,8 @@ export type DayOfWeek =
   | "friday"
   | "saturday";
 
+export type SupportedEventLanguage = "en" | "de" | "fr" | "he" | "ar" | "ru";
+
 export interface GapRecoverySettings {
   autoGapAnalysis: boolean;
   minGapThreshold: number;
@@ -257,6 +259,8 @@ export interface GapRecoverySettings {
   minConfidenceThreshold: number;
   includedCalendars: string[];
   excludedCalendars: string[];
+  eventLanguages: SupportedEventLanguage[];
+  languageSetupComplete: boolean;
 }
 
 export interface GapCandidate {
@@ -324,4 +328,6 @@ export interface UpdateGapSettingsRequest {
   ignoredDays?: DayOfWeek[];
   lookbackDays?: number;
   minConfidenceThreshold?: number;
+  eventLanguages?: SupportedEventLanguage[];
+  languageSetupComplete?: boolean;
 }

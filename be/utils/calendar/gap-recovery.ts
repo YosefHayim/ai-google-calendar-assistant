@@ -16,6 +16,12 @@ import { fetchCalendarEvents } from "./get-events";
 import { fetchCredentialsByEmail } from "../auth/get-user-calendar-tokens";
 import { initUserSupabaseCalendarWithTokensAndUpdateTokens } from "./init";
 import { v4 as uuidv4 } from "uuid";
+import {
+  getCombinedPatternsForLanguages,
+  matchTravelPatternMultilingual,
+  isWorkRelatedEvent,
+  type TravelPatternSet,
+} from "./travel-patterns-i18n";
 
 // =============================================================================
 // Constants
@@ -33,29 +39,11 @@ export const DEFAULT_GAP_RECOVERY_SETTINGS: GapRecoverySettings = {
   minConfidenceThreshold: 0.3,
   includedCalendars: [],
   excludedCalendars: [],
+  eventLanguages: ["en"],
+  languageSetupComplete: false,
 };
 
-// Travel pattern regexes
-const TRAVEL_PATTERNS = {
-  arrival: [
-    /^drive to (.+)$/i,
-    /^travel to (.+)$/i,
-    /^commute to (.+)$/i,
-    /^arrive at (.+)$/i,
-    /^heading to (.+)$/i,
-    /^go to (.+)$/i,
-    /^trip to (.+)$/i,
-  ],
-  departure: [
-    /^drive home$/i,
-    /^leave (.+)$/i,
-    /^depart (.+)$/i,
-    /^heading home$/i,
-    /^go home$/i,
-    /^return home$/i,
-    /^drive from (.+)$/i,
-  ],
-};
+const DEFAULT_PATTERNS = getCombinedPatternsForLanguages(["en"]);
 
 // =============================================================================
 // Helper Functions
@@ -88,21 +76,10 @@ function getDayOfWeek(date: Date): DayOfWeek {
 
 function matchTravelPattern(
   summary: string,
-  type: "arrival" | "departure"
+  type: "arrival" | "departure",
+  patterns: TravelPatternSet = DEFAULT_PATTERNS
 ): { matched: boolean; location: string | null } {
-  const patterns = TRAVEL_PATTERNS[type];
-
-  for (const pattern of patterns) {
-    const match = summary.match(pattern);
-    if (match) {
-      return {
-        matched: true,
-        location: match[1]?.trim() || null,
-      };
-    }
-  }
-
-  return { matched: false, location: null };
+  return matchTravelPatternMultilingual(summary, type, patterns);
 }
 
 function calculateTravelSandwichConfidence(
@@ -125,13 +102,14 @@ function calculateTravelSandwichConfidence(
 
 function detectTravelSandwich(
   precedingEvent: calendar_v3.Schema$Event,
-  followingEvent: calendar_v3.Schema$Event
+  followingEvent: calendar_v3.Schema$Event,
+  patterns: TravelPatternSet = DEFAULT_PATTERNS
 ): InferredContext | null {
   const precedingSummary = precedingEvent.summary || "";
   const followingSummary = followingEvent.summary || "";
 
-  const arrival = matchTravelPattern(precedingSummary, "arrival");
-  const departure = matchTravelPattern(followingSummary, "departure");
+  const arrival = matchTravelPattern(precedingSummary, "arrival", patterns);
+  const departure = matchTravelPattern(followingSummary, "departure", patterns);
 
   if (arrival.matched && departure.matched) {
     const confidence = calculateTravelSandwichConfidence(
@@ -166,38 +144,32 @@ function detectTravelSandwich(
   return null;
 }
 
-function detectWorkSession(
-  gapStart: Date,
-  gapEnd: Date,
-  precedingEvent: calendar_v3.Schema$Event,
-  followingEvent: calendar_v3.Schema$Event
-): InferredContext | null {
+type DetectWorkSessionParams = {
+  gapStart: Date;
+  gapEnd: Date;
+  precedingEvent: calendar_v3.Schema$Event;
+  followingEvent: calendar_v3.Schema$Event;
+  patterns?: TravelPatternSet;
+};
+
+function detectWorkSession({
+  gapStart,
+  gapEnd,
+  precedingEvent,
+  followingEvent,
+  patterns = DEFAULT_PATTERNS,
+}: DetectWorkSessionParams): InferredContext | null {
   const startHour = gapStart.getHours();
   const endHour = gapEnd.getHours();
 
   // Work hours: 8 AM to 6 PM
   const isWorkHours = startHour >= 8 && endHour <= 18;
 
-  // Check if surrounding events are work-related
-  const workKeywords = [
-    "meeting",
-    "standup",
-    "sync",
-    "call",
-    "review",
-    "sprint",
-    "planning",
-    "retro",
-  ];
-  const precedingSummary = (precedingEvent.summary || "").toLowerCase();
-  const followingSummary = (followingEvent.summary || "").toLowerCase();
+  const precedingSummary = precedingEvent.summary || "";
+  const followingSummary = followingEvent.summary || "";
 
-  const precedingIsWork = workKeywords.some((kw) =>
-    precedingSummary.includes(kw)
-  );
-  const followingIsWork = workKeywords.some((kw) =>
-    followingSummary.includes(kw)
-  );
+  const precedingIsWork = isWorkRelatedEvent(precedingSummary, patterns);
+  const followingIsWork = isWorkRelatedEvent(followingSummary, patterns);
 
   if (isWorkHours && (precedingIsWork || followingIsWork)) {
     return {
@@ -270,42 +242,52 @@ function createStandardGapContext(
   };
 }
 
-function inferGapContext(
-  gapStart: Date,
-  gapEnd: Date,
-  precedingEvent: calendar_v3.Schema$Event,
-  followingEvent: calendar_v3.Schema$Event,
-  durationMs: number
-): InferredContext | null {
-  // Try travel sandwich first (highest confidence potential)
-  const travelContext = detectTravelSandwich(precedingEvent, followingEvent);
+type InferGapContextParams = {
+  gapStart: Date;
+  gapEnd: Date;
+  precedingEvent: calendar_v3.Schema$Event;
+  followingEvent: calendar_v3.Schema$Event;
+  durationMs: number;
+  patterns?: TravelPatternSet;
+};
+
+function inferGapContext({
+  gapStart,
+  gapEnd,
+  precedingEvent,
+  followingEvent,
+  durationMs,
+  patterns = DEFAULT_PATTERNS,
+}: InferGapContextParams): InferredContext | null {
+  const travelContext = detectTravelSandwich(
+    precedingEvent,
+    followingEvent,
+    patterns
+  );
   if (travelContext && travelContext.confidence >= 0.6) {
     return travelContext;
   }
 
-  // Try work session detection
-  const workContext = detectWorkSession(
+  const workContext = detectWorkSession({
     gapStart,
     gapEnd,
     precedingEvent,
-    followingEvent
-  );
+    followingEvent,
+    patterns,
+  });
   if (workContext && workContext.confidence >= 0.55) {
     return workContext;
   }
 
-  // Try meal break detection
   const mealContext = detectMealBreak(gapStart, durationMs);
   if (mealContext) {
     return mealContext;
   }
 
-  // Return travel context if we got one (even lower confidence)
   if (travelContext) {
     return travelContext;
   }
 
-  // Fall back to standard gap
   return createStandardGapContext(precedingEvent, followingEvent, durationMs);
 }
 
@@ -382,6 +364,9 @@ export const analyzeGaps = asyncHandler(
 
     const minGapMs = settings.minGapThreshold * MS_PER_MINUTE;
     const maxGapMs = settings.maxGapThreshold * MS_PER_MINUTE;
+    const patterns = getCombinedPatternsForLanguages(
+      settings.eventLanguages || ["en"]
+    );
 
     // Initialize calendar client
     const credentials = await fetchCredentialsByEmail(email);
@@ -438,14 +423,14 @@ export const analyzeGaps = asyncHandler(
         continue;
       }
 
-      // Infer context for the gap
-      const inferredContext = inferGapContext(
-        currentEnd,
-        nextStart,
-        currentEvent,
-        nextEvent,
-        gapDurationMs
-      );
+      const inferredContext = inferGapContext({
+        gapStart: currentEnd,
+        gapEnd: nextStart,
+        precedingEvent: currentEvent,
+        followingEvent: nextEvent,
+        durationMs: gapDurationMs,
+        patterns,
+      });
 
       // Skip if confidence is below threshold
       if (

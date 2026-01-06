@@ -343,6 +343,12 @@ export type GapCandidate = {
 };
 
 /**
+ * Supported languages for calendar event pattern detection.
+ * Corresponds to the languages supported in Telegram bot i18n.
+ */
+export type SupportedEventLanguage = "en" | "de" | "fr" | "he" | "ar" | "ru";
+
+/**
  * User preferences for gap recovery feature
  */
 export type GapRecoverySettings = {
@@ -362,6 +368,10 @@ export type GapRecoverySettings = {
   includedCalendars: string[];
   /** Calendar IDs to exclude */
   excludedCalendars: string[];
+  /** Primary language(s) used for calendar event titles */
+  eventLanguages: SupportedEventLanguage[];
+  /** Whether language setup has been completed during onboarding */
+  languageSetupComplete: boolean;
 };
 
 /**
@@ -414,6 +424,8 @@ export type UpdateGapSettingsRequest = {
   ignoredDays?: DayOfWeek[];
   lookbackDays?: number;
   minConfidenceThreshold?: number;
+  eventLanguages?: SupportedEventLanguage[];
+  languageSetupComplete?: boolean;
 };
 
 /**
