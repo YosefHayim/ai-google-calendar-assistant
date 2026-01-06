@@ -326,10 +326,12 @@ const getConversations = reqResAsyncHandler(
     try {
       const limit = parseInt(req.query.limit as string) || 20;
       const offset = parseInt(req.query.offset as string) || 0;
+      const search = req.query.search as string | undefined;
 
       const conversations = await getWebConversationList(userId, {
         limit,
         offset,
+        search,
       });
 
       sendR(
