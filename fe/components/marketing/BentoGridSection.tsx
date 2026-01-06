@@ -6,13 +6,13 @@ import { Lock, Smartphone, Globe, Brain, Zap, Layout } from 'lucide-react'
 import { BentoCard, BentoGrid } from '@/components/ui/bento-grid'
 import RotatingEarth from '@/components/ui/wireframe-dotted-globe'
 import { ThreeDWallCalendar, CalendarEvent } from '@/components/ui/three-dwall-calendar'
-import { v4 as uuidv4 } from 'uuid'
 
+// Use static IDs and relative dates to avoid hydration mismatch
 const MOCK_EVENTS: CalendarEvent[] = [
-  { id: uuidv4(), title: 'Strategy Session', date: new Date().toISOString() },
-  { id: uuidv4(), title: 'Focus Block', date: new Date(Date.now() + 86400000).toISOString() },
-  { id: uuidv4(), title: 'Board Review', date: new Date(Date.now() + 172800000).toISOString() },
-  { id: uuidv4(), title: 'Product Sync', date: new Date(Date.now() + 259200000).toISOString() },
+  { id: 'event-1', title: 'Strategy Session', date: '2024-01-15T09:00:00.000Z' },
+  { id: 'event-2', title: 'Focus Block', date: '2024-01-16T09:00:00.000Z' },
+  { id: 'event-3', title: 'Board Review', date: '2024-01-17T09:00:00.000Z' },
+  { id: 'event-4', title: 'Product Sync', date: '2024-01-18T09:00:00.000Z' },
 ]
 
 const features = [

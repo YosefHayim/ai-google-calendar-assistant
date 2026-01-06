@@ -239,7 +239,7 @@ export function DatePickerWithRange({ className, date, setDate }: DatePickerWith
               {/* --- FOOTER (Toggle & Actions) --- */}
               <div className="p-3 border-t border-border flex items-center justify-between bg-background/50">
                 <div className="flex items-center gap-3">
-                  <CinematicGlowToggle checked={isCompareEnabled} onChange={handleCompareToggle} label="Compare" />
+                  <CinematicGlowToggle id="compare-toggle" checked={isCompareEnabled} onChange={handleCompareToggle} />
                   <HoverCard>
                     <HoverCardTrigger asChild>
                       <Info className="w-4 h-4 text-muted-foreground  opacity-70 hover:opacity-100 transition-opacity" />

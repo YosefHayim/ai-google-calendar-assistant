@@ -13,12 +13,10 @@ const router = Router();
 router.use(supabaseAuth(), googleTokenValidation, googleTokenRefresh());
 
 router.param("id", (_req: Request, res: Response, next: NextFunction, id: string) => {
-  logger.info(`Google Calendar: Chat: id: ${id}`);
   if (!id) {
     logger.error(`Google Calendar: Chat: id not found`);
     return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "ID parameter is required.");
   }
-  logger.info(`Google Calendar: Chat: id found: ${id}`);
   next();
 });
 

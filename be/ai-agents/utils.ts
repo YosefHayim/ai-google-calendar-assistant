@@ -147,14 +147,35 @@ export type UserCalendar = {
 };
 
 export const getCalendarCategoriesByEmail = asyncHandler(async (email: string): Promise<UserCalendar[]> => {
-  const { data: tokenData, error } = await SUPABASE.from("user_calendars").select("calendars").eq("email", email).single();
+  // Step 1: Get user_id from users table by email
+  const { data: userData, error: userError } = await SUPABASE
+    .from("users")
+    .select("id")
+    .ilike("email", email.trim().toLowerCase())
+    .single();
+
+  if (userError || !userData) {
+    // User not found - return empty array instead of throwing
+    return [];
+  }
+
+  // Step 2: Get calendars from user_calendars table using user_id
+  const { data, error } = await SUPABASE
+    .from("user_calendars")
+    .select("calendar_id, calendar_name")
+    .eq("user_id", userData.id);
 
   if (error) {
     throw error;
   }
 
-  if (tokenData?.calendars && Array.isArray(tokenData.calendars)) {
-    return tokenData.calendars as UserCalendar[];
+  if (data && Array.isArray(data)) {
+    return data
+      .filter((row) => row.calendar_id && row.calendar_name)
+      .map((row) => ({
+        calendar_id: row.calendar_id as string,
+        calendar_name: row.calendar_name as string,
+      }));
   }
 
   return [];
@@ -172,8 +193,10 @@ export function parseToolArguments(raw: unknown) {
 
   // 3) collect fields
   const email = base?.email ?? outer?.email ?? inner?.email;
-  const calendarId = outer?.calendarId ?? base?.calendarId;
-  const eventId = base?.eventId ?? outer?.eventId;
+  const rawCalendarId = outer?.calendarId ?? base?.calendarId ?? inner?.calendarId;
+  // Normalize calendarId - reject invalid values like "/"
+  const calendarId = rawCalendarId && typeof rawCalendarId === "string" && rawCalendarId.trim() !== "" && rawCalendarId !== "/" ? rawCalendarId.trim() : null;
+  const eventId = base?.eventId ?? outer?.eventId ?? inner?.eventId;
 
   // 4) extract event fields (summary/start/end/…)
   const eventLike: Partial<Event> = {

@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowRight, BadgeCheck, Minus, Plus, Zap } from 'lucide-react'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 
 import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
@@ -10,6 +10,13 @@ import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button
 import NumberFlow from '@number-flow/react'
 import { cn } from '@/components/../lib/utils'
 import { useRouter } from 'next/navigation'
+import { useAuthContext } from '@/context/AuthContext'
+import {
+  redirectToCheckout,
+  redirectToCreditPackCheckout,
+  type PlanSlug,
+  type PlanInterval,
+} from '@/services/payment.service'
 
 export interface PricingTier {
   id: string
@@ -71,10 +78,52 @@ export const PricingCard: React.FC<PricingCardProps> = ({ tier, paymentFrequency
     if (customAmount < MIN_CUSTOM_INTERACTIONS) setCustomAmount(MIN_CUSTOM_INTERACTIONS)
   }
 
-  const handleGetStarted = () => {
+  const { isAuthenticated, user } = useAuthContext()
+
+  const handleGetStarted = async () => {
     setIsLoading(true)
-    // Redirect to register page
-    router.push('/register')
+
+    try {
+      // If user is not authenticated, redirect to register first
+      if (!isAuthenticated) {
+        // Store the plan info in localStorage so we can redirect after auth
+        localStorage.setItem(
+          'pending_plan',
+          JSON.stringify({
+            planSlug: tier.id as PlanSlug,
+            interval: isPerUse ? 'one_time' : (paymentFrequency as PlanInterval),
+            credits: isCustomTier ? customAmount : (tier.price[paymentFrequency] as number),
+          }),
+        )
+        router.push('/register')
+        return
+      }
+
+      // User is authenticated, proceed to checkout
+      if (isPerUse) {
+        // Credit pack purchase
+        const credits = isCustomTier ? customAmount : (tier as any).action_pack_size || 25
+        await redirectToCreditPackCheckout({
+          credits,
+          planSlug: tier.id as PlanSlug,
+        })
+      } else {
+        // Subscription checkout
+        if (tier.id === 'starter') {
+          // Free plan - redirect to dashboard
+          router.push('/dashboard')
+          return
+        }
+
+        await redirectToCheckout({
+          planSlug: tier.id as PlanSlug,
+          interval: paymentFrequency as PlanInterval,
+        })
+      }
+    } catch (error) {
+      console.error('Checkout error:', error)
+      setIsLoading(false)
+    }
   }
 
   // Determine the subtitle label dynamically

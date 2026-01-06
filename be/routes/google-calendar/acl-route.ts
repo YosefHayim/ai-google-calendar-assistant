@@ -14,22 +14,18 @@ const router = express.Router();
 router.use(supabaseAuth(), googleTokenValidation, googleTokenRefresh());
 
 router.param("calendarId", (_req: Request, res: Response, next: NextFunction, calendarId: string) => {
-  logger.info(`Google Calendar: ACL: calendarId: ${calendarId}`);
   if (!calendarId) {
     logger.error(`Google Calendar: ACL: calendarId not found`);
     return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar ID parameter is required.");
   }
-  logger.info(`Google Calendar: ACL: calendarId found: ${calendarId}`);
   next();
 });
 
 router.param("ruleId", (_req: Request, res: Response, next: NextFunction, ruleId: string) => {
-  logger.info(`Google Calendar: ACL: ruleId: ${ruleId}`);
   if (!ruleId) {
     logger.error(`Google Calendar: ACL: ruleId not found`);
     return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Rule ID parameter is required.");
   }
-  logger.info(`Google Calendar: ACL: ruleId found: ${ruleId}`);
   next();
 });
 

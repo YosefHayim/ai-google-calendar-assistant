@@ -1,6 +1,6 @@
 'use client'
 
-import { BarChart3, Coffee, Info, RotateCw, Users, Zap } from 'lucide-react'
+import { Info, RotateCw } from 'lucide-react'
 import type { CalendarEvent } from '@/types/api'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
 import React from 'react'
@@ -19,12 +19,15 @@ import { DatePickerWithRange } from '@/components/ui/date-range-picker'
 // Dialogs
 import EventDetailsDialog from '@/components/dialogs/EventDetailsDialog'
 import InsightCard from './InsightCard'
+import InsightCardSkeleton from './InsightCardSkeleton'
 import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button'
 import KPICardsSection from './KPICardsSection'
 import ManageCalendars from '@/components/dashboard/analytics/ManageCalendars'
 import RecentEvents from '@/components/dashboard/analytics/RecentEvents'
 import TimeAllocationChart from './TimeAllocationChart'
 import { useAnalyticsContext } from '@/contexts/AnalyticsContext'
+import { useAIInsights } from '@/hooks/queries/analytics/useAIInsights'
+import { getInsightIcon } from '@/lib/iconUtils'
 
 interface AnalyticsDashboardProps {
   isLoading?: boolean
@@ -93,36 +96,17 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
 
   const isLoading = initialLoading || isAnalyticsLoading || isCalendarsLoading
 
-  const weeklyInsights = [
-    {
-      icon: Zap,
-      title: 'Focus Velocity',
-      value: '+15%',
-      description: 'Your deep work output increased this week.',
-      color: 'amber' as const,
-    },
-    {
-      icon: Users,
-      title: 'Collaborative Load',
-      value: '14h',
-      description: 'Balanced ratio of talk vs. execution time.',
-      color: 'sky' as const,
-    },
-    {
-      icon: Coffee,
-      title: 'Refocus Window',
-      value: '22 min',
-      description: 'Avg. time to resume focus after meetings.',
-      color: 'emerald' as const,
-    },
-    {
-      icon: BarChart3,
-      title: 'Task Completion',
-      value: '92%',
-      description: 'Nearly perfect hit rate on scheduled tasks.',
-      color: 'indigo' as const,
-    },
-  ]
+  // Fetch AI-powered insights
+  const {
+    data: insightsData,
+    isLoading: isInsightsLoading,
+    isError: isInsightsError,
+    refetch: refetchInsights,
+  } = useAIInsights({
+    timeMin: date?.from ?? null,
+    timeMax: date?.to ?? null,
+    enabled: !isLoading && !!date?.from && !!date?.to,
+  })
 
   if (isAnalyticsError) {
     return (
@@ -222,9 +206,43 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
             </HoverCard>
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-            {weeklyInsights.map((insight) => (
-              <InsightCard key={insight.title} {...insight} />
-            ))}
+            {isInsightsLoading ? (
+              // Show 4 skeleton cards while loading
+              <>
+                <InsightCardSkeleton />
+                <InsightCardSkeleton />
+                <InsightCardSkeleton />
+                <InsightCardSkeleton />
+              </>
+            ) : isInsightsError ? (
+              // Error state with retry button
+              <div className="col-span-full flex flex-col items-center justify-center py-8 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md">
+                <p className="text-zinc-500 dark:text-zinc-400 mb-4">Failed to load insights</p>
+                <button
+                  onClick={() => refetchInsights()}
+                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md text-sm font-medium transition-colors"
+                >
+                  Retry
+                </button>
+              </div>
+            ) : insightsData?.insights && insightsData.insights.length > 0 ? (
+              // Dynamic AI insights
+              insightsData.insights.map((insight) => (
+                <InsightCard
+                  key={insight.id}
+                  icon={getInsightIcon(insight.icon)}
+                  title={insight.title}
+                  value={insight.value}
+                  description={insight.description}
+                  color={insight.color}
+                />
+              ))
+            ) : (
+              // Empty state
+              <div className="col-span-full flex flex-col items-center justify-center py-8 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md">
+                <p className="text-zinc-500 dark:text-zinc-400">No insights available for this period</p>
+              </div>
+            )}
           </div>
         </div>
 
@@ -276,7 +294,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
           handleCalendarEventClick(
             event,
             selectedCalendarForEvents?.color || '#6366f1',
-            selectedCalendarForEvents?.name || ''
+            selectedCalendarForEvents?.name || '',
           )
         }}
       />

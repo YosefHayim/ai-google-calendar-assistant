@@ -15,7 +15,6 @@ import { logger } from "@/utils/logger";
  * @returns {Promise<void>} The response object.
  */
 const listAclRules = reqResAsyncHandler(async (req: Request, res: Response) => {
-  logger.info(`Google Calendar: ACL: listAclRules called: ${req.params.calendarId}`);
   const tokenData = await fetchCredentialsByEmail(req.user?.email!);
   if (!tokenData) {
     logger.error(`Google Calendar: ACL: listAclRules called: User credentials not found.`);
@@ -27,8 +26,6 @@ const listAclRules = reqResAsyncHandler(async (req: Request, res: Response) => {
     calendarId: req.params.calendarId,
     showDeleted: req.query.showDeleted === "true",
   });
-
-  logger.info(`Google Calendar: ACL: listAclRules called: Successfully retrieved ACL rules: ${r.data}`);
   sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully retrieved ACL rules", r.data);
 });
 
@@ -51,8 +48,6 @@ const getAclRule = reqResAsyncHandler(async (req: Request, res: Response) => {
     calendarId: req.params.calendarId,
     ruleId: req.params.ruleId,
   });
-
-  logger.info(`Google Calendar: ACL: getAclRule called: Successfully retrieved ACL rule: ${r.data}`);
   sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully retrieved ACL rule", r.data);
 });
 
@@ -82,8 +77,6 @@ const insertAclRule = reqResAsyncHandler(async (req: Request, res: Response) => 
       },
     },
   });
-
-  logger.info(`Google Calendar: ACL: insertAclRule called: ACL rule created successfully: ${r.data}`);
   sendR(res, STATUS_RESPONSE.CREATED, "ACL rule created successfully", r.data);
 });
 
@@ -108,8 +101,6 @@ const patchAclRule = reqResAsyncHandler(async (req: Request, res: Response) => {
     sendNotifications: req.query.sendNotifications === "true",
     requestBody: req.body,
   });
-
-  logger.info(`Google Calendar: ACL: patchAclRule called: ACL rule patched successfully: ${r.data}`);
   sendR(res, STATUS_RESPONSE.SUCCESS, "ACL rule patched successfully", r.data);
 });
 
@@ -134,8 +125,6 @@ const updateAclRule = reqResAsyncHandler(async (req: Request, res: Response) => 
     sendNotifications: req.query.sendNotifications === "true",
     requestBody: req.body,
   });
-
-  logger.info(`Google Calendar: ACL: updateAclRule called: ACL rule updated successfully: ${r.data}`);
   sendR(res, STATUS_RESPONSE.SUCCESS, "ACL rule updated successfully", r.data);
 });
 
@@ -158,8 +147,6 @@ const deleteAclRule = reqResAsyncHandler(async (req: Request, res: Response) => 
     calendarId: req.params.calendarId,
     ruleId: req.params.ruleId,
   });
-
-  logger.info(`Google Calendar: ACL: deleteAclRule called: ACL rule deleted successfully: ${req.params.ruleId}`);
   sendR(res, STATUS_RESPONSE.SUCCESS, "ACL rule deleted successfully");
 });
 
@@ -190,8 +177,6 @@ const watchAcl = reqResAsyncHandler(async (req: Request, res: Response) => {
       params: req.body.params,
     },
   });
-
-  logger.info(`Google Calendar: ACL: watchAcl called: ACL watch created successfully: ${r.data}`);
   sendR(res, STATUS_RESPONSE.SUCCESS, "ACL watch created successfully", r.data);
 });
 

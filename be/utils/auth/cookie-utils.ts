@@ -23,9 +23,6 @@ const BASE_COOKIE_OPTIONS: CookieOptions = {
  * @param user - Optional user object to store in cookie
  */
 export const setAuthCookies = (res: Response, accessToken: string, refreshToken: string, user?: object) => {
-  logger.info(`Auth: setAuthCookies called: accessToken: ${accessToken}`);
-  logger.info(`Auth: setAuthCookies called: refreshToken: ${refreshToken}`);
-  logger.info(`Auth: setAuthCookies called: user: ${user}`);
   res.cookie(ACCESS_TOKEN_COOKIE, accessToken, {
     ...BASE_COOKIE_OPTIONS,
     maxAge: 60 * 60 * 1000, // 1 hour for access token
@@ -35,13 +32,11 @@ export const setAuthCookies = (res: Response, accessToken: string, refreshToken:
     maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days for refresh token
   });
   if (user) {
-    logger.info(`Auth: setAuthCookies called: user: ${user}`);
     res.cookie(USER_COOKIE, JSON.stringify(user), {
       ...BASE_COOKIE_OPTIONS,
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
     });
   }
-  logger.info(`Auth: setAuthCookies called: cookies set`);
 };
 
 /**
@@ -50,9 +45,7 @@ export const setAuthCookies = (res: Response, accessToken: string, refreshToken:
  * @param res - Express response object
  */
 export const clearAuthCookies = (res: Response) => {
-  logger.info(`Auth: clearAuthCookies called`);
   res.clearCookie(ACCESS_TOKEN_COOKIE, { path: "/" });
   res.clearCookie(REFRESH_TOKEN_COOKIE, { path: "/" });
   res.clearCookie(USER_COOKIE, { path: "/" });
-  logger.info(`Auth: clearAuthCookies called: cookies cleared`);
 };

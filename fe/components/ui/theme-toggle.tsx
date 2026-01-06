@@ -2,7 +2,7 @@
 
 import { Moon, Sun } from 'lucide-react'
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { cn } from '@/components/../lib/utils'
 import { useTheme } from 'next-themes'
 
@@ -12,7 +12,31 @@ interface ThemeToggleProps {
 
 export function ThemeToggle({ className }: ThemeToggleProps) {
   const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
   const isDarkMode = theme === 'dark'
+
+  // Prevent hydration mismatch by rendering a placeholder until mounted
+  if (!mounted) {
+    return (
+      <div
+        className={cn(
+          'flex w-16 h-8 p-1 rounded-full transition-all duration-300 bg-zinc-200 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800',
+          className,
+        )}
+      >
+        <div className="flex justify-between items-center w-full">
+          <div className="flex justify-center items-center w-6 h-6 rounded-full bg-zinc-300 dark:bg-zinc-800" />
+          <div className="flex justify-center items-center w-6 h-6 rounded-full" />
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div
       className={cn(

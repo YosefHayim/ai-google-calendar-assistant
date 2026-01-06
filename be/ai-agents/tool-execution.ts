@@ -86,17 +86,37 @@ export const EXECUTION_TOOLS = {
       throw new Error("eventId is required for update.");
     }
 
-    // If timed event without timezone, fetch user's default calendar timezone
-    const eventWithTimezone = await applyDefaultTimezoneIfNeeded(eventLike as Event, email);
-    const eventData: Event = { ...formatEventData(eventWithTimezone), id: eventId };
-    return eventsHandler(null, ACTION.UPDATE, eventData, { email, calendarId: calendarId ?? "primary", eventId });
+    // For updates, only include fields that are actually being changed
+    // Don't require summary/start/end - only pass what the user wants to update
+    const updateData: Partial<Event> = { id: eventId };
+
+    // Only add fields that are actually provided (not null/undefined)
+    if (eventLike.summary) updateData.summary = eventLike.summary;
+    if (eventLike.description) updateData.description = eventLike.description;
+    if (eventLike.location) updateData.location = eventLike.location;
+
+    // Handle start/end times if provided
+    if (eventLike.start?.dateTime || eventLike.start?.date) {
+      const startWithTz = await applyDefaultTimezoneIfNeeded({ start: eventLike.start } as Event, email);
+      updateData.start = startWithTz.start;
+    }
+    if (eventLike.end?.dateTime || eventLike.end?.date) {
+      const endWithTz = await applyDefaultTimezoneIfNeeded({ end: eventLike.end } as Event, email);
+      updateData.end = endWithTz.end;
+    }
+
+    // Use PATCH for partial updates - only updates provided fields, preserves the rest
+    return eventsHandler(null, ACTION.PATCH, updateData as Event, { email, calendarId: calendarId ?? "primary", eventId });
   }),
 
   getEvent: asyncHandler(
     async (
       params: calendar_v3.Schema$Event & { email: string; q?: string | null; timeMin?: string | null; searchAllCalendars?: boolean; calendarId?: string | null }
     ) => {
-      const startOfYear = new Date().toISOString().split("T")[0];
+      // Default timeMin to start of today in RFC3339 format (required by Google Calendar API)
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const defaultTimeMin = today.toISOString();
       // Limit events to prevent context overflow
       const MAX_EVENTS_TOTAL = 100;
       const MAX_EVENTS_PER_CALENDAR = 50;
@@ -107,8 +127,10 @@ export const EXECUTION_TOOLS = {
       }
 
       // Helper to slim down event data to essential fields only
-      const slimEvent = (event: calendar_v3.Schema$Event) => ({
+      // calendarId is added when iterating across calendars (see allEventsResults loop)
+      const slimEvent = (event: calendar_v3.Schema$Event, calendarId?: string | null) => ({
         id: event.id,
+        calendarId: calendarId ?? event.organizer?.email ?? "primary", // Include calendar ID for updates
         summary: event.summary,
         description: event.description?.substring(0, 200), // Truncate long descriptions
         start: event.start,
@@ -132,7 +154,14 @@ export const EXECUTION_TOOLS = {
             getEvents({
               calendarEvents: calendar.events,
               req: undefined,
-              extra: { calendarId: calId, timeMin: params.timeMin ?? startOfYear, q: params.q || "", maxResults: MAX_EVENTS_PER_CALENDAR },
+              extra: {
+                calendarId: calId,
+                timeMin: params.timeMin ?? defaultTimeMin,
+                q: params.q || "",
+                maxResults: MAX_EVENTS_PER_CALENDAR,
+                singleEvents: true,
+                orderBy: "startTime",
+              },
             })
           )
         );
@@ -153,7 +182,7 @@ export const EXECUTION_TOOLS = {
             // Only add events if we haven't hit the total limit
             const remainingSlots = MAX_EVENTS_TOTAL - aggregatedEvents.length;
             if (remainingSlots > 0) {
-              const eventsToAdd = events.slice(0, remainingSlots).map(slimEvent);
+              const eventsToAdd = events.slice(0, remainingSlots).map((e) => slimEvent(e, calId));
               aggregatedEvents.push(...eventsToAdd);
               if (events.length > remainingSlots) {
                 truncated = true;
@@ -174,18 +203,25 @@ export const EXECUTION_TOOLS = {
       }
 
       // Search single calendar (original behavior)
-      return eventsHandler(null, ACTION.GET, {}, { email, calendarId: calendarId ?? "primary", timeMin: params.timeMin ?? startOfYear, q: params.q || "" });
+      return eventsHandler(null, ACTION.GET, {}, {
+        email,
+        calendarId: calendarId ?? "primary",
+        timeMin: params.timeMin ?? defaultTimeMin,
+        q: params.q || "",
+        singleEvents: true,
+        orderBy: "startTime",
+      });
     }
   ),
 
-  deleteEvent: asyncHandler((params: { eventId: string; email: string }) => {
-    const { email, eventId } = parseToolArguments(params);
+  deleteEvent: asyncHandler((params: { eventId: string; email: string; calendarId?: string | null }) => {
+    const { email, eventId, calendarId } = parseToolArguments(params);
     if (!(email && isEmail(email))) {
       throw new Error("Invalid email address.");
     }
     if (!eventId) {
       throw new Error("Event ID is required to delete event.");
     }
-    return eventsHandler(null, ACTION.DELETE, { id: eventId }, { email });
+    return eventsHandler(null, ACTION.DELETE, { id: eventId }, { email, calendarId: calendarId ?? "primary" });
   }),
 };
