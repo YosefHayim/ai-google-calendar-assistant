@@ -119,7 +119,7 @@ export const initializeFreePlan = reqResAsyncHandler(async (req: Request, res: R
 
   const subscription = await ensureFreePlan(userId);
 
-  sendR(res, STATUS_RESPONSE.SUCCESS, "Free plan initialized", { subscription });
+  return sendR(res, STATUS_RESPONSE.SUCCESS, "Free plan initialized", { subscription });
 });
 
 // ============================================================================
@@ -352,9 +352,9 @@ export const requestRefund = reqResAsyncHandler(async (req: Request, res: Respon
     const result = await processMoneyBackRefund(subscription.stripe_subscription_id, reason);
 
     if (result.success) {
-      sendR(res, STATUS_RESPONSE.SUCCESS, result.message);
+      return sendR(res, STATUS_RESPONSE.SUCCESS, result.message);
     } else {
-      sendR(res, STATUS_RESPONSE.BAD_REQUEST, result.message);
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, result.message);
     }
   } catch (error) {
     console.error("Refund error:", error);

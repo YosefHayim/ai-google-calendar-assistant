@@ -424,7 +424,7 @@ const removeConversation = reqResAsyncHandler(
         );
       }
 
-      sendR(res, STATUS_RESPONSE.SUCCESS, "Conversation deleted successfully");
+      return sendR(res, STATUS_RESPONSE.SUCCESS, "Conversation deleted successfully");
     } catch (error) {
       console.error("Error deleting conversation:", error);
       sendR(

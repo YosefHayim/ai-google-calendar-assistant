@@ -26,7 +26,7 @@ const stopChannel = reqResAsyncHandler(async (req: Request, res: Response) => {
     },
   });
 
-  sendR(res, STATUS_RESPONSE.SUCCESS, "Channel stopped successfully");
+  return sendR(res, STATUS_RESPONSE.SUCCESS, "Channel stopped successfully");
 });
 
 export default {

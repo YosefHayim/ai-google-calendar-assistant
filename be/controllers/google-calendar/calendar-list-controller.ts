@@ -26,7 +26,7 @@ const listCalendars = reqResAsyncHandler(async (req: Request, res: Response) => 
     showHidden: req.query.showHidden === "true",
   });
 
-  sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully retrieved calendar list", r.data);
+  return sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully retrieved calendar list", r.data);
 });
 
 /**
@@ -47,7 +47,7 @@ const getCalendarListEntry = reqResAsyncHandler(async (req: Request, res: Respon
     calendarId: req.params.id,
   });
 
-  sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully retrieved calendar list entry", r.data);
+  return sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully retrieved calendar list entry", r.data);
 });
 
 /**
@@ -79,7 +79,7 @@ const insertCalendarToList = reqResAsyncHandler(async (req: Request, res: Respon
     colorRgbFormat: req.query.colorRgbFormat === "true",
   });
 
-  sendR(res, STATUS_RESPONSE.CREATED, "Calendar added to list successfully", r.data);
+  return sendR(res, STATUS_RESPONSE.CREATED, "Calendar added to list successfully", r.data);
 });
 
 /**
@@ -102,7 +102,7 @@ const patchCalendarListEntry = reqResAsyncHandler(async (req: Request, res: Resp
     colorRgbFormat: req.query.colorRgbFormat === "true",
   });
 
-  sendR(res, STATUS_RESPONSE.SUCCESS, "Calendar list entry patched successfully", r.data);
+  return sendR(res, STATUS_RESPONSE.SUCCESS, "Calendar list entry patched successfully", r.data);
 });
 
 /**
@@ -125,7 +125,7 @@ const updateCalendarListEntry = reqResAsyncHandler(async (req: Request, res: Res
     colorRgbFormat: req.query.colorRgbFormat === "true",
   });
 
-  sendR(res, STATUS_RESPONSE.SUCCESS, "Calendar list entry updated successfully", r.data);
+  return sendR(res, STATUS_RESPONSE.SUCCESS, "Calendar list entry updated successfully", r.data);
 });
 
 /**
@@ -146,7 +146,7 @@ const deleteCalendarFromList = reqResAsyncHandler(async (req: Request, res: Resp
     calendarId: req.params.id,
   });
 
-  sendR(res, STATUS_RESPONSE.SUCCESS, "Calendar removed from list successfully");
+  return sendR(res, STATUS_RESPONSE.SUCCESS, "Calendar removed from list successfully");
 });
 
 /**
@@ -177,7 +177,7 @@ const watchCalendarList = reqResAsyncHandler(async (req: Request, res: Response)
     showHidden: req.query.showHidden === "true",
   });
 
-  sendR(res, STATUS_RESPONSE.SUCCESS, "Calendar list watch created successfully", r.data);
+  return sendR(res, STATUS_RESPONSE.SUCCESS, "Calendar list watch created successfully", r.data);
 });
 
 export default {

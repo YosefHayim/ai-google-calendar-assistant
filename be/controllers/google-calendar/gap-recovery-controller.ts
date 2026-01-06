@@ -108,7 +108,7 @@ const getGaps = reqResAsyncHandler(async (req: Request, res: Response) => {
     });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : "Failed to analyze gaps";
-    sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, errorMessage);
+    return sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, errorMessage);
   }
 });
 
@@ -148,7 +148,7 @@ const getGapsFormatted = reqResAsyncHandler(async (req: Request, res: Response) 
     });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : "Failed to format gaps";
-    sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, errorMessage);
+    return sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, errorMessage);
   }
 });
 
@@ -201,11 +201,11 @@ const fillGapHandler = reqResAsyncHandler(async (req: Request, res: Response) =>
         message: `Created "${body.summary}" from ${gap.start} to ${gap.end}`,
       });
     } else {
-      sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Failed to create event");
+      return sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Failed to create event");
     }
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : "Failed to fill gap";
-    sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, errorMessage);
+    return sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, errorMessage);
   }
 });
 
@@ -276,7 +276,7 @@ const getSettings = reqResAsyncHandler(async (req: Request, res: Response) => {
 
   const settings = getUserSettings(userId);
 
-  sendR(res, STATUS_RESPONSE.SUCCESS, "Settings retrieved", { settings });
+  return sendR(res, STATUS_RESPONSE.SUCCESS, "Settings retrieved", { settings });
 });
 
 /**
@@ -314,7 +314,7 @@ const updateSettings = reqResAsyncHandler(async (req: Request, res: Response) =>
   // Clear cached gaps since settings changed
   gapCandidatesStore.delete(userId);
 
-  sendR(res, STATUS_RESPONSE.SUCCESS, "Settings updated", { settings: newSettings });
+  return sendR(res, STATUS_RESPONSE.SUCCESS, "Settings updated", { settings: newSettings });
 });
 
 /**

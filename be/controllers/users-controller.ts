@@ -212,7 +212,7 @@ const generateAuthGoogleUrl = reqResAsyncHandler(async (req: Request, res: Respo
  */
 const signUpUserReg = reqResAsyncHandler(async (req: Request, res: Response) => {
   if (!(req.body.email && req.body.password)) {
-    sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Email and password are required.");
+    return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Email and password are required.");
   }
   const { data, error } = await SUPABASE.auth.signUp({
     email: req.body.email,
@@ -220,13 +220,10 @@ const signUpUserReg = reqResAsyncHandler(async (req: Request, res: Response) => 
   });
 
   if (error) {
-    sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Failed to sign up user.", error);
-    return;
+    return sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Failed to sign up user.", error);
   }
-  if (data) {
-    sendR(res, STATUS_RESPONSE.SUCCESS, "User signed up successfully.", data);
-    return;
-  }
+
+  return sendR(res, STATUS_RESPONSE.SUCCESS, "User signed up successfully.", data);
 });
 
 /**
@@ -279,11 +276,9 @@ const getCurrentUserInformation = reqResAsyncHandler(async (req: Request, res: R
       created_at: req.user?.created_at,
       updated_at: req.user?.updated_at,
     };
-    sendR(res, STATUS_RESPONSE.SUCCESS, "User fetched successfully.", customUser);
-    return;
+    return sendR(res, STATUS_RESPONSE.SUCCESS, "User fetched successfully.", customUser);
   } else {
-    sendR(res, STATUS_RESPONSE.SUCCESS, "User fetched successfully.", req.user);
-    return;
+    return sendR(res, STATUS_RESPONSE.SUCCESS, "User fetched successfully.", req.user);
   }
 });
 
@@ -316,7 +311,7 @@ const getUserInformationById = reqResAsyncHandler(async (req: Request, res: Resp
     return sendR(res, STATUS_RESPONSE.FORBIDDEN, "You can only access your own user information.");
   }
 
-  sendR(res, STATUS_RESPONSE.SUCCESS, "User fetched successfully.", data);
+  return sendR(res, STATUS_RESPONSE.SUCCESS, "User fetched successfully.", data);
 });
 
 /**
@@ -372,7 +367,7 @@ const signInUserReg = reqResAsyncHandler(async (req: Request, res: Response) => 
     setAuthCookies(res, data.session.access_token, data.session.refresh_token, data.user);
   }
 
-  sendR(res, STATUS_RESPONSE.SUCCESS, "User signin successfully.", data);
+  return sendR(res, STATUS_RESPONSE.SUCCESS, "User signin successfully.", data);
 });
 
 /**
@@ -380,7 +375,7 @@ const signInUserReg = reqResAsyncHandler(async (req: Request, res: Response) => 
  */
 const verifyEmailByOtp = reqResAsyncHandler(async (req: Request, res: Response) => {
   if (!(req.body.email && req.body.token)) {
-    sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Email and token are required.");
+    return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Email and token are required.");
   }
 
   const { data, error } = await SUPABASE.auth.verifyOtp({
@@ -390,10 +385,10 @@ const verifyEmailByOtp = reqResAsyncHandler(async (req: Request, res: Response) 
   });
 
   if (error) {
-    sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Failed to verify email.", error);
+    return sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Failed to verify email.", error);
   }
 
-  sendR(res, STATUS_RESPONSE.SUCCESS, "Email verified successfully.", data);
+  return sendR(res, STATUS_RESPONSE.SUCCESS, "Email verified successfully.", data);
 });
 
 const refreshToken = reqResAsyncHandler(async (req: Request, res: Response) => {
@@ -401,7 +396,7 @@ const refreshToken = reqResAsyncHandler(async (req: Request, res: Response) => {
     refresh_token: req.body.refresh_token,
   });
 
-  sendR(res, STATUS_RESPONSE.SUCCESS, "Token refreshed successfully.", data);
+  return sendR(res, STATUS_RESPONSE.SUCCESS, "Token refreshed successfully.", data);
 });
 
 /**
@@ -409,14 +404,14 @@ const refreshToken = reqResAsyncHandler(async (req: Request, res: Response) => {
  */
 const logout = reqResAsyncHandler(async (_req: Request, res: Response) => {
   clearAuthCookies(res);
-  sendR(res, STATUS_RESPONSE.SUCCESS, "Logged out successfully.");
+  return sendR(res, STATUS_RESPONSE.SUCCESS, "Logged out successfully.");
 });
 
 /**
  * Check if user has a valid session
  */
 const checkSession = reqResAsyncHandler(async (req: Request, res: Response) => {
-  sendR(res, STATUS_RESPONSE.SUCCESS, "Session is valid.", {
+  return sendR(res, STATUS_RESPONSE.SUCCESS, "Session is valid.", {
     authenticated: true,
     userId: req.user?.id,
     email: req.user?.email,
@@ -480,7 +475,7 @@ const getGoogleCalendarIntegrationStatus = reqResAsyncHandler(async (req: Reques
     isExpired = Date.now() > new Date(oauthToken.expires_at).getTime();
   }
 
-  sendR(res, STATUS_RESPONSE.SUCCESS, "Google Calendar integration status fetched successfully.", {
+  return sendR(res, STATUS_RESPONSE.SUCCESS, "Google Calendar integration status fetched successfully.", {
     isSynced,
     isActive,
     isExpired,
@@ -519,7 +514,7 @@ const disconnectGoogleCalendarIntegration = reqResAsyncHandler(async (req: Reque
     return sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Failed to disconnect Google Calendar.", error);
   }
 
-  sendR(res, STATUS_RESPONSE.SUCCESS, "Google Calendar disconnected successfully.", {
+  return sendR(res, STATUS_RESPONSE.SUCCESS, "Google Calendar disconnected successfully.", {
     isActive: false,
   });
 });

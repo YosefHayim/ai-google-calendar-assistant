@@ -26,7 +26,7 @@ const listAclRules = reqResAsyncHandler(async (req: Request, res: Response) => {
     calendarId: req.params.calendarId,
     showDeleted: req.query.showDeleted === "true",
   });
-  sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully retrieved ACL rules", r.data);
+  return sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully retrieved ACL rules", r.data);
 });
 
 /**
@@ -48,7 +48,7 @@ const getAclRule = reqResAsyncHandler(async (req: Request, res: Response) => {
     calendarId: req.params.calendarId,
     ruleId: req.params.ruleId,
   });
-  sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully retrieved ACL rule", r.data);
+  return sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully retrieved ACL rule", r.data);
 });
 
 /**
@@ -77,7 +77,7 @@ const insertAclRule = reqResAsyncHandler(async (req: Request, res: Response) => 
       },
     },
   });
-  sendR(res, STATUS_RESPONSE.CREATED, "ACL rule created successfully", r.data);
+  return sendR(res, STATUS_RESPONSE.CREATED, "ACL rule created successfully", r.data);
 });
 
 /**
@@ -101,7 +101,7 @@ const patchAclRule = reqResAsyncHandler(async (req: Request, res: Response) => {
     sendNotifications: req.query.sendNotifications === "true",
     requestBody: req.body,
   });
-  sendR(res, STATUS_RESPONSE.SUCCESS, "ACL rule patched successfully", r.data);
+  return sendR(res, STATUS_RESPONSE.SUCCESS, "ACL rule patched successfully", r.data);
 });
 
 /**
@@ -125,7 +125,7 @@ const updateAclRule = reqResAsyncHandler(async (req: Request, res: Response) => 
     sendNotifications: req.query.sendNotifications === "true",
     requestBody: req.body,
   });
-  sendR(res, STATUS_RESPONSE.SUCCESS, "ACL rule updated successfully", r.data);
+  return sendR(res, STATUS_RESPONSE.SUCCESS, "ACL rule updated successfully", r.data);
 });
 
 /**
@@ -147,7 +147,7 @@ const deleteAclRule = reqResAsyncHandler(async (req: Request, res: Response) => 
     calendarId: req.params.calendarId,
     ruleId: req.params.ruleId,
   });
-  sendR(res, STATUS_RESPONSE.SUCCESS, "ACL rule deleted successfully");
+  return sendR(res, STATUS_RESPONSE.SUCCESS, "ACL rule deleted successfully");
 });
 
 /**
@@ -177,7 +177,7 @@ const watchAcl = reqResAsyncHandler(async (req: Request, res: Response) => {
       params: req.body.params,
     },
   });
-  sendR(res, STATUS_RESPONSE.SUCCESS, "ACL watch created successfully", r.data);
+  return sendR(res, STATUS_RESPONSE.SUCCESS, "ACL watch created successfully", r.data);
 });
 
 export default {

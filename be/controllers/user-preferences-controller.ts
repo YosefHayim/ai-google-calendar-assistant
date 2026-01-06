@@ -71,7 +71,7 @@ const getPreference = reqResAsyncHandler(
         );
       }
 
-      sendR(res, STATUS_RESPONSE.SUCCESS, "Preference retrieved successfully", {
+      return sendR(res, STATUS_RESPONSE.SUCCESS, "Preference retrieved successfully", {
         key,
         value: data.preference_value,
         updatedAt: data.updated_at,
@@ -79,7 +79,7 @@ const getPreference = reqResAsyncHandler(
       });
     } catch (error) {
       console.error("Error getting preference:", error);
-      sendR(
+      return sendR(
         res,
         STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
         "Error retrieving preference",
@@ -133,14 +133,14 @@ const updatePreference = reqResAsyncHandler(
         );
       }
 
-      sendR(res, STATUS_RESPONSE.SUCCESS, "Preference saved successfully", {
+      return sendR(res, STATUS_RESPONSE.SUCCESS, "Preference saved successfully", {
         key,
         value: data.preference_value,
         updatedAt: data.updated_at,
       });
     } catch (error) {
       console.error("Error updating preference:", error);
-      sendR(
+      return sendR(
         res,
         STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
         "Error saving preference",
@@ -206,7 +206,7 @@ const getAllPreferences = reqResAsyncHandler(
         }
       }
 
-      sendR(
+      return sendR(
         res,
         STATUS_RESPONSE.SUCCESS,
         "Preferences retrieved successfully",
@@ -216,7 +216,7 @@ const getAllPreferences = reqResAsyncHandler(
       );
     } catch (error) {
       console.error("Error getting preferences:", error);
-      sendR(
+      return sendR(
         res,
         STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
         "Error retrieving preferences",
