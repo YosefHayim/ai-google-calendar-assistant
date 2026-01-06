@@ -1,10 +1,12 @@
 export const ar = {
   "commands.start.header": "مرحباً بك في Ally",
-  "commands.start.welcomeText": "أنا سكرتيرك الشخصي بالذكاء الاصطناعي لتقويم Google. أخبرني بما تحتاجه لغة بسيطة - وسأهتم بالباقي.",
+  "commands.start.welcomeText":
+    "أنا سكرتيرك الشخصي بالذكاء الاصطناعي لتقويم Google. أخبرني بما تحتاجه لغة بسيطة - وسأهتم بالباقي.",
   "commands.start.footer": "دعنا نستعيد وقتك",
   "commands.start.sections.getStarted.title": "ابدأ الآن",
   "commands.start.sections.getStarted.items.0": "فقط راسلني بشكل طبيعي",
-  "commands.start.sections.getStarted.items.1": "أو اكتب /help لرؤية ما يمكنني فعله",
+  "commands.start.sections.getStarted.items.1":
+    "أو اكتب /help لرؤية ما يمكنني فعله",
   "commands.start.sections.trySaying.title": "جرب أن تقول",
   "commands.start.sections.trySaying.items.0": "'ماذا لدي في الجدول اليوم؟'",
   "commands.start.sections.trySaying.items.1": "'احجز ساعتين للعمل العميق غداً'",
@@ -12,17 +14,20 @@ export const ar = {
   "commands.help.header": "كيف يساعدك Ally",
   "commands.help.description": "سكرتيرك الشخصي الذكي لإدارة التقويم ببراعة.",
   "commands.help.naturalLanguageTip": "أو فقط راسلني بشكل طبيعي!",
-  "commands.help.footerTip": "'كم ساعة من العمل العميق أنجزت هذا الأسبوع مقارنة بالأسبوع الماضي؟'",
+  "commands.help.footerTip":
+    "'كم ساعة من العمل العميق أنجزت هذا الأسبوع مقارنة بالأسبوع الماضي؟'",
   "commands.help.sections.viewSchedule.title": "عرض جدولك",
   "commands.help.sections.viewSchedule.items.0": "/today - جدول اليوم",
   "commands.help.sections.viewSchedule.items.1": "/tomorrow - أجندة الغد",
-  "commands.help.sections.viewSchedule.items.2": "/week - نظرة سريعة على الأسبوع",
+  "commands.help.sections.viewSchedule.items.2":
+    "/week - نظرة سريعة على الأسبوع",
   "commands.help.sections.viewSchedule.items.3": "/month - نظرة عامة شهرية",
   "commands.help.sections.viewSchedule.items.4": "/free - البحث عن أوقات فراغ",
   "commands.help.sections.viewSchedule.items.5": "/busy - عرض الارتباطات",
   "commands.help.sections.manageEvents.title": "إدارة الأحداث",
   "commands.help.sections.manageEvents.items.0": "/create - جدولة موعد",
-  "commands.help.sections.manageEvents.items.1": "/update - إعادة جدولة أو تعديل",
+  "commands.help.sections.manageEvents.items.1":
+    "/update - إعادة جدولة أو تعديل",
   "commands.help.sections.manageEvents.items.2": "/delete - إلغاء حدث",
   "commands.help.sections.manageEvents.items.3": "/search - البحث في التقويم",
   "commands.help.sections.timeInsights.title": "رؤى الوقت",
@@ -37,8 +42,10 @@ export const ar = {
 
   "commands.usage.header": "إليك كيف يساعدك Ally:",
   "commands.usage.sections.scheduleProtect.title": "الجدولة والحماية",
-  "commands.usage.sections.scheduleProtect.items.0": "'احجز ساعتين للعمل العميق غداً صباحاً'",
-  "commands.usage.sections.scheduleProtect.items.1": "'جدول مكالمة مع سارة في الساعة 3 مساءً'",
+  "commands.usage.sections.scheduleProtect.items.0":
+    "'احجز ساعتين للعمل العميق غداً صباحاً'",
+  "commands.usage.sections.scheduleProtect.items.1":
+    "'جدول مكالمة مع سارة في الساعة 3 مساءً'",
   "commands.usage.sections.queryTime.title": "الاستعلام عن وقتك",
   "commands.usage.sections.queryTime.items.0": "'ماذا لدي في الجدول اليوم؟'",
   "commands.usage.sections.queryTime.items.1": "'جد لي وقتاً متاحاً هذا الأسبوع'",
@@ -46,12 +53,14 @@ export const ar = {
   "commands.usage.sections.customize.items.0": "اكتب /settings لتخصيص Ally",
 
   "commands.exit.header": "حتى المرة القادمة",
-  "commands.exit.text": "تم مسح محادثتك. أنا هنا متى احتجت إلي - فقط أرسل رسالة للمتابعة من حيث توقفنا.",
+  "commands.exit.text":
+    "تم مسح محادثتك. أنا هنا متى احتجت إلي - فقط أرسل رسالة للمتابعة من حيث توقفنا.",
   "commands.exit.footer": "انطلق لإنجاز مهامك",
 
   "commands.today.header": "جدول اليوم",
   "commands.today.text": "جاري سحب أجندتك لليوم...",
-  "commands.today.footerTip": "يمكنك أيضاً أن تسأل 'ماذا لدي في الجدول اليوم؟' في أي وقت.",
+  "commands.today.footerTip":
+    "يمكنك أيضاً أن تسأل 'ماذا لدي في الجدول اليوم؟' في أي وقت.",
 
   "commands.tomorrow.header": "أجندة الغد",
   "commands.tomorrow.text": "جاري التحقق مما هو مخطط للغد...",
@@ -74,7 +83,8 @@ export const ar = {
 
   "commands.busy.header": "ارتباطاتك",
   "commands.busy.text": "جاري التحقق من أوقات انشغالك...",
-  "commands.busy.footerTip": "استخدم /free للعثور على الأوقات المتاحة بدلاً من ذلك.",
+  "commands.busy.footerTip":
+    "استخدم /free للعثور على الأوقات المتاحة بدلاً من ذلك.",
 
   "commands.quick.header": "إضافة سريعة",
   "commands.quick.text": "فقط أخبرني بما تريد جدولته:",
@@ -87,46 +97,65 @@ export const ar = {
   "commands.create.text": "فقط صف ما تحتاجه - أنا أفهم اللغة الطبيعية:",
   "commands.create.footerTip": "صف حدثك وسأهتم بالباقي.",
   "commands.create.sections.eventsMeetings.title": "الأحداث والاجتماعات",
-  "commands.create.sections.eventsMeetings.items.0": "'مكالمة مع سارة غداً الساعة 2 مساءً'",
-  "commands.create.sections.eventsMeetings.items.1": "'اجتماع تنسيق الفريق كل اثنين الساعة 9 صباحاً'",
-  "commands.create.sections.eventsMeetings.items.2": "'غداء مع المستثمر يوم الجمعة ظهراً'",
+  "commands.create.sections.eventsMeetings.items.0":
+    "'مكالمة مع سارة غداً الساعة 2 مساءً'",
+  "commands.create.sections.eventsMeetings.items.1":
+    "'اجتماع تنسيق الفريق كل اثنين الساعة 9 صباحاً'",
+  "commands.create.sections.eventsMeetings.items.2":
+    "'غداء مع المستثمر يوم الجمعة ظهراً'",
   "commands.create.sections.focusDeepWork.title": "التركيز والعمل العميق",
-  "commands.create.sections.focusDeepWork.items.0": "'احجز 3 ساعات للعمل العميق غداً صباحاً'",
-  "commands.create.sections.focusDeepWork.items.1": "'احجز بعد ظهر الجمعة للتطوير الاستراتيجي'",
+  "commands.create.sections.focusDeepWork.items.0":
+    "'احجز 3 ساعات للعمل العميق غداً صباحاً'",
+  "commands.create.sections.focusDeepWork.items.1":
+    "'احجز بعد ظهر الجمعة للتطوير الاستراتيجي'",
   "commands.create.sections.withDuration.title": "مع تحديد المدة",
-  "commands.create.sections.withDuration.items.0": "'ورشة عمل لمدة ساعتين يوم الأربعاء الساعة 10 صباحاً'",
-  "commands.create.sections.withDuration.items.1": "'اجتماع سريع لمدة 15 دقيقة الساعة 4 مساءً'",
+  "commands.create.sections.withDuration.items.0":
+    "'ورشة عمل لمدة ساعتين يوم الأربعاء الساعة 10 صباحاً'",
+  "commands.create.sections.withDuration.items.1":
+    "'اجتماع سريع لمدة 15 دقيقة الساعة 4 مساءً'",
   "commands.create.sections.specificCalendar.title": "تقويم محدد",
-  "commands.create.sections.specificCalendar.items.0": "'أضف إلى العمل: مكالمة عميل الجمعة 2 مساءً'",
+  "commands.create.sections.specificCalendar.items.0":
+    "'أضف إلى العمل: مكالمة عميل الجمعة 2 مساءً'",
 
   "commands.update.header": "إعادة جدولة أو تعديل",
   "commands.update.text": "عدل أي حدث في تقويمك:",
   "commands.update.footerTip": "فقط أخبرني بما تريد تغييره.",
   "commands.update.sections.reschedule.title": "إعادة جدولة",
-  "commands.update.sections.reschedule.items.0": "'انقل اجتماعي الساعة 2 مساءً إلى 4 مساءً'",
-  "commands.update.sections.reschedule.items.1": "'أجل طبيب الأسنان للأسبوع القادم'",
-  "commands.update.sections.reschedule.items.2": "'غير موعد غداء الجمعة للساعة 1 مساءً'",
+  "commands.update.sections.reschedule.items.0":
+    "'انقل اجتماعي الساعة 2 مساءً إلى 4 مساءً'",
+  "commands.update.sections.reschedule.items.1":
+    "'أجل طبيب الأسنان للأسبوع القادم'",
+  "commands.update.sections.reschedule.items.2":
+    "'غير موعد غداء الجمعة للساعة 1 مساءً'",
   "commands.update.sections.editDetails.title": "تعديل التفاصيل",
-  "commands.update.sections.editDetails.items.0": "'غير اسم اجتماع الفريق إلى مراجعة السبرينت'",
-  "commands.update.sections.editDetails.items.1": "'أضف رابط Zoom لمكالمة الغد'",
+  "commands.update.sections.editDetails.items.0":
+    "'غير اسم اجتماع الفريق إلى مراجعة السبرينت'",
+  "commands.update.sections.editDetails.items.1":
+    "'أضف رابط Zoom لمكالمة الغد'",
   "commands.update.sections.editDetails.items.2": "'حدث وصف اجتماع المشروع'",
   "commands.update.sections.adjustDuration.title": "تعديل المدة",
-  "commands.update.sections.adjustDuration.items.0": "'اجعل الاجتماع اليومي 30 دقيقة بدلاً من 15'",
-  "commands.update.sections.adjustDuration.items.1": "'مدد ورشة عمل الغد بمقدار ساعة'",
+  "commands.update.sections.adjustDuration.items.0":
+    "'اجعل الاجتماع اليومي 30 دقيقة بدلاً من 15'",
+  "commands.update.sections.adjustDuration.items.1":
+    "'مدد ورشة عمل الغد بمقدار ساعة'",
 
   "commands.delete.header": "إلغاء حدث",
   "commands.delete.text": "أزل أحداثاً من تقويمك:",
   "commands.delete.footerWarning": "سأطلب التأكيد قبل إزالة أي شيء",
   "commands.delete.sections.cancelByName.title": "إلغاء بالاسم",
-  "commands.delete.sections.cancelByName.items.0": "'ألغِ اجتماعي الساعة 3 مساءً'",
+  "commands.delete.sections.cancelByName.items.0":
+    "'ألغِ اجتماعي الساعة 3 مساءً'",
   "commands.delete.sections.cancelByName.items.1": "'أزل الغداء مع جون غداً'",
   "commands.delete.sections.cancelByName.items.2": "'احذف موعد طبيب الأسنان'",
   "commands.delete.sections.clearMultiple.title": "مسح متعدد",
-  "commands.delete.sections.clearMultiple.items.0": "'أفرغ جدول بعد ظهر الجمعة'",
+  "commands.delete.sections.clearMultiple.items.0":
+    "'أفرغ جدول بعد ظهر الجمعة'",
   "commands.delete.sections.clearMultiple.items.1": "'أزل جميع اجتماعات الغد'",
   "commands.delete.sections.recurringEvents.title": "أحداث متكررة",
-  "commands.delete.sections.recurringEvents.items.0": "'تخطى الاجتماع اليومي لهذا الأسبوع'",
-  "commands.delete.sections.recurringEvents.items.1": "'ألغِ جميع اجتماعات الفريق المستقبلية'",
+  "commands.delete.sections.recurringEvents.items.0":
+    "'تخطى الاجتماع اليومي لهذا الأسبوع'",
+  "commands.delete.sections.recurringEvents.items.1":
+    "'ألغِ جميع اجتماعات الفريق المستقبلية'",
 
   "commands.cancel.header": "إلغاء أو إعادة جدولة",
   "commands.cancel.text": "هل تحتاج لإجراء تغييرات؟ فقط أخبرني:",
@@ -141,11 +170,15 @@ export const ar = {
   "commands.search.sections.searchByKeyword.title": "بحث بالكلمة المفتاحية",
   "commands.search.sections.searchByKeyword.items.0": "'جد الاجتماعات مع جون'",
   "commands.search.sections.searchByKeyword.items.1": "'ابحث عن طبيب الأسنان'",
-  "commands.search.sections.searchByKeyword.items.2": "'اعرض جميع الاجتماعات اليومية'",
-  "commands.search.sections.searchByKeyword.items.3": "'جد أحداث حول مشروع ألفا'",
+  "commands.search.sections.searchByKeyword.items.2":
+    "'اعرض جميع الاجتماعات اليومية'",
+  "commands.search.sections.searchByKeyword.items.3":
+    "'جد أحداث حول مشروع ألفا'",
   "commands.search.sections.filterByDate.title": "تصفية حسب التاريخ",
-  "commands.search.sections.filterByDate.items.0": "'جد اجتماعات الأسبوع القادم'",
-  "commands.search.sections.filterByDate.items.1": "'ابحث عن المكالمات في ديسمبر'",
+  "commands.search.sections.filterByDate.items.0":
+    "'جد اجتماعات الأسبوع القادم'",
+  "commands.search.sections.filterByDate.items.1":
+    "'ابحث عن المكالمات في ديسمبر'",
 
   "commands.remind.header": "تعيين تذكير",
   "commands.remind.text": "لا تفوت ما يهمك أبداً. جرب:",
@@ -163,16 +196,22 @@ export const ar = {
   "commands.analytics.sections.timePeriod.items.2": "'رؤى لهذا الشهر'",
   "commands.analytics.sections.timePeriod.items.3": "'تفصيل آخر 30 يوماً'",
   "commands.analytics.sections.comparePeriods.title": "مقارنة الفترات",
-  "commands.analytics.sections.comparePeriods.items.0": "'قارن هذا الأسبوع بالأسبوع الماضي'",
-  "commands.analytics.sections.comparePeriods.items.1": "'كيف يقارن هذا الشهر بالشهر الماضي؟'",
+  "commands.analytics.sections.comparePeriods.items.0":
+    "'قارن هذا الأسبوع بالأسبوع الماضي'",
+  "commands.analytics.sections.comparePeriods.items.1":
+    "'كيف يقارن هذا الشهر بالشهر الماضي؟'",
   "commands.analytics.sections.deepWorkFocus.title": "العمل العميق والتركيز",
-  "commands.analytics.sections.deepWorkFocus.items.0": "'كم ساعة عمل عميق أنجزت هذا الأسبوع؟'",
-  "commands.analytics.sections.deepWorkFocus.items.1": "'الوقت في الاجتماعات مقابل وقت التركيز'",
-  "commands.analytics.sections.deepWorkFocus.items.2": "'اتجاهات إنتاجيتي هذا الشهر'",
+  "commands.analytics.sections.deepWorkFocus.items.0":
+    "'كم ساعة عمل عميق أنجزت هذا الأسبوع؟'",
+  "commands.analytics.sections.deepWorkFocus.items.1":
+    "'الوقت في الاجتماعات مقابل وقت التركيز'",
+  "commands.analytics.sections.deepWorkFocus.items.2":
+    "'اتجاهات إنتاجيتي هذا الشهر'",
 
   "commands.calendars.header": "تقويماتك",
   "commands.calendars.text": "جاري جلب تقويماتك المتصلة...",
-  "commands.calendars.footerTip": "يمكنك جدولة الأحداث في تقويمات محددة بالاسم.",
+  "commands.calendars.footerTip":
+    "يمكنك جدولة الأحداث في تقويمات محددة بالاسم.",
 
   "commands.status.header": "حالة الاتصال",
   "commands.status.text": "جاري التحقق من اتصال تقويم Google...",
@@ -183,14 +222,18 @@ export const ar = {
   "commands.settings.connectedAsText": "متصل كـ:",
   "commands.settings.footerText": "اختر خياراً أدناه:",
   "commands.settings.sections.options.title": "الخيارات",
-  "commands.settings.sections.options.items.0": "<b>تغيير البريد الإلكتروني</b> - تحديث بريدك المرتبط",
-  "commands.settings.sections.options.items.1": "<b>إعادة ربط Google</b> - إعادة تفويض الوصول للتقويم",
+  "commands.settings.sections.options.items.0":
+    "<b>تغيير البريد الإلكتروني</b> - تحديث بريدك المرتبط",
+  "commands.settings.sections.options.items.1":
+    "<b>إعادة ربط Google</b> - إعادة تفويض الوصول للتقويم",
   "commands.settings.buttons.changeEmail": "تغيير البريد الإلكتروني",
   "commands.settings.buttons.reconnectGoogle": "إعادة ربط تقويم Google",
 
-  "commands.changeEmail.notAuthenticatedError": "يجب أن تكون مصادقاً أولاً. يرجى إرسال عنوان بريدك الإلكتروني.",
+  "commands.changeEmail.notAuthenticatedError":
+    "يجب أن تكون مصادقاً أولاً. يرجى إرسال عنوان بريدك الإلكتروني.",
   "commands.changeEmail.currentEmailText": "بريدك الإلكتروني الحالي هو:",
-  "commands.changeEmail.enterNewEmailPrompt": "يرجى إدخال عنوان بريدك الإلكتروني الجديد:",
+  "commands.changeEmail.enterNewEmailPrompt":
+    "يرجى إدخال عنوان بريدك الإلكتروني الجديد:",
 
   "commands.feedback.header": "شاركنا رأيك",
   "commands.feedback.text": "مدخلاتك تشكل كيفية تطور Ally. يمكنك:",
@@ -209,24 +252,52 @@ export const ar = {
   "commands.language.languages.fr": "الفرنسية (Français)",
   "commands.language.languages.de": "الألمانية (Deutsch)",
   "commands.language.languages.ar": "العربية",
+  "commands.language.languages.ru": "الروسية (Русский)",
 
-  "auth.welcomePrompt": "مرحباً! للبدء، يرجى إدخال عنوان بريدك الإلكتروني للتحقق:",
+  "commands.mycalendars.header": "تقويماتي",
+  "commands.mycalendars.loading": "جاري جلب تقويماتك...",
+  "commands.mycalendars.noCalendars":
+    "لم يتم العثور على تقويمات. يرجى ربط تقويم Google أولاً.",
+  "commands.mycalendars.calendarCount": "لديك {{count}} تقويم(ات):",
+  "commands.mycalendars.footerTip":
+    "استخدم أسماء التقويمات عند إنشاء أحداث لتقويمات محددة.",
+
+  "commands.aboutme.header": "ما أعرفه عنك",
+  "commands.aboutme.loading": "جاري تحليل ملفك الشخصي ونشاطك...",
+  "commands.aboutme.noData":
+    "ليس لدي بيانات كافية عنك حتى الآن. استخدمني أكثر وسأتعلم تفضيلاتك!",
+  "commands.aboutme.sections.profile.title": "الملف الشخصي",
+  "commands.aboutme.sections.calendars.title": "تقويماتك",
+  "commands.aboutme.sections.activity.title": "النشاط",
+  "commands.aboutme.sections.insights.title": "الاستنتاجات",
+  "commands.aboutme.footerTip": "أتعلم المزيد عنك مع كل تفاعل.",
+
+  "auth.welcomePrompt":
+    "مرحباً! للبدء، يرجى إدخال عنوان بريدك الإلكتروني للتحقق:",
   "auth.enterOtpPrompt":
     "تم إرسال رمز التحقق إلى {{email}}.\n\nيرجى إدخال الرمز المكون من 6 أرقام من بريدك الإلكتروني (صالح لمدة 10 دقائق).\n\nإذا أدخلت بريداً خاطئاً، فقط اكتب البريد الصحيح.",
-  "auth.otpExpired": "انتهت صلاحية رمز التحقق. يرجى إدخال بريدك الإلكتروني مرة أخرى:",
-  "auth.otpInvalidError": "رمز التحقق غير صالح. يرجى المحاولة مرة أخرى أو كتابة عنوان بريد إلكتروني جديد.",
+  "auth.otpExpired":
+    "انتهت صلاحية رمز التحقق. يرجى إدخال بريدك الإلكتروني مرة أخرى:",
+  "auth.otpInvalidError":
+    "رمز التحقق غير صالح. يرجى المحاولة مرة أخرى أو كتابة عنوان بريد إلكتروني جديد.",
   "auth.otpInvalidWithNewEmail": "خطأ: {{error}}",
-  "auth.emailVerifiedSuccess": "تم التحقق من البريد الإلكتروني وحفظه بنجاح! يمكنك الآن استخدام البوت.",
+  "auth.emailVerifiedSuccess":
+    "تم التحقق من البريد الإلكتروني وحفظه بنجاح! يمكنك الآن استخدام البوت.",
   "auth.dbSaveError": "خطأ في حفظ البريد الإلكتروني. يرجى المحاولة مرة أخرى.",
-  "auth.enterOtpOrNewEmail": "يرجى إدخال رمز التحقق المكون من 6 أرقام من بريدك الإلكتروني، أو إدخال عنوان بريد إلكتروني مختلف:",
-  "auth.otpSentToNewEmail": "تم إرسال رمز التحقق إلى {{email}}.\n\nيرجى إدخال الرمز المكون من 6 أرقام من بريدك الإلكتروني (صالح لمدة 10 دقائق):",
-  "auth.otpSendFailed": "فشل إرسال رمز التحقق: {{error}}\n\nيرجى المحاولة مرة أخرى باستخدام بريد إلكتروني مختلف.",
+  "auth.enterOtpOrNewEmail":
+    "يرجى إدخال رمز التحقق المكون من 6 أرقام من بريدك الإلكتروني، أو إدخال عنوان بريد إلكتروني مختلف:",
+  "auth.otpSentToNewEmail":
+    "تم إرسال رمز التحقق إلى {{email}}.\n\nيرجى إدخال الرمز المكون من 6 أرقام من بريدك الإلكتروني (صالح لمدة 10 دقائق):",
+  "auth.otpSendFailed":
+    "فشل إرسال رمز التحقق: {{error}}\n\nيرجى المحاولة مرة أخرى باستخدام بريد إلكتروني مختلف.",
 
   "errors.processingError": "خطأ في معالجة طلبك.",
-  "errors.noOutputFromAgent": "لم يتم استلام أي مخرجات من وكيل الذكاء الاصطناعي.",
+  "errors.noOutputFromAgent":
+    "لم يتم استلام أي مخرجات من وكيل الذكاء الاصطناعي.",
   "errors.eventCreationError": "خطأ في إنشاء الحدث. يرجى المحاولة مرة أخرى.",
   "errors.confirmationError": "خطأ أثناء التأكيد. يرجى المحاولة مرة أخرى.",
-  "errors.pendingEventPrompt": "لديك حدث قيد الإنشاء. يرجى الرد بـ 'نعم' للإنشاء رغم التعارضات، أو 'لا' للإلغاء.",
+  "errors.pendingEventPrompt":
+    "لديك حدث قيد الإنشاء. يرجى الرد بـ 'نعم' للإنشاء رغم التعارضات، أو 'لا' للإلغاء.",
   "errors.processingPreviousRequest": "لحظة، ما زلت أعمل على طلبك السابق...",
 
   "common.confirm": "تأكيد",
@@ -254,6 +325,8 @@ export const ar = {
   "botMenu.feedback": "إرسال ملاحظات",
   "botMenu.exit": "إنهاء المحادثة",
   "botMenu.language": "تغيير اللغة",
+  "botMenu.mycalendars": "قائمة تقويماتي",
+  "botMenu.aboutme": "ماذا تعرف عني؟",
 } as const;
 
 export type TranslationKey = keyof typeof ar;

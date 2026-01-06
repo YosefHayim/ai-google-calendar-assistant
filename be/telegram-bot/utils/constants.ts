@@ -25,6 +25,8 @@ export const COMMANDS = {
   // Analytics & Insights
   ANALYTICS: "/analytics",
   CALENDARS: "/calendars",
+  MYCALENDARS: "/mycalendars",
+  ABOUTME: "/aboutme",
 
   // Account
   STATUS: "/status",

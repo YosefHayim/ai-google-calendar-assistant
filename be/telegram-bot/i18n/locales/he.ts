@@ -5,7 +5,8 @@ export const he = {
   "commands.start.footer": "בוא ננצל את הזמן שלך",
   "commands.start.sections.getStarted.title": "להתחיל",
   "commands.start.sections.getStarted.items.0": "פשוט שלח לי הודעה",
-  "commands.start.sections.getStarted.items.1": "או הקלד /help כדי לראות מה אני יכולה לעשות",
+  "commands.start.sections.getStarted.items.1":
+    "או הקלד /help כדי לראות מה אני יכולה לעשות",
   "commands.start.sections.trySaying.title": "נסה להגיד",
   "commands.start.sections.trySaying.items.0": "'מה יש לי היום?'",
   "commands.start.sections.trySaying.items.1": "'קבע 2 שעות לעבודה מעמיקה מחר'",
@@ -13,7 +14,8 @@ export const he = {
   "commands.help.header": "איך Ally עוזרת",
   "commands.help.description": "המזכירה האישית שלך לשליטה ביומן.",
   "commands.help.naturalLanguageTip": "או פשוט שלח לי הודעה!",
-  "commands.help.footerTip": "'כמה זמן עבודה מעמיקה היה לי השבוע לעומת שבוע שעבר?'",
+  "commands.help.footerTip":
+    "'כמה זמן עבודה מעמיקה היה לי השבוע לעומת שבוע שעבר?'",
   "commands.help.sections.viewSchedule.title": "צפייה בלו״ז",
   "commands.help.sections.viewSchedule.items.0": "/today - לו״ז להיום",
   "commands.help.sections.viewSchedule.items.1": "/tomorrow - סדר יום למחר",
@@ -38,16 +40,20 @@ export const he = {
 
   "commands.usage.header": "ככה Ally עוזרת:",
   "commands.usage.sections.scheduleProtect.title": "תזמון והגנה",
-  "commands.usage.sections.scheduleProtect.items.0": "'קבע 2 שעות לעבודה מעמיקה מחר בבוקר'",
-  "commands.usage.sections.scheduleProtect.items.1": "'קבע שיחה עם שרה ב-3 אחה״צ'",
+  "commands.usage.sections.scheduleProtect.items.0":
+    "'קבע 2 שעות לעבודה מעמיקה מחר בבוקר'",
+  "commands.usage.sections.scheduleProtect.items.1":
+    "'קבע שיחה עם שרה ב-3 אחה״צ'",
   "commands.usage.sections.queryTime.title": "שאילתות זמן",
   "commands.usage.sections.queryTime.items.0": "'מה יש לי היום?'",
   "commands.usage.sections.queryTime.items.1": "'מצא לי זמן פנוי השבוע'",
   "commands.usage.sections.customize.title": "התאמה אישית",
-  "commands.usage.sections.customize.items.0": "הקלד /settings להתאמה אישית של Ally",
+  "commands.usage.sections.customize.items.0":
+    "הקלד /settings להתאמה אישית של Ally",
 
   "commands.exit.header": "להתראות",
-  "commands.exit.text": "השיחה נמחקה. אני כאן כשתצטרך - פשוט שלח הודעה כדי להמשיך מאיפה שהפסקת.",
+  "commands.exit.text":
+    "השיחה נמחקה. אני כאן כשתצטרך - פשוט שלח הודעה כדי להמשיך מאיפה שהפסקת.",
   "commands.exit.footer": "לך לעשות דברים",
 
   "commands.today.header": "הלו״ז להיום",
@@ -89,16 +95,23 @@ export const he = {
   "commands.create.footerTip": "תאר את האירוע ואני אטפל בשאר.",
   "commands.create.sections.eventsMeetings.title": "אירועים ופגישות",
   "commands.create.sections.eventsMeetings.items.0": "'שיחה עם שרה מחר ב-2'",
-  "commands.create.sections.eventsMeetings.items.1": "'סנכרון צוות כל יום שני ב-9'",
-  "commands.create.sections.eventsMeetings.items.2": "'ארוחת צהריים עם משקיע ביום שישי'",
+  "commands.create.sections.eventsMeetings.items.1":
+    "'סנכרון צוות כל יום שני ב-9'",
+  "commands.create.sections.eventsMeetings.items.2":
+    "'ארוחת צהריים עם משקיע ביום שישי'",
   "commands.create.sections.focusDeepWork.title": "ריכוז ועבודה מעמיקה",
-  "commands.create.sections.focusDeepWork.items.0": "'חסום 3 שעות לעבודה מעמיקה מחר בבוקר'",
-  "commands.create.sections.focusDeepWork.items.1": "'שמור את יום שישי אחה״צ לאסטרטגיה'",
+  "commands.create.sections.focusDeepWork.items.0":
+    "'חסום 3 שעות לעבודה מעמיקה מחר בבוקר'",
+  "commands.create.sections.focusDeepWork.items.1":
+    "'שמור את יום שישי אחה״צ לאסטרטגיה'",
   "commands.create.sections.withDuration.title": "עם משך",
-  "commands.create.sections.withDuration.items.0": "'סדנה של שעתיים ביום רביעי ב-10'",
-  "commands.create.sections.withDuration.items.1": "'צ׳ק-אין קצר של 15 דקות ב-4'",
+  "commands.create.sections.withDuration.items.0":
+    "'סדנה של שעתיים ביום רביעי ב-10'",
+  "commands.create.sections.withDuration.items.1":
+    "'צ׳ק-אין קצר של 15 דקות ב-4'",
   "commands.create.sections.specificCalendar.title": "יומן ספציפי",
-  "commands.create.sections.specificCalendar.items.0": "'הוסף לעבודה: שיחה עם לקוח ביום שישי ב-2'",
+  "commands.create.sections.specificCalendar.items.0":
+    "'הוסף לעבודה: שיחה עם לקוח ביום שישי ב-2'",
 
   "commands.update.header": "שינוי או עריכה",
   "commands.update.text": "שנה כל אירוע ביומן שלך:",
@@ -106,28 +119,36 @@ export const he = {
   "commands.update.sections.reschedule.title": "שינוי מועד",
   "commands.update.sections.reschedule.items.0": "'הזז את הפגישה של 2 ל-4'",
   "commands.update.sections.reschedule.items.1": "'דחה את הרופא לשבוע הבא'",
-  "commands.update.sections.reschedule.items.2": "'הזז את ארוחת הצהריים של שישי ל-1'",
+  "commands.update.sections.reschedule.items.2":
+    "'הזז את ארוחת הצהריים של שישי ל-1'",
   "commands.update.sections.editDetails.title": "עריכת פרטים",
-  "commands.update.sections.editDetails.items.0": "'שנה את שם פגישת הצוות ל-Sprint Review'",
-  "commands.update.sections.editDetails.items.1": "'הוסף לינק זום לשיחה של מחר'",
-  "commands.update.sections.editDetails.items.2": "'עדכן את תיאור פגישת הפרויקט'",
+  "commands.update.sections.editDetails.items.0":
+    "'שנה את שם פגישת הצוות ל-Sprint Review'",
+  "commands.update.sections.editDetails.items.1":
+    "'הוסף לינק זום לשיחה של מחר'",
+  "commands.update.sections.editDetails.items.2":
+    "'עדכן את תיאור פגישת הפרויקט'",
   "commands.update.sections.adjustDuration.title": "שינוי משך",
-  "commands.update.sections.adjustDuration.items.0": "'הפוך את הסטנדאפ ל-30 דקות במקום 15'",
-  "commands.update.sections.adjustDuration.items.1": "'האר את הסדנה של מחר בשעה'",
+  "commands.update.sections.adjustDuration.items.0":
+    "'הפוך את הסטנדאפ ל-30 דקות במקום 15'",
+  "commands.update.sections.adjustDuration.items.1":
+    "'האר את הסדנה של מחר בשעה'",
 
   "commands.delete.header": "ביטול אירוע",
   "commands.delete.text": "הסר אירועים מהיומן שלך:",
   "commands.delete.footerWarning": "אני אאשר לפני מחיקה",
   "commands.delete.sections.cancelByName.title": "ביטול לפי שם",
   "commands.delete.sections.cancelByName.items.0": "'בטל את הפגישה של 3'",
-  "commands.delete.sections.cancelByName.items.1": "'הסר ארוחת צהריים עם יוחנן מחר'",
+  "commands.delete.sections.cancelByName.items.1":
+    "'הסר ארוחת צהריים עם יוחנן מחר'",
   "commands.delete.sections.cancelByName.items.2": "'מחק את התור לרופא שיניים'",
   "commands.delete.sections.clearMultiple.title": "ניקוי מרובה",
   "commands.delete.sections.clearMultiple.items.0": "'נקה את יום שישי אחה״צ'",
   "commands.delete.sections.clearMultiple.items.1": "'הסר את כל הפגישות מחר'",
   "commands.delete.sections.recurringEvents.title": "אירועים חוזרים",
   "commands.delete.sections.recurringEvents.items.0": "'דלג על הסטנדאפ השבוע'",
-  "commands.delete.sections.recurringEvents.items.1": "'בטל את כל פגישות הצוות העתידיות'",
+  "commands.delete.sections.recurringEvents.items.1":
+    "'בטל את כל פגישות הצוות העתידיות'",
 
   "commands.cancel.header": "ביטול או שינוי",
   "commands.cancel.text": "צריך לעשות שינויים? פשוט ספר לי:",
@@ -143,7 +164,8 @@ export const he = {
   "commands.search.sections.searchByKeyword.items.0": "'מצא פגישות עם יוחנן'",
   "commands.search.sections.searchByKeyword.items.1": "'חפש רופא שיניים'",
   "commands.search.sections.searchByKeyword.items.2": "'הראה את כל הסטנדאפים'",
-  "commands.search.sections.searchByKeyword.items.3": "'מצא אירועים על פרויקט אלפא'",
+  "commands.search.sections.searchByKeyword.items.3":
+    "'מצא אירועים על פרויקט אלפא'",
   "commands.search.sections.filterByDate.title": "סינון לפי תאריך",
   "commands.search.sections.filterByDate.items.0": "'מצא פגישות בשבוע הבא'",
   "commands.search.sections.filterByDate.items.1": "'חפש שיחות בדצמבר'",
@@ -164,12 +186,17 @@ export const he = {
   "commands.analytics.sections.timePeriod.items.2": "'תובנות לחודש הזה'",
   "commands.analytics.sections.timePeriod.items.3": "'פירוט ל-30 יום אחרונים'",
   "commands.analytics.sections.comparePeriods.title": "השוואת תקופות",
-  "commands.analytics.sections.comparePeriods.items.0": "'השווה שבוע זה לשבוע שעבר'",
-  "commands.analytics.sections.comparePeriods.items.1": "'איך החודש הזה בהשוואה לקודם?'",
+  "commands.analytics.sections.comparePeriods.items.0":
+    "'השווה שבוע זה לשבוע שעבר'",
+  "commands.analytics.sections.comparePeriods.items.1":
+    "'איך החודש הזה בהשוואה לקודם?'",
   "commands.analytics.sections.deepWorkFocus.title": "עבודה מעמיקה וריכוז",
-  "commands.analytics.sections.deepWorkFocus.items.0": "'כמה עבודה מעמיקה היתה לי השבוע?'",
-  "commands.analytics.sections.deepWorkFocus.items.1": "'זמן בפגישות לעומת זמן ריכוז'",
-  "commands.analytics.sections.deepWorkFocus.items.2": "'מגמות הפרודוקטיביות שלי החודש'",
+  "commands.analytics.sections.deepWorkFocus.items.0":
+    "'כמה עבודה מעמיקה היתה לי השבוע?'",
+  "commands.analytics.sections.deepWorkFocus.items.1":
+    "'זמן בפגישות לעומת זמן ריכוז'",
+  "commands.analytics.sections.deepWorkFocus.items.2":
+    "'מגמות הפרודוקטיביות שלי החודש'",
 
   "commands.calendars.header": "היומנים שלך",
   "commands.calendars.text": "מביא את היומנים המחוברים שלך...",
@@ -184,12 +211,15 @@ export const he = {
   "commands.settings.connectedAsText": "מחובר כ:",
   "commands.settings.footerText": "בחר אפשרות למטה:",
   "commands.settings.sections.options.title": "אפשרויות",
-  "commands.settings.sections.options.items.0": "<b>שינוי אימייל</b> - עדכן את האימייל המקושר",
-  "commands.settings.sections.options.items.1": "<b>חיבור מחדש ל-Google</b> - אשר מחדש גישה ליומן",
+  "commands.settings.sections.options.items.0":
+    "<b>שינוי אימייל</b> - עדכן את האימייל המקושר",
+  "commands.settings.sections.options.items.1":
+    "<b>חיבור מחדש ל-Google</b> - אשר מחדש גישה ליומן",
   "commands.settings.buttons.changeEmail": "שינוי אימייל",
   "commands.settings.buttons.reconnectGoogle": "חיבור מחדש ל-Google Calendar",
 
-  "commands.changeEmail.notAuthenticatedError": "עליך להתחבר קודם. אנא שלח לי את כתובת האימייל שלך.",
+  "commands.changeEmail.notAuthenticatedError":
+    "עליך להתחבר קודם. אנא שלח לי את כתובת האימייל שלך.",
   "commands.changeEmail.currentEmailText": "האימייל הנוכחי שלך:",
   "commands.changeEmail.enterNewEmailPrompt": "אנא הזן את כתובת האימייל החדשה:",
 
@@ -198,7 +228,8 @@ export const he = {
   "commands.feedback.options.0": "לספר מה עובד טוב",
   "commands.feedback.options.1": "לדווח על בעיות שנתקלת בהן",
   "commands.feedback.options.2": "להציע תכונות שתרצה לראות",
-  "commands.feedback.instructionText": "פשוט כתוב את המשוב שלך - הצוות יראה אותו.",
+  "commands.feedback.instructionText":
+    "פשוט כתוב את המשוב שלך - הצוות יראה אותו.",
   "commands.feedback.footer": "תודה שאתה עוזר לנו לבנות משהו נהדר",
 
   "commands.language.header": "הגדרות שפה",
@@ -210,26 +241,52 @@ export const he = {
   "commands.language.languages.fr": "צרפתית (Français)",
   "commands.language.languages.de": "גרמנית (Deutsch)",
   "commands.language.languages.ar": "ערבית (العربية)",
+  "commands.language.languages.ru": "רוסית (Русский)",
 
-  "auth.welcomePrompt": "ברוכים הבאים! כדי להתחיל, אנא הזן את כתובת האימייל שלך לאימות:",
+  "commands.mycalendars.header": "היומנים שלי",
+  "commands.mycalendars.loading": "טוען את היומנים שלך...",
+  "commands.mycalendars.noCalendars":
+    "לא נמצאו יומנים. אנא חבר את Google Calendar קודם.",
+  "commands.mycalendars.calendarCount": "יש לך {{count}} יומן(ים):",
+  "commands.mycalendars.footerTip":
+    "השתמש בשמות היומנים כשאתה יוצר אירועים ליומנים ספציפיים.",
+
+  "commands.aboutme.header": "מה אני יודע עליך",
+  "commands.aboutme.loading": "מנתח את הפרופיל והפעילות שלך...",
+  "commands.aboutme.noData":
+    "אין לי מספיק מידע עליך עדיין. השתמש בי יותר ואלמד את ההעדפות שלך!",
+  "commands.aboutme.sections.profile.title": "פרופיל",
+  "commands.aboutme.sections.calendars.title": "היומנים שלך",
+  "commands.aboutme.sections.activity.title": "פעילות",
+  "commands.aboutme.sections.insights.title": "תובנות",
+  "commands.aboutme.footerTip": "אני לומד יותר עליך עם כל אינטראקציה.",
+
+  "auth.welcomePrompt":
+    "ברוכים הבאים! כדי להתחיל, אנא הזן את כתובת האימייל שלך לאימות:",
   "auth.enterOtpPrompt":
     "קוד אימות נשלח ל-{{email}}.\n\nאנא הזן את הקוד בן 6 הספרות מהאימייל (תקף ל-10 דקות).\n\nאם הזנת אימייל שגוי, פשוט הקלד את הנכון.",
   "auth.otpExpired": "קוד האימות פג תוקף. אנא הזן את האימייל שוב:",
-  "auth.otpInvalidError": "קוד אימות לא תקין. אנא נסה שוב או הזן כתובת אימייל אחרת.",
+  "auth.otpInvalidError":
+    "קוד אימות לא תקין. אנא נסה שוב או הזן כתובת אימייל אחרת.",
   "auth.otpInvalidWithNewEmail": "שגיאה: {{error}}",
-  "auth.emailVerifiedSuccess": "האימייל אומת ונשמר בהצלחה! כעת אפשר להשתמש בבוט.",
+  "auth.emailVerifiedSuccess":
+    "האימייל אומת ונשמר בהצלחה! כעת אפשר להשתמש בבוט.",
   "auth.dbSaveError": "שגיאה בשמירת האימייל. אנא נסה שוב.",
-  "auth.enterOtpOrNewEmail": "אנא הזן את קוד האימות בן 6 הספרות מהאימייל, או הזן כתובת אימייל אחרת:",
+  "auth.enterOtpOrNewEmail":
+    "אנא הזן את קוד האימות בן 6 הספרות מהאימייל, או הזן כתובת אימייל אחרת:",
   "auth.otpSentToNewEmail":
     "קוד אימות נשלח ל-{{email}}.\n\nאנא הזן את הקוד בן 6 הספרות מהאימייל (תקף ל-10 דקות):",
-  "auth.otpSendFailed": "שליחת קוד האימות נכשלה: {{error}}\n\nאנא נסה עם כתובת אימייל אחרת.",
+  "auth.otpSendFailed":
+    "שליחת קוד האימות נכשלה: {{error}}\n\nאנא נסה עם כתובת אימייל אחרת.",
 
   "errors.processingError": "שגיאה בעיבוד הבקשה שלך.",
   "errors.noOutputFromAgent": "לא התקבל פלט מסוכן ה-AI.",
   "errors.eventCreationError": "שגיאה ביצירת האירוע. אנא נסה שוב.",
   "errors.confirmationError": "שגיאה באישור. אנא נסה שוב.",
-  "errors.pendingEventPrompt": "יש לך יצירת אירוע ממתינה. אנא השב 'כן' ליצירה למרות התנגשויות, או 'לא' לביטול.",
-  "errors.processingPreviousRequest": "רגע, אני עדיין עובדת על הבקשה הקודמת שלך...",
+  "errors.pendingEventPrompt":
+    "יש לך יצירת אירוע ממתינה. אנא השב 'כן' ליצירה למרות התנגשויות, או 'לא' לביטול.",
+  "errors.processingPreviousRequest":
+    "רגע, אני עדיין עובדת על הבקשה הקודמת שלך...",
 
   "common.confirm": "אישור",
   "common.cancel": "ביטול",
@@ -256,4 +313,6 @@ export const he = {
   "botMenu.feedback": "שליחת משוב",
   "botMenu.exit": "סיום שיחה",
   "botMenu.language": "שינוי שפה",
-} as const
+  "botMenu.mycalendars": "רשימת היומנים שלי",
+  "botMenu.aboutme": "מה אתה יודע עליי?",
+} as const;

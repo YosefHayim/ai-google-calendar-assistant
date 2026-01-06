@@ -1,113 +1,154 @@
-'use client'
+"use client";
 
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react'
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
-import { useRouter } from 'next/navigation'
-import { useTheme } from 'next-themes'
+import { useRouter } from "next/navigation";
+import { useTheme } from "next-themes";
 
-const ONBOARDING_COMPLETE_KEY = 'allyOnBoardingComplete'
+import { useGapSettings } from "@/hooks/queries/gaps";
 
-interface DashboardUIContextValue {
-  // Sidebar state
-  isSidebarOpen: boolean
-  toggleSidebar: () => void
-  closeSidebar: () => void
+const ONBOARDING_COMPLETE_KEY = "allyOnBoardingComplete";
+const LANGUAGE_ONBOARDING_DISMISSED_KEY = "allyLanguageOnboardingDismissed";
 
-  // Settings modal state
-  isSettingsOpen: boolean
-  openSettings: () => void
-  closeSettings: () => void
+type DashboardUIContextValue = {
+  isSidebarOpen: boolean;
+  toggleSidebar: () => void;
+  closeSidebar: () => void;
 
-  // Theme
-  isDarkMode: boolean
-  toggleTheme: () => void
+  isSettingsOpen: boolean;
+  openSettings: () => void;
+  closeSettings: () => void;
 
-  // Onboarding tour
-  showTour: boolean
-  completeTour: () => void
+  isDarkMode: boolean;
+  toggleTheme: () => void;
 
-  // Sign out
-  handleSignOut: () => void
-}
+  showTour: boolean;
+  completeTour: () => void;
 
-const DashboardUIContext = createContext<DashboardUIContextValue | null>(null)
+  showLanguageOnboarding: boolean;
+  completeLanguageOnboarding: () => void;
+  dismissLanguageOnboarding: () => void;
 
-export function DashboardUIProvider({ children }: { children: React.ReactNode }) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true)
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
-  const [showTour, setShowTour] = useState(false)
-  const { theme, setTheme } = useTheme()
-  const router = useRouter()
+  handleSignOut: () => void;
+};
+
+const DashboardUIContext = createContext<DashboardUIContextValue | null>(null);
+
+export function DashboardUIProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [showTour, setShowTour] = useState(false);
+  const [showLanguageOnboarding, setShowLanguageOnboarding] = useState(false);
+  const { theme, setTheme } = useTheme();
+  const router = useRouter();
+
+  const { settings: gapSettings, isLoading: isGapSettingsLoading } =
+    useGapSettings();
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setIsSidebarOpen(window.innerWidth >= 768)
+    if (typeof window !== "undefined") {
+      setIsSidebarOpen(window.innerWidth >= 768);
 
-      // Check if user has seen onboarding tour
-      const hasSeenTour = localStorage.getItem(ONBOARDING_COMPLETE_KEY)
+      const hasSeenTour = localStorage.getItem(ONBOARDING_COMPLETE_KEY);
       if (!hasSeenTour) {
-        const timer = setTimeout(() => setShowTour(true), 1000)
-        return () => clearTimeout(timer)
+        const timer = setTimeout(() => setShowTour(true), 1000);
+        return () => clearTimeout(timer);
       }
     }
-  }, [])
+  }, []);
+
+  useEffect(() => {
+    if (isGapSettingsLoading) return;
+
+    const wasDismissed = localStorage.getItem(
+      LANGUAGE_ONBOARDING_DISMISSED_KEY
+    );
+    if (wasDismissed) return;
+
+    if (gapSettings && !gapSettings.languageSetupComplete) {
+      const timer = setTimeout(() => setShowLanguageOnboarding(true), 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [gapSettings, isGapSettingsLoading]);
 
   const toggleSidebar = useCallback(() => {
-    setIsSidebarOpen((prev) => !prev)
-  }, [])
+    setIsSidebarOpen((prev) => !prev);
+  }, []);
 
   const closeSidebar = useCallback(() => {
-    if (typeof window !== 'undefined' && window.innerWidth < 768) {
-      setIsSidebarOpen(false)
+    if (typeof window !== "undefined" && window.innerWidth < 768) {
+      setIsSidebarOpen(false);
     }
-  }, [])
+  }, []);
 
-  const openSettings = () => setIsSettingsOpen(true)
+  const openSettings = () => setIsSettingsOpen(true);
 
-  const closeSettings = () => setIsSettingsOpen(false)
+  const closeSettings = () => setIsSettingsOpen(false);
 
-  const toggleTheme = () => setTheme(theme === 'dark' ? 'light' : 'dark')
+  const toggleTheme = () => setTheme(theme === "dark" ? "light" : "dark");
 
   const completeTour = () => {
-    setShowTour(false)
-    localStorage.setItem(ONBOARDING_COMPLETE_KEY, 'true')
-  }
+    setShowTour(false);
+    localStorage.setItem(ONBOARDING_COMPLETE_KEY, "true");
+  };
+
+  const completeLanguageOnboarding = () => {
+    setShowLanguageOnboarding(false);
+  };
+
+  const dismissLanguageOnboarding = () => {
+    setShowLanguageOnboarding(false);
+    localStorage.setItem(LANGUAGE_ONBOARDING_DISMISSED_KEY, "true");
+  };
 
   const handleSignOut = () => {
-    closeSettings()
-    router.push('/login')
-  }
+    closeSettings();
+    router.push("/login");
+  };
 
   const value: DashboardUIContextValue = {
-    // Sidebar
     isSidebarOpen,
     toggleSidebar,
     closeSidebar,
 
-    // Settings
     isSettingsOpen,
     openSettings,
     closeSettings,
 
-    // Theme
-    isDarkMode: theme === 'dark',
+    isDarkMode: theme === "dark",
     toggleTheme,
 
-    // Onboarding
     showTour,
     completeTour,
 
-    // Sign out
-    handleSignOut,
-  }
+    showLanguageOnboarding,
+    completeLanguageOnboarding,
+    dismissLanguageOnboarding,
 
-  return <DashboardUIContext.Provider value={value}>{children}</DashboardUIContext.Provider>
+    handleSignOut,
+  };
+
+  return (
+    <DashboardUIContext.Provider value={value}>
+      {children}
+    </DashboardUIContext.Provider>
+  );
 }
 
 export function useDashboardUI() {
-  const context = useContext(DashboardUIContext)
+  const context = useContext(DashboardUIContext);
   if (!context) {
-    throw new Error('useDashboardUI must be used within a DashboardUIProvider')
+    throw new Error("useDashboardUI must be used within a DashboardUIProvider");
   }
-  return context
+  return context;
 }
