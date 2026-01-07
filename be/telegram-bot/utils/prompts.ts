@@ -29,6 +29,7 @@ export const buildAgentPrompt = (
 
 type BuildPromptOptions = {
   allyBrain?: AllyBrainPreference | null;
+  languageCode?: string;
 };
 
 export const buildAgentPromptWithContext = (
@@ -48,6 +49,12 @@ export const buildAgentPromptWithContext = (
 
   parts.push(`Current date and time is ${timestamp}.`);
   parts.push(`User: ${email}`);
+
+  if (options?.languageCode) {
+    parts.push(
+      `IMPORTANT: User's preferred language is "${options.languageCode}". You MUST respond in this language.`
+    );
+  }
 
   if (conversationContext) {
     const truncatedContext = truncateContext(
