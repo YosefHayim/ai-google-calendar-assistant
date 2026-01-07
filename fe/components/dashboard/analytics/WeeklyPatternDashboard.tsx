@@ -1,21 +1,21 @@
 'use client'
 
 import * as React from 'react'
-import { BarChart3, LineChart, AreaChart, CalendarDays, Info } from 'lucide-react'
-import { AnimatePresence, motion } from 'framer-motion'
+import { CalendarDays, Info } from 'lucide-react'
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
 import type { WeeklyPatternDataPoint } from '@/types/analytics'
 import { formatNumber } from '@/lib/dataUtils'
+import { ChartTypeWrapper } from './ChartTypeWrapper'
 
 import { WeeklyPatternBarChart } from './weekly-pattern-charts/WeeklyPatternBarChart'
 import { WeeklyPatternLineChart } from './weekly-pattern-charts/WeeklyPatternLineChart'
 import { WeeklyPatternAreaChart } from './weekly-pattern-charts/WeeklyPatternAreaChart'
 
-type ChartType = 'bar' | 'line' | 'area'
+const CHART_TYPES = ['bar', 'line', 'area'] as const
+type WeeklyChartType = (typeof CHART_TYPES)[number]
 
 interface WeeklyPatternDashboardProps {
   data: WeeklyPatternDataPoint[]
@@ -23,19 +23,11 @@ interface WeeklyPatternDashboardProps {
   isLoading?: boolean
 }
 
-const chartTypeConfig: Record<ChartType, { icon: React.ElementType; label: string }> = {
-  bar: { icon: BarChart3, label: 'Bar' },
-  line: { icon: LineChart, label: 'Line' },
-  area: { icon: AreaChart, label: 'Area' },
-}
-
 export const WeeklyPatternDashboard: React.FC<WeeklyPatternDashboardProps> = ({
   data,
   onDayClick,
   isLoading = false,
 }) => {
-  const [chartType, setChartType] = React.useState<ChartType>('bar')
-
   const totalHours = React.useMemo(() => {
     return data.reduce((acc, curr) => acc + curr.hours, 0)
   }, [data])
@@ -90,7 +82,7 @@ export const WeeklyPatternDashboard: React.FC<WeeklyPatternDashboardProps> = ({
     )
   }
 
-  const renderChart = () => {
+  const renderChart = (chartType: WeeklyChartType) => {
     const chartProps = { data, onDayClick }
 
     switch (chartType) {
@@ -125,8 +117,8 @@ export const WeeklyPatternDashboard: React.FC<WeeklyPatternDashboardProps> = ({
                 <div className="space-y-2">
                   <h4 className="font-semibold text-sm">Weekly Pattern</h4>
                   <p className="text-xs text-zinc-600 dark:text-zinc-400">
-                    Shows how your events are distributed across days of the week. Click on any day to see
-                    the events scheduled for that day.
+                    Shows how your events are distributed across days of the week. Click on any day to see the events
+                    scheduled for that day.
                   </p>
                 </div>
               </HoverCardContent>
@@ -140,7 +132,7 @@ export const WeeklyPatternDashboard: React.FC<WeeklyPatternDashboardProps> = ({
           <div className="relative z-30 flex flex-1 flex-col justify-center gap-1 border-t border-zinc-200 dark:border-zinc-800 px-6 py-4 text-left sm:border-t-0 sm:border-l sm:px-8 sm:py-6">
             <span className="text-zinc-500 dark:text-zinc-400 text-xs">Total Hours</span>
             <span className="text-lg leading-none font-bold text-zinc-900 dark:text-zinc-100 sm:text-3xl">
-              {formatNumber(totalHours, 1)}h
+              {formatNumber(totalHours, 1)}H
             </span>
           </div>
           <div className="relative z-30 flex flex-1 flex-col justify-center gap-1 border-t border-l border-zinc-200 dark:border-zinc-800 px-6 py-4 text-left sm:border-t-0 sm:px-8 sm:py-6">
@@ -152,39 +144,9 @@ export const WeeklyPatternDashboard: React.FC<WeeklyPatternDashboardProps> = ({
         </div>
       </CardHeader>
       <CardContent className="px-2 sm:p-6">
-        <div className="flex justify-end mb-4">
-          <Tabs value={chartType} onValueChange={(value) => setChartType(value as ChartType)}>
-            <TabsList className="h-8">
-              {(Object.entries(chartTypeConfig) as [ChartType, { icon: React.ElementType; label: string }][]).map(
-                ([type, config]) => {
-                  const IconComponent = config.icon
-                  return (
-                    <TabsTrigger
-                      key={type}
-                      value={type}
-                      className="h-7 px-2 text-xs gap-1"
-                      title={config.label}
-                    >
-                      <IconComponent size={14} />
-                      <span className="hidden sm:inline">{config.label}</span>
-                    </TabsTrigger>
-                  )
-                }
-              )}
-            </TabsList>
-          </Tabs>
-        </div>
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={chartType}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
-          >
-            {renderChart()}
-          </motion.div>
-        </AnimatePresence>
+        <ChartTypeWrapper chartId="weekly-pattern" chartTypes={CHART_TYPES} defaultType="bar">
+          {(chartType) => renderChart(chartType)}
+        </ChartTypeWrapper>
       </CardContent>
     </Card>
   )

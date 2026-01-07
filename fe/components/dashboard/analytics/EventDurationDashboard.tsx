@@ -1,21 +1,27 @@
 'use client'
 
 import * as React from 'react'
-import { BarChart3, PieChart, Layers, Timer, Info } from 'lucide-react'
-import { AnimatePresence, motion } from 'framer-motion'
+import { Timer, Info } from 'lucide-react'
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
 import type { EventDurationCategory } from '@/types/analytics'
 import { formatNumber } from '@/lib/dataUtils'
+import { ChartTypeWrapper } from './ChartTypeWrapper'
 
 import { EventDurationBarChart } from './event-duration-charts/EventDurationBarChart'
 import { EventDurationPieChart } from './event-duration-charts/EventDurationPieChart'
 import { EventDurationProgressChart } from './event-duration-charts/EventDurationProgressChart'
 
-type ChartType = 'progress' | 'bar' | 'pie'
+const CHART_TYPES = ['progress', 'bar', 'pie'] as const
+type DurationChartType = (typeof CHART_TYPES)[number]
+
+const CHART_LABELS: Partial<Record<DurationChartType, string>> = {
+  progress: 'Progress',
+  bar: 'Bar',
+  pie: 'Pie',
+}
 
 interface EventDurationDashboardProps {
   data: EventDurationCategory[]
@@ -24,20 +30,12 @@ interface EventDurationDashboardProps {
   isLoading?: boolean
 }
 
-const chartTypeConfig: Record<ChartType, { icon: React.ElementType; label: string }> = {
-  progress: { icon: Layers, label: 'Progress' },
-  bar: { icon: BarChart3, label: 'Bar' },
-  pie: { icon: PieChart, label: 'Pie' },
-}
-
 export const EventDurationDashboard: React.FC<EventDurationDashboardProps> = ({
   data,
   totalEvents,
   onCategoryClick,
   isLoading = false,
 }) => {
-  const [chartType, setChartType] = React.useState<ChartType>('progress')
-
   if (isLoading) {
     return (
       <Card className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 py-0">
@@ -85,7 +83,7 @@ export const EventDurationDashboard: React.FC<EventDurationDashboardProps> = ({
     )
   }
 
-  const renderChart = () => {
+  const renderChart = (chartType: DurationChartType) => {
     const chartProps = { data, onCategoryClick, totalEvents }
 
     switch (chartType) {
@@ -120,7 +118,8 @@ export const EventDurationDashboard: React.FC<EventDurationDashboardProps> = ({
                 <div className="space-y-2">
                   <h4 className="font-semibold text-sm">Event Duration</h4>
                   <p className="text-xs text-zinc-600 dark:text-zinc-400">
-                    Breakdown of your events by duration. Click on any category to see the events in that duration range.
+                    Breakdown of your events by duration. Click on any category to see the events in that duration
+                    range.
                   </p>
                 </div>
               </HoverCardContent>
@@ -138,39 +137,14 @@ export const EventDurationDashboard: React.FC<EventDurationDashboardProps> = ({
         </div>
       </CardHeader>
       <CardContent className="px-2 sm:p-6">
-        <div className="flex justify-end mb-4">
-          <Tabs value={chartType} onValueChange={(value) => setChartType(value as ChartType)}>
-            <TabsList className="h-8">
-              {(Object.entries(chartTypeConfig) as [ChartType, { icon: React.ElementType; label: string }][]).map(
-                ([type, config]) => {
-                  const IconComponent = config.icon
-                  return (
-                    <TabsTrigger
-                      key={type}
-                      value={type}
-                      className="h-7 px-2 text-xs gap-1"
-                      title={config.label}
-                    >
-                      <IconComponent size={14} />
-                      <span className="hidden sm:inline">{config.label}</span>
-                    </TabsTrigger>
-                  )
-                }
-              )}
-            </TabsList>
-          </Tabs>
-        </div>
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={chartType}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
-          >
-            {renderChart()}
-          </motion.div>
-        </AnimatePresence>
+        <ChartTypeWrapper
+          chartId="event-duration"
+          chartTypes={CHART_TYPES}
+          defaultType="progress"
+          labels={CHART_LABELS}
+        >
+          {(chartType) => renderChart(chartType)}
+        </ChartTypeWrapper>
       </CardContent>
     </Card>
   )

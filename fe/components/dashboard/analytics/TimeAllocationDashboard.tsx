@@ -1,15 +1,14 @@
 'use client'
 
 import * as React from 'react'
-import { BarChart3, PieChart, CircleDot, Radar, BarChartHorizontal, Info } from 'lucide-react'
-import { AnimatePresence, motion } from 'framer-motion'
+import { Info } from 'lucide-react'
 
 import { Skeleton } from '@/components/ui/skeleton'
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
 import type { CalendarBreakdownItem } from '@/types/analytics'
 import { sumBy, calculatePercentage, formatNumber } from '@/lib/dataUtils'
 import { getValidHexColor } from '@/lib/colorUtils'
+import { ChartTypeWrapper } from './ChartTypeWrapper'
 
 import { TimeAllocationBarChart } from './time-allocation-charts/TimeAllocationBarChart'
 import { TimeAllocationPieChart } from './time-allocation-charts/TimeAllocationPieChart'
@@ -17,7 +16,16 @@ import { TimeAllocationDonutChart } from './time-allocation-charts/TimeAllocatio
 import { TimeAllocationRadarChart } from './time-allocation-charts/TimeAllocationRadarChart'
 import { TimeAllocationHorizontalBarChart } from './time-allocation-charts/TimeAllocationHorizontalBarChart'
 
-type ChartType = 'bar' | 'pie' | 'donut' | 'radar' | 'horizontal'
+const CHART_TYPES = ['bar', 'pie', 'donut', 'radar', 'horizontal'] as const
+type AllocationChartType = (typeof CHART_TYPES)[number]
+
+const CHART_LABELS: Partial<Record<AllocationChartType, string>> = {
+  bar: 'Bar',
+  pie: 'Pie',
+  donut: 'Donut',
+  radar: 'Radar',
+  horizontal: 'H-Bar',
+}
 
 interface TimeAllocationDashboardProps {
   data: CalendarBreakdownItem[]
@@ -25,20 +33,12 @@ interface TimeAllocationDashboardProps {
   isLoading?: boolean
 }
 
-const chartTypeConfig: Record<ChartType, { icon: React.ElementType; label: string }> = {
-  bar: { icon: BarChart3, label: 'Bar' },
-  pie: { icon: PieChart, label: 'Pie' },
-  donut: { icon: CircleDot, label: 'Donut' },
-  radar: { icon: Radar, label: 'Radar' },
-  horizontal: { icon: BarChartHorizontal, label: 'H-Bar' },
-}
-
 export const TimeAllocationDashboard: React.FC<TimeAllocationDashboardProps> = ({
   data,
   onCalendarClick,
   isLoading = false,
 }) => {
-  const [chartType, setChartType] = React.useState<ChartType>('donut')
+  const [currentChartType, setCurrentChartType] = React.useState<AllocationChartType>('donut')
   const totalHours = sumBy(data, 'hours')
 
   if (isLoading) {
@@ -75,7 +75,7 @@ export const TimeAllocationDashboard: React.FC<TimeAllocationDashboardProps> = (
     )
   }
 
-  const renderChart = () => {
+  const renderChart = (chartType: AllocationChartType) => {
     const chartProps = { data, onCalendarClick }
 
     switch (chartType) {
@@ -93,6 +93,8 @@ export const TimeAllocationDashboard: React.FC<TimeAllocationDashboardProps> = (
         return <TimeAllocationDonutChart {...chartProps} />
     }
   }
+
+  const showLegend = ['bar', 'horizontal', 'radar', 'donut'].includes(currentChartType)
 
   return (
     <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm">
@@ -119,50 +121,40 @@ export const TimeAllocationDashboard: React.FC<TimeAllocationDashboardProps> = (
                 </div>
               </HoverCardContent>
             </HoverCard>
-            <span className="text-sm font-normal text-zinc-500 ml-2">
-              {formatNumber(totalHours, 1)}h total
-            </span>
+            <span className="text-sm font-normal text-zinc-500 ml-2">{formatNumber(totalHours, 1)}H total</span>
           </h3>
 
-          <Tabs value={chartType} onValueChange={(value) => setChartType(value as ChartType)}>
-            <TabsList className="h-8">
-              {(Object.entries(chartTypeConfig) as [ChartType, { icon: React.ElementType; label: string }][]).map(
-                ([type, config]) => {
-                  const IconComponent = config.icon
-                  return (
-                    <TabsTrigger
-                      key={type}
-                      value={type}
-                      className="h-7 px-2 text-xs gap-1"
-                      title={config.label}
-                    >
-                      <IconComponent size={14} />
-                      <span className="hidden sm:inline">{config.label}</span>
-                    </TabsTrigger>
-                  )
-                }
-              )}
-            </TabsList>
-          </Tabs>
+          <ChartTypeWrapper
+            chartId="time-allocation"
+            chartTypes={CHART_TYPES}
+            defaultType="donut"
+            labels={CHART_LABELS}
+            className="!mb-0"
+          >
+            {(chartType) => {
+              if (chartType !== currentChartType) {
+                setCurrentChartType(chartType)
+              }
+              return null
+            }}
+          </ChartTypeWrapper>
         </div>
       </div>
 
       <div className="p-4 flex flex-col lg:flex-row gap-4">
         <div className="flex-1 min-w-0">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={chartType}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.2 }}
-            >
-              {renderChart()}
-            </motion.div>
-          </AnimatePresence>
+          <ChartTypeWrapper
+            chartId="time-allocation"
+            chartTypes={CHART_TYPES}
+            defaultType="donut"
+            labels={CHART_LABELS}
+            className="[&>div:first-child]:hidden"
+          >
+            {(chartType) => renderChart(chartType)}
+          </ChartTypeWrapper>
         </div>
 
-        {['bar', 'horizontal', 'radar', 'donut'].includes(chartType) && (
+        {showLegend && (
           <div className="lg:w-48 flex-shrink-0">
             <ul className="space-y-2">
               {data.map((item) => {
@@ -194,7 +186,7 @@ export const TimeAllocationDashboard: React.FC<TimeAllocationDashboardProps> = (
                       {item.category}
                     </span>
                     <span className="font-mono text-zinc-500 dark:text-zinc-400 text-xs">
-                      {formatNumber(item.hours, 1)}h
+                      {formatNumber(item.hours, 1)}H
                     </span>
                     <span className="text-xs text-zinc-400 w-8 text-right">
                       {calculatePercentage(item.hours, totalHours, 0)}%

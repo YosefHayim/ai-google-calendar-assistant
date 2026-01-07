@@ -165,6 +165,16 @@ const ChatInterface: React.FC = () => {
     textInputRef.current?.focus()
   }
 
+  const handleEditAndResend = (messageId: string, newText: string) => {
+    const messageIndex = messages.findIndex((m) => m.id === messageId)
+    if (messageIndex === -1) return
+
+    const updatedMessages = messages.slice(0, messageIndex)
+    setMessages(updatedMessages)
+
+    handleSend(undefined, newText)
+  }
+
   const handleTypewriterComplete = () => {
     // Get the message before clearing the streaming ID
     const currentStreamingId = streamingMessageId
@@ -228,7 +238,7 @@ const ChatInterface: React.FC = () => {
               isStreaming={isStreaming}
               streamingMessageId={streamingMessageId}
               onResend={handleResend}
-              onEdit={handleEditMessage}
+              onEditAndResend={handleEditAndResend}
               onSpeak={speakText}
               onTypewriterComplete={handleTypewriterComplete}
               avatarScrollRef={avatarScrollRef}
