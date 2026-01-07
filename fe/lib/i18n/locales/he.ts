@@ -68,6 +68,137 @@ export const he: TranslationShape = {
     rights: 'כל הזכויות שמורות.',
     privacy: 'מדיניות פרטיות',
     terms: 'תנאי שימוש',
+    product: 'מוצר',
+    pricing: 'מחירים',
+    executivePower: 'כוח מנהלים',
+    company: 'חברה',
+    aboutUs: 'אודותינו',
+    careers: 'קריירה',
+    resources: 'משאבים',
+    blog: 'בלוג',
+    changeLog: 'יומן שינויים',
+    description:
+      'עוזרת AI ברמת מנהלים שתוכננה לבעלי עסקים להגן על עבודתם העמוקה. מגישה חינמית ועד לכוח מנהלים בלתי מוגבל. בנויה על פרוטוקול Ally Neural.',
+    systemStatus: 'כל המערכות פעילות • מנוע ביצועים גבוהים',
+  },
+
+  // Home Page
+  home: {
+    badge: 'ניהול יומן מונע AI',
+    title: 'המזכירה הפרטית',
+    titleHighlight: 'AI שלך',
+    subtitle: 'נהל את יומן Google שלך עם פקודות קוליות טבעיות. תזמן, תזמן מחדש ומטב את הזמן שלך ללא מאמץ.',
+    getStartedFree: 'התחל בחינם',
+    viewPricing: 'צפה במחירים',
+    featuresTitle: 'כל מה שאתה צריך לניהול הזמן שלך',
+    featuresSubtitle: 'אלי משלבת אינטליגנציית AI עם אינטגרציה חלקה ליומן',
+    voiceCommands: 'פקודות קוליות',
+    voiceCommandsDesc: 'תזמן פגישות, הגדר תזכורות ונהל את היומן שלך באמצעות פקודות קוליות טבעיות.',
+    smartScheduling: 'תזמון חכם',
+    smartSchedulingDesc: 'תזמון מונע AI שמוצא את הזמנים הטובים ביותר לפגישות והתור שלך.',
+    timeOptimization: 'אופטימיזציית זמן',
+    timeOptimizationDesc: 'נתח את דפוסי לוח הזמנים שלך וקבל תובנות למיקסום הפרודוקטיביות.',
+    ctaTitle: 'מוכן לשנות את חוויית היומן שלך?',
+    ctaSubtitle: 'הצטרף לאלפי אנשי מקצוע שפישטו את התזמון שלהם עם אלי.',
+    startForFree: 'התחל בחינם',
+  },
+
+  // About Page
+  about: {
+    title: 'אודות',
+    subtitle: 'אנחנו בונים את עתיד ניהול היומן עם אינטליגנציה מונעת AI שמבינה איך אתה עובד.',
+    missionTitle: 'המשימה שלנו',
+    missionP1:
+      'אנחנו מאמינים שכל אחד מגיע לו עוזר אישי שמבין את לוח הזמנים שלו, מכבד את הזמן שלו ועוזר לו להתמקד במה שחשוב באמת.',
+    missionP2: 'אלי משלבת AI מתקדם עם עיצוב אינטואיטיבי כדי ליצור חוויית יומן שמרגישה כמו מזכירה אישית בקצות אצבעותיך.',
+    activeUsers: 'משתמשים פעילים',
+    accuracyRate: 'אחוז דיוק',
+    userRating: 'דירוג משתמשים',
+    savedWeekly: 'נחסך שבועית',
+    valuesTitle: 'הערכים שלנו',
+    privacyFirst: 'פרטיות קודמת',
+    privacyFirstDesc: 'הנתונים שלך שייכים לך. אנחנו משתמשים בהצפנה מובילה בתעשייה ולעולם לא מוכרים את המידע שלך.',
+    speedMatters: 'מהירות חשובה',
+    speedMattersDesc: 'כל אינטראקציה ממוטבת למהירות. תזמן בשניות, לא בדקות.',
+    userFocused: 'ממוקד משתמש',
+    userFocusedDesc: 'כל תכונה שאנחנו בונים מתחילה בהבנת הצרכים האמיתיים של המשתמשים שלנו.',
+    ctaTitle: 'הצטרף אלינו במשימה',
+    ctaSubtitle: 'חווה את עתיד ניהול היומן היום.',
+    getStarted: 'התחל',
+  },
+
+  // Contact Page
+  contact: {
+    badge: 'צור קשר',
+    title: 'צור קשר',
+    subtitle: 'יש לך שאלה, משוב או צריך תמיכה? נשמח לשמוע ממך.',
+    emailUs: 'שלח לנו מייל',
+    emailUsDesc: 'לפניות כלליות ותמיכה',
+    responseTime: 'זמן תגובה',
+    responseTimeDesc: 'אנחנו בדרך כלל מגיבים תוך 24-48 שעות בימי עסקים.',
+    form: {
+      name: 'שם',
+      namePlaceholder: 'השם שלך',
+      email: 'אימייל',
+      emailPlaceholder: 'your@email.com',
+      subject: 'נושא',
+      subjectPlaceholder: 'איך נוכל לעזור?',
+      message: 'הודעה',
+      messagePlaceholder: 'ספר לנו עוד...',
+      submit: 'שלח הודעה',
+      submitting: 'שולח...',
+      success: 'ההודעה נשלחה בהצלחה!',
+      error: 'שליחת ההודעה נכשלה. נסה שוב.',
+    },
+  },
+
+  // Pricing Page
+  pricing: {
+    testimonialsTitle: 'הסטנדרט לביצוע אסטרטגי',
+    testimonialsSubtitle: 'הצטרף לאלפי מנהיגים שהאוטמו את התזמון שלהם כדי להגן על שעות העבודה היקרות ביותר שלהם.',
+    testimonialsBadge: 'יעילות מאומתת',
+  },
+
+  // Login Page
+  login: {
+    title: 'ברוך שובך',
+    subtitle: 'גש למזכירה הפרטית שלך בצורה מאובטחת.',
+    loginWithGoogle: 'התחבר עם Google',
+    connecting: 'מתחבר...',
+    noAccount: 'אין לך חשבון?',
+    signUp: 'הירשם',
+    errors: {
+      noToken: 'האימות נכשל. נסה שוב.',
+      callbackFailed: 'OAuth callback נכשל. נסה שוב.',
+    },
+  },
+
+  // Register Page
+  register: {
+    title: 'הצטרף לאלי',
+    subtitle: 'התחל לייעל את הפעולות המנהליות שלך היום.',
+    signUpWithGoogle: 'הירשם עם Google',
+    connecting: 'מתחבר...',
+    agreeToTerms: 'בהרשמה, אתה מסכים ל',
+    termsOfService: 'תנאי השימוש',
+    and: 'ול',
+    privacyPolicy: 'מדיניות הפרטיות',
+    haveAccount: 'יש לך כבר חשבון?',
+    login: 'התחבר',
+  },
+
+  // Callback Page
+  callback: {
+    securingConnection: 'מאבטח את החיבור שלך...',
+    syncingCalendar: 'מסנכרן את היומן שלך...',
+    preparingWorkspace: 'מכין את סביבת העבודה שלך...',
+    almostThere: 'כמעט שם...',
+    authFailed: 'האימות נכשל',
+    somethingWentWrong: 'משהו השתבש',
+    redirectingToLogin: 'מעביר להתחברות...',
+    completingSignIn: 'משלים את ההתחברות...',
+    tagline: 'עוזרת היומן המונעת AI שלך',
+    loading: 'טוען...',
   },
 
   // Sidebar Navigation

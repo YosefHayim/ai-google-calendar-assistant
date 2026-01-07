@@ -12,28 +12,26 @@ import { useConversations, useConversation, useDeleteConversationById } from '@/
 import { queryKeys } from '@/lib/query'
 
 interface ChatContextValue {
-  // Conversation state
   selectedConversationId: string | null
   conversations: ConversationListItem[]
   isLoadingConversations: boolean
   isLoadingConversation: boolean
-  isPendingConversation: boolean // True when in a new, unsaved conversation
+  isPendingConversation: boolean
 
-  // Search state
   searchQuery: string
   setSearchQuery: (query: string) => void
-  isSearching: boolean // True when fetching search results
+  isSearching: boolean
 
-  // Actions
+  streamingTitleConversationId: string | null
+
   selectConversation: (conversation: ConversationListItem) => void
   startNewConversation: () => void
   refreshConversations: () => Promise<void>
   removeConversation: (id: string) => Promise<boolean>
   setConversationId: (id: string | null, isLocallyCreated?: boolean) => void
-  updateConversationTitle: (id: string, title: string) => void
+  updateConversationTitle: (id: string, title: string, isStreaming?: boolean) => void
   addConversationToList: (conversation: ConversationListItem) => void
 
-  // Messages for the selected conversation
   messages: Message[]
   setMessages: React.Dispatch<React.SetStateAction<Message[]>>
 }
@@ -49,6 +47,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   const [isPendingConversation, setIsPendingConversation] = useState(true)
   const [localConversations, setLocalConversations] = useState<ConversationListItem[]>([])
   const [searchQuery, setSearchQuery] = useState('')
+  const [streamingTitleConversationId, setStreamingTitleConversationId] = useState<string | null>(null)
 
   // TanStack Query hooks - pass search query when it has 2+ characters
   const {
@@ -100,11 +99,20 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     }
   }, [selectedConversationData, selectedConversationId])
 
-  const selectConversation = useCallback((conversation: ConversationListItem) => {
-    locallyCreatedConversationRef.current = null
-    setSelectedConversationId(conversation.id)
-    setIsPendingConversation(false)
-  }, [])
+  const selectConversation = useCallback(
+    (conversation: ConversationListItem) => {
+      locallyCreatedConversationRef.current = null
+      // Clear messages immediately when switching conversations to avoid showing stale data
+      setMessages([])
+      setSelectedConversationId(conversation.id)
+      setIsPendingConversation(false)
+      // Invalidate the specific conversation query to ensure fresh data
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.conversations.detail(conversation.id),
+      })
+    },
+    [queryClient],
+  )
 
   const startNewConversation = useCallback(async () => {
     locallyCreatedConversationRef.current = null
@@ -147,12 +155,17 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const updateConversationTitle = useCallback(
-    (id: string, title: string) => {
+    (id: string, title: string, isStreaming = false) => {
+      if (isStreaming) {
+        setStreamingTitleConversationId(id)
+      }
       setLocalConversations((prev) => prev.map((c) => (c.id === id ? { ...c, title } : c)))
-      // Also update the query cache
       queryClient.invalidateQueries({
         queryKey: queryKeys.conversations.list(),
       })
+      if (isStreaming) {
+        setTimeout(() => setStreamingTitleConversationId(null), 2000)
+      }
     },
     [queryClient],
   )
@@ -185,6 +198,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         searchQuery,
         setSearchQuery,
         isSearching,
+        streamingTitleConversationId,
         selectConversation,
         startNewConversation,
         refreshConversations,

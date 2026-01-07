@@ -6,10 +6,12 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { formatRelativeDate } from '@/lib/dateUtils'
 import type { ConversationListItem } from '@/services/chatService'
+import { StreamingTitle } from './StreamingTitle'
 
 interface ConversationListProps {
   conversations: ConversationListItem[]
   selectedConversationId: string | null
+  streamingTitleConversationId: string | null
   isLoading: boolean
   isSearching: boolean
   localSearchValue: string
@@ -22,6 +24,7 @@ interface ConversationListProps {
 export const ConversationList: React.FC<ConversationListProps> = ({
   conversations,
   selectedConversationId,
+  streamingTitleConversationId,
   isLoading,
   isSearching,
   localSearchValue,
@@ -85,7 +88,12 @@ export const ConversationList: React.FC<ConversationListProps> = ({
             >
               <div className="flex items-start justify-between gap-2">
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">{conversation.title}</p>
+                  <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">
+                    <StreamingTitle
+                      title={conversation.title}
+                      isStreaming={streamingTitleConversationId === conversation.id}
+                    />
+                  </p>
                   <div className="flex items-center gap-1 mt-0.5 text-xs text-zinc-400">
                     <Clock className="w-3 h-3" />
                     <span>{formatRelativeDate(conversation.lastUpdated)}</span>

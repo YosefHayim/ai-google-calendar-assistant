@@ -62,6 +62,136 @@ export const fr: TranslationShape = {
     rights: 'Tous droits réservés.',
     privacy: 'Politique de confidentialité',
     terms: "Conditions d'utilisation",
+    product: 'Produit',
+    pricing: 'Tarifs',
+    executivePower: 'Executive Power',
+    company: 'Entreprise',
+    aboutUs: 'À propos',
+    careers: 'Carrières',
+    resources: 'Ressources',
+    blog: 'Blog',
+    changeLog: 'Changelog',
+    description:
+      "L'assistant IA de niveau exécutif conçu pour protéger votre temps de travail profond. De l'accès gratuit à la puissance illimitée. Construit sur le protocole Ally Neural.",
+    systemStatus: 'Tous les systèmes opérationnels • Moteur haute performance',
+  },
+
+  home: {
+    badge: "Gestion d'agenda avec IA",
+    title: 'Votre',
+    titleHighlight: 'Secrétaire IA Privé',
+    subtitle:
+      'Gérez votre Google Agenda avec des commandes vocales naturelles. Planifiez, reprogrammez et optimisez votre temps sans effort.',
+    getStartedFree: 'Commencer gratuitement',
+    viewPricing: 'Voir les tarifs',
+    featuresTitle: 'Tout ce dont vous avez besoin pour gérer votre temps',
+    featuresSubtitle: "Ally combine l'intelligence IA avec une intégration transparente du calendrier",
+    voiceCommands: 'Commandes vocales',
+    voiceCommandsDesc:
+      'Planifiez des réunions, définissez des rappels et gérez votre agenda avec des commandes vocales naturelles.',
+    smartScheduling: 'Planification intelligente',
+    smartSchedulingDesc: 'Planification par IA qui trouve les meilleurs créneaux pour vos réunions.',
+    timeOptimization: 'Optimisation du temps',
+    timeOptimizationDesc: 'Analysez vos habitudes et obtenez des insights pour maximiser votre productivité.',
+    ctaTitle: 'Prêt à transformer votre expérience agenda?',
+    ctaSubtitle: 'Rejoignez des milliers de professionnels qui ont simplifié leur planification avec Ally.',
+    startForFree: 'Commencer gratuitement',
+  },
+
+  about: {
+    title: 'À propos',
+    subtitle:
+      "Nous construisons l'avenir de la gestion d'agenda avec une intelligence IA qui comprend votre façon de travailler.",
+    missionTitle: 'Notre mission',
+    missionP1:
+      "Nous croyons que chacun mérite un assistant personnel qui comprend son emploi du temps, respecte son temps et l'aide à se concentrer sur l'essentiel.",
+    missionP2:
+      'Ally combine une IA de pointe avec un design intuitif pour créer une expérience agenda qui ressemble à avoir un secrétaire dédié.',
+    activeUsers: 'Utilisateurs actifs',
+    accuracyRate: 'Taux de précision',
+    userRating: 'Note utilisateurs',
+    savedWeekly: 'Économisé par semaine',
+    valuesTitle: 'Nos valeurs',
+    privacyFirst: "Confidentialité d'abord",
+    privacyFirstDesc:
+      'Vos données vous appartiennent. Nous utilisons un chiffrement de pointe et ne vendons jamais vos informations.',
+    speedMatters: 'La vitesse compte',
+    speedMattersDesc: 'Chaque interaction est optimisée pour la vitesse. Planifiez en secondes.',
+    userFocused: 'Centré utilisateur',
+    userFocusedDesc: 'Chaque fonctionnalité commence par comprendre les vrais besoins de nos utilisateurs.',
+    ctaTitle: 'Rejoignez notre mission',
+    ctaSubtitle: "Découvrez l'avenir de la gestion d'agenda dès aujourd'hui.",
+    getStarted: 'Commencer',
+  },
+
+  contact: {
+    badge: 'Nous contacter',
+    title: 'Contactez-nous',
+    subtitle: "Une question, un commentaire ou besoin d'aide? Nous serions ravis de vous entendre.",
+    emailUs: 'Écrivez-nous',
+    emailUsDesc: 'Pour les demandes générales et le support',
+    responseTime: 'Temps de réponse',
+    responseTimeDesc: 'Nous répondons généralement sous 24-48 heures ouvrées.',
+    form: {
+      name: 'Nom',
+      namePlaceholder: 'Votre nom',
+      email: 'Email',
+      emailPlaceholder: 'votre@email.com',
+      subject: 'Sujet',
+      subjectPlaceholder: 'Comment pouvons-nous vous aider?',
+      message: 'Message',
+      messagePlaceholder: 'Dites-nous en plus...',
+      submit: 'Envoyer le message',
+      submitting: 'Envoi...',
+      success: 'Message envoyé avec succès!',
+      error: "Échec de l'envoi. Veuillez réessayer.",
+    },
+  },
+
+  pricing: {
+    testimonialsTitle: 'Le standard pour une exécution stratégique',
+    testimonialsSubtitle:
+      'Rejoignez des milliers de leaders qui ont automatisé leur planification pour protéger leurs heures de travail.',
+    testimonialsBadge: 'Efficacité vérifiée',
+  },
+
+  login: {
+    title: 'Bon retour',
+    subtitle: 'Accédez à votre secrétaire privé en toute sécurité.',
+    loginWithGoogle: 'Se connecter avec Google',
+    connecting: 'Connexion...',
+    noAccount: 'Pas encore de compte?',
+    signUp: "S'inscrire",
+    errors: {
+      noToken: "L'authentification a échoué. Veuillez réessayer.",
+      callbackFailed: 'Le callback OAuth a échoué. Veuillez réessayer.',
+    },
+  },
+
+  register: {
+    title: 'Rejoignez Ally',
+    subtitle: "Commencez à optimiser vos opérations dès aujourd'hui.",
+    signUpWithGoogle: "S'inscrire avec Google",
+    connecting: 'Connexion...',
+    agreeToTerms: 'En vous inscrivant, vous acceptez les',
+    termsOfService: "conditions d'utilisation",
+    and: 'et la',
+    privacyPolicy: 'politique de confidentialité',
+    haveAccount: 'Déjà un compte?',
+    login: 'Se connecter',
+  },
+
+  callback: {
+    securingConnection: 'Sécurisation de la connexion...',
+    syncingCalendar: 'Synchronisation de votre agenda...',
+    preparingWorkspace: 'Préparation de votre espace de travail...',
+    almostThere: 'Presque terminé...',
+    authFailed: "L'authentification a échoué",
+    somethingWentWrong: "Une erreur s'est produite",
+    redirectingToLogin: 'Redirection vers la connexion...',
+    completingSignIn: 'Finalisation de la connexion...',
+    tagline: 'Votre assistant agenda propulsé par IA',
+    loading: 'Chargement...',
   },
 
   sidebar: {

@@ -74,9 +74,17 @@ const ChatInterface: React.FC = () => {
     setError(errorMessage)
   }, [])
 
+  const handleTitleGenerated = useCallback(
+    (conversationId: string, title: string) => {
+      updateConversationTitle(conversationId, title, true)
+    },
+    [updateConversationTitle],
+  )
+
   const { streamingState, sendStreamingMessage, cancelStream, resetStreamingState } = useStreamingChat({
     onStreamComplete: handleStreamComplete,
     onStreamError: handleStreamError,
+    onTitleGenerated: handleTitleGenerated,
   })
 
   const isLoading = streamingState.isStreaming

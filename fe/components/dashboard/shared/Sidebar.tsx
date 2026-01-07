@@ -9,7 +9,6 @@ import { useUser } from '@/hooks/queries/auth/useUser'
 import { QuickEventDialog } from '@/components/dialogs/QuickEventDialog'
 import { SidebarHeader, SidebarNav, ConversationList, SidebarFooter, DeleteConfirmDialog } from './sidebar-components'
 
-
 interface SidebarProps {
   isOpen: boolean
   onClose: () => void
@@ -20,7 +19,8 @@ interface SidebarProps {
 
 const SidebarContent: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle, onOpenSettings, onSignOut }) => {
   const { data: userData } = useUser({ customUser: true })
-  const { conversations, isLoadingConversations, selectedConversationId, isSearching } = useChatContext()
+  const { conversations, isLoadingConversations, selectedConversationId, isSearching, streamingTitleConversationId } =
+    useChatContext()
   const {
     pathname,
     conversationToDelete,
@@ -55,7 +55,12 @@ const SidebarContent: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle, onO
         }`}
       >
         <div className="flex-1 flex flex-col min-w-0 overflow-y-auto overflow-x-hidden">
-          <SidebarHeader isOpen={isOpen} onClose={onClose} onToggle={onToggle} onNewChat={() => handleNewChat(onClose)} />
+          <SidebarHeader
+            isOpen={isOpen}
+            onClose={onClose}
+            onToggle={onToggle}
+            onNewChat={() => handleNewChat(onClose)}
+          />
 
           <SidebarNav pathname={pathname} isOpen={isOpen} onClose={onClose} />
 
@@ -76,6 +81,7 @@ const SidebarContent: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle, onO
             <ConversationList
               conversations={conversations}
               selectedConversationId={selectedConversationId}
+              streamingTitleConversationId={streamingTitleConversationId}
               isLoading={isLoadingConversations}
               isSearching={isSearching}
               localSearchValue={localSearchValue}
@@ -86,7 +92,11 @@ const SidebarContent: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle, onO
             />
           )}
 
-          <QuickEventDialog isOpen={isQuickEventOpen} onClose={() => setIsQuickEventOpen(false)} onEventCreated={() => {}} />
+          <QuickEventDialog
+            isOpen={isQuickEventOpen}
+            onClose={() => setIsQuickEventOpen(false)}
+            onEventCreated={() => {}}
+          />
 
           <SidebarFooter
             isOpen={isOpen}

@@ -66,6 +66,141 @@ export const en = {
     rights: 'All rights reserved.',
     privacy: 'Privacy Policy',
     terms: 'Terms of Service',
+    product: 'Product',
+    pricing: 'Pricing',
+    executivePower: 'Executive Power',
+    company: 'Company',
+    aboutUs: 'About Us',
+    careers: 'Careers',
+    resources: 'Resources',
+    blog: 'Blog',
+    changeLog: 'Change Log',
+    description:
+      'The executive-grade AI assistant designed for business owners to defend their deep work. From Free Exploratory access to Unlimited Executive Power. Built on the Ally Neural Protocol.',
+    systemStatus: 'All Systems Operational • High-Performance Engine',
+  },
+
+  // Home Page
+  home: {
+    badge: 'AI-Powered Calendar Management',
+    title: 'Your Private',
+    titleHighlight: 'AI Secretary',
+    subtitle:
+      'Manage your Google Calendar with natural voice commands. Schedule, reschedule, and optimize your time effortlessly.',
+    getStartedFree: 'Get Started Free',
+    viewPricing: 'View Pricing',
+    featuresTitle: 'Everything you need to manage your time',
+    featuresSubtitle: 'Ally combines AI intelligence with seamless calendar integration',
+    voiceCommands: 'Voice Commands',
+    voiceCommandsDesc: 'Schedule meetings, set reminders, and manage your calendar using natural voice commands.',
+    smartScheduling: 'Smart Scheduling',
+    smartSchedulingDesc: 'AI-powered scheduling that finds the best times for your meetings and appointments.',
+    timeOptimization: 'Time Optimization',
+    timeOptimizationDesc: 'Analyze your schedule patterns and get insights to maximize productivity.',
+    ctaTitle: 'Ready to transform your calendar experience?',
+    ctaSubtitle: 'Join thousands of professionals who have simplified their scheduling with Ally.',
+    startForFree: 'Start for Free',
+  },
+
+  // About Page
+  about: {
+    title: 'About',
+    subtitle:
+      "We're building the future of calendar management with AI-powered intelligence that understands how you work.",
+    missionTitle: 'Our Mission',
+    missionP1:
+      'We believe everyone deserves a personal assistant that understands their schedule, respects their time, and helps them focus on what matters most.',
+    missionP2:
+      'Ally combines cutting-edge AI with intuitive design to create a calendar experience that feels like having a dedicated secretary at your fingertips.',
+    activeUsers: 'Active Users',
+    accuracyRate: 'Accuracy Rate',
+    userRating: 'User Rating',
+    savedWeekly: 'Saved Weekly',
+    valuesTitle: 'Our Values',
+    privacyFirst: 'Privacy First',
+    privacyFirstDesc: 'Your data belongs to you. We use industry-leading encryption and never sell your information.',
+    speedMatters: 'Speed Matters',
+    speedMattersDesc: 'Every interaction is optimized for speed. Schedule in seconds, not minutes.',
+    userFocused: 'User Focused',
+    userFocusedDesc: "Every feature we build starts with understanding our users' real needs.",
+    ctaTitle: 'Join us on our mission',
+    ctaSubtitle: 'Experience the future of calendar management today.',
+    getStarted: 'Get Started',
+  },
+
+  // Contact Page
+  contact: {
+    badge: 'Get in Touch',
+    title: 'Contact Us',
+    subtitle: "Have a question, feedback, or need support? We'd love to hear from you.",
+    emailUs: 'Email Us',
+    emailUsDesc: 'For general inquiries and support',
+    responseTime: 'Response Time',
+    responseTimeDesc: 'We typically respond within 24-48 hours during business days.',
+    form: {
+      name: 'Name',
+      namePlaceholder: 'Your name',
+      email: 'Email',
+      emailPlaceholder: 'your@email.com',
+      subject: 'Subject',
+      subjectPlaceholder: 'How can we help?',
+      message: 'Message',
+      messagePlaceholder: 'Tell us more...',
+      submit: 'Send Message',
+      submitting: 'Sending...',
+      success: 'Message sent successfully!',
+      error: 'Failed to send message. Please try again.',
+    },
+  },
+
+  // Pricing Page
+  pricing: {
+    testimonialsTitle: 'The Standard for Strategic Execution',
+    testimonialsSubtitle:
+      'Join thousands of leaders who have automated their scheduling to protect their most valuable work hours.',
+    testimonialsBadge: 'Verified Efficiency',
+  },
+
+  // Login Page
+  login: {
+    title: 'Welcome Back',
+    subtitle: 'Access your private secretary securely.',
+    loginWithGoogle: 'Login with Google',
+    connecting: 'Connecting...',
+    noAccount: "Don't have an account?",
+    signUp: 'Sign up',
+    errors: {
+      noToken: 'Authentication failed. Please try again.',
+      callbackFailed: 'OAuth callback failed. Please try again.',
+    },
+  },
+
+  // Register Page
+  register: {
+    title: 'Join Ally',
+    subtitle: 'Start optimizing your executive operations today.',
+    signUpWithGoogle: 'Sign up with Google',
+    connecting: 'Connecting...',
+    agreeToTerms: 'By signing up, you agree to the',
+    termsOfService: 'terms of service',
+    and: 'and',
+    privacyPolicy: 'privacy policy',
+    haveAccount: 'Already have an account?',
+    login: 'Login',
+  },
+
+  // Callback Page
+  callback: {
+    securingConnection: 'Securing your connection...',
+    syncingCalendar: 'Syncing your calendar...',
+    preparingWorkspace: 'Preparing your workspace...',
+    almostThere: 'Almost there...',
+    authFailed: 'Authentication failed',
+    somethingWentWrong: 'Something went wrong',
+    redirectingToLogin: 'Redirecting to login...',
+    completingSignIn: 'Completing sign in...',
+    tagline: 'Your AI-Powered Calendar Assistant',
+    loading: 'Loading...',
   },
 
   // Sidebar Navigation
