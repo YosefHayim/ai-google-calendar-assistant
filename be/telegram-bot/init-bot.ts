@@ -23,15 +23,13 @@ import {
   buildAgentPromptWithContext,
   buildConfirmationPrompt,
   isDuplicateMessage,
-  addMessageToContext,
-  buildContextPrompt,
   summarizeMessages,
   storeEmbeddingAsync,
   getRelevantContext,
   handlePendingEmailChange,
   initiateEmailChange,
-  getUserIdFromTelegram,
-} from "./utils";
+  telegramConversation,
+} from "./utils"
 import { generateGoogleAuthUrl } from "@/utils/auth";
 import { logger } from "@/utils/logger";
 import {
@@ -167,7 +165,7 @@ const handleConfirmation = async (ctx: GlobalContext): Promise<void> => {
   const telegramUserId = ctx.from?.id!;
 
   try {
-    await addMessageToContext(
+    await telegramConversation.addMessageToContext(
       chatId,
       telegramUserId,
       {
@@ -175,9 +173,9 @@ const handleConfirmation = async (ctx: GlobalContext): Promise<void> => {
         content: "User confirmed event creation despite conflicts.",
       },
       summarizeMessages
-    );
+    )
 
-    const userUuid = await getUserIdFromTelegram(telegramUserId);
+    const userUuid = await telegramConversation.getUserIdFromTelegram(telegramUserId)
 
     const prompt = buildConfirmationPrompt(
       ctx.session.firstName!,
@@ -201,15 +199,15 @@ const handleConfirmation = async (ctx: GlobalContext): Promise<void> => {
     }
 
     if (finalOutput) {
-      await addMessageToContext(
+      await telegramConversation.addMessageToContext(
         chatId,
         telegramUserId,
         { role: "assistant", content: finalOutput },
         summarizeMessages
-      );
+      )
     }
 
-    await ctx.reply(finalOutput);
+    await ctx.reply(finalOutput)
   } catch (error) {
     logger.error(`Telegram Bot: Confirmation error: ${error}`);
     await ctx.reply(t("errors.eventCreationError"));
@@ -261,16 +259,16 @@ const handleAgentRequest = async (
   const { t } = getTranslatorFromLanguageCode(ctx.session.codeLang);
 
   try {
-    const conversationContext = await addMessageToContext(
+    const conversationContext = await telegramConversation.addMessageToContext(
       chatId,
       telegramUserId,
       { role: "user", content: message },
       summarizeMessages
-    );
+    )
 
-    storeEmbeddingAsync(chatId, telegramUserId, message, "user");
+    storeEmbeddingAsync(chatId, telegramUserId, message, "user")
 
-    const contextPrompt = buildContextPrompt(conversationContext);
+    const contextPrompt = telegramConversation.buildContextPrompt(conversationContext)
 
     const semanticContext = await getRelevantContext(telegramUserId, message, {
       threshold: 0.75,
@@ -294,7 +292,7 @@ const handleAgentRequest = async (
       `Telegram Bot: Prompt length for user ${telegramUserId}: ${prompt.length} chars (context: ${fullContext.length}, message: ${message.length})`
     );
 
-    const userUuid = await getUserIdFromTelegram(telegramUserId);
+    const userUuid = await telegramConversation.getUserIdFromTelegram(telegramUserId)
 
     const { finalOutput } = await activateAgent(ORCHESTRATOR_AGENT, prompt, {
       email: ctx.session.email,
@@ -308,13 +306,13 @@ const handleAgentRequest = async (
     });
 
     if (finalOutput) {
-      await addMessageToContext(
+      await telegramConversation.addMessageToContext(
         chatId,
         telegramUserId,
         { role: "assistant", content: finalOutput },
         summarizeMessages
-      );
-      storeEmbeddingAsync(chatId, telegramUserId, finalOutput, "assistant");
+      )
+      storeEmbeddingAsync(chatId, telegramUserId, finalOutput, "assistant")
     }
 
     if (finalOutput?.startsWith("CONFLICT_DETECTED::")) {

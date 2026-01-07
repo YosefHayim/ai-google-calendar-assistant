@@ -1,107 +1,55 @@
-/**
- * Direct utilities for calendar operations - bypasses AI agents for faster execution.
- * These functions are called directly instead of through agent wrappers.
- */
-
-import { SUPABASE } from "@/config"
 import { fetchCredentialsByEmail } from "@/utils/auth"
-import { checkEventConflicts, initUserSupabaseCalendarWithTokensAndUpdateTokens } from "@/utils/calendar"
+import {
+  checkEventConflicts,
+  initUserSupabaseCalendarWithTokensAndUpdateTokens,
+} from "@/utils/calendar"
 import type { calendar_v3 } from "googleapis"
 import isEmail from "validator/lib/isEmail"
-import { formatEventData, getCalendarCategoriesByEmail, type UserCalendar } from "./utils"
+import {
+  formatEventData,
+  getCalendarCategoriesByEmail,
+  type UserCalendar,
+} from "./utils"
 import type { TokensProps } from "@/types"
 import { MODELS } from "@/config/constants/ai"
 import OpenAI from "openai"
 import { env } from "@/config"
-import { USER_FIELDS } from "@/config/constants/sql"
+import { userRepository } from "@/utils/repositories/UserRepository"
 
-type Event = calendar_v3.Schema$Event;
-
-// ═══════════════════════════════════════════════════════════════════════════
-// USER VALIDATION (bypasses validateUser agent)
-// ═══════════════════════════════════════════════════════════════════════════
+type Event = calendar_v3.Schema$Event
 
 export type ValidateUserResult = {
-  exists: boolean;
-  user?: Record<string, unknown>;
-  error?: string;
-};
+  exists: boolean
+  user?: Record<string, unknown>
+  error?: string
+}
 
-/**
- * Validates if a user exists in the database - direct DB call without AI agent.
- * Replaces: AGENTS.validateUser
- * Latency: ~300ms (vs ~2-5s with agent)
- */
-export async function validateUserDirect(email: string): Promise<ValidateUserResult> {
+export async function validateUserDirect(
+  email: string
+): Promise<ValidateUserResult> {
   if (!email || !isEmail(email)) {
-    return { exists: false, error: "Invalid email address." };
+    return { exists: false, error: "Invalid email address." }
   }
 
-  const normalizedEmail = email.trim().toLowerCase();
-
   try {
-    // Step 1: Query users table to check if user exists
-    const { data: userData, error: userError } = await SUPABASE
-      .from("users")
-      .select(USER_FIELDS)
-      .ilike("email", normalizedEmail)
-      .single();
-
-    if (userError || !userData) {
-      // Check for database schema errors specifically
-      if (userError) {
-        const categorized = categorizeError(userError);
-        if (categorized.type === "database") {
-          return { exists: false, error: "Database error - please try again in a moment." };
-        }
-      }
-      return { exists: false, error: "No credentials found - authorization required." };
-    }
-
-    // Step 2: Check if user has valid OAuth tokens
-    const { data: tokenData, error: tokenError } = await SUPABASE
-      .from("oauth_tokens")
-      .select("id, is_valid, provider")
-      .eq("user_id", userData.id)
-      .eq("provider", "google")
-      .single();
-
-    if (tokenError || !tokenData) {
-      return { exists: false, error: "No credentials found - authorization required." };
-    }
-
-    if (!tokenData.is_valid) {
-      return { exists: false, error: "Token expired - authorization required." };
-    }
-
-    return { exists: true, user: userData as Record<string, unknown> };
+    const result = await userRepository.validateUserExists(email)
+    return result
   } catch (error) {
-    const categorized = categorizeError(error);
-    return { exists: false, error: categorized.message };
+    const categorized = categorizeError(error)
+    return { exists: false, error: categorized.message }
   }
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// TIMEZONE (bypasses getUserDefaultTimeZone agent)
-// ═══════════════════════════════════════════════════════════════════════════
-
 export type TimezoneResult = {
-  timezone: string;
-  error?: string;
-};
+  timezone: string
+  error?: string
+}
 
-/**
- * Updates user's timezone in the database. Part of: Timezone caching flow in getUserDefaultTimezoneDirect.
- */
-async function updateUserTimezoneInDb(email: string, timezone: string): Promise<void> {
-  try {
-    await SUPABASE
-      .from("users")
-      .update({ timezone, updated_at: new Date().toISOString() })
-      .ilike("email", email.trim().toLowerCase());
-  } catch (error) {
-    console.error("Failed to update timezone in DB:", error);
-  }
+async function updateUserTimezoneInDb(
+  email: string,
+  timezone: string
+): Promise<void> {
+  await userRepository.updateUserTimezone(email, timezone)
 }
 
 /**
@@ -145,56 +93,46 @@ function categorizeError(error: unknown): { type: "auth" | "database" | "other";
  * If fetched from Google Calendar, saves to DB for future use.
  * Replaces: AGENTS.getUserDefaultTimeZone
  * Latency: ~0ms from DB, ~1s from Google Calendar (first time only)
+ * Part of: UserRepository refactoring - uses userRepository.findUserByEmail
  */
-export async function getUserDefaultTimezoneDirect(email: string): Promise<TimezoneResult> {
+export async function getUserDefaultTimezoneDirect(
+  email: string
+): Promise<TimezoneResult> {
   if (!email || !isEmail(email)) {
-    return { timezone: "UTC", error: "Invalid email address." };
+    return { timezone: "UTC", error: "Invalid email address." }
   }
 
-  const normalizedEmail = email.trim().toLowerCase();
-
   try {
-    // First, check if timezone exists in users table
-    const { data: userData, error: dbError } = await SUPABASE
-      .from("users")
-      .select("id, timezone")
-      .ilike("email", normalizedEmail)
-      .single();
+    const user = await userRepository.findUserByEmail(email)
 
-    // If there's a database schema error, fall back to Google Calendar API
-    if (dbError && dbError.message?.toLowerCase().includes("column") && dbError.message?.toLowerCase().includes("does not exist")) {
-      console.warn("Timezone column not found in DB, falling back to Google Calendar API");
-      // Continue to fetch from Google Calendar
-    } else if (userData?.timezone) {
-      return { timezone: userData.timezone };
+    if (user?.timezone) {
+      return { timezone: user.timezone }
     }
 
-    // Timezone not in DB - fetch from Google Calendar settings
-    const tokenProps = await fetchCredentialsByEmail(email);
-    const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenProps);
-    const response = await calendar.settings.get({ setting: "timezone" });
-    const timezone = response.data.value || "UTC";
+    const tokenProps = await fetchCredentialsByEmail(email)
+    const calendar =
+      await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenProps)
+    const response = await calendar.settings.get({ setting: "timezone" })
+    const timezone = response.data.value || "UTC"
 
-    // Save timezone to DB for future use (fire and forget) - only if column exists
-    if (!dbError) {
-      updateUserTimezoneInDb(normalizedEmail, timezone);
+    if (user) {
+      updateUserTimezoneInDb(email, timezone)
     }
 
-    return { timezone };
+    return { timezone }
   } catch (error) {
-    const categorized = categorizeError(error);
-    console.error("Failed to get user timezone:", error);
+    const categorized = categorizeError(error)
+    console.error("Failed to get user timezone:", error)
 
-    // Return categorized error message so agents can handle appropriately
     return {
       timezone: "UTC",
       error:
         categorized.type === "auth"
           ? "No credentials found - authorization required."
           : categorized.type === "database"
-          ? "Database error - please try again in a moment."
-          : "Failed to fetch timezone, using UTC.",
-    };
+            ? "Database error - please try again in a moment."
+            : "Failed to fetch timezone, using UTC.",
+    }
   }
 }
 

@@ -4,10 +4,16 @@ export interface ApiResponse<T> {
   data: T | null;
 }
 
+export interface UserMetadata {
+  first_name?: string;
+  last_name?: string;
+  avatar_url?: string;
+}
+
 export interface User {
   id: string;
   email: string;
-  user_metadata: Record<string, any>;
+  user_metadata: UserMetadata;
   aud: string;
   confirmed_at: string;
   created_at: string;

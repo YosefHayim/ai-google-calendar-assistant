@@ -1,6 +1,16 @@
 import { ENV } from '../constants'
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios'
 
+interface RetryableRequestConfig extends InternalAxiosRequestConfig {
+  _retry?: boolean
+}
+
+interface SessionErrorResponse {
+  data?: {
+    code?: string
+  }
+}
+
 const ACCESS_TOKEN_HEADER = 'access_token'
 const REFRESH_TOKEN_HEADER = 'refresh_token'
 const USER_KEY = 'user'
@@ -65,13 +75,14 @@ apiClient.interceptors.response.use(
 
     return response
   },
-  async (error: AxiosError) => {
-    const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean }
+  async (error: AxiosError<SessionErrorResponse>) => {
+    const originalRequest = error.config as RetryableRequestConfig | undefined
+    if (!originalRequest) {
+      return Promise.reject(error)
+    }
 
-    // Check if this is a 401 error with SESSION_EXPIRED code
-    if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
-      const responseData = error.response.data as { data?: { code?: string } }
-      const errorCode = responseData?.data?.code
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      const errorCode = error.response.data?.data?.code
 
       if (errorCode === 'SESSION_EXPIRED' || errorCode === 'SESSION_REFRESH_FAILED') {
         if (isRefreshing) {
@@ -127,7 +138,8 @@ apiClient.interceptors.response.use(
           return response
         } catch (refreshError) {
           isRefreshing = false
-          processQueue(refreshError as AxiosError, null)
+          const axiosRefreshError = axios.isAxiosError(refreshError) ? refreshError : null
+          processQueue(axiosRefreshError, null)
 
           // Refresh failed, clear auth and redirect to login
           if (typeof window !== 'undefined') {

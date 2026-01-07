@@ -1,6 +1,9 @@
-import { SUPABASE } from "@/config";
-import { logger } from "@/utils/logger";
-import { getUserIdFromTelegram } from "./conversation-history";
+import { SUPABASE } from "@/config"
+import { logger } from "@/utils/logger"
+import { telegramConversation } from "@/utils/conversation/TelegramConversationAdapter"
+
+const getUserIdFromTelegram = (telegramUserId: number) =>
+  telegramConversation.getUserIdFromTelegram(telegramUserId)
 
 export type AllyBrainPreference = {
   enabled: boolean;

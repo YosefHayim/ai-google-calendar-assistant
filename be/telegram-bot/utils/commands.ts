@@ -10,7 +10,10 @@ import { ORCHESTRATOR_AGENT, getCalendarCategoriesByEmail } from "@/ai-agents";
 import { ResponseBuilder } from "../response-system";
 import { SupabaseAgentSession } from "@/ai-agents/sessions";
 import type { SupportedLocale } from "../i18n";
-import { getUserIdFromTelegram } from "./conversation-history";
+import { telegramConversation } from "@/utils/conversation/TelegramConversationAdapter"
+
+const getUserIdFromTelegram = (telegramUserId: number) =>
+  telegramConversation.getUserIdFromTelegram(telegramUserId)
 import { logger } from "@/utils/logger";
 import { resetSession } from "./session";
 import { gatherUserKnowledge } from "./user-knowledge";

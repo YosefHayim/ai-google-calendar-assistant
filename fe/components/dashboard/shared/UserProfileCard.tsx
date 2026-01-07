@@ -1,15 +1,14 @@
 'use client'
 
-import type { CustomUser, User } from '@/types/api'
 import Image from 'next/image'
-import React from 'react'
 import { useUser } from '@/hooks/queries/auth/useUser'
+import { getUserDisplayInfo } from '@/lib/user-utils'
 
 interface UserProfileCardProps {
   isOpen: boolean
 }
 
-const UserProfileCard: React.FC<UserProfileCardProps> = ({ isOpen }) => {
+function UserProfileCard({ isOpen }: UserProfileCardProps) {
   const { data: userData, isLoading } = useUser({ customUser: true })
 
   if (isLoading) {
@@ -26,22 +25,10 @@ const UserProfileCard: React.FC<UserProfileCardProps> = ({ isOpen }) => {
     )
   }
 
-  if (!userData) return null
+  const userInfo = getUserDisplayInfo(userData)
+  if (!userInfo) return null
 
-  // Handle both CustomUser and User types
-  const isCustomUser = 'avatar_url' in userData || 'first_name' in userData
-  const customUser = isCustomUser ? (userData as CustomUser) : null
-  const standardUser = !isCustomUser && 'user_metadata' in userData ? (userData as User) : null
-
-  const firstName =
-    customUser?.first_name || (standardUser?.user_metadata as Record<string, unknown>)?.first_name?.toString() || ''
-  const lastName =
-    customUser?.last_name || (standardUser?.user_metadata as Record<string, unknown>)?.last_name?.toString() || ''
-  const avatarUrl =
-    customUser?.avatar_url || (standardUser?.user_metadata as Record<string, unknown>)?.avatar_url?.toString()
-  const email = customUser?.email || standardUser?.email || ''
-  const fullName = [firstName, lastName].filter(Boolean).join(' ') || 'User'
-  const initials = `${firstName?.[0] || ''}${lastName?.[0] || ''}`.toUpperCase() || email?.[0]?.toUpperCase() || 'U'
+  const { fullName, initials, email, avatarUrl } = userInfo
 
   return (
     <div className={`flex items-center gap-3 p-2 rounded-md ${!isOpen ? 'md:justify-center' : ''}`}>
