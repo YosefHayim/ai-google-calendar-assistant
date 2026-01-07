@@ -9,7 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
 import type { DailyAvailableHoursDataPoint } from '@/types/analytics'
-import { calculateAverage } from '@/lib/dataUtils'
+import { calculateAverage, formatNumber } from '@/lib/dataUtils'
 import { CALENDAR_CONSTANTS } from '@/lib/constants'
 
 import { DailyHoursBarChart } from './daily-hours-charts/DailyHoursBarChart'
@@ -146,13 +146,13 @@ export const DailyAvailableHoursDashboard: React.FC<DailyAvailableHoursDashboard
           <div className="relative z-30 flex flex-1 flex-col justify-center gap-1 border-t border-zinc-200 dark:border-zinc-800 px-6 py-4 text-left sm:border-t-0 sm:border-l sm:px-8 sm:py-6">
             <span className="text-zinc-500 dark:text-zinc-400 text-xs">Total Available</span>
             <span className="text-lg leading-none font-bold text-zinc-900 dark:text-zinc-100 sm:text-3xl">
-              {totalAvailableHours.toFixed(1)}h
+              {formatNumber(totalAvailableHours, 1)}h
             </span>
           </div>
           <div className="relative z-30 flex flex-1 flex-col justify-center gap-1 border-t border-l border-zinc-200 dark:border-zinc-800 px-6 py-4 text-left sm:border-t-0 sm:px-8 sm:py-6">
             <span className="text-zinc-500 dark:text-zinc-400 text-xs">Daily Avg</span>
             <span className="text-lg leading-none font-bold text-zinc-900 dark:text-zinc-100 sm:text-3xl">
-              {averageAvailableHours.toFixed(1)}h
+              {formatNumber(averageAvailableHours, 1)}h
             </span>
           </div>
         </div>
