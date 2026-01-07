@@ -3,6 +3,7 @@ import { OAUTH2CLIENT, REDIRECT_URI, SCOPES, SUPABASE, env } from "@/config"
 import type { TokensProps } from "@/types"
 import { google } from "googleapis"
 import { logger } from "../logger"
+import { isoToMs, msToIso } from "../date/timestamp-utils"
 
 /**
  * Create a fresh OAuth2Client instance for token refresh
@@ -96,20 +97,7 @@ export const checkTokenExpiry = (expiryDate: number | string | null | undefined)
   }
 }
 
-/**
- * Convert ISO timestamp to milliseconds for backwards compatibility
- */
-const isoToMs = (isoString: string | null | undefined): number | null => {
-  if (!isoString) return null
-  return new Date(isoString).getTime()
-}
 
-/**
- * Convert milliseconds to ISO timestamp for database storage
- */
-const msToIso = (ms: number): string => {
-  return new Date(ms).toISOString()
-}
 
 /**
  * Fetch Google Calendar tokens from database by email

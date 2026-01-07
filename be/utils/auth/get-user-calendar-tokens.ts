@@ -2,14 +2,7 @@ import { SUPABASE } from "@/config"
 import type { TokensProps } from "@/types"
 import { asyncHandler } from "../http/async-handlers"
 import { logger } from "../logger"
-
-/**
- * Convert ISO timestamp to milliseconds for backwards compatibility
- */
-const isoToMs = (isoString: string | null | undefined): number | null => {
-  if (!isoString) return null
-  return new Date(isoString).getTime()
-}
+import { isoToMs } from "../date/timestamp-utils"
 
 /**
  * Fetch credentials by email

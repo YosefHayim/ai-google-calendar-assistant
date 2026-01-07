@@ -146,15 +146,13 @@ export const QuickEventDialog: React.FC<QuickEventDialogProps> = ({ isOpen, onCl
 
       if (response.success) {
         const data = response.data
-        if (data.event) {
-          setState('success')
-          setAllyMessage('Event added to your calendar!')
-          setParsedEvent(data.parsed ?? null)
-          setCalendarName(data.calendarName ?? '')
-          setEventUrl(data.eventUrl ?? '')
-          toast.success('Event created successfully')
-          onEventCreated?.()
-        }
+        setState('success')
+        setAllyMessage('Event added to your calendar!')
+        setParsedEvent(data.parsed ?? null)
+        setCalendarName(data.calendarName ?? '')
+        setEventUrl(data.eventUrl ?? '')
+        toast.success('Event created successfully')
+        onEventCreated?.()
       } else if (response.requiresConfirmation) {
         const conflictData = response.data
         setState('conflict')
@@ -180,6 +178,8 @@ export const QuickEventDialog: React.FC<QuickEventDialogProps> = ({ isOpen, onCl
     if (response.success) {
       setState('success')
       setAllyMessage('Event added to your calendar!')
+      setParsedEvent(response.data.parsed ?? null)
+      setCalendarName(response.data.calendarName ?? '')
       setEventUrl(response.data.eventUrl ?? '')
       toast.success('Event created successfully')
       onEventCreated?.()

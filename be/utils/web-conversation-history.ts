@@ -2,6 +2,7 @@ import { SUPABASE } from "@/config/clients/supabase";
 import { logger } from "./logger";
 import type { userAndAiMessageProps } from "@/types";
 import type { Database } from "@/database.types";
+import { getStartOfDay, isToday } from "@/utils/date/date-helpers";
 
 const MAX_CONTEXT_LENGTH = 1000;
 
@@ -26,27 +27,10 @@ type WebConversationRow = {
   last_message_at: string | null;
 };
 
-// Get start of day timestamp for comparison
-const getStartOfDay = (date: Date = new Date()): Date => {
-  const start = new Date(date);
-  start.setHours(0, 0, 0, 0);
-  return start;
-};
-
-// Check if a date is from today
-const isToday = (dateString: string): boolean => {
-  const date = new Date(dateString);
-  const today = getStartOfDay();
-  const dateStart = getStartOfDay(date);
-  return dateStart.getTime() === today.getTime();
-};
-
-// Calculate total text length of messages
 const calculateContextLength = (messages: userAndAiMessageProps[]): number => {
   return messages.reduce((total, msg) => total + (msg.content?.length || 0), 0);
 };
 
-// Map message role from our type to database enum
 const mapRoleToDb = (role: "user" | "assistant" | "system"): MessageRole => {
   return role as MessageRole;
 };

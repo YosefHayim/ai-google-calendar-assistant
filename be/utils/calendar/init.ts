@@ -7,11 +7,7 @@ import { logger } from "../logger";
 import { updateUserSupabaseTokens } from "../auth/update-tokens-of-user";
 
 /**
- * Create a fresh OAuth2Client instance for per-request use
- *
- * This avoids issues with singleton OAuth2Client caching stale token state.
- * Each request gets its own client to prevent credential leakage between users
- * and ensure token refresh works correctly after expiry.
+ * Create a fresh OAuth2Client instance for per-request use. Part of: Calendar initialization flow.
  */
 export const createOAuth2Client = (): OAuth2Client => {
   return new google.auth.OAuth2(env.googleClientId, env.googleClientSecret, REDIRECT_URI);
@@ -20,7 +16,7 @@ export const createOAuth2Client = (): OAuth2Client => {
 type RefreshedToken = { token: string | null | undefined; expiry_date?: number | null };
 
 /**
- * Refresh OAuth tokens and get new access token
+ * Refresh OAuth tokens and get new access token. Part of: Calendar initialization flow.
  */
 export const refreshAccessToken = async (client: OAuth2Client): Promise<RefreshedToken | null> => {
   try {
@@ -37,14 +33,14 @@ export const refreshAccessToken = async (client: OAuth2Client): Promise<Refreshe
 };
 
 /**
- * Create Google Calendar client
+ * Create Google Calendar client. Part of: Calendar initialization flow.
  */
 export const createCalendarClient = (auth: OAuth2Client): calendar_v3.Calendar => {
   return google.calendar({ version: "v3", auth, responseType: "json" });
 };
 
 /**
- * Persist refreshed tokens to database if needed
+ * Persist refreshed tokens to database if needed. Part of: Calendar initialization flow.
  */
 const persistRefreshedTokens = async (oldTokens: TokensProps, newTokens: RefreshedToken | null): Promise<void> => {
   if (newTokens?.token) {
@@ -53,10 +49,7 @@ const persistRefreshedTokens = async (oldTokens: TokensProps, newTokens: Refresh
 };
 
 /**
- * Initialize calendar with user tokens
- *
- * Creates a fresh OAuth2Client per request to avoid stale token state issues.
- * Sets credentials, refreshes token if needed, updates DB, and returns calendar client.
+ * Initialize calendar with user tokens. Part of: Calendar initialization flow - main entry point.
  */
 export const initUserSupabaseCalendarWithTokensAndUpdateTokens = async (tokens: TokensProps): Promise<calendar_v3.Calendar> => {
   const oauthClient = createOAuth2Client();

@@ -7,8 +7,6 @@ import {
   OAUTH2CLIENT,
   PROVIDERS,
   REDIRECT_URI,
-  SCOPES,
-  SCOPES_STRING,
   STATUS_RESPONSE,
   SUPABASE,
   env,
@@ -19,27 +17,11 @@ import {
   supabaseThirdPartySignInOrSignUp,
 } from "@/utils/auth";
 import { reqResAsyncHandler, sendR } from "@/utils/http";
+import { msToIso } from "@/utils/date/timestamp-utils";
 
 import type { TokensProps } from "@/types";
 import { syncUserCalendarsAfterOAuth } from "@/utils/calendar/sync-calendars-after-oauth";
 import { validateSupabaseToken } from "@/utils/auth/supabase-token";
-
-const ACCESS_TOKEN_HEADER = "access_token";
-const REFRESH_TOKEN_HEADER = "refresh_token";
-const USER_KEY = "user";
-
-/**
- * Helper to convert milliseconds to ISO timestamp
- */
-const msToIso = (ms: number): string => new Date(ms).toISOString();
-
-/**
- * Helper to convert ISO timestamp to milliseconds
- */
-const isoToMs = (iso: string | null | undefined): number | null => {
-  if (!iso) return null;
-  return new Date(iso).getTime();
-};
 
 /**
  * Generate Google Auth URL and Handle Callback
