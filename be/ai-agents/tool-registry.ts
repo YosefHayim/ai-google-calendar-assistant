@@ -12,6 +12,7 @@ import {
   summarizeEvents,
   validateUserDirect,
 } from "./direct-utilities";
+import { checkEventConflictsAllCalendars } from "@/utils/calendar";
 
 import { EXECUTION_TOOLS } from "./tool-execution";
 import { TOOLS_DESCRIPTION } from "./tool-descriptions";
@@ -456,5 +457,29 @@ export const DIRECT_TOOLS = {
     },
     errorFunction: (_, error) =>
       `format_gaps_display: ${stringifyError(error)}`,
+  }),
+
+  check_conflicts_all_calendars: tool<
+    typeof PARAMETERS_TOOLS.checkConflictsAllCalendarsParameters,
+    AgentContext
+  >({
+    name: "check_conflicts_all_calendars",
+    description:
+      "Checks for event conflicts across ALL user calendars for a given time range. Returns conflicting events from ANY calendar, not just the target calendar. Use when moving events to detect conflicts in other calendars. Can exclude a specific event ID (the event being moved) to avoid self-conflict.",
+    parameters: PARAMETERS_TOOLS.checkConflictsAllCalendarsParameters,
+    execute: async ({ startTime, endTime, excludeEventId }, runContext) => {
+      const email = getEmailFromContext(
+        runContext,
+        "check_conflicts_all_calendars",
+      );
+      return checkEventConflictsAllCalendars({
+        email,
+        startTime,
+        endTime,
+        excludeEventId: excludeEventId ?? undefined,
+      });
+    },
+    errorFunction: (_, error) =>
+      `check_conflicts_all_calendars: ${stringifyError(error)}`,
   }),
 };

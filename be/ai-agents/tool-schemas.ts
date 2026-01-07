@@ -254,4 +254,25 @@ export const PARAMETERS_TOOLS = {
     .describe(
       "Parameters for filling a gap with a new calendar event. Email is automatically provided from user context.",
     ),
+
+  // Check conflicts across all calendars parameters
+  checkConflictsAllCalendarsParameters: z
+    .object({
+      startTime: z.coerce
+        .string()
+        .describe("Start time to check for conflicts in RFC3339 format."),
+      endTime: z.coerce
+        .string()
+        .describe("End time to check for conflicts in RFC3339 format."),
+      excludeEventId: z.coerce
+        .string()
+        .nullable()
+        .optional()
+        .describe(
+          "Event ID to exclude from conflict check (the event being moved).",
+        ),
+    })
+    .describe(
+      "Check for conflicting events across ALL calendars. Use this when moving events to detect conflicts in other calendars.",
+    ),
 };

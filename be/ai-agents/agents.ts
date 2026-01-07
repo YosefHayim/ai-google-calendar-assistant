@@ -78,13 +78,20 @@ export const HANDOFF_AGENTS = {
     model: MEDIUM_MODEL,
     instructions: AGENT_INSTRUCTIONS.updateEventHandoff,
     modelSettings: { toolChoice: "required" },
-    tools: [AGENT_TOOLS.get_event, AGENTS.updateEvent.asTool({ toolName: "update_event" })],
+    tools: [
+      AGENT_TOOLS.get_event,
+      AGENTS.updateEvent.asTool({ toolName: "update_event" }),
+      DIRECT_TOOLS.check_conflicts_all_calendars,
+    ],
   }),
   deleteEventHandoff: new Agent({
     name: "delete_event_handoff_agent",
     model: MEDIUM_MODEL,
     instructions: AGENT_INSTRUCTIONS.deleteEventHandoff,
-    tools: [AGENT_TOOLS.get_event, AGENTS.deleteEvent.asTool({ toolName: "delete_event" })],
+    tools: [
+      AGENT_TOOLS.get_event,
+      AGENTS.deleteEvent.asTool({ toolName: "delete_event" }),
+    ],
   }),
   registerUserHandoff: new Agent({
     name: "register_user_handoff_agent",
@@ -103,13 +110,23 @@ export const ORCHESTRATOR_AGENT = new Agent({
   modelSettings: { parallelToolCalls: true },
   instructions: AGENT_INSTRUCTIONS.orchestrator,
   tools: [
-    HANDOFF_AGENTS.createEventHandoff.asTool({ toolName: "create_event_handoff" }),
+    HANDOFF_AGENTS.createEventHandoff.asTool({
+      toolName: "create_event_handoff",
+    }),
     DIRECT_TOOLS.get_event_direct, // Direct event retrieval - preserves auth context
     DIRECT_TOOLS.summarize_events, // Cheap summarization of raw event JSON
-    HANDOFF_AGENTS.updateEventHandoff.asTool({ toolName: "update_event_handoff" }),
-    HANDOFF_AGENTS.deleteEventHandoff.asTool({ toolName: "delete_event_handoff" }),
-    HANDOFF_AGENTS.registerUserHandoff.asTool({ toolName: "register_user_handoff" }),
-    AGENTS.generateGoogleAuthUrl.asTool({ toolName: "generate_google_auth_url" }),
+    HANDOFF_AGENTS.updateEventHandoff.asTool({
+      toolName: "update_event_handoff",
+    }),
+    HANDOFF_AGENTS.deleteEventHandoff.asTool({
+      toolName: "delete_event_handoff",
+    }),
+    HANDOFF_AGENTS.registerUserHandoff.asTool({
+      toolName: "register_user_handoff",
+    }),
+    AGENTS.generateGoogleAuthUrl.asTool({
+      toolName: "generate_google_auth_url",
+    }),
   ],
   inputGuardrails: [calendarSafetyGuardrail],
 });
