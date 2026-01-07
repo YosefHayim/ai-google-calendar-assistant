@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useState, useMemo } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useTranslation } from 'react-i18next'
 import { AllyLogo } from '@/components/shared/logo'
 
 const ACCESS_TOKEN_HEADER = 'access_token'
@@ -10,11 +11,16 @@ const REFRESH_TOKEN_HEADER = 'refresh_token'
 const USER_KEY = 'user'
 
 // Animated orbital ring component
-const OrbitalRing = ({ delay, size, duration, reverse = false }: { 
+const OrbitalRing = ({
+  delay,
+  size,
+  duration,
+  reverse = false,
+}: {
   delay: number
   size: number
   duration: number
-  reverse?: boolean 
+  reverse?: boolean
 }) => (
   <motion.div
     className="absolute rounded-full border border-primary/20"
@@ -27,7 +33,7 @@ const OrbitalRing = ({ delay, size, duration, reverse = false }: {
       marginTop: -size / 2,
     }}
     initial={{ opacity: 0, scale: 0.8, rotate: 0 }}
-    animate={{ 
+    animate={{
       opacity: [0, 0.6, 0.3],
       scale: 1,
       rotate: reverse ? -360 : 360,
@@ -50,13 +56,16 @@ const OrbitalRing = ({ delay, size, duration, reverse = false }: {
 
 // Floating particle component
 const Particle = ({ index: _index }: { index: number }) => {
-  const randomValues = useMemo(() => ({
-    x: Math.random() * 400 - 200,
-    y: Math.random() * 400 - 200,
-    delay: Math.random() * 2,
-    duration: 3 + Math.random() * 4,
-    size: 2 + Math.random() * 4,
-  }), [])
+  const randomValues = useMemo(
+    () => ({
+      x: Math.random() * 400 - 200,
+      y: Math.random() * 400 - 200,
+      delay: Math.random() * 2,
+      duration: 3 + Math.random() * 4,
+      size: 2 + Math.random() * 4,
+    }),
+    [],
+  )
 
   return (
     <motion.div
@@ -126,20 +135,24 @@ const ProgressBar = ({ progress }: { progress: number }) => (
   </div>
 )
 
-// Status messages that cycle through
-const statusMessages = [
-  'Securing your connection...',
-  'Syncing your calendar...',
-  'Preparing your workspace...',
-  'Almost there...',
-]
-
 function CallbackContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const { t } = useTranslation()
   const [error, setError] = useState<string | null>(null)
   const [progress, setProgress] = useState(0)
   const [messageIndex, setMessageIndex] = useState(0)
+
+  // Status messages that cycle through
+  const statusMessages = useMemo(
+    () => [
+      t('callback.securingConnection'),
+      t('callback.syncingCalendar'),
+      t('callback.preparingWorkspace'),
+      t('callback.almostThere'),
+    ],
+    [t],
+  )
 
   // Cycle through status messages
   useEffect(() => {
@@ -170,7 +183,7 @@ function CallbackContent() {
         const email = searchParams.get('email')
 
         if (!accessToken) {
-          setError('Authentication failed')
+          setError(t('callback.authFailed'))
           setTimeout(() => router.push('/login?error=no_token'), 2000)
           return
         }
@@ -186,14 +199,14 @@ function CallbackContent() {
 
         // Complete the progress bar before redirecting
         setProgress(100)
-        
+
         // Small delay for visual satisfaction
         setTimeout(() => {
           router.push('/dashboard')
         }, 800)
       } catch (err) {
         console.error('Auth callback error:', err)
-        setError('Something went wrong')
+        setError(t('callback.somethingWentWrong'))
         setTimeout(() => router.push('/login?error=callback_failed'), 2000)
       }
     }
@@ -205,7 +218,7 @@ function CallbackContent() {
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-white via-zinc-50 to-white dark:from-[#030303] dark:via-zinc-950 dark:to-[#030303] overflow-hidden">
       {/* Grid background */}
       <div className="absolute inset-0 grid-background opacity-30" />
-      
+
       {/* Radial gradient overlay */}
       <div className="absolute inset-0 bg-gradient-radial from-primary/5 via-transparent to-transparent" />
 
@@ -227,12 +240,12 @@ function CallbackContent() {
         <div className="relative w-40 h-40 flex items-center justify-center mb-12">
           {/* Pulsing glow */}
           <PulsingGlow />
-          
+
           {/* Orbital rings */}
           <OrbitalRing delay={0} size={160} duration={8} />
           <OrbitalRing delay={0.2} size={200} duration={12} reverse />
           <OrbitalRing delay={0.4} size={240} duration={16} />
-          
+
           {/* Logo wrapper */}
           <motion.div
             className="relative z-10 w-24 h-24 bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 dark:from-white dark:via-zinc-100 dark:to-white rounded-2xl flex items-center justify-center shadow-2xl shadow-primary/20"
@@ -251,13 +264,13 @@ function CallbackContent() {
               animate={{ opacity: [0.5, 0.8, 0.5] }}
               transition={{ duration: 2, repeat: Infinity }}
             />
-            
+
             <motion.div
-              animate={{ 
+              animate={{
                 scale: [1, 1.05, 1],
               }}
-              transition={{ 
-                duration: 2, 
+              transition={{
+                duration: 2,
                 repeat: Infinity,
                 ease: 'easeInOut',
               }}
@@ -287,7 +300,7 @@ function CallbackContent() {
                 </svg>
               </motion.div>
               <p className="text-red-500 font-medium text-lg mb-2">{error}</p>
-              <p className="text-zinc-500 text-sm">Redirecting to login...</p>
+              <p className="text-zinc-500 text-sm">{t('callback.redirectingToLogin')}</p>
             </motion.div>
           ) : (
             <motion.div
@@ -312,7 +325,7 @@ function CallbackContent() {
 
               {/* Progress bar */}
               <ProgressBar progress={progress} />
-              
+
               {/* Progress percentage */}
               <motion.p
                 className="text-zinc-400 text-sm mt-3 font-mono"
@@ -332,7 +345,7 @@ function CallbackContent() {
           animate={{ opacity: 1 }}
           transition={{ delay: 1 }}
         >
-          Your AI-Powered Calendar Assistant
+          {t('callback.tagline')}
         </motion.p>
       </motion.div>
 
@@ -362,12 +375,12 @@ function CallbackFallback() {
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-white via-zinc-50 to-white dark:from-[#030303] dark:via-zinc-950 dark:to-[#030303]">
       <motion.div
         className="w-24 h-24 bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 dark:from-white dark:via-zinc-100 dark:to-white rounded-2xl flex items-center justify-center shadow-2xl"
-        animate={{ 
+        animate={{
           scale: [1, 1.05, 1],
           rotate: [0, 5, -5, 0],
         }}
-        transition={{ 
-          duration: 2, 
+        transition={{
+          duration: 2,
           repeat: Infinity,
           ease: 'easeInOut',
         }}

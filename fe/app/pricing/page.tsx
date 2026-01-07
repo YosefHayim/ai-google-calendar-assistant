@@ -1,3 +1,7 @@
+'use client'
+
+import { useTranslation } from 'react-i18next'
+
 import { PricingSectionDemo } from '@/components/ui/pricing-section-demo'
 import FAQs from '@/components/marketing/FAQs'
 import { AnimatedTestimonials } from '@/components/ui/animated-testimonials'
@@ -37,15 +41,17 @@ const MOCK_TESTIMONIALS = [
 ]
 
 export default function PricingPage() {
+  const { t } = useTranslation()
+
   return (
     <MarketingLayout>
       <div className="flex flex-col items-center justify-center w-full">
         <PricingSectionDemo />
 
         <AnimatedTestimonials
-          title="The Standard for Strategic Execution"
-          subtitle="Join thousands of leaders who have automated their scheduling to protect their most valuable work hours."
-          badgeText="Verified Efficiency"
+          title={t('pricing.testimonialsTitle')}
+          subtitle={t('pricing.testimonialsSubtitle')}
+          badgeText={t('pricing.testimonialsBadge')}
           testimonials={MOCK_TESTIMONIALS}
           autoRotateInterval={5000}
         />

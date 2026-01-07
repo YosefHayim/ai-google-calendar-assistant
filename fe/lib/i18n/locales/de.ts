@@ -192,6 +192,7 @@ export const de: TranslationShape = {
     completingSignIn: 'Anmeldung wird abgeschlossen...',
     tagline: 'Ihr KI-gestützter Kalender-Assistent',
     loading: 'Laden...',
+    noAccessToken: 'Kein Zugriffstoken erhalten',
   },
 
   sidebar: {

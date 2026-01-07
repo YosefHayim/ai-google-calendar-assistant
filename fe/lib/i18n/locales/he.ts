@@ -199,6 +199,7 @@ export const he: TranslationShape = {
     completingSignIn: 'משלים את ההתחברות...',
     tagline: 'עוזרת היומן המונעת AI שלך',
     loading: 'טוען...',
+    noAccessToken: 'לא התקבל אסימון גישה',
   },
 
   // Sidebar Navigation

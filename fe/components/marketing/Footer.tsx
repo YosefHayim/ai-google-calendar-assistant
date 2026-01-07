@@ -6,6 +6,7 @@ import { TelegramIcon, WhatsAppIcon } from '@/components/shared/Icons'
 import Link from 'next/link'
 import { Mail } from 'lucide-react'
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 
 // Custom Discord Icon since it's sometimes missing from standard sets or varies in naming
 const DiscordIcon = ({ className }: { className?: string }) => (
@@ -16,29 +17,30 @@ const DiscordIcon = ({ className }: { className?: string }) => (
 
 const Footer = () => {
   const currentYear = new Date().getFullYear()
+  const { t } = useTranslation()
 
   const sections = [
     {
-      title: 'Product',
+      title: t('footer.product'),
       links: [
-        { name: 'Pricing', href: '/pricing' },
-        { name: 'Executive Power', href: '/pricing' },
+        { name: t('footer.pricing'), href: '/pricing' },
+        { name: t('footer.executivePower'), href: '/pricing' },
       ],
     },
     {
-      title: 'Company',
+      title: t('footer.company'),
       links: [
-        { name: 'About Us', href: '/about' },
-        { name: 'Careers', href: '/careers' },
-        { name: 'Privacy Policy', href: '/privacy' },
-        { name: 'Terms of Service', href: '/terms' },
+        { name: t('footer.aboutUs'), href: '/about' },
+        { name: t('footer.careers'), href: '/careers' },
+        { name: t('footer.privacy'), href: '/privacy' },
+        { name: t('footer.terms'), href: '/terms' },
       ],
     },
     {
-      title: 'Resources',
+      title: t('footer.resources'),
       links: [
-        { name: 'Blog', href: '#' },
-        { name: 'Change Log', href: '/changelog' },
+        { name: t('footer.blog'), href: '#' },
+        { name: t('footer.changeLog'), href: '/changelog' },
       ],
     },
   ]
@@ -56,10 +58,7 @@ const Footer = () => {
                 Ally <BetaBadge />
               </span>
             </Link>
-            <p className="text-zinc-500 dark:text-zinc-400 max-w-sm mb-8 leading-relaxed">
-              The executive-grade AI assistant designed for business owners to defend their deep work. From Free
-              Exploratory access to <b>Unlimited Executive Power</b>. Built on the Ally Neural Protocol.
-            </p>
+            <p className="text-zinc-500 dark:text-zinc-400 max-w-sm mb-8 leading-relaxed">{t('footer.description')}</p>
             <div className="flex items-center gap-4">
               <a
                 href="https://discord.gg"
@@ -124,7 +123,7 @@ const Footer = () => {
           <div className="flex items-center gap-6">
             <span className="flex items-center gap-2 text-xs font-medium text-emerald-500 uppercase tracking-tight">
               <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              All Systems Operational • High-Performance Engine
+              {t('footer.systemStatus')}
             </span>
           </div>
         </div>

@@ -2,6 +2,7 @@
 
 import { Suspense, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { useTranslation } from 'react-i18next'
 
 import { AllyLogo } from '@/components/shared/logo'
 
@@ -12,6 +13,7 @@ const USER_KEY = 'user'
 function CallbackContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const { t } = useTranslation()
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -22,7 +24,7 @@ function CallbackContent() {
         const userParam = searchParams.get(USER_KEY)
 
         if (!accessToken) {
-          setError('No access token received')
+          setError(t('callback.noAccessToken'))
           setTimeout(() => router.push('/login?error=no_token'), 2000)
           return
         }
@@ -50,13 +52,13 @@ function CallbackContent() {
         router.push('/dashboard')
       } catch (err) {
         console.error('Auth callback error:', err)
-        setError('Authentication failed')
+        setError(t('callback.authFailed'))
         setTimeout(() => router.push('/login?error=callback_failed'), 2000)
       }
     }
 
     handleCallback()
-  }, [searchParams, router])
+  }, [searchParams, router, t])
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-white dark:bg-[#030303]">
@@ -67,12 +69,12 @@ function CallbackContent() {
         {error ? (
           <div className="text-center">
             <p className="text-red-500 font-medium">{error}</p>
-            <p className="text-zinc-500 text-sm mt-2">Redirecting to login...</p>
+            <p className="text-zinc-500 text-sm mt-2">{t('callback.redirectingToLogin')}</p>
           </div>
         ) : (
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-zinc-900 dark:border-white mx-auto mb-4"></div>
-            <p className="text-zinc-600 dark:text-zinc-400 font-medium">Completing sign in...</p>
+            <p className="text-zinc-600 dark:text-zinc-400 font-medium">{t('callback.completingSignIn')}</p>
           </div>
         )}
       </div>
@@ -81,6 +83,8 @@ function CallbackContent() {
 }
 
 function CallbackFallback() {
+  const { t } = useTranslation()
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-white dark:bg-[#030303]">
       <div className="flex flex-col items-center gap-4">
@@ -89,7 +93,7 @@ function CallbackFallback() {
         </div>
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-zinc-900 dark:border-white mx-auto mb-4"></div>
-          <p className="text-zinc-600 dark:text-zinc-400 font-medium">Loading...</p>
+          <p className="text-zinc-600 dark:text-zinc-400 font-medium">{t('callback.loading')}</p>
         </div>
       </div>
     </div>

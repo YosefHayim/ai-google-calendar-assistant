@@ -1,8 +1,9 @@
 'use client'
 
+import { useTranslation } from 'react-i18next'
+
 import { AllyLogo, BetaBadge } from '@/components/shared/logo'
 import React, { useEffect } from 'react'
-
 import { ENDPOINTS } from '@/lib/api/endpoints'
 import { ENV } from '@/lib/constants'
 import { FcGoogle } from 'react-icons/fc'
@@ -12,16 +13,17 @@ import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 const carouselImages = [
-  'https://images.unsplash.com/photo-1552588147-385012304918?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', // Focused work, modern laptop
-  'https://images.unsplash.com/photo-1543286386-713bdd593766?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', // Digital planning, calendar UI
-  'https://images.unsplash.com/photo-1556740738-b615950ee0b4?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', // Clean, organized tech desk
-  'https://images.unsplash.com/photo-1521737711867-ee1375d8616c?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', // Business professional looking focused
-  'https://images.unsplash.com/photo-1510519108179-ba09b7dfd4b7?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', // Abstract blue/purple tech
+  'https://images.unsplash.com/photo-1552588147-385012304918?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+  'https://images.unsplash.com/photo-1543286386-713bdd593766?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+  'https://images.unsplash.com/photo-1556740738-b615950ee0b4?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+  'https://images.unsplash.com/photo-1521737711867-ee1375d8616c?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+  'https://images.unsplash.com/photo-1510519108179-ba09b7dfd4b7?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
 ]
 
 const USER = 'user'
 
 const LoginPage: React.FC = () => {
+  const { t } = useTranslation()
   const router = useRouter()
   const searchParams = useSearchParams()
   const error = searchParams?.get('error')
@@ -35,7 +37,6 @@ const LoginPage: React.FC = () => {
 
   const handleGoogleLogin = () => {
     setIsLoading(true)
-    // Redirect to Google OAuth endpoint on backend
     window.location.href = `${ENV.API_BASE_URL}${ENDPOINTS.USERS_CALLBACK}`
   }
 
@@ -56,24 +57,22 @@ const LoginPage: React.FC = () => {
 
         <div className="w-full max-w-md">
           <h1 className="text-4xl md:text-5xl font-medium tracking-normal mb-4 text-zinc-900 dark:text-zinc-100">
-            Welcome Back
+            {t('login.title')}
           </h1>
-          <p className="text-zinc-500 dark:text-zinc-400 mb-8 text-lg font-medium">
-            Access your private secretary securely.
-          </p>
+          <p className="text-zinc-500 dark:text-zinc-400 mb-8 text-lg font-medium">{t('login.subtitle')}</p>
           {error && (
             <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
               <p className="text-red-600 dark:text-red-400 text-sm font-medium">
-                {error === 'no_token' && 'Authentication failed. Please try again.'}
-                {error === 'callback_failed' && 'OAuth callback failed. Please try again.'}
+                {error === 'no_token' && t('login.errors.noToken')}
+                {error === 'callback_failed' && t('login.errors.callbackFailed')}
                 {error !== 'no_token' && error !== 'callback_failed' && error}
               </p>
             </div>
           )}
           <div className="space-y-2">
             <InteractiveHoverButton
-              text="Login with Google"
-              loadingText="Connecting..."
+              text={t('login.loginWithGoogle')}
+              loadingText={t('login.connecting')}
               isLoading={isLoading}
               Icon={<FcGoogle size={24} />}
               className="w-full h-14 text-lg shadow-lg border-zinc-200 dark:border-zinc-700"
@@ -81,9 +80,9 @@ const LoginPage: React.FC = () => {
             />
           </div>
           <p className="mt-8 text-center text-zinc-500 dark:text-zinc-400 text-sm">
-            Don&apos;t have an account?{' '}
+            {t('login.noAccount')}{' '}
             <Link href="/register" className="text-primary font-medium hover:underline p-0">
-              Sign up
+              {t('login.signUp')}
             </Link>
           </p>
         </div>

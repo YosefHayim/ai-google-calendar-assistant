@@ -192,6 +192,7 @@ export const fr: TranslationShape = {
     completingSignIn: 'Finalisation de la connexion...',
     tagline: 'Votre assistant agenda propulsé par IA',
     loading: 'Chargement...',
+    noAccessToken: "Aucun jeton d'accès reçu",
   },
 
   sidebar: {
