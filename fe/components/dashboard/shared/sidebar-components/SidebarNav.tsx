@@ -3,6 +3,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { BarChart2, LayoutDashboard, Target } from 'lucide-react'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
 interface NavLinkProps {
   href: string
@@ -10,13 +11,24 @@ interface NavLinkProps {
   isOpen: boolean
   icon: React.ElementType
   id?: string
+  description?: string
   onClick?: () => void
   children?: React.ReactNode
 }
 
-const NavLink: React.FC<NavLinkProps> = ({ href, activePath, isOpen, icon: Icon, id, onClick, children }) => {
+const NavLink: React.FC<NavLinkProps> = ({
+  href,
+  activePath,
+  isOpen,
+  icon: Icon,
+  id,
+  description,
+  onClick,
+  children,
+}) => {
   const isActive = activePath === href
-  return (
+
+  const linkContent = (
     <Link
       id={id}
       href={href}
@@ -31,12 +43,43 @@ const NavLink: React.FC<NavLinkProps> = ({ href, activePath, isOpen, icon: Icon,
       <span className={`text-sm whitespace-nowrap ${!isOpen ? 'md:hidden' : ''}`}>{children}</span>
     </Link>
   )
+
+  if (description) {
+    return (
+      <Tooltip delayDuration={300}>
+        <TooltipTrigger asChild>{linkContent}</TooltipTrigger>
+        <TooltipContent side="right" className="max-w-[200px]">
+          <p className="text-xs">{description}</p>
+        </TooltipContent>
+      </Tooltip>
+    )
+  }
+
+  return linkContent
 }
 
 const NAV_ITEMS = [
-  { href: '/dashboard', icon: LayoutDashboard, label: 'Assistant', id: 'tour-assistant' },
-  { href: '/dashboard/analytics', icon: BarChart2, label: 'Intelligence', id: 'tour-analytics' },
-  { href: '/dashboard/gaps', icon: Target, label: 'Gap Recovery', id: 'tour-gaps' },
+  {
+    href: '/dashboard',
+    icon: LayoutDashboard,
+    label: 'Assistant',
+    id: 'tour-assistant',
+    description: 'Chat with your AI calendar assistant to manage events and schedules',
+  },
+  {
+    href: '/dashboard/analytics',
+    icon: BarChart2,
+    label: 'Analytics',
+    id: 'tour-analytics',
+    description: 'View insights on time allocation, event patterns, and productivity trends',
+  },
+  {
+    href: '/dashboard/gaps',
+    icon: Target,
+    label: 'Gap Recovery',
+    id: 'tour-gaps',
+    description: 'Discover and recover untracked time gaps in your calendar',
+  },
 ]
 
 interface SidebarNavProps {
@@ -47,13 +90,24 @@ interface SidebarNavProps {
 
 export const SidebarNav: React.FC<SidebarNavProps> = ({ pathname, isOpen, onClose }) => {
   return (
-    <nav className="px-4 space-y-2">
-      {NAV_ITEMS.map((item) => (
-        <NavLink key={item.href} href={item.href} activePath={pathname} isOpen={isOpen} icon={item.icon} id={item.id} onClick={onClose}>
-          {item.label}
-        </NavLink>
-      ))}
-    </nav>
+    <TooltipProvider>
+      <nav className="px-4 space-y-2">
+        {NAV_ITEMS.map((item) => (
+          <NavLink
+            key={item.href}
+            href={item.href}
+            activePath={pathname}
+            isOpen={isOpen}
+            icon={item.icon}
+            id={item.id}
+            description={item.description}
+            onClick={onClose}
+          >
+            {item.label}
+          </NavLink>
+        ))}
+      </nav>
+    </TooltipProvider>
   )
 }
 

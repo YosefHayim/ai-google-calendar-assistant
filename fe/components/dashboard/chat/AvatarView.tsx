@@ -1,25 +1,25 @@
-"use client";
+'use client'
 
-import React from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { MessageSquare } from "lucide-react";
-import { Message } from "@/types";
-import { AssistantAvatar } from "./AssistantAvatar";
-import { StreamingTypewriter } from "@/components/ui/streaming-typewriter";
-import { MessageActions } from "./MessageActions";
+import React, { useState, useRef, useEffect } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { MessageSquare, Check, X } from 'lucide-react'
+import { Message } from '@/types'
+import { AssistantAvatar } from './AssistantAvatar'
+import { StreamingTypewriter } from '@/components/ui/streaming-typewriter'
+import { MessageActions } from './MessageActions'
 
 interface AvatarViewProps {
-  messages: Message[];
-  isRecording: boolean;
-  isSpeaking: boolean;
-  isLoading: boolean;
-  isStreaming: boolean;
-  streamingMessageId: string | null;
-  onResend: (text: string) => void;
-  onEdit: (text: string) => void;
-  onSpeak: (text: string) => void;
-  onTypewriterComplete?: () => void;
-  avatarScrollRef: React.RefObject<HTMLDivElement | null>;
+  messages: Message[]
+  isRecording: boolean
+  isSpeaking: boolean
+  isLoading: boolean
+  isStreaming: boolean
+  streamingMessageId: string | null
+  onResend: (text: string) => void
+  onEditAndResend: (messageId: string, newText: string) => void
+  onSpeak: (text: string) => void
+  onTypewriterComplete?: () => void
+  avatarScrollRef: React.RefObject<HTMLDivElement | null>
 }
 
 export const AvatarView: React.FC<AvatarViewProps> = ({
@@ -30,17 +30,54 @@ export const AvatarView: React.FC<AvatarViewProps> = ({
   isStreaming,
   streamingMessageId,
   onResend,
-  onEdit,
+  onEditAndResend,
   onSpeak,
   onTypewriterComplete,
   avatarScrollRef,
 }) => {
-  const hasConversation = messages.length > 1;
+  const hasConversation = messages.length > 1
+  const [editingMessageId, setEditingMessageId] = useState<string | null>(null)
+  const [editText, setEditText] = useState('')
+  const editInputRef = useRef<HTMLTextAreaElement>(null)
+
+  useEffect(() => {
+    if (editingMessageId && editInputRef.current) {
+      editInputRef.current.focus()
+      editInputRef.current.setSelectionRange(editText.length, editText.length)
+    }
+  }, [editingMessageId, editText.length])
+
+  const handleStartEdit = (msg: Message) => {
+    setEditingMessageId(msg.id)
+    setEditText(msg.content)
+  }
+
+  const handleCancelEdit = () => {
+    setEditingMessageId(null)
+    setEditText('')
+  }
+
+  const handleConfirmEdit = () => {
+    if (editingMessageId && editText.trim()) {
+      onEditAndResend(editingMessageId, editText.trim())
+      setEditingMessageId(null)
+      setEditText('')
+    }
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      handleConfirmEdit()
+    } else if (e.key === 'Escape') {
+      handleCancelEdit()
+    }
+  }
 
   return (
     <div className="absolute inset-0 z-10  dark:bg-zinc-950 flex flex-col md:flex-row items-center justify-center p-4">
       <div
-        className={`flex flex-col items-center justify-center transition-all duration-700 w-full ${hasConversation ? "md:w-1/2" : "w-full"}`}
+        className={`flex flex-col items-center justify-center transition-all duration-700 w-full ${hasConversation ? 'md:w-1/2' : 'w-full'}`}
       >
         <AssistantAvatar
           isRecording={isRecording}
@@ -69,45 +106,71 @@ export const AvatarView: React.FC<AvatarViewProps> = ({
             </div>
             <div className="flex-1 space-y-2">
               {messages.map((msg) => {
-                const isCurrentlyStreaming =
-                  msg.id === streamingMessageId && isStreaming;
+                const isCurrentlyStreaming = msg.id === streamingMessageId && isStreaming
+                const isEditing = editingMessageId === msg.id
 
                 return (
-                  <div
-                    key={msg.id}
-                    className="animate-in fade-in slide-in-from-right-2 duration-300 flex flex-col"
-                  >
-                    <div
-                      className={`p-3 rounded-xl text-xs leading-relaxed max-w-[90%] shadow-sm ${
-                        msg.role === "assistant"
-                          ? "bg-zinc-100 dark:bg-zinc-900 text-zinc-800 dark:text-zinc-200 ml-0 mr-auto rounded-tl-none"
-                          : "bg-primary text-white ml-auto mr-0 rounded-tr-none"
-                      }`}
-                    >
-                      {isCurrentlyStreaming ? (
-                        <StreamingTypewriter
-                          text={msg.content}
-                          isStreaming={isCurrentlyStreaming}
-                          className="inline"
-                          cursorChar="_"
-                          cursorClassName="ml-0.5 text-primary"
-                          onComplete={onTypewriterComplete}
+                  <div key={msg.id} className="animate-in fade-in slide-in-from-right-2 duration-300 flex flex-col">
+                    {isEditing ? (
+                      <div className="flex flex-col gap-2 ml-auto mr-0 max-w-[90%]">
+                        <textarea
+                          ref={editInputRef}
+                          value={editText}
+                          onChange={(e) => setEditText(e.target.value)}
+                          onKeyDown={handleKeyDown}
+                          className="p-3 rounded-xl text-xs leading-relaxed bg-primary/10 text-zinc-900 dark:text-zinc-100 border-2 border-primary rounded-tr-none resize-none min-h-[60px] focus:outline-none focus:ring-2 focus:ring-primary/50"
+                          rows={Math.min(5, editText.split('\n').length + 1)}
                         />
-                      ) : (
-                        msg.content
-                      )}
-                    </div>
-                    {!isCurrentlyStreaming && (
+                        <div className="flex justify-end gap-2">
+                          <button
+                            onClick={handleCancelEdit}
+                            className="p-1.5 rounded-md bg-zinc-200 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-300 dark:hover:bg-zinc-700 transition-colors"
+                            title="Cancel (Esc)"
+                          >
+                            <X size={14} />
+                          </button>
+                          <button
+                            onClick={handleConfirmEdit}
+                            className="p-1.5 rounded-md bg-primary text-white hover:bg-primary/90 transition-colors"
+                            title="Confirm (Enter)"
+                          >
+                            <Check size={14} />
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div
+                        className={`p-3 rounded-xl text-xs leading-relaxed max-w-[90%] shadow-sm ${
+                          msg.role === 'assistant'
+                            ? 'bg-zinc-100 dark:bg-zinc-900 text-zinc-800 dark:text-zinc-200 ml-0 mr-auto rounded-tl-none'
+                            : 'bg-primary text-white ml-auto mr-0 rounded-tr-none'
+                        }`}
+                      >
+                        {isCurrentlyStreaming ? (
+                          <StreamingTypewriter
+                            text={msg.content}
+                            isStreaming={isCurrentlyStreaming}
+                            className="inline"
+                            cursorChar="_"
+                            cursorClassName="ml-0.5 text-primary"
+                            onComplete={onTypewriterComplete}
+                          />
+                        ) : (
+                          msg.content
+                        )}
+                      </div>
+                    )}
+                    {!isCurrentlyStreaming && !isEditing && (
                       <MessageActions
                         msg={msg}
                         isSpeaking={isSpeaking}
                         onResend={onResend}
-                        onEdit={onEdit}
+                        onEdit={() => handleStartEdit(msg)}
                         onSpeak={onSpeak}
                       />
                     )}
                   </div>
-                );
+                )
               })}
               <div ref={avatarScrollRef} />
             </div>
@@ -115,5 +178,5 @@ export const AvatarView: React.FC<AvatarViewProps> = ({
         )}
       </AnimatePresence>
     </div>
-  );
-};
+  )
+}

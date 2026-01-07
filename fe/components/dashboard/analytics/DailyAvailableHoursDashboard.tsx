@@ -1,23 +1,20 @@
 'use client'
 
 import * as React from 'react'
-import { BarChart3, LineChart, AreaChart, Layers, Clock, Info } from 'lucide-react'
-import { AnimatePresence, motion } from 'framer-motion'
+import { Clock, Info } from 'lucide-react'
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
 import type { DailyAvailableHoursDataPoint } from '@/types/analytics'
 import { calculateAverage, formatNumber } from '@/lib/dataUtils'
 import { CALENDAR_CONSTANTS } from '@/lib/constants'
+import { ChartTypeWrapper } from './ChartTypeWrapper'
 
 import { DailyHoursBarChart } from './daily-hours-charts/DailyHoursBarChart'
 import { DailyHoursLineChart } from './daily-hours-charts/DailyHoursLineChart'
 import { DailyHoursAreaChart } from './daily-hours-charts/DailyHoursAreaChart'
 import { DailyHoursStackedChart } from './daily-hours-charts/DailyHoursStackedChart'
-
-type ChartType = 'bar' | 'line' | 'area' | 'stacked'
 
 interface DailyAvailableHoursDashboardProps {
   data: DailyAvailableHoursDataPoint[]
@@ -25,20 +22,11 @@ interface DailyAvailableHoursDashboardProps {
   isLoading?: boolean
 }
 
-const chartTypeConfig: Record<ChartType, { icon: React.ElementType; label: string }> = {
-  bar: { icon: BarChart3, label: 'Bar' },
-  line: { icon: LineChart, label: 'Line' },
-  area: { icon: AreaChart, label: 'Area' },
-  stacked: { icon: Layers, label: 'Stacked' },
-}
-
 export const DailyAvailableHoursDashboard: React.FC<DailyAvailableHoursDashboardProps> = ({
   data,
   onDayClick,
   isLoading = false,
 }) => {
-  const [chartType, setChartType] = React.useState<ChartType>('bar')
-
   const totalAvailableHours = React.useMemo(() => {
     return data.reduce((acc, curr) => acc + curr.hours, 0)
   }, [data])
@@ -93,7 +81,10 @@ export const DailyAvailableHoursDashboard: React.FC<DailyAvailableHoursDashboard
     )
   }
 
-  const renderChart = () => {
+  const CHART_TYPES = ['bar', 'line', 'area', 'stacked'] as const
+  type DailyChartType = (typeof CHART_TYPES)[number]
+
+  const renderChart = (chartType: DailyChartType) => {
     const chartProps = { data, onDayClick }
 
     switch (chartType) {
@@ -158,39 +149,9 @@ export const DailyAvailableHoursDashboard: React.FC<DailyAvailableHoursDashboard
         </div>
       </CardHeader>
       <CardContent className="px-2 sm:p-6">
-        <div className="flex justify-end mb-4">
-          <Tabs value={chartType} onValueChange={(value) => setChartType(value as ChartType)}>
-            <TabsList className="h-8">
-              {(Object.entries(chartTypeConfig) as [ChartType, { icon: React.ElementType; label: string }][]).map(
-                ([type, config]) => {
-                  const IconComponent = config.icon
-                  return (
-                    <TabsTrigger
-                      key={type}
-                      value={type}
-                      className="h-7 px-2 text-xs gap-1"
-                      title={config.label}
-                    >
-                      <IconComponent size={14} />
-                      <span className="hidden sm:inline">{config.label}</span>
-                    </TabsTrigger>
-                  )
-                }
-              )}
-            </TabsList>
-          </Tabs>
-        </div>
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={chartType}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
-          >
-            {renderChart()}
-          </motion.div>
-        </AnimatePresence>
+        <ChartTypeWrapper chartId="daily-available-hours" chartTypes={CHART_TYPES} defaultType="bar">
+          {(chartType) => renderChart(chartType)}
+        </ChartTypeWrapper>
       </CardContent>
     </Card>
   )

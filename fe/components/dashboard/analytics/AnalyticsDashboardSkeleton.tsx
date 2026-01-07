@@ -3,74 +3,128 @@
 import {
   Skeleton,
   SkeletonCalendarSources,
-  SkeletonCard,
   SkeletonChart,
   SkeletonDonutChart,
-  SkeletonHeatmap,
   SkeletonInsightCard,
-  SkeletonLineChart,
   SkeletonList,
 } from '@/components/ui/skeleton'
 
 import React from 'react'
 
-const AnalyticsDashboardSkeleton: React.FC = () => {
-  // Get preferred chart type from localStorage
-  const preferredChartType =
-    typeof window !== 'undefined'
-      ? localStorage.getItem('AnalyticsChartType') === 'line'
-        ? 'line'
-        : 'column'
-      : 'column'
-
+const BentoStatsSkeleton: React.FC = () => {
   return (
-    <div className="max-w-7xl mx-auto w-full p-6 animate-in fade-in duration-500 overflow-y-auto bg-zinc-50 dark:bg-zinc-950">
-      <header className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <div>
-          <Skeleton className="h-8 w-40 mb-2" />
-          <Skeleton className="h-4 w-64" />
+    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
+      <div className="col-span-2 row-span-2 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-6">
+        <div className="flex items-start justify-between mb-4">
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-1">
+              <Skeleton className="w-8 h-8 rounded-lg" />
+              <Skeleton className="h-3 w-28" />
+            </div>
+            <Skeleton className="h-4 w-48 mt-2" />
+          </div>
+          <Skeleton className="w-[90px] h-[90px] rounded-full" />
         </div>
-        <div className="flex gap-2">
-          <Skeleton className="h-9 w-40 rounded-md" />
-          <Skeleton className="h-9 w-36 rounded-md" />
+        <div className="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-zinc-100 dark:border-zinc-800">
+          <div>
+            <Skeleton className="h-3 w-20 mb-1" />
+            <Skeleton className="h-6 w-12" />
+          </div>
+          <div>
+            <Skeleton className="h-3 w-16 mb-1" />
+            <Skeleton className="h-6 w-12" />
+          </div>
+        </div>
+      </div>
+
+      {Array.from({ length: 10 }).map((_, i) => (
+        <div key={i} className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5">
+          <div className="flex items-center gap-2 mb-3">
+            <Skeleton className="w-8 h-8 rounded-lg flex-shrink-0" />
+            <Skeleton className="h-3 w-16" />
+          </div>
+          <Skeleton className="h-8 w-16 mb-1" />
+          <Skeleton className="h-3 w-24" />
+        </div>
+      ))}
+    </div>
+  )
+}
+
+const DailyHoursChartSkeleton: React.FC = () => {
+  return (
+    <div className="lg:col-span-3 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl py-0">
+      <div className="flex flex-col items-stretch border-b border-zinc-200 dark:border-zinc-800 !p-0 sm:flex-row">
+        <div className="flex flex-1 flex-col justify-center gap-1 px-6 pt-4 pb-3 sm:!py-4">
+          <div className="flex items-center gap-2">
+            <Skeleton className="w-5 h-5" />
+            <Skeleton className="h-5 w-40" />
+          </div>
+          <Skeleton className="h-4 w-56 mt-1" />
+        </div>
+        <div className="flex">
+          <div className="flex flex-1 flex-col justify-center gap-1 border-t border-zinc-200 dark:border-zinc-800 px-6 py-4 sm:border-t-0 sm:border-l sm:px-8 sm:py-6">
+            <Skeleton className="h-3 w-24" />
+            <Skeleton className="h-8 w-16 mt-1" />
+          </div>
+          <div className="flex flex-1 flex-col justify-center gap-1 border-t border-l border-zinc-200 dark:border-zinc-800 px-6 py-4 sm:border-t-0 sm:px-8 sm:py-6">
+            <Skeleton className="h-3 w-20" />
+            <Skeleton className="h-8 w-16 mt-1" />
+          </div>
+        </div>
+      </div>
+      <div className="px-2 sm:p-6">
+        <div className="flex justify-end mb-4">
+          <Skeleton className="h-8 w-48" />
+        </div>
+        <Skeleton className="h-[250px] w-full" />
+      </div>
+    </div>
+  )
+}
+
+const AnalyticsDashboardSkeleton: React.FC = () => {
+  return (
+    <div className="max-w-7xl mx-auto w-full p-4 animate-in fade-in duration-500 overflow-y-auto bg-zinc-50 dark:bg-zinc-950 space-y-6">
+      <header className="flex flex-col gap-4">
+        <div className="flex flex-wrap items-baseline gap-2">
+          <Skeleton className="h-5 w-20" />
+          <Skeleton className="h-6 w-56" />
+          <Skeleton className="h-4 w-16" />
+        </div>
+        <div className="flex gap-2 items-center">
+          <Skeleton className="h-9 w-64 rounded-md" />
+          <Skeleton className="h-9 w-28 rounded-md" />
         </div>
       </header>
 
-      {/* KPI Cards Skeleton */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+      <BentoStatsSkeleton />
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {[1, 2, 3, 4].map((i) => (
-          <SkeletonCard key={i} />
+          <SkeletonChart key={i} />
         ))}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Trend Analysis Skeleton */}
-        <div className="lg:col-span-3">{preferredChartType === 'line' ? <SkeletonLineChart /> : <SkeletonChart />}</div>
+        <DailyHoursChartSkeleton />
 
-        {/* Intelligence Insights Skeleton */}
         <div className="lg:col-span-3">
-          <Skeleton className="h-6 w-48 mb-6 ml-2" />
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-            {[1, 2, 3, 4].map((i) => (
+          <Skeleton className="h-6 w-24 mb-4" />
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4">
+            {Array.from({ length: 10 }).map((_, i) => (
               <SkeletonInsightCard key={i} />
             ))}
           </div>
         </div>
 
-        {/* Time Mix Skeleton */}
         <div className="lg:col-span-2">
           <SkeletonDonutChart />
         </div>
 
-        {/* Ops & Calendars Skeleton */}
         <div className="lg:col-span-1 flex flex-col gap-6">
           <SkeletonList items={4} className="flex-1" />
           <SkeletonCalendarSources items={4} />
-        </div>
-
-        {/* Long term heatmap Skeleton */}
-        <div className="lg:col-span-3 mt-4">
-          <SkeletonHeatmap />
         </div>
       </div>
     </div>
