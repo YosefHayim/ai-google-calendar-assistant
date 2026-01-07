@@ -24,18 +24,18 @@ import { format } from 'date-fns'
 
 const CalendarEventsDialog: React.FC<CalendarEventsDialogProps> = ({
   isOpen,
-  calendarId,
   calendarName,
   calendarColor,
   dateRange,
   events,
   isLoading,
   totalHours,
-  previousPeriodHours,
-  percentageChange,
   onClose,
   onEventClick,
 }) => {
+  if (isLoading) {
+    return null
+  }
   const getEventDuration = (event: CalendarEvent): string => {
     if (!event.start || !event.end) return 'N/A'
 

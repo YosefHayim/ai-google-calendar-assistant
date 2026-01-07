@@ -1,12 +1,22 @@
-import path from 'path'
-import { fileURLToPath } from 'url'
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   turbopack: {
     resolveExtensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
+  },
+  experimental: {
+    swcPlugins:
+      process.env.NODE_ENV === 'development'
+        ? [
+            [
+              'swc-plugin-component-annotate',
+              {
+                dataComponent: true,
+                dataElement: false,
+                dataSourceFile: true,
+              },
+            ],
+          ]
+        : [],
   },
   reactCompiler: true,
   compiler: {
