@@ -1,14 +1,13 @@
-import express, { NextFunction, Request, Response } from "express";
-
-import { STATUS_RESPONSE } from "@/config";
-import { logger } from "@/utils/logger";
-import { sendR } from "@/utils/http";
-import { supabaseAuth } from "@/middlewares/supabase-auth";
+import express, { type NextFunction, type Request, type Response } from "express"
+import { STATUS_RESPONSE } from "@/config"
+import { logger } from "@/utils/logger"
+import { sendR } from "@/utils/http"
+import { supabaseAuth } from "@/middlewares/supabase-auth"
 import {
   authRateLimiter,
   otpRateLimiter,
   refreshRateLimiter,
-} from "@/middlewares/rate-limiter";
+} from "@/middlewares/rate-limiter"
 import {
   validate,
   signUpSchema,
@@ -18,9 +17,11 @@ import {
   allyBrainSchema,
   contextualSchedulingSchema,
   preferenceKeyParamSchema,
-} from "@/middlewares/validation";
-import { userController } from "@/controllers/users-controller";
-import { userPreferencesController } from "@/controllers/user-preferences-controller";
+} from "@/middlewares/validation"
+import { authController } from "@/controllers/users/auth-controller"
+import { profileController } from "@/controllers/users/profile-controller"
+import { googleIntegrationController } from "@/controllers/users/google-integration-controller"
+import { userPreferencesController } from "@/controllers/user-preferences-controller"
 
 const router = express.Router();
 
@@ -39,29 +40,21 @@ router.param(
   },
 );
 
-// get current user information
-router.get(
-  "/get-user",
-  supabaseAuth(),
-  userController.getCurrentUserInformation,
-);
+router.get("/get-user", supabaseAuth(), profileController.getCurrentUserInformation)
 
-// check session (lightweight - for auto-login check)
-router.get("/session", supabaseAuth(), userController.checkSession);
+router.get("/session", supabaseAuth(), authController.checkSession)
 
-// get google calendar integration status
 router.get(
   "/integrations/google-calendar",
   supabaseAuth(),
-  userController.getGoogleCalendarIntegrationStatus,
-);
+  googleIntegrationController.getGoogleCalendarIntegrationStatus
+)
 
-// disconnect google calendar integration
 router.post(
   "/integrations/google-calendar/disconnect",
   supabaseAuth(),
-  userController.disconnectGoogleCalendarIntegration,
-);
+  googleIntegrationController.disconnectGoogleCalendarIntegration
+)
 
 // ============================================
 // User Preferences Routes
@@ -98,68 +91,34 @@ router.put(
   userPreferencesController.updatePreference,
 );
 
-// refresh token (rate limited)
-router.post(
-  "/refresh",
-  refreshRateLimiter,
-  supabaseAuth(),
-  userController.refreshToken,
-);
+router.post("/refresh", refreshRateLimiter, supabaseAuth(), authController.refreshToken)
 
-// deactivate user (with input validation)
 router.delete(
   "/",
   supabaseAuth(),
   validate(deactivateUserSchema),
-  userController.deActivateUser,
-);
+  profileController.deActivateUser
+)
 
-// generate auth google url without using supabase 3rd party provider auth
-router.get("/callback", userController.generateAuthGoogleUrl);
+router.get("/callback", googleIntegrationController.generateAuthGoogleUrl)
 
-// verify user by email otp (rate limited - stricter, with validation)
 router.post(
   "/verify-user-by-email-otp",
   otpRateLimiter,
   validate(otpVerificationSchema),
-  userController.verifyEmailByOtp,
-);
+  authController.verifyEmailByOtp
+)
 
-// sign up user (rate limited, with validation)
-router.post(
-  "/signup",
-  authRateLimiter,
-  validate(signUpSchema),
-  userController.signUpUserReg,
-);
+router.post("/signup", authRateLimiter, validate(signUpSchema), authController.signUpUserReg)
 
-// sign in user (rate limited, with validation)
-router.post(
-  "/signin",
-  authRateLimiter,
-  validate(signInSchema),
-  userController.signInUserReg,
-);
+router.post("/signin", authRateLimiter, validate(signInSchema), authController.signInUserReg)
 
-// logout user (clears cookies)
-router.post("/logout", userController.logout);
+router.post("/logout", authController.logout)
 
-// sign up or sign in with google (rate limited)
-router.get(
-  "/signup/google",
-  authRateLimiter,
-  userController.signUpOrSignInWithGoogle,
-);
+router.get("/signup/google", authRateLimiter, authController.signUpOrSignInWithGoogle)
 
-// sign up user via github (rate limited)
-router.get(
-  "/signup/github",
-  authRateLimiter,
-  userController.signUpUserViaGitHub,
-);
+router.get("/signup/github", authRateLimiter, authController.signUpUserViaGitHub)
 
-// SECURITY FIX: Protect user info endpoint with authentication
-// get any user information by id (requires authentication)
-router.get("/:id", supabaseAuth(), userController.getUserInformationById);
+router.get("/:id", supabaseAuth(), profileController.getUserInformationById)
 
-export default router;
+export default router

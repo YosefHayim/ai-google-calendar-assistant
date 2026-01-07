@@ -1,72 +1,25 @@
-import type { Request, Response } from "express";
-import { reqResAsyncHandler, sendR } from "@/utils/http";
+import type { Request, Response } from "express"
+import { reqResAsyncHandler, sendR } from "@/utils/http"
+import { STATUS_RESPONSE } from "@/config"
 
-import { STATUS_RESPONSE } from "@/config";
-import { fetchCredentialsByEmail } from "@/utils/auth";
-import { initUserSupabaseCalendarWithTokensAndUpdateTokens } from "@/utils/calendar";
-import { logger } from "@/utils/logger";
-
-/**
-
- *
- * @param {Request} req - The request object.
- * @param {Response} res - The response object.
- * @description -  List access control rules for a calendar
- * @returns {Promise<void>} The response object.
- */
 const listAclRules = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const tokenData = await fetchCredentialsByEmail(req.user?.email!);
-  if (!tokenData) {
-    logger.error(`Google Calendar: ACL: listAclRules called: User credentials not found.`);
-    return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User credentials not found.");
-  }
-
-  const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData);
-  const r = await calendar.acl.list({
+  const r = await req.calendar!.acl.list({
     calendarId: req.params.calendarId,
     showDeleted: req.query.showDeleted === "true",
-  });
-  return sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully retrieved ACL rules", r.data);
-});
+  })
+  return sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully retrieved ACL rules", r.data)
+})
 
-/**
- * Get a specific access control rule
- *
- * @param {Request} req - The request object.
- * @param {Response} res - The response object.
- * @returns {Promise<void>} The response object.
- */
 const getAclRule = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const tokenData = await fetchCredentialsByEmail(req.user?.email!);
-  if (!tokenData) {
-    logger.error(`Google Calendar: ACL: getAclRule called: User credentials not found.`);
-    return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User credentials not found.");
-  }
-
-  const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData);
-  const r = await calendar.acl.get({
+  const r = await req.calendar!.acl.get({
     calendarId: req.params.calendarId,
     ruleId: req.params.ruleId,
-  });
-  return sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully retrieved ACL rule", r.data);
-});
+  })
+  return sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully retrieved ACL rule", r.data)
+})
 
-/**
- * Create an access control rule
- *
- * @param {Request} req - The request object.
- * @param {Response} res - The response object.
- * @returns {Promise<void>} The response object.
- */
 const insertAclRule = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const tokenData = await fetchCredentialsByEmail(req.user?.email!);
-  if (!tokenData) {
-    logger.error(`Google Calendar: ACL: insertAclRule called: User credentials not found.`);
-    return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User credentials not found.");
-  }
-
-  const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData);
-  const r = await calendar.acl.insert({
+  const r = await req.calendar!.acl.insert({
     calendarId: req.params.calendarId,
     sendNotifications: req.query.sendNotifications === "true",
     requestBody: {
@@ -76,96 +29,40 @@ const insertAclRule = reqResAsyncHandler(async (req: Request, res: Response) => 
         value: req.body.scope?.value,
       },
     },
-  });
-  return sendR(res, STATUS_RESPONSE.CREATED, "ACL rule created successfully", r.data);
-});
+  })
+  return sendR(res, STATUS_RESPONSE.CREATED, "ACL rule created successfully", r.data)
+})
 
-/**
- * Partial update of an access control rule
- *
- * @param {Request} req - The request object.
- * @param {Response} res - The response object.
- * @returns {Promise<void>} The response object.
- */
 const patchAclRule = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const tokenData = await fetchCredentialsByEmail(req.user?.email!);
-  if (!tokenData) {
-    logger.error(`Google Calendar: ACL: patchAclRule called: User credentials not found.`);
-    return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User credentials not found.");
-  }
-
-  const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData);
-  const r = await calendar.acl.patch({
+  const r = await req.calendar!.acl.patch({
     calendarId: req.params.calendarId,
     ruleId: req.params.ruleId,
     sendNotifications: req.query.sendNotifications === "true",
     requestBody: req.body,
-  });
-  return sendR(res, STATUS_RESPONSE.SUCCESS, "ACL rule patched successfully", r.data);
-});
+  })
+  return sendR(res, STATUS_RESPONSE.SUCCESS, "ACL rule patched successfully", r.data)
+})
 
-/**
- * Full update of an access control rule
- *
- * @param {Request} req - The request object.
- * @param {Response} res - The response object.
- * @returns {Promise<void>} The response object.
- */
 const updateAclRule = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const tokenData = await fetchCredentialsByEmail(req.user?.email!);
-  if (!tokenData) {
-    logger.error(`Google Calendar: ACL: updateAclRule called: User credentials not found.`);
-    return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User credentials not found.");
-  }
-
-  const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData);
-  const r = await calendar.acl.update({
+  const r = await req.calendar!.acl.update({
     calendarId: req.params.calendarId,
     ruleId: req.params.ruleId,
     sendNotifications: req.query.sendNotifications === "true",
     requestBody: req.body,
-  });
-  return sendR(res, STATUS_RESPONSE.SUCCESS, "ACL rule updated successfully", r.data);
-});
+  })
+  return sendR(res, STATUS_RESPONSE.SUCCESS, "ACL rule updated successfully", r.data)
+})
 
-/**
- * Delete an access control rule
- *
- * @param {Request} req - The request object.
- * @param {Response} res - The response object.
- * @returns {Promise<void>} The response object.
- */
 const deleteAclRule = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const tokenData = await fetchCredentialsByEmail(req.user?.email!);
-  if (!tokenData) {
-    logger.error(`Google Calendar: ACL: deleteAclRule called: User credentials not found.`);
-    return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User credentials not found.");
-  }
-
-  const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData);
-  await calendar.acl.delete({
+  await req.calendar!.acl.delete({
     calendarId: req.params.calendarId,
     ruleId: req.params.ruleId,
-  });
-  return sendR(res, STATUS_RESPONSE.SUCCESS, "ACL rule deleted successfully");
-});
+  })
+  return sendR(res, STATUS_RESPONSE.SUCCESS, "ACL rule deleted successfully")
+})
 
-/**
- * Watch for changes to ACL resources
- *
- * @param {Request} req - The request object.
- * @param {Response} res - The response object.
- * @returns {Promise<void>} The response object.
- */
 const watchAcl = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const tokenData = await fetchCredentialsByEmail(req.user?.email!);
-  if (!tokenData) {
-    logger.error(`Google Calendar: ACL: watchAcl called: User credentials not found.`);
-    return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User credentials not found.");
-  }
-
-  const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData);
-  const r = await calendar.acl.watch({
+  const r = await req.calendar!.acl.watch({
     calendarId: req.params.calendarId,
     showDeleted: req.query.showDeleted === "true",
     requestBody: {
@@ -176,9 +73,9 @@ const watchAcl = reqResAsyncHandler(async (req: Request, res: Response) => {
       expiration: req.body.expiration,
       params: req.body.params,
     },
-  });
-  return sendR(res, STATUS_RESPONSE.SUCCESS, "ACL watch created successfully", r.data);
-});
+  })
+  return sendR(res, STATUS_RESPONSE.SUCCESS, "ACL watch created successfully", r.data)
+})
 
 export default {
   listAclRules,
@@ -188,4 +85,4 @@ export default {
   updateAclRule,
   deleteAclRule,
   watchAcl,
-};
+}
