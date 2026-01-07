@@ -1,13 +1,17 @@
-import express, { type NextFunction, type Request, type Response } from "express"
-import { STATUS_RESPONSE } from "@/config"
-import { logger } from "@/utils/logger"
-import { sendR } from "@/utils/http"
-import { supabaseAuth } from "@/middlewares/supabase-auth"
+import express, {
+  type NextFunction,
+  type Request,
+  type Response,
+} from "express";
+import { STATUS_RESPONSE } from "@/config";
+import { logger } from "@/utils/logger";
+import { sendR } from "@/utils/http";
+import { supabaseAuth } from "@/middlewares/supabase-auth";
 import {
   authRateLimiter,
   otpRateLimiter,
   refreshRateLimiter,
-} from "@/middlewares/rate-limiter"
+} from "@/middlewares/rate-limiter";
 import {
   validate,
   signUpSchema,
@@ -17,11 +21,12 @@ import {
   allyBrainSchema,
   contextualSchedulingSchema,
   preferenceKeyParamSchema,
-} from "@/middlewares/validation"
-import { authController } from "@/controllers/users/auth-controller"
-import { profileController } from "@/controllers/users/profile-controller"
-import { googleIntegrationController } from "@/controllers/users/google-integration-controller"
-import { userPreferencesController } from "@/controllers/user-preferences-controller"
+  reminderPreferencesSchema,
+} from "@/middlewares/validation";
+import { authController } from "@/controllers/users/auth-controller";
+import { profileController } from "@/controllers/users/profile-controller";
+import { googleIntegrationController } from "@/controllers/users/google-integration-controller";
+import { userPreferencesController } from "@/controllers/user-preferences-controller";
 
 const router = express.Router();
 
@@ -40,21 +45,25 @@ router.param(
   },
 );
 
-router.get("/get-user", supabaseAuth(), profileController.getCurrentUserInformation)
+router.get(
+  "/get-user",
+  supabaseAuth(),
+  profileController.getCurrentUserInformation,
+);
 
-router.get("/session", supabaseAuth(), authController.checkSession)
+router.get("/session", supabaseAuth(), authController.checkSession);
 
 router.get(
   "/integrations/google-calendar",
   supabaseAuth(),
-  googleIntegrationController.getGoogleCalendarIntegrationStatus
-)
+  googleIntegrationController.getGoogleCalendarIntegrationStatus,
+);
 
 router.post(
   "/integrations/google-calendar/disconnect",
   supabaseAuth(),
-  googleIntegrationController.disconnectGoogleCalendarIntegration
-)
+  googleIntegrationController.disconnectGoogleCalendarIntegration,
+);
 
 // ============================================
 // User Preferences Routes
@@ -91,34 +100,65 @@ router.put(
   userPreferencesController.updatePreference,
 );
 
-router.post("/refresh", refreshRateLimiter, supabaseAuth(), authController.refreshToken)
+// update reminder_defaults preference
+router.put(
+  "/preferences/reminder_defaults",
+  supabaseAuth(),
+  validate(reminderPreferencesSchema, "body"),
+  userPreferencesController.updatePreference,
+);
+
+router.post(
+  "/refresh",
+  refreshRateLimiter,
+  supabaseAuth(),
+  authController.refreshToken,
+);
 
 router.delete(
   "/",
   supabaseAuth(),
   validate(deactivateUserSchema),
-  profileController.deActivateUser
-)
+  profileController.deActivateUser,
+);
 
-router.get("/callback", googleIntegrationController.generateAuthGoogleUrl)
+router.get("/callback", googleIntegrationController.generateAuthGoogleUrl);
 
 router.post(
   "/verify-user-by-email-otp",
   otpRateLimiter,
   validate(otpVerificationSchema),
-  authController.verifyEmailByOtp
-)
+  authController.verifyEmailByOtp,
+);
 
-router.post("/signup", authRateLimiter, validate(signUpSchema), authController.signUpUserReg)
+router.post(
+  "/signup",
+  authRateLimiter,
+  validate(signUpSchema),
+  authController.signUpUserReg,
+);
 
-router.post("/signin", authRateLimiter, validate(signInSchema), authController.signInUserReg)
+router.post(
+  "/signin",
+  authRateLimiter,
+  validate(signInSchema),
+  authController.signInUserReg,
+);
 
-router.post("/logout", authController.logout)
+router.post("/logout", authController.logout);
 
-router.get("/signup/google", authRateLimiter, authController.signUpOrSignInWithGoogle)
+router.get(
+  "/signup/google",
+  authRateLimiter,
+  authController.signUpOrSignInWithGoogle,
+);
 
-router.get("/signup/github", authRateLimiter, authController.signUpUserViaGitHub)
+router.get(
+  "/signup/github",
+  authRateLimiter,
+  authController.signUpUserViaGitHub,
+);
 
-router.get("/:id", supabaseAuth(), profileController.getUserInformationById)
+router.get("/:id", supabaseAuth(), profileController.getUserInformationById);
 
-export default router
+export default router;

@@ -12,7 +12,16 @@ import {
   summarizeEvents,
   validateUserDirect,
 } from "./direct-utilities";
-import { checkEventConflictsAllCalendars } from "@/utils/calendar";
+import {
+  checkEventConflictsAllCalendars,
+  getCalendarDefaultReminders,
+  updateCalendarDefaultReminders,
+  updateEventReminders,
+  getUserReminderPreferences,
+  saveUserReminderPreferences,
+  getUserIdByEmail,
+  resolveRemindersForEvent,
+} from "@/utils/calendar";
 
 import { EXECUTION_TOOLS } from "./tool-execution";
 import { TOOLS_DESCRIPTION } from "./tool-descriptions";
@@ -260,7 +269,6 @@ export const DIRECT_TOOLS = {
       `pre_create_validation: ${stringifyError(error)}`,
   }),
 
-  // Insert event direct - email from context
   insert_event_direct: tool<
     z.ZodObject<{
       calendarId: z.ZodDefault<z.ZodString>;
@@ -269,12 +277,17 @@ export const DIRECT_TOOLS = {
       location: z.ZodNullable<z.ZodString>;
       start: ReturnType<typeof makeEventTime>;
       end: ReturnType<typeof makeEventTime>;
+      reminders: z.ZodOptional<
+        z.ZodNullable<
+          typeof PARAMETERS_TOOLS.setEventRemindersParameters.shape.reminders
+        >
+      >;
     }>,
     AgentContext
   >({
     name: "insert_event_direct",
     description:
-      "Direct event insertion - bypasses AI agent. Returns created event from Google Calendar API. Email is automatically provided from user context.",
+      "Direct event insertion - bypasses AI agent. Returns created event from Google Calendar API. Email is automatically provided from user context. If reminders not specified, applies user's stored reminder preferences.",
     parameters: z.object({
       calendarId: z.coerce.string().default("primary"),
       summary: z.coerce.string(),
@@ -282,10 +295,25 @@ export const DIRECT_TOOLS = {
       location: z.coerce.string().nullable(),
       start: makeEventTime(),
       end: makeEventTime(),
+      reminders: PARAMETERS_TOOLS.setEventRemindersParameters.shape.reminders
+        .nullable()
+        .optional(),
     }),
     execute: async (params, runContext) => {
       const email = getEmailFromContext(runContext, "insert_event_direct");
-      return EXECUTION_TOOLS.insertEvent({ ...params, email });
+      const userId = await getUserIdByEmail(email);
+
+      let remindersToApply = params.reminders;
+      if (!remindersToApply && userId) {
+        const userPreferences = await getUserReminderPreferences(userId);
+        remindersToApply = resolveRemindersForEvent(userPreferences, null);
+      }
+
+      return EXECUTION_TOOLS.insertEvent({
+        ...params,
+        email,
+        reminders: remindersToApply ?? undefined,
+      });
     },
     errorFunction: (_, error) =>
       `insert_event_direct: ${stringifyError(error)}`,
@@ -481,5 +509,131 @@ export const DIRECT_TOOLS = {
     },
     errorFunction: (_, error) =>
       `check_conflicts_all_calendars: ${stringifyError(error)}`,
+  }),
+
+  set_event_reminders: tool<
+    typeof PARAMETERS_TOOLS.setEventRemindersParameters,
+    AgentContext
+  >({
+    name: "set_event_reminders",
+    description: TOOLS_DESCRIPTION.setEventReminders,
+    parameters: PARAMETERS_TOOLS.setEventRemindersParameters,
+    execute: async ({ eventId, calendarId, reminders }, runContext) => {
+      const email = getEmailFromContext(runContext, "set_event_reminders");
+      return updateEventReminders(
+        email,
+        calendarId ?? "primary",
+        eventId,
+        reminders,
+      );
+    },
+    errorFunction: (_, error) =>
+      `set_event_reminders: ${stringifyError(error)}`,
+  }),
+
+  get_calendar_default_reminders: tool<
+    typeof PARAMETERS_TOOLS.getCalendarDefaultRemindersParameters,
+    AgentContext
+  >({
+    name: "get_calendar_default_reminders",
+    description: TOOLS_DESCRIPTION.getCalendarDefaultReminders,
+    parameters: PARAMETERS_TOOLS.getCalendarDefaultRemindersParameters,
+    execute: async ({ calendarId }, runContext) => {
+      const email = getEmailFromContext(
+        runContext,
+        "get_calendar_default_reminders",
+      );
+      const result = await getCalendarDefaultReminders(email, calendarId);
+      if (!result) {
+        return { error: "Could not retrieve calendar reminders" };
+      }
+      return result;
+    },
+    errorFunction: (_, error) =>
+      `get_calendar_default_reminders: ${stringifyError(error)}`,
+  }),
+
+  update_calendar_default_reminders: tool<
+    typeof PARAMETERS_TOOLS.updateCalendarDefaultRemindersParameters,
+    AgentContext
+  >({
+    name: "update_calendar_default_reminders",
+    description: TOOLS_DESCRIPTION.updateCalendarDefaultReminders,
+    parameters: PARAMETERS_TOOLS.updateCalendarDefaultRemindersParameters,
+    execute: async ({ calendarId, defaultReminders }, runContext) => {
+      const email = getEmailFromContext(
+        runContext,
+        "update_calendar_default_reminders",
+      );
+      return updateCalendarDefaultReminders(
+        email,
+        calendarId,
+        defaultReminders,
+      );
+    },
+    errorFunction: (_, error) =>
+      `update_calendar_default_reminders: ${stringifyError(error)}`,
+  }),
+
+  get_user_reminder_preferences: tool<
+    typeof PARAMETERS_TOOLS.getUserReminderPreferencesParameters,
+    AgentContext
+  >({
+    name: "get_user_reminder_preferences",
+    description: TOOLS_DESCRIPTION.getUserReminderPreferences,
+    parameters: PARAMETERS_TOOLS.getUserReminderPreferencesParameters,
+    execute: async (_params, runContext) => {
+      const email = getEmailFromContext(
+        runContext,
+        "get_user_reminder_preferences",
+      );
+      const userId = await getUserIdByEmail(email);
+      if (!userId) {
+        return { error: "User not found" };
+      }
+      const preferences = await getUserReminderPreferences(userId);
+      return (
+        preferences ?? {
+          enabled: true,
+          defaultReminders: [],
+          useCalendarDefaults: true,
+        }
+      );
+    },
+    errorFunction: (_, error) =>
+      `get_user_reminder_preferences: ${stringifyError(error)}`,
+  }),
+
+  update_user_reminder_preferences: tool<
+    typeof PARAMETERS_TOOLS.updateUserReminderPreferencesParameters,
+    AgentContext
+  >({
+    name: "update_user_reminder_preferences",
+    description: TOOLS_DESCRIPTION.updateUserReminderPreferences,
+    parameters: PARAMETERS_TOOLS.updateUserReminderPreferencesParameters,
+    execute: async (
+      { enabled, defaultReminders, useCalendarDefaults },
+      runContext,
+    ) => {
+      const email = getEmailFromContext(
+        runContext,
+        "update_user_reminder_preferences",
+      );
+      const userId = await getUserIdByEmail(email);
+      if (!userId) {
+        return { error: "User not found" };
+      }
+      await saveUserReminderPreferences(userId, {
+        enabled,
+        defaultReminders,
+        useCalendarDefaults,
+      });
+      return {
+        success: true,
+        preferences: { enabled, defaultReminders, useCalendarDefaults },
+      };
+    },
+    errorFunction: (_, error) =>
+      `update_user_reminder_preferences: ${stringifyError(error)}`,
   }),
 };

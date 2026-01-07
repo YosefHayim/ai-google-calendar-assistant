@@ -16,3 +16,15 @@ export {
   formatGapsForDisplay,
   DEFAULT_GAP_RECOVERY_SETTINGS,
 } from "./gap-recovery";
+export {
+  getUserReminderPreferences,
+  getUserIdByEmail,
+  getCalendarDefaultReminders,
+  updateCalendarDefaultReminders,
+  updateEventReminders,
+  resolveRemindersForEvent,
+  saveUserReminderPreferences,
+  type EventReminder,
+  type EventReminders,
+  type ReminderPreferences,
+} from "./reminders";
