@@ -7,7 +7,7 @@ import { useChatContext } from '@/contexts/ChatContext'
 import { useUser } from '@/hooks/queries/auth/useUser'
 import { QuickEventDialog } from '@/components/dialogs/QuickEventDialog'
 import { SidebarHeader, SidebarNav, ConversationList, SidebarFooter, DeleteConfirmDialog } from './sidebar-components'
-import type { ConversationListItem } from '@/services/chatService'
+
 
 interface SidebarProps {
   isOpen: boolean

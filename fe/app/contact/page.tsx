@@ -19,7 +19,7 @@ export default function ContactPage() {
               Contact Us
             </h1>
             <p className="text-lg text-zinc-500 dark:text-zinc-400 max-w-2xl mx-auto">
-              Have a question, feedback, or need support? We'd love to hear from
+              Have a question, feedback, or need support? We&apos;d love to hear from
               you.
             </p>
           </div>

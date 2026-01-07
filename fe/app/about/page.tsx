@@ -15,7 +15,7 @@ export default function AboutPage() {
             About <span className="text-primary">Ally</span>
           </h1>
           <p className="text-xl text-zinc-500 dark:text-zinc-400 max-w-2xl mx-auto">
-            We're building the future of calendar management with AI-powered intelligence that understands how you work.
+            We&apos;re building the future of calendar management with AI-powered intelligence that understands how you work.
           </p>
         </div>
       </section>
@@ -90,7 +90,7 @@ export default function AboutPage() {
               </div>
               <h3 className="text-xl font-medium text-zinc-900 dark:text-zinc-100 mb-3">User Focused</h3>
               <p className="text-zinc-500 dark:text-zinc-400">
-                Every feature we build starts with understanding our users' real needs.
+                Every feature we build starts with understanding our users&apos; real needs.
               </p>
             </div>
           </div>

@@ -49,7 +49,7 @@ const OrbitalRing = ({ delay, size, duration, reverse = false }: {
 )
 
 // Floating particle component
-const Particle = ({ index }: { index: number }) => {
+const Particle = ({ index: _index }: { index: number }) => {
   const randomValues = useMemo(() => ({
     x: Math.random() * 400 - 200,
     y: Math.random() * 400 - 200,

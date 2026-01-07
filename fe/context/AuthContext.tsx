@@ -32,7 +32,7 @@ export const AuthProvider = ({ children }: { children?: ReactNode }) => {
     if (storedUser && token && refreshToken) {
       try {
         setUser(JSON.parse(storedUser))
-      } catch (e) {
+      } catch {
         console.error('Auth: Failed to parse user data.')
         // Clear invalid data
         localStorage.removeItem(USER)

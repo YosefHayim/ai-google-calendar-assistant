@@ -46,19 +46,15 @@ const StreamingTypewriter: React.FC<StreamingTypewriterProps> = ({
   // Start typing animation when text changes and streaming is active
   useEffect(() => {
     if (isStreaming && text && text !== displayedText) {
-      // Reset and start typing from the beginning
       displayedIndexRef.current = 0
       setDisplayedText('')
       setIsTyping(true)
     } else if (!isStreaming && text && displayedText !== text) {
-      // If streaming stopped, show full text immediately
       setDisplayedText(text)
       setIsTyping(false)
-      if (onComplete) {
-        onComplete()
-      }
+      onComplete?.()
     }
-  }, [isStreaming, text])
+  }, [isStreaming, text, displayedText, onComplete])
 
   // Typing animation effect
   useEffect(() => {

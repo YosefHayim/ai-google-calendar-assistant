@@ -32,7 +32,7 @@ export const TimeAllocationRadarChart: React.FC<TimeAllocationRadarChartProps> =
     return calculateMax(data.map((d) => d.hours), 1)
   }, [data])
 
-  const handleClick = (entry: CalendarBreakdownItem) => {
+  const _handleClick = (entry: CalendarBreakdownItem) => {
     if (onCalendarClick && entry.calendarId) {
       onCalendarClick(entry.calendarId, entry.category, getValidHexColor(entry.color))
     }

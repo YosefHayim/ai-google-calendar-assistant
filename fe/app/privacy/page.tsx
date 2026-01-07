@@ -27,8 +27,8 @@ export default function PrivacyPolicyPage() {
             <section className="mb-12">
               <h2 className="text-2xl font-medium text-zinc-900 dark:text-zinc-100 mb-4">1. Introduction</h2>
               <p className="text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4">
-                Welcome to Ally ("we," "our," or "us"). Ally Technologies Inc. operates the Ally application and related
-                services (collectively, the "Service"). This Privacy Policy explains how we collect, use, disclose, and
+                Welcome to Ally (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;). Ally Technologies Inc. operates the Ally application and related
+                services (collectively, the &quot;Service&quot;). This Privacy Policy explains how we collect, use, disclose, and
                 safeguard your information when you use our Service.
               </p>
               <p className="text-zinc-600 dark:text-zinc-300 leading-relaxed">
@@ -218,7 +218,7 @@ export default function PrivacyPolicyPage() {
               <div className="bg-amber-50 dark:bg-amber-950/30 rounded-lg p-4 border border-amber-200 dark:border-amber-800">
                 <p className="text-zinc-700 dark:text-zinc-200 leading-relaxed">
                   <strong>
-                    Ally's use and transfer to any other app of information received from Google APIs will adhere to the{' '}
+                    Ally&apos;s use and transfer to any other app of information received from Google APIs will adhere to the{' '}
                     <a
                       href="https://developers.google.com/terms/api-services-user-data-policy"
                       target="_blank"
@@ -276,8 +276,8 @@ export default function PrivacyPolicyPage() {
                     <strong>Purpose:</strong> Secure database hosting and authentication services.
                   </p>
                   <p className="text-sm text-zinc-600 dark:text-zinc-300 mt-1">
-                    <strong>Data Shared:</strong> All user data is stored in Supabase's PostgreSQL database with
-                    Row-Level Security enabled.
+                  <strong>Data Shared:</strong> All user data is stored in Supabase&apos;s PostgreSQL database with
+                  Row-Level Security enabled.
                   </p>
                 </div>
 
@@ -350,7 +350,7 @@ export default function PrivacyPolicyPage() {
                   <strong>Portability:</strong> Request your data in a machine-readable format.
                 </li>
                 <li>
-                  <strong>Disconnect Google:</strong> Revoke Ally's access to your Google Calendar at any time from your
+                  <strong>Disconnect Google:</strong> Revoke Ally&apos;s access to your Google Calendar at any time from your
                   dashboard or{' '}
                   <a
                     href="https://myaccount.google.com/permissions"
@@ -390,7 +390,7 @@ export default function PrivacyPolicyPage() {
 
             {/* Children's Privacy */}
             <section className="mb-12">
-              <h2 className="text-2xl font-medium text-zinc-900 dark:text-zinc-100 mb-4">10. Children's Privacy</h2>
+              <h2 className="text-2xl font-medium text-zinc-900 dark:text-zinc-100 mb-4">10. Children&apos;s Privacy</h2>
               <p className="text-zinc-600 dark:text-zinc-300 leading-relaxed">
                 Ally is not intended for users under 13 years of age. We do not knowingly collect personal information
                 from children under 13. If you believe we have collected data from a child under 13, please contact us
@@ -421,7 +421,7 @@ export default function PrivacyPolicyPage() {
               </h2>
               <p className="text-zinc-600 dark:text-zinc-300 leading-relaxed">
                 We may update this Privacy Policy from time to time. We will notify you of any material changes by
-                posting the new Privacy Policy on this page and updating the "Last Updated" date. We encourage you to
+                posting the new Privacy Policy on this page and updating the &quot;Last Updated&quot; date. We encourage you to
                 review this Privacy Policy periodically.
               </p>
             </section>

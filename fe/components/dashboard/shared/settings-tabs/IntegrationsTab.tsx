@@ -5,7 +5,7 @@ import { AlertTriangle, ArrowUpRight, CheckCircle2, Circle, Loader2, Plus, Refre
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { GoogleCalendarIcon, TelegramIcon, WhatsAppIcon } from '@/components/shared/Icons'
+
 import { SettingsRow, SettingsSection } from './components'
 import type { GoogleCalendarIntegrationStatus } from '@/types/api'
 

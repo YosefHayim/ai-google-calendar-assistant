@@ -2,6 +2,7 @@
 
 import React, { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { format } from "date-fns";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -306,9 +307,10 @@ function BillingPageContent() {
               {access.subscription.currentPeriodEnd && (
                 <p className="text-xs text-yellow-600 dark:text-yellow-400 mt-1">
                   Access until:{" "}
-                  {new Date(
-                    access.subscription.currentPeriodEnd
-                  ).toLocaleDateString()}
+                  {format(
+                    new Date(access.subscription.currentPeriodEnd),
+                    "MMM d, yyyy"
+                  )}
                 </p>
               )}
             </div>
@@ -433,7 +435,7 @@ function BillingPageContent() {
                     Cancel Subscription
                   </p>
                   <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                    You'll retain access until the end of your billing period
+                    You&apos;ll retain access until the end of your billing period
                   </p>
                 </div>
                 <Button

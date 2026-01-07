@@ -35,7 +35,7 @@ export default function ErrorBoundary({ error, reset }: { error: Error & { diges
             </div>
             <h2 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">Ally hit a snag</h2>
             <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed max-w-[90%]">
-              Even the best assistants trip up sometimes. I've logged this issue, but let's try to get you back on
+              Even the best assistants trip up sometimes. I&apos;ve logged this issue, but let&apos;s try to get you back on
               track.
             </p>
           </CardHeader>

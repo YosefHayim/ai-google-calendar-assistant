@@ -2,7 +2,7 @@
 
 'use client'
 
-import { ArrowLeft, CheckCircle2, Lock, RefreshCw } from 'lucide-react'
+import { ArrowLeft, CheckCircle2, Lock } from 'lucide-react'
 import React, { useEffect, useRef, useState } from 'react'
 
 import { AllyLogo } from '@/components/shared/logo'
@@ -123,7 +123,7 @@ const OTPVerificationPage: React.FC = () => {
 
                   <div className="flex flex-col items-center gap-2">
                     <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
-                      Didn't receive code?{' '}
+                      Didn&apos;t receive code?{' '}
                       {canResend ? (
                         <button onClick={handleResend} type="button" className="text-primary hover:underline font-bold">
                           Send again

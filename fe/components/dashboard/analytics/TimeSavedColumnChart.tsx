@@ -41,7 +41,7 @@ const TimeSavedColumnChart: React.FC<TimeSavedColumnChartProps> = ({ data }) => 
   const barWidth = Math.max(2, (availableWidth - (data.length - 1) * barSpacing) / data.length)
   const plotHeight = height - padding * 2
 
-  const getY = (hours: number) => padding + plotHeight - (hours / maxY) * plotHeight
+  const _getY = (hours: number) => padding + plotHeight - (hours / maxY) * plotHeight
   const getBarHeight = (hours: number) => (hours / maxY) * plotHeight
 
   return (

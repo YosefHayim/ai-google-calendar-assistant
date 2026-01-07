@@ -4,7 +4,7 @@
 import { Card, CardContent } from '@/components/ui/card'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { eachDayOfInterval, endOfMonth, format, startOfMonth } from 'date-fns'
 
 import { Button } from '@/components/ui/button'

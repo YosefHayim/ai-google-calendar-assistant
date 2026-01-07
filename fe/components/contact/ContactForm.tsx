@@ -181,7 +181,7 @@ export const ContactForm: React.FC = () => {
           Thanks!
         </h3>
         <p className="text-zinc-500 dark:text-zinc-400 mb-6">
-          We've received your message and will get back to you soon.
+          We&apos;ve received your message and will get back to you soon.
         </p>
         <Button onClick={() => setSubmissionState("idle")} variant="outline">
           Send Another Message
