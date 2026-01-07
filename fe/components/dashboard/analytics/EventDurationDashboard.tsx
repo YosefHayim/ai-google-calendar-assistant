@@ -129,9 +129,9 @@ export const EventDurationDashboard: React.FC<EventDurationDashboardProps> = ({
             Breakdown by meeting length
           </CardDescription>
         </div>
-        <div className="relative z-30 flex flex-1 flex-col justify-center gap-1 border-t border-zinc-200 dark:border-zinc-800 px-6 py-4 text-left sm:border-t-0 sm:border-l sm:px-8 sm:py-6">
+        <div className="relative z-30 flex flex-1 flex-col justify-center gap-1 border-t border-zinc-200 dark:border-zinc-800 px-6 py-4 text-left sm:border-t-0 sm:border-l sm:px-6 sm:py-4 lg:px-8 lg:py-6">
           <span className="text-zinc-500 dark:text-zinc-400 text-xs">Total Events</span>
-          <span className="text-lg leading-none font-bold text-zinc-900 dark:text-zinc-100 sm:text-3xl">
+          <span className="text-lg leading-none font-bold text-zinc-900 dark:text-zinc-100 sm:text-xl lg:text-3xl">
             {formatNumber(totalEvents)}
           </span>
         </div>

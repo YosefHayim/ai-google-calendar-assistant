@@ -1,27 +1,21 @@
 'use client'
 
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { StreamCallbacks, continueConversation } from '@/services/chatService'
+import { ChatResponse, continueConversation } from '@/services/chatService'
 import { queryKeys } from '@/lib/query'
 import type { MutationHookOptions } from '../useMutationWrapper'
 
 interface ContinueConversationParams {
   conversationId: string
   message: string
-  callbacks: StreamCallbacks
 }
 
-/**
- * Hook to continue a conversation (send a message)
- * Uses mutation pattern since this is a write operation
- */
-export function useUpdateConversationById(options?: MutationHookOptions<void, ContinueConversationParams>) {
+export function useUpdateConversationById(options?: MutationHookOptions<ChatResponse, ContinueConversationParams>) {
   const queryClient = useQueryClient()
 
-  const mutation = useMutation<void, Error, ContinueConversationParams>({
-    mutationFn: ({ conversationId, message, callbacks }) => continueConversation(conversationId, message, callbacks),
+  const mutation = useMutation<ChatResponse, Error, ContinueConversationParams>({
+    mutationFn: ({ conversationId, message }) => continueConversation(conversationId, message),
     onSuccess: (data, variables) => {
-      // Invalidate conversation detail to refetch
       queryClient.invalidateQueries({
         queryKey: queryKeys.conversations.detail(variables.conversationId),
       })

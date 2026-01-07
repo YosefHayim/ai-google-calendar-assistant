@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react'
 import { decodeAudioData, getSpeechFromGemini } from '@/services/geminiService'
-import { streamChatMessage, continueConversation, type ChatMessage as ChatHistoryMessage } from '@/services/chatService'
+import { sendChatMessage, continueConversation, type ChatMessage as ChatHistoryMessage } from '@/services/chatService'
 
 import { Message } from '@/types'
 import { AvatarView } from './AvatarView'
@@ -34,8 +34,6 @@ const ChatInterface: React.FC = () => {
 
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const [isStreaming, setIsStreaming] = useState(false)
-  const [streamingMessageId, setStreamingMessageId] = useState<string | null>(null)
   const [isSpeaking, setIsSpeaking] = useState(false)
   const [activeTab, setActiveTab] = useState<ActiveTab>('chat')
   const [error, setError] = useState<string | null>(null)
@@ -73,7 +71,7 @@ const ChatInterface: React.FC = () => {
 
   const handleSend = async (e?: React.FormEvent, textToSend: string = input) => {
     e?.preventDefault()
-    if (!textToSend.trim() || isLoading || isStreaming) return
+    if (!textToSend.trim() || isLoading) return
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -84,75 +82,49 @@ const ChatInterface: React.FC = () => {
     setMessages((prev) => [...prev, userMessage])
     setInput('')
     setIsLoading(true)
-    setIsStreaming(true)
     setError(null)
 
-    // Create placeholder for streaming message
-    const assistantMessageId = (Date.now() + 1).toString()
-    setStreamingMessageId(assistantMessageId)
-
-    // Add empty assistant message that will be updated during streaming
-    const assistantMessage: Message = {
-      id: assistantMessageId,
-      role: 'assistant',
-      content: '',
-      timestamp: new Date(),
-    }
-    setMessages((prev) => [...prev, assistantMessage])
-
-    const callbacks = {
-      onChunk: () => {
-        // Not used anymore - typewriter component handles animation
-      },
-      onComplete: (fullText: string, conversationId?: string, title?: string) => {
-        // Set the full text immediately - typewriter will animate it
-        setMessages((prev) => prev.map((msg) => (msg.id === assistantMessageId ? { ...msg, content: fullText } : msg)))
-        // Handle new conversation creation
-        if (conversationId && !selectedConversationId) {
-          setConversationId(conversationId)
-          // Add new conversation to the list immediately with the generated title
-          addConversationToList({
-            id: conversationId,
-            title: title || 'New Conversation',
-            messageCount: 2, // user message + assistant response
-            lastUpdated: new Date().toISOString(),
-            createdAt: new Date().toISOString(),
-          })
-        } else if (conversationId && title) {
-          // Update title for existing conversation if a new title is provided
-          updateConversationTitle(conversationId, title)
-        }
-        // Keep streaming flag true so typewriter animates
-        // Note: isStreaming will be set to false when typewriter completes via handleTypewriterComplete
-      },
-      onError: (errorMsg: string) => {
-        setError(errorMsg || 'Communication relay failed. Please retry.')
-        setIsStreaming(false)
-        setIsLoading(false)
-        setStreamingMessageId(null)
-        // Remove the empty assistant message on error
-        setMessages((prev) => prev.filter((msg) => msg.id !== assistantMessageId))
-      },
-    }
-
     try {
+      let response
       if (selectedConversationId) {
-        // Continue existing conversation
-        await continueConversation(selectedConversationId, textToSend, callbacks)
+        response = await continueConversation(selectedConversationId, textToSend)
       } else {
-        // New conversation - build history for the API
         const history: ChatHistoryMessage[] = messages.map((m) => ({
           role: m.role,
           content: m.content,
         }))
-        await streamChatMessage(textToSend, history, callbacks)
+        response = await sendChatMessage(textToSend, history)
+      }
+
+      const assistantMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: response.content,
+        timestamp: new Date(),
+      }
+      setMessages((prev) => [...prev, assistantMessage])
+
+      if (response.conversationId && !selectedConversationId) {
+        setConversationId(response.conversationId, true)
+        addConversationToList({
+          id: response.conversationId,
+          title: response.title || 'New Conversation',
+          messageCount: 2,
+          lastUpdated: new Date().toISOString(),
+          createdAt: new Date().toISOString(),
+        })
+      } else if (response.conversationId && response.title) {
+        updateConversationTitle(response.conversationId, response.title)
+      }
+
+      if (activeTab === 'avatar' && response.content) {
+        speakText(response.content.split('\n')[0])
       }
     } catch (err) {
       setError('Communication relay failed. Please retry.')
-      setIsStreaming(false)
-      setIsLoading(false)
-      setStreamingMessageId(null)
       console.error(err)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -173,23 +145,6 @@ const ChatInterface: React.FC = () => {
     setMessages(updatedMessages)
 
     handleSend(undefined, newText)
-  }
-
-  const handleTypewriterComplete = () => {
-    // Get the message before clearing the streaming ID
-    const currentStreamingId = streamingMessageId
-    const lastMessage = currentStreamingId
-      ? messages.find((msg) => msg.role === 'assistant' && msg.id === currentStreamingId)
-      : null
-
-    setIsStreaming(false)
-    setIsLoading(false)
-    setStreamingMessageId(null)
-
-    // Speak the response in avatar mode
-    if (activeTab === 'avatar' && lastMessage?.content) {
-      speakText(lastMessage.content.split('\n')[0])
-    }
   }
 
   const {
@@ -216,18 +171,15 @@ const ChatInterface: React.FC = () => {
 
   return (
     <div className="flex h-full w-full relative overflow-hidden">
-      {/* Main Chat Area */}
       <div className="flex-1 flex flex-col h-full max-w-4xl mx-auto w-full relative overflow-hidden">
         <ViewSwitcher activeTab={activeTab} onTabChange={setActiveTab} />
 
-        {/* Loading overlay for conversation */}
         {isLoadingConversation && (
           <div className="absolute inset-0 bg-white/80 dark:bg-zinc-950/80 z-20 flex items-center justify-center">
             <div className="animate-spin w-8 h-8 border-2 border-zinc-300 border-t-zinc-900 rounded-full" />
           </div>
         )}
 
-        {/* Main Content Area */}
         <div className="flex-1 relative">
           {activeTab === 'avatar' ? (
             <AvatarView
@@ -235,12 +187,9 @@ const ChatInterface: React.FC = () => {
               isRecording={isRecording}
               isSpeaking={isSpeaking}
               isLoading={isLoading}
-              isStreaming={isStreaming}
-              streamingMessageId={streamingMessageId}
               onResend={handleResend}
               onEditAndResend={handleEditAndResend}
               onSpeak={speakText}
-              onTypewriterComplete={handleTypewriterComplete}
               avatarScrollRef={avatarScrollRef}
             />
           ) : activeTab === '3d' ? (
@@ -249,14 +198,11 @@ const ChatInterface: React.FC = () => {
             <ChatView
               messages={messages}
               isLoading={isLoading}
-              isStreaming={isStreaming}
-              streamingMessageId={streamingMessageId}
               error={error}
               isSpeaking={isSpeaking}
               onResend={handleResend}
               onEdit={handleEditMessage}
               onSpeak={speakText}
-              onTypewriterComplete={handleTypewriterComplete}
               scrollRef={scrollRef}
             />
           )}
@@ -266,7 +212,6 @@ const ChatInterface: React.FC = () => {
           ref={textInputRef}
           input={input}
           isLoading={isLoading}
-          isStreaming={isStreaming}
           isRecording={isRecording}
           speechRecognitionSupported={speechRecognitionSupported}
           speechRecognitionError={speechRecognitionError}

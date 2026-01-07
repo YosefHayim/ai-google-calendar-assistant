@@ -8,7 +8,6 @@ import { AIVoiceInput } from '@/components/ui/ai-voice-input'
 interface ChatInputProps {
   input: string
   isLoading: boolean
-  isStreaming: boolean
   isRecording: boolean
   speechRecognitionSupported: boolean
   speechRecognitionError: string | null
@@ -27,7 +26,6 @@ export const ChatInput = forwardRef<HTMLInputElement, ChatInputProps>(
     {
       input,
       isLoading,
-      isStreaming,
       isRecording,
       speechRecognitionSupported,
       speechRecognitionError,
@@ -42,7 +40,7 @@ export const ChatInput = forwardRef<HTMLInputElement, ChatInputProps>(
     },
     textInputRef,
   ) => {
-    const isDisabled = isLoading || isStreaming
+    const isDisabled = isLoading
     return (
       <div
         id="tour-chat-input"
