@@ -6,6 +6,7 @@ import { Clock, Info } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
+import { useLanguage } from '@/contexts/LanguageContext'
 import type { DailyAvailableHoursDataPoint } from '@/types/analytics'
 import { calculateAverage, formatNumber } from '@/lib/dataUtils'
 import { CALENDAR_CONSTANTS } from '@/lib/constants'
@@ -27,6 +28,8 @@ export const DailyAvailableHoursDashboard: React.FC<DailyAvailableHoursDashboard
   onDayClick,
   isLoading = false,
 }) => {
+  const { t } = useLanguage()
+
   const totalAvailableHours = React.useMemo(() => {
     return data.reduce((acc, curr) => acc + curr.hours, 0)
   }, [data])

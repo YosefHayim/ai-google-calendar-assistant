@@ -57,4 +57,9 @@ router.delete("/conversations/:id", chatController.removeConversation);
  */
 router.post("/conversations/:id/messages", chatController.continueConversation);
 
+/**
+ * Start a new conversation (closes current active conversation)
+ */
+router.post("/conversations/new", chatController.startNewConversation);
+
 export default router;

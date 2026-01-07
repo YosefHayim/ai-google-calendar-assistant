@@ -128,3 +128,12 @@ export const continueConversation = async (conversationId: string, message: stri
     title: response.data?.data?.title,
   }
 }
+
+export const startNewConversation = async (): Promise<boolean> => {
+  try {
+    await apiClient.post('/api/chat/conversations/new')
+    return true
+  } catch {
+    return false
+  }
+}

@@ -72,7 +72,9 @@ export function ChartTypeWrapper<T extends string>({
           <TabsList className="h-8">
             {chartTypes.map((type) => {
               const IconComponent = ALL_CHART_ICONS[type] || BarChart3
-              const label = labels[type] || type.charAt(0).toUpperCase() + type.slice(1)
+              // Use provided label, then try i18n translation, then fallback to capitalized type
+              const label =
+                labels[type] || t(`analytics.chartTypes.${type}`) || type.charAt(0).toUpperCase() + type.slice(1)
               return (
                 <TabsTrigger key={type} value={type} className="h-7 px-2 text-xs gap-1" title={label}>
                   <IconComponent size={14} />
