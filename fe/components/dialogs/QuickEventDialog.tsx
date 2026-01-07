@@ -4,24 +4,13 @@ import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { AllyLogo } from '@/components/shared/logo'
-import {
-  Calendar,
-  Clock,
-  MapPin,
-  FileText,
-  Loader2,
-  Check,
-  Sparkles,
-  AlertCircle,
-  Mic,
-  MicOff,
-  ExternalLink,
-} from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { Calendar, Loader2, Mic, MicOff, Sparkles } from 'lucide-react'
+import { AnimatePresence } from 'framer-motion'
 import { eventsService } from '@/lib/api/services/events.service'
 import { voiceService } from '@/lib/api/services/voice.service'
 import { toast } from 'sonner'
 import type { QuickAddConflict, ParsedEventData } from '@/types/api'
+import { InputView, LoadingView, ConfirmView, ConflictView, SuccessView, ErrorView } from './quick-event'
 
 type QuickEventDialogProps = {
   isOpen: boolean
@@ -29,16 +18,9 @@ type QuickEventDialogProps = {
   onEventCreated?: () => void
 }
 
-type DialogState =
-  | 'input'
-  | 'recording'
-  | 'transcribing'
-  | 'parsing'
-  | 'confirm'
-  | 'conflict'
-  | 'creating'
-  | 'success'
-  | 'error'
+type DialogState = 'input' | 'recording' | 'transcribing' | 'parsing' | 'confirm' | 'conflict' | 'creating' | 'success' | 'error'
+
+const MIN_TEXT_LENGTH = 5
 
 export const QuickEventDialog: React.FC<QuickEventDialogProps> = ({ isOpen, onClose, onEventCreated }) => {
   const [text, setText] = useState('')
@@ -48,7 +30,6 @@ export const QuickEventDialog: React.FC<QuickEventDialogProps> = ({ isOpen, onCl
   const [calendarName, setCalendarName] = useState<string>('')
   const [eventUrl, setEventUrl] = useState<string>('')
   const [allyMessage, setAllyMessage] = useState<string>('')
-  const [, setErrorMessage] = useState<string>('')
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const chunksRef = useRef<Blob[]>([])
@@ -62,7 +43,6 @@ export const QuickEventDialog: React.FC<QuickEventDialogProps> = ({ isOpen, onCl
       setCalendarName('')
       setEventUrl('')
       setAllyMessage('')
-      setErrorMessage('')
     }
   }, [isOpen])
 
@@ -101,12 +81,10 @@ export const QuickEventDialog: React.FC<QuickEventDialogProps> = ({ isOpen, onCl
           } else {
             setState('error')
             setAllyMessage(result.message || 'Could not transcribe audio.')
-            setErrorMessage(result.message || 'Transcription failed')
           }
         } catch {
           setState('error')
           setAllyMessage('Failed to transcribe audio. Please try again.')
-          setErrorMessage('Transcription failed')
         }
       }
 
@@ -136,8 +114,7 @@ export const QuickEventDialog: React.FC<QuickEventDialogProps> = ({ isOpen, onCl
 
   const processText = useCallback(
     async (inputText: string) => {
-      const minLength = 5
-      if (!inputText.trim() || inputText.length < minLength) return
+      if (!inputText.trim() || inputText.length < MIN_TEXT_LENGTH) return
 
       setState('parsing')
       setAllyMessage('Understanding your request...')
@@ -163,10 +140,9 @@ export const QuickEventDialog: React.FC<QuickEventDialogProps> = ({ isOpen, onCl
       } else {
         setState('error')
         setAllyMessage(response.error || 'Failed to create event.')
-        setErrorMessage(response.error || 'Unknown error')
       }
     },
-    [onClose, onEventCreated],
+    [onEventCreated]
   )
 
   const handleForceCreate = useCallback(async () => {
@@ -187,7 +163,6 @@ export const QuickEventDialog: React.FC<QuickEventDialogProps> = ({ isOpen, onCl
       setState('error')
       const errorMsg = response.requiresConfirmation ? 'Unexpected conflict' : response.error
       setAllyMessage(errorMsg || 'Failed to create event.')
-      setErrorMessage(errorMsg || 'Unknown error')
     }
   }, [text, onEventCreated])
 
@@ -202,10 +177,9 @@ export const QuickEventDialog: React.FC<QuickEventDialogProps> = ({ isOpen, onCl
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    const minLength = 5
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
-      if (text.trim().length >= minLength) {
+      if (text.trim().length >= MIN_TEXT_LENGTH) {
         processText(text)
       }
     }
@@ -213,7 +187,6 @@ export const QuickEventDialog: React.FC<QuickEventDialogProps> = ({ isOpen, onCl
 
   const resetState = () => {
     setState('input')
-    setErrorMessage('')
     setAllyMessage('')
     setConflicts([])
   }
@@ -267,12 +240,7 @@ Examples:
               <p className="text-xs text-zinc-400">
                 {state === 'recording' ? 'Recording... Click mic to stop' : 'Press Enter to process'}
               </p>
-              <Button
-                onClick={() => processText(text)}
-                disabled={text.trim().length < 5 || isDisabled}
-                variant="outline"
-                size="sm"
-              >
+              <Button onClick={() => processText(text)} disabled={text.trim().length < MIN_TEXT_LENGTH || isDisabled} variant="outline" size="sm">
                 {state === 'parsing' || state === 'transcribing' ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -300,192 +268,33 @@ Examples:
             </div>
 
             <AnimatePresence mode="wait">
-              {(state === 'input' || state === 'recording') && (
-                <motion.div
-                  key="input"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="flex-1 flex flex-col items-center justify-center text-center"
-                >
-                  <div
-                    className={`w-16 h-16 rounded-full flex items-center justify-center mb-4 ${
-                      state === 'recording' ? 'bg-red-100 dark:bg-red-900/30' : 'bg-zinc-200 dark:bg-zinc-800'
-                    }`}
-                  >
-                    {state === 'recording' ? (
-                      <Mic className="w-8 h-8 text-red-500 animate-pulse" />
-                    ) : (
-                      <Calendar className="w-8 h-8 text-zinc-400" />
-                    )}
-                  </div>
-                  <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                    {state === 'recording'
-                      ? 'Listening... Speak your event details'
-                      : 'Type or speak your event details'}
-                  </p>
-                </motion.div>
-              )}
+              {(state === 'input' || state === 'recording') && <InputView state={state} />}
 
-              {(state === 'transcribing' || state === 'parsing' || state === 'creating') && (
-                <motion.div
-                  key="loading"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="flex-1 flex flex-col items-center justify-center text-center"
-                >
-                  <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                    <Loader2 className="w-8 h-8 text-primary animate-spin" />
-                  </div>
-                  <p className="text-sm text-zinc-600 dark:text-zinc-300">{allyMessage}</p>
-                </motion.div>
-              )}
+              {(state === 'transcribing' || state === 'parsing' || state === 'creating') && <LoadingView message={allyMessage} />}
 
               {state === 'confirm' && parsedEvent && (
-                <motion.div
-                  key="confirm"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="flex-1 flex flex-col"
-                >
-                  <p className="text-sm text-zinc-600 dark:text-zinc-300 mb-4">{allyMessage}</p>
-                  <EventPreview event={parsedEvent} calendarName={calendarName} />
-                  <Button onClick={handleForceCreate} className="w-full bg-primary hover:bg-primary-hover text-white">
-                    <Check className="w-4 h-4 mr-2" />
-                    Add to Calendar
-                  </Button>
-                </motion.div>
+                <ConfirmView event={parsedEvent} calendarName={calendarName} message={allyMessage} onConfirm={handleForceCreate} />
               )}
 
               {state === 'conflict' && parsedEvent && (
-                <motion.div
-                  key="conflict"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="flex-1 flex flex-col"
-                >
-                  <p className="text-sm text-amber-600 dark:text-amber-400 mb-3">{allyMessage}</p>
-                  <EventPreview event={parsedEvent} calendarName={calendarName} />
-                  {conflicts.length > 0 && (
-                    <div className="mb-3 p-2 bg-amber-50 dark:bg-amber-900/20 rounded border border-amber-200 dark:border-amber-800">
-                      <p className="text-xs font-medium text-amber-700 dark:text-amber-300 mb-1">Conflicts with:</p>
-                      {conflicts.slice(0, 3).map((c) => (
-                        <p key={c.id} className="text-xs text-amber-600 dark:text-amber-400">
-                          • {c.summary}
-                        </p>
-                      ))}
-                    </div>
-                  )}
-                  <div className="space-y-2">
-                    <Button onClick={handleForceCreate} className="w-full bg-amber-500 hover:bg-amber-600 text-white">
-                      Create Anyway
-                    </Button>
-                    <Button onClick={resetState} variant="outline" className="w-full">
-                      Cancel
-                    </Button>
-                  </div>
-                </motion.div>
+                <ConflictView
+                  event={parsedEvent}
+                  calendarName={calendarName}
+                  conflicts={conflicts}
+                  message={allyMessage}
+                  onConfirm={handleForceCreate}
+                  onCancel={resetState}
+                />
               )}
 
-              {state === 'success' && (
-                <motion.div
-                  key="success"
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  className="flex-1 flex flex-col items-center justify-center text-center"
-                >
-                  <div className="w-16 h-16 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mb-4">
-                    <Check className="w-8 h-8 text-green-600 dark:text-green-400" />
-                  </div>
-                  <p className="text-sm font-medium text-green-600 dark:text-green-400">{allyMessage}</p>
-                  {calendarName && <p className="text-xs text-zinc-500 mt-1">Added to {calendarName}</p>}
-                  {eventUrl && (
-                    <a
-                      href={eventUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="mt-3 text-sm text-primary hover:underline flex items-center gap-1"
-                    >
-                      <ExternalLink className="w-4 h-4" />
-                      View in Google Calendar
-                    </a>
-                  )}
-                  <Button onClick={onClose} variant="outline" size="sm" className="mt-4">
-                    Close
-                  </Button>
-                </motion.div>
-              )}
+              {state === 'success' && <SuccessView message={allyMessage} calendarName={calendarName} eventUrl={eventUrl} onClose={onClose} />}
 
-              {state === 'error' && (
-                <motion.div
-                  key="error"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="flex-1 flex flex-col items-center justify-center text-center"
-                >
-                  <div className="w-16 h-16 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mb-4">
-                    <AlertCircle className="w-8 h-8 text-red-600 dark:text-red-400" />
-                  </div>
-                  <p className="text-sm text-red-600 dark:text-red-400 mb-4">{allyMessage}</p>
-                  <Button onClick={resetState} variant="outline" size="sm">
-                    Try Again
-                  </Button>
-                </motion.div>
-              )}
+              {state === 'error' && <ErrorView message={allyMessage} onRetry={resetState} />}
             </AnimatePresence>
           </div>
         </div>
       </DialogContent>
     </Dialog>
-  )
-}
-
-function EventPreview({ event, calendarName }: { event: ParsedEventData; calendarName?: string }) {
-  return (
-    <div className="bg-white dark:bg-zinc-900 rounded-lg p-3 border border-zinc-200 dark:border-zinc-800 space-y-2 mb-3 text-left">
-      <div className="flex items-start gap-2">
-        <FileText className="w-4 h-4 text-zinc-400 mt-0.5 flex-shrink-0" />
-        <div className="min-w-0">
-          <p className="text-xs text-zinc-400">Event</p>
-          <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">{event.summary}</p>
-        </div>
-      </div>
-      {(event.date || event.time) && (
-        <div className="flex items-start gap-2">
-          <Clock className="w-4 h-4 text-zinc-400 mt-0.5 flex-shrink-0" />
-          <div>
-            <p className="text-xs text-zinc-400">When</p>
-            <p className="text-sm text-zinc-900 dark:text-zinc-100">
-              {event.date} {event.time && `at ${event.time}`}
-              {event.duration && ` (${event.duration})`}
-            </p>
-          </div>
-        </div>
-      )}
-      {event.location && (
-        <div className="flex items-start gap-2">
-          <MapPin className="w-4 h-4 text-zinc-400 mt-0.5 flex-shrink-0" />
-          <div>
-            <p className="text-xs text-zinc-400">Location</p>
-            <p className="text-sm text-zinc-900 dark:text-zinc-100">{event.location}</p>
-          </div>
-        </div>
-      )}
-      {calendarName && (
-        <div className="flex items-start gap-2">
-          <Calendar className="w-4 h-4 text-zinc-400 mt-0.5 flex-shrink-0" />
-          <div>
-            <p className="text-xs text-zinc-400">Calendar</p>
-            <p className="text-sm text-zinc-900 dark:text-zinc-100">{calendarName}</p>
-          </div>
-        </div>
-      )}
-    </div>
   )
 }
 

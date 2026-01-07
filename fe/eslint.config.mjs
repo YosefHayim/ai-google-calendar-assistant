@@ -91,4 +91,16 @@ export default [
       '@typescript-eslint/no-require-imports': 'off',
     },
   },
+
+  // Config files - allow globals
+  {
+    files: ['**/*.config.js', '**/*.config.mjs', 'postcss.config.js'],
+    languageOptions: {
+      globals: {
+        module: 'readonly',
+        process: 'readonly',
+        __dirname: 'readonly',
+      },
+    },
+  },
 ]
