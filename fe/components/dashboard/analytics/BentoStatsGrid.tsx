@@ -156,7 +156,7 @@ const BentoStatsGrid: React.FC<BentoStatsGridProps> = ({ data, comparison, isLoa
     >
       <motion.div
         variants={item}
-        className="col-span-2 row-span-2 bg-gradient-to-br from-indigo-50 to-white dark:from-indigo-950/30 dark:to-zinc-950 border border-indigo-200/50 dark:border-indigo-800/30 rounded-xl p-6 shadow-sm hover:shadow-md hover:border-indigo-300 dark:hover:border-indigo-700 transition-all"
+        className="col-span-2 row-span-2 bg-gradient-to-br from-indigo-50 to-white dark:from-indigo-950/30 dark:to-zinc-950 border border-indigo-200/50 dark:border-indigo-800/30 rounded-xl p-6 shadow-sm hover:shadow-md hover:border-indigo-300 dark:hover:border-indigo-700 transition-all overflow-hidden"
       >
         <div className="flex items-start justify-between mb-4">
           <div>
@@ -243,7 +243,7 @@ const BentoStatsGrid: React.FC<BentoStatsGridProps> = ({ data, comparison, isLoa
 
       <motion.div
         variants={item}
-        className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 shadow-sm hover:shadow-md hover:border-amber-300 dark:hover:border-amber-700 transition-all"
+        className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 shadow-sm hover:shadow-md hover:border-amber-300 dark:hover:border-amber-700 transition-all overflow-hidden"
       >
         <div className="flex items-center gap-2 mb-3 min-w-0">
           <div className="w-8 h-8 flex-shrink-0 rounded-lg bg-amber-100 dark:bg-amber-900/50 flex items-center justify-center">
@@ -261,7 +261,7 @@ const BentoStatsGrid: React.FC<BentoStatsGridProps> = ({ data, comparison, isLoa
 
       <motion.div
         variants={item}
-        className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 shadow-sm hover:shadow-md hover:border-orange-300 dark:hover:border-orange-700 transition-all"
+        className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 shadow-sm hover:shadow-md hover:border-orange-300 dark:hover:border-orange-700 transition-all overflow-hidden"
       >
         <div className="flex items-center gap-2 mb-3 min-w-0">
           <div className="w-8 h-8 flex-shrink-0 rounded-lg bg-orange-100 dark:bg-orange-900/50 flex items-center justify-center">
@@ -279,7 +279,7 @@ const BentoStatsGrid: React.FC<BentoStatsGridProps> = ({ data, comparison, isLoa
 
       <motion.div
         variants={item}
-        className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 shadow-sm hover:shadow-md hover:border-teal-300 dark:hover:border-teal-700 transition-all"
+        className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 shadow-sm hover:shadow-md hover:border-teal-300 dark:hover:border-teal-700 transition-all overflow-hidden"
       >
         <div className="flex items-center gap-2 mb-3 min-w-0">
           <div className="w-8 h-8 flex-shrink-0 rounded-lg bg-teal-100 dark:bg-teal-900/50 flex items-center justify-center">
@@ -299,7 +299,7 @@ const BentoStatsGrid: React.FC<BentoStatsGridProps> = ({ data, comparison, isLoa
 
       <motion.div
         variants={item}
-        className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 shadow-sm hover:shadow-md hover:border-purple-300 dark:hover:border-purple-700 transition-all"
+        className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 shadow-sm hover:shadow-md hover:border-purple-300 dark:hover:border-purple-700 transition-all overflow-hidden"
       >
         <div className="flex items-center gap-2 mb-3 min-w-0">
           <div className="w-8 h-8 flex-shrink-0 rounded-lg bg-purple-100 dark:bg-purple-900/50 flex items-center justify-center">
@@ -320,7 +320,7 @@ const BentoStatsGrid: React.FC<BentoStatsGridProps> = ({ data, comparison, isLoa
 
       <motion.div
         variants={item}
-        className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 shadow-sm hover:shadow-md hover:border-rose-300 dark:hover:border-rose-700 transition-all"
+        className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 shadow-sm hover:shadow-md hover:border-rose-300 dark:hover:border-rose-700 transition-all overflow-hidden"
       >
         <div className="flex items-center gap-2 mb-3 min-w-0">
           <div className="w-8 h-8 flex-shrink-0 rounded-lg bg-rose-100 dark:bg-rose-900/50 flex items-center justify-center">
@@ -339,7 +339,7 @@ const BentoStatsGrid: React.FC<BentoStatsGridProps> = ({ data, comparison, isLoa
 
       <motion.div
         variants={item}
-        className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 shadow-sm hover:shadow-md hover:border-cyan-300 dark:hover:border-cyan-700 transition-all"
+        className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 shadow-sm hover:shadow-md hover:border-cyan-300 dark:hover:border-cyan-700 transition-all overflow-hidden"
       >
         <div className="flex items-center gap-2 mb-3 min-w-0">
           <div className="w-8 h-8 flex-shrink-0 rounded-lg bg-cyan-100 dark:bg-cyan-900/50 flex items-center justify-center">
@@ -357,7 +357,7 @@ const BentoStatsGrid: React.FC<BentoStatsGridProps> = ({ data, comparison, isLoa
 
       <motion.div
         variants={item}
-        className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 shadow-sm hover:shadow-md hover:border-violet-300 dark:hover:border-violet-700 transition-all"
+        className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 shadow-sm hover:shadow-md hover:border-violet-300 dark:hover:border-violet-700 transition-all overflow-hidden"
       >
         <div className="flex items-center gap-2 mb-3 min-w-0">
           <div className="w-8 h-8 flex-shrink-0 rounded-lg bg-violet-100 dark:bg-violet-900/50 flex items-center justify-center">
@@ -375,7 +375,7 @@ const BentoStatsGrid: React.FC<BentoStatsGridProps> = ({ data, comparison, isLoa
 
       <motion.div
         variants={item}
-        className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 shadow-sm hover:shadow-md hover:border-fuchsia-300 dark:hover:border-fuchsia-700 transition-all"
+        className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 shadow-sm hover:shadow-md hover:border-fuchsia-300 dark:hover:border-fuchsia-700 transition-all overflow-hidden"
       >
         <div className="flex items-center gap-2 mb-3 min-w-0">
           <div className="w-8 h-8 flex-shrink-0 rounded-lg bg-fuchsia-100 dark:bg-fuchsia-900/50 flex items-center justify-center">
