@@ -222,18 +222,20 @@ Examples:
                 className="w-full h-full resize-none bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-4 pr-12 text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary/50"
                 disabled={isDisabled}
               />
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="icon"
                 onClick={toggleRecording}
                 disabled={isDisabled}
-                className={`absolute right-3 top-3 p-2 rounded-full transition-all ${
+                className={`absolute right-3 top-3 rounded-full ${
                   state === 'recording'
-                    ? 'bg-red-500 text-white animate-pulse'
+                    ? 'bg-red-500 text-white animate-pulse hover:bg-red-600'
                     : 'bg-zinc-200 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-300 dark:hover:bg-zinc-600'
-                } disabled:opacity-50 disabled:cursor-not-allowed`}
+                }`}
               >
                 {state === 'recording' ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
-              </button>
+              </Button>
             </div>
 
             <div className="mt-4 flex items-center justify-between">

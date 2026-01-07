@@ -9,6 +9,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 
 import { AnimatedHamburger } from "@/components/ui/animated-hamburger";
+import { Button } from "@/components/ui/button";
 import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button";
 import { LanguageDropdown } from "@/components/shared/LanguageDropdown";
 import Link from "next/link";
@@ -150,12 +151,14 @@ const Navbar = () => {
                     Ally <BetaBadge />
                   </span>
                 </Link>
-                <button
+                <Button
+                  variant="ghost"
+                  size="icon"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="p-2 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+                  className="rounded-full"
                 >
                   <X className="w-6 h-6 text-zinc-500" />
-                </button>
+                </Button>
               </div>
 
               <div className="flex flex-col gap-6 flex-1">

@@ -1,5 +1,6 @@
 'use client'
 
+import { Button } from '@/components/ui/button'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
 import { calculatePercentage, sumBy } from '@/lib/dataUtils'
 
@@ -73,9 +74,13 @@ const TimeAllocationChart: React.FC<TimeAllocationChartProps> = ({ data, onCalen
           Time Allocation
           <HoverCard>
             <HoverCardTrigger asChild>
-              <button className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-6 w-6 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
+              >
                 <Info size={16} />
-              </button>
+              </Button>
             </HoverCardTrigger>
             <HoverCardContent>
               <div className="space-y-2">

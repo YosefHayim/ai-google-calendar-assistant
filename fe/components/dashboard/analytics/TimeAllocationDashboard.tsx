@@ -4,6 +4,7 @@ import * as React from 'react'
 import { BarChart3, PieChart, CircleDot, Radar, BarChartHorizontal, Info } from 'lucide-react'
 import { AnimatePresence, motion } from 'framer-motion'
 
+import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
@@ -128,12 +129,13 @@ export const TimeAllocationDashboard: React.FC<TimeAllocationDashboardProps> = (
             Time Allocation
             <HoverCard>
               <HoverCardTrigger asChild>
-                <button
-                  type="button"
-                  className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors"
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
                 >
                   <Info size={16} />
-                </button>
+                </Button>
               </HoverCardTrigger>
               <HoverCardContent>
                 <div className="space-y-2">
