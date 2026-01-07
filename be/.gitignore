@@ -107,6 +107,7 @@ desktop.ini
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+!postman/*
 .idea/
 *.iml
 *.suo
@@ -136,6 +137,9 @@ desktop.ini
 !yarn.lock
 !.eslintrc.json
 !biome.jsonc
+
+# --- POSTMAN FIX: Allow JSONs inside the postman folder ---
+!postman/*.json
 
 # Supabase
 supabase/.temp
@@ -192,14 +196,3 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 dev-debug.log
-# Dependency directories
-# Environment variables
-# Editor directories and files
-.idea
-.vscode
-# OS specific
-
-# Task files
-# tasks.json
-# tasks/ 
-tsconfig.tsbuildinfo
