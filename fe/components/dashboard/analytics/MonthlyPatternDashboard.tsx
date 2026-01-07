@@ -110,7 +110,7 @@ export const MonthlyPatternDashboard: React.FC<MonthlyPatternDashboardProps> = (
         <div className="flex flex-1 flex-col justify-center gap-1 px-6 pt-4 pb-3 sm:!py-4">
           <CardTitle className="flex items-center gap-2 text-zinc-900 dark:text-zinc-100">
             <Calendar className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-            Monthly Pattern
+            {t('analytics.charts.monthlyPattern')}
             <HoverCard>
               <HoverCardTrigger asChild>
                 <button
@@ -122,28 +122,27 @@ export const MonthlyPatternDashboard: React.FC<MonthlyPatternDashboardProps> = (
               </HoverCardTrigger>
               <HoverCardContent>
                 <div className="space-y-2">
-                  <h4 className="font-semibold text-sm">Monthly Pattern</h4>
+                  <h4 className="font-semibold text-sm">{t('analytics.charts.monthlyPattern')}</h4>
                   <p className="text-xs text-zinc-600 dark:text-zinc-400">
-                    Shows how your events are distributed across days of the month. Click on any day to see the events
-                    scheduled for that day.
+                    {t('analytics.charts.monthlyPatternTooltip')}
                   </p>
                 </div>
               </HoverCardContent>
             </HoverCard>
           </CardTitle>
           <CardDescription className="text-zinc-500 dark:text-zinc-400 text-xs font-medium italic">
-            Hours scheduled per day of month
+            {t('analytics.charts.monthlyPatternDescription')}
           </CardDescription>
         </div>
         <div className="flex">
           <div className="relative z-30 flex flex-1 flex-col justify-center gap-1 border-t border-zinc-200 dark:border-zinc-800 px-6 py-4 text-left sm:border-t-0 sm:border-l sm:px-6 sm:py-4 lg:px-8 lg:py-6">
-            <span className="text-zinc-500 dark:text-zinc-400 text-xs">Total Hours</span>
+            <span className="text-zinc-500 dark:text-zinc-400 text-xs">{t('analytics.charts.totalHours')}</span>
             <span className="text-lg leading-none font-bold text-zinc-900 dark:text-zinc-100 sm:text-xl lg:text-3xl">
               {formatNumber(totalHours, 1)}H
             </span>
           </div>
           <div className="relative z-30 flex flex-1 flex-col justify-center gap-1 border-t border-l border-zinc-200 dark:border-zinc-800 px-6 py-4 text-left sm:border-t-0 sm:px-6 sm:py-4 lg:px-8 lg:py-6">
-            <span className="text-zinc-500 dark:text-zinc-400 text-xs">Events</span>
+            <span className="text-zinc-500 dark:text-zinc-400 text-xs">{t('analytics.charts.totalEventsLabel')}</span>
             <span className="text-lg leading-none font-bold text-zinc-900 dark:text-zinc-100 sm:text-xl lg:text-3xl">
               {formatNumber(totalEvents)}
             </span>
