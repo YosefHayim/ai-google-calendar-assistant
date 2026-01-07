@@ -43,6 +43,12 @@ router.post("/", chatController.sendChat);
 router.get("/conversations", chatController.getConversations);
 
 /**
+ * Start a new conversation (closes current active conversation)
+ * Must be before :id routes to avoid matching "new" as an ID
+ */
+router.post("/conversations/new", chatController.startNewConversation);
+
+/**
  * Get a specific conversation by ID
  */
 router.get("/conversations/:id", chatController.getConversation);
@@ -56,10 +62,5 @@ router.delete("/conversations/:id", chatController.removeConversation);
  * Continue an existing conversation - send message to specific conversation
  */
 router.post("/conversations/:id/messages", chatController.continueConversation);
-
-/**
- * Start a new conversation (closes current active conversation)
- */
-router.post("/conversations/new", chatController.startNewConversation);
 
 export default router;
