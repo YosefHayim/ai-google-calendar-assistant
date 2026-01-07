@@ -53,7 +53,7 @@ export const handleAgentRequest = async (
       ctx.session.email,
       message,
       fullContext,
-      { allyBrain }
+      { allyBrain, languageCode: ctx.session.codeLang }
     )
 
     logger.info(
@@ -87,7 +87,9 @@ export const handleAgentRequest = async (
     if (finalOutput?.startsWith("CONFLICT_DETECTED::")) {
       await handleConflictResponse(ctx, finalOutput)
     } else {
-      await ctx.reply(finalOutput || t("errors.noOutputFromAgent"))
+      await ctx.reply(finalOutput || t("errors.noOutputFromAgent"), {
+        parse_mode: "HTML",
+      })
     }
   } catch (error) {
     if (error instanceof InputGuardrailTripwireTriggered) {
@@ -152,7 +154,7 @@ export const handleConfirmation = async (ctx: GlobalContext): Promise<void> => {
     })
 
     if (!finalOutput) {
-      await ctx.reply(t("errors.noOutputFromAgent"))
+      await ctx.reply(t("errors.noOutputFromAgent"), { parse_mode: "HTML" })
       return
     }
 
@@ -165,10 +167,10 @@ export const handleConfirmation = async (ctx: GlobalContext): Promise<void> => {
       )
     }
 
-    await ctx.reply(finalOutput)
+    await ctx.reply(finalOutput, { parse_mode: "HTML" })
   } catch (error) {
     logger.error(`Telegram Bot: Confirmation error: ${error}`)
-    await ctx.reply(t("errors.eventCreationError"))
+    await ctx.reply(t("errors.eventCreationError"), { parse_mode: "HTML" })
   } finally {
     ctx.session.isProcessing = false
   }
@@ -187,7 +189,7 @@ export const handleConflictResponse = async (
   const parts = output.split("::")
 
   if (parts.length < CONFLICT_PARTS_MIN_LENGTH) {
-    await ctx.reply(output)
+    await ctx.reply(output, { parse_mode: "HTML" })
     return
   }
 
@@ -200,9 +202,9 @@ export const handleConflictResponse = async (
       conflictingEvents: conflictData.conflictingEvents,
     }
 
-    await ctx.reply(userMessage)
+    await ctx.reply(userMessage, { parse_mode: "HTML" })
   } catch (parseError) {
     logger.error(`Telegram Bot: Failed to parse conflict data: ${parseError}`)
-    await ctx.reply(output)
+    await ctx.reply(output, { parse_mode: "HTML" })
   }
 }
