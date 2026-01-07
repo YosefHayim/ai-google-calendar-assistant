@@ -152,15 +152,22 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     [queryClient],
   )
 
-  const addConversationToList = useCallback((conversation: ConversationListItem) => {
-    setLocalConversations((prev) => {
-      const exists = prev.some((c) => c.id === conversation.id)
-      if (exists) {
-        return prev.map((c) => (c.id === conversation.id ? conversation : c))
-      }
-      return [conversation, ...prev]
-    })
-  }, [])
+  const addConversationToList = useCallback(
+    (conversation: ConversationListItem) => {
+      setLocalConversations((prev) => {
+        const exists = prev.some((c) => c.id === conversation.id)
+        if (exists) {
+          return prev.map((c) => (c.id === conversation.id ? conversation : c))
+        }
+        return [conversation, ...prev]
+      })
+      // Also invalidate the query cache to ensure server data is refreshed
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.conversations.list(),
+      })
+    },
+    [queryClient],
+  )
 
   return (
     <ChatContext.Provider
