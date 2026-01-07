@@ -375,10 +375,36 @@ const continueConversation = reqResAsyncHandler(
   },
 );
 
+const startNewConversation = reqResAsyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = req.user?.id;
+
+    if (!userId) {
+      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
+    }
+
+    try {
+      await webConversation.closeActiveConversation(userId);
+
+      sendR(res, STATUS_RESPONSE.SUCCESS, "New conversation started", {
+        success: true,
+      });
+    } catch (error) {
+      console.error("Error starting new conversation:", error);
+      sendR(
+        res,
+        STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
+        "Error starting new conversation",
+      );
+    }
+  },
+);
+
 export const chatController = {
   sendChat,
   getConversations,
   getConversation,
   removeConversation,
   continueConversation,
+  startNewConversation,
 };
