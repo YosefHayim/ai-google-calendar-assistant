@@ -42,7 +42,7 @@ export const queryKeys = {
   conversations: {
     all: ['conversations'] as const,
     list: () => [...queryKeys.conversations.all, 'list'] as const,
-    detail: (id: number) => [...queryKeys.conversations.all, 'detail', id] as const,
+    detail: (id: string) => [...queryKeys.conversations.all, 'detail', id] as const,
   },
 
   // Integration queries

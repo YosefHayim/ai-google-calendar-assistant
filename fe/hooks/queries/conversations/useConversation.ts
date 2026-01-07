@@ -7,7 +7,7 @@ import { getConversation, type FullConversation } from '@/services/chatService'
 import type { QueryHookOptions } from '../useQueryWrapper'
 
 interface UseConversationOptions extends QueryHookOptions {
-  conversationId: number | null
+  conversationId: string | null
 }
 
 /**
@@ -18,7 +18,7 @@ export function useConversation(options: UseConversationOptions) {
   const { conversationId, ...queryOptions } = options
 
   const query = useQuery<FullConversation | null, Error>({
-    queryKey: queryKeys.conversations.detail(conversationId ?? 0),
+    queryKey: queryKeys.conversations.detail(conversationId ?? ''),
     queryFn: () => (conversationId ? getConversation(conversationId) : Promise.resolve(null)),
     staleTime: queryOptions.staleTime ?? QUERY_CONFIG.DEFAULT_STALE_TIME,
     enabled: (queryOptions.enabled ?? true) && conversationId !== null,

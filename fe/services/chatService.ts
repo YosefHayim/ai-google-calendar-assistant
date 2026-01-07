@@ -13,7 +13,7 @@ export interface ChatMessage {
 
 export interface StreamCallbacks {
   onChunk: (chunk: string, fullText: string) => void
-  onComplete: (fullText: string, conversationId?: number, title?: string) => void
+  onComplete: (fullText: string, conversationId?: string, title?: string) => void
   onError: (error: string) => void
 }
 
@@ -66,7 +66,7 @@ export const sendChatMessage = async (message: string, history: ChatMessage[]): 
 // ============================================
 
 export interface ConversationListItem {
-  id: number
+  id: string
   title: string
   messageCount: number
   lastUpdated: string
@@ -74,7 +74,7 @@ export interface ConversationListItem {
 }
 
 export interface FullConversation {
-  id: number
+  id: string
   userId: string
   messages: ChatMessage[]
   summary?: string
@@ -119,7 +119,7 @@ export const getConversations = async (
 /**
  * Get a specific conversation by ID
  */
-export const getConversation = async (conversationId: number): Promise<FullConversation | null> => {
+export const getConversation = async (conversationId: string): Promise<FullConversation | null> => {
   try {
     const response = await apiClient.get(`/api/chat/conversations/${conversationId}`)
     return response.data?.data?.conversation || null
@@ -131,7 +131,7 @@ export const getConversation = async (conversationId: number): Promise<FullConve
 /**
  * Delete a conversation
  */
-export const deleteConversation = async (conversationId: number): Promise<boolean> => {
+export const deleteConversation = async (conversationId: string): Promise<boolean> => {
   try {
     await apiClient.delete(`/api/chat/conversations/${conversationId}`)
     return true
@@ -158,7 +158,7 @@ export const deleteAllConversations = async (): Promise<boolean> => {
  * Continue an existing conversation
  */
 export const continueConversation = async (
-  conversationId: number,
+  conversationId: string,
   message: string,
   callbacks: StreamCallbacks,
 ): Promise<void> => {

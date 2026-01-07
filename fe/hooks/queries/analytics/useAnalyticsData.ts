@@ -254,9 +254,11 @@ export function useAnalyticsData({ timeMin, timeMax, calendarMap, enabled = true
               summary: event.summary || 'No Title',
               startTime: event.start.dateTime,
               endTime: event.end.dateTime,
+              eventDate: dayKey,
               durationMinutes,
               calendarName,
               calendarColor,
+              htmlLink: event.htmlLink,
             }
 
             const dayOfWeek = start.getDay()

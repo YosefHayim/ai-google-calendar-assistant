@@ -88,14 +88,10 @@ const getPreference = reqResAsyncHandler(
   },
 );
 
-/**
- * Update or create a user preference
- * PUT /api/users/preferences/:key
- */
 const updatePreference = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     const userId = req.user?.id;
-    const key = req.params.key as PreferenceKey;
+    const key = req.path.split("/").at(-1) as PreferenceKey;
     const value = req.body as AllyBrainBody | ContextualSchedulingBody;
 
     if (!userId) {

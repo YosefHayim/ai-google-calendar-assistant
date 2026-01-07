@@ -70,6 +70,51 @@ export async function fetchCalendarEvents(
   return data;
 }
 
+const GOOGLE_CALENDAR_MAX_RESULTS = 2500;
+const DEFAULT_MAX_PAGINATION_PAGES = 50;
+
+export async function fetchAllCalendarEvents(
+  calendarEvents: calendar_v3.Resource$Events,
+  params: calendar_v3.Params$Resource$Events$List,
+  maxPages = DEFAULT_MAX_PAGINATION_PAGES
+): Promise<calendar_v3.Schema$Events> {
+  const allItems: calendar_v3.Schema$Event[] = [];
+  let pageToken: string | undefined;
+  let pageCount = 0;
+  let lastResponse: calendar_v3.Schema$Events | null = null;
+
+  const paginatedParams: calendar_v3.Params$Resource$Events$List = {
+    ...params,
+    maxResults: params.maxResults ?? GOOGLE_CALENDAR_MAX_RESULTS,
+  };
+
+  do {
+    const { data } = await calendarEvents.list({
+      ...paginatedParams,
+      pageToken,
+    });
+
+    lastResponse = data;
+
+    if (data.items) {
+      allItems.push(...data.items);
+    }
+
+    pageToken = data.nextPageToken ?? undefined;
+    pageCount++;
+
+    if (pageCount >= maxPages) {
+      break;
+    }
+  } while (pageToken);
+
+  return {
+    ...lastResponse,
+    items: allItems,
+    nextPageToken: undefined,
+  };
+}
+
 /**
  * Format a single event into custom format
  */
@@ -114,7 +159,7 @@ export async function getEvents({ calendarEvents, req, extra }: GetEventsParams)
   const customFlag = Boolean(rawExtra.customEvents);
   const { listParams, calendarId } = buildListParams(rawExtra);
 
-  const eventsData = await fetchCalendarEvents(calendarEvents, listParams);
+  const eventsData = await fetchAllCalendarEvents(calendarEvents, listParams);
 
   if (customFlag) {
     return formatCustomEventsResponse(eventsData.items ?? [], calendarId);
