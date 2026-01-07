@@ -18,11 +18,12 @@ export function useDisconnectGoogleCalendar(options?: MutationHookOptions<Discon
   const mutation = useMutation<ApiResponse<DisconnectResponse>, Error, void>({
     mutationFn: () => integrationsService.disconnectGoogleCalendar(),
     onSuccess: (data, variables) => {
-      // Invalidate the Google Calendar status query to refetch
       queryClient.invalidateQueries({
         queryKey: queryKeys.integrations.googleCalendar(),
       })
-      options?.onSuccess?.(data.data as DisconnectResponse, variables)
+      if (data.data) {
+        options?.onSuccess?.(data.data, variables)
+      }
     },
     onError: (error, variables) => {
       options?.onError?.(error, variables)

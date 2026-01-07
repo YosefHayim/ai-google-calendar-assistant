@@ -44,7 +44,7 @@ import { useDebouncedCallback } from "use-debounce";
 
 import { Button } from "@/components/ui/button";
 import { formatRelativeDate } from "@/lib/dateUtils";
-import { CustomUser } from "@/types/api";
+import { getUserDisplayInfo } from "@/lib/user-utils";
 import Image from "next/image";
 import Link from "next/link";
 import { QuickEventDialog } from "@/components/dialogs/QuickEventDialog";
@@ -205,28 +205,11 @@ const Sidebar: React.FC<SidebarProps> = ({
     }
   };
 
-  // Extract user data similar to UserProfileCard
-  const isCustomUser =
-    userData && ("avatar_url" in userData || "first_name" in userData);
-  const customUser = isCustomUser ? (userData as CustomUser) : null;
-  const standardUser =
-    !isCustomUser && userData && "user_metadata" in userData ? userData : null;
-
-  const firstName =
-    customUser?.first_name ||
-    (standardUser?.user_metadata as Record<string, any>)?.first_name ||
-    "";
-  const lastName =
-    customUser?.last_name ||
-    (standardUser?.user_metadata as Record<string, any>)?.last_name ||
-    "";
-  const avatarUrl =
-    customUser?.avatar_url ||
-    (standardUser?.user_metadata as Record<string, any>)?.avatar_url;
-  const email = customUser?.email || standardUser?.email || "";
-  const fullName = [firstName, lastName].filter(Boolean).join(" ") || "User";
-  const initials =
-    `${firstName?.[0] || ""}${lastName?.[0] || ""}`.toUpperCase() || "U";
+  const userInfo = getUserDisplayInfo(userData);
+  const fullName = userInfo?.fullName ?? "User";
+  const initials = userInfo?.initials ?? "U";
+  const email = userInfo?.email ?? "";
+  const avatarUrl = userInfo?.avatarUrl;
 
   return (
     <>

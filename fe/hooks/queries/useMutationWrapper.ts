@@ -25,13 +25,12 @@ export function useMutationWrapper<TData, TVariables>(
 
   const apiError = isError ? extractApiError(error) : null
 
-  // Wrap mutateAsync to extract data from ApiResponse
   const mutateAsync = async (variables: TVariables): Promise<TData> => {
     const result = await originalMutateAsync(variables)
-    if (result.status === 'error') {
-      throw new Error(result.message)
+    if (result.status === 'error' || result.data === null) {
+      throw new Error(result.message || 'No data returned')
     }
-    return result.data as TData
+    return result.data
   }
 
   return {

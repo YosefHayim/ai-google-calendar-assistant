@@ -5,13 +5,12 @@ import Image from 'next/image'
 import { Moon, Sun, Monitor } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { SettingsRow, SettingsDropdown, SettingsSection, type DropdownOption } from './components'
-import type { CustomUser } from '@/types/api'
-import type { User } from '@supabase/supabase-js'
+import { getUserDisplayInfo, type UserData } from '@/lib/user-utils'
 
 interface GeneralTabProps {
   isDarkMode: boolean
   toggleTheme: () => void
-  userData: CustomUser | User | null | undefined
+  userData: UserData | null | undefined
   isUserLoading: boolean
 }
 
@@ -55,20 +54,12 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ isDarkMode, toggleTheme,
     }
   }
 
-  const isCustomUser = userData && ('avatar_url' in userData || 'first_name' in userData)
-  const customUser = isCustomUser ? (userData as CustomUser) : null
-  const standardUser = !isCustomUser && userData && 'user_metadata' in userData ? (userData as User) : null
-
-  const firstName = customUser?.first_name || (standardUser?.user_metadata as Record<string, unknown>)?.first_name || ''
-  const lastName = customUser?.last_name || (standardUser?.user_metadata as Record<string, unknown>)?.last_name || ''
-  const email = customUser?.email || standardUser?.email || ''
-  const avatarUrl = customUser?.avatar_url || (standardUser?.user_metadata as Record<string, unknown>)?.avatar_url
-  const fullName = [firstName, lastName].filter(Boolean).join(' ') || 'User'
-  const initials =
-    `${(firstName as string)?.[0] || ''}${(lastName as string)?.[0] || ''}`.toUpperCase() ||
-    (email as string)?.[0]?.toUpperCase() ||
-    'U'
-  const createdAt = customUser?.created_at || standardUser?.created_at
+  const userInfo = getUserDisplayInfo(userData)
+  const fullName = userInfo?.fullName ?? 'User'
+  const initials = userInfo?.initials ?? 'U'
+  const email = userInfo?.email ?? ''
+  const avatarUrl = userInfo?.avatarUrl
+  const createdAt = userInfo?.createdAt
 
   return (
     <Card>
@@ -80,7 +71,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ isDarkMode, toggleTheme,
         <div className="flex items-center gap-4 pb-4 border-b border-zinc-100 dark:border-zinc-800">
           {avatarUrl ? (
             <Image
-              src={avatarUrl as string}
+              src={avatarUrl}
               alt={fullName}
               width={56}
               height={56}
@@ -93,7 +84,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ isDarkMode, toggleTheme,
           )}
           <div className="flex-1 min-w-0">
             <h4 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 truncate">{fullName}</h4>
-            <p className="text-sm text-zinc-500 truncate">{email as string}</p>
+            <p className="text-sm text-zinc-500 truncate">{email}</p>
             {createdAt && (
               <p className="text-xs text-zinc-400 mt-1">
                 Member since {new Date(createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
