@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { Calendar } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { SidebarProvider, useSidebarContext } from '@/contexts/SidebarContext'
 import { useChatContext } from '@/contexts/ChatContext'
 import { useUser } from '@/hooks/queries/auth/useUser'
@@ -60,13 +61,14 @@ const SidebarContent: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle, onO
 
           {isOpen && (
             <div className="px-4 mt-4">
-              <button
+              <Button
                 onClick={() => setIsQuickEventOpen(true)}
-                className="w-full flex items-center gap-3 p-2 rounded-md bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+                variant="ghost"
+                className="w-full justify-start bg-primary/10 text-primary hover:bg-primary/20"
               >
                 <Calendar className="w-5 h-5" />
                 <span className="text-sm font-medium">Quick Add Event</span>
-              </button>
+              </Button>
             </div>
           )}
 

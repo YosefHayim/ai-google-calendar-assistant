@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { HelpCircle } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 
@@ -41,13 +42,15 @@ export const SettingsRow: React.FC<SettingsRowProps> = ({
         <TooltipProvider delayDuration={200}>
           <Tooltip>
             <TooltipTrigger asChild>
-              <button
+              <Button
                 type="button"
-                className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors"
+                variant="ghost"
+                size="icon"
+                className="h-6 w-6 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
                 aria-label={`More info about ${title}`}
               >
                 <HelpCircle className="w-4 h-4" />
-              </button>
+              </Button>
             </TooltipTrigger>
             <TooltipContent side="top" className="max-w-[250px] text-center">
               <p>{tooltip}</p>

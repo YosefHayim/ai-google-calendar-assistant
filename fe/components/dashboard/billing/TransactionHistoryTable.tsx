@@ -69,10 +69,11 @@ function MobileTransactionCard({
 }) {
   return (
     <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg overflow-hidden">
-      <button
+      <Button
         type="button"
+        variant="ghost"
         onClick={onToggle}
-        className="w-full p-4 flex items-center justify-between text-left hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors"
+        className="w-full p-4 h-auto flex items-center justify-between text-left hover:bg-zinc-50 dark:hover:bg-zinc-800/50"
       >
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between mb-1">
@@ -93,7 +94,7 @@ function MobileTransactionCard({
         <div className="ml-3 flex-shrink-0 text-zinc-400">
           {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
         </div>
-      </button>
+      </Button>
 
       {isExpanded && (
         <div className="px-4 pb-4 pt-2 border-t border-zinc-100 dark:border-zinc-800 space-y-3">

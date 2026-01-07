@@ -71,7 +71,7 @@ const makeFullEventParams = () =>
       end: makeEventTime(),
     })
     .describe(
-      "Full event parameters including summary, description, location, start, and end times. Email is automatically provided from user context."
+      "Full event parameters including summary, description, location, start, and end times. Email is automatically provided from user context.",
     );
 
 export const PARAMETERS_TOOLS = {
@@ -122,43 +122,75 @@ export const PARAMETERS_TOOLS = {
         .nullable(),
     })
     .describe(
-      "Fetch events for the authenticated user. Email is automatically provided from user context. By default searches all calendars. IMPORTANT: Always provide timeMax to limit query scope."
+      "Fetch events for the authenticated user. Email is automatically provided from user context. By default searches all calendars. IMPORTANT: Always provide timeMax to limit query scope.",
     ),
 
   // INSERT event - no email needed
   insertEventParameters: makeFullEventParams().describe(
-    "Insert a new event into the user's calendar. Email is automatically provided from user context."
+    "Insert a new event into the user's calendar. Email is automatically provided from user context.",
   ),
 
   // UPDATE event - eventId required, all other fields optional with defaults
   // Only pass fields you want to change - unspecified fields are preserved
+  // CRITICAL: Empty strings are transformed to null to prevent bad API requests
   updateEventParameters: z
     .object({
       eventId: requiredString(
         "The ID of the event to update.",
-        "Event ID is required."
+        "Event ID is required.",
       ),
       calendarId: calendarSchema.default(null),
       summary: z.coerce
         .string({
           description:
-            "New title for the event. Only pass if changing the title.",
+            "New title for the event. ONLY pass if explicitly renaming. Do NOT pass for time changes.",
         })
+        .transform((val) => (val === "" ? null : val))
         .nullable()
         .default(null),
       description: z.coerce
         .string({ description: "New description. Only pass if changing." })
+        .transform((val) => (val === "" ? null : val))
         .nullable()
         .default(null),
       location: z.coerce
         .string({ description: "New location. Only pass if changing." })
+        .transform((val) => (val === "" ? null : val))
         .nullable()
         .default(null),
-      start: makeEventTime().nullable().default(null),
-      end: makeEventTime().nullable().default(null),
+      start: makeEventTime()
+        .transform((val) => {
+          // Filter out empty values in start time object
+          if (!val) return null;
+          const cleaned = {
+            date: val.date === "" ? null : val.date,
+            dateTime: val.dateTime === "" ? null : val.dateTime,
+            timeZone: val.timeZone === "" ? null : val.timeZone,
+          };
+          // Return null if all fields are empty/null
+          if (!cleaned.date && !cleaned.dateTime) return null;
+          return cleaned;
+        })
+        .nullable()
+        .default(null),
+      end: makeEventTime()
+        .transform((val) => {
+          // Filter out empty values in end time object
+          if (!val) return null;
+          const cleaned = {
+            date: val.date === "" ? null : val.date,
+            dateTime: val.dateTime === "" ? null : val.dateTime,
+            timeZone: val.timeZone === "" ? null : val.timeZone,
+          };
+          // Return null if all fields are empty/null
+          if (!cleaned.date && !cleaned.dateTime) return null;
+          return cleaned;
+        })
+        .nullable()
+        .default(null),
     })
     .describe(
-      "Update an existing event by ID. IMPORTANT: Only pass fields you want to change - do NOT pass summary unless renaming the event. Unspecified fields are preserved from the original event."
+      "Update an existing event by ID. CRITICAL: Only pass fields you want to change. Do NOT pass summary/description/location unless explicitly changing them. Empty strings are invalid.",
     ),
 
   // DELETE event - no email needed
@@ -166,12 +198,12 @@ export const PARAMETERS_TOOLS = {
     .object({
       eventId: requiredString(
         "The ID of the event to delete.",
-        "Event ID is required."
+        "Event ID is required.",
       ),
       calendarId: calendarSchema,
     })
     .describe(
-      "Delete an event by ID. Use the calendarId from the event. Email is automatically provided from user context."
+      "Delete an event by ID. Use the calendarId from the event. Email is automatically provided from user context.",
     ),
 
   // Gap analysis parameters
@@ -190,7 +222,7 @@ export const PARAMETERS_TOOLS = {
         .describe("Calendar ID to analyze. Defaults to 'primary'."),
     })
     .describe(
-      "Parameters for analyzing gaps in the user's calendar. Email is automatically provided from user context."
+      "Parameters for analyzing gaps in the user's calendar. Email is automatically provided from user context.",
     ),
 
   // Fill gap parameters
@@ -220,6 +252,6 @@ export const PARAMETERS_TOOLS = {
         .describe("Calendar ID to create the event in."),
     })
     .describe(
-      "Parameters for filling a gap with a new calendar event. Email is automatically provided from user context."
+      "Parameters for filling a gap with a new calendar event. Email is automatically provided from user context.",
     ),
 };

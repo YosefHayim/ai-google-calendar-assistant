@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { CalendarPlus, Clock, MapPin, Loader2, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import {
   Dialog,
   DialogContent,
@@ -90,12 +91,11 @@ export const FillGapDialog: React.FC<FillGapDialogProps> = ({ gap, isOpen, onClo
             <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
               Event Name <span className="text-red-500">*</span>
             </label>
-            <input
+            <Input
               type="text"
               value={summary}
               onChange={(e) => setSummary(e.target.value)}
               placeholder="What would you like to schedule?"
-              className="w-full px-4 py-2.5 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all"
               autoFocus
             />
           </div>
@@ -105,13 +105,13 @@ export const FillGapDialog: React.FC<FillGapDialogProps> = ({ gap, isOpen, onClo
               Location <span className="text-zinc-400 font-normal">(optional)</span>
             </label>
             <div className="relative">
-              <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
-              <input
+              <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 z-10" />
+              <Input
                 type="text"
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
                 placeholder="Add a location"
-                className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all"
+                className="pl-10"
               />
             </div>
           </div>

@@ -1,12 +1,12 @@
 'use client'
 
-'use client'
-
 import { ArrowLeft, ChevronDown, Phone, ShieldCheck } from 'lucide-react'
 import React, { useState } from 'react'
 
 import { AllyLogo } from '@/components/shared/logo'
 import { BackgroundPattern1 } from '@/components/shared/BackgroundPattern1'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button'
 import { useRouter } from 'next/navigation'
 
@@ -108,13 +108,13 @@ const PhoneRegistrationPage: React.FC = () => {
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-primary transition-colors">
                     <Phone size={16} />
                   </div>
-                  <input
+                  <Input
                     type="tel"
                     required
                     value={phoneNumber}
                     onChange={(e) => setPhoneNumber(e.target.value)}
                     placeholder="555-000-0000"
-                    className="w-full h-full bg-transparent py-5 pl-11 pr-4 text-xl outline-none text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 font-medium"
+                    className="w-full h-full bg-transparent py-5 pl-11 pr-4 text-xl border-0 shadow-none focus-visible:ring-0 font-medium"
                   />
                 </div>
               </div>
@@ -130,13 +130,14 @@ const PhoneRegistrationPage: React.FC = () => {
             />
           </form>
 
-          <button
+          <Button
             onClick={() => router.push('/register')}
-            className="mt-8 flex items-center justify-center gap-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 w-full transition-colors font-medium text-sm"
+            variant="ghost"
+            className="mt-8 w-full text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 font-medium text-sm"
           >
             <ArrowLeft size={16} />
             Back to registration
-          </button>
+          </Button>
         </div>
       </BackgroundPattern1>
 

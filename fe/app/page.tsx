@@ -2,6 +2,7 @@
 
 import { ArrowRight, Calendar, Clock, Mic, Sparkles } from 'lucide-react'
 
+import { Button } from '@/components/ui/button'
 import BentoGridSection from '@/components/marketing/BentoGridSection'
 import FAQs from '@/components/marketing/FAQs'
 import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button'
@@ -35,9 +36,12 @@ export default function HomePage() {
               <InteractiveHoverButton text="Get Started Free" className="h-14 px-8 text-lg" />
             </Link>
             <Link href="/pricing">
-              <button className="border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 rounded-full h-14 px-8 text-lg font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors flex items-center gap-2">
-                View Pricing <ArrowRight className="w-5 h-5" />
-              </button>
+              <Button
+                  variant="outline"
+                  className="rounded-full h-14 px-8 text-lg font-medium"
+                >
+                  View Pricing <ArrowRight className="w-5 h-5" />
+                </Button>
             </Link>
           </div>
         </div>

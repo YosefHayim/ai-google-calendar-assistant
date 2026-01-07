@@ -1,5 +1,9 @@
 import { PARAMETERS_TOOLS, makeEventTime } from "./tool-schemas";
-import { analyzeGapsForUser, fillGap, formatGapsForDisplay } from "@/utils/calendar/gap-recovery";
+import {
+  analyzeGapsForUser,
+  fillGap,
+  formatGapsForDisplay,
+} from "@/utils/calendar/gap-recovery";
 import {
   checkConflictsDirect,
   getUserDefaultTimezoneDirect,
@@ -25,10 +29,15 @@ export interface AgentContext {
 /**
  * Extract email from run context - throws if not available
  */
-function getEmailFromContext(runContext: RunContext<AgentContext> | undefined, toolName: string): string {
+function getEmailFromContext(
+  runContext: RunContext<AgentContext> | undefined,
+  toolName: string,
+): string {
   const email = runContext?.context?.email;
   if (!email) {
-    throw new Error(`${toolName}: User email not found in context. Ensure the user is authenticated.`);
+    throw new Error(
+      `${toolName}: User email not found in context. Ensure the user is authenticated.`,
+    );
   }
   return email;
 }
@@ -42,7 +51,10 @@ function stringifyError(error: unknown): string {
     return error.message;
   }
   if (typeof error === "object" && error !== null) {
-    if ("message" in error && typeof (error as { message: unknown }).message === "string") {
+    if (
+      "message" in error &&
+      typeof (error as { message: unknown }).message === "string"
+    ) {
       return (error as { message: string }).message;
     }
     try {
@@ -60,14 +72,16 @@ export const AGENT_TOOLS = {
     description: TOOLS_DESCRIPTION.generateGoogleAuthUrlDescription,
     parameters: PARAMETERS_TOOLS.generateGoogleAuthUrlParameters,
     execute: EXECUTION_TOOLS.generateGoogleAuthUrl,
-    errorFunction: (_, error) => `generate_google_auth_url: ${stringifyError(error)}`,
+    errorFunction: (_, error) =>
+      `generate_google_auth_url: ${stringifyError(error)}`,
   }),
   register_user_via_db: tool({
     name: "register_user_via_db",
     description: TOOLS_DESCRIPTION.registerUserViaDb,
     parameters: PARAMETERS_TOOLS.registerUserParameters,
     execute: EXECUTION_TOOLS.registerUser,
-    errorFunction: (_, error) => `register_user_via_db: ${stringifyError(error)}`,
+    errorFunction: (_, error) =>
+      `register_user_via_db: ${stringifyError(error)}`,
   }),
   // GET event - email from context
   get_event: tool<typeof PARAMETERS_TOOLS.getEventParameters, AgentContext>({
@@ -81,18 +95,36 @@ export const AGENT_TOOLS = {
     errorFunction: (_, error) => `get_event: ${stringifyError(error)}`,
   }),
   // UPDATE event - email from context
-  update_event: tool<typeof PARAMETERS_TOOLS.updateEventParameters, AgentContext>({
+  update_event: tool<
+    typeof PARAMETERS_TOOLS.updateEventParameters,
+    AgentContext
+  >({
     name: "update_event",
     description: TOOLS_DESCRIPTION.updateEvent,
     parameters: PARAMETERS_TOOLS.updateEventParameters,
     execute: async (params, runContext) => {
       const email = getEmailFromContext(runContext, "update_event");
-      return EXECUTION_TOOLS.updateEvent({ ...params, email });
+      const cleanedParams = {
+        eventId: params.eventId,
+        calendarId: params.calendarId ?? undefined,
+        summary: params.summary ?? undefined,
+        description: params.description ?? undefined,
+        location: params.location ?? undefined,
+        start: params.start ?? undefined,
+        end: params.end ?? undefined,
+        email,
+      };
+      return EXECUTION_TOOLS.updateEvent(
+        cleanedParams as Parameters<typeof EXECUTION_TOOLS.updateEvent>[0],
+      );
     },
     errorFunction: (_, error) => `update_event: ${stringifyError(error)}`,
   }),
   // DELETE event - email from context
-  delete_event: tool<typeof PARAMETERS_TOOLS.deleteEventParameter, AgentContext>({
+  delete_event: tool<
+    typeof PARAMETERS_TOOLS.deleteEventParameter,
+    AgentContext
+  >({
     name: "delete_event",
     description: TOOLS_DESCRIPTION.deleteEvent,
     parameters: PARAMETERS_TOOLS.deleteEventParameter,
@@ -121,7 +153,8 @@ export const DIRECT_TOOLS = {
       const email = getEmailFromContext(runContext, "validate_user_direct");
       return validateUserDirect(email);
     },
-    errorFunction: (_, error) => `validate_user_direct: ${stringifyError(error)}`,
+    errorFunction: (_, error) =>
+      `validate_user_direct: ${stringifyError(error)}`,
   }),
 
   // Get timezone - email from context
@@ -134,7 +167,8 @@ export const DIRECT_TOOLS = {
       const email = getEmailFromContext(runContext, "get_timezone_direct");
       return getUserDefaultTimezoneDirect(email);
     },
-    errorFunction: (_, error) => `get_timezone_direct: ${stringifyError(error)}`,
+    errorFunction: (_, error) =>
+      `get_timezone_direct: ${stringifyError(error)}`,
   }),
 
   // Select calendar - email from context
@@ -158,7 +192,8 @@ export const DIRECT_TOOLS = {
       const email = getEmailFromContext(runContext, "select_calendar_direct");
       return selectCalendarByRules(email, { summary, description, location });
     },
-    errorFunction: (_, error) => `select_calendar_direct: ${stringifyError(error)}`,
+    errorFunction: (_, error) =>
+      `select_calendar_direct: ${stringifyError(error)}`,
   }),
 
   // Check conflicts - email from context
@@ -182,7 +217,8 @@ export const DIRECT_TOOLS = {
       const email = getEmailFromContext(runContext, "check_conflicts_direct");
       return checkConflictsDirect({ email, calendarId, start, end });
     },
-    errorFunction: (_, error) => `check_conflicts_direct: ${stringifyError(error)}`,
+    errorFunction: (_, error) =>
+      `check_conflicts_direct: ${stringifyError(error)}`,
   }),
 
   // Pre-create validation - email from context
@@ -206,7 +242,10 @@ export const DIRECT_TOOLS = {
       start: makeEventTime().nullable(),
       end: makeEventTime().nullable(),
     }),
-    execute: async ({ summary, description, location, start, end }, runContext) => {
+    execute: async (
+      { summary, description, location, start, end },
+      runContext,
+    ) => {
       const email = getEmailFromContext(runContext, "pre_create_validation");
       return preCreateValidation(email, {
         summary: summary ?? undefined,
@@ -216,7 +255,8 @@ export const DIRECT_TOOLS = {
         end: end ?? undefined,
       });
     },
-    errorFunction: (_, error) => `pre_create_validation: ${stringifyError(error)}`,
+    errorFunction: (_, error) =>
+      `pre_create_validation: ${stringifyError(error)}`,
   }),
 
   // Insert event direct - email from context
@@ -246,11 +286,15 @@ export const DIRECT_TOOLS = {
       const email = getEmailFromContext(runContext, "insert_event_direct");
       return EXECUTION_TOOLS.insertEvent({ ...params, email });
     },
-    errorFunction: (_, error) => `insert_event_direct: ${stringifyError(error)}`,
+    errorFunction: (_, error) =>
+      `insert_event_direct: ${stringifyError(error)}`,
   }),
 
   // Get event direct - email from context
-  get_event_direct: tool<typeof PARAMETERS_TOOLS.getEventParameters, AgentContext>({
+  get_event_direct: tool<
+    typeof PARAMETERS_TOOLS.getEventParameters,
+    AgentContext
+  >({
     name: "get_event_direct",
     description:
       "Direct event retrieval - bypasses AI agent. Searches for events by optional keywords, and time range. Returns raw JSON events array. Email is automatically provided from user context.",
@@ -271,14 +315,15 @@ export const DIRECT_TOOLS = {
       eventsData: z.coerce
         .string()
         .describe(
-          "The response object from get_event_direct as a JSON string. When searchAllCalendars=true, it contains 'allEvents' array. When searchAllCalendars=false, it contains { type: 'standard', data: { items: [...] } }."
+          "The response object from get_event_direct as a JSON string. When searchAllCalendars=true, it contains 'allEvents' array. When searchAllCalendars=false, it contains { type: 'standard', data: { items: [...] } }.",
         ),
     }),
     execute: async ({ eventsData }) => {
       // Parse JSON string to object
       let parsedData: unknown;
       try {
-        parsedData = typeof eventsData === "string" ? JSON.parse(eventsData) : eventsData;
+        parsedData =
+          typeof eventsData === "string" ? JSON.parse(eventsData) : eventsData;
       } catch {
         return { error: "Invalid JSON string provided for eventsData" };
       }
@@ -323,7 +368,10 @@ export const DIRECT_TOOLS = {
   // ═══════════════════════════════════════════════════════════════════════════
 
   // Analyze gaps - email from context
-  analyze_gaps_direct: tool<typeof PARAMETERS_TOOLS.analyzeGapsParameters, AgentContext>({
+  analyze_gaps_direct: tool<
+    typeof PARAMETERS_TOOLS.analyzeGapsParameters,
+    AgentContext
+  >({
     name: "analyze_gaps_direct",
     description: TOOLS_DESCRIPTION.analyzeGaps,
     parameters: PARAMETERS_TOOLS.analyzeGapsParameters,
@@ -349,15 +397,22 @@ export const DIRECT_TOOLS = {
         },
       };
     },
-    errorFunction: (_, error) => `analyze_gaps_direct: ${stringifyError(error)}`,
+    errorFunction: (_, error) =>
+      `analyze_gaps_direct: ${stringifyError(error)}`,
   }),
 
   // Fill gap - email from context
-  fill_gap_direct: tool<typeof PARAMETERS_TOOLS.fillGapParameters, AgentContext>({
+  fill_gap_direct: tool<
+    typeof PARAMETERS_TOOLS.fillGapParameters,
+    AgentContext
+  >({
     name: "fill_gap_direct",
     description: TOOLS_DESCRIPTION.fillGap,
     parameters: PARAMETERS_TOOLS.fillGapParameters,
-    execute: async ({ gapStart, gapEnd, summary, description, location, calendarId }, runContext) => {
+    execute: async (
+      { gapStart, gapEnd, summary, description, location, calendarId },
+      runContext,
+    ) => {
       const email = getEmailFromContext(runContext, "fill_gap_direct");
       return await fillGap({
         email,
@@ -381,7 +436,9 @@ export const DIRECT_TOOLS = {
     name: "format_gaps_display",
     description: TOOLS_DESCRIPTION.formatGapsForDisplay,
     parameters: z.object({
-      gapsJson: z.coerce.string().describe("The gaps array from analyze_gaps_direct as a JSON string."),
+      gapsJson: z.coerce
+        .string()
+        .describe("The gaps array from analyze_gaps_direct as a JSON string."),
     }),
     execute: async ({ gapsJson }) => {
       let gaps: Parameters<typeof formatGapsForDisplay>[0];
@@ -397,6 +454,7 @@ export const DIRECT_TOOLS = {
         count: Array.isArray(gaps) ? gaps.length : 0,
       };
     },
-    errorFunction: (_, error) => `format_gaps_display: ${stringifyError(error)}`,
+    errorFunction: (_, error) =>
+      `format_gaps_display: ${stringifyError(error)}`,
   }),
 };

@@ -2,6 +2,7 @@ import { NextFunction, Request, Response, Router } from "express";
 
 import { STATUS_RESPONSE } from "@/config/constants";
 import { chatController } from "@/controllers/chat-controller";
+import { chatStreamController } from "@/controllers/chat-stream-controller";
 import { googleTokenRefresh } from "@/middlewares/google-token-refresh";
 import { googleTokenValidation } from "@/middlewares/google-token-validation";
 import { logger } from "@/utils/logger";
@@ -27,10 +28,8 @@ router.param(
   },
 );
 
-/**
- * Chat endpoint - processes messages via OpenAI Agents SDK
- */
 router.post("/", chatController.sendChat);
+router.post("/stream", chatStreamController.streamChat);
 
 // ============================================
 // Conversation Management Endpoints
@@ -58,9 +57,7 @@ router.get("/conversations/:id", chatController.getConversation);
  */
 router.delete("/conversations/:id", chatController.removeConversation);
 
-/**
- * Continue an existing conversation - send message to specific conversation
- */
 router.post("/conversations/:id/messages", chatController.continueConversation);
+router.post("/conversations/:id/messages/stream", chatStreamController.streamContinueConversation);
 
 export default router;

@@ -3,6 +3,7 @@
 import React from 'react'
 import Image from 'next/image'
 import { BadgeCheck, Bell, CreditCard, LogOut, MoreHorizontal, Settings, Sparkles } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -44,14 +45,16 @@ export const SidebarFooter: React.FC<SidebarFooterProps> = ({
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button
-              className="p-1.5 rounded-md text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors flex-shrink-0"
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-zinc-500 dark:text-zinc-400 flex-shrink-0"
               onClick={(e) => e.stopPropagation()}
               suppressHydrationWarning
             >
               <MoreHorizontal className="w-5 h-5" />
               <span className="sr-only">More options</span>
-            </button>
+            </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent side="top" align={isOpen ? 'end' : 'center'} className="min-w-[14rem] rounded-lg">
             <DropdownMenuLabel className="p-0 font-normal">
