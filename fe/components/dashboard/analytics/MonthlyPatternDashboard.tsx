@@ -6,6 +6,7 @@ import { Calendar, Info } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
+import { useLanguage } from '@/contexts/LanguageContext'
 import type { MonthlyPatternDataPoint } from '@/types/analytics'
 import { formatNumber } from '@/lib/dataUtils'
 import { ChartTypeWrapper } from './ChartTypeWrapper'
@@ -28,6 +29,8 @@ export const MonthlyPatternDashboard: React.FC<MonthlyPatternDashboardProps> = (
   onDayClick,
   isLoading = false,
 }) => {
+  const { t } = useLanguage()
+
   const filteredData = React.useMemo(() => {
     return data.filter((d) => d.hours > 0 || d.eventCount > 0)
   }, [data])
@@ -78,9 +81,9 @@ export const MonthlyPatternDashboard: React.FC<MonthlyPatternDashboardProps> = (
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Calendar className="w-5 h-5 text-primary" />
-            Monthly Pattern
+            {t('analytics.charts.monthlyPattern')}
           </CardTitle>
-          <CardDescription>No data available</CardDescription>
+          <CardDescription>{t('common.noData')}</CardDescription>
         </CardHeader>
       </Card>
     )
