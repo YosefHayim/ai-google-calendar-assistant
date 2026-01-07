@@ -235,7 +235,7 @@ const BentoStatsGrid: React.FC<BentoStatsGridProps> = ({ data, comparison, isLoa
           )}
         </div>
         <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
-          Avg {data.averageEventDuration.toFixed(1)}h per event
+          Avg {data.averageEventDuration.toFixed(1)}H per event
         </p>
       </motion.div>
 

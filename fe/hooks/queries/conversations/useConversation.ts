@@ -26,9 +26,14 @@ export function useConversation(options: UseConversationOptions) {
     refetchOnMount: queryOptions.refetchOnMount ?? true,
   })
 
+  // When query is disabled (no conversationId), isLoading should be false
+  // TanStack Query v5 can leave isLoading stale when query becomes disabled
+  const isEnabled = (queryOptions.enabled ?? true) && conversationId !== null
+  const isActuallyLoading = isEnabled && query.isLoading
+
   return {
     conversation: query.data,
-    isLoading: query.isLoading,
+    isLoading: isActuallyLoading,
     isFetching: query.isFetching,
     isError: query.isError,
     error: query.error,
