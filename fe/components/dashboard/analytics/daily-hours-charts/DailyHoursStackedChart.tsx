@@ -24,7 +24,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-export const DailyHoursStackedChart: React.FC<DailyHoursStackedChartProps> = ({ data, onDayClick: _onDayClick }) => {
+export const DailyHoursStackedChart: React.FC<DailyHoursStackedChartProps> = ({ data, onDayClick }) => {
   const chartData = React.useMemo(() => {
     return data.map((point) => ({
       ...point,
@@ -41,6 +41,12 @@ export const DailyHoursStackedChart: React.FC<DailyHoursStackedChartProps> = ({ 
         data={chartData}
         margin={{ left: 12, right: 12, top: 12, bottom: 12 }}
         stackOffset="none"
+        onClick={(state) => {
+          if (onDayClick && state?.activePayload?.[0]?.payload) {
+            const point = state.activePayload[0].payload as DailyAvailableHoursDataPoint
+            onDayClick(point.date, point.hours)
+          }
+        }}
       >
         <defs>
           <linearGradient id="availableGradient" x1="0" y1="0" x2="0" y2="1">
@@ -113,13 +119,7 @@ export const DailyHoursStackedChart: React.FC<DailyHoursStackedChartProps> = ({ 
             </div>
           )}
         />
-        <Area
-          type="monotone"
-          dataKey="used"
-          stackId="1"
-          stroke="#6366f1"
-          fill="url(#usedGradient)"
-        />
+        <Area type="monotone" dataKey="used" stackId="1" stroke="#6366f1" fill="url(#usedGradient)" />
         <Area
           type="monotone"
           dataKey="available"
@@ -127,6 +127,12 @@ export const DailyHoursStackedChart: React.FC<DailyHoursStackedChartProps> = ({ 
           stroke="#f26306"
           fill="url(#availableGradient)"
           className="cursor-pointer"
+          activeDot={{
+            r: 5,
+            fill: '#f26306',
+            stroke: '#fff',
+            strokeWidth: 2,
+          }}
         />
       </AreaChart>
     </ChartContainer>

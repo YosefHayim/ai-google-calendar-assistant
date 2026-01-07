@@ -19,7 +19,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-export const DailyHoursLineChart: React.FC<DailyHoursLineChartProps> = ({ data, onDayClick: _onDayClick }) => {
+export const DailyHoursLineChart: React.FC<DailyHoursLineChartProps> = ({ data, onDayClick }) => {
   const chartData = React.useMemo(() => {
     return data.map((point) => ({
       ...point,
@@ -33,6 +33,12 @@ export const DailyHoursLineChart: React.FC<DailyHoursLineChartProps> = ({ data, 
         accessibilityLayer
         data={chartData}
         margin={{ left: 12, right: 12, top: 12, bottom: 12 }}
+        onClick={(state) => {
+          if (onDayClick && state?.activePayload?.[0]?.payload) {
+            const point = state.activePayload[0].payload as DailyAvailableHoursDataPoint
+            onDayClick(point.date, point.hours)
+          }
+        }}
       >
         <CartesianGrid strokeDasharray="3 3" className="stroke-zinc-200 dark:stroke-zinc-800" />
         <XAxis

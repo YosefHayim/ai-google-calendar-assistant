@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import { format } from 'date-fns'
-import { Clock, Calendar, CalendarDays, ExternalLink } from 'lucide-react'
+import { Clock, Calendar, CalendarDays, ExternalLink, Hourglass } from 'lucide-react'
 import type { PatternEventSummary } from '@/types/analytics'
 
 interface EventsListPopoverProps {
@@ -40,11 +40,7 @@ function handleEventClick(htmlLink: string | undefined) {
   }
 }
 
-export const EventsListPopover: React.FC<EventsListPopoverProps> = ({
-  events,
-  title,
-  maxHeight = 300,
-}) => {
+export const EventsListPopover: React.FC<EventsListPopoverProps> = ({ events, title, maxHeight = 300 }) => {
   if (events.length === 0) {
     return (
       <div className="p-3">
@@ -57,7 +53,9 @@ export const EventsListPopover: React.FC<EventsListPopoverProps> = ({
     <div className="w-[300px]">
       <div className="px-3 py-2 border-b border-zinc-200 dark:border-zinc-700">
         <h4 className="font-semibold text-sm text-zinc-900 dark:text-zinc-100">{title}</h4>
-        <p className="text-xs text-zinc-500 dark:text-zinc-400">{events.length} event{events.length !== 1 ? 's' : ''}</p>
+        <p className="text-xs text-zinc-500 dark:text-zinc-400">
+          {events.length} event{events.length !== 1 ? 's' : ''}
+        </p>
       </div>
       <div style={{ maxHeight }} className="p-2 overflow-y-auto">
         <div className="space-y-2">
@@ -85,14 +83,13 @@ export const EventsListPopover: React.FC<EventsListPopoverProps> = ({
                     <CalendarDays className="w-3 h-3" />
                     <span>{formatEventDate(event.eventDate)}</span>
                   </div>
-                  <div className="flex items-center gap-3 mt-1">
-                    <div className="flex items-center gap-1 text-xs text-zinc-500 dark:text-zinc-400">
-                      <Clock className="w-3 h-3" />
-                      <span>{formatEventTime(event.startTime, event.endTime)}</span>
-                    </div>
-                    <div className="flex items-center gap-1 text-xs text-zinc-500 dark:text-zinc-400">
-                      <span className="font-medium">{formatDuration(event.durationMinutes)}</span>
-                    </div>
+                  <div className="flex items-center gap-1 mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+                    <Clock className="w-3 h-3" />
+                    <span>{formatEventTime(event.startTime, event.endTime)}</span>
+                  </div>
+                  <div className="flex items-center gap-1 mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+                    <Hourglass className="w-3 h-3" />
+                    <span className="font-medium">{formatDuration(event.durationMinutes)}</span>
                   </div>
                   <div className="flex items-center gap-1 mt-1 text-xs text-zinc-400 dark:text-zinc-500">
                     <Calendar className="w-3 h-3" />
