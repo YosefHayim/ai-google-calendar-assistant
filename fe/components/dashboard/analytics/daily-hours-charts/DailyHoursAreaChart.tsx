@@ -19,7 +19,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-export const DailyHoursAreaChart: React.FC<DailyHoursAreaChartProps> = ({ data, onDayClick: _onDayClick }) => {
+export const DailyHoursAreaChart: React.FC<DailyHoursAreaChartProps> = ({ data, onDayClick }) => {
   const chartData = React.useMemo(() => {
     return data.map((point) => ({
       ...point,
@@ -33,6 +33,12 @@ export const DailyHoursAreaChart: React.FC<DailyHoursAreaChartProps> = ({ data, 
         accessibilityLayer
         data={chartData}
         margin={{ left: 12, right: 12, top: 12, bottom: 12 }}
+        onClick={(state) => {
+          if (onDayClick && state?.activePayload?.[0]?.payload) {
+            const point = state.activePayload[0].payload as DailyAvailableHoursDataPoint
+            onDayClick(point.date, point.hours)
+          }
+        }}
       >
         <defs>
           <linearGradient id="hoursGradient" x1="0" y1="0" x2="0" y2="1">
