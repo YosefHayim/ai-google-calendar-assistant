@@ -6,6 +6,7 @@ import { Timer, Info } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
+import { useLanguage } from '@/contexts/LanguageContext'
 import type { EventDurationCategory } from '@/types/analytics'
 import { formatNumber } from '@/lib/dataUtils'
 import { ChartTypeWrapper } from './ChartTypeWrapper'
@@ -16,12 +17,6 @@ import { EventDurationProgressChart } from './event-duration-charts/EventDuratio
 
 const CHART_TYPES = ['progress', 'bar', 'pie'] as const
 type DurationChartType = (typeof CHART_TYPES)[number]
-
-const CHART_LABELS: Partial<Record<DurationChartType, string>> = {
-  progress: 'Progress',
-  bar: 'Bar',
-  pie: 'Pie',
-}
 
 interface EventDurationDashboardProps {
   data: EventDurationCategory[]
@@ -36,6 +31,8 @@ export const EventDurationDashboard: React.FC<EventDurationDashboardProps> = ({
   onCategoryClick,
   isLoading = false,
 }) => {
+  const { t } = useLanguage()
+
   if (isLoading) {
     return (
       <Card className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 py-0">
@@ -137,12 +134,7 @@ export const EventDurationDashboard: React.FC<EventDurationDashboardProps> = ({
         </div>
       </CardHeader>
       <CardContent className="px-2 sm:p-6">
-        <ChartTypeWrapper
-          chartId="event-duration"
-          chartTypes={CHART_TYPES}
-          defaultType="progress"
-          labels={CHART_LABELS}
-        >
+        <ChartTypeWrapper chartId="event-duration" chartTypes={CHART_TYPES} defaultType="progress">
           {(chartType) => renderChart(chartType)}
         </ChartTypeWrapper>
       </CardContent>
