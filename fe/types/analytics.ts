@@ -258,9 +258,11 @@ export interface PatternEventSummary {
   summary: string
   startTime: string
   endTime: string
+  eventDate: string
   durationMinutes: number
   calendarName: string
   calendarColor: string
+  htmlLink?: string
 }
 
 export interface WeeklyPatternDataPoint {

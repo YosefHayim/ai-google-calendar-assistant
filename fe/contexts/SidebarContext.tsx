@@ -9,8 +9,8 @@ import type { ConversationListItem } from '@/services/chatService'
 
 interface SidebarContextValue {
   pathname: string
-  conversationToDelete: number | null
-  setConversationToDelete: (id: number | null) => void
+  conversationToDelete: string | null
+  setConversationToDelete: (id: string | null) => void
   localSearchValue: string
   handleSearchChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   handleClearSearch: () => void
@@ -18,7 +18,7 @@ interface SidebarContextValue {
   setIsQuickEventOpen: (open: boolean) => void
   handleNewChat: (onClose: () => void) => void
   handleSelectConversation: (conversation: ConversationListItem, onClose: () => void) => Promise<void>
-  initiateDelete: (e: React.MouseEvent, id: number) => void
+  initiateDelete: (e: React.MouseEvent, id: string) => void
   confirmDelete: () => Promise<void>
 }
 
@@ -29,7 +29,7 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter()
   const { selectConversation, startNewConversation, removeConversation, searchQuery, setSearchQuery } = useChatContext()
 
-  const [conversationToDelete, setConversationToDelete] = useState<number | null>(null)
+  const [conversationToDelete, setConversationToDelete] = useState<string | null>(null)
   const [localSearchValue, setLocalSearchValue] = useState(searchQuery)
   const [isQuickEventOpen, setIsQuickEventOpen] = useState(false)
 
@@ -43,7 +43,7 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
       setLocalSearchValue(value)
       debouncedSetSearch(value)
     },
-    [debouncedSetSearch]
+    [debouncedSetSearch],
   )
 
   const handleClearSearch = useCallback(() => {
@@ -59,7 +59,7 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
       }
       onClose()
     },
-    [pathname, router, startNewConversation]
+    [pathname, router, startNewConversation],
   )
 
   const handleSelectConversation = useCallback(
@@ -70,10 +70,10 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
       }
       onClose()
     },
-    [pathname, router, selectConversation]
+    [pathname, router, selectConversation],
   )
 
-  const initiateDelete = useCallback((e: React.MouseEvent, id: number) => {
+  const initiateDelete = useCallback((e: React.MouseEvent, id: string) => {
     e.stopPropagation()
     setConversationToDelete(id)
   }, [])
@@ -116,7 +116,7 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
       handleSelectConversation,
       initiateDelete,
       confirmDelete,
-    ]
+    ],
   )
 
   return <SidebarContext.Provider value={value}>{children}</SidebarContext.Provider>

@@ -6,7 +6,7 @@ import { queryKeys } from '@/lib/query'
 import type { MutationHookOptions } from '../useMutationWrapper'
 
 interface ContinueConversationParams {
-  conversationId: number
+  conversationId: string
   message: string
   callbacks: StreamCallbacks
 }

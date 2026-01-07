@@ -104,7 +104,7 @@ const ChatInterface: React.FC = () => {
       onChunk: () => {
         // Not used anymore - typewriter component handles animation
       },
-      onComplete: (fullText: string, conversationId?: number, title?: string) => {
+      onComplete: (fullText: string, conversationId?: string, title?: string) => {
         // Set the full text immediately - typewriter will animate it
         setMessages((prev) => prev.map((msg) => (msg.id === assistantMessageId ? { ...msg, content: fullText } : msg)))
         // Handle new conversation creation

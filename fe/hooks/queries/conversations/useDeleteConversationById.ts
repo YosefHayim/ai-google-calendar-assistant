@@ -9,11 +9,11 @@ import type { MutationHookOptions } from '../useMutationWrapper'
  * Hook to delete a conversation by ID
  * Uses mutation pattern since this is a write operation
  */
-export function useDeleteConversationById(options?: MutationHookOptions<boolean, number>) {
+export function useDeleteConversationById(options?: MutationHookOptions<boolean, string>) {
   const queryClient = useQueryClient()
 
-  const mutation = useMutation<boolean, Error, number>({
-    mutationFn: (conversationId: number) => deleteConversation(conversationId),
+  const mutation = useMutation<boolean, Error, string>({
+    mutationFn: (conversationId: string) => deleteConversation(conversationId),
     onSuccess: (data, conversationId) => {
       // Invalidate conversation list to refetch
       queryClient.invalidateQueries({

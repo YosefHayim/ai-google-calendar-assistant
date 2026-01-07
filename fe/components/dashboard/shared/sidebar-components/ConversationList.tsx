@@ -7,14 +7,14 @@ import type { ConversationListItem } from '@/services/chatService'
 
 interface ConversationListProps {
   conversations: ConversationListItem[]
-  selectedConversationId: number | null
+  selectedConversationId: string | null
   isLoading: boolean
   isSearching: boolean
   localSearchValue: string
   onSearchChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   onClearSearch: () => void
   onSelectConversation: (conversation: ConversationListItem) => void
-  onInitiateDelete: (e: React.MouseEvent, id: number) => void
+  onInitiateDelete: (e: React.MouseEvent, id: string) => void
 }
 
 export const ConversationList: React.FC<ConversationListProps> = ({

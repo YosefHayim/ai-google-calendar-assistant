@@ -16,16 +16,16 @@ import DailyAvailableHoursDashboard from './DailyAvailableHoursDashboard'
 import DayEventsDialog from '@/components/dialogs/DayEventsDialog'
 import { DatePickerWithRange } from '@/components/ui/date-range-picker'
 import EventDetailsDialog from '@/components/dialogs/EventDetailsDialog'
-import EventDurationChart from './EventDurationChart'
+import EventDurationDashboard from './EventDurationDashboard'
 import InsightCard from './InsightCard'
 import InsightCardSkeleton from './InsightCardSkeleton'
 import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button'
 import ManageCalendars from '@/components/dashboard/analytics/ManageCalendars'
+import MonthlyPatternDashboard from './MonthlyPatternDashboard'
 import RecentEvents from '@/components/dashboard/analytics/RecentEvents'
 import TimeAllocationDashboard from './TimeAllocationDashboard'
 import TimeDistributionChart from './TimeDistributionChart'
-import WeeklyPatternChart from './WeeklyPatternChart'
-import MonthlyPatternChart from './MonthlyPatternChart'
+import WeeklyPatternDashboard from './WeeklyPatternDashboard'
 import { getInsightIcon } from '@/lib/iconUtils'
 import { useAIInsights } from '@/hooks/queries/analytics/useAIInsights'
 import { useAnalyticsContext } from '@/contexts/AnalyticsContext'
@@ -119,8 +119,9 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
     recentActivities,
     dailyAvailableHours,
     weeklyPattern,
+    monthlyPattern,
     timeOfDayDistribution,
-    eventDurationBreakdown,
+    eventDurationCategories,
     totalEvents,
   } = processedData
 
@@ -152,11 +153,12 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
 
       <BentoStatsGrid data={processedData} comparison={comparison} isLoading={isAnalyticsFetching} />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <WeeklyPatternChart data={weeklyPattern} isLoading={isAnalyticsFetching} />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <WeeklyPatternDashboard data={weeklyPattern} isLoading={isAnalyticsFetching} />
+        <MonthlyPatternDashboard data={monthlyPattern} isLoading={isAnalyticsFetching} />
         <TimeDistributionChart data={timeOfDayDistribution} isLoading={isAnalyticsFetching} />
-        <EventDurationChart
-          data={eventDurationBreakdown}
+        <EventDurationDashboard
+          data={eventDurationCategories}
           totalEvents={totalEvents}
           isLoading={isAnalyticsFetching}
         />
