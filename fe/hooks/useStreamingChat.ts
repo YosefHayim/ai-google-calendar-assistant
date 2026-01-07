@@ -7,6 +7,7 @@ import type { StreamingState } from '@/types/stream'
 interface UseStreamingChatOptions {
   onStreamComplete?: (conversationId: string, fullResponse: string) => void
   onStreamError?: (error: string) => void
+  onTitleGenerated?: (conversationId: string, title: string) => void
 }
 
 interface UseStreamingChatReturn {
@@ -25,7 +26,7 @@ const initialState: StreamingState = {
 }
 
 export function useStreamingChat(options: UseStreamingChatOptions = {}): UseStreamingChatReturn {
-  const { onStreamComplete, onStreamError } = options
+  const { onStreamComplete, onStreamError, onTitleGenerated } = options
   const [streamingState, setStreamingState] = useState<StreamingState>(initialState)
   const abortControllerRef = useRef<AbortController | null>(null)
 
@@ -90,6 +91,9 @@ export function useStreamingChat(options: UseStreamingChatOptions = {}): UseStre
               currentAgent: to,
             }))
           },
+          onTitleGenerated: (convId, title) => {
+            onTitleGenerated?.(convId, title)
+          },
           onDone: (convId, fullResponse) => {
             setStreamingState((prev) => ({
               ...prev,
@@ -119,7 +123,7 @@ export function useStreamingChat(options: UseStreamingChatOptions = {}): UseStre
 
       abortControllerRef.current = null
     },
-    [onStreamComplete, onStreamError],
+    [onStreamComplete, onStreamError, onTitleGenerated],
   )
 
   return {

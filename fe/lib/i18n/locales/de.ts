@@ -62,6 +62,136 @@ export const de: TranslationShape = {
     rights: 'Alle Rechte vorbehalten.',
     privacy: 'Datenschutzrichtlinie',
     terms: 'Nutzungsbedingungen',
+    product: 'Produkt',
+    pricing: 'Preise',
+    executivePower: 'Executive Power',
+    company: 'Unternehmen',
+    aboutUs: 'Über uns',
+    careers: 'Karriere',
+    resources: 'Ressourcen',
+    blog: 'Blog',
+    changeLog: 'Änderungsprotokoll',
+    description:
+      'Der KI-Assistent auf Führungsebene, entwickelt um Ihre Tiefenarbeit zu schützen. Von kostenlosem Zugang bis zu unbegrenzter Leistung. Basierend auf dem Ally Neural Protocol.',
+    systemStatus: 'Alle Systeme betriebsbereit • Hochleistungsmotor',
+  },
+
+  home: {
+    badge: 'KI-gestützte Kalenderverwaltung',
+    title: 'Ihr privater',
+    titleHighlight: 'KI-Sekretär',
+    subtitle:
+      'Verwalten Sie Ihren Google Kalender mit natürlichen Sprachbefehlen. Planen, verschieben und optimieren Sie Ihre Zeit mühelos.',
+    getStartedFree: 'Kostenlos starten',
+    viewPricing: 'Preise ansehen',
+    featuresTitle: 'Alles, was Sie zur Zeitverwaltung brauchen',
+    featuresSubtitle: 'Ally kombiniert KI-Intelligenz mit nahtloser Kalenderintegration',
+    voiceCommands: 'Sprachbefehle',
+    voiceCommandsDesc:
+      'Planen Sie Meetings, setzen Sie Erinnerungen und verwalten Sie Ihren Kalender mit natürlicher Sprache.',
+    smartScheduling: 'Intelligente Planung',
+    smartSchedulingDesc: 'KI-gestützte Planung, die die besten Zeiten für Ihre Termine findet.',
+    timeOptimization: 'Zeitoptimierung',
+    timeOptimizationDesc:
+      'Analysieren Sie Ihre Zeitplanmuster und erhalten Sie Einblicke zur Produktivitätssteigerung.',
+    ctaTitle: 'Bereit, Ihr Kalender-Erlebnis zu transformieren?',
+    ctaSubtitle: 'Schließen Sie sich Tausenden von Fachleuten an, die ihre Planung mit Ally vereinfacht haben.',
+    startForFree: 'Kostenlos starten',
+  },
+
+  about: {
+    title: 'Über uns',
+    subtitle: 'Wir bauen die Zukunft der Kalenderverwaltung mit KI-Intelligenz, die Ihre Arbeitsweise versteht.',
+    missionTitle: 'Unsere Mission',
+    missionP1:
+      'Wir glauben, dass jeder einen persönlichen Assistenten verdient, der den Zeitplan versteht, die Zeit respektiert und hilft, sich auf das Wichtige zu konzentrieren.',
+    missionP2:
+      'Ally kombiniert modernste KI mit intuitivem Design für ein Kalender-Erlebnis, das sich wie ein persönlicher Sekretär anfühlt.',
+    activeUsers: 'Aktive Nutzer',
+    accuracyRate: 'Genauigkeitsrate',
+    userRating: 'Nutzerbewertung',
+    savedWeekly: 'Wöchentlich gespart',
+    valuesTitle: 'Unsere Werte',
+    privacyFirst: 'Datenschutz zuerst',
+    privacyFirstDesc:
+      'Ihre Daten gehören Ihnen. Wir verwenden branchenführende Verschlüsselung und verkaufen niemals Ihre Informationen.',
+    speedMatters: 'Geschwindigkeit zählt',
+    speedMattersDesc: 'Jede Interaktion ist auf Geschwindigkeit optimiert. Planen Sie in Sekunden.',
+    userFocused: 'Nutzerorientiert',
+    userFocusedDesc: 'Jede Funktion beginnt mit dem Verständnis der echten Bedürfnisse unserer Nutzer.',
+    ctaTitle: 'Schließen Sie sich unserer Mission an',
+    ctaSubtitle: 'Erleben Sie die Zukunft der Kalenderverwaltung noch heute.',
+    getStarted: 'Loslegen',
+  },
+
+  contact: {
+    badge: 'Kontakt aufnehmen',
+    title: 'Kontaktieren Sie uns',
+    subtitle: 'Haben Sie eine Frage, Feedback oder brauchen Sie Unterstützung? Wir freuen uns, von Ihnen zu hören.',
+    emailUs: 'E-Mail senden',
+    emailUsDesc: 'Für allgemeine Anfragen und Support',
+    responseTime: 'Antwortzeit',
+    responseTimeDesc: 'Wir antworten in der Regel innerhalb von 24-48 Stunden an Werktagen.',
+    form: {
+      name: 'Name',
+      namePlaceholder: 'Ihr Name',
+      email: 'E-Mail',
+      emailPlaceholder: 'ihre@email.com',
+      subject: 'Betreff',
+      subjectPlaceholder: 'Wie können wir helfen?',
+      message: 'Nachricht',
+      messagePlaceholder: 'Erzählen Sie uns mehr...',
+      submit: 'Nachricht senden',
+      submitting: 'Wird gesendet...',
+      success: 'Nachricht erfolgreich gesendet!',
+      error: 'Senden fehlgeschlagen. Bitte erneut versuchen.',
+    },
+  },
+
+  pricing: {
+    testimonialsTitle: 'Der Standard für strategische Umsetzung',
+    testimonialsSubtitle:
+      'Schließen Sie sich Tausenden von Führungskräften an, die ihre Planung automatisiert haben, um ihre wertvollste Arbeitszeit zu schützen.',
+    testimonialsBadge: 'Verifizierte Effizienz',
+  },
+
+  login: {
+    title: 'Willkommen zurück',
+    subtitle: 'Greifen Sie sicher auf Ihren privaten Sekretär zu.',
+    loginWithGoogle: 'Mit Google anmelden',
+    connecting: 'Verbindung wird hergestellt...',
+    noAccount: 'Noch kein Konto?',
+    signUp: 'Registrieren',
+    errors: {
+      noToken: 'Authentifizierung fehlgeschlagen. Bitte erneut versuchen.',
+      callbackFailed: 'OAuth-Callback fehlgeschlagen. Bitte erneut versuchen.',
+    },
+  },
+
+  register: {
+    title: 'Ally beitreten',
+    subtitle: 'Beginnen Sie noch heute mit der Optimierung Ihrer Abläufe.',
+    signUpWithGoogle: 'Mit Google registrieren',
+    connecting: 'Verbindung wird hergestellt...',
+    agreeToTerms: 'Mit der Registrierung stimmen Sie den',
+    termsOfService: 'Nutzungsbedingungen',
+    and: 'und der',
+    privacyPolicy: 'Datenschutzrichtlinie',
+    haveAccount: 'Bereits ein Konto?',
+    login: 'Anmelden',
+  },
+
+  callback: {
+    securingConnection: 'Verbindung wird gesichert...',
+    syncingCalendar: 'Kalender wird synchronisiert...',
+    preparingWorkspace: 'Arbeitsbereich wird vorbereitet...',
+    almostThere: 'Fast fertig...',
+    authFailed: 'Authentifizierung fehlgeschlagen',
+    somethingWentWrong: 'Etwas ist schief gelaufen',
+    redirectingToLogin: 'Weiterleitung zur Anmeldung...',
+    completingSignIn: 'Anmeldung wird abgeschlossen...',
+    tagline: 'Ihr KI-gestützter Kalender-Assistent',
+    loading: 'Laden...',
   },
 
   sidebar: {

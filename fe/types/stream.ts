@@ -3,6 +3,7 @@ export type SSEEventType =
   | 'tool_start'
   | 'tool_complete'
   | 'agent_switch'
+  | 'title_generated'
   | 'done'
   | 'error'
   | 'heartbeat'
@@ -50,6 +51,11 @@ export interface ErrorData {
   code: string
 }
 
+export interface TitleGeneratedData {
+  conversationId: string
+  title: string
+}
+
 export interface StreamingState {
   isStreaming: boolean
   streamedText: string
@@ -63,6 +69,7 @@ export interface StreamCallbacks {
   onToolStart?: (tool: string, agent: string) => void
   onToolComplete?: (tool: string, result: 'success' | 'error') => void
   onAgentSwitch?: (from: string, to: string) => void
+  onTitleGenerated?: (conversationId: string, title: string) => void
   onDone?: (conversationId: string, fullResponse: string) => void
   onError?: (message: string, code: string) => void
 }

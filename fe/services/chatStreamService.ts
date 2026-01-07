@@ -6,6 +6,7 @@ import type {
   ToolStartData,
   ToolCompleteData,
   AgentSwitchData,
+  TitleGeneratedData,
   DoneData,
   ErrorData,
   StreamCallbacks,
@@ -125,6 +126,11 @@ export async function streamChatMessage(options: StreamChatOptions): Promise<Str
           case 'agent_switch': {
             const data = event.data as AgentSwitchData
             callbacks.onAgentSwitch?.(data.from, data.to)
+            break
+          }
+          case 'title_generated': {
+            const data = event.data as TitleGeneratedData
+            callbacks.onTitleGenerated?.(data.conversationId, data.title)
             break
           }
           case 'done': {
