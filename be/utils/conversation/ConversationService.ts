@@ -1,8 +1,8 @@
-import { SUPABASE } from "@/config/clients/supabase"
-import { logger } from "@/utils/logger"
-import { isToday } from "@/utils/date/date-helpers"
-import type { userAndAiMessageProps } from "@/types"
-import type { Database } from "@/database.types"
+import { SUPABASE } from "@/config/clients/supabase";
+import { logger } from "@/utils/logger";
+import { isToday } from "@/utils/date/date-helpers";
+import type { userAndAiMessageProps } from "@/types";
+import type { Database } from "@/database.types";
 import type {
   ConversationConfig,
   ConversationContext,
@@ -13,61 +13,61 @@ import type {
   SummarizeFn,
   TelegramConversationRow,
   WebConversationRow,
-} from "./types"
-import { DEFAULT_CONVERSATION_CONFIG } from "./types"
+} from "./types";
+import { DEFAULT_CONVERSATION_CONFIG } from "./types";
 
 type ConversationInsert =
-  Database["public"]["Tables"]["conversations"]["Insert"]
+  Database["public"]["Tables"]["conversations"]["Insert"];
 
-const TITLE_TRUNCATE_LENGTH = 50
-const TITLE_TRUNCATE_SUFFIX_LENGTH = 47
-const TITLE_CLEANUP_REGEX = /^[-•*]\s*/
+const TITLE_TRUNCATE_LENGTH = 50;
+const TITLE_TRUNCATE_SUFFIX_LENGTH = 47;
+const TITLE_CLEANUP_REGEX = /^[-•*]\s*/;
 
 const mapRoleToDb = (role: "user" | "assistant" | "system"): MessageRole =>
-  role as MessageRole
+  role as MessageRole;
 
 const calculateContextLength = (messages: userAndAiMessageProps[]): number =>
-  messages.reduce((total, msg) => total + (msg.content?.length || 0), 0)
+  messages.reduce((total, msg) => total + (msg.content?.length || 0), 0);
 
 type StoreSummaryParams = {
-  conversationId: string
-  userId: string
-  summaryText: string
-  messageCount: number
-  firstSequence: number
-  lastSequence: number
-}
+  conversationId: string;
+  userId: string;
+  summaryText: string;
+  messageCount: number;
+  firstSequence: number;
+  lastSequence: number;
+};
 
 type AddMessageParams = {
-  stateId: string
-  userId: string
-  context: ConversationContext
-  message: userAndAiMessageProps
-  summarizeFn: SummarizeFn
-}
+  stateId: string;
+  userId: string;
+  context: ConversationContext;
+  message: userAndAiMessageProps;
+  summarizeFn: SummarizeFn;
+};
 
 export class ConversationService {
-  private readonly source: ConversationSource
-  private readonly config: ConversationConfig
+  private readonly source: ConversationSource;
+  private readonly config: ConversationConfig;
 
   constructor(
     source: ConversationSource,
-    config: Partial<ConversationConfig> = {}
+    config: Partial<ConversationConfig> = {},
   ) {
-    this.source = source
-    this.config = { ...DEFAULT_CONVERSATION_CONFIG, ...config }
+    this.source = source;
+    this.config = { ...DEFAULT_CONVERSATION_CONFIG, ...config };
   }
 
   async getConversationMessages(
-    conversationId: string
+    conversationId: string,
   ): Promise<userAndAiMessageProps[]> {
     const { data, error } = await SUPABASE.from("conversation_messages")
       .select("role, content, sequence_number")
       .eq("conversation_id", conversationId)
-      .order("sequence_number", { ascending: true })
+      .order("sequence_number", { ascending: true });
 
     if (error || !data) {
-      return []
+      return [];
     }
 
     return data
@@ -75,14 +75,14 @@ export class ConversationService {
       .map((msg) => ({
         role: msg.role as "user" | "assistant",
         content: msg.content,
-      }))
+      }));
   }
 
   async getTodayConversation(
-    identifier: string | number
+    identifier: string | number,
   ): Promise<WebConversationRow | TelegramConversationRow | null> {
-    const isWeb = this.source === "web"
-    const filterField = isWeb ? "user_id" : "external_chat_id"
+    const isWeb = this.source === "web";
+    const filterField = isWeb ? "user_id" : "external_chat_id";
 
     const { data, error } = await SUPABASE.from("conversations")
       .select("*")
@@ -91,55 +91,55 @@ export class ConversationService {
       .eq("is_active", true)
       .order("created_at", { ascending: false })
       .limit(1)
-      .maybeSingle()
+      .maybeSingle();
 
     if (error) {
       logger.error(
-        `Failed to fetch conversation for ${this.source} ${identifier}: ${error.message}`
-      )
-      return null
+        `Failed to fetch conversation for ${this.source} ${identifier}: ${error.message}`,
+      );
+      return null;
     }
 
     if (!data) {
-      return null
+      return null;
     }
 
-    const updatedAt = data.updated_at || data.created_at
+    const updatedAt = data.updated_at || data.created_at;
     if (!isToday(updatedAt)) {
-      return null
+      return null;
     }
 
-    return data as WebConversationRow | TelegramConversationRow
+    return data as WebConversationRow | TelegramConversationRow;
   }
 
   async createConversation(
     userId: string,
     externalChatId?: number,
-    initialMessage?: userAndAiMessageProps
+    initialMessage?: userAndAiMessageProps,
   ): Promise<{ id: string; context: ConversationContext } | null> {
     const insertData: ConversationInsert = {
       user_id: userId,
       source: this.source,
       is_active: true,
       message_count: initialMessage ? 1 : 0,
-    }
+    };
 
     if (this.source === "telegram" && externalChatId) {
-      insertData.external_chat_id = externalChatId
+      insertData.external_chat_id = externalChatId;
     }
 
     const { data: conversation, error: convError } = await SUPABASE.from(
-      "conversations"
+      "conversations",
     )
       .insert(insertData)
       .select()
-      .single()
+      .single();
 
     if (convError || !conversation) {
       logger.error(
-        `Failed to create ${this.source} conversation for user ${userId}: ${convError?.message}`
-      )
-      return null
+        `Failed to create ${this.source} conversation for user ${userId}: ${convError?.message}`,
+      );
+      return null;
     }
 
     if (initialMessage?.content) {
@@ -148,7 +148,7 @@ export class ConversationService {
         role: mapRoleToDb(initialMessage.role),
         content: initialMessage.content,
         sequence_number: 1,
-      })
+      });
     }
 
     return {
@@ -157,13 +157,13 @@ export class ConversationService {
         messages: initialMessage ? [initialMessage] : [],
         lastUpdated: new Date().toISOString(),
       },
-    }
+    };
   }
 
   async updateConversationState(
     conversationId: string,
     context: ConversationContext,
-    messageCount: number
+    messageCount: number,
   ): Promise<boolean> {
     const updateData: Database["public"]["Tables"]["conversations"]["Update"] =
       {
@@ -171,24 +171,24 @@ export class ConversationService {
         summary: context.summary,
         updated_at: new Date().toISOString(),
         last_message_at: new Date().toISOString(),
-      }
+      };
 
     if (context.title) {
-      updateData.title = context.title
+      updateData.title = context.title;
     }
 
     const { error } = await SUPABASE.from("conversations")
       .update(updateData)
-      .eq("id", conversationId)
+      .eq("id", conversationId);
 
     if (error) {
       logger.error(
-        `Failed to update conversation ${conversationId}: ${error.message}`
-      )
-      return false
+        `Failed to update conversation ${conversationId}: ${error.message}`,
+      );
+      return false;
     }
 
-    return true
+    return true;
   }
 
   async updateTitle(conversationId: string, title: string): Promise<boolean> {
@@ -197,16 +197,16 @@ export class ConversationService {
         title,
         updated_at: new Date().toISOString(),
       })
-      .eq("id", conversationId)
+      .eq("id", conversationId);
 
     if (error) {
       logger.error(
-        `Failed to update title for ${conversationId}: ${error.message}`
-      )
-      return false
+        `Failed to update title for ${conversationId}: ${error.message}`,
+      );
+      return false;
     }
 
-    return true
+    return true;
   }
 
   async storeSummary(params: StoreSummaryParams): Promise<boolean> {
@@ -217,48 +217,48 @@ export class ConversationService {
       message_count: params.messageCount,
       first_message_sequence: params.firstSequence,
       last_message_sequence: params.lastSequence,
-    })
+    });
 
     if (error) {
       logger.error(
-        `Failed to store summary for ${params.conversationId}: ${error.message}`
-      )
-      return false
+        `Failed to store summary for ${params.conversationId}: ${error.message}`,
+      );
+      return false;
     }
 
-    return true
+    return true;
   }
 
   async markAsSummarized(
     conversationId: string,
-    summary: string
+    summary: string,
   ): Promise<boolean> {
     const { error } = await SUPABASE.from("conversations")
       .update({
         summary,
         updated_at: new Date().toISOString(),
       })
-      .eq("id", conversationId)
+      .eq("id", conversationId);
 
     if (error) {
       logger.error(
-        `Failed to mark ${conversationId} as summarized: ${error.message}`
-      )
-      return false
+        `Failed to mark ${conversationId} as summarized: ${error.message}`,
+      );
+      return false;
     }
 
-    return true
+    return true;
   }
 
   async condenseSummary(
     existingSummary: string,
     newSummary: string,
-    summarizeFn: SummarizeFn
+    summarizeFn: SummarizeFn,
   ): Promise<string> {
-    const combined = `${existingSummary}\n\n${newSummary}`
+    const combined = `${existingSummary}\n\n${newSummary}`;
 
     if (combined.length <= this.config.maxSummaryLength) {
-      return combined
+      return combined;
     }
 
     try {
@@ -267,26 +267,26 @@ export class ConversationService {
           role: "user",
           content: `Please condense this conversation summary:\n${combined}`,
         },
-      ])
-      return condensedSummary.slice(0, this.config.maxSummaryLength)
+      ]);
+      return condensedSummary.slice(0, this.config.maxSummaryLength);
     } catch {
-      return combined.slice(-this.config.maxSummaryLength)
+      return combined.slice(-this.config.maxSummaryLength);
     }
   }
 
   async addMessageAndMaybeSummarize(
-    params: AddMessageParams
+    params: AddMessageParams,
   ): Promise<ConversationContext> {
-    const { stateId, userId, context, message, summarizeFn } = params
+    const { stateId, userId, context, message, summarizeFn } = params;
 
     const { data: lastMsg } = await SUPABASE.from("conversation_messages")
       .select("sequence_number")
       .eq("conversation_id", stateId)
       .order("sequence_number", { ascending: false })
       .limit(1)
-      .maybeSingle()
+      .maybeSingle();
 
-    const nextSequence = (lastMsg?.sequence_number || 0) + 1
+    const nextSequence = (lastMsg?.sequence_number || 0) + 1;
 
     if (message.content) {
       await SUPABASE.from("conversation_messages").insert({
@@ -294,27 +294,27 @@ export class ConversationService {
         role: mapRoleToDb(message.role),
         content: message.content,
         sequence_number: nextSequence,
-      })
+      });
     }
 
-    context.messages.push(message)
-    context.lastUpdated = new Date().toISOString()
+    context.messages.push(message);
+    context.lastUpdated = new Date().toISOString();
 
-    const totalLength = calculateContextLength(context.messages)
+    const totalLength = calculateContextLength(context.messages);
     const shouldSummarize =
       (totalLength > this.config.maxContextLength ||
         context.messages.length > this.config.maxMessagesBeforeSummarize) &&
-      context.messages.length > 2
+      context.messages.length > 2;
 
     if (shouldSummarize) {
-      const messagesToSummarize = context.messages.slice(0, -2)
-      const recentMessages = context.messages.slice(-2)
+      const messagesToSummarize = context.messages.slice(0, -2);
+      const recentMessages = context.messages.slice(-2);
 
       try {
-        const newSummary = await summarizeFn(messagesToSummarize)
+        const newSummary = await summarizeFn(messagesToSummarize);
 
-        const firstSeq = nextSequence - context.messages.length + 1
-        const lastSeq = nextSequence - 2
+        const firstSeq = nextSequence - context.messages.length + 1;
+        const lastSeq = nextSequence - 2;
         await this.storeSummary({
           conversationId: stateId,
           userId,
@@ -322,107 +322,111 @@ export class ConversationService {
           messageCount: messagesToSummarize.length,
           firstSequence: firstSeq,
           lastSequence: lastSeq,
-        })
+        });
 
         if (context.summary) {
           context.summary = await this.condenseSummary(
             context.summary,
             newSummary,
-            summarizeFn
-          )
+            summarizeFn,
+          );
         } else {
-          context.summary = newSummary.slice(0, this.config.maxSummaryLength)
+          context.summary = newSummary.slice(0, this.config.maxSummaryLength);
         }
 
-        context.messages = recentMessages
-        await this.markAsSummarized(stateId, context.summary)
+        context.messages = recentMessages;
+        await this.markAsSummarized(stateId, context.summary);
       } catch (error) {
-        logger.error(`Failed to summarize conversation ${stateId}: ${error}`)
+        logger.error(`Failed to summarize conversation ${stateId}: ${error}`);
       }
     }
 
-    await this.updateConversationState(stateId, context, context.messages.length)
-    return context
+    await this.updateConversationState(
+      stateId,
+      context,
+      context.messages.length,
+    );
+    return context;
   }
 
   buildContextPrompt(context: ConversationContext): string {
-    const parts: string[] = []
+    const parts: string[] = [];
 
     if (context.summary) {
       const truncatedSummary =
         context.summary.length > this.config.maxSummaryDisplayLength
           ? context.summary.slice(-this.config.maxSummaryDisplayLength)
-          : context.summary
-      parts.push(`Previous conversation summary:\n${truncatedSummary}`)
+          : context.summary;
+      parts.push(`Previous conversation summary:\n${truncatedSummary}`);
     }
 
     if (context.messages.length > 0) {
       let messageHistory = context.messages
         .map(
           (msg) =>
-            `${msg.role === "user" ? "User" : "Assistant"}: ${msg.content}`
+            `${msg.role === "user" ? "User" : "Assistant"}: ${msg.content}`,
         )
-        .join("\n")
+        .join("\n");
       if (messageHistory.length > this.config.maxMessagesDisplayLength) {
         messageHistory = messageHistory.slice(
-          -this.config.maxMessagesDisplayLength
-        )
+          -this.config.maxMessagesDisplayLength,
+        );
       }
-      parts.push(`Recent messages:\n${messageHistory}`)
+      parts.push(`Recent messages:\n${messageHistory}`);
     }
 
-    const result = parts.join("\n\n")
+    const result = parts.join("\n\n");
 
     if (result.length > this.config.maxContextPromptLength) {
-      return result.slice(-this.config.maxContextPromptLength)
+      return result.slice(-this.config.maxContextPromptLength);
     }
 
-    return result
+    return result;
   }
 
   async getConversationList(
     userId: string,
-    options?: { limit?: number; offset?: number; search?: string }
+    options?: { limit?: number; offset?: number; search?: string },
   ): Promise<ConversationListItem[]> {
-    const DEFAULT_LIMIT = 20
-    const MIN_SEARCH_LENGTH = 2
+    const DEFAULT_LIMIT = 20;
+    const MIN_SEARCH_LENGTH = 2;
 
-    const limit = options?.limit || DEFAULT_LIMIT
-    const offset = options?.offset || 0
-    const search = options?.search
+    const limit = options?.limit || DEFAULT_LIMIT;
+    const offset = options?.offset || 0;
+    const search = options?.search;
 
     let query = SUPABASE.from("conversations")
       .select(
-        "id, message_count, title, summary, created_at, updated_at, last_message_at"
+        "id, message_count, title, summary, created_at, updated_at, last_message_at",
       )
       .eq("user_id", userId)
-      .eq("source", this.source)
+      .eq("source", this.source);
 
     if (search && search.length >= MIN_SEARCH_LENGTH) {
-      query = query.ilike("title", `%${search}%`)
+      query = query.ilike("title", `%${search}%`);
     }
 
     const { data, error } = await query
       .order("updated_at", { ascending: false, nullsFirst: false })
-      .range(offset, offset + limit - 1)
+      .range(offset, offset + limit - 1);
 
     if (error) {
       logger.error(
-        `Failed to fetch conversation list for user ${userId}: ${error.message}`
-      )
-      return []
+        `Failed to fetch conversation list for user ${userId}: ${error.message}`,
+      );
+      return [];
     }
 
     return (data || []).map((row) => {
-      let title = row.title || "New Conversation"
+      let title = row.title || "New Conversation";
       if (!row.title && row.summary) {
         const firstLine = row.summary
           .split("\n")[0]
-          .replace(TITLE_CLEANUP_REGEX, "")
+          .replace(TITLE_CLEANUP_REGEX, "");
         title =
           firstLine.length > TITLE_TRUNCATE_LENGTH
             ? `${firstLine.slice(0, TITLE_TRUNCATE_SUFFIX_LENGTH)}...`
-            : firstLine
+            : firstLine;
       }
 
       return {
@@ -431,29 +435,29 @@ export class ConversationService {
         messageCount: row.message_count || 0,
         lastUpdated: row.last_message_at || row.updated_at || row.created_at,
         createdAt: row.created_at,
-      }
-    })
+      };
+    });
   }
 
   async getConversationById(
     conversationId: string,
-    userId: string
+    userId: string,
   ): Promise<FullConversation | null> {
     const { data, error } = await SUPABASE.from("conversations")
       .select("*")
       .eq("id", conversationId)
       .eq("user_id", userId)
       .eq("source", this.source)
-      .single()
+      .single();
 
     if (error || !data) {
       logger.error(
-        `Failed to fetch conversation ${conversationId}: ${error?.message}`
-      )
-      return null
+        `Failed to fetch conversation ${conversationId}: ${error?.message}`,
+      );
+      return null;
     }
 
-    const messages = await this.getConversationMessages(conversationId)
+    const messages = await this.getConversationMessages(conversationId);
 
     return {
       id: data.id,
@@ -464,17 +468,17 @@ export class ConversationService {
       messageCount: data.message_count || 0,
       lastUpdated: data.last_message_at || data.updated_at || data.created_at,
       createdAt: data.created_at,
-    }
+    };
   }
 
   async loadConversationIntoContext(
     conversationId: string,
-    userId: string
+    userId: string,
   ): Promise<{ stateId: string; context: ConversationContext } | null> {
-    const conversation = await this.getConversationById(conversationId, userId)
+    const conversation = await this.getConversationById(conversationId, userId);
 
     if (!conversation) {
-      return null
+      return null;
     }
 
     return {
@@ -485,37 +489,54 @@ export class ConversationService {
         title: conversation.title,
         lastUpdated: conversation.lastUpdated,
       },
-    }
+    };
   }
 
   async deleteConversation(
     conversationId: string,
-    userId: string
+    userId: string,
   ): Promise<boolean> {
     const { error: msgError } = await SUPABASE.from("conversation_messages")
       .delete()
-      .eq("conversation_id", conversationId)
+      .eq("conversation_id", conversationId);
 
     if (msgError) {
       logger.error(
-        `Failed to delete messages for ${conversationId}: ${msgError.message}`
-      )
-      return false
+        `Failed to delete messages for ${conversationId}: ${msgError.message}`,
+      );
+      return false;
     }
 
     const { error } = await SUPABASE.from("conversations")
       .delete()
       .eq("id", conversationId)
       .eq("user_id", userId)
-      .eq("source", this.source)
+      .eq("source", this.source);
 
     if (error) {
       logger.error(
-        `Failed to delete conversation ${conversationId}: ${error.message}`
-      )
-      return false
+        `Failed to delete conversation ${conversationId}: ${error.message}`,
+      );
+      return false;
     }
 
-    return true
+    return true;
+  }
+
+  async closeActiveConversation(userId: string): Promise<boolean> {
+    const { error } = await SUPABASE.from("conversations")
+      .update({ is_active: false })
+      .eq("user_id", userId)
+      .eq("source", this.source)
+      .eq("is_active", true);
+
+    if (error) {
+      logger.error(
+        `Failed to close active conversation for user ${userId}: ${error.message}`,
+      );
+      return false;
+    }
+
+    return true;
   }
 }

@@ -4,11 +4,7 @@ import * as React from 'react'
 import { BarChart3, LineChart, AreaChart, Layers, PieChart, CircleDot, Radar, BarChartHorizontal } from 'lucide-react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
-
-interface ChartTypeConfig {
-  icon: React.ElementType
-  label: string
-}
+import { useLanguage } from '@/contexts/LanguageContext'
 
 const ALL_CHART_ICONS: Record<string, React.ElementType> = {
   bar: BarChart3,
@@ -43,6 +39,7 @@ export function ChartTypeWrapper<T extends string>({
   className,
   tabsPosition = 'right',
 }: ChartTypeWrapperProps<T>) {
+  const { t } = useLanguage()
   const [chartType, setChartTypeState] = React.useState<T>(defaultType)
   const [isHydrated, setIsHydrated] = React.useState(false)
 
