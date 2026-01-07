@@ -116,12 +116,13 @@ export const LanguageOnboardingModal: React.FC<
             {SUPPORTED_LANGUAGES.map((lang) => {
               const isSelected = selectedLanguages.includes(lang.code);
               return (
-                <button
+                <Button
                   key={lang.code}
                   type="button"
+                  variant="outline"
                   onClick={() => toggleLanguage(lang.code)}
                   className={`
-                    flex items-center gap-3 p-3 rounded-lg border-2 transition-all text-left
+                    h-auto flex items-center gap-3 p-3 rounded-lg border-2 justify-start
                     ${
                       isSelected
                         ? "border-primary bg-primary/5 dark:bg-primary/10"
@@ -138,7 +139,7 @@ export const LanguageOnboardingModal: React.FC<
                     {isSelected && <Check className="w-3 h-3 text-white" />}
                   </div>
                   <span className="text-xl">{lang.flag}</span>
-                  <div className="flex-1">
+                  <div className="flex-1 text-left">
                     <span className="font-medium text-zinc-900 dark:text-zinc-100">
                       {lang.name}
                     </span>
@@ -146,7 +147,7 @@ export const LanguageOnboardingModal: React.FC<
                       {lang.nativeName}
                     </span>
                   </div>
-                </button>
+                </Button>
               );
             })}
           </div>

@@ -1,5 +1,6 @@
 'use client'
 
+import { Button } from '@/components/ui/button'
 import { Info, RotateCw } from 'lucide-react'
 import type { CalendarEvent } from '@/types/api'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
@@ -99,12 +100,9 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
           <p className="text-red-600 dark:text-red-300 text-sm mb-4">
             {analyticsError?.message || 'Failed to fetch analytics data. Please try again.'}
           </p>
-          <button
-            onClick={() => refetchAnalytics()}
-            className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md text-sm font-medium transition-colors"
-          >
+          <Button onClick={() => refetchAnalytics()} variant="destructive" size="sm">
             Retry
-          </button>
+          </Button>
         </div>
       </div>
     )
@@ -172,9 +170,13 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
             AI Insights
             <HoverCard>
               <HoverCardTrigger asChild>
-                <button className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
+                >
                   <Info size={16} />
-                </button>
+                </Button>
               </HoverCardTrigger>
               <HoverCardContent>
                 <div className="space-y-2">
@@ -193,12 +195,9 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
             ) : isInsightsError ? (
               <div className="col-span-full flex flex-col items-center justify-center py-8 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl">
                 <p className="text-zinc-500 dark:text-zinc-400 mb-4">Failed to load insights</p>
-                <button
-                  onClick={() => refetchInsights()}
-                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md text-sm font-medium transition-colors"
-                >
+                <Button onClick={() => refetchInsights()} size="sm">
                   Retry
-                </button>
+                </Button>
               </div>
             ) : insightsData?.insights && insightsData.insights.length > 0 ? (
               insightsData.insights.map((insight) => (

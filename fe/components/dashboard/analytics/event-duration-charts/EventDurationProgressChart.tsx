@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import type { EventDurationCategory } from '@/types/analytics'
 import { EventsListPopover } from '../EventsListPopover'
@@ -37,10 +38,10 @@ export const EventDurationProgressChart: React.FC<EventDurationProgressChartProp
         <div className="space-y-6">
           <div className="relative h-8 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden flex">
             {segments.map((segment, index) => (
-              <button
+              <Button
                 key={segment.key}
-                type="button"
-                className="h-full transition-all duration-500 relative group cursor-pointer hover:opacity-80"
+                variant="ghost"
+                className="h-full p-0 transition-all duration-500 relative group cursor-pointer hover:opacity-80 rounded-none"
                 style={{
                   width: `${segment.percentage}%`,
                   backgroundColor: segment.color,
@@ -58,16 +59,16 @@ export const EventDurationProgressChart: React.FC<EventDurationProgressChartProp
                     </span>
                   )}
                 </div>
-              </button>
+              </Button>
             ))}
           </div>
 
           <div className="grid grid-cols-2 gap-x-4 gap-y-3">
             {data.map((cat) => (
-              <button
+              <Button
                 key={cat.key}
-                type="button"
-                className="flex items-center gap-2 text-left hover:bg-zinc-50 dark:hover:bg-zinc-800/50 rounded-lg p-1 -m-1 transition-colors cursor-pointer"
+                variant="ghost"
+                className="flex items-center gap-2 text-left hover:bg-zinc-50 dark:hover:bg-zinc-800/50 rounded-lg p-1 -m-1 h-auto justify-start"
                 onClick={() => handleCategoryClick(cat)}
               >
                 <div className="w-3 h-3 rounded-sm flex-shrink-0" style={{ backgroundColor: cat.color }} />
@@ -80,7 +81,7 @@ export const EventDurationProgressChart: React.FC<EventDurationProgressChartProp
                     {cat.count} events ({totalEvents > 0 ? ((cat.count / totalEvents) * 100).toFixed(0) : 0}%)
                   </div>
                 </div>
-              </button>
+              </Button>
             ))}
           </div>
         </div>

@@ -5,6 +5,7 @@ import { Bar, BarChart, CartesianGrid, XAxis } from 'recharts'
 import { Clock, Info } from 'lucide-react'
 import { format } from 'date-fns'
 
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from '@/components/ui/chart'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
@@ -64,9 +65,13 @@ const DailyAvailableHoursChart: React.FC<DailyAvailableHoursChartProps> = ({ dat
             Daily Available Hours
             <HoverCard>
               <HoverCardTrigger asChild>
-                <button className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
+                >
                   <Info size={16} />
-                </button>
+                </Button>
               </HoverCardTrigger>
               <HoverCardContent>
                 <div className="space-y-2">

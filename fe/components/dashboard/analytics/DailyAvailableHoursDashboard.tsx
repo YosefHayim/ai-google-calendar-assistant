@@ -3,6 +3,7 @@
 import * as React from 'react'
 import { Clock, Info } from 'lucide-react'
 
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
@@ -113,12 +114,13 @@ export const DailyAvailableHoursDashboard: React.FC<DailyAvailableHoursDashboard
             {t('analytics.charts.dailyHours')}
             <HoverCard>
               <HoverCardTrigger asChild>
-                <button
-                  type="button"
-                  className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors"
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
                 >
                   <Info size={16} />
-                </button>
+                </Button>
               </HoverCardTrigger>
               <HoverCardContent>
                 <div className="space-y-2">
