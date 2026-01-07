@@ -8,7 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
 import type { CalendarBreakdownItem } from '@/types/analytics'
-import { sumBy, calculatePercentage } from '@/lib/dataUtils'
+import { sumBy, calculatePercentage, formatNumber } from '@/lib/dataUtils'
 import { getValidHexColor } from '@/lib/colorUtils'
 
 import { TimeAllocationBarChart } from './time-allocation-charts/TimeAllocationBarChart'
@@ -120,7 +120,7 @@ export const TimeAllocationDashboard: React.FC<TimeAllocationDashboardProps> = (
               </HoverCardContent>
             </HoverCard>
             <span className="text-sm font-normal text-zinc-500 ml-2">
-              {totalHours.toFixed(1)}h total
+              {formatNumber(totalHours, 1)}h total
             </span>
           </h3>
 
@@ -194,7 +194,7 @@ export const TimeAllocationDashboard: React.FC<TimeAllocationDashboardProps> = (
                       {item.category}
                     </span>
                     <span className="font-mono text-zinc-500 dark:text-zinc-400 text-xs">
-                      {item.hours.toFixed(1)}h
+                      {formatNumber(item.hours, 1)}h
                     </span>
                     <span className="text-xs text-zinc-400 w-8 text-right">
                       {calculatePercentage(item.hours, totalHours, 0)}%

@@ -160,11 +160,11 @@ const BentoStatsGrid: React.FC<BentoStatsGridProps> = ({ data, comparison, isLoa
       >
         <div className="flex items-start justify-between mb-4">
           <div>
-            <div className="flex items-center gap-2 mb-1">
-              <div className="w-8 h-8 rounded-lg bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center">
+            <div className="flex items-center gap-2 mb-1 min-w-0">
+              <div className="w-8 h-8 flex-shrink-0 rounded-lg bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center">
                 <Zap className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
               </div>
-              <span className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+              <span className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider truncate">
                 Productivity Score
               </span>
             </div>
@@ -192,13 +192,13 @@ const BentoStatsGrid: React.FC<BentoStatsGridProps> = ({ data, comparison, isLoa
 
       <motion.div
         variants={item}
-        className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 shadow-sm hover:shadow-md hover:border-sky-300 dark:hover:border-sky-700 transition-all"
+        className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 shadow-sm hover:shadow-md hover:border-sky-300 dark:hover:border-sky-700 transition-all overflow-hidden"
       >
-        <div className="flex items-center gap-2 mb-3">
-          <div className="w-8 h-8 rounded-lg bg-sky-100 dark:bg-sky-900/50 flex items-center justify-center">
+        <div className="flex items-center gap-2 mb-3 min-w-0">
+          <div className="w-8 h-8 flex-shrink-0 rounded-lg bg-sky-100 dark:bg-sky-900/50 flex items-center justify-center">
             <CalendarDays className="w-4 h-4 text-sky-600 dark:text-sky-400" />
           </div>
-          <span className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+          <span className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider truncate">
             Total Events
           </span>
         </div>
@@ -217,13 +217,13 @@ const BentoStatsGrid: React.FC<BentoStatsGridProps> = ({ data, comparison, isLoa
 
       <motion.div
         variants={item}
-        className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 shadow-sm hover:shadow-md hover:border-emerald-300 dark:hover:border-emerald-700 transition-all"
+        className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 shadow-sm hover:shadow-md hover:border-emerald-300 dark:hover:border-emerald-700 transition-all overflow-hidden"
       >
-        <div className="flex items-center gap-2 mb-3">
-          <div className="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/50 flex items-center justify-center">
+        <div className="flex items-center gap-2 mb-3 min-w-0">
+          <div className="w-8 h-8 flex-shrink-0 rounded-lg bg-emerald-100 dark:bg-emerald-900/50 flex items-center justify-center">
             <Clock className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
           </div>
-          <span className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+          <span className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider truncate">
             Total Hours
           </span>
         </div>
@@ -245,11 +245,11 @@ const BentoStatsGrid: React.FC<BentoStatsGridProps> = ({ data, comparison, isLoa
         variants={item}
         className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 shadow-sm hover:shadow-md hover:border-amber-300 dark:hover:border-amber-700 transition-all"
       >
-        <div className="flex items-center gap-2 mb-3">
-          <div className="w-8 h-8 rounded-lg bg-amber-100 dark:bg-amber-900/50 flex items-center justify-center">
+        <div className="flex items-center gap-2 mb-3 min-w-0">
+          <div className="w-8 h-8 flex-shrink-0 rounded-lg bg-amber-100 dark:bg-amber-900/50 flex items-center justify-center">
             <Activity className="w-4 h-4 text-amber-600 dark:text-amber-400" />
           </div>
-          <span className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+          <span className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider truncate">
             Avg/Day
           </span>
         </div>
@@ -263,11 +263,11 @@ const BentoStatsGrid: React.FC<BentoStatsGridProps> = ({ data, comparison, isLoa
         variants={item}
         className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 shadow-sm hover:shadow-md hover:border-orange-300 dark:hover:border-orange-700 transition-all"
       >
-        <div className="flex items-center gap-2 mb-3">
-          <div className="w-8 h-8 rounded-lg bg-orange-100 dark:bg-orange-900/50 flex items-center justify-center">
+        <div className="flex items-center gap-2 mb-3 min-w-0">
+          <div className="w-8 h-8 flex-shrink-0 rounded-lg bg-orange-100 dark:bg-orange-900/50 flex items-center justify-center">
             <Sun className="w-4 h-4 text-orange-600 dark:text-orange-400" />
           </div>
-          <span className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+          <span className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider truncate">
             Peak Hour
           </span>
         </div>
@@ -281,11 +281,11 @@ const BentoStatsGrid: React.FC<BentoStatsGridProps> = ({ data, comparison, isLoa
         variants={item}
         className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 shadow-sm hover:shadow-md hover:border-teal-300 dark:hover:border-teal-700 transition-all"
       >
-        <div className="flex items-center gap-2 mb-3">
-          <div className="w-8 h-8 rounded-lg bg-teal-100 dark:bg-teal-900/50 flex items-center justify-center">
+        <div className="flex items-center gap-2 mb-3 min-w-0">
+          <div className="w-8 h-8 flex-shrink-0 rounded-lg bg-teal-100 dark:bg-teal-900/50 flex items-center justify-center">
             <Target className="w-4 h-4 text-teal-600 dark:text-teal-400" />
           </div>
-          <span className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+          <span className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider truncate">
             Focus Blocks
           </span>
         </div>
@@ -301,11 +301,11 @@ const BentoStatsGrid: React.FC<BentoStatsGridProps> = ({ data, comparison, isLoa
         variants={item}
         className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 shadow-sm hover:shadow-md hover:border-purple-300 dark:hover:border-purple-700 transition-all"
       >
-        <div className="flex items-center gap-2 mb-3">
-          <div className="w-8 h-8 rounded-lg bg-purple-100 dark:bg-purple-900/50 flex items-center justify-center">
+        <div className="flex items-center gap-2 mb-3 min-w-0">
+          <div className="w-8 h-8 flex-shrink-0 rounded-lg bg-purple-100 dark:bg-purple-900/50 flex items-center justify-center">
             <Flame className="w-4 h-4 text-purple-600 dark:text-purple-400" />
           </div>
-          <span className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+          <span className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider truncate">
             Busiest Day
           </span>
         </div>
@@ -322,11 +322,11 @@ const BentoStatsGrid: React.FC<BentoStatsGridProps> = ({ data, comparison, isLoa
         variants={item}
         className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 shadow-sm hover:shadow-md hover:border-rose-300 dark:hover:border-rose-700 transition-all"
       >
-        <div className="flex items-center gap-2 mb-3">
-          <div className="w-8 h-8 rounded-lg bg-rose-100 dark:bg-rose-900/50 flex items-center justify-center">
+        <div className="flex items-center gap-2 mb-3 min-w-0">
+          <div className="w-8 h-8 flex-shrink-0 rounded-lg bg-rose-100 dark:bg-rose-900/50 flex items-center justify-center">
             <Timer className="w-4 h-4 text-rose-600 dark:text-rose-400" />
           </div>
-          <span className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+          <span className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider truncate">
             Longest Event
           </span>
         </div>
@@ -341,11 +341,11 @@ const BentoStatsGrid: React.FC<BentoStatsGridProps> = ({ data, comparison, isLoa
         variants={item}
         className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 shadow-sm hover:shadow-md hover:border-cyan-300 dark:hover:border-cyan-700 transition-all"
       >
-        <div className="flex items-center gap-2 mb-3">
-          <div className="w-8 h-8 rounded-lg bg-cyan-100 dark:bg-cyan-900/50 flex items-center justify-center">
+        <div className="flex items-center gap-2 mb-3 min-w-0">
+          <div className="w-8 h-8 flex-shrink-0 rounded-lg bg-cyan-100 dark:bg-cyan-900/50 flex items-center justify-center">
             <CalendarOff className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
           </div>
-          <span className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+          <span className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider truncate">
             Free Days
           </span>
         </div>
@@ -359,11 +359,11 @@ const BentoStatsGrid: React.FC<BentoStatsGridProps> = ({ data, comparison, isLoa
         variants={item}
         className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 shadow-sm hover:shadow-md hover:border-violet-300 dark:hover:border-violet-700 transition-all"
       >
-        <div className="flex items-center gap-2 mb-3">
-          <div className="w-8 h-8 rounded-lg bg-violet-100 dark:bg-violet-900/50 flex items-center justify-center">
+        <div className="flex items-center gap-2 mb-3 min-w-0">
+          <div className="w-8 h-8 flex-shrink-0 rounded-lg bg-violet-100 dark:bg-violet-900/50 flex items-center justify-center">
             <Star className="w-4 h-4 text-violet-600 dark:text-violet-400" />
           </div>
-          <span className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+          <span className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider truncate">
             All-Day
           </span>
         </div>
@@ -377,11 +377,11 @@ const BentoStatsGrid: React.FC<BentoStatsGridProps> = ({ data, comparison, isLoa
         variants={item}
         className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 shadow-sm hover:shadow-md hover:border-fuchsia-300 dark:hover:border-fuchsia-700 transition-all"
       >
-        <div className="flex items-center gap-2 mb-3">
-          <div className="w-8 h-8 rounded-lg bg-fuchsia-100 dark:bg-fuchsia-900/50 flex items-center justify-center">
+        <div className="flex items-center gap-2 mb-3 min-w-0">
+          <div className="w-8 h-8 flex-shrink-0 rounded-lg bg-fuchsia-100 dark:bg-fuchsia-900/50 flex items-center justify-center">
             <Repeat className="w-4 h-4 text-fuchsia-600 dark:text-fuchsia-400" />
           </div>
-          <span className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+          <span className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider truncate">
             Recurring
           </span>
         </div>

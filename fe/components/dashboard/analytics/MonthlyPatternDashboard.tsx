@@ -9,6 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
 import type { MonthlyPatternDataPoint } from '@/types/analytics'
+import { formatNumber } from '@/lib/dataUtils'
 
 import { MonthlyPatternBarChart } from './monthly-pattern-charts/MonthlyPatternBarChart'
 import { MonthlyPatternLineChart } from './monthly-pattern-charts/MonthlyPatternLineChart'
@@ -143,13 +144,13 @@ export const MonthlyPatternDashboard: React.FC<MonthlyPatternDashboardProps> = (
           <div className="relative z-30 flex flex-1 flex-col justify-center gap-1 border-t border-zinc-200 dark:border-zinc-800 px-6 py-4 text-left sm:border-t-0 sm:border-l sm:px-8 sm:py-6">
             <span className="text-zinc-500 dark:text-zinc-400 text-xs">Total Hours</span>
             <span className="text-lg leading-none font-bold text-zinc-900 dark:text-zinc-100 sm:text-3xl">
-              {totalHours.toFixed(1)}h
+              {formatNumber(totalHours, 1)}h
             </span>
           </div>
           <div className="relative z-30 flex flex-1 flex-col justify-center gap-1 border-t border-l border-zinc-200 dark:border-zinc-800 px-6 py-4 text-left sm:border-t-0 sm:px-8 sm:py-6">
             <span className="text-zinc-500 dark:text-zinc-400 text-xs">Events</span>
             <span className="text-lg leading-none font-bold text-zinc-900 dark:text-zinc-100 sm:text-3xl">
-              {totalEvents}
+              {formatNumber(totalEvents)}
             </span>
           </div>
         </div>

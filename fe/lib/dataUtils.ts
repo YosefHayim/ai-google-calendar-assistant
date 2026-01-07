@@ -60,3 +60,23 @@ export const calculateMax = (values: number[], defaultValue: number = 1): number
 export const calculateAvailableHoursLeft = (usedHours: number, totalAvailableHours: number = 17): number => {
   return Math.max(0, totalAvailableHours - usedHours)
 }
+
+/**
+ * Formats a number with locale-aware thousand separators
+ * @param value - The number to format
+ * @param decimals - Number of decimal places (optional, preserves original if not specified)
+ * @returns Formatted string with commas as thousand separators
+ * @example
+ * formatNumber(1234) // "1,234"
+ * formatNumber(1234.5) // "1,234.5"
+ * formatNumber(1234.567, 1) // "1,234.6"
+ */
+export const formatNumber = (value: number, decimals?: number): string => {
+  if (decimals !== undefined) {
+    return value.toLocaleString('en-US', {
+      minimumFractionDigits: decimals,
+      maximumFractionDigits: decimals,
+    })
+  }
+  return value.toLocaleString('en-US')
+}
