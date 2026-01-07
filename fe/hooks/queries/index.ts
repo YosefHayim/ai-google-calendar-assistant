@@ -54,4 +54,11 @@ export {
 } from './gaps'
 
 // User Preferences hooks
-export { useAllyBrain, useUpdateAllyBrain, useContextualScheduling, useUpdateContextualScheduling } from './preferences'
+export {
+  useAllyBrain,
+  useUpdateAllyBrain,
+  useContextualScheduling,
+  useUpdateContextualScheduling,
+  useReminderDefaults,
+  useUpdateReminderDefaults,
+} from './preferences'

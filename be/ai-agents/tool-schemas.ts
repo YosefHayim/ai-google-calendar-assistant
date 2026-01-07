@@ -2,6 +2,43 @@ import { TIMEZONE } from "@/config";
 import validator from "validator";
 import { z } from "zod";
 
+// ═══════════════════════════════════════════════════════════════════════════
+// REMINDER SCHEMAS - Google Calendar API compliant
+// Max reminder: 40320 minutes (4 weeks before event)
+// Methods: "email" or "popup"
+// ═══════════════════════════════════════════════════════════════════════════
+
+const REMINDER_MAX_MINUTES = 40320; // 4 weeks in minutes
+
+export const reminderMethodSchema = z.enum(["email", "popup"], {
+  description:
+    "Reminder notification method: 'email' for email notification, 'popup' for browser/device popup.",
+});
+
+export const eventReminderSchema = z.object({
+  method: reminderMethodSchema,
+  minutes: z.coerce
+    .number()
+    .int()
+    .min(0, "Reminder minutes must be non-negative")
+    .max(
+      REMINDER_MAX_MINUTES,
+      `Reminder cannot be more than ${REMINDER_MAX_MINUTES} minutes (4 weeks) before event`,
+    ),
+});
+
+export const eventRemindersSchema = z.object({
+  useDefault: z.boolean({
+    description:
+      "If true, use the calendar's default reminders. If false, use the overrides array.",
+  }),
+  overrides: z
+    .array(eventReminderSchema)
+    .max(5, "Maximum 5 reminder overrides allowed")
+    .optional()
+    .describe("Custom reminders. Only used when useDefault is false."),
+});
+
 const requiredString = (description: string, message = "Required.") =>
   z.coerce.string({ description }).trim().min(1, { message });
 
@@ -55,7 +92,6 @@ export const makeEventTime = () =>
     })
     .describe("Event start or end time, with optional timezone.");
 
-// Event parameters WITHOUT email - email comes from authenticated context
 const makeFullEventParams = () =>
   z
     .object({
@@ -69,9 +105,10 @@ const makeFullEventParams = () =>
         .nullable(),
       start: makeEventTime(),
       end: makeEventTime(),
+      reminders: eventRemindersSchema.nullable().optional(),
     })
     .describe(
-      "Full event parameters including summary, description, location, start, and end times. Email is automatically provided from user context.",
+      "Full event parameters including summary, description, location, start, end times, and optional reminders. Email is automatically provided from user context.",
     );
 
 export const PARAMETERS_TOOLS = {
@@ -275,4 +312,66 @@ export const PARAMETERS_TOOLS = {
     .describe(
       "Check for conflicting events across ALL calendars. Use this when moving events to detect conflicts in other calendars.",
     ),
+
+  // Reminder-related parameters
+  setEventRemindersParameters: z
+    .object({
+      eventId: requiredString(
+        "The ID of the event to update reminders for.",
+        "Event ID is required.",
+      ),
+      calendarId: calendarSchema,
+      reminders: eventRemindersSchema,
+    })
+    .describe(
+      "Set reminders for a specific event. Can use calendar defaults or custom overrides.",
+    ),
+
+  getCalendarDefaultRemindersParameters: z
+    .object({
+      calendarId: z.coerce
+        .string()
+        .default("primary")
+        .describe("Calendar ID to get default reminders for."),
+    })
+    .describe("Get the default reminders configured for a calendar."),
+
+  updateCalendarDefaultRemindersParameters: z
+    .object({
+      calendarId: z.coerce
+        .string()
+        .default("primary")
+        .describe("Calendar ID to update default reminders for."),
+      defaultReminders: z
+        .array(eventReminderSchema)
+        .max(5, "Maximum 5 default reminders allowed")
+        .describe("Array of default reminders to set for the calendar."),
+    })
+    .describe(
+      "Update the default reminders for a calendar. These will be used when useDefault is true on events.",
+    ),
+
+  getUserReminderPreferencesParameters: z
+    .object({})
+    .describe("Get the user's stored reminder preferences from Ally's brain."),
+
+  updateUserReminderPreferencesParameters: z
+    .object({
+      enabled: z
+        .boolean()
+        .describe(
+          "Whether to automatically apply reminder preferences to new events.",
+        ),
+      defaultReminders: z
+        .array(eventReminderSchema)
+        .max(5, "Maximum 5 default reminders allowed")
+        .describe("User's preferred default reminders to apply to new events."),
+      useCalendarDefaults: z
+        .boolean()
+        .default(true)
+        .describe(
+          "If true, use the calendar's defaults. If false, use the user's custom defaults.",
+        ),
+    })
+    .describe("Update the user's reminder preferences stored in Ally's brain."),
 };

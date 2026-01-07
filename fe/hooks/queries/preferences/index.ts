@@ -4,7 +4,11 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { preferencesService, type PreferenceResponse } from '@/lib/api/services/preferences.service'
 import { queryKeys } from '@/lib/query/keys'
 import { QUERY_CONFIG } from '@/lib/constants'
-import type { AllyBrainFormData, ContextualSchedulingFormData } from '@/lib/validations/preferences'
+import type {
+  AllyBrainFormData,
+  ContextualSchedulingFormData,
+  ReminderDefaultsFormData,
+} from '@/lib/validations/preferences'
 import type { QueryHookOptions } from '../useQueryWrapper'
 
 /**
@@ -115,6 +119,56 @@ export function useUpdateContextualScheduling() {
   return {
     updateContextualScheduling: mutation.mutate,
     updateContextualSchedulingAsync: mutation.mutateAsync,
+    isUpdating: mutation.isPending,
+    isError: mutation.isError,
+    error: mutation.error,
+    isSuccess: mutation.isSuccess,
+    reset: mutation.reset,
+  }
+}
+
+export function useReminderDefaults(options?: QueryHookOptions) {
+  const query = useQuery({
+    queryKey: queryKeys.preferences.reminderDefaults(),
+    queryFn: async () => {
+      const response = await preferencesService.getReminderDefaults()
+      return response.data
+    },
+    staleTime: options?.staleTime ?? QUERY_CONFIG.USER_STALE_TIME,
+    enabled: options?.enabled ?? true,
+    refetchOnWindowFocus: options?.refetchOnWindowFocus ?? false,
+    refetchOnMount: options?.refetchOnMount ?? true,
+  })
+
+  return {
+    data: query.data ?? null,
+    isLoading: query.isLoading,
+    isFetching: query.isFetching,
+    isError: query.isError,
+    error: query.error,
+    refetch: query.refetch,
+  }
+}
+
+export function useUpdateReminderDefaults() {
+  const queryClient = useQueryClient()
+
+  const mutation = useMutation({
+    mutationFn: (data: ReminderDefaultsFormData) => preferencesService.updateReminderDefaults(data),
+    onSuccess: (response) => {
+      if (response.data) {
+        queryClient.setQueryData<PreferenceResponse<ReminderDefaultsFormData>>(
+          queryKeys.preferences.reminderDefaults(),
+          response.data,
+        )
+      }
+      queryClient.invalidateQueries({ queryKey: queryKeys.preferences.list() })
+    },
+  })
+
+  return {
+    updateReminderDefaults: mutation.mutate,
+    updateReminderDefaultsAsync: mutation.mutateAsync,
     isUpdating: mutation.isPending,
     isError: mutation.isError,
     error: mutation.error,

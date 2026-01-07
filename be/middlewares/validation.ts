@@ -24,7 +24,7 @@ export const signUpSchema = z.object({
     .max(128, "Password must be less than 128 characters")
     .regex(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-      "Password must contain at least one uppercase letter, one lowercase letter, and one number"
+      "Password must contain at least one uppercase letter, one lowercase letter, and one number",
     ),
 });
 
@@ -117,7 +117,7 @@ export const createEventSchema = z.object({
         email: z.string().email("Invalid attendee email"),
         displayName: z.string().max(200).optional(),
         optional: z.boolean().optional(),
-      })
+      }),
     )
     .max(100, "Maximum 100 attendees allowed")
     .optional(),
@@ -130,7 +130,7 @@ export const createEventSchema = z.object({
           z.object({
             method: z.enum(["email", "popup"]),
             minutes: z.number().min(0).max(40320), // Max 4 weeks
-          })
+          }),
         )
         .max(5)
         .optional(),
@@ -360,10 +360,10 @@ export const contextualSchedulingSchema = z.object({
 });
 
 export const preferenceKeyParamSchema = z.object({
-  key: z.enum(["ally_brain", "contextual_scheduling"], {
+  key: z.enum(["ally_brain", "contextual_scheduling", "reminder_defaults"], {
     errorMap: () => ({
       message:
-        "Invalid preference key. Must be 'ally_brain' or 'contextual_scheduling'",
+        "Invalid preference key. Must be 'ally_brain', 'contextual_scheduling', or 'reminder_defaults'",
     }),
   }),
 });
@@ -371,4 +371,29 @@ export const preferenceKeyParamSchema = z.object({
 export type AllyBrainBody = z.infer<typeof allyBrainSchema>;
 export type ContextualSchedulingBody = z.infer<
   typeof contextualSchedulingSchema
+>;
+
+// ============================================
+// Reminder Preferences Validation Schemas
+// ============================================
+
+export const eventReminderSchema = z.object({
+  method: z.enum(["email", "popup"]),
+  minutes: z.number().int().min(0).max(40320),
+});
+
+export const reminderPreferencesSchema = z.object({
+  enabled: z.boolean(),
+  defaultReminders: z.array(eventReminderSchema).max(5).optional(),
+  useCalendarDefaults: z.boolean().optional().default(true),
+});
+
+export type ReminderPreferencesBody = z.infer<typeof reminderPreferencesSchema>;
+
+export const updateCalendarRemindersSchema = z.object({
+  defaultReminders: z.array(eventReminderSchema).max(5),
+});
+
+export type UpdateCalendarRemindersBody = z.infer<
+  typeof updateCalendarRemindersSchema
 >;

@@ -4,9 +4,13 @@ import { STATUS_RESPONSE, SUPABASE } from "@/config";
 import type {
   AllyBrainBody,
   ContextualSchedulingBody,
+  ReminderPreferencesBody,
 } from "@/middlewares/validation";
 
-type PreferenceKey = "ally_brain" | "contextual_scheduling";
+type PreferenceKey =
+  | "ally_brain"
+  | "contextual_scheduling"
+  | "reminder_defaults";
 
 interface AllyBrainPreference {
   enabled: boolean;
@@ -17,7 +21,21 @@ interface ContextualSchedulingPreference {
   enabled: boolean;
 }
 
-type PreferenceValue = AllyBrainPreference | ContextualSchedulingPreference;
+interface EventReminder {
+  method: "email" | "popup";
+  minutes: number;
+}
+
+interface ReminderDefaultsPreference {
+  enabled: boolean;
+  defaultReminders: EventReminder[];
+  useCalendarDefaults: boolean;
+}
+
+type PreferenceValue =
+  | AllyBrainPreference
+  | ContextualSchedulingPreference
+  | ReminderDefaultsPreference;
 
 /**
  * Get a user preference by key
@@ -32,7 +50,12 @@ const getPreference = reqResAsyncHandler(
       return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
     }
 
-    if (!key || !["ally_brain", "contextual_scheduling"].includes(key)) {
+    if (
+      !key ||
+      !["ally_brain", "contextual_scheduling", "reminder_defaults"].includes(
+        key,
+      )
+    ) {
       return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Invalid preference key");
     }
 
@@ -52,11 +75,15 @@ const getPreference = reqResAsyncHandler(
         );
       }
 
-      // Return default values if preference doesn't exist
       if (!data) {
         const defaultValues: Record<PreferenceKey, PreferenceValue> = {
           ally_brain: { enabled: false, instructions: "" },
           contextual_scheduling: { enabled: true },
+          reminder_defaults: {
+            enabled: true,
+            defaultReminders: [],
+            useCalendarDefaults: true,
+          },
         };
 
         return sendR(
@@ -71,12 +98,17 @@ const getPreference = reqResAsyncHandler(
         );
       }
 
-      return sendR(res, STATUS_RESPONSE.SUCCESS, "Preference retrieved successfully", {
-        key,
-        value: data.preference_value,
-        updatedAt: data.updated_at,
-        isDefault: false,
-      });
+      return sendR(
+        res,
+        STATUS_RESPONSE.SUCCESS,
+        "Preference retrieved successfully",
+        {
+          key,
+          value: data.preference_value,
+          updatedAt: data.updated_at,
+          isDefault: false,
+        },
+      );
     } catch (error) {
       console.error("Error getting preference:", error);
       return sendR(
@@ -98,12 +130,16 @@ const updatePreference = reqResAsyncHandler(
       return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
     }
 
-    if (!key || !["ally_brain", "contextual_scheduling"].includes(key)) {
+    if (
+      !key ||
+      !["ally_brain", "contextual_scheduling", "reminder_defaults"].includes(
+        key,
+      )
+    ) {
       return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Invalid preference key");
     }
 
     try {
-      // Upsert the preference (insert or update on conflict)
       const { data, error } = await SUPABASE.from("user_preferences")
         .upsert(
           {
@@ -129,11 +165,16 @@ const updatePreference = reqResAsyncHandler(
         );
       }
 
-      return sendR(res, STATUS_RESPONSE.SUCCESS, "Preference saved successfully", {
-        key,
-        value: data.preference_value,
-        updatedAt: data.updated_at,
-      });
+      return sendR(
+        res,
+        STATUS_RESPONSE.SUCCESS,
+        "Preference saved successfully",
+        {
+          key,
+          value: data.preference_value,
+          updatedAt: data.updated_at,
+        },
+      );
     } catch (error) {
       console.error("Error updating preference:", error);
       return sendR(
@@ -172,10 +213,14 @@ const getAllPreferences = reqResAsyncHandler(
         );
       }
 
-      // Build response with defaults for missing preferences
       const defaults: Record<PreferenceKey, PreferenceValue> = {
         ally_brain: { enabled: false, instructions: "" },
         contextual_scheduling: { enabled: true },
+        reminder_defaults: {
+          enabled: true,
+          defaultReminders: [],
+          useCalendarDefaults: true,
+        },
       };
 
       const preferences: Record<
@@ -240,6 +285,26 @@ export async function getAllyBrainPreference(
     }
 
     return data.preference_value as unknown as AllyBrainPreference;
+  } catch {
+    return null;
+  }
+}
+
+export async function getReminderDefaultsPreference(
+  userId: string,
+): Promise<ReminderDefaultsPreference | null> {
+  try {
+    const { data, error } = await SUPABASE.from("user_preferences")
+      .select("preference_value")
+      .eq("user_id", userId)
+      .eq("preference_key", "reminder_defaults")
+      .maybeSingle();
+
+    if (error || !data) {
+      return null;
+    }
+
+    return data.preference_value as unknown as ReminderDefaultsPreference;
   } catch {
     return null;
   }

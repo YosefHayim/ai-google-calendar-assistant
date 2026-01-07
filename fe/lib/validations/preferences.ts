@@ -19,6 +19,39 @@ export const contextualSchedulingSchema = z.object({
 export type AllyBrainFormData = z.infer<typeof allyBrainSchema>
 export type ContextualSchedulingFormData = z.infer<typeof contextualSchedulingSchema>
 
+export const eventReminderSchema = z.object({
+  method: z.enum(['email', 'popup']),
+  minutes: z.number().int().min(0).max(40320),
+})
+
+export const reminderDefaultsSchema = z.object({
+  enabled: z.boolean(),
+  defaultReminders: z.array(eventReminderSchema).max(5).optional().default([]),
+  useCalendarDefaults: z.boolean().optional().default(true),
+})
+
+export type EventReminder = z.infer<typeof eventReminderSchema>
+export type ReminderDefaultsFormData = z.infer<typeof reminderDefaultsSchema>
+
+export const reminderDefaultsDefaults: ReminderDefaultsFormData = {
+  enabled: true,
+  defaultReminders: [],
+  useCalendarDefaults: true,
+}
+
+export const REMINDER_TIME_OPTIONS = [
+  { value: 0, label: 'At time of event' },
+  { value: 5, label: '5 minutes before' },
+  { value: 10, label: '10 minutes before' },
+  { value: 15, label: '15 minutes before' },
+  { value: 30, label: '30 minutes before' },
+  { value: 60, label: '1 hour before' },
+  { value: 120, label: '2 hours before' },
+  { value: 1440, label: '1 day before' },
+  { value: 2880, label: '2 days before' },
+  { value: 10080, label: '1 week before' },
+] as const
+
 /**
  * Default values for Ally's Brain form
  */

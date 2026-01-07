@@ -7,10 +7,17 @@ export const TOOLS_DESCRIPTION = {
 
   insertEvent: `Creates a calendar event. Email is automatically provided from user context.
 
-Input: { calendarId, summary, start, end, location?, description? }
+Input: { calendarId, summary, start, end, location?, description?, reminders? }
 Output: created event object from Google Calendar API
 
-Defaults when missing: summary="Untitled Event", duration=60min, timezone from user's stored settings`,
+Defaults when missing: summary="Untitled Event", duration=60min, timezone from user's stored settings
+
+Reminder behavior:
+- If reminders explicitly provided, uses those
+- If not provided, checks user's stored reminder preferences
+- User can configure defaults via update_user_reminder_preferences tool
+- Set reminders.useDefault=true to use calendar's default reminders
+- Or provide reminders.overrides with custom [{method: "email"|"popup", minutes: number}]`,
 
   updateEvent: `Modifies an existing event. Preserves unspecified fields. Email is automatically provided from user context.
 
@@ -94,4 +101,48 @@ The formatted output includes:
 - Events before and after each gap
 - Suggestions (if confidence >= 0.5)
 - Action instructions for the user`,
+
+  setEventReminders: `Set reminders for an existing calendar event. Email is automatically provided from user context.
+
+Input: { eventId, calendarId?, reminders: { useDefault: boolean, overrides?: [{ method: "email"|"popup", minutes: number }] } }
+Output: Updated event object with reminders
+
+Use when user explicitly asks to:
+- "Remind me 30 minutes before the meeting"
+- "Set a notification for this event"
+- "Add an email reminder 1 day before"
+
+Note: Maximum 5 reminder overrides, minutes range 0-40320 (4 weeks).`,
+
+  getCalendarDefaultReminders: `Get the default reminders configured for a calendar. Email is automatically provided from user context.
+
+Input: { calendarId? }
+Output: { defaultReminders: [{ method, minutes }], calendarName: string }
+
+Use when user asks about their default reminder settings for a calendar.`,
+
+  updateCalendarDefaultReminders: `Update the default reminders for a calendar. These apply to all new events unless overridden. Email is automatically provided from user context.
+
+Input: { calendarId?, defaultReminders: [{ method: "email"|"popup", minutes: number }] }
+Output: Updated calendar list entry
+
+Use when user wants to change their default reminder behavior for a calendar.
+Maximum 5 default reminders allowed.`,
+
+  getUserReminderPreferences: `Get the user's stored reminder preferences from Ally's brain. Email is automatically provided from user context.
+
+Input: {}
+Output: { enabled: boolean, defaultReminders: [], useCalendarDefaults: boolean } or null if not set
+
+Use to check user's reminder preferences before creating events.`,
+
+  updateUserReminderPreferences: `Update the user's reminder preferences stored in Ally's brain. Email is automatically provided from user context.
+
+Input: { enabled: boolean, defaultReminders: [{ method, minutes }], useCalendarDefaults: boolean }
+Output: { success: boolean }
+
+Use when user wants Ally to remember their preferred reminder settings:
+- "Always remind me 15 minutes before events"
+- "I like email reminders 1 day before"
+- "Use my calendar's default reminders"`,
 } as const;

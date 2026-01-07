@@ -1,5 +1,9 @@
 import type { ApiResponse } from '@/types/api'
-import type { AllyBrainFormData, ContextualSchedulingFormData } from '@/lib/validations/preferences'
+import type {
+  AllyBrainFormData,
+  ContextualSchedulingFormData,
+  ReminderDefaultsFormData,
+} from '@/lib/validations/preferences'
 
 import { ENDPOINTS } from '@/lib/api/endpoints'
 import { apiClient } from '@/lib/api/client'
@@ -16,6 +20,7 @@ export interface AllPreferencesResponse {
   preferences: {
     ally_brain: PreferenceResponse<AllyBrainFormData>
     contextual_scheduling: PreferenceResponse<ContextualSchedulingFormData>
+    reminder_defaults: PreferenceResponse<ReminderDefaultsFormData>
   }
 }
 
@@ -67,6 +72,23 @@ export const preferencesService = {
   ): Promise<ApiResponse<PreferenceResponse<ContextualSchedulingFormData>>> {
     const { data } = await apiClient.put<ApiResponse<PreferenceResponse<ContextualSchedulingFormData>>>(
       ENDPOINTS.USER_PREFERENCES_CONTEXTUAL_SCHEDULING,
+      value,
+    )
+    return data
+  },
+
+  async getReminderDefaults(): Promise<ApiResponse<PreferenceResponse<ReminderDefaultsFormData>>> {
+    const { data } = await apiClient.get<ApiResponse<PreferenceResponse<ReminderDefaultsFormData>>>(
+      ENDPOINTS.USER_PREFERENCES_BY_KEY('reminder_defaults'),
+    )
+    return data
+  },
+
+  async updateReminderDefaults(
+    value: ReminderDefaultsFormData,
+  ): Promise<ApiResponse<PreferenceResponse<ReminderDefaultsFormData>>> {
+    const { data } = await apiClient.put<ApiResponse<PreferenceResponse<ReminderDefaultsFormData>>>(
+      ENDPOINTS.USER_PREFERENCES_REMINDER_DEFAULTS,
       value,
     )
     return data
