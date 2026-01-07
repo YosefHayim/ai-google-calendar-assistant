@@ -201,6 +201,7 @@ export const en = {
     completingSignIn: 'Completing sign in...',
     tagline: 'Your AI-Powered Calendar Assistant',
     loading: 'Loading...',
+    noAccessToken: 'No access token received',
   },
 
   // Sidebar Navigation

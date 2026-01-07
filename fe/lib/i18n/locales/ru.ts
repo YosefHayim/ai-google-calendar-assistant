@@ -189,6 +189,7 @@ export const ru: TranslationShape = {
     completingSignIn: 'Завершение входа...',
     tagline: 'Ваш ИИ-ассистент для календаря',
     loading: 'Загрузка...',
+    noAccessToken: 'Токен доступа не получен',
   },
 
   sidebar: {
