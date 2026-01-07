@@ -6,9 +6,13 @@ import NumberFlow from '@number-flow/react'
 import {
   Activity,
   CalendarDays,
+  CalendarOff,
   Clock,
   Flame,
+  Repeat,
+  Star,
   Target,
+  Timer,
   TrendingUp,
   TrendingDown,
   Minus,
@@ -113,11 +117,11 @@ function formatPeakHour(hour: number): string {
 const BentoStatsGrid: React.FC<BentoStatsGridProps> = ({ data, comparison, isLoading = false }) => {
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {Array.from({ length: 8 }).map((_, i) => (
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
+        {Array.from({ length: 10 }).map((_, i) => (
           <div
             key={i}
-            className={`bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 ${i === 0 ? 'md:col-span-2 md:row-span-2' : ''}`}
+            className={`bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 ${i === 0 ? 'col-span-2 row-span-2' : ''}`}
           >
             <Skeleton className="h-4 w-20 mb-3" />
             <Skeleton className={`${i === 0 ? 'h-20 w-20' : 'h-8 w-24'} mb-2`} />
@@ -128,14 +132,24 @@ const BentoStatsGrid: React.FC<BentoStatsGridProps> = ({ data, comparison, isLoa
     )
   }
 
-  const { productivityMetrics, focusTimeMetrics, totalEvents, totalDurationHours, busiestDayHours } = data
+  const {
+    productivityMetrics,
+    focusTimeMetrics,
+    totalEvents,
+    totalDurationHours,
+    busiestDayHours,
+    longestEvent,
+    eventFreeDays,
+    allDayEventsCount,
+    recurringEventsCount,
+  } = data
 
   const totalEventsTrend = comparison?.trends.totalEvents
   const totalDurationTrend = comparison?.trends.totalDuration
 
   return (
     <motion.div
-      className="grid grid-cols-2 md:grid-cols-4 gap-3"
+      className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3"
       variants={container}
       initial="hidden"
       animate="show"
@@ -302,6 +316,79 @@ const BentoStatsGrid: React.FC<BentoStatsGridProps> = ({ data, comparison, isLoa
         <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1 truncate">
           {productivityMetrics.mostProductiveDay}
         </p>
+      </motion.div>
+
+      <motion.div
+        variants={item}
+        className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 shadow-sm hover:shadow-md hover:border-rose-300 dark:hover:border-rose-700 transition-all"
+      >
+        <div className="flex items-center gap-2 mb-3">
+          <div className="w-8 h-8 rounded-lg bg-rose-100 dark:bg-rose-900/50 flex items-center justify-center">
+            <Timer className="w-4 h-4 text-rose-600 dark:text-rose-400" />
+          </div>
+          <span className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+            Longest Event
+          </span>
+        </div>
+        <p className="text-3xl font-bold text-zinc-900 dark:text-zinc-100">
+          <NumberFlow value={longestEvent} />
+          <span className="text-lg font-medium text-zinc-500">h</span>
+        </p>
+        <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">longest single event</p>
+      </motion.div>
+
+      <motion.div
+        variants={item}
+        className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 shadow-sm hover:shadow-md hover:border-cyan-300 dark:hover:border-cyan-700 transition-all"
+      >
+        <div className="flex items-center gap-2 mb-3">
+          <div className="w-8 h-8 rounded-lg bg-cyan-100 dark:bg-cyan-900/50 flex items-center justify-center">
+            <CalendarOff className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
+          </div>
+          <span className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+            Free Days
+          </span>
+        </div>
+        <p className="text-3xl font-bold text-zinc-900 dark:text-zinc-100">
+          <NumberFlow value={eventFreeDays} />
+        </p>
+        <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">days without events</p>
+      </motion.div>
+
+      <motion.div
+        variants={item}
+        className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 shadow-sm hover:shadow-md hover:border-violet-300 dark:hover:border-violet-700 transition-all"
+      >
+        <div className="flex items-center gap-2 mb-3">
+          <div className="w-8 h-8 rounded-lg bg-violet-100 dark:bg-violet-900/50 flex items-center justify-center">
+            <Star className="w-4 h-4 text-violet-600 dark:text-violet-400" />
+          </div>
+          <span className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+            All-Day
+          </span>
+        </div>
+        <p className="text-3xl font-bold text-zinc-900 dark:text-zinc-100">
+          <NumberFlow value={allDayEventsCount} />
+        </p>
+        <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">all-day events</p>
+      </motion.div>
+
+      <motion.div
+        variants={item}
+        className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 shadow-sm hover:shadow-md hover:border-fuchsia-300 dark:hover:border-fuchsia-700 transition-all"
+      >
+        <div className="flex items-center gap-2 mb-3">
+          <div className="w-8 h-8 rounded-lg bg-fuchsia-100 dark:bg-fuchsia-900/50 flex items-center justify-center">
+            <Repeat className="w-4 h-4 text-fuchsia-600 dark:text-fuchsia-400" />
+          </div>
+          <span className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+            Recurring
+          </span>
+        </div>
+        <p className="text-3xl font-bold text-zinc-900 dark:text-zinc-100">
+          <NumberFlow value={recurringEventsCount} />
+        </p>
+        <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">recurring events</p>
       </motion.div>
     </motion.div>
   )

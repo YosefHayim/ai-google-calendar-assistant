@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { AlertTriangle, Brain, Check, Loader2, MessageSquareX, Sparkles, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
@@ -48,7 +48,7 @@ export const AssistantTab: React.FC<AssistantTabProps> = ({ onDeleteAllConversat
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     setValue,
     reset,
     formState: { errors, isDirty },
@@ -57,8 +57,8 @@ export const AssistantTab: React.FC<AssistantTabProps> = ({ onDeleteAllConversat
     defaultValues: allyBrainDefaults,
   })
 
-  const watchedEnabled = watch('enabled')
-  const watchedInstructions = watch('instructions') || ''
+  const watchedEnabled = useWatch({ control, name: 'enabled' })
+  const watchedInstructions = useWatch({ control, name: 'instructions' }) || ''
   const charCount = watchedInstructions.length
   const isOverLimit = charCount > MAX_CHARS
   const showCounter = charCount >= SHOW_COUNTER_THRESHOLD

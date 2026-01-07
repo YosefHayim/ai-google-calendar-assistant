@@ -3,6 +3,7 @@
 import { CalendarDays, CheckCircle, Plus } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
 import type { CalendarListEntry } from '@/types/api'
 import React from 'react'
 
@@ -11,6 +12,7 @@ interface ManageCalendarsProps {
   calendarMap: Map<string, { name: string; color: string }>
   onCalendarClick: (calendar: CalendarListEntry) => void
   onCreateCalendar: () => void
+  isLoading?: boolean
 }
 
 const ManageCalendars: React.FC<ManageCalendarsProps> = ({
@@ -18,7 +20,34 @@ const ManageCalendars: React.FC<ManageCalendarsProps> = ({
   calendarMap,
   onCalendarClick,
   onCreateCalendar,
+  isLoading = false,
 }) => {
+  if (isLoading) {
+    return (
+      <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-6">
+        <div className="gap-2 mb-6 flex items-center justify-between">
+          <div>
+            <div className="flex items-center gap-2">
+              <Skeleton className="w-4 h-4" />
+              <Skeleton className="h-5 w-36" />
+            </div>
+            <Skeleton className="h-3 w-24 mt-1" />
+          </div>
+          <Skeleton className="h-8 w-8 rounded-md" />
+        </div>
+        <div className="space-y-2">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="flex items-center gap-3 p-2 rounded-md">
+              <Skeleton className="w-2.5 h-2.5 rounded-full" />
+              <Skeleton className="flex-1 h-4" />
+              <Skeleton className="w-4 h-4" />
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-6">
       <div className="gap-2 mb-6 flex items-center justify-between">

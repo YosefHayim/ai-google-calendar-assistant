@@ -1,6 +1,7 @@
 'use client'
 
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
+import { Skeleton } from '@/components/ui/skeleton'
 import { Info, ListChecks } from 'lucide-react'
 
 import type { ProcessedActivity } from '@/types/analytics'
@@ -9,9 +10,35 @@ import React from 'react'
 interface RecentEventsProps {
   activities: ProcessedActivity[]
   onActivityClick: (activity: ProcessedActivity) => void
+  isLoading?: boolean
 }
 
-const RecentEvents: React.FC<RecentEventsProps> = ({ activities, onActivityClick }) => {
+const RecentEvents: React.FC<RecentEventsProps> = ({ activities, onActivityClick, isLoading = false }) => {
+  if (isLoading) {
+    return (
+      <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-6 flex-1">
+        <div className="mb-6 flex items-center gap-2">
+          <Skeleton className="w-4 h-4" />
+          <Skeleton className="h-5 w-32" />
+        </div>
+        <ul className="space-y-2">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <li key={i} className="flex items-start gap-3 p-2 -m-2">
+              <Skeleton className="w-8 h-8 rounded-md" />
+              <div className="flex-1">
+                <Skeleton className="h-4 w-48 mb-1" />
+                <div className="flex items-center gap-2 mt-0.5">
+                  <Skeleton className="h-3 w-16" />
+                  <Skeleton className="h-4 w-20" />
+                </div>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )
+  }
+
   return (
     <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-6 flex-1">
       <div className="mb-6 flex items-center justify-between">
