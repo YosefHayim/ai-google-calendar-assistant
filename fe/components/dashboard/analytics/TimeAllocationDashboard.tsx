@@ -4,6 +4,7 @@ import * as React from 'react'
 import { BarChart3, PieChart, CircleDot, Radar, BarChartHorizontal, Info } from 'lucide-react'
 import { AnimatePresence, motion } from 'framer-motion'
 
+import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
 import type { CalendarBreakdownItem } from '@/types/analytics'
@@ -21,6 +22,7 @@ type ChartType = 'bar' | 'pie' | 'donut' | 'radar' | 'horizontal'
 interface TimeAllocationDashboardProps {
   data: CalendarBreakdownItem[]
   onCalendarClick?: (calendarId: string, calendarName: string, calendarColor: string) => void
+  isLoading?: boolean
 }
 
 const chartTypeConfig: Record<ChartType, { icon: React.ElementType; label: string }> = {
@@ -31,9 +33,39 @@ const chartTypeConfig: Record<ChartType, { icon: React.ElementType; label: strin
   horizontal: { icon: BarChartHorizontal, label: 'H-Bar' },
 }
 
-export const TimeAllocationDashboard: React.FC<TimeAllocationDashboardProps> = ({ data, onCalendarClick }) => {
+export const TimeAllocationDashboard: React.FC<TimeAllocationDashboardProps> = ({
+  data,
+  onCalendarClick,
+  isLoading = false,
+}) => {
   const [chartType, setChartType] = React.useState<ChartType>('donut')
   const totalHours = sumBy(data, 'hours')
+
+  if (isLoading) {
+    return (
+      <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm">
+        <div className="p-4 pb-2 border-b border-zinc-200 dark:border-zinc-800">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <Skeleton className="h-5 w-32" />
+              <Skeleton className="h-4 w-20" />
+            </div>
+            <Skeleton className="h-8 w-48" />
+          </div>
+        </div>
+        <div className="p-4 flex flex-col lg:flex-row gap-4">
+          <div className="flex-1 flex justify-center items-center">
+            <Skeleton className="h-[200px] w-[200px] rounded-full" />
+          </div>
+          <div className="lg:w-48 flex-shrink-0 space-y-2">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Skeleton key={i} className="h-10 w-full" />
+            ))}
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   if (totalHours === 0) {
     return (

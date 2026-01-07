@@ -1,0 +1,107 @@
+'use client'
+
+import * as React from 'react'
+import { Area, AreaChart, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip } from 'recharts'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import type { WeeklyPatternDataPoint } from '@/types/analytics'
+import { EventsListPopover } from '../EventsListPopover'
+
+interface WeeklyPatternAreaChartProps {
+  data: WeeklyPatternDataPoint[]
+  onDayClick?: (dayIndex: number, events: WeeklyPatternDataPoint['events']) => void
+}
+
+export const WeeklyPatternAreaChart: React.FC<WeeklyPatternAreaChartProps> = ({ data, onDayClick }) => {
+  const [activeDataPoint, setActiveDataPoint] = React.useState<WeeklyPatternDataPoint | null>(null)
+  const [popoverOpen, setPopoverOpen] = React.useState(false)
+
+  const orderedData = React.useMemo(() => {
+    if (!data || data.length === 0) return []
+    const sorted = [...data].sort((a, b) => {
+      const orderA = a.dayIndex === 0 ? 7 : a.dayIndex
+      const orderB = b.dayIndex === 0 ? 7 : b.dayIndex
+      return orderA - orderB
+    })
+    return sorted
+  }, [data])
+
+  return (
+    <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
+      <PopoverTrigger asChild>
+        <div className="h-[200px] w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart
+              data={orderedData}
+              margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+              onClick={(state) => {
+                if (state?.activePayload?.[0]?.payload) {
+                  const point = state.activePayload[0].payload as WeeklyPatternDataPoint
+                  if (point.events.length > 0) {
+                    setActiveDataPoint(point)
+                    setPopoverOpen(true)
+                  }
+                  onDayClick?.(point.dayIndex, point.events)
+                }
+              }}
+            >
+              <defs>
+                <linearGradient id="weeklyGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" className="stroke-zinc-200 dark:stroke-zinc-800" />
+              <XAxis
+                dataKey="dayShort"
+                axisLine={false}
+                tickLine={false}
+                tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
+              />
+              <YAxis
+                axisLine={false}
+                tickLine={false}
+                tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
+                tickFormatter={(value) => `${value}h`}
+              />
+              <Tooltip
+                content={({ active, payload }) => {
+                  if (active && payload && payload.length > 0) {
+                    const point = payload[0].payload as WeeklyPatternDataPoint
+                    return (
+                      <div className="bg-zinc-900 dark:bg-zinc-800 text-white px-3 py-2 rounded-lg shadow-lg">
+                        <p className="font-medium">{point.day}</p>
+                        <p className="text-sm">{point.hours}h scheduled</p>
+                        <p className="text-xs text-zinc-400">{point.eventCount} events</p>
+                        {point.events.length > 0 && (
+                          <p className="text-xs text-indigo-400 mt-1">Click to view events</p>
+                        )}
+                      </div>
+                    )
+                  }
+                  return null
+                }}
+              />
+              <Area
+                type="monotone"
+                dataKey="hours"
+                stroke="#6366f1"
+                strokeWidth={2}
+                fill="url(#weeklyGradient)"
+                dot={{ fill: '#6366f1', strokeWidth: 2, r: 4, cursor: 'pointer' }}
+                activeDot={{ r: 6, fill: '#6366f1', stroke: '#fff', strokeWidth: 2, cursor: 'pointer' }}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      </PopoverTrigger>
+      {activeDataPoint && activeDataPoint.events.length > 0 && (
+        <PopoverContent side="top" align="center" className="p-0">
+          <EventsListPopover
+            events={activeDataPoint.events}
+            title={activeDataPoint.day}
+          />
+        </PopoverContent>
+      )}
+    </Popover>
+  )
+}

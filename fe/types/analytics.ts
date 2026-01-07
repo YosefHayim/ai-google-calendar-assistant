@@ -253,12 +253,40 @@ export interface DailyAvailableHoursDataPoint {
 
 // --- Enhanced Analytics Types ---
 
+export interface PatternEventSummary {
+  id: string
+  summary: string
+  startTime: string
+  endTime: string
+  durationMinutes: number
+  calendarName: string
+  calendarColor: string
+}
+
 export interface WeeklyPatternDataPoint {
   day: string
   dayShort: string
   dayIndex: number
   hours: number
   eventCount: number
+  events: PatternEventSummary[]
+}
+
+export interface MonthlyPatternDataPoint {
+  dayOfMonth: number
+  hours: number
+  eventCount: number
+  events: PatternEventSummary[]
+}
+
+export interface EventDurationCategory {
+  key: 'short' | 'medium' | 'long' | 'extended'
+  label: string
+  range: string
+  color: string
+  count: number
+  percentage: number
+  events: PatternEventSummary[]
 }
 
 export interface TimeOfDayDistribution {
@@ -303,8 +331,10 @@ export interface EnhancedAnalyticsData {
 
   // New enhanced metrics
   weeklyPattern: WeeklyPatternDataPoint[]
+  monthlyPattern: MonthlyPatternDataPoint[]
   timeOfDayDistribution: TimeOfDayDistribution
   eventDurationBreakdown: EventDurationBreakdown
+  eventDurationCategories: EventDurationCategory[]
   focusTimeMetrics: FocusTimeMetrics
   productivityMetrics: ProductivityMetrics
 
@@ -344,6 +374,11 @@ export interface BentoStatsGridProps {
 
 export interface WeeklyPatternChartProps {
   data: WeeklyPatternDataPoint[]
+  isLoading?: boolean
+}
+
+export interface MonthlyPatternChartProps {
+  data: MonthlyPatternDataPoint[]
   isLoading?: boolean
 }
 

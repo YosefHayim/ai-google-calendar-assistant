@@ -421,8 +421,10 @@ export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
     recentActivities: [],
     dailyAvailableHours: [],
     weeklyPattern: [],
+    monthlyPattern: [],
     timeOfDayDistribution: { morning: 0, afternoon: 0, evening: 0, night: 0 },
     eventDurationBreakdown: { short: 0, medium: 0, long: 0, extended: 0 },
+    eventDurationCategories: [],
     focusTimeMetrics: {
       totalFocusBlocks: 0,
       averageFocusBlockLength: 0,

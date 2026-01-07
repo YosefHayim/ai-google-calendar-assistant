@@ -25,6 +25,7 @@ import RecentEvents from '@/components/dashboard/analytics/RecentEvents'
 import TimeAllocationDashboard from './TimeAllocationDashboard'
 import TimeDistributionChart from './TimeDistributionChart'
 import WeeklyPatternChart from './WeeklyPatternChart'
+import MonthlyPatternChart from './MonthlyPatternChart'
 import { getInsightIcon } from '@/lib/iconUtils'
 import { useAIInsights } from '@/hooks/queries/analytics/useAIInsights'
 import { useAnalyticsContext } from '@/contexts/AnalyticsContext'
@@ -162,7 +163,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <DailyAvailableHoursDashboard data={dailyAvailableHours} onDayClick={openDayEventsDialog} />
+        <DailyAvailableHoursDashboard data={dailyAvailableHours} onDayClick={openDayEventsDialog} isLoading={isAnalyticsFetching} />
 
         <div className="lg:col-span-3">
           <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-4 flex items-center gap-2">
@@ -184,14 +185,9 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
               </HoverCardContent>
             </HoverCard>
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4">
             {isInsightsLoading ? (
-              <>
-                <InsightCardSkeleton />
-                <InsightCardSkeleton />
-                <InsightCardSkeleton />
-                <InsightCardSkeleton />
-              </>
+              Array.from({ length: 10 }).map((_, i) => <InsightCardSkeleton key={i} />)
             ) : isInsightsError ? (
               <div className="col-span-full flex flex-col items-center justify-center py-8 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl">
                 <p className="text-zinc-500 dark:text-zinc-400 mb-4">Failed to load insights</p>
@@ -222,16 +218,17 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
         </div>
 
         <div className="lg:col-span-2">
-          <TimeAllocationDashboard data={calendarBreakdown} onCalendarClick={openCalendarEventsDialog} />
+          <TimeAllocationDashboard data={calendarBreakdown} onCalendarClick={openCalendarEventsDialog} isLoading={isAnalyticsFetching} />
         </div>
 
         <div className="lg:col-span-1 flex flex-col gap-6">
-          <RecentEvents activities={recentActivities} onActivityClick={handleActivityClick} />
+          <RecentEvents activities={recentActivities} onActivityClick={handleActivityClick} isLoading={isAnalyticsFetching} />
           <ManageCalendars
             calendars={calendarsData}
             calendarMap={calendarMap}
             onCalendarClick={openCalendarSettingsDialog}
             onCreateCalendar={openCreateCalendarDialog}
+            isLoading={isAnalyticsFetching}
           />
         </div>
       </div>

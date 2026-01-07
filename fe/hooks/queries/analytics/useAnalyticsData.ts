@@ -14,6 +14,9 @@ import {
   type DailyAvailableHoursDataPoint,
   type EnhancedAnalyticsData,
   type WeeklyPatternDataPoint,
+  type MonthlyPatternDataPoint,
+  type PatternEventSummary,
+  type EventDurationCategory,
   type TimeOfDayDistribution,
   type EventDurationBreakdown,
   type FocusTimeMetrics,
@@ -49,9 +52,22 @@ function getEmptyEnhancedData(): EnhancedAnalyticsData {
       dayIndex: index,
       hours: 0,
       eventCount: 0,
+      events: [],
+    })),
+    monthlyPattern: Array.from({ length: 31 }, (_, i) => ({
+      dayOfMonth: i + 1,
+      hours: 0,
+      eventCount: 0,
+      events: [],
     })),
     timeOfDayDistribution: { morning: 0, afternoon: 0, evening: 0, night: 0 },
     eventDurationBreakdown: { short: 0, medium: 0, long: 0, extended: 0 },
+    eventDurationCategories: [
+      { key: 'short', label: 'Short', range: '< 30 min', color: '#34d399', count: 0, percentage: 0, events: [] },
+      { key: 'medium', label: 'Medium', range: '30-60 min', color: '#38bdf8', count: 0, percentage: 0, events: [] },
+      { key: 'long', label: 'Long', range: '1-2 hrs', color: '#fbbf24', count: 0, percentage: 0, events: [] },
+      { key: 'extended', label: 'Extended', range: '2+ hrs', color: '#fb7185', count: 0, percentage: 0, events: [] },
+    ],
     focusTimeMetrics: {
       totalFocusBlocks: 0,
       averageFocusBlockLength: 0,
@@ -168,7 +184,17 @@ export function useAnalyticsData({ timeMin, timeMax, calendarMap, enabled = true
 
       const weeklyHours = new Array(7).fill(0)
       const weeklyEventCounts = new Array(7).fill(0)
+      const weeklyEvents: PatternEventSummary[][] = Array.from({ length: 7 }, () => [])
+      const monthlyHours = new Array(31).fill(0)
+      const monthlyEventCounts = new Array(31).fill(0)
+      const monthlyEvents: PatternEventSummary[][] = Array.from({ length: 31 }, () => [])
       const hourlyDistribution = new Array(24).fill(0)
+      const durationEvents: Record<keyof EventDurationBreakdown, PatternEventSummary[]> = {
+        short: [],
+        medium: [],
+        long: [],
+        extended: [],
+      }
 
       const timeOfDay: TimeOfDayDistribution = { morning: 0, afternoon: 0, evening: 0, night: 0 }
       const durationBreakdown: EventDurationBreakdown = { short: 0, medium: 0, long: 0, extended: 0 }
@@ -223,9 +249,25 @@ export function useAnalyticsData({ timeMin, timeMax, calendarMap, enabled = true
             dayHoursMap.set(dayKey, (dayHoursMap.get(dayKey) || 0) + hours)
             dayEventsMap.set(dayKey, (dayEventsMap.get(dayKey) || 0) + 1)
 
+            const eventSummary: PatternEventSummary = {
+              id: event.id,
+              summary: event.summary || 'No Title',
+              startTime: event.start.dateTime,
+              endTime: event.end.dateTime,
+              durationMinutes,
+              calendarName,
+              calendarColor,
+            }
+
             const dayOfWeek = start.getDay()
             weeklyHours[dayOfWeek] += hours
             weeklyEventCounts[dayOfWeek]++
+            weeklyEvents[dayOfWeek].push(eventSummary)
+
+            const dayOfMonth = start.getDate()
+            monthlyHours[dayOfMonth - 1] += hours
+            monthlyEventCounts[dayOfMonth - 1]++
+            monthlyEvents[dayOfMonth - 1].push(eventSummary)
 
             const startHour = start.getHours()
             hourlyDistribution[startHour]++
@@ -235,6 +277,7 @@ export function useAnalyticsData({ timeMin, timeMax, calendarMap, enabled = true
 
             const durationCategory = getDurationCategory(durationMinutes)
             durationBreakdown[durationCategory]++
+            durationEvents[durationCategory].push(eventSummary)
 
             const existing = calendarDurationMap.get(calendarName)
             if (existing) {
@@ -300,6 +343,14 @@ export function useAnalyticsData({ timeMin, timeMax, calendarMap, enabled = true
         dayIndex: index,
         hours: Math.round(weeklyHours[index] * 10) / 10,
         eventCount: weeklyEventCounts[index],
+        events: weeklyEvents[index],
+      }))
+
+      const monthlyPattern: MonthlyPatternDataPoint[] = Array.from({ length: 31 }, (_, index) => ({
+        dayOfMonth: index + 1,
+        hours: Math.round(monthlyHours[index] * 10) / 10,
+        eventCount: monthlyEventCounts[index],
+        events: monthlyEvents[index],
       }))
 
       const totalDays = timeMin && timeMax ? Math.ceil((timeMax.getTime() - timeMin.getTime()) / (1000 * 60 * 60 * 24)) : 0
@@ -351,6 +402,13 @@ export function useAnalyticsData({ timeMin, timeMax, calendarMap, enabled = true
         peakHour,
       }
 
+      const eventDurationCategories: EventDurationCategory[] = [
+        { key: 'short', label: 'Short', range: '< 30 min', color: '#34d399', count: durationBreakdown.short, percentage: totalEvents > 0 ? (durationBreakdown.short / totalEvents) * 100 : 0, events: durationEvents.short },
+        { key: 'medium', label: 'Medium', range: '30-60 min', color: '#38bdf8', count: durationBreakdown.medium, percentage: totalEvents > 0 ? (durationBreakdown.medium / totalEvents) * 100 : 0, events: durationEvents.medium },
+        { key: 'long', label: 'Long', range: '1-2 hrs', color: '#fbbf24', count: durationBreakdown.long, percentage: totalEvents > 0 ? (durationBreakdown.long / totalEvents) * 100 : 0, events: durationEvents.long },
+        { key: 'extended', label: 'Extended', range: '2+ hrs', color: '#fb7185', count: durationBreakdown.extended, percentage: totalEvents > 0 ? (durationBreakdown.extended / totalEvents) * 100 : 0, events: durationEvents.extended },
+      ]
+
       return {
         totalEvents,
         totalDurationHours,
@@ -360,8 +418,10 @@ export function useAnalyticsData({ timeMin, timeMax, calendarMap, enabled = true
         recentActivities: recentActivities.slice(0, 5),
         dailyAvailableHours,
         weeklyPattern,
+        monthlyPattern,
         timeOfDayDistribution: timeOfDay,
         eventDurationBreakdown: durationBreakdown,
+        eventDurationCategories,
         focusTimeMetrics,
         productivityMetrics,
         totalDays,
