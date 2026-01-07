@@ -1,14 +1,15 @@
 'use client'
 
 import * as React from 'react'
-import { Info } from 'lucide-react'
+import { BarChart3, PieChart, CircleDot, Radar, BarChartHorizontal, Info } from 'lucide-react'
+import { AnimatePresence, motion } from 'framer-motion'
 
 import { Skeleton } from '@/components/ui/skeleton'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
 import type { CalendarBreakdownItem } from '@/types/analytics'
 import { sumBy, calculatePercentage, formatNumber } from '@/lib/dataUtils'
 import { getValidHexColor } from '@/lib/colorUtils'
-import { ChartTypeWrapper } from './ChartTypeWrapper'
 
 import { TimeAllocationBarChart } from './time-allocation-charts/TimeAllocationBarChart'
 import { TimeAllocationPieChart } from './time-allocation-charts/TimeAllocationPieChart'
@@ -17,14 +18,21 @@ import { TimeAllocationRadarChart } from './time-allocation-charts/TimeAllocatio
 import { TimeAllocationHorizontalBarChart } from './time-allocation-charts/TimeAllocationHorizontalBarChart'
 
 const CHART_TYPES = ['bar', 'pie', 'donut', 'radar', 'horizontal'] as const
-type AllocationChartType = (typeof CHART_TYPES)[number]
+type ChartType = (typeof CHART_TYPES)[number]
 
-const CHART_LABELS: Partial<Record<AllocationChartType, string>> = {
-  bar: 'Bar',
-  pie: 'Pie',
-  donut: 'Donut',
-  radar: 'Radar',
-  horizontal: 'H-Bar',
+const STORAGE_KEY = 'analytics_chart_type_time-allocation'
+
+interface ChartTypeConfig {
+  icon: React.ElementType
+  label: string
+}
+
+const chartTypeConfig: Record<ChartType, ChartTypeConfig> = {
+  bar: { icon: BarChart3, label: 'Bar' },
+  pie: { icon: PieChart, label: 'Pie' },
+  donut: { icon: CircleDot, label: 'Donut' },
+  radar: { icon: Radar, label: 'Radar' },
+  horizontal: { icon: BarChartHorizontal, label: 'H-Bar' },
 }
 
 interface TimeAllocationDashboardProps {
@@ -38,8 +46,22 @@ export const TimeAllocationDashboard: React.FC<TimeAllocationDashboardProps> = (
   onCalendarClick,
   isLoading = false,
 }) => {
-  const [currentChartType, setCurrentChartType] = React.useState<AllocationChartType>('donut')
+  const [chartType, setChartTypeState] = React.useState<ChartType>('donut')
+  const [isHydrated, setIsHydrated] = React.useState(false)
   const totalHours = sumBy(data, 'hours')
+
+  React.useEffect(() => {
+    const stored = localStorage.getItem(STORAGE_KEY)
+    if (stored && CHART_TYPES.includes(stored as ChartType)) {
+      setChartTypeState(stored as ChartType)
+    }
+    setIsHydrated(true)
+  }, [])
+
+  const setChartType = React.useCallback((type: ChartType) => {
+    localStorage.setItem(STORAGE_KEY, type)
+    setChartTypeState(type)
+  }, [])
 
   if (isLoading) {
     return (
@@ -75,7 +97,7 @@ export const TimeAllocationDashboard: React.FC<TimeAllocationDashboardProps> = (
     )
   }
 
-  const renderChart = (chartType: AllocationChartType) => {
+  const renderChart = () => {
     const chartProps = { data, onCalendarClick }
 
     switch (chartType) {
@@ -94,7 +116,9 @@ export const TimeAllocationDashboard: React.FC<TimeAllocationDashboardProps> = (
     }
   }
 
-  const showLegend = ['bar', 'horizontal', 'radar', 'donut'].includes(currentChartType)
+  if (!isHydrated) {
+    return null
+  }
 
   return (
     <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm">
@@ -124,37 +148,39 @@ export const TimeAllocationDashboard: React.FC<TimeAllocationDashboardProps> = (
             <span className="text-sm font-normal text-zinc-500 ml-2">{formatNumber(totalHours, 1)}H total</span>
           </h3>
 
-          <ChartTypeWrapper
-            chartId="time-allocation"
-            chartTypes={CHART_TYPES}
-            defaultType="donut"
-            labels={CHART_LABELS}
-            className="!mb-0"
-          >
-            {(chartType) => {
-              if (chartType !== currentChartType) {
-                setCurrentChartType(chartType)
-              }
-              return null
-            }}
-          </ChartTypeWrapper>
+          <Tabs value={chartType} onValueChange={(value) => setChartType(value as ChartType)}>
+            <TabsList className="h-8">
+              {CHART_TYPES.map((type) => {
+                const config = chartTypeConfig[type]
+                const IconComponent = config.icon
+                return (
+                  <TabsTrigger key={type} value={type} className="h-7 px-2 text-xs gap-1" title={config.label}>
+                    <IconComponent size={14} />
+                    <span className="hidden sm:inline">{config.label}</span>
+                  </TabsTrigger>
+                )
+              })}
+            </TabsList>
+          </Tabs>
         </div>
       </div>
 
       <div className="p-4 flex flex-col lg:flex-row gap-4">
         <div className="flex-1 min-w-0">
-          <ChartTypeWrapper
-            chartId="time-allocation"
-            chartTypes={CHART_TYPES}
-            defaultType="donut"
-            labels={CHART_LABELS}
-            className="[&>div:first-child]:hidden"
-          >
-            {(chartType) => renderChart(chartType)}
-          </ChartTypeWrapper>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={chartType}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+            >
+              {renderChart()}
+            </motion.div>
+          </AnimatePresence>
         </div>
 
-        {showLegend && (
+        {['bar', 'horizontal', 'radar', 'donut'].includes(chartType) && (
           <div className="lg:w-48 flex-shrink-0">
             <ul className="space-y-2">
               {data.map((item) => {
