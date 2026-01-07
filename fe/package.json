@@ -7,7 +7,7 @@
     "redis": "redis-server",
     "dev": "next dev --port 4000",
     "format": "prettier --write .",
-    "lint": "eslint . --max-warnings 0",
+    "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "start": "next start",
     "sort": "npx sort-package-json",

@@ -11,7 +11,6 @@ const nextConfig = {
 
     return config
   },
-  cacheComponents: true,
   // Enable Turbopack (default in Next.js 16) with empty config to silence warning
   turbopack: {
     resolveExtensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
