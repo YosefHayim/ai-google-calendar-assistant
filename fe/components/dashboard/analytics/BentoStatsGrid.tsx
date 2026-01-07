@@ -227,7 +227,7 @@ const BentoStatsGrid: React.FC<BentoStatsGridProps> = ({ data, comparison, isLoa
             <Clock className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
           </div>
           <span className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider truncate">
-            Total Hours
+            {t('analytics.stats.totalHours')}
           </span>
         </div>
         <div className="flex items-baseline gap-2">
@@ -240,7 +240,7 @@ const BentoStatsGrid: React.FC<BentoStatsGridProps> = ({ data, comparison, isLoa
           )}
         </div>
         <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
-          Avg {data.averageEventDuration.toFixed(1)}H per event
+          {t('analytics.stats.avgPerEvent', { value: data.averageEventDuration.toFixed(1) })}
         </p>
       </motion.div>
 
@@ -253,13 +253,13 @@ const BentoStatsGrid: React.FC<BentoStatsGridProps> = ({ data, comparison, isLoa
             <Activity className="w-4 h-4 text-amber-600 dark:text-amber-400" />
           </div>
           <span className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider truncate">
-            Avg/Day
+            {t('analytics.stats.avgPerDay')}
           </span>
         </div>
         <p className="text-3xl font-bold text-zinc-900 dark:text-zinc-100">
           <NumberFlow value={productivityMetrics.averageEventsPerDay} />
         </p>
-        <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">events per day</p>
+        <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">{t('analytics.stats.eventsPerDay')}</p>
       </motion.div>
 
       <motion.div
@@ -271,13 +271,13 @@ const BentoStatsGrid: React.FC<BentoStatsGridProps> = ({ data, comparison, isLoa
             <Sun className="w-4 h-4 text-orange-600 dark:text-orange-400" />
           </div>
           <span className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider truncate">
-            Peak Hour
+            {t('analytics.stats.peakHour')}
           </span>
         </div>
         <p className="text-3xl font-bold text-zinc-900 dark:text-zinc-100">
           {formatPeakHour(productivityMetrics.peakHour)}
         </p>
-        <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">most scheduled time</p>
+        <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">{t('analytics.stats.mostScheduledTime')}</p>
       </motion.div>
 
       <motion.div
@@ -289,13 +289,13 @@ const BentoStatsGrid: React.FC<BentoStatsGridProps> = ({ data, comparison, isLoa
             <Target className="w-4 h-4 text-teal-600 dark:text-teal-400" />
           </div>
           <span className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider truncate">
-            Focus Blocks
+            {t('analytics.stats.focusBlocks')}
           </span>
         </div>
         <p className="text-3xl font-bold text-zinc-900 dark:text-zinc-100">
           <NumberFlow value={focusTimeMetrics.totalFocusBlocks} />
         </p>
-        <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">2+ hour blocks available</p>
+        <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">{t('analytics.stats.focusBlocksDescription')}</p>
       </motion.div>
 
       <motion.div
@@ -307,7 +307,7 @@ const BentoStatsGrid: React.FC<BentoStatsGridProps> = ({ data, comparison, isLoa
             <Flame className="w-4 h-4 text-purple-600 dark:text-purple-400" />
           </div>
           <span className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider truncate">
-            Busiest Day
+            {t('analytics.stats.busiestDay')}
           </span>
         </div>
         <p className="text-3xl font-bold text-zinc-900 dark:text-zinc-100">
@@ -328,14 +328,14 @@ const BentoStatsGrid: React.FC<BentoStatsGridProps> = ({ data, comparison, isLoa
             <Timer className="w-4 h-4 text-rose-600 dark:text-rose-400" />
           </div>
           <span className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider truncate">
-            Longest Event
+            {t('analytics.stats.longestEvent')}
           </span>
         </div>
         <p className="text-3xl font-bold text-zinc-900 dark:text-zinc-100">
           <NumberFlow value={longestEvent} />
           <span className="text-lg font-medium text-zinc-500">H</span>
         </p>
-        <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">longest single event</p>
+        <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">{t('analytics.stats.longestSingleEvent')}</p>
       </motion.div>
 
       <motion.div
@@ -347,13 +347,13 @@ const BentoStatsGrid: React.FC<BentoStatsGridProps> = ({ data, comparison, isLoa
             <CalendarOff className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
           </div>
           <span className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider truncate">
-            Free Days
+            {t('analytics.stats.freeDays')}
           </span>
         </div>
         <p className="text-3xl font-bold text-zinc-900 dark:text-zinc-100">
           <NumberFlow value={eventFreeDays} />
         </p>
-        <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">days without events</p>
+        <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">{t('analytics.stats.daysWithoutEvents')}</p>
       </motion.div>
 
       <motion.div
@@ -365,13 +365,13 @@ const BentoStatsGrid: React.FC<BentoStatsGridProps> = ({ data, comparison, isLoa
             <Star className="w-4 h-4 text-violet-600 dark:text-violet-400" />
           </div>
           <span className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider truncate">
-            All-Day
+            {t('analytics.stats.allDay')}
           </span>
         </div>
         <p className="text-3xl font-bold text-zinc-900 dark:text-zinc-100">
           <NumberFlow value={allDayEventsCount} />
         </p>
-        <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">all-day events</p>
+        <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">{t('analytics.stats.allDayEvents')}</p>
       </motion.div>
 
       <motion.div
@@ -383,13 +383,13 @@ const BentoStatsGrid: React.FC<BentoStatsGridProps> = ({ data, comparison, isLoa
             <Repeat className="w-4 h-4 text-fuchsia-600 dark:text-fuchsia-400" />
           </div>
           <span className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider truncate">
-            Recurring
+            {t('analytics.stats.recurring')}
           </span>
         </div>
         <p className="text-3xl font-bold text-zinc-900 dark:text-zinc-100">
           <NumberFlow value={recurringEventsCount} />
         </p>
-        <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">recurring events</p>
+        <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">{t('analytics.stats.recurringEvents')}</p>
       </motion.div>
     </motion.div>
   )
