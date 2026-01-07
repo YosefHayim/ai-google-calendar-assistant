@@ -19,7 +19,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-export const DailyHoursAreaChart: React.FC<DailyHoursAreaChartProps> = ({ data, onDayClick }) => {
+export const DailyHoursAreaChart: React.FC<DailyHoursAreaChartProps> = ({ data, onDayClick: _onDayClick }) => {
   const chartData = React.useMemo(() => {
     return data.map((point) => ({
       ...point,

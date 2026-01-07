@@ -31,7 +31,7 @@ export const ChatInput = forwardRef<HTMLInputElement, ChatInputProps>(
       isRecording,
       speechRecognitionSupported,
       speechRecognitionError,
-      interimTranscription,
+      interimTranscription: _interimTranscription,
       onInputChange,
       onSubmit,
       onToggleRecording,

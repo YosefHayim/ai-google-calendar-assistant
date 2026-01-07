@@ -5,7 +5,7 @@ import { queryKeys } from '@/lib/query'
 import { QUERY_CONFIG } from '@/lib/constants'
 import { getConversations, type ConversationListResponse } from '@/services/chatService'
 import type { QueryHookOptions } from '../useQueryWrapper'
-import type { ApiResponse } from '@/types/api'
+
 
 interface UseConversationsOptions extends QueryHookOptions {
   limit?: number

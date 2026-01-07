@@ -1,12 +1,31 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 
-declare global {
-  interface Window {
-    SpeechRecognition: any
-    webkitSpeechRecognition: any
+interface SpeechRecognitionInstance {
+  continuous: boolean
+  interimResults: boolean
+  lang: string
+  start: () => void
+  stop: () => void
+  onresult: ((event: SpeechRecognitionEventType) => void) | null
+  onerror: ((event: SpeechRecognitionErrorEventType) => void) | null
+  onend: (() => void) | null
+}
+
+interface SpeechRecognitionEventType {
+  resultIndex: number
+  results: {
+    length: number
+    [index: number]: {
+      isFinal: boolean
+      [index: number]: { transcript: string }
+    }
   }
+}
+
+interface SpeechRecognitionErrorEventType {
+  error: string
 }
 
 interface UseSpeechRecognitionReturn {
@@ -26,42 +45,48 @@ export const useSpeechRecognition = (onFinalTranscription: (text: string) => voi
   const [speechRecognitionError, setSpeechRecognitionError] = useState<string | null>(null)
   const [interimTranscription, setInterimTranscription] = useState<string>('')
 
-  const speechRecognitionRef = useRef<any | null>(null)
+  const speechRecognitionRef = useRef<SpeechRecognitionInstance | null>(null)
   const isRecognitionRunning = useRef<boolean>(false)
+  const onFinalTranscriptionRef = useRef(onFinalTranscription)
+  
+  useEffect(() => {
+    onFinalTranscriptionRef.current = onFinalTranscription
+  }, [onFinalTranscription])
 
-  const stopRecording = (finalTranscription?: string | null) => {
+  const stopRecording = useCallback((finalTranscription?: string | null) => {
     if (speechRecognitionRef.current && isRecognitionRunning.current) {
       try {
         speechRecognitionRef.current.stop()
-      } catch (e) {
+      } catch {
         // Silently handle if already stopped
       }
       isRecognitionRunning.current = false
     }
     setIsRecording(false)
 
-    const textToSend = finalTranscription || interimTranscription
-    setInterimTranscription('')
+    setInterimTranscription((currentInterim) => {
+      const textToSend = finalTranscription || currentInterim
+      if (textToSend.trim()) {
+        onFinalTranscriptionRef.current(textToSend)
+      }
+      return ''
+    })
+  }, [])
 
-    if (textToSend.trim()) {
-      onFinalTranscription(textToSend)
-    }
-  }
-
-  const cancelRecording = () => {
+  const cancelRecording = useCallback(() => {
     if (speechRecognitionRef.current && isRecognitionRunning.current) {
       try {
         speechRecognitionRef.current.stop()
-      } catch (e) {
+      } catch {
         // Silent recovery
       }
       isRecognitionRunning.current = false
     }
     setIsRecording(false)
     setInterimTranscription('')
-  }
+  }, [])
 
-  const startRecording = async () => {
+  const startRecording = useCallback(async () => {
     if (isRecognitionRunning.current) return
 
     try {
@@ -74,66 +99,70 @@ export const useSpeechRecognition = (onFinalTranscription: (text: string) => voi
         isRecognitionRunning.current = true
         setIsRecording(true)
       }
-    } catch (err) {
+    } catch {
       setSpeechRecognitionError('Microphone access denied.')
       setIsRecording(false)
       isRecognitionRunning.current = false
     }
-  }
+  }, [])
 
-  const toggleRecording = () => {
+  const toggleRecording = useCallback(() => {
     if (isRecording || isRecognitionRunning.current) {
-      stopRecording(interimTranscription)
+      stopRecording()
     } else {
       startRecording()
     }
-  }
+  }, [isRecording, stopRecording, startRecording])
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
-      const recognition = new SpeechRecognition()
-      recognition.continuous = false
-      recognition.interimResults = true
-      recognition.lang = 'en-US'
+    if (typeof window !== 'undefined') {
+      const SpeechRecognitionAPI = (window as { SpeechRecognition?: new () => SpeechRecognitionInstance; webkitSpeechRecognition?: new () => SpeechRecognitionInstance }).SpeechRecognition || 
+        (window as { SpeechRecognition?: new () => SpeechRecognitionInstance; webkitSpeechRecognition?: new () => SpeechRecognitionInstance }).webkitSpeechRecognition
+      
+      if (SpeechRecognitionAPI) {
+        const recognition = new SpeechRecognitionAPI()
+        recognition.continuous = false
+        recognition.interimResults = true
+        recognition.lang = 'en-US'
 
-      recognition.onresult = (event: any) => {
-        let interim = ''
-        let final = ''
-        for (let i = event.resultIndex; i < event.results.length; ++i) {
-          if (event.results[i].isFinal) {
-            final += event.results[i][0].transcript
-          } else {
-            interim += event.results[i][0].transcript
+        recognition.onresult = (event: SpeechRecognitionEventType) => {
+          let interim = ''
+          let final = ''
+          for (let i = event.resultIndex; i < event.results.length; ++i) {
+            if (event.results[i].isFinal) {
+              final += event.results[i][0].transcript
+            } else {
+              interim += event.results[i][0].transcript
+            }
+          }
+          setInterimTranscription(interim)
+          if (final) {
+            stopRecording(final)
           }
         }
-        setInterimTranscription(interim)
-        if (final) {
-          stopRecording(final)
-        }
-      }
 
-      recognition.onerror = (event: any) => {
-        if (event.error !== 'aborted') {
-          console.error('Speech recognition error:', event.error)
-          if (event.error === 'not-allowed') {
-            setSpeechRecognitionError('Microphone access denied.')
+        recognition.onerror = (event: SpeechRecognitionErrorEventType) => {
+          if (event.error !== 'aborted') {
+            console.error('Speech recognition error:', event.error)
+            if (event.error === 'not-allowed') {
+              setSpeechRecognitionError('Microphone access denied.')
+            }
           }
+          setIsRecording(false)
+          isRecognitionRunning.current = false
+          setInterimTranscription('')
         }
-        setIsRecording(false)
-        isRecognitionRunning.current = false
-        setInterimTranscription('')
-      }
 
-      recognition.onend = () => {
-        isRecognitionRunning.current = false
-        setIsRecording(false)
-      }
+        recognition.onend = () => {
+          isRecognitionRunning.current = false
+          setIsRecording(false)
+        }
 
-      speechRecognitionRef.current = recognition
-      setSpeechRecognitionSupported(true)
-    } else {
-      setSpeechRecognitionError('Speech-to-Text not supported in this browser.')
+        speechRecognitionRef.current = recognition
+        setSpeechRecognitionSupported(true)
+      } else {
+        setSpeechRecognitionError('Speech-to-Text not supported in this browser.')
+      }
     }
 
     return () => {

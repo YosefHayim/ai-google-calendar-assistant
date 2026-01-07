@@ -203,12 +203,11 @@ const AIAllySidebar: React.FC<AIAllySidebarProps> = ({
     }, 1500);
   };
 
-  // Use the shared speech recognition hook
   const {
     isRecording,
     speechRecognitionSupported,
     speechRecognitionError,
-    interimTranscription,
+    interimTranscription: _interimTranscription,
     startRecording,
     stopRecording,
     cancelRecording,

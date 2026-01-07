@@ -2,7 +2,7 @@
 
 'use client'
 
-import { ArrowRight, Brain, Globe, Link as LinkIcon, Rocket, Shield, Sparkles, Zap } from 'lucide-react'
+import { ArrowRight, Link as LinkIcon, Sparkles, Zap } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import React, { useEffect, useRef, useState } from 'react'
 
@@ -28,11 +28,11 @@ interface RadialOrbitalTimelineProps {
 export default function RadialOrbitalTimeline({ timelineData }: RadialOrbitalTimelineProps) {
   const [expandedItems, setExpandedItems] = useState<Record<number, boolean>>({})
   const [isHubHovered, setIsHubHovered] = useState(false)
-  const [viewMode, setViewMode] = useState<'orbital'>('orbital')
+  const [viewMode] = useState<'orbital'>('orbital')
   const [rotationAngle, setRotationAngle] = useState<number>(0)
   const [autoRotate, setAutoRotate] = useState<boolean>(true)
   const [pulseEffect, setPulseEffect] = useState<Record<number, boolean>>({})
-  const [centerOffset, setCenterOffset] = useState<{ x: number; y: number }>({
+  const [centerOffset] = useState<{ x: number; y: number }>({
     x: 0,
     y: 0,
   })
@@ -161,7 +161,7 @@ export default function RadialOrbitalTimeline({ timelineData }: RadialOrbitalTim
           Evolution of Intelligence
         </h2>
         <p className="text-zinc-500 max-w-lg mx-auto mt-4 mb-16 font-medium text-sm md:text-base">
-          Click a node to explore the depth of Ally's neural capabilities.
+          Click a node to explore the depth of Ally&apos;s neural capabilities.
         </p>
       </div>
 

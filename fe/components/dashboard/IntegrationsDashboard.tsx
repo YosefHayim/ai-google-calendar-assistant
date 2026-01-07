@@ -3,7 +3,7 @@
 import { ArrowUpRight, CheckCircle2, Circle, List, Loader2, RefreshCw, Settings, X } from 'lucide-react'
 import { GoogleCalendarIcon, TelegramIcon, WhatsAppIcon } from '@/components/shared/Icons'
 import React, { useState } from 'react'
-import { Skeleton, SkeletonIntegrationCard } from '@/components/ui/skeleton'
+import { Skeleton } from '@/components/ui/skeleton'
 
 import { useCalendars } from '@/hooks/queries'
 

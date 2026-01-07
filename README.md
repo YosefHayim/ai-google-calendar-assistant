@@ -31,38 +31,86 @@ AI Google Calendar Assistant is a sophisticated calendar automation platform tha
 
 | Feature | Status | Description |
 |---------|--------|-------------|
-| AI Chat Interface | Done | Natural language calendar management with streaming responses |
-| Voice Input | Done | Speech-to-text for hands-free interaction |
-| Multiple View Modes | Done | Chat, Avatar, and 3D view modes |
-| Analytics Dashboard | Done | Calendar insights with heatmaps, time allocation charts |
+| AI Chat Interface | Done | Natural language calendar management with streaming responses and typewriter effect |
+| Voice Input | Done | Speech-to-text for hands-free interaction with voice-powered orb UI |
+| Multiple View Modes | Done | Chat view, Avatar view, and 3D view modes |
+| Analytics Dashboard | Done | Calendar insights with heatmaps, time allocation charts, daily hours analysis |
 | Conversation History | Done | Persistent conversations with AI-generated titles |
-| Onboarding Tour | Done | Interactive guided tour for new users |
-| Dark/Light Theme | Done | System-aware theme switching |
-| Google OAuth | Done | Secure calendar integration |
+| Onboarding Tour | Done | Interactive guided tour for new users with language selection |
+| Dark/Light Theme | Done | System-aware theme switching with cinematic glow toggle |
+| Google OAuth | Done | Secure calendar integration with token auto-refresh |
 | Integration Management | Done | Connect/disconnect Google Calendar, view status |
+| Gap Recovery Panel | Done | Dedicated page for analyzing and filling calendar gaps |
+| Quick Event Dialog | Done | Fast event creation with preview and validation |
+| Event Details Dialog | Done | View and manage individual events |
+| Calendar Settings | Done | Manage calendar preferences and timezone |
+| Billing Dashboard | Done | Payment methods, transaction history, subscription management |
+| Pricing Page | Done | Tiered pricing with animated testimonials and FAQs |
+
+### Frontend UI Components
+
+| Component | Description |
+|-----------|-------------|
+| Streaming Typewriter | Real-time text streaming with cursor animation |
+| 3D Wall Calendar | Interactive 3D calendar visualization |
+| Wireframe Globe | Animated dotted globe for global integrations |
+| Bento Grid | Feature showcase with animated backgrounds |
+| Voice-Powered Orb | Visual feedback for voice input |
+| Animated Testimonials | Auto-rotating customer testimonials |
+| Date Range Picker | Calendar date selection with ranges |
+| Radial Orbital Timeline | Circular timeline visualization |
+| Interactive Charts | Bar, line, area, pie, donut, radar charts via Recharts |
 
 ### Telegram Bot
 
 | Feature | Status | Description |
 |---------|--------|-------------|
 | Natural Language Events | Done | Create events via chat messages |
-| Quick Commands | Done | `/today`, `/tomorrow`, `/week`, `/month` |
-| Availability Check | Done | `/free`, `/busy` commands |
-| Event Management | Done | `/create`, `/update`, `/delete` |
-| Session Management | Done | Persistent sessions with 24h TTL |
+| Quick Commands | Done | `/today`, `/tomorrow`, `/week`, `/month` for schedule views |
+| Availability Check | Done | `/free`, `/busy` commands for time availability |
+| Event Management | Done | `/create`, `/update`, `/delete` event operations |
+| Session Management | Done | Persistent sessions with 24h TTL and auto-expiry |
 | Email Linking | Done | Link Telegram to Google account |
 | Context Memory | Done | Conversation summarization and embeddings |
+| Multi-Language Support | Done | English, Hebrew, Arabic, German, French, Russian with RTL handling |
+| Ally Brain | Done | Persistent user knowledge and preferences |
+| Rate Limiting | Done | Per-user rate limiting to prevent abuse |
+| Inline Keyboards | Done | Interactive buttons for settings, language, brain management |
 
 ### AI Agent System
 
 | Feature | Status | Description |
 |---------|--------|-------------|
 | Orchestrator Agent | Done | Routes requests to specialized tools |
-| Direct Tools | Done | Fast, non-AI utilities for DB operations |
+| Direct Tools | Done | Fast, non-AI utilities for DB operations (bypass LLM overhead) |
 | Handoff Agents | Done | Multi-step workflows (create, update, delete) |
 | Guardrails | Done | Safety checks for injection and mass deletion |
-| Session Persistence | Done | Supabase-backed agent state |
+| Session Persistence | Done | Supabase-backed agent state with session factory |
 | Parallel Tool Execution | Done | Efficient multi-tool calls |
+| Pre-Create Validation | Done | Combined validation: user, timezone, calendar selection, conflicts in parallel |
+| Event Summarization | Done | AI-powered event list summarization with cost-efficient models |
+| Insights Generator | Done | Calendar analytics and productivity insights |
+
+### AI Tools Available
+
+| Tool | Type | Description |
+|------|------|-------------|
+| `validate_user_direct` | Direct | Fast user validation in DB |
+| `get_timezone_direct` | Direct | Get user's default timezone |
+| `select_calendar_direct` | Direct | Rules-based calendar selection |
+| `check_conflicts_direct` | Direct | Check for event conflicts |
+| `pre_create_validation` | Direct | Combined parallel validation |
+| `insert_event_direct` | Direct | Direct event insertion |
+| `get_event_direct` | Direct | Direct event retrieval |
+| `summarize_events` | Direct | AI event summarization |
+| `analyze_gaps_direct` | Direct | Analyze calendar gaps |
+| `fill_gap_direct` | Direct | Fill detected gaps |
+| `format_gaps_direct` | Direct | Format gaps for display |
+| `get_event` | Agent | Event retrieval with context |
+| `update_event` | Agent | Event modification |
+| `delete_event` | Agent | Event deletion |
+| `generate_google_auth_url` | Agent | OAuth URL generation |
+| `register_user_via_db` | Agent | User registration |
 
 ### Gap Recovery
 
@@ -72,18 +120,24 @@ AI Google Calendar Assistant is a sophisticated calendar automation platform tha
 | Context Inference | Done | AI-powered suggestions (travel, work, meals) |
 | One-Click Fill | Done | Fill gaps with suggested activities |
 | Settings Management | Done | Customizable thresholds and ignored days |
+| Date Range Filtering | Done | Analyze specific time periods |
+| Dismiss All | Done | Bulk dismiss detected gaps |
 
 ### Calendar Operations
 
 | Feature | Status | Description |
 |---------|--------|-------------|
 | Event CRUD | Done | Create, read, update, delete events |
-| Multi-Calendar | Done | Support for multiple calendars |
+| Multi-Calendar | Done | Support for multiple calendars with auto-selection |
 | Quick Add | Done | Natural language event creation |
 | Conflict Detection | Done | Check for scheduling conflicts |
-| Recurring Events | Done | Support for recurring event patterns |
-| Time Zone Handling | Done | Automatic timezone detection |
+| Recurring Events | Done | Support for recurring event patterns (RRULE) |
+| Time Zone Handling | Done | Automatic timezone detection and conversion |
 | Free/Busy Query | Done | Check availability |
+| Event Analytics | Done | Duration, distribution, patterns |
+| Calendar Colors | Done | Color-coded calendar support |
+| ACL Management | Done | Calendar access control |
+| Watch/Webhooks | Done | Real-time event change notifications |
 
 ---
 
@@ -158,41 +212,68 @@ AI Google Calendar Assistant is a sophisticated calendar automation platform tha
 ai-google-calendar-assistant/
 ├── be/                              # Backend (Express + TypeScript + Bun)
 │   ├── ai-agents/                   # OpenAI Agent implementations
-│   │   ├── sessions/                # Session persistence
+│   │   ├── sessions/                # Session persistence (Supabase)
 │   │   ├── agents.ts                # Agent definitions
-│   │   ├── tool-registry.ts         # Tool definitions
+│   │   ├── tool-registry.ts         # Tool definitions (AGENT_TOOLS, DIRECT_TOOLS)
 │   │   ├── guardrails.ts            # Safety checks
-│   │   └── direct-utilities.ts      # Fast non-AI tools
+│   │   ├── direct-utilities.ts      # Fast non-AI tools
+│   │   └── insights-generator.ts    # Analytics insights
 │   ├── config/                      # Configuration
-│   │   ├── clients/                 # External clients
+│   │   ├── clients/                 # External clients (Supabase, etc.)
 │   │   └── constants/               # Application constants
 │   ├── controllers/                 # Request handlers
-│   │   └── google-calendar/         # Calendar-specific
+│   │   └── google-calendar/         # Calendar-specific controllers
 │   ├── database/                    # Database migrations
 │   │   └── migrations/              # SQL migration scripts
 │   ├── domain/                      # Domain-Driven Design
 │   │   ├── entities/                # Business entities
 │   │   └── repositories/            # Repository interfaces
 │   ├── infrastructure/              # External integrations
-│   │   ├── di/                      # Dependency injection
-│   │   └── repositories/            # Implementations
+│   │   ├── di/                      # Dependency injection (Inversify)
+│   │   └── repositories/            # Repository implementations
 │   ├── middlewares/                 # Express middleware
 │   ├── routes/                      # API routes
+│   │   └── google-calendar/         # Calendar API routes
 │   ├── telegram-bot/                # Telegram integration
+│   │   ├── handlers/                # Bot config, callbacks, messages, agents
+│   │   ├── i18n/                    # Internationalization (6 languages)
+│   │   ├── middleware/              # Auth, rate limiting, session expiry
+│   │   ├── response-system/         # Templated responses with RTL support
+│   │   └── utils/                   # Commands, session, embeddings
 │   ├── tests/                       # Test files
 │   └── utils/                       # Utilities
+│       ├── calendar/                # Calendar operations, gap recovery
+│       ├── auth/                    # Authentication utilities
+│       └── conversation/            # Conversation adapters
 │
 ├── fe/                              # Frontend (Next.js 15 + React 19)
 │   ├── app/                         # Next.js App Router
-│   │   ├── dashboard/               # Dashboard pages
-│   │   └── auth/                    # Auth pages
+│   │   ├── dashboard/               # Dashboard pages (main, analytics, gaps, billing, integrations)
+│   │   ├── auth/                    # Auth pages
+│   │   ├── pricing/                 # Pricing page
+│   │   ├── about/                   # About page
+│   │   ├── contact/                 # Contact page
+│   │   └── waitinglist/             # Waiting list page
 │   ├── components/                  # React components
 │   │   ├── dashboard/               # Dashboard components
-│   │   ├── marketing/               # Marketing pages
-│   │   └── ui/                      # UI primitives
+│   │   │   ├── chat/                # Chat interface (ChatView, AvatarView, MessageBubble)
+│   │   │   ├── analytics/           # Analytics charts and dashboards
+│   │   │   ├── gaps/                # Gap recovery panel
+│   │   │   └── billing/             # Billing components
+│   │   ├── marketing/               # Marketing pages (Navbar, Footer, Features)
+│   │   ├── dialogs/                 # Modal dialogs (QuickEvent, EventDetails, Calendar)
+│   │   ├── ui/                      # UI primitives (43 components)
+│   │   ├── auth/                    # Auth components (Login, Register, OTP)
+│   │   └── shared/                  # Shared components (Logo, Theme, Icons)
 │   ├── contexts/                    # React contexts
+│   │   ├── AuthContext.tsx          # Authentication state
+│   │   ├── ChatContext.tsx          # Chat state management
+│   │   ├── DashboardUIContext.tsx   # Dashboard UI state
+│   │   ├── GapRecoveryContext.tsx   # Gap recovery state
+│   │   ├── AnalyticsContext.tsx     # Analytics state
+│   │   └── LanguageContext.tsx      # i18n state
 │   ├── hooks/                       # Custom hooks
-│   │   └── queries/                 # TanStack Query
+│   │   └── queries/                 # TanStack Query hooks
 │   ├── lib/                         # Utilities
 │   └── services/                    # Service layer
 │
@@ -277,11 +358,23 @@ ai-google-calendar-assistant/
 | `PATCH` | `/settings` | Update settings |
 | `POST` | `/disable` | Disable gap analysis |
 
+### Additional Endpoints
+
+| Route | Description |
+|-------|-------------|
+| `/api/voice` | Voice transcription |
+| `/api/contact` | Contact form submission |
+| `/api/payment` | Stripe payment integration |
+| `/api/webhooks` | External webhooks |
+| `/api/whatsapp` | WhatsApp integration |
+| `/api/calendar/acl` | Calendar access control |
+| `/api/calendar/channels` | Push notification channels |
+
 ---
 
 ## Database Schema
 
-### Current Tables (Legacy)
+### Current Tables
 
 | Table | Description |
 |-------|-------------|
@@ -296,8 +389,6 @@ ai-google-calendar-assistant/
 | `gap_recovery_settings` | User preferences for gap recovery |
 
 ### Professional Schema (New - in `be/database/migrations/`)
-
-The new schema introduces proper normalization, foreign keys, indexes, and audit fields:
 
 | Table | Description |
 |-------|-------------|
@@ -344,7 +435,7 @@ The new schema introduces proper normalization, foreign keys, indexes, and audit
 | **Validation** | Zod v3.25 |
 | **DI** | Inversify v7.10 |
 | **Testing** | Jest v30.2 |
-| **Linting** | Biome |
+| **Linting** | Biome, Ultracite |
 
 ### Frontend
 
@@ -358,6 +449,7 @@ The new schema introduces proper normalization, foreign keys, indexes, and audit
 | **Components** | Radix UI, shadcn/ui |
 | **State** | TanStack Query, React Context |
 | **Forms** | TanStack React Form |
+| **Charts** | Recharts |
 | **Icons** | Lucide Icons |
 
 ---
@@ -458,7 +550,8 @@ The backend runs on `http://localhost:3000` and frontend on `http://localhost:40
 bun --watch app.ts          # Dev server with hot reload
 bun run jest                # Run tests
 bun run jest --coverage     # Tests with coverage
-npx biome check --write .   # Format code
+npx ultracite check         # Lint check
+npx biome fix --write .     # Format code
 ```
 
 #### Frontend
@@ -502,19 +595,48 @@ See `AGENTS.md` for complete coding guidelines.
 ### In Development
 
 - [ ] WhatsApp bot completion
-- [ ] Stripe subscription billing
-- [ ] Enhanced conflict resolution
+- [ ] Stripe subscription billing (payment flow complete, webhook handling in progress)
+- [ ] Enhanced conflict resolution with suggested alternatives
 - [ ] Meeting optimization suggestions
 
-### Planned
+### Planned Features
 
-- [ ] Slack integration
-- [ ] Mobile app (React Native)
-- [ ] Zoom/Google Meet auto-linking
-- [ ] Email integration (Gmail)
-- [ ] Redis caching layer
-- [ ] Team collaboration features
-- [ ] Calendar sharing
+| Feature | Description | Priority |
+|---------|-------------|----------|
+| **Slack Integration** | Calendar management from Slack | High |
+| **Mobile App** | React Native mobile application | High |
+| **Zoom/Meet Auto-Link** | Automatic video call links in events | Medium |
+| **Email Integration** | Gmail event extraction and scheduling | Medium |
+| **Redis Caching** | Faster response times for frequent queries | Medium |
+| **Team Collaboration** | Shared calendars and team scheduling | Medium |
+| **Calendar Sharing** | Share availability with external users | Medium |
+| **Smart Reminders** | AI-powered reminder suggestions | Low |
+| **Event Templates** | Reusable event templates | Low |
+| **Weekly Digest** | AI-generated weekly schedule summaries | Low |
+
+### Potential UI Improvements
+
+| Area | Improvement |
+|------|-------------|
+| **Dashboard** | Drag-and-drop calendar interface |
+| **Analytics** | Exportable reports (PDF/CSV) |
+| **Chat** | Message search and filtering |
+| **Mobile** | PWA support for mobile web |
+| **Accessibility** | ARIA improvements and keyboard navigation |
+| **Onboarding** | Video tutorials and tooltips |
+| **Notifications** | In-app notification center |
+| **Customization** | Custom themes and accent colors |
+
+### Technical Improvements
+
+| Area | Improvement |
+|------|-------------|
+| **Performance** | Edge caching for static assets |
+| **Monitoring** | OpenTelemetry integration |
+| **Testing** | E2E tests with Playwright |
+| **Documentation** | API documentation with OpenAPI/Swagger |
+| **CI/CD** | Automated deployment pipelines |
+| **Logging** | Structured logging with log aggregation |
 
 ---
 
@@ -543,3 +665,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [Supabase](https://supabase.com/) - Backend platform
 - [Vercel](https://vercel.com/) - Next.js and hosting
 - [shadcn/ui](https://ui.shadcn.com/) - UI components
+- [Grammy](https://grammy.dev/) - Telegram Bot framework

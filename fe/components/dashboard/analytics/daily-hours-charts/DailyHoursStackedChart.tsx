@@ -24,7 +24,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-export const DailyHoursStackedChart: React.FC<DailyHoursStackedChartProps> = ({ data, onDayClick }) => {
+export const DailyHoursStackedChart: React.FC<DailyHoursStackedChartProps> = ({ data, onDayClick: _onDayClick }) => {
   const chartData = React.useMemo(() => {
     return data.map((point) => ({
       ...point,

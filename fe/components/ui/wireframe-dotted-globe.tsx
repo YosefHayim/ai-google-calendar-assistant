@@ -20,7 +20,7 @@ export default function RotatingEarth({
   hideControls = false,
 }: RotatingEarthProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const [_isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -113,14 +113,14 @@ export default function RotatingEarth({
       const [[minLng, minLat], [maxLng, maxLat]] = bounds
 
       const stepSize = dotSpacing * 0.08
-      let pointsGenerated = 0
+      let _pointsGenerated = 0
 
       for (let lng = minLng; lng <= maxLng; lng += stepSize) {
         for (let lat = minLat; lat <= maxLat; lat += stepSize) {
           const point: [number, number] = [lng, lat]
           if (pointInFeature(point, feature)) {
             dots.push(point)
-            pointsGenerated++
+            _pointsGenerated++
           }
         }
       }
@@ -223,7 +223,7 @@ export default function RotatingEarth({
 
         render()
         setIsLoading(false)
-      } catch (err) {
+      } catch (_err) {
         setError('Failed to load land map data')
         setIsLoading(false)
       }
