@@ -513,5 +513,234 @@ export const de: TranslationShape = {
     unauthorized: 'Bitte melden Sie sich an, um fortzufahren.',
     notFound: 'Die angeforderte Ressource wurde nicht gefunden.',
     serverError: 'Serverfehler. Bitte versuchen Sie es später erneut.',
+    hitSnag: 'Ally hatte ein Problem',
+    hitSnagDesc:
+      'Auch die besten Assistenten stolpern manchmal. Das Problem wurde protokolliert, lassen Sie uns Sie wieder auf Kurs bringen.',
+    viewSystemLogs: 'Systemprotokolle anzeigen',
+    referenceId: 'Referenz-ID',
+    persistsContact: 'Wenn das Problem weiterhin besteht, kontaktieren Sie den Support mit der obigen Referenz-ID.',
+    criticalError:
+      'Ein kritischer Fehler ist aufgetreten. Bitte versuchen Sie es erneut oder kontaktieren Sie den Support.',
+    viewErrorDetails: 'Fehlerdetails anzeigen',
+    errorId: 'Fehler-ID',
+    tryAgain: 'Erneut versuchen',
+    reloadPage: 'Seite neu laden',
+    returnHome: 'Zur Startseite',
+    retrying: 'Erneuter Versuch...',
+    somethingWentWrong: 'Etwas ist schief gelaufen',
+  },
+
+  bento: {
+    title: 'Privat. Sicher. Für Geschwindigkeit gebaut.',
+    subtitle: 'Ein KI-Assistent, der auf Ihre Kernbedürfnisse als Führungskraft zugeschnitten ist.',
+    features: {
+      deepWork: {
+        name: 'Schützen Sie Ihre Tiefenarbeit',
+        description:
+          'Ally schützt automatisch Ihre wichtigsten Arbeitsblöcke vor Unterbrechungen durch intelligente Neuplanung von Konflikten.',
+        cta: 'Mehr erfahren',
+      },
+      flexibleScheduling: {
+        name: 'Flexible Terminplanung',
+        description:
+          'Prioritäten ändern sich. Ally macht es einfach, Ihren Zeitplan spontan anzupassen ohne das übliche Hin und Her.',
+        cta: 'So funktioniert es',
+      },
+      worksEverywhere: {
+        name: 'Funktioniert überall',
+        description:
+          'Verwalten Sie Ihren Kalender über Telegram und WhatsApp. Ally ist immer verfügbar, wo auch immer Sie sind.',
+        cta: 'Integrationen erkunden',
+      },
+      chatToDone: {
+        name: 'Vom Chat zur Erledigung',
+        description:
+          'Der schnellste Weg von einem Gedanken zu einem geplanten Termin. Senden Sie einfach eine Nachricht.',
+        cta: 'Jetzt testen',
+      },
+      secure: {
+        name: 'Sicher von Grund auf',
+        description:
+          'Ihre Privatsphäre ist fundamental. Daten sind immer verschlüsselt und werden niemals für das Training von Modellen verwendet.',
+        cta: 'Datenschutzrichtlinie',
+      },
+    },
+  },
+
+  testimonials: {
+    badge: 'Verifizierungsebene',
+    title: 'Vertraut von den ambitioniertesten Leistungsträgern der Welt.',
+    verified: 'Verifiziert',
+    reviews: {
+      alex: {
+        name: 'Alex Rivera',
+        role: 'Venture-Partner',
+        content:
+          'Ally hat verändert, wie ich meine Zeit manage. Ich schreibe einfach dem Bot auf WhatsApp, um meinen Tag zu prüfen, und er organisiert automatisch meinen Google Kalender neu, um meine Tiefenarbeitsfenster zu priorisieren.',
+      },
+      sarah: {
+        name: 'Sarah Chen',
+        role: 'Solo-Gründerin',
+        content:
+          'Das Telegram-Relay ist makellos. Ich kann Tiefenarbeitssitzungen blockieren und Kalenderüberschneidungen per Sprachnachricht lösen, während ich zwischen Terminen gehe. Es ist wirklich ein privates Büroerlebnis.',
+      },
+      james: {
+        name: 'James Wilson',
+        role: 'Privatinvestor',
+        content:
+          'Ich habe endlich meine Morgen zurückerobert. Ally versteht meine Produktivitätsgewohnheiten besser als ich, und schützt meine Fokusblöcke wie ein Falke vor niedrigwertigen Kalendereinladungen.',
+      },
+      elena: {
+        name: 'Elena Rodriguez',
+        role: 'Leitende Rechtsberaterin',
+        content:
+          'Der quantitative Ansatz für mein Zeitkonto war der entscheidende Faktor. Mein Fokus-Verhältnis und Context-Switching-Kosten in Echtzeit zu sehen, hat mich zu einer viel effektiveren Führungskraft gemacht.',
+      },
+      marcus: {
+        name: 'Marcus Thorne',
+        role: 'Geschäftsführer',
+        content:
+          'Terminanpassungen per Sprache über Telegram zu erfassen hat meinen Workflow verändert. Ally versteht Absichten, nicht nur Schlüsselwörter, was die automatische Konfliktlösung unglaublich zuverlässig macht.',
+      },
+      lila: {
+        name: 'Lila Vance',
+        role: 'Strategieberaterin',
+        content:
+          'Die Intelligence-Analytik zeigt mir genau, wo meine Fokuslecks sind. Ich habe mein Tiefenarbeitsverhältnis um 40% gesteigert, seit Ally meine neuronale Terminplanung und Kalenderverwaltung übernommen hat.',
+      },
+    },
+  },
+
+  faq: {
+    title: 'Häufige Fragen',
+    contactCta: 'Benötigen Sie eine unternehmensweite Bereitstellung? Kontaktieren Sie unser',
+    operationsTeam: 'Operations-Team',
+    questions: {
+      interactions: {
+        question: 'Warum berechnen Sie für "Interaktionen"?',
+        answer:
+          'Wir glauben an einen transparenten Werteaustausch. Jede Interaktion nutzt fortschrittliche neuronale Logik zur Prüfung oder Anpassung Ihrer Abläufe. Durch die Messung von Interaktionen stellen wir sicher, dass Sie nur für die tatsächlich ausgeübte Kontrolle über Ihren Zeitplan zahlen.',
+      },
+      sovereignty: {
+        question: 'Was ist "Totale Souveränität"?',
+        answer:
+          'Der Executive-Plan für $7/Monat gewährt Ihnen unbegrenzten Zugang zu unserem neuronalen Arbitrator. Dies ist für Führungskräfte mit hohem Volumen, die 24/7-Überwachung über mehrere komplexe Kalender mit priorisierter neuronaler Verarbeitung benötigen.',
+      },
+      audit: {
+        question: 'Kann ich meine eigenen Zeitdaten prüfen?',
+        answer:
+          'Ja. Unser Intelligence-Dashboard bietet granulare Einblicke in Ihr Fokus-Verhältnis und Context-Switching-Kosten. Wir glauben, dass Sie Ihre Zeitdaten genauso besitzen sollten wie Ihr Unternehmen.',
+      },
+      dataTraining: {
+        question: 'Werden meine Daten für KI-Training verwendet?',
+        answer:
+          'Absolut nicht. Wir glauben, dass Ihr privates Büro privat bleiben sollte. Ihr Zeitplan wird in einem verschlüsselten Silo gespeichert und niemals zum Training grundlegender Modelle verwendet. Ihre Souveränität ist unsere Priorität.',
+      },
+      credits: {
+        question: 'Wie skalieren individuelle Kreditpakete?',
+        answer:
+          'Für Unternehmen mit saisonalen Arbeitslasten ermöglichen individuelle Credits ($1 = 100 Aktionen) die Skalierung Ihrer Kontrolle nach oben oder unten ohne Änderung des Abonnements. Sie verfallen nie und dienen als operative Reserve.',
+      },
+    },
+  },
+
+  useCases: {
+    intelligentScheduling: {
+      title: 'Intelligente Terminplanung',
+      description:
+        'Findet den perfekten Zeitpunkt für Meetings und navigiert mühelos durch komplexe Kalender und Zeitzonen.',
+      userMessage: 'Finde 30min für mich, Sarah und Alex.',
+      allyResponse: 'Erledigt. Dienstag um 14:30 Uhr.',
+      confirmation: 'Alle Kalender aktualisiert.',
+    },
+    focusProtection: {
+      title: 'Fokuszeitschutz',
+      description:
+        'Schützt automatisch Ihre Tiefenarbeitssitzungen vor Unterbrechungen durch intelligente Neuplanung von Konflikten.',
+      userMessage: 'Schütze meinen Morgen für Q4-Strategie.',
+      allyResponse: 'Ihr Kalender ist von 9:00 - 12:00 Uhr blockiert.',
+      focusModeActive: 'Fokusmodus ist aktiv.',
+    },
+    travelAgent: {
+      title: 'Proaktiver Reiseagent',
+      description:
+        'Überwacht Ihre Reisepläne, passt sich automatisch an Verspätungen an und hält alle Beteiligten informiert.',
+      delayAlert: 'Flug nach SFO um 2 Stunden verspätet.',
+      allyResponse: 'Erledigt. Fahrdienst und Hotel sind aktualisiert.',
+    },
+    voiceToAction: {
+      title: 'Sprache zu Aktion',
+      description:
+        'Erfassen Sie Gedanken und Befehle unterwegs. Ally transkribiert, versteht und führt Aufgaben sofort aus.',
+      userMessage: '"Erinnere mich, um 16 Uhr Investoren anzurufen"',
+      allyResponse: "Erinnerung gesetzt: 'Investoren anrufen' um 16:00 Uhr.",
+    },
+  },
+
+  billing: {
+    title: 'Abrechnung & Abonnement',
+    subtitle: 'Verwalten Sie Ihr Abonnement und Ihre Rechnungsdetails',
+    manageBilling: 'Abrechnung verwalten',
+    paymentSuccess: 'Zahlung erfolgreich!',
+    subscriptionActivated: 'Ihr Abonnement wurde aktiviert.',
+    freePlan: 'Kostenloser Plan',
+    billedAnnually: 'Jährliche Abrechnung',
+    billedMonthly: 'Monatliche Abrechnung',
+    status: {
+      trial: 'Testversion',
+      active: 'Aktiv',
+      pastDue: 'Überfällig',
+      canceled: 'Gekündigt',
+      free: 'Kostenlos',
+    },
+    trial: {
+      daysLeft: '{{days}} Tage Ihrer Testversion verbleiben',
+      fullAccess:
+        'Die Testversion beinhaltet vollen Zugang zu allen Funktionen. Keine Gebühr bis zum Ende der Testversion.',
+    },
+    moneyBack: {
+      title: '30-Tage-Geld-zurück-Garantie aktiv',
+      description: 'Nicht zufrieden? Erhalten Sie eine vollständige Rückerstattung, keine Fragen gestellt.',
+    },
+    cancelNotice: {
+      title: 'Ihr Abonnement wird am Ende dieses Abrechnungszeitraums gekündigt',
+      accessUntil: 'Zugang bis: {{date}}',
+    },
+    usage: {
+      title: 'Nutzung in diesem Zeitraum',
+      aiInteractions: 'KI-Interaktionen',
+      unlimited: 'Unbegrenzt',
+      remaining: '{{count}} verbleibend',
+      creditBalance: 'Guthaben',
+      credits: '{{count}} Credits',
+    },
+    transactions: {
+      title: 'Transaktionsverlauf',
+    },
+    plans: {
+      title: 'Verfügbare Pläne',
+      popular: 'Beliebt',
+      perMonth: '/Monat',
+      unlimitedInteractions: 'Unbegrenzte Interaktionen',
+      interactionsPerMonth: '{{count}} Interaktionen/Monat',
+      upgrade: 'Upgrade',
+      downgrade: 'Downgrade',
+      currentPlan: 'Aktueller Plan',
+    },
+    actions: {
+      title: 'Abonnement-Aktionen',
+      cancelSubscription: 'Abonnement kündigen',
+      cancelDesc: 'Sie behalten den Zugang bis zum Ende des Abrechnungszeitraums',
+      cancel: 'Kündigen',
+      requestRefund: 'Vollständige Rückerstattung anfordern',
+      refundDesc: '30-Tage-Geld-zurück-Garantie - keine Fragen',
+    },
+    confirm: {
+      cancelSubscription:
+        'Sind Sie sicher, dass Sie Ihr Abonnement kündigen möchten? Sie haben weiterhin Zugang bis zum Ende des Abrechnungszeitraums.',
+      requestRefund:
+        'Sind Sie sicher, dass Sie eine Rückerstattung anfordern möchten? Ihr Abonnement wird sofort gekündigt.',
+      refundSuccess: 'Rückerstattung erfolgreich bearbeitet!',
+    },
   },
 } as const
