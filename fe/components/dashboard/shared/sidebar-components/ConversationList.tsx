@@ -2,6 +2,8 @@
 
 import React from 'react'
 import { Clock, MessageSquare, Search, Trash2, X } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { formatRelativeDate } from '@/lib/dateUtils'
 import type { ConversationListItem } from '@/services/chatService'
 
@@ -35,21 +37,23 @@ export const ConversationList: React.FC<ConversationListProps> = ({
       </div>
 
       <div className="relative mb-3">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
-        <input
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 z-10" />
+        <Input
           type="text"
           value={localSearchValue}
           onChange={onSearchChange}
           placeholder="Search conversations..."
-          className="w-full pl-9 pr-8 py-2 text-sm bg-zinc-100 dark:bg-zinc-800 border-0 rounded-md text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary/50"
+          className="w-full pl-9 pr-8 bg-zinc-100 dark:bg-zinc-800 border-0"
         />
         {localSearchValue && (
-          <button
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={onClearSearch}
-            className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-400"
+            className="absolute right-1 top-1/2 -translate-y-1/2 h-6 w-6 text-zinc-400"
           >
             <X className="w-3 h-3" />
-          </button>
+          </Button>
         )}
       </div>
 
@@ -87,13 +91,15 @@ export const ConversationList: React.FC<ConversationListProps> = ({
                     <span>{formatRelativeDate(conversation.lastUpdated)}</span>
                   </div>
                 </div>
-                <button
+                <Button
+                  variant="ghost"
+                  size="icon"
                   onClick={(e) => onInitiateDelete(e, conversation.id)}
-                  className="p-1 rounded opacity-0 group-hover:opacity-100 hover:bg-red-100 dark:hover:bg-red-900/30 text-zinc-400 hover:text-red-500 transition-all"
+                  className="h-6 w-6 opacity-0 group-hover:opacity-100 hover:bg-red-100 dark:hover:bg-red-900/30 text-zinc-400 hover:text-red-500"
                   title="Delete"
                 >
                   <Trash2 className="w-3 h-3" />
-                </button>
+                </Button>
               </div>
             </div>
           ))}

@@ -3,6 +3,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { Plus, ChevronLeft, LayoutDashboard, X } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { AllyLogo, BetaBadge } from '@/components/shared/logo'
 
 interface SidebarHeaderProps {
@@ -28,26 +29,30 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = ({ isOpen, onClose, o
         </Link>
       )}
       <div className="flex items-center gap-1">
-        <button
+        <Button
+          size="icon"
           onClick={onNewChat}
-          className="p-1.5 rounded-md bg-primary text-white hover:bg-primary-hover transition-colors"
           title="New Chat"
         >
           <Plus className="w-5 h-5" />
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
           onClick={onToggle}
-          className="p-1 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 hidden md:block"
+          className="text-zinc-500 hidden md:flex"
         >
           {isOpen ? <ChevronLeft className="w-5 h-5" /> : <LayoutDashboard className="w-5 h-5" />}
-        </button>
+        </Button>
         {isOpen && (
-          <button
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={onClose}
-            className="p-1 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 md:hidden"
+            className="text-zinc-500 md:hidden"
           >
             <X className="w-5 h-5" />
-          </button>
+          </Button>
         )}
       </div>
     </div>

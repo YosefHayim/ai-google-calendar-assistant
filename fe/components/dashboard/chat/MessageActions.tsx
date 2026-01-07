@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { Clock, Edit2, RotateCcw, Volume2 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { Message } from '@/types'
 
 interface MessageActionsProps {
@@ -16,13 +17,15 @@ export const MessageActions: React.FC<MessageActionsProps> = ({ msg, isSpeaking,
   if (msg.role === 'assistant') {
     return (
       <div className="flex items-center gap-2 mt-1 px-1">
-        <button
+        <Button
+          variant="ghost"
+          size="icon"
           onClick={() => onSpeak(msg.content)}
-          className="p-1 text-zinc-400 hover:text-primary transition-colors"
+          className="h-6 w-6 text-zinc-400 hover:text-primary"
           title="Hear response"
         >
           <Volume2 className={`w-3 h-3 ${isSpeaking ? 'animate-pulse text-primary' : ''}`} />
-        </button>
+        </Button>
         <span className="text-xs font-bold text-zinc-400 uppercase tracking-tighter">
           {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
         </span>
@@ -36,28 +39,34 @@ export const MessageActions: React.FC<MessageActionsProps> = ({ msg, isSpeaking,
         <Clock className="w-2.5 h-2.5" />
         {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
       </div>
-      <div className="flex items-center gap-2 border-l border-zinc-200 dark:border-zinc-800 pl-2">
-        <button
+      <div className="flex items-center gap-1 border-l border-zinc-200 dark:border-zinc-800 pl-2">
+        <Button
+          variant="ghost"
+          size="icon"
           onClick={() => onResend(msg.content)}
-          className="p-1 text-zinc-400 hover:text-primary transition-colors"
+          className="h-7 w-7 text-zinc-400 hover:text-primary"
           title="Reset / Re-trigger"
         >
           <RotateCcw size={16} />
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
           onClick={() => onSpeak(msg.content)}
-          className="p-1 text-zinc-400 hover:text-primary transition-colors"
+          className="h-7 w-7 text-zinc-400 hover:text-primary"
           title="Hear message"
         >
           <Volume2 size={16} />
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
           onClick={() => onEdit(msg.content)}
-          className="p-1 text-zinc-400 hover:text-primary transition-colors"
+          className="h-7 w-7 text-zinc-400 hover:text-primary"
           title="Edit & Resend"
         >
           <Edit2 size={16} />
-        </button>
+        </Button>
       </div>
     </div>
   )

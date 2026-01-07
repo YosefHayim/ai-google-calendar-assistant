@@ -5,6 +5,8 @@ import { ArrowUp, ChevronDown, Mic, X } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 
 import { AIVoiceInput } from "@/components/ui/ai-voice-input";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { VoicePoweredOrb } from "@/components/ui/voice-powered-orb";
 import { cn } from "@/lib/utils";
 import { useSpeechRecognition } from "@/components/dashboard/chat/useSpeechRecognition";
@@ -90,20 +92,24 @@ const ChatHeader: React.FC<{ onClose: () => void; onMinimize: () => void }> = ({
       </div>
 
       <div className="flex items-center gap-1">
-        <button
+        <Button
+          variant="ghost"
+          size="icon"
           onClick={onMinimize}
-          className="p-1.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 transition-all"
+          className="h-8 w-8 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
           title="Minimize"
         >
           <ChevronDown size={16} />
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
           onClick={onClose}
-          className="p-1.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 transition-all"
+          className="h-8 w-8 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
           title="Close"
         >
           <X size={16} />
-        </button>
+        </Button>
       </div>
     </div>
   );
@@ -302,16 +308,18 @@ const AIAllySidebar: React.FC<AIAllySidebarProps> = ({
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {quickActions.map((action) => (
-                    <button
+                    <Button
                       key={action.label}
+                      variant="outline"
+                      size="sm"
                       onClick={() => {
                         setInputText(action.label);
                         inputRef.current?.focus();
                       }}
-                      className="px-3 py-1.5 text-xs font-medium rounded-full bg-zinc-100 dark:bg-zinc-800/80 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors border border-zinc-200/50 dark:border-zinc-700/50"
+                      className="rounded-full text-xs font-medium"
                     >
                       {action.emoji} {action.label}
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </motion.div>
@@ -331,12 +339,14 @@ const AIAllySidebar: React.FC<AIAllySidebarProps> = ({
                     visualizerBars={32}
                     className="py-2"
                   />
-                  <button
+                  <Button
+                    variant="ghost"
+                    size="icon"
                     onClick={handleCancelRecording}
-                    className="absolute top-2 right-2 p-1.5 rounded-full text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+                    className="absolute top-2 right-2 h-7 w-7 text-zinc-400"
                   >
                     <X size={16} />
-                  </button>
+                  </Button>
                 </div>
               ) : (
                 <form
@@ -347,44 +357,42 @@ const AIAllySidebar: React.FC<AIAllySidebarProps> = ({
                   className="relative flex items-center bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-1.5 gap-1.5"
                 >
                   {/* Voice Button */}
-                  <button
+                  <Button
                     type="button"
+                    variant="ghost"
+                    size="icon"
                     onClick={handleToggleRecording}
-                    className={cn(
-                      "p-2.5 rounded-xl transition-all flex-shrink-0",
-                      "text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800"
-                    )}
+                    className="h-10 w-10 flex-shrink-0 text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
                     disabled={!speechRecognitionSupported}
                     title="Voice input"
                   >
                     <Mic className="w-5 h-5" />
-                  </button>
+                  </Button>
 
                   {/* Text Input */}
-                  <input
+                  <Input
                     ref={inputRef}
                     type="text"
                     value={inputText}
                     onChange={(e) => setInputText(e.target.value)}
                     placeholder="Ask Ally anything..."
-                    className="flex-1 bg-transparent border-none outline-none py-2.5 px-1 text-zinc-800 dark:text-zinc-100 text-sm placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
+                    className="flex-1 h-10 bg-transparent border-0 shadow-none focus-visible:ring-0 text-sm"
                   />
 
                   {/* Send Button */}
-                  <motion.button
+                  <Button
                     type="submit"
+                    size="icon"
                     disabled={!inputText.trim()}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
                     className={cn(
-                      "p-2.5 rounded-xl transition-all flex-shrink-0",
+                      "h-10 w-10 flex-shrink-0 rounded-xl",
                       inputText.trim()
-                        ? "bg-zinc-950 dark:bg-zinc-100 text-white dark:text-zinc-950"
-                        : "bg-zinc-100 dark:bg-zinc-800 text-zinc-300 dark:text-zinc-600 cursor-not-allowed"
+                        ? "bg-zinc-950 dark:bg-zinc-100 text-white dark:text-zinc-950 hover:bg-zinc-800 dark:hover:bg-zinc-200"
+                        : "bg-zinc-100 dark:bg-zinc-800 text-zinc-300 dark:text-zinc-600"
                     )}
                   >
                     <ArrowUp className="w-5 h-5" />
-                  </motion.button>
+                  </Button>
                 </form>
               )}
 

@@ -22,8 +22,14 @@ export function deepClean<T>(obj: T): T {
     }
     if (isPlainObject(val)) {
       const cleaned = omitBy(
-        Object.fromEntries(Object.entries(val as object).map(([k, v]) => [k, clean(v)])),
-        (v) => isNil(v) || v === "" || (isPlainObject(v) && isEmpty(v)) || (Array.isArray(v) && !v.length)
+        Object.fromEntries(
+          Object.entries(val as object).map(([k, v]) => [k, clean(v)]),
+        ),
+        (v) =>
+          isNil(v) ||
+          v === "" ||
+          (isPlainObject(v) && isEmpty(v)) ||
+          (Array.isArray(v) && !v.length),
       );
       return isEmpty(cleaned) ? undefined : cleaned;
     }
@@ -58,7 +64,11 @@ export function normalizeEventDateTime(input: Partial<EDT>): EDT {
 /**
  * Validate required event fields. Part of: Event validation flow in formatEventData.
  */
-export function validateEventRequired(summary: string | null | undefined, start: EDT, end: EDT): void {
+export function validateEventRequired(
+  summary: string | null | undefined,
+  start: EDT,
+  end: EDT,
+): void {
   if (!summary) {
     throw new Error("Event summary is required.");
   }
@@ -73,19 +83,28 @@ export function validateEventRequired(summary: string | null | undefined, start:
 /**
  * Validate and normalize event timezone. Part of: Event validation flow in formatEventData.
  */
-export function validateAndResolveTimezone(start: EDT, end: EDT): string | undefined {
-  const tzStart = start.dateTime ? start.timeZone ?? undefined : undefined;
-  const tzEnd = end.dateTime ? end.timeZone ?? tzStart ?? undefined : undefined;
+export function validateAndResolveTimezone(
+  start: EDT,
+  end: EDT,
+): string | undefined {
+  const tzStart = start.dateTime ? (start.timeZone ?? undefined) : undefined;
+  const tzEnd = end.dateTime
+    ? (end.timeZone ?? tzStart ?? undefined)
+    : undefined;
 
   if ((start.dateTime || end.dateTime) && !(tzStart || tzEnd)) {
     throw new Error("Event timeZone is required for timed events.");
   }
 
   if (tzStart && !ALLOWED_TZ.has(tzStart)) {
-    throw new Error(`Invalid timeZone: ${tzStart}. Allowed: ${Array.from(ALLOWED_TZ).join(", ")}`);
+    throw new Error(
+      `Invalid timeZone: ${tzStart}. Allowed: ${Array.from(ALLOWED_TZ).join(", ")}`,
+    );
   }
   if (tzEnd && !ALLOWED_TZ.has(tzEnd)) {
-    throw new Error(`Invalid timeZone: ${tzEnd}. Allowed: ${Array.from(ALLOWED_TZ).join(", ")}`);
+    throw new Error(
+      `Invalid timeZone: ${tzEnd}. Allowed: ${Array.from(ALLOWED_TZ).join(", ")}`,
+    );
   }
   if (tzStart && tzEnd && tzStart !== tzEnd) {
     throw new Error("Start and end time zones must match.");
@@ -97,7 +116,11 @@ export function validateAndResolveTimezone(start: EDT, end: EDT): string | undef
 /**
  * Apply resolved timezone to event date/time objects. Part of: Event validation flow in formatEventData.
  */
-export function applyTimezone(start: EDT, end: EDT, timezone: string | undefined): void {
+export function applyTimezone(
+  start: EDT,
+  end: EDT,
+  timezone: string | undefined,
+): void {
   if (start.dateTime) {
     start.timeZone = timezone;
   }
@@ -109,7 +132,11 @@ export function applyTimezone(start: EDT, end: EDT, timezone: string | undefined
 /**
  * Build event object from cleaned data
  */
-export function buildEvent(cleaned: Partial<Event>, start: EDT, end: EDT): Event {
+export function buildEvent(
+  cleaned: Partial<Event>,
+  start: EDT,
+  end: EDT,
+): Event {
   return {
     summary: cleaned.summary,
     description: cleaned.description,
@@ -146,42 +173,75 @@ export type UserCalendar = {
   calendar_name: string;
 };
 
-export const getCalendarCategoriesByEmail = asyncHandler(async (email: string): Promise<UserCalendar[]> => {
-  // Step 1: Get user_id from users table by email
-  const { data: userData, error: userError } = await SUPABASE.from("users").select("id").ilike("email", email.trim().toLowerCase()).single();
+export const getCalendarCategoriesByEmail = asyncHandler(
+  async (email: string): Promise<UserCalendar[]> => {
+    // Step 1: Get user_id from users table by email
+    const { data: userData, error: userError } = await SUPABASE.from("users")
+      .select("id")
+      .ilike("email", email.trim().toLowerCase())
+      .single();
 
-  if (userError || !userData) {
-    // User not found - return empty array instead of throwing
+    if (userError || !userData) {
+      // User not found - return empty array instead of throwing
+      return [];
+    }
+
+    // Step 2: Get calendars from user_calendars table using user_id
+    const { data, error } = await SUPABASE.from("user_calendars")
+      .select("calendar_id, calendar_name")
+      .eq("user_id", userData.id);
+
+    if (error) {
+      throw error;
+    }
+
+    if (data && Array.isArray(data)) {
+      return data
+        .filter((row) => row.calendar_id && row.calendar_name)
+        .map((row) => ({
+          calendar_id: row.calendar_id as string,
+          calendar_name: row.calendar_name as string,
+        }));
+    }
+
     return [];
-  }
+  },
+);
 
-  // Step 2: Get calendars from user_calendars table using user_id
-  const { data, error } = await SUPABASE.from("user_calendars").select("calendar_id, calendar_name").eq("user_id", userData.id);
+const cleanObject = <T extends Record<string, unknown>>(obj: T): T =>
+  omitBy(obj, (v) => isNil(v) || v === "") as T;
 
-  if (error) {
-    throw error;
-  }
-
-  if (data && Array.isArray(data)) {
-    return data
-      .filter((row) => row.calendar_id && row.calendar_name)
-      .map((row) => ({
-        calendar_id: row.calendar_id as string,
-        calendar_name: row.calendar_name as string,
-      }));
-  }
-
-  return [];
-});
-
-const cleanObject = <T extends Record<string, unknown>>(obj: T): T => omitBy(obj, (v) => isNil(v) || v === "") as T;
+function cleanEventDateTime(
+  dt:
+    | {
+        date?: string | null;
+        dateTime?: string | null;
+        timeZone?: string | null;
+      }
+    | null
+    | undefined,
+):
+  | { date?: string | null; dateTime?: string | null; timeZone?: string | null }
+  | undefined {
+  if (!dt) return undefined;
+  const cleaned = {
+    date: dt.date === "" ? null : dt.date,
+    dateTime: dt.dateTime === "" ? null : dt.dateTime,
+    timeZone: dt.timeZone === "" ? null : dt.timeZone,
+  };
+  if (!cleaned.date && !cleaned.dateTime) return undefined;
+  return cleaned;
+}
 
 /**
  * Parse and normalize tool arguments from various nested structures. Part of: Agent tool execution flow.
  */
 export function parseToolArguments(raw: unknown) {
   // 1) accept stringified input
-  const base = typeof (raw as { input?: string })?.input === "string" ? JSON.parse((raw as { input: string }).input) : raw;
+  const base =
+    typeof (raw as { input?: string })?.input === "string"
+      ? JSON.parse((raw as { input: string }).input)
+      : raw;
 
   // 2) unwrap common nestings
   const outer = base?.fullEventParameters ?? base;
@@ -189,17 +249,27 @@ export function parseToolArguments(raw: unknown) {
 
   // 3) collect fields
   const email = base?.email ?? outer?.email ?? inner?.email;
-  const rawCalendarId = outer?.calendarId ?? base?.calendarId ?? inner?.calendarId;
+  const rawCalendarId =
+    outer?.calendarId ?? base?.calendarId ?? inner?.calendarId;
   // Normalize calendarId - reject invalid values like "/"
-  const calendarId = rawCalendarId && typeof rawCalendarId === "string" && rawCalendarId.trim() !== "" && rawCalendarId !== "/" ? rawCalendarId.trim() : null;
+  const calendarId =
+    rawCalendarId &&
+    typeof rawCalendarId === "string" &&
+    rawCalendarId.trim() !== "" &&
+    rawCalendarId !== "/"
+      ? rawCalendarId.trim()
+      : null;
   const eventId = base?.eventId ?? outer?.eventId ?? inner?.eventId;
 
-  // 4) extract event fields (summary/start/end/…)
+  // 4) extract event fields (summary/start/end/…), cleaning empty strings to null
+  const cleanString = (val: unknown): string | undefined =>
+    typeof val === "string" && val.trim() !== "" ? val : undefined;
+
   const eventLike: Partial<Event> = {
     id: inner?.id,
-    summary: inner?.summary,
-    description: inner?.description,
-    location: inner?.location,
+    summary: cleanString(inner?.summary),
+    description: cleanString(inner?.description),
+    location: cleanString(inner?.location),
     attendees: inner?.attendees,
     reminders: inner?.reminders,
     recurrence: inner?.recurrence,
@@ -207,8 +277,8 @@ export function parseToolArguments(raw: unknown) {
     conferenceData: inner?.conferenceData,
     transparency: inner?.transparency,
     visibility: inner?.visibility,
-    start: inner?.start,
-    end: inner?.end,
+    start: cleanEventDateTime(inner?.start),
+    end: cleanEventDateTime(inner?.end),
   };
 
   return { email, calendarId, eventId, eventLike: cleanObject(eventLike) };

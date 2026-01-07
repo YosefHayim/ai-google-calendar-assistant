@@ -1,8 +1,7 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState, useCallback } from 'react'
 import { decodeAudioData, getSpeechFromGemini } from '@/services/geminiService'
-import { sendChatMessage, continueConversation, type ChatMessage as ChatHistoryMessage } from '@/services/chatService'
 
 import { Message } from '@/types'
 import { AvatarView } from './AvatarView'
@@ -12,6 +11,7 @@ import { ThreeDView } from './ThreeDView'
 import { ViewSwitcher } from './ViewSwitcher'
 import { useSpeechRecognition } from './useSpeechRecognition'
 import { useChatContext } from '@/contexts/ChatContext'
+import { useStreamingChat } from '@/hooks/useStreamingChat'
 
 declare global {
   interface Window {
@@ -33,7 +33,6 @@ const ChatInterface: React.FC = () => {
   } = useChatContext()
 
   const [input, setInput] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
   const [isSpeaking, setIsSpeaking] = useState(false)
   const [activeTab, setActiveTab] = useState<ActiveTab>('chat')
   const [error, setError] = useState<string | null>(null)
@@ -42,6 +41,45 @@ const ChatInterface: React.FC = () => {
   const avatarScrollRef = useRef<HTMLDivElement>(null)
   const audioContextRef = useRef<AudioContext | null>(null)
   const textInputRef = useRef<HTMLInputElement>(null)
+
+  const handleStreamComplete = useCallback(
+    (conversationId: string, fullResponse: string) => {
+      const assistantMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: fullResponse,
+        timestamp: new Date(),
+      }
+      setMessages((prev) => [...prev, assistantMessage])
+
+      if (conversationId && !selectedConversationId) {
+        setConversationId(conversationId, true)
+        addConversationToList({
+          id: conversationId,
+          title: 'New Conversation',
+          messageCount: 2,
+          lastUpdated: new Date().toISOString(),
+          createdAt: new Date().toISOString(),
+        })
+      }
+
+      if (activeTab === 'avatar' && fullResponse) {
+        speakText(fullResponse.split('\n')[0])
+      }
+    },
+    [selectedConversationId, setConversationId, addConversationToList, setMessages, activeTab],
+  )
+
+  const handleStreamError = useCallback((errorMessage: string) => {
+    setError(errorMessage)
+  }, [])
+
+  const { streamingState, sendStreamingMessage, cancelStream, resetStreamingState } = useStreamingChat({
+    onStreamComplete: handleStreamComplete,
+    onStreamError: handleStreamError,
+  })
+
+  const isLoading = streamingState.isStreaming
 
   const speakText = async (text: string) => {
     if (!audioContextRef.current) {
@@ -81,51 +119,10 @@ const ChatInterface: React.FC = () => {
     }
     setMessages((prev) => [...prev, userMessage])
     setInput('')
-    setIsLoading(true)
     setError(null)
+    resetStreamingState()
 
-    try {
-      let response
-      if (selectedConversationId) {
-        response = await continueConversation(selectedConversationId, textToSend)
-      } else {
-        const history: ChatHistoryMessage[] = messages.map((m) => ({
-          role: m.role,
-          content: m.content,
-        }))
-        response = await sendChatMessage(textToSend, history)
-      }
-
-      const assistantMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: response.content,
-        timestamp: new Date(),
-      }
-      setMessages((prev) => [...prev, assistantMessage])
-
-      if (response.conversationId && !selectedConversationId) {
-        setConversationId(response.conversationId, true)
-        addConversationToList({
-          id: response.conversationId,
-          title: response.title || 'New Conversation',
-          messageCount: 2,
-          lastUpdated: new Date().toISOString(),
-          createdAt: new Date().toISOString(),
-        })
-      } else if (response.conversationId && response.title) {
-        updateConversationTitle(response.conversationId, response.title)
-      }
-
-      if (activeTab === 'avatar' && response.content) {
-        speakText(response.content.split('\n')[0])
-      }
-    } catch (err) {
-      setError('Communication relay failed. Please retry.')
-      console.error(err)
-    } finally {
-      setIsLoading(false)
-    }
+    await sendStreamingMessage(textToSend, selectedConversationId || undefined)
   }
 
   const handleResend = (text: string) => {
@@ -147,6 +144,10 @@ const ChatInterface: React.FC = () => {
     handleSend(undefined, newText)
   }
 
+  const handleCancel = () => {
+    cancelStream()
+  }
+
   const {
     isRecording,
     speechRecognitionSupported,
@@ -162,7 +163,7 @@ const ChatInterface: React.FC = () => {
 
   useEffect(() => {
     scrollToBottom()
-  }, [messages, isLoading, activeTab])
+  }, [messages, isLoading, activeTab, streamingState.streamedText])
 
   const scrollToBottom = () => {
     scrollRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -204,6 +205,8 @@ const ChatInterface: React.FC = () => {
               onEdit={handleEditMessage}
               onSpeak={speakText}
               scrollRef={scrollRef}
+              streamingText={streamingState.streamedText}
+              currentTool={streamingState.currentTool}
             />
           )}
         </div>
@@ -222,6 +225,7 @@ const ChatInterface: React.FC = () => {
           onStartRecording={startRecording}
           onStopRecording={stopRecording}
           onCancelRecording={cancelRecording}
+          onCancel={isLoading ? handleCancel : undefined}
         />
       </div>
     </div>

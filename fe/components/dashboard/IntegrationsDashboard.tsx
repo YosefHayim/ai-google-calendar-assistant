@@ -3,6 +3,7 @@
 import { ArrowUpRight, CheckCircle2, Circle, List, Loader2, RefreshCw, Settings, X } from 'lucide-react'
 import { GoogleCalendarIcon, TelegramIcon, WhatsAppIcon } from '@/components/shared/Icons'
 import React, { useState } from 'react'
+import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 
 import { useCalendars } from '@/hooks/queries'
@@ -22,13 +23,14 @@ const IntegrationsDashboard: React.FC<IntegrationsDashboardProps> = () => {
           <h1 className="text-2xl font-medium text-zinc-900 dark:text-zinc-100 mb-2">Integrations</h1>
           <p className="text-zinc-500 dark:text-zinc-400">Connect and manage your executive workspace.</p>
         </div>
-        <button
+        <Button
+          variant="ghost"
           onClick={() => refetch()}
-          className="p-2 text-zinc-400 hover:text-primary transition-colors flex items-center gap-2 text-xs font-bold uppercase tracking-widest"
+          className="text-zinc-400 hover:text-primary text-xs font-bold uppercase tracking-widest"
         >
           <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
           Refresh
-        </button>
+        </Button>
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
@@ -45,9 +47,9 @@ const IntegrationsDashboard: React.FC<IntegrationsDashboardProps> = () => {
           <p className="text-sm text-zinc-500 mb-6">Interact with Ally directly through your Telegram bot.</p>
           <div className="flex items-center justify-between pt-4 border-t border-zinc-100">
             <span className="text-xs font-mono text-zinc-400">@AllySyncBot</span>
-            <button className="text-zinc-950 dark:text-zinc-100 text-sm font-medium flex items-center gap-1 p-1">
+            <Button variant="ghost" size="sm" className="text-sm font-medium">
               <span>Settings</span> <ArrowUpRight className="w-3.5 h-3.5" />
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -63,12 +65,12 @@ const IntegrationsDashboard: React.FC<IntegrationsDashboardProps> = () => {
           <h3 className="text-lg font-medium text-zinc-900 dark:text-zinc-100 mb-1">WhatsApp</h3>
           <p className="text-sm text-zinc-500 mb-6">Sync Ally with WhatsApp for secure relay of messages.</p>
           <div className="pt-4 border-t border-zinc-100">
-            <button
+            <Button
               onClick={() => setIsWhatsAppModalOpen(true)}
-              className="w-full bg-zinc-950 dark:bg-zinc-100 text-white dark:text-zinc-950 p-1 rounded-md text-sm font-medium flex items-center justify-center gap-2"
+              className="w-full"
             >
               Connect <WhatsAppIcon className="w-4 h-4" />
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -91,9 +93,9 @@ const IntegrationsDashboard: React.FC<IntegrationsDashboardProps> = () => {
                 <List className="w-4 h-4 text-zinc-400" />
                 {isLoading ? 'Fetching Calendars...' : 'Synced Sources'}
               </h4>
-              <button className="text-zinc-950 dark:text-zinc-100 text-sm font-medium flex items-center gap-1 p-1">
+              <Button variant="ghost" size="sm" className="text-sm font-medium">
                 <Settings className="w-3.5 h-3.5" /> Manage
-              </button>
+              </Button>
             </div>
 
             {isLoading ? (
@@ -109,9 +111,9 @@ const IntegrationsDashboard: React.FC<IntegrationsDashboardProps> = () => {
             ) : isError ? (
               <div className="py-4 text-center">
                 <p className="text-xs text-red-500 font-bold uppercase tracking-tight">Failed to load calendar data.</p>
-                <button onClick={() => refetch()} className="text-xs text-primary underline mt-1">
+                <Button variant="link" onClick={() => refetch()} className="text-xs text-primary p-0 h-auto mt-1">
                   Try again
-                </button>
+                </Button>
               </div>
             ) : calendarList.length === 0 ? (
               <div className="py-8 text-center text-zinc-400 text-xs italic">No active calendar sources found.</div>
@@ -141,22 +143,24 @@ const IntegrationsDashboard: React.FC<IntegrationsDashboardProps> = () => {
       {isWhatsAppModalOpen && (
         <div className="fixed inset-0 bg-black/50 dark:bg-black/80 flex items-center justify-center z-50 p-4">
           <div className="bg-white dark:bg-zinc-900 rounded-lg p-6 shadow-xl max-w-sm w-full relative">
-            <button
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={() => setIsWhatsAppModalOpen(false)}
               className="absolute top-3 right-3 text-zinc-500 hover:text-zinc-700"
             >
               <X className="w-5 h-5" />
-            </button>
+            </Button>
             <h3 className="text-lg font-medium text-zinc-900 dark:text-zinc-100 mb-4">Connect WhatsApp</h3>
             <p className="text-sm text-zinc-500 mb-6">
               To connect WhatsApp, please follow the instructions in your Ally Node console.
             </p>
-            <button
+            <Button
               onClick={() => setIsWhatsAppModalOpen(false)}
-              className="w-full bg-zinc-950 dark:bg-zinc-100 text-white dark:text-zinc-950 p-2 rounded-md text-sm font-medium flex items-center justify-center gap-2"
+              className="w-full"
             >
               <Loader2 className="w-4 h-4 animate-spin" /> Open Console
-            </button>
+            </Button>
           </div>
         </div>
       )}

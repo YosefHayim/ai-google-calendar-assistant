@@ -1,12 +1,12 @@
 'use client'
 
-'use client'
-
 import { ArrowLeft, CheckCircle2, Lock } from 'lucide-react'
 import React, { useEffect, useRef, useState } from 'react'
 
 import { AllyLogo } from '@/components/shared/logo'
 import { BackgroundPattern1 } from '@/components/shared/BackgroundPattern1'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button'
 import { useRouter } from 'next/navigation'
 
@@ -98,7 +98,7 @@ const OTPVerificationPage: React.FC = () => {
               <form onSubmit={handleVerify} className="space-y-2">
                 <div className="flex justify-between gap-2">
                   {otp.map((digit, index) => (
-                    <input
+                    <Input
                       key={index}
                       ref={(el) => {
                         inputRefs.current[index] = el
@@ -109,7 +109,7 @@ const OTPVerificationPage: React.FC = () => {
                       value={digit}
                       onChange={(e) => handleChange(index, e.target.value)}
                       onKeyDown={(e) => handleKeyDown(index, e)}
-                      className="w-12 h-16 sm:w-14 sm:h-20 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl text-center text-3xl font-bold outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all text-zinc-900 dark:text-zinc-100 shadow-sm"
+                      className="w-12 h-16 sm:w-14 sm:h-20 rounded-xl text-center text-3xl font-bold focus:ring-4 focus:ring-primary/10"
                     />
                   ))}
                 </div>
@@ -125,9 +125,14 @@ const OTPVerificationPage: React.FC = () => {
                     <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
                       Didn&apos;t receive code?{' '}
                       {canResend ? (
-                        <button onClick={handleResend} type="button" className="text-primary hover:underline font-bold">
+                        <Button
+                          onClick={handleResend}
+                          type="button"
+                          variant="link"
+                          className="p-0 h-auto font-bold"
+                        >
                           Send again
-                        </button>
+                        </Button>
                       ) : (
                         <span className="text-zinc-400 dark:text-zinc-600 italic">
                           Retry in 0:{timer.toString().padStart(2, '0')}
@@ -138,12 +143,13 @@ const OTPVerificationPage: React.FC = () => {
                 </div>
               </form>
 
-              <button
+              <Button
                 onClick={() => router.push('/phone-registration')}
-                className="mt-12 flex items-center justify-center gap-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors font-medium text-xs uppercase tracking-widest w-full"
+                variant="ghost"
+                className="mt-12 w-full text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 font-medium text-xs uppercase tracking-widest"
               >
                 <ArrowLeft className="w-3.5 h-3.5" /> Edit Phone Number
-              </button>
+              </Button>
             </>
           )}
         </div>

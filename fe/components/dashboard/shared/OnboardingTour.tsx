@@ -3,6 +3,7 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight, Sparkles, X } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
+import { Button } from '@/components/ui/button'
 
 interface Step {
   id: string
@@ -143,9 +144,14 @@ export const OnboardingTour: React.FC<{ onComplete: () => void }> = ({ onComplet
               <Sparkles size={16} />
               <span className="text-xs font-bold uppercase tracking-widest">Ally Protocol</span>
             </div>
-            <button onClick={onComplete} className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 p-1">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onComplete}
+              className="h-7 w-7 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200"
+            >
               <X size={16} />
-            </button>
+            </Button>
           </div>
 
           <div>
@@ -166,21 +172,22 @@ export const OnboardingTour: React.FC<{ onComplete: () => void }> = ({ onComplet
             </div>
             <div className="flex gap-2">
               {currentStep > 0 && (
-                <button
+                <Button
+                  variant="secondary"
+                  size="icon"
                   onClick={prev}
-                  className="p-2 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
                   aria-label="Previous step"
                 >
                   <ChevronLeft size={16} />
-                </button>
+                </Button>
               )}
-              <button
+              <Button
                 onClick={next}
-                className="flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-lg text-sm font-bold shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
+                className="shadow-lg shadow-primary/20 font-bold"
               >
                 {currentStep === TOUR_STEPS.length - 1 ? 'Start Audit' : 'Next'}
                 {currentStep < TOUR_STEPS.length - 1 && <ChevronRight size={16} />}
-              </button>
+              </Button>
             </div>
           </div>
         </motion.div>

@@ -1,0 +1,73 @@
+'use client'
+
+import React from 'react'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+import { Loader2 } from 'lucide-react'
+
+interface StreamingMessageProps {
+  content: string
+  currentTool: string | null
+  isStreaming: boolean
+}
+
+const TOOL_DISPLAY_NAMES: Record<string, string> = {
+  parse_event_text: 'Understanding your request...',
+  pre_create_validation: 'Validating event details...',
+  insert_event_direct: 'Creating your event...',
+  get_event_direct: 'Fetching event details...',
+  update_event: 'Updating your event...',
+  delete_event: 'Deleting event...',
+  summarize_events: 'Summarizing events...',
+  create_event_handoff: 'Processing event creation...',
+  update_event_handoff: 'Processing event update...',
+  delete_event_handoff: 'Processing event deletion...',
+  register_user_handoff: 'Setting up your account...',
+  generate_google_auth_url: 'Generating authentication link...',
+}
+
+function getToolDisplayName(tool: string): string {
+  return TOOL_DISPLAY_NAMES[tool] || `Working on: ${tool.replaceAll('_', ' ')}...`
+}
+
+export const StreamingMessage: React.FC<StreamingMessageProps> = ({ content, currentTool, isStreaming }) => {
+  const showToolIndicator = isStreaming && currentTool && !content
+
+  return (
+    <div className="flex w-full mb-2 justify-start">
+      <div className="max-w-[85%] md:max-w-[75%] flex flex-col items-start">
+        <div className="px-4 py-3 rounded-md rounded-tl-none text-sm leading-relaxed bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-100 shadow-sm">
+          {showToolIndicator && (
+            <div className="flex items-center gap-2 text-zinc-500 dark:text-zinc-400">
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <span className="text-xs italic">{getToolDisplayName(currentTool)}</span>
+            </div>
+          )}
+
+          {content && (
+            <div className="prose prose-sm max-w-none prose-zinc dark:prose-invert">
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
+            </div>
+          )}
+
+          {isStreaming && content && (
+            <span className="inline-block w-2 h-4 ml-1 bg-primary animate-pulse rounded-sm" />
+          )}
+
+          {isStreaming && !content && !currentTool && (
+            <div className="flex items-center gap-2">
+              <div className="flex gap-1">
+                <div className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" />
+                <div className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:0.2s]" />
+                <div className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:0.4s]" />
+              </div>
+              <span className="text-xs font-medium text-zinc-500 italic">Ally is thinking...</span>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default StreamingMessage

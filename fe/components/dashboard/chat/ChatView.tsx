@@ -4,8 +4,8 @@ import { AlertCircle } from 'lucide-react'
 import { Message } from '@/types'
 import { MessageActions } from './MessageActions'
 import MessageBubble from '@/components/dashboard/chat/MessageBubble'
+import { StreamingMessage } from './StreamingMessage'
 import React from 'react'
-import { Skeleton } from '@/components/ui/skeleton'
 
 interface ChatViewProps {
   messages: Message[]
@@ -16,6 +16,8 @@ interface ChatViewProps {
   onEdit: (text: string) => void
   onSpeak: (text: string) => void
   scrollRef: React.RefObject<HTMLDivElement | null>
+  streamingText?: string
+  currentTool?: string | null
 }
 
 export const ChatView: React.FC<ChatViewProps> = ({
@@ -27,6 +29,8 @@ export const ChatView: React.FC<ChatViewProps> = ({
   onEdit,
   onSpeak,
   scrollRef,
+  streamingText = '',
+  currentTool = null,
 }) => {
   return (
     <div className="h-full overflow-y-auto px-4 pt-24 pb-32">
@@ -48,23 +52,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
           </div>
         ))}
         {isLoading && (
-          <div className="flex justify-start mb-6">
-            <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-4 py-3 rounded-md rounded-tl-none shadow-sm max-w-[85%] md:max-w-[75%]">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="flex gap-1">
-                  <div className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce"></div>
-                  <div className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:0.2s]"></div>
-                  <div className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:0.4s]"></div>
-                </div>
-                <span className="text-xs font-medium text-zinc-500 italic">Ally is thinking...</span>
-              </div>
-              <div className="space-y-2">
-                <Skeleton className="h-3 w-48" />
-                <Skeleton className="h-3 w-64" />
-                <Skeleton className="h-3 w-40" />
-              </div>
-            </div>
-          </div>
+          <StreamingMessage content={streamingText} currentTool={currentTool} isStreaming={isLoading} />
         )}
       </div>
       {error && (

@@ -2,6 +2,7 @@
 
 import { AllyLogo } from "@/components/shared/logo";
 import { ArrowLeft } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button";
 import Link from "next/link";
 import React from "react";
@@ -53,8 +54,8 @@ const WaitingList: React.FC = () => {
         </p>
 
         <div className="mt-12 flex flex-col sm:flex-row w-full max-w-lg mx-auto gap-3 items-center">
-          <input
-            className="flex-1 w-full bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 px-6 py-4 rounded-full text-lg outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 h-16"
+          <Input
+            className="flex-1 w-full h-16 px-6 rounded-full text-lg"
             placeholder="Email"
             type="email"
           />

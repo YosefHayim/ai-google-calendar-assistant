@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { MessageSquare, Check, X } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { Message } from '@/types'
 import { AssistantAvatar } from './AssistantAvatar'
 import { MessageActions } from './MessageActions'
@@ -107,22 +108,25 @@ export const AvatarView: React.FC<AvatarViewProps> = ({
                           className="p-3 rounded-xl text-xs leading-relaxed bg-primary/10 text-zinc-900 dark:text-zinc-100 border-2 border-primary rounded-tr-none resize-none min-h-[60px] focus:outline-none focus:ring-2 focus:ring-primary/50"
                           rows={Math.min(5, editText.split('\n').length + 1)}
                         />
-                        <div className="flex justify-end gap-2">
-                          <button
-                            onClick={handleCancelEdit}
-                            className="p-1.5 rounded-md bg-zinc-200 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-300 dark:hover:bg-zinc-700 transition-colors"
-                            title="Cancel (Esc)"
-                          >
-                            <X size={14} />
-                          </button>
-                          <button
-                            onClick={handleConfirmEdit}
-                            className="p-1.5 rounded-md bg-primary text-white hover:bg-primary/90 transition-colors"
-                            title="Confirm (Enter)"
-                          >
-                            <Check size={14} />
-                          </button>
-                        </div>
+<div className="flex justify-end gap-2">
+                                          <Button
+                                            variant="secondary"
+                                            size="icon"
+                                            onClick={handleCancelEdit}
+                                            className="h-7 w-7"
+                                            title="Cancel (Esc)"
+                                          >
+                                            <X size={14} />
+                                          </Button>
+                                          <Button
+                                            size="icon"
+                                            onClick={handleConfirmEdit}
+                                            className="h-7 w-7"
+                                            title="Confirm (Enter)"
+                                          >
+                                            <Check size={14} />
+                                          </Button>
+                                        </div>
                       </div>
                     ) : (
                       <div

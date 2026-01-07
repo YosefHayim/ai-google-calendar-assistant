@@ -1,9 +1,11 @@
 'use client'
 
-import { ArrowUp, Mic, X } from 'lucide-react'
+import { ArrowUp, Mic, Square, X } from 'lucide-react'
 import React, { forwardRef } from 'react'
 
 import { AIVoiceInput } from '@/components/ui/ai-voice-input'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 
 interface ChatInputProps {
   input: string
@@ -19,6 +21,7 @@ interface ChatInputProps {
   onStopRecording: (finalTranscription: string | null) => void
   onCancelRecording: () => void
   onInterimResult?: (text: string) => void
+  onCancel?: () => void
 }
 
 export const ChatInput = forwardRef<HTMLInputElement, ChatInputProps>(
@@ -37,10 +40,11 @@ export const ChatInput = forwardRef<HTMLInputElement, ChatInputProps>(
       onStopRecording,
       onCancelRecording,
       onInterimResult,
+      onCancel,
     },
     textInputRef,
   ) => {
-    const isDisabled = isLoading
+    const isDisabled = isLoading && !onCancel
     return (
       <div
         id="tour-chat-input"
@@ -57,48 +61,65 @@ export const ChatInput = forwardRef<HTMLInputElement, ChatInputProps>(
               speechRecognitionSupported={speechRecognitionSupported}
               speechRecognitionError={speechRecognitionError}
             />
-            <button
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={onCancelRecording}
-              className="absolute top-4 right-4 p-2 rounded-full text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+              className="absolute top-4 right-4 text-zinc-400"
             >
               <X className="w-5 h-5" />
-            </button>
+            </Button>
           </div>
         ) : (
           <form
             onSubmit={onSubmit}
             className="relative flex items-center bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-2xl p-2 gap-2"
           >
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="icon"
               onClick={onToggleRecording}
-              className={`p-3 rounded-xl transition-all ${
+              className={`h-12 w-12 rounded-xl ${
                 isRecording ? 'text-red-500 bg-red-50' : 'text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100'
               }`}
               disabled={isDisabled || !speechRecognitionSupported}
             >
               <Mic className="w-6 h-6" />
-            </button>
-            <input
+            </Button>
+            <Input
               ref={textInputRef}
               type="text"
               value={input}
               onChange={(e) => onInputChange(e.target.value)}
               placeholder="What do you have for me today? I'm ready to help you."
-              className="flex-1 bg-transparent border-none outline-none py-4 px-2 text-zinc-800 dark:text-zinc-100 font-medium text-lg placeholder:italic placeholder:font-normal"
+              className="flex-1 h-14 bg-transparent border-0 shadow-none focus-visible:ring-0 text-lg font-medium placeholder:italic placeholder:font-normal"
               disabled={isDisabled}
             />
-            <button
-              type="submit"
-              disabled={!input.trim() || isDisabled}
-              className={`p-3 rounded-xl transition-all ${
-                input.trim() && !isDisabled
-                  ? 'bg-zinc-950 dark:bg-zinc-100 text-white dark:text-zinc-950'
-                  : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-400'
-              }`}
-            >
-              <ArrowUp className="w-6 h-6" />
-            </button>
+            {isLoading && onCancel ? (
+              <Button
+                type="button"
+                variant="destructive"
+                size="icon"
+                onClick={onCancel}
+                className="h-12 w-12 rounded-xl"
+              >
+                <Square className="w-6 h-6" />
+              </Button>
+            ) : (
+              <Button
+                type="submit"
+                size="icon"
+                disabled={!input.trim() || isLoading}
+                className={`h-12 w-12 rounded-xl ${
+                  input.trim() && !isLoading
+                    ? 'bg-zinc-950 dark:bg-zinc-100 text-white dark:text-zinc-950 hover:bg-zinc-800 dark:hover:bg-zinc-200'
+                    : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-400'
+                }`}
+              >
+                <ArrowUp className="w-6 h-6" />
+              </Button>
+            )}
           </form>
         )}
       </div>

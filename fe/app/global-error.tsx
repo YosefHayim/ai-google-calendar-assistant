@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
+import { Button } from '@/components/ui/button'
 
 export default function GlobalError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
   useEffect(() => {
@@ -46,18 +47,10 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
               </div>
             </details>
             <div className="flex gap-2">
-              <button
-                onClick={() => reset()}
-                className="inline-flex h-10 items-center justify-center rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
-              >
-                Try again
-              </button>
-              <button
-                onClick={() => window.location.reload()}
-                className="inline-flex h-10 items-center justify-center rounded-md border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-900 hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800"
-              >
+              <Button onClick={() => reset()}>Try again</Button>
+              <Button variant="outline" onClick={() => window.location.reload()}>
                 Reload page
-              </button>
+              </Button>
             </div>
           </div>
         </div>

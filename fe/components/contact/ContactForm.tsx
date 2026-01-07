@@ -292,14 +292,16 @@ export const ContactForm: React.FC = () => {
                 <span className="text-sm text-zinc-700 dark:text-zinc-300 truncate max-w-[200px]">
                   {file.name}
                 </span>
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="icon"
                   onClick={() => removeFile(index)}
-                  className="text-zinc-400 hover:text-red-500 transition-colors"
+                  className="h-6 w-6 text-zinc-400 hover:text-red-500"
                   disabled={submissionState === "loading"}
                 >
                   <X className="w-4 h-4" />
-                </button>
+                </Button>
               </div>
             ))}
           </div>
