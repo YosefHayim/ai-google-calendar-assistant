@@ -257,14 +257,6 @@ export const en = {
   "commands.language.languages.ar": "Arabic (العربية)",
   "commands.language.languages.ru": "Russian (Русский)",
 
-  "commands.mycalendars.header": "My Calendars",
-  "commands.mycalendars.loading": "Fetching your calendars...",
-  "commands.mycalendars.noCalendars":
-    "No calendars found. Please connect your Google Calendar first.",
-  "commands.mycalendars.calendarCount": "You have {{count}} calendar(s):",
-  "commands.mycalendars.footerTip":
-    "Use calendar names when creating events for specific calendars.",
-
   "commands.aboutme.header": "What I Know About You",
   "commands.aboutme.loading": "Analyzing your profile and activity...",
   "commands.aboutme.noData":
@@ -376,7 +368,6 @@ export const en = {
   "botMenu.feedback": "Give feedback",
   "botMenu.exit": "End conversation",
   "botMenu.language": "Change language",
-  "botMenu.mycalendars": "My calendars list",
   "botMenu.aboutme": "What do you know about me?",
 } as const;
 

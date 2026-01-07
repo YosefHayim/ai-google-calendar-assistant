@@ -95,10 +95,11 @@ export function DatePickerWithRange({ className, date, setDate }: DatePickerWith
     let newRange: DateRange | undefined
 
     switch (preset) {
-      case 'yesterday':
+      case 'yesterday': {
         const yest = subDays(today, 1)
         newRange = { from: yest, to: yest }
         break
+      }
       case 'last7':
         newRange = { from: subDays(today, 7), to: today }
         break
@@ -111,13 +112,14 @@ export function DatePickerWithRange({ className, date, setDate }: DatePickerWith
       case 'thisMonth':
         newRange = { from: startOfMonth(today), to: today }
         break
-      case 'prevMonth':
+      case 'prevMonth': {
         const prevMonthDate = subMonths(today, 1)
         newRange = {
           from: startOfMonth(prevMonthDate),
           to: endOfMonth(prevMonthDate),
         }
         break
+      }
       case 'thisYear':
         newRange = { from: startOfYear(today), to: today }
         break

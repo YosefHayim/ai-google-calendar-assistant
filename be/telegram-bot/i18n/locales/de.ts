@@ -285,14 +285,6 @@ export const de = {
   "commands.language.languages.ar": "Arabisch (العربية)",
   "commands.language.languages.ru": "Russisch (Русский)",
 
-  "commands.mycalendars.header": "Meine Kalender",
-  "commands.mycalendars.loading": "Lade Ihre Kalender...",
-  "commands.mycalendars.noCalendars":
-    "Keine Kalender gefunden. Bitte verbinden Sie zuerst Ihren Google Calendar.",
-  "commands.mycalendars.calendarCount": "Sie haben {{count}} Kalender:",
-  "commands.mycalendars.footerTip":
-    "Verwenden Sie Kalendernamen beim Erstellen von Terminen für bestimmte Kalender.",
-
   "commands.aboutme.header": "Was ich über Sie weiß",
   "commands.aboutme.loading": "Analysiere Ihr Profil und Aktivität...",
   "commands.aboutme.noData":
@@ -414,7 +406,6 @@ export const de = {
   "botMenu.feedback": "Feedback geben",
   "botMenu.exit": "Konversation beenden",
   "botMenu.language": "Sprache ändern",
-  "botMenu.mycalendars": "Meine Kalenderliste",
   "botMenu.aboutme": "Was weißt du über mich?",
 } as const;
 

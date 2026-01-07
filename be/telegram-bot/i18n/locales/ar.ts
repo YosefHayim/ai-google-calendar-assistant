@@ -254,14 +254,6 @@ export const ar = {
   "commands.language.languages.ar": "العربية",
   "commands.language.languages.ru": "الروسية (Русский)",
 
-  "commands.mycalendars.header": "تقويماتي",
-  "commands.mycalendars.loading": "جاري جلب تقويماتك...",
-  "commands.mycalendars.noCalendars":
-    "لم يتم العثور على تقويمات. يرجى ربط تقويم Google أولاً.",
-  "commands.mycalendars.calendarCount": "لديك {{count}} تقويم(ات):",
-  "commands.mycalendars.footerTip":
-    "استخدم أسماء التقويمات عند إنشاء أحداث لتقويمات محددة.",
-
   "commands.aboutme.header": "ما أعرفه عنك",
   "commands.aboutme.loading": "جاري تحليل ملفك الشخصي ونشاطك...",
   "commands.aboutme.noData":
@@ -369,7 +361,6 @@ export const ar = {
   "botMenu.feedback": "إرسال ملاحظات",
   "botMenu.exit": "إنهاء المحادثة",
   "botMenu.language": "تغيير اللغة",
-  "botMenu.mycalendars": "قائمة تقويماتي",
   "botMenu.aboutme": "ماذا تعرف عني؟",
 } as const;
 

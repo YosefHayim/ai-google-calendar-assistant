@@ -273,14 +273,6 @@ export const ru = {
   "commands.language.languages.ar": "Арабский (العربية)",
   "commands.language.languages.ru": "Русский",
 
-  "commands.mycalendars.header": "Мои календари",
-  "commands.mycalendars.loading": "Загружаю ваши календари...",
-  "commands.mycalendars.noCalendars":
-    "Календари не найдены. Сначала подключите Google Calendar.",
-  "commands.mycalendars.calendarCount": "У вас {{count}} календар(ей):",
-  "commands.mycalendars.footerTip":
-    "Используйте имена календарей при создании событий для конкретных календарей.",
-
   "commands.aboutme.header": "Что я знаю о вас",
   "commands.aboutme.loading": "Анализирую ваш профиль и активность...",
   "commands.aboutme.noData":
@@ -393,6 +385,5 @@ export const ru = {
   "botMenu.feedback": "Оставить отзыв",
   "botMenu.exit": "Завершить разговор",
   "botMenu.language": "Изменить язык",
-  "botMenu.mycalendars": "Список моих календарей",
   "botMenu.aboutme": "Что ты знаешь обо мне?",
 } as const;

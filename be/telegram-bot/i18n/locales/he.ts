@@ -243,14 +243,6 @@ export const he = {
   "commands.language.languages.ar": "ערבית (العربية)",
   "commands.language.languages.ru": "רוסית (Русский)",
 
-  "commands.mycalendars.header": "היומנים שלי",
-  "commands.mycalendars.loading": "טוען את היומנים שלך...",
-  "commands.mycalendars.noCalendars":
-    "לא נמצאו יומנים. אנא חבר את Google Calendar קודם.",
-  "commands.mycalendars.calendarCount": "יש לך {{count}} יומן(ים):",
-  "commands.mycalendars.footerTip":
-    "השתמש בשמות היומנים כשאתה יוצר אירועים ליומנים ספציפיים.",
-
   "commands.aboutme.header": "מה אני יודע עליך",
   "commands.aboutme.loading": "מנתח את הפרופיל והפעילות שלך...",
   "commands.aboutme.noData":
@@ -357,6 +349,5 @@ export const he = {
   "botMenu.feedback": "שליחת משוב",
   "botMenu.exit": "סיום שיחה",
   "botMenu.language": "שינוי שפה",
-  "botMenu.mycalendars": "רשימת היומנים שלי",
   "botMenu.aboutme": "מה אתה יודע עליי?",
 } as const;

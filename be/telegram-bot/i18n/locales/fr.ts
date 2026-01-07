@@ -292,14 +292,6 @@ export const fr = {
   "commands.language.languages.ar": "Arabe (العربية)",
   "commands.language.languages.ru": "Russe (Русский)",
 
-  "commands.mycalendars.header": "Mes agendas",
-  "commands.mycalendars.loading": "Récupération de vos agendas...",
-  "commands.mycalendars.noCalendars":
-    "Aucun agenda trouvé. Veuillez d'abord connecter votre Google Calendar.",
-  "commands.mycalendars.calendarCount": "Vous avez {{count}} agenda(s) :",
-  "commands.mycalendars.footerTip":
-    "Utilisez les noms des agendas lors de la création d'événements pour des agendas spécifiques.",
-
   "commands.aboutme.header": "Ce que je sais de vous",
   "commands.aboutme.loading": "Analyse de votre profil et activité...",
   "commands.aboutme.noData":
@@ -418,7 +410,6 @@ export const fr = {
   "botMenu.feedback": "Donner un avis",
   "botMenu.exit": "Finir conversation",
   "botMenu.language": "Changer langue",
-  "botMenu.mycalendars": "Liste de mes agendas",
   "botMenu.aboutme": "Que savez-vous de moi ?",
 } as const;
 
