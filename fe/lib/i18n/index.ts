@@ -1,8 +1,3 @@
-export {
-  i18n,
-  SUPPORTED_LANGUAGES,
-  LANGUAGE_STORAGE_KEY,
-  type SupportedLanguageCode,
-} from "./config";
+export { i18n, SUPPORTED_LANGUAGES, LANGUAGE_STORAGE_KEY, type SupportedLanguageCode } from './config'
 
-export { en, type TranslationKeys } from "./locales/en";
+export { en, type TranslationKeys, type TranslationShape } from './locales/en'

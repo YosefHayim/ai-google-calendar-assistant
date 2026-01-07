@@ -114,20 +114,16 @@ const sendChat = reqResAsyncHandler(
       });
       const finalOutput = result.finalOutput || "";
 
-      webConversation
-        .addMessageToContext(
-          userId,
-          { role: "user", content: message },
-          summarizeMessages,
-        )
-        .catch(console.error);
-      webConversation
-        .addMessageToContext(
-          userId,
-          { role: "assistant", content: finalOutput },
-          summarizeMessages,
-        )
-        .catch(console.error);
+      await webConversation.addMessageToContext(
+        userId,
+        { role: "user", content: message },
+        summarizeMessages,
+      );
+      await webConversation.addMessageToContext(
+        userId,
+        { role: "assistant", content: finalOutput },
+        summarizeMessages,
+      );
       storeWebEmbeddingAsync(userId, message, "user");
       storeWebEmbeddingAsync(userId, finalOutput, "assistant");
 
@@ -349,20 +345,16 @@ const continueConversation = reqResAsyncHandler(
       });
       const finalOutput = result.finalOutput || "";
 
-      webConversation
-        .addMessageToContext(
-          userId,
-          { role: "user", content: message },
-          summarizeMessages,
-        )
-        .catch(console.error);
-      webConversation
-        .addMessageToContext(
-          userId,
-          { role: "assistant", content: finalOutput },
-          summarizeMessages,
-        )
-        .catch(console.error);
+      await webConversation.addMessageToContext(
+        userId,
+        { role: "user", content: message },
+        summarizeMessages,
+      );
+      await webConversation.addMessageToContext(
+        userId,
+        { role: "assistant", content: finalOutput },
+        summarizeMessages,
+      );
 
       storeWebEmbeddingAsync(userId, message, "user");
       storeWebEmbeddingAsync(userId, finalOutput, "assistant");

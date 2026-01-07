@@ -4,6 +4,7 @@ import React from 'react'
 import Link from 'next/link'
 import { BarChart2, LayoutDashboard, Target } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 interface NavLinkProps {
   href: string
@@ -58,30 +59,6 @@ const NavLink: React.FC<NavLinkProps> = ({
   return linkContent
 }
 
-const NAV_ITEMS = [
-  {
-    href: '/dashboard',
-    icon: LayoutDashboard,
-    label: 'Assistant',
-    id: 'tour-assistant',
-    description: 'Chat with your AI calendar assistant to manage events and schedules',
-  },
-  {
-    href: '/dashboard/analytics',
-    icon: BarChart2,
-    label: 'Analytics',
-    id: 'tour-analytics',
-    description: 'View insights on time allocation, event patterns, and productivity trends',
-  },
-  {
-    href: '/dashboard/gaps',
-    icon: Target,
-    label: 'Gap Recovery',
-    id: 'tour-gaps',
-    description: 'Discover and recover untracked time gaps in your calendar',
-  },
-]
-
 interface SidebarNavProps {
   pathname: string
   isOpen: boolean
@@ -89,10 +66,36 @@ interface SidebarNavProps {
 }
 
 export const SidebarNav: React.FC<SidebarNavProps> = ({ pathname, isOpen, onClose }) => {
+  const { t } = useLanguage()
+
+  const navItems = [
+    {
+      href: '/dashboard',
+      icon: LayoutDashboard,
+      label: t('sidebar.assistant'),
+      id: 'tour-assistant',
+      description: t('sidebar.assistantDescription'),
+    },
+    {
+      href: '/dashboard/analytics',
+      icon: BarChart2,
+      label: t('sidebar.analytics'),
+      id: 'tour-analytics',
+      description: t('sidebar.analyticsDescription'),
+    },
+    {
+      href: '/dashboard/gaps',
+      icon: Target,
+      label: t('sidebar.gapRecovery'),
+      id: 'tour-gaps',
+      description: t('sidebar.gapRecoveryDescription'),
+    },
+  ]
+
   return (
     <TooltipProvider>
       <nav className="px-4 space-y-2">
-        {NAV_ITEMS.map((item) => (
+        {navItems.map((item) => (
           <NavLink
             key={item.href}
             href={item.href}

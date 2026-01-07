@@ -20,6 +20,7 @@ import {
   Sun,
 } from 'lucide-react'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useLanguage } from '@/contexts/LanguageContext'
 import type { EnhancedAnalyticsData, ComparisonResult } from '@/types/analytics'
 
 interface BentoStatsGridProps {
@@ -115,6 +116,8 @@ function formatPeakHour(hour: number): string {
 }
 
 const BentoStatsGrid: React.FC<BentoStatsGridProps> = ({ data, comparison, isLoading = false }) => {
+  const { t } = useLanguage()
+
   if (isLoading) {
     return (
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
@@ -165,24 +168,24 @@ const BentoStatsGrid: React.FC<BentoStatsGridProps> = ({ data, comparison, isLoa
                 <Zap className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
               </div>
               <span className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider truncate">
-                Productivity Score
+                {t('analytics.stats.productivityScore')}
               </span>
             </div>
             <p className="text-sm text-zinc-600 dark:text-zinc-400 mt-2">
-              Based on meeting load, focus time, and event distribution
+              {t('analytics.stats.productivityDescription')}
             </p>
           </div>
           <CircularProgress value={productivityMetrics.productivityScore} size={90} />
         </div>
         <div className="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-indigo-100 dark:border-indigo-900/50">
           <div>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400">Meeting Load</p>
+            <p className="text-xs text-zinc-500 dark:text-zinc-400">{t('analytics.stats.meetingLoad')}</p>
             <p className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
               <NumberFlow value={productivityMetrics.meetingLoad} />%
             </p>
           </div>
           <div>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400">Focus Time</p>
+            <p className="text-xs text-zinc-500 dark:text-zinc-400">{t('analytics.stats.focusTime')}</p>
             <p className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
               <NumberFlow value={focusTimeMetrics.focusTimePercentage} />%
             </p>
@@ -199,7 +202,7 @@ const BentoStatsGrid: React.FC<BentoStatsGridProps> = ({ data, comparison, isLoa
             <CalendarDays className="w-4 h-4 text-sky-600 dark:text-sky-400" />
           </div>
           <span className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider truncate">
-            Total Events
+            {t('analytics.stats.totalEvents')}
           </span>
         </div>
         <div className="flex items-baseline gap-2">
@@ -210,7 +213,9 @@ const BentoStatsGrid: React.FC<BentoStatsGridProps> = ({ data, comparison, isLoa
             <TrendBadge direction={totalEventsTrend.direction} percentage={totalEventsTrend.percentageChange} />
           )}
         </div>
-        <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">{data.daysWithEvents} days with events</p>
+        <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
+          {data.daysWithEvents} {t('analytics.stats.daysWithEvents')}
+        </p>
       </motion.div>
 
       <motion.div
