@@ -17,7 +17,7 @@ interface UseUserOptions extends QueryHookOptions {
 export function useUser(options?: UseUserOptions) {
   const customUser = options?.customUser ?? false
   const query = useQuery({
-    queryKey: [...queryKeys.auth.user(), customUser ? 'custom' : 'standard'],
+    queryKey: [...queryKeys.auth.user(), customUser],
     queryFn: () => authService.getUser(customUser),
     staleTime: options?.staleTime ?? QUERY_CONFIG.USER_STALE_TIME,
     enabled: options?.enabled ?? true,

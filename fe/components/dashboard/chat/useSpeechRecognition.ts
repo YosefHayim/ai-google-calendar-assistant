@@ -140,7 +140,9 @@ export const useSpeechRecognition = (onFinalTranscription: (text: string) => voi
       if (speechRecognitionRef.current && isRecognitionRunning.current) {
         try {
           speechRecognitionRef.current.stop()
-        } catch (e) {}
+        } catch {
+          // Intentionally ignoring stop errors during cleanup
+        }
       }
     }
   }, [stopRecording])

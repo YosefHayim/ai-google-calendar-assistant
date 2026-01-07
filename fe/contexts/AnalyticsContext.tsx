@@ -209,7 +209,7 @@ export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
     useQuery({
       queryKey: [
         "calendar-events",
-        selectedCalendarForEvents?.id,
+        selectedCalendarForEvents,
         date?.from,
         date?.to,
       ],

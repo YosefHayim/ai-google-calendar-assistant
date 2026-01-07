@@ -23,7 +23,7 @@ export function useAnalyticsComparison({
   enabled = true,
 }: UseAnalyticsComparisonOptions) {
   return useQuery({
-    queryKey: ['analytics-comparison', timeMin, timeMax],
+    queryKey: ['analytics-comparison', timeMin, timeMax, currentMetrics],
     queryFn: async (): Promise<ComparisonResult | null> => {
       if (!timeMin || !timeMax || !currentMetrics) return null
 

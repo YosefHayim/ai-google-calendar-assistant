@@ -18,7 +18,7 @@ export function useCalendarSettings(options?: UseCalendarSettingsOptions) {
   const calendarId = options?.calendarId
 
   const query = useQuery({
-    queryKey: calendarId ? queryKeys.calendars.settingsById(calendarId) : queryKeys.calendars.settings(),
+    queryKey: [...queryKeys.calendars.settings(), calendarId ?? null],
     queryFn: () => (calendarId ? calendarsService.getSettingsById(calendarId) : calendarsService.getSettings()),
     staleTime: options?.staleTime ?? QUERY_CONFIG.CALENDARS_STALE_TIME,
     enabled: options?.enabled ?? true,

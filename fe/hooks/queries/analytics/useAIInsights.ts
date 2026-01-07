@@ -27,7 +27,7 @@ interface APIResponse {
  */
 export function useAIInsights({ timeMin, timeMax, enabled = true }: UseAIInsightsOptions) {
   return useQuery<AIInsightsResponse>({
-    queryKey: ['ai-insights', timeMin?.toISOString(), timeMax?.toISOString()],
+    queryKey: ['ai-insights', timeMin, timeMax],
     queryFn: async (): Promise<AIInsightsResponse> => {
       if (!timeMin || !timeMax) {
         throw new Error('timeMin and timeMax are required')
