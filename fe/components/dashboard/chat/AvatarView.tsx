@@ -5,7 +5,6 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { MessageSquare, Check, X } from 'lucide-react'
 import { Message } from '@/types'
 import { AssistantAvatar } from './AssistantAvatar'
-import { StreamingTypewriter } from '@/components/ui/streaming-typewriter'
 import { MessageActions } from './MessageActions'
 
 interface AvatarViewProps {
@@ -13,12 +12,9 @@ interface AvatarViewProps {
   isRecording: boolean
   isSpeaking: boolean
   isLoading: boolean
-  isStreaming: boolean
-  streamingMessageId: string | null
   onResend: (text: string) => void
   onEditAndResend: (messageId: string, newText: string) => void
   onSpeak: (text: string) => void
-  onTypewriterComplete?: () => void
   avatarScrollRef: React.RefObject<HTMLDivElement | null>
 }
 
@@ -27,12 +23,9 @@ export const AvatarView: React.FC<AvatarViewProps> = ({
   isRecording,
   isSpeaking,
   isLoading,
-  isStreaming,
-  streamingMessageId,
   onResend,
   onEditAndResend,
   onSpeak,
-  onTypewriterComplete,
   avatarScrollRef,
 }) => {
   const hasConversation = messages.length > 1
@@ -82,7 +75,7 @@ export const AvatarView: React.FC<AvatarViewProps> = ({
         <AssistantAvatar
           isRecording={isRecording}
           isSpeaking={isSpeaking}
-          isLoading={isLoading || isStreaming}
+          isLoading={isLoading}
           compact={hasConversation}
         />
       </div>
@@ -97,16 +90,9 @@ export const AvatarView: React.FC<AvatarViewProps> = ({
           >
             <div className="flex items-center gap-2 mb-6 text-zinc-400 font-bold text-xs uppercase tracking-widest">
               <MessageSquare className="w-3.5 h-3.5" /> Live Context
-              {isStreaming && (
-                <span className="ml-2 flex items-center gap-1 text-primary">
-                  <span className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse" />
-                  Streaming
-                </span>
-              )}
             </div>
             <div className="flex-1 space-y-2">
               {messages.map((msg) => {
-                const isCurrentlyStreaming = msg.id === streamingMessageId && isStreaming
                 const isEditing = editingMessageId === msg.id
 
                 return (
@@ -146,21 +132,10 @@ export const AvatarView: React.FC<AvatarViewProps> = ({
                             : 'bg-primary text-white ml-auto mr-0 rounded-tr-none'
                         }`}
                       >
-                        {isCurrentlyStreaming ? (
-                          <StreamingTypewriter
-                            text={msg.content}
-                            isStreaming={isCurrentlyStreaming}
-                            className="inline"
-                            cursorChar="_"
-                            cursorClassName="ml-0.5 text-primary"
-                            onComplete={onTypewriterComplete}
-                          />
-                        ) : (
-                          msg.content
-                        )}
+                        {msg.content}
                       </div>
                     )}
-                    {!isCurrentlyStreaming && !isEditing && (
+                    {!isEditing && (
                       <MessageActions
                         msg={msg}
                         isSpeaking={isSpeaking}

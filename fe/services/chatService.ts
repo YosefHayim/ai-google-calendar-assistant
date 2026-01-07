@@ -1,9 +1,3 @@
-/**
- * Chat Service
- * Handles chat with the backend AI agent via regular HTTP requests
- * Frontend uses typewriter component to simulate real-time typing
- */
-
 import { apiClient } from '@/lib/api/client'
 
 export interface ChatMessage {
@@ -11,54 +5,23 @@ export interface ChatMessage {
   content: string
 }
 
-export interface StreamCallbacks {
-  onChunk: (chunk: string, fullText: string) => void
-  onComplete: (fullText: string, conversationId?: string, title?: string) => void
-  onError: (error: string) => void
+export interface ChatResponse {
+  content: string
+  conversationId?: string
+  title?: string
 }
 
-/**
- * Send a message and get the complete AI response
- * Frontend will use typewriter component to simulate real-time typing
- * @param message - The user's message
- * @param history - Previous messages in the conversation
- * @param callbacks - Callbacks for streaming events
- * @param conversationId - Optional existing conversation ID to continue
- */
-export const streamChatMessage = async (
-  message: string,
-  history: ChatMessage[],
-  callbacks: StreamCallbacks,
-  conversationId?: number | null,
-): Promise<void> => {
-  const { onComplete, onError } = callbacks
-
-  try {
-    const response = await apiClient.post('/api/chat', {
-      message,
-      history,
-      source: 'web',
-      conversationId: conversationId || undefined,
-    })
-    const content = response.data?.data?.content || 'No response received'
-    const returnedConversationId = response.data?.data?.conversationId
-    const title = response.data?.data?.title
-
-    // Return the complete response - typewriter component will handle the animation
-    onComplete(content, returnedConversationId, title)
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
-    onError(errorMessage)
+export const sendChatMessage = async (message: string, history: ChatMessage[]): Promise<ChatResponse> => {
+  const response = await apiClient.post('/api/chat', {
+    message,
+    history,
+    source: 'web',
+  })
+  return {
+    content: response.data?.data?.content || 'No response received',
+    conversationId: response.data?.data?.conversationId,
+    title: response.data?.data?.title,
   }
-}
-
-/**
- * Send a message without streaming (fallback)
- * Uses apiClient for automatic token handling
- */
-export const sendChatMessage = async (message: string, history: ChatMessage[]): Promise<string> => {
-  const response = await apiClient.post('/api/chat', { message, history })
-  return response.data?.data?.content || 'No response received'
 }
 
 // ============================================
@@ -154,26 +117,14 @@ export const deleteAllConversations = async (): Promise<boolean> => {
   }
 }
 
-/**
- * Continue an existing conversation
- */
-export const continueConversation = async (
-  conversationId: string,
-  message: string,
-  callbacks: StreamCallbacks,
-): Promise<void> => {
-  const { onComplete, onError } = callbacks
-
-  try {
-    const response = await apiClient.post(`/api/chat/conversations/${conversationId}/messages`, {
-      message,
-      source: 'web',
-    })
-    const content = response.data?.data?.content || 'No response received'
-    const title = response.data?.data?.title
-    onComplete(content, conversationId, title)
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
-    onError(errorMessage)
+export const continueConversation = async (conversationId: string, message: string): Promise<ChatResponse> => {
+  const response = await apiClient.post(`/api/chat/conversations/${conversationId}/messages`, {
+    message,
+    source: 'web',
+  })
+  return {
+    content: response.data?.data?.content || 'No response received',
+    conversationId,
+    title: response.data?.data?.title,
   }
 }

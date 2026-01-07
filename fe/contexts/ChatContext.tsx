@@ -25,7 +25,7 @@ interface ChatContextValue {
   startNewConversation: () => void
   refreshConversations: () => Promise<void>
   removeConversation: (id: string) => Promise<boolean>
-  setConversationId: (id: string | null) => void
+  setConversationId: (id: string | null, isLocallyCreated?: boolean) => void
   updateConversationTitle: (id: string, title: string) => void
   addConversationToList: (conversation: ConversationListItem) => void
 
@@ -64,6 +64,8 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   const { deleteConversationAsync } = useDeleteConversationById()
 
   const prevFetchedRef = useRef<ConversationListItem[]>([])
+  // Track if we just created this conversation locally (to avoid overwriting messages)
+  const locallyCreatedConversationRef = useRef<string | null>(null)
 
   useEffect(() => {
     const prevIds = prevFetchedRef.current.map((c) => c.id).join(',')
@@ -75,8 +77,13 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   }, [fetchedConversations])
 
   // Convert conversation messages when a conversation is loaded
+  // Skip if this conversation was just created locally (messages already exist)
   useEffect(() => {
     if (selectedConversationData && selectedConversationId) {
+      // Skip overwriting if we just created this conversation locally
+      if (locallyCreatedConversationRef.current === selectedConversationId) {
+        return
+      }
       const convertedMessages: Message[] = (selectedConversationData.messages || []).map(
         (msg: ChatMessage, index: number) => ({
           id: `${selectedConversationId}-${index}`,
@@ -90,11 +97,13 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   }, [selectedConversationData, selectedConversationId])
 
   const selectConversation = useCallback((conversation: ConversationListItem) => {
+    locallyCreatedConversationRef.current = null
     setSelectedConversationId(conversation.id)
     setIsPendingConversation(false)
   }, [])
 
   const startNewConversation = useCallback(() => {
+    locallyCreatedConversationRef.current = null
     setMessages([])
     setSelectedConversationId(null)
     setIsPendingConversation(true)
@@ -122,7 +131,10 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     [deleteConversationAsync, selectedConversationId, startNewConversation],
   )
 
-  const setConversationId = useCallback((id: string | null) => {
+  const setConversationId = useCallback((id: string | null, isLocallyCreated = false) => {
+    if (isLocallyCreated && id) {
+      locallyCreatedConversationRef.current = id
+    }
     setSelectedConversationId(id)
     if (id !== null) {
       setIsPendingConversation(false)

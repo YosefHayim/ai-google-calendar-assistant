@@ -12,27 +12,23 @@ const router = Router();
 
 router.use(supabaseAuth(), googleTokenValidation, googleTokenRefresh());
 
-router.param("id", (_req: Request, res: Response, next: NextFunction, id: string) => {
-  if (!id) {
-    logger.error(`Google Calendar: Chat: id not found`);
-    return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "ID parameter is required.");
-  }
-  next();
-});
-
-// ============================================
-// Chat Message Endpoints
-// ============================================
-
-/**
- * Chat endpoint that returns regular HTTP response
- * Uses OpenAI Agents SDK to process messages and returns complete response
- * Frontend uses typewriter component to simulate real-time typing
- */
-router.post("/stream", chatController.streamChat);
+router.param(
+  "id",
+  (_req: Request, res: Response, next: NextFunction, id: string) => {
+    if (!id) {
+      logger.error(`Google Calendar: Chat: id not found`);
+      return sendR(
+        res,
+        STATUS_RESPONSE.BAD_REQUEST,
+        "ID parameter is required.",
+      );
+    }
+    next();
+  },
+);
 
 /**
- * Non-streaming chat endpoint for fallback
+ * Chat endpoint - processes messages via OpenAI Agents SDK
  */
 router.post("/", chatController.sendChat);
 
