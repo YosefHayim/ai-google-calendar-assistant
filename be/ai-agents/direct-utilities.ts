@@ -91,7 +91,7 @@ export type TimezoneResult = {
 };
 
 /**
- * Updates user's timezone in the database.
+ * Updates user's timezone in the database. Part of: Timezone caching flow in getUserDefaultTimezoneDirect.
  */
 async function updateUserTimezoneInDb(email: string, timezone: string): Promise<void> {
   try {
@@ -105,7 +105,7 @@ async function updateUserTimezoneInDb(email: string, timezone: string): Promise<
 }
 
 /**
- * Categorizes an error to help agents respond appropriately.
+ * Categorizes an error to help agents respond appropriately. Part of: Error handling in direct utilities (validateUserDirect, getUserDefaultTimezoneDirect).
  */
 function categorizeError(error: unknown): { type: "auth" | "database" | "other"; message: string } {
   const errorMsg = error instanceof Error ? error.message : String(error);

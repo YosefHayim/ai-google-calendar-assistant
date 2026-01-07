@@ -10,7 +10,7 @@ type EDT = calendar_v3.Schema$EventDateTime;
 const ALLOWED_TZ = new Set<string>(Object.values(TIMEZONE) as string[]);
 
 /**
- * Recursively remove empty strings, null, and undefined values from objects
+ * Recursively remove empty strings, null, and undefined from objects. Part of: Event validation flow in formatEventData.
  */
 export function deepClean<T>(obj: T): T {
   if (!obj || typeof obj !== "object") return obj;
@@ -34,7 +34,7 @@ export function deepClean<T>(obj: T): T {
 }
 
 /**
- * Normalize event date/time to ensure mutual exclusivity of date vs dateTime
+ * Normalize event date/time to ensure mutual exclusivity of date vs dateTime. Part of: Event validation flow in formatEventData.
  */
 export function normalizeEventDateTime(input: Partial<EDT>): EDT {
   const e: Partial<EDT> = { ...input };
@@ -56,7 +56,7 @@ export function normalizeEventDateTime(input: Partial<EDT>): EDT {
 }
 
 /**
- * Validate required event fields
+ * Validate required event fields. Part of: Event validation flow in formatEventData.
  */
 export function validateEventRequired(summary: string | null | undefined, start: EDT, end: EDT): void {
   if (!summary) {
@@ -71,8 +71,7 @@ export function validateEventRequired(summary: string | null | undefined, start:
 }
 
 /**
- * Validate and normalize event timezone
- * Returns the resolved timezone for timed events
+ * Validate and normalize event timezone. Part of: Event validation flow in formatEventData.
  */
 export function validateAndResolveTimezone(start: EDT, end: EDT): string | undefined {
   const tzStart = start.dateTime ? start.timeZone ?? undefined : undefined;
@@ -96,7 +95,7 @@ export function validateAndResolveTimezone(start: EDT, end: EDT): string | undef
 }
 
 /**
- * Apply resolved timezone to event date/time objects
+ * Apply resolved timezone to event date/time objects. Part of: Event validation flow in formatEventData.
  */
 export function applyTimezone(start: EDT, end: EDT, timezone: string | undefined): void {
   if (start.dateTime) {
@@ -176,6 +175,10 @@ export const getCalendarCategoriesByEmail = asyncHandler(async (email: string): 
 });
 
 const cleanObject = <T extends Record<string, unknown>>(obj: T): T => omitBy(obj, (v) => isNil(v) || v === "") as T;
+
+/**
+ * Parse and normalize tool arguments from various nested structures. Part of: Agent tool execution flow.
+ */
 export function parseToolArguments(raw: unknown) {
   // 1) accept stringified input
   const base = typeof (raw as { input?: string })?.input === "string" ? JSON.parse((raw as { input: string }).input) : raw;

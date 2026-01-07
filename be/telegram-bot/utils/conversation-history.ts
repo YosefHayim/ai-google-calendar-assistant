@@ -2,6 +2,7 @@ import type { Database } from "@/database.types";
 import { SUPABASE } from "@/config/clients/supabase";
 import { logger } from "@/utils/logger";
 import type { userAndAiMessageProps } from "@/types";
+import { getStartOfDay, isToday } from "@/utils/date/date-helpers";
 
 const MAX_CONTEXT_LENGTH = 1500;
 const MAX_SUMMARY_LENGTH = 1000;
@@ -25,19 +26,6 @@ type ConversationRow = {
   created_at: string;
   updated_at: string;
   last_message_at: string | null;
-};
-
-const getStartOfDay = (date: Date = new Date()): Date => {
-  const start = new Date(date);
-  start.setHours(0, 0, 0, 0);
-  return start;
-};
-
-const isToday = (dateString: string): boolean => {
-  const date = new Date(dateString);
-  const today = getStartOfDay();
-  const dateStart = getStartOfDay(date);
-  return dateStart.getTime() === today.getTime();
 };
 
 const calculateContextLength = (messages: userAndAiMessageProps[]): number => {
