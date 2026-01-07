@@ -1,13 +1,13 @@
-import channelsController from "@/controllers/google-calendar/channels-controller";
-import express from "express";
-import { googleTokenRefresh } from "@/middlewares/google-token-refresh";
-import { googleTokenValidation } from "@/middlewares/google-token-validation";
-import { supabaseAuth } from "@/middlewares/supabase-auth";
+import channelsController from "@/controllers/google-calendar/channels-controller"
+import express from "express"
+import { googleTokenRefresh } from "@/middlewares/google-token-refresh"
+import { googleTokenValidation } from "@/middlewares/google-token-validation"
+import { withCalendarClient } from "@/middlewares/calendar-client"
+import { supabaseAuth } from "@/middlewares/supabase-auth"
 
-const router = express.Router();
+const router = express.Router()
 
-// Supabase auth (with auto-refresh) + Google token validation + auto-refresh
-router.use(supabaseAuth(), googleTokenValidation, googleTokenRefresh());
+router.use(supabaseAuth(), googleTokenValidation, googleTokenRefresh(), withCalendarClient)
 
 // Stop watching resources through a channel
 router.post("/stop", channelsController.stopChannel);
