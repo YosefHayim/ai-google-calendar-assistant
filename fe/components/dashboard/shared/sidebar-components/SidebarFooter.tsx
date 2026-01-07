@@ -13,12 +13,11 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import UserProfileCard from '@/components/dashboard/shared/UserProfileCard'
-import { getUserDisplayInfo } from '@/lib/user-utils'
-import type { Tables } from '@/database.types'
+import { getUserDisplayInfo, type UserData } from '@/lib/user-utils'
 
 interface SidebarFooterProps {
   isOpen: boolean
-  userData: Tables<'users'> | null | undefined
+  userData: UserData | null | undefined
   onOpenSettings: () => void
   onClose: () => void
   onSignOut?: () => void
