@@ -29,6 +29,8 @@ export const WeeklyPatternDashboard: React.FC<WeeklyPatternDashboardProps> = ({
   onDayClick,
   isLoading = false,
 }) => {
+  const { t } = useLanguage()
+
   const totalHours = React.useMemo(() => {
     return data.reduce((acc, curr) => acc + curr.hours, 0)
   }, [data])
@@ -75,9 +77,9 @@ export const WeeklyPatternDashboard: React.FC<WeeklyPatternDashboardProps> = ({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <CalendarDays className="w-5 h-5 text-primary" />
-            Weekly Pattern
+            {t('analytics.charts.weeklyPattern')}
           </CardTitle>
-          <CardDescription>No data available</CardDescription>
+          <CardDescription>{t('common.noData')}</CardDescription>
         </CardHeader>
       </Card>
     )
