@@ -547,6 +547,251 @@ export const en = {
     unauthorized: 'Please sign in to continue.',
     notFound: 'The requested resource was not found.',
     serverError: 'Server error. Please try again later.',
+    hitSnag: 'Ally hit a snag',
+    hitSnagDesc:
+      "Even the best assistants trip up sometimes. I've logged this issue, but let's try to get you back on track.",
+    viewSystemLogs: 'View System Logs',
+    referenceId: 'Reference ID',
+    persistsContact: 'If this persists, please contact support with the Reference ID above.',
+    criticalError: 'A critical error occurred. Please try again or contact support if the problem persists.',
+    viewErrorDetails: 'View error details',
+    errorId: 'Error ID',
+    tryAgain: 'Try again',
+    reloadPage: 'Reload page',
+    returnHome: 'Return Home',
+    retrying: 'Retrying...',
+    somethingWentWrong: 'Something went wrong',
+  },
+
+  // Bento Grid Section
+  bento: {
+    title: 'Private. Secure. Built for Speed.',
+    subtitle: 'An AI assistant engineered around your core needs as a leader.',
+    features: {
+      deepWork: {
+        name: 'Defend Your Deep Work',
+        description:
+          'Ally automatically shields your most important work blocks from interruptions by intelligently rescheduling conflicts.',
+        cta: 'Learn more',
+      },
+      flexibleScheduling: {
+        name: 'Flexible Scheduling',
+        description:
+          'Priorities change. Ally makes it easy to adjust your schedule on the fly without the usual back-and-forth.',
+        cta: 'See how it works',
+      },
+      worksEverywhere: {
+        name: 'Works Where You Do',
+        description: 'Manage your calendar from Telegram and WhatsApp. Ally is always available, wherever you are.',
+        cta: 'Explore integrations',
+      },
+      chatToDone: {
+        name: 'From Chat to Done',
+        description: 'The fastest way from a thought to a scheduled event. Just send a simple message.',
+        cta: 'Try it now',
+      },
+      secure: {
+        name: 'Secure by Design',
+        description: 'Your privacy is fundamental. Data is always encrypted and never used for training models.',
+        cta: 'Privacy Policy',
+      },
+    },
+  },
+
+  // Testimonials Section
+  testimonials: {
+    badge: 'Verification Layer',
+    title: "Trusted by the world's most ambitious high-performers.",
+    verified: 'Verified',
+    reviews: {
+      alex: {
+        name: 'Alex Rivera',
+        role: 'Venture Partner',
+        content:
+          'Ally has transformed how I manage my time. I just message the bot on WhatsApp to audit my day, and it automatically reshuffles my Google Calendar to prioritize my deep work windows.',
+      },
+      sarah: {
+        name: 'Sarah Chen',
+        role: 'Solo Founder',
+        content:
+          "The Telegram relay is flawless. I can block deep work sessions and resolve calendar overlaps via voice note while walking between appointments. It's truly a private office experience.",
+      },
+      james: {
+        name: 'James Wilson',
+        role: 'Private Investor',
+        content:
+          "I've finally reclaimed my mornings. Ally understands my productivity habits better than I do, shielding my focus blocks like a hawk from low-value calendar invites.",
+      },
+      elena: {
+        name: 'Elena Rodriguez',
+        role: 'Lead Counsel',
+        content:
+          'The quantitative approach to my time ledger was the deciding factor. Seeing my focus ratio and context-switching costs in real-time has made me a much more effective executive.',
+      },
+      marcus: {
+        name: 'Marcus Thorne',
+        role: 'Managing Director',
+        content:
+          'Capturing schedule adjustments via voice on Telegram has changed my workflow. Ally understands intent, not just keywords, making the automated conflict resolution incredibly reliable.',
+      },
+      lila: {
+        name: 'Lila Vance',
+        role: 'Strategy Consultant',
+        content:
+          "The intelligence analytics show me exactly where my focus leaks are. I've increased my deep work ratio by 40% since Ally took over my neural scheduling and calendar management.",
+      },
+    },
+  },
+
+  // FAQ Section
+  faq: {
+    title: 'Common Inquiries',
+    contactCta: 'Need an organization-wide deployment? Contact our',
+    operationsTeam: 'operations team',
+    questions: {
+      interactions: {
+        question: 'Why do you charge for "Interactions"?',
+        answer:
+          'We believe in a transparent value exchange. Every interaction uses advanced neural reasoning to audit or adjust your operations. By measuring interactions, we ensure you only pay for the command you actually exercise over your schedule.',
+      },
+      sovereignty: {
+        question: 'What is "Total Sovereignty"?',
+        answer:
+          'The Executive plan for $7/mo grants you uncapped access to our neural arbitrator. This is for high-volume owners who need 24/7 oversight across multiple complex calendars with priority neural processing.',
+      },
+      audit: {
+        question: 'Can I audit my own time data?',
+        answer:
+          'Yes. Our Intelligence dashboard provides granular insights into your focus ratio and context switching costs. We believe you should own your time data as much as you own your business.',
+      },
+      dataTraining: {
+        question: 'Is my data used for AI training?',
+        answer:
+          'Absolutely not. We believe your private office should remain private. Your schedule is stored in an encrypted silo and is never used to train foundational models. Your sovereignty is our priority.',
+      },
+      credits: {
+        question: 'How do custom credit packs scale?',
+        answer:
+          'For businesses with seasonal workloads, custom credits ($1 = 100 actions) allow you to scale your command up or down without changing your subscription. They never expire and act as an operational reserve.',
+      },
+    },
+  },
+
+  // Use Case Grid Section
+  useCases: {
+    intelligentScheduling: {
+      title: 'Intelligent Scheduling',
+      description: 'Finds the perfect time for meetings, navigating complex calendars and timezones effortlessly.',
+      userMessage: 'Find 30m for me, Sarah, and Alex.',
+      allyResponse: 'Done. Tuesday at 2:30 PM.',
+      confirmation: 'All calendars updated.',
+    },
+    focusProtection: {
+      title: 'Focus Time Protection',
+      description:
+        'Automatically shields your deep work sessions from interruptions by intelligently rescheduling conflicts.',
+      userMessage: 'Protect my morning for Q4 strategy.',
+      allyResponse: 'Your calendar is blocked from 9 AM - 12 PM.',
+      focusModeActive: 'Focus mode is active.',
+    },
+    travelAgent: {
+      title: 'Proactive Travel Agent',
+      description:
+        'Monitors your travel plans, automatically adjusting to delays and keeping all stakeholders informed.',
+      delayAlert: 'Flight to SFO delayed by 2 hours.',
+      allyResponse: 'Handled. Car service and hotel are updated.',
+    },
+    voiceToAction: {
+      title: 'Voice-to-Action',
+      description:
+        'Capture thoughts and commands on the go. Ally transcribes, understands, and executes tasks instantly.',
+      userMessage: '"Remind me to call investors at 4pm"',
+      allyResponse: "Reminder set: 'Call investors' at 4:00 PM.",
+    },
+  },
+
+  // Billing
+  billing: {
+    title: 'Billing & Subscription',
+    subtitle: 'Manage your subscription and billing details',
+    manageBilling: 'Manage Billing',
+    paymentSuccess: 'Payment successful!',
+    subscriptionActivated: 'Your subscription has been activated.',
+    freePlan: 'Free Plan',
+    billedAnnually: 'Billed annually',
+    billedMonthly: 'Billed monthly',
+
+    // Status badges
+    status: {
+      trial: 'Trial',
+      active: 'Active',
+      pastDue: 'Past Due',
+      canceled: 'Canceled',
+      free: 'Free',
+    },
+
+    // Trial info
+    trial: {
+      daysLeft: '{{days}} days left in your free trial',
+      fullAccess: 'Your trial includes full access to all features. No charge until trial ends.',
+    },
+
+    // Money-back guarantee
+    moneyBack: {
+      title: '30-day money-back guarantee active',
+      description: 'Not satisfied? Get a full refund, no questions asked.',
+    },
+
+    // Cancel notice
+    cancelNotice: {
+      title: 'Your subscription will cancel at the end of this billing period',
+      accessUntil: 'Access until: {{date}}',
+    },
+
+    // Usage stats
+    usage: {
+      title: 'Usage This Period',
+      aiInteractions: 'AI Interactions',
+      unlimited: 'Unlimited',
+      remaining: '{{count}} remaining',
+      creditBalance: 'Credit Balance',
+      credits: '{{count}} credits',
+    },
+
+    // Transaction history
+    transactions: {
+      title: 'Transaction History',
+    },
+
+    // Available plans
+    plans: {
+      title: 'Available Plans',
+      popular: 'Popular',
+      perMonth: '/mo',
+      unlimitedInteractions: 'Unlimited interactions',
+      interactionsPerMonth: '{{count}} interactions/mo',
+      upgrade: 'Upgrade',
+      downgrade: 'Downgrade',
+      currentPlan: 'Current Plan',
+    },
+
+    // Actions
+    actions: {
+      title: 'Subscription Actions',
+      cancelSubscription: 'Cancel Subscription',
+      cancelDesc: "You'll retain access until the end of your billing period",
+      cancel: 'Cancel',
+      requestRefund: 'Request Full Refund',
+      refundDesc: '30-day money-back guarantee - no questions asked',
+    },
+
+    // Confirm dialogs
+    confirm: {
+      cancelSubscription:
+        'Are you sure you want to cancel your subscription? You will still have access until the end of your billing period.',
+      requestRefund: 'Are you sure you want to request a refund? Your subscription will be cancelled immediately.',
+      refundSuccess: 'Refund processed successfully!',
+    },
   },
 } as const
 
