@@ -3,6 +3,7 @@ import { getModelSpec } from "@/shared/orchestrator/model-registry"
 import type { LLMProvider, ProviderConfig } from "./types"
 import { createOpenAIProvider } from "./providers/openai-provider"
 import { createGoogleProvider } from "./providers/google-provider"
+import { createAnthropicProvider } from "./providers/anthropic-provider"
 
 function getApiKey(provider: string): string {
   switch (provider) {
@@ -41,7 +42,7 @@ export function createProviderFromProfile(profile: AgentProfile): LLMProvider {
     case "google":
       return createGoogleProvider(config)
     case "anthropic":
-      throw new Error("Anthropic provider not yet implemented")
+      return createAnthropicProvider(config)
     default:
       throw new Error(`Unknown provider: ${modelSpec.provider}`)
   }

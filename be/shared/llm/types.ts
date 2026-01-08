@@ -14,10 +14,26 @@ export interface ToolCall {
   arguments: string
 }
 
+export interface JsonSchemaProperty {
+  type: "string" | "number" | "integer" | "boolean" | "array" | "object"
+  description?: string
+  items?: JsonSchemaProperty
+  properties?: Record<string, JsonSchemaProperty>
+  required?: string[]
+  nullable?: boolean
+}
+
+export interface JsonSchema {
+  type: "object"
+  properties: Record<string, JsonSchemaProperty>
+  required?: string[]
+  description?: string
+}
+
 export interface ToolDefinition {
   name: string
   description: string
-  parameters: Record<string, unknown>
+  parameters: JsonSchema
 }
 
 export interface ChatParams {

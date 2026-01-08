@@ -12,6 +12,14 @@ import { resetSession } from "./session";
 import { telegramConversation } from "@/utils/conversation/TelegramConversationAdapter";
 import { generateSpeechForTelegram } from "@/utils/ai/text-to-speech";
 import { getVoicePreferenceForTelegram } from "./ally-brain";
+import {
+  getSelectedAgentProfileForTelegram,
+  getAllAgentProfiles,
+  getProviderIcon,
+  getTierBadge,
+  setSelectedAgentProfileForTelegram,
+} from "./agent-profile";
+import { getAgentProfile, AGENT_PROFILES } from "@/shared/orchestrator/agent-profiles";
 
 const getUserIdFromTelegram = (telegramUserId: number) => telegramConversation.getUserIdFromTelegram(telegramUserId);
 
@@ -929,5 +937,107 @@ export const handleAsVoiceCommand = async (ctx: GlobalContext): Promise<void> =>
       .text(lastResponse.text)
       .build();
     await ctx.reply(response.content, { parse_mode: "HTML" });
+  }
+};
+
+export const handleProfileCommand = async (ctx: GlobalContext): Promise<void> => {
+  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
+  const telegramUserId = ctx.from?.id;
+
+  if (!telegramUserId) {
+    const response = ResponseBuilder.telegram()
+      .direction(direction)
+      .header("🤖", t("commands.profile.header"))
+      .text(t("commands.profile.noUser"))
+      .build();
+    await ctx.reply(response.content, { parse_mode: "HTML" });
+    return;
+  }
+
+  try {
+    const currentProfileId = await getSelectedAgentProfileForTelegram(telegramUserId);
+    const currentProfile = getAgentProfile(currentProfileId);
+    const allProfiles = getAllAgentProfiles();
+
+    const keyboard = new InlineKeyboard();
+
+    for (const profile of allProfiles) {
+      const isSelected = profile.id === currentProfileId;
+      const providerIcon = getProviderIcon(profile.modelConfig.provider);
+      const tierBadge = getTierBadge(profile.tier);
+      const realtimeIndicator = profile.modelConfig.supportsRealtime ? "⚡" : "";
+
+      const label = isSelected
+        ? `✓ ${profile.displayName} ${tierBadge}${realtimeIndicator}`
+        : `${providerIcon} ${profile.displayName} ${tierBadge}${realtimeIndicator}`;
+
+      keyboard.text(label, `profile:${profile.id}`).row();
+    }
+
+    const realtimeStatus = currentProfile.modelConfig.supportsRealtime
+      ? t("commands.profile.realtimeEnabled")
+      : t("commands.profile.realtimeDisabled");
+
+    const response = ResponseBuilder.telegram()
+      .direction(direction)
+      .header("🤖", t("commands.profile.header"))
+      .text(t("commands.profile.description"))
+      .spacing()
+      .text(`<b>${t("commands.profile.currentProfile")}:</b> ${currentProfile.displayName}`)
+      .text(`<i>${currentProfile.tagline}</i>`)
+      .spacing()
+      .text(`<b>${t("commands.profile.tier")}:</b> ${currentProfile.tier}`)
+      .text(`<b>${t("commands.profile.realtime")}:</b> ${realtimeStatus}`)
+      .spacing()
+      .text(t("commands.profile.selectPrompt"))
+      .build();
+
+    await ctx.reply(response.content, {
+      parse_mode: "HTML",
+      reply_markup: keyboard,
+    });
+  } catch (error) {
+    logger.error(`Telegram Bot: Failed to get profile settings: ${error}`);
+    const response = ResponseBuilder.telegram()
+      .direction(direction)
+      .header("🤖", t("commands.profile.header"))
+      .text(t("commands.profile.error"))
+      .build();
+    await ctx.reply(response.content, { parse_mode: "HTML" });
+  }
+};
+
+export const handleProfileSelection = async (
+  ctx: GlobalContext,
+  profileId: string
+): Promise<void> => {
+  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
+  const telegramUserId = ctx.from?.id;
+
+  if (!telegramUserId) {
+    await ctx.answerCallbackQuery(t("commands.profile.noUser"));
+    return;
+  }
+
+  try {
+    if (!AGENT_PROFILES[profileId]) {
+      await ctx.answerCallbackQuery(t("commands.profile.invalidProfile"));
+      return;
+    }
+
+    const success = await setSelectedAgentProfileForTelegram(telegramUserId, profileId);
+
+    if (success) {
+      const profile = getAgentProfile(profileId);
+      await ctx.answerCallbackQuery(
+        `${t("commands.profile.switched")} ${profile.displayName}`
+      );
+      await handleProfileCommand(ctx);
+    } else {
+      await ctx.answerCallbackQuery(t("commands.profile.updateFailed"));
+    }
+  } catch (error) {
+    logger.error(`Telegram Bot: Failed to update profile: ${error}`);
+    await ctx.answerCallbackQuery(t("commands.profile.error"));
   }
 };

@@ -1,4 +1,12 @@
-import { GoogleGenerativeAI, type Content, type Part } from "@google/generative-ai"
+import {
+  GoogleGenerativeAI,
+  SchemaType,
+  type Content,
+  type Part,
+  type FunctionDeclarationSchema,
+  type FunctionDeclarationSchemaProperty,
+  type Tool,
+} from "@google/generative-ai"
 import type {
   LLMProvider,
   ChatParams,
@@ -7,6 +15,8 @@ import type {
   ProviderConfig,
   Message,
   ToolDefinition,
+  JsonSchema,
+  JsonSchemaProperty,
 } from "../types"
 
 function convertMessages(messages: Message[]): Content[] {
@@ -52,13 +62,70 @@ function convertMessages(messages: Message[]): Content[] {
   return result
 }
 
-function convertTools(tools: ToolDefinition[]) {
+function convertProperty(prop: JsonSchemaProperty): FunctionDeclarationSchemaProperty {
+  const baseProps = {
+    description: prop.description,
+    nullable: prop.nullable,
+  }
+
+  switch (prop.type) {
+    case "string":
+      return { type: SchemaType.STRING, ...baseProps }
+    case "number":
+      return { type: SchemaType.NUMBER, ...baseProps }
+    case "integer":
+      return { type: SchemaType.INTEGER, ...baseProps }
+    case "boolean":
+      return { type: SchemaType.BOOLEAN, ...baseProps }
+    case "array": {
+      if (!prop.items) {
+        return { type: SchemaType.ARRAY, items: { type: SchemaType.STRING }, ...baseProps }
+      }
+      return {
+        type: SchemaType.ARRAY,
+        items: convertProperty(prop.items),
+        ...baseProps,
+      }
+    }
+    case "object": {
+      const properties: Record<string, FunctionDeclarationSchemaProperty> = {}
+      if (prop.properties) {
+        for (const [key, value] of Object.entries(prop.properties)) {
+          properties[key] = convertProperty(value)
+        }
+      }
+      return {
+        type: SchemaType.OBJECT,
+        properties,
+        required: prop.required,
+        ...baseProps,
+      }
+    }
+  }
+}
+
+function convertJsonSchemaToGoogleSchema(schema: JsonSchema): FunctionDeclarationSchema {
+  const properties: Record<string, FunctionDeclarationSchemaProperty> = {}
+
+  for (const [key, value] of Object.entries(schema.properties)) {
+    properties[key] = convertProperty(value)
+  }
+
+  return {
+    type: SchemaType.OBJECT,
+    properties,
+    required: schema.required,
+    description: schema.description,
+  }
+}
+
+function convertTools(tools: ToolDefinition[]): Tool[] {
   return [
     {
       functionDeclarations: tools.map((tool) => ({
         name: tool.name,
         description: tool.description,
-        parameters: tool.parameters,
+        parameters: convertJsonSchemaToGoogleSchema(tool.parameters),
       })),
     },
   ]

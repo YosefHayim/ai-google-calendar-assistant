@@ -381,6 +381,22 @@ export const en = {
   "commands.asvoice.alreadyVoice": "The last response was already sent as voice.",
   "commands.asvoice.generating": "Generating voice message...",
   "commands.asvoice.failed": "Failed to generate voice message. Here's the text instead:",
+
+  "commands.profile.header": "AI Assistant Profile",
+  "commands.profile.description": "Choose which AI model powers your assistant. Each profile offers different capabilities and response styles.",
+  "commands.profile.noUser": "Could not identify user.",
+  "commands.profile.currentProfile": "Current Profile",
+  "commands.profile.tier": "Tier",
+  "commands.profile.realtime": "Voice Support",
+  "commands.profile.realtimeEnabled": "Enabled ⚡",
+  "commands.profile.realtimeDisabled": "Text only",
+  "commands.profile.selectPrompt": "Tap a profile below to switch:",
+  "commands.profile.switched": "Switched to",
+  "commands.profile.updateFailed": "Failed to update profile. Please try again.",
+  "commands.profile.invalidProfile": "Invalid profile selected.",
+  "commands.profile.error": "An error occurred. Please try again.",
+
+  "botMenu.profile": "Choose AI profile",
 } as const;
 
 export type TranslationKey = keyof typeof en;

@@ -26,3 +26,14 @@ export {
   createVoiceAgent,
   formatProfileForClient,
 } from "./orchestrator-factory"
+
+export {
+  type Modality,
+  type TextAgentConfig,
+  type CreateTextAgentOptions,
+  type StreamEvent,
+  type RunTextAgentOptions,
+  createTextAgent,
+  runTextAgent,
+  supportsTools,
+} from "./text-agent-factory"

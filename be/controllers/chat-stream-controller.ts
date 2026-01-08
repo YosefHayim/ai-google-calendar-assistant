@@ -19,16 +19,28 @@ import { ORCHESTRATOR_AGENT } from "@/ai-agents"
 import { STATUS_RESPONSE } from "@/config"
 import { createAgentSession } from "@/ai-agents/sessions"
 import { getAllyBrainPreference } from "@/controllers/user-preferences-controller"
-import { run } from "@openai/agents"
+import {
+  run,
+  type RunRawModelStreamEvent,
+  type RunAgentUpdatedStreamEvent,
+  type RunItemStreamEvent,
+} from "@openai/agents"
 import { sendR } from "@/utils/http"
 import { webConversation } from "@/utils/conversation/WebConversationAdapter"
 import { unifiedContextStore } from "@/shared/context"
+import {
+  createTextAgent,
+  runTextAgent,
+  type TextAgentConfig,
+} from "@/shared/orchestrator"
+import { getAgentProfile, DEFAULT_AGENT_PROFILE_ID } from "@/shared/orchestrator"
 
 const EMBEDDING_THRESHOLD = 0.75;
 const EMBEDDING_LIMIT = 3;
 
 type StreamChatRequest = {
   message: string;
+  profileId?: string;
 };
 
 type PromptParams = {
@@ -70,6 +82,124 @@ async function buildChatPromptWithContext(params: PromptParams): Promise<string>
   return parts.join("\n");
 }
 
+async function handleOpenAIStreaming(
+  res: Response,
+  userId: string,
+  userEmail: string,
+  conversationId: string,
+  fullPrompt: string
+): Promise<string> {
+  let fullResponse = ""
+  let currentAgent = ORCHESTRATOR_AGENT.name
+
+  const session = createAgentSession({
+    userId,
+    agentName: ORCHESTRATOR_AGENT.name,
+    taskId: conversationId,
+  });
+
+  const agentContext: AgentContext = { email: userEmail };
+  const stream = await run(ORCHESTRATOR_AGENT, fullPrompt, {
+    context: agentContext,
+    session,
+    stream: true,
+  });
+
+  for await (const event of stream) {
+    if (res.writableEnded) break;
+
+    if (event.type === "raw_model_stream_event") {
+      const rawEvent = event as RunRawModelStreamEvent
+      const data = rawEvent.data
+      if (
+        "type" in data &&
+        data.type === "model" &&
+        "event" in data &&
+        data.event &&
+        typeof data.event === "object" &&
+        "type" in data.event &&
+        data.event.type === "response.output_text.delta" &&
+        "delta" in data.event &&
+        typeof data.event.delta === "string"
+      ) {
+        fullResponse += data.event.delta
+        writeTextDelta(res, data.event.delta, fullResponse)
+      }
+    } else if (event.type === "agent_updated_stream_event") {
+      const agentEvent = event as RunAgentUpdatedStreamEvent
+      const newAgent = agentEvent.agent?.name
+      if (newAgent && newAgent !== currentAgent) {
+        writeAgentSwitch(res, currentAgent, newAgent)
+        currentAgent = newAgent
+      }
+    } else if (event.type === "run_item_stream_event") {
+      const itemEvent = event as RunItemStreamEvent
+      const item = itemEvent.item
+      if (item?.type === "tool_call_item" && "name" in item) {
+        writeToolStart(res, String(item.name) || "unknown", currentAgent)
+      } else if (item?.type === "tool_call_output_item" && "name" in item) {
+        writeToolComplete(res, String(item.name) || "unknown", "success")
+      }
+    }
+  }
+
+  await stream.completed;
+
+  if (!fullResponse && stream.finalOutput) {
+    fullResponse = typeof stream.finalOutput === "string"
+      ? stream.finalOutput
+      : String(stream.finalOutput)
+    writeTextDelta(res, fullResponse, fullResponse)
+  }
+
+  return fullResponse
+}
+
+async function handleMultiProviderStreaming(
+  res: Response,
+  agentConfig: TextAgentConfig,
+  fullPrompt: string,
+  userEmail: string
+): Promise<string> {
+  let fullResponse = ""
+  const agentName = agentConfig.profile.displayName
+
+  await runTextAgent(agentConfig, {
+    prompt: fullPrompt,
+    email: userEmail,
+    onEvent: async (event) => {
+      if (res.writableEnded) return
+
+      switch (event.type) {
+        case "text_delta":
+          if (event.content) {
+            fullResponse = event.fullContent || fullResponse + event.content
+            writeTextDelta(res, event.content, fullResponse)
+          }
+          break
+        case "tool_start":
+          writeToolStart(res, event.toolName || "unknown", agentName)
+          break
+        case "tool_complete":
+          writeToolComplete(res, event.toolName || "unknown", "success")
+          break
+        case "agent_switch":
+          if (event.fromAgent && event.toAgent) {
+            writeAgentSwitch(res, event.fromAgent, event.toAgent)
+          }
+          break
+        case "error":
+          writeError(res, event.error || "Unknown error", "STREAM_ERROR")
+          break
+        case "done":
+          break
+      }
+    },
+  })
+
+  return fullResponse
+}
+
 async function handleStreamingResponse(
   res: Response,
   userId: string,
@@ -77,7 +207,8 @@ async function handleStreamingResponse(
   message: string,
   conversationId: string,
   isNewConversation: boolean,
-  fullPrompt: string
+  fullPrompt: string,
+  profileId: string = DEFAULT_AGENT_PROFILE_ID
 ): Promise<void> {
   setupSSEHeaders(res)
   const stopHeartbeat = startHeartbeat(res)
@@ -86,63 +217,34 @@ async function handleStreamingResponse(
   await unifiedContextStore.touch(userId)
 
   let fullResponse = ""
-  let currentAgent = ORCHESTRATOR_AGENT.name
+  const profile = getAgentProfile(profileId)
+  const useOpenAIAgent = profile.modelConfig.provider === "openai"
 
   try {
-    const session = createAgentSession({
-      userId,
-      agentName: ORCHESTRATOR_AGENT.name,
-      taskId: conversationId,
-    });
-
-    const agentContext: AgentContext = { email: userEmail };
-    const stream = await run(ORCHESTRATOR_AGENT, fullPrompt, {
-      context: agentContext,
-      session,
-      stream: true,
-    });
-
-    for await (const event of stream) {
-      if (res.writableEnded) break;
-
-      if (event.type === "raw_model_stream_event") {
-        const data = event.data as {
-          type?: string;
-          event?: { type?: string; delta?: string };
-        };
-        if (data.type === "model" && data.event?.type === "response.output_text.delta" && data.event.delta) {
-          fullResponse += data.event.delta;
-          writeTextDelta(res, data.event.delta, fullResponse);
-        }
-      } else if (event.type === "agent_updated_stream_event") {
-        const newAgent = (event as { agent?: { name?: string } }).agent?.name;
-        if (newAgent && newAgent !== currentAgent) {
-          writeAgentSwitch(res, currentAgent, newAgent);
-          currentAgent = newAgent;
-        }
-      } else if (event.type === "run_item_stream_event") {
-        const item = (event as { item?: { type?: string; name?: string; status?: string } }).item;
-        if (item?.type === "tool_call") {
-          writeToolStart(res, item.name || "unknown", currentAgent);
-        } else if (item?.type === "tool_call_output") {
-          writeToolComplete(res, item.name || "unknown", "success");
-        }
-      }
-    }
-
-    await stream.completed;
-
-    if (!fullResponse && stream.finalOutput) {
-      fullResponse = stream.finalOutput as string;
-      writeTextDelta(res, fullResponse, fullResponse);
+    if (useOpenAIAgent) {
+      fullResponse = await handleOpenAIStreaming(
+        res,
+        userId,
+        userEmail,
+        conversationId,
+        fullPrompt
+      )
+    } else {
+      const agentConfig = createTextAgent({
+        profileId,
+        modality: "chat",
+      })
+      fullResponse = await handleMultiProviderStreaming(res, agentConfig, fullPrompt, userEmail)
     }
 
     await webConversation.addMessageToConversation(conversationId, userId, { role: "user", content: message }, summarizeMessages);
 
-    await webConversation.addMessageToConversation(conversationId, userId, { role: "assistant", content: fullResponse }, summarizeMessages);
+    if (fullResponse) {
+      await webConversation.addMessageToConversation(conversationId, userId, { role: "assistant", content: fullResponse }, summarizeMessages);
+      storeWebEmbeddingAsync(userId, fullResponse, "assistant");
+    }
 
     storeWebEmbeddingAsync(userId, message, "user");
-    storeWebEmbeddingAsync(userId, fullResponse, "assistant");
 
     writeDone(res, conversationId, fullResponse, undefined);
 
@@ -166,7 +268,7 @@ async function handleStreamingResponse(
 }
 
 const streamChat = async (req: Request<unknown, unknown, StreamChatRequest>, res: Response): Promise<void> => {
-  const { message } = req.body;
+  const { message, profileId } = req.body;
   const userId = req.user?.id;
   const userEmail = req.user?.email;
 
@@ -197,7 +299,7 @@ const streamChat = async (req: Request<unknown, unknown, StreamChatRequest>, res
       userId,
     });
 
-    await handleStreamingResponse(res, userId, userEmail || "", message, conversationId, isNewConversation, fullPrompt);
+    await handleStreamingResponse(res, userId, userEmail || "", message, conversationId, isNewConversation, fullPrompt, profileId);
   } catch (error) {
     console.error("Stream chat error:", error);
     if (!res.headersSent) {
@@ -209,11 +311,14 @@ const streamChat = async (req: Request<unknown, unknown, StreamChatRequest>, res
   }
 };
 
-const streamContinueConversation = async (req: Request, res: Response): Promise<void> => {
-  const userId = req.user?.id;
-  const userEmail = req.user?.email;
-  const conversationId = req.params.id;
-  const { message } = req.body as StreamChatRequest;
+const streamContinueConversation = async (
+  req: Request<{ id: string }, unknown, StreamChatRequest>,
+  res: Response
+): Promise<void> => {
+  const userId = req.user?.id
+  const userEmail = req.user?.email
+  const conversationId = req.params.id
+  const { message, profileId } = req.body
 
   if (!userId) {
     sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
@@ -253,7 +358,7 @@ const streamContinueConversation = async (req: Request, res: Response): Promise<
       userId,
     });
 
-    await handleStreamingResponse(res, userId, userEmail || "", message, conversationId, false, fullPrompt);
+    await handleStreamingResponse(res, userId, userEmail || "", message, conversationId, false, fullPrompt, profileId);
   } catch (error) {
     console.error("Stream continue conversation error:", error);
     if (!res.headersSent) {

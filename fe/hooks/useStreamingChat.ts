@@ -5,6 +5,7 @@ import { streamChatMessage, createStreamAbortController } from '@/services/chatS
 import type { StreamingState } from '@/types/stream'
 
 interface UseStreamingChatOptions {
+  profileId?: string | null
   onStreamComplete?: (conversationId: string, fullResponse: string) => void
   onStreamError?: (error: string) => void
   onTitleGenerated?: (conversationId: string, title: string) => void
@@ -12,7 +13,7 @@ interface UseStreamingChatOptions {
 
 interface UseStreamingChatReturn {
   streamingState: StreamingState
-  sendStreamingMessage: (message: string, conversationId?: string) => Promise<void>
+  sendStreamingMessage: (message: string, conversationId?: string, profileId?: string) => Promise<void>
   cancelStream: () => void
   resetStreamingState: () => void
 }
@@ -26,7 +27,7 @@ const initialState: StreamingState = {
 }
 
 export function useStreamingChat(options: UseStreamingChatOptions = {}): UseStreamingChatReturn {
-  const { onStreamComplete, onStreamError, onTitleGenerated } = options
+  const { profileId: defaultProfileId, onStreamComplete, onStreamError, onTitleGenerated } = options
   const [streamingState, setStreamingState] = useState<StreamingState>(initialState)
   const abortControllerRef = useRef<AbortController | null>(null)
 
@@ -46,7 +47,7 @@ export function useStreamingChat(options: UseStreamingChatOptions = {}): UseStre
   }, [])
 
   const sendStreamingMessage = useCallback(
-    async (message: string, conversationId?: string) => {
+    async (message: string, conversationId?: string, profileId?: string) => {
       if (abortControllerRef.current) {
         abortControllerRef.current.abort()
       }
@@ -61,9 +62,12 @@ export function useStreamingChat(options: UseStreamingChatOptions = {}): UseStre
         error: null,
       })
 
+      const effectiveProfileId = profileId ?? defaultProfileId ?? undefined
+
       const result = await streamChatMessage({
         message,
         conversationId,
+        profileId: effectiveProfileId,
         signal: abortControllerRef.current.signal,
         callbacks: {
           onTextDelta: (delta, fullText) => {
@@ -123,7 +127,7 @@ export function useStreamingChat(options: UseStreamingChatOptions = {}): UseStre
 
       abortControllerRef.current = null
     },
-    [onStreamComplete, onStreamError, onTitleGenerated],
+    [defaultProfileId, onStreamComplete, onStreamError, onTitleGenerated],
   )
 
   return {

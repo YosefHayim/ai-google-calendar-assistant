@@ -2,6 +2,7 @@
 
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 
+import { AgentProfileSelector } from './AgentProfileSelector'
 import { AvatarView } from './AvatarView'
 import { ChatInput } from './ChatInput'
 import { ChatView } from './ChatView'
@@ -31,6 +32,7 @@ const ChatInterface: React.FC = () => {
     isLoadingConversation,
     addConversationToList,
     updateConversationTitle,
+    selectedProfileId,
   } = useChatContext()
 
   const { data: voiceData } = useVoicePreference()
@@ -93,6 +95,7 @@ const ChatInterface: React.FC = () => {
   )
 
   const { streamingState, sendStreamingMessage, cancelStream, resetStreamingState } = useStreamingChat({
+    profileId: selectedProfileId,
     onStreamComplete: handleStreamComplete,
     onStreamError: handleStreamError,
     onTitleGenerated: handleTitleGenerated,
@@ -188,6 +191,9 @@ const ChatInterface: React.FC = () => {
   return (
     <div className="flex h-full w-full relative overflow-hidden">
       <div className="flex-1 flex flex-col h-full  mx-auto w-full relative overflow-hidden">
+        <div className="absolute top-4 left-4 z-30">
+          <AgentProfileSelector />
+        </div>
         <ViewSwitcher activeTab={activeTab} onTabChange={setActiveTab} />
 
         {isLoadingConversation && (

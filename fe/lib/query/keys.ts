@@ -67,6 +67,15 @@ export const queryKeys = {
     reminderDefaults: () => [...queryKeys.preferences.all, 'reminder_defaults'] as const,
     voicePreference: () => [...queryKeys.preferences.all, 'voice_preference'] as const,
   },
+
+  // Agent Profiles queries
+  agentProfiles: {
+    all: ['agent-profiles'] as const,
+    list: (params?: { tier?: string; voiceOnly?: boolean }) =>
+      [...queryKeys.agentProfiles.all, 'list', params ?? {}] as const,
+    detail: (id: string) => [...queryKeys.agentProfiles.all, 'detail', id] as const,
+    selected: () => [...queryKeys.agentProfiles.all, 'selected'] as const,
+  },
 } as const
 
 /** Type helper for query keys */

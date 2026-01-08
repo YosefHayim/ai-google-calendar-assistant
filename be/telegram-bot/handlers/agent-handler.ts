@@ -13,7 +13,13 @@ import {
   telegramConversation,
 } from "../utils"
 import { getAllyBrainForTelegram } from "../utils/ally-brain"
+import { getSelectedAgentProfileForTelegram } from "../utils/agent-profile"
 import { unifiedContextStore } from "@/shared/context"
+import {
+  createTextAgent,
+  runTextAgent,
+} from "@/shared/orchestrator/text-agent-factory"
+import { getAgentProfile } from "@/shared/orchestrator/agent-profiles"
 
 const CONFLICT_PARTS_MIN_LENGTH = 3
 
@@ -57,28 +63,52 @@ export const handleAgentRequest = async (
       .join("\n\n")
 
     const allyBrain = await getAllyBrainForTelegram(telegramUserId)
+    const profileId = await getSelectedAgentProfileForTelegram(telegramUserId)
+    const selectedProfile = getAgentProfile(profileId)
 
     const prompt = buildAgentPromptWithContext(
       ctx.session.email,
       message,
       fullContext,
-      { allyBrain, languageCode: ctx.session.codeLang }
+      {
+        allyBrain,
+        languageCode: ctx.session.codeLang,
+      }
     )
 
+    logger.info(
+      `Telegram Bot: User ${telegramUserId} using profile "${selectedProfile.id}" (${selectedProfile.modelConfig.provider})`
+    )
     logger.info(
       `Telegram Bot: Prompt length for user ${telegramUserId}: ${prompt.length} chars (context: ${fullContext.length}, message: ${message.length})`
     )
 
-    const { finalOutput } = await activateAgent(ORCHESTRATOR_AGENT, prompt, {
-      email: ctx.session.email,
-      session: userUuid
-        ? {
-            userId: userUuid,
-            agentName: ORCHESTRATOR_AGENT.name,
-            taskId: chatId.toString(),
-          }
-        : undefined,
+    const agentConfig = createTextAgent({
+      profileId,
+      modality: "telegram",
     })
+
+    let finalOutput: string
+
+    if (agentConfig.useNativeAgentSDK) {
+      const result = await activateAgent(ORCHESTRATOR_AGENT, prompt, {
+        email: ctx.session.email,
+        session: userUuid
+          ? {
+              userId: userUuid,
+              agentName: ORCHESTRATOR_AGENT.name,
+              taskId: chatId.toString(),
+            }
+          : undefined,
+      })
+      finalOutput = result.finalOutput || ""
+    } else {
+      finalOutput = await runTextAgent(agentConfig, {
+        prompt,
+        email: ctx.session.email,
+        onEvent: async () => {},
+      })
+    }
 
     if (finalOutput) {
       await telegramConversation.addMessageToContext(
@@ -143,35 +173,51 @@ export const handleConfirmation = async (ctx: GlobalContext): Promise<void> => {
     const userUuid =
       await telegramConversation.getUserIdFromTelegram(telegramUserId)
 
+    const profileId = await getSelectedAgentProfileForTelegram(telegramUserId)
+    const agentConfig = createTextAgent({
+      profileId,
+      modality: "telegram",
+    })
+
     const prompt = buildConfirmationPrompt(
       ctx.session.firstName ?? "",
       ctx.session.email ?? "",
       pending.eventData
     )
-    const { finalOutput } = await activateAgent(ORCHESTRATOR_AGENT, prompt, {
-      email: ctx.session.email,
-      session: userUuid
-        ? {
-            userId: userUuid,
-            agentName: ORCHESTRATOR_AGENT.name,
-            taskId: chatId.toString(),
-          }
-        : undefined,
-    })
+
+    let finalOutput: string
+
+    if (agentConfig.useNativeAgentSDK) {
+      const result = await activateAgent(ORCHESTRATOR_AGENT, prompt, {
+        email: ctx.session.email,
+        session: userUuid
+          ? {
+              userId: userUuid,
+              agentName: ORCHESTRATOR_AGENT.name,
+              taskId: chatId.toString(),
+            }
+          : undefined,
+      })
+      finalOutput = result.finalOutput || ""
+    } else {
+      finalOutput = await runTextAgent(agentConfig, {
+        prompt,
+        email: ctx.session.email,
+        onEvent: async () => {},
+      })
+    }
 
     if (!finalOutput) {
       await ctx.reply(t("errors.noOutputFromAgent"), { parse_mode: "HTML" })
       return
     }
 
-    if (finalOutput) {
-      await telegramConversation.addMessageToContext(
-        chatId,
-        telegramUserId,
-        { role: "assistant", content: finalOutput },
-        summarizeMessages
-      )
-    }
+    await telegramConversation.addMessageToContext(
+      chatId,
+      telegramUserId,
+      { role: "assistant", content: finalOutput },
+      summarizeMessages
+    )
 
     await ctx.reply(finalOutput, { parse_mode: "HTML" })
   } catch (error) {

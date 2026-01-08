@@ -28,6 +28,7 @@ import { authController } from "@/controllers/users/auth-controller";
 import { profileController } from "@/controllers/users/profile-controller";
 import { googleIntegrationController } from "@/controllers/users/google-integration-controller";
 import { userPreferencesController } from "@/controllers/user-preferences-controller";
+import { agentProfilesController } from "@/controllers/agent-profiles-controller";
 
 const router = express.Router();
 
@@ -115,6 +116,11 @@ router.put(
   validate(voicePreferenceSchema, "body"),
   userPreferencesController.updatePreference,
 );
+
+router.get("/agent-profiles", agentProfilesController.listProfiles);
+router.get("/agent-profiles/selected", supabaseAuth(), agentProfilesController.getUserSelectedProfile);
+router.put("/agent-profiles/selected", supabaseAuth(), agentProfilesController.setUserSelectedProfile);
+router.get("/agent-profiles/:id", agentProfilesController.getProfile);
 
 router.post(
   "/refresh",
