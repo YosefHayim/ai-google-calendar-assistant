@@ -20,6 +20,7 @@ export const apiClient = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true, // Send cookies with cross-origin requests
 })
 
 // Track if we're currently refreshing to avoid multiple refresh attempts
