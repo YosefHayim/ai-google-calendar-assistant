@@ -293,7 +293,6 @@ def export_for_web(filepath):
         export_morph=True,
         export_morph_normal=False,
         export_materials="EXPORT",
-        export_colors=True,
         export_cameras=False,
         export_lights=False,
         export_apply=True,
