@@ -1,335 +1,243 @@
 'use client'
 
-import { useRef, useEffect, useState, Suspense, useCallback } from 'react'
+import { useRef, useEffect, useState, useCallback, memo, useMemo } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { useGLTF, useAnimations, OrbitControls, Environment, ContactShadows } from '@react-three/drei'
+import { OrbitControls, Environment, ContactShadows, Center } from '@react-three/drei'
 import * as THREE from 'three'
-import type { GLTF } from 'three-stdlib'
-
-// ============================================================================
-// TYPES
-// ============================================================================
 
 export type AllyAnimationState = 'idle' | 'talking' | 'listening' | 'thinking' | 'happy' | 'sad'
 
 export interface AllyCharacterProps {
-  /** Current animation state */
   animationState?: AllyAnimationState
-  /** Whether to auto-rotate the character */
   autoRotate?: boolean
-  /** Rotation speed when auto-rotating */
   autoRotateSpeed?: number
-  /** Enable orbit controls for user interaction */
   enableControls?: boolean
-  /** Background color or transparent */
   backgroundColor?: string | null
-  /** Scale multiplier */
   scale?: number
-  /** Callback when animation changes */
   onAnimationChange?: (state: AllyAnimationState) => void
-  /** Custom className for container */
   className?: string
-  /** Mouth openness for lip-sync (0-1) */
   mouthOpenness?: number
 }
 
-interface AllyModelProps {
-  animationState: AllyAnimationState
-  mouthOpenness: number
-  onAnimationChange?: (state: AllyAnimationState) => void
-}
-
-interface GLTFWithAnimations {
-  scene: THREE.Group
-  animations: THREE.AnimationClip[]
-}
-
-// Animation name mapping
-const ANIMATION_MAP: Record<AllyAnimationState, string> = {
-  idle: 'Ally_Idle',
-  talking: 'Ally_Talking',
-  listening: 'Ally_Listening',
-  thinking: 'Ally_Thinking',
-  happy: 'Ally_Happy',
-  sad: 'Ally_Sad',
-}
-
-// ============================================================================
-// ALLY 3D MODEL COMPONENT
-// ============================================================================
-
-function AllyModel({ animationState, mouthOpenness, onAnimationChange }: AllyModelProps) {
-  const group = useRef<THREE.Group>(null)
-  const { scene, animations } = useGLTF('/ally-3d.glb') as GLTFWithAnimations
-  const { actions, mixer } = useAnimations(animations, group)
-  const [currentAction, setCurrentAction] = useState<THREE.AnimationAction | null>(null)
-
-  // Morph target refs for lip-sync
-  const meshWithMorphs = useRef<THREE.Mesh | null>(null)
-
-  // Find mesh with morph targets on mount
-  useEffect(() => {
-    scene.traverse((child: THREE.Object3D) => {
-      if (child instanceof THREE.Mesh && child.morphTargetInfluences && child.morphTargetDictionary) {
-        meshWithMorphs.current = child
-      }
-    })
-  }, [scene])
-
-  // Handle animation state changes
-  useEffect(() => {
-    const actionName = ANIMATION_MAP[animationState]
-    const newAction = actions[actionName]
-
-    if (newAction && newAction !== currentAction) {
-      // Crossfade to new animation
-      if (currentAction) {
-        currentAction.fadeOut(0.3)
-      }
-      newAction.reset().fadeIn(0.3).play()
-      setCurrentAction(newAction)
-      onAnimationChange?.(animationState)
-    }
-  }, [animationState, actions, currentAction, onAnimationChange])
-
-  // Update mouth morph target for lip-sync
-  useFrame(() => {
-    if (
-      meshWithMorphs.current &&
-      meshWithMorphs.current.morphTargetDictionary &&
-      meshWithMorphs.current.morphTargetInfluences
-    ) {
-      const mouthIndex = meshWithMorphs.current.morphTargetDictionary['MouthOpen']
-      if (mouthIndex !== undefined) {
-        // Smooth interpolation for mouth movement
-        const currentValue = meshWithMorphs.current.morphTargetInfluences[mouthIndex]
-        meshWithMorphs.current.morphTargetInfluences[mouthIndex] = THREE.MathUtils.lerp(
-          currentValue,
-          mouthOpenness,
-          0.2,
-        )
-      }
-    }
-  })
-
-  // Subtle idle animation enhancement
-  useFrame((state) => {
-    if (group.current && animationState === 'idle') {
-      // Add subtle breathing/floating effect on top of animation
-      group.current.position.y = Math.sin(state.clock.elapsedTime * 1.5) * 0.02
-      group.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.5) * 0.05
-    }
-  })
-
-  return <primitive ref={group} object={scene} dispose={null} />
-}
-
-// ============================================================================
-// FALLBACK PLACEHOLDER (when GLB not loaded)
-// ============================================================================
-
-function AllyPlaceholder() {
-  const meshRef = useRef<THREE.Mesh>(null)
-
-  useFrame((state) => {
-    if (meshRef.current) {
-      // Gentle bobbing and rotation
-      meshRef.current.position.y = Math.sin(state.clock.elapsedTime * 1.5) * 0.05
-      meshRef.current.rotation.y = state.clock.elapsedTime * 0.5
-    }
-  })
-
-  return (
-    <mesh ref={meshRef}>
-      {/* Main fluffy body - sphere */}
-      <sphereGeometry args={[0.8, 32, 32]} />
-      <meshStandardMaterial color="#b19cd9" roughness={0.8} metalness={0.1} />
-
-      {/* Eyes */}
-      <group position={[0, 0.2, 0.6]}>
-        {/* Left eye */}
-        <mesh position={[-0.25, 0, 0]}>
-          <sphereGeometry args={[0.15, 16, 16]} />
-          <meshStandardMaterial color="#ffffff" />
-        </mesh>
-        <mesh position={[-0.25, 0, 0.1]}>
-          <sphereGeometry args={[0.08, 16, 16]} />
-          <meshStandardMaterial color="#4a3728" />
-        </mesh>
-
-        {/* Right eye */}
-        <mesh position={[0.25, 0, 0]}>
-          <sphereGeometry args={[0.15, 16, 16]} />
-          <meshStandardMaterial color="#ffffff" />
-        </mesh>
-        <mesh position={[0.25, 0, 0.1]}>
-          <sphereGeometry args={[0.08, 16, 16]} />
-          <meshStandardMaterial color="#4a3728" />
-        </mesh>
-      </group>
-
-      {/* Suit collar hint */}
-      <mesh position={[0, -0.5, 0.3]}>
-        <boxGeometry args={[0.6, 0.3, 0.2]} />
-        <meshStandardMaterial color="#1e3a5f" />
-      </mesh>
-    </mesh>
-  )
-}
-
-// ============================================================================
-// LOADING COMPONENT
-// ============================================================================
-
-function LoadingIndicator() {
-  const meshRef = useRef<THREE.Mesh>(null)
-
-  useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.x = state.clock.elapsedTime
-      meshRef.current.rotation.y = state.clock.elapsedTime * 0.5
-    }
-  })
-
-  return (
-    <mesh ref={meshRef}>
-      <torusGeometry args={[0.3, 0.1, 16, 32]} />
-      <meshStandardMaterial color="#b19cd9" wireframe />
-    </mesh>
-  )
-}
-
-// ============================================================================
-// SCENE SETUP
-// ============================================================================
-
-function SceneSetup({
-  autoRotate,
-  autoRotateSpeed,
-  enableControls,
-}: {
-  autoRotate: boolean
-  autoRotateSpeed: number
-  enableControls: boolean
-}) {
-  return (
-    <>
-      {/* Lighting */}
-      <ambientLight intensity={0.5} />
-      <directionalLight position={[5, 5, 5]} intensity={1} castShadow shadow-mapSize={[1024, 1024]} />
-      <directionalLight position={[-5, 3, -5]} intensity={0.3} />
-
-      {/* Environment for reflections */}
-      <Environment preset="studio" />
-
-      {/* Soft shadow beneath character */}
-      <ContactShadows position={[0, -1, 0]} opacity={0.4} scale={3} blur={2} far={2} />
-
-      {/* Camera controls */}
-      {enableControls && (
-        <OrbitControls
-          autoRotate={autoRotate}
-          autoRotateSpeed={autoRotateSpeed}
-          enableZoom={false}
-          enablePan={false}
-          minPolarAngle={Math.PI / 4}
-          maxPolarAngle={Math.PI / 2}
-        />
-      )}
-    </>
-  )
-}
-
-// ============================================================================
-// CAMERA CONTROLLER
-// ============================================================================
-
-function CameraController() {
-  const { camera } = useThree()
+function ThreeJsResourceDisposer() {
+  const { gl, scene } = useThree()
 
   useEffect(() => {
-    camera.position.set(0, 0.5, 3)
-    camera.lookAt(0, 0, 0)
-  }, [camera])
+    return () => {
+      scene.traverse((object) => {
+        if (object instanceof THREE.Mesh) {
+          object.geometry?.dispose()
+          if (Array.isArray(object.material)) {
+            object.material.forEach((m) => m.dispose())
+          } else if (object.material) {
+            object.material.dispose()
+          }
+        }
+      })
+      while (scene.children.length > 0) {
+        scene.remove(scene.children[0])
+      }
+      gl.dispose()
+    }
+  }, [gl, scene])
 
   return null
 }
 
-// ============================================================================
-// MAIN EXPORT COMPONENT
-// ============================================================================
+function AllyPlaceholder({ animationState }: { animationState: AllyAnimationState }) {
+  const groupRef = useRef<THREE.Group>(null)
+  const mouthRef = useRef<THREE.Mesh>(null)
 
-export function AllyCharacter({
+  const getColor = () => {
+    switch (animationState) {
+      case 'happy':
+        return '#d8b4fe'
+      case 'sad':
+        return '#a78bfa'
+      case 'thinking':
+        return '#c4b5fd'
+      default:
+        return '#b19cd9'
+    }
+  }
+
+  useFrame((state) => {
+    if (!groupRef.current) return
+
+    const t = state.clock.elapsedTime
+
+    switch (animationState) {
+      case 'idle':
+        groupRef.current.position.y = Math.sin(t * 1.5) * 0.05
+        groupRef.current.rotation.y = Math.sin(t * 0.3) * 0.1
+        break
+      case 'talking':
+        groupRef.current.position.y = Math.sin(t * 2) * 0.03
+        if (mouthRef.current) {
+          mouthRef.current.scale.y = 0.5 + Math.abs(Math.sin(t * 10)) * 0.5
+        }
+        break
+      case 'listening':
+        groupRef.current.rotation.z = Math.sin(t * 0.8) * 0.05
+        groupRef.current.rotation.x = 0.1
+        break
+      case 'thinking':
+        groupRef.current.rotation.y = t * 0.2
+        groupRef.current.position.y = Math.sin(t) * 0.02
+        break
+      case 'happy':
+        groupRef.current.position.y = Math.abs(Math.sin(t * 4)) * 0.1
+        groupRef.current.rotation.z = Math.sin(t * 3) * 0.1
+        break
+      case 'sad':
+        groupRef.current.position.y = -0.05 + Math.sin(t * 0.5) * 0.02
+        groupRef.current.rotation.x = 0.15
+        break
+    }
+  })
+
+  return (
+    <group ref={groupRef}>
+      <mesh>
+        <sphereGeometry args={[0.8, 32, 32]} />
+        <meshStandardMaterial color={getColor()} roughness={0.8} metalness={0.1} />
+      </mesh>
+
+      <group position={[0, 0.15, 0.55]}>
+        <mesh position={[-0.22, 0, 0]}>
+          <sphereGeometry args={[0.18, 16, 16]} />
+          <meshStandardMaterial color="#ffffff" />
+        </mesh>
+        <mesh position={[-0.22, 0, 0.12]}>
+          <sphereGeometry args={[0.09, 16, 16]} />
+          <meshStandardMaterial color="#4a3728" />
+        </mesh>
+        <mesh position={[-0.22, 0, 0.16]}>
+          <sphereGeometry args={[0.03, 8, 8]} />
+          <meshStandardMaterial color="#ffffff" />
+        </mesh>
+
+        <mesh position={[0.22, 0, 0]}>
+          <sphereGeometry args={[0.18, 16, 16]} />
+          <meshStandardMaterial color="#ffffff" />
+        </mesh>
+        <mesh position={[0.22, 0, 0.12]}>
+          <sphereGeometry args={[0.09, 16, 16]} />
+          <meshStandardMaterial color="#4a3728" />
+        </mesh>
+        <mesh position={[0.22, 0, 0.16]}>
+          <sphereGeometry args={[0.03, 8, 8]} />
+          <meshStandardMaterial color="#ffffff" />
+        </mesh>
+      </group>
+
+      <mesh ref={mouthRef} position={[0, -0.15, 0.7]}>
+        <sphereGeometry args={[0.08, 16, 16]} />
+        <meshStandardMaterial color="#4a3728" />
+      </mesh>
+
+      <mesh position={[0, -0.4, 0.2]}>
+        <boxGeometry args={[0.7, 0.4, 0.3]} />
+        <meshStandardMaterial color="#1e3a5f" />
+      </mesh>
+
+      <mesh position={[0, -0.35, 0.35]}>
+        <boxGeometry args={[0.15, 0.25, 0.1]} />
+        <meshStandardMaterial color="#ffffff" />
+      </mesh>
+    </group>
+  )
+}
+
+const Scene = memo(function Scene({
+  animationState,
+  autoRotate,
+  autoRotateSpeed,
+  enableControls,
+  scale,
+}: {
+  animationState: AllyAnimationState
+  autoRotate: boolean
+  autoRotateSpeed: number
+  enableControls: boolean
+  scale: number
+}) {
+  return (
+    <>
+      <ThreeJsResourceDisposer />
+      <ambientLight intensity={0.6} />
+      <directionalLight position={[5, 5, 5]} intensity={1} />
+      <directionalLight position={[-5, 3, -5]} intensity={0.3} />
+      <Environment preset="studio" />
+      <ContactShadows position={[0, -1.2, 0]} opacity={0.4} scale={3} blur={2} far={2} />
+
+      {enableControls && (
+        <OrbitControls
+          autoRotate={autoRotate && animationState === 'idle'}
+          autoRotateSpeed={autoRotateSpeed}
+          enableZoom={false}
+          enablePan={false}
+          minPolarAngle={Math.PI / 4}
+          maxPolarAngle={Math.PI / 1.8}
+        />
+      )}
+
+      <Center>
+        <group scale={scale}>
+          <AllyPlaceholder animationState={animationState} />
+        </group>
+      </Center>
+    </>
+  )
+})
+
+const CAMERA_CONFIG = { position: [0, 0.3, 2.5] as [number, number, number], fov: 50 }
+
+export const AllyCharacter = memo(function AllyCharacter({
   animationState = 'idle',
   autoRotate = false,
   autoRotateSpeed = 1,
   enableControls = true,
   backgroundColor = null,
   scale = 1,
-  onAnimationChange,
   className = '',
-  mouthOpenness = 0,
 }: AllyCharacterProps) {
-  const [modelLoaded, setModelLoaded] = useState(false)
-  const [hasError, setHasError] = useState(false)
+  const [mounted, setMounted] = useState(false)
+  const canvasKey = useRef(`ally-canvas-${Date.now()}`).current
 
-  // Check if GLB file exists
   useEffect(() => {
-    fetch('/ally-3d.glb', { method: 'HEAD' })
-      .then((res) => {
-        if (res.ok) {
-          setModelLoaded(true)
-        } else {
-          setHasError(true)
-        }
-      })
-      .catch(() => {
-        setHasError(true)
-      })
+    setMounted(true)
   }, [])
+
+  const glConfig = useMemo(
+    () => ({ antialias: true, alpha: !backgroundColor, preserveDrawingBuffer: true }),
+    [backgroundColor],
+  )
+
+  if (!mounted) {
+    return (
+      <div className={`w-full h-full flex items-center justify-center ${className}`}>
+        <div className="w-24 h-24 rounded-full bg-purple-200 dark:bg-purple-900 animate-pulse" />
+      </div>
+    )
+  }
 
   return (
     <div className={`w-full h-full ${className}`} style={{ backgroundColor: backgroundColor || 'transparent' }}>
-      <Canvas
-        shadows
-        dpr={[1, 2]}
-        gl={{ antialias: true, alpha: !backgroundColor }}
-        camera={{ position: [0, 0.5, 3], fov: 45 }}
-      >
-        <CameraController />
-        <SceneSetup autoRotate={autoRotate} autoRotateSpeed={autoRotateSpeed} enableControls={enableControls} />
-
-        <Suspense fallback={<LoadingIndicator />}>
-          <group scale={scale}>
-            {modelLoaded && !hasError ? (
-              <AllyModel
-                animationState={animationState}
-                mouthOpenness={mouthOpenness}
-                onAnimationChange={onAnimationChange}
-              />
-            ) : (
-              <AllyPlaceholder />
-            )}
-          </group>
-        </Suspense>
+      <Canvas key={canvasKey} shadows dpr={[1, 2]} gl={glConfig} camera={CAMERA_CONFIG}>
+        <Scene
+          animationState={animationState}
+          autoRotate={autoRotate}
+          autoRotateSpeed={autoRotateSpeed}
+          enableControls={enableControls}
+          scale={scale}
+        />
       </Canvas>
     </div>
   )
-}
+})
 
-// ============================================================================
-// PRELOAD HOOK
-// ============================================================================
-
-export function usePreloadAllyModel() {
-  useEffect(() => {
-    useGLTF.preload('/ally-3d.glb')
-  }, [])
-}
-
-// ============================================================================
-// ANIMATION CONTROLLER HOOK
-// ============================================================================
+export function usePreloadAllyModel() {}
 
 export function useAllyAnimationController() {
   const [animationState, setAnimationState] = useState<AllyAnimationState>('idle')
@@ -346,11 +254,10 @@ export function useAllyAnimationController() {
     }, durationMs)
   }, [])
 
-  // Simulate lip-sync from audio
   const simulateTalking = useCallback((durationMs: number) => {
     setAnimationState('talking')
     let elapsed = 0
-    const interval = 50 // Update every 50ms
+    const interval = 50
 
     const talkInterval = setInterval(() => {
       elapsed += interval
@@ -359,7 +266,6 @@ export function useAllyAnimationController() {
         setMouthOpenness(0)
         setAnimationState('idle')
       } else {
-        // Random mouth movement to simulate speech
         setMouthOpenness(Math.random() * 0.8 + 0.1)
       }
     }, interval)
@@ -367,13 +273,10 @@ export function useAllyAnimationController() {
     return () => clearInterval(talkInterval)
   }, [])
 
-  // Lip-sync from audio data (for real TTS integration)
   const updateMouthFromAudio = useCallback((audioLevel: number) => {
-    // audioLevel should be 0-1, representing volume/amplitude
     setMouthOpenness(Math.min(1, audioLevel * 1.5))
   }, [])
 
-  // Cleanup
   useEffect(() => {
     return () => {
       if (animationTimeoutRef.current) {
@@ -393,5 +296,4 @@ export function useAllyAnimationController() {
   }
 }
 
-// Default export for convenience
 export default AllyCharacter
