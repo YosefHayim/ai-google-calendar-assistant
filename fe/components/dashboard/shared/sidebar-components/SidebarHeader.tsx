@@ -1,10 +1,11 @@
 'use client'
 
-import React from 'react'
-import Link from 'next/link'
-import { Plus, ChevronLeft, LayoutDashboard, X } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import { AllyLogo, BetaBadge } from '@/components/shared/logo'
+import { ChevronLeft, ChevronRight, LayoutDashboard, Plus, X } from 'lucide-react'
+
+import { Button } from '@/components/ui/button'
+import Link from 'next/link'
+import React from 'react'
 
 interface SidebarHeaderProps {
   isOpen: boolean
@@ -42,7 +43,7 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = ({ isOpen, onClose, o
           onClick={onToggle}
           className="text-zinc-500 hidden md:flex"
         >
-          {isOpen ? <ChevronLeft className="w-5 h-5" /> : <LayoutDashboard className="w-5 h-5" />}
+          {isOpen ? <ChevronLeft className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
         </Button>
         {isOpen && (
           <Button

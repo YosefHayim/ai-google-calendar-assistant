@@ -1,17 +1,18 @@
 'use client'
 
-import React, { useEffect, useRef, useState, useCallback } from 'react'
-import { decodeAudioData, getSpeechFromGemini } from '@/services/geminiService'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 
-import { Message } from '@/types'
 import { AvatarView } from './AvatarView'
 import { ChatInput } from './ChatInput'
 import { ChatView } from './ChatView'
+import { Message } from '@/types'
 import { ThreeDView } from './ThreeDView'
 import { ViewSwitcher } from './ViewSwitcher'
-import { useSpeechRecognition } from './useSpeechRecognition'
 import { useChatContext } from '@/contexts/ChatContext'
+import { useSpeechRecognition } from './useSpeechRecognition'
 import { useStreamingChat } from '@/hooks/useStreamingChat'
+import { voiceService } from '@/lib/api/services/voice.service'
+import { useVoicePreference } from '@/hooks/queries'
 
 declare global {
   interface Window {
@@ -31,6 +32,8 @@ const ChatInterface: React.FC = () => {
     addConversationToList,
     updateConversationTitle,
   } = useChatContext()
+
+  const { data: voiceData } = useVoicePreference()
 
   const [input, setInput] = useState('')
   const [isSpeaking, setIsSpeaking] = useState(false)
@@ -63,11 +66,19 @@ const ChatInterface: React.FC = () => {
         })
       }
 
-      if (activeTab === 'avatar' && fullResponse) {
+      // Auto-play voice response if enabled in settings, or always for avatar tab
+      if (fullResponse && (voiceData?.value?.enabled || activeTab === 'avatar')) {
         speakText(fullResponse.split('\n')[0])
       }
     },
-    [selectedConversationId, setConversationId, addConversationToList, setMessages, activeTab],
+    [
+      selectedConversationId,
+      setConversationId,
+      addConversationToList,
+      setMessages,
+      activeTab,
+      voiceData?.value?.enabled,
+    ],
   )
 
   const handleStreamError = useCallback((errorMessage: string) => {
@@ -91,23 +102,19 @@ const ChatInterface: React.FC = () => {
 
   const speakText = async (text: string) => {
     if (!audioContextRef.current) {
-      audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 24000 })
+      audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)()
     }
 
     setIsSpeaking(true)
     try {
-      const audioContent = await getSpeechFromGemini(text)
+      const audioArrayBuffer = await voiceService.synthesize(text, voiceData?.value?.voice)
+      const audioBuffer = await audioContextRef.current.decodeAudioData(audioArrayBuffer)
 
-      if (audioContent) {
-        const audioBuffer = await decodeAudioData(audioContent, audioContextRef.current)
-        const source = audioContextRef.current.createBufferSource()
-        source.buffer = audioBuffer
-        source.connect(audioContextRef.current.destination)
-        source.onended = () => setIsSpeaking(false)
-        source.start()
-      } else {
-        setIsSpeaking(false)
-      }
+      const source = audioContextRef.current.createBufferSource()
+      source.buffer = audioBuffer
+      source.connect(audioContextRef.current.destination)
+      source.onended = () => setIsSpeaking(false)
+      source.start()
     } catch (audioError) {
       console.error('Error fetching or playing audio:', audioError)
       setError('Could not play audio response.')
@@ -180,7 +187,7 @@ const ChatInterface: React.FC = () => {
 
   return (
     <div className="flex h-full w-full relative overflow-hidden">
-      <div className="flex-1 flex flex-col h-full max-w-4xl mx-auto w-full relative overflow-hidden">
+      <div className="flex-1 flex flex-col h-full  mx-auto w-full relative overflow-hidden">
         <ViewSwitcher activeTab={activeTab} onTabChange={setActiveTab} />
 
         {isLoadingConversation && (

@@ -61,4 +61,6 @@ export {
   useUpdateContextualScheduling,
   useReminderDefaults,
   useUpdateReminderDefaults,
+  useVoicePreference,
+  useUpdateVoicePreference,
 } from './preferences'

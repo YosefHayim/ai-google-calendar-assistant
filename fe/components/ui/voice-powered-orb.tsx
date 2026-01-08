@@ -210,7 +210,11 @@ export const VoicePoweredOrb: FC<VoicePoweredOrbProps> = ({
     targetAudioLevel.current = 0
   }
 
-  const initMicrophone = async () => {
+  const isAudioContextUsable = (ctx: AudioContext | null): ctx is AudioContext => {
+    return ctx !== null && ctx.state !== 'closed'
+  }
+
+  const initMicrophone = async (cleanedUp: { current: boolean }) => {
     try {
       if (!audioContextRef.current) {
         audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)()
@@ -220,14 +224,23 @@ export const VoicePoweredOrb: FC<VoicePoweredOrbProps> = ({
         await audioContextRef.current.resume()
       }
 
+      if (cleanedUp.current || !isAudioContextUsable(audioContextRef.current)) {
+        return false
+      }
+
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
       })
 
+      if (cleanedUp.current || !isAudioContextUsable(audioContextRef.current)) {
+        stream.getTracks().forEach((t) => t.stop())
+        return false
+      }
+
       mediaStreamRef.current = stream
       analyserRef.current = audioContextRef.current.createAnalyser()
       microphoneRef.current = audioContextRef.current.createMediaStreamSource(stream)
-      analyserRef.current.fftSize = 256 // Faster response
+      analyserRef.current.fftSize = 256
       analyserRef.current.smoothingTimeConstant = 0.5
       microphoneRef.current.connect(analyserRef.current)
       dataArrayRef.current = new Uint8Array(analyserRef.current.frequencyBinCount)
@@ -239,12 +252,18 @@ export const VoicePoweredOrb: FC<VoicePoweredOrbProps> = ({
   }
 
   useEffect(() => {
+    const cleanedUp = { current: false }
+
     if (enableVoiceControl) {
-      initMicrophone()
+      initMicrophone(cleanedUp)
     } else {
       stopMicrophone()
     }
-    return () => stopMicrophone()
+
+    return () => {
+      cleanedUp.current = true
+      stopMicrophone()
+    }
   }, [enableVoiceControl])
 
   useEffect(() => {

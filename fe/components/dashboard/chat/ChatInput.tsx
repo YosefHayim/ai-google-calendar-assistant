@@ -48,7 +48,7 @@ export const ChatInput = forwardRef<HTMLInputElement, ChatInputProps>(
     return (
       <div
         id="tour-chat-input"
-        className="absolute bottom-0 left-0 right-0 p-4 z-20 bg-gradient-to-t from-white dark:from-zinc-950 via-white/80 to-transparent"
+        className="sticky bottom-0 left-0 right-0 p-4 z-20 bg-gradient-to-t from-white dark:from-zinc-950 via-white/80 to-transparent"
       >
         {isRecording ? (
           <div className="relative flex flex-col items-center justify-center bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-2xl p-4 transition-all">

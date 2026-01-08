@@ -1,6 +1,7 @@
 import { apiClient } from '@/lib/api/client'
 import { ENDPOINTS } from '@/lib/api/endpoints'
 import type { ApiResponse } from '@/types/api'
+import type { TTSVoice } from '@/lib/validations/preferences'
 
 export type TranscriptionResponse = {
   text: string
@@ -17,5 +18,14 @@ export const voiceService = {
       },
     })
     return data
+  },
+
+  async synthesize(text: string, voice?: TTSVoice): Promise<ArrayBuffer> {
+    const response = await apiClient.post<ArrayBuffer>(
+      ENDPOINTS.VOICE_SYNTHESIZE,
+      { text, voice },
+      { responseType: 'arraybuffer' },
+    )
+    return response.data
   },
 }

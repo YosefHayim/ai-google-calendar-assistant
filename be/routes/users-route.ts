@@ -22,6 +22,7 @@ import {
   contextualSchedulingSchema,
   preferenceKeyParamSchema,
   reminderPreferencesSchema,
+  voicePreferenceSchema,
 } from "@/middlewares/validation";
 import { authController } from "@/controllers/users/auth-controller";
 import { profileController } from "@/controllers/users/profile-controller";
@@ -105,6 +106,13 @@ router.put(
   "/preferences/reminder_defaults",
   supabaseAuth(),
   validate(reminderPreferencesSchema, "body"),
+  userPreferencesController.updatePreference,
+);
+
+router.put(
+  "/preferences/voice_preference",
+  supabaseAuth(),
+  validate(voicePreferenceSchema, "body"),
   userPreferencesController.updatePreference,
 );
 

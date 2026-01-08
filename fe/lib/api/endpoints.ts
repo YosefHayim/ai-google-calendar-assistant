@@ -356,11 +356,9 @@ export const ENDPOINTS = {
    */
   USER_PREFERENCES_CONTEXTUAL_SCHEDULING: '/api/users/preferences/contextual_scheduling',
 
-  /**
-   * Update reminder_defaults preference
-   * Methods: PUT
-   */
   USER_PREFERENCES_REMINDER_DEFAULTS: '/api/users/preferences/reminder_defaults',
+
+  USER_PREFERENCES_VOICE: '/api/users/preferences/voice_preference',
 
   /**
    * Submit contact form
@@ -379,6 +377,8 @@ export const ENDPOINTS = {
    * Body: multipart/form-data with audio file
    */
   VOICE_TRANSCRIBE: '/api/voice/transcribe',
+
+  VOICE_SYNTHESIZE: '/api/voice/synthesize',
 } as const
 
 export type EndpointsType = typeof ENDPOINTS

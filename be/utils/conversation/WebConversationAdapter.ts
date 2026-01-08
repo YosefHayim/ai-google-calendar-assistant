@@ -1,12 +1,8 @@
+import type { ConversationContext, ConversationListItem, FullConversation, SummarizeFn } from "./types";
+
+import { ConversationService } from "./ConversationService";
 import { logger } from "@/utils/logger";
 import type { userAndAiMessageProps } from "@/types";
-import type {
-  ConversationContext,
-  ConversationListItem,
-  FullConversation,
-  SummarizeFn,
-} from "./types";
-import { ConversationService } from "./ConversationService";
 
 const WEB_CONFIG = {
   maxContextLength: 1000,
@@ -28,29 +24,15 @@ export class WebConversationAdapter {
     return this.service.getTodayConversation(userId);
   }
 
-  createConversationState(
-    userId: string,
-    initialMessage?: userAndAiMessageProps,
-  ): Promise<{ id: string; context: ConversationContext } | null> {
+  createConversationState(userId: string, initialMessage?: userAndAiMessageProps): Promise<{ id: string; context: ConversationContext } | null> {
     return this.service.createConversation(userId, undefined, initialMessage);
   }
 
-  updateConversationState(
-    conversationId: string,
-    context: ConversationContext,
-    messageCount: number,
-  ): Promise<boolean> {
-    return this.service.updateConversationState(
-      conversationId,
-      context,
-      messageCount,
-    );
+  updateConversationState(conversationId: string, context: ConversationContext, messageCount: number): Promise<boolean> {
+    return this.service.updateConversationState(conversationId, context, messageCount);
   }
 
-  updateConversationTitle(
-    conversationId: string,
-    title: string,
-  ): Promise<boolean> {
+  updateConversationTitle(conversationId: string, title: string): Promise<boolean> {
     return this.service.updateTitle(conversationId, title);
   }
 
@@ -69,23 +51,16 @@ export class WebConversationAdapter {
     return this.service.markAsSummarized(conversationId, summary);
   }
 
-  async getOrCreateTodayContext(
-    userId: string,
-  ): Promise<{ stateId: string; context: ConversationContext }> {
+  async getOrCreateTodayContext(userId: string): Promise<{ stateId: string; context: ConversationContext }> {
     const existingConversation = await this.getTodayConversationState(userId);
 
     if (existingConversation) {
-      const messages = await this.service.getConversationMessages(
-        existingConversation.id,
-      );
+      const messages = await this.service.getConversationMessages(existingConversation.id);
       const context: ConversationContext = {
         messages,
         summary: existingConversation.summary || undefined,
-        title:
-          (existingConversation as { title?: string | null }).title ||
-          undefined,
-        lastUpdated:
-          existingConversation.updated_at || existingConversation.created_at,
+        title: (existingConversation as { title?: string | null }).title || undefined,
+        lastUpdated: existingConversation.updated_at || existingConversation.created_at,
       };
       return { stateId: existingConversation.id, context };
     }
@@ -93,9 +68,7 @@ export class WebConversationAdapter {
     const newState = await this.createConversationState(userId);
 
     if (!newState) {
-      logger.warn(
-        `Failed to create conversation state for user ${userId}, using fallback`,
-      );
+      logger.warn(`Failed to create conversation state for user ${userId}, using fallback`);
       return {
         stateId: "",
         context: { messages: [], lastUpdated: new Date().toISOString() },
@@ -108,11 +81,7 @@ export class WebConversationAdapter {
     };
   }
 
-  async addMessageToContext(
-    userId: string,
-    message: userAndAiMessageProps,
-    summarizeFn: SummarizeFn,
-  ): Promise<ConversationContext> {
+  async addMessageToContext(userId: string, message: userAndAiMessageProps, summarizeFn: SummarizeFn): Promise<ConversationContext> {
     const { stateId, context } = await this.getOrCreateTodayContext(userId);
 
     if (!stateId) {
@@ -130,6 +99,33 @@ export class WebConversationAdapter {
     });
   }
 
+  /**
+   * Add a message to a specific conversation by ID.
+   * Use this when continuing an existing conversation to ensure messages
+   * are saved to the correct conversation, not just "today's" conversation.
+   */
+  async addMessageToConversation(
+    conversationId: string,
+    userId: string,
+    message: userAndAiMessageProps,
+    summarizeFn: SummarizeFn
+  ): Promise<ConversationContext> {
+    const loaded = await this.loadConversationIntoContext(conversationId, userId);
+
+    if (!loaded) {
+      logger.warn(`Failed to load conversation ${conversationId} for user ${userId}, falling back to today's context`);
+      return this.addMessageToContext(userId, message, summarizeFn);
+    }
+
+    return this.service.addMessageAndMaybeSummarize({
+      stateId: loaded.stateId,
+      userId,
+      context: loaded.context,
+      message,
+      summarizeFn,
+    });
+  }
+
   buildContextPrompt(context: ConversationContext): string {
     return this.service.buildContextPrompt(context);
   }
@@ -139,24 +135,15 @@ export class WebConversationAdapter {
     return context;
   }
 
-  getConversationList(
-    userId: string,
-    options?: { limit?: number; offset?: number; search?: string },
-  ): Promise<ConversationListItem[]> {
+  getConversationList(userId: string, options?: { limit?: number; offset?: number; search?: string }): Promise<ConversationListItem[]> {
     return this.service.getConversationList(userId, options);
   }
 
-  getConversationById(
-    conversationId: string,
-    userId: string,
-  ): Promise<FullConversation | null> {
+  getConversationById(conversationId: string, userId: string): Promise<FullConversation | null> {
     return this.service.getConversationById(conversationId, userId);
   }
 
-  loadConversationIntoContext(
-    conversationId: string,
-    userId: string,
-  ): Promise<{ stateId: string; context: ConversationContext } | null> {
+  loadConversationIntoContext(conversationId: string, userId: string): Promise<{ stateId: string; context: ConversationContext } | null> {
     return this.service.loadConversationIntoContext(conversationId, userId);
   }
 
