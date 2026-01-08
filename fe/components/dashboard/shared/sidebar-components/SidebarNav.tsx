@@ -2,7 +2,7 @@
 
 import React from 'react'
 import Link from 'next/link'
-import { BarChart2, LayoutDashboard, Target } from 'lucide-react'
+import { BarChart2, Calendar, History, LayoutDashboard, MessageCircle, Target, User } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { useLanguage } from '@/contexts/LanguageContext'
 
@@ -89,6 +89,30 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({ pathname, isOpen, onClos
       label: t('sidebar.gapRecovery'),
       id: 'tour-gaps',
       description: t('sidebar.gapRecoveryDescription'),
+    },
+    {
+      href: '/dashboard/calendars',
+      icon: Calendar,
+      label: t('sidebar.calendars'),
+      description: t('sidebar.calendarsDescription'),
+    },
+    {
+      href: '/dashboard/activity',
+      icon: History,
+      label: t('sidebar.activity'),
+      description: t('sidebar.activityDescription'),
+    },
+    {
+      href: '/dashboard/telegram',
+      icon: MessageCircle,
+      label: t('sidebar.telegram'),
+      description: t('sidebar.telegramDescription'),
+    },
+    {
+      href: '/dashboard/account',
+      icon: User,
+      label: t('sidebar.account'),
+      description: t('sidebar.accountDescription'),
     },
   ]
 
