@@ -1,9 +1,9 @@
-import { SUPABASE } from "@/config"
-import { logger } from "@/utils/logger"
-import { telegramConversation } from "@/utils/conversation/TelegramConversationAdapter"
+import { SUPABASE } from "@/config";
+import { logger } from "@/utils/logger";
+import { telegramConversation } from "@/utils/conversation/TelegramConversationAdapter";
 
 const getUserIdFromTelegram = (telegramUserId: number) =>
-  telegramConversation.getUserIdFromTelegram(telegramUserId)
+  telegramConversation.getUserIdFromTelegram(telegramUserId);
 
 export type AllyBrainPreference = {
   enabled: boolean;
@@ -16,7 +16,7 @@ const DEFAULT_ALLY_BRAIN: AllyBrainPreference = {
 };
 
 export const getAllyBrainForTelegram = async (
-  telegramUserId: number
+  telegramUserId: number,
 ): Promise<AllyBrainPreference | null> => {
   try {
     const userId = await getUserIdFromTelegram(telegramUserId);
@@ -48,13 +48,13 @@ export const getAllyBrainForTelegram = async (
 
 export const updateAllyBrainForTelegram = async (
   telegramUserId: number,
-  value: AllyBrainPreference
+  value: AllyBrainPreference,
 ): Promise<boolean> => {
   try {
     const userId = await getUserIdFromTelegram(telegramUserId);
     if (!userId) {
       logger.warn(
-        `ally-brain: No user found for telegram ID ${telegramUserId}`
+        `ally-brain: No user found for telegram ID ${telegramUserId}`,
       );
       return false;
     }
@@ -69,7 +69,7 @@ export const updateAllyBrainForTelegram = async (
       },
       {
         onConflict: "user_id,preference_key",
-      }
+      },
     );
 
     if (error) {
@@ -86,7 +86,7 @@ export const updateAllyBrainForTelegram = async (
 
 export const toggleAllyBrainEnabled = async (
   telegramUserId: number,
-  enabled: boolean
+  enabled: boolean,
 ): Promise<boolean> => {
   const current = await getAllyBrainForTelegram(telegramUserId);
   const updated: AllyBrainPreference = {
@@ -101,7 +101,7 @@ export type InstructionUpdateMode = "replace" | "append";
 export const updateAllyBrainInstructions = async (
   telegramUserId: number,
   instructions: string,
-  mode: InstructionUpdateMode = "replace"
+  mode: InstructionUpdateMode = "replace",
 ): Promise<boolean> => {
   const current = await getAllyBrainForTelegram(telegramUserId);
 
@@ -120,7 +120,7 @@ export const updateAllyBrainInstructions = async (
 };
 
 export const clearAllyBrainInstructions = async (
-  telegramUserId: number
+  telegramUserId: number,
 ): Promise<boolean> => {
   const current = await getAllyBrainForTelegram(telegramUserId);
   const updated: AllyBrainPreference = {
@@ -128,4 +128,45 @@ export const clearAllyBrainInstructions = async (
     instructions: "",
   };
   return updateAllyBrainForTelegram(telegramUserId, updated);
+};
+
+export type VoicePreference = {
+  enabled: boolean;
+  voice: "alloy" | "echo" | "fable" | "onyx" | "nova" | "shimmer";
+};
+
+const DEFAULT_VOICE_PREFERENCE: VoicePreference = {
+  enabled: true,
+  voice: "alloy",
+};
+
+export const getVoicePreferenceForTelegram = async (
+  telegramUserId: number,
+): Promise<VoicePreference> => {
+  try {
+    const userId = await getUserIdFromTelegram(telegramUserId);
+    if (!userId) {
+      return DEFAULT_VOICE_PREFERENCE;
+    }
+
+    const { data, error } = await SUPABASE.from("user_preferences")
+      .select("preference_value")
+      .eq("user_id", userId)
+      .eq("preference_key", "voice_preference")
+      .maybeSingle();
+
+    if (error) {
+      logger.error(`voice-preference: Error fetching: ${error.message}`);
+      return DEFAULT_VOICE_PREFERENCE;
+    }
+
+    if (!data) {
+      return DEFAULT_VOICE_PREFERENCE;
+    }
+
+    return data.preference_value as unknown as VoicePreference;
+  } catch (error) {
+    logger.error(`voice-preference: Failed to get: ${error}`);
+    return DEFAULT_VOICE_PREFERENCE;
+  }
 };

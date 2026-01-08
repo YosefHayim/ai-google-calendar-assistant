@@ -8,6 +8,7 @@ import type {
   AllyBrainFormData,
   ContextualSchedulingFormData,
   ReminderDefaultsFormData,
+  VoicePreferenceFormData,
 } from '@/lib/validations/preferences'
 import type { QueryHookOptions } from '../useQueryWrapper'
 
@@ -169,6 +170,56 @@ export function useUpdateReminderDefaults() {
   return {
     updateReminderDefaults: mutation.mutate,
     updateReminderDefaultsAsync: mutation.mutateAsync,
+    isUpdating: mutation.isPending,
+    isError: mutation.isError,
+    error: mutation.error,
+    isSuccess: mutation.isSuccess,
+    reset: mutation.reset,
+  }
+}
+
+export function useVoicePreference(options?: QueryHookOptions) {
+  const query = useQuery({
+    queryKey: queryKeys.preferences.voicePreference(),
+    queryFn: async () => {
+      const response = await preferencesService.getVoicePreference()
+      return response.data
+    },
+    staleTime: options?.staleTime ?? QUERY_CONFIG.USER_STALE_TIME,
+    enabled: options?.enabled ?? true,
+    refetchOnWindowFocus: options?.refetchOnWindowFocus ?? false,
+    refetchOnMount: options?.refetchOnMount ?? true,
+  })
+
+  return {
+    data: query.data ?? null,
+    isLoading: query.isLoading,
+    isFetching: query.isFetching,
+    isError: query.isError,
+    error: query.error,
+    refetch: query.refetch,
+  }
+}
+
+export function useUpdateVoicePreference() {
+  const queryClient = useQueryClient()
+
+  const mutation = useMutation({
+    mutationFn: (data: VoicePreferenceFormData) => preferencesService.updateVoicePreference(data),
+    onSuccess: (response) => {
+      if (response.data) {
+        queryClient.setQueryData<PreferenceResponse<VoicePreferenceFormData>>(
+          queryKeys.preferences.voicePreference(),
+          response.data,
+        )
+      }
+      queryClient.invalidateQueries({ queryKey: queryKeys.preferences.list() })
+    },
+  })
+
+  return {
+    updateVoicePreference: mutation.mutate,
+    updateVoicePreferenceAsync: mutation.mutateAsync,
     isUpdating: mutation.isPending,
     isError: mutation.isError,
     error: mutation.error,

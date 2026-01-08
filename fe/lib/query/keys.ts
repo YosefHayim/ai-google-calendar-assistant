@@ -65,6 +65,7 @@ export const queryKeys = {
     allyBrain: () => [...queryKeys.preferences.all, 'ally_brain'] as const,
     contextualScheduling: () => [...queryKeys.preferences.all, 'contextual_scheduling'] as const,
     reminderDefaults: () => [...queryKeys.preferences.all, 'reminder_defaults'] as const,
+    voicePreference: () => [...queryKeys.preferences.all, 'voice_preference'] as const,
   },
 } as const
 

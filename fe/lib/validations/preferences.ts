@@ -60,7 +60,28 @@ export const allyBrainDefaults: AllyBrainFormData = {
   instructions: '',
 }
 
-/**
- * Placeholder text for Ally's Brain textarea
- */
 export const ALLY_BRAIN_PLACEHOLDER = `Example: I prefer morning meetings between 9-11am. My work days are Sunday through Thursday. Always add a 15-minute buffer between meetings. I take lunch at 1pm for an hour. When scheduling with clients, prefer video calls over in-person meetings.`
+
+export const TTS_VOICES = ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'] as const
+export type TTSVoice = (typeof TTS_VOICES)[number]
+
+export const voicePreferenceSchema = z.object({
+  enabled: z.boolean(),
+  voice: z.enum(TTS_VOICES).optional().default('alloy'),
+})
+
+export type VoicePreferenceFormData = z.infer<typeof voicePreferenceSchema>
+
+export const voicePreferenceDefaults: VoicePreferenceFormData = {
+  enabled: true,
+  voice: 'alloy',
+}
+
+export const VOICE_OPTIONS: { value: TTSVoice; label: string; description: string }[] = [
+  { value: 'alloy', label: 'Alloy', description: 'Balanced and versatile' },
+  { value: 'echo', label: 'Echo', description: 'Warm and conversational' },
+  { value: 'fable', label: 'Fable', description: 'Expressive storyteller' },
+  { value: 'onyx', label: 'Onyx', description: 'Deep and authoritative' },
+  { value: 'nova', label: 'Nova', description: 'Friendly and upbeat' },
+  { value: 'shimmer', label: 'Shimmer', description: 'Clear and melodic' },
+]

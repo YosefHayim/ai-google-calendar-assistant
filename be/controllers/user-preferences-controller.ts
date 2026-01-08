@@ -5,12 +5,14 @@ import type {
   AllyBrainBody,
   ContextualSchedulingBody,
   ReminderPreferencesBody,
+  VoicePreferenceBody,
 } from "@/middlewares/validation";
 
 type PreferenceKey =
   | "ally_brain"
   | "contextual_scheduling"
-  | "reminder_defaults";
+  | "reminder_defaults"
+  | "voice_preference";
 
 interface AllyBrainPreference {
   enabled: boolean;
@@ -32,10 +34,16 @@ interface ReminderDefaultsPreference {
   useCalendarDefaults: boolean;
 }
 
+interface VoicePreference {
+  enabled: boolean;
+  voice: "alloy" | "echo" | "fable" | "onyx" | "nova" | "shimmer";
+}
+
 type PreferenceValue =
   | AllyBrainPreference
   | ContextualSchedulingPreference
-  | ReminderDefaultsPreference;
+  | ReminderDefaultsPreference
+  | VoicePreference;
 
 /**
  * Get a user preference by key
@@ -52,9 +60,12 @@ const getPreference = reqResAsyncHandler(
 
     if (
       !key ||
-      !["ally_brain", "contextual_scheduling", "reminder_defaults"].includes(
-        key,
-      )
+      ![
+        "ally_brain",
+        "contextual_scheduling",
+        "reminder_defaults",
+        "voice_preference",
+      ].includes(key)
     ) {
       return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Invalid preference key");
     }
@@ -84,6 +95,7 @@ const getPreference = reqResAsyncHandler(
             defaultReminders: [],
             useCalendarDefaults: true,
           },
+          voice_preference: { enabled: true, voice: "alloy" },
         };
 
         return sendR(
@@ -124,7 +136,10 @@ const updatePreference = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     const userId = req.user?.id;
     const key = req.path.split("/").at(-1) as PreferenceKey;
-    const value = req.body as AllyBrainBody | ContextualSchedulingBody;
+    const value = req.body as
+      | AllyBrainBody
+      | ContextualSchedulingBody
+      | VoicePreferenceBody;
 
     if (!userId) {
       return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
@@ -132,9 +147,12 @@ const updatePreference = reqResAsyncHandler(
 
     if (
       !key ||
-      !["ally_brain", "contextual_scheduling", "reminder_defaults"].includes(
-        key,
-      )
+      ![
+        "ally_brain",
+        "contextual_scheduling",
+        "reminder_defaults",
+        "voice_preference",
+      ].includes(key)
     ) {
       return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Invalid preference key");
     }
@@ -221,6 +239,7 @@ const getAllPreferences = reqResAsyncHandler(
           defaultReminders: [],
           useCalendarDefaults: true,
         },
+        voice_preference: { enabled: true, voice: "alloy" },
       };
 
       const preferences: Record<
@@ -305,6 +324,26 @@ export async function getReminderDefaultsPreference(
     }
 
     return data.preference_value as unknown as ReminderDefaultsPreference;
+  } catch {
+    return null;
+  }
+}
+
+export async function getVoicePreference(
+  userId: string,
+): Promise<VoicePreference | null> {
+  try {
+    const { data, error } = await SUPABASE.from("user_preferences")
+      .select("preference_value")
+      .eq("user_id", userId)
+      .eq("preference_key", "voice_preference")
+      .maybeSingle();
+
+    if (error || !data) {
+      return null;
+    }
+
+    return data.preference_value as unknown as VoicePreference;
   } catch {
     return null;
   }

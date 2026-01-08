@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { AlertTriangle, Brain, Check, Loader2, MessageSquareX, Sparkles, Trash2 } from 'lucide-react'
+import { AlertTriangle, Brain, Check, Loader2, MessageSquareX, Sparkles, Trash2, Volume2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -16,12 +16,16 @@ import {
   useUpdateAllyBrain,
   useContextualScheduling,
   useUpdateContextualScheduling,
+  useVoicePreference,
+  useUpdateVoicePreference,
 } from '@/hooks/queries'
 import {
   allyBrainSchema,
   type AllyBrainFormData,
   allyBrainDefaults,
   ALLY_BRAIN_PLACEHOLDER,
+  VOICE_OPTIONS,
+  type TTSVoice,
 } from '@/lib/validations/preferences'
 
 interface AssistantTabProps {
@@ -35,14 +39,19 @@ const SHOW_COUNTER_THRESHOLD = 900
 export const AssistantTab: React.FC<AssistantTabProps> = ({ onDeleteAllConversations, isDeletingConversations }) => {
   const allyBrainToggleId = React.useId()
   const contextualToggleId = React.useId()
+  const voiceToggleId = React.useId()
 
   const { data: allyBrainData, isLoading: isLoadingAllyBrain } = useAllyBrain()
   const { data: contextualData, isLoading: isLoadingContextual } = useContextualScheduling()
+  const { data: voiceData, isLoading: isLoadingVoice } = useVoicePreference()
 
   const { updateAllyBrainAsync, isUpdating: isUpdatingAllyBrain, isSuccess: isAllyBrainSuccess } = useUpdateAllyBrain()
   const { updateContextualScheduling, isUpdating: isUpdatingContextual } = useUpdateContextualScheduling()
+  const { updateVoicePreference, isUpdating: isUpdatingVoice } = useUpdateVoicePreference()
 
   const [contextualEnabled, setContextualEnabled] = useState(true)
+  const [voiceEnabled, setVoiceEnabled] = useState(true)
+  const [selectedVoice, setSelectedVoice] = useState<TTSVoice>('alloy')
   const [memoryUsage] = useState('~1.2MB of scheduling patterns')
 
   const {
@@ -78,6 +87,13 @@ export const AssistantTab: React.FC<AssistantTabProps> = ({ onDeleteAllConversat
     }
   }, [contextualData])
 
+  useEffect(() => {
+    if (voiceData?.value) {
+      setVoiceEnabled(voiceData.value.enabled)
+      setSelectedVoice(voiceData.value.voice || 'alloy')
+    }
+  }, [voiceData])
+
   const handleContextualToggle = (checked: boolean) => {
     setContextualEnabled(checked)
     updateContextualScheduling(
@@ -89,6 +105,38 @@ export const AssistantTab: React.FC<AssistantTabProps> = ({ onDeleteAllConversat
         onError: () => {
           setContextualEnabled(!checked)
           toast.error('Failed to update preference')
+        },
+      },
+    )
+  }
+
+  const handleVoiceToggle = (checked: boolean) => {
+    setVoiceEnabled(checked)
+    updateVoicePreference(
+      { enabled: checked, voice: selectedVoice },
+      {
+        onSuccess: () => {
+          toast.success(checked ? 'Voice responses enabled' : 'Voice responses disabled')
+        },
+        onError: () => {
+          setVoiceEnabled(!checked)
+          toast.error('Failed to update voice preference')
+        },
+      },
+    )
+  }
+
+  const handleVoiceChange = (voice: TTSVoice) => {
+    setSelectedVoice(voice)
+    updateVoicePreference(
+      { enabled: voiceEnabled, voice },
+      {
+        onSuccess: () => {
+          toast.success(`Voice changed to ${VOICE_OPTIONS.find((v) => v.value === voice)?.label || voice}`)
+        },
+        onError: () => {
+          setSelectedVoice(voiceData?.value?.voice || 'alloy')
+          toast.error('Failed to update voice')
         },
       },
     )
@@ -117,7 +165,7 @@ export const AssistantTab: React.FC<AssistantTabProps> = ({ onDeleteAllConversat
     }
   }
 
-  const isLoading = isLoadingAllyBrain || isLoadingContextual
+  const isLoading = isLoadingAllyBrain || isLoadingContextual || isLoadingVoice
 
   if (isLoading) {
     return (
@@ -294,6 +342,79 @@ export const AssistantTab: React.FC<AssistantTabProps> = ({ onDeleteAllConversat
               </p>
             </div>
           </SettingsSection>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500/10 to-cyan-500/10 dark:from-blue-500/20 dark:to-cyan-500/20">
+              <Volume2 className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+            </div>
+            <div>
+              <CardTitle className="text-lg">Voice Settings</CardTitle>
+              <CardDescription>Choose how Ally speaks to you in voice responses.</CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <SettingsSection>
+            <SettingsRow
+              id="voice-enabled"
+              title="Enable Voice Responses"
+              tooltip="When enabled, Ally will respond with voice in chat and when you send voice messages on Telegram"
+              variant="toggle"
+              control={
+                <CinematicGlowToggle
+                  id={voiceToggleId}
+                  checked={voiceEnabled}
+                  onChange={isUpdatingVoice ? () => {} : handleVoiceToggle}
+                />
+              }
+            />
+          </SettingsSection>
+
+          <AnimatePresence>
+            {voiceEnabled && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.2 }}
+                className="overflow-hidden"
+              >
+                <SettingsSection>
+                  <div className="space-y-3">
+                    <Label className="text-sm font-medium">Select Voice</Label>
+                    <div className="grid gap-2">
+                      {VOICE_OPTIONS.map((option) => (
+                        <button
+                          key={option.value}
+                          type="button"
+                          onClick={() => handleVoiceChange(option.value)}
+                          disabled={isUpdatingVoice}
+                          className={`flex items-center justify-between p-3 rounded-lg border transition-all text-left
+                            ${
+                              selectedVoice === option.value
+                                ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                                : 'border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600'
+                            }
+                            ${isUpdatingVoice ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+                          `}
+                        >
+                          <div>
+                            <span className="font-medium text-sm text-zinc-900 dark:text-zinc-100">{option.label}</span>
+                            <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">{option.description}</p>
+                          </div>
+                          {selectedVoice === option.value && <Check className="w-4 h-4 text-blue-500" />}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </SettingsSection>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </CardContent>
       </Card>
     </div>

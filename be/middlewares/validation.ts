@@ -360,12 +360,20 @@ export const contextualSchedulingSchema = z.object({
 });
 
 export const preferenceKeyParamSchema = z.object({
-  key: z.enum(["ally_brain", "contextual_scheduling", "reminder_defaults"], {
-    errorMap: () => ({
-      message:
-        "Invalid preference key. Must be 'ally_brain', 'contextual_scheduling', or 'reminder_defaults'",
-    }),
-  }),
+  key: z.enum(
+    [
+      "ally_brain",
+      "contextual_scheduling",
+      "reminder_defaults",
+      "voice_preference",
+    ],
+    {
+      errorMap: () => ({
+        message:
+          "Invalid preference key. Must be 'ally_brain', 'contextual_scheduling', 'reminder_defaults', or 'voice_preference'",
+      }),
+    },
+  ),
 });
 
 export type AllyBrainBody = z.infer<typeof allyBrainSchema>;
@@ -397,3 +405,23 @@ export const updateCalendarRemindersSchema = z.object({
 export type UpdateCalendarRemindersBody = z.infer<
   typeof updateCalendarRemindersSchema
 >;
+
+// ============================================
+// Voice Preferences Validation Schemas
+// ============================================
+
+const ttsVoiceSchema = z.enum([
+  "alloy",
+  "echo",
+  "fable",
+  "onyx",
+  "nova",
+  "shimmer",
+]);
+
+export const voicePreferenceSchema = z.object({
+  enabled: z.boolean(),
+  voice: ttsVoiceSchema.optional().default("alloy"),
+});
+
+export type VoicePreferenceBody = z.infer<typeof voicePreferenceSchema>;
