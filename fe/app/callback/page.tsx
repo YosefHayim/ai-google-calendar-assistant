@@ -5,10 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import { AllyLogo } from '@/components/shared/logo'
-
-const ACCESS_TOKEN_HEADER = 'access_token'
-const REFRESH_TOKEN_HEADER = 'refresh_token'
-const USER_KEY = 'user'
+import { authService } from '@/lib/api/services/auth.service'
 
 // Animated orbital ring component
 const OrbitalRing = ({
@@ -176,31 +173,24 @@ function CallbackContent() {
   useEffect(() => {
     const handleCallback = async () => {
       try {
-        const accessToken = searchParams.get(ACCESS_TOKEN_HEADER)
-        const refreshToken = searchParams.get(REFRESH_TOKEN_HEADER)
-        const firstName = searchParams.get('first_name')
-        const lastName = searchParams.get('last_name')
-        const email = searchParams.get('email')
+        const authStatus = searchParams.get('auth')
 
-        if (!accessToken) {
+        if (authStatus !== 'success') {
           setError(t('callback.authFailed'))
-          setTimeout(() => router.push('/login?error=no_token'), 2000)
+          setTimeout(() => router.push('/login?error=auth_failed'), 2000)
           return
         }
 
-        // Store auth data
-        localStorage.setItem(ACCESS_TOKEN_HEADER, accessToken)
-        if (refreshToken) {
-          localStorage.setItem(REFRESH_TOKEN_HEADER, refreshToken)
-        }
-        if (firstName && lastName && email) {
-          localStorage.setItem(USER_KEY, JSON.stringify({ firstName, lastName, email }))
+        const response = await authService.getUser(true)
+
+        if (response.status !== 'success' || !response.data) {
+          setError(t('callback.authFailed'))
+          setTimeout(() => router.push('/login?error=session_invalid'), 2000)
+          return
         }
 
-        // Complete the progress bar before redirecting
         setProgress(100)
 
-        // Small delay for visual satisfaction
         setTimeout(() => {
           router.push('/dashboard')
         }, 800)
@@ -212,7 +202,7 @@ function CallbackContent() {
     }
 
     handleCallback()
-  }, [searchParams, router])
+  }, [searchParams, router, t])
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-white via-zinc-50 to-white dark:from-[#030303] dark:via-zinc-950 dark:to-[#030303] overflow-hidden">
