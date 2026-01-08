@@ -11,7 +11,7 @@ import { ViewSwitcher } from './ViewSwitcher'
 import { useChatContext } from '@/contexts/ChatContext'
 import { useSpeechRecognition } from './useSpeechRecognition'
 import { useStreamingChat } from '@/hooks/useStreamingChat'
-import { voiceService } from '@/lib/api/services/voice.service'
+import { ttsCache } from '@/lib/api/services/tts-cache.service'
 import { useVoicePreference } from '@/hooks/queries'
 
 declare global {
@@ -107,7 +107,7 @@ const ChatInterface: React.FC = () => {
 
     setIsSpeaking(true)
     try {
-      const audioArrayBuffer = await voiceService.synthesize(text, voiceData?.value?.voice)
+      const audioArrayBuffer = await ttsCache.synthesize(text, voiceData?.value?.voice)
       const audioBuffer = await audioContextRef.current.decodeAudioData(audioArrayBuffer)
 
       const source = audioContextRef.current.createBufferSource()

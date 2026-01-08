@@ -1,16 +1,28 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { AlertTriangle, Brain, Check, Loader2, MessageSquareX, Sparkles, Trash2, Volume2 } from 'lucide-react'
+import {
+  AlertTriangle,
+  Brain,
+  Check,
+  Loader2,
+  MessageSquareX,
+  Play,
+  Sparkles,
+  Square,
+  Trash2,
+  Volume2,
+} from 'lucide-react'
 import { toast } from 'sonner'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import CinematicGlowToggle from '@/components/ui/cinematic-glow-toggle'
-import { SettingsRow, SettingsSection } from './components'
+import { SettingsRow, SettingsSection, SettingsDropdown, type DropdownOption } from './components'
+import { voiceService } from '@/lib/api/services/voice.service'
 import {
   useAllyBrain,
   useUpdateAllyBrain,
@@ -36,6 +48,13 @@ interface AssistantTabProps {
 const MAX_CHARS = 1000
 const SHOW_COUNTER_THRESHOLD = 900
 
+const VOICE_PREVIEW_TEXT = "Hi! I'm Ally, your AI calendar assistant. How can I help you today?"
+
+const VOICE_DROPDOWN_OPTIONS: DropdownOption[] = VOICE_OPTIONS.map((v) => ({
+  value: v.value,
+  label: `${v.label} — ${v.description}`,
+}))
+
 export const AssistantTab: React.FC<AssistantTabProps> = ({ onDeleteAllConversations, isDeletingConversations }) => {
   const allyBrainToggleId = React.useId()
   const contextualToggleId = React.useId()
@@ -53,6 +72,10 @@ export const AssistantTab: React.FC<AssistantTabProps> = ({ onDeleteAllConversat
   const [voiceEnabled, setVoiceEnabled] = useState(true)
   const [selectedVoice, setSelectedVoice] = useState<TTSVoice>('alloy')
   const [memoryUsage] = useState('~1.2MB of scheduling patterns')
+  const [isPreviewPlaying, setIsPreviewPlaying] = useState(false)
+  const [isPreviewLoading, setIsPreviewLoading] = useState(false)
+  const previewAudioContextRef = useRef<AudioContext | null>(null)
+  const previewSourceRef = useRef<AudioBufferSourceNode | null>(null)
 
   const {
     register,
@@ -126,13 +149,14 @@ export const AssistantTab: React.FC<AssistantTabProps> = ({ onDeleteAllConversat
     )
   }
 
-  const handleVoiceChange = (voice: TTSVoice) => {
-    setSelectedVoice(voice)
+  const handleVoiceChange = (voice: string) => {
+    const typedVoice = voice as TTSVoice
+    setSelectedVoice(typedVoice)
     updateVoicePreference(
-      { enabled: voiceEnabled, voice },
+      { enabled: voiceEnabled, voice: typedVoice },
       {
         onSuccess: () => {
-          toast.success(`Voice changed to ${VOICE_OPTIONS.find((v) => v.value === voice)?.label || voice}`)
+          toast.success(`Voice changed to ${VOICE_OPTIONS.find((v) => v.value === typedVoice)?.label || typedVoice}`)
         },
         onError: () => {
           setSelectedVoice(voiceData?.value?.voice || 'alloy')
@@ -141,6 +165,69 @@ export const AssistantTab: React.FC<AssistantTabProps> = ({ onDeleteAllConversat
       },
     )
   }
+
+  const stopPreview = () => {
+    if (previewSourceRef.current) {
+      try {
+        previewSourceRef.current.stop()
+      } catch {
+        // Already stopped
+      }
+      previewSourceRef.current = null
+    }
+    setIsPreviewPlaying(false)
+  }
+
+  const playVoicePreview = async () => {
+    if (isPreviewPlaying) {
+      stopPreview()
+      return
+    }
+
+    setIsPreviewLoading(true)
+    try {
+      if (!previewAudioContextRef.current || previewAudioContextRef.current.state === 'closed') {
+        previewAudioContextRef.current = new (
+          window.AudioContext ||
+          (window as typeof window & { webkitAudioContext: typeof AudioContext }).webkitAudioContext
+        )()
+      }
+
+      if (previewAudioContextRef.current.state === 'suspended') {
+        await previewAudioContextRef.current.resume()
+      }
+
+      const audioArrayBuffer = await voiceService.synthesize(VOICE_PREVIEW_TEXT, selectedVoice)
+      const audioBuffer = await previewAudioContextRef.current.decodeAudioData(audioArrayBuffer)
+
+      const source = previewAudioContextRef.current.createBufferSource()
+      source.buffer = audioBuffer
+      source.connect(previewAudioContextRef.current.destination)
+      source.onended = () => {
+        setIsPreviewPlaying(false)
+        previewSourceRef.current = null
+      }
+
+      previewSourceRef.current = source
+      setIsPreviewPlaying(true)
+      setIsPreviewLoading(false)
+      source.start()
+    } catch (error) {
+      console.error('Error playing voice preview:', error)
+      toast.error('Failed to play voice preview')
+      setIsPreviewPlaying(false)
+      setIsPreviewLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    return () => {
+      stopPreview()
+      if (previewAudioContextRef.current && previewAudioContextRef.current.state !== 'closed') {
+        previewAudioContextRef.current.close()
+      }
+    }
+  }, [])
 
   const onSubmit = async (data: AllyBrainFormData) => {
     try {
@@ -384,33 +471,38 @@ export const AssistantTab: React.FC<AssistantTabProps> = ({ onDeleteAllConversat
                 className="overflow-hidden"
               >
                 <SettingsSection>
-                  <div className="space-y-3">
-                    <Label className="text-sm font-medium">Select Voice</Label>
-                    <div className="grid gap-2">
-                      {VOICE_OPTIONS.map((option) => (
-                        <button
-                          key={option.value}
+                  <SettingsRow
+                    id="voice-selection"
+                    title="Voice"
+                    tooltip="Choose which voice Ally uses for audio responses"
+                    control={
+                      <div className="flex items-center gap-2">
+                        <SettingsDropdown
+                          value={selectedVoice}
+                          options={VOICE_DROPDOWN_OPTIONS}
+                          onChange={handleVoiceChange}
+                          className="min-w-[200px]"
+                        />
+                        <Button
                           type="button"
-                          onClick={() => handleVoiceChange(option.value)}
-                          disabled={isUpdatingVoice}
-                          className={`flex items-center justify-between p-3 rounded-lg border transition-all text-left
-                            ${
-                              selectedVoice === option.value
-                                ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                                : 'border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600'
-                            }
-                            ${isUpdatingVoice ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
-                          `}
+                          variant="outline"
+                          size="icon"
+                          onClick={playVoicePreview}
+                          disabled={isPreviewLoading || isUpdatingVoice}
+                          className="flex-shrink-0"
+                          title={isPreviewPlaying ? 'Stop preview' : 'Preview voice'}
                         >
-                          <div>
-                            <span className="font-medium text-sm text-zinc-900 dark:text-zinc-100">{option.label}</span>
-                            <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">{option.description}</p>
-                          </div>
-                          {selectedVoice === option.value && <Check className="w-4 h-4 text-blue-500" />}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
+                          {isPreviewLoading ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          ) : isPreviewPlaying ? (
+                            <Square className="w-4 h-4" />
+                          ) : (
+                            <Play className="w-4 h-4" />
+                          )}
+                        </Button>
+                      </div>
+                    }
+                  />
                 </SettingsSection>
               </motion.div>
             )}
