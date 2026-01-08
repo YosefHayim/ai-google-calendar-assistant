@@ -24,7 +24,7 @@ type ChartType = (typeof CHART_TYPES)[number]
 const STORAGE_KEY = 'analytics_chart_type_time-allocation'
 
 interface ChartTypeConfig {
-  icon: React.ElementType
+  icon: React.ComponentType<{ size?: number }>
   label: string
 }
 

@@ -6,7 +6,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useLanguage } from '@/contexts/LanguageContext'
 
-const ALL_CHART_ICONS: Record<string, React.ElementType> = {
+const ALL_CHART_ICONS: Record<string, React.ComponentType<{ size?: number }>> = {
   bar: BarChart3,
   line: LineChart,
   area: AreaChart,
