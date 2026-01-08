@@ -34,6 +34,7 @@ export const COMMANDS = {
   CHANGEEMAIL: "/changeemail",
   LANGUAGE: "/language",
   BRAIN: "/brain",
+  PROFILE: "/profile",
 
   // Response Format
   ASTEXT: "/astext",

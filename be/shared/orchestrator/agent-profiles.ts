@@ -232,6 +232,38 @@ export const AGENT_PROFILES: Record<string, AgentProfile> = {
     },
     version: "v1",
   },
+
+  "ally-claude": {
+    id: "ally-claude",
+    displayName: "Ally Claude",
+    tagline: "Anthropic-Powered",
+    description:
+      "Powered by Anthropic's Claude. Known for nuanced understanding, helpful responses, and strong reasoning capabilities.",
+    tier: "pro",
+    capabilities: [
+      "calendar_read",
+      "calendar_write",
+      "gap_analysis",
+      "smart_scheduling",
+      "multi_calendar",
+      "voice",
+    ],
+    modelConfig: {
+      provider: "anthropic",
+      tier: "balanced",
+      supportsRealtime: false,
+    },
+    voice: {
+      style: "nova",
+      speed: 1.0,
+    },
+    personality: {
+      conciseness: 0.6,
+      casualness: 0.4,
+      notes: "Thoughtful and precise. Excellent at understanding nuanced requests and providing clear explanations.",
+    },
+    version: "v1",
+  },
 }
 
 /** Default agent for new users */

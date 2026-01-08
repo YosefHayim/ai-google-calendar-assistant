@@ -383,6 +383,10 @@ export const ENDPOINTS = {
   VOICE_LIVEKIT_TOKEN: '/api/voice/livekit/token',
 
   VOICE_AGENT_PROFILES: '/api/voice/agents/profiles',
+
+  AGENT_PROFILES: '/api/users/agent-profiles',
+  AGENT_PROFILES_BY_ID: (id: string) => `/api/users/agent-profiles/${id}`,
+  AGENT_PROFILES_SELECTED: '/api/users/agent-profiles/selected',
 } as const
 
 export type EndpointsType = typeof ENDPOINTS

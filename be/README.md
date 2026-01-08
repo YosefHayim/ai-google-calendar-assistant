@@ -60,8 +60,11 @@ This service exposes a backend (Express + TypeScript) that:
 - Natural language processing for event commands
 - Session-based user context management
 - Background agent processing
-- Command support (/start, /exit)
+- Command support (/start, /exit, /profile, /brain, and more)
 - Multi-user support with authentication
+- Agent profile selection (choose between Ally Lite, Pro, Flash, etc.)
+- Custom AI personality instructions via /brain command
+- Multi-language support (English, Hebrew, German, French, Arabic, Russian)
 
 ### Architecture & Infrastructure
 - Clean architecture with layered design
@@ -91,7 +94,7 @@ This service exposes a backend (Express + TypeScript) that:
 - Runtime: Node.js (CommonJS)
 - Language: TypeScript (via `ts-node`)
 - Web framework: Express
-- AI: `@openai/agents`, `@openai/agents-core`, `@openai/agents-realtime`
+- AI: `@openai/agents`, `@openai/agents-core`, `@openai/agents-realtime`, Google Gemini, Anthropic Claude
 - Database/Auth: Supabase (`@supabase/supabase-js`, `supabase`)
 - Calendar: Google Calendar API (`googleapis`)
 - Bot: `grammy`, `@grammyjs/*`

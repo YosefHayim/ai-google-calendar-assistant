@@ -47,6 +47,7 @@ function parseSSELine(line: string): SSEEvent | null {
 export interface StreamChatOptions {
   message: string
   conversationId?: string
+  profileId?: string
   callbacks: StreamCallbacks
   signal?: AbortSignal
 }
@@ -59,17 +60,22 @@ export interface StreamResult {
 }
 
 export async function streamChatMessage(options: StreamChatOptions): Promise<StreamResult> {
-  const { message, conversationId, callbacks, signal } = options
+  const { message, conversationId, profileId, callbacks, signal } = options
 
   const url = conversationId
     ? `${ENV.API_BASE_URL}/api/chat/conversations/${conversationId}/messages/stream`
     : `${ENV.API_BASE_URL}/api/chat/stream`
 
+  const body: { message: string; profileId?: string } = { message }
+  if (profileId) {
+    body.profileId = profileId
+  }
+
   try {
     const response = await fetch(url, {
       method: 'POST',
       headers: getAuthHeaders(),
-      body: JSON.stringify({ message }),
+      body: JSON.stringify(body),
       signal,
     })
 

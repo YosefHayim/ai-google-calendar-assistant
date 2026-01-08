@@ -9,6 +9,7 @@ import {
 } from '@/services/chatService'
 import { Message } from '@/types'
 import { useConversations, useConversation, useDeleteConversationById } from '@/hooks/queries'
+import { useSelectedAgentProfile } from '@/hooks/queries/agent-profiles'
 import { queryKeys } from '@/lib/query'
 
 interface ChatContextValue {
@@ -23,6 +24,9 @@ interface ChatContextValue {
   isSearching: boolean
 
   streamingTitleConversationId: string | null
+
+  selectedProfileId: string | null
+  isLoadingProfile: boolean
 
   selectConversation: (conversation: ConversationListItem) => void
   startNewConversation: () => void
@@ -65,6 +69,8 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   })
 
   const { deleteConversationAsync } = useDeleteConversationById()
+
+  const { profileId: selectedProfileId, isLoading: isLoadingProfile } = useSelectedAgentProfile()
 
   const prevFetchedRef = useRef<ConversationListItem[]>([])
   // Track if we just created this conversation locally (to avoid overwriting messages)
@@ -199,6 +205,8 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         setSearchQuery,
         isSearching,
         streamingTitleConversationId,
+        selectedProfileId,
+        isLoadingProfile,
         selectConversation,
         startNewConversation,
         refreshConversations,

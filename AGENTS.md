@@ -220,6 +220,7 @@ be/shared/orchestrator/
 | `ally-flash` | Ally Flash | pro | Yes | Lightning fast responses |
 | `ally-executive` | Ally Executive | enterprise | Yes | Premium reasoning, executive assistance |
 | `ally-gemini` | Ally Gemini | pro | No | Google Gemini powered |
+| `ally-claude` | Ally Claude | pro | No | Anthropic Claude powered |
 
 ### Usage
 
@@ -242,8 +243,16 @@ const { data } = useAgentProfiles({ tier: 'pro', voiceOnly: true })
 ```
 
 **API Endpoints:**
-- `GET /api/voice/agents/profiles` - List available profiles
+- `GET /api/users/agent-profiles` - List available profiles
+- `GET /api/users/agent-profiles/selected` - Get user's selected profile
+- `PUT /api/users/agent-profiles/selected` - Set user's selected profile
 - `POST /api/voice/livekit/token` - Pass `{ profileId }` to select agent
+
+**Telegram Bot:**
+```
+/profile - Open profile selector with inline keyboard
+```
+Users can switch between profiles directly in Telegram. The selected profile affects response style and personality.
 
 ### Model Registry
 

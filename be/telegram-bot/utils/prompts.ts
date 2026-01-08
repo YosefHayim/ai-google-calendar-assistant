@@ -30,6 +30,7 @@ export const buildAgentPrompt = (
 type BuildPromptOptions = {
   allyBrain?: AllyBrainPreference | null;
   languageCode?: string;
+  personalityNotes?: string;
 };
 
 export const buildAgentPromptWithContext = (
@@ -54,6 +55,10 @@ export const buildAgentPromptWithContext = (
     parts.push(
       `IMPORTANT: User's preferred language is "${options.languageCode}". You MUST respond in this language.`
     );
+  }
+
+  if (options?.personalityNotes) {
+    parts.push(`Response style: ${options.personalityNotes}`);
   }
 
   if (conversationContext) {

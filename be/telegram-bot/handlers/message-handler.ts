@@ -40,6 +40,7 @@ import {
   handleBrainInstructionsInput,
   handleAsTextCommand,
   handleAsVoiceCommand,
+  handleProfileCommand,
 } from "../utils/commands";
 import {
   handleAgentRequest,
@@ -121,6 +122,7 @@ const SIMPLE_COMMANDS: Record<string, CommandHandler> = {
   [COMMANDS.LANGUAGE]: handleLanguageCommand,
   [COMMANDS.ABOUTME]: handleAboutMeCommand,
   [COMMANDS.BRAIN]: handleBrainCommand,
+  [COMMANDS.PROFILE]: handleProfileCommand,
   [COMMANDS.ASTEXT]: handleAsTextCommand,
   [COMMANDS.ASVOICE]: handleAsVoiceCommand,
 };
