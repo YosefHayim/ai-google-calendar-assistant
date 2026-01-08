@@ -1,15 +1,48 @@
+/**
+ * @fileoverview Core types and utilities shared across all modalities (chat, voice, telegram).
+ * This module provides the foundational interfaces and helper functions used throughout the backend.
+ */
+
+/**
+ * Context passed to all tool handlers. Contains the authenticated user's email.
+ * Used by event-handlers, direct-handlers, and gap-handlers.
+ * @example
+ * const ctx: HandlerContext = { email: "user@example.com" }
+ * await getEventHandler(params, ctx)
+ */
 export interface HandlerContext {
   email: string
 }
 
+/**
+ * Context for OpenAI Agents SDK tools. Passed via RunContext<AgentContext>.
+ * Extracted using getEmailFromContext() in adapters.
+ * @example
+ * const agent = new Agent<AgentContext>({ ... })
+ * runner.run(agent, { context: { email: userEmail } })
+ */
 export interface AgentContext {
   email: string
 }
 
+/**
+ * Controls event data projection for different modalities.
+ * - VOICE_LITE: Minimal fields for voice responses (summary, start, end)
+ * - CHAT_STANDARD: Standard fields for chat UI (includes description, location)
+ * - FULL: All fields for API responses
+ */
 export type ProjectionMode = "VOICE_LITE" | "CHAT_STANDARD" | "FULL"
 
+/**
+ * Interaction modality for cross-modal context tracking.
+ * Stored in Redis to enable context continuity across channels.
+ */
 export type Modality = "chat" | "voice" | "telegram" | "api"
 
+/**
+ * Represents a calendar event that conflicts with a proposed time slot.
+ * Returned by checkConflictsHandler and checkEventConflicts.
+ */
 export interface ConflictingEvent {
   id: string
   summary: string
@@ -19,12 +52,25 @@ export interface ConflictingEvent {
   calendarName: string
 }
 
+/**
+ * Result of conflict checking operations.
+ * Used by pre_create_validation tool and conflict checking utilities.
+ */
 export interface ConflictCheckResult {
   hasConflicts: boolean
   conflictingEvents: ConflictingEvent[]
   error?: string
 }
 
+/**
+ * Converts any error type to a user-friendly string message.
+ * Handles Error instances, objects with message property, and unknown types.
+ * Used in tool errorFunction callbacks and error responses.
+ * @param error - Any thrown error or unknown value
+ * @returns Human-readable error message string
+ * @example
+ * errorFunction: (_, error) => `tool_name: ${stringifyError(error)}`
+ */
 export function stringifyError(error: unknown): string {
   if (error instanceof Error) {
     return error.message
@@ -45,6 +91,15 @@ export function stringifyError(error: unknown): string {
   return String(error)
 }
 
+/**
+ * Categorizes errors into auth, database, or other types.
+ * Used to provide appropriate user-facing error messages.
+ * @param error - Any thrown error or unknown value
+ * @returns Object with error type and user-friendly message
+ * @example
+ * const { type, message } = categorizeError(error)
+ * if (type === "auth") return { error: "Please re-authenticate" }
+ */
 export function categorizeError(error: unknown): {
   type: "auth" | "database" | "other"
   message: string

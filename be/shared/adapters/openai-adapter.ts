@@ -37,7 +37,10 @@ import { type AgentContext, stringifyError } from "@/shared/types"
 
 export type { AgentContext }
 
-function getEmailFromContext(
+/**
+ * Extract email from run context - throws if not available
+ */
+export function getEmailFromContext(
   runContext: RunContext<AgentContext> | undefined,
   toolName: string,
 ): string {

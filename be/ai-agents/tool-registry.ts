@@ -25,27 +25,12 @@ import {
 
 import { EXECUTION_TOOLS } from "./tool-execution";
 import { TOOLS_DESCRIPTION } from "./tool-descriptions";
-import { tool, type RunContext } from "@openai/agents";
+import { tool } from "@openai/agents";
 import { z } from "zod";
 import { type AgentContext, stringifyError } from "@/shared/types";
+import { getEmailFromContext } from "@/shared/adapters/openai-adapter";
 
 export type { AgentContext };
-
-/**
- * Extract email from run context - throws if not available
- */
-function getEmailFromContext(
-  runContext: RunContext<AgentContext> | undefined,
-  toolName: string,
-): string {
-  const email = runContext?.context?.email;
-  if (!email) {
-    throw new Error(
-      `${toolName}: User email not found in context. Ensure the user is authenticated.`,
-    );
-  }
-  return email;
-}
 
 export const AGENT_TOOLS = {
   generate_google_auth_url: tool({
