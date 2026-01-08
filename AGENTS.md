@@ -5,6 +5,7 @@
 ## Overview
 
 AI-powered Google Calendar Assistant with **multi-modal architecture**. Supports three interaction modalities:
+
 - **Chat** (web) - OpenAI Agents SDK via streaming
 - **Voice** (real-time) - LiveKit Agents SDK + OpenAI Realtime API
 - **Telegram** - OpenAI Agents SDK via Grammy bot
@@ -140,6 +141,7 @@ be/shared/
 ```
 
 **Handler Pattern:**
+
 ```typescript
 // Pure business logic - no framework dependencies
 export async function getEventHandler(
@@ -156,23 +158,24 @@ export async function getEventHandler(
 
 Redis-backed state that persists across modalities:
 
-| Key Pattern | Purpose | TTL |
-|-------------|---------|-----|
-| `ctx:{userId}:last_event` | Last referenced event | 24h |
-| `ctx:{userId}:last_calendar` | Last referenced calendar | 24h |
-| `ctx:{userId}:conversation` | Pending actions, topic | 2h |
-| `ctx:{userId}:modality` | Current modality (chat/voice/telegram) | 2h |
+| Key Pattern                  | Purpose                                | TTL |
+| ---------------------------- | -------------------------------------- | --- |
+| `ctx:{userId}:last_event`    | Last referenced event                  | 24h |
+| `ctx:{userId}:last_calendar` | Last referenced calendar               | 24h |
+| `ctx:{userId}:conversation`  | Pending actions, topic                 | 2h  |
+| `ctx:{userId}:modality`      | Current modality (chat/voice/telegram) | 2h  |
 
 **Usage:**
+
 ```typescript
-import { unifiedContextStore } from "@/shared/context"
+import { unifiedContextStore } from "@/shared/context";
 
 // Track modality at session start
-await unifiedContextStore.setModality(userId, "voice")
-await unifiedContextStore.touch(userId)  // Refresh TTLs
+await unifiedContextStore.setModality(userId, "voice");
+await unifiedContextStore.touch(userId); // Refresh TTLs
 
 // Entity resolution for pronouns
-const lastEvent = await unifiedContextStore.getLastEvent(userId)
+const lastEvent = await unifiedContextStore.getLastEvent(userId);
 ```
 
 ### LiveKit Voice Agent
@@ -180,11 +183,13 @@ const lastEvent = await unifiedContextStore.getLastEvent(userId)
 The voice agent runs as a separate process using LiveKit Agents SDK:
 
 **Start voice agent:**
+
 ```bash
 cd be && npx ts-node voice-sidecar/agent.ts
 ```
 
 **Environment variables required:**
+
 ```env
 LIVEKIT_API_KEY=your_api_key
 LIVEKIT_API_SECRET=your_api_secret
@@ -194,9 +199,10 @@ LIVEKIT_WS_URL=wss://your-project.livekit.cloud
 **Token endpoint:** `POST /api/voice/livekit/token`
 
 **Frontend integration:**
+
 ```tsx
-import { useLiveKitVoice } from '@/hooks/useLiveKitVoice'
-import { LiveKitVoiceButton } from '@/components/ui/livekit-voice-button'
+import { useLiveKitVoice } from "@/hooks/useLiveKitVoice";
+import { LiveKitVoiceButton } from "@/components/ui/livekit-voice-button";
 ```
 
 ## Branded Agent Orchestrator (v1)
@@ -213,58 +219,63 @@ be/shared/orchestrator/
 └── index.ts                # Barrel export
 ```
 
-| Profile ID | Display Name | Tier | Realtime | Description |
-|------------|--------------|------|----------|-------------|
-| `ally-lite` | Ally Lite | free | No | Quick & simple for basic tasks |
-| `ally-pro` | Ally Pro | pro | Yes | Balanced intelligence, multi-calendar |
-| `ally-flash` | Ally Flash | pro | Yes | Lightning fast responses |
-| `ally-executive` | Ally Executive | enterprise | Yes | Premium reasoning, executive assistance |
-| `ally-gemini` | Ally Gemini | pro | No | Google Gemini powered |
-| `ally-claude` | Ally Claude | pro | No | Anthropic Claude powered |
+| Profile ID       | Display Name   | Tier       | Realtime | Description                             |
+| ---------------- | -------------- | ---------- | -------- | --------------------------------------- |
+| `ally-lite`      | Ally Lite      | free       | No       | Quick & simple for basic tasks          |
+| `ally-pro`       | Ally Pro       | pro        | Yes      | Balanced intelligence, multi-calendar   |
+| `ally-flash`     | Ally Flash     | pro        | Yes      | Lightning fast responses                |
+| `ally-executive` | Ally Executive | enterprise | Yes      | Premium reasoning, executive assistance |
+| `ally-gemini`    | Ally Gemini    | pro        | No       | Google Gemini powered                   |
+| `ally-claude`    | Ally Claude    | pro        | No       | Anthropic Claude powered                |
 
 ### Usage
 
 **Backend - Voice Agent:**
+
 ```typescript
-import { createVoiceAgent } from "@/shared/orchestrator"
+import { createVoiceAgent } from "@/shared/orchestrator";
 
 const { agent, realtimeModel, profile } = createVoiceAgent({
-  profileId: "ally-pro",  // User's selected profile
+  profileId: "ally-pro", // User's selected profile
   tools,
-})
+});
 ```
 
 **Frontend - Profile Selection:**
-```tsx
-import { useAgentProfiles } from '@/hooks/useAgentProfiles'
 
-const { data } = useAgentProfiles({ tier: 'pro', voiceOnly: true })
+```tsx
+import { useAgentProfiles } from "@/hooks/useAgentProfiles";
+
+const { data } = useAgentProfiles({ tier: "pro", voiceOnly: true });
 // data.profiles = [{ id, displayName, tagline, ... }]
 ```
 
 **API Endpoints:**
+
 - `GET /api/users/agent-profiles` - List available profiles
 - `GET /api/users/agent-profiles/selected` - Get user's selected profile
 - `PUT /api/users/agent-profiles/selected` - Set user's selected profile
 - `POST /api/voice/livekit/token` - Pass `{ profileId }` to select agent
 
 **Telegram Bot:**
+
 ```
 /profile - Open profile selector with inline keyboard
 ```
+
 Users can switch between profiles directly in Telegram. The selected profile affects response style and personality.
 
 ### Model Registry
 
 Profiles map to actual models via `model-registry.ts`:
 
-| Provider | Tier | Model |
-|----------|------|-------|
-| OpenAI | fast | gpt-4.1-nano |
-| OpenAI | balanced | gpt-4.1-mini |
-| OpenAI | powerful | gpt-5-mini |
-| Google | balanced | gemini-2.0-flash |
-| Anthropic | balanced | claude-sonnet-4 |
+| Provider  | Tier     | Model            |
+| --------- | -------- | ---------------- |
+| OpenAI    | fast     | gpt-4.1-nano     |
+| OpenAI    | balanced | gpt-4.1-mini     |
+| OpenAI    | powerful | gpt-5-mini       |
+| Google    | balanced | gemini-2.0-flash |
+| Anthropic | balanced | claude-sonnet-4  |
 
 ## Notes
 

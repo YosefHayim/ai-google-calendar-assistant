@@ -1,22 +1,84 @@
-FROM node:latest
+# LiveKit Voice Agent Dockerfile
+# Optimized for deploying to LiveKit Cloud
+# See: https://docs.livekit.io/deploy/agents/cloud/builds
+# syntax=docker/dockerfile:1
 
-# Create work directory
+# =============================================================================
+# Base Stage - Common dependencies
+# =============================================================================
+ARG BUN_VERSION=1.2
+FROM oven/bun:${BUN_VERSION}-slim AS base
+
+# Install required system packages
+# ca-certificates: enables TLS/SSL for secure API calls
+RUN apt-get update -qq && \
+    apt-get install --no-install-recommends -y ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
-# Copy only package manager files first (better caching)
-COPY package.json pnpm-lock.yaml* ./
+# =============================================================================
+# Dependencies Stage - Install all dependencies
+# =============================================================================
+FROM base AS deps
 
-# Install dependencies
-RUN corepack enable && pnpm install --frozen-lockfile
+# Copy package files from the monorepo root (be/)
+COPY package.json bun.lock* ./
 
-# Copy the rest of the project
-COPY . .
+# Install all dependencies
+RUN bun install --frozen-lockfile
 
-# Set environment
+# =============================================================================
+# Build Stage - Prepare production files
+# =============================================================================
+FROM base AS builder
+
+WORKDIR /app
+
+# Copy node_modules from deps stage
+COPY --from=deps /app/node_modules ./node_modules
+
+# Copy all source files needed for the voice agent
+COPY package.json bun.lock* tsconfig.json ./
+COPY voice-sidecar ./voice-sidecar
+COPY shared ./shared
+COPY utils ./utils
+COPY config ./config
+COPY ai-agents ./ai-agents
+
+# =============================================================================
+# Production Stage - Minimal runtime image
+# =============================================================================
+FROM base AS production
+
+WORKDIR /app
+
+# Create non-privileged user for security
+ARG UID=10001
+RUN adduser \
+    --disabled-password \
+    --gecos "" \
+    --home "/app" \
+    --shell "/sbin/nologin" \
+    --uid "${UID}" \
+    appuser
+
+# Copy built application from builder
+COPY --from=builder --chown=appuser:appuser /app/node_modules ./node_modules
+COPY --from=builder --chown=appuser:appuser /app/package.json ./
+COPY --from=builder --chown=appuser:appuser /app/tsconfig.json ./
+COPY --from=builder --chown=appuser:appuser /app/voice-sidecar ./voice-sidecar
+COPY --from=builder --chown=appuser:appuser /app/shared ./shared
+COPY --from=builder --chown=appuser:appuser /app/utils ./utils
+COPY --from=builder --chown=appuser:appuser /app/config ./config
+COPY --from=builder --chown=appuser:appuser /app/ai-agents ./ai-agents
+
+# Switch to non-root user
+USER appuser
+
+# Set production environment
 ENV NODE_ENV=production
 
-# Expose port for App Runner / local docker run
-EXPOSE 8080
-
-# Start the app
-CMD ["pnpm", "start"]
+# The LiveKit Agents SDK expects the agent to be run with the "start" command
+# which connects to LiveKit Cloud and waits for jobs
+CMD ["bun", "run", "voice-sidecar/agent.ts"]

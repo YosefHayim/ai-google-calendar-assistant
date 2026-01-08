@@ -1,0 +1,5 @@
+[project]
+subdomain = "ai-google-calendar-project-mljh2s1n"
+
+[agent]
+name = "calendar-voice-assistant"
