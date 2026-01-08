@@ -362,6 +362,18 @@ export const ar = {
   "botMenu.exit": "إنهاء المحادثة",
   "botMenu.language": "تغيير اللغة",
   "botMenu.aboutme": "ماذا تعرف عني؟",
+  "botMenu.astext": "كرر الأخير كنص",
+  "botMenu.asvoice": "كرر الأخير كصوت",
+
+  "commands.astext.header": "الرد الأخير كنص",
+  "commands.astext.noLastResponse": "لا توجد استجابة سابقة لعرضها. أرسل لي رسالة أولاً!",
+  "commands.astext.alreadyText": "تم إرسال الرد الأخير كنص بالفعل.",
+
+  "commands.asvoice.header": "الرد الأخير كصوت",
+  "commands.asvoice.noLastResponse": "لا توجد استجابة سابقة للتكرار. أرسل لي رسالة أولاً!",
+  "commands.asvoice.alreadyVoice": "تم إرسال الرد الأخير كرسالة صوتية بالفعل.",
+  "commands.asvoice.generating": "جارٍ إنشاء الرسالة الصوتية...",
+  "commands.asvoice.failed": "فشل في إنشاء الرسالة الصوتية. إليك النص بدلاً من ذلك:",
 } as const;
 
 export type TranslationKey = keyof typeof ar;

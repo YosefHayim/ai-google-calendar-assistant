@@ -34,6 +34,10 @@ export const COMMANDS = {
   CHANGEEMAIL: "/changeemail",
   LANGUAGE: "/language",
   BRAIN: "/brain",
+
+  // Response Format
+  ASTEXT: "/astext",
+  ASVOICE: "/asvoice",
 } as const;
 
 export const CONFIRM_RESPONSES = ["yes", "y", "confirm"] as const;

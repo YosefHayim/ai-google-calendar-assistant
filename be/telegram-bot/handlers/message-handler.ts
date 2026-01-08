@@ -38,6 +38,8 @@ import {
   handleAboutMeCommand,
   handleBrainCommand,
   handleBrainInstructionsInput,
+  handleAsTextCommand,
+  handleAsVoiceCommand,
 } from "../utils/commands";
 import {
   handleAgentRequest,
@@ -119,6 +121,8 @@ const SIMPLE_COMMANDS: Record<string, CommandHandler> = {
   [COMMANDS.LANGUAGE]: handleLanguageCommand,
   [COMMANDS.ABOUTME]: handleAboutMeCommand,
   [COMMANDS.BRAIN]: handleBrainCommand,
+  [COMMANDS.ASTEXT]: handleAsTextCommand,
+  [COMMANDS.ASVOICE]: handleAsVoiceCommand,
 };
 
 type AgentCommand = {
@@ -244,11 +248,13 @@ const handleAgentRequestWithVoice = async (
 
   const originalReply = ctx.reply.bind(ctx);
 
-  if (respondWithVoice) {
-    ctx.reply = async (
-      textResponse: string,
-      other?: Parameters<typeof originalReply>[1],
-    ) => {
+  ctx.reply = async (
+    textResponse: string,
+    other?: Parameters<typeof originalReply>[1],
+  ) => {
+    let sentAsVoice = false;
+
+    if (respondWithVoice) {
       const voicePref = await getVoicePreferenceForTelegram(telegramUserId);
 
       if (voicePref.enabled) {
@@ -263,16 +269,30 @@ const handleAgentRequestWithVoice = async (
             await ctx.replyWithVoice(
               new InputFile(ttsResult.audioBuffer, "response.ogg"),
             );
+            sentAsVoice = true;
+
+            ctx.session.lastAgentResponse = {
+              text: textResponse,
+              sentAsVoice: true,
+              timestamp: Date.now(),
+            };
+
             return {} as ReturnType<typeof originalReply>;
           } catch (voiceError) {
             logger.error(`TG Voice: Failed to send voice: ${voiceError}`);
           }
         }
       }
+    }
 
-      return originalReply(textResponse, other);
+    ctx.session.lastAgentResponse = {
+      text: textResponse,
+      sentAsVoice,
+      timestamp: Date.now(),
     };
-  }
+
+    return originalReply(textResponse, other);
+  };
 
   await handleAgentRequest(ctx, text);
 

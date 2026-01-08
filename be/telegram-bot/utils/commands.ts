@@ -1,7 +1,7 @@
 import { SUPPORTED_LOCALES, createTranslator, getTranslatorFromLanguageCode } from "../i18n";
 
 import type { GlobalContext } from "../init-bot";
-import { InlineKeyboard } from "grammy";
+import { InlineKeyboard, InputFile } from "grammy";
 import { ORCHESTRATOR_AGENT } from "@/ai-agents";
 import { ResponseBuilder } from "../response-system";
 import { SupabaseAgentSession } from "@/ai-agents/sessions";
@@ -10,6 +10,8 @@ import { gatherUserKnowledge } from "./user-knowledge";
 import { logger } from "@/utils/logger";
 import { resetSession } from "./session";
 import { telegramConversation } from "@/utils/conversation/TelegramConversationAdapter";
+import { generateSpeechForTelegram } from "@/utils/ai/text-to-speech";
+import { getVoicePreferenceForTelegram } from "./ally-brain";
 
 const getUserIdFromTelegram = (telegramUserId: number) => telegramConversation.getUserIdFromTelegram(telegramUserId);
 
@@ -858,5 +860,74 @@ export const handleBrainClear = async (ctx: GlobalContext): Promise<void> => {
   } catch (error) {
     logger.error(`Telegram Bot: Failed to clear brain: ${error}`);
     await ctx.answerCallbackQuery(t("commands.brain.error"));
+  }
+};
+
+export const handleAsTextCommand = async (ctx: GlobalContext): Promise<void> => {
+  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
+
+  const lastResponse = ctx.session.lastAgentResponse;
+
+  if (!lastResponse) {
+    const response = ResponseBuilder.telegram()
+      .direction(direction)
+      .header("📝", t("commands.astext.header"))
+      .text(t("commands.astext.noLastResponse"))
+      .build();
+    await ctx.reply(response.content, { parse_mode: "HTML" });
+    return;
+  }
+
+  const response = ResponseBuilder.telegram()
+    .direction(direction)
+    .header("📝", t("commands.astext.header"))
+    .text(lastResponse.text)
+    .build();
+  await ctx.reply(response.content, { parse_mode: "HTML" });
+};
+
+export const handleAsVoiceCommand = async (ctx: GlobalContext): Promise<void> => {
+  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
+  const telegramUserId = ctx.from?.id ?? 0;
+
+  const lastResponse = ctx.session.lastAgentResponse;
+
+  if (!lastResponse) {
+    const response = ResponseBuilder.telegram()
+      .direction(direction)
+      .header("🔊", t("commands.asvoice.header"))
+      .text(t("commands.asvoice.noLastResponse"))
+      .build();
+    await ctx.reply(response.content, { parse_mode: "HTML" });
+    return;
+  }
+
+  try {
+    const voicePref = await getVoicePreferenceForTelegram(telegramUserId);
+    const cleanText = lastResponse.text.replace(/<[^>]*>/g, "");
+    const ttsResult = await generateSpeechForTelegram(cleanText, voicePref.voice);
+
+    if (ttsResult.success && ttsResult.audioBuffer) {
+      await ctx.replyWithVoice(new InputFile(ttsResult.audioBuffer, "response.ogg"));
+    } else {
+      const response = ResponseBuilder.telegram()
+        .direction(direction)
+        .header("🔊", t("commands.asvoice.header"))
+        .text(t("commands.asvoice.failed"))
+        .spacing()
+        .text(lastResponse.text)
+        .build();
+      await ctx.reply(response.content, { parse_mode: "HTML" });
+    }
+  } catch (error) {
+    logger.error(`Telegram Bot: Failed to generate voice for /asvoice: ${error}`);
+    const response = ResponseBuilder.telegram()
+      .direction(direction)
+      .header("🔊", t("commands.asvoice.header"))
+      .text(t("commands.asvoice.failed"))
+      .spacing()
+      .text(lastResponse.text)
+      .build();
+    await ctx.reply(response.content, { parse_mode: "HTML" });
   }
 };

@@ -35,8 +35,10 @@ export const eventRemindersSchema = z.object({
   overrides: z
     .array(eventReminderSchema)
     .max(5, "Maximum 5 reminder overrides allowed")
-    .optional()
-    .describe("Custom reminders. Only used when useDefault is false."),
+    .default([])
+    .describe(
+      "Custom reminders array. Required field - use empty array [] when useDefault is true, or provide up to 5 reminder objects when useDefault is false.",
+    ),
 });
 
 const requiredString = (description: string, message = "Required.") =>
