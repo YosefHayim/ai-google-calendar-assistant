@@ -1,4 +1,4 @@
-import type { Request, Response } from "express"
+import type { Request, Response } from "express";
 import {
   endSSEStream,
   setupSSEHeaders,
@@ -10,30 +10,21 @@ import {
   writeTitleGenerated,
   writeToolComplete,
   writeToolStart,
-} from "@/utils/sse"
-import { generateConversationTitle, summarizeMessages } from "@/telegram-bot/utils/summarize"
-import { getWebRelevantContext, storeWebEmbeddingAsync } from "@/utils/web-embeddings"
+} from "@/utils/sse";
+import { generateConversationTitle, summarizeMessages } from "@/telegram-bot/utils/summarize";
+import { getWebRelevantContext, storeWebEmbeddingAsync } from "@/utils/web-embeddings";
 
-import type { AgentContext } from "@/ai-agents/tool-registry"
-import { ORCHESTRATOR_AGENT } from "@/ai-agents"
-import { STATUS_RESPONSE } from "@/config"
-import { createAgentSession } from "@/ai-agents/sessions"
-import { getAllyBrainPreference } from "@/controllers/user-preferences-controller"
-import {
-  run,
-  type RunRawModelStreamEvent,
-  type RunAgentUpdatedStreamEvent,
-  type RunItemStreamEvent,
-} from "@openai/agents"
-import { sendR } from "@/utils/http"
-import { webConversation } from "@/utils/conversation/WebConversationAdapter"
-import { unifiedContextStore } from "@/shared/context"
-import {
-  createTextAgent,
-  runTextAgent,
-  type TextAgentConfig,
-} from "@/shared/orchestrator"
-import { getAgentProfile, DEFAULT_AGENT_PROFILE_ID } from "@/shared/orchestrator"
+import type { AgentContext } from "@/ai-agents/tool-registry";
+import { ORCHESTRATOR_AGENT } from "@/ai-agents";
+import { STATUS_RESPONSE } from "@/config";
+import { createAgentSession } from "@/ai-agents/sessions";
+import { getAllyBrainPreference } from "@/controllers/user-preferences-controller";
+import { run, type RunRawModelStreamEvent, type RunAgentUpdatedStreamEvent, type RunItemStreamEvent } from "@openai/agents";
+import { sendR } from "@/utils/http";
+import { webConversation } from "@/utils/conversation/WebConversationAdapter";
+import { unifiedContextStore } from "@/shared/context";
+import { createTextAgent, runTextAgent, type TextAgentConfig } from "@/shared/orchestrator";
+import { getAgentProfile, DEFAULT_AGENT_PROFILE_ID } from "@/shared/orchestrator";
 
 const EMBEDDING_THRESHOLD = 0.75;
 const EMBEDDING_LIMIT = 3;
@@ -82,15 +73,9 @@ async function buildChatPromptWithContext(params: PromptParams): Promise<string>
   return parts.join("\n");
 }
 
-async function handleOpenAIStreaming(
-  res: Response,
-  userId: string,
-  userEmail: string,
-  conversationId: string,
-  fullPrompt: string
-): Promise<string> {
-  let fullResponse = ""
-  let currentAgent = ORCHESTRATOR_AGENT.name
+async function handleOpenAIStreaming(res: Response, userId: string, userEmail: string, conversationId: string, fullPrompt: string): Promise<string> {
+  let fullResponse = "";
+  let currentAgent = ORCHESTRATOR_AGENT.name;
 
   const session = createAgentSession({
     userId,
@@ -109,8 +94,8 @@ async function handleOpenAIStreaming(
     if (res.writableEnded) break;
 
     if (event.type === "raw_model_stream_event") {
-      const rawEvent = event as RunRawModelStreamEvent
-      const data = rawEvent.data
+      const rawEvent = event as RunRawModelStreamEvent;
+      const data = rawEvent.data;
       if (
         "type" in data &&
         data.type === "model" &&
@@ -122,23 +107,23 @@ async function handleOpenAIStreaming(
         "delta" in data.event &&
         typeof data.event.delta === "string"
       ) {
-        fullResponse += data.event.delta
-        writeTextDelta(res, data.event.delta, fullResponse)
+        fullResponse += data.event.delta;
+        writeTextDelta(res, data.event.delta, fullResponse);
       }
     } else if (event.type === "agent_updated_stream_event") {
-      const agentEvent = event as RunAgentUpdatedStreamEvent
-      const newAgent = agentEvent.agent?.name
+      const agentEvent = event as RunAgentUpdatedStreamEvent;
+      const newAgent = agentEvent.agent?.name;
       if (newAgent && newAgent !== currentAgent) {
-        writeAgentSwitch(res, currentAgent, newAgent)
-        currentAgent = newAgent
+        writeAgentSwitch(res, currentAgent, newAgent);
+        currentAgent = newAgent;
       }
     } else if (event.type === "run_item_stream_event") {
-      const itemEvent = event as RunItemStreamEvent
-      const item = itemEvent.item
+      const itemEvent = event as RunItemStreamEvent;
+      const item = itemEvent.item;
       if (item?.type === "tool_call_item" && "name" in item) {
-        writeToolStart(res, String(item.name) || "unknown", currentAgent)
+        writeToolStart(res, String(item.name) || "unknown", currentAgent);
       } else if (item?.type === "tool_call_output_item" && "name" in item) {
-        writeToolComplete(res, String(item.name) || "unknown", "success")
+        writeToolComplete(res, String(item.name) || "unknown", "success");
       }
     }
   }
@@ -146,58 +131,51 @@ async function handleOpenAIStreaming(
   await stream.completed;
 
   if (!fullResponse && stream.finalOutput) {
-    fullResponse = typeof stream.finalOutput === "string"
-      ? stream.finalOutput
-      : String(stream.finalOutput)
-    writeTextDelta(res, fullResponse, fullResponse)
+    fullResponse = typeof stream.finalOutput === "string" ? stream.finalOutput : String(stream.finalOutput);
+    writeTextDelta(res, fullResponse, fullResponse);
   }
 
-  return fullResponse
+  return fullResponse;
 }
 
-async function handleMultiProviderStreaming(
-  res: Response,
-  agentConfig: TextAgentConfig,
-  fullPrompt: string,
-  userEmail: string
-): Promise<string> {
-  let fullResponse = ""
-  const agentName = agentConfig.profile.displayName
+async function handleMultiProviderStreaming(res: Response, agentConfig: TextAgentConfig, fullPrompt: string, userEmail: string): Promise<string> {
+  let fullResponse = "";
+  const agentName = agentConfig.profile.displayName;
 
   await runTextAgent(agentConfig, {
     prompt: fullPrompt,
     email: userEmail,
     onEvent: async (event) => {
-      if (res.writableEnded) return
+      if (res.writableEnded) return;
 
       switch (event.type) {
         case "text_delta":
           if (event.content) {
-            fullResponse = event.fullContent || fullResponse + event.content
-            writeTextDelta(res, event.content, fullResponse)
+            fullResponse = event.fullContent || fullResponse + event.content;
+            writeTextDelta(res, event.content, fullResponse);
           }
-          break
+          break;
         case "tool_start":
-          writeToolStart(res, event.toolName || "unknown", agentName)
-          break
+          writeToolStart(res, event.toolName || "unknown", agentName);
+          break;
         case "tool_complete":
-          writeToolComplete(res, event.toolName || "unknown", "success")
-          break
+          writeToolComplete(res, event.toolName || "unknown", "success");
+          break;
         case "agent_switch":
           if (event.fromAgent && event.toAgent) {
-            writeAgentSwitch(res, event.fromAgent, event.toAgent)
+            writeAgentSwitch(res, event.fromAgent, event.toAgent);
           }
-          break
+          break;
         case "error":
-          writeError(res, event.error || "Unknown error", "STREAM_ERROR")
-          break
+          writeError(res, event.error || "Unknown error", "STREAM_ERROR");
+          break;
         case "done":
-          break
+          break;
       }
     },
-  })
+  });
 
-  return fullResponse
+  return fullResponse;
 }
 
 async function handleStreamingResponse(
@@ -210,31 +188,25 @@ async function handleStreamingResponse(
   fullPrompt: string,
   profileId: string = DEFAULT_AGENT_PROFILE_ID
 ): Promise<void> {
-  setupSSEHeaders(res)
-  const stopHeartbeat = startHeartbeat(res)
+  setupSSEHeaders(res);
+  const stopHeartbeat = startHeartbeat(res);
 
-  await unifiedContextStore.setModality(userId, "chat")
-  await unifiedContextStore.touch(userId)
+  await unifiedContextStore.setModality(userId, "chat");
+  await unifiedContextStore.touch(userId);
 
-  let fullResponse = ""
-  const profile = getAgentProfile(profileId)
-  const useOpenAIAgent = profile.modelConfig.provider === "openai"
+  let fullResponse = "";
+  const profile = getAgentProfile(profileId);
+  const useOpenAIAgent = profile.modelConfig.provider === "openai";
 
   try {
     if (useOpenAIAgent) {
-      fullResponse = await handleOpenAIStreaming(
-        res,
-        userId,
-        userEmail,
-        conversationId,
-        fullPrompt
-      )
+      fullResponse = await handleOpenAIStreaming(res, userId, userEmail, conversationId, fullPrompt);
     } else {
       const agentConfig = createTextAgent({
         profileId,
         modality: "chat",
-      })
-      fullResponse = await handleMultiProviderStreaming(res, agentConfig, fullPrompt, userEmail)
+      });
+      fullResponse = await handleMultiProviderStreaming(res, agentConfig, fullPrompt, userEmail);
     }
 
     await webConversation.addMessageToConversation(conversationId, userId, { role: "user", content: message }, summarizeMessages);
@@ -311,14 +283,11 @@ const streamChat = async (req: Request<unknown, unknown, StreamChatRequest>, res
   }
 };
 
-const streamContinueConversation = async (
-  req: Request<{ id: string }, unknown, StreamChatRequest>,
-  res: Response
-): Promise<void> => {
-  const userId = req.user?.id
-  const userEmail = req.user?.email
-  const conversationId = req.params.id
-  const { message, profileId } = req.body
+const streamContinueConversation = async (req: Request<{ id: string }, unknown, StreamChatRequest>, res: Response): Promise<void> => {
+  const userId = req.user?.id;
+  const userEmail = req.user?.email;
+  const conversationId = req.params.id;
+  const { message, profileId } = req.body;
 
   if (!userId) {
     sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");

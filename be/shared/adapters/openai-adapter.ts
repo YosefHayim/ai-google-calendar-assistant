@@ -33,10 +33,9 @@ import {
   fillGapHandler,
   formatGapsHandler,
 } from "@/shared/tools/handlers"
+import { type AgentContext, stringifyError } from "@/shared/types"
 
-export interface AgentContext {
-  email: string
-}
+export type { AgentContext }
 
 function getEmailFromContext(
   runContext: RunContext<AgentContext> | undefined,
@@ -49,26 +48,6 @@ function getEmailFromContext(
     )
   }
   return email
-}
-
-function stringifyError(error: unknown): string {
-  if (error instanceof Error) {
-    return error.message
-  }
-  if (typeof error === "object" && error !== null) {
-    if (
-      "message" in error &&
-      typeof (error as { message: unknown }).message === "string"
-    ) {
-      return (error as { message: string }).message
-    }
-    try {
-      return JSON.stringify(error)
-    } catch {
-      return "Unknown error occurred"
-    }
-  }
-  return String(error)
 }
 
 function createHandlerContext(email: string): HandlerContext {

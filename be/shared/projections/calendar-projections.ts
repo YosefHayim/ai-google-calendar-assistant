@@ -1,4 +1,6 @@
-export type ProjectionMode = "VOICE_LITE" | "CHAT_STANDARD" | "FULL"
+import type { ProjectionMode } from "@/shared/types"
+
+export type { ProjectionMode }
 
 export interface CalendarProjectionVoiceLite {
   name: string

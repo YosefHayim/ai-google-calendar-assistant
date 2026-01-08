@@ -530,6 +530,9 @@ export const fr: TranslationShape = {
     returnHome: "Retour à l'accueil",
     retrying: 'Nouvelle tentative...',
     somethingWentWrong: "Quelque chose s'est mal passé",
+    copy: 'Copier',
+    copied: 'Copié!',
+    copyError: "Copier les détails de l'erreur",
   },
 
   bento: {

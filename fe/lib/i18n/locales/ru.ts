@@ -522,6 +522,9 @@ export const ru: TranslationShape = {
     returnHome: 'На главную',
     retrying: 'Повторная попытка...',
     somethingWentWrong: 'Что-то пошло не так',
+    copy: 'Копировать',
+    copied: 'Скопировано!',
+    copyError: 'Копировать детали ошибки',
   },
 
   bento: {

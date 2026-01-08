@@ -1,22 +1,17 @@
-// Main agent exports
-export { AGENTS, HANDOFF_AGENTS, ORCHESTRATOR_AGENT } from "./agents";
+export { AGENTS, HANDOFF_AGENTS, ORCHESTRATOR_AGENT } from "./agents"
 
-// Tool registry
-export { AGENT_TOOLS, type AgentContext } from "./tool-registry";
+export { AGENT_TOOLS, type AgentContext } from "./tool-registry"
 
-// Instructions and descriptions
-export { AGENT_INSTRUCTIONS } from "./agents-instructions";
-export { HANDOFF_DESCRIPTIONS } from "./agent-handoff-descriptions";
+export { AGENT_INSTRUCTIONS } from "./agents-instructions"
+export { HANDOFF_DESCRIPTIONS } from "./agent-handoff-descriptions"
 
-// Tool components
-export { TOOLS_DESCRIPTION } from "./tool-descriptions";
-export { EXECUTION_TOOLS } from "./tool-execution";
-export { PARAMETERS_TOOLS } from "./tool-schemas";
+export { TOOLS_DESCRIPTION } from "./tool-descriptions"
+export { EXECUTION_TOOLS } from "./tool-execution"
+export { PARAMETERS_TOOLS } from "./tool-schemas"
 
-// Utilities
-export { formatEventData, parseToolArguments, getCalendarCategoriesByEmail } from "./utils";
+export { formatEventData, parseToolArguments } from "./utils"
+export { getCalendarCategoriesByEmail, type UserCalendar } from "@/shared"
 
-// Direct utilities (bypass AI agents for faster execution)
 export {
   validateUserDirect,
   getUserDefaultTimezoneDirect,
@@ -24,9 +19,15 @@ export {
   selectCalendarByRules,
   checkConflictsDirect,
   preCreateValidation,
-} from "./direct-utilities";
+  summarizeEvents,
+  type ValidateUserResult,
+  type TimezoneResult,
+  type SelectCalendarResult,
+  type ConflictCheckResult,
+  type PreCreateValidationResult,
+  type ValidateEventResult,
+} from "./direct-utilities"
 
-// Session management for persistent agent memory
 export {
   SupabaseAgentSession,
   createAgentSession,
@@ -36,4 +37,4 @@ export {
   type SessionType,
   type CompactionStrategy,
   type CompactionConfig,
-} from "./sessions";
+} from "./sessions"

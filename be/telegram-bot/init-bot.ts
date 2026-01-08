@@ -1,17 +1,16 @@
 import { run, type RunnerHandle } from "@grammyjs/runner"
-import type { Context, SessionFlavor } from "grammy"
-import type { SessionData } from "@/types"
 import { logger } from "@/utils/logger"
 import {
   createBot,
   configureSession,
   configureMiddleware,
   registerBotCommands,
+  type GlobalContext,
 } from "./handlers/bot-config"
 import { registerCallbackHandlers } from "./handlers/callback-handlers"
 import { registerMessageHandler } from "./handlers/message-handler"
 
-export type GlobalContext = SessionFlavor<SessionData> & Context
+export type { GlobalContext }
 
 const bot = createBot()
 

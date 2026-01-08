@@ -14,63 +14,56 @@
  * context is provided (via session state rather than RunContext).
  */
 
-import type { HandlerContext } from "@/shared/tools/handlers"
+import type { AnalyzeGapsParams, FillGapParams, FormatGapsDisplayParams } from "@/shared/tools/schemas/gap-schemas";
 import type {
+  CheckConflictsParams,
+  DeleteEventParams,
   GetEventParams,
   InsertEventParams,
-  UpdateEventParams,
-  DeleteEventParams,
-  CheckConflictsParams,
   PreCreateValidationParams,
-} from "@/shared/tools/schemas/event-schemas"
-import type { SelectCalendarParams } from "@/shared/tools/schemas/calendar-schemas"
-import type {
-  AnalyzeGapsParams,
-  FillGapParams,
-  FormatGapsDisplayParams,
-} from "@/shared/tools/schemas/gap-schemas"
-
+  UpdateEventParams,
+} from "@/shared/tools/schemas/event-schemas";
 import {
-  getEventHandler,
-  insertEventHandler,
-  updateEventHandler,
-  deleteEventHandler,
-  validateUserHandler,
-  getTimezoneHandler,
-  selectCalendarHandler,
-  checkConflictsHandler,
-  preCreateValidationHandler,
   analyzeGapsHandler,
+  checkConflictsHandler,
+  deleteEventHandler,
   fillGapHandler,
   formatGapsHandler,
-} from "@/shared/tools/handlers"
+  getEventHandler,
+  getTimezoneHandler,
+  insertEventHandler,
+  preCreateValidationHandler,
+  selectCalendarHandler,
+  updateEventHandler,
+  validateUserHandler,
+} from "@/shared/tools/handlers";
+
+import type { HandlerContext } from "@/shared/tools/handlers";
+import type { SelectCalendarParams } from "@/shared/tools/schemas/calendar-schemas";
 
 export interface LiveKitAgentContext {
-  email: string
-  sessionId?: string
+  email: string;
+  sessionId?: string;
 }
 
 function createHandlerContext(ctx: LiveKitAgentContext): HandlerContext {
-  return { email: ctx.email }
+  return { email: ctx.email };
 }
 
 type ToolDefinition = {
-  name: string
-  description: string
-  parameters: Record<string, unknown>
-  handler: (
-    params: Record<string, unknown>,
-    ctx: LiveKitAgentContext,
-  ) => Promise<unknown>
-}
+  name: string;
+  description: string;
+  parameters: Record<string, unknown>;
+  handler: (params: Record<string, unknown>, ctx: LiveKitAgentContext) => Promise<unknown>;
+};
 
 function normalizeEventTime(time: Record<string, unknown> | null | undefined) {
-  if (!time) return null
+  if (!time) return null;
   return {
     date: (time.date as string) ?? null,
     dateTime: (time.dateTime as string) ?? null,
     timeZone: (time.timeZone as string) ?? null,
-  }
+  };
 }
 
 export const LIVEKIT_TOOL_DEFINITIONS: ToolDefinition[] = [
@@ -88,7 +81,7 @@ export const LIVEKIT_TOOL_DEFINITIONS: ToolDefinition[] = [
       },
     },
     handler: async (params, ctx) => {
-      return getEventHandler(params as GetEventParams, createHandlerContext(ctx))
+      return getEventHandler(params as GetEventParams, createHandlerContext(ctx));
     },
   },
   {
@@ -107,10 +100,7 @@ export const LIVEKIT_TOOL_DEFINITIONS: ToolDefinition[] = [
       required: ["summary", "start", "end"],
     },
     handler: async (params, ctx) => {
-      return insertEventHandler(
-        params as InsertEventParams,
-        createHandlerContext(ctx),
-      )
+      return insertEventHandler(params as InsertEventParams, createHandlerContext(ctx));
     },
   },
   {
@@ -130,10 +120,7 @@ export const LIVEKIT_TOOL_DEFINITIONS: ToolDefinition[] = [
       required: ["eventId"],
     },
     handler: async (params, ctx) => {
-      return updateEventHandler(
-        params as UpdateEventParams,
-        createHandlerContext(ctx),
-      )
+      return updateEventHandler(params as UpdateEventParams, createHandlerContext(ctx));
     },
   },
   {
@@ -148,10 +135,7 @@ export const LIVEKIT_TOOL_DEFINITIONS: ToolDefinition[] = [
       required: ["eventId"],
     },
     handler: async (params, ctx) => {
-      return deleteEventHandler(
-        params as DeleteEventParams,
-        createHandlerContext(ctx),
-      )
+      return deleteEventHandler(params as DeleteEventParams, createHandlerContext(ctx));
     },
   },
   {
@@ -159,7 +143,7 @@ export const LIVEKIT_TOOL_DEFINITIONS: ToolDefinition[] = [
     description: "Check if user exists and has valid credentials.",
     parameters: { type: "object", properties: {} },
     handler: async (_params, ctx) => {
-      return validateUserHandler(createHandlerContext(ctx))
+      return validateUserHandler(createHandlerContext(ctx));
     },
   },
   {
@@ -167,7 +151,7 @@ export const LIVEKIT_TOOL_DEFINITIONS: ToolDefinition[] = [
     description: "Get user's default timezone.",
     parameters: { type: "object", properties: {} },
     handler: async (_params, ctx) => {
-      return getTimezoneHandler(createHandlerContext(ctx))
+      return getTimezoneHandler(createHandlerContext(ctx));
     },
   },
   {
@@ -182,10 +166,7 @@ export const LIVEKIT_TOOL_DEFINITIONS: ToolDefinition[] = [
       },
     },
     handler: async (params, ctx) => {
-      return selectCalendarHandler(
-        params as SelectCalendarParams,
-        createHandlerContext(ctx),
-      )
+      return selectCalendarHandler(params as SelectCalendarParams, createHandlerContext(ctx));
     },
   },
   {
@@ -201,12 +182,10 @@ export const LIVEKIT_TOOL_DEFINITIONS: ToolDefinition[] = [
       required: ["start", "end"],
     },
     handler: async (params, ctx) => {
-      const startTime = normalizeEventTime(
-        params.start as Record<string, unknown>,
-      )
-      const endTime = normalizeEventTime(params.end as Record<string, unknown>)
+      const startTime = normalizeEventTime(params.start as Record<string, unknown>);
+      const endTime = normalizeEventTime(params.end as Record<string, unknown>);
       if (!startTime || !endTime) {
-        return { hasConflicts: false, conflictingEvents: [], error: "Invalid time range" }
+        return { hasConflicts: false, conflictingEvents: [], error: "Invalid time range" };
       }
       return checkConflictsHandler(
         {
@@ -214,14 +193,13 @@ export const LIVEKIT_TOOL_DEFINITIONS: ToolDefinition[] = [
           start: startTime,
           end: endTime,
         },
-        createHandlerContext(ctx),
-      )
+        createHandlerContext(ctx)
+      );
     },
   },
   {
     name: "pre_create_validation",
-    description:
-      "Combined validation: user check, timezone, calendar selection, conflict check.",
+    description: "Combined validation: user check, timezone, calendar selection, conflict check.",
     parameters: {
       type: "object",
       properties: {
@@ -241,8 +219,8 @@ export const LIVEKIT_TOOL_DEFINITIONS: ToolDefinition[] = [
           start: normalizeEventTime(params.start as Record<string, unknown>),
           end: normalizeEventTime(params.end as Record<string, unknown>),
         },
-        createHandlerContext(ctx),
-      )
+        createHandlerContext(ctx)
+      );
     },
   },
   {
@@ -256,10 +234,7 @@ export const LIVEKIT_TOOL_DEFINITIONS: ToolDefinition[] = [
       },
     },
     handler: async (params, ctx) => {
-      return analyzeGapsHandler(
-        params as AnalyzeGapsParams,
-        createHandlerContext(ctx),
-      )
+      return analyzeGapsHandler(params as AnalyzeGapsParams, createHandlerContext(ctx));
     },
   },
   {
@@ -278,7 +253,7 @@ export const LIVEKIT_TOOL_DEFINITIONS: ToolDefinition[] = [
       required: ["gapStart", "gapEnd", "summary"],
     },
     handler: async (params, ctx) => {
-      return fillGapHandler(params as FillGapParams, createHandlerContext(ctx))
+      return fillGapHandler(params as FillGapParams, createHandlerContext(ctx));
     },
   },
   {
@@ -292,17 +267,15 @@ export const LIVEKIT_TOOL_DEFINITIONS: ToolDefinition[] = [
       required: ["gapsJson"],
     },
     handler: async (params) => {
-      return formatGapsHandler(params as FormatGapsDisplayParams)
+      return formatGapsHandler(params as FormatGapsDisplayParams);
     },
   },
-]
+];
 
-export function getLiveKitToolByName(
-  name: string,
-): ToolDefinition | undefined {
-  return LIVEKIT_TOOL_DEFINITIONS.find((t) => t.name === name)
+export function getLiveKitToolByName(name: string): ToolDefinition | undefined {
+  return LIVEKIT_TOOL_DEFINITIONS.find((t) => t.name === name);
 }
 
 export function getAllLiveKitTools(): ToolDefinition[] {
-  return LIVEKIT_TOOL_DEFINITIONS
+  return LIVEKIT_TOOL_DEFINITIONS;
 }

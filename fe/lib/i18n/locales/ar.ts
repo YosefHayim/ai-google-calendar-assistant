@@ -518,6 +518,9 @@ export const ar: TranslationShape = {
     returnHome: 'العودة للرئيسية',
     retrying: 'جارٍ المحاولة...',
     somethingWentWrong: 'حدث خطأ ما',
+    copy: 'نسخ',
+    copied: 'تم النسخ!',
+    copyError: 'نسخ تفاصيل الخطأ',
   },
 
   bento: {

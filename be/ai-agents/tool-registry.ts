@@ -27,14 +27,9 @@ import { EXECUTION_TOOLS } from "./tool-execution";
 import { TOOLS_DESCRIPTION } from "./tool-descriptions";
 import { tool, type RunContext } from "@openai/agents";
 import { z } from "zod";
+import { type AgentContext, stringifyError } from "@/shared/types";
 
-/**
- * Context type for agent runs - contains user email from authenticated session
- * This is passed to run() and accessible in tool execute functions
- */
-export interface AgentContext {
-  email: string;
-}
+export type { AgentContext };
 
 /**
  * Extract email from run context - throws if not available
@@ -50,30 +45,6 @@ function getEmailFromContext(
     );
   }
   return email;
-}
-
-/**
- * Properly stringify an error object for tool error responses.
- * Handles Error instances, objects with message property, and plain objects.
- */
-function stringifyError(error: unknown): string {
-  if (error instanceof Error) {
-    return error.message;
-  }
-  if (typeof error === "object" && error !== null) {
-    if (
-      "message" in error &&
-      typeof (error as { message: unknown }).message === "string"
-    ) {
-      return (error as { message: string }).message;
-    }
-    try {
-      return JSON.stringify(error);
-    } catch {
-      return "Unknown error occurred";
-    }
-  }
-  return String(error);
 }
 
 export const AGENT_TOOLS = {

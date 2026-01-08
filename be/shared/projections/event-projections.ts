@@ -1,8 +1,9 @@
 import type { calendar_v3 } from "googleapis"
+import type { ProjectionMode } from "@/shared/types"
 
 type Event = calendar_v3.Schema$Event
 
-export type ProjectionMode = "VOICE_LITE" | "CHAT_STANDARD" | "FULL"
+export type { ProjectionMode }
 
 export interface EventProjectionVoiceLite {
   summary: string
