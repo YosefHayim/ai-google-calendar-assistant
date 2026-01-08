@@ -34,7 +34,9 @@ const providerIcons: Record<string, string> = {
 function TierBadge({ tier }: { tier: AgentTier }) {
   const config = tierConfig[tier]
   return (
-    <span className={cn('inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[10px] font-medium', config.color)}>
+    <span
+      className={cn('inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[10px] font-medium', config.color)}
+    >
       {config.label}
     </span>
   )
@@ -61,9 +63,7 @@ function ProfileItem({
         <div className="flex items-center gap-2">
           <span className="font-medium text-sm">{profile.displayName}</span>
           <TierBadge tier={profile.tier} />
-          {profile.modelConfig.supportsRealtime && (
-            <Zap className="h-3 w-3 text-amber-500" />
-          )}
+          {profile.modelConfig.supportsRealtime && <Zap className="h-3 w-3 text-amber-500" />}
         </div>
         <p className="text-xs text-muted-foreground truncate">{profile.tagline}</p>
       </div>
@@ -89,7 +89,8 @@ export function AgentProfileSelector() {
   }
 
   const currentProfile = selectedProfile || profiles[0]
-  if (!currentProfile) return null
+  // Guard against missing profile or missing modelConfig
+  if (!currentProfile?.modelConfig) return null
 
   return (
     <DropdownMenu>
@@ -103,9 +104,7 @@ export function AgentProfileSelector() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="w-72">
-        <DropdownMenuLabel className="text-xs text-muted-foreground font-normal">
-          Select AI Assistant
-        </DropdownMenuLabel>
+        <DropdownMenuLabel className="text-xs text-muted-foreground font-normal">Select AI Assistant</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {profiles.map((profile) => (
           <ProfileItem

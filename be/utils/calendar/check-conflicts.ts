@@ -3,33 +3,22 @@ import type { calendar_v3 } from "googleapis";
 import { fetchCredentialsByEmail } from "@/utils/auth";
 import { formatDate } from "@/utils/date";
 import { initUserSupabaseCalendarWithTokensAndUpdateTokens } from "./init";
+import type { ConflictingEvent, ConflictCheckResult } from "@/shared/types";
+
+export type { ConflictingEvent, ConflictCheckResult };
 
 export type ConflictCheckParams = {
   email: string;
   calendarId: string;
-  startTime: string; // ISO8601
-  endTime: string; // ISO8601
+  startTime: string;
+  endTime: string;
 };
 
 export type ConflictCheckAllCalendarsParams = {
   email: string;
-  startTime: string; // ISO8601
-  endTime: string; // ISO8601
-  excludeEventId?: string; // Exclude the event being moved (to avoid self-conflict)
-};
-
-export type ConflictingEvent = {
-  id: string;
-  summary: string;
-  start: string;
-  end: string;
-  calendarId: string;
-  calendarName: string;
-};
-
-export type ConflictCheckResult = {
-  hasConflicts: boolean;
-  conflictingEvents: ConflictingEvent[];
+  startTime: string;
+  endTime: string;
+  excludeEventId?: string;
 };
 
 /**

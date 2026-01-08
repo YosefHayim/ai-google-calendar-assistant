@@ -1,18 +1,31 @@
 'use client'
 
-import { AlertCircle, AlertTriangle, Home, RefreshCw, Terminal } from 'lucide-react'
+import { AlertCircle, AlertTriangle, Check, Copy, Home, RefreshCw, Terminal } from 'lucide-react'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { Button } from '@/components/ui/button'
 
+function formatErrorForCopy(error: Error & { digest?: string }): string {
+  const lines = [`Error: ${error.message || 'Unknown Application Error'}`]
+  if (error.digest) lines.push(`Reference ID: ${error.digest}`)
+  if (error.stack) {
+    const stackLines = error.stack
+      .split('\n')
+      .slice(1, 6)
+      .map((line) => line.trim())
+    lines.push('Stack:', ...stackLines)
+  }
+  return lines.join('\n')
+}
+
 export default function ErrorBoundary({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
   const { t } = useTranslation()
   const [isRetrying, setIsRetrying] = useState(false)
+  const [copied, setCopied] = useState(false)
 
   useEffect(() => {
-    // Log error to console in development
     if (process.env.NODE_ENV === 'development') {
       console.error('Ally Runtime Error:', error)
     }
@@ -20,12 +33,21 @@ export default function ErrorBoundary({ error, reset }: { error: Error & { diges
 
   const handleRetry = () => {
     setIsRetrying(true)
-    // Add a small artificial delay to make the interaction feel "processed"
     setTimeout(() => {
       reset()
       setIsRetrying(false)
     }, 500)
   }
+
+  const handleCopyError = useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText(formatErrorForCopy(error))
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch {
+      /* Clipboard API may not be available */
+    }
+  }, [error])
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-zinc-50 p-6 dark:bg-zinc-950">
@@ -45,7 +67,30 @@ export default function ErrorBoundary({ error, reset }: { error: Error & { diges
             <details className="group rounded-xl border border-zinc-200 bg-white px-4 py-3 dark:border-zinc-800 dark:bg-zinc-900 transition-all hover:border-zinc-300 dark:hover:border-zinc-700">
               <summary className="flex cursor-pointer items-center justify-between text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200">
                 <span>{t('errors.viewSystemLogs')}</span>
-                <Terminal className="h-4 w-4 opacity-50 transition-transform group-open:rotate-90 group-open:opacity-100" />
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      handleCopyError()
+                    }}
+                    className="flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-medium transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                    title={t('errors.copyError')}
+                  >
+                    {copied ? (
+                      <>
+                        <Check className="h-3 w-3 text-green-600" />
+                        <span className="text-green-600">{t('errors.copied')}</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="h-3 w-3" />
+                        <span>{t('errors.copy')}</span>
+                      </>
+                    )}
+                  </button>
+                  <Terminal className="h-4 w-4 opacity-50 transition-transform group-open:rotate-90 group-open:opacity-100" />
+                </div>
               </summary>
 
               <div className="mt-3 space-y-3 pt-2 border-t border-zinc-100 dark:border-zinc-800/50">

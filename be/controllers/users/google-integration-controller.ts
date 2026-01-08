@@ -1,6 +1,7 @@
 import type { Request, Response } from "express"
 import {
   ACCESS_TOKEN_COOKIE,
+  REFRESH_TOKEN_COOKIE,
   setAuthCookies,
 } from "@/utils/auth/cookie-utils"
 import {
@@ -14,25 +15,93 @@ import { generateGoogleAuthUrl } from "@/utils/auth"
 import { reqResAsyncHandler, sendR } from "@/utils/http"
 import { msToIso } from "@/utils/date/timestamp-utils"
 import { syncUserCalendarsAfterOAuth } from "@/utils/calendar/sync-calendars-after-oauth"
-import { validateSupabaseToken } from "@/utils/auth/supabase-token"
+import {
+  refreshSupabaseSession,
+  validateSupabaseToken,
+} from "@/utils/auth/supabase-token"
+
+async function checkExistingSessionAndRedirect(
+  res: Response,
+  accessToken: string,
+  refreshToken: string | undefined,
+  frontendUrl: string
+): Promise<boolean> {
+  let validation = await validateSupabaseToken(accessToken).catch(() => null)
+
+  if ((!validation?.user || validation.needsRefresh) && refreshToken) {
+    try {
+      const refreshed = await refreshSupabaseSession(refreshToken)
+      setAuthCookies(
+        res,
+        refreshed.accessToken,
+        refreshed.refreshToken,
+        refreshed.user
+      )
+      validation = {
+        user: refreshed.user,
+        accessToken: refreshed.accessToken,
+        error: null,
+        needsRefresh: false,
+      }
+    } catch {
+      return false
+    }
+  }
+
+  if (!validation?.user?.email) return false
+
+  const normalizedEmail = validation.user.email.toLowerCase().trim()
+
+  const { data: user } = await SUPABASE.from("users")
+    .select("id")
+    .ilike("email", normalizedEmail)
+    .limit(1)
+    .maybeSingle()
+
+  if (!user) return false
+
+  const { data: existingToken } = await SUPABASE.from("oauth_tokens")
+    .select("refresh_token, is_valid")
+    .eq("user_id", user.id)
+    .eq("provider", "google")
+    .limit(1)
+    .maybeSingle()
+
+  if (existingToken?.refresh_token && existingToken?.is_valid) {
+    res.redirect(`${frontendUrl}/loading?redirect=dashboard`)
+    return true
+  }
+
+  return false
+}
 
 const generateAuthGoogleUrl = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     const code = req.query.code as string | undefined
     const postmanHeaders = req.headers["user-agent"]
+    const frontendUrl = env.urls.frontend
+    const accessToken = req.cookies?.[ACCESS_TOKEN_COOKIE]
+    const refreshToken = req.cookies?.[REFRESH_TOKEN_COOKIE]
+
+    if (!code && accessToken) {
+      const redirected = await checkExistingSessionAndRedirect(
+        res,
+        accessToken,
+        refreshToken,
+        frontendUrl
+      )
+      if (redirected) return
+    }
 
     let forceConsent = true
     let userEmail: string | undefined = req.user?.email
 
-    if (!userEmail) {
-      const accessToken = req.cookies?.[ACCESS_TOKEN_COOKIE]
-      if (accessToken) {
-        const validation = await validateSupabaseToken(accessToken).catch(
-          () => null
-        )
-        if (validation?.user?.email) {
-          userEmail = validation.user.email
-        }
+    if (!userEmail && accessToken) {
+      const validation = await validateSupabaseToken(accessToken).catch(
+        () => null
+      )
+      if (validation?.user?.email) {
+        userEmail = validation.user.email
       }
     }
 

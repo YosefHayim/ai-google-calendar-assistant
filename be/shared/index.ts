@@ -83,11 +83,13 @@ export {
   selectCalendarHandler,
   checkConflictsHandler,
   preCreateValidationHandler,
+  getCalendarCategoriesByEmail,
   type ValidateUserResult,
   type TimezoneResult,
   type SelectCalendarResult,
   type ConflictCheckResult,
   type PreCreateValidationResult,
+  type UserCalendar,
   analyzeGapsHandler,
   fillGapHandler,
   formatGapsHandler,
@@ -105,3 +107,14 @@ export {
   getAvailableToolNames,
   isToolAvailable,
 } from "./tools/tool-executor"
+
+export {
+  type HandlerContext as SharedHandlerContext,
+  type AgentContext as SharedAgentContext,
+  type ProjectionMode,
+  type Modality,
+  type ConflictingEvent,
+  type ConflictCheckResult as SharedConflictCheckResult,
+  stringifyError,
+  categorizeError,
+} from "./types"

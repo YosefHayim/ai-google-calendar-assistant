@@ -1,15 +1,25 @@
-// Environment configuration
 export { env, REDIRECT_URI } from "./env";
 
-// Client instances
-export { SUPABASE, OAUTH2CLIENT, CALENDAR, initializeOpenAI, redisClient, isRedisConnected, disconnectRedis } from "./clients";
+export {
+  SUPABASE,
+  OAUTH2CLIENT,
+  CALENDAR,
+  initializeOpenAI,
+  redisClient,
+  isRedisConnected,
+  disconnectRedis,
+  getStripeClient,
+  isStripeEnabled,
+  getStripePublishableKey,
+  STRIPE_CONFIG,
+} from "./clients";
 
-// Constants
 export {
   GOOGLE_CALENDAR_SCOPES,
   SCOPES,
   SCOPES_STRING,
   REQUEST_CONFIG_BASE,
+  MAX_RESULTS,
   STATUS_RESPONSE,
   ROUTES,
   PROVIDERS,
@@ -17,8 +27,10 @@ export {
   MODELS,
   CURRENT_MODEL,
   TIMEZONE,
+  USER_OAUTH_FIELDS,
+  OAUTH_TOKEN_FIELDS,
+  USER_FIELDS,
+  TOKEN_FIELDS,
 } from "./constants";
 
-// Legacy CONFIG object for backwards compatibility during migration
-// TODO: Remove after all imports are updated to use `env`
 export { env as CONFIG } from "./env";

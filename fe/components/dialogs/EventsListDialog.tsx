@@ -1,0 +1,148 @@
+'use client'
+
+import { Calendar, CalendarDays, Clock, ExternalLink, Hash, Hourglass } from 'lucide-react'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../ui/dialog'
+import { format } from 'date-fns'
+import type { PatternEventSummary } from '@/types/analytics'
+
+export interface EventsListDialogProps {
+  isOpen: boolean
+  title: string
+  subtitle?: string
+  events: PatternEventSummary[]
+  onClose: () => void
+}
+
+function formatDuration(minutes: number): string {
+  if (minutes < 60) {
+    return `${Math.round(minutes)}m`
+  }
+  const hours = Math.floor(minutes / 60)
+  const remainingMinutes = Math.round(minutes % 60)
+  if (remainingMinutes === 0) {
+    return `${hours}h`
+  }
+  return `${hours}h ${remainingMinutes}m`
+}
+
+function formatEventTime(startTime: string, endTime: string): string {
+  const start = new Date(startTime)
+  const end = new Date(endTime)
+  return `${format(start, 'h:mm a')} - ${format(end, 'h:mm a')}`
+}
+
+function formatEventDate(dateStr: string): string {
+  const date = new Date(dateStr)
+  return format(date, 'EEE, MMM d')
+}
+
+function handleEventClick(htmlLink: string | undefined) {
+  if (htmlLink) {
+    window.open(htmlLink, '_blank', 'noopener,noreferrer')
+  }
+}
+
+function calculateTotalHours(events: PatternEventSummary[]): number {
+  return events.reduce((acc, event) => acc + event.durationMinutes / 60, 0)
+}
+
+const EventsListDialog: React.FC<EventsListDialogProps> = ({ isOpen, title, subtitle, events, onClose }) => {
+  const totalHours = calculateTotalHours(events)
+
+  return (
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="max-w-lg max-h-[85vh] flex flex-col p-0 gap-0 overflow-hidden">
+        <div className="h-1 w-full shrink-0 bg-primary" />
+
+        <DialogHeader className="p-6 pb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-md flex items-center justify-center shrink-0 bg-primary/20">
+              <CalendarDays size={20} className="text-primary" />
+            </div>
+            <div className="flex-1 text-left">
+              <DialogTitle className="text-xl font-bold text-zinc-900 dark:text-zinc-100">{title}</DialogTitle>
+              <DialogDescription className="sr-only">Events for {title}</DialogDescription>
+              {subtitle && <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">{subtitle}</p>}
+
+              <div className="flex flex-wrap gap-4 mt-2">
+                <div className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-2">
+                  <Hash size={12} className="text-primary" />
+                  <span>
+                    {events.length} event{events.length !== 1 ? 's' : ''}
+                  </span>
+                </div>
+                <div className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-2">
+                  <Hourglass size={12} className="text-primary" />
+                  <span>Total: {totalHours.toFixed(1)}h</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </DialogHeader>
+
+        <div className="flex-1 overflow-y-auto p-6 pt-0">
+          {events.length === 0 ? (
+            <div className="flex flex-col items-center justify-center p-6 text-center">
+              <CalendarDays size={50} className="text-zinc-300 dark:text-zinc-700 mb-3" />
+              <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300">No events</p>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400">No events found for this period.</p>
+            </div>
+          ) : (
+            <ul className="space-y-2">
+              {events.map((event) => (
+                <li
+                  key={event.id}
+                  onClick={() => handleEventClick(event.htmlLink)}
+                  className={`flex items-start gap-3 group rounded-lg p-3 bg-zinc-50 dark:bg-zinc-800/50 transition-colors ${event.htmlLink ? 'cursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-800' : ''}`}
+                >
+                  <div
+                    className="w-8 h-8 rounded-md flex items-center justify-center shrink-0 mt-0.5"
+                    style={{ backgroundColor: `${event.calendarColor}20` }}
+                  >
+                    <CalendarDays size={16} style={{ color: event.calendarColor }} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-semibold text-zinc-800 dark:text-zinc-200 truncate flex-1">
+                        {event.summary}
+                      </p>
+                      {event.htmlLink && (
+                        <ExternalLink className="w-3.5 h-3.5 text-zinc-400 dark:text-zinc-500 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      )}
+                    </div>
+
+                    <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                      <div className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-1">
+                        <CalendarDays size={12} />
+                        <span>{formatEventDate(event.eventDate)}</span>
+                      </div>
+                      <span className="text-zinc-300 dark:text-zinc-600">•</span>
+                      <div className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-1">
+                        <Clock size={12} />
+                        <span>{formatEventTime(event.startTime, event.endTime)}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 mt-1 flex-wrap">
+                      <div className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-1">
+                        <Hourglass size={12} />
+                        <span className="font-medium">{formatDuration(event.durationMinutes)}</span>
+                      </div>
+                      <span className="text-zinc-300 dark:text-zinc-600">•</span>
+                      <div className="text-xs text-zinc-400 dark:text-zinc-500 flex items-center gap-1">
+                        <Calendar size={12} />
+                        <span className="truncate max-w-[150px]">{event.calendarName}</span>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+export default EventsListDialog

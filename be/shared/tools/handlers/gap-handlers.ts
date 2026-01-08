@@ -8,10 +8,9 @@ import type {
   FillGapParams,
   FormatGapsDisplayParams,
 } from "../schemas"
+import type { HandlerContext } from "@/shared/types"
 
-export interface HandlerContext {
-  email: string
-}
+export type { HandlerContext }
 
 export type GapCandidateDTO = {
   id: string

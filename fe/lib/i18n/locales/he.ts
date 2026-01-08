@@ -556,6 +556,9 @@ export const he: TranslationShape = {
     returnHome: 'חזור לדף הבית',
     retrying: 'מנסה שוב...',
     somethingWentWrong: 'משהו השתבש',
+    copy: 'העתק',
+    copied: 'הועתק!',
+    copyError: 'העתק פרטי שגיאה',
   },
 
   bento: {

@@ -1,419 +1,147 @@
-import { fetchCredentialsByEmail } from "@/utils/auth"
-import {
-  checkEventConflicts,
-  initUserSupabaseCalendarWithTokensAndUpdateTokens,
-} from "@/utils/calendar"
+import { MODELS } from "@/config/constants/ai"
+import { env } from "@/config"
+import OpenAI from "openai"
 import type { calendar_v3 } from "googleapis"
 import isEmail from "validator/lib/isEmail"
 import {
-  formatEventData,
-  getCalendarCategoriesByEmail,
-  type UserCalendar,
-} from "./utils"
-import type { TokensProps } from "@/types"
-import { MODELS } from "@/config/constants/ai"
-import OpenAI from "openai"
-import { env } from "@/config"
-import { userRepository } from "@/utils/repositories/UserRepository"
+  validateUserHandler,
+  getTimezoneHandler,
+  selectCalendarHandler,
+  checkConflictsHandler,
+  preCreateValidationHandler,
+  type ValidateUserResult,
+  type TimezoneResult,
+  type SelectCalendarResult,
+  type ConflictCheckResult,
+  type PreCreateValidationResult,
+} from "@/shared"
+
+export type {
+  ValidateUserResult,
+  TimezoneResult,
+  SelectCalendarResult,
+  ConflictCheckResult,
+  PreCreateValidationResult,
+}
+
+export { formatEventData, type UserCalendar, getCalendarCategoriesByEmail } from "./utils"
 
 type Event = calendar_v3.Schema$Event
 
-export type ValidateUserResult = {
-  exists: boolean
-  user?: Record<string, unknown>
-  error?: string
+export async function validateUserDirect(email: string): Promise<ValidateUserResult> {
+  return validateUserHandler({ email })
 }
 
-export async function validateUserDirect(
-  email: string
-): Promise<ValidateUserResult> {
-  if (!email || !isEmail(email)) {
-    return { exists: false, error: "Invalid email address." }
-  }
-
-  try {
-    const result = await userRepository.validateUserExists(email)
-    return result
-  } catch (error) {
-    const categorized = categorizeError(error)
-    return { exists: false, error: categorized.message }
-  }
+export async function getUserDefaultTimezoneDirect(email: string): Promise<TimezoneResult> {
+  return getTimezoneHandler({ email })
 }
 
-export type TimezoneResult = {
-  timezone: string
-  error?: string
-}
-
-async function updateUserTimezoneInDb(
+export async function selectCalendarByRules(
   email: string,
-  timezone: string
-): Promise<void> {
-  await userRepository.updateUserTimezone(email, timezone)
+  eventInfo: { summary?: string | null; description?: string | null; location?: string | null },
+): Promise<SelectCalendarResult> {
+  return selectCalendarHandler(
+    {
+      summary: eventInfo.summary ?? undefined,
+      description: eventInfo.description ?? undefined,
+      location: eventInfo.location ?? undefined,
+    },
+    { email },
+  )
 }
 
-/**
- * Categorizes an error to help agents respond appropriately. Part of: Error handling in direct utilities (validateUserDirect, getUserDefaultTimezoneDirect).
- */
-function categorizeError(error: unknown): { type: "auth" | "database" | "other"; message: string } {
-  const errorMsg = error instanceof Error ? error.message : String(error);
-  const lowerMsg = errorMsg.toLowerCase();
-
-  // Authorization errors - user needs to re-authenticate
-  if (
-    lowerMsg.includes("no credentials found") ||
-    lowerMsg.includes("user not found") ||
-    lowerMsg.includes("no tokens available") ||
-    lowerMsg.includes("invalid_grant") ||
-    lowerMsg.includes("token has been expired") ||
-    lowerMsg.includes("token has been revoked") ||
-    lowerMsg.includes("401") ||
-    lowerMsg.includes("403") ||
-    lowerMsg.includes("unauthorized")
-  ) {
-    return { type: "auth", message: "No credentials found - authorization required." };
-  }
-
-  // Database errors - system issue, not user's fault
-  if (
-    (lowerMsg.includes("column") && lowerMsg.includes("does not exist")) ||
-    (lowerMsg.includes("relation") && lowerMsg.includes("does not exist")) ||
-    lowerMsg.includes("connection refused") ||
-    lowerMsg.includes("database") ||
-    lowerMsg.includes("could not fetch credentials")
-  ) {
-    return { type: "database", message: "Database error - please try again in a moment." };
-  }
-
-  return { type: "other", message: errorMsg };
-}
-
-/**
- * Gets user's default timezone - first checks DB, then falls back to Google Calendar API.
- * If fetched from Google Calendar, saves to DB for future use.
- * Replaces: AGENTS.getUserDefaultTimeZone
- * Latency: ~0ms from DB, ~1s from Google Calendar (first time only)
- * Part of: UserRepository refactoring - uses userRepository.findUserByEmail
- */
-export async function getUserDefaultTimezoneDirect(
+export async function checkConflictsDirect(params: {
   email: string
-): Promise<TimezoneResult> {
-  if (!email || !isEmail(email)) {
-    return { timezone: "UTC", error: "Invalid email address." }
-  }
-
-  try {
-    const user = await userRepository.findUserByEmail(email)
-
-    if (user?.timezone) {
-      return { timezone: user.timezone }
-    }
-
-    const tokenProps = await fetchCredentialsByEmail(email)
-    const calendar =
-      await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenProps)
-    const response = await calendar.settings.get({ setting: "timezone" })
-    const timezone = response.data.value || "UTC"
-
-    if (user) {
-      updateUserTimezoneInDb(email, timezone)
-    }
-
-    return { timezone }
-  } catch (error) {
-    const categorized = categorizeError(error)
-    console.error("Failed to get user timezone:", error)
-
-    return {
-      timezone: "UTC",
-      error:
-        categorized.type === "auth"
-          ? "No credentials found - authorization required."
-          : categorized.type === "database"
-            ? "Database error - please try again in a moment."
-            : "Failed to fetch timezone, using UTC.",
-    }
-  }
+  calendarId: string
+  start: calendar_v3.Schema$EventDateTime
+  end: calendar_v3.Schema$EventDateTime
+}): Promise<ConflictCheckResult> {
+  return checkConflictsHandler(
+    {
+      calendarId: params.calendarId,
+      start: {
+        date: params.start.date ?? null,
+        dateTime: params.start.dateTime ?? null,
+        timeZone: params.start.timeZone ?? null,
+      },
+      end: {
+        date: params.end.date ?? null,
+        dateTime: params.end.dateTime ?? null,
+        timeZone: params.end.timeZone ?? null,
+      },
+    },
+    { email: params.email },
+  )
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// EVENT VALIDATION (bypasses validateEventData agent)
-// ═══════════════════════════════════════════════════════════════════════════
+export async function preCreateValidation(
+  email: string,
+  eventData: Partial<Event>,
+): Promise<PreCreateValidationResult> {
+  return preCreateValidationHandler(
+    {
+      summary: eventData.summary ?? null,
+      description: eventData.description ?? null,
+      location: eventData.location ?? null,
+      start: eventData.start
+        ? {
+            date: eventData.start.date ?? null,
+            dateTime: eventData.start.dateTime ?? null,
+            timeZone: eventData.start.timeZone ?? null,
+          }
+        : null,
+      end: eventData.end
+        ? {
+            date: eventData.end.date ?? null,
+            dateTime: eventData.end.dateTime ?? null,
+            timeZone: eventData.end.timeZone ?? null,
+          }
+        : null,
+    },
+    { email },
+  )
+}
+
+import { formatEventData as formatEvent } from "./utils"
 
 export type ValidateEventResult = {
-  valid: boolean;
-  event?: Event & { email: string };
-  error?: string;
-};
+  valid: boolean
+  event?: Event & { email: string }
+  error?: string
+}
 
-/**
- * Validates and formats event data - direct validation without AI agent.
- * Replaces: AGENTS.validateEventData
- * Latency: ~100ms (vs ~2-5s with agent)
- */
-export function validateEventDataDirect(eventData: Partial<Event> & { email: string }): ValidateEventResult {
-  const { email, ...eventLike } = eventData;
+export function validateEventDataDirect(
+  eventData: Partial<Event> & { email: string },
+): ValidateEventResult {
+  const { email, ...eventLike } = eventData
 
   if (!email || !isEmail(email)) {
-    return { valid: false, error: "Invalid email address." };
+    return { valid: false, error: "Invalid email address." }
   }
 
   try {
-    const formatted = formatEventData(eventLike as Event);
-    return { valid: true, event: { ...formatted, email } };
+    const formatted = formatEvent(eventLike as Event)
+    return { valid: true, event: { ...formatted, email } }
   } catch (error) {
     return {
       valid: false,
       error: error instanceof Error ? error.message : "Invalid event data.",
-    };
-  }
-}
-
-// ═══════════════════════════════════════════════════════════════════════════
-// CALENDAR SELECTION (bypasses selectCalendar agent)
-// ═══════════════════════════════════════════════════════════════════════════
-
-export type SelectCalendarResult = {
-  calendarId: string;
-  calendarName: string;
-  matchReason?: string;
-};
-
-/**
- * Selects the best calendar using AI semantic matching.
- * Uses GPT-4.1-nano for cost efficiency while providing accurate context-based matching.
- * Latency: ~300-500ms
- */
-export async function selectCalendarByRules(
-  email: string,
-  eventInfo: { summary?: string | null; description?: string | null; location?: string | null }
-): Promise<SelectCalendarResult> {
-  // Get user's calendars
-  const calendars = await getCalendarCategoriesByEmail(email);
-
-  if (!calendars || calendars.length === 0) {
-    return { calendarId: "primary", calendarName: "Primary", matchReason: "No calendars found" };
-  }
-
-  // If only one calendar, use it directly
-  if (calendars.length === 1) {
-    return {
-      calendarId: calendars[0].calendar_id,
-      calendarName: calendars[0].calendar_name,
-      matchReason: "Only calendar available",
-    };
-  }
-
-  // Build event context
-  const eventContext = [eventInfo.summary, eventInfo.description, eventInfo.location].filter(Boolean).join(" | ") || "No event details provided";
-
-  // Build calendar options for the prompt
-  const calendarOptions = calendars.map((c, i) => `${i + 1}. "${c.calendar_name}"`).join("\n");
-
-  try {
-    const response = await openai.chat.completions.create({
-      model: SUMMARIZATION_MODEL,
-      messages: [
-        {
-          role: "system",
-          content: `You are a calendar assistant that matches events to the most appropriate calendar.
-Given an event and available calendars, return ONLY the number of the best matching calendar.
-
-Rules:
-- Match based on semantic meaning, not just keywords
-- Consider the purpose/category each calendar name implies
-- "Learning Time" should match study, courses, tutorials, skill development
-- "Work" should match meetings, deadlines, professional tasks
-- "Friends and Family" should match social events, gatherings, personal time with loved ones
-- "Health" should match doctor visits, gym, wellness activities
-- If unclear, prefer more specific calendars over generic ones
-- Return ONLY a single number (1, 2, 3, etc.)`,
-        },
-        {
-          role: "user",
-          content: `Event: ${eventContext}
-
-Available calendars:
-${calendarOptions}
-
-Which calendar number is the best match?`,
-        },
-      ],
-      max_tokens: 10,
-      temperature: 0,
-    });
-
-    const result = response.choices[0]?.message?.content?.trim();
-    const selectedIndex = parseInt(result || "1", 10) - 1;
-
-    // Validate the selection
-    if (selectedIndex >= 0 && selectedIndex < calendars.length) {
-      return {
-        calendarId: calendars[selectedIndex].calendar_id,
-        calendarName: calendars[selectedIndex].calendar_name,
-        matchReason: "AI semantic match",
-      };
     }
-
-    // Invalid response, fall back to first calendar
-    console.warn(`AI returned invalid calendar index: ${result}`);
-    return {
-      calendarId: calendars[0].calendar_id,
-      calendarName: calendars[0].calendar_name,
-      matchReason: "AI fallback to first",
-    };
-  } catch (error) {
-    console.error("AI calendar selection failed:", error);
-    // Fallback: use primary or first calendar
-    const primary = calendars.find((c) => c.calendar_id === "primary" || c.calendar_name.toLowerCase().includes("primary"));
-    return {
-      calendarId: primary?.calendar_id || calendars[0].calendar_id,
-      calendarName: primary?.calendar_name || calendars[0].calendar_name,
-      matchReason: "AI error fallback",
-    };
   }
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// CONFLICT CHECK (bypasses checkConflicts agent)
-// ═══════════════════════════════════════════════════════════════════════════
+const openai = new OpenAI({ apiKey: env.openAiApiKey })
+const SUMMARIZATION_MODEL = MODELS.GPT_4_1_NANO
 
-export type ConflictCheckResult = {
-  hasConflicts: boolean;
-  conflictingEvents: Array<{
-    id: string;
-    summary: string;
-    start: string;
-    end: string;
-    calendarName: string;
-  }>;
-  error?: string;
-};
-
-/**
- * Checks for event conflicts - direct API call without AI agent.
- * Replaces: AGENTS.checkConflicts
- * Latency: ~1s (vs ~2-5s with agent)
- */
-export async function checkConflictsDirect(params: {
-  email: string;
-  calendarId: string;
-  start: calendar_v3.Schema$EventDateTime;
-  end: calendar_v3.Schema$EventDateTime;
-}): Promise<ConflictCheckResult> {
-  const { email, calendarId, start, end } = params;
-
-  if (!email || !isEmail(email)) {
-    return { hasConflicts: false, conflictingEvents: [], error: "Invalid email address." };
-  }
-
-  const startTime = start?.dateTime || start?.date;
-  const endTime = end?.dateTime || end?.date;
-
-  if (!startTime || !endTime) {
-    return { hasConflicts: false, conflictingEvents: [], error: "Start and end times required." };
-  }
-
-  try {
-    return await checkEventConflicts({
-      email,
-      calendarId: calendarId || "primary",
-      startTime,
-      endTime,
-    });
-  } catch (error) {
-    console.error("Conflict check failed:", error);
-    return {
-      hasConflicts: false,
-      conflictingEvents: [],
-      error: "Failed to check conflicts.",
-    };
-  }
-}
-
-// ═══════════════════════════════════════════════════════════════════════════
-// COMBINED UTILITY: Pre-create validation
-// ═══════════════════════════════════════════════════════════════════════════
-
-export type PreCreateValidationResult = {
-  valid: boolean;
-  timezone: string;
-  calendarId: string;
-  calendarName: string;
-  conflicts: ConflictCheckResult;
-  error?: string;
-};
-
-/**
- * Performs all pre-creation validations in parallel - combines multiple utilities.
- * This replaces 4 agent calls with parallel direct calls.
- * Latency: ~1-2s (vs ~8-20s with sequential agents)
- */
-export async function preCreateValidation(email: string, eventData: Partial<Event>): Promise<PreCreateValidationResult> {
-  // Run validations in parallel
-  const [userResult, timezoneResult, calendarResult] = await Promise.all([
-    validateUserDirect(email),
-    getUserDefaultTimezoneDirect(email),
-    selectCalendarByRules(email, {
-      summary: eventData.summary,
-      description: eventData.description,
-      location: eventData.location,
-    }),
-  ]);
-
-  if (!userResult.exists) {
-    // Pass through the specific error message for proper error categorization
-    return {
-      valid: false,
-      timezone: "UTC",
-      calendarId: "primary",
-      calendarName: "Primary",
-      conflicts: { hasConflicts: false, conflictingEvents: [] },
-      error: userResult.error || "User not found or no tokens available.",
-    };
-  }
-
-  // Check conflicts if we have start/end times
-  let conflicts: ConflictCheckResult = { hasConflicts: false, conflictingEvents: [] };
-  if (eventData.start && eventData.end) {
-    conflicts = await checkConflictsDirect({
-      email,
-      calendarId: calendarResult.calendarId,
-      start: eventData.start,
-      end: eventData.end,
-    });
-  }
-
-  return {
-    valid: true,
-    timezone: timezoneResult.timezone,
-    calendarId: calendarResult.calendarId,
-    calendarName: calendarResult.calendarName,
-    conflicts,
-  };
-}
-
-// ═══════════════════════════════════════════════════════════════════════════
-// EVENT SUMMARIZATION (cheap model for formatting event data)
-// ═══════════════════════════════════════════════════════════════════════════
-
-const openai = new OpenAI({ apiKey: env.openAiApiKey });
-const SUMMARIZATION_MODEL = MODELS.GPT_4_1_NANO;
-
-/**
- * Summarizes calendar events JSON into a compact Telegram-friendly format.
- * Uses the cheapest model (gpt-4.1-nano) for cost efficiency.
- *
- * @param events - Array of calendar events from Google Calendar API
- * @returns A friendly, formatted summary string
- */
-export async function summarizeEvents(events: calendar_v3.Schema$Event[]): Promise<string> {
+export async function summarizeEvents(
+  events: calendar_v3.Schema$Event[],
+): Promise<string> {
   if (!events || events.length === 0) {
-    return "I couldn't find any events matching that. Would you like me to search differently?";
+    return "I couldn't find any events matching that. Would you like me to search differently?"
   }
 
   try {
-    const eventsJson = JSON.stringify(events, null, 2);
+    const eventsJson = JSON.stringify(events, null, 2)
 
     const response = await openai.chat.completions.create({
       model: SUMMARIZATION_MODEL,
@@ -438,43 +166,38 @@ Rules:
           content: `Events:\n${eventsJson}`,
         },
       ],
-      // max_tokens: 500,
       temperature: 0.3,
-    });
+    })
 
-    const summary = response.choices[0]?.message?.content?.trim();
+    const summary = response.choices[0]?.message?.content?.trim()
 
     if (!summary) {
-      throw new Error("No summary generated");
+      throw new Error("No summary generated")
     }
 
-    return summary;
+    return summary
   } catch (error) {
-    console.error("Error summarizing events:", error);
-    // Fallback: create a simple summary
-    return createFallbackEventSummary(events);
+    console.error("Error summarizing events:", error)
+    return createFallbackEventSummary(events)
   }
 }
 
-/**
- * Fallback summary when AI summarization fails.
- */
 function createFallbackEventSummary(events: calendar_v3.Schema$Event[]): string {
   if (events.length === 1) {
-    const event = events[0];
-    const title = event.summary || "Untitled Event";
-    const start = event.start?.dateTime || event.start?.date || "Unknown time";
-    const location = event.location ? ` at ${event.location}` : "";
-    return `I found "${title}" scheduled for ${start}${location}.`;
+    const event = events[0]
+    const title = event.summary || "Untitled Event"
+    const start = event.start?.dateTime || event.start?.date || "Unknown time"
+    const location = event.location ? ` at ${event.location}` : ""
+    return `I found "${title}" scheduled for ${start}${location}.`
   }
 
   return `I found ${events.length} events for you. Here's what I found:\n\n${events
     .slice(0, 10)
     .map((event, idx) => {
-      const title = event.summary || "Untitled Event";
-      const start = event.start?.dateTime || event.start?.date || "Unknown time";
-      const location = event.location ? ` - ${event.location}` : "";
-      return `${idx + 1}. "${title}" - ${start}${location}`;
+      const title = event.summary || "Untitled Event"
+      const start = event.start?.dateTime || event.start?.date || "Unknown time"
+      const location = event.location ? ` - ${event.location}` : ""
+      return `${idx + 1}. "${title}" - ${start}${location}`
     })
-    .join("\n")}${events.length > 10 ? `\n\n...and ${events.length - 10} more events.` : ""}`;
+    .join("\n")}${events.length > 10 ? `\n\n...and ${events.length - 10} more events.` : ""}`
 }

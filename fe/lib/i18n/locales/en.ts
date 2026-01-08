@@ -561,6 +561,9 @@ export const en = {
     returnHome: 'Return Home',
     retrying: 'Retrying...',
     somethingWentWrong: 'Something went wrong',
+    copy: 'Copy',
+    copied: 'Copied!',
+    copyError: 'Copy error details',
   },
 
   // Bento Grid Section

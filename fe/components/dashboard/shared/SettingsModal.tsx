@@ -144,14 +144,14 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
           </div>
 
           {/* Content Area */}
-          <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
-            <div className="flex items-center justify-end p-4 pb-2">
+          <div className="flex-1 flex flex-col min-w-0 min-h-0">
+            <div className="flex items-center justify-end p-4 pb-2 flex-shrink-0">
               <Button variant="ghost" size="icon" onClick={onClose} className="text-zinc-500 hover:text-zinc-700">
                 <X className="w-5 h-5" />
               </Button>
             </div>
 
-            <div className="px-6 pb-6">
+            <div className="flex-1 overflow-y-auto px-6 pb-6">
               <TabsContent value="general" className="mt-0">
                 <GeneralTab
                   isDarkMode={isDarkMode}

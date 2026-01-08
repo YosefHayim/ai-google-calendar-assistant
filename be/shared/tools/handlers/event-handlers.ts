@@ -14,6 +14,7 @@ import type {
   DeleteEventParams,
   EventTime,
 } from "../schemas"
+import type { HandlerContext } from "@/shared/types"
 
 type Event = calendar_v3.Schema$Event
 
@@ -82,9 +83,7 @@ function convertEventTime(time: EventTime | null): Event["start"] | undefined {
   }
 }
 
-export interface HandlerContext {
-  email: string
-}
+export type { HandlerContext }
 
 export async function getEventHandler(
   params: GetEventParams,

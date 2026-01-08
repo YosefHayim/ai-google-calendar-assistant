@@ -68,6 +68,27 @@ export const GapSettingsTab: React.FC = () => {
     setValue('eventLanguages', newLanguages, { shouldDirty: true })
   }
 
+  const handleAutoGapToggle = (checked: boolean) => {
+    setValue('autoGapAnalysis', checked)
+    updateSettings(
+      {
+        eventLanguages: selectedLanguages as SupportedEventLanguage[],
+        autoGapAnalysis: checked,
+        languageSetupComplete: settings?.languageSetupComplete ?? false,
+      },
+      {
+        onSuccess: () => {
+          toast.success(checked ? 'Automatic gap analysis enabled' : 'Automatic gap analysis disabled')
+          reset({ eventLanguages: selectedLanguages, autoGapAnalysis: checked })
+        },
+        onError: () => {
+          setValue('autoGapAnalysis', !checked)
+          toast.error('Failed to update setting')
+        },
+      },
+    )
+  }
+
   const onSubmit = (data: GapSettingsFormData) => {
     updateSettings(
       {
@@ -150,7 +171,7 @@ export const GapSettingsTab: React.FC = () => {
                   <CinematicGlowToggle
                     id={autoGapToggleId}
                     checked={watchedAutoGap}
-                    onChange={(checked) => setValue('autoGapAnalysis', checked, { shouldDirty: true })}
+                    onChange={isPending ? () => {} : handleAutoGapToggle}
                   />
                 }
               />

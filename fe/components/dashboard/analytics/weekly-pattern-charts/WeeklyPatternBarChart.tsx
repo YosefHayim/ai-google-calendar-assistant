@@ -3,9 +3,8 @@
 import * as React from 'react'
 import { Bar, BarChart, XAxis, YAxis, Cell } from 'recharts'
 import { ChartContainer, ChartTooltip, type ChartConfig } from '@/components/ui/chart'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import type { WeeklyPatternDataPoint } from '@/types/analytics'
-import { EventsListPopover } from '../EventsListPopover'
+import EventsListDialog from '@/components/dialogs/EventsListDialog'
 
 interface WeeklyPatternBarChartProps {
   data: WeeklyPatternDataPoint[]
@@ -20,8 +19,8 @@ const chartConfig = {
 } satisfies ChartConfig
 
 export const WeeklyPatternBarChart: React.FC<WeeklyPatternBarChartProps> = ({ data, onDayClick }) => {
-  const [activeIndex, setActiveIndex] = React.useState<number | null>(null)
-  const [popoverOpen, setPopoverOpen] = React.useState(false)
+  const [activeDataPoint, setActiveDataPoint] = React.useState<WeeklyPatternDataPoint | null>(null)
+  const [dialogOpen, setDialogOpen] = React.useState(false)
 
   const orderedData = React.useMemo(() => {
     if (!data || data.length === 0) return []
@@ -33,79 +32,68 @@ export const WeeklyPatternBarChart: React.FC<WeeklyPatternBarChartProps> = ({ da
     return sorted
   }, [data])
 
-  const activeDataPoint = activeIndex !== null ? orderedData[activeIndex] : null
-
   return (
-    <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
-      <PopoverTrigger asChild>
-        <div className="w-full">
-          <ChartContainer config={chartConfig} className="h-[200px] w-full">
-            <BarChart data={orderedData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-              <XAxis
-                dataKey="dayShort"
-                axisLine={false}
-                tickLine={false}
-                tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
-              />
-              <YAxis
-                axisLine={false}
-                tickLine={false}
-                tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
-                tickFormatter={(value) => `${value}h`}
-              />
-              <ChartTooltip
-                content={({ active, payload }) => {
-                  if (active && payload && payload.length > 0) {
-                    const point = payload[0].payload as WeeklyPatternDataPoint
-                    return (
-                      <div className="bg-zinc-900 dark:bg-zinc-800 text-white px-3 py-2 rounded-lg shadow-lg">
-                        <p className="font-medium">{point.day}</p>
-                        <p className="text-sm">{point.hours}h scheduled</p>
-                        <p className="text-xs text-zinc-400">{point.eventCount} events</p>
-                        {point.events.length > 0 && (
-                          <p className="text-xs text-indigo-400 mt-1">Click to view events</p>
-                        )}
-                      </div>
-                    )
-                  }
-                  return null
-                }}
-              />
-              <Bar
-                dataKey="hours"
-                radius={[4, 4, 0, 0]}
-                maxBarSize={40}
-                className="cursor-pointer"
-                onClick={(barData, index) => {
-                  if (barData?.payload) {
-                    const point = barData.payload as WeeklyPatternDataPoint
-                    if (point.events.length > 0) {
-                      setActiveIndex(index)
-                      setPopoverOpen(true)
-                    }
-                    onDayClick?.(point.dayIndex, point.events)
-                  }
-                }}
-              >
-                {orderedData.map((entry) => (
-                  <Cell
-                    key={entry.dayIndex}
-                    fill={entry.dayIndex === 0 || entry.dayIndex === 6 ? '#a5b4fc' : '#6366f1'}
-                  />
-                ))}
-              </Bar>
-            </BarChart>
-          </ChartContainer>
-        </div>
-      </PopoverTrigger>
-      {activeDataPoint && activeDataPoint.events.length > 0 && (
-        <PopoverContent side="top" align="center" className="p-0">
-          <EventsListPopover
-            events={activeDataPoint.events}
-            title={activeDataPoint.day}
+    <>
+      <ChartContainer config={chartConfig} className="h-[200px] w-full">
+        <BarChart data={orderedData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+          <XAxis
+            dataKey="dayShort"
+            axisLine={false}
+            tickLine={false}
+            tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
           />
-        </PopoverContent>
-      )}
-    </Popover>
+          <YAxis
+            axisLine={false}
+            tickLine={false}
+            tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
+            tickFormatter={(value) => `${value}h`}
+          />
+          <ChartTooltip
+            content={({ active, payload }) => {
+              if (active && payload && payload.length > 0) {
+                const point = payload[0].payload as WeeklyPatternDataPoint
+                return (
+                  <div className="bg-zinc-900 dark:bg-zinc-800 text-white px-3 py-2 rounded-lg shadow-lg">
+                    <p className="font-medium">{point.day}</p>
+                    <p className="text-sm">{point.hours}h scheduled</p>
+                    <p className="text-xs text-zinc-400">{point.eventCount} events</p>
+                    {point.events.length > 0 && <p className="text-xs text-indigo-400 mt-1">Click to view events</p>}
+                  </div>
+                )
+              }
+              return null
+            }}
+          />
+          <Bar
+            dataKey="hours"
+            radius={[4, 4, 0, 0]}
+            maxBarSize={40}
+            className="cursor-pointer"
+            onClick={(barData) => {
+              if (barData?.payload) {
+                const point = barData.payload as WeeklyPatternDataPoint
+                if (point.events.length > 0) {
+                  setActiveDataPoint(point)
+                  setDialogOpen(true)
+                }
+                onDayClick?.(point.dayIndex, point.events)
+              }
+            }}
+          >
+            {orderedData.map((entry) => (
+              <Cell key={entry.dayIndex} fill={entry.dayIndex === 0 || entry.dayIndex === 6 ? '#a5b4fc' : '#6366f1'} />
+            ))}
+          </Bar>
+        </BarChart>
+      </ChartContainer>
+
+      <EventsListDialog
+        isOpen={dialogOpen}
+        title={activeDataPoint?.day ?? ''}
+        subtitle={activeDataPoint ? `${activeDataPoint.hours}h scheduled` : undefined}
+        events={activeDataPoint?.events ?? []}
+        onClose={() => setDialogOpen(false)}
+      />
+    </>
   )
 }

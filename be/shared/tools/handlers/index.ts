@@ -1,4 +1,4 @@
-export type { HandlerContext } from "./event-handlers"
+export type { HandlerContext } from "@/shared/types"
 
 export {
   getEventHandler,
@@ -13,14 +13,16 @@ export {
   selectCalendarHandler,
   checkConflictsHandler,
   preCreateValidationHandler,
-} from "./validation-handlers"
+  getCalendarCategoriesByEmail,
+} from "./direct-handlers"
 export type {
   ValidateUserResult,
   TimezoneResult,
   SelectCalendarResult,
   ConflictCheckResult,
   PreCreateValidationResult,
-} from "./validation-handlers"
+  UserCalendar,
+} from "./direct-handlers"
 
 export {
   analyzeGapsHandler,

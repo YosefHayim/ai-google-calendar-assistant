@@ -13,15 +13,18 @@ import type {
   CheckConflictsParams,
   PreCreateValidationParams,
 } from "../schemas"
+import {
+  type HandlerContext,
+  type ConflictCheckResult,
+  categorizeError,
+} from "@/shared/types"
 
 type Event = calendar_v3.Schema$Event
 
 const SUMMARIZATION_MODEL = MODELS.GPT_4_1_NANO
 const openai = new OpenAI({ apiKey: env.openAiApiKey })
 
-export interface HandlerContext {
-  email: string
-}
+export type { HandlerContext, ConflictCheckResult }
 
 export type ValidateUserResult = {
   exists: boolean
@@ -40,18 +43,6 @@ export type SelectCalendarResult = {
   matchReason?: string
 }
 
-export type ConflictCheckResult = {
-  hasConflicts: boolean
-  conflictingEvents: Array<{
-    id: string
-    summary: string
-    start: string
-    end: string
-    calendarName: string
-  }>
-  error?: string
-}
-
 export type PreCreateValidationResult = {
   valid: boolean
   timezone: string
@@ -59,40 +50,6 @@ export type PreCreateValidationResult = {
   calendarName: string
   conflicts: ConflictCheckResult
   error?: string
-}
-
-function categorizeError(error: unknown): {
-  type: "auth" | "database" | "other"
-  message: string
-} {
-  const errorMsg = error instanceof Error ? error.message : String(error)
-  const lowerMsg = errorMsg.toLowerCase()
-
-  if (
-    lowerMsg.includes("no credentials found") ||
-    lowerMsg.includes("user not found") ||
-    lowerMsg.includes("no tokens available") ||
-    lowerMsg.includes("invalid_grant") ||
-    lowerMsg.includes("token has been expired") ||
-    lowerMsg.includes("token has been revoked") ||
-    lowerMsg.includes("401") ||
-    lowerMsg.includes("403") ||
-    lowerMsg.includes("unauthorized")
-  ) {
-    return { type: "auth", message: "No credentials found - authorization required." }
-  }
-
-  if (
-    (lowerMsg.includes("column") && lowerMsg.includes("does not exist")) ||
-    (lowerMsg.includes("relation") && lowerMsg.includes("does not exist")) ||
-    lowerMsg.includes("connection refused") ||
-    lowerMsg.includes("database") ||
-    lowerMsg.includes("could not fetch credentials")
-  ) {
-    return { type: "database", message: "Database error - please try again in a moment." }
-  }
-
-  return { type: "other", message: errorMsg }
 }
 
 export async function validateUserHandler(
@@ -156,12 +113,12 @@ export async function getTimezoneHandler(
   }
 }
 
-interface UserCalendar {
+export interface UserCalendar {
   calendar_id: string
   calendar_name: string
 }
 
-async function getCalendarCategoriesByEmail(
+export async function getCalendarCategoriesByEmail(
   email: string,
 ): Promise<UserCalendar[]> {
   const user = await userRepository.findUserByEmail(email)
