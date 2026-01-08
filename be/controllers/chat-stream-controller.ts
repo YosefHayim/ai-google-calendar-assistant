@@ -1,4 +1,4 @@
-import type { Request, Response } from "express";
+import type { Request, Response } from "express"
 import {
   endSSEStream,
   setupSSEHeaders,
@@ -10,18 +10,19 @@ import {
   writeTitleGenerated,
   writeToolComplete,
   writeToolStart,
-} from "@/utils/sse";
-import { generateConversationTitle, summarizeMessages } from "@/telegram-bot/utils/summarize";
-import { getWebRelevantContext, storeWebEmbeddingAsync } from "@/utils/web-embeddings";
+} from "@/utils/sse"
+import { generateConversationTitle, summarizeMessages } from "@/telegram-bot/utils/summarize"
+import { getWebRelevantContext, storeWebEmbeddingAsync } from "@/utils/web-embeddings"
 
-import type { AgentContext } from "@/ai-agents/tool-registry";
-import { ORCHESTRATOR_AGENT } from "@/ai-agents";
-import { STATUS_RESPONSE } from "@/config";
-import { createAgentSession } from "@/ai-agents/sessions";
-import { getAllyBrainPreference } from "@/controllers/user-preferences-controller";
-import { run } from "@openai/agents";
-import { sendR } from "@/utils/http";
-import { webConversation } from "@/utils/conversation/WebConversationAdapter";
+import type { AgentContext } from "@/ai-agents/tool-registry"
+import { ORCHESTRATOR_AGENT } from "@/ai-agents"
+import { STATUS_RESPONSE } from "@/config"
+import { createAgentSession } from "@/ai-agents/sessions"
+import { getAllyBrainPreference } from "@/controllers/user-preferences-controller"
+import { run } from "@openai/agents"
+import { sendR } from "@/utils/http"
+import { webConversation } from "@/utils/conversation/WebConversationAdapter"
+import { unifiedContextStore } from "@/shared/context"
 
 const EMBEDDING_THRESHOLD = 0.75;
 const EMBEDDING_LIMIT = 3;
@@ -78,11 +79,14 @@ async function handleStreamingResponse(
   isNewConversation: boolean,
   fullPrompt: string
 ): Promise<void> {
-  setupSSEHeaders(res);
-  const stopHeartbeat = startHeartbeat(res);
+  setupSSEHeaders(res)
+  const stopHeartbeat = startHeartbeat(res)
 
-  let fullResponse = "";
-  let currentAgent = ORCHESTRATOR_AGENT.name;
+  await unifiedContextStore.setModality(userId, "chat")
+  await unifiedContextStore.touch(userId)
+
+  let fullResponse = ""
+  let currentAgent = ORCHESTRATOR_AGENT.name
 
   try {
     const session = createAgentSession({

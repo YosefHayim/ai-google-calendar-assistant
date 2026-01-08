@@ -1,14 +1,24 @@
-import type { Request, Response } from "express";
-import { STATUS_RESPONSE } from "@/config";
-import { reqResAsyncHandler, sendR } from "@/utils/http";
-import { transcribeAudio } from "@/utils/ai/voice-transcription";
+import type { Request, Response } from "express"
+import { STATUS_RESPONSE } from "@/config"
+import { reqResAsyncHandler, sendR } from "@/utils/http"
+import { transcribeAudio } from "@/utils/ai/voice-transcription"
 import {
   generateSpeech,
   isValidVoice,
   DEFAULT_VOICE,
   type TTSVoice,
-} from "@/utils/ai/text-to-speech";
-import { getVoicePreference } from "@/controllers/user-preferences-controller";
+} from "@/utils/ai/text-to-speech"
+import { getVoicePreference } from "@/controllers/user-preferences-controller"
+import { AccessToken } from "livekit-server-sdk"
+import {
+  AGENT_PROFILES,
+  DEFAULT_AGENT_PROFILE_ID,
+  getAgentProfile,
+  getProfilesForTier,
+  formatProfileForClient,
+  isRealtimeSupported,
+  type AgentTier,
+} from "@/shared/orchestrator"
 
 const transcribe = reqResAsyncHandler(async (req: Request, res: Response) => {
   if (!req.file) {
@@ -74,4 +84,83 @@ const synthesize = reqResAsyncHandler(async (req: Request, res: Response) => {
   return res.send(result.audioBuffer);
 });
 
-export default { transcribe, synthesize };
+const getLiveKitToken = reqResAsyncHandler(async (req: Request, res: Response) => {
+  const userId = req.user?.id
+  const userEmail = req.user?.email
+
+  if (!userId || !userEmail) {
+    return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated")
+  }
+
+  const { profileId = DEFAULT_AGENT_PROFILE_ID } = req.body as {
+    profileId?: string
+  }
+
+  const profile = getAgentProfile(profileId)
+
+  if (!isRealtimeSupported(profile)) {
+    return sendR(
+      res,
+      STATUS_RESPONSE.BAD_REQUEST,
+      `Agent profile "${profile.displayName}" does not support real-time voice`
+    )
+  }
+
+  const apiKey = process.env.LIVEKIT_API_KEY
+  const apiSecret = process.env.LIVEKIT_API_SECRET
+  const wsUrl = process.env.LIVEKIT_WS_URL
+
+  if (!apiKey || !apiSecret || !wsUrl) {
+    return sendR(
+      res,
+      STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
+      "LiveKit not configured"
+    )
+  }
+
+  const roomName = `calendar-voice-${userId}-${Date.now()}`
+  const participantName = userEmail.split("@")[0]
+
+  const token = new AccessToken(apiKey, apiSecret, {
+    identity: participantName,
+    name: participantName,
+    metadata: JSON.stringify({ userId, email: userEmail, profileId: profile.id }),
+  })
+
+  token.addGrant({
+    room: roomName,
+    roomJoin: true,
+    canPublish: true,
+    canSubscribe: true,
+    canPublishData: true,
+  })
+
+  const jwt = await token.toJwt()
+
+  return sendR(res, STATUS_RESPONSE.SUCCESS, "LiveKit token generated", {
+    token: jwt,
+    roomName,
+    wsUrl,
+    profile: formatProfileForClient(profile),
+  })
+})
+
+const getAgentProfiles = reqResAsyncHandler(async (req: Request, res: Response) => {
+  const userTier = (req.query.tier as AgentTier) || "free"
+  const voiceOnly = req.query.voice === "true"
+
+  let profiles = getProfilesForTier(userTier)
+
+  if (voiceOnly) {
+    profiles = profiles.filter((p) => isRealtimeSupported(p))
+  }
+
+  const formatted = profiles.map(formatProfileForClient)
+
+  return sendR(res, STATUS_RESPONSE.SUCCESS, "Agent profiles retrieved", {
+    profiles: formatted,
+    defaultProfileId: DEFAULT_AGENT_PROFILE_ID,
+  })
+})
+
+export default { transcribe, synthesize, getLiveKitToken, getAgentProfiles }

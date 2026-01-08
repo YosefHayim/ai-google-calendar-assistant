@@ -13,6 +13,7 @@ import {
   telegramConversation,
 } from "../utils"
 import { getAllyBrainForTelegram } from "../utils/ally-brain"
+import { unifiedContextStore } from "@/shared/context"
 
 const CONFLICT_PARTS_MIN_LENGTH = 3
 
@@ -24,6 +25,14 @@ export const handleAgentRequest = async (
   const chatId = ctx.chat?.id || ctx.session.chatId
   const telegramUserId = ctx.from?.id ?? 0
   const { t } = getTranslatorFromLanguageCode(ctx.session.codeLang)
+
+  const userUuid =
+    await telegramConversation.getUserIdFromTelegram(telegramUserId)
+
+  if (userUuid) {
+    await unifiedContextStore.setModality(userUuid, "telegram")
+    await unifiedContextStore.touch(userUuid)
+  }
 
   try {
     const conversationContext = await telegramConversation.addMessageToContext(
@@ -59,9 +68,6 @@ export const handleAgentRequest = async (
     logger.info(
       `Telegram Bot: Prompt length for user ${telegramUserId}: ${prompt.length} chars (context: ${fullContext.length}, message: ${message.length})`
     )
-
-    const userUuid =
-      await telegramConversation.getUserIdFromTelegram(telegramUserId)
 
     const { finalOutput } = await activateAgent(ORCHESTRATOR_AGENT, prompt, {
       email: ctx.session.email,

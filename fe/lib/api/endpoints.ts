@@ -379,6 +379,10 @@ export const ENDPOINTS = {
   VOICE_TRANSCRIBE: '/api/voice/transcribe',
 
   VOICE_SYNTHESIZE: '/api/voice/synthesize',
+
+  VOICE_LIVEKIT_TOKEN: '/api/voice/livekit/token',
+
+  VOICE_AGENT_PROFILES: '/api/voice/agents/profiles',
 } as const
 
 export type EndpointsType = typeof ENDPOINTS
