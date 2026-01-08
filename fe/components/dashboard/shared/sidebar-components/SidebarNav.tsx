@@ -10,7 +10,7 @@ interface NavLinkProps {
   href: string
   activePath: string
   isOpen: boolean
-  icon: React.ElementType
+  icon: React.ComponentType<{ className?: string }>
   id?: string
   description?: string
   onClick?: () => void

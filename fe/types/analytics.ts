@@ -97,7 +97,7 @@ export interface CalendarBreakdownItem {
 export interface ProcessedActivity {
   action: string
   time: string
-  icon: React.ElementType
+  icon: React.ComponentType<{ size?: number; style?: React.CSSProperties }>
   timestamp: number
   calendarName: string
   calendarId: string
@@ -153,7 +153,7 @@ export interface TimeAllocationChartProps {
 export type InsightColor = 'amber' | 'sky' | 'emerald' | 'rose' | 'indigo' | 'orange'
 
 export interface InsightCardProps {
-  icon: React.ElementType
+  icon: React.ComponentType<{ className?: string }>
   title: string
   value: string
   description: string
@@ -161,7 +161,7 @@ export interface InsightCardProps {
 }
 
 export interface WeeklyInsight {
-  icon: React.ElementType
+  icon: React.ComponentType<{ className?: string }>
   title: string
   value: string
   description: string
@@ -173,7 +173,7 @@ export interface StatsCardProps {
   value: number
   previousValue?: number
   suffix?: string
-  icon: React.ElementType
+  icon: React.ComponentType<{ className?: string }>
   iconColor: string
   iconBg: string
   showTrend?: boolean
@@ -357,7 +357,7 @@ export interface BentoStatItem {
   label: string
   value: number | string
   suffix?: string
-  icon: React.ElementType
+  icon: React.ComponentType<{ className?: string }>
   iconColor: string
   iconBg: string
   description?: string
