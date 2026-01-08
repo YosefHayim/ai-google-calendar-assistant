@@ -103,4 +103,12 @@ export default [
       },
     },
   },
+
+  // React Three Fiber components - allow Three.js JSX properties
+  {
+    files: ['**/components/3d/**/*.{ts,tsx}'],
+    rules: {
+      'react/no-unknown-property': 'off',
+    },
+  },
 ]

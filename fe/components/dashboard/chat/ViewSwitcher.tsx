@@ -49,7 +49,7 @@ export const ViewSwitcher: React.FC<ViewSwitcherProps> = ({ activeTab, onTabChan
             : 'text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300'
         }`}
       >
-        <Box className="w-3.5 h-3.5" /> 3D (Coming Soon)
+        <Box className="w-3.5 h-3.5" /> 3D
       </Button>
     </div>
   )
