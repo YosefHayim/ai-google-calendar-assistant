@@ -407,6 +407,18 @@ export const de = {
   "botMenu.exit": "Konversation beenden",
   "botMenu.language": "Sprache ändern",
   "botMenu.aboutme": "Was weißt du über mich?",
+  "botMenu.astext": "Letzte als Text wiederholen",
+  "botMenu.asvoice": "Letzte als Sprache wiederholen",
+
+  "commands.astext.header": "Letzte Antwort als Text",
+  "commands.astext.noLastResponse": "Keine vorherige Antwort zum Anzeigen. Senden Sie mir zuerst eine Nachricht!",
+  "commands.astext.alreadyText": "Die letzte Antwort wurde bereits als Text gesendet.",
+
+  "commands.asvoice.header": "Letzte Antwort als Sprache",
+  "commands.asvoice.noLastResponse": "Keine vorherige Antwort zum Wiederholen. Senden Sie mir zuerst eine Nachricht!",
+  "commands.asvoice.alreadyVoice": "Die letzte Antwort wurde bereits als Sprachnachricht gesendet.",
+  "commands.asvoice.generating": "Sprachnachricht wird generiert...",
+  "commands.asvoice.failed": "Sprachnachricht konnte nicht generiert werden. Hier ist der Text:",
 } as const;
 
 export type TranslationKey = keyof typeof de;

@@ -369,6 +369,18 @@ export const en = {
   "botMenu.exit": "End conversation",
   "botMenu.language": "Change language",
   "botMenu.aboutme": "What do you know about me?",
+  "botMenu.astext": "Repeat last as text",
+  "botMenu.asvoice": "Repeat last as voice",
+
+  "commands.astext.header": "Last Response as Text",
+  "commands.astext.noLastResponse": "No previous response to show. Send me a message first!",
+  "commands.astext.alreadyText": "The last response was already sent as text.",
+
+  "commands.asvoice.header": "Last Response as Voice",
+  "commands.asvoice.noLastResponse": "No previous response to repeat. Send me a message first!",
+  "commands.asvoice.alreadyVoice": "The last response was already sent as voice.",
+  "commands.asvoice.generating": "Generating voice message...",
+  "commands.asvoice.failed": "Failed to generate voice message. Here's the text instead:",
 } as const;
 
 export type TranslationKey = keyof typeof en;

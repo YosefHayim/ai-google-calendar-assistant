@@ -90,6 +90,12 @@ export type SessionData = {
   awaitingBrainInstructions?: boolean;
   // Mode for brain instructions update (append or replace)
   brainInstructionsMode?: "append" | "replace";
+  // Last agent response for repeat as text/voice feature
+  lastAgentResponse?: {
+    text: string;
+    sentAsVoice: boolean;
+    timestamp: number;
+  };
 };
 
 /**

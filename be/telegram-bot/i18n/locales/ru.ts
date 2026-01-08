@@ -386,4 +386,16 @@ export const ru = {
   "botMenu.exit": "Завершить разговор",
   "botMenu.language": "Изменить язык",
   "botMenu.aboutme": "Что ты знаешь обо мне?",
+  "botMenu.astext": "Повторить как текст",
+  "botMenu.asvoice": "Повторить как голос",
+
+  "commands.astext.header": "Последний ответ текстом",
+  "commands.astext.noLastResponse": "Нет предыдущего ответа. Сначала отправьте мне сообщение!",
+  "commands.astext.alreadyText": "Последний ответ уже был отправлен текстом.",
+
+  "commands.asvoice.header": "Последний ответ голосом",
+  "commands.asvoice.noLastResponse": "Нет предыдущего ответа для повторения. Сначала отправьте мне сообщение!",
+  "commands.asvoice.alreadyVoice": "Последний ответ уже был отправлен голосовым сообщением.",
+  "commands.asvoice.generating": "Генерация голосового сообщения...",
+  "commands.asvoice.failed": "Не удалось создать голосовое сообщение. Вот текст:",
 } as const;

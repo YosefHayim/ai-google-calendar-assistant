@@ -90,6 +90,8 @@ export const BOT_COMMANDS = [
   { command: "calendars", description: "Your calendars" },
   { command: "aboutme", description: "What do you know about me?" },
   { command: "brain", description: "Teach Ally your preferences" },
+  { command: "astext", description: "Repeat last as text" },
+  { command: "asvoice", description: "Repeat last as voice" },
   { command: "status", description: "Check connection" },
   { command: "settings", description: "Ally settings" },
   { command: "language", description: "Change language" },

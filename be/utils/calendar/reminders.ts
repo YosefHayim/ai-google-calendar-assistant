@@ -10,7 +10,7 @@ export interface EventReminder {
 
 export interface EventReminders {
   useDefault: boolean;
-  overrides?: EventReminder[];
+  overrides: EventReminder[];
 }
 
 export interface ReminderPreferences {
@@ -121,7 +121,7 @@ export function resolveRemindersForEvent(
   }
 
   if (userPreferences.useCalendarDefaults) {
-    return { useDefault: true };
+    return { useDefault: true, overrides: [] };
   }
 
   if (userPreferences.defaultReminders.length > 0) {
@@ -131,7 +131,7 @@ export function resolveRemindersForEvent(
     };
   }
 
-  return { useDefault: true };
+  return { useDefault: true, overrides: [] };
 }
 
 export async function saveUserReminderPreferences(

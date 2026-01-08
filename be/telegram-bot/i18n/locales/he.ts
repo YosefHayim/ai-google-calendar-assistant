@@ -350,4 +350,16 @@ export const he = {
   "botMenu.exit": "סיום שיחה",
   "botMenu.language": "שינוי שפה",
   "botMenu.aboutme": "מה אתה יודע עליי?",
+  "botMenu.astext": "חזור על האחרון כטקסט",
+  "botMenu.asvoice": "חזור על האחרון כהודעה קולית",
+
+  "commands.astext.header": "התגובה האחרונה כטקסט",
+  "commands.astext.noLastResponse": "אין תגובה קודמת להציג. שלח לי הודעה קודם!",
+  "commands.astext.alreadyText": "התגובה האחרונה כבר נשלחה כטקסט.",
+
+  "commands.asvoice.header": "התגובה האחרונה כהודעה קולית",
+  "commands.asvoice.noLastResponse": "אין תגובה קודמת לחזור עליה. שלח לי הודעה קודם!",
+  "commands.asvoice.alreadyVoice": "התגובה האחרונה כבר נשלחה כהודעה קולית.",
+  "commands.asvoice.generating": "מייצר הודעה קולית...",
+  "commands.asvoice.failed": "נכשל ביצירת הודעה קולית. הנה הטקסט במקום:",
 } as const;
