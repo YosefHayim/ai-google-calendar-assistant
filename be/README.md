@@ -11,7 +11,7 @@ This service exposes a backend (Express + TypeScript) that:
 - Uses OpenAI Agents to understand free-text requests and generate scheduling actions.
 - Persists users, sessions, and settings in Supabase.
 - Exposes a Telegram bot (via `grammy`) as the main assistant interface.
-- Integrates Stripe for subscription and billing flows.
+- Integrates Lemon Squeezy for subscription and billing flows.
 
 ## Features
 
@@ -85,7 +85,7 @@ This service exposes a backend (Express + TypeScript) that:
 
 ### SaaS-Ready Features
 - Multi-user support with isolated data
-- Stripe payment integration for subscriptions
+- Lemon Squeezy payment integration for subscriptions
 - WhatsApp integration (in development)
 - Scalable architecture for production deployment
 
@@ -98,7 +98,7 @@ This service exposes a backend (Express + TypeScript) that:
 - Database/Auth: Supabase (`@supabase/supabase-js`, `supabase`)
 - Calendar: Google Calendar API (`googleapis`)
 - Bot: `grammy`, `@grammyjs/*`
-- Payments: Stripe
+- Payments: Lemon Squeezy
 - Config/Env: `dotenv`, Doppler
 - Validation: `zod`
 - Logging/Middleware: `morgan`, `cors`, `cookie-parser`, `validator`

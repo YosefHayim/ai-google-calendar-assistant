@@ -36,9 +36,9 @@ export interface Plan {
   isHighlighted: boolean
 }
 
-export interface StripeStatus {
+export interface PaymentStatus {
   enabled: boolean
-  publishableKey?: string
+  provider: 'lemonsqueezy'
   trialDays: number
   moneyBackDays: number
 }
@@ -94,10 +94,10 @@ interface ApiResponse<T> {
 // ============================================================================
 
 /**
- * Get Stripe configuration status
+ * Get payment provider configuration status
  */
-export const getStripeStatus = async (): Promise<StripeStatus> => {
-  const response = await apiClient.get<ApiResponse<StripeStatus>>(ENDPOINTS.PAYMENTS_STATUS)
+export const getPaymentStatus = async (): Promise<PaymentStatus> => {
+  const response = await apiClient.get<ApiResponse<PaymentStatus>>(ENDPOINTS.PAYMENTS_STATUS)
   return response.data.data!
 }
 
@@ -125,7 +125,7 @@ export const initializeFreePlan = async (): Promise<void> => {
 }
 
 /**
- * Create checkout session for subscription and redirect to Stripe
+ * Create checkout session for subscription
  */
 export const createSubscriptionCheckout = async (params: CheckoutParams): Promise<string> => {
   const response = await apiClient.post<ApiResponse<{ checkoutUrl: string; sessionId: string }>>(
@@ -136,7 +136,7 @@ export const createSubscriptionCheckout = async (params: CheckoutParams): Promis
 }
 
 /**
- * Create checkout session for credit pack and redirect to Stripe
+ * Create checkout session for credit pack
  */
 export const createCreditPackCheckout = async (params: CreditPackCheckoutParams): Promise<string> => {
   const response = await apiClient.post<ApiResponse<{ checkoutUrl: string; sessionId: string }>>(
@@ -176,7 +176,7 @@ export const requestRefund = async (reason?: string): Promise<{ success: boolean
 // ============================================================================
 
 /**
- * Redirect to Stripe checkout
+ * Redirect to checkout
  */
 export const redirectToCheckout = async (params: CheckoutParams): Promise<void> => {
   const checkoutUrl = await createSubscriptionCheckout(params)

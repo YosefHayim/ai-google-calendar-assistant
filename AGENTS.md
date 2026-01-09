@@ -331,7 +331,7 @@ Session management for agent conversations.
 | `chat-stream-controller.ts` | Streaming chat with SSE |
 | `agent-profiles-controller.ts` | Agent profile CRUD |
 | `voice-controller.ts` | LiveKit token generation |
-| `payment-controller.ts` | Stripe subscription handling |
+| `payment-controller.ts` | Lemon Squeezy subscription handling |
 | `user-preferences-controller.ts` | User settings CRUD |
 | `contact-controller.ts` | Contact form submission |
 | `whatsapp-controller.ts` | WhatsApp integration |
@@ -376,9 +376,9 @@ Session management for agent conversations.
 | `redisClient` | Redis client instance |
 | `isRedisConnected()` | Check Redis connection |
 | `disconnectRedis()` | Close Redis connection |
-| `getStripeClient()` | Get Stripe client |
-| `isStripeEnabled()` | Check if Stripe is configured |
-| `STRIPE_CONFIG` | Stripe configuration |
+| `initializeLemonSqueezy()` | Initialize Lemon Squeezy client |
+| `isLemonSqueezyEnabled()` | Check if Lemon Squeezy is configured |
+| `LEMONSQUEEZY_CONFIG` | Lemon Squeezy configuration |
 
 #### Constants (`constants/`)
 
@@ -482,7 +482,7 @@ npm run format              # Prettier
 | Google Calendar API | Events, calendars, OAuth | `be/utils/calendar/` |
 | OpenAI | Agent orchestration | `be/ai-agents/` |
 | LiveKit | Real-time voice rooms | `be/voice-sidecar/` |
-| Stripe | Payments (subscription) | `be/services/subscription-service.ts` |
+| Lemon Squeezy | Payments (subscription) | `be/services/lemonsqueezy-service.ts` |
 | Redis | Cross-modal context store | `be/shared/context/` |
 
 ---

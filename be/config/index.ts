@@ -8,10 +8,10 @@ export {
   redisClient,
   isRedisConnected,
   disconnectRedis,
-  getStripeClient,
-  isStripeEnabled,
-  getStripePublishableKey,
-  STRIPE_CONFIG,
+  initializeLemonSqueezy,
+  isLemonSqueezyEnabled,
+  getLemonSqueezyStoreId,
+  LEMONSQUEEZY_CONFIG,
 } from "./clients";
 
 export {

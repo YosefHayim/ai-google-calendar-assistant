@@ -252,14 +252,14 @@ export default function TermsOfServicePage() {
                   </a>
                 </li>
                 <li>
-                  <strong>Stripe:</strong> Subject to{' '}
+                  <strong>Lemon Squeezy:</strong> Subject to{' '}
                   <a
-                    href="https://stripe.com/legal"
+                    href="https://www.lemonsqueezy.com/terms"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-primary hover:underline"
                   >
-                    Stripe&apos;s Terms of Service
+                    Lemon Squeezy&apos;s Terms of Service
                   </a>
                 </li>
                 <li>

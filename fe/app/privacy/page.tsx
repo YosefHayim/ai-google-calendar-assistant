@@ -75,7 +75,7 @@ export default function PrivacyPolicyPage() {
                   <strong>Communication Data:</strong> Messages and instructions you send to our AI assistant.
                 </li>
                 <li>
-                  <strong>Payment Information:</strong> Billing details processed securely through Stripe (we do not
+                  <strong>Payment Information:</strong> Billing details processed securely through Lemon Squeezy (we do not
                   store your full payment card details).
                 </li>
               </ul>
@@ -282,7 +282,7 @@ export default function PrivacyPolicyPage() {
                 </div>
 
                 <div className="bg-zinc-50 dark:bg-zinc-900/50 rounded-lg p-4 border border-zinc-200 dark:border-zinc-800">
-                  <h4 className="font-medium text-zinc-900 dark:text-zinc-100 mb-2">Stripe</h4>
+                  <h4 className="font-medium text-zinc-900 dark:text-zinc-100 mb-2">Lemon Squeezy</h4>
                   <p className="text-sm text-zinc-600 dark:text-zinc-300">
                     <strong>Purpose:</strong> Payment processing for subscription plans.
                   </p>
