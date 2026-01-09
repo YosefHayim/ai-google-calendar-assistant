@@ -1,4 +1,14 @@
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
+
+// Mock lodash-es before importing utils
+jest.mock("lodash-es", () => ({
+  isEmpty: (val: unknown) => !val || (typeof val === 'object' && Object.keys(val as object).length === 0),
+  isNil: (val: unknown) => val === null || val === undefined,
+  isPlainObject: (val: unknown) => typeof val === 'object' && val !== null && !Array.isArray(val),
+  omitBy: (obj: Record<string, unknown>, predicate: (val: unknown) => boolean) =>
+    Object.fromEntries(Object.entries(obj).filter(([_, v]) => !predicate(v))),
+}));
+
 import { parseToolArguments, formatEventData } from "../../ai-agents/utils";
 
 import { TIMEZONE } from "@/config";

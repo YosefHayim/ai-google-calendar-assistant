@@ -460,3 +460,148 @@ export type GapErrorCode =
   | "EVENT_CREATION_FAILED"
   | "INVALID_TIME_RANGE"
   | "SETTINGS_VALIDATION_FAILED";
+
+// =============================================================================
+// Admin Dashboard Types
+// =============================================================================
+
+/**
+ * User roles for RBAC
+ */
+export type UserRole = "user" | "admin" | "moderator" | "support";
+
+/**
+ * User status enum
+ */
+export type UserStatus = "active" | "inactive" | "suspended" | "pending_verification";
+
+/**
+ * Admin user representation with subscription info
+ */
+export type AdminUser = {
+  id: string;
+  email: string;
+  first_name: string | null;
+  last_name: string | null;
+  display_name: string | null;
+  avatar_url: string | null;
+  status: UserStatus;
+  role: UserRole;
+  timezone: string | null;
+  locale: string | null;
+  email_verified: boolean | null;
+  created_at: string;
+  updated_at: string;
+  last_login_at: string | null;
+  subscription?: AdminUserSubscription | null;
+  oauth_connected?: boolean;
+};
+
+/**
+ * Subscription info for admin user view
+ */
+export type AdminUserSubscription = {
+  id: string;
+  plan_name: string;
+  plan_slug: string;
+  status: string;
+  interval: string;
+  current_period_end: string | null;
+  ai_interactions_used: number;
+  credits_remaining: number;
+};
+
+/**
+ * Admin dashboard KPI stats
+ */
+export type AdminDashboardStats = {
+  totalUsers: number;
+  activeUsers: number;
+  newUsersToday: number;
+  newUsersWeek: number;
+  newUsersMonth: number;
+  activeSubscriptions: number;
+  totalRevenueCents: number;
+  mrrCents: number;
+};
+
+/**
+ * Subscription distribution by plan
+ */
+export type SubscriptionDistribution = {
+  planSlug: string;
+  planName: string;
+  subscriberCount: number;
+  percentage: number;
+};
+
+/**
+ * Admin user list query parameters
+ */
+export type AdminUserListParams = {
+  page?: number;
+  limit?: number;
+  search?: string;
+  status?: UserStatus;
+  role?: UserRole;
+  sortBy?: "created_at" | "email" | "last_login_at";
+  sortOrder?: "asc" | "desc";
+};
+
+/**
+ * Paginated admin user list response
+ */
+export type AdminUserListResponse = {
+  users: AdminUser[];
+  total: number;
+  page: number;
+  totalPages: number;
+};
+
+/**
+ * Admin audit log entry
+ */
+export type AdminAuditLogEntry = {
+  id: string;
+  action: string;
+  admin_user_id: string;
+  admin_email?: string;
+  resource_type: string;
+  resource_id: string;
+  old_values: Record<string, unknown> | null;
+  new_values: Record<string, unknown> | null;
+  ip_address: string;
+  user_agent: string;
+  created_at: string;
+};
+
+/**
+ * Admin payment record
+ */
+export type AdminPayment = {
+  id: string;
+  user_id: string;
+  amount_cents: number;
+  currency: string;
+  status: string;
+  description: string | null;
+  created_at: string;
+  user_email?: string;
+  user_name?: string;
+};
+
+/**
+ * Request to update user status
+ */
+export type UpdateUserStatusRequest = {
+  status: UserStatus;
+  reason?: string;
+};
+
+/**
+ * Request to grant credits
+ */
+export type GrantCreditsRequest = {
+  credits: number;
+  reason: string;
+};

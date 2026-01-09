@@ -37,6 +37,7 @@ export const mockUserRecord: Database["public"]["Tables"]["users"]["Row"] = {
   timezone: "America/New_York",
   locale: "en",
   status: "active",
+  role: "user",
   email_verified: true,
   last_login_at: "2024-01-01T00:00:00Z",
   deactivated_at: null,

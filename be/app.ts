@@ -25,6 +25,7 @@ import usersRoute from "@/routes/users-route";
 import voiceRoute from "@/routes/voice-route";
 import webhooksRoute from "@/routes/webhooks-route";
 import whatsAppRoute from "@/routes/whatsapp-route";
+import adminRoute from "@/routes/admin-route";
 
 const ACCESS_TOKEN_HEADER = "access_token";
 const REFRESH_TOKEN_HEADER = "refresh_token";
@@ -89,6 +90,7 @@ app.use(ROUTES.PAYMENTS, paymentRoute);
 app.use(ROUTES.CONTACT, contactRoute);
 app.use(ROUTES.WEBHOOKS, webhooksRoute);
 app.use(ROUTES.VOICE, voiceRoute);
+app.use(ROUTES.ADMIN, adminRoute);
 
 app.use((_req, res, _next) => {
   logger.error(`Opps! It looks like this route doesn't exist. ${_req.originalUrl}`);

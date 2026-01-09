@@ -387,6 +387,86 @@ export const ENDPOINTS = {
   AGENT_PROFILES: '/api/users/agent-profiles',
   AGENT_PROFILES_BY_ID: (id: string) => `/api/users/agent-profiles/${id}`,
   AGENT_PROFILES_SELECTED: '/api/users/agent-profiles/selected',
+
+  // ============================================
+  // ADMIN ENDPOINTS
+  // ============================================
+
+  /**
+   * Get admin dashboard stats
+   * Methods: GET
+   * Returns: KPI metrics (total users, revenue, etc.)
+   */
+  ADMIN_DASHBOARD_STATS: '/api/admin/dashboard/stats',
+
+  /**
+   * Get subscription distribution
+   * Methods: GET
+   * Returns: Breakdown of users by plan
+   */
+  ADMIN_DASHBOARD_DISTRIBUTION: '/api/admin/dashboard/distribution',
+
+  /**
+   * List all users (admin)
+   * Methods: GET
+   * Query: page, limit, search, status, role, sortBy, sortOrder
+   */
+  ADMIN_USERS: '/api/admin/users',
+
+  /**
+   * Get user by ID (admin)
+   * Methods: GET
+   * @param id - User ID
+   */
+  ADMIN_USER_BY_ID: (id: string) => `/api/admin/users/${id}`,
+
+  /**
+   * Update user status (admin)
+   * Methods: PATCH
+   * @param id - User ID
+   */
+  ADMIN_USER_STATUS: (id: string) => `/api/admin/users/${id}/status`,
+
+  /**
+   * Update user role (admin)
+   * Methods: PATCH
+   * @param id - User ID
+   */
+  ADMIN_USER_ROLE: (id: string) => `/api/admin/users/${id}/role`,
+
+  /**
+   * Grant credits to user (admin)
+   * Methods: POST
+   * @param id - User ID
+   */
+  ADMIN_USER_CREDITS: (id: string) => `/api/admin/users/${id}/credits`,
+
+  /**
+   * Send password reset (admin)
+   * Methods: POST
+   * @param id - User ID
+   */
+  ADMIN_USER_PASSWORD_RESET: (id: string) => `/api/admin/users/${id}/password-reset`,
+
+  /**
+   * List all subscriptions (admin)
+   * Methods: GET
+   */
+  ADMIN_SUBSCRIPTIONS: '/api/admin/subscriptions',
+
+  /**
+   * Get payment history (admin)
+   * Methods: GET
+   * Query: page, limit, userId, status
+   */
+  ADMIN_PAYMENTS: '/api/admin/payments',
+
+  /**
+   * Get audit logs (admin)
+   * Methods: GET
+   * Query: page, limit, adminUserId, actionType
+   */
+  ADMIN_AUDIT_LOGS: '/api/admin/audit-logs',
 } as const
 
 export type EndpointsType = typeof ENDPOINTS
