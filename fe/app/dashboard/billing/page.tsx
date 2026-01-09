@@ -71,7 +71,7 @@ function BillingPageContent() {
 
     loadData()
 
-    // Check for success parameter from Stripe redirect
+    // Check for success parameter from checkout redirect
     if (searchParams.get('success') === 'true') {
       setShowSuccess(true)
       setTimeout(() => setShowSuccess(false), 5000)

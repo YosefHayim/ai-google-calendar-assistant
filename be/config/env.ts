@@ -98,26 +98,25 @@ const openai = {
 } as const;
 
 // ============================================================================
-// Stripe Configuration
+// LemonSqueezy Configuration
 // ============================================================================
 
-const stripe = {
-  secretKey: getOptional("STRIPE_SECRET_KEY"),
-  publishableKey: getOptional("STRIPE_PUBLISHABLE_KEY"),
-  webhookSecret: getOptional("STRIPE_WEBHOOK_SECRET"),
-  // Price IDs for each plan and interval
-  prices: {
+const lemonSqueezy = {
+  apiKey: getOptional("LEMONSQUEEZY_API_KEY"),
+  storeId: getOptional("LEMONSQUEEZY_STORE_ID"),
+  webhookSecret: getOptional("LEMONSQUEEZY_WEBHOOK_SECRET"),
+  variants: {
     pro: {
-      monthly: getOptional("STRIPE_PRICE_PRO_MONTHLY"),
-      yearly: getOptional("STRIPE_PRICE_PRO_YEARLY"),
+      monthly: getOptional("LEMONSQUEEZY_VARIANT_PRO_MONTHLY"),
+      yearly: getOptional("LEMONSQUEEZY_VARIANT_PRO_YEARLY"),
     },
     executive: {
-      monthly: getOptional("STRIPE_PRICE_EXECUTIVE_MONTHLY"),
-      yearly: getOptional("STRIPE_PRICE_EXECUTIVE_YEARLY"),
+      monthly: getOptional("LEMONSQUEEZY_VARIANT_EXECUTIVE_MONTHLY"),
+      yearly: getOptional("LEMONSQUEEZY_VARIANT_EXECUTIVE_YEARLY"),
     },
   },
   get isEnabled(): boolean {
-    return !!this.secretKey;
+    return !!this.apiKey && !!this.storeId;
   },
 } as const;
 
@@ -213,7 +212,7 @@ export const env = {
   supabase,
   google,
   openai,
-  stripe,
+  lemonSqueezy,
   integrations,
   atlassian,
   resend,

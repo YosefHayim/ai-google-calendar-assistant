@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import { AllyLogo } from '@/components/shared/logo'
 import { authService } from '@/lib/api/services/auth.service'
+import { STORAGE_KEYS } from '@/lib/constants'
 
 // Animated orbital ring component
 const OrbitalRing = ({
@@ -179,6 +180,25 @@ function CallbackContent() {
           setError(t('callback.authFailed'))
           setTimeout(() => router.push('/login?error=auth_failed'), 2000)
           return
+        }
+
+        const accessToken = searchParams.get('access_token')
+        const refreshToken = searchParams.get('refresh_token')
+        const userParam = searchParams.get('user')
+
+        if (accessToken) {
+          localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, accessToken)
+        }
+        if (refreshToken) {
+          localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, refreshToken)
+        }
+        if (userParam) {
+          try {
+            const user = JSON.parse(userParam)
+            localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user))
+          } catch {
+            console.error('Failed to parse user data')
+          }
         }
 
         const response = await authService.getUser(true)

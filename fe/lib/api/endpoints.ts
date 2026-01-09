@@ -211,9 +211,9 @@ export const ENDPOINTS = {
   // ============================================
 
   /**
-   * Get Stripe configuration status
+   * Get payment provider configuration status
    * Methods: GET
-   * Returns: enabled, publishableKey, trialDays, moneyBackDays
+   * Returns: enabled, provider, trialDays, moneyBackDays
    */
   PAYMENTS_STATUS: '/api/payments/status',
 

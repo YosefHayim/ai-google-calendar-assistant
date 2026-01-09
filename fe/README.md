@@ -44,4 +44,4 @@ This multi-agent approach allows it to handle even complex scheduling tasks with
 
 - **Private & Secure:** Your calendar data is yours alone. We use secure methods to store your connection tokens and protect your information.
 - **Ready to Scale:** The system is built on a robust and modern foundation, ensuring it’s reliable whether you're managing a personal schedule or a team's entire workflow.
-- **Payment-Ready:** With Stripe integration, it's ready to handle subscriptions for future SaaS features.
+- **Payment-Ready:** With Lemon Squeezy integration, it's ready to handle subscriptions for future SaaS features.
