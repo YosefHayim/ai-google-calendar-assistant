@@ -56,6 +56,8 @@ export type Database = {
       audit_logs: {
         Row: {
           action: string
+          admin_action_type: string | null
+          admin_user_id: string | null
           created_at: string
           error_message: string | null
           id: string
@@ -70,6 +72,8 @@ export type Database = {
         }
         Insert: {
           action: string
+          admin_action_type?: string | null
+          admin_user_id?: string | null
           created_at?: string
           error_message?: string | null
           id?: string
@@ -84,6 +88,8 @@ export type Database = {
         }
         Update: {
           action?: string
+          admin_action_type?: string | null
+          admin_user_id?: string | null
           created_at?: string
           error_message?: string | null
           id?: string
@@ -96,7 +102,43 @@ export type Database = {
           user_agent?: string | null
           user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "audit_logs_admin_user_id_fkey"
+            columns: ["admin_user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "audit_logs_admin_user_id_fkey"
+            columns: ["admin_user_id"]
+            isOneToOne: false
+            referencedRelation: "v_active_users_with_calendar"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "audit_logs_admin_user_id_fkey"
+            columns: ["admin_user_id"]
+            isOneToOne: false
+            referencedRelation: "v_admin_user_list"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "audit_logs_admin_user_id_fkey"
+            columns: ["admin_user_id"]
+            isOneToOne: false
+            referencedRelation: "v_user_billing_summary"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "audit_logs_admin_user_id_fkey"
+            columns: ["admin_user_id"]
+            isOneToOne: false
+            referencedRelation: "v_user_conversation_stats"
+            referencedColumns: ["user_id"]
+          },
+        ]
       }
       conversation_embeddings: {
         Row: {
@@ -163,6 +205,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "v_active_users_with_calendar"
             referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "conversation_embeddings_new_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "v_admin_user_list"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "conversation_embeddings_new_user_id_fkey"
@@ -290,6 +339,13 @@ export type Database = {
             foreignKeyName: "conversation_summaries_new_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "v_admin_user_list"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversation_summaries_new_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "v_user_billing_summary"
             referencedColumns: ["user_id"]
           },
@@ -354,6 +410,7 @@ export type Database = {
           credits_remaining: number
           expires_at: string | null
           id: string
+          lemonsqueezy_order_id: string | null
           price_cents: number
           purchased_at: string | null
           status: Database["public"]["Enums"]["payment_status"] | null
@@ -368,6 +425,7 @@ export type Database = {
           credits_remaining: number
           expires_at?: string | null
           id?: string
+          lemonsqueezy_order_id?: string | null
           price_cents: number
           purchased_at?: string | null
           status?: Database["public"]["Enums"]["payment_status"] | null
@@ -382,6 +440,7 @@ export type Database = {
           credits_remaining?: number
           expires_at?: string | null
           id?: string
+          lemonsqueezy_order_id?: string | null
           price_cents?: number
           purchased_at?: string | null
           status?: Database["public"]["Enums"]["payment_status"] | null
@@ -404,6 +463,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "v_active_users_with_calendar"
             referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "credit_packs_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "v_admin_user_list"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "credit_packs_user_id_fkey"
@@ -529,6 +595,42 @@ export type Database = {
         }
         Relationships: []
       }
+      lemonsqueezy_webhook_events: {
+        Row: {
+          created_at: string | null
+          error_message: string | null
+          event_id: string
+          event_type: string
+          id: string
+          payload: Json
+          processed: boolean | null
+          processed_at: string | null
+          retry_count: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          error_message?: string | null
+          event_id: string
+          event_type: string
+          id?: string
+          payload: Json
+          processed?: boolean | null
+          processed_at?: string | null
+          retry_count?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          error_message?: string | null
+          event_id?: string
+          event_type?: string
+          id?: string
+          payload?: Json
+          processed?: boolean | null
+          processed_at?: string | null
+          retry_count?: number | null
+        }
+        Relationships: []
+      }
       oauth_tokens: {
         Row: {
           access_token: string
@@ -603,6 +705,13 @@ export type Database = {
             foreignKeyName: "oauth_tokens_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "v_admin_user_list"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "oauth_tokens_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "v_user_billing_summary"
             referencedColumns: ["user_id"]
           },
@@ -624,6 +733,8 @@ export type Database = {
           description: string | null
           id: string
           invoice_url: string | null
+          lemonsqueezy_order_id: string | null
+          lemonsqueezy_subscription_id: string | null
           receipt_url: string | null
           refund_reason: string | null
           refunded_amount_cents: number | null
@@ -644,6 +755,8 @@ export type Database = {
           description?: string | null
           id?: string
           invoice_url?: string | null
+          lemonsqueezy_order_id?: string | null
+          lemonsqueezy_subscription_id?: string | null
           receipt_url?: string | null
           refund_reason?: string | null
           refunded_amount_cents?: number | null
@@ -664,6 +777,8 @@ export type Database = {
           description?: string | null
           id?: string
           invoice_url?: string | null
+          lemonsqueezy_order_id?: string | null
+          lemonsqueezy_subscription_id?: string | null
           receipt_url?: string | null
           refund_reason?: string | null
           refunded_amount_cents?: number | null
@@ -699,6 +814,13 @@ export type Database = {
             referencedColumns: ["subscription_id"]
           },
           {
+            foreignKeyName: "payment_history_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "v_admin_user_list"
+            referencedColumns: ["subscription_id"]
+          },
+          {
             foreignKeyName: "payment_history_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
@@ -711,6 +833,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "v_active_users_with_calendar"
             referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "payment_history_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "v_admin_user_list"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "payment_history_user_id_fkey"
@@ -740,6 +869,9 @@ export type Database = {
           is_active: boolean | null
           is_highlighted: boolean | null
           is_popular: boolean | null
+          lemonsqueezy_product_id: string | null
+          lemonsqueezy_variant_id_monthly: string | null
+          lemonsqueezy_variant_id_yearly: string | null
           name: string
           price_monthly_cents: number | null
           price_per_use_cents: number | null
@@ -761,6 +893,9 @@ export type Database = {
           is_active?: boolean | null
           is_highlighted?: boolean | null
           is_popular?: boolean | null
+          lemonsqueezy_product_id?: string | null
+          lemonsqueezy_variant_id_monthly?: string | null
+          lemonsqueezy_variant_id_yearly?: string | null
           name: string
           price_monthly_cents?: number | null
           price_per_use_cents?: number | null
@@ -782,6 +917,9 @@ export type Database = {
           is_active?: boolean | null
           is_highlighted?: boolean | null
           is_popular?: boolean | null
+          lemonsqueezy_product_id?: string | null
+          lemonsqueezy_variant_id_monthly?: string | null
+          lemonsqueezy_variant_id_yearly?: string | null
           name?: string
           price_monthly_cents?: number | null
           price_per_use_cents?: number | null
@@ -843,6 +981,9 @@ export type Database = {
           first_payment_at: string | null
           id: string
           interval: Database["public"]["Enums"]["plan_interval"] | null
+          lemonsqueezy_customer_id: string | null
+          lemonsqueezy_subscription_id: string | null
+          lemonsqueezy_variant_id: string | null
           metadata: Json | null
           money_back_eligible_until: string | null
           plan_id: string
@@ -867,6 +1008,9 @@ export type Database = {
           first_payment_at?: string | null
           id?: string
           interval?: Database["public"]["Enums"]["plan_interval"] | null
+          lemonsqueezy_customer_id?: string | null
+          lemonsqueezy_subscription_id?: string | null
+          lemonsqueezy_variant_id?: string | null
           metadata?: Json | null
           money_back_eligible_until?: string | null
           plan_id: string
@@ -891,6 +1035,9 @@ export type Database = {
           first_payment_at?: string | null
           id?: string
           interval?: Database["public"]["Enums"]["plan_interval"] | null
+          lemonsqueezy_customer_id?: string | null
+          lemonsqueezy_subscription_id?: string | null
+          lemonsqueezy_variant_id?: string | null
           metadata?: Json | null
           money_back_eligible_until?: string | null
           plan_id?: string
@@ -924,6 +1071,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "v_active_users_with_calendar"
             referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "v_admin_user_list"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "subscriptions_user_id_fkey"
@@ -1006,6 +1160,13 @@ export type Database = {
             foreignKeyName: "telegram_users_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "v_admin_user_list"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "telegram_users_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "v_user_billing_summary"
             referencedColumns: ["user_id"]
           },
@@ -1068,6 +1229,13 @@ export type Database = {
             referencedColumns: ["subscription_id"]
           },
           {
+            foreignKeyName: "usage_records_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "v_admin_user_list"
+            referencedColumns: ["subscription_id"]
+          },
+          {
             foreignKeyName: "usage_records_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
@@ -1080,6 +1248,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "v_active_users_with_calendar"
             referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "usage_records_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "v_admin_user_list"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "usage_records_user_id_fkey"
@@ -1177,6 +1352,13 @@ export type Database = {
             foreignKeyName: "user_calendars_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "v_admin_user_list"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_calendars_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "v_user_billing_summary"
             referencedColumns: ["user_id"]
           },
@@ -1232,6 +1414,7 @@ export type Database = {
           last_login_at: string | null
           last_name: string | null
           locale: string | null
+          role: Database["public"]["Enums"]["user_role"]
           status: Database["public"]["Enums"]["user_status"] | null
           timezone: string | null
           updated_at: string
@@ -1248,6 +1431,7 @@ export type Database = {
           last_login_at?: string | null
           last_name?: string | null
           locale?: string | null
+          role?: Database["public"]["Enums"]["user_role"]
           status?: Database["public"]["Enums"]["user_status"] | null
           timezone?: string | null
           updated_at?: string
@@ -1264,6 +1448,7 @@ export type Database = {
           last_login_at?: string | null
           last_name?: string | null
           locale?: string | null
+          role?: Database["public"]["Enums"]["user_role"]
           status?: Database["public"]["Enums"]["user_status"] | null
           timezone?: string | null
           updated_at?: string
@@ -1316,6 +1501,13 @@ export type Database = {
             foreignKeyName: "subscriptions_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "v_admin_user_list"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "v_user_billing_summary"
             referencedColumns: ["user_id"]
           },
@@ -1341,6 +1533,50 @@ export type Database = {
         }
         Relationships: []
       }
+      v_admin_dashboard_stats: {
+        Row: {
+          active_subscriptions: number | null
+          active_users: number | null
+          mrr_cents: number | null
+          new_users_month: number | null
+          new_users_today: number | null
+          new_users_week: number | null
+          total_revenue_cents: number | null
+          total_users: number | null
+        }
+        Relationships: []
+      }
+      v_admin_user_list: {
+        Row: {
+          ai_interactions_used: number | null
+          avatar_url: string | null
+          created_at: string | null
+          credits_remaining: number | null
+          current_period_end: string | null
+          display_name: string | null
+          email: string | null
+          email_verified: boolean | null
+          first_name: string | null
+          has_oauth_connected: boolean | null
+          id: string | null
+          last_name: string | null
+          locale: string | null
+          plan_name: string | null
+          plan_slug: string | null
+          role: Database["public"]["Enums"]["user_role"] | null
+          status: Database["public"]["Enums"]["user_status"] | null
+          subscription_id: string | null
+          subscription_interval:
+            | Database["public"]["Enums"]["plan_interval"]
+            | null
+          subscription_status:
+            | Database["public"]["Enums"]["subscription_status"]
+            | null
+          timezone: string | null
+          updated_at: string | null
+        }
+        Relationships: []
+      }
       v_pending_gaps_summary: {
         Row: {
           avg_confidence: number | null
@@ -1349,6 +1585,15 @@ export type Database = {
           pending_count: number | null
           total_minutes_untracked: number | null
           user_id: string | null
+        }
+        Relationships: []
+      }
+      v_subscription_distribution: {
+        Row: {
+          percentage: number | null
+          plan_name: string | null
+          plan_slug: string | null
+          subscriber_count: number | null
         }
         Relationships: []
       }
@@ -1543,6 +1788,7 @@ export type Database = {
         | "incomplete"
         | "incomplete_expired"
         | "paused"
+      user_role: "user" | "admin" | "moderator" | "support"
       user_status: "active" | "inactive" | "suspended" | "pending_verification"
     }
     CompositeTypes: {
@@ -1701,6 +1947,7 @@ export const Constants = {
         "incomplete_expired",
         "paused",
       ],
+      user_role: ["user", "admin", "moderator", "support"],
       user_status: ["active", "inactive", "suspended", "pending_verification"],
     },
   },

@@ -27,6 +27,7 @@ export enum ROUTES {
   CONTACT = "/api/contact",
   WEBHOOKS = "/webhooks",
   VOICE = "/api/voice",
+  ADMIN = "/api/admin",
 }
 
 export enum PROVIDERS {

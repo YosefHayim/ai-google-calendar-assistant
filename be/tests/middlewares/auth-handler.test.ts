@@ -14,11 +14,11 @@ const mockSupabase = {
 };
 
 // Mock modules
-jest.mock("@/config/root-config", () => ({
+jest.mock("@/config", () => ({
   SUPABASE: mockSupabase,
 }));
 
-jest.mock("@/utils/send-response", () => ({
+jest.mock("@/utils/http/send-response", () => ({
   default: mockSendR,
 }));
 
