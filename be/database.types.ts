@@ -1455,6 +1455,90 @@ export type Database = {
         }
         Relationships: []
       }
+      whatsapp_users: {
+        Row: {
+          created_at: string | null
+          first_message_at: string | null
+          id: string
+          is_linked: boolean | null
+          language_code: string | null
+          last_activity_at: string | null
+          message_count: number | null
+          onboarding_step: string | null
+          pending_email: string | null
+          updated_at: string | null
+          user_id: string | null
+          whatsapp_name: string | null
+          whatsapp_phone: string
+        }
+        Insert: {
+          created_at?: string | null
+          first_message_at?: string | null
+          id?: string
+          is_linked?: boolean | null
+          language_code?: string | null
+          last_activity_at?: string | null
+          message_count?: number | null
+          onboarding_step?: string | null
+          pending_email?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          whatsapp_name?: string | null
+          whatsapp_phone: string
+        }
+        Update: {
+          created_at?: string | null
+          first_message_at?: string | null
+          id?: string
+          is_linked?: boolean | null
+          language_code?: string | null
+          last_activity_at?: string | null
+          message_count?: number | null
+          onboarding_step?: string | null
+          pending_email?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          whatsapp_name?: string | null
+          whatsapp_phone?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "whatsapp_users_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "whatsapp_users_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "v_active_users_with_calendar"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "whatsapp_users_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "v_admin_user_list"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "whatsapp_users_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "v_user_billing_summary"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "whatsapp_users_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "v_user_conversation_stats"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
     }
     Views: {
       v_active_subscriptions: {
