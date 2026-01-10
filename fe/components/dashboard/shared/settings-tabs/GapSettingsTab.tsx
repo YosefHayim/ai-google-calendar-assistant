@@ -8,6 +8,7 @@ import { AlertTriangle, Globe, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { LoadingSection } from '@/components/ui/loading-spinner'
 import CinematicGlowToggle from '@/components/ui/cinematic-glow-toggle'
 import { SettingsRow, SettingsSection, MultiSelectDropdown, type DropdownOption } from './components'
 import { useGapSettings, useUpdateGapSettings } from '@/hooks/queries/gaps'
@@ -108,8 +109,8 @@ export const GapSettingsTab: React.FC = () => {
   if (isLoading) {
     return (
       <Card>
-        <CardContent className="flex items-center justify-center py-12">
-          <Loader2 className="w-6 h-6 animate-spin text-zinc-400" />
+        <CardContent>
+          <LoadingSection text="Loading settings..." />
         </CardContent>
       </Card>
     )
@@ -157,7 +158,6 @@ export const GapSettingsTab: React.FC = () => {
                     options={LANGUAGE_OPTIONS}
                     onChange={handleLanguageChange}
                     placeholder="Select languages"
-                    className="min-w-[180px]"
                   />
                 }
               />
@@ -166,7 +166,6 @@ export const GapSettingsTab: React.FC = () => {
                 id="auto-gap-analysis"
                 title="Automatic Gap Analysis"
                 tooltip="Automatically detect gaps in your calendar when you log in to the dashboard"
-                variant="toggle"
                 control={
                   <CinematicGlowToggle
                     id={autoGapToggleId}

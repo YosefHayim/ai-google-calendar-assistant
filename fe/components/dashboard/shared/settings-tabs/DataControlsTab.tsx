@@ -1,38 +1,81 @@
 'use client'
 
-import React from 'react'
-import { Download, Trash2 } from 'lucide-react'
+import { Brain, Download, Loader2, MessageSquareX, Trash2 } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
 import { SettingsRow, SettingsSection } from './components'
 
-export const DataControlsTab: React.FC = () => {
+import { Button } from '@/components/ui/button'
+import React from 'react'
+
+interface DataControlsTabProps {
+  onDeleteAllConversations: () => void
+  isDeletingConversations: boolean
+  onResetMemory: () => void
+  isResettingMemory: boolean
+  onDeleteAccount: () => void
+}
+
+export const DataControlsTab: React.FC<DataControlsTabProps> = ({
+  onDeleteAllConversations,
+  isDeletingConversations,
+  onResetMemory,
+  isResettingMemory,
+  onDeleteAccount,
+}) => {
   const handleExport = () => {
     console.log('Exporting calendar data...')
-  }
-
-  const handleDeleteAccount = () => {
-    if (window.confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
-      console.log('Deleting account...')
-    }
   }
 
   return (
     <Card>
       <CardHeader>
         <CardTitle className="text-lg">Data Controls</CardTitle>
-        <CardDescription>Manage your data and account.</CardDescription>
+        <CardDescription>Manage your data, conversations, and account.</CardDescription>
       </CardHeader>
       <CardContent>
-        <SettingsSection>
+        <SettingsSection showDivider className="mt-4">
           <SettingsRow
-            id="export-data"
-            title="Export Calendar Data"
-            tooltip="Download all your calendar data as a CSV file for backup or migration"
+            id="delete-conversations"
+            title="Delete All Conversations"
+            tooltip="Permanently delete all your chat history with Ally. This removes all messages, summaries, and conversation data. This cannot be undone."
             control={
-              <Button variant="outline" size="sm" onClick={handleExport} className="gap-2">
-                <Download className="w-4 h-4" />
-                Export CSV
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onDeleteAllConversations}
+                disabled={isDeletingConversations}
+                className="gap-2 text-amber-600 hover:text-amber-700 border-amber-200 hover:bg-amber-50 dark:border-amber-900/30 dark:hover:bg-amber-900/20"
+              >
+                {isDeletingConversations ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <MessageSquareX className="w-4 h-4" />
+                )}
+                Clear History
+              </Button>
+            }
+          />
+        </SettingsSection>
+
+        <SettingsSection showDivider className="mt-4">
+          <SettingsRow
+            id="reset-memory"
+            title="Reset Assistant Memory"
+            tooltip="Clear all learned scheduling patterns, preferred meeting durations, and location preferences. Ally will need to relearn your habits over time."
+            control={
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onResetMemory}
+                disabled={isResettingMemory}
+                className="gap-2 text-amber-600 hover:text-amber-700 border-amber-200 hover:bg-amber-50 dark:border-amber-900/30 dark:hover:bg-amber-900/20"
+              >
+                {isResettingMemory ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Brain className="w-4 h-4" />
+                )}
+                Reset Memory
               </Button>
             }
           />
@@ -42,11 +85,11 @@ export const DataControlsTab: React.FC = () => {
           <SettingsRow
             id="delete-account"
             title="Delete Account"
-            tooltip="Permanently delete your account and all associated data. This cannot be undone."
+            tooltip="Permanently delete your account including all data, conversations, preferences, and calendar connections. This action is irreversible."
             control={
-              <Button variant="destructive" size="sm" onClick={handleDeleteAccount} className="gap-2">
+              <Button variant="destructive" size="sm" onClick={onDeleteAccount} className="gap-2">
                 <Trash2 className="w-4 h-4" />
-                Delete
+                Delete Account
               </Button>
             }
           />

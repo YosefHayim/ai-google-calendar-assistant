@@ -118,7 +118,6 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ isDarkMode, toggleTheme,
                 value={timezone}
                 options={TIMEZONE_OPTIONS}
                 onChange={setTimezone}
-                className="min-w-[180px]"
               />
             }
           />
@@ -133,7 +132,6 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ isDarkMode, toggleTheme,
                 value={timeFormat}
                 options={TIME_FORMAT_OPTIONS}
                 onChange={setTimeFormat}
-                className="min-w-[160px]"
               />
             }
           />

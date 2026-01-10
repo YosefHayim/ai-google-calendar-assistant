@@ -35,6 +35,7 @@ export {
   useGetConversationById,
   useDeleteConversationById,
   useDeleteAllConversations,
+  useResetMemory,
   useUpdateConversationById,
   useRefreshConversations,
 } from './conversations'

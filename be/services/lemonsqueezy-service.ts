@@ -825,3 +825,79 @@ export const ensureFreePlan = async (userId: string): Promise<UserSubscription |
     trialDays: 0,
   })
 }
+
+export interface UpgradeSubscriptionParams {
+  userId: string
+  newPlanSlug: PlanSlug
+  newInterval: "monthly" | "yearly"
+}
+
+export const upgradeSubscriptionPlan = async (
+  params: UpgradeSubscriptionParams
+): Promise<{ subscription: UserSubscription; prorated: boolean }> => {
+  initializeLemonSqueezy()
+
+  const { userId, newPlanSlug, newInterval } = params
+
+  const subscription = await getUserSubscription(userId)
+  if (!subscription) {
+    throw new Error("No subscription found for user")
+  }
+
+  if (!subscription.lemonsqueezy_subscription_id) {
+    throw new Error("Subscription is not linked to LemonSqueezy")
+  }
+
+  const newPlan = await getPlanBySlug(newPlanSlug)
+  if (!newPlan) {
+    throw new Error(`Plan not found: ${newPlanSlug}`)
+  }
+
+  const getVariantIdFromConfig = (slug: PlanSlug, interval: "monthly" | "yearly") => {
+    const variants = LEMONSQUEEZY_CONFIG.VARIANTS
+    if (slug === "starter") return interval === "monthly" ? variants.starter?.monthly : variants.starter?.yearly
+    if (slug === "pro") return interval === "monthly" ? variants.pro?.monthly : variants.pro?.yearly
+    if (slug === "executive") return interval === "monthly" ? variants.executive?.monthly : variants.executive?.yearly
+    return null
+  }
+
+  const newVariantId =
+    newInterval === "monthly"
+      ? newPlan.lemonsqueezy_variant_id_monthly || getVariantIdFromConfig(newPlanSlug, "monthly")
+      : newPlan.lemonsqueezy_variant_id_yearly || getVariantIdFromConfig(newPlanSlug, "yearly")
+
+  if (!newVariantId) {
+    throw new Error(`No LemonSqueezy variant configured for plan: ${newPlanSlug} (${newInterval})`)
+  }
+
+  // Call LemonSqueezy to update the subscription variant (this handles proration automatically)
+  const { error: lsError } = await updateSubscription(subscription.lemonsqueezy_subscription_id, {
+    variantId: parseInt(newVariantId, 10),
+  })
+
+  if (lsError) {
+    throw new Error(`Failed to update subscription in LemonSqueezy: ${lsError.message}`)
+  }
+
+  // Update local subscription record with new plan
+  const { data: updatedSubscription, error: dbError } = await supabase
+    .from("subscriptions")
+    .update({
+      plan_id: newPlan.id,
+      lemonsqueezy_variant_id: newVariantId,
+      interval: newInterval,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", subscription.id)
+    .select()
+    .single()
+
+  if (dbError) {
+    throw new Error(`Failed to update subscription in database: ${dbError.message}`)
+  }
+
+  return {
+    subscription: updatedSubscription,
+    prorated: true,
+  }
+}

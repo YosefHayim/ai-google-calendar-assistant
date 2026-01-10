@@ -12,58 +12,46 @@ interface SettingsRowProps {
   control: React.ReactNode
   id?: string
   className?: string
-  variant?: 'toggle' | 'dropdown'
 }
 
-export const SettingsRow: React.FC<SettingsRowProps> = ({
-  title,
-  tooltip,
-  control,
-  id,
-  className,
-  variant = 'dropdown',
-}) => {
-  const isToggle = variant === 'toggle'
-
+export const SettingsRow: React.FC<SettingsRowProps> = ({ title, tooltip, control, id, className }) => {
   return (
     <div
-      className={cn(
-        'grid items-center min-h-[48px] py-3',
-        isToggle ? 'grid-cols-[1fr_auto_auto] gap-4' : 'grid-cols-[1fr_auto] gap-4',
-        className,
-      )}
+      className={cn('grid grid-cols-3 items-center min-h-[48px] py-3 gap-4', className)}
       role="group"
       aria-labelledby={id ? `${id}-label` : undefined}
     >
-      <div className="flex items-center gap-2">
-        <div>
-          <span id={id ? `${id}-label` : undefined} className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
-            {title}
-          </span>
-        </div>
-        <div>
-          <TooltipProvider delayDuration={200}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="h-6 w-6 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
-                  aria-label={`More info about ${title}`}
-                >
-                  <HelpCircle className="w-4 h-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="top" className="max-w-[250px] text-center">
-                <p>{tooltip}</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
+      {/* Column 1: Label */}
+      <div>
+        <span id={id ? `${id}-label` : undefined} className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
+          {title}
+        </span>
       </div>
-      {isToggle && <div className="flex-1" />}
-      <div className="flex-shrink-0">{control}</div>
+
+      {/* Column 2: Help button */}
+      <div className="flex justify-center">
+        <TooltipProvider delayDuration={200}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="h-6 w-6 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
+                aria-label={`More info about ${title}`}
+              >
+                <HelpCircle className="w-4 h-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="top" className="max-w-[250px] text-center">
+              <p>{tooltip}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+
+      {/* Column 3: Control */}
+      <div className="flex justify-end">{control}</div>
     </div>
   )
 }

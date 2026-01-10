@@ -155,3 +155,35 @@ export const getWebRelevantContext = async (
   const similarConversations = await searchWebSimilarConversations(userId, query, options);
   return buildWebSemanticContext(similarConversations);
 };
+
+// Delete all embeddings for a user (web)
+export const deleteAllWebEmbeddings = async (userId: string): Promise<{ success: boolean; deletedCount: number }> => {
+  try {
+    // First count how many will be deleted
+    const { count, error: countError } = await SUPABASE
+      .from(CONVERSATION_EMBEDDINGS_TABLE)
+      .select("*", { count: "exact", head: true })
+      .contains("metadata", { userId });
+
+    if (countError) {
+      logger.error(`Failed to count embeddings for user ${userId}: ${countError.message}`);
+    }
+
+    // Delete embeddings where metadata contains userId
+    const { error } = await SUPABASE
+      .from(CONVERSATION_EMBEDDINGS_TABLE)
+      .delete()
+      .contains("metadata", { userId });
+
+    if (error) {
+      logger.error(`Failed to delete embeddings for user ${userId}: ${error.message}`);
+      return { success: false, deletedCount: 0 };
+    }
+
+    logger.info(`Deleted ${count || 0} embeddings for user ${userId}`);
+    return { success: true, deletedCount: count || 0 };
+  } catch (error) {
+    logger.error(`Failed to delete embeddings for user ${userId}: ${error}`);
+    return { success: false, deletedCount: 0 };
+  }
+};

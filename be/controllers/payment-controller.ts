@@ -24,6 +24,7 @@ import {
   handleSubscriptionPaymentFailed,
   processMoneyBackRefund,
   ensureFreePlan,
+  upgradeSubscriptionPlan,
   type PlanSlug,
 } from "@/services/lemonsqueezy-service"
 
@@ -291,6 +292,60 @@ export const requestRefund = reqResAsyncHandler(async (req: Request, res: Respon
       res,
       STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
       error instanceof Error ? error.message : "Failed to process refund"
+    )
+  }
+})
+
+export const upgradeSubscription = reqResAsyncHandler(async (req: Request, res: Response) => {
+  const userResult = requireUserId(req, res)
+  if (!userResult.success) return
+  const { userId } = userResult
+
+  if (!isLemonSqueezyEnabled()) {
+    return sendR(res, STATUS_RESPONSE.SERVICE_UNAVAILABLE, "Payment provider is not configured")
+  }
+
+  const { planSlug, interval } = req.body
+
+  if (!planSlug || !["starter", "pro", "executive"].includes(planSlug)) {
+    return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Invalid plan slug")
+  }
+
+  if (!interval || !["monthly", "yearly"].includes(interval)) {
+    return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Invalid interval")
+  }
+
+  const existingSubscription = await getUserSubscription(userId)
+  if (!existingSubscription) {
+    return sendR(res, STATUS_RESPONSE.NOT_FOUND, "No subscription found. Please create a subscription first.")
+  }
+
+  if (!existingSubscription.lemonsqueezy_subscription_id) {
+    return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Subscription is not linked to payment provider. Please complete checkout first.")
+  }
+
+  try {
+    const result = await upgradeSubscriptionPlan({
+      userId,
+      newPlanSlug: planSlug as PlanSlug,
+      newInterval: interval,
+    })
+
+    sendR(res, STATUS_RESPONSE.SUCCESS, "Subscription upgraded successfully", {
+      subscription: {
+        id: result.subscription.id,
+        status: result.subscription.status,
+        interval: result.subscription.interval,
+        planId: result.subscription.plan_id,
+      },
+      prorated: result.prorated,
+    })
+  } catch (error) {
+    console.error("Upgrade subscription error:", error)
+    sendR(
+      res,
+      STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
+      error instanceof Error ? error.message : "Failed to upgrade subscription"
     )
   }
 })

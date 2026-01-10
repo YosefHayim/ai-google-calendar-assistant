@@ -158,6 +158,10 @@ export class WebConversationAdapter {
     return this.service.deleteConversation(conversationId, userId);
   }
 
+  deleteAllConversations(userId: string): Promise<{ success: boolean; deletedCount: number }> {
+    return this.service.deleteAllConversations(userId);
+  }
+
   closeActiveConversation(userId: string): Promise<boolean> {
     return this.service.closeActiveConversation(userId);
   }
