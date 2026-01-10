@@ -28,11 +28,10 @@ export {
   type ValidateEventResult,
 } from "./direct-utilities"
 
+// Note: SupabaseAgentSession removed - agent_sessions table dropped for simpler architecture
 export {
-  SupabaseAgentSession,
   createAgentSession,
   getSessionInfo,
-  type SupabaseSessionOptions,
   type CreateSessionOptions,
   type SessionType,
   type CompactionStrategy,

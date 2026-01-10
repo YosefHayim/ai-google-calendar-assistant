@@ -210,14 +210,14 @@ export class ConversationService {
   }
 
   async storeSummary(params: StoreSummaryParams): Promise<boolean> {
-    const { error } = await SUPABASE.from("conversation_summaries").insert({
-      conversation_id: params.conversationId,
-      user_id: params.userId,
-      summary_text: params.summaryText,
-      message_count: params.messageCount,
-      first_message_sequence: params.firstSequence,
-      last_message_sequence: params.lastSequence,
-    });
+    // Summary is now stored directly in conversations.summary column
+    // This method updates the summary field in the conversation record
+    const { error } = await SUPABASE.from("conversations")
+      .update({
+        summary: params.summaryText,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", params.conversationId);
 
     if (error) {
       logger.error(
@@ -604,19 +604,6 @@ export class ConversationService {
         `Failed to delete messages for user ${userId}: ${msgError.message}`,
       );
       return { success: false, deletedCount: 0 };
-    }
-
-    // Delete all summaries for these conversations
-    const { error: summaryError } = await SUPABASE
-      .from("conversation_summaries")
-      .delete()
-      .in("conversation_id", conversationIds);
-
-    if (summaryError) {
-      logger.error(
-        `Failed to delete summaries for user ${userId}: ${summaryError.message}`,
-      );
-      // Continue anyway - summaries are not critical
     }
 
     // Delete all conversations

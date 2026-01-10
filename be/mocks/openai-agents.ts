@@ -1,5 +1,8 @@
 import { jest } from "@jest/globals";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyFn = (...args: any[]) => any;
+
 /**
  * Mock OpenAI Agent responses and configurations
  */
@@ -370,16 +373,16 @@ export const createMockAgentError = (errorType: keyof typeof mockAgentErrors) =>
  * Mock tools for testing tool calls
  */
 export const mockAgentTools = {
-  validateUser: jest.fn(),
-  registerUser: jest.fn(),
-  insertEvent: jest.fn(),
-  getEvent: jest.fn(),
-  updateEvent: jest.fn(),
-  deleteEvent: jest.fn(),
-  analyzeCalendarType: jest.fn(),
-  validateEventFields: jest.fn(),
-  generateAuthUrl: jest.fn(),
-  getUserTimeZone: jest.fn(),
+  validateUser: jest.fn<AnyFn>(),
+  registerUser: jest.fn<AnyFn>(),
+  insertEvent: jest.fn<AnyFn>(),
+  getEvent: jest.fn<AnyFn>(),
+  updateEvent: jest.fn<AnyFn>(),
+  deleteEvent: jest.fn<AnyFn>(),
+  analyzeCalendarType: jest.fn<AnyFn>(),
+  validateEventFields: jest.fn<AnyFn>(),
+  generateAuthUrl: jest.fn<AnyFn>(),
+  getUserTimeZone: jest.fn<AnyFn>(),
 };
 
 /**
@@ -396,6 +399,6 @@ export const resetMockAgentTools = () => {
 /**
  * Mock Agent class for Jest mocking
  */
-export const Agent = jest.fn().mockImplementation((config: MockAgentConfig) => {
+export const Agent = jest.fn<AnyFn>().mockImplementation((config: MockAgentConfig) => {
   return new MockAgent(config);
 });

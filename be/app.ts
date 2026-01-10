@@ -13,7 +13,6 @@ import cors from "cors";
 import errorHandler from "@/middlewares/error-handler";
 import eventsRoute from "@/routes/google-calendar/events-route";
 import express from "express";
-import gapRecoveryRoute from "@/routes/google-calendar/gap-recovery-route";
 import helmet from "helmet";
 import { logger } from "@/utils/logger";
 import morgan from "morgan";
@@ -82,7 +81,7 @@ app.use(ROUTES.USERS, usersRoute);
 app.use(ROUTES.CALENDAR_LIST, calendarListRoute);
 app.use(ROUTES.CALENDAR, calendarRoute);
 app.use(ROUTES.EVENTS, eventsRoute);
-app.use(ROUTES.GAPS, gapRecoveryRoute);
+// Gap recovery feature removed - table dropped for simpler architecture
 app.use(ROUTES.ACL, aclRoute);
 app.use(ROUTES.CHANNELS, channelsRoute);
 app.use(ROUTES.WHATSAPP, whatsAppRoute);

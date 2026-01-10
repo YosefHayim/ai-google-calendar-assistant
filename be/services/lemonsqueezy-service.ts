@@ -210,24 +210,14 @@ export const getSubscriptionByLemonSqueezyId = async (
 export const checkUserAccess = async (userId: string): Promise<UserAccess> => {
   const subscription = await getUserSubscription(userId)
 
-  const { data: creditPacks } = await supabase
-    .from("credit_packs")
-    .select("credits_remaining")
-    .eq("user_id", userId)
-    .eq("status", "succeeded")
-    .gt("credits_remaining", 0)
-
-  const totalCredits =
-    creditPacks?.reduce((sum: number, pack: CreditPack) => sum + pack.credits_remaining, 0) || 0
-
   if (!subscription) {
     return {
-      has_access: totalCredits > 0,
+      has_access: false,
       subscription_status: null,
       plan_name: null,
       plan_slug: null,
       interactions_remaining: null,
-      credits_remaining: totalCredits,
+      credits_remaining: 0,
       trial_days_left: null,
       money_back_eligible: false,
     }
@@ -252,12 +242,12 @@ export const checkUserAccess = async (userId: string): Promise<UserAccess> => {
     : false
 
   return {
-    has_access: ["trialing", "active"].includes(subscription.status) || totalCredits > 0,
+    has_access: ["trialing", "active"].includes(subscription.status),
     subscription_status: subscription.status,
     plan_name: plan?.name || null,
     plan_slug: plan?.slug || null,
     interactions_remaining: interactionsRemaining,
-    credits_remaining: totalCredits + subscription.credits_remaining,
+    credits_remaining: subscription.credits_remaining,
     trial_days_left: trialDaysLeft,
     money_back_eligible: moneyBackEligible,
   }
@@ -478,68 +468,11 @@ export const createCheckoutSession = async (
   }
 }
 
+// Credit pack checkout feature removed - subscriptions only
 export const createCreditPackCheckout = async (
-  params: CreateCreditPackCheckoutParams
+  _params: CreateCreditPackCheckoutParams
 ): Promise<{ url: string; id: string }> => {
-  initializeLemonSqueezy()
-
-  const { userId, userEmail, credits, planSlug, successUrl } = params
-
-  const plan = await getPlanBySlug(planSlug)
-  if (!plan) throw new Error(`Plan not found: ${planSlug}`)
-
-  const priceInCents = Math.ceil(credits / 100) * 100
-
-  const storeId = env.lemonSqueezy.storeId
-  if (!storeId) {
-    throw new Error("LemonSqueezy store ID not configured")
-  }
-
-  const creditVariantId = env.lemonSqueezy.variants.credits || env.lemonSqueezy.variants.pro?.monthly
-  if (!creditVariantId) {
-    throw new Error("No credit pack variant configured. Set LEMONSQUEEZY_VARIANT_CREDITS in environment.")
-  }
-
-  const { data, error } = await createCheckout(storeId, creditVariantId, {
-    checkoutOptions: {
-      embed: false,
-    },
-    checkoutData: {
-      email: userEmail,
-      custom: {
-        [LEMONSQUEEZY_CONFIG.METADATA_KEYS.USER_ID]: userId,
-        [LEMONSQUEEZY_CONFIG.METADATA_KEYS.PLAN_SLUG]: planSlug,
-        [LEMONSQUEEZY_CONFIG.METADATA_KEYS.CREDIT_PACK_SIZE]: credits.toString(),
-      },
-    },
-    productOptions: {
-      name: `${credits} AI Credits Pack`,
-      description: `${credits} AI interactions for ${plan.name} tier`,
-      redirectUrl: successUrl || LEMONSQUEEZY_CONFIG.CHECKOUT.SUCCESS_URL,
-    },
-    testMode: env.isDev,
-  })
-
-  if (error) {
-    throw new Error(`Failed to create credit pack checkout: ${error.message}`)
-  }
-
-  if (!data?.data?.attributes?.url) {
-    throw new Error("No checkout URL returned from LemonSqueezy")
-  }
-
-  await supabase.from("credit_packs").insert({
-    user_id: userId,
-    credits_purchased: credits,
-    credits_remaining: credits,
-    price_cents: priceInCents,
-    status: "pending",
-  })
-
-  return {
-    url: data.data.attributes.url,
-    id: data.data.id,
-  }
+  throw new Error("Credit pack purchases are no longer supported. Please upgrade your subscription plan.")
 }
 
 export const getCustomerPortalUrl = async (customerId: string): Promise<string> => {
@@ -599,32 +532,14 @@ export const handleOrderCreated = async (order: {
   customData?: Record<string, string>
 }): Promise<void> => {
   const userId = order.customData?.[LEMONSQUEEZY_CONFIG.METADATA_KEYS.USER_ID]
-  const creditPackSize = order.customData?.[LEMONSQUEEZY_CONFIG.METADATA_KEYS.CREDIT_PACK_SIZE]
 
   if (!userId) {
     console.error("No user_id in order custom data")
     return
   }
 
-  if (creditPackSize) {
-    await supabase
-      .from("credit_packs")
-      .update({
-        status: "succeeded",
-        lemonsqueezy_order_id: order.id,
-        purchased_at: new Date().toISOString(),
-      })
-      .eq("user_id", userId)
-      .eq("status", "pending")
-
-    await supabase.from("payment_history").insert({
-      user_id: userId,
-      lemonsqueezy_order_id: order.id,
-      amount_cents: parseInt(order.totalFormatted.replace(/[^0-9]/g, "")) || 0,
-      status: "succeeded",
-      description: `Credit pack purchase: ${creditPackSize} credits`,
-    })
-  }
+  // Order created - subscription will be handled by handleSubscriptionCreated
+  console.log(`Order ${order.id} created for user ${userId}`)
 }
 
 export const handleSubscriptionCreated = async (subscription: {
@@ -676,15 +591,6 @@ export const handleSubscriptionPaymentSuccess = async (subscription: {
       status: "active",
     })
     .eq("id", dbSubscription.id)
-
-  await supabase.from("payment_history").insert({
-    user_id: dbSubscription.user_id,
-    subscription_id: dbSubscription.id,
-    lemonsqueezy_subscription_id: subscription.id,
-    amount_cents: 0,
-    status: "succeeded",
-    description: "Subscription renewal payment",
-  })
 }
 
 export const handleSubscriptionPaymentFailed = async (subscriptionId: string): Promise<void> => {
@@ -697,20 +603,11 @@ export const handleSubscriptionPaymentFailed = async (subscriptionId: string): P
       status: "past_due",
     })
     .eq("id", dbSubscription.id)
-
-  await supabase.from("payment_history").insert({
-    user_id: dbSubscription.user_id,
-    subscription_id: dbSubscription.id,
-    lemonsqueezy_subscription_id: subscriptionId,
-    amount_cents: 0,
-    status: "failed",
-    description: "Payment failed",
-  })
 }
 
 export const recordUsage = async (
   userId: string,
-  actionType: string,
+  _actionType: string,
   quantity = 1
 ): Promise<boolean> => {
   const access = await checkUserAccess(userId)
@@ -718,58 +615,25 @@ export const recordUsage = async (
 
   const subscription = await getUserSubscription(userId)
 
-  if (subscription) {
-    const plan = await getPlanById(subscription.plan_id)
-    if (
-      plan?.ai_interactions_monthly !== null &&
-      subscription.ai_interactions_used + quantity > (plan?.ai_interactions_monthly || 0)
-    ) {
-      return await deductCredits(userId, quantity)
-    }
-
-    await supabase
-      .from("subscriptions")
-      .update({
-        ai_interactions_used: subscription.ai_interactions_used + quantity,
-      })
-      .eq("id", subscription.id)
-
-    await supabase.from("usage_records").insert({
-      user_id: userId,
-      subscription_id: subscription.id,
-      action_type: actionType,
-      quantity,
-      period_start: subscription.current_period_start || new Date().toISOString(),
-      period_end: subscription.current_period_end || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-    })
-
-    return true
+  if (!subscription) {
+    return false
   }
 
-  return await deductCredits(userId, quantity)
-}
-
-const deductCredits = async (userId: string, quantity: number): Promise<boolean> => {
-  const { data: creditPack } = await supabase
-    .from("credit_packs")
-    .select("*")
-    .eq("user_id", userId)
-    .eq("status", "succeeded")
-    .gt("credits_remaining", 0)
-    .order("created_at", { ascending: true })
-    .limit(1)
-    .maybeSingle()
-
-  if (!creditPack || creditPack.credits_remaining < quantity) {
+  const plan = await getPlanById(subscription.plan_id)
+  if (
+    plan?.ai_interactions_monthly !== null &&
+    subscription.ai_interactions_used + quantity > (plan?.ai_interactions_monthly || 0)
+  ) {
+    // No more credits available - subscription limit exceeded
     return false
   }
 
   await supabase
-    .from("credit_packs")
+    .from("subscriptions")
     .update({
-      credits_remaining: creditPack.credits_remaining - quantity,
+      ai_interactions_used: subscription.ai_interactions_used + quantity,
     })
-    .eq("id", creditPack.id)
+    .eq("id", subscription.id)
 
   return true
 }

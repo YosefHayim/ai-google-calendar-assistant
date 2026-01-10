@@ -23,8 +23,7 @@ export const SecurityTab: React.FC = () => {
             id="mfa"
             title="Authenticator App (MFA)"
             tooltip="Require a 2FA code when logging in from a new device for enhanced security"
-            variant="toggle"
-            control={<CinematicGlowToggle id={toggleId} checked={authenticatorApp} onChange={setAuthenticatorApp} />}
+                        control={<CinematicGlowToggle id={toggleId} checked={authenticatorApp} onChange={setAuthenticatorApp} />}
           />
         </SettingsSection>
 

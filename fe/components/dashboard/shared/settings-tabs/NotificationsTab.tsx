@@ -211,8 +211,7 @@ export const NotificationsTab: React.FC = () => {
                   id="reminder-enabled"
                   title="Apply Default Reminders"
                   tooltip="When enabled, Ally will automatically add your preferred reminders to new events"
-                  variant="toggle"
-                  control={
+                                    control={
                     <CinematicGlowToggle
                       id={reminderToggleId}
                       checked={reminderSettings.enabled}
@@ -226,8 +225,7 @@ export const NotificationsTab: React.FC = () => {
                     id="use-calendar-defaults"
                     title="Use Calendar Defaults"
                     tooltip="Use the default reminders configured in your Google Calendar instead of custom ones"
-                    variant="toggle"
-                    control={
+                                        control={
                       <CinematicGlowToggle
                         id={calendarDefaultsToggleId}
                         checked={reminderSettings.useCalendarDefaults}

@@ -1,11 +1,12 @@
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import type { NextFunction, Request, Response } from "express";
+import { mockFn } from "../test-utils";
 
 // Define mocks at module level
-const mockValidateSupabaseToken = jest.fn();
-const mockRefreshSupabaseSession = jest.fn();
-const mockSetAuthCookies = jest.fn();
-const mockSendR = jest.fn();
+const mockValidateSupabaseToken = mockFn();
+const mockRefreshSupabaseSession = mockFn();
+const mockSetAuthCookies = mockFn();
+const mockSendR = mockFn();
 
 jest.mock("@/utils/auth/cookie-utils", () => ({
   ACCESS_TOKEN_COOKIE: "access_token",
@@ -39,8 +40,8 @@ import { supabaseAuth } from "../../middlewares/supabase-auth";
 describe("supabaseAuth Middleware", () => {
   let mockRequest: Partial<Request>;
   let mockResponse: Partial<Response>;
-  let mockNext: jest.Mock;
-  let setHeaderMock: jest.Mock;
+  let mockNext: ReturnType<typeof mockFn>;
+  let setHeaderMock: ReturnType<typeof mockFn>;
 
   const mockUser = {
     id: "user-123",
@@ -52,7 +53,7 @@ describe("supabaseAuth Middleware", () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    setHeaderMock = jest.fn();
+    setHeaderMock = mockFn();
     mockRequest = {
       headers: {},
       cookies: {},
@@ -60,7 +61,7 @@ describe("supabaseAuth Middleware", () => {
     mockResponse = {
       setHeader: setHeaderMock as unknown as Response["setHeader"],
     };
-    mockNext = jest.fn();
+    mockNext = mockFn();
   });
 
   describe("token extraction", () => {

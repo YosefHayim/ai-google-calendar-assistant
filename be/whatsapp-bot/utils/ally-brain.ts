@@ -3,19 +3,20 @@
  * Handles user preferences for AI personality and voice settings
  */
 
-import { SUPABASE } from "@/config"
 import { logger } from "@/utils/logger"
 import { getUserIdFromWhatsApp } from "./conversation-history"
+import {
+  getPreference,
+  updatePreference,
+  type AllyBrainPreference,
+  type VoicePreference,
+  PREFERENCE_DEFAULTS,
+} from "@/services/user-preferences-service"
 
-export type AllyBrainPreference = {
-  enabled: boolean
-  instructions: string
-}
+export type { AllyBrainPreference, VoicePreference }
 
-const DEFAULT_ALLY_BRAIN: AllyBrainPreference = {
-  enabled: false,
-  instructions: "",
-}
+const DEFAULT_ALLY_BRAIN = PREFERENCE_DEFAULTS.ally_brain as AllyBrainPreference
+const DEFAULT_VOICE_PREFERENCE = PREFERENCE_DEFAULTS.voice_preference as VoicePreference
 
 /**
  * Gets Ally Brain preferences for a WhatsApp user
@@ -29,22 +30,8 @@ export const getAllyBrainForWhatsApp = async (
       return null
     }
 
-    const { data, error } = await SUPABASE.from("user_preferences")
-      .select("preference_value")
-      .eq("user_id", userId)
-      .eq("preference_key", "ally_brain")
-      .maybeSingle()
-
-    if (error) {
-      logger.error(`WhatsApp: ally-brain: Error fetching preference: ${error.message}`)
-      return null
-    }
-
-    if (!data) {
-      return DEFAULT_ALLY_BRAIN
-    }
-
-    return data.preference_value as unknown as AllyBrainPreference
+    const result = await getPreference<AllyBrainPreference>(userId, "ally_brain")
+    return result ?? DEFAULT_ALLY_BRAIN
   } catch (error) {
     logger.error(`WhatsApp: ally-brain: Failed to get preference: ${error}`)
     return null
@@ -65,39 +52,12 @@ export const updateAllyBrainForWhatsApp = async (
       return false
     }
 
-    const { error } = await SUPABASE.from("user_preferences").upsert(
-      {
-        user_id: userId,
-        preference_key: "ally_brain",
-        preference_value: value,
-        category: "assistant",
-        updated_at: new Date().toISOString(),
-      },
-      {
-        onConflict: "user_id,preference_key",
-      }
-    )
-
-    if (error) {
-      logger.error(`WhatsApp: ally-brain: Error updating preference: ${error.message}`)
-      return false
-    }
-
+    await updatePreference(userId, "ally_brain", value)
     return true
   } catch (error) {
     logger.error(`WhatsApp: ally-brain: Failed to update preference: ${error}`)
     return false
   }
-}
-
-export type VoicePreference = {
-  enabled: boolean
-  voice: "alloy" | "echo" | "fable" | "onyx" | "nova" | "shimmer"
-}
-
-const DEFAULT_VOICE_PREFERENCE: VoicePreference = {
-  enabled: true,
-  voice: "alloy",
 }
 
 /**
@@ -112,22 +72,8 @@ export const getVoicePreferenceForWhatsApp = async (
       return DEFAULT_VOICE_PREFERENCE
     }
 
-    const { data, error } = await SUPABASE.from("user_preferences")
-      .select("preference_value")
-      .eq("user_id", userId)
-      .eq("preference_key", "voice_preference")
-      .maybeSingle()
-
-    if (error) {
-      logger.error(`WhatsApp: voice-preference: Error fetching: ${error.message}`)
-      return DEFAULT_VOICE_PREFERENCE
-    }
-
-    if (!data) {
-      return DEFAULT_VOICE_PREFERENCE
-    }
-
-    return data.preference_value as unknown as VoicePreference
+    const result = await getPreference<VoicePreference>(userId, "voice_preference")
+    return result ?? DEFAULT_VOICE_PREFERENCE
   } catch (error) {
     logger.error(`WhatsApp: voice-preference: Failed to get: ${error}`)
     return DEFAULT_VOICE_PREFERENCE
@@ -147,24 +93,7 @@ export const updateVoicePreferenceForWhatsApp = async (
       return false
     }
 
-    const { error } = await SUPABASE.from("user_preferences").upsert(
-      {
-        user_id: userId,
-        preference_key: "voice_preference",
-        preference_value: value,
-        category: "assistant",
-        updated_at: new Date().toISOString(),
-      },
-      {
-        onConflict: "user_id,preference_key",
-      }
-    )
-
-    if (error) {
-      logger.error(`WhatsApp: voice-preference: Error updating: ${error.message}`)
-      return false
-    }
-
+    await updatePreference(userId, "voice_preference", value)
     return true
   } catch (error) {
     logger.error(`WhatsApp: voice-preference: Failed to update: ${error}`)

@@ -4,7 +4,6 @@ import type { GlobalContext } from "../init-bot";
 import { InlineKeyboard, InputFile } from "grammy";
 import { ORCHESTRATOR_AGENT } from "@/ai-agents";
 import { ResponseBuilder } from "../response-system";
-import { SupabaseAgentSession } from "@/ai-agents/sessions";
 import type { SupportedLocale } from "../i18n";
 import { gatherUserKnowledge } from "./user-knowledge";
 import { logger } from "@/utils/logger";
@@ -107,26 +106,7 @@ export const handleHelpCommand = async (ctx: GlobalContext): Promise<void> => {
 export const handleExitCommand = async (ctx: GlobalContext): Promise<void> => {
   resetSession(ctx);
 
-  const telegramUserId = ctx.from?.id;
-  const chatId = ctx.chat?.id || ctx.session.chatId;
-
-  if (telegramUserId) {
-    try {
-      const userUuid = await getUserIdFromTelegram(telegramUserId);
-      if (userUuid) {
-        const sessionId = SupabaseAgentSession.generateSessionId(userUuid, ORCHESTRATOR_AGENT.name, chatId.toString());
-        const agentSession = new SupabaseAgentSession({
-          sessionId,
-          userId: userUuid,
-          agentName: ORCHESTRATOR_AGENT.name,
-        });
-        await agentSession.clearSession();
-        logger.info(`Telegram Bot: Cleared agent session for user ${telegramUserId} (uuid: ${userUuid})`);
-      }
-    } catch (error) {
-      logger.error(`Telegram Bot: Failed to clear agent session for user ${telegramUserId}: ${error}`);
-    }
-  }
+  // Note: Agent sessions are now memory-based (ephemeral) - no need to clear persistent sessions
 
   const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
 
@@ -633,7 +613,7 @@ export const handleBrainCommand = async (ctx: GlobalContext): Promise<void> => {
   }
 
   try {
-    const { getAllyBrainForTelegram } = await import("./ally-brain");
+    const { getAllyBrainForTelegram } = await import("./ally-brain.js");
     const brainData = await getAllyBrainForTelegram(telegramUserId);
 
     const statusText = brainData?.enabled ? t("commands.brain.statusEnabled") : t("commands.brain.statusDisabled");
@@ -690,7 +670,7 @@ export const handleBrainToggle = async (ctx: GlobalContext, enable: boolean): Pr
   }
 
   try {
-    const { toggleAllyBrainEnabled } = await import("./ally-brain");
+    const { toggleAllyBrainEnabled } = await import("./ally-brain.js");
     const success = await toggleAllyBrainEnabled(telegramUserId, enable);
 
     if (success) {
@@ -717,7 +697,7 @@ export const handleBrainEditStart = async (ctx: GlobalContext): Promise<void> =>
     return;
   }
 
-  const { getAllyBrainForTelegram } = await import("./ally-brain");
+  const { getAllyBrainForTelegram } = await import("./ally-brain.js");
   const brainData = await getAllyBrainForTelegram(telegramUserId);
 
   if (brainData?.instructions?.trim()) {
@@ -819,7 +799,7 @@ export const handleBrainInstructionsInput = async (ctx: GlobalContext, instructi
   }
 
   try {
-    const { updateAllyBrainInstructions } = await import("./ally-brain");
+    const { updateAllyBrainInstructions } = await import("./ally-brain.js");
     const mode = ctx.session.brainInstructionsMode || "replace";
     const success = await updateAllyBrainInstructions(telegramUserId, instructions, mode);
 
@@ -856,7 +836,7 @@ export const handleBrainClear = async (ctx: GlobalContext): Promise<void> => {
   }
 
   try {
-    const { clearAllyBrainInstructions } = await import("./ally-brain");
+    const { clearAllyBrainInstructions } = await import("./ally-brain.js");
     const success = await clearAllyBrainInstructions(telegramUserId);
 
     if (success) {

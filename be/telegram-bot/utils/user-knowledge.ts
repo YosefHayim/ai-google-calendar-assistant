@@ -64,23 +64,25 @@ const fetchConversations = (userId: string) =>
     .eq("user_id", userId)
     .order("last_message_at", { ascending: false });
 
+// Summaries are now stored in conversations.summary column
 const fetchConversationSummaries = (userId: string) =>
-  SUPABASE.from("conversation_summaries")
-    .select("summary_text")
+  SUPABASE.from("conversations")
+    .select("summary")
     .eq("user_id", userId)
-    .order("created_at", { ascending: false })
+    .not("summary", "is", null)
+    .order("updated_at", { ascending: false })
     .limit(RECENT_SUMMARIES_LIMIT);
 
-const fetchGapRecoverySettings = (userId: string) =>
-  SUPABASE.from("gap_recovery_settings")
-    .select("is_enabled, min_gap_minutes, max_gap_minutes")
-    .eq("user_id", userId)
-    .maybeSingle();
+// Gap recovery feature removed
+const fetchGapRecoverySettings = (_userId: string) =>
+  Promise.resolve({ data: null, error: null });
 
+// Preferences now stored in users.preferences JSONB column
 const fetchUserPreferences = (userId: string) =>
-  SUPABASE.from("user_preferences")
-    .select("preference_key, preference_value")
-    .eq("user_id", userId);
+  SUPABASE.from("users")
+    .select("preferences")
+    .eq("id", userId)
+    .single();
 
 type BuildKnowledgeParams = {
   user: {
@@ -108,13 +110,13 @@ type BuildKnowledgeParams = {
         last_message_at: string | null;
       }[]
     | null;
-  summaries: { summary_text: string }[] | null;
+  summaries: { summary: string | null }[] | null;
   gapSettings: {
     is_enabled: boolean | null;
     min_gap_minutes: number | null;
     max_gap_minutes: number | null;
   } | null;
-  preferences: { preference_key: string; preference_value: unknown }[] | null;
+  preferences: { preferences: Record<string, unknown> | null } | null;
 };
 
 const buildKnowledgeObject = (params: BuildKnowledgeParams): UserKnowledge => {
@@ -161,16 +163,14 @@ const buildKnowledgeObject = (params: BuildKnowledgeParams): UserKnowledge => {
       lastConversationAt: conversations?.[0]?.last_message_at ?? null,
       conversationSummaries:
         summaries
-          ?.map((s) => s.summary_text)
+          ?.map((s) => s.summary)
           .filter((s): s is string => Boolean(s)) ?? [],
     },
     preferences: {
-      gapRecoveryEnabled: gapSettings?.is_enabled ?? null,
-      minGapMinutes: gapSettings?.min_gap_minutes ?? null,
-      maxGapMinutes: gapSettings?.max_gap_minutes ?? null,
-      customPreferences: Object.fromEntries(
-        preferences?.map((p) => [p.preference_key, p.preference_value]) ?? []
-      ),
+      gapRecoveryEnabled: null, // Gap recovery feature removed
+      minGapMinutes: null,
+      maxGapMinutes: null,
+      customPreferences: preferences?.preferences ?? {},
     },
   };
 };
@@ -210,7 +210,7 @@ export const gatherUserKnowledge = async (
       conversations,
       summaries,
       gapSettings,
-      preferences,
+      preferences: preferences ? { preferences: preferences.preferences as Record<string, unknown> | null } : null,
     });
   } catch (error) {
     logger.error(

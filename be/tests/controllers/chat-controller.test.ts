@@ -1,24 +1,25 @@
 import { jest, describe, it, expect, beforeEach } from "@jest/globals";
 import type { Request, Response, NextFunction } from "express";
+import { mockFn, type AnyFn } from "../test-utils";
 
 // Mock functions
-const mockGetOrCreateTodayContext = jest.fn<() => Promise<{ stateId: string; context: { messages: unknown[]; title?: string } }>>();
-const mockBuildContextPrompt = jest.fn<() => string>();
-const mockAddMessageToContext = jest.fn<() => Promise<void>>();
-const mockGetConversationList = jest.fn<() => Promise<unknown[]>>();
-const mockGetConversationById = jest.fn<() => Promise<unknown>>();
-const mockDeleteConversation = jest.fn<() => Promise<boolean>>();
-const mockLoadConversationIntoContext = jest.fn<() => Promise<{ context: { messages: unknown[] } } | null>>();
-const mockCloseActiveConversation = jest.fn<() => Promise<void>>();
-const mockUpdateConversationTitle = jest.fn<() => Promise<void>>();
-const mockGetWebRelevantContext = jest.fn<() => Promise<string>>();
-const mockStoreWebEmbeddingAsync = jest.fn<() => void>();
-const mockGenerateConversationTitle = jest.fn<() => Promise<string>>();
-const mockSummarizeMessages = jest.fn();
-const mockRun = jest.fn<() => Promise<{ finalOutput: string }>>();
-const mockCreateAgentSession = jest.fn<() => unknown>();
-const mockGetAllyBrainPreference = jest.fn<() => Promise<{ enabled: boolean; instructions?: string } | null>>();
-const mockSendR = jest.fn<() => void>();
+const mockGetOrCreateTodayContext = mockFn();
+const mockBuildContextPrompt = mockFn();
+const mockAddMessageToContext = mockFn();
+const mockGetConversationList = mockFn();
+const mockGetConversationById = mockFn();
+const mockDeleteConversation = mockFn();
+const mockLoadConversationIntoContext = mockFn();
+const mockCloseActiveConversation = mockFn();
+const mockUpdateConversationTitle = mockFn();
+const mockGetWebRelevantContext = mockFn();
+const mockStoreWebEmbeddingAsync = mockFn();
+const mockGenerateConversationTitle = mockFn();
+const mockSummarizeMessages = mockFn();
+const mockRun = mockFn();
+const mockCreateAgentSession = mockFn();
+const mockGetAllyBrainPreference = mockFn();
+const mockSendR = mockFn();
 
 jest.mock("@/utils/conversation/WebConversationAdapter", () => ({
   webConversation: {
@@ -94,13 +95,20 @@ describe("Chat Controller", () => {
       body: {},
       query: {},
       params: {},
-      user: { id: "user-123", email: "test@example.com" },
+      user: {
+        id: "user-123",
+        email: "test@example.com",
+        aud: "authenticated",
+        app_metadata: {},
+        user_metadata: {},
+        created_at: new Date().toISOString(),
+      },
     };
     mockRes = {
-      status: jest.fn().mockReturnThis() as unknown as Response["status"],
-      json: jest.fn().mockReturnThis() as unknown as Response["json"],
+      status: mockFn().mockReturnThis() as unknown as Response["status"],
+      json: mockFn().mockReturnThis() as unknown as Response["json"],
     };
-    mockNext = jest.fn();
+    mockNext = mockFn();
 
     // Default mock implementations
     mockGetAllyBrainPreference.mockResolvedValue(null);
@@ -112,9 +120,9 @@ describe("Chat Controller", () => {
     mockGetWebRelevantContext.mockResolvedValue("");
     mockCreateAgentSession.mockReturnValue({});
     mockRun.mockResolvedValue({ finalOutput: "AI response" });
-    mockAddMessageToContext.mockResolvedValue();
+    mockAddMessageToContext.mockResolvedValue(undefined);
     mockGenerateConversationTitle.mockResolvedValue("Test Title");
-    mockUpdateConversationTitle.mockResolvedValue();
+    mockUpdateConversationTitle.mockResolvedValue(undefined);
   });
 
   describe("sendChat", () => {
@@ -462,7 +470,7 @@ describe("Chat Controller", () => {
     });
 
     it("should close active conversation and start new one", async () => {
-      mockCloseActiveConversation.mockResolvedValue();
+      mockCloseActiveConversation.mockResolvedValue(undefined);
 
       await chatController.startNewConversation(mockReq as Request, mockRes as Response, mockNext);
 

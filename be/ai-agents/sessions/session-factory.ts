@@ -1,8 +1,8 @@
 import type { Session, AgentInputItem } from "@openai/agents";
 import { MemorySession } from "@openai/agents";
-import { SupabaseAgentSession } from "./supabase-session";
 
-export type SessionType = "supabase" | "memory";
+// Note: SupabaseAgentSession removed - agent_sessions table was dropped for simpler architecture
+export type SessionType = "memory";
 export type CompactionStrategy = "none" | "responses";
 
 export interface CompactionConfig {
@@ -19,7 +19,7 @@ export interface CreateSessionOptions {
   agentName: string;
   /** Optional task/conversation ID for further isolation */
   taskId?: string;
-  /** Session storage backend (default: supabase) */
+  /** Session storage backend (default: memory) */
   sessionType?: SessionType;
   /** Compaction strategy to keep context small (default: none) */
   compaction?: CompactionStrategy;
@@ -30,9 +30,12 @@ export interface CreateSessionOptions {
 /**
  * Factory for creating agent sessions with optional compaction
  *
+ * Note: Supabase sessions were removed for simpler architecture.
+ * All sessions now use in-memory storage.
+ *
  * @example
  * ```typescript
- * // Simple Supabase session
+ * // Memory session
  * const session = createAgentSession({
  *   userId: 'user123',
  *   agentName: 'parse_event_text_agent'
@@ -46,45 +49,16 @@ export interface CreateSessionOptions {
  *   compaction: 'responses',
  *   compactionConfig: { maxItems: 30 }
  * });
- *
- * // Memory session for testing
- * const session = createAgentSession({
- *   userId: 'test',
- *   agentName: 'test_agent',
- *   sessionType: 'memory'
- * });
  * ```
  */
 export function createAgentSession(options: CreateSessionOptions): Session {
-  const { userId, agentName, taskId, sessionType = "supabase", compaction = "none", compactionConfig } = options;
+  const { compaction = "none", compactionConfig } = options;
 
-  // Create base session
-  let baseSession: Session;
-
-  switch (sessionType) {
-    case "memory":
-      // Good for development/testing - no persistence
-      baseSession = new MemorySession();
-      break;
-
-    case "supabase":
-    default: {
-      const sessionId = SupabaseAgentSession.generateSessionId(userId, agentName, taskId);
-      baseSession = new SupabaseAgentSession({
-        sessionId,
-        userId,
-        agentName,
-      });
-      break;
-    }
-  }
+  // All sessions use memory now (Supabase sessions removed)
+  const baseSession: Session = new MemorySession();
 
   // Wrap with compaction if requested
-  // Note: OpenAIResponsesCompactionSession requires additional setup
-  // For now, we return the base session and handle compaction manually if needed
   if (compaction === "responses") {
-    // The OpenAI SDK's compaction session wraps another session
-    // and automatically summarizes when items exceed maxItems
     return createCompactionWrapper(baseSession, compactionConfig);
   }
 
@@ -94,9 +68,6 @@ export function createAgentSession(options: CreateSessionOptions): Session {
 /**
  * Creates a compaction wrapper that automatically summarizes session history
  * when it exceeds the configured maxItems threshold.
- *
- * This is a lightweight implementation that doesn't require OpenAIResponsesCompactionSession
- * which may not be available in all SDK versions.
  */
 function createCompactionWrapper(baseSession: Session, config?: CompactionConfig): Session {
   const maxItems = config?.maxItems ?? 50;
@@ -106,8 +77,6 @@ function createCompactionWrapper(baseSession: Session, config?: CompactionConfig
 
     getItems: async (limit?: number): Promise<AgentInputItem[]> => {
       const items = await baseSession.getItems(limit);
-      // If items exceed threshold, we could trigger compaction here
-      // For now, just return items and let the caller handle it
       return items;
     },
 
@@ -117,8 +86,6 @@ function createCompactionWrapper(baseSession: Session, config?: CompactionConfig
       // Check if we need to compact
       const allItems = await baseSession.getItems();
       if (allItems.length > maxItems) {
-        // Log that compaction would be triggered
-        // Actual summarization would require an LLM call
         console.log(`[Session] Items (${allItems.length}) exceed maxItems (${maxItems}), compaction recommended`);
       }
     },

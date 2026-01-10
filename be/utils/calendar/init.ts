@@ -1,7 +1,7 @@
 import { REDIRECT_URI, env } from "@/config";
 import { calendar_v3, google } from "googleapis";
 
-import type { OAuth2Client } from "google-auth-library";
+import type { OAuth2Client, Credentials } from "google-auth-library";
 import type { TokensProps } from "@/types";
 import { logger } from "../logger";
 import { updateUserSupabaseTokens } from "../auth/update-tokens-of-user";
@@ -49,11 +49,23 @@ const persistRefreshedTokens = async (oldTokens: TokensProps, newTokens: Refresh
 };
 
 /**
+ * Convert TokensProps to Google Credentials format
+ */
+const toGoogleCredentials = (tokens: TokensProps): Credentials => ({
+  access_token: tokens.access_token ?? undefined,
+  refresh_token: tokens.refresh_token ?? undefined,
+  scope: tokens.scope ?? undefined,
+  token_type: tokens.token_type ?? undefined,
+  id_token: tokens.id_token ?? undefined,
+  expiry_date: tokens.expiry_date ?? undefined,
+});
+
+/**
  * Initialize calendar with user tokens. Part of: Calendar initialization flow - main entry point.
  */
 export const initUserSupabaseCalendarWithTokensAndUpdateTokens = async (tokens: TokensProps): Promise<calendar_v3.Calendar> => {
   const oauthClient = createOAuth2Client();
-  oauthClient.setCredentials(tokens);
+  oauthClient.setCredentials(toGoogleCredentials(tokens));
 
   const refreshedTokens = await refreshAccessToken(oauthClient);
   await persistRefreshedTokens(tokens, refreshedTokens);

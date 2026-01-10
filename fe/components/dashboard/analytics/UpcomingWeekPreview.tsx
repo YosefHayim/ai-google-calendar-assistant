@@ -132,7 +132,7 @@ const DayCard: React.FC<{ day: UpcomingDayData }> = ({ day }) => {
                     <div className="flex items-center gap-1.5">
                       <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate flex-1">{event.summary}</p>
                       {event.isRecurring && (
-                        <Repeat className="w-3 h-3 text-zinc-400 flex-shrink-0" title="Recurring event" />
+                        <span title="Recurring event"><Repeat className="w-3 h-3 text-zinc-400 flex-shrink-0" /></span>
                       )}
                     </div>
                     <p className="text-xs text-zinc-500 dark:text-zinc-400">

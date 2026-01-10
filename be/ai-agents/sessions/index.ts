@@ -1,7 +1,4 @@
-// Session implementations
-export { SupabaseAgentSession, type SupabaseSessionOptions } from "./supabase-session";
-
-// Session factory
+// Session factory (Supabase sessions removed - agent_sessions table dropped)
 export {
   createAgentSession,
   getSessionInfo,

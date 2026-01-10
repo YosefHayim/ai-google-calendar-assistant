@@ -12,223 +12,33 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "13.0.4"
   }
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
   public: {
     Tables: {
-      agent_sessions: {
-        Row: {
-          agent_name: string
-          context: Json | null
-          created_at: string
-          expires_at: string | null
-          id: string
-          is_active: boolean | null
-          items: Json | null
-          session_id: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          agent_name: string
-          context?: Json | null
-          created_at?: string
-          expires_at?: string | null
-          id?: string
-          is_active?: boolean | null
-          items?: Json | null
-          session_id: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          agent_name?: string
-          context?: Json | null
-          created_at?: string
-          expires_at?: string | null
-          id?: string
-          is_active?: boolean | null
-          items?: Json | null
-          session_id?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      audit_logs: {
-        Row: {
-          action: string
-          admin_action_type: string | null
-          admin_user_id: string | null
-          created_at: string
-          error_message: string | null
-          id: string
-          ip_address: unknown
-          new_values: Json | null
-          old_values: Json | null
-          resource_id: string | null
-          resource_type: string | null
-          status: string | null
-          user_agent: string | null
-          user_id: string | null
-        }
-        Insert: {
-          action: string
-          admin_action_type?: string | null
-          admin_user_id?: string | null
-          created_at?: string
-          error_message?: string | null
-          id?: string
-          ip_address?: unknown
-          new_values?: Json | null
-          old_values?: Json | null
-          resource_id?: string | null
-          resource_type?: string | null
-          status?: string | null
-          user_agent?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          action?: string
-          admin_action_type?: string | null
-          admin_user_id?: string | null
-          created_at?: string
-          error_message?: string | null
-          id?: string
-          ip_address?: unknown
-          new_values?: Json | null
-          old_values?: Json | null
-          resource_id?: string | null
-          resource_type?: string | null
-          status?: string | null
-          user_agent?: string | null
-          user_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "audit_logs_admin_user_id_fkey"
-            columns: ["admin_user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "audit_logs_admin_user_id_fkey"
-            columns: ["admin_user_id"]
-            isOneToOne: false
-            referencedRelation: "v_active_users_with_calendar"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "audit_logs_admin_user_id_fkey"
-            columns: ["admin_user_id"]
-            isOneToOne: false
-            referencedRelation: "v_admin_user_list"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "audit_logs_admin_user_id_fkey"
-            columns: ["admin_user_id"]
-            isOneToOne: false
-            referencedRelation: "v_user_billing_summary"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "audit_logs_admin_user_id_fkey"
-            columns: ["admin_user_id"]
-            isOneToOne: false
-            referencedRelation: "v_user_conversation_stats"
-            referencedColumns: ["user_id"]
-          },
-        ]
-      }
-      conversation_embeddings: {
-        Row: {
-          content: string
-          conversation_id: string | null
-          created_at: string
-          embedding: string | null
-          id: string
-          message_id: string | null
-          metadata: Json | null
-          source: Database["public"]["Enums"]["conversation_source"] | null
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          content: string
-          conversation_id?: string | null
-          created_at?: string
-          embedding?: string | null
-          id?: string
-          message_id?: string | null
-          metadata?: Json | null
-          source?: Database["public"]["Enums"]["conversation_source"] | null
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          content?: string
-          conversation_id?: string | null
-          created_at?: string
-          embedding?: string | null
-          id?: string
-          message_id?: string | null
-          metadata?: Json | null
-          source?: Database["public"]["Enums"]["conversation_source"] | null
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "conversation_embeddings_conversation_id_fkey"
-            columns: ["conversation_id"]
-            isOneToOne: false
-            referencedRelation: "conversations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "conversation_embeddings_message_id_fkey"
-            columns: ["message_id"]
-            isOneToOne: false
-            referencedRelation: "conversation_messages"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "conversation_embeddings_new_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "conversation_embeddings_new_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_active_users_with_calendar"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "conversation_embeddings_new_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_admin_user_list"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "conversation_embeddings_new_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_user_billing_summary"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "conversation_embeddings_new_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_user_conversation_stats"
-            referencedColumns: ["user_id"]
-          },
-        ]
-      }
       conversation_messages: {
         Row: {
           completion_tokens: number | null
@@ -279,85 +89,6 @@ export type Database = {
           },
         ]
       }
-      conversation_summaries: {
-        Row: {
-          conversation_id: string
-          created_at: string
-          first_message_sequence: number
-          id: string
-          last_message_sequence: number
-          message_count: number
-          metadata: Json | null
-          summary_text: string
-          user_id: string
-        }
-        Insert: {
-          conversation_id: string
-          created_at?: string
-          first_message_sequence: number
-          id?: string
-          last_message_sequence: number
-          message_count: number
-          metadata?: Json | null
-          summary_text: string
-          user_id: string
-        }
-        Update: {
-          conversation_id?: string
-          created_at?: string
-          first_message_sequence?: number
-          id?: string
-          last_message_sequence?: number
-          message_count?: number
-          metadata?: Json | null
-          summary_text?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "conversation_summaries_conversation_id_fkey"
-            columns: ["conversation_id"]
-            isOneToOne: false
-            referencedRelation: "conversations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "conversation_summaries_new_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "conversation_summaries_new_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_active_users_with_calendar"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "conversation_summaries_new_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_admin_user_list"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "conversation_summaries_new_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_user_billing_summary"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "conversation_summaries_new_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_user_conversation_stats"
-            referencedColumns: ["user_id"]
-          },
-        ]
-      }
       conversations: {
         Row: {
           archived_at: string | null
@@ -398,198 +129,6 @@ export type Database = {
           source?: Database["public"]["Enums"]["conversation_source"]
           summary?: string | null
           title?: string | null
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      credit_packs: {
-        Row: {
-          created_at: string | null
-          credits_purchased: number
-          credits_remaining: number
-          expires_at: string | null
-          id: string
-          lemonsqueezy_order_id: string | null
-          price_cents: number
-          purchased_at: string | null
-          status: Database["public"]["Enums"]["payment_status"] | null
-          stripe_checkout_session_id: string | null
-          stripe_payment_intent_id: string | null
-          updated_at: string | null
-          user_id: string
-        }
-        Insert: {
-          created_at?: string | null
-          credits_purchased: number
-          credits_remaining: number
-          expires_at?: string | null
-          id?: string
-          lemonsqueezy_order_id?: string | null
-          price_cents: number
-          purchased_at?: string | null
-          status?: Database["public"]["Enums"]["payment_status"] | null
-          stripe_checkout_session_id?: string | null
-          stripe_payment_intent_id?: string | null
-          updated_at?: string | null
-          user_id: string
-        }
-        Update: {
-          created_at?: string | null
-          credits_purchased?: number
-          credits_remaining?: number
-          expires_at?: string | null
-          id?: string
-          lemonsqueezy_order_id?: string | null
-          price_cents?: number
-          purchased_at?: string | null
-          status?: Database["public"]["Enums"]["payment_status"] | null
-          stripe_checkout_session_id?: string | null
-          stripe_payment_intent_id?: string | null
-          updated_at?: string | null
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "credit_packs_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "credit_packs_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_active_users_with_calendar"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "credit_packs_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_admin_user_list"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "credit_packs_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_user_billing_summary"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "credit_packs_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_user_conversation_stats"
-            referencedColumns: ["user_id"]
-          },
-        ]
-      }
-      gap_candidates: {
-        Row: {
-          confidence_score: number | null
-          created_at: string
-          detected_at: string
-          duration_ms: number
-          end_time: string
-          following_event_calendar_id: string | null
-          following_event_id: string
-          following_event_summary: string | null
-          id: string
-          inferred_context: Json | null
-          preceding_event_calendar_id: string | null
-          preceding_event_id: string
-          preceding_event_summary: string | null
-          resolution_data: Json | null
-          resolution_status:
-            | Database["public"]["Enums"]["gap_resolution_status"]
-            | null
-          resolved_at: string | null
-          resolved_event_id: string | null
-          start_time: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          confidence_score?: number | null
-          created_at?: string
-          detected_at?: string
-          duration_ms: number
-          end_time: string
-          following_event_calendar_id?: string | null
-          following_event_id: string
-          following_event_summary?: string | null
-          id?: string
-          inferred_context?: Json | null
-          preceding_event_calendar_id?: string | null
-          preceding_event_id: string
-          preceding_event_summary?: string | null
-          resolution_data?: Json | null
-          resolution_status?:
-            | Database["public"]["Enums"]["gap_resolution_status"]
-            | null
-          resolved_at?: string | null
-          resolved_event_id?: string | null
-          start_time: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          confidence_score?: number | null
-          created_at?: string
-          detected_at?: string
-          duration_ms?: number
-          end_time?: string
-          following_event_calendar_id?: string | null
-          following_event_id?: string
-          following_event_summary?: string | null
-          id?: string
-          inferred_context?: Json | null
-          preceding_event_calendar_id?: string | null
-          preceding_event_id?: string
-          preceding_event_summary?: string | null
-          resolution_data?: Json | null
-          resolution_status?:
-            | Database["public"]["Enums"]["gap_resolution_status"]
-            | null
-          resolved_at?: string | null
-          resolved_event_id?: string | null
-          start_time?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      gap_recovery_settings: {
-        Row: {
-          created_at: string
-          id: string
-          is_enabled: boolean | null
-          max_gap_minutes: number | null
-          min_gap_minutes: number | null
-          settings: Json
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          is_enabled?: boolean | null
-          max_gap_minutes?: number | null
-          min_gap_minutes?: number | null
-          settings?: Json
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          is_enabled?: boolean | null
-          max_gap_minutes?: number | null
-          min_gap_minutes?: number | null
-          settings?: Json
           updated_at?: string
           user_id?: string
         }
@@ -712,146 +251,6 @@ export type Database = {
             foreignKeyName: "oauth_tokens_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "v_user_billing_summary"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "oauth_tokens_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_user_conversation_stats"
-            referencedColumns: ["user_id"]
-          },
-        ]
-      }
-      payment_history: {
-        Row: {
-          amount_cents: number
-          created_at: string | null
-          credit_pack_id: string | null
-          currency: string | null
-          description: string | null
-          id: string
-          invoice_url: string | null
-          lemonsqueezy_order_id: string | null
-          lemonsqueezy_subscription_id: string | null
-          receipt_url: string | null
-          refund_reason: string | null
-          refunded_amount_cents: number | null
-          refunded_at: string | null
-          status: Database["public"]["Enums"]["payment_status"] | null
-          stripe_charge_id: string | null
-          stripe_invoice_id: string | null
-          stripe_payment_intent_id: string | null
-          subscription_id: string | null
-          updated_at: string | null
-          user_id: string
-        }
-        Insert: {
-          amount_cents: number
-          created_at?: string | null
-          credit_pack_id?: string | null
-          currency?: string | null
-          description?: string | null
-          id?: string
-          invoice_url?: string | null
-          lemonsqueezy_order_id?: string | null
-          lemonsqueezy_subscription_id?: string | null
-          receipt_url?: string | null
-          refund_reason?: string | null
-          refunded_amount_cents?: number | null
-          refunded_at?: string | null
-          status?: Database["public"]["Enums"]["payment_status"] | null
-          stripe_charge_id?: string | null
-          stripe_invoice_id?: string | null
-          stripe_payment_intent_id?: string | null
-          subscription_id?: string | null
-          updated_at?: string | null
-          user_id: string
-        }
-        Update: {
-          amount_cents?: number
-          created_at?: string | null
-          credit_pack_id?: string | null
-          currency?: string | null
-          description?: string | null
-          id?: string
-          invoice_url?: string | null
-          lemonsqueezy_order_id?: string | null
-          lemonsqueezy_subscription_id?: string | null
-          receipt_url?: string | null
-          refund_reason?: string | null
-          refunded_amount_cents?: number | null
-          refunded_at?: string | null
-          status?: Database["public"]["Enums"]["payment_status"] | null
-          stripe_charge_id?: string | null
-          stripe_invoice_id?: string | null
-          stripe_payment_intent_id?: string | null
-          subscription_id?: string | null
-          updated_at?: string | null
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "payment_history_credit_pack_id_fkey"
-            columns: ["credit_pack_id"]
-            isOneToOne: false
-            referencedRelation: "credit_packs"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "payment_history_subscription_id_fkey"
-            columns: ["subscription_id"]
-            isOneToOne: false
-            referencedRelation: "subscriptions"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "payment_history_subscription_id_fkey"
-            columns: ["subscription_id"]
-            isOneToOne: false
-            referencedRelation: "v_active_subscriptions"
-            referencedColumns: ["subscription_id"]
-          },
-          {
-            foreignKeyName: "payment_history_subscription_id_fkey"
-            columns: ["subscription_id"]
-            isOneToOne: false
-            referencedRelation: "v_admin_user_list"
-            referencedColumns: ["subscription_id"]
-          },
-          {
-            foreignKeyName: "payment_history_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "payment_history_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_active_users_with_calendar"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "payment_history_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_admin_user_list"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "payment_history_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_user_billing_summary"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "payment_history_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
             referencedRelation: "v_user_conversation_stats"
             referencedColumns: ["user_id"]
           },
@@ -929,42 +328,6 @@ export type Database = {
           stripe_price_id_yearly?: string | null
           stripe_product_id?: string | null
           updated_at?: string | null
-        }
-        Relationships: []
-      }
-      stripe_webhook_events: {
-        Row: {
-          created_at: string | null
-          error_message: string | null
-          event_type: string
-          id: string
-          payload: Json
-          processed: boolean | null
-          processed_at: string | null
-          retry_count: number | null
-          stripe_event_id: string
-        }
-        Insert: {
-          created_at?: string | null
-          error_message?: string | null
-          event_type: string
-          id?: string
-          payload: Json
-          processed?: boolean | null
-          processed_at?: string | null
-          retry_count?: number | null
-          stripe_event_id: string
-        }
-        Update: {
-          created_at?: string | null
-          error_message?: string | null
-          event_type?: string
-          id?: string
-          payload?: Json
-          processed?: boolean | null
-          processed_at?: string | null
-          retry_count?: number | null
-          stripe_event_id?: string
         }
         Relationships: []
       }
@@ -1083,13 +446,6 @@ export type Database = {
             foreignKeyName: "subscriptions_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "v_user_billing_summary"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "subscriptions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
             referencedRelation: "v_user_conversation_stats"
             referencedColumns: ["user_id"]
           },
@@ -1165,106 +521,6 @@ export type Database = {
           },
           {
             foreignKeyName: "telegram_users_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_user_billing_summary"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "telegram_users_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_user_conversation_stats"
-            referencedColumns: ["user_id"]
-          },
-        ]
-      }
-      usage_records: {
-        Row: {
-          action_type: string
-          id: string
-          metadata: Json | null
-          period_end: string
-          period_start: string
-          quantity: number | null
-          recorded_at: string | null
-          subscription_id: string | null
-          user_id: string
-        }
-        Insert: {
-          action_type: string
-          id?: string
-          metadata?: Json | null
-          period_end: string
-          period_start: string
-          quantity?: number | null
-          recorded_at?: string | null
-          subscription_id?: string | null
-          user_id: string
-        }
-        Update: {
-          action_type?: string
-          id?: string
-          metadata?: Json | null
-          period_end?: string
-          period_start?: string
-          quantity?: number | null
-          recorded_at?: string | null
-          subscription_id?: string | null
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "usage_records_subscription_id_fkey"
-            columns: ["subscription_id"]
-            isOneToOne: false
-            referencedRelation: "subscriptions"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "usage_records_subscription_id_fkey"
-            columns: ["subscription_id"]
-            isOneToOne: false
-            referencedRelation: "v_active_subscriptions"
-            referencedColumns: ["subscription_id"]
-          },
-          {
-            foreignKeyName: "usage_records_subscription_id_fkey"
-            columns: ["subscription_id"]
-            isOneToOne: false
-            referencedRelation: "v_admin_user_list"
-            referencedColumns: ["subscription_id"]
-          },
-          {
-            foreignKeyName: "usage_records_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "usage_records_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_active_users_with_calendar"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "usage_records_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_admin_user_list"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "usage_records_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_user_billing_summary"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "usage_records_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "v_user_conversation_stats"
@@ -1359,47 +615,10 @@ export type Database = {
             foreignKeyName: "user_calendars_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "v_user_billing_summary"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "user_calendars_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
             referencedRelation: "v_user_conversation_stats"
             referencedColumns: ["user_id"]
           },
         ]
-      }
-      user_preferences: {
-        Row: {
-          category: string | null
-          created_at: string
-          id: string
-          preference_key: string
-          preference_value: Json
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          category?: string | null
-          created_at?: string
-          id?: string
-          preference_key: string
-          preference_value: Json
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          category?: string | null
-          created_at?: string
-          id?: string
-          preference_key?: string
-          preference_value?: Json
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
       }
       users: {
         Row: {
@@ -1414,6 +633,7 @@ export type Database = {
           last_login_at: string | null
           last_name: string | null
           locale: string | null
+          preferences: Json | null
           role: Database["public"]["Enums"]["user_role"]
           status: Database["public"]["Enums"]["user_status"] | null
           timezone: string | null
@@ -1431,6 +651,7 @@ export type Database = {
           last_login_at?: string | null
           last_name?: string | null
           locale?: string | null
+          preferences?: Json | null
           role?: Database["public"]["Enums"]["user_role"]
           status?: Database["public"]["Enums"]["user_status"] | null
           timezone?: string | null
@@ -1448,6 +669,7 @@ export type Database = {
           last_login_at?: string | null
           last_name?: string | null
           locale?: string | null
+          preferences?: Json | null
           role?: Database["public"]["Enums"]["user_role"]
           status?: Database["public"]["Enums"]["user_status"] | null
           timezone?: string | null
@@ -1527,13 +749,6 @@ export type Database = {
             foreignKeyName: "whatsapp_users_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "v_user_billing_summary"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "whatsapp_users_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
             referencedRelation: "v_user_conversation_stats"
             referencedColumns: ["user_id"]
           },
@@ -1592,13 +807,6 @@ export type Database = {
             foreignKeyName: "subscriptions_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "v_user_billing_summary"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "subscriptions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
             referencedRelation: "v_user_conversation_stats"
             referencedColumns: ["user_id"]
           },
@@ -1614,19 +822,6 @@ export type Database = {
           token_expires_at: string | null
           token_valid: boolean | null
           user_id: string | null
-        }
-        Relationships: []
-      }
-      v_admin_dashboard_stats: {
-        Row: {
-          active_subscriptions: number | null
-          active_users: number | null
-          mrr_cents: number | null
-          new_users_month: number | null
-          new_users_today: number | null
-          new_users_week: number | null
-          total_revenue_cents: number | null
-          total_users: number | null
         }
         Relationships: []
       }
@@ -1661,38 +856,12 @@ export type Database = {
         }
         Relationships: []
       }
-      v_pending_gaps_summary: {
-        Row: {
-          avg_confidence: number | null
-          earliest_gap: string | null
-          latest_gap: string | null
-          pending_count: number | null
-          total_minutes_untracked: number | null
-          user_id: string | null
-        }
-        Relationships: []
-      }
       v_subscription_distribution: {
         Row: {
           percentage: number | null
           plan_name: string | null
           plan_slug: string | null
           subscriber_count: number | null
-        }
-        Relationships: []
-      }
-      v_user_billing_summary: {
-        Row: {
-          credit_packs_purchased: number | null
-          current_plan: string | null
-          current_status:
-            | Database["public"]["Enums"]["subscription_status"]
-            | null
-          email: string | null
-          total_credits_remaining: number | null
-          total_paid_cents: number | null
-          total_subscriptions: number | null
-          user_id: string | null
         }
         Relationships: []
       }
@@ -1817,25 +986,6 @@ export type Database = {
           metadata: Json
           similarity: number
         }[]
-      }
-      match_user_preference_embeddings: {
-        Args: {
-          match_count?: number
-          match_preference_type?: string
-          match_threshold?: number
-          match_user_id: string
-          query_embedding: string
-        }
-        Returns: {
-          content: string
-          id: number
-          metadata: Json
-          similarity: number
-        }[]
-      }
-      record_usage: {
-        Args: { p_action_type: string; p_quantity?: number; p_user_id: string }
-        Returns: boolean
       }
       reset_subscription_usage: {
         Args: { p_subscription_id: string }
@@ -1999,6 +1149,9 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {
       calendar_access_role: ["owner", "writer", "reader", "freeBusyReader"],

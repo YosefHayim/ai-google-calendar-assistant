@@ -2,6 +2,11 @@ import { jest } from "@jest/globals";
 import type { Request, Response, NextFunction } from "express";
 import type { User } from "@supabase/supabase-js";
 
+// Type helper for flexible mock functions
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyFn = (...args: any[]) => any;
+const mockFn = () => jest.fn<AnyFn>();
+
 /**
  * Creates a mock Express Request object
  */
@@ -22,15 +27,15 @@ export const createMockRequest = (overrides: Partial<Request> = {}): Partial<Req
  */
 export const createMockResponse = (): {
   res: Partial<Response>;
-  statusMock: jest.Mock;
-  jsonMock: jest.Mock;
-  setHeaderMock: jest.Mock;
-  cookieMock: jest.Mock;
+  statusMock: jest.Mock<AnyFn>;
+  jsonMock: jest.Mock<AnyFn>;
+  setHeaderMock: jest.Mock<AnyFn>;
+  cookieMock: jest.Mock<AnyFn>;
 } => {
-  const jsonMock = jest.fn();
-  const setHeaderMock = jest.fn();
-  const cookieMock = jest.fn();
-  const statusMock = jest.fn().mockReturnValue({
+  const jsonMock = mockFn();
+  const setHeaderMock = mockFn();
+  const cookieMock = mockFn();
+  const statusMock = mockFn().mockReturnValue({
     json: jsonMock,
   });
 
@@ -47,8 +52,8 @@ export const createMockResponse = (): {
 /**
  * Creates a mock NextFunction
  */
-export const createMockNext = (): jest.Mock<NextFunction> => {
-  return jest.fn() as unknown as jest.Mock<NextFunction>;
+export const createMockNext = (): jest.Mock<AnyFn> => {
+  return mockFn();
 };
 
 /**
@@ -84,60 +89,60 @@ export const createMockAdminUser = (overrides: Partial<User> = {}): User => {
  * Mock Supabase client factory
  */
 export const createMockSupabase = () => {
-  const mockSingle = jest.fn().mockResolvedValue({ data: null, error: null });
-  const mockMaybeSingle = jest.fn().mockResolvedValue({ data: null, error: null });
-  const mockSelect = jest.fn().mockReturnValue({
-    eq: jest.fn().mockReturnValue({
+  const mockSingle = mockFn().mockResolvedValue({ data: null, error: null });
+  const mockMaybeSingle = mockFn().mockResolvedValue({ data: null, error: null });
+  const mockSelect = mockFn().mockReturnValue({
+    eq: mockFn().mockReturnValue({
       single: mockSingle,
       maybeSingle: mockMaybeSingle,
-      in: jest.fn().mockReturnValue({
+      in: mockFn().mockReturnValue({
         single: mockSingle,
         maybeSingle: mockMaybeSingle,
-        order: jest.fn().mockReturnValue({
-          limit: jest.fn().mockReturnValue({
+        order: mockFn().mockReturnValue({
+          limit: mockFn().mockReturnValue({
             maybeSingle: mockMaybeSingle,
           }),
         }),
       }),
-      order: jest.fn().mockReturnValue({
-        range: jest.fn().mockResolvedValue({ data: [], error: null, count: 0 }),
-        limit: jest.fn().mockReturnValue({
+      order: mockFn().mockReturnValue({
+        range: mockFn().mockResolvedValue({ data: [], error: null, count: 0 }),
+        limit: mockFn().mockReturnValue({
           maybeSingle: mockMaybeSingle,
         }),
       }),
     }),
     single: mockSingle,
     maybeSingle: mockMaybeSingle,
-    or: jest.fn().mockReturnValue({
-      eq: jest.fn().mockReturnValue({
-        order: jest.fn().mockReturnValue({
-          range: jest.fn().mockResolvedValue({ data: [], error: null, count: 0 }),
+    or: mockFn().mockReturnValue({
+      eq: mockFn().mockReturnValue({
+        order: mockFn().mockReturnValue({
+          range: mockFn().mockResolvedValue({ data: [], error: null, count: 0 }),
         }),
       }),
     }),
-    order: jest.fn().mockReturnValue({
+    order: mockFn().mockReturnValue({
       ascending: true,
     }),
   });
 
-  const mockInsert = jest.fn().mockReturnValue({
-    select: jest.fn().mockReturnValue({
+  const mockInsert = mockFn().mockReturnValue({
+    select: mockFn().mockReturnValue({
       single: mockSingle,
     }),
   });
 
-  const mockUpdate = jest.fn().mockReturnValue({
-    eq: jest.fn().mockReturnValue({
-      select: jest.fn().mockReturnValue({
+  const mockUpdate = mockFn().mockReturnValue({
+    eq: mockFn().mockReturnValue({
+      select: mockFn().mockReturnValue({
         single: mockSingle,
         maybeSingle: mockMaybeSingle,
       }),
     }),
   });
 
-  const mockUpsert = jest.fn().mockResolvedValue({ error: null });
+  const mockUpsert = mockFn().mockResolvedValue({ error: null });
 
-  const mockFrom = jest.fn().mockReturnValue({
+  const mockFrom = mockFn().mockReturnValue({
     select: mockSelect,
     insert: mockInsert,
     update: mockUpdate,
@@ -145,10 +150,10 @@ export const createMockSupabase = () => {
   });
 
   const mockAuth = {
-    getUser: jest.fn().mockResolvedValue({ data: { user: null }, error: null }),
-    setSession: jest.fn().mockResolvedValue({ data: { session: null }, error: null }),
-    refreshSession: jest.fn().mockResolvedValue({ data: { session: null }, error: null }),
-    resetPasswordForEmail: jest.fn().mockResolvedValue({ error: null }),
+    getUser: mockFn().mockResolvedValue({ data: { user: null }, error: null }),
+    setSession: mockFn().mockResolvedValue({ data: { session: null }, error: null }),
+    refreshSession: mockFn().mockResolvedValue({ data: { session: null }, error: null }),
+    resetPasswordForEmail: mockFn().mockResolvedValue({ error: null }),
   };
 
   return {
@@ -171,7 +176,7 @@ export const createMockSupabase = () => {
  */
 export const createMockLemonSqueezy = () => {
   return {
-    createCheckout: jest.fn().mockResolvedValue({
+    createCheckout: mockFn().mockResolvedValue({
       data: {
         data: {
           id: "checkout-id",
@@ -182,19 +187,19 @@ export const createMockLemonSqueezy = () => {
       },
       error: null,
     }),
-    getSubscription: jest.fn().mockResolvedValue({
+    getSubscription: mockFn().mockResolvedValue({
       data: { data: { attributes: {} } },
       error: null,
     }),
-    updateSubscription: jest.fn().mockResolvedValue({
+    updateSubscription: mockFn().mockResolvedValue({
       data: { data: { attributes: {} } },
       error: null,
     }),
-    cancelSubscription: jest.fn().mockResolvedValue({
+    cancelSubscription: mockFn().mockResolvedValue({
       data: { data: { attributes: {} } },
       error: null,
     }),
-    getCustomer: jest.fn().mockResolvedValue({
+    getCustomer: mockFn().mockResolvedValue({
       data: {
         data: {
           attributes: {
@@ -204,7 +209,7 @@ export const createMockLemonSqueezy = () => {
       },
       error: null,
     }),
-    listCustomers: jest.fn().mockResolvedValue({
+    listCustomers: mockFn().mockResolvedValue({
       data: { data: [] },
       error: null,
     }),
@@ -261,17 +266,9 @@ export const testData = {
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   },
-  creditPack: {
-    id: "credit-123",
-    user_id: "test-user-id",
-    lemonsqueezy_order_id: "ls-order-123",
-    credits_purchased: 500,
-    credits_remaining: 450,
-    price_cents: 500,
-    status: "succeeded",
-    purchased_at: new Date().toISOString(),
-    expires_at: null,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
 };
+
+/**
+ * Export mockFn helper for use in other test files
+ */
+export { mockFn, type AnyFn };

@@ -1,17 +1,18 @@
 import { jest, describe, it, expect, beforeEach } from "@jest/globals";
 import type { Request, Response, NextFunction } from "express";
+import { mockFn } from "../../test-utils";
 
 // Mock functions
-const mockEventsHandler = jest.fn<() => Promise<unknown>>();
-const mockFetchCredentialsByEmail = jest.fn<() => Promise<unknown>>();
-const mockInitUserSupabaseCalendarWithTokensAndUpdateTokens = jest.fn<() => Promise<unknown>>();
-const mockGetEvents = jest.fn<() => Promise<unknown>>();
-const mockQuickAddWithOrchestrator = jest.fn<() => Promise<unknown>>();
-const mockGetCachedInsights = jest.fn<() => Promise<unknown>>();
-const mockSetCachedInsights = jest.fn<() => Promise<void>>();
-const mockCalculateInsightsMetrics = jest.fn<() => unknown>();
-const mockGenerateInsightsWithRetry = jest.fn<() => Promise<{ insights: unknown[] }>>();
-const mockSendR = jest.fn<() => void>();
+const mockEventsHandler = mockFn();
+const mockFetchCredentialsByEmail = mockFn();
+const mockInitUserSupabaseCalendarWithTokensAndUpdateTokens = mockFn();
+const mockGetEvents = mockFn();
+const mockQuickAddWithOrchestrator = mockFn();
+const mockGetCachedInsights = mockFn();
+const mockSetCachedInsights = mockFn();
+const mockCalculateInsightsMetrics = mockFn();
+const mockGenerateInsightsWithRetry = mockFn();
+const mockSendR = mockFn();
 
 jest.mock("@/config", () => ({
   ACTION: {
@@ -91,13 +92,20 @@ describe("Events Controller", () => {
       body: {},
       query: {},
       params: {},
-      user: { id: "user-123", email: "test@example.com" },
+      user: {
+        id: "user-123",
+        email: "test@example.com",
+        app_metadata: {},
+        user_metadata: {},
+        aud: "authenticated",
+        created_at: new Date().toISOString(),
+      },
     };
     mockRes = {
-      status: jest.fn().mockReturnThis() as unknown as Response["status"],
-      json: jest.fn().mockReturnThis() as unknown as Response["json"],
+      status: mockFn().mockReturnThis() as unknown as Response["status"],
+      json: mockFn().mockReturnThis() as unknown as Response["json"],
     };
-    mockNext = jest.fn();
+    mockNext = mockFn();
 
     // Default mock for tokens
     mockFetchCredentialsByEmail.mockResolvedValue({
@@ -137,7 +145,7 @@ describe("Events Controller", () => {
       mockReq.query = { calendarId: "primary" };
       const mockCalendar = {
         events: {
-          get: jest.fn().mockResolvedValue({ data: { id: "event-123", summary: "Test Event" } }),
+          get: mockFn().mockResolvedValue({ data: { id: "event-123", summary: "Test Event" } }),
         },
       };
       mockInitUserSupabaseCalendarWithTokensAndUpdateTokens.mockResolvedValue(mockCalendar);
@@ -402,7 +410,7 @@ describe("Events Controller", () => {
 
       const mockCalendar = {
         calendarList: {
-          list: jest.fn().mockResolvedValue({
+          list: mockFn().mockResolvedValue({
             data: { items: [{ id: "primary", summary: "Primary", backgroundColor: "#4285f4" }] },
           }),
         },
@@ -417,7 +425,7 @@ describe("Events Controller", () => {
       mockGenerateInsightsWithRetry.mockResolvedValue({
         insights: [{ type: "summary", message: "You had 1 meeting" }],
       });
-      mockSetCachedInsights.mockResolvedValue();
+      mockSetCachedInsights.mockResolvedValue(undefined);
 
       await eventsController.getInsights(mockReq as Request, mockRes as Response, mockNext);
 
@@ -444,7 +452,7 @@ describe("Events Controller", () => {
 
       const mockCalendar = {
         calendarList: {
-          list: jest.fn().mockResolvedValue({ data: { items: [{ id: "primary" }] } }),
+          list: mockFn().mockResolvedValue({ data: { items: [{ id: "primary" }] } }),
         },
         events: {},
       };
@@ -479,7 +487,7 @@ describe("Events Controller", () => {
       mockReq.query = { timeMin: "2024-01-01", timeMax: "2024-01-31" };
       const mockCalendar = {
         calendarList: {
-          list: jest.fn().mockResolvedValue({
+          list: mockFn().mockResolvedValue({
             data: { items: [{ id: "primary" }, { id: "work" }] },
           }),
         },
@@ -520,7 +528,7 @@ describe("Events Controller", () => {
       mockReq.body = { id: "channel-123", type: "web_hook" };
       const mockCalendar = {
         events: {
-          watch: jest.fn().mockResolvedValue({ data: { resourceId: "resource-123" } }),
+          watch: mockFn().mockResolvedValue({ data: { resourceId: "resource-123" } }),
         },
       };
       mockInitUserSupabaseCalendarWithTokensAndUpdateTokens.mockResolvedValue(mockCalendar);
@@ -543,7 +551,7 @@ describe("Events Controller", () => {
       mockReq.query = { calendarId: "primary" };
       const mockCalendar = {
         events: {
-          move: jest.fn().mockResolvedValue({ data: { id: "moved-event" } }),
+          move: mockFn().mockResolvedValue({ data: { id: "moved-event" } }),
         },
       };
       mockInitUserSupabaseCalendarWithTokensAndUpdateTokens.mockResolvedValue(mockCalendar);
@@ -566,7 +574,7 @@ describe("Events Controller", () => {
       mockReq.query = { timeMin: "2024-01-01", timeMax: "2024-12-31" };
       const mockCalendar = {
         events: {
-          instances: jest.fn().mockResolvedValue({
+          instances: mockFn().mockResolvedValue({
             data: { items: [{ id: "instance-1" }, { id: "instance-2" }] },
           }),
         },
@@ -597,7 +605,7 @@ describe("Events Controller", () => {
       };
       const mockCalendar = {
         events: {
-          import: jest.fn().mockResolvedValue({ data: { id: "imported-123" } }),
+          import: mockFn().mockResolvedValue({ data: { id: "imported-123" } }),
         },
       };
       mockInitUserSupabaseCalendarWithTokensAndUpdateTokens.mockResolvedValue(mockCalendar);

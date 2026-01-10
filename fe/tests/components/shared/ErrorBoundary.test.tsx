@@ -191,10 +191,12 @@ describe("ErrorBoundary", () => {
     const originalNodeEnv = process.env.NODE_ENV;
 
     afterEach(() => {
+      // @ts-ignore - NODE_ENV is normally readonly but we need to restore it
       process.env.NODE_ENV = originalNodeEnv;
     });
 
     it("should log to console in development mode", () => {
+      // @ts-ignore - NODE_ENV is normally readonly but we need to set it for testing
       process.env.NODE_ENV = "development";
 
       const consoleErrorCalls: unknown[][] = [];
@@ -204,7 +206,8 @@ describe("ErrorBoundary", () => {
       };
 
       // Simulate componentDidCatch logging in dev
-      if (process.env.NODE_ENV === "development") {
+      const nodeEnv = process.env.NODE_ENV;
+      if (nodeEnv === "development") {
         console.error("ErrorBoundary caught an error:", new Error("Test"));
       }
 
@@ -215,6 +218,7 @@ describe("ErrorBoundary", () => {
     });
 
     it("should not log to console in production mode", () => {
+      // @ts-ignore - NODE_ENV is normally readonly but we need to set it for testing
       process.env.NODE_ENV = "production";
 
       const consoleErrorCalls: unknown[][] = [];
@@ -224,7 +228,8 @@ describe("ErrorBoundary", () => {
       };
 
       // Simulate componentDidCatch - should not log in production
-      if (process.env.NODE_ENV === "development") {
+      const nodeEnv = process.env.NODE_ENV as string;
+      if (nodeEnv === "development") {
         console.error("ErrorBoundary caught an error:", new Error("Test"));
       }
 

@@ -193,22 +193,21 @@ export const updateConversationState = async (conversationId: string, context: C
   return true;
 };
 
+// Summary is now stored directly in conversations.summary column
 export const storeSummary = async (
   conversationId: string,
-  userId: string,
+  _userId: string,
   summaryText: string,
-  messageCount: number,
-  firstSequence: number,
-  lastSequence: number
+  _messageCount: number,
+  _firstSequence: number,
+  _lastSequence: number
 ): Promise<boolean> => {
-  const { error } = await SUPABASE.from("conversation_summaries").insert({
-    conversation_id: conversationId,
-    user_id: userId,
-    summary_text: summaryText,
-    message_count: messageCount,
-    first_message_sequence: firstSequence,
-    last_message_sequence: lastSequence,
-  });
+  const { error } = await SUPABASE.from("conversations")
+    .update({
+      summary: summaryText,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", conversationId);
 
   if (error) {
     logger.error(`Failed to store summary for conversation ${conversationId}: ${error.message}`);

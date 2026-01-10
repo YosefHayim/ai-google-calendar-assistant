@@ -1,11 +1,12 @@
 import type { NextFunction, Request, Response } from "express";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
+import { mockFn } from "../test-utils";
 
 // Now import after mocks
 import errorHandler from "../../middlewares/error-handler";
 
 // Create mocks before imports
-const mockSendR = jest.fn();
+const mockSendR = mockFn();
 
 // Mock modules
 jest.mock("@/utils/send-response", () => ({
@@ -21,15 +22,15 @@ jest.mock("@/types", () => ({
 describe("errorHandler", () => {
   let mockRequest: Partial<Request>;
   let mockResponse: Partial<Response>;
-  let mockNext: jest.Mock<NextFunction>;
+  let mockNext: ReturnType<typeof mockFn>;
 
   beforeEach(() => {
     mockRequest = {};
     mockResponse = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
+      status: mockFn().mockReturnThis(),
+      json: mockFn(),
     };
-    mockNext = jest.fn() as unknown as jest.Mock<NextFunction>;
+    mockNext = mockFn();
     mockSendR.mockClear();
   });
 
