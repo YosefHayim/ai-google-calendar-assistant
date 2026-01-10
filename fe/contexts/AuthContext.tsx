@@ -2,7 +2,7 @@
 
 import type { AuthData, CustomUser, User } from '@/types/api'
 import React, { ReactNode, createContext, useCallback, useContext, useEffect, useState } from 'react'
-import { authService } from '@/lib/api/services/auth.service'
+import { authService } from '@/services/auth.service'
 
 interface AuthContextType {
   user: User | CustomUser | null

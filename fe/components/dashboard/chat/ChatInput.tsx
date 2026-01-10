@@ -1,11 +1,12 @@
 'use client'
 
 import { ArrowUp, Mic, Square, X } from 'lucide-react'
-import React, { forwardRef } from 'react'
+import React, { forwardRef, useMemo } from 'react'
 
 import { AIVoiceInput } from '@/components/ui/ai-voice-input'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { getTextDirection } from '@/lib/utils'
 
 interface ChatInputProps {
   input: string
@@ -45,6 +46,8 @@ export const ChatInput = forwardRef<HTMLInputElement, ChatInputProps>(
     textInputRef,
   ) => {
     const isDisabled = isLoading && !onCancel
+    const inputDirection = useMemo(() => getTextDirection(input), [input])
+
     return (
       <div
         id="tour-chat-input"
@@ -93,8 +96,9 @@ export const ChatInput = forwardRef<HTMLInputElement, ChatInputProps>(
               value={input}
               onChange={(e) => onInputChange(e.target.value)}
               placeholder="What do you have for me today? I'm ready to help you."
-              className="flex-1 h-14 bg-transparent border-0 shadow-none focus-visible:ring-0 text-lg font-medium placeholder:italic placeholder:font-normal"
+              className={`flex-1 h-14 bg-transparent border-0 shadow-none focus-visible:ring-0 text-lg font-medium placeholder:italic placeholder:font-normal ${inputDirection === 'rtl' ? 'text-right' : ''}`}
               disabled={isDisabled}
+              dir={inputDirection}
             />
             {isLoading && onCancel ? (
               <Button

@@ -1,7 +1,7 @@
 'use client'
 
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { eventsService } from '@/lib/api/services/events.service'
+import { eventsService } from '@/services/events.service'
 import { queryKeys } from '@/lib/query/keys'
 import { useMutationWrapper, MutationHookOptions } from '../useMutationWrapper'
 import type { MoveEventRequest, CalendarEvent, ApiResponse } from '@/types/api'

@@ -4,7 +4,7 @@ import type { ApiResponse, CreateCalendarRequest, CreateCalendarResponse } from 
 import { MutationHookOptions, useMutationWrapper } from '../useMutationWrapper'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
-import { calendarsService } from '@/lib/api/services/calendars.service'
+import { calendarsService } from '@/services/calendars.service'
 import { queryKeys } from '@/lib/query/keys'
 
 /**

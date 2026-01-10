@@ -6,8 +6,8 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { DateRange } from 'react-day-picker'
 import { z } from 'zod'
 
-import { calendarsService } from '@/lib/api/services/calendars.service'
-import { eventsService } from '@/lib/api/services/events.service'
+import { calendarsService } from '@/services/calendars.service'
+import { eventsService } from '@/services/events.service'
 import { useAnalyticsData } from '@/hooks/queries/analytics'
 import {
   CalendarEventSchema,

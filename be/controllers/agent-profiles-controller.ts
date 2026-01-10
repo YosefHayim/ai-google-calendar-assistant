@@ -1,6 +1,8 @@
 import type { Request, Response } from "express"
 import { reqResAsyncHandler, sendR } from "@/utils/http"
-import { STATUS_RESPONSE, SUPABASE } from "@/config"
+import { STATUS_RESPONSE } from "@/config"
+import { requireUserId } from "@/utils/auth/require-user"
+import * as preferencesService from "@/services/user-preferences-service"
 import {
   AGENT_PROFILES,
   getAgentProfile,
@@ -69,19 +71,26 @@ const getProfile = reqResAsyncHandler(async (req: Request, res: Response) => {
 
 const getUserSelectedProfile = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const userId = req.user?.id
+    const userResult = requireUserId(req, res)
+    if (!userResult.success) return
+    const { userId } = userResult
 
-    if (!userId) {
-      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated")
-    }
+    try {
+      const agentPref = await preferencesService.getAgentProfilePreference(userId)
+      const profileId = agentPref?.profileId || DEFAULT_AGENT_PROFILE_ID
 
-    const { data, error } = await SUPABASE.from("user_preferences")
-      .select("preference_value")
-      .eq("user_id", userId)
-      .eq("preference_key", "agent_profile")
-      .maybeSingle()
+      if (!AGENT_PROFILES[profileId]) {
+        return sendR(res, STATUS_RESPONSE.SUCCESS, "Profile retrieved", {
+          profile: toDTO(DEFAULT_AGENT_PROFILE_ID),
+          isDefault: true,
+        })
+      }
 
-    if (error) {
+      return sendR(res, STATUS_RESPONSE.SUCCESS, "Profile retrieved", {
+        profile: toDTO(profileId),
+        isDefault: !agentPref,
+      })
+    } catch (error) {
       console.error("Error fetching agent profile preference:", error)
       return sendR(
         res,
@@ -89,50 +98,30 @@ const getUserSelectedProfile = reqResAsyncHandler(
         "Error fetching preference"
       )
     }
-
-    const profileId =
-      (data?.preference_value as { profileId?: string })?.profileId ||
-      DEFAULT_AGENT_PROFILE_ID
-
-    if (!AGENT_PROFILES[profileId]) {
-      return sendR(res, STATUS_RESPONSE.SUCCESS, "Profile retrieved", {
-        profile: toDTO(DEFAULT_AGENT_PROFILE_ID),
-        isDefault: true,
-      })
-    }
-
-    return sendR(res, STATUS_RESPONSE.SUCCESS, "Profile retrieved", {
-      profile: toDTO(profileId),
-      isDefault: !data,
-    })
   }
 )
 
 const setUserSelectedProfile = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const userId = req.user?.id
-    const { profileId } = req.body
+    const userResult = requireUserId(req, res)
+    if (!userResult.success) return
+    const { userId } = userResult
 
-    if (!userId) {
-      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated")
-    }
+    const { profileId } = req.body
 
     if (!profileId || !AGENT_PROFILES[profileId]) {
       return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Invalid profile ID")
     }
 
-    const { error } = await SUPABASE.from("user_preferences").upsert(
-      {
-        user_id: userId,
-        preference_key: "agent_profile",
-        preference_value: { profileId },
-        category: "assistant",
-        updated_at: new Date().toISOString(),
-      },
-      { onConflict: "user_id,preference_key" }
-    )
+    try {
+      await preferencesService.updatePreference(userId, "agent_profile", {
+        profileId,
+      })
 
-    if (error) {
+      return sendR(res, STATUS_RESPONSE.SUCCESS, "Profile saved", {
+        profile: toDTO(profileId),
+      })
+    } catch (error) {
       console.error("Error saving agent profile preference:", error)
       return sendR(
         res,
@@ -140,10 +129,6 @@ const setUserSelectedProfile = reqResAsyncHandler(
         "Error saving preference"
       )
     }
-
-    return sendR(res, STATUS_RESPONSE.SUCCESS, "Profile saved", {
-      profile: toDTO(profileId),
-    })
   }
 )
 

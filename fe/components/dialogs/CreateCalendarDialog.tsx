@@ -15,7 +15,7 @@ import { Button } from '../ui/button'
 import type { CreateCalendarDialogProps } from '@/types/analytics'
 import { Input } from '../ui/input'
 import { InteractiveHoverButton } from '../ui/interactive-hover-button'
-import { calendarsService } from '@/lib/api/services/calendars.service'
+import { calendarsService } from '@/services/calendars.service'
 import { toast } from 'sonner'
 import { useQueryClient } from '@tanstack/react-query'
 

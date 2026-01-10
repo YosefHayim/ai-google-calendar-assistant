@@ -1,6 +1,8 @@
 import type { Request, Response } from "express";
 import { STATUS_RESPONSE } from "@/config";
 import { reqResAsyncHandler, sendR } from "@/utils/http";
+import { parsePaginationParams, parseSortParams } from "@/utils/http/pagination";
+import { requireUserId } from "@/utils/auth/require-user";
 import * as adminService from "@/services/admin-service";
 import type { AdminRequest } from "@/middlewares/admin-auth";
 import type { AdminUserListParams, UserRole, UserStatus } from "@/types";
@@ -38,14 +40,21 @@ export const getSubscriptionDistribution = reqResAsyncHandler(
  */
 export const getUsers = reqResAsyncHandler(
   async (req: Request, res: Response) => {
+    const { page, limit } = parsePaginationParams(req.query);
+    const { sortBy, sortOrder } = parseSortParams(
+      req.query,
+      ["created_at", "email", "last_login_at"] as const,
+      "created_at"
+    );
+
     const params: AdminUserListParams = {
-      page: req.query.page ? parseInt(req.query.page as string, 10) : 1,
-      limit: req.query.limit ? parseInt(req.query.limit as string, 10) : 20,
+      page,
+      limit,
       search: req.query.search as string | undefined,
       status: req.query.status as UserStatus | undefined,
       role: req.query.role as UserRole | undefined,
-      sortBy: req.query.sortBy as AdminUserListParams["sortBy"],
-      sortOrder: req.query.sortOrder as AdminUserListParams["sortOrder"],
+      sortBy,
+      sortOrder,
     };
 
     const result = await adminService.getUserList(params);
@@ -73,13 +82,12 @@ export const getUserById = reqResAsyncHandler(
  */
 export const updateUserStatus = reqResAsyncHandler(
   async (req: AdminRequest, res: Response) => {
+    const userResult = requireUserId(req, res);
+    if (!userResult.success) return;
+    const { userId: adminUserId } = userResult;
+
     const { id } = req.params;
     const { status, reason } = req.body;
-    const adminUserId = req.user?.id;
-
-    if (!adminUserId) {
-      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "Admin ID required");
-    }
 
     // Prevent admin from changing their own status
     if (id === adminUserId) {
@@ -101,13 +109,12 @@ export const updateUserStatus = reqResAsyncHandler(
  */
 export const updateUserRole = reqResAsyncHandler(
   async (req: AdminRequest, res: Response) => {
+    const userResult = requireUserId(req, res);
+    if (!userResult.success) return;
+    const { userId: adminUserId } = userResult;
+
     const { id } = req.params;
     const { role, reason } = req.body;
-    const adminUserId = req.user?.id;
-
-    if (!adminUserId) {
-      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "Admin ID required");
-    }
 
     // Prevent admin from changing their own role
     if (id === adminUserId) {
@@ -125,13 +132,12 @@ export const updateUserRole = reqResAsyncHandler(
  */
 export const grantCredits = reqResAsyncHandler(
   async (req: AdminRequest, res: Response) => {
+    const userResult = requireUserId(req, res);
+    if (!userResult.success) return;
+    const { userId: adminUserId } = userResult;
+
     const { id } = req.params;
     const { credits, reason } = req.body;
-    const adminUserId = req.user?.id;
-
-    if (!adminUserId) {
-      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "Admin ID required");
-    }
 
     if (!credits || credits <= 0) {
       return sendR(
@@ -152,14 +158,13 @@ export const grantCredits = reqResAsyncHandler(
  */
 export const sendPasswordReset = reqResAsyncHandler(
   async (req: AdminRequest, res: Response) => {
+    const userResult = requireUserId(req, res);
+    if (!userResult.success) return;
+    const { userId: adminUserId } = userResult;
+
     const user = await adminService.getUserById(req.params.id);
     if (!user) {
       return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User not found");
-    }
-
-    const adminUserId = req.user?.id;
-    if (!adminUserId) {
-      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "Admin ID required");
     }
 
     await adminService.sendPasswordResetEmail(user.email, adminUserId);
@@ -173,9 +178,11 @@ export const sendPasswordReset = reqResAsyncHandler(
  */
 export const getPaymentHistory = reqResAsyncHandler(
   async (req: Request, res: Response) => {
+    const { page, limit } = parsePaginationParams(req.query);
+
     const params = {
-      page: req.query.page ? parseInt(req.query.page as string, 10) : 1,
-      limit: req.query.limit ? parseInt(req.query.limit as string, 10) : 20,
+      page,
+      limit,
       userId: req.query.userId as string | undefined,
       status: req.query.status as string | undefined,
     };
@@ -191,9 +198,11 @@ export const getPaymentHistory = reqResAsyncHandler(
  */
 export const getSubscriptions = reqResAsyncHandler(
   async (req: Request, res: Response) => {
+    const { page, limit } = parsePaginationParams(req.query);
+
     const params: AdminUserListParams = {
-      page: req.query.page ? parseInt(req.query.page as string, 10) : 1,
-      limit: req.query.limit ? parseInt(req.query.limit as string, 10) : 20,
+      page,
+      limit,
       sortBy: "created_at",
       sortOrder: "desc",
     };
@@ -218,14 +227,59 @@ export const getSubscriptions = reqResAsyncHandler(
  */
 export const getAuditLogs = reqResAsyncHandler(
   async (req: Request, res: Response) => {
+    const { page, limit } = parsePaginationParams(req.query, { limit: 50 });
+
     const params = {
-      page: req.query.page ? parseInt(req.query.page as string, 10) : 1,
-      limit: req.query.limit ? parseInt(req.query.limit as string, 10) : 50,
+      page,
+      limit,
       adminUserId: req.query.adminUserId as string | undefined,
       actionType: req.query.actionType as string | undefined,
     };
 
     const result = await adminService.getAuditLogs(params);
     return sendR(res, STATUS_RESPONSE.SUCCESS, "Audit logs retrieved", result);
+  }
+);
+
+/**
+ * GET /api/admin/dashboard/revenue-trends
+ * Get monthly revenue trends for charts
+ */
+export const getRevenueTrends = reqResAsyncHandler(
+  async (req: Request, res: Response) => {
+    const months = req.query.months ? parseInt(req.query.months as string, 10) : 6;
+    const trends = await adminService.getRevenueTrends(months);
+    return sendR(res, STATUS_RESPONSE.SUCCESS, "Revenue trends retrieved", trends);
+  }
+);
+
+/**
+ * GET /api/admin/dashboard/subscription-trends
+ * Get daily subscription trends for charts
+ */
+export const getSubscriptionTrends = reqResAsyncHandler(
+  async (req: Request, res: Response) => {
+    const days = req.query.days ? parseInt(req.query.days as string, 10) : 7;
+    const trends = await adminService.getSubscriptionTrends(days);
+    return sendR(res, STATUS_RESPONSE.SUCCESS, "Subscription trends retrieved", trends);
+  }
+);
+
+/**
+ * GET /api/admin/me
+ * Get current admin user info
+ */
+export const getAdminMe = reqResAsyncHandler(
+  async (req: AdminRequest, res: Response) => {
+    const userResult = requireUserId(req, res);
+    if (!userResult.success) return;
+    const { userId } = userResult;
+
+    const user = await adminService.getAdminUserInfo(userId);
+    if (!user) {
+      return sendR(res, STATUS_RESPONSE.NOT_FOUND, "Admin user not found");
+    }
+
+    return sendR(res, STATUS_RESPONSE.SUCCESS, "Admin user info retrieved", user);
   }
 );

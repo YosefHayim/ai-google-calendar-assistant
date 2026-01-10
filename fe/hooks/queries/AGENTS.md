@@ -32,7 +32,7 @@ export function useCreateEvent() {
 | Add mutation hook        | Domain folder + export in `index.ts` |
 | Change query behavior    | `useQueryWrapper.ts`                 |
 | Change mutation behavior | `useMutationWrapper.ts`              |
-| API calls                | `@/lib/api/services/`                |
+| API calls                | `@/services/`                        |
 
 ## Domain Structure
 

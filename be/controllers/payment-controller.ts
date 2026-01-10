@@ -2,6 +2,7 @@ import type { Request, Response } from "express"
 import crypto from "node:crypto"
 import { reqResAsyncHandler, sendR } from "@/utils/http"
 import { STATUS_RESPONSE, env } from "@/config"
+import { requireUserId, requireUser } from "@/utils/auth"
 import {
   isLemonSqueezyEnabled,
   LEMONSQUEEZY_CONFIG,
@@ -63,11 +64,9 @@ export const getPlans = reqResAsyncHandler(async (_req: Request, res: Response) 
 })
 
 export const getSubscriptionStatus = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const userId = req.user?.id
-
-  if (!userId) {
-    return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated")
-  }
+  const userResult = requireUserId(req, res)
+  if (!userResult.success) return
+  const { userId } = userResult
 
   const access = await checkUserAccess(userId)
   const subscription = await getUserSubscription(userId)
@@ -89,11 +88,9 @@ export const getSubscriptionStatus = reqResAsyncHandler(async (req: Request, res
 })
 
 export const initializeFreePlan = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const userId = req.user?.id
-
-  if (!userId) {
-    return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated")
-  }
+  const userResult = requireUserId(req, res)
+  if (!userResult.success) return
+  const { userId } = userResult
 
   const subscription = await ensureFreePlan(userId)
 
@@ -101,12 +98,9 @@ export const initializeFreePlan = reqResAsyncHandler(async (req: Request, res: R
 })
 
 export const createSubscriptionCheckout = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const userId = req.user?.id
-  const userEmail = req.user?.email
-
-  if (!userId || !userEmail) {
-    return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated")
-  }
+  const userResult = requireUser(req, res)
+  if (!userResult.success) return
+  const { userId, userEmail } = userResult
 
   if (!isLemonSqueezyEnabled()) {
     return sendR(res, STATUS_RESPONSE.SERVICE_UNAVAILABLE, "Payment provider is not configured")
@@ -123,7 +117,7 @@ export const createSubscriptionCheckout = reqResAsyncHandler(async (req: Request
   }
 
   const existingSubscription = await getUserSubscription(userId)
-  if (existingSubscription && ["on_trial", "active"].includes(existingSubscription.status)) {
+  if (existingSubscription && ["trialing", "active"].includes(existingSubscription.status)) {
     return sendR(res, STATUS_RESPONSE.CONFLICT, "User already has an active subscription", {
       currentPlan: existingSubscription.plan_id,
       status: existingSubscription.status,
@@ -155,12 +149,9 @@ export const createSubscriptionCheckout = reqResAsyncHandler(async (req: Request
 })
 
 export const createCreditPackCheckoutSession = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const userId = req.user?.id
-  const userEmail = req.user?.email
-
-  if (!userId || !userEmail) {
-    return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated")
-  }
+  const userResult = requireUser(req, res)
+  if (!userResult.success) return
+  const { userId, userEmail } = userResult
 
   if (!isLemonSqueezyEnabled()) {
     return sendR(res, STATUS_RESPONSE.SERVICE_UNAVAILABLE, "Payment provider is not configured")
@@ -201,11 +192,9 @@ export const createCreditPackCheckoutSession = reqResAsyncHandler(async (req: Re
 })
 
 export const createPortalSession = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const userId = req.user?.id
-
-  if (!userId) {
-    return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated")
-  }
+  const userResult = requireUserId(req, res)
+  if (!userResult.success) return
+  const { userId } = userResult
 
   if (!isLemonSqueezyEnabled()) {
     return sendR(res, STATUS_RESPONSE.SERVICE_UNAVAILABLE, "Payment provider is not configured")
@@ -234,11 +223,9 @@ export const createPortalSession = reqResAsyncHandler(async (req: Request, res: 
 })
 
 export const cancelUserSubscription = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const userId = req.user?.id
-
-  if (!userId) {
-    return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated")
-  }
+  const userResult = requireUserId(req, res)
+  if (!userResult.success) return
+  const { userId } = userResult
 
   if (!isLemonSqueezyEnabled()) {
     return sendR(res, STATUS_RESPONSE.SERVICE_UNAVAILABLE, "Payment provider is not configured")
@@ -274,11 +261,9 @@ export const cancelUserSubscription = reqResAsyncHandler(async (req: Request, re
 })
 
 export const requestRefund = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const userId = req.user?.id
-
-  if (!userId) {
-    return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated")
-  }
+  const userResult = requireUserId(req, res)
+  if (!userResult.success) return
+  const { userId } = userResult
 
   if (!isLemonSqueezyEnabled()) {
     return sendR(res, STATUS_RESPONSE.SERVICE_UNAVAILABLE, "Payment provider is not configured")

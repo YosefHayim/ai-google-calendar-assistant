@@ -1,6 +1,6 @@
 "use client";
 
-import { AuthProvider } from "@/context/AuthContext";
+import { AuthProvider } from "@/contexts/AuthContext";
 import { ENV } from "@/lib/constants";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { QueryClientProvider } from "@tanstack/react-query";

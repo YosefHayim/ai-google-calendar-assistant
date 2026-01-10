@@ -27,7 +27,7 @@ mock.module("@/lib/api/endpoints", () => ({
 }));
 
 // Import after mocks
-import { authService } from "@/lib/api/services/auth.service";
+import { authService } from "@/services/auth.service";
 
 describe("authService", () => {
   beforeEach(() => {

@@ -14,10 +14,26 @@ import {
   initializeLemonSqueezy,
   LEMONSQUEEZY_CONFIG,
 } from "@/config/clients/lemonsqueezy"
+import {
+  ACTIVE_SUBSCRIPTION_STATUSES,
+  VALID_SUBSCRIPTION_STATUSES,
+} from "@/utils/db/subscription-status"
 
 export type PlanSlug = "starter" | "pro" | "executive"
 export type PlanInterval = "monthly" | "yearly" | "one_time"
+// Database subscription_status enum values (matching Supabase schema)
 export type SubscriptionStatus =
+  | "trialing"
+  | "active"
+  | "paused"
+  | "past_due"
+  | "unpaid"
+  | "canceled"
+  | "incomplete"
+  | "incomplete_expired"
+
+// LemonSqueezy status values (for mapping from webhooks)
+type LemonSqueezyStatus =
   | "on_trial"
   | "active"
   | "paused"
@@ -25,6 +41,20 @@ export type SubscriptionStatus =
   | "unpaid"
   | "cancelled"
   | "expired"
+
+// Map LemonSqueezy status to database enum
+const mapLemonSqueezyStatusToDb = (lsStatus: string): SubscriptionStatus => {
+  const statusMap: Record<string, SubscriptionStatus> = {
+    on_trial: "trialing",
+    active: "active",
+    paused: "paused",
+    past_due: "past_due",
+    unpaid: "unpaid",
+    cancelled: "canceled",
+    expired: "canceled",
+  }
+  return statusMap[lsStatus] || "active"
+}
 
 export interface Plan {
   id: string
@@ -155,7 +185,7 @@ export const getUserSubscription = async (userId: string): Promise<UserSubscript
     .from("subscriptions")
     .select("*")
     .eq("user_id", userId)
-    .in("status", ["on_trial", "active", "past_due", "paused"])
+    .in("status", [...VALID_SUBSCRIPTION_STATUSES])
     .order("created_at", { ascending: false })
     .limit(1)
     .maybeSingle()
@@ -206,7 +236,7 @@ export const checkUserAccess = async (userId: string): Promise<UserAccess> => {
   const plan = await getPlanById(subscription.plan_id)
 
   let trialDaysLeft: number | null = null
-  if (subscription.status === "on_trial" && subscription.trial_end) {
+  if (subscription.status === "trialing" && subscription.trial_end) {
     const trialEnd = new Date(subscription.trial_end)
     const now = new Date()
     trialDaysLeft = Math.max(0, Math.ceil((trialEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)))
@@ -222,7 +252,7 @@ export const checkUserAccess = async (userId: string): Promise<UserAccess> => {
     : false
 
   return {
-    has_access: ["on_trial", "active"].includes(subscription.status) || totalCredits > 0,
+    has_access: ["trialing", "active"].includes(subscription.status) || totalCredits > 0,
     subscription_status: subscription.status,
     plan_name: plan?.name || null,
     plan_slug: plan?.slug || null,
@@ -256,7 +286,7 @@ export const createSubscriptionRecord = async (params: {
       lemonsqueezy_customer_id: params.lemonSqueezyCustomerId,
       lemonsqueezy_subscription_id: params.lemonSqueezySubscriptionId,
       lemonsqueezy_variant_id: params.lemonSqueezyVariantId,
-      status: params.status || "on_trial",
+      status: params.status || "trialing",
       interval: params.interval || "monthly",
       trial_start: trialEnd ? now.toISOString() : null,
       trial_end: trialEnd?.toISOString() || null,
@@ -283,17 +313,7 @@ export const updateSubscriptionFromWebhook = async (
     cancelledAt?: string | null
   }
 ): Promise<UserSubscription | null> => {
-  const statusMap: Record<string, SubscriptionStatus> = {
-    on_trial: "on_trial",
-    active: "active",
-    paused: "paused",
-    past_due: "past_due",
-    unpaid: "unpaid",
-    cancelled: "cancelled",
-    expired: "expired",
-  }
-
-  const status = statusMap[lsSubscription.status] || "active"
+  const status = mapLemonSqueezyStatusToDb(lsSubscription.status)
 
   let moneyBackEligibleUntil: string | null = null
   let firstPaymentAt: string | null = null
@@ -370,7 +390,7 @@ export const cancelSubscription = async (
       cancel_at_period_end: !cancelImmediately,
       canceled_at: new Date().toISOString(),
       cancellation_reason: reason,
-      status: cancelImmediately ? "cancelled" : subscription.status,
+      status: cancelImmediately ? "canceled" : subscription.status,
     })
     .eq("id", subscription.id)
     .select()
@@ -447,7 +467,7 @@ export const createCheckoutSession = async (
   await createSubscriptionRecord({
     userId,
     planId: plan.id,
-    status: "on_trial",
+    status: "trialing",
     interval,
     trialDays: LEMONSQUEEZY_CONFIG.TRIAL_DAYS,
   })
@@ -632,12 +652,12 @@ export const handleSubscriptionCreated = async (subscription: {
       lemonsqueezy_subscription_id: subscription.id,
       lemonsqueezy_customer_id: subscription.customerId,
       lemonsqueezy_variant_id: subscription.variantId,
-      status: subscription.status === "on_trial" ? "on_trial" : "active",
+      status: mapLemonSqueezyStatusToDb(subscription.status),
       trial_end: subscription.trialEndsAt,
       current_period_end: subscription.renewsAt,
     })
     .eq("user_id", userId)
-    .in("status", ["on_trial", "active", "past_due"])
+    .in("status", [...ACTIVE_SUBSCRIPTION_STATUSES])
 }
 
 export const handleSubscriptionPaymentSuccess = async (subscription: {

@@ -12,6 +12,7 @@ import type {
 import type { GapCandidateDTO, GapRecoverySettings } from "@/types"
 import type { Request, Response } from "express"
 import { reqResAsyncHandler, sendR } from "@/utils/http"
+import { requireUserId, requireUser } from "@/utils/auth"
 import {
   setCachedGaps,
   getGapFromCache,
@@ -43,12 +44,9 @@ function createGapFingerprint(
 }
 
 const getGaps = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const userId = req.user?.id
-  const email = req.user?.email
-
-  if (!userId || !email) {
-    return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated")
-  }
+  const userResult = requireUser(req, res)
+  if (!userResult.success) return
+  const { userId, userEmail: email } = userResult
 
   const query = (req.validatedQuery || req.query) as GapAnalysisQuery
   const settings = await getGapSettingsFromDb(userId)
@@ -135,12 +133,9 @@ async function persistNewGapsToDb(
 
 const getGapsFormatted = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const userId = req.user?.id
-    const email = req.user?.email
-
-    if (!userId || !email) {
-      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated")
-    }
+    const userResult = requireUser(req, res)
+    if (!userResult.success) return
+    const { userId, userEmail: email } = userResult
 
     const query = (req.validatedQuery || req.query) as GapAnalysisQuery
     const settings = await getGapSettingsFromDb(userId)
@@ -186,13 +181,10 @@ const getGapsFormatted = reqResAsyncHandler(
 
 const fillGapHandler = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const userId = req.user?.id
-    const email = req.user?.email
+    const userResult = requireUser(req, res)
+    if (!userResult.success) return
+    const { userId, userEmail: email } = userResult
     const { gapId } = req.params
-
-    if (!userId || !email) {
-      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated")
-    }
 
     if (!gapId) {
       return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Gap ID is required")
@@ -248,12 +240,10 @@ const fillGapHandler = reqResAsyncHandler(
 )
 
 const skipGap = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const userId = req.user?.id
+  const userResult = requireUserId(req, res)
+  if (!userResult.success) return
+  const { userId } = userResult
   const { gapId } = req.params
-
-  if (!userId) {
-    return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated")
-  }
 
   if (!gapId) {
     return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Gap ID is required")
@@ -280,11 +270,9 @@ const skipGap = reqResAsyncHandler(async (req: Request, res: Response) => {
 
 const dismissAllGaps = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const userId = req.user?.id
-
-    if (!userId) {
-      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated")
-    }
+    const userResult = requireUserId(req, res)
+    if (!userResult.success) return
+    const { userId } = userResult
 
     const count = await dismissAllGapsInDb(userId)
     await invalidateGapsCache(userId)
@@ -298,11 +286,9 @@ const dismissAllGaps = reqResAsyncHandler(
 
 const getSettingsHandler = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const userId = req.user?.id
-
-    if (!userId) {
-      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated")
-    }
+    const userResult = requireUserId(req, res)
+    if (!userResult.success) return
+    const { userId } = userResult
 
     const settings = await getGapSettingsFromDb(userId)
 
@@ -314,11 +300,9 @@ const getSettingsHandler = reqResAsyncHandler(
 
 const updateSettingsHandler = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const userId = req.user?.id
-
-    if (!userId) {
-      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated")
-    }
+    const userResult = requireUserId(req, res)
+    if (!userResult.success) return
+    const { userId } = userResult
 
     const body = req.body as UpdateGapSettingsBody
     const currentSettings = await getGapSettingsFromDb(userId)
@@ -368,11 +352,9 @@ const updateSettingsHandler = reqResAsyncHandler(
 
 const disableGapAnalysis = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const userId = req.user?.id
-
-    if (!userId) {
-      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated")
-    }
+    const userResult = requireUserId(req, res)
+    if (!userResult.success) return
+    const { userId } = userResult
 
     const currentSettings = await getGapSettingsFromDb(userId)
     const newSettings: GapRecoverySettings = {
