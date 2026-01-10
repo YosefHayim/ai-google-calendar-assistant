@@ -734,41 +734,100 @@ export const getBillingOverview = async (userId: string): Promise<BillingOvervie
 
   const subscription = await getUserSubscription(userId);
 
-  if (!subscription || !subscription.lemonsqueezy_subscription_id) {
+  if (!subscription) {
     return {
       paymentMethod: null,
       transactions: [],
     };
   }
 
+  const plan = await getPlanById(subscription.plan_id);
+  const planName = plan?.name || "Subscription";
+
   let transactions: TransactionInfo[] = [];
 
-  try {
-    const { data: invoicesData, error: invoicesError } = await listSubscriptionInvoices({
-      filter: {
-        subscriptionId: subscription.lemonsqueezy_subscription_id,
-      },
+  // Add subscription lifecycle events
+  // Trial started
+  if (subscription.trial_start) {
+    transactions.push({
+      id: `trial-${subscription.id}`,
+      date: subscription.trial_start,
+      description: `Trial Started - ${planName}`,
+      amount: 0,
+      currency: "USD",
+      status: "succeeded",
+      invoiceUrl: null,
     });
-
-    if (!invoicesError && invoicesData?.data) {
-      transactions = invoicesData.data.map((invoice) => {
-        const attrs = invoice.attributes;
-        const status: TransactionStatus = attrs.status === "paid" ? "succeeded" : attrs.status === "pending" ? "pending" : "failed";
-
-        return {
-          id: invoice.id,
-          date: attrs.created_at,
-          description: `${attrs.billing_reason === "initial" ? "Initial" : "Renewal"} - Subscription`,
-          amount: attrs.total / 100,
-          currency: attrs.currency.toUpperCase(),
-          status,
-          invoiceUrl: attrs.urls?.invoice_url || null,
-        };
-      });
-    }
-  } catch (error) {
-    console.error("Failed to fetch subscription invoices:", error);
   }
+
+  // First payment / subscription activated
+  if (subscription.first_payment_at) {
+    transactions.push({
+      id: `activated-${subscription.id}`,
+      date: subscription.first_payment_at,
+      description: `Subscription Activated - ${planName}`,
+      amount: 0,
+      currency: "USD",
+      status: "succeeded",
+      invoiceUrl: null,
+    });
+  }
+
+  // Cancellation event
+  if (subscription.canceled_at) {
+    transactions.push({
+      id: `canceled-${subscription.id}`,
+      date: subscription.canceled_at,
+      description: subscription.cancel_at_period_end
+        ? `Cancellation Scheduled - ${planName}`
+        : `Subscription Canceled - ${planName}`,
+      amount: 0,
+      currency: "USD",
+      status: subscription.cancel_at_period_end ? "pending" : "succeeded",
+      invoiceUrl: null,
+    });
+  }
+
+  // Fetch payment invoices from LemonSqueezy if subscription is linked
+  if (subscription.lemonsqueezy_subscription_id) {
+    try {
+      const { data: invoicesData, error: invoicesError } = await listSubscriptionInvoices({
+        filter: {
+          subscriptionId: subscription.lemonsqueezy_subscription_id,
+        },
+      });
+
+      if (!invoicesError && invoicesData?.data) {
+        const invoiceTransactions = invoicesData.data.map((invoice) => {
+          const attrs = invoice.attributes;
+          const status: TransactionStatus = attrs.status === "paid" ? "succeeded" : attrs.status === "pending" ? "pending" : "failed";
+
+          let description = "Subscription Payment";
+          if (attrs.billing_reason === "initial") {
+            description = `Initial Payment - ${planName}`;
+          } else if (attrs.billing_reason === "renewal") {
+            description = `Renewal Payment - ${planName}`;
+          }
+
+          return {
+            id: `inv-${invoice.id}`,
+            date: attrs.created_at,
+            description,
+            amount: attrs.total / 100,
+            currency: attrs.currency.toUpperCase(),
+            status,
+            invoiceUrl: attrs.urls?.invoice_url || null,
+          };
+        });
+        transactions.push(...invoiceTransactions);
+      }
+    } catch (error) {
+      console.error("Failed to fetch subscription invoices:", error);
+    }
+  }
+
+  // Sort transactions by date (newest first)
+  transactions.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   // LemonSqueezy doesn't expose card details - payment method is managed via customer portal
   // Return null for payment method, frontend will show "Manage via Portal" option

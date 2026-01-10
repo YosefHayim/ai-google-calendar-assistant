@@ -25,12 +25,16 @@ import {
   getSubscriptionStatus,
   getPlans,
   redirectToBillingPortal,
+  redirectToCheckout,
+  upgradeSubscription,
   cancelSubscription,
   requestRefund,
   getBillingOverview,
   type UserAccess,
   type Plan,
   type BillingOverview,
+  type PlanSlug,
+  type PlanInterval,
 } from '@/services/payment.service'
 import { PaymentMethodCard } from '@/components/dashboard/billing/PaymentMethodCard'
 import { TransactionHistoryTable } from '@/components/dashboard/billing/TransactionHistoryTable'
@@ -86,6 +90,45 @@ function BillingPageContent() {
       await redirectToBillingPortal()
     } catch (error) {
       console.error('Failed to open billing portal:', error)
+    } finally {
+      setActionLoading(null)
+    }
+  }
+
+  const handlePlanAction = async (plan: Plan) => {
+    // For starter (free) plan, redirect to billing portal to manage/downgrade
+    if (plan.slug === 'starter') {
+      await handleManageBilling()
+      return
+    }
+
+    setActionLoading(`plan-${plan.id}`)
+    try {
+      // Check if user has a subscription linked to payment provider
+      const isLinkedToProvider = access?.subscription?.isLinkedToProvider === true
+
+      if (isLinkedToProvider) {
+        // Upgrade/downgrade existing subscription
+        await upgradeSubscription({
+          planSlug: plan.slug as PlanSlug,
+          interval: 'monthly' as PlanInterval,
+        })
+        // Reload data to reflect changes
+        const [accessData, billingData] = await Promise.all([
+          getSubscriptionStatus(),
+          getBillingOverview(),
+        ])
+        setAccess(accessData)
+        setBillingOverview(billingData)
+      } else {
+        // Create new subscription checkout
+        await redirectToCheckout({
+          planSlug: plan.slug as PlanSlug,
+          interval: 'monthly' as PlanInterval,
+        })
+      }
+    } catch (error) {
+      console.error('Plan action error:', error)
     } finally {
       setActionLoading(null)
     }
@@ -341,10 +384,17 @@ function BillingPageContent() {
                     <Button
                       className="w-full mt-4"
                       variant={plan.isHighlighted ? 'default' : 'outline'}
-                      onClick={() => (window.location.href = '/pricing')}
+                      onClick={() => handlePlanAction(plan)}
+                      disabled={actionLoading === `plan-${plan.id}` || actionLoading === 'portal'}
                     >
-                      {plan.pricing.monthly === 0 ? t('billing.plans.downgrade') : t('billing.plans.upgrade')}
-                      <ArrowRight className="w-4 h-4 ml-2" />
+                      {actionLoading === `plan-${plan.id}` || (plan.slug === 'starter' && actionLoading === 'portal') ? (
+                        <RefreshCw className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <>
+                          {plan.pricing.monthly === 0 ? t('billing.plans.downgrade') : t('billing.plans.upgrade')}
+                          <ArrowRight className="w-4 h-4 ml-2" />
+                        </>
+                      )}
                     </Button>
                   )}
                   {plan.slug === access?.plan_slug && (
