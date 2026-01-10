@@ -11,6 +11,7 @@ import {
   requestRefund,
   upgradeSubscription,
   handleWebhook,
+  getBillingInfo,
 } from "@/controllers/payment-controller"
 import { supabaseAuth } from "@/middlewares/supabase-auth"
 
@@ -37,5 +38,7 @@ router.post("/portal", supabaseAuth(), createPortalSession)
 router.post("/cancel", supabaseAuth(), cancelUserSubscription)
 
 router.post("/refund", supabaseAuth(), requestRefund)
+
+router.get("/billing", supabaseAuth(), getBillingInfo)
 
 export default router

@@ -6,7 +6,7 @@ import { Download, CheckCircle2, Clock, XCircle, ChevronDown, ChevronUp, Receipt
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import type { Transaction, TransactionStatus } from '@/types/billing'
+import type { Transaction, TransactionStatus } from '@/services/payment.service'
 
 interface TransactionHistoryTableProps {
   transactions: Transaction[]

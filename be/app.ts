@@ -9,6 +9,7 @@ import channelsRoute from "@/routes/google-calendar/channels-route";
 import chatRoute from "@/routes/google-calendar/chat-route";
 import contactRoute from "@/routes/contact-route";
 import cookieParser from "cookie-parser";
+import cronRoute from "@/routes/cron-route";
 import cors from "cors";
 import errorHandler from "@/middlewares/error-handler";
 import eventsRoute from "@/routes/google-calendar/events-route";
@@ -91,6 +92,7 @@ app.use(ROUTES.CONTACT, contactRoute);
 app.use(ROUTES.WEBHOOKS, webhooksRoute);
 app.use(ROUTES.VOICE, voiceRoute);
 app.use(ROUTES.ADMIN, adminRoute);
+app.use(ROUTES.CRON, cronRoute);
 
 app.use((_req, res, _next) => {
   logger.error(`Opps! It looks like this route doesn't exist. ${_req.originalUrl}`);

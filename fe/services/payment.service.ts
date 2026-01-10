@@ -196,6 +196,45 @@ export const upgradeSubscription = async (params: UpgradeParams): Promise<Upgrad
 }
 
 // ============================================================================
+// Billing Overview Types
+// ============================================================================
+
+export type TransactionStatus = 'succeeded' | 'pending' | 'failed'
+export type CardBrand = 'visa' | 'mastercard' | 'amex' | 'discover' | 'unknown'
+
+export interface PaymentMethod {
+  id: string
+  brand: CardBrand
+  last4: string
+  expiryMonth: number
+  expiryYear: number
+  isDefault: boolean
+}
+
+export interface Transaction {
+  id: string
+  date: string
+  description: string
+  amount: number
+  currency: string
+  status: TransactionStatus
+  invoiceUrl: string | null
+}
+
+export interface BillingOverview {
+  paymentMethod: PaymentMethod | null
+  transactions: Transaction[]
+}
+
+/**
+ * Get billing overview (payment method, transactions)
+ */
+export const getBillingOverview = async (): Promise<BillingOverview> => {
+  const response = await apiClient.get<ApiResponse<BillingOverview>>(ENDPOINTS.PAYMENTS_BILLING)
+  return response.data.data!
+}
+
+// ============================================================================
 // Utility Functions
 // ============================================================================
 

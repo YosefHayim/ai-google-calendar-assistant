@@ -5,9 +5,11 @@ import {
   cancelSubscription as lsCancelSubscription,
   getCustomer,
   listCustomers,
+  listSubscriptionInvoices,
   type Checkout,
   type Subscription,
   type Customer,
+  type SubscriptionInvoice,
 } from "@lemonsqueezy/lemonsqueezy.js";
 import { SUPABASE, env } from "@/config";
 import { initializeLemonSqueezy, LEMONSQUEEZY_CONFIG } from "@/config/clients/lemonsqueezy";
@@ -697,5 +699,81 @@ export const upgradeSubscriptionPlan = async (params: UpgradeSubscriptionParams)
   return {
     subscription: updatedSubscription,
     prorated: true,
+  };
+};
+
+export type TransactionStatus = "succeeded" | "pending" | "failed";
+export type CardBrand = "visa" | "mastercard" | "amex" | "discover" | "unknown";
+
+export interface PaymentMethodInfo {
+  id: string;
+  brand: CardBrand;
+  last4: string;
+  expiryMonth: number;
+  expiryYear: number;
+  isDefault: boolean;
+}
+
+export interface TransactionInfo {
+  id: string;
+  date: string;
+  description: string;
+  amount: number;
+  currency: string;
+  status: TransactionStatus;
+  invoiceUrl: string | null;
+}
+
+export interface BillingOverview {
+  paymentMethod: PaymentMethodInfo | null;
+  transactions: TransactionInfo[];
+}
+
+export const getBillingOverview = async (userId: string): Promise<BillingOverview> => {
+  initializeLemonSqueezy();
+
+  const subscription = await getUserSubscription(userId);
+
+  if (!subscription || !subscription.lemonsqueezy_subscription_id) {
+    return {
+      paymentMethod: null,
+      transactions: [],
+    };
+  }
+
+  let transactions: TransactionInfo[] = [];
+
+  try {
+    const { data: invoicesData, error: invoicesError } = await listSubscriptionInvoices({
+      filter: {
+        subscriptionId: subscription.lemonsqueezy_subscription_id,
+      },
+    });
+
+    if (!invoicesError && invoicesData?.data) {
+      transactions = invoicesData.data.map((invoice) => {
+        const attrs = invoice.attributes;
+        const status: TransactionStatus = attrs.status === "paid" ? "succeeded" : attrs.status === "pending" ? "pending" : "failed";
+
+        return {
+          id: invoice.id,
+          date: attrs.created_at,
+          description: `${attrs.billing_reason === "initial" ? "Initial" : "Renewal"} - Subscription`,
+          amount: attrs.total / 100,
+          currency: attrs.currency.toUpperCase(),
+          status,
+          invoiceUrl: attrs.urls?.invoice_url || null,
+        };
+      });
+    }
+  } catch (error) {
+    console.error("Failed to fetch subscription invoices:", error);
+  }
+
+  // LemonSqueezy doesn't expose card details - payment method is managed via customer portal
+  // Return null for payment method, frontend will show "Manage via Portal" option
+  return {
+    paymentMethod: null,
+    transactions,
   };
 };

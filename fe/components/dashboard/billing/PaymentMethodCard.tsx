@@ -4,7 +4,7 @@ import React from 'react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
-import type { PaymentMethod, CardBrand } from '@/types/billing'
+import type { PaymentMethod, CardBrand } from '@/services/payment.service'
 
 interface PaymentMethodCardProps {
   paymentMethod: PaymentMethod | null

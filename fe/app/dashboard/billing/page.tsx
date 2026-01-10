@@ -20,28 +20,24 @@ import {
   Settings,
   Receipt,
 } from 'lucide-react'
+import { LoadingSection } from '@/components/ui/loading-spinner'
 import {
   getSubscriptionStatus,
   getPlans,
   redirectToBillingPortal,
   cancelSubscription,
   requestRefund,
+  getBillingOverview,
   type UserAccess,
   type Plan,
+  type BillingOverview,
 } from '@/services/payment.service'
 import { PaymentMethodCard } from '@/components/dashboard/billing/PaymentMethodCard'
 import { TransactionHistoryTable } from '@/components/dashboard/billing/TransactionHistoryTable'
-import { MOCK_PAYMENT_METHOD, MOCK_TRANSACTIONS } from '@/types/billing'
 
 export default function BillingPage() {
   return (
-    <Suspense
-      fallback={
-        <div className="flex-1 p-6 flex items-center justify-center">
-          <RefreshCw className="w-8 h-8 animate-spin text-primary" />
-        </div>
-      }
-    >
+    <Suspense fallback={<LoadingSection text="Loading billing..." />}>
       <BillingPageContent />
     </Suspense>
   )
@@ -52,6 +48,7 @@ function BillingPageContent() {
   const searchParams = useSearchParams()
   const [access, setAccess] = useState<UserAccess | null>(null)
   const [plans, setPlans] = useState<Plan[]>([])
+  const [billingOverview, setBillingOverview] = useState<BillingOverview | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [actionLoading, setActionLoading] = useState<string | null>(null)
   const [showSuccess, setShowSuccess] = useState(false)
@@ -59,9 +56,14 @@ function BillingPageContent() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [accessData, plansData] = await Promise.all([getSubscriptionStatus(), getPlans()])
+        const [accessData, plansData, billingData] = await Promise.all([
+          getSubscriptionStatus(),
+          getPlans(),
+          getBillingOverview(),
+        ])
         setAccess(accessData)
         setPlans(plansData)
+        setBillingOverview(billingData)
       } catch (error) {
         console.error('Failed to load billing data:', error)
       } finally {
@@ -176,11 +178,7 @@ function BillingPageContent() {
   }
 
   if (isLoading) {
-    return (
-      <div className="flex-1 p-6 flex items-center justify-center">
-        <RefreshCw className="w-8 h-8 animate-spin text-primary" />
-      </div>
-    )
+    return <LoadingSection text="Loading billing..." />
   }
 
   return (
@@ -300,7 +298,7 @@ function BillingPageContent() {
             </div>
           </Card>
 
-          <PaymentMethodCard paymentMethod={MOCK_PAYMENT_METHOD} onUpdate={handleManageBilling} />
+          <PaymentMethodCard paymentMethod={billingOverview?.paymentMethod || null} onUpdate={handleManageBilling} />
         </div>
 
         <Card className="p-6">
@@ -310,7 +308,7 @@ function BillingPageContent() {
               <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">{t('billing.transactions.title')}</h3>
             </div>
           </div>
-          <TransactionHistoryTable transactions={MOCK_TRANSACTIONS} />
+          <TransactionHistoryTable transactions={billingOverview?.transactions || []} />
         </Card>
 
         {plans.length > 0 && (

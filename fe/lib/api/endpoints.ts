@@ -279,6 +279,13 @@ export const ENDPOINTS = {
    */
   PAYMENTS_UPGRADE: '/api/payments/upgrade',
 
+  /**
+   * Get billing overview (payment method, transactions)
+   * Methods: GET
+   * Returns: paymentMethod, transactions[]
+   */
+  PAYMENTS_BILLING: '/api/payments/billing',
+
   // ============================================
   // GAP RECOVERY ENDPOINTS
   // ============================================

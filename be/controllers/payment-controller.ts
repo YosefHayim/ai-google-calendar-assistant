@@ -25,6 +25,7 @@ import {
   processMoneyBackRefund,
   ensureFreePlan,
   upgradeSubscriptionPlan,
+  getBillingOverview,
   type PlanSlug,
 } from "@/services/lemonsqueezy-service"
 
@@ -508,3 +509,26 @@ export const handleWebhook = async (req: Request, res: Response): Promise<void> 
     res.status(500).json({ error: "Webhook processing failed" })
   }
 }
+
+export const getBillingInfo = reqResAsyncHandler(async (req: Request, res: Response) => {
+  const userResult = requireUserId(req, res)
+  if (!userResult.success) return
+  const { userId } = userResult
+
+  if (!isLemonSqueezyEnabled()) {
+    return sendR(res, STATUS_RESPONSE.SERVICE_UNAVAILABLE, "Payment provider is not configured")
+  }
+
+  try {
+    const billingOverview = await getBillingOverview(userId)
+
+    sendR(res, STATUS_RESPONSE.SUCCESS, "Billing overview retrieved", billingOverview)
+  } catch (error) {
+    console.error("Billing overview error:", error)
+    sendR(
+      res,
+      STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
+      error instanceof Error ? error.message : "Failed to get billing overview"
+    )
+  }
+})

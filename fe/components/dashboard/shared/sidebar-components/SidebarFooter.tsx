@@ -2,6 +2,7 @@
 
 import React from 'react'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 import { BadgeCheck, Bell, CreditCard, LogOut, MoreHorizontal, Settings, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -31,6 +32,7 @@ export const SidebarFooter: React.FC<SidebarFooterProps> = ({
   onClose,
   onSignOut,
 }) => {
+  const router = useRouter()
   const userInfo = getUserDisplayInfo(userData)
   const fullName = userInfo?.fullName ?? 'User'
   const initials = userInfo?.initials ?? 'U'
@@ -93,7 +95,13 @@ export const SidebarFooter: React.FC<SidebarFooterProps> = ({
                 <BadgeCheck className="w-4 h-4" />
                 <span>Account</span>
               </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer">
+              <DropdownMenuItem
+                className="cursor-pointer"
+                onClick={() => {
+                  router.push('/dashboard/billing')
+                  onClose()
+                }}
+              >
                 <CreditCard className="w-4 h-4" />
                 <span>Billing</span>
               </DropdownMenuItem>
