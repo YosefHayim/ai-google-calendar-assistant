@@ -36,27 +36,31 @@ export const SettingsRow: React.FC<SettingsRowProps> = ({
       aria-labelledby={id ? `${id}-label` : undefined}
     >
       <div className="flex items-center gap-2">
-        <span id={id ? `${id}-label` : undefined} className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
-          {title}
-        </span>
-        <TooltipProvider delayDuration={200}>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                className="h-6 w-6 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
-                aria-label={`More info about ${title}`}
-              >
-                <HelpCircle className="w-4 h-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="top" className="max-w-[250px] text-center">
-              <p>{tooltip}</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <div>
+          <span id={id ? `${id}-label` : undefined} className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
+            {title}
+          </span>
+        </div>
+        <div>
+          <TooltipProvider delayDuration={200}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
+                  aria-label={`More info about ${title}`}
+                >
+                  <HelpCircle className="w-4 h-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="top" className="max-w-[250px] text-center">
+                <p>{tooltip}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
       </div>
       {isToggle && <div className="flex-1" />}
       <div className="flex-shrink-0">{control}</div>

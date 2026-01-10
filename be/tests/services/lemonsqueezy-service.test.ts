@@ -407,7 +407,7 @@ describe("LemonSqueezy Service", () => {
         id: "new-sub-123",
         user_id: "user-123",
         plan_id: "plan-123",
-        status: "on_trial",
+        status: "trialing",
       };
 
       mockSupabase.from.mockReturnValue({
@@ -512,7 +512,7 @@ describe("LemonSqueezy Service", () => {
           eq: jest.fn().mockReturnValue({
             select: jest.fn().mockReturnValue({
               maybeSingle: jest.fn().mockResolvedValue({
-                data: { status: "cancelled" },
+                data: { status: "canceled" },
                 error: null,
               }),
             }),
@@ -524,7 +524,7 @@ describe("LemonSqueezy Service", () => {
         id: "ls-sub-123",
         customerId: "ls-cust-123",
         variantId: "ls-var-123",
-        status: "cancelled",
+        status: "cancelled",  // LemonSqueezy sends "cancelled"
         trialEndsAt: null,
         renewsAt: null,
         endsAt: null,
@@ -594,7 +594,7 @@ describe("LemonSqueezy Service", () => {
           eq: jest.fn().mockReturnValue({
             select: jest.fn().mockReturnValue({
               single: jest.fn().mockResolvedValue({
-                data: { id: "sub-123", status: "cancelled" },
+                data: { id: "sub-123", status: "canceled" },
                 error: null,
               }),
             }),
@@ -605,7 +605,7 @@ describe("LemonSqueezy Service", () => {
       const result = await cancelSubscription("ls-sub-123", "Refund requested", true);
 
       expect(mockLemonSqueezyFns.cancelSubscription).toHaveBeenCalled();
-      expect(result?.status).toBe("cancelled");
+      expect(result?.status).toBe("canceled");
     });
 
     it("should throw error when subscription not found", async () => {
@@ -1000,7 +1000,7 @@ describe("LemonSqueezy Service", () => {
             eq: jest.fn().mockReturnValue({
               select: jest.fn().mockReturnValue({
                 single: jest.fn().mockResolvedValue({
-                  data: { id: "sub-123", status: "cancelled" },
+                  data: { id: "sub-123", status: "canceled" },
                   error: null,
                 }),
               }),
@@ -1013,7 +1013,7 @@ describe("LemonSqueezy Service", () => {
       const result = await processMoneyBackRefund("ls-sub-123", "Changed my mind");
 
       expect(result.success).toBe(true);
-      expect(result.message).toContain("cancelled");
+      expect(result.message).toContain("cancelled");  // The message text still uses "cancelled"
     });
 
     it("should reject refund when not eligible", async () => {

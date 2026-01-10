@@ -8,7 +8,8 @@ import {
   DEFAULT_VOICE,
   type TTSVoice,
 } from "@/utils/ai/text-to-speech"
-import { getVoicePreference } from "@/controllers/user-preferences-controller"
+import { getVoicePreference } from "@/services/user-preferences-service"
+import { requireUser } from "@/utils/auth"
 import { AccessToken } from "livekit-server-sdk"
 import {
   AGENT_PROFILES,
@@ -85,12 +86,9 @@ const synthesize = reqResAsyncHandler(async (req: Request, res: Response) => {
 });
 
 const getLiveKitToken = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const userId = req.user?.id
-  const userEmail = req.user?.email
-
-  if (!userId || !userEmail) {
-    return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated")
-  }
+  const userResult = requireUser(req, res)
+  if (!userResult.success) return
+  const { userId, userEmail } = userResult
 
   const { profileId = DEFAULT_AGENT_PROFILE_ID } = req.body as {
     profileId?: string

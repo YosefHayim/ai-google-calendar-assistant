@@ -15,7 +15,7 @@ import type { AgentContext } from "@/ai-agents/tool-registry";
 import { ORCHESTRATOR_AGENT } from "@/ai-agents";
 import { STATUS_RESPONSE } from "@/config";
 import { createAgentSession } from "@/ai-agents/sessions";
-import { getAllyBrainPreference } from "@/controllers/user-preferences-controller";
+import { getAllyBrainPreference } from "@/services/user-preferences-service";
 
 const DEFAULT_LIMIT = 20;
 const DEFAULT_OFFSET = 0;

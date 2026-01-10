@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import { AllyLogo } from '@/components/shared/logo'
-import { authService } from '@/lib/api/services/auth.service'
+import { authService } from '@/services/auth.service'
 import { STORAGE_KEYS } from '@/lib/constants'
 
 // Animated orbital ring component

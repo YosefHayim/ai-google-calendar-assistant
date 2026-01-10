@@ -104,11 +104,14 @@ export function DashboardUIProvider({
       }
 
       // Show toast with reconnect action
-      const authUrl = googleCalendarStatus?.data?.authUrl;
+      // Note: googleCalendarStatus is already the unwrapped GoogleCalendarIntegrationStatus (destructured from useQueryWrapper)
+      const authUrl = googleCalendarStatus?.authUrl;
 
       toast.error("Google Calendar session expired", {
-        description: "Your Google Calendar connection needs to be refreshed.",
-        duration: 10000,
+        description: authUrl
+          ? "Your Google Calendar connection needs to be refreshed. Click 'Reconnect' to continue."
+          : "Your Google Calendar connection needs to be refreshed. Go to Settings > Integrations to reconnect.",
+        duration: 15000,
         action: authUrl
           ? {
               label: "Reconnect",
@@ -116,7 +119,12 @@ export function DashboardUIProvider({
                 window.location.href = authUrl;
               },
             }
-          : undefined,
+          : {
+              label: "Open Settings",
+              onClick: () => {
+                setIsSettingsOpen(true);
+              },
+            },
       });
     }
   }, [searchParams, googleCalendarStatus]);

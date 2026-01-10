@@ -27,7 +27,7 @@ mock.module("@/lib/api/endpoints", () => ({
 }));
 
 // Import after mocks
-import { eventsService } from "@/lib/api/services/events.service";
+import { eventsService } from "@/services/events.service";
 
 describe("eventsService", () => {
   beforeEach(() => {

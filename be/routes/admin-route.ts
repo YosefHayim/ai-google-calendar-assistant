@@ -13,6 +13,9 @@ import {
   getPaymentHistory,
   getSubscriptions,
   getAuditLogs,
+  getRevenueTrends,
+  getSubscriptionTrends,
+  getAdminMe,
 } from "@/controllers/admin-controller";
 
 const router = express.Router();
@@ -24,6 +27,11 @@ router.use(adminAuth(["admin"]));
 // Dashboard endpoints
 router.get("/dashboard/stats", getDashboardStats);
 router.get("/dashboard/distribution", getSubscriptionDistribution);
+router.get("/dashboard/revenue-trends", getRevenueTrends);
+router.get("/dashboard/subscription-trends", getSubscriptionTrends);
+
+// Current admin user
+router.get("/me", getAdminMe);
 
 // User management endpoints
 router.get("/users", getUsers);

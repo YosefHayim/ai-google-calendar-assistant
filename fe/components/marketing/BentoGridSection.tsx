@@ -5,8 +5,7 @@ import { motion } from 'framer-motion'
 import { Lock, Globe, Brain, Zap, Layout } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { BentoCard, BentoGrid } from '@/components/ui/bento-grid'
-import RotatingEarth from '@/components/ui/wireframe-dotted-globe'
-import { ThreeDWallCalendar, CalendarEvent } from '@/components/ui/three-dwall-calendar'
+import { RotatingEarth, ThreeDWallCalendar, CalendarEvent } from '@/components/3d'
 
 const MOCK_EVENTS: CalendarEvent[] = [
   { id: 'event-1', title: 'Strategy Session', date: '2024-01-15T09:00:00.000Z' },

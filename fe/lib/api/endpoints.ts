@@ -407,6 +407,29 @@ export const ENDPOINTS = {
   ADMIN_DASHBOARD_DISTRIBUTION: '/api/admin/dashboard/distribution',
 
   /**
+   * Get revenue trends for charts
+   * Methods: GET
+   * Query: months (default: 6)
+   * Returns: Monthly revenue and subscription data
+   */
+  ADMIN_DASHBOARD_REVENUE_TRENDS: '/api/admin/dashboard/revenue-trends',
+
+  /**
+   * Get subscription trends for charts
+   * Methods: GET
+   * Query: days (default: 7)
+   * Returns: Daily subscription trend data
+   */
+  ADMIN_DASHBOARD_SUBSCRIPTION_TRENDS: '/api/admin/dashboard/subscription-trends',
+
+  /**
+   * Get current admin user info
+   * Methods: GET
+   * Returns: Current admin user details
+   */
+  ADMIN_ME: '/api/admin/me',
+
+  /**
    * List all users (admin)
    * Methods: GET
    * Query: page, limit, search, status, role, sortBy, sortOrder

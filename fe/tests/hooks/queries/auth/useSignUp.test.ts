@@ -10,7 +10,7 @@ const mockSignUp = mock(() =>
   })
 );
 
-mock.module("@/lib/api/services/auth.service", () => ({
+mock.module("@/services/auth.service", () => ({
   authService: {
     signUp: mockSignUp,
   },

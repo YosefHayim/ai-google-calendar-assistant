@@ -1,7 +1,7 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
-import { voiceService, type AgentProfile } from '@/lib/api/services/voice.service'
+import { voiceService, type AgentProfile } from '@/services/voice.service'
 
 export type AgentTier = 'free' | 'pro' | 'enterprise'
 

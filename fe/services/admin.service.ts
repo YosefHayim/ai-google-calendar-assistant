@@ -11,6 +11,8 @@ import type {
   AdminAuditLogListResponse,
   UserStatus,
   UserRole,
+  RevenueTrendPoint,
+  SubscriptionTrendPoint,
 } from '@/types/admin'
 
 interface ApiResponse<T> {
@@ -107,6 +109,30 @@ export const getAuditLogs = async (params: {
   search?: string
 }): Promise<AdminAuditLogListResponse> => {
   const response = await apiClient.get<ApiResponse<AdminAuditLogListResponse>>(ENDPOINTS.ADMIN_AUDIT_LOGS, { params })
+  return response.data.data!
+}
+
+// ============================================
+// Dashboard Charts
+// ============================================
+
+export const getRevenueTrends = async (months: number = 6): Promise<RevenueTrendPoint[]> => {
+  const response = await apiClient.get<ApiResponse<RevenueTrendPoint[]>>(ENDPOINTS.ADMIN_DASHBOARD_REVENUE_TRENDS, {
+    params: { months },
+  })
+  return response.data.data || []
+}
+
+export const getSubscriptionTrends = async (days: number = 7): Promise<SubscriptionTrendPoint[]> => {
+  const response = await apiClient.get<ApiResponse<SubscriptionTrendPoint[]>>(
+    ENDPOINTS.ADMIN_DASHBOARD_SUBSCRIPTION_TRENDS,
+    { params: { days } }
+  )
+  return response.data.data || []
+}
+
+export const getAdminMe = async (): Promise<AdminUser> => {
+  const response = await apiClient.get<ApiResponse<AdminUser>>(ENDPOINTS.ADMIN_ME)
   return response.data.data!
 }
 

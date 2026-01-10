@@ -10,7 +10,7 @@ import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button
 import NumberFlow from '@number-flow/react'
 import { cn } from '@/components/../lib/utils'
 import { useRouter } from 'next/navigation'
-import { useAuthContext } from '@/context/AuthContext'
+import { useAuthContext } from '@/contexts/AuthContext'
 import {
   redirectToCheckout,
   redirectToCreditPackCheckout,

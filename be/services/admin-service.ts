@@ -1,4 +1,8 @@
 import { SUPABASE } from "@/config";
+import {
+  ACTIVE_SUBSCRIPTION_STATUSES,
+  MODIFIABLE_SUBSCRIPTION_STATUSES,
+} from "@/utils/db/subscription-status";
 import type {
   AdminUser,
   AdminDashboardStats,
@@ -287,7 +291,7 @@ export const grantCredits = async (
   )
     .select("id, credits_remaining")
     .eq("user_id", userId)
-    .in("status", ["active", "trialing", "past_due"])
+    .in("status", [...MODIFIABLE_SUBSCRIPTION_STATUSES])
     .single();
 
   if (fetchError || !subscription) {
@@ -509,4 +513,115 @@ export const sendPasswordResetEmail = async (
     resourceId: userEmail,
     newValues: { email: userEmail },
   });
+};
+
+/**
+ * Revenue trends data point
+ */
+export interface RevenueTrendPoint {
+  month: string;
+  revenue: number;
+  subscriptions: number;
+}
+
+/**
+ * Subscription trend data point
+ */
+export interface SubscriptionTrendPoint {
+  date: string;
+  newSubscriptions: number;
+  cancelledSubscriptions: number;
+  totalActive: number;
+}
+
+/**
+ * Get monthly revenue trends for the last N months
+ */
+export const getRevenueTrends = async (months: number = 6): Promise<RevenueTrendPoint[]> => {
+  const trends: RevenueTrendPoint[] = [];
+  const now = new Date();
+
+  for (let i = months - 1; i >= 0; i--) {
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() - i + 1, 0, 23, 59, 59);
+
+    // Get revenue for this month
+    const { data: payments } = await SUPABASE.from("payment_history")
+      .select("amount_cents")
+      .eq("status", "succeeded")
+      .gte("created_at", startOfMonth.toISOString())
+      .lte("created_at", endOfMonth.toISOString());
+
+    const revenue = (payments || []).reduce((sum, p) => sum + (p.amount_cents || 0), 0);
+
+    // Get new subscriptions for this month
+    const { count: subCount } = await SUPABASE.from("subscriptions")
+      .select("id", { count: "exact", head: true })
+      .gte("created_at", startOfMonth.toISOString())
+      .lte("created_at", endOfMonth.toISOString());
+
+    const monthName = startOfMonth.toLocaleDateString("en-US", { month: "short" });
+
+    trends.push({
+      month: monthName,
+      revenue: revenue / 100, // Convert cents to dollars
+      subscriptions: subCount || 0,
+    });
+  }
+
+  return trends;
+};
+
+/**
+ * Get daily subscription trends for the last N days
+ */
+export const getSubscriptionTrends = async (days: number = 7): Promise<SubscriptionTrendPoint[]> => {
+  const trends: SubscriptionTrendPoint[] = [];
+  const now = new Date();
+
+  for (let i = days - 1; i >= 0; i--) {
+    const date = new Date(now);
+    date.setDate(date.getDate() - i);
+    date.setHours(0, 0, 0, 0);
+
+    const endOfDay = new Date(date);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    // Get new subscriptions for this day
+    const { count: newSubs } = await SUPABASE.from("subscriptions")
+      .select("id", { count: "exact", head: true })
+      .gte("created_at", date.toISOString())
+      .lte("created_at", endOfDay.toISOString());
+
+    // Get cancelled subscriptions for this day
+    const { count: cancelledSubs } = await SUPABASE.from("subscriptions")
+      .select("id", { count: "exact", head: true })
+      .not("cancelled_at", "is", null)
+      .gte("cancelled_at", date.toISOString())
+      .lte("cancelled_at", endOfDay.toISOString());
+
+    // Get total active subscriptions at end of this day
+    const { count: totalActive } = await SUPABASE.from("subscriptions")
+      .select("id", { count: "exact", head: true })
+      .in("status", [...ACTIVE_SUBSCRIPTION_STATUSES])
+      .lte("created_at", endOfDay.toISOString());
+
+    const dayName = date.toLocaleDateString("en-US", { weekday: "short" });
+
+    trends.push({
+      date: dayName,
+      newSubscriptions: newSubs || 0,
+      cancelledSubscriptions: cancelledSubs || 0,
+      totalActive: totalActive || 0,
+    });
+  }
+
+  return trends;
+};
+
+/**
+ * Get current admin user info
+ */
+export const getAdminUserInfo = async (userId: string): Promise<AdminUser | null> => {
+  return getUserById(userId);
 };

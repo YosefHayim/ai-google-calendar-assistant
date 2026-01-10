@@ -162,7 +162,7 @@ export function AIVoiceInput({
           {speechRecognitionError ? (
             <span className="text-red-500">{speechRecognitionError}</span>
           ) : isRecordingProp ? (
-            'Listening...'
+            'Listening... (speak in any language)'
           ) : (
             'Click to speak'
           )}

@@ -1,5 +1,4 @@
 'use client'
-'use client'
 
 import { Card, CardContent } from '@/components/ui/card'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'

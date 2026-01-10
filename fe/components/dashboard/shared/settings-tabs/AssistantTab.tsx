@@ -22,7 +22,7 @@ import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import CinematicGlowToggle from '@/components/ui/cinematic-glow-toggle'
 import { SettingsRow, SettingsSection, SettingsDropdown, type DropdownOption } from './components'
-import { voiceService } from '@/lib/api/services/voice.service'
+import { voiceService } from '@/services/voice.service'
 import {
   useAllyBrain,
   useUpdateAllyBrain,

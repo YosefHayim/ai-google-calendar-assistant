@@ -1,7 +1,7 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
-import { gapsService } from '@/lib/api/services/gaps.service'
+import { gapsService } from '@/services/gaps.service'
 import { queryKeys } from '@/lib/query/keys'
 import type { GapsResponse, GapQueryParams, ApiResponse } from '@/types/api'
 

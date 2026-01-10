@@ -152,3 +152,16 @@ export interface GrantCreditsRequest {
   credits: number
   reason: string
 }
+
+export interface RevenueTrendPoint {
+  month: string
+  revenue: number
+  subscriptions: number
+}
+
+export interface SubscriptionTrendPoint {
+  date: string
+  newSubscriptions: number
+  cancelledSubscriptions: number
+  totalActive: number
+}

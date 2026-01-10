@@ -13,7 +13,7 @@ const mockCreateEvent = mock(() =>
   })
 );
 
-mock.module("@/lib/api/services/events.service", () => ({
+mock.module("@/services/events.service", () => ({
   eventsService: {
     createEvent: mockCreateEvent,
   },

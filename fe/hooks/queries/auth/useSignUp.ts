@@ -1,7 +1,7 @@
 'use client'
 
 import { useMutation } from '@tanstack/react-query'
-import { authService } from '@/lib/api/services/auth.service'
+import { authService } from '@/services/auth.service'
 import { useMutationWrapper, MutationHookOptions } from '../useMutationWrapper'
 import type { AuthData, ApiResponse } from '@/types/api'
 

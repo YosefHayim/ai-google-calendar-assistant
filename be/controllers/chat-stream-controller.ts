@@ -18,7 +18,7 @@ import type { AgentContext } from "@/ai-agents/tool-registry";
 import { ORCHESTRATOR_AGENT } from "@/ai-agents";
 import { STATUS_RESPONSE } from "@/config";
 import { createAgentSession } from "@/ai-agents/sessions";
-import { getAllyBrainPreference } from "@/controllers/user-preferences-controller";
+import { getAllyBrainPreference } from "@/services/user-preferences-service";
 import { run, type RunRawModelStreamEvent, type RunAgentUpdatedStreamEvent, type RunItemStreamEvent } from "@openai/agents";
 import { sendR } from "@/utils/http";
 import { webConversation } from "@/utils/conversation/WebConversationAdapter";

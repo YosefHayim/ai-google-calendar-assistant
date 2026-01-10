@@ -1,9 +1,10 @@
 'use client'
 
-import React from 'react'
+import React, { useMemo } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { Loader2 } from 'lucide-react'
+import { getTextDirection } from '@/lib/utils'
 
 interface StreamingMessageProps {
   content: string
@@ -32,11 +33,16 @@ function getToolDisplayName(tool: string): string {
 
 export const StreamingMessage: React.FC<StreamingMessageProps> = ({ content, currentTool, isStreaming }) => {
   const showToolIndicator = isStreaming && currentTool && !content
+  const textDirection = useMemo(() => getTextDirection(content), [content])
+  const isRTL = textDirection === 'rtl'
 
   return (
     <div className="flex w-full mb-2 justify-start">
       <div className="max-w-[85%] md:max-w-[75%] flex flex-col items-start">
-        <div className="px-4 py-3 rounded-md rounded-tl-none text-sm leading-relaxed bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-100 shadow-sm">
+        <div
+          className="px-4 py-3 rounded-md rounded-tl-none text-sm leading-relaxed bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-100 shadow-sm"
+          dir={content ? textDirection : undefined}
+        >
           {showToolIndicator && (
             <div className="flex items-center gap-3">
               {/* Mini pulsing orb with spinner */}
@@ -49,7 +55,7 @@ export const StreamingMessage: React.FC<StreamingMessageProps> = ({ content, cur
           )}
 
           {content && (
-            <div className="prose prose-sm max-w-none prose-zinc dark:prose-invert">
+            <div className={`prose prose-sm max-w-none prose-zinc dark:prose-invert ${isRTL ? 'text-right' : ''}`}>
               <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
             </div>
           )}

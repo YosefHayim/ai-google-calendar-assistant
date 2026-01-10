@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useRef, useEffect } from 'react'
 import { Room, RoomEvent, Track, RemoteTrack, RemoteTrackPublication, Participant } from 'livekit-client'
-import { voiceService } from '@/lib/api/services/voice.service'
+import { voiceService } from '@/services/voice.service'
 
 export type LiveKitVoiceState = 'idle' | 'connecting' | 'connected' | 'speaking' | 'listening' | 'error'
 

@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import ReactMarkdown from 'react-markdown'
 import { Role } from '@/types'
 import remarkGfm from 'remark-gfm'
+import { getTextDirection } from '@/lib/utils'
 
 interface MessageBubbleProps {
   role: Role
@@ -12,6 +13,8 @@ interface MessageBubbleProps {
 
 const MessageBubble: React.FC<MessageBubbleProps> = ({ role, content, timestamp, hideTimestamp }) => {
   const isUser = role === 'user'
+  const textDirection = useMemo(() => getTextDirection(content), [content])
+  const isRTL = textDirection === 'rtl'
 
   return (
     <div className={`flex w-full mb-2 ${isUser ? 'justify-end' : 'justify-start'}`}>
@@ -23,13 +26,16 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ role, content, timestamp,
                 ? 'bg-primary text-white rounded-tr-none shadow-md'
                 : 'bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-100 rounded-tl-none shadow-sm'
             }`}
+          dir={textDirection}
         >
-          <div className={`prose prose-sm max-w-none ${isUser ? 'prose-invert' : 'prose-zinc dark:prose-invert'}`}>
+          <div
+            className={`prose prose-sm max-w-none ${isUser ? 'prose-invert' : 'prose-zinc dark:prose-invert'} ${isRTL ? 'text-right' : ''}`}
+          >
             <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
           </div>
         </div>
         {!hideTimestamp && (
-          <span className="text-xs text-zinc-400 mt-1 px-1">
+          <span className={`text-xs text-zinc-400 mt-1 px-1 ${isRTL ? 'text-right w-full' : ''}`}>
             {timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </span>
         )}

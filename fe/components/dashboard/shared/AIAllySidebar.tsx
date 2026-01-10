@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { VoicePoweredOrb } from "@/components/ui/voice-powered-orb";
 import { cn } from "@/lib/utils";
-import { useSpeechRecognition } from "@/components/dashboard/chat/useSpeechRecognition";
+import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
 
 interface AIAllySidebarProps {
   isOpen: boolean;

@@ -8,7 +8,7 @@ import {
   type AgentProfilesResponse,
   type SelectedProfileResponse,
   type GetProfilesParams,
-} from '@/lib/api/services/agent-profiles.service'
+} from '@/services/agent-profiles.service'
 import { queryKeys } from '@/lib/query/keys'
 import { QUERY_CONFIG } from '@/lib/constants'
 import type { QueryHookOptions } from '../useQueryWrapper'
