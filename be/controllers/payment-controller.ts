@@ -83,6 +83,7 @@ export const getSubscriptionStatus = reqResAsyncHandler(async (req: Request, res
           currentPeriodEnd: subscription.current_period_end,
           cancelAtPeriodEnd: subscription.cancel_at_period_end,
           moneyBackEligibleUntil: subscription.money_back_eligible_until,
+          isLinkedToProvider: !!subscription.lemonsqueezy_subscription_id,
         }
       : null,
   })
@@ -119,10 +120,15 @@ export const createSubscriptionCheckout = reqResAsyncHandler(async (req: Request
 
   const existingSubscription = await getUserSubscription(userId)
   if (existingSubscription && ["trialing", "active"].includes(existingSubscription.status)) {
-    return sendR(res, STATUS_RESPONSE.CONFLICT, "User already has an active subscription", {
-      currentPlan: existingSubscription.plan_id,
-      status: existingSubscription.status,
-    })
+    // Allow checkout if subscription exists but is not linked to LemonSqueezy
+    // This handles abandoned checkouts where user started but never completed payment
+    if (existingSubscription.lemonsqueezy_subscription_id) {
+      return sendR(res, STATUS_RESPONSE.CONFLICT, "User already has an active subscription", {
+        currentPlan: existingSubscription.plan_id,
+        status: existingSubscription.status,
+      })
+    }
+    // Subscription exists but not linked - will be updated when checkout completes via webhook
   }
 
   try {

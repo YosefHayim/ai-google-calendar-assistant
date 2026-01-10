@@ -395,13 +395,36 @@ export const createCheckoutSession = async (params: CreateCheckoutSessionParams)
     throw new Error("No checkout URL returned from LemonSqueezy");
   }
 
-  await createSubscriptionRecord({
-    userId,
-    planId: plan.id,
-    status: "trialing",
-    interval,
-    trialDays: LEMONSQUEEZY_CONFIG.TRIAL_DAYS,
-  });
+  // Check if user has an existing orphaned subscription (not linked to LemonSqueezy)
+  const existingSubscription = await getUserSubscription(userId);
+  if (existingSubscription && !existingSubscription.lemonsqueezy_subscription_id) {
+    // Update existing orphaned subscription instead of creating new
+    const now = new Date();
+    const trialEnd = new Date(now.getTime() + LEMONSQUEEZY_CONFIG.TRIAL_DAYS * 24 * 60 * 60 * 1000);
+
+    await supabase
+      .from("subscriptions")
+      .update({
+        plan_id: plan.id,
+        status: "trialing",
+        interval,
+        trial_start: now.toISOString(),
+        trial_end: trialEnd.toISOString(),
+        current_period_start: now.toISOString(),
+        current_period_end: new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+        updated_at: now.toISOString(),
+      })
+      .eq("id", existingSubscription.id);
+  } else {
+    // Create new subscription record
+    await createSubscriptionRecord({
+      userId,
+      planId: plan.id,
+      status: "trialing",
+      interval,
+      trialDays: LEMONSQUEEZY_CONFIG.TRIAL_DAYS,
+    });
+  }
 
   return {
     url: data.data.attributes.url,

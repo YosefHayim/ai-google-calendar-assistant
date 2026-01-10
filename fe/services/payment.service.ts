@@ -51,6 +51,7 @@ export interface SubscriptionInfo {
   currentPeriodEnd: string | null
   cancelAtPeriodEnd: boolean
   moneyBackEligibleUntil: string | null
+  isLinkedToProvider: boolean
 }
 
 export interface UserAccess {

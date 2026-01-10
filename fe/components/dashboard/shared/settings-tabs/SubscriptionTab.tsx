@@ -114,13 +114,12 @@ export const SubscriptionTab: React.FC = () => {
           return
         }
 
-        // Check if user has a paid subscription (pro/executive)
-        // Users with paid subscriptions should use upgrade endpoint
-        // Users on starter/free plan should use checkout to create new subscription
-        const hasPaidSubscription =
-          access?.plan_slug === 'pro' || access?.plan_slug === 'executive'
+        // Check if user has a subscription linked to payment provider (LemonSqueezy)
+        // Users with linked subscriptions should use upgrade endpoint
+        // Users without linked subscriptions should use checkout to create new subscription
+        const isLinkedToProvider = access?.subscription?.isLinkedToProvider === true
 
-        if (hasPaidSubscription) {
+        if (isLinkedToProvider) {
           // Upgrade existing subscription
           await upgradeSubscription({
             planSlug: plan.slug as PlanSlug,

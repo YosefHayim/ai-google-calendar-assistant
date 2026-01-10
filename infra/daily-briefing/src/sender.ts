@@ -1,8 +1,8 @@
-import type { SQSEvent, SQSBatchResponse, SQSBatchItemFailure } from 'aws-lambda';
-import { createClient, type SupabaseClient } from '@supabase/supabase-js';
-import { google, type calendar_v3 } from 'googleapis';
-import { Resend } from 'resend';
-import { buildBriefingEmailHtml, buildBriefingEmailText } from './email-template';
+import type { SQSEvent, SQSBatchResponse, SQSBatchItemFailure } from "aws-lambda";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { google, type calendar_v3 } from "googleapis";
+import { Resend } from "resend";
+import { buildBriefingEmailHtml, buildBriefingEmailText } from "./email-template";
 
 interface BriefingQueueMessage {
   userId: string;
@@ -32,17 +32,11 @@ interface UserData {
 const resend = new Resend(process.env.RESEND_API_KEY!);
 
 function getSupabase(): SupabaseClient {
-  return createClient(
-    process.env.SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  );
+  return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
 }
 
 function createOAuth2Client() {
-  return new google.auth.OAuth2(
-    process.env.GOOGLE_CLIENT_ID,
-    process.env.GOOGLE_CLIENT_SECRET,
-  );
+  return new google.auth.OAuth2(process.env.GOOGLE_CLIENT_ID, process.env.GOOGLE_CLIENT_SECRET);
 }
 
 /**
@@ -50,11 +44,11 @@ function createOAuth2Client() {
  */
 async function getUserTokens(supabase: SupabaseClient, userId: string): Promise<OAuthTokens | null> {
   const { data, error } = await supabase
-    .from('oauth_tokens')
-    .select('access_token, refresh_token, id_token, expires_at, token_type, scope')
-    .eq('user_id', userId)
-    .eq('provider', 'google')
-    .eq('is_valid', true)
+    .from("oauth_tokens")
+    .select("access_token, refresh_token, id_token, expires_at, token_type, scope")
+    .eq("user_id", userId)
+    .eq("provider", "google")
+    .eq("is_valid", true)
     .single();
 
   if (error || !data) {
@@ -76,11 +70,7 @@ async function getUserTokens(supabase: SupabaseClient, userId: string): Promise<
  * Get user data from database
  */
 async function getUserData(supabase: SupabaseClient, userId: string): Promise<UserData | null> {
-  const { data, error } = await supabase
-    .from('users')
-    .select('id, email, display_name, first_name, preferences')
-    .eq('id', userId)
-    .single();
+  const { data, error } = await supabase.from("users").select("id, email, display_name, first_name, preferences").eq("id", userId).single();
 
   if (error || !data) {
     console.error(`User not found ${userId}:`, error);
@@ -95,11 +85,7 @@ async function getUserData(supabase: SupabaseClient, userId: string): Promise<Us
  */
 async function updateLastSentDate(supabase: SupabaseClient, userId: string, date: string): Promise<void> {
   // Get current preferences
-  const { data: user, error: fetchError } = await supabase
-    .from('users')
-    .select('preferences')
-    .eq('id', userId)
-    .single();
+  const { data: user, error: fetchError } = await supabase.from("users").select("preferences").eq("id", userId).single();
 
   if (fetchError || !user) {
     console.error(`Failed to fetch preferences for user ${userId}:`, fetchError);
@@ -107,7 +93,7 @@ async function updateLastSentDate(supabase: SupabaseClient, userId: string, date
   }
 
   const preferences = user.preferences || {};
-  const dailyBriefing = (preferences as Record<string, unknown>).daily_briefing as Record<string, unknown> || {};
+  const dailyBriefing = ((preferences as Record<string, unknown>).daily_briefing as Record<string, unknown>) || {};
 
   // Update lastSentDate
   const updatedPreferences = {
@@ -118,10 +104,7 @@ async function updateLastSentDate(supabase: SupabaseClient, userId: string, date
     },
   };
 
-  const { error: updateError } = await supabase
-    .from('users')
-    .update({ preferences: updatedPreferences })
-    .eq('id', userId);
+  const { error: updateError } = await supabase.from("users").update({ preferences: updatedPreferences }).eq("id", userId);
 
   if (updateError) {
     console.error(`Failed to update lastSentDate for user ${userId}:`, updateError);
@@ -131,58 +114,54 @@ async function updateLastSentDate(supabase: SupabaseClient, userId: string, date
 /**
  * Fetch calendar events for today
  */
-async function fetchTodayEvents(
-  tokens: OAuthTokens,
-  timezone: string,
-  date: string,
-): Promise<calendar_v3.Schema$Event[]> {
+async function fetchTodayEvents(tokens: OAuthTokens, timezone: string, date: string): Promise<calendar_v3.Schema$Event[]> {
   const oauth2Client = createOAuth2Client();
   oauth2Client.setCredentials(tokens);
 
-  const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
+  const calendar = google.calendar({ version: "v3", auth: oauth2Client });
 
   // Calculate start and end of day in user's timezone
   const startOfDay = new Date(`${date}T00:00:00`);
   const endOfDay = new Date(`${date}T23:59:59`);
 
   // Convert to ISO strings with timezone consideration
-  const timeMin = new Date(startOfDay.toLocaleString('en-US', { timeZone: timezone })).toISOString();
-  const timeMax = new Date(endOfDay.toLocaleString('en-US', { timeZone: timezone })).toISOString();
+  const timeMin = new Date(startOfDay.toLocaleString("en-US", { timeZone: timezone })).toISOString();
+  const timeMax = new Date(endOfDay.toLocaleString("en-US", { timeZone: timezone })).toISOString();
 
   try {
     const response = await calendar.events.list({
-      calendarId: 'primary',
+      calendarId: "primary",
       timeMin,
       timeMax,
       singleEvents: true,
-      orderBy: 'startTime',
+      orderBy: "startTime",
       maxResults: 50,
     });
 
     return response.data.items || [];
   } catch (error) {
-    console.error('Error fetching calendar events:', error);
+    console.error("Error fetching calendar events:", error);
 
     // Check if token needs refresh
     if ((error as { code?: number }).code === 401) {
-      console.log('Token expired, attempting refresh...');
+      console.log("Token expired, attempting refresh...");
 
       try {
         const { credentials } = await oauth2Client.refreshAccessToken();
         oauth2Client.setCredentials(credentials);
 
         const retryResponse = await calendar.events.list({
-          calendarId: 'primary',
+          calendarId: "primary",
           timeMin,
           timeMax,
           singleEvents: true,
-          orderBy: 'startTime',
+          orderBy: "startTime",
           maxResults: 50,
         });
 
         return retryResponse.data.items || [];
       } catch (refreshError) {
-        console.error('Token refresh failed:', refreshError);
+        console.error("Token refresh failed:", refreshError);
         throw refreshError;
       }
     }
@@ -199,13 +178,13 @@ async function sendBriefingEmail(
   firstName: string | undefined,
   events: calendar_v3.Schema$Event[],
   timezone: string,
-  date: string,
+  date: string
 ): Promise<void> {
   const dateObj = new Date(date);
-  const formattedDate = dateObj.toLocaleDateString('en-US', {
-    weekday: 'long',
-    month: 'long',
-    day: 'numeric',
+  const formattedDate = dateObj.toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
     timeZone: timezone,
   });
 
@@ -225,10 +204,7 @@ async function sendBriefingEmail(
 /**
  * Process a single user's daily briefing
  */
-async function processUserBriefing(
-  supabase: SupabaseClient,
-  message: BriefingQueueMessage,
-): Promise<void> {
+async function processUserBriefing(supabase: SupabaseClient, message: BriefingQueueMessage): Promise<void> {
   const { userId, email, timezone, date } = message;
 
   console.log(`Processing briefing for user ${userId}`);
@@ -252,13 +228,7 @@ async function processUserBriefing(
   console.log(`Found ${events.length} events for user ${userId}`);
 
   // Send email
-  await sendBriefingEmail(
-    email,
-    userData.first_name || userData.display_name?.split(' ')[0],
-    events,
-    timezone,
-    date,
-  );
+  await sendBriefingEmail(email, userData.first_name || userData.display_name?.split(" ")[0], events, timezone, date);
 
   // Update lastSentDate
   await updateLastSentDate(supabase, userId, date);
