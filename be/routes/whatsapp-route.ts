@@ -1,17 +1,50 @@
-import express from "express";
-import { whatsAppController } from "@/controllers/whatsapp-controller";
-import { supabaseAuth } from "@/middlewares/supabase-auth";
+/**
+ * WhatsApp Routes
+ * Handles WhatsApp Cloud API webhooks and integration endpoints
+ */
 
-const router = express.Router();
+import express from "express"
+import { whatsAppController } from "@/controllers/whatsapp-controller"
+import { webhookSignatureMiddleware } from "@/whatsapp-bot/services/webhook-security"
+import { supabaseAuth } from "@/middlewares/supabase-auth"
 
-// ============================================
-// WhatsApp routes UNDER DEVELOPMENT
-// SECURITY: All routes require authentication
-// ============================================
-router.use(supabaseAuth());
+const router = express.Router()
 
-router.get("/", whatsAppController.getWhatsAppNotifications);
+// ============================================================================
+// Public Webhook Endpoints (No auth - called by Meta)
+// ============================================================================
 
-// router.post("/", whatsAppController.WhatsAppMessagesCreated);
+/**
+ * GET /api/whatsapp
+ * Webhook verification endpoint - Meta calls this to verify your webhook URL
+ * Must respond with the challenge token
+ */
+router.get("/", whatsAppController.verifyWebhook)
 
-export default router;
+/**
+ * POST /api/whatsapp
+ * Webhook events endpoint - Meta sends message events here
+ * Uses raw body parser for signature verification
+ *
+ * IMPORTANT: This endpoint uses express.raw() to get the raw body for
+ * signature verification. The webhookSignatureMiddleware parses the JSON
+ * after verification.
+ */
+router.post(
+  "/",
+  express.raw({ type: "application/json" }),
+  webhookSignatureMiddleware,
+  whatsAppController.handleWebhook
+)
+
+// ============================================================================
+// Protected Admin Endpoints
+// ============================================================================
+
+/**
+ * GET /api/whatsapp/status
+ * Returns integration configuration status (for admin dashboard)
+ */
+router.get("/status", supabaseAuth(), whatsAppController.getStatus)
+
+export default router

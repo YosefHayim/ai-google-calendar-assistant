@@ -13,10 +13,11 @@ interface AvatarViewProps {
   messages: Message[]
   isRecording: boolean
   isSpeaking: boolean
+  speakingMessageId: string | null
   isLoading: boolean
   onResend: (text: string) => void
   onEditAndResend: (messageId: string, newText: string) => void
-  onSpeak: (text: string) => void
+  onSpeak: (text: string, messageId?: string) => void
   avatarScrollRef: React.RefObject<HTMLDivElement | null>
 }
 
@@ -24,6 +25,7 @@ export const AvatarView: React.FC<AvatarViewProps> = ({
   messages,
   isRecording,
   isSpeaking,
+  speakingMessageId,
   isLoading,
   onResend,
   onEditAndResend,
@@ -138,10 +140,10 @@ export const AvatarView: React.FC<AvatarViewProps> = ({
                     {!isEditing && (
                       <MessageActions
                         msg={msg}
-                        isSpeaking={isSpeaking}
+                        isSpeaking={isSpeaking && speakingMessageId === msg.id}
                         onResend={onResend}
                         onEdit={() => handleStartEdit(msg)}
-                        onSpeak={onSpeak}
+                        onSpeak={(text) => onSpeak(text, msg.id)}
                       />
                     )}
                   </div>

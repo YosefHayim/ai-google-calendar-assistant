@@ -137,9 +137,17 @@ const integrations = {
     },
   },
   whatsapp: {
-    accessToken: getOptional("DEV_WHATS_APP_ACCESS_TOKEN"),
+    phoneNumberId: getOptional("WHATSAPP_PHONE_NUMBER_ID"),
+    businessAccountId: getOptional("WHATSAPP_BUSINESS_ACCOUNT_ID"),
+    accessToken: getOptional("WHATSAPP_ACCESS_TOKEN"),
+    verifyToken: getOptional("WHATSAPP_VERIFY_TOKEN"),
+    appSecret: getOptional("WHATSAPP_APP_SECRET"),
+    apiVersion: getOptional("WHATSAPP_API_VERSION") ?? "v22.0",
     get isEnabled(): boolean {
-      return !!this.accessToken;
+      return !!(this.phoneNumberId && this.accessToken && this.verifyToken);
+    },
+    get baseUrl(): string {
+      return `https://graph.facebook.com/${this.apiVersion}`;
     },
   },
 } as const;
@@ -232,7 +240,6 @@ export const env = {
   googleApiKey: google.apiKey,
   openAiApiKey: openai.apiKey,
   telegramAccessToken: integrations.telegram.accessToken,
-  devWhatsAppAccessToken: integrations.whatsapp.accessToken,
   testEmail: testing.testEmail,
 } as const;
 

@@ -37,7 +37,7 @@ export type ProjectionMode = "VOICE_LITE" | "CHAT_STANDARD" | "FULL"
  * Interaction modality for cross-modal context tracking.
  * Stored in Redis to enable context continuity across channels.
  */
-export type Modality = "chat" | "voice" | "telegram" | "api"
+export type Modality = "chat" | "voice" | "telegram" | "whatsapp" | "api"
 
 /**
  * Represents a calendar event that conflicts with a proposed time slot.
