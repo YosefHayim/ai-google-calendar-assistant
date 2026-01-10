@@ -2,10 +2,6 @@
  * WhatsApp Conversation History Management
  * Handles conversation persistence and context for WhatsApp users
  * Similar to Telegram's conversation-history.ts but adapted for WhatsApp
- *
- * NOTE: The whatsapp_users table types are not yet in database.types.ts
- * Run the migration in migrations/20260110_whatsapp_users.sql first,
- * then regenerate types with: npx supabase gen types typescript
  */
 
 import type { Database } from "@/database.types"
@@ -13,10 +9,6 @@ import { SUPABASE } from "@/config/clients/supabase"
 import { logger } from "@/utils/logger"
 import type { userAndAiMessageProps } from "@/types"
 import { isToday } from "@/utils/date/date-helpers"
-
-// Use any for whatsapp_users table until types are regenerated
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const supabaseAny = SUPABASE as any
 
 const MAX_CONTEXT_LENGTH = 1500
 const MAX_SUMMARY_LENGTH = 1000
@@ -42,16 +34,7 @@ type ConversationRow = {
   last_message_at: string | null
 }
 
-type WhatsAppUserRow = {
-  id: string
-  whatsapp_phone: string
-  whatsapp_name: string | null
-  user_id: string | null
-  is_linked: boolean
-  language_code: string
-  created_at: string
-  last_activity_at: string
-}
+type WhatsAppUserRow = Database["public"]["Tables"]["whatsapp_users"]["Row"]
 
 const calculateContextLength = (messages: userAndAiMessageProps[]): number => {
   return messages.reduce((total, msg) => total + (msg.content?.length || 0), 0)
@@ -86,7 +69,7 @@ const condenseSummary = async (
  * Gets the user ID from a WhatsApp phone number
  */
 export const getUserIdFromWhatsApp = async (phoneNumber: string): Promise<string | null> => {
-  const { data, error } = await supabaseAny.from("whatsapp_users")
+  const { data, error } = await SUPABASE.from("whatsapp_users")
     .select("user_id")
     .eq("whatsapp_phone", phoneNumber)
     .single()
@@ -106,7 +89,7 @@ export const getOrCreateWhatsAppUser = async (
   displayName?: string
 ): Promise<WhatsAppUserRow | null> => {
   // Try to get existing user
-  const { data: existingUser } = await supabaseAny.from("whatsapp_users")
+  const { data: existingUser } = await SUPABASE.from("whatsapp_users")
     .select("*")
     .eq("whatsapp_phone", phoneNumber)
     .single()
@@ -118,7 +101,7 @@ export const getOrCreateWhatsAppUser = async (
       updates.whatsapp_name = displayName
     }
 
-    await supabaseAny.from("whatsapp_users")
+    await SUPABASE.from("whatsapp_users")
       .update(updates)
       .eq("whatsapp_phone", phoneNumber)
 
@@ -126,7 +109,7 @@ export const getOrCreateWhatsAppUser = async (
   }
 
   // Create new user
-  const { data: newUser, error: insertError } = await supabaseAny.from("whatsapp_users")
+  const { data: newUser, error: insertError } = await SUPABASE.from("whatsapp_users")
     .insert({
       whatsapp_phone: phoneNumber,
       whatsapp_name: displayName || null,
@@ -291,23 +274,22 @@ export const updateConversationState = async (
 
 /**
  * Stores a summary for a conversation
+ * Summary is now stored directly in conversations.summary column
  */
 export const storeSummary = async (
   conversationId: string,
-  userId: string,
+  _userId: string,
   summaryText: string,
-  messageCount: number,
-  firstSequence: number,
-  lastSequence: number
+  _messageCount: number,
+  _firstSequence: number,
+  _lastSequence: number
 ): Promise<boolean> => {
-  const { error } = await SUPABASE.from("conversation_summaries").insert({
-    conversation_id: conversationId,
-    user_id: userId,
-    summary_text: summaryText,
-    message_count: messageCount,
-    first_message_sequence: firstSequence,
-    last_message_sequence: lastSequence,
-  })
+  const { error } = await SUPABASE.from("conversations")
+    .update({
+      summary: summaryText,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", conversationId)
 
   if (error) {
     logger.error(`WhatsApp: Failed to store summary for conversation ${conversationId}: ${error.message}`)

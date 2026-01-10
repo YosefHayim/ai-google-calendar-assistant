@@ -1,20 +1,21 @@
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
+import { mockFn } from "../test-utils";
 
 // Mock dependencies before imports
 const mockSupabase = {
-  from: jest.fn(),
+  from: mockFn(),
 };
 
 const mockLemonSqueezyFns = {
-  createCheckout: jest.fn(),
-  getSubscription: jest.fn(),
-  updateSubscription: jest.fn(),
-  cancelSubscription: jest.fn(),
-  getCustomer: jest.fn(),
-  listCustomers: jest.fn(),
+  createCheckout: mockFn(),
+  getSubscription: mockFn(),
+  updateSubscription: mockFn(),
+  cancelSubscription: mockFn(),
+  getCustomer: mockFn(),
+  listCustomers: mockFn(),
 };
 
-const mockInitializeLemonSqueezy = jest.fn();
+const mockInitializeLemonSqueezy = mockFn();
 const mockLemonSqueezyConfig = {
   TRIAL_DAYS: 7,
   MONEY_BACK_DAYS: 30,
@@ -91,9 +92,9 @@ describe("LemonSqueezy Service", () => {
       ];
 
       mockSupabase.from.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            order: jest.fn().mockResolvedValue({ data: mockPlans, error: null }),
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            order: mockFn().mockResolvedValue({ data: mockPlans, error: null }),
           }),
         }),
       });
@@ -106,9 +107,9 @@ describe("LemonSqueezy Service", () => {
 
     it("should throw error when fetch fails", async () => {
       mockSupabase.from.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            order: jest.fn().mockResolvedValue({
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            order: mockFn().mockResolvedValue({
               data: null,
               error: { message: "Database error" },
             }),
@@ -121,9 +122,9 @@ describe("LemonSqueezy Service", () => {
 
     it("should return empty array when no plans found", async () => {
       mockSupabase.from.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            order: jest.fn().mockResolvedValue({ data: null, error: null }),
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            order: mockFn().mockResolvedValue({ data: null, error: null }),
           }),
         }),
       });
@@ -138,10 +139,10 @@ describe("LemonSqueezy Service", () => {
       const mockPlan = { id: "1", name: "Pro", slug: "pro" };
 
       mockSupabase.from.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            eq: jest.fn().mockReturnValue({
-              maybeSingle: jest.fn().mockResolvedValue({ data: mockPlan, error: null }),
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            eq: mockFn().mockReturnValue({
+              maybeSingle: mockFn().mockResolvedValue({ data: mockPlan, error: null }),
             }),
           }),
         }),
@@ -155,10 +156,10 @@ describe("LemonSqueezy Service", () => {
 
     it("should return null when plan not found", async () => {
       mockSupabase.from.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            eq: jest.fn().mockReturnValue({
-              maybeSingle: jest.fn().mockResolvedValue({ data: null, error: null }),
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            eq: mockFn().mockReturnValue({
+              maybeSingle: mockFn().mockResolvedValue({ data: null, error: null }),
             }),
           }),
         }),
@@ -170,10 +171,10 @@ describe("LemonSqueezy Service", () => {
 
     it("should throw error when fetch fails", async () => {
       mockSupabase.from.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            eq: jest.fn().mockReturnValue({
-              maybeSingle: jest.fn().mockResolvedValue({
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            eq: mockFn().mockReturnValue({
+              maybeSingle: mockFn().mockResolvedValue({
                 data: null,
                 error: { message: "Database error" },
               }),
@@ -191,9 +192,9 @@ describe("LemonSqueezy Service", () => {
       const mockPlan = { id: "plan-123", name: "Pro" };
 
       mockSupabase.from.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            maybeSingle: jest.fn().mockResolvedValue({ data: mockPlan, error: null }),
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            maybeSingle: mockFn().mockResolvedValue({ data: mockPlan, error: null }),
           }),
         }),
       });
@@ -212,12 +213,12 @@ describe("LemonSqueezy Service", () => {
       };
 
       mockSupabase.from.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            in: jest.fn().mockReturnValue({
-              order: jest.fn().mockReturnValue({
-                limit: jest.fn().mockReturnValue({
-                  maybeSingle: jest.fn().mockResolvedValue({
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            in: mockFn().mockReturnValue({
+              order: mockFn().mockReturnValue({
+                limit: mockFn().mockReturnValue({
+                  maybeSingle: mockFn().mockResolvedValue({
                     data: mockSubscription,
                     error: null,
                   }),
@@ -234,12 +235,12 @@ describe("LemonSqueezy Service", () => {
 
     it("should return null when no active subscription", async () => {
       mockSupabase.from.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            in: jest.fn().mockReturnValue({
-              order: jest.fn().mockReturnValue({
-                limit: jest.fn().mockReturnValue({
-                  maybeSingle: jest.fn().mockResolvedValue({ data: null, error: null }),
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            in: mockFn().mockReturnValue({
+              order: mockFn().mockReturnValue({
+                limit: mockFn().mockReturnValue({
+                  maybeSingle: mockFn().mockResolvedValue({ data: null, error: null }),
                 }),
               }),
             }),
@@ -257,9 +258,9 @@ describe("LemonSqueezy Service", () => {
       const mockSubscription = { id: "sub-123", lemonsqueezy_subscription_id: "ls-sub-123" };
 
       mockSupabase.from.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            maybeSingle: jest.fn().mockResolvedValue({ data: mockSubscription, error: null }),
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            maybeSingle: mockFn().mockResolvedValue({ data: mockSubscription, error: null }),
           }),
         }),
       });
@@ -289,12 +290,12 @@ describe("LemonSqueezy Service", () => {
 
       // Mock getUserSubscription
       mockSupabase.from.mockReturnValueOnce({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            in: jest.fn().mockReturnValue({
-              order: jest.fn().mockReturnValue({
-                limit: jest.fn().mockReturnValue({
-                  maybeSingle: jest.fn().mockResolvedValue({ data: mockSubscription, error: null }),
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            in: mockFn().mockReturnValue({
+              order: mockFn().mockReturnValue({
+                limit: mockFn().mockReturnValue({
+                  maybeSingle: mockFn().mockResolvedValue({ data: mockSubscription, error: null }),
                 }),
               }),
             }),
@@ -304,10 +305,10 @@ describe("LemonSqueezy Service", () => {
 
       // Mock credit packs query
       mockSupabase.from.mockReturnValueOnce({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            eq: jest.fn().mockReturnValue({
-              gt: jest.fn().mockResolvedValue({ data: [], error: null }),
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            eq: mockFn().mockReturnValue({
+              gt: mockFn().mockResolvedValue({ data: [], error: null }),
             }),
           }),
         }),
@@ -315,9 +316,9 @@ describe("LemonSqueezy Service", () => {
 
       // Mock getPlanById
       mockSupabase.from.mockReturnValueOnce({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            maybeSingle: jest.fn().mockResolvedValue({ data: mockPlan, error: null }),
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            maybeSingle: mockFn().mockResolvedValue({ data: mockPlan, error: null }),
           }),
         }),
       });
@@ -333,12 +334,12 @@ describe("LemonSqueezy Service", () => {
     it("should return no access for user without subscription and no credits", async () => {
       // Mock no subscription
       mockSupabase.from.mockReturnValueOnce({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            in: jest.fn().mockReturnValue({
-              order: jest.fn().mockReturnValue({
-                limit: jest.fn().mockReturnValue({
-                  maybeSingle: jest.fn().mockResolvedValue({ data: null, error: null }),
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            in: mockFn().mockReturnValue({
+              order: mockFn().mockReturnValue({
+                limit: mockFn().mockReturnValue({
+                  maybeSingle: mockFn().mockResolvedValue({ data: null, error: null }),
                 }),
               }),
             }),
@@ -348,10 +349,10 @@ describe("LemonSqueezy Service", () => {
 
       // Mock no credit packs
       mockSupabase.from.mockReturnValueOnce({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            eq: jest.fn().mockReturnValue({
-              gt: jest.fn().mockResolvedValue({ data: [], error: null }),
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            eq: mockFn().mockReturnValue({
+              gt: mockFn().mockResolvedValue({ data: [], error: null }),
             }),
           }),
         }),
@@ -367,12 +368,12 @@ describe("LemonSqueezy Service", () => {
     it("should grant access with credits only", async () => {
       // Mock no subscription
       mockSupabase.from.mockReturnValueOnce({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            in: jest.fn().mockReturnValue({
-              order: jest.fn().mockReturnValue({
-                limit: jest.fn().mockReturnValue({
-                  maybeSingle: jest.fn().mockResolvedValue({ data: null, error: null }),
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            in: mockFn().mockReturnValue({
+              order: mockFn().mockReturnValue({
+                limit: mockFn().mockReturnValue({
+                  maybeSingle: mockFn().mockResolvedValue({ data: null, error: null }),
                 }),
               }),
             }),
@@ -382,10 +383,10 @@ describe("LemonSqueezy Service", () => {
 
       // Mock credit packs with remaining credits
       mockSupabase.from.mockReturnValueOnce({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            eq: jest.fn().mockReturnValue({
-              gt: jest.fn().mockResolvedValue({
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            eq: mockFn().mockReturnValue({
+              gt: mockFn().mockResolvedValue({
                 data: [{ credits_remaining: 100 }, { credits_remaining: 50 }],
                 error: null,
               }),
@@ -411,9 +412,9 @@ describe("LemonSqueezy Service", () => {
       };
 
       mockSupabase.from.mockReturnValue({
-        insert: jest.fn().mockReturnValue({
-          select: jest.fn().mockReturnValue({
-            single: jest.fn().mockResolvedValue({ data: mockSubscription, error: null }),
+        insert: mockFn().mockReturnValue({
+          select: mockFn().mockReturnValue({
+            single: mockFn().mockResolvedValue({ data: mockSubscription, error: null }),
           }),
         }),
       });
@@ -437,9 +438,9 @@ describe("LemonSqueezy Service", () => {
       };
 
       mockSupabase.from.mockReturnValue({
-        insert: jest.fn().mockReturnValue({
-          select: jest.fn().mockReturnValue({
-            single: jest.fn().mockResolvedValue({ data: mockSubscription, error: null }),
+        insert: mockFn().mockReturnValue({
+          select: mockFn().mockReturnValue({
+            single: mockFn().mockResolvedValue({ data: mockSubscription, error: null }),
           }),
         }),
       });
@@ -455,9 +456,9 @@ describe("LemonSqueezy Service", () => {
 
     it("should throw error when creation fails", async () => {
       mockSupabase.from.mockReturnValue({
-        insert: jest.fn().mockReturnValue({
-          select: jest.fn().mockReturnValue({
-            single: jest.fn().mockResolvedValue({
+        insert: mockFn().mockReturnValue({
+          select: mockFn().mockReturnValue({
+            single: mockFn().mockResolvedValue({
               data: null,
               error: { message: "Insert failed" },
             }),
@@ -480,10 +481,10 @@ describe("LemonSqueezy Service", () => {
       };
 
       mockSupabase.from.mockReturnValue({
-        update: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            select: jest.fn().mockReturnValue({
-              maybeSingle: jest.fn().mockResolvedValue({
+        update: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            select: mockFn().mockReturnValue({
+              maybeSingle: mockFn().mockResolvedValue({
                 data: mockUpdatedSubscription,
                 error: null,
               }),
@@ -508,10 +509,10 @@ describe("LemonSqueezy Service", () => {
 
     it("should handle status mapping correctly", async () => {
       mockSupabase.from.mockReturnValue({
-        update: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            select: jest.fn().mockReturnValue({
-              maybeSingle: jest.fn().mockResolvedValue({
+        update: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            select: mockFn().mockReturnValue({
+              maybeSingle: mockFn().mockResolvedValue({
                 data: { status: "canceled" },
                 error: null,
               }),
@@ -540,9 +541,9 @@ describe("LemonSqueezy Service", () => {
     beforeEach(() => {
       // Mock getSubscriptionByLemonSqueezyId
       mockSupabase.from.mockReturnValueOnce({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            maybeSingle: jest.fn().mockResolvedValue({
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            maybeSingle: mockFn().mockResolvedValue({
               data: {
                 id: "sub-123",
                 lemonsqueezy_subscription_id: "ls-sub-123",
@@ -562,10 +563,10 @@ describe("LemonSqueezy Service", () => {
       });
 
       mockSupabase.from.mockReturnValueOnce({
-        update: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            select: jest.fn().mockReturnValue({
-              single: jest.fn().mockResolvedValue({
+        update: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            select: mockFn().mockReturnValue({
+              single: mockFn().mockResolvedValue({
                 data: { id: "sub-123", status: "active", cancel_at_period_end: true },
                 error: null,
               }),
@@ -590,10 +591,10 @@ describe("LemonSqueezy Service", () => {
       });
 
       mockSupabase.from.mockReturnValueOnce({
-        update: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            select: jest.fn().mockReturnValue({
-              single: jest.fn().mockResolvedValue({
+        update: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            select: mockFn().mockReturnValue({
+              single: mockFn().mockResolvedValue({
                 data: { id: "sub-123", status: "canceled" },
                 error: null,
               }),
@@ -612,9 +613,9 @@ describe("LemonSqueezy Service", () => {
       // Reset mock to return null
       mockSupabase.from.mockReset();
       mockSupabase.from.mockReturnValueOnce({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            maybeSingle: jest.fn().mockResolvedValue({ data: null, error: null }),
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            maybeSingle: mockFn().mockResolvedValue({ data: null, error: null }),
           }),
         }),
       });
@@ -636,10 +637,10 @@ describe("LemonSqueezy Service", () => {
 
       // Mock getPlanBySlug
       mockSupabase.from.mockReturnValueOnce({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            eq: jest.fn().mockReturnValue({
-              maybeSingle: jest.fn().mockResolvedValue({ data: mockPlan, error: null }),
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            eq: mockFn().mockReturnValue({
+              maybeSingle: mockFn().mockResolvedValue({ data: mockPlan, error: null }),
             }),
           }),
         }),
@@ -657,9 +658,9 @@ describe("LemonSqueezy Service", () => {
 
       // Mock createSubscriptionRecord
       mockSupabase.from.mockReturnValueOnce({
-        insert: jest.fn().mockReturnValue({
-          select: jest.fn().mockReturnValue({
-            single: jest.fn().mockResolvedValue({
+        insert: mockFn().mockReturnValue({
+          select: mockFn().mockReturnValue({
+            single: mockFn().mockResolvedValue({
               data: { id: "sub-123" },
               error: null,
             }),
@@ -681,10 +682,10 @@ describe("LemonSqueezy Service", () => {
 
     it("should throw error when plan not found", async () => {
       mockSupabase.from.mockReturnValueOnce({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            eq: jest.fn().mockReturnValue({
-              maybeSingle: jest.fn().mockResolvedValue({ data: null, error: null }),
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            eq: mockFn().mockReturnValue({
+              maybeSingle: mockFn().mockResolvedValue({ data: null, error: null }),
             }),
           }),
         }),
@@ -704,10 +705,10 @@ describe("LemonSqueezy Service", () => {
       const mockPlan = { id: "plan-123", lemonsqueezy_variant_id_monthly: "var-123" };
 
       mockSupabase.from.mockReturnValueOnce({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            eq: jest.fn().mockReturnValue({
-              maybeSingle: jest.fn().mockResolvedValue({ data: mockPlan, error: null }),
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            eq: mockFn().mockReturnValue({
+              maybeSingle: mockFn().mockResolvedValue({ data: mockPlan, error: null }),
             }),
           }),
         }),
@@ -772,9 +773,9 @@ describe("LemonSqueezy Service", () => {
   describe("isWebhookEventProcessed", () => {
     it("should return true for processed event", async () => {
       mockSupabase.from.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            maybeSingle: jest.fn().mockResolvedValue({
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            maybeSingle: mockFn().mockResolvedValue({
               data: { processed: true },
               error: null,
             }),
@@ -788,9 +789,9 @@ describe("LemonSqueezy Service", () => {
 
     it("should return false for unprocessed event", async () => {
       mockSupabase.from.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            maybeSingle: jest.fn().mockResolvedValue({
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            maybeSingle: mockFn().mockResolvedValue({
               data: { processed: false },
               error: null,
             }),
@@ -804,9 +805,9 @@ describe("LemonSqueezy Service", () => {
 
     it("should return false when event not found", async () => {
       mockSupabase.from.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            maybeSingle: jest.fn().mockResolvedValue({ data: null, error: null }),
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            maybeSingle: mockFn().mockResolvedValue({ data: null, error: null }),
           }),
         }),
       });
@@ -819,7 +820,7 @@ describe("LemonSqueezy Service", () => {
   describe("recordWebhookEvent", () => {
     it("should record webhook event successfully", async () => {
       mockSupabase.from.mockReturnValue({
-        upsert: jest.fn().mockResolvedValue({ error: null }),
+        upsert: mockFn().mockResolvedValue({ error: null }),
       });
 
       await recordWebhookEvent("event-123", "subscription_created", { data: "test" }, true);
@@ -831,7 +832,7 @@ describe("LemonSqueezy Service", () => {
       const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {});
 
       mockSupabase.from.mockReturnValue({
-        upsert: jest.fn().mockResolvedValue({ error: { message: "Upsert failed" } }),
+        upsert: mockFn().mockResolvedValue({ error: { message: "Upsert failed" } }),
       });
 
       // Should not throw
@@ -847,12 +848,12 @@ describe("LemonSqueezy Service", () => {
       // Mock checkUserAccess
       mockSupabase.from
         .mockReturnValueOnce({
-          select: jest.fn().mockReturnValue({
-            eq: jest.fn().mockReturnValue({
-              in: jest.fn().mockReturnValue({
-                order: jest.fn().mockReturnValue({
-                  limit: jest.fn().mockReturnValue({
-                    maybeSingle: jest.fn().mockResolvedValue({
+          select: mockFn().mockReturnValue({
+            eq: mockFn().mockReturnValue({
+              in: mockFn().mockReturnValue({
+                order: mockFn().mockReturnValue({
+                  limit: mockFn().mockReturnValue({
+                    maybeSingle: mockFn().mockResolvedValue({
                       data: {
                         id: "sub-123",
                         plan_id: "plan-123",
@@ -868,18 +869,18 @@ describe("LemonSqueezy Service", () => {
           }),
         })
         .mockReturnValueOnce({
-          select: jest.fn().mockReturnValue({
-            eq: jest.fn().mockReturnValue({
-              eq: jest.fn().mockReturnValue({
-                gt: jest.fn().mockResolvedValue({ data: [], error: null }),
+          select: mockFn().mockReturnValue({
+            eq: mockFn().mockReturnValue({
+              eq: mockFn().mockReturnValue({
+                gt: mockFn().mockResolvedValue({ data: [], error: null }),
               }),
             }),
           }),
         })
         .mockReturnValueOnce({
-          select: jest.fn().mockReturnValue({
-            eq: jest.fn().mockReturnValue({
-              maybeSingle: jest.fn().mockResolvedValue({
+          select: mockFn().mockReturnValue({
+            eq: mockFn().mockReturnValue({
+              maybeSingle: mockFn().mockResolvedValue({
                 data: { ai_interactions_monthly: 1000 },
                 error: null,
               }),
@@ -888,12 +889,12 @@ describe("LemonSqueezy Service", () => {
         })
         // getUserSubscription again
         .mockReturnValueOnce({
-          select: jest.fn().mockReturnValue({
-            eq: jest.fn().mockReturnValue({
-              in: jest.fn().mockReturnValue({
-                order: jest.fn().mockReturnValue({
-                  limit: jest.fn().mockReturnValue({
-                    maybeSingle: jest.fn().mockResolvedValue({
+          select: mockFn().mockReturnValue({
+            eq: mockFn().mockReturnValue({
+              in: mockFn().mockReturnValue({
+                order: mockFn().mockReturnValue({
+                  limit: mockFn().mockReturnValue({
+                    maybeSingle: mockFn().mockResolvedValue({
                       data: {
                         id: "sub-123",
                         plan_id: "plan-123",
@@ -910,9 +911,9 @@ describe("LemonSqueezy Service", () => {
           }),
         })
         .mockReturnValueOnce({
-          select: jest.fn().mockReturnValue({
-            eq: jest.fn().mockReturnValue({
-              maybeSingle: jest.fn().mockResolvedValue({
+          select: mockFn().mockReturnValue({
+            eq: mockFn().mockReturnValue({
+              maybeSingle: mockFn().mockResolvedValue({
                 data: { ai_interactions_monthly: 1000 },
                 error: null,
               }),
@@ -920,12 +921,12 @@ describe("LemonSqueezy Service", () => {
           }),
         })
         .mockReturnValueOnce({
-          update: jest.fn().mockReturnValue({
-            eq: jest.fn().mockResolvedValue({ error: null }),
+          update: mockFn().mockReturnValue({
+            eq: mockFn().mockResolvedValue({ error: null }),
           }),
         })
         .mockReturnValueOnce({
-          insert: jest.fn().mockResolvedValue({ error: null }),
+          insert: mockFn().mockResolvedValue({ error: null }),
         });
 
       const result = await recordUsage("user-123", "chat_message", 1);
@@ -935,12 +936,12 @@ describe("LemonSqueezy Service", () => {
     it("should return false when user has no access", async () => {
       mockSupabase.from
         .mockReturnValueOnce({
-          select: jest.fn().mockReturnValue({
-            eq: jest.fn().mockReturnValue({
-              in: jest.fn().mockReturnValue({
-                order: jest.fn().mockReturnValue({
-                  limit: jest.fn().mockReturnValue({
-                    maybeSingle: jest.fn().mockResolvedValue({ data: null, error: null }),
+          select: mockFn().mockReturnValue({
+            eq: mockFn().mockReturnValue({
+              in: mockFn().mockReturnValue({
+                order: mockFn().mockReturnValue({
+                  limit: mockFn().mockReturnValue({
+                    maybeSingle: mockFn().mockResolvedValue({ data: null, error: null }),
                   }),
                 }),
               }),
@@ -948,10 +949,10 @@ describe("LemonSqueezy Service", () => {
           }),
         })
         .mockReturnValueOnce({
-          select: jest.fn().mockReturnValue({
-            eq: jest.fn().mockReturnValue({
-              eq: jest.fn().mockReturnValue({
-                gt: jest.fn().mockResolvedValue({ data: [], error: null }),
+          select: mockFn().mockReturnValue({
+            eq: mockFn().mockReturnValue({
+              eq: mockFn().mockReturnValue({
+                gt: mockFn().mockResolvedValue({ data: [], error: null }),
               }),
             }),
           }),
@@ -968,9 +969,9 @@ describe("LemonSqueezy Service", () => {
 
       mockSupabase.from
         .mockReturnValueOnce({
-          select: jest.fn().mockReturnValue({
-            eq: jest.fn().mockReturnValue({
-              maybeSingle: jest.fn().mockResolvedValue({
+          select: mockFn().mockReturnValue({
+            eq: mockFn().mockReturnValue({
+              maybeSingle: mockFn().mockResolvedValue({
                 data: {
                   id: "sub-123",
                   lemonsqueezy_subscription_id: "ls-sub-123",
@@ -983,9 +984,9 @@ describe("LemonSqueezy Service", () => {
         })
         // For cancelSubscription internal getSubscriptionByLemonSqueezyId
         .mockReturnValueOnce({
-          select: jest.fn().mockReturnValue({
-            eq: jest.fn().mockReturnValue({
-              maybeSingle: jest.fn().mockResolvedValue({
+          select: mockFn().mockReturnValue({
+            eq: mockFn().mockReturnValue({
+              maybeSingle: mockFn().mockResolvedValue({
                 data: {
                   id: "sub-123",
                   lemonsqueezy_subscription_id: "ls-sub-123",
@@ -996,10 +997,10 @@ describe("LemonSqueezy Service", () => {
           }),
         })
         .mockReturnValueOnce({
-          update: jest.fn().mockReturnValue({
-            eq: jest.fn().mockReturnValue({
-              select: jest.fn().mockReturnValue({
-                single: jest.fn().mockResolvedValue({
+          update: mockFn().mockReturnValue({
+            eq: mockFn().mockReturnValue({
+              select: mockFn().mockReturnValue({
+                single: mockFn().mockResolvedValue({
                   data: { id: "sub-123", status: "canceled" },
                   error: null,
                 }),
@@ -1020,9 +1021,9 @@ describe("LemonSqueezy Service", () => {
       const pastDate = new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString();
 
       mockSupabase.from.mockReturnValueOnce({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            maybeSingle: jest.fn().mockResolvedValue({
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            maybeSingle: mockFn().mockResolvedValue({
               data: {
                 id: "sub-123",
                 money_back_eligible_until: pastDate,
@@ -1041,9 +1042,9 @@ describe("LemonSqueezy Service", () => {
 
     it("should return error when subscription not found", async () => {
       mockSupabase.from.mockReturnValueOnce({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            maybeSingle: jest.fn().mockResolvedValue({ data: null, error: null }),
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            maybeSingle: mockFn().mockResolvedValue({ data: null, error: null }),
           }),
         }),
       });
@@ -1060,12 +1061,12 @@ describe("LemonSqueezy Service", () => {
       const existingSubscription = { id: "sub-123", status: "active" };
 
       mockSupabase.from.mockReturnValueOnce({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            in: jest.fn().mockReturnValue({
-              order: jest.fn().mockReturnValue({
-                limit: jest.fn().mockReturnValue({
-                  maybeSingle: jest.fn().mockResolvedValue({
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            in: mockFn().mockReturnValue({
+              order: mockFn().mockReturnValue({
+                limit: mockFn().mockReturnValue({
+                  maybeSingle: mockFn().mockResolvedValue({
                     data: existingSubscription,
                     error: null,
                   }),
@@ -1086,12 +1087,12 @@ describe("LemonSqueezy Service", () => {
 
       mockSupabase.from
         .mockReturnValueOnce({
-          select: jest.fn().mockReturnValue({
-            eq: jest.fn().mockReturnValue({
-              in: jest.fn().mockReturnValue({
-                order: jest.fn().mockReturnValue({
-                  limit: jest.fn().mockReturnValue({
-                    maybeSingle: jest.fn().mockResolvedValue({ data: null, error: null }),
+          select: mockFn().mockReturnValue({
+            eq: mockFn().mockReturnValue({
+              in: mockFn().mockReturnValue({
+                order: mockFn().mockReturnValue({
+                  limit: mockFn().mockReturnValue({
+                    maybeSingle: mockFn().mockResolvedValue({ data: null, error: null }),
                   }),
                 }),
               }),
@@ -1099,18 +1100,18 @@ describe("LemonSqueezy Service", () => {
           }),
         })
         .mockReturnValueOnce({
-          select: jest.fn().mockReturnValue({
-            eq: jest.fn().mockReturnValue({
-              eq: jest.fn().mockReturnValue({
-                maybeSingle: jest.fn().mockResolvedValue({ data: starterPlan, error: null }),
+          select: mockFn().mockReturnValue({
+            eq: mockFn().mockReturnValue({
+              eq: mockFn().mockReturnValue({
+                maybeSingle: mockFn().mockResolvedValue({ data: starterPlan, error: null }),
               }),
             }),
           }),
         })
         .mockReturnValueOnce({
-          insert: jest.fn().mockReturnValue({
-            select: jest.fn().mockReturnValue({
-              single: jest.fn().mockResolvedValue({ data: newSubscription, error: null }),
+          insert: mockFn().mockReturnValue({
+            select: mockFn().mockReturnValue({
+              single: mockFn().mockResolvedValue({ data: newSubscription, error: null }),
             }),
           }),
         });
@@ -1124,12 +1125,12 @@ describe("LemonSqueezy Service", () => {
 
       mockSupabase.from
         .mockReturnValueOnce({
-          select: jest.fn().mockReturnValue({
-            eq: jest.fn().mockReturnValue({
-              in: jest.fn().mockReturnValue({
-                order: jest.fn().mockReturnValue({
-                  limit: jest.fn().mockReturnValue({
-                    maybeSingle: jest.fn().mockResolvedValue({ data: null, error: null }),
+          select: mockFn().mockReturnValue({
+            eq: mockFn().mockReturnValue({
+              in: mockFn().mockReturnValue({
+                order: mockFn().mockReturnValue({
+                  limit: mockFn().mockReturnValue({
+                    maybeSingle: mockFn().mockResolvedValue({ data: null, error: null }),
                   }),
                 }),
               }),
@@ -1137,10 +1138,10 @@ describe("LemonSqueezy Service", () => {
           }),
         })
         .mockReturnValueOnce({
-          select: jest.fn().mockReturnValue({
-            eq: jest.fn().mockReturnValue({
-              eq: jest.fn().mockReturnValue({
-                maybeSingle: jest.fn().mockResolvedValue({ data: null, error: null }),
+          select: mockFn().mockReturnValue({
+            eq: mockFn().mockReturnValue({
+              eq: mockFn().mockReturnValue({
+                maybeSingle: mockFn().mockResolvedValue({ data: null, error: null }),
               }),
             }),
           }),

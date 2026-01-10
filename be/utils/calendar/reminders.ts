@@ -2,6 +2,11 @@ import type { calendar_v3 } from "googleapis";
 import { SUPABASE } from "@/config";
 import { fetchCredentialsByEmail } from "@/utils/auth";
 import { initUserSupabaseCalendarWithTokensAndUpdateTokens } from "./init";
+import {
+  getPreference,
+  updatePreference,
+  type ReminderDefaultsPreference,
+} from "@/services/user-preferences-service";
 
 export interface EventReminder {
   method: "email" | "popup";
@@ -22,17 +27,7 @@ export interface ReminderPreferences {
 export async function getUserReminderPreferences(
   userId: string,
 ): Promise<ReminderPreferences | null> {
-  const { data, error } = await SUPABASE.from("user_preferences")
-    .select("preference_value")
-    .eq("user_id", userId)
-    .eq("preference_key", "reminder_defaults")
-    .maybeSingle();
-
-  if (error || !data) {
-    return null;
-  }
-
-  return data.preference_value as unknown as ReminderPreferences;
+  return getPreference<ReminderDefaultsPreference>(userId, "reminder_defaults");
 }
 
 export async function getUserIdByEmail(email: string): Promise<string | null> {
@@ -138,20 +133,5 @@ export async function saveUserReminderPreferences(
   userId: string,
   preferences: ReminderPreferences,
 ): Promise<void> {
-  const preferenceValue = JSON.parse(JSON.stringify(preferences));
-
-  const { error } = await SUPABASE.from("user_preferences").upsert(
-    {
-      user_id: userId,
-      preference_key: "reminder_defaults",
-      preference_value: preferenceValue,
-      category: "assistant",
-      updated_at: new Date().toISOString(),
-    },
-    { onConflict: "user_id,preference_key" },
-  );
-
-  if (error) {
-    throw new Error(`Failed to save reminder preferences: ${error.message}`);
-  }
+  await updatePreference(userId, "reminder_defaults", preferences);
 }

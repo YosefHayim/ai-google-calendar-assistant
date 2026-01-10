@@ -1,19 +1,20 @@
-import { SUPABASE } from "@/config";
 import { logger } from "@/utils/logger";
 import { telegramConversation } from "@/utils/conversation/TelegramConversationAdapter";
+import {
+  getPreference,
+  updatePreference,
+  type AllyBrainPreference,
+  type VoicePreference,
+  PREFERENCE_DEFAULTS,
+} from "@/services/user-preferences-service";
 
 const getUserIdFromTelegram = (telegramUserId: number) =>
   telegramConversation.getUserIdFromTelegram(telegramUserId);
 
-export type AllyBrainPreference = {
-  enabled: boolean;
-  instructions: string;
-};
+export type { AllyBrainPreference, VoicePreference };
 
-const DEFAULT_ALLY_BRAIN: AllyBrainPreference = {
-  enabled: false,
-  instructions: "",
-};
+const DEFAULT_ALLY_BRAIN = PREFERENCE_DEFAULTS.ally_brain as AllyBrainPreference;
+const DEFAULT_VOICE_PREFERENCE = PREFERENCE_DEFAULTS.voice_preference as VoicePreference;
 
 export const getAllyBrainForTelegram = async (
   telegramUserId: number,
@@ -24,22 +25,8 @@ export const getAllyBrainForTelegram = async (
       return null;
     }
 
-    const { data, error } = await SUPABASE.from("user_preferences")
-      .select("preference_value")
-      .eq("user_id", userId)
-      .eq("preference_key", "ally_brain")
-      .maybeSingle();
-
-    if (error) {
-      logger.error(`ally-brain: Error fetching preference: ${error.message}`);
-      return null;
-    }
-
-    if (!data) {
-      return DEFAULT_ALLY_BRAIN;
-    }
-
-    return data.preference_value as unknown as AllyBrainPreference;
+    const result = await getPreference<AllyBrainPreference>(userId, "ally_brain");
+    return result ?? DEFAULT_ALLY_BRAIN;
   } catch (error) {
     logger.error(`ally-brain: Failed to get preference: ${error}`);
     return null;
@@ -59,24 +46,7 @@ export const updateAllyBrainForTelegram = async (
       return false;
     }
 
-    const { error } = await SUPABASE.from("user_preferences").upsert(
-      {
-        user_id: userId,
-        preference_key: "ally_brain",
-        preference_value: value,
-        category: "assistant",
-        updated_at: new Date().toISOString(),
-      },
-      {
-        onConflict: "user_id,preference_key",
-      },
-    );
-
-    if (error) {
-      logger.error(`ally-brain: Error updating preference: ${error.message}`);
-      return false;
-    }
-
+    await updatePreference(userId, "ally_brain", value);
     return true;
   } catch (error) {
     logger.error(`ally-brain: Failed to update preference: ${error}`);
@@ -130,16 +100,6 @@ export const clearAllyBrainInstructions = async (
   return updateAllyBrainForTelegram(telegramUserId, updated);
 };
 
-export type VoicePreference = {
-  enabled: boolean;
-  voice: "alloy" | "echo" | "fable" | "onyx" | "nova" | "shimmer";
-};
-
-const DEFAULT_VOICE_PREFERENCE: VoicePreference = {
-  enabled: true,
-  voice: "alloy",
-};
-
 export const getVoicePreferenceForTelegram = async (
   telegramUserId: number,
 ): Promise<VoicePreference> => {
@@ -149,22 +109,8 @@ export const getVoicePreferenceForTelegram = async (
       return DEFAULT_VOICE_PREFERENCE;
     }
 
-    const { data, error } = await SUPABASE.from("user_preferences")
-      .select("preference_value")
-      .eq("user_id", userId)
-      .eq("preference_key", "voice_preference")
-      .maybeSingle();
-
-    if (error) {
-      logger.error(`voice-preference: Error fetching: ${error.message}`);
-      return DEFAULT_VOICE_PREFERENCE;
-    }
-
-    if (!data) {
-      return DEFAULT_VOICE_PREFERENCE;
-    }
-
-    return data.preference_value as unknown as VoicePreference;
+    const result = await getPreference<VoicePreference>(userId, "voice_preference");
+    return result ?? DEFAULT_VOICE_PREFERENCE;
   } catch (error) {
     logger.error(`voice-preference: Failed to get: ${error}`);
     return DEFAULT_VOICE_PREFERENCE;

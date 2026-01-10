@@ -1,6 +1,9 @@
 import { jest } from "@jest/globals";
 import type { calendar_v3 } from "googleapis";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyFn = (...args: any[]) => any;
+
 /**
  * Mock Google Calendar API responses and data
  */
@@ -116,62 +119,62 @@ export const mockCalendarList: calendar_v3.Schema$CalendarList = {
  */
 export const createMockCalendarClient = () => {
   const mockEventsApi = {
-    list: jest.fn(),
-    get: jest.fn(),
-    insert: jest.fn(),
-    update: jest.fn(),
-    patch: jest.fn(),
-    delete: jest.fn(),
-    instances: jest.fn(),
-    move: jest.fn(),
-    quickAdd: jest.fn(),
-    watch: jest.fn(),
+    list: jest.fn<AnyFn>(),
+    get: jest.fn<AnyFn>(),
+    insert: jest.fn<AnyFn>(),
+    update: jest.fn<AnyFn>(),
+    patch: jest.fn<AnyFn>(),
+    delete: jest.fn<AnyFn>(),
+    instances: jest.fn<AnyFn>(),
+    move: jest.fn<AnyFn>(),
+    quickAdd: jest.fn<AnyFn>(),
+    watch: jest.fn<AnyFn>(),
   };
 
   const mockCalendarsApi = {
-    get: jest.fn(),
-    insert: jest.fn(),
-    update: jest.fn(),
-    patch: jest.fn(),
-    delete: jest.fn(),
-    clear: jest.fn(),
+    get: jest.fn<AnyFn>(),
+    insert: jest.fn<AnyFn>(),
+    update: jest.fn<AnyFn>(),
+    patch: jest.fn<AnyFn>(),
+    delete: jest.fn<AnyFn>(),
+    clear: jest.fn<AnyFn>(),
   };
 
   const mockCalendarListApi = {
-    list: jest.fn(),
-    get: jest.fn(),
-    insert: jest.fn(),
-    update: jest.fn(),
-    patch: jest.fn(),
-    delete: jest.fn(),
-    watch: jest.fn(),
+    list: jest.fn<AnyFn>(),
+    get: jest.fn<AnyFn>(),
+    insert: jest.fn<AnyFn>(),
+    update: jest.fn<AnyFn>(),
+    patch: jest.fn<AnyFn>(),
+    delete: jest.fn<AnyFn>(),
+    watch: jest.fn<AnyFn>(),
   };
 
   // Default successful responses
   mockEventsApi.list.mockResolvedValue({ data: mockEventsList });
   mockEventsApi.get.mockResolvedValue({ data: mockCalendarEvent });
-  mockEventsApi.insert.mockImplementation(({ requestBody }) =>
+  mockEventsApi.insert.mockImplementation((args: { requestBody: any }) =>
     Promise.resolve({
       data: {
         ...mockCalendarEvent,
-        ...requestBody,
+        ...args.requestBody,
         id: `mock-event-${Date.now()}`,
       },
     }),
   );
-  mockEventsApi.update.mockImplementation(({ requestBody }) =>
+  mockEventsApi.update.mockImplementation((args: { requestBody: any }) =>
     Promise.resolve({
       data: {
         ...mockCalendarEvent,
-        ...requestBody,
+        ...args.requestBody,
       },
     }),
   );
-  mockEventsApi.patch.mockImplementation(({ requestBody }) =>
+  mockEventsApi.patch.mockImplementation((args: { requestBody: any }) =>
     Promise.resolve({
       data: {
         ...mockCalendarEvent,
-        ...requestBody,
+        ...args.requestBody,
       },
     }),
   );
@@ -356,8 +359,8 @@ export const mockDateUtils = {
  * Mock OAuth2 client for Google Calendar authentication
  */
 export const createMockOAuth2Client = () => ({
-  setCredentials: jest.fn(),
-  getAccessToken: jest.fn().mockResolvedValue({
+  setCredentials: jest.fn<AnyFn>(),
+  getAccessToken: jest.fn<AnyFn>().mockResolvedValue({
     token: "mock-access-token",
     res: {
       status: 200,
@@ -368,21 +371,21 @@ export const createMockOAuth2Client = () => ({
       },
     },
   }),
-  refreshAccessToken: jest.fn().mockResolvedValue({
+  refreshAccessToken: jest.fn<AnyFn>().mockResolvedValue({
     credentials: {
       access_token: "mock-refreshed-token",
       refresh_token: "mock-refresh-token",
       expiry_date: Date.now() + 3600000,
     },
   }),
-  getToken: jest.fn().mockResolvedValue({
+  getToken: jest.fn<AnyFn>().mockResolvedValue({
     tokens: {
       access_token: "mock-access-token",
       refresh_token: "mock-refresh-token",
       expiry_date: Date.now() + 3600000,
     },
   }),
-  generateAuthUrl: jest.fn().mockReturnValue("https://accounts.google.com/o/oauth2/v2/auth?mock=true"),
+  generateAuthUrl: jest.fn<AnyFn>().mockReturnValue("https://accounts.google.com/o/oauth2/v2/auth?mock=true"),
   _clientId: "mock-client-id",
   _clientSecret: "mock-client-secret",
 });

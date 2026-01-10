@@ -1,13 +1,14 @@
 import { jest, describe, it, expect, beforeEach } from "@jest/globals";
+import { mockFn } from "../../test-utils";
 
 // Mock functions
-const mockGenerateAuthUrl = jest.fn<() => string>();
-const mockSetCredentials = jest.fn<() => void>();
-const mockRefreshAccessToken = jest.fn<() => Promise<{ credentials: unknown }>>();
-const mockFindUserWithGoogleTokens = jest.fn<() => Promise<{ data: unknown; error: string | null }>>();
-const mockFindUserIdByEmail = jest.fn<() => Promise<string | null>>();
-const mockUpdateGoogleTokens = jest.fn<() => Promise<void>>();
-const mockDeactivateGoogleTokens = jest.fn<() => Promise<void>>();
+const mockGenerateAuthUrl = mockFn();
+const mockSetCredentials = mockFn();
+const mockRefreshAccessToken = mockFn();
+const mockFindUserWithGoogleTokens = mockFn();
+const mockFindUserIdByEmail = mockFn();
+const mockUpdateGoogleTokens = mockFn();
+const mockDeactivateGoogleTokens = mockFn();
 
 // Create a mock OAuth2 class
 class MockOAuth2 {
@@ -296,7 +297,7 @@ describe("Google Token Utilities", () => {
   describe("persistGoogleTokens", () => {
     it("should persist tokens for existing user", async () => {
       mockFindUserIdByEmail.mockResolvedValue("user-123");
-      mockUpdateGoogleTokens.mockResolvedValue();
+      mockUpdateGoogleTokens.mockResolvedValue(undefined);
 
       await persistGoogleTokens("test@example.com", {
         accessToken: "new-access-token",
@@ -326,7 +327,7 @@ describe("Google Token Utilities", () => {
   describe("deactivateGoogleTokens", () => {
     it("should deactivate tokens for existing user", async () => {
       mockFindUserIdByEmail.mockResolvedValue("user-123");
-      mockDeactivateGoogleTokens.mockResolvedValue();
+      mockDeactivateGoogleTokens.mockResolvedValue(undefined);
 
       await deactivateGoogleTokens("test@example.com");
 

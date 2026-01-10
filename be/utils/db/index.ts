@@ -1,2 +1,2 @@
 export * from "./subscription-status";
-export * from "./gap-repository";
+// gap-repository removed - gap_candidates table dropped for simpler architecture

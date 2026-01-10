@@ -1,15 +1,16 @@
 import { jest, describe, it, expect, beforeEach } from "@jest/globals";
 import type { Request, Response, NextFunction } from "express";
+import { mockFn } from "../../test-utils";
 
 // Mock dependencies
-const mockSignUp = jest.fn<() => Promise<{ data: unknown; error: unknown }>>();
-const mockSignInWithPassword = jest.fn<() => Promise<{ data: unknown; error: unknown }>>();
-const mockVerifyOtp = jest.fn<() => Promise<{ data: unknown; error: unknown }>>();
-const mockRefreshSession = jest.fn<() => Promise<{ data: unknown }>>();
-const mockSetAuthCookies = jest.fn<() => void>();
-const mockClearAuthCookies = jest.fn<() => void>();
-const mockSupabaseThirdPartySignInOrSignUp = jest.fn<() => Promise<void>>();
-const mockSendR = jest.fn<() => void>();
+const mockSignUp = mockFn();
+const mockSignInWithPassword = mockFn();
+const mockVerifyOtp = mockFn();
+const mockRefreshSession = mockFn();
+const mockSetAuthCookies = mockFn();
+const mockClearAuthCookies = mockFn();
+const mockSupabaseThirdPartySignInOrSignUp = mockFn();
+const mockSendR = mockFn();
 
 jest.mock("@/config", () => ({
   PROVIDERS: {
@@ -62,13 +63,20 @@ describe("authController", () => {
     jest.clearAllMocks();
     mockReq = {
       body: {},
-      user: { id: "user-123", email: "test@example.com" },
+      user: {
+        id: "user-123",
+        email: "test@example.com",
+        app_metadata: {},
+        user_metadata: {},
+        aud: "authenticated",
+        created_at: new Date().toISOString(),
+      },
     };
     mockRes = {
-      status: jest.fn().mockReturnThis() as unknown as Response["status"],
-      json: jest.fn().mockReturnThis() as unknown as Response["json"],
+      status: mockFn().mockReturnThis() as unknown as Response["status"],
+      json: mockFn().mockReturnThis() as unknown as Response["json"],
     };
-    mockNext = jest.fn();
+    mockNext = mockFn();
   });
 
   describe("signUpUserReg", () => {
@@ -234,7 +242,7 @@ describe("authController", () => {
 
   describe("signUpOrSignInWithGoogle", () => {
     it("should call supabaseThirdPartySignInOrSignUp with Google provider", async () => {
-      mockSupabaseThirdPartySignInOrSignUp.mockResolvedValue();
+      mockSupabaseThirdPartySignInOrSignUp.mockResolvedValue(undefined);
 
       await authController.signUpOrSignInWithGoogle(
         mockReq as Request,
@@ -251,7 +259,7 @@ describe("authController", () => {
 
   describe("signUpUserViaGitHub", () => {
     it("should call supabaseThirdPartySignInOrSignUp with GitHub provider", async () => {
-      mockSupabaseThirdPartySignInOrSignUp.mockResolvedValue();
+      mockSupabaseThirdPartySignInOrSignUp.mockResolvedValue(undefined);
 
       await authController.signUpUserViaGitHub(
         mockReq as Request,
@@ -386,7 +394,14 @@ describe("authController", () => {
 
   describe("checkSession", () => {
     it("should return session info for authenticated user", async () => {
-      mockReq.user = { id: "user-123", email: "test@example.com" };
+      mockReq.user = {
+        id: "user-123",
+        email: "test@example.com",
+        app_metadata: {},
+        user_metadata: {},
+        aud: "authenticated",
+        created_at: new Date().toISOString(),
+      };
 
       await authController.checkSession(
         mockReq as Request,

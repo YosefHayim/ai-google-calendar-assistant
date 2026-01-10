@@ -95,6 +95,8 @@ export interface CalendarEvent {
   reminders: { useDefault: boolean; overrides?: EventReminder[] };
   created: string;
   updated: string;
+  recurringEventId?: string;
+  recurrence?: string[];
 }
 
 export interface CustomEvent {

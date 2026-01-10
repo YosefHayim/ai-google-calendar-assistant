@@ -16,59 +16,101 @@ import type {
 } from "@/types";
 
 /**
- * Get dashboard KPI stats from the view
+ * Get dashboard KPI stats via direct queries
  */
 export const getDashboardStats = async (): Promise<AdminDashboardStats> => {
-  const { data, error } = await SUPABASE.from("v_admin_dashboard_stats")
-    .select("*")
-    .single();
+  const now = new Date();
+  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
+  const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
+  const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString();
 
-  if (error) {
+  try {
+    // Run all queries in parallel
+    const [
+      { count: totalUsers },
+      { count: activeUsers },
+      { count: newUsersToday },
+      { count: newUsersWeek },
+      { count: newUsersMonth },
+      { count: activeSubscriptions },
+    ] = await Promise.all([
+      SUPABASE.from("users").select("id", { count: "exact", head: true }),
+      SUPABASE.from("users").select("id", { count: "exact", head: true }).eq("status", "active"),
+      SUPABASE.from("users").select("id", { count: "exact", head: true }).gte("created_at", todayStart),
+      SUPABASE.from("users").select("id", { count: "exact", head: true }).gte("created_at", weekAgo),
+      SUPABASE.from("users").select("id", { count: "exact", head: true }).gte("created_at", monthAgo),
+      SUPABASE.from("subscriptions").select("id", { count: "exact", head: true }).in("status", [...ACTIVE_SUBSCRIPTION_STATUSES]),
+    ]);
+
+    return {
+      totalUsers: totalUsers || 0,
+      activeUsers: activeUsers || 0,
+      newUsersToday: newUsersToday || 0,
+      newUsersWeek: newUsersWeek || 0,
+      newUsersMonth: newUsersMonth || 0,
+      activeSubscriptions: activeSubscriptions || 0,
+      totalRevenueCents: 0, // Revenue tracking via LemonSqueezy dashboard
+      mrrCents: 0, // MRR tracking via LemonSqueezy dashboard
+    };
+  } catch (error) {
     console.error("[Admin Service] Failed to fetch dashboard stats:", error);
-    throw new Error(`Failed to fetch dashboard stats: ${error.message}`);
+    throw new Error(`Failed to fetch dashboard stats: ${error}`);
   }
-
-  return {
-    totalUsers: data.total_users || 0,
-    activeUsers: data.active_users || 0,
-    newUsersToday: data.new_users_today || 0,
-    newUsersWeek: data.new_users_week || 0,
-    newUsersMonth: data.new_users_month || 0,
-    activeSubscriptions: data.active_subscriptions || 0,
-    totalRevenueCents: data.total_revenue_cents || 0,
-    mrrCents: data.mrr_cents || 0,
-  };
 };
 
 /**
- * Get subscription distribution from the view
+ * Get subscription distribution via direct queries
  */
 export const getSubscriptionDistribution = async (): Promise<
   SubscriptionDistribution[]
 > => {
-  const { data, error } = await SUPABASE.from("v_subscription_distribution")
-    .select("*");
+  try {
+    // Get active subscriptions grouped by plan
+    const { data: subscriptions, error: subError } = await SUPABASE.from("subscriptions")
+      .select("plan_id")
+      .in("status", [...ACTIVE_SUBSCRIPTION_STATUSES]);
 
-  if (error) {
-    console.error(
-      "[Admin Service] Failed to fetch subscription distribution:",
-      error
-    );
-    throw new Error(
-      `Failed to fetch subscription distribution: ${error.message}`
-    );
+    if (subError) {
+      throw subError;
+    }
+
+    // Get all plans
+    const { data: plans, error: planError } = await SUPABASE.from("plans")
+      .select("id, slug, name");
+
+    if (planError) {
+      throw planError;
+    }
+
+    // Count subscriptions per plan
+    const planCounts = new Map<string, number>();
+    const totalSubs = subscriptions?.length || 0;
+
+    for (const sub of subscriptions || []) {
+      const count = planCounts.get(sub.plan_id) || 0;
+      planCounts.set(sub.plan_id, count + 1);
+    }
+
+    // Build distribution
+    const distribution: SubscriptionDistribution[] = (plans || []).map((plan) => {
+      const count = planCounts.get(plan.id) || 0;
+      return {
+        planSlug: plan.slug || "unknown",
+        planName: plan.name || "Unknown",
+        subscriberCount: count,
+        percentage: totalSubs > 0 ? Math.round((count / totalSubs) * 100) : 0,
+      };
+    }).filter((d) => d.subscriberCount > 0);
+
+    return distribution;
+  } catch (error) {
+    console.error("[Admin Service] Failed to fetch subscription distribution:", error);
+    throw new Error(`Failed to fetch subscription distribution: ${error}`);
   }
-
-  return (data || []).map((item) => ({
-    planSlug: item.plan_slug || "unknown",
-    planName: item.plan_name || "Unknown",
-    subscriberCount: item.subscriber_count || 0,
-    percentage: item.percentage || 0,
-  }));
 };
 
 /**
- * Get paginated user list with filters using the view
+ * Get paginated user list with filters via direct queries
  */
 export const getUserList = async (
   params: AdminUserListParams
@@ -85,120 +127,170 @@ export const getUserList = async (
 
   const offset = (page - 1) * limit;
 
-  let query = SUPABASE.from("v_admin_user_list").select("*", { count: "exact" });
+  try {
+    // Query users directly
+    let query = SUPABASE.from("users").select("*", { count: "exact" });
 
-  // Apply filters
-  if (search) {
-    query = query.or(
-      `email.ilike.%${search}%,first_name.ilike.%${search}%,last_name.ilike.%${search}%`
-    );
-  }
-  if (status) {
-    query = query.eq("status", status);
-  }
-  if (role) {
-    query = query.eq("role", role);
-  }
+    // Apply filters
+    if (search) {
+      query = query.or(
+        `email.ilike.%${search}%,first_name.ilike.%${search}%,last_name.ilike.%${search}%`
+      );
+    }
+    if (status) {
+      query = query.eq("status", status);
+    }
+    if (role) {
+      query = query.eq("role", role);
+    }
 
-  // Apply sorting and pagination
-  query = query
-    .order(sortBy, { ascending: sortOrder === "asc" })
-    .range(offset, offset + limit - 1);
+    // Apply sorting and pagination
+    query = query
+      .order(sortBy, { ascending: sortOrder === "asc" })
+      .range(offset, offset + limit - 1);
 
-  const { data, error, count } = await query;
+    const { data, error, count } = await query;
 
-  if (error) {
+    if (error) {
+      throw error;
+    }
+
+    // Get subscriptions for these users
+    const userIds = (data || []).map((u: any) => u.id);
+    const { data: subscriptions } = userIds.length > 0
+      ? await SUPABASE.from("subscriptions")
+          .select("*, plans(name, slug)")
+          .in("user_id", userIds)
+          .in("status", [...ACTIVE_SUBSCRIPTION_STATUSES, ...MODIFIABLE_SUBSCRIPTION_STATUSES])
+      : { data: [] };
+
+    // Get oauth tokens to check connection status
+    const { data: oauthTokens } = userIds.length > 0
+      ? await SUPABASE.from("oauth_tokens")
+          .select("user_id")
+          .in("user_id", userIds)
+      : { data: [] };
+
+    const subsByUser = new Map<string, any>();
+    for (const sub of subscriptions || []) {
+      subsByUser.set(sub.user_id, sub);
+    }
+
+    const oauthByUser = new Set<string>();
+    for (const token of oauthTokens || []) {
+      oauthByUser.add(token.user_id);
+    }
+
+    const users: AdminUser[] = (data || []).map((user: any) => {
+      const sub = subsByUser.get(user.id);
+      return {
+        id: user.id || "",
+        email: user.email || "",
+        first_name: user.first_name,
+        last_name: user.last_name,
+        display_name: user.display_name,
+        avatar_url: user.avatar_url,
+        status: user.status || "active",
+        role: user.role || "user",
+        timezone: user.timezone,
+        locale: user.locale,
+        email_verified: user.email_verified,
+        created_at: user.created_at || new Date().toISOString(),
+        updated_at: user.updated_at || new Date().toISOString(),
+        last_login_at: user.last_login_at,
+        subscription: sub
+          ? {
+              id: sub.id,
+              plan_name: sub.plans?.name || "Unknown",
+              plan_slug: sub.plans?.slug || "unknown",
+              status: sub.status || "unknown",
+              interval: sub.interval || "monthly",
+              current_period_end: sub.current_period_end,
+              ai_interactions_used: sub.ai_interactions_used || 0,
+              credits_remaining: sub.credits_remaining || 0,
+            }
+          : null,
+        oauth_connected: oauthByUser.has(user.id),
+      };
+    });
+
+    return {
+      users,
+      total: count || 0,
+      page,
+      totalPages: Math.ceil((count || 0) / limit),
+    };
+  } catch (error) {
     console.error("[Admin Service] Failed to fetch users:", error);
-    throw new Error(`Failed to fetch users: ${error.message}`);
+    throw new Error(`Failed to fetch users: ${error}`);
   }
-
-  const users: AdminUser[] = (data || []).map((user: any) => ({
-    id: user.id || "",
-    email: user.email || "",
-    first_name: user.first_name,
-    last_name: user.last_name,
-    display_name: user.display_name,
-    avatar_url: user.avatar_url,
-    status: user.status || "active",
-    role: user.role || "user",
-    timezone: user.timezone,
-    locale: user.locale,
-    email_verified: user.email_verified,
-    created_at: user.created_at || new Date().toISOString(),
-    updated_at: user.updated_at || new Date().toISOString(),
-    last_login_at: null, // Not in view currently
-    subscription: user.subscription_id
-      ? {
-          id: user.subscription_id,
-          plan_name: user.plan_name || "Unknown",
-          plan_slug: user.plan_slug || "unknown",
-          status: user.subscription_status || "unknown",
-          interval: user.subscription_interval || "monthly",
-          current_period_end: user.current_period_end,
-          ai_interactions_used: user.ai_interactions_used || 0,
-          credits_remaining: user.credits_remaining || 0,
-        }
-      : null,
-    oauth_connected: user.has_oauth_connected || false,
-  }));
-
-  return {
-    users,
-    total: count || 0,
-    page,
-    totalPages: Math.ceil((count || 0) / limit),
-  };
 };
 
 /**
- * Get single user details by ID
+ * Get single user details by ID via direct queries
  */
 export const getUserById = async (userId: string): Promise<AdminUser | null> => {
-  const { data, error } = await SUPABASE.from("v_admin_user_list")
-    .select("*")
-    .eq("id", userId)
-    .single();
+  try {
+    const { data: user, error } = await SUPABASE.from("users")
+      .select("*")
+      .eq("id", userId)
+      .single();
 
-  if (error) {
-    if (error.code === "PGRST116") {
-      return null; // Not found
+    if (error) {
+      if (error.code === "PGRST116") {
+        return null; // Not found
+      }
+      throw error;
     }
+
+    if (!user) return null;
+
+    // Get subscription
+    const { data: subscription } = await SUPABASE.from("subscriptions")
+      .select("*, plans(name, slug)")
+      .eq("user_id", userId)
+      .in("status", [...ACTIVE_SUBSCRIPTION_STATUSES, ...MODIFIABLE_SUBSCRIPTION_STATUSES])
+      .maybeSingle();
+
+    // Check oauth connection
+    const { data: oauthToken } = await SUPABASE.from("oauth_tokens")
+      .select("id")
+      .eq("user_id", userId)
+      .maybeSingle();
+
+    return {
+      id: user.id || "",
+      email: user.email || "",
+      first_name: user.first_name,
+      last_name: user.last_name,
+      display_name: user.display_name,
+      avatar_url: user.avatar_url,
+      status: user.status || "active",
+      role: user.role || "user",
+      timezone: user.timezone,
+      locale: user.locale,
+      email_verified: user.email_verified,
+      created_at: user.created_at || new Date().toISOString(),
+      updated_at: user.updated_at || new Date().toISOString(),
+      last_login_at: user.last_login_at,
+      subscription: subscription
+        ? {
+            id: subscription.id,
+            plan_name: (subscription.plans as any)?.name || "Unknown",
+            plan_slug: (subscription.plans as any)?.slug || "unknown",
+            status: subscription.status || "unknown",
+            interval: subscription.interval || "monthly",
+            current_period_end: subscription.current_period_end,
+            ai_interactions_used: subscription.ai_interactions_used || 0,
+            credits_remaining: subscription.credits_remaining || 0,
+          }
+        : null,
+      oauth_connected: !!oauthToken,
+    };
+  } catch (error) {
     console.error("[Admin Service] Failed to fetch user:", error);
-    throw new Error(`Failed to fetch user: ${error.message}`);
+    throw new Error(`Failed to fetch user: ${error}`);
   }
-
-  if (!data) return null;
-
-  const userData = data as any;
-  return {
-    id: userData.id || "",
-    email: userData.email || "",
-    first_name: userData.first_name,
-    last_name: userData.last_name,
-    display_name: userData.display_name,
-    avatar_url: userData.avatar_url,
-    status: userData.status || "active",
-    role: userData.role || "user",
-    timezone: userData.timezone,
-    locale: userData.locale,
-    email_verified: userData.email_verified,
-    created_at: userData.created_at || new Date().toISOString(),
-    updated_at: userData.updated_at || new Date().toISOString(),
-    last_login_at: null,
-    subscription: userData.subscription_id
-      ? {
-          id: userData.subscription_id,
-          plan_name: userData.plan_name || "Unknown",
-          plan_slug: userData.plan_slug || "unknown",
-          status: userData.subscription_status || "unknown",
-          interval: userData.subscription_interval || "monthly",
-          current_period_end: userData.current_period_end,
-          ai_interactions_used: userData.ai_interactions_used || 0,
-          credits_remaining: userData.credits_remaining || 0,
-        }
-      : null,
-    oauth_connected: userData.has_oauth_connected || false,
-  };
 };
 
 /**
@@ -329,138 +421,36 @@ export const grantCredits = async (
 
 /**
  * Get payment history for admin view
+ * Note: Payment history table was removed - use LemonSqueezy dashboard
  */
-export const getPaymentHistory = async (params: {
+export const getPaymentHistory = async (_params: {
   page?: number;
   limit?: number;
   userId?: string;
   status?: string;
 }): Promise<{ payments: AdminPayment[]; total: number }> => {
-  const { page = 1, limit = 20, userId, status } = params;
-  const offset = (page - 1) * limit;
-
-  let query = SUPABASE.from("payment_history")
-    .select(
-      `
-      id,
-      user_id,
-      amount_cents,
-      currency,
-      status,
-      description,
-      created_at,
-      users!inner(email, first_name, last_name)
-    `,
-      { count: "exact" }
-    );
-
-  if (userId) query = query.eq("user_id", userId);
-  if (status) query = query.eq("status", status as any);
-
-  query = query
-    .order("created_at", { ascending: false })
-    .range(offset, offset + limit - 1);
-
-  const { data, error, count } = await query;
-
-  if (error) {
-    console.error("[Admin Service] Failed to fetch payment history:", error);
-    throw new Error(`Failed to fetch payment history: ${error.message}`);
-  }
-
-  const payments: AdminPayment[] = (data || []).map((payment: any) => ({
-    id: payment.id,
-    user_id: payment.user_id,
-    amount_cents: payment.amount_cents,
-    currency: payment.currency,
-    status: payment.status,
-    description: payment.description,
-    created_at: payment.created_at,
-    user_email: payment.users?.email,
-    user_name: [payment.users?.first_name, payment.users?.last_name]
-      .filter(Boolean)
-      .join(" "),
-  }));
-
-  return { payments, total: count || 0 };
+  // Payment history is now managed via LemonSqueezy dashboard
+  return { payments: [], total: 0 };
 };
 
 /**
  * Get admin audit logs
+ * Note: Audit logs table was removed for simplicity
  */
-export const getAuditLogs = async (params: {
+export const getAuditLogs = async (_params: {
   page?: number;
   limit?: number;
   adminUserId?: string;
   actionType?: string;
 }): Promise<{ logs: AdminAuditLogEntry[]; total: number }> => {
-  const { page = 1, limit = 50, adminUserId, actionType } = params;
-  const offset = (page - 1) * limit;
-
-  let query = SUPABASE.from("audit_logs")
-    .select(
-      `
-      id,
-      action,
-      admin_user_id,
-      admin_action_type,
-      resource_type,
-      resource_id,
-      old_values,
-      new_values,
-      ip_address,
-      user_agent,
-      created_at
-    `,
-      { count: "exact" }
-    )
-    .not("admin_user_id", "is", null);
-
-  if (adminUserId) query = query.eq("admin_user_id", adminUserId);
-  if (actionType) query = query.eq("admin_action_type", actionType);
-
-  query = query
-    .order("created_at", { ascending: false })
-    .range(offset, offset + limit - 1);
-
-  const { data, error, count } = await query;
-
-  if (error) {
-    console.error("[Admin Service] Failed to fetch audit logs:", error);
-    throw new Error(`Failed to fetch audit logs: ${error.message}`);
-  }
-
-  // Fetch admin emails separately for display
-  const adminIds = [...new Set((data || []).map((log: any) => log.admin_user_id))];
-  const { data: admins } = await SUPABASE.from("users")
-    .select("id, email")
-    .in("id", adminIds);
-
-  const adminEmailMap = new Map(
-    (admins || []).map((a: any) => [a.id, a.email])
-  );
-
-  const logs: AdminAuditLogEntry[] = (data || []).map((log: any) => ({
-    id: log.id,
-    action: log.action,
-    admin_user_id: log.admin_user_id,
-    admin_email: adminEmailMap.get(log.admin_user_id) || undefined,
-    resource_type: log.resource_type || "",
-    resource_id: log.resource_id || "",
-    old_values: log.old_values,
-    new_values: log.new_values,
-    ip_address: log.ip_address || "",
-    user_agent: log.user_agent || "",
-    created_at: log.created_at,
-  }));
-
-  return { logs, total: count || 0 };
+  // Audit logs feature removed for simpler architecture
+  return { logs: [], total: 0 };
 };
 
 /**
- * Log admin action to audit_logs
+ * Log admin action (no-op after audit_logs table removal)
  */
-export const logAdminAction = async (params: {
+export const logAdminAction = async (_params: {
   adminUserId: string;
   action: string;
   resourceType: string;
@@ -470,23 +460,9 @@ export const logAdminAction = async (params: {
   ipAddress?: string;
   userAgent?: string;
 }): Promise<void> => {
-  const { error } = await SUPABASE.from("audit_logs").insert({
-    admin_user_id: params.adminUserId,
-    admin_action_type: params.action,
-    action: params.action,
-    resource_type: params.resourceType,
-    resource_id: params.resourceId,
-    old_values: params.oldValues || null,
-    new_values: params.newValues || null,
-    ip_address: params.ipAddress || null,
-    user_agent: params.userAgent || null,
-    status: "success",
-  } as any);
-
-  if (error) {
-    console.error("[Admin Service] Failed to log admin action:", error);
-    // Don't throw - logging should not break the main operation
-  }
+  // Audit logging disabled - table removed for simpler architecture
+  // Console log for debugging if needed
+  console.log(`[Admin Action] ${_params.action} on ${_params.resourceType}/${_params.resourceId}`);
 };
 
 /**
@@ -536,6 +512,7 @@ export interface SubscriptionTrendPoint {
 
 /**
  * Get monthly revenue trends for the last N months
+ * Note: Revenue is now tracked via LemonSqueezy dashboard
  */
 export const getRevenueTrends = async (months: number = 6): Promise<RevenueTrendPoint[]> => {
   const trends: RevenueTrendPoint[] = [];
@@ -544,15 +521,6 @@ export const getRevenueTrends = async (months: number = 6): Promise<RevenueTrend
   for (let i = months - 1; i >= 0; i--) {
     const startOfMonth = new Date(now.getFullYear(), now.getMonth() - i, 1);
     const endOfMonth = new Date(now.getFullYear(), now.getMonth() - i + 1, 0, 23, 59, 59);
-
-    // Get revenue for this month
-    const { data: payments } = await SUPABASE.from("payment_history")
-      .select("amount_cents")
-      .eq("status", "succeeded")
-      .gte("created_at", startOfMonth.toISOString())
-      .lte("created_at", endOfMonth.toISOString());
-
-    const revenue = (payments || []).reduce((sum, p) => sum + (p.amount_cents || 0), 0);
 
     // Get new subscriptions for this month
     const { count: subCount } = await SUPABASE.from("subscriptions")
@@ -564,7 +532,7 @@ export const getRevenueTrends = async (months: number = 6): Promise<RevenueTrend
 
     trends.push({
       month: monthName,
-      revenue: revenue / 100, // Convert cents to dollars
+      revenue: 0, // Revenue tracking moved to LemonSqueezy dashboard
       subscriptions: subCount || 0,
     });
   }

@@ -1,12 +1,13 @@
 import type { NextFunction, Request, Response } from "express";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
+import { mockFn } from "../test-utils";
 
 // Now import after mocks are set up
 import { authHandler } from "../../middlewares/auth-handler";
 
 // Create mocks before imports
-const mockGetUser = jest.fn();
-const mockSendR = jest.fn();
+const mockGetUser = mockFn();
+const mockSendR = mockFn();
 const mockSupabase = {
   auth: {
     getUser: mockGetUser,
@@ -34,17 +35,17 @@ const mockUser = {
 describe("authHandler", () => {
   let mockRequest: Partial<Request>;
   let mockResponse: Partial<Response>;
-  let mockNext: jest.Mock<NextFunction>;
+  let mockNext: ReturnType<typeof mockFn>;
 
   beforeEach(() => {
     mockRequest = {
       headers: {},
     };
     mockResponse = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
+      status: mockFn().mockReturnThis(),
+      json: mockFn(),
     };
-    mockNext = jest.fn() as unknown as jest.Mock<NextFunction>;
+    mockNext = mockFn();
     mockGetUser.mockClear();
     mockSendR.mockClear();
   });

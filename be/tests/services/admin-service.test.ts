@@ -1,10 +1,11 @@
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
+import { mockFn } from "../test-utils";
 
 // Mock dependencies before imports
 const mockSupabase = {
-  from: jest.fn(),
+  from: mockFn(),
   auth: {
-    resetPasswordForEmail: jest.fn(),
+    resetPasswordForEmail: mockFn(),
   },
 };
 
@@ -46,8 +47,8 @@ describe("Admin Service", () => {
       };
 
       mockSupabase.from.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          single: jest.fn().mockResolvedValue({ data: mockStats, error: null }),
+        select: mockFn().mockReturnValue({
+          single: mockFn().mockResolvedValue({ data: mockStats, error: null }),
         }),
       });
 
@@ -68,8 +69,8 @@ describe("Admin Service", () => {
 
     it("should handle null values with defaults", async () => {
       mockSupabase.from.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          single: jest.fn().mockResolvedValue({
+        select: mockFn().mockReturnValue({
+          single: mockFn().mockResolvedValue({
             data: {
               total_users: null,
               active_users: null,
@@ -94,8 +95,8 @@ describe("Admin Service", () => {
 
     it("should throw error when fetch fails", async () => {
       mockSupabase.from.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          single: jest.fn().mockResolvedValue({
+        select: mockFn().mockReturnValue({
+          single: mockFn().mockResolvedValue({
             data: null,
             error: { message: "Database error" },
           }),
@@ -115,7 +116,7 @@ describe("Admin Service", () => {
       ];
 
       mockSupabase.from.mockReturnValue({
-        select: jest.fn().mockResolvedValue({ data: mockData, error: null }),
+        select: mockFn().mockResolvedValue({ data: mockData, error: null }),
       });
 
       const distribution = await getSubscriptionDistribution();
@@ -132,7 +133,7 @@ describe("Admin Service", () => {
 
     it("should handle null values with defaults", async () => {
       mockSupabase.from.mockReturnValue({
-        select: jest.fn().mockResolvedValue({
+        select: mockFn().mockResolvedValue({
           data: [{ plan_slug: null, plan_name: null, subscriber_count: null, percentage: null }],
           error: null,
         }),
@@ -150,7 +151,7 @@ describe("Admin Service", () => {
 
     it("should return empty array when no data", async () => {
       mockSupabase.from.mockReturnValue({
-        select: jest.fn().mockResolvedValue({ data: null, error: null }),
+        select: mockFn().mockResolvedValue({ data: null, error: null }),
       });
 
       const distribution = await getSubscriptionDistribution();
@@ -159,7 +160,7 @@ describe("Admin Service", () => {
 
     it("should throw error when fetch fails", async () => {
       mockSupabase.from.mockReturnValue({
-        select: jest.fn().mockResolvedValue({
+        select: mockFn().mockResolvedValue({
           data: null,
           error: { message: "Database error" },
         }),
@@ -191,12 +192,12 @@ describe("Admin Service", () => {
       ];
 
       mockSupabase.from.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          or: jest.fn().mockReturnValue({
-            eq: jest.fn().mockReturnValue({
-              eq: jest.fn().mockReturnValue({
-                order: jest.fn().mockReturnValue({
-                  range: jest.fn().mockResolvedValue({
+        select: mockFn().mockReturnValue({
+          or: mockFn().mockReturnValue({
+            eq: mockFn().mockReturnValue({
+              eq: mockFn().mockReturnValue({
+                order: mockFn().mockReturnValue({
+                  range: mockFn().mockResolvedValue({
                     data: mockUsers,
                     error: null,
                     count: 1,
@@ -205,10 +206,10 @@ describe("Admin Service", () => {
               }),
             }),
           }),
-          eq: jest.fn().mockReturnValue({
-            eq: jest.fn().mockReturnValue({
-              order: jest.fn().mockReturnValue({
-                range: jest.fn().mockResolvedValue({
+          eq: mockFn().mockReturnValue({
+            eq: mockFn().mockReturnValue({
+              order: mockFn().mockReturnValue({
+                range: mockFn().mockResolvedValue({
                   data: mockUsers,
                   error: null,
                   count: 1,
@@ -216,8 +217,8 @@ describe("Admin Service", () => {
               }),
             }),
           }),
-          order: jest.fn().mockReturnValue({
-            range: jest.fn().mockResolvedValue({
+          order: mockFn().mockReturnValue({
+            range: mockFn().mockResolvedValue({
               data: mockUsers,
               error: null,
               count: 1,
@@ -237,10 +238,10 @@ describe("Admin Service", () => {
 
     it("should apply search filter", async () => {
       const mockQuery = {
-        or: jest.fn().mockReturnThis(),
-        eq: jest.fn().mockReturnThis(),
-        order: jest.fn().mockReturnThis(),
-        range: jest.fn().mockResolvedValue({ data: [], error: null, count: 0 }),
+        or: mockFn().mockReturnThis(),
+        eq: mockFn().mockReturnThis(),
+        order: mockFn().mockReturnThis(),
+        range: mockFn().mockResolvedValue({ data: [], error: null, count: 0 }),
       };
 
       mockSupabase.from.mockReturnValue({
@@ -256,10 +257,10 @@ describe("Admin Service", () => {
 
     it("should apply status and role filters", async () => {
       const mockQuery = {
-        or: jest.fn().mockReturnThis(),
-        eq: jest.fn().mockReturnThis(),
-        order: jest.fn().mockReturnThis(),
-        range: jest.fn().mockResolvedValue({ data: [], error: null, count: 0 }),
+        or: mockFn().mockReturnThis(),
+        eq: mockFn().mockReturnThis(),
+        order: mockFn().mockReturnThis(),
+        range: mockFn().mockResolvedValue({ data: [], error: null, count: 0 }),
       };
 
       mockSupabase.from.mockReturnValue({
@@ -274,9 +275,9 @@ describe("Admin Service", () => {
 
     it("should calculate totalPages correctly", async () => {
       mockSupabase.from.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          order: jest.fn().mockReturnValue({
-            range: jest.fn().mockResolvedValue({ data: [], error: null, count: 95 }),
+        select: mockFn().mockReturnValue({
+          order: mockFn().mockReturnValue({
+            range: mockFn().mockResolvedValue({ data: [], error: null, count: 95 }),
           }),
         }),
       });
@@ -288,9 +289,9 @@ describe("Admin Service", () => {
 
     it("should throw error when fetch fails", async () => {
       mockSupabase.from.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          order: jest.fn().mockReturnValue({
-            range: jest.fn().mockResolvedValue({
+        select: mockFn().mockReturnValue({
+          order: mockFn().mockReturnValue({
+            range: mockFn().mockResolvedValue({
               data: null,
               error: { message: "Database error" },
             }),
@@ -314,9 +315,9 @@ describe("Admin Service", () => {
       };
 
       mockSupabase.from.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            single: jest.fn().mockResolvedValue({ data: mockUser, error: null }),
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            single: mockFn().mockResolvedValue({ data: mockUser, error: null }),
           }),
         }),
       });
@@ -329,9 +330,9 @@ describe("Admin Service", () => {
 
     it("should return null when user not found (PGRST116)", async () => {
       mockSupabase.from.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            single: jest.fn().mockResolvedValue({
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            single: mockFn().mockResolvedValue({
               data: null,
               error: { code: "PGRST116", message: "Not found" },
             }),
@@ -345,9 +346,9 @@ describe("Admin Service", () => {
 
     it("should return null when data is null", async () => {
       mockSupabase.from.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            single: jest.fn().mockResolvedValue({ data: null, error: null }),
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            single: mockFn().mockResolvedValue({ data: null, error: null }),
           }),
         }),
       });
@@ -358,9 +359,9 @@ describe("Admin Service", () => {
 
     it("should throw error for other database errors", async () => {
       mockSupabase.from.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            single: jest.fn().mockResolvedValue({
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            single: mockFn().mockResolvedValue({
               data: null,
               error: { code: "OTHER", message: "Database error" },
             }),
@@ -376,9 +377,9 @@ describe("Admin Service", () => {
     it("should update user status and log action", async () => {
       // Mock fetching current user
       mockSupabase.from.mockReturnValueOnce({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            single: jest.fn().mockResolvedValue({
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            single: mockFn().mockResolvedValue({
               data: { status: "active", email: "test@example.com" },
               error: null,
             }),
@@ -388,14 +389,14 @@ describe("Admin Service", () => {
 
       // Mock update
       mockSupabase.from.mockReturnValueOnce({
-        update: jest.fn().mockReturnValue({
-          eq: jest.fn().mockResolvedValue({ error: null }),
+        update: mockFn().mockReturnValue({
+          eq: mockFn().mockResolvedValue({ error: null }),
         }),
       });
 
       // Mock audit log
       mockSupabase.from.mockReturnValueOnce({
-        insert: jest.fn().mockResolvedValue({ error: null }),
+        insert: mockFn().mockResolvedValue({ error: null }),
       });
 
       await updateUserStatus("user-123", "suspended", "admin-123", "Violation of terms");
@@ -406,16 +407,16 @@ describe("Admin Service", () => {
 
     it("should throw error when update fails", async () => {
       mockSupabase.from.mockReturnValueOnce({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            single: jest.fn().mockResolvedValue({ data: { status: "active" }, error: null }),
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            single: mockFn().mockResolvedValue({ data: { status: "active" }, error: null }),
           }),
         }),
       });
 
       mockSupabase.from.mockReturnValueOnce({
-        update: jest.fn().mockReturnValue({
-          eq: jest.fn().mockResolvedValue({ error: { message: "Update failed" } }),
+        update: mockFn().mockReturnValue({
+          eq: mockFn().mockResolvedValue({ error: { message: "Update failed" } }),
         }),
       });
 
@@ -429,9 +430,9 @@ describe("Admin Service", () => {
     it("should update user role and log action", async () => {
       // Mock fetching current user
       mockSupabase.from.mockReturnValueOnce({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            single: jest.fn().mockResolvedValue({
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            single: mockFn().mockResolvedValue({
               data: { role: "user", email: "test@example.com" },
               error: null,
             }),
@@ -441,14 +442,14 @@ describe("Admin Service", () => {
 
       // Mock update
       mockSupabase.from.mockReturnValueOnce({
-        update: jest.fn().mockReturnValue({
-          eq: jest.fn().mockResolvedValue({ error: null }),
+        update: mockFn().mockReturnValue({
+          eq: mockFn().mockResolvedValue({ error: null }),
         }),
       });
 
       // Mock audit log
       mockSupabase.from.mockReturnValueOnce({
-        insert: jest.fn().mockResolvedValue({ error: null }),
+        insert: mockFn().mockResolvedValue({ error: null }),
       });
 
       await updateUserRole("user-123", "admin", "admin-456");
@@ -464,16 +465,16 @@ describe("Admin Service", () => {
 
     it("should throw error when update fails", async () => {
       mockSupabase.from.mockReturnValueOnce({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            single: jest.fn().mockResolvedValue({ data: { role: "user" }, error: null }),
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            single: mockFn().mockResolvedValue({ data: { role: "user" }, error: null }),
           }),
         }),
       });
 
       mockSupabase.from.mockReturnValueOnce({
-        update: jest.fn().mockReturnValue({
-          eq: jest.fn().mockResolvedValue({ error: { message: "Update failed" } }),
+        update: mockFn().mockReturnValue({
+          eq: mockFn().mockResolvedValue({ error: { message: "Update failed" } }),
         }),
       });
 
@@ -487,10 +488,10 @@ describe("Admin Service", () => {
     it("should grant credits to user with active subscription", async () => {
       // Mock fetching subscription
       mockSupabase.from.mockReturnValueOnce({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            in: jest.fn().mockReturnValue({
-              single: jest.fn().mockResolvedValue({
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            in: mockFn().mockReturnValue({
+              single: mockFn().mockResolvedValue({
                 data: { id: "sub-123", credits_remaining: 100 },
                 error: null,
               }),
@@ -501,14 +502,14 @@ describe("Admin Service", () => {
 
       // Mock update credits
       mockSupabase.from.mockReturnValueOnce({
-        update: jest.fn().mockReturnValue({
-          eq: jest.fn().mockResolvedValue({ error: null }),
+        update: mockFn().mockReturnValue({
+          eq: mockFn().mockResolvedValue({ error: null }),
         }),
       });
 
       // Mock audit log
       mockSupabase.from.mockReturnValueOnce({
-        insert: jest.fn().mockResolvedValue({ error: null }),
+        insert: mockFn().mockResolvedValue({ error: null }),
       });
 
       await grantCredits("user-123", 500, "admin-123", "Customer service gesture");
@@ -519,10 +520,10 @@ describe("Admin Service", () => {
 
     it("should throw error when user has no active subscription", async () => {
       mockSupabase.from.mockReturnValueOnce({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            in: jest.fn().mockReturnValue({
-              single: jest.fn().mockResolvedValue({ data: null, error: null }),
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            in: mockFn().mockReturnValue({
+              single: mockFn().mockResolvedValue({ data: null, error: null }),
             }),
           }),
         }),
@@ -535,10 +536,10 @@ describe("Admin Service", () => {
 
     it("should throw error when credit update fails", async () => {
       mockSupabase.from.mockReturnValueOnce({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            in: jest.fn().mockReturnValue({
-              single: jest.fn().mockResolvedValue({
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            in: mockFn().mockReturnValue({
+              single: mockFn().mockResolvedValue({
                 data: { id: "sub-123", credits_remaining: 100 },
                 error: null,
               }),
@@ -548,8 +549,8 @@ describe("Admin Service", () => {
       });
 
       mockSupabase.from.mockReturnValueOnce({
-        update: jest.fn().mockReturnValue({
-          eq: jest.fn().mockResolvedValue({ error: { message: "Update failed" } }),
+        update: mockFn().mockReturnValue({
+          eq: mockFn().mockResolvedValue({ error: { message: "Update failed" } }),
         }),
       });
 
@@ -575,11 +576,11 @@ describe("Admin Service", () => {
       ];
 
       mockSupabase.from.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            eq: jest.fn().mockReturnValue({
-              order: jest.fn().mockReturnValue({
-                range: jest.fn().mockResolvedValue({
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            eq: mockFn().mockReturnValue({
+              order: mockFn().mockReturnValue({
+                range: mockFn().mockResolvedValue({
                   data: mockPayments,
                   error: null,
                   count: 1,
@@ -587,8 +588,8 @@ describe("Admin Service", () => {
               }),
             }),
           }),
-          order: jest.fn().mockReturnValue({
-            range: jest.fn().mockResolvedValue({
+          order: mockFn().mockReturnValue({
+            range: mockFn().mockResolvedValue({
               data: mockPayments,
               error: null,
               count: 1,
@@ -606,9 +607,9 @@ describe("Admin Service", () => {
 
     it("should apply userId filter", async () => {
       const mockQuery = {
-        eq: jest.fn().mockReturnThis(),
-        order: jest.fn().mockReturnThis(),
-        range: jest.fn().mockResolvedValue({ data: [], error: null, count: 0 }),
+        eq: mockFn().mockReturnThis(),
+        order: mockFn().mockReturnThis(),
+        range: mockFn().mockResolvedValue({ data: [], error: null, count: 0 }),
       };
 
       mockSupabase.from.mockReturnValue({
@@ -622,9 +623,9 @@ describe("Admin Service", () => {
 
     it("should throw error when fetch fails", async () => {
       mockSupabase.from.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          order: jest.fn().mockReturnValue({
-            range: jest.fn().mockResolvedValue({
+        select: mockFn().mockReturnValue({
+          order: mockFn().mockReturnValue({
+            range: mockFn().mockResolvedValue({
               data: null,
               error: { message: "Database error" },
             }),
@@ -655,12 +656,12 @@ describe("Admin Service", () => {
 
       mockSupabase.from
         .mockReturnValueOnce({
-          select: jest.fn().mockReturnValue({
-            not: jest.fn().mockReturnValue({
-              eq: jest.fn().mockReturnValue({
-                eq: jest.fn().mockReturnValue({
-                  order: jest.fn().mockReturnValue({
-                    range: jest.fn().mockResolvedValue({
+          select: mockFn().mockReturnValue({
+            not: mockFn().mockReturnValue({
+              eq: mockFn().mockReturnValue({
+                eq: mockFn().mockReturnValue({
+                  order: mockFn().mockReturnValue({
+                    range: mockFn().mockResolvedValue({
                       data: mockLogs,
                       error: null,
                       count: 1,
@@ -668,8 +669,8 @@ describe("Admin Service", () => {
                   }),
                 }),
               }),
-              order: jest.fn().mockReturnValue({
-                range: jest.fn().mockResolvedValue({
+              order: mockFn().mockReturnValue({
+                range: mockFn().mockResolvedValue({
                   data: mockLogs,
                   error: null,
                   count: 1,
@@ -679,8 +680,8 @@ describe("Admin Service", () => {
           }),
         })
         .mockReturnValueOnce({
-          select: jest.fn().mockReturnValue({
-            in: jest.fn().mockResolvedValue({
+          select: mockFn().mockReturnValue({
+            in: mockFn().mockResolvedValue({
               data: [{ id: "admin-1", email: "admin@example.com" }],
               error: null,
             }),
@@ -696,10 +697,10 @@ describe("Admin Service", () => {
 
     it("should apply adminUserId filter", async () => {
       const mockQuery = {
-        not: jest.fn().mockReturnThis(),
-        eq: jest.fn().mockReturnThis(),
-        order: jest.fn().mockReturnThis(),
-        range: jest.fn().mockResolvedValue({ data: [], error: null, count: 0 }),
+        not: mockFn().mockReturnThis(),
+        eq: mockFn().mockReturnThis(),
+        order: mockFn().mockReturnThis(),
+        range: mockFn().mockResolvedValue({ data: [], error: null, count: 0 }),
       };
 
       mockSupabase.from.mockReturnValueOnce({
@@ -707,8 +708,8 @@ describe("Admin Service", () => {
       });
 
       mockSupabase.from.mockReturnValueOnce({
-        select: jest.fn().mockReturnValue({
-          in: jest.fn().mockResolvedValue({ data: [], error: null }),
+        select: mockFn().mockReturnValue({
+          in: mockFn().mockResolvedValue({ data: [], error: null }),
         }),
       });
 
@@ -719,10 +720,10 @@ describe("Admin Service", () => {
 
     it("should throw error when fetch fails", async () => {
       mockSupabase.from.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          not: jest.fn().mockReturnValue({
-            order: jest.fn().mockReturnValue({
-              range: jest.fn().mockResolvedValue({
+        select: mockFn().mockReturnValue({
+          not: mockFn().mockReturnValue({
+            order: mockFn().mockReturnValue({
+              range: mockFn().mockResolvedValue({
                 data: null,
                 error: { message: "Database error" },
               }),
@@ -738,7 +739,7 @@ describe("Admin Service", () => {
   describe("logAdminAction", () => {
     it("should log admin action successfully", async () => {
       mockSupabase.from.mockReturnValue({
-        insert: jest.fn().mockResolvedValue({ error: null }),
+        insert: mockFn().mockResolvedValue({ error: null }),
       });
 
       await logAdminAction({
@@ -757,7 +758,7 @@ describe("Admin Service", () => {
       const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {});
 
       mockSupabase.from.mockReturnValue({
-        insert: jest.fn().mockResolvedValue({ error: { message: "Insert failed" } }),
+        insert: mockFn().mockResolvedValue({ error: { message: "Insert failed" } }),
       });
 
       // Should not throw
@@ -779,7 +780,7 @@ describe("Admin Service", () => {
 
       // Mock audit log
       mockSupabase.from.mockReturnValue({
-        insert: jest.fn().mockResolvedValue({ error: null }),
+        insert: mockFn().mockResolvedValue({ error: null }),
       });
 
       await sendPasswordResetEmail("user@example.com", "admin-123");

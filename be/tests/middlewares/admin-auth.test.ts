@@ -1,9 +1,10 @@
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import type { NextFunction, Request, Response } from "express";
+import { mockFn } from "../test-utils";
 
 // Define mocks at module level
-const mockSupabaseFrom = jest.fn();
-const mockSendR = jest.fn();
+const mockSupabaseFrom = mockFn();
+const mockSendR = mockFn();
 
 // Mock modules before imports with factory functions
 jest.mock("@/config", () => ({
@@ -31,7 +32,7 @@ import { adminAuth, type AdminRequest } from "../../middlewares/admin-auth";
 describe("adminAuth Middleware", () => {
   let mockRequest: Partial<AdminRequest>;
   let mockResponse: Partial<Response>;
-  let mockNext: jest.Mock;
+  let mockNext: ReturnType<typeof mockFn>;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -40,7 +41,7 @@ describe("adminAuth Middleware", () => {
       user: { id: "user-123", email: "test@example.com" } as any,
     };
     mockResponse = {};
-    mockNext = jest.fn();
+    mockNext = mockFn();
   });
 
   describe("authentication check", () => {
@@ -67,9 +68,9 @@ describe("adminAuth Middleware", () => {
   describe("role verification", () => {
     it("should allow admin user when admin role required", async () => {
       mockSupabaseFrom.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            single: jest.fn().mockResolvedValue({
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            single: mockFn().mockResolvedValue({
               data: { role: "admin", status: "active" },
               error: null,
             }),
@@ -87,9 +88,9 @@ describe("adminAuth Middleware", () => {
 
     it("should allow moderator when moderator or admin is required", async () => {
       mockSupabaseFrom.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            single: jest.fn().mockResolvedValue({
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            single: mockFn().mockResolvedValue({
               data: { role: "moderator", status: "active" },
               error: null,
             }),
@@ -106,9 +107,9 @@ describe("adminAuth Middleware", () => {
 
     it("should deny regular user when admin role required", async () => {
       mockSupabaseFrom.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            single: jest.fn().mockResolvedValue({
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            single: mockFn().mockResolvedValue({
               data: { role: "user", status: "active" },
               error: null,
             }),
@@ -129,9 +130,9 @@ describe("adminAuth Middleware", () => {
 
     it("should default to user role when role is null", async () => {
       mockSupabaseFrom.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            single: jest.fn().mockResolvedValue({
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            single: mockFn().mockResolvedValue({
               data: { role: null, status: "active" },
               error: null,
             }),
@@ -151,9 +152,9 @@ describe("adminAuth Middleware", () => {
 
     it("should use default admin role when no roles specified", async () => {
       mockSupabaseFrom.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            single: jest.fn().mockResolvedValue({
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            single: mockFn().mockResolvedValue({
               data: { role: "admin", status: "active" },
               error: null,
             }),
@@ -171,9 +172,9 @@ describe("adminAuth Middleware", () => {
   describe("suspended user check", () => {
     it("should deny suspended user", async () => {
       mockSupabaseFrom.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            single: jest.fn().mockResolvedValue({
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            single: mockFn().mockResolvedValue({
               data: { role: "admin", status: "suspended" },
               error: null,
             }),
@@ -190,9 +191,9 @@ describe("adminAuth Middleware", () => {
 
     it("should allow active admin user", async () => {
       mockSupabaseFrom.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            single: jest.fn().mockResolvedValue({
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            single: mockFn().mockResolvedValue({
               data: { role: "admin", status: "active" },
               error: null,
             }),
@@ -212,9 +213,9 @@ describe("adminAuth Middleware", () => {
       const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {});
 
       mockSupabaseFrom.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            single: jest.fn().mockResolvedValue({
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            single: mockFn().mockResolvedValue({
               data: null,
               error: { message: "Database error" },
             }),
@@ -239,9 +240,9 @@ describe("adminAuth Middleware", () => {
       const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {});
 
       mockSupabaseFrom.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            single: jest.fn().mockResolvedValue({
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            single: mockFn().mockResolvedValue({
               data: null,
               error: null,
             }),
@@ -265,9 +266,9 @@ describe("adminAuth Middleware", () => {
   describe("request augmentation", () => {
     it("should attach userRole to request for downstream use", async () => {
       mockSupabaseFrom.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            single: jest.fn().mockResolvedValue({
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            single: mockFn().mockResolvedValue({
               data: { role: "admin", status: "active" },
               error: null,
             }),
@@ -283,9 +284,9 @@ describe("adminAuth Middleware", () => {
 
     it("should fetch role from users table", async () => {
       mockSupabaseFrom.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            single: jest.fn().mockResolvedValue({
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            single: mockFn().mockResolvedValue({
               data: { role: "admin", status: "active" },
               error: null,
             }),
@@ -303,9 +304,9 @@ describe("adminAuth Middleware", () => {
   describe("multiple allowed roles", () => {
     it("should allow user with any of the allowed roles", async () => {
       mockSupabaseFrom.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            single: jest.fn().mockResolvedValue({
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            single: mockFn().mockResolvedValue({
               data: { role: "support", status: "active" },
               error: null,
             }),
@@ -322,9 +323,9 @@ describe("adminAuth Middleware", () => {
 
     it("should deny user with role not in allowed list", async () => {
       mockSupabaseFrom.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            single: jest.fn().mockResolvedValue({
+        select: mockFn().mockReturnValue({
+          eq: mockFn().mockReturnValue({
+            single: mockFn().mockResolvedValue({
               data: { role: "user", status: "active" },
               error: null,
             }),

@@ -1,26 +1,27 @@
 import { jest, describe, it, expect, beforeEach } from "@jest/globals";
 import type { Request, Response, NextFunction } from "express";
 import crypto from "node:crypto";
+import { mockFn } from "../test-utils";
 
 // Mock functions
-const mockIsLemonSqueezyEnabled = jest.fn<() => boolean>();
-const mockGetActivePlans = jest.fn<() => Promise<unknown[]>>();
-const mockGetUserSubscription = jest.fn<() => Promise<unknown>>();
-const mockCheckUserAccess = jest.fn<() => Promise<unknown>>();
-const mockCreateCheckoutSession = jest.fn<() => Promise<{ url: string; id: string }>>();
-const mockCreateCreditPackCheckout = jest.fn<() => Promise<{ url: string; id: string }>>();
-const mockGetCustomerPortalUrl = jest.fn<() => Promise<string>>();
-const mockCancelSubscription = jest.fn<() => Promise<unknown>>();
-const mockProcessMoneyBackRefund = jest.fn<() => Promise<{ success: boolean; message: string }>>();
-const mockEnsureFreePlan = jest.fn<() => Promise<unknown>>();
-const mockIsWebhookEventProcessed = jest.fn<() => Promise<boolean>>();
-const mockRecordWebhookEvent = jest.fn<() => Promise<void>>();
-const mockHandleOrderCreated = jest.fn<() => Promise<void>>();
-const mockHandleSubscriptionCreated = jest.fn<() => Promise<void>>();
-const mockUpdateSubscriptionFromWebhook = jest.fn<() => Promise<void>>();
-const mockHandleSubscriptionPaymentSuccess = jest.fn<() => Promise<void>>();
-const mockHandleSubscriptionPaymentFailed = jest.fn<() => Promise<void>>();
-const mockSendR = jest.fn<() => void>();
+const mockIsLemonSqueezyEnabled = mockFn();
+const mockGetActivePlans = mockFn();
+const mockGetUserSubscription = mockFn();
+const mockCheckUserAccess = mockFn();
+const mockCreateCheckoutSession = mockFn();
+const mockCreateCreditPackCheckout = mockFn();
+const mockGetCustomerPortalUrl = mockFn();
+const mockCancelSubscription = mockFn();
+const mockProcessMoneyBackRefund = mockFn();
+const mockEnsureFreePlan = mockFn();
+const mockIsWebhookEventProcessed = mockFn();
+const mockRecordWebhookEvent = mockFn();
+const mockHandleOrderCreated = mockFn();
+const mockHandleSubscriptionCreated = mockFn();
+const mockUpdateSubscriptionFromWebhook = mockFn();
+const mockHandleSubscriptionPaymentSuccess = mockFn();
+const mockHandleSubscriptionPaymentFailed = mockFn();
+const mockSendR = mockFn();
 
 jest.mock("@/config", () => ({
   STATUS_RESPONSE: {
@@ -101,13 +102,20 @@ describe("Payment Controller", () => {
       body: {},
       query: {},
       headers: {},
-      user: { id: "user-123", email: "test@example.com" },
+      user: {
+        id: "user-123",
+        email: "test@example.com",
+        app_metadata: {},
+        user_metadata: {},
+        aud: "authenticated",
+        created_at: new Date().toISOString(),
+      },
     };
     mockRes = {
-      status: jest.fn().mockReturnThis() as unknown as Response["status"],
-      json: jest.fn().mockReturnThis() as unknown as Response["json"],
+      status: mockFn().mockReturnThis() as unknown as Response["status"],
+      json: mockFn().mockReturnThis() as unknown as Response["json"],
     };
-    mockNext = jest.fn();
+    mockNext = mockFn();
     mockIsLemonSqueezyEnabled.mockReturnValue(true);
   });
 
@@ -578,8 +586,8 @@ describe("Payment Controller", () => {
       mockReq.body = rawBody;
       mockReq.headers = { "x-signature": signature };
       mockIsWebhookEventProcessed.mockResolvedValue(false);
-      mockRecordWebhookEvent.mockResolvedValue();
-      mockHandleOrderCreated.mockResolvedValue();
+      mockRecordWebhookEvent.mockResolvedValue(undefined);
+      mockHandleOrderCreated.mockResolvedValue(undefined);
 
       await handleWebhook(mockReq as Request, mockRes as Response);
 
@@ -609,8 +617,8 @@ describe("Payment Controller", () => {
       mockReq.body = rawBody;
       mockReq.headers = { "x-signature": signature };
       mockIsWebhookEventProcessed.mockResolvedValue(false);
-      mockRecordWebhookEvent.mockResolvedValue();
-      mockHandleSubscriptionCreated.mockResolvedValue();
+      mockRecordWebhookEvent.mockResolvedValue(undefined);
+      mockHandleSubscriptionCreated.mockResolvedValue(undefined);
 
       await handleWebhook(mockReq as Request, mockRes as Response);
 
@@ -640,8 +648,8 @@ describe("Payment Controller", () => {
       mockReq.body = rawBody;
       mockReq.headers = { "x-signature": signature };
       mockIsWebhookEventProcessed.mockResolvedValue(false);
-      mockRecordWebhookEvent.mockResolvedValue();
-      mockUpdateSubscriptionFromWebhook.mockResolvedValue();
+      mockRecordWebhookEvent.mockResolvedValue(undefined);
+      mockUpdateSubscriptionFromWebhook.mockResolvedValue(undefined);
 
       await handleWebhook(mockReq as Request, mockRes as Response);
 
@@ -662,8 +670,8 @@ describe("Payment Controller", () => {
       mockReq.body = rawBody;
       mockReq.headers = { "x-signature": signature };
       mockIsWebhookEventProcessed.mockResolvedValue(false);
-      mockRecordWebhookEvent.mockResolvedValue();
-      mockHandleSubscriptionPaymentSuccess.mockResolvedValue();
+      mockRecordWebhookEvent.mockResolvedValue(undefined);
+      mockHandleSubscriptionPaymentSuccess.mockResolvedValue(undefined);
 
       await handleWebhook(mockReq as Request, mockRes as Response);
 
@@ -684,8 +692,8 @@ describe("Payment Controller", () => {
       mockReq.body = rawBody;
       mockReq.headers = { "x-signature": signature };
       mockIsWebhookEventProcessed.mockResolvedValue(false);
-      mockRecordWebhookEvent.mockResolvedValue();
-      mockHandleSubscriptionPaymentFailed.mockResolvedValue();
+      mockRecordWebhookEvent.mockResolvedValue(undefined);
+      mockHandleSubscriptionPaymentFailed.mockResolvedValue(undefined);
 
       await handleWebhook(mockReq as Request, mockRes as Response);
 
@@ -703,7 +711,7 @@ describe("Payment Controller", () => {
       mockReq.body = rawBody;
       mockReq.headers = { "x-signature": signature };
       mockIsWebhookEventProcessed.mockResolvedValue(false);
-      mockRecordWebhookEvent.mockResolvedValue();
+      mockRecordWebhookEvent.mockResolvedValue(undefined);
       mockHandleSubscriptionCreated.mockRejectedValue(new Error("Processing failed"));
 
       await handleWebhook(mockReq as Request, mockRes as Response);

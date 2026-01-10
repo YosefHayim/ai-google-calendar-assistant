@@ -27,21 +27,21 @@ if (typeof window === "undefined") {
       pathname: "/",
       search: "",
       hash: "",
-    },
+    } as unknown as Location,
     navigator: {
       userAgent: "test",
-    },
+    } as unknown as Navigator,
   };
 }
 
 if (typeof document === "undefined") {
   // @ts-ignore
   globalThis.document = {
-    createElement: () => ({}),
+    createElement: () => ({} as unknown as HTMLElement),
     getElementById: () => null,
     querySelector: () => null,
-    querySelectorAll: () => [],
-    body: {},
+    querySelectorAll: () => [] as unknown as NodeListOf<Element>,
+    body: {} as unknown as HTMLElement,
   };
 }
 

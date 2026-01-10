@@ -274,8 +274,7 @@ export const AssistantTab: React.FC<AssistantTabProps> = () => {
                 id="ally-brain-toggle"
                 title="Enable Custom Instructions"
                 tooltip="When enabled, Ally will always consider these instructions in all conversations"
-                variant="toggle"
-                control={
+                                control={
                   <CinematicGlowToggle
                     id={allyBrainToggleId}
                     checked={watchedEnabled}
@@ -375,8 +374,7 @@ export const AssistantTab: React.FC<AssistantTabProps> = () => {
               id="contextual-scheduling"
               title="Contextual Scheduling"
               tooltip="Allow Ally to remember your preferred meeting durations, buffer times, and recurring locations"
-              variant="toggle"
-              control={
+                            control={
                 <CinematicGlowToggle
                   id={contextualToggleId}
                   checked={contextualEnabled}
@@ -414,8 +412,7 @@ export const AssistantTab: React.FC<AssistantTabProps> = () => {
               id="voice-enabled"
               title="Enable Voice Responses"
               tooltip="When enabled, Ally will respond with voice in chat and when you send voice messages on Telegram"
-              variant="toggle"
-              control={
+                            control={
                 <CinematicGlowToggle
                   id={voiceToggleId}
                   checked={voiceEnabled}

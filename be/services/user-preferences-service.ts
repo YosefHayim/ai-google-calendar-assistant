@@ -2,7 +2,7 @@
  * User Preferences Service
  *
  * Centralized service for managing user preferences.
- * Provides a generic interface for getting/setting any preference type.
+ * Uses the users.preferences JSONB column for storage.
  */
 
 import { SUPABASE } from "@/config";
@@ -97,56 +97,80 @@ export function isValidPreferenceKey(key: string): key is PreferenceKey {
 }
 
 // ============================================
+// Helper Functions
+// ============================================
+
+type UserPreferences = Record<string, Json>;
+
+/**
+ * Get user preferences JSONB from users table
+ */
+async function getUserPreferences(userId: string): Promise<UserPreferences> {
+  const { data, error } = await SUPABASE.from("users")
+    .select("preferences")
+    .eq("id", userId)
+    .single();
+
+  if (error || !data) {
+    return {};
+  }
+
+  return (data.preferences as UserPreferences) || {};
+}
+
+/**
+ * Update user preferences JSONB in users table
+ */
+async function setUserPreferences(
+  userId: string,
+  preferences: UserPreferences
+): Promise<void> {
+  const { error } = await SUPABASE.from("users")
+    .update({ preferences: preferences as Json })
+    .eq("id", userId);
+
+  if (error) {
+    throw new Error(`Failed to update preferences: ${error.message}`);
+  }
+}
+
+// ============================================
 // Generic Preference Functions
 // ============================================
 
 /**
  * Get a single preference by key
- *
- * @param userId - User ID
- * @param key - Preference key
- * @returns Preference value or null if not found (defaults not applied)
  */
 export async function getPreference<T extends PreferenceValue>(
   userId: string,
   key: PreferenceKey
 ): Promise<T | null> {
   try {
-    const { data, error } = await SUPABASE.from("user_preferences")
-      .select("preference_value")
-      .eq("user_id", userId)
-      .eq("preference_key", key)
-      .maybeSingle();
+    const preferences = await getUserPreferences(userId);
+    const value = preferences[key];
 
-    if (error || !data) {
+    if (value === undefined) {
       return null;
     }
 
-    return data.preference_value as unknown as T;
+    return value as unknown as T;
   } catch {
     return null;
   }
 }
 
 /**
- * Get a single preference with metadata (includes updatedAt, isDefault)
- *
- * @param userId - User ID
- * @param key - Preference key
- * @returns Preference result with metadata
+ * Get a single preference with metadata
  */
 export async function getPreferenceWithMeta<T extends PreferenceValue>(
   userId: string,
   key: PreferenceKey
 ): Promise<PreferenceResult<T>> {
   try {
-    const { data, error } = await SUPABASE.from("user_preferences")
-      .select("preference_value, updated_at")
-      .eq("user_id", userId)
-      .eq("preference_key", key)
-      .maybeSingle();
+    const preferences = await getUserPreferences(userId);
+    const value = preferences[key];
 
-    if (error || !data) {
+    if (value === undefined) {
       return {
         value: PREFERENCE_DEFAULTS[key] as T,
         isDefault: true,
@@ -154,8 +178,7 @@ export async function getPreferenceWithMeta<T extends PreferenceValue>(
     }
 
     return {
-      value: data.preference_value as unknown as T,
-      updatedAt: data.updated_at,
+      value: value as unknown as T,
       isDefault: false,
     };
   } catch {
@@ -167,49 +190,33 @@ export async function getPreferenceWithMeta<T extends PreferenceValue>(
 }
 
 /**
- * Get all assistant preferences for a user
- *
- * @param userId - User ID
- * @param category - Preference category (default: "assistant")
- * @returns Map of all preferences with defaults applied
+ * Get all preferences for a user
  */
 export async function getAllPreferences(
   userId: string,
-  category: string = "assistant"
+  _category: string = "assistant"
 ): Promise<Record<string, PreferenceResult<PreferenceValue>>> {
   try {
-    const { data, error } = await SUPABASE.from("user_preferences")
-      .select("preference_key, preference_value, updated_at")
-      .eq("user_id", userId)
-      .eq("category", category);
-
-    if (error) {
-      console.error("[Preferences Service] Error fetching preferences:", error);
-      throw new Error(`Failed to fetch preferences: ${error.message}`);
-    }
-
-    const preferences: Record<string, PreferenceResult<PreferenceValue>> = {};
+    const preferences = await getUserPreferences(userId);
+    const result: Record<string, PreferenceResult<PreferenceValue>> = {};
 
     // Add stored preferences
-    for (const pref of data || []) {
-      preferences[pref.preference_key] = {
-        value: pref.preference_value as unknown as PreferenceValue,
-        updatedAt: pref.updated_at,
-        isDefault: false,
-      };
-    }
-
-    // Add defaults for missing keys
     for (const key of VALID_PREFERENCE_KEYS) {
-      if (!preferences[key]) {
-        preferences[key] = {
+      const value = preferences[key];
+      if (value !== undefined) {
+        result[key] = {
+          value: value as unknown as PreferenceValue,
+          isDefault: false,
+        };
+      } else {
+        result[key] = {
           value: PREFERENCE_DEFAULTS[key],
           isDefault: true,
         };
       }
     }
 
-    return preferences;
+    return result;
   } catch (error) {
     console.error("[Preferences Service] Error getting preferences:", error);
     throw error;
@@ -218,43 +225,20 @@ export async function getAllPreferences(
 
 /**
  * Update a preference
- *
- * @param userId - User ID
- * @param key - Preference key
- * @param value - New preference value
- * @param category - Preference category (default: "assistant")
- * @returns Updated preference result
  */
 export async function updatePreference<T extends PreferenceValue>(
   userId: string,
   key: PreferenceKey,
   value: T,
-  category: string = "assistant"
+  _category: string = "assistant"
 ): Promise<PreferenceResult<T>> {
-  const { data, error } = await SUPABASE.from("user_preferences")
-    .upsert(
-      {
-        user_id: userId,
-        preference_key: key,
-        preference_value: value as unknown as Json,
-        category,
-        updated_at: new Date().toISOString(),
-      },
-      {
-        onConflict: "user_id,preference_key",
-      }
-    )
-    .select("preference_value, updated_at")
-    .single();
+  const preferences = await getUserPreferences(userId);
+  preferences[key] = value as unknown as Json;
 
-  if (error) {
-    console.error("[Preferences Service] Error updating preference:", error);
-    throw new Error(`Failed to update preference: ${error.message}`);
-  }
+  await setUserPreferences(userId, preferences);
 
   return {
-    value: data.preference_value as unknown as T,
-    updatedAt: data.updated_at,
+    value,
     isDefault: false,
   };
 }

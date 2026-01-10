@@ -1,11 +1,12 @@
 import { jest, describe, it, expect, beforeEach } from "@jest/globals";
+import { mockFn } from "../test-utils";
 
 // Mock functions
-const mockEventsHandler = jest.fn<() => Promise<unknown>>();
-const mockFetchCredentialsByEmail = jest.fn<() => Promise<unknown>>();
-const mockInitUserSupabaseCalendarWithTokensAndUpdateTokens = jest.fn<() => Promise<unknown>>();
-const mockGenerateGoogleAuthUrl = jest.fn<() => string>();
-const mockGetEvents = jest.fn<() => Promise<unknown>>();
+const mockEventsHandler = mockFn();
+const mockFetchCredentialsByEmail = mockFn();
+const mockInitUserSupabaseCalendarWithTokensAndUpdateTokens = mockFn();
+const mockGenerateGoogleAuthUrl = mockFn();
+const mockGetEvents = mockFn();
 
 // Mock the utils module to prevent lodash-es import
 jest.mock("@/ai-agents/utils", () => ({
@@ -103,7 +104,7 @@ describe("Tool Execution", () => {
         refresh_token: "refresh",
       });
       mockInitUserSupabaseCalendarWithTokensAndUpdateTokens.mockResolvedValue({
-        settings: { get: jest.fn().mockResolvedValue({ data: { value: "America/New_York" } }) },
+        settings: { get: mockFn().mockResolvedValue({ data: { value: "America/New_York" } }) },
       });
       mockEventsHandler.mockResolvedValue({ id: "event-123" });
     });
@@ -170,7 +171,7 @@ describe("Tool Execution", () => {
         refresh_token: "refresh",
       });
       mockInitUserSupabaseCalendarWithTokensAndUpdateTokens.mockResolvedValue({
-        settings: { get: jest.fn().mockResolvedValue({ data: { value: "America/New_York" } }) },
+        settings: { get: mockFn().mockResolvedValue({ data: { value: "America/New_York" } }) },
       });
       mockEventsHandler.mockResolvedValue({ id: "event-123", summary: "Updated" });
     });
@@ -239,7 +240,7 @@ describe("Tool Execution", () => {
       });
       mockInitUserSupabaseCalendarWithTokensAndUpdateTokens.mockResolvedValue({
         calendarList: {
-          list: jest.fn().mockResolvedValue({
+          list: mockFn().mockResolvedValue({
             data: { items: [{ id: "primary" }, { id: "work" }] },
           }),
         },

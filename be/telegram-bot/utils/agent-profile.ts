@@ -1,4 +1,3 @@
-import { SUPABASE } from "@/config"
 import { logger } from "@/utils/logger"
 import { telegramConversation } from "@/utils/conversation/TelegramConversationAdapter"
 import {
@@ -7,19 +6,14 @@ import {
   getAgentProfile,
   type AgentProfile,
 } from "@/shared/orchestrator/agent-profiles"
+import {
+  getPreference,
+  updatePreference,
+  type AgentProfilePreference,
+} from "@/services/user-preferences-service"
 
 const getUserIdFromTelegram = (telegramUserId: number) =>
   telegramConversation.getUserIdFromTelegram(telegramUserId)
-
-export type SelectedAgentProfilePreference = {
-  profileId: string
-  selectedAt: string
-}
-
-const DEFAULT_PREFERENCE: SelectedAgentProfilePreference = {
-  profileId: DEFAULT_AGENT_PROFILE_ID,
-  selectedAt: new Date().toISOString(),
-}
 
 export const getSelectedAgentProfileForTelegram = async (
   telegramUserId: number
@@ -30,24 +24,12 @@ export const getSelectedAgentProfileForTelegram = async (
       return DEFAULT_AGENT_PROFILE_ID
     }
 
-    const { data, error } = await SUPABASE.from("user_preferences")
-      .select("preference_value")
-      .eq("user_id", userId)
-      .eq("preference_key", "selected_agent_profile")
-      .maybeSingle()
+    const pref = await getPreference<AgentProfilePreference>(userId, "agent_profile")
 
-    if (error) {
-      logger.error(
-        `agent-profile: Error fetching preference: ${error.message}`
-      )
+    if (!pref?.profileId) {
       return DEFAULT_AGENT_PROFILE_ID
     }
 
-    if (!data) {
-      return DEFAULT_AGENT_PROFILE_ID
-    }
-
-    const pref = data.preference_value as unknown as SelectedAgentProfilePreference
     if (!AGENT_PROFILES[pref.profileId]) {
       logger.warn(
         `agent-profile: Profile ${pref.profileId} no longer exists, using default`
@@ -87,30 +69,9 @@ export const setSelectedAgentProfileForTelegram = async (
       return false
     }
 
-    const preference: SelectedAgentProfilePreference = {
+    await updatePreference<AgentProfilePreference>(userId, "agent_profile", {
       profileId,
-      selectedAt: new Date().toISOString(),
-    }
-
-    const { error } = await SUPABASE.from("user_preferences").upsert(
-      {
-        user_id: userId,
-        preference_key: "selected_agent_profile",
-        preference_value: preference,
-        category: "assistant",
-        updated_at: new Date().toISOString(),
-      },
-      {
-        onConflict: "user_id,preference_key",
-      }
-    )
-
-    if (error) {
-      logger.error(
-        `agent-profile: Error updating preference: ${error.message}`
-      )
-      return false
-    }
+    })
 
     logger.info(
       `agent-profile: Set profile ${profileId} for telegram user ${telegramUserId}`
