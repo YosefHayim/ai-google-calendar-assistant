@@ -38,6 +38,7 @@ import {
 } from '@/services/payment.service'
 import { PaymentMethodCard } from '@/components/dashboard/billing/PaymentMethodCard'
 import { TransactionHistoryTable } from '@/components/dashboard/billing/TransactionHistoryTable'
+import { ConfirmDialog } from '@/components/dashboard/shared/ConfirmDialog'
 
 export default function BillingPage() {
   return (
@@ -56,6 +57,7 @@ function BillingPageContent() {
   const [isLoading, setIsLoading] = useState(true)
   const [actionLoading, setActionLoading] = useState<string | null>(null)
   const [showSuccess, setShowSuccess] = useState(false)
+  const [confirmDialog, setConfirmDialog] = useState<'cancel' | 'refund' | null>(null)
 
   useEffect(() => {
     const loadData = async () => {
@@ -134,43 +136,52 @@ function BillingPageContent() {
     }
   }
 
-  const handleCancelSubscription = async () => {
-    if (!confirm(t('billing.confirm.cancelSubscription'))) {
-      return
-    }
+  const handleCancelSubscription = () => {
+    setConfirmDialog('cancel')
+  }
 
+  const confirmCancelSubscription = async () => {
     setActionLoading('cancel')
     try {
       await cancelSubscription('User requested cancellation')
       // Refresh data
-      const accessData = await getSubscriptionStatus()
+      const [accessData, billingData] = await Promise.all([
+        getSubscriptionStatus(),
+        getBillingOverview(),
+      ])
       setAccess(accessData)
+      setBillingOverview(billingData)
     } catch (error) {
       console.error('Failed to cancel subscription:', error)
     } finally {
       setActionLoading(null)
+      setConfirmDialog(null)
     }
   }
 
-  const handleRefund = async () => {
-    if (!confirm(t('billing.confirm.requestRefund'))) {
-      return
-    }
+  const handleRefund = () => {
+    setConfirmDialog('refund')
+  }
 
+  const confirmRefund = async () => {
     setActionLoading('refund')
     try {
       const result = await requestRefund('User requested refund via billing page')
       if (result.success) {
-        alert(t('billing.confirm.refundSuccess'))
-        const accessData = await getSubscriptionStatus()
+        setShowSuccess(true)
+        setTimeout(() => setShowSuccess(false), 5000)
+        const [accessData, billingData] = await Promise.all([
+          getSubscriptionStatus(),
+          getBillingOverview(),
+        ])
         setAccess(accessData)
-      } else {
-        alert(result.message)
+        setBillingOverview(billingData)
       }
     } catch (error) {
       console.error('Failed to process refund:', error)
     } finally {
       setActionLoading(null)
+      setConfirmDialog(null)
     }
   }
 
@@ -445,6 +456,36 @@ function BillingPageContent() {
           </div>
         </Card>
       </div>
+
+      {/* Cancel Subscription Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={confirmDialog === 'cancel'}
+        onClose={() => setConfirmDialog(null)}
+        onConfirm={confirmCancelSubscription}
+        title={t('billing.confirm.cancelTitle')}
+        description={
+          access?.subscription_status === 'trialing'
+            ? t('billing.confirm.cancelTrialDescription')
+            : t('billing.confirm.cancelDescription')
+        }
+        confirmLabel={t('billing.confirm.cancelButton')}
+        cancelLabel={t('billing.confirm.keepButton')}
+        variant="destructive"
+        isLoading={actionLoading === 'cancel'}
+      />
+
+      {/* Refund Request Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={confirmDialog === 'refund'}
+        onClose={() => setConfirmDialog(null)}
+        onConfirm={confirmRefund}
+        title={t('billing.confirm.refundTitle')}
+        description={t('billing.confirm.refundDescription')}
+        confirmLabel={t('billing.confirm.refundButton')}
+        cancelLabel={t('billing.confirm.nevermindButton')}
+        variant="warning"
+        isLoading={actionLoading === 'refund'}
+      />
     </div>
   )
 }

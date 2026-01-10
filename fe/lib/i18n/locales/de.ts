@@ -749,11 +749,18 @@ export const de: TranslationShape = {
       refundDesc: '30-Tage-Geld-zurück-Garantie - keine Fragen',
     },
     confirm: {
-      cancelSubscription:
+      cancelTitle: 'Abonnement kündigen',
+      cancelDescription:
         'Sind Sie sicher, dass Sie Ihr Abonnement kündigen möchten? Sie haben weiterhin Zugang bis zum Ende des Abrechnungszeitraums.',
-      requestRefund:
-        'Sind Sie sicher, dass Sie eine Rückerstattung anfordern möchten? Ihr Abonnement wird sofort gekündigt.',
-      refundSuccess: 'Rückerstattung erfolgreich bearbeitet!',
+      cancelTrialDescription:
+        'Sind Sie sicher, dass Sie Ihre Testversion kündigen möchten? Sie verlieren sofort den Zugang zu Premium-Funktionen.',
+      cancelButton: 'Ja, kündigen',
+      keepButton: 'Abonnement behalten',
+      refundTitle: 'Rückerstattung anfordern',
+      refundDescription:
+        'Sind Sie sicher, dass Sie eine vollständige Rückerstattung anfordern möchten? Ihr Abonnement wird sofort gekündigt und der Zugang wird widerrufen.',
+      refundButton: 'Rückerstattung anfordern',
+      nevermindButton: 'Abbrechen',
     },
   },
 } as const

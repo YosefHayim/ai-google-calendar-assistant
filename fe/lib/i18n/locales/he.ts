@@ -767,9 +767,15 @@ export const he: TranslationShape = {
       refundDesc: 'ערבות החזר כספי של 30 יום - ללא שאלות',
     },
     confirm: {
-      cancelSubscription: 'האם אתה בטוח שברצונך לבטל את המנוי? עדיין תהיה לך גישה עד סוף תקופת החיוב.',
-      requestRefund: 'האם אתה בטוח שברצונך לבקש החזר? המנוי שלך יבוטל מיד.',
-      refundSuccess: 'ההחזר בוצע בהצלחה!',
+      cancelTitle: 'ביטול מנוי',
+      cancelDescription: 'האם אתה בטוח שברצונך לבטל את המנוי? עדיין תהיה לך גישה לכל התכונות עד סוף תקופת החיוב הנוכחית.',
+      cancelTrialDescription: 'האם אתה בטוח שברצונך לבטל את תקופת הניסיון? תאבד גישה לתכונות פרימיום מיד.',
+      cancelButton: 'כן, בטל',
+      keepButton: 'שמור על המנוי',
+      refundTitle: 'בקש החזר',
+      refundDescription: 'האם אתה בטוח שברצונך לבקש החזר מלא? המנוי שלך יבוטל מיד והגישה תבוטל.',
+      refundButton: 'בקש החזר',
+      nevermindButton: 'ביטול',
     },
   },
 } as const

@@ -750,10 +750,18 @@ export const fr: TranslationShape = {
       refundDesc: 'Garantie de remboursement de 30 jours - sans questions',
     },
     confirm: {
-      cancelSubscription:
-        "Êtes-vous sûr de vouloir annuler votre abonnement ? Vous aurez toujours accès jusqu'à la fin de la période de facturation.",
-      requestRefund: 'Êtes-vous sûr de vouloir demander un remboursement ? Votre abonnement sera annulé immédiatement.',
-      refundSuccess: 'Remboursement traité avec succès !',
+      cancelTitle: "Annuler l'abonnement",
+      cancelDescription:
+        "Êtes-vous sûr de vouloir annuler votre abonnement ? Vous conserverez l'accès à toutes les fonctionnalités jusqu'à la fin de votre période de facturation actuelle.",
+      cancelTrialDescription:
+        "Êtes-vous sûr de vouloir annuler votre essai ? Vous perdrez immédiatement l'accès aux fonctionnalités premium.",
+      cancelButton: 'Oui, annuler',
+      keepButton: "Conserver l'abonnement",
+      refundTitle: 'Demander un remboursement',
+      refundDescription:
+        "Êtes-vous sûr de vouloir demander un remboursement complet ? Votre abonnement sera annulé immédiatement et l'accès sera révoqué.",
+      refundButton: 'Demander un remboursement',
+      nevermindButton: 'Annuler',
     },
   },
 } as const

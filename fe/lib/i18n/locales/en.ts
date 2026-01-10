@@ -800,10 +800,21 @@ export const en = {
 
     // Confirm dialogs
     confirm: {
-      cancelSubscription:
-        'Are you sure you want to cancel your subscription? You will still have access until the end of your billing period.',
-      requestRefund: 'Are you sure you want to request a refund? Your subscription will be cancelled immediately.',
-      refundSuccess: 'Refund processed successfully!',
+      // Cancel subscription dialog
+      cancelTitle: 'Cancel Subscription',
+      cancelDescription:
+        'Are you sure you want to cancel your subscription? You will retain access to all features until the end of your current billing period.',
+      cancelTrialDescription:
+        'Are you sure you want to cancel your trial? You will lose access to premium features immediately.',
+      cancelButton: 'Yes, Cancel',
+      keepButton: 'Keep Subscription',
+
+      // Refund dialog
+      refundTitle: 'Request Refund',
+      refundDescription:
+        'Are you sure you want to request a full refund? Your subscription will be cancelled immediately and access will be revoked.',
+      refundButton: 'Request Refund',
+      nevermindButton: 'Never Mind',
     },
   },
 } as const
