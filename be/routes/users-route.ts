@@ -23,6 +23,7 @@ import {
   preferenceKeyParamSchema,
   reminderPreferencesSchema,
   voicePreferenceSchema,
+  dailyBriefingSchema,
 } from "@/middlewares/validation";
 import { authController } from "@/controllers/users/auth-controller";
 import { profileController } from "@/controllers/users/profile-controller";
@@ -114,6 +115,14 @@ router.put(
   "/preferences/voice_preference",
   supabaseAuth(),
   validate(voicePreferenceSchema, "body"),
+  userPreferencesController.updatePreference,
+);
+
+// update daily_briefing preference
+router.put(
+  "/preferences/daily_briefing",
+  supabaseAuth(),
+  validate(dailyBriefingSchema, "body"),
   userPreferencesController.updatePreference,
 );
 

@@ -171,6 +171,29 @@ export const requestRefund = async (reason?: string): Promise<{ success: boolean
   return response.data.data || { success: false, message: response.data.message }
 }
 
+export interface UpgradeParams {
+  planSlug: PlanSlug
+  interval: PlanInterval
+}
+
+export interface UpgradeResult {
+  subscription: {
+    id: string
+    status: SubscriptionStatus
+    interval: PlanInterval
+    planId: string
+  }
+  prorated: boolean
+}
+
+/**
+ * Upgrade or downgrade subscription plan
+ */
+export const upgradeSubscription = async (params: UpgradeParams): Promise<UpgradeResult> => {
+  const response = await apiClient.post<ApiResponse<UpgradeResult>>(ENDPOINTS.PAYMENTS_UPGRADE, params)
+  return response.data.data!
+}
+
 // ============================================================================
 // Utility Functions
 // ============================================================================

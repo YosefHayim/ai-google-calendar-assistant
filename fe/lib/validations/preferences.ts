@@ -85,3 +85,20 @@ export const VOICE_OPTIONS: { value: TTSVoice; label: string; description: strin
   { value: 'nova', label: 'Nova', description: 'Friendly and upbeat' },
   { value: 'shimmer', label: 'Shimmer', description: 'Clear and melodic' },
 ]
+
+/**
+ * Validation schema for daily briefing preference
+ */
+export const dailyBriefingSchema = z.object({
+  enabled: z.boolean(),
+  time: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/, 'Time must be in HH:MM format'),
+  timezone: z.string().min(1, 'Timezone is required'),
+})
+
+export type DailyBriefingFormData = z.infer<typeof dailyBriefingSchema>
+
+export const dailyBriefingDefaults: DailyBriefingFormData = {
+  enabled: false,
+  time: '08:00',
+  timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+}

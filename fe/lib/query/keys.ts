@@ -66,6 +66,7 @@ export const queryKeys = {
     contextualScheduling: () => [...queryKeys.preferences.all, 'contextual_scheduling'] as const,
     reminderDefaults: () => [...queryKeys.preferences.all, 'reminder_defaults'] as const,
     voicePreference: () => [...queryKeys.preferences.all, 'voice_preference'] as const,
+    dailyBriefing: () => [...queryKeys.preferences.all, 'daily_briefing'] as const,
   },
 
   // Agent Profiles queries

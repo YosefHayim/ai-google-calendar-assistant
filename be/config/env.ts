@@ -7,27 +7,18 @@ dotenv.config({ path: path.resolve(__dirname, "../.env") });
 // Validation
 // ============================================================================
 
-const REQUIRED_ENV_VARS = [
-  "SUPABASE_URL",
-  "SUPABASE_SERVICE_ROLE_KEY",
-  "OPEN_API_KEY",
-  "GOOGLE_CLIENT_ID",
-  "GOOGLE_CLIENT_SECRET",
-] as const;
+const REQUIRED_ENV_VARS = ["SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY", "OPEN_API_KEY", "GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET"] as const;
 
 const missing = REQUIRED_ENV_VARS.filter((key) => !process.env[key]);
 if (missing.length > 0) {
-  throw new Error(
-    `Missing required environment variables: ${missing.join(", ")}`
-  );
+  throw new Error(`Missing required environment variables: ${missing.join(", ")}`);
 }
 
 // ============================================================================
 // Helper to get optional env vars with type safety
 // ============================================================================
 
-const getOptional = (key: string): string | undefined =>
-  process.env[key] || undefined;
+const getOptional = (key: string): string | undefined => process.env[key] || undefined;
 const getRequired = (key: string): string => process.env[key]!;
 
 // ============================================================================

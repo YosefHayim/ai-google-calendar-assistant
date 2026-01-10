@@ -272,6 +272,13 @@ export const ENDPOINTS = {
    */
   PAYMENTS_REFUND: '/api/payments/refund',
 
+  /**
+   * Upgrade or downgrade subscription plan
+   * Methods: POST
+   * Body: { planSlug, interval }
+   */
+  PAYMENTS_UPGRADE: '/api/payments/upgrade',
+
   // ============================================
   // GAP RECOVERY ENDPOINTS
   // ============================================
@@ -359,6 +366,12 @@ export const ENDPOINTS = {
   USER_PREFERENCES_REMINDER_DEFAULTS: '/api/users/preferences/reminder_defaults',
 
   USER_PREFERENCES_VOICE: '/api/users/preferences/voice_preference',
+
+  /**
+   * Update daily_briefing preference
+   * Methods: PUT
+   */
+  USER_PREFERENCES_DAILY_BRIEFING: '/api/users/preferences/daily_briefing',
 
   /**
    * Submit contact form

@@ -9,6 +9,7 @@ import type {
   ContextualSchedulingFormData,
   ReminderDefaultsFormData,
   VoicePreferenceFormData,
+  DailyBriefingFormData,
 } from '@/lib/validations/preferences'
 import type { QueryHookOptions } from '../useQueryWrapper'
 
@@ -220,6 +221,62 @@ export function useUpdateVoicePreference() {
   return {
     updateVoicePreference: mutation.mutate,
     updateVoicePreferenceAsync: mutation.mutateAsync,
+    isUpdating: mutation.isPending,
+    isError: mutation.isError,
+    error: mutation.error,
+    isSuccess: mutation.isSuccess,
+    reset: mutation.reset,
+  }
+}
+
+/**
+ * Hook to fetch Daily Briefing preference
+ */
+export function useDailyBriefing(options?: QueryHookOptions) {
+  const query = useQuery({
+    queryKey: queryKeys.preferences.dailyBriefing(),
+    queryFn: async () => {
+      const response = await preferencesService.getDailyBriefing()
+      return response.data
+    },
+    staleTime: options?.staleTime ?? QUERY_CONFIG.USER_STALE_TIME,
+    enabled: options?.enabled ?? true,
+    refetchOnWindowFocus: options?.refetchOnWindowFocus ?? false,
+    refetchOnMount: options?.refetchOnMount ?? true,
+  })
+
+  return {
+    data: query.data ?? null,
+    isLoading: query.isLoading,
+    isFetching: query.isFetching,
+    isError: query.isError,
+    error: query.error,
+    refetch: query.refetch,
+  }
+}
+
+/**
+ * Hook to update Daily Briefing preference
+ */
+export function useUpdateDailyBriefing() {
+  const queryClient = useQueryClient()
+
+  const mutation = useMutation({
+    mutationFn: (data: DailyBriefingFormData) => preferencesService.updateDailyBriefing(data),
+    onSuccess: (response) => {
+      if (response.data) {
+        queryClient.setQueryData<PreferenceResponse<DailyBriefingFormData>>(
+          queryKeys.preferences.dailyBriefing(),
+          response.data,
+        )
+      }
+      queryClient.invalidateQueries({ queryKey: queryKeys.preferences.list() })
+    },
+  })
+
+  return {
+    updateDailyBriefing: mutation.mutate,
+    updateDailyBriefingAsync: mutation.mutateAsync,
     isUpdating: mutation.isPending,
     isError: mutation.isError,
     error: mutation.error,

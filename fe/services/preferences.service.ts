@@ -4,6 +4,7 @@ import type {
   ContextualSchedulingFormData,
   ReminderDefaultsFormData,
   VoicePreferenceFormData,
+  DailyBriefingFormData,
 } from '@/lib/validations/preferences'
 
 import { ENDPOINTS } from '@/lib/api/endpoints'
@@ -107,6 +108,29 @@ export const preferencesService = {
   ): Promise<ApiResponse<PreferenceResponse<VoicePreferenceFormData>>> {
     const { data } = await apiClient.put<ApiResponse<PreferenceResponse<VoicePreferenceFormData>>>(
       ENDPOINTS.USER_PREFERENCES_VOICE,
+      value,
+    )
+    return data
+  },
+
+  /**
+   * Get Daily Briefing preference
+   */
+  async getDailyBriefing(): Promise<ApiResponse<PreferenceResponse<DailyBriefingFormData>>> {
+    const { data } = await apiClient.get<ApiResponse<PreferenceResponse<DailyBriefingFormData>>>(
+      ENDPOINTS.USER_PREFERENCES_BY_KEY('daily_briefing'),
+    )
+    return data
+  },
+
+  /**
+   * Update Daily Briefing preference
+   */
+  async updateDailyBriefing(
+    value: DailyBriefingFormData,
+  ): Promise<ApiResponse<PreferenceResponse<DailyBriefingFormData>>> {
+    const { data } = await apiClient.put<ApiResponse<PreferenceResponse<DailyBriefingFormData>>>(
+      ENDPOINTS.USER_PREFERENCES_DAILY_BRIEFING,
       value,
     )
     return data

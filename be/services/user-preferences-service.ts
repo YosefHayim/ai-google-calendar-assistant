@@ -17,7 +17,8 @@ export type PreferenceKey =
   | "contextual_scheduling"
   | "reminder_defaults"
   | "voice_preference"
-  | "agent_profile";
+  | "agent_profile"
+  | "daily_briefing";
 
 export interface AllyBrainPreference {
   enabled: boolean;
@@ -48,12 +49,20 @@ export interface AgentProfilePreference {
   profileId: string;
 }
 
+export interface DailyBriefingPreference {
+  enabled: boolean;
+  time: string; // HH:MM (24-hour format)
+  timezone: string; // IANA timezone (e.g., "America/New_York")
+  lastSentDate?: string; // YYYY-MM-DD for duplicate prevention
+}
+
 export type PreferenceValue =
   | AllyBrainPreference
   | ContextualSchedulingPreference
   | ReminderDefaultsPreference
   | VoicePreference
-  | AgentProfilePreference;
+  | AgentProfilePreference
+  | DailyBriefingPreference;
 
 export interface PreferenceResult<T> {
   value: T;
@@ -75,6 +84,7 @@ export const PREFERENCE_DEFAULTS: Record<PreferenceKey, PreferenceValue> = {
   },
   voice_preference: { enabled: true, voice: "alloy" },
   agent_profile: { profileId: "" },
+  daily_briefing: { enabled: false, time: "08:00", timezone: "UTC" },
 };
 
 export const VALID_PREFERENCE_KEYS: PreferenceKey[] = [
@@ -83,6 +93,7 @@ export const VALID_PREFERENCE_KEYS: PreferenceKey[] = [
   "reminder_defaults",
   "voice_preference",
   "agent_profile",
+  "daily_briefing",
 ];
 
 // ============================================
@@ -293,4 +304,13 @@ export async function getAgentProfilePreference(
   userId: string
 ): Promise<AgentProfilePreference | null> {
   return getPreference<AgentProfilePreference>(userId, "agent_profile");
+}
+
+/**
+ * Get daily_briefing preference
+ */
+export async function getDailyBriefingPreference(
+  userId: string
+): Promise<DailyBriefingPreference | null> {
+  return getPreference<DailyBriefingPreference>(userId, "daily_briefing");
 }

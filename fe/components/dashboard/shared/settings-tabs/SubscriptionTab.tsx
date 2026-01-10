@@ -26,6 +26,7 @@ import {
   redirectToCheckout,
   redirectToCreditPackCheckout,
   redirectToBillingPortal,
+  upgradeSubscription,
   type Plan,
   type UserAccess,
   type PlanSlug,
@@ -113,10 +114,28 @@ export const SubscriptionTab: React.FC = () => {
           return
         }
 
-        await redirectToCheckout({
-          planSlug: plan.slug as PlanSlug,
-          interval: selectedFrequency as PlanInterval,
-        })
+        // Check if user has a paid subscription (pro/executive)
+        // Users with paid subscriptions should use upgrade endpoint
+        // Users on starter/free plan should use checkout to create new subscription
+        const hasPaidSubscription =
+          access?.plan_slug === 'pro' || access?.plan_slug === 'executive'
+
+        if (hasPaidSubscription) {
+          // Upgrade existing subscription
+          await upgradeSubscription({
+            planSlug: plan.slug as PlanSlug,
+            interval: selectedFrequency as PlanInterval,
+          })
+          // Reload subscription data to reflect changes
+          const updatedAccess = await getSubscriptionStatus()
+          setAccess(updatedAccess)
+        } else {
+          // Create new subscription checkout
+          await redirectToCheckout({
+            planSlug: plan.slug as PlanSlug,
+            interval: selectedFrequency as PlanInterval,
+          })
+        }
       }
     } catch (error) {
       console.error('Checkout error:', error)

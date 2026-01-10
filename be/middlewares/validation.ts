@@ -366,11 +366,12 @@ export const preferenceKeyParamSchema = z.object({
       "contextual_scheduling",
       "reminder_defaults",
       "voice_preference",
+      "daily_briefing",
     ],
     {
       errorMap: () => ({
         message:
-          "Invalid preference key. Must be 'ally_brain', 'contextual_scheduling', 'reminder_defaults', or 'voice_preference'",
+          "Invalid preference key. Must be 'ally_brain', 'contextual_scheduling', 'reminder_defaults', 'voice_preference', or 'daily_briefing'",
       }),
     },
   ),
@@ -425,3 +426,32 @@ export const voicePreferenceSchema = z.object({
 });
 
 export type VoicePreferenceBody = z.infer<typeof voicePreferenceSchema>;
+
+// ============================================
+// Daily Briefing Validation Schemas
+// ============================================
+
+const ianaTimezoneSchema = z.string().refine(
+  (tz) => {
+    try {
+      Intl.DateTimeFormat(undefined, { timeZone: tz });
+      return true;
+    } catch {
+      return false;
+    }
+  },
+  { message: "Invalid IANA timezone" }
+);
+
+export const dailyBriefingSchema = z.object({
+  enabled: z.boolean(),
+  time: z
+    .string()
+    .regex(
+      /^([01]\d|2[0-3]):([0-5]\d)$/,
+      "Time must be in HH:MM 24-hour format (e.g., 08:30)"
+    ),
+  timezone: ianaTimezoneSchema,
+});
+
+export type DailyBriefingBody = z.infer<typeof dailyBriefingSchema>;
