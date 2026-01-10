@@ -106,6 +106,10 @@ const lemonSqueezy = {
   storeId: getOptional("LEMONSQUEEZY_STORE_ID"),
   webhookSecret: getOptional("LEMONSQUEEZY_WEBHOOK_SECRET"),
   variants: {
+    starter: {
+      monthly: getOptional("LEMONSQUEEZY_VARIANT_STARTER_MONTHLY"),
+      yearly: getOptional("LEMONSQUEEZY_VARIANT_STARTER_YEARLY"),
+    },
     pro: {
       monthly: getOptional("LEMONSQUEEZY_VARIANT_PRO_MONTHLY"),
       yearly: getOptional("LEMONSQUEEZY_VARIANT_PRO_YEARLY"),
@@ -114,6 +118,7 @@ const lemonSqueezy = {
       monthly: getOptional("LEMONSQUEEZY_VARIANT_EXECUTIVE_MONTHLY"),
       yearly: getOptional("LEMONSQUEEZY_VARIANT_EXECUTIVE_YEARLY"),
     },
+    credits: getOptional("LEMONSQUEEZY_VARIANT_CREDITS"),
   },
   get isEnabled(): boolean {
     return !!this.apiKey && !!this.storeId;

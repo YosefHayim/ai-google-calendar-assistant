@@ -198,6 +198,8 @@ export const fr: TranslationShape = {
   sidebar: {
     assistant: 'Assistant',
     assistantDescription: 'Discutez avec votre assistant IA pour gérer événements et emplois du temps',
+    admin: 'Admin',
+    adminDescription: "Accédez au tableau de bord d'administration pour gérer les utilisateurs, abonnements et paramètres système",
     analytics: 'Analytiques',
     analyticsDescription:
       "Consultez les analyses de répartition du temps, les tendances d'événements et la productivité",

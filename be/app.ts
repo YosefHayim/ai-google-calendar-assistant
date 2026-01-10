@@ -1,6 +1,7 @@
 import { ROUTES, STATUS_RESPONSE, env } from "@/config";
 
 import aclRoute from "@/routes/google-calendar/acl-route";
+import adminRoute from "@/routes/admin-route";
 import { apiRateLimiter } from "@/middlewares/rate-limiter";
 import calendarListRoute from "@/routes/google-calendar/calendar-list-route";
 import calendarRoute from "@/routes/google-calendar/calendar-route";
@@ -25,7 +26,6 @@ import usersRoute from "@/routes/users-route";
 import voiceRoute from "@/routes/voice-route";
 import webhooksRoute from "@/routes/webhooks-route";
 import whatsAppRoute from "@/routes/whatsapp-route";
-import adminRoute from "@/routes/admin-route";
 
 const ACCESS_TOKEN_HEADER = "access_token";
 const REFRESH_TOKEN_HEADER = "refresh_token";

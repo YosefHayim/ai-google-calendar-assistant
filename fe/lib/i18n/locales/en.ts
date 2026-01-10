@@ -208,6 +208,8 @@ export const en = {
   sidebar: {
     assistant: 'Assistant',
     assistantDescription: 'Chat with your AI calendar assistant to manage events and schedules',
+    admin: 'Admin',
+    adminDescription: 'Access the admin dashboard to manage users, subscriptions, and system settings',
     analytics: 'Analytics',
     analyticsDescription: 'View insights on time allocation, event patterns, and productivity trends',
     gapRecovery: 'Gap Recovery',

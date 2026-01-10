@@ -206,6 +206,8 @@ export const he: TranslationShape = {
   sidebar: {
     assistant: 'עוזרת',
     assistantDescription: 'שוחח עם העוזרת החכמה שלך לניהול אירועים ולוחות זמנים',
+    admin: 'ניהול',
+    adminDescription: 'גישה ללוח הניהול לניהול משתמשים, מנויים והגדרות מערכת',
     analytics: 'אנליטיקס',
     analyticsDescription: 'צפה בתובנות על הקצאת זמן, דפוסי אירועים ומגמות פרודוקטיביות',
     gapRecovery: 'שחזור פערים',

@@ -8,10 +8,12 @@ import React, {
   useState,
 } from "react";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useTheme } from "next-themes";
+import { toast } from "sonner";
 
 import { useGapSettings } from "@/hooks/queries/gaps";
+import { useGoogleCalendarStatus } from "@/hooks/queries/integrations";
 
 const ONBOARDING_COMPLETE_KEY = "allyOnBoardingComplete";
 const LANGUAGE_ONBOARDING_DISMISSED_KEY = "allyLanguageOnboardingDismissed";
@@ -51,9 +53,12 @@ export function DashboardUIProvider({
   const [showLanguageOnboarding, setShowLanguageOnboarding] = useState(false);
   const { theme, setTheme } = useTheme();
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const { settings: gapSettings, isLoading: isGapSettingsLoading } =
     useGapSettings();
+
+  const { data: googleCalendarStatus } = useGoogleCalendarStatus();
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -80,6 +85,41 @@ export function DashboardUIProvider({
       return () => clearTimeout(timer);
     }
   }, [gapSettings, isGapSettingsLoading]);
+
+  // Handle Google Calendar reauth required
+  useEffect(() => {
+    const googleReauth = searchParams.get("google_reauth");
+    const sessionReauth = typeof window !== "undefined"
+      ? sessionStorage.getItem("google_reauth_required")
+      : null;
+
+    if (googleReauth === "required" || sessionReauth === "true") {
+      // Clear the flags
+      if (typeof window !== "undefined") {
+        sessionStorage.removeItem("google_reauth_required");
+        // Remove query param from URL without reload
+        const url = new URL(window.location.href);
+        url.searchParams.delete("google_reauth");
+        window.history.replaceState({}, "", url.toString());
+      }
+
+      // Show toast with reconnect action
+      const authUrl = googleCalendarStatus?.data?.authUrl;
+
+      toast.error("Google Calendar session expired", {
+        description: "Your Google Calendar connection needs to be refreshed.",
+        duration: 10000,
+        action: authUrl
+          ? {
+              label: "Reconnect",
+              onClick: () => {
+                window.location.href = authUrl;
+              },
+            }
+          : undefined,
+      });
+    }
+  }, [searchParams, googleCalendarStatus]);
 
   const toggleSidebar = useCallback(() => {
     setIsSidebarOpen((prev) => !prev);

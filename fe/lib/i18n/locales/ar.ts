@@ -192,6 +192,8 @@ export const ar: TranslationShape = {
   sidebar: {
     assistant: 'المساعد',
     assistantDescription: 'تحدث مع مساعدك الذكي لإدارة الأحداث والجداول',
+    admin: 'المشرف',
+    adminDescription: 'الوصول إلى لوحة الإدارة لإدارة المستخدمين والاشتراكات وإعدادات النظام',
     analytics: 'التحليلات',
     analyticsDescription: 'عرض رؤى حول توزيع الوقت وأنماط الأحداث واتجاهات الإنتاجية',
     gapRecovery: 'استعادة الفجوات',

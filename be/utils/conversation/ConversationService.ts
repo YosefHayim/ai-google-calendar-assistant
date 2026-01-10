@@ -288,13 +288,36 @@ export class ConversationService {
 
     const nextSequence = (lastMsg?.sequence_number || 0) + 1;
 
+    logger.info(
+      `addMessageAndMaybeSummarize: stateId=${stateId}, role=${message.role}, hasContent=${!!message.content}, contentLen=${message.content?.length || 0}, nextSeq=${nextSequence}`,
+    );
+
     if (message.content) {
-      await SUPABASE.from("conversation_messages").insert({
-        conversation_id: stateId,
-        role: mapRoleToDb(message.role),
-        content: message.content,
-        sequence_number: nextSequence,
-      });
+      const { data: insertedMsg, error: insertError } = await SUPABASE.from(
+        "conversation_messages",
+      )
+        .insert({
+          conversation_id: stateId,
+          role: mapRoleToDb(message.role),
+          content: message.content,
+          sequence_number: nextSequence,
+        })
+        .select()
+        .single();
+
+      if (insertError) {
+        logger.error(
+          `Failed to insert message for conversation ${stateId}: ${insertError.message}`,
+        );
+      } else {
+        logger.info(
+          `Successfully inserted message ${insertedMsg?.id} for conversation ${stateId}`,
+        );
+      }
+    } else {
+      logger.warn(
+        `Skipping message insert - no content: stateId=${stateId}, role=${message.role}`,
+      );
     }
 
     context.messages.push(message);
@@ -341,11 +364,9 @@ export class ConversationService {
       }
     }
 
-    await this.updateConversationState(
-      stateId,
-      context,
-      context.messages.length,
-    );
+    // Use nextSequence as the actual message count (represents total messages in DB)
+    // Not context.messages.length which can be reduced after summarization
+    await this.updateConversationState(stateId, context, nextSequence);
     return context;
   }
 
@@ -475,11 +496,22 @@ export class ConversationService {
     conversationId: string,
     userId: string,
   ): Promise<{ stateId: string; context: ConversationContext } | null> {
+    logger.info(
+      `loadConversationIntoContext: loading ${conversationId} for user ${userId}`,
+    );
+
     const conversation = await this.getConversationById(conversationId, userId);
 
     if (!conversation) {
+      logger.warn(
+        `loadConversationIntoContext: conversation ${conversationId} not found for user ${userId}`,
+      );
       return null;
     }
+
+    logger.info(
+      `loadConversationIntoContext: found conversation ${conversationId} with ${conversation.messages.length} messages`,
+    );
 
     return {
       stateId: conversation.id,

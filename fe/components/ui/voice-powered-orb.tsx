@@ -13,6 +13,7 @@ interface VoicePoweredOrbProps {
   voiceSensitivity?: number
   maxRotationSpeed?: number
   maxHoverIntensity?: number
+  isLoading?: boolean
   onVoiceDetected?: (detected: boolean) => void
 }
 
@@ -23,6 +24,7 @@ export const VoicePoweredOrb: FC<VoicePoweredOrbProps> = ({
   voiceSensitivity = 2.5, // Increased sensitivity for better correspondence
   maxRotationSpeed = 1.2,
   maxHoverIntensity = 0.8, // Increased for clearer visual feedback
+  isLoading = false,
   onVoiceDetected,
 }) => {
   const ctnDom = useRef<HTMLDivElement>(null)
@@ -34,6 +36,12 @@ export const VoicePoweredOrb: FC<VoicePoweredOrbProps> = ({
 
   const smoothedAudioLevel = useRef<number>(0)
   const targetAudioLevel = useRef<number>(0)
+  const isLoadingRef = useRef<boolean>(isLoading)
+
+  // Keep isLoadingRef in sync with prop
+  useEffect(() => {
+    isLoadingRef.current = isLoading
+  }, [isLoading])
 
   const vert = /* glsl */ `
     precision highp float;
@@ -55,6 +63,7 @@ export const VoicePoweredOrb: FC<VoicePoweredOrbProps> = ({
     uniform float hover;
     uniform float rot;
     uniform float hoverIntensity;
+    uniform float loadingPulse;
     varying vec2 vUv;
 
     vec3 rgb2yiq(vec3 c) {
@@ -189,7 +198,17 @@ export const VoicePoweredOrb: FC<VoicePoweredOrbProps> = ({
       uv.x += distortAmount * sin(uv.y * 8.0 + iTime * 2.0);
       uv.y += distortAmount * sin(uv.x * 8.0 + iTime * 2.0);
 
+      // Loading pulse effect - adds breathing glow when AI is thinking
+      float loadingDistort = loadingPulse * 0.05;
+      uv.x += loadingDistort * sin(uv.y * 4.0 + iTime * 3.0);
+      uv.y += loadingDistort * cos(uv.x * 4.0 + iTime * 3.0);
+
       vec4 col = draw(uv, iTime, hue);
+
+      // Add glow effect during loading
+      float glowIntensity = loadingPulse * 0.3;
+      col.rgb += vec3(glowIntensity * 0.8, glowIntensity * 0.4, glowIntensity * 0.1);
+
       gl_FragColor = vec4(col.rgb * col.a, col.a);
     }
   `
@@ -294,6 +313,7 @@ export const VoicePoweredOrb: FC<VoicePoweredOrbProps> = ({
           hover: { value: 0 },
           rot: { value: 0 },
           hoverIntensity: { value: 0 },
+          loadingPulse: { value: 0 },
         },
       })
 
@@ -360,6 +380,15 @@ export const VoicePoweredOrb: FC<VoicePoweredOrbProps> = ({
         program.uniforms.hover.value = voiceLevel
         program.uniforms.hoverIntensity.value = maxHoverIntensity
         program.uniforms.rot.value = currentRot
+
+        // Loading pulse animation - smooth sine wave breathing effect
+        if (isLoadingRef.current) {
+          const pulseValue = (Math.sin(t * 0.004) + 1) * 0.5 // Oscillates 0-1
+          program.uniforms.loadingPulse.value = pulseValue
+        } else {
+          // Smoothly fade out loading pulse when not loading
+          program.uniforms.loadingPulse.value *= 0.9
+        }
 
         if (rendererInstance && glContext) {
           glContext.clear(glContext.COLOR_BUFFER_BIT)

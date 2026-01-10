@@ -38,9 +38,13 @@ export const StreamingMessage: React.FC<StreamingMessageProps> = ({ content, cur
       <div className="max-w-[85%] md:max-w-[75%] flex flex-col items-start">
         <div className="px-4 py-3 rounded-md rounded-tl-none text-sm leading-relaxed bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-100 shadow-sm">
           {showToolIndicator && (
-            <div className="flex items-center gap-2 text-zinc-500 dark:text-zinc-400">
-              <Loader2 className="w-4 h-4 animate-spin" />
-              <span className="text-xs italic">{getToolDisplayName(currentTool)}</span>
+            <div className="flex items-center gap-3">
+              {/* Mini pulsing orb with spinner */}
+              <div className="relative w-6 h-6 flex items-center justify-center">
+                <div className="absolute inset-0 rounded-full bg-primary/20 animate-pulse" />
+                <Loader2 className="w-4 h-4 animate-spin text-primary" />
+              </div>
+              <span className="text-xs font-medium text-zinc-600 dark:text-zinc-400">{getToolDisplayName(currentTool)}</span>
             </div>
           )}
 
@@ -55,13 +59,20 @@ export const StreamingMessage: React.FC<StreamingMessageProps> = ({ content, cur
           )}
 
           {isStreaming && !content && !currentTool && (
-            <div className="flex items-center gap-2">
-              <div className="flex gap-1">
-                <div className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" />
-                <div className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:0.2s]" />
-                <div className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:0.4s]" />
+            <div className="flex items-center gap-3">
+              {/* Mini pulsing orb */}
+              <div className="relative w-6 h-6 flex items-center justify-center">
+                <div className="absolute inset-0 rounded-full bg-primary/30 animate-ping" />
+                <div className="relative w-4 h-4 rounded-full bg-gradient-to-br from-primary to-orange-600 animate-pulse shadow-lg shadow-primary/40" />
               </div>
-              <span className="text-xs font-medium text-zinc-500 italic">Ally is thinking...</span>
+              <div className="flex flex-col gap-1">
+                <span className="text-xs font-medium text-zinc-700 dark:text-zinc-300">Ally is thinking...</span>
+                <div className="flex gap-1">
+                  <div className="w-1 h-1 bg-primary/60 rounded-full animate-bounce" />
+                  <div className="w-1 h-1 bg-primary/60 rounded-full animate-bounce [animation-delay:0.15s]" />
+                  <div className="w-1 h-1 bg-primary/60 rounded-full animate-bounce [animation-delay:0.3s]" />
+                </div>
+              </div>
             </div>
           )}
         </div>

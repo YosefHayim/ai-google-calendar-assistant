@@ -33,6 +33,7 @@ export const AssistantAvatar: React.FC<AssistantAvatarProps> = ({ isRecording, i
         <div className="w-full h-full relative">
           <VoicePoweredOrb
             enableVoiceControl={isRecording || isSpeaking}
+            isLoading={isLoading}
             className="w-full h-full rounded-full"
             maxRotationSpeed={1.0}
             voiceSensitivity={1.5}

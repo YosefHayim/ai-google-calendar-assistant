@@ -390,10 +390,18 @@ export const createCheckoutSession = async (
   const plan = await getPlanBySlug(planSlug)
   if (!plan) throw new Error(`Plan not found: ${planSlug}`)
 
+  const getVariantIdFromConfig = (slug: PlanSlug, int: "monthly" | "yearly") => {
+    const variants = LEMONSQUEEZY_CONFIG.VARIANTS
+    if (slug === "starter") return int === "monthly" ? variants.starter?.monthly : variants.starter?.yearly
+    if (slug === "pro") return int === "monthly" ? variants.pro?.monthly : variants.pro?.yearly
+    if (slug === "executive") return int === "monthly" ? variants.executive?.monthly : variants.executive?.yearly
+    return null
+  }
+
   const variantId =
     interval === "monthly"
-      ? plan.lemonsqueezy_variant_id_monthly || LEMONSQUEEZY_CONFIG.VARIANTS.pro?.monthly
-      : plan.lemonsqueezy_variant_id_yearly || LEMONSQUEEZY_CONFIG.VARIANTS.pro?.yearly
+      ? plan.lemonsqueezy_variant_id_monthly || getVariantIdFromConfig(planSlug, "monthly")
+      : plan.lemonsqueezy_variant_id_yearly || getVariantIdFromConfig(planSlug, "yearly")
 
   if (!variantId) {
     throw new Error(`No LemonSqueezy variant configured for plan: ${planSlug} (${interval})`)
@@ -467,9 +475,9 @@ export const createCreditPackCheckout = async (
     throw new Error("LemonSqueezy store ID not configured")
   }
 
-  const creditVariantId = env.lemonSqueezy.variants.pro?.monthly
+  const creditVariantId = env.lemonSqueezy.variants.credits || env.lemonSqueezy.variants.pro?.monthly
   if (!creditVariantId) {
-    throw new Error("No credit pack variant configured")
+    throw new Error("No credit pack variant configured. Set LEMONSQUEEZY_VARIANT_CREDITS in environment.")
   }
 
   const { data, error } = await createCheckout(storeId, creditVariantId, {
