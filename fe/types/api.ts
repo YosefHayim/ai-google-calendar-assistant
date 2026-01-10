@@ -27,6 +27,7 @@ export interface CustomUser {
   first_name?: string | null;
   last_name?: string | null;
   avatar_url?: string | null;
+  role?: 'user' | 'admin' | 'moderator' | 'support';
   created_at: string;
   updated_at: string;
 }

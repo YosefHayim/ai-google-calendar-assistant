@@ -1,10 +1,12 @@
 'use client'
 
-import React from 'react'
-import Link from 'next/link'
-import { BarChart2, Calendar, History, LayoutDashboard, MessageCircle, Target, User } from 'lucide-react'
+import { BarChart2, LayoutDashboard, Shield } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+
+import Link from 'next/link'
+import React from 'react'
 import { useLanguage } from '@/contexts/LanguageContext'
+import { useUser } from '@/hooks/queries/auth/useUser'
 
 interface NavLinkProps {
   href: string
@@ -67,6 +69,9 @@ interface SidebarNavProps {
 
 export const SidebarNav: React.FC<SidebarNavProps> = ({ pathname, isOpen, onClose }) => {
   const { t } = useLanguage()
+  const { data: userData } = useUser({ customUser: true })
+  // Check if user has admin role - only CustomUser has the role field
+  const isAdmin = userData && 'role' in userData && userData.role === 'admin'
 
   const navItems = [
     {
@@ -76,6 +81,17 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({ pathname, isOpen, onClos
       id: 'tour-assistant',
       description: t('sidebar.assistantDescription'),
     },
+    ...(isAdmin
+      ? [
+          {
+            href: '/admin',
+            icon: Shield,
+            label: t('sidebar.admin'),
+            id: 'tour-admin',
+            description: t('sidebar.adminDescription'),
+          },
+        ]
+      : []),
     {
       href: '/dashboard/analytics',
       icon: BarChart2,
@@ -83,42 +99,11 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({ pathname, isOpen, onClos
       id: 'tour-analytics',
       description: t('sidebar.analyticsDescription'),
     },
-    {
-      href: '/dashboard/gaps',
-      icon: Target,
-      label: t('sidebar.gapRecovery'),
-      id: 'tour-gaps',
-      description: t('sidebar.gapRecoveryDescription'),
-    },
-    {
-      href: '/dashboard/calendars',
-      icon: Calendar,
-      label: t('sidebar.calendars'),
-      description: t('sidebar.calendarsDescription'),
-    },
-    {
-      href: '/dashboard/activity',
-      icon: History,
-      label: t('sidebar.activity'),
-      description: t('sidebar.activityDescription'),
-    },
-    {
-      href: '/dashboard/telegram',
-      icon: MessageCircle,
-      label: t('sidebar.telegram'),
-      description: t('sidebar.telegramDescription'),
-    },
-    {
-      href: '/dashboard/account',
-      icon: User,
-      label: t('sidebar.account'),
-      description: t('sidebar.accountDescription'),
-    },
   ]
 
   return (
     <TooltipProvider>
-      <nav className="px-4 space-y-2">
+      <nav className="px-4 space-y-2 mt-2">
         {navItems.map((item) => (
           <NavLink
             key={item.href}

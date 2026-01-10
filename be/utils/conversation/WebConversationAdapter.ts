@@ -110,12 +110,19 @@ export class WebConversationAdapter {
     message: userAndAiMessageProps,
     summarizeFn: SummarizeFn
   ): Promise<ConversationContext> {
+    if (!conversationId) {
+      logger.warn(`addMessageToConversation called with empty conversationId, falling back to today's context`);
+      return this.addMessageToContext(userId, message, summarizeFn);
+    }
+
     const loaded = await this.loadConversationIntoContext(conversationId, userId);
 
     if (!loaded) {
       logger.warn(`Failed to load conversation ${conversationId} for user ${userId}, falling back to today's context`);
       return this.addMessageToContext(userId, message, summarizeFn);
     }
+
+    logger.info(`Adding ${message.role} message to conversation ${conversationId} (content length: ${message.content?.length || 0})`);
 
     return this.service.addMessageAndMaybeSummarize({
       stateId: loaded.stateId,

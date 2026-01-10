@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { AdminSidebar } from '@/components/admin/AdminSidebar'
 import { RefreshCw } from 'lucide-react'
+import { getDashboardStats } from '@/services/admin.service'
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter()
@@ -16,24 +17,20 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     const checkAdminAccess = async () => {
       try {
         // Try to fetch admin dashboard stats - if it fails, user is not admin
-        const response = await fetch('/api/admin/dashboard/stats', {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-          },
-        })
-
-        if (response.ok) {
-          setIsAuthorized(true)
-        } else if (response.status === 403) {
+        await getDashboardStats()
+        setIsAuthorized(true)
+      } catch (error: unknown) {
+        console.error('Failed to check admin access:', error)
+        const axiosError = error as { response?: { status?: number } }
+        if (axiosError?.response?.status === 403) {
           // Not authorized - redirect to dashboard
           router.push('/dashboard')
-        } else if (response.status === 401) {
+        } else if (axiosError?.response?.status === 401) {
           // Not logged in - redirect to login
           router.push('/login')
+        } else {
+          router.push('/dashboard')
         }
-      } catch (error) {
-        console.error('Failed to check admin access:', error)
-        router.push('/dashboard')
       } finally {
         setIsLoading(false)
       }

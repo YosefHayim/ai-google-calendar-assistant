@@ -11,6 +11,10 @@ interface SessionErrorResponse {
   }
 }
 
+// Google reauth error codes from backend
+const GOOGLE_REAUTH_CODES = ['GOOGLE_REAUTH_REQUIRED', 'GOOGLE_TOKEN_REFRESH_FAILED']
+const SUPABASE_SESSION_CODES = ['SESSION_EXPIRED', 'SESSION_REFRESH_FAILED']
+
 const ACCESS_TOKEN_HEADER = 'access_token'
 const REFRESH_TOKEN_HEADER = 'refresh_token'
 const USER_KEY = 'user'
@@ -85,7 +89,19 @@ apiClient.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       const errorCode = error.response.data?.data?.code
 
-      if (errorCode === 'SESSION_EXPIRED' || errorCode === 'SESSION_REFRESH_FAILED') {
+      // Handle Google Calendar token expiration - redirect to dashboard with reconnect prompt
+      if (errorCode && GOOGLE_REAUTH_CODES.includes(errorCode)) {
+        if (typeof window !== 'undefined') {
+          // Store the error state for the dashboard to display a reconnect prompt
+          sessionStorage.setItem('google_reauth_required', 'true')
+          // Redirect to dashboard with query param to trigger reconnection UI
+          window.location.href = '/dashboard?google_reauth=required'
+        }
+        return Promise.reject(error)
+      }
+
+      // Handle Supabase session expiration - try to refresh the session
+      if (errorCode && SUPABASE_SESSION_CODES.includes(errorCode)) {
         if (isRefreshing) {
           // If already refreshing, queue this request
           return new Promise((resolve, reject) => {

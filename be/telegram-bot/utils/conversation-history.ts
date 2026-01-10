@@ -290,12 +290,16 @@ export const addMessageToContext = async (
   const nextSequence = (lastMsg?.sequence_number || 0) + 1;
 
   if (message.content) {
-    await SUPABASE.from("conversation_messages").insert({
+    const { error: insertError } = await SUPABASE.from("conversation_messages").insert({
       conversation_id: stateId,
       role: mapRoleToDb(message.role),
       content: message.content,
       sequence_number: nextSequence,
     });
+
+    if (insertError) {
+      logger.error(`Failed to insert message for conversation ${stateId}: ${insertError.message}`);
+    }
   }
 
   context.messages.push(message);
@@ -332,7 +336,9 @@ export const addMessageToContext = async (
     }
   }
 
-  await updateConversationState(stateId, context, context.messages.length);
+  // Use nextSequence as the actual message count (represents total messages in DB)
+  // Not context.messages.length which can be reduced after summarization
+  await updateConversationState(stateId, context, nextSequence);
 
   return context;
 };

@@ -1,11 +1,12 @@
 'use client'
 
-import React, { useState, useRef, useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { MessageSquare, Check, X } from 'lucide-react'
+import { Check, MessageSquare, X } from 'lucide-react'
+import React, { useEffect, useRef, useState } from 'react'
+
+import { AssistantAvatar } from './AssistantAvatar'
 import { Button } from '@/components/ui/button'
 import { Message } from '@/types'
-import { AssistantAvatar } from './AssistantAvatar'
 import { MessageActions } from './MessageActions'
 
 interface AvatarViewProps {
@@ -99,7 +100,7 @@ export const AvatarView: React.FC<AvatarViewProps> = ({
                 return (
                   <div key={msg.id} className="animate-in fade-in slide-in-from-right-2 duration-300 flex flex-col">
                     {isEditing ? (
-                      <div className="flex flex-col gap-2 ml-auto mr-0 max-w-[90%]">
+                      <div className="flex flex-col gap-2 ml-auto mr-0 max-w-[90%] w-full">
                         <textarea
                           ref={editInputRef}
                           value={editText}
@@ -108,25 +109,20 @@ export const AvatarView: React.FC<AvatarViewProps> = ({
                           className="p-3 rounded-xl text-xs leading-relaxed bg-primary/10 text-zinc-900 dark:text-zinc-100 border-2 border-primary rounded-tr-none resize-none min-h-[60px] focus:outline-none focus:ring-2 focus:ring-primary/50"
                           rows={Math.min(5, editText.split('\n').length + 1)}
                         />
-<div className="flex justify-end gap-2">
-                                          <Button
-                                            variant="secondary"
-                                            size="icon"
-                                            onClick={handleCancelEdit}
-                                            className="h-7 w-7"
-                                            title="Cancel (Esc)"
-                                          >
-                                            <X size={14} />
-                                          </Button>
-                                          <Button
-                                            size="icon"
-                                            onClick={handleConfirmEdit}
-                                            className="h-7 w-7"
-                                            title="Confirm (Enter)"
-                                          >
-                                            <Check size={14} />
-                                          </Button>
-                                        </div>
+                        <div className="flex justify-end gap-2">
+                          <Button
+                            variant="secondary"
+                            size="icon"
+                            onClick={handleCancelEdit}
+                            className="h-7 w-7"
+                            title="Cancel (Esc)"
+                          >
+                            <X size={14} />
+                          </Button>
+                          <Button size="icon" onClick={handleConfirmEdit} className="h-7 w-7" title="Confirm (Enter)">
+                            <Check size={14} />
+                          </Button>
+                        </div>
                       </div>
                     ) : (
                       <div

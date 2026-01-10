@@ -12,10 +12,12 @@ const getCurrentUserInformation = reqResAsyncHandler(
       let avatarUrl: string | null | undefined =
         req.user?.user_metadata?.avatar_url
 
+      let role: string | null = null
+
       if (req.user?.email) {
         const normalizedEmail = req.user.email.toLowerCase().trim()
         const { data: userData } = await SUPABASE.from("users")
-          .select("first_name, last_name, avatar_url")
+          .select("first_name, last_name, avatar_url, role")
           .ilike("email", normalizedEmail)
           .limit(1)
           .maybeSingle()
@@ -24,6 +26,7 @@ const getCurrentUserInformation = reqResAsyncHandler(
           firstName = userData.first_name ?? firstName
           lastName = userData.last_name ?? lastName
           avatarUrl = userData.avatar_url ?? avatarUrl
+          role = userData.role ?? null
         }
       }
 
@@ -34,6 +37,7 @@ const getCurrentUserInformation = reqResAsyncHandler(
         first_name: firstName,
         last_name: lastName,
         avatar_url: avatarUrl,
+        role,
         created_at: req.user?.created_at,
         updated_at: req.user?.updated_at,
       }

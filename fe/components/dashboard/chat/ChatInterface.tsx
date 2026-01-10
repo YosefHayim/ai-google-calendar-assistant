@@ -14,6 +14,7 @@ import { useSpeechRecognition } from './useSpeechRecognition'
 import { useStreamingChat } from '@/hooks/useStreamingChat'
 import { ttsCache } from '@/lib/api/services/tts-cache.service'
 import { useVoicePreference } from '@/hooks/queries'
+import { toast } from 'sonner'
 
 declare global {
   interface Window {
@@ -46,6 +47,18 @@ const ChatInterface: React.FC = () => {
   const avatarScrollRef = useRef<HTMLDivElement>(null)
   const audioContextRef = useRef<AudioContext | null>(null)
   const textInputRef = useRef<HTMLInputElement>(null)
+  const isDocumentVisibleRef = useRef<boolean>(true)
+
+  // Track document visibility for background notifications
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      isDocumentVisibleRef.current = !document.hidden
+    }
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+    }
+  }, [])
 
   const handleStreamComplete = useCallback(
     (conversationId: string, fullResponse: string) => {
@@ -65,6 +78,19 @@ const ChatInterface: React.FC = () => {
           messageCount: 2,
           lastUpdated: new Date().toISOString(),
           createdAt: new Date().toISOString(),
+        })
+      }
+
+      // Show notification toast if user is not viewing the page
+      if (!isDocumentVisibleRef.current) {
+        const previewText = fullResponse.slice(0, 80) + (fullResponse.length > 80 ? '...' : '')
+        toast.success('Ally has responded', {
+          description: previewText,
+          duration: 8000,
+          action: {
+            label: 'View',
+            onClick: () => window.focus(),
+          },
         })
       }
 

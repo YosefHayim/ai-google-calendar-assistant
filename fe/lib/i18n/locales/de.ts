@@ -198,6 +198,8 @@ export const de: TranslationShape = {
   sidebar: {
     assistant: 'Assistent',
     assistantDescription: 'Chatten Sie mit Ihrem KI-Assistenten um Termine und Zeitpläne zu verwalten',
+    admin: 'Admin',
+    adminDescription: 'Zugriff auf das Admin-Dashboard zur Verwaltung von Benutzern, Abonnements und Systemeinstellungen',
     analytics: 'Analytik',
     analyticsDescription: 'Sehen Sie Einblicke zur Zeitverteilung, Terminmustern und Produktivitätstrends',
     gapRecovery: 'Lückenwiederherstellung',

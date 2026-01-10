@@ -6,11 +6,12 @@ import { Calendar as CalendarIcon, Info } from 'lucide-react'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import {
-  addDays,
   addMonths,
   endOfMonth,
   format,
   isSameMonth,
+  isValid,
+  parse,
   startOfMonth,
   startOfWeek,
   startOfYear,
@@ -20,6 +21,8 @@ import {
 
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import CinematicGlowToggle from './cinematic-glow-toggle'
 import { DateRange } from 'react-day-picker'
 import { cn } from '@/lib/utils'
@@ -30,13 +33,17 @@ interface DatePickerWithRangeProps extends React.HTMLAttributes<HTMLDivElement> 
   setDate: (date: DateRange | undefined) => void
 }
 
-type PresetKey = 'yesterday' | 'today' | 'last7' | 'last30' | 'thisWeek' | 'thisMonth' | 'prevMonth' | 'thisYear'
+type PresetKey = 'yesterday' | 'today' | 'last7' | 'last30' | 'thisWeek' | 'thisMonth' | 'prevMonth' | 'thisYear' | 'custom'
 
 export function DatePickerWithRange({ className, date, setDate }: DatePickerWithRangeProps) {
   const [isOpen, setIsOpen] = React.useState(false)
   const [internalDate, setInternalDate] = React.useState<DateRange | undefined>(date)
   const [isCompareEnabled, setIsCompareEnabled] = React.useState(false)
   const [activePreset, setActivePreset] = React.useState<PresetKey | undefined>(undefined)
+
+  // Custom date input state
+  const [customFromInput, setCustomFromInput] = React.useState('')
+  const [customToInput, setCustomToInput] = React.useState('')
 
   // --- Independent Month State ---
   // Initialize Right Month to today, Left Month to previous month
@@ -61,6 +68,13 @@ export function DatePickerWithRange({ className, date, setDate }: DatePickerWith
       setRightMonth(date.to)
       setLeftMonth(date.from && !isSameMonth(date.from, date.to) ? date.from : subMonths(date.to, 1))
     }
+    // Sync custom inputs with external date
+    if (date?.from) {
+      setCustomFromInput(format(date.from, 'yyyy-MM-dd'))
+    }
+    if (date?.to) {
+      setCustomToInput(format(date.to, 'yyyy-MM-dd'))
+    }
   }, [date])
 
   React.useEffect(() => {
@@ -78,6 +92,43 @@ export function DatePickerWithRange({ className, date, setDate }: DatePickerWith
   const handleSelect = (selectedDate: DateRange | undefined) => {
     setInternalDate(selectedDate)
     setActivePreset(undefined)
+    // Update custom inputs when calendar selection changes
+    if (selectedDate?.from) {
+      setCustomFromInput(format(selectedDate.from, 'yyyy-MM-dd'))
+    }
+    if (selectedDate?.to) {
+      setCustomToInput(format(selectedDate.to, 'yyyy-MM-dd'))
+    }
+  }
+
+  const handleCustomDateChange = (type: 'from' | 'to', value: string) => {
+    if (type === 'from') {
+      setCustomFromInput(value)
+    } else {
+      setCustomToInput(value)
+    }
+
+    const parsedDate = parse(value, 'yyyy-MM-dd', new Date())
+    if (isValid(parsedDate)) {
+      const newRange = { ...internalDate }
+      if (type === 'from') {
+        newRange.from = parsedDate
+      } else {
+        newRange.to = parsedDate
+      }
+      setInternalDate(newRange as DateRange)
+      setActivePreset('custom')
+
+      // Update calendar views
+      if (newRange.to) {
+        setRightMonth(newRange.to)
+        if (newRange.from && !isSameMonth(newRange.from, newRange.to)) {
+          setLeftMonth(newRange.from)
+        } else {
+          setLeftMonth(subMonths(newRange.to, 1))
+        }
+      }
+    }
   }
 
   const handleApply = () => {
@@ -127,6 +178,14 @@ export function DatePickerWithRange({ className, date, setDate }: DatePickerWith
 
     setInternalDate(newRange)
     setActivePreset(preset)
+
+    // Sync custom inputs
+    if (newRange?.from) {
+      setCustomFromInput(format(newRange.from, 'yyyy-MM-dd'))
+    }
+    if (newRange?.to) {
+      setCustomToInput(format(newRange.to, 'yyyy-MM-dd'))
+    }
 
     // Smart View Update:
     // Right calendar focuses on the 'to' date (current context)
@@ -196,6 +255,39 @@ export function DatePickerWithRange({ className, date, setDate }: DatePickerWith
               {renderPresetButton('This Month', 'thisMonth')}
               {renderPresetButton('Previous Month', 'prevMonth')}
               {renderPresetButton('This Year', 'thisYear')}
+
+              {/* Custom Date Range */}
+              <div className="mt-3 pt-3 border-t border-border">
+                <span className="text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wider px-2 block">
+                  Custom Range
+                </span>
+                <div className="space-y-2 px-1">
+                  <div>
+                    <Label htmlFor="custom-from" className="text-xs text-muted-foreground">
+                      From
+                    </Label>
+                    <Input
+                      id="custom-from"
+                      type="date"
+                      value={customFromInput}
+                      onChange={(e) => handleCustomDateChange('from', e.target.value)}
+                      className="h-8 text-xs"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="custom-to" className="text-xs text-muted-foreground">
+                      To
+                    </Label>
+                    <Input
+                      id="custom-to"
+                      type="date"
+                      value={customToInput}
+                      onChange={(e) => handleCustomDateChange('to', e.target.value)}
+                      className="h-8 text-xs"
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* --- RIGHT SIDE (Calendars) --- */}
