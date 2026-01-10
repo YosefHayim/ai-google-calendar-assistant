@@ -43,8 +43,8 @@ const PLAN_ORDER: Record<PlanSlug, number> = {
 }
 
 const CREDIT_PACK_SIZES: Record<PlanSlug, number> = {
-  starter: 25,
-  pro: 100,
+  starter: 100,
+  pro: 250,
   executive: 1000,
 }
 

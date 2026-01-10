@@ -9,6 +9,7 @@ import { z } from 'zod'
 import { calendarsService } from '@/services/calendars.service'
 import { eventsService } from '@/services/events.service'
 import { useAnalyticsData } from '@/hooks/queries/analytics'
+import { useUpcomingWeekData, type UpcomingWeekData } from '@/hooks/queries/analytics/useUpcomingWeekData'
 import {
   CalendarEventSchema,
   type EnhancedAnalyticsData,
@@ -91,6 +92,12 @@ interface AnalyticsContextValue {
 
   // Helper to handle calendar event click from dialogs
   handleCalendarEventClick: (event: CalendarEvent, calendarColor: string, calendarName: string) => void
+
+  // Upcoming week data
+  upcomingWeekData: UpcomingWeekData | undefined
+  isUpcomingWeekLoading: boolean
+  isUpcomingWeekError: boolean
+  refetchUpcomingWeek: () => void
 }
 
 const AnalyticsContext = createContext<AnalyticsContextValue | null>(null)
@@ -172,6 +179,17 @@ export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
     timeMax: date?.to || null,
     calendarMap,
     enabled: !!date?.from && !!date?.to,
+  })
+
+  // Fetch upcoming week data
+  const {
+    data: upcomingWeekData,
+    isLoading: isUpcomingWeekLoading,
+    isError: isUpcomingWeekError,
+    refetch: refetchUpcomingWeek,
+  } = useUpcomingWeekData({
+    calendarMap,
+    enabled: !isCalendarsLoading,
   })
 
   // Fetch events for selected calendar in dialog
@@ -446,6 +464,12 @@ export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
       // Helpers
       handleActivityClick,
       handleCalendarEventClick,
+
+      // Upcoming week data
+      upcomingWeekData,
+      isUpcomingWeekLoading,
+      isUpcomingWeekError,
+      refetchUpcomingWeek,
     }),
     [
       date,
@@ -490,6 +514,10 @@ export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
       closeDayEventsDialog,
       handleActivityClick,
       handleCalendarEventClick,
+      upcomingWeekData,
+      isUpcomingWeekLoading,
+      isUpcomingWeekError,
+      refetchUpcomingWeek,
     ],
   )
 

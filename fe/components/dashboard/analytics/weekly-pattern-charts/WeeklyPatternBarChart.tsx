@@ -69,9 +69,10 @@ export const WeeklyPatternBarChart: React.FC<WeeklyPatternBarChartProps> = ({ da
             radius={[4, 4, 0, 0]}
             maxBarSize={40}
             className="cursor-pointer"
-            onClick={(barData) => {
-              if (barData?.payload) {
-                const point = barData.payload as WeeklyPatternDataPoint
+            onClick={(data, index) => {
+              // In Recharts, data contains the payload directly when clicking cells
+              const point = data as unknown as WeeklyPatternDataPoint
+              if (point && point.events) {
                 if (point.events.length > 0) {
                   setActiveDataPoint(point)
                   setDialogOpen(true)

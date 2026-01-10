@@ -22,6 +22,7 @@ import paymentRoute from "@/routes/payment-route";
 import { securityAuditMiddleware } from "@/middlewares/security-audit";
 import { sendR } from "@/utils/http";
 import { startTelegramBot } from "@/telegram-bot/init-bot";
+import { initWhatsApp } from "@/whatsapp-bot/init-whatsapp";
 import usersRoute from "@/routes/users-route";
 import voiceRoute from "@/routes/voice-route";
 import webhooksRoute from "@/routes/webhooks-route";
@@ -110,3 +111,4 @@ app.listen(PORT, (error?: Error) => {
 });
 
 startTelegramBot();
+initWhatsApp();

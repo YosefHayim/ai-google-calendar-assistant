@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
@@ -38,6 +38,23 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
         return ''
     }
   }
+
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === 'Enter' && isOpen && !isLoading) {
+        e.preventDefault()
+        onConfirm()
+      }
+    },
+    [isOpen, isLoading, onConfirm]
+  )
+
+  useEffect(() => {
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown)
+      return () => document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [isOpen, handleKeyDown])
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && !isLoading && onClose()}>

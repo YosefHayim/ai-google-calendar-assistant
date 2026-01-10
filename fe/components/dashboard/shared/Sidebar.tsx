@@ -25,6 +25,7 @@ const SidebarContent: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle, onO
     pathname,
     conversationToDelete,
     setConversationToDelete,
+    isDeletingConversation,
     localSearchValue,
     handleSearchChange,
     handleClearSearch,
@@ -42,6 +43,7 @@ const SidebarContent: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle, onO
         isOpen={!!conversationToDelete}
         onClose={() => setConversationToDelete(null)}
         onConfirm={confirmDelete}
+        isLoading={isDeletingConversation}
       />
 
       {isOpen && (

@@ -11,6 +11,7 @@ interface SidebarContextValue {
   pathname: string
   conversationToDelete: string | null
   setConversationToDelete: (id: string | null) => void
+  isDeletingConversation: boolean
   localSearchValue: string
   handleSearchChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   handleClearSearch: () => void
@@ -30,6 +31,7 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
   const { selectConversation, startNewConversation, removeConversation, searchQuery, setSearchQuery } = useChatContext()
 
   const [conversationToDelete, setConversationToDelete] = useState<string | null>(null)
+  const [isDeletingConversation, setIsDeletingConversation] = useState(false)
   const [localSearchValue, setLocalSearchValue] = useState(searchQuery)
   const [isQuickEventOpen, setIsQuickEventOpen] = useState(false)
 
@@ -80,13 +82,18 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
 
   const confirmDelete = useCallback(async () => {
     if (conversationToDelete) {
-      const success = await removeConversation(conversationToDelete)
-      if (success) {
-        toast.success('Conversation deleted')
-      } else {
-        toast.error('Failed to delete conversation')
+      setIsDeletingConversation(true)
+      try {
+        const success = await removeConversation(conversationToDelete)
+        if (success) {
+          toast.success('Conversation deleted')
+        } else {
+          toast.error('Failed to delete conversation')
+        }
+      } finally {
+        setIsDeletingConversation(false)
+        setConversationToDelete(null)
       }
-      setConversationToDelete(null)
     }
   }, [conversationToDelete, removeConversation])
 
@@ -95,6 +102,7 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
       pathname,
       conversationToDelete,
       setConversationToDelete,
+      isDeletingConversation,
       localSearchValue,
       handleSearchChange,
       handleClearSearch,
@@ -108,6 +116,7 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
     [
       pathname,
       conversationToDelete,
+      isDeletingConversation,
       localSearchValue,
       handleSearchChange,
       handleClearSearch,

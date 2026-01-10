@@ -60,7 +60,7 @@ export const RESPONSE_STYLE = {
 }
 
 export function buildBasePrompt(options: {
-  modality: "voice" | "chat" | "telegram"
+  modality: "voice" | "chat" | "telegram" | "whatsapp"
   conciseness: number
   responseStyle?: keyof typeof RESPONSE_STYLE
 }): string {

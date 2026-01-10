@@ -20,7 +20,7 @@ import type { LLMProvider, Message, ToolDefinition } from "@/shared/llm"
 import { buildBasePrompt } from "@/shared/prompts"
 import { executeTools } from "@/shared/tools/tool-executor"
 
-export type Modality = "chat" | "telegram"
+export type Modality = "chat" | "telegram" | "whatsapp"
 
 export interface TextAgentConfig {
   profile: AgentProfile

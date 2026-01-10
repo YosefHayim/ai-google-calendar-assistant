@@ -18,14 +18,17 @@ import DayEventsDialog from '@/components/dialogs/DayEventsDialog'
 import { DatePickerWithRange } from '@/components/ui/date-range-picker'
 import EventDetailsDialog from '@/components/dialogs/EventDetailsDialog'
 import EventDurationDashboard from './EventDurationDashboard'
+import FocusTimeTracker from './FocusTimeTracker'
 import InsightCard from './InsightCard'
 import InsightCardSkeleton from './InsightCardSkeleton'
 import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button'
 import ManageCalendars from '@/components/dashboard/analytics/ManageCalendars'
 import MonthlyPatternDashboard from './MonthlyPatternDashboard'
 import RecentEvents from '@/components/dashboard/analytics/RecentEvents'
+import ScheduleHealthScore from './ScheduleHealthScore'
 import TimeAllocationDashboard from './TimeAllocationDashboard'
 import TimeDistributionChart from './TimeDistributionChart'
+import UpcomingWeekPreview from './UpcomingWeekPreview'
 import WeeklyPatternDashboard from './WeeklyPatternDashboard'
 import { getInsightIcon } from '@/lib/iconUtils'
 import { useAIInsights } from '@/hooks/queries/analytics/useAIInsights'
@@ -77,6 +80,10 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
     closeDayEventsDialog,
     handleActivityClick,
     handleCalendarEventClick,
+    upcomingWeekData,
+    isUpcomingWeekLoading,
+    isUpcomingWeekError,
+    refetchUpcomingWeek,
   } = useAnalyticsContext()
 
   const isLoading = initialLoading || isAnalyticsLoading || isCalendarsLoading
@@ -162,9 +169,29 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <DailyAvailableHoursDashboard data={dailyAvailableHours} onDayClick={openDayEventsDialog} isLoading={isAnalyticsFetching} />
+      {/* Daily Available Hours - Full Width */}
+      <DailyAvailableHoursDashboard data={dailyAvailableHours} onDayClick={openDayEventsDialog} isLoading={isAnalyticsFetching} />
 
+      {/* New Analytics Row: Focus Time, Schedule Health, Upcoming Week */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <FocusTimeTracker
+          data={processedData.focusTimeMetrics}
+          totalDays={processedData.totalDays}
+          isLoading={isAnalyticsFetching}
+        />
+        <ScheduleHealthScore
+          data={processedData}
+          isLoading={isAnalyticsFetching}
+        />
+        <UpcomingWeekPreview
+          data={upcomingWeekData}
+          isLoading={isUpcomingWeekLoading}
+          isError={isUpcomingWeekError}
+          onRetry={refetchUpcomingWeek}
+        />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-3">
           <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-4 flex items-center gap-2">
             AI Insights
@@ -189,9 +216,9 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
               </HoverCardContent>
             </HoverCard>
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
             {isInsightsLoading ? (
-              Array.from({ length: 10 }).map((_, i) => <InsightCardSkeleton key={i} />)
+              Array.from({ length: 5 }).map((_, i) => <InsightCardSkeleton key={i} />)
             ) : isInsightsError ? (
               <div className="col-span-full flex flex-col items-center justify-center py-8 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl">
                 <p className="text-zinc-500 dark:text-zinc-400 mb-4">Failed to load insights</p>

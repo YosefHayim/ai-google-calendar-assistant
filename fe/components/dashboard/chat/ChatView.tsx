@@ -12,9 +12,10 @@ interface ChatViewProps {
   isLoading: boolean
   error: string | null
   isSpeaking: boolean
+  speakingMessageId: string | null
   onResend: (text: string) => void
   onEdit: (text: string) => void
-  onSpeak: (text: string) => void
+  onSpeak: (text: string, messageId?: string) => void
   scrollRef: React.RefObject<HTMLDivElement | null>
   streamingText?: string
   currentTool?: string | null
@@ -25,6 +26,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
   isLoading,
   error,
   isSpeaking,
+  speakingMessageId,
   onResend,
   onEdit,
   onSpeak,
@@ -42,10 +44,10 @@ export const ChatView: React.FC<ChatViewProps> = ({
               <div className="max-w-[85%] md:max-w-[75%] w-full">
                 <MessageActions
                   msg={msg}
-                  isSpeaking={isSpeaking}
+                  isSpeaking={isSpeaking && speakingMessageId === msg.id}
                   onResend={onResend}
                   onEdit={onEdit}
-                  onSpeak={onSpeak}
+                  onSpeak={(text) => onSpeak(text, msg.id)}
                 />
               </div>
             </div>

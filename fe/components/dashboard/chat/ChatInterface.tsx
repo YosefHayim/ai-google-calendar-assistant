@@ -41,12 +41,14 @@ const ChatInterface: React.FC = () => {
 
   const [input, setInput] = useState('')
   const [isSpeaking, setIsSpeaking] = useState(false)
+  const [speakingMessageId, setSpeakingMessageId] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState<ActiveTab>('chat')
   const [error, setError] = useState<string | null>(null)
 
   const scrollRef = useRef<HTMLDivElement>(null)
   const avatarScrollRef = useRef<HTMLDivElement>(null)
   const audioContextRef = useRef<AudioContext | null>(null)
+  const audioSourceRef = useRef<AudioBufferSourceNode | null>(null)
   const textInputRef = useRef<HTMLInputElement>(null)
   const isDocumentVisibleRef = useRef<boolean>(true)
 
@@ -130,25 +132,55 @@ const ChatInterface: React.FC = () => {
 
   const isLoading = streamingState.isStreaming
 
-  const speakText = async (text: string) => {
+  const stopSpeaking = () => {
+    if (audioSourceRef.current) {
+      try {
+        audioSourceRef.current.stop()
+      } catch {
+        // Ignore errors if audio already stopped
+      }
+      audioSourceRef.current = null
+    }
+    setIsSpeaking(false)
+    setSpeakingMessageId(null)
+  }
+
+  const speakText = async (text: string, messageId?: string) => {
+    // If the same message is already playing, stop it (toggle behavior)
+    if (messageId && speakingMessageId === messageId && isSpeaking) {
+      stopSpeaking()
+      return
+    }
+
+    // Stop any currently playing audio before starting new one
+    stopSpeaking()
+
     if (!audioContextRef.current) {
       audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)()
     }
 
     setIsSpeaking(true)
+    setSpeakingMessageId(messageId || null)
     try {
       const audioArrayBuffer = await ttsCache.synthesize(text, voiceData?.value?.voice)
       const audioBuffer = await audioContextRef.current.decodeAudioData(audioArrayBuffer)
 
       const source = audioContextRef.current.createBufferSource()
+      audioSourceRef.current = source
       source.buffer = audioBuffer
       source.connect(audioContextRef.current.destination)
-      source.onended = () => setIsSpeaking(false)
+      source.onended = () => {
+        setIsSpeaking(false)
+        setSpeakingMessageId(null)
+        audioSourceRef.current = null
+      }
       source.start()
     } catch (audioError) {
       console.error('Error fetching or playing audio:', audioError)
       setError('Could not play audio response.')
       setIsSpeaking(false)
+      setSpeakingMessageId(null)
+      audioSourceRef.current = null
     }
   }
 
@@ -231,6 +263,7 @@ const ChatInterface: React.FC = () => {
               messages={messages}
               isRecording={isRecording}
               isSpeaking={isSpeaking}
+              speakingMessageId={speakingMessageId}
               isLoading={isLoading}
               onResend={handleResend}
               onEditAndResend={handleEditAndResend}
@@ -245,6 +278,7 @@ const ChatInterface: React.FC = () => {
               isLoading={isLoading}
               error={error}
               isSpeaking={isSpeaking}
+              speakingMessageId={speakingMessageId}
               onResend={handleResend}
               onEdit={handleEditMessage}
               onSpeak={speakText}

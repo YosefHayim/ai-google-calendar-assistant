@@ -1,23 +1,159 @@
-import type { Request, Response } from "express";
-import { STATUS_RESPONSE, env } from "@/config";
+/**
+ * WhatsApp Controller
+ * Handles incoming WhatsApp Cloud API webhooks
+ */
 
-const getWhatsAppNotifications = (req: Request, res: Response) => {
-  const { "hub.mode": mode, "hub.challenge": challenge, "hub.verify_token": token } = req.query;
+import type { Request, Response } from "express"
+import { STATUS_RESPONSE } from "@/config"
+import { logger } from "@/utils/logger"
+import { verifyWebhookSubscription } from "@/whatsapp-bot/services/webhook-security"
+import { handleIncomingMessage } from "@/whatsapp-bot/handlers/message-handler"
+import { isWhatsAppConfigured, getWhatsAppStatus } from "@/whatsapp-bot/init-whatsapp"
+import type {
+  WhatsAppWebhookPayload,
+  WhatsAppIncomingMessage,
+  WhatsAppContact,
+  WhatsAppMessageStatus,
+} from "@/whatsapp-bot/types"
 
-  if (mode === "subscribe" && token === env.devWhatsAppAccessToken) {
-    res.status(STATUS_RESPONSE.SUCCESS).send(challenge);
+/**
+ * GET /api/whatsapp
+ * Handles webhook verification from Meta
+ */
+const verifyWebhook = (req: Request, res: Response): void => {
+  const mode = req.query["hub.mode"] as string | undefined
+  const token = req.query["hub.verify_token"] as string | undefined
+  const challenge = req.query["hub.challenge"] as string | undefined
+
+  const result = verifyWebhookSubscription(mode, token, challenge)
+
+  if (result.success && result.challenge) {
+    logger.info("WhatsApp: Webhook verification successful")
+    res.status(STATUS_RESPONSE.SUCCESS).send(result.challenge)
   } else {
-    res.status(STATUS_RESPONSE.FORBIDDEN).end();
+    logger.warn("WhatsApp: Webhook verification failed")
+    res.status(STATUS_RESPONSE.FORBIDDEN).send("Verification failed")
   }
-};
+}
 
-const WhatsAppMessagesCreated = (req: Request, res: Response) => {
-  const timestamp = new Date().toISOString().replace("T", " ").slice(0, 19);
+/**
+ * POST /api/whatsapp
+ * Handles incoming webhook events from WhatsApp
+ */
+const handleWebhook = async (req: Request, res: Response): Promise<void> => {
+  // Always respond quickly to avoid webhook timeouts
+  res.status(STATUS_RESPONSE.SUCCESS).send("EVENT_RECEIVED")
 
-  res.status(STATUS_RESPONSE.SUCCESS).end();
-};
+  if (!isWhatsAppConfigured()) {
+    logger.warn("WhatsApp: Received webhook but integration not configured")
+    return
+  }
+
+  try {
+    const payload = req.body as WhatsAppWebhookPayload
+
+    // Validate payload structure
+    if (payload.object !== "whatsapp_business_account") {
+      logger.warn(`WhatsApp: Unexpected webhook object type: ${payload.object}`)
+      return
+    }
+
+    // Process each entry
+    for (const entry of payload.entry || []) {
+      for (const change of entry.changes || []) {
+        if (change.field !== "messages") {
+          continue
+        }
+
+        const value = change.value
+
+        // Handle message status updates (sent, delivered, read)
+        if (value.statuses) {
+          for (const status of value.statuses) {
+            handleMessageStatus(status)
+          }
+        }
+
+        // Handle incoming messages
+        if (value.messages) {
+          const contacts = value.contacts || []
+
+          for (const message of value.messages) {
+            const contact = contacts.find((c) => c.wa_id === message.from)
+            await processMessage(message, contact)
+          }
+        }
+
+        // Handle errors from the API
+        if (value.errors) {
+          for (const error of value.errors) {
+            logger.error(
+              `WhatsApp: API Error - Code: ${error.code}, Title: ${error.title}, Message: ${error.message || "N/A"}`
+            )
+          }
+        }
+      }
+    }
+  } catch (error) {
+    logger.error(`WhatsApp: Error processing webhook: ${error}`)
+  }
+}
+
+/**
+ * Processes a single incoming message
+ */
+const processMessage = async (
+  message: WhatsAppIncomingMessage,
+  contact?: WhatsAppContact
+): Promise<void> => {
+  const messagePreview =
+    message.type === "text"
+      ? message.text?.body?.slice(0, 50)
+      : `[${message.type}]`
+
+  logger.info(
+    `WhatsApp: Incoming ${message.type} from ${message.from}: ${messagePreview}`
+  )
+
+  try {
+    await handleIncomingMessage(message, contact)
+  } catch (error) {
+    logger.error(
+      `WhatsApp: Error handling message ${message.id} from ${message.from}: ${error}`
+    )
+  }
+}
+
+/**
+ * Handles message status updates
+ */
+const handleMessageStatus = (status: WhatsAppMessageStatus): void => {
+  // Log status updates at debug level to avoid noise
+  logger.debug(
+    `WhatsApp: Message ${status.id} to ${status.recipient_id}: ${status.status}`
+  )
+
+  // Handle failed messages
+  if (status.status === "failed" && status.errors) {
+    for (const error of status.errors) {
+      logger.error(
+        `WhatsApp: Message failed - Code: ${error.code}, Title: ${error.title}`
+      )
+    }
+  }
+}
+
+/**
+ * GET /api/whatsapp/status
+ * Returns WhatsApp integration status (for admin/debugging)
+ */
+const getStatus = (_req: Request, res: Response): void => {
+  const status = getWhatsAppStatus()
+  res.status(STATUS_RESPONSE.SUCCESS).json(status)
+}
 
 export const whatsAppController = {
-  getWhatsAppNotifications,
-  WhatsAppMessagesCreated,
-};
+  verifyWebhook,
+  handleWebhook,
+  getStatus,
+}

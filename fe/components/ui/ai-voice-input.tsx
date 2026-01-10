@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import { Mic } from 'lucide-react'
 import { cn } from '@/components/../lib/utils' // Adjusted path for cn utility
 
@@ -34,8 +34,17 @@ export function AIVoiceInput({
   const [time, setTime] = useState(0)
   const [isClient, setIsClient] = useState(false)
   const [isDemo, setIsDemo] = useState(demoMode)
+  const [audioLevels, setAudioLevels] = useState<number[]>(() =>
+    Array(visualizerBars).fill(5)
+  )
 
-  // Generate deterministic heights for visualizer bars to avoid hydration mismatch
+  // Audio analysis refs
+  const audioContextRef = useRef<AudioContext | null>(null)
+  const analyserRef = useRef<AnalyserNode | null>(null)
+  const mediaStreamRef = useRef<MediaStream | null>(null)
+  const animationFrameRef = useRef<number | null>(null)
+
+  // Generate deterministic heights for visualizer bars (fallback when not recording)
   const barHeights = useMemo(() => {
     return Array.from({ length: visualizerBars }, (_, i) => {
       // Use seeded pseudo-random based on index for consistent heights
@@ -43,6 +52,85 @@ export function AIVoiceInput({
       return 20 + (seed / 233280) * 80
     })
   }, [visualizerBars])
+
+  // Analyze audio and update levels
+  const analyzeAudio = useCallback(() => {
+    if (!analyserRef.current) return
+
+    const dataArray = new Uint8Array(analyserRef.current.frequencyBinCount)
+    analyserRef.current.getByteFrequencyData(dataArray)
+
+    // Sample frequency data to match number of bars
+    const step = Math.floor(dataArray.length / visualizerBars)
+    const levels = Array.from({ length: visualizerBars }, (_, i) => {
+      const index = i * step
+      // Get average of nearby frequencies for smoother visualization
+      let sum = 0
+      for (let j = 0; j < step; j++) {
+        sum += dataArray[index + j] || 0
+      }
+      const avg = sum / step
+      // Normalize to percentage (0-100) with minimum height
+      return Math.max(5, (avg / 255) * 100)
+    })
+
+    setAudioLevels(levels)
+    animationFrameRef.current = requestAnimationFrame(analyzeAudio)
+  }, [visualizerBars])
+
+  // Start audio analysis
+  const startAudioAnalysis = useCallback(async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+      mediaStreamRef.current = stream
+
+      audioContextRef.current = new (window.AudioContext || (window as typeof window & { webkitAudioContext: typeof AudioContext }).webkitAudioContext)()
+      analyserRef.current = audioContextRef.current.createAnalyser()
+      analyserRef.current.fftSize = 256
+      analyserRef.current.smoothingTimeConstant = 0.7
+
+      const source = audioContextRef.current.createMediaStreamSource(stream)
+      source.connect(analyserRef.current)
+
+      analyzeAudio()
+    } catch (error) {
+      console.error('Failed to start audio analysis:', error)
+    }
+  }, [analyzeAudio])
+
+  // Stop audio analysis
+  const stopAudioAnalysis = useCallback(() => {
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current)
+      animationFrameRef.current = null
+    }
+
+    if (mediaStreamRef.current) {
+      mediaStreamRef.current.getTracks().forEach(track => track.stop())
+      mediaStreamRef.current = null
+    }
+
+    if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
+      audioContextRef.current.close()
+      audioContextRef.current = null
+    }
+
+    analyserRef.current = null
+    setAudioLevels(Array(visualizerBars).fill(5))
+  }, [visualizerBars])
+
+  // Handle recording state changes
+  useEffect(() => {
+    if (isRecordingProp) {
+      startAudioAnalysis()
+    } else {
+      stopAudioAnalysis()
+    }
+
+    return () => {
+      stopAudioAnalysis()
+    }
+  }, [isRecordingProp, startAudioAnalysis, stopAudioAnalysis])
 
   useEffect(() => {
     setIsClient(true)
@@ -138,19 +226,20 @@ export function AIVoiceInput({
           {formatTime(time)}
         </span>
 
-        <div className="h-4 w-64 flex items-center justify-center gap-0.5">
-          {barHeights.map((height, i) => (
+        <div className="h-8 w-64 flex items-center justify-center gap-0.5">
+          {audioLevels.map((level, i) => (
             <div
               key={i}
               className={cn(
-                'w-0.5 rounded-full transition-all duration-300',
-                isRecordingProp ? 'bg-primary/50 dark:bg-primary/50 animate-pulse' : 'bg-black/10 dark:bg-white/10 h-1',
+                'w-0.5 rounded-full transition-all',
+                isRecordingProp
+                  ? 'bg-primary dark:bg-primary duration-75'
+                  : 'bg-black/10 dark:bg-white/10 duration-300 h-1',
               )}
               style={
                 isRecordingProp && isClient
                   ? {
-                      height: `${height}%`,
-                      animationDelay: `${i * 0.05}s`,
+                      height: `${Math.max(8, level)}%`,
                     }
                   : undefined
               }

@@ -6,7 +6,7 @@
 import { redisClient, isRedisConnected } from "@/config/clients/redis"
 import { logger } from "@/utils/logger"
 
-export type Modality = "chat" | "voice" | "telegram" | "api"
+export type Modality = "chat" | "voice" | "telegram" | "whatsapp" | "api"
 
 export type EventReference = {
   eventId: string
