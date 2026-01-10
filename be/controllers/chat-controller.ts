@@ -8,7 +8,9 @@ import {
 import {
   getWebRelevantContext,
   storeWebEmbeddingAsync,
+  deleteAllWebEmbeddings,
 } from "@/utils/web-embeddings";
+import { unifiedContextStore } from "@/shared/context";
 import { reqResAsyncHandler, sendR } from "@/utils/http";
 
 import type { AgentContext } from "@/ai-agents/tool-registry";
@@ -400,6 +402,78 @@ const startNewConversation = reqResAsyncHandler(
   },
 );
 
+const deleteAllConversations = reqResAsyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = req.user?.id;
+
+    if (!userId) {
+      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
+    }
+
+    try {
+      const result = await webConversation.deleteAllConversations(userId);
+
+      if (!result.success) {
+        return sendR(
+          res,
+          STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
+          "Failed to delete conversations",
+        );
+      }
+
+      sendR(res, STATUS_RESPONSE.SUCCESS, "All conversations deleted", {
+        deletedCount: result.deletedCount,
+      });
+    } catch (error) {
+      console.error("Error deleting all conversations:", error);
+      sendR(
+        res,
+        STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
+        "Error deleting conversations",
+      );
+    }
+  },
+);
+
+const resetMemory = reqResAsyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = req.user?.id;
+
+    if (!userId) {
+      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
+    }
+
+    try {
+      // Clear Redis context (temporary session data)
+      await unifiedContextStore.clearAll(userId);
+
+      // Delete all conversation embeddings (semantic memory)
+      const embeddingsResult = await deleteAllWebEmbeddings(userId);
+
+      // Delete all conversations (includes messages and summaries)
+      const conversationsResult = await webConversation.deleteAllConversations(userId);
+
+      const totalDeleted = {
+        embeddings: embeddingsResult.deletedCount,
+        conversations: conversationsResult.deletedCount,
+        redisContext: true,
+      };
+
+      sendR(res, STATUS_RESPONSE.SUCCESS, "Memory reset successfully", {
+        ...totalDeleted,
+        message: "All learned patterns and conversation history have been cleared. Ally will relearn your preferences over time.",
+      });
+    } catch (error) {
+      console.error("Error resetting memory:", error);
+      sendR(
+        res,
+        STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
+        "Error resetting memory",
+      );
+    }
+  },
+);
+
 export const chatController = {
   sendChat,
   getConversations,
@@ -407,4 +481,6 @@ export const chatController = {
   removeConversation,
   continueConversation,
   startNewConversation,
+  deleteAllConversations,
+  resetMemory,
 };

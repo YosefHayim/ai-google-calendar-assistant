@@ -9,6 +9,7 @@ import {
   createPortalSession,
   cancelUserSubscription,
   requestRefund,
+  upgradeSubscription,
   handleWebhook,
 } from "@/controllers/payment-controller"
 import { supabaseAuth } from "@/middlewares/supabase-auth"
@@ -28,6 +29,8 @@ router.post("/initialize-free", supabaseAuth(), initializeFreePlan)
 router.post("/checkout", supabaseAuth(), createSubscriptionCheckout)
 
 router.post("/checkout/credits", supabaseAuth(), createCreditPackCheckoutSession)
+
+router.post("/upgrade", supabaseAuth(), upgradeSubscription)
 
 router.post("/portal", supabaseAuth(), createPortalSession)
 

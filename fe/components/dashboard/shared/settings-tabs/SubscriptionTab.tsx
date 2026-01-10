@@ -18,6 +18,7 @@ import {
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { LoadingSection } from '@/components/ui/loading-spinner'
 import { Tab } from '@/components/ui/pricing-tab'
 import {
   getPlans,
@@ -136,11 +137,7 @@ export const SubscriptionTab: React.FC = () => {
   }
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <RefreshCw className="w-6 h-6 animate-spin text-primary" />
-      </div>
-    )
+    return <LoadingSection text="Loading subscription..." />
   }
 
   const isPerUse = selectedFrequency === 'per use'
@@ -150,15 +147,15 @@ export const SubscriptionTab: React.FC = () => {
       {access?.plan_name && (
         <Card className="bg-gradient-to-r from-primary/5 to-primary/10 border-primary/20">
           <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3 min-w-0">
                 {getPlanIcon(access.plan_slug || '')}
-                <div>
+                <div className="min-w-0">
                   <p className="text-xs text-zinc-500 dark:text-zinc-400">Current Plan</p>
-                  <p className="font-semibold text-zinc-900 dark:text-white">{access.plan_name}</p>
+                  <p className="font-semibold text-zinc-900 dark:text-white truncate">{access.plan_name}</p>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-shrink-0">
                 <Badge className="bg-primary/20 text-primary text-xs">
                   {access.subscription_status === 'trialing' ? 'Trial' : 'Active'}
                 </Badge>
@@ -287,11 +284,11 @@ function PlanRow({ plan, selectedFrequency, actionType, isLoading, onAction, isP
       )}
     >
       <CardContent className="p-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3 min-w-0 flex-1">
             {getPlanIcon()}
-            <div>
-              <div className="flex items-center gap-2">
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
                 <span
                   className={cn(
                     'font-semibold',
@@ -325,7 +322,7 @@ function PlanRow({ plan, selectedFrequency, actionType, isLoading, onAction, isP
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-shrink-0">
             <AnimatePresence mode="wait">
               <motion.div
                 key={`${plan.id}-${selectedFrequency}`}

@@ -34,7 +34,7 @@ export const SettingsDropdown: React.FC<SettingsDropdownProps> = ({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button id={id} variant="outline" className={cn('min-w-[140px] justify-between gap-2 font-normal', className)}>
+        <Button id={id} variant="outline" className={cn('w-full justify-between gap-2 font-normal', className)}>
           <span className="flex items-center gap-2 truncate">
             {selectedOption?.icon}
             {selectedOption?.label || placeholder}
@@ -42,7 +42,7 @@ export const SettingsDropdown: React.FC<SettingsDropdownProps> = ({
           <ChevronDown className="w-4 h-4 opacity-50 flex-shrink-0" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="min-w-[140px]">
+      <DropdownMenuContent align="end">
         {options.map((option) => (
           <DropdownMenuItem
             key={option.value}
@@ -105,12 +105,12 @@ export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button id={id} variant="outline" className={cn('min-w-[160px] justify-between gap-2 font-normal', className)}>
+        <Button id={id} variant="outline" className={cn('w-full justify-between gap-2 font-normal', className)}>
           <span className="truncate">{getDisplayText()}</span>
           <ChevronDown className="w-4 h-4 opacity-50 flex-shrink-0" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="min-w-[180px]">
+      <DropdownMenuContent align="end">
         {options.map((option) => {
           const isSelected = values.includes(option.value)
           return (

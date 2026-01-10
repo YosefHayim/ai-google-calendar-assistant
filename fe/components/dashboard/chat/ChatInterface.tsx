@@ -13,6 +13,7 @@ import { useChatContext } from '@/contexts/ChatContext'
 import { useSpeechRecognition } from '@/hooks/useSpeechRecognition'
 import { useStreamingChat } from '@/hooks/useStreamingChat'
 import { ttsCache } from '@/services/tts-cache.service'
+import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { useVoicePreference } from '@/hooks/queries'
 import { toast } from 'sonner'
 
@@ -222,11 +223,7 @@ const ChatInterface: React.FC = () => {
         </div>
         <ViewSwitcher activeTab={activeTab} onTabChange={setActiveTab} />
 
-        {isLoadingConversation && (
-          <div className="absolute inset-0 bg-white/80 dark:bg-zinc-950/80 z-20 flex items-center justify-center">
-            <div className="animate-spin w-8 h-8 border-2 border-zinc-300 border-t-zinc-900 rounded-full" />
-          </div>
-        )}
+        {isLoadingConversation && <LoadingSpinner overlay />}
 
         <div className="flex-1 relative">
           {activeTab === 'avatar' ? (

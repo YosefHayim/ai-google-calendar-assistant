@@ -5,6 +5,7 @@ import { Bell, Check, Loader2, Plus, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { LoadingSection } from '@/components/ui/loading-spinner'
 import CinematicGlowToggle from '@/components/ui/cinematic-glow-toggle'
 import { SettingsRow, SettingsDropdown, SettingsSection, type DropdownOption } from './components'
 import { useReminderDefaults, useUpdateReminderDefaults } from '@/hooks/queries'
@@ -202,9 +203,7 @@ export const NotificationsTab: React.FC = () => {
         </CardHeader>
         <CardContent>
           {isLoadingReminders ? (
-            <div className="flex items-center justify-center py-8">
-              <Loader2 className="w-6 h-6 animate-spin text-zinc-400" />
-            </div>
+            <LoadingSection text="Loading reminders..." />
           ) : (
             <div className="space-y-4">
               <SettingsSection>

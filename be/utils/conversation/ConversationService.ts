@@ -571,4 +571,72 @@ export class ConversationService {
 
     return true;
   }
+
+  async deleteAllConversations(userId: string): Promise<{ success: boolean; deletedCount: number }> {
+    // First, get all conversation IDs for this user
+    const { data: conversations, error: fetchError } = await SUPABASE
+      .from("conversations")
+      .select("id")
+      .eq("user_id", userId)
+      .eq("source", this.source);
+
+    if (fetchError) {
+      logger.error(
+        `Failed to fetch conversations for deletion for user ${userId}: ${fetchError.message}`,
+      );
+      return { success: false, deletedCount: 0 };
+    }
+
+    if (!conversations || conversations.length === 0) {
+      return { success: true, deletedCount: 0 };
+    }
+
+    const conversationIds = conversations.map((c) => c.id);
+
+    // Delete all messages for these conversations
+    const { error: msgError } = await SUPABASE
+      .from("conversation_messages")
+      .delete()
+      .in("conversation_id", conversationIds);
+
+    if (msgError) {
+      logger.error(
+        `Failed to delete messages for user ${userId}: ${msgError.message}`,
+      );
+      return { success: false, deletedCount: 0 };
+    }
+
+    // Delete all summaries for these conversations
+    const { error: summaryError } = await SUPABASE
+      .from("conversation_summaries")
+      .delete()
+      .in("conversation_id", conversationIds);
+
+    if (summaryError) {
+      logger.error(
+        `Failed to delete summaries for user ${userId}: ${summaryError.message}`,
+      );
+      // Continue anyway - summaries are not critical
+    }
+
+    // Delete all conversations
+    const { error: convError } = await SUPABASE
+      .from("conversations")
+      .delete()
+      .eq("user_id", userId)
+      .eq("source", this.source);
+
+    if (convError) {
+      logger.error(
+        `Failed to delete conversations for user ${userId}: ${convError.message}`,
+      );
+      return { success: false, deletedCount: 0 };
+    }
+
+    logger.info(
+      `Deleted ${conversationIds.length} conversations for user ${userId}`,
+    );
+
+    return { success: true, deletedCount: conversationIds.length };
+  }
 }

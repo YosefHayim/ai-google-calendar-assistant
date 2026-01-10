@@ -8,11 +8,9 @@ import {
   Brain,
   Check,
   Loader2,
-  MessageSquareX,
   Play,
   Sparkles,
   Square,
-  Trash2,
   Volume2,
 } from 'lucide-react'
 import { toast } from 'sonner'
@@ -20,6 +18,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
+import { LoadingSection } from '@/components/ui/loading-spinner'
 import CinematicGlowToggle from '@/components/ui/cinematic-glow-toggle'
 import { SettingsRow, SettingsSection, SettingsDropdown, type DropdownOption } from './components'
 import { voiceService } from '@/services/voice.service'
@@ -40,10 +39,7 @@ import {
   type TTSVoice,
 } from '@/lib/validations/preferences'
 
-interface AssistantTabProps {
-  onDeleteAllConversations: () => void
-  isDeletingConversations: boolean
-}
+interface AssistantTabProps {}
 
 const MAX_CHARS = 1000
 const SHOW_COUNTER_THRESHOLD = 900
@@ -55,7 +51,7 @@ const VOICE_DROPDOWN_OPTIONS: DropdownOption[] = VOICE_OPTIONS.map((v) => ({
   label: `${v.label} — ${v.description}`,
 }))
 
-export const AssistantTab: React.FC<AssistantTabProps> = ({ onDeleteAllConversations, isDeletingConversations }) => {
+export const AssistantTab: React.FC<AssistantTabProps> = () => {
   const allyBrainToggleId = React.useId()
   const contextualToggleId = React.useId()
   const voiceToggleId = React.useId()
@@ -240,25 +236,13 @@ export const AssistantTab: React.FC<AssistantTabProps> = ({ onDeleteAllConversat
     }
   }
 
-  const handleClearChatHistory = () => {
-    if (
-      window.confirm(
-        "Are you sure you want to clear Ally's memory? It will forget your scheduling preferences and common meeting times.",
-      )
-    ) {
-      toast.success('Memory cleared', {
-        description: 'Ally will relearn your habits over time.',
-      })
-    }
-  }
-
   const isLoading = isLoadingAllyBrain || isLoadingContextual || isLoadingVoice
 
   if (isLoading) {
     return (
       <Card>
-        <CardContent className="flex items-center justify-center py-12">
-          <Loader2 className="w-6 h-6 animate-spin text-zinc-400" />
+        <CardContent>
+          <LoadingSection text="Loading preferences..." />
         </CardContent>
       </Card>
     )
@@ -409,26 +393,6 @@ export const AssistantTab: React.FC<AssistantTabProps> = ({ onDeleteAllConversat
             />
           </SettingsSection>
 
-          <SettingsSection showDivider className="pt-4">
-            <div className="space-y-3">
-              <Button variant="outline" onClick={onDeleteAllConversations} disabled={isDeletingConversations}>
-                {isDeletingConversations ? (
-                  <Loader2 size={16} className="mr-2 animate-spin" />
-                ) : (
-                  <MessageSquareX size={16} className="mr-2" />
-                )}
-                Delete Chat Logs
-              </Button>
-
-              <Button variant="destructive" onClick={handleClearChatHistory}>
-                <Trash2 size={16} className="mr-2" /> Reset Assistant Memory
-              </Button>
-
-              <p className="text-xs text-red-500 flex items-center gap-1 font-medium">
-                <AlertTriangle size={14} /> Warning: Ally will forget your scheduling habits.
-              </p>
-            </div>
-          </SettingsSection>
         </CardContent>
       </Card>
 

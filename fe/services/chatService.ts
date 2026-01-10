@@ -104,16 +104,17 @@ export const deleteConversation = async (conversationId: string): Promise<boolea
 }
 
 /**
- * Delete all conversations
+ * Delete all conversations for the current user
  */
-export const deleteAllConversations = async (): Promise<boolean> => {
+export const deleteAllConversations = async (): Promise<{ success: boolean; deletedCount: number }> => {
   try {
-    await apiClient.delete('/api/conversations/all', {
-      data: { is_active: false },
-    })
-    return true
+    const response = await apiClient.delete('/api/chat/conversations')
+    return {
+      success: true,
+      deletedCount: response.data?.data?.deletedCount || 0,
+    }
   } catch {
-    return false
+    return { success: false, deletedCount: 0 }
   }
 }
 
@@ -135,5 +136,26 @@ export const startNewConversation = async (): Promise<boolean> => {
     return true
   } catch {
     return false
+  }
+}
+
+/**
+ * Reset all memory (embeddings, context, conversations) for the current user
+ * This clears all learned patterns and conversation history
+ */
+export interface ResetMemoryResult {
+  embeddings: number
+  conversations: number
+  redisContext: boolean
+  message: string
+}
+
+export const resetMemory = async (): Promise<ResetMemoryResult> => {
+  const response = await apiClient.delete('/api/chat/memory')
+  return response.data?.data || {
+    embeddings: 0,
+    conversations: 0,
+    redisContext: true,
+    message: 'Memory reset completed',
   }
 }

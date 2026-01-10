@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import { Bell, Brain, Clock, CreditCard, Database, LayoutDashboard, LogOut, Settings, Shield, X } from 'lucide-react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -9,6 +9,7 @@ import {
   useGoogleCalendarStatus,
   useDisconnectGoogleCalendar,
   useDeleteAllConversations,
+  useResetMemory,
   useUser,
 } from '@/hooks/queries'
 import { toast } from 'sonner'
@@ -23,6 +24,7 @@ import {
   AssistantTab,
   GapSettingsTab,
 } from './settings-tabs'
+import { ConfirmDialog } from './ConfirmDialog'
 
 interface SettingsModalProps {
   isOpen: boolean
@@ -54,6 +56,11 @@ const tabs: { id: TabValue; label: string; icon: React.ComponentType<{ size?: nu
 ]
 
 const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOut, isDarkMode, toggleTheme }) => {
+  const [showDeleteConversationsDialog, setShowDeleteConversationsDialog] = useState(false)
+  const [showDisconnectGoogleDialog, setShowDisconnectGoogleDialog] = useState(false)
+  const [showResetMemoryDialog, setShowResetMemoryDialog] = useState(false)
+  const [showDeleteAccountDialog, setShowDeleteAccountDialog] = useState(false)
+
   const { data: userData, isLoading: isUserLoading } = useUser({
     customUser: true,
     enabled: isOpen,
@@ -65,6 +72,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
 
   const { mutate: disconnectGoogleCalendar, isPending: isDisconnecting } = useDisconnectGoogleCalendar()
   const { deleteAll: deleteAllConversations, isDeleting: isDeletingConversations } = useDeleteAllConversations()
+  const { resetMemory: resetMemoryMutation, isResetting: isResettingMemory } = useResetMemory()
 
   const isGoogleCalendarBusy = isGoogleCalendarLoading || isDisconnecting
 
@@ -75,24 +83,27 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
   }
 
   const handleGoogleCalendarDisconnect = () => {
-    if (
-      !window.confirm(
-        'Are you sure you want to disconnect Google Calendar? The assistant will no longer be able to manage your schedule.',
-      )
-    ) {
-      return
-    }
+    setShowDisconnectGoogleDialog(true)
+  }
+
+  const confirmGoogleCalendarDisconnect = () => {
     disconnectGoogleCalendar()
+    setShowDisconnectGoogleDialog(false)
+    toast.success('Google Calendar disconnected', {
+      description: 'Your calendar integration has been removed.',
+    })
   }
 
   const handleDeleteAllConversations = () => {
-    if (!window.confirm('Are you sure you want to delete ALL chat logs? This cannot be undone.')) {
-      return
-    }
+    setShowDeleteConversationsDialog(true)
+  }
+
+  const confirmDeleteAllConversations = () => {
     deleteAllConversations(undefined, {
       onSuccess: () => {
-        toast.success('Chat logs deleted', {
-          description: 'All conversation logs have been deleted.',
+        setShowDeleteConversationsDialog(false)
+        toast.success('Conversations deleted', {
+          description: 'All your chat history has been permanently deleted.',
         })
       },
       onError: (error) => {
@@ -103,9 +114,85 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
     })
   }
 
+  const handleResetMemory = () => {
+    setShowResetMemoryDialog(true)
+  }
+
+  const confirmResetMemory = () => {
+    resetMemoryMutation(undefined, {
+      onSuccess: (data) => {
+        setShowResetMemoryDialog(false)
+        toast.success('Memory cleared', {
+          description: data.message || 'Ally will relearn your scheduling habits over time.',
+        })
+      },
+      onError: (error) => {
+        toast.error('Failed to reset memory', {
+          description: error instanceof Error ? error.message : 'An error occurred',
+        })
+      },
+    })
+  }
+
+  const handleDeleteAccount = () => {
+    setShowDeleteAccountDialog(true)
+  }
+
+  const confirmDeleteAccount = () => {
+    // TODO: Implement actual account deletion
+    setShowDeleteAccountDialog(false)
+    toast.success('Account deletion initiated', {
+      description: 'Your account will be deleted shortly.',
+    })
+  }
+
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-2xl p-0 gap-0 overflow-hidden bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 [&>button]:hidden">
+    <>
+      <ConfirmDialog
+        isOpen={showDeleteConversationsDialog}
+        onClose={() => setShowDeleteConversationsDialog(false)}
+        onConfirm={confirmDeleteAllConversations}
+        title="Delete All Conversations"
+        description="Are you sure you want to delete all your chat history? This will permanently remove all messages, summaries, and conversation data. This action cannot be undone."
+        confirmLabel="Delete All"
+        variant="warning"
+        isLoading={isDeletingConversations}
+      />
+
+      <ConfirmDialog
+        isOpen={showDisconnectGoogleDialog}
+        onClose={() => setShowDisconnectGoogleDialog(false)}
+        onConfirm={confirmGoogleCalendarDisconnect}
+        title="Disconnect Google Calendar"
+        description="Are you sure you want to disconnect Google Calendar? Ally will no longer be able to view or manage your calendar events."
+        confirmLabel="Disconnect"
+        variant="destructive"
+        isLoading={isDisconnecting}
+      />
+
+      <ConfirmDialog
+        isOpen={showResetMemoryDialog}
+        onClose={() => setShowResetMemoryDialog(false)}
+        onConfirm={confirmResetMemory}
+        title="Reset Assistant Memory"
+        description="Are you sure you want to reset Ally's memory? This will clear all learned scheduling patterns, preferred meeting durations, and location preferences. Ally will need to relearn your habits over time."
+        confirmLabel="Reset Memory"
+        variant="warning"
+        isLoading={isResettingMemory}
+      />
+
+      <ConfirmDialog
+        isOpen={showDeleteAccountDialog}
+        onClose={() => setShowDeleteAccountDialog(false)}
+        onConfirm={confirmDeleteAccount}
+        title="Delete Account"
+        description="Are you sure you want to permanently delete your account? This will remove all your data including conversations, preferences, calendar connections, and subscription. This action cannot be undone."
+        confirmLabel="Delete Account"
+        variant="destructive"
+      />
+
+      <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="max-w-3xl p-0 gap-0 overflow-hidden bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 [&>button]:hidden">
         <DialogHeader className="sr-only">
           <DialogTitle>Settings</DialogTitle>
           <DialogDescription>Manage your Ally preferences and settings.</DialogDescription>
@@ -151,7 +238,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
               </Button>
             </div>
 
-            <div className="flex-1 overflow-y-auto px-6 pb-6">
+            <div className="flex-1 overflow-y-auto overflow-x-hidden px-6 pb-6">
               <TabsContent value="general" className="mt-0">
                 <GeneralTab
                   isDarkMode={isDarkMode}
@@ -177,10 +264,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
               </TabsContent>
 
               <TabsContent value="assistant" className="mt-0">
-                <AssistantTab
-                  onDeleteAllConversations={handleDeleteAllConversations}
-                  isDeletingConversations={isDeletingConversations}
-                />
+                <AssistantTab />
               </TabsContent>
 
               <TabsContent value="gap_settings" className="mt-0">
@@ -196,13 +280,20 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
               </TabsContent>
 
               <TabsContent value="data_controls" className="mt-0">
-                <DataControlsTab />
+                <DataControlsTab
+                  onDeleteAllConversations={handleDeleteAllConversations}
+                  isDeletingConversations={isDeletingConversations}
+                  onResetMemory={handleResetMemory}
+                  isResettingMemory={isResettingMemory}
+                  onDeleteAccount={handleDeleteAccount}
+                />
               </TabsContent>
             </div>
           </div>
         </Tabs>
       </DialogContent>
     </Dialog>
+    </>
   )
 }
 

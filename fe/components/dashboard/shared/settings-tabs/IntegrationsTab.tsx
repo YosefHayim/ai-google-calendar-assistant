@@ -1,13 +1,13 @@
 'use client'
 
-import React from 'react'
 import { AlertTriangle, ArrowUpRight, CheckCircle2, Circle, Loader2, Plus, RefreshCw, X } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-
 import { SettingsRow, SettingsSection } from './components'
+
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import type { GoogleCalendarIntegrationStatus } from '@/types/api'
+import React from 'react'
 
 interface IntegrationsTabProps {
   googleCalendarStatus: GoogleCalendarIntegrationStatus | null | undefined
@@ -81,7 +81,13 @@ export const IntegrationsTab: React.FC<IntegrationsTabProps> = ({
           <div className="flex gap-2 pl-0 py-2">
             {googleIsConnected ? (
               <>
-                <Button className="flex-1" variant="outline" size="sm" onClick={onResync} disabled={isGoogleCalendarBusy}>
+                <Button
+                  className="flex-1"
+                  variant="outline"
+                  size="sm"
+                  onClick={onResync}
+                  disabled={isGoogleCalendarBusy}
+                >
                   <RefreshCw size={14} className="mr-2" /> Re-sync
                 </Button>
                 <Button
@@ -121,7 +127,7 @@ export const IntegrationsTab: React.FC<IntegrationsTabProps> = ({
             tooltip="Chat with Ally on Telegram to manage your calendar on the go"
             control={
               <Button variant="outline" size="sm" asChild>
-                <a href="https://t.me/ai_schedule_event_server_bot" target="_blank" rel="noreferrer">
+                <a className="w-full" href="https://t.me/ai_schedule_event_server_bot" target="_blank" rel="noreferrer">
                   Open <ArrowUpRight size={14} className="ml-1" />
                 </a>
               </Button>

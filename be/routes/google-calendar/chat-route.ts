@@ -48,6 +48,17 @@ router.get("/conversations", chatController.getConversations);
 router.post("/conversations/new", chatController.startNewConversation);
 
 /**
+ * Delete all conversations for the authenticated user
+ */
+router.delete("/conversations", chatController.deleteAllConversations);
+
+/**
+ * Reset all memory (embeddings, context, conversations) for the authenticated user
+ * This clears all learned patterns and conversation history
+ */
+router.delete("/memory", chatController.resetMemory);
+
+/**
  * Get a specific conversation by ID
  */
 router.get("/conversations/:id", chatController.getConversation);
