@@ -220,7 +220,18 @@ async function handleStreamingResponse(
       fullResponse = await handleMultiProviderStreaming(res, agentConfig, fullPrompt, userEmail, images);
     }
 
-    await webConversation.addMessageToConversation(conversationId, userId, { role: "user", content: message }, summarizeMessages);
+    // Convert ImageContent[] to MessageImageData[] for storage
+    const messageImages = images?.map((img) => ({
+      data: img.data,
+      mimeType: img.mimeType,
+    }));
+
+    await webConversation.addMessageToConversation(
+      conversationId,
+      userId,
+      { role: "user", content: message, images: messageImages },
+      summarizeMessages
+    );
 
     if (fullResponse) {
       await webConversation.addMessageToConversation(conversationId, userId, { role: "assistant", content: fullResponse }, summarizeMessages);

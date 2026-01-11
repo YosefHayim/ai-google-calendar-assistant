@@ -1,6 +1,6 @@
 'use client'
 
-import { ArrowUp, ImagePlus, Mic, Square, X } from 'lucide-react'
+import { ArrowUp, ImagePlus, Mic, Square, X, ChevronLeft, ChevronRight } from 'lucide-react'
 import React, { forwardRef, useCallback, useMemo, useRef, useState } from 'react'
 
 import { AIVoiceInput } from '@/components/ui/ai-voice-input'
@@ -13,6 +13,80 @@ export interface ImageFile {
   file: File
   preview: string
   base64?: string
+}
+
+interface ImageLightboxProps {
+  images: ImageFile[]
+  currentIndex: number
+  onClose: () => void
+  onPrevious: () => void
+  onNext: () => void
+}
+
+const ImageLightbox: React.FC<ImageLightboxProps> = ({
+  images,
+  currentIndex,
+  onClose,
+  onPrevious,
+  onNext,
+}) => {
+  const currentImage = images[currentIndex]
+  if (!currentImage) return null
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <button
+        onClick={onClose}
+        className="absolute top-4 right-4 z-10 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+      >
+        <X className="w-6 h-6" />
+      </button>
+
+      {images.length > 1 && (
+        <>
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              onPrevious()
+            }}
+            className="absolute left-4 z-10 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors disabled:opacity-50"
+            disabled={currentIndex === 0}
+          >
+            <ChevronLeft className="w-8 h-8" />
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              onNext()
+            }}
+            className="absolute right-4 z-10 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors disabled:opacity-50"
+            disabled={currentIndex === images.length - 1}
+          >
+            <ChevronRight className="w-8 h-8" />
+          </button>
+        </>
+      )}
+
+      <div
+        className="relative max-w-[90vw] max-h-[90vh]"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <img
+          src={currentImage.preview}
+          alt={`Image ${currentIndex + 1}`}
+          className="max-w-full max-h-[90vh] object-contain rounded-lg"
+        />
+        {images.length > 1 && (
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-black/50 text-white text-sm">
+            {currentIndex + 1} / {images.length}
+          </div>
+        )}
+      </div>
+    </div>
+  )
 }
 
 interface ChatInputProps {
@@ -63,6 +137,23 @@ export const ChatInput = forwardRef<HTMLInputElement, ChatInputProps>(
     const isDisabled = isLoading && !onCancel
     const inputDirection = useMemo(() => getTextDirection(input), [input])
     const fileInputRef = useRef<HTMLInputElement>(null)
+    const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
+
+    const openLightbox = useCallback((index: number) => {
+      setLightboxIndex(index)
+    }, [])
+
+    const closeLightbox = useCallback(() => {
+      setLightboxIndex(null)
+    }, [])
+
+    const goToPrevious = useCallback(() => {
+      setLightboxIndex((prev) => (prev !== null && prev > 0 ? prev - 1 : prev))
+    }, [])
+
+    const goToNext = useCallback(() => {
+      setLightboxIndex((prev) => (prev !== null && prev < images.length - 1 ? prev + 1 : prev))
+    }, [])
 
     const handleImageSelect = useCallback(
       async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -154,13 +245,19 @@ export const ChatInput = forwardRef<HTMLInputElement, ChatInputProps>(
         {/* Image previews */}
         {images.length > 0 && (
           <div className="flex gap-2 mb-2 flex-wrap max-w-full overflow-x-auto pb-2">
-            {images.map((image) => (
+            {images.map((image, index) => (
               <div key={image.id} className="relative group flex-shrink-0">
-                <img
-                  src={image.preview}
-                  alt="Upload preview"
-                  className="w-16 h-16 object-cover rounded-lg border border-zinc-200 dark:border-zinc-700"
-                />
+                <button
+                  type="button"
+                  onClick={() => openLightbox(index)}
+                  className="block focus:outline-none focus:ring-2 focus:ring-primary rounded-lg"
+                >
+                  <img
+                    src={image.preview}
+                    alt="Upload preview"
+                    className="w-16 h-16 object-cover rounded-lg border border-zinc-200 dark:border-zinc-700 cursor-pointer hover:opacity-80 transition-opacity"
+                  />
+                </button>
                 <button
                   type="button"
                   onClick={() => removeImage(image.id)}
@@ -176,6 +273,17 @@ export const ChatInput = forwardRef<HTMLInputElement, ChatInputProps>(
               </span>
             )}
           </div>
+        )}
+
+        {/* Image Lightbox */}
+        {lightboxIndex !== null && images.length > 0 && (
+          <ImageLightbox
+            images={images}
+            currentIndex={lightboxIndex}
+            onClose={closeLightbox}
+            onPrevious={goToPrevious}
+            onNext={goToNext}
+          />
         )}
 
         {isRecording ? (

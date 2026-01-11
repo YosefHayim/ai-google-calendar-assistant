@@ -260,9 +260,15 @@ export type ConversationMessageRecord = {
   created_at: string;
 };
 
+export type MessageImageData = {
+  data: string; // base64 encoded
+  mimeType: "image/png" | "image/jpeg" | "image/webp" | "image/gif";
+};
+
 export type userAndAiMessageProps = {
   role: "user" | "assistant";
   content: string | undefined;
+  images?: MessageImageData[];
 };
 
 export type TOOLS = keyof typeof AGENT_TOOLS;

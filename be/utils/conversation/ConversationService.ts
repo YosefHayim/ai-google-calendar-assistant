@@ -64,7 +64,7 @@ export class ConversationService {
     logger.info(`getConversationMessages: fetching messages for conversation ${conversationId}`);
 
     const { data, error } = await SUPABASE.from("conversation_messages")
-      .select("role, content, sequence_number")
+      .select("role, content, sequence_number, metadata")
       .eq("conversation_id", conversationId)
       .order("sequence_number", { ascending: true });
 
@@ -82,10 +82,22 @@ export class ConversationService {
 
     return data
       .filter((msg) => msg.role === "user" || msg.role === "assistant")
-      .map((msg) => ({
-        role: msg.role as "user" | "assistant",
-        content: msg.content,
-      }));
+      .map((msg) => {
+        const message: userAndAiMessageProps = {
+          role: msg.role as "user" | "assistant",
+          content: msg.content,
+        };
+
+        // Extract images from metadata if present
+        if (msg.metadata && typeof msg.metadata === "object" && "images" in msg.metadata) {
+          const metadata = msg.metadata as { images?: unknown };
+          if (Array.isArray(metadata.images)) {
+            message.images = metadata.images;
+          }
+        }
+
+        return message;
+      });
   }
 
   async getTodayConversation(
@@ -298,19 +310,24 @@ export class ConversationService {
 
     const nextSequence = (lastMsg?.sequence_number || 0) + 1;
 
+    const hasImages = message.images && message.images.length > 0;
     logger.info(
-      `addMessageAndMaybeSummarize: stateId=${stateId}, role=${message.role}, hasContent=${!!message.content}, contentLen=${message.content?.length || 0}, nextSeq=${nextSequence}`,
+      `addMessageAndMaybeSummarize: stateId=${stateId}, role=${message.role}, hasContent=${!!message.content}, contentLen=${message.content?.length || 0}, hasImages=${hasImages}, nextSeq=${nextSequence}`,
     );
 
-    if (message.content) {
+    if (message.content || hasImages) {
+      // Build metadata with images if present
+      const metadata = hasImages ? { images: message.images } : undefined;
+
       const { data: insertedMsg, error: insertError } = await SUPABASE.from(
         "conversation_messages",
       )
         .insert({
           conversation_id: stateId,
           role: mapRoleToDb(message.role),
-          content: message.content,
+          content: message.content || "",
           sequence_number: nextSequence,
+          metadata: metadata,
         })
         .select()
         .single();
@@ -321,7 +338,7 @@ export class ConversationService {
         );
       } else {
         logger.info(
-          `Successfully inserted message ${insertedMsg?.id} for conversation ${stateId}`,
+          `Successfully inserted message ${insertedMsg?.id} for conversation ${stateId}${hasImages ? ` with ${message.images?.length} images` : ""}`,
         );
       }
     } else {

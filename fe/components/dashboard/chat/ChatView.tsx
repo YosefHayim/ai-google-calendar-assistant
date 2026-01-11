@@ -39,7 +39,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
       <div id="tour-chat-history">
         {messages.map((msg) => (
           <div key={msg.id} className="group mb-8">
-            <MessageBubble role={msg.role} content={msg.content} timestamp={msg.timestamp} hideTimestamp={true} />
+            <MessageBubble role={msg.role} content={msg.content} timestamp={msg.timestamp} images={msg.images} hideTimestamp={true} />
             <div className={`flex w-full ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
               <div className="max-w-[85%] md:max-w-[75%] w-full">
                 <MessageActions
