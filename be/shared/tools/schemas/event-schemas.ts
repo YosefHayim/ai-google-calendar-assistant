@@ -93,6 +93,12 @@ export const insertEventSchema = z
       .optional(),
     start: eventTimeSchema,
     end: eventTimeSchema,
+    addMeetLink: z.coerce
+      .boolean({
+        description:
+          "Set to true to automatically add a Google Meet video conference link to the event. Use when user asks for a video call, meeting link, virtual meeting, or online meeting.",
+      })
+      .default(false),
   })
   .describe("Create a new calendar event. Email provided from context.")
 

@@ -181,6 +181,8 @@ export interface CreateEventRequest {
   reminders?: { useDefault: boolean; overrides?: EventReminder[] };
   calendarId?: string;
   email?: string;
+  /** Set to true to automatically add a Google Meet video conference link */
+  addMeetLink?: boolean;
 }
 
 // Update event request

@@ -77,7 +77,12 @@ const getAllEvents = reqResAsyncHandler(async (req: Request, res: Response) => {
  *
  */
 const createEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const r = await eventsHandler(req, ACTION.INSERT, req.body, { calendarId: req.query.calendarId ?? "primary", email: req.body.email });
+  const { addMeetLink, ...eventData } = req.body;
+  const r = await eventsHandler(req, ACTION.INSERT, eventData, {
+    calendarId: req.query.calendarId ?? "primary",
+    email: req.body.email,
+    addMeetLink: addMeetLink === true,
+  });
   return sendR(res, STATUS_RESPONSE.CREATED, "Event created successfully", r);
 });
 
