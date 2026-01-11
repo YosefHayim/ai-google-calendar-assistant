@@ -5,7 +5,7 @@ import { DashboardUIProvider, useDashboardUI } from '@/contexts/DashboardUIConte
 import { ChatProvider } from '@/contexts/ChatContext'
 import { LanguageOnboardingModal } from '@/components/onboarding/LanguageOnboardingModal'
 import { OnboardingTour } from '@/components/dashboard/shared/OnboardingTour'
-import React from 'react'
+import React, { Suspense } from 'react'
 import SettingsModal from '@/components/dashboard/shared/SettingsModal'
 import Sidebar from '@/components/dashboard/shared/Sidebar'
 
@@ -57,12 +57,22 @@ function DashboardLayoutContent({ children }: { children?: React.ReactNode }) {
   )
 }
 
+function DashboardLayoutFallback() {
+  return (
+    <div className="flex h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-950">
+      <div className="animate-pulse text-zinc-500">Loading...</div>
+    </div>
+  )
+}
+
 export default function DashboardLayout({ children }: { children?: React.ReactNode }) {
   return (
-    <DashboardUIProvider>
-      <ChatProvider>
-        <DashboardLayoutContent>{children}</DashboardLayoutContent>
-      </ChatProvider>
-    </DashboardUIProvider>
+    <Suspense fallback={<DashboardLayoutFallback />}>
+      <DashboardUIProvider>
+        <ChatProvider>
+          <DashboardLayoutContent>{children}</DashboardLayoutContent>
+        </ChatProvider>
+      </DashboardUIProvider>
+    </Suspense>
   )
 }
