@@ -60,3 +60,11 @@ export const DATE_CONSTANTS = {
   /** Week day labels */
   WEEK_DAYS: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
 } as const
+
+// Social & Integration Links
+export const SOCIAL_LINKS = {
+  TELEGRAM_BOT: 'https://t.me/ai_schedule_event_server_bot',
+  DISCORD: 'https://discord.gg/ally',
+  WHATSAPP: 'https://wa.me/message/ally',
+  EMAIL: 'mailto:hello@getally.ai',
+} as const
