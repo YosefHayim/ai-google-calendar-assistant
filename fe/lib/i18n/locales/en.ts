@@ -78,6 +78,7 @@ export const en = {
     description:
       'The executive-grade AI assistant designed for business owners to defend their deep work. From Free Exploratory access to Unlimited Executive Power. Built on the Ally Neural Protocol.',
     systemStatus: 'All Systems Operational • High-Performance Engine',
+    chatOnTelegram: 'Chat with Ally on Telegram',
   },
 
   // Home Page
@@ -100,6 +101,10 @@ export const en = {
     ctaTitle: 'Ready to transform your calendar experience?',
     ctaSubtitle: 'Join thousands of professionals who have simplified their scheduling with Ally.',
     startForFree: 'Start for Free',
+    telegramTitle: 'Chat with Ally on Telegram',
+    telegramDescription:
+      'Manage your calendar on the go. Send voice messages, schedule events, and get reminders — all from Telegram.',
+    openTelegram: 'Open in Telegram',
   },
 
   // About Page

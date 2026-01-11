@@ -6,6 +6,7 @@ import { TelegramIcon, WhatsAppIcon } from '@/components/shared/Icons'
 import Link from 'next/link'
 import { Mail } from 'lucide-react'
 import React from 'react'
+import { SOCIAL_LINKS } from '@/lib/constants'
 import { useTranslation } from 'react-i18next'
 
 // Custom Discord Icon since it's sometimes missing from standard sets or varies in naming
@@ -61,7 +62,7 @@ const Footer = () => {
             <p className="text-zinc-500 dark:text-zinc-400 max-w-sm mb-8 leading-relaxed">{t('footer.description')}</p>
             <div className="flex items-center gap-4">
               <a
-                href="https://discord.gg"
+                href={SOCIAL_LINKS.DISCORD}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2 bg-zinc-100 dark:bg-zinc-900 rounded-md text-zinc-500 hover:text-primary transition-colors"
@@ -70,16 +71,16 @@ const Footer = () => {
                 <DiscordIcon className="w-5 h-5" />
               </a>
               <a
-                href="https://t.me"
+                href={SOCIAL_LINKS.TELEGRAM_BOT}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-2 bg-zinc-100 dark:bg-zinc-900 rounded-md text-zinc-500 hover:text-primary transition-colors"
-                title="Telegram"
+                className="p-2 bg-zinc-100 dark:bg-zinc-900 rounded-md text-zinc-500 hover:text-[#0088cc] transition-colors"
+                title={t('footer.chatOnTelegram')}
               >
                 <TelegramIcon className="w-5 h-5" />
               </a>
               <a
-                href="https://wa.me"
+                href={SOCIAL_LINKS.WHATSAPP}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2 bg-zinc-100 dark:bg-zinc-900 rounded-md text-zinc-500 hover:text-primary transition-colors"
@@ -88,7 +89,7 @@ const Footer = () => {
                 <WhatsAppIcon className="w-5 h-5" />
               </a>
               <a
-                href="mailto:hello@getally.ai"
+                href={SOCIAL_LINKS.EMAIL}
                 className="p-2 bg-zinc-100 dark:bg-zinc-900 rounded-md text-zinc-500 hover:text-primary transition-colors"
                 title="Email"
               >

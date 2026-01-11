@@ -1,10 +1,12 @@
 'use client'
 
-import { ArrowRight, Calendar, Clock, Mic, Sparkles } from 'lucide-react'
+import { ArrowRight, Calendar, Clock, MessageCircle, Mic, Sparkles } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 import { Button } from '@/components/ui/button'
 import BentoGridSection from '@/components/marketing/BentoGridSection'
+import { SOCIAL_LINKS } from '@/lib/constants'
+import { TelegramIcon } from '@/components/shared/Icons'
 import FAQs from '@/components/marketing/FAQs'
 import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button'
 import Link from 'next/link'
@@ -76,6 +78,42 @@ export default function HomePage() {
                 {t('home.timeOptimization')}
               </h3>
               <p className="text-zinc-500 dark:text-zinc-400">{t('home.timeOptimizationDesc')}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Telegram Bot CTA Section */}
+      <section className="py-16 px-6">
+        <div className="max-w-4xl mx-auto">
+          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0088cc] to-[#0066aa] p-8 md:p-12">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2" />
+            <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
+              <div className="flex-shrink-0">
+                <div className="w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                  <TelegramIcon className="w-12 h-12 md:w-14 md:h-14 text-white" />
+                </div>
+              </div>
+              <div className="flex-1 text-center md:text-left">
+                <h3 className="text-2xl md:text-3xl font-medium text-white mb-3">
+                  {t('home.telegramTitle')}
+                </h3>
+                <p className="text-white/80 text-lg mb-6 max-w-xl">
+                  {t('home.telegramDescription')}
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+                  <a
+                    href={SOCIAL_LINKS.TELEGRAM_BOT}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white text-[#0088cc] font-medium rounded-full hover:bg-white/90 transition-colors"
+                  >
+                    <MessageCircle className="w-5 h-5" />
+                    {t('home.openTelegram')}
+                  </a>
+                </div>
+              </div>
             </div>
           </div>
         </div>
