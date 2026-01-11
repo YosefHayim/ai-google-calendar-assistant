@@ -1,9 +1,15 @@
 export type Role = 'user' | 'assistant'
 
+export interface MessageImage {
+  data: string // base64 encoded
+  mimeType: 'image/png' | 'image/jpeg' | 'image/webp' | 'image/gif'
+}
+
 export interface Message {
   id: string
   role: Role
   content: string
+  images?: MessageImage[]
   timestamp: Date
 }
 

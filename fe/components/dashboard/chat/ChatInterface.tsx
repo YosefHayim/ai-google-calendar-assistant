@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import { AgentProfileSelector } from './AgentProfileSelector'
 import { AvatarView } from './AvatarView'
-import { ChatInput } from './ChatInput'
+import { ChatInput, ImageFile } from './ChatInput'
 import { ChatView } from './ChatView'
 import { Message } from '@/types'
 import { ThreeDView } from './ThreeDView'
@@ -40,6 +40,7 @@ const ChatInterface: React.FC = () => {
   const { data: voiceData } = useVoicePreference()
 
   const [input, setInput] = useState('')
+  const [images, setImages] = useState<ImageFile[]>([])
   const [isSpeaking, setIsSpeaking] = useState(false)
   const [speakingMessageId, setSpeakingMessageId] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState<ActiveTab>('chat')
@@ -186,20 +187,41 @@ const ChatInterface: React.FC = () => {
 
   const handleSend = async (e?: React.FormEvent, textToSend: string = input) => {
     e?.preventDefault()
-    if (!textToSend.trim() || isLoading) return
+    if ((!textToSend.trim() && images.length === 0) || isLoading) return
+
+    // Build content with images if present
+    const messageContent = images.length > 0
+      ? `${textToSend || 'Please analyze these images and help me with any scheduling or calendar-related content.'}`
+      : textToSend
 
     const userMessage: Message = {
       id: Date.now().toString(),
       role: 'user',
-      content: textToSend,
+      content: messageContent,
+      images: images.length > 0 ? images.map(img => ({
+        data: img.base64 || '',
+        mimeType: img.file.type as 'image/png' | 'image/jpeg' | 'image/webp' | 'image/gif',
+      })) : undefined,
       timestamp: new Date(),
     }
     setMessages((prev) => [...prev, userMessage])
     setInput('')
+
+    // Clean up image previews and clear images state
+    images.forEach(img => URL.revokeObjectURL(img.preview))
+    setImages([])
+
     setError(null)
     resetStreamingState()
 
-    await sendStreamingMessage(textToSend, selectedConversationId || undefined)
+    // Pass images to streaming message
+    const imageData = userMessage.images?.map(img => ({
+      type: 'image' as const,
+      data: img.data,
+      mimeType: img.mimeType,
+    }))
+
+    await sendStreamingMessage(messageContent, selectedConversationId || undefined, imageData)
   }
 
   const handleResend = (text: string) => {
@@ -297,6 +319,7 @@ const ChatInterface: React.FC = () => {
           speechRecognitionSupported={speechRecognitionSupported}
           speechRecognitionError={speechRecognitionError}
           interimTranscription={interimTranscription}
+          images={images}
           onInputChange={setInput}
           onSubmit={handleSend}
           onToggleRecording={toggleRecording}
@@ -304,6 +327,7 @@ const ChatInterface: React.FC = () => {
           onStopRecording={stopRecording}
           onCancelRecording={cancelRecording}
           onCancel={isLoading ? handleCancel : undefined}
+          onImagesChange={setImages}
         />
       </div>
     </div>
