@@ -398,4 +398,8 @@ export const ru = {
   "commands.asvoice.alreadyVoice": "Последний ответ уже был отправлен голосовым сообщением.",
   "commands.asvoice.generating": "Генерация голосового сообщения...",
   "commands.asvoice.failed": "Не удалось создать голосовое сообщение. Вот текст:",
+
+  "commands.website.header": "Веб-панель",
+  "commands.website.text": "Откройте панель управления календарём и настройте параметры онлайн:",
+  "botMenu.website": "Открыть веб-панель",
 } as const;

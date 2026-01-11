@@ -39,6 +39,9 @@ export const COMMANDS = {
   // Response Format
   ASTEXT: "/astext",
   ASVOICE: "/asvoice",
+
+  // Links
+  WEBSITE: "/website",
 } as const;
 
 export const CONFIRM_RESPONSES = ["yes", "y", "confirm"] as const;

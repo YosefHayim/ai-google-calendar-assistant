@@ -423,6 +423,10 @@ export const fr = {
   "commands.asvoice.alreadyVoice": "La dernière réponse a déjà été envoyée en vocal.",
   "commands.asvoice.generating": "Génération du message vocal...",
   "commands.asvoice.failed": "Échec de la génération du message vocal. Voici le texte :",
+
+  "commands.website.header": "Tableau de bord Web",
+  "commands.website.text": "Accédez à votre tableau de bord de calendrier et gérez vos paramètres en ligne :",
+  "botMenu.website": "Ouvrir le tableau de bord",
 } as const;
 
 export type TranslationKey = keyof typeof fr;
