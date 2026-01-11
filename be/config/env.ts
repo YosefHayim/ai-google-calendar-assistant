@@ -1,7 +1,10 @@
 import dotenv from "dotenv"
 import path from "node:path"
 
-dotenv.config({ path: path.resolve(__dirname, "../.env") })
+// Only load .env file in development - in production, env vars are injected by the platform
+if (process.env.NODE_ENV !== "production") {
+  dotenv.config({ path: path.resolve(__dirname, "../.env") })
+}
 
 // ============================================================================
 // Hardcoded Constants (Non-Secrets)
