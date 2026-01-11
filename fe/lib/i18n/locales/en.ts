@@ -107,6 +107,48 @@ export const en = {
     openTelegram: 'Open in Telegram',
   },
 
+  // Feature Showcase
+  showcase: {
+    badge: 'Live Demo',
+    title: 'See Ally in Action',
+    subtitle: 'Experience seamless calendar management across Telegram and Web',
+    today: {
+      title: "Today's Schedule",
+      description:
+        "Get a complete overview of your day with /today. See all meetings, focus blocks, and free time at a glance.",
+    },
+    voice: {
+      title: 'Voice Commands',
+      description:
+        'Send voice messages to manage your calendar hands-free. Ally transcribes and executes your requests instantly.',
+    },
+    analytics: {
+      title: 'Time Analytics',
+      description:
+        'Track your productivity with /analytics. See focus time, meeting load, and weekly trends to optimize your schedule.',
+    },
+    brain: {
+      title: 'Ally Brain',
+      description:
+        'Teach Ally your preferences with /brain. Set rules like "no meetings before 10am" and Ally will remember.',
+    },
+    search: {
+      title: 'Smart Search',
+      description:
+        'Find past meetings instantly. Ask "When did I last meet with Sarah?" and get precise answers with context.',
+    },
+    create: {
+      title: 'Quick Create',
+      description:
+        'Schedule events with natural language. Just say "Lunch with Alex tomorrow at noon" and confirm.',
+    },
+    language: {
+      title: 'Multi-Language',
+      description:
+        'Use Ally in your preferred language with /language. Supports English, Hebrew, Russian, French, German, and Arabic.',
+    },
+  },
+
   // About Page
   about: {
     title: 'About',
