@@ -1,70 +1,92 @@
-import dotenv from "dotenv";
-import path from "node:path";
+import dotenv from "dotenv"
+import path from "node:path"
 
-dotenv.config({ path: path.resolve(__dirname, "../.env") });
+dotenv.config({ path: path.resolve(__dirname, "../.env") })
 
 // ============================================================================
-// Validation
+// Hardcoded Constants (Non-Secrets)
 // ============================================================================
 
-const REQUIRED_ENV_VARS = ["SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY", "OPEN_API_KEY", "GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET"] as const;
+const CONSTANTS = {
+  // Supabase
+  SUPABASE_URL: "https://vdwjfekcsnurtjsieojv.supabase.co",
 
-const missing = REQUIRED_ENV_VARS.filter((key) => !process.env[key]);
+  // Google OAuth
+  GOOGLE_CLIENT_ID: "633918377873-vvlgvie0ksenm5jcvs3c74vhb17rdqsn.apps.googleusercontent.com",
+
+  // LiveKit
+  LIVEKIT_WS_URL: "wss://ai-google-calendar-project-mljh2s1n.livekit.cloud",
+
+  // LemonSqueezy
+  LEMONSQUEEZY_STORE_ID: "270009",
+  LEMONSQUEEZY_VARIANTS: {
+    starter: { monthly: "1204847", yearly: "1204888" },
+    pro: { monthly: "1204856", yearly: "1204874" },
+    executive: { monthly: "1204865", yearly: "1204889" },
+    credits: "1204898",
+  },
+
+  // URLs (Production)
+  PROD_BACKEND_URL: "https://i3fzcpnmmk.eu-central-1.awsapprunner.com",
+  PROD_FRONTEND_URL: "https://niicspurpm.eu-central-1.awsapprunner.com",
+
+  // Defaults
+  DEFAULT_PORT: 3000,
+  DEFAULT_HOST: "localhost",
+  WHATSAPP_API_VERSION: "v22.0",
+} as const
+
+// ============================================================================
+// Validation - Only secrets need to be in .env
+// ============================================================================
+
+const REQUIRED_SECRETS = [
+  "SUPABASE_SERVICE_ROLE_KEY",
+  "OPEN_API_KEY",
+  "GOOGLE_CLIENT_SECRET",
+] as const
+
+const missing = REQUIRED_SECRETS.filter((key) => !process.env[key])
 if (missing.length > 0) {
-  throw new Error(`Missing required environment variables: ${missing.join(", ")}`);
-}
-
-// Warn about missing production-critical environment variables
-const isProduction = process.env.NODE_ENV === "production";
-if (isProduction && !process.env.BASE_URL) {
-  console.warn(
-    "\n⚠️  WARNING: BASE_URL environment variable is not set in production!\n" +
-    "   OAuth callbacks will redirect to localhost instead of your deployed URL.\n" +
-    "   Set BASE_URL to your deployed backend URL (e.g., https://api.yourdomain.com)\n"
-  );
-}
-if (isProduction && !process.env.FRONTEND_URL) {
-  console.warn(
-    "\n⚠️  WARNING: FRONTEND_URL environment variable is not set in production!\n" +
-    "   Post-OAuth redirects will go to localhost instead of your frontend.\n" +
-    "   Set FRONTEND_URL to your deployed frontend URL (e.g., https://yourdomain.com)\n"
-  );
+  throw new Error(`Missing required secret environment variables: ${missing.join(", ")}`)
 }
 
 // ============================================================================
 // Helper to get optional env vars with type safety
 // ============================================================================
 
-const getOptional = (key: string): string | undefined => process.env[key] || undefined;
-const getRequired = (key: string): string => process.env[key]!;
+const getOptional = (key: string): string | undefined => process.env[key] || undefined
+const getRequired = (key: string): string => process.env[key]!
 
 // ============================================================================
 // Environment Detection
 // ============================================================================
 
-const nodeEnv = process.env.NODE_ENV ?? "development";
+const nodeEnv = process.env.NODE_ENV ?? "development"
 
-export const isDev = nodeEnv === "development";
-export const isProd = nodeEnv === "production";
-export const isTest = nodeEnv === "test";
+export const isDev = nodeEnv === "development" || nodeEnv === "dev"
+export const isProd = nodeEnv === "production"
+export const isTest = nodeEnv === "test"
 
 // ============================================================================
 // Server Configuration
 // ============================================================================
 
-const DEFAULT_PORT = 3000;
-const port = Number(process.env.PORT) || DEFAULT_PORT;
+const port = Number(process.env.PORT) || CONSTANTS.DEFAULT_PORT
 
 const server = {
   nodeEnv,
   port,
-  host: process.env.HOST ?? "localhost",
+  host: process.env.HOST ?? CONSTANTS.DEFAULT_HOST,
   get baseUrl(): string {
-    const url = process.env.BASE_URL ?? `http://${this.host}:${this.port}`;
-    // Remove trailing slash to prevent double slashes in URL construction
-    return url.replace(/\/+$/, "");
+    // In production, use hardcoded URL. In dev, use localhost.
+    if (isProd) {
+      return CONSTANTS.PROD_BACKEND_URL
+    }
+    const url = process.env.BASE_URL ?? `http://${this.host}:${this.port}`
+    return url.replace(/\/+$/, "")
   },
-} as const;
+} as const
 
 // ============================================================================
 // URLs Configuration
@@ -72,36 +94,39 @@ const server = {
 
 const urls = {
   get api(): string {
-    return server.baseUrl;
+    return server.baseUrl
   },
   get authCallback(): string {
-    return `${server.baseUrl}/api/users/callback`;
+    return `${server.baseUrl}/api/users/callback`
   },
   get frontend(): string {
-    const url = process.env.FRONTEND_URL ?? "http://localhost:4000";
-    // Remove trailing slash to prevent double slashes in URL construction
-    return url.replace(/\/+$/, "");
+    // In production, use hardcoded URL. In dev, use localhost.
+    if (isProd) {
+      return CONSTANTS.PROD_FRONTEND_URL
+    }
+    const url = process.env.FRONTEND_URL ?? "http://localhost:4000"
+    return url.replace(/\/+$/, "")
   },
-} as const;
+} as const
 
 // ============================================================================
 // Supabase Configuration
 // ============================================================================
 
 const supabase = {
-  url: getRequired("SUPABASE_URL"),
+  url: CONSTANTS.SUPABASE_URL,
   serviceRoleKey: getRequired("SUPABASE_SERVICE_ROLE_KEY"),
-} as const;
+} as const
 
 // ============================================================================
 // Google Configuration
 // ============================================================================
 
 const google = {
-  clientId: getRequired("GOOGLE_CLIENT_ID"),
+  clientId: CONSTANTS.GOOGLE_CLIENT_ID,
   clientSecret: getRequired("GOOGLE_CLIENT_SECRET"),
   apiKey: getOptional("GOOGLE_API_KEY"),
-} as const;
+} as const
 
 // ============================================================================
 // OpenAI Configuration
@@ -109,7 +134,20 @@ const google = {
 
 const openai = {
   apiKey: getRequired("OPEN_API_KEY"),
-} as const;
+} as const
+
+// ============================================================================
+// LiveKit Configuration
+// ============================================================================
+
+const livekit = {
+  wsUrl: CONSTANTS.LIVEKIT_WS_URL,
+  apiKey: getOptional("LIVEKIT_API_KEY"),
+  apiSecret: getOptional("LIVEKIT_API_SECRET"),
+  get isEnabled(): boolean {
+    return !!(this.apiKey && this.apiSecret)
+  },
+} as const
 
 // ============================================================================
 // LemonSqueezy Configuration
@@ -117,27 +155,13 @@ const openai = {
 
 const lemonSqueezy = {
   apiKey: getOptional("LEMONSQUEEZY_API_KEY"),
-  storeId: getOptional("LEMONSQUEEZY_STORE_ID"),
+  storeId: CONSTANTS.LEMONSQUEEZY_STORE_ID,
   webhookSecret: getOptional("LEMONSQUEEZY_WEBHOOK_SECRET"),
-  variants: {
-    starter: {
-      monthly: getOptional("LEMONSQUEEZY_VARIANT_STARTER_MONTHLY"),
-      yearly: getOptional("LEMONSQUEEZY_VARIANT_STARTER_YEARLY"),
-    },
-    pro: {
-      monthly: getOptional("LEMONSQUEEZY_VARIANT_PRO_MONTHLY"),
-      yearly: getOptional("LEMONSQUEEZY_VARIANT_PRO_YEARLY"),
-    },
-    executive: {
-      monthly: getOptional("LEMONSQUEEZY_VARIANT_EXECUTIVE_MONTHLY"),
-      yearly: getOptional("LEMONSQUEEZY_VARIANT_EXECUTIVE_YEARLY"),
-    },
-    credits: getOptional("LEMONSQUEEZY_VARIANT_CREDITS"),
-  },
+  variants: CONSTANTS.LEMONSQUEEZY_VARIANTS,
   get isEnabled(): boolean {
-    return !!this.apiKey && !!this.storeId;
+    return !!this.apiKey
   },
-} as const;
+} as const
 
 // ============================================================================
 // Integrations Configuration
@@ -147,7 +171,7 @@ const integrations = {
   telegram: {
     accessToken: getOptional("TELEGRAM_BOT_ACCESS_TOKEN"),
     get isEnabled(): boolean {
-      return !!this.accessToken;
+      return !!this.accessToken
     },
   },
   whatsapp: {
@@ -156,15 +180,15 @@ const integrations = {
     accessToken: getOptional("WHATSAPP_ACCESS_TOKEN"),
     verifyToken: getOptional("WHATSAPP_VERIFY_TOKEN"),
     appSecret: getOptional("WHATSAPP_APP_SECRET"),
-    apiVersion: getOptional("WHATSAPP_API_VERSION") ?? "v22.0",
+    apiVersion: CONSTANTS.WHATSAPP_API_VERSION,
     get isEnabled(): boolean {
-      return !!(this.phoneNumberId && this.accessToken && this.verifyToken);
+      return !!(this.phoneNumberId && this.accessToken && this.verifyToken)
     },
     get baseUrl(): string {
-      return `https://graph.facebook.com/${this.apiVersion}`;
+      return `https://graph.facebook.com/${this.apiVersion}`
     },
   },
-} as const;
+} as const
 
 // ============================================================================
 // Jira/Confluence Configuration (optional)
@@ -175,11 +199,9 @@ const atlassian = {
     url: getOptional("JIRA_URL"),
     username: getOptional("JIRA_USERNAME"),
     apiToken: getOptional("JIRA_API_TOKEN"),
-    projectsFilter: getOptional("JIRA_PROJECTS_FILTER")
-      ?.split(",")
-      .map((s) => s.trim()),
+    projectsFilter: getOptional("JIRA_PROJECTS_FILTER")?.split(",").map((s) => s.trim()),
     get isEnabled(): boolean {
-      return !!(this.url && this.username && this.apiToken);
+      return !!(this.url && this.username && this.apiToken)
     },
   },
   confluence: {
@@ -187,10 +209,10 @@ const atlassian = {
     username: getOptional("CONFLUENCE_USERNAME"),
     apiToken: getOptional("CONFLUENCE_API_TOKEN"),
     get isEnabled(): boolean {
-      return !!(this.url && this.username && this.apiToken);
+      return !!(this.url && this.username && this.apiToken)
     },
   },
-} as const;
+} as const
 
 // ============================================================================
 // Resend Email Configuration
@@ -203,9 +225,9 @@ const resend = {
   supportEmail: getOptional("SUPPORT_EMAIL") ?? "support@ally.sh",
   storeInboundAttachments: process.env.STORE_INBOUND_ATTACHMENTS === "true",
   get isEnabled(): boolean {
-    return !!this.apiKey;
+    return !!this.apiKey
   },
-} as const;
+} as const
 
 // ============================================================================
 // Testing Configuration
@@ -213,7 +235,7 @@ const resend = {
 
 const testing = {
   testEmail: getOptional("TEST_EMAIL"),
-} as const;
+} as const
 
 // ============================================================================
 // Exported Configuration Object
@@ -239,6 +261,7 @@ export const env = {
   supabase,
   google,
   openai,
+  livekit,
   lemonSqueezy,
   integrations,
   atlassian,
@@ -246,7 +269,6 @@ export const env = {
   testing,
 
   // Legacy flat accessors (for backwards compatibility)
-  // TODO: Migrate usages to grouped accessors (e.g., env.supabase.url)
   supabaseUrl: supabase.url,
   supabaseServiceRoleKey: supabase.serviceRoleKey,
   googleClientId: google.clientId,
@@ -255,10 +277,10 @@ export const env = {
   openAiApiKey: openai.apiKey,
   telegramAccessToken: integrations.telegram.accessToken,
   testEmail: testing.testEmail,
-} as const;
+} as const
 
 // ============================================================================
 // Backwards Compatibility Exports
 // ============================================================================
 
-export const REDIRECT_URI = urls.authCallback;
+export const REDIRECT_URI = urls.authCallback

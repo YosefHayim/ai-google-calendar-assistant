@@ -1,5 +1,5 @@
 import type { Request, Response } from "express"
-import { STATUS_RESPONSE } from "@/config"
+import { STATUS_RESPONSE, env } from "@/config"
 import { reqResAsyncHandler, sendR } from "@/utils/http"
 import { transcribeAudio } from "@/utils/ai/voice-transcription"
 import {
@@ -104,17 +104,15 @@ const getLiveKitToken = reqResAsyncHandler(async (req: Request, res: Response) =
     )
   }
 
-  const apiKey = process.env.LIVEKIT_API_KEY
-  const apiSecret = process.env.LIVEKIT_API_SECRET
-  const wsUrl = process.env.LIVEKIT_WS_URL
-
-  if (!apiKey || !apiSecret || !wsUrl) {
+  if (!env.livekit.isEnabled) {
     return sendR(
       res,
       STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
       "LiveKit not configured"
     )
   }
+
+  const { apiKey, apiSecret, wsUrl } = env.livekit
 
   const roomName = `calendar-voice-${userId}-${Date.now()}`
   const participantName = userEmail.split("@")[0]
