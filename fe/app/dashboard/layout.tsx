@@ -1,16 +1,13 @@
-"use client";
+'use client'
 
-import React from "react";
+import { DashboardUIProvider, useDashboardUI } from '@/contexts/DashboardUIContext'
 
-import { ChatProvider } from "@/contexts/ChatContext";
-import {
-  DashboardUIProvider,
-  useDashboardUI,
-} from "@/contexts/DashboardUIContext";
-import { OnboardingTour } from "@/components/dashboard/shared/OnboardingTour";
-import SettingsModal from "@/components/dashboard/shared/SettingsModal";
-import Sidebar from "@/components/dashboard/shared/Sidebar";
-import { LanguageOnboardingModal } from "@/components/onboarding/LanguageOnboardingModal";
+import { ChatProvider } from '@/contexts/ChatContext'
+import { LanguageOnboardingModal } from '@/components/onboarding/LanguageOnboardingModal'
+import { OnboardingTour } from '@/components/dashboard/shared/OnboardingTour'
+import React from 'react'
+import SettingsModal from '@/components/dashboard/shared/SettingsModal'
+import Sidebar from '@/components/dashboard/shared/Sidebar'
 
 function DashboardLayoutContent({ children }: { children?: React.ReactNode }) {
   const {
@@ -28,7 +25,7 @@ function DashboardLayoutContent({ children }: { children?: React.ReactNode }) {
     completeLanguageOnboarding,
     dismissLanguageOnboarding,
     handleSignOut,
-  } = useDashboardUI();
+  } = useDashboardUI()
 
   return (
     <div className="flex h-screen overflow-hidden bg-zinc-50 dark:bg-zinc-950">
@@ -41,9 +38,7 @@ function DashboardLayoutContent({ children }: { children?: React.ReactNode }) {
         onOpenSettings={openSettings}
         onSignOut={handleSignOut}
       />
-      <main
-        className={`flex-1 flex flex-col transition-all duration-300 ${isSidebarOpen ? "md:ml-64" : "md:ml-20"}`}
-      >
+      <main className={`flex-1 flex flex-col transition-all duration-300 ${isSidebarOpen ? 'md:ml-64' : 'md:ml-20'}`}>
         {children}
       </main>
       <SettingsModal
@@ -59,19 +54,15 @@ function DashboardLayoutContent({ children }: { children?: React.ReactNode }) {
         onComplete={completeLanguageOnboarding}
       />
     </div>
-  );
+  )
 }
 
-export default function DashboardLayout({
-  children,
-}: {
-  children?: React.ReactNode;
-}) {
+export default function DashboardLayout({ children }: { children?: React.ReactNode }) {
   return (
     <DashboardUIProvider>
       <ChatProvider>
         <DashboardLayoutContent>{children}</DashboardLayoutContent>
       </ChatProvider>
     </DashboardUIProvider>
-  );
+  )
 }

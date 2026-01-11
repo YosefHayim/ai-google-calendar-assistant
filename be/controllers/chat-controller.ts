@@ -347,12 +347,14 @@ const continueConversation = reqResAsyncHandler(
       });
       const finalOutput = result.finalOutput || "";
 
-      await webConversation.addMessageToContext(
+      await webConversation.addMessageToConversation(
+        conversationId,
         userId,
         { role: "user", content: message },
         summarizeMessages,
       );
-      await webConversation.addMessageToContext(
+      await webConversation.addMessageToConversation(
+        conversationId,
         userId,
         { role: "assistant", content: finalOutput },
         summarizeMessages,

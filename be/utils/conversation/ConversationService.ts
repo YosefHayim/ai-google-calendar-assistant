@@ -61,14 +61,24 @@ export class ConversationService {
   async getConversationMessages(
     conversationId: string,
   ): Promise<userAndAiMessageProps[]> {
+    logger.info(`getConversationMessages: fetching messages for conversation ${conversationId}`);
+
     const { data, error } = await SUPABASE.from("conversation_messages")
       .select("role, content, sequence_number")
       .eq("conversation_id", conversationId)
       .order("sequence_number", { ascending: true });
 
-    if (error || !data) {
+    if (error) {
+      logger.error(`getConversationMessages: error fetching messages for ${conversationId}: ${error.message}`);
       return [];
     }
+
+    if (!data || data.length === 0) {
+      logger.warn(`getConversationMessages: no messages found for conversation ${conversationId}`);
+      return [];
+    }
+
+    logger.info(`getConversationMessages: found ${data.length} messages for conversation ${conversationId}`);
 
     return data
       .filter((msg) => msg.role === "user" || msg.role === "assistant")
@@ -464,6 +474,8 @@ export class ConversationService {
     conversationId: string,
     userId: string,
   ): Promise<FullConversation | null> {
+    logger.info(`getConversationById: fetching conversation ${conversationId} for user ${userId} (source: ${this.source})`);
+
     const { data, error } = await SUPABASE.from("conversations")
       .select("*")
       .eq("id", conversationId)
@@ -473,12 +485,16 @@ export class ConversationService {
 
     if (error || !data) {
       logger.error(
-        `Failed to fetch conversation ${conversationId}: ${error?.message}`,
+        `getConversationById: failed to fetch conversation ${conversationId}: ${error?.message}`,
       );
       return null;
     }
 
+    logger.info(`getConversationById: found conversation ${conversationId}, message_count in DB: ${data.message_count}`);
+
     const messages = await this.getConversationMessages(conversationId);
+
+    logger.info(`getConversationById: returning conversation ${conversationId} with ${messages.length} messages (DB count: ${data.message_count})`);
 
     return {
       id: data.id,
