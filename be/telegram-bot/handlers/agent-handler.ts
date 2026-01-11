@@ -11,6 +11,7 @@ import {
   storeEmbeddingAsync,
   getRelevantContext,
   telegramConversation,
+  startTypingIndicator,
 } from "../utils"
 import { getAllyBrainForTelegram } from "../utils/ally-brain"
 import { getSelectedAgentProfileForTelegram } from "../utils/agent-profile"
@@ -31,6 +32,9 @@ export const handleAgentRequest = async (
   const chatId = ctx.chat?.id || ctx.session.chatId
   const telegramUserId = ctx.from?.id ?? 0
   const { t } = getTranslatorFromLanguageCode(ctx.session.codeLang)
+
+  // Start typing indicator while processing
+  const stopTyping = startTypingIndicator(ctx)
 
   const userUuid =
     await telegramConversation.getUserIdFromTelegram(telegramUserId)
@@ -141,6 +145,7 @@ export const handleAgentRequest = async (
     )
     await ctx.reply(t("errors.processingError"))
   } finally {
+    stopTyping()
     ctx.session.isProcessing = false
   }
 }
@@ -155,6 +160,9 @@ export const handleConfirmation = async (ctx: GlobalContext): Promise<void> => {
 
   ctx.session.isProcessing = true
   ctx.session.pendingConfirmation = undefined
+
+  // Start typing indicator while processing
+  const stopTyping = startTypingIndicator(ctx)
 
   const chatId = ctx.chat?.id || ctx.session.chatId
   const telegramUserId = ctx.from?.id ?? 0
@@ -224,6 +232,7 @@ export const handleConfirmation = async (ctx: GlobalContext): Promise<void> => {
     logger.error(`Telegram Bot: Confirmation error: ${error}`)
     await ctx.reply(t("errors.eventCreationError"), { parse_mode: "HTML" })
   } finally {
+    stopTyping()
     ctx.session.isProcessing = false
   }
 }

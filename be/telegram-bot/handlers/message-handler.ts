@@ -9,6 +9,7 @@ import {
   isDuplicateMessage,
   handlePendingEmailChange,
   initiateEmailChange,
+  startTypingIndicator,
 } from "../utils";
 import {
   handleExitCommand,
@@ -314,9 +315,13 @@ const handleVoiceMessage = async (ctx: GlobalContext): Promise<void> => {
     return;
   }
 
+  // Start typing indicator while processing voice
+  const stopTyping = startTypingIndicator(ctx);
+
   try {
     const file = await ctx.api.getFile(voice.file_id);
     if (!file.file_path) {
+      stopTyping();
       await ctx.reply(t("errors.processingError"));
       return;
     }
@@ -328,6 +333,7 @@ const handleVoiceMessage = async (ctx: GlobalContext): Promise<void> => {
     const transcription = await transcribeAudio(audioBuffer, "audio/ogg");
 
     if (!transcription.success || !transcription.text) {
+      stopTyping();
       await ctx.reply(transcription.error ?? t("errors.processingError"));
       return;
     }
@@ -336,10 +342,14 @@ const handleVoiceMessage = async (ctx: GlobalContext): Promise<void> => {
       `TG Voice: Transcribed ${audioBuffer.length} bytes to "${transcription.text.substring(0, 50)}..." for user ${telegramUserId}`,
     );
 
+    // Stop typing before passing to agent (agent handler will start its own)
+    stopTyping();
     await handleFreeTextMessage(ctx, transcription.text, true);
   } catch (error) {
     logger.error(`TG Voice: Error processing voice message: ${error}`);
     await ctx.reply(t("errors.processingError"));
+  } finally {
+    stopTyping();
   }
 };
 
