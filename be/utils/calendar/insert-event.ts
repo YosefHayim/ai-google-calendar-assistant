@@ -1,6 +1,5 @@
 import { REQUEST_CONFIG_BASE } from "@/config";
 import type { calendar_v3 } from "googleapis";
-import { v4 as uuidv4 } from "uuid";
 
 type InsertEventParams = {
   calendarEvents: calendar_v3.Resource$Events;
@@ -14,7 +13,7 @@ type InsertEventParams = {
 function generateMeetConferenceData(): calendar_v3.Schema$ConferenceData {
   return {
     createRequest: {
-      requestId: uuidv4(),
+      requestId: Date.now().toString(),
       conferenceSolutionKey: {
         type: "hangoutsMeet",
       },
