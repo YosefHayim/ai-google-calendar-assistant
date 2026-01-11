@@ -143,7 +143,7 @@ const getEventAnalytics = reqResAsyncHandler(async (req: Request, res: Response)
     allCalendarIds = calendarIdsParam.split(',').map(id => id.trim()).filter(Boolean);
   } else {
     // Default: fetch all calendars
-    allCalendarIds = (await calendar.calendarList.list({ prettyPrint: true }).then((r) => r.data.items?.map((cal) => cal.id))) || ["primary"];
+    allCalendarIds = (await calendar.calendarList.list({ prettyPrint: true }).then((r) => r.data.items?.map((cal) => cal.id).filter((id): id is string => Boolean(id)))) || ["primary"];
   }
 
   let totalEventsFound = 0;

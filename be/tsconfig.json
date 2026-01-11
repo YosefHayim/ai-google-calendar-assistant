@@ -11,11 +11,15 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "baseUrl": ".",
+    "outDir": "./dist",
+    "rootDir": ".",
     "paths": {
       "@/*": [
         "*"
       ]
     },
     "strictNullChecks": true
-  }
+  },
+  "include": ["./**/*.ts"],
+  "exclude": ["node_modules", "dist"]
 }
