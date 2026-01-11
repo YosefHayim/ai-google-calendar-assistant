@@ -8,6 +8,7 @@ import BentoGridSection from '@/components/marketing/BentoGridSection'
 import { SOCIAL_LINKS } from '@/lib/constants'
 import { TelegramIcon } from '@/components/shared/Icons'
 import FAQs from '@/components/marketing/FAQs'
+import FeatureShowcase from '@/components/marketing/FeatureShowcase'
 import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button'
 import Link from 'next/link'
 import MarketingLayout from '@/components/marketing/MarketingLayout'
@@ -118,6 +119,8 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      <FeatureShowcase />
 
       <BentoGridSection />
 

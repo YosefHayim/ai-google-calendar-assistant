@@ -107,6 +107,36 @@ export const en = {
     openTelegram: 'Open in Telegram',
   },
 
+  // Feature Showcase
+  showcase: {
+    title: 'See Ally in Action',
+    subtitle: 'Experience seamless calendar management across Telegram and Web',
+    schedule: {
+      title: 'Smart Scheduling',
+      description:
+        'Schedule meetings and events with natural language. Ally understands context and finds the best times.',
+    },
+    voice: {
+      title: 'Voice Commands',
+      description:
+        'Send voice messages to manage your calendar hands-free. Perfect for when you are on the go.',
+    },
+    analytics: {
+      title: 'Time Analytics',
+      description:
+        'Get insights into how you spend your time. Track meetings, focus time, and productivity trends.',
+    },
+    reminders: {
+      title: 'Smart Reminders',
+      description:
+        'Never miss important preparations. Ally sends timely reminders before your meetings.',
+    },
+    search: {
+      title: 'Quick Search',
+      description: 'Find past meetings and events instantly. Ask Ally about your schedule history.',
+    },
+  },
+
   // About Page
   about: {
     title: 'About',
