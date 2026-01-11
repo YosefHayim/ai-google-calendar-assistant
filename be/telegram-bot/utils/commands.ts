@@ -1038,3 +1038,114 @@ export const handleProfileSelection = async (
     await ctx.answerCallbackQuery(t("commands.profile.error"));
   }
 };
+
+export const handleRescheduleCommand = async (ctx: GlobalContext): Promise<void> => {
+  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
+
+  const sections = [
+    {
+      key: "commands.reschedule.sections.howToUse",
+      emoji: "📋",
+      itemCount: 3,
+    },
+    {
+      key: "commands.reschedule.sections.smartFeatures",
+      emoji: "🧠",
+      itemCount: 3,
+    },
+  ];
+
+  let builder = ResponseBuilder.telegram()
+    .direction(direction)
+    .header("🔄", t("commands.reschedule.header"))
+    .text(t("commands.reschedule.text"));
+
+  builder = buildSectionsFromKeys(builder, t, sections);
+  builder.footer(t("commands.reschedule.footerTip"));
+
+  const response = builder.build();
+  await ctx.reply(response.content, { parse_mode: "HTML" });
+};
+
+export const handleRescheduleSelection = async (
+  ctx: GlobalContext,
+  suggestionIndex: number
+): Promise<void> => {
+  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
+
+  const pendingReschedule = ctx.session.pendingReschedule;
+  if (!pendingReschedule) {
+    await ctx.answerCallbackQuery(t("commands.reschedule.noSession"));
+    return;
+  }
+
+  const suggestion = pendingReschedule.suggestions[suggestionIndex];
+  if (!suggestion) {
+    await ctx.answerCallbackQuery(t("commands.reschedule.invalidSelection"));
+    return;
+  }
+
+  await ctx.answerCallbackQuery(t("commands.reschedule.applying"));
+
+  try {
+    const { applyReschedule } = await import("@/utils/calendar/reschedule.js");
+
+    const result = await applyReschedule({
+      email: ctx.session.email!,
+      eventId: pendingReschedule.eventId,
+      calendarId: pendingReschedule.calendarId,
+      newStart: suggestion.start,
+      newEnd: suggestion.end,
+    });
+
+    ctx.session.pendingReschedule = undefined;
+
+    if (result.success) {
+      const response = ResponseBuilder.telegram()
+        .direction(direction)
+        .header("✅", t("commands.reschedule.success"))
+        .text(
+          t("commands.reschedule.successText")
+            .replace("{{event}}", pendingReschedule.eventSummary)
+            .replace("{{time}}", suggestion.startFormatted)
+        )
+        .build();
+
+      await ctx.reply(response.content, { parse_mode: "HTML" });
+    } else {
+      const response = ResponseBuilder.telegram()
+        .direction(direction)
+        .header("❌", t("commands.reschedule.failed"))
+        .text(result.error ?? t("commands.reschedule.unknownError"))
+        .build();
+
+      await ctx.reply(response.content, { parse_mode: "HTML" });
+    }
+  } catch (error) {
+    logger.error(`Telegram Bot: Failed to apply reschedule: ${error}`);
+    ctx.session.pendingReschedule = undefined;
+
+    const response = ResponseBuilder.telegram()
+      .direction(direction)
+      .header("❌", t("commands.reschedule.failed"))
+      .text(t("commands.reschedule.error"))
+      .build();
+
+    await ctx.reply(response.content, { parse_mode: "HTML" });
+  }
+};
+
+export const handleRescheduleCancellation = async (ctx: GlobalContext): Promise<void> => {
+  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
+
+  ctx.session.pendingReschedule = undefined;
+  await ctx.answerCallbackQuery(t("commands.reschedule.cancelled"));
+
+  const response = ResponseBuilder.telegram()
+    .direction(direction)
+    .header("🔄", t("commands.reschedule.cancelledHeader"))
+    .text(t("commands.reschedule.cancelledText"))
+    .build();
+
+  await ctx.reply(response.content, { parse_mode: "HTML" });
+};

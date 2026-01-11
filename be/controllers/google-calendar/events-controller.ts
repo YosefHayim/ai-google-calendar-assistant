@@ -10,6 +10,7 @@ import { fetchCredentialsByEmail } from "@/utils/auth/get-user-calendar-tokens";
 import { generateInsightsWithRetry } from "@/ai-agents/insights-generator";
 import { getEvents } from "@/utils/calendar/get-events";
 import { initUserSupabaseCalendarWithTokensAndUpdateTokens } from "@/utils/calendar/init";
+import { findRescheduleSuggestions, applyReschedule } from "@/utils/calendar/reschedule";
 
 /**
  * Get event by event ID
@@ -443,6 +444,97 @@ const getInsights = reqResAsyncHandler(async (req: Request, res: Response) => {
   return sendR(res, STATUS_RESPONSE.SUCCESS, "Insights generated successfully", responseData);
 });
 
+/**
+ * Get reschedule suggestions for an event
+ *
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @returns {Promise<void>} The response object with reschedule suggestions.
+ * @description Finds optimal reschedule times for a specific event.
+ */
+const getRescheduleSuggestions = reqResAsyncHandler(async (req: Request, res: Response) => {
+  const email = req.user?.email;
+  if (!email) {
+    return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated.");
+  }
+
+  const { eventId } = req.params;
+  if (!eventId) {
+    return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Event ID is required.");
+  }
+
+  const {
+    calendarId = "primary",
+    preferredTimeOfDay = "any",
+    daysToSearch = "7",
+    excludeWeekends = "false",
+  } = req.query as {
+    calendarId?: string;
+    preferredTimeOfDay?: "morning" | "afternoon" | "evening" | "any";
+    daysToSearch?: string;
+    excludeWeekends?: string;
+  };
+
+  const result = await findRescheduleSuggestions({
+    email,
+    eventId,
+    calendarId,
+    preferredTimeOfDay,
+    daysToSearch: parseInt(daysToSearch, 10),
+    excludeWeekends: excludeWeekends === "true",
+  });
+
+  if (!result.success) {
+    return sendR(res, STATUS_RESPONSE.BAD_REQUEST, result.error ?? "Failed to find reschedule suggestions");
+  }
+
+  return sendR(res, STATUS_RESPONSE.SUCCESS, "Reschedule suggestions generated", result);
+});
+
+/**
+ * Apply a reschedule to an event
+ *
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @returns {Promise<void>} The response object.
+ * @description Reschedules an event to a new time.
+ */
+const rescheduleEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
+  const email = req.user?.email;
+  if (!email) {
+    return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated.");
+  }
+
+  const { eventId } = req.params;
+  if (!eventId) {
+    return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Event ID is required.");
+  }
+
+  const { newStart, newEnd, calendarId = "primary" } = req.body as {
+    newStart: string;
+    newEnd: string;
+    calendarId?: string;
+  };
+
+  if (!newStart || !newEnd) {
+    return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "New start and end times are required.");
+  }
+
+  const result = await applyReschedule({
+    email,
+    eventId,
+    calendarId,
+    newStart,
+    newEnd,
+  });
+
+  if (!result.success) {
+    return sendR(res, STATUS_RESPONSE.BAD_REQUEST, result.error ?? "Failed to reschedule event");
+  }
+
+  return sendR(res, STATUS_RESPONSE.SUCCESS, "Event rescheduled successfully", result.event);
+});
+
 export default {
   moveEvent,
   watchEvents,
@@ -456,4 +548,6 @@ export default {
   getEventInstances,
   importEvent,
   getInsights,
+  getRescheduleSuggestions,
+  rescheduleEvent,
 };

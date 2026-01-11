@@ -96,6 +96,20 @@ export type SessionData = {
     sentAsVoice: boolean;
     timestamp: number;
   };
+  // Reschedule flow state
+  pendingReschedule?: {
+    eventId: string;
+    eventSummary: string;
+    calendarId: string;
+    suggestions: Array<{
+      start: string;
+      end: string;
+      startFormatted: string;
+      endFormatted: string;
+      dayOfWeek: string;
+      reason: string;
+    }>;
+  };
 };
 
 /**

@@ -42,6 +42,7 @@ import {
   handleAsVoiceCommand,
   handleProfileCommand,
   handleWebsiteCommand,
+  handleRescheduleCommand,
 } from "../utils/commands";
 import {
   handleAgentRequest,
@@ -127,6 +128,7 @@ const SIMPLE_COMMANDS: Record<string, CommandHandler> = {
   [COMMANDS.ASTEXT]: handleAsTextCommand,
   [COMMANDS.ASVOICE]: handleAsVoiceCommand,
   [COMMANDS.WEBSITE]: handleWebsiteCommand,
+  [COMMANDS.RESCHEDULE]: handleRescheduleCommand,
 };
 
 type AgentCommand = {
