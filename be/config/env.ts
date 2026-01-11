@@ -14,6 +14,23 @@ if (missing.length > 0) {
   throw new Error(`Missing required environment variables: ${missing.join(", ")}`);
 }
 
+// Warn about missing production-critical environment variables
+const isProduction = process.env.NODE_ENV === "production";
+if (isProduction && !process.env.BASE_URL) {
+  console.warn(
+    "\n⚠️  WARNING: BASE_URL environment variable is not set in production!\n" +
+    "   OAuth callbacks will redirect to localhost instead of your deployed URL.\n" +
+    "   Set BASE_URL to your deployed backend URL (e.g., https://api.yourdomain.com)\n"
+  );
+}
+if (isProduction && !process.env.FRONTEND_URL) {
+  console.warn(
+    "\n⚠️  WARNING: FRONTEND_URL environment variable is not set in production!\n" +
+    "   Post-OAuth redirects will go to localhost instead of your frontend.\n" +
+    "   Set FRONTEND_URL to your deployed frontend URL (e.g., https://yourdomain.com)\n"
+  );
+}
+
 // ============================================================================
 // Helper to get optional env vars with type safety
 // ============================================================================
