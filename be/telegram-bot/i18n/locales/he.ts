@@ -323,6 +323,8 @@ export const he = {
     "יש לך יצירת אירוע ממתינה. אנא השב 'כן' ליצירה למרות התנגשויות, או 'לא' לביטול.",
   "errors.processingPreviousRequest":
     "רגע, אני עדיין עובדת על הבקשה הקודמת שלך...",
+  "errors.imageProcessingError": "לא ניתן לעבד את התמונה. אנא נסה שוב עם תמונה אחרת.",
+  "errors.tooManyImages": "ניתן לשלוח עד {{max}} תמונות בבת אחת. חלק מהתמונות דולגו.",
 
   "common.confirm": "אישור",
   "common.cancel": "ביטול",
@@ -330,6 +332,7 @@ export const he = {
   "common.no": "לא",
   "common.eventCreationCancelled": "יצירת האירוע בוטלה.",
   "common.typeExitToStop": "הקלד /exit לסיום.",
+  "common.analyzeImage": "אנא נתח את התמונה הזו וספר לי מה אתה רואה. אם היא מכילה מידע על יומן או תזמון, עזור לי ליצור את האירוע.",
 
   "botMenu.today": "לו״ז להיום",
   "botMenu.tomorrow": "סדר יום למחר",

@@ -14,10 +14,40 @@ import type {
   StreamChunk,
   ProviderConfig,
   Message,
+  MessageContent,
   ToolDefinition,
   JsonSchema,
   JsonSchemaProperty,
 } from "../types"
+
+function getStringContent(content: MessageContent): string {
+  if (typeof content === "string") {
+    return content
+  }
+  return content
+    .filter((part) => part.type === "text")
+    .map((part) => (part as { type: "text"; text: string }).text)
+    .join("\n")
+}
+
+function convertContentToParts(content: MessageContent): Part[] {
+  if (typeof content === "string") {
+    return content ? [{ text: content }] : []
+  }
+
+  return content.map((part) => {
+    if (part.type === "text") {
+      return { text: part.text }
+    }
+    // Image content
+    return {
+      inlineData: {
+        mimeType: part.mimeType,
+        data: part.data,
+      },
+    }
+  })
+}
 
 function convertMessages(messages: Message[]): Content[] {
   const result: Content[] = []
@@ -30,9 +60,8 @@ function convertMessages(messages: Message[]): Content[] {
     const role = msg.role === "assistant" ? "model" : "user"
     const parts: Part[] = []
 
-    if (msg.content) {
-      parts.push({ text: msg.content })
-    }
+    // Convert content (text and/or images)
+    parts.push(...convertContentToParts(msg.content))
 
     if (msg.toolCalls?.length) {
       for (const tc of msg.toolCalls) {
@@ -49,7 +78,7 @@ function convertMessages(messages: Message[]): Content[] {
       parts.push({
         functionResponse: {
           name: msg.name || msg.toolCallId,
-          response: { result: msg.content },
+          response: { result: getStringContent(msg.content) },
         },
       })
     }
@@ -134,7 +163,7 @@ function convertTools(tools: ToolDefinition[]): Tool[] {
 function getSystemInstruction(messages: Message[], systemPrompt?: string): string | undefined {
   const systemMessages = messages.filter((m) => m.role === "system")
   const parts = systemPrompt ? [systemPrompt] : []
-  parts.push(...systemMessages.map((m) => m.content))
+  parts.push(...systemMessages.map((m) => getStringContent(m.content)))
   return parts.length > 0 ? parts.join("\n\n") : undefined
 }
 

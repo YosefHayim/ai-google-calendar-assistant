@@ -16,7 +16,7 @@ import type { Agent as OpenAIAgent } from "@openai/agents"
 import type { AgentProfile } from "./agent-profiles"
 import { getAgentProfile, DEFAULT_AGENT_PROFILE_ID } from "./agent-profiles"
 import { isOpenAIProvider, createProviderFromProfile } from "@/shared/llm"
-import type { LLMProvider, Message, ToolDefinition } from "@/shared/llm"
+import type { LLMProvider, Message, MessageContent, ToolDefinition, ImageContent, TextContent } from "@/shared/llm"
 import { buildBasePrompt } from "@/shared/prompts"
 import { executeTools } from "@/shared/tools/tool-executor"
 
@@ -46,6 +46,7 @@ export interface StreamEvent {
 
 export interface RunTextAgentOptions {
   prompt: string
+  images?: ImageContent[]
   context?: Record<string, unknown>
   tools?: ToolDefinition[]
   onEvent: (event: StreamEvent) => void | Promise<void>
@@ -184,14 +185,30 @@ async function runWithAgentSDK(
 
 const MAX_TOOL_ITERATIONS = 10
 
+function buildUserContent(prompt: string, images?: ImageContent[]): MessageContent {
+  if (!images || images.length === 0) {
+    return prompt
+  }
+
+  // Build multi-part content with text and images
+  const content: (TextContent | ImageContent)[] = [
+    { type: "text", text: prompt },
+    ...images,
+  ]
+
+  return content
+}
+
 async function runWithProvider(
   provider: LLMProvider,
   systemPrompt: string,
   options: RunTextAgentOptions & { email?: string }
 ): Promise<string> {
+  const userContent = buildUserContent(options.prompt, options.images)
+
   const messages: Message[] = [
     { role: "system", content: systemPrompt },
-    { role: "user", content: options.prompt },
+    { role: "user", content: userContent },
   ]
 
   let fullResponse = ""

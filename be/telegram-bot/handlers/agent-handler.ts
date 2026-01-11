@@ -13,6 +13,7 @@ import {
   telegramConversation,
   startTypingIndicator,
 } from "../utils"
+import type { ImageContent } from "@/shared/llm"
 import { getAllyBrainForTelegram } from "../utils/ally-brain"
 import { getSelectedAgentProfileForTelegram } from "../utils/agent-profile"
 import { unifiedContextStore } from "@/shared/context"
@@ -24,9 +25,14 @@ import { getAgentProfile } from "@/shared/orchestrator/agent-profiles"
 
 const CONFLICT_PARTS_MIN_LENGTH = 3
 
+export interface AgentRequestOptions {
+  images?: ImageContent[]
+}
+
 export const handleAgentRequest = async (
   ctx: GlobalContext,
-  message: string
+  message: string,
+  options?: AgentRequestOptions
 ): Promise<void> => {
   ctx.session.isProcessing = true
   const chatId = ctx.chat?.id || ctx.session.chatId

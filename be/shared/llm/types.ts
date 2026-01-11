@@ -1,8 +1,21 @@
 export type MessageRole = "system" | "user" | "assistant" | "tool"
 
+export interface ImageContent {
+  type: "image"
+  data: string // base64 encoded image data
+  mimeType: "image/png" | "image/jpeg" | "image/webp" | "image/gif"
+}
+
+export interface TextContent {
+  type: "text"
+  text: string
+}
+
+export type MessageContent = string | (TextContent | ImageContent)[]
+
 export interface Message {
   role: MessageRole
-  content: string
+  content: MessageContent
   name?: string
   toolCallId?: string
   toolCalls?: ToolCall[]

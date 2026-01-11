@@ -335,6 +335,8 @@ export const ar = {
   "errors.pendingEventPrompt":
     "لديك حدث قيد الإنشاء. يرجى الرد بـ 'نعم' للإنشاء رغم التعارضات، أو 'لا' للإلغاء.",
   "errors.processingPreviousRequest": "لحظة، ما زلت أعمل على طلبك السابق...",
+  "errors.imageProcessingError": "تعذر معالجة الصورة. يرجى المحاولة مرة أخرى بصورة مختلفة.",
+  "errors.tooManyImages": "يمكنك إرسال حتى {{max}} صور في المرة الواحدة. تم تخطي بعض الصور.",
 
   "common.confirm": "تأكيد",
   "common.cancel": "إلغاء",
@@ -342,6 +344,7 @@ export const ar = {
   "common.no": "لا",
   "common.eventCreationCancelled": "تم إلغاء إنشاء الحدث.",
   "common.typeExitToStop": "اكتب /exit للتوقف.",
+  "common.analyzeImage": "يرجى تحليل هذه الصورة وإخباري بما تراه. إذا كانت تحتوي على معلومات تقويم أو جدولة، ساعدني في إنشاء الحدث.",
 
   "botMenu.today": "جدول اليوم",
   "botMenu.tomorrow": "أجندة الغد",

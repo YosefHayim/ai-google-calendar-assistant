@@ -384,6 +384,8 @@ export const fr = {
     "Vous avez une création d'événement en attente. Veuillez répondre 'oui' pour créer malgré les conflits, ou 'non' pour annuler.",
   "errors.processingPreviousRequest":
     "Attendez, je travaille encore sur votre demande précédente...",
+  "errors.imageProcessingError": "Impossible de traiter l'image. Veuillez réessayer avec une autre image.",
+  "errors.tooManyImages": "Vous pouvez envoyer jusqu'à {{max}} images à la fois. Certaines images ont été ignorées.",
 
   "common.confirm": "Confirmer",
   "common.cancel": "Annuler",
@@ -391,6 +393,7 @@ export const fr = {
   "common.no": "Non",
   "common.eventCreationCancelled": "Création d'événement annulée.",
   "common.typeExitToStop": "Tapez /exit pour arrêter.",
+  "common.analyzeImage": "Veuillez analyser cette image et me dire ce que vous voyez. Si elle contient des informations de calendrier ou de planification, aidez-moi à créer l'événement.",
 
   "botMenu.today": "Planning du jour",
   "botMenu.tomorrow": "Agenda de demain",

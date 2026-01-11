@@ -6,10 +6,44 @@ import type {
   StreamChunk,
   ProviderConfig,
   Message,
+  MessageContent,
   ToolDefinition,
   JsonSchema,
   JsonSchemaProperty,
 } from "../types"
+
+type AnthropicContent = string | Anthropic.ContentBlockParam[]
+
+function convertContent(content: MessageContent): AnthropicContent {
+  if (typeof content === "string") {
+    return content
+  }
+
+  return content.map((part) => {
+    if (part.type === "text") {
+      return { type: "text" as const, text: part.text }
+    }
+    // Image content
+    return {
+      type: "image" as const,
+      source: {
+        type: "base64" as const,
+        media_type: part.mimeType,
+        data: part.data,
+      },
+    }
+  })
+}
+
+function getStringContent(content: MessageContent): string {
+  if (typeof content === "string") {
+    return content
+  }
+  return content
+    .filter((part) => part.type === "text")
+    .map((part) => (part as { type: "text"; text: string }).text)
+    .join("\n")
+}
 
 function convertMessages(messages: Message[]): Anthropic.MessageParam[] {
   const result: Anthropic.MessageParam[] = []
@@ -20,12 +54,13 @@ function convertMessages(messages: Message[]): Anthropic.MessageParam[] {
     }
 
     if (msg.role === "user") {
-      result.push({ role: "user", content: msg.content })
+      result.push({ role: "user", content: convertContent(msg.content) })
     } else if (msg.role === "assistant") {
       const content: (Anthropic.TextBlockParam | Anthropic.ToolUseBlockParam)[] = []
+      const textContent = getStringContent(msg.content)
 
-      if (msg.content) {
-        content.push({ type: "text", text: msg.content })
+      if (textContent) {
+        content.push({ type: "text", text: textContent })
       }
 
       if (msg.toolCalls?.length) {
@@ -49,7 +84,7 @@ function convertMessages(messages: Message[]): Anthropic.MessageParam[] {
           {
             type: "tool_result",
             tool_use_id: msg.toolCallId,
-            content: msg.content,
+            content: getStringContent(msg.content),
           },
         ],
       })
@@ -108,7 +143,7 @@ function convertTools(tools: ToolDefinition[]): Anthropic.Tool[] {
 function getSystemPrompt(messages: Message[], systemPrompt?: string): string | undefined {
   const systemMessages = messages.filter((m) => m.role === "system")
   const parts = systemPrompt ? [systemPrompt] : []
-  parts.push(...systemMessages.map((m) => m.content))
+  parts.push(...systemMessages.map((m) => getStringContent(m.content)))
   return parts.length > 0 ? parts.join("\n\n") : undefined
 }
 

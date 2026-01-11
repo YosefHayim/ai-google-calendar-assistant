@@ -1,6 +1,9 @@
 export type {
   MessageRole,
   Message,
+  MessageContent,
+  ImageContent,
+  TextContent,
   ToolCall,
   ToolDefinition,
   ChatParams,

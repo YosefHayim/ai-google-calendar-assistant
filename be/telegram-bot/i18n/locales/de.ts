@@ -380,6 +380,8 @@ export const de = {
     "Sie haben eine ausstehende Terminerstellung. Bitte antworten Sie mit 'ja', um trotz Konflikten zu erstellen, oder 'nein', um abzubrechen.",
   "errors.processingPreviousRequest":
     "Moment, ich arbeite noch an Ihrer vorherigen Anfrage...",
+  "errors.imageProcessingError": "Das Bild konnte nicht verarbeitet werden. Bitte versuchen Sie es mit einem anderen Bild.",
+  "errors.tooManyImages": "Sie können bis zu {{max}} Bilder auf einmal senden. Einige Bilder wurden übersprungen.",
 
   "common.confirm": "Bestätigen",
   "common.cancel": "Abbrechen",
@@ -387,6 +389,7 @@ export const de = {
   "common.no": "Nein",
   "common.eventCreationCancelled": "Terminerstellung abgebrochen.",
   "common.typeExitToStop": "Tippen Sie /exit, um zu stoppen.",
+  "common.analyzeImage": "Bitte analysieren Sie dieses Bild und sagen Sie mir, was Sie sehen. Wenn es Kalender- oder Terminplanungsinformationen enthält, helfen Sie mir, den Termin zu erstellen.",
 
   "botMenu.today": "Heutiger Zeitplan",
   "botMenu.tomorrow": "Agenda für morgen",
