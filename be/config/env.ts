@@ -1,9 +1,9 @@
-import dotenv from "dotenv"
-import path from "node:path"
+import dotenv from "dotenv";
+import path from "node:path";
 
 // Only load .env file in development - in production, env vars are injected by the platform
 if (process.env.NODE_ENV !== "production") {
-  dotenv.config({ path: path.resolve(__dirname, "../.env") })
+  dotenv.config({ path: path.resolve(__dirname, "../.env") });
 }
 
 // ============================================================================
@@ -30,52 +30,48 @@ const CONSTANTS = {
   },
 
   // URLs (Production)
-  PROD_BACKEND_URL: "https://api.askally.io",
+  PROD_BACKEND_URL: "https://i3fzcpnmmk.eu-central-1.awsapprunner.com/",
   PROD_FRONTEND_URL: "https://askally.io",
 
   // Defaults
   DEFAULT_PORT: 3000,
   DEFAULT_HOST: "localhost",
   WHATSAPP_API_VERSION: "v22.0",
-} as const
+} as const;
 
 // ============================================================================
 // Validation - Only secrets need to be in .env
 // ============================================================================
 
-const REQUIRED_SECRETS = [
-  "SUPABASE_SERVICE_ROLE_KEY",
-  "OPEN_API_KEY",
-  "GOOGLE_CLIENT_SECRET",
-] as const
+const REQUIRED_SECRETS = ["SUPABASE_SERVICE_ROLE_KEY", "OPEN_API_KEY", "GOOGLE_CLIENT_SECRET"] as const;
 
-const missing = REQUIRED_SECRETS.filter((key) => !process.env[key])
+const missing = REQUIRED_SECRETS.filter((key) => !process.env[key]);
 if (missing.length > 0) {
-  throw new Error(`Missing required secret environment variables: ${missing.join(", ")}`)
+  throw new Error(`Missing required secret environment variables: ${missing.join(", ")}`);
 }
 
 // ============================================================================
 // Helper to get optional env vars with type safety
 // ============================================================================
 
-const getOptional = (key: string): string | undefined => process.env[key] || undefined
-const getRequired = (key: string): string => process.env[key]!
+const getOptional = (key: string): string | undefined => process.env[key] || undefined;
+const getRequired = (key: string): string => process.env[key]!;
 
 // ============================================================================
 // Environment Detection
 // ============================================================================
 
-const nodeEnv = process.env.NODE_ENV ?? "development"
+const nodeEnv = process.env.NODE_ENV ?? "development";
 
-export const isDev = nodeEnv === "development" || nodeEnv === "dev"
-export const isProd = nodeEnv === "production"
-export const isTest = nodeEnv === "test"
+export const isDev = nodeEnv === "development" || nodeEnv === "dev";
+export const isProd = nodeEnv === "production";
+export const isTest = nodeEnv === "test";
 
 // ============================================================================
 // Server Configuration
 // ============================================================================
 
-const port = Number(process.env.PORT) || CONSTANTS.DEFAULT_PORT
+const port = Number(process.env.PORT) || CONSTANTS.DEFAULT_PORT;
 
 const server = {
   nodeEnv,
@@ -84,12 +80,12 @@ const server = {
   get baseUrl(): string {
     // In production, use hardcoded URL. In dev, use localhost.
     if (isProd) {
-      return CONSTANTS.PROD_BACKEND_URL
+      return CONSTANTS.PROD_BACKEND_URL;
     }
-    const url = process.env.BASE_URL ?? `http://${this.host}:${this.port}`
-    return url.replace(/\/+$/, "")
+    const url = process.env.BASE_URL ?? `http://${this.host}:${this.port}`;
+    return url.replace(/\/+$/, "");
   },
-} as const
+} as const;
 
 // ============================================================================
 // URLs Configuration
@@ -97,20 +93,20 @@ const server = {
 
 const urls = {
   get api(): string {
-    return server.baseUrl
+    return server.baseUrl;
   },
   get authCallback(): string {
-    return `${server.baseUrl}/api/users/callback`
+    return `${server.baseUrl}/api/users/callback`;
   },
   get frontend(): string {
     // In production, use hardcoded URL. In dev, use localhost.
     if (isProd) {
-      return CONSTANTS.PROD_FRONTEND_URL
+      return CONSTANTS.PROD_FRONTEND_URL;
     }
-    const url = process.env.FRONTEND_URL ?? "http://localhost:4000"
-    return url.replace(/\/+$/, "")
+    const url = process.env.FRONTEND_URL ?? "http://localhost:4000";
+    return url.replace(/\/+$/, "");
   },
-} as const
+} as const;
 
 // ============================================================================
 // Supabase Configuration
@@ -119,7 +115,7 @@ const urls = {
 const supabase = {
   url: CONSTANTS.SUPABASE_URL,
   serviceRoleKey: getRequired("SUPABASE_SERVICE_ROLE_KEY"),
-} as const
+} as const;
 
 // ============================================================================
 // Google Configuration
@@ -129,7 +125,7 @@ const google = {
   clientId: CONSTANTS.GOOGLE_CLIENT_ID,
   clientSecret: getRequired("GOOGLE_CLIENT_SECRET"),
   apiKey: getOptional("GOOGLE_API_KEY"),
-} as const
+} as const;
 
 // ============================================================================
 // OpenAI Configuration
@@ -137,7 +133,7 @@ const google = {
 
 const openai = {
   apiKey: getRequired("OPEN_API_KEY"),
-} as const
+} as const;
 
 // ============================================================================
 // LiveKit Configuration
@@ -148,9 +144,9 @@ const livekit = {
   apiKey: getOptional("LIVEKIT_API_KEY"),
   apiSecret: getOptional("LIVEKIT_API_SECRET"),
   get isEnabled(): boolean {
-    return !!(this.apiKey && this.apiSecret)
+    return !!(this.apiKey && this.apiSecret);
   },
-} as const
+} as const;
 
 // ============================================================================
 // LemonSqueezy Configuration
@@ -162,9 +158,9 @@ const lemonSqueezy = {
   webhookSecret: getOptional("LEMONSQUEEZY_WEBHOOK_SECRET"),
   variants: CONSTANTS.LEMONSQUEEZY_VARIANTS,
   get isEnabled(): boolean {
-    return !!this.apiKey
+    return !!this.apiKey;
   },
-} as const
+} as const;
 
 // ============================================================================
 // Integrations Configuration
@@ -174,7 +170,7 @@ const integrations = {
   telegram: {
     accessToken: getOptional("TELEGRAM_BOT_ACCESS_TOKEN"),
     get isEnabled(): boolean {
-      return !!this.accessToken
+      return !!this.accessToken;
     },
   },
   whatsapp: {
@@ -185,13 +181,13 @@ const integrations = {
     appSecret: getOptional("WHATSAPP_APP_SECRET"),
     apiVersion: CONSTANTS.WHATSAPP_API_VERSION,
     get isEnabled(): boolean {
-      return !!(this.phoneNumberId && this.accessToken && this.verifyToken)
+      return !!(this.phoneNumberId && this.accessToken && this.verifyToken);
     },
     get baseUrl(): string {
-      return `https://graph.facebook.com/${this.apiVersion}`
+      return `https://graph.facebook.com/${this.apiVersion}`;
     },
   },
-} as const
+} as const;
 
 // ============================================================================
 // Jira/Confluence Configuration (optional)
@@ -202,9 +198,11 @@ const atlassian = {
     url: getOptional("JIRA_URL"),
     username: getOptional("JIRA_USERNAME"),
     apiToken: getOptional("JIRA_API_TOKEN"),
-    projectsFilter: getOptional("JIRA_PROJECTS_FILTER")?.split(",").map((s) => s.trim()),
+    projectsFilter: getOptional("JIRA_PROJECTS_FILTER")
+      ?.split(",")
+      .map((s) => s.trim()),
     get isEnabled(): boolean {
-      return !!(this.url && this.username && this.apiToken)
+      return !!(this.url && this.username && this.apiToken);
     },
   },
   confluence: {
@@ -212,10 +210,10 @@ const atlassian = {
     username: getOptional("CONFLUENCE_USERNAME"),
     apiToken: getOptional("CONFLUENCE_API_TOKEN"),
     get isEnabled(): boolean {
-      return !!(this.url && this.username && this.apiToken)
+      return !!(this.url && this.username && this.apiToken);
     },
   },
-} as const
+} as const;
 
 // ============================================================================
 // Resend Email Configuration
@@ -228,9 +226,9 @@ const resend = {
   supportEmail: getOptional("SUPPORT_EMAIL") ?? "support@ally.sh",
   storeInboundAttachments: process.env.STORE_INBOUND_ATTACHMENTS === "true",
   get isEnabled(): boolean {
-    return !!this.apiKey
+    return !!this.apiKey;
   },
-} as const
+} as const;
 
 // ============================================================================
 // Testing Configuration
@@ -238,7 +236,7 @@ const resend = {
 
 const testing = {
   testEmail: getOptional("TEST_EMAIL"),
-} as const
+} as const;
 
 // ============================================================================
 // Exported Configuration Object
@@ -280,10 +278,10 @@ export const env = {
   openAiApiKey: openai.apiKey,
   telegramAccessToken: integrations.telegram.accessToken,
   testEmail: testing.testEmail,
-} as const
+} as const;
 
 // ============================================================================
 // Backwards Compatibility Exports
 // ============================================================================
 
-export const REDIRECT_URI = urls.authCallback
+export const REDIRECT_URI = urls.authCallback;
