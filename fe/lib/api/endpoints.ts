@@ -146,6 +146,22 @@ export const ENDPOINTS = {
   EVENTS_BY_ID: (id: string) => `/api/events/${id}`,
 
   /**
+   * Get reschedule suggestions for an event
+   * Methods: GET
+   * Query params: calendarId, preferredTimeOfDay, daysToSearch, excludeWeekends
+   * @param id - Event ID
+   */
+  EVENTS_RESCHEDULE_SUGGESTIONS: (id: string) => `/api/events/${id}/reschedule-suggestions`,
+
+  /**
+   * Apply reschedule to an event
+   * Methods: POST
+   * Body: { newStart, newEnd, calendarId }
+   * @param id - Event ID
+   */
+  EVENTS_RESCHEDULE: (id: string) => `/api/events/${id}/reschedule`,
+
+  /**
    * Get event analytics by date range
    * Methods: GET
    * Query params: startDate, endDate

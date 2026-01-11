@@ -42,6 +42,9 @@ export const COMMANDS = {
 
   // Links
   WEBSITE: "/website",
+
+  // Smart Features
+  RESCHEDULE: "/reschedule",
 } as const;
 
 export const CONFIRM_RESPONSES = ["yes", "y", "confirm"] as const;

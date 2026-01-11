@@ -25,6 +25,7 @@ import { webConversation } from "@/utils/conversation/WebConversationAdapter";
 import { unifiedContextStore } from "@/shared/context";
 import { createTextAgent, runTextAgent, type TextAgentConfig } from "@/shared/orchestrator";
 import { getAgentProfile, DEFAULT_AGENT_PROFILE_ID } from "@/shared/orchestrator";
+import type { ImageContent } from "@/shared/llm";
 
 const EMBEDDING_THRESHOLD = 0.75;
 const EMBEDDING_LIMIT = 3;
@@ -32,6 +33,7 @@ const EMBEDDING_LIMIT = 3;
 type StreamChatRequest = {
   message: string;
   profileId?: string;
+  images?: ImageContent[];
 };
 
 type PromptParams = {
@@ -40,10 +42,12 @@ type PromptParams = {
   semanticContext: string;
   userEmail: string;
   userId: string;
+  hasImages?: boolean;
+  imageCount?: number;
 };
 
 async function buildChatPromptWithContext(params: PromptParams): Promise<string> {
-  const { message, conversationContext, semanticContext, userEmail, userId } = params;
+  const { message, conversationContext, semanticContext, userEmail, userId, hasImages, imageCount } = params;
   const parts: string[] = [];
 
   const allyBrain = await getAllyBrainPreference(userId);
@@ -66,6 +70,10 @@ async function buildChatPromptWithContext(params: PromptParams): Promise<string>
     parts.push("\n--- Related Past Conversations ---");
     parts.push(semanticContext);
     parts.push("--- End Past Conversations ---");
+  }
+
+  if (hasImages && imageCount) {
+    parts.push(`\n[User has attached ${imageCount} image(s) to this message. Please analyze them and help with any calendar-related content you find.]`);
   }
 
   parts.push(`\nUser Request: ${message}`);
@@ -138,12 +146,13 @@ async function handleOpenAIStreaming(res: Response, userId: string, userEmail: s
   return fullResponse;
 }
 
-async function handleMultiProviderStreaming(res: Response, agentConfig: TextAgentConfig, fullPrompt: string, userEmail: string): Promise<string> {
+async function handleMultiProviderStreaming(res: Response, agentConfig: TextAgentConfig, fullPrompt: string, userEmail: string, images?: ImageContent[]): Promise<string> {
   let fullResponse = "";
   const agentName = agentConfig.profile.displayName;
 
   await runTextAgent(agentConfig, {
     prompt: fullPrompt,
+    images,
     email: userEmail,
     onEvent: async (event) => {
       if (res.writableEnded) return;
@@ -186,7 +195,8 @@ async function handleStreamingResponse(
   conversationId: string,
   isNewConversation: boolean,
   fullPrompt: string,
-  profileId: string = DEFAULT_AGENT_PROFILE_ID
+  profileId: string = DEFAULT_AGENT_PROFILE_ID,
+  images?: ImageContent[]
 ): Promise<void> {
   setupSSEHeaders(res);
   const stopHeartbeat = startHeartbeat(res);
@@ -200,16 +210,28 @@ async function handleStreamingResponse(
 
   try {
     if (useOpenAIAgent) {
+      // Note: OpenAI Agents SDK doesn't support images directly yet, so images will be described in prompt
       fullResponse = await handleOpenAIStreaming(res, userId, userEmail, conversationId, fullPrompt);
     } else {
       const agentConfig = createTextAgent({
         profileId,
         modality: "chat",
       });
-      fullResponse = await handleMultiProviderStreaming(res, agentConfig, fullPrompt, userEmail);
+      fullResponse = await handleMultiProviderStreaming(res, agentConfig, fullPrompt, userEmail, images);
     }
 
-    await webConversation.addMessageToConversation(conversationId, userId, { role: "user", content: message }, summarizeMessages);
+    // Convert ImageContent[] to MessageImageData[] for storage
+    const messageImages = images?.map((img) => ({
+      data: img.data,
+      mimeType: img.mimeType,
+    }));
+
+    await webConversation.addMessageToConversation(
+      conversationId,
+      userId,
+      { role: "user", content: message, images: messageImages },
+      summarizeMessages
+    );
 
     if (fullResponse) {
       await webConversation.addMessageToConversation(conversationId, userId, { role: "assistant", content: fullResponse }, summarizeMessages);
@@ -240,12 +262,12 @@ async function handleStreamingResponse(
 }
 
 const streamChat = async (req: Request<unknown, unknown, StreamChatRequest>, res: Response): Promise<void> => {
-  const { message, profileId } = req.body;
+  const { message, profileId, images } = req.body;
   const userId = req.user?.id;
   const userEmail = req.user?.email;
 
-  if (!message?.trim()) {
-    sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Message is required");
+  if (!message?.trim() && (!images || images.length === 0)) {
+    sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Message or images required");
     return;
   }
 
@@ -258,20 +280,22 @@ const streamChat = async (req: Request<unknown, unknown, StreamChatRequest>, res
     const { stateId: conversationId, context } = await webConversation.getOrCreateTodayContext(userId);
     const isNewConversation = context.messages.length === 0 && !context.title;
     const conversationContext = webConversation.buildContextPrompt(context);
-    const semanticContext = await getWebRelevantContext(userId, message, {
+    const semanticContext = await getWebRelevantContext(userId, message || "", {
       threshold: EMBEDDING_THRESHOLD,
       limit: EMBEDDING_LIMIT,
     });
 
     const fullPrompt = await buildChatPromptWithContext({
-      message,
+      message: message || "Please analyze the attached images.",
       conversationContext,
       semanticContext,
       userEmail: userEmail || userId,
       userId,
+      hasImages: images && images.length > 0,
+      imageCount: images?.length,
     });
 
-    await handleStreamingResponse(res, userId, userEmail || "", message, conversationId, isNewConversation, fullPrompt, profileId);
+    await handleStreamingResponse(res, userId, userEmail || "", message || "Image analysis", conversationId, isNewConversation, fullPrompt, profileId, images);
   } catch (error) {
     console.error("Stream chat error:", error);
     if (!res.headersSent) {
@@ -287,7 +311,7 @@ const streamContinueConversation = async (req: Request<{ id: string }, unknown, 
   const userId = req.user?.id;
   const userEmail = req.user?.email;
   const conversationId = req.params.id;
-  const { message, profileId } = req.body;
+  const { message, profileId, images } = req.body;
 
   if (!userId) {
     sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
@@ -299,8 +323,8 @@ const streamContinueConversation = async (req: Request<{ id: string }, unknown, 
     return;
   }
 
-  if (!message?.trim()) {
-    sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Message is required");
+  if (!message?.trim() && (!images || images.length === 0)) {
+    sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Message or images required");
     return;
   }
 
@@ -314,20 +338,22 @@ const streamContinueConversation = async (req: Request<{ id: string }, unknown, 
 
     const conversationContext = webConversation.buildContextPrompt(loaded.context);
 
-    const semanticContext = await getWebRelevantContext(userId, message, {
+    const semanticContext = await getWebRelevantContext(userId, message || "", {
       threshold: EMBEDDING_THRESHOLD,
       limit: EMBEDDING_LIMIT,
     });
 
     const fullPrompt = await buildChatPromptWithContext({
-      message,
+      message: message || "Please analyze the attached images.",
       conversationContext,
       semanticContext,
       userEmail: userEmail || userId,
       userId,
+      hasImages: images && images.length > 0,
+      imageCount: images?.length,
     });
 
-    await handleStreamingResponse(res, userId, userEmail || "", message, conversationId, false, fullPrompt, profileId);
+    await handleStreamingResponse(res, userId, userEmail || "", message || "Image analysis", conversationId, false, fullPrompt, profileId, images);
   } catch (error) {
     console.error("Stream continue conversation error:", error);
     if (!res.headersSent) {

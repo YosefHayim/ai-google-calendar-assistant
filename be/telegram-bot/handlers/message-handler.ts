@@ -9,6 +9,7 @@ import {
   isDuplicateMessage,
   handlePendingEmailChange,
   initiateEmailChange,
+  startTypingIndicator,
 } from "../utils";
 import {
   handleExitCommand,
@@ -42,6 +43,7 @@ import {
   handleAsVoiceCommand,
   handleProfileCommand,
   handleWebsiteCommand,
+  handleRescheduleCommand,
 } from "../utils/commands";
 import {
   handleAgentRequest,
@@ -51,7 +53,9 @@ import {
 import { transcribeAudio } from "@/utils/ai/voice-transcription";
 import { generateSpeechForTelegram } from "@/utils/ai/text-to-speech";
 import { getVoicePreferenceForTelegram } from "../utils/ally-brain";
+import { processPhoto, MAX_IMAGES } from "../utils/image-handler";
 import { logger } from "@/utils/logger";
+import type { ImageContent } from "@/shared/llm";
 
 const MessageAction = {
   CONFIRM: "confirm",
@@ -127,6 +131,7 @@ const SIMPLE_COMMANDS: Record<string, CommandHandler> = {
   [COMMANDS.ASTEXT]: handleAsTextCommand,
   [COMMANDS.ASVOICE]: handleAsVoiceCommand,
   [COMMANDS.WEBSITE]: handleWebsiteCommand,
+  [COMMANDS.RESCHEDULE]: handleRescheduleCommand,
 };
 
 type AgentCommand = {
@@ -228,10 +233,15 @@ const handleSessionStates = async (
   return false;
 };
 
+interface MessageOptions {
+  respondWithVoice?: boolean;
+  images?: ImageContent[];
+}
+
 const handleFreeTextMessage = async (
   ctx: GlobalContext,
   text: string,
-  respondWithVoice = false,
+  options: MessageOptions = {},
 ): Promise<void> => {
   const { t } = getTranslatorFromLanguageCode(ctx.session.codeLang);
 
@@ -240,14 +250,15 @@ const handleFreeTextMessage = async (
     await ctx.reply(t("common.typeExitToStop"));
   }
 
-  await handleAgentRequestWithVoice(ctx, text, respondWithVoice);
+  await handleAgentRequestWithVoice(ctx, text, options);
 };
 
 const handleAgentRequestWithVoice = async (
   ctx: GlobalContext,
   text: string,
-  respondWithVoice: boolean,
+  options: MessageOptions = {},
 ): Promise<void> => {
+  const { respondWithVoice = false, images } = options;
   const telegramUserId = ctx.from?.id ?? 0;
 
   const originalReply = ctx.reply.bind(ctx);
@@ -298,7 +309,7 @@ const handleAgentRequestWithVoice = async (
     return originalReply(textResponse, other);
   };
 
-  await handleAgentRequest(ctx, text);
+  await handleAgentRequest(ctx, text, { images });
 
   ctx.reply = originalReply;
 };
@@ -312,9 +323,13 @@ const handleVoiceMessage = async (ctx: GlobalContext): Promise<void> => {
     return;
   }
 
+  // Start typing indicator while processing voice
+  const stopTyping = startTypingIndicator(ctx);
+
   try {
     const file = await ctx.api.getFile(voice.file_id);
     if (!file.file_path) {
+      stopTyping();
       await ctx.reply(t("errors.processingError"));
       return;
     }
@@ -326,6 +341,7 @@ const handleVoiceMessage = async (ctx: GlobalContext): Promise<void> => {
     const transcription = await transcribeAudio(audioBuffer, "audio/ogg");
 
     if (!transcription.success || !transcription.text) {
+      stopTyping();
       await ctx.reply(transcription.error ?? t("errors.processingError"));
       return;
     }
@@ -334,10 +350,14 @@ const handleVoiceMessage = async (ctx: GlobalContext): Promise<void> => {
       `TG Voice: Transcribed ${audioBuffer.length} bytes to "${transcription.text.substring(0, 50)}..." for user ${telegramUserId}`,
     );
 
-    await handleFreeTextMessage(ctx, transcription.text, true);
+    // Stop typing before passing to agent (agent handler will start its own)
+    stopTyping();
+    await handleFreeTextMessage(ctx, transcription.text, { respondWithVoice: true });
   } catch (error) {
     logger.error(`TG Voice: Error processing voice message: ${error}`);
     await ctx.reply(t("errors.processingError"));
+  } finally {
+    stopTyping();
   }
 };
 
@@ -383,6 +403,54 @@ export const registerMessageHandler = (bot: Bot<GlobalContext>): void => {
       return;
     }
 
-    await handleFreeTextMessage(ctx, text, false);
+    await handleFreeTextMessage(ctx, text);
+  });
+
+  // Handle photo messages (single or with caption)
+  bot.on("message:photo", async (ctx) => {
+    const msgId = ctx.message.message_id;
+    const { t } = getTranslatorFromLanguageCode(ctx.session.codeLang);
+
+    if (isDuplicateMessage(ctx, msgId)) {
+      return;
+    }
+
+    const photo = ctx.message.photo;
+    const caption = ctx.message.caption || "";
+
+    if (!photo || photo.length === 0) {
+      return;
+    }
+
+    // Start typing indicator
+    const stopTyping = startTypingIndicator(ctx);
+
+    try {
+      // Process the photo
+      const imageContent = await processPhoto(ctx.api, photo);
+
+      if (!imageContent) {
+        stopTyping();
+        await ctx.reply(t("errors.imageProcessingError"));
+        return;
+      }
+
+      const images = [imageContent];
+
+      logger.info(
+        `TG Photo: Processing 1 image for user ${ctx.from?.id ?? 0}`,
+      );
+
+      // Use caption as the message, or a default prompt
+      const text = caption || t("common.analyzeImage");
+
+      stopTyping();
+      await handleFreeTextMessage(ctx, text, { images });
+    } catch (error) {
+      logger.error(`TG Photo: Error processing photo: ${error}`);
+      await ctx.reply(t("errors.processingError"));
+    } finally {
+      stopTyping();
+    }
   });
 };

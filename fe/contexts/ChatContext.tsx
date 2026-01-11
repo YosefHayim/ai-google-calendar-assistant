@@ -98,6 +98,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
           id: `${selectedConversationId}-${index}`,
           role: msg.role,
           content: msg.content,
+          images: msg.images,
           timestamp: new Date(),
         }),
       )

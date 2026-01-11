@@ -342,6 +342,8 @@ export const en = {
     "You have a pending event creation. Please reply 'yes' to create despite conflicts, or 'no' to cancel.",
   "errors.processingPreviousRequest":
     "Hold on, I'm still working on your previous request...",
+  "errors.imageProcessingError": "Unable to process the image. Please try again with a different image.",
+  "errors.tooManyImages": "You can send up to {{max}} images at once. Some images were skipped.",
 
   "common.confirm": "Confirm",
   "common.cancel": "Cancel",
@@ -349,6 +351,7 @@ export const en = {
   "common.no": "No",
   "common.eventCreationCancelled": "Event creation cancelled.",
   "common.typeExitToStop": "Type /exit to stop.",
+  "common.analyzeImage": "Please analyze this image and tell me what you see. If it contains calendar or scheduling information, help me create the event.",
 
   "botMenu.today": "Today's schedule",
   "botMenu.tomorrow": "Tomorrow's agenda",
@@ -401,6 +404,36 @@ export const en = {
   "commands.website.header": "Web Dashboard",
   "commands.website.text": "Access your calendar dashboard and manage your settings online:",
   "botMenu.website": "Open web dashboard",
+
+  // Reschedule command
+  "commands.reschedule.header": "Smart Reschedule",
+  "commands.reschedule.text": "Tell me which event to reschedule, and I'll find the best available times:",
+  "commands.reschedule.footerTip": "Just describe the event you want to move.",
+  "commands.reschedule.sections.howToUse.title": "How to Use",
+  "commands.reschedule.sections.howToUse.items.0": "'Reschedule my 2pm meeting'",
+  "commands.reschedule.sections.howToUse.items.1": "'Move the dentist to next week'",
+  "commands.reschedule.sections.howToUse.items.2": "'Push team standup to afternoon'",
+  "commands.reschedule.sections.smartFeatures.title": "Smart Features",
+  "commands.reschedule.sections.smartFeatures.items.0": "AI finds optimal times based on your schedule",
+  "commands.reschedule.sections.smartFeatures.items.1": "Checks all calendars for conflicts",
+  "commands.reschedule.sections.smartFeatures.items.2": "Respects your preferences from /brain",
+  "commands.reschedule.suggestionsHeader": "Suggested Times",
+  "commands.reschedule.suggestionsText": "Here are the best times to reschedule <b>{{event}}</b>:",
+  "commands.reschedule.noSuggestions": "No available slots found in the next 7 days. Try a longer time range.",
+  "commands.reschedule.selectTime": "Tap a time to reschedule:",
+  "commands.reschedule.success": "Event Rescheduled",
+  "commands.reschedule.successText": "<b>{{event}}</b> has been moved to {{time}}.",
+  "commands.reschedule.failed": "Reschedule Failed",
+  "commands.reschedule.error": "Something went wrong. Please try again.",
+  "commands.reschedule.unknownError": "Unable to reschedule the event.",
+  "commands.reschedule.noSession": "No pending reschedule. Use /reschedule to start.",
+  "commands.reschedule.invalidSelection": "Invalid selection. Please try again.",
+  "commands.reschedule.applying": "Rescheduling...",
+  "commands.reschedule.cancelled": "Reschedule cancelled.",
+  "commands.reschedule.cancelledHeader": "Cancelled",
+  "commands.reschedule.cancelledText": "No changes were made to your calendar.",
+  "commands.reschedule.keepOriginal": "Keep Original",
+  "botMenu.reschedule": "Smart reschedule",
 } as const;
 
 export type TranslationKey = keyof typeof en;

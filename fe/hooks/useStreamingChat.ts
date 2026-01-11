@@ -4,6 +4,12 @@ import { useState, useCallback, useRef } from 'react'
 import { streamChatMessage, createStreamAbortController } from '@/services/chatStreamService'
 import type { StreamingState } from '@/types/stream'
 
+export interface ImageContent {
+  type: 'image'
+  data: string
+  mimeType: 'image/png' | 'image/jpeg' | 'image/webp' | 'image/gif'
+}
+
 interface UseStreamingChatOptions {
   profileId?: string | null
   onStreamComplete?: (conversationId: string, fullResponse: string) => void
@@ -13,7 +19,7 @@ interface UseStreamingChatOptions {
 
 interface UseStreamingChatReturn {
   streamingState: StreamingState
-  sendStreamingMessage: (message: string, conversationId?: string, profileId?: string) => Promise<void>
+  sendStreamingMessage: (message: string, conversationId?: string, images?: ImageContent[]) => Promise<void>
   cancelStream: () => void
   resetStreamingState: () => void
 }
@@ -47,7 +53,7 @@ export function useStreamingChat(options: UseStreamingChatOptions = {}): UseStre
   }, [])
 
   const sendStreamingMessage = useCallback(
-    async (message: string, conversationId?: string, profileId?: string) => {
+    async (message: string, conversationId?: string, images?: ImageContent[]) => {
       if (abortControllerRef.current) {
         abortControllerRef.current.abort()
       }
@@ -62,12 +68,13 @@ export function useStreamingChat(options: UseStreamingChatOptions = {}): UseStre
         error: null,
       })
 
-      const effectiveProfileId = profileId ?? defaultProfileId ?? undefined
+      const effectiveProfileId = defaultProfileId ?? undefined
 
       const result = await streamChatMessage({
         message,
         conversationId,
         profileId: effectiveProfileId,
+        images,
         signal: abortControllerRef.current.signal,
         callbacks: {
           onTextDelta: (delta, fullText) => {

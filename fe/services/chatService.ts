@@ -1,8 +1,14 @@
 import { apiClient } from '@/lib/api/client'
 
+export interface ChatMessageImage {
+  data: string // base64 encoded
+  mimeType: 'image/png' | 'image/jpeg' | 'image/webp' | 'image/gif'
+}
+
 export interface ChatMessage {
   role: 'user' | 'assistant'
   content: string
+  images?: ChatMessageImage[]
 }
 
 export interface ChatResponse {

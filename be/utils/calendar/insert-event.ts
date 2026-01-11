@@ -8,6 +8,20 @@ type InsertEventParams = {
 };
 
 /**
+ * Generate conference data for Google Meet
+ */
+function generateMeetConferenceData(): calendar_v3.Schema$ConferenceData {
+  return {
+    createRequest: {
+      requestId: Date.now().toString(),
+      conferenceSolutionKey: {
+        type: "hangoutsMeet",
+      },
+    },
+  };
+}
+
+/**
  * Insert an event into the calendar
  *
  * @param {InsertEventParams} params - The parameters for inserting an event.
@@ -20,13 +34,21 @@ type InsertEventParams = {
 export async function insertEvent({ calendarEvents, eventData, extra }: InsertEventParams) {
   const body = (eventData as calendar_v3.Schema$Event & { calendarId?: string; email?: string }) || {};
   const calendarId = (extra?.calendarId as string) || body.calendarId || "primary";
+  const addMeetLink = extra?.addMeetLink === true;
 
   const { calendarId: _cid, email: _email, ...requestBody } = body;
+
+  // Add Google Meet conference data if requested
+  if (addMeetLink) {
+    requestBody.conferenceData = generateMeetConferenceData();
+  }
 
   const createdEvent = await calendarEvents.insert({
     ...REQUEST_CONFIG_BASE,
     calendarId,
     requestBody,
+    // conferenceDataVersion is required when adding conference data
+    conferenceDataVersion: addMeetLink ? 1 : undefined,
   });
   return createdEvent.data;
 }

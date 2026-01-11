@@ -112,4 +112,60 @@ export const eventsService = {
     const { data } = await apiClient.post<ApiResponse<CalendarEvent>>(ENDPOINTS.EVENTS_WATCH, requestData)
     return data
   },
+
+  async getRescheduleSuggestions(
+    eventId: string,
+    params?: {
+      calendarId?: string
+      preferredTimeOfDay?: 'morning' | 'afternoon' | 'evening' | 'any'
+      daysToSearch?: number
+      excludeWeekends?: boolean
+    },
+  ): Promise<ApiResponse<RescheduleSuggestionsResponse>> {
+    const { data } = await apiClient.get<ApiResponse<RescheduleSuggestionsResponse>>(
+      ENDPOINTS.EVENTS_RESCHEDULE_SUGGESTIONS(eventId),
+      { params },
+    )
+    return data
+  },
+
+  async rescheduleEvent(
+    eventId: string,
+    requestData: RescheduleEventRequest,
+  ): Promise<ApiResponse<CalendarEvent>> {
+    const { data } = await apiClient.post<ApiResponse<CalendarEvent>>(
+      ENDPOINTS.EVENTS_RESCHEDULE(eventId),
+      requestData,
+    )
+    return data
+  },
+}
+
+export interface RescheduleSuggestion {
+  start: string
+  end: string
+  startFormatted: string
+  endFormatted: string
+  dayOfWeek: string
+  score: number
+  reason: string
+}
+
+export interface RescheduleSuggestionsResponse {
+  success: boolean
+  event?: {
+    id: string
+    summary: string
+    start: string
+    end: string
+    duration: number
+  }
+  suggestions: RescheduleSuggestion[]
+  error?: string
+}
+
+export interface RescheduleEventRequest {
+  newStart: string
+  newEnd: string
+  calendarId?: string
 }

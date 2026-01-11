@@ -239,6 +239,7 @@ export async function insertEventHandler(
     email,
     calendarId: params.calendarId ?? "primary",
     customEvents: false,
+    addMeetLink: params.addMeetLink ?? false,
   })
 }
 

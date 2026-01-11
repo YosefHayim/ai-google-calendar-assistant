@@ -45,6 +45,12 @@ router.post("/import", eventsController.importEvent);
 // get instances of a recurring event (must be before /:id)
 router.get("/:id/instances", eventsController.getEventInstances);
 
+// get reschedule suggestions for an event
+router.get("/:id/reschedule-suggestions", eventsController.getRescheduleSuggestions);
+
+// apply reschedule to an event
+router.post("/:id/reschedule", eventsController.rescheduleEvent);
+
 // get specific event by id
 router.get("/:id", eventsController.getEventById);
 

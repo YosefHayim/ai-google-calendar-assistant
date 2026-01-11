@@ -6,8 +6,40 @@ import type {
   StreamChunk,
   ProviderConfig,
   Message,
+  MessageContent,
   ToolDefinition,
 } from "../types"
+
+type OpenAIContent = string | OpenAI.ChatCompletionContentPart[]
+
+function convertContent(content: MessageContent): OpenAIContent {
+  if (typeof content === "string") {
+    return content
+  }
+
+  return content.map((part) => {
+    if (part.type === "text") {
+      return { type: "text" as const, text: part.text }
+    }
+    // Image content
+    return {
+      type: "image_url" as const,
+      image_url: {
+        url: `data:${part.mimeType};base64,${part.data}`,
+      },
+    }
+  })
+}
+
+function getStringContent(content: MessageContent): string {
+  if (typeof content === "string") {
+    return content
+  }
+  return content
+    .filter((part) => part.type === "text")
+    .map((part) => (part as { type: "text"; text: string }).text)
+    .join("\n")
+}
 
 function convertMessages(
   messages: Message[],
@@ -21,14 +53,15 @@ function convertMessages(
 
   for (const msg of messages) {
     if (msg.role === "system") {
-      result.push({ role: "system", content: msg.content })
+      result.push({ role: "system", content: getStringContent(msg.content) })
     } else if (msg.role === "user") {
-      result.push({ role: "user", content: msg.content })
+      result.push({ role: "user", content: convertContent(msg.content) })
     } else if (msg.role === "assistant") {
+      const textContent = getStringContent(msg.content)
       if (msg.toolCalls?.length) {
         result.push({
           role: "assistant",
-          content: msg.content || null,
+          content: textContent || null,
           tool_calls: msg.toolCalls.map((tc) => ({
             id: tc.id,
             type: "function" as const,
@@ -36,13 +69,13 @@ function convertMessages(
           })),
         })
       } else {
-        result.push({ role: "assistant", content: msg.content })
+        result.push({ role: "assistant", content: textContent })
       }
     } else if (msg.role === "tool" && msg.toolCallId) {
       result.push({
         role: "tool",
         tool_call_id: msg.toolCallId,
-        content: msg.content,
+        content: getStringContent(msg.content),
       })
     }
   }

@@ -384,6 +384,8 @@ export const fr = {
     "Vous avez une création d'événement en attente. Veuillez répondre 'oui' pour créer malgré les conflits, ou 'non' pour annuler.",
   "errors.processingPreviousRequest":
     "Attendez, je travaille encore sur votre demande précédente...",
+  "errors.imageProcessingError": "Impossible de traiter l'image. Veuillez réessayer avec une autre image.",
+  "errors.tooManyImages": "Vous pouvez envoyer jusqu'à {{max}} images à la fois. Certaines images ont été ignorées.",
 
   "common.confirm": "Confirmer",
   "common.cancel": "Annuler",
@@ -391,6 +393,7 @@ export const fr = {
   "common.no": "Non",
   "common.eventCreationCancelled": "Création d'événement annulée.",
   "common.typeExitToStop": "Tapez /exit pour arrêter.",
+  "common.analyzeImage": "Veuillez analyser cette image et me dire ce que vous voyez. Si elle contient des informations de calendrier ou de planification, aidez-moi à créer l'événement.",
 
   "botMenu.today": "Planning du jour",
   "botMenu.tomorrow": "Agenda de demain",
@@ -427,6 +430,36 @@ export const fr = {
   "commands.website.header": "Tableau de bord Web",
   "commands.website.text": "Accédez à votre tableau de bord de calendrier et gérez vos paramètres en ligne :",
   "botMenu.website": "Ouvrir le tableau de bord",
+
+  // Reschedule command
+  "commands.reschedule.header": "Replanification intelligente",
+  "commands.reschedule.text": "Dites-moi quel événement déplacer, et je trouverai les meilleurs créneaux :",
+  "commands.reschedule.footerTip": "Décrivez simplement l'événement que vous souhaitez déplacer.",
+  "commands.reschedule.sections.howToUse.title": "Comment utiliser",
+  "commands.reschedule.sections.howToUse.items.0": "'Déplacer ma réunion de 14h'",
+  "commands.reschedule.sections.howToUse.items.1": "'Reporter le dentiste à la semaine prochaine'",
+  "commands.reschedule.sections.howToUse.items.2": "'Décaler le standup à l'après-midi'",
+  "commands.reschedule.sections.smartFeatures.title": "Fonctions intelligentes",
+  "commands.reschedule.sections.smartFeatures.items.0": "L'IA trouve les créneaux optimaux selon votre agenda",
+  "commands.reschedule.sections.smartFeatures.items.1": "Vérifie tous les calendriers pour les conflits",
+  "commands.reschedule.sections.smartFeatures.items.2": "Respecte vos préférences de /brain",
+  "commands.reschedule.suggestionsHeader": "Créneaux suggérés",
+  "commands.reschedule.suggestionsText": "Voici les meilleurs créneaux pour <b>{{event}}</b> :",
+  "commands.reschedule.noSuggestions": "Aucun créneau disponible dans les 7 prochains jours.",
+  "commands.reschedule.selectTime": "Appuyez sur un créneau pour replanifier :",
+  "commands.reschedule.success": "Événement replanifié",
+  "commands.reschedule.successText": "<b>{{event}}</b> a été déplacé à {{time}}.",
+  "commands.reschedule.failed": "Échec de la replanification",
+  "commands.reschedule.error": "Une erreur s'est produite. Veuillez réessayer.",
+  "commands.reschedule.unknownError": "Impossible de replanifier l'événement.",
+  "commands.reschedule.noSession": "Pas de replanification en cours. Utilisez /reschedule.",
+  "commands.reschedule.invalidSelection": "Sélection invalide. Veuillez réessayer.",
+  "commands.reschedule.applying": "Replanification en cours...",
+  "commands.reschedule.cancelled": "Replanification annulée.",
+  "commands.reschedule.cancelledHeader": "Annulé",
+  "commands.reschedule.cancelledText": "Aucune modification n'a été apportée à votre calendrier.",
+  "commands.reschedule.keepOriginal": "Garder l'original",
+  "botMenu.reschedule": "Replanification intelligente",
 } as const;
 
 export type TranslationKey = keyof typeof fr;
