@@ -109,31 +109,43 @@ export const en = {
 
   // Feature Showcase
   showcase: {
+    badge: 'Live Demo',
     title: 'See Ally in Action',
     subtitle: 'Experience seamless calendar management across Telegram and Web',
-    schedule: {
-      title: 'Smart Scheduling',
+    today: {
+      title: "Today's Schedule",
       description:
-        'Schedule meetings and events with natural language. Ally understands context and finds the best times.',
+        "Get a complete overview of your day with /today. See all meetings, focus blocks, and free time at a glance.",
     },
     voice: {
       title: 'Voice Commands',
       description:
-        'Send voice messages to manage your calendar hands-free. Perfect for when you are on the go.',
+        'Send voice messages to manage your calendar hands-free. Ally transcribes and executes your requests instantly.',
     },
     analytics: {
       title: 'Time Analytics',
       description:
-        'Get insights into how you spend your time. Track meetings, focus time, and productivity trends.',
+        'Track your productivity with /analytics. See focus time, meeting load, and weekly trends to optimize your schedule.',
     },
-    reminders: {
-      title: 'Smart Reminders',
+    brain: {
+      title: 'Ally Brain',
       description:
-        'Never miss important preparations. Ally sends timely reminders before your meetings.',
+        'Teach Ally your preferences with /brain. Set rules like "no meetings before 10am" and Ally will remember.',
     },
     search: {
-      title: 'Quick Search',
-      description: 'Find past meetings and events instantly. Ask Ally about your schedule history.',
+      title: 'Smart Search',
+      description:
+        'Find past meetings instantly. Ask "When did I last meet with Sarah?" and get precise answers with context.',
+    },
+    create: {
+      title: 'Quick Create',
+      description:
+        'Schedule events with natural language. Just say "Lunch with Alex tomorrow at noon" and confirm.',
+    },
+    language: {
+      title: 'Multi-Language',
+      description:
+        'Use Ally in your preferred language with /language. Supports English, Hebrew, Russian, French, German, and Arabic.',
     },
   },
 
