@@ -31,6 +31,10 @@ interface AnalyticsContextValue {
   date: DateRange | undefined
   setDate: (date: DateRange | undefined) => void
 
+  // Calendar filter
+  selectedCalendarIds: string[]
+  setSelectedCalendarIds: (ids: string[]) => void
+
   // Calendars data
   calendarsData: CalendarListEntry[]
   calendarMap: Map<string, { name: string; color: string }>
@@ -111,6 +115,9 @@ export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
     to: new Date(),
   })
 
+  // Calendar filter state (empty array = all calendars)
+  const [selectedCalendarIds, setSelectedCalendarIds] = useState<string[]>([])
+
   // Event details dialog state
   const [selectedEvent, setSelectedEvent] = useState<z.infer<typeof CalendarEventSchema> | null>(null)
   const [isEventDialogOpen, setIsEventDialogOpen] = useState(false)
@@ -178,6 +185,7 @@ export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
     timeMin: date?.from || null,
     timeMax: date?.to || null,
     calendarMap,
+    calendarIds: selectedCalendarIds,
     enabled: !!date?.from && !!date?.to,
   })
 
@@ -409,6 +417,10 @@ export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
       date,
       setDate,
 
+      // Calendar filter
+      selectedCalendarIds,
+      setSelectedCalendarIds,
+
       // Calendars data
       calendarsData,
       calendarMap,
@@ -474,6 +486,7 @@ export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
     [
       date,
       setDate,
+      selectedCalendarIds,
       calendarsData,
       calendarMap,
       isCalendarsLoading,

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, useEffect } from 'react'
 import { transcribeAudio } from '@/services/voice.service'
 
 interface UseSpeechRecognitionReturn {
@@ -23,6 +23,7 @@ export const useSpeechRecognition = (onFinalTranscription: (text: string) => voi
   const [speechRecognitionError, setSpeechRecognitionError] = useState<string | null>(null)
   const [interimTranscription, setInterimTranscription] = useState<string>('')
   const [isTranscribing, setIsTranscribing] = useState(false)
+  const [speechRecognitionSupported, setSpeechRecognitionSupported] = useState(false)
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const audioChunksRef = useRef<Blob[]>([])
@@ -32,8 +33,10 @@ export const useSpeechRecognition = (onFinalTranscription: (text: string) => voi
   // Update ref when callback changes
   onFinalTranscriptionRef.current = onFinalTranscription
 
-  // Check if MediaRecorder is supported
-  const speechRecognitionSupported = typeof window !== 'undefined' && 'MediaRecorder' in window
+  // Check if MediaRecorder is supported (client-side only)
+  useEffect(() => {
+    setSpeechRecognitionSupported('MediaRecorder' in window)
+  }, [])
 
   const cleanupRecording = useCallback(() => {
     // Stop all tracks in the stream

@@ -133,7 +133,18 @@ const getEventAnalytics = reqResAsyncHandler(async (req: Request, res: Response)
   }
 
   const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData);
-  const allCalendarIds = (await calendar.calendarList.list({ prettyPrint: true }).then((r) => r.data.items?.map((calendar) => calendar.id))) || ["primary"];
+
+  // Support filtering by specific calendar IDs (comma-separated)
+  const calendarIdsParam = req.query.calendarIds as string | undefined;
+  let allCalendarIds: string[];
+
+  if (calendarIdsParam) {
+    // Parse comma-separated calendar IDs from query param
+    allCalendarIds = calendarIdsParam.split(',').map(id => id.trim()).filter(Boolean);
+  } else {
+    // Default: fetch all calendars
+    allCalendarIds = (await calendar.calendarList.list({ prettyPrint: true }).then((r) => r.data.items?.map((cal) => cal.id))) || ["primary"];
+  }
 
   let totalEventsFound = 0;
   const totalNumberOfCalendars = allCalendarIds.length;

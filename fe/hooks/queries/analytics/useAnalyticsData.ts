@@ -30,6 +30,8 @@ interface UseAnalyticsDataOptions {
   timeMin: Date | null
   timeMax: Date | null
   calendarMap: Map<string, { name: string; color: string }>
+  /** Filter analytics to specific calendar IDs. Empty array = all calendars */
+  calendarIds?: string[]
   enabled?: boolean
 }
 
@@ -118,9 +120,9 @@ function calculateProductivityScore(
   return Math.round((meetingBalance * 0.4 + focusScore * 0.35 + distributionScore * 0.25))
 }
 
-export function useAnalyticsData({ timeMin, timeMax, calendarMap, enabled = true }: UseAnalyticsDataOptions) {
+export function useAnalyticsData({ timeMin, timeMax, calendarMap, calendarIds = [], enabled = true }: UseAnalyticsDataOptions) {
   const analyticsQuery = useQuery({
-    queryKey: ['events-analytics', timeMin, timeMax],
+    queryKey: ['events-analytics', timeMin, timeMax, calendarIds],
     queryFn: async (): Promise<AnalyticsResponse | null> => {
       if (!timeMin || !timeMax) return null
 
@@ -128,6 +130,11 @@ export function useAnalyticsData({ timeMin, timeMax, calendarMap, enabled = true
         timeMin: timeMin.toISOString(),
         timeMax: timeMax.toISOString(),
       })
+
+      // Add calendar IDs filter if specified
+      if (calendarIds.length > 0) {
+        params.set('calendarIds', calendarIds.join(','))
+      }
 
       const response = await apiClient.get(`${ENDPOINTS.EVENTS_ANALYTICS}?${params.toString()}`)
 

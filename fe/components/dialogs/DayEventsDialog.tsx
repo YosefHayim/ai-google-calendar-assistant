@@ -1,12 +1,15 @@
 'use client'
 
-import { CalendarDays, CircleCheckBig, CircleX, Clock, Hash, Hourglass, Loader2, MapPin, Sun } from 'lucide-react'
+import { CalendarDays, CircleCheckBig, CircleX, Clock, Hash, Hourglass, Loader2, MapPin, Search, Sun, X } from 'lucide-react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../ui/dialog'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
+import { Input } from '@/components/ui/input'
 
 import type { CalendarEvent } from '@/types/api'
-import React from 'react'
+import React, { useState, useMemo } from 'react'
 import { format } from 'date-fns'
+import { useTranslation } from 'react-i18next'
+import { useDebouncedCallback } from 'use-debounce'
 
 export interface DayEventsDialogProps {
   isOpen: boolean
@@ -31,6 +34,53 @@ const DayEventsDialog: React.FC<DayEventsDialogProps> = ({
   onClose,
   onEventClick,
 }) => {
+  const { t } = useTranslation()
+  const [inputValue, setInputValue] = useState('')
+  const [debouncedQuery, setDebouncedQuery] = useState('')
+
+  const debouncedSetQuery = useDebouncedCallback((value: string) => {
+    setDebouncedQuery(value)
+  }, 300)
+
+  const handleSearchChange = (value: string) => {
+    setInputValue(value)
+    debouncedSetQuery(value)
+  }
+
+  const clearSearch = () => {
+    setInputValue('')
+    setDebouncedQuery('')
+  }
+
+  // Filter events based on debounced search query (summary or description)
+  const filteredEvents = useMemo(() => {
+    if (!debouncedQuery.trim()) return events
+    const query = debouncedQuery.toLowerCase().trim()
+    return events.filter((event) => {
+      const summary = (event.summary || '').toLowerCase()
+      const description = (event.description || '').toLowerCase()
+      return summary.includes(query) || description.includes(query)
+    })
+  }, [events, debouncedQuery])
+
+  // Calculate filtered hours
+  const filteredBusyHours = useMemo(() => {
+    return filteredEvents.reduce((acc, event) => {
+      if (!event.start || !event.end) return acc
+      const start = event.start.dateTime
+        ? new Date(event.start.dateTime)
+        : event.start.date
+          ? new Date(event.start.date)
+          : null
+      const end = event.end.dateTime ? new Date(event.end.dateTime) : event.end.date ? new Date(event.end.date) : null
+      if (!start || !end) return acc
+      const durationMs = end.getTime() - start.getTime()
+      return acc + durationMs / (1000 * 60 * 60)
+    }, 0)
+  }, [filteredEvents])
+
+  const isFiltering = debouncedQuery.trim().length > 0
+
   if (isLoading) {
     return null
   }
@@ -114,15 +164,29 @@ const DayEventsDialog: React.FC<DayEventsDialogProps> = ({
               <div className="flex flex-wrap gap-4 mt-2">
                 <div className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-2">
                   <Clock size={12} className="text-primary" />
-                  <span>Available: {availableHours.toFixed(1)}h</span>
+                  <span>{t('dialogs.dayEvents.available', 'Available')}: {availableHours.toFixed(1)}h</span>
                 </div>
                 <div className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-2">
                   <Hourglass size={12} className="text-primary" />
-                  <span>Busy: {busyHours.toFixed(1)}h</span>
+                  <span>
+                    {isFiltering
+                      ? t('dialogs.eventSearch.filteredBusy', 'Filtered: {{filtered}}h (of {{total}}h)', {
+                          filtered: filteredBusyHours.toFixed(1),
+                          total: busyHours.toFixed(1),
+                        })
+                      : `${t('dialogs.dayEvents.busy', 'Busy')}: ${busyHours.toFixed(1)}h`}
+                  </span>
                 </div>
                 <div className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-2">
                   <Hash size={12} className="text-primary" />
-                  <span>Events: {events.length}</span>
+                  <span>
+                    {isFiltering
+                      ? t('dialogs.eventSearch.filteredCount', 'Events: {{filtered}} of {{total}}', {
+                          filtered: filteredEvents.length,
+                          total: events.length,
+                        })
+                      : `${t('dialogs.dayEvents.events', 'Events')}: ${events.length}`}
+                  </span>
                 </div>
               </div>
             </div>
@@ -198,9 +262,35 @@ const DayEventsDialog: React.FC<DayEventsDialogProps> = ({
           </div>
         </div>
 
+        {/* Search Input */}
+        {events.length > 0 && (
+          <div className="px-6 py-2 border-b border-zinc-200 dark:border-zinc-800">
+            <div className="relative">
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
+              <Input
+                type="text"
+                placeholder={t('dialogs.eventSearch.placeholder', 'Search by title or description...')}
+                value={inputValue}
+                onChange={(e) => handleSearchChange(e.target.value)}
+                className="pl-9 pr-9 h-9 text-sm"
+              />
+              {inputValue && (
+                <button
+                  onClick={clearSearch}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
+                >
+                  <X size={14} />
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Scrollable Content Area */}
         <div className="flex-1 overflow-y-auto p-6 pt-4">
-          <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-3">Events</h4>
+          <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-3">
+            {t('dialogs.dayEvents.eventsTitle', 'Events')}
+          </h4>
           {isLoading ? (
             <div className="flex items-center justify-center py-8">
               <Loader2 className="w-6 h-6 animate-spin text-zinc-400" />
@@ -208,14 +298,31 @@ const DayEventsDialog: React.FC<DayEventsDialogProps> = ({
           ) : events.length === 0 ? (
             <div className="flex flex-col items-center justify-center p-6 text-center">
               <CalendarDays size={50} className="text-emerald-500 mb-3" />
-              <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300">No events scheduled</p>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                You have {availableHours.toFixed(1)} hours of free time this day.
+              <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                {t('dialogs.dayEvents.noEvents', 'No events scheduled')}
               </p>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                {t('dialogs.dayEvents.freeTime', 'You have {{hours}} hours of free time this day.', {
+                  hours: availableHours.toFixed(1),
+                })}
+              </p>
+            </div>
+          ) : filteredEvents.length === 0 ? (
+            <div className="flex flex-col items-center justify-center p-6 text-center">
+              <Search size={50} className="text-zinc-300 dark:text-zinc-600 mb-3" />
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                {t('dialogs.eventSearch.noMatches', 'No events match your search.')}
+              </p>
+              <button
+                onClick={clearSearch}
+                className="text-xs text-primary hover:underline mt-2"
+              >
+                {t('dialogs.eventSearch.clearSearch', 'Clear search')}
+              </button>
             </div>
           ) : (
             <ul className="space-y-2">
-              {[...events]
+              {[...filteredEvents]
                 .sort((a, b) => {
                   const aStart = a.start?.dateTime
                     ? new Date(a.start.dateTime).getTime()

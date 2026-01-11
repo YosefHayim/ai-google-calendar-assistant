@@ -11,16 +11,21 @@ import {
   Loader2,
   MapPin,
   Minus,
+  Search,
   TrendingDown,
   TrendingUp,
+  X,
 } from 'lucide-react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../ui/dialog'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
+import { Input } from '@/components/ui/input'
 
 import type { CalendarEvent } from '@/types/api'
 import type { CalendarEventsDialogProps } from '@/types/analytics'
-import React from 'react'
+import React, { useState, useMemo } from 'react'
 import { format } from 'date-fns'
+import { useTranslation } from 'react-i18next'
+import { useDebouncedCallback } from 'use-debounce'
 
 const CalendarEventsDialog: React.FC<CalendarEventsDialogProps> = ({
   isOpen,
@@ -33,6 +38,54 @@ const CalendarEventsDialog: React.FC<CalendarEventsDialogProps> = ({
   onClose,
   onEventClick,
 }) => {
+  const { t } = useTranslation()
+  const [inputValue, setInputValue] = useState('')
+  const [debouncedQuery, setDebouncedQuery] = useState('')
+
+  const debouncedSetQuery = useDebouncedCallback((value: string) => {
+    setDebouncedQuery(value)
+  }, 300)
+
+  const handleSearchChange = (value: string) => {
+    setInputValue(value)
+    debouncedSetQuery(value)
+  }
+
+  const clearSearch = () => {
+    setInputValue('')
+    setDebouncedQuery('')
+  }
+
+  // Filter events based on debounced search query (summary or description)
+  const filteredEvents = useMemo(() => {
+    if (!debouncedQuery.trim()) return events
+    const query = debouncedQuery.toLowerCase().trim()
+    return events.filter((event) => {
+      const summary = (event.summary || '').toLowerCase()
+      const description = (event.description || '').toLowerCase()
+      return summary.includes(query) || description.includes(query)
+    })
+  }, [events, debouncedQuery])
+
+  // Calculate filtered hours
+  const filteredHours = useMemo(() => {
+    if (!debouncedQuery.trim()) return totalHours || 0
+    return filteredEvents.reduce((acc, event) => {
+      if (!event.start || !event.end) return acc
+      const start = event.start.dateTime
+        ? new Date(event.start.dateTime)
+        : event.start.date
+          ? new Date(event.start.date)
+          : null
+      const end = event.end.dateTime ? new Date(event.end.dateTime) : event.end.date ? new Date(event.end.date) : null
+      if (!start || !end) return acc
+      const durationMs = end.getTime() - start.getTime()
+      return acc + durationMs / (1000 * 60 * 60)
+    }, 0)
+  }, [filteredEvents, debouncedQuery, totalHours])
+
+  const isFiltering = debouncedQuery.trim().length > 0
+
   if (isLoading) {
     return null
   }
@@ -100,15 +153,53 @@ const CalendarEventsDialog: React.FC<CalendarEventsDialogProps> = ({
               </div>
               <div className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-2">
                 <Clock size={12} style={{ color: calendarColor }} />
-                <span>Total hours: {totalHours?.toFixed(1) || 'N/A'}h</span>
+                <span>
+                  {isFiltering
+                    ? t('dialogs.eventSearch.filteredHours', 'Filtered hours: {{filtered}}h (of {{total}}h)', {
+                        filtered: filteredHours.toFixed(1),
+                        total: totalHours?.toFixed(1) || '0',
+                      })
+                    : `${t('dialogs.eventSearch.totalHours', 'Total hours')}: ${totalHours?.toFixed(1) || 'N/A'}h`}
+                </span>
               </div>
               <div className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-2">
                 <Hash size={12} style={{ color: calendarColor }} />
-                <span>Total events: {events.length}</span>
+                <span>
+                  {isFiltering
+                    ? t('dialogs.eventSearch.filteredEvents', 'Filtered events: {{filtered}} (of {{total}})', {
+                        filtered: filteredEvents.length,
+                        total: events.length,
+                      })
+                    : `${t('dialogs.eventSearch.totalEvents', 'Total events')}: ${events.length}`}
+                </span>
               </div>
             </div>
           </div>
         </DialogHeader>
+
+        {/* Search Input */}
+        {events.length > 0 && (
+          <div className="px-6 pb-2">
+            <div className="relative">
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
+              <Input
+                type="text"
+                placeholder={t('dialogs.eventSearch.placeholder', 'Search by title or description...')}
+                value={inputValue}
+                onChange={(e) => handleSearchChange(e.target.value)}
+                className="pl-9 pr-9 h-9 text-sm"
+              />
+              {inputValue && (
+                <button
+                  onClick={clearSearch}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
+                >
+                  <X size={14} />
+                </button>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Scrollable Content Area */}
         <div className="flex-1 overflow-y-auto p-6 pt-2">
@@ -120,12 +211,25 @@ const CalendarEventsDialog: React.FC<CalendarEventsDialogProps> = ({
             <div className="flex flex-col items-center justify-center p-6 text-center">
               <CalendarDays size={50} style={{ color: calendarColor }} />
               <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                No events found for this calendar in the selected date range.
+                {t('dialogs.eventSearch.noEvents', 'No events found for this calendar in the selected date range.')}
               </p>
+            </div>
+          ) : filteredEvents.length === 0 ? (
+            <div className="flex flex-col items-center justify-center p-6 text-center">
+              <Search size={50} className="text-zinc-300 dark:text-zinc-600 mb-3" />
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                {t('dialogs.eventSearch.noMatches', 'No events match your search.')}
+              </p>
+              <button
+                onClick={clearSearch}
+                className="text-xs text-primary hover:underline mt-2"
+              >
+                {t('dialogs.eventSearch.clearSearch', 'Clear search')}
+              </button>
             </div>
           ) : (
             <ul className="space-y-2">
-              {[...events]
+              {[...filteredEvents]
                 .sort((a, b) => {
                   const aStart = a.start?.dateTime
                     ? new Date(a.start.dateTime).getTime()

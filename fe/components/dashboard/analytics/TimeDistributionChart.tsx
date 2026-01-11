@@ -77,8 +77,8 @@ const TimeDistributionChart: React.FC<TimeDistributionChartProps> = ({ data, isL
           No events in this period
         </div>
       ) : (
-        <ChartContainer config={chartConfig} className="mx-auto">
-          <div className="relative">
+        <ChartContainer config={chartConfig} className="mx-auto aspect-auto h-[180px]">
+          <div className="relative flex items-center justify-center h-full">
             <ResponsiveContainer width={160} height={160}>
               <PieChart>
                 <Pie

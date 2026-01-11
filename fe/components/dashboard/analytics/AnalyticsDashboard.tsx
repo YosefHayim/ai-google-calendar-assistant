@@ -10,6 +10,7 @@ import { getDaysBetween } from '@/lib/dateUtils'
 
 import AnalyticsDashboardSkeleton from './AnalyticsDashboardSkeleton'
 import BentoStatsGrid from './BentoStatsGrid'
+import { CalendarFilterSelect } from './CalendarFilterSelect'
 import CalendarEventsDialog from '@/components/dialogs/CalendarEventsDialog'
 import CalendarSettingsDialog from '@/components/dialogs/CalendarSettingsDialog'
 import CreateCalendarDialog from '@/components/dialogs/CreateCalendarDialog'
@@ -42,6 +43,8 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
   const {
     date,
     setDate,
+    selectedCalendarIds,
+    setSelectedCalendarIds,
     calendarsData,
     calendarMap,
     isCalendarsLoading,
@@ -144,8 +147,14 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
             </span>
           </div>
         )}
-        <div className="flex gap-2 items-center">
+        <div className="flex flex-wrap gap-2 items-center">
           <DatePickerWithRange date={date} setDate={setDate} />
+          <CalendarFilterSelect
+            calendars={calendarsData}
+            selectedCalendarIds={selectedCalendarIds}
+            onSelectionChange={setSelectedCalendarIds}
+            isLoading={isCalendarsLoading}
+          />
           <InteractiveHoverButton
             text="Refresh"
             loadingText="Refreshing..."
@@ -156,31 +165,96 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
         </div>
       </header>
 
-      <BentoStatsGrid data={processedData} comparison={comparison} isLoading={isAnalyticsFetching} />
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <WeeklyPatternDashboard data={weeklyPattern} isLoading={isAnalyticsFetching} />
-        <MonthlyPatternDashboard data={monthlyPattern} isLoading={isAnalyticsFetching} />
-        <TimeDistributionChart data={timeOfDayDistribution} isLoading={isAnalyticsFetching} />
-        <EventDurationDashboard
-          data={eventDurationCategories}
-          totalEvents={totalEvents}
-          isLoading={isAnalyticsFetching}
-        />
+      {/* AI Insights KPI Cards */}
+      <div>
+        <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-4 flex items-center gap-2">
+          AI Insights
+          <HoverCard>
+            <HoverCardTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-6 w-6 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
+              >
+                <Info size={16} />
+              </Button>
+            </HoverCardTrigger>
+            <HoverCardContent>
+              <div className="space-y-2">
+                <h4 className="font-semibold text-sm">Performance Intelligence</h4>
+                <p className="text-xs text-zinc-600 dark:text-zinc-400">
+                  AI-powered insights about your productivity patterns, focus velocity, and schedule optimization
+                  opportunities.
+                </p>
+              </div>
+            </HoverCardContent>
+          </HoverCard>
+        </h3>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+          {isInsightsLoading ? (
+            Array.from({ length: 5 }).map((_, i) => <InsightCardSkeleton key={i} />)
+          ) : isInsightsError ? (
+            <div className="col-span-full flex flex-col items-center justify-center py-8 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl">
+              <p className="text-zinc-500 dark:text-zinc-400 mb-4">Failed to load insights</p>
+              <Button onClick={() => refetchInsights()} size="sm">
+                Retry
+              </Button>
+            </div>
+          ) : insightsData?.insights && insightsData.insights.length > 0 ? (
+            insightsData.insights.map((insight) => (
+              <InsightCard
+                key={insight.id}
+                icon={getInsightIcon(insight.icon)}
+                title={insight.title}
+                value={insight.value}
+                description={insight.description}
+                color={insight.color}
+              />
+            ))
+          ) : (
+            <div className="col-span-full flex flex-col items-center justify-center py-8 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl">
+              <p className="text-zinc-500 dark:text-zinc-400">No insights available for this period</p>
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Daily Available Hours - Full Width */}
-      <DailyAvailableHoursDashboard data={dailyAvailableHours} onDayClick={openDayEventsDialog} isLoading={isAnalyticsFetching} />
+      {/* Recent Events - 5 columns horizontal grid */}
+      <RecentEvents activities={recentActivities} onActivityClick={handleActivityClick} isLoading={isAnalyticsFetching} layout="horizontal" />
 
-      {/* New Analytics Row: Focus Time, Schedule Health, Upcoming Week */}
+      {/* BentoStats */}
+      <BentoStatsGrid data={processedData} comparison={comparison} isLoading={isAnalyticsFetching} />
+
+      {/* Charts - Full width, stacked */}
+      <WeeklyPatternDashboard data={weeklyPattern} isLoading={isAnalyticsFetching} />
+      <MonthlyPatternDashboard data={monthlyPattern} isLoading={isAnalyticsFetching} />
+      <TimeDistributionChart data={timeOfDayDistribution} isLoading={isAnalyticsFetching} />
+      <EventDurationDashboard
+        data={eventDurationCategories}
+        totalEvents={totalEvents}
+        isLoading={isAnalyticsFetching}
+      />
+      <DailyAvailableHoursDashboard data={dailyAvailableHours} onDayClick={openDayEventsDialog} isLoading={isAnalyticsFetching} />
+      <TimeAllocationDashboard data={calendarBreakdown} onCalendarClick={openCalendarEventsDialog} isLoading={isAnalyticsFetching} />
+
+      {/* Manage Calendars */}
+      <ManageCalendars
+        calendars={calendarsData}
+        calendarMap={calendarMap}
+        onCalendarClick={openCalendarSettingsDialog}
+        onCreateCalendar={openCreateCalendarDialog}
+        isLoading={isAnalyticsFetching}
+      />
+
+      {/* Bottom Row: Schedule Health, Focus Time, Upcoming Week */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <ScheduleHealthScore
+          data={processedData}
+          isLoading={isAnalyticsFetching}
+        />
         <FocusTimeTracker
           data={processedData.focusTimeMetrics}
           totalDays={processedData.totalDays}
-          isLoading={isAnalyticsFetching}
-        />
-        <ScheduleHealthScore
-          data={processedData}
           isLoading={isAnalyticsFetching}
         />
         <UpcomingWeekPreview
@@ -189,76 +263,6 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
           isError={isUpcomingWeekError}
           onRetry={refetchUpcomingWeek}
         />
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-3">
-          <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-4 flex items-center gap-2">
-            AI Insights
-            <HoverCard>
-              <HoverCardTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-6 w-6 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
-                >
-                  <Info size={16} />
-                </Button>
-              </HoverCardTrigger>
-              <HoverCardContent>
-                <div className="space-y-2">
-                  <h4 className="font-semibold text-sm">Performance Intelligence</h4>
-                  <p className="text-xs text-zinc-600 dark:text-zinc-400">
-                    AI-powered insights about your productivity patterns, focus velocity, and schedule optimization
-                    opportunities.
-                  </p>
-                </div>
-              </HoverCardContent>
-            </HoverCard>
-          </h3>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-            {isInsightsLoading ? (
-              Array.from({ length: 5 }).map((_, i) => <InsightCardSkeleton key={i} />)
-            ) : isInsightsError ? (
-              <div className="col-span-full flex flex-col items-center justify-center py-8 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl">
-                <p className="text-zinc-500 dark:text-zinc-400 mb-4">Failed to load insights</p>
-                <Button onClick={() => refetchInsights()} size="sm">
-                  Retry
-                </Button>
-              </div>
-            ) : insightsData?.insights && insightsData.insights.length > 0 ? (
-              insightsData.insights.map((insight) => (
-                <InsightCard
-                  key={insight.id}
-                  icon={getInsightIcon(insight.icon)}
-                  title={insight.title}
-                  value={insight.value}
-                  description={insight.description}
-                  color={insight.color}
-                />
-              ))
-            ) : (
-              <div className="col-span-full flex flex-col items-center justify-center py-8 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl">
-                <p className="text-zinc-500 dark:text-zinc-400">No insights available for this period</p>
-              </div>
-            )}
-          </div>
-        </div>
-
-        <div className="lg:col-span-2">
-          <TimeAllocationDashboard data={calendarBreakdown} onCalendarClick={openCalendarEventsDialog} isLoading={isAnalyticsFetching} />
-        </div>
-
-        <div className="lg:col-span-1 flex flex-col gap-6">
-          <RecentEvents activities={recentActivities} onActivityClick={handleActivityClick} isLoading={isAnalyticsFetching} />
-          <ManageCalendars
-            calendars={calendarsData}
-            calendarMap={calendarMap}
-            onCalendarClick={openCalendarSettingsDialog}
-            onCreateCalendar={openCreateCalendarDialog}
-            isLoading={isAnalyticsFetching}
-          />
-        </div>
       </div>
 
       <EventDetailsDialog

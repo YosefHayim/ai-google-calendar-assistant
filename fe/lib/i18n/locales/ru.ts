@@ -231,6 +231,15 @@ export const ru: TranslationShape = {
     refresh: 'Обновить',
     analyzing: 'Анализ календаря...',
 
+    calendarFilter: {
+      filterByCalendar: 'Фильтр по календарю',
+      allCalendars: 'Все календари',
+      oneCalendar: '1 Календарь',
+      multipleCalendars: '{{count}} Календарей',
+      clear: 'Очистить',
+      noCalendars: 'Нет доступных календарей',
+    },
+
     stats: {
       productivityScore: 'Оценка продуктивности',
       productivityDescription: 'На основе нагрузки встреч, времени фокусировки и распределения событий',
@@ -442,6 +451,23 @@ export const ru: TranslationShape = {
       title: 'События на {{date}}',
       noEvents: 'Нет событий в этот день',
       totalHours: '{{hours}} часов запланировано',
+      available: 'Доступно',
+      busy: 'Занято',
+      events: 'События',
+      eventsTitle: 'События',
+      freeTime: 'У вас {{hours}} часов свободного времени в этот день.',
+    },
+    eventSearch: {
+      placeholder: 'Поиск по названию или описанию...',
+      noMatches: 'Нет событий, соответствующих вашему поиску.',
+      clearSearch: 'Очистить поиск',
+      noEvents: 'События для этого календаря в выбранном диапазоне дат не найдены.',
+      totalHours: 'Всего часов',
+      totalEvents: 'Всего событий',
+      filteredHours: 'Отфильтровано часов: {{filtered}}ч (из {{total}}ч)',
+      filteredEvents: 'Отфильтровано событий: {{filtered}} (из {{total}})',
+      filteredBusy: 'Отфильтровано: {{filtered}}ч (из {{total}}ч)',
+      filteredCount: 'События: {{filtered}} из {{total}}',
     },
     calendarEvents: {
       title: 'События {{calendar}}',

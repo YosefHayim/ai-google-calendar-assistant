@@ -47,7 +47,7 @@ export const InsightSchema = z.object({
 });
 
 export const InsightsResponseSchema = z.object({
-  insights: z.array(InsightSchema).length(4).describe("Exactly 4 unique insights"),
+  insights: z.array(InsightSchema).length(10).describe("Exactly 10 unique insights"),
 });
 
 export type AIInsight = z.infer<typeof InsightSchema>;
@@ -57,13 +57,13 @@ export type AIInsightsResponse = z.infer<typeof InsightsResponseSchema>;
 // SYSTEM PROMPT
 // ============================================================================
 
-const INSIGHTS_SYSTEM_PROMPT = `You are an analytics assistant that generates personalized calendar insights. Given the user's calendar metrics, generate exactly 4 unique, interesting insights.
+const INSIGHTS_SYSTEM_PROMPT = `You are an analytics assistant that generates personalized calendar insights. Given the user's calendar metrics, generate exactly 10 unique, interesting insights.
 
 IMPORTANT RULES:
-1. Pick 4 DIFFERENT insight types - never repeat categories
+1. Pick 10 DIFFERENT insight types - never repeat categories
 2. Base insights on the ACTUAL data provided - don't make up numbers
 3. Make descriptions personal and actionable
-4. Use varied colors across the 4 cards
+4. Use varied colors across the 10 cards
 5. Mix positive insights with areas for improvement
 6. Keep values concise (max 15 chars) and descriptions brief (max 100 chars)
 
@@ -107,7 +107,7 @@ TREND INSIGHTS:
 - "Meeting Density": Events per day average | icon: activity | color: amber
 - "Time Distribution": Morning vs afternoon preference | icon: sun | color: orange
 
-Return a JSON object with exactly 4 insights that tell an interesting story about this user's schedule.`;
+Return a JSON object with exactly 10 insights that tell an interesting story about this user's schedule.`;
 
 // ============================================================================
 // GENERATOR FUNCTION
@@ -122,7 +122,7 @@ const INSIGHTS_MODEL = MODELS.GPT_4_1_NANO;
  * @param metrics - Calculated metrics from calendar events
  * @param periodStart - Start date of the analysis period
  * @param periodEnd - End date of the analysis period
- * @returns Array of 4 AI-generated insights
+ * @returns Array of 10 AI-generated insights
  */
 export async function generateInsights(metrics: InsightsMetrics, periodStart: string, periodEnd: string): Promise<AIInsightsResponse> {
   const openai = new OpenAI({ apiKey: env.openAiApiKey });
@@ -144,7 +144,7 @@ You MUST respond with a valid JSON object matching this exact structure:
     }
   ]
 }
-The insights array MUST contain exactly 4 items.`;
+The insights array MUST contain exactly 10 items.`;
 
   const response = await openai.chat.completions.create({
     model: INSIGHTS_MODEL,
@@ -155,7 +155,7 @@ The insights array MUST contain exactly 4 items.`;
       },
       {
         role: "user",
-        content: `Generate 4 insights for the period ${periodStart} to ${periodEnd}.
+        content: `Generate 10 insights for the period ${periodStart} to ${periodEnd}.
 
 Calendar Metrics:
 ${JSON.stringify(metrics, null, 2)}`,
@@ -199,7 +199,7 @@ ${JSON.stringify(metrics, null, 2)}`,
  * @param periodStart - Start date of the analysis period
  * @param periodEnd - End date of the analysis period
  * @param maxRetries - Maximum number of retry attempts (default: 3)
- * @returns Array of 4 AI-generated insights
+ * @returns Array of 10 AI-generated insights
  * @throws Error if all retries fail
  */
 export async function generateInsightsWithRetry(metrics: InsightsMetrics, periodStart: string, periodEnd: string, maxRetries = 3): Promise<AIInsightsResponse> {

@@ -228,6 +228,15 @@ export const ar: TranslationShape = {
     refresh: 'تحديث',
     analyzing: 'جاري تحليل التقويم...',
 
+    calendarFilter: {
+      filterByCalendar: 'تصفية حسب التقويم',
+      allCalendars: 'جميع التقويمات',
+      oneCalendar: 'تقويم واحد',
+      multipleCalendars: '{{count}} تقويمات',
+      clear: 'مسح',
+      noCalendars: 'لا توجد تقويمات متاحة',
+    },
+
     stats: {
       productivityScore: 'نقاط الإنتاجية',
       productivityDescription: 'بناءً على حمل الاجتماعات ووقت التركيز وتوزيع الأحداث',
@@ -438,6 +447,23 @@ export const ar: TranslationShape = {
       title: 'أحداث {{date}}',
       noEvents: 'لا توجد أحداث في هذا اليوم',
       totalHours: '{{hours}} ساعات مجدولة',
+      available: 'متاح',
+      busy: 'مشغول',
+      events: 'الأحداث',
+      eventsTitle: 'الأحداث',
+      freeTime: 'لديك {{hours}} ساعات وقت فراغ في هذا اليوم.',
+    },
+    eventSearch: {
+      placeholder: 'البحث بالعنوان أو الوصف...',
+      noMatches: 'لا توجد أحداث تطابق بحثك.',
+      clearSearch: 'مسح البحث',
+      noEvents: 'لم يتم العثور على أحداث لهذا التقويم في الفترة المحددة.',
+      totalHours: 'إجمالي الساعات',
+      totalEvents: 'إجمالي الأحداث',
+      filteredHours: 'الساعات المصفاة: {{filtered}} ساعة (من {{total}} ساعة)',
+      filteredEvents: 'الأحداث المصفاة: {{filtered}} (من {{total}})',
+      filteredBusy: 'المصفى: {{filtered}} ساعة (من {{total}} ساعة)',
+      filteredCount: 'الأحداث: {{filtered}} من {{total}}',
     },
     calendarEvents: {
       title: 'أحداث {{calendar}}',

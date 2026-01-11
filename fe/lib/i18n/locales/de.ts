@@ -234,6 +234,15 @@ export const de: TranslationShape = {
     refresh: 'Aktualisieren',
     analyzing: 'Analysiere Ihren Kalender...',
 
+    calendarFilter: {
+      filterByCalendar: 'Nach Kalender filtern',
+      allCalendars: 'Alle Kalender',
+      oneCalendar: '1 Kalender',
+      multipleCalendars: '{{count}} Kalender',
+      clear: 'Löschen',
+      noCalendars: 'Keine Kalender verfügbar',
+    },
+
     stats: {
       productivityScore: 'Produktivitätswert',
       productivityDescription: 'Basierend auf Meeting-Last, Fokuszeit und Terminverteilung',
@@ -446,6 +455,23 @@ export const de: TranslationShape = {
       title: 'Termine am {{date}}',
       noEvents: 'Keine Termine an diesem Tag',
       totalHours: '{{hours}} Stunden geplant',
+      available: 'Verfügbar',
+      busy: 'Beschäftigt',
+      events: 'Termine',
+      eventsTitle: 'Termine',
+      freeTime: 'Sie haben {{hours}} Stunden freie Zeit an diesem Tag.',
+    },
+    eventSearch: {
+      placeholder: 'Nach Titel oder Beschreibung suchen...',
+      noMatches: 'Keine Termine entsprechen Ihrer Suche.',
+      clearSearch: 'Suche löschen',
+      noEvents: 'Keine Termine für diesen Kalender im ausgewählten Zeitraum gefunden.',
+      totalHours: 'Gesamtstunden',
+      totalEvents: 'Gesamte Termine',
+      filteredHours: 'Gefilterte Stunden: {{filtered}}h (von {{total}}h)',
+      filteredEvents: 'Gefilterte Termine: {{filtered}} (von {{total}})',
+      filteredBusy: 'Gefiltert: {{filtered}}h (von {{total}}h)',
+      filteredCount: 'Termine: {{filtered}} von {{total}}',
     },
     calendarEvents: {
       title: 'Termine von {{calendar}}',

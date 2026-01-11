@@ -257,7 +257,7 @@ const ChatInterface: React.FC = () => {
 
         {isLoadingConversation && <LoadingSpinner overlay />}
 
-        <div className="flex-1 relative">
+        <div className="flex-1 relative h-full overflow-hidden">
           {activeTab === 'avatar' ? (
             <AvatarView
               messages={messages}

@@ -244,6 +244,15 @@ export const he: TranslationShape = {
     refresh: 'רענן',
     analyzing: 'מנתח את היומן שלך...',
 
+    calendarFilter: {
+      filterByCalendar: 'סנן לפי יומן',
+      allCalendars: 'כל היומנים',
+      oneCalendar: 'יומן אחד',
+      multipleCalendars: '{{count}} יומנים',
+      clear: 'נקה',
+      noCalendars: 'אין יומנים זמינים',
+    },
+
     // Stats labels
     stats: {
       productivityScore: 'ציון פרודוקטיביות',
@@ -473,6 +482,23 @@ export const he: TranslationShape = {
       title: 'אירועים ב-{{date}}',
       noEvents: 'אין אירועים ביום זה',
       totalHours: '{{hours}} שעות מתוזמנות',
+      available: 'זמין',
+      busy: 'עסוק',
+      events: 'אירועים',
+      eventsTitle: 'אירועים',
+      freeTime: 'יש לך {{hours}} שעות פנויות ביום זה.',
+    },
+    eventSearch: {
+      placeholder: 'חיפוש לפי כותרת או תיאור...',
+      noMatches: 'אין אירועים התואמים לחיפוש שלך.',
+      clearSearch: 'נקה חיפוש',
+      noEvents: 'לא נמצאו אירועים ליומן זה בטווח התאריכים שנבחר.',
+      totalHours: 'סה"כ שעות',
+      totalEvents: 'סה"כ אירועים',
+      filteredHours: 'שעות מסוננות: {{filtered}} שעות (מתוך {{total}} שעות)',
+      filteredEvents: 'אירועים מסוננים: {{filtered}} (מתוך {{total}})',
+      filteredBusy: 'מסונן: {{filtered}} שעות (מתוך {{total}} שעות)',
+      filteredCount: 'אירועים: {{filtered}} מתוך {{total}}',
     },
     calendarEvents: {
       title: 'אירועי {{calendar}}',

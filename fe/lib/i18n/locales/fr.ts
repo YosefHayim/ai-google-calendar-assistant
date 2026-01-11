@@ -235,6 +235,15 @@ export const fr: TranslationShape = {
     refresh: 'Actualiser',
     analyzing: 'Analyse de votre agenda...',
 
+    calendarFilter: {
+      filterByCalendar: 'Filtrer par calendrier',
+      allCalendars: 'Tous les calendriers',
+      oneCalendar: '1 Calendrier',
+      multipleCalendars: '{{count}} Calendriers',
+      clear: 'Effacer',
+      noCalendars: 'Aucun calendrier disponible',
+    },
+
     stats: {
       productivityScore: 'Score de productivité',
       productivityDescription:
@@ -449,6 +458,23 @@ export const fr: TranslationShape = {
       title: 'Événements du {{date}}',
       noEvents: 'Aucun événement ce jour',
       totalHours: '{{hours}} heures planifiées',
+      available: 'Disponible',
+      busy: 'Occupé',
+      events: 'Événements',
+      eventsTitle: 'Événements',
+      freeTime: 'Vous avez {{hours}} heures de temps libre ce jour.',
+    },
+    eventSearch: {
+      placeholder: 'Rechercher par titre ou description...',
+      noMatches: 'Aucun événement ne correspond à votre recherche.',
+      clearSearch: 'Effacer la recherche',
+      noEvents: "Aucun événement trouvé pour ce calendrier dans la période sélectionnée.",
+      totalHours: 'Heures totales',
+      totalEvents: 'Total des événements',
+      filteredHours: 'Heures filtrées : {{filtered}}h (sur {{total}}h)',
+      filteredEvents: 'Événements filtrés : {{filtered}} (sur {{total}})',
+      filteredBusy: 'Filtré : {{filtered}}h (sur {{total}}h)',
+      filteredCount: 'Événements : {{filtered}} sur {{total}}',
     },
     calendarEvents: {
       title: 'Événements de {{calendar}}',

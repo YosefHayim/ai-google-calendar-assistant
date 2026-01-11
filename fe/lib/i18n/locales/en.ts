@@ -246,6 +246,16 @@ export const en = {
     refresh: 'Refresh',
     analyzing: 'Analyzing your calendar...',
 
+    // Calendar filter
+    calendarFilter: {
+      filterByCalendar: 'Filter by Calendar',
+      allCalendars: 'All Calendars',
+      oneCalendar: '1 Calendar',
+      multipleCalendars: '{{count}} Calendars',
+      clear: 'Clear',
+      noCalendars: 'No calendars available',
+    },
+
     // Stats labels
     stats: {
       productivityScore: 'Productivity Score',
@@ -476,6 +486,23 @@ export const en = {
       title: 'Events on {{date}}',
       noEvents: 'No events on this day',
       totalHours: '{{hours}} hours scheduled',
+      available: 'Available',
+      busy: 'Busy',
+      events: 'Events',
+      eventsTitle: 'Events',
+      freeTime: 'You have {{hours}} hours of free time this day.',
+    },
+    eventSearch: {
+      placeholder: 'Search by title or description...',
+      noMatches: 'No events match your search.',
+      clearSearch: 'Clear search',
+      noEvents: 'No events found for this calendar in the selected date range.',
+      totalHours: 'Total hours',
+      totalEvents: 'Total events',
+      filteredHours: 'Filtered hours: {{filtered}}h (of {{total}}h)',
+      filteredEvents: 'Filtered events: {{filtered}} (of {{total}})',
+      filteredBusy: 'Filtered: {{filtered}}h (of {{total}}h)',
+      filteredCount: 'Events: {{filtered}} of {{total}}',
     },
     calendarEvents: {
       title: '{{calendar}} Events',
