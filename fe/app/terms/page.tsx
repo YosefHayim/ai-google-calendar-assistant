@@ -4,7 +4,7 @@ import MarketingLayout from '@/components/marketing/MarketingLayout'
 import Link from 'next/link'
 
 export default function TermsOfServicePage() {
-  const lastUpdated = 'January 5, 2026'
+  const lastUpdated = 'January 11, 2026'
   const effectiveDate = 'January 5, 2026'
 
   return (
@@ -249,6 +249,17 @@ export default function TermsOfServicePage() {
                     className="text-primary hover:underline"
                   >
                     Telegram&apos;s Terms of Service
+                  </a>
+                </li>
+                <li>
+                  <strong>WhatsApp:</strong> Subject to{' '}
+                  <a
+                    href="https://www.whatsapp.com/legal/terms-of-service"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline"
+                  >
+                    WhatsApp&apos;s Terms of Service
                   </a>
                 </li>
                 <li>

@@ -4,7 +4,7 @@ import MarketingLayout from '@/components/marketing/MarketingLayout'
 import Link from 'next/link'
 
 export default function PrivacyPolicyPage() {
-  const lastUpdated = 'January 5, 2026'
+  const lastUpdated = 'January 11, 2026'
   const effectiveDate = 'January 5, 2026'
 
   return (
@@ -96,6 +96,9 @@ export default function PrivacyPolicyPage() {
                   <strong>Telegram:</strong> Telegram user ID, username, and chat messages when you link your Telegram
                   account.
                 </li>
+                <li>
+                  <strong>WhatsApp:</strong> Your phone number and chat messages when you interact with Ally via WhatsApp.
+                </li>
               </ul>
 
               <h3 className="text-xl font-medium text-zinc-900 dark:text-zinc-100 mb-3 mt-6">
@@ -121,47 +124,89 @@ export default function PrivacyPolicyPage() {
                 4.1 Google Scopes We Request
               </h3>
               <p className="text-zinc-600 dark:text-zinc-300 mb-4">
-                Ally requests access to the following Google OAuth scopes:
+                Ally requests access to the following Google OAuth scopes. Each scope is necessary for specific features of our AI calendar assistant:
               </p>
+
+              <h4 className="text-lg font-medium text-zinc-900 dark:text-zinc-100 mb-2 mt-4">Authentication Scopes</h4>
+              <div className="overflow-x-auto mb-4">
+                <table className="w-full text-sm text-zinc-600 dark:text-zinc-300 border-collapse">
+                  <thead>
+                    <tr className="border-b border-zinc-200 dark:border-zinc-700">
+                      <th className="text-left py-2 pr-4 font-medium">Scope</th>
+                      <th className="text-left py-2 font-medium">Purpose & Justification</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="border-b border-zinc-100 dark:border-zinc-800">
+                      <td className="py-2 pr-4 font-mono text-xs">openid</td>
+                      <td className="py-2">Required for secure authentication using OpenID Connect protocol</td>
+                    </tr>
+                    <tr className="border-b border-zinc-100 dark:border-zinc-800">
+                      <td className="py-2 pr-4 font-mono text-xs">email</td>
+                      <td className="py-2">Access your email address to create your account and send important notifications about your calendar</td>
+                    </tr>
+                    <tr className="border-b border-zinc-100 dark:border-zinc-800">
+                      <td className="py-2 pr-4 font-mono text-xs">profile</td>
+                      <td className="py-2">Access your name and profile picture to personalize your Ally dashboard experience</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <h4 className="text-lg font-medium text-zinc-900 dark:text-zinc-100 mb-2 mt-4">Calendar Access Scopes</h4>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm text-zinc-600 dark:text-zinc-300 border-collapse">
                   <thead>
                     <tr className="border-b border-zinc-200 dark:border-zinc-700">
                       <th className="text-left py-2 pr-4 font-medium">Scope</th>
-                      <th className="text-left py-2 font-medium">Purpose</th>
+                      <th className="text-left py-2 font-medium">Purpose & Justification</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr className="border-b border-zinc-100 dark:border-zinc-800">
-                      <td className="py-2 pr-4 font-mono text-xs">openid, email, profile</td>
-                      <td className="py-2">Authenticate your identity and personalize your experience</td>
-                    </tr>
-                    <tr className="border-b border-zinc-100 dark:border-zinc-800">
                       <td className="py-2 pr-4 font-mono text-xs">calendar</td>
-                      <td className="py-2">Full access to create, read, update, and delete calendar events</td>
+                      <td className="py-2"><strong>Full calendar access:</strong> Required to create, edit, move, and delete events when you instruct Ally via chat. This is the core functionality of our AI assistant.</td>
                     </tr>
                     <tr className="border-b border-zinc-100 dark:border-zinc-800">
                       <td className="py-2 pr-4 font-mono text-xs">calendar.events</td>
-                      <td className="py-2">Manage events on your calendars</td>
+                      <td className="py-2"><strong>Event management:</strong> Enables Ally to create new events, update existing ones, and delete events across all your calendars based on your natural language instructions.</td>
+                    </tr>
+                    <tr className="border-b border-zinc-100 dark:border-zinc-800">
+                      <td className="py-2 pr-4 font-mono text-xs">calendar.events.owned</td>
+                      <td className="py-2"><strong>Your owned events:</strong> Manage events that you own (created by you), ensuring Ally can properly handle event modifications and deletions.</td>
+                    </tr>
+                    <tr className="border-b border-zinc-100 dark:border-zinc-800">
+                      <td className="py-2 pr-4 font-mono text-xs">calendar.events.owned.readonly</td>
+                      <td className="py-2"><strong>Read your owned events:</strong> View events you created to provide analytics, insights, and AI-powered schedule optimization suggestions.</td>
                     </tr>
                     <tr className="border-b border-zinc-100 dark:border-zinc-800">
                       <td className="py-2 pr-4 font-mono text-xs">calendar.readonly</td>
-                      <td className="py-2">View your calendar data to provide AI insights</td>
+                      <td className="py-2"><strong>View calendar data:</strong> Read your calendar to understand your schedule, detect conflicts, find available time slots, and provide intelligent scheduling suggestions.</td>
                     </tr>
                     <tr className="border-b border-zinc-100 dark:border-zinc-800">
                       <td className="py-2 pr-4 font-mono text-xs">calendar.calendarlist</td>
-                      <td className="py-2">Access your list of calendars</td>
+                      <td className="py-2"><strong>Calendar list access:</strong> View and manage your list of calendars so you can choose which calendars Ally should work with.</td>
+                    </tr>
+                    <tr className="border-b border-zinc-100 dark:border-zinc-800">
+                      <td className="py-2 pr-4 font-mono text-xs">calendar.calendarlist.readonly</td>
+                      <td className="py-2"><strong>View calendar list:</strong> See all your calendars (work, personal, shared) to display them in your dashboard and let you select which ones to manage.</td>
                     </tr>
                     <tr className="border-b border-zinc-100 dark:border-zinc-800">
                       <td className="py-2 pr-4 font-mono text-xs">calendar.freebusy</td>
-                      <td className="py-2">Check availability for scheduling</td>
+                      <td className="py-2"><strong>Free/busy information:</strong> Check when you&apos;re available or busy to help schedule new events at optimal times without conflicts.</td>
                     </tr>
                     <tr>
                       <td className="py-2 pr-4 font-mono text-xs">calendar.app.created</td>
-                      <td className="py-2">Manage calendars created by Ally</td>
+                      <td className="py-2"><strong>App-created calendars:</strong> Manage calendars that Ally creates on your behalf (if you request Ally to create a new calendar).</td>
                     </tr>
                   </tbody>
                 </table>
+              </div>
+
+              <div className="bg-blue-50 dark:bg-blue-950/30 rounded-lg p-4 border border-blue-200 dark:border-blue-800 mt-4">
+                <p className="text-zinc-700 dark:text-zinc-200 text-sm">
+                  <strong>Why we need these permissions:</strong> Ally is a full-featured AI calendar assistant that manages your schedule through natural language. To understand commands like &quot;Move my 3pm meeting to tomorrow&quot; or &quot;Find a free slot for a dentist appointment next week,&quot; we need comprehensive access to read your calendar and make changes on your behalf. You can revoke these permissions at any time.
+                </p>
               </div>
 
               <h3 className="text-xl font-medium text-zinc-900 dark:text-zinc-100 mb-3 mt-6">
@@ -298,6 +343,28 @@ export default function PrivacyPolicyPage() {
                   </p>
                   <p className="text-sm text-zinc-600 dark:text-zinc-300 mt-1">
                     <strong>Data Shared:</strong> Your Telegram user ID, messages sent to the bot, and AI responses.
+                  </p>
+                </div>
+
+                <div className="bg-zinc-50 dark:bg-zinc-900/50 rounded-lg p-4 border border-zinc-200 dark:border-zinc-800">
+                  <h4 className="font-medium text-zinc-900 dark:text-zinc-100 mb-2">WhatsApp Business API (Meta)</h4>
+                  <p className="text-sm text-zinc-600 dark:text-zinc-300">
+                    <strong>Purpose:</strong> Enable chat-based calendar management via WhatsApp messaging.
+                  </p>
+                  <p className="text-sm text-zinc-600 dark:text-zinc-300 mt-1">
+                    <strong>Data Shared:</strong> Your WhatsApp phone number, messages sent to our business number, and AI responses.
+                  </p>
+                  <p className="text-sm text-zinc-600 dark:text-zinc-300 mt-1">
+                    <strong>Note:</strong> WhatsApp messages are processed through Meta&apos;s WhatsApp Business Platform. See{' '}
+                    <a
+                      href="https://www.whatsapp.com/legal/privacy-policy"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline"
+                    >
+                      WhatsApp&apos;s Privacy Policy
+                    </a>{' '}
+                    for details on their data handling.
                   </p>
                 </div>
               </div>
