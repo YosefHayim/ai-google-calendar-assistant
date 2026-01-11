@@ -38,3 +38,14 @@ export {
   type UserExtractionResult,
   type UserExtractionError,
 } from "./require-user";
+
+// Ownership validation (anti-BOLA/IDOR)
+export {
+  validateResourceOwnership,
+  requireOwnership,
+  requireConversationOwnership,
+  requireEmailOwnership,
+  requireUserIdOwnership,
+  type OwnedResourceType,
+  type OwnershipValidationResult,
+} from "./ownership-validation";

@@ -86,3 +86,50 @@ export const apiRateLimiter = rateLimit({
     });
   },
 });
+
+/**
+ * AI/Chat rate limiter - STRICT
+ * Protects expensive AI endpoints from abuse
+ *
+ * Limits: 10 requests per minute per user (identified by user ID from auth)
+ * Falls back to IP if user not authenticated
+ */
+export const aiChatRateLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 10, // 10 AI requests per minute
+  message: "Too many AI requests. Please wait before sending more messages.",
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => {
+    return req.user?.id || req.ip || "anonymous";
+  },
+  handler: (_req, res) => {
+    sendR(res, STATUS_RESPONSE.TOO_MANY_REQUESTS, "Too many AI requests. Please wait before sending more messages.", {
+      code: "AI_RATE_LIMIT_EXCEEDED",
+      retryAfter: 60,
+    });
+  },
+});
+
+/**
+ * AI/Chat rate limiter - BURST protection
+ * Prevents rapid-fire requests (possible automation/abuse)
+ *
+ * Limits: 3 requests per 10 seconds per user
+ */
+export const aiChatBurstLimiter = rateLimit({
+  windowMs: 10 * 1000, // 10 seconds
+  max: 3, // 3 requests per 10 seconds
+  message: "Too many requests in a short time. Please slow down.",
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => {
+    return req.user?.id || req.ip || "anonymous";
+  },
+  handler: (_req, res) => {
+    sendR(res, STATUS_RESPONSE.TOO_MANY_REQUESTS, "Too many requests in a short time. Please slow down.", {
+      code: "AI_BURST_LIMIT_EXCEEDED",
+      retryAfter: 10,
+    });
+  },
+});

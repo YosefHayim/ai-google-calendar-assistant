@@ -1,4 +1,4 @@
-import { ENV, STORAGE_KEYS } from '@/lib/constants'
+import { ENV } from '@/lib/constants'
 import type {
   SSEEvent,
   SSEEventType,
@@ -13,24 +13,9 @@ import type {
 } from '@/types/stream'
 
 function getAuthHeaders(): HeadersInit {
-  const headers: HeadersInit = {
+  return {
     'Content-Type': 'application/json',
   }
-
-  if (typeof window !== 'undefined') {
-    const token = localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN)
-    const refreshToken = localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN)
-
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`
-    }
-
-    if (refreshToken) {
-      headers['refresh_token'] = refreshToken
-    }
-  }
-
-  return headers
 }
 
 function parseSSELine(line: string): SSEEvent | null {
@@ -85,6 +70,7 @@ export async function streamChatMessage(options: StreamChatOptions): Promise<Str
     const response = await fetch(url, {
       method: 'POST',
       headers: getAuthHeaders(),
+      credentials: 'include',
       body: JSON.stringify(body),
       signal,
     })

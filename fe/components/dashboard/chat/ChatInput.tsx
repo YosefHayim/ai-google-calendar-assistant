@@ -7,6 +7,7 @@ import { AIVoiceInput } from '@/components/ui/ai-voice-input'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { getTextDirection } from '@/lib/utils'
+import { INPUT_LIMITS, validateInputLength } from '@/lib/security/sanitize'
 
 export interface ImageFile {
   id: string
@@ -111,6 +112,7 @@ interface ChatInputProps {
 const MAX_IMAGES = 10
 const MAX_IMAGE_SIZE_MB = 10
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+const MAX_INPUT_LENGTH = INPUT_LIMITS.CHAT_MESSAGE
 
 export const ChatInput = forwardRef<HTMLInputElement, ChatInputProps>(
   (
@@ -138,6 +140,9 @@ export const ChatInput = forwardRef<HTMLInputElement, ChatInputProps>(
     const inputDirection = useMemo(() => getTextDirection(input), [input])
     const fileInputRef = useRef<HTMLInputElement>(null)
     const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
+
+    const inputValidation = useMemo(() => validateInputLength(input, MAX_INPUT_LENGTH), [input])
+    const isInputTooLong = !inputValidation.isValid
 
     const openLightbox = useCallback((index: number) => {
       setLightboxIndex(index)
@@ -346,17 +351,25 @@ export const ChatInput = forwardRef<HTMLInputElement, ChatInputProps>(
             >
               <Mic className="w-6 h-6" />
             </Button>
-            <Input
-              ref={textInputRef}
-              type="text"
-              value={input}
-              onChange={(e) => onInputChange(e.target.value)}
-              onPaste={handlePaste}
-              placeholder={images.length > 0 ? 'Add a message about your images...' : 'What do you have for me today? I\'m ready to help you.'}
-              className={`flex-1 h-14 bg-transparent border-0 shadow-none focus-visible:ring-0 text-lg font-medium placeholder:italic placeholder:font-normal ${inputDirection === 'rtl' ? 'text-right' : ''}`}
-              disabled={isDisabled}
-              dir={inputDirection}
-            />
+            <div className="flex-1 relative">
+              <Input
+                ref={textInputRef}
+                type="text"
+                value={input}
+                onChange={(e) => onInputChange(e.target.value)}
+                onPaste={handlePaste}
+                maxLength={MAX_INPUT_LENGTH}
+                placeholder={images.length > 0 ? 'Add a message about your images...' : 'What do you have for me today? I\'m ready to help you.'}
+                className={`w-full h-14 bg-transparent border-0 shadow-none focus-visible:ring-0 text-lg font-medium placeholder:italic placeholder:font-normal ${inputDirection === 'rtl' ? 'text-right' : ''} ${isInputTooLong ? 'text-red-500' : ''}`}
+                disabled={isDisabled}
+                dir={inputDirection}
+              />
+              {input.length > MAX_INPUT_LENGTH * 0.8 && (
+                <span className={`absolute right-2 bottom-0 text-xs ${isInputTooLong ? 'text-red-500' : 'text-zinc-400'}`}>
+                  {input.length}/{MAX_INPUT_LENGTH}
+                </span>
+              )}
+            </div>
             {isLoading && onCancel ? (
               <Button
                 type="button"
@@ -371,12 +384,13 @@ export const ChatInput = forwardRef<HTMLInputElement, ChatInputProps>(
               <Button
                 type="submit"
                 size="icon"
-                disabled={(!input.trim() && images.length === 0) || isLoading}
+                disabled={(!input.trim() && images.length === 0) || isLoading || isInputTooLong}
                 className={`h-12 w-12 rounded-xl ${
-                  (input.trim() || images.length > 0) && !isLoading
+                  (input.trim() || images.length > 0) && !isLoading && !isInputTooLong
                     ? 'bg-zinc-950 dark:bg-zinc-100 text-white dark:text-zinc-950 hover:bg-zinc-800 dark:hover:bg-zinc-200'
                     : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-400'
                 }`}
+                title={isInputTooLong ? 'Message too long' : undefined}
               >
                 <ArrowUp className="w-6 h-6" />
               </Button>

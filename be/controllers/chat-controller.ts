@@ -66,7 +66,9 @@ async function buildChatPromptWithContext(
     parts.push("--- End Past Conversations ---");
   }
 
-  parts.push(`\nUser Request: ${message}`);
+  parts.push(`\n<user_request>`);
+  parts.push(message);
+  parts.push(`</user_request>`);
 
   return parts.join("\n");
 }

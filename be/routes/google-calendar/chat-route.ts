@@ -5,6 +5,7 @@ import { chatController } from "@/controllers/chat-controller";
 import { chatStreamController } from "@/controllers/chat-stream-controller";
 import { googleTokenRefresh } from "@/middlewares/google-token-refresh";
 import { googleTokenValidation } from "@/middlewares/google-token-validation";
+import { aiChatRateLimiter, aiChatBurstLimiter } from "@/middlewares/rate-limiter";
 import { logger } from "@/utils/logger";
 import { sendR } from "@/utils";
 import { supabaseAuth } from "@/middlewares/supabase-auth";
@@ -28,8 +29,8 @@ router.param(
   },
 );
 
-router.post("/", chatController.sendChat);
-router.post("/stream", chatStreamController.streamChat);
+router.post("/", aiChatBurstLimiter, aiChatRateLimiter, chatController.sendChat);
+router.post("/stream", aiChatBurstLimiter, aiChatRateLimiter, chatStreamController.streamChat);
 
 // ============================================
 // Conversation Management Endpoints
@@ -68,7 +69,7 @@ router.get("/conversations/:id", chatController.getConversation);
  */
 router.delete("/conversations/:id", chatController.removeConversation);
 
-router.post("/conversations/:id/messages", chatController.continueConversation);
-router.post("/conversations/:id/messages/stream", chatStreamController.streamContinueConversation);
+router.post("/conversations/:id/messages", aiChatBurstLimiter, aiChatRateLimiter, chatController.continueConversation);
+router.post("/conversations/:id/messages/stream", aiChatBurstLimiter, aiChatRateLimiter, chatStreamController.streamContinueConversation);
 
 export default router;

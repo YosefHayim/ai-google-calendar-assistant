@@ -76,7 +76,9 @@ async function buildChatPromptWithContext(params: PromptParams): Promise<string>
     parts.push(`\n[User has attached ${imageCount} image(s) to this message. Please analyze them and help with any calendar-related content you find.]`);
   }
 
-  parts.push(`\nUser Request: ${message}`);
+  parts.push(`\n<user_request>`);
+  parts.push(message);
+  parts.push(`</user_request>`);
 
   return parts.join("\n");
 }

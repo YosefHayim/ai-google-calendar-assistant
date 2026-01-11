@@ -25,6 +25,7 @@ import { format, formatDistanceStrict } from 'date-fns'
 import type { EventDetailsDialogProps } from '@/types/analytics'
 import React from 'react'
 import { RescheduleDialog } from '@/components/dashboard/RescheduleDialog'
+import { sanitizeHtml } from '@/lib/security/sanitize'
 
 const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
   isOpen,
@@ -184,7 +185,7 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
                 <AlignLeft className="w-4 h-4 text-zinc-400" />
               </div>
               <div className="text-sm text-zinc-600 dark:text-zinc-300 whitespace-pre-wrap leading-relaxed overflow-hidden">
-                <div dangerouslySetInnerHTML={{ __html: event.description }} />
+                <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(event.description) }} />
               </div>
             </div>
           )}
