@@ -208,7 +208,7 @@ const Navbar = () => {
                   <WhatsAppIcon className="w-5 h-5" />
                 </a>
                 <a
-                  href="mailto:hello@getally.ai"
+                  href="mailto:hello@askally.io"
                   className="p-2.5 bg-zinc-100 dark:bg-zinc-900 rounded-lg text-zinc-500 hover:text-primary transition-colors"
                   title="Email"
                 >

@@ -184,8 +184,8 @@ export default function TermsOfServicePage() {
               <p className="text-zinc-600 dark:text-zinc-300 leading-relaxed">
                 Subscription fees are generally non-refundable. However, we may consider refund requests on a
                 case-by-case basis. Contact{' '}
-                <a href="mailto:hello@getally.ai" className="text-primary hover:underline">
-                  hello@getally.ai
+                <a href="mailto:hello@askally.io" className="text-primary hover:underline">
+                  hello@askally.io
                 </a>{' '}
                 for refund inquiries.
               </p>
@@ -362,8 +362,8 @@ export default function TermsOfServicePage() {
               <p className="text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4">
                 <strong>By You:</strong> You may terminate your account at any time by disconnecting your Google
                 Calendar and deleting your account from the dashboard, or by contacting us at{' '}
-                <a href="mailto:hello@getally.ai" className="text-primary hover:underline">
-                  hello@getally.ai
+                <a href="mailto:hello@askally.io" className="text-primary hover:underline">
+                  hello@askally.io
                 </a>
                 .
               </p>
@@ -433,8 +433,8 @@ export default function TermsOfServicePage() {
               <div className="bg-zinc-50 dark:bg-zinc-900/50 rounded-xl p-6 border border-zinc-200 dark:border-zinc-800">
                 <p className="text-zinc-600 dark:text-zinc-300 mb-2">
                   <strong>Email:</strong>{' '}
-                  <a href="mailto:hello@getally.ai" className="text-primary hover:underline">
-                    hello@getally.ai
+                  <a href="mailto:hello@askally.io" className="text-primary hover:underline">
+                    hello@askally.io
                   </a>
                 </p>
                 <p className="text-zinc-600 dark:text-zinc-300">

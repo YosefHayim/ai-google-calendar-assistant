@@ -30,8 +30,8 @@ const CONSTANTS = {
   },
 
   // URLs (Production)
-  PROD_BACKEND_URL: "https://i3fzcpnmmk.eu-central-1.awsapprunner.com",
-  PROD_FRONTEND_URL: "https://niicspurpm.eu-central-1.awsapprunner.com",
+  PROD_BACKEND_URL: "https://api.askally.io",
+  PROD_FRONTEND_URL: "https://askally.io",
 
   // Defaults
   DEFAULT_PORT: 3000,

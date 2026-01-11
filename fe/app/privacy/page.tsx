@@ -46,14 +46,14 @@ export default function PrivacyPolicyPage() {
                 </p>
                 <p className="text-zinc-600 dark:text-zinc-300 mb-2">
                   <strong>Email:</strong>{' '}
-                  <a href="mailto:hello@getally.ai" className="text-primary hover:underline">
-                    hello@getally.ai
+                  <a href="mailto:hello@askally.io" className="text-primary hover:underline">
+                    hello@askally.io
                   </a>
                 </p>
                 <p className="text-zinc-600 dark:text-zinc-300">
                   <strong>Website:</strong>{' '}
-                  <a href="https://getally.ai" className="text-primary hover:underline">
-                    https://getally.ai
+                  <a href="https://askally.io" className="text-primary hover:underline">
+                    https://askally.io
                   </a>
                 </p>
               </div>
@@ -432,8 +432,8 @@ export default function PrivacyPolicyPage() {
               </ul>
               <p className="text-zinc-600 dark:text-zinc-300 mt-4">
                 To exercise these rights, contact us at{' '}
-                <a href="mailto:hello@getally.ai" className="text-primary hover:underline">
-                  hello@getally.ai
+                <a href="mailto:hello@askally.io" className="text-primary hover:underline">
+                  hello@askally.io
                 </a>
                 .
               </p>
@@ -462,8 +462,8 @@ export default function PrivacyPolicyPage() {
                 Ally is not intended for users under 13 years of age. We do not knowingly collect personal information
                 from children under 13. If you believe we have collected data from a child under 13, please contact us
                 immediately at{' '}
-                <a href="mailto:hello@getally.ai" className="text-primary hover:underline">
-                  hello@getally.ai
+                <a href="mailto:hello@askally.io" className="text-primary hover:underline">
+                  hello@askally.io
                 </a>
                 .
               </p>
@@ -502,8 +502,8 @@ export default function PrivacyPolicyPage() {
               <div className="bg-zinc-50 dark:bg-zinc-900/50 rounded-xl p-6 border border-zinc-200 dark:border-zinc-800">
                 <p className="text-zinc-600 dark:text-zinc-300 mb-2">
                   <strong>Email:</strong>{' '}
-                  <a href="mailto:hello@getally.ai" className="text-primary hover:underline">
-                    hello@getally.ai
+                  <a href="mailto:hello@askally.io" className="text-primary hover:underline">
+                    hello@askally.io
                   </a>
                 </p>
                 <p className="text-zinc-600 dark:text-zinc-300">

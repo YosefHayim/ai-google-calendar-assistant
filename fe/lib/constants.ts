@@ -66,5 +66,5 @@ export const SOCIAL_LINKS = {
   TELEGRAM_BOT: 'https://t.me/ai_schedule_event_server_bot',
   DISCORD: 'https://discord.gg/ally',
   WHATSAPP: 'https://wa.me/message/ally',
-  EMAIL: 'mailto:hello@getally.ai',
+  EMAIL: 'mailto:hello@askally.io',
 } as const

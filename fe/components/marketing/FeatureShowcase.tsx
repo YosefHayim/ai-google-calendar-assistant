@@ -129,7 +129,7 @@ const BrowserMockup = ({ children }: { children: React.ReactNode }) => (
             <div className="w-4 h-4 rounded-full bg-emerald-500 flex items-center justify-center">
               <Check className="w-2.5 h-2.5 text-white" />
             </div>
-            <span className="text-xs text-zinc-600 dark:text-zinc-300 font-medium">app.getally.ai</span>
+            <span className="text-xs text-zinc-600 dark:text-zinc-300 font-medium">app.askally.io</span>
           </div>
         </div>
       </div>

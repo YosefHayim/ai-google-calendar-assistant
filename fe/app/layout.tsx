@@ -16,8 +16,21 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Ally | The AI Secretary for your Google Calendar",
-  description: "Your intelligent calendar assistant powered by AI",
+  title: "Ask Ally | The AI Secretary for your Google Calendar",
+  description: "Your intelligent calendar assistant powered by AI. Manage your Google Calendar with natural language commands.",
+  metadataBase: new URL("https://askally.io"),
+  openGraph: {
+    title: "Ask Ally | The AI Secretary for your Google Calendar",
+    description: "Your intelligent calendar assistant powered by AI. Manage your Google Calendar with natural language commands.",
+    url: "https://askally.io",
+    siteName: "Ask Ally",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Ask Ally | The AI Secretary for your Google Calendar",
+    description: "Your intelligent calendar assistant powered by AI.",
+  },
 };
 
 export default function RootLayout({
