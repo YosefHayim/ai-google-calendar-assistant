@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import {
   AlignLeft,
   ArrowRight,
@@ -12,17 +13,18 @@ import {
   Info,
   Link as LinkIcon,
   MapPin,
+  RefreshCw,
   User,
   Users,
   X,
 } from 'lucide-react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
 import { format, formatDistanceStrict } from 'date-fns'
 
 import type { EventDetailsDialogProps } from '@/types/analytics'
 import React from 'react'
-
-// Adjust path if your UI components are elsewhere
+import { RescheduleDialog } from '@/components/dashboard/RescheduleDialog'
 
 const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
   isOpen,
@@ -31,6 +33,8 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
   calendarName,
   onClose,
 }) => {
+  const [showReschedule, setShowReschedule] = useState(false)
+
   if (!event) return null
 
   const formatDate = (dateStr?: string | null) => {
@@ -254,21 +258,44 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
               )}
             </div>
 
-            {event.htmlLink && (
-              <a
-                href={event.htmlLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-xs font-semibold hover:underline transition-colors"
-                style={{ color: calendarColor }}
+            <div className="flex items-center gap-3">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowReschedule(true)}
+                className="text-xs"
               >
-                Open in Google Calendar
-                <ExternalLink size={12} />
-              </a>
-            )}
+                <RefreshCw size={12} className="mr-1.5" />
+                Reschedule
+              </Button>
+
+              {event.htmlLink && (
+                <a
+                  href={event.htmlLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold hover:underline transition-colors"
+                  style={{ color: calendarColor }}
+                >
+                  Open in Google Calendar
+                  <ExternalLink size={12} />
+                </a>
+              )}
+            </div>
           </div>
         </div>
       </DialogContent>
+
+      {/* Reschedule Dialog */}
+      {event.id && (
+        <RescheduleDialog
+          open={showReschedule}
+          onOpenChange={setShowReschedule}
+          eventId={event.id}
+          eventSummary={event.summary || 'Event'}
+          onSuccess={onClose}
+        />
+      )}
     </Dialog>
   )
 }
