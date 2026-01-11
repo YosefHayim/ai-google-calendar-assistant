@@ -946,18 +946,12 @@ export const handleProfileCommand = async (ctx: GlobalContext): Promise<void> =>
       const isSelected = profile.id === currentProfileId;
       const providerIcon = getProviderIcon(profile.modelConfig.provider);
       const tierBadge = getTierBadge(profile.tier);
-      const realtimeIndicator = profile.modelConfig.supportsRealtime ? "⚡" : "";
-
       const label = isSelected
-        ? `✓ ${profile.displayName} ${tierBadge}${realtimeIndicator}`
-        : `${providerIcon} ${profile.displayName} ${tierBadge}${realtimeIndicator}`;
+        ? `✓ ${profile.displayName} ${tierBadge}`
+        : `${providerIcon} ${profile.displayName} ${tierBadge}`;
 
       keyboard.text(label, `profile:${profile.id}`).row();
     }
-
-    const realtimeStatus = currentProfile.modelConfig.supportsRealtime
-      ? t("commands.profile.realtimeEnabled")
-      : t("commands.profile.realtimeDisabled");
 
     const response = ResponseBuilder.telegram()
       .direction(direction)
@@ -968,7 +962,6 @@ export const handleProfileCommand = async (ctx: GlobalContext): Promise<void> =>
       .text(`<i>${currentProfile.tagline}</i>`)
       .spacing()
       .text(`<b>${t("commands.profile.tier")}:</b> ${currentProfile.tier}`)
-      .text(`<b>${t("commands.profile.realtime")}:</b> ${realtimeStatus}`)
       .spacing()
       .text(t("commands.profile.selectPrompt"))
       .build();

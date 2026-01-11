@@ -14,7 +14,6 @@ export type AgentCapability =
   | "smart_scheduling"
   | "multi_calendar"
   | "voice"
-  | "realtime"
 
 export type VoiceStyle = "alloy" | "echo" | "fable" | "onyx" | "nova" | "shimmer"
 
@@ -37,10 +36,8 @@ export interface AgentProfile {
     provider: "openai" | "google" | "anthropic"
     /** Tier within provider: fast, balanced, powerful */
     tier: "fast" | "balanced" | "powerful"
-    /** Whether this supports realtime/voice */
-    supportsRealtime: boolean
   }
-  /** Voice settings */
+  /** Voice settings for TTS */
   voice: {
     style: VoiceStyle
     speed: number
@@ -80,7 +77,6 @@ export const AGENT_PROFILES: Record<string, AgentProfile> = {
     modelConfig: {
       provider: "openai",
       tier: "fast",
-      supportsRealtime: false,
     },
     voice: {
       style: "alloy",
@@ -111,12 +107,10 @@ export const AGENT_PROFILES: Record<string, AgentProfile> = {
       "smart_scheduling",
       "multi_calendar",
       "voice",
-      "realtime",
     ],
     modelConfig: {
       provider: "openai",
       tier: "balanced",
-      supportsRealtime: true,
     },
     voice: {
       style: "nova",
@@ -142,12 +136,10 @@ export const AGENT_PROFILES: Record<string, AgentProfile> = {
       "calendar_read",
       "calendar_write",
       "voice",
-      "realtime",
     ],
     modelConfig: {
       provider: "openai",
       tier: "fast",
-      supportsRealtime: true,
     },
     voice: {
       style: "echo",
@@ -178,12 +170,10 @@ export const AGENT_PROFILES: Record<string, AgentProfile> = {
       "smart_scheduling",
       "multi_calendar",
       "voice",
-      "realtime",
     ],
     modelConfig: {
       provider: "openai",
       tier: "powerful",
-      supportsRealtime: true,
     },
     voice: {
       style: "onyx",
@@ -199,7 +189,7 @@ export const AGENT_PROFILES: Record<string, AgentProfile> = {
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // EXPERIMENTAL / FUTURE PROVIDERS
+  // ALTERNATIVE PROVIDERS
   // ═══════════════════════════════════════════════════════════════════════════
   "ally-gemini": {
     id: "ally-gemini",
@@ -219,7 +209,6 @@ export const AGENT_PROFILES: Record<string, AgentProfile> = {
     modelConfig: {
       provider: "google",
       tier: "balanced",
-      supportsRealtime: false, // Gemini Live coming soon
     },
     voice: {
       style: "nova",
@@ -251,7 +240,6 @@ export const AGENT_PROFILES: Record<string, AgentProfile> = {
     modelConfig: {
       provider: "anthropic",
       tier: "balanced",
-      supportsRealtime: false,
     },
     voice: {
       style: "nova",
@@ -283,11 +271,4 @@ export function getProfilesForTier(tier: AgentTier): AgentProfile[] {
     const profileTierIndex = tierOrder.indexOf(profile.tier)
     return profileTierIndex <= tierIndex
   })
-}
-
-/** Get profiles that support realtime voice */
-export function getRealtimeProfiles(): AgentProfile[] {
-  return Object.values(AGENT_PROFILES).filter(
-    (p) => p.modelConfig.supportsRealtime
-  )
 }

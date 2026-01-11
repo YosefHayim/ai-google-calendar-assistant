@@ -17,9 +17,6 @@ const CONSTANTS = {
   // Google OAuth
   GOOGLE_CLIENT_ID: "633918377873-vvlgvie0ksenm5jcvs3c74vhb17rdqsn.apps.googleusercontent.com",
 
-  // LiveKit
-  LIVEKIT_WS_URL: "wss://ai-google-calendar-project-mljh2s1n.livekit.cloud",
-
   // LemonSqueezy
   LEMONSQUEEZY_STORE_ID: "270009",
   LEMONSQUEEZY_VARIANTS: {
@@ -136,19 +133,6 @@ const openai = {
 } as const;
 
 // ============================================================================
-// LiveKit Configuration
-// ============================================================================
-
-const livekit = {
-  wsUrl: CONSTANTS.LIVEKIT_WS_URL,
-  apiKey: getOptional("LIVEKIT_API_KEY"),
-  apiSecret: getOptional("LIVEKIT_API_SECRET"),
-  get isEnabled(): boolean {
-    return !!(this.apiKey && this.apiSecret);
-  },
-} as const;
-
-// ============================================================================
 // LemonSqueezy Configuration
 // ============================================================================
 
@@ -262,7 +246,6 @@ export const env = {
   supabase,
   google,
   openai,
-  livekit,
   lemonSqueezy,
   integrations,
   atlassian,

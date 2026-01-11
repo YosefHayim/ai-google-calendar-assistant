@@ -41,7 +41,6 @@ router.use(supabaseAuth());
 
 router.post("/transcribe", upload.single("audio"), voiceController.transcribe)
 router.post("/synthesize", voiceController.synthesize)
-router.post("/livekit/token", voiceController.getLiveKitToken)
 router.get("/agents/profiles", voiceController.getAgentProfiles)
 
 export default router

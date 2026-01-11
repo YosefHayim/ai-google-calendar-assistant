@@ -6,40 +6,32 @@ export type ModelTier = "fast" | "balanced" | "powerful"
 export interface ModelSpec {
   provider: ModelProvider
   modelId: string
-  realtimeModelId?: string
   maxTokens: number
   temperature: number
   supportsTools: boolean
-  supportsRealtime: boolean
 }
 
 const OPENAI_MODELS: Record<ModelTier, ModelSpec> = {
   fast: {
     provider: "openai",
     modelId: "gpt-4.1-nano",
-    realtimeModelId: "gpt-4o-mini-realtime-preview",
     maxTokens: 1024,
     temperature: 0.7,
     supportsTools: true,
-    supportsRealtime: true,
   },
   balanced: {
     provider: "openai",
     modelId: "gpt-4.1-mini",
-    realtimeModelId: "gpt-4o-realtime-preview-2024-12-17",
     maxTokens: 2048,
     temperature: 0.7,
     supportsTools: true,
-    supportsRealtime: true,
   },
   powerful: {
     provider: "openai",
     modelId: "gpt-5-mini",
-    realtimeModelId: "gpt-4o-realtime-preview-2024-12-17",
     maxTokens: 4096,
     temperature: 0.6,
     supportsTools: true,
-    supportsRealtime: true,
   },
 }
 
@@ -50,7 +42,6 @@ const GOOGLE_MODELS: Record<ModelTier, ModelSpec> = {
     maxTokens: 1024,
     temperature: 0.7,
     supportsTools: true,
-    supportsRealtime: false,
   },
   balanced: {
     provider: "google",
@@ -58,7 +49,6 @@ const GOOGLE_MODELS: Record<ModelTier, ModelSpec> = {
     maxTokens: 2048,
     temperature: 0.7,
     supportsTools: true,
-    supportsRealtime: false,
   },
   powerful: {
     provider: "google",
@@ -66,7 +56,6 @@ const GOOGLE_MODELS: Record<ModelTier, ModelSpec> = {
     maxTokens: 4096,
     temperature: 0.6,
     supportsTools: true,
-    supportsRealtime: false,
   },
 }
 
@@ -77,7 +66,6 @@ const ANTHROPIC_MODELS: Record<ModelTier, ModelSpec> = {
     maxTokens: 1024,
     temperature: 0.7,
     supportsTools: true,
-    supportsRealtime: false,
   },
   balanced: {
     provider: "anthropic",
@@ -85,7 +73,6 @@ const ANTHROPIC_MODELS: Record<ModelTier, ModelSpec> = {
     maxTokens: 2048,
     temperature: 0.7,
     supportsTools: true,
-    supportsRealtime: false,
   },
   powerful: {
     provider: "anthropic",
@@ -93,7 +80,6 @@ const ANTHROPIC_MODELS: Record<ModelTier, ModelSpec> = {
     maxTokens: 4096,
     temperature: 0.6,
     supportsTools: true,
-    supportsRealtime: false,
   },
 }
 
@@ -112,18 +98,4 @@ export function getModelSpec(profile: AgentProfile): ModelSpec {
   }
 
   return registry[tier] ?? OPENAI_MODELS.balanced
-}
-
-export function getRealtimeModelId(profile: AgentProfile): string | null {
-  const spec = getModelSpec(profile)
-
-  if (!spec.supportsRealtime || !spec.realtimeModelId) {
-    return null
-  }
-
-  return spec.realtimeModelId
-}
-
-export function isRealtimeSupported(profile: AgentProfile): boolean {
-  return profile.modelConfig.supportsRealtime && getRealtimeModelId(profile) !== null
 }

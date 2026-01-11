@@ -1,5 +1,5 @@
 import type { Request, Response } from "express"
-import { STATUS_RESPONSE, env } from "@/config"
+import { STATUS_RESPONSE } from "@/config"
 import { reqResAsyncHandler, sendR } from "@/utils/http"
 import { transcribeAudio } from "@/utils/ai/voice-transcription"
 import {
@@ -9,15 +9,10 @@ import {
   type TTSVoice,
 } from "@/utils/ai/text-to-speech"
 import { getVoicePreference } from "@/services/user-preferences-service"
-import { requireUser } from "@/utils/auth"
-import { AccessToken } from "livekit-server-sdk"
 import {
-  AGENT_PROFILES,
   DEFAULT_AGENT_PROFILE_ID,
-  getAgentProfile,
   getProfilesForTier,
   formatProfileForClient,
-  isRealtimeSupported,
   type AgentTier,
 } from "@/shared/orchestrator"
 
@@ -85,72 +80,10 @@ const synthesize = reqResAsyncHandler(async (req: Request, res: Response) => {
   return res.send(result.audioBuffer);
 });
 
-const getLiveKitToken = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const userResult = requireUser(req, res)
-  if (!userResult.success) return
-  const { userId, userEmail } = userResult
-
-  const { profileId = DEFAULT_AGENT_PROFILE_ID } = req.body as {
-    profileId?: string
-  }
-
-  const profile = getAgentProfile(profileId)
-
-  if (!isRealtimeSupported(profile)) {
-    return sendR(
-      res,
-      STATUS_RESPONSE.BAD_REQUEST,
-      `Agent profile "${profile.displayName}" does not support real-time voice`
-    )
-  }
-
-  if (!env.livekit.isEnabled) {
-    return sendR(
-      res,
-      STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
-      "LiveKit not configured"
-    )
-  }
-
-  const { apiKey, apiSecret, wsUrl } = env.livekit
-
-  const roomName = `calendar-voice-${userId}-${Date.now()}`
-  const participantName = userEmail.split("@")[0]
-
-  const token = new AccessToken(apiKey, apiSecret, {
-    identity: participantName,
-    name: participantName,
-    metadata: JSON.stringify({ userId, email: userEmail, profileId: profile.id }),
-  })
-
-  token.addGrant({
-    room: roomName,
-    roomJoin: true,
-    canPublish: true,
-    canSubscribe: true,
-    canPublishData: true,
-  })
-
-  const jwt = await token.toJwt()
-
-  return sendR(res, STATUS_RESPONSE.SUCCESS, "LiveKit token generated", {
-    token: jwt,
-    roomName,
-    wsUrl,
-    profile: formatProfileForClient(profile),
-  })
-})
-
 const getAgentProfiles = reqResAsyncHandler(async (req: Request, res: Response) => {
   const userTier = (req.query.tier as AgentTier) || "free"
-  const voiceOnly = req.query.voice === "true"
 
-  let profiles = getProfilesForTier(userTier)
-
-  if (voiceOnly) {
-    profiles = profiles.filter((p) => isRealtimeSupported(p))
-  }
-
+  const profiles = getProfilesForTier(userTier)
   const formatted = profiles.map(formatProfileForClient)
 
   return sendR(res, STATUS_RESPONSE.SUCCESS, "Agent profiles retrieved", {
@@ -159,4 +92,4 @@ const getAgentProfiles = reqResAsyncHandler(async (req: Request, res: Response) 
   })
 })
 
-export default { transcribe, synthesize, getLiveKitToken, getAgentProfiles }
+export default { transcribe, synthesize, getAgentProfiles }

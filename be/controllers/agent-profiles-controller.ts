@@ -19,7 +19,6 @@ interface AgentProfileDTO {
   tier: AgentTier
   capabilities: string[]
   provider: string
-  supportsRealtime: boolean
   voice: {
     style: string
     speed: number
@@ -36,20 +35,14 @@ function toDTO(profileId: string): AgentProfileDTO {
     tier: profile.tier,
     capabilities: profile.capabilities,
     provider: profile.modelConfig.provider,
-    supportsRealtime: profile.modelConfig.supportsRealtime,
     voice: profile.voice,
   }
 }
 
 const listProfiles = reqResAsyncHandler(async (req: Request, res: Response) => {
   const tier = (req.query.tier as AgentTier) || "pro"
-  const voiceOnly = req.query.voiceOnly === "true"
 
-  let profiles = getProfilesForTier(tier).map((p) => toDTO(p.id))
-
-  if (voiceOnly) {
-    profiles = profiles.filter((p) => p.supportsRealtime)
-  }
+  const profiles = getProfilesForTier(tier).map((p) => toDTO(p.id))
 
   return sendR(res, STATUS_RESPONSE.SUCCESS, "Profiles retrieved", {
     profiles,
