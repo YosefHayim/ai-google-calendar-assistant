@@ -60,7 +60,9 @@ const server = {
   port,
   host: process.env.HOST ?? "localhost",
   get baseUrl(): string {
-    return process.env.BASE_URL ?? `http://${this.host}:${this.port}`;
+    const url = process.env.BASE_URL ?? `http://${this.host}:${this.port}`;
+    // Remove trailing slash to prevent double slashes in URL construction
+    return url.replace(/\/+$/, "");
   },
 } as const;
 
@@ -75,7 +77,11 @@ const urls = {
   get authCallback(): string {
     return `${server.baseUrl}/api/users/callback`;
   },
-  frontend: process.env.FRONTEND_URL ?? "http://localhost:4000",
+  get frontend(): string {
+    const url = process.env.FRONTEND_URL ?? "http://localhost:4000";
+    // Remove trailing slash to prevent double slashes in URL construction
+    return url.replace(/\/+$/, "");
+  },
 } as const;
 
 // ============================================================================
