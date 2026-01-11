@@ -7,6 +7,12 @@ import { useTranslation } from 'react-i18next'
 import { AllyLogo } from '@/components/shared/logo'
 import { authService } from '@/services/auth.service'
 import { STORAGE_KEYS } from '@/lib/constants'
+import {
+  redirectToCheckout,
+  redirectToCreditPackCheckout,
+  type PlanSlug,
+  type PlanInterval,
+} from '@/services/payment.service'
 
 // Animated orbital ring component
 const OrbitalRing = ({
@@ -210,6 +216,40 @@ function CallbackContent() {
         }
 
         setProgress(100)
+
+        // Check for pending plan from pricing page (unauthenticated user flow)
+        const pendingPlanStr = localStorage.getItem('pending_plan')
+        if (pendingPlanStr) {
+          try {
+            const pendingPlan = JSON.parse(pendingPlanStr) as {
+              planSlug: PlanSlug
+              interval: PlanInterval | 'one_time'
+              credits?: number
+            }
+            localStorage.removeItem('pending_plan')
+
+            // Redirect to checkout instead of dashboard
+            if (pendingPlan.interval === 'one_time') {
+              await redirectToCreditPackCheckout({
+                credits: pendingPlan.credits || 25,
+                planSlug: pendingPlan.planSlug,
+              })
+            } else if (pendingPlan.planSlug !== 'starter') {
+              // Don't redirect to checkout for free starter plan
+              await redirectToCheckout({
+                planSlug: pendingPlan.planSlug,
+                interval: pendingPlan.interval,
+              })
+            } else {
+              // Starter plan - just go to dashboard
+              router.push('/dashboard')
+            }
+            return
+          } catch {
+            // If parsing fails, just go to dashboard
+            localStorage.removeItem('pending_plan')
+          }
+        }
 
         setTimeout(() => {
           router.push('/dashboard')
