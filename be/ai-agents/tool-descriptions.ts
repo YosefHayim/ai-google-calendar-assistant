@@ -53,6 +53,18 @@ Output: { allEvents: [{ id, calendarId, summary, start, end, location?, descript
 IMPORTANT: Each event includes its calendarId - use this when updating or deleting events.
 Example event: { id: "abc123", calendarId: "work@group.calendar.google.com", summary: "Meeting", ... }
 
+SEARCH BEHAVIOR (q parameter):
+• The q parameter performs PARTIAL/CONTAINS matching across event fields (summary, description, location)
+• "Predicto" will find "Predicto Startup", "Predicto Daily Standup", "Meeting at Predicto"
+• Use SHORT keywords for best results: "Predicto" not "Predicto Startup Daily Meeting"
+• If no results, try WITHOUT q parameter to get all events in the time range
+
+SMART SEARCH STRATEGY:
+1) First try: Use key word(s) from user's request
+2) If no results: Remove qualifiers, try single keyword
+3) If still no results: Search without q, filter results manually
+4) NEVER say "event not found" - list available events instead
+
 By default (searchAllCalendars=true), this tool searches across ALL user calendars to find events.
 This ensures events are found regardless of which calendar they are in.
 Set searchAllCalendars=false and provide calendarId to search only a specific calendar.
