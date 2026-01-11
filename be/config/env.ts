@@ -14,6 +14,23 @@ if (missing.length > 0) {
   throw new Error(`Missing required environment variables: ${missing.join(", ")}`);
 }
 
+// Warn about missing production-critical environment variables
+const isProduction = process.env.NODE_ENV === "production";
+if (isProduction && !process.env.BASE_URL) {
+  console.warn(
+    "\n⚠️  WARNING: BASE_URL environment variable is not set in production!\n" +
+    "   OAuth callbacks will redirect to localhost instead of your deployed URL.\n" +
+    "   Set BASE_URL to your deployed backend URL (e.g., https://api.yourdomain.com)\n"
+  );
+}
+if (isProduction && !process.env.FRONTEND_URL) {
+  console.warn(
+    "\n⚠️  WARNING: FRONTEND_URL environment variable is not set in production!\n" +
+    "   Post-OAuth redirects will go to localhost instead of your frontend.\n" +
+    "   Set FRONTEND_URL to your deployed frontend URL (e.g., https://yourdomain.com)\n"
+  );
+}
+
 // ============================================================================
 // Helper to get optional env vars with type safety
 // ============================================================================
@@ -43,7 +60,9 @@ const server = {
   port,
   host: process.env.HOST ?? "localhost",
   get baseUrl(): string {
-    return process.env.BASE_URL ?? `http://${this.host}:${this.port}`;
+    const url = process.env.BASE_URL ?? `http://${this.host}:${this.port}`;
+    // Remove trailing slash to prevent double slashes in URL construction
+    return url.replace(/\/+$/, "");
   },
 } as const;
 
@@ -58,7 +77,11 @@ const urls = {
   get authCallback(): string {
     return `${server.baseUrl}/api/users/callback`;
   },
-  frontend: process.env.FRONTEND_URL ?? "http://localhost:4000",
+  get frontend(): string {
+    const url = process.env.FRONTEND_URL ?? "http://localhost:4000";
+    // Remove trailing slash to prevent double slashes in URL construction
+    return url.replace(/\/+$/, "");
+  },
 } as const;
 
 // ============================================================================
