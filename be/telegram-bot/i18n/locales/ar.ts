@@ -374,6 +374,10 @@ export const ar = {
   "commands.asvoice.alreadyVoice": "تم إرسال الرد الأخير كرسالة صوتية بالفعل.",
   "commands.asvoice.generating": "جارٍ إنشاء الرسالة الصوتية...",
   "commands.asvoice.failed": "فشل في إنشاء الرسالة الصوتية. إليك النص بدلاً من ذلك:",
+
+  "commands.website.header": "لوحة التحكم",
+  "commands.website.text": "الوصول إلى لوحة التحكم في التقويم وإدارة إعداداتك عبر الإنترنت:",
+  "botMenu.website": "فتح لوحة التحكم",
 } as const;
 
 export type TranslationKey = keyof typeof ar;

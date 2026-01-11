@@ -419,6 +419,10 @@ export const de = {
   "commands.asvoice.alreadyVoice": "Die letzte Antwort wurde bereits als Sprachnachricht gesendet.",
   "commands.asvoice.generating": "Sprachnachricht wird generiert...",
   "commands.asvoice.failed": "Sprachnachricht konnte nicht generiert werden. Hier ist der Text:",
+
+  "commands.website.header": "Web-Dashboard",
+  "commands.website.text": "Greifen Sie auf Ihr Kalender-Dashboard zu und verwalten Sie Ihre Einstellungen online:",
+  "botMenu.website": "Web-Dashboard öffnen",
 } as const;
 
 export type TranslationKey = keyof typeof de;

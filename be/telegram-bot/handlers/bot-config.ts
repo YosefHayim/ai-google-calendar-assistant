@@ -99,6 +99,7 @@ export const BOT_COMMANDS = [
   { command: "help", description: "How Ally helps" },
   { command: "feedback", description: "Give feedback" },
   { command: "exit", description: "End conversation" },
+  { command: "website", description: "Open web dashboard" },
 ]
 
 export const registerBotCommands = async (

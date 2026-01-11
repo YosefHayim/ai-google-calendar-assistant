@@ -362,4 +362,8 @@ export const he = {
   "commands.asvoice.alreadyVoice": "התגובה האחרונה כבר נשלחה כהודעה קולית.",
   "commands.asvoice.generating": "מייצר הודעה קולית...",
   "commands.asvoice.failed": "נכשל ביצירת הודעה קולית. הנה הטקסט במקום:",
+
+  "commands.website.header": "לוח בקרה באינטרנט",
+  "commands.website.text": "גש ללוח הבקרה של היומן שלך ונהל את ההגדרות שלך אונליין:",
+  "botMenu.website": "פתח לוח בקרה באינטרנט",
 } as const;

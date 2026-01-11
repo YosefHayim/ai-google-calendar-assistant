@@ -397,6 +397,10 @@ export const en = {
   "commands.profile.error": "An error occurred. Please try again.",
 
   "botMenu.profile": "Choose AI profile",
+
+  "commands.website.header": "Web Dashboard",
+  "commands.website.text": "Access your calendar dashboard and manage your settings online:",
+  "botMenu.website": "Open web dashboard",
 } as const;
 
 export type TranslationKey = keyof typeof en;

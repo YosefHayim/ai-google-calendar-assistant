@@ -4,6 +4,7 @@ import type { GlobalContext } from "../init-bot";
 import { InlineKeyboard, InputFile } from "grammy";
 import { ORCHESTRATOR_AGENT } from "@/ai-agents";
 import { ResponseBuilder } from "../response-system";
+import { env } from "@/config";
 import type { SupportedLocale } from "../i18n";
 import { gatherUserKnowledge } from "./user-knowledge";
 import { logger } from "@/utils/logger";
@@ -985,6 +986,22 @@ export const handleProfileCommand = async (ctx: GlobalContext): Promise<void> =>
       .build();
     await ctx.reply(response.content, { parse_mode: "HTML" });
   }
+};
+
+export const handleWebsiteCommand = async (ctx: GlobalContext): Promise<void> => {
+  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
+
+  const frontendUrl = env.urls.frontend;
+
+  const response = ResponseBuilder.telegram()
+    .direction(direction)
+    .header("🌐", t("commands.website.header"))
+    .text(t("commands.website.text"))
+    .spacing()
+    .text(`👉 <a href="${frontendUrl}">${frontendUrl}</a>`)
+    .build();
+
+  await ctx.reply(response.content, { parse_mode: "HTML" });
 };
 
 export const handleProfileSelection = async (
