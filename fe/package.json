@@ -1,7 +1,7 @@
 {
   "name": "google-ai-personal-assistant",
   "displayName": "Google AI Personal Assistant",
-  "version": "5.27.0",
+  "version": "1.0.139",
   "scripts": {
     "build": "next build",
     "redis": "redis-server",
