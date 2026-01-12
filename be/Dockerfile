@@ -86,6 +86,10 @@ RUN apt-get update -qq && \
 # Set production environment
 ENV NODE_ENV=production
 
+# Memory tuning: Limit V8 heap to ~1.5GB (adjust based on container size)
+# For 2GB container, use 1536. For 1GB container, use 768.
+ENV NODE_OPTIONS="--max-old-space-size=1536"
+
 # Create non-privileged user for security
 ARG UID=10001
 RUN adduser \
