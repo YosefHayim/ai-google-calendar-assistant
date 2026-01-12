@@ -12,9 +12,10 @@ interface SettingsRowProps {
   control: React.ReactNode
   id?: string
   className?: string
+  icon?: React.ReactNode
 }
 
-export const SettingsRow: React.FC<SettingsRowProps> = ({ title, tooltip, control, id, className }) => {
+export const SettingsRow: React.FC<SettingsRowProps> = ({ title, tooltip, control, id, className, icon }) => {
   return (
     <div
       className={cn(
@@ -25,8 +26,8 @@ export const SettingsRow: React.FC<SettingsRowProps> = ({ title, tooltip, contro
       role="group"
       aria-labelledby={id ? `${id}-label` : undefined}
     >
-      {/* Column 1: Label with inline help on mobile */}
       <div className="flex items-center gap-1 w-full sm:w-auto">
+        {icon && <span className="flex-shrink-0 mr-1.5">{icon}</span>}
         <span id={id ? `${id}-label` : undefined} className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
           {title}
         </span>

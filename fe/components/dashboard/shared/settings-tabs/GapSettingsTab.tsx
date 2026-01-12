@@ -122,7 +122,7 @@ export const GapSettingsTab: React.FC = () => {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap">
             <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500/10 to-cyan-500/10 dark:from-blue-500/20 dark:to-cyan-500/20">
               <Globe className="w-5 h-5 text-blue-600 dark:text-blue-400" />
             </div>
@@ -135,7 +135,7 @@ export const GapSettingsTab: React.FC = () => {
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             {showLanguageWarning && (
-              <div className="flex items-start gap-3 p-3 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
+              <div className="flex flex-wrap items-start gap-3 p-3 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 sm:flex-nowrap">
                 <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
                 <div>
                   <p className="text-sm font-medium text-amber-800 dark:text-amber-200">Language setup required</p>

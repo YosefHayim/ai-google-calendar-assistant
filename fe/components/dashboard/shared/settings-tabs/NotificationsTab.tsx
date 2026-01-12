@@ -232,7 +232,7 @@ export const NotificationsTab: React.FC = () => {
 
       <Card>
         <CardHeader>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap">
             <div className="p-2 rounded-lg bg-gradient-to-br from-amber-500/10 to-orange-500/10 dark:from-amber-500/20 dark:to-orange-500/20">
               <Mail className="w-5 h-5 text-amber-600 dark:text-amber-400" />
             </div>
@@ -319,7 +319,7 @@ export const NotificationsTab: React.FC = () => {
 
       <Card>
         <CardHeader>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap">
             <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500/10 to-cyan-500/10 dark:from-blue-500/20 dark:to-cyan-500/20">
               <Bell className="w-5 h-5 text-blue-600 dark:text-blue-400" />
             </div>
@@ -382,10 +382,10 @@ export const NotificationsTab: React.FC = () => {
                   ) : (
                     <div className="space-y-2">
                       {reminderSettings.defaultReminders.map((reminder, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center gap-2 p-3 rounded-lg bg-zinc-50 dark:bg-zinc-800/50"
-                        >
+<div
+                                          key={index}
+                                          className="flex flex-wrap items-center gap-2 p-3 rounded-lg bg-zinc-50 dark:bg-zinc-800/50 sm:flex-nowrap"
+                                        >
                           <SettingsDropdown
                             id={`reminder-method-${index}`}
                             value={reminder.method}

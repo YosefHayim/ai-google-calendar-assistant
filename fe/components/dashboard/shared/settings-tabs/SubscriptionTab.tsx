@@ -141,15 +141,15 @@ export const SubscriptionTab: React.FC = () => {
       {access?.plan_name && (
         <Card className="bg-gradient-to-r from-primary/5 to-primary/10 border-primary/20">
           <CardContent className="p-4">
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex items-center gap-3 min-w-0">
+            <div className="flex flex-wrap items-center justify-between gap-4 sm:flex-nowrap">
+              <div className="flex flex-wrap items-center gap-3 min-w-0 sm:flex-nowrap">
                 {getPlanIcon(access.plan_slug || '')}
                 <div className="min-w-0">
                   <p className="text-xs text-zinc-500 dark:text-zinc-400">Current Plan</p>
                   <p className="font-semibold text-zinc-900 dark:text-white truncate">{access.plan_name}</p>
                 </div>
               </div>
-              <div className="flex items-center gap-2 flex-shrink-0">
+              <div className="flex flex-wrap items-center gap-2 flex-shrink-0 sm:flex-nowrap">
                 <Badge className="bg-primary/20 text-primary text-xs">
                   {access.subscription_status === 'trialing' ? 'Trial' : 'Active'}
                 </Badge>
@@ -209,7 +209,7 @@ export const SubscriptionTab: React.FC = () => {
       {isPerUse && (
         <Card className="bg-gradient-to-br from-amber-500/10 to-orange-500/10 border-amber-500/20">
           <CardContent className="p-4">
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3 sm:flex-nowrap">
               <Zap className="w-5 h-5 text-amber-500" />
               <div>
                 <p className="text-sm font-medium text-zinc-900 dark:text-white">Pay As You Go</p>
@@ -278,11 +278,11 @@ function PlanRow({ plan, selectedFrequency, actionType, isLoading, onAction, isP
       )}
     >
       <CardContent className="p-4">
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3 min-w-0 flex-1">
+        <div className="flex flex-wrap items-center justify-between gap-4 sm:flex-nowrap">
+          <div className="flex flex-wrap items-center gap-3 min-w-0 flex-1 sm:flex-nowrap">
             {getPlanIcon()}
             <div className="min-w-0">
-              <div className="flex items-center gap-2 flex-wrap">
+              <div className="flex flex-wrap items-center gap-2">
                 <span
                   className={cn(
                     'font-semibold',
@@ -316,7 +316,7 @@ function PlanRow({ plan, selectedFrequency, actionType, isLoading, onAction, isP
             </div>
           </div>
 
-          <div className="flex items-center gap-3 flex-shrink-0">
+          <div className="flex flex-wrap items-center gap-3 flex-shrink-0 sm:flex-nowrap">
             <AnimatePresence mode="wait">
               <motion.div
                 key={`${plan.id}-${selectedFrequency}`}
@@ -396,7 +396,7 @@ function PlanRow({ plan, selectedFrequency, actionType, isLoading, onAction, isP
 
         {isPerUse && isExecutive && (
           <div className="mt-3 pt-3 border-t border-white/10">
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3 sm:flex-nowrap">
               <button
                 type="button"
                 onClick={() => adjustCredits(-100)}
@@ -404,7 +404,7 @@ function PlanRow({ plan, selectedFrequency, actionType, isLoading, onAction, isP
               >
                 <Minus size={12} />
               </button>
-              <div className="flex-1">
+              <div className="flex-1 min-w-[100px]">
                 <input
                   type="range"
                   min={100}

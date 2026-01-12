@@ -252,7 +252,7 @@ export const AssistantTab: React.FC<AssistantTabProps> = () => {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap">
             <div className="p-2 rounded-lg bg-gradient-to-br from-purple-500/10 to-pink-500/10 dark:from-purple-500/20 dark:to-pink-500/20">
               <Brain className="w-5 h-5 text-purple-600 dark:text-purple-400" />
             </div>
@@ -396,7 +396,7 @@ export const AssistantTab: React.FC<AssistantTabProps> = () => {
 
       <Card>
         <CardHeader>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap">
             <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500/10 to-cyan-500/10 dark:from-blue-500/20 dark:to-cyan-500/20">
               <Volume2 className="w-5 h-5 text-blue-600 dark:text-blue-400" />
             </div>
@@ -437,7 +437,7 @@ export const AssistantTab: React.FC<AssistantTabProps> = () => {
                     title="Voice"
                     tooltip="Choose which voice Ally uses for audio responses"
                     control={
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap">
                         <SettingsDropdown
                           value={selectedVoice}
                           options={VOICE_DROPDOWN_OPTIONS}

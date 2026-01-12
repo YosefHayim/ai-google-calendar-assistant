@@ -34,7 +34,7 @@ export const SettingsDropdown: React.FC<SettingsDropdownProps> = ({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button id={id} variant="outline" className={cn('w-full justify-between gap-2 font-normal', className)}>
+        <Button id={id} variant="outline" className={cn('w-full sm:w-auto justify-between gap-2 font-normal', className)}>
           <span className="flex items-center gap-2 truncate">
             {selectedOption?.icon}
             {selectedOption?.label || placeholder}
@@ -105,7 +105,7 @@ export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button id={id} variant="outline" className={cn('w-full justify-between gap-2 font-normal', className)}>
+        <Button id={id} variant="outline" className={cn('w-full sm:w-auto justify-between gap-2 font-normal', className)}>
           <span className="truncate">{getDisplayText()}</span>
           <ChevronDown className="w-4 h-4 opacity-50 flex-shrink-0" />
         </Button>

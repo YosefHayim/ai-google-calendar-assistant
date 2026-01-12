@@ -61,6 +61,25 @@ const isOtpCode = (text: string): boolean => {
   return validator.isLength(trimmed, { min: 6, max: 6 }) && validator.isNumeric(trimmed)
 }
 
+const extractEmailFromSlackFormat = (text: string): string => {
+  const trimmed = text.trim()
+  
+  if (trimmed.startsWith("<mailto:")) {
+    const withoutPrefix = trimmed.slice(8)
+    const pipeIndex = withoutPrefix.indexOf("|")
+    const bracketIndex = withoutPrefix.indexOf(">")
+    
+    if (pipeIndex > 0) {
+      return withoutPrefix.slice(0, pipeIndex).toLowerCase()
+    }
+    if (bracketIndex > 0) {
+      return withoutPrefix.slice(0, bracketIndex).toLowerCase()
+    }
+  }
+  
+  return trimmed.toLowerCase()
+}
+
 export const handleSlackAuth = async (
   client: WebClient,
   slackUserId: string,
@@ -137,8 +156,9 @@ export const handleSlackAuth = async (
         }
       }
 
-      if (messageText && validator.isEmail(messageText)) {
-        const newEmail = messageText.toLowerCase().trim()
+      const extractedEmail = messageText ? extractEmailFromSlackFormat(messageText) : ""
+      if (extractedEmail && validator.isEmail(extractedEmail)) {
+        const newEmail = extractedEmail
         const otpResult = await sendEmailOtp(newEmail)
 
         if (!otpResult.success) {
@@ -185,8 +205,9 @@ export const handleSlackAuth = async (
       }
     }
 
-    if (messageText && validator.isEmail(messageText)) {
-      const emailToVerify = messageText.toLowerCase().trim()
+    const extractedNewEmail = messageText ? extractEmailFromSlackFormat(messageText) : ""
+    if (extractedNewEmail && validator.isEmail(extractedNewEmail)) {
+      const emailToVerify = extractedNewEmail
       const otpResult = await sendEmailOtp(emailToVerify)
 
       if (!otpResult.success) {

@@ -78,7 +78,7 @@ export const IntegrationsTab: React.FC<IntegrationsTabProps> = ({
             control={getGoogleCalendarStatusBadge(isGoogleCalendarLoading, googleCalendarStatus)}
           />
 
-          <div className="flex gap-2 pl-0 py-2">
+          <div className="flex flex-wrap gap-2 pl-0 py-2 sm:flex-nowrap">
             {googleIsConnected ? (
               <>
                 <Button
@@ -140,6 +140,19 @@ export const IntegrationsTab: React.FC<IntegrationsTabProps> = ({
             id="whatsapp"
             title="WhatsApp"
             tooltip="WhatsApp integration is coming soon - join the waitlist to get early access"
+            control={
+              <div className="flex items-center gap-2">
+                <Badge variant="secondary">Coming Soon</Badge>
+              </div>
+            }
+          />
+        </SettingsSection>
+
+        <SettingsSection showDivider className="mt-4">
+          <SettingsRow
+            id="slack"
+            title="Slack"
+            tooltip="Slack integration is coming soon - manage your calendar directly from your workspace"
             control={
               <div className="flex items-center gap-2">
                 <Badge variant="secondary">Coming Soon</Badge>
