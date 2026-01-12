@@ -210,6 +210,7 @@ const generateAuthGoogleUrl = reqResAsyncHandler(
         is_valid: boolean;
         updated_at: string;
         refresh_token?: string;
+        provider_user_id?: string | null;
       } = {
         user_id: userData.id,
         provider: "google",
@@ -220,6 +221,8 @@ const generateAuthGoogleUrl = reqResAsyncHandler(
         expires_at: tokens.expiry_date ? msToIso(tokens.expiry_date) : null,
         is_valid: true,
         updated_at: new Date().toISOString(),
+        // Store Google subject ID for RISC (Cross-Account Protection) event matching
+        provider_user_id: payload.sub ?? null,
       };
 
       if (tokens.refresh_token) {
