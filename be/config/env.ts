@@ -59,18 +59,26 @@ const getRequired = (key: string): string => process.env[key]!;
 // Environment Detection
 // ============================================================================
 
-const nodeEnv = process.env.NODE_ENV ?? "development";
+/**
+ * Environment detection strategy:
+ * - Use PORT to detect environment: 3000 = local dev, 8080 = production (App Runner)
+ * - This is more reliable than NODE_ENV which may not be set
+ * - Falls back to NODE_ENV if PORT matches neither
+ */
+const port = Number(process.env.PORT) || CONSTANTS.DEV_PORT;
+const nodeEnv = process.env.NODE_ENV;
 
-export const isDev = nodeEnv === "development" || nodeEnv === "dev";
-export const isProd = nodeEnv === "production";
+// Port-based detection: 3000 = dev, 8080 = prod
+const isDevPort = port === CONSTANTS.DEV_PORT;
+const isProdPort = port === CONSTANTS.PROD_PORT;
+
 export const isTest = nodeEnv === "test";
+export const isDev = isDevPort && !isProdPort && nodeEnv !== "production";
+export const isProd = isProdPort || nodeEnv === "production" || (!isDev && !isTest);
 
 // ============================================================================
 // Server Configuration
 // ============================================================================
-
-const defaultPort = isProd ? CONSTANTS.PROD_PORT : CONSTANTS.DEV_PORT;
-const port = Number(process.env.PORT) || defaultPort;
 
 const server = {
   nodeEnv,
