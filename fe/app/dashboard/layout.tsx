@@ -8,6 +8,8 @@ import { OnboardingTour } from '@/components/dashboard/shared/OnboardingTour'
 import React, { Suspense } from 'react'
 import SettingsModal from '@/components/dashboard/shared/SettingsModal'
 import Sidebar from '@/components/dashboard/shared/Sidebar'
+import { Button } from '@/components/ui/button'
+import { Menu } from 'lucide-react'
 
 function DashboardLayoutContent({ children }: { children?: React.ReactNode }) {
   const {
@@ -39,6 +41,18 @@ function DashboardLayoutContent({ children }: { children?: React.ReactNode }) {
         onSignOut={handleSignOut}
       />
       <main className={`flex-1 flex flex-col transition-all duration-300 ${isSidebarOpen ? 'md:ml-64' : 'md:ml-20'}`}>
+        {/* Mobile hamburger menu - only visible on mobile when sidebar is closed */}
+        {!isSidebarOpen && (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleSidebar}
+            className="fixed top-4 left-4 z-40 md:hidden bg-white dark:bg-zinc-900 shadow-md border border-zinc-200 dark:border-zinc-700"
+            aria-label="Open menu"
+          >
+            <Menu className="w-5 h-5" />
+          </Button>
+        )}
         {children}
       </main>
       <SettingsModal
