@@ -205,107 +205,148 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
       />
 
       <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-3xl p-0 gap-0 overflow-hidden bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 [&>button]:hidden">
-        <DialogHeader className="sr-only">
-          <DialogTitle>Settings</DialogTitle>
-          <DialogDescription>Manage your Ally preferences and settings.</DialogDescription>
-        </DialogHeader>
+        <DialogContent className="w-[calc(100%-2rem)] max-w-3xl max-h-[85vh] sm:h-[500px] p-0 gap-0 overflow-hidden bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 [&>button]:hidden">
+          <DialogHeader className="sr-only">
+            <DialogTitle>Settings</DialogTitle>
+            <DialogDescription>Manage your Ally preferences and settings.</DialogDescription>
+          </DialogHeader>
 
-        <Tabs defaultValue="general" className="flex w-full h-[500px]" orientation="vertical">
-          {/* Sidebar */}
-          <div className="w-56 bg-zinc-50 dark:bg-zinc-900/50 border-r border-zinc-200 dark:border-zinc-800 flex flex-col p-4">
-            <div className="flex items-center gap-2 mb-8 px-2">
-              <div className="w-6 h-6 bg-zinc-900 dark:bg-zinc-100 rounded-md flex items-center justify-center text-white dark:text-zinc-900 font-bold text-xs">
-                A
+          <Tabs defaultValue="general" className="flex flex-col sm:flex-row w-full h-full" orientation="vertical">
+            {/* Mobile Header */}
+            <div className="flex sm:hidden items-center justify-between px-4 py-3 border-b border-zinc-200 dark:border-zinc-800 flex-shrink-0">
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 bg-zinc-900 dark:bg-zinc-100 rounded-md flex items-center justify-center text-white dark:text-zinc-900 font-bold text-xs">
+                  A
+                </div>
+                <h2 className="font-semibold text-zinc-900 dark:text-zinc-100 text-sm">Settings</h2>
               </div>
-              <h2 className="font-semibold text-zinc-900 dark:text-zinc-100">Ally Settings</h2>
-            </div>
-
-            <TabsList className="flex-1 flex flex-col h-auto bg-transparent p-0 gap-1">
-              {tabs.map((tab) => (
-                <TabsTrigger
-                  key={tab.id}
-                  value={tab.id}
-                  className="w-full justify-start gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all data-[state=active]:bg-white data-[state=active]:dark:bg-zinc-800 data-[state=active]:text-zinc-900 data-[state=active]:dark:text-zinc-100 data-[state=active]:shadow-sm text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800/70 data-[state=inactive]:shadow-none"
-                >
-                  <tab.icon size={16} />
-                  {tab.label}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-
-            <Button
-              variant="ghost"
-              onClick={onSignOut}
-              className="w-full justify-start gap-3 px-3 py-2 text-red-500 text-sm font-medium mt-auto hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600"
-            >
-              <LogOut size={16} /> Sign Out
-            </Button>
-          </div>
-
-          {/* Content Area */}
-          <div className="flex-1 flex flex-col min-w-0 min-h-0">
-            <div className="flex items-center justify-end p-4 pb-2 flex-shrink-0">
-              <Button variant="ghost" size="icon" onClick={onClose} className="text-zinc-500 hover:text-zinc-700">
-                <X className="w-5 h-5" />
+              <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8 text-zinc-500 hover:text-zinc-700">
+                <X className="w-4 h-4" />
               </Button>
             </div>
 
-            <div className="flex-1 overflow-y-auto overflow-x-hidden px-6 pb-6">
-              <TabsContent value="general" className="mt-0">
-                <GeneralTab
-                  isDarkMode={isDarkMode}
-                  toggleTheme={toggleTheme}
-                  userData={userData}
-                  isUserLoading={isUserLoading}
-                />
-              </TabsContent>
-
-              <TabsContent value="account" className="mt-0">
-                <SubscriptionTab />
-              </TabsContent>
-
-              <TabsContent value="integrations" className="mt-0">
-                <IntegrationsTab
-                  googleCalendarStatus={googleCalendarStatus}
-                  isGoogleCalendarLoading={isGoogleCalendarLoading}
-                  isGoogleCalendarBusy={isGoogleCalendarBusy}
-                  isDisconnecting={isDisconnecting}
-                  onResync={handleGoogleCalendarResync}
-                  onDisconnect={handleGoogleCalendarDisconnect}
-                />
-              </TabsContent>
-
-              <TabsContent value="assistant" className="mt-0">
-                <AssistantTab />
-              </TabsContent>
-
-              <TabsContent value="gap_settings" className="mt-0">
-                <GapSettingsTab />
-              </TabsContent>
-
-              <TabsContent value="notifications" className="mt-0">
-                <NotificationsTab />
-              </TabsContent>
-
-              <TabsContent value="security" className="mt-0">
-                <SecurityTab />
-              </TabsContent>
-
-              <TabsContent value="data_controls" className="mt-0">
-                <DataControlsTab
-                  onDeleteAllConversations={handleDeleteAllConversations}
-                  isDeletingConversations={isDeletingConversations}
-                  onResetMemory={handleResetMemory}
-                  isResettingMemory={isResettingMemory}
-                  onDeleteAccount={handleDeleteAccount}
-                />
-              </TabsContent>
+            {/* Mobile Tab Bar - Horizontal scrollable with icons only */}
+            <div className="flex sm:hidden border-b border-zinc-200 dark:border-zinc-800 flex-shrink-0 bg-zinc-50 dark:bg-zinc-900/50">
+              <TabsList className="flex w-full h-auto bg-transparent p-1 gap-1 overflow-x-auto">
+                {tabs.map((tab) => (
+                  <TabsTrigger
+                    key={tab.id}
+                    value={tab.id}
+                    className="flex-shrink-0 flex items-center justify-center p-2 rounded-md text-xs font-medium transition-all data-[state=active]:bg-white data-[state=active]:dark:bg-zinc-800 data-[state=active]:text-zinc-900 data-[state=active]:dark:text-zinc-100 data-[state=active]:shadow-sm text-zinc-500"
+                    title={tab.label}
+                  >
+                    <tab.icon size={16} />
+                  </TabsTrigger>
+                ))}
+              </TabsList>
             </div>
-          </div>
-        </Tabs>
-      </DialogContent>
-    </Dialog>
+
+            {/* Desktop Sidebar */}
+            <div className="hidden sm:flex w-52 bg-zinc-50 dark:bg-zinc-900/50 border-r border-zinc-200 dark:border-zinc-800 flex-col p-3 flex-shrink-0">
+              <div className="flex items-center gap-2 mb-6 px-2">
+                <div className="w-6 h-6 bg-zinc-900 dark:bg-zinc-100 rounded-md flex items-center justify-center text-white dark:text-zinc-900 font-bold text-xs">
+                  A
+                </div>
+                <h2 className="font-semibold text-zinc-900 dark:text-zinc-100 text-sm">Ally Settings</h2>
+              </div>
+
+              <TabsList className="flex-1 flex flex-col h-auto bg-transparent p-0 gap-1">
+                {tabs.map((tab) => (
+                  <TabsTrigger
+                    key={tab.id}
+                    value={tab.id}
+                    className="w-full justify-start gap-2 px-2 py-1.5 rounded-md text-xs font-medium transition-all data-[state=active]:bg-white data-[state=active]:dark:bg-zinc-800 data-[state=active]:text-zinc-900 data-[state=active]:dark:text-zinc-100 data-[state=active]:shadow-sm text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800/70"
+                  >
+                    <tab.icon size={14} />
+                    {tab.label}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+
+              <Button
+                variant="ghost"
+                onClick={onSignOut}
+                className="w-full justify-start gap-2 px-2 py-1.5 text-red-500 text-xs font-medium mt-auto hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600"
+              >
+                <LogOut size={14} /> Sign Out
+              </Button>
+            </div>
+
+            {/* Content Area */}
+            <div className="flex-1 flex flex-col min-w-0 min-h-0 overflow-hidden">
+              {/* Desktop Close Button */}
+              <div className="hidden sm:flex items-center justify-end p-3 pb-0 flex-shrink-0">
+                <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8 text-zinc-500 hover:text-zinc-700">
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+
+              <div className="flex-1 overflow-y-auto overflow-x-hidden px-4 pb-4 pt-2 sm:pt-0">
+                <TabsContent value="general" className="mt-0">
+                  <GeneralTab
+                    isDarkMode={isDarkMode}
+                    toggleTheme={toggleTheme}
+                    userData={userData}
+                    isUserLoading={isUserLoading}
+                  />
+                </TabsContent>
+
+                <TabsContent value="account" className="mt-0">
+                  <SubscriptionTab />
+                </TabsContent>
+
+                <TabsContent value="integrations" className="mt-0">
+                  <IntegrationsTab
+                    googleCalendarStatus={googleCalendarStatus}
+                    isGoogleCalendarLoading={isGoogleCalendarLoading}
+                    isGoogleCalendarBusy={isGoogleCalendarBusy}
+                    isDisconnecting={isDisconnecting}
+                    onResync={handleGoogleCalendarResync}
+                    onDisconnect={handleGoogleCalendarDisconnect}
+                  />
+                </TabsContent>
+
+                <TabsContent value="assistant" className="mt-0">
+                  <AssistantTab />
+                </TabsContent>
+
+                <TabsContent value="gap_settings" className="mt-0">
+                  <GapSettingsTab />
+                </TabsContent>
+
+                <TabsContent value="notifications" className="mt-0">
+                  <NotificationsTab />
+                </TabsContent>
+
+                <TabsContent value="security" className="mt-0">
+                  <SecurityTab />
+                </TabsContent>
+
+                <TabsContent value="data_controls" className="mt-0">
+                  <DataControlsTab
+                    onDeleteAllConversations={handleDeleteAllConversations}
+                    isDeletingConversations={isDeletingConversations}
+                    onResetMemory={handleResetMemory}
+                    isResettingMemory={isResettingMemory}
+                    onDeleteAccount={handleDeleteAccount}
+                  />
+                </TabsContent>
+
+                {/* Mobile Sign Out */}
+                <div className="sm:hidden mt-4 pt-3 border-t border-zinc-200 dark:border-zinc-800">
+                  <Button
+                    variant="ghost"
+                    onClick={onSignOut}
+                    className="w-full justify-center gap-2 py-2 text-red-500 text-sm font-medium hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600"
+                  >
+                    <LogOut size={14} /> Sign Out
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </Tabs>
+        </DialogContent>
+      </Dialog>
     </>
   )
 }

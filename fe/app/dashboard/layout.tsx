@@ -40,12 +40,11 @@ function DashboardLayoutContent({ children }: { children?: React.ReactNode }) {
         onSignOut={handleSignOut}
       />
       <main className={`flex-1 flex flex-col transition-all duration-300 ${isSidebarOpen ? 'md:ml-64' : 'md:ml-20'}`}>
-        {/* Mobile hamburger menu - only visible on mobile when sidebar is closed */}
         {!isSidebarOpen && (
           <AnimatedHamburger
             isOpen={false}
             onClick={toggleSidebar}
-            className="fixed top-4 left-4 z-40 md:hidden bg-white dark:bg-zinc-900 shadow-md border border-zinc-200 dark:border-zinc-700"
+            className="fixed top-4 left-4 z-[60] md:hidden bg-zinc-50 dark:bg-zinc-950 rounded-md"
           />
         )}
         {children}

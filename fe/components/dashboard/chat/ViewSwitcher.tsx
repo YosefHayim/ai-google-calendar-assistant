@@ -14,15 +14,15 @@ interface ViewSwitcherProps {
 
 export const ViewSwitcher: React.FC<ViewSwitcherProps> = ({ activeTab, onTabChange }) => {
   return (
-    <div className="absolute top-4 left-1/2 -translate-x-1/2 z-30 flex bg-white/80 dark:bg-zinc-800/80 backdrop-blur-md p-1 rounded-full shadow-lg border border-zinc-200 dark:border-zinc-700">
+    <div className="absolute top-4 left-1/2 -translate-x-1/2 ml-4 z-30 flex flex-nowrap justify-center bg-white/80 dark:bg-zinc-800/80 backdrop-blur-md p-0.5 rounded-md shadow-lg border border-zinc-200 dark:border-zinc-700">
       <Button
         variant="ghost"
         size="sm"
         onClick={() => onTabChange('chat')}
-        className={`flex items-center gap-2 rounded-full text-xs font-bold ${
+        className={`flex items-center gap-2 rounded-md text-xs font-bold ${
           activeTab === 'chat'
-            ? 'bg-zinc-900 dark:bg-zinc-100 shadow-sm text-white dark:text-zinc-900 hover:bg-zinc-900 dark:hover:bg-zinc-100'
-            : 'text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300'
+            ? 'bg-zinc-900 dark:bg-zinc-100 shadow-sm text-white dark:text-zinc-900 hover:bg-zinc-900 dark:hover:bg-zinc-100 hover:text-white dark:hover:text-zinc-900'
+            : 'text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-700 hover:text-zinc-700 dark:hover:text-zinc-300'
         }`}
       >
         <MessageSquare className="w-3.5 h-3.5" /> Chat
@@ -31,10 +31,10 @@ export const ViewSwitcher: React.FC<ViewSwitcherProps> = ({ activeTab, onTabChan
         variant="ghost"
         size="sm"
         onClick={() => onTabChange('avatar')}
-        className={`flex items-center gap-2 rounded-full text-xs font-bold ${
+        className={`flex items-center gap-2 rounded-md text-xs font-bold ${
           activeTab === 'avatar'
-            ? 'bg-zinc-900 dark:bg-zinc-100 shadow-sm text-white dark:text-zinc-900 hover:bg-zinc-900 dark:hover:bg-zinc-100'
-            : 'text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300'
+            ? 'bg-zinc-900 dark:bg-zinc-100 shadow-sm text-white dark:text-zinc-900 hover:bg-zinc-900 dark:hover:bg-zinc-100 hover:text-white dark:hover:text-zinc-900'
+            : 'text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-700 hover:text-zinc-700 dark:hover:text-zinc-300'
         }`}
       >
         <User className="w-3.5 h-3.5" /> 2D
@@ -43,10 +43,10 @@ export const ViewSwitcher: React.FC<ViewSwitcherProps> = ({ activeTab, onTabChan
         variant="ghost"
         size="sm"
         onClick={() => onTabChange('3d')}
-        className={`flex items-center gap-2 rounded-full text-xs font-bold ${
+        className={`flex items-center gap-2 rounded-md text-xs font-bold ${
           activeTab === '3d'
-            ? 'bg-zinc-900 dark:bg-zinc-100 shadow-sm text-white dark:text-zinc-900 hover:bg-zinc-900 dark:hover:bg-zinc-100'
-            : 'text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300'
+            ? 'bg-zinc-900 dark:bg-zinc-100 shadow-sm text-white dark:text-zinc-900 hover:bg-zinc-900 dark:hover:bg-zinc-100 hover:text-white dark:hover:text-zinc-900'
+            : 'text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-700 hover:text-zinc-700 dark:hover:text-zinc-300'
         }`}
       >
         <Box className="w-3.5 h-3.5" /> 3D

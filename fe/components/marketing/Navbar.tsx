@@ -2,7 +2,7 @@
 
 import { AllyLogo, BetaBadge } from "@/components/shared/logo";
 import { AnimatePresence, motion } from "framer-motion";
-import { Mail, X } from "lucide-react";
+import { Mail } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { TelegramIcon, WhatsAppIcon } from "@/components/shared/Icons";
 import { usePathname, useRouter } from "next/navigation";
@@ -110,11 +110,15 @@ const Navbar = () => {
         <div className="flex items-center gap-2 md:hidden">
           <LanguageDropdown compact />
           <ThemeToggle className="scale-75" />
-          <AnimatedHamburger
-            isOpen={isMobileMenuOpen}
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          />
         </div>
+      </div>
+
+      {/* Mobile Hamburger - Fixed position, always accessible */}
+      <div className="fixed top-3 right-4 z-[90] md:hidden">
+        <AnimatedHamburger
+          isOpen={isMobileMenuOpen}
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        />
       </div>
 
       {/* Mobile Side Navigation */}
@@ -138,7 +142,7 @@ const Navbar = () => {
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
               className="fixed inset-y-0 left-0 w-[80%] max-w-sm bg-white dark:bg-zinc-950 z-[80] md:hidden shadow-2xl border-r border-zinc-200 dark:border-zinc-800 flex flex-col p-6 pt-10"
             >
-              <div className="flex items-center justify-between mb-10">
+              <div className="flex items-center mb-10">
                 <Link
                   href="/"
                   className="flex items-center gap-2"
@@ -151,14 +155,6 @@ const Navbar = () => {
                     Ally <BetaBadge />
                   </span>
                 </Link>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="rounded-full"
-                >
-                  <X className="w-6 h-6 text-zinc-500" />
-                </Button>
               </div>
 
               <div className="flex flex-col gap-6 flex-1">

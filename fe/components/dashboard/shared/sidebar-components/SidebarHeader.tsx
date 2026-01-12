@@ -21,14 +21,21 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = ({ isOpen, onClose, o
       className={`flex items-center p-4 border-b border-zinc-200 dark:border-zinc-800 ${isOpen ? 'justify-between' : 'justify-center'}`}
     >
       {isOpen && (
-        <Link href="/dashboard" className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-zinc-900 dark:bg-white rounded-md flex items-center justify-center text-white dark:text-zinc-900">
-            <AllyLogo className="w-5 h-5" />
-          </div>
-          <span className="font-medium text-lg tracking-normal flex items-center text-zinc-900 dark:text-zinc-100">
-            Ally <BetaBadge />
-          </span>
-        </Link>
+        <div className="flex items-center gap-2">
+          <AnimatedHamburger
+            isOpen={true}
+            onClick={onClose}
+            className="md:hidden"
+          />
+          <Link href="/dashboard" className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-zinc-900 dark:bg-white rounded-md flex items-center justify-center text-white dark:text-zinc-900">
+              <AllyLogo className="w-5 h-5" />
+            </div>
+            <span className="font-medium text-lg tracking-normal flex items-center text-zinc-900 dark:text-zinc-100">
+              Ally <BetaBadge />
+            </span>
+          </Link>
+        </div>
       )}
       <div className="flex items-center gap-1">
         <Button
@@ -46,13 +53,6 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = ({ isOpen, onClose, o
         >
           {isOpen ? <ChevronLeft className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
         </Button>
-        {isOpen && (
-          <AnimatedHamburger
-            isOpen={true}
-            onClick={onClose}
-            className="md:hidden"
-          />
-        )}
       </div>
     </div>
   )

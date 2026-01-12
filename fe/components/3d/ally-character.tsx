@@ -2,7 +2,7 @@
 
 import { useRef, useEffect, useState, useCallback, memo, useMemo } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { OrbitControls, Environment, ContactShadows, Center } from '@react-three/drei'
+import { OrbitControls, ContactShadows, Center } from '@react-three/drei'
 import * as THREE from 'three'
 
 export type AllyAnimationState = 'idle' | 'talking' | 'listening' | 'thinking' | 'happy' | 'sad'
@@ -165,10 +165,10 @@ const Scene = memo(function Scene({
   return (
     <>
       <ThreeJsResourceDisposer />
-      <ambientLight intensity={0.6} />
-      <directionalLight position={[5, 5, 5]} intensity={1} />
-      <directionalLight position={[-5, 3, -5]} intensity={0.3} />
-      <Environment preset="studio" />
+      <ambientLight intensity={0.7} />
+      <directionalLight position={[5, 5, 5]} intensity={1.2} castShadow />
+      <directionalLight position={[-5, 3, -5]} intensity={0.5} />
+      <pointLight position={[0, 2, 2]} intensity={0.4} />
       <ContactShadows position={[0, -1.2, 0]} opacity={0.4} scale={3} blur={2} far={2} />
 
       {enableControls && (
