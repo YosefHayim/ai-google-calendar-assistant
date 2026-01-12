@@ -272,7 +272,7 @@ const ChatInterface: React.FC = () => {
   return (
     <div className="flex h-full w-full relative overflow-hidden">
       <div className="flex-1 flex flex-col h-full  mx-auto w-full relative overflow-hidden">
-        <div className="absolute top-4 left-4 z-30">
+        <div className="absolute top-4 left-16 md:left-4 z-30">
           <AgentProfileSelector />
         </div>
         <ViewSwitcher activeTab={activeTab} onTabChange={setActiveTab} />
