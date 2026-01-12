@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
-import { useTranslation } from 'react-i18next'
 import {
   Calendar,
   Check,
@@ -624,7 +623,6 @@ const FEATURES: Feature[] = [
 ]
 
 const FeatureShowcase = () => {
-  const { t } = useTranslation()
   const [activeIndex, setActiveIndex] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
 
