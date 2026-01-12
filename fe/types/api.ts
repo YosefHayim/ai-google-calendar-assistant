@@ -357,13 +357,4 @@ export interface DismissAllGapsResponse {
   message: string;
 }
 
-export interface UpdateGapSettingsRequest {
-  autoGapAnalysis?: boolean;
-  minGapThreshold?: number;
-  maxGapThreshold?: number;
-  ignoredDays?: DayOfWeek[];
-  lookbackDays?: number;
-  minConfidenceThreshold?: number;
-  eventLanguages?: SupportedEventLanguage[];
-  languageSetupComplete?: boolean;
-}
+

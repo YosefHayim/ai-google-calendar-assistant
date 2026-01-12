@@ -5,4 +5,3 @@ export { DataControlsTab } from "./DataControlsTab";
 export { IntegrationsTab } from "./IntegrationsTab";
 export { SecurityTab } from "./SecurityTab";
 export { AssistantTab } from "./AssistantTab";
-export { GapSettingsTab } from "./GapSettingsTab";

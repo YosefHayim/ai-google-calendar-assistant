@@ -1,6 +1,6 @@
 'use client'
 
-import { AlertTriangle, ArrowUpRight, CheckCircle2, Circle, Loader2, Plus, RefreshCw, X } from 'lucide-react'
+import { AlertTriangle, ArrowUpRight, Calendar, CheckCircle2, Circle, Hash, Loader2, Phone, Plus, RefreshCw, Send, X } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { SettingsRow, SettingsSection } from './components'
 
@@ -75,6 +75,7 @@ export const IntegrationsTab: React.FC<IntegrationsTabProps> = ({
             id="google-calendar"
             title="Google Calendar"
             tooltip="Connect your Google Calendar to let Ally manage your events and schedule"
+            icon={<Calendar size={18} className="text-blue-600 dark:text-blue-400" />}
             control={getGoogleCalendarStatusBadge(isGoogleCalendarLoading, googleCalendarStatus)}
           />
 
@@ -125,6 +126,7 @@ export const IntegrationsTab: React.FC<IntegrationsTabProps> = ({
             id="telegram"
             title="Telegram Bot"
             tooltip="Chat with Ally on Telegram to manage your calendar on the go"
+            icon={<Send size={18} className="text-sky-500 dark:text-sky-400" />}
             control={
               <Button variant="outline" size="sm" asChild>
                 <a className="w-full" href="https://t.me/ai_schedule_event_server_bot" target="_blank" rel="noreferrer">
@@ -140,6 +142,7 @@ export const IntegrationsTab: React.FC<IntegrationsTabProps> = ({
             id="whatsapp"
             title="WhatsApp"
             tooltip="WhatsApp integration is coming soon - join the waitlist to get early access"
+            icon={<Phone size={18} className="text-green-600 dark:text-green-400" />}
             control={
               <div className="flex items-center gap-2">
                 <Badge variant="secondary">Coming Soon</Badge>
@@ -153,6 +156,7 @@ export const IntegrationsTab: React.FC<IntegrationsTabProps> = ({
             id="slack"
             title="Slack"
             tooltip="Slack integration is coming soon - manage your calendar directly from your workspace"
+            icon={<Hash size={18} className="text-purple-600 dark:text-purple-400" />}
             control={
               <div className="flex items-center gap-2">
                 <Badge variant="secondary">Coming Soon</Badge>

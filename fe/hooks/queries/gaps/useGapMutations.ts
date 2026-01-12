@@ -3,14 +3,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { gapsService } from '@/services/gaps.service'
 import { queryKeys } from '@/lib/query/keys'
-import type {
-  FillGapRequest,
-  FillGapResponse,
-  SkipGapResponse,
-  DismissAllGapsResponse,
-  GapRecoverySettings,
-  UpdateGapSettingsRequest,
-} from '@/types/api'
+import type { FillGapRequest, FillGapResponse, SkipGapResponse, DismissAllGapsResponse } from '@/types/api'
 import { toast } from 'sonner'
 
 /**
@@ -98,33 +91,6 @@ export function useDismissAllGaps() {
 }
 
 /**
- * Hook to update gap recovery settings
- */
-export function useUpdateGapSettings() {
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    mutationFn: async (data: UpdateGapSettingsRequest) => {
-      const response = await gapsService.updateSettings(data)
-      if (response.status === 'error' || !response.data) {
-        throw new Error(response.message || 'Failed to update settings')
-      }
-      return response.data.settings
-    },
-    onSuccess: (_data: GapRecoverySettings) => {
-      toast.success('Settings updated')
-      queryClient.invalidateQueries({ queryKey: queryKeys.gaps.settings() })
-      queryClient.invalidateQueries({ queryKey: queryKeys.gaps.all })
-    },
-    onError: (error: Error) => {
-      toast.error('Failed to update settings', {
-        description: error.message,
-      })
-    },
-  })
-}
-
-/**
  * Hook to disable gap analysis
  */
 export function useDisableGapAnalysis() {
@@ -141,7 +107,6 @@ export function useDisableGapAnalysis() {
     onSuccess: () => {
       toast.success('Gap analysis disabled')
       queryClient.invalidateQueries({ queryKey: queryKeys.gaps.all })
-      queryClient.invalidateQueries({ queryKey: queryKeys.gaps.settings() })
     },
     onError: (error: Error) => {
       toast.error('Failed to disable gap analysis', {

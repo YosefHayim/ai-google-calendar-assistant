@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Bell, Brain, Clock, CreditCard, Database, LayoutDashboard, LogOut, Settings, Shield, X } from 'lucide-react'
+import { Bell, Brain, CreditCard, Database, LayoutDashboard, LogOut, Settings, Shield, X } from 'lucide-react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
@@ -24,7 +24,6 @@ import {
   IntegrationsTab,
   SecurityTab,
   AssistantTab,
-  GapSettingsTab,
 } from './settings-tabs'
 import { ConfirmDialog } from './ConfirmDialog'
 
@@ -36,22 +35,13 @@ interface SettingsModalProps {
   toggleTheme: () => void
 }
 
-type TabValue =
-  | 'general'
-  | 'account'
-  | 'notifications'
-  | 'integrations'
-  | 'assistant'
-  | 'security'
-  | 'data_controls'
-  | 'gap_settings'
+type TabValue = 'general' | 'account' | 'notifications' | 'integrations' | 'assistant' | 'security' | 'data_controls'
 
 const tabs: { id: TabValue; label: string; icon: React.ComponentType<{ size?: number }> }[] = [
   { id: 'general', label: 'General', icon: Settings },
   { id: 'account', label: 'Subscription', icon: CreditCard },
   { id: 'integrations', label: 'Integrations', icon: LayoutDashboard },
   { id: 'assistant', label: "Ally's Brain", icon: Brain },
-  { id: 'gap_settings', label: 'Gap Detection', icon: Clock },
   { id: 'notifications', label: 'Notifications', icon: Bell },
   { id: 'security', label: 'Security', icon: Shield },
   { id: 'data_controls', label: 'Data', icon: Database },
@@ -308,10 +298,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
 
                 <TabsContent value="assistant" className="mt-0">
                   <AssistantTab />
-                </TabsContent>
-
-                <TabsContent value="gap_settings" className="mt-0">
-                  <GapSettingsTab />
                 </TabsContent>
 
                 <TabsContent value="notifications" className="mt-0">

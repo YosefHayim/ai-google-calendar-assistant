@@ -8,7 +8,7 @@ const InsightCard: React.FC<InsightCardProps> = ({ icon: Icon, title, value, des
   const selectedColor = getInsightColorClasses(color)
 
   return (
-    <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-6 flex flex-col gap-4 transition-all hover:shadow-md hover:-translate-y-1">
+    <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-4 sm:p-6 flex flex-col gap-3 sm:gap-4 transition-all hover:shadow-md hover:-translate-y-1">
       <div className="flex items-center gap-3">
         <div
           className={`w-8 h-8 flex items-center justify-center rounded-md shrink-0 ${selectedColor.bg} ${selectedColor.text}`}

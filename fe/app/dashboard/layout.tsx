@@ -3,7 +3,6 @@
 import { DashboardUIProvider, useDashboardUI } from '@/contexts/DashboardUIContext'
 
 import { ChatProvider } from '@/contexts/ChatContext'
-import { LanguageOnboardingModal } from '@/components/onboarding/LanguageOnboardingModal'
 import { OnboardingTour } from '@/components/dashboard/shared/OnboardingTour'
 import React, { Suspense } from 'react'
 import SettingsModal from '@/components/dashboard/shared/SettingsModal'
@@ -22,9 +21,6 @@ function DashboardLayoutContent({ children }: { children?: React.ReactNode }) {
     toggleTheme,
     showTour,
     completeTour,
-    showLanguageOnboarding,
-    completeLanguageOnboarding,
-    dismissLanguageOnboarding,
     handleSignOut,
   } = useDashboardUI()
 
@@ -55,11 +51,6 @@ function DashboardLayoutContent({ children }: { children?: React.ReactNode }) {
         onSignOut={handleSignOut}
         isDarkMode={isDarkMode}
         toggleTheme={toggleTheme}
-      />
-      <LanguageOnboardingModal
-        isOpen={showLanguageOnboarding}
-        onClose={dismissLanguageOnboarding}
-        onComplete={completeLanguageOnboarding}
       />
     </div>
   )

@@ -4,13 +4,11 @@ import type {
   ApiResponse,
   GapsResponse,
   GapQueryParams,
-  GapRecoverySettings,
   FillGapRequest,
   FillGapResponse,
   SkipGapRequest,
   SkipGapResponse,
   DismissAllGapsResponse,
-  UpdateGapSettingsRequest,
 } from '@/types/api'
 
 export const gapsService = {
@@ -51,25 +49,6 @@ export const gapsService = {
    */
   async dismissAllGaps(): Promise<ApiResponse<DismissAllGapsResponse>> {
     const { data } = await apiClient.post<ApiResponse<DismissAllGapsResponse>>(ENDPOINTS.GAPS_DISMISS_ALL)
-    return data
-  },
-
-  /**
-   * Get gap recovery settings
-   */
-  async getSettings(): Promise<ApiResponse<{ settings: GapRecoverySettings }>> {
-    const { data } = await apiClient.get<ApiResponse<{ settings: GapRecoverySettings }>>(ENDPOINTS.GAPS_SETTINGS)
-    return data
-  },
-
-  /**
-   * Update gap recovery settings
-   */
-  async updateSettings(requestData: UpdateGapSettingsRequest): Promise<ApiResponse<{ settings: GapRecoverySettings }>> {
-    const { data } = await apiClient.patch<ApiResponse<{ settings: GapRecoverySettings }>>(
-      ENDPOINTS.GAPS_SETTINGS_UPDATE,
-      requestData,
-    )
     return data
   },
 

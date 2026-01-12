@@ -85,7 +85,6 @@ app.use(ROUTES.USERS, usersRoute);
 app.use(ROUTES.CALENDAR_LIST, calendarListRoute);
 app.use(ROUTES.CALENDAR, calendarRoute);
 app.use(ROUTES.EVENTS, eventsRoute);
-// Gap recovery feature removed - table dropped for simpler architecture
 app.use(ROUTES.ACL, aclRoute);
 app.use(ROUTES.CHANNELS, channelsRoute);
 app.use(ROUTES.WHATSAPP, whatsAppRoute);

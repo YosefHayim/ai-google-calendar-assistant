@@ -12,12 +12,10 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import { toast } from "sonner";
 
-import { useGapSettings } from "@/hooks/queries/gaps";
 import { useGoogleCalendarStatus } from "@/hooks/queries/integrations";
 import { STORAGE_KEYS } from "@/lib/constants";
 
 const ONBOARDING_COMPLETE_KEY = "allyOnBoardingComplete";
-const LANGUAGE_ONBOARDING_DISMISSED_KEY = "allyLanguageOnboardingDismissed";
 
 type DashboardUIContextValue = {
   isSidebarOpen: boolean;
@@ -34,10 +32,6 @@ type DashboardUIContextValue = {
   showTour: boolean;
   completeTour: () => void;
 
-  showLanguageOnboarding: boolean;
-  completeLanguageOnboarding: () => void;
-  dismissLanguageOnboarding: () => void;
-
   handleSignOut: () => void;
 };
 
@@ -51,13 +45,9 @@ export function DashboardUIProvider({
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [showTour, setShowTour] = useState(false);
-  const [showLanguageOnboarding, setShowLanguageOnboarding] = useState(false);
   const { theme, setTheme } = useTheme();
   const router = useRouter();
   const searchParams = useSearchParams();
-
-  const { settings: gapSettings, isLoading: isGapSettingsLoading } =
-    useGapSettings();
 
   const { data: googleCalendarStatus } = useGoogleCalendarStatus();
 
@@ -72,20 +62,6 @@ export function DashboardUIProvider({
       }
     }
   }, []);
-
-  useEffect(() => {
-    if (isGapSettingsLoading) return;
-
-    const wasDismissed = localStorage.getItem(
-      LANGUAGE_ONBOARDING_DISMISSED_KEY
-    );
-    if (wasDismissed) return;
-
-    if (gapSettings && !gapSettings.languageSetupComplete) {
-      const timer = setTimeout(() => setShowLanguageOnboarding(true), 1500);
-      return () => clearTimeout(timer);
-    }
-  }, [gapSettings, isGapSettingsLoading]);
 
   // Handle Google Calendar reauth required
   useEffect(() => {
@@ -151,15 +127,6 @@ export function DashboardUIProvider({
     localStorage.setItem(ONBOARDING_COMPLETE_KEY, "true");
   };
 
-  const completeLanguageOnboarding = () => {
-    setShowLanguageOnboarding(false);
-  };
-
-  const dismissLanguageOnboarding = () => {
-    setShowLanguageOnboarding(false);
-    localStorage.setItem(LANGUAGE_ONBOARDING_DISMISSED_KEY, "true");
-  };
-
   const handleSignOut = () => {
     closeSettings();
     // Clear all auth-related localStorage items
@@ -183,10 +150,6 @@ export function DashboardUIProvider({
 
     showTour,
     completeTour,
-
-    showLanguageOnboarding,
-    completeLanguageOnboarding,
-    dismissLanguageOnboarding,
 
     handleSignOut,
   };

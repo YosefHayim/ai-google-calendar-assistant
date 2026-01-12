@@ -1,6 +1,6 @@
 'use client'
 
-import { ArrowUp, ImagePlus, Mic, Square, X, ChevronLeft, ChevronRight } from 'lucide-react'
+import { ArrowUp, ImagePlus, Mic, Pause, X, ChevronLeft, ChevronRight } from 'lucide-react'
 import React, { forwardRef, useCallback, useMemo, useRef, useState } from 'react'
 
 import { AIVoiceInput } from '@/components/ui/ai-voice-input'
@@ -341,11 +341,11 @@ export const ChatInput = forwardRef<HTMLInputElement, ChatInputProps>(
               variant="ghost"
               size="icon"
               onClick={() => fileInputRef.current?.click()}
-              className="h-12 w-12 rounded-xl text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
+              className="h-6 w-6 md:h-12 md:w-12 rounded-xl text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
               disabled={isDisabled || !canAddMoreImages}
               title={canAddMoreImages ? 'Add images' : `Max ${MAX_IMAGES} images`}
             >
-              <ImagePlus className="w-6 h-6" />
+              <ImagePlus className="w-3 h-3 md:w-6 md:h-6" />
             </Button>
 
             <Button
@@ -353,12 +353,12 @@ export const ChatInput = forwardRef<HTMLInputElement, ChatInputProps>(
               variant="ghost"
               size="icon"
               onClick={onToggleRecording}
-              className={`h-12 w-12 rounded-xl ${
+              className={`h-6 w-6 md:h-12 md:w-12 rounded-xl ${
                 isRecording ? 'text-red-500 bg-red-50' : 'text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100'
               }`}
               disabled={isDisabled || !speechRecognitionSupported}
             >
-              <Mic className="w-6 h-6" />
+              <Mic className="w-3 h-3 md:w-6 md:h-6" />
             </Button>
             <div className="flex-1 relative">
               <Input
@@ -369,7 +369,7 @@ export const ChatInput = forwardRef<HTMLInputElement, ChatInputProps>(
                 onPaste={handlePaste}
                 maxLength={MAX_INPUT_LENGTH}
                 placeholder={images.length > 0 ? 'Add a message about your images...' : 'What do you have for me today? I\'m ready to help you.'}
-                className={`w-full h-14 bg-transparent border-0 shadow-none focus-visible:ring-0 text-lg font-medium placeholder:italic placeholder:font-normal ${inputDirection === 'rtl' ? 'text-right' : ''} ${isInputTooLong ? 'text-red-500' : ''}`}
+                className={`w-full h-7 md:h-14 max-h-[200px] md:max-h-none bg-transparent border-0 shadow-none focus-visible:ring-0 text-sm md:text-lg font-medium placeholder:italic placeholder:font-normal ${inputDirection === 'rtl' ? 'text-right' : ''} ${isInputTooLong ? 'text-red-500' : ''}`}
                 disabled={isDisabled}
                 dir={inputDirection}
               />
@@ -385,23 +385,24 @@ export const ChatInput = forwardRef<HTMLInputElement, ChatInputProps>(
                 variant="destructive"
                 size="icon"
                 onClick={onCancel}
-                className="h-12 w-12 rounded-xl"
+                className="h-6 w-6 md:h-12 md:w-12 rounded-xl animate-pulse"
+                title="Cancel AI response"
               >
-                <Square className="w-6 h-6" />
+                <Pause className="w-3 h-3 md:w-6 md:h-6" />
               </Button>
             ) : (
               <Button
                 type="submit"
                 size="icon"
                 disabled={(!input.trim() && images.length === 0) || isLoading || isInputTooLong}
-                className={`h-12 w-12 rounded-xl ${
+                className={`h-6 w-6 md:h-12 md:w-12 rounded-xl ${
                   (input.trim() || images.length > 0) && !isLoading && !isInputTooLong
                     ? 'bg-zinc-950 dark:bg-zinc-100 text-white dark:text-zinc-950 hover:bg-zinc-800 dark:hover:bg-zinc-200'
                     : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-400'
                 }`}
                 title={isInputTooLong ? 'Message too long' : undefined}
               >
-                <ArrowUp className="w-6 h-6" />
+                <ArrowUp className="w-3 h-3 md:w-6 md:h-6" />
               </Button>
             )}
           </form>

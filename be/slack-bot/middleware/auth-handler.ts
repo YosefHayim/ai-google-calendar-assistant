@@ -252,26 +252,66 @@ const linkSlackUser = async (
 ): Promise<void> => {
   let userId: string | null = null
 
-  const { data: existingUser } = await SUPABASE
+  const { data: existingUser, error: selectError } = await SUPABASE
     .from("users")
     .select("id")
     .ilike("email", email)
     .maybeSingle()
 
-  if (!existingUser) {
-    const { data: newUser, error: userError } = await SUPABASE
-      .from("users")
-      .insert({ email, status: "pending_verification" })
-      .select("id")
-      .single()
+  if (selectError) {
+    logger.error(`Slack Bot: Auth: Failed to check existing user: ${selectError.message}`)
+  }
 
-    if (userError || !newUser) {
-      logger.error(`Slack Bot: Auth: Failed to create user: ${userError?.message}`)
-      return
+  if (!existingUser) {
+    const { data: authUser } = await SUPABASE.auth.admin.listUsers()
+    const matchedAuthUser = authUser?.users?.find(
+      (u) => u.email?.toLowerCase() === email.toLowerCase()
+    )
+
+    if (matchedAuthUser) {
+      const { data: newUser, error: userError } = await SUPABASE
+        .from("users")
+        .insert({ id: matchedAuthUser.id, email, status: "active" })
+        .select("id")
+        .single()
+
+      if (userError) {
+        if (userError.code === "23505") {
+          const { data: retryUser } = await SUPABASE
+            .from("users")
+            .select("id")
+            .ilike("email", email)
+            .maybeSingle()
+          userId = retryUser?.id || matchedAuthUser.id
+        } else {
+          logger.error(`Slack Bot: Auth: Failed to create user from auth: ${userError.message}`)
+          return
+        }
+      } else {
+        userId = newUser?.id || matchedAuthUser.id
+      }
+    } else {
+      const { data: newUser, error: userError } = await SUPABASE
+        .from("users")
+        .insert({ email, status: "pending_verification" })
+        .select("id")
+        .single()
+
+      if (userError || !newUser) {
+        logger.error(`Slack Bot: Auth: Failed to create user: ${userError?.message}`)
+        return
+      }
+      userId = newUser.id
     }
-    userId = newUser.id
+    logger.info(`Slack Bot: Created user record for ${email}`)
   } else {
     userId = existingUser.id
+    logger.info(`Slack Bot: Found existing user for ${email}`)
+  }
+
+  if (!userId) {
+    logger.error(`Slack Bot: Auth: No user ID available for ${email}`)
+    return
   }
 
   await linkSlackUserDirect(client, slackUserId, teamId, email, userId, session)
@@ -289,14 +329,18 @@ const linkSlackUserDirect = async (
     const userInfo = await client.users.info({ user: slackUserId })
     const profile = userInfo.user?.profile
 
-    const { data: existingSlackUser } = await SUPABASE
+    const { data: existingSlackUser, error: selectError } = await SUPABASE
       .from("slack_users")
       .select("id")
       .eq("slack_user_id", slackUserId)
       .maybeSingle()
 
+    if (selectError) {
+      logger.error(`Slack Bot: Failed to check existing slack user: ${selectError.message}`)
+    }
+
     if (existingSlackUser) {
-      await SUPABASE
+      const { error: updateError } = await SUPABASE
         .from("slack_users")
         .update({
           user_id: userId,
@@ -307,8 +351,14 @@ const linkSlackUserDirect = async (
           last_activity_at: new Date().toISOString(),
         })
         .eq("id", existingSlackUser.id)
+
+      if (updateError) {
+        logger.error(`Slack Bot: Failed to update slack user: ${updateError.message}`)
+        return
+      }
+      logger.info(`Slack Bot: Updated slack_users for ${slackUserId}`)
     } else {
-      await SUPABASE.from("slack_users").insert({
+      const { error: insertError } = await SUPABASE.from("slack_users").insert({
         slack_user_id: slackUserId,
         slack_team_id: teamId,
         slack_username: profile?.display_name || profile?.real_name,
@@ -316,6 +366,12 @@ const linkSlackUserDirect = async (
         user_id: userId,
         is_linked: true,
       })
+
+      if (insertError) {
+        logger.error(`Slack Bot: Failed to insert slack user: ${insertError.message}`)
+        return
+      }
+      logger.info(`Slack Bot: Inserted new slack_users record for ${slackUserId}`)
     }
 
     updateSession(slackUserId, teamId, {

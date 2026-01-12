@@ -340,18 +340,6 @@ export const ENDPOINTS = {
   GAPS_DISMISS_ALL: '/api/gaps/dismiss-all',
 
   /**
-   * Get gap recovery settings
-   * Methods: GET
-   */
-  GAPS_SETTINGS: '/api/gaps/settings',
-
-  /**
-   * Update gap recovery settings
-   * Methods: PATCH
-   */
-  GAPS_SETTINGS_UPDATE: '/api/gaps/settings',
-
-  /**
    * Disable gap analysis feature
    * Methods: POST
    */

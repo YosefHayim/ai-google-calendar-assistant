@@ -6,6 +6,40 @@ import { checkRateLimit } from "../middleware/rate-limiter";
 import { handleSlackAuth } from "../middleware/auth-handler";
 import { logger } from "@/utils/logger";
 
+const TYPING_EMOJI = "hourglass_flowing_sand";
+
+async function addTypingIndicator(
+  client: MessageArgs["client"],
+  channel: string,
+  timestamp: string
+): Promise<void> {
+  try {
+    await client.reactions.add({
+      channel,
+      timestamp,
+      name: TYPING_EMOJI,
+    });
+  } catch (error) {
+    logger.debug(`Slack Bot: Failed to add typing indicator: ${error}`);
+  }
+}
+
+async function removeTypingIndicator(
+  client: MessageArgs["client"],
+  channel: string,
+  timestamp: string
+): Promise<void> {
+  try {
+    await client.reactions.remove({
+      channel,
+      timestamp,
+      name: TYPING_EMOJI,
+    });
+  } catch (error) {
+    logger.debug(`Slack Bot: Failed to remove typing indicator: ${error}`);
+  }
+}
+
 type MessageArgs = SlackEventMiddlewareArgs<"message"> & AllMiddlewareArgs;
 type AppMentionArgs = SlackEventMiddlewareArgs<"app_mention"> & AllMiddlewareArgs;
 
@@ -73,7 +107,13 @@ export const handleSlackMessage = async (args: MessageArgs): Promise<void> => {
     }
   }
 
+  const channel = "channel" in event ? (event.channel as string) : "";
+
   try {
+    if (channel && ts) {
+      await addTypingIndicator(client, channel, ts);
+    }
+
     const response = await handleAgentRequest({
       message: text,
       email: authResult.session.email,
@@ -85,6 +125,10 @@ export const handleSlackMessage = async (args: MessageArgs): Promise<void> => {
   } catch (error) {
     logger.error(`Slack Bot: Error processing message: ${error}`);
     await say("Sorry, I encountered an error processing your request. Please try again.");
+  } finally {
+    if (channel && ts) {
+      await removeTypingIndicator(client, channel, ts);
+    }
   }
 };
 
@@ -94,6 +138,8 @@ export const handleAppMention = async (args: AppMentionArgs): Promise<void> => {
   const text = event.text.replace(/<@[A-Z0-9]+>/gi, "").trim();
   const userId = event.user;
   const teamId = event.team || "unknown";
+  const channel = event.channel;
+  const ts = event.ts;
 
   if (!userId) {
     return;
@@ -125,6 +171,10 @@ export const handleAppMention = async (args: AppMentionArgs): Promise<void> => {
   }
 
   try {
+    if (channel && ts) {
+      await addTypingIndicator(client, channel, ts);
+    }
+
     const response = await handleAgentRequest({
       message: text,
       email: authResult.session.email,
@@ -136,5 +186,9 @@ export const handleAppMention = async (args: AppMentionArgs): Promise<void> => {
   } catch (error) {
     logger.error(`Slack Bot: Error processing mention: ${error}`);
     await say("Sorry, I encountered an error processing your request. Please try again.");
+  } finally {
+    if (channel && ts) {
+      await removeTypingIndicator(client, channel, ts);
+    }
   }
 };

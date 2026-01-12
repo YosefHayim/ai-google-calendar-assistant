@@ -55,7 +55,6 @@ export const queryKeys = {
   gaps: {
     all: ['gaps'] as const,
     list: (params?: GapQueryParams) => [...queryKeys.gaps.all, 'list', params ?? {}] as const,
-    settings: () => [...queryKeys.gaps.all, 'settings'] as const,
   },
 
   // User Preferences queries
