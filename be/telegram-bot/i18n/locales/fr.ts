@@ -39,14 +39,29 @@ export const fr = {
     "/delete - Annuler un événement",
   "commands.help.sections.manageEvents.items.3":
     "/search - Rechercher dans l'agenda",
+  "commands.help.sections.manageEvents.items.4":
+    "/reschedule - Reprogrammation intelligente avec suggestions IA",
   "commands.help.sections.timeInsights.title": "Analyses de temps",
   "commands.help.sections.timeInsights.items.0":
     "/analytics - Comprendre votre temps",
   "commands.help.sections.timeInsights.items.1": "/calendars - Vos agendas",
-  "commands.help.sections.settings.title": "Paramètres",
+  "commands.help.sections.timeInsights.items.2":
+    "/aboutme - Ce qu'Ally sait de vous",
+  "commands.help.sections.personalization.title": "Personnalisation",
+  "commands.help.sections.personalization.items.0":
+    "/brain - Enseigner vos préférences à Ally",
+  "commands.help.sections.personalization.items.1":
+    "/profile - Choisir le profil d'assistant IA",
+  "commands.help.sections.personalization.items.2": "/language - Changer de langue",
+  "commands.help.sections.responseFormats.title": "Formats de réponse",
+  "commands.help.sections.responseFormats.items.0":
+    "/astext - Répéter la dernière réponse en texte",
+  "commands.help.sections.responseFormats.items.1":
+    "/asvoice - Répéter la dernière réponse en voix",
+  "commands.help.sections.settings.title": "Paramètres et plus",
   "commands.help.sections.settings.items.0": "/status - Vérifier la connexion",
   "commands.help.sections.settings.items.1": "/settings - Paramètres d'Ally",
-  "commands.help.sections.settings.items.2": "/language - Changer de langue",
+  "commands.help.sections.settings.items.2": "/website - Ouvrir le tableau de bord",
   "commands.help.sections.settings.items.3": "/feedback - Donner votre avis",
   "commands.help.sections.settings.items.4": "/exit - Terminer la conversation",
 

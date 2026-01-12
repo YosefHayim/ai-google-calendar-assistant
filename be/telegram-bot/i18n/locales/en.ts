@@ -31,14 +31,30 @@ export const en = {
   "commands.help.sections.manageEvents.items.1": "/update - Reschedule or edit",
   "commands.help.sections.manageEvents.items.2": "/delete - Cancel an event",
   "commands.help.sections.manageEvents.items.3": "/search - Search calendar",
+  "commands.help.sections.manageEvents.items.4":
+    "/reschedule - Smart reschedule with AI suggestions",
   "commands.help.sections.timeInsights.title": "Time Insights",
   "commands.help.sections.timeInsights.items.0":
     "/analytics - Understand your time",
   "commands.help.sections.timeInsights.items.1": "/calendars - Your calendars",
-  "commands.help.sections.settings.title": "Settings",
+  "commands.help.sections.timeInsights.items.2":
+    "/aboutme - What Ally knows about you",
+  "commands.help.sections.personalization.title": "Personalization",
+  "commands.help.sections.personalization.items.0":
+    "/brain - Teach Ally your preferences",
+  "commands.help.sections.personalization.items.1":
+    "/profile - Choose AI assistant profile",
+  "commands.help.sections.personalization.items.2":
+    "/language - Change language",
+  "commands.help.sections.responseFormats.title": "Response Formats",
+  "commands.help.sections.responseFormats.items.0":
+    "/astext - Repeat last response as text",
+  "commands.help.sections.responseFormats.items.1":
+    "/asvoice - Repeat last response as voice",
+  "commands.help.sections.settings.title": "Settings & More",
   "commands.help.sections.settings.items.0": "/status - Check connection",
   "commands.help.sections.settings.items.1": "/settings - Ally settings",
-  "commands.help.sections.settings.items.2": "/language - Change language",
+  "commands.help.sections.settings.items.2": "/website - Open web dashboard",
   "commands.help.sections.settings.items.3": "/feedback - Give feedback",
   "commands.help.sections.settings.items.4": "/exit - End conversation",
 

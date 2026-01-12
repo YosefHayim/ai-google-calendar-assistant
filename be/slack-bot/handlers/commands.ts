@@ -1,80 +1,80 @@
-import type { SlackCommandMiddlewareArgs, AllMiddlewareArgs } from "@slack/bolt"
-import { SlackResponseBuilder } from "../utils/response-builder"
-import { handleAgentRequest } from "./agent-handler"
-import { getSession } from "../utils/session"
-import { handleSlackAuth } from "../middleware/auth-handler"
-import { logger } from "@/utils/logger"
+import type { AllMiddlewareArgs, SlackCommandMiddlewareArgs } from "@slack/bolt";
 
-type CommandArgs = SlackCommandMiddlewareArgs & AllMiddlewareArgs
+import { SlackResponseBuilder } from "../utils/response-builder";
+import { getSession } from "../utils/session";
+import { handleAgentRequest } from "./agent-handler";
+import { handleSlackAuth } from "../middleware/auth-handler";
+import { logger } from "@/utils/logger";
 
-const requireAuth = async (
-  args: CommandArgs
-): Promise<{ authorized: boolean; email?: string }> => {
-  const { command, client, respond } = args
-  const authResult = await handleSlackAuth(
-    client,
-    command.user_id,
-    command.team_id
-  )
+type CommandArgs = SlackCommandMiddlewareArgs & AllMiddlewareArgs;
+
+const requireAuth = async (args: CommandArgs): Promise<{ authorized: boolean; email?: string }> => {
+  const { command, client, respond } = args;
+  const authResult = await handleSlackAuth(client, command.user_id, command.team_id);
 
   if (authResult.needsAuth) {
     await respond({
       text: authResult.authMessage || "Please authenticate first.",
       response_type: "ephemeral",
-    })
-    return { authorized: false }
+    });
+    return { authorized: false };
   }
 
-  return { authorized: true, email: authResult.session.email }
-}
+  return { authorized: true, email: authResult.session.email };
+};
 
 export const handleHelpCommand = async (args: CommandArgs): Promise<void> => {
-  const { respond } = args
+  const { respond } = args;
 
   const response = SlackResponseBuilder.create()
-    .header("✨", "Ally - Your AI Calendar Assistant")
-    .section(
-      "I can help you manage your Google Calendar using natural language. Here's what I can do:"
-    )
+    .header("✨", "How Ally Helps")
+    .section("Your private AI secretary for calendar mastery.")
     .divider()
-    .section("*📅 View Schedule*")
+    .section("*📅 View Your Schedule*")
     .bulletList([
       "`/ally today` - Today's schedule",
       "`/ally tomorrow` - Tomorrow's agenda",
-      "`/ally week` - This week at a glance",
+      "`/ally week` - Week at a glance",
       "`/ally month` - Monthly overview",
+      "`/ally free` - Find open slots",
+      "`/ally busy` - View commitments",
     ])
     .section("*⚡ Manage Events*")
     .bulletList([
       "`/ally create <description>` - Schedule something",
-      "`/ally free` - Find open time slots",
-      "`/ally busy` - View your commitments",
+      "`/ally update <description>` - Reschedule or edit",
+      "`/ally delete <description>` - Cancel an event",
+      "`/ally search <query>` - Search calendar",
     ])
+    .section("*📊 Time Insights*")
+    .bulletList(["`/ally analytics` - Understand your time", "`/ally calendars` - Your calendars"])
     .section("*🛠️ Settings*")
     .bulletList([
       "`/ally status` - Check connection",
+      "`/ally settings` - Ally settings",
+      "`/ally feedback <message>` - Give feedback",
       "`/ally help` - Show this help",
     ])
     .divider()
-    .context(["💬 Or just talk to me naturally! Try: \"What do I have tomorrow?\""])
-    .build()
+    .context(["💬 Or just message me naturally!", '_"How much deep work did I get this week vs last week?"_'])
+    .build();
 
   await respond({
     blocks: response.blocks,
     text: response.text,
     response_type: "ephemeral",
-  })
-}
+  });
+};
 
 export const handleTodayCommand = async (args: CommandArgs): Promise<void> => {
-  const { command, client, respond } = args
-  const auth = await requireAuth(args)
-  if (!auth.authorized || !auth.email) return
+  const { command, client, respond } = args;
+  const auth = await requireAuth(args);
+  if (!auth.authorized || !auth.email) return;
 
   await respond({
     text: "Fetching today's schedule...",
     response_type: "ephemeral",
-  })
+  });
 
   try {
     const response = await handleAgentRequest({
@@ -82,30 +82,30 @@ export const handleTodayCommand = async (args: CommandArgs): Promise<void> => {
       email: auth.email,
       slackUserId: command.user_id,
       teamId: command.team_id,
-    })
+    });
 
     await respond({
       text: response,
       response_type: "in_channel",
-    })
+    });
   } catch (error) {
-    logger.error(`Slack Bot: Today command error: ${error}`)
+    logger.error(`Slack Bot: Today command error: ${error}`);
     await respond({
       text: "Sorry, I couldn't fetch your schedule. Please try again.",
       response_type: "ephemeral",
-    })
+    });
   }
-}
+};
 
 export const handleTomorrowCommand = async (args: CommandArgs): Promise<void> => {
-  const { command, respond } = args
-  const auth = await requireAuth(args)
-  if (!auth.authorized || !auth.email) return
+  const { command, respond } = args;
+  const auth = await requireAuth(args);
+  if (!auth.authorized || !auth.email) return;
 
   await respond({
     text: "Fetching tomorrow's schedule...",
     response_type: "ephemeral",
-  })
+  });
 
   try {
     const response = await handleAgentRequest({
@@ -113,30 +113,30 @@ export const handleTomorrowCommand = async (args: CommandArgs): Promise<void> =>
       email: auth.email,
       slackUserId: command.user_id,
       teamId: command.team_id,
-    })
+    });
 
     await respond({
       text: response,
       response_type: "in_channel",
-    })
+    });
   } catch (error) {
-    logger.error(`Slack Bot: Tomorrow command error: ${error}`)
+    logger.error(`Slack Bot: Tomorrow command error: ${error}`);
     await respond({
       text: "Sorry, I couldn't fetch your schedule. Please try again.",
       response_type: "ephemeral",
-    })
+    });
   }
-}
+};
 
 export const handleWeekCommand = async (args: CommandArgs): Promise<void> => {
-  const { command, respond } = args
-  const auth = await requireAuth(args)
-  if (!auth.authorized || !auth.email) return
+  const { command, respond } = args;
+  const auth = await requireAuth(args);
+  if (!auth.authorized || !auth.email) return;
 
   await respond({
     text: "Fetching this week's schedule...",
     response_type: "ephemeral",
-  })
+  });
 
   try {
     const response = await handleAgentRequest({
@@ -144,30 +144,30 @@ export const handleWeekCommand = async (args: CommandArgs): Promise<void> => {
       email: auth.email,
       slackUserId: command.user_id,
       teamId: command.team_id,
-    })
+    });
 
     await respond({
       text: response,
       response_type: "in_channel",
-    })
+    });
   } catch (error) {
-    logger.error(`Slack Bot: Week command error: ${error}`)
+    logger.error(`Slack Bot: Week command error: ${error}`);
     await respond({
       text: "Sorry, I couldn't fetch your schedule. Please try again.",
       response_type: "ephemeral",
-    })
+    });
   }
-}
+};
 
 export const handleMonthCommand = async (args: CommandArgs): Promise<void> => {
-  const { command, respond } = args
-  const auth = await requireAuth(args)
-  if (!auth.authorized || !auth.email) return
+  const { command, respond } = args;
+  const auth = await requireAuth(args);
+  if (!auth.authorized || !auth.email) return;
 
   await respond({
     text: "Fetching this month's overview...",
     response_type: "ephemeral",
-  })
+  });
 
   try {
     const response = await handleAgentRequest({
@@ -175,30 +175,30 @@ export const handleMonthCommand = async (args: CommandArgs): Promise<void> => {
       email: auth.email,
       slackUserId: command.user_id,
       teamId: command.team_id,
-    })
+    });
 
     await respond({
       text: response,
       response_type: "in_channel",
-    })
+    });
   } catch (error) {
-    logger.error(`Slack Bot: Month command error: ${error}`)
+    logger.error(`Slack Bot: Month command error: ${error}`);
     await respond({
       text: "Sorry, I couldn't fetch your schedule. Please try again.",
       response_type: "ephemeral",
-    })
+    });
   }
-}
+};
 
 export const handleFreeCommand = async (args: CommandArgs): Promise<void> => {
-  const { command, respond } = args
-  const auth = await requireAuth(args)
-  if (!auth.authorized || !auth.email) return
+  const { command, respond } = args;
+  const auth = await requireAuth(args);
+  if (!auth.authorized || !auth.email) return;
 
   await respond({
     text: "Finding free time slots...",
     response_type: "ephemeral",
-  })
+  });
 
   try {
     const response = await handleAgentRequest({
@@ -206,30 +206,30 @@ export const handleFreeCommand = async (args: CommandArgs): Promise<void> => {
       email: auth.email,
       slackUserId: command.user_id,
       teamId: command.team_id,
-    })
+    });
 
     await respond({
       text: response,
       response_type: "in_channel",
-    })
+    });
   } catch (error) {
-    logger.error(`Slack Bot: Free command error: ${error}`)
+    logger.error(`Slack Bot: Free command error: ${error}`);
     await respond({
       text: "Sorry, I couldn't find free slots. Please try again.",
       response_type: "ephemeral",
-    })
+    });
   }
-}
+};
 
 export const handleBusyCommand = async (args: CommandArgs): Promise<void> => {
-  const { command, respond } = args
-  const auth = await requireAuth(args)
-  if (!auth.authorized || !auth.email) return
+  const { command, respond } = args;
+  const auth = await requireAuth(args);
+  if (!auth.authorized || !auth.email) return;
 
   await respond({
     text: "Checking your commitments...",
     response_type: "ephemeral",
-  })
+  });
 
   try {
     const response = await handleAgentRequest({
@@ -237,66 +237,59 @@ export const handleBusyCommand = async (args: CommandArgs): Promise<void> => {
       email: auth.email,
       slackUserId: command.user_id,
       teamId: command.team_id,
-    })
+    });
 
     await respond({
       text: response,
       response_type: "in_channel",
-    })
+    });
   } catch (error) {
-    logger.error(`Slack Bot: Busy command error: ${error}`)
+    logger.error(`Slack Bot: Busy command error: ${error}`);
     await respond({
       text: "Sorry, I couldn't fetch your schedule. Please try again.",
       response_type: "ephemeral",
-    })
+    });
   }
-}
+};
 
 export const handleStatusCommand = async (args: CommandArgs): Promise<void> => {
-  const { command, client, respond } = args
+  const { command, client, respond } = args;
 
-  const authResult = await handleSlackAuth(
-    client,
-    command.user_id,
-    command.team_id
-  )
+  const authResult = await handleSlackAuth(client, command.user_id, command.team_id);
 
-  const session = getSession(command.user_id, command.team_id)
+  const session = getSession(command.user_id, command.team_id);
 
   const response = SlackResponseBuilder.create()
     .header("📊", "Ally Status")
     .field("Connection", authResult.session.email ? "✅ Connected" : "❌ Not connected")
     .field("Email", authResult.session.email || "Not linked")
     .field("Messages", session.messageCount.toString())
-    .build()
+    .build();
 
   await respond({
     blocks: response.blocks,
     text: response.text,
     response_type: "ephemeral",
-  })
-}
+  });
+};
 
-export const handleCreateCommand = async (
-  args: CommandArgs,
-  eventDescription: string
-): Promise<void> => {
-  const { command, respond } = args
-  const auth = await requireAuth(args)
-  if (!auth.authorized || !auth.email) return
+export const handleCreateCommand = async (args: CommandArgs, eventDescription: string): Promise<void> => {
+  const { command, respond } = args;
+  const auth = await requireAuth(args);
+  if (!auth.authorized || !auth.email) return;
 
   if (!eventDescription.trim()) {
     await respond({
       text: "Please describe the event you want to create. Example: `/ally create Meeting with John tomorrow at 2pm`",
       response_type: "ephemeral",
-    })
-    return
+    });
+    return;
   }
 
   await respond({
     text: `Creating event: "${eventDescription}"...`,
     response_type: "ephemeral",
-  })
+  });
 
   try {
     const response = await handleAgentRequest({
@@ -304,71 +297,328 @@ export const handleCreateCommand = async (
       email: auth.email,
       slackUserId: command.user_id,
       teamId: command.team_id,
-    })
+    });
 
     await respond({
       text: response,
       response_type: "in_channel",
-    })
+    });
   } catch (error) {
-    logger.error(`Slack Bot: Create command error: ${error}`)
+    logger.error(`Slack Bot: Create command error: ${error}`);
     await respond({
       text: "Sorry, I couldn't create the event. Please try again.",
       response_type: "ephemeral",
-    })
+    });
   }
-}
+};
+
+export const handleUpdateCommand = async (args: CommandArgs, updateDescription: string): Promise<void> => {
+  const { command, respond } = args;
+  const auth = await requireAuth(args);
+  if (!auth.authorized || !auth.email) return;
+
+  if (!updateDescription.trim()) {
+    await respond({
+      text: "Please describe what you want to update. Example: `/ally update Move my 2pm meeting to 4pm`",
+      response_type: "ephemeral",
+    });
+    return;
+  }
+
+  await respond({
+    text: `Updating event: "${updateDescription}"...`,
+    response_type: "ephemeral",
+  });
+
+  try {
+    const response = await handleAgentRequest({
+      message: `Update this event: ${updateDescription}`,
+      email: auth.email,
+      slackUserId: command.user_id,
+      teamId: command.team_id,
+    });
+
+    await respond({
+      text: response,
+      response_type: "in_channel",
+    });
+  } catch (error) {
+    logger.error(`Slack Bot: Update command error: ${error}`);
+    await respond({
+      text: "Sorry, I couldn't update the event. Please try again.",
+      response_type: "ephemeral",
+    });
+  }
+};
+
+export const handleDeleteCommand = async (args: CommandArgs, deleteDescription: string): Promise<void> => {
+  const { command, respond } = args;
+  const auth = await requireAuth(args);
+  if (!auth.authorized || !auth.email) return;
+
+  if (!deleteDescription.trim()) {
+    await respond({
+      text: "Please describe which event to delete. Example: `/ally delete Cancel my 3pm meeting`",
+      response_type: "ephemeral",
+    });
+    return;
+  }
+
+  await respond({
+    text: `Deleting event: "${deleteDescription}"...`,
+    response_type: "ephemeral",
+  });
+
+  try {
+    const response = await handleAgentRequest({
+      message: `Delete this event: ${deleteDescription}`,
+      email: auth.email,
+      slackUserId: command.user_id,
+      teamId: command.team_id,
+    });
+
+    await respond({
+      text: response,
+      response_type: "in_channel",
+    });
+  } catch (error) {
+    logger.error(`Slack Bot: Delete command error: ${error}`);
+    await respond({
+      text: "Sorry, I couldn't delete the event. Please try again.",
+      response_type: "ephemeral",
+    });
+  }
+};
+
+export const handleSearchCommand = async (args: CommandArgs, searchQuery: string): Promise<void> => {
+  const { command, respond } = args;
+  const auth = await requireAuth(args);
+  if (!auth.authorized || !auth.email) return;
+
+  if (!searchQuery.trim()) {
+    await respond({
+      text: "Please provide a search query. Example: `/ally search meetings with John`",
+      response_type: "ephemeral",
+    });
+    return;
+  }
+
+  await respond({
+    text: `Searching for: "${searchQuery}"...`,
+    response_type: "ephemeral",
+  });
+
+  try {
+    const response = await handleAgentRequest({
+      message: `Search my calendar for: ${searchQuery}`,
+      email: auth.email,
+      slackUserId: command.user_id,
+      teamId: command.team_id,
+    });
+
+    await respond({
+      text: response,
+      response_type: "in_channel",
+    });
+  } catch (error) {
+    logger.error(`Slack Bot: Search command error: ${error}`);
+    await respond({
+      text: "Sorry, I couldn't search your calendar. Please try again.",
+      response_type: "ephemeral",
+    });
+  }
+};
+
+export const handleAnalyticsCommand = async (args: CommandArgs): Promise<void> => {
+  const { command, respond } = args;
+  const auth = await requireAuth(args);
+  if (!auth.authorized || !auth.email) return;
+
+  await respond({
+    text: "Analyzing your calendar...",
+    response_type: "ephemeral",
+  });
+
+  try {
+    const response = await handleAgentRequest({
+      message: "Give me insights about how I spend my time. Show me analytics for this week.",
+      email: auth.email,
+      slackUserId: command.user_id,
+      teamId: command.team_id,
+    });
+
+    await respond({
+      text: response,
+      response_type: "in_channel",
+    });
+  } catch (error) {
+    logger.error(`Slack Bot: Analytics command error: ${error}`);
+    await respond({
+      text: "Sorry, I couldn't generate analytics. Please try again.",
+      response_type: "ephemeral",
+    });
+  }
+};
+
+export const handleCalendarsCommand = async (args: CommandArgs): Promise<void> => {
+  const { command, respond } = args;
+  const auth = await requireAuth(args);
+  if (!auth.authorized || !auth.email) return;
+
+  await respond({
+    text: "Fetching your calendars...",
+    response_type: "ephemeral",
+  });
+
+  try {
+    const response = await handleAgentRequest({
+      message: "Show me all my connected calendars.",
+      email: auth.email,
+      slackUserId: command.user_id,
+      teamId: command.team_id,
+    });
+
+    await respond({
+      text: response,
+      response_type: "in_channel",
+    });
+  } catch (error) {
+    logger.error(`Slack Bot: Calendars command error: ${error}`);
+    await respond({
+      text: "Sorry, I couldn't fetch your calendars. Please try again.",
+      response_type: "ephemeral",
+    });
+  }
+};
+
+export const handleSettingsCommand = async (args: CommandArgs): Promise<void> => {
+  const { command, client, respond } = args;
+
+  const authResult = await handleSlackAuth(client, command.user_id, command.team_id);
+
+  const session = getSession(command.user_id, command.team_id);
+
+  const response = SlackResponseBuilder.create()
+    .header("⚙️", "Ally Settings")
+    .field("Email", authResult.session.email || "Not linked")
+    .field("Connection", authResult.session.email ? "✅ Connected" : "❌ Not connected")
+    .field("Messages this session", session.messageCount.toString())
+    .divider()
+    .section("*Available Settings*")
+    .bulletList(["`/ally status` - Check connection status", "`/ally feedback <message>` - Send feedback to the team"])
+    .build();
+
+  await respond({
+    blocks: response.blocks,
+    text: response.text,
+    response_type: "ephemeral",
+  });
+};
+
+export const handleFeedbackCommand = async (args: CommandArgs, feedbackMessage: string): Promise<void> => {
+  const { respond } = args;
+
+  if (!feedbackMessage.trim()) {
+    await respond({
+      text: "Please provide your feedback. Example: `/ally feedback I love the natural language scheduling!`",
+      response_type: "ephemeral",
+    });
+    return;
+  }
+
+  logger.info(`Slack Bot: Feedback received: ${feedbackMessage}`);
+
+  const response = SlackResponseBuilder.create()
+    .header("💬", "Thanks for your feedback!")
+    .section("Your input helps us make Ally better. The team will review your message.")
+    .context(["We appreciate you taking the time to share your thoughts ✨"])
+    .build();
+
+  await respond({
+    blocks: response.blocks,
+    text: response.text,
+    response_type: "ephemeral",
+  });
+};
 
 export const parseAndRouteCommand = async (args: CommandArgs): Promise<void> => {
-  const { command } = args
-  const text = command.text.trim().toLowerCase()
-  const fullText = command.text.trim()
+  const { command } = args;
+  const text = command.text.trim().toLowerCase();
+  const fullText = command.text.trim();
 
   if (!text || text === "help") {
-    return handleHelpCommand(args)
+    return handleHelpCommand(args);
   }
 
   if (text === "today") {
-    return handleTodayCommand(args)
+    return handleTodayCommand(args);
   }
 
   if (text === "tomorrow") {
-    return handleTomorrowCommand(args)
+    return handleTomorrowCommand(args);
   }
 
   if (text === "week") {
-    return handleWeekCommand(args)
+    return handleWeekCommand(args);
   }
 
   if (text === "month") {
-    return handleMonthCommand(args)
+    return handleMonthCommand(args);
   }
 
   if (text === "free") {
-    return handleFreeCommand(args)
+    return handleFreeCommand(args);
   }
 
   if (text === "busy") {
-    return handleBusyCommand(args)
+    return handleBusyCommand(args);
   }
 
   if (text === "status") {
-    return handleStatusCommand(args)
+    return handleStatusCommand(args);
+  }
+
+  if (text === "settings") {
+    return handleSettingsCommand(args);
+  }
+
+  if (text === "analytics") {
+    return handleAnalyticsCommand(args);
+  }
+
+  if (text === "calendars") {
+    return handleCalendarsCommand(args);
   }
 
   if (text.startsWith("create ")) {
-    return handleCreateCommand(args, fullText.slice(7))
+    return handleCreateCommand(args, fullText.slice(7));
   }
 
-  const auth = await requireAuth(args)
-  if (!auth.authorized || !auth.email) return
+  if (text.startsWith("update ")) {
+    return handleUpdateCommand(args, fullText.slice(7));
+  }
 
-  const { respond } = args
+  if (text.startsWith("delete ")) {
+    return handleDeleteCommand(args, fullText.slice(7));
+  }
+
+  if (text.startsWith("search ")) {
+    return handleSearchCommand(args, fullText.slice(7));
+  }
+
+  if (text.startsWith("feedback ")) {
+    return handleFeedbackCommand(args, fullText.slice(9));
+  }
+
+  const auth = await requireAuth(args);
+  if (!auth.authorized || !auth.email) return;
+
+  const { respond } = args;
 
   await respond({
     text: "Processing your request...",
     response_type: "ephemeral",
-  })
+  });
 
   try {
     const response = await handleAgentRequest({
@@ -376,17 +626,17 @@ export const parseAndRouteCommand = async (args: CommandArgs): Promise<void> => 
       email: auth.email,
       slackUserId: command.user_id,
       teamId: command.team_id,
-    })
+    });
 
     await respond({
       text: response,
       response_type: "in_channel",
-    })
+    });
   } catch (error) {
-    logger.error(`Slack Bot: Command error: ${error}`)
+    logger.error(`Slack Bot: Command error: ${error}`);
     await respond({
       text: "Sorry, I couldn't process your request. Please try again.",
       response_type: "ephemeral",
-    })
+    });
   }
-}
+};

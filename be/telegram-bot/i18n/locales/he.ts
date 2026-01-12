@@ -28,13 +28,27 @@ export const he = {
   "commands.help.sections.manageEvents.items.1": "/update - שינוי או עריכה",
   "commands.help.sections.manageEvents.items.2": "/delete - ביטול אירוע",
   "commands.help.sections.manageEvents.items.3": "/search - חיפוש ביומן",
+  "commands.help.sections.manageEvents.items.4":
+    "/reschedule - תזמון מחדש חכם עם הצעות AI",
   "commands.help.sections.timeInsights.title": "תובנות זמן",
   "commands.help.sections.timeInsights.items.0": "/analytics - הבנת הזמן שלך",
   "commands.help.sections.timeInsights.items.1": "/calendars - היומנים שלך",
-  "commands.help.sections.settings.title": "הגדרות",
+  "commands.help.sections.timeInsights.items.2": "/aboutme - מה Ally יודעת עליך",
+  "commands.help.sections.personalization.title": "התאמה אישית",
+  "commands.help.sections.personalization.items.0":
+    "/brain - למד את Ally את ההעדפות שלך",
+  "commands.help.sections.personalization.items.1":
+    "/profile - בחירת פרופיל עוזר AI",
+  "commands.help.sections.personalization.items.2": "/language - שינוי שפה",
+  "commands.help.sections.responseFormats.title": "פורמט תגובות",
+  "commands.help.sections.responseFormats.items.0":
+    "/astext - חזור על התגובה האחרונה כטקסט",
+  "commands.help.sections.responseFormats.items.1":
+    "/asvoice - חזור על התגובה האחרונה כקול",
+  "commands.help.sections.settings.title": "הגדרות ועוד",
   "commands.help.sections.settings.items.0": "/status - בדיקת חיבור",
   "commands.help.sections.settings.items.1": "/settings - הגדרות Ally",
-  "commands.help.sections.settings.items.2": "/language - שינוי שפה",
+  "commands.help.sections.settings.items.2": "/website - פתיחת לוח הבקרה",
   "commands.help.sections.settings.items.3": "/feedback - שליחת משוב",
   "commands.help.sections.settings.items.4": "/exit - סיום שיחה",
 

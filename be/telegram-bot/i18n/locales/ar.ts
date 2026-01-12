@@ -30,13 +30,27 @@ export const ar = {
     "/update - إعادة جدولة أو تعديل",
   "commands.help.sections.manageEvents.items.2": "/delete - إلغاء حدث",
   "commands.help.sections.manageEvents.items.3": "/search - البحث في التقويم",
+  "commands.help.sections.manageEvents.items.4":
+    "/reschedule - إعادة جدولة ذكية مع اقتراحات الذكاء الاصطناعي",
   "commands.help.sections.timeInsights.title": "رؤى الوقت",
   "commands.help.sections.timeInsights.items.0": "/analytics - افهم وقتك",
   "commands.help.sections.timeInsights.items.1": "/calendars - تقويماتك",
-  "commands.help.sections.settings.title": "الإعدادات",
+  "commands.help.sections.timeInsights.items.2": "/aboutme - ماذا يعرف Ally عنك",
+  "commands.help.sections.personalization.title": "التخصيص",
+  "commands.help.sections.personalization.items.0":
+    "/brain - علّم Ally تفضيلاتك",
+  "commands.help.sections.personalization.items.1":
+    "/profile - اختيار ملف مساعد الذكاء الاصطناعي",
+  "commands.help.sections.personalization.items.2": "/language - تغيير اللغة",
+  "commands.help.sections.responseFormats.title": "صيغ الردود",
+  "commands.help.sections.responseFormats.items.0":
+    "/astext - تكرار الرد الأخير كنص",
+  "commands.help.sections.responseFormats.items.1":
+    "/asvoice - تكرار الرد الأخير كصوت",
+  "commands.help.sections.settings.title": "الإعدادات والمزيد",
   "commands.help.sections.settings.items.0": "/status - التحقق من الاتصال",
   "commands.help.sections.settings.items.1": "/settings - إعدادات Ally",
-  "commands.help.sections.settings.items.2": "/language - تغيير اللغة",
+  "commands.help.sections.settings.items.2": "/website - فتح لوحة التحكم",
   "commands.help.sections.settings.items.3": "/feedback - إرسال ملاحظات",
   "commands.help.sections.settings.items.4": "/exit - إنهاء المحادثة",
 

@@ -20,6 +20,11 @@ type ConversationMessage = {
  */
 const extractUserRequestForGuardrail = (input: string | ConversationMessage[]): string => {
   if (typeof input === "string") {
+    // Extract content from <user_request> tags if present (from buildChatPromptWithContext)
+    const userRequestMatch = input.match(/<user_request>\s*([\s\S]*?)\s*<\/user_request>/i);
+    if (userRequestMatch?.[1]) {
+      return userRequestMatch[1].trim();
+    }
     return input;
   }
 

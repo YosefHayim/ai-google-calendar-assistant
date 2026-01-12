@@ -90,8 +90,10 @@ export const handleHelpCommand = async (ctx: GlobalContext): Promise<void> => {
 
   const sections = [
     { key: "commands.help.sections.viewSchedule", emoji: "📅", itemCount: 6 },
-    { key: "commands.help.sections.manageEvents", emoji: "⚡", itemCount: 4 },
-    { key: "commands.help.sections.timeInsights", emoji: "📊", itemCount: 2 },
+    { key: "commands.help.sections.manageEvents", emoji: "⚡", itemCount: 5 },
+    { key: "commands.help.sections.timeInsights", emoji: "📊", itemCount: 3 },
+    { key: "commands.help.sections.personalization", emoji: "🧠", itemCount: 3 },
+    { key: "commands.help.sections.responseFormats", emoji: "🔊", itemCount: 2 },
     { key: "commands.help.sections.settings", emoji: "🛠️", itemCount: 5 },
   ];
 

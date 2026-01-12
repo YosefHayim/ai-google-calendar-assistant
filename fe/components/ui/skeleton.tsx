@@ -32,7 +32,7 @@ export function SkeletonInsightCard({ className }: SkeletonProps) {
   return (
     <div
       className={cn(
-        'bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-6 flex flex-col gap-4',
+        'bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-4 sm:p-6 flex flex-col gap-3 sm:gap-4',
         className,
       )}
     >

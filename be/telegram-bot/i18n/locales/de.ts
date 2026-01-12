@@ -38,14 +38,29 @@ export const de = {
     "/delete - Einen Termin absagen",
   "commands.help.sections.manageEvents.items.3":
     "/search - Kalender durchsuchen",
+  "commands.help.sections.manageEvents.items.4":
+    "/reschedule - Intelligente Umplanung mit KI-Vorschlägen",
   "commands.help.sections.timeInsights.title": "Zeitanalysen",
   "commands.help.sections.timeInsights.items.0":
     "/analytics - Ihre Zeit verstehen",
   "commands.help.sections.timeInsights.items.1": "/calendars - Ihre Kalender",
-  "commands.help.sections.settings.title": "Einstellungen",
+  "commands.help.sections.timeInsights.items.2":
+    "/aboutme - Was Ally über Sie weiß",
+  "commands.help.sections.personalization.title": "Personalisierung",
+  "commands.help.sections.personalization.items.0":
+    "/brain - Ally Ihre Präferenzen beibringen",
+  "commands.help.sections.personalization.items.1":
+    "/profile - KI-Assistentenprofil wählen",
+  "commands.help.sections.personalization.items.2": "/language - Sprache ändern",
+  "commands.help.sections.responseFormats.title": "Antwortformate",
+  "commands.help.sections.responseFormats.items.0":
+    "/astext - Letzte Antwort als Text wiederholen",
+  "commands.help.sections.responseFormats.items.1":
+    "/asvoice - Letzte Antwort als Sprache wiederholen",
+  "commands.help.sections.settings.title": "Einstellungen & mehr",
   "commands.help.sections.settings.items.0": "/status - Verbindung prüfen",
   "commands.help.sections.settings.items.1": "/settings - Ally Einstellungen",
-  "commands.help.sections.settings.items.2": "/language - Sprache ändern",
+  "commands.help.sections.settings.items.2": "/website - Web-Dashboard öffnen",
   "commands.help.sections.settings.items.3": "/feedback - Feedback geben",
   "commands.help.sections.settings.items.4": "/exit - Konversation beenden",
 

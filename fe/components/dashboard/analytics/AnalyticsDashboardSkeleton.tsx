@@ -147,7 +147,7 @@ const AnalyticsDashboardSkeleton: React.FC = () => {
       <div>
         <Skeleton className="h-6 w-24 mb-4" />
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-          {Array.from({ length: 10 }).map((_, i) => (
+          {Array.from({ length: 5 }).map((_, i) => (
             <SkeletonInsightCard key={i} />
           ))}
         </div>
