@@ -5,18 +5,22 @@ build:
     - corepack enable
     - pnpm install --frozen-lockfile
     - pnpm build
+    - cp -r public .next/standalone/public
+    - cp -r .next/static .next/standalone/.next/static
 run:
-  command: node dist/app.js
+  command: node .next/standalone/server.js
   network:
-    port: 8080
+    port: 3000
   env:
     - name: NODE_ENV
       value: "production"
     - name: PORT
-      value: "8080"
+      value: "3000"
+    - name: HOSTNAME
+      value: "0.0.0.0"
   health_check:
-    protocol: HTTP
-    path: /api/cron/health
+    protocol: TCP
+    port: 3000
     interval: 10
     timeout: 5
     healthy_threshold: 1
