@@ -156,9 +156,6 @@ const lemonSqueezy = {
 const integrations = {
   telegram: {
     accessToken: getOptional("TELEGRAM_BOT_ACCESS_TOKEN"),
-    // Secret token for webhook security - validates requests are from Telegram
-    // Without this, anyone could POST fake updates to your webhook endpoint
-    webhookSecret: getOptional("TELEGRAM_WEBHOOK_SECRET"),
     // Always use webhook mode in production for reliability with App Runner
     // Long-polling fails with auto-scaling (duplicate bots) and idle timeouts
     get useWebhook(): boolean {
