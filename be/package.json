@@ -1,7 +1,7 @@
 {
   "name": "ai-google-calendar-assistant",
   "displayName": "Google AI Personal Assistant",
-  "version": "5.27.0",
+  "version": "1.0.139",
   "type": "commonjs",
   "main": "app.js",
   "scripts": {
