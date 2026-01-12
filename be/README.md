@@ -93,7 +93,7 @@ This backend service provides:
 - **AI Agent Orchestration**: Multi-agent system using OpenAI Agents SDK for intelligent calendar management
 - **Multi-Modal Architecture**: Chat, Voice, and Telegram share the same tool handlers via the Shared Layer
 - **Google Calendar Integration**: Full CRUD operations, conflict detection, gap recovery
-- **Multi-Platform Bots**: Telegram bot (production) and WhatsApp bot (in development)
+- **Multi-Platform Bots**: Telegram bot (production), Slack bot (production), and WhatsApp bot (in development)
 - **SaaS Infrastructure**: Multi-tenant architecture with Lemon Squeezy payment integration
 - **Real-time Features**: Voice transcription, streaming chat responses (SSE), webhooks
 
@@ -110,11 +110,11 @@ This backend service provides:
 │                                                                                 │
 │   ┌─────────────────────────────────────────────────────────────────────────┐   │
 │   │                           REQUEST LAYER                                 │   │
-│   │   ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐       │   │
-│   │   │  HTTP   │  │  SSE    │  │ Telegram│  │ WhatsApp│  │ LiveKit │       │   │
-│   │   │ Routes  │  │ Stream  │  │   Bot   │  │   Bot   │  │  Voice  │       │   │
-│   │   └────┬────┘  └────┬────┘  └────┬────┘  └────┬────┘  └────┬────┘       │   │
-│   └────────┼────────────┼───────────┼───────────┼───────────┼───────────────┘   │
+│   │   ┌───────┐ ┌───────┐ ┌────────┐ ┌───────┐ ┌────────┐ ┌───────┐         │   │
+│   │   │ HTTP  │ │  SSE  │ │Telegram│ │ Slack │ │WhatsApp│ │LiveKit│         │   │
+│   │   │Routes │ │Stream │ │  Bot   │ │  Bot  │ │  Bot   │ │ Voice │         │   │
+│   │   └───┬───┘ └───┬───┘ └───┬────┘ └───┬───┘ └───┬────┘ └───┬───┘         │   │
+│   └───────┼─────────┼─────────┼─────────┼─────────┼─────────┼───────────────┘   │
 │            │            │           │           │           │                   │
 │            └────────────┼───────────┼───────────┼───────────┘                   │
 │                         │           │           │                               │
@@ -242,13 +242,13 @@ The **Shared Layer** (`be/shared/`) is the architectural hub enabling code reuse
                     │   └─────────────────────────────────────┘   │
                     └─────────────────────────────────────────────┘
                                           │
-              ┌───────────────────────────┼───────────────────────┐
-              │                           │                       │
-              ▼                           ▼                       ▼
-        ┌───────────┐             ┌───────────┐           ┌───────────┐
-        │   Chat    │             │   Voice   │           │  Telegram │
-        │  (Web)    │             │ (LiveKit) │           │   (Bot)   │
-        └───────────┘             └───────────┘           └───────────┘
+              ┌─────────────────┬───────────┼───────────┬─────────────────┐
+              │                 │           │           │                 │
+              ▼                 ▼           ▼           ▼                 ▼
+        ┌───────────┐     ┌───────────┐ ┌───────────┐ ┌───────────┐ ┌───────────┐
+        │   Chat    │     │   Voice   │ │  Telegram │ │   Slack   │ │ WhatsApp  │
+        │  (Web)    │     │ (LiveKit) │ │   (Bot)   │ │   (Bot)   │ │   (Bot)   │
+        └───────────┘     └───────────┘ └───────────┘ └───────────┘ └───────────┘
 ```
 
 ### Tool Handlers (`shared/tools/handlers/`)
@@ -601,6 +601,26 @@ if (!safe) {
 | `POST` | `/checkout` | Create checkout session | JWT |
 | `POST` | `/cancel` | Cancel subscription | JWT |
 
+### Telegram (`/api/telegram`)
+
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| `POST` | `/webhook` | Telegram bot webhook endpoint | Bot Token |
+
+### Slack (`/api/slack`)
+
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| `POST` | `/events` | Slack events webhook | Signing Secret |
+| `POST` | `/commands` | Slash commands handler | Signing Secret |
+| `POST` | `/interactions` | Interactive components | Signing Secret |
+
+### Google RISC (`/api/risc`)
+
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| `POST` | `/events` | Google Cross-Account Protection events | JWT (Google) |
+
 ---
 
 ## Middleware
@@ -758,7 +778,15 @@ be/
 │   ├── init-bot.ts              # Bot initialization
 │   ├── handlers/                # Message handlers
 │   ├── commands/                # Slash commands
-│   └── middleware/              # Telegram middleware
+│   ├── middleware/              # Telegram middleware
+│   └── locales/                 # Multi-language support
+│
+├── slack-bot/                   # Slack Bot Integration
+│   ├── init-bot.ts              # Bot initialization & event handling
+│   ├── handlers/                # Message & command handlers
+│   ├── middleware/              # Rate limiting, auth verification
+│   ├── utils/                   # Response builder, session management
+│   └── services/                # User resolver, conversation history
 │
 ├── whatsapp-bot/                # WhatsApp Bot (in dev)
 │   ├── init-whatsapp.ts
@@ -961,6 +989,11 @@ ANTHROPIC_API_KEY=your_anthropic_api_key
 # Telegram Bot
 TELEGRAM_BOT_ACCESS_TOKEN=your_telegram_bot_token
 
+# Slack Bot
+SLACK_BOT_TOKEN=xoxb-your-slack-bot-token
+SLACK_SIGNING_SECRET=your_slack_signing_secret
+SLACK_APP_TOKEN=xapp-your-slack-app-level-token
+
 # Payments
 LEMON_SQUEEZY_API_KEY=your_api_key
 LEMON_SQUEEZY_STORE_ID=your_store_id
@@ -1010,12 +1043,15 @@ bun run sort         # Sort package.json
 |---------|---------|-----------------|
 | **Supabase** | PostgreSQL + Auth + RLS | `@/config/clients/supabase.ts` |
 | **Google Calendar** | Events, calendars, OAuth | `@/utils/calendar/` |
+| **Google RISC** | Cross-Account Protection | `@/routes/risc-route.ts` |
 | **OpenAI** | Agent orchestration, LLM | `@/ai-agents/` |
 | **Anthropic** | Alternative LLM provider | `@/config/clients/openai.ts` |
 | **LiveKit** | Real-time voice rooms | `@/voice-sidecar/` |
 | **Lemon Squeezy** | Payments (subscription) | `@/services/lemonsqueezy-service.ts` |
 | **Redis** | Cross-modal context store | `@/shared/context/` |
 | **Resend** | Email delivery | `@/controllers/contact-controller.ts` |
+| **Telegram** | Telegram Bot API (Grammy) | `@/telegram-bot/` |
+| **Slack** | Slack Bot API | `@/slack-bot/` |
 
 ---
 
