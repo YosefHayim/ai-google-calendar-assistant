@@ -2,9 +2,30 @@
  * Global constants for the application
  */
 
+// Production backend URL (hardcoded)
+const PRODUCTION_BACKEND_URL = 'https://i3fzcpnmmk.eu-central-1.awsapprunner.com'
+const LOCAL_BACKEND_URL = 'http://localhost:3000'
+
+/**
+ * Get the backend API base URL based on current host
+ * - localhost/127.0.0.1 -> local backend (localhost:3000)
+ * - any other host -> production backend (AWS App Runner)
+ */
+const getApiBaseUrl = (): string => {
+  if (typeof window !== 'undefined') {
+    const hostname = window.location.hostname
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+      return LOCAL_BACKEND_URL
+    }
+  }
+  return PRODUCTION_BACKEND_URL
+}
+
 // Environment configuration
 export const ENV = {
-  API_BASE_URL: process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3000',
+  get API_BASE_URL() {
+    return getApiBaseUrl()
+  },
   IS_DEVELOPMENT: process.env.NODE_ENV === 'development',
   IS_PRODUCTION: process.env.NODE_ENV === 'production',
   IS_TEST: process.env.NODE_ENV === 'test',
