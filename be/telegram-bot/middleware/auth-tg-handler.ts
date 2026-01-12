@@ -122,7 +122,7 @@ export const authTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
 
       if (Date.now() > expiresAt) {
         session.pendingEmailVerification = undefined
-        await ctx.reply(t("auth.otpExpired"))
+        await ctx.reply(t("auth.otpExpired"), { parse_mode: "HTML" })
         return
       }
 
