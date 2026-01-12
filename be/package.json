@@ -30,6 +30,7 @@
     "@lemonsqueezy/lemonsqueezy.js": "^4.0.0",
     "@openai/agents": "^0.3.7",
     "@openai/agents-core": "^0.3.7",
+    "@slack/bolt": "^4.6.0",
     "@supabase/supabase-js": "^2.80.0",
     "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",

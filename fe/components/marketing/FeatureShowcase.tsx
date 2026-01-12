@@ -1,7 +1,7 @@
 'use client'
 
-import React, { useState, useEffect, useCallback } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { useState, useEffect, useCallback } from 'react'
+import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import {
   Calendar,
@@ -20,7 +20,6 @@ import {
   Languages,
   CalendarDays,
   CalendarRange,
-  Sparkles,
   User,
   Settings,
   Volume2,
@@ -30,6 +29,7 @@ import {
 } from 'lucide-react'
 import { TelegramIcon } from '@/components/shared/Icons'
 import { AllyLogo } from '@/components/shared/logo'
+import { IPhoneMockup } from '@/components/ui/iphone-mockup'
 import { cn } from '@/lib/utils'
 
 interface Message {
@@ -95,22 +95,19 @@ const VoiceWaveform = () => (
   </div>
 )
 
-// Phone mockup component for Telegram
 const PhoneMockup = ({ children }: { children: React.ReactNode }) => (
-  <div className="relative mx-auto w-[300px] h-[600px]">
-    {/* Phone frame */}
-    <div className="absolute inset-0 bg-gradient-to-b from-zinc-800 to-zinc-900 rounded-[3rem] shadow-2xl border-[10px] border-zinc-800">
-      {/* Dynamic Island */}
-      <div className="absolute top-2 left-1/2 -translate-x-1/2 w-28 h-7 bg-black rounded-full flex items-center justify-center">
-        <div className="w-3 h-3 rounded-full bg-zinc-800 mr-8" />
-      </div>
-      {/* Screen */}
-      <div className="absolute inset-3 top-10 bottom-3 bg-white dark:bg-zinc-900 rounded-[2rem] overflow-hidden">
-        {children}
-      </div>
-      {/* Home indicator */}
-      <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-32 h-1 bg-zinc-600 rounded-full" />
-    </div>
+  <div className="relative mx-auto">
+    <IPhoneMockup
+      model="15-pro"
+      color="space-black"
+      scale={0.68}
+      screenBg="#0E1621"
+      safeArea={false}
+      showHomeIndicator={true}
+      className="mx-auto"
+    >
+      <div className="h-full w-full">{children}</div>
+    </IPhoneMockup>
   </div>
 )
 
@@ -648,141 +645,95 @@ const FeatureShowcase = () => {
   const activeFeature = FEATURES[activeIndex]
 
   return (
-    <section className="py-24 px-6 overflow-hidden bg-gradient-to-b from-zinc-50 to-white dark:from-zinc-950 dark:to-zinc-900">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4"
-          >
-            <Sparkles className="w-4 h-4" />
-            {t('showcase.badge')}
-          </motion.div>
-          <h2 className="text-3xl md:text-5xl font-medium text-zinc-900 dark:text-zinc-100 mb-4">
-            {t('showcase.title')}
-          </h2>
-          <p className="text-lg text-zinc-500 dark:text-zinc-400 max-w-2xl mx-auto">{t('showcase.subtitle')}</p>
-        </div>
+    <section className="py-16 md:py-24 px-4 sm:px-6 overflow-hidden bg-gradient-to-b from-zinc-50 to-white dark:from-zinc-950 dark:to-zinc-900 relative">
+      <div className="absolute inset-0 z-0 opacity-30 pointer-events-none" aria-hidden="true">
+        <div className="absolute bottom-0 left-[-10%] top-[20%] h-[400px] w-[400px] rounded-full bg-[radial-gradient(circle_farthest-side,rgba(var(--primary-rgb,34,197,94),0.2),rgba(255,255,255,0))]" />
+        <div className="absolute bottom-0 right-[-10%] top-[10%] h-[400px] w-[400px] rounded-full bg-[radial-gradient(circle_farthest-side,rgba(139,92,246,0.15),rgba(255,255,255,0))]" />
+      </div>
 
-        {/* Feature pills */}
-        <div className="flex flex-wrap justify-center gap-2 mb-10">
-          {FEATURES.map((feature, index) => {
-            const Icon = feature.icon
-            return (
-              <button
-                key={feature.id}
-                onClick={() => setActiveIndex(index)}
-                className={cn(
-                  'flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium transition-all duration-300',
-                  index === activeIndex
-                    ? 'bg-primary text-white shadow-lg shadow-primary/30 scale-105'
-                    : 'bg-white dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-700 border border-zinc-200 dark:border-zinc-700'
-                )}
-              >
-                <Icon className="w-4 h-4" />
-                <span className="hidden sm:inline">{t(feature.titleKey)}</span>
-              </button>
-            )
-          })}
-        </div>
-
-        {/* Main showcase */}
+      <div className="max-w-7xl mx-auto relative z-10">
         <div
           className="relative"
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
         >
-          {/* Navigation */}
           <button
             onClick={prevSlide}
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-white dark:bg-zinc-800 shadow-xl flex items-center justify-center text-zinc-600 dark:text-zinc-400 hover:text-primary hover:scale-110 transition-all border border-zinc-200 dark:border-zinc-700"
+            className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/80 dark:bg-zinc-800/80 backdrop-blur-sm shadow-xl flex items-center justify-center text-zinc-600 dark:text-zinc-400 hover:text-primary hover:scale-110 transition-all border border-zinc-200 dark:border-zinc-700"
           >
-            <ChevronLeft className="w-6 h-6" />
+            <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
           </button>
           <button
             onClick={nextSlide}
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-white dark:bg-zinc-800 shadow-xl flex items-center justify-center text-zinc-600 dark:text-zinc-400 hover:text-primary hover:scale-110 transition-all border border-zinc-200 dark:border-zinc-700"
+            className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/80 dark:bg-zinc-800/80 backdrop-blur-sm shadow-xl flex items-center justify-center text-zinc-600 dark:text-zinc-400 hover:text-primary hover:scale-110 transition-all border border-zinc-200 dark:border-zinc-700"
           >
-            <ChevronRight className="w-6 h-6" />
+            <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
           </button>
 
-          {/* Devices */}
-          <div className="flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-20 px-16">
-            {/* Telegram */}
-            <div className="relative">
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="absolute -top-6 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-gradient-to-r from-[#0088cc] to-[#00a2e8] text-white px-5 py-2 rounded-full text-sm font-medium shadow-lg shadow-[#0088cc]/30 z-10"
-              >
-                <TelegramIcon className="w-4 h-4" />
-                <span>Telegram Bot</span>
-              </motion.div>
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={`phone-${activeIndex}`}
-                  initial={{ opacity: 0, x: -30, rotateY: -5 }}
-                  animate={{ opacity: 1, x: 0, rotateY: 0 }}
-                  exit={{ opacity: 0, x: 30, rotateY: 5 }}
-                  transition={{ duration: 0.4, ease: 'easeOut' }}
-                >
-                  <PhoneMockup>
-                    <TelegramChat messages={activeFeature.telegram.messages} />
-                  </PhoneMockup>
-                </motion.div>
-              </AnimatePresence>
-            </div>
+          <div className="relative w-full h-[450px] sm:h-[500px] md:h-[550px] flex items-center justify-center [perspective:1200px]">
+            {FEATURES.map((feature, index) => {
+              const offset = index - activeIndex
+              const total = FEATURES.length
+              let pos = (offset + total) % total
+              if (pos > Math.floor(total / 2)) {
+                pos = pos - total
+              }
 
-            {/* Web */}
-            <div className="relative w-full max-w-[520px]">
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="absolute -top-6 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-gradient-to-r from-zinc-800 to-zinc-700 dark:from-zinc-100 dark:to-zinc-200 text-white dark:text-zinc-900 px-5 py-2 rounded-full text-sm font-medium shadow-lg z-10"
-              >
-                <Globe className="w-4 h-4" />
-                <span>Web Dashboard</span>
-              </motion.div>
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={`browser-${activeIndex}`}
-                  initial={{ opacity: 0, x: 30, rotateY: 5 }}
-                  animate={{ opacity: 1, x: 0, rotateY: 0 }}
-                  exit={{ opacity: 0, x: -30, rotateY: -5 }}
-                  transition={{ duration: 0.4, ease: 'easeOut' }}
+              const isCenter = pos === 0
+              const isAdjacent = Math.abs(pos) === 1
+
+              return (
+                <div
+                  key={feature.id}
+                  className={cn(
+                    'absolute transition-all duration-500 ease-out flex items-center justify-center'
+                  )}
+                  style={{
+                    transform: `
+                      translateX(${pos * 55}%) 
+                      scale(${isCenter ? 1 : isAdjacent ? 0.75 : 0.5})
+                      rotateY(${pos * -12}deg)
+                      translateZ(${isCenter ? 0 : -100}px)
+                    `,
+                    zIndex: isCenter ? 10 : isAdjacent ? 5 : 1,
+                    opacity: isCenter ? 1 : isAdjacent ? 0.5 : 0,
+                    filter: isCenter ? 'blur(0px)' : `blur(${isAdjacent ? 2 : 4}px)`,
+                    visibility: Math.abs(pos) > 2 ? 'hidden' : 'visible',
+                    pointerEvents: isCenter ? 'auto' : 'none',
+                  }}
                 >
-                  <BrowserMockup>{activeFeature.web.component}</BrowserMockup>
-                </motion.div>
-              </AnimatePresence>
-            </div>
+                  <div className="relative">
+                    {isCenter && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="absolute -top-6 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-gradient-to-r from-[#0088cc] to-[#00a2e8] text-white px-3 py-1.5 rounded-full text-xs font-medium shadow-lg shadow-[#0088cc]/30 z-20 whitespace-nowrap"
+                      >
+                        <TelegramIcon className="w-3.5 h-3.5" />
+                        <span>Telegram Bot</span>
+                      </motion.div>
+                    )}
+                    <div className={cn(
+                      'transform transition-transform duration-500',
+                      isCenter ? 'scale-100' : 'scale-90'
+                    )}>
+                      <PhoneMockup>
+                        <TelegramChat messages={feature.telegram.messages} />
+                      </PhoneMockup>
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
           </div>
 
-          {/* Description */}
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={`desc-${activeIndex}`}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="text-center mt-12"
-            >
-              <h3 className="text-2xl font-medium text-zinc-900 dark:text-zinc-100 mb-3">
-                {t(activeFeature.titleKey)}
-              </h3>
-              <p className="text-zinc-500 dark:text-zinc-400 max-w-xl mx-auto">{t(activeFeature.descriptionKey)}</p>
-            </motion.div>
-          </AnimatePresence>
-
-          {/* Progress */}
-          <div className="flex justify-center gap-2 mt-10">
+          <div className="flex justify-center gap-2 mt-8">
             {FEATURES.map((_, index) => (
               <button
                 key={index}
                 onClick={() => setActiveIndex(index)}
-                className="h-2 rounded-full overflow-hidden bg-zinc-200 dark:bg-zinc-700 transition-all"
-                style={{ width: index === activeIndex ? 48 : 16 }}
+                className="h-2 rounded-full overflow-hidden bg-zinc-200 dark:bg-zinc-700 transition-all duration-300"
+                style={{ width: index === activeIndex ? 48 : 12 }}
               >
                 <motion.div
                   className="h-full bg-primary"

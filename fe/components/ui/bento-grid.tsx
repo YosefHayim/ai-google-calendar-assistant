@@ -9,7 +9,7 @@ const BentoGrid: React.FC<{
   className?: string
 }> = ({ children, className }) => {
   return (
-    <div className={cn('grid w-full auto-rows-[22rem] grid-cols-1 md:grid-cols-3 gap-4', className)}>{children}</div>
+    <div className={cn('grid w-full auto-rows-[16rem] md:auto-rows-[22rem] grid-cols-1 md:grid-cols-3 gap-4', className)}>{children}</div>
   )
 }
 
@@ -25,7 +25,7 @@ const BentoCard: React.FC<{
 }> = ({ name, className, background, Icon, description, href, cta }) => (
   <div
     className={cn(
-      'group relative col-span-3 flex flex-col justify-between overflow-hidden rounded-xl transition-all duration-300',
+      'group relative col-span-1 flex flex-col justify-between overflow-hidden rounded-xl transition-all duration-300',
       // light styles
       'bg-white [box-shadow:0_0_0_1px_rgba(0,0,0,.03),0_2px_4px_rgba(0,0,0,.05),0_12px_24px_rgba(0,0,0,.05)]',
       // dark styles
@@ -35,15 +35,15 @@ const BentoCard: React.FC<{
   >
     <div className="absolute inset-0 z-0">{background}</div>
 
-    <div className="pointer-events-none z-10 flex transform-gpu flex-col gap-1 p-6 transition-all duration-300 group-hover:-translate-y-10">
-      <Icon className="h-12 w-12 origin-left transform-gpu text-zinc-900 dark:text-zinc-100 transition-all duration-300 ease-in-out group-hover:scale-75" />
-      <h3 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100">{name}</h3>
-      <p className="max-w-lg text-zinc-500 dark:text-zinc-400 text-sm">{description}</p>
+    <div className="pointer-events-none z-10 flex transform-gpu flex-col gap-1 p-4 md:p-6 transition-all duration-300 group-hover:-translate-y-10">
+      <Icon className="h-8 w-8 md:h-12 md:w-12 origin-left transform-gpu text-zinc-900 dark:text-zinc-100 transition-all duration-300 ease-in-out group-hover:scale-75" />
+      <h3 className="text-lg md:text-xl font-semibold text-zinc-900 dark:text-zinc-100">{name}</h3>
+      <p className="max-w-lg text-zinc-500 dark:text-zinc-400 text-xs md:text-sm line-clamp-3 md:line-clamp-none">{description}</p>
     </div>
 
     <div
       className={cn(
-        'pointer-events-none absolute bottom-0 flex w-full translate-y-10 transform-gpu flex-row items-center p-4 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 z-20',
+        'pointer-events-none absolute bottom-0 flex w-full translate-y-10 transform-gpu flex-row items-center p-3 md:p-4 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 z-20',
       )}
     >
       <Button

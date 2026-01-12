@@ -17,7 +17,6 @@ import {
   signUpSchema,
   signInSchema,
   otpVerificationSchema,
-  deactivateUserSchema,
   allyBrainSchema,
   contextualSchedulingSchema,
   preferenceKeyParamSchema,
@@ -141,7 +140,6 @@ router.post(
 router.delete(
   "/",
   supabaseAuth(),
-  validate(deactivateUserSchema),
   profileController.deActivateUser,
 );
 

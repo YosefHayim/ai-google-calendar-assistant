@@ -30,6 +30,10 @@ const CONSTANTS = {
   PROD_BACKEND_URL: "https://i3fzcpnmmk.eu-central-1.awsapprunner.com/",
   PROD_FRONTEND_URL: "https://askally.io",
 
+  // Slack
+  SLACK_APP_ID: "A0A87Q52742",
+  SLACK_CLIENT_ID: "10273441014227.10279821075138",
+
   // Defaults
   DEV_PORT: 3000,
   PROD_PORT: 8080,
@@ -185,6 +189,17 @@ const integrations = {
     },
     get baseUrl(): string {
       return `https://graph.facebook.com/${this.apiVersion}`;
+    },
+  },
+  slack: {
+    appId: CONSTANTS.SLACK_APP_ID,
+    clientId: CONSTANTS.SLACK_CLIENT_ID,
+    clientSecret: getOptional("SLACK_CLIENT_SECRET"),
+    signingSecret: getOptional("SLACK_SIGNING_SECRET"),
+    appToken: getOptional("SLACK_APP_TOKEN"),
+    botToken: getOptional("SLACK_BOT_TOKEN"),
+    get isEnabled(): boolean {
+      return !!(this.botToken && this.signingSecret && this.appToken);
     },
   },
 } as const;

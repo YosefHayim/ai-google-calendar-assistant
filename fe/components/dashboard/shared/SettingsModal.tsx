@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Bell, Brain, Clock, CreditCard, Database, LayoutDashboard, LogOut, Settings, Shield, X } from 'lucide-react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -11,6 +12,7 @@ import {
   useDeleteAllConversations,
   useResetMemory,
   useUser,
+  useDeactivateUser,
 } from '@/hooks/queries'
 import { toast } from 'sonner'
 
@@ -70,9 +72,11 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
     enabled: isOpen,
   })
 
+  const router = useRouter()
   const { mutate: disconnectGoogleCalendar, isPending: isDisconnecting } = useDisconnectGoogleCalendar()
   const { deleteAll: deleteAllConversations, isDeleting: isDeletingConversations } = useDeleteAllConversations()
   const { resetMemory: resetMemoryMutation, isResetting: isResettingMemory } = useResetMemory()
+  const { mutateAsync: deactivateUserAsync, isPending: isDeactivating } = useDeactivateUser()
 
   const isGoogleCalendarBusy = isGoogleCalendarLoading || isDisconnecting
 
@@ -138,12 +142,20 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
     setShowDeleteAccountDialog(true)
   }
 
-  const confirmDeleteAccount = () => {
-    // TODO: Implement actual account deletion
-    setShowDeleteAccountDialog(false)
-    toast.success('Account deletion initiated', {
-      description: 'Your account will be deleted shortly.',
-    })
+  const confirmDeleteAccount = async () => {
+    try {
+      await deactivateUserAsync()
+      setShowDeleteAccountDialog(false)
+      toast.success('Account deleted successfully', {
+        description: 'Your account and all associated data have been permanently deleted.',
+      })
+      onSignOut?.()
+      router.push('/')
+    } catch (error) {
+      toast.error('Failed to delete account', {
+        description: error instanceof Error ? error.message : 'An error occurred while deleting your account.',
+      })
+    }
   }
 
   return (
@@ -189,6 +201,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
         description="Are you sure you want to permanently delete your account? This will remove all your data including conversations, preferences, calendar connections, and subscription. This action cannot be undone."
         confirmLabel="Delete Account"
         variant="destructive"
+        isLoading={isDeactivating}
       />
 
       <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>

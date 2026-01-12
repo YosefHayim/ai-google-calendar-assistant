@@ -100,8 +100,9 @@ export const de: TranslationShape = {
     startForFree: 'Kostenlos starten',
     telegramTitle: 'Mit Ally auf Telegram chatten',
     telegramDescription:
-      'Verwalten Sie Ihren Kalender unterwegs. Senden Sie Sprachnachrichten, planen Sie Termine und erhalten Sie Erinnerungen — alles über Telegram.',
+      'Verwalten Sie Ihren Kalender unterwegs. Senden Sie Sprachnachrichten, planen Sie Termine und erhalten Sie Erinnerungen, alles über Telegram.',
     openTelegram: 'In Telegram öffnen',
+    availableIn: 'Verfügbar auf',
   },
 
   // Feature Showcase
@@ -147,28 +148,56 @@ export const de: TranslationShape = {
   },
 
   about: {
-    title: 'Über uns',
-    subtitle: 'Wir bauen die Zukunft der Kalenderverwaltung mit KI-Intelligenz, die Ihre Arbeitsweise versteht.',
-    missionTitle: 'Unsere Mission',
-    missionP1:
-      'Wir glauben, dass jeder einen persönlichen Assistenten verdient, der den Zeitplan versteht, die Zeit respektiert und hilft, sich auf das Wichtige zu konzentrieren.',
-    missionP2:
-      'Ally kombiniert modernste KI mit intuitivem Design für ein Kalender-Erlebnis, das sich wie ein persönlicher Sekretär anfühlt.',
-    activeUsers: 'Aktive Nutzer',
-    accuracyRate: 'Genauigkeitsrate',
-    userRating: 'Nutzerbewertung',
-    savedWeekly: 'Wöchentlich gespart',
-    valuesTitle: 'Unsere Werte',
-    privacyFirst: 'Datenschutz zuerst',
-    privacyFirstDesc:
-      'Ihre Daten gehören Ihnen. Wir verwenden branchenführende Verschlüsselung und verkaufen niemals Ihre Informationen.',
-    speedMatters: 'Geschwindigkeit zählt',
-    speedMattersDesc: 'Jede Interaktion ist auf Geschwindigkeit optimiert. Planen Sie in Sekunden.',
-    userFocused: 'Nutzerorientiert',
-    userFocusedDesc: 'Jede Funktion beginnt mit dem Verständnis der echten Bedürfnisse unserer Nutzer.',
-    ctaTitle: 'Schließen Sie sich unserer Mission an',
-    ctaSubtitle: 'Erleben Sie die Zukunft der Kalenderverwaltung noch heute.',
-    getStarted: 'Loslegen',
+    heroBadge: 'Die versteckten Kosten des Chaos',
+    heroTitle: 'Ihre Zeit ist',
+    heroTitleHighlight: 'unter Beschuss',
+    heroSubtitle:
+      'Jeder Kontextwechsel, jeder Terminkonflikt, jede Stunde für Verwaltungsarbeit. Es summiert sich alles. Zeit ist die einzige Ressource, die Sie nie zurückbekommen.',
+
+    problemTitle: 'Der tägliche Kampf',
+    problemSubtitle: 'Moderne Fachleute verlieren jede Woche Stunden an Kalender-Chaos, das sie nie wollten.',
+    problemContextSwitch: 'Kontextwechsel',
+    problemContextSwitchDesc: 'Springen zwischen Apps, Tabs und Aufgaben. Jeder Wechsel kostet 23 Minuten Fokuszeit.',
+    problemCalendarChaos: 'Kalender-Chaos',
+    problemCalendarChaosDesc: 'Doppelbuchungen, Zeitzonenverwirrung und endloses Hin und Her für ein einfaches Meeting.',
+    problemLostHours: 'Verlorene Stunden',
+    problemLostHoursDesc: 'Verwaltungsaufwand stiehlt Ihre produktivsten Stunden. Zeit für Deep Work verschwindet.',
+    problemBlindSpots: 'Blinde Flecken',
+    problemBlindSpotsDesc: 'Wo ist der Dienstag geblieben? Lücken in Ihrem Kalender, die Sie nie nachvollziehen können.',
+
+    visionBadge: 'Was wir glauben',
+    visionTitle: 'Jeder verdient einen privaten KI-Sekretär',
+    visionP1: 'Wir haben Ally gebaut, weil wir glauben, dass Ihr Kalender für Sie arbeiten sollte, nicht gegen Sie. Er sollte Ihre Prioritäten verteidigen, nicht nur aufzeichnen.',
+    visionP2: 'Die gleiche KI-Technologie, die Enterprise-Lösungen antreibt, sollte jedem Unternehmer, Führungskraft und Fachmann zur Verfügung stehen, der seine Zeit schätzt.',
+    visionBelief1: 'Ihr Kalender sollte Ihre Deep Work schützen, nicht einfach darüber planen.',
+    visionBelief2: 'Zeitmanagement sollte Sekunden dauern, nicht Stunden Verwaltung.',
+    visionBelief3: 'Ihre Daten gehören Ihnen. Niemals verkauft, niemals für Training verwendet.',
+
+    impactTitle: 'Was sich ändert, wenn Sie Ally nutzen',
+    impactSubtitle: 'Echte Auswirkungen auf Ihre Arbeit und Ihr Leben.',
+    impactHours: 'Stunden zurückgewonnen',
+    impactHoursDesc: 'Verschwenden Sie keine Zeit mehr mit Terminplanung. Gewinnen Sie jede Woche Stunden für wichtige Arbeit.',
+    impactFocus: 'Fokus geschützt',
+    impactFocusDesc: 'Ally schützt Ihre Deep-Work-Blöcke vor Unterbrechungen durch intelligente Umplanung von Konflikten.',
+    impactGaps: 'Lücken geschlossen',
+    impactGapsDesc: 'Fragen Sie sich nie mehr, wo Ihre Zeit geblieben ist. Ally findet und hilft Ihnen, Kalenderlücken zu füllen.',
+    impactVoice: 'Sprache zu Aktion',
+    impactVoiceDesc: 'Vom Gedanken zum geplanten Termin in Sekunden. Sprechen Sie einfach natürlich und Ally erledigt den Rest.',
+
+    differenceTitle: 'Anders durch Design',
+    differenceSubtitle: 'Von Grund auf mit anderen Prioritäten gebaut.',
+    differencePrivacy: 'Datenschutz zuerst',
+    differencePrivacyDesc: 'Ihre Daten sind verschlüsselt, werden nie verkauft und nie für KI-Training verwendet. Ihr privates Büro bleibt privat.',
+    differenceMultiPlatform: 'Arbeitet, wo Sie arbeiten',
+    differenceMultiPlatformDesc: 'Web, Sprache, Telegram, WhatsApp. Ally ist überall verfügbar, wo Sie sind, wie auch immer Sie kommunizieren möchten.',
+    differenceProactive: 'Proaktiv, nicht passiv',
+    differenceProactiveDesc: 'Ally zeichnet nicht nur Ihren Zeitplan auf. Es schützt Ihre Zeit, schlägt Optimierungen vor und löst Konflikte automatisch.',
+
+    ctaBadge: 'Werden Sie Teil der Bewegung',
+    ctaTitle: 'Fordern Sie Ihre Zeit zurück',
+    ctaSubtitle: 'Hören Sie auf, gegen Ihren Kalender zu kämpfen. Beginnen Sie, ihn zu beherrschen. Schließen Sie sich Tausenden von Fachleuten an, die die Kontrolle zurückgewonnen haben.',
+    ctaPrimary: 'Kostenlos starten',
+    ctaSecondary: 'Preise ansehen',
   },
 
   contact: {
@@ -654,46 +683,15 @@ export const de: TranslationShape = {
   },
 
   testimonials: {
-    badge: 'Verifizierungsebene',
-    title: 'Vertraut von den ambitioniertesten Leistungsträgern der Welt.',
-    verified: 'Verifiziert',
-    reviews: {
-      alex: {
-        name: 'Alex Rivera',
-        role: 'Venture-Partner',
-        content:
-          'Ally hat verändert, wie ich meine Zeit manage. Ich schreibe einfach dem Bot auf WhatsApp, um meinen Tag zu prüfen, und er organisiert automatisch meinen Google Kalender neu, um meine Tiefenarbeitsfenster zu priorisieren.',
-      },
-      sarah: {
-        name: 'Sarah Chen',
-        role: 'Solo-Gründerin',
-        content:
-          'Das Telegram-Relay ist makellos. Ich kann Tiefenarbeitssitzungen blockieren und Kalenderüberschneidungen per Sprachnachricht lösen, während ich zwischen Terminen gehe. Es ist wirklich ein privates Büroerlebnis.',
-      },
-      james: {
-        name: 'James Wilson',
-        role: 'Privatinvestor',
-        content:
-          'Ich habe endlich meine Morgen zurückerobert. Ally versteht meine Produktivitätsgewohnheiten besser als ich, und schützt meine Fokusblöcke wie ein Falke vor niedrigwertigen Kalendereinladungen.',
-      },
-      elena: {
-        name: 'Elena Rodriguez',
-        role: 'Leitende Rechtsberaterin',
-        content:
-          'Der quantitative Ansatz für mein Zeitkonto war der entscheidende Faktor. Mein Fokus-Verhältnis und Context-Switching-Kosten in Echtzeit zu sehen, hat mich zu einer viel effektiveren Führungskraft gemacht.',
-      },
-      marcus: {
-        name: 'Marcus Thorne',
-        role: 'Geschäftsführer',
-        content:
-          'Terminanpassungen per Sprache über Telegram zu erfassen hat meinen Workflow verändert. Ally versteht Absichten, nicht nur Schlüsselwörter, was die automatische Konfliktlösung unglaublich zuverlässig macht.',
-      },
-      lila: {
-        name: 'Lila Vance',
-        role: 'Strategieberaterin',
-        content:
-          'Die Intelligence-Analytik zeigt mir genau, wo meine Fokuslecks sind. Ich habe mein Tiefenarbeitsverhältnis um 40% gesteigert, seit Ally meine neuronale Terminplanung und Kalenderverwaltung übernommen hat.',
-      },
+    badge: 'Frühes Feedback',
+    title: 'Was frühe Nutzer sagen',
+    subtitle: 'Erfahren Sie, was unsere ersten Nutzer denken. Ihr Feedback könnte auch hier stehen!',
+    cta: 'Seien Sie einer der Ersten',
+    feedbackButton: 'Feedback teilen',
+    featured: {
+      name: 'Yosef Sabag',
+      role: 'CEO',
+      content: 'Die Nutzung von Ally hat die Art verändert, wie ich meinen Zeitplan verfolge und bessere Einblicke erhalte.',
     },
   },
 

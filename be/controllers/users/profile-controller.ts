@@ -1,6 +1,8 @@
 import type { Request, Response } from "express"
 import { STATUS_RESPONSE, SUPABASE } from "@/config"
 import { reqResAsyncHandler, sendR } from "@/utils/http"
+import { webConversation } from "@/utils/conversation/WebConversationAdapter"
+import { unifiedContextStore } from "@/shared/context"
 
 const getCurrentUserInformation = reqResAsyncHandler(
   async (req: Request, res: Response) => {
@@ -100,15 +102,18 @@ const getUserInformationById = reqResAsyncHandler(
 
 const deActivateUser = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const email = req.body.email?.toLowerCase().trim()
+    // Use authenticated user's email for security (not body.email)
+    const userId = req.user?.id
+    const email = req.user?.email?.toLowerCase().trim()
 
-    if (!email) {
-      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Email is required.")
+    if (!userId || !email) {
+      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "Authentication required.")
     }
 
+    // Verify user exists in database
     const { data: user, error: userError } = await SUPABASE.from("users")
       .select("id")
-      .ilike("email", email)
+      .eq("id", userId)
       .limit(1)
       .maybeSingle()
 
@@ -116,21 +121,70 @@ const deActivateUser = reqResAsyncHandler(
       return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User not found.", userError)
     }
 
-    const { error: updateError } = await SUPABASE.from("oauth_tokens")
-      .update({ is_valid: false, updated_at: new Date().toISOString() })
-      .eq("user_id", user.id)
-      .eq("provider", "google")
+    const deletionResults = {
+      oauthTokens: false,
+      conversations: 0,
+      redisContext: false,
+      userRecord: false,
+      supabaseAuth: false,
+    }
 
-    if (updateError) {
+    try {
+      // 1. Revoke Google OAuth tokens (set invalid and clear sensitive data)
+      const { error: tokenError } = await SUPABASE.from("oauth_tokens")
+        .update({
+          is_valid: false,
+          access_token: "[DELETED]",
+          refresh_token: null,
+          id_token: null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("user_id", userId)
+        .eq("provider", "google")
+
+      if (!tokenError) {
+        deletionResults.oauthTokens = true
+      }
+
+      // 2. Delete all conversations and messages
+      const conversationsResult = await webConversation.deleteAllConversations(userId)
+      deletionResults.conversations = conversationsResult.deletedCount
+
+      // 3. Clear Redis context (cross-modal session data)
+      await unifiedContextStore.clearAll(userId)
+      deletionResults.redisContext = true
+
+      // 4. Delete user record from users table (this will cascade to related tables via FK)
+      const { error: deleteUserError } = await SUPABASE.from("users")
+        .delete()
+        .eq("id", userId)
+
+      if (!deleteUserError) {
+        deletionResults.userRecord = true
+      }
+
+      // 5. Delete user from Supabase Auth
+      const { error: authDeleteError } = await SUPABASE.auth.admin.deleteUser(userId)
+
+      if (!authDeleteError) {
+        deletionResults.supabaseAuth = true
+      } else {
+        console.error("Failed to delete user from Supabase Auth:", authDeleteError)
+      }
+
+      return sendR(res, STATUS_RESPONSE.SUCCESS, "Account deleted successfully.", {
+        deleted: deletionResults,
+        message: "Your account and all associated data have been permanently deleted.",
+      })
+    } catch (error) {
+      console.error("Error during account deletion:", error)
       return sendR(
         res,
         STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
-        "Failed to deactivate user.",
-        updateError
+        "Failed to delete account. Please try again or contact support.",
+        { partialDeletion: deletionResults }
       )
     }
-
-    return sendR(res, STATUS_RESPONSE.SUCCESS, "User deactivated successfully.")
   }
 )
 

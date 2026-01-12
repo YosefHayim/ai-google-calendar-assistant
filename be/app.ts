@@ -9,12 +9,14 @@ import channelsRoute from "@/routes/google-calendar/channels-route";
 import chatRoute from "@/routes/google-calendar/chat-route";
 import contactRoute from "@/routes/contact-route";
 import cookieParser from "cookie-parser";
-import cronRoute from "@/routes/cron-route";
 import cors from "cors";
+import cronRoute from "@/routes/cron-route";
 import errorHandler from "@/middlewares/error-handler";
 import eventsRoute from "@/routes/google-calendar/events-route";
 import express from "express";
 import helmet from "helmet";
+import { initWhatsApp } from "@/whatsapp-bot/init-whatsapp";
+import { startSlackBot } from "@/slack-bot";
 import { logger } from "@/utils/logger";
 import morgan from "morgan";
 import path from "node:path";
@@ -24,7 +26,6 @@ import { securityAuditMiddleware } from "@/middlewares/security-audit";
 import { sendR } from "@/utils/http";
 import { startTelegramBot } from "@/telegram-bot/init-bot";
 import telegramRoute from "@/routes/telegram-route";
-import { initWhatsApp } from "@/whatsapp-bot/init-whatsapp";
 import usersRoute from "@/routes/users-route";
 import voiceRoute from "@/routes/voice-route";
 import webhooksRoute from "@/routes/webhooks-route";
@@ -118,3 +119,4 @@ app.listen(PORT, (error?: Error) => {
 
 startTelegramBot();
 initWhatsApp();
+startSlackBot();

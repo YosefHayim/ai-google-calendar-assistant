@@ -36,7 +36,7 @@ const NavLink: React.FC<NavLinkProps> = ({
       id={id}
       href={href}
       onClick={onClick}
-      className={`w-full flex items-center gap-3 p-2 rounded-md transition-colors ${
+      className={`w-full flex items-center gap-3 p-2 rounded-lg transition-colors ${
         isActive
           ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 font-bold'
           : 'text-zinc-500 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-900'
@@ -105,7 +105,8 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({ pathname, isOpen, onClos
     <TooltipProvider>
       <nav className="px-4 space-y-2 mt-2">
         {navItems.map((item) => (
-          <NavLink
+          <NavLink 
+          
             key={item.href}
             href={item.href}
             activePath={pathname}

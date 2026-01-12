@@ -12,31 +12,6 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "13.0.4"
   }
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          extensions?: Json
-          operationName?: string
-          query?: string
-          variables?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
-  }
   public: {
     Tables: {
       conversation_messages: {
@@ -330,6 +305,77 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      slack_users: {
+        Row: {
+          created_at: string | null
+          first_name: string | null
+          id: string
+          is_linked: boolean | null
+          last_activity_at: string | null
+          pending_email: string | null
+          slack_team_id: string
+          slack_user_id: string
+          slack_username: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          first_name?: string | null
+          id?: string
+          is_linked?: boolean | null
+          last_activity_at?: string | null
+          pending_email?: string | null
+          slack_team_id: string
+          slack_user_id: string
+          slack_username?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          first_name?: string | null
+          id?: string
+          is_linked?: boolean | null
+          last_activity_at?: string | null
+          pending_email?: string | null
+          slack_team_id?: string
+          slack_user_id?: string
+          slack_username?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "slack_users_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "slack_users_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "v_active_users_with_calendar"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "slack_users_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "v_admin_user_list"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "slack_users_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "v_user_conversation_stats"
+            referencedColumns: ["user_id"]
+          },
+        ]
       }
       subscriptions: {
         Row: {
@@ -1149,9 +1195,6 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {
       calendar_access_role: ["owner", "writer", "reader", "freeBusyReader"],

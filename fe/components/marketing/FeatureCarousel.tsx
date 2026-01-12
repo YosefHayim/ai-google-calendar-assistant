@@ -305,7 +305,7 @@ const FeatureCarousel = () => {
         variant="outline"
         size="icon"
         onClick={prev}
-        className="absolute left-0 lg:-left-6 top-1/2 -translate-y-1/2 z-30 rounded-full bg-white/90 dark:bg-zinc-800/90 backdrop-blur-sm border-zinc-200 dark:border-zinc-700 shadow-xl text-zinc-500 hover:text-primary opacity-0 group-hover/carousel:opacity-100 hover:scale-110 active:scale-95"
+        className="absolute left-2 lg:-left-6 top-1/2 -translate-y-1/2 z-30 rounded-full bg-white/90 dark:bg-zinc-800/90 backdrop-blur-sm border-zinc-200 dark:border-zinc-700 shadow-xl text-zinc-500 hover:text-primary opacity-100 lg:opacity-0 lg:group-hover/carousel:opacity-100 hover:scale-110 active:scale-95"
       >
         <ChevronLeft className="w-5 h-5" />
       </Button>
@@ -314,7 +314,7 @@ const FeatureCarousel = () => {
         variant="outline"
         size="icon"
         onClick={next}
-        className="absolute right-0 lg:-right-6 top-1/2 -translate-y-1/2 z-30 rounded-full bg-white/90 dark:bg-zinc-800/90 backdrop-blur-sm border-zinc-200 dark:border-zinc-700 shadow-xl text-zinc-500 hover:text-primary opacity-0 group-hover/carousel:opacity-100 hover:scale-110 active:scale-95"
+        className="absolute right-2 lg:-right-6 top-1/2 -translate-y-1/2 z-30 rounded-full bg-white/90 dark:bg-zinc-800/90 backdrop-blur-sm border-zinc-200 dark:border-zinc-700 shadow-xl text-zinc-500 hover:text-primary opacity-100 lg:opacity-0 lg:group-hover/carousel:opacity-100 hover:scale-110 active:scale-95"
       >
         <ChevronRight className="w-5 h-5" />
       </Button>

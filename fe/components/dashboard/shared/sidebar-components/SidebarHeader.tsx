@@ -1,8 +1,9 @@
 'use client'
 
 import { AllyLogo, BetaBadge } from '@/components/shared/logo'
-import { ChevronLeft, ChevronRight, LayoutDashboard, Plus, X } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Plus } from 'lucide-react'
 
+import { AnimatedHamburger } from '@/components/ui/animated-hamburger'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import React from 'react'
@@ -20,7 +21,7 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = ({ isOpen, onClose, o
       className={`flex items-center p-4 border-b border-zinc-200 dark:border-zinc-800 ${isOpen ? 'justify-between' : 'justify-center'}`}
     >
       {isOpen && (
-        <Link href="/" onClick={onClose} className="flex items-center gap-2">
+        <Link href="/dashboard" className="flex items-center gap-2">
           <div className="w-8 h-8 bg-zinc-900 dark:bg-white rounded-md flex items-center justify-center text-white dark:text-zinc-900">
             <AllyLogo className="w-5 h-5" />
           </div>
@@ -46,14 +47,11 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = ({ isOpen, onClose, o
           {isOpen ? <ChevronLeft className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
         </Button>
         {isOpen && (
-          <Button
-            variant="ghost"
-            size="icon"
+          <AnimatedHamburger
+            isOpen={true}
             onClick={onClose}
-            className="text-zinc-500 md:hidden"
-          >
-            <X className="w-5 h-5" />
-          </Button>
+            className="md:hidden"
+          />
         )}
       </div>
     </div>

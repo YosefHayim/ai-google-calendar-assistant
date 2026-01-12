@@ -103,8 +103,9 @@ export const en = {
     startForFree: 'Start for Free',
     telegramTitle: 'Chat with Ally on Telegram',
     telegramDescription:
-      'Manage your calendar on the go. Send voice messages, schedule events, and get reminders — all from Telegram.',
+      'Manage your calendar on the go. Send voice messages, schedule events, and get reminders, all from Telegram.',
     openTelegram: 'Open in Telegram',
+    availableIn: 'Available in',
   },
 
   // Feature Showcase
@@ -151,28 +152,76 @@ export const en = {
 
   // About Page
   about: {
-    title: 'About',
-    subtitle:
-      "We're building the future of calendar management with AI-powered intelligence that understands how you work.",
-    missionTitle: 'Our Mission',
-    missionP1:
-      'We believe everyone deserves a personal assistant that understands their schedule, respects their time, and helps them focus on what matters most.',
-    missionP2:
-      'Ally combines cutting-edge AI with intuitive design to create a calendar experience that feels like having a dedicated secretary at your fingertips.',
-    activeUsers: 'Active Users',
-    accuracyRate: 'Accuracy Rate',
-    userRating: 'User Rating',
-    savedWeekly: 'Saved Weekly',
-    valuesTitle: 'Our Values',
-    privacyFirst: 'Privacy First',
-    privacyFirstDesc: 'Your data belongs to you. We use industry-leading encryption and never sell your information.',
-    speedMatters: 'Speed Matters',
-    speedMattersDesc: 'Every interaction is optimized for speed. Schedule in seconds, not minutes.',
-    userFocused: 'User Focused',
-    userFocusedDesc: "Every feature we build starts with understanding our users' real needs.",
-    ctaTitle: 'Join us on our mission',
-    ctaSubtitle: 'Experience the future of calendar management today.',
-    getStarted: 'Get Started',
+    // Hero Section
+    heroBadge: 'The Hidden Cost of Chaos',
+    heroTitle: 'Your Time Is',
+    heroTitleHighlight: 'Under Attack',
+    heroSubtitle:
+      'Every context switch, every scheduling conflict, every hour lost to admin work. It all adds up. Time is the only resource you can never get back.',
+
+    // Problem Section
+    problemTitle: 'The Daily Battle',
+    problemSubtitle: 'Modern professionals lose hours every week to calendar chaos they never asked for.',
+    problemContextSwitch: 'Context Switching',
+    problemContextSwitchDesc:
+      'Jumping between apps, tabs, and tasks. Each switch costs you 23 minutes of focus time.',
+    problemCalendarChaos: 'Calendar Chaos',
+    problemCalendarChaosDesc:
+      'Double-bookings, timezone confusion, and endless back-and-forth just to schedule a simple meeting.',
+    problemLostHours: 'Lost Hours',
+    problemLostHoursDesc:
+      'Administrative overhead steals your most productive hours. Time meant for deep work disappears.',
+    problemBlindSpots: 'Blind Spots',
+    problemBlindSpotsDesc:
+      'Where did Tuesday go? Gaps in your calendar that you can never account for or recover.',
+
+    // Vision Section
+    visionBadge: 'What We Believe',
+    visionTitle: 'Everyone Deserves a Private AI Secretary',
+    visionP1:
+      "We built Ally because we believe your calendar should work for you, not against you. It should defend your priorities, not just record them.",
+    visionP2:
+      "The same AI technology that powers enterprise solutions should be available to every business owner, executive, and professional who values their time.",
+    visionBelief1: 'Your calendar should protect your deep work, not just schedule over it.',
+    visionBelief2: 'Managing your time should take seconds, not hours of admin.',
+    visionBelief3: 'Your data belongs to you. Never sold, never used for training.',
+
+    // Impact Section
+    impactTitle: 'What Changes When You Use Ally',
+    impactSubtitle: 'Real impact on how you work and live.',
+    impactHours: 'Hours Reclaimed',
+    impactHoursDesc:
+      'Stop losing time to scheduling overhead. Get hours back every week for the work that actually matters.',
+    impactFocus: 'Focus Protected',
+    impactFocusDesc:
+      'Ally shields your deep work blocks from interruptions, intelligently rescheduling conflicts.',
+    impactGaps: 'Gaps Recovered',
+    impactGapsDesc:
+      'Never wonder where your time went. Ally finds and helps you fill the gaps in your calendar.',
+    impactVoice: 'Voice to Action',
+    impactVoiceDesc:
+      'Thought to scheduled event in seconds. Just speak naturally and Ally handles the rest.',
+
+    // Difference Section
+    differenceTitle: "We're Different By Design",
+    differenceSubtitle: 'Built from the ground up with different priorities.',
+    differencePrivacy: 'Privacy First',
+    differencePrivacyDesc:
+      'Your data is encrypted, never sold, and never used to train AI models. Your private office stays private.',
+    differenceMultiPlatform: 'Works Where You Work',
+    differenceMultiPlatformDesc:
+      'Web, voice, Telegram, WhatsApp. Ally is available wherever you are, however you prefer to communicate.',
+    differenceProactive: 'Proactive, Not Passive',
+    differenceProactiveDesc:
+      "Ally doesn't just record your schedule. It protects your time, suggests optimizations, and handles conflicts automatically.",
+
+    // CTA Section
+    ctaBadge: 'Join the Movement',
+    ctaTitle: 'Reclaim Your Time',
+    ctaSubtitle:
+      "Stop fighting your calendar. Start commanding it. Join thousands of professionals who've taken back control.",
+    ctaPrimary: 'Get Started Free',
+    ctaSecondary: 'View Pricing',
   },
 
   // Contact Page
@@ -685,48 +734,16 @@ export const en = {
     },
   },
 
-  // Testimonials Section
   testimonials: {
-    badge: 'Verification Layer',
-    title: "Trusted by the world's most ambitious high-performers.",
-    verified: 'Verified',
-    reviews: {
-      alex: {
-        name: 'Alex Rivera',
-        role: 'Venture Partner',
-        content:
-          'Ally has transformed how I manage my time. I just message the bot on WhatsApp to audit my day, and it automatically reshuffles my Google Calendar to prioritize my deep work windows.',
-      },
-      sarah: {
-        name: 'Sarah Chen',
-        role: 'Solo Founder',
-        content:
-          "The Telegram relay is flawless. I can block deep work sessions and resolve calendar overlaps via voice note while walking between appointments. It's truly a private office experience.",
-      },
-      james: {
-        name: 'James Wilson',
-        role: 'Private Investor',
-        content:
-          "I've finally reclaimed my mornings. Ally understands my productivity habits better than I do, shielding my focus blocks like a hawk from low-value calendar invites.",
-      },
-      elena: {
-        name: 'Elena Rodriguez',
-        role: 'Lead Counsel',
-        content:
-          'The quantitative approach to my time ledger was the deciding factor. Seeing my focus ratio and context-switching costs in real-time has made me a much more effective executive.',
-      },
-      marcus: {
-        name: 'Marcus Thorne',
-        role: 'Managing Director',
-        content:
-          'Capturing schedule adjustments via voice on Telegram has changed my workflow. Ally understands intent, not just keywords, making the automated conflict resolution incredibly reliable.',
-      },
-      lila: {
-        name: 'Lila Vance',
-        role: 'Strategy Consultant',
-        content:
-          "The intelligence analytics show me exactly where my focus leaks are. I've increased my deep work ratio by 40% since Ally took over my neural scheduling and calendar management.",
-      },
+    badge: 'Early Feedback',
+    title: 'What early users are saying',
+    subtitle: 'See what our first users think. Your feedback could be here too!',
+    cta: 'Be one of the first',
+    feedbackButton: 'Share Your Feedback',
+    featured: {
+      name: 'Yosef Sabag',
+      role: 'CEO',
+      content: 'Using Ally has changed the way I am tracking my schedule and getting better insights.',
     },
   },
 

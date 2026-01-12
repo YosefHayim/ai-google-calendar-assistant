@@ -3,7 +3,9 @@ import ReactMarkdown from 'react-markdown'
 import { Role, MessageImage } from '@/types'
 import remarkGfm from 'remark-gfm'
 import { getTextDirection } from '@/lib/utils'
-import { X, ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 
 interface MessageBubbleProps {
   role: Role
@@ -16,7 +18,8 @@ interface MessageBubbleProps {
 interface MessageImageLightboxProps {
   images: MessageImage[]
   currentIndex: number
-  onClose: () => void
+  open: boolean
+  onOpenChange: (open: boolean) => void
   onPrevious: () => void
   onNext: () => void
 }
@@ -24,7 +27,8 @@ interface MessageImageLightboxProps {
 const MessageImageLightbox: React.FC<MessageImageLightboxProps> = ({
   images,
   currentIndex,
-  onClose,
+  open,
+  onOpenChange,
   onPrevious,
   onNext,
 }) => {
@@ -34,58 +38,45 @@ const MessageImageLightbox: React.FC<MessageImageLightboxProps> = ({
   const imageSrc = `data:${currentImage.mimeType};base64,${currentImage.data}`
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
-      onClick={onClose}
-    >
-      <button
-        onClick={onClose}
-        className="absolute top-4 right-4 z-10 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
-      >
-        <X className="w-6 h-6" />
-      </button>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-[90vw] max-h-[90vh] p-0 border-none bg-transparent shadow-none">
+        <VisuallyHidden>
+          <DialogTitle>Image Preview</DialogTitle>
+        </VisuallyHidden>
 
-      {images.length > 1 && (
-        <>
-          <button
-            onClick={(e) => {
-              e.stopPropagation()
-              onPrevious()
-            }}
-            className="absolute left-4 z-10 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors disabled:opacity-50"
-            disabled={currentIndex === 0}
-          >
-            <ChevronLeft className="w-8 h-8" />
-          </button>
-          <button
-            onClick={(e) => {
-              e.stopPropagation()
-              onNext()
-            }}
-            className="absolute right-4 z-10 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors disabled:opacity-50"
-            disabled={currentIndex === images.length - 1}
-          >
-            <ChevronRight className="w-8 h-8" />
-          </button>
-        </>
-      )}
-
-      <div
-        className="relative max-w-[90vw] max-h-[90vh]"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <img
-          src={imageSrc}
-          alt={`Image ${currentIndex + 1}`}
-          className="max-w-full max-h-[90vh] object-contain rounded-lg"
-        />
         {images.length > 1 && (
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-black/50 text-white text-sm">
-            {currentIndex + 1} / {images.length}
-          </div>
+          <>
+            <button
+              onClick={onPrevious}
+              className="absolute left-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors disabled:opacity-50"
+              disabled={currentIndex === 0}
+            >
+              <ChevronLeft className="w-8 h-8" />
+            </button>
+            <button
+              onClick={onNext}
+              className="absolute right-12 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors disabled:opacity-50"
+              disabled={currentIndex === images.length - 1}
+            >
+              <ChevronRight className="w-8 h-8" />
+            </button>
+          </>
         )}
-      </div>
-    </div>
+
+        <div className="relative flex items-center justify-center">
+          <img
+            src={imageSrc}
+            alt={`Image ${currentIndex + 1}`}
+            className="max-w-full max-h-[85vh] object-contain rounded-lg"
+          />
+          {images.length > 1 && (
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-black/50 text-white text-sm">
+              {currentIndex + 1} / {images.length}
+            </div>
+          )}
+        </div>
+      </DialogContent>
+    </Dialog>
   )
 }
 
@@ -166,11 +157,12 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ role, content, timestamp,
       </div>
 
       {/* Image Lightbox */}
-      {lightboxIndex !== null && hasImages && (
+      {hasImages && (
         <MessageImageLightbox
           images={images}
-          currentIndex={lightboxIndex}
-          onClose={closeLightbox}
+          currentIndex={lightboxIndex ?? 0}
+          open={lightboxIndex !== null}
+          onOpenChange={(open) => !open && closeLightbox()}
           onPrevious={goToPrevious}
           onNext={goToNext}
         />

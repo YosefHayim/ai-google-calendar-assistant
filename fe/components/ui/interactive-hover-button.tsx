@@ -48,7 +48,7 @@ const InteractiveHoverButton = React.forwardRef<HTMLButtonElement, InteractiveHo
         ref={ref}
         disabled={isLoading || props.disabled}
         className={cn(
-          'group relative w-32 cursor-pointer overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-2 text-center font-semibold text-zinc-900 dark:text-zinc-100 transition-all duration-300',
+          'group relative w-auto cursor-pointer overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-2 text-center font-semibold text-zinc-900 dark:text-zinc-100 transition-all duration-300',
           isLoading && 'cursor-wait border-primary/50',
           className,
         )}

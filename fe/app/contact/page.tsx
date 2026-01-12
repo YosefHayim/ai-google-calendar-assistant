@@ -1,7 +1,7 @@
 'use client'
 
 import { useTranslation } from 'react-i18next'
-import { Mail, MessageSquare } from 'lucide-react'
+import { Mail } from 'lucide-react'
 
 import MarketingLayout from '@/components/marketing/MarketingLayout'
 import { ContactForm } from '@/components/contact/ContactForm'
@@ -14,10 +14,6 @@ export default function ContactPage() {
       <section className="py-24 px-6">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
-              <MessageSquare size={16} />
-              {t('contact.badge')}
-            </div>
             <h1 className="text-4xl md:text-5xl font-medium tracking-tight text-zinc-900 dark:text-zinc-100 mb-4">
               {t('contact.title')}
             </h1>

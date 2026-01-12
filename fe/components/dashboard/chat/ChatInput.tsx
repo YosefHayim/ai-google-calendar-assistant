@@ -5,9 +5,12 @@ import React, { forwardRef, useCallback, useMemo, useRef, useState } from 'react
 
 import { AIVoiceInput } from '@/components/ui/ai-voice-input'
 import { Button } from '@/components/ui/button'
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import { getTextDirection } from '@/lib/utils'
 import { INPUT_LIMITS, validateInputLength } from '@/lib/security/sanitize'
+import { toast } from 'sonner'
 
 export interface ImageFile {
   id: string
@@ -19,7 +22,8 @@ export interface ImageFile {
 interface ImageLightboxProps {
   images: ImageFile[]
   currentIndex: number
-  onClose: () => void
+  open: boolean
+  onOpenChange: (open: boolean) => void
   onPrevious: () => void
   onNext: () => void
 }
@@ -27,7 +31,8 @@ interface ImageLightboxProps {
 const ImageLightbox: React.FC<ImageLightboxProps> = ({
   images,
   currentIndex,
-  onClose,
+  open,
+  onOpenChange,
   onPrevious,
   onNext,
 }) => {
@@ -35,58 +40,45 @@ const ImageLightbox: React.FC<ImageLightboxProps> = ({
   if (!currentImage) return null
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
-      onClick={onClose}
-    >
-      <button
-        onClick={onClose}
-        className="absolute top-4 right-4 z-10 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
-      >
-        <X className="w-6 h-6" />
-      </button>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-[90vw] max-h-[90vh] p-0 border-none bg-transparent shadow-none">
+        <VisuallyHidden>
+          <DialogTitle>Image Preview</DialogTitle>
+        </VisuallyHidden>
 
-      {images.length > 1 && (
-        <>
-          <button
-            onClick={(e) => {
-              e.stopPropagation()
-              onPrevious()
-            }}
-            className="absolute left-4 z-10 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors disabled:opacity-50"
-            disabled={currentIndex === 0}
-          >
-            <ChevronLeft className="w-8 h-8" />
-          </button>
-          <button
-            onClick={(e) => {
-              e.stopPropagation()
-              onNext()
-            }}
-            className="absolute right-4 z-10 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors disabled:opacity-50"
-            disabled={currentIndex === images.length - 1}
-          >
-            <ChevronRight className="w-8 h-8" />
-          </button>
-        </>
-      )}
-
-      <div
-        className="relative max-w-[90vw] max-h-[90vh]"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <img
-          src={currentImage.preview}
-          alt={`Image ${currentIndex + 1}`}
-          className="max-w-full max-h-[90vh] object-contain rounded-lg"
-        />
         {images.length > 1 && (
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-black/50 text-white text-sm">
-            {currentIndex + 1} / {images.length}
-          </div>
+          <>
+            <button
+              onClick={onPrevious}
+              className="absolute left-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors disabled:opacity-50"
+              disabled={currentIndex === 0}
+            >
+              <ChevronLeft className="w-8 h-8" />
+            </button>
+            <button
+              onClick={onNext}
+              className="absolute right-12 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors disabled:opacity-50"
+              disabled={currentIndex === images.length - 1}
+            >
+              <ChevronRight className="w-8 h-8" />
+            </button>
+          </>
         )}
-      </div>
-    </div>
+
+        <div className="relative flex items-center justify-center">
+          <img
+            src={currentImage.preview}
+            alt={`Image ${currentIndex + 1}`}
+            className="max-w-full max-h-[85vh] object-contain rounded-lg"
+          />
+          {images.length > 1 && (
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-black/50 text-white text-sm">
+              {currentIndex + 1} / {images.length}
+            </div>
+          )}
+        </div>
+      </DialogContent>
+    </Dialog>
   )
 }
 
@@ -166,7 +158,18 @@ export const ChatInput = forwardRef<HTMLInputElement, ChatInputProps>(
         if (!files || !onImagesChange) return
 
         const remainingSlots = MAX_IMAGES - images.length
-        const filesToAdd = Array.from(files).slice(0, remainingSlots)
+        if (remainingSlots === 0) {
+          toast.error(`Maximum ${MAX_IMAGES} images allowed`)
+          event.target.value = ''
+          return
+        }
+
+        const allFiles = Array.from(files)
+        if (allFiles.length > remainingSlots) {
+          toast.error(`Maximum ${MAX_IMAGES} images allowed`)
+        }
+
+        const filesToAdd = allFiles.slice(0, remainingSlots)
 
         const newImages: ImageFile[] = await Promise.all(
           filesToAdd
@@ -218,6 +221,15 @@ export const ChatInput = forwardRef<HTMLInputElement, ChatInputProps>(
         event.preventDefault()
 
         const remainingSlots = MAX_IMAGES - images.length
+        if (remainingSlots === 0) {
+          toast.error(`Maximum ${MAX_IMAGES} images allowed`)
+          return
+        }
+
+        if (imageItems.length > remainingSlots) {
+          toast.error(`Maximum ${MAX_IMAGES} images allowed`)
+        }
+
         const itemsToProcess = imageItems.slice(0, remainingSlots)
 
         const newImages: ImageFile[] = await Promise.all(
@@ -272,20 +284,17 @@ export const ChatInput = forwardRef<HTMLInputElement, ChatInputProps>(
                 </button>
               </div>
             ))}
-            {images.length > 0 && images.length < MAX_IMAGES && (
-              <span className="text-xs text-zinc-400 self-center ml-2">
-                {MAX_IMAGES - images.length} more
-              </span>
-            )}
+
           </div>
         )}
 
         {/* Image Lightbox */}
-        {lightboxIndex !== null && images.length > 0 && (
+        {images.length > 0 && (
           <ImageLightbox
             images={images}
-            currentIndex={lightboxIndex}
-            onClose={closeLightbox}
+            currentIndex={lightboxIndex ?? 0}
+            open={lightboxIndex !== null}
+            onOpenChange={(open) => !open && closeLightbox()}
             onPrevious={goToPrevious}
             onNext={goToNext}
           />
