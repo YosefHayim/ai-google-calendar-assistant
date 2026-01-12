@@ -132,7 +132,8 @@ export const authTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
         if (!verification.success) {
           auditLogger.authFail(from.id, verification.error || "OTP verification failed", pendingEmail)
           await ctx.reply(
-            `${t("auth.otpInvalidError")}\n\n${t("auth.otpInvalidWithNewEmail", { error: verification.error || "" })}`
+            `${t("auth.otpInvalidError")}\n\n${t("auth.otpInvalidWithNewEmail", { error: verification.error || "" })}`,
+            { parse_mode: "HTML" }
           )
           return
         }
