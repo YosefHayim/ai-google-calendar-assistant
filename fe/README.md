@@ -54,8 +54,10 @@ This frontend application provides:
 | **Multiple View Modes** | Chat view, Avatar view, 3D visualization |
 | **Voice Input** | Speech-to-text via browser API and LiveKit |
 | **Voice Orb** | Visual feedback animation during voice input |
+| **Image Upload** | Upload images for AI vision analysis |
 | **Markdown Support** | Rich text rendering with syntax highlighting |
 | **Message Actions** | Copy, regenerate, and feedback options |
+| **TTS Caching** | Cached text-to-speech for repeated responses |
 
 ### Dashboard Views
 
@@ -92,7 +94,7 @@ This frontend application provides:
 | **CalendarFilterSelect** | Filter analytics by calendar |
 | **TimeDistributionChart** | Hourly activity breakdown |
 
-### Modal Dialogs
+### Modal Dialogs (15 Variants)
 
 | Dialog | Description |
 |--------|-------------|
@@ -103,6 +105,8 @@ This frontend application provides:
 | **CalendarSettingsDialog** | Manage calendar preferences |
 | **CreateCalendarDialog** | Create new secondary calendars |
 | **EventsListDialog** | Paginated event listing |
+| **RescheduleDialog** | Smart event rescheduling with conflict detection |
+| **GapRecoveryDialog** | Fill untracked time gaps |
 | **UserDetailsDialog** | Admin: detailed user information |
 | **GrantCreditsDialog** | Admin: grant user credits |
 
@@ -128,6 +132,14 @@ This frontend application provides:
 | **Session Management** | Automatic token refresh on focus |
 | **Protected Routes** | Route guards for authenticated pages |
 
+### Mobile & Responsive
+
+| Feature | Description |
+|---------|-------------|
+| **Hamburger Menu** | Mobile sidebar access via hamburger menu |
+| **Responsive Layouts** | Adaptive UI for all screen sizes |
+| **Touch-Friendly** | Optimized touch interactions |
+
 ### 3D Visualizations
 
 | Component | Description |
@@ -135,6 +147,7 @@ This frontend application provides:
 | **WallCalendar3D** | Interactive Three.js calendar view |
 | **WireframeGlobe** | Animated dotted globe |
 | **Particles** | tsParticles background effects |
+| **AllyCharacter** | 3D AI assistant animation |
 
 ---
 
@@ -362,6 +375,26 @@ interface DashboardUIContextType {
 | **LanguageContext** | i18n locale management |
 | **GapRecoveryContext** | Gap analysis state and operations |
 
+#### GapRecoveryContext
+
+```typescript
+interface GapRecoveryContextType {
+  gaps: Gap[]
+  isAnalyzing: boolean
+  selectedGap: Gap | null
+  analyzeGaps: (dateRange: DateRange) => Promise<void>
+  fillGap: (gap: Gap, eventDetails: EventInput) => Promise<void>
+  dismissGap: (gapId: string) => void
+  selectGap: (gap: Gap) => void
+}
+```
+
+**Features:**
+- Detect untracked time between calendar events
+- Suggest events to fill detected gaps
+- AI-powered activity recommendations
+- Integration with quick event creation
+
 ### TanStack Query Patterns
 
 #### Query Example
@@ -558,8 +591,12 @@ const form = useForm<FormValues>()
 | `useSpeechRecognition` | Browser speech API | `hooks/useSpeechRecognition.ts` |
 | `useLiveKitVoice` | LiveKit voice integration | `hooks/useLiveKitVoice.ts` |
 | `useAgentProfiles` | AI agent tier selection | `hooks/useAgentProfiles.ts` |
+| `useGapRecovery` | Gap detection and filling | `hooks/useGapRecovery.ts` |
+| `useImageUpload` | Image upload with preview | `hooks/useImageUpload.ts` |
+| `useTTSCache` | Text-to-speech caching | `hooks/useTTSCache.ts` |
 | `useDebounce` | Debounced values | `hooks/useDebounce.ts` |
 | `useLocalStorage` | Persistent local storage | `hooks/useLocalStorage.ts` |
+| `useMobileMenu` | Mobile hamburger menu state | `hooks/useMobileMenu.ts` |
 
 ### TanStack Query Hooks (60+)
 
@@ -691,6 +728,9 @@ const {
 | `paymentService` | `payment.service.ts` | Billing operations |
 | `adminService` | `admin.service.ts` | Admin operations |
 | `agentProfilesService` | `agent-profiles.service.ts` | Agent tier selection |
+| `preferencesService` | `preferences.service.ts` | User preferences management |
+| `ttsCacheService` | `tts-cache.service.ts` | TTS response caching |
+| `integrationsService` | `integrations.service.ts` | Google Calendar connection |
 
 ### Service Pattern
 
@@ -797,7 +837,9 @@ fe/
 ├── components/                  # React Components
 │   ├── 3d/                      # Three.js components
 │   │   ├── WallCalendar3D.tsx   # 3D calendar visualization
-│   │   └── WireframeGlobe.tsx   # Globe animation
+│   │   ├── WireframeGlobe.tsx   # Globe animation
+│   │   ├── AllyCharacter.tsx    # 3D AI assistant animation
+│   │   └── Particles.tsx        # tsParticles background effects
 │   ├── admin/                   # Admin components
 │   │   ├── AdminSidebar.tsx
 │   │   ├── GrantCreditsDialog.tsx
@@ -830,19 +872,23 @@ fe/
 │   │   │   ├── AvatarView.tsx
 │   │   │   ├── MessageBubble.tsx
 │   │   │   ├── StreamingTypewriter.tsx
+│   │   │   ├── ImageUpload.tsx
 │   │   │   └── VoiceOrb.tsx
 │   │   ├── shared/              # Shared dashboard components
 │   │   │   ├── DashboardHeader.tsx
 │   │   │   ├── DashboardSidebar.tsx
-│   │   │   └── DashboardLayout.tsx
+│   │   │   ├── DashboardLayout.tsx
+│   │   │   └── HamburgerMenu.tsx
 │   │   └── IntegrationsDashboard.tsx
-│   ├── dialogs/                 # Modal dialogs (14 variants)
+│   ├── dialogs/                 # Modal dialogs (15 variants)
 │   │   ├── CalendarEventsDialog.tsx
 │   │   ├── CalendarSettingsDialog.tsx
 │   │   ├── CreateCalendarDialog.tsx
 │   │   ├── DayEventsDialog.tsx
 │   │   ├── EventDetailsDialog.tsx
 │   │   ├── EventsListDialog.tsx
+│   │   ├── GapRecoveryDialog.tsx
+│   │   ├── RescheduleDialog.tsx
 │   │   └── QuickEventDialog.tsx
 │   ├── marketing/               # Marketing components
 │   │   ├── Navbar.tsx
@@ -889,18 +935,18 @@ fe/
 │
 ├── services/                    # API Services
 │   ├── admin.service.ts         # Admin API calls
-│   ├── agent-profiles.service.ts
+│   ├── agent-profiles.service.ts # AI agent tier selection
 │   ├── auth.service.ts          # Auth API calls
 │   ├── calendars.service.ts     # Calendar API calls
 │   ├── chatService.ts           # Chat API calls
-│   ├── chatStreamService.ts     # Streaming chat
+│   ├── chatStreamService.ts     # Streaming chat (SSE)
 │   ├── events.service.ts        # Events API calls
 │   ├── gaps.service.ts          # Gap recovery API
-│   ├── integrations.service.ts  # Integrations API
+│   ├── integrations.service.ts  # Google Calendar connection
 │   ├── payment.service.ts       # Payment API calls
-│   ├── preferences.service.ts   # User preferences
-│   ├── tts-cache.service.ts     # TTS caching
-│   └── voice.service.ts         # Voice API calls
+│   ├── preferences.service.ts   # User preferences & settings
+│   ├── tts-cache.service.ts     # Text-to-speech caching
+│   └── voice.service.ts         # Voice transcription API
 │
 ├── lib/                         # Utilities
 │   ├── api.ts                   # Axios instance
