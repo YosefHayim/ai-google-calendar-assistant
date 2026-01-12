@@ -14,6 +14,7 @@ import { toast } from "sonner";
 
 import { useGapSettings } from "@/hooks/queries/gaps";
 import { useGoogleCalendarStatus } from "@/hooks/queries/integrations";
+import { STORAGE_KEYS } from "@/lib/constants";
 
 const ONBOARDING_COMPLETE_KEY = "allyOnBoardingComplete";
 const LANGUAGE_ONBOARDING_DISMISSED_KEY = "allyLanguageOnboardingDismissed";
@@ -161,6 +162,10 @@ export function DashboardUIProvider({
 
   const handleSignOut = () => {
     closeSettings();
+    // Clear all auth-related localStorage items
+    localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN);
+    localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
+    localStorage.removeItem(STORAGE_KEYS.USER);
     router.push("/login");
   };
 
