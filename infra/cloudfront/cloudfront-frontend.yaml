@@ -1,0 +1,366 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: CloudFront distribution for Next.js Frontend on App Runner
+
+Parameters:
+  AppRunnerDomain:
+    Type: String
+    Description: The App Runner service URL (e.g., abc123.eu-central-1.awsapprunner.com)
+    Default: ''
+
+  CustomDomainName:
+    Type: String
+    Description: Custom domain name for CloudFront (e.g., askally.io)
+    Default: ''
+
+  AcmCertificateArn:
+    Type: String
+    Description: ARN of ACM certificate in us-east-1 for custom domain (required if using custom domain)
+    Default: ''
+
+  Environment:
+    Type: String
+    AllowedValues:
+      - production
+      - staging
+    Default: production
+
+Conditions:
+  HasCustomDomain: !Not [!Equals [!Ref CustomDomainName, '']]
+  HasCertificate: !Not [!Equals [!Ref AcmCertificateArn, '']]
+  UseCustomDomain: !And [!Condition HasCustomDomain, !Condition HasCertificate]
+
+Resources:
+  # Origin Request Policy - Forward necessary headers to App Runner
+  OriginRequestPolicy:
+    Type: AWS::CloudFront::OriginRequestPolicy
+    Properties:
+      OriginRequestPolicyConfig:
+        Name: !Sub '${AWS::StackName}-OriginRequestPolicy'
+        Comment: Forward headers needed for Next.js App Runner origin
+        HeadersConfig:
+          HeaderBehavior: whitelist
+          Headers:
+            - Host
+            - Accept
+            - Accept-Language
+            - Accept-Encoding
+            - X-Forwarded-For
+            - X-Forwarded-Proto
+        QueryStringsConfig:
+          QueryStringBehavior: all
+        CookiesConfig:
+          CookieBehavior: all
+
+  # Cache Policy for Static Assets (_next/static/*)
+  StaticAssetsCachePolicy:
+    Type: AWS::CloudFront::CachePolicy
+    Properties:
+      CachePolicyConfig:
+        Name: !Sub '${AWS::StackName}-StaticAssets'
+        Comment: Long-term caching for Next.js static assets
+        DefaultTTL: 31536000  # 1 year
+        MaxTTL: 31536000
+        MinTTL: 31536000
+        ParametersInCacheKeyAndForwardedToOrigin:
+          EnableAcceptEncodingGzip: true
+          EnableAcceptEncodingBrotli: true
+          HeadersConfig:
+            HeaderBehavior: none
+          QueryStringsConfig:
+            QueryStringBehavior: none
+          CookiesConfig:
+            CookieBehavior: none
+
+  # Cache Policy for Public Assets (images, fonts, etc.)
+  PublicAssetsCachePolicy:
+    Type: AWS::CloudFront::CachePolicy
+    Properties:
+      CachePolicyConfig:
+        Name: !Sub '${AWS::StackName}-PublicAssets'
+        Comment: Caching for public folder assets
+        DefaultTTL: 86400  # 1 day
+        MaxTTL: 2592000    # 30 days
+        MinTTL: 3600       # 1 hour
+        ParametersInCacheKeyAndForwardedToOrigin:
+          EnableAcceptEncodingGzip: true
+          EnableAcceptEncodingBrotli: true
+          HeadersConfig:
+            HeaderBehavior: none
+          QueryStringsConfig:
+            QueryStringBehavior: none
+          CookiesConfig:
+            CookieBehavior: none
+
+  # Cache Policy for Dynamic Content (HTML pages, API routes)
+  DynamicContentCachePolicy:
+    Type: AWS::CloudFront::CachePolicy
+    Properties:
+      CachePolicyConfig:
+        Name: !Sub '${AWS::StackName}-Dynamic'
+        Comment: No caching for dynamic Next.js content
+        DefaultTTL: 0
+        MaxTTL: 0
+        MinTTL: 0
+        ParametersInCacheKeyAndForwardedToOrigin:
+          EnableAcceptEncodingGzip: true
+          EnableAcceptEncodingBrotli: true
+          HeadersConfig:
+            HeaderBehavior: whitelist
+            Headers:
+              - Accept
+              - Accept-Language
+              - Authorization
+          QueryStringsConfig:
+            QueryStringBehavior: all
+          CookiesConfig:
+            CookieBehavior: all
+
+  # Response Headers Policy - Security headers
+  SecurityHeadersPolicy:
+    Type: AWS::CloudFront::ResponseHeadersPolicy
+    Properties:
+      ResponseHeadersPolicyConfig:
+        Name: !Sub '${AWS::StackName}-SecurityHeaders'
+        Comment: Security headers for frontend
+        SecurityHeadersConfig:
+          StrictTransportSecurity:
+            AccessControlMaxAgeSec: 31536000
+            IncludeSubdomains: true
+            Preload: true
+            Override: true
+          ContentTypeOptions:
+            Override: true
+          FrameOptions:
+            FrameOption: DENY
+            Override: true
+          ReferrerPolicy:
+            ReferrerPolicy: strict-origin-when-cross-origin
+            Override: true
+          XSSProtection:
+            ModeBlock: true
+            Protection: true
+            Override: true
+
+  # CloudFront Distribution
+  CloudFrontDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        Comment: !Sub 'Next.js Frontend CDN - ${Environment}'
+        DefaultRootObject: ''
+        HttpVersion: http2and3
+        IPV6Enabled: true
+        PriceClass: PriceClass_100  # Use only North America and Europe edge locations
+
+        # Custom domain configuration
+        Aliases: !If
+          - UseCustomDomain
+          - [!Ref CustomDomainName]
+          - !Ref AWS::NoValue
+
+        ViewerCertificate: !If
+          - UseCustomDomain
+          - AcmCertificateArn: !Ref AcmCertificateArn
+            SslSupportMethod: sni-only
+            MinimumProtocolVersion: TLSv1.2_2021
+          - CloudFrontDefaultCertificate: true
+
+        # Origin configuration
+        Origins:
+          - Id: AppRunnerOrigin
+            DomainName: !Ref AppRunnerDomain
+            CustomOriginConfig:
+              HTTPPort: 80
+              HTTPSPort: 443
+              OriginProtocolPolicy: https-only
+              OriginSSLProtocols:
+                - TLSv1.2
+              OriginReadTimeout: 30
+              OriginKeepaliveTimeout: 5
+            OriginCustomHeaders:
+              - HeaderName: X-CDN-Secret
+                HeaderValue: '{{resolve:secretsmanager:cloudfront-cdn-secret:SecretString:token}}'
+
+        # Cache behaviors - most specific patterns first
+        CacheBehaviors:
+          # Next.js static assets (hashed, immutable) - cache forever
+          - PathPattern: '_next/static/*'
+            TargetOriginId: AppRunnerOrigin
+            ViewerProtocolPolicy: redirect-to-https
+            AllowedMethods:
+              - GET
+              - HEAD
+            CachedMethods:
+              - GET
+              - HEAD
+            CachePolicyId: !Ref StaticAssetsCachePolicy
+            OriginRequestPolicyId: !Ref OriginRequestPolicy
+            ResponseHeadersPolicyId: !Ref SecurityHeadersPolicy
+            Compress: true
+
+          # Next.js image optimization API - short cache with query string variation
+          - PathPattern: '_next/image*'
+            TargetOriginId: AppRunnerOrigin
+            ViewerProtocolPolicy: redirect-to-https
+            AllowedMethods:
+              - GET
+              - HEAD
+            CachedMethods:
+              - GET
+              - HEAD
+            CachePolicyId: !Ref PublicAssetsCachePolicy
+            OriginRequestPolicyId: !Ref OriginRequestPolicy
+            ResponseHeadersPolicyId: !Ref SecurityHeadersPolicy
+            Compress: true
+
+          # Public folder assets (favicon, robots.txt, etc.)
+          - PathPattern: '*.ico'
+            TargetOriginId: AppRunnerOrigin
+            ViewerProtocolPolicy: redirect-to-https
+            AllowedMethods:
+              - GET
+              - HEAD
+            CachedMethods:
+              - GET
+              - HEAD
+            CachePolicyId: !Ref PublicAssetsCachePolicy
+            OriginRequestPolicyId: !Ref OriginRequestPolicy
+            Compress: true
+
+          - PathPattern: '*.png'
+            TargetOriginId: AppRunnerOrigin
+            ViewerProtocolPolicy: redirect-to-https
+            AllowedMethods:
+              - GET
+              - HEAD
+            CachedMethods:
+              - GET
+              - HEAD
+            CachePolicyId: !Ref PublicAssetsCachePolicy
+            OriginRequestPolicyId: !Ref OriginRequestPolicy
+            Compress: true
+
+          - PathPattern: '*.jpg'
+            TargetOriginId: AppRunnerOrigin
+            ViewerProtocolPolicy: redirect-to-https
+            AllowedMethods:
+              - GET
+              - HEAD
+            CachedMethods:
+              - GET
+              - HEAD
+            CachePolicyId: !Ref PublicAssetsCachePolicy
+            OriginRequestPolicyId: !Ref OriginRequestPolicy
+            Compress: true
+
+          - PathPattern: '*.svg'
+            TargetOriginId: AppRunnerOrigin
+            ViewerProtocolPolicy: redirect-to-https
+            AllowedMethods:
+              - GET
+              - HEAD
+            CachedMethods:
+              - GET
+              - HEAD
+            CachePolicyId: !Ref PublicAssetsCachePolicy
+            OriginRequestPolicyId: !Ref OriginRequestPolicy
+            Compress: true
+
+          - PathPattern: '*.woff2'
+            TargetOriginId: AppRunnerOrigin
+            ViewerProtocolPolicy: redirect-to-https
+            AllowedMethods:
+              - GET
+              - HEAD
+            CachedMethods:
+              - GET
+              - HEAD
+            CachePolicyId: !Ref PublicAssetsCachePolicy
+            OriginRequestPolicyId: !Ref OriginRequestPolicy
+            Compress: true
+
+          - PathPattern: 'robots.txt'
+            TargetOriginId: AppRunnerOrigin
+            ViewerProtocolPolicy: redirect-to-https
+            AllowedMethods:
+              - GET
+              - HEAD
+            CachedMethods:
+              - GET
+              - HEAD
+            CachePolicyId: !Ref PublicAssetsCachePolicy
+            OriginRequestPolicyId: !Ref OriginRequestPolicy
+            Compress: true
+
+          - PathPattern: 'sitemap*.xml'
+            TargetOriginId: AppRunnerOrigin
+            ViewerProtocolPolicy: redirect-to-https
+            AllowedMethods:
+              - GET
+              - HEAD
+            CachedMethods:
+              - GET
+              - HEAD
+            CachePolicyId: !Ref PublicAssetsCachePolicy
+            OriginRequestPolicyId: !Ref OriginRequestPolicy
+            Compress: true
+
+        # Default behavior for all other requests (dynamic content)
+        DefaultCacheBehavior:
+          TargetOriginId: AppRunnerOrigin
+          ViewerProtocolPolicy: redirect-to-https
+          AllowedMethods:
+            - DELETE
+            - GET
+            - HEAD
+            - OPTIONS
+            - PATCH
+            - POST
+            - PUT
+          CachedMethods:
+            - GET
+            - HEAD
+          CachePolicyId: !Ref DynamicContentCachePolicy
+          OriginRequestPolicyId: !Ref OriginRequestPolicy
+          ResponseHeadersPolicyId: !Ref SecurityHeadersPolicy
+          Compress: true
+
+        # Custom error responses
+        CustomErrorResponses:
+          - ErrorCode: 503
+            ResponseCode: 503
+            ResponsePagePath: /503
+            ErrorCachingMinTTL: 10
+          - ErrorCode: 502
+            ResponseCode: 502
+            ResponsePagePath: /502
+            ErrorCachingMinTTL: 10
+
+      Tags:
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Service
+          Value: frontend-cdn
+
+Outputs:
+  CloudFrontDistributionId:
+    Description: CloudFront Distribution ID
+    Value: !Ref CloudFrontDistribution
+    Export:
+      Name: !Sub '${AWS::StackName}-DistributionId'
+
+  CloudFrontDomainName:
+    Description: CloudFront Distribution Domain Name
+    Value: !GetAtt CloudFrontDistribution.DomainName
+    Export:
+      Name: !Sub '${AWS::StackName}-DomainName'
+
+  CloudFrontURL:
+    Description: Full CloudFront URL
+    Value: !Sub 'https://${CloudFrontDistribution.DomainName}'
+
+  CustomDomainURL:
+    Condition: UseCustomDomain
+    Description: Custom Domain URL
+    Value: !Sub 'https://${CustomDomainName}'

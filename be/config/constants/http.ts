@@ -29,6 +29,7 @@ export enum ROUTES {
   VOICE = "/api/voice",
   ADMIN = "/api/admin",
   CRON = "/api/cron",
+  TELEGRAM = "/api/telegram",
 }
 
 export enum PROVIDERS {

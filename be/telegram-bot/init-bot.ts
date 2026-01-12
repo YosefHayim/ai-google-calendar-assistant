@@ -1,4 +1,6 @@
 import { run, type RunnerHandle } from "@grammyjs/runner"
+import type { Bot } from "grammy"
+import { env } from "@/config"
 import { logger } from "@/utils/logger"
 import {
   createBot,
@@ -12,24 +14,81 @@ import { registerMessageHandler } from "./handlers/message-handler"
 
 export type { GlobalContext }
 
-const bot = createBot()
-
-configureSession(bot)
-configureMiddleware(bot)
-registerCallbackHandlers(bot)
-registerMessageHandler(bot)
-
+// Bot instance - initialized lazily
+let bot: Bot<GlobalContext> | null = null
 let runnerHandle: RunnerHandle | null = null
+let isInitialized = false
 
 const MINUTES_IN_RETRY = 5
 const SECONDS_IN_MINUTE = 60
 const MS_IN_SECOND = 1000
 const MAX_RETRY_TIME_MS = MINUTES_IN_RETRY * SECONDS_IN_MINUTE * MS_IN_SECOND
 
-export const startTelegramBot = async (): Promise<void> => {
-  await registerBotCommands(bot)
+/**
+ * Get the bot instance (for webhook handler)
+ * Returns null if bot is not enabled or not initialized
+ */
+export const getBot = (): Bot<GlobalContext> | null => {
+  return bot
+}
 
-  runnerHandle = run(bot, {
+/**
+ * Initialize the bot instance with all middleware and handlers
+ * This is called once at startup
+ */
+const initializeBot = (): Bot<GlobalContext> => {
+  if (bot) return bot
+
+  bot = createBot()
+  configureSession(bot)
+  configureMiddleware(bot)
+  registerCallbackHandlers(bot)
+  registerMessageHandler(bot)
+
+  return bot
+}
+
+/**
+ * Set up webhook with Telegram API
+ * This tells Telegram to send updates to our webhook URL instead of polling
+ */
+const setupWebhook = async (botInstance: Bot<GlobalContext>): Promise<void> => {
+  const webhookUrl = `${env.baseUrl}/api/telegram/webhook`
+
+  try {
+    // Delete any existing webhook first
+    await botInstance.api.deleteWebhook({ drop_pending_updates: false })
+
+    // Set the webhook
+    await botInstance.api.setWebhook(webhookUrl, {
+      allowed_updates: [
+        "message",
+        "callback_query",
+        "inline_query",
+        "chosen_inline_result",
+        "my_chat_member",
+      ],
+      drop_pending_updates: false,
+    })
+
+    logger.info(`Telegram Bot: Webhook set to ${webhookUrl}`)
+  } catch (error) {
+    logger.error(`Telegram Bot: Failed to set webhook: ${error}`)
+    throw error
+  }
+}
+
+/**
+ * Start the bot in long-polling mode (development/fallback)
+ * WARNING: Not recommended for production with App Runner due to:
+ * - Idle timeout issues
+ * - Duplicate bot instances with auto-scaling
+ */
+const startPolling = async (botInstance: Bot<GlobalContext>): Promise<void> => {
+  // Delete any existing webhook before starting polling
+  await botInstance.api.deleteWebhook({ drop_pending_updates: false })
+
+  runnerHandle = run(botInstance, {
     runner: {
       maxRetryTime: MAX_RETRY_TIME_MS,
       retryInterval: "exponential",
@@ -37,24 +96,89 @@ export const startTelegramBot = async (): Promise<void> => {
     },
   })
 
-  const stopBot = async (): Promise<void> => {
-    if (runnerHandle) {
-      await runnerHandle.stop()
-    }
-    process.exit(0)
+  logger.info("Telegram Bot: Started in polling mode")
+}
+
+/**
+ * Start the Telegram bot
+ * Automatically chooses webhook or polling mode based on environment
+ *
+ * Production (with TELEGRAM_WEBHOOK_SECRET): Uses webhooks
+ * Development (or without secret): Uses long-polling
+ */
+export const startTelegramBot = async (): Promise<void> => {
+  // Check if Telegram is enabled
+  if (!env.integrations.telegram.isEnabled) {
+    logger.info("Telegram Bot: Disabled (no access token)")
+    return
   }
 
-  process.once("SIGINT", stopBot)
-  process.once("SIGTERM", stopBot)
+  // Prevent double initialization
+  if (isInitialized) {
+    logger.warn("Telegram Bot: Already initialized")
+    return
+  }
 
-  process.on("unhandledRejection", (reason: unknown) => {
-    if (
-      reason instanceof Error &&
-      (reason.message.includes("getUpdates") ||
-        reason.message.includes("Network request"))
-    ) {
-      return
+  try {
+    // Initialize the bot
+    const botInstance = initializeBot()
+
+    // Register bot commands with Telegram
+    await registerBotCommands(botInstance)
+
+    // Choose mode based on environment
+    if (env.integrations.telegram.useWebhook) {
+      // Production: Use webhooks
+      await setupWebhook(botInstance)
+      logger.info("Telegram Bot: Running in webhook mode")
+    } else {
+      // Development: Use long-polling
+      await startPolling(botInstance)
     }
-    logger.error(`Telegram Bot: Unhandled rejection: ${reason}`)
-  })
+
+    isInitialized = true
+
+    // Set up graceful shutdown
+    const stopBot = async (): Promise<void> => {
+      logger.info("Telegram Bot: Shutting down...")
+
+      if (runnerHandle) {
+        await runnerHandle.stop()
+        runnerHandle = null
+      }
+
+      // Remove webhook on shutdown (optional, but clean)
+      if (bot && env.integrations.telegram.useWebhook) {
+        try {
+          await bot.api.deleteWebhook()
+        } catch {
+          // Ignore errors during shutdown
+        }
+      }
+
+      bot = null
+      isInitialized = false
+    }
+
+    process.once("SIGINT", stopBot)
+    process.once("SIGTERM", stopBot)
+
+    // Handle unhandled rejections gracefully
+    process.on("unhandledRejection", (reason: unknown) => {
+      if (
+        reason instanceof Error &&
+        (reason.message.includes("getUpdates") ||
+          reason.message.includes("Network request"))
+      ) {
+        return
+      }
+      logger.error(`Telegram Bot: Unhandled rejection: ${reason}`)
+    })
+  } catch (error) {
+    logger.error(`Telegram Bot: Failed to start: ${error}`)
+    // In production, we want the container to restart if bot fails to start
+    if (env.isProd) {
+      throw error
+    }
+  }
 }

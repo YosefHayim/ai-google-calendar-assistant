@@ -79,7 +79,8 @@ const server = {
   get baseUrl(): string {
     // In production, use hardcoded URL. In dev, use localhost.
     if (isProd) {
-      return CONSTANTS.PROD_BACKEND_URL;
+      // Remove trailing slash to prevent double slashes in URL concatenation
+      return CONSTANTS.PROD_BACKEND_URL.replace(/\/+$/, "");
     }
     const url = process.env.BASE_URL ?? `http://${this.host}:${this.port}`;
     return url.replace(/\/+$/, "");
@@ -155,6 +156,11 @@ const lemonSqueezy = {
 const integrations = {
   telegram: {
     accessToken: getOptional("TELEGRAM_BOT_ACCESS_TOKEN"),
+    // Always use webhook mode in production for reliability with App Runner
+    // Long-polling fails with auto-scaling (duplicate bots) and idle timeouts
+    get useWebhook(): boolean {
+      return isProd;
+    },
     get isEnabled(): boolean {
       return !!this.accessToken;
     },
