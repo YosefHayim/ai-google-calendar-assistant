@@ -1,3 +1,24 @@
+/**
+ * @module logger
+ * @description Centralized logging utility for the application using Winston.
+ *
+ * This module provides a pre-configured Winston logger instance with environment-aware
+ * transports and formatting. In development mode, logs are written to both files and
+ * console with colorized output. In production, logs are sent to console only (for
+ * AWS App Runner / CloudWatch capture).
+ *
+ * Log files are organized by date and environment:
+ * - `logs/{env}-error-{date}.log` - Error-level logs only
+ * - `logs/{env}-combined-{date}.log` - All log levels
+ *
+ * @example
+ * import { logger } from "@/utils/logger";
+ *
+ * logger.info("User logged in", { userId: 123 });
+ * logger.warn("Rate limit approaching", { remaining: 5 });
+ * logger.error("Failed to connect", { error: err.message });
+ */
+
 import { env } from "@/config";
 import path from "path";
 import winston from "winston";
@@ -41,6 +62,32 @@ if (env.isDev) {
   );
 }
 
+/**
+ * @description The main application logger instance.
+ * A pre-configured Winston logger with environment-specific transports.
+ *
+ * Available log levels (in order of severity):
+ * - error: Critical errors that need immediate attention
+ * - warn: Warning conditions that should be reviewed
+ * - info: General informational messages (default level)
+ * - http: HTTP request logging
+ * - verbose: Detailed informational messages
+ * - debug: Debug-level messages for development
+ * - silly: Most verbose logging level
+ *
+ * @type {winston.Logger}
+ * @example
+ * import { logger } from "@/utils/logger";
+ *
+ * // Basic logging
+ * logger.info("Application started");
+ *
+ * // Logging with metadata
+ * logger.info("User action", { userId: 123, action: "login" });
+ *
+ * // Error logging with stack trace
+ * logger.error("Database connection failed", { error: err.stack });
+ */
 export const logger = winston.createLogger({
   level: "info",
   format: winston.format.combine(winston.format.timestamp(), jsonWithGap),

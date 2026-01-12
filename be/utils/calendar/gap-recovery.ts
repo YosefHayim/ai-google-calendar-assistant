@@ -49,6 +49,16 @@ const DEFAULT_PATTERNS = getCombinedPatternsForLanguages(["en"]);
 // Helper Functions
 // =============================================================================
 
+/**
+ * @description Formats a duration in milliseconds into a human-readable string.
+ * Returns the most concise representation (hours, minutes, or both).
+ * @param {number} durationMs - The duration in milliseconds to format.
+ * @returns {string} A formatted duration string (e.g., "30m", "2h", "1h 45m").
+ * @example
+ * formatDuration(1800000); // Returns "30m"
+ * formatDuration(7200000); // Returns "2h"
+ * formatDuration(5400000); // Returns "1h 30m"
+ */
 function formatDuration(durationMs: number): string {
   const hours = Math.floor(durationMs / MS_PER_HOUR);
   const minutes = Math.floor((durationMs % MS_PER_HOUR) / MS_PER_MINUTE);
@@ -61,6 +71,14 @@ function formatDuration(durationMs: number): string {
   return `${minutes}m`;
 }
 
+/**
+ * @description Converts a Date object to a lowercase day of the week string.
+ * Used for checking if gaps fall on user-configured ignored days.
+ * @param {Date} date - The date to get the day of week from.
+ * @returns {DayOfWeek} The lowercase day name (e.g., "monday", "tuesday").
+ * @example
+ * getDayOfWeek(new Date("2025-01-15")); // Returns "wednesday"
+ */
 function getDayOfWeek(date: Date): DayOfWeek {
   const days: DayOfWeek[] = [
     "sunday",
@@ -74,6 +92,17 @@ function getDayOfWeek(date: Date): DayOfWeek {
   return days[date.getDay()];
 }
 
+/**
+ * @description Matches an event summary against travel-related patterns to detect arrival or departure events.
+ * Delegates to the multilingual pattern matching function with a default pattern set.
+ * @param {string} summary - The event summary/title to match against patterns.
+ * @param {"arrival" | "departure"} type - The type of travel pattern to match.
+ * @param {TravelPatternSet} [patterns=DEFAULT_PATTERNS] - Optional pattern set to use for matching.
+ * @returns {{ matched: boolean; location: string | null }} Object indicating if pattern matched and extracted location.
+ * @example
+ * matchTravelPattern("Drive to airport", "arrival"); // Returns { matched: true, location: "airport" }
+ * matchTravelPattern("Team meeting", "arrival"); // Returns { matched: false, location: null }
+ */
 function matchTravelPattern(
   summary: string,
   type: "arrival" | "departure",
@@ -82,6 +111,18 @@ function matchTravelPattern(
   return matchTravelPatternMultilingual(summary, type, patterns);
 }
 
+/**
+ * @description Calculates a confidence score for a travel sandwich detection based on location matching.
+ * Higher confidence is assigned when arrival location is known and departure matches "home" or is unspecified.
+ * @param {string | null} arrivalLocation - The destination location extracted from the arrival event.
+ * @param {string | null} departureLocation - The origin location extracted from the departure event.
+ * @returns {number} A confidence score between 0.7 and 0.9.
+ * @example
+ * calculateTravelSandwichConfidence("office", "home"); // Returns 0.9
+ * calculateTravelSandwichConfidence("office", null); // Returns 0.9
+ * calculateTravelSandwichConfidence("office", "office"); // Returns 0.85
+ * calculateTravelSandwichConfidence(null, null); // Returns 0.7
+ */
 function calculateTravelSandwichConfidence(
   arrivalLocation: string | null,
   departureLocation: string | null
@@ -100,6 +141,21 @@ function calculateTravelSandwichConfidence(
   return 0.7;
 }
 
+/**
+ * @description Detects if a gap between two events represents a "travel sandwich" pattern.
+ * A travel sandwich occurs when an arrival event is followed by a departure event, suggesting
+ * the user spent time at a destination between travel events.
+ * @param {calendar_v3.Schema$Event} precedingEvent - The event before the gap (potential arrival).
+ * @param {calendar_v3.Schema$Event} followingEvent - The event after the gap (potential departure).
+ * @param {TravelPatternSet} [patterns=DEFAULT_PATTERNS] - Optional pattern set for multilingual matching.
+ * @returns {InferredContext | null} Context with suggestion and confidence, or null if not a travel sandwich.
+ * @example
+ * const context = detectTravelSandwich(arrivalEvent, departureEvent);
+ * if (context) {
+ *   console.log(context.suggestion); // "Activity at office"
+ *   console.log(context.confidence); // 0.9
+ * }
+ */
 function detectTravelSandwich(
   precedingEvent: calendar_v3.Schema$Event,
   followingEvent: calendar_v3.Schema$Event,
@@ -152,6 +208,25 @@ type DetectWorkSessionParams = {
   patterns?: TravelPatternSet;
 };
 
+/**
+ * @description Detects if a gap likely represents an untracked work session.
+ * Analyzes the gap timing (8 AM - 6 PM) and whether surrounding events are work-related
+ * based on keyword matching in event summaries.
+ * @param {DetectWorkSessionParams} params - Parameters for work session detection.
+ * @param {Date} params.gapStart - The start time of the gap.
+ * @param {Date} params.gapEnd - The end time of the gap.
+ * @param {calendar_v3.Schema$Event} params.precedingEvent - The event before the gap.
+ * @param {calendar_v3.Schema$Event} params.followingEvent - The event after the gap.
+ * @param {TravelPatternSet} [params.patterns] - Optional pattern set for work keyword matching.
+ * @returns {InferredContext | null} Context with "Work session" suggestion if detected, or null.
+ * @example
+ * const context = detectWorkSession({
+ *   gapStart: new Date("2025-01-15T10:00:00"),
+ *   gapEnd: new Date("2025-01-15T12:00:00"),
+ *   precedingEvent: meetingEvent,
+ *   followingEvent: syncEvent
+ * });
+ */
 function detectWorkSession({
   gapStart,
   gapEnd,
@@ -183,6 +258,16 @@ function detectWorkSession({
   return null;
 }
 
+/**
+ * @description Detects if a gap likely represents a meal break based on time of day and duration.
+ * Identifies breakfast (7-9 AM, 30-90 min), lunch (11 AM-2 PM, 30-120 min), and dinner (5-8 PM, 45-150 min).
+ * @param {Date} gapStart - The start time of the gap.
+ * @param {number} gapDurationMs - The duration of the gap in milliseconds.
+ * @returns {InferredContext | null} Context with meal type suggestion if detected, or null.
+ * @example
+ * detectMealBreak(new Date("2025-01-15T12:00:00"), 3600000); // Returns { type: "meal_break", suggestion: "Lunch break", ... }
+ * detectMealBreak(new Date("2025-01-15T22:00:00"), 3600000); // Returns null (not meal time)
+ */
 function detectMealBreak(
   gapStart: Date,
   gapDurationMs: number
@@ -225,6 +310,17 @@ function detectMealBreak(
   return null;
 }
 
+/**
+ * @description Creates a generic context for gaps that don't match specific patterns.
+ * Used as a fallback when travel, work, or meal patterns are not detected.
+ * @param {calendar_v3.Schema$Event} precedingEvent - The event before the gap.
+ * @param {calendar_v3.Schema$Event} followingEvent - The event after the gap.
+ * @param {number} durationMs - The duration of the gap in milliseconds.
+ * @returns {InferredContext} A standard gap context with descriptive suggestion.
+ * @example
+ * const context = createStandardGapContext(event1, event2, 3600000);
+ * // Returns { type: "standard_gap", suggestion: "1h untracked between \"Meeting\" and \"Lunch\"", ... }
+ */
 function createStandardGapContext(
   precedingEvent: calendar_v3.Schema$Event,
   followingEvent: calendar_v3.Schema$Event,
@@ -251,6 +347,27 @@ type InferGapContextParams = {
   patterns?: TravelPatternSet;
 };
 
+/**
+ * @description Infers the most likely context for a calendar gap using multiple detection strategies.
+ * Tries travel sandwich, work session, and meal break detection in order of priority,
+ * falling back to a standard gap context if no specific pattern is matched.
+ * @param {InferGapContextParams} params - Parameters for gap context inference.
+ * @param {Date} params.gapStart - The start time of the gap.
+ * @param {Date} params.gapEnd - The end time of the gap.
+ * @param {calendar_v3.Schema$Event} params.precedingEvent - The event before the gap.
+ * @param {calendar_v3.Schema$Event} params.followingEvent - The event after the gap.
+ * @param {number} params.durationMs - The duration of the gap in milliseconds.
+ * @param {TravelPatternSet} [params.patterns] - Optional pattern set for multilingual matching.
+ * @returns {InferredContext | null} The inferred context with type, suggestion, and confidence score.
+ * @example
+ * const context = inferGapContext({
+ *   gapStart: new Date("2025-01-15T10:00:00"),
+ *   gapEnd: new Date("2025-01-15T12:00:00"),
+ *   precedingEvent: arrivalEvent,
+ *   followingEvent: departureEvent,
+ *   durationMs: 7200000
+ * });
+ */
 function inferGapContext({
   gapStart,
   gapEnd,
@@ -291,6 +408,17 @@ function inferGapContext({
   return createStandardGapContext(precedingEvent, followingEvent, durationMs);
 }
 
+/**
+ * @description Creates a simplified boundary event object from a Google Calendar event.
+ * Used to represent the events that bookend a detected gap.
+ * @param {calendar_v3.Schema$Event} event - The Google Calendar event to convert.
+ * @param {Date} timestamp - The relevant timestamp (start or end) for this boundary.
+ * @param {string} calendarId - The ID of the calendar containing the event.
+ * @returns {GapBoundaryEvent} A simplified event object with essential display information.
+ * @example
+ * const boundary = createGapBoundaryEvent(calendarEvent, new Date(), "primary");
+ * // Returns { eventId: "abc123", summary: "Meeting", timestamp: Date, ... }
+ */
 function createGapBoundaryEvent(
   event: calendar_v3.Schema$Event,
   timestamp: Date,
@@ -306,18 +434,49 @@ function createGapBoundaryEvent(
   };
 }
 
+/**
+ * @description Extracts the end time from a Google Calendar event as a Date object.
+ * Handles both timed events (dateTime) and all-day events (date).
+ * @param {calendar_v3.Schema$Event} event - The Google Calendar event.
+ * @returns {Date | null} The event end time as a Date, or null if not available.
+ * @example
+ * const endTime = getEventEndTime(calendarEvent);
+ * if (endTime) {
+ *   console.log("Event ends at:", endTime.toISOString());
+ * }
+ */
 function getEventEndTime(event: calendar_v3.Schema$Event): Date | null {
   const endStr = event.end?.dateTime || event.end?.date;
   if (!endStr) return null;
   return new Date(endStr);
 }
 
+/**
+ * @description Extracts the start time from a Google Calendar event as a Date object.
+ * Handles both timed events (dateTime) and all-day events (date).
+ * @param {calendar_v3.Schema$Event} event - The Google Calendar event.
+ * @returns {Date | null} The event start time as a Date, or null if not available.
+ * @example
+ * const startTime = getEventStartTime(calendarEvent);
+ * if (startTime) {
+ *   console.log("Event starts at:", startTime.toISOString());
+ * }
+ */
 function getEventStartTime(event: calendar_v3.Schema$Event): Date | null {
   const startStr = event.start?.dateTime || event.start?.date;
   if (!startStr) return null;
   return new Date(startStr);
 }
 
+/**
+ * @description Converts a GapCandidate internal object to a GapCandidateDTO for API responses.
+ * Transforms Date objects to ISO strings and calculates duration in minutes.
+ * @param {GapCandidate} gap - The internal gap candidate object with Date instances.
+ * @returns {GapCandidateDTO} A serializable DTO suitable for JSON responses.
+ * @example
+ * const dto = gapCandidateToDTO(gapCandidate);
+ * // Returns { id: "uuid", start: "2025-01-15T10:00:00Z", durationMinutes: 60, ... }
+ */
 function gapCandidateToDTO(gap: GapCandidate): GapCandidateDTO {
   return {
     id: gap.id,
@@ -347,6 +506,26 @@ type AnalyzeGapsParams = {
   options?: GapAnalysisOptions;
 };
 
+/**
+ * @description Analyzes a user's calendar to find gaps between events that may represent untracked time.
+ * Fetches events from Google Calendar, identifies gaps meeting duration thresholds, and infers
+ * context for each gap based on surrounding events and time of day.
+ * @param {AnalyzeGapsParams} params - Parameters for gap analysis.
+ * @param {string} params.email - The user's email address for authentication.
+ * @param {Date} params.startDate - The start of the analysis period.
+ * @param {Date} params.endDate - The end of the analysis period.
+ * @param {string} [params.calendarId="primary"] - The calendar ID to analyze.
+ * @param {Partial<GapRecoverySettings>} [params.settings] - Override default gap recovery settings.
+ * @param {GapAnalysisOptions} [params.options] - Additional analysis options.
+ * @returns {Promise<GapCandidate[]>} Array of detected gaps with inferred context and metadata.
+ * @example
+ * const gaps = await analyzeGaps({
+ *   email: "user@example.com",
+ *   startDate: new Date("2025-01-08"),
+ *   endDate: new Date("2025-01-15"),
+ *   settings: { minGapThreshold: 60 }
+ * });
+ */
 export const analyzeGaps = asyncHandler(
   async ({
     email,
@@ -477,6 +656,21 @@ type AnalyzeGapsForUserParams = {
   settings?: Partial<GapRecoverySettings>;
 };
 
+/**
+ * @description High-level function to analyze gaps for a user over a specified lookback period.
+ * Wraps analyzeGaps with sensible defaults and returns DTOs ready for API responses.
+ * @param {AnalyzeGapsForUserParams} params - Parameters for user gap analysis.
+ * @param {string} params.email - The user's email address for authentication.
+ * @param {number} [params.lookbackDays=7] - Number of days to look back for gap analysis.
+ * @param {string} [params.calendarId="primary"] - The calendar ID to analyze.
+ * @param {Partial<GapRecoverySettings>} [params.settings] - Override default gap recovery settings.
+ * @returns {Promise<GapCandidateDTO[]>} Array of gap DTOs suitable for API responses.
+ * @example
+ * const gaps = await analyzeGapsForUser({
+ *   email: "user@example.com",
+ *   lookbackDays: 14
+ * });
+ */
 export const analyzeGapsForUser = asyncHandler(
   async ({
     email,
@@ -509,6 +703,27 @@ type FillGapParams = {
   eventDetails: FillGapRequest;
 };
 
+/**
+ * @description Creates a new calendar event to fill a detected gap with user-specified activity.
+ * Uses the gap's time boundaries and user-provided event details to create the event.
+ * @param {FillGapParams} params - Parameters for filling the gap.
+ * @param {string} params.email - The user's email address for authentication.
+ * @param {string} params.gapId - The unique identifier of the gap being filled.
+ * @param {Date} params.gapStart - The start time of the gap.
+ * @param {Date} params.gapEnd - The end time of the gap.
+ * @param {string} params.calendarId - The default calendar ID if not specified in eventDetails.
+ * @param {FillGapRequest} params.eventDetails - Event details including summary, description, location.
+ * @returns {Promise<{ success: boolean; eventId?: string }>} Result indicating success and the new event ID.
+ * @example
+ * const result = await fillGap({
+ *   email: "user@example.com",
+ *   gapId: "gap-uuid",
+ *   gapStart: new Date("2025-01-15T10:00:00"),
+ *   gapEnd: new Date("2025-01-15T12:00:00"),
+ *   calendarId: "primary",
+ *   eventDetails: { summary: "Deep work session" }
+ * });
+ */
 export const fillGap = asyncHandler(
   async ({
     email,
@@ -545,6 +760,21 @@ export const fillGap = asyncHandler(
   }
 );
 
+/**
+ * @description Formats an array of gap candidates into a human-readable string for display.
+ * Creates a numbered list with dates, times, surrounding events, and suggested activities.
+ * Includes interactive instructions for users to fill or skip gaps.
+ * @param {GapCandidateDTO[]} gaps - Array of gap DTOs to format for display.
+ * @returns {string} A formatted multi-line string suitable for chat or UI display.
+ * @example
+ * const displayText = formatGapsForDisplay(gaps);
+ * // Returns:
+ * // "I noticed some gaps in your calendar:
+ * //  1. **Wednesday, Jan 15** | 10:00 AM - 12:00 PM (2h)
+ * //     Between: \"Meeting\" -> \"Lunch\"
+ * //     Suggested: Work session
+ * //  ..."
+ */
 export const formatGapsForDisplay = (gaps: GapCandidateDTO[]): string => {
   if (gaps.length === 0) {
     return "No gaps found in your calendar for the specified period.";

@@ -23,9 +23,27 @@ const TITLE_TRUNCATE_LENGTH = 50;
 const TITLE_TRUNCATE_SUFFIX_LENGTH = 47;
 const TITLE_CLEANUP_REGEX = /^[-•*]\s*/;
 
+/**
+ * @description Maps a message role string to the database-compatible MessageRole type.
+ * @param {("user" | "assistant" | "system")} role - The role of the message sender.
+ * @returns {MessageRole} The role cast to MessageRole type for database storage.
+ * @example
+ * const dbRole = mapRoleToDb("user"); // Returns "user" as MessageRole
+ */
 const mapRoleToDb = (role: "user" | "assistant" | "system"): MessageRole =>
   role as MessageRole;
 
+/**
+ * @description Calculates the total character length of all message contents in an array.
+ * Used to determine when conversation context should be summarized.
+ * @param {userAndAiMessageProps[]} messages - Array of conversation messages.
+ * @returns {number} The total character count of all message contents.
+ * @example
+ * const length = calculateContextLength([
+ *   { role: "user", content: "Hello" },
+ *   { role: "assistant", content: "Hi there!" }
+ * ]); // Returns 15
+ */
 const calculateContextLength = (messages: userAndAiMessageProps[]): number =>
   messages.reduce((total, msg) => total + (msg.content?.length || 0), 0);
 
@@ -46,10 +64,29 @@ type AddMessageParams = {
   summarizeFn: SummarizeFn;
 };
 
+/**
+ * @description Service class for managing conversation state, messages, and summaries.
+ * Handles CRUD operations for conversations stored in Supabase, including automatic
+ * summarization of long conversations to maintain context within size limits.
+ * @example
+ * const service = new ConversationService("web", { maxContextLength: 2000 });
+ * const conversation = await service.createConversation(userId);
+ */
 export class ConversationService {
   private readonly source: ConversationSource;
   private readonly config: ConversationConfig;
 
+  /**
+   * @description Creates a new ConversationService instance for managing conversations.
+   * @param {ConversationSource} source - The source platform for conversations ("web" or "telegram").
+   * @param {Partial<ConversationConfig>} [config={}] - Optional configuration overrides for context limits and summarization thresholds.
+   * @example
+   * const webService = new ConversationService("web");
+   * const telegramService = new ConversationService("telegram", {
+   *   maxContextLength: 1500,
+   *   maxMessagesBeforeSummarize: 6
+   * });
+   */
   constructor(
     source: ConversationSource,
     config: Partial<ConversationConfig> = {},
@@ -58,6 +95,16 @@ export class ConversationService {
     this.config = { ...DEFAULT_CONVERSATION_CONFIG, ...config };
   }
 
+  /**
+   * @description Retrieves all messages for a specific conversation from the database.
+   * Messages are filtered to only include user and assistant roles, ordered by sequence number.
+   * Image metadata is extracted and included in the returned message objects.
+   * @param {string} conversationId - The unique identifier of the conversation.
+   * @returns {Promise<userAndAiMessageProps[]>} Array of messages with role, content, and optional images.
+   * @example
+   * const messages = await service.getConversationMessages("conv-123");
+   * // Returns: [{ role: "user", content: "Hello" }, { role: "assistant", content: "Hi!" }]
+   */
   async getConversationMessages(
     conversationId: string,
   ): Promise<userAndAiMessageProps[]> {
@@ -100,6 +147,18 @@ export class ConversationService {
       });
   }
 
+  /**
+   * @description Retrieves the active conversation for today based on the identifier.
+   * For web source, uses user_id; for telegram, uses external_chat_id.
+   * Returns null if no active conversation exists or if it wasn't updated today.
+   * @param {string | number} identifier - User ID (string) for web or chat ID (number) for telegram.
+   * @returns {Promise<WebConversationRow | TelegramConversationRow | null>} The conversation row if found and updated today, null otherwise.
+   * @example
+   * // Web usage
+   * const webConvo = await service.getTodayConversation("user-uuid-123");
+   * // Telegram usage
+   * const telegramConvo = await service.getTodayConversation(123456789);
+   */
   async getTodayConversation(
     identifier: string | number,
   ): Promise<WebConversationRow | TelegramConversationRow | null> {
@@ -134,6 +193,22 @@ export class ConversationService {
     return data as WebConversationRow | TelegramConversationRow;
   }
 
+  /**
+   * @description Creates a new conversation in the database with optional initial message.
+   * For telegram conversations, also stores the external chat ID.
+   * @param {string} userId - The UUID of the user creating the conversation.
+   * @param {number} [externalChatId] - Optional telegram chat ID for telegram source conversations.
+   * @param {userAndAiMessageProps} [initialMessage] - Optional first message to add to the conversation.
+   * @returns {Promise<{ id: string; context: ConversationContext } | null>} The created conversation with its ID and context, or null on failure.
+   * @example
+   * // Create empty conversation
+   * const convo = await service.createConversation("user-uuid-123");
+   * // Create with initial message
+   * const convoWithMsg = await service.createConversation("user-uuid-123", undefined, {
+   *   role: "user",
+   *   content: "Hello, assistant!"
+   * });
+   */
   async createConversation(
     userId: string,
     externalChatId?: number,
@@ -182,6 +257,21 @@ export class ConversationService {
     };
   }
 
+  /**
+   * @description Updates the conversation state in the database with current context.
+   * Updates message count, summary, timestamps, and optionally the title.
+   * @param {string} conversationId - The unique identifier of the conversation to update.
+   * @param {ConversationContext} context - The current conversation context containing messages, summary, and title.
+   * @param {number} messageCount - The total number of messages in the conversation.
+   * @returns {Promise<boolean>} True if update succeeded, false on failure.
+   * @example
+   * const success = await service.updateConversationState("conv-123", {
+   *   messages: [...],
+   *   summary: "Discussion about calendar events",
+   *   title: "Calendar Planning",
+   *   lastUpdated: new Date().toISOString()
+   * }, 10);
+   */
   async updateConversationState(
     conversationId: string,
     context: ConversationContext,
@@ -213,6 +303,14 @@ export class ConversationService {
     return true;
   }
 
+  /**
+   * @description Updates the title of a conversation in the database.
+   * @param {string} conversationId - The unique identifier of the conversation.
+   * @param {string} title - The new title to set for the conversation.
+   * @returns {Promise<boolean>} True if update succeeded, false on failure.
+   * @example
+   * const success = await service.updateTitle("conv-123", "Meeting Schedule Discussion");
+   */
   async updateTitle(conversationId: string, title: string): Promise<boolean> {
     const { error } = await SUPABASE.from("conversations")
       .update({
@@ -231,6 +329,27 @@ export class ConversationService {
     return true;
   }
 
+  /**
+   * @description Stores a conversation summary in the database.
+   * Updates the summary field directly in the conversations table.
+   * @param {StoreSummaryParams} params - The summary parameters.
+   * @param {string} params.conversationId - The conversation ID to update.
+   * @param {string} params.userId - The user ID (for logging purposes).
+   * @param {string} params.summaryText - The summary text to store.
+   * @param {number} params.messageCount - Number of messages summarized.
+   * @param {number} params.firstSequence - First message sequence number in summary.
+   * @param {number} params.lastSequence - Last message sequence number in summary.
+   * @returns {Promise<boolean>} True if storage succeeded, false on failure.
+   * @example
+   * const success = await service.storeSummary({
+   *   conversationId: "conv-123",
+   *   userId: "user-456",
+   *   summaryText: "User asked about calendar events...",
+   *   messageCount: 10,
+   *   firstSequence: 1,
+   *   lastSequence: 10
+   * });
+   */
   async storeSummary(params: StoreSummaryParams): Promise<boolean> {
     // Summary is now stored directly in conversations.summary column
     // This method updates the summary field in the conversation record
@@ -251,6 +370,15 @@ export class ConversationService {
     return true;
   }
 
+  /**
+   * @description Marks a conversation as summarized by updating its summary field.
+   * Used after automatic summarization to persist the summary state.
+   * @param {string} conversationId - The unique identifier of the conversation.
+   * @param {string} summary - The summary text to store.
+   * @returns {Promise<boolean>} True if update succeeded, false on failure.
+   * @example
+   * const success = await service.markAsSummarized("conv-123", "Conversation about scheduling meetings...");
+   */
   async markAsSummarized(
     conversationId: string,
     summary: string,
@@ -272,6 +400,21 @@ export class ConversationService {
     return true;
   }
 
+  /**
+   * @description Condenses an existing summary with a new summary when combined length exceeds limits.
+   * If the combined summaries fit within maxSummaryLength, they are simply concatenated.
+   * Otherwise, uses the provided summarization function to condense them into a shorter summary.
+   * @param {string} existingSummary - The current conversation summary.
+   * @param {string} newSummary - The new summary to merge with the existing one.
+   * @param {SummarizeFn} summarizeFn - Function to call for AI-based summarization.
+   * @returns {Promise<string>} The condensed summary, truncated to maxSummaryLength.
+   * @example
+   * const condensed = await service.condenseSummary(
+   *   "Previous discussion about meetings...",
+   *   "New discussion about calendar sync...",
+   *   async (messages) => await aiSummarize(messages)
+   * );
+   */
   async condenseSummary(
     existingSummary: string,
     newSummary: string,
@@ -296,6 +439,26 @@ export class ConversationService {
     }
   }
 
+  /**
+   * @description Adds a message to a conversation and triggers automatic summarization if needed.
+   * Checks if context length or message count exceeds configured thresholds, and if so,
+   * summarizes older messages to keep context within limits while preserving recent messages.
+   * @param {AddMessageParams} params - Parameters for adding the message.
+   * @param {string} params.stateId - The conversation ID.
+   * @param {string} params.userId - The user ID for the conversation.
+   * @param {ConversationContext} params.context - Current conversation context to update.
+   * @param {userAndAiMessageProps} params.message - The message to add.
+   * @param {SummarizeFn} params.summarizeFn - Function for AI-based summarization.
+   * @returns {Promise<ConversationContext>} Updated conversation context with the new message and possibly a new summary.
+   * @example
+   * const updatedContext = await service.addMessageAndMaybeSummarize({
+   *   stateId: "conv-123",
+   *   userId: "user-456",
+   *   context: currentContext,
+   *   message: { role: "user", content: "Schedule a meeting tomorrow" },
+   *   summarizeFn: async (msgs) => await aiSummarize(msgs)
+   * });
+   */
   async addMessageAndMaybeSummarize(
     params: AddMessageParams,
   ): Promise<ConversationContext> {
@@ -397,6 +560,20 @@ export class ConversationService {
     return context;
   }
 
+  /**
+   * @description Builds a formatted prompt string from conversation context for AI consumption.
+   * Combines the conversation summary (if available) and recent message history into a
+   * single prompt string, respecting configured display length limits.
+   * @param {ConversationContext} context - The conversation context containing summary and messages.
+   * @returns {string} A formatted string containing the summary and message history, truncated to maxContextPromptLength.
+   * @example
+   * const prompt = service.buildContextPrompt({
+   *   summary: "User has been asking about calendar events...",
+   *   messages: [{ role: "user", content: "What's next?" }],
+   *   lastUpdated: new Date().toISOString()
+   * });
+   * // Returns: "Previous conversation summary:\nUser has been...\n\nRecent messages:\nUser: What's next?"
+   */
   buildContextPrompt(context: ConversationContext): string {
     const parts: string[] = [];
 
@@ -432,6 +609,23 @@ export class ConversationService {
     return result;
   }
 
+  /**
+   * @description Retrieves a paginated list of conversations for a user.
+   * Supports search filtering by title and pagination with limit/offset.
+   * Falls back to using summary first line as title if no explicit title is set.
+   * @param {string} userId - The UUID of the user whose conversations to list.
+   * @param {Object} [options] - Optional filtering and pagination options.
+   * @param {number} [options.limit=20] - Maximum number of conversations to return.
+   * @param {number} [options.offset=0] - Number of conversations to skip for pagination.
+   * @param {string} [options.search] - Search term to filter conversations by title (min 2 chars).
+   * @returns {Promise<ConversationListItem[]>} Array of conversation list items with id, title, messageCount, lastUpdated, and createdAt.
+   * @example
+   * const conversations = await service.getConversationList("user-123", {
+   *   limit: 10,
+   *   offset: 0,
+   *   search: "meeting"
+   * });
+   */
   async getConversationList(
     userId: string,
     options?: { limit?: number; offset?: number; search?: string },
@@ -487,6 +681,18 @@ export class ConversationService {
     });
   }
 
+  /**
+   * @description Retrieves a full conversation by ID including all its messages.
+   * Validates that the conversation belongs to the specified user and source.
+   * @param {string} conversationId - The unique identifier of the conversation.
+   * @param {string} userId - The UUID of the user who owns the conversation.
+   * @returns {Promise<FullConversation | null>} The full conversation with messages, or null if not found or access denied.
+   * @example
+   * const conversation = await service.getConversationById("conv-123", "user-456");
+   * if (conversation) {
+   *   console.log(`Found ${conversation.messages.length} messages`);
+   * }
+   */
   async getConversationById(
     conversationId: string,
     userId: string,
@@ -525,6 +731,20 @@ export class ConversationService {
     };
   }
 
+  /**
+   * @description Loads an existing conversation into a context object for continued interaction.
+   * Retrieves the full conversation and transforms it into a ConversationContext format
+   * suitable for adding new messages and building prompts.
+   * @param {string} conversationId - The unique identifier of the conversation to load.
+   * @param {string} userId - The UUID of the user who owns the conversation.
+   * @returns {Promise<{ stateId: string; context: ConversationContext } | null>} Object with conversation ID and context, or null if not found.
+   * @example
+   * const loaded = await service.loadConversationIntoContext("conv-123", "user-456");
+   * if (loaded) {
+   *   const { stateId, context } = loaded;
+   *   // Continue conversation with context.messages
+   * }
+   */
   async loadConversationIntoContext(
     conversationId: string,
     userId: string,
@@ -557,6 +777,19 @@ export class ConversationService {
     };
   }
 
+  /**
+   * @description Permanently deletes a conversation and all its associated messages.
+   * First deletes all messages in the conversation, then deletes the conversation record.
+   * Validates that the conversation belongs to the specified user and source.
+   * @param {string} conversationId - The unique identifier of the conversation to delete.
+   * @param {string} userId - The UUID of the user who owns the conversation.
+   * @returns {Promise<boolean>} True if deletion succeeded, false if any deletion failed.
+   * @example
+   * const success = await service.deleteConversation("conv-123", "user-456");
+   * if (success) {
+   *   console.log("Conversation deleted successfully");
+   * }
+   */
   async deleteConversation(
     conversationId: string,
     userId: string,
@@ -588,6 +821,16 @@ export class ConversationService {
     return true;
   }
 
+  /**
+   * @description Closes the currently active conversation for a user by setting is_active to false.
+   * This allows a new conversation to be created for subsequent interactions.
+   * Only affects conversations matching the service's configured source.
+   * @param {string} userId - The UUID of the user whose active conversation should be closed.
+   * @returns {Promise<boolean>} True if the close operation succeeded, false on failure.
+   * @example
+   * const success = await service.closeActiveConversation("user-456");
+   * // User can now start a new conversation
+   */
   async closeActiveConversation(userId: string): Promise<boolean> {
     const { error } = await SUPABASE.from("conversations")
       .update({ is_active: false })
@@ -605,6 +848,16 @@ export class ConversationService {
     return true;
   }
 
+  /**
+   * @description Permanently deletes all conversations and their messages for a user.
+   * First fetches all conversation IDs, then batch deletes all associated messages,
+   * and finally deletes all conversation records. Useful for account cleanup or privacy requests.
+   * @param {string} userId - The UUID of the user whose conversations should be deleted.
+   * @returns {Promise<{ success: boolean; deletedCount: number }>} Object with success status and count of deleted conversations.
+   * @example
+   * const result = await service.deleteAllConversations("user-456");
+   * console.log(`Deleted ${result.deletedCount} conversations`);
+   */
   async deleteAllConversations(userId: string): Promise<{ success: boolean; deletedCount: number }> {
     // First, get all conversation IDs for this user
     const { data: conversations, error: fetchError } = await SUPABASE

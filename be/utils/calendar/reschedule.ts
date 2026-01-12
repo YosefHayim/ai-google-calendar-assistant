@@ -48,7 +48,26 @@ const TIME_PREFERENCES = {
 };
 
 /**
- * Find optimal reschedule times for an event
+ * @description Finds optimal reschedule times for an event based on user preferences and calendar availability.
+ * Analyzes free slots across all user calendars, scores them by time preference, and returns ranked suggestions.
+ * @param {RescheduleParams} params - Parameters for finding reschedule suggestions.
+ * @param {string} params.email - The user's email address for authentication.
+ * @param {string} params.eventId - The ID of the event to reschedule.
+ * @param {string} [params.calendarId="primary"] - The calendar containing the event.
+ * @param {"morning" | "afternoon" | "evening" | "any"} [params.preferredTimeOfDay="any"] - Preferred time slot for the event.
+ * @param {number} [params.daysToSearch=7] - Number of days to search for available slots.
+ * @param {boolean} [params.excludeWeekends=false] - Whether to exclude weekend days from suggestions.
+ * @returns {Promise<RescheduleResult>} Result containing event info, ranked suggestions, and any errors.
+ * @example
+ * const result = await findRescheduleSuggestions({
+ *   email: "user@example.com",
+ *   eventId: "event123",
+ *   preferredTimeOfDay: "morning",
+ *   excludeWeekends: true
+ * });
+ * if (result.success) {
+ *   console.log("Top suggestion:", result.suggestions[0]);
+ * }
  */
 export const findRescheduleSuggestions = asyncHandler(
   async (params: RescheduleParams): Promise<RescheduleResult> => {
@@ -249,7 +268,25 @@ export interface ApplyRescheduleResult {
 }
 
 /**
- * Apply a reschedule suggestion to an event
+ * @description Applies a reschedule suggestion by updating the event's start and end times.
+ * Patches the event in Google Calendar with the new time slot.
+ * @param {ApplyRescheduleParams} params - Parameters for applying the reschedule.
+ * @param {string} params.email - The user's email address for authentication.
+ * @param {string} params.eventId - The ID of the event to reschedule.
+ * @param {string} [params.calendarId="primary"] - The calendar containing the event.
+ * @param {string} params.newStart - The new start time in ISO 8601 format.
+ * @param {string} params.newEnd - The new end time in ISO 8601 format.
+ * @returns {Promise<ApplyRescheduleResult>} Result indicating success and the updated event or error message.
+ * @example
+ * const result = await applyReschedule({
+ *   email: "user@example.com",
+ *   eventId: "event123",
+ *   newStart: "2025-01-16T10:00:00Z",
+ *   newEnd: "2025-01-16T11:00:00Z"
+ * });
+ * if (result.success) {
+ *   console.log("Event rescheduled to:", result.event?.start);
+ * }
  */
 export const applyReschedule = asyncHandler(
   async (params: ApplyRescheduleParams): Promise<ApplyRescheduleResult> => {

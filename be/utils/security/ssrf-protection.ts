@@ -53,6 +53,25 @@ export interface SSRFValidationResult {
   normalizedUrl?: string
 }
 
+/**
+ * @description Checks if an IPv4 address belongs to a private, reserved, or internal
+ * network range. Used internally by SSRF protection to block access to internal resources.
+ * Private ranges include: 10.x.x.x, 172.16-31.x.x, 192.168.x.x, 127.x.x.x (loopback),
+ * 169.254.x.x (link-local), and 0.x.x.x.
+ *
+ * @param {string} ip - The IPv4 address string to check (e.g., '192.168.1.1')
+ * @returns {boolean} True if the IP is in a private/reserved range, false otherwise
+ *
+ * @example
+ * isPrivateIPv4('192.168.1.1')   // true (private)
+ * isPrivateIPv4('10.0.0.1')      // true (private)
+ * isPrivateIPv4('127.0.0.1')     // true (loopback)
+ * isPrivateIPv4('8.8.8.8')       // false (public Google DNS)
+ * isPrivateIPv4('172.16.0.1')    // true (private)
+ * isPrivateIPv4('172.32.0.1')    // false (not in private range)
+ *
+ * @private
+ */
 function isPrivateIPv4(ip: string): boolean {
   const parts = ip.split(".").map(Number)
   if (parts.length !== 4) return false
@@ -73,6 +92,24 @@ function isPrivateIPv4(ip: string): boolean {
   return false
 }
 
+/**
+ * @description Checks if an IPv6 address belongs to a private, reserved, or internal
+ * network range. Used internally by SSRF protection to block access to internal resources.
+ * Private ranges include: ::1 (loopback), fe80: (link-local), fc/fd (unique local),
+ * and :: (unspecified).
+ *
+ * @param {string} ip - The IPv6 address string to check, with or without brackets
+ * @returns {boolean} True if the IP is in a private/reserved range, false otherwise
+ *
+ * @example
+ * isPrivateIPv6('::1')           // true (loopback)
+ * isPrivateIPv6('[::1]')         // true (bracketed loopback)
+ * isPrivateIPv6('fe80::1')       // true (link-local)
+ * isPrivateIPv6('fd00::1')       // true (unique local)
+ * isPrivateIPv6('2001:4860::1')  // false (public Google)
+ *
+ * @private
+ */
 function isPrivateIPv6(ip: string): boolean {
   const normalized = ip.toLowerCase().replace(/^\[|\]$/g, "")
 
@@ -84,6 +121,42 @@ function isPrivateIPv6(ip: string): boolean {
   return false
 }
 
+/**
+ * @description Validates a URL for Server-Side Request Forgery (SSRF) vulnerabilities.
+ * Checks against blocked protocols, hostnames, IP ranges, and optionally enforces
+ * a domain allowlist. Logs security warnings when suspicious URLs are blocked.
+ *
+ * @param {string} urlString - The URL string to validate
+ * @param {Object} [options] - Optional validation configuration
+ * @param {boolean} [options.allowPrivateIPs=false] - Whether to allow private IP addresses
+ * @param {Set<string>} [options.allowedDomains] - Custom set of allowed domains (overrides default)
+ * @param {boolean} [options.strictMode=false] - If true, only allows domains in the allowlist
+ * @returns {SSRFValidationResult} An object containing:
+ *   - safe: boolean indicating if the URL is safe to fetch
+ *   - reason: explanation if unsafe (only if safe is false)
+ *   - normalizedUrl: the validated URL string (only if safe is true)
+ *
+ * @example
+ * // Basic validation
+ * const result = validateUrlForSSRF('https://api.example.com/data');
+ * if (result.safe) {
+ *   // Safe to fetch result.normalizedUrl
+ * }
+ *
+ * @example
+ * // Strict mode with custom allowlist
+ * const allowed = new Set(['api.trusted.com']);
+ * const result = validateUrlForSSRF(url, {
+ *   strictMode: true,
+ *   allowedDomains: allowed
+ * });
+ *
+ * @example
+ * // Blocked URLs
+ * validateUrlForSSRF('http://localhost:8080')        // { safe: false, reason: '...' }
+ * validateUrlForSSRF('http://169.254.169.254/meta')  // { safe: false, reason: '...' }
+ * validateUrlForSSRF('file:///etc/passwd')           // { safe: false, reason: 'Blocked protocol' }
+ */
 export function validateUrlForSSRF(urlString: string, options?: {
   allowPrivateIPs?: boolean
   allowedDomains?: Set<string>
@@ -138,6 +211,44 @@ export function validateUrlForSSRF(urlString: string, options?: {
   }
 }
 
+/**
+ * @description A secure wrapper around the native fetch API that validates URLs for
+ * SSRF vulnerabilities before making the request. Throws an error if the URL fails
+ * validation, preventing requests to internal or unauthorized resources.
+ *
+ * @param {string} urlString - The URL to fetch
+ * @param {Object} [options] - Fetch options extended with SSRF configuration
+ * @param {RequestInit} [options] - Standard fetch options (method, headers, body, etc.)
+ * @param {Object} [options.ssrfOptions] - SSRF validation options passed to validateUrlForSSRF
+ * @param {boolean} [options.ssrfOptions.allowPrivateIPs] - Allow private IP addresses
+ * @param {Set<string>} [options.ssrfOptions.allowedDomains] - Custom domain allowlist
+ * @param {boolean} [options.ssrfOptions.strictMode] - Only allow explicitly listed domains
+ * @returns {Promise<Response>} The fetch Response if URL passes validation
+ * @throws {Error} If SSRF validation fails with message 'SSRF Protection: {reason}'
+ *
+ * @example
+ * // Basic secure fetch
+ * try {
+ *   const response = await safeFetch('https://api.example.com/data');
+ *   const data = await response.json();
+ * } catch (error) {
+ *   console.error('Fetch blocked:', error.message);
+ * }
+ *
+ * @example
+ * // With fetch and SSRF options
+ * const response = await safeFetch('https://api.trusted.com/webhook', {
+ *   method: 'POST',
+ *   headers: { 'Content-Type': 'application/json' },
+ *   body: JSON.stringify(payload),
+ *   ssrfOptions: { strictMode: true }
+ * });
+ *
+ * @example
+ * // This will throw an error
+ * await safeFetch('http://localhost:3000/internal');
+ * // Error: SSRF Protection: Access to internal resources is not allowed
+ */
 export async function safeFetch(
   urlString: string,
   options?: RequestInit & { ssrfOptions?: Parameters<typeof validateUrlForSSRF>[1] }
@@ -152,10 +263,51 @@ export async function safeFetch(
   return fetch(validation.normalizedUrl!, fetchOptions)
 }
 
+/**
+ * @description Checks if a hostname is in the default allowlist of trusted external domains.
+ * The allowlist includes common API providers like Telegram, OpenAI, Anthropic, Google APIs,
+ * and LemonSqueezy. Case-insensitive comparison.
+ *
+ * @param {string} hostname - The hostname to check (e.g., 'api.telegram.org')
+ * @returns {boolean} True if the hostname is in the allowlist, false otherwise
+ *
+ * @example
+ * // Check if domain is trusted
+ * isAllowedDomain('api.telegram.org')   // true
+ * isAllowedDomain('api.anthropic.com')  // true
+ * isAllowedDomain('evil.com')           // false
+ *
+ * @example
+ * // Case insensitive
+ * isAllowedDomain('API.TELEGRAM.ORG')   // true
+ */
 export function isAllowedDomain(hostname: string): boolean {
   return ALLOWED_EXTERNAL_DOMAINS.has(hostname.toLowerCase())
 }
 
+/**
+ * @description Adds a hostname to the runtime allowlist of trusted external domains.
+ * This modification persists for the lifetime of the process. Useful for dynamically
+ * trusting new API endpoints or partner domains. The hostname is normalized to lowercase.
+ *
+ * @param {string} hostname - The hostname to add to the allowlist (e.g., 'api.partner.com')
+ * @returns {void}
+ *
+ * @example
+ * // Add a new trusted domain at runtime
+ * addAllowedDomain('api.newpartner.com');
+ *
+ * // Now this domain will pass strict mode validation
+ * const result = validateUrlForSSRF('https://api.newpartner.com/data', {
+ *   strictMode: true
+ * });
+ * // result.safe === true
+ *
+ * @example
+ * // Case is normalized
+ * addAllowedDomain('API.EXAMPLE.COM');
+ * isAllowedDomain('api.example.com'); // true
+ */
 export function addAllowedDomain(hostname: string): void {
   ALLOWED_EXTERNAL_DOMAINS.add(hostname.toLowerCase())
 }

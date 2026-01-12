@@ -255,6 +255,17 @@ export const TRAVEL_PATTERNS_BY_LANGUAGE: Record<
   },
 };
 
+/**
+ * @description Combines travel patterns from multiple languages into a single pattern set.
+ * Merges arrival patterns, departure patterns, and work keywords from all specified languages,
+ * deduplicating work keywords.
+ * @param {SupportedEventLanguage[]} languages - Array of language codes to include (e.g., ["en", "de", "fr"]).
+ * @returns {TravelPatternSet} Combined pattern set with merged arrival, departure, and work patterns.
+ * @example
+ * const patterns = getCombinedPatternsForLanguages(["en", "de"]);
+ * // patterns.arrival contains both English and German arrival patterns
+ * // patterns.workKeywords contains deduplicated keywords from both languages
+ */
 export function getCombinedPatternsForLanguages(
   languages: SupportedEventLanguage[]
 ): TravelPatternSet {
@@ -278,6 +289,21 @@ export function getCombinedPatternsForLanguages(
   };
 }
 
+/**
+ * @description Matches an event summary against multilingual travel patterns to detect travel-related events.
+ * Tests the summary against all regex patterns of the specified type and extracts location if captured.
+ * @param {string} summary - The event summary/title to match against patterns.
+ * @param {"arrival" | "departure"} type - The type of travel pattern to match.
+ * @param {TravelPatternSet} patterns - The combined pattern set from one or more languages.
+ * @returns {{ matched: boolean; location: string | null }} Object with match status and extracted location (if any).
+ * @example
+ * const patterns = getCombinedPatternsForLanguages(["en", "de"]);
+ * matchTravelPatternMultilingual("Fahrt nach Berlin", "arrival", patterns);
+ * // Returns { matched: true, location: "Berlin" }
+ *
+ * matchTravelPatternMultilingual("Team meeting", "arrival", patterns);
+ * // Returns { matched: false, location: null }
+ */
 export function matchTravelPatternMultilingual(
   summary: string,
   type: "arrival" | "departure",
@@ -298,6 +324,18 @@ export function matchTravelPatternMultilingual(
   return { matched: false, location: null };
 }
 
+/**
+ * @description Determines if an event is work-related based on keyword matching.
+ * Performs case-insensitive matching of the event summary against work keywords
+ * from the provided pattern set.
+ * @param {string} summary - The event summary/title to check.
+ * @param {TravelPatternSet} patterns - The pattern set containing work keywords.
+ * @returns {boolean} True if the summary contains any work-related keyword.
+ * @example
+ * const patterns = getCombinedPatternsForLanguages(["en"]);
+ * isWorkRelatedEvent("Team standup meeting", patterns); // Returns true
+ * isWorkRelatedEvent("Lunch with friends", patterns); // Returns false
+ */
 export function isWorkRelatedEvent(
   summary: string,
   patterns: TravelPatternSet
