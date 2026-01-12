@@ -155,6 +155,12 @@ const lemonSqueezy = {
 const integrations = {
   telegram: {
     accessToken: getOptional("TELEGRAM_BOT_ACCESS_TOKEN"),
+    webhookSecret: getOptional("TELEGRAM_WEBHOOK_SECRET"),
+    // Use webhook mode in production for reliability with App Runner
+    // Long-polling can fail with auto-scaling or idle timeouts
+    get useWebhook(): boolean {
+      return isProd && !!this.webhookSecret;
+    },
     get isEnabled(): boolean {
       return !!this.accessToken;
     },

@@ -22,6 +22,7 @@ import paymentRoute from "@/routes/payment-route";
 import { securityAuditMiddleware } from "@/middlewares/security-audit";
 import { sendR } from "@/utils/http";
 import { startTelegramBot } from "@/telegram-bot/init-bot";
+import telegramRoute from "@/routes/telegram-route";
 import { initWhatsApp } from "@/whatsapp-bot/init-whatsapp";
 import usersRoute from "@/routes/users-route";
 import voiceRoute from "@/routes/voice-route";
@@ -93,6 +94,7 @@ app.use(ROUTES.WEBHOOKS, webhooksRoute);
 app.use(ROUTES.VOICE, voiceRoute);
 app.use(ROUTES.ADMIN, adminRoute);
 app.use(ROUTES.CRON, cronRoute);
+app.use(ROUTES.TELEGRAM, telegramRoute);
 
 app.use((_req, res, _next) => {
   logger.error(`Opps! It looks like this route doesn't exist. ${_req.originalUrl}`);

@@ -1,33 +1,52 @@
 # Node.js dependencies
-**/node_modules
+node_modules
+.pnpm-store
 **/npm-debug.log
 **/yarn-error.log
 **/pnpm-debug.log
 
-# Build outputs
-**/dist
-**/build
-**/coverage
+# Build outputs (we rebuild in Docker)
+dist
+build
+coverage
+.nyc_output
 
 # Local environment & config files
-**/.env
-**/.env.local
+.env
+.env.*
+!.env.example
 .DS_Store
+Thumbs.db
 
 # Logs & temp files
+logs
 **/*.log
 **/*.gz
 **/*.tgz
 **/.tmp
 **/.cache
 
-# Docker artifacts
-Dockerfile*
-.dockerignore
+# Testing
+*.test.ts
+*.spec.ts
+__tests__
+jest.config.*
 
 # Git & Editor files
 .git
 .gitignore
 .idea
 .vscode
+*.swp
+*.swo
+
+# TypeScript build info
+*.tsbuildinfo
+
+# Misc
+.eslintcache
+biome.json
+
+# Old dockerfile (deprecated - use Dockerfile instead)
+dockerfile
 
