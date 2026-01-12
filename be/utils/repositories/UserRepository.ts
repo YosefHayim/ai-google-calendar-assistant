@@ -410,6 +410,171 @@ export class UserRepository {
       logger.error(`UserRepository: updateUserTimezone error: ${error.message}`)
     }
   }
+
+  // ==========================================================================
+  // RISC (Cross-Account Protection) Methods
+  // ==========================================================================
+
+  /**
+   * @description Finds a user by their Google subject ID (sub claim from ID token).
+   * Used for RISC event processing where we receive the Google sub instead of email.
+   *
+   * @param {string} googleSubjectId - The Google subject ID (sub claim)
+   * @returns {Promise<{ userId: string; email: string } | null>} User info or null if not found
+   */
+  async findUserByGoogleSubjectId(
+    googleSubjectId: string
+  ): Promise<{ userId: string; email: string } | null> {
+    const { data, error } = await SUPABASE.from("oauth_tokens")
+      .select("user_id, users!inner(email)")
+      .eq("provider", "google")
+      .eq("provider_user_id", googleSubjectId)
+      .limit(1)
+      .maybeSingle()
+
+    if (error) {
+      logger.error(
+        `UserRepository: findUserByGoogleSubjectId error: ${error.message}`
+      )
+      return null
+    }
+
+    if (!data) {
+      return null
+    }
+
+    // Type assertion for the joined data
+    const userData = data as unknown as {
+      user_id: string
+      users: { email: string }
+    }
+
+    return {
+      userId: userData.user_id,
+      email: userData.users.email,
+    }
+  }
+
+  /**
+   * @description Revokes all Google OAuth tokens for a user identified by Google subject ID.
+   * Sets is_valid to false and clears sensitive token data. Used for RISC tokens-revoked events.
+   *
+   * @param {string} googleSubjectId - The Google subject ID (sub claim)
+   * @returns {Promise<{ success: boolean; userId?: string; email?: string }>}
+   */
+  async revokeTokensByGoogleSubjectId(
+    googleSubjectId: string
+  ): Promise<{ success: boolean; userId?: string; email?: string }> {
+    // First find the user
+    const userInfo = await this.findUserByGoogleSubjectId(googleSubjectId)
+
+    if (!userInfo) {
+      logger.warn(
+        `UserRepository: No user found for Google subject ID: ${googleSubjectId}`
+      )
+      return { success: false }
+    }
+
+    // Revoke the tokens - set is_valid to false and clear tokens
+    const { error } = await SUPABASE.from("oauth_tokens")
+      .update({
+        is_valid: false,
+        access_token: "[REVOKED]",
+        refresh_token: null,
+        id_token: null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("user_id", userInfo.userId)
+      .eq("provider", "google")
+
+    if (error) {
+      logger.error(
+        `UserRepository: revokeTokensByGoogleSubjectId error: ${error.message}`
+      )
+      return { success: false }
+    }
+
+    logger.info(
+      `UserRepository: Revoked Google tokens for user ${userInfo.email} (Google sub: ${googleSubjectId})`
+    )
+
+    return {
+      success: true,
+      userId: userInfo.userId,
+      email: userInfo.email,
+    }
+  }
+
+  /**
+   * @description Stores the Google subject ID for a user's OAuth tokens.
+   * Should be called during OAuth flow to enable RISC event processing.
+   *
+   * @param {string} userId - The user's internal ID
+   * @param {string} googleSubjectId - The Google subject ID (sub claim from ID token)
+   * @returns {Promise<void>}
+   */
+  async setGoogleSubjectId(
+    userId: string,
+    googleSubjectId: string
+  ): Promise<void> {
+    const { error } = await SUPABASE.from("oauth_tokens")
+      .update({
+        provider_user_id: googleSubjectId,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("user_id", userId)
+      .eq("provider", "google")
+
+    if (error) {
+      logger.error(
+        `UserRepository: setGoogleSubjectId error: ${error.message}`
+      )
+    }
+  }
+
+  /**
+   * @description Suspends a user account. Used for RISC account-disabled events.
+   *
+   * @param {string} googleSubjectId - The Google subject ID
+   * @returns {Promise<{ success: boolean; userId?: string; email?: string }>}
+   */
+  async suspendUserByGoogleSubjectId(
+    googleSubjectId: string
+  ): Promise<{ success: boolean; userId?: string; email?: string }> {
+    const userInfo = await this.findUserByGoogleSubjectId(googleSubjectId)
+
+    if (!userInfo) {
+      return { success: false }
+    }
+
+    // Update user status to suspended
+    const { error } = await SUPABASE.from("users")
+      .update({
+        status: "suspended",
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", userInfo.userId)
+
+    if (error) {
+      logger.error(
+        `UserRepository: suspendUserByGoogleSubjectId error: ${error.message}`
+      )
+      return { success: false }
+    }
+
+    // Also revoke tokens
+    await this.revokeTokensByGoogleSubjectId(googleSubjectId)
+
+    logger.info(
+      `UserRepository: Suspended user ${userInfo.email} (Google sub: ${googleSubjectId})`
+    )
+
+    return {
+      success: true,
+      userId: userInfo.userId,
+      email: userInfo.email,
+    }
+  }
 }
 
 export const userRepository = new UserRepository()
