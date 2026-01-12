@@ -17,19 +17,44 @@ interface SettingsRowProps {
 export const SettingsRow: React.FC<SettingsRowProps> = ({ title, tooltip, control, id, className }) => {
   return (
     <div
-      className={cn('grid grid-cols-3 items-center min-h-[48px] py-3 gap-4', className)}
+      className={cn(
+        'flex flex-wrap items-center min-h-[48px] py-3 gap-x-2 gap-y-2',
+        'sm:grid sm:grid-cols-3 sm:flex-nowrap sm:gap-4',
+        className
+      )}
       role="group"
       aria-labelledby={id ? `${id}-label` : undefined}
     >
-      {/* Column 1: Label */}
-      <div>
+      {/* Column 1: Label with inline help on mobile */}
+      <div className="flex items-center gap-1 w-full sm:w-auto">
         <span id={id ? `${id}-label` : undefined} className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
           {title}
         </span>
+        {/* Help button inline on mobile */}
+        <div className="sm:hidden">
+          <TooltipProvider delayDuration={200}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="h-5 w-5 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
+                  aria-label={`More info about ${title}`}
+                >
+                  <HelpCircle className="w-3.5 h-3.5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="top" className="max-w-[250px] text-center">
+                <p>{tooltip}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
       </div>
 
-      {/* Column 2: Help button */}
-      <div className="flex justify-center">
+      {/* Column 2: Help button - desktop only */}
+      <div className="hidden sm:flex justify-center">
         <TooltipProvider delayDuration={200}>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -51,7 +76,7 @@ export const SettingsRow: React.FC<SettingsRowProps> = ({ title, tooltip, contro
       </div>
 
       {/* Column 3: Control */}
-      <div className="flex justify-end">{control}</div>
+      <div className="flex justify-end w-full sm:w-auto">{control}</div>
     </div>
   )
 }
