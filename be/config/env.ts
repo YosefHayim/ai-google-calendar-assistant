@@ -79,7 +79,8 @@ const server = {
   get baseUrl(): string {
     // In production, use hardcoded URL. In dev, use localhost.
     if (isProd) {
-      return CONSTANTS.PROD_BACKEND_URL;
+      // Remove trailing slash to prevent double slashes in URL concatenation
+      return CONSTANTS.PROD_BACKEND_URL.replace(/\/+$/, "");
     }
     const url = process.env.BASE_URL ?? `http://${this.host}:${this.port}`;
     return url.replace(/\/+$/, "");
