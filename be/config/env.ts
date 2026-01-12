@@ -31,7 +31,8 @@ const CONSTANTS = {
   PROD_FRONTEND_URL: "https://askally.io",
 
   // Defaults
-  DEFAULT_PORT: 3000,
+  DEV_PORT: 3000,
+  PROD_PORT: 8080,
   DEFAULT_HOST: "localhost",
   WHATSAPP_API_VERSION: "v22.0",
 } as const;
@@ -68,7 +69,8 @@ export const isTest = nodeEnv === "test";
 // Server Configuration
 // ============================================================================
 
-const port = Number(process.env.PORT) || CONSTANTS.DEFAULT_PORT;
+const defaultPort = isProd ? CONSTANTS.PROD_PORT : CONSTANTS.DEV_PORT;
+const port = Number(process.env.PORT) || defaultPort;
 
 const server = {
   nodeEnv,
