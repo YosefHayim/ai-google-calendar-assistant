@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   Crown,
@@ -21,19 +21,17 @@ import { Badge } from '@/components/ui/badge'
 import { LoadingSection } from '@/components/ui/loading-spinner'
 import { Tab } from '@/components/ui/pricing-tab'
 import {
-  getPlans,
-  getSubscriptionStatus,
   redirectToCheckout,
   redirectToCreditPackCheckout,
   redirectToBillingPortal,
   upgradeSubscription,
   type Plan,
-  type UserAccess,
   type PlanSlug,
   type PlanInterval,
 } from '@/services/payment.service'
 import NumberFlow from '@number-flow/react'
 import { cn } from '@/lib/utils'
+import { useSubscriptionStatus, usePlans } from '@/hooks/queries/billing'
 
 const PAYMENT_FREQUENCIES = ['monthly', 'yearly', 'per use']
 
@@ -50,27 +48,12 @@ const CREDIT_PACK_SIZES: Record<PlanSlug, number> = {
 }
 
 export const SubscriptionTab: React.FC = () => {
-  const [access, setAccess] = useState<UserAccess | null>(null)
-  const [plans, setPlans] = useState<Plan[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+  const { data: access, isLoading: accessLoading, refetch: refetchAccess } = useSubscriptionStatus()
+  const { data: plans, isLoading: plansLoading } = usePlans()
   const [selectedFrequency, setSelectedFrequency] = useState<string>('monthly')
   const [actionLoading, setActionLoading] = useState<string | null>(null)
 
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const [accessData, plansData] = await Promise.all([getSubscriptionStatus(), getPlans()])
-        setAccess(accessData)
-        setPlans(plansData)
-      } catch (error) {
-        console.error('Failed to load subscription data:', error)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    loadData()
-  }, [])
+  const isLoading = accessLoading || plansLoading
 
   const getPlanIcon = (planSlug: string) => {
     switch (planSlug) {
@@ -114,22 +97,15 @@ export const SubscriptionTab: React.FC = () => {
           return
         }
 
-        // Check if user has a subscription linked to payment provider (LemonSqueezy)
-        // Users with linked subscriptions should use upgrade endpoint
-        // Users without linked subscriptions should use checkout to create new subscription
         const isLinkedToProvider = access?.subscription?.isLinkedToProvider === true
 
         if (isLinkedToProvider) {
-          // Upgrade existing subscription
           await upgradeSubscription({
             planSlug: plan.slug as PlanSlug,
             interval: selectedFrequency as PlanInterval,
           })
-          // Reload subscription data to reflect changes
-          const updatedAccess = await getSubscriptionStatus()
-          setAccess(updatedAccess)
+          await refetchAccess()
         } else {
-          // Create new subscription checkout
           await redirectToCheckout({
             planSlug: plan.slug as PlanSlug,
             interval: selectedFrequency as PlanInterval,
@@ -217,7 +193,7 @@ export const SubscriptionTab: React.FC = () => {
       </div>
 
       <div className="space-y-3">
-        {plans.map((plan) => (
+        {plans?.map((plan) => (
           <PlanRow
             key={plan.id}
             plan={plan}

@@ -351,24 +351,34 @@ export const de = {
   "botMenu.brain": "Ally Ihre Präferenzen beibringen",
 
   "auth.welcomePrompt":
-    "Willkommen! Um zu beginnen, geben Sie bitte Ihre E-Mail-Adresse zur Verifizierung ein:",
+    "👋 <b>Willkommen bei Ally!</b>\n\nIch bin Ihr KI-gestützter Kalender-Assistent. Ich kann Ihnen helfen:\n\n📅 Termine in natürlicher Sprache zu planen und zu verwalten\n🔍 Freie Zeiten zu finden und Ihren Zeitplan einzusehen\n📊 Einblicke in Ihre Zeitnutzung zu erhalten\n\n<b>Lassen Sie uns in 2 schnellen Schritten starten:</b>\n\n<b>Schritt 1:</b> E-Mail verifizieren\n<b>Schritt 2:</b> Google Kalender verbinden\n\nBitte geben Sie Ihre E-Mail-Adresse ein, um zu beginnen:",
   "auth.enterOtpPrompt":
-    "Ein Bestätigungscode wurde an {{email}} gesendet.\n\nBitte geben Sie den 6-stelligen Code aus Ihrer E-Mail ein (gültig für 10 Minuten).\n\nFalls Sie die falsche E-Mail eingegeben haben, tippen Sie einfach die richtige ein.",
+    "📧 <b>Prüfen Sie Ihren Posteingang!</b>\n\nIch habe einen 6-stelligen Code an <b>{{email}}</b> gesendet.\n\nBitte geben Sie den Code unten ein (gültig für 10 Minuten).\n\n<i>Falsche E-Mail? Tippen Sie einfach die richtige ein.</i>",
   "auth.otpExpired":
-    "Bestätigungscode abgelaufen. Bitte geben Sie Ihre E-Mail erneut ein:",
+    "⏰ Bestätigungscode abgelaufen.\n\nBitte geben Sie Ihre E-Mail-Adresse erneut ein:",
   "auth.otpInvalidError":
-    "Ungültiger Bestätigungscode. Bitte versuchen Sie es erneut oder geben Sie eine neue E-Mail-Adresse ein.",
+    "❌ Ungültiger Bestätigungscode.\n\nBitte versuchen Sie es erneut oder geben Sie eine andere E-Mail-Adresse ein.",
   "auth.otpInvalidWithNewEmail": "Fehler: {{error}}",
   "auth.emailVerifiedSuccess":
-    "E-Mail erfolgreich verifiziert und gespeichert! Sie können den Bot jetzt nutzen.",
+    "✅ <b>E-Mail verifiziert!</b>\n\nSuper, Sie sind auf halbem Weg.\n\n<b>Nächster Schritt:</b> Verbinden Sie Ihren Google Kalender, damit ich Ihren Zeitplan verwalten kann.",
   "auth.dbSaveError":
     "Fehler beim Speichern der E-Mail. Bitte versuchen Sie es erneut.",
   "auth.enterOtpOrNewEmail":
-    "Bitte geben Sie den 6-stelligen Bestätigungscode aus Ihrer E-Mail ein oder geben Sie eine andere E-Mail-Adresse ein:",
+    "Bitte geben Sie den 6-stelligen Code ein, oder tippen Sie eine andere E-Mail-Adresse:",
   "auth.otpSentToNewEmail":
-    "Bestätigungscode an {{email}} gesendet.\n\nBitte geben Sie den 6-stelligen Code aus Ihrer E-Mail ein (gültig für 10 Minuten):",
+    "📧 Bestätigungscode an <b>{{email}}</b> gesendet.\n\nBitte geben Sie den 6-stelligen Code ein (gültig für 10 Minuten):",
   "auth.otpSendFailed":
-    "Fehler beim Senden des Bestätigungscodes: {{error}}\n\nBitte versuchen Sie es erneut mit einer anderen E-Mail.",
+    "Fehler beim Senden des Codes: {{error}}\n\nBitte versuchen Sie es mit einer anderen E-Mail.",
+  "auth.googleCalendarConnect":
+    "🔗 <b>Google Kalender verbinden</b>\n\nUm Ihren Kalender zu verwalten, benötige ich Ihre Erlaubnis, auf Ihren Google Kalender zuzugreifen.\n\n<b>Was ich nach der Verbindung tun kann:</b>\n• Ihren Zeitplan einsehen\n• Termine erstellen und aktualisieren\n• Verfügbare Zeiten finden\n• Ihnen Erinnerungen senden\n\n<b>Ihre Daten sind sicher:</b>\n• Ich greife nur auf Kalenderdaten zu\n• Sie können den Zugriff jederzeit widerrufen\n• Ihre Daten werden nie geteilt",
+  "auth.googleCalendarReconnect":
+    "🔄 <b>Google Kalender erneut verbinden</b>\n\nIhr Kalenderzugriff ist abgelaufen. Bitte verbinden Sie sich erneut, um Ally weiter zu nutzen.",
+  "auth.googleCalendarMissingPermissions":
+    "⚠️ <b>Zusätzliche Berechtigungen erforderlich</b>\n\nIch benötige vollen Kalenderzugriff, um Ihnen effektiv zu helfen. Bitte verbinden Sie sich erneut mit vollständigen Berechtigungen.",
+  "auth.googleCalendarSessionExpired":
+    "🔄 <b>Sitzung abgelaufen</b>\n\nIhre Google Kalender-Sitzung ist abgelaufen. Bitte verbinden Sie sich erneut, um fortzufahren.",
+  "auth.googleCalendarConnectButton": "🔗 Google Kalender verbinden",
+  "auth.googleCalendarReconnectButton": "🔄 Google Kalender erneut verbinden",
 
   "errors.processingError": "Fehler bei der Bearbeitung Ihrer Anfrage.",
   "errors.noOutputFromAgent": "Keine Ausgabe vom AI-Agenten erhalten.",

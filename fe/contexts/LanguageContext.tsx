@@ -4,6 +4,7 @@ import React, { createContext, useContext, useEffect, useState, useCallback, use
 import { useTranslation } from 'react-i18next'
 import type { TFunction } from 'i18next'
 import { SUPPORTED_LANGUAGES, LANGUAGE_STORAGE_KEY, type SupportedLanguageCode } from '@/lib/i18n'
+import { detectUserLanguage } from '@/lib/geolocation'
 import '@/lib/i18n/config'
 
 interface LanguageContextValue {
@@ -16,18 +17,38 @@ interface LanguageContextValue {
 
 const LanguageContext = createContext<LanguageContextValue | undefined>(undefined)
 
+function getInitialLanguage(): SupportedLanguageCode {
+  if (typeof window === 'undefined') return 'en'
+
+  const stored = localStorage.getItem(LANGUAGE_STORAGE_KEY)
+  const validStored = SUPPORTED_LANGUAGES.find((lang) => lang.code === stored)
+  if (validStored) {
+    return validStored.code
+  }
+
+  const detected = detectUserLanguage()
+  if (detected) {
+    localStorage.setItem(LANGUAGE_STORAGE_KEY, detected)
+    return detected
+  }
+
+  return 'en'
+}
+
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const { t, i18n } = useTranslation()
   const [currentLanguage, setCurrentLanguage] = useState<SupportedLanguageCode>('en')
 
   useEffect(() => {
-    const stored = localStorage.getItem(LANGUAGE_STORAGE_KEY)
-    const validLanguage = SUPPORTED_LANGUAGES.find((lang) => lang.code === stored)
-    if (validLanguage) {
-      setCurrentLanguage(validLanguage.code)
-      i18n.changeLanguage(validLanguage.code)
-    } else {
-      setCurrentLanguage(i18n.language as SupportedLanguageCode)
+    const initialLang = getInitialLanguage()
+    setCurrentLanguage(initialLang)
+    i18n.changeLanguage(initialLang)
+
+    const lang = SUPPORTED_LANGUAGES.find((l) => l.code === initialLang)
+    if (lang) {
+      const htmlEl = document.documentElement
+      htmlEl.lang = initialLang
+      htmlEl.dir = lang.dir
     }
   }, [i18n])
 

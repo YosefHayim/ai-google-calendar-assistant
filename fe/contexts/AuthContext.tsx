@@ -1,8 +1,11 @@
 'use client'
 
 import type { AuthData, CustomUser, User } from '@/types/api'
-import React, { ReactNode, createContext, useCallback, useContext, useEffect, useState } from 'react'
-import { authService } from '@/services/auth.service'
+import React, { ReactNode, createContext, useCallback, useContext, useMemo } from 'react'
+import { useUser } from '@/hooks/queries/auth/useUser'
+import { STORAGE_KEYS } from '@/lib/constants'
+import { useQueryClient } from '@tanstack/react-query'
+import { queryKeys } from '@/lib/query/keys'
 
 interface AuthContextType {
   user: User | CustomUser | null
@@ -15,46 +18,51 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
+const hasPreviousSession = () =>
+  typeof window !== 'undefined' && !!localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN)
+
 export const AuthProvider = ({ children }: { children?: ReactNode }) => {
-  const [user, setUser] = useState<User | CustomUser | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const queryClient = useQueryClient()
 
-  const fetchUser = useCallback(async () => {
-    try {
-      const response = await authService.getUser(true)
-      if (response.status === 'success' && response.data) {
-        setUser(response.data)
-      } else {
-        setUser(null)
-      }
-    } catch {
-      setUser(null)
-    } finally {
-      setIsLoading(false)
-    }
-  }, [])
+  const { data: user, isLoading, refetch } = useUser({
+    customUser: true,
+    enabled: hasPreviousSession(),
+    refetchOnWindowFocus: false,
+    refetchOnMount: true,
+  })
 
-  useEffect(() => {
-    fetchUser()
-  }, [fetchUser])
-
-  const login = (data: AuthData) => {
-    setUser(data.user)
-  }
+  const login = useCallback(
+    (data: AuthData) => {
+      queryClient.setQueryData([...queryKeys.auth.user(), true], {
+        status: 'success',
+        data: data.user,
+      })
+    },
+    [queryClient],
+  )
 
   const logout = useCallback(() => {
-    setUser(null)
-  }, [])
+    queryClient.setQueryData([...queryKeys.auth.user(), true], null)
+    queryClient.invalidateQueries({ queryKey: queryKeys.auth.all })
+  }, [queryClient])
 
   const refreshUser = useCallback(async () => {
-    await fetchUser()
-  }, [fetchUser])
+    await refetch()
+  }, [refetch])
 
-  return (
-    <AuthContext.Provider value={{ user, isLoading, isAuthenticated: !!user, login, logout, refreshUser }}>
-      {children}
-    </AuthContext.Provider>
+  const value = useMemo(
+    () => ({
+      user: user ?? null,
+      isLoading,
+      isAuthenticated: !!user,
+      login,
+      logout,
+      refreshUser,
+    }),
+    [user, isLoading, login, logout, refreshUser],
   )
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
 export const useAuthContext = () => {

@@ -316,23 +316,33 @@ export const en = {
   "botMenu.brain": "Teach Ally your preferences",
 
   "auth.welcomePrompt":
-    "Welcome! To get started, please enter your email address for verification:",
+    "👋 <b>Welcome to Ally!</b>\n\nI'm your AI-powered calendar assistant. I can help you:\n\n📅 Schedule and manage events using natural language\n🔍 Find free time and check your schedule\n📊 Get insights about how you spend your time\n\n<b>Let's get you set up in 2 quick steps:</b>\n\n<b>Step 1:</b> Verify your email\n<b>Step 2:</b> Connect your Google Calendar\n\nPlease enter your email address to begin:",
   "auth.enterOtpPrompt":
-    "A verification code has been sent to {{email}}.\n\nPlease enter the 6-digit code from your email (valid for 10 minutes).\n\nIf you entered the wrong email, just type the correct one.",
+    "📧 <b>Check your inbox!</b>\n\nI've sent a 6-digit verification code to <b>{{email}}</b>.\n\nPlease enter the code below (valid for 10 minutes).\n\n<i>Wrong email? Just type the correct one instead.</i>",
   "auth.otpExpired":
-    "Verification code expired. Please enter your email again:",
+    "⏰ Verification code expired.\n\nPlease enter your email address again:",
   "auth.otpInvalidError":
-    "Invalid verification code. Please try again or type a new email address.",
+    "❌ Invalid verification code.\n\nPlease try again or type a different email address.",
   "auth.otpInvalidWithNewEmail": "Error: {{error}}",
   "auth.emailVerifiedSuccess":
-    "Email verified and saved successfully! You can now use the bot.",
+    "✅ <b>Email verified!</b>\n\nGreat, you're halfway there.\n\n<b>Next step:</b> Connect your Google Calendar so I can help manage your schedule.",
   "auth.dbSaveError": "Error saving email. Please try again.",
   "auth.enterOtpOrNewEmail":
-    "Please enter the 6-digit verification code from your email, or enter a different email address:",
+    "Please enter the 6-digit verification code, or type a different email address:",
   "auth.otpSentToNewEmail":
-    "Verification code sent to {{email}}.\n\nPlease enter the 6-digit code from your email (valid for 10 minutes):",
+    "📧 Verification code sent to <b>{{email}}</b>.\n\nPlease enter the 6-digit code (valid for 10 minutes):",
   "auth.otpSendFailed":
     "Failed to send verification code: {{error}}\n\nPlease try again with a different email.",
+  "auth.googleCalendarConnect":
+    "🔗 <b>Connect Google Calendar</b>\n\nTo manage your calendar, I need permission to access your Google Calendar.\n\n<b>What I can do once connected:</b>\n• View your schedule\n• Create and update events\n• Find available time slots\n• Send you reminders\n\n<b>Your data is secure:</b>\n• I only access calendar data\n• You can revoke access anytime\n• Your data is never shared",
+  "auth.googleCalendarReconnect":
+    "🔄 <b>Reconnect Google Calendar</b>\n\nYour calendar access has expired. Please reconnect to continue using Ally.",
+  "auth.googleCalendarMissingPermissions":
+    "⚠️ <b>Additional Permissions Needed</b>\n\nI need full calendar access to help you effectively. Please reconnect with complete permissions.",
+  "auth.googleCalendarSessionExpired":
+    "🔄 <b>Session Expired</b>\n\nYour Google Calendar session has expired. Please reconnect to continue.",
+  "auth.googleCalendarConnectButton": "🔗 Connect Google Calendar",
+  "auth.googleCalendarReconnectButton": "🔄 Reconnect Google Calendar",
 
   "errors.processingError": "Error processing your request.",
   "errors.noOutputFromAgent": "No output received from AI Agent.",

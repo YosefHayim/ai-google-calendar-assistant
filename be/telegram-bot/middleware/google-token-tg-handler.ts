@@ -1,3 +1,4 @@
+import { AuditEventType, auditLogger } from "@/utils/audit-logger";
 import {
   checkTokenExpiry,
   deactivateGoogleTokens,
@@ -8,10 +9,11 @@ import {
 } from "@/utils/auth";
 
 import type { GlobalContext } from "../init-bot";
+import { InlineKeyboard } from "grammy";
 import type { MiddlewareFn } from "grammy";
 import type { TokensProps } from "@/types";
+import { getTranslatorFromLanguageCode } from "../i18n";
 import { logger } from "@/utils/logger";
-import { auditLogger, AuditEventType } from "@/utils/audit-logger";
 
 /**
  * Validation result for Google Calendar tokens
@@ -27,7 +29,8 @@ type TelegramTokenValidationResult = {
  * Validate Google Calendar tokens for Telegram user
  * Returns validated tokens or null if auth is required
  */
-const validateGoogleTokens = async (ctx: GlobalContext, email: string): Promise<TelegramTokenValidationResult | null> => {
+const validateGoogleTokens = async (ctx: GlobalContext, email: string, langCode?: string): Promise<TelegramTokenValidationResult | null> => {
+  const { t } = getTranslatorFromLanguageCode(langCode);
   const { data: tokens, error } = await fetchGoogleTokensByEmail(email);
   if (error) {
     logger.error(`Telegram Bot: Google Token: validateGoogleTokens middleware error: ${error}`);
@@ -37,23 +40,32 @@ const validateGoogleTokens = async (ctx: GlobalContext, email: string): Promise<
   }
 
   if (!tokens) {
-    // First-time authentication - force consent screen
     const authUrl = generateGoogleAuthUrl({ forceConsent: true });
-    await ctx.reply(`To help you manage your calendar, I need access to your Google Calendar. Please authorize:\n\n${authUrl}`);
+    const keyboard = new InlineKeyboard().url(t("auth.googleCalendarConnectButton"), authUrl);
+    await ctx.reply(t("auth.googleCalendarConnect"), {
+      parse_mode: "HTML",
+      reply_markup: keyboard,
+    });
     return null;
   }
 
   if (!tokens.is_active) {
-    // Re-authentication required - force consent screen
     const authUrl = generateGoogleAuthUrl({ forceConsent: true });
-    await ctx.reply(`Your Google Calendar access has been revoked. Please reconnect:\n\n${authUrl}`);
+    const keyboard = new InlineKeyboard().url(t("auth.googleCalendarReconnectButton"), authUrl);
+    await ctx.reply(t("auth.googleCalendarReconnect"), {
+      parse_mode: "HTML",
+      reply_markup: keyboard,
+    });
     return null;
   }
 
   if (!tokens.refresh_token) {
-    // Missing refresh token - force consent screen to get one
     const authUrl = generateGoogleAuthUrl({ forceConsent: true });
-    await ctx.reply(`Missing calendar permissions. Please reconnect with full access:\n\n${authUrl}`);
+    const keyboard = new InlineKeyboard().url(t("auth.googleCalendarReconnectButton"), authUrl);
+    await ctx.reply(t("auth.googleCalendarMissingPermissions"), {
+      parse_mode: "HTML",
+      reply_markup: keyboard,
+    });
     return null;
   }
 
@@ -68,10 +80,14 @@ const validateGoogleTokens = async (ctx: GlobalContext, email: string): Promise<
  * Refresh Google Calendar tokens if expired or near expiry
  * Returns refreshed tokens or null if reauth is required
  */
-const refreshGoogleTokensIfNeeded = async (ctx: GlobalContext, validation: TelegramTokenValidationResult): Promise<TelegramTokenValidationResult | null> => {
+const refreshGoogleTokensIfNeeded = async (
+  ctx: GlobalContext,
+  validation: TelegramTokenValidationResult,
+  langCode?: string
+): Promise<TelegramTokenValidationResult | null> => {
   const { tokens, isExpired, isNearExpiry } = validation;
+  const { t } = getTranslatorFromLanguageCode(langCode);
 
-  // Token is still valid - no refresh needed
   if (!isExpired && !isNearExpiry) {
     return validation;
   }
@@ -89,7 +105,6 @@ const refreshGoogleTokensIfNeeded = async (ctx: GlobalContext, validation: Teleg
 
     const expiresInMs = refreshedTokens.expiryDate - Date.now();
 
-    // Audit log successful token refresh
     auditLogger.tokenRefresh(ctx.from?.id || 0, email, expiresInMs);
 
     const result: TelegramTokenValidationResult = {
@@ -117,15 +132,17 @@ const refreshGoogleTokensIfNeeded = async (ctx: GlobalContext, validation: Teleg
     if (message.startsWith("REAUTH_REQUIRED:")) {
       await deactivateGoogleTokens(email);
 
-      // Audit log reauth required
       auditLogger.log(AuditEventType.GOOGLE_REAUTH_REQUIRED, ctx.from?.id || 0, {
         email,
         reason: message,
       });
 
-      // Re-authentication required - force consent screen
       const authUrl = generateGoogleAuthUrl({ forceConsent: true });
-      await ctx.reply(`Your Google Calendar session has expired. Please reconnect:\n\n${authUrl}`);
+      const keyboard = new InlineKeyboard().url(t("auth.googleCalendarReconnectButton"), authUrl);
+      await ctx.reply(t("auth.googleCalendarSessionExpired"), {
+        parse_mode: "HTML",
+        reply_markup: keyboard,
+      });
       return null;
     }
 
@@ -140,37 +157,25 @@ const refreshGoogleTokensIfNeeded = async (ctx: GlobalContext, validation: Teleg
  *
  * Validates that the user has valid Google Calendar tokens and refreshes if needed.
  * Must be used after authTgHandler middleware (requires session.email to be set).
- *
- * @description
- * This middleware:
- * 1. Fetches user's Google Calendar tokens from database
- * 2. Validates tokens exist, are active, and have refresh_token
- * 3. Checks token expiry status (5 min buffer for near-expiry)
- * 4. Refreshes tokens if expired or near expiry
- * 5. Stores validated tokens in session.googleTokens
- * 6. Handles REAUTH_REQUIRED by deactivating tokens and prompting user
  */
 export const googleTokenTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
   const email = ctx.session?.email;
+  const langCode = ctx.session?.codeLang;
 
-  // Skip if no email in session (authTgHandler should have set this)
   if (!email) {
     return next();
   }
 
-  // Step 1: Validate tokens exist and are active
-  const validation = await validateGoogleTokens(ctx, email);
+  const validation = await validateGoogleTokens(ctx, email, langCode);
   if (!validation) {
-    return; // Stop here until user authorizes Google Calendar
+    return;
   }
 
-  // Step 2: Refresh tokens if expired or near expiry
-  const refreshedValidation = await refreshGoogleTokensIfNeeded(ctx, validation);
+  const refreshedValidation = await refreshGoogleTokensIfNeeded(ctx, validation, langCode);
   if (!refreshedValidation) {
-    return; // Stop here until user re-authorizes
+    return;
   }
 
-  // Step 3: Store validated tokens in session for agent usage
   ctx.session.googleTokens = refreshedValidation.tokens;
   return next();
 };

@@ -443,6 +443,33 @@ Session management for agent conversations.
 | `export default` for components | Use named exports |
 | Empty catch blocks | Handle or rethrow errors |
 | Hardcoded config values | Use `@/config` constants |
+| `useState` for data fetching loading states | Use TanStack Query's built-in `isLoading` |
+| `useEffect` + `useState` for API calls | Use `useQuery`/`useQueries` hooks instead |
+
+### Loading State Pattern (Frontend)
+
+**NEVER** use manual loading state for data fetching:
+```typescript
+// BAD - manual loading state
+const [isLoading, setIsLoading] = useState(true)
+const [data, setData] = useState(null)
+useEffect(() => {
+  fetchData().then(setData).finally(() => setIsLoading(false))
+}, [])
+
+// GOOD - TanStack Query handles loading
+const { data, isLoading } = useQuery({
+  queryKey: ['data'],
+  queryFn: fetchData,
+  enabled: hasPreviousSession(), // conditional fetching
+})
+```
+
+**When `useState` for loading IS acceptable:**
+- UI-only states (redirects via `window.location.href`)
+- Asset loading (3D models, images)
+- Form submission that redirects (no data return)
+- Simulated delays / animations
 
 ---
 

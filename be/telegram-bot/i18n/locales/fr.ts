@@ -355,24 +355,34 @@ export const fr = {
   "botMenu.brain": "Apprendre vos préférences à Ally",
 
   "auth.welcomePrompt":
-    "Bienvenue ! Pour commencer, veuillez entrer votre adresse e-mail pour vérification :",
+    "👋 <b>Bienvenue sur Ally !</b>\n\nJe suis votre assistant calendrier intelligent. Je peux vous aider à :\n\n📅 Planifier et gérer des événements en langage naturel\n🔍 Trouver du temps libre et consulter votre agenda\n📊 Obtenir des insights sur la gestion de votre temps\n\n<b>Commençons en 2 étapes rapides :</b>\n\n<b>Étape 1 :</b> Vérifier votre e-mail\n<b>Étape 2 :</b> Connecter votre Google Agenda\n\nVeuillez entrer votre adresse e-mail pour commencer :",
   "auth.enterOtpPrompt":
-    "Un code de vérification a été envoyé à {{email}}.\n\nVeuillez entrer le code à 6 chiffres reçu par e-mail (valide pendant 10 minutes).\n\nSi vous avez entré le mauvais e-mail, tapez simplement le bon.",
+    "📧 <b>Vérifiez votre boîte de réception !</b>\n\nJ'ai envoyé un code de vérification à 6 chiffres à <b>{{email}}</b>.\n\nVeuillez entrer le code ci-dessous (valide 10 minutes).\n\n<i>Mauvais e-mail ? Tapez simplement le bon.</i>",
   "auth.otpExpired":
-    "Code de vérification expiré. Veuillez entrer votre e-mail à nouveau :",
+    "⏰ Code de vérification expiré.\n\nVeuillez entrer votre adresse e-mail à nouveau :",
   "auth.otpInvalidError":
-    "Code de vérification invalide. Veuillez réessayer ou taper une nouvelle adresse e-mail.",
+    "❌ Code de vérification invalide.\n\nVeuillez réessayer ou tapez une autre adresse e-mail.",
   "auth.otpInvalidWithNewEmail": "Erreur : {{error}}",
   "auth.emailVerifiedSuccess":
-    "E-mail vérifié et enregistré avec succès ! Vous pouvez maintenant utiliser le bot.",
+    "✅ <b>E-mail vérifié !</b>\n\nParfait, vous y êtes presque.\n\n<b>Prochaine étape :</b> Connectez votre Google Agenda pour que je puisse gérer votre planning.",
   "auth.dbSaveError":
     "Erreur lors de l'enregistrement de l'e-mail. Veuillez réessayer.",
   "auth.enterOtpOrNewEmail":
-    "Veuillez entrer le code de vérification à 6 chiffres reçu par e-mail, ou entrer une adresse e-mail différente :",
+    "Veuillez entrer le code à 6 chiffres, ou tapez une autre adresse e-mail :",
   "auth.otpSentToNewEmail":
-    "Code de vérification envoyé à {{email}}.\n\nVeuillez entrer le code à 6 chiffres reçu par e-mail (valide pendant 10 minutes) :",
+    "📧 Code de vérification envoyé à <b>{{email}}</b>.\n\nVeuillez entrer le code à 6 chiffres (valide 10 minutes) :",
   "auth.otpSendFailed":
-    "Échec de l'envoi du code de vérification : {{error}}\n\nVeuillez réessayer avec un autre e-mail.",
+    "Échec de l'envoi du code : {{error}}\n\nVeuillez réessayer avec un autre e-mail.",
+  "auth.googleCalendarConnect":
+    "🔗 <b>Connecter Google Agenda</b>\n\nPour gérer votre agenda, j'ai besoin de votre permission pour accéder à Google Agenda.\n\n<b>Ce que je peux faire une fois connecté :</b>\n• Consulter votre planning\n• Créer et modifier des événements\n• Trouver des créneaux disponibles\n• Vous envoyer des rappels\n\n<b>Vos données sont sécurisées :</b>\n• J'accède uniquement aux données de l'agenda\n• Vous pouvez révoquer l'accès à tout moment\n• Vos données ne sont jamais partagées",
+  "auth.googleCalendarReconnect":
+    "🔄 <b>Reconnecter Google Agenda</b>\n\nVotre accès à l'agenda a expiré. Veuillez vous reconnecter pour continuer à utiliser Ally.",
+  "auth.googleCalendarMissingPermissions":
+    "⚠️ <b>Permissions supplémentaires requises</b>\n\nJ'ai besoin d'un accès complet à l'agenda pour vous aider efficacement. Veuillez vous reconnecter avec les permissions complètes.",
+  "auth.googleCalendarSessionExpired":
+    "🔄 <b>Session expirée</b>\n\nVotre session Google Agenda a expiré. Veuillez vous reconnecter pour continuer.",
+  "auth.googleCalendarConnectButton": "🔗 Connecter Google Agenda",
+  "auth.googleCalendarReconnectButton": "🔄 Reconnecter Google Agenda",
 
   "errors.processingError": "Erreur lors du traitement de votre demande.",
   "errors.noOutputFromAgent": "Aucune réponse reçue de l'agent IA.",

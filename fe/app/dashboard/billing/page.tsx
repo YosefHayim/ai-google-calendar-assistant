@@ -4,6 +4,7 @@ import React, { Suspense, useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useTranslation } from 'react-i18next'
 import { format } from 'date-fns'
+import { useQueryClient } from '@tanstack/react-query'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -22,23 +23,19 @@ import {
 } from 'lucide-react'
 import { LoadingSection } from '@/components/ui/loading-spinner'
 import {
-  getSubscriptionStatus,
-  getPlans,
   redirectToBillingPortal,
   redirectToCheckout,
   upgradeSubscription,
   cancelSubscription,
   requestRefund,
-  getBillingOverview,
-  type UserAccess,
   type Plan,
-  type BillingOverview,
   type PlanSlug,
   type PlanInterval,
 } from '@/services/payment.service'
 import { PaymentMethodCard } from '@/components/dashboard/billing/PaymentMethodCard'
 import { TransactionHistoryTable } from '@/components/dashboard/billing/TransactionHistoryTable'
 import { ConfirmDialog } from '@/components/dashboard/shared/ConfirmDialog'
+import { useBillingData, billingKeys } from '@/hooks/queries/billing'
 
 export default function BillingPage() {
   return (
@@ -51,35 +48,13 @@ export default function BillingPage() {
 function BillingPageContent() {
   const { t } = useTranslation()
   const searchParams = useSearchParams()
-  const [access, setAccess] = useState<UserAccess | null>(null)
-  const [plans, setPlans] = useState<Plan[]>([])
-  const [billingOverview, setBillingOverview] = useState<BillingOverview | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const queryClient = useQueryClient()
+  const { access, plans, billingOverview, isLoading, refetchAll } = useBillingData()
   const [actionLoading, setActionLoading] = useState<string | null>(null)
   const [showSuccess, setShowSuccess] = useState(false)
   const [confirmDialog, setConfirmDialog] = useState<'cancel' | 'refund' | null>(null)
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        const [accessData, plansData, billingData] = await Promise.all([
-          getSubscriptionStatus(),
-          getPlans(),
-          getBillingOverview(),
-        ])
-        setAccess(accessData)
-        setPlans(plansData)
-        setBillingOverview(billingData)
-      } catch (error) {
-        console.error('Failed to load billing data:', error)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    loadData()
-
-    // Check for success parameter from checkout redirect
     if (searchParams.get('success') === 'true') {
       setShowSuccess(true)
       setTimeout(() => setShowSuccess(false), 5000)
@@ -98,7 +73,6 @@ function BillingPageContent() {
   }
 
   const handlePlanAction = async (plan: Plan) => {
-    // For starter (free) plan, redirect to billing portal to manage/downgrade
     if (plan.slug === 'starter') {
       await handleManageBilling()
       return
@@ -106,24 +80,15 @@ function BillingPageContent() {
 
     setActionLoading(`plan-${plan.id}`)
     try {
-      // Check if user has a subscription linked to payment provider
       const isLinkedToProvider = access?.subscription?.isLinkedToProvider === true
 
       if (isLinkedToProvider) {
-        // Upgrade/downgrade existing subscription
         await upgradeSubscription({
           planSlug: plan.slug as PlanSlug,
           interval: 'monthly' as PlanInterval,
         })
-        // Reload data to reflect changes
-        const [accessData, billingData] = await Promise.all([
-          getSubscriptionStatus(),
-          getBillingOverview(),
-        ])
-        setAccess(accessData)
-        setBillingOverview(billingData)
+        await refetchAll()
       } else {
-        // Create new subscription checkout
         await redirectToCheckout({
           planSlug: plan.slug as PlanSlug,
           interval: 'monthly' as PlanInterval,
@@ -144,13 +109,7 @@ function BillingPageContent() {
     setActionLoading('cancel')
     try {
       await cancelSubscription('User requested cancellation')
-      // Refresh data
-      const [accessData, billingData] = await Promise.all([
-        getSubscriptionStatus(),
-        getBillingOverview(),
-      ])
-      setAccess(accessData)
-      setBillingOverview(billingData)
+      await refetchAll()
     } catch (error) {
       console.error('Failed to cancel subscription:', error)
     } finally {
@@ -170,12 +129,7 @@ function BillingPageContent() {
       if (result.success) {
         setShowSuccess(true)
         setTimeout(() => setShowSuccess(false), 5000)
-        const [accessData, billingData] = await Promise.all([
-          getSubscriptionStatus(),
-          getBillingOverview(),
-        ])
-        setAccess(accessData)
-        setBillingOverview(billingData)
+        await refetchAll()
       }
     } catch (error) {
       console.error('Failed to process refund:', error)
@@ -365,7 +319,7 @@ function BillingPageContent() {
           <TransactionHistoryTable transactions={billingOverview?.transactions || []} />
         </Card>
 
-        {plans.length > 0 && (
+        {plans && plans.length > 0 && (
           <Card className="p-6">
             <h3 className="text-lg font-semibold text-zinc-900 dark:text-white mb-4">{t('billing.plans.title')}</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -457,7 +411,6 @@ function BillingPageContent() {
         </Card>
       </div>
 
-      {/* Cancel Subscription Confirmation Dialog */}
       <ConfirmDialog
         isOpen={confirmDialog === 'cancel'}
         onClose={() => setConfirmDialog(null)}
@@ -474,7 +427,6 @@ function BillingPageContent() {
         isLoading={actionLoading === 'cancel'}
       />
 
-      {/* Refund Request Confirmation Dialog */}
       <ConfirmDialog
         isOpen={confirmDialog === 'refund'}
         onClose={() => setConfirmDialog(null)}
