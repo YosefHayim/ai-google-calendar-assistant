@@ -1,4 +1,4 @@
-import { ENV } from '../constants'
+import { ENV, STORAGE_KEYS } from '../constants'
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios'
 
 interface RetryableRequestConfig extends InternalAxiosRequestConfig {
@@ -22,6 +22,24 @@ export const apiClient = axios.create({
   withCredentials: true,
 })
 
+// SameSite=Lax cookies don't work with cross-origin AJAX - must send tokens via headers
+apiClient.interceptors.request.use(
+  (config) => {
+    if (typeof window !== 'undefined') {
+      const accessToken = localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN)
+      if (accessToken && !config.headers.Authorization) {
+        config.headers.Authorization = `Bearer ${accessToken}`
+      }
+      const refreshToken = localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN)
+      if (refreshToken && !config.headers.refresh_token) {
+        config.headers.refresh_token = refreshToken
+      }
+    }
+    return config
+  },
+  (error) => Promise.reject(error),
+)
+
 let isRefreshing = false
 let failedQueue: Array<{
   resolve: (value?: unknown) => void
@@ -41,7 +59,19 @@ const processQueue = (error: AxiosError | null) => {
 }
 
 apiClient.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    if (typeof window !== 'undefined') {
+      const newAccessToken = response.headers['access_token']
+      const newRefreshToken = response.headers['refresh_token']
+      if (newAccessToken) {
+        localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, newAccessToken)
+      }
+      if (newRefreshToken) {
+        localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, newRefreshToken)
+      }
+    }
+    return response
+  },
   async (error: AxiosError<SessionErrorResponse>) => {
     const originalRequest = error.config as RetryableRequestConfig | undefined
     if (!originalRequest) {
