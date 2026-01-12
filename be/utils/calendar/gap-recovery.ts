@@ -15,7 +15,7 @@ import type { calendar_v3 } from "googleapis";
 import { fetchCalendarEvents } from "./get-events";
 import { fetchCredentialsByEmail } from "../auth/get-user-calendar-tokens";
 import { initUserSupabaseCalendarWithTokensAndUpdateTokens } from "./init";
-import { v4 as uuidv4 } from "uuid";
+import { randomUUID } from "node:crypto";
 import {
   getCombinedPatternsForLanguages,
   matchTravelPatternMultilingual,
@@ -441,7 +441,7 @@ export const analyzeGaps = asyncHandler(
       }
 
       const gap: GapCandidate = {
-        id: uuidv4(),
+        id: randomUUID(),
         userId: "", // Will be set by the caller
         start: currentEnd,
         end: nextStart,
