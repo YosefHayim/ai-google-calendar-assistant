@@ -74,6 +74,7 @@ export const fr: TranslationShape = {
     description:
       "L'assistant IA de niveau exécutif conçu pour protéger votre temps de travail profond. De l'accès gratuit à la puissance illimitée. Construit sur le protocole Ally Neural.",
     systemStatus: 'Tous les systèmes opérationnels • Moteur haute performance',
+    chatOnTelegram: 'Discuter avec Ally sur Telegram',
   },
 
   home: {
@@ -96,6 +97,52 @@ export const fr: TranslationShape = {
     ctaTitle: 'Prêt à transformer votre expérience agenda?',
     ctaSubtitle: 'Rejoignez des milliers de professionnels qui ont simplifié leur planification avec Ally.',
     startForFree: 'Commencer gratuitement',
+    telegramTitle: 'Discuter avec Ally sur Telegram',
+    telegramDescription:
+      'Gérez votre agenda en déplacement. Envoyez des messages vocaux, planifiez des événements et recevez des rappels — le tout depuis Telegram.',
+    openTelegram: 'Ouvrir dans Telegram',
+  },
+
+  // Feature Showcase
+  showcase: {
+    badge: 'Démo en direct',
+    title: 'Voyez Ally en action',
+    subtitle: 'Découvrez la gestion de calendrier fluide sur Telegram et Web',
+    today: {
+      title: "Programme d'aujourd'hui",
+      description:
+        "Obtenez un aperçu complet de votre journée avec /today. Voyez toutes les réunions, blocs de concentration et temps libre d'un coup d'œil.",
+    },
+    voice: {
+      title: 'Commandes vocales',
+      description:
+        'Envoyez des messages vocaux pour gérer votre agenda sans les mains. Ally transcrit et exécute vos demandes instantanément.',
+    },
+    analytics: {
+      title: 'Analyse du temps',
+      description:
+        'Suivez votre productivité avec /analytics. Voyez le temps de concentration, la charge de réunions et les tendances hebdomadaires pour optimiser votre emploi du temps.',
+    },
+    brain: {
+      title: 'Ally Brain',
+      description:
+        'Enseignez vos préférences à Ally avec /brain. Définissez des règles comme "pas de réunions avant 10h" et Ally s\'en souviendra.',
+    },
+    search: {
+      title: 'Recherche intelligente',
+      description:
+        'Trouvez instantanément les réunions passées. Demandez "Quand ai-je rencontré Sarah pour la dernière fois?" et obtenez des réponses précises avec contexte.',
+    },
+    create: {
+      title: 'Création rapide',
+      description:
+        'Planifiez des événements en langage naturel. Dites simplement "Déjeuner avec Alex demain à midi" et confirmez.',
+    },
+    language: {
+      title: 'Multilingue',
+      description:
+        'Utilisez Ally dans votre langue préférée avec /language. Supporte l\'anglais, l\'hébreu, le russe, le français, l\'allemand et l\'arabe.',
+    },
   },
 
   about: {

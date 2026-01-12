@@ -26,6 +26,7 @@ import {
   Volume2,
   Edit3,
   Trash2,
+  type LucideIcon,
 } from 'lucide-react'
 import { TelegramIcon } from '@/components/shared/Icons'
 import { AllyLogo } from '@/components/shared/logo'
@@ -41,7 +42,7 @@ interface Message {
 
 interface Feature {
   id: string
-  icon: React.ElementType
+  icon: LucideIcon
   titleKey: string
   descriptionKey: string
   category: 'schedule' | 'manage' | 'insights' | 'ai'

@@ -5,6 +5,7 @@ const nextConfig = {
     resolveExtensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
   },
   experimental: {
+    turbopackUseSystemTlsCerts: true,
     swcPlugins:
       process.env.NODE_ENV === 'development'
         ? [
