@@ -7,7 +7,13 @@ import { logger } from "../logger";
 import { updateUserSupabaseTokens } from "../auth/update-tokens-of-user";
 
 /**
- * Create a fresh OAuth2Client instance for per-request use. Part of: Calendar initialization flow.
+ * @description Creates a fresh OAuth2Client instance configured with application credentials.
+ * Used as the foundation for Google Calendar API authentication on a per-request basis.
+ * Part of the calendar initialization flow.
+ * @returns {OAuth2Client} A new OAuth2Client instance configured with client ID, secret, and redirect URI.
+ * @example
+ * const oauthClient = createOAuth2Client();
+ * oauthClient.setCredentials(userTokens);
  */
 export const createOAuth2Client = (): OAuth2Client => {
   return new google.auth.OAuth2(env.googleClientId, env.googleClientSecret, REDIRECT_URI);
@@ -16,7 +22,17 @@ export const createOAuth2Client = (): OAuth2Client => {
 type RefreshedToken = { token: string | null | undefined; expiry_date?: number | null };
 
 /**
- * Refresh OAuth tokens and get new access token. Part of: Calendar initialization flow.
+ * @description Refreshes OAuth tokens using the client's refresh token and returns the new access token.
+ * Handles token refresh errors gracefully and logs detailed error information.
+ * Part of the calendar initialization flow.
+ * @param {OAuth2Client} client - An OAuth2Client with credentials (including refresh_token) already set.
+ * @returns {Promise<RefreshedToken | null>} The new access token and expiry date, or null if token is unavailable.
+ * @throws {Error} Throws with "invalid grant" message if refresh fails (e.g., token revoked).
+ * @example
+ * const refreshed = await refreshAccessToken(oauthClient);
+ * if (refreshed?.token) {
+ *   console.log("New token expires at:", new Date(refreshed.expiry_date));
+ * }
  */
 export const refreshAccessToken = async (client: OAuth2Client): Promise<RefreshedToken | null> => {
   try {
@@ -33,14 +49,28 @@ export const refreshAccessToken = async (client: OAuth2Client): Promise<Refreshe
 };
 
 /**
- * Create Google Calendar client. Part of: Calendar initialization flow.
+ * @description Creates an authenticated Google Calendar API client using the provided OAuth2Client.
+ * Configures the client for v3 API with JSON response type.
+ * Part of the calendar initialization flow.
+ * @param {OAuth2Client} auth - An authenticated OAuth2Client with valid credentials.
+ * @returns {calendar_v3.Calendar} A configured Google Calendar API client ready for API calls.
+ * @example
+ * const calendar = createCalendarClient(oauthClient);
+ * const events = await calendar.events.list({ calendarId: "primary" });
  */
 export const createCalendarClient = (auth: OAuth2Client): calendar_v3.Calendar => {
   return google.calendar({ version: "v3", auth, responseType: "json" });
 };
 
 /**
- * Persist refreshed tokens to database if needed. Part of: Calendar initialization flow.
+ * @description Persists refreshed OAuth tokens to the database if new tokens were obtained.
+ * Updates the user's stored tokens in Supabase to maintain valid credentials.
+ * Part of the calendar initialization flow.
+ * @param {TokensProps} oldTokens - The original tokens used for the refresh request.
+ * @param {RefreshedToken | null} newTokens - The newly obtained tokens from the refresh operation.
+ * @returns {Promise<void>} Resolves when tokens are persisted (or skipped if no new token).
+ * @example
+ * await persistRefreshedTokens(originalTokens, refreshedTokens);
  */
 const persistRefreshedTokens = async (oldTokens: TokensProps, newTokens: RefreshedToken | null): Promise<void> => {
   if (newTokens?.token) {
@@ -49,7 +79,13 @@ const persistRefreshedTokens = async (oldTokens: TokensProps, newTokens: Refresh
 };
 
 /**
- * Convert TokensProps to Google Credentials format
+ * @description Converts application TokensProps format to Google's Credentials format.
+ * Maps nullable fields to undefined as required by the Google Auth library.
+ * @param {TokensProps} tokens - The application's token format from the database.
+ * @returns {Credentials} A Google Credentials object compatible with OAuth2Client.
+ * @example
+ * const googleCreds = toGoogleCredentials(userTokens);
+ * oauthClient.setCredentials(googleCreds);
  */
 const toGoogleCredentials = (tokens: TokensProps): Credentials => ({
   access_token: tokens.access_token ?? undefined,
@@ -61,7 +97,15 @@ const toGoogleCredentials = (tokens: TokensProps): Credentials => ({
 });
 
 /**
- * Initialize calendar with user tokens. Part of: Calendar initialization flow - main entry point.
+ * @description Main entry point for initializing a Google Calendar client with user tokens.
+ * Creates OAuth2Client, sets credentials, refreshes tokens, persists new tokens to database,
+ * and returns a ready-to-use Calendar client.
+ * @param {TokensProps} tokens - User's OAuth tokens retrieved from the database.
+ * @returns {Promise<calendar_v3.Calendar>} An authenticated Google Calendar API client.
+ * @example
+ * const credentials = await fetchCredentialsByEmail("user@example.com");
+ * const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(credentials);
+ * const events = await calendar.events.list({ calendarId: "primary" });
  */
 export const initUserSupabaseCalendarWithTokensAndUpdateTokens = async (tokens: TokensProps): Promise<calendar_v3.Calendar> => {
   const oauthClient = createOAuth2Client();

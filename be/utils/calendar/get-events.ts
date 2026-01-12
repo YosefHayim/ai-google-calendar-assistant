@@ -40,7 +40,17 @@ export type StandardEventsResponse = {
 export type GetEventsResponse = CustomEventsResponse | StandardEventsResponse;
 
 /**
- * Build list parameters for Google Calendar API
+ * @description Builds and normalizes list parameters for the Google Calendar events.list API.
+ * Extracts calendar-specific options, applies base request configuration, and separates
+ * the calendarId from other parameters for proper API formatting.
+ * @param {ListExtra} rawExtra - Raw options including calendarId, customEvents flag, and list parameters.
+ * @returns {{ listParams: calendar_v3.Params$Resource$Events$List; calendarId: string | undefined }} An object containing normalized list params and extracted calendarId.
+ * @example
+ * const { listParams, calendarId } = buildListParams({
+ *   calendarId: "primary",
+ *   timeMin: "2025-01-01T00:00:00Z",
+ *   maxResults: 50
+ * });
  */
 function buildListParams(rawExtra: ListExtra): { listParams: calendar_v3.Params$Resource$Events$List; calendarId: string | undefined } {
   const { email: _omitEmail, customEvents: _omitCustom, calendarId, includeCalendarName: _omitIncludeCalendarName = false, ...listExtraRaw } = rawExtra;
@@ -60,7 +70,17 @@ function buildListParams(rawExtra: ListExtra): { listParams: calendar_v3.Params$
 }
 
 /**
- * Fetch raw events from Google Calendar API
+ * @description Fetches raw events from the Google Calendar API using the events.list endpoint.
+ * Returns the complete events data structure including items, nextPageToken, and metadata.
+ * @param {calendar_v3.Resource$Events} calendarEvents - The Google Calendar events resource.
+ * @param {calendar_v3.Params$Resource$Events$List} params - Parameters for the events.list API call.
+ * @returns {Promise<calendar_v3.Schema$Events>} The raw events data from Google Calendar API.
+ * @example
+ * const eventsData = await fetchCalendarEvents(calendar.events, {
+ *   calendarId: "primary",
+ *   timeMin: "2025-01-01T00:00:00Z",
+ *   maxResults: 100
+ * });
  */
 export async function fetchCalendarEvents(
   calendarEvents: calendar_v3.Resource$Events,
@@ -73,6 +93,20 @@ export async function fetchCalendarEvents(
 const GOOGLE_CALENDAR_MAX_RESULTS = 2500;
 const DEFAULT_MAX_PAGINATION_PAGES = 50;
 
+/**
+ * @description Fetches all events from Google Calendar with automatic pagination handling.
+ * Continues fetching pages until no more results or maxPages limit is reached.
+ * Consolidates all event items into a single response object.
+ * @param {calendar_v3.Resource$Events} calendarEvents - The Google Calendar events resource.
+ * @param {calendar_v3.Params$Resource$Events$List} params - Parameters for the events.list API call.
+ * @param {number} [maxPages=50] - Maximum number of pages to fetch to prevent infinite loops.
+ * @returns {Promise<calendar_v3.Schema$Events>} Consolidated events data with all items from all pages.
+ * @example
+ * const allEvents = await fetchAllCalendarEvents(calendar.events, {
+ *   calendarId: "primary",
+ *   timeMin: "2025-01-01T00:00:00Z"
+ * }, 10);
+ */
 export async function fetchAllCalendarEvents(
   calendarEvents: calendar_v3.Resource$Events,
   params: calendar_v3.Params$Resource$Events$List,
@@ -116,7 +150,13 @@ export async function fetchAllCalendarEvents(
 }
 
 /**
- * Format a single event into custom format
+ * @description Formats a Google Calendar event into a simplified, display-friendly structure.
+ * Extracts key fields and formats dates using the application's date formatting utilities.
+ * @param {calendar_v3.Schema$Event} event - The raw Google Calendar event object.
+ * @returns {FormattedEvent} A simplified event object with formatted dates and duration.
+ * @example
+ * const formatted = formatSingleEvent(calendarEvent);
+ * // Returns { eventId: "abc123", summary: "Meeting", start: "Jan 15, 2025 10:00 AM", ... }
  */
 export function formatSingleEvent(event: calendar_v3.Schema$Event): FormattedEvent {
   const startDate = event.start?.date || event.start?.dateTime || null;
@@ -134,7 +174,14 @@ export function formatSingleEvent(event: calendar_v3.Schema$Event): FormattedEve
 }
 
 /**
- * Format events into custom response format
+ * @description Formats an array of events into a custom response structure for API responses.
+ * Reverses the event order (newest first) and applies single event formatting to each.
+ * @param {calendar_v3.Schema$Event[]} events - Array of raw Google Calendar events.
+ * @param {string | undefined} calendarId - The calendar ID these events belong to.
+ * @returns {CustomEventsResponse} A structured response with formatted events and metadata.
+ * @example
+ * const response = formatCustomEventsResponse(events, "primary");
+ * // Returns { type: "custom", calendarId: "primary", totalNumberOfEventsFound: 5, totalEventsFound: [...] }
  */
 export function formatCustomEventsResponse(events: calendar_v3.Schema$Event[], calendarId: string | undefined): CustomEventsResponse {
   const items = events.slice().reverse();
@@ -149,10 +196,26 @@ export function formatCustomEventsResponse(events: calendar_v3.Schema$Event[], c
 }
 
 /**
- * Get events from the calendar
- *
+ * @description Main entry point for retrieving events from a Google Calendar.
+ * Supports both standard (raw) and custom (formatted) response formats based on the customEvents flag.
+ * Merges parameters from extra options and request body/query.
  * @param {GetEventsParams} params - The parameters for getting events.
- * @returns {Promise<GetEventsResponse>} The events response with type discriminator.
+ * @param {calendar_v3.Resource$Events} params.calendarEvents - The Google Calendar events resource.
+ * @param {object | null} [params.req] - Optional request object containing body/query parameters.
+ * @param {Record<string, unknown>} [params.extra] - Additional options to merge with request params.
+ * @returns {Promise<GetEventsResponse>} Either a CustomEventsResponse or StandardEventsResponse based on customEvents flag.
+ * @example
+ * // Get formatted events
+ * const response = await getEvents({
+ *   calendarEvents: calendar.events,
+ *   extra: { calendarId: "primary", customEvents: true }
+ * });
+ *
+ * // Get raw events
+ * const rawResponse = await getEvents({
+ *   calendarEvents: calendar.events,
+ *   extra: { calendarId: "primary" }
+ * });
  */
 export async function getEvents({ calendarEvents, req, extra }: GetEventsParams): Promise<GetEventsResponse> {
   const rawExtra: ListExtra = { ...(extra as ListExtra), ...(req?.body ?? {}), ...(req?.query ?? {}) };

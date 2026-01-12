@@ -86,7 +86,16 @@ export const auditLogger = {
     });
   },
 
-  // Convenience methods for common events
+  /**
+   * @description Logs a successful authentication event for a user.
+   * Records the user's email and authentication method used.
+   * @param {number} telegramUserId - The unique Telegram user identifier
+   * @param {string} email - The email address used for authentication
+   * @param {string} [method="email"] - The authentication method (e.g., "email", "google", "magic_link")
+   * @returns {void}
+   * @example
+   * auditLogger.authSuccess(123456789, "user@example.com", "google");
+   */
   authSuccess: (telegramUserId: number, email: string, method = "email"): void => {
     auditWinstonLogger.info({
       event_type: AuditEventType.AUTH_SUCCESS,
@@ -95,6 +104,16 @@ export const auditLogger = {
     });
   },
 
+  /**
+   * @description Logs a failed authentication attempt with the reason for failure.
+   * Useful for security monitoring and detecting potential brute force attacks.
+   * @param {number} telegramUserId - The unique Telegram user identifier
+   * @param {string} reason - The reason for authentication failure (e.g., "invalid_password", "account_locked")
+   * @param {string} [email] - The email address used in the failed attempt (optional)
+   * @returns {void}
+   * @example
+   * auditLogger.authFail(123456789, "invalid_password", "user@example.com");
+   */
   authFail: (telegramUserId: number, reason: string, email?: string): void => {
     auditWinstonLogger.info({
       event_type: AuditEventType.AUTH_FAIL,
@@ -103,6 +122,16 @@ export const auditLogger = {
     });
   },
 
+  /**
+   * @description Logs when a user changes their associated email address.
+   * Records both the previous and new email addresses for audit trail.
+   * @param {number} telegramUserId - The unique Telegram user identifier
+   * @param {string} oldEmail - The user's previous email address
+   * @param {string} newEmail - The user's new email address
+   * @returns {void}
+   * @example
+   * auditLogger.emailChange(123456789, "old@example.com", "new@example.com");
+   */
   emailChange: (telegramUserId: number, oldEmail: string, newEmail: string): void => {
     auditWinstonLogger.info({
       event_type: AuditEventType.EMAIL_CHANGE,
@@ -111,6 +140,16 @@ export const auditLogger = {
     });
   },
 
+  /**
+   * @description Logs a successful token refresh event.
+   * Tracks when authentication tokens are renewed and their new expiry time.
+   * @param {number} telegramUserId - The unique Telegram user identifier
+   * @param {string} email - The email address associated with the token
+   * @param {number} [expiresInMs] - Time in milliseconds until the new token expires (optional)
+   * @returns {void}
+   * @example
+   * auditLogger.tokenRefresh(123456789, "user@example.com", 3600000); // Token expires in 1 hour
+   */
   tokenRefresh: (telegramUserId: number, email: string, expiresInMs?: number): void => {
     auditWinstonLogger.info({
       event_type: AuditEventType.TOKEN_REFRESH,
@@ -119,6 +158,16 @@ export const auditLogger = {
     });
   },
 
+  /**
+   * @description Logs when a user hits a rate limit.
+   * Records the type of limit exceeded and when it resets.
+   * @param {number} telegramUserId - The unique Telegram user identifier
+   * @param {string} limitType - The type of rate limit hit (e.g., "api_requests", "login_attempts")
+   * @param {number} resetInSeconds - Time in seconds until the rate limit resets
+   * @returns {void}
+   * @example
+   * auditLogger.rateLimitHit(123456789, "api_requests", 60); // Limit resets in 60 seconds
+   */
   rateLimitHit: (telegramUserId: number, limitType: string, resetInSeconds: number): void => {
     auditWinstonLogger.info({
       event_type: AuditEventType.RATE_LIMIT_HIT,
@@ -127,6 +176,16 @@ export const auditLogger = {
     });
   },
 
+  /**
+   * @description Logs when a user's session expires due to inactivity.
+   * Records the last activity timestamp and duration of inactivity.
+   * @param {number} telegramUserId - The unique Telegram user identifier
+   * @param {string} lastActivityIso - ISO 8601 timestamp of the user's last activity
+   * @param {number} inactiveHours - Number of hours the user was inactive before session expired
+   * @returns {void}
+   * @example
+   * auditLogger.sessionExpired(123456789, "2024-01-15T10:30:00Z", 24);
+   */
   sessionExpired: (telegramUserId: number, lastActivityIso: string, inactiveHours: number): void => {
     auditWinstonLogger.info({
       event_type: AuditEventType.SESSION_EXPIRED,

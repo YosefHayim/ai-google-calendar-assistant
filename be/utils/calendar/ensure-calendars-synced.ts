@@ -6,6 +6,17 @@ import { logger } from "../logger";
 type UserCalendarInsert =
   Database["public"]["Tables"]["user_calendars"]["Insert"];
 
+/**
+ * @description Ensures that a user's Google Calendar list is synchronized with the Supabase database.
+ * Checks if the user already has calendars stored in the database; if not, fetches all calendars
+ * from Google Calendar API and upserts them into the user_calendars table.
+ * @param {calendar_v3.Calendar} calendar - An authenticated Google Calendar API client instance.
+ * @param {string} userId - The unique identifier of the user in the Supabase database.
+ * @returns {Promise<void>} Resolves when synchronization is complete or skipped (if calendars already exist).
+ * @example
+ * const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(credentials);
+ * await ensureCalendarsSynced(calendar, "user-uuid-123");
+ */
 export const ensureCalendarsSynced = async (
   calendar: calendar_v3.Calendar,
   userId: string

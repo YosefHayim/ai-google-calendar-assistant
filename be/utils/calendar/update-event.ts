@@ -9,16 +9,16 @@ type UpdateEventParams = {
 };
 
 /**
- * Update an event in the calendar
- *
- * @param {UpdateEventParams} params - The parameters for updating an event.
- * @returns {Promise<calendar_v3.Schema$Event>} The updated event.
- * @description Updates an event in the calendar and sends the response.
+ * @description Validates and normalizes a calendar ID string for use with Google Calendar API.
+ * Trims whitespace and rejects obviously invalid values like empty strings or single slashes.
+ * @param {unknown} id - The calendar ID to validate (may be undefined, null, or non-string).
+ * @returns {string | null} The trimmed calendar ID if valid, or null if invalid.
  * @example
- * const data = await updateEvent(params);
- *
+ * normalizeCalendarId("primary"); // Returns "primary"
+ * normalizeCalendarId("  user@gmail.com  "); // Returns "user@gmail.com"
+ * normalizeCalendarId(""); // Returns null
+ * normalizeCalendarId("/"); // Returns null
  */
-// Helper to validate and normalize calendarId
 function normalizeCalendarId(id: unknown): string | null {
   if (!id || typeof id !== "string") return null;
   const trimmed = id.trim();

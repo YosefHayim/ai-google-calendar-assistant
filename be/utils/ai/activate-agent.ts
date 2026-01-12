@@ -20,16 +20,25 @@ export interface ActivateAgentOptions {
 type AnyAgent = Agent<any, any>;
 
 /**
- * Activate an agent by key and prompt with optional session support
+ * @description Activates and runs an AI agent with the specified prompt and configuration options.
+ * Supports both agent keys (string identifiers) and direct Agent objects. Handles session
+ * management for persistent memory across conversations, and builds the context required
+ * for calendar tool authentication. This is the primary entry point for invoking AI agents
+ * throughout the application.
  *
- * @param {AGENTS_LIST | Agent} agentKey - The agent key or agent object.
- * @param {string} prompt - The prompt for the agent.
- * @param {ActivateAgentOptions} options - Optional session and context configuration.
- * @returns {Promise<string>} The response from the agent.
+ * @param {AGENTS_LIST | Agent} agentKey - The agent identifier string (e.g., "parseEventText") or an Agent object instance
+ * @param {string} prompt - The user input or instruction to send to the agent
+ * @param {ActivateAgentOptions} [options] - Optional configuration for session and context
+ * @param {Session | CreateSessionOptions} [options.session] - Session instance or config for persistent memory
+ * @param {string} [options.email] - User email required for calendar operations and tool authentication
+ * @param {Record<string, unknown>} [options.context] - Additional context data to pass to the agent
+ * @returns {Promise<RunResult>} The complete run result from the agent, including finalOutput and execution details
+ * @throws {Error} If the agent key is invalid or prompt is empty
  *
  * @example
  * // Basic usage (no session)
  * const result = await activateAgent(ORCHESTRATOR_AGENT, "Create a meeting");
+ * console.log(result.finalOutput);
  *
  * @example
  * // With session for persistent memory
@@ -38,7 +47,8 @@ type AnyAgent = Agent<any, any>;
  *     userId: "user123",
  *     agentName: "parse_event_text_agent",
  *     taskId: "conv456"
- *   }
+ *   },
+ *   email: "user@example.com"
  * });
  *
  * @example
@@ -88,15 +98,20 @@ export const activateAgent = asyncHandler(async (agentKey: AGENTS_LIST | AnyAgen
 });
 
 /**
- * Run a worker agent with its own persistent session
+ * @description Runs a worker agent with its own persistent session for maintaining context
+ * across multiple invocations. This is a convenience wrapper around the agent run function
+ * that automatically creates and manages the session lifecycle. Ideal for agents that need
+ * to remember previous interactions within a conversation or task.
  *
- * Convenience function for running worker agents that need to maintain
- * context across multiple invocations.
- *
- * @param agent - The agent to run
- * @param prompt - The prompt/input for the agent
- * @param sessionConfig - Configuration for the session
- * @returns The agent's final output
+ * @param {Agent} agent - The agent instance to run (not an agent key)
+ * @param {string} prompt - The user input or instruction to process
+ * @param {CreateSessionOptions} sessionConfig - Configuration for creating the persistent session
+ * @param {string} sessionConfig.userId - Unique identifier for the user
+ * @param {string} sessionConfig.agentName - Name of the agent for session namespacing
+ * @param {string} [sessionConfig.taskId] - Optional task/conversation ID for grouping related sessions
+ * @param {string} [sessionConfig.compaction] - Memory compaction strategy (e.g., "responses")
+ * @param {Object} [sessionConfig.compactionConfig] - Configuration for memory compaction
+ * @returns {Promise<string>} The agent's final output text, or empty string if no output
  *
  * @example
  * const result = await runWorkerWithSession(
@@ -110,6 +125,7 @@ export const activateAgent = asyncHandler(async (agentKey: AGENTS_LIST | AnyAgen
  *     compactionConfig: { maxItems: 30 }
  *   }
  * );
+ * console.log(`Parsed event: ${result}`);
  */
 export async function runWorkerWithSession(agent: Agent, prompt: string, sessionConfig: CreateSessionOptions): Promise<string> {
   const session = createAgentSession(sessionConfig);

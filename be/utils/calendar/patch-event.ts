@@ -7,7 +7,18 @@ type PatchEventParams = {
   extra?: Record<string, unknown>;
 };
 
-// Helper to validate and normalize calendarId
+/**
+ * @description Validates and normalizes a calendar ID string for use with Google Calendar API.
+ * Trims whitespace and rejects obviously invalid values like empty strings or single slashes.
+ * @param {unknown} id - The calendar ID to validate (may be undefined, null, or non-string).
+ * @returns {string | null} The trimmed calendar ID if valid, or null if invalid.
+ * @example
+ * normalizeCalendarId("primary"); // Returns "primary"
+ * normalizeCalendarId("  user@gmail.com  "); // Returns "user@gmail.com"
+ * normalizeCalendarId(""); // Returns null
+ * normalizeCalendarId("/"); // Returns null
+ * normalizeCalendarId(null); // Returns null
+ */
 function normalizeCalendarId(id: unknown): string | null {
   if (!id || typeof id !== "string") return null;
   const trimmed = id.trim();

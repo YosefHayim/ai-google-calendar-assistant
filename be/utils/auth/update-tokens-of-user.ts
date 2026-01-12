@@ -4,7 +4,22 @@ import { asyncHandler } from "../http/async-handlers"
 import { logger } from "../logger"
 
 /**
- * Convert milliseconds to ISO timestamp for database storage
+ * @description Converts a timestamp in milliseconds (since Unix epoch) to an ISO 8601
+ * formatted string suitable for database storage. Returns null if the input is
+ * null, undefined, or zero.
+ *
+ * @param {number | null | undefined} ms - The timestamp in milliseconds since epoch,
+ *   or null/undefined.
+ * @returns {string | null} The ISO 8601 formatted timestamp string (e.g., "2024-01-15T10:30:00.000Z"),
+ *   or null if the input is falsy.
+ *
+ * @example
+ * const isoDate = msToIso(1705312200000);
+ * console.log(isoDate); // "2024-01-15T10:30:00.000Z"
+ *
+ * @example
+ * const nullResult = msToIso(null);
+ * console.log(nullResult); // null
  */
 const msToIso = (ms: number | null | undefined): string | null => {
   if (!ms) return null
@@ -12,13 +27,39 @@ const msToIso = (ms: number | null | undefined): string | null => {
 }
 
 /**
- * Update tokens of user in Supabase
- * Uses the new schema: oauth_tokens table
+ * @description Updates a user's Google OAuth tokens in Supabase after a token refresh.
+ * This function handles the persistence of new access tokens and expiry dates to the
+ * oauth_tokens table. It can identify the user by either their user_id (preferred)
+ * or email address, and updates the token validity status and refresh timestamp.
  *
- * @param {TokensProps} oldTokens - The old tokens of the user.
- * @param {TokensProps & { token?: string | null }} newTokens - The new tokens of the user.
- * @returns {Promise<TokensProps>} The updated tokens of the user in Supabase.
- * @description Updates the tokens of the user in Supabase and sends the response.
+ * The function merges the old and new token data, preserving fields that weren't
+ * updated while applying new values for access_token and expires_at. It also sets
+ * is_valid to true and records the last_refreshed_at timestamp.
+ *
+ * @param {TokensProps} oldTokens - The existing token object, must contain either
+ *   email or user_id for user identification. Other fields are preserved if not
+ *   overwritten by newTokens.
+ * @param {TokensProps & { token?: string | null }} newTokens - The new token values
+ *   to persist. Accepts either:
+ *   - token: Alternative field for access_token (for backwards compatibility)
+ *   - access_token: The new access token string
+ *   - expiry_date: Token expiry as milliseconds since epoch
+ *   - expires_at: Token expiry as ISO string
+ * @returns {Promise<TokensProps>} A promise resolving to the merged token object
+ *   with updated values, including is_valid: true and is_active: true.
+ * @throws {Error} "No email or user_id provided for token update" - If oldTokens
+ *   lacks both email and user_id.
+ * @throws {Error} "Failed to find user: {message}" - If user lookup by email fails.
+ * @throws {Error} "Failed to update user calendar tokens in supabase: {message}" -
+ *   If the database update operation fails.
+ *
+ * @example
+ * const updatedTokens = await updateUserSupabaseTokens(
+ *   existingTokens,
+ *   { access_token: "new_token_value", expiry_date: Date.now() + 3600000 }
+ * );
+ * console.log(updatedTokens.access_token); // "new_token_value"
+ * console.log(updatedTokens.is_valid); // true
  */
 export const updateUserSupabaseTokens = asyncHandler(
   async (oldTokens: TokensProps, newTokens: TokensProps & { token?: string | null }): Promise<TokensProps> => {

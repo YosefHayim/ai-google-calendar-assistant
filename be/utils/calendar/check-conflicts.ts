@@ -96,6 +96,27 @@ export const checkEventConflicts = asyncHandler(
   },
 );
 
+/**
+ * @description Checks for conflicting events across all user calendars in the specified time range.
+ * Queries Google Calendar API for each calendar the user has access to and identifies
+ * any events that overlap with the proposed time slot.
+ * @param {ConflictCheckAllCalendarsParams} params - The parameters for the conflict check.
+ * @param {string} params.email - The email address of the user whose calendars to check.
+ * @param {string} params.startTime - The start time of the proposed event in ISO 8601 format.
+ * @param {string} params.endTime - The end time of the proposed event in ISO 8601 format.
+ * @param {string} [params.excludeEventId] - Optional event ID to exclude from conflict detection (useful when rescheduling).
+ * @returns {Promise<ConflictCheckResult>} An object containing hasConflicts boolean and array of conflicting events.
+ * @example
+ * const result = await checkEventConflictsAllCalendars({
+ *   email: "user@example.com",
+ *   startTime: "2025-01-15T10:00:00Z",
+ *   endTime: "2025-01-15T11:00:00Z",
+ *   excludeEventId: "abc123" // optional
+ * });
+ * if (result.hasConflicts) {
+ *   console.log("Conflicts found:", result.conflictingEvents);
+ * }
+ */
 export const checkEventConflictsAllCalendars = asyncHandler(
   async (
     params: ConflictCheckAllCalendarsParams,

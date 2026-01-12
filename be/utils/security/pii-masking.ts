@@ -28,6 +28,40 @@ export interface PIIMaskingResult {
   maskedLength: number
 }
 
+/**
+ * @description Masks personally identifiable information (PII) in a string to prevent
+ * accidental exposure in logs, LLM training data, or API responses. Detects and masks
+ * SSNs, credit card numbers, email addresses, phone numbers, and IP addresses.
+ * Critical for GDPR/CCPA compliance.
+ *
+ * @param {string} input - The text string to scan and mask for PII
+ * @param {Object} [options] - Optional configuration
+ * @param {string} [options.preserveUserEmail] - An email address to exclude from masking
+ *   (useful for preserving the current user's email while masking others)
+ * @returns {PIIMaskingResult} An object containing:
+ *   - masked: The input string with PII replaced by redaction markers
+ *   - foundTypes: Array of PII types that were detected (e.g., ['email', 'phone'])
+ *   - originalLength: Character count of the original input
+ *   - maskedLength: Character count of the masked output
+ *
+ * @example
+ * // Basic PII masking
+ * const result = maskPII('Contact john@example.com or call 555-123-4567');
+ * // Result: {
+ * //   masked: 'Contact [EMAIL_REDACTED] or call [PHONE_REDACTED]',
+ * //   foundTypes: ['email', 'phone'],
+ * //   originalLength: 46,
+ * //   maskedLength: 50
+ * // }
+ *
+ * @example
+ * // Preserve the current user's email
+ * const result = maskPII(
+ *   'From: user@app.com, To: external@other.com',
+ *   { preserveUserEmail: 'user@app.com' }
+ * );
+ * // Result: masked = 'From: user@app.com, To: [EMAIL_REDACTED]'
+ */
 export function maskPII(input: string, options?: { preserveUserEmail?: string }): PIIMaskingResult {
   const { preserveUserEmail } = options || {}
   let masked = input
@@ -60,6 +94,29 @@ export function maskPII(input: string, options?: { preserveUserEmail?: string })
   }
 }
 
+/**
+ * @description Quickly checks if a string contains any detectable PII without performing
+ * masking. Useful for conditional logic where you need to know if PII exists before
+ * deciding whether to process or log data.
+ *
+ * @param {string} input - The text string to scan for PII
+ * @returns {boolean} True if any PII pattern (SSN, credit card, email, phone, IP) is found
+ *
+ * @example
+ * // Check before logging
+ * if (containsPII(userMessage)) {
+ *   logger.info('Message contains PII - not logging content');
+ * } else {
+ *   logger.info(`User message: ${userMessage}`);
+ * }
+ *
+ * @example
+ * // Detection examples
+ * containsPII('Hello world')           // false
+ * containsPII('Email: test@test.com')  // true
+ * containsPII('SSN: 123-45-6789')      // true
+ * containsPII('Call 555-123-4567')     // true
+ */
 export function containsPII(input: string): boolean {
   for (const { pattern } of PII_PATTERNS) {
     if (pattern.test(input)) {
@@ -70,6 +127,25 @@ export function containsPII(input: string): boolean {
   return false
 }
 
+/**
+ * @description Partially masks an email address for display purposes while keeping it
+ * recognizable to the owner. Shows the first 1-2 characters of the local part,
+ * masks the rest with asterisks, and preserves the full domain.
+ *
+ * @param {string} email - The email address to partially mask
+ * @returns {string} The partially masked email (e.g., 'jo***@example.com')
+ *   Returns the original string if it's not a valid email format
+ *
+ * @example
+ * // Standard masking
+ * maskEmailPartially('john.doe@example.com')  // 'jo***@example.com'
+ * maskEmailPartially('a@test.com')            // 'a***@test.com'
+ *
+ * @example
+ * // Use in user notifications
+ * const message = `Verification sent to ${maskEmailPartially(user.email)}`;
+ * // Result: 'Verification sent to jo***@example.com'
+ */
 export function maskEmailPartially(email: string): string {
   const [local, domain] = email.split("@")
   if (!local || !domain) return email
@@ -80,6 +156,31 @@ export function maskEmailPartially(email: string): string {
   return `${maskedLocal}@${domain}`
 }
 
+/**
+ * @description Partially masks a phone number for display purposes while keeping the
+ * last 4 digits visible. Normalizes the output to a consistent format regardless
+ * of input formatting.
+ *
+ * @param {string} phone - The phone number to partially mask (any format accepted)
+ * @returns {string} The partially masked phone in format '***-***-XXXX' where XXXX
+ *   are the last 4 digits. Returns '[PHONE_REDACTED]' if the number has fewer
+ *   than 4 digits.
+ *
+ * @example
+ * // Various input formats produce consistent output
+ * maskPhonePartially('555-123-4567')     // '***-***-4567'
+ * maskPhonePartially('+1 (555) 123-4567') // '***-***-4567'
+ * maskPhonePartially('5551234567')       // '***-***-4567'
+ *
+ * @example
+ * // Use in user notifications
+ * const message = `SMS sent to ${maskPhonePartially(user.phone)}`;
+ * // Result: 'SMS sent to ***-***-4567'
+ *
+ * @example
+ * // Too short numbers are fully redacted
+ * maskPhonePartially('123')  // '[PHONE_REDACTED]'
+ */
 export function maskPhonePartially(phone: string): string {
   const digits = phone.replace(/\D/g, "")
   if (digits.length < 4) return "[PHONE_REDACTED]"

@@ -50,7 +50,22 @@ export interface InsightsMetrics {
 const DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 
 /**
- * Calculate comprehensive metrics from calendar events for AI insights generation
+ * @description Calculates comprehensive metrics from a collection of calendar events for AI insights generation.
+ * Analyzes events to determine patterns including time distribution, peak hours, busiest/quietest days,
+ * back-to-back meetings, gap analysis, and calendar-specific breakdowns. Filters out cancelled events
+ * and separates timed events from all-day events for accurate calculations.
+ *
+ * @param {calendar_v3.Schema$Event[]} events - Array of Google Calendar events to analyze
+ * @param {Record<string, { name: string; color: string }>} calendarMap - Mapping of calendar IDs to their display names and colors
+ * @returns {InsightsMetrics} Comprehensive metrics object containing event counts, time totals,
+ *   day analysis, peak hours, work patterns, event details, meeting patterns, and calendar breakdown
+ *
+ * @example
+ * const events = await calendar.events.list({ calendarId: 'primary' });
+ * const calendarMap = { 'primary': { name: 'Work', color: '#4285f4' } };
+ * const metrics = calculateInsightsMetrics(events.data.items, calendarMap);
+ * console.log(`Total hours scheduled: ${metrics.totalHours}`);
+ * console.log(`Busiest day: ${metrics.busiestDay?.day}`);
  */
 export function calculateInsightsMetrics(
   events: calendar_v3.Schema$Event[],
@@ -277,7 +292,15 @@ export function calculateInsightsMetrics(
 }
 
 /**
- * Format a date string to day name (e.g., "Monday, Jan 5")
+ * @description Formats an ISO date string into a human-readable day name with abbreviated month and day number.
+ * Useful for displaying dates in a friendly format for calendar insights and reports.
+ *
+ * @param {string} dateStr - ISO date string (e.g., "2024-01-15" or "2024-01-15T10:00:00Z")
+ * @returns {string} Formatted string with full day name, abbreviated month, and day number (e.g., "Monday, Jan 15")
+ *
+ * @example
+ * formatDayName("2024-01-15"); // Returns "Monday, Jan 15"
+ * formatDayName("2024-12-25T00:00:00Z"); // Returns "Wednesday, Dec 25"
  */
 function formatDayName(dateStr: string): string {
   const date = new Date(dateStr)
@@ -288,7 +311,15 @@ function formatDayName(dateStr: string): string {
 }
 
 /**
- * Format a Date to time string (e.g., "9:30 AM")
+ * @description Formats a JavaScript Date object into a localized 12-hour time string with AM/PM indicator.
+ * Uses US English locale formatting for consistent display across different environments.
+ *
+ * @param {Date} date - JavaScript Date object to format
+ * @returns {string} Formatted time string in 12-hour format with AM/PM (e.g., "9:30 AM", "2:00 PM")
+ *
+ * @example
+ * formatTime(new Date("2024-01-15T09:30:00")); // Returns "9:30 AM"
+ * formatTime(new Date("2024-01-15T14:00:00")); // Returns "2:00 PM"
  */
 function formatTime(date: Date): string {
   return date.toLocaleTimeString("en-US", {
