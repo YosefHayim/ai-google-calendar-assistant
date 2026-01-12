@@ -74,6 +74,7 @@ export const de: TranslationShape = {
     description:
       'Der KI-Assistent auf Führungsebene, entwickelt um Ihre Tiefenarbeit zu schützen. Von kostenlosem Zugang bis zu unbegrenzter Leistung. Basierend auf dem Ally Neural Protocol.',
     systemStatus: 'Alle Systeme betriebsbereit • Hochleistungsmotor',
+    chatOnTelegram: 'Mit Ally auf Telegram chatten',
   },
 
   home: {
@@ -97,6 +98,52 @@ export const de: TranslationShape = {
     ctaTitle: 'Bereit, Ihr Kalender-Erlebnis zu transformieren?',
     ctaSubtitle: 'Schließen Sie sich Tausenden von Fachleuten an, die ihre Planung mit Ally vereinfacht haben.',
     startForFree: 'Kostenlos starten',
+    telegramTitle: 'Mit Ally auf Telegram chatten',
+    telegramDescription:
+      'Verwalten Sie Ihren Kalender unterwegs. Senden Sie Sprachnachrichten, planen Sie Termine und erhalten Sie Erinnerungen — alles über Telegram.',
+    openTelegram: 'In Telegram öffnen',
+  },
+
+  // Feature Showcase
+  showcase: {
+    badge: 'Live Demo',
+    title: 'Sehen Sie Ally in Aktion',
+    subtitle: 'Erleben Sie nahtlose Kalenderverwaltung über Telegram und Web',
+    today: {
+      title: 'Heutiger Zeitplan',
+      description:
+        'Erhalten Sie einen vollständigen Überblick über Ihren Tag mit /today. Sehen Sie alle Meetings, Fokusblöcke und freie Zeit auf einen Blick.',
+    },
+    voice: {
+      title: 'Sprachbefehle',
+      description:
+        'Senden Sie Sprachnachrichten, um Ihren Kalender freihändig zu verwalten. Ally transkribiert und führt Ihre Anfragen sofort aus.',
+    },
+    analytics: {
+      title: 'Zeitanalyse',
+      description:
+        'Verfolgen Sie Ihre Produktivität mit /analytics. Sehen Sie Fokuszeit, Meeting-Last und wöchentliche Trends zur Optimierung Ihres Zeitplans.',
+    },
+    brain: {
+      title: 'Ally Brain',
+      description:
+        'Bringen Sie Ally Ihre Präferenzen mit /brain bei. Setzen Sie Regeln wie "keine Meetings vor 10 Uhr" und Ally wird sich erinnern.',
+    },
+    search: {
+      title: 'Intelligente Suche',
+      description:
+        'Finden Sie vergangene Meetings sofort. Fragen Sie "Wann habe ich zuletzt Sarah getroffen?" und erhalten Sie präzise Antworten mit Kontext.',
+    },
+    create: {
+      title: 'Schnell erstellen',
+      description:
+        'Planen Sie Termine mit natürlicher Sprache. Sagen Sie einfach "Mittagessen mit Alex morgen um 12 Uhr" und bestätigen Sie.',
+    },
+    language: {
+      title: 'Mehrsprachig',
+      description:
+        'Verwenden Sie Ally in Ihrer bevorzugten Sprache mit /language. Unterstützt Englisch, Hebräisch, Russisch, Französisch, Deutsch und Arabisch.',
+    },
   },
 
   about: {

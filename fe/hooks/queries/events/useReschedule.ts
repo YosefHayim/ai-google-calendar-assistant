@@ -60,7 +60,7 @@ export function useRescheduleEvent(options?: MutationHookOptions<CalendarEvent, 
       })
       // Invalidate the specific event
       queryClient.invalidateQueries({
-        queryKey: queryKeys.events.byId(variables.eventId),
+        queryKey: queryKeys.events.detail(variables.eventId),
       })
       if (data.data) {
         options?.onSuccess?.(data.data, variables)
