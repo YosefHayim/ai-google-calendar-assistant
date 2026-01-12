@@ -21,16 +21,14 @@ const router = express.Router()
  */
 router.post(
   "/webhook",
-  // Middleware to validate Telegram webhook secret
+  // Middleware to validate Telegram webhook secret (if configured)
   (req, res, next) => {
     const webhookSecret = env.integrations.telegram.webhookSecret
 
-    // If no webhook secret is configured, reject all requests
+    // If no secret configured, allow requests but log warning (less secure)
     if (!webhookSecret) {
-      logger.warn("Telegram webhook: No webhook secret configured")
-      return res.status(STATUS_RESPONSE.INTERNAL_SERVER_ERROR).json({
-        error: "Webhook not configured",
-      })
+      logger.warn("Telegram webhook: No TELEGRAM_WEBHOOK_SECRET configured - requests are not validated!")
+      return next()
     }
 
     // Validate the secret token header from Telegram

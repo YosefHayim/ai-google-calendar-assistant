@@ -60,9 +60,8 @@ const setupWebhook = async (botInstance: Bot<GlobalContext>): Promise<void> => {
     // Delete any existing webhook first
     await botInstance.api.deleteWebhook({ drop_pending_updates: false })
 
-    // Set the new webhook with secret token for security
-    await botInstance.api.setWebhook(webhookUrl, {
-      secret_token: webhookSecret,
+    // Build webhook options
+    const webhookOptions: Parameters<typeof botInstance.api.setWebhook>[1] = {
       // Allowed updates - specify which update types to receive
       allowed_updates: [
         "message",
@@ -71,9 +70,20 @@ const setupWebhook = async (botInstance: Bot<GlobalContext>): Promise<void> => {
         "chosen_inline_result",
         "my_chat_member",
       ],
-      // Drop pending updates on webhook change to avoid processing old messages
+      // Don't drop pending updates on webhook change
       drop_pending_updates: false,
-    })
+    }
+
+    // Add secret token if configured (recommended for security)
+    if (webhookSecret) {
+      webhookOptions.secret_token = webhookSecret
+      logger.info("Telegram Bot: Webhook will use secret token validation")
+    } else {
+      logger.warn("Telegram Bot: No TELEGRAM_WEBHOOK_SECRET - webhook requests won't be validated!")
+    }
+
+    // Set the webhook
+    await botInstance.api.setWebhook(webhookUrl, webhookOptions)
 
     logger.info(`Telegram Bot: Webhook set to ${webhookUrl}`)
   } catch (error) {
