@@ -85,8 +85,12 @@ const RecentEvents: React.FC<RecentEventsProps> = ({ activities, onActivityClick
                     className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg group-hover:opacity-80 transition-opacity flex items-center justify-center shrink-0"
                     style={{ backgroundColor: `${activity.calendarColor || '#6366f1'}20` }}
                   >
-                    <Icon size={16} className="sm:hidden" style={{ color: activity.calendarColor || '#6366f1' }} />
-                    <Icon size={18} className="hidden sm:block" style={{ color: activity.calendarColor || '#6366f1' }} />
+                    <span className="sm:hidden">
+                      <Icon size={16} style={{ color: activity.calendarColor || '#6366f1' }} />
+                    </span>
+                    <span className="hidden sm:block">
+                      <Icon size={18} style={{ color: activity.calendarColor || '#6366f1' }} />
+                    </span>
                   </div>
                   <p className="text-[10px] sm:text-xs text-zinc-400 font-bold uppercase">{activity.time}</p>
                 </div>

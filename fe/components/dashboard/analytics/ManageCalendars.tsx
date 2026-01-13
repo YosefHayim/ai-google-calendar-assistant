@@ -24,23 +24,23 @@ const ManageCalendars: React.FC<ManageCalendarsProps> = ({
 }) => {
   if (isLoading) {
     return (
-      <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-6">
-        <div className="gap-2 mb-6 flex items-center justify-between">
-          <div>
+      <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-4 sm:p-6">
+        <div className="gap-2 mb-4 sm:mb-6 flex items-center justify-between">
+          <div className="min-w-0">
             <div className="flex items-center gap-2">
               <Skeleton className="w-4 h-4" />
-              <Skeleton className="h-5 w-36" />
+              <Skeleton className="h-4 sm:h-5 w-28 sm:w-36" />
             </div>
-            <Skeleton className="h-3 w-24 mt-1" />
+            <Skeleton className="h-3 w-20 sm:w-24 mt-1" />
           </div>
-          <Skeleton className="h-8 w-8 rounded-md" />
+          <Skeleton className="h-7 w-7 sm:h-8 sm:w-8 rounded-md flex-shrink-0" />
         </div>
-        <div className="space-y-2">
+        <div className="space-y-1.5 sm:space-y-2">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="flex items-center gap-3 p-2 rounded-md">
-              <Skeleton className="w-2.5 h-2.5 rounded-full" />
-              <Skeleton className="flex-1 h-4" />
-              <Skeleton className="w-4 h-4" />
+            <div key={i} className="flex items-center gap-2 sm:gap-3 p-1.5 sm:p-2 rounded-md">
+              <Skeleton className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full flex-shrink-0" />
+              <Skeleton className="flex-1 h-3 sm:h-4" />
+              <Skeleton className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
             </div>
           ))}
         </div>
@@ -49,14 +49,15 @@ const ManageCalendars: React.FC<ManageCalendarsProps> = ({
   }
 
   return (
-    <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-6">
-      <div className="gap-2 mb-6 flex items-center justify-between">
+    <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-4 sm:p-6">
+      <div className="gap-2 mb-4 sm:mb-6 flex items-center justify-between">
         {/* Left Side: Text Stack */}
-        <div>
-          <h3 className="w-max font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
-            <CalendarDays className="w-4 h-4 text-zinc-400" /> Managed Calendars
+        <div className="min-w-0">
+          <h3 className="font-bold text-sm sm:text-base text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+            <CalendarDays className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-zinc-400 flex-shrink-0" />
+            <span className="truncate">Managed Calendars</span>
           </h3>
-          <div className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
+          <div className="text-[10px] sm:text-xs text-zinc-500 dark:text-zinc-400 mt-0.5 sm:mt-1">
             <span>Total calendars:</span> {calendars?.length}
           </div>
         </div>
@@ -67,13 +68,14 @@ const ManageCalendars: React.FC<ManageCalendarsProps> = ({
           onClick={onCreateCalendar}
           size="icon"
           variant={'ghost'}
-          className="h-8 w-8 rounded-md border border-dashed border-zinc-300 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-900/30 hover:text-zinc-900 dark:hover:text-zinc-100 transition-all active:scale-[0.98]"
+          className="h-7 w-7 sm:h-8 sm:w-8 rounded-md border border-dashed border-zinc-300 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-900/30 hover:text-zinc-900 dark:hover:text-zinc-100 transition-all active:scale-[0.98] flex-shrink-0"
         >
-          <Plus size={14} />
+          <Plus size={12} className="sm:hidden" />
+          <Plus size={14} className="hidden sm:block" />
         </Button>
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-1.5 sm:space-y-2">
         {calendars && calendars.length > 0 ? (
           calendars.map((calendar) => {
             const calendarInfo = calendarMap.get(calendar.id)
@@ -83,27 +85,28 @@ const ManageCalendars: React.FC<ManageCalendarsProps> = ({
             return (
               <div
                 key={calendar.id}
-                className="border border-transparent hover:border-black hover:border flex items-center gap-3 p-2 rounded-md hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors group cursor-pointer"
+                className="border border-transparent hover:border-black hover:border flex items-center gap-2 sm:gap-3 p-1.5 sm:p-2 rounded-md hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors group cursor-pointer"
                 style={{ backgroundColor: `${color}08` }}
                 onClick={() => {
                   onCalendarClick(calendar)
                 }}
               >
                 <div
-                  className="w-2.5 h-2.5 rounded-full shadow-sm group-hover:scale-125 transition-transform"
+                  className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full shadow-sm group-hover:scale-125 transition-transform flex-shrink-0"
                   style={{ backgroundColor: color }}
                 />
-                <span className="flex-1 text-sm font-bold text-zinc-800 dark:text-zinc-200 truncate">
+                <span className="flex-1 text-xs sm:text-sm font-bold text-zinc-800 dark:text-zinc-200 truncate">
                   {displayName}
                 </span>
-                <span className=" font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 rounded border border-emerald-200 dark:border-emerald-800 uppercase tracking-tighter">
-                  <CheckCircle size={12} />
+                <span className="font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 rounded border border-emerald-200 dark:border-emerald-800 uppercase tracking-tighter flex-shrink-0">
+                  <CheckCircle size={10} className="sm:hidden" />
+                  <CheckCircle size={12} className="hidden sm:block" />
                 </span>
               </div>
             )
           })
         ) : (
-          <p className="text-sm text-zinc-500">No calendars found.</p>
+          <p className="text-xs sm:text-sm text-zinc-500">No calendars found.</p>
         )}
       </div>
     </div>
