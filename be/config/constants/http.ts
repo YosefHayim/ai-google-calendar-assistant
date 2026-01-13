@@ -30,6 +30,7 @@ export enum ROUTES {
   ADMIN = "/api/admin",
   CRON = "/api/cron",
   TELEGRAM = "/api/telegram",
+  SLACK = "/api/slack",
   /** Google RISC (Cross-Account Protection) endpoint */
   RISC = "/api/google/risc",
 }

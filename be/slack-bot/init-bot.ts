@@ -1,32 +1,50 @@
-import { App, type SlackEventMiddlewareArgs, type AllMiddlewareArgs } from "@slack/bolt"
+import {
+  App,
+  ExpressReceiver,
+  type SlackEventMiddlewareArgs,
+  type AllMiddlewareArgs,
+} from "@slack/bolt"
 import { env } from "@/config"
 import { logger } from "@/utils/logger"
 import { handleSlackMessage, handleAppMention } from "./handlers/message-handler"
 import { parseAndRouteCommand } from "./handlers/commands"
 
 let app: App | null = null
+let receiver: ExpressReceiver | null = null
 let isInitialized = false
 
 export const getSlackApp = (): App | null => {
   return app
 }
 
-const initializeApp = (): App => {
-  if (app) return app
+export const getSlackReceiver = (): ExpressReceiver | null => {
+  return receiver
+}
+
+const initializeApp = (): { app: App; receiver: ExpressReceiver } => {
+  if (app && receiver) return { app, receiver }
+
+  receiver = new ExpressReceiver({
+    signingSecret: env.integrations.slack.signingSecret || "",
+    processBeforeResponse: true,
+  })
 
   app = new App({
     token: env.integrations.slack.botToken,
     signingSecret: env.integrations.slack.signingSecret,
-    appToken: env.integrations.slack.appToken,
-    socketMode: true,
+    receiver,
   })
 
   app.message(async (args) => {
-    await handleSlackMessage(args as SlackEventMiddlewareArgs<"message"> & AllMiddlewareArgs)
+    await handleSlackMessage(
+      args as SlackEventMiddlewareArgs<"message"> & AllMiddlewareArgs
+    )
   })
 
   app.event("app_mention", async (args) => {
-    await handleAppMention(args as SlackEventMiddlewareArgs<"app_mention"> & AllMiddlewareArgs)
+    await handleAppMention(
+      args as SlackEventMiddlewareArgs<"app_mention"> & AllMiddlewareArgs
+    )
   })
 
   app.command("/ally", async (args) => {
@@ -58,12 +76,12 @@ const initializeApp = (): App => {
     await parseAndRouteCommand(args)
   })
 
-  app.action(/^confirm_event_/, async ({ ack, body, client }) => {
+  app.action(/^confirm_event_/, async ({ ack, body }) => {
     await ack()
     logger.info(`Slack Bot: Event confirmation action from ${body.user.id}`)
   })
 
-  app.action(/^cancel_event_/, async ({ ack, body, client }) => {
+  app.action(/^cancel_event_/, async ({ ack, body }) => {
     await ack()
     logger.info(`Slack Bot: Event cancellation action from ${body.user.id}`)
   })
@@ -72,46 +90,35 @@ const initializeApp = (): App => {
     logger.error(`Slack Bot: Error: ${error.message}`)
   })
 
-  return app
+  return { app, receiver }
 }
 
-export const startSlackBot = async (): Promise<void> => {
+export const initSlackBot = (): ExpressReceiver | null => {
   if (!env.integrations.slack.isEnabled) {
     logger.info("Slack Bot: Disabled (missing credentials)")
-    return
+    return null
   }
 
-  if (isInitialized) {
+  if (isInitialized && receiver) {
     logger.warn("Slack Bot: Already initialized")
-    return
+    return receiver
   }
 
   try {
-    const slackApp = initializeApp()
-
-    await slackApp.start()
+    const { receiver: slackReceiver } = initializeApp()
     isInitialized = true
 
-    logger.info("Slack Bot: Started in Socket Mode")
-    logger.info("Slack Bot: Listening for messages and commands")
+    logger.info("Slack Bot: Initialized in HTTP mode")
+    logger.info("Slack Bot: Listening for events at /api/slack/events")
+    logger.info("Slack Bot: Listening for commands at /api/slack/commands")
+    logger.info("Slack Bot: Listening for interactions at /api/slack/interactions")
 
-    const stopBot = async (): Promise<void> => {
-      logger.info("Slack Bot: Shutting down...")
-
-      if (app) {
-        await app.stop()
-        app = null
-      }
-
-      isInitialized = false
-    }
-
-    process.once("SIGINT", stopBot)
-    process.once("SIGTERM", stopBot)
+    return slackReceiver
   } catch (error) {
-    logger.error(`Slack Bot: Failed to start: ${error}`)
+    logger.error(`Slack Bot: Failed to initialize: ${error}`)
     if (env.isProd) {
       throw error
     }
+    return null
   }
 }

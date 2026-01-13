@@ -196,10 +196,9 @@ const integrations = {
     clientId: CONSTANTS.SLACK_CLIENT_ID,
     clientSecret: getOptional("SLACK_CLIENT_SECRET"),
     signingSecret: getOptional("SLACK_SIGNING_SECRET"),
-    appToken: getOptional("SLACK_APP_TOKEN"),
     botToken: getOptional("SLACK_BOT_TOKEN"),
     get isEnabled(): boolean {
-      return !!(this.botToken && this.signingSecret && this.appToken);
+      return !!(this.botToken && this.signingSecret);
     },
   },
 } as const;

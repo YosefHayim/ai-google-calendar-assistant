@@ -25,13 +25,27 @@ export const ru = {
   "commands.help.sections.manageEvents.items.1": "/update - Перенести или изменить",
   "commands.help.sections.manageEvents.items.2": "/delete - Отменить событие",
   "commands.help.sections.manageEvents.items.3": "/search - Поиск в календаре",
+  "commands.help.sections.manageEvents.items.4":
+    "/reschedule - Умное перепланирование с предложениями ИИ",
   "commands.help.sections.timeInsights.title": "Аналитика времени",
   "commands.help.sections.timeInsights.items.0": "/analytics - Анализ вашего времени",
   "commands.help.sections.timeInsights.items.1": "/calendars - Ваши календари",
-  "commands.help.sections.settings.title": "Настройки",
+  "commands.help.sections.timeInsights.items.2": "/aboutme - Что Ally знает о вас",
+  "commands.help.sections.personalization.title": "Персонализация",
+  "commands.help.sections.personalization.items.0":
+    "/brain - Научить Ally вашим предпочтениям",
+  "commands.help.sections.personalization.items.1":
+    "/profile - Выбрать профиль ИИ-ассистента",
+  "commands.help.sections.personalization.items.2": "/language - Изменить язык",
+  "commands.help.sections.responseFormats.title": "Форматы ответов",
+  "commands.help.sections.responseFormats.items.0":
+    "/astext - Повторить последний ответ текстом",
+  "commands.help.sections.responseFormats.items.1":
+    "/asvoice - Повторить последний ответ голосом",
+  "commands.help.sections.settings.title": "Настройки и прочее",
   "commands.help.sections.settings.items.0": "/status - Проверить подключение",
   "commands.help.sections.settings.items.1": "/settings - Настройки Ally",
-  "commands.help.sections.settings.items.2": "/language - Изменить язык",
+  "commands.help.sections.settings.items.2": "/website - Открыть веб-панель",
   "commands.help.sections.settings.items.3": "/feedback - Оставить отзыв",
   "commands.help.sections.settings.items.4": "/exit - Завершить разговор",
 
