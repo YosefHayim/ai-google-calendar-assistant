@@ -1,20 +1,21 @@
-import { ENV } from '@/lib/constants'
 import type {
-  SSEEvent,
-  SSEEventType,
-  TextDeltaData,
-  ToolStartData,
-  ToolCompleteData,
   AgentSwitchData,
-  TitleGeneratedData,
   DoneData,
   ErrorData,
+  SSEEvent,
+  SSEEventType,
   StreamCallbacks,
+  TextDeltaData,
+  TitleGeneratedData,
+  ToolCompleteData,
+  ToolStartData,
 } from '@/types/stream'
+import { ENV, STORAGE_KEYS } from '@/lib/constants'
 
 function getAuthHeaders(): HeadersInit {
   return {
     'Content-Type': 'application/json',
+    Authorization: `Bearer ${localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN)}`,
   }
 }
 
