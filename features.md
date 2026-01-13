@@ -1,84 +1,121 @@
-1. replace open ai whisper with eleven labs agents for better voice sound of languages. - backend feature
-   optimize prompts of our hands off agents but this prompts will be in general prompts for each agents so we will improve the ai agents layer with eleven labs as well adding other providers agents such as gemini and claude.
+### **Features & Bug Fixes (`features.md`)**
 
-2. if user says to invite other person to google meet with email he provide then we should verify if we have this feature enable or not and if not implement properly.
+1. **Backend | Voice & Agent Optimization**
+   Replace OpenAI Whisper with ElevenLabs to improve voice synthesis quality. Refactor backend prompts to be provider-agnostic, enabling support for multiple AI agents (ElevenLabs, Gemini, Claude) alongside existing ones.
+2. **Feature | Google Meet Integration**
+   Implement logic to verify if the "Invite to Google Meet" feature is enabled when a user provides an email. If enabled, execute the invite; if not, handle the error gracefully or prompt for enablement.
+3. **UI | Font Update**
+   Update the application's font family to a more "futuristic" style that better aligns with the AI branding.
+4. **Backend/Frontend | Organization Support**
+   Implement "Organization" vs. "Individual" user logic.
 
-3. change font for matching futuristic ai app better then what we have now.
+- **DB:** Add necessary columns to Supabase tables via CLI and regenerate `package.json` types.
+- **Validation:** Ensure cross-user validation within organizations to resolve conflicts.
+- **FE:** Add a setting in the Settings Modal to identify and manage user types.
 
-4. organization feature we first check if the user in organization and if so we validate a cross other users in the organization. so we can solve conflicts at organization level and in indiviudals as well. so this means we need to readd few columns in the relvant tables in teh supabase db via the supabase cli then regenerate types via the script in the package json and make sure that everything is integrated in the be and properly verified then add that in the settings modal in the fe so we can identify user type if he is individual or organization level.
+5. **Mobile UI | Homepage Carousel**
+   Fix the vertical alignment of carousel buttons in mobile view. They are currently positioned at the bottom 80%; center them vertically relative to the component.
+6. **Infra | AWS Region Latency Review**
+   Evaluate latency for users in Israel connecting to the Frankfurt AWS region. Determine if moving services to a closer region (or a multi-region setup) is necessary for performance.
+7. **Infra | Frontend Build Fix**
+   Investigate and fix the build failure causing rollbacks in the AWS App Runner service for the frontend.
+8. **UI | Dynamic Feature Carousel**
+   Refactor the features carousel to dynamically toggle between Telegram and Slack showcases. Do not show both simultaneously; alternate them to simplify the marketing message.
+9. **UI | Settings Logout**
+   Change the text color of the "Logout" button in the Settings Modal to **red** on hover.
+10. **UI | Settings Tooltips**
+    Fix the tooltip behavior in the Settings Modal. Hovering/clicking on setting rows currently fails to display the informational card.
+11. **UI | Subscription Loader Alignment**
+    Center the loading animation within the Subscription tab of the Settings Modal (currently misaligned to the top).
+12. **UI | Integrations Tab Cleanup**
 
-5. improve the carousel auotmatic in the homepage in mobile view the carousel buttons are not in the middle of the carousel but like at the bottom 80% of the component and not in the middle of it.
+- Replace custom SVGs with standard **React Icons** or **Lucide Icons** (specifically for Slack, WhatsApp, Google Calendar, and Telegram).
+- Add `overflow-auto` and set `max-height` to match the modal height.
+- _Note to Agent:_ If a specific icon is missing, flag it for manual review.
 
-6. i am from israel so for isreal users should i move the aws app runner services to other region ? currently on franfrkut.
+13. **Refactor | Shadcn UI Enforcement**
+    Audit the codebase to ensure all dialogs, popups, and overlays strictly use **Shadcn UI** components. Replace any custom implementations.
+14. **UI | Icon Theme Consistency**
+    Standardize icon colors: **Black** for Light Mode, **Orange** for Dark Mode. Remove any multi-colored ("rainbow") icon styles.
+15. **Feature | Cross-Platform Sync**
+    Implement an optional synchronization feature. If enabled (default: `true`), conversations started on Telegram/Slack automatically sync with the web interface. Add a toggle for this in the Settings Modal.
+16. **UX | Analytics Dashboard Overhaul**
+    Redesign the Analytics page to be more inviting and hierarchical. Organize data by importance (top-down) or introduce tabs to segment insights logically.
+17. **UI | Sidebar Buttons & Info Icons**
 
-7. fe is failing in building in the instance please identify and fix. cause we have rollback in the aws service fe.
+- Update icons for "Assistant," "Analytics," and "Quick Add Event" to better match the brand.
+- Add an "Info" (i) icon next to these buttons that reveals a tooltip only on hover.
 
-8. we show telegram features carousel but not slack this should be dynamicly show one as telegram one slack feature but more simple cause we want to mroe show off ally then just really show each command thats not a good marketing.
+18. **Feature | Secure Conversation Sharing**
+    Implement a "Share Link" feature allowing users to generate a unique link for a conversation. Ensure access is restricted so only the intended recipient can view it.
+19. **Feature | Analytics URL Mirroring**
+    Sync Analytics filters (dates, calendars) with the URL query parameters. This allows users to share or bookmark specific dashboard views (e.g., specific date ranges) across devices.
+20. **UI | Dashboard Loader & Empty State**
 
-9. if user hover on logout from settings modal text should be red
+- Fix the loader alignment (center it) when navigating to Dashboard/Billing.
+- If no subscription actions exist, display an "Info" icon with explanatory text (similar to Transaction History).
 
-10. tooltips hover/click in the settings modal isnt displaying hover card with the info releated to the setting row.
+21. **UI | Badge Styling**
+    Remove hover effects on badges. They should maintain a static background color based on the active theme (Light/Dark).
+22. **Mobile UI | File Attachment Input**
 
-11. loading animation in the subscription tab in the settings modal is not to the center of the tab but in the top fix.
+- Fix the "Remove" button on file attachments (currently cut off by `overflow-hidden`).
+- Replace the remove button with a **Trash Icon** to match the conversation sidebar style.
 
-12. integrations tab do not use custom svg icons but only react icons or lucide icon if icon u want not found reply me back add this to ur rules of project. also missing overflow-auto to the tabs and max h of the same height of the modal itself. which means proepr slack icon , whatsapp and google for the calendar , as well for the telegram bot.
+23. **UI | Microphone Input Padding**
+    Increase the padding of the microphone button in the input area to prevent layout breakage and match the text input height.
+24. **UX | Toast Notifications for Actions**
+    Trigger Toast notifications for specific actions: "Hear Response" toggle (Activate/Disable sound), "Copy Text," and "Reset/Re-trigger."
+25. **Feature | Inline Message Editing**
+    Allow users to inline-edit their previous messages in the chat interface. Submitting an edit should trigger a re-generation of the AI response (simulating a "step back" in the conversation).
+26. **UI | Sidebar Navigation Update**
+    Replace the "Quick Add Event" button in the top sidebar with a **"New Chat"** button. (Note: Remove the old "Quick Add Event" functionality entirely).
+27. **Branding | Email Mentions**
+    Scan the frontend for any hardcoded email addresses and replace them with `@askally.io`.
+28. **UI | Input Textarea Expansion**
+    Increase the visual weight of the input area on both desktop and mobile.
 
-13. validate all our components are properly using shadcn ui components as the layers and not custom dialogs or pop ups etc.
+- Set fixed rows to `4`.
+- Enable `overflow-auto` with a `max-height` of `200px`.
+- Add more padding for a "fatter" look.
 
-14. icons colors should be black in light theme and orange in dark theme. match our ui ux not rainbow colors.
+29. **Refactor | Component Reusability**
+    Identify and refactor duplicate UI patterns into modular, reusable components to improve maintainability and architecture.
+30. **UI | Pricing Consistency**
+    Ensure the Pricing Plans displayed in the Dashboard/Billing section strictly match the external Pricing page components and data.
+31. **UI | Footer Cleanup**
+    Remove **Discord** from the footer social links (Supported platforms: Slack, Telegram, Google Calendar).
+32. **Content | Help Center**
+    Design and implement a dedicated Help Center page.
+33. **Content | Changelog**
+    Design and implement a UI page for the application Changelog.
+34. **Content | Blog**
+    Create a Blog section optimized for SEO.
+35. **SEO | AI Crawler Optimization**
+    Optimize all public pages (meta tags, structure) for better indexing by AI search engines (ChatGPT, Gemini, Claude).
+36. **Mobile UI | Sidebar Alignment**
+    Ensure the mobile sidebar matches the desktop sidebar in terms of item width and general visual proportions.
+37. **Feature | Team Invite**
+    Implement a feature allowing users to invite team members to join their Ally workspace.
+38. **Feature | Affiliate/Referral Program**
+    Implement a referral system: "Invite a friend, get 1 month free."
+39. **UI | Timezone Dropdown Fix**
+    Fix the Z-Index issue causing the Timezone dropdown in the Settings Modal to appear "behind" or outside the modal boundaries.
+40. **Feature | Geo-Location Toggle**
+    Implement a "Real-time Location" toggle (Default: `false`).
 
-15. feature of sync between the cross platforms. if user is open conversation via telegram or slack it will automaticly sync with the web in terms of conversations the user made. this is optional for the user and the default will be true in the settings modal.
+- If `true`: Use the user's lat/long for event creation context.
+- Check feasibility for implementation on WhatsApp and Slack integrations.
 
-16. please preform a ui ux change for the analytics page so it become more inviting for user to get insights either tabs within teh page or a better way to get insights data by a proepr importance from top to bottom or hierircal logic of whats the most important to the less one, cause its looks not good.
+41. **UX | Onboarding Wizard 2.0**
+    Overhaul the onboarding flow:
 
-17. in teh sidebar buttons e.g. quick add event or analytics or assitant make sure that we see info icon so user see the info about it only when hover on that info icon. plus replace icons to better match assitant ally , analytics, and quick add event.
+- **Audio Support:** Auto-play audio instructions (with toggle OFF).
+- **Step-by-Step:** Guided navigation highlighting specific components.
+- **Content:** Detailed, marketing-focused explanations of the platform.
+- **Logic:** Advance to the next step only after audio finishes or user clicks "Next."
 
-18. implememnt share feature so user can share a link to a conversation he made to another user only os only that user can see the link.
+42. **UI | Logo & Sidebar Spacing**
 
-19. implement in the analytics sync with the url parmass so the query of dates we pass or filter calendars are as well "mirrored" to the url address itself so i can copy paste drop other pc and it will automaticly use that.
-
-20. loader animation when user nav to dashboard/billing as not at the middle of the page please fix , if no subscription actions then show info icon and a text releated like we have in the transcation history
-
-21.remove hover on badges it should not apply any hover color only static light/dark color bg work.
-
-22.attaching file of image to the input in mobile is making the remove button slightly hitten by the overflow hidden of it remove it. and replace that with trash icon to be match as we have in the conversations sidebar when user hover on one conversation to delete.
-
-23. if user click microphoen the padding should be so much big it should be the same as the input has in regular so its doesnt break
-
-24. if user click on toggle button of Hear response this will as well trigger toast of activate sound / disable sound , same for copy , Reset / Re-trigger.
-
-25. edit my (as a user) the message in the 2d chat or 3d chat or chat itself never mind which one it should inline edit hte div and let me edit the input this will trigger new response from the ai and give the user "feeling that we have got back one step back in the messages"
-
-26. move the button New Chat from the top sidebar and place it instead of the quick add event .then remove it we do not need it for now.
-
-27. look for all emails mentions we have in the fe and make sure that is replaced with @askally.io and not what we have now.
-
-28. input in desktop should be more "fat" more padding more rows to go down to with textarea of shadcn ui with rows fixed of 4 and with overflow-auto ofc with max of 200px h and in mobile same.
-
-29. identify components that could be reused which means reuse them and not over re-create them again. so we have more modular and a better components artiecture. so it will be easily to refactor improve modify maybe even add specific props or customs to some components but should be very much dynamic , robust and reused.
-
-30. pricing plans in the dashboard billing are not match the same we have at the pricing outside dashboard, make sure its the exact same. this means we should have the same componetns.
-
-31. our app is currently integrated to slack, telegram, google calendar not discord so remove it from the footer.
-
-32. create help center
-
-33. create changelog ui page.
-
-34. create blog with optimization for seo
-
-35. optimize geo for ai chatgpt,gemini cladue etc for better search results. each page should proeprly have meta description and following best practices to optimize website.
-
-36. apply the same sidebar we have in desktop just match it in width and size for mobile.
-
-37. invite ur team feature to join ally.
-
-38. get free month by affiliate inviting a new person gets 1 free month in our app
-
-39. dropdown of tiemzone in settings modal appear outsde of it cause of low index .
-
-40. real time access to geo lat and let location to improve our events creation for user. so the default will be false and if user want hecan toggle to true which will be always use the real time location of him to place that within the even creation at the current moment. check if this can be implemented on telegram as well or just on whatsapp and same on slack.
-
-41. improve the on boarding wizard so it guide user step by step plus navigating between the pages we have after login and success oauth so user can get a deatiled and a good explanation about the platform. plus add to it support of audio sound this means that we automaticly start the onbiarding with audio on activated user can toggle off to read additionally when audio is finish to read we move to the next step or if its otggled off wait for user to click next step to proceed with nav and highlight specific componetns or pages plus better explanations and very marketing ones.
-
-42. settings modal logo isnt the same as the logo sidebar make sure its conssitant a cross all components. as well the sidebar options are in a very high gap from the logo so should be justify-start ot items-start to make the items more close to the logo for better ui.
+- Ensure the logo in the Settings Modal matches the Sidebar logo exactly.
+- Adjust sidebar items to `justify-start` to reduce the large gap between the logo and the first menu item.
