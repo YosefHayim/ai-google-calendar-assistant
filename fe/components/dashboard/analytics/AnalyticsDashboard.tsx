@@ -134,20 +134,20 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
   } = processedData
 
   return (
-    <div className="max-w-7xl mx-auto w-full p-4 animate-in fade-in duration-500 overflow-y-auto bg-zinc-50 dark:bg-zinc-950 space-y-6">
-      <header className="flex flex-col gap-4">
+    <div className="max-w-7xl mx-auto w-full p-3 sm:p-4 animate-in fade-in duration-500 overflow-y-auto bg-zinc-50 dark:bg-zinc-950 space-y-4 sm:space-y-6">
+      <header className="flex flex-col gap-3 sm:gap-4">
         {date?.from && date?.to && (
-          <div className="flex flex-wrap items-baseline gap-2">
-            <span className="text-zinc-500 dark:text-zinc-400">Analytics for</span>
-            <span className="font-semibold text-zinc-900 dark:text-zinc-100">
+          <div className="flex flex-wrap items-baseline gap-1.5 sm:gap-2">
+            <span className="text-sm sm:text-base text-zinc-500 dark:text-zinc-400">Analytics for</span>
+            <span className="text-sm sm:text-base font-semibold text-zinc-900 dark:text-zinc-100">
               {format(date.from, 'MMM dd, yyyy')} - {format(date.to, 'MMM dd, yyyy')}
             </span>
-            <span className="text-sm text-zinc-400 dark:text-zinc-500">
+            <span className="text-xs sm:text-sm text-zinc-400 dark:text-zinc-500">
               ({getDaysBetween(date.from, date.to)} days)
             </span>
           </div>
         )}
-        <div className="flex flex-wrap gap-2 items-center">
+        <div className="flex flex-col min-[300px]:flex-row flex-wrap gap-2 items-stretch min-[300px]:items-center">
           <DatePickerWithRange date={date} setDate={setDate} />
           <CalendarFilterSelect
             calendars={calendarsData}
@@ -167,7 +167,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
 
       {/* AI Insights KPI Cards */}
       <div>
-        <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-4 flex items-center gap-2">
+        <h3 className="text-base sm:text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-3 sm:mb-4 flex items-center gap-2">
           AI Insights
           <HoverCard>
             <HoverCardTrigger asChild>
@@ -190,7 +190,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
             </HoverCardContent>
           </HoverCard>
         </h3>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 min-[300px]:grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
           {isInsightsLoading ? (
             Array.from({ length: 5 }).map((_, i) => <InsightCardSkeleton key={i} />)
           ) : isInsightsError ? (
@@ -247,7 +247,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
       />
 
       {/* Bottom Row: Schedule Health, Focus Time, Upcoming Week */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         <ScheduleHealthScore
           data={processedData}
           isLoading={isAnalyticsFetching}

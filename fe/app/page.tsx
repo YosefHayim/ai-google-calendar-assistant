@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import BentoGridSection from '@/components/marketing/BentoGridSection'
 import { SOCIAL_LINKS } from '@/lib/constants'
-import { TelegramIcon } from '@/components/shared/Icons'
+import { TelegramIcon, SlackIcon } from '@/components/shared/Icons'
 import FeatureShowcase from '@/components/marketing/FeatureShowcase'
 import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button'
 import { AnimatedFeatureSpotlight3D } from '@/components/ui/animated-feature-spotlight3d'
@@ -40,16 +40,25 @@ export default function HomePage() {
               </Button>
             </Link>
           </div>
-          <div className="mt-8 flex items-center justify-center gap-2 text-zinc-500 dark:text-zinc-400">
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-2 text-zinc-500 dark:text-zinc-400">
             <span className="text-sm font-medium">{t('home.availableIn')}</span>
             <a
               href={SOCIAL_LINKS.TELEGRAM_BOT}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#0088cc]/10 text-[#0088cc] hover:bg-[#0088cc]/20 transition-colors text-sm font-medium"
+              aria-label="Connect via Telegram"
             >
               <TelegramIcon className="w-4 h-4" />
               Telegram
+            </a>
+            <a
+              href="/api/slack/oauth/install"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#4A154B]/10 text-[#4A154B] dark:bg-[#E01E5A]/10 dark:text-[#E01E5A] hover:bg-[#4A154B]/20 dark:hover:bg-[#E01E5A]/20 transition-colors text-sm font-medium"
+              aria-label="Add to Slack"
+            >
+              <SlackIcon className="w-4 h-4" />
+              Slack
             </a>
           </div>
         </div>

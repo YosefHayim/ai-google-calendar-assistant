@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { Bell, Check, Loader2, Mail, Plus, Trash2 } from 'lucide-react'
+import { Bell, Check, Loader2, Mail, Plus, Trash2, CheckCircle, AlertTriangle, Sparkles, CalendarDays, BellRing, CalendarCog } from 'lucide-react'
 import { toast } from 'sonner'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -189,6 +189,7 @@ export const NotificationsTab: React.FC = () => {
               id="event-confirmations"
               title="Event Confirmations"
               tooltip="Get an immediate confirmation message when Ally successfully adds or updates an event"
+              icon={<CheckCircle size={18} className="text-green-500 dark:text-green-400" />}
               control={
                 <SettingsDropdown
                   id="event-confirmations-dropdown"
@@ -203,6 +204,7 @@ export const NotificationsTab: React.FC = () => {
               id="conflict-alerts"
               title="Conflict Alerts"
               tooltip="Get notified immediately if a new request overlaps with an existing commitment"
+              icon={<AlertTriangle size={18} className="text-amber-500 dark:text-amber-400" />}
               control={
                 <SettingsDropdown
                   id="conflict-alerts-dropdown"
@@ -217,6 +219,7 @@ export const NotificationsTab: React.FC = () => {
               id="feature-updates"
               title="Feature Updates"
               tooltip="Stay in the loop on new integrations like WhatsApp and Notion"
+              icon={<Sparkles size={18} className="text-purple-500 dark:text-purple-400" />}
               control={
                 <SettingsDropdown
                   id="feature-updates-dropdown"
@@ -254,6 +257,7 @@ export const NotificationsTab: React.FC = () => {
                   id="briefing-enabled"
                   title="Enable Daily Briefing"
                   tooltip="When enabled, you'll receive an email each morning with your schedule for the day"
+                  icon={<CalendarDays size={18} className="text-amber-600 dark:text-amber-400" />}
                   control={
                     <CinematicGlowToggle
                       id={dailyBriefingToggleId}
@@ -341,6 +345,7 @@ export const NotificationsTab: React.FC = () => {
                   id="reminder-enabled"
                   title="Apply Default Reminders"
                   tooltip="When enabled, Ally will automatically add your preferred reminders to new events"
+                  icon={<BellRing size={18} className="text-blue-600 dark:text-blue-400" />}
                   control={
                     <CinematicGlowToggle
                       id={reminderToggleId}
@@ -355,6 +360,7 @@ export const NotificationsTab: React.FC = () => {
                     id="use-calendar-defaults"
                     title="Use Calendar Defaults"
                     tooltip="Use the default reminders configured in your Google Calendar instead of custom ones"
+                    icon={<CalendarCog size={18} className="text-slate-500 dark:text-slate-400" />}
                     control={
                       <CinematicGlowToggle
                         id={calendarDefaultsToggleId}

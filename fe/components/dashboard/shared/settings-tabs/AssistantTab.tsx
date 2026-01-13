@@ -12,6 +12,11 @@ import {
   Sparkles,
   Square,
   Volume2,
+  Lightbulb,
+  CalendarCheck,
+  Database,
+  Mic,
+  Music,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -267,14 +272,15 @@ export const AssistantTab: React.FC<AssistantTabProps> = () => {
             </div>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="max-h-[300px] overflow-y-auto">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <SettingsSection>
               <SettingsRow
                 id="ally-brain-toggle"
                 title="Enable Custom Instructions"
                 tooltip="When enabled, Ally will always consider these instructions in all conversations"
-                                control={
+                icon={<Lightbulb size={18} className="text-amber-500 dark:text-amber-400" />}
+                control={
                   <CinematicGlowToggle
                     id={allyBrainToggleId}
                     checked={watchedEnabled}
@@ -368,13 +374,14 @@ export const AssistantTab: React.FC<AssistantTabProps> = () => {
           <CardTitle className="text-lg">Memory Management</CardTitle>
           <CardDescription>Control how Ally learns from your scheduling patterns.</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="max-h-[300px] overflow-y-auto space-y-4">
           <SettingsSection>
             <SettingsRow
               id="contextual-scheduling"
               title="Contextual Scheduling"
               tooltip="Allow Ally to remember your preferred meeting durations, buffer times, and recurring locations"
-                            control={
+              icon={<CalendarCheck size={18} className="text-indigo-500 dark:text-indigo-400" />}
+              control={
                 <CinematicGlowToggle
                   id={contextualToggleId}
                   checked={contextualEnabled}
@@ -387,6 +394,7 @@ export const AssistantTab: React.FC<AssistantTabProps> = () => {
               id="memory-stats"
               title="Learned Patterns"
               tooltip="Amount of scheduling patterns Ally has learned from your calendar activity"
+              icon={<Database size={18} className="text-slate-500 dark:text-slate-400" />}
               control={<span className="text-sm text-zinc-500 dark:text-zinc-400">{memoryUsage}</span>}
             />
           </SettingsSection>
@@ -406,13 +414,14 @@ export const AssistantTab: React.FC<AssistantTabProps> = () => {
             </div>
           </div>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="max-h-[300px] overflow-y-auto space-y-4">
           <SettingsSection>
             <SettingsRow
               id="voice-enabled"
               title="Enable Voice Responses"
               tooltip="When enabled, Ally will respond with voice in chat and when you send voice messages on Telegram"
-                            control={
+              icon={<Mic size={18} className="text-cyan-500 dark:text-cyan-400" />}
+              control={
                 <CinematicGlowToggle
                   id={voiceToggleId}
                   checked={voiceEnabled}
@@ -436,6 +445,7 @@ export const AssistantTab: React.FC<AssistantTabProps> = () => {
                     id="voice-selection"
                     title="Voice"
                     tooltip="Choose which voice Ally uses for audio responses"
+                    icon={<Music size={18} className="text-pink-500 dark:text-pink-400" />}
                     control={
                       <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap">
                         <SettingsDropdown

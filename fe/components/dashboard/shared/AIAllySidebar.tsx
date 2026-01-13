@@ -262,8 +262,8 @@ const AIAllySidebar: React.FC<AIAllySidebarProps> = ({
 
   return (
     <>
-      {/* Floating Orb Button */}
-      <div className="fixed bottom-6 right-6 z-50">
+      {/* Floating Orb Button - hidden on mobile */}
+      <div className="hidden md:block fixed bottom-6 right-6 z-50">
         <AllyOrbButton onClick={() => onOpen?.()} isOpen={isOpen} />
       </div>
 

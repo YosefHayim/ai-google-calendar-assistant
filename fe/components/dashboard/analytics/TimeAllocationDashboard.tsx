@@ -67,22 +67,22 @@ export const TimeAllocationDashboard: React.FC<TimeAllocationDashboardProps> = (
   if (isLoading) {
     return (
       <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm">
-        <div className="p-4 pb-2 border-b border-zinc-200 dark:border-zinc-800">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div className="p-3 sm:p-4 pb-2 border-b border-zinc-200 dark:border-zinc-800">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
             <div className="flex items-center gap-2">
-              <Skeleton className="h-5 w-32" />
-              <Skeleton className="h-4 w-20" />
+              <Skeleton className="h-4 sm:h-5 w-24 sm:w-32" />
+              <Skeleton className="h-3 sm:h-4 w-16 sm:w-20" />
             </div>
-            <Skeleton className="h-8 w-48" />
+            <Skeleton className="h-7 sm:h-8 w-full sm:w-48" />
           </div>
         </div>
-        <div className="p-4 flex flex-col lg:flex-row gap-4">
+        <div className="p-3 sm:p-4 flex flex-col lg:flex-row gap-3 sm:gap-4">
           <div className="flex-1 flex justify-center items-center">
-            <Skeleton className="h-[200px] w-[200px] rounded-full" />
+            <Skeleton className="h-[150px] w-[150px] sm:h-[200px] sm:w-[200px] rounded-full" />
           </div>
-          <div className="lg:w-48 flex-shrink-0 space-y-2">
+          <div className="lg:w-48 flex-shrink-0 space-y-1.5 sm:space-y-2">
             {Array.from({ length: 5 }).map((_, i) => (
-              <Skeleton key={i} className="h-10 w-full" />
+              <Skeleton key={i} className="h-8 sm:h-10 w-full" />
             ))}
           </div>
         </div>

@@ -21,18 +21,18 @@ const RecentEvents: React.FC<RecentEventsProps> = ({ activities, onActivityClick
 
   if (isLoading) {
     return (
-      <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-6 flex-1">
-        <div className="mb-6 flex items-center gap-2">
+      <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-4 sm:p-6 flex-1">
+        <div className="mb-4 sm:mb-6 flex items-center gap-2">
           <Skeleton className="w-4 h-4" />
-          <Skeleton className="h-5 w-32" />
+          <Skeleton className="h-4 sm:h-5 w-28 sm:w-32" />
         </div>
-        <div className={isHorizontal ? 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4' : 'space-y-2'}>
+        <div className={isHorizontal ? 'grid grid-cols-1 min-[300px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4' : 'space-y-2'}>
           {Array.from({ length: isHorizontal ? 5 : 5 }).map((_, i) => (
             <div key={i} className={isHorizontal ? 'flex flex-col gap-2 p-3 border border-zinc-200 dark:border-zinc-800 rounded-lg' : 'flex items-start gap-3 p-2 -m-2'}>
-              <Skeleton className="w-8 h-8 rounded-md" />
-              <div className="flex-1">
+              <Skeleton className="w-8 h-8 rounded-md flex-shrink-0" />
+              <div className="flex-1 min-w-0">
                 <Skeleton className="h-4 w-full mb-1" />
-                <Skeleton className="h-3 w-16" />
+                <Skeleton className="h-3 w-14 sm:w-16" />
               </div>
             </div>
           ))}
@@ -42,17 +42,17 @@ const RecentEvents: React.FC<RecentEventsProps> = ({ activities, onActivityClick
   }
 
   return (
-    <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-6 flex-1">
-      <div className="mb-6 flex items-center justify-between">
-        <h3 className="font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
-          <ListChecks className="w-4 h-4 text-zinc-400" />
-          <span>{isHorizontal ? '5' : activities?.length} Recent Events</span>
+    <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-4 sm:p-6 flex-1">
+      <div className="mb-4 sm:mb-6 flex items-center justify-between">
+        <h3 className="font-bold text-sm sm:text-base text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+          <ListChecks className="w-4 h-4 text-zinc-400 flex-shrink-0" />
+          <span className="truncate">{isHorizontal ? '5' : activities?.length} Recent Events</span>
           <HoverCard>
             <HoverCardTrigger asChild>
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-6 w-6 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
+                className="h-6 w-6 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 flex-shrink-0"
               >
                 <Info size={16} />
               </Button>
@@ -70,31 +70,32 @@ const RecentEvents: React.FC<RecentEventsProps> = ({ activities, onActivityClick
         </h3>
       </div>
       {displayActivities.length > 0 ? (
-        <div className={isHorizontal ? 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4' : 'space-y-2'}>
+        <div className={isHorizontal ? 'grid grid-cols-1 min-[300px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4' : 'space-y-2'}>
           {displayActivities.map((activity, i) => {
             const Icon = activity.icon
             return isHorizontal ? (
               <div
                 key={i}
-                className="border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 flex flex-col gap-3 group cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-900/50 rounded-lg p-4 transition-colors"
+                className="border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 flex flex-col gap-2 sm:gap-3 group cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-900/50 rounded-lg p-3 sm:p-4 transition-colors"
                 data-calendar-id={activity.calendarId || ''}
                 onClick={() => onActivityClick(activity)}
               >
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 sm:gap-3">
                   <div
-                    className="w-10 h-10 rounded-lg group-hover:opacity-80 transition-opacity flex items-center justify-center shrink-0"
+                    className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg group-hover:opacity-80 transition-opacity flex items-center justify-center shrink-0"
                     style={{ backgroundColor: `${activity.calendarColor || '#6366f1'}20` }}
                   >
-                    <Icon size={18} style={{ color: activity.calendarColor || '#6366f1' }} />
+                    <Icon size={16} className="sm:hidden" style={{ color: activity.calendarColor || '#6366f1' }} />
+                    <Icon size={18} className="hidden sm:block" style={{ color: activity.calendarColor || '#6366f1' }} />
                   </div>
-                  <p className="text-xs text-zinc-400 font-bold uppercase">{activity.time}</p>
+                  <p className="text-[10px] sm:text-xs text-zinc-400 font-bold uppercase">{activity.time}</p>
                 </div>
-                <p className="text-sm font-semibold text-zinc-800 dark:text-zinc-200 line-clamp-2">
+                <p className="text-xs sm:text-sm font-semibold text-zinc-800 dark:text-zinc-200 line-clamp-2">
                   {activity.action}
                 </p>
                 {activity.calendarName && (
                   <span
-                    className="text-xs font-bold px-2 py-1 rounded border self-start"
+                    className="text-[10px] sm:text-xs font-bold px-1.5 sm:px-2 py-0.5 sm:py-1 rounded border self-start truncate max-w-full"
                     style={{
                       color: activity.calendarColor || '#6366f1',
                       borderColor: activity.calendarColor || '#6366f1',

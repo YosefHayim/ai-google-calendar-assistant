@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import Image from 'next/image'
-import { Moon, Sun, Monitor } from 'lucide-react'
+import { Moon, Sun, Monitor, Palette, Globe, Clock } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { SettingsRow, SettingsDropdown, SettingsSection, type DropdownOption } from './components'
 import { getUserDisplayInfo, type UserData } from '@/lib/user-utils'
@@ -98,6 +98,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ isDarkMode, toggleTheme,
             id="appearance"
             title="Appearance"
             tooltip="Choose your preferred color theme for the interface"
+            icon={<Palette size={18} className="text-violet-500 dark:text-violet-400" />}
             control={
               <SettingsDropdown
                 id="appearance-dropdown"
@@ -112,6 +113,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ isDarkMode, toggleTheme,
             id="timezone"
             title="Default Timezone"
             tooltip="Events will be scheduled in this timezone unless specified otherwise"
+            icon={<Globe size={18} className="text-blue-500 dark:text-blue-400" />}
             control={
               <SettingsDropdown
                 id="timezone-dropdown"
@@ -126,6 +128,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ isDarkMode, toggleTheme,
             id="time-format"
             title="Time Format"
             tooltip="Display format for event times throughout the app"
+            icon={<Clock size={18} className="text-emerald-500 dark:text-emerald-400" />}
             control={
               <SettingsDropdown
                 id="time-format-dropdown"

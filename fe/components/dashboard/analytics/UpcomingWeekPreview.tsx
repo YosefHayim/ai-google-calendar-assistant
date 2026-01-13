@@ -45,33 +45,33 @@ const DayCard: React.FC<{ day: UpcomingDayData }> = ({ day }) => {
       <HoverCardTrigger asChild>
         <div
           className={`
-            relative flex flex-col items-center p-2 rounded-lg border cursor-pointer
+            relative flex flex-col items-center p-1.5 sm:p-2 rounded-lg border cursor-pointer
             transition-all duration-200 hover:scale-105 hover:shadow-md
             ${BUSYNESS_COLORS[day.busynessLevel]}
             ${BUSYNESS_BORDER_COLORS[day.busynessLevel]}
-            ${day.isToday ? 'ring-2 ring-indigo-500 ring-offset-2 dark:ring-offset-zinc-950' : ''}
+            ${day.isToday ? 'ring-2 ring-indigo-500 ring-offset-1 sm:ring-offset-2 dark:ring-offset-zinc-950' : ''}
           `}
         >
           {day.isToday && (
-            <span className="absolute -top-2 left-1/2 -translate-x-1/2 text-[10px] font-bold text-indigo-600 dark:text-indigo-400 bg-white dark:bg-zinc-950 px-1 rounded">
+            <span className="absolute -top-1.5 sm:-top-2 left-1/2 -translate-x-1/2 text-[8px] sm:text-[10px] font-bold text-indigo-600 dark:text-indigo-400 bg-white dark:bg-zinc-950 px-0.5 sm:px-1 rounded">
               TODAY
             </span>
           )}
           {day.isTomorrow && !day.isToday && (
-            <span className="absolute -top-2 left-1/2 -translate-x-1/2 text-[10px] font-medium text-zinc-500 bg-white dark:bg-zinc-950 px-1 rounded">
+            <span className="absolute -top-1.5 sm:-top-2 left-1/2 -translate-x-1/2 text-[8px] sm:text-[10px] font-medium text-zinc-500 bg-white dark:bg-zinc-950 px-0.5 sm:px-1 rounded">
               TMR
             </span>
           )}
 
-          <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">{day.dayShort}</span>
-          <span className="text-lg font-bold text-zinc-900 dark:text-zinc-100">{format(day.date, 'd')}</span>
+          <span className="text-[10px] sm:text-xs font-medium text-zinc-500 dark:text-zinc-400">{day.dayShort}</span>
+          <span className="text-base sm:text-lg font-bold text-zinc-900 dark:text-zinc-100">{format(day.date, 'd')}</span>
 
           {/* Busyness indicator */}
-          <div className="mt-1 flex gap-0.5">
+          <div className="mt-0.5 sm:mt-1 flex gap-0.5">
             {[1, 2, 3, 4, 5].map((level) => (
               <div
                 key={level}
-                className={`w-1.5 h-1.5 rounded-full transition-colors ${
+                className={`w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full transition-colors ${
                   level <=
                   (day.busynessLevel === 'free'
                     ? 0
@@ -95,8 +95,8 @@ const DayCard: React.FC<{ day: UpcomingDayData }> = ({ day }) => {
             ))}
           </div>
 
-          <span className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-1">
-            {day.eventCount} {day.eventCount === 1 ? 'event' : 'events'}
+          <span className="text-[8px] sm:text-[10px] text-zinc-500 dark:text-zinc-400 mt-0.5 sm:mt-1 truncate max-w-full">
+            {day.eventCount} {day.eventCount === 1 ? 'evt' : 'evts'}
           </span>
         </div>
       </HoverCardTrigger>
@@ -162,15 +162,15 @@ const DayCard: React.FC<{ day: UpcomingDayData }> = ({ day }) => {
 const UpcomingWeekPreview: React.FC<UpcomingWeekPreviewProps> = ({ data, isLoading = false, isError = false, onRetry }) => {
   if (isLoading) {
     return (
-      <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-sm p-6">
+      <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-sm p-4 sm:p-6">
         <div className="flex items-center gap-2 mb-2">
-          <Skeleton className="w-8 h-8 rounded-lg" />
-          <Skeleton className="h-5 w-36" />
+          <Skeleton className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg" />
+          <Skeleton className="h-4 sm:h-5 w-28 sm:w-36" />
         </div>
-        <Skeleton className="h-4 w-48 mb-6" />
-        <div className="grid grid-cols-7 gap-2">
+        <Skeleton className="h-3 sm:h-4 w-40 sm:w-48 mb-4 sm:mb-6" />
+        <div className="grid grid-cols-4 min-[300px]:grid-cols-7 gap-1.5 sm:gap-2">
           {Array.from({ length: 7 }).map((_, i) => (
-            <Skeleton key={i} className="h-24 rounded-lg" />
+            <Skeleton key={i} className="h-16 sm:h-24 rounded-lg" />
           ))}
         </div>
       </div>
@@ -179,15 +179,15 @@ const UpcomingWeekPreview: React.FC<UpcomingWeekPreviewProps> = ({ data, isLoadi
 
   if (isError) {
     return (
-      <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-sm p-6">
-        <div className="flex items-center gap-2 mb-4">
-          <div className="w-8 h-8 rounded-lg bg-rose-100 dark:bg-rose-900/50 flex items-center justify-center">
-            <AlertCircle className="w-4 h-4 text-rose-600 dark:text-rose-400" />
+      <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-sm p-4 sm:p-6">
+        <div className="flex items-center gap-2 mb-3 sm:mb-4">
+          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-rose-100 dark:bg-rose-900/50 flex items-center justify-center">
+            <AlertCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-rose-600 dark:text-rose-400" />
           </div>
-          <h3 className="font-semibold text-zinc-900 dark:text-zinc-100">Upcoming Week</h3>
+          <h3 className="font-semibold text-sm sm:text-base text-zinc-900 dark:text-zinc-100">Upcoming Week</h3>
         </div>
-        <div className="text-center py-8">
-          <p className="text-zinc-500 dark:text-zinc-400 mb-4">Failed to load upcoming events</p>
+        <div className="text-center py-6 sm:py-8">
+          <p className="text-sm sm:text-base text-zinc-500 dark:text-zinc-400 mb-3 sm:mb-4">Failed to load upcoming events</p>
           {onRetry && (
             <Button variant="outline" size="sm" onClick={onRetry}>
               Retry
@@ -203,55 +203,55 @@ const UpcomingWeekPreview: React.FC<UpcomingWeekPreviewProps> = ({ data, isLoadi
   }
 
   return (
-    <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
-      <div className="flex items-center justify-between mb-1">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-purple-100 dark:bg-purple-900/50 flex items-center justify-center">
-            <CalendarDays className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+    <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-sm p-4 sm:p-6 hover:shadow-md transition-shadow">
+      <div className="flex items-center justify-between mb-1 gap-2">
+        <div className="flex items-center gap-2 min-w-0">
+          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-purple-100 dark:bg-purple-900/50 flex items-center justify-center flex-shrink-0">
+            <CalendarDays className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-600 dark:text-purple-400" />
           </div>
-          <h3 className="font-semibold text-zinc-900 dark:text-zinc-100">Upcoming Week</h3>
+          <h3 className="font-semibold text-sm sm:text-base text-zinc-900 dark:text-zinc-100 truncate">Upcoming Week</h3>
         </div>
-        <div className="flex items-center gap-1 text-xs text-zinc-500 dark:text-zinc-400">
+        <div className="flex items-center gap-1 text-[10px] sm:text-xs text-zinc-500 dark:text-zinc-400 flex-shrink-0">
           <Clock className="w-3 h-3" />
           <span>{data.totalHours} hrs</span>
         </div>
       </div>
-      <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-4 ml-10">
+      <p className="text-[10px] sm:text-xs text-zinc-500 dark:text-zinc-400 mb-3 sm:mb-4 ml-9 sm:ml-10 truncate">
         {data.totalEvents} events • Busiest: {data.busiestDay}
       </p>
 
       {/* Week Grid */}
-      <div className="grid grid-cols-7 gap-2">
+      <div className="grid grid-cols-4 min-[300px]:grid-cols-7 gap-1.5 sm:gap-2">
         {data.days.map((day) => (
           <DayCard key={day.dateStr} day={day} />
         ))}
       </div>
 
       {/* Legend */}
-      <div className="flex items-center justify-center gap-4 mt-4 pt-4 border-t border-zinc-200 dark:border-zinc-800">
-        <div className="flex items-center gap-1.5">
-          <div className="w-2 h-2 rounded-full bg-emerald-500" />
-          <span className="text-xs text-zinc-500 dark:text-zinc-400">Light</span>
+      <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-zinc-200 dark:border-zinc-800">
+        <div className="flex items-center gap-1 sm:gap-1.5">
+          <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-500" />
+          <span className="text-[10px] sm:text-xs text-zinc-500 dark:text-zinc-400">Light</span>
         </div>
-        <div className="flex items-center gap-1.5">
-          <div className="w-2 h-2 rounded-full bg-sky-500" />
-          <span className="text-xs text-zinc-500 dark:text-zinc-400">Moderate</span>
+        <div className="flex items-center gap-1 sm:gap-1.5">
+          <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-sky-500" />
+          <span className="text-[10px] sm:text-xs text-zinc-500 dark:text-zinc-400">Moderate</span>
         </div>
-        <div className="flex items-center gap-1.5">
-          <div className="w-2 h-2 rounded-full bg-amber-500" />
-          <span className="text-xs text-zinc-500 dark:text-zinc-400">Busy</span>
+        <div className="flex items-center gap-1 sm:gap-1.5">
+          <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-amber-500" />
+          <span className="text-[10px] sm:text-xs text-zinc-500 dark:text-zinc-400">Busy</span>
         </div>
-        <div className="flex items-center gap-1.5">
-          <div className="w-2 h-2 rounded-full bg-rose-500" />
-          <span className="text-xs text-zinc-500 dark:text-zinc-400">Packed</span>
+        <div className="flex items-center gap-1 sm:gap-1.5">
+          <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-rose-500" />
+          <span className="text-[10px] sm:text-xs text-zinc-500 dark:text-zinc-400">Packed</span>
         </div>
       </div>
 
       {/* Alert for packed days */}
       {data.days.some((d) => d.busynessLevel === 'packed') && (
-        <div className="mt-3 p-2 rounded-lg bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-800 flex items-center gap-2">
-          <AlertCircle className="w-4 h-4 text-rose-500 flex-shrink-0" />
-          <p className="text-xs text-rose-700 dark:text-rose-300">
+        <div className="mt-2 sm:mt-3 p-1.5 sm:p-2 rounded-lg bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-800 flex items-center gap-1.5 sm:gap-2">
+          <AlertCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-rose-500 flex-shrink-0" />
+          <p className="text-[10px] sm:text-xs text-rose-700 dark:text-rose-300">
             You have packed days ahead. Consider rescheduling some events.
           </p>
         </div>
