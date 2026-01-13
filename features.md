@@ -15,7 +15,7 @@
 
 ⏱️ **Mobile UI | Homepage Carousel**
    Fix the vertical alignment of carousel buttons in mobile view. They are currently positioned at the bottom 80%; center them vertically relative to the component.
-⏱️ **Infra | AWS Region Latency Review**
+✅ **Infra | AWS Region Latency Review**
    Evaluate latency for users in Israel connecting to the Frankfurt AWS region. Determine if moving services to a closer region (or a multi-region setup) is necessary for performance.
 ⏱️ **Infra | Frontend Build Fix**
    Investigate and fix the build failure causing rollbacks in the AWS App Runner service for the frontend.
