@@ -259,12 +259,12 @@ export const AssistantTab: React.FC<AssistantTabProps> = () => {
         <CardHeader>
           <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap">
             <div className="p-2 rounded-lg bg-gradient-to-br from-purple-500/10 to-pink-500/10 dark:from-purple-500/20 dark:to-pink-500/20">
-              <Brain className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+              <Brain className="w-5 h-5 text-zinc-900 dark:text-primary" />
             </div>
             <div>
               <CardTitle className="text-lg flex items-center gap-2">
                 Ally's Brain
-                <Sparkles className="w-4 h-4 text-amber-500" />
+                <Sparkles className="w-4 h-4 text-zinc-900 dark:text-primary" />
               </CardTitle>
               <CardDescription>
                 Teach Ally about your preferences. These instructions will be remembered in every conversation.
@@ -279,7 +279,7 @@ export const AssistantTab: React.FC<AssistantTabProps> = () => {
                 id="ally-brain-toggle"
                 title="Enable Custom Instructions"
                 tooltip="When enabled, Ally will always consider these instructions in all conversations"
-                icon={<Lightbulb size={18} className="text-amber-500 dark:text-amber-400" />}
+                icon={<Lightbulb size={18} className="text-zinc-900 dark:text-primary" />}
                 control={
                   <CinematicGlowToggle
                     id={allyBrainToggleId}
@@ -380,7 +380,7 @@ export const AssistantTab: React.FC<AssistantTabProps> = () => {
               id="contextual-scheduling"
               title="Contextual Scheduling"
               tooltip="Allow Ally to remember your preferred meeting durations, buffer times, and recurring locations"
-              icon={<CalendarCheck size={18} className="text-indigo-500 dark:text-indigo-400" />}
+              icon={<CalendarCheck size={18} className="text-zinc-900 dark:text-primary" />}
               control={
                 <CinematicGlowToggle
                   id={contextualToggleId}
@@ -406,7 +406,7 @@ export const AssistantTab: React.FC<AssistantTabProps> = () => {
         <CardHeader>
           <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap">
             <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500/10 to-cyan-500/10 dark:from-blue-500/20 dark:to-cyan-500/20">
-              <Volume2 className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+              <Volume2 className="w-5 h-5 text-zinc-900 dark:text-primary" />
             </div>
             <div>
               <CardTitle className="text-lg">Voice Settings</CardTitle>
@@ -420,7 +420,7 @@ export const AssistantTab: React.FC<AssistantTabProps> = () => {
               id="voice-enabled"
               title="Enable Voice Responses"
               tooltip="When enabled, Ally will respond with voice in chat and when you send voice messages on Telegram"
-              icon={<Mic size={18} className="text-cyan-500 dark:text-cyan-400" />}
+              icon={<Mic size={18} className="text-zinc-900 dark:text-primary" />}
               control={
                 <CinematicGlowToggle
                   id={voiceToggleId}
@@ -445,7 +445,7 @@ export const AssistantTab: React.FC<AssistantTabProps> = () => {
                     id="voice-selection"
                     title="Voice"
                     tooltip="Choose which voice Ally uses for audio responses"
-                    icon={<Music size={18} className="text-pink-500 dark:text-pink-400" />}
+                    icon={<Music size={18} className="text-zinc-900 dark:text-primary" />}
                     control={
                       <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap">
                         <SettingsDropdown
