@@ -5,6 +5,7 @@ import type {
   ReminderDefaultsFormData,
   VoicePreferenceFormData,
   DailyBriefingFormData,
+  CrossPlatformSyncFormData,
 } from '@/lib/validations/preferences'
 
 import { ENDPOINTS } from '@/lib/api/endpoints'
@@ -131,6 +132,23 @@ export const preferencesService = {
   ): Promise<ApiResponse<PreferenceResponse<DailyBriefingFormData>>> {
     const { data } = await apiClient.put<ApiResponse<PreferenceResponse<DailyBriefingFormData>>>(
       ENDPOINTS.USER_PREFERENCES_DAILY_BRIEFING,
+      value,
+    )
+    return data
+  },
+
+  async getCrossPlatformSync(): Promise<ApiResponse<PreferenceResponse<CrossPlatformSyncFormData>>> {
+    const { data } = await apiClient.get<ApiResponse<PreferenceResponse<CrossPlatformSyncFormData>>>(
+      ENDPOINTS.USER_PREFERENCES_BY_KEY('cross_platform_sync'),
+    )
+    return data
+  },
+
+  async updateCrossPlatformSync(
+    value: CrossPlatformSyncFormData,
+  ): Promise<ApiResponse<PreferenceResponse<CrossPlatformSyncFormData>>> {
+    const { data } = await apiClient.put<ApiResponse<PreferenceResponse<CrossPlatformSyncFormData>>>(
+      ENDPOINTS.USER_PREFERENCES_CROSS_PLATFORM_SYNC,
       value,
     )
     return data

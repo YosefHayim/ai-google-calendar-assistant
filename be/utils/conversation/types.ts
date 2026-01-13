@@ -62,6 +62,7 @@ export type ConversationListItem = {
   messageCount: number
   lastUpdated: string
   createdAt: string
+  source?: ConversationSource
 }
 
 /**

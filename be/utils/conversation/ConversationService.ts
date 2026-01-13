@@ -628,7 +628,12 @@ export class ConversationService {
    */
   async getConversationList(
     userId: string,
-    options?: { limit?: number; offset?: number; search?: string },
+    options?: {
+      limit?: number
+      offset?: number
+      search?: string
+      includeAllSources?: boolean
+    },
   ): Promise<ConversationListItem[]> {
     const DEFAULT_LIMIT = 20;
     const MIN_SEARCH_LENGTH = 2;
@@ -636,13 +641,17 @@ export class ConversationService {
     const limit = options?.limit || DEFAULT_LIMIT;
     const offset = options?.offset || 0;
     const search = options?.search;
+    const includeAllSources = options?.includeAllSources || false;
 
     let query = SUPABASE.from("conversations")
       .select(
-        "id, message_count, title, summary, created_at, updated_at, last_message_at",
+        "id, message_count, title, summary, created_at, updated_at, last_message_at, source",
       )
-      .eq("user_id", userId)
-      .eq("source", this.source);
+      .eq("user_id", userId);
+
+    if (!includeAllSources) {
+      query = query.eq("source", this.source);
+    }
 
     if (search && search.length >= MIN_SEARCH_LENGTH) {
       query = query.ilike("title", `%${search}%`);
@@ -671,13 +680,19 @@ export class ConversationService {
             : firstLine;
       }
 
-      return {
+      const item: ConversationListItem = {
         id: row.id,
         title,
         messageCount: row.message_count || 0,
         lastUpdated: row.last_message_at || row.updated_at || row.created_at,
         createdAt: row.created_at,
       };
+
+      if (includeAllSources && row.source) {
+        item.source = row.source as ConversationSource;
+      }
+
+      return item;
     });
   }
 
