@@ -29,9 +29,6 @@ const mockLemonSqueezyConfig = {
     INTERVAL: "interval",
     CREDIT_PACK_SIZE: "credit_pack_size",
   },
-  VARIANTS: {
-    pro: { monthly: "var-pro-monthly", yearly: "var-pro-yearly" },
-  },
 };
 
 jest.mock("@/config", () => ({
@@ -40,9 +37,6 @@ jest.mock("@/config", () => ({
     isDev: true,
     lemonSqueezy: {
       storeId: "test-store-id",
-      variants: {
-        pro: { monthly: "var-pro-monthly", yearly: "var-pro-yearly" },
-      },
     },
   },
 }));

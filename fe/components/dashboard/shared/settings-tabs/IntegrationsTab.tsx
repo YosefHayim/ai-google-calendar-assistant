@@ -69,7 +69,7 @@ export const IntegrationsTab: React.FC<IntegrationsTabProps> = ({
         <CardTitle className="text-lg">Integrations</CardTitle>
         <CardDescription>Manage your calendar and messaging integrations.</CardDescription>
       </CardHeader>
-      <CardContent className="max-h-[300px] overflow-y-auto">
+      <CardContent className="max-h-[400px] overflow-y-auto">
         <SettingsSection>
           <SettingsRow
             id="google-calendar"

@@ -43,8 +43,6 @@ export const LEMONSQUEEZY_CONFIG = {
     CANCEL_URL: `${env.urls.frontend}/pricing?canceled=true`,
   },
 
-  VARIANTS: env.lemonSqueezy.variants,
-
   METADATA_KEYS: {
     USER_ID: "user_id",
     PLAN_SLUG: "plan_slug",

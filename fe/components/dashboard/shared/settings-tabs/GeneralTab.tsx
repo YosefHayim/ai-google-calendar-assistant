@@ -67,7 +67,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ isDarkMode, toggleTheme,
         <CardTitle className="text-lg">General</CardTitle>
         <CardDescription>Manage your profile and preferences.</CardDescription>
       </CardHeader>
-      <CardContent className="space-y-2">
+      <CardContent className="space-y-2 max-h-[400px] overflow-y-auto">
         <div className="flex flex-wrap items-center gap-4 pb-4 border-b border-zinc-100 dark:border-zinc-800 sm:flex-nowrap">
           {avatarUrl ? (
             <Image

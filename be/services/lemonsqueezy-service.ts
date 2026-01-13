@@ -343,18 +343,7 @@ export const createCheckoutSession = async (params: CreateCheckoutSessionParams)
   const plan = await getPlanBySlug(planSlug);
   if (!plan) throw new Error(`Plan not found: ${planSlug}`);
 
-  const getVariantIdFromConfig = (slug: PlanSlug, int: "monthly" | "yearly") => {
-    const variants = LEMONSQUEEZY_CONFIG.VARIANTS;
-    if (slug === "starter") return int === "monthly" ? variants.starter?.monthly : variants.starter?.yearly;
-    if (slug === "pro") return int === "monthly" ? variants.pro?.monthly : variants.pro?.yearly;
-    if (slug === "executive") return int === "monthly" ? variants.executive?.monthly : variants.executive?.yearly;
-    return null;
-  };
-
-  const variantId =
-    interval === "monthly"
-      ? plan.lemonsqueezy_variant_id_monthly || getVariantIdFromConfig(planSlug, "monthly")
-      : plan.lemonsqueezy_variant_id_yearly || getVariantIdFromConfig(planSlug, "yearly");
+  const variantId = interval === "monthly" ? plan.lemonsqueezy_variant_id_monthly : plan.lemonsqueezy_variant_id_yearly;
 
   if (!variantId) {
     throw new Error(`No LemonSqueezy variant configured for plan: ${planSlug} (${interval})`);
@@ -653,18 +642,7 @@ export const upgradeSubscriptionPlan = async (params: UpgradeSubscriptionParams)
     throw new Error(`Plan not found: ${newPlanSlug}`);
   }
 
-  const getVariantIdFromConfig = (slug: PlanSlug, interval: "monthly" | "yearly") => {
-    const variants = LEMONSQUEEZY_CONFIG.VARIANTS;
-    if (slug === "starter") return interval === "monthly" ? variants.starter?.monthly : variants.starter?.yearly;
-    if (slug === "pro") return interval === "monthly" ? variants.pro?.monthly : variants.pro?.yearly;
-    if (slug === "executive") return interval === "monthly" ? variants.executive?.monthly : variants.executive?.yearly;
-    return null;
-  };
-
-  const newVariantId =
-    newInterval === "monthly"
-      ? newPlan.lemonsqueezy_variant_id_monthly || getVariantIdFromConfig(newPlanSlug, "monthly")
-      : newPlan.lemonsqueezy_variant_id_yearly || getVariantIdFromConfig(newPlanSlug, "yearly");
+  const newVariantId = newInterval === "monthly" ? newPlan.lemonsqueezy_variant_id_monthly : newPlan.lemonsqueezy_variant_id_yearly;
 
   if (!newVariantId) {
     throw new Error(`No LemonSqueezy variant configured for plan: ${newPlanSlug} (${newInterval})`);

@@ -32,7 +32,7 @@ export const DataControlsTab: React.FC<DataControlsTabProps> = ({
         <CardTitle className="text-lg">Data Controls</CardTitle>
         <CardDescription>Manage your data, conversations, and account.</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="max-h-[400px] overflow-y-auto">
         <SettingsSection showDivider className="mt-4">
           <SettingsRow
             id="delete-conversations"

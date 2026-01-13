@@ -17,15 +17,6 @@ const CONSTANTS = {
   // Google OAuth
   GOOGLE_CLIENT_ID: "633918377873-vvlgvie0ksenm5jcvs3c74vhb17rdqsn.apps.googleusercontent.com",
 
-  // LemonSqueezy
-  LEMONSQUEEZY_STORE_ID: "270009",
-  LEMONSQUEEZY_VARIANTS: {
-    starter: { monthly: "1204847", yearly: "1204888" },
-    pro: { monthly: "1204856", yearly: "1204874" },
-    executive: { monthly: "1204865", yearly: "1204889" },
-    credits: "1204898",
-  },
-
   // URLs (Production)
   PROD_BACKEND_URL: "https://i3fzcpnmmk.eu-central-1.awsapprunner.com/",
   PROD_FRONTEND_URL: "https://askally.io",
@@ -153,11 +144,10 @@ const openai = {
 
 const lemonSqueezy = {
   apiKey: getOptional("LEMONSQUEEZY_API_KEY"),
-  storeId: CONSTANTS.LEMONSQUEEZY_STORE_ID,
+  storeId: getOptional("LEMONSQUEEZY_STORE_ID"),
   webhookSecret: getOptional("LEMONSQUEEZY_WEBHOOK_SECRET"),
-  variants: CONSTANTS.LEMONSQUEEZY_VARIANTS,
   get isEnabled(): boolean {
-    return !!this.apiKey;
+    return !!this.apiKey && !!this.storeId;
   },
 } as const;
 

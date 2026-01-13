@@ -272,7 +272,7 @@ export const AssistantTab: React.FC<AssistantTabProps> = () => {
             </div>
           </div>
         </CardHeader>
-        <CardContent className="max-h-[300px] overflow-y-auto">
+        <CardContent className="max-h-[400px] overflow-y-auto">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <SettingsSection>
               <SettingsRow
