@@ -82,6 +82,14 @@ app.get("/", (_req, res) => {
   res.status(STATUS_RESPONSE.SUCCESS).json({ message: "AI Google Calendar Assistant Server is running." });
 });
 
+app.get("/health", (_req, res) => {
+  res.status(STATUS_RESPONSE.SUCCESS).json({
+    status: "ok",
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+  });
+});
+
 app.use(ROUTES.USERS, usersRoute);
 app.use(ROUTES.CALENDAR_LIST, calendarListRoute);
 app.use(ROUTES.CALENDAR, calendarRoute);
