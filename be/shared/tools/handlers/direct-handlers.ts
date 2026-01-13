@@ -1,6 +1,7 @@
 import { fetchCredentialsByEmail } from "@/utils/auth"
 import {
   checkEventConflicts,
+  checkEventConflictsAllCalendars,
   initUserSupabaseCalendarWithTokensAndUpdateTokens,
 } from "@/utils/calendar"
 import { userRepository } from "@/utils/repositories/UserRepository"
@@ -311,14 +312,11 @@ export async function preCreateValidationHandler(
   }
 
   if (params.start && params.end) {
-    conflicts = await checkConflictsHandler(
-      {
-        calendarId: calendarResult.calendarId,
-        start: params.start,
-        end: params.end,
-      },
-      ctx,
-    )
+    conflicts = await checkEventConflictsAllCalendars({
+      email,
+      startTime: params.start,
+      endTime: params.end,
+    })
   }
 
   return {
