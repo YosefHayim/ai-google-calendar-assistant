@@ -13,8 +13,8 @@
 - **Validation:** Ensure cross-user validation within organizations to resolve conflicts.
 - **FE:** Add a setting in the Settings Modal to identify and manage user types.
 
-⏱️ **Mobile UI | Homepage Carousel**
-   Fix the vertical alignment of carousel buttons in mobile view. They are currently positioned at the bottom 80%; center them vertically relative to the component.
+✅ **Mobile UI | Homepage Carousel**
+   Fix the vertical alignment of carousel buttons in mobile view. They are currently positioned at the bottom 80%; center them vertically relative to the component. *(Already correctly implemented with `top-1/2 -translate-y-1/2`)*
 ✅ **Infra | AWS Region Latency Review**
    Evaluate latency for users in Israel connecting to the Frankfurt AWS region. Determine if moving services to a closer region (or a multi-region setup) is necessary for performance.
 ✅ **Infra | Frontend Build Fix**
@@ -25,7 +25,7 @@
    Change the text color of the "Logout" button in the Settings Modal to **red** on hover.
 ⏱️ **UI | Settings Tooltips**
     Fix the tooltip behavior in the Settings Modal. Hovering/clicking on setting rows currently fails to display the informational card.
-⏱️ **UI | Subscription Loader Alignment**
+✅ **UI | Subscription Loader Alignment**
     Center the loading animation within the Subscription tab of the Settings Modal (currently misaligned to the top).
 ✅ **UI | Integrations Tab Cleanup**
 
