@@ -19,7 +19,7 @@
    Evaluate latency for users in Israel connecting to the Frankfurt AWS region. Determine if moving services to a closer region (or a multi-region setup) is necessary for performance.
 ⏱️ **Infra | Frontend Build Fix**
    Investigate and fix the build failure causing rollbacks in the AWS App Runner service for the frontend.
-8. **UI | Dynamic Feature Carousel**
+⏱️ **UI | Dynamic Feature Carousel**
    Refactor the features carousel to dynamically toggle between Telegram and Slack showcases. Do not show both simultaneously; alternate them to simplify the marketing message.
 9. **UI | Settings Logout**
    Change the text color of the "Logout" button in the Settings Modal to **red** on hover.
