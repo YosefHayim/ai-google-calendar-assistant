@@ -70,3 +70,11 @@
 35. optimize geo for ai chatgpt,gemini cladue etc for better search results. each page should proeprly have meta description and following best practices to optimize website. 
 
 36. apply the same sidebar we have in desktop just match it in width and size for mobile. 
+
+37. invite ur team feature to join ally.
+
+38. get free month by affiliate inviting a new person gets 1 free month in our app 
+
+39. dropdown of tiemzone in settings modal appear outsde of it cause of low index .
+
+40. real time access to geo lat and let location to improve our events creation for user. so the default will be false and if user want hecan toggle to true which will be always use the real time location of him to place that within the even creation at the current moment. check if this can be implemented on telegram as well or just on whatsapp and same on slack.
