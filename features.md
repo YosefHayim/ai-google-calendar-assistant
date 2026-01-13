@@ -41,7 +41,7 @@
     Implement an optional synchronization feature. If enabled (default: `true`), conversations started on Telegram/Slack automatically sync with the web interface. Add a toggle for this in the Settings Modal.
 16. **UX | Analytics Dashboard Overhaul**
     Redesign the Analytics page to be more inviting and hierarchical. Organize data by importance (top-down) or introduce tabs to segment insights logically.
-17. **UI | Sidebar Buttons & Info Icons**
+✅ **UI | Sidebar Buttons & Info Icons**
 
 - Update icons for "Assistant," "Analytics," and "Quick Add Event" to better match the brand.
 - Add an "Info" (i) icon next to these buttons that reveals a tooltip only on hover.
