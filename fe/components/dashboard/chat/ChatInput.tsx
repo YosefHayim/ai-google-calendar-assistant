@@ -1,6 +1,6 @@
 'use client'
 
-import { ArrowUp, ImagePlus, Mic, Pause, X, ChevronLeft, ChevronRight } from 'lucide-react'
+import { ArrowUp, ImagePlus, Mic, Pause, X, ChevronLeft, ChevronRight, Trash2 } from 'lucide-react'
 import React, { forwardRef, useCallback, useMemo, useRef, useState } from 'react'
 
 import { AIVoiceInput } from '@/components/ui/ai-voice-input'
@@ -261,7 +261,7 @@ export const ChatInput = forwardRef<HTMLInputElement, ChatInputProps>(
       >
         {/* Image previews */}
         {images.length > 0 && (
-          <div className="flex gap-2 mb-2 flex-wrap max-w-full overflow-x-auto pb-2">
+          <div className="flex gap-3 mb-2 flex-wrap max-w-full overflow-x-auto pb-2 overflow-visible">
             {images.map((image, index) => (
               <div key={image.id} className="relative group flex-shrink-0">
                 <button
@@ -278,13 +278,13 @@ export const ChatInput = forwardRef<HTMLInputElement, ChatInputProps>(
                 <button
                   type="button"
                   onClick={() => removeImage(image.id)}
-                  className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity shadow-sm"
+                  title="Remove image"
                 >
-                  <X className="w-3 h-3" />
+                  <Trash2 className="w-3 h-3" />
                 </button>
               </div>
             ))}
-
           </div>
         )}
 
@@ -341,11 +341,11 @@ export const ChatInput = forwardRef<HTMLInputElement, ChatInputProps>(
               variant="ghost"
               size="icon"
               onClick={() => fileInputRef.current?.click()}
-              className="h-6 w-6 md:h-12 md:w-12 rounded-xl text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
+              className="h-7 w-7 md:h-14 md:w-14 p-1.5 md:p-3 rounded-xl flex-shrink-0 text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
               disabled={isDisabled || !canAddMoreImages}
               title={canAddMoreImages ? 'Add images' : `Max ${MAX_IMAGES} images`}
             >
-              <ImagePlus className="w-3 h-3 md:w-6 md:h-6" />
+              <ImagePlus className="w-4 h-4 md:w-6 md:h-6" />
             </Button>
 
             <Button
@@ -353,12 +353,12 @@ export const ChatInput = forwardRef<HTMLInputElement, ChatInputProps>(
               variant="ghost"
               size="icon"
               onClick={onToggleRecording}
-              className={`h-6 w-6 md:h-12 md:w-12 rounded-xl ${
+              className={`h-7 w-7 md:h-14 md:w-14 p-1.5 md:p-3 rounded-xl flex-shrink-0 ${
                 isRecording ? 'text-red-500 bg-red-50' : 'text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100'
               }`}
               disabled={isDisabled || !speechRecognitionSupported}
             >
-              <Mic className="w-3 h-3 md:w-6 md:h-6" />
+              <Mic className="w-4 h-4 md:w-6 md:h-6" />
             </Button>
             <div className="flex-1 relative">
               <Input
@@ -385,24 +385,24 @@ export const ChatInput = forwardRef<HTMLInputElement, ChatInputProps>(
                 variant="destructive"
                 size="icon"
                 onClick={onCancel}
-                className="h-6 w-6 md:h-12 md:w-12 rounded-xl animate-pulse"
+                className="h-7 w-7 md:h-14 md:w-14 p-1.5 md:p-3 rounded-xl flex-shrink-0 animate-pulse"
                 title="Cancel AI response"
               >
-                <Pause className="w-3 h-3 md:w-6 md:h-6" />
+                <Pause className="w-4 h-4 md:w-6 md:h-6" />
               </Button>
             ) : (
               <Button
                 type="submit"
                 size="icon"
                 disabled={(!input.trim() && images.length === 0) || isLoading || isInputTooLong}
-                className={`h-6 w-6 md:h-12 md:w-12 rounded-xl ${
+                className={`h-7 w-7 md:h-14 md:w-14 p-1.5 md:p-3 rounded-xl flex-shrink-0 ${
                   (input.trim() || images.length > 0) && !isLoading && !isInputTooLong
                     ? 'bg-zinc-950 dark:bg-zinc-100 text-white dark:text-zinc-950 hover:bg-zinc-800 dark:hover:bg-zinc-200'
                     : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-400'
                 }`}
                 title={isInputTooLong ? 'Message too long' : undefined}
               >
-                <ArrowUp className="w-3 h-3 md:w-6 md:h-6" />
+                <ArrowUp className="w-4 h-4 md:w-6 md:h-6" />
               </Button>
             )}
           </form>

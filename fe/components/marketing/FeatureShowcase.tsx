@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
   Calendar,
   Check,
@@ -24,12 +24,17 @@ import {
   Volume2,
   Edit3,
   Trash2,
+  Hash,
+  AtSign,
+  MoreVertical,
   type LucideIcon,
 } from 'lucide-react'
-import { TelegramIcon } from '@/components/shared/Icons'
+import { TelegramIcon, SlackIcon } from '@/components/shared/Icons'
 import { AllyLogo } from '@/components/shared/logo'
 import { IPhoneMockup } from '@/components/ui/iphone-mockup'
 import { cn } from '@/lib/utils'
+
+type Platform = 'telegram' | 'slack'
 
 interface Message {
   type: 'user' | 'ally'
@@ -46,6 +51,9 @@ interface Feature {
   descriptionKey: string
   category: 'schedule' | 'manage' | 'insights' | 'ai'
   telegram: {
+    messages: Message[]
+  }
+  slack: {
     messages: Message[]
   }
   web: {
@@ -218,6 +226,94 @@ const TelegramChat = ({ messages }: { messages: Message[] }) => (
       <button className="p-2 text-[#6C7883] hover:text-white transition-colors">
         <Mic className="w-6 h-6" />
       </button>
+    </div>
+  </div>
+)
+
+// Slack chat interface
+const SlackChat = ({ messages }: { messages: Message[] }) => (
+  <div className="h-full flex flex-col bg-[#1A1D21]">
+    {/* Slack header */}
+    <div className="bg-[#1A1D21] px-4 py-3 flex items-center gap-3 border-b border-[#313338]">
+      <div className="flex items-center gap-2 flex-1">
+        <Hash className="w-5 h-5 text-[#B9BBBE]" />
+        <span className="text-white font-semibold text-sm">ally-assistant</span>
+      </div>
+      <div className="flex items-center gap-3 text-[#B9BBBE]">
+        <AtSign className="w-5 h-5" />
+        <MoreVertical className="w-5 h-5" />
+      </div>
+    </div>
+
+    {/* Channel info bar */}
+    <div className="bg-[#222529] px-4 py-2 border-b border-[#313338] flex items-center gap-2">
+      <div className="w-2 h-2 rounded-full bg-emerald-500" />
+      <span className="text-xs text-[#B9BBBE]">Ally is online</span>
+    </div>
+
+    {/* Chat messages */}
+    <div className="flex-1 p-4 space-y-4 overflow-y-auto bg-[#1A1D21]">
+      {messages.map((msg, i) => (
+        <motion.div
+          key={i}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: i * 0.4, duration: 0.3 }}
+          className="flex gap-3"
+        >
+          {msg.type === 'user' ? (
+            <>
+              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+                <User className="w-5 h-5 text-white" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-white font-semibold text-sm">You</span>
+                  <span className="text-[10px] text-[#72767D]">{msg.time}</span>
+                </div>
+                {msg.isVoice ? (
+                  <div className="flex items-center gap-2 bg-[#2B2D31] rounded-lg p-2 w-fit">
+                    <div className="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center">
+                      <Mic className="w-4 h-4 text-indigo-400" />
+                    </div>
+                    <VoiceWaveform />
+                    <span className="text-xs text-[#72767D]">0:03</span>
+                  </div>
+                ) : (
+                  <div className="text-sm text-[#DCDDDE]">{msg.content}</div>
+                )}
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary to-emerald-600 flex items-center justify-center flex-shrink-0">
+                <AllyLogo className="w-5 h-5 text-white" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-white font-semibold text-sm">Ally</span>
+                  <span className="px-1.5 py-0.5 rounded text-[10px] bg-[#5865F2] text-white">APP</span>
+                  <span className="text-[10px] text-[#72767D]">{msg.time}</span>
+                </div>
+                {msg.showTyping ? (
+                  <TypingIndicator />
+                ) : (
+                  <div className="text-sm text-[#DCDDDE]">{msg.content}</div>
+                )}
+              </div>
+            </>
+          )}
+        </motion.div>
+      ))}
+    </div>
+
+    {/* Input area */}
+    <div className="px-4 py-3 border-t border-[#313338]">
+      <div className="bg-[#383A40] rounded-lg px-4 py-3 flex items-center gap-3">
+        <Plus className="w-5 h-5 text-[#B9BBBE]" />
+        <span className="text-sm text-[#72767D] flex-1">Message #ally-assistant</span>
+        <AtSign className="w-5 h-5 text-[#B9BBBE]" />
+      </div>
     </div>
   </div>
 )
@@ -414,6 +510,41 @@ const FEATURES: Feature[] = [
         },
       ],
     },
+    slack: {
+      messages: [
+        { type: 'user', content: '/ally today', time: '9:00 AM' },
+        {
+          type: 'ally',
+          content: (
+            <div className="bg-[#2B2D31] rounded-lg p-3 border-l-4 border-primary">
+              <div className="font-semibold mb-2 text-white">📅 Today's Schedule</div>
+              <div className="space-y-1.5">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-blue-500" />
+                  <span>9:30 AM - Team Standup (30m)</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-purple-500" />
+                  <span>11:00 AM - Client Call (1h)</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                  <span>2:00 PM - Deep Work (2h) 🧠</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-orange-500" />
+                  <span>4:30 PM - Review (30m)</span>
+                </div>
+              </div>
+              <div className="mt-3 pt-2 border-t border-[#3F4147] text-xs text-emerald-400">
+                ✓ 4h scheduled • 4h free
+              </div>
+            </div>
+          ),
+          time: '9:00 AM',
+        },
+      ],
+    },
     web: { component: <WebCalendarView /> },
   },
   {
@@ -437,6 +568,30 @@ const FEATURES: Feature[] = [
                 I've blocked <strong>2:00 PM - 4:00 PM</strong> for deep work.
               </div>
               <div className="mt-2 flex items-center gap-2 text-xs text-purple-400">
+                <Brain className="w-3 h-3" />
+                Focus mode will be enabled
+              </div>
+            </div>
+          ),
+          time: '10:15 AM',
+        },
+      ],
+    },
+    slack: {
+      messages: [
+        { type: 'user', content: 'Block 2 hours for deep work', time: '10:15 AM', isVoice: true },
+        {
+          type: 'ally',
+          content: (
+            <div className="bg-[#2B2D31] rounded-lg p-3 border-l-4 border-emerald-500">
+              <div className="flex items-center gap-2 mb-2">
+                <Check className="w-4 h-4 text-emerald-400" />
+                <span className="font-semibold text-white">Deep Work Scheduled</span>
+              </div>
+              <div>
+                I've blocked <strong className="text-white">2:00 PM - 4:00 PM</strong> for deep work.
+              </div>
+              <div className="mt-3 flex items-center gap-2 text-xs text-purple-400 bg-purple-500/10 px-2 py-1 rounded w-fit">
                 <Brain className="w-3 h-3" />
                 Focus mode will be enabled
               </div>
@@ -474,6 +629,35 @@ const FEATURES: Feature[] = [
                 </div>
               </div>
               <div className="mt-2 text-xs text-zinc-400">Best day: Wednesday (5h focus)</div>
+            </div>
+          ),
+          time: '5:00 PM',
+        },
+      ],
+    },
+    slack: {
+      messages: [
+        { type: 'user', content: '/ally analytics', time: '5:00 PM' },
+        {
+          type: 'ally',
+          content: (
+            <div className="bg-[#2B2D31] rounded-lg p-3 border-l-4 border-[#5865F2]">
+              <div className="font-semibold mb-3 text-white">📊 This Week's Insights</div>
+              <div className="grid grid-cols-3 gap-2 mb-3">
+                <div className="bg-[#1E1F22] rounded-lg p-2 text-center">
+                  <div className="text-lg font-bold text-emerald-400">18h</div>
+                  <div className="text-[10px] text-[#72767D]">Focus</div>
+                </div>
+                <div className="bg-[#1E1F22] rounded-lg p-2 text-center">
+                  <div className="text-lg font-bold text-blue-400">12h</div>
+                  <div className="text-[10px] text-[#72767D]">Meetings</div>
+                </div>
+                <div className="bg-[#1E1F22] rounded-lg p-2 text-center">
+                  <div className="text-lg font-bold text-purple-400">87%</div>
+                  <div className="text-[10px] text-[#72767D]">Score</div>
+                </div>
+              </div>
+              <div className="text-xs text-[#72767D]">🏆 Best day: Wednesday (5h focus)</div>
             </div>
           ),
           time: '5:00 PM',
@@ -518,6 +702,36 @@ const FEATURES: Feature[] = [
         },
       ],
     },
+    slack: {
+      messages: [
+        { type: 'user', content: '/ally preferences', time: '8:00 AM' },
+        {
+          type: 'ally',
+          content: (
+            <div className="bg-[#2B2D31] rounded-lg p-3 border-l-4 border-purple-500">
+              <div className="font-semibold mb-2 text-white">🧠 Ally Brain</div>
+              <div className="text-sm mb-2">Teach me your preferences!</div>
+              <div className="bg-[#1E1F22] rounded-lg p-2 text-xs space-y-1">
+                <div className="text-[#72767D]">Current: "Schedule meetings 10AM-4PM"</div>
+                <div className="text-primary cursor-pointer">Click to edit your instructions →</div>
+              </div>
+            </div>
+          ),
+          time: '8:00 AM',
+        },
+        { type: 'user', content: 'Never schedule meetings before 10am', time: '8:01 AM' },
+        {
+          type: 'ally',
+          content: (
+            <div className="flex items-center gap-2 bg-emerald-500/10 text-emerald-400 px-3 py-2 rounded-lg w-fit">
+              <Check className="w-4 h-4" />
+              <span>Got it! I'll protect your mornings.</span>
+            </div>
+          ),
+          time: '8:01 AM',
+        },
+      ],
+    },
     web: { component: <WebBrainView /> },
   },
   {
@@ -542,6 +756,29 @@ const FEATURES: Feature[] = [
                 </div>
               </div>
               <div className="mt-2 text-xs text-zinc-400">Next scheduled: Jan 15th</div>
+            </div>
+          ),
+          time: '3:00 PM',
+        },
+      ],
+    },
+    slack: {
+      messages: [
+        { type: 'user', content: '@Ally when did I last meet with Sarah?', time: '3:00 PM' },
+        {
+          type: 'ally',
+          content: (
+            <div className="bg-[#2B2D31] rounded-lg p-3 border-l-4 border-blue-500">
+              <div className="font-semibold mb-2 text-white">🔍 Found it!</div>
+              <div className="text-sm mb-2">Last meeting with Sarah:</div>
+              <div className="bg-[#1E1F22] rounded-lg p-3">
+                <div className="font-semibold text-white">Project Kickoff</div>
+                <div className="text-xs text-[#72767D] mt-1">📅 Jan 5th, 3:00 PM (1h)</div>
+              </div>
+              <div className="mt-3 text-xs text-[#72767D] flex items-center gap-1">
+                <Calendar className="w-3 h-3" />
+                Next scheduled: Jan 15th
+              </div>
             </div>
           ),
           time: '3:00 PM',
@@ -575,6 +812,35 @@ const FEATURES: Feature[] = [
               <div className="flex gap-2 mt-2">
                 <span className="px-3 py-1 bg-emerald-500/20 text-emerald-400 rounded-full text-xs">Yes</span>
                 <span className="px-3 py-1 bg-white/10 rounded-full text-xs">No</span>
+              </div>
+            </div>
+          ),
+          time: '6:00 PM',
+        },
+      ],
+    },
+    slack: {
+      messages: [
+        { type: 'user', content: '@Ally schedule lunch with Alex tomorrow at noon', time: '6:00 PM' },
+        {
+          type: 'ally',
+          content: (
+            <div className="bg-[#2B2D31] rounded-lg p-3 border-l-4 border-primary">
+              <div className="flex items-center gap-2 mb-3">
+                <Calendar className="w-4 h-4 text-primary" />
+                <span className="font-semibold text-white">New Event Preview</span>
+              </div>
+              <div className="bg-[#1E1F22] rounded-lg p-3 mb-3">
+                <div className="font-semibold text-white">Lunch with Alex</div>
+                <div className="text-xs text-[#72767D] mt-1">📅 Tomorrow, 12:00 PM - 1:00 PM</div>
+              </div>
+              <div className="flex gap-2">
+                <button className="px-4 py-1.5 bg-emerald-500 text-white rounded text-xs font-medium">
+                  ✓ Create
+                </button>
+                <button className="px-4 py-1.5 bg-[#4F545C] text-white rounded text-xs font-medium">
+                  Cancel
+                </button>
               </div>
             </div>
           ),
@@ -618,13 +884,93 @@ const FEATURES: Feature[] = [
         },
       ],
     },
+    slack: {
+      messages: [
+        { type: 'user', content: '/ally language', time: '7:00 PM' },
+        {
+          type: 'ally',
+          content: (
+            <div className="bg-[#2B2D31] rounded-lg p-3 border-l-4 border-[#5865F2]">
+              <div className="font-semibold mb-2 text-white">🌐 Choose Language</div>
+              <div className="text-sm mb-3 text-[#72767D]">Current: English</div>
+              <div className="grid grid-cols-3 gap-2">
+                {['🇺🇸 EN', '🇮🇱 HE', '🇷🇺 RU', '🇫🇷 FR', '🇩🇪 DE', '🇸🇦 AR'].map((lang, i) => (
+                  <button
+                    key={lang}
+                    className={cn(
+                      'px-2 py-1.5 rounded text-xs font-medium transition-colors',
+                      i === 0 ? 'bg-primary text-white' : 'bg-[#4F545C] text-[#DCDDDE] hover:bg-[#5D6269]'
+                    )}
+                  >
+                    {lang}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ),
+          time: '7:00 PM',
+        },
+      ],
+    },
     web: { component: <WebBrainView /> },
   },
 ]
 
+const PlatformToggle = ({
+  platform,
+  onToggle,
+}: {
+  platform: Platform
+  onToggle: (p: Platform) => void
+}) => (
+  <div className="flex justify-center mb-8">
+    <div className="inline-flex items-center p-1 rounded-full bg-zinc-100 dark:bg-zinc-800/80 backdrop-blur-sm border border-zinc-200 dark:border-zinc-700 shadow-lg">
+      <button
+        onClick={() => onToggle('telegram')}
+        className={cn(
+          'relative flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300',
+          platform === 'telegram'
+            ? 'text-white'
+            : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200'
+        )}
+      >
+        {platform === 'telegram' && (
+          <motion.div
+            layoutId="platformBg"
+            className="absolute inset-0 bg-gradient-to-r from-[#0088cc] to-[#00a2e8] rounded-full shadow-lg shadow-[#0088cc]/30"
+            transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
+          />
+        )}
+        <TelegramIcon className={cn('w-4 h-4 relative z-10', platform === 'telegram' && 'text-white')} />
+        <span className="relative z-10">Telegram</span>
+      </button>
+      <button
+        onClick={() => onToggle('slack')}
+        className={cn(
+          'relative flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300',
+          platform === 'slack'
+            ? 'text-white'
+            : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200'
+        )}
+      >
+        {platform === 'slack' && (
+          <motion.div
+            layoutId="platformBg"
+            className="absolute inset-0 bg-gradient-to-r from-[#611f69] to-[#4A154B] rounded-full shadow-lg shadow-[#611f69]/30"
+            transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
+          />
+        )}
+        <SlackIcon className={cn('w-4 h-4 relative z-10', platform === 'slack' && 'text-white')} />
+        <span className="relative z-10">Slack</span>
+      </button>
+    </div>
+  </div>
+)
+
 const FeatureShowcase = () => {
   const [activeIndex, setActiveIndex] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
+  const [platform, setPlatform] = useState<Platform>('telegram')
 
   const nextSlide = useCallback(() => {
     setActiveIndex((prev) => (prev + 1) % FEATURES.length)
@@ -650,6 +996,7 @@ const FeatureShowcase = () => {
       </div>
 
       <div className="max-w-7xl mx-auto relative z-10">
+        <PlatformToggle platform={platform} onToggle={setPlatform} />
         <div
           className="relative"
           onMouseEnter={() => setIsPaused(true)}
@@ -701,22 +1048,56 @@ const FeatureShowcase = () => {
                   }}
                 >
                   <div className="relative">
-                    {isCenter && (
-                      <motion.div
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="absolute -top-6 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-gradient-to-r from-[#0088cc] to-[#00a2e8] text-white px-3 py-1.5 rounded-full text-xs font-medium shadow-lg shadow-[#0088cc]/30 z-20 whitespace-nowrap"
-                      >
-                        <TelegramIcon className="w-3.5 h-3.5" />
-                        <span>Telegram Bot</span>
-                      </motion.div>
-                    )}
+                    <AnimatePresence mode="wait">
+                      {isCenter && (
+                        <motion.div
+                          key={platform}
+                          initial={{ opacity: 0, y: -10, scale: 0.9 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: -10, scale: 0.9 }}
+                          transition={{ duration: 0.3 }}
+                          className={cn(
+                            'absolute -top-6 left-1/2 -translate-x-1/2 flex items-center gap-2 text-white px-3 py-1.5 rounded-full text-xs font-medium shadow-lg z-20 whitespace-nowrap',
+                            platform === 'telegram'
+                              ? 'bg-gradient-to-r from-[#0088cc] to-[#00a2e8] shadow-[#0088cc]/30'
+                              : 'bg-gradient-to-r from-[#611f69] to-[#4A154B] shadow-[#611f69]/30'
+                          )}
+                        >
+                          {platform === 'telegram' ? (
+                            <>
+                              <TelegramIcon className="w-3.5 h-3.5" />
+                              <span>Telegram Bot</span>
+                            </>
+                          ) : (
+                            <>
+                              <SlackIcon className="w-3.5 h-3.5" />
+                              <span>Slack App</span>
+                            </>
+                          )}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                     <div className={cn(
                       'transform transition-transform duration-500',
                       isCenter ? 'scale-100' : 'scale-90'
                     )}>
                       <PhoneMockup>
-                        <TelegramChat messages={feature.telegram.messages} />
+                        <AnimatePresence mode="wait">
+                          <motion.div
+                            key={`${feature.id}-${platform}`}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.3 }}
+                            className="h-full"
+                          >
+                            {platform === 'telegram' ? (
+                              <TelegramChat messages={feature.telegram.messages} />
+                            ) : (
+                              <SlackChat messages={feature.slack.messages} />
+                            )}
+                          </motion.div>
+                        </AnimatePresence>
                       </PhoneMockup>
                     </div>
                   </div>

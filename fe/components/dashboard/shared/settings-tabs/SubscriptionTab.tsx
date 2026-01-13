@@ -131,7 +131,11 @@ export const SubscriptionTab: React.FC = () => {
   }
 
   if (isLoading) {
-    return <LoadingSection text="Loading subscription..." />
+    return (
+      <div className="flex items-center justify-center min-h-[300px] h-full">
+        <LoadingSection text="Loading subscription..." />
+      </div>
+    )
   }
 
   const isPerUse = selectedFrequency === 'per use'

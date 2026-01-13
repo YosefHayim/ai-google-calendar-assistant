@@ -67,6 +67,7 @@ export const queryKeys = {
     reminderDefaults: () => [...queryKeys.preferences.all, 'reminder_defaults'] as const,
     voicePreference: () => [...queryKeys.preferences.all, 'voice_preference'] as const,
     dailyBriefing: () => [...queryKeys.preferences.all, 'daily_briefing'] as const,
+    crossPlatformSync: () => [...queryKeys.preferences.all, 'cross_platform_sync'] as const,
   },
 
   // Agent Profiles queries

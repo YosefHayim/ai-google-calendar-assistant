@@ -10,11 +10,13 @@ import type {
   ConversationSource,
   FullConversation,
   MessageRole,
+  SharedConversation,
   SummarizeFn,
   TelegramConversationRow,
   WebConversationRow,
 } from "./types";
 import { DEFAULT_CONVERSATION_CONFIG } from "./types";
+import crypto from "node:crypto";
 
 type ConversationInsert =
   Database["public"]["Tables"]["conversations"]["Insert"];
@@ -628,7 +630,12 @@ export class ConversationService {
    */
   async getConversationList(
     userId: string,
-    options?: { limit?: number; offset?: number; search?: string },
+    options?: {
+      limit?: number
+      offset?: number
+      search?: string
+      includeAllSources?: boolean
+    },
   ): Promise<ConversationListItem[]> {
     const DEFAULT_LIMIT = 20;
     const MIN_SEARCH_LENGTH = 2;
@@ -636,13 +643,17 @@ export class ConversationService {
     const limit = options?.limit || DEFAULT_LIMIT;
     const offset = options?.offset || 0;
     const search = options?.search;
+    const includeAllSources = options?.includeAllSources || false;
 
     let query = SUPABASE.from("conversations")
       .select(
-        "id, message_count, title, summary, created_at, updated_at, last_message_at",
+        "id, message_count, title, summary, created_at, updated_at, last_message_at, source",
       )
-      .eq("user_id", userId)
-      .eq("source", this.source);
+      .eq("user_id", userId);
+
+    if (!includeAllSources) {
+      query = query.eq("source", this.source);
+    }
 
     if (search && search.length >= MIN_SEARCH_LENGTH) {
       query = query.ilike("title", `%${search}%`);
@@ -671,13 +682,19 @@ export class ConversationService {
             : firstLine;
       }
 
-      return {
+      const item: ConversationListItem = {
         id: row.id,
         title,
         messageCount: row.message_count || 0,
         lastUpdated: row.last_message_at || row.updated_at || row.created_at,
         createdAt: row.created_at,
       };
+
+      if (includeAllSources && row.source) {
+        item.source = row.source as ConversationSource;
+      }
+
+      return item;
     });
   }
 
@@ -911,5 +928,194 @@ export class ConversationService {
     );
 
     return { success: true, deletedCount: conversationIds.length };
+  }
+
+  /**
+   * @description Generates a unique share token for a conversation.
+   * The token is a 32-character URL-safe random string.
+   * @returns {string} A unique share token.
+   */
+  private generateShareToken(): string {
+    return crypto.randomBytes(16).toString("hex");
+  }
+
+  /**
+   * @description Creates a shareable link for a conversation by generating a unique token.
+   * The token expires after the specified duration (default: 7 days).
+   * Only the conversation owner can create share links.
+   * @param {string} conversationId - The unique identifier of the conversation to share.
+   * @param {string} userId - The UUID of the user who owns the conversation.
+   * @param {number} [expiresInDays=7] - Number of days until the share link expires.
+   * @returns {Promise<{ token: string; expiresAt: string } | null>} The share token and expiration date, or null on failure.
+   * @example
+   * const share = await service.createShareLink("conv-123", "user-456", 7);
+   * if (share) {
+   *   console.log(`Share link expires at: ${share.expiresAt}`);
+   * }
+   */
+  async createShareLink(
+    conversationId: string,
+    userId: string,
+    expiresInDays = 7,
+  ): Promise<{ token: string; expiresAt: string } | null> {
+    // Verify the user owns this conversation
+    const { data: conversation, error: fetchError } = await SUPABASE
+      .from("conversations")
+      .select("id, user_id")
+      .eq("id", conversationId)
+      .eq("user_id", userId)
+      .eq("source", this.source)
+      .single();
+
+    if (fetchError || !conversation) {
+      logger.error(
+        `createShareLink: conversation ${conversationId} not found for user ${userId}`,
+      );
+      return null;
+    }
+
+    const token = this.generateShareToken();
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + expiresInDays);
+
+    const { error: updateError } = await SUPABASE
+      .from("conversations")
+      .update({
+        share_token: token,
+        share_expires_at: expiresAt.toISOString(),
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", conversationId);
+
+    if (updateError) {
+      logger.error(
+        `createShareLink: failed to update conversation ${conversationId}: ${updateError.message}`,
+      );
+      return null;
+    }
+
+    logger.info(
+      `createShareLink: created share link for conversation ${conversationId}, expires ${expiresAt.toISOString()}`,
+    );
+
+    return { token, expiresAt: expiresAt.toISOString() };
+  }
+
+  /**
+   * @description Revokes an existing share link by clearing the share token.
+   * Only the conversation owner can revoke share links.
+   * @param {string} conversationId - The unique identifier of the conversation.
+   * @param {string} userId - The UUID of the user who owns the conversation.
+   * @returns {Promise<boolean>} True if the share link was revoked, false on failure.
+   * @example
+   * const revoked = await service.revokeShareLink("conv-123", "user-456");
+   */
+  async revokeShareLink(
+    conversationId: string,
+    userId: string,
+  ): Promise<boolean> {
+    const { error } = await SUPABASE
+      .from("conversations")
+      .update({
+        share_token: null,
+        share_expires_at: null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", conversationId)
+      .eq("user_id", userId)
+      .eq("source", this.source);
+
+    if (error) {
+      logger.error(
+        `revokeShareLink: failed to revoke share for ${conversationId}: ${error.message}`,
+      );
+      return false;
+    }
+
+    logger.info(`revokeShareLink: revoked share link for conversation ${conversationId}`);
+    return true;
+  }
+
+  /**
+   * @description Retrieves a shared conversation by its share token.
+   * Validates that the token exists and has not expired.
+   * Does not require authentication - anyone with the token can access.
+   * @param {string} token - The unique share token.
+   * @returns {Promise<SharedConversation | null>} The shared conversation with messages, or null if invalid/expired.
+   * @example
+   * const shared = await service.getSharedConversation("abc123def456...");
+   * if (shared) {
+   *   console.log(`Viewing shared conversation: ${shared.title}`);
+   * }
+   */
+  async getSharedConversation(token: string): Promise<SharedConversation | null> {
+    const { data: conversation, error } = await SUPABASE
+      .from("conversations")
+      .select("id, title, summary, created_at, share_expires_at, message_count")
+      .eq("share_token", token)
+      .eq("source", this.source)
+      .single();
+
+    if (error || !conversation) {
+      logger.warn(`getSharedConversation: invalid token or conversation not found`);
+      return null;
+    }
+
+    // Check if share link has expired
+    if (conversation.share_expires_at) {
+      const expiresAt = new Date(conversation.share_expires_at);
+      if (expiresAt < new Date()) {
+        logger.warn(
+          `getSharedConversation: share link expired for conversation ${conversation.id}`,
+        );
+        return null;
+      }
+    }
+
+    // Fetch messages for the shared conversation
+    const messages = await this.getConversationMessages(conversation.id);
+
+    return {
+      id: conversation.id,
+      title: conversation.title || "Shared Conversation",
+      messages,
+      messageCount: conversation.message_count || messages.length,
+      createdAt: conversation.created_at,
+      expiresAt: conversation.share_expires_at || undefined,
+    };
+  }
+
+  /**
+   * @description Gets the current share status of a conversation.
+   * Returns the share token and expiration if the conversation is shared.
+   * @param {string} conversationId - The unique identifier of the conversation.
+   * @param {string} userId - The UUID of the user who owns the conversation.
+   * @returns {Promise<{ isShared: boolean; token?: string; expiresAt?: string } | null>} Share status or null if not found.
+   */
+  async getShareStatus(
+    conversationId: string,
+    userId: string,
+  ): Promise<{ isShared: boolean; token?: string; expiresAt?: string } | null> {
+    const { data, error } = await SUPABASE
+      .from("conversations")
+      .select("share_token, share_expires_at")
+      .eq("id", conversationId)
+      .eq("user_id", userId)
+      .eq("source", this.source)
+      .single();
+
+    if (error || !data) {
+      return null;
+    }
+
+    const isExpired = data.share_expires_at
+      ? new Date(data.share_expires_at) < new Date()
+      : false;
+
+    return {
+      isShared: !!data.share_token && !isExpired,
+      token: data.share_token || undefined,
+      expiresAt: data.share_expires_at || undefined,
+    };
   }
 }

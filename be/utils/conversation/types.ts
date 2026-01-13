@@ -62,6 +62,7 @@ export type ConversationListItem = {
   messageCount: number
   lastUpdated: string
   createdAt: string
+  source?: ConversationSource
 }
 
 /**
@@ -76,6 +77,18 @@ export type FullConversation = {
   messageCount: number
   lastUpdated: string
   createdAt: string
+}
+
+/**
+ * Shared conversation accessible via token (read-only, no user info)
+ */
+export type SharedConversation = {
+  id: string
+  title: string
+  messages: userAndAiMessageProps[]
+  messageCount: number
+  createdAt: string
+  expiresAt?: string
 }
 
 /**

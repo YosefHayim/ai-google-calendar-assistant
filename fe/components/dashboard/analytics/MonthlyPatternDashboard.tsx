@@ -110,7 +110,7 @@ export const MonthlyPatternDashboard: React.FC<MonthlyPatternDashboardProps> = (
       <CardHeader className="flex flex-col items-stretch border-b border-zinc-200 dark:border-zinc-800 !p-0 sm:flex-row">
         <div className="flex flex-1 flex-col justify-center gap-1 px-6 pt-4 pb-3 sm:!py-4">
           <CardTitle className="flex items-center gap-2 text-zinc-900 dark:text-zinc-100">
-            <Calendar className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+            <Calendar className="w-5 h-5 text-zinc-900 dark:text-primary" />
             {t('analytics.charts.monthlyPattern')}
             <HoverCard>
               <HoverCardTrigger asChild>

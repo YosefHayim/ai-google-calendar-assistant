@@ -1,13 +1,18 @@
 'use client'
 
-import { AlertTriangle, ArrowUpRight, Calendar, CheckCircle2, Circle, Hash, Loader2, Phone, Plus, RefreshCw, Send, X } from 'lucide-react'
+import { AlertTriangle, ArrowUpRight, CheckCircle2, Circle, Loader2, Plus, RefreshCw, X, RefreshCcw } from 'lucide-react'
+import { FaTelegram, FaWhatsapp, FaSlack } from 'react-icons/fa'
+import { SiGooglecalendar } from 'react-icons/si'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { SettingsRow, SettingsSection } from './components'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import type { GoogleCalendarIntegrationStatus } from '@/types/api'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { toast } from 'sonner'
+import CinematicGlowToggle from '@/components/ui/cinematic-glow-toggle'
+import { useCrossPlatformSync, useUpdateCrossPlatformSync } from '@/hooks/queries'
 
 interface IntegrationsTabProps {
   googleCalendarStatus: GoogleCalendarIntegrationStatus | null | undefined
@@ -33,13 +38,13 @@ const getGoogleCalendarStatusBadge = (
   if (status?.isSynced) {
     if (status.isActive && !status.isExpired) {
       return (
-        <Badge className="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 hover:bg-green-100">
+        <Badge className="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
           <CheckCircle2 size={14} className="mr-1" /> Connected
         </Badge>
       )
     }
     return (
-      <Badge className="bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 hover:bg-amber-100">
+      <Badge className="bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
         <AlertTriangle size={14} className="mr-1" /> {status.isExpired ? 'Expired' : 'Inactive'}
       </Badge>
     )
@@ -63,6 +68,33 @@ export const IntegrationsTab: React.FC<IntegrationsTabProps> = ({
   const googleIsConnected =
     googleCalendarStatus?.isSynced && googleCalendarStatus.isActive && !googleCalendarStatus.isExpired
 
+  const crossPlatformSyncToggleId = React.useId()
+  const { data: syncData, isLoading: isLoadingSync } = useCrossPlatformSync()
+  const { updateCrossPlatformSync, isUpdating: isUpdatingSync } = useUpdateCrossPlatformSync()
+  const [syncEnabled, setSyncEnabled] = useState(true)
+
+  useEffect(() => {
+    if (syncData?.value) {
+      setSyncEnabled(syncData.value.enabled)
+    }
+  }, [syncData])
+
+  const handleSyncToggle = (checked: boolean) => {
+    setSyncEnabled(checked)
+    updateCrossPlatformSync(
+      { enabled: checked },
+      {
+        onSuccess: () => {
+          toast.success(checked ? 'Cross-platform sync enabled' : 'Cross-platform sync disabled')
+        },
+        onError: () => {
+          setSyncEnabled(!checked)
+          toast.error('Failed to update preference')
+        },
+      },
+    )
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -75,7 +107,7 @@ export const IntegrationsTab: React.FC<IntegrationsTabProps> = ({
             id="google-calendar"
             title="Google Calendar"
             tooltip="Connect your Google Calendar to let Ally manage your events and schedule"
-            icon={<Calendar size={18} className="text-blue-600 dark:text-blue-400" />}
+            icon={<SiGooglecalendar size={18} className="text-blue-600 dark:text-blue-400" />}
             control={getGoogleCalendarStatusBadge(isGoogleCalendarLoading, googleCalendarStatus)}
           />
 
@@ -123,10 +155,26 @@ export const IntegrationsTab: React.FC<IntegrationsTabProps> = ({
 
         <SettingsSection showDivider className="mt-4">
           <SettingsRow
+            id="cross-platform-sync"
+            title="Cross-Platform Sync"
+            tooltip="When enabled, conversations from Telegram and other platforms will appear in your web chat history"
+            icon={<RefreshCcw size={18} className="text-emerald-500 dark:text-emerald-400" />}
+            control={
+              <CinematicGlowToggle
+                id={crossPlatformSyncToggleId}
+                checked={syncEnabled}
+                onChange={isUpdatingSync || isLoadingSync ? () => {} : handleSyncToggle}
+              />
+            }
+          />
+        </SettingsSection>
+
+        <SettingsSection showDivider className="mt-4">
+          <SettingsRow
             id="telegram"
             title="Telegram Bot"
             tooltip="Chat with Ally on Telegram to manage your calendar on the go"
-            icon={<Send size={18} className="text-sky-500 dark:text-sky-400" />}
+            icon={<FaTelegram size={18} className="text-sky-500 dark:text-sky-400" />}
             control={
               <Button variant="outline" size="sm" asChild>
                 <a className="w-full" href="https://t.me/ai_schedule_event_server_bot" target="_blank" rel="noreferrer">
@@ -142,7 +190,7 @@ export const IntegrationsTab: React.FC<IntegrationsTabProps> = ({
             id="whatsapp"
             title="WhatsApp"
             tooltip="WhatsApp integration is coming soon - join the waitlist to get early access"
-            icon={<Phone size={18} className="text-green-600 dark:text-green-400" />}
+            icon={<FaWhatsapp size={18} className="text-green-600 dark:text-green-400" />}
             control={
               <div className="flex items-center gap-2">
                 <Badge variant="secondary">Coming Soon</Badge>
@@ -156,7 +204,7 @@ export const IntegrationsTab: React.FC<IntegrationsTabProps> = ({
             id="slack"
             title="Slack"
             tooltip="Slack integration is coming soon - manage your calendar directly from your workspace"
-            icon={<Hash size={18} className="text-purple-600 dark:text-purple-400" />}
+            icon={<FaSlack size={18} className="text-purple-600 dark:text-purple-400" />}
             control={
               <div className="flex items-center gap-2">
                 <Badge variant="secondary">Coming Soon</Badge>

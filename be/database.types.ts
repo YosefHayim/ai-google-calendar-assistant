@@ -73,6 +73,8 @@ export type Database = {
           is_active: boolean | null
           last_message_at: string | null
           message_count: number | null
+          share_expires_at: string | null
+          share_token: string | null
           source: Database["public"]["Enums"]["conversation_source"]
           summary: string | null
           title: string | null
@@ -87,6 +89,8 @@ export type Database = {
           is_active?: boolean | null
           last_message_at?: string | null
           message_count?: number | null
+          share_expires_at?: string | null
+          share_token?: string | null
           source: Database["public"]["Enums"]["conversation_source"]
           summary?: string | null
           title?: string | null
@@ -101,6 +105,8 @@ export type Database = {
           is_active?: boolean | null
           last_message_at?: string | null
           message_count?: number | null
+          share_expires_at?: string | null
+          share_token?: string | null
           source?: Database["public"]["Enums"]["conversation_source"]
           summary?: string | null
           title?: string | null

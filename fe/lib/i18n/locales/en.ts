@@ -308,6 +308,8 @@ export const en = {
     adminDescription: 'Access the admin dashboard to manage users, subscriptions, and system settings',
     analytics: 'Analytics',
     analyticsDescription: 'View insights on time allocation, event patterns, and productivity trends',
+    quickAddEvent: 'Quick Add Event',
+    quickAddEventDescription: 'Instantly create calendar events with natural language or voice input',
     gapRecovery: 'Gap Recovery',
     gapRecoveryDescription: 'Discover and recover untracked time gaps in your calendar',
     calendars: 'Calendars',

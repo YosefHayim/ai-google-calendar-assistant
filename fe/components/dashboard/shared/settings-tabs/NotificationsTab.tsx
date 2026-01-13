@@ -189,7 +189,7 @@ export const NotificationsTab: React.FC = () => {
               id="event-confirmations"
               title="Event Confirmations"
               tooltip="Get an immediate confirmation message when Ally successfully adds or updates an event"
-              icon={<CheckCircle size={18} className="text-green-500 dark:text-green-400" />}
+              icon={<CheckCircle size={18} className="text-zinc-900 dark:text-primary" />}
               control={
                 <SettingsDropdown
                   id="event-confirmations-dropdown"
@@ -204,7 +204,7 @@ export const NotificationsTab: React.FC = () => {
               id="conflict-alerts"
               title="Conflict Alerts"
               tooltip="Get notified immediately if a new request overlaps with an existing commitment"
-              icon={<AlertTriangle size={18} className="text-amber-500 dark:text-amber-400" />}
+              icon={<AlertTriangle size={18} className="text-zinc-900 dark:text-primary" />}
               control={
                 <SettingsDropdown
                   id="conflict-alerts-dropdown"
@@ -219,7 +219,7 @@ export const NotificationsTab: React.FC = () => {
               id="feature-updates"
               title="Feature Updates"
               tooltip="Stay in the loop on new integrations like WhatsApp and Notion"
-              icon={<Sparkles size={18} className="text-purple-500 dark:text-purple-400" />}
+              icon={<Sparkles size={18} className="text-zinc-900 dark:text-primary" />}
               control={
                 <SettingsDropdown
                   id="feature-updates-dropdown"
@@ -237,7 +237,7 @@ export const NotificationsTab: React.FC = () => {
         <CardHeader>
           <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap">
             <div className="p-2 rounded-lg bg-gradient-to-br from-amber-500/10 to-orange-500/10 dark:from-amber-500/20 dark:to-orange-500/20">
-              <Mail className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+              <Mail className="w-5 h-5 text-zinc-900 dark:text-primary" />
             </div>
             <div>
               <CardTitle className="text-lg">Daily Briefing</CardTitle>
@@ -257,7 +257,7 @@ export const NotificationsTab: React.FC = () => {
                   id="briefing-enabled"
                   title="Enable Daily Briefing"
                   tooltip="When enabled, you'll receive an email each morning with your schedule for the day"
-                  icon={<CalendarDays size={18} className="text-amber-600 dark:text-amber-400" />}
+                  icon={<CalendarDays size={18} className="text-zinc-900 dark:text-primary" />}
                   control={
                     <CinematicGlowToggle
                       id={dailyBriefingToggleId}
@@ -325,7 +325,7 @@ export const NotificationsTab: React.FC = () => {
         <CardHeader>
           <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap">
             <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500/10 to-cyan-500/10 dark:from-blue-500/20 dark:to-cyan-500/20">
-              <Bell className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+              <Bell className="w-5 h-5 text-zinc-900 dark:text-primary" />
             </div>
             <div>
               <CardTitle className="text-lg">Default Reminders</CardTitle>
@@ -345,7 +345,7 @@ export const NotificationsTab: React.FC = () => {
                   id="reminder-enabled"
                   title="Apply Default Reminders"
                   tooltip="When enabled, Ally will automatically add your preferred reminders to new events"
-                  icon={<BellRing size={18} className="text-blue-600 dark:text-blue-400" />}
+                  icon={<BellRing size={18} className="text-zinc-900 dark:text-primary" />}
                   control={
                     <CinematicGlowToggle
                       id={reminderToggleId}

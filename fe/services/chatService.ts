@@ -165,3 +165,64 @@ export const resetMemory = async (): Promise<ResetMemoryResult> => {
     message: 'Memory reset completed',
   }
 }
+
+export interface ShareLinkResult {
+  token: string
+  expiresAt: string
+}
+
+export interface ShareStatus {
+  isShared: boolean
+  token?: string
+  expiresAt?: string
+}
+
+export interface SharedConversation {
+  id: string
+  title: string
+  messages: ChatMessage[]
+  messageCount: number
+  createdAt: string
+  expiresAt?: string
+}
+
+export const createShareLink = async (
+  conversationId: string,
+  expiresInDays: number = 7,
+): Promise<ShareLinkResult | null> => {
+  try {
+    const response = await apiClient.post(`/api/chat/conversations/${conversationId}/share`, {
+      expiresInDays,
+    })
+    return response.data?.data || null
+  } catch {
+    return null
+  }
+}
+
+export const revokeShareLink = async (conversationId: string): Promise<boolean> => {
+  try {
+    await apiClient.delete(`/api/chat/conversations/${conversationId}/share`)
+    return true
+  } catch {
+    return false
+  }
+}
+
+export const getShareStatus = async (conversationId: string): Promise<ShareStatus | null> => {
+  try {
+    const response = await apiClient.get(`/api/chat/conversations/${conversationId}/share`)
+    return response.data?.data || null
+  } catch {
+    return null
+  }
+}
+
+export const getSharedConversation = async (token: string): Promise<SharedConversation | null> => {
+  try {
+    const response = await apiClient.get(`/api/shared/conversations/${token}`)
+    return response.data?.data || null
+  } catch {
+    return null
+  }
+}

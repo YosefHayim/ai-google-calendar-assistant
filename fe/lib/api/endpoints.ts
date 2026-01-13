@@ -392,6 +392,12 @@ export const ENDPOINTS = {
   USER_PREFERENCES_DAILY_BRIEFING: '/api/users/preferences/daily_briefing',
 
   /**
+   * Update cross_platform_sync preference
+   * Methods: PUT
+   */
+  USER_PREFERENCES_CROSS_PLATFORM_SYNC: '/api/users/preferences/cross_platform_sync',
+
+  /**
    * Submit contact form
    * Methods: POST
    * Body: multipart/form-data with name, email, subject, message, attachments[]

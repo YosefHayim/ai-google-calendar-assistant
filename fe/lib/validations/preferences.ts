@@ -102,3 +102,13 @@ export const dailyBriefingDefaults: DailyBriefingFormData = {
   time: '08:00',
   timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
 }
+
+export const crossPlatformSyncSchema = z.object({
+  enabled: z.boolean(),
+})
+
+export type CrossPlatformSyncFormData = z.infer<typeof crossPlatformSyncSchema>
+
+export const crossPlatformSyncDefaults: CrossPlatformSyncFormData = {
+  enabled: true,
+}

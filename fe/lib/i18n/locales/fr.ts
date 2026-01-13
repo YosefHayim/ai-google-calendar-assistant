@@ -278,6 +278,8 @@ export const fr: TranslationShape = {
     analytics: 'Analytiques',
     analyticsDescription:
       "Consultez les analyses de répartition du temps, les tendances d'événements et la productivité",
+    quickAddEvent: 'Ajout rapide',
+    quickAddEventDescription: 'Créez instantanément des événements avec le langage naturel ou la saisie vocale',
     gapRecovery: 'Récupération des créneaux',
     gapRecoveryDescription: 'Découvrez et récupérez les créneaux non suivis dans votre agenda',
     calendars: 'Agendas',

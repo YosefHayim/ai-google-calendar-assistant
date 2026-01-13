@@ -274,6 +274,8 @@ export const ar: TranslationShape = {
     adminDescription: 'الوصول إلى لوحة الإدارة لإدارة المستخدمين والاشتراكات وإعدادات النظام',
     analytics: 'التحليلات',
     analyticsDescription: 'عرض رؤى حول توزيع الوقت وأنماط الأحداث واتجاهات الإنتاجية',
+    quickAddEvent: 'إضافة سريعة',
+    quickAddEventDescription: 'إنشاء أحداث التقويم فوراً باستخدام اللغة الطبيعية أو الإدخال الصوتي',
     gapRecovery: 'استعادة الفجوات',
     gapRecoveryDescription: 'اكتشف واستعد فجوات الوقت غير المسجلة في تقويمك',
     calendars: 'التقويمات',

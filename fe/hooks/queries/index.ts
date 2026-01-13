@@ -58,6 +58,8 @@ export {
   useUpdateVoicePreference,
   useDailyBriefing,
   useUpdateDailyBriefing,
+  useCrossPlatformSync,
+  useUpdateCrossPlatformSync,
 } from './preferences'
 
 // Billing hooks

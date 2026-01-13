@@ -23,6 +23,7 @@ import path from "node:path";
 import paymentRoute from "@/routes/payment-route";
 import riscRoute from "@/routes/risc-route";
 import { securityAuditMiddleware } from "@/middlewares/security-audit";
+import sharedRoute from "@/routes/shared-route";
 import { sendR } from "@/utils/http";
 import slackRoute from "@/routes/slack-route";
 import { startTelegramBot } from "@/telegram-bot/init-bot";
@@ -105,9 +106,9 @@ app.use(ROUTES.VOICE, voiceRoute);
 app.use(ROUTES.ADMIN, adminRoute);
 app.use(ROUTES.CRON, cronRoute);
 app.use(ROUTES.TELEGRAM, telegramRoute);
-// Google RISC (Cross-Account Protection) - must be public (no auth middleware)
 app.use(ROUTES.RISC, riscRoute);
 app.use(ROUTES.SLACK, slackRoute);
+app.use(ROUTES.SHARED, sharedRoute);
 
 app.use((_req, res, _next) => {
   logger.error(`Opps! It looks like this route doesn't exist. ${_req.originalUrl}`);
