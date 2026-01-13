@@ -6,7 +6,7 @@
    Implement logic to verify if the "Invite to Google Meet" feature is enabled when a user provides an email. If enabled, execute the invite; if not, handle the error gracefully or prompt for enablement.
 ⏱️ **UI | Font Update**
    Update the application's font family to a more "futuristic" style that better aligns with the AI branding.
-4. **Backend/Frontend | Organization Support**
+⏱️ **Backend/Frontend | Organization Support**
    Implement "Organization" vs. "Individual" user logic.
 
 - **DB:** Add necessary columns to Supabase tables via CLI and regenerate `package.json` types.
