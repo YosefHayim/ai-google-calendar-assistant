@@ -57,24 +57,26 @@
 
 29. identify components that could be reused which means reuse them and not over re-create them again. so we have more modular and a better components artiecture. so it will be easily to refactor improve modify maybe even add specific props or customs to some components but should be very much dynamic , robust and reused.
 
-30. pricing plans in the dashboard billing are not match the same we have at the pricing outside dashboard, make sure its the exact same. this means we should have the same componetns. 
+30. pricing plans in the dashboard billing are not match the same we have at the pricing outside dashboard, make sure its the exact same. this means we should have the same componetns.
 
-31. our app is currently integrated to slack, telegram, google calendar not discord so remove it from the footer. 
+31. our app is currently integrated to slack, telegram, google calendar not discord so remove it from the footer.
 
-32. create help center 
+32. create help center
 
-33. create changelog ui page. 
+33. create changelog ui page.
 
 34. create blog with optimization for seo
 
-35. optimize geo for ai chatgpt,gemini cladue etc for better search results. each page should proeprly have meta description and following best practices to optimize website. 
+35. optimize geo for ai chatgpt,gemini cladue etc for better search results. each page should proeprly have meta description and following best practices to optimize website.
 
-36. apply the same sidebar we have in desktop just match it in width and size for mobile. 
+36. apply the same sidebar we have in desktop just match it in width and size for mobile.
 
 37. invite ur team feature to join ally.
 
-38. get free month by affiliate inviting a new person gets 1 free month in our app 
+38. get free month by affiliate inviting a new person gets 1 free month in our app
 
 39. dropdown of tiemzone in settings modal appear outsde of it cause of low index .
 
 40. real time access to geo lat and let location to improve our events creation for user. so the default will be false and if user want hecan toggle to true which will be always use the real time location of him to place that within the even creation at the current moment. check if this can be implemented on telegram as well or just on whatsapp and same on slack.
+
+41. improve the on boarding wizard so it guide user step by step plus navigating between the pages we have after login and success oauth so user can get a deatiled and a good explanation about the platform. plus add to it support of audio sound this means that we automaticly start the onbiarding with audio on activated user can toggle off to read additionally when audio is finish to read we move to the next step or if its otggled off wait for user to click next step to proceed with nav and highlight specific componetns or pages plus better explanations and very marketing ones.
