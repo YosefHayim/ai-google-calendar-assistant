@@ -55,14 +55,14 @@
 - Fix the loader alignment (center it) when navigating to Dashboard/Billing.
 - If no subscription actions exist, display an "Info" icon with explanatory text (similar to Transaction History).
 
-21. **UI | Badge Styling**
+21. ✅ **UI | Badge Styling**
     Remove hover effects on badges. They should maintain a static background color based on the active theme (Light/Dark).
-22. **Mobile UI | File Attachment Input**
+22. ✅ **Mobile UI | File Attachment Input**
 
 - Fix the "Remove" button on file attachments (currently cut off by `overflow-hidden`).
 - Replace the remove button with a **Trash Icon** to match the conversation sidebar style.
 
-23. **UI | Microphone Input Padding**
+23. ✅ **UI | Microphone Input Padding**
     Increase the padding of the microphone button in the input area to prevent layout breakage and match the text input height.
 24. **UX | Toast Notifications for Actions**
     Trigger Toast notifications for specific actions: "Hear Response" toggle (Activate/Disable sound), "Copy Text," and "Reset/Re-trigger."
@@ -83,7 +83,7 @@
     Identify and refactor duplicate UI patterns into modular, reusable components to improve maintainability and architecture.
 30. **UI | Pricing Consistency**
     Ensure the Pricing Plans displayed in the Dashboard/Billing section strictly match the external Pricing page components and data.
-31. **UI | Footer Cleanup**
+31. ✅ **UI | Footer Cleanup**
     Remove **Discord** from the footer social links (Supported platforms: Slack, Telegram, Google Calendar).
 32. **Content | Help Center**
     Design and implement a dedicated Help Center page.
