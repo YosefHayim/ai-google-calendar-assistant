@@ -4,6 +4,8 @@ import { MODELS } from "@/config";
 import { logger } from "@/utils/logger";
 import { z } from "zod";
 
+console.log("GUARDRAILS FILE LOADED - VERSION 2");
+
 const MAX_INPUT_LENGTH = 5000;
 
 type ConversationMessage = {
@@ -19,10 +21,11 @@ type ConversationMessage = {
  * Function call results (e.g., 100 calendar events JSON) would otherwise exceed the 5000 char limit.
  */
 const extractUserRequestForGuardrail = (input: string | ConversationMessage[]): string => {
+  console.log("EXTRACT CALLED, input type:", typeof input, "length:", typeof input === "string" ? input.length : "N/A");
   if (typeof input === "string") {
     // Extract content from <user_request> tags if present (from buildChatPromptWithContext)
     const userRequestMatch = input.match(/<user_request>\s*([\s\S]*?)\s*<\/user_request>/i);
-    logger.info(`AI: extractUserRequestForGuardrail: isString=true, matchFound=${!!userRequestMatch}, extractedLength=${userRequestMatch?.[1]?.length ?? 0}`);
+    console.log("REGEX RESULT:", !!userRequestMatch, "captured:", userRequestMatch?.[1]);
     if (userRequestMatch?.[1]) {
       return userRequestMatch[1].trim();
     }
@@ -45,6 +48,10 @@ const extractUserRequestForGuardrail = (input: string | ConversationMessage[]): 
       if (currentRequestMatch?.[1]) {
         return currentRequestMatch[1].trim();
       }
+      const userRequestMatch = msg.content.match(/<user_request>\s*([\s\S]*?)\s*<\/user_request>/i);
+      if (userRequestMatch?.[1]) {
+        return userRequestMatch[1].trim();
+      }
       return msg.content;
     }
 
@@ -54,6 +61,10 @@ const extractUserRequestForGuardrail = (input: string | ConversationMessage[]): 
         .map((c) => c.text || "")
         .join("\n");
       if (textContent) {
+        const userRequestMatch = textContent.match(/<user_request>\s*([\s\S]*?)\s*<\/user_request>/i);
+        if (userRequestMatch?.[1]) {
+          return userRequestMatch[1].trim();
+        }
         return textContent;
       }
     }

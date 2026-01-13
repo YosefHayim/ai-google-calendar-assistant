@@ -4,14 +4,18 @@ import {
   type SlackEventMiddlewareArgs,
   type AllMiddlewareArgs,
 } from "@slack/bolt"
+import { WebClient } from "@slack/web-api"
 import { env } from "@/config"
 import { logger } from "@/utils/logger"
 import { handleSlackMessage, handleAppMention } from "./handlers/message-handler"
 import { parseAndRouteCommand } from "./handlers/commands"
+import { getWorkspaceToken } from "./services/oauth-service"
 
 let app: App | null = null
 let receiver: ExpressReceiver | null = null
 let isInitialized = false
+
+const workspaceClients = new Map<string, WebClient>()
 
 export const getSlackApp = (): App | null => {
   return app
@@ -19,6 +23,33 @@ export const getSlackApp = (): App | null => {
 
 export const getSlackReceiver = (): ExpressReceiver | null => {
   return receiver
+}
+
+export const getClientForTeam = async (teamId: string): Promise<WebClient | null> => {
+  const cached = workspaceClients.get(teamId)
+  if (cached) {
+    return cached
+  }
+
+  const token = await getWorkspaceToken(teamId)
+  if (!token) {
+    if (env.integrations.slack.botToken) {
+      return new WebClient(env.integrations.slack.botToken)
+    }
+    return null
+  }
+
+  const client = new WebClient(token)
+  workspaceClients.set(teamId, client)
+  return client
+}
+
+export const clearClientCache = (teamId?: string): void => {
+  if (teamId) {
+    workspaceClients.delete(teamId)
+  } else {
+    workspaceClients.clear()
+  }
 }
 
 const initializeApp = (): { app: App; receiver: ExpressReceiver } => {
@@ -29,10 +60,27 @@ const initializeApp = (): { app: App; receiver: ExpressReceiver } => {
     processBeforeResponse: true,
   })
 
+  const authorizeFn = async ({ teamId }: { teamId?: string }) => {
+    if (!teamId) {
+      throw new Error("No team ID provided")
+    }
+
+    const token = await getWorkspaceToken(teamId)
+    if (token) {
+      return { botToken: token }
+    }
+
+    if (env.integrations.slack.botToken) {
+      return { botToken: env.integrations.slack.botToken }
+    }
+
+    throw new Error(`No token found for team ${teamId}`)
+  }
+
   app = new App({
-    token: env.integrations.slack.botToken,
     signingSecret: env.integrations.slack.signingSecret,
     receiver,
+    authorize: authorizeFn,
   })
 
   app.message(async (args) => {
@@ -108,10 +156,11 @@ export const initSlackBot = (): ExpressReceiver | null => {
     const { receiver: slackReceiver } = initializeApp()
     isInitialized = true
 
-    logger.info("Slack Bot: Initialized in HTTP mode")
-    logger.info("Slack Bot: Listening for events at /api/slack/events")
-    logger.info("Slack Bot: Listening for commands at /api/slack/commands")
-    logger.info("Slack Bot: Listening for interactions at /api/slack/interactions")
+    logger.info("Slack Bot: Initialized in HTTP mode (multi-workspace)")
+    logger.info("Slack Bot: OAuth install URL: /api/slack/oauth/install")
+    logger.info("Slack Bot: Events endpoint: /api/slack/events")
+    logger.info("Slack Bot: Commands endpoint: /api/slack/commands")
+    logger.info("Slack Bot: Interactions endpoint: /api/slack/interactions")
 
     return slackReceiver
   } catch (error) {

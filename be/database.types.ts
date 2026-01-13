@@ -377,6 +377,63 @@ export type Database = {
           },
         ]
       }
+      slack_workspaces: {
+        Row: {
+          app_id: string | null
+          authed_user_id: string | null
+          bot_token: string
+          bot_user_id: string | null
+          created_at: string | null
+          enterprise_id: string | null
+          enterprise_name: string | null
+          id: string
+          installed_at: string | null
+          installed_by_user_id: string | null
+          is_active: boolean | null
+          is_enterprise_install: boolean | null
+          scope: string | null
+          team_id: string
+          team_name: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          app_id?: string | null
+          authed_user_id?: string | null
+          bot_token: string
+          bot_user_id?: string | null
+          created_at?: string | null
+          enterprise_id?: string | null
+          enterprise_name?: string | null
+          id?: string
+          installed_at?: string | null
+          installed_by_user_id?: string | null
+          is_active?: boolean | null
+          is_enterprise_install?: boolean | null
+          scope?: string | null
+          team_id: string
+          team_name?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          app_id?: string | null
+          authed_user_id?: string | null
+          bot_token?: string
+          bot_user_id?: string | null
+          created_at?: string | null
+          enterprise_id?: string | null
+          enterprise_name?: string | null
+          id?: string
+          installed_at?: string | null
+          installed_by_user_id?: string | null
+          is_active?: boolean | null
+          is_enterprise_install?: boolean | null
+          scope?: string | null
+          team_id?: string
+          team_name?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       subscriptions: {
         Row: {
           ai_interactions_used: number | null
