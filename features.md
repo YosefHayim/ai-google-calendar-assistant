@@ -4,7 +4,7 @@
    Replace OpenAI Whisper with ElevenLabs to improve voice synthesis quality. Refactor backend prompts to be provider-agnostic, enabling support for multiple AI agents (ElevenLabs, Gemini, Claude) alongside existing ones.
 ⏱️ **Feature | Google Meet Integration**
    Implement logic to verify if the "Invite to Google Meet" feature is enabled when a user provides an email. If enabled, execute the invite; if not, handle the error gracefully or prompt for enablement.
-⏱️ **UI | Font Update**
+✅ **UI | Font Update**
    Update the application's font family to a more "futuristic" style that better aligns with the AI branding.
 ⏱️ **Backend/Frontend | Organization Support**
    Implement "Organization" vs. "Individual" user logic.
@@ -25,7 +25,7 @@
    Change the text color of the "Logout" button in the Settings Modal to **red** on hover.
 ⏱️ **UI | Settings Tooltips**
     Fix the tooltip behavior in the Settings Modal. Hovering/clicking on setting rows currently fails to display the informational card.
-11. **UI | Subscription Loader Alignment**
+⏱️ **UI | Subscription Loader Alignment**
     Center the loading animation within the Subscription tab of the Settings Modal (currently misaligned to the top).
 12. **UI | Integrations Tab Cleanup**
 
