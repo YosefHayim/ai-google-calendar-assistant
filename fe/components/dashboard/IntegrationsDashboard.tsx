@@ -2,17 +2,19 @@
 
 import { ArrowUpRight, CheckCircle2, Circle, List, Loader2, RefreshCw, Settings, X } from 'lucide-react'
 import { GoogleCalendarIcon, TelegramIcon, WhatsAppIcon } from '@/components/shared/Icons'
+import { FaSlack } from 'react-icons/fa'
 import React, { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 
-import { useCalendars } from '@/hooks/queries'
+import { useCalendars, useSlackStatus } from '@/hooks/queries'
 
 interface IntegrationsDashboardProps {}
 
 const IntegrationsDashboard: React.FC<IntegrationsDashboardProps> = () => {
   const [isWhatsAppModalOpen, setIsWhatsAppModalOpen] = useState(false)
   const { data: calendars, isLoading, isError, refetch } = useCalendars({ custom: true })
+  const { data: slackStatus, isLoading: isSlackLoading, refetch: refetchSlack } = useSlackStatus()
 
   const calendarList = calendars || []
 
@@ -71,6 +73,46 @@ const IntegrationsDashboard: React.FC<IntegrationsDashboardProps> = () => {
             >
               Connect <WhatsAppIcon className="w-4 h-4" />
             </Button>
+          </div>
+        </div>
+
+        <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md p-6 shadow-sm">
+          <div className="flex items-start justify-between mb-6">
+            <div className="p-3 bg-purple-50 dark:bg-purple-900/30 text-[#4A154B] rounded-md">
+              <FaSlack className="w-5 h-5" />
+            </div>
+            {isSlackLoading ? (
+              <Skeleton className="w-24 h-6 rounded-full" />
+            ) : slackStatus?.isConnected ? (
+              <div className="flex items-center gap-1.5 bg-green-50 text-green-700 p-1 rounded-full text-xs font-medium border border-green-100">
+                <CheckCircle2 size={16} /> Connected
+              </div>
+            ) : (
+              <div className="flex items-center gap-1.5 bg-zinc-100 text-zinc-500 p-1 rounded-full text-xs font-medium border border-zinc-200">
+                <Circle size={16} /> Not connected
+              </div>
+            )}
+          </div>
+          <h3 className="text-lg font-medium text-zinc-900 dark:text-zinc-100 mb-1">Slack</h3>
+          <p className="text-sm text-zinc-500 mb-6">Add Ally to your Slack workspace for team calendar management.</p>
+          <div className="pt-4 border-t border-zinc-100">
+            {slackStatus?.isConnected ? (
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-mono text-zinc-400">@{slackStatus.slackUsername || 'Connected'}</span>
+                <Button variant="ghost" size="sm" className="text-sm font-medium" onClick={() => refetchSlack()}>
+                  <RefreshCw className="w-3.5 h-3.5" /> Refresh
+                </Button>
+              </div>
+            ) : (
+              <Button
+                onClick={() => window.location.href = slackStatus?.installUrl || `${process.env.NEXT_PUBLIC_API_URL}/api/slack/oauth/install`}
+                className="w-full bg-[#4A154B] hover:bg-[#3a1039]"
+                disabled={isSlackLoading}
+              >
+                {isSlackLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <FaSlack className="w-4 h-4" />}
+                Add to Slack
+              </Button>
+            )}
           </div>
         </div>
 

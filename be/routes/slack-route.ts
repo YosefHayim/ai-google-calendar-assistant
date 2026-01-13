@@ -1,5 +1,5 @@
 import express from "express"
-import { env, STATUS_RESPONSE } from "@/config"
+import { env, STATUS_RESPONSE, SUPABASE } from "@/config"
 import { logger } from "@/utils/logger"
 import { getSlackReceiver } from "@/slack-bot/init-bot"
 import {
@@ -7,6 +7,8 @@ import {
   exchangeCodeForToken,
   deactivateWorkspace,
 } from "@/slack-bot/services/oauth-service"
+import { supabaseAuth } from "@/middlewares/supabase-auth"
+import { sendR } from "@/utils/http"
 
 const router = express.Router()
 
@@ -18,18 +20,18 @@ const router = express.Router()
  */
 router.post("/events", async (req, res) => {
   try {
+    if (req.body?.type === "url_verification") {
+      logger.info("Slack events: URL verification challenge received")
+      return res.status(STATUS_RESPONSE.SUCCESS).json({
+        challenge: req.body.challenge,
+      })
+    }
+
     const receiver = getSlackReceiver()
     if (!receiver) {
       logger.error("Slack events: Bot not initialized")
       return res.status(STATUS_RESPONSE.INTERNAL_SERVER_ERROR).json({
         error: "Slack bot not initialized",
-      })
-    }
-
-    if (req.body?.type === "url_verification") {
-      logger.info("Slack events: URL verification challenge received")
-      return res.status(STATUS_RESPONSE.SUCCESS).json({
-        challenge: req.body.challenge,
       })
     }
 
@@ -147,6 +149,51 @@ router.post("/oauth/uninstall", async (req, res) => {
   }
 
   return res.status(STATUS_RESPONSE.SUCCESS).json({ ok: true })
+})
+
+router.get("/status", supabaseAuth(), async (req, res) => {
+  try {
+    const user = req.user
+    if (!user?.email) {
+      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated")
+    }
+
+    const { data: dbUser } = await SUPABASE
+      .from("users")
+      .select("id")
+      .eq("email", user.email)
+      .single()
+
+    if (!dbUser) {
+      return sendR(res, STATUS_RESPONSE.SUCCESS, "Slack integration status", {
+        isConnected: false,
+        slackUserId: null,
+        slackTeamId: null,
+        slackUsername: null,
+        connectedAt: null,
+        installUrl: generateInstallUrl(),
+      })
+    }
+
+    const { data: slackUser } = await SUPABASE
+      .from("slack_users")
+      .select("slack_user_id, slack_team_id, slack_username, created_at, is_linked")
+      .eq("user_id", dbUser.id)
+      .eq("is_linked", true)
+      .maybeSingle()
+
+    return sendR(res, STATUS_RESPONSE.SUCCESS, "Slack integration status", {
+      isConnected: !!slackUser?.is_linked,
+      slackUserId: slackUser?.slack_user_id || null,
+      slackTeamId: slackUser?.slack_team_id || null,
+      slackUsername: slackUser?.slack_username || null,
+      connectedAt: slackUser?.created_at || null,
+      installUrl: generateInstallUrl(),
+    })
+  } catch (error) {
+    logger.error(`Slack status: Error checking status: ${error}`)
+    return sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Failed to check Slack status")
+  }
 })
 
 router.get("/health", (_req, res) => {

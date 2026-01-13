@@ -222,6 +222,13 @@ export const ENDPOINTS = {
    */
   INTEGRATIONS_GOOGLE_CALENDAR_DISCONNECT: '/api/users/integrations/google-calendar/disconnect',
 
+  /**
+   * Get Slack integration status
+   * Methods: GET
+   * Returns: isConnected, slackUserId, slackTeamId, slackUsername, connectedAt, installUrl
+   */
+  INTEGRATIONS_SLACK: '/api/slack/status',
+
   // ============================================
   // PAYMENT ENDPOINTS
   // ============================================

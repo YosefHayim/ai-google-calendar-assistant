@@ -49,6 +49,7 @@ export const queryKeys = {
   integrations: {
     all: ['integrations'] as const,
     googleCalendar: () => [...queryKeys.integrations.all, 'googleCalendar'] as const,
+    slack: () => [...queryKeys.integrations.all, 'slack'] as const,
   },
 
   // Gap Recovery queries

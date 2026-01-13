@@ -271,6 +271,15 @@ export interface GoogleCalendarIntegrationStatus {
   authUrl: string;
 }
 
+export interface SlackIntegrationStatus {
+  isConnected: boolean;
+  slackUserId: string | null;
+  slackTeamId: string | null;
+  slackUsername: string | null;
+  connectedAt: string | null;
+  installUrl: string;
+}
+
 // ============================================
 // Gap Recovery Types
 // ============================================

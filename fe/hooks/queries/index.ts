@@ -41,7 +41,7 @@ export {
 } from './conversations'
 
 // Integration hooks
-export { useGoogleCalendarStatus, useDisconnectGoogleCalendar } from './integrations'
+export { useGoogleCalendarStatus, useDisconnectGoogleCalendar, useSlackStatus } from './integrations'
 
 // Gap Recovery hooks
 export { useGaps, useFillGap, useSkipGap, useDismissAllGaps, useDisableGapAnalysis } from './gaps'

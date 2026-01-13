@@ -23,3 +23,5 @@ export const GoogleCalendarIcon = ({ className }: { className?: string }) => (
     <path d="M7 15H9V17H7V15Z" fill="#FFFFFF" />
   </svg>
 )
+
+
