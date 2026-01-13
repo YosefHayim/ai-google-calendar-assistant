@@ -17,7 +17,7 @@
    Fix the vertical alignment of carousel buttons in mobile view. They are currently positioned at the bottom 80%; center them vertically relative to the component.
 ⏱️ **Infra | AWS Region Latency Review**
    Evaluate latency for users in Israel connecting to the Frankfurt AWS region. Determine if moving services to a closer region (or a multi-region setup) is necessary for performance.
-7. **Infra | Frontend Build Fix**
+⏱️ **Infra | Frontend Build Fix**
    Investigate and fix the build failure causing rollbacks in the AWS App Runner service for the frontend.
 8. **UI | Dynamic Feature Carousel**
    Refactor the features carousel to dynamically toggle between Telegram and Slack showcases. Do not show both simultaneously; alternate them to simplify the marketing message.
