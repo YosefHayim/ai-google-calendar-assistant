@@ -10,6 +10,7 @@ import type {
   ReminderDefaultsFormData,
   VoicePreferenceFormData,
   DailyBriefingFormData,
+  CrossPlatformSyncFormData,
 } from '@/lib/validations/preferences'
 import type { QueryHookOptions } from '../useQueryWrapper'
 
@@ -277,6 +278,57 @@ export function useUpdateDailyBriefing() {
   return {
     updateDailyBriefing: mutation.mutate,
     updateDailyBriefingAsync: mutation.mutateAsync,
+    isUpdating: mutation.isPending,
+    isError: mutation.isError,
+    error: mutation.error,
+    isSuccess: mutation.isSuccess,
+    reset: mutation.reset,
+  }
+}
+
+export function useCrossPlatformSync(options?: QueryHookOptions) {
+  const query = useQuery({
+    queryKey: queryKeys.preferences.crossPlatformSync(),
+    queryFn: async () => {
+      const response = await preferencesService.getCrossPlatformSync()
+      return response.data
+    },
+    staleTime: options?.staleTime ?? QUERY_CONFIG.USER_STALE_TIME,
+    enabled: options?.enabled ?? true,
+    refetchOnWindowFocus: options?.refetchOnWindowFocus ?? false,
+    refetchOnMount: options?.refetchOnMount ?? true,
+  })
+
+  return {
+    data: query.data ?? null,
+    isLoading: query.isLoading,
+    isFetching: query.isFetching,
+    isError: query.isError,
+    error: query.error,
+    refetch: query.refetch,
+  }
+}
+
+export function useUpdateCrossPlatformSync() {
+  const queryClient = useQueryClient()
+
+  const mutation = useMutation({
+    mutationFn: (data: CrossPlatformSyncFormData) => preferencesService.updateCrossPlatformSync(data),
+    onSuccess: (response) => {
+      if (response.data) {
+        queryClient.setQueryData<PreferenceResponse<CrossPlatformSyncFormData>>(
+          queryKeys.preferences.crossPlatformSync(),
+          response.data,
+        )
+      }
+      queryClient.invalidateQueries({ queryKey: queryKeys.preferences.list() })
+      queryClient.invalidateQueries({ queryKey: queryKeys.conversations.list() })
+    },
+  })
+
+  return {
+    updateCrossPlatformSync: mutation.mutate,
+    updateCrossPlatformSyncAsync: mutation.mutateAsync,
     isUpdating: mutation.isPending,
     isError: mutation.isError,
     error: mutation.error,

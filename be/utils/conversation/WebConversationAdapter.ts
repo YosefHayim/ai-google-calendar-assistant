@@ -298,7 +298,15 @@ export class WebConversationAdapter {
    *   search: "meeting"
    * });
    */
-  getConversationList(userId: string, options?: { limit?: number; offset?: number; search?: string }): Promise<ConversationListItem[]> {
+  getConversationList(
+    userId: string,
+    options?: {
+      limit?: number
+      offset?: number
+      search?: string
+      includeAllSources?: boolean
+    },
+  ): Promise<ConversationListItem[]> {
     return this.service.getConversationList(userId, options);
   }
 

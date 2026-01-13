@@ -17,7 +17,12 @@ import type { AgentContext } from "@/ai-agents/tool-registry";
 import { ORCHESTRATOR_AGENT } from "@/ai-agents";
 import { STATUS_RESPONSE } from "@/config";
 import { createAgentSession } from "@/ai-agents/sessions";
-import { getAllyBrainPreference } from "@/services/user-preferences-service";
+import {
+  getAllyBrainPreference,
+  getCrossPlatformSyncPreference,
+  PREFERENCE_DEFAULTS,
+} from "@/services/user-preferences-service";
+import type { CrossPlatformSyncPreference } from "@/services/user-preferences-service";
 
 const DEFAULT_LIMIT = 20;
 const DEFAULT_OFFSET = 0;
@@ -175,10 +180,18 @@ const getConversations = reqResAsyncHandler(
         Number.parseInt(req.query.offset as string, 10) || DEFAULT_OFFSET;
       const search = req.query.search as string | undefined;
 
+      const syncPreference = await getCrossPlatformSyncPreference(userId);
+      const includeAllSources =
+        (
+          syncPreference ||
+          (PREFERENCE_DEFAULTS.cross_platform_sync as CrossPlatformSyncPreference)
+        ).enabled;
+
       const conversations = await webConversation.getConversationList(userId, {
         limit,
         offset,
         search,
+        includeAllSources,
       });
 
       sendR(

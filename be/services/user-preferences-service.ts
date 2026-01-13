@@ -18,7 +18,8 @@ export type PreferenceKey =
   | "reminder_defaults"
   | "voice_preference"
   | "agent_profile"
-  | "daily_briefing";
+  | "daily_briefing"
+  | "cross_platform_sync";
 
 export interface AllyBrainPreference {
   enabled: boolean;
@@ -56,13 +57,18 @@ export interface DailyBriefingPreference {
   lastSentDate?: string; // YYYY-MM-DD for duplicate prevention
 }
 
+export interface CrossPlatformSyncPreference {
+  enabled: boolean;
+}
+
 export type PreferenceValue =
   | AllyBrainPreference
   | ContextualSchedulingPreference
   | ReminderDefaultsPreference
   | VoicePreference
   | AgentProfilePreference
-  | DailyBriefingPreference;
+  | DailyBriefingPreference
+  | CrossPlatformSyncPreference;
 
 export interface PreferenceResult<T> {
   value: T;
@@ -85,6 +91,7 @@ export const PREFERENCE_DEFAULTS: Record<PreferenceKey, PreferenceValue> = {
   voice_preference: { enabled: true, voice: "alloy" },
   agent_profile: { profileId: "" },
   daily_briefing: { enabled: false, time: "08:00", timezone: "UTC" },
+  cross_platform_sync: { enabled: true },
 };
 
 export const VALID_PREFERENCE_KEYS: PreferenceKey[] = [
@@ -94,6 +101,7 @@ export const VALID_PREFERENCE_KEYS: PreferenceKey[] = [
   "voice_preference",
   "agent_profile",
   "daily_briefing",
+  "cross_platform_sync",
 ];
 
 // ============================================
@@ -313,4 +321,16 @@ export async function getDailyBriefingPreference(
   userId: string
 ): Promise<DailyBriefingPreference | null> {
   return getPreference<DailyBriefingPreference>(userId, "daily_briefing");
+}
+
+/**
+ * Get cross_platform_sync preference
+ */
+export async function getCrossPlatformSyncPreference(
+  userId: string
+): Promise<CrossPlatformSyncPreference | null> {
+  return getPreference<CrossPlatformSyncPreference>(
+    userId,
+    "cross_platform_sync"
+  );
 }

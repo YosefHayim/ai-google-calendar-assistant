@@ -1,6 +1,6 @@
 'use client'
 
-import { AlertTriangle, ArrowUpRight, CheckCircle2, Circle, Loader2, Plus, RefreshCw, X } from 'lucide-react'
+import { AlertTriangle, ArrowUpRight, CheckCircle2, Circle, Loader2, Plus, RefreshCw, X, RefreshCcw } from 'lucide-react'
 import { FaTelegram, FaWhatsapp, FaSlack } from 'react-icons/fa'
 import { SiGooglecalendar } from 'react-icons/si'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -9,7 +9,10 @@ import { SettingsRow, SettingsSection } from './components'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import type { GoogleCalendarIntegrationStatus } from '@/types/api'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { toast } from 'sonner'
+import CinematicGlowToggle from '@/components/ui/cinematic-glow-toggle'
+import { useCrossPlatformSync, useUpdateCrossPlatformSync } from '@/hooks/queries'
 
 interface IntegrationsTabProps {
   googleCalendarStatus: GoogleCalendarIntegrationStatus | null | undefined
@@ -64,6 +67,33 @@ export const IntegrationsTab: React.FC<IntegrationsTabProps> = ({
 }) => {
   const googleIsConnected =
     googleCalendarStatus?.isSynced && googleCalendarStatus.isActive && !googleCalendarStatus.isExpired
+
+  const crossPlatformSyncToggleId = React.useId()
+  const { data: syncData, isLoading: isLoadingSync } = useCrossPlatformSync()
+  const { updateCrossPlatformSync, isUpdating: isUpdatingSync } = useUpdateCrossPlatformSync()
+  const [syncEnabled, setSyncEnabled] = useState(true)
+
+  useEffect(() => {
+    if (syncData?.value) {
+      setSyncEnabled(syncData.value.enabled)
+    }
+  }, [syncData])
+
+  const handleSyncToggle = (checked: boolean) => {
+    setSyncEnabled(checked)
+    updateCrossPlatformSync(
+      { enabled: checked },
+      {
+        onSuccess: () => {
+          toast.success(checked ? 'Cross-platform sync enabled' : 'Cross-platform sync disabled')
+        },
+        onError: () => {
+          setSyncEnabled(!checked)
+          toast.error('Failed to update preference')
+        },
+      },
+    )
+  }
 
   return (
     <Card>
@@ -121,6 +151,22 @@ export const IntegrationsTab: React.FC<IntegrationsTabProps> = ({
               </Button>
             )}
           </div>
+        </SettingsSection>
+
+        <SettingsSection showDivider className="mt-4">
+          <SettingsRow
+            id="cross-platform-sync"
+            title="Cross-Platform Sync"
+            tooltip="When enabled, conversations from Telegram and other platforms will appear in your web chat history"
+            icon={<RefreshCcw size={18} className="text-emerald-500 dark:text-emerald-400" />}
+            control={
+              <CinematicGlowToggle
+                id={crossPlatformSyncToggleId}
+                checked={syncEnabled}
+                onChange={isUpdatingSync || isLoadingSync ? () => {} : handleSyncToggle}
+              />
+            }
+          />
         </SettingsSection>
 
         <SettingsSection showDivider className="mt-4">
