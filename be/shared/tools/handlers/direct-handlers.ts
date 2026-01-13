@@ -312,11 +312,15 @@ export async function preCreateValidationHandler(
   }
 
   if (params.start && params.end) {
-    conflicts = await checkEventConflictsAllCalendars({
-      email,
-      startTime: params.start,
-      endTime: params.end,
-    })
+    const startTime = params.start.dateTime || params.start.date
+    const endTime = params.end.dateTime || params.end.date
+    if (startTime && endTime) {
+      conflicts = await checkEventConflictsAllCalendars({
+        email,
+        startTime,
+        endTime,
+      })
+    }
   }
 
   return {
