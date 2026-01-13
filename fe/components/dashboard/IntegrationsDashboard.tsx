@@ -1,11 +1,18 @@
 'use client'
 
-import { ArrowUpRight, CheckCircle2, Circle, List, Loader2, RefreshCw, Settings, X } from 'lucide-react'
+import { ArrowUpRight, CheckCircle2, Circle, List, Loader2, RefreshCw, Settings } from 'lucide-react'
 import { GoogleCalendarIcon, TelegramIcon, WhatsAppIcon } from '@/components/shared/Icons'
 import { FaSlack } from 'react-icons/fa'
 import React, { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 
 import { useCalendars, useSlackStatus } from '@/hooks/queries'
 
@@ -181,31 +188,23 @@ const IntegrationsDashboard: React.FC<IntegrationsDashboardProps> = () => {
         </div>
       </div>
 
-      {/* WhatsApp Modal */}
-      {isWhatsAppModalOpen && (
-        <div className="fixed inset-0 bg-black/50 dark:bg-black/80 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-zinc-900 rounded-lg p-6 shadow-xl max-w-sm w-full relative">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsWhatsAppModalOpen(false)}
-              className="absolute top-3 right-3 text-zinc-500 hover:text-zinc-700"
-            >
-              <X className="w-5 h-5" />
-            </Button>
-            <h3 className="text-lg font-medium text-zinc-900 dark:text-zinc-100 mb-4">Connect WhatsApp</h3>
-            <p className="text-sm text-zinc-500 mb-6">
+      {/* WhatsApp Modal - Using Shadcn Dialog */}
+      <Dialog open={isWhatsAppModalOpen} onOpenChange={setIsWhatsAppModalOpen}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Connect WhatsApp</DialogTitle>
+            <DialogDescription>
               To connect WhatsApp, please follow the instructions in your Ally Node console.
-            </p>
-            <Button
-              onClick={() => setIsWhatsAppModalOpen(false)}
-              className="w-full"
-            >
-              <Loader2 className="w-4 h-4 animate-spin" /> Open Console
-            </Button>
-          </div>
-        </div>
-      )}
+            </DialogDescription>
+          </DialogHeader>
+          <Button
+            onClick={() => setIsWhatsAppModalOpen(false)}
+            className="w-full"
+          >
+            <Loader2 className="w-4 h-4 animate-spin" /> Open Console
+          </Button>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
