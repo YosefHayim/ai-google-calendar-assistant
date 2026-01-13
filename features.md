@@ -6,14 +6,14 @@
    Implement logic to verify if the "Invite to Google Meet" feature is enabled when a user provides an email. If enabled, execute the invite; if not, handle the error gracefully or prompt for enablement.
 ⏱️ **UI | Font Update**
    Update the application's font family to a more "futuristic" style that better aligns with the AI branding.
-4. **Backend/Frontend | Organization Support**
+⏱️ **Backend/Frontend | Organization Support**
    Implement "Organization" vs. "Individual" user logic.
 
 - **DB:** Add necessary columns to Supabase tables via CLI and regenerate `package.json` types.
 - **Validation:** Ensure cross-user validation within organizations to resolve conflicts.
 - **FE:** Add a setting in the Settings Modal to identify and manage user types.
 
-5. **Mobile UI | Homepage Carousel**
+⏱️ **Mobile UI | Homepage Carousel**
    Fix the vertical alignment of carousel buttons in mobile view. They are currently positioned at the bottom 80%; center them vertically relative to the component.
 6. **Infra | AWS Region Latency Review**
    Evaluate latency for users in Israel connecting to the Frankfurt AWS region. Determine if moving services to a closer region (or a multi-region setup) is necessary for performance.
