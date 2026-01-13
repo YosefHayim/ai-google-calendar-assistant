@@ -256,7 +256,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
               <Button
                 variant="ghost"
                 onClick={onSignOut}
-                className="w-full justify-start gap-2 px-2 py-1.5 text-red-500 text-xs font-medium mt-auto hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600"
+                className="w-full justify-start gap-2 px-2 py-1.5 text-zinc-500 text-xs font-medium mt-auto hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-500 dark:hover:text-red-400"
               >
                 <LogOut size={14} /> Sign Out
               </Button>
@@ -323,7 +323,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
                   <Button
                     variant="ghost"
                     onClick={onSignOut}
-                    className="w-full justify-center gap-2 py-2 text-red-500 text-sm font-medium hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600"
+                    className="w-full justify-center gap-2 py-2 text-zinc-500 text-sm font-medium hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-500 dark:hover:text-red-400"
                   >
                     <LogOut size={14} /> Sign Out
                   </Button>
