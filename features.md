@@ -56,3 +56,17 @@
 28. input in desktop should be more "fat" more padding more rows to go down to with textarea of shadcn ui with rows fixed of 4 and with overflow-auto ofc with max of 200px h and in mobile same.
 
 29. identify components that could be reused which means reuse them and not over re-create them again. so we have more modular and a better components artiecture. so it will be easily to refactor improve modify maybe even add specific props or customs to some components but should be very much dynamic , robust and reused.
+
+30. pricing plans in the dashboard billing are not match the same we have at the pricing outside dashboard, make sure its the exact same. this means we should have the same componetns. 
+
+31. our app is currently integrated to slack, telegram, google calendar not discord so remove it from the footer. 
+
+32. create help center 
+
+33. create changelog ui page. 
+
+34. create blog with optimization for seo
+
+35. optimize geo for ai chatgpt,gemini cladue etc for better search results. each page should proeprly have meta description and following best practices to optimize website. 
+
+36. apply the same sidebar we have in desktop just match it in width and size for mobile. 
