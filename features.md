@@ -35,7 +35,7 @@
 
 ✅ **Refactor | Shadcn UI Enforcement**
     Audit the codebase to ensure all dialogs, popups, and overlays strictly use **Shadcn UI** components. Replace any custom implementations.
-⏱️ **UI | Icon Theme Consistency**
+✅ **UI | Icon Theme Consistency**
     Standardize icon colors: **Black** for Light Mode, **Orange** for Dark Mode. Remove any multi-colored ("rainbow") icon styles.
 15. **Feature | Cross-Platform Sync**
     Implement an optional synchronization feature. If enabled (default: `true`), conversations started on Telegram/Slack automatically sync with the web interface. Add a toggle for this in the Settings Modal.
