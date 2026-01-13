@@ -21,7 +21,7 @@
    Investigate and fix the build failure causing rollbacks in the AWS App Runner service for the frontend.
 ⏱️ **UI | Dynamic Feature Carousel**
    Refactor the features carousel to dynamically toggle between Telegram and Slack showcases. Do not show both simultaneously; alternate them to simplify the marketing message.
-⏱️ **UI | Settings Logout**
+✅ **UI | Settings Logout**
    Change the text color of the "Logout" button in the Settings Modal to **red** on hover.
 ⏱️ **UI | Settings Tooltips**
     Fix the tooltip behavior in the Settings Modal. Hovering/clicking on setting rows currently fails to display the informational card.
