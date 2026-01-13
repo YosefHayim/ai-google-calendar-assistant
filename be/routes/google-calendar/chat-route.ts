@@ -72,4 +72,8 @@ router.delete("/conversations/:id", chatController.removeConversation);
 router.post("/conversations/:id/messages", aiChatBurstLimiter, aiChatRateLimiter, chatController.continueConversation);
 router.post("/conversations/:id/messages/stream", aiChatBurstLimiter, aiChatRateLimiter, chatStreamController.streamContinueConversation);
 
+router.post("/conversations/:id/share", chatController.createShareLink);
+router.delete("/conversations/:id/share", chatController.revokeShareLink);
+router.get("/conversations/:id/share", chatController.getShareStatus);
+
 export default router;

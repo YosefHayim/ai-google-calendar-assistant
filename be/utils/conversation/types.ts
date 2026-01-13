@@ -79,6 +79,18 @@ export type FullConversation = {
 }
 
 /**
+ * Shared conversation accessible via token (read-only, no user info)
+ */
+export type SharedConversation = {
+  id: string
+  title: string
+  messages: userAndAiMessageProps[]
+  messageCount: number
+  createdAt: string
+  expiresAt?: string
+}
+
+/**
  * Configuration for conversation service
  */
 export type ConversationConfig = {

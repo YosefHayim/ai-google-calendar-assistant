@@ -1,4 +1,4 @@
-import type { ConversationContext, ConversationListItem, FullConversation, SummarizeFn } from "./types";
+import type { ConversationContext, ConversationListItem, FullConversation, SharedConversation, SummarizeFn } from "./types";
 
 import { ConversationService } from "./ConversationService";
 import { logger } from "@/utils/logger";
@@ -380,6 +380,29 @@ export class WebConversationAdapter {
    */
   closeActiveConversation(userId: string): Promise<boolean> {
     return this.service.closeActiveConversation(userId);
+  }
+
+  createShareLink(
+    conversationId: string,
+    userId: string,
+    expiresInDays?: number,
+  ): Promise<{ token: string; expiresAt: string } | null> {
+    return this.service.createShareLink(conversationId, userId, expiresInDays);
+  }
+
+  revokeShareLink(conversationId: string, userId: string): Promise<boolean> {
+    return this.service.revokeShareLink(conversationId, userId);
+  }
+
+  getShareStatus(
+    conversationId: string,
+    userId: string,
+  ): Promise<{ isShared: boolean; token?: string; expiresAt?: string } | null> {
+    return this.service.getShareStatus(conversationId, userId);
+  }
+
+  getSharedConversation(token: string): Promise<SharedConversation | null> {
+    return this.service.getSharedConversation(token);
   }
 }
 

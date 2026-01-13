@@ -478,6 +478,160 @@ const resetMemory = reqResAsyncHandler(
   },
 );
 
+const createShareLink = reqResAsyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = req.user?.id;
+    const conversationId = req.params.id;
+    const expiresInDays = req.body.expiresInDays || 7;
+
+    if (!userId) {
+      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
+    }
+
+    if (!conversationId) {
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Invalid conversation ID");
+    }
+
+    try {
+      const result = await webConversation.createShareLink(
+        conversationId,
+        userId,
+        expiresInDays,
+      );
+
+      if (!result) {
+        return sendR(
+          res,
+          STATUS_RESPONSE.NOT_FOUND,
+          "Conversation not found or access denied",
+        );
+      }
+
+      sendR(res, STATUS_RESPONSE.SUCCESS, "Share link created successfully", {
+        token: result.token,
+        expiresAt: result.expiresAt,
+      });
+    } catch (error) {
+      console.error("Error creating share link:", error);
+      sendR(
+        res,
+        STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
+        "Error creating share link",
+      );
+    }
+  },
+);
+
+const revokeShareLink = reqResAsyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = req.user?.id;
+    const conversationId = req.params.id;
+
+    if (!userId) {
+      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
+    }
+
+    if (!conversationId) {
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Invalid conversation ID");
+    }
+
+    try {
+      const revoked = await webConversation.revokeShareLink(
+        conversationId,
+        userId,
+      );
+
+      if (!revoked) {
+        return sendR(
+          res,
+          STATUS_RESPONSE.NOT_FOUND,
+          "Conversation not found or access denied",
+        );
+      }
+
+      sendR(res, STATUS_RESPONSE.SUCCESS, "Share link revoked successfully");
+    } catch (error) {
+      console.error("Error revoking share link:", error);
+      sendR(
+        res,
+        STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
+        "Error revoking share link",
+      );
+    }
+  },
+);
+
+const getShareStatus = reqResAsyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = req.user?.id;
+    const conversationId = req.params.id;
+
+    if (!userId) {
+      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
+    }
+
+    if (!conversationId) {
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Invalid conversation ID");
+    }
+
+    try {
+      const status = await webConversation.getShareStatus(
+        conversationId,
+        userId,
+      );
+
+      if (!status) {
+        return sendR(res, STATUS_RESPONSE.NOT_FOUND, "Conversation not found");
+      }
+
+      sendR(res, STATUS_RESPONSE.SUCCESS, "Share status retrieved", status);
+    } catch (error) {
+      console.error("Error getting share status:", error);
+      sendR(
+        res,
+        STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
+        "Error getting share status",
+      );
+    }
+  },
+);
+
+const getSharedConversation = reqResAsyncHandler(
+  async (req: Request, res: Response) => {
+    const token = req.params.token;
+
+    if (!token) {
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Share token is required");
+    }
+
+    try {
+      const conversation = await webConversation.getSharedConversation(token);
+
+      if (!conversation) {
+        return sendR(
+          res,
+          STATUS_RESPONSE.NOT_FOUND,
+          "Shared conversation not found or link has expired",
+        );
+      }
+
+      sendR(
+        res,
+        STATUS_RESPONSE.SUCCESS,
+        "Shared conversation retrieved",
+        conversation,
+      );
+    } catch (error) {
+      console.error("Error getting shared conversation:", error);
+      sendR(
+        res,
+        STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
+        "Error retrieving shared conversation",
+      );
+    }
+  },
+);
+
 export const chatController = {
   sendChat,
   getConversations,
@@ -487,4 +641,8 @@ export const chatController = {
   startNewConversation,
   deleteAllConversations,
   resetMemory,
+  createShareLink,
+  revokeShareLink,
+  getShareStatus,
+  getSharedConversation,
 };

@@ -1,12 +1,15 @@
 'use client'
 
-import React from 'react'
-import { Clock, MessageSquare, Search, Trash2, X } from 'lucide-react'
+import React, { useState } from 'react'
+import { Check, Clock, Copy, Link, MessageSquare, Search, Trash2, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { formatRelativeDate } from '@/lib/dateUtils'
 import type { ConversationListItem } from '@/services/chatService'
+import { createShareLink } from '@/services/chatService'
 import { StreamingTitle } from './StreamingTitle'
+import { toast } from 'sonner'
 
 interface ConversationListProps {
   conversations: ConversationListItem[]
@@ -33,6 +36,33 @@ export const ConversationList: React.FC<ConversationListProps> = ({
   onSelectConversation,
   onInitiateDelete,
 }) => {
+  const [sharingId, setSharingId] = useState<string | null>(null)
+  const [copiedId, setCopiedId] = useState<string | null>(null)
+
+  const handleShare = async (e: React.MouseEvent, conversationId: string) => {
+    e.stopPropagation()
+    setSharingId(conversationId)
+
+    try {
+      const result = await createShareLink(conversationId)
+      if (result) {
+        const shareUrl = `${window.location.origin}/shared/${result.token}`
+        await navigator.clipboard.writeText(shareUrl)
+        setCopiedId(conversationId)
+        toast.success('Share link copied to clipboard', {
+          description: 'Link expires in 7 days',
+        })
+        setTimeout(() => setCopiedId(null), 2000)
+      } else {
+        toast.error('Failed to create share link')
+      }
+    } catch {
+      toast.error('Failed to create share link')
+    } finally {
+      setSharingId(null)
+    }
+  }
+
   return (
     <div className="flex-1 mt-4 px-4 overflow-y-auto flex flex-col">
       <div className="flex items-center justify-between mb-2 px-2">
@@ -99,15 +129,41 @@ export const ConversationList: React.FC<ConversationListProps> = ({
                     <span>{formatRelativeDate(conversation.lastUpdated)}</span>
                   </div>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={(e) => onInitiateDelete(e, conversation.id)}
-                  className="h-6 w-6 opacity-0 group-hover:opacity-100 hover:bg-red-100 dark:hover:bg-red-900/30 text-zinc-400 hover:text-red-500"
-                  title="Delete"
-                >
-                  <Trash2 className="w-3 h-3" />
-                </Button>
+                <div className="flex items-center gap-0.5">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={(e) => handleShare(e, conversation.id)}
+                        disabled={sharingId === conversation.id}
+                        className="h-6 w-6 opacity-0 group-hover:opacity-100 hover:bg-blue-100 dark:hover:bg-blue-900/30 text-zinc-400 hover:text-blue-500"
+                      >
+                        {copiedId === conversation.id ? (
+                          <Check className="w-3 h-3 text-green-500" />
+                        ) : sharingId === conversation.id ? (
+                          <Copy className="w-3 h-3 animate-pulse" />
+                        ) : (
+                          <Link className="w-3 h-3" />
+                        )}
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="top">Share conversation</TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={(e) => onInitiateDelete(e, conversation.id)}
+                        className="h-6 w-6 opacity-0 group-hover:opacity-100 hover:bg-red-100 dark:hover:bg-red-900/30 text-zinc-400 hover:text-red-500"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="top">Delete conversation</TooltipContent>
+                  </Tooltip>
+                </div>
               </div>
             </div>
           ))}
