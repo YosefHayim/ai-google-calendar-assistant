@@ -38,7 +38,7 @@ export const DataControlsTab: React.FC<DataControlsTabProps> = ({
             id="delete-conversations"
             title="Delete All Conversations"
             tooltip="Permanently delete all your chat history with Ally. This removes all messages, summaries, and conversation data. This cannot be undone."
-            icon={<MessageCircleX size={18} className="text-amber-500 dark:text-amber-400" />}
+            icon={<MessageCircleX size={18} className="text-zinc-900 dark:text-primary" />}
             control={
               <Button
                 variant="outline"
@@ -63,7 +63,7 @@ export const DataControlsTab: React.FC<DataControlsTabProps> = ({
             id="reset-memory"
             title="Reset Assistant Memory"
             tooltip="Clear all learned scheduling patterns, preferred meeting durations, and location preferences. Ally will need to relearn your habits over time."
-            icon={<Eraser size={18} className="text-amber-500 dark:text-amber-400" />}
+            icon={<Eraser size={18} className="text-zinc-900 dark:text-primary" />}
             control={
               <Button
                 variant="outline"
@@ -88,7 +88,7 @@ export const DataControlsTab: React.FC<DataControlsTabProps> = ({
             id="delete-account"
             title="Delete Account"
             tooltip="Permanently delete your account including all data, conversations, preferences, and calendar connections. This action is irreversible."
-            icon={<UserX size={18} className="text-red-500 dark:text-red-400" />}
+            icon={<UserX size={18} className="text-zinc-900 dark:text-primary" />}
             control={
               <Button variant="destructive" size="sm" onClick={onDeleteAccount} className="gap-2">
                 <Trash2 className="w-4 h-4" />

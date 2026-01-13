@@ -98,7 +98,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ isDarkMode, toggleTheme,
             id="appearance"
             title="Appearance"
             tooltip="Choose your preferred color theme for the interface"
-            icon={<Palette size={18} className="text-violet-500 dark:text-violet-400" />}
+            icon={<Palette size={18} className="text-zinc-900 dark:text-primary" />}
             control={
               <SettingsDropdown
                 id="appearance-dropdown"
@@ -113,7 +113,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ isDarkMode, toggleTheme,
             id="timezone"
             title="Default Timezone"
             tooltip="Events will be scheduled in this timezone unless specified otherwise"
-            icon={<Globe size={18} className="text-blue-500 dark:text-blue-400" />}
+            icon={<Globe size={18} className="text-zinc-900 dark:text-primary" />}
             control={
               <SettingsDropdown
                 id="timezone-dropdown"
@@ -128,7 +128,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ isDarkMode, toggleTheme,
             id="time-format"
             title="Time Format"
             tooltip="Display format for event times throughout the app"
-            icon={<Clock size={18} className="text-emerald-500 dark:text-emerald-400" />}
+            icon={<Clock size={18} className="text-zinc-900 dark:text-primary" />}
             control={
               <SettingsDropdown
                 id="time-format-dropdown"

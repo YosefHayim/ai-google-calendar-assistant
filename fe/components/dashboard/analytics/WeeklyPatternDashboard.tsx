@@ -106,7 +106,7 @@ export const WeeklyPatternDashboard: React.FC<WeeklyPatternDashboardProps> = ({
       <CardHeader className="flex flex-col items-stretch border-b border-zinc-200 dark:border-zinc-800 !p-0 sm:flex-row">
         <div className="flex flex-1 flex-col justify-center gap-1 px-4 sm:px-6 pt-3 sm:pt-4 pb-2 sm:pb-3 sm:!py-4">
           <CardTitle className="flex items-center gap-2 text-sm sm:text-base text-zinc-900 dark:text-zinc-100">
-            <CalendarDays className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-600 dark:text-indigo-400 flex-shrink-0" />
+            <CalendarDays className="w-4 h-4 sm:w-5 sm:h-5 text-zinc-900 dark:text-primary flex-shrink-0" />
             <span className="truncate">{t('analytics.charts.weeklyPattern')}</span>
             <HoverCard>
               <HoverCardTrigger asChild>

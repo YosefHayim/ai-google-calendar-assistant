@@ -65,8 +65,8 @@ const TimeDistributionChart: React.FC<TimeDistributionChartProps> = ({ data, isL
   return (
     <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
       <div className="flex items-center gap-2 mb-1">
-        <div className="w-8 h-8 rounded-lg bg-sky-100 dark:bg-sky-900/50 flex items-center justify-center">
-          <Clock className="w-4 h-4 text-sky-600 dark:text-sky-400" />
+        <div className="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center">
+          <Clock className="w-4 h-4 text-zinc-900 dark:text-primary" />
         </div>
         <h3 className="font-semibold text-zinc-900 dark:text-zinc-100">Time of Day</h3>
       </div>
