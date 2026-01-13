@@ -42,7 +42,7 @@ export function LanguageDropdown({
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        className={cn("min-w-[180px]", className)}
+        className={cn("min-w-44", className)}
       >
         {languages.map((lang) => (
           <DropdownMenuItem

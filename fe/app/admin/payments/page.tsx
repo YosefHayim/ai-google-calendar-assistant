@@ -39,7 +39,7 @@ export default function AdminPaymentsPage() {
       {/* Filters */}
       <Card className="p-4">
         <div className="flex flex-wrap gap-4">
-          <div className="relative flex-1 min-w-[200px]">
+          <div className="relative flex-1 min-w-48">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
             <Input
               placeholder="Search by user email or order ID..."

@@ -397,7 +397,7 @@ export const NotificationsTab: React.FC = () => {
                             value={reminder.method}
                             options={REMINDER_METHOD_OPTIONS}
                             onChange={(value) => handleUpdateReminder(index, 'method', value)}
-                            className="min-w-[100px]"
+                            className="min-w-24"
                           />
                           <SettingsDropdown
                             id={`reminder-time-${index}`}

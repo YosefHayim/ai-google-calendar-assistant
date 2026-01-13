@@ -363,19 +363,19 @@ function PlanRow({ plan, selectedFrequency, actionType, isLoading, onAction, isP
             </AnimatePresence>
 
             {isCurrentPlan ? (
-              <Button disabled size="sm" className="min-w-[90px]">
+              <Button disabled size="sm" className="min-w-24">
                 <Check className="w-3 h-3 mr-1" />
                 Current
               </Button>
             ) : isLoading ? (
-              <Button disabled size="sm" className="min-w-[90px]">
+              <Button disabled size="sm" className="min-w-24">
                 <RefreshCw className="w-3 h-3 animate-spin" />
               </Button>
             ) : actionType === 'upgrade' ? (
               <Button
                 onClick={() => onAction(isExecutive && isPerUse ? customCredits : undefined)}
                 size="sm"
-                className={cn('min-w-[90px]', isHighlighted && 'bg-white text-zinc-900 hover:bg-zinc-100')}
+                className={cn('min-w-24', isHighlighted && 'bg-white text-zinc-900 hover:bg-zinc-100')}
               >
                 {isPerUse ? 'Buy' : 'Upgrade'}
                 <ArrowRight className="w-3 h-3 ml-1" />
@@ -385,7 +385,7 @@ function PlanRow({ plan, selectedFrequency, actionType, isLoading, onAction, isP
                 onClick={() => onAction()}
                 variant="outline"
                 size="sm"
-                className={cn('min-w-[90px]', isHighlighted && 'border-white/30 text-white hover:bg-white/10')}
+                className={cn('min-w-24', isHighlighted && 'border-white/30 text-white hover:bg-white/10')}
               >
                 {isPerUse ? 'Buy' : 'Downgrade'}
                 <ArrowDown className="w-3 h-3 ml-1" />
@@ -404,7 +404,7 @@ function PlanRow({ plan, selectedFrequency, actionType, isLoading, onAction, isP
               >
                 <Minus size={12} />
               </button>
-              <div className="flex-1 min-w-[100px]">
+              <div className="flex-1 min-w-24">
                 <input
                   type="range"
                   min={100}
@@ -422,7 +422,7 @@ function PlanRow({ plan, selectedFrequency, actionType, isLoading, onAction, isP
               >
                 <Plus size={12} />
               </button>
-              <div className="text-right min-w-[80px]">
+              <div className="text-right min-w-20">
                 <NumberFlow
                   value={customCredits}
                   className="text-sm font-bold font-mono text-white dark:text-zinc-900"

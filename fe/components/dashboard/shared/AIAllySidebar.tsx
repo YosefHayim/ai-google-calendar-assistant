@@ -275,13 +275,13 @@ const AIAllySidebar: React.FC<AIAllySidebarProps> = ({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ type: "spring", stiffness: 400, damping: 30 }}
-            className="fixed bottom-6 right-6 z-50 w-[380px] max-h-[600px] flex flex-col rounded-2xl shadow-2xl shadow-black/20 dark:shadow-black/40 border border-zinc-200/60 dark:border-zinc-800/60 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-2xl overflow-hidden"
+            className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-96 max-h-[80vh] flex flex-col rounded-2xl shadow-2xl shadow-black/20 dark:shadow-black/40 border border-zinc-200/60 dark:border-zinc-800/60 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-2xl overflow-hidden"
           >
             {/* Header */}
             <ChatHeader onClose={onClose} onMinimize={onClose} />
 
             {/* Messages Area */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-2 min-h-[280px] max-h-[320px] scrollbar-thin scrollbar-thumb-zinc-300 dark:scrollbar-thumb-zinc-700 scrollbar-track-transparent">
+            <div className="flex-1 overflow-y-auto p-4 space-y-2 min-h-64 max-h-80 scrollbar-thin scrollbar-thumb-zinc-300 dark:scrollbar-thumb-zinc-700 scrollbar-track-transparent">
               {messages.map((message, index) => (
                 <MessageBubble
                   key={message.id}
