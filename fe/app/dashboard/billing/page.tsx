@@ -186,7 +186,11 @@ function BillingPageContent() {
   }
 
   if (isLoading) {
-    return <LoadingSection text="Loading billing..." />
+    return (
+      <div className="flex-1 flex items-center justify-center min-h-[400px]">
+        <LoadingSection text="Loading billing..." />
+      </div>
+    )
   }
 
   return (
@@ -405,6 +409,13 @@ function BillingPageContent() {
                     t('billing.actions.requestRefund')
                   )}
                 </Button>
+              </div>
+            )}
+
+            {!access?.subscription && !access?.money_back_eligible && (
+              <div className="flex items-center gap-3 py-8 justify-center text-center">
+                <AlertCircle className="w-5 h-5 text-zinc-400" />
+                <p className="text-zinc-500 dark:text-zinc-400">{t('billing.actions.noActionsAvailable', 'No actions available at this time.')}</p>
               </div>
             )}
           </div>
