@@ -1,7 +1,8 @@
 'use client'
 
-import React, { createContext, useCallback, useContext, useState, useMemo, useRef } from 'react'
-import { subDays } from 'date-fns'
+import React, { createContext, useCallback, useContext, useState, useMemo, useRef, useEffect } from 'react'
+import { useSearchParams, useRouter, usePathname } from 'next/navigation'
+import { subDays, parseISO, isValid } from 'date-fns'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { DateRange } from 'react-day-picker'
 import { z } from 'zod'
@@ -18,6 +19,21 @@ import {
   type ProcessedActivity,
 } from '@/types/analytics'
 import type { CalendarEvent, CalendarListEntry, EventQueryParams } from '@/types/api'
+
+function parseDateParam(param: string | null): Date | undefined {
+  if (!param) return undefined
+  try {
+    const parsed = parseISO(param)
+    return isValid(parsed) ? parsed : undefined
+  } catch {
+    return undefined
+  }
+}
+
+function formatDateParam(date: Date | undefined): string | undefined {
+  if (!date) return undefined
+  return date.toISOString().split('T')[0]
+}
 
 // Types for dialog state
 interface SelectedCalendarForEvents {
@@ -108,15 +124,67 @@ const AnalyticsContext = createContext<AnalyticsContextValue | null>(null)
 
 export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
   const queryClient = useQueryClient()
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const isInitialMount = useRef(true)
 
-  // Date range state
-  const [date, setDate] = useState<DateRange | undefined>({
-    from: subDays(new Date(), 7),
-    to: new Date(),
-  })
+  const getInitialDateRange = (): DateRange | undefined => {
+    const fromParam = parseDateParam(searchParams.get('from'))
+    const toParam = parseDateParam(searchParams.get('to'))
+    if (fromParam && toParam) {
+      return { from: fromParam, to: toParam }
+    }
+    return { from: subDays(new Date(), 7), to: new Date() }
+  }
 
-  // Calendar filter state (empty array = all calendars)
-  const [selectedCalendarIds, setSelectedCalendarIds] = useState<string[]>([])
+  const getInitialCalendarIds = (): string[] => {
+    const calendarsParam = searchParams.get('calendars')
+    if (calendarsParam) {
+      return calendarsParam.split(',').filter(Boolean)
+    }
+    return []
+  }
+
+  const [date, setDateState] = useState<DateRange | undefined>(getInitialDateRange)
+  const [selectedCalendarIds, setSelectedCalendarIdsState] = useState<string[]>(getInitialCalendarIds)
+
+  const updateUrlParams = useCallback(
+    (newDate: DateRange | undefined, newCalendarIds: string[]) => {
+      const params = new URLSearchParams()
+      if (newDate?.from) params.set('from', formatDateParam(newDate.from)!)
+      if (newDate?.to) params.set('to', formatDateParam(newDate.to)!)
+      if (newCalendarIds.length > 0) params.set('calendars', newCalendarIds.join(','))
+      const queryString = params.toString()
+      const newUrl = queryString ? `${pathname}?${queryString}` : pathname
+      router.replace(newUrl, { scroll: false })
+    },
+    [pathname, router],
+  )
+
+  const setDate = useCallback(
+    (newDate: DateRange | undefined) => {
+      setDateState(newDate)
+      if (!isInitialMount.current) {
+        updateUrlParams(newDate, selectedCalendarIds)
+      }
+    },
+    [selectedCalendarIds, updateUrlParams],
+  )
+
+  const setSelectedCalendarIds = useCallback(
+    (ids: string[]) => {
+      setSelectedCalendarIdsState(ids)
+      if (!isInitialMount.current) {
+        updateUrlParams(date, ids)
+      }
+    },
+    [date, updateUrlParams],
+  )
+
+  useEffect(() => {
+    isInitialMount.current = false
+  }, [])
 
   // Event details dialog state
   const [selectedEvent, setSelectedEvent] = useState<z.infer<typeof CalendarEventSchema> | null>(null)
