@@ -27,7 +27,7 @@
     Fix the tooltip behavior in the Settings Modal. Hovering/clicking on setting rows currently fails to display the informational card.
 ⏱️ **UI | Subscription Loader Alignment**
     Center the loading animation within the Subscription tab of the Settings Modal (currently misaligned to the top).
-⏱️ **UI | Integrations Tab Cleanup**
+✅ **UI | Integrations Tab Cleanup**
 
 - Replace custom SVGs with standard **React Icons** or **Lucide Icons** (specifically for Slack, WhatsApp, Google Calendar, and Telegram).
 - Add `overflow-auto` and set `max-height` to match the modal height.
