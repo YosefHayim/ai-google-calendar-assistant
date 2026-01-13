@@ -26,7 +26,7 @@ const RecentEvents: React.FC<RecentEventsProps> = ({ activities, onActivityClick
           <Skeleton className="w-4 h-4" />
           <Skeleton className="h-4 sm:h-5 w-28 sm:w-32" />
         </div>
-        <div className={isHorizontal ? 'grid grid-cols-1 min-[300px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4' : 'space-y-2'}>
+        <div className={isHorizontal ? 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4' : 'space-y-2'}>
           {Array.from({ length: isHorizontal ? 5 : 5 }).map((_, i) => (
             <div key={i} className={isHorizontal ? 'flex flex-col gap-2 p-3 border border-zinc-200 dark:border-zinc-800 rounded-lg' : 'flex items-start gap-3 p-2 -m-2'}>
               <Skeleton className="w-8 h-8 rounded-md flex-shrink-0" />
@@ -70,7 +70,7 @@ const RecentEvents: React.FC<RecentEventsProps> = ({ activities, onActivityClick
         </h3>
       </div>
       {displayActivities.length > 0 ? (
-        <div className={isHorizontal ? 'grid grid-cols-1 min-[300px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4' : 'space-y-2'}>
+        <div className={isHorizontal ? 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4' : 'space-y-2'}>
           {displayActivities.map((activity, i) => {
             const Icon = activity.icon
             return isHorizontal ? (

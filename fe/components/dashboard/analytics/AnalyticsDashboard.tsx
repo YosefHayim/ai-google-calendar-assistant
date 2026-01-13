@@ -147,7 +147,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
             </span>
           </div>
         )}
-        <div className="flex flex-col min-[300px]:flex-row flex-wrap gap-2 items-stretch min-[300px]:items-center">
+        <div className="flex flex-col sm:flex-row flex-wrap gap-2 items-stretch sm:items-center">
           <DatePickerWithRange date={date} setDate={setDate} />
           <CalendarFilterSelect
             calendars={calendarsData}
@@ -190,7 +190,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
             </HoverCardContent>
           </HoverCard>
         </h3>
-        <div className="grid grid-cols-1 min-[300px]:grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
           {isInsightsLoading ? (
             Array.from({ length: 5 }).map((_, i) => <InsightCardSkeleton key={i} />)
           ) : isInsightsError ? (

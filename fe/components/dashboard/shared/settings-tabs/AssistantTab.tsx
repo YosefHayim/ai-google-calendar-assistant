@@ -272,7 +272,7 @@ export const AssistantTab: React.FC<AssistantTabProps> = () => {
             </div>
           </div>
         </CardHeader>
-        <CardContent className="max-h-[400px] overflow-y-auto">
+        <CardContent className="max-h-[60vh] overflow-y-auto">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <SettingsSection>
               <SettingsRow
@@ -374,7 +374,7 @@ export const AssistantTab: React.FC<AssistantTabProps> = () => {
           <CardTitle className="text-lg">Memory Management</CardTitle>
           <CardDescription>Control how Ally learns from your scheduling patterns.</CardDescription>
         </CardHeader>
-        <CardContent className="max-h-[300px] overflow-y-auto space-y-4">
+        <CardContent className="max-h-72 overflow-y-auto space-y-4">
           <SettingsSection>
             <SettingsRow
               id="contextual-scheduling"
@@ -414,7 +414,7 @@ export const AssistantTab: React.FC<AssistantTabProps> = () => {
             </div>
           </div>
         </CardHeader>
-        <CardContent className="max-h-[300px] overflow-y-auto space-y-4">
+        <CardContent className="max-h-72 overflow-y-auto space-y-4">
           <SettingsSection>
             <SettingsRow
               id="voice-enabled"
@@ -452,7 +452,7 @@ export const AssistantTab: React.FC<AssistantTabProps> = () => {
                           value={selectedVoice}
                           options={VOICE_DROPDOWN_OPTIONS}
                           onChange={handleVoiceChange}
-                          className="min-w-[200px]"
+                          className="min-w-52"
                         />
                         <Button
                           type="button"

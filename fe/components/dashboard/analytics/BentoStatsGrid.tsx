@@ -120,11 +120,11 @@ const BentoStatsGrid: React.FC<BentoStatsGridProps> = ({ data, comparison, isLoa
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 min-[300px]:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3">
         {Array.from({ length: 10 }).map((_, i) => (
           <div
             key={i}
-            className={`bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-3 sm:p-5 ${i === 0 ? 'col-span-1 min-[300px]:col-span-2 row-span-2' : ''}`}
+            className={`bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-3 sm:p-5 ${i === 0 ? 'col-span-1 sm:col-span-2 row-span-2' : ''}`}
           >
             <Skeleton className="h-4 w-16 sm:w-20 mb-2 sm:mb-3" />
             <Skeleton className={`${i === 0 ? 'h-16 w-16 sm:h-20 sm:w-20' : 'h-6 sm:h-8 w-20 sm:w-24'} mb-2`} />
@@ -152,16 +152,16 @@ const BentoStatsGrid: React.FC<BentoStatsGridProps> = ({ data, comparison, isLoa
 
   return (
     <motion.div
-      className="grid grid-cols-1 min-[300px]:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3"
+      className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3"
       variants={container}
       initial="hidden"
       animate="show"
     >
       <motion.div
         variants={item}
-        className="col-span-1 min-[300px]:col-span-2 row-span-2 bg-gradient-to-br from-indigo-50 to-white dark:from-indigo-950/30 dark:to-zinc-950 border border-indigo-200/50 dark:border-indigo-800/30 rounded-xl p-4 sm:p-6 shadow-sm hover:shadow-md hover:border-indigo-300 dark:hover:border-indigo-700 transition-all overflow-hidden"
+        className="col-span-1 sm:col-span-2 row-span-2 bg-gradient-to-br from-indigo-50 to-white dark:from-indigo-950/30 dark:to-zinc-950 border border-indigo-200/50 dark:border-indigo-800/30 rounded-xl p-4 sm:p-6 shadow-sm hover:shadow-md hover:border-indigo-300 dark:hover:border-indigo-700 transition-all overflow-hidden"
       >
-        <div className="flex flex-col min-[300px]:flex-row items-start justify-between gap-3 mb-4">
+        <div className="flex flex-col sm:flex-row items-start justify-between gap-3 mb-4">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1 min-w-0">
               <div className="w-7 h-7 sm:w-8 sm:h-8 flex-shrink-0 rounded-lg bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center">
@@ -175,7 +175,7 @@ const BentoStatsGrid: React.FC<BentoStatsGridProps> = ({ data, comparison, isLoa
               {t('analytics.stats.productivityDescription')}
             </p>
           </div>
-          <div className="hidden min-[300px]:block">
+          <div className="hidden sm:block">
             <CircularProgress value={productivityMetrics.productivityScore} size={90} className="hidden sm:block" />
             <CircularProgress value={productivityMetrics.productivityScore} size={70} className="block sm:hidden" />
           </div>

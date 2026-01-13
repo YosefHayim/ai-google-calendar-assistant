@@ -13,9 +13,9 @@ import React from 'react'
 
 const BentoStatsSkeleton: React.FC = () => {
   return (
-    <div className="grid grid-cols-1 min-[300px]:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3">
-      <div className="col-span-1 min-[300px]:col-span-2 row-span-2 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-4 sm:p-6">
-        <div className="flex flex-col min-[300px]:flex-row items-start justify-between gap-3 mb-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3">
+      <div className="col-span-1 sm:col-span-2 row-span-2 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-4 sm:p-6">
+        <div className="flex flex-col sm:flex-row items-start justify-between gap-3 mb-4">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
               <Skeleton className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex-shrink-0" />
@@ -90,7 +90,7 @@ const RecentEventsSkeleton: React.FC = () => {
         <Skeleton className="w-4 h-4" />
         <Skeleton className="h-5 w-28 sm:w-32" />
       </div>
-      <div className="grid grid-cols-1 min-[300px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
         {Array.from({ length: 5 }).map((_, i) => (
           <div key={i} className="flex flex-col gap-2 p-3 border border-zinc-200 dark:border-zinc-800 rounded-lg">
             <div className="flex items-center gap-2 sm:gap-3">
@@ -137,16 +137,16 @@ const AnalyticsDashboardSkeleton: React.FC = () => {
           <Skeleton className="h-3 sm:h-4 w-14 sm:w-16" />
         </div>
         <div className="flex flex-wrap gap-2 items-center">
-          <Skeleton className="h-9 w-full min-[300px]:w-auto min-[300px]:flex-1 sm:flex-none sm:w-64 rounded-md" />
-          <Skeleton className="h-9 w-full min-[300px]:w-auto min-[300px]:flex-1 sm:flex-none sm:w-28 rounded-md" />
-          <Skeleton className="h-9 w-full min-[300px]:w-auto sm:w-24 rounded-md" />
+          <Skeleton className="h-9 w-full sm:w-auto sm:flex-1 md:flex-none md:w-64 rounded-md" />
+          <Skeleton className="h-9 w-full sm:w-auto sm:flex-1 md:flex-none md:w-28 rounded-md" />
+          <Skeleton className="h-9 w-full sm:w-auto md:w-24 rounded-md" />
         </div>
       </header>
 
       {/* AI Insights KPI Cards */}
       <div>
         <Skeleton className="h-5 sm:h-6 w-20 sm:w-24 mb-3 sm:mb-4" />
-        <div className="grid grid-cols-1 min-[300px]:grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
           {Array.from({ length: 5 }).map((_, i) => (
             <SkeletonInsightCard key={i} />
           ))}

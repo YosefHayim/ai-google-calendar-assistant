@@ -168,7 +168,7 @@ const UpcomingWeekPreview: React.FC<UpcomingWeekPreviewProps> = ({ data, isLoadi
           <Skeleton className="h-4 sm:h-5 w-28 sm:w-36" />
         </div>
         <Skeleton className="h-3 sm:h-4 w-40 sm:w-48 mb-4 sm:mb-6" />
-        <div className="grid grid-cols-4 min-[300px]:grid-cols-7 gap-1.5 sm:gap-2">
+        <div className="grid grid-cols-7 gap-1 sm:gap-2">
           {Array.from({ length: 7 }).map((_, i) => (
             <Skeleton key={i} className="h-16 sm:h-24 rounded-lg" />
           ))}
@@ -221,7 +221,7 @@ const UpcomingWeekPreview: React.FC<UpcomingWeekPreviewProps> = ({ data, isLoadi
       </p>
 
       {/* Week Grid */}
-      <div className="grid grid-cols-4 min-[300px]:grid-cols-7 gap-1.5 sm:gap-2">
+      <div className="grid grid-cols-7 gap-1 sm:gap-2">
         {data.days.map((day) => (
           <DayCard key={day.dateStr} day={day} />
         ))}

@@ -162,7 +162,7 @@ export const TimeAllocationDashboard: React.FC<TimeAllocationDashboardProps> = (
                   <TabsTrigger key={type} value={type} className="h-6 sm:h-7 px-1.5 sm:px-2 text-[10px] sm:text-xs gap-0.5 sm:gap-1" title={config.label}>
                     <span className="sm:hidden"><IconComponent size={12} /></span>
                     <span className="hidden sm:block"><IconComponent size={14} /></span>
-                    <span className="hidden min-[400px]:inline">{config.label}</span>
+                    <span className="hidden sm:inline">{config.label}</span>
                   </TabsTrigger>
                 )
               })}
