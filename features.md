@@ -23,7 +23,7 @@
    Refactor the features carousel to dynamically toggle between Telegram and Slack showcases. Do not show both simultaneously; alternate them to simplify the marketing message.
 ✅ **UI | Settings Logout**
    Change the text color of the "Logout" button in the Settings Modal to **red** on hover.
-⏱️ **UI | Settings Tooltips**
+✅ **UI | Settings Tooltips**
     Fix the tooltip behavior in the Settings Modal. Hovering/clicking on setting rows currently fails to display the informational card.
 ✅ **UI | Subscription Loader Alignment**
     Center the loading animation within the Subscription tab of the Settings Modal (currently misaligned to the top).
