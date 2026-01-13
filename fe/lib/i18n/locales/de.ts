@@ -278,6 +278,8 @@ export const de: TranslationShape = {
     adminDescription: 'Zugriff auf das Admin-Dashboard zur Verwaltung von Benutzern, Abonnements und Systemeinstellungen',
     analytics: 'Analytik',
     analyticsDescription: 'Sehen Sie Einblicke zur Zeitverteilung, Terminmustern und Produktivitätstrends',
+    quickAddEvent: 'Schnell hinzufügen',
+    quickAddEventDescription: 'Erstellen Sie Kalendereinträge sofort mit natürlicher Sprache oder Spracheingabe',
     gapRecovery: 'Lückenwiederherstellung',
     gapRecoveryDescription: 'Entdecken und nutzen Sie ungenutzte Zeitlücken in Ihrem Kalender',
     calendars: 'Kalender',

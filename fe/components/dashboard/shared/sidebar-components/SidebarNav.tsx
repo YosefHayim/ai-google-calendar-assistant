@@ -1,6 +1,6 @@
 'use client'
 
-import { BarChart2, LayoutDashboard, Shield } from 'lucide-react'
+import { Info, PieChart, Shield, Sparkles } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
 import Link from 'next/link'
@@ -31,34 +31,39 @@ const NavLink: React.FC<NavLinkProps> = ({
 }) => {
   const isActive = activePath === href
 
-  const linkContent = (
-    <Link
-      id={id}
-      href={href}
-      onClick={onClick}
-      className={`w-full flex items-center gap-3 p-2 rounded-lg transition-colors ${
-        isActive
-          ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 font-bold'
-          : 'text-zinc-500 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-900'
-      } ${!isOpen ? 'md:justify-center' : ''}`}
-    >
-      <Icon className={`w-5 h-5 ${isActive ? 'text-primary' : ''}`} />
-      <span className={`text-sm whitespace-nowrap ${!isOpen ? 'md:hidden' : ''}`}>{children}</span>
-    </Link>
+  return (
+    <div className="flex items-center gap-1">
+      <Link
+        id={id}
+        href={href}
+        onClick={onClick}
+        className={`flex-1 flex items-center gap-3 p-2 rounded-lg transition-colors ${
+          isActive
+            ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 font-bold'
+            : 'text-zinc-500 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-900'
+        } ${!isOpen ? 'md:justify-center' : ''}`}
+      >
+        <Icon className={`w-5 h-5 shrink-0 ${isActive ? 'text-primary' : ''}`} />
+        <span className={`text-sm whitespace-nowrap ${!isOpen ? 'md:hidden' : ''}`}>{children}</span>
+      </Link>
+      {description && isOpen && (
+        <Tooltip delayDuration={200}>
+          <TooltipTrigger asChild>
+            <button
+              type="button"
+              className="p-1 rounded-md text-zinc-400 hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+              aria-label="More information"
+            >
+              <Info className="w-3.5 h-3.5" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="right" className="max-w-[220px] bg-zinc-900 dark:bg-zinc-800 text-zinc-100 border-zinc-700">
+            <p className="text-xs leading-relaxed">{description}</p>
+          </TooltipContent>
+        </Tooltip>
+      )}
+    </div>
   )
-
-  if (description) {
-    return (
-      <Tooltip delayDuration={300}>
-        <TooltipTrigger asChild>{linkContent}</TooltipTrigger>
-        <TooltipContent side="right" className="max-w-[200px]">
-          <p className="text-xs">{description}</p>
-        </TooltipContent>
-      </Tooltip>
-    )
-  }
-
-  return linkContent
 }
 
 interface SidebarNavProps {
@@ -76,7 +81,7 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({ pathname, isOpen, onClos
   const navItems = [
     {
       href: '/dashboard',
-      icon: LayoutDashboard,
+      icon: Sparkles,
       label: t('sidebar.assistant'),
       id: 'tour-assistant',
       description: t('sidebar.assistantDescription'),
@@ -94,7 +99,7 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({ pathname, isOpen, onClos
       : []),
     {
       href: '/dashboard/analytics',
-      icon: BarChart2,
+      icon: PieChart,
       label: t('sidebar.analytics'),
       id: 'tour-analytics',
       description: t('sidebar.analyticsDescription'),
@@ -105,8 +110,7 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({ pathname, isOpen, onClos
     <TooltipProvider>
       <nav className="px-4 space-y-2 mt-2">
         {navItems.map((item) => (
-          <NavLink 
-          
+          <NavLink
             key={item.href}
             href={item.href}
             activePath={pathname}

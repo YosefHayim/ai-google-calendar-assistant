@@ -288,6 +288,8 @@ export const he: TranslationShape = {
     adminDescription: 'גישה ללוח הניהול לניהול משתמשים, מנויים והגדרות מערכת',
     analytics: 'אנליטיקס',
     analyticsDescription: 'צפה בתובנות על הקצאת זמן, דפוסי אירועים ומגמות פרודוקטיביות',
+    quickAddEvent: 'הוספה מהירה',
+    quickAddEventDescription: 'צור אירועי יומן באופן מיידי עם שפה טבעית או קלט קולי',
     gapRecovery: 'שחזור פערים',
     gapRecoveryDescription: 'גלה ושחזר פערי זמן לא מתועדים ביומן שלך',
     calendars: 'יומנים',
