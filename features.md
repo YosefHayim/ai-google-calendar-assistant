@@ -51,4 +51,8 @@
 
 26. move the button New Chat from the top sidebar and place it instead of the quick add event .then remove it we do not need it for now.
 
-27.
+27. look for all emails mentions we have in the fe and make sure that is replaced with @askally.io and not what we have now.
+
+28. input in desktop should be more "fat" more padding more rows to go down to with textarea of shadcn ui with rows fixed of 4 and with overflow-auto ofc with max of 200px h and in mobile same.
+
+29. identify components that could be reused which means reuse them and not over re-create them again. so we have more modular and a better components artiecture. so it will be easily to refactor improve modify maybe even add specific props or customs to some components but should be very much dynamic , robust and reused.
