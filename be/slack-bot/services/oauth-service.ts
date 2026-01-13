@@ -12,6 +12,7 @@ const SLACK_SCOPES = [
   "im:history",
   "im:read",
   "im:write",
+  "incoming-webhook",
   "reactions:read",
   "reactions:write",
   "users:read",
@@ -85,6 +86,10 @@ export const exchangeCodeForToken = async (
       enterprise_name: result.enterprise?.name || null,
       is_enterprise_install: result.is_enterprise_install || false,
       installed_by_user_id: result.authed_user?.id || null,
+      webhook_url: result.incoming_webhook?.url || null,
+      webhook_channel: result.incoming_webhook?.channel || null,
+      webhook_channel_id: result.incoming_webhook?.channel_id || null,
+      webhook_configuration_url: result.incoming_webhook?.configuration_url || null,
     })
 
     if (!workspace) {

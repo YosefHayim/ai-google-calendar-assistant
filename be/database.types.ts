@@ -395,6 +395,10 @@ export type Database = {
           team_id: string
           team_name: string | null
           updated_at: string | null
+          webhook_channel: string | null
+          webhook_channel_id: string | null
+          webhook_configuration_url: string | null
+          webhook_url: string | null
         }
         Insert: {
           app_id?: string | null
@@ -413,6 +417,10 @@ export type Database = {
           team_id: string
           team_name?: string | null
           updated_at?: string | null
+          webhook_channel?: string | null
+          webhook_channel_id?: string | null
+          webhook_configuration_url?: string | null
+          webhook_url?: string | null
         }
         Update: {
           app_id?: string | null
@@ -431,6 +439,10 @@ export type Database = {
           team_id?: string
           team_name?: string | null
           updated_at?: string | null
+          webhook_channel?: string | null
+          webhook_channel_id?: string | null
+          webhook_configuration_url?: string | null
+          webhook_url?: string | null
         }
         Relationships: []
       }
