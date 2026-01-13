@@ -33,7 +33,7 @@
 - Add `overflow-auto` and set `max-height` to match the modal height.
 - _Note to Agent:_ If a specific icon is missing, flag it for manual review.
 
-13. **Refactor | Shadcn UI Enforcement**
+⏱️ **Refactor | Shadcn UI Enforcement**
     Audit the codebase to ensure all dialogs, popups, and overlays strictly use **Shadcn UI** components. Replace any custom implementations.
 14. **UI | Icon Theme Consistency**
     Standardize icon colors: **Black** for Light Mode, **Orange** for Dark Mode. Remove any multi-colored ("rainbow") icon styles.
