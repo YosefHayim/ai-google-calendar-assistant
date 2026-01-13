@@ -4,7 +4,7 @@
    Replace OpenAI Whisper with ElevenLabs to improve voice synthesis quality. Refactor backend prompts to be provider-agnostic, enabling support for multiple AI agents (ElevenLabs, Gemini, Claude) alongside existing ones.
 ⏱️ **Feature | Google Meet Integration**
    Implement logic to verify if the "Invite to Google Meet" feature is enabled when a user provides an email. If enabled, execute the invite; if not, handle the error gracefully or prompt for enablement.
-3. **UI | Font Update**
+⏱️ **UI | Font Update**
    Update the application's font family to a more "futuristic" style that better aligns with the AI branding.
 4. **Backend/Frontend | Organization Support**
    Implement "Organization" vs. "Individual" user logic.
