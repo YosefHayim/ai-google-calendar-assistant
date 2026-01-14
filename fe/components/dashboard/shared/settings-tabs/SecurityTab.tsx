@@ -17,7 +17,7 @@ export const SecurityTab: React.FC = () => {
         <CardTitle className="text-lg">Security</CardTitle>
         <CardDescription>Manage your authentication and session settings.</CardDescription>
       </CardHeader>
-      <CardContent className="max-h-[60vh] overflow-y-auto">
+      <CardContent>
         <SettingsSection title="Authentication">
           <SettingsRow
             id="mfa"

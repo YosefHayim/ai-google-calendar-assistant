@@ -254,7 +254,7 @@ export const AssistantTab: React.FC<AssistantTabProps> = () => {
   }
 
   return (
-    <div className="space-y-6 max-h-[60vh] overflow-y-auto">
+    <div className="space-y-6">
       <Card>
         <CardHeader>
           <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap">

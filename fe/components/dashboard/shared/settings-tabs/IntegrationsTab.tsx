@@ -106,7 +106,7 @@ export const IntegrationsTab: React.FC<IntegrationsTabProps> = ({
   }
 
   return (
-    <div className="space-y-6 max-h-[60vh] overflow-y-auto">
+    <div className="space-y-6">
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">Integrations</CardTitle>

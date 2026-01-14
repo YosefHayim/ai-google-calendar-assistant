@@ -141,7 +141,7 @@ export const SubscriptionTab: React.FC = () => {
   const isPerUse = selectedFrequency === 'per use'
 
   return (
-    <div className="space-y-6 max-h-[60vh] overflow-y-auto">
+    <div className="space-y-6">
       {access?.plan_name && (
         <Card className="bg-gradient-to-r from-primary/5 to-primary/10 border-primary/20">
           <CardContent className="p-3 sm:p-4">
