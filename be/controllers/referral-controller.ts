@@ -106,6 +106,7 @@ export const referralController = {
           inviter_email: userEmail,
           invitee_email: referredEmail || "",
           reward_type: "free_month",
+          invite_token: "",
         })
         .select("*")
         .single();

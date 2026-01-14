@@ -16,7 +16,7 @@ export type BriefingContent = {
 
 export type ChannelIdentifiers = {
   email: string;
-  oderId: string;
+  userId: string;
   telegramChatId?: number;
   whatsappPhone?: string;
   slackUserId?: string;
@@ -154,24 +154,33 @@ async function getChannelIdentifiers(
     .eq("user_id", userId)
     .single();
 
-  const { data: slackUser } = await (
-    SUPABASE as ReturnType<typeof SUPABASE.from>
-  )
-    .from("slack_users")
-    .select("slack_user_id, team_id")
-    .eq("user_id", userId)
-    .single();
+  const { data: slackIntegrations } = await SUPABASE.from("integrations")
+    .select("workspace_id, user_mappings")
+    .eq("integration_type", "slack");
+
+  type SlackUserMapping = { user_id: string; external_id: string };
+  let slackUserId: string | undefined;
+  let slackTeamId: string | undefined;
+
+  if (slackIntegrations) {
+    for (const integration of slackIntegrations) {
+      const mappings = integration.user_mappings as SlackUserMapping[] | null;
+      const mapping = mappings?.find((m) => m.user_id === userId);
+      if (mapping) {
+        slackUserId = mapping.external_id;
+        slackTeamId = integration.workspace_id;
+        break;
+      }
+    }
+  }
 
   return {
     email: user.email,
-    oderId: user.id,
+    userId: user.id,
     telegramChatId: telegramUser?.telegram_chat_id ?? undefined,
     whatsappPhone: whatsappUser?.whatsapp_phone ?? undefined,
-    slackUserId:
-      (slackUser as { slack_user_id?: string } | null)?.slack_user_id ??
-      undefined,
-    slackTeamId:
-      (slackUser as { team_id?: string } | null)?.team_id ?? undefined,
+    slackUserId,
+    slackTeamId,
   };
 }
 

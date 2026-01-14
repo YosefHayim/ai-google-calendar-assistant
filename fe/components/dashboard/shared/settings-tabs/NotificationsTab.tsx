@@ -111,6 +111,7 @@ export const NotificationsTab: React.FC = () => {
         enabled: briefingData.value.enabled,
         time: briefingData.value.time,
         timezone: briefingData.value.timezone,
+        channel: briefingData.value.channel ?? 'email',
       })
     }
   }, [briefingData])

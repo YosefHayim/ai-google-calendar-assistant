@@ -78,6 +78,7 @@ export const teamInviteController = {
             role,
             message,
           },
+          invite_token: "",
         })
         .select("*")
         .single();
