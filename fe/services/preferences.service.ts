@@ -6,6 +6,7 @@ import type {
   VoicePreferenceFormData,
   DailyBriefingFormData,
   CrossPlatformSyncFormData,
+  GeoLocationFormData,
 } from '@/lib/validations/preferences'
 
 import { ENDPOINTS } from '@/lib/api/endpoints'
@@ -149,6 +150,23 @@ export const preferencesService = {
   ): Promise<ApiResponse<PreferenceResponse<CrossPlatformSyncFormData>>> {
     const { data } = await apiClient.put<ApiResponse<PreferenceResponse<CrossPlatformSyncFormData>>>(
       ENDPOINTS.USER_PREFERENCES_CROSS_PLATFORM_SYNC,
+      value,
+    )
+    return data
+  },
+
+  async getGeoLocation(): Promise<ApiResponse<PreferenceResponse<GeoLocationFormData>>> {
+    const { data } = await apiClient.get<ApiResponse<PreferenceResponse<GeoLocationFormData>>>(
+      ENDPOINTS.USER_PREFERENCES_BY_KEY('geo_location'),
+    )
+    return data
+  },
+
+  async updateGeoLocation(
+    value: GeoLocationFormData,
+  ): Promise<ApiResponse<PreferenceResponse<GeoLocationFormData>>> {
+    const { data } = await apiClient.put<ApiResponse<PreferenceResponse<GeoLocationFormData>>>(
+      ENDPOINTS.USER_PREFERENCES_GEO_LOCATION,
       value,
     )
     return data

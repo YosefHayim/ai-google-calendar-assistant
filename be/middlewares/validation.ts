@@ -363,6 +363,17 @@ export const crossPlatformSyncSchema = z.object({
   enabled: z.boolean(),
 });
 
+export const geoLocationSchema = z.object({
+  enabled: z.boolean(),
+  lastKnownLocation: z
+    .object({
+      latitude: z.number().min(-90).max(90),
+      longitude: z.number().min(-180).max(180),
+      timestamp: z.string(),
+    })
+    .optional(),
+});
+
 export const preferenceKeyParamSchema = z.object({
   key: z.enum(
     [
@@ -372,11 +383,12 @@ export const preferenceKeyParamSchema = z.object({
       "voice_preference",
       "daily_briefing",
       "cross_platform_sync",
+      "geo_location",
     ],
     {
       errorMap: () => ({
         message:
-          "Invalid preference key. Must be 'ally_brain', 'contextual_scheduling', 'reminder_defaults', 'voice_preference', 'daily_briefing', or 'cross_platform_sync'",
+          "Invalid preference key. Must be 'ally_brain', 'contextual_scheduling', 'reminder_defaults', 'voice_preference', 'daily_briefing', 'cross_platform_sync', or 'geo_location'",
       }),
     },
   ),

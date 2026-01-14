@@ -60,6 +60,8 @@ export {
   useUpdateDailyBriefing,
   useCrossPlatformSync,
   useUpdateCrossPlatformSync,
+  useGeoLocation,
+  useUpdateGeoLocation,
 } from './preferences'
 
 // Billing hooks

@@ -43,17 +43,3 @@ Implement "Organization" vs. "Individual" user logic.
 
 9. **Feature | Affiliate/Referral Program**
    Implement a referral system: "Invite a friend, get 1 month free."
-
-10. **Feature | Geo-Location Toggle**
-    Implement a "Real-time Location" toggle (Default: `false`).
-
-- If `true`: Use the user's lat/long for event creation context.
-- Check feasibility for implementation on WhatsApp and Slack integrations.
-
-11. **UX | Onboarding Wizard 2.0**
-    Overhaul the onboarding flow:
-
-- **Audio Support:** Auto-play audio instructions (with toggle OFF).
-- **Step-by-Step:** Guided navigation highlighting specific components.
-- **Content:** Detailed, marketing-focused explanations of the platform.
-- **Logic:** Advance to the next step only after audio finishes or user clicks "Next."

@@ -68,6 +68,7 @@ export const queryKeys = {
     voicePreference: () => [...queryKeys.preferences.all, 'voice_preference'] as const,
     dailyBriefing: () => [...queryKeys.preferences.all, 'daily_briefing'] as const,
     crossPlatformSync: () => [...queryKeys.preferences.all, 'cross_platform_sync'] as const,
+    geoLocation: () => [...queryKeys.preferences.all, 'geo_location'] as const,
   },
 
   // Agent Profiles queries

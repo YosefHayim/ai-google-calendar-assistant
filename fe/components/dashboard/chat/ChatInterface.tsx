@@ -17,6 +17,8 @@ import { ttsCache } from '@/services/tts-cache.service'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { useVoicePreference } from '@/hooks/queries'
 import { toast } from 'sonner'
+import { OnboardingWizard } from '@/components/onboarding'
+import { useOnboarding } from '@/hooks/useOnboarding'
 
 declare global {
   interface Window {
@@ -39,6 +41,7 @@ const ChatInterface: React.FC = () => {
   } = useChatContext()
 
   const { data: voiceData } = useVoicePreference()
+  const { showOnboarding, completeOnboarding, closeOnboarding } = useOnboarding()
 
   const [input, setInput] = useState('')
   const [images, setImages] = useState<ImageFile[]>([])
@@ -338,8 +341,11 @@ const ChatInterface: React.FC = () => {
           onCancelRecording={cancelRecording}
           onCancel={isLoading ? handleCancel : undefined}
           onImagesChange={setImages}
+          data-onboarding="chat-input"
         />
       </div>
+
+      <OnboardingWizard isOpen={showOnboarding} onClose={closeOnboarding} onComplete={completeOnboarding} />
     </div>
   )
 }
