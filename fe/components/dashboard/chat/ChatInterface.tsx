@@ -10,6 +10,7 @@ import { Message } from '@/types'
 import { ThreeDView } from './ThreeDView'
 import { ViewSwitcher } from './ViewSwitcher'
 import { useChatContext } from '@/contexts/ChatContext'
+import { useMutedSpeechDetection } from '@/hooks/useMutedSpeechDetection'
 import { useSpeechRecognition } from '@/hooks/useSpeechRecognition'
 import { useStreamingChat } from '@/hooks/useStreamingChat'
 import { ttsCache } from '@/services/tts-cache.service'
@@ -50,7 +51,7 @@ const ChatInterface: React.FC = () => {
   const avatarScrollRef = useRef<HTMLDivElement>(null)
   const audioContextRef = useRef<AudioContext | null>(null)
   const audioSourceRef = useRef<AudioBufferSourceNode | null>(null)
-  const textInputRef = useRef<HTMLInputElement>(null)
+  const textInputRef = useRef<HTMLTextAreaElement>(null)
   const isDocumentVisibleRef = useRef<boolean>(true)
 
   // Track document visibility for background notifications
@@ -150,6 +151,7 @@ const ChatInterface: React.FC = () => {
     // If the same message is already playing, stop it (toggle behavior)
     if (messageId && speakingMessageId === messageId && isSpeaking) {
       stopSpeaking()
+      toast.info('Audio stopped')
       return
     }
 
@@ -162,6 +164,7 @@ const ChatInterface: React.FC = () => {
 
     setIsSpeaking(true)
     setSpeakingMessageId(messageId || null)
+    toast.info('Playing audio...')
     try {
       const audioArrayBuffer = await ttsCache.synthesize(text, voiceData?.value?.voice)
       const audioBuffer = await audioContextRef.current.decodeAudioData(audioArrayBuffer)
@@ -179,6 +182,7 @@ const ChatInterface: React.FC = () => {
     } catch (audioError) {
       console.error('Error fetching or playing audio:', audioError)
       setError('Could not play audio response.')
+      toast.error('Failed to play audio')
       setIsSpeaking(false)
       setSpeakingMessageId(null)
       audioSourceRef.current = null
@@ -229,6 +233,7 @@ const ChatInterface: React.FC = () => {
   }
 
   const handleResend = (text: string) => {
+    toast.info('Regenerating response...')
     handleSend(undefined, text)
   }
 
@@ -262,6 +267,12 @@ const ChatInterface: React.FC = () => {
     toggleRecording,
   } = useSpeechRecognition((finalTranscription) => {
     handleSend(undefined, finalTranscription)
+  })
+
+  useMutedSpeechDetection({
+    isRecording,
+    speechRecognitionSupported,
+    onActivateMic: toggleRecording,
   })
 
   useEffect(() => {

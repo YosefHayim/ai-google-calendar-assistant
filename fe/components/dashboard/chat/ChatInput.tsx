@@ -6,7 +6,7 @@ import React, { forwardRef, useCallback, useMemo, useRef, useState } from 'react
 import { AIVoiceInput } from '@/components/ui/ai-voice-input'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import { getTextDirection } from '@/lib/utils'
 import { INPUT_LIMITS, validateInputLength } from '@/lib/security/sanitize'
@@ -106,7 +106,7 @@ const MAX_IMAGE_SIZE_MB = 10
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
 const MAX_INPUT_LENGTH = INPUT_LIMITS.CHAT_MESSAGE
 
-export const ChatInput = forwardRef<HTMLInputElement, ChatInputProps>(
+export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
   (
     {
       input,
@@ -361,25 +361,33 @@ export const ChatInput = forwardRef<HTMLInputElement, ChatInputProps>(
               <Mic className="w-4 h-4 md:w-6 md:h-6" />
             </Button>
             <div className="flex-1 relative">
-              <Input
+              <Textarea
                 ref={textInputRef}
-                type="text"
                 value={input}
                 onChange={(e) => onInputChange(e.target.value)}
                 onPaste={handlePaste}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault()
+                    if (input.trim() || images.length > 0) {
+                      onSubmit()
+                    }
+                  }
+                }}
                 maxLength={MAX_INPUT_LENGTH}
+                rows={4}
                 placeholder={
                   images.length > 0
                     ? 'Add a message about your images...'
                     : "What do you have for me today? I'm ready to help you."
                 }
-                className={`w-full h-7 md:h-14 max-h-[200px] md:max-h-none bg-transparent border-0 shadow-none focus-visible:ring-0 text-sm md:text-lg font-medium placeholder:italic placeholder:font-normal ${inputDirection === 'rtl' ? 'text-right' : ''} ${isInputTooLong ? 'text-red-500' : ''}`}
+                className={`w-full min-h-[100px] max-h-[200px] overflow-y-auto resize-none bg-transparent border-0 shadow-none focus-visible:ring-0 p-4 text-sm md:text-lg font-medium placeholder:italic placeholder:font-normal ${inputDirection === 'rtl' ? 'text-right' : ''} ${isInputTooLong ? 'text-red-500' : ''}`}
                 disabled={isDisabled}
                 dir={inputDirection}
               />
               {input.length > MAX_INPUT_LENGTH * 0.8 && (
                 <span
-                  className={`absolute right-2 bottom-0 text-xs ${isInputTooLong ? 'text-red-500' : 'text-zinc-400'}`}
+                  className={`absolute right-2 bottom-1 text-xs ${isInputTooLong ? 'text-red-500' : 'text-zinc-400'}`}
                 >
                   {input.length}/{MAX_INPUT_LENGTH}
                 </span>

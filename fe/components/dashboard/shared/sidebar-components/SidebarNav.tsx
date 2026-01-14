@@ -111,7 +111,7 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({ pathname, isOpen, onClos
 
   return (
     <TooltipProvider>
-      <nav className="px-4 space-y-2 mt-2">
+      <nav className="px-4 space-y-1 mt-1">
         {navItems.map((item) => (
           <NavLink
             key={item.href}

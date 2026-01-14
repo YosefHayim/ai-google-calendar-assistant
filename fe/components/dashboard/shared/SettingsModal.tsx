@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Bell, Brain, CreditCard, Database, LayoutDashboard, LogOut, Settings, Shield, X } from 'lucide-react'
+import { AllyLogo } from '@/components/shared/logo'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
@@ -205,8 +206,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
             {/* Mobile Header */}
             <div className="flex sm:hidden items-center justify-between px-4 py-3 border-b border-zinc-200 dark:border-zinc-800 flex-shrink-0">
               <div className="flex items-center gap-2">
-                <div className="w-6 h-6 bg-zinc-900 dark:bg-zinc-100 rounded-md flex items-center justify-center text-white dark:text-zinc-900 font-bold text-xs">
-                  A
+                <div className="w-6 h-6 bg-zinc-900 dark:bg-white rounded-md flex items-center justify-center text-white dark:text-zinc-900">
+                  <AllyLogo className="w-4 h-4" />
                 </div>
                 <h2 className="font-semibold text-zinc-900 dark:text-zinc-100 text-sm">Settings</h2>
               </div>
@@ -238,9 +239,9 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
 
             {/* Desktop Sidebar */}
             <div className="hidden sm:flex w-52 bg-zinc-50 dark:bg-zinc-900/50 border-r border-zinc-200 dark:border-zinc-800 flex-col p-3 flex-shrink-0">
-              <div className="flex items-center gap-2 mb-6 px-2">
-                <div className="w-6 h-6 bg-zinc-900 dark:bg-zinc-100 rounded-md flex items-center justify-center text-white dark:text-zinc-900 font-bold text-xs">
-                  A
+              <div className="flex items-center gap-2 mb-4 px-2">
+                <div className="w-8 h-8 bg-zinc-900 dark:bg-white rounded-md flex items-center justify-center text-white dark:text-zinc-900">
+                  <AllyLogo className="w-5 h-5" />
                 </div>
                 <h2 className="font-semibold text-zinc-900 dark:text-zinc-100 text-sm">Ally Settings</h2>
               </div>
