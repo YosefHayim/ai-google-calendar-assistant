@@ -1,32 +1,32 @@
 'use client'
 
-import React, { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { Bell, Brain, CreditCard, Database, LayoutDashboard, LogOut, Settings, Shield, X } from 'lucide-react'
-import { AllyLogo } from '@/components/shared/logo'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Button } from '@/components/ui/button'
 import {
-  useGoogleCalendarStatus,
-  useDisconnectGoogleCalendar,
+  AssistantTab,
+  DataControlsTab,
+  GeneralTab,
+  IntegrationsTab,
+  NotificationsTab,
+  SecurityTab,
+  SubscriptionTab,
+} from './settings-tabs'
+import { Bell, Brain, CreditCard, Database, LayoutDashboard, LogOut, Settings, Shield, X } from 'lucide-react'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import React, { useState } from 'react'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import {
+  useDeactivateUser,
   useDeleteAllConversations,
+  useDisconnectGoogleCalendar,
+  useGoogleCalendarStatus,
   useResetMemory,
   useUser,
-  useDeactivateUser,
 } from '@/hooks/queries'
-import { toast } from 'sonner'
 
-import {
-  GeneralTab,
-  SubscriptionTab,
-  NotificationsTab,
-  DataControlsTab,
-  IntegrationsTab,
-  SecurityTab,
-  AssistantTab,
-} from './settings-tabs'
+import { AllyLogo } from '@/components/shared/logo'
+import { Button } from '@/components/ui/button'
 import { ConfirmDialog } from './ConfirmDialog'
+import { toast } from 'sonner'
+import { useRouter } from 'next/navigation'
 
 interface SettingsModalProps {
   isOpen: boolean
@@ -246,7 +246,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
                 <h2 className="font-semibold text-zinc-900 dark:text-zinc-100 text-sm">Ally Settings</h2>
               </div>
 
-              <TabsList className="flex-1 flex flex-col h-auto bg-transparent p-0 gap-1">
+              <TabsList className="flex-1 flex flex-col h-full justify-start bg-transparent p-0 gap-1">
                 {tabs.map((tab) => (
                   <TabsTrigger
                     key={tab.id}
