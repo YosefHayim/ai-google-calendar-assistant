@@ -29,12 +29,12 @@ import {
   MoreVertical,
   type LucideIcon,
 } from 'lucide-react'
-import { TelegramIcon, SlackIcon } from '@/components/shared/Icons'
+import { TelegramIcon, SlackIcon, WhatsAppIcon } from '@/components/shared/Icons'
 import { AllyLogo } from '@/components/shared/logo'
 import { IPhoneMockup } from '@/components/ui/iphone-mockup'
 import { cn } from '@/lib/utils'
 
-type Platform = 'telegram' | 'slack'
+type Platform = 'telegram' | 'slack' | 'whatsapp'
 
 interface Message {
   type: 'user' | 'ally'
@@ -54,6 +54,9 @@ interface Feature {
     messages: Message[]
   }
   slack: {
+    messages: Message[]
+  }
+  whatsapp: {
     messages: Message[]
   }
   web: {
@@ -312,6 +315,89 @@ const SlackChat = ({ messages }: { messages: Message[] }) => (
   </div>
 )
 
+// WhatsApp chat interface
+const WhatsAppChat = ({ messages }: { messages: Message[] }) => (
+  <div className="h-full flex flex-col bg-[#111B21]">
+    {/* WhatsApp header */}
+    <div className="bg-[#202C33] px-4 py-3 flex items-center gap-3">
+      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-emerald-600 flex items-center justify-center">
+        <AllyLogo className="w-6 h-6 text-white" />
+      </div>
+      <div className="flex-1">
+        <div className="text-white font-medium text-sm">Ally Assistant</div>
+        <div className="text-[#8696A0] text-xs">online</div>
+      </div>
+      <div className="flex items-center gap-4 text-[#AEBAC1]">
+        <Search className="w-5 h-5" />
+        <MoreVertical className="w-5 h-5" />
+      </div>
+    </div>
+
+    {/* Chat messages */}
+    <div
+      className="flex-1 p-3 space-y-2 overflow-y-auto"
+      style={{
+        backgroundImage: `url("data:image/svg+xml,%3Csvg width='412' height='412' viewBox='0 0 412 412' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%2309141A' fill-opacity='0.4'%3E%3Cpath d='M0 0h206v206H0zM206 206h206v206H206z'/%3E%3C/g%3E%3C/svg%3E")`,
+        backgroundColor: '#0B141A',
+      }}
+    >
+      {messages.map((msg, i) => (
+        <motion.div
+          key={i}
+          initial={{ opacity: 0, y: 10, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ delay: i * 0.4, duration: 0.3 }}
+          className={cn('flex', msg.type === 'user' ? 'justify-end' : 'justify-start')}
+        >
+          {msg.type === 'user' ? (
+            <div className="bg-[#005C4B] text-white px-3 py-2 rounded-lg rounded-tr-none max-w-[85%] shadow-sm">
+              {msg.isVoice ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+                    <Mic className="w-4 h-4" />
+                  </div>
+                  <VoiceWaveform />
+                  <span className="text-xs text-white/70">0:03</span>
+                </div>
+              ) : (
+                <div className="text-sm">{msg.content}</div>
+              )}
+              <div className="flex items-center justify-end gap-1 mt-1">
+                <span className="text-[10px] text-white/60">{msg.time}</span>
+                <CheckCheck className="w-4 h-4 text-[#53BDEB]" />
+              </div>
+            </div>
+          ) : (
+            <div className="bg-[#202C33] text-white px-3 py-2 rounded-lg rounded-tl-none max-w-[85%] shadow-sm">
+              {msg.showTyping ? (
+                <TypingIndicator />
+              ) : (
+                <>
+                  <div className="text-sm">{msg.content}</div>
+                  <div className="flex items-center justify-end mt-1">
+                    <span className="text-[10px] text-[#8696A0]">{msg.time}</span>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+        </motion.div>
+      ))}
+    </div>
+
+    {/* Input area */}
+    <div className="bg-[#202C33] px-3 py-2 flex items-center gap-2">
+      <button className="p-2 text-[#8696A0] hover:text-white transition-colors">
+        <Plus className="w-6 h-6" />
+      </button>
+      <div className="flex-1 bg-[#2A3942] rounded-full px-4 py-2 text-sm text-[#8696A0]">Type a message</div>
+      <button className="p-2 text-[#8696A0] hover:text-white transition-colors">
+        <Mic className="w-6 h-6" />
+      </button>
+    </div>
+  </div>
+)
+
 // Web dashboard views
 const WebCalendarView = () => (
   <div className="h-full p-4 bg-zinc-50 dark:bg-zinc-900">
@@ -539,6 +625,27 @@ const FEATURES: Feature[] = [
         },
       ],
     },
+    whatsapp: {
+      messages: [
+        { type: 'user', content: 'Show me today', time: '9:00 AM' },
+        {
+          type: 'ally',
+          content: (
+            <div>
+              <div className="font-medium mb-2">📅 Today's Schedule</div>
+              <div className="space-y-1 text-sm">
+                <div>• 9:30 AM - Team Standup (30m)</div>
+                <div>• 11:00 AM - Client Call (1h)</div>
+                <div>• 2:00 PM - Deep Work (2h) 🧠</div>
+                <div>• 4:30 PM - Review (30m)</div>
+              </div>
+              <div className="mt-2 text-xs text-emerald-400">Total: 4h scheduled, 4h free</div>
+            </div>
+          ),
+          time: '9:00 AM',
+        },
+      ],
+    },
     web: { component: <WebCalendarView /> },
   },
   {
@@ -586,6 +693,30 @@ const FEATURES: Feature[] = [
                 I've blocked <strong className="text-white">2:00 PM - 4:00 PM</strong> for deep work.
               </div>
               <div className="mt-3 flex items-center gap-2 text-xs text-purple-400 bg-purple-500/10 px-2 py-1 rounded w-fit">
+                <Brain className="w-3 h-3" />
+                Focus mode will be enabled
+              </div>
+            </div>
+          ),
+          time: '10:15 AM',
+        },
+      ],
+    },
+    whatsapp: {
+      messages: [
+        { type: 'user', content: 'Block 2 hours for deep work', time: '10:15 AM', isVoice: true },
+        {
+          type: 'ally',
+          content: (
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <Check className="w-4 h-4 text-emerald-400" />
+                <span className="font-medium">Deep Work Scheduled</span>
+              </div>
+              <div className="text-sm">
+                I've blocked <strong>2:00 PM - 4:00 PM</strong> for deep work.
+              </div>
+              <div className="mt-2 flex items-center gap-2 text-xs text-purple-400">
                 <Brain className="w-3 h-3" />
                 Focus mode will be enabled
               </div>
@@ -652,6 +783,32 @@ const FEATURES: Feature[] = [
                 </div>
               </div>
               <div className="text-xs text-[#72767D]">🏆 Best day: Wednesday (5h focus)</div>
+            </div>
+          ),
+          time: '5:00 PM',
+        },
+      ],
+    },
+    whatsapp: {
+      messages: [
+        { type: 'user', content: 'Show my analytics', time: '5:00 PM' },
+        {
+          type: 'ally',
+          content: (
+            <div>
+              <div className="font-medium mb-2">📊 This Week's Insights</div>
+              <div className="space-y-1 text-sm">
+                <div>
+                  🧠 Focus Time: <span className="text-emerald-400">18h (+23%)</span>
+                </div>
+                <div>
+                  📅 Meetings: <span className="text-blue-400">12h (-15%)</span>
+                </div>
+                <div>
+                  ⚡ Productivity: <span className="text-purple-400">87%</span>
+                </div>
+              </div>
+              <div className="mt-2 text-xs text-zinc-400">Best day: Wednesday (5h focus)</div>
             </div>
           ),
           time: '5:00 PM',
@@ -726,6 +883,36 @@ const FEATURES: Feature[] = [
         },
       ],
     },
+    whatsapp: {
+      messages: [
+        { type: 'user', content: 'Set my preferences', time: '8:00 AM' },
+        {
+          type: 'ally',
+          content: (
+            <div>
+              <div className="font-medium mb-2">🧠 Ally Brain</div>
+              <div className="text-sm mb-2">Teach me your preferences!</div>
+              <div className="text-xs text-zinc-400 space-y-1">
+                <div>Current: "Schedule meetings 10AM-4PM"</div>
+                <div className="text-primary">Reply to update your instructions</div>
+              </div>
+            </div>
+          ),
+          time: '8:00 AM',
+        },
+        { type: 'user', content: 'Never schedule meetings before 10am', time: '8:01 AM' },
+        {
+          type: 'ally',
+          content: (
+            <div className="flex items-center gap-2">
+              <Check className="w-4 h-4 text-emerald-400" />
+              <span>Got it! I'll protect your mornings.</span>
+            </div>
+          ),
+          time: '8:01 AM',
+        },
+      ],
+    },
     web: { component: <WebBrainView /> },
   },
   {
@@ -773,6 +960,28 @@ const FEATURES: Feature[] = [
                 <Calendar className="w-3 h-3" />
                 Next scheduled: Jan 15th
               </div>
+            </div>
+          ),
+          time: '3:00 PM',
+        },
+      ],
+    },
+    whatsapp: {
+      messages: [
+        { type: 'user', content: 'When did I last meet with Sarah?', time: '3:00 PM' },
+        {
+          type: 'ally',
+          content: (
+            <div>
+              <div className="font-medium mb-2">🔍 Found it!</div>
+              <div className="text-sm">
+                Last meeting with Sarah:
+                <div className="mt-1 p-2 bg-white/10 rounded-lg">
+                  <div className="font-medium">Project Kickoff</div>
+                  <div className="text-xs text-zinc-400">Jan 5th, 3:00 PM (1h)</div>
+                </div>
+              </div>
+              <div className="mt-2 text-xs text-zinc-400">Next scheduled: Jan 15th</div>
             </div>
           ),
           time: '3:00 PM',
@@ -831,6 +1040,32 @@ const FEATURES: Feature[] = [
               <div className="flex gap-2">
                 <button className="px-4 py-1.5 bg-emerald-500 text-white rounded text-xs font-medium">✓ Create</button>
                 <button className="px-4 py-1.5 bg-[#4F545C] text-white rounded text-xs font-medium">Cancel</button>
+              </div>
+            </div>
+          ),
+          time: '6:00 PM',
+        },
+      ],
+    },
+    whatsapp: {
+      messages: [
+        { type: 'user', content: 'Schedule lunch with Alex tomorrow at noon', time: '6:00 PM' },
+        {
+          type: 'ally',
+          content: (
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <Calendar className="w-4 h-4 text-primary" />
+                <span className="font-medium">New Event</span>
+              </div>
+              <div className="p-2 bg-white/10 rounded-lg text-sm">
+                <div className="font-medium">Lunch with Alex</div>
+                <div className="text-xs text-zinc-400">Tomorrow, 12:00 PM - 1:00 PM</div>
+              </div>
+              <div className="mt-2 text-xs">Create this event?</div>
+              <div className="flex gap-2 mt-2">
+                <span className="px-3 py-1 bg-emerald-500/20 text-emerald-400 rounded-full text-xs">Yes</span>
+                <span className="px-3 py-1 bg-white/10 rounded-full text-xs">No</span>
               </div>
             </div>
           ),
@@ -902,12 +1137,40 @@ const FEATURES: Feature[] = [
         },
       ],
     },
+    whatsapp: {
+      messages: [
+        { type: 'user', content: 'Change language', time: '7:00 PM' },
+        {
+          type: 'ally',
+          content: (
+            <div>
+              <div className="font-medium mb-2">🌐 Choose Language</div>
+              <div className="text-sm mb-2">Current: English</div>
+              <div className="flex flex-wrap gap-2">
+                {['🇺🇸 English', '🇮🇱 עברית', '🇷🇺 Русский', '🇫🇷 Français', '🇩🇪 Deutsch', '🇸🇦 العربية'].map((lang) => (
+                  <span
+                    key={lang}
+                    className={cn(
+                      'px-2 py-1 rounded-lg text-xs',
+                      lang.includes('English') ? 'bg-primary/30 text-primary' : 'bg-white/10',
+                    )}
+                  >
+                    {lang}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ),
+          time: '7:00 PM',
+        },
+      ],
+    },
     web: { component: <WebBrainView /> },
   },
 ]
 
 const PlatformToggle = ({ platform, onToggle }: { platform: Platform; onToggle: (p: Platform) => void }) => (
-  <div className="flex justify-center mb-8 z-[1000]">
+  <div className="relative flex justify-center md:justify-end mb-8 z-50 md:pr-8">
     <div className="inline-flex items-center p-1 rounded-full bg-zinc-100 dark:bg-zinc-800/80 backdrop-blur-sm border border-zinc-200 dark:border-zinc-700 shadow-lg">
       <button
         onClick={() => onToggle('telegram')}
@@ -946,6 +1209,25 @@ const PlatformToggle = ({ platform, onToggle }: { platform: Platform; onToggle: 
         )}
         <SlackIcon className={cn('w-4 h-4 relative z-10', platform === 'slack' && 'text-white')} />
         <span className="relative z-10">Slack</span>
+      </button>
+      <button
+        onClick={() => onToggle('whatsapp')}
+        className={cn(
+          'relative flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300',
+          platform === 'whatsapp'
+            ? 'text-white'
+            : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200',
+        )}
+      >
+        {platform === 'whatsapp' && (
+          <motion.div
+            layoutId="platformBg"
+            className="absolute inset-0 bg-gradient-to-r from-[#25D366] to-[#128C7E] rounded-full shadow-lg shadow-[#25D366]/30"
+            transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
+          />
+        )}
+        <WhatsAppIcon className={cn('w-4 h-4 relative z-10', platform === 'whatsapp' && 'text-white')} />
+        <span className="relative z-10">WhatsApp</span>
       </button>
     </div>
   </div>
@@ -1038,7 +1320,9 @@ const FeatureShowcase = () => {
                             'absolute -top-6 left-1/2 -translate-x-1/2 flex items-center gap-2 text-white px-3 py-1.5 rounded-full text-xs font-medium shadow-lg z-20 whitespace-nowrap',
                             platform === 'telegram'
                               ? 'bg-gradient-to-r from-[#0088cc] to-[#00a2e8] shadow-[#0088cc]/30'
-                              : 'bg-gradient-to-r from-[#611f69] to-[#4A154B] shadow-[#611f69]/30',
+                              : platform === 'slack'
+                                ? 'bg-gradient-to-r from-[#611f69] to-[#4A154B] shadow-[#611f69]/30'
+                                : 'bg-gradient-to-r from-[#25D366] to-[#128C7E] shadow-[#25D366]/30',
                           )}
                         >
                           {platform === 'telegram' ? (
@@ -1046,10 +1330,15 @@ const FeatureShowcase = () => {
                               <TelegramIcon className="w-3.5 h-3.5" />
                               <span>Telegram Bot</span>
                             </>
-                          ) : (
+                          ) : platform === 'slack' ? (
                             <>
                               <SlackIcon className="w-3.5 h-3.5" />
                               <span>Slack App</span>
+                            </>
+                          ) : (
+                            <>
+                              <WhatsAppIcon className="w-3.5 h-3.5" />
+                              <span>WhatsApp</span>
                             </>
                           )}
                         </motion.div>
@@ -1070,8 +1359,10 @@ const FeatureShowcase = () => {
                           >
                             {platform === 'telegram' ? (
                               <TelegramChat messages={feature.telegram.messages} />
-                            ) : (
+                            ) : platform === 'slack' ? (
                               <SlackChat messages={feature.slack.messages} />
+                            ) : (
+                              <WhatsAppChat messages={feature.whatsapp.messages} />
                             )}
                           </motion.div>
                         </AnimatePresence>
