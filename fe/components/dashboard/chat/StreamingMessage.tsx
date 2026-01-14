@@ -50,7 +50,9 @@ export const StreamingMessage: React.FC<StreamingMessageProps> = ({ content, cur
                 <div className="absolute inset-0 rounded-full bg-primary/20 animate-pulse" />
                 <Loader2 className="w-4 h-4 animate-spin text-primary" />
               </div>
-              <span className="text-xs font-medium text-zinc-600 dark:text-zinc-400">{getToolDisplayName(currentTool)}</span>
+              <span className="text-xs font-medium text-zinc-600 dark:text-zinc-400">
+                {getToolDisplayName(currentTool)}
+              </span>
             </div>
           )}
 
@@ -60,9 +62,7 @@ export const StreamingMessage: React.FC<StreamingMessageProps> = ({ content, cur
             </div>
           )}
 
-          {isStreaming && content && (
-            <span className="inline-block w-2 h-4 ml-1 bg-primary animate-pulse rounded-sm" />
-          )}
+          {isStreaming && content && <span className="inline-block w-2 h-4 ml-1 bg-primary animate-pulse rounded-sm" />}
 
           {isStreaming && !content && !currentTool && (
             <div className="flex items-center gap-3">

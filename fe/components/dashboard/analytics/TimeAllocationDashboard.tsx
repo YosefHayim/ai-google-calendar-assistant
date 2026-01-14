@@ -143,8 +143,8 @@ export const TimeAllocationDashboard: React.FC<TimeAllocationDashboardProps> = (
                   <div className="space-y-2">
                     <h4 className="font-semibold text-sm">Time Allocation</h4>
                     <p className="text-xs text-zinc-600 dark:text-zinc-400">
-                      Visual breakdown of how your time is distributed across different calendars. Each segment represents
-                      the total hours spent in that calendar during the selected date range.
+                      Visual breakdown of how your time is distributed across different calendars. Each segment
+                      represents the total hours spent in that calendar during the selected date range.
                     </p>
                   </div>
                 </HoverCardContent>
@@ -159,9 +159,18 @@ export const TimeAllocationDashboard: React.FC<TimeAllocationDashboardProps> = (
                 const config = chartTypeConfig[type]
                 const IconComponent = config.icon
                 return (
-                  <TabsTrigger key={type} value={type} className="h-6 sm:h-7 px-1.5 sm:px-2 text-[10px] sm:text-xs gap-0.5 sm:gap-1" title={config.label}>
-                    <span className="sm:hidden"><IconComponent size={12} /></span>
-                    <span className="hidden sm:block"><IconComponent size={14} /></span>
+                  <TabsTrigger
+                    key={type}
+                    value={type}
+                    className="h-6 sm:h-7 px-1.5 sm:px-2 text-[10px] sm:text-xs gap-0.5 sm:gap-1"
+                    title={config.label}
+                  >
+                    <span className="sm:hidden">
+                      <IconComponent size={12} />
+                    </span>
+                    <span className="hidden sm:block">
+                      <IconComponent size={14} />
+                    </span>
                     <span className="hidden sm:inline">{config.label}</span>
                   </TabsTrigger>
                 )
@@ -213,7 +222,10 @@ export const TimeAllocationDashboard: React.FC<TimeAllocationDashboardProps> = (
                     role={onCalendarClick && item.calendarId ? 'button' : undefined}
                     tabIndex={onCalendarClick && item.calendarId ? 0 : undefined}
                   >
-                    <div className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-sm flex-shrink-0" style={{ backgroundColor: safeColor }} />
+                    <div
+                      className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-sm flex-shrink-0"
+                      style={{ backgroundColor: safeColor }}
+                    />
                     <span className="flex-1 font-medium text-zinc-800 dark:text-zinc-200 truncate">
                       {item.category}
                     </span>

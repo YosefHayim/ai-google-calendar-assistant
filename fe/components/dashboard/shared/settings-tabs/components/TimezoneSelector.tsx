@@ -59,13 +59,7 @@ interface TimezoneSelectorProps {
   id?: string
 }
 
-export const TimezoneSelector: React.FC<TimezoneSelectorProps> = ({
-  value,
-  onChange,
-  disabled,
-  className,
-  id,
-}) => {
+export const TimezoneSelector: React.FC<TimezoneSelectorProps> = ({ value, onChange, disabled, className, id }) => {
   const [open, setOpen] = useState(false)
   const [search, setSearch] = useState('')
 

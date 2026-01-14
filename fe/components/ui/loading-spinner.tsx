@@ -19,12 +19,7 @@ const sizeClasses = {
  * Consistent loading spinner component used across the application.
  * Use overlay=true for full-container overlays (like loading a conversation).
  */
-export function LoadingSpinner({
-  size = 'md',
-  className,
-  overlay = false,
-  text,
-}: LoadingSpinnerProps) {
+export function LoadingSpinner({ size = 'md', className, overlay = false, text }: LoadingSpinnerProps) {
   const spinner = (
     <div
       className={cn(
@@ -59,13 +54,7 @@ export function LoadingSpinner({
 /**
  * Centered loading spinner for tab content or sections
  */
-export function LoadingSection({
-  text,
-  className,
-}: {
-  text?: string
-  className?: string
-}) {
+export function LoadingSection({ text, className }: { text?: string; className?: string }) {
   return (
     <div className={cn('flex items-center justify-center py-12', className)}>
       <LoadingSpinner size="md" text={text} />

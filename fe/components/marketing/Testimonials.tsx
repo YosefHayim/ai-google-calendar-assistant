@@ -116,9 +116,7 @@ const Testimonials = () => {
           viewport={{ once: true }}
           className="flex flex-col items-center justify-center max-w-[600px] mx-auto mb-12"
         >
-          <p className="text-xs font-bold text-primary uppercase tracking-[0.2em] mb-4">
-            {t('testimonials.badge')}
-          </p>
+          <p className="text-xs font-bold text-primary uppercase tracking-[0.2em] mb-4">{t('testimonials.badge')}</p>
 
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight text-center text-zinc-900 dark:text-zinc-100">
             {t('testimonials.title')}
@@ -144,9 +142,7 @@ const Testimonials = () => {
             </Link>
             <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20">
               <MessageSquarePlus className="w-4 h-4 text-primary" />
-              <span className="text-sm font-medium text-primary">
-                {t('testimonials.cta', 'Be one of the first')}
-              </span>
+              <span className="text-sm font-medium text-primary">{t('testimonials.cta', 'Be one of the first')}</span>
             </div>
           </motion.div>
         </motion.div>

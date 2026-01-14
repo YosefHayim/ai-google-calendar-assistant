@@ -125,12 +125,7 @@ const OTPVerificationPage: React.FC = () => {
                     <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
                       Didn&apos;t receive code?{' '}
                       {canResend ? (
-                        <Button
-                          onClick={handleResend}
-                          type="button"
-                          variant="link"
-                          className="p-0 h-auto font-bold"
-                        >
+                        <Button onClick={handleResend} type="button" variant="link" className="p-0 h-auto font-bold">
                           Send again
                         </Button>
                       ) : (

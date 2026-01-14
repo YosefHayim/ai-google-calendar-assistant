@@ -13,11 +13,11 @@ run:
     port: 3000
   env:
     - name: NODE_ENV
-      value: "production"
+      value: 'production'
     - name: PORT
-      value: "3000"
+      value: '3000'
     - name: HOSTNAME
-      value: "0.0.0.0"
+      value: '0.0.0.0'
   health_check:
     protocol: TCP
     port: 3000

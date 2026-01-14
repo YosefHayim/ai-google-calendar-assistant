@@ -88,7 +88,7 @@ export const useSpeechRecognition = (onFinalTranscription: (text: string) => voi
       }
       setIsRecording(false)
     },
-    [cleanupRecording]
+    [cleanupRecording],
   )
 
   const cancelRecording = useCallback(() => {

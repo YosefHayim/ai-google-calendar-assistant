@@ -190,32 +190,36 @@ const ChatInterface: React.FC = () => {
     if ((!textToSend.trim() && images.length === 0) || isLoading) return
 
     // Build content with images if present
-    const messageContent = images.length > 0
-      ? `${textToSend || 'Please analyze these images and help me with any scheduling or calendar-related content.'}`
-      : textToSend
+    const messageContent =
+      images.length > 0
+        ? `${textToSend || 'Please analyze these images and help me with any scheduling or calendar-related content.'}`
+        : textToSend
 
     const userMessage: Message = {
       id: Date.now().toString(),
       role: 'user',
       content: messageContent,
-      images: images.length > 0 ? images.map(img => ({
-        data: img.base64 || '',
-        mimeType: img.file.type as 'image/png' | 'image/jpeg' | 'image/webp' | 'image/gif',
-      })) : undefined,
+      images:
+        images.length > 0
+          ? images.map((img) => ({
+              data: img.base64 || '',
+              mimeType: img.file.type as 'image/png' | 'image/jpeg' | 'image/webp' | 'image/gif',
+            }))
+          : undefined,
       timestamp: new Date(),
     }
     setMessages((prev) => [...prev, userMessage])
     setInput('')
 
     // Clean up image previews and clear images state
-    images.forEach(img => URL.revokeObjectURL(img.preview))
+    images.forEach((img) => URL.revokeObjectURL(img.preview))
     setImages([])
 
     setError(null)
     resetStreamingState()
 
     // Pass images to streaming message
-    const imageData = userMessage.images?.map(img => ({
+    const imageData = userMessage.images?.map((img) => ({
       type: 'image' as const,
       data: img.data,
       mimeType: img.mimeType,

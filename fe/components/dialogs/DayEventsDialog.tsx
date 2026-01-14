@@ -1,6 +1,18 @@
 'use client'
 
-import { CalendarDays, CircleCheckBig, CircleX, Clock, Hash, Hourglass, Loader2, MapPin, Search, Sun, X } from 'lucide-react'
+import {
+  CalendarDays,
+  CircleCheckBig,
+  CircleX,
+  Clock,
+  Hash,
+  Hourglass,
+  Loader2,
+  MapPin,
+  Search,
+  Sun,
+  X,
+} from 'lucide-react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../ui/dialog'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
 import { Input } from '@/components/ui/input'
@@ -164,7 +176,9 @@ const DayEventsDialog: React.FC<DayEventsDialogProps> = ({
               <div className="flex flex-wrap gap-4 mt-2">
                 <div className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-2">
                   <Clock size={12} className="text-primary" />
-                  <span>{t('dialogs.dayEvents.available', 'Available')}: {availableHours.toFixed(1)}h</span>
+                  <span>
+                    {t('dialogs.dayEvents.available', 'Available')}: {availableHours.toFixed(1)}h
+                  </span>
                 </div>
                 <div className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-2">
                   <Hourglass size={12} className="text-primary" />
@@ -313,10 +327,7 @@ const DayEventsDialog: React.FC<DayEventsDialogProps> = ({
               <p className="text-sm text-zinc-500 dark:text-zinc-400">
                 {t('dialogs.eventSearch.noMatches', 'No events match your search.')}
               </p>
-              <button
-                onClick={clearSearch}
-                className="text-xs text-primary hover:underline mt-2"
-              >
+              <button onClick={clearSearch} className="text-xs text-primary hover:underline mt-2">
                 {t('dialogs.eventSearch.clearSearch', 'Clear search')}
               </button>
             </div>

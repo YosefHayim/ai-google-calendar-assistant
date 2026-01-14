@@ -127,7 +127,10 @@ export const SidebarFooter: React.FC<SidebarFooterProps> = ({
             {onSignOut && (
               <>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={onSignOut} className="cursor-pointer">
+                <DropdownMenuItem
+                  onClick={onSignOut}
+                  className="cursor-pointer hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-500 dark:hover:text-red-400"
+                >
                   <LogOut className="w-4 h-4" />
                   <span>Log out</span>
                 </DropdownMenuItem>

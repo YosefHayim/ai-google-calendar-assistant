@@ -66,9 +66,7 @@ export function CalendarFilterSelect({
           disabled={isLoading}
         >
           <Calendar className="h-4 w-4 text-zinc-500" />
-          <span className="max-w-[150px] truncate text-zinc-700 dark:text-zinc-300">
-            {getSelectedCalendarNames()}
-          </span>
+          <span className="max-w-[150px] truncate text-zinc-700 dark:text-zinc-300">{getSelectedCalendarNames()}</span>
           <ChevronDown className="h-3.5 w-3.5 text-zinc-400" />
         </Button>
       </PopoverTrigger>
@@ -100,15 +98,13 @@ export function CalendarFilterSelect({
             className={cn(
               'flex w-full items-center gap-3 rounded-md px-2 py-2 text-sm transition-colors',
               'hover:bg-zinc-100 dark:hover:bg-zinc-800',
-              isAllSelected && 'bg-zinc-100 dark:bg-zinc-800'
+              isAllSelected && 'bg-zinc-100 dark:bg-zinc-800',
             )}
           >
             <div
               className={cn(
                 'flex h-4 w-4 items-center justify-center rounded border',
-                isAllSelected
-                  ? 'border-primary bg-primary text-white'
-                  : 'border-zinc-300 dark:border-zinc-600'
+                isAllSelected ? 'border-primary bg-primary text-white' : 'border-zinc-300 dark:border-zinc-600',
               )}
             >
               {isAllSelected && <Check className="h-3 w-3" />}
@@ -134,26 +130,19 @@ export function CalendarFilterSelect({
                 className={cn(
                   'flex w-full items-center gap-3 rounded-md px-2 py-2 text-sm transition-colors',
                   'hover:bg-zinc-100 dark:hover:bg-zinc-800',
-                  isSelected && 'bg-zinc-100 dark:bg-zinc-800'
+                  isSelected && 'bg-zinc-100 dark:bg-zinc-800',
                 )}
               >
                 <div
                   className={cn(
                     'flex h-4 w-4 items-center justify-center rounded border',
-                    isSelected
-                      ? 'border-primary bg-primary text-white'
-                      : 'border-zinc-300 dark:border-zinc-600'
+                    isSelected ? 'border-primary bg-primary text-white' : 'border-zinc-300 dark:border-zinc-600',
                   )}
                 >
                   {isSelected && <Check className="h-3 w-3" />}
                 </div>
-                <div
-                  className="h-3 w-3 rounded-full flex-shrink-0"
-                  style={{ backgroundColor: calendarColor }}
-                />
-                <span className="truncate text-zinc-700 dark:text-zinc-300">
-                  {calendar.summary || calendar.id}
-                </span>
+                <div className="h-3 w-3 rounded-full flex-shrink-0" style={{ backgroundColor: calendarColor }} />
+                <span className="truncate text-zinc-700 dark:text-zinc-300">{calendar.summary || calendar.id}</span>
               </button>
             )
           })}

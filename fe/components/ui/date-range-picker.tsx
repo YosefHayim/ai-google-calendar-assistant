@@ -30,7 +30,16 @@ interface DatePickerWithRangeProps extends React.HTMLAttributes<HTMLDivElement> 
   setDate: (date: DateRange | undefined) => void
 }
 
-type PresetKey = 'yesterday' | 'today' | 'last7' | 'last30' | 'thisWeek' | 'thisMonth' | 'prevMonth' | 'thisYear' | 'custom'
+type PresetKey =
+  | 'yesterday'
+  | 'today'
+  | 'last7'
+  | 'last30'
+  | 'thisWeek'
+  | 'thisMonth'
+  | 'prevMonth'
+  | 'thisYear'
+  | 'custom'
 
 export function DatePickerWithRange({ className, date, setDate }: DatePickerWithRangeProps) {
   const [isOpen, setIsOpen] = React.useState(false)
@@ -217,7 +226,7 @@ export function DatePickerWithRange({ className, date, setDate }: DatePickerWith
                             variant="outline"
                             className={cn(
                               'w-full h-8 justify-start text-left font-normal text-xs',
-                              !internalDate?.from && 'text-muted-foreground'
+                              !internalDate?.from && 'text-muted-foreground',
                             )}
                           >
                             <CalendarIcon className="mr-2 h-3 w-3" />
@@ -256,7 +265,7 @@ export function DatePickerWithRange({ className, date, setDate }: DatePickerWith
                             variant="outline"
                             className={cn(
                               'w-full h-8 justify-start text-left font-normal text-xs',
-                              !internalDate?.to && 'text-muted-foreground'
+                              !internalDate?.to && 'text-muted-foreground',
                             )}
                           >
                             <CalendarIcon className="mr-2 h-3 w-3" />

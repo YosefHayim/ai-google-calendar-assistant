@@ -21,7 +21,7 @@ export const SettingsRow: React.FC<SettingsRowProps> = ({ title, tooltip, contro
       className={cn(
         'flex flex-col gap-2 min-h-[48px] py-3',
         'sm:grid sm:grid-cols-3 sm:items-center sm:gap-4',
-        className
+        className,
       )}
       role="group"
       aria-labelledby={id ? `${id}-label` : undefined}
@@ -29,7 +29,10 @@ export const SettingsRow: React.FC<SettingsRowProps> = ({ title, tooltip, contro
       <div className="flex items-center justify-between gap-1 sm:justify-start">
         <div className="flex items-center gap-1 min-w-0">
           {icon && <span className="flex-shrink-0 mr-1.5">{icon}</span>}
-          <span id={id ? `${id}-label` : undefined} className="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">
+          <span
+            id={id ? `${id}-label` : undefined}
+            className="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate"
+          >
             {title}
           </span>
         </div>

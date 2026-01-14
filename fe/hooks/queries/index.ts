@@ -63,10 +63,4 @@ export {
 } from './preferences'
 
 // Billing hooks
-export {
-  billingKeys,
-  useSubscriptionStatus,
-  usePlans,
-  useBillingOverview,
-  useBillingData,
-} from './billing'
+export { billingKeys, useSubscriptionStatus, usePlans, useBillingOverview, useBillingData } from './billing'

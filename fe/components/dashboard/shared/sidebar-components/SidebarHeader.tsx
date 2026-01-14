@@ -22,11 +22,7 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = ({ isOpen, onClose, o
     >
       {isOpen && (
         <div className="flex items-center gap-2">
-          <AnimatedHamburger
-            isOpen={true}
-            onClick={onClose}
-            className="md:hidden"
-          />
+          <AnimatedHamburger isOpen={true} onClick={onClose} className="md:hidden" />
           <Link href="/dashboard" className="flex items-center gap-2">
             <div className="w-8 h-8 bg-zinc-900 dark:bg-white rounded-md flex items-center justify-center text-white dark:text-zinc-900">
               <AllyLogo className="w-5 h-5" />
@@ -38,19 +34,10 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = ({ isOpen, onClose, o
         </div>
       )}
       <div className="flex items-center gap-1">
-        <Button
-          size="icon"
-          onClick={onNewChat}
-          title="New Chat"
-        >
+        <Button size="icon" onClick={onNewChat} title="New Chat">
           <Plus className="w-5 h-5" />
         </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={onToggle}
-          className="text-zinc-500 hidden md:flex"
-        >
+        <Button variant="ghost" size="icon" onClick={onToggle} className="text-zinc-500 hidden md:flex">
           {isOpen ? <ChevronLeft className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
         </Button>
       </div>

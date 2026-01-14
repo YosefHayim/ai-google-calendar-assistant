@@ -368,13 +368,19 @@ export const ChatInput = forwardRef<HTMLInputElement, ChatInputProps>(
                 onChange={(e) => onInputChange(e.target.value)}
                 onPaste={handlePaste}
                 maxLength={MAX_INPUT_LENGTH}
-                placeholder={images.length > 0 ? 'Add a message about your images...' : 'What do you have for me today? I\'m ready to help you.'}
+                placeholder={
+                  images.length > 0
+                    ? 'Add a message about your images...'
+                    : "What do you have for me today? I'm ready to help you."
+                }
                 className={`w-full h-7 md:h-14 max-h-[200px] md:max-h-none bg-transparent border-0 shadow-none focus-visible:ring-0 text-sm md:text-lg font-medium placeholder:italic placeholder:font-normal ${inputDirection === 'rtl' ? 'text-right' : ''} ${isInputTooLong ? 'text-red-500' : ''}`}
                 disabled={isDisabled}
                 dir={inputDirection}
               />
               {input.length > MAX_INPUT_LENGTH * 0.8 && (
-                <span className={`absolute right-2 bottom-0 text-xs ${isInputTooLong ? 'text-red-500' : 'text-zinc-400'}`}>
+                <span
+                  className={`absolute right-2 bottom-0 text-xs ${isInputTooLong ? 'text-red-500' : 'text-zinc-400'}`}
+                >
                   {input.length}/{MAX_INPUT_LENGTH}
                 </span>
               )}

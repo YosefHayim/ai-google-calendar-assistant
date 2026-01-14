@@ -118,7 +118,7 @@ export const INPUT_LIMITS = {
  */
 export function validateInputLength(
   input: string,
-  maxLength: number
+  maxLength: number,
 ): { isValid: boolean; error?: string; remaining: number } {
   const length = input.length
   const remaining = maxLength - length

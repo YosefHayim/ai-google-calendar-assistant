@@ -220,9 +220,7 @@ const TelegramChat = ({ messages }: { messages: Message[] }) => (
       <button className="p-2 text-[#6C7883] hover:text-white transition-colors">
         <Plus className="w-6 h-6" />
       </button>
-      <div className="flex-1 bg-[#242F3D] rounded-full px-4 py-2 text-sm text-[#6C7883]">
-        Message
-      </div>
+      <div className="flex-1 bg-[#242F3D] rounded-full px-4 py-2 text-sm text-[#6C7883]">Message</div>
       <button className="p-2 text-[#6C7883] hover:text-white transition-colors">
         <Mic className="w-6 h-6" />
       </button>
@@ -295,11 +293,7 @@ const SlackChat = ({ messages }: { messages: Message[] }) => (
                   <span className="px-1.5 py-0.5 rounded text-[10px] bg-[#5865F2] text-white">APP</span>
                   <span className="text-[10px] text-[#72767D]">{msg.time}</span>
                 </div>
-                {msg.showTyping ? (
-                  <TypingIndicator />
-                ) : (
-                  <div className="text-sm text-[#DCDDDE]">{msg.content}</div>
-                )}
+                {msg.showTyping ? <TypingIndicator /> : <div className="text-sm text-[#DCDDDE]">{msg.content}</div>}
               </div>
             </>
           )}
@@ -344,7 +338,7 @@ const WebCalendarView = () => (
           transition={{ delay: 0.2 + i * 0.1 }}
           className={cn(
             'flex items-center gap-3 p-3 rounded-xl bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700',
-            event.focus && 'ring-2 ring-emerald-500/50'
+            event.focus && 'ring-2 ring-emerald-500/50',
           )}
         >
           <div className={cn('w-1 h-12 rounded-full', event.color)} />
@@ -835,12 +829,8 @@ const FEATURES: Feature[] = [
                 <div className="text-xs text-[#72767D] mt-1">📅 Tomorrow, 12:00 PM - 1:00 PM</div>
               </div>
               <div className="flex gap-2">
-                <button className="px-4 py-1.5 bg-emerald-500 text-white rounded text-xs font-medium">
-                  ✓ Create
-                </button>
-                <button className="px-4 py-1.5 bg-[#4F545C] text-white rounded text-xs font-medium">
-                  Cancel
-                </button>
+                <button className="px-4 py-1.5 bg-emerald-500 text-white rounded text-xs font-medium">✓ Create</button>
+                <button className="px-4 py-1.5 bg-[#4F545C] text-white rounded text-xs font-medium">Cancel</button>
               </div>
             </div>
           ),
@@ -871,7 +861,7 @@ const FEATURES: Feature[] = [
                     key={lang}
                     className={cn(
                       'px-2 py-1 rounded-lg text-xs',
-                      lang.includes('English') ? 'bg-primary/30 text-primary' : 'bg-white/10'
+                      lang.includes('English') ? 'bg-primary/30 text-primary' : 'bg-white/10',
                     )}
                   >
                     {lang}
@@ -899,7 +889,7 @@ const FEATURES: Feature[] = [
                     key={lang}
                     className={cn(
                       'px-2 py-1.5 rounded text-xs font-medium transition-colors',
-                      i === 0 ? 'bg-primary text-white' : 'bg-[#4F545C] text-[#DCDDDE] hover:bg-[#5D6269]'
+                      i === 0 ? 'bg-primary text-white' : 'bg-[#4F545C] text-[#DCDDDE] hover:bg-[#5D6269]',
                     )}
                   >
                     {lang}
@@ -916,13 +906,7 @@ const FEATURES: Feature[] = [
   },
 ]
 
-const PlatformToggle = ({
-  platform,
-  onToggle,
-}: {
-  platform: Platform
-  onToggle: (p: Platform) => void
-}) => (
+const PlatformToggle = ({ platform, onToggle }: { platform: Platform; onToggle: (p: Platform) => void }) => (
   <div className="flex justify-center mb-8">
     <div className="inline-flex items-center p-1 rounded-full bg-zinc-100 dark:bg-zinc-800/80 backdrop-blur-sm border border-zinc-200 dark:border-zinc-700 shadow-lg">
       <button
@@ -931,7 +915,7 @@ const PlatformToggle = ({
           'relative flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300',
           platform === 'telegram'
             ? 'text-white'
-            : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200'
+            : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200',
         )}
       >
         {platform === 'telegram' && (
@@ -950,7 +934,7 @@ const PlatformToggle = ({
           'relative flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300',
           platform === 'slack'
             ? 'text-white'
-            : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200'
+            : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200',
         )}
       >
         {platform === 'slack' && (
@@ -997,11 +981,7 @@ const FeatureShowcase = () => {
 
       <div className="max-w-7xl mx-auto relative z-10">
         <PlatformToggle platform={platform} onToggle={setPlatform} />
-        <div
-          className="relative"
-          onMouseEnter={() => setIsPaused(true)}
-          onMouseLeave={() => setIsPaused(false)}
-        >
+        <div className="relative" onMouseEnter={() => setIsPaused(true)} onMouseLeave={() => setIsPaused(false)}>
           <button
             onClick={prevSlide}
             className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/80 dark:bg-zinc-800/80 backdrop-blur-sm shadow-xl flex items-center justify-center text-zinc-600 dark:text-zinc-400 hover:text-primary hover:scale-110 transition-all border border-zinc-200 dark:border-zinc-700"
@@ -1030,9 +1010,7 @@ const FeatureShowcase = () => {
               return (
                 <div
                   key={feature.id}
-                  className={cn(
-                    'absolute transition-all duration-500 ease-out flex items-center justify-center'
-                  )}
+                  className={cn('absolute transition-all duration-500 ease-out flex items-center justify-center')}
                   style={{
                     transform: `
                       translateX(${pos * 55}%) 
@@ -1060,7 +1038,7 @@ const FeatureShowcase = () => {
                             'absolute -top-6 left-1/2 -translate-x-1/2 flex items-center gap-2 text-white px-3 py-1.5 rounded-full text-xs font-medium shadow-lg z-20 whitespace-nowrap',
                             platform === 'telegram'
                               ? 'bg-gradient-to-r from-[#0088cc] to-[#00a2e8] shadow-[#0088cc]/30'
-                              : 'bg-gradient-to-r from-[#611f69] to-[#4A154B] shadow-[#611f69]/30'
+                              : 'bg-gradient-to-r from-[#611f69] to-[#4A154B] shadow-[#611f69]/30',
                           )}
                         >
                           {platform === 'telegram' ? (
@@ -1077,10 +1055,9 @@ const FeatureShowcase = () => {
                         </motion.div>
                       )}
                     </AnimatePresence>
-                    <div className={cn(
-                      'transform transition-transform duration-500',
-                      isCenter ? 'scale-100' : 'scale-90'
-                    )}>
+                    <div
+                      className={cn('transform transition-transform duration-500', isCenter ? 'scale-100' : 'scale-90')}
+                    >
                       <PhoneMockup>
                         <AnimatePresence mode="wait">
                           <motion.div

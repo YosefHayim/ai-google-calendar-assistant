@@ -29,11 +29,7 @@ export const DailyHoursBarChart: React.FC<DailyHoursBarChartProps> = ({ data, on
 
   return (
     <ChartContainer config={chartConfig} className="aspect-auto h-[250px] w-full">
-      <BarChart
-        accessibilityLayer
-        data={chartData}
-        margin={{ left: 12, right: 12 }}
-      >
+      <BarChart accessibilityLayer data={chartData} margin={{ left: 12, right: 12 }}>
         <CartesianGrid vertical={false} className="stroke-zinc-200 dark:stroke-zinc-800" />
         <XAxis
           dataKey="formattedDate"

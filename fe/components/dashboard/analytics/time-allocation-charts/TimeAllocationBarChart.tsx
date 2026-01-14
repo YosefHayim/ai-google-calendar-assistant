@@ -28,11 +28,7 @@ export const TimeAllocationBarChart: React.FC<TimeAllocationBarChartProps> = ({ 
 
   return (
     <ChartContainer config={chartConfig} className="aspect-auto h-[280px] w-full">
-      <BarChart
-        accessibilityLayer
-        data={chartData}
-        margin={{ left: 12, right: 12, top: 12, bottom: 12 }}
-      >
+      <BarChart accessibilityLayer data={chartData} margin={{ left: 12, right: 12, top: 12, bottom: 12 }}>
         <CartesianGrid vertical={false} className="stroke-zinc-200 dark:stroke-zinc-800" />
         <XAxis
           dataKey="category"

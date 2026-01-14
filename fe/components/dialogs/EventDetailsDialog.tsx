@@ -260,12 +260,7 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
             </div>
 
             <div className="flex items-center gap-3">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowReschedule(true)}
-                className="text-xs"
-              >
+              <Button variant="outline" size="sm" onClick={() => setShowReschedule(true)} className="text-xs">
                 <RefreshCw size={12} className="mr-1.5" />
                 Reschedule
               </Button>

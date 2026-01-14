@@ -45,7 +45,7 @@ export function GrantCreditsDialog({ user, onClose }: GrantCreditsDialogProps) {
         onError: (error) => {
           alert(`Failed to grant credits: ${error.message}`)
         },
-      }
+      },
     )
   }
 
@@ -57,9 +57,7 @@ export function GrantCreditsDialog({ user, onClose }: GrantCreditsDialogProps) {
             <CreditCard className="w-5 h-5 text-primary" />
             Grant Credits
           </DialogTitle>
-          <DialogDescription>
-            Add credits to {user.display_name || user.email}&apos;s account
-          </DialogDescription>
+          <DialogDescription>Add credits to {user.display_name || user.email}&apos;s account</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">

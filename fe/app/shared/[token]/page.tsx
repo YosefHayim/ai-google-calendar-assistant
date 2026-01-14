@@ -14,9 +14,7 @@ function MessageBubble({ message, isUser }: { message: ChatMessage; isUser: bool
       <div
         className={cn(
           'max-w-[80%] rounded-2xl px-4 py-3',
-          isUser
-            ? 'bg-primary text-primary-foreground rounded-br-md'
-            : 'bg-muted text-foreground rounded-bl-md',
+          isUser ? 'bg-primary text-primary-foreground rounded-br-md' : 'bg-muted text-foreground rounded-bl-md',
         )}
       >
         <p className="text-sm whitespace-pre-wrap">{message.content}</p>
@@ -76,10 +74,7 @@ export default function SharedConversationPage() {
           </div>
           <h1 className="text-2xl font-semibold mb-2">Conversation Not Found</h1>
           <p className="text-muted-foreground mb-6">{error}</p>
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-primary hover:underline"
-          >
+          <Link href="/" className="inline-flex items-center gap-2 text-primary hover:underline">
             <ArrowLeft className="w-4 h-4" />
             Go to homepage
           </Link>
@@ -111,10 +106,7 @@ export default function SharedConversationPage() {
                 </div>
               </div>
             </div>
-            <Link
-              href="/"
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
+            <Link href="/" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               Try Ask Ally
             </Link>
           </div>

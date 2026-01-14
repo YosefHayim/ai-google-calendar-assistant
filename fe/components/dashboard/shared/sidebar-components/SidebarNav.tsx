@@ -57,7 +57,10 @@ const NavLink: React.FC<NavLinkProps> = ({
               <Info className="w-3.5 h-3.5" />
             </button>
           </TooltipTrigger>
-          <TooltipContent side="right" className="max-w-[220px] bg-zinc-900 dark:bg-zinc-800 text-zinc-100 border-zinc-700">
+          <TooltipContent
+            side="right"
+            className="max-w-[220px] bg-zinc-900 dark:bg-zinc-800 text-zinc-100 border-zinc-700"
+          >
             <p className="text-xs leading-relaxed">{description}</p>
           </TooltipContent>
         </Tooltip>

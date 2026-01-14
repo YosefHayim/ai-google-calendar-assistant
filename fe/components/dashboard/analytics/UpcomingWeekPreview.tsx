@@ -64,7 +64,9 @@ const DayCard: React.FC<{ day: UpcomingDayData }> = ({ day }) => {
           )}
 
           <span className="text-[10px] sm:text-xs font-medium text-zinc-500 dark:text-zinc-400">{day.dayShort}</span>
-          <span className="text-base sm:text-lg font-bold text-zinc-900 dark:text-zinc-100">{format(day.date, 'd')}</span>
+          <span className="text-base sm:text-lg font-bold text-zinc-900 dark:text-zinc-100">
+            {format(day.date, 'd')}
+          </span>
 
           {/* Busyness indicator */}
           <div className="mt-0.5 sm:mt-1 flex gap-0.5">
@@ -105,9 +107,7 @@ const DayCard: React.FC<{ day: UpcomingDayData }> = ({ day }) => {
         <div className="p-3 border-b border-zinc-200 dark:border-zinc-800">
           <div className="flex items-center justify-between">
             <h4 className="font-semibold text-zinc-900 dark:text-zinc-100">{day.dayName}</h4>
-            <span
-              className={`text-xs px-2 py-0.5 rounded-full ${BUSYNESS_COLORS[day.busynessLevel]} font-medium`}
-            >
+            <span className={`text-xs px-2 py-0.5 rounded-full ${BUSYNESS_COLORS[day.busynessLevel]} font-medium`}>
               {BUSYNESS_TEXT[day.busynessLevel]}
             </span>
           </div>
@@ -130,9 +130,13 @@ const DayCard: React.FC<{ day: UpcomingDayData }> = ({ day }) => {
                   />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5">
-                      <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate flex-1">{event.summary}</p>
+                      <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate flex-1">
+                        {event.summary}
+                      </p>
                       {event.isRecurring && (
-                        <span title="Recurring event"><Repeat className="w-3 h-3 text-zinc-400 flex-shrink-0" /></span>
+                        <span title="Recurring event">
+                          <Repeat className="w-3 h-3 text-zinc-400 flex-shrink-0" />
+                        </span>
                       )}
                     </div>
                     <p className="text-xs text-zinc-500 dark:text-zinc-400">
@@ -159,7 +163,12 @@ const DayCard: React.FC<{ day: UpcomingDayData }> = ({ day }) => {
   )
 }
 
-const UpcomingWeekPreview: React.FC<UpcomingWeekPreviewProps> = ({ data, isLoading = false, isError = false, onRetry }) => {
+const UpcomingWeekPreview: React.FC<UpcomingWeekPreviewProps> = ({
+  data,
+  isLoading = false,
+  isError = false,
+  onRetry,
+}) => {
   if (isLoading) {
     return (
       <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-sm p-4 sm:p-6">
@@ -187,7 +196,9 @@ const UpcomingWeekPreview: React.FC<UpcomingWeekPreviewProps> = ({ data, isLoadi
           <h3 className="font-semibold text-sm sm:text-base text-zinc-900 dark:text-zinc-100">Upcoming Week</h3>
         </div>
         <div className="text-center py-6 sm:py-8">
-          <p className="text-sm sm:text-base text-zinc-500 dark:text-zinc-400 mb-3 sm:mb-4">Failed to load upcoming events</p>
+          <p className="text-sm sm:text-base text-zinc-500 dark:text-zinc-400 mb-3 sm:mb-4">
+            Failed to load upcoming events
+          </p>
           {onRetry && (
             <Button variant="outline" size="sm" onClick={onRetry}>
               Retry
@@ -209,7 +220,9 @@ const UpcomingWeekPreview: React.FC<UpcomingWeekPreviewProps> = ({ data, isLoadi
           <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center flex-shrink-0">
             <CalendarDays className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-zinc-900 dark:text-primary" />
           </div>
-          <h3 className="font-semibold text-sm sm:text-base text-zinc-900 dark:text-zinc-100 truncate">Upcoming Week</h3>
+          <h3 className="font-semibold text-sm sm:text-base text-zinc-900 dark:text-zinc-100 truncate">
+            Upcoming Week
+          </h3>
         </div>
         <div className="flex items-center gap-1 text-[10px] sm:text-xs text-zinc-500 dark:text-zinc-400 flex-shrink-0">
           <Clock className="w-3 h-3" />

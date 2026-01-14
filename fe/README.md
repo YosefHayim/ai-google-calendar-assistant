@@ -46,108 +46,108 @@ This frontend application provides:
 
 ### AI Chat Interface
 
-| Feature | Description |
-|---------|-------------|
-| **Streaming Responses** | Real-time text streaming with typewriter effect via SSE |
-| **Natural Language** | Create, update, delete events via conversation |
-| **Conversation History** | Persistent conversations with AI-generated titles |
-| **Multiple View Modes** | Chat view, Avatar view, 3D visualization |
-| **Voice Input** | Speech-to-text via browser API and LiveKit |
-| **Voice Orb** | Visual feedback animation during voice input |
-| **Image Upload** | Upload images for AI vision analysis |
-| **Markdown Support** | Rich text rendering with syntax highlighting |
-| **Message Actions** | Copy, regenerate, and feedback options |
-| **TTS Caching** | Cached text-to-speech for repeated responses |
+| Feature                  | Description                                             |
+| ------------------------ | ------------------------------------------------------- |
+| **Streaming Responses**  | Real-time text streaming with typewriter effect via SSE |
+| **Natural Language**     | Create, update, delete events via conversation          |
+| **Conversation History** | Persistent conversations with AI-generated titles       |
+| **Multiple View Modes**  | Chat view, Avatar view, 3D visualization                |
+| **Voice Input**          | Speech-to-text via browser API and LiveKit              |
+| **Voice Orb**            | Visual feedback animation during voice input            |
+| **Image Upload**         | Upload images for AI vision analysis                    |
+| **Markdown Support**     | Rich text rendering with syntax highlighting            |
+| **Message Actions**      | Copy, regenerate, and feedback options                  |
+| **TTS Caching**          | Cached text-to-speech for repeated responses            |
 
 ### Dashboard Views
 
-| View | Route | Description |
-|------|-------|-------------|
-| **Main Dashboard** | `/dashboard` | Chat interface with sidebar navigation |
-| **Analytics** | `/dashboard/analytics` | Calendar insights, time allocation, patterns |
-| **Billing** | `/dashboard/billing` | Subscription management, payment history |
-| **Integrations** | `/dashboard/integrations` | Connect/disconnect Google Calendar |
+| View               | Route                     | Description                                  |
+| ------------------ | ------------------------- | -------------------------------------------- |
+| **Main Dashboard** | `/dashboard`              | Chat interface with sidebar navigation       |
+| **Analytics**      | `/dashboard/analytics`    | Calendar insights, time allocation, patterns |
+| **Billing**        | `/dashboard/billing`      | Subscription management, payment history     |
+| **Integrations**   | `/dashboard/integrations` | Connect/disconnect Google Calendar           |
 
 ### Admin Dashboard
 
-| Page | Route | Description |
-|------|-------|-------------|
-| **Users** | `/admin/users` | Search, view, manage all users |
-| **Subscriptions** | `/admin/subscriptions` | Monitor subscription statuses |
-| **Payments** | `/admin/payments` | Transaction history |
-| **Audit Logs** | `/admin/audit-logs` | Security event tracking |
+| Page              | Route                  | Description                    |
+| ----------------- | ---------------------- | ------------------------------ |
+| **Users**         | `/admin/users`         | Search, view, manage all users |
+| **Subscriptions** | `/admin/subscriptions` | Monitor subscription statuses  |
+| **Payments**      | `/admin/payments`      | Transaction history            |
+| **Audit Logs**    | `/admin/audit-logs`    | Security event tracking        |
 
 ### Analytics Dashboard Components
 
-| Component | Description |
-|-----------|-------------|
-| **BentoStatsGrid** | Key metrics in animated grid layout |
-| **TimeAllocationChart** | Category-based time distribution (pie chart) |
-| **DailyAvailableHoursChart** | Daily free time analysis (bar chart) |
-| **WeeklyPatternDashboard** | Day-of-week activity heatmap |
-| **MonthlyPatternChart** | Month-over-month trends (line chart) |
-| **EventDurationDashboard** | Event length distribution |
-| **RecentEvents** | Latest calendar entries list |
-| **UpcomingWeekPreview** | Next 7 days overview |
-| **FocusTimeTracker** | Deep work time analysis |
-| **ScheduleHealthScore** | Overall schedule quality metric |
-| **CalendarFilterSelect** | Filter analytics by calendar |
-| **TimeDistributionChart** | Hourly activity breakdown |
+| Component                    | Description                                  |
+| ---------------------------- | -------------------------------------------- |
+| **BentoStatsGrid**           | Key metrics in animated grid layout          |
+| **TimeAllocationChart**      | Category-based time distribution (pie chart) |
+| **DailyAvailableHoursChart** | Daily free time analysis (bar chart)         |
+| **WeeklyPatternDashboard**   | Day-of-week activity heatmap                 |
+| **MonthlyPatternChart**      | Month-over-month trends (line chart)         |
+| **EventDurationDashboard**   | Event length distribution                    |
+| **RecentEvents**             | Latest calendar entries list                 |
+| **UpcomingWeekPreview**      | Next 7 days overview                         |
+| **FocusTimeTracker**         | Deep work time analysis                      |
+| **ScheduleHealthScore**      | Overall schedule quality metric              |
+| **CalendarFilterSelect**     | Filter analytics by calendar                 |
+| **TimeDistributionChart**    | Hourly activity breakdown                    |
 
 ### Modal Dialogs (15 Variants)
 
-| Dialog | Description |
-|--------|-------------|
-| **QuickEventDialog** | Fast event creation with preview |
-| **EventDetailsDialog** | View and manage single events |
-| **CalendarEventsDialog** | Browse events by calendar |
-| **DayEventsDialog** | View all events for a specific day |
-| **CalendarSettingsDialog** | Manage calendar preferences |
-| **CreateCalendarDialog** | Create new secondary calendars |
-| **EventsListDialog** | Paginated event listing |
-| **RescheduleDialog** | Smart event rescheduling with conflict detection |
-| **GapRecoveryDialog** | Fill untracked time gaps |
-| **UserDetailsDialog** | Admin: detailed user information |
-| **GrantCreditsDialog** | Admin: grant user credits |
+| Dialog                     | Description                                      |
+| -------------------------- | ------------------------------------------------ |
+| **QuickEventDialog**       | Fast event creation with preview                 |
+| **EventDetailsDialog**     | View and manage single events                    |
+| **CalendarEventsDialog**   | Browse events by calendar                        |
+| **DayEventsDialog**        | View all events for a specific day               |
+| **CalendarSettingsDialog** | Manage calendar preferences                      |
+| **CreateCalendarDialog**   | Create new secondary calendars                   |
+| **EventsListDialog**       | Paginated event listing                          |
+| **RescheduleDialog**       | Smart event rescheduling with conflict detection |
+| **GapRecoveryDialog**      | Fill untracked time gaps                         |
+| **UserDetailsDialog**      | Admin: detailed user information                 |
+| **GrantCreditsDialog**     | Admin: grant user credits                        |
 
 ### Marketing Pages
 
-| Page | Route | Description |
-|------|-------|-------------|
-| **Landing** | `/` | Hero section with feature showcase |
-| **Pricing** | `/pricing` | Tiered pricing with animated testimonials |
-| **About** | `/about` | Company and product information |
-| **Contact** | `/contact` | Contact form with email integration |
-| **Waiting List** | `/waitinglist` | Early access signup |
-| **Privacy** | `/privacy` | Privacy policy |
-| **Terms** | `/terms` | Terms of service |
+| Page             | Route          | Description                               |
+| ---------------- | -------------- | ----------------------------------------- |
+| **Landing**      | `/`            | Hero section with feature showcase        |
+| **Pricing**      | `/pricing`     | Tiered pricing with animated testimonials |
+| **About**        | `/about`       | Company and product information           |
+| **Contact**      | `/contact`     | Contact form with email integration       |
+| **Waiting List** | `/waitinglist` | Early access signup                       |
+| **Privacy**      | `/privacy`     | Privacy policy                            |
+| **Terms**        | `/terms`       | Terms of service                          |
 
 ### Authentication
 
-| Feature | Description |
-|---------|-------------|
-| **Email/Password** | Traditional signup and signin |
-| **Google OAuth** | One-click Google authentication |
-| **OTP Verification** | Email verification code |
-| **Session Management** | Automatic token refresh on focus |
-| **Protected Routes** | Route guards for authenticated pages |
+| Feature                | Description                          |
+| ---------------------- | ------------------------------------ |
+| **Email/Password**     | Traditional signup and signin        |
+| **Google OAuth**       | One-click Google authentication      |
+| **OTP Verification**   | Email verification code              |
+| **Session Management** | Automatic token refresh on focus     |
+| **Protected Routes**   | Route guards for authenticated pages |
 
 ### Mobile & Responsive
 
-| Feature | Description |
-|---------|-------------|
-| **Hamburger Menu** | Mobile sidebar access via hamburger menu |
-| **Responsive Layouts** | Adaptive UI for all screen sizes |
-| **Touch-Friendly** | Optimized touch interactions |
+| Feature                | Description                              |
+| ---------------------- | ---------------------------------------- |
+| **Hamburger Menu**     | Mobile sidebar access via hamburger menu |
+| **Responsive Layouts** | Adaptive UI for all screen sizes         |
+| **Touch-Friendly**     | Optimized touch interactions             |
 
 ### 3D Visualizations
 
-| Component | Description |
-|-----------|-------------|
+| Component          | Description                        |
+| ------------------ | ---------------------------------- |
 | **WallCalendar3D** | Interactive Three.js calendar view |
-| **WireframeGlobe** | Animated dotted globe |
-| **Particles** | tsParticles background effects |
-| **AllyCharacter** | 3D AI assistant animation |
+| **WireframeGlobe** | Animated dotted globe              |
+| **Particles**      | tsParticles background effects     |
+| **AllyCharacter**  | 3D AI assistant animation          |
 
 ---
 
@@ -280,12 +280,12 @@ User Message
 
 ### Overview
 
-| Type | Tool | Use Case |
-|------|------|----------|
-| **Server State** | TanStack Query | API data, caching, background refresh |
-| **UI State** | React Context | Auth, chat, dashboard, sidebar |
-| **Form State** | React Hook Form | Form fields, validation |
-| **URL State** | Next.js routing | Filters, pagination, navigation |
+| Type             | Tool            | Use Case                              |
+| ---------------- | --------------- | ------------------------------------- |
+| **Server State** | TanStack Query  | API data, caching, background refresh |
+| **UI State**     | React Context   | Auth, chat, dashboard, sidebar        |
+| **Form State**   | React Hook Form | Form fields, validation               |
+| **URL State**    | Next.js routing | Filters, pagination, navigation       |
 
 ### React Contexts
 
@@ -303,6 +303,7 @@ interface AuthContextType {
 ```
 
 **Features:**
+
 - User authentication state
 - Session management with auto-refresh
 - Google OAuth integration
@@ -324,6 +325,7 @@ interface ChatContextType {
 ```
 
 **Features:**
+
 - Conversation management
 - Message streaming state
 - Real-time message updates
@@ -344,6 +346,7 @@ interface AnalyticsContextType {
 ```
 
 **Features:**
+
 - Date range filtering
 - Calendar selection
 - Analytics data caching
@@ -363,16 +366,17 @@ interface DashboardUIContextType {
 ```
 
 **Features:**
+
 - Modal dialog management
 - Selected item tracking
 - Cross-component state sharing
 
 #### Other Contexts
 
-| Context | Purpose |
-|---------|---------|
-| **SidebarContext** | Sidebar collapse/expand state |
-| **LanguageContext** | i18n locale management |
+| Context                | Purpose                           |
+| ---------------------- | --------------------------------- |
+| **SidebarContext**     | Sidebar collapse/expand state     |
+| **LanguageContext**    | i18n locale management            |
 | **GapRecoveryContext** | Gap analysis state and operations |
 
 #### GapRecoveryContext
@@ -390,6 +394,7 @@ interface GapRecoveryContextType {
 ```
 
 **Features:**
+
 - Detect untracked time between calendar events
 - Suggest events to fill detected gaps
 - AI-powered activity recommendations
@@ -462,69 +467,69 @@ Built with Radix UI and shadcn/ui for accessibility and consistency.
 
 #### Layout Components
 
-| Component | Description | Location |
-|-----------|-------------|----------|
-| `Sidebar` | Collapsible navigation | `components/dashboard/shared/` |
-| `Header` | Dashboard header with user menu | `components/dashboard/shared/` |
-| `Footer` | Marketing page footer | `components/marketing/` |
-| `Card` | Content container | `components/ui/card.tsx` |
-| `Separator` | Visual divider | `components/ui/separator.tsx` |
+| Component   | Description                     | Location                       |
+| ----------- | ------------------------------- | ------------------------------ |
+| `Sidebar`   | Collapsible navigation          | `components/dashboard/shared/` |
+| `Header`    | Dashboard header with user menu | `components/dashboard/shared/` |
+| `Footer`    | Marketing page footer           | `components/marketing/`        |
+| `Card`      | Content container               | `components/ui/card.tsx`       |
+| `Separator` | Visual divider                  | `components/ui/separator.tsx`  |
 
 #### Form Components
 
-| Component | Description | Location |
-|-----------|-------------|----------|
-| `Input` | Text input with validation | `components/ui/input.tsx` |
-| `Button` | Multiple variants | `components/ui/button.tsx` |
-| `Select` | Dropdown selection | `components/ui/select.tsx` |
-| `Checkbox` | Toggle checkbox | `components/ui/checkbox.tsx` |
-| `Switch` | Toggle switch | `components/ui/switch.tsx` |
-| `DatePicker` | Date selection | `components/ui/date-picker.tsx` |
-| `DateRangePicker` | Date range selection | `components/ui/date-range-picker.tsx` |
+| Component         | Description                | Location                              |
+| ----------------- | -------------------------- | ------------------------------------- |
+| `Input`           | Text input with validation | `components/ui/input.tsx`             |
+| `Button`          | Multiple variants          | `components/ui/button.tsx`            |
+| `Select`          | Dropdown selection         | `components/ui/select.tsx`            |
+| `Checkbox`        | Toggle checkbox            | `components/ui/checkbox.tsx`          |
+| `Switch`          | Toggle switch              | `components/ui/switch.tsx`            |
+| `DatePicker`      | Date selection             | `components/ui/date-picker.tsx`       |
+| `DateRangePicker` | Date range selection       | `components/ui/date-range-picker.tsx` |
 
 #### Feedback Components
 
-| Component | Description | Location |
-|-----------|-------------|----------|
-| `Toast` | Notification toasts | `components/ui/toast.tsx` |
-| `Dialog` | Modal dialogs | `components/ui/dialog.tsx` |
+| Component     | Description          | Location                         |
+| ------------- | -------------------- | -------------------------------- |
+| `Toast`       | Notification toasts  | `components/ui/toast.tsx`        |
+| `Dialog`      | Modal dialogs        | `components/ui/dialog.tsx`       |
 | `AlertDialog` | Confirmation dialogs | `components/ui/alert-dialog.tsx` |
-| `Tooltip` | Hover tooltips | `components/ui/tooltip.tsx` |
-| `Progress` | Progress indicators | `components/ui/progress.tsx` |
-| `Skeleton` | Loading skeletons | `components/ui/skeleton.tsx` |
+| `Tooltip`     | Hover tooltips       | `components/ui/tooltip.tsx`      |
+| `Progress`    | Progress indicators  | `components/ui/progress.tsx`     |
+| `Skeleton`    | Loading skeletons    | `components/ui/skeleton.tsx`     |
 
 #### Data Display
 
-| Component | Description | Location |
-|-----------|-------------|----------|
-| `Table` | Data tables with sorting | `components/ui/table.tsx` |
-| `Badge` | Status badges | `components/ui/badge.tsx` |
-| `Avatar` | User avatars | `components/ui/avatar.tsx` |
-| `Tabs` | Tab navigation | `components/ui/tabs.tsx` |
-| `Accordion` | Expandable sections | `components/ui/accordion.tsx` |
+| Component   | Description              | Location                      |
+| ----------- | ------------------------ | ----------------------------- |
+| `Table`     | Data tables with sorting | `components/ui/table.tsx`     |
+| `Badge`     | Status badges            | `components/ui/badge.tsx`     |
+| `Avatar`    | User avatars             | `components/ui/avatar.tsx`    |
+| `Tabs`      | Tab navigation           | `components/ui/tabs.tsx`      |
+| `Accordion` | Expandable sections      | `components/ui/accordion.tsx` |
 
 ### Dashboard Components
 
 #### Chat Components
 
-| Component | Description |
-|-----------|-------------|
-| `ChatView` | Main chat interface with message list |
-| `AvatarView` | Alternative view with AI avatar |
-| `MessageBubble` | Individual message display |
-| `StreamingTypewriter` | Animated text streaming effect |
-| `VoiceOrb` | Voice input visualization |
-| `ChatInput` | Message input with voice button |
+| Component             | Description                           |
+| --------------------- | ------------------------------------- |
+| `ChatView`            | Main chat interface with message list |
+| `AvatarView`          | Alternative view with AI avatar       |
+| `MessageBubble`       | Individual message display            |
+| `StreamingTypewriter` | Animated text streaming effect        |
+| `VoiceOrb`            | Voice input visualization             |
+| `ChatInput`           | Message input with voice button       |
 
 #### Analytics Components
 
-| Component | Props | Description |
-|-----------|-------|-------------|
-| `BentoStatsGrid` | `data: Stats[]` | Animated stats cards |
-| `TimeAllocationChart` | `data: TimeData[]` | Pie chart for time distribution |
-| `WeeklyPatternDashboard` | `data: WeekData[]` | Heatmap visualization |
-| `FocusTimeTracker` | `focusHours: number` | Progress ring for focus time |
-| `ScheduleHealthScore` | `score: number` | Health score indicator |
+| Component                | Props                | Description                     |
+| ------------------------ | -------------------- | ------------------------------- |
+| `BentoStatsGrid`         | `data: Stats[]`      | Animated stats cards            |
+| `TimeAllocationChart`    | `data: TimeData[]`   | Pie chart for time distribution |
+| `WeeklyPatternDashboard` | `data: WeekData[]`   | Heatmap visualization           |
+| `FocusTimeTracker`       | `focusHours: number` | Progress ring for focus time    |
+| `ScheduleHealthScore`    | `score: number`      | Health score indicator          |
 
 ### Component Patterns
 
@@ -585,18 +590,18 @@ const form = useForm<FormValues>()
 
 ### Custom Hooks Overview
 
-| Hook | Purpose | Location |
-|------|---------|----------|
-| `useStreamingChat` | SSE chat streaming | `hooks/useStreamingChat.ts` |
-| `useSpeechRecognition` | Browser speech API | `hooks/useSpeechRecognition.ts` |
-| `useLiveKitVoice` | LiveKit voice integration | `hooks/useLiveKitVoice.ts` |
-| `useAgentProfiles` | AI agent tier selection | `hooks/useAgentProfiles.ts` |
-| `useGapRecovery` | Gap detection and filling | `hooks/useGapRecovery.ts` |
-| `useImageUpload` | Image upload with preview | `hooks/useImageUpload.ts` |
-| `useTTSCache` | Text-to-speech caching | `hooks/useTTSCache.ts` |
-| `useDebounce` | Debounced values | `hooks/useDebounce.ts` |
-| `useLocalStorage` | Persistent local storage | `hooks/useLocalStorage.ts` |
-| `useMobileMenu` | Mobile hamburger menu state | `hooks/useMobileMenu.ts` |
+| Hook                   | Purpose                     | Location                        |
+| ---------------------- | --------------------------- | ------------------------------- |
+| `useStreamingChat`     | SSE chat streaming          | `hooks/useStreamingChat.ts`     |
+| `useSpeechRecognition` | Browser speech API          | `hooks/useSpeechRecognition.ts` |
+| `useLiveKitVoice`      | LiveKit voice integration   | `hooks/useLiveKitVoice.ts`      |
+| `useAgentProfiles`     | AI agent tier selection     | `hooks/useAgentProfiles.ts`     |
+| `useGapRecovery`       | Gap detection and filling   | `hooks/useGapRecovery.ts`       |
+| `useImageUpload`       | Image upload with preview   | `hooks/useImageUpload.ts`       |
+| `useTTSCache`          | Text-to-speech caching      | `hooks/useTTSCache.ts`          |
+| `useDebounce`          | Debounced values            | `hooks/useDebounce.ts`          |
+| `useLocalStorage`      | Persistent local storage    | `hooks/useLocalStorage.ts`      |
+| `useMobileMenu`        | Mobile hamburger menu state | `hooks/useMobileMenu.ts`        |
 
 ### TanStack Query Hooks (60+)
 
@@ -604,64 +609,59 @@ Organized by domain in `hooks/queries/`:
 
 #### Auth Hooks
 
-| Hook | Method | Endpoint |
-|------|--------|----------|
-| `useSignIn` | POST | `/api/users/signin` |
-| `useSignUp` | POST | `/api/users/signup` |
-| `useUser` | GET | `/api/users/get-user` |
-| `useLogout` | POST | `/api/users/logout` |
+| Hook        | Method | Endpoint              |
+| ----------- | ------ | --------------------- |
+| `useSignIn` | POST   | `/api/users/signin`   |
+| `useSignUp` | POST   | `/api/users/signup`   |
+| `useUser`   | GET    | `/api/users/get-user` |
+| `useLogout` | POST   | `/api/users/logout`   |
 
 #### Calendar Hooks
 
-| Hook | Method | Endpoint |
-|------|--------|----------|
-| `useCalendars` | GET | `/api/calendar` |
-| `useCalendar` | GET | `/api/calendar/:id` |
-| `useCreateCalendar` | POST | `/api/calendar` |
-| `useUpdateCalendar` | PATCH | `/api/calendar/:id` |
+| Hook                | Method | Endpoint            |
+| ------------------- | ------ | ------------------- |
+| `useCalendars`      | GET    | `/api/calendar`     |
+| `useCalendar`       | GET    | `/api/calendar/:id` |
+| `useCreateCalendar` | POST   | `/api/calendar`     |
+| `useUpdateCalendar` | PATCH  | `/api/calendar/:id` |
 | `useDeleteCalendar` | DELETE | `/api/calendar/:id` |
 
 #### Event Hooks
 
-| Hook | Method | Endpoint |
-|------|--------|----------|
-| `useEvents` | GET | `/api/events` |
-| `useEvent` | GET | `/api/events/:id` |
-| `useCreateEvent` | POST | `/api/events` |
-| `useUpdateEvent` | PATCH | `/api/events/:id` |
-| `useDeleteEvent` | DELETE | `/api/events/:id` |
-| `useEventAnalytics` | GET | `/api/events/analytics` |
+| Hook                | Method | Endpoint                |
+| ------------------- | ------ | ----------------------- |
+| `useEvents`         | GET    | `/api/events`           |
+| `useEvent`          | GET    | `/api/events/:id`       |
+| `useCreateEvent`    | POST   | `/api/events`           |
+| `useUpdateEvent`    | PATCH  | `/api/events/:id`       |
+| `useDeleteEvent`    | DELETE | `/api/events/:id`       |
+| `useEventAnalytics` | GET    | `/api/events/analytics` |
 
 #### Conversation Hooks
 
-| Hook | Method | Endpoint |
-|------|--------|----------|
-| `useConversations` | GET | `/api/chat/conversations` |
-| `useConversation` | GET | `/api/chat/conversations/:id` |
-| `useDeleteConversation` | DELETE | `/api/chat/conversations/:id` |
-| `useUpdateConversationTitle` | PATCH | `/api/chat/conversations/:id` |
+| Hook                         | Method | Endpoint                      |
+| ---------------------------- | ------ | ----------------------------- |
+| `useConversations`           | GET    | `/api/chat/conversations`     |
+| `useConversation`            | GET    | `/api/chat/conversations/:id` |
+| `useDeleteConversation`      | DELETE | `/api/chat/conversations/:id` |
+| `useUpdateConversationTitle` | PATCH  | `/api/chat/conversations/:id` |
 
 #### Admin Hooks
 
-| Hook | Method | Endpoint |
-|------|--------|----------|
-| `useAdminUsers` | GET | `/api/admin/users` |
-| `useAdminUser` | GET | `/api/admin/users/:id` |
-| `useGrantCredits` | POST | `/api/admin/users/:id/credits` |
-| `useAuditLogs` | GET | `/api/admin/audit-logs` |
-| `useAdminPayments` | GET | `/api/admin/payments` |
+| Hook               | Method | Endpoint                       |
+| ------------------ | ------ | ------------------------------ |
+| `useAdminUsers`    | GET    | `/api/admin/users`             |
+| `useAdminUser`     | GET    | `/api/admin/users/:id`         |
+| `useGrantCredits`  | POST   | `/api/admin/users/:id/credits` |
+| `useAuditLogs`     | GET    | `/api/admin/audit-logs`        |
+| `useAdminPayments` | GET    | `/api/admin/payments`          |
 
 ### Hook Usage Examples
 
 #### useStreamingChat
 
 ```tsx
-const {
-  isStreaming,
-  streamedContent,
-  sendMessage,
-  stopStreaming,
-} = useStreamingChat({
+const { isStreaming, streamedContent, sendMessage, stopStreaming } = useStreamingChat({
   conversationId,
   onComplete: (message) => {
     // Handle completed message
@@ -675,14 +675,7 @@ const {
 #### useSpeechRecognition
 
 ```tsx
-const {
-  isListening,
-  transcript,
-  startListening,
-  stopListening,
-  resetTranscript,
-  isSupported,
-} = useSpeechRecognition({
+const { isListening, transcript, startListening, stopListening, resetTranscript, isSupported } = useSpeechRecognition({
   language: 'en-US',
   continuous: false,
   onResult: (text) => {
@@ -694,15 +687,7 @@ const {
 #### useLiveKitVoice
 
 ```tsx
-const {
-  isConnected,
-  isRecording,
-  connect,
-  disconnect,
-  startRecording,
-  stopRecording,
-  roomState,
-} = useLiveKitVoice({
+const { isConnected, isRecording, connect, disconnect, startRecording, stopRecording, roomState } = useLiveKitVoice({
   roomName: conversationId,
   onTranscript: (text) => {
     // Handle transcribed text
@@ -716,21 +701,21 @@ const {
 
 ### API Services
 
-| Service | File | Description |
-|---------|------|-------------|
-| `authService` | `auth.service.ts` | Authentication operations |
-| `calendarsService` | `calendars.service.ts` | Calendar CRUD |
-| `eventsService` | `events.service.ts` | Event CRUD + analytics |
-| `chatService` | `chatService.ts` | Non-streaming chat |
-| `chatStreamService` | `chatStreamService.ts` | SSE streaming chat |
-| `gapsService` | `gaps.service.ts` | Gap recovery operations |
-| `voiceService` | `voice.service.ts` | Voice transcription |
-| `paymentService` | `payment.service.ts` | Billing operations |
-| `adminService` | `admin.service.ts` | Admin operations |
-| `agentProfilesService` | `agent-profiles.service.ts` | Agent tier selection |
-| `preferencesService` | `preferences.service.ts` | User preferences management |
-| `ttsCacheService` | `tts-cache.service.ts` | TTS response caching |
-| `integrationsService` | `integrations.service.ts` | Google Calendar connection |
+| Service                | File                        | Description                 |
+| ---------------------- | --------------------------- | --------------------------- |
+| `authService`          | `auth.service.ts`           | Authentication operations   |
+| `calendarsService`     | `calendars.service.ts`      | Calendar CRUD               |
+| `eventsService`        | `events.service.ts`         | Event CRUD + analytics      |
+| `chatService`          | `chatService.ts`            | Non-streaming chat          |
+| `chatStreamService`    | `chatStreamService.ts`      | SSE streaming chat          |
+| `gapsService`          | `gaps.service.ts`           | Gap recovery operations     |
+| `voiceService`         | `voice.service.ts`          | Voice transcription         |
+| `paymentService`       | `payment.service.ts`        | Billing operations          |
+| `adminService`         | `admin.service.ts`          | Admin operations            |
+| `agentProfilesService` | `agent-profiles.service.ts` | Agent tier selection        |
+| `preferencesService`   | `preferences.service.ts`    | User preferences management |
+| `ttsCacheService`      | `tts-cache.service.ts`      | TTS response caching        |
+| `integrationsService`  | `integrations.service.ts`   | Google Calendar connection  |
 
 ### Service Pattern
 
@@ -780,7 +765,9 @@ const api = axios.create({
 
 // Request interceptor - add auth token
 api.interceptors.request.use(async (config) => {
-  const { data: { session } } = await supabase.auth.getSession()
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
   if (session?.access_token) {
     config.headers.Authorization = `Bearer ${session.access_token}`
   }
@@ -796,7 +783,7 @@ api.interceptors.response.use(
       window.location.href = '/login'
     }
     return Promise.reject(error)
-  }
+  },
 )
 
 export default api
@@ -1043,28 +1030,29 @@ npm run update:db:types # Generate Supabase types
 
 ### Code Style
 
-| Rule | Standard |
-|------|----------|
-| **Formatter** | Prettier |
-| **Linter** | ESLint with Next.js config |
-| **Semicolons** | None |
-| **Quotes** | Single quotes |
-| **Imports** | `@/` alias for all internal imports |
+| Rule           | Standard                            |
+| -------------- | ----------------------------------- |
+| **Formatter**  | Prettier                            |
+| **Linter**     | ESLint with Next.js config          |
+| **Semicolons** | None                                |
+| **Quotes**     | Single quotes                       |
+| **Imports**    | `@/` alias for all internal imports |
 
 ### File Conventions
 
-| Type | Convention | Example |
-|------|------------|---------|
-| **Components** | PascalCase | `ChatView.tsx` |
-| **Pages** | `page.tsx` | `app/dashboard/page.tsx` |
-| **Hooks** | useCamelCase | `useStreamingChat.ts` |
-| **Services** | camelCase.service | `calendars.service.ts` |
-| **Types** | camelCase | `calendar.ts` |
-| **Contexts** | PascalCase + Context | `ChatContext.tsx` |
+| Type           | Convention           | Example                  |
+| -------------- | -------------------- | ------------------------ |
+| **Components** | PascalCase           | `ChatView.tsx`           |
+| **Pages**      | `page.tsx`           | `app/dashboard/page.tsx` |
+| **Hooks**      | useCamelCase         | `useStreamingChat.ts`    |
+| **Services**   | camelCase.service    | `calendars.service.ts`   |
+| **Types**      | camelCase            | `calendar.ts`            |
+| **Contexts**   | PascalCase + Context | `ChatContext.tsx`        |
 
 ### Adding a New Feature
 
 1. **Create types** in `types/`:
+
 ```typescript
 // types/feature.ts
 export interface Feature {
@@ -1074,6 +1062,7 @@ export interface Feature {
 ```
 
 2. **Create service** in `services/`:
+
 ```typescript
 // services/feature.service.ts
 export const featureService = {
@@ -1083,6 +1072,7 @@ export const featureService = {
 ```
 
 3. **Create hooks** in `hooks/queries/`:
+
 ```typescript
 // hooks/queries/useFeatures.ts
 export function useFeatures() {
@@ -1094,6 +1084,7 @@ export function useFeatures() {
 ```
 
 4. **Create components** in `components/`:
+
 ```typescript
 // components/feature/FeatureList.tsx
 export function FeatureList() {
@@ -1158,15 +1149,15 @@ describe('ChatView', () => {
 
 ### Optimization Strategies
 
-| Strategy | Implementation |
-|----------|----------------|
-| **Server Components** | Default for static content (Next.js 16) |
-| **Client Components** | Only where interactivity needed |
-| **Image Optimization** | Next.js Image component |
-| **Code Splitting** | Automatic route-based splitting |
-| **Lazy Loading** | Dynamic imports for heavy components |
-| **Query Caching** | TanStack Query with stale-while-revalidate |
-| **Streaming** | SSE for real-time chat updates |
+| Strategy               | Implementation                             |
+| ---------------------- | ------------------------------------------ |
+| **Server Components**  | Default for static content (Next.js 16)    |
+| **Client Components**  | Only where interactivity needed            |
+| **Image Optimization** | Next.js Image component                    |
+| **Code Splitting**     | Automatic route-based splitting            |
+| **Lazy Loading**       | Dynamic imports for heavy components       |
+| **Query Caching**      | TanStack Query with stale-while-revalidate |
+| **Streaming**          | SSE for real-time chat updates             |
 
 ### Lazy Loading Example
 
@@ -1193,14 +1184,14 @@ const WallCalendar3D = dynamic(
 
 ### Client-Side Security
 
-| Feature | Implementation |
-|---------|----------------|
-| **HTTPS Only** | Enforced in production |
-| **XSS Prevention** | React's built-in escaping |
-| **CSRF Protection** | Supabase Auth tokens |
-| **Input Sanitization** | Zod validation |
-| **Secure Cookies** | HttpOnly, SameSite |
-| **Content Security** | Next.js security headers |
+| Feature                | Implementation            |
+| ---------------------- | ------------------------- |
+| **HTTPS Only**         | Enforced in production    |
+| **XSS Prevention**     | React's built-in escaping |
+| **CSRF Protection**    | Supabase Auth tokens      |
+| **Input Sanitization** | Zod validation            |
+| **Secure Cookies**     | HttpOnly, SameSite        |
+| **Content Security**   | Next.js security headers  |
 
 ### Authentication Flow
 

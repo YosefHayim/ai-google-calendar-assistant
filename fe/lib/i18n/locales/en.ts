@@ -116,7 +116,7 @@ export const en = {
     today: {
       title: "Today's Schedule",
       description:
-        "Get a complete overview of your day with /today. See all meetings, focus blocks, and free time at a glance.",
+        'Get a complete overview of your day with /today. See all meetings, focus blocks, and free time at a glance.',
     },
     voice: {
       title: 'Voice Commands',
@@ -140,8 +140,7 @@ export const en = {
     },
     create: {
       title: 'Quick Create',
-      description:
-        'Schedule events with natural language. Just say "Lunch with Alex tomorrow at noon" and confirm.',
+      description: 'Schedule events with natural language. Just say "Lunch with Alex tomorrow at noon" and confirm.',
     },
     language: {
       title: 'Multi-Language',
@@ -163,8 +162,7 @@ export const en = {
     problemTitle: 'The Daily Battle',
     problemSubtitle: 'Modern professionals lose hours every week to calendar chaos they never asked for.',
     problemContextSwitch: 'Context Switching',
-    problemContextSwitchDesc:
-      'Jumping between apps, tabs, and tasks. Each switch costs you 23 minutes of focus time.',
+    problemContextSwitchDesc: 'Jumping between apps, tabs, and tasks. Each switch costs you 23 minutes of focus time.',
     problemCalendarChaos: 'Calendar Chaos',
     problemCalendarChaosDesc:
       'Double-bookings, timezone confusion, and endless back-and-forth just to schedule a simple meeting.',
@@ -172,16 +170,15 @@ export const en = {
     problemLostHoursDesc:
       'Administrative overhead steals your most productive hours. Time meant for deep work disappears.',
     problemBlindSpots: 'Blind Spots',
-    problemBlindSpotsDesc:
-      'Where did Tuesday go? Gaps in your calendar that you can never account for or recover.',
+    problemBlindSpotsDesc: 'Where did Tuesday go? Gaps in your calendar that you can never account for or recover.',
 
     // Vision Section
     visionBadge: 'What We Believe',
     visionTitle: 'Everyone Deserves a Private AI Secretary',
     visionP1:
-      "We built Ally because we believe your calendar should work for you, not against you. It should defend your priorities, not just record them.",
+      'We built Ally because we believe your calendar should work for you, not against you. It should defend your priorities, not just record them.',
     visionP2:
-      "The same AI technology that powers enterprise solutions should be available to every business owner, executive, and professional who values their time.",
+      'The same AI technology that powers enterprise solutions should be available to every business owner, executive, and professional who values their time.',
     visionBelief1: 'Your calendar should protect your deep work, not just schedule over it.',
     visionBelief2: 'Managing your time should take seconds, not hours of admin.',
     visionBelief3: 'Your data belongs to you. Never sold, never used for training.',
@@ -193,14 +190,11 @@ export const en = {
     impactHoursDesc:
       'Stop losing time to scheduling overhead. Get hours back every week for the work that actually matters.',
     impactFocus: 'Focus Protected',
-    impactFocusDesc:
-      'Ally shields your deep work blocks from interruptions, intelligently rescheduling conflicts.',
+    impactFocusDesc: 'Ally shields your deep work blocks from interruptions, intelligently rescheduling conflicts.',
     impactGaps: 'Gaps Recovered',
-    impactGapsDesc:
-      'Never wonder where your time went. Ally finds and helps you fill the gaps in your calendar.',
+    impactGapsDesc: 'Never wonder where your time went. Ally finds and helps you fill the gaps in your calendar.',
     impactVoice: 'Voice to Action',
-    impactVoiceDesc:
-      'Thought to scheduled event in seconds. Just speak naturally and Ally handles the rest.',
+    impactVoiceDesc: 'Thought to scheduled event in seconds. Just speak naturally and Ally handles the rest.',
 
     // Difference Section
     differenceTitle: "We're Different By Design",

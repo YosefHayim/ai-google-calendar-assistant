@@ -1,6 +1,16 @@
 'use client'
 
-import { AlertTriangle, ArrowUpRight, CheckCircle2, Circle, Loader2, Plus, RefreshCw, X, RefreshCcw } from 'lucide-react'
+import {
+  AlertTriangle,
+  ArrowUpRight,
+  CheckCircle2,
+  Circle,
+  Loader2,
+  Plus,
+  RefreshCw,
+  X,
+  RefreshCcw,
+} from 'lucide-react'
 import { FaTelegram, FaWhatsapp, FaSlack } from 'react-icons/fa'
 import { SiGooglecalendar } from 'react-icons/si'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'

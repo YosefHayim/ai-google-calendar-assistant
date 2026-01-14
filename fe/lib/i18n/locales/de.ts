@@ -159,16 +159,20 @@ export const de: TranslationShape = {
     problemContextSwitch: 'Kontextwechsel',
     problemContextSwitchDesc: 'Springen zwischen Apps, Tabs und Aufgaben. Jeder Wechsel kostet 23 Minuten Fokuszeit.',
     problemCalendarChaos: 'Kalender-Chaos',
-    problemCalendarChaosDesc: 'Doppelbuchungen, Zeitzonenverwirrung und endloses Hin und Her für ein einfaches Meeting.',
+    problemCalendarChaosDesc:
+      'Doppelbuchungen, Zeitzonenverwirrung und endloses Hin und Her für ein einfaches Meeting.',
     problemLostHours: 'Verlorene Stunden',
     problemLostHoursDesc: 'Verwaltungsaufwand stiehlt Ihre produktivsten Stunden. Zeit für Deep Work verschwindet.',
     problemBlindSpots: 'Blinde Flecken',
-    problemBlindSpotsDesc: 'Wo ist der Dienstag geblieben? Lücken in Ihrem Kalender, die Sie nie nachvollziehen können.',
+    problemBlindSpotsDesc:
+      'Wo ist der Dienstag geblieben? Lücken in Ihrem Kalender, die Sie nie nachvollziehen können.',
 
     visionBadge: 'Was wir glauben',
     visionTitle: 'Jeder verdient einen privaten KI-Sekretär',
-    visionP1: 'Wir haben Ally gebaut, weil wir glauben, dass Ihr Kalender für Sie arbeiten sollte, nicht gegen Sie. Er sollte Ihre Prioritäten verteidigen, nicht nur aufzeichnen.',
-    visionP2: 'Die gleiche KI-Technologie, die Enterprise-Lösungen antreibt, sollte jedem Unternehmer, Führungskraft und Fachmann zur Verfügung stehen, der seine Zeit schätzt.',
+    visionP1:
+      'Wir haben Ally gebaut, weil wir glauben, dass Ihr Kalender für Sie arbeiten sollte, nicht gegen Sie. Er sollte Ihre Prioritäten verteidigen, nicht nur aufzeichnen.',
+    visionP2:
+      'Die gleiche KI-Technologie, die Enterprise-Lösungen antreibt, sollte jedem Unternehmer, Führungskraft und Fachmann zur Verfügung stehen, der seine Zeit schätzt.',
     visionBelief1: 'Ihr Kalender sollte Ihre Deep Work schützen, nicht einfach darüber planen.',
     visionBelief2: 'Zeitmanagement sollte Sekunden dauern, nicht Stunden Verwaltung.',
     visionBelief3: 'Ihre Daten gehören Ihnen. Niemals verkauft, niemals für Training verwendet.',
@@ -176,26 +180,34 @@ export const de: TranslationShape = {
     impactTitle: 'Was sich ändert, wenn Sie Ally nutzen',
     impactSubtitle: 'Echte Auswirkungen auf Ihre Arbeit und Ihr Leben.',
     impactHours: 'Stunden zurückgewonnen',
-    impactHoursDesc: 'Verschwenden Sie keine Zeit mehr mit Terminplanung. Gewinnen Sie jede Woche Stunden für wichtige Arbeit.',
+    impactHoursDesc:
+      'Verschwenden Sie keine Zeit mehr mit Terminplanung. Gewinnen Sie jede Woche Stunden für wichtige Arbeit.',
     impactFocus: 'Fokus geschützt',
-    impactFocusDesc: 'Ally schützt Ihre Deep-Work-Blöcke vor Unterbrechungen durch intelligente Umplanung von Konflikten.',
+    impactFocusDesc:
+      'Ally schützt Ihre Deep-Work-Blöcke vor Unterbrechungen durch intelligente Umplanung von Konflikten.',
     impactGaps: 'Lücken geschlossen',
-    impactGapsDesc: 'Fragen Sie sich nie mehr, wo Ihre Zeit geblieben ist. Ally findet und hilft Ihnen, Kalenderlücken zu füllen.',
+    impactGapsDesc:
+      'Fragen Sie sich nie mehr, wo Ihre Zeit geblieben ist. Ally findet und hilft Ihnen, Kalenderlücken zu füllen.',
     impactVoice: 'Sprache zu Aktion',
-    impactVoiceDesc: 'Vom Gedanken zum geplanten Termin in Sekunden. Sprechen Sie einfach natürlich und Ally erledigt den Rest.',
+    impactVoiceDesc:
+      'Vom Gedanken zum geplanten Termin in Sekunden. Sprechen Sie einfach natürlich und Ally erledigt den Rest.',
 
     differenceTitle: 'Anders durch Design',
     differenceSubtitle: 'Von Grund auf mit anderen Prioritäten gebaut.',
     differencePrivacy: 'Datenschutz zuerst',
-    differencePrivacyDesc: 'Ihre Daten sind verschlüsselt, werden nie verkauft und nie für KI-Training verwendet. Ihr privates Büro bleibt privat.',
+    differencePrivacyDesc:
+      'Ihre Daten sind verschlüsselt, werden nie verkauft und nie für KI-Training verwendet. Ihr privates Büro bleibt privat.',
     differenceMultiPlatform: 'Arbeitet, wo Sie arbeiten',
-    differenceMultiPlatformDesc: 'Web, Sprache, Telegram, WhatsApp. Ally ist überall verfügbar, wo Sie sind, wie auch immer Sie kommunizieren möchten.',
+    differenceMultiPlatformDesc:
+      'Web, Sprache, Telegram, WhatsApp. Ally ist überall verfügbar, wo Sie sind, wie auch immer Sie kommunizieren möchten.',
     differenceProactive: 'Proaktiv, nicht passiv',
-    differenceProactiveDesc: 'Ally zeichnet nicht nur Ihren Zeitplan auf. Es schützt Ihre Zeit, schlägt Optimierungen vor und löst Konflikte automatisch.',
+    differenceProactiveDesc:
+      'Ally zeichnet nicht nur Ihren Zeitplan auf. Es schützt Ihre Zeit, schlägt Optimierungen vor und löst Konflikte automatisch.',
 
     ctaBadge: 'Werden Sie Teil der Bewegung',
     ctaTitle: 'Fordern Sie Ihre Zeit zurück',
-    ctaSubtitle: 'Hören Sie auf, gegen Ihren Kalender zu kämpfen. Beginnen Sie, ihn zu beherrschen. Schließen Sie sich Tausenden von Fachleuten an, die die Kontrolle zurückgewonnen haben.',
+    ctaSubtitle:
+      'Hören Sie auf, gegen Ihren Kalender zu kämpfen. Beginnen Sie, ihn zu beherrschen. Schließen Sie sich Tausenden von Fachleuten an, die die Kontrolle zurückgewonnen haben.',
     ctaPrimary: 'Kostenlos starten',
     ctaSecondary: 'Preise ansehen',
   },
@@ -275,7 +287,8 @@ export const de: TranslationShape = {
     assistant: 'Assistent',
     assistantDescription: 'Chatten Sie mit Ihrem KI-Assistenten um Termine und Zeitpläne zu verwalten',
     admin: 'Admin',
-    adminDescription: 'Zugriff auf das Admin-Dashboard zur Verwaltung von Benutzern, Abonnements und Systemeinstellungen',
+    adminDescription:
+      'Zugriff auf das Admin-Dashboard zur Verwaltung von Benutzern, Abonnements und Systemeinstellungen',
     analytics: 'Analytik',
     analyticsDescription: 'Sehen Sie Einblicke zur Zeitverteilung, Terminmustern und Produktivitätstrends',
     quickAddEvent: 'Schnell hinzufügen',
@@ -693,7 +706,8 @@ export const de: TranslationShape = {
     featured: {
       name: 'Yosef Sabag',
       role: 'CEO',
-      content: 'Die Nutzung von Ally hat die Art verändert, wie ich meinen Zeitplan verfolge und bessere Einblicke erhalte.',
+      content:
+        'Die Nutzung von Ally hat die Art verändert, wie ich meinen Zeitplan verfolge und bessere Einblicke erhalte.',
     },
   },
 

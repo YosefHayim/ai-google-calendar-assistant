@@ -202,11 +202,15 @@ const ScheduleHealthScore: React.FC<ScheduleHealthScoreProps> = ({ data, isLoadi
           <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center flex-shrink-0">
             <Activity className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-zinc-900 dark:text-primary" />
           </div>
-          <h3 className="font-semibold text-sm sm:text-base text-zinc-900 dark:text-zinc-100 truncate">Schedule Health</h3>
+          <h3 className="font-semibold text-sm sm:text-base text-zinc-900 dark:text-zinc-100 truncate">
+            Schedule Health
+          </h3>
         </div>
         <span className={`text-xs sm:text-sm font-medium flex-shrink-0 ${overall.color}`}>{overall.label}</span>
       </div>
-      <p className="text-[10px] sm:text-xs text-zinc-500 dark:text-zinc-400 mb-3 sm:mb-4 ml-9 sm:ml-10">Overall schedule wellness</p>
+      <p className="text-[10px] sm:text-xs text-zinc-500 dark:text-zinc-400 mb-3 sm:mb-4 ml-9 sm:ml-10">
+        Overall schedule wellness
+      </p>
 
       {/* Circular Progress */}
       <div className="flex justify-center mb-4 sm:mb-6">

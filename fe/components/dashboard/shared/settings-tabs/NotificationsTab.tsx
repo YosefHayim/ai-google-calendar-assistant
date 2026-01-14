@@ -1,7 +1,20 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { Bell, Check, Loader2, Mail, Plus, Trash2, CheckCircle, AlertTriangle, Sparkles, CalendarDays, BellRing, CalendarCog } from 'lucide-react'
+import {
+  Bell,
+  Check,
+  Loader2,
+  Mail,
+  Plus,
+  Trash2,
+  CheckCircle,
+  AlertTriangle,
+  Sparkles,
+  CalendarDays,
+  BellRing,
+  CalendarCog,
+} from 'lucide-react'
 import { toast } from 'sonner'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -15,7 +28,12 @@ import {
   TimezoneSelector,
   type DropdownOption,
 } from './components'
-import { useReminderDefaults, useUpdateReminderDefaults, useDailyBriefing, useUpdateDailyBriefing } from '@/hooks/queries'
+import {
+  useReminderDefaults,
+  useUpdateReminderDefaults,
+  useDailyBriefing,
+  useUpdateDailyBriefing,
+} from '@/hooks/queries'
 import {
   type EventReminder,
   type ReminderDefaultsFormData,
@@ -56,13 +74,21 @@ export const NotificationsTab: React.FC = () => {
 
   // Reminder defaults state
   const { data: reminderData, isLoading: isLoadingReminders } = useReminderDefaults()
-  const { updateReminderDefaultsAsync, isUpdating: isUpdatingReminders, isSuccess: isReminderSuccess } = useUpdateReminderDefaults()
+  const {
+    updateReminderDefaultsAsync,
+    isUpdating: isUpdatingReminders,
+    isSuccess: isReminderSuccess,
+  } = useUpdateReminderDefaults()
   const [reminderSettings, setReminderSettings] = useState<ReminderDefaultsFormData>(reminderDefaultsDefaults)
   const [isReminderDirty, setIsReminderDirty] = useState(false)
 
   // Daily briefing state
   const { data: briefingData, isLoading: isLoadingBriefing } = useDailyBriefing()
-  const { updateDailyBriefingAsync, isUpdating: isUpdatingBriefing, isSuccess: isBriefingSuccess } = useUpdateDailyBriefing()
+  const {
+    updateDailyBriefingAsync,
+    isUpdating: isUpdatingBriefing,
+    isSuccess: isBriefingSuccess,
+  } = useUpdateDailyBriefing()
   const [briefingSettings, setBriefingSettings] = useState<DailyBriefingFormData>(dailyBriefingDefaults)
   const [isBriefingDirty, setIsBriefingDirty] = useState(false)
 
@@ -241,9 +267,7 @@ export const NotificationsTab: React.FC = () => {
             </div>
             <div>
               <CardTitle className="text-lg">Daily Briefing</CardTitle>
-              <CardDescription>
-                Receive a summary of your day's schedule every morning via email.
-              </CardDescription>
+              <CardDescription>Receive a summary of your day's schedule every morning via email.</CardDescription>
             </div>
           </div>
         </CardHeader>
@@ -272,36 +296,32 @@ export const NotificationsTab: React.FC = () => {
                 <div className="space-y-4 pt-2">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                        Delivery Time
-                      </label>
+                      <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Delivery Time</label>
                       <TimePicker
                         id="briefing-time"
                         value={briefingSettings.time}
                         onChange={handleBriefingTimeChange}
                       />
-                      <p className="text-xs text-zinc-500">
-                        Choose when you'd like to receive your daily briefing
-                      </p>
+                      <p className="text-xs text-zinc-500">Choose when you'd like to receive your daily briefing</p>
                     </div>
                     <div className="space-y-2">
-                      <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                        Timezone
-                      </label>
+                      <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Timezone</label>
                       <TimezoneSelector
                         id="briefing-timezone"
                         value={briefingSettings.timezone}
                         onChange={handleBriefingTimezoneChange}
                       />
-                      <p className="text-xs text-zinc-500">
-                        Your briefing will be sent based on this timezone
-                      </p>
+                      <p className="text-xs text-zinc-500">Your briefing will be sent based on this timezone</p>
                     </div>
                   </div>
                 </div>
               )}
 
-              <Button onClick={handleSaveBriefing} disabled={!isBriefingDirty || isUpdatingBriefing} className="w-full mt-4">
+              <Button
+                onClick={handleSaveBriefing}
+                disabled={!isBriefingDirty || isUpdatingBriefing}
+                className="w-full mt-4"
+              >
                 {isUpdatingBriefing ? (
                   <>
                     <Loader2 size={16} className="mr-2 animate-spin" />
@@ -388,10 +408,10 @@ export const NotificationsTab: React.FC = () => {
                   ) : (
                     <div className="space-y-2">
                       {reminderSettings.defaultReminders.map((reminder, index) => (
-<div
-                                          key={index}
-                                          className="flex flex-wrap items-center gap-2 p-3 rounded-lg bg-zinc-50 dark:bg-zinc-800/50 sm:flex-nowrap"
-                                        >
+                        <div
+                          key={index}
+                          className="flex flex-wrap items-center gap-2 p-3 rounded-lg bg-zinc-50 dark:bg-zinc-800/50 sm:flex-nowrap"
+                        >
                           <SettingsDropdown
                             id={`reminder-method-${index}`}
                             value={reminder.method}
@@ -428,7 +448,11 @@ export const NotificationsTab: React.FC = () => {
                 </div>
               )}
 
-              <Button onClick={handleSaveReminders} disabled={!isReminderDirty || isUpdatingReminders} className="w-full mt-4">
+              <Button
+                onClick={handleSaveReminders}
+                disabled={!isReminderDirty || isUpdatingReminders}
+                className="w-full mt-4"
+              >
                 {isUpdatingReminders ? (
                   <>
                     <Loader2 size={16} className="mr-2 animate-spin" />

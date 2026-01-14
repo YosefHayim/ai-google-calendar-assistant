@@ -220,10 +220,7 @@ const CalendarEventsDialog: React.FC<CalendarEventsDialogProps> = ({
               <p className="text-sm text-zinc-500 dark:text-zinc-400">
                 {t('dialogs.eventSearch.noMatches', 'No events match your search.')}
               </p>
-              <button
-                onClick={clearSearch}
-                className="text-xs text-primary hover:underline mt-2"
-              >
+              <button onClick={clearSearch} className="text-xs text-primary hover:underline mt-2">
                 {t('dialogs.eventSearch.clearSearch', 'Clear search')}
               </button>
             </div>

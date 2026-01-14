@@ -38,7 +38,10 @@ const BentoStatsSkeleton: React.FC = () => {
       </div>
 
       {Array.from({ length: 10 }).map((_, i) => (
-        <div key={i} className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-3 sm:p-5">
+        <div
+          key={i}
+          className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-3 sm:p-5"
+        >
           <div className="flex items-center gap-2 mb-2 sm:mb-3">
             <Skeleton className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex-shrink-0" />
             <Skeleton className="h-3 w-14 sm:w-16" />
@@ -110,7 +113,10 @@ const BottomRowSkeleton: React.FC = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
       {Array.from({ length: 3 }).map((_, i) => (
-        <div key={i} className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-4 sm:p-6">
+        <div
+          key={i}
+          className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-4 sm:p-6"
+        >
           <div className="flex items-center gap-2 mb-3 sm:mb-4">
             <Skeleton className="w-5 h-5" />
             <Skeleton className="h-5 w-28 sm:w-32" />

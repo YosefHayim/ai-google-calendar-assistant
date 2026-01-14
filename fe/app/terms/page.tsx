@@ -27,9 +27,9 @@ export default function TermsOfServicePage() {
             <section className="mb-12">
               <h2 className="text-2xl font-medium text-zinc-900 dark:text-zinc-100 mb-4">1. Acceptance of Terms</h2>
               <p className="text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4">
-                By accessing or using Ally (the &quot;Service&quot;), operated by Ally Technologies Inc. (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;),
-                you agree to be bound by these Terms of Service (&quot;Terms&quot;). If you do not agree to these Terms, you may
-                not use the Service.
+                By accessing or using Ally (the &quot;Service&quot;), operated by Ally Technologies Inc.
+                (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;), you agree to be bound by these Terms of Service
+                (&quot;Terms&quot;). If you do not agree to these Terms, you may not use the Service.
               </p>
               <p className="text-zinc-600 dark:text-zinc-300 leading-relaxed">
                 These Terms apply to all users of the Service, including visitors, registered users, and users accessing
@@ -101,8 +101,8 @@ export default function TermsOfServicePage() {
 
               <div className="bg-amber-50 dark:bg-amber-950/30 rounded-lg p-4 border border-amber-200 dark:border-amber-800 mt-4">
                 <p className="text-zinc-700 dark:text-zinc-200 leading-relaxed">
-                  <strong>Important:</strong> Ally&apos;s use and transfer of information received from Google APIs adheres
-                  to the{' '}
+                  <strong>Important:</strong> Ally&apos;s use and transfer of information received from Google APIs
+                  adheres to the{' '}
                   <a
                     href="https://developers.google.com/terms/api-services-user-data-policy"
                     target="_blank"
@@ -296,8 +296,8 @@ export default function TermsOfServicePage() {
               <div className="bg-zinc-50 dark:bg-zinc-900/50 rounded-lg p-4 border border-zinc-200 dark:border-zinc-800">
                 <p className="text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4">
                   <strong>
-                    THE SERVICE IS PROVIDED &quot;AS IS&quot; AND &quot;AS AVAILABLE&quot; WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR
-                    IMPLIED.
+                    THE SERVICE IS PROVIDED &quot;AS IS&quot; AND &quot;AS AVAILABLE&quot; WITHOUT WARRANTIES OF ANY
+                    KIND, EITHER EXPRESS OR IMPLIED.
                   </strong>
                 </p>
                 <p className="text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4">We do not warrant that:</p>
@@ -388,8 +388,8 @@ export default function TermsOfServicePage() {
               <h2 className="text-2xl font-medium text-zinc-900 dark:text-zinc-100 mb-4">14. Changes to Terms</h2>
               <p className="text-zinc-600 dark:text-zinc-300 leading-relaxed">
                 We reserve the right to modify these Terms at any time. We will notify you of material changes by
-                posting the updated Terms on this page and updating the &quot;Last Updated&quot; date. Your continued use of the
-                Service after changes constitutes acceptance of the new Terms.
+                posting the updated Terms on this page and updating the &quot;Last Updated&quot; date. Your continued
+                use of the Service after changes constitutes acceptance of the new Terms.
               </p>
             </section>
 

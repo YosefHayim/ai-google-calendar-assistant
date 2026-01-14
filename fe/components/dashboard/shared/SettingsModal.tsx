@@ -210,7 +210,12 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
                 </div>
                 <h2 className="font-semibold text-zinc-900 dark:text-zinc-100 text-sm">Settings</h2>
               </div>
-              <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8 text-zinc-500 hover:text-zinc-700">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={onClose}
+                className="h-8 w-8 text-zinc-500 hover:text-zinc-700"
+              >
                 <X className="w-4 h-4" />
               </Button>
             </div>
@@ -266,7 +271,12 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
             <div className="flex-1 flex flex-col min-w-0 min-h-0 overflow-hidden">
               {/* Desktop Close Button */}
               <div className="hidden sm:flex items-center justify-end p-3 pb-0 flex-shrink-0">
-                <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8 text-zinc-500 hover:text-zinc-700">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={onClose}
+                  className="h-8 w-8 text-zinc-500 hover:text-zinc-700"
+                >
                   <X className="w-4 h-4" />
                 </Button>
               </div>

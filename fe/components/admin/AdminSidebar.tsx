@@ -38,7 +38,7 @@ export function AdminSidebar() {
                 'flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-sm font-medium',
                 isActive
                   ? 'bg-primary text-white'
-                  : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white'
+                  : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white',
               )}
             >
               <item.icon className="w-5 h-5" />

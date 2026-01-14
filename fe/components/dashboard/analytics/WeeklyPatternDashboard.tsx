@@ -135,13 +135,17 @@ export const WeeklyPatternDashboard: React.FC<WeeklyPatternDashboardProps> = ({
         </div>
         <div className="flex">
           <div className="relative z-30 flex flex-1 flex-col justify-center gap-0.5 sm:gap-1 border-t border-zinc-200 dark:border-zinc-800 px-4 sm:px-6 py-2 sm:py-4 text-left sm:border-t-0 sm:border-l lg:px-8 lg:py-6">
-            <span className="text-zinc-500 dark:text-zinc-400 text-[10px] sm:text-xs">{t('analytics.charts.totalHours')}</span>
+            <span className="text-zinc-500 dark:text-zinc-400 text-[10px] sm:text-xs">
+              {t('analytics.charts.totalHours')}
+            </span>
             <span className="text-base leading-none font-bold text-zinc-900 dark:text-zinc-100 sm:text-xl lg:text-3xl">
               {formatNumber(totalHours, 1)}H
             </span>
           </div>
           <div className="relative z-30 flex flex-1 flex-col justify-center gap-0.5 sm:gap-1 border-t border-l border-zinc-200 dark:border-zinc-800 px-4 sm:px-6 py-2 sm:py-4 text-left sm:border-t-0 lg:px-8 lg:py-6">
-            <span className="text-zinc-500 dark:text-zinc-400 text-[10px] sm:text-xs">{t('analytics.charts.totalEventsLabel')}</span>
+            <span className="text-zinc-500 dark:text-zinc-400 text-[10px] sm:text-xs">
+              {t('analytics.charts.totalEventsLabel')}
+            </span>
             <span className="text-base leading-none font-bold text-zinc-900 dark:text-zinc-100 sm:text-xl lg:text-3xl">
               {formatNumber(totalEvents)}
             </span>

@@ -220,7 +220,12 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
       </div>
 
       {/* Recent Events - 5 columns horizontal grid */}
-      <RecentEvents activities={recentActivities} onActivityClick={handleActivityClick} isLoading={isAnalyticsFetching} layout="horizontal" />
+      <RecentEvents
+        activities={recentActivities}
+        onActivityClick={handleActivityClick}
+        isLoading={isAnalyticsFetching}
+        layout="horizontal"
+      />
 
       {/* BentoStats */}
       <BentoStatsGrid data={processedData} comparison={comparison} isLoading={isAnalyticsFetching} />
@@ -234,8 +239,16 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
         totalEvents={totalEvents}
         isLoading={isAnalyticsFetching}
       />
-      <DailyAvailableHoursDashboard data={dailyAvailableHours} onDayClick={openDayEventsDialog} isLoading={isAnalyticsFetching} />
-      <TimeAllocationDashboard data={calendarBreakdown} onCalendarClick={openCalendarEventsDialog} isLoading={isAnalyticsFetching} />
+      <DailyAvailableHoursDashboard
+        data={dailyAvailableHours}
+        onDayClick={openDayEventsDialog}
+        isLoading={isAnalyticsFetching}
+      />
+      <TimeAllocationDashboard
+        data={calendarBreakdown}
+        onCalendarClick={openCalendarEventsDialog}
+        isLoading={isAnalyticsFetching}
+      />
 
       {/* Manage Calendars */}
       <ManageCalendars
@@ -248,10 +261,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
 
       {/* Bottom Row: Schedule Health, Focus Time, Upcoming Week */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-        <ScheduleHealthScore
-          data={processedData}
-          isLoading={isAnalyticsFetching}
-        />
+        <ScheduleHealthScore data={processedData} isLoading={isAnalyticsFetching} />
         <FocusTimeTracker
           data={processedData.focusTimeMetrics}
           totalDays={processedData.totalDays}
@@ -286,7 +296,11 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
         percentageChange={undefined}
         onClose={closeCalendarEventsDialog}
         onEventClick={(event) => {
-          handleCalendarEventClick(event, selectedCalendarForEvents?.color || '#6366f1', selectedCalendarForEvents?.name || '')
+          handleCalendarEventClick(
+            event,
+            selectedCalendarForEvents?.color || '#6366f1',
+            selectedCalendarForEvents?.name || '',
+          )
         }}
       />
 

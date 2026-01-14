@@ -172,19 +172,11 @@ export const OnboardingTour: React.FC<{ onComplete: () => void }> = ({ onComplet
             </div>
             <div className="flex gap-2">
               {currentStep > 0 && (
-                <Button
-                  variant="secondary"
-                  size="icon"
-                  onClick={prev}
-                  aria-label="Previous step"
-                >
+                <Button variant="secondary" size="icon" onClick={prev} aria-label="Previous step">
                   <ChevronLeft size={16} />
                 </Button>
               )}
-              <Button
-                onClick={next}
-                className="shadow-lg shadow-primary/20 font-bold"
-              >
+              <Button onClick={next} className="shadow-lg shadow-primary/20 font-bold">
                 {currentStep === TOUR_STEPS.length - 1 ? 'Start Audit' : 'Next'}
                 {currentStep < TOUR_STEPS.length - 1 && <ChevronRight size={16} />}
               </Button>

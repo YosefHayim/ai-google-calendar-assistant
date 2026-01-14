@@ -398,7 +398,6 @@ export const AssistantTab: React.FC<AssistantTabProps> = () => {
               control={<span className="text-sm text-zinc-500 dark:text-zinc-400">{memoryUsage}</span>}
             />
           </SettingsSection>
-
         </CardContent>
       </Card>
 
@@ -440,41 +439,41 @@ export const AssistantTab: React.FC<AssistantTabProps> = () => {
                 transition={{ duration: 0.2 }}
                 className="overflow-hidden"
               >
-                  <SettingsSection>
-                    <SettingsRow
-                      id="voice-selection"
-                      title="Voice"
-                      tooltip="Choose which voice Ally uses for audio responses"
-                      icon={<Music size={18} className="text-zinc-900 dark:text-primary" />}
-                      control={
-                        <div className="flex items-center gap-2 w-full sm:w-auto">
-                          <SettingsDropdown
-                            value={selectedVoice}
-                            options={VOICE_DROPDOWN_OPTIONS}
-                            onChange={handleVoiceChange}
-                            className="flex-1 sm:flex-none sm:min-w-52"
-                          />
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="icon"
-                            onClick={playVoicePreview}
-                            disabled={isPreviewLoading || isUpdatingVoice}
-                            className="flex-shrink-0"
-                            title={isPreviewPlaying ? 'Stop preview' : 'Preview voice'}
-                          >
-                            {isPreviewLoading ? (
-                              <Loader2 className="w-4 h-4 animate-spin" />
-                            ) : isPreviewPlaying ? (
-                              <Square className="w-4 h-4" />
-                            ) : (
-                              <Play className="w-4 h-4" />
-                            )}
-                          </Button>
-                        </div>
-                      }
-                    />
-                  </SettingsSection>
+                <SettingsSection>
+                  <SettingsRow
+                    id="voice-selection"
+                    title="Voice"
+                    tooltip="Choose which voice Ally uses for audio responses"
+                    icon={<Music size={18} className="text-zinc-900 dark:text-primary" />}
+                    control={
+                      <div className="flex items-center gap-2 w-full sm:w-auto">
+                        <SettingsDropdown
+                          value={selectedVoice}
+                          options={VOICE_DROPDOWN_OPTIONS}
+                          onChange={handleVoiceChange}
+                          className="flex-1 sm:flex-none sm:min-w-52"
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          onClick={playVoicePreview}
+                          disabled={isPreviewLoading || isUpdatingVoice}
+                          className="flex-shrink-0"
+                          title={isPreviewPlaying ? 'Stop preview' : 'Preview voice'}
+                        >
+                          {isPreviewLoading ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          ) : isPreviewPlaying ? (
+                            <Square className="w-4 h-4" />
+                          ) : (
+                            <Play className="w-4 h-4" />
+                          )}
+                        </Button>
+                      </div>
+                    }
+                  />
+                </SettingsSection>
               </motion.div>
             )}
           </AnimatePresence>

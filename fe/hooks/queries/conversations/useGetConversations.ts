@@ -1,10 +1,7 @@
-import { QUERY_CONFIG } from "@/lib/constants";
-import {
-  getConversations,
-  type ConversationListResponse,
-} from "@/services/chatService";
-import { queryKeys } from "@/lib/query/keys";
-import { useQuery } from "@tanstack/react-query";
+import { QUERY_CONFIG } from '@/lib/constants'
+import { getConversations, type ConversationListResponse } from '@/services/chatService'
+import { queryKeys } from '@/lib/query/keys'
+import { useQuery } from '@tanstack/react-query'
 
 export const useGetConversations = () => {
   const query = useQuery<ConversationListResponse, Error>({
@@ -12,7 +9,7 @@ export const useGetConversations = () => {
     queryFn: () => getConversations(20, 0),
     staleTime: QUERY_CONFIG.DEFAULT_STALE_TIME,
     enabled: true,
-  });
+  })
 
   return {
     conversations: query.data?.conversations ?? [],
@@ -23,5 +20,5 @@ export const useGetConversations = () => {
     error: query.error,
     isSuccess: query.isSuccess,
     refetch: query.refetch,
-  };
-};
+  }
+}

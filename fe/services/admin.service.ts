@@ -126,7 +126,7 @@ export const getRevenueTrends = async (months: number = 6): Promise<RevenueTrend
 export const getSubscriptionTrends = async (days: number = 7): Promise<SubscriptionTrendPoint[]> => {
   const response = await apiClient.get<ApiResponse<SubscriptionTrendPoint[]>>(
     ENDPOINTS.ADMIN_DASHBOARD_SUBSCRIPTION_TRENDS,
-    { params: { days } }
+    { params: { days } },
   )
   return response.data.data || []
 }

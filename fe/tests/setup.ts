@@ -1,7 +1,7 @@
-import { afterEach, mock } from "bun:test";
+import { afterEach, mock } from 'bun:test'
 
 // Mock window and document if they don't exist (for Node-like environment)
-if (typeof window === "undefined") {
+if (typeof window === 'undefined') {
   // @ts-ignore
   globalThis.window = {
     matchMedia: (query: string) => ({
@@ -23,50 +23,50 @@ if (typeof window === "undefined") {
       key: () => null,
     },
     location: {
-      href: "",
-      pathname: "/",
-      search: "",
-      hash: "",
+      href: '',
+      pathname: '/',
+      search: '',
+      hash: '',
     } as unknown as Location,
     navigator: {
-      userAgent: "test",
+      userAgent: 'test',
     } as unknown as Navigator,
-  };
+  }
 }
 
-if (typeof document === "undefined") {
+if (typeof document === 'undefined') {
   // @ts-ignore
   globalThis.document = {
-    createElement: () => ({} as unknown as HTMLElement),
+    createElement: () => ({}) as unknown as HTMLElement,
     getElementById: () => null,
     querySelector: () => null,
     querySelectorAll: () => [] as unknown as NodeListOf<Element>,
     body: {} as unknown as HTMLElement,
-  };
+  }
 }
 
 // Mock ResizeObserver
-if (typeof ResizeObserver === "undefined") {
+if (typeof ResizeObserver === 'undefined') {
   // @ts-ignore
   globalThis.ResizeObserver = class ResizeObserver {
     observe() {}
     unobserve() {}
     disconnect() {}
-  };
+  }
 }
 
 // Mock IntersectionObserver
-if (typeof IntersectionObserver === "undefined") {
+if (typeof IntersectionObserver === 'undefined') {
   // @ts-ignore
   globalThis.IntersectionObserver = class IntersectionObserver {
     observe() {}
     unobserve() {}
     disconnect() {}
-  };
+  }
 }
 
 // Mock Next.js router
-mock.module("next/navigation", () => ({
+mock.module('next/navigation', () => ({
   useRouter: () => ({
     push: () => {},
     replace: () => {},
@@ -74,13 +74,13 @@ mock.module("next/navigation", () => ({
     back: () => {},
     forward: () => {},
   }),
-  usePathname: () => "/",
+  usePathname: () => '/',
   useSearchParams: () => new URLSearchParams(),
   useParams: () => ({}),
-}));
+}))
 
 // Suppress console errors/warnings in tests unless DEBUG is set
 if (!process.env.TEST_DEBUG) {
-  console.error = () => {};
-  console.warn = () => {};
+  console.error = () => {}
+  console.warn = () => {}
 }

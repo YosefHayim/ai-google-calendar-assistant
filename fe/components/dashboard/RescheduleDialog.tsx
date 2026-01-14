@@ -2,13 +2,7 @@
 
 import { useState } from 'react'
 import { Calendar, Clock, ArrowRight, Loader2, Check, AlertCircle, Sparkles } from 'lucide-react'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { useRescheduleSuggestions, useRescheduleEvent } from '@/hooks/queries/events/useReschedule'
@@ -47,10 +41,7 @@ export function RescheduleDialog({
     enabled: open && !!eventId,
   })
 
-  const {
-    mutate: rescheduleEvent,
-    isPending: isRescheduling,
-  } = useRescheduleEvent({
+  const { mutate: rescheduleEvent, isPending: isRescheduling } = useRescheduleEvent({
     onSuccess: () => {
       onOpenChange(false)
       setSelectedSuggestion(null)
@@ -198,10 +189,7 @@ export function RescheduleDialog({
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
-          <Button
-            onClick={handleReschedule}
-            disabled={!selectedSuggestion || isRescheduling}
-          >
+          <Button onClick={handleReschedule} disabled={!selectedSuggestion || isRescheduling}>
             {isRescheduling ? (
               <>
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />

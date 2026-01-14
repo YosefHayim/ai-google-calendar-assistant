@@ -6,14 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
 import {
   Users,
@@ -30,17 +23,7 @@ import {
   Info,
   ChevronDown,
 } from 'lucide-react'
-import {
-  Line,
-  LineChart,
-  Bar,
-  BarChart,
-  Area,
-  AreaChart,
-  XAxis,
-  CartesianGrid,
-  ResponsiveContainer,
-} from 'recharts'
+import { Line, LineChart, Bar, BarChart, Area, AreaChart, XAxis, CartesianGrid, ResponsiveContainer } from 'recharts'
 import {
   useDashboardStats,
   useSubscriptionDistribution,
@@ -55,7 +38,7 @@ import { cn } from '@/lib/utils'
 // Helper to generate sparkline data from trends
 const generateSparklineFromTrends = (
   data: { revenue?: number; subscriptions?: number }[] | undefined,
-  key: 'revenue' | 'subscriptions'
+  key: 'revenue' | 'subscriptions',
 ): { value: number }[] => {
   if (!data || data.length === 0) {
     return Array(7).fill({ value: 0 })
@@ -141,7 +124,11 @@ export default function AdminDashboardPage() {
               title="Active Subscriptions"
               value={formatNumber(stats?.activeSubscriptions || 0)}
               subtitle="Total active"
-              trend={stats?.activeSubscriptions && stats?.totalUsers ? Math.round((stats.activeSubscriptions / stats.totalUsers) * 100) : 0}
+              trend={
+                stats?.activeSubscriptions && stats?.totalUsers
+                  ? Math.round((stats.activeSubscriptions / stats.totalUsers) * 100)
+                  : 0
+              }
               trendUp={true}
               data={subsSparkline}
               color="var(--chart-1)"
@@ -150,7 +137,11 @@ export default function AdminDashboardPage() {
               title="New Users This Week"
               value={formatNumber(stats?.newUsersWeek || 0)}
               subtitle="Since last week"
-              trend={stats?.newUsersWeek && stats?.newUsersMonth ? Math.round((stats.newUsersWeek / stats.newUsersMonth) * 100) : 0}
+              trend={
+                stats?.newUsersWeek && stats?.newUsersMonth
+                  ? Math.round((stats.newUsersWeek / stats.newUsersMonth) * 100)
+                  : 0
+              }
               trendUp={(stats?.newUsersWeek || 0) > 0}
               data={revenueSparkline}
               color="var(--chart-2)"
@@ -159,7 +150,9 @@ export default function AdminDashboardPage() {
               title="Active Users"
               value={formatNumber(stats?.activeUsers || 0)}
               subtitle="Total active"
-              trend={stats?.activeUsers && stats?.totalUsers ? Math.round((stats.activeUsers / stats.totalUsers) * 100) : 0}
+              trend={
+                stats?.activeUsers && stats?.totalUsers ? Math.round((stats.activeUsers / stats.totalUsers) * 100) : 0
+              }
               trendUp={true}
               data={subsSparkline}
               color="#6366f1"
@@ -350,16 +343,17 @@ export default function AdminDashboardPage() {
               <Card className="h-full">
                 <CardHeader>
                   <CardTitle>Admin</CardTitle>
-                  <CardDescription className="truncate">
-                    Currently logged in administrator
-                  </CardDescription>
+                  <CardDescription className="truncate">Currently logged in administrator</CardDescription>
                 </CardHeader>
                 <CardContent className="grid gap-6">
                   {adminUser ? (
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <div className="flex items-center space-x-4">
                         <Avatar className="h-10 w-10">
-                          <AvatarImage src={adminUser.avatar_url || ''} alt={adminUser.display_name || adminUser.email} />
+                          <AvatarImage
+                            src={adminUser.avatar_url || ''}
+                            alt={adminUser.display_name || adminUser.email}
+                          />
                           <AvatarFallback>
                             {(adminUser.display_name || adminUser.first_name || adminUser.email)
                               .substring(0, 2)
@@ -368,7 +362,9 @@ export default function AdminDashboardPage() {
                         </Avatar>
                         <div>
                           <p className="text-sm font-medium leading-none">
-                            {adminUser.display_name || `${adminUser.first_name || ''} ${adminUser.last_name || ''}`.trim() || 'Admin'}
+                            {adminUser.display_name ||
+                              `${adminUser.first_name || ''} ${adminUser.last_name || ''}`.trim() ||
+                              'Admin'}
                           </p>
                           <p className="text-sm text-muted-foreground">{adminUser.email}</p>
                         </div>
@@ -395,9 +391,7 @@ export default function AdminDashboardPage() {
                       <div>
                         <p className="text-muted-foreground">Member since</p>
                         <p className="font-medium">
-                          {adminUser?.created_at
-                            ? new Date(adminUser.created_at).toLocaleDateString()
-                            : '-'}
+                          {adminUser?.created_at ? new Date(adminUser.created_at).toLocaleDateString() : '-'}
                         </p>
                       </div>
                       <div>
@@ -474,19 +468,10 @@ function StatCardWithSparkline({
           <div className="flex flex-wrap items-center justify-between gap-6">
             <div className="text-3xl font-bold">{value}</div>
             <div className="w-[70px]">
-              <ChartContainer
-                config={{ month: { label: 'Value', color } }}
-                className="h-[40px] w-full"
-              >
+              <ChartContainer config={{ month: { label: 'Value', color } }} className="h-[40px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={data}>
-                    <Line
-                      type="monotone"
-                      dataKey="value"
-                      stroke={color}
-                      strokeWidth={1.5}
-                      dot={false}
-                    />
+                    <Line type="monotone" dataKey="value" stroke={color} strokeWidth={1.5} dot={false} />
                   </LineChart>
                 </ResponsiveContainer>
               </ChartContainer>
@@ -499,7 +484,7 @@ function StatCardWithSparkline({
           <div
             className={cn(
               'flex items-center gap-1',
-              trendUp ? 'text-emerald-500 dark:text-emerald-400' : 'text-red-500 dark:text-red-400'
+              trendUp ? 'text-emerald-500 dark:text-emerald-400' : 'text-red-500 dark:text-red-400',
             )}
           >
             <p className="text-[13px] font-medium leading-none">{trend}%</p>
@@ -573,7 +558,7 @@ function AnalyticsTabContent({
                             ? 'bg-amber-500'
                             : plan.planSlug === 'pro'
                               ? 'bg-primary'
-                              : 'bg-zinc-400'
+                              : 'bg-zinc-400',
                         )}
                       />
                       <span className="text-sm text-muted-foreground">{plan.planName}</span>

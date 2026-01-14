@@ -1,12 +1,12 @@
-"use client";
+'use client'
 
-import { AllyLogo } from "@/components/shared/logo";
-import { ArrowLeft } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button";
-import Link from "next/link";
-import React from "react";
-import { SparklesCore } from "@/components/ui/sparkles";
+import { AllyLogo } from '@/components/shared/logo'
+import { ArrowLeft } from 'lucide-react'
+import { Input } from '@/components/ui/input'
+import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button'
+import Link from 'next/link'
+import React from 'react'
+import { SparklesCore } from '@/components/ui/sparkles'
 
 const WaitingList: React.FC = () => {
   return (
@@ -33,9 +33,7 @@ const WaitingList: React.FC = () => {
             <AllyLogo className="w-6 h-6" />
           </div>
           <div className="flex flex-col">
-            <span className="text-lg font-bold text-zinc-900 dark:text-zinc-100 leading-none">
-              Ally
-            </span>
+            <span className="text-lg font-bold text-zinc-900 dark:text-zinc-100 leading-none">Ally</span>
             <span className="text-xs font-medium text-zinc-500 flex items-center gap-1 group-hover:text-primary transition-colors">
               <ArrowLeft size={16} /> Back Home
             </span>
@@ -49,25 +47,19 @@ const WaitingList: React.FC = () => {
           <span className="text-primary italic">Awaits.</span>
         </h1>
         <p className="mt-8 text-zinc-500 dark:text-zinc-400 text-xl font-medium max-w-lg mx-auto leading-relaxed">
-          Be among the first leaders to experience executive-grade AI
-          scheduling. Join the waitlist for exclusive early access.
+          Be among the first leaders to experience executive-grade AI scheduling. Join the waitlist for exclusive early
+          access.
         </p>
 
         <div className="mt-12 flex flex-col sm:flex-row w-full max-w-lg mx-auto gap-3 items-center">
-          <Input
-            className="flex-1 w-full h-16 px-6 rounded-full text-lg"
-            placeholder="Email"
-            type="email"
-          />
+          <Input className="flex-1 w-full h-16 px-6 rounded-full text-lg" placeholder="Email" type="email" />
           <InteractiveHoverButton
             text="Reserve Spot"
             className="w-full sm:w-56 h-16 text-lg shadow-xl shadow-primary/20 shrink-0"
           />
         </div>
 
-        <p className="mt-6 text-xs text-zinc-400 font-medium">
-          Secure. Private. Instant notification upon entry.
-        </p>
+        <p className="mt-6 text-xs text-zinc-400 font-medium">Secure. Private. Instant notification upon entry.</p>
       </div>
 
       {/* Subtle bottom detail */}
@@ -75,7 +67,7 @@ const WaitingList: React.FC = () => {
         Executive Ops x Ally Node
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default WaitingList;
+export default WaitingList

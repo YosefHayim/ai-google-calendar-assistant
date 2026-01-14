@@ -6,7 +6,6 @@ import { QUERY_CONFIG } from '@/lib/constants'
 import { getConversations, type ConversationListResponse } from '@/services/chatService'
 import type { QueryHookOptions } from '../useQueryWrapper'
 
-
 interface UseConversationsOptions extends QueryHookOptions {
   limit?: number
   offset?: number

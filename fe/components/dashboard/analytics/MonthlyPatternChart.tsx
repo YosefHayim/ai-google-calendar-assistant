@@ -79,12 +79,8 @@ const MonthlyPatternChart: React.FC<MonthlyPatternChartProps> = ({ data, isLoadi
                       return (
                         <div className="flex flex-col gap-1">
                           <span className="font-medium">Day {payload.dayOfMonth}</span>
-                          <span>
-                            {value}h scheduled
-                          </span>
-                          <span className="text-xs text-muted-foreground">
-                            {payload.eventCount} events
-                          </span>
+                          <span>{value}h scheduled</span>
+                          <span className="text-xs text-muted-foreground">{payload.eventCount} events</span>
                         </div>
                       )
                     }}

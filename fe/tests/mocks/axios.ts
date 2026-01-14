@@ -1,4 +1,4 @@
-import { mock } from "bun:test";
+import { mock } from 'bun:test'
 
 // Mock axios instance
 export const mockAxios = {
@@ -23,6 +23,6 @@ export const mockAxios = {
       eject: mock(() => {}),
     },
   },
-};
+}
 
-export default mockAxios;
+export default mockAxios

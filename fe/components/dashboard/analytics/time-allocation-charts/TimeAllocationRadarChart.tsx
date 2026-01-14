@@ -17,7 +17,10 @@ export const TimeAllocationRadarChart: React.FC<TimeAllocationRadarChartProps> =
   // For radar chart, we create one data point per calendar (spoke)
   // Each spoke shows that calendar's hours value
   const { chartData, chartConfig, maxHours } = React.useMemo(() => {
-    const max = calculateMax(data.map((d) => d.hours), 1)
+    const max = calculateMax(
+      data.map((d) => d.hours),
+      1,
+    )
 
     // Each calendar becomes a point on the radar
     const transformedData = data.map((item) => ({
@@ -39,19 +42,14 @@ export const TimeAllocationRadarChart: React.FC<TimeAllocationRadarChartProps> =
     return { chartData: transformedData, chartConfig: config, maxHours: max }
   }, [data])
 
-  const handleClick = (entry: typeof chartData[0]) => {
+  const handleClick = (entry: (typeof chartData)[0]) => {
     if (onCalendarClick && entry.calendarId) {
       onCalendarClick(entry.calendarId, entry.category, entry.color)
     }
   }
 
   // Custom dot component to render each point with its calendar color
-  const CustomDot = (props: {
-    cx: number
-    cy: number
-    payload: typeof chartData[0]
-    index: number
-  }) => {
+  const CustomDot = (props: { cx: number; cy: number; payload: (typeof chartData)[0]; index: number }) => {
     const { cx, cy, payload } = props
     return (
       <circle
@@ -70,19 +68,14 @@ export const TimeAllocationRadarChart: React.FC<TimeAllocationRadarChartProps> =
   return (
     <ChartContainer config={chartConfig} className="aspect-auto h-[280px] w-full">
       <RadarChart cx="50%" cy="50%" outerRadius="70%" data={chartData}>
-        <PolarGrid
-          className="stroke-zinc-200 dark:stroke-zinc-700"
-          gridType="polygon"
-        />
+        <PolarGrid className="stroke-zinc-200 dark:stroke-zinc-700" gridType="polygon" />
         <PolarAngleAxis
           dataKey="category"
           tick={({ x, y, payload, index }) => {
             const item = chartData[index]
             const color = item?.color || '#71717a'
             // Truncate long names
-            const displayName = payload.value.length > 12
-              ? payload.value.substring(0, 10) + '...'
-              : payload.value
+            const displayName = payload.value.length > 12 ? payload.value.substring(0, 10) + '...' : payload.value
             return (
               <g transform={`translate(${x},${y})`}>
                 <text
@@ -113,19 +106,14 @@ export const TimeAllocationRadarChart: React.FC<TimeAllocationRadarChartProps> =
         <Tooltip
           content={({ active, payload }) => {
             if (active && payload && payload.length > 0) {
-              const item = payload[0].payload as typeof chartData[0]
+              const item = payload[0].payload as (typeof chartData)[0]
               return (
                 <div className="rounded-lg border border-zinc-700 bg-zinc-900 dark:bg-zinc-800 px-3 py-2 text-white shadow-xl">
                   <div className="flex items-center gap-2 mb-1">
-                    <div
-                      className="w-3 h-3 rounded-sm"
-                      style={{ backgroundColor: item.color }}
-                    />
+                    <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: item.color }} />
                     <span className="font-medium text-sm">{item.category}</span>
                   </div>
-                  <div className="text-zinc-300 text-xs">
-                    {item.hours.toFixed(1)} hours
-                  </div>
+                  <div className="text-zinc-300 text-xs">{item.hours.toFixed(1)} hours</div>
                 </div>
               )
             }

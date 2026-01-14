@@ -18,7 +18,16 @@ type QuickEventDialogProps = {
   onEventCreated?: () => void
 }
 
-type DialogState = 'input' | 'recording' | 'transcribing' | 'parsing' | 'confirm' | 'conflict' | 'creating' | 'success' | 'error'
+type DialogState =
+  | 'input'
+  | 'recording'
+  | 'transcribing'
+  | 'parsing'
+  | 'confirm'
+  | 'conflict'
+  | 'creating'
+  | 'success'
+  | 'error'
 
 const MIN_TEXT_LENGTH = 5
 
@@ -142,7 +151,7 @@ export const QuickEventDialog: React.FC<QuickEventDialogProps> = ({ isOpen, onCl
         setAllyMessage(response.error || 'Failed to create event.')
       }
     },
-    [onEventCreated]
+    [onEventCreated],
   )
 
   const handleForceCreate = useCallback(async () => {
@@ -242,7 +251,12 @@ Examples:
               <p className="text-xs text-zinc-400">
                 {state === 'recording' ? 'Recording... Click mic to stop' : 'Press Enter to process'}
               </p>
-              <Button onClick={() => processText(text)} disabled={text.trim().length < MIN_TEXT_LENGTH || isDisabled} variant="outline" size="sm">
+              <Button
+                onClick={() => processText(text)}
+                disabled={text.trim().length < MIN_TEXT_LENGTH || isDisabled}
+                variant="outline"
+                size="sm"
+              >
                 {state === 'parsing' || state === 'transcribing' ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -272,10 +286,17 @@ Examples:
             <AnimatePresence mode="wait">
               {(state === 'input' || state === 'recording') && <InputView state={state} />}
 
-              {(state === 'transcribing' || state === 'parsing' || state === 'creating') && <LoadingView message={allyMessage} />}
+              {(state === 'transcribing' || state === 'parsing' || state === 'creating') && (
+                <LoadingView message={allyMessage} />
+              )}
 
               {state === 'confirm' && parsedEvent && (
-                <ConfirmView event={parsedEvent} calendarName={calendarName} message={allyMessage} onConfirm={handleForceCreate} />
+                <ConfirmView
+                  event={parsedEvent}
+                  calendarName={calendarName}
+                  message={allyMessage}
+                  onConfirm={handleForceCreate}
+                />
               )}
 
               {state === 'conflict' && parsedEvent && (
@@ -289,7 +310,9 @@ Examples:
                 />
               )}
 
-              {state === 'success' && <SuccessView message={allyMessage} calendarName={calendarName} eventUrl={eventUrl} onClose={onClose} />}
+              {state === 'success' && (
+                <SuccessView message={allyMessage} calendarName={calendarName} eventUrl={eventUrl} onClose={onClose} />
+              )}
 
               {state === 'error' && <ErrorView message={allyMessage} onRetry={resetState} />}
             </AnimatePresence>

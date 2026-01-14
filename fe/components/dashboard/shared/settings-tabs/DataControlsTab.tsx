@@ -72,11 +72,7 @@ export const DataControlsTab: React.FC<DataControlsTabProps> = ({
                 disabled={isResettingMemory}
                 className="gap-2 text-amber-600 hover:text-amber-700 border-amber-200 hover:bg-amber-50 dark:border-amber-900/30 dark:hover:bg-amber-900/20"
               >
-                {isResettingMemory ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <Brain className="w-4 h-4" />
-                )}
+                {isResettingMemory ? <Loader2 className="w-4 h-4 animate-spin" /> : <Brain className="w-4 h-4" />}
                 Reset Memory
               </Button>
             }
