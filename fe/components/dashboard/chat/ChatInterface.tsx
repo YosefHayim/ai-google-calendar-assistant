@@ -317,7 +317,7 @@ const ChatInterface: React.FC = () => {
               isSpeaking={isSpeaking}
               speakingMessageId={speakingMessageId}
               onResend={handleResend}
-              onEdit={handleEditMessage}
+              onEditAndResend={handleEditAndResend}
               onSpeak={speakText}
               scrollRef={scrollRef}
               streamingText={streamingState.streamedText}

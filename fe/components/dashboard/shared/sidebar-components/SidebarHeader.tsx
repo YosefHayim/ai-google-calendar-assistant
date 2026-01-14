@@ -34,7 +34,7 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = ({ isOpen, onClose, o
         </div>
       )}
       <div className="flex items-center gap-1">
-        <Button size="icon" onClick={onNewChat} title="New Chat">
+        <Button size="icon" onClick={onNewChat} title="New Chat" className="min-w-[44px] min-h-[44px] md:min-w-0 md:min-h-0">
           <Plus className="w-5 h-5" />
         </Button>
         <Button variant="ghost" size="icon" onClick={onToggle} className="text-zinc-500 hidden md:flex">

@@ -50,7 +50,7 @@ export const SidebarFooter: React.FC<SidebarFooterProps> = ({
             <Button
               variant="ghost"
               size="icon"
-              className="text-zinc-500 dark:text-zinc-400 flex-shrink-0"
+              className="text-zinc-500 dark:text-zinc-400 flex-shrink-0 min-w-[44px] min-h-[44px] md:min-w-0 md:min-h-0"
               onClick={(e) => e.stopPropagation()}
               suppressHydrationWarning
             >
