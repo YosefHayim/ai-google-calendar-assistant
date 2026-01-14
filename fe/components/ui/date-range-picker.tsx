@@ -160,7 +160,7 @@ export function DatePickerWithRange({ className, date, setDate }: DatePickerWith
     <Button
       variant={activePreset === presetKey ? 'default' : 'ghost'}
       className={cn(
-        'justify-start font-normal w-full',
+        'justify-start font-normal w-auto lg:w-full',
         activePreset === presetKey
           ? 'bg-primary text-primary-foreground hover:bg-primary/90'
           : 'hover:bg-zinc-100 dark:hover:bg-zinc-800',
@@ -198,8 +198,8 @@ export function DatePickerWithRange({ className, date, setDate }: DatePickerWith
         <PopoverContent className="w-auto p-0" align="start">
           <div className="flex flex-col sm:flex-row h-full">
             {/* --- LEFT SIDEBAR (Presets) --- */}
-            <div className="flex flex-col gap-1 p-3 border-r border-border min-w-[150px]">
-              <span className="text-xs font-semibold text-muted-foreground mb-1 uppercase tracking-wider px-2">
+            <div className="flex flex-row flex-wrap gap-1.5 p-3 border-b border-border lg:flex-col lg:gap-1 lg:border-r lg:border-b-0 lg:min-w-[150px]">
+              <span className="text-xs font-semibold text-muted-foreground mb-1 uppercase tracking-wider px-2 w-full lg:w-auto">
                 Presets
               </span>
               {renderPresetButton('Yesterday', 'yesterday')}
