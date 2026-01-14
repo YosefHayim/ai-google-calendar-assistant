@@ -1,5 +1,5 @@
 import type { ApiResponse } from '@/types/api'
-import type { BlogPost, BlogPostsResponse, BlogQueryParams } from '@/types/blog'
+import type { BlogPost, BlogPostsResponse, BlogQueryParams, CreateBlogPostData, BlogCategory } from '@/types/blog'
 import { apiClient } from '@/lib/api/client'
 import { ASSETS } from '@/lib/constants'
 
@@ -49,6 +49,16 @@ export const blogService = {
   async getRelated(slug: string, limit?: number): Promise<ApiResponse<BlogPost[]>> {
     const url = limit ? `/api/blog/${slug}/related?limit=${limit}` : `/api/blog/${slug}/related`
     const { data } = await apiClient.get<ApiResponse<BlogPost[]>>(url)
+    return data
+  },
+
+  async getAvailableCategories(): Promise<ApiResponse<BlogCategory[]>> {
+    const { data } = await apiClient.get<ApiResponse<BlogCategory[]>>('/api/blog/categories/available')
+    return data
+  },
+
+  async create(postData: CreateBlogPostData): Promise<ApiResponse<BlogPost>> {
+    const { data } = await apiClient.post<ApiResponse<BlogPost>>('/api/blog', postData)
     return data
   },
 }

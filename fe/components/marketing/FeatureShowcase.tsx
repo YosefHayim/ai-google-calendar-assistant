@@ -907,7 +907,7 @@ const FEATURES: Feature[] = [
 ]
 
 const PlatformToggle = ({ platform, onToggle }: { platform: Platform; onToggle: (p: Platform) => void }) => (
-  <div className="flex justify-center mb-8">
+  <div className="flex justify-center mb-8 z-[1000]">
     <div className="inline-flex items-center p-1 rounded-full bg-zinc-100 dark:bg-zinc-800/80 backdrop-blur-sm border border-zinc-200 dark:border-zinc-700 shadow-lg">
       <button
         onClick={() => onToggle('telegram')}
@@ -973,7 +973,7 @@ const FeatureShowcase = () => {
   const activeFeature = FEATURES[activeIndex]
 
   return (
-    <section className="py-16 md:py-24 px-4 sm:px-6 overflow-hidden bg-gradient-to-b from-zinc-50 to-white dark:from-zinc-950 dark:to-zinc-900 relative">
+    <section>
       <div className="absolute inset-0 z-0 opacity-30 pointer-events-none" aria-hidden="true">
         <div className="absolute bottom-0 left-[-10%] top-[20%] h-[400px] w-[400px] rounded-full bg-[radial-gradient(circle_farthest-side,rgba(var(--primary-rgb,34,197,94),0.2),rgba(255,255,255,0))]" />
         <div className="absolute bottom-0 right-[-10%] top-[10%] h-[400px] w-[400px] rounded-full bg-[radial-gradient(circle_farthest-side,rgba(139,92,246,0.15),rgba(255,255,255,0))]" />

@@ -40,3 +40,35 @@ export interface BlogQueryParams {
   limit?: number
   offset?: number
 }
+
+export const BLOG_CATEGORIES = [
+  'Productivity',
+  'Time Management',
+  'AI & Technology',
+  'Tips & Tricks',
+  'Work-Life Balance',
+  'Meeting Efficiency',
+] as const
+
+export type BlogCategory = (typeof BLOG_CATEGORIES)[number]
+
+export interface CreateBlogPostData {
+  title: string
+  excerpt: string
+  content: string
+  category: BlogCategory
+  image_key?: string | null
+  author?: {
+    name: string
+    role: string
+  }
+  read_time?: string
+  featured?: boolean
+  tags?: string[]
+  seo?: {
+    title?: string
+    description?: string
+    keywords?: string[]
+  }
+  status?: 'draft' | 'published'
+}

@@ -9,7 +9,9 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { JsonLd } from '@/components/shared/JsonLd'
 import { generateBreadcrumbSchema, generateArticleSchema, SITE_CONFIG } from '@/lib/constants/seo'
-import { getBlogPostBySlug, getRelatedPosts } from '@/lib/data/blog-posts'
+import { useBlogPost, useRelatedPosts } from '@/hooks/queries'
+import { getBlogImageUrl } from '@/services/blog.service'
+import { getBlogPostBySlug, getRelatedPosts as getStaticRelatedPosts } from '@/lib/data/blog-posts'
 import {
   ArrowLeft,
   Calendar,
@@ -21,6 +23,7 @@ import {
   BookOpen,
   ArrowRight,
   Check,
+  Loader2,
 } from 'lucide-react'
 import { formatBlogDate } from '@/lib/formatUtils'
 import { useState } from 'react'
@@ -81,14 +84,71 @@ function ShareButtons({ title, url }: { title: string; url: string }) {
 export default function BlogPostPage() {
   const params = useParams()
   const slug = params.slug as string
-  const post = getBlogPostBySlug(slug)
+
+  const { data: dynamicPost, isLoading, isError } = useBlogPost(slug)
+  const { data: dynamicRelated } = useRelatedPosts(slug, 3)
+
+  const staticPost = getBlogPostBySlug(slug)
+  const staticRelated = getStaticRelatedPosts(slug, 3)
+
+  const useDynamicData = !isError && dynamicPost
+  const post = useDynamicData ? dynamicPost : staticPost
+  const relatedPosts = useDynamicData && dynamicRelated?.length ? dynamicRelated : staticRelated
+
+  if (isLoading) {
+    return (
+      <MarketingLayout>
+        <div className="flex justify-center items-center min-h-[60vh]">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      </MarketingLayout>
+    )
+  }
 
   if (!post) {
     notFound()
   }
 
-  const relatedPosts = getRelatedPosts(slug, 3)
+  const getImageSrc = (p: typeof post) => {
+    if (!p) return undefined
+    if (useDynamicData && 'image_key' in p) {
+      return getBlogImageUrl(p.image_key as string | null)
+    }
+    return 'image' in p ? p.image : undefined
+  }
+
+  const getAuthor = (p: typeof post) => {
+    if (!p) return { name: 'Ask Ally Team', role: 'Team' }
+    if (typeof p.author === 'object' && p.author !== null) {
+      return p.author as { name: string; role: string }
+    }
+    return { name: 'Ask Ally Team', role: 'Team' }
+  }
+
+  const getReadTime = (p: typeof post) => {
+    if (!p) return '5 min read'
+    if ('read_time' in p) return p.read_time as string
+    if ('readTime' in p) return p.readTime as string
+    return '5 min read'
+  }
+
+  const getPublishedAt = (p: typeof post) => {
+    if (!p) return new Date().toISOString()
+    if ('published_at' in p) return p.published_at as string
+    if ('publishedAt' in p) return p.publishedAt as string
+    return new Date().toISOString()
+  }
+
+  const getUpdatedAt = (p: typeof post) => {
+    if (!p) return undefined
+    if ('updated_at' in p) return p.updated_at as string | undefined
+    if ('updatedAt' in p) return p.updatedAt as string | undefined
+    return undefined
+  }
+
   const postUrl = `${SITE_CONFIG.url}/blog/${post.slug}`
+  const author = getAuthor(post)
+  const imageSrc = getImageSrc(post)
 
   const breadcrumbSchema = generateBreadcrumbSchema([
     { name: 'Home', url: SITE_CONFIG.url },
@@ -99,9 +159,9 @@ export default function BlogPostPage() {
   const articleSchema = generateArticleSchema({
     title: post.title,
     description: post.excerpt,
-    datePublished: post.publishedAt,
-    dateModified: post.updatedAt || post.publishedAt,
-    author: post.author.name,
+    datePublished: getPublishedAt(post),
+    dateModified: getUpdatedAt(post) || getPublishedAt(post),
+    author: author.name,
     image: `${SITE_CONFIG.url}/og-blog-${post.slug}.png`,
   })
 
@@ -109,14 +169,14 @@ export default function BlogPostPage() {
     <MarketingLayout>
       <JsonLd data={[breadcrumbSchema, articleSchema]} />
 
-      {post.image && (
+      {imageSrc && (
         <div className="relative w-full h-[300px] md:h-[400px] lg:h-[500px] overflow-hidden">
-          <Image src={post.image} alt={post.title} fill sizes="100vw" className="object-cover" priority />
+          <Image src={imageSrc} alt={post.title} fill sizes="100vw" className="object-cover" priority />
           <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-zinc-950 via-transparent to-transparent" />
         </div>
       )}
 
-      <article className={`py-16 md:py-24 px-4 sm:px-6 ${post.image ? '-mt-24 relative z-10' : ''}`}>
+      <article className={`py-16 md:py-24 px-4 sm:px-6 ${imageSrc ? '-mt-24 relative z-10' : ''}`}>
         <div className="max-w-3xl mx-auto">
           <Link
             href="/blog"
@@ -144,17 +204,17 @@ export default function BlogPostPage() {
                   <User className="w-5 h-5 text-primary" />
                 </div>
                 <div>
-                  <p className="font-medium text-zinc-900 dark:text-zinc-100">{post.author.name}</p>
-                  <p className="text-xs">{post.author.role}</p>
+                  <p className="font-medium text-zinc-900 dark:text-zinc-100">{author.name}</p>
+                  <p className="text-xs">{author.role}</p>
                 </div>
               </div>
               <div className="flex items-center gap-1">
                 <Calendar className="w-4 h-4" />
-                {formatBlogDate(post.publishedAt)}
+                {formatBlogDate(getPublishedAt(post))}
               </div>
               <div className="flex items-center gap-1">
                 <Clock className="w-4 h-4" />
-                {post.readTime}
+                {getReadTime(post)}
               </div>
             </div>
           </header>
@@ -207,9 +267,9 @@ export default function BlogPostPage() {
                 <Link key={relatedPost.slug} href={`/blog/${relatedPost.slug}`}>
                   <Card className="h-full overflow-hidden border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors group">
                     <div className="aspect-video relative overflow-hidden bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-zinc-800 dark:to-zinc-900">
-                      {relatedPost.image ? (
+                      {getImageSrc(relatedPost) ? (
                         <Image
-                          src={relatedPost.image}
+                          src={getImageSrc(relatedPost)!}
                           alt={relatedPost.title}
                           fill
                           sizes="(max-width: 768px) 100vw, 33vw"
@@ -265,30 +325,19 @@ export default function BlogPostPage() {
   )
 }
 
-// Simple markdown to HTML converter for blog content
 function formatMarkdownToHtml(markdown: string): string {
   let html = markdown
-    // Headers
     .replace(/^### (.*$)/gim, '<h3>$1</h3>')
     .replace(/^## (.*$)/gim, '<h2>$1</h2>')
     .replace(/^# (.*$)/gim, '<h1>$1</h1>')
-    // Bold
     .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
-    // Italic
     .replace(/\*(.*?)\*/gim, '<em>$1</em>')
-    // Code blocks
     .replace(/```([\s\S]*?)```/gim, '<pre><code>$1</code></pre>')
-    // Inline code
     .replace(/`(.*?)`/gim, '<code>$1</code>')
-    // Links
     .replace(/\[(.*?)\]\((.*?)\)/gim, '<a href="$2">$1</a>')
-    // Unordered lists
     .replace(/^\- (.*$)/gim, '<li>$1</li>')
-    // Ordered lists
     .replace(/^\d+\. (.*$)/gim, '<li>$1</li>')
-    // Paragraphs
     .replace(/\n\n/gim, '</p><p>')
-    // Line breaks
     .replace(/\n/gim, '<br>')
 
   html = html.replace(/(<li>[\s\S]*?<\/li>)/gim, (match) => {
@@ -298,11 +347,9 @@ function formatMarkdownToHtml(markdown: string): string {
     return match
   })
 
-  // Clean up multiple consecutive ul tags
   html = html.replace(/<\/ul><br><ul>/gim, '')
   html = html.replace(/<\/ul><ul>/gim, '')
 
-  // Wrap in paragraph if not already
   if (!html.startsWith('<')) {
     html = '<p>' + html + '</p>'
   }

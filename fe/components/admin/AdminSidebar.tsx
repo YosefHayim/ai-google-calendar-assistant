@@ -3,7 +3,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, Users, CreditCard, Receipt, FileText, ArrowLeft, Shield } from 'lucide-react'
+import { LayoutDashboard, Users, CreditCard, Receipt, FileText, ArrowLeft, Shield, PenSquare } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const navItems = [
@@ -12,6 +12,7 @@ const navItems = [
   { href: '/admin/subscriptions', icon: CreditCard, label: 'Subscriptions' },
   { href: '/admin/payments', icon: Receipt, label: 'Payments' },
   { href: '/admin/audit-logs', icon: FileText, label: 'Audit Logs' },
+  { href: '/admin/blog', icon: PenSquare, label: 'Blog' },
 ]
 
 export function AdminSidebar() {

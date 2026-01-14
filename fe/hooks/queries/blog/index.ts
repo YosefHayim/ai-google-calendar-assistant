@@ -1,15 +1,17 @@
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { blogService } from '@/services/blog.service'
-import type { BlogQueryParams } from '@/types/blog'
+import type { BlogQueryParams, CreateBlogPostData } from '@/types/blog'
 import { QUERY_CONFIG } from '@/lib/constants'
+import { toast } from 'sonner'
 
 export const blogKeys = {
   all: ['blog'] as const,
   list: (params?: BlogQueryParams) => [...blogKeys.all, 'list', params] as const,
   post: (slug: string) => [...blogKeys.all, 'post', slug] as const,
   categories: () => [...blogKeys.all, 'categories'] as const,
+  availableCategories: () => [...blogKeys.all, 'availableCategories'] as const,
   featured: () => [...blogKeys.all, 'featured'] as const,
   related: (slug: string, limit?: number) => [...blogKeys.all, 'related', slug, limit] as const,
 }
@@ -68,5 +70,38 @@ export function useRelatedPosts(slug: string, limit?: number) {
     },
     enabled: !!slug,
     staleTime: 5 * QUERY_CONFIG.DEFAULT_STALE_TIME,
+  })
+}
+
+export function useAvailableCategories() {
+  return useQuery({
+    queryKey: blogKeys.availableCategories(),
+    queryFn: async () => {
+      const response = await blogService.getAvailableCategories()
+      return response.data ?? []
+    },
+    staleTime: 60 * QUERY_CONFIG.DEFAULT_STALE_TIME,
+  })
+}
+
+export function useCreateBlogPost() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (postData: CreateBlogPostData) => {
+      const response = await blogService.create(postData)
+      return response.data
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: blogKeys.all })
+      toast.success('Blog post created!', {
+        description: `"${data?.title}" has been published successfully.`,
+      })
+    },
+    onError: (error: Error) => {
+      toast.error('Failed to create blog post', {
+        description: error.message || 'Please try again.',
+      })
+    },
   })
 }
