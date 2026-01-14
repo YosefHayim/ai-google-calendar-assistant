@@ -34,6 +34,8 @@ import voiceRoute from "@/routes/voice-route";
 import waitingListRoute from "@/routes/waiting-list-route";
 import webhooksRoute from "@/routes/webhooks-route";
 import whatsAppRoute from "@/routes/whatsapp-route";
+import referralRoute from "@/routes/referral-route";
+import teamInviteRoute from "@/routes/team-invite-route";
 
 const ACCESS_TOKEN_HEADER = "access_token";
 const REFRESH_TOKEN_HEADER = "refresh_token";
@@ -113,6 +115,8 @@ app.use(ROUTES.SLACK, slackRoute);
 app.use(ROUTES.SHARED, sharedRoute);
 app.use("/api/newsletter", newsletterRoute);
 app.use("/api/waitinglist", waitingListRoute);
+app.use("/api/referral", referralRoute);
+app.use("/api/teams", teamInviteRoute);
 
 app.use((_req, res, _next) => {
   logger.error(`Opps! It looks like this route doesn't exist. ${_req.originalUrl}`);

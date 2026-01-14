@@ -115,6 +115,123 @@ export type Database = {
         }
         Relationships: []
       }
+      integrations: {
+        Row: {
+          access_token: string | null
+          bot_user_id: string | null
+          created_at: string | null
+          id: string
+          installed_at: string | null
+          installed_by: string | null
+          integration_type: string
+          last_sync_at: string | null
+          refresh_token: string | null
+          scope: string | null
+          status: string | null
+          token_expires_at: string | null
+          updated_at: string | null
+          user_mappings: Json | null
+          workspace_data: Json
+          workspace_id: string
+        }
+        Insert: {
+          access_token?: string | null
+          bot_user_id?: string | null
+          created_at?: string | null
+          id?: string
+          installed_at?: string | null
+          installed_by?: string | null
+          integration_type: string
+          last_sync_at?: string | null
+          refresh_token?: string | null
+          scope?: string | null
+          status?: string | null
+          token_expires_at?: string | null
+          updated_at?: string | null
+          user_mappings?: Json | null
+          workspace_data?: Json
+          workspace_id: string
+        }
+        Update: {
+          access_token?: string | null
+          bot_user_id?: string | null
+          created_at?: string | null
+          id?: string
+          installed_at?: string | null
+          installed_by?: string | null
+          integration_type?: string
+          last_sync_at?: string | null
+          refresh_token?: string | null
+          scope?: string | null
+          status?: string | null
+          token_expires_at?: string | null
+          updated_at?: string | null
+          user_mappings?: Json | null
+          workspace_data?: Json
+          workspace_id?: string
+        }
+        Relationships: []
+      }
+      invitations: {
+        Row: {
+          accepted_at: string | null
+          converted_at: string | null
+          created_at: string | null
+          expires_at: string | null
+          id: string
+          invite_token: string
+          invite_type: string
+          invitee_email: string
+          invitee_id: string | null
+          inviter_email: string
+          inviter_id: string
+          metadata: Json | null
+          reward_amount: number | null
+          reward_claimed_at: string | null
+          reward_type: string | null
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          accepted_at?: string | null
+          converted_at?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          invite_token: string
+          invite_type: string
+          invitee_email: string
+          invitee_id?: string | null
+          inviter_email: string
+          inviter_id: string
+          metadata?: Json | null
+          reward_amount?: number | null
+          reward_claimed_at?: string | null
+          reward_type?: string | null
+          status?: string
+          updated_at?: string | null
+        }
+        Update: {
+          accepted_at?: string | null
+          converted_at?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          invite_token?: string
+          invite_type?: string
+          invitee_email?: string
+          invitee_id?: string | null
+          inviter_email?: string
+          inviter_id?: string
+          metadata?: Json | null
+          reward_amount?: number | null
+          reward_claimed_at?: string | null
+          reward_type?: string | null
+          status?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       lemonsqueezy_webhook_events: {
         Row: {
           created_at: string | null
@@ -148,6 +265,54 @@ export type Database = {
           processed?: boolean | null
           processed_at?: string | null
           retry_count?: number | null
+        }
+        Relationships: []
+      }
+      marketing_subscriptions: {
+        Row: {
+          created_at: string | null
+          email: string
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          name: string | null
+          source: string | null
+          status: string | null
+          subscription_types: string[] | null
+          unsubscribed_at: string | null
+          updated_at: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          name?: string | null
+          source?: string | null
+          status?: string | null
+          subscription_types?: string[] | null
+          unsubscribed_at?: string | null
+          updated_at?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          name?: string | null
+          source?: string | null
+          status?: string | null
+          subscription_types?: string[] | null
+          unsubscribed_at?: string | null
+          updated_at?: string | null
+          user_agent?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -347,6 +512,93 @@ export type Database = {
           stripe_price_id_monthly?: string | null
           stripe_price_id_yearly?: string | null
           stripe_product_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      referral_stats: {
+        Row: {
+          created_at: string | null
+          id: string
+          pending_referrals: number | null
+          successful_referrals: number | null
+          total_free_months_earned: number | null
+          total_referrals: number | null
+          total_rewards_earned: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          pending_referrals?: number | null
+          successful_referrals?: number | null
+          total_free_months_earned?: number | null
+          total_referrals?: number | null
+          total_rewards_earned?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          pending_referrals?: number | null
+          successful_referrals?: number | null
+          total_free_months_earned?: number | null
+          total_referrals?: number | null
+          total_rewards_earned?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      referrals: {
+        Row: {
+          converted_at: string | null
+          created_at: string | null
+          expires_at: string | null
+          id: string
+          referral_code: string
+          referred_email: string | null
+          referred_id: string | null
+          referrer_email: string
+          referrer_id: string
+          reward_amount: number | null
+          reward_claimed_at: string | null
+          reward_type: string | null
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          converted_at?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          referral_code: string
+          referred_email?: string | null
+          referred_id?: string | null
+          referrer_email: string
+          referrer_id: string
+          reward_amount?: number | null
+          reward_claimed_at?: string | null
+          reward_type?: string | null
+          status?: string
+          updated_at?: string | null
+        }
+        Update: {
+          converted_at?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          referral_code?: string
+          referred_email?: string | null
+          referred_id?: string | null
+          referrer_email?: string
+          referrer_id?: string
+          reward_amount?: number | null
+          reward_claimed_at?: string | null
+          reward_type?: string | null
+          status?: string
           updated_at?: string | null
         }
         Relationships: []
@@ -610,6 +862,149 @@ export type Database = {
             referencedColumns: ["user_id"]
           },
         ]
+      }
+      team_invites: {
+        Row: {
+          accepted_at: string | null
+          created_at: string | null
+          expires_at: string | null
+          id: string
+          invite_token: string
+          invitee_email: string
+          invitee_id: string | null
+          inviter_email: string
+          inviter_id: string
+          message: string | null
+          role: string | null
+          status: string
+          team_name: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          accepted_at?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          invite_token: string
+          invitee_email: string
+          invitee_id?: string | null
+          inviter_email: string
+          inviter_id: string
+          message?: string | null
+          role?: string | null
+          status?: string
+          team_name?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          accepted_at?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          invite_token?: string
+          invitee_email?: string
+          invitee_id?: string | null
+          inviter_email?: string
+          inviter_id?: string
+          message?: string | null
+          role?: string | null
+          status?: string
+          team_name?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      team_members: {
+        Row: {
+          id: string
+          invite_id: string | null
+          invited_by: string | null
+          joined_at: string | null
+          role: string | null
+          team_id: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          invite_id?: string | null
+          invited_by?: string | null
+          joined_at?: string | null
+          role?: string | null
+          team_id: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          invite_id?: string | null
+          invited_by?: string | null
+          joined_at?: string | null
+          role?: string | null
+          team_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_members_invite_id_fkey"
+            columns: ["invite_id"]
+            isOneToOne: false
+            referencedRelation: "invitations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "team_members_invite_id_fkey"
+            columns: ["invite_id"]
+            isOneToOne: false
+            referencedRelation: "referrals_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "team_members_invite_id_fkey"
+            columns: ["invite_id"]
+            isOneToOne: false
+            referencedRelation: "team_invites_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "team_members_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      teams: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          max_members: number | null
+          name: string
+          owner_id: string
+          settings: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          max_members?: number | null
+          name: string
+          owner_id: string
+          settings?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          max_members?: number | null
+          name?: string
+          owner_id?: string
+          settings?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       telegram_users: {
         Row: {
@@ -964,6 +1359,147 @@ export type Database = {
       }
     }
     Views: {
+      newsletter_subscriptions_view: {
+        Row: {
+          created_at: string | null
+          email: string | null
+          id: string | null
+          ip_address: string | null
+          source: string | null
+          status: string | null
+          subscribed_at: string | null
+          unsubscribed_at: string | null
+          updated_at: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email?: string | null
+          id?: string | null
+          ip_address?: string | null
+          source?: string | null
+          status?: string | null
+          subscribed_at?: string | null
+          unsubscribed_at?: string | null
+          updated_at?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string | null
+          id?: string | null
+          ip_address?: string | null
+          source?: string | null
+          status?: string | null
+          subscribed_at?: string | null
+          unsubscribed_at?: string | null
+          updated_at?: string | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
+      referrals_view: {
+        Row: {
+          converted_at: string | null
+          created_at: string | null
+          expires_at: string | null
+          id: string | null
+          referral_code: string | null
+          referred_email: string | null
+          referred_id: string | null
+          referrer_email: string | null
+          referrer_id: string | null
+          reward_amount: number | null
+          reward_claimed_at: string | null
+          reward_type: string | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          converted_at?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string | null
+          referral_code?: never
+          referred_email?: never
+          referred_id?: string | null
+          referrer_email?: string | null
+          referrer_id?: string | null
+          reward_amount?: number | null
+          reward_claimed_at?: string | null
+          reward_type?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          converted_at?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string | null
+          referral_code?: never
+          referred_email?: never
+          referred_id?: string | null
+          referrer_email?: string | null
+          referrer_id?: string | null
+          reward_amount?: number | null
+          reward_claimed_at?: string | null
+          reward_type?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      team_invites_view: {
+        Row: {
+          accepted_at: string | null
+          created_at: string | null
+          expires_at: string | null
+          id: string | null
+          invite_token: string | null
+          invitee_email: string | null
+          invitee_id: string | null
+          inviter_email: string | null
+          inviter_id: string | null
+          message: string | null
+          role: string | null
+          status: string | null
+          team_name: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          accepted_at?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string | null
+          invite_token?: string | null
+          invitee_email?: string | null
+          invitee_id?: string | null
+          inviter_email?: string | null
+          inviter_id?: string | null
+          message?: never
+          role?: never
+          status?: string | null
+          team_name?: never
+          updated_at?: string | null
+        }
+        Update: {
+          accepted_at?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string | null
+          invite_token?: string | null
+          invitee_email?: string | null
+          invitee_id?: string | null
+          inviter_email?: string | null
+          inviter_id?: string | null
+          message?: never
+          role?: never
+          status?: string | null
+          team_name?: never
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       v_active_subscriptions: {
         Row: {
           ai_interactions_limit: number | null
@@ -1085,6 +1621,54 @@ export type Database = {
         }
         Relationships: []
       }
+      waiting_list_view: {
+        Row: {
+          created_at: string | null
+          email: string | null
+          id: string | null
+          invited_at: string | null
+          ip_address: string | null
+          name: string | null
+          notes: string | null
+          position: number | null
+          registered_at: string | null
+          source: string | null
+          status: string | null
+          updated_at: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email?: string | null
+          id?: string | null
+          invited_at?: never
+          ip_address?: string | null
+          name?: string | null
+          notes?: never
+          position?: never
+          registered_at?: never
+          source?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string | null
+          id?: string | null
+          invited_at?: never
+          ip_address?: string | null
+          name?: string | null
+          notes?: never
+          position?: never
+          registered_at?: never
+          source?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       check_trial_expirations: { Args: never; Returns: number }
@@ -1109,6 +1693,10 @@ export type Database = {
         Args: { days_old?: number }
         Returns: number
       }
+      generate_invitation_token: { Args: never; Returns: string }
+      generate_invite_token: { Args: never; Returns: string }
+      generate_referral_code: { Args: never; Returns: string }
+      generate_referral_code_v2: { Args: never; Returns: string }
       get_or_create_conversation:
         | {
             Args: {

@@ -42,8 +42,9 @@ export const teamInviteController = {
       }
 
       const { data: existingInvite } = await SUPABASE
-        .from("team_invites")
+        .from("invitations")
         .select("id, status")
+        .eq("invite_type", "team")
         .eq("inviter_id", userId)
         .eq("invitee_email", inviteeEmail)
         .eq("status", "pending")
@@ -54,14 +55,18 @@ export const teamInviteController = {
       }
 
       const { data: invite, error } = await SUPABASE
-        .from("team_invites")
+        .from("invitations")
         .insert({
+          invite_type: "team",
           inviter_id: userId,
           inviter_email: userEmail,
           invitee_email: inviteeEmail,
-          team_name: teamName,
-          role,
-          message,
+          expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+          metadata: {
+            team_name: teamName,
+            role,
+            message,
+          },
         })
         .select("*")
         .single()
@@ -75,7 +80,7 @@ export const teamInviteController = {
           id: invite.id,
           inviteeEmail: invite.invitee_email,
           status: invite.status,
-          role: invite.role,
+          role: invite.metadata?.role,
           inviteLink,
           expiresAt: invite.expires_at,
         },
@@ -94,13 +99,31 @@ export const teamInviteController = {
     }
 
     try {
-      const { data: invites, error } = await SUPABASE
-        .from("team_invites")
+      const { data: invitations, error } = await SUPABASE
+        .from("invitations")
         .select("*")
+        .eq("invite_type", "team")
         .eq("inviter_id", userId)
         .order("created_at", { ascending: false })
 
       if (error) throw error
+
+      const invites = invitations.map((inv) => ({
+        id: inv.id,
+        inviter_id: inv.inviter_id,
+        inviter_email: inv.inviter_email,
+        invitee_email: inv.invitee_email,
+        invitee_id: inv.invitee_id,
+        team_name: inv.metadata?.team_name,
+        role: inv.metadata?.role,
+        status: inv.status,
+        invite_token: inv.invite_token,
+        message: inv.metadata?.message,
+        expires_at: inv.expires_at,
+        accepted_at: inv.accepted_at,
+        created_at: inv.created_at,
+        updated_at: inv.updated_at,
+      }))
 
       return sendR(res, 200, "Sent invites retrieved", { invites })
     } catch (error) {
@@ -117,14 +140,32 @@ export const teamInviteController = {
     }
 
     try {
-      const { data: invites, error } = await SUPABASE
-        .from("team_invites")
+      const { data: invitations, error } = await SUPABASE
+        .from("invitations")
         .select("*")
+        .eq("invite_type", "team")
         .eq("invitee_email", userEmail)
         .in("status", ["pending"])
         .order("created_at", { ascending: false })
 
       if (error) throw error
+
+      const invites = invitations.map((inv) => ({
+        id: inv.id,
+        inviter_id: inv.inviter_id,
+        inviter_email: inv.inviter_email,
+        invitee_email: inv.invitee_email,
+        invitee_id: inv.invitee_id,
+        team_name: inv.metadata?.team_name,
+        role: inv.metadata?.role,
+        status: inv.status,
+        invite_token: inv.invite_token,
+        message: inv.metadata?.message,
+        expires_at: inv.expires_at,
+        accepted_at: inv.accepted_at,
+        created_at: inv.created_at,
+        updated_at: inv.updated_at,
+      }))
 
       return sendR(res, 200, "Received invites retrieved", { invites })
     } catch (error) {
@@ -150,8 +191,9 @@ export const teamInviteController = {
 
     try {
       const { data: invite, error: fetchError } = await SUPABASE
-        .from("team_invites")
+        .from("invitations")
         .select("*")
+        .eq("invite_type", "team")
         .eq("invite_token", inviteToken)
         .eq("invitee_email", userEmail)
         .single()
@@ -166,7 +208,7 @@ export const teamInviteController = {
 
       if (invite.expires_at && new Date(invite.expires_at) < new Date()) {
         await SUPABASE
-          .from("team_invites")
+          .from("invitations")
           .update({ status: "expired", updated_at: new Date().toISOString() })
           .eq("id", invite.id)
         return sendR(res, 400, "This invite has expired", null)
@@ -175,7 +217,7 @@ export const teamInviteController = {
       const newStatus = action === "accept" ? "accepted" : "declined"
 
       const { error: updateError } = await SUPABASE
-        .from("team_invites")
+        .from("invitations")
         .update({
           status: newStatus,
           invitee_id: action === "accept" ? userId : null,
@@ -189,7 +231,7 @@ export const teamInviteController = {
       return sendR(res, 200, `Invite ${newStatus} successfully`, {
         status: newStatus,
         inviterEmail: invite.inviter_email,
-        teamName: invite.team_name,
+        teamName: invite.metadata?.team_name,
       })
     } catch (error) {
       console.error("Respond to invite error:", error)
@@ -211,9 +253,10 @@ export const teamInviteController = {
 
     try {
       const { data: invite, error: fetchError } = await SUPABASE
-        .from("team_invites")
+        .from("invitations")
         .select("*")
         .eq("id", inviteId)
+        .eq("invite_type", "team")
         .eq("inviter_id", userId)
         .single()
 
@@ -226,7 +269,7 @@ export const teamInviteController = {
       }
 
       const { error: updateError } = await SUPABASE
-        .from("team_invites")
+        .from("invitations")
         .update({
           status: "cancelled",
           updated_at: new Date().toISOString(),
@@ -256,9 +299,10 @@ export const teamInviteController = {
 
     try {
       const { data: invite, error: fetchError } = await SUPABASE
-        .from("team_invites")
+        .from("invitations")
         .select("*")
         .eq("id", inviteId)
+        .eq("invite_type", "team")
         .eq("inviter_id", userId)
         .single()
 
@@ -271,7 +315,7 @@ export const teamInviteController = {
       }
 
       const { error: updateError } = await SUPABASE
-        .from("team_invites")
+        .from("invitations")
         .update({
           status: "pending",
           expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
@@ -302,8 +346,9 @@ export const teamInviteController = {
 
     try {
       const { data: invite, error } = await SUPABASE
-        .from("team_invites")
-        .select("inviter_email, team_name, role, status, expires_at, message")
+        .from("invitations")
+        .select("inviter_email, metadata, status, expires_at")
+        .eq("invite_type", "team")
         .eq("invite_token", token)
         .single()
 
@@ -319,9 +364,9 @@ export const teamInviteController = {
         expired: isExpired,
         status: invite.status,
         inviterEmail: invite.inviter_email,
-        teamName: invite.team_name,
-        role: invite.role,
-        message: invite.message,
+        teamName: invite.metadata?.team_name,
+        role: invite.metadata?.role,
+        message: invite.metadata?.message,
       })
     } catch (error) {
       console.error("Get invite by token error:", error)
@@ -391,7 +436,7 @@ export const teamInviteController = {
             name,
             description,
             owner_id,
-            max_members,
+            settings,
             created_at
           )
         `)

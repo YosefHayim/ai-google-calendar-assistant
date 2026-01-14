@@ -40,7 +40,7 @@ export const BLOG_POSTS: BlogPost[] = [
     title: 'The Future of AI-Powered Calendar Management: How Smart Scheduling is Transforming Productivity',
     excerpt:
       'Discover how artificial intelligence is revolutionizing the way we manage our time and schedules. From natural language processing to predictive scheduling, the future of calendar management is here.',
-    image: '/future-of-ai-calendar-management.jpg',
+    image: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800&h=450&fit=crop',
     content: `
 ## The Evolution of Calendar Management
 
@@ -119,7 +119,7 @@ Ready to experience the future of calendar management? [Try Ask Ally today](/reg
     title: '10 Productivity Hacks Using AI Calendar Assistants That Will Transform Your Workday',
     excerpt:
       'Learn how to maximize your productivity with these proven tips and tricks. From voice commands to smart scheduling, unlock the full potential of your calendar with AI assistance.',
-    image: '/productivity-hacks-ask-ally.jpg',
+    image: 'https://images.unsplash.com/photo-1483058712412-4245e9b90334?w=800&h=450&fit=crop',
     content: `
 ## Unlock Your Full Productivity Potential
 
@@ -231,6 +231,7 @@ These hacks work best when combined. Start with one or two that address your big
     title: 'How to Recover Lost Time: The Complete Guide to Gap Analysis and Time Tracking',
     excerpt:
       'Understanding where your time goes is the first step to better time management. Learn how AI-powered Gap Recovery helps you track and optimize every hour of your day.',
+    image: 'https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=800&h=450&fit=crop',
     content: `
 ## The Hidden Cost of Untracked Time
 
@@ -345,6 +346,7 @@ The ultimate goal isn't just tracking - it's optimization. Use gap data to:
     title: 'Building Better Meeting Habits: A Complete Guide to Reducing Meeting Fatigue',
     excerpt:
       'Start the year right with healthier meeting habits. Discover strategies to reduce meeting fatigue, reclaim focus time, and make every calendar event count.',
+    image: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=800&h=450&fit=crop',
     content: `
 ## The Meeting Epidemic
 
@@ -489,6 +491,7 @@ Changing meeting culture takes time, but the benefits are substantial:
     title: 'Mastering Work-Life Balance: How Your Calendar Can Help You Live Better',
     excerpt:
       'Your calendar is more than a work tool - it is a blueprint for your life. Learn how intentional scheduling can improve your well-being and help you achieve true work-life balance.',
+    image: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=800&h=450&fit=crop',
     content: `
 ## Beyond Work: Your Calendar as a Life Tool
 
@@ -626,7 +629,7 @@ Perfect balance doesn't exist. Life ebbs and flows. The goal is intentional allo
     title: 'The Science of Focus Time: How to Protect Deep Work in a Distracted World',
     excerpt:
       'Deep work is the superpower of the knowledge economy. Learn the science behind focus time and practical strategies to protect your most productive hours.',
-    image: '/focus-time-deep-work.jpg',
+    image: 'https://images.unsplash.com/photo-1488190211105-8b0e65b80b4e?w=800&h=450&fit=crop',
     content: `
 ## The Deep Work Advantage
 
@@ -751,7 +754,7 @@ Your focus is your competitive advantage. Protect it accordingly.
     title: 'Understanding Your Time: A Guide to Calendar Analytics and Data-Driven Scheduling',
     excerpt:
       'What gets measured gets managed. Learn how calendar analytics can reveal hidden patterns in your schedule and help you make smarter decisions about your time.',
-    image: '/calendar-analytics-insights.jpg',
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=450&fit=crop',
     content: `
 ## The Power of Calendar Data
 
@@ -900,7 +903,7 @@ What gets measured gets managed. What gets managed gets improved.
     title: 'Voice-First Calendar Management: The Complete Guide to Hands-Free Scheduling',
     excerpt:
       'Voice technology is revolutionizing how we interact with our calendars. Learn how to master voice commands for efficient, hands-free schedule management.',
-    image: '/voice-commands-calendar.jpg',
+    image: 'https://images.unsplash.com/photo-1589254065878-42c9da997008?w=800&h=450&fit=crop',
     content: `
 ## The Rise of Voice-First Productivity
 
@@ -1046,6 +1049,7 @@ Your voice is the most natural interface you have. Use it.
     title: 'Calendar Management for Remote Workers: Essential Tips for Distributed Teams',
     excerpt:
       'Remote work requires intentional calendar management. Learn strategies for time zone coordination, async collaboration, and maintaining work-life boundaries when working from home.',
+    image: 'https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=800&h=450&fit=crop',
     content: `
 ## The Remote Work Calendar Challenge
 
@@ -1224,7 +1228,7 @@ Remote work is here to stay. Master your calendar, and master remote success.
     title: 'From To-Do List to Time Blocks: Mastering Task Prioritization with Your Calendar',
     excerpt:
       'Your to-do list is just wishes without time allocation. Learn how to transform tasks into calendar blocks and master the art of realistic scheduling.',
-    image: '/task-prioritization-calendar.jpg',
+    image: 'https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=800&h=450&fit=crop',
     content: `
 ## The To-Do List Problem
 
@@ -1391,6 +1395,7 @@ Your calendar is your budget for time. Spend wisely.
     title: 'Inside the AI: How Multi-Agent Systems Power Modern Calendar Assistants',
     excerpt:
       'Peek behind the curtain of AI calendar assistants. Learn how multi-agent architectures work together to understand your requests, manage conflicts, and optimize your schedule.',
+    image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=450&fit=crop',
     content: `
 ## Beyond Simple Chatbots
 
@@ -1516,7 +1521,8 @@ The future of AI isn't one superintelligent system - it's teams of specialized a
     slug: 'telegram-bot-productivity-guide',
     title: 'The Power of Messaging: Using Telegram Bots for Calendar Productivity',
     excerpt:
-      'Your calendar doesn\'t have to live in a separate app. Learn how Telegram bots bring powerful calendar management to your favorite messaging platform.',
+      "Your calendar doesn't have to live in a separate app. Learn how Telegram bots bring powerful calendar management to your favorite messaging platform.",
+    image: 'https://images.unsplash.com/photo-1611746872915-64382b5c76da?w=800&h=450&fit=crop',
     content: `
 ## Calendar Management Where You Already Are
 
@@ -1704,6 +1710,7 @@ The best tool is the one you actually use. By putting your calendar in Telegram,
     title: 'Trust Your Calendar: Security and Privacy in AI-Powered Scheduling',
     excerpt:
       'Your calendar contains sensitive information about your life. Learn what security measures to expect from AI calendar assistants and how to protect your data.',
+    image: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=800&h=450&fit=crop',
     content: `
 ## Your Calendar Knows Everything
 
@@ -1909,7 +1916,8 @@ Your calendar is personal. Your security is non-negotiable.
     slug: 'managing-multiple-calendars',
     title: 'One Life, Multiple Calendars: Mastering Multi-Calendar Management',
     excerpt:
-      'Work calendar, personal calendar, family calendar - managing multiple calendars doesn\'t have to be chaotic. Learn strategies for seamless multi-calendar coordination.',
+      "Work calendar, personal calendar, family calendar - managing multiple calendars doesn't have to be chaotic. Learn strategies for seamless multi-calendar coordination.",
+    image: 'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=800&h=450&fit=crop',
     content: `
 ## The Multi-Calendar Reality
 
@@ -2142,9 +2150,10 @@ Multiple calendars don't have to mean multiple headaches. With the right system,
   },
   {
     slug: 'natural-language-processing-calendars',
-    title: 'Speaking Your Calendar\'s Language: How NLP Transforms Scheduling',
+    title: "Speaking Your Calendar's Language: How NLP Transforms Scheduling",
     excerpt:
       'From "tomorrow at 2" to precise timestamps - discover how natural language processing makes calendar management feel like conversation.',
+    image: 'https://images.unsplash.com/photo-1526378722484-bd91ca387e72?w=800&h=450&fit=crop',
     content: `
 ## The Magic of Natural Language
 
@@ -2391,6 +2400,7 @@ The best technology is invisible. NLP makes your calendar feel like a conversati
     title: 'Digital Life Organization: Your Calendar as the Hub of Everything',
     excerpt:
       'In our hyperconnected world, the calendar has evolved beyond appointments. Learn how to use your calendar as the central organizing system for your entire digital life.',
+    image: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&h=450&fit=crop',
     content: `
 ## Beyond Appointments: Calendar as Life OS
 
@@ -2639,6 +2649,2401 @@ Your time is your life. Organize it intentionally.
       ],
     },
   },
+  {
+    slug: 'morning-routines-calendar-habits',
+    title: 'The Power of Morning Routines: Building Calendar Habits That Stick',
+    excerpt:
+      'How you start your day determines how you spend it. Learn how to use your calendar to build and maintain powerful morning routines that set you up for success.',
+    image: 'https://images.unsplash.com/photo-1506784365847-bbad939e9335?w=800&h=450&fit=crop',
+    content: `
+## Why Morning Routines Matter
+
+The first hours of your day are precious. Research shows that willpower is highest in the morning, cognitive function peaks early, and decisions made before noon tend to be better quality. Yet most people waste this golden time scrolling through emails or reacting to others' priorities.
+
+## The Calendar-Based Morning Routine
+
+### Traditional Approach vs. Calendar Approach
+
+**Traditional:** Hope to wake up early, try to remember what to do, often fail.
+
+**Calendar-Based:** Every morning activity has a scheduled time, creating structure and accountability.
+
+### Building Your Morning Block
+
+Start by mapping your ideal morning:
+- Wake up time
+- Physical activity or exercise
+- Mental preparation (meditation, journaling)
+- Learning or skill development
+- Planning and prioritization
+- Transition to work
+
+Each element gets a specific time block.
+
+## Example Morning Routine Calendar
+
+**5:30 AM - 6:00 AM:** Wake up, hydration, light stretching
+**6:00 AM - 6:45 AM:** Exercise (run, gym, yoga)
+**6:45 AM - 7:15 AM:** Shower and get ready
+**7:15 AM - 7:30 AM:** Meditation or mindfulness
+**7:30 AM - 8:00 AM:** Learning time (podcast, reading, course)
+**8:00 AM - 8:30 AM:** Breakfast and family time
+**8:30 AM - 9:00 AM:** Daily planning and review
+
+## Making Morning Routines Stick
+
+### 1. Start Small
+
+Don't overhaul everything at once:
+- Week 1: Just schedule wake-up time
+- Week 2: Add one morning activity
+- Week 3: Add another
+- Gradually build the full routine
+
+### 2. Use AI Assistance
+
+Let your AI calendar assistant help:
+- "Set up a recurring morning routine starting at 6am"
+- "Remind me to review my day at 8:30am every weekday"
+- "Block 30 minutes for meditation before work"
+
+### 3. Build in Flexibility
+
+Life happens. Plan for:
+- A "short version" for busy days
+- Weekend variations
+- Travel-friendly alternatives
+
+### 4. Track and Adjust
+
+Use your calendar data to:
+- See which blocks you actually keep
+- Identify patterns in missed activities
+- Optimize timing based on energy levels
+
+## The Compound Effect of Mornings
+
+Consistent morning routines compound:
+
+**Daily:** Better focus, more energy, clearer thinking
+**Weekly:** Noticeable productivity improvements
+**Monthly:** Established habits feel automatic
+**Yearly:** Transformed life through small daily actions
+
+### Real Numbers
+
+If your morning routine gives you just 30 focused minutes you wouldn't otherwise have:
+- 30 min/day × 365 days = 182.5 hours/year
+- That's over 22 eight-hour workdays of productive time
+
+## Protecting Your Morning
+
+### Calendar Defense
+
+Use your calendar to protect morning time:
+- Mark morning blocks as "Busy"
+- Decline meeting requests before a certain hour
+- Set your working hours to start after your routine
+
+### Communication
+
+Let others know:
+- "I'm not available before 9am"
+- Set up automatic responses for early morning emails
+- Create clear boundaries
+
+## Common Morning Routine Mistakes
+
+### Too Ambitious
+
+Starting with a 3-hour routine when you currently have none is a recipe for failure.
+
+**Fix:** Start with 15-30 minutes and grow gradually.
+
+### No Buffer
+
+Back-to-back activities with no transition time.
+
+**Fix:** Add 5-10 minute buffers between major blocks.
+
+### Inflexibility
+
+All-or-nothing thinking leads to abandoned routines.
+
+**Fix:** Have 10-minute, 30-minute, and full versions of your routine.
+
+### Ignoring Energy
+
+Scheduling high-effort activities when energy is low.
+
+**Fix:** Match activities to your natural morning energy curve.
+
+## AI-Enhanced Morning Routines
+
+### Smart Scheduling
+
+AI can help optimize your morning:
+- Analyze when you're most productive
+- Suggest optimal timing for different activities
+- Adjust based on your sleep data (if connected)
+
+### Automatic Adjustments
+
+When your schedule changes:
+- "I have an early flight tomorrow - adjust my morning routine"
+- "Move my workout to the afternoon today"
+- "Compress my morning routine to 30 minutes"
+
+### Progress Tracking
+
+AI analytics can show:
+- Morning routine completion rates
+- Correlation with productive days
+- Suggestions for improvement
+
+## Building Your Routine Today
+
+1. **Decide** on 1-3 morning activities to start
+2. **Schedule** them as recurring calendar events
+3. **Protect** that time from other commitments
+4. **Track** completion for 2 weeks
+5. **Adjust** and add more activities
+
+## Start Your Morning Transformation
+
+[Try Ask Ally](/register) and use natural language to build your morning routine: "Create a morning routine starting at 6am with exercise, meditation, and planning time."
+
+Your morning sets the tone for everything that follows. Own it.
+    `,
+    category: 'Productivity',
+    author: { name: 'Yosef Sabag', role: 'CEO & Co-Founder' },
+    publishedAt: '2025-10-05',
+    readTime: '8 min read',
+    featured: false,
+    tags: ['morning routine', 'habits', 'productivity', 'time management', 'self-improvement'],
+    seo: {
+      title: 'Building Morning Routines with Your Calendar | Ask Ally Blog',
+      description:
+        'Learn how to build and maintain powerful morning routines using calendar-based scheduling. Tips for creating habits that stick and transform your days.',
+      keywords: [
+        'morning routine',
+        'calendar habits',
+        'productivity morning',
+        'habit building',
+        'morning schedule',
+        'time management',
+        'daily routine',
+      ],
+    },
+  },
+  {
+    slug: 'calendar-for-freelancers',
+    title: "Freelancer's Guide to Calendar Mastery: Juggling Clients, Projects, and Life",
+    excerpt:
+      "Freelancing means managing your own time - and that's harder than it sounds. Learn calendar strategies specifically designed for the unique challenges of freelance work.",
+    image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&h=450&fit=crop',
+    content: `
+## The Freelance Calendar Challenge
+
+Freelancers face unique scheduling challenges:
+- Multiple clients with competing priorities
+- Variable workloads and deadlines
+- No clear boundaries between work and personal time
+- Unpredictable income requiring time for business development
+- Isolation without team structure
+
+Your calendar becomes your most important business tool.
+
+## Setting Up Your Freelance Calendar System
+
+### Multiple Calendar Strategy
+
+Create separate calendars for:
+- **Client Work:** Billable project time
+- **Business Development:** Marketing, proposals, networking
+- **Admin:** Invoicing, bookkeeping, emails
+- **Personal:** Non-work commitments
+- **Blocked Time:** Focus time, buffer time
+
+Color-code each for instant visual clarity.
+
+### The Freelance Week Template
+
+Design a weekly template before client work floods in:
+
+**Monday:** 
+- Morning: Admin and planning
+- Afternoon: Client work
+
+**Tuesday-Thursday:**
+- Core client work hours
+- Protected focus blocks
+
+**Friday:**
+- Client work (morning)
+- Business development (afternoon)
+- Weekly review
+
+**Weekends:** Off (yes, really off)
+
+## Client Management Through Calendar
+
+### Booking Client Time
+
+Use scheduling links to let clients book time:
+- Set available hours for calls
+- Include buffer time between meetings
+- Block personal hours from availability
+- Respect time zones
+
+### Project Time Blocking
+
+Estimate project hours and block them:
+- "Client A - Website Project" (8 hours this week)
+- Break into specific daily blocks
+- Include deadline buffer
+
+### Deadline Tracking
+
+Create events for all deadlines:
+- First draft due
+- Client review period
+- Revisions
+- Final delivery
+- Invoice date
+
+## Avoiding Freelance Calendar Traps
+
+### Trap 1: Over-Scheduling Billable Work
+
+Leaving no time for business development means feast-or-famine cycles.
+
+**Solution:** Block 20-30% of time for non-billable but essential work.
+
+### Trap 2: Always Available
+
+Saying yes to any client request time erodes boundaries.
+
+**Solution:** Define and communicate your working hours. Stick to them.
+
+### Trap 3: No Admin Time
+
+Ignoring invoicing, marketing, and planning catches up eventually.
+
+**Solution:** Schedule recurring admin blocks weekly.
+
+### Trap 4: Context Switching
+
+Jumping between clients destroys focus and productivity.
+
+**Solution:** Batch client work. Dedicate full days or half-days to single clients.
+
+## Time Tracking for Freelancers
+
+### Why Track Everything
+
+- Accurate billing
+- Understanding true project costs
+- Identifying profitable vs. unprofitable work
+- Data for future estimates
+
+### Calendar-Based Tracking
+
+Your calendar can serve as a time log:
+- Create events as you work
+- Update end times when you finish
+- Use AI to identify untracked gaps
+- Generate reports for billing
+
+## Setting Boundaries
+
+### Client Communication
+
+Be clear about your availability:
+- "I'm available Tuesday through Thursday for calls"
+- "I'll respond to emails within 24 business hours"
+- "Rush projects require advance notice and additional fees"
+
+### Calendar Enforcement
+
+Use your calendar to enforce boundaries:
+- Decline requests outside your hours
+- Show "Busy" for personal time
+- Auto-decline conflicting requests
+
+### Protecting Personal Time
+
+Schedule personal commitments like client meetings:
+- Doctor appointments
+- Family events
+- Vacation (block far in advance)
+- Exercise and health
+
+## Handling Variable Workloads
+
+### Feast Mode
+
+When you have too much work:
+- Prioritize highest-value clients
+- Be honest about capacity limits
+- Consider subcontracting or referrals
+- Raise rates for new projects
+
+### Famine Mode
+
+When work is slow:
+- Intensify business development activities
+- Reach out to past clients
+- Create content and visibility
+- Invest in skill development
+
+## Financial Planning Through Calendar
+
+### Income Forecasting
+
+Calendar data helps predict income:
+- Scheduled billable hours × rate = expected revenue
+- Identify low-revenue weeks in advance
+- Plan business development accordingly
+
+### Expense Planning
+
+Schedule financial tasks:
+- Quarterly tax payments
+- Annual business expenses
+- Professional development investments
+
+## AI Assistance for Freelancers
+
+AI calendar assistants help by:
+- Tracking time across multiple clients
+- Identifying untracked hours (Gap Recovery)
+- Suggesting optimal scheduling
+- Managing multiple time zones
+- Automating routine scheduling
+
+## Building Your Freelance Calendar
+
+1. **Audit** your current time allocation
+2. **Design** your ideal week template
+3. **Set up** multiple calendars by category
+4. **Block** non-negotiable personal time first
+5. **Allocate** client and business development time
+6. **Track** everything for continuous improvement
+
+## Take Control of Your Freelance Time
+
+[Try Ask Ally](/register) and tell it: "Help me set up a freelance calendar system with client work, business development, and admin time."
+
+Freelancing gives you freedom - but only if you manage your time intentionally.
+    `,
+    category: 'Tips & Tricks',
+    author: { name: 'Yosef Sabag', role: 'CEO & Co-Founder' },
+    publishedAt: '2025-09-28',
+    readTime: '9 min read',
+    featured: false,
+    tags: ['freelancing', 'client management', 'time tracking', 'business', 'productivity'],
+    seo: {
+      title: 'Freelancer Calendar Guide: Manage Clients & Projects | Ask Ally Blog',
+      description:
+        'Master calendar management as a freelancer. Learn strategies for juggling clients, tracking time, setting boundaries, and building a sustainable freelance business.',
+      keywords: [
+        'freelance calendar',
+        'freelancer time management',
+        'client scheduling',
+        'freelance productivity',
+        'time tracking freelance',
+        'business development',
+        'freelance tips',
+      ],
+    },
+  },
+  {
+    slug: 'recurring-events-best-practices',
+    title: 'Recurring Events Done Right: Patterns, Exceptions, and Smart Repetition',
+    excerpt:
+      "Recurring events can be your calendar's superpower or its biggest headache. Learn best practices for setting up, managing, and optimizing repeating calendar events.",
+    image: 'https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=800&h=450&fit=crop',
+    content: `
+## The Power of Recurring Events
+
+Recurring events are the backbone of structured time management:
+- Weekly team meetings
+- Daily habits and routines
+- Monthly reviews
+- Annual planning sessions
+- Birthdays and anniversaries
+
+Done well, they create rhythm and reduce decision fatigue. Done poorly, they clutter your calendar and create scheduling chaos.
+
+## Types of Recurring Patterns
+
+### Simple Patterns
+
+**Daily:** Every day at the same time
+- Morning routine, daily standups
+
+**Weekly:** Same day(s) each week
+- Team meetings, gym sessions
+
+**Monthly:** Same date each month
+- Monthly reviews, bill payments
+
+**Annual:** Same date each year
+- Birthdays, anniversaries, annual reviews
+
+### Complex Patterns
+
+**Bi-weekly:** Every other week
+- Sprint planning, 1-on-1s
+
+**Custom weekly:** Specific days
+- "Every Monday, Wednesday, and Friday"
+
+**Monthly by day:** First Tuesday, last Friday, etc.
+- "First Monday of each month"
+
+**Business days only:** Excludes weekends
+- Workday standups
+
+## Setting Up Recurring Events with AI
+
+Natural language makes complex patterns simple:
+
+- "Schedule team meeting every Tuesday at 10am"
+- "Add gym time Monday, Wednesday, Friday at 7am"
+- "Monthly review on the first Friday of each month at 2pm"
+- "Daily standup at 9am on weekdays only"
+- "Bi-weekly 1-on-1 with Sarah starting next Monday"
+
+## Best Practices for Recurring Events
+
+### 1. Set End Dates When Appropriate
+
+Not everything should recur forever:
+- Project-related recurring events should end with the project
+- Trial habits should have review dates
+- Time-limited commitments need clear endpoints
+
+### 2. Include Essential Details
+
+Recurring events should be self-contained:
+- Meeting links (Zoom, Google Meet)
+- Agendas or agenda templates
+- Preparation notes
+- Attendee lists
+
+### 3. Build in Review Points
+
+Schedule periodic evaluations:
+- "Is this meeting still necessary?"
+- "Should we change the frequency?"
+- "Are the right people attending?"
+
+### 4. Use Descriptive Titles
+
+Clear titles save time:
+- "Weekly Team Standup (15 min)" vs. "Meeting"
+- "Monthly Budget Review - Finance Team" vs. "Review"
+- "Daily: Morning Exercise (30 min)" vs. "Exercise"
+
+## Handling Exceptions
+
+### Single Occurrence Changes
+
+When one instance needs to change:
+- "Skip next week's standup - team offsite"
+- "Move this Thursday's meeting to Friday"
+- "Add extra attendee to today's sync only"
+
+### Permanent Changes
+
+When the pattern needs to change going forward:
+- "Change weekly meeting from Tuesday to Wednesday starting next month"
+- "Extend standup from 15 to 30 minutes"
+- "Add Sarah to all future team meetings"
+
+### Holiday Handling
+
+How to handle holidays in recurring events:
+- Automatically skip holidays
+- Move to adjacent days
+- Cancel that occurrence only
+- Hold as scheduled regardless
+
+## Common Recurring Event Mistakes
+
+### Too Many Recurring Meetings
+
+The calendar fills up before any work gets scheduled.
+
+**Fix:** Audit recurring meetings quarterly. Cancel or reduce frequency.
+
+### No Buffer Time
+
+Back-to-back recurring events create meeting marathons.
+
+**Fix:** Schedule 5-minute buffers or end meetings 5 minutes early.
+
+### Stale Recurring Events
+
+Events that no longer serve their purpose but continue indefinitely.
+
+**Fix:** Set calendar reminders to review recurring events quarterly.
+
+### Over-Invitation
+
+Adding everyone "just in case" to recurring meetings.
+
+**Fix:** Minimum viable attendees. Share notes with others.
+
+## Recurring Event Audit
+
+Quarterly, review all recurring events:
+
+### Questions to Ask
+
+1. Is this event still necessary?
+2. Does it need to happen this frequently?
+3. Is the duration appropriate?
+4. Are the right people attending?
+5. Is it scheduled at the optimal time?
+
+### Actions to Take
+
+- Delete unnecessary recurring events
+- Reduce frequency where possible
+- Adjust duration based on actual need
+- Update attendee lists
+- Reschedule to better times
+
+## Special Recurring Event Types
+
+### Themed Days
+
+Create recurring time blocks for specific work types:
+- "Focus Friday" - no meetings allowed
+- "Admin Monday Morning" - administrative tasks
+- "Creative Wednesday" - project work
+
+### Buffer Blocks
+
+Schedule recurring empty time:
+- Before important meetings (prep time)
+- After intense sessions (recovery time)
+- End of day (overflow buffer)
+
+### Maintenance Events
+
+Schedule recurring maintenance:
+- Weekly calendar review
+- Monthly goal check-in
+- Quarterly planning session
+- Annual life review
+
+## AI and Recurring Events
+
+AI assistants excel at recurring event management:
+
+### Creation
+"Set up a weekly team sync every Tuesday at 10am with the engineering team"
+
+### Modification
+"Change all my weekly meetings to start 30 minutes later"
+
+### Queries
+"Show me all my recurring weekly events"
+"How many hours per week do I spend in recurring meetings?"
+
+### Analysis
+"Which recurring meetings have I missed most often?"
+"Suggest which recurring events I could eliminate"
+
+## Building Your Recurring Event Strategy
+
+1. **List** all activities that should recur
+2. **Categorize** by frequency (daily, weekly, monthly)
+3. **Schedule** with appropriate patterns
+4. **Set** review reminders for each category
+5. **Audit** quarterly and adjust
+
+## Optimize Your Recurring Events
+
+[Try Ask Ally](/register) and use natural language to manage recurring events: "Show me all my recurring meetings so I can decide which ones to keep."
+
+Recurring events should serve you, not enslave you.
+    `,
+    category: 'Tips & Tricks',
+    author: { name: 'Yosef Sabag', role: 'CEO & Co-Founder' },
+    publishedAt: '2025-09-20',
+    readTime: '8 min read',
+    featured: false,
+    tags: ['recurring events', 'calendar management', 'meetings', 'scheduling', 'productivity'],
+    seo: {
+      title: 'Recurring Events Best Practices for Calendar Management | Ask Ally Blog',
+      description:
+        'Master recurring events in your calendar. Learn patterns, handle exceptions, avoid common mistakes, and optimize repeating events for maximum productivity.',
+      keywords: [
+        'recurring events',
+        'repeating calendar events',
+        'meeting scheduling',
+        'calendar patterns',
+        'event management',
+        'productivity',
+        'time management',
+      ],
+    },
+  },
+  {
+    slug: 'calendar-sharing-collaboration',
+    title: 'Calendar Sharing for Teams: Collaboration Without Chaos',
+    excerpt:
+      'Shared calendars can unite teams or create confusion. Learn how to set up calendar sharing that enables collaboration while protecting privacy and maintaining clarity.',
+    image: 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800&h=450&fit=crop',
+    content: `
+## The Promise and Peril of Shared Calendars
+
+Shared calendars promise transparency and coordination. But without thoughtful setup, they deliver confusion and privacy concerns.
+
+Done right, shared calendars:
+- Enable easy meeting scheduling
+- Reduce scheduling back-and-forth
+- Improve team awareness
+- Support resource allocation
+
+Done wrong, they:
+- Expose sensitive information
+- Create cluttered views
+- Generate confusion about ownership
+- Lead to scheduling conflicts
+
+## Understanding Calendar Sharing Options
+
+### Visibility Levels
+
+Most calendar systems offer multiple sharing levels:
+
+**Free/Busy Only:** Others see when you're available but not event details
+**See Event Titles:** Others see when and what (titles) but not full details
+**See All Details:** Full event information visible
+**Edit Access:** Others can create, modify, or delete events
+
+Choose the minimum access needed for the purpose.
+
+### Sharing Targets
+
+Who you share with matters:
+- **Public:** Anyone can see (rarely appropriate)
+- **Organization:** All coworkers
+- **Specific People:** Named individuals
+- **Groups:** Defined teams or departments
+
+## Building a Team Calendar System
+
+### Layer 1: Personal Calendars
+
+Each team member maintains their calendar:
+- Personal events
+- Individual meetings
+- Private appointments
+- Working hours
+
+Share: Free/Busy with team
+
+### Layer 2: Team Calendar
+
+A shared calendar for team-wide events:
+- Team meetings
+- Project deadlines
+- Team activities
+- Shared holidays
+
+Share: Full details with team members
+
+### Layer 3: Resource Calendars
+
+For shared resources:
+- Meeting rooms
+- Equipment
+- Shared vehicles
+- Hot desks
+
+Share: Full details with those who can book
+
+## Best Practices for Calendar Sharing
+
+### 1. Default to Minimal Visibility
+
+Start with Free/Busy and increase only when needed:
+- Colleagues need to find meeting times? Free/Busy is enough
+- Project team needs coordination? Share titles
+- Executive assistant manages your schedule? Full details
+
+### 2. Use Descriptive Event Titles
+
+When others can see your titles, make them meaningful:
+- "1:1 with Sarah - Project Review" not "Meeting"
+- "Client Call - Acme Corp" not "Call"
+- "Focus Time - Report Writing" not "Busy"
+
+### 3. Mark Sensitive Events Appropriately
+
+For private events that still need to block time:
+- Medical appointments: Mark as "Private" or "Doctor Appointment"
+- Personal matters: "Personal Appointment"
+- Job interviews: "External Meeting"
+
+### 4. Communicate Sharing Expectations
+
+Make sharing policies clear:
+- What calendars should be shared
+- At what visibility level
+- With whom
+- How to handle private events
+
+## Team Calendar Etiquette
+
+### For Event Creators
+
+- Include all relevant attendees
+- Provide clear agenda or description
+- Set appropriate duration
+- Check attendee availability first
+- Use descriptive titles
+
+### For Attendees
+
+- Keep calendar up to date
+- Respond to invitations promptly
+- Update if your availability changes
+- Don't overbook yourself
+- Respect others' blocked time
+
+### For Viewers
+
+- Don't assume availability without checking
+- Respect private event boundaries
+- Use Free/Busy for scheduling when possible
+- Ask before looking at detailed calendars
+
+## Managing Multiple Shared Calendars
+
+### Avoid Clutter
+
+Too many shared calendars create visual noise:
+- Subscribe only to calendars you need
+- Toggle visibility based on context
+- Use calendar groups to manage views
+
+### Color Coding
+
+Consistent colors help:
+- Personal events: One color
+- Team meetings: Another color
+- Department events: Third color
+- Company-wide: Fourth color
+
+### Layered Viewing
+
+Switch between views based on need:
+- Daily: See everything
+- Weekly planning: Focus on meetings
+- Monthly overview: Team calendar only
+
+## Privacy Considerations
+
+### Protecting Sensitive Information
+
+Some events shouldn't be visible to everyone:
+- Medical appointments
+- Personal matters
+- Confidential business meetings
+- Performance discussions
+
+Use "Private" markers or separate personal calendars.
+
+### Cultural Sensitivity
+
+Different cultures have different expectations:
+- Some value transparency highly
+- Others consider calendar details private
+- Consider your team's composition
+
+### Legal Considerations
+
+In some contexts, calendar data may be sensitive:
+- Employment law considerations
+- Client confidentiality
+- HIPAA (healthcare contexts)
+- Personal data regulations (GDPR)
+
+## Collaboration Features
+
+### Scheduling Assistants
+
+Let AI help find times when all attendees are free:
+- "Find 30 minutes when John, Sarah, and I are all available next week"
+- Automated scheduling polls
+- Smart time suggestions
+
+### Calendar Overlays
+
+View multiple calendars together:
+- See team availability at a glance
+- Identify scheduling conflicts
+- Find open time slots
+
+### Delegation
+
+Some systems allow delegation:
+- Assistants can manage others' calendars
+- Appropriate for executives and busy professionals
+- Clear protocols for what can be scheduled
+
+## Building Your Sharing Strategy
+
+1. **Audit** current calendar sharing setup
+2. **Define** what visibility levels are appropriate for whom
+3. **Communicate** expectations to the team
+4. **Create** team calendars where needed
+5. **Review** regularly and adjust
+
+## Optimize Your Team's Calendar Sharing
+
+[Try Ask Ally](/register) for AI-powered scheduling that works across shared calendars: "Find time for a team meeting when everyone is free."
+
+Shared calendars should clarify, not complicate.
+    `,
+    category: 'Productivity',
+    author: { name: 'Yosef Sabag', role: 'CEO & Co-Founder' },
+    publishedAt: '2025-09-15',
+    readTime: '9 min read',
+    featured: false,
+    tags: ['calendar sharing', 'team collaboration', 'privacy', 'scheduling', 'teamwork'],
+    seo: {
+      title: 'Calendar Sharing & Team Collaboration Guide | Ask Ally Blog',
+      description:
+        'Learn how to share calendars effectively with teams. Best practices for visibility settings, privacy, collaboration, and avoiding calendar chaos.',
+      keywords: [
+        'calendar sharing',
+        'team calendar',
+        'shared calendars',
+        'calendar collaboration',
+        'team scheduling',
+        'calendar privacy',
+        'calendar management',
+      ],
+    },
+  },
+  {
+    slug: 'smart-notifications-alerts',
+    title: 'Beyond Reminders: Smart Notification Strategies for Effective Time Management',
+    excerpt:
+      'Calendar notifications can be lifesavers or distractions. Learn how to configure smart alerts that help you stay on track without disrupting your focus.',
+    image: 'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=800&h=450&fit=crop',
+    content: `
+## The Notification Paradox
+
+Calendar notifications are meant to help you remember. But too many notifications create noise, and too few lead to missed commitments. The goal is strategic alerting - the right reminder at the right time.
+
+## Types of Calendar Notifications
+
+### Time-Based Reminders
+
+Traditional reminders tied to event times:
+- 15 minutes before
+- 1 hour before
+- 1 day before
+- 1 week before
+
+### Location-Based Alerts
+
+Reminders triggered by location:
+- When you leave home
+- When you arrive at office
+- When near a meeting location
+
+### Contextual Notifications
+
+Smart alerts based on context:
+- Travel time to in-person meetings
+- Preparation time for presentations
+- Buffer alerts for back-to-back meetings
+
+## Configuring Effective Reminders
+
+### Match Reminders to Event Types
+
+Different events need different lead times:
+
+**Quick calls:** 5-minute reminder
+**Regular meetings:** 10-15 minute reminder
+**Important presentations:** 1 day + 1 hour + 15 minutes
+**External appointments:** Travel time + buffer
+**Deadlines:** 1 week + 1 day + morning of
+
+### Layer Multiple Reminders
+
+Important events deserve multiple touches:
+
+**Client presentation:**
+- 1 week before: "Start preparing for client presentation"
+- 1 day before: "Finalize presentation materials"
+- 2 hours before: "Review presentation one more time"
+- 30 minutes before: "Connect to video call"
+
+### Vary Notification Types
+
+Use different notification methods for different urgency:
+- Email: Low urgency, advance notice
+- Push notification: Standard reminders
+- SMS: Critical events you cannot miss
+- Multiple channels: Highest priority
+
+## Notification Strategies by Context
+
+### Work Calendar
+
+**Default:** 10-minute reminder
+**Meetings with travel:** Add travel time alert
+**Preparation-heavy:** Add 1-day reminder
+**Deadlines:** Morning notification + final reminder
+
+### Personal Calendar
+
+**Appointments:** 1 hour + 15 minutes
+**Social events:** 1 day + 2 hours
+**Bills/tasks:** Morning of due date
+**Birthdays:** 1 week (for gift buying) + day of
+
+### Health Calendar
+
+**Medications:** Exact time, multiple channels
+**Appointments:** 1 day + 2 hours + 30 minutes
+**Exercise:** Wake-up reminder or evening alert
+**Check-ups:** 1 week advance for scheduling
+
+## Avoiding Notification Fatigue
+
+### Signs of Too Many Notifications
+
+- Dismissing without reading
+- Feeling stressed by alerts
+- Missing important ones in the noise
+- Turning off notifications entirely
+
+### Strategies to Reduce Noise
+
+**1. Ruthless Defaults:** Set minimal default reminders
+**2. Exception-Based:** Add extra reminders only when needed
+**3. Digest Mode:** Daily summary instead of individual alerts
+**4. Priority Filtering:** Only urgent events get push notifications
+
+### The Notification Audit
+
+Monthly, review your notification patterns:
+- Which notifications are you acting on?
+- Which are you dismissing without reading?
+- What events have you missed despite reminders?
+- Where do you need more or fewer alerts?
+
+## Smart Notification Features
+
+### AI-Powered Suggestions
+
+Modern calendar AI can suggest:
+- Optimal reminder times based on your patterns
+- Travel time alerts based on real-time traffic
+- Preparation reminders based on event type
+- Follow-up reminders for unanswered invitations
+
+### Adaptive Notifications
+
+Systems that learn from your behavior:
+- More aggressive reminders for events you've missed before
+- Reduced reminders for routine events you always remember
+- Smart timing based on your response patterns
+
+### Cross-Device Intelligence
+
+Notifications that know where you are:
+- Desktop alerts when at computer
+- Phone notifications when mobile
+- Watch alerts for in-meeting awareness
+- Smart home integration for morning routines
+
+## Notification Etiquette
+
+### For Meeting Organizers
+
+- Don't add excessive reminders to invites
+- Respect attendees' notification preferences
+- Send manual reminders only for critical changes
+- Update events rather than sending separate messages
+
+### For Attendees
+
+- Configure personal notifications for shared events
+- Don't rely solely on organizer-set reminders
+- Take responsibility for your own attendance
+
+## Building Your Notification Strategy
+
+### Step 1: Audit Current State
+
+- How many notifications do you receive daily?
+- What percentage are useful?
+- What events have you missed?
+
+### Step 2: Define Categories
+
+Create clear categories with default reminders:
+- Routine meetings: 10 minutes
+- Important events: 1 day + 30 minutes
+- Deadlines: Multiple progressive reminders
+- Personal: Based on type
+
+### Step 3: Configure Channels
+
+Match channels to urgency:
+- Email: Advance notice, non-urgent
+- Push: Standard day-of reminders
+- SMS: Can't-miss critical events
+
+### Step 4: Monitor and Adjust
+
+Track effectiveness and refine over time.
+
+## Advanced Notification Techniques
+
+### Prep Time Blocking
+
+Instead of just a reminder, block preparation time:
+- "Presentation Prep" event before "Client Presentation"
+- Travel time blocked before in-person meetings
+- Review time before important discussions
+
+### Notification-Free Zones
+
+Define periods without interruption:
+- Focus time blocks
+- Deep work sessions
+- Personal evening time
+- Weekend mornings
+
+### Context-Aware Snoozing
+
+When snoozing makes sense:
+- In another meeting? Snooze until it ends
+- Traveling? Snooze with travel time buffer
+- After hours? Snooze until morning
+
+## Optimize Your Notifications
+
+[Try Ask Ally](/register) and configure smart reminders: "Set up intelligent notifications for my important meetings with preparation time."
+
+The right reminder at the right time - that's the goal.
+    `,
+    category: 'Tips & Tricks',
+    author: { name: 'Yosef Sabag', role: 'CEO & Co-Founder' },
+    publishedAt: '2025-09-08',
+    readTime: '8 min read',
+    featured: false,
+    tags: ['notifications', 'reminders', 'alerts', 'productivity', 'time management'],
+    seo: {
+      title: 'Smart Calendar Notifications & Alert Strategies | Ask Ally Blog',
+      description:
+        'Learn how to configure calendar notifications that help without overwhelming. Strategies for smart reminders, notification types, and avoiding alert fatigue.',
+      keywords: [
+        'calendar notifications',
+        'smart reminders',
+        'calendar alerts',
+        'notification management',
+        'time management',
+        'productivity',
+        'reminder strategies',
+      ],
+    },
+  },
+  {
+    slug: 'calendar-project-management-integration',
+    title: 'Calendar Meets Project Management: Integrating Time and Tasks',
+    excerpt:
+      "Your calendar and project management tools shouldn't live in silos. Learn how to connect them for seamless workflow management.",
+    image: 'https://images.unsplash.com/photo-1507925921958-8a62f3d1a50d?w=800&h=450&fit=crop',
+    content: `
+## The Disconnect Problem
+
+Most professionals use separate systems for:
+- **Calendar:** Time-based commitments
+- **Project Management:** Tasks and workflows
+- **Communication:** Messages and updates
+
+This fragmentation creates problems:
+- Deadlines exist in one system but not the other
+- Workload is invisible in calendar view
+- Time for tasks isn't actually blocked
+
+## The Integration Vision
+
+Imagine a unified system where:
+- Project deadlines appear in your calendar
+- Calendar shows actual workload, not just meetings
+- Tasks have time allocated automatically
+- Project timelines respect your real availability
+
+## Integration Approaches
+
+### Manual Integration
+
+The simplest approach:
+1. Review project tasks regularly
+2. Create calendar events for work time
+3. Update both systems as things change
+
+**Pros:** Simple, no technical setup
+**Cons:** Time-consuming, prone to drift
+
+### Automated Sync
+
+Tools that connect systems:
+- Zapier/Make automations
+- Native integrations
+- API connections
+
+**Pros:** Automatic updates
+**Cons:** Setup complexity, potential sync issues
+
+### Unified Platforms
+
+All-in-one solutions:
+- Calendar + tasks in one system
+- Native integration by design
+- Single source of truth
+
+**Pros:** No sync needed
+**Cons:** May lack specialized features
+
+## What to Integrate
+
+### Deadlines → Calendar
+
+Project deadlines should appear as calendar events:
+- Visual reminder of upcoming due dates
+- Context for scheduling decisions
+- Time blocking for completion work
+
+### Tasks → Time Blocks
+
+Major tasks need calendar allocation:
+- Estimate task duration
+- Block dedicated work time
+- Track actual time spent
+
+### Milestones → Calendar
+
+Project milestones as calendar events:
+- Phase completions
+- Review points
+- Delivery dates
+
+### Meetings → Project Context
+
+Meeting outcomes connected to projects:
+- Action items become tasks
+- Decisions update project plans
+- Meeting notes link to relevant projects
+
+## Implementation Strategies
+
+### Strategy 1: Deadline Sync
+
+Simplest integration - just sync deadlines:
+
+**Setup:**
+1. Create a "Deadlines" calendar
+2. Add all project deadlines as all-day events
+3. Review weekly and update
+
+**Works for:** Individual contributors, small projects
+
+### Strategy 2: Time Blocking from Tasks
+
+Block time based on task estimates:
+
+**Setup:**
+1. Estimate time for each task
+2. Block calendar time before deadlines
+3. Protect blocked time from meetings
+
+**Works for:** Knowledge workers, creative professionals
+
+### Strategy 3: Full Bidirectional Sync
+
+Complete integration between systems:
+
+**Setup:**
+1. Connect PM tool to calendar
+2. Configure sync rules
+3. Manage in either system
+
+**Works for:** Project managers, team leads
+
+## Calendar-First Task Management
+
+### The Time-Based Approach
+
+Instead of infinite task lists:
+1. Tasks without time aren't real commitments
+2. If it can't be scheduled, it shouldn't be on the list
+3. Calendar shows actual capacity
+
+### Weekly Task Allocation
+
+Every week:
+1. Review pending tasks
+2. Estimate time needed
+3. Block calendar time
+4. Adjust task list to fit available time
+
+### Daily Time Boxing
+
+Each day:
+1. Morning: review tasks for day
+2. Confirm calendar blocks
+3. Execute based on schedule
+4. Evening: update completion status
+
+## Avoiding Integration Pitfalls
+
+### Over-Integration
+
+Syncing everything creates noise:
+- Minor tasks don't need calendar events
+- Sub-tasks clutter the view
+- Too much automation feels rigid
+
+**Solution:** Integrate strategically, not comprehensively
+
+### Sync Conflicts
+
+When systems disagree:
+- Which is the source of truth?
+- How are conflicts resolved?
+- Who maintains the integration?
+
+**Solution:** Clear rules, regular audits
+
+### Integration Maintenance
+
+Connections break:
+- APIs change
+- Tools update
+- Rules become outdated
+
+**Solution:** Regular integration reviews
+
+## Tool-Specific Considerations
+
+### Asana + Calendar
+
+- Deadlines sync as calendar events
+- Projects can have dedicated calendars
+- Two-way sync available with premium
+
+### Trello + Calendar
+
+- Power-ups for calendar sync
+- Card due dates as events
+- Board-level calendar views
+
+### Notion + Calendar
+
+- Native calendar database
+- Linked to task databases
+- Custom sync through API
+
+### Linear + Calendar
+
+- Cycle dates as calendar events
+- Issue deadlines in calendar
+- GitHub integration for development
+
+## AI-Enhanced Integration
+
+Modern AI can help bridge systems:
+
+**Natural Language Input:**
+"Schedule 2 hours to work on the marketing presentation before Friday's deadline"
+
+**Automatic Suggestions:**
+"You have a deadline tomorrow but no work time blocked. Want me to find time today?"
+
+**Smart Scheduling:**
+"Based on task estimates, you'll need 6 hours this week. I found these available slots."
+
+## Building Your Integration
+
+1. **Audit** current workflows and pain points
+2. **Choose** integration level (manual, automated, unified)
+3. **Configure** with minimal complexity first
+4. **Test** for one project or week
+5. **Iterate** based on what works
+
+## Start Integrating Today
+
+[Try Ask Ally](/register) and use natural language to connect your tasks and calendar: "Block time this week to complete my project tasks before Thursday."
+
+Your time and your tasks should speak the same language.
+    `,
+    category: 'Productivity',
+    author: { name: 'Yosef Sabag', role: 'CEO & Co-Founder' },
+    publishedAt: '2025-09-01',
+    readTime: '9 min read',
+    featured: false,
+    tags: ['project management', 'integration', 'productivity', 'task management', 'workflow'],
+    seo: {
+      title: 'Calendar & Project Management Integration Guide | Ask Ally Blog',
+      description:
+        'Learn how to integrate your calendar with project management tools. Strategies for syncing deadlines, blocking time for tasks, and unified workflow management.',
+      keywords: [
+        'calendar integration',
+        'project management',
+        'task management',
+        'productivity tools',
+        'deadline sync',
+        'time blocking',
+        'workflow integration',
+      ],
+    },
+  },
+  {
+    slug: 'year-end-calendar-review-planning',
+    title: 'Annual Calendar Review: Reflecting on Your Year and Planning the Next',
+    excerpt:
+      'The end of the year is the perfect time to review your calendar patterns and set yourself up for success in the coming year.',
+    image: 'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=800&h=450&fit=crop',
+    content: `
+## Why an Annual Calendar Review?
+
+Your calendar is a record of how you spent your most valuable resource: time. An annual review reveals:
+- Where your time actually went
+- Patterns you didn't notice day-to-day
+- Alignment (or misalignment) with your priorities
+- Opportunities for the coming year
+
+## The Annual Review Process
+
+### Step 1: Data Gathering
+
+Before analysis, collect the data:
+- Export calendar from past year
+- Pull time tracking data if available
+- Gather relevant metrics (projects completed, goals achieved)
+- Note major life events and changes
+
+### Step 2: Category Analysis
+
+Break down time by category:
+
+**Work Categories:**
+- Meetings
+- Focused work
+- Administrative tasks
+- Business development
+- Learning/growth
+
+**Personal Categories:**
+- Health and fitness
+- Family and relationships
+- Hobbies and interests
+- Rest and recovery
+- Personal development
+
+### Step 3: Pattern Recognition
+
+Look for patterns:
+- Which months were busiest?
+- What days of the week had the most meetings?
+- When did you have the most focus time?
+- What recurring events were consistent or inconsistent?
+
+### Step 4: Alignment Check
+
+Compare with intentions:
+- Did you spend time on what matters most?
+- Which goals had adequate time allocation?
+- What got neglected despite being important?
+- What consumed time without adding value?
+
+## Key Metrics to Review
+
+### Meeting Load
+
+**Calculate:**
+- Total hours in meetings
+- Average meetings per week
+- Longest meeting streaks
+- Meeting-free days
+
+**Evaluate:**
+- Was this the right amount?
+- Which meetings were valuable?
+- Which should be eliminated or shortened?
+
+### Focus Time
+
+**Calculate:**
+- Total hours of uninterrupted work
+- Average focus blocks per week
+- Longest focus sessions
+- Focus time trends over the year
+
+**Evaluate:**
+- Was this enough for meaningful work?
+- What patterns supported or hindered focus?
+- How can you protect more focus time?
+
+### Work-Life Ratio
+
+**Calculate:**
+- Work hours vs. personal hours
+- Weekend work frequency
+- Vacation days taken vs. available
+- Evening work patterns
+
+**Evaluate:**
+- Was this sustainable?
+- Did you protect personal priorities?
+- What needs to change?
+
+### Goal Achievement
+
+**Assess:**
+- Which goals had calendar time allocated?
+- Which goals were achieved?
+- What's the correlation between time allocation and achievement?
+
+## Common Annual Review Discoveries
+
+### "I Had No Idea..."
+
+Frequent surprises:
+- "I spent 20 hours per week in meetings"
+- "I only exercised 30% of planned sessions"
+- "I never took real lunch breaks"
+- "Weekend work was more frequent than I thought"
+
+### Pattern Insights
+
+Often revealed:
+- Best creative work happened Thursday mornings
+- Meeting-heavy Tuesdays led to low-energy Wednesdays
+- Summer had better work-life balance
+- December was chaotic every year
+
+### Misalignments
+
+Common gaps:
+- "Health is a priority" but 2 hours/week on exercise
+- "Family first" but working most evenings
+- "Learning is important" but no blocked time for it
+
+## Planning the Next Year
+
+### Step 1: Define Priorities
+
+What matters most in the coming year?
+- Career goals
+- Health objectives
+- Relationship investments
+- Personal development
+- Financial targets
+
+### Step 2: Time Budgeting
+
+Allocate weekly time to priorities:
+- 10 hours on strategic projects
+- 5 hours on exercise
+- 3 hours on learning
+- 10 hours of focused work
+- Protected family time
+
+### Step 3: Calendar Setup
+
+Transform budgets into scheduled time:
+- Create recurring blocks for priorities
+- Set up new calendar categories
+- Configure default meeting lengths
+- Block personal commitments
+
+### Step 4: Create Systems
+
+Establish supporting habits:
+- Weekly review routine
+- Monthly planning sessions
+- Quarterly goal check-ins
+- Annual review (schedule it now!)
+
+## Building Better Calendar Habits
+
+### What to Start
+
+Based on review insights:
+- Daily morning routine block
+- Focus time protection
+- Buffer time between meetings
+- Monthly review session
+
+### What to Stop
+
+Remove what didn't work:
+- Unnecessary recurring meetings
+- Over-commitment patterns
+- Always-available behavior
+- Context-switching habits
+
+### What to Continue
+
+Keep what worked:
+- Effective meeting formats
+- Successful focus strategies
+- Healthy boundaries
+- Review practices
+
+## The Commitment Ceremony
+
+Make your plan real:
+
+1. **Write it down:** Document your time allocation goals
+2. **Calendar it:** Add all recurring blocks for the year
+3. **Share it:** Tell others about your boundaries
+4. **Review it:** Schedule quarterly check-ins
+
+## Tools for Annual Review
+
+### Calendar Analytics
+
+If your calendar tool provides analytics:
+- Export annual reports
+- Review trends and patterns
+- Compare to previous years
+
+### AI-Powered Insights
+
+AI calendar assistants can:
+- Summarize annual patterns
+- Identify anomalies and trends
+- Suggest optimizations
+- Track progress against goals
+
+### Manual Analysis
+
+Spreadsheet approach:
+- Export calendar to CSV
+- Categorize events
+- Create pivot tables
+- Generate charts
+
+## Your Annual Review Checklist
+
+**Reflect:**
+- [ ] Export and review past year's calendar
+- [ ] Calculate key metrics (meetings, focus, work-life)
+- [ ] Identify patterns and surprises
+- [ ] Note alignment gaps
+
+**Plan:**
+- [ ] Define top priorities for new year
+- [ ] Create time budget for priorities
+- [ ] Set up calendar structure
+- [ ] Schedule review checkpoints
+
+**Commit:**
+- [ ] Document the plan
+- [ ] Add recurring blocks to calendar
+- [ ] Communicate boundaries
+- [ ] Schedule next annual review
+
+## Start Your Review Today
+
+[Try Ask Ally](/register) for AI-powered calendar analytics: "Show me a summary of how I spent my time last year."
+
+Your past calendar reveals your actual priorities. Your future calendar can reflect your intended ones.
+    `,
+    category: 'Productivity',
+    author: { name: 'Yosef Sabag', role: 'CEO & Co-Founder' },
+    publishedAt: '2025-08-25',
+    readTime: '10 min read',
+    featured: false,
+    tags: ['annual review', 'planning', 'goal setting', 'productivity', 'reflection'],
+    seo: {
+      title: 'Annual Calendar Review & Year Planning Guide | Ask Ally Blog',
+      description:
+        'Learn how to conduct an annual calendar review and plan for the coming year. Metrics to track, patterns to spot, and systems to build for better time management.',
+      keywords: [
+        'annual review',
+        'calendar review',
+        'year planning',
+        'goal setting',
+        'productivity',
+        'time management',
+        'annual planning',
+      ],
+    },
+  },
+  {
+    slug: 'energy-management-calendar',
+    title: 'Energy Management: Scheduling Around Your Natural Rhythms',
+    excerpt:
+      'Time management is incomplete without energy management. Learn how to schedule your calendar around your natural energy patterns for peak performance.',
+    image: 'https://images.unsplash.com/photo-1493612276216-ee3925520721?w=800&h=450&fit=crop',
+    content: `
+## Beyond Time Management
+
+Traditional time management treats all hours equally. But anyone who's tried to do creative work at 3pm after a heavy lunch knows: not all hours are created equal.
+
+Energy management recognizes that:
+- Your cognitive abilities fluctuate throughout the day
+- Different tasks require different energy levels
+- Scheduling should align with your natural rhythms
+
+## Understanding Your Energy Patterns
+
+### The Typical Day
+
+Most people follow a general pattern:
+
+**Morning (6am-12pm):** Rising energy, peak cognitive function
+**Early Afternoon (12pm-3pm):** Post-lunch dip, lower alertness
+**Late Afternoon (3pm-6pm):** Secondary peak, good for collaboration
+**Evening (6pm onwards):** Declining energy, winding down
+
+### Your Personal Pattern
+
+But patterns vary individually:
+- **Early birds:** Peak performance in early morning
+- **Night owls:** Best work happens late
+- **Steady eddies:** Consistent energy throughout
+
+Track your energy for 1-2 weeks to identify your pattern.
+
+## Mapping Tasks to Energy Levels
+
+### High-Energy Tasks
+
+Save your peak hours for:
+- Complex problem-solving
+- Creative work
+- Strategic thinking
+- Important writing
+- Learning new skills
+
+### Medium-Energy Tasks
+
+Mid-energy periods suit:
+- Meetings and collaboration
+- Routine analysis
+- Email and communication
+- Planning and organizing
+
+### Low-Energy Tasks
+
+Reserve energy dips for:
+- Administrative tasks
+- Data entry
+- Simple organizing
+- Routine maintenance
+
+## Building an Energy-Aware Schedule
+
+### Step 1: Identify Your Peak Hours
+
+When do you feel most alert and focused?
+- Track energy levels for two weeks
+- Note your best productive hours
+- Identify your energy dip times
+
+### Step 2: Categorize Your Tasks
+
+List all recurring tasks by energy requirement:
+- High: Strategic work, creative projects
+- Medium: Meetings, collaboration
+- Low: Admin, routine tasks
+
+### Step 3: Create Your Energy Template
+
+Design a weekly template:
+
+**Peak Hours (e.g., 9am-12pm):**
+- Block for focused, high-value work
+- Protect from interruptions
+- No meetings unless essential
+
+**Dip Hours (e.g., 1pm-3pm):**
+- Schedule routine tasks
+- Administrative work
+- Less demanding meetings
+
+**Recovery Hours (e.g., 3pm-5pm):**
+- Collaborative work
+- Check-in meetings
+- Medium-complexity tasks
+
+### Step 4: Implement and Protect
+
+Add these blocks to your calendar:
+- "Deep Work" blocks during peak hours
+- "Admin Time" during low-energy periods
+- Meeting windows when energy suits collaboration
+
+## Practical Energy Strategies
+
+### Morning Optimization
+
+Protect your morning peak:
+- No email checking before important work
+- Block 9am-11am for deep work
+- Delay first meeting until after peak hours
+
+### Afternoon Recovery
+
+Work with the post-lunch dip:
+- Schedule a short walk
+- Handle routine tasks
+- Avoid scheduling important decisions
+
+### Evening Boundaries
+
+As energy declines:
+- Stop taking on new tasks
+- Wind down complex work
+- Prepare for the next day
+
+## Energy Boosters and Drains
+
+### Boosters
+
+Activities that raise energy:
+- Physical movement
+- Natural light exposure
+- Strategic caffeine use
+- Short breaks
+- Positive social interaction
+
+### Drains
+
+Activities that lower energy:
+- Back-to-back meetings
+- Conflict and stress
+- Poor sleep the night before
+- Heavy meals
+- Sedentary periods
+
+## Calendar Features for Energy Management
+
+### Color Coding
+
+Use colors to indicate energy requirements:
+- Red: High-energy tasks
+- Yellow: Medium-energy activities
+- Green: Low-energy work
+
+### Buffer Time
+
+Build in energy recovery:
+- 15 minutes between meetings
+- Lunch breaks that are actual breaks
+- Transition time between task types
+
+### Energy Reminders
+
+Set reminders for energy practices:
+- Mid-morning stretch break
+- Post-lunch walk
+- Afternoon water break
+
+## AI and Energy Awareness
+
+Smart calendar assistants can:
+- Learn your energy patterns from data
+- Suggest optimal timing for tasks
+- Warn when you're scheduling against your rhythms
+- Recommend breaks based on patterns
+
+Example: "You have a strategy meeting scheduled at 2pm when your energy is typically low. Would you like to move it to 10am?"
+
+## Special Considerations
+
+### Meeting Scheduling
+
+When scheduling with others:
+- Default to your medium-energy times
+- Protect peak hours from meetings
+- Be flexible but know your limits
+
+### Energy and Remote Work
+
+Without commute transitions:
+- Create artificial energy breaks
+- Define clear work/rest boundaries
+- Schedule movement intentionally
+
+### Energy and Travel
+
+Different time zones affect energy:
+- Adjust important work for jet lag
+- Build in recovery time
+- Don't schedule crucial meetings right after travel
+
+## Building Your Energy-Aware Calendar
+
+1. **Track** your energy for 1-2 weeks
+2. **Identify** your peak, medium, and low periods
+3. **Categorize** tasks by energy requirement
+4. **Design** a weekly template aligning tasks to energy
+5. **Protect** peak hours ruthlessly
+6. **Review** and adjust regularly
+
+## Optimize Your Energy Today
+
+[Try Ask Ally](/register) and set up an energy-aware schedule: "Block my mornings for deep work and schedule routine tasks in the afternoon."
+
+Work with your energy, not against it.
+    `,
+    category: 'Work-Life Balance',
+    author: { name: 'Yosef Sabag', role: 'CEO & Co-Founder' },
+    publishedAt: '2025-08-15',
+    readTime: '9 min read',
+    featured: false,
+    tags: ['energy management', 'productivity', 'circadian rhythm', 'peak performance', 'scheduling'],
+    seo: {
+      title: 'Energy Management & Calendar Scheduling Guide | Ask Ally Blog',
+      description:
+        'Learn to schedule your calendar around natural energy patterns. Match tasks to energy levels for peak performance and sustainable productivity.',
+      keywords: [
+        'energy management',
+        'productivity rhythms',
+        'calendar scheduling',
+        'peak performance',
+        'circadian rhythm',
+        'work schedule',
+        'energy levels',
+      ],
+    },
+  },
+  {
+    slug: 'batch-processing-calendar',
+    title: 'The Art of Batching: How to Group Similar Tasks for Maximum Efficiency',
+    excerpt:
+      'Context switching is the enemy of productivity. Learn how to use batch processing in your calendar to minimize transitions and maximize focus.',
+    image: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&h=450&fit=crop',
+    content: `
+## The Hidden Cost of Context Switching
+
+Every time you switch tasks, you pay a tax:
+- Mental transition time (15-25 minutes to regain focus)
+- Loss of momentum
+- Increased cognitive load
+- Higher error rates
+
+Research suggests context switching can cost 40% of productive time.
+
+## What is Batch Processing?
+
+Batching means grouping similar tasks together:
+- All emails at once, not throughout the day
+- All phone calls in one block
+- All admin work in a dedicated window
+- All creative work in protected sessions
+
+The result: fewer transitions, deeper focus, better work.
+
+## The Science Behind Batching
+
+### Cognitive Load Theory
+
+Your brain has limited working memory. Switching tasks requires:
+- Unloading current context
+- Loading new context
+- Reorienting to different goals
+- Adapting to different tools
+
+Batching minimizes these costly transitions.
+
+### Flow State Protection
+
+Flow requires sustained focus (15-25 minutes to achieve). Interruptions restart the clock. Batching protects flow by grouping similar work.
+
+### Decision Fatigue Reduction
+
+Each task switch requires decisions. Batching reduces total decisions by establishing patterns and routines.
+
+## Common Batching Categories
+
+### Communication Batch
+
+Group all communication activities:
+- Email processing (not email checking)
+- Slack/Teams messages
+- Phone calls
+- Text responses
+
+**Example:** 9-9:30am, 1-1:30pm, 4:30-5pm
+
+### Meeting Batch
+
+Cluster meetings together:
+- Back-to-back with short buffers
+- Dedicated "meeting days"
+- Meeting-free mornings or days
+
+**Example:** Tuesdays and Thursdays for meetings
+
+### Admin Batch
+
+Group administrative tasks:
+- Expense reports
+- Calendar maintenance
+- File organization
+- Systems updates
+
+**Example:** Friday afternoon admin block
+
+### Creative Batch
+
+Protect uninterrupted time for creative work:
+- Writing
+- Design
+- Strategy
+- Problem-solving
+
+**Example:** Monday and Wednesday mornings
+
+### Deep Work Batch
+
+Extended focus for complex tasks:
+- Coding
+- Analysis
+- Research
+- Learning
+
+**Example:** 9am-12pm daily (no meetings)
+
+## Implementing Batching in Your Calendar
+
+### Step 1: Audit Current Fragmentation
+
+For one week, track:
+- How often you switch task types
+- How long you spend on each activity
+- Where interruptions come from
+- Your most fragmented days
+
+### Step 2: Identify Batchable Activities
+
+List all recurring task types:
+- Communication
+- Meetings
+- Admin
+- Creative work
+- Deep work
+- Errands
+- Personal tasks
+
+### Step 3: Design Your Batch Schedule
+
+Create themed time blocks:
+
+**Morning Block (9am-12pm):**
+Deep work - no interruptions
+
+**Early Afternoon (12pm-1pm):**
+Communication batch - emails, messages
+
+**Mid Afternoon (1pm-3pm):**
+Meetings and collaboration
+
+**Late Afternoon (3pm-4pm):**
+Second communication batch
+
+**End of Day (4pm-5pm):**
+Admin and planning
+
+### Step 4: Communicate and Protect
+
+Tell others about your batching:
+- "I check email at 9am and 4pm"
+- "I'm available for calls Tuesday afternoons"
+- "I don't take meetings before 1pm"
+
+## Advanced Batching Techniques
+
+### Themed Days
+
+Entire days dedicated to activity types:
+- Monday: Planning and strategy
+- Tuesday: External meetings
+- Wednesday: Deep work
+- Thursday: Internal collaboration
+- Friday: Admin and review
+
+### Energy-Aware Batching
+
+Match batches to energy levels:
+- High energy: Creative and deep work batches
+- Medium energy: Meeting batches
+- Low energy: Admin batches
+
+### Batch Nesting
+
+Batches within batches:
+- Email batch: Process newsletters, respond to urgent, handle routine
+- Meeting batch: External calls, internal syncs, 1-on-1s
+
+## Common Batching Challenges
+
+### "But I Need to Be Responsive!"
+
+Reality check:
+- Most things can wait 2-4 hours
+- Truly urgent issues find you regardless
+- Better work benefits everyone more than instant replies
+
+**Solution:** Batch communication but leave emergency channels open
+
+### "My Calendar Is Already Full"
+
+Start small:
+- Batch just one activity type
+- Protect 2 hours per day at first
+- Gradually expand as you see results
+
+### "Others Schedule Meetings Whenever"
+
+Take control:
+- Block batching time before others can book it
+- Share your meeting availability windows
+- Decline or reschedule conflicts
+
+### "Different Days Have Different Needs"
+
+Create flexible templates:
+- Heavy meeting days: Communication batches only
+- Light days: Full batching structure
+- Adjust weekly based on commitments
+
+## Batching with AI Assistance
+
+AI calendar tools can help:
+
+**Setup:** "Create a batching schedule with email time twice daily and no meetings before noon"
+
+**Enforcement:** "Suggest moving this meeting to my meeting batch time"
+
+**Analysis:** "How much time did I spend in each batch category last week?"
+
+## Measuring Batching Success
+
+Track improvements in:
+- Uninterrupted work time (should increase)
+- Task completion rate (should improve)
+- Stress levels (should decrease)
+- Work quality (should improve)
+- End-of-day energy (should be higher)
+
+## Building Your Batching System
+
+1. **Audit** current context switching patterns
+2. **List** all batchable activity types
+3. **Design** themed time blocks
+4. **Calendar** the batches as recurring events
+5. **Communicate** your new availability
+6. **Protect** batch time from interruptions
+7. **Review** and refine weekly
+
+## Start Batching Today
+
+[Try Ask Ally](/register) and set up your batching schedule: "Create themed time blocks for email, meetings, and deep work throughout my week."
+
+Stop the constant switching. Start the batch processing.
+    `,
+    category: 'Productivity',
+    author: { name: 'Yosef Sabag', role: 'CEO & Co-Founder' },
+    publishedAt: '2025-08-08',
+    readTime: '9 min read',
+    featured: false,
+    tags: ['batch processing', 'productivity', 'focus', 'time management', 'efficiency'],
+    seo: {
+      title: 'Batch Processing & Task Grouping for Productivity | Ask Ally Blog',
+      description:
+        'Learn how to batch similar tasks for maximum efficiency. Reduce context switching, protect focus time, and boost productivity through smart scheduling.',
+      keywords: [
+        'batch processing',
+        'task batching',
+        'productivity',
+        'context switching',
+        'focus time',
+        'efficiency',
+        'time management',
+      ],
+    },
+  },
+  {
+    slug: 'calendar-boundaries-saying-no',
+    title: 'The Power of No: Setting Calendar Boundaries That Protect Your Time',
+    excerpt:
+      "Your calendar reflects your priorities. If you can't say no, others will fill your time with their priorities. Learn to set and maintain healthy calendar boundaries.",
+    image: 'https://images.unsplash.com/photo-1529070538774-1843cb3265df?w=800&h=450&fit=crop',
+    content: `
+## The Boundary Problem
+
+Without clear boundaries, your calendar becomes a public resource. Others schedule meetings when it's convenient for them. Requests pile up. Your priorities get squeezed out.
+
+The result: you're busy all the time but never doing your most important work.
+
+## Why Boundaries Matter
+
+### Time is Zero-Sum
+
+Every hour has only one use:
+- Time spent in an unnecessary meeting can't be spent on deep work
+- Time given to others isn't available for your priorities
+- "Yes" to one thing is "no" to something else
+
+### Quality Requires Protection
+
+Your best work needs:
+- Uninterrupted time
+- Mental space
+- Adequate rest
+- Protected focus periods
+
+Boundaries create these conditions.
+
+### Sustainability Demands Limits
+
+Without boundaries:
+- Work expands to fill available time
+- Burnout becomes inevitable
+- Relationships suffer
+- Health declines
+
+Boundaries make your work life sustainable.
+
+## Types of Calendar Boundaries
+
+### Time Boundaries
+
+When you work and when you don't:
+- Working hours (e.g., 9am-6pm)
+- No-meeting times (e.g., mornings)
+- Protected personal time (e.g., evenings, weekends)
+- Vacation blackout periods
+
+### Meeting Boundaries
+
+Rules for meetings:
+- Maximum duration (e.g., 45 minutes default)
+- Required agenda for all meetings
+- Minimum notice for scheduling
+- Maximum meetings per day
+
+### Availability Boundaries
+
+How and when you're reachable:
+- Response time expectations
+- Emergency contact rules
+- Communication channel preferences
+- Out-of-office protocols
+
+## Implementing Calendar Boundaries
+
+### Step 1: Define Your Boundaries
+
+Write down your non-negotiables:
+- "No meetings before 10am"
+- "Fridays are meeting-free"
+- "Maximum 4 hours of meetings per day"
+- "No work email after 7pm"
+
+### Step 2: Configure Your Calendar
+
+Make boundaries visible:
+- Block protected time
+- Set working hours
+- Create buffer events
+- Use auto-decline rules
+
+### Step 3: Communicate Clearly
+
+Tell others your boundaries:
+- Email signature with availability
+- Scheduling link with constraints
+- Team communication about working hours
+- Manager alignment on expectations
+
+### Step 4: Enforce Consistently
+
+Hold the line:
+- Decline politely but firmly
+- Offer alternatives when saying no
+- Don't make exceptions "just this once"
+- Review and strengthen as needed
+
+## The Art of Saying No
+
+### The Direct No
+
+"I'm not available at that time. Can we look at Thursday afternoon instead?"
+
+### The Boundary Reminder
+
+"I don't take meetings before 10am. My calendar shows availability starting then."
+
+### The Priority Explanation
+
+"I've blocked that time for focused work on [project]. That's my priority this week."
+
+### The Alternative Offer
+
+"I can't do a meeting, but I could respond via email/document/async video."
+
+### The Honest Limit
+
+"I've hit my meeting limit for this week. Can we schedule for next week?"
+
+## Common Boundary Challenges
+
+### "But It's Urgent!"
+
+Reality: Most "urgent" things aren't truly urgent.
+
+**Response:** "I understand this feels urgent. For true emergencies, I can be reached by [method]. For everything else, my next available time is [time]."
+
+### "Just This Once..."
+
+Reality: Exceptions become expectations.
+
+**Response:** "I appreciate you understanding my boundaries. If I make exceptions, I won't be able to maintain the focus time that lets me do my best work."
+
+### "Everyone Else Is Available"
+
+Reality: Your boundaries are yours.
+
+**Response:** "I've found this schedule lets me be most productive. I'm happy to find a time that works within my available hours."
+
+### "The Boss Wants..."
+
+Reality: Even manager requests need boundaries (carefully).
+
+**Response:** "I want to give this the attention it deserves. I have [conflicting commitment]. Could we schedule for [alternative] or should I reprioritize?"
+
+## Boundary Maintenance
+
+### Regular Review
+
+Monthly, assess your boundaries:
+- Are they being respected?
+- Where are you making too many exceptions?
+- What new boundaries do you need?
+- What's working well?
+
+### Gradual Strengthening
+
+Boundaries can grow over time:
+- Start with easier boundaries
+- Add more as you build confidence
+- Tighten as colleagues adjust
+
+### Repair After Violations
+
+When boundaries get violated:
+- Acknowledge it happened
+- Restate the boundary
+- Plan to prevent recurrence
+- Don't guilt yourself
+
+## Boundaries and Relationships
+
+### Managing Up
+
+With managers:
+- Share your productivity system
+- Explain why boundaries help your output
+- Propose alternatives, not just nos
+- Align on priorities
+
+### Managing Peers
+
+With colleagues:
+- Be consistent in boundary enforcement
+- Offer flexibility where you can
+- Reciprocate their boundaries
+- Build mutual respect
+
+### Managing Down
+
+With direct reports:
+- Model healthy boundaries
+- Encourage their boundaries
+- Respect their time
+- Create team norms
+
+## Calendar Features for Boundaries
+
+### Working Hours
+
+Set your available hours in calendar settings. Meetings outside these hours show conflicts.
+
+### Focus Time Blocks
+
+Block protected time as "Busy" so others can't schedule over it.
+
+### Auto-Decline
+
+Some calendars can automatically decline requests outside your parameters.
+
+### Scheduling Links
+
+Use tools like Calendly to only show available slots within your boundaries.
+
+## Building Your Boundary System
+
+1. **List** your ideal boundaries
+2. **Prioritize** which to implement first
+3. **Configure** calendar settings
+4. **Communicate** to key stakeholders
+5. **Practice** saying no
+6. **Review** and adjust monthly
+
+## Protect Your Time Today
+
+[Try Ask Ally](/register) to help maintain your boundaries: "Block my mornings for focus time and show me as busy during those hours."
+
+Your time is your life. Protect it accordingly.
+    `,
+    category: 'Work-Life Balance',
+    author: { name: 'Yosef Sabag', role: 'CEO & Co-Founder' },
+    publishedAt: '2025-08-01',
+    readTime: '10 min read',
+    featured: false,
+    tags: ['boundaries', 'saying no', 'work-life balance', 'time management', 'productivity'],
+    seo: {
+      title: 'Setting Calendar Boundaries & Learning to Say No | Ask Ally Blog',
+      description:
+        'Learn how to set and maintain healthy calendar boundaries. Strategies for saying no, protecting your time, and creating sustainable work habits.',
+      keywords: [
+        'calendar boundaries',
+        'saying no',
+        'time management',
+        'work-life balance',
+        'productivity',
+        'meeting limits',
+        'time protection',
+      ],
+    },
+  },
 ]
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
@@ -2655,12 +5060,17 @@ export function getFeaturedPost(): BlogPost | undefined {
 }
 
 export function getRecentPosts(count: number = 3): BlogPost[] {
-  return [...BLOG_POSTS].sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()).slice(0, count)
+  return [...BLOG_POSTS]
+    .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
+    .slice(0, count)
 }
 
 export function getRelatedPosts(currentSlug: string, count: number = 3): BlogPost[] {
   const currentPost = getBlogPostBySlug(currentSlug)
   if (!currentPost) return []
 
-  return BLOG_POSTS.filter((post) => post.slug !== currentSlug && post.category === currentPost.category).slice(0, count)
+  return BLOG_POSTS.filter((post) => post.slug !== currentSlug && post.category === currentPost.category).slice(
+    0,
+    count,
+  )
 }

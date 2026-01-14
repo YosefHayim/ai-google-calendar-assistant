@@ -25,26 +25,30 @@ export const newsletterController = {
     const userAgent = req.headers["user-agent"]
 
     try {
-      // Check if already subscribed
       const { data: existing } = await SUPABASE
-        .from("newsletter_subscriptions")
-        .select("status")
+        .from("marketing_subscriptions")
+        .select("subscription_types, status")
         .eq("email", email)
         .single()
 
       if (existing) {
-        if (existing.status === "active") {
+        const hasNewsletter = existing.subscription_types?.includes("newsletter")
+        
+        if (hasNewsletter && existing.status === "active") {
           return sendR(res, 200, "You're already subscribed!", { email })
         }
         
-        // Reactivate if previously unsubscribed
+        const newTypes = hasNewsletter 
+          ? existing.subscription_types 
+          : [...(existing.subscription_types || []), "newsletter"]
+
         const { error } = await SUPABASE
-          .from("newsletter_subscriptions")
+          .from("marketing_subscriptions")
           .update({
+            subscription_types: newTypes,
             status: "active",
-            subscribed_at: new Date().toISOString(),
-            unsubscribed_at: null,
             source,
+            unsubscribed_at: null,
             updated_at: new Date().toISOString(),
           })
           .eq("email", email)
@@ -54,11 +58,11 @@ export const newsletterController = {
         return sendR(res, 200, "Welcome back! You've been resubscribed.", { email })
       }
 
-      // New subscription
       const { error } = await SUPABASE
-        .from("newsletter_subscriptions")
+        .from("marketing_subscriptions")
         .insert({
           email,
+          subscription_types: ["newsletter"],
           source,
           ip_address: ipAddress,
           user_agent: userAgent,
@@ -83,11 +87,24 @@ export const newsletterController = {
     const { email } = validation.data
 
     try {
+      const { data: existing } = await SUPABASE
+        .from("marketing_subscriptions")
+        .select("subscription_types")
+        .eq("email", email)
+        .single()
+
+      if (!existing) {
+        return sendR(res, 200, "Successfully unsubscribed from newsletter.", { email })
+      }
+
+      const newTypes = existing.subscription_types?.filter((t: string) => t !== "newsletter") || []
+
       const { error } = await SUPABASE
-        .from("newsletter_subscriptions")
+        .from("marketing_subscriptions")
         .update({
-          status: "unsubscribed",
-          unsubscribed_at: new Date().toISOString(),
+          subscription_types: newTypes,
+          status: newTypes.length === 0 ? "unsubscribed" : "active",
+          unsubscribed_at: newTypes.length === 0 ? new Date().toISOString() : null,
           updated_at: new Date().toISOString(),
         })
         .eq("email", email)
@@ -110,8 +127,8 @@ export const newsletterController = {
 
     try {
       const { data, error } = await SUPABASE
-        .from("newsletter_subscriptions")
-        .select("status, subscribed_at")
+        .from("marketing_subscriptions")
+        .select("subscription_types, status, created_at")
         .eq("email", email)
         .single()
 
@@ -119,9 +136,11 @@ export const newsletterController = {
         return sendR(res, 404, "Not subscribed", { subscribed: false })
       }
 
+      const hasNewsletter = data.subscription_types?.includes("newsletter") && data.status === "active"
+
       return sendR(res, 200, "Subscription found", {
-        subscribed: data.status === "active",
-        subscribedAt: data.subscribed_at,
+        subscribed: hasNewsletter,
+        subscribedAt: data.created_at,
       })
     } catch (error) {
       console.error("Newsletter status error:", error)

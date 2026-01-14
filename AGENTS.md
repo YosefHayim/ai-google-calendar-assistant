@@ -337,6 +337,8 @@ Session management for agent conversations.
 | `whatsapp-controller.ts` | WhatsApp integration |
 | `newsletter-controller.ts` | Newsletter subscribe/unsubscribe |
 | `waiting-list-controller.ts` | Waiting list join/position |
+| `referral-controller.ts` | Referral program management |
+| `team-invite-controller.ts` | Team invites and collaboration |
 | `google-calendar/` | Calendar-specific endpoints |
 | `users/` | User management endpoints |
 

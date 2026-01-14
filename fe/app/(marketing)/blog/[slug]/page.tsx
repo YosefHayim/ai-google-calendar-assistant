@@ -2,6 +2,7 @@
 
 import { useParams, notFound } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import MarketingLayout from '@/components/marketing/MarketingLayout'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -57,31 +58,17 @@ function ShareButtons({ title, url }: { title: string; url: string }) {
     <>
       <div className="flex items-center gap-2">
         <span className="text-sm text-zinc-500 dark:text-zinc-400 mr-2">Share:</span>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8"
-          onClick={handleTwitterShare}
-        >
+        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleTwitterShare}>
           <Twitter className="h-4 w-4" />
         </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8"
-          onClick={handleLinkedInShare}
-        >
+        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleLinkedInShare}>
           <Linkedin className="h-4 w-4" />
         </Button>
         <Button variant="ghost" size="icon" className="h-8 w-8" onClick={copyToClipboard}>
-          {showCopyCheck ? (
-            <Check className="h-4 w-4 text-green-500" />
-          ) : (
-            <LinkIcon className="h-4 w-4" />
-          )}
+          {showCopyCheck ? <Check className="h-4 w-4 text-green-500" /> : <LinkIcon className="h-4 w-4" />}
         </Button>
       </div>
-      
+
       {toastMessage && (
         <div className="fixed bottom-4 right-4 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 px-4 py-2 rounded-lg shadow-lg animate-in fade-in slide-in-from-bottom-2 duration-300">
           {toastMessage}
@@ -122,7 +109,14 @@ export default function BlogPostPage() {
     <MarketingLayout>
       <JsonLd data={[breadcrumbSchema, articleSchema]} />
 
-      <article className="py-16 md:py-24 px-4 sm:px-6">
+      {post.image && (
+        <div className="relative w-full h-[300px] md:h-[400px] lg:h-[500px]">
+          <Image src={post.image} alt={post.title} fill className="object-cover" priority sizes="100vw" />
+          <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-zinc-950 via-transparent to-transparent" />
+        </div>
+      )}
+
+      <article className={`py-16 md:py-24 px-4 sm:px-6 ${post.image ? '-mt-24 relative z-10' : ''}`}>
         <div className="max-w-3xl mx-auto">
           <Link
             href="/blog"
@@ -135,18 +129,14 @@ export default function BlogPostPage() {
           <header className="mb-12">
             <div className="flex items-center gap-3 mb-6">
               <Badge variant="default">{post.category}</Badge>
-              {post.featured && (
-                <Badge variant="secondary">Featured</Badge>
-              )}
+              {post.featured && <Badge variant="secondary">Featured</Badge>}
             </div>
 
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-medium tracking-tight text-zinc-900 dark:text-zinc-100 mb-6 leading-tight">
               {post.title}
             </h1>
 
-            <p className="text-xl text-zinc-500 dark:text-zinc-400 mb-8">
-              {post.excerpt}
-            </p>
+            <p className="text-xl text-zinc-500 dark:text-zinc-400 mb-8">{post.excerpt}</p>
 
             <div className="flex flex-wrap items-center gap-6 text-sm text-zinc-500 dark:text-zinc-400 pb-8 border-b border-zinc-200 dark:border-zinc-800">
               <div className="flex items-center gap-2">
@@ -211,15 +201,25 @@ export default function BlogPostPage() {
       {relatedPosts.length > 0 && (
         <section className="py-16 md:py-24 px-4 sm:px-6 bg-zinc-50 dark:bg-zinc-900/50">
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-2xl md:text-3xl font-medium text-zinc-900 dark:text-zinc-100 mb-8">
-              Related Articles
-            </h2>
+            <h2 className="text-2xl md:text-3xl font-medium text-zinc-900 dark:text-zinc-100 mb-8">Related Articles</h2>
             <div className="grid md:grid-cols-3 gap-6">
               {relatedPosts.map((relatedPost) => (
                 <Link key={relatedPost.slug} href={`/blog/${relatedPost.slug}`}>
                   <Card className="h-full overflow-hidden border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors group">
-                    <div className="aspect-video bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-zinc-800 dark:to-zinc-900 flex items-center justify-center">
-                      <BookOpen className="w-12 h-12 text-zinc-300 dark:text-zinc-700 group-hover:text-primary/50 transition-colors" />
+                    <div className="aspect-video relative bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-zinc-800 dark:to-zinc-900">
+                      {relatedPost.image ? (
+                        <Image
+                          src={relatedPost.image}
+                          alt={relatedPost.title}
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform duration-300"
+                          sizes="(max-width: 768px) 100vw, 33vw"
+                        />
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <BookOpen className="w-12 h-12 text-zinc-300 dark:text-zinc-700 group-hover:text-primary/50 transition-colors" />
+                        </div>
+                      )}
                     </div>
                     <CardContent className="p-5">
                       <Badge variant="secondary" className="mb-3">
@@ -228,9 +228,7 @@ export default function BlogPostPage() {
                       <h3 className="font-medium text-zinc-900 dark:text-zinc-100 mb-2 line-clamp-2 group-hover:text-primary transition-colors">
                         {relatedPost.title}
                       </h3>
-                      <p className="text-sm text-zinc-500 dark:text-zinc-400 line-clamp-2">
-                        {relatedPost.excerpt}
-                      </p>
+                      <p className="text-sm text-zinc-500 dark:text-zinc-400 line-clamp-2">{relatedPost.excerpt}</p>
                     </CardContent>
                   </Card>
                 </Link>

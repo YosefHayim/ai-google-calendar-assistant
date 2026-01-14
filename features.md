@@ -35,15 +35,16 @@ Implement "Organization" vs. "Individual" user logic.
 6. **Mobile UI | Sidebar Alignment**
    Ensure the mobile sidebar matches the desktop sidebar in terms of item width and general visual proportions.
 
-7. **Feature | Team Invite**
-   Implement a feature allowing users to invite team members to join their Ally workspace.
-
-8. **Feature | Affiliate/Referral Program**
-   Implement a referral system: "Invite a friend, get 1 month free."
-
 ---
 
 ### **Completed Features (Recently Shipped)**
+
+✅ **v2.2.2 - January 14, 2026**
+- **Team Invite System**: Full team collaboration with invite management (send, accept, decline, cancel, resend)
+- **Referral/Affiliate Program**: "Invite a friend, get 1 month free" with tracking and reward claiming
+- Team dashboard page with sent/received invites management
+- Referrals dashboard page with stats, referral tracking, and reward claiming
+- Database migrations for referrals, referral_stats, team_invites, teams, team_members tables
 
 ✅ **v2.2.1 - January 14, 2026**
 - Newsletter subscription system (subscribe/unsubscribe/status API endpoints)

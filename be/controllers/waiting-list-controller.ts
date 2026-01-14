@@ -22,38 +22,82 @@ export const waitingListController = {
     const userAgent = req.headers["user-agent"]
 
     try {
-      // Check if already on waiting list
       const { data: existing } = await SUPABASE
-        .from("waiting_list")
-        .select("position, status")
+        .from("marketing_subscriptions")
+        .select("subscription_types, metadata, status")
         .eq("email", email)
         .single()
 
       if (existing) {
-        return sendR(res, 200, "You're already on the waiting list!", {
-          position: existing.position,
-          status: existing.status,
+        const hasWaitlist = existing.subscription_types?.includes("waitlist")
+        
+        if (hasWaitlist) {
+          return sendR(res, 200, "You're already on the waiting list!", {
+            position: existing.metadata?.waitlist_position,
+            status: existing.status,
+            email,
+          })
+        }
+
+        const maxPosition = await SUPABASE
+          .from("marketing_subscriptions")
+          .select("metadata")
+          .contains("subscription_types", ["waitlist"])
+          .order("metadata->waitlist_position", { ascending: false })
+          .limit(1)
+          .single()
+
+        const newPosition = (maxPosition.data?.metadata?.waitlist_position || 0) + 1
+
+        const { error } = await SUPABASE
+          .from("marketing_subscriptions")
+          .update({
+            subscription_types: [...(existing.subscription_types || []), "waitlist"],
+            name: name || existing.metadata?.name,
+            metadata: {
+              ...existing.metadata,
+              waitlist_position: newPosition,
+            },
+            updated_at: new Date().toISOString(),
+          })
+          .eq("email", email)
+
+        if (error) throw error
+
+        return sendR(res, 201, "Successfully joined the waiting list!", {
+          position: newPosition,
           email,
         })
       }
 
-      // Add to waiting list
-      const { data, error } = await SUPABASE
-        .from("waiting_list")
+      const maxPosition = await SUPABASE
+        .from("marketing_subscriptions")
+        .select("metadata")
+        .contains("subscription_types", ["waitlist"])
+        .order("metadata->waitlist_position", { ascending: false })
+        .limit(1)
+        .single()
+
+      const newPosition = (maxPosition.data?.metadata?.waitlist_position || 0) + 1
+
+      const { error } = await SUPABASE
+        .from("marketing_subscriptions")
         .insert({
           email,
           name,
+          subscription_types: ["waitlist"],
           source,
           ip_address: ipAddress,
           user_agent: userAgent,
+          metadata: {
+            waitlist_position: newPosition,
+          },
         })
-        .select("position")
-        .single()
 
       if (error) throw error
 
       return sendR(res, 201, "Successfully joined the waiting list!", {
-        position: data.position,
+        position: newPosition,
         email,
       })
     } catch (error) {
@@ -71,8 +115,8 @@ export const waitingListController = {
 
     try {
       const { data, error } = await SUPABASE
-        .from("waiting_list")
-        .select("position, status, created_at")
+        .from("marketing_subscriptions")
+        .select("subscription_types, metadata, status, created_at")
         .eq("email", email)
         .single()
 
@@ -80,8 +124,14 @@ export const waitingListController = {
         return sendR(res, 404, "Not found on waiting list", null)
       }
 
+      const hasWaitlist = data.subscription_types?.includes("waitlist")
+      
+      if (!hasWaitlist) {
+        return sendR(res, 404, "Not found on waiting list", null)
+      }
+
       return sendR(res, 200, "Position found", {
-        position: data.position,
+        position: data.metadata?.waitlist_position,
         status: data.status,
         joinedAt: data.created_at,
       })

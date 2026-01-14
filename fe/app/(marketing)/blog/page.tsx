@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import MarketingLayout from '@/components/marketing/MarketingLayout'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -81,11 +82,31 @@ export default function BlogPage() {
               <Link href={`/blog/${featuredPost.slug}`}>
                 <Card className="overflow-hidden border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors group">
                   <div className="grid md:grid-cols-2 gap-0">
-                    <div className="aspect-video md:aspect-auto bg-gradient-to-br from-primary/20 via-purple-500/20 to-pink-500/20 flex items-center justify-center">
-                      <div className="text-center p-8">
-                        <Sparkles className="w-16 h-16 text-primary/60 mx-auto mb-4 group-hover:scale-110 transition-transform" />
-                        <span className="text-sm text-zinc-500 dark:text-zinc-400">Featured Article</span>
-                      </div>
+                    <div className="aspect-video md:aspect-auto relative bg-gradient-to-br from-primary/20 via-purple-500/20 to-pink-500/20 min-h-[250px]">
+                      {featuredPost.image ? (
+                        <>
+                          <Image
+                            src={featuredPost.image}
+                            alt={featuredPost.title}
+                            fill
+                            className="object-cover group-hover:scale-105 transition-transform duration-300"
+                            sizes="(max-width: 768px) 100vw, 50vw"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+                          <div className="absolute bottom-4 left-4">
+                            <span className="text-sm text-white/90 bg-black/40 px-3 py-1 rounded-full backdrop-blur-sm">
+                              Featured Article
+                            </span>
+                          </div>
+                        </>
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="text-center p-8">
+                            <Sparkles className="w-16 h-16 text-primary/60 mx-auto mb-4 group-hover:scale-110 transition-transform" />
+                            <span className="text-sm text-zinc-500 dark:text-zinc-400">Featured Article</span>
+                          </div>
+                        </div>
+                      )}
                     </div>
                     <CardContent className="p-6 md:p-8 flex flex-col justify-center">
                       <div className="flex items-center gap-3 mb-4">
@@ -127,8 +148,20 @@ export default function BlogPage() {
             {regularPosts.map((post) => (
               <Link key={post.slug} href={`/blog/${post.slug}`}>
                 <Card className="h-full overflow-hidden border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors group">
-                  <div className="aspect-video bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-zinc-800 dark:to-zinc-900 flex items-center justify-center">
-                    <BookOpen className="w-12 h-12 text-zinc-300 dark:text-zinc-700 group-hover:text-primary/50 transition-colors" />
+                  <div className="aspect-video relative bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-zinc-800 dark:to-zinc-900">
+                    {post.image ? (
+                      <Image
+                        src={post.image}
+                        alt={post.title}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      />
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <BookOpen className="w-12 h-12 text-zinc-300 dark:text-zinc-700 group-hover:text-primary/50 transition-colors" />
+                      </div>
+                    )}
                   </div>
                   <CardContent className="p-5">
                     <div className="flex items-center gap-2 mb-3">

@@ -557,6 +557,34 @@ See `/fe/env.example` for all available options.
 | `POST` | `/join` | Join the waiting list |
 | `GET` | `/position/:email` | Get position in waiting list |
 
+### Referrals (`/api/referral`)
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/code` | Get user's referral code/link |
+| `POST` | `/create` | Create new referral |
+| `POST` | `/apply` | Apply a referral code |
+| `POST` | `/convert` | Convert referral on subscription |
+| `GET` | `/my-referrals` | Get user's referral history |
+| `GET` | `/stats` | Get referral statistics |
+| `POST` | `/claim` | Claim referral reward |
+| `GET` | `/validate/:code` | Validate a referral code |
+
+### Teams (`/api/teams`)
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/invite` | Send team invite |
+| `GET` | `/invites/sent` | Get sent invites |
+| `GET` | `/invites/received` | Get received invites |
+| `POST` | `/invite/respond` | Accept/decline invite |
+| `DELETE` | `/invite/:id` | Cancel invite |
+| `POST` | `/invite/:id/resend` | Resend invite |
+| `GET` | `/invite/:token` | Get invite details by token |
+| `POST` | `/` | Create a team |
+| `GET` | `/` | Get user's teams |
+| `GET` | `/:teamId/members` | Get team members |
+
 ---
 
 ## Security Architecture

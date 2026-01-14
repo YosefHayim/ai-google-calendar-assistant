@@ -1,7 +1,14 @@
 import { Request, Response } from "express"
 import { z } from "zod"
 import { SUPABASE } from "@/config/clients"
-import { sendR } from "@/utils/send-response"
+import sendR from "@/utils/send-response"
+
+interface InvitationMetadata {
+  referral_code?: string
+  team_name?: string
+  role?: string
+  message?: string
+}
 
 const createReferralSchema = z.object({
   referredEmail: z.string().email("Invalid email address").optional(),
@@ -27,33 +34,42 @@ export const referralController = {
 
     try {
       const { data: existing, error: fetchError } = await SUPABASE
-        .from("referrals")
-        .select("referral_code")
-        .eq("referrer_id", userId)
-        .is("referred_email", null)
+        .from("invitations")
+        .select("metadata")
+        .eq("inviter_id", userId)
+        .eq("invite_type", "referral")
+        .eq("invitee_email", "")
         .single()
 
       if (existing) {
+        const metadata = existing.metadata as InvitationMetadata | null
+        const referralCode = metadata?.referral_code
         return sendR(res, 200, "Referral code retrieved", {
-          referralCode: existing.referral_code,
-          referralLink: `${process.env.FE_BASE_URL || "https://askally.io"}/signup?ref=${existing.referral_code}`,
+          referralCode,
+          referralLink: `${process.env.FE_BASE_URL || "https://askally.io"}/signup?ref=${referralCode}`,
         })
       }
 
       const { data: newReferral, error: insertError } = await SUPABASE
-        .from("referrals")
+        .from("invitations")
         .insert({
-          referrer_id: userId,
-          referrer_email: userEmail,
+          invite_type: "referral",
+          inviter_id: userId,
+          inviter_email: userEmail,
+          invitee_email: "",
+          reward_type: "free_month",
+          invite_token: "",
         })
-        .select("referral_code")
+        .select("metadata")
         .single()
 
       if (insertError) throw insertError
 
+      const metadata = newReferral.metadata as InvitationMetadata | null
+      const referralCode = metadata?.referral_code
       return sendR(res, 201, "Referral code created", {
-        referralCode: newReferral.referral_code,
-        referralLink: `${process.env.FE_BASE_URL || "https://askally.io"}/signup?ref=${newReferral.referral_code}`,
+        referralCode,
+        referralLink: `${process.env.FE_BASE_URL || "https://askally.io"}/signup?ref=${referralCode}`,
       })
     } catch (error) {
       console.error("Get referral code error:", error)
@@ -82,20 +98,23 @@ export const referralController = {
       }
 
       const { data: newReferral, error } = await SUPABASE
-        .from("referrals")
+        .from("invitations")
         .insert({
-          referrer_id: userId,
-          referrer_email: userEmail,
-          referred_email: referredEmail || null,
+          invite_type: "referral",
+          inviter_id: userId,
+          inviter_email: userEmail,
+          invitee_email: referredEmail || "",
+          reward_type: "free_month",
         })
         .select("*")
         .single()
 
       if (error) throw error
 
+      const referralCode = newReferral.metadata?.referral_code
       return sendR(res, 201, "Referral created", {
-        referralCode: newReferral.referral_code,
-        referralLink: `${process.env.FE_BASE_URL || "https://askally.io"}/signup?ref=${newReferral.referral_code}`,
+        referralCode,
+        referralLink: `${process.env.FE_BASE_URL || "https://askally.io"}/signup?ref=${referralCode}`,
       })
     } catch (error) {
       console.error("Create referral error:", error)
@@ -113,16 +132,17 @@ export const referralController = {
 
     try {
       const { data: referral, error: fetchError } = await SUPABASE
-        .from("referrals")
+        .from("invitations")
         .select("*")
-        .eq("referral_code", referralCode)
+        .eq("invite_type", "referral")
+        .eq("metadata->>referral_code", referralCode)
         .single()
 
       if (fetchError || !referral) {
         return sendR(res, 404, "Invalid referral code", null)
       }
 
-      if (referral.referrer_email === referredEmail) {
+      if (referral.inviter_email === referredEmail) {
         return sendR(res, 400, "You cannot use your own referral code", null)
       }
 
@@ -135,9 +155,9 @@ export const referralController = {
       }
 
       const { error: updateError } = await SUPABASE
-        .from("referrals")
+        .from("invitations")
         .update({
-          referred_email: referredEmail,
+          invitee_email: referredEmail,
           status: "signed_up",
           updated_at: new Date().toISOString(),
         })
@@ -146,7 +166,7 @@ export const referralController = {
       if (updateError) throw updateError
 
       return sendR(res, 200, "Referral code applied successfully", {
-        referrerEmail: referral.referrer_email,
+        referrerEmail: referral.inviter_email,
         rewardType: referral.reward_type,
       })
     } catch (error) {
@@ -165,9 +185,10 @@ export const referralController = {
 
     try {
       const { data: referral, error: fetchError } = await SUPABASE
-        .from("referrals")
+        .from("invitations")
         .select("*")
-        .eq("referred_email", userEmail)
+        .eq("invite_type", "referral")
+        .eq("invitee_email", userEmail)
         .eq("status", "signed_up")
         .single()
 
@@ -176,9 +197,9 @@ export const referralController = {
       }
 
       const { error: updateError } = await SUPABASE
-        .from("referrals")
+        .from("invitations")
         .update({
-          referred_id: userId,
+          invitee_id: userId,
           status: "converted",
           converted_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
@@ -205,13 +226,31 @@ export const referralController = {
     }
 
     try {
-      const { data: referrals, error } = await SUPABASE
-        .from("referrals")
+      const { data: invitations, error } = await SUPABASE
+        .from("invitations")
         .select("*")
-        .eq("referrer_id", userId)
+        .eq("invite_type", "referral")
+        .eq("inviter_id", userId)
         .order("created_at", { ascending: false })
 
       if (error) throw error
+
+      const referrals = invitations.map((inv) => ({
+        id: inv.id,
+        referrer_id: inv.inviter_id,
+        referrer_email: inv.inviter_email,
+        referral_code: inv.metadata?.referral_code,
+        referred_email: inv.invitee_email || null,
+        referred_id: inv.invitee_id,
+        status: inv.status,
+        reward_type: inv.reward_type,
+        reward_amount: inv.reward_amount,
+        reward_claimed_at: inv.reward_claimed_at,
+        expires_at: inv.expires_at,
+        converted_at: inv.converted_at,
+        created_at: inv.created_at,
+        updated_at: inv.updated_at,
+      }))
 
       return sendR(res, 200, "Referrals retrieved", { referrals })
     } catch (error) {
@@ -228,25 +267,25 @@ export const referralController = {
     }
 
     try {
-      const { data: stats, error } = await SUPABASE
-        .from("referral_stats")
-        .select("*")
-        .eq("user_id", userId)
-        .single()
+      const { data: referrals, error } = await SUPABASE
+        .from("invitations")
+        .select("status, reward_type, reward_amount")
+        .eq("invite_type", "referral")
+        .eq("inviter_id", userId)
 
-      if (error && error.code !== "PGRST116") throw error
+      if (error) throw error
 
-      const defaultStats = {
-        total_referrals: 0,
-        successful_referrals: 0,
-        pending_referrals: 0,
-        total_rewards_earned: 0,
-        total_free_months_earned: 0,
+      const stats = {
+        total_referrals: referrals?.length || 0,
+        successful_referrals: referrals?.filter((r) => r.status === "converted" || r.status === "rewarded").length || 0,
+        pending_referrals: referrals?.filter((r) => r.status === "pending" || r.status === "signed_up").length || 0,
+        total_rewards_earned: referrals?.filter((r) => r.status === "rewarded").length || 0,
+        total_free_months_earned: referrals
+          ?.filter((r) => r.status === "rewarded" && r.reward_type === "free_month")
+          .reduce((sum, r) => sum + (r.reward_amount || 0), 0) || 0,
       }
 
-      return sendR(res, 200, "Referral stats retrieved", {
-        stats: stats || defaultStats,
-      })
+      return sendR(res, 200, "Referral stats retrieved", { stats })
     } catch (error) {
       console.error("Get referral stats error:", error)
       return sendR(res, 500, "Failed to get referral stats", null)
@@ -269,10 +308,11 @@ export const referralController = {
 
     try {
       const { data: referral, error: fetchError } = await SUPABASE
-        .from("referrals")
+        .from("invitations")
         .select("*")
         .eq("id", referralId)
-        .eq("referrer_id", userId)
+        .eq("invite_type", "referral")
+        .eq("inviter_id", userId)
         .eq("status", "converted")
         .single()
 
@@ -281,7 +321,7 @@ export const referralController = {
       }
 
       const { error: updateError } = await SUPABASE
-        .from("referrals")
+        .from("invitations")
         .update({
           status: "rewarded",
           reward_claimed_at: new Date().toISOString(),
@@ -290,17 +330,6 @@ export const referralController = {
         .eq("id", referralId)
 
       if (updateError) throw updateError
-
-      await SUPABASE
-        .from("referral_stats")
-        .update({
-          total_rewards_earned: SUPABASE.rpc("increment", { x: 1 }),
-          total_free_months_earned: referral.reward_type === "free_month" 
-            ? SUPABASE.rpc("increment", { x: referral.reward_amount }) 
-            : undefined,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("user_id", userId)
 
       return sendR(res, 200, "Reward claimed successfully", {
         rewardType: referral.reward_type,
@@ -321,9 +350,10 @@ export const referralController = {
 
     try {
       const { data: referral, error } = await SUPABASE
-        .from("referrals")
-        .select("referrer_email, status, expires_at, reward_type")
-        .eq("referral_code", code)
+        .from("invitations")
+        .select("inviter_email, status, expires_at, reward_type, metadata")
+        .eq("invite_type", "referral")
+        .eq("metadata->>referral_code", code)
         .single()
 
       if (error || !referral) {
