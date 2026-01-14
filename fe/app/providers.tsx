@@ -26,10 +26,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
           <AuthProvider>{children}</AuthProvider>
         </LanguageProvider>
         <Toaster
-          position="bottom-right"
+          position="bottom-center"
           toastOptions={{
             className:
-              'bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100',
+              'bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 w-[calc(100vw-2rem)] sm:w-auto sm:min-w-[356px] sm:max-w-[420px] mx-auto',
             duration: 4000,
           }}
           richColors

@@ -2,6 +2,8 @@
 
 import MarketingLayout from '@/components/marketing/MarketingLayout'
 import { Badge } from '@/components/ui/badge'
+import { JsonLd } from '@/components/shared/JsonLd'
+import { generateBreadcrumbSchema, generateWebPageSchema, SITE_CONFIG } from '@/lib/constants/seo'
 import { Sparkles, Bug, Zap, Calendar, Mic, Shield, Bell, BarChart3 } from 'lucide-react'
 
 type ChangeType = 'feature' | 'fix' | 'improvement'
@@ -153,8 +155,19 @@ const CHANGELOG_DATA: ChangelogEntry[] = [
 ]
 
 export function ChangelogPage() {
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Home', url: SITE_CONFIG.url },
+    { name: 'Changelog', url: `${SITE_CONFIG.url}/changelog` },
+  ])
+  const pageSchema = generateWebPageSchema({
+    title: 'Changelog - Ask Ally',
+    description: 'See what\'s new in Ask Ally. Track our latest features, improvements, and fixes.',
+    url: `${SITE_CONFIG.url}/changelog`,
+  })
+
   return (
     <MarketingLayout>
+      <JsonLd data={[breadcrumbSchema, pageSchema]} />
       <section className="py-16 md:py-24 px-4 sm:px-6">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16">

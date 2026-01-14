@@ -1,26 +1,25 @@
 import '@/styles/globals.css'
 
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Providers } from '@/app/providers'
+import { BASE_METADATA, generateOrganizationSchema, generateSoftwareApplicationSchema } from '@/lib/constants/seo'
+import { JsonLd } from '@/components/shared/JsonLd'
 
 export const metadata: Metadata = {
-  title: 'Ask Ally | The AI Secretary for your Google Calendar',
-  description:
-    'Your intelligent calendar assistant powered by AI. Manage your Google Calendar with natural language commands.',
-  metadataBase: new URL('https://askally.io'),
-  openGraph: {
-    title: 'Ask Ally | The AI Secretary for your Google Calendar',
-    description:
-      'Your intelligent calendar assistant powered by AI. Manage your Google Calendar with natural language commands.',
-    url: 'https://askally.io',
-    siteName: 'Ask Ally',
-    type: 'website',
+  ...BASE_METADATA,
+  verification: {
+    google: 'google-site-verification-code',
   },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Ask Ally | The AI Secretary for your Google Calendar',
-    description: 'Your intelligent calendar assistant powered by AI.',
-  },
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+    { media: '(prefers-color-scheme: dark)', color: '#09090b' },
+  ],
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -33,6 +32,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&family=Playfair+Display:wght@400..900&display=swap"
           rel="stylesheet"
         />
+        <JsonLd data={[generateOrganizationSchema(), generateSoftwareApplicationSchema()]} />
       </head>
       <body className="font-sans bg-background text-foreground" suppressHydrationWarning={true}>
         <Providers>{children}</Providers>

@@ -62,7 +62,7 @@ export function CalendarFilterSelect({
         <Button
           variant="outline"
           size="sm"
-          className="h-9 gap-2 border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-800"
+          className="h-9 w-full sm:w-auto gap-2 border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-800"
           disabled={isLoading}
         >
           <Calendar className="h-4 w-4 text-zinc-500" />

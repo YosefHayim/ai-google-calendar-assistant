@@ -7,6 +7,8 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { JsonLd } from '@/components/shared/JsonLd'
+import { generateBreadcrumbSchema, generateWebPageSchema, SITE_CONFIG } from '@/lib/constants/seo'
 import { BookOpen, ArrowRight, Calendar, Clock, User, Mail, Sparkles } from 'lucide-react'
 
 interface BlogPost {
@@ -84,8 +86,19 @@ export function BlogPage() {
   const featuredPost = BLOG_POSTS.find((post) => post.featured)
   const regularPosts = filteredPosts.filter((post) => !post.featured)
 
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Home', url: SITE_CONFIG.url },
+    { name: 'Blog', url: `${SITE_CONFIG.url}/blog` },
+  ])
+  const pageSchema = generateWebPageSchema({
+    title: 'Blog - Ask Ally',
+    description: 'Tips, tutorials, and insights from the Ask Ally team.',
+    url: `${SITE_CONFIG.url}/blog`,
+  })
+
   return (
     <MarketingLayout>
+      <JsonLd data={[breadcrumbSchema, pageSchema]} />
       <section className="py-16 md:py-24 px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">

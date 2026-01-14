@@ -323,7 +323,7 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
         ) : (
           <form
             onSubmit={onSubmit}
-            className="relative flex items-center bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-2xl p-2 gap-2"
+            className="relative flex items-center bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-2xl p-1.5 sm:p-2 gap-1.5 sm:gap-2"
           >
             {/* Hidden file input */}
             <input

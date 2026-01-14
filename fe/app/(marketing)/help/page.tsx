@@ -6,6 +6,13 @@ import MarketingLayout from '@/components/marketing/MarketingLayout'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
+import { JsonLd } from '@/components/shared/JsonLd'
+import {
+  generateFAQSchema,
+  generateBreadcrumbSchema,
+  generateWebPageSchema,
+  SITE_CONFIG,
+} from '@/lib/constants/seo'
 import {
   Search,
   BookOpen,
@@ -179,6 +186,8 @@ const POPULAR_TOPICS = [
   { icon: Zap, title: 'Quick Start Guide', href: '#getting-started' },
 ]
 
+const ALL_FAQS = Object.values(FAQ_DATA).flat()
+
 export function HelpCenterPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
@@ -189,8 +198,20 @@ export function HelpCenterPage() {
       category.description.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
+  const faqSchema = generateFAQSchema(ALL_FAQS)
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Home', url: SITE_CONFIG.url },
+    { name: 'Help Center', url: `${SITE_CONFIG.url}/help` },
+  ])
+  const pageSchema = generateWebPageSchema({
+    title: 'Help Center - Ask Ally',
+    description: 'Find answers to common questions about Ask Ally, the AI calendar assistant.',
+    url: `${SITE_CONFIG.url}/help`,
+  })
+
   return (
     <MarketingLayout>
+      <JsonLd data={[faqSchema, breadcrumbSchema, pageSchema]} />
       <section className="py-16 md:py-24 px-4 sm:px-6 bg-gradient-to-b from-zinc-50 to-white dark:from-zinc-900/50 dark:to-transparent">
         <div className="max-w-4xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
