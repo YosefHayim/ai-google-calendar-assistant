@@ -2,6 +2,7 @@ import express from "express";
 import multer from "multer";
 import voiceController from "@/controllers/voice-controller";
 import { supabaseAuth } from "@/middlewares/supabase-auth";
+import { voiceRateLimiter, voiceBurstLimiter } from "@/middlewares/rate-limiter";
 
 const router = express.Router();
 
@@ -39,8 +40,9 @@ const upload = multer({
 
 router.use(supabaseAuth());
 
-router.post("/transcribe", upload.single("audio"), voiceController.transcribe)
-router.post("/synthesize", voiceController.synthesize)
+// Voice endpoints with rate limiting to prevent billing spikes
+router.post("/transcribe", voiceBurstLimiter, voiceRateLimiter, upload.single("audio"), voiceController.transcribe)
+router.post("/synthesize", voiceBurstLimiter, voiceRateLimiter, voiceController.synthesize)
 router.get("/agents/profiles", voiceController.getAgentProfiles)
 
 export default router
