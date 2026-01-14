@@ -1,7 +1,7 @@
 import { Request, Response } from "express"
 import { z } from "zod"
 import { SUPABASE } from "@/config/clients"
-import { sendR } from "@/utils/send-response"
+import { sendR } from "@/utils/http"
 
 const joinSchema = z.object({
   email: z.string().email("Invalid email address"),
