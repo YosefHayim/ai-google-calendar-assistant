@@ -190,7 +190,7 @@ router.get("/status", supabaseAuth(), async (req, res) => {
       });
     }
 
-    const { data: slackUser } = await SUPABASE.from("slack_users")
+    const { data: slackUser } = await slackUsersTable()
       .select(
         "slack_user_id, slack_team_id, slack_username, created_at, is_linked"
       )
@@ -198,12 +198,13 @@ router.get("/status", supabaseAuth(), async (req, res) => {
       .eq("is_linked", true)
       .maybeSingle();
 
+    const typedSlackUser = slackUser as SlackUserRow | null;
     return sendR(res, STATUS_RESPONSE.SUCCESS, "Slack integration status", {
-      isConnected: !!slackUser?.is_linked,
-      slackUserId: slackUser?.slack_user_id || null,
-      slackTeamId: slackUser?.slack_team_id || null,
-      slackUsername: slackUser?.slack_username || null,
-      connectedAt: slackUser?.created_at || null,
+      isConnected: !!typedSlackUser?.is_linked,
+      slackUserId: typedSlackUser?.slack_user_id || null,
+      slackTeamId: typedSlackUser?.slack_team_id || null,
+      slackUsername: typedSlackUser?.slack_username || null,
+      connectedAt: typedSlackUser?.created_at || null,
       installUrl: generateInstallUrl(),
     });
   } catch (error) {
