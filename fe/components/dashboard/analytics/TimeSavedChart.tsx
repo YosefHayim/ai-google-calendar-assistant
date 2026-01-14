@@ -3,6 +3,7 @@
 import React, { useRef, useState } from 'react'
 
 import { calculateMax } from '@/lib/dataUtils'
+import { formatHours } from '@/lib/formatUtils'
 import { motion } from 'framer-motion'
 import { useContainerDimensions } from '@/hooks/useContainerDimensions'
 
@@ -160,7 +161,7 @@ const TimeSavedChart: React.FC<TimeSavedChartProps> = ({ data }) => {
             <span className="text-xs text-zinc-400 font-bold uppercase tracking-wider">{hoveredData.day}</span>
             <span className="text-sm font-bold text-white flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-              {hoveredData.hours.toFixed(1)}h saved
+              {formatHours(hoveredData.hours)} saved
             </span>
           </div>
         </div>

@@ -7,6 +7,7 @@ import { ChartContainer, type ChartConfig } from '@/components/ui/chart'
 import type { CalendarBreakdownItem } from '@/types/analytics'
 import { getValidHexColor } from '@/lib/colorUtils'
 import { calculatePercentage, sumBy } from '@/lib/dataUtils'
+import { formatHours } from '@/lib/formatUtils'
 
 interface TimeAllocationPieChartProps {
   data: CalendarBreakdownItem[]
@@ -50,7 +51,7 @@ export const TimeAllocationPieChart: React.FC<TimeAllocationPieChartProps> = ({ 
                     <span className="font-medium text-sm">{item.category}</span>
                   </div>
                   <div className="text-zinc-300 text-xs">
-                    {item.hours.toFixed(1)} hours ({item.percentage}%)
+                    {formatHours(item.hours, 1)} ({item.percentage}%)
                   </div>
                 </div>
               )
@@ -82,7 +83,7 @@ export const TimeAllocationPieChart: React.FC<TimeAllocationPieChartProps> = ({ 
                   >
                     <div className="w-3 h-3 rounded-sm flex-shrink-0" style={{ backgroundColor: entry.color }} />
                     <span className="text-zinc-700 dark:text-zinc-300 truncate max-w-[100px]">{item.category}</span>
-                    <span className="text-zinc-500 dark:text-zinc-400 font-mono text-xs">{item.hours.toFixed(1)}h</span>
+                    <span className="text-zinc-500 dark:text-zinc-400 font-mono text-xs">{formatHours(item.hours)}</span>
                   </li>
                 )
               })}

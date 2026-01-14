@@ -7,6 +7,7 @@ import { ChartContainer, type ChartConfig } from '@/components/ui/chart'
 import type { CalendarBreakdownItem } from '@/types/analytics'
 import { getValidHexColor } from '@/lib/colorUtils'
 import { calculatePercentage, sumBy } from '@/lib/dataUtils'
+import { formatHours } from '@/lib/formatUtils'
 
 interface TimeAllocationDonutChartProps {
   data: CalendarBreakdownItem[]
@@ -50,7 +51,7 @@ export const TimeAllocationDonutChart: React.FC<TimeAllocationDonutChartProps> =
                     <span className="font-medium text-sm">{item.category}</span>
                   </div>
                   <div className="text-zinc-300 text-xs">
-                    {item.hours.toFixed(1)} hours ({item.percentage}%)
+                    {formatHours(item.hours, 1)} ({item.percentage}%)
                   </div>
                 </div>
               )
@@ -83,7 +84,7 @@ export const TimeAllocationDonutChart: React.FC<TimeAllocationDonutChartProps> =
                       y={viewBox.cy}
                       className="fill-zinc-900 dark:fill-zinc-100 text-3xl font-bold"
                     >
-                      {totalHours.toFixed(1)}h
+                      {formatHours(totalHours)}
                     </tspan>
                     <tspan x={viewBox.cx} y={(viewBox.cy || 0) + 24} className="fill-zinc-500 text-xs font-medium">
                       Tracked

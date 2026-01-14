@@ -7,6 +7,7 @@ import { format } from 'date-fns'
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from '@/components/ui/chart'
 import type { DailyAvailableHoursDataPoint } from '@/types/analytics'
 import { CALENDAR_CONSTANTS } from '@/lib/constants'
+import { formatHours } from '@/lib/formatUtils'
 
 interface DailyHoursStackedChartProps {
   data: DailyAvailableHoursDataPoint[]
@@ -98,7 +99,7 @@ export const DailyHoursStackedChart: React.FC<DailyHoursStackedChartProps> = ({ 
               }}
               formatter={(value, name) => {
                 const label = name === 'available' ? 'Available' : 'Scheduled'
-                return [`${Number(value).toFixed(1)}h ${label.toLowerCase()}`, '']
+                return [`${formatHours(Number(value))} ${label.toLowerCase()}`, '']
               }}
             />
           }
