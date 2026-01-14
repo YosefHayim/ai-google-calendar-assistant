@@ -19,6 +19,7 @@ import {
   otpVerificationSchema,
   allyBrainSchema,
   contextualSchedulingSchema,
+  crossPlatformSyncSchema,
   preferenceKeyParamSchema,
   reminderPreferencesSchema,
   voicePreferenceSchema,
@@ -122,6 +123,14 @@ router.put(
   "/preferences/daily_briefing",
   supabaseAuth(),
   validate(dailyBriefingSchema, "body"),
+  userPreferencesController.updatePreference,
+);
+
+// update cross_platform_sync preference
+router.put(
+  "/preferences/cross_platform_sync",
+  supabaseAuth(),
+  validate(crossPlatformSyncSchema, "body"),
   userPreferencesController.updatePreference,
 );
 

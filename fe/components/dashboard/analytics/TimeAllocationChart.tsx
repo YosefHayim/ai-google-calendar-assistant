@@ -2,7 +2,8 @@
 
 import { Button } from '@/components/ui/button'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
-import { calculatePercentage, sumBy } from '@/lib/dataUtils'
+import { sumBy } from '@/lib/dataUtils'
+import { formatHours, calculatePercentage } from '@/lib/formatUtils'
 
 import { Info } from 'lucide-react'
 import React from 'react'
@@ -65,7 +66,7 @@ const TimeAllocationChart: React.FC<TimeAllocationChartProps> = ({ data, onCalen
           })}
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-3xl font-bold text-zinc-900 dark:text-zinc-100">{totalHours.toFixed(1)}h</span>
+          <span className="text-3xl font-bold text-zinc-900 dark:text-zinc-100">{formatHours(totalHours)}</span>
           <span className="text-xs font-medium text-zinc-500">Tracked</span>
         </div>
       </div>
@@ -112,7 +113,7 @@ const TimeAllocationChart: React.FC<TimeAllocationChartProps> = ({ data, onCalen
               >
                 <div className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: safeColor }} />
                 <span className="flex-1 font-medium text-zinc-800 dark:text-zinc-200 truncate">{item.category}</span>
-                <span className="font-mono text-zinc-500 dark:text-zinc-400">{item.hours.toFixed(1)}h</span>
+                <span className="font-mono text-zinc-500 dark:text-zinc-400">{formatHours(item.hours)}</span>
                 <span className="text-xs text-zinc-400 w-10 text-right">
                   {calculatePercentage(item.hours, totalHours, 0)}%
                 </span>

@@ -11,8 +11,7 @@ import {
 } from '@/services/payment.service'
 import { QUERY_CONFIG, STORAGE_KEYS } from '@/lib/constants'
 
-const hasPreviousSession = () =>
-  typeof window !== 'undefined' && !!localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN)
+const hasPreviousSession = () => typeof window !== 'undefined' && !!localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN)
 
 // Fallback plans when database is empty
 const FALLBACK_PLANS: Plan[] = [
@@ -23,12 +22,7 @@ const FALLBACK_PLANS: Plan[] = [
     description: 'For individuals performing an exploratory audit of their weekly focus.',
     pricing: { monthly: 0, yearly: 0, perUse: 3 },
     limits: { aiInteractionsMonthly: 10, actionPackSize: 25 },
-    features: [
-      '10 AI Interactions/mo',
-      'Google Calendar Sync',
-      'WhatsApp & Telegram',
-      'Basic Dashboard',
-    ],
+    features: ['10 AI Interactions/mo', 'Google Calendar Sync', 'WhatsApp & Telegram', 'Basic Dashboard'],
     isPopular: false,
     isHighlighted: false,
   },

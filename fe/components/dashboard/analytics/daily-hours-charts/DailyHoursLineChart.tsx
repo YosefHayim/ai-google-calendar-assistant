@@ -5,6 +5,7 @@ import { Line, LineChart, CartesianGrid, XAxis, YAxis } from 'recharts'
 import { format } from 'date-fns'
 
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from '@/components/ui/chart'
+import { formatHours } from '@/lib/formatUtils'
 import type { DailyAvailableHoursDataPoint } from '@/types/analytics'
 
 interface DailyHoursLineChartProps {
@@ -75,7 +76,7 @@ export const DailyHoursLineChart: React.FC<DailyHoursLineChartProps> = ({ data, 
                 }
                 return value
               }}
-              formatter={(value) => [`${Number(value).toFixed(1)}h available`, '']}
+              formatter={(value) => [`${formatHours(Number(value))} available`, '']}
             />
           }
         />

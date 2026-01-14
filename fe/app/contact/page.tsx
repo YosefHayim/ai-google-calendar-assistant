@@ -34,8 +34,8 @@ export default function ContactPage() {
                 </div>
                 <h3 className="font-medium text-zinc-900 dark:text-zinc-100 mb-2">{t('contact.emailUs')}</h3>
                 <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-3">{t('contact.emailUsDesc')}</p>
-                <a href="mailto:support@ally.sh" className="text-sm text-primary hover:underline">
-                  support@ally.sh
+                <a href="mailto:support@askally.io" className="text-sm text-primary hover:underline">
+                  support@askally.io
                 </a>
               </div>
 

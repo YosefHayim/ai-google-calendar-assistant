@@ -37,7 +37,7 @@ const NavLink: React.FC<NavLinkProps> = ({
         id={id}
         href={href}
         onClick={onClick}
-        className={`flex-1 flex items-center gap-3 p-2 rounded-lg transition-colors ${
+        className={`flex-1 flex items-center gap-3 p-3 md:p-2 rounded-lg transition-colors min-h-[44px] md:min-h-0 ${
           isActive
             ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 font-bold'
             : 'text-zinc-500 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-900'
@@ -51,13 +51,16 @@ const NavLink: React.FC<NavLinkProps> = ({
           <TooltipTrigger asChild>
             <button
               type="button"
-              className="p-1 rounded-md text-zinc-400 hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+              className="p-2 md:p-1 rounded-md text-zinc-400 hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors min-w-[36px] min-h-[36px] md:min-w-0 md:min-h-0 flex items-center justify-center"
               aria-label="More information"
             >
               <Info className="w-3.5 h-3.5" />
             </button>
           </TooltipTrigger>
-          <TooltipContent side="right" className="max-w-[220px] bg-zinc-900 dark:bg-zinc-800 text-zinc-100 border-zinc-700">
+          <TooltipContent
+            side="right"
+            className="max-w-[220px] bg-zinc-900 dark:bg-zinc-800 text-zinc-100 border-zinc-700"
+          >
             <p className="text-xs leading-relaxed">{description}</p>
           </TooltipContent>
         </Tooltip>
@@ -108,7 +111,7 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({ pathname, isOpen, onClos
 
   return (
     <TooltipProvider>
-      <nav className="px-4 space-y-2 mt-2">
+      <nav className="px-4 space-y-0.5 pt-1">
         {navItems.map((item) => (
           <NavLink
             key={item.href}

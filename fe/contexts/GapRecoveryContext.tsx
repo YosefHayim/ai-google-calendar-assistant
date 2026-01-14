@@ -46,7 +46,7 @@ export function GapRecoveryProvider({ children }: { children: React.ReactNode })
         endDate: format(dateRange.to, "yyyy-MM-dd'T'23:59:59'Z'"),
       }),
     }),
-    [dateRange]
+    [dateRange],
   )
 
   const { gaps, totalCount, analyzedRange, isLoading, isFetching, isError, refetch } = useGaps(queryParams)
@@ -77,17 +77,17 @@ export function GapRecoveryProvider({ children }: { children: React.ReactNode })
             setIsDialogOpen(false)
             setSelectedGap(null)
           },
-        }
+        },
       )
     },
-    [fillGap]
+    [fillGap],
   )
 
   const handleSkip = useCallback(
     (gapId: string) => {
       skipGap({ gapId })
     },
-    [skipGap]
+    [skipGap],
   )
 
   const handleDismissAll = useCallback(() => {
@@ -139,7 +139,7 @@ export function GapRecoveryProvider({ children }: { children: React.ReactNode })
       isSkipping,
       skippingVariables?.gapId,
       isDismissing,
-    ]
+    ],
   )
 
   return <GapRecoveryContext.Provider value={value}>{children}</GapRecoveryContext.Provider>

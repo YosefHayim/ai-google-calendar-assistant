@@ -3,7 +3,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, Users, CreditCard, Receipt, FileText, ArrowLeft, Shield } from 'lucide-react'
+import { LayoutDashboard, Users, CreditCard, Receipt, FileText, ArrowLeft, Shield, PenSquare } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const navItems = [
@@ -12,6 +12,7 @@ const navItems = [
   { href: '/admin/subscriptions', icon: CreditCard, label: 'Subscriptions' },
   { href: '/admin/payments', icon: Receipt, label: 'Payments' },
   { href: '/admin/audit-logs', icon: FileText, label: 'Audit Logs' },
+  { href: '/admin/blog', icon: PenSquare, label: 'Blog' },
 ]
 
 export function AdminSidebar() {
@@ -38,7 +39,7 @@ export function AdminSidebar() {
                 'flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-sm font-medium',
                 isActive
                   ? 'bg-primary text-white'
-                  : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white'
+                  : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white',
               )}
             >
               <item.icon className="w-5 h-5" />

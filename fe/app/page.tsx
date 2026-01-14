@@ -1,18 +1,18 @@
 'use client'
 
 import { ArrowRight, Calendar, Clock, Mic } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
+import { SlackIcon, TelegramIcon, WhatsAppIcon } from '@/components/shared/Icons'
 
-import { Button } from '@/components/ui/button'
+import { AnimatedFeatureSpotlight3D } from '@/components/ui/animated-feature-spotlight3d'
 import BentoGridSection from '@/components/marketing/BentoGridSection'
-import { SOCIAL_LINKS } from '@/lib/constants'
-import { TelegramIcon, SlackIcon } from '@/components/shared/Icons'
+import { Button } from '@/components/ui/button'
 import FeatureShowcase from '@/components/marketing/FeatureShowcase'
 import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button'
-import { AnimatedFeatureSpotlight3D } from '@/components/ui/animated-feature-spotlight3d'
 import Link from 'next/link'
 import MarketingLayout from '@/components/marketing/MarketingLayout'
+import { SOCIAL_LINKS } from '@/lib/constants'
 import Testimonials from '@/components/marketing/Testimonials'
+import { useTranslation } from 'react-i18next'
 
 export default function HomePage() {
   const { t } = useTranslation()
@@ -59,6 +59,16 @@ export default function HomePage() {
             >
               <SlackIcon className="w-4 h-4" />
               Slack
+            </a>
+            <a
+              href={`https://api.whatsapp.com/send?phone=${process.env.NEXT_PUBLIC_WHATSAPP_PHONE_NUMBER}&text=Hello`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366]/20 transition-colors text-sm font-medium"
+              aria-label="Add to WhatsApp"
+            >
+              <WhatsAppIcon className="w-4 h-4" />
+              WhatsApp
             </a>
           </div>
         </div>

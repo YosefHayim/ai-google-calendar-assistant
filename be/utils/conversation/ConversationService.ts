@@ -714,13 +714,14 @@ export class ConversationService {
     conversationId: string,
     userId: string,
   ): Promise<FullConversation | null> {
-    logger.info(`getConversationById: fetching conversation ${conversationId} for user ${userId} (source: ${this.source})`);
+    logger.info(`getConversationById: fetching conversation ${conversationId} for user ${userId}`);
 
+    // Don't filter by source - user_id check is sufficient for access control
+    // This allows cross-platform sync to work (viewing telegram conversations via web, etc.)
     const { data, error } = await SUPABASE.from("conversations")
       .select("*")
       .eq("id", conversationId)
       .eq("user_id", userId)
-      .eq("source", this.source)
       .single();
 
     if (error || !data) {
@@ -825,8 +826,7 @@ export class ConversationService {
     const { error } = await SUPABASE.from("conversations")
       .delete()
       .eq("id", conversationId)
-      .eq("user_id", userId)
-      .eq("source", this.source);
+      .eq("user_id", userId);
 
     if (error) {
       logger.error(
@@ -958,18 +958,20 @@ export class ConversationService {
     userId: string,
     expiresInDays = 7,
   ): Promise<{ token: string; expiresAt: string } | null> {
-    // Verify the user owns this conversation
+    logger.info(`createShareLink: attempting for conversation ${conversationId}, user ${userId}`)
+
     const { data: conversation, error: fetchError } = await SUPABASE
       .from("conversations")
       .select("id, user_id")
       .eq("id", conversationId)
       .eq("user_id", userId)
-      .eq("source", this.source)
       .single();
+
+    logger.info(`createShareLink: query result - data: ${JSON.stringify(conversation)}, error: ${fetchError?.message || "none"}`)
 
     if (fetchError || !conversation) {
       logger.error(
-        `createShareLink: conversation ${conversationId} not found for user ${userId}`,
+        `createShareLink: conversation ${conversationId} not found for user ${userId} - error: ${fetchError?.message}`,
       );
       return null;
     }
@@ -1022,8 +1024,7 @@ export class ConversationService {
         updated_at: new Date().toISOString(),
       })
       .eq("id", conversationId)
-      .eq("user_id", userId)
-      .eq("source", this.source);
+      .eq("user_id", userId);
 
     if (error) {
       logger.error(
@@ -1053,7 +1054,6 @@ export class ConversationService {
       .from("conversations")
       .select("id, title, summary, created_at, share_expires_at, message_count")
       .eq("share_token", token)
-      .eq("source", this.source)
       .single();
 
     if (error || !conversation) {
@@ -1101,7 +1101,6 @@ export class ConversationService {
       .select("share_token, share_expires_at")
       .eq("id", conversationId)
       .eq("user_id", userId)
-      .eq("source", this.source)
       .single();
 
     if (error || !data) {

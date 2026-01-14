@@ -1,15 +1,16 @@
 'use client'
 
-import { ArrowUp, ImagePlus, Mic, Pause, X, ChevronLeft, ChevronRight, Trash2 } from 'lucide-react'
+import { ArrowUp, ChevronLeft, ChevronRight, ImagePlus, Mic, Pause, Trash2, X } from 'lucide-react'
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
+import { INPUT_LIMITS, validateInputLength } from '@/lib/security/sanitize'
 import React, { forwardRef, useCallback, useMemo, useRef, useState } from 'react'
 
 import { AIVoiceInput } from '@/components/ui/ai-voice-input'
 import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import { getTextDirection } from '@/lib/utils'
-import { INPUT_LIMITS, validateInputLength } from '@/lib/security/sanitize'
 import { toast } from 'sonner'
 
 export interface ImageFile {
@@ -106,7 +107,7 @@ const MAX_IMAGE_SIZE_MB = 10
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
 const MAX_INPUT_LENGTH = INPUT_LIMITS.CHAT_MESSAGE
 
-export const ChatInput = forwardRef<HTMLInputElement, ChatInputProps>(
+export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
   (
     {
       input,
@@ -323,10 +324,10 @@ export const ChatInput = forwardRef<HTMLInputElement, ChatInputProps>(
         ) : (
           <form
             onSubmit={onSubmit}
-            className="relative flex items-center bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-2xl p-2 gap-2"
+            className="relative flex items-center bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-2xl p-1.5 sm:p-2 gap-1.5 sm:gap-2"
           >
             {/* Hidden file input */}
-            <input
+            <Input
               ref={fileInputRef}
               type="file"
               accept={ACCEPTED_IMAGE_TYPES.join(',')}
@@ -336,45 +337,60 @@ export const ChatInput = forwardRef<HTMLInputElement, ChatInputProps>(
             />
 
             {/* Image upload button */}
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              onClick={() => fileInputRef.current?.click()}
-              className="h-7 w-7 md:h-14 md:w-14 p-1.5 md:p-3 rounded-xl flex-shrink-0 text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
-              disabled={isDisabled || !canAddMoreImages}
-              title={canAddMoreImages ? 'Add images' : `Max ${MAX_IMAGES} images`}
-            >
-              <ImagePlus className="w-4 h-4 md:w-6 md:h-6" />
-            </Button>
-
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              onClick={onToggleRecording}
-              className={`h-7 w-7 md:h-14 md:w-14 p-1.5 md:p-3 rounded-xl flex-shrink-0 ${
-                isRecording ? 'text-red-500 bg-red-50' : 'text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100'
-              }`}
-              disabled={isDisabled || !speechRecognitionSupported}
-            >
-              <Mic className="w-4 h-4 md:w-6 md:h-6" />
-            </Button>
+            <div className="flex items-center gap-2 flex-col">
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={() => fileInputRef.current?.click()}
+                className="h-7 w-7 md:h-14 md:w-14 p-1.5 md:p-3 rounded-xl flex-shrink-0 text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
+                disabled={isDisabled || !canAddMoreImages}
+                title={canAddMoreImages ? 'Add images' : `Max ${MAX_IMAGES} images`}
+              >
+                <ImagePlus className="w-4 h-4 md:w-6 md:h-6" />
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={onToggleRecording}
+                className={`h-7 w-7 md:h-14 md:w-14 p-1.5 md:p-3 rounded-xl flex-shrink-0 ${
+                  isRecording ? 'text-red-500 bg-red-50' : 'text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100'
+                }`}
+                disabled={isDisabled || !speechRecognitionSupported}
+              >
+                <Mic className="w-4 h-4 md:w-6 md:h-6" />
+              </Button>
+            </div>
             <div className="flex-1 relative">
-              <Input
+              <Textarea
                 ref={textInputRef}
-                type="text"
                 value={input}
                 onChange={(e) => onInputChange(e.target.value)}
                 onPaste={handlePaste}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault()
+                    if (input.trim() || images.length > 0) {
+                      onSubmit()
+                    }
+                  }
+                }}
                 maxLength={MAX_INPUT_LENGTH}
-                placeholder={images.length > 0 ? 'Add a message about your images...' : 'What do you have for me today? I\'m ready to help you.'}
-                className={`w-full h-7 md:h-14 max-h-[200px] md:max-h-none bg-transparent border-0 shadow-none focus-visible:ring-0 text-sm md:text-lg font-medium placeholder:italic placeholder:font-normal ${inputDirection === 'rtl' ? 'text-right' : ''} ${isInputTooLong ? 'text-red-500' : ''}`}
+                rows={4}
+                placeholder={
+                  images.length > 0
+                    ? 'Add a message about your images...'
+                    : "What do you have for me today? I'm ready to help you."
+                }
+                className={`w-full min-h-[100px] max-h-[200px] overflow-y-auto resize-none bg-transparent border-0 shadow-none focus-visible:ring-0 p-4 text-sm md:text-lg font-medium placeholder:italic placeholder:font-normal ${inputDirection === 'rtl' ? 'text-right' : ''} ${isInputTooLong ? 'text-red-500' : ''}`}
                 disabled={isDisabled}
                 dir={inputDirection}
               />
               {input.length > MAX_INPUT_LENGTH * 0.8 && (
-                <span className={`absolute right-2 bottom-0 text-xs ${isInputTooLong ? 'text-red-500' : 'text-zinc-400'}`}>
+                <span
+                  className={`absolute right-2 bottom-1 text-xs ${isInputTooLong ? 'text-red-500' : 'text-zinc-400'}`}
+                >
                   {input.length}/{MAX_INPUT_LENGTH}
                 </span>
               )}

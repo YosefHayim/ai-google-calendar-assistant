@@ -27,9 +27,9 @@ export default function PrivacyPolicyPage() {
             <section className="mb-12">
               <h2 className="text-2xl font-medium text-zinc-900 dark:text-zinc-100 mb-4">1. Introduction</h2>
               <p className="text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4">
-                Welcome to Ally (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;). Ally Technologies Inc. operates the Ally application and related
-                services (collectively, the &quot;Service&quot;). This Privacy Policy explains how we collect, use, disclose, and
-                safeguard your information when you use our Service.
+                Welcome to Ally (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;). Ally Technologies Inc. operates
+                the Ally application and related services (collectively, the &quot;Service&quot;). This Privacy Policy
+                explains how we collect, use, disclose, and safeguard your information when you use our Service.
               </p>
               <p className="text-zinc-600 dark:text-zinc-300 leading-relaxed">
                 By accessing or using Ally, you agree to this Privacy Policy. If you do not agree with the terms of this
@@ -75,8 +75,8 @@ export default function PrivacyPolicyPage() {
                   <strong>Communication Data:</strong> Messages and instructions you send to our AI assistant.
                 </li>
                 <li>
-                  <strong>Payment Information:</strong> Billing details processed securely through Lemon Squeezy (we do not
-                  store your full payment card details).
+                  <strong>Payment Information:</strong> Billing details processed securely through Lemon Squeezy (we do
+                  not store your full payment card details).
                 </li>
               </ul>
 
@@ -97,7 +97,8 @@ export default function PrivacyPolicyPage() {
                   account.
                 </li>
                 <li>
-                  <strong>WhatsApp:</strong> Your phone number and chat messages when you interact with Ally via WhatsApp.
+                  <strong>WhatsApp:</strong> Your phone number and chat messages when you interact with Ally via
+                  WhatsApp.
                 </li>
               </ul>
 
@@ -124,7 +125,8 @@ export default function PrivacyPolicyPage() {
                 4.1 Google Scopes We Request
               </h3>
               <p className="text-zinc-600 dark:text-zinc-300 mb-4">
-                Ally requests access to the following Google OAuth scopes. Each scope is necessary for specific features of our AI calendar assistant:
+                Ally requests access to the following Google OAuth scopes. Each scope is necessary for specific features
+                of our AI calendar assistant:
               </p>
 
               <h4 className="text-lg font-medium text-zinc-900 dark:text-zinc-100 mb-2 mt-4">Authentication Scopes</h4>
@@ -143,11 +145,16 @@ export default function PrivacyPolicyPage() {
                     </tr>
                     <tr className="border-b border-zinc-100 dark:border-zinc-800">
                       <td className="py-2 pr-4 font-mono text-xs">email</td>
-                      <td className="py-2">Access your email address to create your account and send important notifications about your calendar</td>
+                      <td className="py-2">
+                        Access your email address to create your account and send important notifications about your
+                        calendar
+                      </td>
                     </tr>
                     <tr className="border-b border-zinc-100 dark:border-zinc-800">
                       <td className="py-2 pr-4 font-mono text-xs">profile</td>
-                      <td className="py-2">Access your name and profile picture to personalize your Ally dashboard experience</td>
+                      <td className="py-2">
+                        Access your name and profile picture to personalize your Ally dashboard experience
+                      </td>
                     </tr>
                   </tbody>
                 </table>
@@ -165,39 +172,66 @@ export default function PrivacyPolicyPage() {
                   <tbody>
                     <tr className="border-b border-zinc-100 dark:border-zinc-800">
                       <td className="py-2 pr-4 font-mono text-xs">calendar</td>
-                      <td className="py-2"><strong>Full calendar access:</strong> Required to create, edit, move, and delete events when you instruct Ally via chat. This is the core functionality of our AI assistant.</td>
+                      <td className="py-2">
+                        <strong>Full calendar access:</strong> Required to create, edit, move, and delete events when
+                        you instruct Ally via chat. This is the core functionality of our AI assistant.
+                      </td>
                     </tr>
                     <tr className="border-b border-zinc-100 dark:border-zinc-800">
                       <td className="py-2 pr-4 font-mono text-xs">calendar.events</td>
-                      <td className="py-2"><strong>Event management:</strong> Enables Ally to create new events, update existing ones, and delete events across all your calendars based on your natural language instructions.</td>
+                      <td className="py-2">
+                        <strong>Event management:</strong> Enables Ally to create new events, update existing ones, and
+                        delete events across all your calendars based on your natural language instructions.
+                      </td>
                     </tr>
                     <tr className="border-b border-zinc-100 dark:border-zinc-800">
                       <td className="py-2 pr-4 font-mono text-xs">calendar.events.owned</td>
-                      <td className="py-2"><strong>Your owned events:</strong> Manage events that you own (created by you), ensuring Ally can properly handle event modifications and deletions.</td>
+                      <td className="py-2">
+                        <strong>Your owned events:</strong> Manage events that you own (created by you), ensuring Ally
+                        can properly handle event modifications and deletions.
+                      </td>
                     </tr>
                     <tr className="border-b border-zinc-100 dark:border-zinc-800">
                       <td className="py-2 pr-4 font-mono text-xs">calendar.events.owned.readonly</td>
-                      <td className="py-2"><strong>Read your owned events:</strong> View events you created to provide analytics, insights, and AI-powered schedule optimization suggestions.</td>
+                      <td className="py-2">
+                        <strong>Read your owned events:</strong> View events you created to provide analytics, insights,
+                        and AI-powered schedule optimization suggestions.
+                      </td>
                     </tr>
                     <tr className="border-b border-zinc-100 dark:border-zinc-800">
                       <td className="py-2 pr-4 font-mono text-xs">calendar.readonly</td>
-                      <td className="py-2"><strong>View calendar data:</strong> Read your calendar to understand your schedule, detect conflicts, find available time slots, and provide intelligent scheduling suggestions.</td>
+                      <td className="py-2">
+                        <strong>View calendar data:</strong> Read your calendar to understand your schedule, detect
+                        conflicts, find available time slots, and provide intelligent scheduling suggestions.
+                      </td>
                     </tr>
                     <tr className="border-b border-zinc-100 dark:border-zinc-800">
                       <td className="py-2 pr-4 font-mono text-xs">calendar.calendarlist</td>
-                      <td className="py-2"><strong>Calendar list access:</strong> View and manage your list of calendars so you can choose which calendars Ally should work with.</td>
+                      <td className="py-2">
+                        <strong>Calendar list access:</strong> View and manage your list of calendars so you can choose
+                        which calendars Ally should work with.
+                      </td>
                     </tr>
                     <tr className="border-b border-zinc-100 dark:border-zinc-800">
                       <td className="py-2 pr-4 font-mono text-xs">calendar.calendarlist.readonly</td>
-                      <td className="py-2"><strong>View calendar list:</strong> See all your calendars (work, personal, shared) to display them in your dashboard and let you select which ones to manage.</td>
+                      <td className="py-2">
+                        <strong>View calendar list:</strong> See all your calendars (work, personal, shared) to display
+                        them in your dashboard and let you select which ones to manage.
+                      </td>
                     </tr>
                     <tr className="border-b border-zinc-100 dark:border-zinc-800">
                       <td className="py-2 pr-4 font-mono text-xs">calendar.freebusy</td>
-                      <td className="py-2"><strong>Free/busy information:</strong> Check when you&apos;re available or busy to help schedule new events at optimal times without conflicts.</td>
+                      <td className="py-2">
+                        <strong>Free/busy information:</strong> Check when you&apos;re available or busy to help
+                        schedule new events at optimal times without conflicts.
+                      </td>
                     </tr>
                     <tr>
                       <td className="py-2 pr-4 font-mono text-xs">calendar.app.created</td>
-                      <td className="py-2"><strong>App-created calendars:</strong> Manage calendars that Ally creates on your behalf (if you request Ally to create a new calendar).</td>
+                      <td className="py-2">
+                        <strong>App-created calendars:</strong> Manage calendars that Ally creates on your behalf (if
+                        you request Ally to create a new calendar).
+                      </td>
                     </tr>
                   </tbody>
                 </table>
@@ -205,7 +239,11 @@ export default function PrivacyPolicyPage() {
 
               <div className="bg-blue-50 dark:bg-blue-950/30 rounded-lg p-4 border border-blue-200 dark:border-blue-800 mt-4">
                 <p className="text-zinc-700 dark:text-zinc-200 text-sm">
-                  <strong>Why we need these permissions:</strong> Ally is a full-featured AI calendar assistant that manages your schedule through natural language. To understand commands like &quot;Move my 3pm meeting to tomorrow&quot; or &quot;Find a free slot for a dentist appointment next week,&quot; we need comprehensive access to read your calendar and make changes on your behalf. You can revoke these permissions at any time.
+                  <strong>Why we need these permissions:</strong> Ally is a full-featured AI calendar assistant that
+                  manages your schedule through natural language. To understand commands like &quot;Move my 3pm meeting
+                  to tomorrow&quot; or &quot;Find a free slot for a dentist appointment next week,&quot; we need
+                  comprehensive access to read your calendar and make changes on your behalf. You can revoke these
+                  permissions at any time.
                 </p>
               </div>
 
@@ -263,7 +301,8 @@ export default function PrivacyPolicyPage() {
               <div className="bg-amber-50 dark:bg-amber-950/30 rounded-lg p-4 border border-amber-200 dark:border-amber-800">
                 <p className="text-zinc-700 dark:text-zinc-200 leading-relaxed">
                   <strong>
-                    Ally&apos;s use and transfer to any other app of information received from Google APIs will adhere to the{' '}
+                    Ally&apos;s use and transfer to any other app of information received from Google APIs will adhere
+                    to the{' '}
                     <a
                       href="https://developers.google.com/terms/api-services-user-data-policy"
                       target="_blank"
@@ -321,8 +360,8 @@ export default function PrivacyPolicyPage() {
                     <strong>Purpose:</strong> Secure database hosting and authentication services.
                   </p>
                   <p className="text-sm text-zinc-600 dark:text-zinc-300 mt-1">
-                  <strong>Data Shared:</strong> All user data is stored in Supabase&apos;s PostgreSQL database with
-                  Row-Level Security enabled.
+                    <strong>Data Shared:</strong> All user data is stored in Supabase&apos;s PostgreSQL database with
+                    Row-Level Security enabled.
                   </p>
                 </div>
 
@@ -352,10 +391,12 @@ export default function PrivacyPolicyPage() {
                     <strong>Purpose:</strong> Enable chat-based calendar management via WhatsApp messaging.
                   </p>
                   <p className="text-sm text-zinc-600 dark:text-zinc-300 mt-1">
-                    <strong>Data Shared:</strong> Your WhatsApp phone number, messages sent to our business number, and AI responses.
+                    <strong>Data Shared:</strong> Your WhatsApp phone number, messages sent to our business number, and
+                    AI responses.
                   </p>
                   <p className="text-sm text-zinc-600 dark:text-zinc-300 mt-1">
-                    <strong>Note:</strong> WhatsApp messages are processed through Meta&apos;s WhatsApp Business Platform. See{' '}
+                    <strong>Note:</strong> WhatsApp messages are processed through Meta&apos;s WhatsApp Business
+                    Platform. See{' '}
                     <a
                       href="https://www.whatsapp.com/legal/privacy-policy"
                       target="_blank"
@@ -417,8 +458,8 @@ export default function PrivacyPolicyPage() {
                   <strong>Portability:</strong> Request your data in a machine-readable format.
                 </li>
                 <li>
-                  <strong>Disconnect Google:</strong> Revoke Ally&apos;s access to your Google Calendar at any time from your
-                  dashboard or{' '}
+                  <strong>Disconnect Google:</strong> Revoke Ally&apos;s access to your Google Calendar at any time from
+                  your dashboard or{' '}
                   <a
                     href="https://myaccount.google.com/permissions"
                     target="_blank"
@@ -457,7 +498,9 @@ export default function PrivacyPolicyPage() {
 
             {/* Children's Privacy */}
             <section className="mb-12">
-              <h2 className="text-2xl font-medium text-zinc-900 dark:text-zinc-100 mb-4">10. Children&apos;s Privacy</h2>
+              <h2 className="text-2xl font-medium text-zinc-900 dark:text-zinc-100 mb-4">
+                10. Children&apos;s Privacy
+              </h2>
               <p className="text-zinc-600 dark:text-zinc-300 leading-relaxed">
                 Ally is not intended for users under 13 years of age. We do not knowingly collect personal information
                 from children under 13. If you believe we have collected data from a child under 13, please contact us
@@ -488,8 +531,8 @@ export default function PrivacyPolicyPage() {
               </h2>
               <p className="text-zinc-600 dark:text-zinc-300 leading-relaxed">
                 We may update this Privacy Policy from time to time. We will notify you of any material changes by
-                posting the new Privacy Policy on this page and updating the &quot;Last Updated&quot; date. We encourage you to
-                review this Privacy Policy periodically.
+                posting the new Privacy Policy on this page and updating the &quot;Last Updated&quot; date. We encourage
+                you to review this Privacy Policy periodically.
               </p>
             </section>
 

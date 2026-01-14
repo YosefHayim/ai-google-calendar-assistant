@@ -18,7 +18,10 @@ import {
 } from 'lucide-react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../ui/dialog'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { EmptyState } from '@/components/ui/empty-state'
+import { InlineLoader } from '@/components/ui/inline-loader'
 
 import type { CalendarEvent } from '@/types/api'
 import type { CalendarEventsDialogProps } from '@/types/analytics'
@@ -26,6 +29,7 @@ import React, { useState, useMemo } from 'react'
 import { format } from 'date-fns'
 import { useTranslation } from 'react-i18next'
 import { useDebouncedCallback } from 'use-debounce'
+import { formatDurationMs, formatDate, DATE_FORMATS } from '@/lib/formatUtils'
 
 const CalendarEventsDialog: React.FC<CalendarEventsDialogProps> = ({
   isOpen,
@@ -102,23 +106,17 @@ const CalendarEventsDialog: React.FC<CalendarEventsDialogProps> = ({
     if (!start || !end) return 'N/A'
 
     const durationMs = end.getTime() - start.getTime()
-    const durationHours = durationMs / (1000 * 60 * 60)
-
-    if (durationHours < 1) {
-      const minutes = Math.round(durationMs / (1000 * 60))
-      return `${minutes}m`
-    }
-    return `${durationHours.toFixed(1)}h`
+    return formatDurationMs(durationMs)
   }
 
   const formatEventTime = (event: CalendarEvent): string => {
     if (!event.start) return 'N/A'
 
     if (event.start.dateTime) {
-      return format(new Date(event.start.dateTime), "MMM dd, yyyy 'at' h:mm a")
+      return formatDate(event.start.dateTime, 'DATE_TIME')
     }
     if (event.start.date) {
-      return format(new Date(event.start.date), 'MMM dd, yyyy')
+      return formatDate(event.start.date, 'FULL')
     }
     return 'N/A'
   }
@@ -205,28 +203,19 @@ const CalendarEventsDialog: React.FC<CalendarEventsDialogProps> = ({
         <div className="flex-1 overflow-y-auto p-6 pt-2">
           {isLoading ? (
             <div className="flex items-center justify-center py-8">
-              <Loader2 className="w-6 h-6 animate-spin text-zinc-400" />
+              <InlineLoader size="md" />
             </div>
           ) : events.length === 0 ? (
-            <div className="flex flex-col items-center justify-center p-6 text-center">
-              <CalendarDays size={50} style={{ color: calendarColor }} />
-              <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                {t('dialogs.eventSearch.noEvents', 'No events found for this calendar in the selected date range.')}
-              </p>
-            </div>
+            <EmptyState
+              icon={<CalendarDays size={50} style={{ color: calendarColor }} />}
+              title={t('dialogs.eventSearch.noEvents', 'No events found for this calendar in the selected date range.')}
+            />
           ) : filteredEvents.length === 0 ? (
-            <div className="flex flex-col items-center justify-center p-6 text-center">
-              <Search size={50} className="text-zinc-300 dark:text-zinc-600 mb-3" />
-              <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                {t('dialogs.eventSearch.noMatches', 'No events match your search.')}
-              </p>
-              <button
-                onClick={clearSearch}
-                className="text-xs text-primary hover:underline mt-2"
-              >
-                {t('dialogs.eventSearch.clearSearch', 'Clear search')}
-              </button>
-            </div>
+            <EmptyState
+              icon={<Search size={50} />}
+              title={t('dialogs.eventSearch.noMatches', 'No events match your search.')}
+              action={{ label: t('dialogs.eventSearch.clearSearch', 'Clear search'), onClick: clearSearch }}
+            />
           ) : (
             <ul className="space-y-2">
               {[...filteredEvents]

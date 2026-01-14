@@ -3,24 +3,19 @@ const isDev = process.env.NODE_ENV === 'development'
 
 const nextConfig = {
   output: 'standalone',
-  turbopack: {
-    resolveExtensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
-  },
   experimental: {
-    turbopackUseSystemTlsCerts: true,
-    swcPlugins:
-      process.env.NODE_ENV === 'development'
-        ? [
-            [
-              'swc-plugin-component-annotate',
-              {
-                dataComponent: true,
-                dataElement: false,
-                dataSourceFile: true,
-              },
-            ],
-          ]
-        : [],
+    swcPlugins: isDev
+      ? [
+          [
+            'swc-plugin-component-annotate',
+            {
+              dataComponent: true,
+              dataElement: true,
+              dataSourceFile: true,
+            },
+          ],
+        ]
+      : [],
   },
   reactCompiler: true,
   compiler: {
@@ -31,10 +26,22 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
+        hostname: 'ally-ai-google-calendar.s3.eu-north-1.amazonaws.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
         hostname: 'lh3.googleusercontent.com',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+        pathname: '/**',
+      },
     ],
+    minimumCacheTTL: 60,
   },
   async headers() {
     return [
@@ -71,6 +78,18 @@ const nextConfig = {
           {
             key: 'Permissions-Policy',
             value: 'camera=(), microphone=(self), geolocation=()',
+          },
+          {
+            key: 'X-DNS-Prefetch-Control',
+            value: 'on',
+          },
+          {
+            key: 'Strict-Transport-Security',
+            value: 'max-age=63072000; includeSubDomains; preload',
+          },
+          {
+            key: 'X-XSS-Protection',
+            value: '1; mode=block',
           },
         ],
       },

@@ -1,8 +1,8 @@
 'use client'
 
-import { Brain, Download, Loader2, MessageSquareX, Trash2, MessageCircleX, Eraser, UserX } from 'lucide-react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { SettingsRow, SettingsSection } from './components'
+import { Brain, Loader2, MessageSquareX, Trash2, MessageCircleX, Eraser, UserX } from 'lucide-react'
+import { Card, CardContent } from '@/components/ui/card'
+import { SettingsRow, SettingsSection, TabHeader } from './components'
 
 import { Button } from '@/components/ui/button'
 import React from 'react'
@@ -28,11 +28,11 @@ export const DataControlsTab: React.FC<DataControlsTabProps> = ({
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="text-lg">Data Controls</CardTitle>
-        <CardDescription>Manage your data, conversations, and account.</CardDescription>
-      </CardHeader>
-      <CardContent className="max-h-[60vh] overflow-y-auto">
+      <TabHeader
+        title="Data Controls"
+        tooltip="Manage your data, conversations, and account"
+      />
+      <CardContent>
         <SettingsSection showDivider className="mt-4">
           <SettingsRow
             id="delete-conversations"
@@ -72,11 +72,7 @@ export const DataControlsTab: React.FC<DataControlsTabProps> = ({
                 disabled={isResettingMemory}
                 className="gap-2 text-amber-600 hover:text-amber-700 border-amber-200 hover:bg-amber-50 dark:border-amber-900/30 dark:hover:bg-amber-900/20"
               >
-                {isResettingMemory ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <Brain className="w-4 h-4" />
-                )}
+                {isResettingMemory ? <Loader2 className="w-4 h-4 animate-spin" /> : <Brain className="w-4 h-4" />}
                 Reset Memory
               </Button>
             }

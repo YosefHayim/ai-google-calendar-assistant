@@ -5,6 +5,7 @@ import { Bar, BarChart, CartesianGrid, XAxis } from 'recharts'
 import { format } from 'date-fns'
 
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from '@/components/ui/chart'
+import { formatHours } from '@/lib/formatUtils'
 import type { DailyAvailableHoursDataPoint } from '@/types/analytics'
 
 interface DailyHoursBarChartProps {
@@ -29,11 +30,7 @@ export const DailyHoursBarChart: React.FC<DailyHoursBarChartProps> = ({ data, on
 
   return (
     <ChartContainer config={chartConfig} className="aspect-auto h-[250px] w-full">
-      <BarChart
-        accessibilityLayer
-        data={chartData}
-        margin={{ left: 12, right: 12 }}
-      >
+      <BarChart accessibilityLayer data={chartData} margin={{ left: 12, right: 12 }}>
         <CartesianGrid vertical={false} className="stroke-zinc-200 dark:stroke-zinc-800" />
         <XAxis
           dataKey="formattedDate"
@@ -61,7 +58,7 @@ export const DailyHoursBarChart: React.FC<DailyHoursBarChartProps> = ({ data, on
                 }
                 return value
               }}
-              formatter={(value) => [`${Number(value).toFixed(1)}h available`, '']}
+              formatter={(value) => [`${formatHours(Number(value))} available`, '']}
             />
           }
         />

@@ -30,7 +30,16 @@ interface DatePickerWithRangeProps extends React.HTMLAttributes<HTMLDivElement> 
   setDate: (date: DateRange | undefined) => void
 }
 
-type PresetKey = 'yesterday' | 'today' | 'last7' | 'last30' | 'thisWeek' | 'thisMonth' | 'prevMonth' | 'thisYear' | 'custom'
+type PresetKey =
+  | 'yesterday'
+  | 'today'
+  | 'last7'
+  | 'last30'
+  | 'thisWeek'
+  | 'thisMonth'
+  | 'prevMonth'
+  | 'thisYear'
+  | 'custom'
 
 export function DatePickerWithRange({ className, date, setDate }: DatePickerWithRangeProps) {
   const [isOpen, setIsOpen] = React.useState(false)
@@ -151,7 +160,7 @@ export function DatePickerWithRange({ className, date, setDate }: DatePickerWith
     <Button
       variant={activePreset === presetKey ? 'default' : 'ghost'}
       className={cn(
-        'justify-start font-normal w-full',
+        'justify-start font-normal w-auto lg:w-full',
         activePreset === presetKey
           ? 'bg-primary text-primary-foreground hover:bg-primary/90'
           : 'hover:bg-zinc-100 dark:hover:bg-zinc-800',
@@ -169,7 +178,7 @@ export function DatePickerWithRange({ className, date, setDate }: DatePickerWith
           <Button
             id="date"
             variant={'outline'}
-            className={cn('w-[300px] justify-start text-left font-normal', !date && 'text-muted-foreground')}
+            className={cn('w-full sm:w-[300px] justify-start text-left font-normal', !date && 'text-muted-foreground')}
           >
             <CalendarIcon className="mr-2 h-4 w-4" />
             {date?.from ? (
@@ -189,8 +198,8 @@ export function DatePickerWithRange({ className, date, setDate }: DatePickerWith
         <PopoverContent className="w-auto p-0" align="start">
           <div className="flex flex-col sm:flex-row h-full">
             {/* --- LEFT SIDEBAR (Presets) --- */}
-            <div className="flex flex-col gap-1 p-3 border-r border-border min-w-[150px]">
-              <span className="text-xs font-semibold text-muted-foreground mb-1 uppercase tracking-wider px-2">
+            <div className="flex flex-row flex-wrap gap-1.5 p-3 border-b border-border lg:flex-col lg:gap-1 lg:border-r lg:border-b-0 lg:min-w-[150px]">
+              <span className="text-xs font-semibold text-muted-foreground mb-1 uppercase tracking-wider px-2 w-full lg:w-auto">
                 Presets
               </span>
               {renderPresetButton('Yesterday', 'yesterday')}
@@ -217,7 +226,7 @@ export function DatePickerWithRange({ className, date, setDate }: DatePickerWith
                             variant="outline"
                             className={cn(
                               'w-full h-8 justify-start text-left font-normal text-xs',
-                              !internalDate?.from && 'text-muted-foreground'
+                              !internalDate?.from && 'text-muted-foreground',
                             )}
                           >
                             <CalendarIcon className="mr-2 h-3 w-3" />
@@ -256,7 +265,7 @@ export function DatePickerWithRange({ className, date, setDate }: DatePickerWith
                             variant="outline"
                             className={cn(
                               'w-full h-8 justify-start text-left font-normal text-xs',
-                              !internalDate?.to && 'text-muted-foreground'
+                              !internalDate?.to && 'text-muted-foreground',
                             )}
                           >
                             <CalendarIcon className="mr-2 h-3 w-3" />

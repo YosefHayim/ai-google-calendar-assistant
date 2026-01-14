@@ -60,7 +60,10 @@ export default function AboutPage() {
             <span className="text-red-500 dark:text-red-400">{t('about.heroTitleHighlight')}</span>
           </motion.h1>
 
-          <motion.p variants={fadeInUp} className="text-xl md:text-2xl text-zinc-500 dark:text-zinc-400 max-w-3xl mx-auto">
+          <motion.p
+            variants={fadeInUp}
+            className="text-xl md:text-2xl text-zinc-500 dark:text-zinc-400 max-w-3xl mx-auto"
+          >
             {t('about.heroSubtitle')}
           </motion.p>
         </motion.div>
@@ -216,7 +219,9 @@ export default function AboutPage() {
                 <div
                   className={`absolute inset-0 bg-gradient-to-br ${impact.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}
                 />
-                <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${impact.gradient} flex items-center justify-center mb-4`}>
+                <div
+                  className={`w-14 h-14 rounded-xl bg-gradient-to-br ${impact.gradient} flex items-center justify-center mb-4`}
+                >
                   <impact.icon className="w-7 h-7 text-white" />
                 </div>
                 <h3 className="text-xl font-semibold text-white mb-2">{t(impact.titleKey)}</h3>
@@ -238,7 +243,9 @@ export default function AboutPage() {
             <h2 className="text-3xl md:text-5xl font-medium text-zinc-900 dark:text-zinc-100 mb-4">
               {t('about.differenceTitle')}
             </h2>
-            <p className="text-lg text-zinc-500 dark:text-zinc-400 max-w-2xl mx-auto">{t('about.differenceSubtitle')}</p>
+            <p className="text-lg text-zinc-500 dark:text-zinc-400 max-w-2xl mx-auto">
+              {t('about.differenceSubtitle')}
+            </p>
           </motion.div>
 
           <motion.div
@@ -275,9 +282,7 @@ export default function AboutPage() {
               },
             ].map((diff, index) => (
               <motion.div key={index} variants={fadeInUp} className="text-center">
-                <div
-                  className={`w-16 h-16 rounded-2xl ${diff.iconBg} flex items-center justify-center mx-auto mb-6`}
-                >
+                <div className={`w-16 h-16 rounded-2xl ${diff.iconBg} flex items-center justify-center mx-auto mb-6`}>
                   <diff.icon className={`w-8 h-8 ${diff.iconColor}`} />
                 </div>
                 <h3 className="text-xl font-medium text-zinc-900 dark:text-zinc-100 mb-3">{t(diff.titleKey)}</h3>

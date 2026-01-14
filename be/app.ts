@@ -19,19 +19,24 @@ import { initSlackBot } from "@/slack-bot";
 import { initWhatsApp } from "@/whatsapp-bot/init-whatsapp";
 import { logger } from "@/utils/logger";
 import morgan from "morgan";
+import newsletterRoute from "@/routes/newsletter-route";
 import path from "node:path";
 import paymentRoute from "@/routes/payment-route";
 import riscRoute from "@/routes/risc-route";
 import { securityAuditMiddleware } from "@/middlewares/security-audit";
-import sharedRoute from "@/routes/shared-route";
 import { sendR } from "@/utils/http";
+import sharedRoute from "@/routes/shared-route";
 import slackRoute from "@/routes/slack-route";
 import { startTelegramBot } from "@/telegram-bot/init-bot";
 import telegramRoute from "@/routes/telegram-route";
 import usersRoute from "@/routes/users-route";
 import voiceRoute from "@/routes/voice-route";
+import waitingListRoute from "@/routes/waiting-list-route";
 import webhooksRoute from "@/routes/webhooks-route";
 import whatsAppRoute from "@/routes/whatsapp-route";
+import referralRoute from "@/routes/referral-route";
+import teamInviteRoute from "@/routes/team-invite-route";
+import blogRoute from "@/routes/blog-route";
 
 const ACCESS_TOKEN_HEADER = "access_token";
 const REFRESH_TOKEN_HEADER = "refresh_token";
@@ -48,22 +53,32 @@ app.use(
     crossOriginResourcePolicy: { policy: "cross-origin" },
     // Disable CSP for API (no HTML served)
     contentSecurityPolicy: false,
-  })
+  }),
 );
 
 // SECURITY: Configure CORS from environment
 // In production, this should be set to the actual frontend URL(s)
 const corsOrigins = env.isProd
   ? [env.urls.frontend].filter(Boolean) // Production: only allow configured frontend
-  : ["http://localhost:4000", "http://127.0.0.1:4000", env.urls.frontend].filter(Boolean); // Development: allow localhost
+  : [
+      "http://localhost:4000",
+      "http://127.0.0.1:4000",
+      env.urls.frontend,
+    ].filter(Boolean); // Development: allow localhost
 
 app.use(
   cors({
     origin: corsOrigins,
     credentials: true,
     exposedHeaders: [ACCESS_TOKEN_HEADER, REFRESH_TOKEN_HEADER, USER_KEY],
-    allowedHeaders: ["Content-Type", "Authorization", REFRESH_TOKEN_HEADER, USER_KEY, ACCESS_TOKEN_HEADER],
-  })
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      REFRESH_TOKEN_HEADER,
+      USER_KEY,
+      ACCESS_TOKEN_HEADER,
+    ],
+  }),
 );
 
 // SECURITY: Apply general API rate limiting
@@ -80,7 +95,9 @@ app.use("/static", express.static(path.join(__dirname, "public")));
 
 app.get("/", (_req, res) => {
   console.log("AI Google Calendar Assistant Server is running.");
-  res.status(STATUS_RESPONSE.SUCCESS).json({ message: "AI Google Calendar Assistant Server is running." });
+  res
+    .status(STATUS_RESPONSE.SUCCESS)
+    .json({ message: "AI Google Calendar Assistant Server is running." });
 });
 
 app.get("/health", (_req, res) => {
@@ -109,11 +126,25 @@ app.use(ROUTES.TELEGRAM, telegramRoute);
 app.use(ROUTES.RISC, riscRoute);
 app.use(ROUTES.SLACK, slackRoute);
 app.use(ROUTES.SHARED, sharedRoute);
+app.use("/api/newsletter", newsletterRoute);
+app.use("/api/waitinglist", waitingListRoute);
+app.use("/api/referral", referralRoute);
+app.use("/api/teams", teamInviteRoute);
+app.use("/api/blog", blogRoute);
 
 app.use((_req, res, _next) => {
-  logger.error(`Opps! It looks like this route doesn't exist. ${_req.originalUrl}`);
-  console.error("Opps! It looks like this route doesn't exist:", _req.originalUrl);
-  sendR(res, STATUS_RESPONSE.NOT_FOUND, `Opps! It looks like this route doesn't exist. ${_req.originalUrl}`);
+  logger.error(
+    `Opps! It looks like this route doesn't exist. ${_req.originalUrl}`,
+  );
+  console.error(
+    "Opps! It looks like this route doesn't exist:",
+    _req.originalUrl,
+  );
+  sendR(
+    res,
+    STATUS_RESPONSE.NOT_FOUND,
+    `Opps! It looks like this route doesn't exist. ${_req.originalUrl}`,
+  );
 });
 
 app.use(errorHandler);

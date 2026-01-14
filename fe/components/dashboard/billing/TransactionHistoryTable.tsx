@@ -1,12 +1,14 @@
 'use client'
 
+import { CheckCircle2, ChevronDown, ChevronUp, Clock, Download, Receipt, XCircle } from 'lucide-react'
 import React, { useState } from 'react'
-import { format } from 'date-fns'
-import { Download, CheckCircle2, Clock, XCircle, ChevronDown, ChevronUp, Receipt } from 'lucide-react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import type { Transaction, TransactionStatus } from '@/services/payment.service'
+
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import type { Transaction, TransactionStatus } from '@/services/payment.service'
+import { format } from 'date-fns'
+import { formatMoney } from '@/lib/formatUtils'
 
 interface TransactionHistoryTableProps {
   transactions: Transaction[]
@@ -39,23 +41,12 @@ function StatusBadge({ status }: { status: TransactionStatus }) {
 
   return (
     <span
-      className={cn(
-        'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium',
-        config.className,
-      )}
+      className={cn('inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium', config.className)}
     >
       <Icon className="w-3 h-3" />
       {config.label}
     </span>
   )
-}
-
-function formatAmount(amount: number, currency: string): string {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency,
-    minimumFractionDigits: 2,
-  }).format(amount)
 }
 
 function MobileTransactionCard({
@@ -81,7 +72,7 @@ function MobileTransactionCard({
               {format(new Date(transaction.date), 'MMM dd, yyyy')}
             </span>
             <span className="font-mono font-bold text-zinc-900 dark:text-zinc-100">
-              {formatAmount(transaction.amount, transaction.currency)}
+              {formatMoney(transaction.amount, { currency: transaction.currency })}
             </span>
           </div>
           <div className="flex items-center justify-between">
@@ -97,7 +88,7 @@ function MobileTransactionCard({
       </Button>
 
       {isExpanded && (
-        <div className="px-4 pb-4 pt-2 border-t border-zinc-100 dark:border-zinc-800 space-y-3">
+        <div className="px-4 pb-4 pt-2 border-t border-zinc-100 dark:border-zinc-800 space-y-2">
           <div className="flex items-center justify-between text-sm">
             <span className="text-zinc-500 dark:text-zinc-400">Transaction ID</span>
             <span className="font-mono text-xs text-zinc-700 dark:text-zinc-300">{transaction.id}</span>
@@ -156,7 +147,7 @@ export function TransactionHistoryTable({ transactions, className }: Transaction
                   {transaction.description}
                 </TableCell>
                 <TableCell className="text-right font-mono font-bold text-zinc-900 dark:text-zinc-100">
-                  {formatAmount(transaction.amount, transaction.currency)}
+                  {formatMoney(transaction.amount, { currency: transaction.currency })}
                 </TableCell>
                 <TableCell>
                   <StatusBadge status={transaction.status} />
@@ -182,7 +173,7 @@ export function TransactionHistoryTable({ transactions, className }: Transaction
         </Table>
       </div>
 
-      <div className="md:hidden space-y-3">
+      <div className="md:hidden space-y-2">
         {transactions.map((transaction) => (
           <MobileTransactionCard
             key={transaction.id}

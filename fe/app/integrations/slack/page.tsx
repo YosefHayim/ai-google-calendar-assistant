@@ -65,11 +65,11 @@ function SlackCallbackContent() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-zinc-50 dark:bg-zinc-950 p-4">
       <div className="bg-white dark:bg-zinc-900 rounded-lg shadow-lg p-8 max-w-md w-full text-center">
-        <div className={`w-16 h-16 rounded-full mx-auto mb-6 flex items-center justify-center ${
-          status === 'success' 
-            ? 'bg-green-100 dark:bg-green-900/30' 
-            : 'bg-red-100 dark:bg-red-900/30'
-        }`}>
+        <div
+          className={`w-16 h-16 rounded-full mx-auto mb-6 flex items-center justify-center ${
+            status === 'success' ? 'bg-green-100 dark:bg-green-900/30' : 'bg-red-100 dark:bg-red-900/30'
+          }`}
+        >
           {status === 'success' ? (
             <CheckCircle2 className="w-8 h-8 text-green-600" />
           ) : (
@@ -85,7 +85,7 @@ function SlackCallbackContent() {
         </div>
 
         <p className="text-zinc-500 dark:text-zinc-400 mb-2">{message}</p>
-        
+
         {status === 'success' && teamName && (
           <p className="text-sm text-zinc-400 mb-6">
             Workspace: <span className="font-medium text-zinc-600 dark:text-zinc-300">{teamName}</span>

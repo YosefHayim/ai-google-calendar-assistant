@@ -6,13 +6,7 @@ import { FaSlack } from 'react-icons/fa'
 import React, { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 
 import { useCalendars, useSlackStatus } from '@/hooks/queries'
 
@@ -74,10 +68,7 @@ const IntegrationsDashboard: React.FC<IntegrationsDashboardProps> = () => {
           <h3 className="text-lg font-medium text-zinc-900 dark:text-zinc-100 mb-1">WhatsApp</h3>
           <p className="text-sm text-zinc-500 mb-6">Sync Ally with WhatsApp for secure relay of messages.</p>
           <div className="pt-4 border-t border-zinc-100">
-            <Button
-              onClick={() => setIsWhatsAppModalOpen(true)}
-              className="w-full"
-            >
+            <Button onClick={() => setIsWhatsAppModalOpen(true)} className="w-full">
               Connect <WhatsAppIcon className="w-4 h-4" />
             </Button>
           </div>
@@ -112,7 +103,10 @@ const IntegrationsDashboard: React.FC<IntegrationsDashboardProps> = () => {
               </div>
             ) : (
               <Button
-                onClick={() => window.location.href = slackStatus?.installUrl || `${process.env.NEXT_PUBLIC_API_URL}/api/slack/oauth/install`}
+                onClick={() =>
+                  (window.location.href =
+                    slackStatus?.installUrl || `${process.env.NEXT_PUBLIC_API_URL}/api/slack/oauth/install`)
+                }
                 className="w-full bg-[#4A154B] hover:bg-[#3a1039]"
                 disabled={isSlackLoading}
               >
@@ -197,10 +191,7 @@ const IntegrationsDashboard: React.FC<IntegrationsDashboardProps> = () => {
               To connect WhatsApp, please follow the instructions in your Ally Node console.
             </DialogDescription>
           </DialogHeader>
-          <Button
-            onClick={() => setIsWhatsAppModalOpen(false)}
-            className="w-full"
-          >
+          <Button onClick={() => setIsWhatsAppModalOpen(false)} className="w-full">
             <Loader2 className="w-4 h-4 animate-spin" /> Open Console
           </Button>
         </DialogContent>

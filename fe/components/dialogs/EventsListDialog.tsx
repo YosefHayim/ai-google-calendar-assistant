@@ -2,7 +2,8 @@
 
 import { Calendar, CalendarDays, Clock, ExternalLink, Hash, Hourglass } from 'lucide-react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../ui/dialog'
-import { format } from 'date-fns'
+import { EmptyState } from '@/components/ui/empty-state'
+import { formatDuration, formatTimeRange, formatDate, formatHours } from '@/lib/formatUtils'
 import type { PatternEventSummary } from '@/types/analytics'
 
 export interface EventsListDialogProps {
@@ -11,29 +12,6 @@ export interface EventsListDialogProps {
   subtitle?: string
   events: PatternEventSummary[]
   onClose: () => void
-}
-
-function formatDuration(minutes: number): string {
-  if (minutes < 60) {
-    return `${Math.round(minutes)}m`
-  }
-  const hours = Math.floor(minutes / 60)
-  const remainingMinutes = Math.round(minutes % 60)
-  if (remainingMinutes === 0) {
-    return `${hours}h`
-  }
-  return `${hours}h ${remainingMinutes}m`
-}
-
-function formatEventTime(startTime: string, endTime: string): string {
-  const start = new Date(startTime)
-  const end = new Date(endTime)
-  return `${format(start, 'h:mm a')} - ${format(end, 'h:mm a')}`
-}
-
-function formatEventDate(dateStr: string): string {
-  const date = new Date(dateStr)
-  return format(date, 'EEE, MMM d')
 }
 
 function handleEventClick(htmlLink: string | undefined) {
@@ -73,7 +51,7 @@ const EventsListDialog: React.FC<EventsListDialogProps> = ({ isOpen, title, subt
                 </div>
                 <div className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-2">
                   <Hourglass size={12} className="text-primary" />
-                  <span>Total: {totalHours.toFixed(1)}h</span>
+                  <span>Total: {formatHours(totalHours)}</span>
                 </div>
               </div>
             </div>
@@ -82,11 +60,11 @@ const EventsListDialog: React.FC<EventsListDialogProps> = ({ isOpen, title, subt
 
         <div className="flex-1 overflow-y-auto p-6 pt-0">
           {events.length === 0 ? (
-            <div className="flex flex-col items-center justify-center p-6 text-center">
-              <CalendarDays size={50} className="text-zinc-300 dark:text-zinc-700 mb-3" />
-              <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300">No events</p>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400">No events found for this period.</p>
-            </div>
+            <EmptyState
+              icon={<CalendarDays size={50} />}
+              title="No events"
+              description="No events found for this period."
+            />
           ) : (
             <ul className="space-y-2">
               {events.map((event) => (
@@ -114,12 +92,12 @@ const EventsListDialog: React.FC<EventsListDialogProps> = ({ isOpen, title, subt
                     <div className="flex items-center gap-2 mt-1.5 flex-wrap">
                       <div className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-1">
                         <CalendarDays size={12} />
-                        <span>{formatEventDate(event.eventDate)}</span>
+                        <span>{formatDate(event.eventDate, 'WEEKDAY_SHORT')}</span>
                       </div>
                       <span className="text-zinc-300 dark:text-zinc-600">•</span>
                       <div className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-1">
                         <Clock size={12} />
-                        <span>{formatEventTime(event.startTime, event.endTime)}</span>
+                        <span>{formatTimeRange(event.startTime, event.endTime)}</span>
                       </div>
                     </div>
 

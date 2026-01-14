@@ -35,7 +35,7 @@ export function useLiveKitVoice(options: UseLiveKitVoiceOptions = {}) {
         onAgentSpeaking?.(true)
       }
     },
-    [onAgentSpeaking]
+    [onAgentSpeaking],
   )
 
   const handleTrackUnsubscribed = useCallback(
@@ -46,7 +46,7 @@ export function useLiveKitVoice(options: UseLiveKitVoiceOptions = {}) {
         onAgentSpeaking?.(false)
       }
     },
-    [onAgentSpeaking]
+    [onAgentSpeaking],
   )
 
   const handleDataReceived = useCallback(
@@ -63,7 +63,7 @@ export function useLiveKitVoice(options: UseLiveKitVoiceOptions = {}) {
         return
       }
     },
-    [onTranscript]
+    [onTranscript],
   )
 
   const connect = useCallback(async () => {

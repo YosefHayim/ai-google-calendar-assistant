@@ -141,23 +141,32 @@ export const SubscriptionTab: React.FC = () => {
   const isPerUse = selectedFrequency === 'per use'
 
   return (
-    <div className="space-y-6 max-h-[60vh] overflow-y-auto">
+    <div className="space-y-6">
       {access?.plan_name && (
         <Card className="bg-gradient-to-r from-primary/5 to-primary/10 border-primary/20">
-          <CardContent className="p-4">
-            <div className="flex flex-wrap items-center justify-between gap-4 sm:flex-nowrap">
-              <div className="flex flex-wrap items-center gap-3 min-w-0 sm:flex-nowrap">
+          <CardContent className="p-3 sm:p-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+              <div className="flex items-center gap-3 min-w-0">
                 {getPlanIcon(access.plan_slug || '')}
-                <div className="min-w-0">
+                <div className="min-w-0 flex-1">
                   <p className="text-xs text-zinc-500 dark:text-zinc-400">Current Plan</p>
                   <p className="font-semibold text-zinc-900 dark:text-white truncate">{access.plan_name}</p>
                 </div>
-              </div>
-              <div className="flex flex-wrap items-center gap-2 flex-shrink-0 sm:flex-nowrap">
-                <Badge className="bg-primary/20 text-primary text-xs">
+                <Badge className="bg-primary/20 text-primary text-xs sm:hidden">
                   {access.subscription_status === 'trialing' ? 'Trial' : 'Active'}
                 </Badge>
-                <Button variant="outline" size="sm" onClick={handleManageBilling} disabled={actionLoading === 'portal'}>
+              </div>
+              <div className="flex items-center gap-2 flex-shrink-0">
+                <Badge className="bg-primary/20 text-primary text-xs hidden sm:inline-flex">
+                  {access.subscription_status === 'trialing' ? 'Trial' : 'Active'}
+                </Badge>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleManageBilling}
+                  disabled={actionLoading === 'portal'}
+                  className="flex-1 sm:flex-none"
+                >
                   {actionLoading === 'portal' ? (
                     <RefreshCw className="w-3 h-3 animate-spin" />
                   ) : (
@@ -196,7 +205,7 @@ export const SubscriptionTab: React.FC = () => {
         </div>
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-2">
         {plans?.map((plan) => (
           <PlanRow
             key={plan.id}
@@ -281,11 +290,11 @@ function PlanRow({ plan, selectedFrequency, actionType, isLoading, onAction, isP
         isCurrentPlan && 'ring-1 ring-green-500',
       )}
     >
-      <CardContent className="p-4">
-        <div className="flex flex-wrap items-center justify-between gap-4 sm:flex-nowrap">
-          <div className="flex flex-wrap items-center gap-3 min-w-0 flex-1 sm:flex-nowrap">
-            {getPlanIcon()}
-            <div className="min-w-0">
+      <CardContent className="p-3 sm:p-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+          <div className="flex items-start gap-3 min-w-0 flex-1">
+            <div className="flex-shrink-0 mt-0.5">{getPlanIcon()}</div>
+            <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2">
                 <span
                   className={cn(
@@ -311,7 +320,7 @@ function PlanRow({ plan, selectedFrequency, actionType, isLoading, onAction, isP
               </div>
               <p
                 className={cn(
-                  'text-xs mt-0.5',
+                  'text-xs mt-0.5 line-clamp-2',
                   isHighlighted ? 'text-white/70 dark:text-zinc-900/70' : 'text-zinc-500',
                 )}
               >
@@ -320,14 +329,14 @@ function PlanRow({ plan, selectedFrequency, actionType, isLoading, onAction, isP
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3 flex-shrink-0 sm:flex-nowrap">
+          <div className="flex items-center justify-between gap-3 sm:justify-end sm:flex-shrink-0">
             <AnimatePresence mode="wait">
               <motion.div
                 key={`${plan.id}-${selectedFrequency}`}
                 initial={{ opacity: 0, y: 5 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -5 }}
-                className="text-right"
+                className="text-left sm:text-right"
               >
                 {isFree ? (
                   <span
@@ -367,19 +376,19 @@ function PlanRow({ plan, selectedFrequency, actionType, isLoading, onAction, isP
             </AnimatePresence>
 
             {isCurrentPlan ? (
-              <Button disabled size="sm" className="min-w-24">
+              <Button disabled size="sm" className="min-w-20 sm:min-w-24">
                 <Check className="w-3 h-3 mr-1" />
                 Current
               </Button>
             ) : isLoading ? (
-              <Button disabled size="sm" className="min-w-24">
+              <Button disabled size="sm" className="min-w-20 sm:min-w-24">
                 <RefreshCw className="w-3 h-3 animate-spin" />
               </Button>
             ) : actionType === 'upgrade' ? (
               <Button
                 onClick={() => onAction(isExecutive && isPerUse ? customCredits : undefined)}
                 size="sm"
-                className={cn('min-w-24', isHighlighted && 'bg-white text-zinc-900 hover:bg-zinc-100')}
+                className={cn('min-w-20 sm:min-w-24', isHighlighted && 'bg-white text-zinc-900 hover:bg-zinc-100')}
               >
                 {isPerUse ? 'Buy' : 'Upgrade'}
                 <ArrowRight className="w-3 h-3 ml-1" />
@@ -389,7 +398,7 @@ function PlanRow({ plan, selectedFrequency, actionType, isLoading, onAction, isP
                 onClick={() => onAction()}
                 variant="outline"
                 size="sm"
-                className={cn('min-w-24', isHighlighted && 'border-white/30 text-white hover:bg-white/10')}
+                className={cn('min-w-20 sm:min-w-24', isHighlighted && 'border-white/30 text-white hover:bg-white/10')}
               >
                 {isPerUse ? 'Buy' : 'Downgrade'}
                 <ArrowDown className="w-3 h-3 ml-1" />

@@ -356,7 +356,8 @@ function BillingPageContent() {
                       onClick={() => handlePlanAction(plan)}
                       disabled={actionLoading === `plan-${plan.id}` || actionLoading === 'portal'}
                     >
-                      {actionLoading === `plan-${plan.id}` || (plan.slug === 'starter' && actionLoading === 'portal') ? (
+                      {actionLoading === `plan-${plan.id}` ||
+                      (plan.slug === 'starter' && actionLoading === 'portal') ? (
                         <RefreshCw className="w-4 h-4 animate-spin" />
                       ) : (
                         <>
@@ -415,7 +416,9 @@ function BillingPageContent() {
             {!access?.subscription && !access?.money_back_eligible && (
               <div className="flex items-center gap-3 py-8 justify-center text-center">
                 <AlertCircle className="w-5 h-5 text-zinc-400" />
-                <p className="text-zinc-500 dark:text-zinc-400">{t('billing.actions.noActionsAvailable', 'No actions available at this time.')}</p>
+                <p className="text-zinc-500 dark:text-zinc-400">
+                  {t('billing.actions.noActionsAvailable', 'No actions available at this time.')}
+                </p>
               </div>
             )}
           </div>

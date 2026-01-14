@@ -3,7 +3,14 @@
 import React, { useCallback, useEffect } from 'react'
 import { Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 
 export interface ConfirmDialogProps {
   isOpen: boolean
@@ -46,7 +53,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
         onConfirm()
       }
     },
-    [isOpen, isLoading, onConfirm]
+    [isOpen, isLoading, onConfirm],
   )
 
   useEffect(() => {

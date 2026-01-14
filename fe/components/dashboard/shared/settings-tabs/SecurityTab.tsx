@@ -2,10 +2,10 @@
 
 import React, { useState } from 'react'
 import { ChevronRight, ShieldCheck, Monitor } from 'lucide-react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import CinematicGlowToggle from '@/components/ui/cinematic-glow-toggle'
-import { SettingsRow, SettingsSection } from './components'
+import { SettingsRow, SettingsSection, TabHeader } from './components'
 
 export const SecurityTab: React.FC = () => {
   const [authenticatorApp, setAuthenticatorApp] = useState(true)
@@ -13,11 +13,11 @@ export const SecurityTab: React.FC = () => {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="text-lg">Security</CardTitle>
-        <CardDescription>Manage your authentication and session settings.</CardDescription>
-      </CardHeader>
-      <CardContent className="max-h-[60vh] overflow-y-auto">
+      <TabHeader
+        title="Security"
+        tooltip="Manage your authentication and session settings"
+      />
+      <CardContent>
         <SettingsSection title="Authentication">
           <SettingsRow
             id="mfa"

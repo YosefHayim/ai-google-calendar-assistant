@@ -143,6 +143,12 @@ export const updateEventSchema = z
       .default(null),
     start: eventTimeSchema.transform(cleanEventTime).nullable().default(null),
     end: eventTimeSchema.transform(cleanEventTime).nullable().default(null),
+    addMeetLink: z.coerce
+      .boolean({
+        description:
+          "Set to true to add a Google Meet video conference link to an existing event. Use when user asks to add a video call, meeting link, or virtual meeting to an existing event.",
+      })
+      .default(false),
   })
   .describe(
     "Update event by ID. CRITICAL: Only pass fields you want to change.",

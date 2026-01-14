@@ -11,6 +11,7 @@ import type {
   VoicePreferenceFormData,
   DailyBriefingFormData,
   CrossPlatformSyncFormData,
+  GeoLocationFormData,
 } from '@/lib/validations/preferences'
 import type { QueryHookOptions } from '../useQueryWrapper'
 
@@ -329,6 +330,56 @@ export function useUpdateCrossPlatformSync() {
   return {
     updateCrossPlatformSync: mutation.mutate,
     updateCrossPlatformSyncAsync: mutation.mutateAsync,
+    isUpdating: mutation.isPending,
+    isError: mutation.isError,
+    error: mutation.error,
+    isSuccess: mutation.isSuccess,
+    reset: mutation.reset,
+  }
+}
+
+export function useGeoLocation(options?: QueryHookOptions) {
+  const query = useQuery({
+    queryKey: queryKeys.preferences.geoLocation(),
+    queryFn: async () => {
+      const response = await preferencesService.getGeoLocation()
+      return response.data
+    },
+    staleTime: options?.staleTime ?? QUERY_CONFIG.USER_STALE_TIME,
+    enabled: options?.enabled ?? true,
+    refetchOnWindowFocus: options?.refetchOnWindowFocus ?? false,
+    refetchOnMount: options?.refetchOnMount ?? true,
+  })
+
+  return {
+    data: query.data ?? null,
+    isLoading: query.isLoading,
+    isFetching: query.isFetching,
+    isError: query.isError,
+    error: query.error,
+    refetch: query.refetch,
+  }
+}
+
+export function useUpdateGeoLocation() {
+  const queryClient = useQueryClient()
+
+  const mutation = useMutation({
+    mutationFn: (data: GeoLocationFormData) => preferencesService.updateGeoLocation(data),
+    onSuccess: (response) => {
+      if (response.data) {
+        queryClient.setQueryData<PreferenceResponse<GeoLocationFormData>>(
+          queryKeys.preferences.geoLocation(),
+          response.data,
+        )
+      }
+      queryClient.invalidateQueries({ queryKey: queryKeys.preferences.list() })
+    },
+  })
+
+  return {
+    updateGeoLocation: mutation.mutate,
+    updateGeoLocationAsync: mutation.mutateAsync,
     isUpdating: mutation.isPending,
     isError: mutation.isError,
     error: mutation.error,

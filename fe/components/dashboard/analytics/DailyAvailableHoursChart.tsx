@@ -12,6 +12,7 @@ import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/h
 import type { DailyAvailableHoursDataPoint } from '@/types/analytics'
 import { CALENDAR_CONSTANTS } from '@/lib/constants'
 import { calculateAverage } from '@/lib/dataUtils'
+import { formatHours } from '@/lib/formatUtils'
 
 interface DailyAvailableHoursChartProps {
   data: DailyAvailableHoursDataPoint[]
@@ -93,13 +94,13 @@ const DailyAvailableHoursChart: React.FC<DailyAvailableHoursChartProps> = ({ dat
           <div className="relative z-30 flex flex-1 flex-col justify-center gap-1 border-t border-zinc-200 dark:border-zinc-800 px-6 py-4 text-left sm:border-t-0 sm:border-l sm:px-6 sm:py-4 lg:px-8 lg:py-6">
             <span className="text-zinc-500 dark:text-zinc-400 text-xs">Total Available</span>
             <span className="text-lg leading-none font-bold text-zinc-900 dark:text-zinc-100 sm:text-xl lg:text-3xl">
-              {totalAvailableHours.toFixed(1)}h
+              {formatHours(totalAvailableHours)}
             </span>
           </div>
           <div className="relative z-30 flex flex-1 flex-col justify-center gap-1 border-t border-l border-zinc-200 dark:border-zinc-800 px-6 py-4 text-left sm:border-t-0 sm:px-6 sm:py-4 lg:px-8 lg:py-6">
             <span className="text-zinc-500 dark:text-zinc-400 text-xs">Daily Avg</span>
             <span className="text-lg leading-none font-bold text-zinc-900 dark:text-zinc-100 sm:text-xl lg:text-3xl">
-              {averageAvailableHours.toFixed(1)}h
+              {formatHours(averageAvailableHours)}
             </span>
           </div>
         </div>
@@ -141,7 +142,7 @@ const DailyAvailableHoursChart: React.FC<DailyAvailableHoursChartProps> = ({ dat
                     }
                     return value
                   }}
-                  formatter={(value) => [`${Number(value).toFixed(1)}h available`, '']}
+                  formatter={(value) => [`${formatHours(Number(value))} available`, '']}
                 />
               }
             />

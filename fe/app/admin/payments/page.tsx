@@ -9,7 +9,7 @@ import { Search, RefreshCw, ChevronLeft, ChevronRight, Receipt, ExternalLink } f
 import { useAdminPayments } from '@/hooks/queries/admin'
 import type { PaymentStatus } from '@/types/admin'
 import { format } from 'date-fns'
-import { formatCurrency } from '@/services/admin.service'
+import { formatCurrency } from '@/lib/formatUtils'
 
 export default function AdminPaymentsPage() {
   const [search, setSearch] = useState('')

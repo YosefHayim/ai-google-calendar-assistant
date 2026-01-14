@@ -233,6 +233,7 @@ export const DIRECT_TOOLS = {
       location: z.ZodNullable<z.ZodString>;
       start: ReturnType<typeof makeEventTime>;
       end: ReturnType<typeof makeEventTime>;
+      addMeetLink: z.ZodDefault<z.ZodBoolean>;
       reminders: z.ZodOptional<
         z.ZodNullable<
           typeof PARAMETERS_TOOLS.setEventRemindersParameters.shape.reminders
@@ -243,7 +244,7 @@ export const DIRECT_TOOLS = {
   >({
     name: "insert_event_direct",
     description:
-      "Direct event insertion - bypasses AI agent. Returns created event from Google Calendar API. Email is automatically provided from user context. If reminders not specified, applies user's stored reminder preferences.",
+      "Direct event insertion - bypasses AI agent. Returns created event from Google Calendar API. Email is automatically provided from user context. If reminders not specified, applies user's stored reminder preferences. Set addMeetLink=true to add Google Meet video conference link.",
     parameters: z.object({
       calendarId: z.coerce.string().default("primary"),
       summary: z.coerce.string(),
@@ -251,6 +252,12 @@ export const DIRECT_TOOLS = {
       location: z.coerce.string().nullable(),
       start: makeEventTime(),
       end: makeEventTime(),
+      addMeetLink: z.coerce
+        .boolean()
+        .default(false)
+        .describe(
+          "Set to true to add a Google Meet video conference link. Use when user asks for video call, meeting link, virtual meeting, or online meeting.",
+        ),
       reminders: PARAMETERS_TOOLS.setEventRemindersParameters.shape.reminders
         .nullable()
         .optional(),
@@ -269,6 +276,7 @@ export const DIRECT_TOOLS = {
         ...params,
         email,
         reminders: remindersToApply ?? undefined,
+        addMeetLink: params.addMeetLink ?? false,
       });
     },
     errorFunction: (_, error) =>

@@ -1,44 +1,44 @@
-"use client";
+'use client'
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Quote, Star } from "lucide-react";
-import { motion, useAnimation, useInView, type Variants } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Quote, Star } from 'lucide-react'
+import { motion, useAnimation, useInView, type Variants } from 'framer-motion'
+import { useEffect, useRef, useState } from 'react'
 
-import { Separator } from "@/components/ui/separator";
+import { Separator } from '@/components/ui/separator'
 
 export interface Testimonial {
-  id: number;
-  name: string;
-  role: string;
-  company: string;
-  content: string;
-  rating: number;
-  avatar: string;
+  id: number
+  name: string
+  role: string
+  company: string
+  content: string
+  rating: number
+  avatar: string
 }
 
 export interface AnimatedTestimonialsProps {
-  title?: string;
-  subtitle?: string;
-  badgeText?: string;
-  testimonials?: Testimonial[];
-  autoRotateInterval?: number;
-  className?: string;
+  title?: string
+  subtitle?: string
+  badgeText?: string
+  testimonials?: Testimonial[]
+  autoRotateInterval?: number
+  className?: string
 }
 
 export function AnimatedTestimonials({
-  title = "Loved by the community",
+  title = 'Loved by the community',
   subtitle = "Don't just take our word for it. See what leaders and executives have to say about Ally.",
-  badgeText = "Trusted by high-performers",
+  badgeText = 'Trusted by high-performers',
   testimonials = [],
   autoRotateInterval = 6000,
   className,
 }: AnimatedTestimonialsProps) {
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(0)
 
-  const sectionRef = useRef(null);
-  const isInView = useInView(sectionRef, { once: true, amount: 0.2 });
-  const controls = useAnimation();
+  const sectionRef = useRef(null)
+  const isInView = useInView(sectionRef, { once: true, amount: 0.2 })
+  const controls = useAnimation()
 
   const containerVariants: Variants = {
     hidden: { opacity: 0 },
@@ -49,7 +49,7 @@ export function AnimatedTestimonials({
         delayChildren: 0.2,
       },
     },
-  };
+  }
 
   const itemVariants: Variants = {
     hidden: { opacity: 0, y: 20 },
@@ -58,36 +58,36 @@ export function AnimatedTestimonials({
       y: 0,
       transition: {
         duration: 0.5,
-        ease: "easeOut" as const,
+        ease: 'easeOut' as const,
       },
     },
-  };
+  }
 
   useEffect(() => {
     if (isInView) {
-      controls.start("visible");
+      controls.start('visible')
     }
-  }, [isInView, controls]);
+  }, [isInView, controls])
 
   useEffect(() => {
-    if (autoRotateInterval <= 0 || testimonials.length <= 1) return;
+    if (autoRotateInterval <= 0 || testimonials.length <= 1) return
 
     const interval = setInterval(() => {
-      setActiveIndex((current) => (current + 1) % testimonials.length);
-    }, autoRotateInterval);
+      setActiveIndex((current) => (current + 1) % testimonials.length)
+    }, autoRotateInterval)
 
-    return () => clearInterval(interval);
-  }, [autoRotateInterval, testimonials.length]);
+    return () => clearInterval(interval)
+  }, [autoRotateInterval, testimonials.length])
 
   if (testimonials.length === 0) {
-    return null;
+    return null
   }
 
   return (
     <section
       ref={sectionRef}
       id="testimonials"
-      className={`py-24 overflow-hidden bg-zinc-50/50 dark:bg-zinc-900/10 ${className || ""}`}
+      className={`py-24 overflow-hidden bg-zinc-50/50 dark:bg-zinc-900/10 ${className || ''}`}
     >
       <div className="container mx-auto px-4 md:px-6">
         <motion.div
@@ -96,10 +96,7 @@ export function AnimatedTestimonials({
           variants={containerVariants}
           className="grid grid-cols-1 gap-16 w-full md:grid-cols-2 lg:gap-24"
         >
-          <motion.div
-            variants={itemVariants}
-            className="flex flex-col justify-center"
-          >
+          <motion.div variants={itemVariants} className="flex flex-col justify-center">
             <div className="space-y-2">
               {badgeText && (
                 <div className="inline-flex items-center px-3 py-1 rounded-full text-xs uppercase tracking-widest font-bold bg-primary/10 text-primary">
@@ -122,9 +119,7 @@ export function AnimatedTestimonials({
                     key={index}
                     onClick={() => setActiveIndex(index)}
                     className={`h-2.5 rounded-full transition-all duration-300 ${
-                      activeIndex === index
-                        ? "w-10 bg-primary"
-                        : "bg-zinc-300 dark:bg-zinc-700 w-2.5"
+                      activeIndex === index ? 'w-10 bg-primary' : 'bg-zinc-300 dark:bg-zinc-700 w-2.5'
                     }`}
                     aria-label={`View testimonial ${index + 1}`}
                   />
@@ -133,10 +128,7 @@ export function AnimatedTestimonials({
             </div>
           </motion.div>
 
-          <motion.div
-            variants={itemVariants}
-            className="relative h-full min-h-[350px] md:min-h-[450px]"
-          >
+          <motion.div variants={itemVariants} className="relative h-full min-h-[350px] md:min-h-[450px]">
             {testimonials.map((testimonial, index) => (
               <motion.div
                 key={testimonial.id}
@@ -147,7 +139,7 @@ export function AnimatedTestimonials({
                   x: activeIndex === index ? 0 : 100,
                   scale: activeIndex === index ? 1 : 0.9,
                 }}
-                transition={{ duration: 0.5, ease: "easeInOut" as const }}
+                transition={{ duration: 0.5, ease: 'easeInOut' as const }}
                 style={{ zIndex: activeIndex === index ? 10 : 0 }}
               >
                 <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 shadow-xl rounded-2xl p-8 md:p-10 h-full flex flex-col transition-all">
@@ -155,10 +147,7 @@ export function AnimatedTestimonials({
                     {Array(testimonial.rating)
                       .fill(0)
                       .map((_, i) => (
-                        <Star
-                          key={i}
-                          className="h-5 w-5 fill-amber-400 text-amber-400"
-                        />
+                        <Star key={i} className="h-5 w-5 fill-amber-400 text-amber-400" />
                       ))}
                   </div>
 
@@ -173,18 +162,11 @@ export function AnimatedTestimonials({
 
                   <div className="flex items-center gap-4">
                     <Avatar className="h-14 w-14 border-2 border-zinc-100 dark:border-zinc-800">
-                      <AvatarImage
-                        src={testimonial.avatar}
-                        alt={testimonial.name}
-                      />
-                      <AvatarFallback>
-                        {testimonial.name.charAt(0)}
-                      </AvatarFallback>
+                      <AvatarImage src={testimonial.avatar} alt={testimonial.name} />
+                      <AvatarFallback>{testimonial.name.charAt(0)}</AvatarFallback>
                     </Avatar>
                     <div>
-                      <h3 className="font-bold text-zinc-900 dark:text-zinc-100">
-                        {testimonial.name}
-                      </h3>
+                      <h3 className="font-bold text-zinc-900 dark:text-zinc-100">{testimonial.name}</h3>
                       <p className="text-sm text-zinc-500 dark:text-zinc-400 font-medium">
                         {testimonial.role}, {testimonial.company}
                       </p>
@@ -200,5 +182,5 @@ export function AnimatedTestimonials({
         </motion.div>
       </div>
     </section>
-  );
+  )
 }

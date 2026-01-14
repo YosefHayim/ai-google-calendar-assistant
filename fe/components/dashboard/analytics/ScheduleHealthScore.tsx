@@ -1,9 +1,10 @@
 'use client'
 
-import React, { useMemo } from 'react'
 import { Activity, AlertTriangle, CheckCircle, Clock, Coffee, Moon, Users } from 'lucide-react'
-import { Skeleton } from '@/components/ui/skeleton'
+import React, { useMemo } from 'react'
+
 import type { EnhancedAnalyticsData } from '@/types/analytics'
+import { Skeleton } from '@/components/ui/skeleton'
 
 interface ScheduleHealthScoreProps {
   data: EnhancedAnalyticsData
@@ -158,7 +159,7 @@ const ScheduleHealthScore: React.FC<ScheduleHealthScoreProps> = ({ data, isLoadi
         <div className="flex justify-center mb-4 sm:mb-6">
           <Skeleton className="h-24 w-24 sm:h-32 sm:w-32 rounded-full" />
         </div>
-        <div className="space-y-2 sm:space-y-3">
+        <div className="space-y-2 sm:space-y-2">
           {Array.from({ length: 4 }).map((_, i) => (
             <Skeleton key={i} className="h-8 sm:h-10 w-full" />
           ))}
@@ -202,11 +203,15 @@ const ScheduleHealthScore: React.FC<ScheduleHealthScoreProps> = ({ data, isLoadi
           <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center flex-shrink-0">
             <Activity className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-zinc-900 dark:text-primary" />
           </div>
-          <h3 className="font-semibold text-sm sm:text-base text-zinc-900 dark:text-zinc-100 truncate">Schedule Health</h3>
+          <h3 className="font-semibold text-sm sm:text-base text-zinc-900 dark:text-zinc-100 truncate">
+            Schedule Health
+          </h3>
         </div>
         <span className={`text-xs sm:text-sm font-medium flex-shrink-0 ${overall.color}`}>{overall.label}</span>
       </div>
-      <p className="text-[10px] sm:text-xs text-zinc-500 dark:text-zinc-400 mb-3 sm:mb-4 ml-9 sm:ml-10">Overall schedule wellness</p>
+      <p className="text-[10px] sm:text-xs text-zinc-500 dark:text-zinc-400 mb-3 sm:mb-4 ml-9 sm:ml-10">
+        Overall schedule wellness
+      </p>
 
       {/* Circular Progress */}
       <div className="flex justify-center mb-4 sm:mb-6">

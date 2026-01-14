@@ -15,8 +15,6 @@ interface SidebarContextValue {
   localSearchValue: string
   handleSearchChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   handleClearSearch: () => void
-  isQuickEventOpen: boolean
-  setIsQuickEventOpen: (open: boolean) => void
   handleNewChat: (onClose: () => void) => void
   handleSelectConversation: (conversation: ConversationListItem, onClose: () => void) => Promise<void>
   initiateDelete: (e: React.MouseEvent, id: string) => void
@@ -33,7 +31,6 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
   const [conversationToDelete, setConversationToDelete] = useState<string | null>(null)
   const [isDeletingConversation, setIsDeletingConversation] = useState(false)
   const [localSearchValue, setLocalSearchValue] = useState(searchQuery)
-  const [isQuickEventOpen, setIsQuickEventOpen] = useState(false)
 
   const debouncedSetSearch = useDebouncedCallback((value: string) => {
     setSearchQuery(value)
@@ -106,8 +103,6 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
       localSearchValue,
       handleSearchChange,
       handleClearSearch,
-      isQuickEventOpen,
-      setIsQuickEventOpen,
       handleNewChat,
       handleSelectConversation,
       initiateDelete,
@@ -120,7 +115,6 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
       localSearchValue,
       handleSearchChange,
       handleClearSearch,
-      isQuickEventOpen,
       handleNewChat,
       handleSelectConversation,
       initiateDelete,

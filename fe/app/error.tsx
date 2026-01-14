@@ -2,10 +2,10 @@
 
 import { AlertCircle, AlertTriangle, Check, Copy, Home, RefreshCw, Terminal } from 'lucide-react'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
-import { useEffect, useState, useCallback } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useCallback, useEffect, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
+import { useTranslation } from 'react-i18next'
 
 function formatErrorForCopy(error: Error & { digest?: string }): string {
   const lines = [`Error: ${error.message || 'Unknown Application Error'}`]
@@ -93,7 +93,7 @@ export default function ErrorBoundary({ error, reset }: { error: Error & { diges
                 </div>
               </summary>
 
-              <div className="mt-3 space-y-3 pt-2 border-t border-zinc-100 dark:border-zinc-800/50">
+              <div className="mt-3 space-y-2 pt-2 border-t border-zinc-100 dark:border-zinc-800/50">
                 <div className="flex items-start gap-2 rounded-md bg-red-50 p-3 dark:bg-red-900/10 border border-red-100 dark:border-red-900/20">
                   <AlertCircle className="h-4 w-4 shrink-0 text-red-600 dark:text-red-400 mt-0.5" />
                   <p className="text-xs font-medium text-red-800 dark:text-red-300 break-all font-mono">

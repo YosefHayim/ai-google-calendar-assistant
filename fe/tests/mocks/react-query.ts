@@ -1,4 +1,4 @@
-import { mock } from "bun:test";
+import { mock } from 'bun:test'
 
 // Mock useQuery hook result
 export const createMockQueryResult = <T>(data: T | undefined = undefined) => ({
@@ -9,8 +9,8 @@ export const createMockQueryResult = <T>(data: T | undefined = undefined) => ({
   isSuccess: !!data,
   isFetching: false,
   refetch: mock(() => Promise.resolve({ data })),
-  status: data ? "success" : "idle",
-});
+  status: data ? 'success' : 'idle',
+})
 
 // Mock useMutation hook result
 export const createMockMutationResult = <T, TVariables = unknown>() => ({
@@ -22,8 +22,8 @@ export const createMockMutationResult = <T, TVariables = unknown>() => ({
   error: null,
   isSuccess: false,
   reset: mock(() => {}),
-  status: "idle" as const,
-});
+  status: 'idle' as const,
+})
 
 // Mock loading state
 export const mockLoadingQuery = {
@@ -34,8 +34,8 @@ export const mockLoadingQuery = {
   isSuccess: false,
   isFetching: true,
   refetch: mock(() => Promise.resolve({ data: undefined })),
-  status: "pending" as const,
-};
+  status: 'pending' as const,
+}
 
 // Mock error state
 export const mockErrorQuery = (error: Error) => ({
@@ -46,5 +46,5 @@ export const mockErrorQuery = (error: Error) => ({
   isSuccess: false,
   isFetching: false,
   refetch: mock(() => Promise.resolve({ data: undefined })),
-  status: "error" as const,
-});
+  status: 'error' as const,
+})

@@ -112,3 +112,20 @@ export type CrossPlatformSyncFormData = z.infer<typeof crossPlatformSyncSchema>
 export const crossPlatformSyncDefaults: CrossPlatformSyncFormData = {
   enabled: true,
 }
+
+export const geoLocationSchema = z.object({
+  enabled: z.boolean(),
+  lastKnownLocation: z
+    .object({
+      latitude: z.number().min(-90).max(90),
+      longitude: z.number().min(-180).max(180),
+      timestamp: z.string(),
+    })
+    .optional(),
+})
+
+export type GeoLocationFormData = z.infer<typeof geoLocationSchema>
+
+export const geoLocationDefaults: GeoLocationFormData = {
+  enabled: false,
+}

@@ -20,14 +20,22 @@ export function LiveKitVoiceButton({ className, onTranscript, onError }: LiveKit
       setShowTranscript(true)
       onTranscript?.(text, isFinal)
     },
-    [onTranscript]
+    [onTranscript],
   )
 
-  const { state, isAgentSpeaking, transcript, isConnected, isMicrophoneEnabled, connect, disconnect, toggleMicrophone } =
-    useLiveKitVoice({
-      onTranscript: handleTranscript,
-      onError,
-    })
+  const {
+    state,
+    isAgentSpeaking,
+    transcript,
+    isConnected,
+    isMicrophoneEnabled,
+    connect,
+    disconnect,
+    toggleMicrophone,
+  } = useLiveKitVoice({
+    onTranscript: handleTranscript,
+    onError,
+  })
 
   const handleClick = useCallback(async () => {
     if (isConnected) {

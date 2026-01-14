@@ -1,11 +1,14 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
-import { Moon, Sun, Monitor, Palette, Globe, Clock } from 'lucide-react'
+import { Moon, Sun, Monitor, Palette, Globe, Clock, MapPin } from 'lucide-react'
+import { toast } from 'sonner'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { SettingsRow, SettingsDropdown, SettingsSection, type DropdownOption } from './components'
+import CinematicGlowToggle from '@/components/ui/cinematic-glow-toggle'
 import { getUserDisplayInfo, type UserData } from '@/lib/user-utils'
+import { useGeoLocation, useUpdateGeoLocation } from '@/hooks/queries'
 
 interface GeneralTabProps {
   isDarkMode: boolean
@@ -41,9 +44,20 @@ const TIME_FORMAT_OPTIONS: DropdownOption[] = [
 ]
 
 export const GeneralTab: React.FC<GeneralTabProps> = ({ isDarkMode, toggleTheme, userData }) => {
+  const geoLocationToggleId = React.useId()
   const [timeFormat, setTimeFormat] = useState('12h')
   const [timezone, setTimezone] = useState('Asia/Jerusalem')
   const [appearance, setAppearance] = useState(isDarkMode ? 'dark' : 'light')
+  const [geoLocationEnabled, setGeoLocationEnabled] = useState(false)
+
+  const { data: geoLocationData, isLoading: isLoadingGeoLocation } = useGeoLocation()
+  const { updateGeoLocation, isUpdating: isUpdatingGeoLocation } = useUpdateGeoLocation()
+
+  useEffect(() => {
+    if (geoLocationData?.value) {
+      setGeoLocationEnabled(geoLocationData.value.enabled)
+    }
+  }, [geoLocationData])
 
   const handleAppearanceChange = (value: string) => {
     setAppearance(value)
@@ -51,6 +65,57 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ isDarkMode, toggleTheme,
       toggleTheme()
     } else if (value === 'light' && isDarkMode) {
       toggleTheme()
+    }
+  }
+
+  const handleGeoLocationToggle = async (checked: boolean) => {
+    setGeoLocationEnabled(checked)
+
+    if (checked && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          updateGeoLocation(
+            {
+              enabled: true,
+              lastKnownLocation: {
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude,
+                timestamp: new Date().toISOString(),
+              },
+            },
+            {
+              onSuccess: () => {
+                toast.success('Real-time location enabled', {
+                  description: 'Ally will use your location to provide context for events.',
+                })
+              },
+              onError: () => {
+                setGeoLocationEnabled(false)
+                toast.error('Failed to enable location')
+              },
+            },
+          )
+        },
+        () => {
+          setGeoLocationEnabled(false)
+          toast.error('Location access denied', {
+            description: 'Please enable location access in your browser settings.',
+          })
+        },
+      )
+    } else {
+      updateGeoLocation(
+        { enabled: false },
+        {
+          onSuccess: () => {
+            toast.success('Real-time location disabled')
+          },
+          onError: () => {
+            setGeoLocationEnabled(true)
+            toast.error('Failed to disable location')
+          },
+        },
+      )
     }
   }
 
@@ -67,7 +132,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ isDarkMode, toggleTheme,
         <CardTitle className="text-lg">General</CardTitle>
         <CardDescription>Manage your profile and preferences.</CardDescription>
       </CardHeader>
-      <CardContent className="space-y-2 max-h-[60vh] overflow-y-auto">
+      <CardContent className="space-y-2">
         <div className="flex flex-wrap items-center gap-4 pb-4 border-b border-zinc-100 dark:border-zinc-800 sm:flex-nowrap">
           {avatarUrl ? (
             <Image
@@ -135,6 +200,20 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ isDarkMode, toggleTheme,
                 value={timeFormat}
                 options={TIME_FORMAT_OPTIONS}
                 onChange={setTimeFormat}
+              />
+            }
+          />
+
+          <SettingsRow
+            id="geo-location"
+            title="Real-time Location"
+            tooltip="When enabled, Ally uses your current location to provide context for event creation (e.g., suggesting nearby venues)"
+            icon={<MapPin size={18} className="text-zinc-900 dark:text-primary" />}
+            control={
+              <CinematicGlowToggle
+                id={geoLocationToggleId}
+                checked={geoLocationEnabled}
+                onChange={isUpdatingGeoLocation || isLoadingGeoLocation ? () => {} : handleGeoLocationToggle}
               />
             }
           />

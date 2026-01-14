@@ -1,15 +1,10 @@
 'use client'
 
 import { ConversationList, DeleteConfirmDialog, SidebarFooter, SidebarHeader, SidebarNav } from './sidebar-components'
-import { Info, Zap } from 'lucide-react'
 import { SidebarProvider, useSidebarContext } from '@/contexts/SidebarContext'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
-import { Button } from '@/components/ui/button'
-import { QuickEventDialog } from '@/components/dialogs/QuickEventDialog'
 import React from 'react'
 import { useChatContext } from '@/contexts/ChatContext'
-import { useLanguage } from '@/contexts/LanguageContext'
 import { useUser } from '@/hooks/queries/auth/useUser'
 
 interface SidebarProps {
@@ -22,7 +17,6 @@ interface SidebarProps {
 
 const SidebarContent: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle, onOpenSettings, onSignOut }) => {
   const { data: userData } = useUser({ customUser: true })
-  const { t } = useLanguage()
   const { conversations, isLoadingConversations, selectedConversationId, isSearching, streamingTitleConversationId } =
     useChatContext()
   const {
@@ -33,8 +27,6 @@ const SidebarContent: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle, onO
     localSearchValue,
     handleSearchChange,
     handleClearSearch,
-    isQuickEventOpen,
-    setIsQuickEventOpen,
     handleNewChat,
     handleSelectConversation,
     initiateDelete,
@@ -71,37 +63,6 @@ const SidebarContent: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle, onO
           <SidebarNav pathname={pathname} isOpen={isOpen} onClose={onClose} />
 
           {isOpen && (
-            <TooltipProvider>
-              <div className="px-4 mt-4">
-                <div className="flex items-center gap-1">
-                  <Button
-                    onClick={() => setIsQuickEventOpen(true)}
-                    variant="ghost"
-                    className="flex-1 justify-start bg-primary/10 text-primary hover:bg-primary/20"
-                  >
-                    <Zap className="w-5 h-5 mr-2 shrink-0" />
-                    <span className="text-sm font-medium">{t('sidebar.quickAddEvent')}</span>
-                  </Button>
-                  <Tooltip delayDuration={200}>
-                    <TooltipTrigger asChild>
-                      <button
-                        type="button"
-                        className="p-1 rounded-md text-zinc-400 hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
-                        aria-label="More information"
-                      >
-                        <Info className="w-3.5 h-3.5" />
-                      </button>
-                    </TooltipTrigger>
-                    <TooltipContent side="right" className="max-w-[220px] bg-zinc-900 dark:bg-zinc-800 text-zinc-100 border-zinc-700">
-                      <p className="text-xs leading-relaxed">{t('sidebar.quickAddEventDescription')}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </div>
-              </div>
-            </TooltipProvider>
-          )}
-
-          {isOpen && (
             <ConversationList
               conversations={conversations}
               selectedConversationId={selectedConversationId}
@@ -115,12 +76,6 @@ const SidebarContent: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle, onO
               onInitiateDelete={initiateDelete}
             />
           )}
-
-          <QuickEventDialog
-            isOpen={isQuickEventOpen}
-            onClose={() => setIsQuickEventOpen(false)}
-            onEventCreated={() => {}}
-          />
 
           <SidebarFooter
             isOpen={isOpen}

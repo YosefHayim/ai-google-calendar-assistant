@@ -18,13 +18,16 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
-const hasPreviousSession = () =>
-  typeof window !== 'undefined' && !!localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN)
+const hasPreviousSession = () => typeof window !== 'undefined' && !!localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN)
 
 export const AuthProvider = ({ children }: { children?: ReactNode }) => {
   const queryClient = useQueryClient()
 
-  const { data: user, isLoading, refetch } = useUser({
+  const {
+    data: user,
+    isLoading,
+    refetch,
+  } = useUser({
     customUser: true,
     enabled: hasPreviousSession(),
     refetchOnWindowFocus: false,

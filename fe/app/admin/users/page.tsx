@@ -12,7 +12,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Search, MoreVertical, UserCog, CreditCard, Mail, Shield, RefreshCw, ChevronLeft, ChevronRight } from 'lucide-react'
+import {
+  Search,
+  MoreVertical,
+  UserCog,
+  CreditCard,
+  Mail,
+  Shield,
+  RefreshCw,
+  ChevronLeft,
+  ChevronRight,
+} from 'lucide-react'
 import { useAdminUsers, useUpdateUserStatus, useSendPasswordReset } from '@/hooks/queries/admin'
 import { GrantCreditsDialog } from '@/components/admin/GrantCreditsDialog'
 import { UserDetailsDialog } from '@/components/admin/UserDetailsDialog'

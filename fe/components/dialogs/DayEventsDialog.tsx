@@ -1,15 +1,31 @@
 'use client'
 
-import { CalendarDays, CircleCheckBig, CircleX, Clock, Hash, Hourglass, Loader2, MapPin, Search, Sun, X } from 'lucide-react'
+import {
+  CalendarDays,
+  CircleCheckBig,
+  CircleX,
+  Clock,
+  Hash,
+  Hourglass,
+  Loader2,
+  MapPin,
+  Search,
+  Sun,
+  X,
+} from 'lucide-react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../ui/dialog'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
 import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { EmptyState } from '@/components/ui/empty-state'
+import { InlineLoader } from '@/components/ui/inline-loader'
 
 import type { CalendarEvent } from '@/types/api'
 import React, { useState, useMemo } from 'react'
 import { format } from 'date-fns'
 import { useTranslation } from 'react-i18next'
 import { useDebouncedCallback } from 'use-debounce'
+import { formatDurationMs, formatHours, formatTimeRange, DATE_FORMATS } from '@/lib/formatUtils'
 
 export interface DayEventsDialogProps {
   isOpen: boolean
@@ -100,20 +116,14 @@ const DayEventsDialog: React.FC<DayEventsDialogProps> = ({
     if (!start || !end) return 'N/A'
 
     const durationMs = end.getTime() - start.getTime()
-    const durationHours = durationMs / (1000 * 60 * 60)
-
-    if (durationHours < 1) {
-      const minutes = Math.round(durationMs / (1000 * 60))
-      return `${minutes}m`
-    }
-    return `${durationHours.toFixed(1)}h`
+    return formatDurationMs(durationMs)
   }
 
   const formatEventTime = (event: CalendarEvent): string => {
     if (!event.start) return 'N/A'
 
     if (event.start.dateTime) {
-      return format(new Date(event.start.dateTime), 'h:mm a')
+      return format(new Date(event.start.dateTime), DATE_FORMATS.TIME_12H)
     }
     if (event.start.date) {
       return 'All day'
@@ -125,9 +135,7 @@ const DayEventsDialog: React.FC<DayEventsDialogProps> = ({
     if (!event.start || !event.end) return 'N/A'
 
     if (event.start.dateTime && event.end.dateTime) {
-      const start = format(new Date(event.start.dateTime), 'h:mm a')
-      const end = format(new Date(event.end.dateTime), 'h:mm a')
-      return `${start} - ${end}`
+      return formatTimeRange(event.start.dateTime, event.end.dateTime)
     }
     if (event.start.date) {
       return 'All day'
@@ -164,7 +172,9 @@ const DayEventsDialog: React.FC<DayEventsDialogProps> = ({
               <div className="flex flex-wrap gap-4 mt-2">
                 <div className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-2">
                   <Clock size={12} className="text-primary" />
-                  <span>{t('dialogs.dayEvents.available', 'Available')}: {availableHours.toFixed(1)}h</span>
+                  <span>
+                    {t('dialogs.dayEvents.available', 'Available')}: {formatHours(availableHours)}
+                  </span>
                 </div>
                 <div className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-2">
                   <Hourglass size={12} className="text-primary" />
@@ -174,7 +184,7 @@ const DayEventsDialog: React.FC<DayEventsDialogProps> = ({
                           filtered: filteredBusyHours.toFixed(1),
                           total: busyHours.toFixed(1),
                         })
-                      : `${t('dialogs.dayEvents.busy', 'Busy')}: ${busyHours.toFixed(1)}h`}
+                      : `${t('dialogs.dayEvents.busy', 'Busy')}: ${formatHours(busyHours)}`}
                   </span>
                 </div>
                 <div className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-2">
@@ -293,33 +303,22 @@ const DayEventsDialog: React.FC<DayEventsDialogProps> = ({
           </h4>
           {isLoading ? (
             <div className="flex items-center justify-center py-8">
-              <Loader2 className="w-6 h-6 animate-spin text-zinc-400" />
+              <InlineLoader size="md" />
             </div>
           ) : events.length === 0 ? (
-            <div className="flex flex-col items-center justify-center p-6 text-center">
-              <CalendarDays size={50} className="text-emerald-500 mb-3" />
-              <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                {t('dialogs.dayEvents.noEvents', 'No events scheduled')}
-              </p>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                {t('dialogs.dayEvents.freeTime', 'You have {{hours}} hours of free time this day.', {
-                  hours: availableHours.toFixed(1),
-                })}
-              </p>
-            </div>
+            <EmptyState
+              icon={<CalendarDays size={50} className="text-emerald-500" />}
+              title={t('dialogs.dayEvents.noEvents', 'No events scheduled')}
+              description={t('dialogs.dayEvents.freeTime', 'You have {{hours}} hours of free time this day.', {
+                hours: availableHours.toFixed(1),
+              })}
+            />
           ) : filteredEvents.length === 0 ? (
-            <div className="flex flex-col items-center justify-center p-6 text-center">
-              <Search size={50} className="text-zinc-300 dark:text-zinc-600 mb-3" />
-              <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                {t('dialogs.eventSearch.noMatches', 'No events match your search.')}
-              </p>
-              <button
-                onClick={clearSearch}
-                className="text-xs text-primary hover:underline mt-2"
-              >
-                {t('dialogs.eventSearch.clearSearch', 'Clear search')}
-              </button>
-            </div>
+            <EmptyState
+              icon={<Search size={50} />}
+              title={t('dialogs.eventSearch.noMatches', 'No events match your search.')}
+              action={{ label: t('dialogs.eventSearch.clearSearch', 'Clear search'), onClick: clearSearch }}
+            />
           ) : (
             <ul className="space-y-2">
               {[...filteredEvents]

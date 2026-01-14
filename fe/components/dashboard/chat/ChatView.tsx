@@ -1,11 +1,12 @@
 'use client'
 
+import React from 'react'
 import { AlertCircle } from 'lucide-react'
 import { Message } from '@/types'
 import { MessageActions } from './MessageActions'
-import MessageBubble from '@/components/dashboard/chat/MessageBubble'
+import { EditableMessage } from './EditableMessage'
 import { StreamingMessage } from './StreamingMessage'
-import React from 'react'
+import { useMessageEdit } from '@/hooks/useMessageEdit'
 
 interface ChatViewProps {
   messages: Message[]
@@ -14,7 +15,7 @@ interface ChatViewProps {
   isSpeaking: boolean
   speakingMessageId: string | null
   onResend: (text: string) => void
-  onEdit: (text: string) => void
+  onEditAndResend: (messageId: string, newText: string) => void
   onSpeak: (text: string, messageId?: string) => void
   scrollRef: React.RefObject<HTMLDivElement | null>
   streamingText?: string
@@ -28,34 +29,50 @@ export const ChatView: React.FC<ChatViewProps> = ({
   isSpeaking,
   speakingMessageId,
   onResend,
-  onEdit,
+  onEditAndResend,
   onSpeak,
   scrollRef,
   streamingText = '',
   currentTool = null,
 }) => {
+  const { editingMessageId, editText, setEditText, editInputRef, startEdit, cancelEdit, confirmEdit, handleKeyDown } =
+    useMessageEdit(onEditAndResend)
+
   return (
     <div className="h-full overflow-y-auto px-4 pt-24 pb-32">
       <div id="tour-chat-history">
-        {messages.map((msg) => (
-          <div key={msg.id} className="group mb-8">
-            <MessageBubble role={msg.role} content={msg.content} timestamp={msg.timestamp} images={msg.images} hideTimestamp={true} />
-            <div className={`flex w-full ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div className="max-w-[85%] md:max-w-[75%] w-full">
-                <MessageActions
-                  msg={msg}
-                  isSpeaking={isSpeaking && speakingMessageId === msg.id}
-                  onResend={onResend}
-                  onEdit={onEdit}
-                  onSpeak={(text) => onSpeak(text, msg.id)}
-                />
-              </div>
+        {messages.map((msg) => {
+          const isEditing = editingMessageId === msg.id
+
+          return (
+            <div key={msg.id} className="group mb-8">
+              <EditableMessage
+                message={msg}
+                isEditing={isEditing}
+                editText={editText}
+                editInputRef={editInputRef}
+                onEditTextChange={setEditText}
+                onKeyDown={handleKeyDown}
+                onConfirm={confirmEdit}
+                onCancel={cancelEdit}
+              />
+              {!isEditing && (
+                <div className={`flex w-full ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                  <div className="max-w-[85%] md:max-w-[75%] w-full">
+                    <MessageActions
+                      msg={msg}
+                      isSpeaking={isSpeaking && speakingMessageId === msg.id}
+                      onResend={onResend}
+                      onEdit={() => startEdit(msg.id, msg.content)}
+                      onSpeak={(text) => onSpeak(text, msg.id)}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
-          </div>
-        ))}
-        {isLoading && (
-          <StreamingMessage content={streamingText} currentTool={currentTool} isStreaming={isLoading} />
-        )}
+          )
+        })}
+        {isLoading && <StreamingMessage content={streamingText} currentTool={currentTool} isStreaming={isLoading} />}
       </div>
       {error && (
         <div className="flex justify-center mb-6">

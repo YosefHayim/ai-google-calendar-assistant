@@ -126,7 +126,7 @@ export const getRevenueTrends = async (months: number = 6): Promise<RevenueTrend
 export const getSubscriptionTrends = async (days: number = 7): Promise<SubscriptionTrendPoint[]> => {
   const response = await apiClient.get<ApiResponse<SubscriptionTrendPoint[]>>(
     ENDPOINTS.ADMIN_DASHBOARD_SUBSCRIPTION_TRENDS,
-    { params: { days } }
+    { params: { days } },
   )
   return response.data.data || []
 }
@@ -136,17 +136,4 @@ export const getAdminMe = async (): Promise<AdminUser> => {
   return response.data.data!
 }
 
-// ============================================
-// Helpers
-// ============================================
 
-export const formatCurrency = (cents: number, currency = 'USD'): string => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency,
-  }).format(cents / 100)
-}
-
-export const formatNumber = (num: number): string => {
-  return new Intl.NumberFormat('en-US').format(num)
-}

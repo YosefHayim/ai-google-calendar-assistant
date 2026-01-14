@@ -158,12 +158,14 @@ export interface ResetMemoryResult {
 
 export const resetMemory = async (): Promise<ResetMemoryResult> => {
   const response = await apiClient.delete('/api/chat/memory')
-  return response.data?.data || {
-    embeddings: 0,
-    conversations: 0,
-    redisContext: true,
-    message: 'Memory reset completed',
-  }
+  return (
+    response.data?.data || {
+      embeddings: 0,
+      conversations: 0,
+      redisContext: true,
+      message: 'Memory reset completed',
+    }
+  )
 }
 
 export interface ShareLinkResult {

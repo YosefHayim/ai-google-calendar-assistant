@@ -111,16 +111,22 @@ function getDurationCategory(minutes: number): keyof EventDurationBreakdown {
 function calculateProductivityScore(
   meetingLoad: number,
   focusTimePercentage: number,
-  eventDistribution: number
+  eventDistribution: number,
 ): number {
   const meetingBalance = meetingLoad > 60 ? Math.max(0, 100 - (meetingLoad - 40)) : 100
   const focusScore = focusTimePercentage * 100
   const distributionScore = eventDistribution * 100
 
-  return Math.round((meetingBalance * 0.4 + focusScore * 0.35 + distributionScore * 0.25))
+  return Math.round(meetingBalance * 0.4 + focusScore * 0.35 + distributionScore * 0.25)
 }
 
-export function useAnalyticsData({ timeMin, timeMax, calendarMap, calendarIds = [], enabled = true }: UseAnalyticsDataOptions) {
+export function useAnalyticsData({
+  timeMin,
+  timeMax,
+  calendarMap,
+  calendarIds = [],
+  enabled = true,
+}: UseAnalyticsDataOptions) {
   const analyticsQuery = useQuery({
     queryKey: ['events-analytics', timeMin, timeMax, calendarIds],
     queryFn: async (): Promise<AnalyticsResponse | null> => {
@@ -362,7 +368,8 @@ export function useAnalyticsData({ timeMin, timeMax, calendarMap, calendarIds = 
         events: monthlyEvents[index],
       }))
 
-      const totalDays = timeMin && timeMax ? Math.ceil((timeMax.getTime() - timeMin.getTime()) / (1000 * 60 * 60 * 24)) : 0
+      const totalDays =
+        timeMin && timeMax ? Math.ceil((timeMax.getTime() - timeMin.getTime()) / (1000 * 60 * 60 * 24)) : 0
       const daysWithEvents = dayHoursMap.size
       const eventFreeDays = Math.max(0, totalDays - daysWithEvents)
 
@@ -374,7 +381,7 @@ export function useAnalyticsData({ timeMin, timeMax, calendarMap, calendarIds = 
       let longestFocusBlock = 0
 
       const sortedDayEntries = Array.from(dayHoursMap.entries()).sort(
-        (a, b) => new Date(a[0]).getTime() - new Date(b[0]).getTime()
+        (a, b) => new Date(a[0]).getTime() - new Date(b[0]).getTime(),
       )
 
       sortedDayEntries.forEach(([, eventHours]) => {
@@ -406,16 +413,62 @@ export function useAnalyticsData({ timeMin, timeMax, calendarMap, calendarIds = 
         productivityScore,
         meetingLoad: Math.round(meetingLoad * 10) / 10,
         averageEventsPerDay: totalDays > 0 ? Math.round((totalEvents / totalDays) * 10) / 10 : 0,
-        mostProductiveDay: sortedDays.length > 0 ? new Date(sortedDays[0][0]).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' }) : '-',
-        leastProductiveDay: sortedDays.length > 0 ? new Date(sortedDays.at(-1)![0]).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' }) : '-',
+        mostProductiveDay:
+          sortedDays.length > 0
+            ? new Date(sortedDays[0][0]).toLocaleDateString('en-US', {
+                weekday: 'long',
+                month: 'short',
+                day: 'numeric',
+              })
+            : '-',
+        leastProductiveDay:
+          sortedDays.length > 0
+            ? new Date(sortedDays.at(-1)![0]).toLocaleDateString('en-US', {
+                weekday: 'long',
+                month: 'short',
+                day: 'numeric',
+              })
+            : '-',
         peakHour,
       }
 
       const eventDurationCategories: EventDurationCategory[] = [
-        { key: 'short', label: 'Short', range: '< 30 min', color: '#34d399', count: durationBreakdown.short, percentage: totalEvents > 0 ? (durationBreakdown.short / totalEvents) * 100 : 0, events: durationEvents.short },
-        { key: 'medium', label: 'Medium', range: '30-60 min', color: '#38bdf8', count: durationBreakdown.medium, percentage: totalEvents > 0 ? (durationBreakdown.medium / totalEvents) * 100 : 0, events: durationEvents.medium },
-        { key: 'long', label: 'Long', range: '1-2 hrs', color: '#fbbf24', count: durationBreakdown.long, percentage: totalEvents > 0 ? (durationBreakdown.long / totalEvents) * 100 : 0, events: durationEvents.long },
-        { key: 'extended', label: 'Extended', range: '2+ hrs', color: '#fb7185', count: durationBreakdown.extended, percentage: totalEvents > 0 ? (durationBreakdown.extended / totalEvents) * 100 : 0, events: durationEvents.extended },
+        {
+          key: 'short',
+          label: 'Short',
+          range: '< 30 min',
+          color: '#34d399',
+          count: durationBreakdown.short,
+          percentage: totalEvents > 0 ? (durationBreakdown.short / totalEvents) * 100 : 0,
+          events: durationEvents.short,
+        },
+        {
+          key: 'medium',
+          label: 'Medium',
+          range: '30-60 min',
+          color: '#38bdf8',
+          count: durationBreakdown.medium,
+          percentage: totalEvents > 0 ? (durationBreakdown.medium / totalEvents) * 100 : 0,
+          events: durationEvents.medium,
+        },
+        {
+          key: 'long',
+          label: 'Long',
+          range: '1-2 hrs',
+          color: '#fbbf24',
+          count: durationBreakdown.long,
+          percentage: totalEvents > 0 ? (durationBreakdown.long / totalEvents) * 100 : 0,
+          events: durationEvents.long,
+        },
+        {
+          key: 'extended',
+          label: 'Extended',
+          range: '2+ hrs',
+          color: '#fb7185',
+          count: durationBreakdown.extended,
+          percentage: totalEvents > 0 ? (durationBreakdown.extended / totalEvents) * 100 : 0,
+          events: durationEvents.extended,
+        },
       ]
 
       return {
@@ -442,7 +495,7 @@ export function useAnalyticsData({ timeMin, timeMax, calendarMap, calendarIds = 
         allDayEventsCount,
       }
     },
-    [calendarMap, timeMin, timeMax]
+    [calendarMap, timeMin, timeMax],
   )
 
   const processedData = React.useMemo(() => {

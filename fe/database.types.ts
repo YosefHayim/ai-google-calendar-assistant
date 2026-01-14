@@ -73,6 +73,8 @@ export type Database = {
           is_active: boolean | null
           last_message_at: string | null
           message_count: number | null
+          share_expires_at: string | null
+          share_token: string | null
           source: Database["public"]["Enums"]["conversation_source"]
           summary: string | null
           title: string | null
@@ -87,6 +89,8 @@ export type Database = {
           is_active?: boolean | null
           last_message_at?: string | null
           message_count?: number | null
+          share_expires_at?: string | null
+          share_token?: string | null
           source: Database["public"]["Enums"]["conversation_source"]
           summary?: string | null
           title?: string | null
@@ -101,11 +105,130 @@ export type Database = {
           is_active?: boolean | null
           last_message_at?: string | null
           message_count?: number | null
+          share_expires_at?: string | null
+          share_token?: string | null
           source?: Database["public"]["Enums"]["conversation_source"]
           summary?: string | null
           title?: string | null
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      integrations: {
+        Row: {
+          access_token: string | null
+          bot_user_id: string | null
+          created_at: string | null
+          id: string
+          installed_at: string | null
+          installed_by: string | null
+          integration_type: string
+          last_sync_at: string | null
+          refresh_token: string | null
+          scope: string | null
+          status: string | null
+          token_expires_at: string | null
+          updated_at: string | null
+          user_mappings: Json | null
+          workspace_data: Json
+          workspace_id: string
+        }
+        Insert: {
+          access_token?: string | null
+          bot_user_id?: string | null
+          created_at?: string | null
+          id?: string
+          installed_at?: string | null
+          installed_by?: string | null
+          integration_type: string
+          last_sync_at?: string | null
+          refresh_token?: string | null
+          scope?: string | null
+          status?: string | null
+          token_expires_at?: string | null
+          updated_at?: string | null
+          user_mappings?: Json | null
+          workspace_data?: Json
+          workspace_id: string
+        }
+        Update: {
+          access_token?: string | null
+          bot_user_id?: string | null
+          created_at?: string | null
+          id?: string
+          installed_at?: string | null
+          installed_by?: string | null
+          integration_type?: string
+          last_sync_at?: string | null
+          refresh_token?: string | null
+          scope?: string | null
+          status?: string | null
+          token_expires_at?: string | null
+          updated_at?: string | null
+          user_mappings?: Json | null
+          workspace_data?: Json
+          workspace_id?: string
+        }
+        Relationships: []
+      }
+      invitations: {
+        Row: {
+          accepted_at: string | null
+          converted_at: string | null
+          created_at: string | null
+          expires_at: string | null
+          id: string
+          invite_token: string
+          invite_type: string
+          invitee_email: string
+          invitee_id: string | null
+          inviter_email: string
+          inviter_id: string
+          metadata: Json | null
+          reward_amount: number | null
+          reward_claimed_at: string | null
+          reward_type: string | null
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          accepted_at?: string | null
+          converted_at?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          invite_token: string
+          invite_type: string
+          invitee_email: string
+          invitee_id?: string | null
+          inviter_email: string
+          inviter_id: string
+          metadata?: Json | null
+          reward_amount?: number | null
+          reward_claimed_at?: string | null
+          reward_type?: string | null
+          status?: string
+          updated_at?: string | null
+        }
+        Update: {
+          accepted_at?: string | null
+          converted_at?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          invite_token?: string
+          invite_type?: string
+          invitee_email?: string
+          invitee_id?: string | null
+          inviter_email?: string
+          inviter_id?: string
+          metadata?: Json | null
+          reward_amount?: number | null
+          reward_claimed_at?: string | null
+          reward_type?: string | null
+          status?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -142,6 +265,54 @@ export type Database = {
           processed?: boolean | null
           processed_at?: string | null
           retry_count?: number | null
+        }
+        Relationships: []
+      }
+      marketing_subscriptions: {
+        Row: {
+          created_at: string | null
+          email: string
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          name: string | null
+          source: string | null
+          status: string | null
+          subscription_types: string[] | null
+          unsubscribed_at: string | null
+          updated_at: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          name?: string | null
+          source?: string | null
+          status?: string | null
+          subscription_types?: string[] | null
+          unsubscribed_at?: string | null
+          updated_at?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          name?: string | null
+          source?: string | null
+          status?: string | null
+          subscription_types?: string[] | null
+          unsubscribed_at?: string | null
+          updated_at?: string | null
+          user_agent?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -306,77 +477,6 @@ export type Database = {
         }
         Relationships: []
       }
-      slack_users: {
-        Row: {
-          created_at: string | null
-          first_name: string | null
-          id: string
-          is_linked: boolean | null
-          last_activity_at: string | null
-          pending_email: string | null
-          slack_team_id: string
-          slack_user_id: string
-          slack_username: string | null
-          updated_at: string | null
-          user_id: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          first_name?: string | null
-          id?: string
-          is_linked?: boolean | null
-          last_activity_at?: string | null
-          pending_email?: string | null
-          slack_team_id: string
-          slack_user_id: string
-          slack_username?: string | null
-          updated_at?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          first_name?: string | null
-          id?: string
-          is_linked?: boolean | null
-          last_activity_at?: string | null
-          pending_email?: string | null
-          slack_team_id?: string
-          slack_user_id?: string
-          slack_username?: string | null
-          updated_at?: string | null
-          user_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "slack_users_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "slack_users_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_active_users_with_calendar"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "slack_users_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_admin_user_list"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "slack_users_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_user_conversation_stats"
-            referencedColumns: ["user_id"]
-          },
-        ]
-      }
       subscriptions: {
         Row: {
           ai_interactions_used: number | null
@@ -496,6 +596,98 @@ export type Database = {
             referencedColumns: ["user_id"]
           },
         ]
+      }
+      team_members: {
+        Row: {
+          id: string
+          invite_id: string | null
+          invited_by: string | null
+          joined_at: string | null
+          role: string | null
+          team_id: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          invite_id?: string | null
+          invited_by?: string | null
+          joined_at?: string | null
+          role?: string | null
+          team_id: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          invite_id?: string | null
+          invited_by?: string | null
+          joined_at?: string | null
+          role?: string | null
+          team_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_members_invite_id_fkey"
+            columns: ["invite_id"]
+            isOneToOne: false
+            referencedRelation: "invitations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "team_members_invite_id_fkey"
+            columns: ["invite_id"]
+            isOneToOne: false
+            referencedRelation: "referrals_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "team_members_invite_id_fkey"
+            columns: ["invite_id"]
+            isOneToOne: false
+            referencedRelation: "team_invites_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "team_members_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      teams: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          max_members: number | null
+          name: string
+          owner_id: string
+          settings: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          max_members?: number | null
+          name: string
+          owner_id: string
+          settings?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          max_members?: number | null
+          name?: string
+          owner_id?: string
+          settings?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       telegram_users: {
         Row: {
@@ -802,6 +994,147 @@ export type Database = {
       }
     }
     Views: {
+      newsletter_subscriptions_view: {
+        Row: {
+          created_at: string | null
+          email: string | null
+          id: string | null
+          ip_address: string | null
+          source: string | null
+          status: string | null
+          subscribed_at: string | null
+          unsubscribed_at: string | null
+          updated_at: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email?: string | null
+          id?: string | null
+          ip_address?: string | null
+          source?: string | null
+          status?: string | null
+          subscribed_at?: string | null
+          unsubscribed_at?: string | null
+          updated_at?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string | null
+          id?: string | null
+          ip_address?: string | null
+          source?: string | null
+          status?: string | null
+          subscribed_at?: string | null
+          unsubscribed_at?: string | null
+          updated_at?: string | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
+      referrals_view: {
+        Row: {
+          converted_at: string | null
+          created_at: string | null
+          expires_at: string | null
+          id: string | null
+          referral_code: string | null
+          referred_email: string | null
+          referred_id: string | null
+          referrer_email: string | null
+          referrer_id: string | null
+          reward_amount: number | null
+          reward_claimed_at: string | null
+          reward_type: string | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          converted_at?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string | null
+          referral_code?: never
+          referred_email?: never
+          referred_id?: string | null
+          referrer_email?: string | null
+          referrer_id?: string | null
+          reward_amount?: number | null
+          reward_claimed_at?: string | null
+          reward_type?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          converted_at?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string | null
+          referral_code?: never
+          referred_email?: never
+          referred_id?: string | null
+          referrer_email?: string | null
+          referrer_id?: string | null
+          reward_amount?: number | null
+          reward_claimed_at?: string | null
+          reward_type?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      team_invites_view: {
+        Row: {
+          accepted_at: string | null
+          created_at: string | null
+          expires_at: string | null
+          id: string | null
+          invite_token: string | null
+          invitee_email: string | null
+          invitee_id: string | null
+          inviter_email: string | null
+          inviter_id: string | null
+          message: string | null
+          role: string | null
+          status: string | null
+          team_name: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          accepted_at?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string | null
+          invite_token?: string | null
+          invitee_email?: string | null
+          invitee_id?: string | null
+          inviter_email?: string | null
+          inviter_id?: string | null
+          message?: never
+          role?: never
+          status?: string | null
+          team_name?: never
+          updated_at?: string | null
+        }
+        Update: {
+          accepted_at?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string | null
+          invite_token?: string | null
+          invitee_email?: string | null
+          invitee_id?: string | null
+          inviter_email?: string | null
+          inviter_id?: string | null
+          message?: never
+          role?: never
+          status?: string | null
+          team_name?: never
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       v_active_subscriptions: {
         Row: {
           ai_interactions_limit: number | null
@@ -923,6 +1256,54 @@ export type Database = {
         }
         Relationships: []
       }
+      waiting_list_view: {
+        Row: {
+          created_at: string | null
+          email: string | null
+          id: string | null
+          invited_at: string | null
+          ip_address: string | null
+          name: string | null
+          notes: string | null
+          position: number | null
+          registered_at: string | null
+          source: string | null
+          status: string | null
+          updated_at: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email?: string | null
+          id?: string | null
+          invited_at?: never
+          ip_address?: string | null
+          name?: string | null
+          notes?: never
+          position?: never
+          registered_at?: never
+          source?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string | null
+          id?: string | null
+          invited_at?: never
+          ip_address?: string | null
+          name?: string | null
+          notes?: never
+          position?: never
+          registered_at?: never
+          source?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       check_trial_expirations: { Args: never; Returns: number }
@@ -947,6 +1328,8 @@ export type Database = {
         Args: { days_old?: number }
         Returns: number
       }
+      generate_invitation_token: { Args: never; Returns: string }
+      generate_referral_code_v2: { Args: never; Returns: string }
       get_or_create_conversation:
         | {
             Args: {

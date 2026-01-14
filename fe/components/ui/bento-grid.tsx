@@ -9,7 +9,11 @@ const BentoGrid: React.FC<{
   className?: string
 }> = ({ children, className }) => {
   return (
-    <div className={cn('grid w-full auto-rows-[16rem] md:auto-rows-[22rem] grid-cols-1 md:grid-cols-3 gap-4', className)}>{children}</div>
+    <div
+      className={cn('grid w-full auto-rows-[16rem] md:auto-rows-[22rem] grid-cols-1 md:grid-cols-3 gap-4', className)}
+    >
+      {children}
+    </div>
   )
 }
 
@@ -38,7 +42,9 @@ const BentoCard: React.FC<{
     <div className="pointer-events-none z-10 flex transform-gpu flex-col gap-1 p-4 md:p-6 transition-all duration-300 group-hover:-translate-y-10">
       <Icon className="h-8 w-8 md:h-12 md:w-12 origin-left transform-gpu text-zinc-900 dark:text-zinc-100 transition-all duration-300 ease-in-out group-hover:scale-75" />
       <h3 className="text-lg md:text-xl font-semibold text-zinc-900 dark:text-zinc-100">{name}</h3>
-      <p className="max-w-lg text-zinc-500 dark:text-zinc-400 text-xs md:text-sm line-clamp-3 md:line-clamp-none">{description}</p>
+      <p className="max-w-lg text-zinc-500 dark:text-zinc-400 text-xs md:text-sm line-clamp-3 md:line-clamp-none">
+        {description}
+      </p>
     </div>
 
     <div

@@ -10,7 +10,7 @@ interface MessageActionsProps {
   msg: Message
   isSpeaking: boolean
   onResend: (text: string) => void
-  onEdit: (text: string) => void
+  onEdit: () => void
   onSpeak: (text: string) => void
 }
 
@@ -93,7 +93,7 @@ export const MessageActions: React.FC<MessageActionsProps> = ({ msg, isSpeaking,
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => onEdit(msg.content)}
+          onClick={onEdit}
           className="h-7 w-7 text-zinc-400 hover:text-primary"
           title="Edit & Resend"
         >

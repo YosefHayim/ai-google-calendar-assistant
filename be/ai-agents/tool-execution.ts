@@ -90,6 +90,7 @@ export const EXECUTION_TOOLS = {
       params: calendar_v3.Schema$Event & {
         email: string;
         customEvents?: boolean;
+        addMeetLink?: boolean;
       },
     ) => {
       const { email, calendarId, eventLike } = parseToolArguments(params);
@@ -107,6 +108,7 @@ export const EXECUTION_TOOLS = {
         email,
         calendarId: calendarId ?? "primary",
         customEvents: params.customEvents ?? false,
+        addMeetLink: params.addMeetLink ?? false,
       });
     },
   ),

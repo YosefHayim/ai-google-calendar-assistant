@@ -398,6 +398,12 @@ export const ENDPOINTS = {
   USER_PREFERENCES_CROSS_PLATFORM_SYNC: '/api/users/preferences/cross_platform_sync',
 
   /**
+   * Update geo_location preference
+   * Methods: PUT
+   */
+  USER_PREFERENCES_GEO_LOCATION: '/api/users/preferences/geo_location',
+
+  /**
    * Submit contact form
    * Methods: POST
    * Body: multipart/form-data with name, email, subject, message, attachments[]

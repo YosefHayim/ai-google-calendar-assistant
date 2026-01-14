@@ -10,12 +10,15 @@ import { Message } from '@/types'
 import { ThreeDView } from './ThreeDView'
 import { ViewSwitcher } from './ViewSwitcher'
 import { useChatContext } from '@/contexts/ChatContext'
+import { useMutedSpeechDetection } from '@/hooks/useMutedSpeechDetection'
 import { useSpeechRecognition } from '@/hooks/useSpeechRecognition'
 import { useStreamingChat } from '@/hooks/useStreamingChat'
 import { ttsCache } from '@/services/tts-cache.service'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { useVoicePreference } from '@/hooks/queries'
 import { toast } from 'sonner'
+import { OnboardingWizard } from '@/components/onboarding'
+import { useOnboarding } from '@/hooks/useOnboarding'
 
 declare global {
   interface Window {
@@ -38,6 +41,7 @@ const ChatInterface: React.FC = () => {
   } = useChatContext()
 
   const { data: voiceData } = useVoicePreference()
+  const { showOnboarding, completeOnboarding, closeOnboarding } = useOnboarding()
 
   const [input, setInput] = useState('')
   const [images, setImages] = useState<ImageFile[]>([])
@@ -50,7 +54,7 @@ const ChatInterface: React.FC = () => {
   const avatarScrollRef = useRef<HTMLDivElement>(null)
   const audioContextRef = useRef<AudioContext | null>(null)
   const audioSourceRef = useRef<AudioBufferSourceNode | null>(null)
-  const textInputRef = useRef<HTMLInputElement>(null)
+  const textInputRef = useRef<HTMLTextAreaElement>(null)
   const isDocumentVisibleRef = useRef<boolean>(true)
 
   // Track document visibility for background notifications
@@ -150,6 +154,7 @@ const ChatInterface: React.FC = () => {
     // If the same message is already playing, stop it (toggle behavior)
     if (messageId && speakingMessageId === messageId && isSpeaking) {
       stopSpeaking()
+      toast.info('Audio stopped')
       return
     }
 
@@ -162,6 +167,7 @@ const ChatInterface: React.FC = () => {
 
     setIsSpeaking(true)
     setSpeakingMessageId(messageId || null)
+    toast.info('Playing audio...')
     try {
       const audioArrayBuffer = await ttsCache.synthesize(text, voiceData?.value?.voice)
       const audioBuffer = await audioContextRef.current.decodeAudioData(audioArrayBuffer)
@@ -179,6 +185,7 @@ const ChatInterface: React.FC = () => {
     } catch (audioError) {
       console.error('Error fetching or playing audio:', audioError)
       setError('Could not play audio response.')
+      toast.error('Failed to play audio')
       setIsSpeaking(false)
       setSpeakingMessageId(null)
       audioSourceRef.current = null
@@ -190,32 +197,36 @@ const ChatInterface: React.FC = () => {
     if ((!textToSend.trim() && images.length === 0) || isLoading) return
 
     // Build content with images if present
-    const messageContent = images.length > 0
-      ? `${textToSend || 'Please analyze these images and help me with any scheduling or calendar-related content.'}`
-      : textToSend
+    const messageContent =
+      images.length > 0
+        ? `${textToSend || 'Please analyze these images and help me with any scheduling or calendar-related content.'}`
+        : textToSend
 
     const userMessage: Message = {
       id: Date.now().toString(),
       role: 'user',
       content: messageContent,
-      images: images.length > 0 ? images.map(img => ({
-        data: img.base64 || '',
-        mimeType: img.file.type as 'image/png' | 'image/jpeg' | 'image/webp' | 'image/gif',
-      })) : undefined,
+      images:
+        images.length > 0
+          ? images.map((img) => ({
+              data: img.base64 || '',
+              mimeType: img.file.type as 'image/png' | 'image/jpeg' | 'image/webp' | 'image/gif',
+            }))
+          : undefined,
       timestamp: new Date(),
     }
     setMessages((prev) => [...prev, userMessage])
     setInput('')
 
     // Clean up image previews and clear images state
-    images.forEach(img => URL.revokeObjectURL(img.preview))
+    images.forEach((img) => URL.revokeObjectURL(img.preview))
     setImages([])
 
     setError(null)
     resetStreamingState()
 
     // Pass images to streaming message
-    const imageData = userMessage.images?.map(img => ({
+    const imageData = userMessage.images?.map((img) => ({
       type: 'image' as const,
       data: img.data,
       mimeType: img.mimeType,
@@ -225,12 +236,8 @@ const ChatInterface: React.FC = () => {
   }
 
   const handleResend = (text: string) => {
+    toast.info('Regenerating response...')
     handleSend(undefined, text)
-  }
-
-  const handleEditMessage = (text: string) => {
-    setInput(text)
-    textInputRef.current?.focus()
   }
 
   const handleEditAndResend = (messageId: string, newText: string) => {
@@ -258,6 +265,12 @@ const ChatInterface: React.FC = () => {
     toggleRecording,
   } = useSpeechRecognition((finalTranscription) => {
     handleSend(undefined, finalTranscription)
+  })
+
+  useMutedSpeechDetection({
+    isRecording,
+    speechRecognitionSupported,
+    onActivateMic: toggleRecording,
   })
 
   useEffect(() => {
@@ -302,7 +315,7 @@ const ChatInterface: React.FC = () => {
               isSpeaking={isSpeaking}
               speakingMessageId={speakingMessageId}
               onResend={handleResend}
-              onEdit={handleEditMessage}
+              onEditAndResend={handleEditAndResend}
               onSpeak={speakText}
               scrollRef={scrollRef}
               streamingText={streamingState.streamedText}
@@ -328,8 +341,11 @@ const ChatInterface: React.FC = () => {
           onCancelRecording={cancelRecording}
           onCancel={isLoading ? handleCancel : undefined}
           onImagesChange={setImages}
+          data-onboarding="chat-input"
         />
       </div>
+
+      <OnboardingWizard isOpen={showOnboarding} onClose={closeOnboarding} onComplete={completeOnboarding} />
     </div>
   )
 }

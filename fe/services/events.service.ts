@@ -129,14 +129,8 @@ export const eventsService = {
     return data
   },
 
-  async rescheduleEvent(
-    eventId: string,
-    requestData: RescheduleEventRequest,
-  ): Promise<ApiResponse<CalendarEvent>> {
-    const { data } = await apiClient.post<ApiResponse<CalendarEvent>>(
-      ENDPOINTS.EVENTS_RESCHEDULE(eventId),
-      requestData,
-    )
+  async rescheduleEvent(eventId: string, requestData: RescheduleEventRequest): Promise<ApiResponse<CalendarEvent>> {
+    const { data } = await apiClient.post<ApiResponse<CalendarEvent>>(ENDPOINTS.EVENTS_RESCHEDULE(eventId), requestData)
     return data
   },
 }

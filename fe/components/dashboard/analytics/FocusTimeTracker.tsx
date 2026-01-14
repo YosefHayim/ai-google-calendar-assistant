@@ -1,9 +1,10 @@
 'use client'
 
-import React from 'react'
-import { Target, Clock, Zap, TrendingUp } from 'lucide-react'
-import { Skeleton } from '@/components/ui/skeleton'
+import { Clock, Target, TrendingUp, Zap } from 'lucide-react'
+
 import type { FocusTimeMetrics } from '@/types/analytics'
+import React from 'react'
+import { Skeleton } from '@/components/ui/skeleton'
 
 interface FocusTimeTrackerProps {
   data: FocusTimeMetrics
@@ -20,7 +21,7 @@ const FocusTimeTracker: React.FC<FocusTimeTrackerProps> = ({ data, totalDays, is
           <Skeleton className="h-4 sm:h-5 w-28 sm:w-32" />
         </div>
         <Skeleton className="h-3 sm:h-4 w-40 sm:w-48 mb-4 sm:mb-6" />
-        <div className="space-y-3 sm:space-y-4">
+        <div className="space-y-2 sm:space-y-4">
           {Array.from({ length: 4 }).map((_, i) => (
             <Skeleton key={i} className="h-10 sm:h-12 w-full" />
           ))}
@@ -92,18 +93,22 @@ const FocusTimeTracker: React.FC<FocusTimeTrackerProps> = ({ data, totalDays, is
         Deep work blocks over {totalDays} days
       </p>
 
-      <div className="space-y-2 sm:space-y-3">
+      <div className="space-y-2 sm:space-y-2">
         {focusStats.map((stat) => (
           <div
             key={stat.label}
             className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg bg-zinc-50 dark:bg-zinc-900/50 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
           >
-            <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg ${stat.bgColor} flex items-center justify-center flex-shrink-0`}>
+            <div
+              className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg ${stat.bgColor} flex items-center justify-center flex-shrink-0`}
+            >
               <stat.icon className={`w-4 h-4 sm:w-5 sm:h-5 ${stat.color}`} />
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-baseline justify-between gap-2">
-                <span className="text-xs sm:text-sm font-medium text-zinc-700 dark:text-zinc-300 truncate">{stat.label}</span>
+                <span className="text-xs sm:text-sm font-medium text-zinc-700 dark:text-zinc-300 truncate">
+                  {stat.label}
+                </span>
                 <span className="text-base sm:text-lg font-bold text-zinc-900 dark:text-zinc-100 flex-shrink-0">
                   {stat.value}
                   <span className="text-[10px] sm:text-xs font-normal text-zinc-500 ml-0.5 sm:ml-1">{stat.suffix}</span>
@@ -119,7 +124,9 @@ const FocusTimeTracker: React.FC<FocusTimeTrackerProps> = ({ data, totalDays, is
       <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-zinc-200 dark:border-zinc-800">
         <div className="flex items-center justify-between text-[10px] sm:text-xs mb-1.5 sm:mb-2 gap-2">
           <span className="text-zinc-500 dark:text-zinc-400 truncate">Focus vs Meeting Time</span>
-          <span className="font-medium text-zinc-700 dark:text-zinc-300 flex-shrink-0">{data.focusTimePercentage}% focus</span>
+          <span className="font-medium text-zinc-700 dark:text-zinc-300 flex-shrink-0">
+            {data.focusTimePercentage}% focus
+          </span>
         </div>
         <div className="h-1.5 sm:h-2 bg-zinc-200 dark:bg-zinc-800 rounded-full overflow-hidden">
           <div

@@ -34,9 +34,7 @@ export function AIVoiceInput({
   const [time, setTime] = useState(0)
   const [isClient, setIsClient] = useState(false)
   const [isDemo, setIsDemo] = useState(demoMode)
-  const [audioLevels, setAudioLevels] = useState<number[]>(() =>
-    Array(visualizerBars).fill(5)
-  )
+  const [audioLevels, setAudioLevels] = useState<number[]>(() => Array(visualizerBars).fill(5))
 
   // Audio analysis refs
   const audioContextRef = useRef<AudioContext | null>(null)
@@ -84,7 +82,10 @@ export function AIVoiceInput({
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
       mediaStreamRef.current = stream
 
-      audioContextRef.current = new (window.AudioContext || (window as typeof window & { webkitAudioContext: typeof AudioContext }).webkitAudioContext)()
+      audioContextRef.current = new (
+        window.AudioContext ||
+        (window as typeof window & { webkitAudioContext: typeof AudioContext }).webkitAudioContext
+      )()
       analyserRef.current = audioContextRef.current.createAnalyser()
       analyserRef.current.fftSize = 256
       analyserRef.current.smoothingTimeConstant = 0.7
@@ -106,7 +107,7 @@ export function AIVoiceInput({
     }
 
     if (mediaStreamRef.current) {
-      mediaStreamRef.current.getTracks().forEach(track => track.stop())
+      mediaStreamRef.current.getTracks().forEach((track) => track.stop())
       mediaStreamRef.current = null
     }
 

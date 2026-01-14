@@ -18,10 +18,7 @@ interface AnimatedFeatureSpotlight3DProps extends React.HTMLAttributes<HTMLEleme
   onButtonClick?: () => void
 }
 
-export const AnimatedFeatureSpotlight3D = React.forwardRef<
-  HTMLElement,
-  AnimatedFeatureSpotlight3DProps
->(
+export const AnimatedFeatureSpotlight3D = React.forwardRef<HTMLElement, AnimatedFeatureSpotlight3DProps>(
   (
     {
       className,
@@ -37,7 +34,7 @@ export const AnimatedFeatureSpotlight3D = React.forwardRef<
       onButtonClick,
       ...props
     },
-    ref
+    ref,
   ) => {
     const x = useMotionValue(0)
     const y = useMotionValue(0)
@@ -62,16 +59,18 @@ export const AnimatedFeatureSpotlight3D = React.forwardRef<
         ref={ref}
         className={cn(
           'w-full max-w-6xl mx-auto p-6 md:p-12 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 overflow-hidden',
-          className
+          className,
         )}
         aria-labelledby="feature-spotlight-heading"
         {...props}
       >
-        <div className={cn(
-          'grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center',
-          reverse && 'md:[&>*:first-child]:order-2'
-        )}>
-<motion.div
+        <div
+          className={cn(
+            'grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center',
+            reverse && 'md:[&>*:first-child]:order-2',
+          )}
+        >
+          <motion.div
             initial={{ opacity: 0, y: -20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -115,7 +114,7 @@ export const AnimatedFeatureSpotlight3D = React.forwardRef<
             )}
           </motion.div>
 
-<motion.div
+          <motion.div
             className="relative w-full min-h-[200px] md:min-h-[280px] flex items-center justify-center"
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
@@ -144,7 +143,7 @@ export const AnimatedFeatureSpotlight3D = React.forwardRef<
         </div>
       </section>
     )
-  }
+  },
 )
 
 AnimatedFeatureSpotlight3D.displayName = 'AnimatedFeatureSpotlight3D'

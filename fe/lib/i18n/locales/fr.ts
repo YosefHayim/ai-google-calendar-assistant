@@ -142,7 +142,7 @@ export const fr: TranslationShape = {
     language: {
       title: 'Multilingue',
       description:
-        'Utilisez Ally dans votre langue préférée avec /language. Supporte l\'anglais, l\'hébreu, le russe, le français, l\'allemand et l\'arabe.',
+        "Utilisez Ally dans votre langue préférée avec /language. Supporte l'anglais, l'hébreu, le russe, le français, l'allemand et l'arabe.",
     },
   },
 
@@ -151,50 +151,63 @@ export const fr: TranslationShape = {
     heroTitle: 'Votre temps est',
     heroTitleHighlight: 'sous attaque',
     heroSubtitle:
-      'Chaque changement de contexte, chaque conflit d\'horaire, chaque heure perdue en admin. Tout s\'accumule. Le temps est la seule ressource que vous ne récupérerez jamais.',
+      "Chaque changement de contexte, chaque conflit d'horaire, chaque heure perdue en admin. Tout s'accumule. Le temps est la seule ressource que vous ne récupérerez jamais.",
 
     problemTitle: 'La bataille quotidienne',
-    problemSubtitle: 'Les professionnels modernes perdent des heures chaque semaine à cause du chaos calendaire qu\'ils n\'ont pas demandé.',
+    problemSubtitle:
+      "Les professionnels modernes perdent des heures chaque semaine à cause du chaos calendaire qu'ils n'ont pas demandé.",
     problemContextSwitch: 'Changement de contexte',
-    problemContextSwitchDesc: 'Sauter entre apps, onglets et tâches. Chaque changement vous coûte 23 minutes de concentration.',
+    problemContextSwitchDesc:
+      'Sauter entre apps, onglets et tâches. Chaque changement vous coûte 23 minutes de concentration.',
     problemCalendarChaos: 'Chaos calendaire',
-    problemCalendarChaosDesc: 'Double réservations, confusion de fuseaux horaires, et va-et-vient interminables pour une simple réunion.',
+    problemCalendarChaosDesc:
+      'Double réservations, confusion de fuseaux horaires, et va-et-vient interminables pour une simple réunion.',
     problemLostHours: 'Heures perdues',
-    problemLostHoursDesc: 'La charge administrative vole vos heures les plus productives. Le temps pour le travail profond disparaît.',
-    problemBlindSpots: 'Zones d\'ombre',
+    problemLostHoursDesc:
+      'La charge administrative vole vos heures les plus productives. Le temps pour le travail profond disparaît.',
+    problemBlindSpots: "Zones d'ombre",
     problemBlindSpotsDesc: 'Où est passé mardi? Des lacunes dans votre agenda que vous ne pouvez jamais expliquer.',
 
     visionBadge: 'Ce que nous croyons',
     visionTitle: 'Tout le monde mérite un secrétaire IA privé',
-    visionP1: 'Nous avons créé Ally parce que nous croyons que votre agenda devrait travailler pour vous, pas contre vous. Il devrait défendre vos priorités, pas juste les enregistrer.',
-    visionP2: 'La même technologie IA qui alimente les solutions d\'entreprise devrait être accessible à chaque entrepreneur, cadre et professionnel qui valorise son temps.',
+    visionP1:
+      'Nous avons créé Ally parce que nous croyons que votre agenda devrait travailler pour vous, pas contre vous. Il devrait défendre vos priorités, pas juste les enregistrer.',
+    visionP2:
+      "La même technologie IA qui alimente les solutions d'entreprise devrait être accessible à chaque entrepreneur, cadre et professionnel qui valorise son temps.",
     visionBelief1: 'Votre agenda devrait protéger votre travail profond, pas le surcharger.',
-    visionBelief2: 'Gérer votre temps devrait prendre des secondes, pas des heures d\'admin.',
-    visionBelief3: 'Vos données vous appartiennent. Jamais vendues, jamais utilisées pour l\'entraînement.',
+    visionBelief2: "Gérer votre temps devrait prendre des secondes, pas des heures d'admin.",
+    visionBelief3: "Vos données vous appartiennent. Jamais vendues, jamais utilisées pour l'entraînement.",
 
     impactTitle: 'Ce qui change avec Ally',
     impactSubtitle: 'Un impact réel sur votre façon de travailler et de vivre.',
     impactHours: 'Heures récupérées',
-    impactHoursDesc: 'Arrêtez de perdre du temps en planification. Récupérez des heures chaque semaine pour le travail qui compte.',
+    impactHoursDesc:
+      'Arrêtez de perdre du temps en planification. Récupérez des heures chaque semaine pour le travail qui compte.',
     impactFocus: 'Concentration protégée',
-    impactFocusDesc: 'Ally protège vos blocs de travail profond des interruptions en replanifiant intelligemment les conflits.',
+    impactFocusDesc:
+      'Ally protège vos blocs de travail profond des interruptions en replanifiant intelligemment les conflits.',
     impactGaps: 'Lacunes comblées',
-    impactGapsDesc: 'Ne vous demandez plus où est passé votre temps. Ally trouve et vous aide à combler les lacunes de votre agenda.',
-    impactVoice: 'De la voix à l\'action',
-    impactVoiceDesc: 'De la pensée à l\'événement planifié en secondes. Parlez naturellement et Ally s\'occupe du reste.',
+    impactGapsDesc:
+      'Ne vous demandez plus où est passé votre temps. Ally trouve et vous aide à combler les lacunes de votre agenda.',
+    impactVoice: "De la voix à l'action",
+    impactVoiceDesc: "De la pensée à l'événement planifié en secondes. Parlez naturellement et Ally s'occupe du reste.",
 
     differenceTitle: 'Différent par conception',
     differenceSubtitle: 'Construit de zéro avec des priorités différentes.',
-    differencePrivacy: 'Confidentialité d\'abord',
-    differencePrivacyDesc: 'Vos données sont chiffrées, jamais vendues, et jamais utilisées pour entraîner des modèles IA. Votre bureau privé reste privé.',
+    differencePrivacy: "Confidentialité d'abord",
+    differencePrivacyDesc:
+      'Vos données sont chiffrées, jamais vendues, et jamais utilisées pour entraîner des modèles IA. Votre bureau privé reste privé.',
     differenceMultiPlatform: 'Fonctionne où vous travaillez',
-    differenceMultiPlatformDesc: 'Web, voix, Telegram, WhatsApp. Ally est disponible partout où vous êtes, comme vous préférez communiquer.',
+    differenceMultiPlatformDesc:
+      'Web, voix, Telegram, WhatsApp. Ally est disponible partout où vous êtes, comme vous préférez communiquer.',
     differenceProactive: 'Proactif, pas passif',
-    differenceProactiveDesc: 'Ally ne se contente pas d\'enregistrer votre emploi du temps. Il protège votre temps, suggère des optimisations et gère les conflits automatiquement.',
+    differenceProactiveDesc:
+      "Ally ne se contente pas d'enregistrer votre emploi du temps. Il protège votre temps, suggère des optimisations et gère les conflits automatiquement.",
 
     ctaBadge: 'Rejoignez le mouvement',
     ctaTitle: 'Reprenez votre temps',
-    ctaSubtitle: 'Arrêtez de vous battre contre votre agenda. Commencez à le commander. Rejoignez des milliers de professionnels qui ont repris le contrôle.',
+    ctaSubtitle:
+      'Arrêtez de vous battre contre votre agenda. Commencez à le commander. Rejoignez des milliers de professionnels qui ont repris le contrôle.',
     ctaPrimary: 'Commencer gratuitement',
     ctaSecondary: 'Voir les tarifs',
   },
@@ -274,7 +287,8 @@ export const fr: TranslationShape = {
     assistant: 'Assistant',
     assistantDescription: 'Discutez avec votre assistant IA pour gérer événements et emplois du temps',
     admin: 'Admin',
-    adminDescription: "Accédez au tableau de bord d'administration pour gérer les utilisateurs, abonnements et paramètres système",
+    adminDescription:
+      "Accédez au tableau de bord d'administration pour gérer les utilisateurs, abonnements et paramètres système",
     analytics: 'Analytiques',
     analyticsDescription:
       "Consultez les analyses de répartition du temps, les tendances d'événements et la productivité",
@@ -545,7 +559,7 @@ export const fr: TranslationShape = {
       placeholder: 'Rechercher par titre ou description...',
       noMatches: 'Aucun événement ne correspond à votre recherche.',
       clearSearch: 'Effacer la recherche',
-      noEvents: "Aucun événement trouvé pour ce calendrier dans la période sélectionnée.",
+      noEvents: 'Aucun événement trouvé pour ce calendrier dans la période sélectionnée.',
       totalHours: 'Heures totales',
       totalEvents: 'Total des événements',
       filteredHours: 'Heures filtrées : {{filtered}}h (sur {{total}}h)',
@@ -693,7 +707,8 @@ export const fr: TranslationShape = {
     featured: {
       name: 'Yosef Sabag',
       role: 'PDG',
-      content: "L'utilisation d'Ally a changé ma façon de suivre mon emploi du temps et d'obtenir de meilleures informations.",
+      content:
+        "L'utilisation d'Ally a changé ma façon de suivre mon emploi du temps et d'obtenir de meilleures informations.",
     },
   },
 

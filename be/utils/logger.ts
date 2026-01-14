@@ -11,6 +11,8 @@
  * - `logs/{env}-error-{date}.log` - Error-level logs only
  * - `logs/{env}-combined-{date}.log` - All log levels
  *
+ * In development mode, log files are cleared on server restart for fresh debugging context.
+ *
  * @example
  * import { logger } from "@/utils/logger";
  *
@@ -20,6 +22,7 @@
  */
 
 import { env } from "@/config";
+import fs from "fs";
 import path from "path";
 import winston from "winston";
 
@@ -30,6 +33,29 @@ const getDate = () => {
 
 // Define the directory for local file logs
 const logDir = "logs";
+
+const clearLogFilesOnStartup = () => {
+  if (!env.isDev) return;
+
+  const date = getDate();
+  const logFiles = [
+    path.join(logDir, `${env.nodeEnv}-error-${date}.log`),
+    path.join(logDir, `${env.nodeEnv}-combined-${date}.log`),
+    path.join(logDir, `${env.nodeEnv}-audit-${date}.log`),
+  ];
+
+  if (!fs.existsSync(logDir)) {
+    fs.mkdirSync(logDir, { recursive: true });
+  }
+
+  for (const logFile of logFiles) {
+    try {
+      fs.writeFileSync(logFile, "", { flag: "w" });
+    } catch {}
+  }
+};
+
+clearLogFilesOnStartup();
 
 // Custom Formatter: Stringify JSON + add an extra Newline (\n) for the gap
 const jsonWithGap = winston.format.printf((info) => {

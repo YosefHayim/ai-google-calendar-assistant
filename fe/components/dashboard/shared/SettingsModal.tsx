@@ -1,31 +1,32 @@
 'use client'
 
-import React, { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import {
+  AssistantTab,
+  DataControlsTab,
+  GeneralTab,
+  IntegrationsTab,
+  NotificationsTab,
+  SecurityTab,
+  SubscriptionTab,
+} from './settings-tabs'
 import { Bell, Brain, CreditCard, Database, LayoutDashboard, LogOut, Settings, Shield, X } from 'lucide-react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import React, { useState } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Button } from '@/components/ui/button'
 import {
-  useGoogleCalendarStatus,
-  useDisconnectGoogleCalendar,
+  useDeactivateUser,
   useDeleteAllConversations,
+  useDisconnectGoogleCalendar,
+  useGoogleCalendarStatus,
   useResetMemory,
   useUser,
-  useDeactivateUser,
 } from '@/hooks/queries'
-import { toast } from 'sonner'
 
-import {
-  GeneralTab,
-  SubscriptionTab,
-  NotificationsTab,
-  DataControlsTab,
-  IntegrationsTab,
-  SecurityTab,
-  AssistantTab,
-} from './settings-tabs'
+import { AllyLogo } from '@/components/shared/logo'
+import { Button } from '@/components/ui/button'
 import { ConfirmDialog } from './ConfirmDialog'
+import { toast } from 'sonner'
+import { useRouter } from 'next/navigation'
 
 interface SettingsModalProps {
   isOpen: boolean
@@ -195,7 +196,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
       />
 
       <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-        <DialogContent className="w-[calc(100%-2rem)] max-w-3xl max-h-[85vh] sm:h-[500px] p-0 gap-0 overflow-hidden bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 [&>button]:hidden">
+        <DialogContent className="w-[calc(100%-2rem)] max-w-3xl h-[85dvh] sm:h-[600px] p-0 gap-0 overflow-hidden bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 [&>button]:hidden">
           <DialogHeader className="sr-only">
             <DialogTitle>Settings</DialogTitle>
             <DialogDescription>Manage your Ally preferences and settings.</DialogDescription>
@@ -205,12 +206,17 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
             {/* Mobile Header */}
             <div className="flex sm:hidden items-center justify-between px-4 py-3 border-b border-zinc-200 dark:border-zinc-800 flex-shrink-0">
               <div className="flex items-center gap-2">
-                <div className="w-6 h-6 bg-zinc-900 dark:bg-zinc-100 rounded-md flex items-center justify-center text-white dark:text-zinc-900 font-bold text-xs">
-                  A
+                <div className="w-6 h-6 bg-zinc-900 dark:bg-white rounded-md flex items-center justify-center text-white dark:text-zinc-900">
+                  <AllyLogo className="w-4 h-4" />
                 </div>
                 <h2 className="font-semibold text-zinc-900 dark:text-zinc-100 text-sm">Settings</h2>
               </div>
-              <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8 text-zinc-500 hover:text-zinc-700">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={onClose}
+                className="h-8 w-8 text-zinc-500 hover:text-zinc-700"
+              >
                 <X className="w-4 h-4" />
               </Button>
             </div>
@@ -233,14 +239,14 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
 
             {/* Desktop Sidebar */}
             <div className="hidden sm:flex w-52 bg-zinc-50 dark:bg-zinc-900/50 border-r border-zinc-200 dark:border-zinc-800 flex-col p-3 flex-shrink-0">
-              <div className="flex items-center gap-2 mb-6 px-2">
-                <div className="w-6 h-6 bg-zinc-900 dark:bg-zinc-100 rounded-md flex items-center justify-center text-white dark:text-zinc-900 font-bold text-xs">
-                  A
+              <div className="flex items-center gap-2 mb-4 px-2">
+                <div className="w-8 h-8 bg-zinc-900 dark:bg-white rounded-md flex items-center justify-center text-white dark:text-zinc-900">
+                  <AllyLogo className="w-5 h-5" />
                 </div>
                 <h2 className="font-semibold text-zinc-900 dark:text-zinc-100 text-sm">Ally Settings</h2>
               </div>
 
-              <TabsList className="flex-1 flex flex-col h-auto bg-transparent p-0 gap-1">
+              <TabsList className="flex-1 flex flex-col h-full justify-start bg-transparent p-0 gap-1">
                 {tabs.map((tab) => (
                   <TabsTrigger
                     key={tab.id}
@@ -266,13 +272,18 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
             <div className="flex-1 flex flex-col min-w-0 min-h-0 overflow-hidden">
               {/* Desktop Close Button */}
               <div className="hidden sm:flex items-center justify-end p-3 pb-0 flex-shrink-0">
-                <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8 text-zinc-500 hover:text-zinc-700">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={onClose}
+                  className="h-8 w-8 text-zinc-500 hover:text-zinc-700"
+                >
                   <X className="w-4 h-4" />
                 </Button>
               </div>
 
               <div className="flex-1 overflow-y-auto overflow-x-hidden px-4 pb-4 pt-2 sm:pt-0">
-                <TabsContent value="general" className="mt-0">
+                <TabsContent value="general" className="mt-0 data-[state=active]:pb-4">
                   <GeneralTab
                     isDarkMode={isDarkMode}
                     toggleTheme={toggleTheme}
@@ -281,11 +292,11 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
                   />
                 </TabsContent>
 
-                <TabsContent value="account" className="mt-0">
+                <TabsContent value="account" className="mt-0 data-[state=active]:pb-4">
                   <SubscriptionTab />
                 </TabsContent>
 
-                <TabsContent value="integrations" className="mt-0">
+                <TabsContent value="integrations" className="mt-0 data-[state=active]:pb-4">
                   <IntegrationsTab
                     googleCalendarStatus={googleCalendarStatus}
                     isGoogleCalendarLoading={isGoogleCalendarLoading}
@@ -296,19 +307,19 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
                   />
                 </TabsContent>
 
-                <TabsContent value="assistant" className="mt-0">
+                <TabsContent value="assistant" className="mt-0 data-[state=active]:pb-4">
                   <AssistantTab />
                 </TabsContent>
 
-                <TabsContent value="notifications" className="mt-0">
+                <TabsContent value="notifications" className="mt-0 data-[state=active]:pb-4">
                   <NotificationsTab />
                 </TabsContent>
 
-                <TabsContent value="security" className="mt-0">
+                <TabsContent value="security" className="mt-0 data-[state=active]:pb-4">
                   <SecurityTab />
                 </TabsContent>
 
-                <TabsContent value="data_controls" className="mt-0">
+                <TabsContent value="data_controls" className="mt-0 data-[state=active]:pb-4">
                   <DataControlsTab
                     onDeleteAllConversations={handleDeleteAllConversations}
                     isDeletingConversations={isDeletingConversations}

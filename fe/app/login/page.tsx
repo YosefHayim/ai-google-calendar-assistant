@@ -1,5 +1,26 @@
+import type { Metadata } from 'next'
 import LoginPage from '@/components/auth/LoginPage'
 import { Suspense } from 'react'
+import { PAGE_METADATA, SITE_CONFIG } from '@/lib/constants/seo'
+
+export const metadata: Metadata = {
+  title: PAGE_METADATA.login.title,
+  description: PAGE_METADATA.login.description,
+  keywords: PAGE_METADATA.login.keywords,
+  openGraph: {
+    title: `${PAGE_METADATA.login.title} | ${SITE_CONFIG.name}`,
+    description: PAGE_METADATA.login.description,
+    url: `${SITE_CONFIG.url}/login`,
+    type: 'website',
+  },
+  twitter: {
+    title: `${PAGE_METADATA.login.title} | ${SITE_CONFIG.name}`,
+    description: PAGE_METADATA.login.description,
+  },
+  alternates: {
+    canonical: `${SITE_CONFIG.url}/login`,
+  },
+}
 
 function LoginFallback() {
   return (

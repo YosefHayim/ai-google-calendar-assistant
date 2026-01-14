@@ -19,43 +19,23 @@ export const SettingsRow: React.FC<SettingsRowProps> = ({ title, tooltip, contro
   return (
     <div
       className={cn(
-        'flex flex-wrap items-center min-h-[48px] py-3 gap-x-2 gap-y-2',
-        'sm:grid sm:grid-cols-3 sm:flex-nowrap sm:gap-4',
-        className
+        'flex flex-col gap-2 min-h-[48px] py-3',
+        'sm:grid sm:grid-cols-[1fr_auto] sm:items-center sm:gap-4',
+        className,
       )}
       role="group"
       aria-labelledby={id ? `${id}-label` : undefined}
     >
-      <div className="flex items-center gap-1 w-full sm:w-auto">
-        {icon && <span className="flex-shrink-0 mr-1.5">{icon}</span>}
-        <span id={id ? `${id}-label` : undefined} className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
-          {title}
-        </span>
-        {/* Help button inline on mobile */}
-        <div className="sm:hidden">
-          <TooltipProvider delayDuration={200}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="h-5 w-5 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
-                  aria-label={`More info about ${title}`}
-                >
-                  <HelpCircle className="w-3.5 h-3.5" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="top" className="max-w-[250px] text-center">
-                <p>{tooltip}</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+      <div className="flex items-center justify-between gap-1 sm:justify-start">
+        <div className="flex items-center gap-1 min-w-0">
+          {icon && <span className="flex-shrink-0 mr-1.5">{icon}</span>}
+          <span
+            id={id ? `${id}-label` : undefined}
+            className="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate"
+          >
+            {title}
+          </span>
         </div>
-      </div>
-
-      {/* Column 2: Help button - desktop only */}
-      <div className="hidden sm:flex justify-center">
         <TooltipProvider delayDuration={200}>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -63,10 +43,10 @@ export const SettingsRow: React.FC<SettingsRowProps> = ({ title, tooltip, contro
                 type="button"
                 variant="ghost"
                 size="icon"
-                className="h-6 w-6 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
+                className="h-5 w-5 sm:h-6 sm:w-6 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 flex-shrink-0"
                 aria-label={`More info about ${title}`}
               >
-                <HelpCircle className="w-4 h-4" />
+                <HelpCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </Button>
             </TooltipTrigger>
             <TooltipContent side="top" className="max-w-[250px] text-center">
@@ -76,7 +56,6 @@ export const SettingsRow: React.FC<SettingsRowProps> = ({ title, tooltip, contro
         </TooltipProvider>
       </div>
 
-      {/* Column 3: Control */}
       <div className="flex justify-end w-full sm:w-auto">{control}</div>
     </div>
   )

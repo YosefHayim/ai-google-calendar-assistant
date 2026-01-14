@@ -7,7 +7,16 @@ import { Button } from '@/components/ui/button'
 import type { ParsedEventData, QuickAddConflict } from '@/types/api'
 import { EventPreview } from './EventPreview'
 
-type DialogState = 'input' | 'recording' | 'transcribing' | 'parsing' | 'confirm' | 'conflict' | 'creating' | 'success' | 'error'
+type DialogState =
+  | 'input'
+  | 'recording'
+  | 'transcribing'
+  | 'parsing'
+  | 'confirm'
+  | 'conflict'
+  | 'creating'
+  | 'success'
+  | 'error'
 
 interface InputViewProps {
   state: DialogState
@@ -90,7 +99,14 @@ interface ConflictViewProps {
   onCancel: () => void
 }
 
-export const ConflictView: React.FC<ConflictViewProps> = ({ event, calendarName, conflicts, message, onConfirm, onCancel }) => (
+export const ConflictView: React.FC<ConflictViewProps> = ({
+  event,
+  calendarName,
+  conflicts,
+  message,
+  onConfirm,
+  onCancel,
+}) => (
   <motion.div
     key="conflict"
     initial={{ opacity: 0, y: 10 }}

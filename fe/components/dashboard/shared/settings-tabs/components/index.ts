@@ -1,5 +1,6 @@
 export { SettingsRow } from './SettingsRow'
 export { SettingsDropdown, MultiSelectDropdown, type DropdownOption } from './SettingsDropdown'
 export { SettingsSection } from './SettingsSection'
+export { TabHeader } from './TabHeader'
 export { TimePicker } from './TimePicker'
 export { TimezoneSelector } from './TimezoneSelector'

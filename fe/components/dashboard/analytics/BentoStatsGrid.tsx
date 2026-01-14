@@ -21,6 +21,7 @@ import {
 } from 'lucide-react'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useLanguage } from '@/contexts/LanguageContext'
+import { TrendText } from '@/components/ui/trend-badge'
 import type { EnhancedAnalyticsData, ComparisonResult } from '@/types/analytics'
 
 interface BentoStatsGridProps {
@@ -45,24 +46,8 @@ const item = {
 }
 
 function TrendBadge({ direction, percentage }: { direction: 'up' | 'down' | 'neutral'; percentage: number }) {
-  if (direction === 'neutral') {
-    return (
-      <span className="inline-flex items-center gap-1 text-xs font-medium text-zinc-500">
-        <Minus size={12} />
-        <span>0%</span>
-      </span>
-    )
-  }
-
-  const isPositive = direction === 'up'
-  const colorClass = isPositive ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'
-
-  return (
-    <span className={`inline-flex items-center gap-1 text-xs font-medium ${colorClass}`}>
-      {isPositive ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
-      <span>{Math.abs(percentage).toFixed(1)}%</span>
-    </span>
-  )
+  const value = direction === 'up' ? percentage : direction === 'down' ? -percentage : 0
+  return <TrendText value={Number(value.toFixed(1))} />
 }
 
 function CircularProgress({ value, size = 80, className = '' }: { value: number; size?: number; className?: string }) {
@@ -182,7 +167,9 @@ const BentoStatsGrid: React.FC<BentoStatsGridProps> = ({ data, comparison, isLoa
         </div>
         <div className="grid grid-cols-2 gap-3 sm:gap-4 mt-4 pt-4 border-t border-zinc-100 dark:border-zinc-800">
           <div>
-            <p className="text-[10px] sm:text-xs text-zinc-500 dark:text-zinc-400">{t('analytics.stats.meetingLoad')}</p>
+            <p className="text-[10px] sm:text-xs text-zinc-500 dark:text-zinc-400">
+              {t('analytics.stats.meetingLoad')}
+            </p>
             <p className="text-base sm:text-lg font-semibold text-zinc-900 dark:text-zinc-100">
               <NumberFlow value={productivityMetrics.meetingLoad} />%
             </p>
@@ -262,7 +249,9 @@ const BentoStatsGrid: React.FC<BentoStatsGridProps> = ({ data, comparison, isLoa
         <p className="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-zinc-100">
           <NumberFlow value={productivityMetrics.averageEventsPerDay} />
         </p>
-        <p className="text-[10px] sm:text-xs text-zinc-500 dark:text-zinc-400 mt-1 truncate">{t('analytics.stats.eventsPerDay')}</p>
+        <p className="text-[10px] sm:text-xs text-zinc-500 dark:text-zinc-400 mt-1 truncate">
+          {t('analytics.stats.eventsPerDay')}
+        </p>
       </motion.div>
 
       <motion.div
@@ -280,7 +269,9 @@ const BentoStatsGrid: React.FC<BentoStatsGridProps> = ({ data, comparison, isLoa
         <p className="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-zinc-100">
           {formatPeakHour(productivityMetrics.peakHour)}
         </p>
-        <p className="text-[10px] sm:text-xs text-zinc-500 dark:text-zinc-400 mt-1 truncate">{t('analytics.stats.mostScheduledTime')}</p>
+        <p className="text-[10px] sm:text-xs text-zinc-500 dark:text-zinc-400 mt-1 truncate">
+          {t('analytics.stats.mostScheduledTime')}
+        </p>
       </motion.div>
 
       <motion.div
@@ -298,7 +289,9 @@ const BentoStatsGrid: React.FC<BentoStatsGridProps> = ({ data, comparison, isLoa
         <p className="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-zinc-100">
           <NumberFlow value={focusTimeMetrics.totalFocusBlocks} />
         </p>
-        <p className="text-[10px] sm:text-xs text-zinc-500 dark:text-zinc-400 mt-1 truncate">{t('analytics.stats.focusBlocksDescription')}</p>
+        <p className="text-[10px] sm:text-xs text-zinc-500 dark:text-zinc-400 mt-1 truncate">
+          {t('analytics.stats.focusBlocksDescription')}
+        </p>
       </motion.div>
 
       <motion.div
@@ -338,7 +331,9 @@ const BentoStatsGrid: React.FC<BentoStatsGridProps> = ({ data, comparison, isLoa
           <NumberFlow value={longestEvent} />
           <span className="text-sm sm:text-lg font-medium text-zinc-500">H</span>
         </p>
-        <p className="text-[10px] sm:text-xs text-zinc-500 dark:text-zinc-400 mt-1 truncate">{t('analytics.stats.longestSingleEvent')}</p>
+        <p className="text-[10px] sm:text-xs text-zinc-500 dark:text-zinc-400 mt-1 truncate">
+          {t('analytics.stats.longestSingleEvent')}
+        </p>
       </motion.div>
 
       <motion.div
@@ -356,7 +351,9 @@ const BentoStatsGrid: React.FC<BentoStatsGridProps> = ({ data, comparison, isLoa
         <p className="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-zinc-100">
           <NumberFlow value={eventFreeDays} />
         </p>
-        <p className="text-[10px] sm:text-xs text-zinc-500 dark:text-zinc-400 mt-1 truncate">{t('analytics.stats.daysWithoutEvents')}</p>
+        <p className="text-[10px] sm:text-xs text-zinc-500 dark:text-zinc-400 mt-1 truncate">
+          {t('analytics.stats.daysWithoutEvents')}
+        </p>
       </motion.div>
 
       <motion.div
@@ -374,7 +371,9 @@ const BentoStatsGrid: React.FC<BentoStatsGridProps> = ({ data, comparison, isLoa
         <p className="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-zinc-100">
           <NumberFlow value={allDayEventsCount} />
         </p>
-        <p className="text-[10px] sm:text-xs text-zinc-500 dark:text-zinc-400 mt-1 truncate">{t('analytics.stats.allDayEvents')}</p>
+        <p className="text-[10px] sm:text-xs text-zinc-500 dark:text-zinc-400 mt-1 truncate">
+          {t('analytics.stats.allDayEvents')}
+        </p>
       </motion.div>
 
       <motion.div
@@ -392,7 +391,9 @@ const BentoStatsGrid: React.FC<BentoStatsGridProps> = ({ data, comparison, isLoa
         <p className="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-zinc-100">
           <NumberFlow value={recurringEventsCount} />
         </p>
-        <p className="text-[10px] sm:text-xs text-zinc-500 dark:text-zinc-400 mt-1 truncate">{t('analytics.stats.recurringEvents')}</p>
+        <p className="text-[10px] sm:text-xs text-zinc-500 dark:text-zinc-400 mt-1 truncate">
+          {t('analytics.stats.recurringEvents')}
+        </p>
       </motion.div>
     </motion.div>
   )

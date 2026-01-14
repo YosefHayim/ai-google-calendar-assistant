@@ -19,7 +19,8 @@ export type PreferenceKey =
   | "voice_preference"
   | "agent_profile"
   | "daily_briefing"
-  | "cross_platform_sync";
+  | "cross_platform_sync"
+  | "geo_location";
 
 export interface AllyBrainPreference {
   enabled: boolean;
@@ -61,6 +62,15 @@ export interface CrossPlatformSyncPreference {
   enabled: boolean;
 }
 
+export interface GeoLocationPreference {
+  enabled: boolean;
+  lastKnownLocation?: {
+    latitude: number;
+    longitude: number;
+    timestamp: string;
+  };
+}
+
 export type PreferenceValue =
   | AllyBrainPreference
   | ContextualSchedulingPreference
@@ -68,7 +78,8 @@ export type PreferenceValue =
   | VoicePreference
   | AgentProfilePreference
   | DailyBriefingPreference
-  | CrossPlatformSyncPreference;
+  | CrossPlatformSyncPreference
+  | GeoLocationPreference;
 
 export interface PreferenceResult<T> {
   value: T;
@@ -92,6 +103,7 @@ export const PREFERENCE_DEFAULTS: Record<PreferenceKey, PreferenceValue> = {
   agent_profile: { profileId: "" },
   daily_briefing: { enabled: false, time: "08:00", timezone: "UTC" },
   cross_platform_sync: { enabled: true },
+  geo_location: { enabled: false },
 };
 
 export const VALID_PREFERENCE_KEYS: PreferenceKey[] = [
@@ -102,6 +114,7 @@ export const VALID_PREFERENCE_KEYS: PreferenceKey[] = [
   "agent_profile",
   "daily_briefing",
   "cross_platform_sync",
+  "geo_location",
 ];
 
 // ============================================
@@ -333,4 +346,13 @@ export async function getCrossPlatformSyncPreference(
     userId,
     "cross_platform_sync"
   );
+}
+
+/**
+ * Get geo_location preference
+ */
+export async function getGeoLocationPreference(
+  userId: string
+): Promise<GeoLocationPreference | null> {
+  return getPreference<GeoLocationPreference>(userId, "geo_location");
 }

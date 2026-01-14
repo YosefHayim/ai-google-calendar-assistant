@@ -111,15 +111,11 @@ export function getCountryFromTimezone(timezone: string): string | null {
   return TIMEZONE_TO_COUNTRY[timezone] ?? null
 }
 
-export function getLanguageForCountry(
-  countryCode: string,
-): SupportedLanguageCode | null {
+export function getLanguageForCountry(countryCode: string): SupportedLanguageCode | null {
   return COUNTRY_TO_LANGUAGE[countryCode] ?? null
 }
 
-export function getLanguageFromBrowserLang(
-  browserLang: string,
-): SupportedLanguageCode | null {
+export function getLanguageFromBrowserLang(browserLang: string): SupportedLanguageCode | null {
   if (browserLang in BROWSER_LANG_TO_SUPPORTED) {
     return BROWSER_LANG_TO_SUPPORTED[browserLang]
   }

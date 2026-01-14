@@ -7,6 +7,7 @@ import { ChartContainer, type ChartConfig } from '@/components/ui/chart'
 import type { CalendarBreakdownItem } from '@/types/analytics'
 import { getValidHexColor } from '@/lib/colorUtils'
 import { calculatePercentage, sumBy } from '@/lib/dataUtils'
+import { formatHours } from '@/lib/formatUtils'
 
 interface TimeAllocationDonutChartProps {
   data: CalendarBreakdownItem[]
@@ -46,14 +47,11 @@ export const TimeAllocationDonutChart: React.FC<TimeAllocationDonutChartProps> =
               return (
                 <div className="rounded-lg border border-zinc-700 bg-zinc-900 dark:bg-zinc-800 px-3 py-2 text-white shadow-xl">
                   <div className="flex items-center gap-2 mb-1">
-                    <div
-                      className="w-3 h-3 rounded-sm"
-                      style={{ backgroundColor: getValidHexColor(item.color) }}
-                    />
+                    <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: getValidHexColor(item.color) }} />
                     <span className="font-medium text-sm">{item.category}</span>
                   </div>
                   <div className="text-zinc-300 text-xs">
-                    {item.hours.toFixed(1)} hours ({item.percentage}%)
+                    {formatHours(item.hours, 1)} ({item.percentage}%)
                   </div>
                 </div>
               )
@@ -80,24 +78,15 @@ export const TimeAllocationDonutChart: React.FC<TimeAllocationDonutChartProps> =
             content={({ viewBox }) => {
               if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
                 return (
-                  <text
-                    x={viewBox.cx}
-                    y={viewBox.cy}
-                    textAnchor="middle"
-                    dominantBaseline="middle"
-                  >
+                  <text x={viewBox.cx} y={viewBox.cy} textAnchor="middle" dominantBaseline="middle">
                     <tspan
                       x={viewBox.cx}
                       y={viewBox.cy}
                       className="fill-zinc-900 dark:fill-zinc-100 text-3xl font-bold"
                     >
-                      {totalHours.toFixed(1)}h
+                      {formatHours(totalHours)}
                     </tspan>
-                    <tspan
-                      x={viewBox.cx}
-                      y={(viewBox.cy || 0) + 24}
-                      className="fill-zinc-500 text-xs font-medium"
-                    >
+                    <tspan x={viewBox.cx} y={(viewBox.cy || 0) + 24} className="fill-zinc-500 text-xs font-medium">
                       Tracked
                     </tspan>
                   </text>
