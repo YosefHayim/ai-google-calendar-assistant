@@ -150,6 +150,8 @@ export async function getEventHandler(
       location: string | null | undefined
       status: string | null | undefined
       htmlLink: string | null | undefined
+      hangoutLink: string | null | undefined
+      conferenceData: Event["conferenceData"] | undefined
     }> = []
     const calendarEventMap: { calendarId: string; eventCount: number }[] = []
     let truncated = false
@@ -178,6 +180,8 @@ export async function getEventHandler(
             location: e.location,
             status: e.status,
             htmlLink: e.htmlLink,
+            hangoutLink: e.hangoutLink,
+            conferenceData: e.conferenceData,
           }))
           aggregatedEvents.push(...eventsToAdd)
           if (events.length > remainingSlots) {
@@ -295,6 +299,7 @@ export async function updateEventHandler(
     email,
     calendarId: params.calendarId ?? "primary",
     eventId: params.eventId,
+    addMeetLink: params.addMeetLink ?? false,
   })
 }
 

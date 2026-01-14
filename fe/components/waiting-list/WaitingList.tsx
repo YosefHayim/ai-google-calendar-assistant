@@ -1,14 +1,12 @@
 'use client'
 
-import { AllyLogo } from '@/components/shared/logo'
-import { ArrowLeft } from 'lucide-react'
+import React, { useState } from 'react'
+
 import { Input } from '@/components/ui/input'
 import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button'
-import Link from 'next/link'
-import React, { useState } from 'react'
 import { SparklesCore } from '@/components/ui/sparkles'
-import { waitingListService } from '@/services/waiting-list.service'
 import { toast } from 'sonner'
+import { waitingListService } from '@/services/waiting-list.service'
 
 const WaitingList: React.FC = () => {
   const [email, setEmail] = useState('')
@@ -60,21 +58,6 @@ const WaitingList: React.FC = () => {
         <div className="absolute inset-0 w-full h-full bg-white dark:bg-[#030303] [mask-image:radial-gradient(450px_300px_at_center,transparent_20%,white)] dark:[mask-image:radial-gradient(450px_300px_at_center,transparent_20%,black)]"></div>
       </div>
 
-      {/* Brand & Escape Link (since Navbar is hidden) */}
-      <div className="absolute top-10 left-10 z-30">
-        <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 bg-zinc-900 dark:bg-white rounded-md flex items-center justify-center text-white dark:text-zinc-900 shadow-xl group-hover:scale-110 transition-transform">
-            <AllyLogo className="w-6 h-6" />
-          </div>
-          <div className="flex flex-col">
-            <span className="text-lg font-bold text-zinc-900 dark:text-zinc-100 leading-none">Ally</span>
-            <span className="text-xs font-medium text-zinc-500 flex items-center gap-1 group-hover:text-primary transition-colors">
-              <ArrowLeft size={16} /> Back Home
-            </span>
-          </div>
-        </Link>
-      </div>
-
       <div className="w-full max-w-2xl text-center relative z-20">
         <h1 className="text-center text-5xl font-medium tracking-tight md:text-7xl lg:text-8xl text-zinc-900 dark:text-zinc-100 leading-none">
           Priority Access <br />
@@ -85,10 +68,10 @@ const WaitingList: React.FC = () => {
           access.
         </p>
 
-        <form onSubmit={handleSubmit} className="mt-12 w-full max-w-lg mx-auto space-y-3">
-          <div className="flex flex-col sm:flex-row w-full gap-3 items-center">
+        <form onSubmit={handleSubmit} className="mt-12 w-full max-w-lg mx-auto space-y-2">
+          <div className="flex flex-row w-full gap-2 items-center justify-center">
             <Input
-              className="flex-1 w-full h-16 px-6 rounded-full text-lg"
+              className="w-auto h-16 px-6 rounded-lg text-lg"
               placeholder="Your name (optional)"
               type="text"
               value={name}
@@ -96,7 +79,7 @@ const WaitingList: React.FC = () => {
               disabled={isSubmitting}
             />
             <Input
-              className="flex-1 w-full h-16 px-6 rounded-full text-lg"
+              className="w-auto h-16 px-6 rounded-lg text-lg"
               placeholder="Email"
               type="email"
               value={email}
@@ -104,13 +87,13 @@ const WaitingList: React.FC = () => {
               required
               disabled={isSubmitting}
             />
-            <InteractiveHoverButton
-              text={isSubmitting ? 'Joining...' : 'Reserve Spot'}
-              className="w-full sm:w-56 h-16 text-lg shadow-xl shadow-primary/20 shrink-0"
-              type="submit"
-              disabled={isSubmitting}
-            />
           </div>
+          <InteractiveHoverButton
+            text={isSubmitting ? 'Joining...' : 'Reserve Spot'}
+            className="w-full h-16 text-lg shadow-xl shadow-primary/20 max-w-full"
+            type="submit"
+            disabled={isSubmitting}
+          />
 
           {position && (
             <div className="mt-6 p-4 rounded-lg bg-primary/10 border border-primary/20">
