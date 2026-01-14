@@ -1,9 +1,10 @@
 'use client'
 
-import React, { useMemo } from 'react'
 import { Activity, AlertTriangle, CheckCircle, Clock, Coffee, Moon, Users } from 'lucide-react'
-import { Skeleton } from '@/components/ui/skeleton'
+import React, { useMemo } from 'react'
+
 import type { EnhancedAnalyticsData } from '@/types/analytics'
+import { Skeleton } from '@/components/ui/skeleton'
 
 interface ScheduleHealthScoreProps {
   data: EnhancedAnalyticsData
@@ -158,7 +159,7 @@ const ScheduleHealthScore: React.FC<ScheduleHealthScoreProps> = ({ data, isLoadi
         <div className="flex justify-center mb-4 sm:mb-6">
           <Skeleton className="h-24 w-24 sm:h-32 sm:w-32 rounded-full" />
         </div>
-        <div className="space-y-2 sm:space-y-3">
+        <div className="space-y-2 sm:space-y-2">
           {Array.from({ length: 4 }).map((_, i) => (
             <Skeleton key={i} className="h-8 sm:h-10 w-full" />
           ))}

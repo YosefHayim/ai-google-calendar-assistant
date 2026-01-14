@@ -166,7 +166,7 @@ const TelegramChat = ({ messages }: { messages: Message[] }) => (
 
     {/* Chat messages */}
     <div
-      className="flex-1 p-4 space-y-3 overflow-y-auto"
+      className="flex-1 p-4 space-y-2 overflow-y-auto"
       style={{
         backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
       }}
@@ -409,7 +409,7 @@ const WebChatView = () => (
         <Volume2 className="w-5 h-5 text-zinc-400" />
       </div>
     </div>
-    <div className="flex-1 p-4 space-y-3 overflow-y-auto">
+    <div className="flex-1 p-4 space-y-2 overflow-y-auto">
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex justify-end">
         <div className="bg-primary text-white px-4 py-2 rounded-2xl rounded-tr-sm text-sm max-w-[80%]">
           What's my schedule like tomorrow?
@@ -451,7 +451,7 @@ const WebBrainView = () => (
         <p className="text-xs text-zinc-500">Your personal preferences</p>
       </div>
     </div>
-    <div className="space-y-3">
+    <div className="space-y-2">
       {[
         { label: 'Preferred meeting times', value: '10 AM - 4 PM', icon: Clock },
         { label: 'Focus time preference', value: 'Mornings', icon: Brain },

@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import {
   AlignLeft,
   ArrowRight,
@@ -19,13 +18,14 @@ import {
   X,
 } from 'lucide-react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
 import { format, formatDistanceStrict } from 'date-fns'
 
+import { Button } from '@/components/ui/button'
 import type { EventDetailsDialogProps } from '@/types/analytics'
 import React from 'react'
 import { RescheduleDialog } from '@/components/dashboard/RescheduleDialog'
 import { sanitizeHtml } from '@/lib/security/sanitize'
+import { useState } from 'react'
 
 const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
   isOpen,
@@ -126,7 +126,7 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
           </DialogHeader>
 
           {/* Primary Info Grid (Time & Location) */}
-          <div className="bg-zinc-50 dark:bg-zinc-900/50 rounded-lg border border-zinc-100 dark:border-zinc-800 p-4 space-y-3">
+          <div className="bg-zinc-50 dark:bg-zinc-900/50 rounded-lg border border-zinc-100 dark:border-zinc-800 p-4 space-y-2">
             {/* Time Range */}
             <div className="flex items-center gap-3 text-sm">
               <div className="w-5 flex justify-center">

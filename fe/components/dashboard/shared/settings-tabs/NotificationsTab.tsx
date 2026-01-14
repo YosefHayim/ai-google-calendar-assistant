@@ -393,7 +393,7 @@ export const NotificationsTab: React.FC = () => {
               </SettingsSection>
 
               {reminderSettings.enabled && !reminderSettings.useCalendarDefaults && (
-                <div className="space-y-3 pt-2">
+                <div className="space-y-2 pt-2">
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Custom Reminders</span>
                     <span className="text-xs text-zinc-500">

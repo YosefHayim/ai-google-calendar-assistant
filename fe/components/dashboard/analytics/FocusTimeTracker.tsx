@@ -1,9 +1,10 @@
 'use client'
 
-import React from 'react'
-import { Target, Clock, Zap, TrendingUp } from 'lucide-react'
-import { Skeleton } from '@/components/ui/skeleton'
+import { Clock, Target, TrendingUp, Zap } from 'lucide-react'
+
 import type { FocusTimeMetrics } from '@/types/analytics'
+import React from 'react'
+import { Skeleton } from '@/components/ui/skeleton'
 
 interface FocusTimeTrackerProps {
   data: FocusTimeMetrics
@@ -20,7 +21,7 @@ const FocusTimeTracker: React.FC<FocusTimeTrackerProps> = ({ data, totalDays, is
           <Skeleton className="h-4 sm:h-5 w-28 sm:w-32" />
         </div>
         <Skeleton className="h-3 sm:h-4 w-40 sm:w-48 mb-4 sm:mb-6" />
-        <div className="space-y-3 sm:space-y-4">
+        <div className="space-y-2 sm:space-y-4">
           {Array.from({ length: 4 }).map((_, i) => (
             <Skeleton key={i} className="h-10 sm:h-12 w-full" />
           ))}
@@ -92,7 +93,7 @@ const FocusTimeTracker: React.FC<FocusTimeTrackerProps> = ({ data, totalDays, is
         Deep work blocks over {totalDays} days
       </p>
 
-      <div className="space-y-2 sm:space-y-3">
+      <div className="space-y-2 sm:space-y-2">
         {focusStats.map((stat) => (
           <div
             key={stat.label}

@@ -205,7 +205,7 @@ export const SubscriptionTab: React.FC = () => {
         </div>
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-2">
         {plans?.map((plan) => (
           <PlanRow
             key={plan.id}

@@ -1,6 +1,7 @@
 'use client'
 
-import { useRef, useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+
 import { toast } from 'sonner'
 
 interface UseMutedSpeechDetectionOptions {

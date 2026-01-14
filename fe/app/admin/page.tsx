@@ -1,38 +1,39 @@
 'use client'
 
-import React from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
+import { Area, AreaChart, Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, XAxis } from 'recharts'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
 import {
-  Users,
+  BarChart3,
+  Bell,
+  Calendar,
+  ChevronDown,
   CreditCard,
-  TrendingUp,
-  TrendingDown,
   DollarSign,
   Download,
-  Calendar,
-  Settings,
-  BarChart3,
   FileText,
-  Bell,
   Info,
-  ChevronDown,
+  Settings,
+  TrendingDown,
+  TrendingUp,
+  Users,
 } from 'lucide-react'
-import { Line, LineChart, Bar, BarChart, Area, AreaChart, XAxis, CartesianGrid, ResponsiveContainer } from 'recharts'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { formatCurrency, formatNumber } from '@/services/admin.service'
 import {
+  useAdminMe,
   useDashboardStats,
-  useSubscriptionDistribution,
   useRecentPayments,
   useRevenueTrends,
+  useSubscriptionDistribution,
   useSubscriptionTrends,
-  useAdminMe,
 } from '@/hooks/queries/admin'
-import { formatCurrency, formatNumber } from '@/services/admin.service'
+
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import React from 'react'
 import { cn } from '@/lib/utils'
 
 // Helper to generate sparkline data from trends
@@ -546,7 +547,7 @@ function AnalyticsTabContent({
             <CardDescription>Breakdown by plan type</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
+            <div className="space-y-2">
               {distribution && distribution.length > 0 ? (
                 distribution.map((plan) => (
                   <div key={plan.planSlug} className="flex items-center justify-between">

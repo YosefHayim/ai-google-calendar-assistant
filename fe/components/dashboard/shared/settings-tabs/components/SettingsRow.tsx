@@ -20,7 +20,7 @@ export const SettingsRow: React.FC<SettingsRowProps> = ({ title, tooltip, contro
     <div
       className={cn(
         'flex flex-col gap-2 min-h-[48px] py-3',
-        'sm:grid sm:grid-cols-3 sm:items-center sm:gap-4',
+        'sm:grid sm:grid-cols-[1fr_auto] sm:items-center sm:gap-4',
         className,
       )}
       role="group"
@@ -36,31 +36,6 @@ export const SettingsRow: React.FC<SettingsRowProps> = ({ title, tooltip, contro
             {title}
           </span>
         </div>
-        <div className="flex items-center gap-1 flex-shrink-0">
-          <div className="sm:hidden">
-            <TooltipProvider delayDuration={200}>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="h-5 w-5 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
-                    aria-label={`More info about ${title}`}
-                  >
-                    <HelpCircle className="w-3.5 h-3.5" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="top" className="max-w-[250px] text-center">
-                  <p>{tooltip}</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-        </div>
-      </div>
-
-      <div className="hidden sm:flex justify-center">
         <TooltipProvider delayDuration={200}>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -68,10 +43,10 @@ export const SettingsRow: React.FC<SettingsRowProps> = ({ title, tooltip, contro
                 type="button"
                 variant="ghost"
                 size="icon"
-                className="h-6 w-6 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
+                className="h-5 w-5 sm:h-6 sm:w-6 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 flex-shrink-0"
                 aria-label={`More info about ${title}`}
               >
-                <HelpCircle className="w-4 h-4" />
+                <HelpCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </Button>
             </TooltipTrigger>
             <TooltipContent side="top" className="max-w-[250px] text-center">

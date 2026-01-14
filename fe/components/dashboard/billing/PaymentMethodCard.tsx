@@ -1,10 +1,11 @@
 'use client'
 
-import React from 'react'
+import type { CardBrand, PaymentMethod } from '@/services/payment.service'
+
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
+import React from 'react'
 import { cn } from '@/lib/utils'
-import type { PaymentMethod, CardBrand } from '@/services/payment.service'
 
 interface PaymentMethodCardProps {
   paymentMethod: PaymentMethod | null
@@ -121,7 +122,7 @@ export function PaymentMethodCard({ paymentMethod, onUpdate, className }: Paymen
           {paymentMethod.isDefault && <span className="text-xs text-zinc-400 uppercase tracking-wider">Default</span>}
         </div>
 
-        <div className="space-y-3">
+        <div className="space-y-2">
           <div className="flex items-center gap-2">
             <span className="text-zinc-400 text-lg tracking-widest">••••</span>
             <span className="text-zinc-400 text-lg tracking-widest">••••</span>
