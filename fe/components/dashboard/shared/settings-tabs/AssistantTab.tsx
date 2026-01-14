@@ -9,7 +9,7 @@ import {
   Check,
   Loader2,
   Play,
-  Sparkles,
+
   Square,
   Volume2,
   Lightbulb,

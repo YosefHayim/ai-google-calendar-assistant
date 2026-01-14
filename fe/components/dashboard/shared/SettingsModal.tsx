@@ -196,7 +196,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
       />
 
       <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-        <DialogContent className="w-[calc(100%-2rem)] max-w-3xl max-h-[85vh] sm:h-[500px] p-0 gap-0 overflow-hidden bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 [&>button]:hidden">
+        <DialogContent className="w-[calc(100%-2rem)] max-w-3xl h-[85vh] sm:h-[600px] p-0 gap-0 overflow-hidden bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 [&>button]:hidden">
           <DialogHeader className="sr-only">
             <DialogTitle>Settings</DialogTitle>
             <DialogDescription>Manage your Ally preferences and settings.</DialogDescription>
@@ -283,7 +283,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
               </div>
 
               <div className="flex-1 overflow-y-auto overflow-x-hidden px-4 pb-4 pt-2 sm:pt-0">
-                <TabsContent value="general" className="mt-0">
+                <TabsContent value="general" className="mt-0 data-[state=active]:pb-4">
                   <GeneralTab
                     isDarkMode={isDarkMode}
                     toggleTheme={toggleTheme}
@@ -292,11 +292,11 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
                   />
                 </TabsContent>
 
-                <TabsContent value="account" className="mt-0">
+                <TabsContent value="account" className="mt-0 data-[state=active]:pb-4">
                   <SubscriptionTab />
                 </TabsContent>
 
-                <TabsContent value="integrations" className="mt-0">
+                <TabsContent value="integrations" className="mt-0 data-[state=active]:pb-4">
                   <IntegrationsTab
                     googleCalendarStatus={googleCalendarStatus}
                     isGoogleCalendarLoading={isGoogleCalendarLoading}
@@ -307,19 +307,19 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
                   />
                 </TabsContent>
 
-                <TabsContent value="assistant" className="mt-0">
+                <TabsContent value="assistant" className="mt-0 data-[state=active]:pb-4">
                   <AssistantTab />
                 </TabsContent>
 
-                <TabsContent value="notifications" className="mt-0">
+                <TabsContent value="notifications" className="mt-0 data-[state=active]:pb-4">
                   <NotificationsTab />
                 </TabsContent>
 
-                <TabsContent value="security" className="mt-0">
+                <TabsContent value="security" className="mt-0 data-[state=active]:pb-4">
                   <SecurityTab />
                 </TabsContent>
 
-                <TabsContent value="data_controls" className="mt-0">
+                <TabsContent value="data_controls" className="mt-0 data-[state=active]:pb-4">
                   <DataControlsTab
                     onDeleteAllConversations={handleDeleteAllConversations}
                     isDeletingConversations={isDeletingConversations}

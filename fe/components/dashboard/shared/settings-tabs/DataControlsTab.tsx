@@ -1,6 +1,6 @@
 'use client'
 
-import { Brain, Download, Loader2, MessageSquareX, Trash2, MessageCircleX, Eraser, UserX } from 'lucide-react'
+import { Brain, Loader2, MessageSquareX, Trash2, MessageCircleX, Eraser, UserX } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { SettingsRow, SettingsSection, TabHeader } from './components'
 
