@@ -7,6 +7,7 @@ import { googleTokenValidation } from "@/middlewares/google-token-validation";
 import { logger } from "@/utils/logger";
 import { sendR } from "@/utils/http";
 import { supabaseAuth } from "@/middlewares/supabase-auth";
+import { calendarAiRateLimiter } from "@/middlewares/rate-limiter";
 
 const router = express.Router();
 
@@ -27,8 +28,8 @@ router.get("/", eventsController.getAllEvents);
 // get event analytics by start date and end date
 router.get("/analytics", eventsController.getEventAnalytics);
 
-// get AI-powered insights for calendar events
-router.get("/insights", eventsController.getInsights);
+// get AI-powered insights for calendar events (rate limited - expensive AI operation)
+router.get("/insights", calendarAiRateLimiter, eventsController.getInsights);
 
 // quick add an event
 router.post("/quick-add", eventsController.quickAddEvent);
@@ -45,8 +46,8 @@ router.post("/import", eventsController.importEvent);
 // get instances of a recurring event (must be before /:id)
 router.get("/:id/instances", eventsController.getEventInstances);
 
-// get reschedule suggestions for an event
-router.get("/:id/reschedule-suggestions", eventsController.getRescheduleSuggestions);
+// get reschedule suggestions for an event (rate limited - expensive AI operation)
+router.get("/:id/reschedule-suggestions", calendarAiRateLimiter, eventsController.getRescheduleSuggestions);
 
 // apply reschedule to an event
 router.post("/:id/reschedule", eventsController.rescheduleEvent);

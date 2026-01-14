@@ -133,3 +133,74 @@ export const aiChatBurstLimiter = rateLimit({
     });
   },
 });
+
+/**
+ * Voice/Whisper rate limiter - STRICT
+ * Protects expensive Whisper transcription and TTS synthesis endpoints
+ * These are costly operations that can cause billing spikes
+ *
+ * Limits: 5 requests per minute per user
+ */
+export const voiceRateLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 5, // 5 voice requests per minute
+  message: "Too many voice requests. Please wait before sending more audio.",
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => {
+    return req.user?.id || req.ip || "anonymous";
+  },
+  handler: (_req, res) => {
+    sendR(res, STATUS_RESPONSE.TOO_MANY_REQUESTS, "Too many voice requests. Please wait before sending more audio.", {
+      code: "VOICE_RATE_LIMIT_EXCEEDED",
+      retryAfter: 60,
+    });
+  },
+});
+
+/**
+ * Voice/Whisper burst limiter
+ * Prevents rapid-fire voice requests
+ *
+ * Limits: 2 requests per 10 seconds per user
+ */
+export const voiceBurstLimiter = rateLimit({
+  windowMs: 10 * 1000, // 10 seconds
+  max: 2, // 2 requests per 10 seconds
+  message: "Too many voice requests in a short time. Please slow down.",
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => {
+    return req.user?.id || req.ip || "anonymous";
+  },
+  handler: (_req, res) => {
+    sendR(res, STATUS_RESPONSE.TOO_MANY_REQUESTS, "Too many voice requests in a short time. Please slow down.", {
+      code: "VOICE_BURST_LIMIT_EXCEEDED",
+      retryAfter: 10,
+    });
+  },
+});
+
+/**
+ * Calendar AI rate limiter
+ * Protects expensive AI-powered calendar operations (insights, reschedule suggestions)
+ * These endpoints call external AI APIs and can be costly
+ *
+ * Limits: 10 requests per minute per user
+ */
+export const calendarAiRateLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 10, // 10 AI calendar requests per minute
+  message: "Too many calendar AI requests. Please wait before requesting more insights.",
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => {
+    return req.user?.id || req.ip || "anonymous";
+  },
+  handler: (_req, res) => {
+    sendR(res, STATUS_RESPONSE.TOO_MANY_REQUESTS, "Too many calendar AI requests. Please wait before requesting more insights.", {
+      code: "CALENDAR_AI_RATE_LIMIT_EXCEEDED",
+      retryAfter: 60,
+    });
+  },
+});
