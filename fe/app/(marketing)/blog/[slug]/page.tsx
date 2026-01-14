@@ -2,7 +2,6 @@
 
 import { useParams, notFound } from 'next/navigation'
 import Link from 'next/link'
-import Image from 'next/image'
 import MarketingLayout from '@/components/marketing/MarketingLayout'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -110,8 +109,8 @@ export default function BlogPostPage() {
       <JsonLd data={[breadcrumbSchema, articleSchema]} />
 
       {post.image && (
-        <div className="relative w-full h-[300px] md:h-[400px] lg:h-[500px]">
-          <Image src={post.image} alt={post.title} fill className="object-cover" priority sizes="100vw" />
+        <div className="relative w-full h-[300px] md:h-[400px] lg:h-[500px] overflow-hidden">
+          <img src={post.image} alt={post.title} className="absolute inset-0 w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-zinc-950 via-transparent to-transparent" />
         </div>
       )}
@@ -206,14 +205,12 @@ export default function BlogPostPage() {
               {relatedPosts.map((relatedPost) => (
                 <Link key={relatedPost.slug} href={`/blog/${relatedPost.slug}`}>
                   <Card className="h-full overflow-hidden border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors group">
-                    <div className="aspect-video relative bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-zinc-800 dark:to-zinc-900">
+                    <div className="aspect-video relative overflow-hidden bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-zinc-800 dark:to-zinc-900">
                       {relatedPost.image ? (
-                        <Image
+                        <img
                           src={relatedPost.image}
                           alt={relatedPost.title}
-                          fill
-                          className="object-cover group-hover:scale-105 transition-transform duration-300"
-                          sizes="(max-width: 768px) 100vw, 33vw"
+                          className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         />
                       ) : (
                         <div className="absolute inset-0 flex items-center justify-center">
