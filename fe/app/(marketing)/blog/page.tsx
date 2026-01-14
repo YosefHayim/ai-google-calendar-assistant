@@ -18,9 +18,12 @@ import {
 } from '@/lib/data/blog-posts'
 import { BookOpen, ArrowRight, Calendar, Clock, User, Mail, Sparkles } from 'lucide-react'
 import { formatBlogDate } from '@/lib/formatUtils'
+import { newsletterService } from '@/services/newsletter.service'
+import { toast } from 'sonner'
 
 export default function BlogPage() {
   const [email, setEmail] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [activeCategory, setActiveCategory] = useState<BlogCategory>('All')
 
   const filteredPosts = getBlogPostsByCategory(activeCategory)
@@ -175,9 +178,24 @@ export default function BlogPage() {
             Get the latest productivity tips, feature updates, and insights delivered straight to your inbox.
           </p>
           <form
-            onSubmit={(e) => {
+            onSubmit={async (e) => {
               e.preventDefault()
-              setEmail('')
+              if (!email) return
+
+              setIsSubmitting(true)
+              try {
+                await newsletterService.subscribe({ email, source: 'blog' })
+                toast.success('Success!', {
+                  description: "You've been subscribed to our newsletter.",
+                })
+                setEmail('')
+              } catch (error: any) {
+                toast.error('Error', {
+                  description: error.response?.data?.message || 'Failed to subscribe. Please try again.',
+                })
+              } finally {
+                setIsSubmitting(false)
+              }
             }}
             className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
           >
@@ -188,9 +206,10 @@ export default function BlogPage() {
               onChange={(e) => setEmail(e.target.value)}
               className="flex-1 h-12"
               required
+              disabled={isSubmitting}
             />
-            <Button type="submit" size="lg" className="gap-2">
-              Subscribe
+            <Button type="submit" size="lg" className="gap-2" disabled={isSubmitting}>
+              {isSubmitting ? 'Subscribing...' : 'Subscribe'}
               <ArrowRight className="w-4 h-4" />
             </Button>
           </form>

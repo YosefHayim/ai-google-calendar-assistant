@@ -5,10 +5,44 @@ import { ArrowLeft } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button'
 import Link from 'next/link'
-import React from 'react'
+import React, { useState } from 'react'
 import { SparklesCore } from '@/components/ui/sparkles'
+import { waitingListService } from '@/services/waiting-list.service'
+import { toast } from 'sonner'
 
 const WaitingList: React.FC = () => {
+  const [email, setEmail] = useState('')
+  const [name, setName] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [position, setPosition] = useState<number | null>(null)
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!email) return
+
+    setIsSubmitting(true)
+    try {
+      const result = await waitingListService.join({
+        email,
+        name: name || undefined,
+        source: 'landing',
+      })
+
+      setPosition(result.data?.position || null)
+      toast.success('Welcome to the waiting list!', {
+        description: `You're #${result.data?.position} in line. We'll notify you when it's your turn!`,
+      })
+      setEmail('')
+      setName('')
+    } catch (error: any) {
+      toast.error('Error', {
+        description: error.response?.data?.message || 'Failed to join waiting list. Please try again.',
+      })
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
   return (
     <div className="relative min-h-screen w-full bg-white dark:bg-[#030303] flex flex-col items-center justify-center py-20 px-4 overflow-hidden animate-in fade-in duration-500">
       {/* Background Sparkles */}
@@ -51,13 +85,41 @@ const WaitingList: React.FC = () => {
           access.
         </p>
 
-        <div className="mt-12 flex flex-col sm:flex-row w-full max-w-lg mx-auto gap-3 items-center">
-          <Input className="flex-1 w-full h-16 px-6 rounded-full text-lg" placeholder="Email" type="email" />
-          <InteractiveHoverButton
-            text="Reserve Spot"
-            className="w-full sm:w-56 h-16 text-lg shadow-xl shadow-primary/20 shrink-0"
-          />
-        </div>
+        <form onSubmit={handleSubmit} className="mt-12 w-full max-w-lg mx-auto space-y-3">
+          <div className="flex flex-col sm:flex-row w-full gap-3 items-center">
+            <Input
+              className="flex-1 w-full h-16 px-6 rounded-full text-lg"
+              placeholder="Your name (optional)"
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              disabled={isSubmitting}
+            />
+            <Input
+              className="flex-1 w-full h-16 px-6 rounded-full text-lg"
+              placeholder="Email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              disabled={isSubmitting}
+            />
+            <InteractiveHoverButton
+              text={isSubmitting ? 'Joining...' : 'Reserve Spot'}
+              className="w-full sm:w-56 h-16 text-lg shadow-xl shadow-primary/20 shrink-0"
+              type="submit"
+              disabled={isSubmitting}
+            />
+          </div>
+
+          {position && (
+            <div className="mt-6 p-4 rounded-lg bg-primary/10 border border-primary/20">
+              <p className="text-center text-primary font-medium">
+                You're <strong>#{position}</strong> on the waiting list!
+              </p>
+            </div>
+          )}
+        </form>
 
         <p className="mt-6 text-xs text-zinc-400 font-medium">Secure. Private. Instant notification upon entry.</p>
       </div>

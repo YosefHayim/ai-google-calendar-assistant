@@ -19,42 +19,75 @@ import {
   Link as LinkIcon,
   BookOpen,
   ArrowRight,
+  Check,
 } from 'lucide-react'
 import { formatBlogDate } from '@/lib/formatUtils'
+import { useState } from 'react'
 
 function ShareButtons({ title, url }: { title: string; url: string }) {
+  const [showCopyCheck, setShowCopyCheck] = useState(false)
+  const [toastMessage, setToastMessage] = useState('')
+
   const encodedTitle = encodeURIComponent(title)
   const encodedUrl = encodeURIComponent(url)
 
+  const showToast = (message: string) => {
+    setToastMessage(message)
+    setTimeout(() => setToastMessage(''), 3000)
+  }
+
   const copyToClipboard = () => {
     navigator.clipboard.writeText(url)
+    setShowCopyCheck(true)
+    showToast('Copied to clipboard!')
+    setTimeout(() => setShowCopyCheck(false), 1000)
+  }
+
+  const handleTwitterShare = () => {
+    window.open(`https://twitter.com/intent/tweet?text=${encodedTitle}&url=${encodedUrl}`, '_blank')
+    showToast('Opening Twitter...')
+  }
+
+  const handleLinkedInShare = () => {
+    window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`, '_blank')
+    showToast('Opening LinkedIn...')
   }
 
   return (
-    <div className="flex items-center gap-2">
-      <span className="text-sm text-zinc-500 dark:text-zinc-400 mr-2">Share:</span>
-      <Button
-        variant="ghost"
-        size="icon"
-        className="h-8 w-8"
-        onClick={() => window.open(`https://twitter.com/intent/tweet?text=${encodedTitle}&url=${encodedUrl}`, '_blank')}
-      >
-        <Twitter className="h-4 w-4" />
-      </Button>
-      <Button
-        variant="ghost"
-        size="icon"
-        className="h-8 w-8"
-        onClick={() =>
-          window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`, '_blank')
-        }
-      >
-        <Linkedin className="h-4 w-4" />
-      </Button>
-      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={copyToClipboard}>
-        <LinkIcon className="h-4 w-4" />
-      </Button>
-    </div>
+    <>
+      <div className="flex items-center gap-2">
+        <span className="text-sm text-zinc-500 dark:text-zinc-400 mr-2">Share:</span>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8"
+          onClick={handleTwitterShare}
+        >
+          <Twitter className="h-4 w-4" />
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8"
+          onClick={handleLinkedInShare}
+        >
+          <Linkedin className="h-4 w-4" />
+        </Button>
+        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={copyToClipboard}>
+          {showCopyCheck ? (
+            <Check className="h-4 w-4 text-green-500" />
+          ) : (
+            <LinkIcon className="h-4 w-4" />
+          )}
+        </Button>
+      </div>
+      
+      {toastMessage && (
+        <div className="fixed bottom-4 right-4 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 px-4 py-2 rounded-lg shadow-lg animate-in fade-in slide-in-from-bottom-2 duration-300">
+          {toastMessage}
+        </div>
+      )}
+    </>
   )
 }
 

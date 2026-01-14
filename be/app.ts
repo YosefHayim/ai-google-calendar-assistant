@@ -19,6 +19,7 @@ import { initSlackBot } from "@/slack-bot";
 import { initWhatsApp } from "@/whatsapp-bot/init-whatsapp";
 import { logger } from "@/utils/logger";
 import morgan from "morgan";
+import newsletterRoute from "@/routes/newsletter-route";
 import path from "node:path";
 import paymentRoute from "@/routes/payment-route";
 import riscRoute from "@/routes/risc-route";
@@ -30,6 +31,7 @@ import { startTelegramBot } from "@/telegram-bot/init-bot";
 import telegramRoute from "@/routes/telegram-route";
 import usersRoute from "@/routes/users-route";
 import voiceRoute from "@/routes/voice-route";
+import waitingListRoute from "@/routes/waiting-list-route";
 import webhooksRoute from "@/routes/webhooks-route";
 import whatsAppRoute from "@/routes/whatsapp-route";
 
@@ -109,6 +111,8 @@ app.use(ROUTES.TELEGRAM, telegramRoute);
 app.use(ROUTES.RISC, riscRoute);
 app.use(ROUTES.SLACK, slackRoute);
 app.use(ROUTES.SHARED, sharedRoute);
+app.use("/api/newsletter", newsletterRoute);
+app.use("/api/waitinglist", waitingListRoute);
 
 app.use((_req, res, _next) => {
   logger.error(`Opps! It looks like this route doesn't exist. ${_req.originalUrl}`);
