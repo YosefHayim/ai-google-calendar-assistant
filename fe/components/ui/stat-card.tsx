@@ -35,12 +35,7 @@ export function StatCard({
       )}
     >
       <div className="flex items-center gap-2 sm:gap-3">
-        <div
-          className={cn(
-            'w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-md shrink-0',
-            iconBgColor,
-          )}
-        >
+        <div className={cn('w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-md shrink-0', iconBgColor)}>
           {icon}
         </div>
         <h3 className="text-xs sm:text-sm font-medium text-zinc-500 dark:text-zinc-400 truncate">{title}</h3>
@@ -50,12 +45,10 @@ export function StatCard({
           <p className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-100 truncate">{value}</p>
           {trend && (
             <span
-              className={cn(
-                'text-xs font-medium shrink-0',
-                trend.isPositive ? 'text-emerald-500' : 'text-red-500',
-              )}
+              className={cn('text-xs font-medium shrink-0', trend.isPositive ? 'text-emerald-500' : 'text-red-500')}
             >
-              {trend.isPositive ? '+' : ''}{trend.value}%
+              {trend.isPositive ? '+' : ''}
+              {trend.value}%
             </span>
           )}
         </div>

@@ -56,7 +56,9 @@ export const referralService = {
     return data
   },
 
-  async applyReferralCode(payload: ApplyReferralData): Promise<ApiResponse<{ referrerEmail: string; rewardType: string }>> {
+  async applyReferralCode(
+    payload: ApplyReferralData,
+  ): Promise<ApiResponse<{ referrerEmail: string; rewardType: string }>> {
     const { data } = await apiClient.post<ApiResponse<{ referrerEmail: string; rewardType: string }>>(
       '/api/referral/apply',
       payload,
@@ -65,9 +67,8 @@ export const referralService = {
   },
 
   async convertReferral(): Promise<ApiResponse<{ rewardType: string; rewardAmount: number }>> {
-    const { data } = await apiClient.post<ApiResponse<{ rewardType: string; rewardAmount: number }>>(
-      '/api/referral/convert',
-    )
+    const { data } =
+      await apiClient.post<ApiResponse<{ rewardType: string; rewardAmount: number }>>('/api/referral/convert')
     return data
   },
 

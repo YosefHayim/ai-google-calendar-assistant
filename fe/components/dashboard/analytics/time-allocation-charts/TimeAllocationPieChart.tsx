@@ -83,7 +83,9 @@ export const TimeAllocationPieChart: React.FC<TimeAllocationPieChartProps> = ({ 
                   >
                     <div className="w-3 h-3 rounded-sm flex-shrink-0" style={{ backgroundColor: entry.color }} />
                     <span className="text-zinc-700 dark:text-zinc-300 truncate max-w-[100px]">{item.category}</span>
-                    <span className="text-zinc-500 dark:text-zinc-400 font-mono text-xs">{formatHours(item.hours)}</span>
+                    <span className="text-zinc-500 dark:text-zinc-400 font-mono text-xs">
+                      {formatHours(item.hours)}
+                    </span>
                   </li>
                 )
               })}

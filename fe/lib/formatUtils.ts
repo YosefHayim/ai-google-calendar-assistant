@@ -109,10 +109,7 @@ export function formatTimeRange(startTime: string | Date, endTime: string | Date
  * formatDuration(120) // "2h"
  * formatDuration(90, { style: 'long' }) // "1 hour 30 minutes"
  */
-export function formatDuration(
-  minutes: number,
-  options: { style?: 'short' | 'long' } = {}
-): string {
+export function formatDuration(minutes: number, options: { style?: 'short' | 'long' } = {}): string {
   const { style = 'short' } = options
 
   if (minutes < 60) {
@@ -146,10 +143,7 @@ export function formatDuration(
  * formatDurationMs(5400000) // "1h 30m"
  * formatDurationMs(1800000) // "30m"
  */
-export function formatDurationMs(
-  durationMs: number,
-  options: { style?: 'short' | 'long' } = {}
-): string {
+export function formatDurationMs(durationMs: number, options: { style?: 'short' | 'long' } = {}): string {
   const minutes = durationMs / (1000 * 60)
   return formatDuration(minutes, options)
 }
@@ -294,11 +288,7 @@ export interface CurrencyFormatOptions {
  * formatCurrency(1000, { minimumFractionDigits: 0 }) // "$10"
  */
 export function formatCurrency(cents: number, options: CurrencyFormatOptions = {}): string {
-  const {
-    currency = 'USD',
-    minimumFractionDigits = 2,
-    maximumFractionDigits = 2,
-  } = options
+  const { currency = 'USD', minimumFractionDigits = 2, maximumFractionDigits = 2 } = options
 
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -320,11 +310,7 @@ export function formatCurrency(cents: number, options: CurrencyFormatOptions = {
  * formatMoney(19.99, { currency: 'EUR' }) // "€19.99"
  */
 export function formatMoney(amount: number, options: CurrencyFormatOptions = {}): string {
-  const {
-    currency = 'USD',
-    minimumFractionDigits = 2,
-    maximumFractionDigits = 2,
-  } = options
+  const { currency = 'USD', minimumFractionDigits = 2, maximumFractionDigits = 2 } = options
 
   return new Intl.NumberFormat('en-US', {
     style: 'currency',

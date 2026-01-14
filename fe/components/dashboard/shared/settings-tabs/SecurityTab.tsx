@@ -13,10 +13,7 @@ export const SecurityTab: React.FC = () => {
 
   return (
     <Card>
-      <TabHeader
-        title="Security"
-        tooltip="Manage your authentication and session settings"
-      />
+      <TabHeader title="Security" tooltip="Manage your authentication and session settings" />
       <CardContent>
         <SettingsSection title="Authentication">
           <SettingsRow

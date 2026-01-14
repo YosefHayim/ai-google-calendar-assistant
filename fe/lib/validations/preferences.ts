@@ -86,13 +86,14 @@ export const VOICE_OPTIONS: { value: TTSVoice; label: string; description: strin
   { value: 'shimmer', label: 'Shimmer', description: 'Clear and melodic' },
 ]
 
-/**
- * Validation schema for daily briefing preference
- */
+export const BRIEFING_CHANNELS = ['email', 'telegram', 'whatsapp', 'slack'] as const
+export type BriefingChannel = (typeof BRIEFING_CHANNELS)[number]
+
 export const dailyBriefingSchema = z.object({
   enabled: z.boolean(),
   time: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/, 'Time must be in HH:MM format'),
   timezone: z.string().min(1, 'Timezone is required'),
+  channel: z.enum(BRIEFING_CHANNELS).optional().default('email'),
 })
 
 export type DailyBriefingFormData = z.infer<typeof dailyBriefingSchema>
@@ -101,7 +102,15 @@ export const dailyBriefingDefaults: DailyBriefingFormData = {
   enabled: false,
   time: '08:00',
   timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+  channel: 'email',
 }
+
+export const CHANNEL_OPTIONS: { value: BriefingChannel; label: string; description: string }[] = [
+  { value: 'email', label: 'Email', description: 'Receive briefing in your inbox' },
+  { value: 'telegram', label: 'Telegram', description: 'Get notified via Telegram bot' },
+  { value: 'whatsapp', label: 'WhatsApp', description: 'Receive via WhatsApp message' },
+  { value: 'slack', label: 'Slack', description: 'Get briefing in Slack DM' },
+]
 
 export const crossPlatformSyncSchema = z.object({
   enabled: z.boolean(),

@@ -1,14 +1,16 @@
 import type { Request, Response } from "express";
-import { STATUS_RESPONSE, env, SUPABASE } from "@/config";
+import { env, STATUS_RESPONSE, SUPABASE } from "@/config";
+import type { DailyBriefingPreference } from "@/services/user-preferences-service";
+import { dispatchBriefing } from "@/utils/briefing/channel-dispatcher";
+import {
+  type FormattedEvent,
+  fetchAllCalendarEvents,
+  formatSingleEvent,
+} from "@/utils/calendar/get-events";
+import { initUserSupabaseCalendarWithTokensAndUpdateTokens } from "@/utils/calendar/init";
 import { reqResAsyncHandler, sendR } from "@/utils/http";
-import { Resend } from "resend";
 import { logger } from "@/utils/logger";
 import { userRepository } from "@/utils/repositories/UserRepository";
-import { initUserSupabaseCalendarWithTokensAndUpdateTokens } from "@/utils/calendar/init";
-import { fetchAllCalendarEvents, formatSingleEvent, type FormattedEvent } from "@/utils/calendar/get-events";
-import type { DailyBriefingPreference } from "@/services/user-preferences-service";
-
-const resend = new Resend(env.resend.apiKey);
 
 // ============================================
 // Types
@@ -41,7 +43,7 @@ type BriefingResult = {
 function isWithinTimeWindow(
   targetTime: string,
   timezone: string,
-  windowMinutes: number = 5
+  windowMinutes = 5
 ): boolean {
   try {
     const now = new Date();
@@ -56,8 +58,12 @@ function isWithinTimeWindow(
     });
 
     const parts = formatter.formatToParts(now);
-    const currentHour = parseInt(parts.find((p) => p.type === "hour")?.value ?? "0");
-    const currentMinute = parseInt(parts.find((p) => p.type === "minute")?.value ?? "0");
+    const currentHour = Number.parseInt(
+      parts.find((p) => p.type === "hour")?.value ?? "0"
+    );
+    const currentMinute = Number.parseInt(
+      parts.find((p) => p.type === "minute")?.value ?? "0"
+    );
 
     // Calculate minutes since midnight for both times
     const targetMinutesSinceMidnight = targetHour * 60 + targetMinute;
@@ -89,7 +95,10 @@ function getTodayInTimezone(timezone: string): string {
 /**
  * Get start and end of day in ISO format for a given timezone
  */
-function getDayBoundsInTimezone(timezone: string): { timeMin: string; timeMax: string } {
+function getDayBoundsInTimezone(timezone: string): {
+  timeMin: string;
+  timeMax: string;
+} {
   const now = new Date();
 
   // Get today's date in the user's timezone
@@ -123,7 +132,7 @@ function getTimezoneOffsetMinutes(timezone: string): number {
   const now = new Date();
   const utcDate = new Date(now.toLocaleString("en-US", { timeZone: "UTC" }));
   const tzDate = new Date(now.toLocaleString("en-US", { timeZone: timezone }));
-  return (utcDate.getTime() - tzDate.getTime()) / 60000;
+  return (utcDate.getTime() - tzDate.getTime()) / 60_000;
 }
 
 /**
@@ -167,9 +176,9 @@ function buildBriefingEmailHtml(
     let minutes = 0;
     match.forEach((m) => {
       if (m.includes("hour")) {
-        minutes += parseInt(m) * 60;
+        minutes += Number.parseInt(m) * 60;
       } else {
-        minutes += parseInt(m);
+        minutes += Number.parseInt(m);
       }
     });
     return acc + minutes;
@@ -287,12 +296,15 @@ async function updateLastSentDate(userId: string, date: string): Promise<void> {
     .single();
 
   if (fetchError || !userData) {
-    logger.error(`Failed to fetch user preferences for update: ${fetchError?.message}`);
+    logger.error(
+      `Failed to fetch user preferences for update: ${fetchError?.message}`
+    );
     return;
   }
 
   const preferences = (userData.preferences as Record<string, unknown>) || {};
-  const dailyBriefing = (preferences.daily_briefing as DailyBriefingPreference) || {};
+  const dailyBriefing =
+    (preferences.daily_briefing as DailyBriefingPreference) || {};
 
   const updatedPreferences = {
     ...preferences,
@@ -314,11 +326,18 @@ async function updateLastSentDate(userId: string, date: string): Promise<void> {
 /**
  * Process a single user's daily briefing
  */
-async function processUserBriefing(user: UserWithBriefingPreference): Promise<BriefingResult> {
+async function processUserBriefing(
+  user: UserWithBriefingPreference
+): Promise<BriefingResult> {
   const briefingPref = user.preferences?.daily_briefing;
 
   if (!briefingPref?.enabled) {
-    return { userId: user.id, email: user.email, status: "skipped", reason: "Not enabled" };
+    return {
+      userId: user.id,
+      email: user.email,
+      status: "skipped",
+      reason: "Not enabled",
+    };
   }
 
   const { time, timezone, lastSentDate } = briefingPref;
@@ -326,23 +345,42 @@ async function processUserBriefing(user: UserWithBriefingPreference): Promise<Br
 
   // Skip if already sent today
   if (lastSentDate === todayStr) {
-    return { userId: user.id, email: user.email, status: "skipped", reason: "Already sent today" };
+    return {
+      userId: user.id,
+      email: user.email,
+      status: "skipped",
+      reason: "Already sent today",
+    };
   }
 
   // Check if it's time to send
   if (!isWithinTimeWindow(time, timezone, 5)) {
-    return { userId: user.id, email: user.email, status: "skipped", reason: "Not within time window" };
+    return {
+      userId: user.id,
+      email: user.email,
+      status: "skipped",
+      reason: "Not within time window",
+    };
   }
 
   try {
     // Get user's Google Calendar tokens
-    const tokensResult = await userRepository.findUserWithGoogleTokens(user.email);
+    const tokensResult = await userRepository.findUserWithGoogleTokens(
+      user.email
+    );
     if (!tokensResult.data) {
-      return { userId: user.id, email: user.email, status: "error", reason: "No Google tokens" };
+      return {
+        userId: user.id,
+        email: user.email,
+        status: "error",
+        reason: "No Google tokens",
+      };
     }
 
     // Initialize calendar client
-    const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokensResult.data);
+    const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(
+      tokensResult.data
+    );
 
     // Fetch today's events
     const { timeMin, timeMax } = getDayBoundsInTimezone(timezone);
@@ -356,8 +394,8 @@ async function processUserBriefing(user: UserWithBriefingPreference): Promise<Br
 
     const events = (eventsData.items ?? []).map(formatSingleEvent);
 
-    // Send email
-    const userName = user.first_name || user.display_name || user.email.split("@")[0];
+    const userName =
+      user.first_name || user.display_name || user.email.split("@")[0];
     const dateFormatter = new Intl.DateTimeFormat("en-US", {
       weekday: "long",
       month: "long",
@@ -366,28 +404,45 @@ async function processUserBriefing(user: UserWithBriefingPreference): Promise<Br
     });
     const formattedDate = dateFormatter.format(new Date());
 
-    const { error: emailError } = await resend.emails.send({
-      from: env.resend.fromEmail,
-      to: user.email,
-      subject: `Your Daily Briefing - ${events.length} event${events.length !== 1 ? "s" : ""} today`,
+    const channel = briefingPref.channel ?? "email";
+    const subject = `Your Daily Briefing - ${events.length} event${events.length !== 1 ? "s" : ""} today`;
+
+    const sendResult = await dispatchBriefing(user.id, channel, {
+      subject,
       html: buildBriefingEmailHtml(userName, formattedDate, events),
       text: buildBriefingEmailText(userName, formattedDate, events),
     });
 
-    if (emailError) {
-      logger.error(`Failed to send briefing email to ${user.email}:`, emailError);
-      return { userId: user.id, email: user.email, status: "error", reason: emailError.message };
+    if (!sendResult.success) {
+      logger.error(
+        `Failed to send briefing to ${user.email} via ${channel}:`,
+        sendResult.error
+      );
+      return {
+        userId: user.id,
+        email: user.email,
+        status: "error",
+        reason: sendResult.error ?? "Send failed",
+      };
     }
 
     // Update lastSentDate
     await updateLastSentDate(user.id, todayStr);
 
-    logger.info(`Daily briefing sent to ${user.email} with ${events.length} events`);
+    logger.info(
+      `Daily briefing sent to ${user.email} via ${channel} with ${events.length} events`
+    );
     return { userId: user.id, email: user.email, status: "sent" };
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
     logger.error(`Error processing briefing for ${user.email}:`, error);
-    return { userId: user.id, email: user.email, status: "error", reason: errorMessage };
+    return {
+      userId: user.id,
+      email: user.email,
+      status: "error",
+      reason: errorMessage,
+    };
   }
 }
 
@@ -399,68 +454,87 @@ async function processUserBriefing(user: UserWithBriefingPreference): Promise<Br
  * Process daily briefings for all eligible users
  * This endpoint should be called by AWS EventBridge every 5 minutes
  */
-const processDailyBriefings = reqResAsyncHandler(async (req: Request, res: Response) => {
-  // Verify cron secret for security
-  const cronSecret = req.headers["x-cron-secret"] as string;
-  const expectedSecret = process.env.CRON_SECRET;
+const processDailyBriefings = reqResAsyncHandler(
+  async (req: Request, res: Response) => {
+    // Verify cron secret for security
+    const cronSecret = req.headers["x-cron-secret"] as string;
+    const expectedSecret = process.env.CRON_SECRET;
 
-  if (expectedSecret && cronSecret !== expectedSecret) {
-    logger.warn("Unauthorized cron request - invalid secret");
-    return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "Unauthorized");
-  }
-
-  if (!env.resend.isEnabled) {
-    return sendR(res, STATUS_RESPONSE.SERVICE_UNAVAILABLE, "Email service not configured");
-  }
-
-  try {
-    // Query all users with daily_briefing enabled
-    const { data: users, error } = await SUPABASE.from("users")
-      .select("id, email, display_name, first_name, preferences")
-      .not("preferences->daily_briefing->enabled", "is", null);
-
-    if (error) {
-      logger.error("Failed to query users for daily briefing:", error);
-      return sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Failed to query users");
+    if (expectedSecret && cronSecret !== expectedSecret) {
+      logger.warn("Unauthorized cron request - invalid secret");
+      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "Unauthorized");
     }
 
-    const eligibleUsers = (users ?? [])
-      .map((user) => ({
-        ...user,
-        preferences: user.preferences as UserWithBriefingPreference["preferences"],
-      }))
-      .filter((user) => {
-        const briefingPref = user.preferences?.daily_briefing;
-        return briefingPref?.enabled === true;
+    if (!env.resend.isEnabled) {
+      return sendR(
+        res,
+        STATUS_RESPONSE.SERVICE_UNAVAILABLE,
+        "Email service not configured"
+      );
+    }
+
+    try {
+      // Query all users with daily_briefing enabled
+      const { data: users, error } = await SUPABASE.from("users")
+        .select("id, email, display_name, first_name, preferences")
+        .not("preferences->daily_briefing->enabled", "is", null);
+
+      if (error) {
+        logger.error("Failed to query users for daily briefing:", error);
+        return sendR(
+          res,
+          STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
+          "Failed to query users"
+        );
+      }
+
+      const eligibleUsers = (users ?? [])
+        .map((user) => ({
+          ...user,
+          preferences:
+            user.preferences as UserWithBriefingPreference["preferences"],
+        }))
+        .filter((user) => {
+          const briefingPref = user.preferences?.daily_briefing;
+          return briefingPref?.enabled === true;
+        });
+
+      logger.info(
+        `Processing daily briefings for ${eligibleUsers.length} eligible users`
+      );
+
+      // Process each user
+      const results: BriefingResult[] = [];
+      for (const user of eligibleUsers) {
+        const result = await processUserBriefing(user);
+        results.push(result);
+      }
+
+      const sent = results.filter((r) => r.status === "sent").length;
+      const skipped = results.filter((r) => r.status === "skipped").length;
+      const errors = results.filter((r) => r.status === "error").length;
+
+      logger.info(
+        `Daily briefing results: ${sent} sent, ${skipped} skipped, ${errors} errors`
+      );
+
+      return sendR(res, STATUS_RESPONSE.SUCCESS, "Daily briefings processed", {
+        processed: eligibleUsers.length,
+        sent,
+        skipped,
+        errors,
+        details: results,
       });
-
-    logger.info(`Processing daily briefings for ${eligibleUsers.length} eligible users`);
-
-    // Process each user
-    const results: BriefingResult[] = [];
-    for (const user of eligibleUsers) {
-      const result = await processUserBriefing(user);
-      results.push(result);
+    } catch (error) {
+      logger.error("Error processing daily briefings:", error);
+      return sendR(
+        res,
+        STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
+        "Failed to process daily briefings"
+      );
     }
-
-    const sent = results.filter((r) => r.status === "sent").length;
-    const skipped = results.filter((r) => r.status === "skipped").length;
-    const errors = results.filter((r) => r.status === "error").length;
-
-    logger.info(`Daily briefing results: ${sent} sent, ${skipped} skipped, ${errors} errors`);
-
-    return sendR(res, STATUS_RESPONSE.SUCCESS, "Daily briefings processed", {
-      processed: eligibleUsers.length,
-      sent,
-      skipped,
-      errors,
-      details: results,
-    });
-  } catch (error) {
-    logger.error("Error processing daily briefings:", error);
-    return sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Failed to process daily briefings");
   }
-});
+);
 
 /**
  * Health check endpoint for cron

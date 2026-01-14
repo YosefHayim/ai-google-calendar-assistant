@@ -16,10 +16,7 @@ export interface WaitingListResponse {
 
 export const waitingListService = {
   async join(data: WaitingListJoinData): Promise<ApiResponse<WaitingListResponse>> {
-    const { data: responseData } = await apiClient.post<ApiResponse<WaitingListResponse>>(
-      '/api/waitinglist/join',
-      data,
-    )
+    const { data: responseData } = await apiClient.post<ApiResponse<WaitingListResponse>>('/api/waitinglist/join', data)
     return responseData
   },
 

@@ -74,11 +74,7 @@ export function TrendText({ value, suffix = '%', className }: TrendTextProps) {
   const isPositive = value > 0
   const isNeutral = value === 0
 
-  const colorClass = isNeutral
-    ? 'text-zinc-500'
-    : isPositive
-      ? 'text-emerald-500'
-      : 'text-red-500'
+  const colorClass = isNeutral ? 'text-zinc-500' : isPositive ? 'text-emerald-500' : 'text-red-500'
 
   return (
     <span className={cn('text-xs font-medium', colorClass, className)}>

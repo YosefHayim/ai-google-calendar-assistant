@@ -26,21 +26,10 @@ function UserAvatar() {
   )
 }
 
-function MessageBubble({
-  message,
-  isUser,
-  isFirst,
-}: {
-  message: ChatMessage
-  isUser: boolean
-  isFirst: boolean
-}) {
+function MessageBubble({ message, isUser, isFirst }: { message: ChatMessage; isUser: boolean; isFirst: boolean }) {
   return (
     <div
-      className={cn(
-        'flex gap-2.5 sm:gap-3 animate-fade-in',
-        isUser ? 'flex-row-reverse' : 'flex-row'
-      )}
+      className={cn('flex gap-2.5 sm:gap-3 animate-fade-in', isUser ? 'flex-row-reverse' : 'flex-row')}
       style={{ animationDelay: `${isFirst ? 0 : 50}ms` }}
     >
       {isUser ? <UserAvatar /> : <AllyAvatar />}
@@ -49,7 +38,7 @@ function MessageBubble({
           'max-w-[85%] sm:max-w-[75%] lg:max-w-[70%] rounded-2xl px-4 py-3 sm:px-5 sm:py-3.5',
           isUser
             ? 'bg-primary text-white rounded-tr-md shadow-md shadow-primary/10'
-            : 'bg-zinc-100 dark:bg-zinc-800/80 text-zinc-900 dark:text-zinc-100 rounded-tl-md border border-zinc-200/50 dark:border-zinc-700/50'
+            : 'bg-zinc-100 dark:bg-zinc-800/80 text-zinc-900 dark:text-zinc-100 rounded-tl-md border border-zinc-200/50 dark:border-zinc-700/50',
         )}
       >
         <p className="text-[15px] sm:text-base leading-relaxed whitespace-pre-wrap">{message.content}</p>
@@ -87,10 +76,12 @@ function ErrorState({ error }: { error: string }) {
         <h1 className="text-2xl sm:text-3xl font-semibold text-zinc-900 dark:text-zinc-100 mb-3">
           Conversation Not Found
         </h1>
-        <p className="text-zinc-500 dark:text-zinc-400 mb-8 text-base sm:text-lg leading-relaxed">
-          {error}
-        </p>
-        <Button asChild size="lg" className="gap-2 h-12 px-6 text-base font-medium rounded-xl shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all">
+        <p className="text-zinc-500 dark:text-zinc-400 mb-8 text-base sm:text-lg leading-relaxed">{error}</p>
+        <Button
+          asChild
+          size="lg"
+          className="gap-2 h-12 px-6 text-base font-medium rounded-xl shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all"
+        >
           <Link href="/">
             Try Ask Ally
             <ArrowRight className="w-4 h-4" />
@@ -157,9 +148,7 @@ export default function SharedConversationPage() {
             </Link>
 
             <div className="flex-1 min-w-0 sm:hidden">
-              <h1 className="font-medium text-sm text-zinc-900 dark:text-zinc-100 truncate">
-                {conversation.title}
-              </h1>
+              <h1 className="font-medium text-sm text-zinc-900 dark:text-zinc-100 truncate">{conversation.title}</h1>
               <div className="flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400">
                 <span>{conversation.messageCount} msgs</span>
                 <span className="text-zinc-300 dark:text-zinc-600">•</span>
@@ -168,7 +157,8 @@ export default function SharedConversationPage() {
                   <>
                     <span className="text-zinc-300 dark:text-zinc-600">•</span>
                     <span className="text-zinc-400 dark:text-zinc-500">
-                      Exp {new Date(conversation.expiresAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                      Exp{' '}
+                      {new Date(conversation.expiresAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                     </span>
                   </>
                 )}
@@ -192,9 +182,7 @@ export default function SharedConversationPage() {
 
       <div className="hidden sm:block max-w-3xl mx-auto w-full px-4 sm:px-6 pt-6 pb-2">
         <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-5 shadow-sm">
-          <h1 className="font-semibold text-xl text-zinc-900 dark:text-zinc-100 mb-2">
-            {conversation.title}
-          </h1>
+          <h1 className="font-semibold text-xl text-zinc-900 dark:text-zinc-100 mb-2">{conversation.title}</h1>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-zinc-500 dark:text-zinc-400">
             <span className="flex items-center gap-1.5">
               <Calendar className="w-4 h-4" />
@@ -207,7 +195,8 @@ export default function SharedConversationPage() {
             {conversation.expiresAt && (
               <span className="flex items-center gap-1.5 text-zinc-400 dark:text-zinc-500">
                 <span className="text-zinc-300 dark:text-zinc-600">•</span>
-                Expires {new Date(conversation.expiresAt).toLocaleDateString('en-US', {
+                Expires{' '}
+                {new Date(conversation.expiresAt).toLocaleDateString('en-US', {
                   month: 'short',
                   day: 'numeric',
                   year: 'numeric',
@@ -221,16 +210,9 @@ export default function SharedConversationPage() {
       <main className="flex-1 max-w-3xl mx-auto w-full px-4 sm:px-6 py-4 sm:py-6 relative">
         <div className="space-y-4 sm:space-y-5">
           {conversation.messages.map((message, index) => (
-            <MessageBubble
-              key={index}
-              message={message}
-              isUser={message.role === 'user'}
-              isFirst={index === 0}
-            />
+            <MessageBubble key={index} message={message} isUser={message.role === 'user'} isFirst={index === 0} />
           ))}
         </div>
-
-
       </main>
 
       <footer className="border-t border-zinc-200/80 dark:border-zinc-800/80 bg-white/50 dark:bg-zinc-950/50 backdrop-blur-sm">
@@ -240,9 +222,7 @@ export default function SharedConversationPage() {
               <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-primary via-primary to-orange-400 flex items-center justify-center shadow-md shadow-primary/20">
                 <AllyLogo className="w-4 h-4" />
               </div>
-              <span className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
-                Powered by Ask Ally
-              </span>
+              <span className="text-sm font-medium text-zinc-600 dark:text-zinc-400">Powered by Ask Ally</span>
             </div>
 
             <span className="hidden sm:block text-zinc-300 dark:text-zinc-700">|</span>

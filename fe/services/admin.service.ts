@@ -135,5 +135,3 @@ export const getAdminMe = async (): Promise<AdminUser> => {
   const response = await apiClient.get<ApiResponse<AdminUser>>(ENDPOINTS.ADMIN_ME)
   return response.data.data!
 }
-
-

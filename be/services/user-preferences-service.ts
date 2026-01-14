@@ -51,11 +51,14 @@ export interface AgentProfilePreference {
   profileId: string;
 }
 
+export type BriefingChannel = "email" | "telegram" | "whatsapp" | "slack";
+
 export interface DailyBriefingPreference {
   enabled: boolean;
   time: string; // HH:MM (24-hour format)
   timezone: string; // IANA timezone (e.g., "America/New_York")
   lastSentDate?: string; // YYYY-MM-DD for duplicate prevention
+  channel: BriefingChannel;
 }
 
 export interface CrossPlatformSyncPreference {
@@ -101,7 +104,7 @@ export const PREFERENCE_DEFAULTS: Record<PreferenceKey, PreferenceValue> = {
   },
   voice_preference: { enabled: true, voice: "alloy" },
   agent_profile: { profileId: "" },
-  daily_briefing: { enabled: false, time: "08:00", timezone: "UTC" },
+  daily_briefing: { enabled: false, time: "08:00", timezone: "UTC", channel: "email" },
   cross_platform_sync: { enabled: true },
   geo_location: { enabled: false },
 };

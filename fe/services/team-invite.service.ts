@@ -58,7 +58,9 @@ export interface CreateTeamData {
 }
 
 export const teamInviteService = {
-  async createInvite(data: CreateInviteData): Promise<ApiResponse<{ invite: Partial<TeamInvite>; inviteLink: string }>> {
+  async createInvite(
+    data: CreateInviteData,
+  ): Promise<ApiResponse<{ invite: Partial<TeamInvite>; inviteLink: string }>> {
     const { data: response } = await apiClient.post<ApiResponse<{ invite: Partial<TeamInvite>; inviteLink: string }>>(
       '/api/teams/invite',
       data,
@@ -80,10 +82,9 @@ export const teamInviteService = {
     inviteToken: string,
     action: 'accept' | 'decline',
   ): Promise<ApiResponse<{ status: string; inviterEmail: string; teamName: string | null }>> {
-    const { data } = await apiClient.post<ApiResponse<{ status: string; inviterEmail: string; teamName: string | null }>>(
-      '/api/teams/invite/respond',
-      { inviteToken, action },
-    )
+    const { data } = await apiClient.post<
+      ApiResponse<{ status: string; inviterEmail: string; teamName: string | null }>
+    >('/api/teams/invite/respond', { inviteToken, action })
     return data
   },
 

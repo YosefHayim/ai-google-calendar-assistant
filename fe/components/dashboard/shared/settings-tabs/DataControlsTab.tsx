@@ -28,10 +28,7 @@ export const DataControlsTab: React.FC<DataControlsTabProps> = ({
 
   return (
     <Card>
-      <TabHeader
-        title="Data Controls"
-        tooltip="Manage your data, conversations, and account"
-      />
+      <TabHeader title="Data Controls" tooltip="Manage your data, conversations, and account" />
       <CardContent>
         <SettingsSection showDivider className="mt-4">
           <SettingsRow
