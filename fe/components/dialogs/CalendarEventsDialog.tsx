@@ -29,6 +29,7 @@ import React, { useState, useMemo } from 'react'
 import { format } from 'date-fns'
 import { useTranslation } from 'react-i18next'
 import { useDebouncedCallback } from 'use-debounce'
+import { formatDurationMs, formatDate, DATE_FORMATS } from '@/lib/formatUtils'
 
 const CalendarEventsDialog: React.FC<CalendarEventsDialogProps> = ({
   isOpen,
@@ -105,23 +106,17 @@ const CalendarEventsDialog: React.FC<CalendarEventsDialogProps> = ({
     if (!start || !end) return 'N/A'
 
     const durationMs = end.getTime() - start.getTime()
-    const durationHours = durationMs / (1000 * 60 * 60)
-
-    if (durationHours < 1) {
-      const minutes = Math.round(durationMs / (1000 * 60))
-      return `${minutes}m`
-    }
-    return `${durationHours.toFixed(1)}h`
+    return formatDurationMs(durationMs)
   }
 
   const formatEventTime = (event: CalendarEvent): string => {
     if (!event.start) return 'N/A'
 
     if (event.start.dateTime) {
-      return format(new Date(event.start.dateTime), "MMM dd, yyyy 'at' h:mm a")
+      return formatDate(event.start.dateTime, 'DATE_TIME')
     }
     if (event.start.date) {
-      return format(new Date(event.start.date), 'MMM dd, yyyy')
+      return formatDate(event.start.date, 'FULL')
     }
     return 'N/A'
   }

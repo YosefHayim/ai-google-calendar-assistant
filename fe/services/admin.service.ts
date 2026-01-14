@@ -136,17 +136,4 @@ export const getAdminMe = async (): Promise<AdminUser> => {
   return response.data.data!
 }
 
-// ============================================
-// Helpers
-// ============================================
 
-export const formatCurrency = (cents: number, currency = 'USD'): string => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency,
-  }).format(cents / 100)
-}
-
-export const formatNumber = (num: number): string => {
-  return new Intl.NumberFormat('en-US').format(num)
-}

@@ -17,15 +17,7 @@ import {
   type BlogCategory,
 } from '@/lib/data/blog-posts'
 import { BookOpen, ArrowRight, Calendar, Clock, User, Mail, Sparkles } from 'lucide-react'
-
-function formatDate(dateString: string): string {
-  const date = new Date(dateString)
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  })
-}
+import { formatBlogDate } from '@/lib/formatUtils'
 
 export default function BlogPage() {
   const [email, setEmail] = useState('')
@@ -109,7 +101,7 @@ export default function BlogPage() {
                           </span>
                           <span className="flex items-center gap-1">
                             <Calendar className="w-4 h-4" />
-                            {formatDate(featuredPost.publishedAt)}
+                            {formatBlogDate(featuredPost.publishedAt)}
                           </span>
                           <span className="flex items-center gap-1">
                             <Clock className="w-4 h-4" />

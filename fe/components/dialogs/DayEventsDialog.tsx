@@ -25,6 +25,7 @@ import React, { useState, useMemo } from 'react'
 import { format } from 'date-fns'
 import { useTranslation } from 'react-i18next'
 import { useDebouncedCallback } from 'use-debounce'
+import { formatDurationMs, formatHours, formatTimeRange, DATE_FORMATS } from '@/lib/formatUtils'
 
 export interface DayEventsDialogProps {
   isOpen: boolean
@@ -115,20 +116,14 @@ const DayEventsDialog: React.FC<DayEventsDialogProps> = ({
     if (!start || !end) return 'N/A'
 
     const durationMs = end.getTime() - start.getTime()
-    const durationHours = durationMs / (1000 * 60 * 60)
-
-    if (durationHours < 1) {
-      const minutes = Math.round(durationMs / (1000 * 60))
-      return `${minutes}m`
-    }
-    return `${durationHours.toFixed(1)}h`
+    return formatDurationMs(durationMs)
   }
 
   const formatEventTime = (event: CalendarEvent): string => {
     if (!event.start) return 'N/A'
 
     if (event.start.dateTime) {
-      return format(new Date(event.start.dateTime), 'h:mm a')
+      return format(new Date(event.start.dateTime), DATE_FORMATS.TIME_12H)
     }
     if (event.start.date) {
       return 'All day'
@@ -140,9 +135,7 @@ const DayEventsDialog: React.FC<DayEventsDialogProps> = ({
     if (!event.start || !event.end) return 'N/A'
 
     if (event.start.dateTime && event.end.dateTime) {
-      const start = format(new Date(event.start.dateTime), 'h:mm a')
-      const end = format(new Date(event.end.dateTime), 'h:mm a')
-      return `${start} - ${end}`
+      return formatTimeRange(event.start.dateTime, event.end.dateTime)
     }
     if (event.start.date) {
       return 'All day'
@@ -180,7 +173,7 @@ const DayEventsDialog: React.FC<DayEventsDialogProps> = ({
                 <div className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-2">
                   <Clock size={12} className="text-primary" />
                   <span>
-                    {t('dialogs.dayEvents.available', 'Available')}: {availableHours.toFixed(1)}h
+                    {t('dialogs.dayEvents.available', 'Available')}: {formatHours(availableHours)}
                   </span>
                 </div>
                 <div className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-2">
@@ -191,7 +184,7 @@ const DayEventsDialog: React.FC<DayEventsDialogProps> = ({
                           filtered: filteredBusyHours.toFixed(1),
                           total: busyHours.toFixed(1),
                         })
-                      : `${t('dialogs.dayEvents.busy', 'Busy')}: ${busyHours.toFixed(1)}h`}
+                      : `${t('dialogs.dayEvents.busy', 'Busy')}: ${formatHours(busyHours)}`}
                   </span>
                 </div>
                 <div className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-2">

@@ -472,6 +472,49 @@ Session management for agent conversations.
 - UI pattern has consistent structure (icon + title + value, etc.)
 - Loading/skeleton states need standardization
 
+### Formatting Utilities (Frontend)
+
+**ALWAYS use `@/lib/formatUtils`** for consistent formatting across the app. Never create inline formatting functions:
+
+| Function | Purpose | Example |
+|----------|---------|---------|
+| `formatDate(date, format)` | Format dates using DATE_FORMATS constants | `formatDate('2026-01-15', 'FULL')` → "Jan 15, 2026" |
+| `formatBlogDate(date)` | Long date for blog/articles | `formatBlogDate('2026-01-15')` → "January 15, 2026" |
+| `formatTimeRange(start, end)` | Time range display | `formatTimeRange(start, end)` → "3:30 PM - 4:30 PM" |
+| `formatDuration(minutes)` | Duration from minutes | `formatDuration(90)` → "1h 30m" |
+| `formatDurationMs(ms)` | Duration from milliseconds | `formatDurationMs(5400000)` → "1h 30m" |
+| `formatHours(hours, decimals?)` | Hours with suffix | `formatHours(2.5)` → "2.5h" |
+| `formatCurrency(cents, options?)` | Currency from cents | `formatCurrency(1999)` → "$19.99" |
+| `formatMoney(amount, options?)` | Currency from dollars | `formatMoney(19.99)` → "$19.99" |
+| `formatNumber(value, decimals?)` | Number with thousands separator | `formatNumber(1234)` → "1,234" |
+| `formatPercentage(value, total)` | Percentage string | `formatPercentage(3, 4)` → "75%" |
+| `roundToDecimals(value, decimals?)` | Round to N decimals | `roundToDecimals(2.567)` → 2.6 |
+
+**DATE_FORMATS constants** (use with `formatDate()` or date-fns `format()`):
+
+| Constant | Output Example |
+|----------|----------------|
+| `FULL` | "Jan 15, 2026" |
+| `FULL_LONG` | "January 15, 2026" |
+| `SHORT` | "Jan 15" |
+| `WEEKDAY_SHORT` | "Mon, Jan 15" |
+| `WEEKDAY_FULL` | "Monday, January 15, 2026" |
+| `TIME_12H` | "3:30 PM" |
+| `DATE_TIME` | "Jan 15, 2026 at 3:30 PM" |
+
+**Anti-patterns (do NOT use inline):**
+```typescript
+// BAD - inline formatting
+{value.toFixed(1)}h
+{amount.toLocaleString('en-US')}
+date.toLocaleDateString('en-US', {...})
+
+// GOOD - use formatUtils
+{formatHours(value)}
+{formatNumber(amount)}
+{formatDate(date, 'FULL')}
+```
+
 ### Shared
 
 - **Files**: kebab-case (`events-controller.ts`, `date-range-picker.tsx`)

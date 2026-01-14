@@ -263,18 +263,6 @@ export const redirectToBillingPortal = async (returnUrl?: string): Promise<void>
 }
 
 /**
- * Format price for display
- */
-export const formatPrice = (cents: number, currency = 'USD'): string => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency,
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  }).format(cents / 100)
-}
-
-/**
  * Calculate days remaining in trial
  */
 export const calculateTrialDaysLeft = (trialEnd: string | null): number | null => {

@@ -8,6 +8,7 @@ import type { Transaction, TransactionStatus } from '@/services/payment.service'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
+import { formatMoney } from '@/lib/formatUtils'
 
 interface TransactionHistoryTableProps {
   transactions: Transaction[]
@@ -48,14 +49,6 @@ function StatusBadge({ status }: { status: TransactionStatus }) {
   )
 }
 
-function formatAmount(amount: number, currency: string): string {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency,
-    minimumFractionDigits: 2,
-  }).format(amount)
-}
-
 function MobileTransactionCard({
   transaction,
   isExpanded,
@@ -79,7 +72,7 @@ function MobileTransactionCard({
               {format(new Date(transaction.date), 'MMM dd, yyyy')}
             </span>
             <span className="font-mono font-bold text-zinc-900 dark:text-zinc-100">
-              {formatAmount(transaction.amount, transaction.currency)}
+              {formatMoney(transaction.amount, { currency: transaction.currency })}
             </span>
           </div>
           <div className="flex items-center justify-between">
@@ -154,7 +147,7 @@ export function TransactionHistoryTable({ transactions, className }: Transaction
                   {transaction.description}
                 </TableCell>
                 <TableCell className="text-right font-mono font-bold text-zinc-900 dark:text-zinc-100">
-                  {formatAmount(transaction.amount, transaction.currency)}
+                  {formatMoney(transaction.amount, { currency: transaction.currency })}
                 </TableCell>
                 <TableCell>
                   <StatusBadge status={transaction.status} />

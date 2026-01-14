@@ -20,15 +20,7 @@ import {
   BookOpen,
   ArrowRight,
 } from 'lucide-react'
-
-function formatDate(dateString: string): string {
-  const date = new Date(dateString)
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  })
-}
+import { formatBlogDate } from '@/lib/formatUtils'
 
 function ShareButtons({ title, url }: { title: string; url: string }) {
   const encodedTitle = encodeURIComponent(title)
@@ -135,7 +127,7 @@ export default function BlogPostPage() {
               </div>
               <div className="flex items-center gap-1">
                 <Calendar className="w-4 h-4" />
-                {formatDate(post.publishedAt)}
+                {formatBlogDate(post.publishedAt)}
               </div>
               <div className="flex items-center gap-1">
                 <Clock className="w-4 h-4" />
@@ -268,8 +260,7 @@ function formatMarkdownToHtml(markdown: string): string {
     // Line breaks
     .replace(/\n/gim, '<br>')
 
-  // Wrap list items in ul/ol
-  html = html.replace(/(<li>.*<\/li>)/gims, (match) => {
+  html = html.replace(/(<li>[\s\S]*?<\/li>)/gim, (match) => {
     if (!match.includes('<ul>') && !match.includes('<ol>')) {
       return '<ul>' + match + '</ul>'
     }
