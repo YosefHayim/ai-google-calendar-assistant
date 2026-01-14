@@ -4,9 +4,18 @@ const isDev = process.env.NODE_ENV === 'development'
 const nextConfig = {
   output: 'standalone',
   experimental: {
-    // Disabled swc-plugin-component-annotate - causes hydration mismatches
-    // between SSR and client rendering in dev mode
-    swcPlugins: [],
+    swcPlugins: isDev
+      ? [
+          [
+            'swc-plugin-component-annotate',
+            {
+              dataComponent: true,
+              dataElement: true,
+              dataSourceFile: true,
+            },
+          ],
+        ]
+      : [],
   },
   reactCompiler: true,
   compiler: {
