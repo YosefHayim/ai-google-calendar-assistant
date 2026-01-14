@@ -89,3 +89,7 @@ export const SOCIAL_LINKS = {
   WHATSAPP: 'https://wa.me/message/ally',
   EMAIL: 'mailto:hello@askally.io',
 } as const
+
+export const ASSETS = {
+  S3_BASE_URL: 'https://ally-ai-google-calendar.s3.eu-north-1.amazonaws.com',
+} as const
