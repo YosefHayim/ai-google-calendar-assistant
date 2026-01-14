@@ -542,6 +542,21 @@ See `/fe/env.example` for all available options.
 | `GET` | `/audit-logs` | Get audit logs |
 | `GET` | `/payments` | Get payment history |
 
+### Newsletter (`/api/newsletter`)
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/subscribe` | Subscribe to newsletter |
+| `POST` | `/unsubscribe` | Unsubscribe from newsletter |
+| `GET` | `/status` | Get subscription status by email |
+
+### Waiting List (`/api/waitinglist`)
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/join` | Join the waiting list |
+| `GET` | `/position/:email` | Get position in waiting list |
+
 ---
 
 ## Security Architecture

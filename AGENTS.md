@@ -1,6 +1,6 @@
 # AI Google Calendar Assistant
 
-**Generated:** 2026-01-08 | **Branch:** main
+**Generated:** 2026-01-14 | **Branch:** main
 
 ## Overview
 
@@ -335,6 +335,8 @@ Session management for agent conversations.
 | `user-preferences-controller.ts` | User settings CRUD |
 | `contact-controller.ts` | Contact form submission |
 | `whatsapp-controller.ts` | WhatsApp integration |
+| `newsletter-controller.ts` | Newsletter subscribe/unsubscribe |
+| `waiting-list-controller.ts` | Waiting list join/position |
 | `google-calendar/` | Calendar-specific endpoints |
 | `users/` | User management endpoints |
 

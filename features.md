@@ -29,17 +29,30 @@ Implement "Organization" vs. "Individual" user logic.
 - Enable `overflow-auto` with a `max-height` of `200px`.
 - Add more padding for a "fatter" look.
 
-5. **Refactor | Component Reusability**
-   Identify and refactor duplicate UI patterns into modular, reusable components to improve maintainability and architecture.
-
-6. **UI | Pricing Consistency**
+5. **UI | Pricing Consistency**
    Ensure the Pricing Plans displayed in the Dashboard/Billing section strictly match the external Pricing page components and data.
 
-7. **Mobile UI | Sidebar Alignment**
+6. **Mobile UI | Sidebar Alignment**
    Ensure the mobile sidebar matches the desktop sidebar in terms of item width and general visual proportions.
 
-8. **Feature | Team Invite**
+7. **Feature | Team Invite**
    Implement a feature allowing users to invite team members to join their Ally workspace.
 
-9. **Feature | Affiliate/Referral Program**
+8. **Feature | Affiliate/Referral Program**
    Implement a referral system: "Invite a friend, get 1 month free."
+
+---
+
+### **Completed Features (Recently Shipped)**
+
+✅ **v2.2.1 - January 14, 2026**
+- Newsletter subscription system (subscribe/unsubscribe/status API endpoints)
+- Waiting list system (join/position API endpoints)
+- Social share buttons with animated confirmation (Twitter/X, LinkedIn, Facebook)
+- Expanded blog content (16 posts covering productivity, AI calendar tips)
+- Reusable UI component library (InfoTooltip, StatCard, InlineLoader, EmptyState, ErrorState, StatusDot, TrendBadge, UserCard, PageHeader, etc.)
+
+✅ **v2.2.0 - January 14, 2026**
+- Geo-location preferences for timezone-aware scheduling
+- Formatting utilities for consistent date/time/number display
+- Development experience improvements (log clearing on restart)

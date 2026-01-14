@@ -27,6 +27,40 @@ const BADGE_STYLES: Record<ChangeType, { variant: 'default' | 'secondary' | 'out
 
 const CHANGELOG_DATA: ChangelogEntry[] = [
   {
+    version: '2.2.1',
+    date: 'January 14, 2026',
+    changes: [
+      {
+        type: 'feature',
+        title: 'Newsletter Subscription System',
+        description:
+          'Stay updated with Ask Ally news and tips. Subscribe to our newsletter directly from blog posts or the website footer.',
+        icon: Sparkles,
+      },
+      {
+        type: 'feature',
+        title: 'Waiting List for Early Access',
+        description:
+          'Join our waiting list to be notified when new features launch. Track your position and get early access to premium features.',
+        icon: Sparkles,
+      },
+      {
+        type: 'feature',
+        title: 'Social Share Buttons',
+        description:
+          'Share blog posts easily on Twitter/X, LinkedIn, and Facebook with animated confirmation feedback.',
+        icon: Sparkles,
+      },
+      {
+        type: 'improvement',
+        title: 'Expanded Blog Content',
+        description:
+          'Added 10 new blog posts covering calendar psychology, habit stacking, voice control tips, and productivity strategies.',
+        icon: Zap,
+      },
+    ],
+  },
+  {
     version: '2.2.0',
     date: 'January 14, 2026',
     changes: [

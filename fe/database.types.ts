@@ -151,6 +151,45 @@ export type Database = {
         }
         Relationships: []
       }
+      newsletter_subscriptions: {
+        Row: {
+          created_at: string | null
+          email: string
+          id: string
+          ip_address: string | null
+          source: string | null
+          status: string
+          subscribed_at: string | null
+          unsubscribed_at: string | null
+          updated_at: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          id?: string
+          ip_address?: string | null
+          source?: string | null
+          status?: string
+          subscribed_at?: string | null
+          unsubscribed_at?: string | null
+          updated_at?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          id?: string
+          ip_address?: string | null
+          source?: string | null
+          status?: string
+          subscribed_at?: string | null
+          unsubscribed_at?: string | null
+          updated_at?: string | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       oauth_tokens: {
         Row: {
           access_token: string
@@ -795,6 +834,54 @@ export type Database = {
           status?: Database["public"]["Enums"]["user_status"] | null
           timezone?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      waiting_list: {
+        Row: {
+          created_at: string | null
+          email: string
+          id: string
+          invited_at: string | null
+          ip_address: string | null
+          name: string | null
+          notes: string | null
+          position: number | null
+          registered_at: string | null
+          source: string | null
+          status: string
+          updated_at: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          id?: string
+          invited_at?: string | null
+          ip_address?: string | null
+          name?: string | null
+          notes?: string | null
+          position?: number | null
+          registered_at?: string | null
+          source?: string | null
+          status?: string
+          updated_at?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          id?: string
+          invited_at?: string | null
+          ip_address?: string | null
+          name?: string | null
+          notes?: string | null
+          position?: number | null
+          registered_at?: string | null
+          source?: string | null
+          status?: string
+          updated_at?: string | null
+          user_agent?: string | null
         }
         Relationships: []
       }
