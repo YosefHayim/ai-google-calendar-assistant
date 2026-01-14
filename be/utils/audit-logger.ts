@@ -1,4 +1,5 @@
 import { env } from "@/config";
+import fs from "fs";
 import path from "path";
 import winston from "winston";
 
@@ -26,11 +27,24 @@ export type AuditLogEntry = {
   metadata: Record<string, unknown>;
 };
 
-// Returns "YYYY-MM-DD" format for file naming
-const getDate = () => new Date().toISOString().split("T")[0];
+const getDate = () => new Date().toISOString().split("T")[0]
+const logDir = "logs"
 
-// Log directory (same as main logger)
-const logDir = "logs";
+const clearAuditLogOnStartup = () => {
+  if (!env.isDev) return
+
+  const auditLogFile = path.join(logDir, `${env.nodeEnv}-audit-${getDate()}.log`)
+
+  if (!fs.existsSync(logDir)) {
+    fs.mkdirSync(logDir, { recursive: true })
+  }
+
+  try {
+    fs.writeFileSync(auditLogFile, "", { flag: "w" })
+  } catch {}
+}
+
+clearAuditLogOnStartup()
 
 // Custom formatter for audit logs - JSON per line
 const auditFormat = winston.format.printf((info) => {
