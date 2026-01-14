@@ -237,11 +237,6 @@ const ChatInterface: React.FC = () => {
     handleSend(undefined, text)
   }
 
-  const handleEditMessage = (text: string) => {
-    setInput(text)
-    textInputRef.current?.focus()
-  }
-
   const handleEditAndResend = (messageId: string, newText: string) => {
     const messageIndex = messages.findIndex((m) => m.id === messageId)
     if (messageIndex === -1) return
