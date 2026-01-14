@@ -20,12 +20,12 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { LoadingSection } from '@/components/ui/loading-spinner'
 import CinematicGlowToggle from '@/components/ui/cinematic-glow-toggle'
-import { SettingsRow, SettingsSection, SettingsDropdown, type DropdownOption } from './components'
+import { SettingsRow, SettingsSection, SettingsDropdown, TabHeader, type DropdownOption } from './components'
 import { voiceService } from '@/services/voice.service'
 import {
   useAllyBrain,
@@ -256,22 +256,11 @@ export const AssistantTab: React.FC<AssistantTabProps> = () => {
   return (
     <div className="space-y-6">
       <Card>
-        <CardHeader>
-          <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap">
-            <div className="p-2 rounded-lg bg-gradient-to-br from-purple-500/10 to-pink-500/10 dark:from-purple-500/20 dark:to-pink-500/20">
-              <Brain className="w-5 h-5 text-zinc-900 dark:text-primary" />
-            </div>
-            <div>
-              <CardTitle className="text-lg flex items-center gap-2">
-                Ally's Brain
-                <Sparkles className="w-4 h-4 text-zinc-900 dark:text-primary" />
-              </CardTitle>
-              <CardDescription>
-                Teach Ally about your preferences. These instructions will be remembered in every conversation.
-              </CardDescription>
-            </div>
-          </div>
-        </CardHeader>
+        <TabHeader
+          title="Ally's Brain"
+          tooltip="Teach Ally about your preferences. These instructions will be remembered in every conversation"
+          icon={<Brain className="w-5 h-5 text-zinc-900 dark:text-primary" />}
+        />
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <SettingsSection>
@@ -370,10 +359,10 @@ export const AssistantTab: React.FC<AssistantTabProps> = () => {
       </Card>
 
       <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Memory Management</CardTitle>
-          <CardDescription>Control how Ally learns from your scheduling patterns.</CardDescription>
-        </CardHeader>
+        <TabHeader
+          title="Memory Management"
+          tooltip="Control how Ally learns from your scheduling patterns"
+        />
         <CardContent className="space-y-4">
           <SettingsSection>
             <SettingsRow
@@ -402,17 +391,11 @@ export const AssistantTab: React.FC<AssistantTabProps> = () => {
       </Card>
 
       <Card>
-        <CardHeader>
-          <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap">
-            <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500/10 to-cyan-500/10 dark:from-blue-500/20 dark:to-cyan-500/20">
-              <Volume2 className="w-5 h-5 text-zinc-900 dark:text-primary" />
-            </div>
-            <div>
-              <CardTitle className="text-lg">Voice Settings</CardTitle>
-              <CardDescription>Choose how Ally speaks to you in voice responses.</CardDescription>
-            </div>
-          </div>
-        </CardHeader>
+        <TabHeader
+          title="Voice Settings"
+          tooltip="Choose how Ally speaks to you in voice responses"
+          icon={<Volume2 className="w-5 h-5 text-zinc-900 dark:text-primary" />}
+        />
         <CardContent className="space-y-4">
           <SettingsSection>
             <SettingsRow

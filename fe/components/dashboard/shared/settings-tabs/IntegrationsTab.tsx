@@ -13,8 +13,8 @@ import {
 } from 'lucide-react'
 import { FaTelegram, FaWhatsapp, FaSlack } from 'react-icons/fa'
 import { SiGooglecalendar } from 'react-icons/si'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { SettingsRow, SettingsSection } from './components'
+import { Card, CardContent } from '@/components/ui/card'
+import { SettingsRow, SettingsSection, TabHeader } from './components'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -108,10 +108,10 @@ export const IntegrationsTab: React.FC<IntegrationsTabProps> = ({
   return (
     <div className="space-y-6">
       <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Integrations</CardTitle>
-          <CardDescription>Manage your calendar and messaging integrations.</CardDescription>
-        </CardHeader>
+        <TabHeader
+          title="Integrations"
+          tooltip="Manage your calendar and messaging integrations"
+        />
         <CardContent>
         <SettingsSection>
           <SettingsRow

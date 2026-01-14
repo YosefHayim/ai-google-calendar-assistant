@@ -1,8 +1,8 @@
 'use client'
 
 import { Brain, Download, Loader2, MessageSquareX, Trash2, MessageCircleX, Eraser, UserX } from 'lucide-react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { SettingsRow, SettingsSection } from './components'
+import { Card, CardContent } from '@/components/ui/card'
+import { SettingsRow, SettingsSection, TabHeader } from './components'
 
 import { Button } from '@/components/ui/button'
 import React from 'react'
@@ -28,10 +28,10 @@ export const DataControlsTab: React.FC<DataControlsTabProps> = ({
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="text-lg">Data Controls</CardTitle>
-        <CardDescription>Manage your data, conversations, and account.</CardDescription>
-      </CardHeader>
+      <TabHeader
+        title="Data Controls"
+        tooltip="Manage your data, conversations, and account"
+      />
       <CardContent>
         <SettingsSection showDivider className="mt-4">
           <SettingsRow

@@ -1,0 +1,48 @@
+'use client'
+
+import React from 'react'
+import { Info } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { CardHeader, CardTitle } from '@/components/ui/card'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+
+interface TabHeaderProps {
+  title: string
+  tooltip: string
+  icon?: React.ReactNode
+}
+
+export const TabHeader: React.FC<TabHeaderProps> = ({ title, tooltip, icon }) => {
+  return (
+    <CardHeader>
+      <div className="flex items-center gap-2">
+        {icon && (
+          <div className="p-2 rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 dark:from-primary/20 dark:to-primary/10">
+            {icon}
+          </div>
+        )}
+        <CardTitle className="text-lg flex items-center gap-1.5">
+          {title}
+          <TooltipProvider delayDuration={200}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="h-5 w-5 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
+                  aria-label={`More info about ${title}`}
+                >
+                  <Info className="w-3.5 h-3.5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="top" className="max-w-[280px]">
+                <p className="text-sm">{tooltip}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </CardTitle>
+      </div>
+    </CardHeader>
+  )
+}

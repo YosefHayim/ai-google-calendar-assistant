@@ -16,7 +16,7 @@ import {
   CalendarCog,
 } from 'lucide-react'
 import { toast } from 'sonner'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { LoadingSection } from '@/components/ui/loading-spinner'
 import CinematicGlowToggle from '@/components/ui/cinematic-glow-toggle'
@@ -24,6 +24,7 @@ import {
   SettingsRow,
   SettingsDropdown,
   SettingsSection,
+  TabHeader,
   TimePicker,
   TimezoneSelector,
   type DropdownOption,
@@ -205,10 +206,10 @@ export const NotificationsTab: React.FC = () => {
   return (
     <div className="space-y-6">
       <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Notifications</CardTitle>
-          <CardDescription>Configure how and when Ally notifies you.</CardDescription>
-        </CardHeader>
+        <TabHeader
+          title="Notifications"
+          tooltip="Configure how and when Ally notifies you"
+        />
         <CardContent>
           <SettingsSection>
             <SettingsRow
@@ -260,17 +261,11 @@ export const NotificationsTab: React.FC = () => {
       </Card>
 
       <Card>
-        <CardHeader>
-          <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap">
-            <div className="p-2 rounded-lg bg-gradient-to-br from-amber-500/10 to-orange-500/10 dark:from-amber-500/20 dark:to-orange-500/20">
-              <Mail className="w-5 h-5 text-zinc-900 dark:text-primary" />
-            </div>
-            <div>
-              <CardTitle className="text-lg">Daily Briefing</CardTitle>
-              <CardDescription>Receive a summary of your day's schedule every morning via email.</CardDescription>
-            </div>
-          </div>
-        </CardHeader>
+        <TabHeader
+          title="Daily Briefing"
+          tooltip="Receive a summary of your day's schedule every morning via email"
+          icon={<Mail className="w-5 h-5 text-zinc-900 dark:text-primary" />}
+        />
         <CardContent>
           {isLoadingBriefing ? (
             <LoadingSection text="Loading daily briefing settings..." />
@@ -342,19 +337,11 @@ export const NotificationsTab: React.FC = () => {
       </Card>
 
       <Card>
-        <CardHeader>
-          <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap">
-            <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500/10 to-cyan-500/10 dark:from-blue-500/20 dark:to-cyan-500/20">
-              <Bell className="w-5 h-5 text-zinc-900 dark:text-primary" />
-            </div>
-            <div>
-              <CardTitle className="text-lg">Default Reminders</CardTitle>
-              <CardDescription>
-                Configure default reminders that Ally will apply when creating new events.
-              </CardDescription>
-            </div>
-          </div>
-        </CardHeader>
+        <TabHeader
+          title="Default Reminders"
+          tooltip="Configure default reminders that Ally will apply when creating new events"
+          icon={<Bell className="w-5 h-5 text-zinc-900 dark:text-primary" />}
+        />
         <CardContent>
           {isLoadingReminders ? (
             <LoadingSection text="Loading reminders..." />

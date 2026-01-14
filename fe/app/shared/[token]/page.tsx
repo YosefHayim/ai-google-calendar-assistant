@@ -164,6 +164,14 @@ export default function SharedConversationPage() {
                 <span>{conversation.messageCount} msgs</span>
                 <span className="text-zinc-300 dark:text-zinc-600">•</span>
                 <span>{formatRelativeDate(conversation.createdAt)}</span>
+                {conversation.expiresAt && (
+                  <>
+                    <span className="text-zinc-300 dark:text-zinc-600">•</span>
+                    <span className="text-zinc-400 dark:text-zinc-500">
+                      Exp {new Date(conversation.expiresAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                    </span>
+                  </>
+                )}
               </div>
             </div>
 

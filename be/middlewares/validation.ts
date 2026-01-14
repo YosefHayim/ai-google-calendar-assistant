@@ -367,11 +367,12 @@ export const preferenceKeyParamSchema = z.object({
       "reminder_defaults",
       "voice_preference",
       "daily_briefing",
+      "cross_platform_sync",
     ],
     {
       errorMap: () => ({
         message:
-          "Invalid preference key. Must be 'ally_brain', 'contextual_scheduling', 'reminder_defaults', 'voice_preference', or 'daily_briefing'",
+          "Invalid preference key. Must be 'ally_brain', 'contextual_scheduling', 'reminder_defaults', 'voice_preference', 'daily_briefing', or 'cross_platform_sync'",
       }),
     },
   ),
