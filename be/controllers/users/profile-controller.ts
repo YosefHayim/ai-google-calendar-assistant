@@ -3,10 +3,25 @@ import { STATUS_RESPONSE, SUPABASE } from "@/config"
 import { reqResAsyncHandler, sendR } from "@/utils/http"
 import { webConversation } from "@/utils/conversation/WebConversationAdapter"
 import { unifiedContextStore } from "@/shared/context"
+import {
+  getCachedUserProfile,
+  setCachedUserProfile,
+  invalidateAllUserCache,
+} from "@/utils/cache/user-cache"
 
 const getCurrentUserInformation = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     if (req.query.customUser === "true") {
+      const userId = req.user?.id
+      if (!userId) {
+        return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated")
+      }
+
+      const cached = await getCachedUserProfile(userId)
+      if (cached) {
+        return sendR(res, STATUS_RESPONSE.SUCCESS, "User fetched successfully.", cached)
+      }
+
       let firstName: string | null | undefined =
         req.user?.user_metadata?.first_name
       let lastName: string | null | undefined =
@@ -43,6 +58,9 @@ const getCurrentUserInformation = reqResAsyncHandler(
         created_at: req.user?.created_at,
         updated_at: req.user?.updated_at,
       }
+
+      await setCachedUserProfile(userId, customUser)
+
       return sendR(
         res,
         STATUS_RESPONSE.SUCCESS,
@@ -150,8 +168,9 @@ const deActivateUser = reqResAsyncHandler(
       const conversationsResult = await webConversation.deleteAllConversations(userId)
       deletionResults.conversations = conversationsResult.deletedCount
 
-      // 3. Clear Redis context (cross-modal session data)
+      // 3. Clear Redis context (cross-modal session data + caches)
       await unifiedContextStore.clearAll(userId)
+      await invalidateAllUserCache(userId)
       deletionResults.redisContext = true
 
       // 4. Delete user record from users table (this will cascade to related tables via FK)

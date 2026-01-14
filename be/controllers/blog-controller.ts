@@ -3,6 +3,10 @@ import { z } from "zod";
 import { SUPABASE } from "@/config/clients";
 import sendR from "@/utils/send-response";
 
+// Blog posts table is not yet in database.types.ts - use untyped queries
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const blogTable = () => (SUPABASE as any).from("blog_posts");
+
 const BLOG_CATEGORIES = [
   "Productivity",
   "Time Management",
@@ -74,11 +78,14 @@ export const blogController = {
     const { category, featured, limit = "50", offset = "0" } = validation.data;
 
     try {
-      let query = SUPABASE.from("blog_posts")
+      let query = blogTable()
         .select("*")
         .eq("status", "published")
         .order("published_at", { ascending: false })
-        .range(parseInt(offset), parseInt(offset) + parseInt(limit) - 1);
+        .range(
+          Number.parseInt(offset),
+          Number.parseInt(offset) + Number.parseInt(limit) - 1
+        );
 
       if (category && category !== "All") {
         query = query.eq("category", category);
@@ -110,7 +117,7 @@ export const blogController = {
     }
 
     try {
-      const { data, error } = await SUPABASE.from("blog_posts")
+      const { data, error } = await blogTable()
         .select("*")
         .eq("slug", slug)
         .eq("status", "published")
@@ -129,20 +136,22 @@ export const blogController = {
 
   async getCategories(_req: Request, res: Response) {
     try {
-      const { data, error } = await SUPABASE.from("blog_posts")
+      const { data, error } = await blogTable()
         .select("category")
         .eq("status", "published");
 
       if (error) throw error;
 
-      const categories = [...new Set(data?.map((p) => p.category) || [])];
+      const categories = [
+        ...new Set(data?.map((p: { category: string }) => p.category) || []),
+      ];
       const categoriesWithAll = ["All", ...categories.sort()];
 
       return sendR(
         res,
         200,
         "Categories retrieved successfully",
-        categoriesWithAll,
+        categoriesWithAll
       );
     } catch (error) {
       console.error("Blog getCategories error:", error);
@@ -152,7 +161,7 @@ export const blogController = {
 
   async getFeatured(_req: Request, res: Response) {
     try {
-      const { data, error } = await SUPABASE.from("blog_posts")
+      const { data, error } = await blogTable()
         .select("*")
         .eq("status", "published")
         .eq("featured", true)
@@ -165,7 +174,7 @@ export const blogController = {
         res,
         200,
         "Featured posts retrieved successfully",
-        data || [],
+        data || []
       );
     } catch (error) {
       console.error("Blog getFeatured error:", error);
@@ -175,14 +184,14 @@ export const blogController = {
 
   async getRelated(req: Request, res: Response) {
     const { slug } = req.params;
-    const limit = parseInt(req.query.limit as string) || 3;
+    const limit = Number.parseInt(req.query.limit as string) || 3;
 
     if (!slug) {
       return sendR(res, 400, "Slug is required", null);
     }
 
     try {
-      const { data: currentPost } = await SUPABASE.from("blog_posts")
+      const { data: currentPost } = await blogTable()
         .select("category, tags")
         .eq("slug", slug)
         .single();
@@ -191,7 +200,7 @@ export const blogController = {
         return sendR(res, 404, "Blog post not found", null);
       }
 
-      const { data, error } = await SUPABASE.from("blog_posts")
+      const { data, error } = await blogTable()
         .select("*")
         .eq("status", "published")
         .eq("category", currentPost.category)
@@ -205,7 +214,7 @@ export const blogController = {
         res,
         200,
         "Related posts retrieved successfully",
-        data || [],
+        data || []
       );
     } catch (error) {
       console.error("Blog getRelated error:", error);
@@ -225,7 +234,7 @@ export const blogController = {
     const readTime = postData.read_time || estimateReadTime(postData.content);
 
     try {
-      const { data: existingPost } = await SUPABASE.from("blog_posts")
+      const { data: existingPost } = await blogTable()
         .select("slug")
         .eq("slug", slug)
         .single();
@@ -235,7 +244,7 @@ export const blogController = {
           res,
           409,
           "A blog post with this title already exists",
-          null,
+          null
         );
       }
 
@@ -246,7 +255,7 @@ export const blogController = {
         keywords: postData.tags || [],
       };
 
-      const { data, error } = await SUPABASE.from("blog_posts")
+      const { data, error } = await blogTable()
         .insert({
           slug,
           title: postData.title,
@@ -256,7 +265,7 @@ export const blogController = {
           image_key: postData.image_key || null,
           author: postData.author || defaultAuthor,
           read_time: readTime,
-          featured: postData.featured || false,
+          featured: postData.featured,
           tags: postData.tags || [],
           seo: postData.seo || defaultSeo,
           status: postData.status || "published",

@@ -2,6 +2,11 @@ import { ACTION, REQUEST_CONFIG_BASE, STATUS_RESPONSE } from "@/config";
 import type { Request, Response } from "express";
 import { eventsHandler, formatDate } from "@/utils";
 import { getCachedInsights, setCachedInsights } from "@/utils/cache/insights-cache";
+import {
+  getCachedEvents,
+  setCachedEvents,
+  invalidateEventsCache,
+} from "@/utils/cache/events-cache";
 import { reqResAsyncHandler, sendR } from "@/utils/http";
 
 import { calculateInsightsMetrics } from "@/utils/ai/insights-calculator";
@@ -56,12 +61,35 @@ const getEventById = reqResAsyncHandler(async (req: Request, res: Response) => {
  *
  */
 const getAllEvents = reqResAsyncHandler(async (req: Request, res: Response) => {
+  const userId = req.user?.id;
   const tokenData = await fetchCredentialsByEmail(req.user?.email!);
   if (!tokenData) {
     return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User tokens not found.");
   }
 
+  const calendarId = (req.query.calendarId as string) || "primary";
+  const timeMin = req.query.timeMin as string | undefined;
+  const timeMax = req.query.timeMax as string | undefined;
+
+  if (userId) {
+    const cached = await getCachedEvents(userId, calendarId, timeMin, timeMax);
+    if (cached) {
+      return sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully retrieved all events", {
+        type: "cached",
+        calendarId: cached.calendarId,
+        totalCount: cached.totalCount,
+        events: cached.events,
+        cachedAt: cached.cachedAt,
+      });
+    }
+  }
+
   const r = await eventsHandler(req as Request, ACTION.GET, undefined, req.query as Record<string, string>);
+
+  if (userId && r?.data?.items) {
+    await setCachedEvents(userId, calendarId, r.data.items, timeMin, timeMax);
+  }
+
   return sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully retrieved all events", r);
 });
 
@@ -83,6 +111,11 @@ const createEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
     email: req.body.email,
     addMeetLink: addMeetLink === true,
   });
+
+  if (req.user?.id) {
+    await invalidateEventsCache(req.user.id);
+  }
+
   return sendR(res, STATUS_RESPONSE.CREATED, "Event created successfully", r);
 });
 
@@ -102,6 +135,11 @@ const updateEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
     id: req.params.id,
     ...req.body,
   });
+
+  if (req.user?.id) {
+    await invalidateEventsCache(req.user.id);
+  }
+
   return sendR(res, STATUS_RESPONSE.SUCCESS, "Event updated successfully", r);
 });
 
@@ -118,6 +156,11 @@ const updateEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
  */
 const deleteEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
   const r = await eventsHandler(req, ACTION.DELETE, { id: req.params.id });
+
+  if (req.user?.id) {
+    await invalidateEventsCache(req.user.id);
+  }
+
   return sendR(res, STATUS_RESPONSE.SUCCESS, "Event deleted successfully", r);
 });
 
