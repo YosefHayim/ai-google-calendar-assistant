@@ -106,12 +106,13 @@ export const IntegrationsTab: React.FC<IntegrationsTabProps> = ({
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-lg">Integrations</CardTitle>
-        <CardDescription>Manage your calendar and messaging integrations.</CardDescription>
-      </CardHeader>
-      <CardContent className="max-h-[60vh] overflow-y-auto">
+    <div className="space-y-6 max-h-[60vh] overflow-y-auto">
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Integrations</CardTitle>
+          <CardDescription>Manage your calendar and messaging integrations.</CardDescription>
+        </CardHeader>
+        <CardContent>
         <SettingsSection>
           <SettingsRow
             id="google-calendar"
@@ -223,6 +224,7 @@ export const IntegrationsTab: React.FC<IntegrationsTabProps> = ({
           />
         </SettingsSection>
       </CardContent>
-    </Card>
+      </Card>
+    </div>
   )
 }

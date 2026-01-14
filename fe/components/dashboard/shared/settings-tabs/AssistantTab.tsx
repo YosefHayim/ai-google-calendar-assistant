@@ -254,7 +254,7 @@ export const AssistantTab: React.FC<AssistantTabProps> = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-h-[60vh] overflow-y-auto">
       <Card>
         <CardHeader>
           <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap">
@@ -272,7 +272,7 @@ export const AssistantTab: React.FC<AssistantTabProps> = () => {
             </div>
           </div>
         </CardHeader>
-        <CardContent className="max-h-[50vh] sm:max-h-[60vh] overflow-y-auto">
+        <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <SettingsSection>
               <SettingsRow
@@ -374,7 +374,7 @@ export const AssistantTab: React.FC<AssistantTabProps> = () => {
           <CardTitle className="text-lg">Memory Management</CardTitle>
           <CardDescription>Control how Ally learns from your scheduling patterns.</CardDescription>
         </CardHeader>
-        <CardContent className="max-h-72 overflow-y-auto space-y-4">
+        <CardContent className="space-y-4">
           <SettingsSection>
             <SettingsRow
               id="contextual-scheduling"
@@ -413,7 +413,7 @@ export const AssistantTab: React.FC<AssistantTabProps> = () => {
             </div>
           </div>
         </CardHeader>
-        <CardContent className="max-h-72 overflow-y-auto space-y-4">
+        <CardContent className="space-y-4">
           <SettingsSection>
             <SettingsRow
               id="voice-enabled"
