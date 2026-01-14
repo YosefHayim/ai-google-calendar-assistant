@@ -359,6 +359,10 @@ export const contextualSchedulingSchema = z.object({
   enabled: z.boolean(),
 });
 
+export const crossPlatformSyncSchema = z.object({
+  enabled: z.boolean(),
+});
+
 export const preferenceKeyParamSchema = z.object({
   key: z.enum(
     [

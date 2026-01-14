@@ -1,15 +1,16 @@
 'use client'
 
-import { ArrowUp, ImagePlus, Mic, Pause, X, ChevronLeft, ChevronRight, Trash2 } from 'lucide-react'
+import { ArrowUp, ChevronLeft, ChevronRight, ImagePlus, Mic, Pause, Trash2, X } from 'lucide-react'
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
+import { INPUT_LIMITS, validateInputLength } from '@/lib/security/sanitize'
 import React, { forwardRef, useCallback, useMemo, useRef, useState } from 'react'
 
 import { AIVoiceInput } from '@/components/ui/ai-voice-input'
 import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import { getTextDirection } from '@/lib/utils'
-import { INPUT_LIMITS, validateInputLength } from '@/lib/security/sanitize'
 import { toast } from 'sonner'
 
 export interface ImageFile {
@@ -326,7 +327,7 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
             className="relative flex items-center bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-2xl p-1.5 sm:p-2 gap-1.5 sm:gap-2"
           >
             {/* Hidden file input */}
-            <input
+            <Input
               ref={fileInputRef}
               type="file"
               accept={ACCEPTED_IMAGE_TYPES.join(',')}
@@ -336,30 +337,31 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
             />
 
             {/* Image upload button */}
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              onClick={() => fileInputRef.current?.click()}
-              className="h-7 w-7 md:h-14 md:w-14 p-1.5 md:p-3 rounded-xl flex-shrink-0 text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
-              disabled={isDisabled || !canAddMoreImages}
-              title={canAddMoreImages ? 'Add images' : `Max ${MAX_IMAGES} images`}
-            >
-              <ImagePlus className="w-4 h-4 md:w-6 md:h-6" />
-            </Button>
-
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              onClick={onToggleRecording}
-              className={`h-7 w-7 md:h-14 md:w-14 p-1.5 md:p-3 rounded-xl flex-shrink-0 ${
-                isRecording ? 'text-red-500 bg-red-50' : 'text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100'
-              }`}
-              disabled={isDisabled || !speechRecognitionSupported}
-            >
-              <Mic className="w-4 h-4 md:w-6 md:h-6" />
-            </Button>
+            <div className="flex items-center gap-2 flex-col">
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={() => fileInputRef.current?.click()}
+                className="h-7 w-7 md:h-14 md:w-14 p-1.5 md:p-3 rounded-xl flex-shrink-0 text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
+                disabled={isDisabled || !canAddMoreImages}
+                title={canAddMoreImages ? 'Add images' : `Max ${MAX_IMAGES} images`}
+              >
+                <ImagePlus className="w-4 h-4 md:w-6 md:h-6" />
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={onToggleRecording}
+                className={`h-7 w-7 md:h-14 md:w-14 p-1.5 md:p-3 rounded-xl flex-shrink-0 ${
+                  isRecording ? 'text-red-500 bg-red-50' : 'text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100'
+                }`}
+                disabled={isDisabled || !speechRecognitionSupported}
+              >
+                <Mic className="w-4 h-4 md:w-6 md:h-6" />
+              </Button>
+            </div>
             <div className="flex-1 relative">
               <Textarea
                 ref={textInputRef}

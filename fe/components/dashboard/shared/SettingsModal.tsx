@@ -196,7 +196,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSignOu
       />
 
       <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-        <DialogContent className="w-[calc(100%-2rem)] max-w-3xl h-[85vh] sm:h-[600px] p-0 gap-0 overflow-hidden bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 [&>button]:hidden">
+        <DialogContent className="w-[calc(100%-2rem)] max-w-3xl h-[85dvh] sm:h-[600px] p-0 gap-0 overflow-hidden bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 [&>button]:hidden">
           <DialogHeader className="sr-only">
             <DialogTitle>Settings</DialogTitle>
             <DialogDescription>Manage your Ally preferences and settings.</DialogDescription>
