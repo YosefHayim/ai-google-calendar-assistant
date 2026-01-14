@@ -40,7 +40,7 @@ export const BLOG_POSTS: BlogPost[] = [
     title: 'The Future of AI-Powered Calendar Management: How Smart Scheduling is Transforming Productivity',
     excerpt:
       'Discover how artificial intelligence is revolutionizing the way we manage our time and schedules. From natural language processing to predictive scheduling, the future of calendar management is here.',
-    image: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800&h=450&fit=crop',
+    image: 'https://ally-ai-google-calendar.s3.eu-north-1.amazonaws.com/future-of-ai-calendar-management.jpg',
     content: `
 ## The Evolution of Calendar Management
 
@@ -119,7 +119,7 @@ Ready to experience the future of calendar management? [Try Ask Ally today](/reg
     title: '10 Productivity Hacks Using AI Calendar Assistants That Will Transform Your Workday',
     excerpt:
       'Learn how to maximize your productivity with these proven tips and tricks. From voice commands to smart scheduling, unlock the full potential of your calendar with AI assistance.',
-    image: 'https://images.unsplash.com/photo-1483058712412-4245e9b90334?w=800&h=450&fit=crop',
+    image: 'https://ally-ai-google-calendar.s3.eu-north-1.amazonaws.com/productivity-hacks-ask-ally.jpg',
     content: `
 ## Unlock Your Full Productivity Potential
 
@@ -231,7 +231,7 @@ These hacks work best when combined. Start with one or two that address your big
     title: 'How to Recover Lost Time: The Complete Guide to Gap Analysis and Time Tracking',
     excerpt:
       'Understanding where your time goes is the first step to better time management. Learn how AI-powered Gap Recovery helps you track and optimize every hour of your day.',
-    image: 'https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=800&h=450&fit=crop',
+    image: 'https://ally-ai-google-calendar.s3.eu-north-1.amazonaws.com/gap-recovery-time-tracking.jpg',
     content: `
 ## The Hidden Cost of Untracked Time
 
@@ -346,7 +346,7 @@ The ultimate goal isn't just tracking - it's optimization. Use gap data to:
     title: 'Building Better Meeting Habits: A Complete Guide to Reducing Meeting Fatigue',
     excerpt:
       'Start the year right with healthier meeting habits. Discover strategies to reduce meeting fatigue, reclaim focus time, and make every calendar event count.',
-    image: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=800&h=450&fit=crop',
+    image: 'https://ally-ai-google-calendar.s3.eu-north-1.amazonaws.com/better-meeting-habits-2026.jpg',
     content: `
 ## The Meeting Epidemic
 
@@ -629,7 +629,7 @@ Perfect balance doesn't exist. Life ebbs and flows. The goal is intentional allo
     title: 'The Science of Focus Time: How to Protect Deep Work in a Distracted World',
     excerpt:
       'Deep work is the superpower of the knowledge economy. Learn the science behind focus time and practical strategies to protect your most productive hours.',
-    image: 'https://images.unsplash.com/photo-1488190211105-8b0e65b80b4e?w=800&h=450&fit=crop',
+    image: 'https://ally-ai-google-calendar.s3.eu-north-1.amazonaws.com/focus-time-deep-work.jpg',
     content: `
 ## The Deep Work Advantage
 
@@ -754,7 +754,7 @@ Your focus is your competitive advantage. Protect it accordingly.
     title: 'Understanding Your Time: A Guide to Calendar Analytics and Data-Driven Scheduling',
     excerpt:
       'What gets measured gets managed. Learn how calendar analytics can reveal hidden patterns in your schedule and help you make smarter decisions about your time.',
-    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=450&fit=crop',
+    image: 'https://ally-ai-google-calendar.s3.eu-north-1.amazonaws.com/calendar-analytics-insights.jpg',
     content: `
 ## The Power of Calendar Data
 
@@ -903,7 +903,7 @@ What gets measured gets managed. What gets managed gets improved.
     title: 'Voice-First Calendar Management: The Complete Guide to Hands-Free Scheduling',
     excerpt:
       'Voice technology is revolutionizing how we interact with our calendars. Learn how to master voice commands for efficient, hands-free schedule management.',
-    image: 'https://images.unsplash.com/photo-1589254065878-42c9da997008?w=800&h=450&fit=crop',
+    image: 'https://ally-ai-google-calendar.s3.eu-north-1.amazonaws.com/voice-commands-calendar.jpg',
     content: `
 ## The Rise of Voice-First Productivity
 
@@ -1228,7 +1228,7 @@ Remote work is here to stay. Master your calendar, and master remote success.
     title: 'From To-Do List to Time Blocks: Mastering Task Prioritization with Your Calendar',
     excerpt:
       'Your to-do list is just wishes without time allocation. Learn how to transform tasks into calendar blocks and master the art of realistic scheduling.',
-    image: 'https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=800&h=450&fit=crop',
+    image: 'https://ally-ai-google-calendar.s3.eu-north-1.amazonaws.com/task-prioritization-calendar.jpg',
     content: `
 ## The To-Do List Problem
 
@@ -1522,7 +1522,7 @@ The future of AI isn't one superintelligent system - it's teams of specialized a
     title: 'The Power of Messaging: Using Telegram Bots for Calendar Productivity',
     excerpt:
       "Your calendar doesn't have to live in a separate app. Learn how Telegram bots bring powerful calendar management to your favorite messaging platform.",
-    image: 'https://images.unsplash.com/photo-1611746872915-64382b5c76da?w=800&h=450&fit=crop',
+    image: 'https://ally-ai-google-calendar.s3.eu-north-1.amazonaws.com/telegram-bot-productivity-guide.jpg',
     content: `
 ## Calendar Management Where You Already Are
 
@@ -2153,7 +2153,7 @@ Multiple calendars don't have to mean multiple headaches. With the right system,
     title: "Speaking Your Calendar's Language: How NLP Transforms Scheduling",
     excerpt:
       'From "tomorrow at 2" to precise timestamps - discover how natural language processing makes calendar management feel like conversation.',
-    image: 'https://images.unsplash.com/photo-1526378722484-bd91ca387e72?w=800&h=450&fit=crop',
+    image: 'https://ally-ai-google-calendar.s3.eu-north-1.amazonaws.com/natural-language-processing-calendars.jpg',
     content: `
 ## The Magic of Natural Language
 
