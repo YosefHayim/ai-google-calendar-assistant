@@ -1,0 +1,289 @@
+'use client'
+
+import { useParams, notFound } from 'next/navigation'
+import Link from 'next/link'
+import MarketingLayout from '@/components/marketing/MarketingLayout'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { JsonLd } from '@/components/shared/JsonLd'
+import { generateBreadcrumbSchema, generateArticleSchema, SITE_CONFIG } from '@/lib/constants/seo'
+import { getBlogPostBySlug, getRelatedPosts } from '@/lib/data/blog-posts'
+import {
+  ArrowLeft,
+  Calendar,
+  Clock,
+  User,
+  Twitter,
+  Linkedin,
+  Link as LinkIcon,
+  BookOpen,
+  ArrowRight,
+} from 'lucide-react'
+
+function formatDate(dateString: string): string {
+  const date = new Date(dateString)
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  })
+}
+
+function ShareButtons({ title, url }: { title: string; url: string }) {
+  const encodedTitle = encodeURIComponent(title)
+  const encodedUrl = encodeURIComponent(url)
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(url)
+  }
+
+  return (
+    <div className="flex items-center gap-2">
+      <span className="text-sm text-zinc-500 dark:text-zinc-400 mr-2">Share:</span>
+      <Button
+        variant="ghost"
+        size="icon"
+        className="h-8 w-8"
+        onClick={() => window.open(`https://twitter.com/intent/tweet?text=${encodedTitle}&url=${encodedUrl}`, '_blank')}
+      >
+        <Twitter className="h-4 w-4" />
+      </Button>
+      <Button
+        variant="ghost"
+        size="icon"
+        className="h-8 w-8"
+        onClick={() =>
+          window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`, '_blank')
+        }
+      >
+        <Linkedin className="h-4 w-4" />
+      </Button>
+      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={copyToClipboard}>
+        <LinkIcon className="h-4 w-4" />
+      </Button>
+    </div>
+  )
+}
+
+export default function BlogPostPage() {
+  const params = useParams()
+  const slug = params.slug as string
+  const post = getBlogPostBySlug(slug)
+
+  if (!post) {
+    notFound()
+  }
+
+  const relatedPosts = getRelatedPosts(slug, 3)
+  const postUrl = `${SITE_CONFIG.url}/blog/${post.slug}`
+
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Home', url: SITE_CONFIG.url },
+    { name: 'Blog', url: `${SITE_CONFIG.url}/blog` },
+    { name: post.title, url: postUrl },
+  ])
+
+  const articleSchema = generateArticleSchema({
+    title: post.title,
+    description: post.excerpt,
+    datePublished: post.publishedAt,
+    dateModified: post.updatedAt || post.publishedAt,
+    author: post.author.name,
+    image: `${SITE_CONFIG.url}/og-blog-${post.slug}.png`,
+  })
+
+  return (
+    <MarketingLayout>
+      <JsonLd data={[breadcrumbSchema, articleSchema]} />
+
+      <article className="py-16 md:py-24 px-4 sm:px-6">
+        <div className="max-w-3xl mx-auto">
+          <Link
+            href="/blog"
+            className="inline-flex items-center gap-2 text-sm text-zinc-500 dark:text-zinc-400 hover:text-primary mb-8 transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Blog
+          </Link>
+
+          <header className="mb-12">
+            <div className="flex items-center gap-3 mb-6">
+              <Badge variant="default">{post.category}</Badge>
+              {post.featured && (
+                <Badge variant="secondary">Featured</Badge>
+              )}
+            </div>
+
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-medium tracking-tight text-zinc-900 dark:text-zinc-100 mb-6 leading-tight">
+              {post.title}
+            </h1>
+
+            <p className="text-xl text-zinc-500 dark:text-zinc-400 mb-8">
+              {post.excerpt}
+            </p>
+
+            <div className="flex flex-wrap items-center gap-6 text-sm text-zinc-500 dark:text-zinc-400 pb-8 border-b border-zinc-200 dark:border-zinc-800">
+              <div className="flex items-center gap-2">
+                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                  <User className="w-5 h-5 text-primary" />
+                </div>
+                <div>
+                  <p className="font-medium text-zinc-900 dark:text-zinc-100">{post.author.name}</p>
+                  <p className="text-xs">{post.author.role}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-1">
+                <Calendar className="w-4 h-4" />
+                {formatDate(post.publishedAt)}
+              </div>
+              <div className="flex items-center gap-1">
+                <Clock className="w-4 h-4" />
+                {post.readTime}
+              </div>
+            </div>
+          </header>
+
+          <div
+            className="prose prose-zinc dark:prose-invert prose-lg max-w-none
+              prose-headings:font-medium prose-headings:tracking-tight
+              prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-4
+              prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3
+              prose-p:leading-relaxed prose-p:mb-4
+              prose-li:leading-relaxed
+              prose-a:text-primary prose-a:no-underline hover:prose-a:underline
+              prose-strong:text-zinc-900 dark:prose-strong:text-zinc-100
+              prose-code:text-primary prose-code:bg-primary/10 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded
+              prose-pre:bg-zinc-900 prose-pre:border prose-pre:border-zinc-800
+              prose-blockquote:border-primary prose-blockquote:bg-zinc-50 dark:prose-blockquote:bg-zinc-900 prose-blockquote:py-1 prose-blockquote:px-6 prose-blockquote:rounded-r-lg
+              prose-ul:my-4 prose-ol:my-4"
+            dangerouslySetInnerHTML={{ __html: formatMarkdownToHtml(post.content) }}
+          />
+
+          <div className="mt-12 pt-8 border-t border-zinc-200 dark:border-zinc-800">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-sm text-zinc-500 dark:text-zinc-400 mr-2">Tags:</span>
+              {post.tags.map((tag) => (
+                <Badge key={tag} variant="outline" className="text-xs">
+                  {tag}
+                </Badge>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-8 pt-8 border-t border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
+            <ShareButtons title={post.title} url={postUrl} />
+            <Link href="/register">
+              <Button className="gap-2">
+                Try Ask Ally Free
+                <ArrowRight className="w-4 h-4" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </article>
+
+      {relatedPosts.length > 0 && (
+        <section className="py-16 md:py-24 px-4 sm:px-6 bg-zinc-50 dark:bg-zinc-900/50">
+          <div className="max-w-6xl mx-auto">
+            <h2 className="text-2xl md:text-3xl font-medium text-zinc-900 dark:text-zinc-100 mb-8">
+              Related Articles
+            </h2>
+            <div className="grid md:grid-cols-3 gap-6">
+              {relatedPosts.map((relatedPost) => (
+                <Link key={relatedPost.slug} href={`/blog/${relatedPost.slug}`}>
+                  <Card className="h-full overflow-hidden border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors group">
+                    <div className="aspect-video bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-zinc-800 dark:to-zinc-900 flex items-center justify-center">
+                      <BookOpen className="w-12 h-12 text-zinc-300 dark:text-zinc-700 group-hover:text-primary/50 transition-colors" />
+                    </div>
+                    <CardContent className="p-5">
+                      <Badge variant="secondary" className="mb-3">
+                        {relatedPost.category}
+                      </Badge>
+                      <h3 className="font-medium text-zinc-900 dark:text-zinc-100 mb-2 line-clamp-2 group-hover:text-primary transition-colors">
+                        {relatedPost.title}
+                      </h3>
+                      <p className="text-sm text-zinc-500 dark:text-zinc-400 line-clamp-2">
+                        {relatedPost.excerpt}
+                      </p>
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      <section className="py-16 md:py-24 px-4 sm:px-6">
+        <div className="max-w-2xl mx-auto text-center">
+          <h2 className="text-2xl md:text-3xl font-medium text-zinc-900 dark:text-zinc-100 mb-4">
+            Ready to transform your calendar?
+          </h2>
+          <p className="text-zinc-500 dark:text-zinc-400 mb-8">
+            Join thousands of professionals who use Ask Ally to manage their time more effectively.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link href="/register">
+              <Button size="lg" className="gap-2 w-full sm:w-auto">
+                Get Started Free
+                <ArrowRight className="w-4 h-4" />
+              </Button>
+            </Link>
+            <Link href="/blog">
+              <Button variant="outline" size="lg" className="w-full sm:w-auto">
+                Read More Articles
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+    </MarketingLayout>
+  )
+}
+
+// Simple markdown to HTML converter for blog content
+function formatMarkdownToHtml(markdown: string): string {
+  let html = markdown
+    // Headers
+    .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+    .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+    .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+    // Bold
+    .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
+    // Italic
+    .replace(/\*(.*?)\*/gim, '<em>$1</em>')
+    // Code blocks
+    .replace(/```([\s\S]*?)```/gim, '<pre><code>$1</code></pre>')
+    // Inline code
+    .replace(/`(.*?)`/gim, '<code>$1</code>')
+    // Links
+    .replace(/\[(.*?)\]\((.*?)\)/gim, '<a href="$2">$1</a>')
+    // Unordered lists
+    .replace(/^\- (.*$)/gim, '<li>$1</li>')
+    // Ordered lists
+    .replace(/^\d+\. (.*$)/gim, '<li>$1</li>')
+    // Paragraphs
+    .replace(/\n\n/gim, '</p><p>')
+    // Line breaks
+    .replace(/\n/gim, '<br>')
+
+  // Wrap list items in ul/ol
+  html = html.replace(/(<li>.*<\/li>)/gims, (match) => {
+    if (!match.includes('<ul>') && !match.includes('<ol>')) {
+      return '<ul>' + match + '</ul>'
+    }
+    return match
+  })
+
+  // Clean up multiple consecutive ul tags
+  html = html.replace(/<\/ul><br><ul>/gim, '')
+  html = html.replace(/<\/ul><ul>/gim, '')
+
+  // Wrap in paragraph if not already
+  if (!html.startsWith('<')) {
+    html = '<p>' + html + '</p>'
+  }
+
+  return html
+}

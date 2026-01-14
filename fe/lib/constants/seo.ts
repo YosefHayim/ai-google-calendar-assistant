@@ -5,7 +5,7 @@ export const SITE_CONFIG = {
   url: 'https://askally.io',
   description:
     'Ask Ally is an AI-powered calendar assistant that helps you manage your Google Calendar with natural language commands, voice input, and smart scheduling.',
-  ogImage: 'https://askally.io/og-image.png',
+  ogImage: 'https://askally.io/logo.png',
   creator: '@askally_io',
   keywords: [
     'AI calendar assistant',
@@ -148,6 +148,18 @@ export const PAGE_METADATA = {
     description:
       'Be among the first to experience Ask Ally. Join our waiting list for early access to the AI-powered calendar assistant that will transform how you manage time.',
     keywords: ['Ask Ally waitlist', 'early access', 'beta signup', 'calendar AI preview'],
+  },
+  login: {
+    title: 'Sign In',
+    description:
+      'Sign in to Ask Ally to access your AI calendar assistant. Manage your Google Calendar with natural language commands and voice input.',
+    keywords: ['Ask Ally login', 'sign in', 'calendar assistant login'],
+  },
+  register: {
+    title: 'Create Account',
+    description:
+      'Create your free Ask Ally account. Get started with AI-powered calendar management, natural language scheduling, and voice commands.',
+    keywords: ['Ask Ally signup', 'create account', 'free calendar AI', 'register'],
   },
 }
 

@@ -9,82 +9,31 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { JsonLd } from '@/components/shared/JsonLd'
 import { generateBreadcrumbSchema, generateWebPageSchema, SITE_CONFIG } from '@/lib/constants/seo'
+import {
+  BLOG_POSTS,
+  BLOG_CATEGORIES,
+  getFeaturedPost,
+  getBlogPostsByCategory,
+  type BlogCategory,
+} from '@/lib/data/blog-posts'
 import { BookOpen, ArrowRight, Calendar, Clock, User, Mail, Sparkles } from 'lucide-react'
 
-interface BlogPost {
-  id: string
-  title: string
-  excerpt: string
-  category: string
-  author: {
-    name: string
-    avatar?: string
-  }
-  date: string
-  readTime: string
-  image: string
-  featured?: boolean
+function formatDate(dateString: string): string {
+  const date = new Date(dateString)
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  })
 }
 
-const BLOG_POSTS: BlogPost[] = [
-  {
-    id: '1',
-    title: 'The Future of AI-Powered Calendar Management',
-    excerpt:
-      'Discover how artificial intelligence is transforming the way we manage our time and schedules. From natural language processing to predictive scheduling, the future is here.',
-    category: 'AI & Technology',
-    author: { name: 'Sarah Chen' },
-    date: 'January 8, 2026',
-    readTime: '5 min read',
-    image: '/api/placeholder/600/400',
-    featured: true,
-  },
-  {
-    id: '2',
-    title: '10 Productivity Hacks Using Ask Ally',
-    excerpt:
-      'Learn how to maximize your productivity with these proven tips and tricks. From voice commands to smart scheduling, unlock the full potential of your calendar.',
-    category: 'Productivity',
-    author: { name: 'Marcus Johnson' },
-    date: 'January 5, 2026',
-    readTime: '7 min read',
-    image: '/api/placeholder/600/400',
-  },
-  {
-    id: '3',
-    title: 'How to Recover Lost Time with Gap Analysis',
-    excerpt:
-      'Understanding where your time goes is the first step to better time management. Learn how our Gap Recovery feature helps you track and optimize every hour.',
-    category: 'Features',
-    author: { name: 'Emily Rodriguez' },
-    date: 'December 28, 2025',
-    readTime: '4 min read',
-    image: '/api/placeholder/600/400',
-  },
-  {
-    id: '4',
-    title: 'Building Better Meeting Habits in 2026',
-    excerpt:
-      'Start the new year right with healthier meeting habits. Discover strategies to reduce meeting fatigue and make every calendar event count.',
-    category: 'Tips & Tricks',
-    author: { name: 'David Park' },
-    date: 'December 20, 2025',
-    readTime: '6 min read',
-    image: '/api/placeholder/600/400',
-  },
-]
-
-const CATEGORIES = ['All', 'AI & Technology', 'Productivity', 'Features', 'Tips & Tricks', 'Company News']
-
-export function BlogPage() {
+export default function BlogPage() {
   const [email, setEmail] = useState('')
-  const [activeCategory, setActiveCategory] = useState('All')
+  const [activeCategory, setActiveCategory] = useState<BlogCategory>('All')
 
-  const filteredPosts =
-    activeCategory === 'All' ? BLOG_POSTS : BLOG_POSTS.filter((post) => post.category === activeCategory)
-
-  const featuredPost = BLOG_POSTS.find((post) => post.featured)
-  const regularPosts = filteredPosts.filter((post) => !post.featured)
+  const filteredPosts = getBlogPostsByCategory(activeCategory)
+  const featuredPost = getFeaturedPost()
+  const regularPosts = activeCategory === 'All' ? filteredPosts.filter((post) => !post.featured) : filteredPosts
 
   const breadcrumbSchema = generateBreadcrumbSchema([
     { name: 'Home', url: SITE_CONFIG.url },
@@ -92,7 +41,8 @@ export function BlogPage() {
   ])
   const pageSchema = generateWebPageSchema({
     title: 'Blog - Ask Ally',
-    description: 'Tips, tutorials, and insights from the Ask Ally team.',
+    description:
+      'Tips, tutorials, and insights on productivity, time management, and AI-powered calendar management from the Ask Ally team.',
     url: `${SITE_CONFIG.url}/blog`,
   })
 
@@ -110,12 +60,13 @@ export function BlogPage() {
               Insights & Updates
             </h1>
             <p className="text-lg text-zinc-500 dark:text-zinc-400 max-w-2xl mx-auto">
-              Tips, tutorials, and the latest news from the Ask Ally team. Learn how to make the most of your time.
+              Tips on productivity, time management, and AI-powered calendar management. Learn how to make the most of
+              your time.
             </p>
           </div>
 
           <div className="flex flex-wrap gap-2 justify-center mb-12">
-            {CATEGORIES.map((category) => (
+            {BLOG_CATEGORIES.map((category) => (
               <button
                 key={category}
                 onClick={() => setActiveCategory(category)}
@@ -132,78 +83,79 @@ export function BlogPage() {
 
           {featuredPost && activeCategory === 'All' && (
             <div className="mb-12">
-              <Card className="overflow-hidden border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors">
-                <div className="grid md:grid-cols-2 gap-0">
-                  <div className="aspect-video md:aspect-auto bg-gradient-to-br from-primary/20 via-purple-500/20 to-pink-500/20 flex items-center justify-center">
-                    <div className="text-center p-8">
-                      <Sparkles className="w-16 h-16 text-primary/60 mx-auto mb-4" />
-                      <span className="text-sm text-zinc-500 dark:text-zinc-400">Featured Article</span>
-                    </div>
-                  </div>
-                  <CardContent className="p-6 md:p-8 flex flex-col justify-center">
-                    <div className="flex items-center gap-3 mb-4">
-                      <Badge variant="default">{featuredPost.category}</Badge>
-                      <span className="text-sm text-zinc-500 dark:text-zinc-400">Featured</span>
-                    </div>
-                    <h2 className="text-2xl md:text-3xl font-medium text-zinc-900 dark:text-zinc-100 mb-3">
-                      {featuredPost.title}
-                    </h2>
-                    <p className="text-zinc-500 dark:text-zinc-400 mb-6">{featuredPost.excerpt}</p>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-4 text-sm text-zinc-500 dark:text-zinc-400">
-                        <span className="flex items-center gap-1">
-                          <User className="w-4 h-4" />
-                          {featuredPost.author.name}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Calendar className="w-4 h-4" />
-                          {featuredPost.date}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Clock className="w-4 h-4" />
-                          {featuredPost.readTime}
-                        </span>
+              <Link href={`/blog/${featuredPost.slug}`}>
+                <Card className="overflow-hidden border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors group">
+                  <div className="grid md:grid-cols-2 gap-0">
+                    <div className="aspect-video md:aspect-auto bg-gradient-to-br from-primary/20 via-purple-500/20 to-pink-500/20 flex items-center justify-center">
+                      <div className="text-center p-8">
+                        <Sparkles className="w-16 h-16 text-primary/60 mx-auto mb-4 group-hover:scale-110 transition-transform" />
+                        <span className="text-sm text-zinc-500 dark:text-zinc-400">Featured Article</span>
                       </div>
-                      <Button variant="ghost" className="gap-2">
-                        Read More
-                        <ArrowRight className="w-4 h-4" />
-                      </Button>
                     </div>
-                  </CardContent>
-                </div>
-              </Card>
+                    <CardContent className="p-6 md:p-8 flex flex-col justify-center">
+                      <div className="flex items-center gap-3 mb-4">
+                        <Badge variant="default">{featuredPost.category}</Badge>
+                        <span className="text-sm text-zinc-500 dark:text-zinc-400">Featured</span>
+                      </div>
+                      <h2 className="text-2xl md:text-3xl font-medium text-zinc-900 dark:text-zinc-100 mb-3 group-hover:text-primary transition-colors">
+                        {featuredPost.title}
+                      </h2>
+                      <p className="text-zinc-500 dark:text-zinc-400 mb-6">{featuredPost.excerpt}</p>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4 text-sm text-zinc-500 dark:text-zinc-400">
+                          <span className="flex items-center gap-1">
+                            <User className="w-4 h-4" />
+                            {featuredPost.author.name}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Calendar className="w-4 h-4" />
+                            {formatDate(featuredPost.publishedAt)}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Clock className="w-4 h-4" />
+                            {featuredPost.readTime}
+                          </span>
+                        </div>
+                        <Button variant="ghost" className="gap-2">
+                          Read More
+                          <ArrowRight className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </div>
+                </Card>
+              </Link>
             </div>
           )}
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {(activeCategory === 'All' ? regularPosts : filteredPosts).map((post) => (
-              <Card
-                key={post.id}
-                className="overflow-hidden border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors group"
-              >
-                <div className="aspect-video bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-zinc-800 dark:to-zinc-900 flex items-center justify-center">
-                  <BookOpen className="w-12 h-12 text-zinc-300 dark:text-zinc-700 group-hover:text-primary/50 transition-colors" />
-                </div>
-                <CardContent className="p-5">
-                  <div className="flex items-center gap-2 mb-3">
-                    <Badge variant="secondary">{post.category}</Badge>
+            {regularPosts.map((post) => (
+              <Link key={post.slug} href={`/blog/${post.slug}`}>
+                <Card className="h-full overflow-hidden border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors group">
+                  <div className="aspect-video bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-zinc-800 dark:to-zinc-900 flex items-center justify-center">
+                    <BookOpen className="w-12 h-12 text-zinc-300 dark:text-zinc-700 group-hover:text-primary/50 transition-colors" />
                   </div>
-                  <h3 className="text-lg font-medium text-zinc-900 dark:text-zinc-100 mb-2 line-clamp-2 group-hover:text-primary transition-colors">
-                    {post.title}
-                  </h3>
-                  <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-4 line-clamp-2">{post.excerpt}</p>
-                  <div className="flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400">
-                    <span className="flex items-center gap-1">
-                      <User className="w-3 h-3" />
-                      {post.author.name}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Clock className="w-3 h-3" />
-                      {post.readTime}
-                    </span>
-                  </div>
-                </CardContent>
-              </Card>
+                  <CardContent className="p-5">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Badge variant="secondary">{post.category}</Badge>
+                    </div>
+                    <h3 className="text-lg font-medium text-zinc-900 dark:text-zinc-100 mb-2 line-clamp-2 group-hover:text-primary transition-colors">
+                      {post.title}
+                    </h3>
+                    <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-4 line-clamp-2">{post.excerpt}</p>
+                    <div className="flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400">
+                      <span className="flex items-center gap-1">
+                        <User className="w-3 h-3" />
+                        {post.author.name}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Clock className="w-3 h-3" />
+                        {post.readTime}
+                      </span>
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
             ))}
           </div>
 
@@ -216,12 +168,6 @@ export function BlogPage() {
               </p>
             </div>
           )}
-
-          <div className="text-center mt-12">
-            <p className="text-zinc-500 dark:text-zinc-400 mb-4">
-              More articles coming soon. We&apos;re just getting started!
-            </p>
-          </div>
         </div>
       </section>
 
@@ -268,5 +214,3 @@ export function BlogPage() {
     </MarketingLayout>
   )
 }
-
-export default BlogPage

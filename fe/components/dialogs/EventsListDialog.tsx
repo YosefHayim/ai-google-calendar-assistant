@@ -2,6 +2,7 @@
 
 import { Calendar, CalendarDays, Clock, ExternalLink, Hash, Hourglass } from 'lucide-react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../ui/dialog'
+import { EmptyState } from '@/components/ui/empty-state'
 import { format } from 'date-fns'
 import type { PatternEventSummary } from '@/types/analytics'
 
@@ -82,11 +83,11 @@ const EventsListDialog: React.FC<EventsListDialogProps> = ({ isOpen, title, subt
 
         <div className="flex-1 overflow-y-auto p-6 pt-0">
           {events.length === 0 ? (
-            <div className="flex flex-col items-center justify-center p-6 text-center">
-              <CalendarDays size={50} className="text-zinc-300 dark:text-zinc-700 mb-3" />
-              <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300">No events</p>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400">No events found for this period.</p>
-            </div>
+            <EmptyState
+              icon={<CalendarDays size={50} />}
+              title="No events"
+              description="No events found for this period."
+            />
           ) : (
             <ul className="space-y-2">
               {events.map((event) => (

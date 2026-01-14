@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Info, RotateCw, LayoutDashboard, TrendingUp, Clock, Calendar, Heart } from 'lucide-react'
 import type { CalendarEvent } from '@/types/api'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
+import { ErrorState } from '@/components/ui/error-state'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import React, { useState, useEffect } from 'react'
 import { format } from 'date-fns'
@@ -133,15 +134,12 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
   if (isAnalyticsError) {
     return (
       <div className="max-w-7xl mx-auto w-full p-6 bg-zinc-50 dark:bg-zinc-950 flex flex-col items-center justify-center min-h-[50vh]">
-        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6 max-w-md text-center">
-          <h3 className="text-red-800 dark:text-red-200 font-semibold mb-2">Error Loading Analytics</h3>
-          <p className="text-red-600 dark:text-red-300 text-sm mb-4">
-            {analyticsError?.message || 'Failed to fetch analytics data. Please try again.'}
-          </p>
-          <Button onClick={() => refetchAnalytics()} variant="destructive" size="sm">
-            Retry
-          </Button>
-        </div>
+        <ErrorState
+          title="Error Loading Analytics"
+          message={analyticsError?.message || 'Failed to fetch analytics data. Please try again.'}
+          onRetry={() => refetchAnalytics()}
+          fullPage
+        />
       </div>
     )
   }

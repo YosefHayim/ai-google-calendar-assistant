@@ -16,6 +16,9 @@ import {
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../ui/dialog'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
 import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { EmptyState } from '@/components/ui/empty-state'
+import { InlineLoader } from '@/components/ui/inline-loader'
 
 import type { CalendarEvent } from '@/types/api'
 import React, { useState, useMemo } from 'react'
@@ -307,30 +310,22 @@ const DayEventsDialog: React.FC<DayEventsDialogProps> = ({
           </h4>
           {isLoading ? (
             <div className="flex items-center justify-center py-8">
-              <Loader2 className="w-6 h-6 animate-spin text-zinc-400" />
+              <InlineLoader size="md" />
             </div>
           ) : events.length === 0 ? (
-            <div className="flex flex-col items-center justify-center p-6 text-center">
-              <CalendarDays size={50} className="text-emerald-500 mb-3" />
-              <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                {t('dialogs.dayEvents.noEvents', 'No events scheduled')}
-              </p>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                {t('dialogs.dayEvents.freeTime', 'You have {{hours}} hours of free time this day.', {
-                  hours: availableHours.toFixed(1),
-                })}
-              </p>
-            </div>
+            <EmptyState
+              icon={<CalendarDays size={50} className="text-emerald-500" />}
+              title={t('dialogs.dayEvents.noEvents', 'No events scheduled')}
+              description={t('dialogs.dayEvents.freeTime', 'You have {{hours}} hours of free time this day.', {
+                hours: availableHours.toFixed(1),
+              })}
+            />
           ) : filteredEvents.length === 0 ? (
-            <div className="flex flex-col items-center justify-center p-6 text-center">
-              <Search size={50} className="text-zinc-300 dark:text-zinc-600 mb-3" />
-              <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                {t('dialogs.eventSearch.noMatches', 'No events match your search.')}
-              </p>
-              <button onClick={clearSearch} className="text-xs text-primary hover:underline mt-2">
-                {t('dialogs.eventSearch.clearSearch', 'Clear search')}
-              </button>
-            </div>
+            <EmptyState
+              icon={<Search size={50} />}
+              title={t('dialogs.eventSearch.noMatches', 'No events match your search.')}
+              action={{ label: t('dialogs.eventSearch.clearSearch', 'Clear search'), onClick: clearSearch }}
+            />
           ) : (
             <ul className="space-y-2">
               {[...filteredEvents]

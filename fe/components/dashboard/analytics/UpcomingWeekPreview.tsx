@@ -6,6 +6,7 @@ import { format } from 'date-fns'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Button } from '@/components/ui/button'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
+import { StatusDot } from '@/components/ui/status-dot'
 import type { UpcomingWeekData, UpcomingDayData } from '@/hooks/queries/analytics/useUpcomingWeekData'
 
 interface UpcomingWeekPreviewProps {
@@ -243,19 +244,19 @@ const UpcomingWeekPreview: React.FC<UpcomingWeekPreviewProps> = ({
       {/* Legend */}
       <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-zinc-200 dark:border-zinc-800">
         <div className="flex items-center gap-1 sm:gap-1.5">
-          <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-500" />
+          <StatusDot color="green" size="xs" className="sm:w-2 sm:h-2" />
           <span className="text-[10px] sm:text-xs text-zinc-500 dark:text-zinc-400">Light</span>
         </div>
         <div className="flex items-center gap-1 sm:gap-1.5">
-          <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-sky-500" />
+          <StatusDot color="blue" size="xs" className="sm:w-2 sm:h-2" />
           <span className="text-[10px] sm:text-xs text-zinc-500 dark:text-zinc-400">Moderate</span>
         </div>
         <div className="flex items-center gap-1 sm:gap-1.5">
-          <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-amber-500" />
+          <StatusDot color="yellow" size="xs" className="sm:w-2 sm:h-2" />
           <span className="text-[10px] sm:text-xs text-zinc-500 dark:text-zinc-400">Busy</span>
         </div>
         <div className="flex items-center gap-1 sm:gap-1.5">
-          <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-rose-500" />
+          <StatusDot color="red" size="xs" className="sm:w-2 sm:h-2" />
           <span className="text-[10px] sm:text-xs text-zinc-500 dark:text-zinc-400">Packed</span>
         </div>
       </div>

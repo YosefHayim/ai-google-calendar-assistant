@@ -21,6 +21,7 @@ import {
 } from 'lucide-react'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useLanguage } from '@/contexts/LanguageContext'
+import { TrendText } from '@/components/ui/trend-badge'
 import type { EnhancedAnalyticsData, ComparisonResult } from '@/types/analytics'
 
 interface BentoStatsGridProps {
@@ -45,24 +46,8 @@ const item = {
 }
 
 function TrendBadge({ direction, percentage }: { direction: 'up' | 'down' | 'neutral'; percentage: number }) {
-  if (direction === 'neutral') {
-    return (
-      <span className="inline-flex items-center gap-1 text-xs font-medium text-zinc-500">
-        <Minus size={12} />
-        <span>0%</span>
-      </span>
-    )
-  }
-
-  const isPositive = direction === 'up'
-  const colorClass = isPositive ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'
-
-  return (
-    <span className={`inline-flex items-center gap-1 text-xs font-medium ${colorClass}`}>
-      {isPositive ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
-      <span>{Math.abs(percentage).toFixed(1)}%</span>
-    </span>
-  )
+  const value = direction === 'up' ? percentage : direction === 'down' ? -percentage : 0
+  return <TrendText value={Number(value.toFixed(1))} />
 }
 
 function CircularProgress({ value, size = 80, className = '' }: { value: number; size?: number; className?: string }) {

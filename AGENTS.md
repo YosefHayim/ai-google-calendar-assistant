@@ -426,6 +426,52 @@ Session management for agent conversations.
 - **Components**: Functional + TypeScript, named exports, `'use client'` for client components
 - **State**: React Context (global) + TanStack Query (server) + useState (local)
 
+### Component Reusability (Frontend)
+
+**ALWAYS use shadcn/ui primitives** for common UI elements. Never create custom HTML elements when a shadcn/ui component exists:
+
+| Element | Use This | NOT This |
+|---------|----------|----------|
+| Buttons | `<Button>` from `@/components/ui/button` | `<button className="...">` |
+| Inputs | `<Input>` from `@/components/ui/input` | `<input className="...">` |
+| Textareas | `<Textarea>` from `@/components/ui/textarea` | `<textarea className="...">` |
+| Tooltips | `<Tooltip>` from `@/components/ui/tooltip` | Custom tooltip divs |
+| Info tooltips | `<InfoTooltip>` from `@/components/ui/info-tooltip` | `<HoverCard>` with Info icon pattern |
+| Loading spinners | `<InlineLoader>` from `@/components/ui/inline-loader` | `<Loader2 className="animate-spin">` |
+| Stat cards | `<StatCard>` from `@/components/ui/stat-card` | Custom card divs with icon+title+value |
+| Empty states | `<EmptyState>` from `@/components/ui/empty-state` | Custom `flex flex-col items-center` divs |
+| Error states | `<ErrorState>` from `@/components/ui/error-state` | Custom error containers with AlertCircle |
+| Status dots | `<StatusDot>` from `@/components/ui/status-dot` | `<div className="w-2 h-2 rounded-full bg-...">` |
+| Trend badges | `<TrendBadge>` from `@/components/ui/trend-badge` | Custom trend indicators with TrendingUp/Down |
+| User cards | `<UserCard>` from `@/components/ui/user-card` | Custom avatar + name + email layouts |
+| Page headers | `<PageHeader>` from `@/components/ui/page-header` | Custom title + description + action layouts |
+
+**Reusable Component Library** (`fe/components/ui/`):
+
+| Component | Purpose | Usage |
+|-----------|---------|-------|
+| `InfoTooltip` | Contextual help with hover card | `<InfoTooltip title="Help">Description</InfoTooltip>` |
+| `StatCard` | Dashboard stat display | `<StatCard icon={<Icon />} title="Title" value="123" />` |
+| `StatCardSkeleton` | Loading state for StatCard | `<StatCardSkeleton />` |
+| `InlineLoader` | Inline loading indicator | `<InlineLoader size="sm" label="Loading..." />` |
+| `ButtonLoader` | Loading spinner inside buttons | `<Button><ButtonLoader /> Saving</Button>` |
+| `FullPageLoader` | Full page loading state | `<FullPageLoader label="Loading dashboard..." />` |
+| `EmptyState` | No data/results display | `<EmptyState icon={<Search />} title="No results" action={{ label: "Clear", onClick: fn }} />` |
+| `ErrorState` | Error with retry option | `<ErrorState message="Failed to load" onRetry={fn} />` |
+| `StatusDot` | Colored status indicator | `<StatusDot color="green" size="sm" pulse />` |
+| `StatusIndicator` | Status with optional label | `<StatusIndicator status="online" showLabel />` |
+| `TrendBadge` | Trend with icon and background | `<TrendBadge value={5.2} />` |
+| `TrendText` | Simple trend text | `<TrendText value={-3.1} />` |
+| `UserCard` | User avatar + name + subtitle | `<UserCard name="John" subtitle="john@example.com" avatarUrl="..." />` |
+| `UserCardSkeleton` | Loading state for UserCard | `<UserCardSkeleton size="md" />` |
+| `PageHeader` | Page title with optional action | `<PageHeader title="Dashboard" description="Overview" action={<Button />} />` |
+| `SectionHeader` | Section title with tooltip | `<SectionHeader title="Settings" tooltip="Configure options" />` |
+
+**When to create new reusable components:**
+- Pattern appears 3+ times across different files
+- UI pattern has consistent structure (icon + title + value, etc.)
+- Loading/skeleton states need standardization
+
 ### Shared
 
 - **Files**: kebab-case (`events-controller.ts`, `date-range-picker.tsx`)
