@@ -219,9 +219,13 @@ function CallbackContent() {
 
         // Identify user in PostHog after successful authentication
         const user = response.data
+        const userName =
+          'user_metadata' in user
+            ? user.user_metadata?.first_name || user.user_metadata?.last_name || user.email
+            : user.first_name || user.last_name || user.email
         posthog?.identify(user.id, {
           email: user.email,
-          name: user.name,
+          name: userName,
           created_at: user.created_at,
         })
 
