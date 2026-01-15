@@ -46,4 +46,24 @@
  *   });
  */
 
-export { DailyDigest, type DailyDigestProps, type CalendarEvent } from "./DailyDigest";
+export {
+  type CalendarEvent,
+  DailyDigest,
+  type DailyDigestProps,
+} from './DailyDigest';
+export { MagicLinkEmail, type MagicLinkEmailProps } from './MagicLinkEmail';
+export {
+  NewsletterEmail,
+  type NewsletterEmailProps,
+  type NewsletterFeature,
+} from './NewsletterEmail';
+export {
+  NotificationEmail,
+  type NotificationEmailProps,
+} from './NotificationEmail';
+export { ReceiptEmail, type ReceiptEmailProps } from './ReceiptEmail';
+export {
+  ResetPasswordEmail,
+  type ResetPasswordEmailProps,
+} from './ResetPasswordEmail';
+export { WelcomeEmail, type WelcomeEmailProps } from './WelcomeEmail';
