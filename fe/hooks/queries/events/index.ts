@@ -1,4 +1,5 @@
 export { useEvents } from './useEvents'
+export { useAllCalendarEvents } from './useAllCalendarEvents'
 export { useEventById } from './useEventById'
 export { useCreateEvent } from './useCreateEvent'
 export { useUpdateEvent } from './useUpdateEvent'

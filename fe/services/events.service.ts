@@ -13,6 +13,15 @@ import type {
   WatchEventsRequest,
 } from '@/types/api'
 
+export interface CalendarEventsGroup {
+  calendarId: string
+  events: CalendarEvent[]
+}
+
+export interface AllCalendarEventsResponse {
+  allEvents: CalendarEventsGroup[]
+}
+
 export type QuickAddResult =
   | { success: true; data: QuickAddResponse }
   | { success: false; requiresConfirmation: true; data: QuickAddResponse; error: string }
@@ -133,6 +142,11 @@ export const eventsService = {
     const { data } = await apiClient.post<ApiResponse<CalendarEvent>>(ENDPOINTS.EVENTS_RESCHEDULE(eventId), requestData)
     return data
   },
+
+  async getAllCalendarEvents(params?: AllCalendarEventsParams): Promise<ApiResponse<AllCalendarEventsResponse>> {
+    const { data } = await apiClient.get<ApiResponse<AllCalendarEventsResponse>>(ENDPOINTS.EVENTS_ANALYTICS, { params })
+    return data
+  },
 }
 
 export interface RescheduleSuggestion {
@@ -162,4 +176,13 @@ export interface RescheduleEventRequest {
   newStart: string
   newEnd: string
   calendarId?: string
+}
+
+export interface AllCalendarEventsParams {
+  timeMin?: string
+  timeMax?: string
+  calendarIds?: string
+  singleEvents?: boolean
+  orderBy?: 'startTime' | 'updated'
+  maxResults?: number
 }

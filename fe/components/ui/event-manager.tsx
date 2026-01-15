@@ -57,6 +57,7 @@ export interface Event {
   category?: string
   attendees?: string[]
   tags?: string[]
+  calendarId?: string
 }
 
 export interface EventManagerProps {

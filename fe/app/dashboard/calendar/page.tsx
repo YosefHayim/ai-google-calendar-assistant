@@ -1,97 +1,362 @@
 'use client'
 
-import { Suspense, useState } from 'react'
+import { useMemo, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { EventManager, type Event } from '@/components/ui/event-manager'
 import AIAllySidebar from '@/components/dashboard/shared/AIAllySidebar'
 import { LoadingSection } from '@/components/ui/loading-spinner'
+import { ErrorState } from '@/components/ui/error-state'
+import { Button } from '@/components/ui/button'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { useCalendars } from '@/hooks/queries/calendars/useCalendars'
+import { useCreateEvent } from '@/hooks/queries/events/useCreateEvent'
+import { useUpdateEvent } from '@/hooks/queries/events/useUpdateEvent'
+import { useDeleteEvent } from '@/hooks/queries/events/useDeleteEvent'
+import { useGoogleCalendarStatus } from '@/hooks/queries/integrations/useGoogleCalendarStatus'
+import { apiClient } from '@/lib/api/client'
+import { ENDPOINTS } from '@/lib/api/endpoints'
+import { toast } from 'sonner'
+import { CalendarDays, Link2, Filter } from 'lucide-react'
+import type { CalendarEvent, CreateEventRequest, UpdateEventRequest, CustomCalendar } from '@/types/api'
 
-const demoEvents: Event[] = [
-  {
-    id: '1',
-    title: 'Team Standup',
-    description: 'Daily sync with the engineering team to discuss progress and blockers',
-    startTime: new Date(new Date().setHours(9, 0, 0, 0)),
-    endTime: new Date(new Date().setHours(9, 30, 0, 0)),
-    color: 'blue',
-    category: 'Meeting',
-    attendees: ['Alice', 'Bob', 'Charlie'],
-    tags: ['Work', 'Team'],
-  },
-  {
-    id: '2',
-    title: 'Product Design Review',
-    description: 'Review new mockups for the dashboard redesign with stakeholders',
-    startTime: new Date(new Date().setHours(14, 0, 0, 0)),
-    endTime: new Date(new Date().setHours(15, 30, 0, 0)),
-    color: 'purple',
-    category: 'Meeting',
-    attendees: ['Sarah', 'Mike'],
-    tags: ['Important', 'Client'],
-  },
-  {
-    id: '3',
-    title: 'Code Review',
-    description: 'Review pull requests for the authentication feature',
-    startTime: new Date(new Date().setDate(new Date().getDate() + 1)),
-    endTime: new Date(new Date().setDate(new Date().getDate() + 1)),
-    color: 'green',
-    category: 'Task',
-    tags: ['Work', 'Urgent'],
-  },
-  {
-    id: '4',
-    title: 'Client Presentation',
-    description: 'Present Q4 roadmap and feature updates to key stakeholders',
-    startTime: new Date(new Date().setDate(new Date().getDate() + 2)),
-    endTime: new Date(new Date().setDate(new Date().getDate() + 2)),
-    color: 'orange',
-    category: 'Meeting',
-    attendees: ['John', 'Emma', 'David'],
-    tags: ['Important', 'Client'],
-  },
-  {
-    id: '5',
-    title: 'Deep Work Session',
-    description: 'Focused time for complex feature development',
-    startTime: new Date(new Date().setHours(10, 0, 0, 0)),
-    endTime: new Date(new Date().setHours(12, 0, 0, 0)),
-    color: 'pink',
-    category: 'Personal',
-    tags: ['Personal'],
-  },
-]
+interface CalendarEventsGroup {
+  calendarId: string
+  events: CalendarEvent[]
+}
+
+const GOOGLE_COLOR_TO_APP_COLOR: Record<string, string> = {
+  '1': 'blue',
+  '2': 'green',
+  '3': 'purple',
+  '4': 'pink',
+  '5': 'orange',
+  '6': 'orange',
+  '7': 'blue',
+  '8': 'gray',
+  '9': 'blue',
+  '10': 'green',
+  '11': 'red',
+}
+
+const ALL_CALENDARS_VALUE = '__all__'
+
+function transformCalendarEventToEvent(calendarEvent: CalendarEvent, calendarId?: string): Event {
+  const startDate = calendarEvent.start.dateTime
+    ? new Date(calendarEvent.start.dateTime)
+    : calendarEvent.start.date
+      ? new Date(calendarEvent.start.date)
+      : new Date()
+
+  const endDate = calendarEvent.end.dateTime
+    ? new Date(calendarEvent.end.dateTime)
+    : calendarEvent.end.date
+      ? new Date(calendarEvent.end.date)
+      : new Date(startDate.getTime() + 60 * 60 * 1000)
+
+  return {
+    id: calendarEvent.id,
+    title: calendarEvent.summary || 'Untitled Event',
+    description: calendarEvent.description,
+    startTime: startDate,
+    endTime: endDate,
+    color: calendarEvent.colorId ? GOOGLE_COLOR_TO_APP_COLOR[calendarEvent.colorId] || 'blue' : 'blue',
+    category: calendarEvent.location ? 'Meeting' : 'Task',
+    attendees: calendarEvent.attendees?.map((a) => a.email) || [],
+    tags: [],
+    calendarId,
+  }
+}
+
+function createEventRequestFromEvent(event: Omit<Event, 'id'>, calendarId?: string): CreateEventRequest {
+  return {
+    summary: event.title,
+    description: event.description,
+    start: {
+      dateTime: event.startTime.toISOString(),
+      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    },
+    end: {
+      dateTime: event.endTime.toISOString(),
+      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    },
+    calendarId,
+  }
+}
+
+function updateEventRequestFromPartialEvent(partialEvent: Partial<Event>): UpdateEventRequest {
+  const request: UpdateEventRequest = {}
+
+  if (partialEvent.title !== undefined) request.summary = partialEvent.title
+  if (partialEvent.description !== undefined) request.description = partialEvent.description
+  if (partialEvent.startTime !== undefined) {
+    request.start = {
+      dateTime: partialEvent.startTime.toISOString(),
+      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    }
+  }
+  if (partialEvent.endTime !== undefined) {
+    request.end = {
+      dateTime: partialEvent.endTime.toISOString(),
+      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    }
+  }
+
+  return request
+}
+
+function flattenAllCalendarEvents(
+  allEventsGroups: CalendarEventsGroup[] | null | undefined,
+  selectedCalendarId: string,
+): Event[] {
+  if (!allEventsGroups) return []
+
+  const events: Event[] = []
+
+  for (const group of allEventsGroups) {
+    if (selectedCalendarId !== ALL_CALENDARS_VALUE && group.calendarId !== selectedCalendarId) {
+      continue
+    }
+    for (const event of group.events) {
+      events.push(transformCalendarEventToEvent(event, group.calendarId))
+    }
+  }
+
+  return events
+}
+
+function getCalendarNameById(calendars: CustomCalendar[] | null | undefined, calendarId: string): string {
+  if (!calendars) return calendarId
+  const calendar = calendars.find((c) => c.calendarId === calendarId)
+  return calendar?.calendarName || calendarId
+}
+
+interface CalendarFilterProps {
+  calendars: CustomCalendar[] | null | undefined
+  selectedCalendarId: string
+  onCalendarChange: (calendarId: string) => void
+  isLoading?: boolean
+}
+
+function CalendarFilter({ calendars, selectedCalendarId, onCalendarChange, isLoading }: CalendarFilterProps) {
+  return (
+    <div className="flex items-center gap-2">
+      <Filter className="h-4 w-4 text-muted-foreground hidden sm:block" />
+      <Select value={selectedCalendarId} onValueChange={onCalendarChange} disabled={isLoading}>
+        <SelectTrigger className="w-full sm:w-[200px] h-9 text-sm">
+          <SelectValue placeholder="Select calendar" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value={ALL_CALENDARS_VALUE}>All Calendars</SelectItem>
+          {calendars?.map((calendar) => (
+            <SelectItem key={calendar.calendarId} value={calendar.calendarId}>
+              {calendar.calendarName || calendar.calendarId}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  )
+}
+
+function GoogleCalendarNotConnected({ authUrl }: { authUrl?: string }) {
+  return (
+    <div className="flex-1 flex items-center justify-center p-6">
+      <div className="flex flex-col items-center justify-center text-center gap-4 max-w-md">
+        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+          <CalendarDays className="h-8 w-8 text-primary" />
+        </div>
+        <div className="space-y-2">
+          <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Connect Google Calendar</h3>
+          <p className="text-sm text-zinc-500 dark:text-zinc-400">
+            Connect your Google Calendar to view and manage your events directly from Ally.
+          </p>
+        </div>
+        {authUrl && (
+          <Button onClick={() => (window.location.href = authUrl)} className="gap-2 mt-2">
+            <Link2 className="h-4 w-4" />
+            Connect Google Calendar
+          </Button>
+        )}
+      </div>
+    </div>
+  )
+}
 
 function CalendarContent() {
   const [isAllySidebarOpen, setIsAllySidebarOpen] = useState(false)
-  const [events, setEvents] = useState<Event[]>(demoEvents)
+  const [selectedCalendarId, setSelectedCalendarId] = useState<string>(ALL_CALENDARS_VALUE)
+
+  const { data: googleCalendarStatus, isLoading: isStatusLoading, error: statusError } = useGoogleCalendarStatus()
+
+  const isGoogleCalendarConnected = googleCalendarStatus?.isActive && !googleCalendarStatus?.isExpired
+
+  const { data: calendars, isLoading: calendarsLoading } = useCalendars({
+    enabled: isGoogleCalendarConnected,
+  })
+
+  const dateRange = useMemo(() => {
+    const now = new Date()
+    const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
+    const lastDayOfNextMonth = new Date(now.getFullYear(), now.getMonth() + 2, 0)
+    return {
+      timeMin: firstDayOfMonth.toISOString(),
+      timeMax: lastDayOfNextMonth.toISOString(),
+    }
+  }, [])
+
+  const {
+    data: allEventsData,
+    isLoading: eventsLoading,
+    error: eventsError,
+    refetch: refetchEvents,
+  } = useQuery({
+    queryKey: ['calendar-all-events', dateRange.timeMin, dateRange.timeMax],
+    queryFn: async () => {
+      const params = new URLSearchParams({
+        timeMin: dateRange.timeMin,
+        timeMax: dateRange.timeMax,
+      })
+      const response = await apiClient.get<{ data: { allEvents: CalendarEventsGroup[] } }>(
+        `${ENDPOINTS.EVENTS_ANALYTICS}?${params.toString()}`,
+      )
+      return response.data?.data?.allEvents ?? []
+    },
+    enabled: isGoogleCalendarConnected,
+    retry: false,
+  })
+
+  const { mutate: createEvent, isPending: isCreating } = useCreateEvent({
+    onSuccess: () => {
+      toast.success('Event created successfully')
+      refetchEvents()
+    },
+    onError: (error) => {
+      toast.error(`Failed to create event: ${error.message}`)
+    },
+  })
+
+  const { mutate: updateEvent, isPending: isUpdating } = useUpdateEvent({
+    onSuccess: () => {
+      toast.success('Event updated successfully')
+      refetchEvents()
+    },
+    onError: (error) => {
+      toast.error(`Failed to update event: ${error.message}`)
+    },
+  })
+
+  const { mutate: deleteEvent, isPending: isDeleting } = useDeleteEvent({
+    onSuccess: () => {
+      toast.success('Event deleted successfully')
+      refetchEvents()
+    },
+    onError: (error) => {
+      toast.error(`Failed to delete event: ${error.message}`)
+    },
+  })
+
+  const events = useMemo<Event[]>(() => {
+    return flattenAllCalendarEvents(allEventsData, selectedCalendarId)
+  }, [allEventsData, selectedCalendarId])
 
   const handleEventCreate = (event: Omit<Event, 'id'>) => {
-    const newEvent: Event = {
-      ...event,
-      id: Math.random().toString(36).substr(2, 9),
-    }
-    setEvents((prev) => [...prev, newEvent])
+    const targetCalendarId = selectedCalendarId !== ALL_CALENDARS_VALUE ? selectedCalendarId : undefined
+    const request = createEventRequestFromEvent(event, targetCalendarId)
+    createEvent(request)
   }
 
   const handleEventUpdate = (id: string, updatedEvent: Partial<Event>) => {
-    setEvents((prev) => prev.map((e) => (e.id === id ? { ...e, ...updatedEvent } : e)))
+    const request = updateEventRequestFromPartialEvent(updatedEvent)
+    updateEvent({ id, data: request })
   }
 
   const handleEventDelete = (id: string) => {
-    setEvents((prev) => prev.filter((e) => e.id !== id))
+    deleteEvent(id)
   }
+
+  if (isStatusLoading) {
+    return <LoadingSection text="Checking calendar connection..." />
+  }
+
+  if (statusError) {
+    return (
+      <div className="flex-1 flex items-center justify-center p-6">
+        <ErrorState
+          title="Connection Error"
+          message="Unable to check Google Calendar connection status. Please try again."
+          onRetry={() => window.location.reload()}
+        />
+      </div>
+    )
+  }
+
+  if (!isGoogleCalendarConnected) {
+    return (
+      <div className="flex flex-col h-full">
+        <GoogleCalendarNotConnected authUrl={googleCalendarStatus?.authUrl} />
+        <AIAllySidebar
+          isOpen={isAllySidebarOpen}
+          onClose={() => setIsAllySidebarOpen(false)}
+          onOpen={() => setIsAllySidebarOpen(true)}
+        />
+      </div>
+    )
+  }
+
+  if (eventsLoading || calendarsLoading) {
+    return <LoadingSection text="Loading your calendar..." className="h-full" />
+  }
+
+  if (eventsError) {
+    const isAuthError = eventsError.message?.includes('not connected') || eventsError.message?.includes('authorize')
+
+    if (isAuthError) {
+      return (
+        <div className="flex flex-col h-full">
+          <GoogleCalendarNotConnected authUrl={googleCalendarStatus?.authUrl} />
+          <AIAllySidebar
+            isOpen={isAllySidebarOpen}
+            onClose={() => setIsAllySidebarOpen(false)}
+            onOpen={() => setIsAllySidebarOpen(true)}
+          />
+        </div>
+      )
+    }
+
+    return (
+      <div className="flex-1 flex items-center justify-center p-6">
+        <ErrorState
+          title="Failed to load calendar"
+          message={eventsError.message || 'Unable to fetch your calendar events. Please try again.'}
+          onRetry={() => refetchEvents()}
+        />
+      </div>
+    )
+  }
+
+  const isMutating = isCreating || isUpdating || isDeleting
 
   return (
     <div className="flex flex-col h-full">
       <div className="flex-1 overflow-auto p-4 sm:p-6">
+        <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <h1 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100">Calendar</h1>
+          <CalendarFilter
+            calendars={calendars}
+            selectedCalendarId={selectedCalendarId}
+            onCalendarChange={setSelectedCalendarId}
+            isLoading={calendarsLoading}
+          />
+        </div>
         <EventManager
           events={events}
           onEventCreate={handleEventCreate}
           onEventUpdate={handleEventUpdate}
           onEventDelete={handleEventDelete}
-          categories={['Meeting', 'Task', 'Reminder', 'Personal']}
+          categories={['Meeting', 'Task', 'Reminder', 'Personal', 'Focus Time', 'Travel']}
           availableTags={['Important', 'Urgent', 'Work', 'Personal', 'Team', 'Client']}
           defaultView="month"
+          className={isMutating ? 'opacity-75 pointer-events-none' : ''}
         />
       </div>
       <AIAllySidebar
@@ -104,9 +369,5 @@ function CalendarContent() {
 }
 
 export default function CalendarPage() {
-  return (
-    <Suspense fallback={<LoadingSection text="Loading calendar..." />}>
-      <CalendarContent />
-    </Suspense>
-  )
+  return <CalendarContent />
 }

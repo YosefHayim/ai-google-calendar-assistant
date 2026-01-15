@@ -5,20 +5,9 @@ import { logger } from "../logger"
 
 type UserCalendarInsert = Database["public"]["Tables"]["user_calendars"]["Insert"]
 
-/**
- * @description Synchronizes a user's Google Calendar list to the Supabase database after OAuth completion.
- * Creates a fresh OAuth client with the provided tokens, fetches all calendars, and upserts them
- * into the user_calendars table. Used during the OAuth callback flow.
- * @param {string} userId - The unique identifier of the user in the Supabase database.
- * @param {string} accessToken - The OAuth access token obtained from the authorization flow.
- * @param {string} [refreshToken] - Optional OAuth refresh token for token renewal.
- * @returns {Promise<void>} Resolves when synchronization is complete.
- * @example
- * // In OAuth callback handler:
- * await syncUserCalendarsAfterOAuth(user.id, tokens.access_token, tokens.refresh_token);
- */
 export const syncUserCalendarsAfterOAuth = async (
   userId: string,
+  email: string,
   accessToken: string,
   refreshToken?: string,
 ): Promise<void> => {
@@ -36,6 +25,15 @@ export const syncUserCalendarsAfterOAuth = async (
 
     if (items.length === 0) {
       logger.info(`syncUserCalendarsAfterOAuth: No calendars found for user ${userId}`)
+      return
+    }
+
+    const { error: userError } = await SUPABASE.from("users").upsert(
+      { id: userId, email },
+      { onConflict: "id", ignoreDuplicates: true }
+    )
+    if (userError) {
+      logger.error(`syncUserCalendarsAfterOAuth: Failed to ensure user exists: ${userError.message}`)
       return
     }
 
