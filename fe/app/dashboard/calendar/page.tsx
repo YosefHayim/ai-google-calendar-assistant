@@ -17,6 +17,7 @@ import { apiClient } from '@/lib/api/client'
 import { ENDPOINTS } from '@/lib/api/endpoints'
 import { toast } from 'sonner'
 import { CalendarDays, Link2, Filter } from 'lucide-react'
+import { QuickEventDialog } from '@/components/dialogs/QuickEventDialog'
 import type { CalendarEvent, CreateEventRequest, UpdateEventRequest, CustomCalendar } from '@/types/api'
 
 interface CalendarEventsGroup {
@@ -185,6 +186,7 @@ function GoogleCalendarNotConnected({ authUrl }: { authUrl?: string }) {
 function CalendarContent() {
   const [isAllySidebarOpen, setIsAllySidebarOpen] = useState(false)
   const [selectedCalendarId, setSelectedCalendarId] = useState<string>(ALL_CALENDARS_VALUE)
+  const [isQuickEventDialogOpen, setIsQuickEventDialogOpen] = useState(false)
 
   const { data: googleCalendarStatus, isLoading: isStatusLoading, error: statusError } = useGoogleCalendarStatus()
 
@@ -353,10 +355,16 @@ function CalendarContent() {
           onEventCreate={handleEventCreate}
           onEventUpdate={handleEventUpdate}
           onEventDelete={handleEventDelete}
+          onNewEventClick={() => setIsQuickEventDialogOpen(true)}
           categories={['Meeting', 'Task', 'Reminder', 'Personal', 'Focus Time', 'Travel']}
           availableTags={['Important', 'Urgent', 'Work', 'Personal', 'Team', 'Client']}
           defaultView="month"
           className={isMutating ? 'opacity-75 pointer-events-none' : ''}
+        />
+        <QuickEventDialog
+          isOpen={isQuickEventDialogOpen}
+          onClose={() => setIsQuickEventDialogOpen(false)}
+          onEventCreated={() => refetchEvents()}
         />
       </div>
       <AIAllySidebar

@@ -4,7 +4,6 @@ import { ACTION, REQUEST_CONFIG_BASE, STATUS_RESPONSE } from "@/config";
 import { eventsHandler, formatDate } from "@/utils";
 import { calculateInsightsMetrics } from "@/utils/ai/insights-calculator";
 import { quickAddWithOrchestrator } from "@/utils/ai/quick-add-orchestrator";
-import { fetchCredentialsByEmail } from "@/utils/auth/get-user-calendar-tokens";
 import {
   getCachedEvents,
   invalidateEventsCache,
@@ -15,7 +14,6 @@ import {
   setCachedInsights,
 } from "@/utils/cache/insights-cache";
 import { getEvents } from "@/utils/calendar/get-events";
-import { initUserSupabaseCalendarWithTokensAndUpdateTokens } from "@/utils/calendar/init";
 import {
   applyReschedule,
   findRescheduleSuggestions,
@@ -34,11 +32,6 @@ import { reqResAsyncHandler, sendR } from "@/utils/http";
  *
  */
 const getEventById = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const tokenData = await fetchCredentialsByEmail(req.user?.email!);
-  if (!tokenData) {
-    return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User tokens are not found.");
-  }
-
   if (!req.params.id) {
     return sendR(
       res,
@@ -47,10 +40,7 @@ const getEventById = reqResAsyncHandler(async (req: Request, res: Response) => {
     );
   }
 
-  const calendar =
-    await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData);
-
-  const r = await calendar.events.get({
+  const r = await req.calendar!.events.get({
     ...REQUEST_CONFIG_BASE,
     calendarId: (req?.query?.calendarId as string) ?? "primary",
     eventId: req.params.id,
@@ -77,11 +67,6 @@ const getEventById = reqResAsyncHandler(async (req: Request, res: Response) => {
  */
 const getAllEvents = reqResAsyncHandler(async (req: Request, res: Response) => {
   const userId = req.user?.id;
-  const tokenData = await fetchCredentialsByEmail(req.user?.email!);
-  if (!tokenData) {
-    return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User tokens not found.");
-  }
-
   const calendarId = (req.query.calendarId as string) || "primary";
   const timeMin = req.query.timeMin as string | undefined;
   const timeMax = req.query.timeMax as string | undefined;
@@ -207,26 +192,17 @@ const deleteEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
  */
 const getEventAnalytics = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const tokenData = await fetchCredentialsByEmail(req.user?.email!);
-    if (!tokenData) {
-      return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User token not found.");
-    }
+    const calendar = req.calendar!;
 
-    const calendar =
-      await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData);
-
-    // Support filtering by specific calendar IDs (comma-separated)
     const calendarIdsParam = req.query.calendarIds as string | undefined;
     let allCalendarIds: string[];
 
     if (calendarIdsParam) {
-      // Parse comma-separated calendar IDs from query param
       allCalendarIds = calendarIdsParam
         .split(",")
         .map((id) => id.trim())
         .filter(Boolean);
     } else {
-      // Default: fetch all calendars
       allCalendarIds = (await calendar.calendarList
         .list({ prettyPrint: true })
         .then((r) =>
@@ -345,14 +321,7 @@ const quickAddEvent = reqResAsyncHandler(
  *
  */
 const watchEvents = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const tokenData = await fetchCredentialsByEmail(req.user?.email!);
-  if (!tokenData) {
-    return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User token not found.");
-  }
-
-  const calendar =
-    await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData);
-  const r = await calendar.events.watch({
+  const r = await req.calendar!.events.watch({
     ...req.body,
     ...REQUEST_CONFIG_BASE,
     calendarId: (req.query.calendarId as string) ?? "primary",
@@ -372,14 +341,7 @@ const watchEvents = reqResAsyncHandler(async (req: Request, res: Response) => {
  *
  */
 const moveEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const tokenData = await fetchCredentialsByEmail(req.user?.email!);
-  if (!tokenData) {
-    return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User token not found.");
-  }
-
-  const calendar =
-    await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData);
-  const r = await calendar.events.move({
+  const r = await req.calendar!.events.move({
     ...req.body,
     ...REQUEST_CONFIG_BASE,
     calendarId: (req.query.calendarId as string) ?? "primary",
@@ -396,14 +358,7 @@ const moveEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
  */
 const getEventInstances = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const tokenData = await fetchCredentialsByEmail(req.user?.email!);
-    if (!tokenData) {
-      return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User token not found.");
-    }
-
-    const calendar =
-      await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData);
-    const r = await calendar.events.instances({
+    const r = await req.calendar!.events.instances({
       ...REQUEST_CONFIG_BASE,
       calendarId: (req.query.calendarId as string) ?? "primary",
       eventId: req.params.id,
@@ -431,14 +386,7 @@ const getEventInstances = reqResAsyncHandler(
  * @returns {Promise<void>} The response object.
  */
 const importEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const tokenData = await fetchCredentialsByEmail(req.user?.email!);
-  if (!tokenData) {
-    return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User token not found.");
-  }
-
-  const calendar =
-    await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData);
-  const r = await calendar.events.import({
+  const r = await req.calendar!.events.import({
     ...REQUEST_CONFIG_BASE,
     calendarId: (req.query.calendarId as string) ?? "primary",
     conferenceDataVersion: req.query.conferenceDataVersion
@@ -497,7 +445,6 @@ const getInsights = reqResAsyncHandler(async (req: Request, res: Response) => {
     );
   }
 
-  // Check Redis cache first
   const cached = await getCachedInsights(userEmail, timeMin, timeMax);
   if (cached) {
     return sendR(
@@ -508,21 +455,12 @@ const getInsights = reqResAsyncHandler(async (req: Request, res: Response) => {
     );
   }
 
-  // Fetch user tokens
-  const tokenData = await fetchCredentialsByEmail(userEmail);
-  if (!tokenData) {
-    return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User token not found");
-  }
-
-  // Initialize calendar and get all calendar IDs
-  const calendar =
-    await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData);
+  const calendar = req.calendar!;
   const calendarListResponse = await calendar.calendarList.list({
     prettyPrint: true,
   });
   const calendarItems = calendarListResponse.data.items || [];
 
-  // Build calendar map for metrics calculation
   const calendarMap: Record<string, { name: string; color: string }> = {};
   for (const cal of calendarItems) {
     if (cal.id) {
@@ -540,7 +478,6 @@ const getInsights = reqResAsyncHandler(async (req: Request, res: Response) => {
     allCalendarIds.push("primary");
   }
 
-  // Fetch events from all calendars (use standard response for raw event data)
   const allEventsArrays = await Promise.all(
     allCalendarIds.map(async (calendarId) => {
       const result = await getEvents({
@@ -549,10 +486,8 @@ const getInsights = reqResAsyncHandler(async (req: Request, res: Response) => {
         extra: { calendarId, timeMin, timeMax, customEvents: false },
       });
 
-      // We only use standard response for insights (raw Google Calendar events)
       if (result.type === "standard") {
         const events = result.data.items ?? [];
-        // Add calendarId to each event for breakdown calculation
         return events.map((event) => ({ ...event, calendarId }));
       }
 
@@ -560,7 +495,6 @@ const getInsights = reqResAsyncHandler(async (req: Request, res: Response) => {
     })
   );
 
-  // Flatten all events
   const allEvents = allEventsArrays.flat();
 
   if (allEvents.length === 0) {
@@ -577,10 +511,8 @@ const getInsights = reqResAsyncHandler(async (req: Request, res: Response) => {
     );
   }
 
-  // Calculate metrics from events
   const metrics = calculateInsightsMetrics(allEvents, calendarMap);
 
-  // Generate insights with retry logic (3 attempts)
   const aiResponse = await generateInsightsWithRetry(
     metrics,
     timeMin,
@@ -588,7 +520,6 @@ const getInsights = reqResAsyncHandler(async (req: Request, res: Response) => {
     3
   );
 
-  // Prepare response data
   const responseData = {
     insights: aiResponse.insights,
     generatedAt: new Date().toISOString(),
@@ -596,7 +527,6 @@ const getInsights = reqResAsyncHandler(async (req: Request, res: Response) => {
     periodEnd: timeMax,
   };
 
-  // Cache the result
   await setCachedInsights(userEmail, timeMin, timeMax, responseData);
 
   return sendR(

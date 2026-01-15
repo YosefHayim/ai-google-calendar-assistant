@@ -65,6 +65,7 @@ export interface EventManagerProps {
   onEventCreate?: (event: Omit<Event, 'id'>) => void
   onEventUpdate?: (id: string, event: Partial<Event>) => void
   onEventDelete?: (id: string) => void
+  onNewEventClick?: () => void
   categories?: string[]
   colors?: { name: string; value: string; bg: string; text: string }[]
   defaultView?: 'month' | 'week' | 'day' | 'list'
@@ -86,6 +87,7 @@ export function EventManager({
   onEventCreate,
   onEventUpdate,
   onEventDelete,
+  onNewEventClick,
   categories = ['Meeting', 'Task', 'Reminder', 'Personal'],
   colors = defaultColors,
   defaultView = 'month',
@@ -504,8 +506,12 @@ export function EventManager({
 
           <Button
             onClick={() => {
-              setIsCreating(true)
-              setIsDialogOpen(true)
+              if (onNewEventClick) {
+                onNewEventClick()
+              } else {
+                setIsCreating(true)
+                setIsDialogOpen(true)
+              }
             }}
             className="w-full sm:w-auto"
           >

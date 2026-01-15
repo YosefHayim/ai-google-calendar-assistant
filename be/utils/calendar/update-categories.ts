@@ -6,12 +6,22 @@ import { logger } from "../logger"
 type UserCalendarInsert = Database["public"]["Tables"]["user_calendars"]["Insert"]
 
 const ensureUserExists = async (userId: string, email: string): Promise<void> => {
-  const { error } = await SUPABASE.from("users").upsert(
-    { id: userId, email },
-    { onConflict: "id", ignoreDuplicates: true }
-  )
+  const { data: existingUser } = await SUPABASE
+    .from("users")
+    .select("id")
+    .eq("id", userId)
+    .single()
+
+  if (existingUser) return
+
+  const { error } = await SUPABASE.from("users").insert({ id: userId, email })
+
   if (error) {
-    logger.error(`ensureUserExists: Failed to ensure user ${userId} exists: ${error.message}`)
+    if (error.code === "23505") {
+      logger.warn(`ensureUserExists: User ${userId} or email ${email} already exists, skipping`)
+      return
+    }
+    logger.error(`ensureUserExists: Failed: ${error.message}`)
     throw error
   }
 }

@@ -25,10 +25,12 @@ import {
   redirectToCreditPackCheckout,
   redirectToBillingPortal,
   upgradeSubscription,
+  cancelSubscription,
   type Plan,
   type PlanSlug,
   type PlanInterval,
 } from '@/services/payment.service'
+import { toast } from 'sonner'
 import NumberFlow from '@number-flow/react'
 import { cn } from '@/lib/utils'
 import { useSubscriptionStatus, usePlans } from '@/hooks/queries/billing'
@@ -80,6 +82,16 @@ export const SubscriptionTab: React.FC = () => {
     return 'downgrade'
   }
 
+  const isNoBillingInfoError = (error: unknown): boolean => {
+    if (typeof error === 'object' && error !== null) {
+      const axiosError = error as { response?: { data?: { message?: string }; status?: number } }
+      const message = axiosError.response?.data?.message || ''
+      const status = axiosError.response?.status
+      return message.includes('No billing information') || status === 404
+    }
+    return false
+  }
+
   const handlePlanAction = async (plan: Plan, customCredits?: number) => {
     const isPerUse = selectedFrequency === 'per use'
 
@@ -93,7 +105,15 @@ export const SubscriptionTab: React.FC = () => {
         })
       } else {
         if (plan.slug === 'starter') {
-          await redirectToBillingPortal()
+          try {
+            await redirectToBillingPortal()
+          } catch (error) {
+            if (isNoBillingInfoError(error)) {
+              toast.info('You are already on the free plan')
+            } else {
+              toast.error('Failed to open billing portal')
+            }
+          }
           return
         }
 
@@ -119,12 +139,27 @@ export const SubscriptionTab: React.FC = () => {
     }
   }
 
+  const isNoBillingInfoError = (error: unknown): boolean => {
+    if (typeof error === 'object' && error !== null) {
+      const axiosError = error as { response?: { data?: { message?: string }; status?: number } }
+      const message = axiosError.response?.data?.message || ''
+      const status = axiosError.response?.status
+      return message.includes('No billing information') || status === 404
+    }
+    return false
+  }
+
   const handleManageBilling = async () => {
     setActionLoading('portal')
     try {
       await redirectToBillingPortal()
     } catch (error) {
-      console.error('Failed to open billing portal:', error)
+      if (isNoBillingInfoError(error)) {
+        toast.info('Redirecting to checkout to set up billing...')
+        await redirectToCheckout({ planSlug: 'pro', interval: 'monthly' })
+      } else {
+        toast.error('Failed to open billing portal')
+      }
     } finally {
       setActionLoading(null)
     }

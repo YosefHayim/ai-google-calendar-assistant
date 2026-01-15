@@ -15,6 +15,7 @@ import {
   CalendarCheck,
   Database,
   Mic,
+  MicOff,
   Music,
   Gauge,
 } from 'lucide-react'
@@ -27,6 +28,7 @@ import { LoadingSection } from '@/components/ui/loading-spinner'
 import CinematicGlowToggle from '@/components/ui/cinematic-glow-toggle'
 import { SettingsRow, SettingsSection, SettingsDropdown, TabHeader, type DropdownOption } from './components'
 import { voiceService } from '@/services/voice.service'
+import { useSpeechRecognition } from '@/hooks/useSpeechRecognition'
 import {
   useAllyBrain,
   useUpdateAllyBrain,
@@ -92,11 +94,26 @@ export const AssistantTab: React.FC<AssistantTabProps> = () => {
     control,
     setValue,
     reset,
+    getValues,
     formState: { errors, isDirty },
   } = useForm<AllyBrainFormData>({
     resolver: zodResolver(allyBrainSchema),
     defaultValues: allyBrainDefaults,
   })
+
+  const handleVoiceTranscription = (transcribedText: string) => {
+    const currentInstructions = getValues('instructions') || ''
+    const separator = currentInstructions.trim() ? ' ' : ''
+    const newInstructions = currentInstructions + separator + transcribedText
+    setValue('instructions', newInstructions, { shouldDirty: true })
+  }
+
+  const {
+    isRecording: isVoiceRecording,
+    speechRecognitionSupported,
+    speechRecognitionError,
+    toggleRecording,
+  } = useSpeechRecognition(handleVoiceTranscription)
 
   const watchedEnabled = useWatch({ control, name: 'enabled' })
   const watchedInstructions = useWatch({ control, name: 'instructions' }) || ''
@@ -183,7 +200,9 @@ export const AssistantTab: React.FC<AssistantTabProps> = () => {
       { enabled: voiceEnabled, voice: selectedVoice, playbackSpeed: typedSpeed },
       {
         onSuccess: () => {
-          toast.success(`Playback speed changed to ${PLAYBACK_SPEED_OPTIONS.find((s) => s.value === typedSpeed)?.label || `${typedSpeed}x`}`)
+          toast.success(
+            `Playback speed changed to ${PLAYBACK_SPEED_OPTIONS.find((s) => s.value === typedSpeed)?.label || `${typedSpeed}x`}`,
+          )
         },
         onError: () => {
           setSelectedPlaybackSpeed((voiceData?.value?.playbackSpeed as PlaybackSpeed) || 1)
@@ -281,7 +300,7 @@ export const AssistantTab: React.FC<AssistantTabProps> = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-h-[calc(83vh-10rem)] overflow-y-auto h-full">
       <Card>
         <TabHeader
           title="Ally's Brain"
@@ -316,9 +335,44 @@ export const AssistantTab: React.FC<AssistantTabProps> = () => {
                   className="overflow-hidden"
                 >
                   <div className="space-y-2">
-                    <Label htmlFor="instructions" className="text-sm font-medium">
-                      Your Instructions
-                    </Label>
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="instructions" className="text-sm font-medium">
+                        Your Instructions
+                      </Label>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={toggleRecording}
+                        disabled={!speechRecognitionSupported || !!speechRecognitionError}
+                        className={`h-8 px-2 gap-1.5 ${
+                          isVoiceRecording
+                            ? 'text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300'
+                            : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200'
+                        }`}
+                        title={
+                          !speechRecognitionSupported
+                            ? 'Voice input not supported'
+                            : speechRecognitionError
+                              ? speechRecognitionError
+                              : isVoiceRecording
+                                ? 'Stop recording'
+                                : 'Record voice instructions'
+                        }
+                      >
+                        {isVoiceRecording ? (
+                          <>
+                            <MicOff size={16} className="animate-pulse" />
+                            <span className="text-xs">Stop</span>
+                          </>
+                        ) : (
+                          <>
+                            <Mic size={16} />
+                            <span className="text-xs">Voice</span>
+                          </>
+                        )}
+                      </Button>
+                    </div>
                     <textarea
                       {...register('instructions')}
                       id="instructions"

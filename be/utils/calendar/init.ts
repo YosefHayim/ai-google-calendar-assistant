@@ -116,3 +116,25 @@ export const initUserSupabaseCalendarWithTokensAndUpdateTokens = async (tokens: 
 
   return createCalendarClient(oauthClient);
 };
+
+/**
+ * @description Creates a Google Calendar client from pre-validated tokens.
+ * Use this when tokens have already been validated and refreshed by middleware
+ * (googleTokenValidation + googleTokenRefresh) to avoid redundant refresh calls.
+ *
+ * This is the RECOMMENDED way to create calendar clients in route handlers
+ * that use the Google token middleware chain.
+ *
+ * @param {TokensProps} tokens - Pre-validated OAuth tokens from req.googleTokenValidation.tokens
+ * @returns {calendar_v3.Calendar} An authenticated Google Calendar API client.
+ * @example
+ * // In a route handler after googleTokenValidation + googleTokenRefresh middleware:
+ * const tokens = req.googleTokenValidation.tokens;
+ * const calendar = createCalendarFromValidatedTokens(tokens);
+ * const events = await calendar.events.list({ calendarId: "primary" });
+ */
+export const createCalendarFromValidatedTokens = (tokens: TokensProps): calendar_v3.Calendar => {
+  const oauthClient = createOAuth2Client();
+  oauthClient.setCredentials(toGoogleCredentials(tokens));
+  return createCalendarClient(oauthClient);
+};

@@ -6,6 +6,7 @@ export { getEventDurationString } from "./duration";
 export { eventsHandler } from "./events";
 export {
   initUserSupabaseCalendarWithTokensAndUpdateTokens,
+  createCalendarFromValidatedTokens,
   refreshAccessToken,
   createCalendarClient,
 } from "./init";

@@ -1,24 +1,30 @@
 import type { NextFunction, Request, Response } from "express"
 import { STATUS_RESPONSE } from "@/config"
 import { reqResAsyncHandler, sendR } from "@/utils/http"
-import { fetchCredentialsByEmail } from "@/utils/auth"
-import { initUserSupabaseCalendarWithTokensAndUpdateTokens } from "@/utils/calendar"
+import { createCalendarFromValidatedTokens } from "@/utils/calendar"
 
+/**
+ * Middleware that attaches a Google Calendar client to the request.
+ * MUST be used after googleTokenValidation + googleTokenRefresh middleware.
+ *
+ * Uses pre-validated tokens from req.googleTokenValidation to avoid redundant
+ * database calls and token refresh operations.
+ */
 export const withCalendarClient = reqResAsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const email = req.user?.email
+    const validation = req.googleTokenValidation
 
-    if (!email) {
+    if (!validation) {
       return sendR(
         res,
-        STATUS_RESPONSE.UNAUTHORIZED,
-        "User email not found in request."
+        STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
+        "Google token validation required. Ensure googleTokenValidation middleware runs first."
       )
     }
 
-    const tokenData = await fetchCredentialsByEmail(email)
+    const { tokens } = validation
 
-    if (!tokenData) {
+    if (!tokens) {
       return sendR(
         res,
         STATUS_RESPONSE.NOT_FOUND,
@@ -26,11 +32,10 @@ export const withCalendarClient = reqResAsyncHandler(
       )
     }
 
-    const calendar =
-      await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData)
+    const calendar = createCalendarFromValidatedTokens(tokens)
 
     req.calendar = calendar
-    req.tokenData = tokenData
+    req.tokenData = tokens
 
     next()
   }

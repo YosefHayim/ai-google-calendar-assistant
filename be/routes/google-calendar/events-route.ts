@@ -4,6 +4,7 @@ import { STATUS_RESPONSE } from "@/config";
 import eventsController from "@/controllers/google-calendar/events-controller";
 import { googleTokenRefresh } from "@/middlewares/google-token-refresh";
 import { googleTokenValidation } from "@/middlewares/google-token-validation";
+import { withCalendarClient } from "@/middlewares/calendar-client";
 import { logger } from "@/utils/logger";
 import { sendR } from "@/utils/http";
 import { supabaseAuth } from "@/middlewares/supabase-auth";
@@ -11,8 +12,8 @@ import { calendarAiRateLimiter } from "@/middlewares/rate-limiter";
 
 const router = express.Router();
 
-// Supabase auth (with auto-refresh) + Google token validation + auto-refresh
-router.use(supabaseAuth(), googleTokenValidation, googleTokenRefresh());
+// Supabase auth + Google token validation + auto-refresh + calendar client
+router.use(supabaseAuth(), googleTokenValidation, googleTokenRefresh(), withCalendarClient);
 
 router.param("id", (_req: Request, res: Response, next: NextFunction, id: string) => {
   if (!id) {
