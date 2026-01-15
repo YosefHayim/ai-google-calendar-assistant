@@ -1,13 +1,17 @@
 import type { Job } from "bullmq"
 import { SUPABASE } from "@/config/clients"
 import { logger } from "@/utils/logger"
-import { refreshGoogleTokens } from "@/utils/auth/google-auth"
+import {
+  refreshGoogleAccessToken,
+  persistGoogleTokens,
+  deactivateGoogleTokens,
+} from "@/utils/auth/google-token"
+import type { TokensProps } from "@/types"
 
 const EXPIRY_THRESHOLD_HOURS = 12
 const SECONDS_PER_HOUR = 3600
 const MILLISECONDS_PER_SECOND = 1000
 const MILLISECONDS_PER_HOUR = SECONDS_PER_HOUR * MILLISECONDS_PER_SECOND
-const ACCESS_TOKEN_LIFETIME_SECONDS = 3600
 
 export type TokenRefreshJobData = Record<string, never>
 
@@ -18,40 +22,41 @@ export type TokenRefreshResult = {
   errors: string[]
 }
 
+type ExpiringTokenRow = {
+  user_id: string
+  refresh_token: string
+  access_token: string
+  expires_at: string | null
+  token_type: string | null
+  id_token: string | null
+  scope: string | null
+  users: {
+    email: string
+  }
+}
+
 async function refreshUserToken(
-  userId: string,
   email: string,
-  refreshToken: string
+  tokenData: Partial<TokensProps>
 ): Promise<{ success: boolean; error?: string }> {
-  const refreshResult = await refreshGoogleTokens(refreshToken)
+  try {
+    const refreshResult = await refreshGoogleAccessToken(tokenData as TokensProps)
 
-  if (!refreshResult.success) {
-    return { success: false, error: refreshResult.error || "Unknown error" }
+    await persistGoogleTokens(email, refreshResult)
+
+    logger.info(`[TokenRefresh] Refreshed token for user ${email}`)
+    return { success: true }
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : "Unknown error"
+
+    const requiresReauth = errorMessage.includes("REAUTH_REQUIRED")
+    if (requiresReauth) {
+      await deactivateGoogleTokens(email).catch(() => null)
+      logger.warn(`[TokenRefresh] Deactivated invalid tokens for ${email}`)
+    }
+
+    return { success: false, error: errorMessage }
   }
-
-  if (!refreshResult.accessToken) {
-    return { success: false, error: "No access token returned" }
-  }
-
-  const newExpiry = new Date(
-    Date.now() + ACCESS_TOKEN_LIFETIME_SECONDS * MILLISECONDS_PER_SECOND
-  )
-
-  const { error: updateError } = await SUPABASE
-    .from("users")
-    .update({
-      google_access_token: refreshResult.accessToken,
-      google_token_expiry: newExpiry.toISOString(),
-      updated_at: new Date().toISOString(),
-    })
-    .eq("id", userId)
-
-  if (updateError) {
-    return { success: false, error: updateError.message }
-  }
-
-  logger.info(`[TokenRefresh] Refreshed token for user ${email}`)
-  return { success: true }
 }
 
 export async function handleTokenRefreshCheck(
@@ -72,10 +77,12 @@ export async function handleTokenRefreshCheck(
     )
 
     const { data: expiringTokens, error: fetchError } = await SUPABASE
-      .from("users")
-      .select("id, email, google_token_expiry, google_refresh_token")
-      .not("google_refresh_token", "is", null)
-      .lt("google_token_expiry", expiryThreshold.toISOString())
+      .from("oauth_tokens")
+      .select("user_id, refresh_token, access_token, expires_at, token_type, id_token, scope, users!inner(email)")
+      .eq("provider", "google")
+      .eq("is_valid", true)
+      .not("refresh_token", "is", null)
+      .lt("expires_at", expiryThreshold.toISOString())
 
     if (fetchError) {
       result.errors.push(`Fetch error: ${fetchError.message}`)
@@ -92,22 +99,29 @@ export async function handleTokenRefreshCheck(
 
     logger.info(`[Job ${job.id}] Found ${expiringTokens.length} tokens to refresh`)
 
-    for (const user of expiringTokens) {
-      if (!user.google_refresh_token) {
+    for (const token of expiringTokens as ExpiringTokenRow[]) {
+      if (!token.refresh_token) {
         continue
       }
 
-      const refreshOutcome = await refreshUserToken(
-        user.id,
-        user.email || "unknown",
-        user.google_refresh_token
-      )
+      const email = token.users.email
+
+      const tokenData: Partial<TokensProps> = {
+        refresh_token: token.refresh_token,
+        access_token: token.access_token,
+        expires_at: token.expires_at,
+        token_type: token.token_type,
+        id_token: token.id_token,
+        scope: token.scope,
+      }
+
+      const refreshOutcome = await refreshUserToken(email, tokenData)
 
       if (refreshOutcome.success) {
         result.refreshed++
       } else {
         result.failed++
-        result.errors.push(`Failed for ${user.email}: ${refreshOutcome.error}`)
+        result.errors.push(`Failed for ${email}: ${refreshOutcome.error}`)
       }
     }
 

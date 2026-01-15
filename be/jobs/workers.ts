@@ -6,6 +6,7 @@ import { handleSubscriptionStatusCheck } from "./handlers/subscription-check"
 import { handleAnalyticsAggregation } from "./handlers/analytics-aggregation"
 import { handleTokenRefreshCheck } from "./handlers/token-refresh"
 import { handleUsageReset } from "./handlers/usage-reset"
+import { handleEventReminderJob, handleDailyDigestJob } from "./handlers/notifications"
 import { logger } from "@/utils/logger"
 
 const workers: Worker[] = []
@@ -74,6 +75,36 @@ export function startWorkers(): void {
 
   workers.push(analyticsWorker)
   logger.info("  - Started: analytics-jobs worker")
+
+  const notificationWorker = new Worker(
+    QUEUE_NAMES.NOTIFICATIONS,
+    (job) => {
+      switch (job.name) {
+        case "event-reminder-check":
+          return handleEventReminderJob(job)
+        case "daily-digest-send":
+          return handleDailyDigestJob(job)
+        default:
+          logger.warn(`Unknown notification job: ${job.name}`)
+          return Promise.resolve(null)
+      }
+    },
+    {
+      connection: bullmqConnection,
+      concurrency: 1,
+    }
+  )
+
+  notificationWorker.on("completed", (job) => {
+    logger.info(`[${job.name}] Job ${job.id} completed`)
+  })
+
+  notificationWorker.on("failed", (job, err) => {
+    logger.error(`[${job?.name}] Job ${job?.id} failed:`, err)
+  })
+
+  workers.push(notificationWorker)
+  logger.info("  - Started: notification-jobs worker")
 
   logger.info("BullMQ: All workers started")
 }

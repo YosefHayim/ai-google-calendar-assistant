@@ -175,6 +175,59 @@ export class WebConversationAdapter {
     };
   }
 
+  async getTodayContextWithoutCreating(userId: string): Promise<{ stateId: string | null; context: ConversationContext; isNew: boolean }> {
+    const existingConversation = await this.getTodayConversationState(userId);
+
+    if (existingConversation) {
+      const messages = await this.service.getConversationMessages(existingConversation.id);
+      const context: ConversationContext = {
+        messages,
+        summary: existingConversation.summary || undefined,
+        title: (existingConversation as { title?: string | null }).title || undefined,
+        lastUpdated: existingConversation.updated_at || existingConversation.created_at,
+      };
+      return { stateId: existingConversation.id, context, isNew: false };
+    }
+
+    return {
+      stateId: null,
+      context: { messages: [], lastUpdated: new Date().toISOString() },
+      isNew: true,
+    };
+  }
+
+  async createConversationWithMessages(
+    userId: string,
+    userMessage: userAndAiMessageProps,
+    assistantMessage: userAndAiMessageProps,
+    summarizeFn: SummarizeFn
+  ): Promise<{ conversationId: string; context: ConversationContext } | null> {
+    const newState = await this.createConversationState(userId);
+
+    if (!newState) {
+      logger.warn(`Failed to create conversation for user ${userId}`);
+      return null;
+    }
+
+    let context = await this.service.addMessageAndMaybeSummarize({
+      stateId: newState.id,
+      userId,
+      context: newState.context,
+      message: userMessage,
+      summarizeFn,
+    });
+
+    context = await this.service.addMessageAndMaybeSummarize({
+      stateId: newState.id,
+      userId,
+      context,
+      message: assistantMessage,
+      summarizeFn,
+    });
+
+    return { conversationId: newState.id, context };
+  }
+
   /**
    * @description Adds a message to the current today's conversation context and handles automatic summarization.
    * Gets or creates today's conversation context, then adds the message using the service's

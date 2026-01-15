@@ -1,4 +1,4 @@
-import type { Request, Response } from "express";
+import type { Request, Response } from "express"
 import {
   endSSEStream,
   setupSSEHeaders,
@@ -10,10 +10,10 @@ import {
   writeTitleGenerated,
   writeToolComplete,
   writeToolStart,
-} from "@/utils/sse";
-import { generateConversationTitle, summarizeMessages } from "@/telegram-bot/utils/summarize";
-import { getWebRelevantContext, storeWebEmbeddingAsync } from "@/utils/web-embeddings";
-import { createCreditTransaction, type CreditTransaction } from "@/services/credit-service";
+} from "@/utils/sse"
+import { generateConversationTitle, summarizeMessages } from "@/telegram-bot/utils/summarize"
+import { getWebRelevantContext, storeWebEmbeddingAsync } from "@/utils/web-embeddings"
+import { createCreditTransaction } from "@/services/credit-service"
 
 import type { AgentContext } from "@/ai-agents/tool-registry";
 import { ORCHESTRATOR_AGENT } from "@/ai-agents";
@@ -195,7 +195,7 @@ type StreamingParams = {
   userId: string
   userEmail: string
   message: string
-  conversationId: string
+  conversationId: string | null
   isNewConversation: boolean
   fullPrompt: string
   profileId?: string
@@ -235,10 +235,13 @@ async function handleStreamingResponse(params: StreamingParams): Promise<void> {
   const profile = getAgentProfile(profileId);
   const useOpenAIAgent = profile.modelConfig.provider === "openai";
   let interactionSuccessful = false;
+  let finalConversationId = conversationId;
 
   try {
+    const tempConversationId = conversationId || `temp-${userId}-${Date.now()}`;
+
     if (useOpenAIAgent) {
-      fullResponse = await handleOpenAIStreaming(res, userId, userEmail, conversationId, fullPrompt);
+      fullResponse = await handleOpenAIStreaming(res, userId, userEmail, tempConversationId, fullPrompt);
     } else {
       const agentConfig = createTextAgent({
         profileId,
@@ -247,33 +250,50 @@ async function handleStreamingResponse(params: StreamingParams): Promise<void> {
       fullResponse = await handleMultiProviderStreaming(res, agentConfig, fullPrompt, userEmail, images);
     }
 
-    const messageImages = images?.map((img) => ({
-      data: img.data,
-      mimeType: img.mimeType,
-    }));
-
-    await webConversation.addMessageToConversation(
-      conversationId,
-      userId,
-      { role: "user", content: message, images: messageImages },
-      summarizeMessages
-    );
-
     if (fullResponse) {
-      await webConversation.addMessageToConversation(conversationId, userId, { role: "assistant", content: fullResponse }, summarizeMessages);
+      const messageImages = images?.map((img) => ({
+        data: img.data,
+        mimeType: img.mimeType,
+      }));
+
+      if (isNewConversation) {
+        const result = await webConversation.createConversationWithMessages(
+          userId,
+          { role: "user", content: message, images: messageImages },
+          { role: "assistant", content: fullResponse },
+          summarizeMessages
+        );
+
+        if (result) {
+          finalConversationId = result.conversationId;
+        }
+      } else if (conversationId) {
+        await webConversation.addMessageToConversation(
+          conversationId,
+          userId,
+          { role: "user", content: message, images: messageImages },
+          summarizeMessages
+        );
+        await webConversation.addMessageToConversation(
+          conversationId,
+          userId,
+          { role: "assistant", content: fullResponse },
+          summarizeMessages
+        );
+      }
+
+      storeWebEmbeddingAsync(userId, message, "user");
       storeWebEmbeddingAsync(userId, fullResponse, "assistant");
       interactionSuccessful = true;
     }
 
-    storeWebEmbeddingAsync(userId, message, "user");
+    writeDone(res, finalConversationId || "", fullResponse, undefined);
 
-    writeDone(res, conversationId, fullResponse, undefined);
-
-    if (isNewConversation && conversationId) {
+    if (isNewConversation && finalConversationId) {
       try {
         const title = await generateConversationTitle(message);
-        await webConversation.updateConversationTitle(conversationId, title);
-        writeTitleGenerated(res, conversationId, title);
+        await webConversation.updateConversationTitle(finalConversationId, title);
+        writeTitleGenerated(res, finalConversationId, title);
       } catch (titleError) {
         console.error("Title generation error:", titleError);
       }
@@ -295,60 +315,57 @@ async function handleStreamingResponse(params: StreamingParams): Promise<void> {
 }
 
 const streamChat = async (req: Request<unknown, unknown, StreamChatRequest>, res: Response): Promise<void> => {
-  const { message, profileId, images } = req.body;
-  const userId = req.user?.id;
-  const userEmail = req.user?.email;
+  const { message, profileId, images } = req.body
+  const userId = req.user?.id
+  const userEmail = req.user?.email
 
   if (!message?.trim() && (!images || images.length === 0)) {
-    sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Message or images required");
-    return;
+    sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Message or images required")
+    return
   }
 
   if (!userId) {
-    sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
-    return;
+    sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated")
+    return
   }
 
   try {
-    const { stateId: conversationId, context } = await webConversation.getOrCreateTodayContext(userId);
-    const isNewConversation = context.messages.length === 0 && !context.title;
-    const conversationContext = webConversation.buildContextPrompt(context);
     const semanticContext = await getWebRelevantContext(userId, message || "", {
       threshold: EMBEDDING_THRESHOLD,
       limit: EMBEDDING_LIMIT,
-    });
+    })
 
     const fullPrompt = await buildChatPromptWithContext({
       message: message || "Please analyze the attached images.",
-      conversationContext,
+      conversationContext: "",
       semanticContext,
       userEmail: userEmail || userId,
       userId,
       hasImages: images && images.length > 0,
       imageCount: images?.length,
-    });
+    })
 
     await handleStreamingResponse({
       res,
       userId,
       userEmail: userEmail || "",
       message: message || "Image analysis",
-      conversationId,
-      isNewConversation,
+      conversationId: null,
+      isNewConversation: true,
       fullPrompt,
       profileId,
       images,
-    });
+    })
   } catch (error) {
-    console.error("Stream chat error:", error);
+    console.error("Stream chat error:", error)
     if (!res.headersSent) {
-      sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Error processing your request");
+      sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Error processing your request")
     } else {
-      writeError(res, "Error processing your request", "INIT_ERROR");
-      endSSEStream(res);
+      writeError(res, "Error processing your request", "INIT_ERROR")
+      endSSEStream(res)
     }
   }
-};
+}
 
 const streamContinueConversation = async (req: Request<{ id: string }, unknown, StreamChatRequest>, res: Response): Promise<void> => {
   const userId = req.user?.id;
