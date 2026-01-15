@@ -4,12 +4,12 @@ import { isEmail } from "validator";
 import { logger } from "@/utils/logger";
 import { auditLogger } from "@/utils/audit-logger";
 
-// Email change OTP expiry time (10 minutes)
-const EMAIL_CHANGE_EXPIRY_MS = 10 * 60 * 1000;
+const MINUTES_IN_EMAIL_CHANGE_EXPIRY = 10
+const SECONDS_IN_MINUTE = 60
+const MS_IN_SECOND = 1000
+const EMAIL_CHANGE_EXPIRY_MS = MINUTES_IN_EMAIL_CHANGE_EXPIRY * SECONDS_IN_MINUTE * MS_IN_SECOND
+const OTP_LENGTH = 6
 
-/**
- * Send OTP to new email for verification
- */
 const sendEmailOtp = async (email: string): Promise<{ success: boolean; error?: string }> => {
   try {
     const { error } = await SUPABASE.auth.signInWithOtp({
@@ -29,33 +29,36 @@ const sendEmailOtp = async (email: string): Promise<{ success: boolean; error?: 
   }
 };
 
-/**
- * Verify OTP code for email change
- */
 const verifyEmailOtp = async (email: string, token: string): Promise<{ success: boolean; error?: string }> => {
+  const normalizedToken = token.replace(/\D/g, "")
+
+  if (normalizedToken.length !== OTP_LENGTH) {
+    logger.warn(`Email change OTP verification: Invalid token length: ${normalizedToken.length}`)
+    return { success: false, error: "Invalid OTP format" }
+  }
+
   try {
     const { error } = await SUPABASE.auth.verifyOtp({
       email,
-      token,
+      token: normalizedToken,
       type: "email",
-    });
+    })
 
     if (error) {
-      return { success: false, error: error.message };
+      logger.warn(`Email change OTP verification failed for ${email}: ${error.message}`)
+      return { success: false, error: error.message }
     }
-    return { success: true };
+    return { success: true }
   } catch (err) {
-    const error = err as Error;
-    return { success: false, error: error.message };
+    const verifyError = err as Error
+    logger.error(`Email change OTP verification exception for ${email}: ${verifyError.message}`)
+    return { success: false, error: verifyError.message }
   }
-};
+}
 
-/**
- * Check if input looks like an OTP code (6 digits)
- */
-export const isOtpCode = (text: string): boolean => {
-  return /^\d{6}$/.test(text.trim());
-};
+const OTP_REGEX = new RegExp(`^\\d{${OTP_LENGTH}}$`)
+
+export const isOtpCode = (text: string): boolean => OTP_REGEX.test(text.trim())
 
 /**
  * Initiate email change - send OTP to new email

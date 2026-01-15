@@ -1,4 +1,4 @@
-import { AuditEventType, auditLogger } from "@/utils/audit-logger";
+import { auditLogger } from "@/utils/audit-logger"
 
 import type { GlobalContext } from "../init-bot";
 import type { MiddlewareFn } from "grammy";
@@ -8,7 +8,11 @@ import { logger } from "@/utils/logger";
 import { resetRateLimit } from "./rate-limiter";
 import validator from "validator";
 
-const OTP_EXPIRY_MS = 10 * 60 * 1000;
+const MINUTES_IN_OTP_EXPIRY = 10
+const SECONDS_IN_MINUTE = 60
+const MS_IN_SECOND = 1000
+const OTP_EXPIRY_MS = MINUTES_IN_OTP_EXPIRY * SECONDS_IN_MINUTE * MS_IN_SECOND
+const OTP_LENGTH = 6
 
 const sendEmailOtp = async (email: string): Promise<{ success: boolean; error?: string }> => {
   try {
@@ -42,27 +46,36 @@ const sendEmailOtp = async (email: string): Promise<{ success: boolean; error?: 
 };
 
 const verifyEmailOtp = async (email: string, token: string): Promise<{ success: boolean; error?: string }> => {
+  const normalizedToken = token.replace(/\D/g, "")
+
+  if (normalizedToken.length !== OTP_LENGTH) {
+    logger.warn(`OTP verification: Invalid token length after normalization: ${normalizedToken.length}`)
+    return { success: false, error: "Invalid OTP format" }
+  }
+
   try {
     const { error } = await SUPABASE.auth.verifyOtp({
       email,
-      token,
+      token: normalizedToken,
       type: "email",
-    });
+    })
 
     if (error) {
-      return { success: false, error: error.message };
+      logger.warn(`OTP verification failed for ${email}: ${error.message}`)
+      return { success: false, error: error.message }
     }
-    return { success: true };
+    return { success: true }
   } catch (err) {
-    const error = err as Error;
-    return { success: false, error: error.message };
+    const verifyError = err as Error
+    logger.error(`OTP verification exception for ${email}: ${verifyError.message}`)
+    return { success: false, error: verifyError.message }
   }
-};
+}
 
 const isOtpCode = (text: string): boolean => {
-  const trimmed = text.trim();
-  return validator.isLength(trimmed, { min: 6, max: 6 }) && validator.isNumeric(trimmed);
-};
+  const trimmed = text.trim()
+  return validator.isLength(trimmed, { min: OTP_LENGTH, max: OTP_LENGTH }) && validator.isNumeric(trimmed)
+}
 
 export const authTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
   const from = ctx.from;
