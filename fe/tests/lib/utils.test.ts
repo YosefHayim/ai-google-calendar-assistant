@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { cn } from '../../lib/utils'
+import { cn, isRTLText, getTextDirection } from '../../lib/utils'
 
 describe('cn utility function', () => {
   describe('basic class merging', () => {
@@ -129,6 +129,103 @@ describe('cn utility function', () => {
     it('should handle many arguments', () => {
       const result = cn('a', 'b', 'c', 'd', 'e', 'f')
       expect(result).toBe('a b c d e f')
+    })
+  })
+})
+
+describe('isRTLText', () => {
+  describe('Hebrew text', () => {
+    it('should return true for Hebrew text', () => {
+      expect(isRTLText('שלום')).toBe(true)
+      expect(isRTLText('מה שלומך')).toBe(true)
+    })
+
+    it('should return true for mixed text with Hebrew', () => {
+      expect(isRTLText('Hello שלום')).toBe(true)
+    })
+  })
+
+  describe('Arabic text', () => {
+    it('should return true for Arabic text', () => {
+      expect(isRTLText('مرحبا')).toBe(true)
+      expect(isRTLText('السلام عليكم')).toBe(true)
+    })
+
+    it('should return true for mixed text with Arabic', () => {
+      expect(isRTLText('Welcome مرحبا')).toBe(true)
+    })
+  })
+
+  describe('LTR text', () => {
+    it('should return false for English text', () => {
+      expect(isRTLText('Hello World')).toBe(false)
+    })
+
+    it('should return false for numbers only', () => {
+      expect(isRTLText('12345')).toBe(false)
+    })
+
+    it('should return false for punctuation only', () => {
+      expect(isRTLText('...!?')).toBe(false)
+    })
+
+    it('should return false for empty string', () => {
+      expect(isRTLText('')).toBe(false)
+    })
+
+    it('should return false for other scripts', () => {
+      expect(isRTLText('日本語')).toBe(false)
+      expect(isRTLText('한국어')).toBe(false)
+      expect(isRTLText('Français')).toBe(false)
+    })
+  })
+})
+
+describe('getTextDirection', () => {
+  describe('RTL detection', () => {
+    it('should return rtl for Hebrew text', () => {
+      expect(getTextDirection('שלום עולם')).toBe('rtl')
+    })
+
+    it('should return rtl for Arabic text', () => {
+      expect(getTextDirection('مرحبا بالعالم')).toBe('rtl')
+    })
+
+    it('should return rtl when first meaningful char is RTL', () => {
+      expect(getTextDirection('  שלום')).toBe('rtl')
+      expect(getTextDirection('   مرحبا')).toBe('rtl')
+    })
+  })
+
+  describe('LTR detection', () => {
+    it('should return ltr for English text', () => {
+      expect(getTextDirection('Hello World')).toBe('ltr')
+    })
+
+    it('should return ltr for empty string', () => {
+      expect(getTextDirection('')).toBe('ltr')
+    })
+
+    it('should return ltr when first meaningful char is LTR', () => {
+      expect(getTextDirection('Hello שלום')).toBe('ltr')
+    })
+  })
+
+  describe('edge cases', () => {
+    it('should skip punctuation and find first letter', () => {
+      expect(getTextDirection('...שלום')).toBe('rtl')
+      expect(getTextDirection('!!!Hello')).toBe('ltr')
+    })
+
+    it('should handle whitespace-only text', () => {
+      expect(getTextDirection('   ')).toBe('ltr')
+    })
+
+    it('should use RTL character count fallback for mixed content', () => {
+      const moreHebrew = 'שלום עולם Hi'
+      const moreEnglish = 'Hello World שלום'
+      expect(getTextDirection(moreHebrew)).toBe('rtl')
+      expect(getTextDirection(moreEnglish)).toBe('ltr')
     })
   })
 })
