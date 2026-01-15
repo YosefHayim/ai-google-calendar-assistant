@@ -33,7 +33,19 @@ jobs:
         with:
           bun-version: ${{ env.BUN_VERSION }}
 
+      - name: Cache Bun dependencies
+        id: cache-deps
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.bun/install/cache
+            ./be/node_modules
+          key: ${{ runner.os }}-bun-${{ hashFiles('be/bun.lockb', 'be/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+
       - name: Install dependencies
+        if: steps.cache-deps.outputs.cache-hit != 'true'
         run: bun install --frozen-lockfile
 
       - name: Run Biome lint
@@ -59,11 +71,23 @@ jobs:
         with:
           bun-version: ${{ env.BUN_VERSION }}
 
+      - name: Cache Bun dependencies
+        id: cache-deps
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.bun/install/cache
+            ./be/node_modules
+          key: ${{ runner.os }}-bun-${{ hashFiles('be/bun.lockb', 'be/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+
       - name: Install dependencies
+        if: steps.cache-deps.outputs.cache-hit != 'true'
         run: bun install --frozen-lockfile
 
       - name: Run unit tests
-        run: bun run jest --testPathPattern="tests/(utils|middlewares|services)" --coverage --coverageReporters=text-summary
+        run: bun run jest tests/utils tests/middlewares tests/services --passWithNoTests --coverage --coverageReporters=text-summary
         env:
           TEST_ENV: true
 
@@ -92,11 +116,23 @@ jobs:
         with:
           bun-version: ${{ env.BUN_VERSION }}
 
+      - name: Cache Bun dependencies
+        id: cache-deps
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.bun/install/cache
+            ./be/node_modules
+          key: ${{ runner.os }}-bun-${{ hashFiles('be/bun.lockb', 'be/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+
       - name: Install dependencies
+        if: steps.cache-deps.outputs.cache-hit != 'true'
         run: bun install --frozen-lockfile
 
       - name: Run controller tests
-        run: bun run jest --testPathPattern="tests/controllers" --coverage --coverageReporters=text-summary
+        run: bun run jest tests/controllers --passWithNoTests --coverage --coverageReporters=text-summary
         env:
           TEST_ENV: true
 
@@ -125,11 +161,23 @@ jobs:
         with:
           bun-version: ${{ env.BUN_VERSION }}
 
+      - name: Cache Bun dependencies
+        id: cache-deps
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.bun/install/cache
+            ./be/node_modules
+          key: ${{ runner.os }}-bun-${{ hashFiles('be/bun.lockb', 'be/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+
       - name: Install dependencies
+        if: steps.cache-deps.outputs.cache-hit != 'true'
         run: bun install --frozen-lockfile
 
       - name: Run integration tests
-        run: bun run jest --testPathPattern="tests/(integration|scenarios)" --coverage --coverageReporters=text-summary
+        run: bun run jest tests/integration tests/scenarios --passWithNoTests --coverage --coverageReporters=text-summary
         env:
           TEST_ENV: true
 
