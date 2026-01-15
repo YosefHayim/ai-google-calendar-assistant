@@ -11,7 +11,7 @@ describe('user-utils', () => {
         first_name: 'John',
         last_name: 'Doe',
         created_at: '2026-01-15',
-        subscription_tier: 'free',
+        updated_at: '2026-01-15',
       }
       expect(isCustomUser(customUser)).toBe(true)
     })
@@ -21,13 +21,13 @@ describe('user-utils', () => {
         id: '123',
         email: 'test@example.com',
         created_at: '2026-01-15',
+        updated_at: '2026-01-15',
         aud: 'authenticated',
-        role: 'authenticated',
+        confirmed_at: '2026-01-15',
         user_metadata: {
           first_name: 'John',
           last_name: 'Doe',
         },
-        app_metadata: {},
       }
       expect(isCustomUser(supabaseUser)).toBe(false)
     })
@@ -43,7 +43,7 @@ describe('user-utils', () => {
           last_name: 'Doe',
           avatar_url: 'https://example.com/avatar.jpg',
           created_at: '2026-01-15',
-          subscription_tier: 'pro',
+          updated_at: '2026-01-15',
         }
 
         const result = getUserDisplayInfo(user)
@@ -66,7 +66,7 @@ describe('user-utils', () => {
           first_name: null,
           last_name: null,
           created_at: '2026-01-15',
-          subscription_tier: 'free',
+          updated_at: '2026-01-15',
         }
 
         const result = getUserDisplayInfo(user)
@@ -84,7 +84,7 @@ describe('user-utils', () => {
           first_name: '',
           last_name: '',
           created_at: '2026-01-15',
-          subscription_tier: 'free',
+          updated_at: '2026-01-15',
         }
 
         const result = getUserDisplayInfo(user)
@@ -99,7 +99,7 @@ describe('user-utils', () => {
           first_name: 'Alice',
           last_name: null,
           created_at: '2026-01-15',
-          subscription_tier: 'free',
+          updated_at: '2026-01-15',
         }
 
         const result = getUserDisplayInfo(user)
@@ -115,7 +115,7 @@ describe('user-utils', () => {
           first_name: null,
           last_name: 'Smith',
           created_at: '2026-01-15',
-          subscription_tier: 'free',
+          updated_at: '2026-01-15',
         }
 
         const result = getUserDisplayInfo(user)
@@ -131,14 +131,14 @@ describe('user-utils', () => {
           id: '123',
           email: 'jane@example.com',
           created_at: '2026-01-15',
+          updated_at: '2026-01-15',
           aud: 'authenticated',
-          role: 'authenticated',
+          confirmed_at: '2026-01-15',
           user_metadata: {
             first_name: 'Jane',
             last_name: 'Smith',
             avatar_url: 'https://example.com/jane.jpg',
           },
-          app_metadata: {},
         }
 
         const result = getUserDisplayInfo(user)
@@ -159,10 +159,10 @@ describe('user-utils', () => {
           id: '123',
           email: 'bob@example.com',
           created_at: '2026-01-15',
+          updated_at: '2026-01-15',
           aud: 'authenticated',
-          role: 'authenticated',
+          confirmed_at: '2026-01-15',
           user_metadata: {},
-          app_metadata: {},
         }
 
         const result = getUserDisplayInfo(user)
@@ -190,7 +190,7 @@ describe('user-utils', () => {
           first_name: 'Test',
           last_name: 'User',
           created_at: '2026-01-15',
-          subscription_tier: 'free',
+          updated_at: '2026-01-15',
         }
 
         const result = getUserDisplayInfo(user)

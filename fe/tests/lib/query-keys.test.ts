@@ -192,8 +192,8 @@ describe('queryKeys', () => {
       const calendarList = queryKeys.calendars.lists()
       const calendarDetail = queryKeys.calendars.detail('123')
 
-      expect(calendarList.slice(0, 1)).toEqual(calendarAll)
-      expect(calendarDetail.slice(0, 1)).toEqual(calendarAll)
+      expect(calendarList[0]).toBe(calendarAll[0])
+      expect(calendarDetail[0]).toBe(calendarAll[0])
     })
 
     it('should maintain unique keys for different resources', () => {
