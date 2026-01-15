@@ -2,7 +2,8 @@
 
 import React from 'react'
 import { useRouter } from 'next/navigation'
-import { AdminSidebar } from '@/components/admin/AdminSidebar'
+import { AdminAppSidebar } from '@/components/admin/AdminAppSidebar'
+import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar'
 import { RefreshCw } from 'lucide-react'
 import { useDashboardStats } from '@/hooks/queries/admin/useDashboardStats'
 
@@ -42,9 +43,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }
 
   return (
-    <div className="flex h-screen bg-zinc-50 dark:bg-zinc-950">
-      <AdminSidebar />
-      <main className="flex-1 overflow-auto">{children}</main>
-    </div>
+    <SidebarProvider defaultOpen={true}>
+      <div className="flex min-h-screen w-full bg-zinc-50 dark:bg-zinc-950">
+        <AdminAppSidebar />
+        <SidebarInset className="flex-1 flex flex-col">
+          <header className="flex h-14 items-center gap-2 border-b border-zinc-200 dark:border-zinc-800 px-4 md:hidden">
+            <SidebarTrigger className="-ml-1" />
+          </header>
+          <main className="flex-1 overflow-auto">{children}</main>
+        </SidebarInset>
+      </div>
+    </SidebarProvider>
   )
 }

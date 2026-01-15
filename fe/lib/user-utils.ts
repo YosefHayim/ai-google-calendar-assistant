@@ -50,9 +50,9 @@ export function getUserDisplayInfo(user: UserData | null | undefined): UserDispl
     }
   }
 
-  const { first_name, last_name, avatar_url } = user.user_metadata
-  const firstName = first_name ?? ''
-  const lastName = last_name ?? ''
+  const metadata = user.user_metadata ?? {}
+  const firstName = metadata.first_name ?? ''
+  const lastName = metadata.last_name ?? ''
   const fullName = [firstName, lastName].filter(Boolean).join(' ') || 'User'
   const initials = `${firstName[0] ?? ''}${lastName[0] ?? ''}`.toUpperCase() || user.email?.[0]?.toUpperCase() || 'U'
 
@@ -62,7 +62,7 @@ export function getUserDisplayInfo(user: UserData | null | undefined): UserDispl
     fullName,
     initials,
     email: user.email,
-    avatarUrl: avatar_url,
+    avatarUrl: metadata.avatar_url,
     createdAt: user.created_at,
   }
 }

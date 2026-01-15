@@ -174,6 +174,7 @@ const ChatInterface: React.FC = () => {
       const source = audioContextRef.current.createBufferSource()
       audioSourceRef.current = source
       source.buffer = audioBuffer
+      source.playbackRate.value = voiceData?.value?.playbackSpeed ?? 1
       source.connect(audioContextRef.current.destination)
       source.onended = () => {
         setIsSpeaking(false)

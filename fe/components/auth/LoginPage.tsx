@@ -8,19 +8,11 @@ import React, { useEffect } from 'react'
 import { ENDPOINTS } from '@/lib/api/endpoints'
 import { ENV } from '@/lib/constants'
 import { FcGoogle } from 'react-icons/fc'
-import ImageCarousel from '@/components/auth/ImageCarousel'
+import { TubesBackground } from '@/components/ui/neon-flow'
 import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuthContext } from '@/contexts/AuthContext'
-
-const carouselImages = [
-  'https://images.unsplash.com/photo-1552588147-385012304918?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-  'https://images.unsplash.com/photo-1543286386-713bdd593766?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-  'https://images.unsplash.com/photo-1556740738-b615950ee0b4?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-  'https://images.unsplash.com/photo-1521737711867-ee1375d8616c?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-  'https://images.unsplash.com/photo-1510519108179-ba09b7dfd4b7?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-]
 
 const LoginPage: React.FC = () => {
   const { t } = useTranslation()
@@ -47,8 +39,8 @@ const LoginPage: React.FC = () => {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 min-h-screen bg-white dark:bg-[#030303] animate-in fade-in duration-500">
-      <div className="flex flex-col items-center justify-center p-8 lg:p-12 relative">
+    <TubesBackground className="min-h-screen animate-in fade-in duration-500">
+      <div className="flex flex-col items-center justify-center min-h-screen p-8 lg:p-12 pointer-events-auto">
         <Link
           href="/"
           className="absolute top-8 left-8 flex items-center gap-2 hover:opacity-80 transition-opacity z-50"
@@ -56,12 +48,12 @@ const LoginPage: React.FC = () => {
           <div className="w-9 h-9 bg-zinc-900 dark:bg-white rounded-md flex items-center justify-center shadow-lg text-white dark:text-zinc-900">
             <AllyLogo className="w-5 h-5" />
           </div>
-          <span className="font-medium text-2xl tracking-normal flex items-center text-zinc-900 dark:text-zinc-100">
+          <span className="font-medium text-2xl tracking-normal flex items-center text-white drop-shadow-[0_0_10px_rgba(0,0,0,0.8)]">
             Ally <BetaBadge />
           </span>
         </Link>
 
-        <div className="w-full max-w-md">
+        <div className="w-full max-w-md bg-white/95 dark:bg-zinc-900/95 backdrop-blur-sm rounded-2xl p-8 shadow-2xl">
           <h1 className="text-4xl md:text-5xl font-medium tracking-normal mb-4 text-zinc-900 dark:text-zinc-100">
             {t('login.title')}
           </h1>
@@ -93,10 +85,7 @@ const LoginPage: React.FC = () => {
           </p>
         </div>
       </div>
-      <div className="hidden md:flex p-6 lg:p-12 items-center justify-center bg-zinc-50 dark:bg-zinc-900/50">
-        <ImageCarousel images={carouselImages} />
-      </div>
-    </div>
+    </TubesBackground>
   )
 }
 

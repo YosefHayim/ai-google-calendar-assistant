@@ -65,9 +65,13 @@ export const ALLY_BRAIN_PLACEHOLDER = `Example: I prefer morning meetings betwee
 export const TTS_VOICES = ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'] as const
 export type TTSVoice = (typeof TTS_VOICES)[number]
 
+export const PLAYBACK_SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 2] as const
+export type PlaybackSpeed = (typeof PLAYBACK_SPEEDS)[number]
+
 export const voicePreferenceSchema = z.object({
   enabled: z.boolean(),
   voice: z.enum(TTS_VOICES).optional().default('alloy'),
+  playbackSpeed: z.number().min(0.5).max(2).optional().default(1),
 })
 
 export type VoicePreferenceFormData = z.infer<typeof voicePreferenceSchema>
@@ -75,7 +79,17 @@ export type VoicePreferenceFormData = z.infer<typeof voicePreferenceSchema>
 export const voicePreferenceDefaults: VoicePreferenceFormData = {
   enabled: true,
   voice: 'alloy',
+  playbackSpeed: 1,
 }
+
+export const PLAYBACK_SPEED_OPTIONS: { value: PlaybackSpeed; label: string }[] = [
+  { value: 0.5, label: '0.5x' },
+  { value: 0.75, label: '0.75x' },
+  { value: 1, label: '1x (Normal)' },
+  { value: 1.25, label: '1.25x' },
+  { value: 1.5, label: '1.5x' },
+  { value: 2, label: '2x' },
+]
 
 export const VOICE_OPTIONS: { value: TTSVoice; label: string; description: string }[] = [
   { value: 'alloy', label: 'Alloy', description: 'Balanced and versatile' },

@@ -381,7 +381,7 @@ describe('preferences validations', () => {
     })
 
     it('voicePreferenceDefaults should have correct values', () => {
-      expect(voicePreferenceDefaults).toEqual({ enabled: true, voice: 'alloy' })
+      expect(voicePreferenceDefaults).toEqual({ enabled: true, voice: 'alloy', playbackSpeed: 1 })
     })
 
     it('dailyBriefingDefaults should have correct structure', () => {

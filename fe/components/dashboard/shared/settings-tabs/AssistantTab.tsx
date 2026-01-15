@@ -16,6 +16,7 @@ import {
   Database,
   Mic,
   Music,
+  Gauge,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -41,6 +42,8 @@ import {
   ALLY_BRAIN_PLACEHOLDER,
   VOICE_OPTIONS,
   type TTSVoice,
+  PLAYBACK_SPEED_OPTIONS,
+  type PlaybackSpeed,
 } from '@/lib/validations/preferences'
 
 interface AssistantTabProps {}
@@ -53,6 +56,11 @@ const VOICE_PREVIEW_TEXT = "Hi! I'm Ally, your AI calendar assistant. How can I 
 const VOICE_DROPDOWN_OPTIONS: DropdownOption[] = VOICE_OPTIONS.map((v) => ({
   value: v.value,
   label: `${v.label} — ${v.description}`,
+}))
+
+const SPEED_DROPDOWN_OPTIONS: DropdownOption[] = PLAYBACK_SPEED_OPTIONS.map((s) => ({
+  value: s.value.toString(),
+  label: s.label,
 }))
 
 export const AssistantTab: React.FC<AssistantTabProps> = () => {
@@ -71,6 +79,7 @@ export const AssistantTab: React.FC<AssistantTabProps> = () => {
   const [contextualEnabled, setContextualEnabled] = useState(true)
   const [voiceEnabled, setVoiceEnabled] = useState(true)
   const [selectedVoice, setSelectedVoice] = useState<TTSVoice>('alloy')
+  const [selectedPlaybackSpeed, setSelectedPlaybackSpeed] = useState<PlaybackSpeed>(1)
   const [memoryUsage] = useState('~1.2MB of scheduling patterns')
   const [isPreviewPlaying, setIsPreviewPlaying] = useState(false)
   const [isPreviewLoading, setIsPreviewLoading] = useState(false)
@@ -114,6 +123,7 @@ export const AssistantTab: React.FC<AssistantTabProps> = () => {
     if (voiceData?.value) {
       setVoiceEnabled(voiceData.value.enabled)
       setSelectedVoice(voiceData.value.voice || 'alloy')
+      setSelectedPlaybackSpeed((voiceData.value.playbackSpeed as PlaybackSpeed) || 1)
     }
   }, [voiceData])
 
@@ -136,7 +146,7 @@ export const AssistantTab: React.FC<AssistantTabProps> = () => {
   const handleVoiceToggle = (checked: boolean) => {
     setVoiceEnabled(checked)
     updateVoicePreference(
-      { enabled: checked, voice: selectedVoice },
+      { enabled: checked, voice: selectedVoice, playbackSpeed: selectedPlaybackSpeed },
       {
         onSuccess: () => {
           toast.success(checked ? 'Voice responses enabled' : 'Voice responses disabled')
@@ -153,7 +163,7 @@ export const AssistantTab: React.FC<AssistantTabProps> = () => {
     const typedVoice = voice as TTSVoice
     setSelectedVoice(typedVoice)
     updateVoicePreference(
-      { enabled: voiceEnabled, voice: typedVoice },
+      { enabled: voiceEnabled, voice: typedVoice, playbackSpeed: selectedPlaybackSpeed },
       {
         onSuccess: () => {
           toast.success(`Voice changed to ${VOICE_OPTIONS.find((v) => v.value === typedVoice)?.label || typedVoice}`)
@@ -161,6 +171,23 @@ export const AssistantTab: React.FC<AssistantTabProps> = () => {
         onError: () => {
           setSelectedVoice(voiceData?.value?.voice || 'alloy')
           toast.error('Failed to update voice')
+        },
+      },
+    )
+  }
+
+  const handlePlaybackSpeedChange = (speed: string) => {
+    const typedSpeed = parseFloat(speed) as PlaybackSpeed
+    setSelectedPlaybackSpeed(typedSpeed)
+    updateVoicePreference(
+      { enabled: voiceEnabled, voice: selectedVoice, playbackSpeed: typedSpeed },
+      {
+        onSuccess: () => {
+          toast.success(`Playback speed changed to ${PLAYBACK_SPEED_OPTIONS.find((s) => s.value === typedSpeed)?.label || `${typedSpeed}x`}`)
+        },
+        onError: () => {
+          setSelectedPlaybackSpeed((voiceData?.value?.playbackSpeed as PlaybackSpeed) || 1)
+          toast.error('Failed to update playback speed')
         },
       },
     )
@@ -202,6 +229,7 @@ export const AssistantTab: React.FC<AssistantTabProps> = () => {
 
       const source = previewAudioContextRef.current.createBufferSource()
       source.buffer = audioBuffer
+      source.playbackRate.value = selectedPlaybackSpeed
       source.connect(previewAudioContextRef.current.destination)
       source.onended = () => {
         setIsPreviewPlaying(false)
@@ -450,6 +478,21 @@ export const AssistantTab: React.FC<AssistantTabProps> = () => {
                           )}
                         </Button>
                       </div>
+                    }
+                  />
+
+                  <SettingsRow
+                    id="playback-speed"
+                    title="Playback Speed"
+                    tooltip="Adjust how fast Ally speaks. Default is 1x (normal speed)"
+                    icon={<Gauge size={18} className="text-zinc-900 dark:text-primary" />}
+                    control={
+                      <SettingsDropdown
+                        value={selectedPlaybackSpeed.toString()}
+                        options={SPEED_DROPDOWN_OPTIONS}
+                        onChange={handlePlaybackSpeedChange}
+                        className="w-full sm:w-auto sm:min-w-32"
+                      />
                     }
                   />
                 </SettingsSection>
