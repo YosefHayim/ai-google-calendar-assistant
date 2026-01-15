@@ -1,10 +1,9 @@
 'use client'
 
-import { useTranslation } from 'react-i18next'
-import { Mail } from 'lucide-react'
-
-import MarketingLayout from '@/components/marketing/MarketingLayout'
 import { ContactForm } from '@/components/contact/ContactForm'
+import { Mail } from 'lucide-react'
+import MarketingLayout from '@/components/marketing/MarketingLayout'
+import { useTranslation } from 'react-i18next'
 
 export default function ContactPage() {
   const { t } = useTranslation()
@@ -34,8 +33,8 @@ export default function ContactPage() {
                 </div>
                 <h3 className="font-medium text-zinc-900 dark:text-zinc-100 mb-2">{t('contact.emailUs')}</h3>
                 <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-3">{t('contact.emailUsDesc')}</p>
-                <a href="mailto:support@askally.io" className="text-sm text-primary hover:underline">
-                  support@askally.io
+                <a href="mailto:hello@askally.io" className="text-sm text-primary hover:underline">
+                  hello@askally.io
                 </a>
               </div>
 
