@@ -8,6 +8,7 @@ import React, { Suspense, useEffect } from 'react'
 import SettingsModal from '@/components/dashboard/shared/SettingsModal'
 import Sidebar from '@/components/dashboard/shared/Sidebar'
 import { AnimatedHamburger } from '@/components/ui/animated-hamburger'
+import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { useAuthContext } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
 
@@ -61,7 +62,7 @@ function DashboardLayoutContent({ children }: { children?: React.ReactNode }) {
 function DashboardLayoutFallback() {
   return (
     <div className="flex h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-950">
-      <div className="animate-pulse text-zinc-500">Loading...</div>
+      <LoadingSpinner size="lg" />
     </div>
   )
 }

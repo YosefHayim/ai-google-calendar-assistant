@@ -6,7 +6,7 @@ import { usePostHog } from 'posthog-js/react'
 import { AllyLogo, BetaBadge } from '@/components/shared/logo'
 import React, { useEffect } from 'react'
 import { ENDPOINTS } from '@/lib/api/endpoints'
-import { ENV } from '@/lib/constants'
+import { ENV, STORAGE_KEYS } from '@/lib/constants'
 import { FcGoogle } from 'react-icons/fc'
 import ImageCarousel from '@/components/auth/ImageCarousel'
 import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button'
@@ -21,7 +21,12 @@ const carouselImages = [
   'https://images.unsplash.com/photo-1510519108179-ba09b7dfd4b7?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
 ]
 
-const USER = 'user'
+const hasValidTokens = (): boolean => {
+  if (typeof window === 'undefined') return false
+  const accessToken = localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN)
+  const refreshToken = localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN)
+  return !!(accessToken && refreshToken)
+}
 
 const LoginPage: React.FC = () => {
   const { t } = useTranslation()
@@ -32,10 +37,10 @@ const LoginPage: React.FC = () => {
   const [isLoading, setIsLoading] = React.useState(false)
 
   useEffect(() => {
-    if (localStorage.getItem(USER)) {
+    if (hasValidTokens()) {
       router.push('/dashboard')
     }
-  })
+  }, [router])
 
   const handleGoogleLogin = () => {
     setIsLoading(true)
