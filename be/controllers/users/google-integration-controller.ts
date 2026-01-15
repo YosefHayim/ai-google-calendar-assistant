@@ -93,42 +93,7 @@ const generateAuthGoogleUrl = reqResAsyncHandler(
       if (redirected) return;
     }
 
-    let forceConsent = false;
-    let userEmail: string | undefined = req.user?.email;
-
-    if (!userEmail && accessToken) {
-      const validation = await validateSupabaseToken(accessToken).catch(
-        () => null,
-      );
-      if (validation?.user?.email) {
-        userEmail = validation.user.email;
-      }
-    }
-
-    if (userEmail) {
-      const normalizedEmail = userEmail.toLowerCase().trim();
-
-      const { data: user } = await SUPABASE.from("users")
-        .select("id")
-        .ilike("email", normalizedEmail)
-        .limit(1)
-        .maybeSingle();
-
-      if (user) {
-        const { data: existingToken } = await SUPABASE.from("oauth_tokens")
-          .select("refresh_token, is_valid")
-          .eq("user_id", user.id)
-          .eq("provider", "google")
-          .limit(1)
-          .maybeSingle();
-
-        if (existingToken && (!existingToken.refresh_token || !existingToken.is_valid)) {
-          forceConsent = true;
-        }
-      }
-    }
-
-    const url = generateGoogleAuthUrl({ forceConsent });
+    const url = generateGoogleAuthUrl({ forceConsent: true })
 
     if (!code) {
       if (postmanHeaders?.includes("Postman")) {

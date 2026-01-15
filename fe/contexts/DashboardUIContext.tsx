@@ -7,7 +7,7 @@ import { useTheme } from 'next-themes'
 import { toast } from 'sonner'
 
 import { useGoogleCalendarStatus } from '@/hooks/queries/integrations'
-import { STORAGE_KEYS } from '@/lib/constants'
+import { useQueryClient } from '@tanstack/react-query'
 
 const ONBOARDING_COMPLETE_KEY = 'allyOnBoardingComplete'
 
@@ -38,6 +38,7 @@ export function DashboardUIProvider({ children }: { children: React.ReactNode })
   const { theme, setTheme } = useTheme()
   const router = useRouter()
   const searchParams = useSearchParams()
+  const queryClient = useQueryClient()
 
   const { data: googleCalendarStatus } = useGoogleCalendarStatus()
 
@@ -117,8 +118,8 @@ export function DashboardUIProvider({ children }: { children: React.ReactNode })
 
   const handleSignOut = () => {
     closeSettings()
-    // Clear ALL localStorage items on logout
     localStorage.clear()
+    queryClient.clear()
     router.push('/login')
   }
 
