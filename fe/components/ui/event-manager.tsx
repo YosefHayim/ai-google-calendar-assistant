@@ -16,7 +16,27 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { Badge } from '@/components/ui/badge'
-import { ChevronLeft, ChevronRight, Plus, Calendar, Clock, Grid3x3, List, Search, Filter, X } from 'lucide-react'
+import {
+  ChevronLeft,
+  ChevronRight,
+  Plus,
+  Calendar,
+  Clock,
+  Grid3x3,
+  List,
+  Search,
+  Filter,
+  X,
+  Mic,
+  Sparkles,
+  Send,
+  Tag,
+  FileText,
+  CheckCircle2,
+} from 'lucide-react'
+import { useSpeechRecognition } from '@/hooks/useSpeechRecognition'
+import { AIVoiceInput } from '@/components/ui/ai-voice-input'
+import { formatDate, formatTimeRange } from '@/lib/formatUtils'
 import { cn } from '@/lib/utils'
 import {
   DropdownMenu,
@@ -90,6 +110,35 @@ export function EventManager({
   const [selectedColors, setSelectedColors] = useState<string[]>([])
   const [selectedTags, setSelectedTags] = useState<string[]>([])
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
+
+  const [allyPrompt, setAllyPrompt] = useState('')
+  const [allyResponse, setAllyResponse] = useState('')
+  const [isProcessing, setIsProcessing] = useState(false)
+  const [actionResult, setActionResult] = useState<{
+    type: 'updated' | 'deleted' | 'none'
+    message: string
+  } | null>(null)
+
+  const handleVoiceTranscription = useCallback((text: string) => {
+    setAllyPrompt((prev) => (prev ? `${prev} ${text}` : text))
+  }, [])
+
+  const {
+    isRecording,
+    speechRecognitionSupported,
+    speechRecognitionError,
+    toggleRecording,
+    startRecording,
+    stopRecording,
+    cancelRecording,
+  } = useSpeechRecognition(handleVoiceTranscription)
+
+  const resetAllyState = useCallback(() => {
+    setAllyPrompt('')
+    setAllyResponse('')
+    setIsProcessing(false)
+    setActionResult(null)
+  }, [])
 
   const filteredEvents = useMemo(() => {
     return events.filter((event) => {
@@ -180,6 +229,88 @@ export function EventManager({
     },
     [onEventDelete],
   )
+
+  const handleSendToAlly = useCallback(async () => {
+    if (!allyPrompt.trim() || !selectedEvent || isProcessing) return
+
+    setIsProcessing(true)
+    setAllyResponse('')
+    setActionResult(null)
+
+    await new Promise((resolve) => setTimeout(resolve, 800))
+
+    const promptLower = allyPrompt.toLowerCase()
+
+    if (promptLower.includes('delete') || promptLower.includes('remove') || promptLower.includes('cancel')) {
+      setAllyResponse("I'll delete this event for you.")
+      await new Promise((resolve) => setTimeout(resolve, 500))
+      handleDeleteEvent(selectedEvent.id)
+      setActionResult({ type: 'deleted', message: 'Event deleted successfully' })
+      setTimeout(() => {
+        setIsDialogOpen(false)
+        resetAllyState()
+      }, 1500)
+    } else if (
+      promptLower.includes('change') ||
+      promptLower.includes('update') ||
+      promptLower.includes('move') ||
+      promptLower.includes('reschedule') ||
+      promptLower.includes('rename') ||
+      promptLower.includes('set')
+    ) {
+      let updatedEvent = { ...selectedEvent }
+      let changeDescription = ''
+
+      const titleMatch = promptLower.match(/(?:title|name|rename|call it)\s+(?:to\s+)?["']?([^"']+)["']?/i)
+      if (titleMatch) {
+        updatedEvent.title = titleMatch[1].trim()
+        changeDescription = `Updated title to "${updatedEvent.title}"`
+      }
+
+      const timeMatch = promptLower.match(/(?:to|at)\s+(\d{1,2})(?::(\d{2}))?\s*(am|pm)?/i)
+      if (timeMatch) {
+        let hours = parseInt(timeMatch[1])
+        const minutes = timeMatch[2] ? parseInt(timeMatch[2]) : 0
+        const ampm = timeMatch[3]?.toLowerCase()
+
+        if (ampm === 'pm' && hours < 12) hours += 12
+        if (ampm === 'am' && hours === 12) hours = 0
+
+        const newStartTime = new Date(selectedEvent.startTime)
+        newStartTime.setHours(hours, minutes)
+        const duration = selectedEvent.endTime.getTime() - selectedEvent.startTime.getTime()
+        const newEndTime = new Date(newStartTime.getTime() + duration)
+
+        updatedEvent.startTime = newStartTime
+        updatedEvent.endTime = newEndTime
+        changeDescription = changeDescription
+          ? `${changeDescription} and rescheduled to ${formatDate(newStartTime, 'TIME_12H')}`
+          : `Rescheduled to ${formatDate(newStartTime, 'TIME_12H')}`
+      }
+
+      if (changeDescription) {
+        setAllyResponse(`Done! ${changeDescription}.`)
+        setEvents((prev) => prev.map((e) => (e.id === selectedEvent.id ? updatedEvent : e)))
+        onEventUpdate?.(selectedEvent.id, updatedEvent)
+        setActionResult({ type: 'updated', message: changeDescription })
+        setTimeout(() => {
+          setIsDialogOpen(false)
+          resetAllyState()
+        }, 1500)
+      } else {
+        setAllyResponse(
+          "I understand you want to make changes. Could you be more specific? For example:\n• \"Change the title to Weekly Standup\"\n• \"Move it to 3pm\"\n• \"Reschedule to tomorrow at 10am\"",
+        )
+      }
+    } else {
+      setAllyResponse(
+        "I can help you modify or delete this event. Try asking me to:\n• \"Change the title to...\"\n• \"Move it to 3pm\"\n• \"Delete this event\"",
+      )
+    }
+
+    setIsProcessing(false)
+    setAllyPrompt('')
+  }, [allyPrompt, selectedEvent, isProcessing, handleDeleteEvent, onEventUpdate, resetAllyState])
 
   const handleDragStart = useCallback((event: Event) => {
     setDraggedEvent(event)
@@ -726,198 +857,353 @@ export function EventManager({
         />
       )}
 
-      {/* Event Dialog */}
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      <Dialog
+        open={isDialogOpen}
+        onOpenChange={(open) => {
+          setIsDialogOpen(open)
+          if (!open) {
+            resetAllyState()
+            setIsCreating(false)
+            setSelectedEvent(null)
+          }
+        }}
+      >
         <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>{isCreating ? 'Create Event' : 'Event Details'}</DialogTitle>
-            <DialogDescription>
-              {isCreating ? 'Add a new event to your calendar' : 'View and edit event details'}
-            </DialogDescription>
-          </DialogHeader>
+          {isCreating ? (
+            <>
+              <DialogHeader>
+                <DialogTitle>Create Event</DialogTitle>
+                <DialogDescription>Add a new event to your calendar</DialogDescription>
+              </DialogHeader>
 
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="title">Title</Label>
-              <Input
-                id="title"
-                value={isCreating ? newEvent.title : selectedEvent?.title}
-                onChange={(e) =>
-                  isCreating
-                    ? setNewEvent((prev) => ({ ...prev, title: e.target.value }))
-                    : setSelectedEvent((prev) => (prev ? { ...prev, title: e.target.value } : null))
-                }
-                placeholder="Event title"
-              />
-            </div>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="title">Title</Label>
+                  <Input
+                    id="title"
+                    value={newEvent.title}
+                    onChange={(e) => setNewEvent((prev) => ({ ...prev, title: e.target.value }))}
+                    placeholder="Event title"
+                  />
+                </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                value={isCreating ? newEvent.description : selectedEvent?.description}
-                onChange={(e) =>
-                  isCreating
-                    ? setNewEvent((prev) => ({
-                        ...prev,
-                        description: e.target.value,
-                      }))
-                    : setSelectedEvent((prev) => (prev ? { ...prev, description: e.target.value } : null))
-                }
-                placeholder="Event description"
-                rows={3}
-              />
-            </div>
+                <div className="space-y-2">
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea
+                    id="description"
+                    value={newEvent.description}
+                    onChange={(e) => setNewEvent((prev) => ({ ...prev, description: e.target.value }))}
+                    placeholder="Event description"
+                    rows={3}
+                  />
+                </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="startTime">Start Time</Label>
-                <Input
-                  id="startTime"
-                  type="datetime-local"
-                  value={
-                    isCreating
-                      ? newEvent.startTime
-                        ? new Date(newEvent.startTime.getTime() - newEvent.startTime.getTimezoneOffset() * 60000)
-                            .toISOString()
-                            .slice(0, 16)
-                        : ''
-                      : selectedEvent
-                        ? new Date(
-                            selectedEvent.startTime.getTime() - selectedEvent.startTime.getTimezoneOffset() * 60000,
-                          )
-                            .toISOString()
-                            .slice(0, 16)
-                        : ''
-                  }
-                  onChange={(e) => {
-                    const date = new Date(e.target.value)
-                    isCreating
-                      ? setNewEvent((prev) => ({ ...prev, startTime: date }))
-                      : setSelectedEvent((prev) => (prev ? { ...prev, startTime: date } : null))
-                  }}
-                />
-              </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="startTime">Start Time</Label>
+                    <Input
+                      id="startTime"
+                      type="datetime-local"
+                      value={
+                        newEvent.startTime
+                          ? new Date(newEvent.startTime.getTime() - newEvent.startTime.getTimezoneOffset() * 60000)
+                              .toISOString()
+                              .slice(0, 16)
+                          : ''
+                      }
+                      onChange={(e) => {
+                        const date = new Date(e.target.value)
+                        setNewEvent((prev) => ({ ...prev, startTime: date }))
+                      }}
+                    />
+                  </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="endTime">End Time</Label>
-                <Input
-                  id="endTime"
-                  type="datetime-local"
-                  value={
-                    isCreating
-                      ? newEvent.endTime
-                        ? new Date(newEvent.endTime.getTime() - newEvent.endTime.getTimezoneOffset() * 60000)
-                            .toISOString()
-                            .slice(0, 16)
-                        : ''
-                      : selectedEvent
-                        ? new Date(selectedEvent.endTime.getTime() - selectedEvent.endTime.getTimezoneOffset() * 60000)
-                            .toISOString()
-                            .slice(0, 16)
-                        : ''
-                  }
-                  onChange={(e) => {
-                    const date = new Date(e.target.value)
-                    isCreating
-                      ? setNewEvent((prev) => ({ ...prev, endTime: date }))
-                      : setSelectedEvent((prev) => (prev ? { ...prev, endTime: date } : null))
-                  }}
-                />
-              </div>
-            </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="endTime">End Time</Label>
+                    <Input
+                      id="endTime"
+                      type="datetime-local"
+                      value={
+                        newEvent.endTime
+                          ? new Date(newEvent.endTime.getTime() - newEvent.endTime.getTimezoneOffset() * 60000)
+                              .toISOString()
+                              .slice(0, 16)
+                          : ''
+                      }
+                      onChange={(e) => {
+                        const date = new Date(e.target.value)
+                        setNewEvent((prev) => ({ ...prev, endTime: date }))
+                      }}
+                    />
+                  </div>
+                </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="category">Category</Label>
-                <Select
-                  value={isCreating ? newEvent.category : selectedEvent?.category}
-                  onValueChange={(value) =>
-                    isCreating
-                      ? setNewEvent((prev) => ({ ...prev, category: value }))
-                      : setSelectedEvent((prev) => (prev ? { ...prev, category: value } : null))
-                  }
-                >
-                  <SelectTrigger id="category">
-                    <SelectValue placeholder="Select category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories.map((cat) => (
-                      <SelectItem key={cat} value={cat}>
-                        {cat}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="color">Color</Label>
-                <Select
-                  value={isCreating ? newEvent.color : selectedEvent?.color}
-                  onValueChange={(value) =>
-                    isCreating
-                      ? setNewEvent((prev) => ({ ...prev, color: value }))
-                      : setSelectedEvent((prev) => (prev ? { ...prev, color: value } : null))
-                  }
-                >
-                  <SelectTrigger id="color">
-                    <SelectValue placeholder="Select color" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {colors.map((color) => (
-                      <SelectItem key={color.value} value={color.value}>
-                        <div className="flex items-center gap-2">
-                          <div className={cn('h-4 w-4 rounded', color.bg)} />
-                          {color.name}
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Tags</Label>
-              <div className="flex flex-wrap gap-2">
-                {availableTags.map((tag) => {
-                  const isSelected = isCreating ? newEvent.tags?.includes(tag) : selectedEvent?.tags?.includes(tag)
-                  return (
-                    <Badge
-                      key={tag}
-                      variant={isSelected ? 'default' : 'outline'}
-                      className="cursor-pointer transition-all hover:scale-105"
-                      onClick={() => toggleTag(tag, isCreating)}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="category">Category</Label>
+                    <Select
+                      value={newEvent.category}
+                      onValueChange={(value) => setNewEvent((prev) => ({ ...prev, category: value }))}
                     >
-                      {tag}
-                    </Badge>
-                  )
-                })}
-              </div>
-            </div>
-          </div>
+                      <SelectTrigger id="category">
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categories.map((cat) => (
+                          <SelectItem key={cat} value={cat}>
+                            {cat}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-          <DialogFooter>
-            {!isCreating && (
-              <Button variant="destructive" onClick={() => selectedEvent && handleDeleteEvent(selectedEvent.id)}>
-                Delete
-              </Button>
-            )}
-            <Button
-              variant="outline"
-              onClick={() => {
-                setIsDialogOpen(false)
-                setIsCreating(false)
-                setSelectedEvent(null)
-              }}
-            >
-              Cancel
-            </Button>
-            <Button onClick={isCreating ? handleCreateEvent : handleUpdateEvent}>
-              {isCreating ? 'Create' : 'Save'}
-            </Button>
-          </DialogFooter>
+                  <div className="space-y-2">
+                    <Label htmlFor="color">Color</Label>
+                    <Select
+                      value={newEvent.color}
+                      onValueChange={(value) => setNewEvent((prev) => ({ ...prev, color: value }))}
+                    >
+                      <SelectTrigger id="color">
+                        <SelectValue placeholder="Select color" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {colors.map((color) => (
+                          <SelectItem key={color.value} value={color.value}>
+                            <div className="flex items-center gap-2">
+                              <div className={cn('h-4 w-4 rounded', color.bg)} />
+                              {color.name}
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Tags</Label>
+                  <div className="flex flex-wrap gap-2">
+                    {availableTags.map((tag) => {
+                      const isSelected = newEvent.tags?.includes(tag)
+                      return (
+                        <Badge
+                          key={tag}
+                          variant={isSelected ? 'default' : 'outline'}
+                          className="cursor-pointer transition-all hover:scale-105"
+                          onClick={() => toggleTag(tag, true)}
+                        >
+                          {tag}
+                        </Badge>
+                      )
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              <DialogFooter>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setIsDialogOpen(false)
+                    setIsCreating(false)
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button onClick={handleCreateEvent}>Create</Button>
+              </DialogFooter>
+            </>
+          ) : (
+            <>
+              <DialogHeader className="pb-2">
+                <DialogTitle className="flex items-center gap-2 text-lg font-semibold">
+                  <Sparkles className="h-5 w-5 text-primary" />
+                  Event Details
+                </DialogTitle>
+                <DialogDescription className="text-sm text-muted-foreground">
+                  Ask Ally to modify this event
+                </DialogDescription>
+              </DialogHeader>
+
+              {selectedEvent && (
+                <div className="space-y-4">
+                  <div
+                    className={cn(
+                      'rounded-xl p-4 space-y-3',
+                      'bg-gradient-to-br from-muted/60 via-muted/40 to-transparent',
+                      'border border-border/50',
+                      'relative overflow-hidden',
+                    )}
+                  >
+                    <div
+                      className={cn(
+                        'absolute top-0 left-0 w-1 h-full rounded-l-xl',
+                        getColorClasses(selectedEvent.color).bg,
+                      )}
+                    />
+
+                    <div className="flex items-start gap-3 pl-2">
+                      <Calendar className="h-5 w-5 text-muted-foreground mt-0.5 flex-shrink-0" />
+                      <div className="min-w-0 flex-1">
+                        <h3 className="font-semibold text-foreground truncate">{selectedEvent.title}</h3>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3 pl-2 text-sm text-muted-foreground">
+                      <Clock className="h-4 w-4 flex-shrink-0" />
+                      <span>
+                        {formatDate(selectedEvent.startTime, 'WEEKDAY_SHORT')} •{' '}
+                        {formatTimeRange(selectedEvent.startTime, selectedEvent.endTime)}
+                      </span>
+                    </div>
+
+                    {selectedEvent.description && (
+                      <div className="flex items-start gap-3 pl-2 text-sm text-muted-foreground">
+                        <FileText className="h-4 w-4 flex-shrink-0 mt-0.5" />
+                        <p className="line-clamp-2">{selectedEvent.description}</p>
+                      </div>
+                    )}
+
+                    {(selectedEvent.category || (selectedEvent.tags && selectedEvent.tags.length > 0)) && (
+                      <div className="flex items-center gap-2 pl-2 flex-wrap">
+                        <Tag className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                        {selectedEvent.category && (
+                          <Badge variant="secondary" className="text-xs">
+                            {selectedEvent.category}
+                          </Badge>
+                        )}
+                        {selectedEvent.tags?.map((tag) => (
+                          <Badge key={tag} variant="outline" className="text-xs">
+                            {tag}
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <div
+                    className={cn(
+                      'min-h-[80px] rounded-lg p-3 transition-all duration-300',
+                      'bg-gradient-to-br from-primary/5 to-transparent',
+                      'border border-primary/10',
+                      allyResponse || isProcessing || actionResult ? 'opacity-100' : 'opacity-60',
+                    )}
+                  >
+                    {isProcessing ? (
+                      <div className="flex items-center gap-3 text-muted-foreground">
+                        <div className="relative">
+                          <div className="h-5 w-5 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
+                        </div>
+                        <span className="text-sm">Ally is thinking...</span>
+                      </div>
+                    ) : actionResult ? (
+                      <div
+                        className={cn(
+                          'flex items-center gap-2 text-sm animate-in fade-in slide-in-from-bottom-2 duration-300',
+                          actionResult.type === 'deleted' ? 'text-red-500' : 'text-green-500',
+                        )}
+                      >
+                        <CheckCircle2 className="h-5 w-5" />
+                        <span className="font-medium">{actionResult.message}</span>
+                      </div>
+                    ) : allyResponse ? (
+                      <div className="text-sm text-foreground whitespace-pre-wrap animate-in fade-in slide-in-from-bottom-2 duration-300">
+                        {allyResponse}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-muted-foreground italic">
+                        Ask Ally to update, reschedule, or delete this event
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    {isRecording ? (
+                      <div className="relative flex flex-col items-center justify-center bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-4 transition-all">
+                        <AIVoiceInput
+                          onStart={startRecording}
+                          onStop={(duration, text) => stopRecording(text)}
+                          isRecordingProp={isRecording}
+                          onToggleRecording={toggleRecording}
+                          speechRecognitionSupported={speechRecognitionSupported}
+                          speechRecognitionError={speechRecognitionError}
+                          visualizerBars={32}
+                          className="py-2"
+                        />
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={cancelRecording}
+                          className="absolute top-2 right-2 text-zinc-400 hover:text-zinc-600"
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="flex gap-2">
+                        <Textarea
+                          value={allyPrompt}
+                          onChange={(e) => setAllyPrompt(e.target.value)}
+                          placeholder="e.g., 'Change to 3pm' or 'Delete this event'"
+                          className={cn(
+                            'min-h-[44px] max-h-[120px] resize-none flex-1',
+                            'bg-background/50 border-border/60',
+                            'focus:border-primary/50 focus:ring-primary/20',
+                            'transition-all duration-200',
+                          )}
+                          rows={1}
+                          disabled={isProcessing || !!actionResult}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' && !e.shiftKey) {
+                              e.preventDefault()
+                              handleSendToAlly()
+                            }
+                          }}
+                        />
+                        {speechRecognitionSupported && (
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="icon"
+                            onClick={toggleRecording}
+                            disabled={isProcessing || !!actionResult}
+                            className="h-11 w-11 flex-shrink-0 transition-all duration-200"
+                          >
+                            <Mic className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </div>
+                    )}
+
+                    <Button
+                      onClick={handleSendToAlly}
+                      disabled={!allyPrompt.trim() || isProcessing || !!actionResult || isRecording}
+                      className={cn(
+                        'w-full gap-2 h-10',
+                        'bg-gradient-to-r from-primary to-primary/80',
+                        'hover:from-primary/90 hover:to-primary/70',
+                        'shadow-lg shadow-primary/20',
+                        'transition-all duration-200',
+                      )}
+                    >
+                      {isProcessing ? (
+                        <>
+                          <div className="h-4 w-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                          Processing...
+                        </>
+                      ) : (
+                        <>
+                          <Send className="h-4 w-4" />
+                          Send to Ally
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
         </DialogContent>
       </Dialog>
     </div>

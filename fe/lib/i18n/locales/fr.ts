@@ -289,6 +289,8 @@ export const fr: TranslationShape = {
     admin: 'Admin',
     adminDescription:
       "Accédez au tableau de bord d'administration pour gérer les utilisateurs, abonnements et paramètres système",
+    calendar: 'Calendrier',
+    calendarDescription: 'Affichez et gérez vos événements en vues mois, semaine, jour et liste',
     analytics: 'Analytiques',
     analyticsDescription:
       "Consultez les analyses de répartition du temps, les tendances d'événements et la productivité",
