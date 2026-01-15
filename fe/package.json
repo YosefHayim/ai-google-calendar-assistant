@@ -14,7 +14,9 @@
     "test": "bun test",
     "test:watch": "bun test --watch",
     "test:coverage": "bun test --coverage",
-    "update:db:types": "npx supabase gen types typescript --project-id vdwjfekcsnurtjsieojv --schema public > database.types.ts"
+    "update:db:types": "npx supabase gen types typescript --project-id vdwjfekcsnurtjsieojv --schema public > database.types.ts",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@google/genai": "1.34.0",
@@ -105,6 +107,19 @@
     "swc-plugin-component-annotate": "^1.13.0",
     "tailwindcss": "^3.4.6",
     "typescript": "~5.5.3",
-    "typescript-eslint": "^8.52.0"
+    "typescript-eslint": "^8.52.0",
+    "storybook": "^10.1.11",
+    "@storybook/nextjs-vite": "^10.1.11",
+    "@chromatic-com/storybook": "^5.0.0",
+    "@storybook/addon-vitest": "^10.1.11",
+    "@storybook/addon-a11y": "^10.1.11",
+    "@storybook/addon-docs": "^10.1.11",
+    "@storybook/addon-onboarding": "^10.1.11",
+    "vite": "^7.3.1",
+    "eslint-plugin-storybook": "^10.1.11",
+    "vitest": "^4.0.17",
+    "playwright": "^1.57.0",
+    "@vitest/browser-playwright": "^4.0.17",
+    "@vitest/coverage-v8": "^4.0.17"
   }
 }
