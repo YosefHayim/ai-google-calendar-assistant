@@ -1,430 +1,540 @@
-import type { Request, Response } from "express"
-import crypto from "node:crypto"
-import { reqResAsyncHandler, sendR } from "@/utils/http"
-import { STATUS_RESPONSE, env } from "@/config"
-import { requireUserId, requireUser } from "@/utils/auth"
+import crypto from "node:crypto";
+import type { Request, Response } from "express";
+import { env, STATUS_RESPONSE } from "@/config";
 import {
   isLemonSqueezyEnabled,
   LEMONSQUEEZY_CONFIG,
-} from "@/config/clients/lemonsqueezy"
+} from "@/config/clients/lemonsqueezy";
 import {
-  getActivePlans,
-  getUserSubscription,
+  cancelSubscription,
   checkUserAccess,
   createCheckoutSession,
   createCreditPackCheckout,
+  ensureFreePlan,
+  getActivePlans,
+  getBillingOverview,
   getCustomerPortalUrl,
-  cancelSubscription,
-  updateSubscriptionFromWebhook,
-  isWebhookEventProcessed,
-  recordWebhookEvent,
+  getUserSubscription,
   handleOrderCreated,
   handleSubscriptionCreated,
-  handleSubscriptionPaymentSuccess,
   handleSubscriptionPaymentFailed,
-  processMoneyBackRefund,
-  ensureFreePlan,
-  upgradeSubscriptionPlan,
-  getBillingOverview,
+  handleSubscriptionPaymentSuccess,
+  isWebhookEventProcessed,
   type PlanSlug,
-} from "@/services/lemonsqueezy-service"
+  processMoneyBackRefund,
+  recordWebhookEvent,
+  updateSubscriptionFromWebhook,
+  upgradeSubscriptionPlan,
+} from "@/services/lemonsqueezy-service";
+import { requireUser, requireUserId } from "@/utils/auth";
+import { reqResAsyncHandler, sendR } from "@/utils/http";
 
-export const getPaymentStatus = reqResAsyncHandler(async (_req: Request, res: Response) => {
-  const enabled = isLemonSqueezyEnabled()
+export const getPaymentStatus = reqResAsyncHandler(
+  async (_req: Request, res: Response) => {
+    const enabled = isLemonSqueezyEnabled();
 
-  sendR(res, STATUS_RESPONSE.SUCCESS, "Payment status", {
-    enabled,
-    provider: "lemonsqueezy",
-    trialDays: LEMONSQUEEZY_CONFIG.TRIAL_DAYS,
-    moneyBackDays: LEMONSQUEEZY_CONFIG.MONEY_BACK_DAYS,
-  })
-})
+    sendR(res, STATUS_RESPONSE.SUCCESS, "Payment status", {
+      enabled,
+      provider: "lemonsqueezy",
+      trialDays: LEMONSQUEEZY_CONFIG.TRIAL_DAYS,
+      moneyBackDays: LEMONSQUEEZY_CONFIG.MONEY_BACK_DAYS,
+    });
+  }
+);
 
-export const getPlans = reqResAsyncHandler(async (_req: Request, res: Response) => {
-  const plans = await getActivePlans()
+export const getPlans = reqResAsyncHandler(
+  async (_req: Request, res: Response) => {
+    const plans = await getActivePlans();
 
-  sendR(res, STATUS_RESPONSE.SUCCESS, "Plans retrieved", {
-    plans: plans.map((plan) => ({
-      id: plan.id,
-      name: plan.name,
-      slug: plan.slug,
-      description: plan.description,
-      pricing: {
-        monthly: plan.price_monthly_cents / 100,
-        yearly: plan.price_yearly_cents / 100,
-        perUse: plan.price_per_use_cents / 100,
-      },
-      limits: {
-        aiInteractionsMonthly: plan.ai_interactions_monthly,
-        actionPackSize: plan.action_pack_size,
-      },
-      features: plan.features,
-      isPopular: plan.is_popular,
-      isHighlighted: plan.is_highlighted,
-    })),
-  })
-})
+    sendR(res, STATUS_RESPONSE.SUCCESS, "Plans retrieved", {
+      plans: plans.map((plan) => ({
+        id: plan.id,
+        name: plan.name,
+        slug: plan.slug,
+        description: plan.description,
+        pricing: {
+          monthly: plan.price_monthly_cents / 100,
+          yearly: plan.price_yearly_cents / 100,
+          perUse: plan.price_per_use_cents / 100,
+        },
+        limits: {
+          aiInteractionsMonthly: plan.ai_interactions_monthly,
+          actionPackSize: plan.action_pack_size,
+        },
+        features: plan.features,
+        isPopular: plan.is_popular,
+        isHighlighted: plan.is_highlighted,
+      })),
+    });
+  }
+);
 
-export const getSubscriptionStatus = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const userResult = requireUserId(req, res)
-  if (!userResult.success) return
-  const { userId } = userResult
+export const getSubscriptionStatus = reqResAsyncHandler(
+  async (req: Request, res: Response) => {
+    const userResult = requireUserId(req, res);
+    if (!userResult.success) return;
+    const { userId } = userResult;
 
-  const access = await checkUserAccess(userId)
-  const subscription = await getUserSubscription(userId)
+    const access = await checkUserAccess(userId);
+    const subscription = await getUserSubscription(userId);
 
-  sendR(res, STATUS_RESPONSE.SUCCESS, "Subscription status", {
-    ...access,
-    subscription: subscription
-      ? {
-          id: subscription.id,
-          status: subscription.status,
-          interval: subscription.interval,
-          trialEnd: subscription.trial_end,
-          currentPeriodEnd: subscription.current_period_end,
-          cancelAtPeriodEnd: subscription.cancel_at_period_end,
-          moneyBackEligibleUntil: subscription.money_back_eligible_until,
-          isLinkedToProvider: !!subscription.lemonsqueezy_subscription_id,
+    sendR(res, STATUS_RESPONSE.SUCCESS, "Subscription status", {
+      ...access,
+      subscription: subscription
+        ? {
+            id: subscription.id,
+            status: subscription.status,
+            interval: subscription.interval,
+            trialEnd: subscription.trial_end,
+            currentPeriodEnd: subscription.current_period_end,
+            cancelAtPeriodEnd: subscription.cancel_at_period_end,
+            moneyBackEligibleUntil: subscription.money_back_eligible_until,
+            isLinkedToProvider: !!subscription.lemonsqueezy_subscription_id,
+          }
+        : null,
+    });
+  }
+);
+
+export const initializeFreePlan = reqResAsyncHandler(
+  async (req: Request, res: Response) => {
+    const userResult = requireUserId(req, res);
+    if (!userResult.success) return;
+    const { userId } = userResult;
+
+    const subscription = await ensureFreePlan(userId);
+
+    return sendR(res, STATUS_RESPONSE.SUCCESS, "Free plan initialized", {
+      subscription,
+    });
+  }
+);
+
+export const createSubscriptionCheckout = reqResAsyncHandler(
+  async (req: Request, res: Response) => {
+    const userResult = requireUser(req, res);
+    if (!userResult.success) return;
+    const { userId, userEmail } = userResult;
+
+    if (!isLemonSqueezyEnabled()) {
+      return sendR(
+        res,
+        STATUS_RESPONSE.SERVICE_UNAVAILABLE,
+        "Payment provider is not configured"
+      );
+    }
+
+    const { planSlug, interval, successUrl, cancelUrl } = req.body;
+
+    if (!(planSlug && ["starter", "pro", "executive"].includes(planSlug))) {
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Invalid plan slug");
+    }
+
+    if (!(interval && ["monthly", "yearly"].includes(interval))) {
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Invalid interval");
+    }
+
+    const existingSubscription = await getUserSubscription(userId);
+    if (
+      existingSubscription &&
+      ["trialing", "active"].includes(existingSubscription.status)
+    ) {
+      // Allow checkout if subscription exists but is not linked to LemonSqueezy
+      // This handles abandoned checkouts where user started but never completed payment
+      if (existingSubscription.lemonsqueezy_subscription_id) {
+        return sendR(
+          res,
+          STATUS_RESPONSE.CONFLICT,
+          "User already has an active subscription",
+          {
+            currentPlan: existingSubscription.plan_id,
+            status: existingSubscription.status,
+          }
+        );
+      }
+      // Subscription exists but not linked - will be updated when checkout completes via webhook
+    }
+
+    try {
+      const session = await createCheckoutSession({
+        userId,
+        userEmail,
+        planSlug: planSlug as PlanSlug,
+        interval,
+        successUrl,
+        cancelUrl,
+      });
+
+      sendR(res, STATUS_RESPONSE.SUCCESS, "Checkout session created", {
+        checkoutUrl: session.url,
+        sessionId: session.id,
+      });
+    } catch (error) {
+      console.error("Checkout error:", error);
+      sendR(
+        res,
+        STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
+        error instanceof Error
+          ? error.message
+          : "Failed to create checkout session"
+      );
+    }
+  }
+);
+
+export const createCreditPackCheckoutSession = reqResAsyncHandler(
+  async (req: Request, res: Response) => {
+    const userResult = requireUser(req, res);
+    if (!userResult.success) return;
+    const { userId, userEmail } = userResult;
+
+    if (!isLemonSqueezyEnabled()) {
+      return sendR(
+        res,
+        STATUS_RESPONSE.SERVICE_UNAVAILABLE,
+        "Payment provider is not configured"
+      );
+    }
+
+    const { credits, planSlug, successUrl, cancelUrl } = req.body;
+
+    if (
+      !credits ||
+      typeof credits !== "number" ||
+      credits < 100 ||
+      credits > 10_000
+    ) {
+      return sendR(
+        res,
+        STATUS_RESPONSE.BAD_REQUEST,
+        "Credits must be between 100 and 10000"
+      );
+    }
+
+    if (!(planSlug && ["starter", "pro", "executive"].includes(planSlug))) {
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Invalid plan slug");
+    }
+
+    try {
+      const session = await createCreditPackCheckout({
+        userId,
+        userEmail,
+        credits,
+        planSlug: planSlug as PlanSlug,
+        successUrl,
+        cancelUrl,
+      });
+
+      sendR(res, STATUS_RESPONSE.SUCCESS, "Credit pack checkout created", {
+        checkoutUrl: session.url,
+        sessionId: session.id,
+      });
+    } catch (error) {
+      console.error("Credit pack checkout error:", error);
+      sendR(
+        res,
+        STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
+        error instanceof Error
+          ? error.message
+          : "Failed to create credit pack checkout"
+      );
+    }
+  }
+);
+
+export const createPortalSession = reqResAsyncHandler(
+  async (req: Request, res: Response) => {
+    const userResult = requireUserId(req, res);
+    if (!userResult.success) return;
+    const { userId } = userResult;
+
+    if (!isLemonSqueezyEnabled()) {
+      return sendR(
+        res,
+        STATUS_RESPONSE.SERVICE_UNAVAILABLE,
+        "Payment provider is not configured"
+      );
+    }
+
+    const subscription = await getUserSubscription(userId);
+
+    if (!subscription?.lemonsqueezy_customer_id) {
+      return sendR(
+        res,
+        STATUS_RESPONSE.NOT_FOUND,
+        "No billing information found"
+      );
+    }
+
+    try {
+      const portalUrl = await getCustomerPortalUrl(
+        subscription.lemonsqueezy_customer_id
+      );
+
+      sendR(res, STATUS_RESPONSE.SUCCESS, "Portal URL retrieved", {
+        portalUrl,
+      });
+    } catch (error) {
+      console.error("Portal session error:", error);
+      sendR(
+        res,
+        STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
+        error instanceof Error ? error.message : "Failed to get portal URL"
+      );
+    }
+  }
+);
+
+export const cancelUserSubscription = reqResAsyncHandler(
+  async (req: Request, res: Response) => {
+    const userResult = requireUserId(req, res);
+    if (!userResult.success) return;
+    const { userId } = userResult;
+
+    if (!isLemonSqueezyEnabled()) {
+      return sendR(
+        res,
+        STATUS_RESPONSE.SERVICE_UNAVAILABLE,
+        "Payment provider is not configured"
+      );
+    }
+
+    const subscription = await getUserSubscription(userId);
+
+    if (!subscription?.lemonsqueezy_subscription_id) {
+      return sendR(
+        res,
+        STATUS_RESPONSE.NOT_FOUND,
+        "No active subscription found"
+      );
+    }
+
+    const { reason, immediate } = req.body;
+
+    try {
+      const updatedSubscription = await cancelSubscription(
+        subscription.lemonsqueezy_subscription_id,
+        reason,
+        immediate === true
+      );
+
+      sendR(
+        res,
+        STATUS_RESPONSE.SUCCESS,
+        "Subscription cancellation initiated",
+        {
+          cancelAtPeriodEnd: updatedSubscription?.cancel_at_period_end,
+          currentPeriodEnd: updatedSubscription?.current_period_end,
         }
-      : null,
-  })
-})
-
-export const initializeFreePlan = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const userResult = requireUserId(req, res)
-  if (!userResult.success) return
-  const { userId } = userResult
-
-  const subscription = await ensureFreePlan(userId)
-
-  return sendR(res, STATUS_RESPONSE.SUCCESS, "Free plan initialized", { subscription })
-})
-
-export const createSubscriptionCheckout = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const userResult = requireUser(req, res)
-  if (!userResult.success) return
-  const { userId, userEmail } = userResult
-
-  if (!isLemonSqueezyEnabled()) {
-    return sendR(res, STATUS_RESPONSE.SERVICE_UNAVAILABLE, "Payment provider is not configured")
-  }
-
-  const { planSlug, interval, successUrl, cancelUrl } = req.body
-
-  if (!planSlug || !["starter", "pro", "executive"].includes(planSlug)) {
-    return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Invalid plan slug")
-  }
-
-  if (!interval || !["monthly", "yearly"].includes(interval)) {
-    return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Invalid interval")
-  }
-
-  const existingSubscription = await getUserSubscription(userId)
-  if (existingSubscription && ["trialing", "active"].includes(existingSubscription.status)) {
-    // Allow checkout if subscription exists but is not linked to LemonSqueezy
-    // This handles abandoned checkouts where user started but never completed payment
-    if (existingSubscription.lemonsqueezy_subscription_id) {
-      return sendR(res, STATUS_RESPONSE.CONFLICT, "User already has an active subscription", {
-        currentPlan: existingSubscription.plan_id,
-        status: existingSubscription.status,
-      })
+      );
+    } catch (error) {
+      console.error("Cancel subscription error:", error);
+      sendR(
+        res,
+        STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
+        error instanceof Error ? error.message : "Failed to cancel subscription"
+      );
     }
-    // Subscription exists but not linked - will be updated when checkout completes via webhook
   }
+);
 
-  try {
-    const session = await createCheckoutSession({
-      userId,
-      userEmail,
-      planSlug: planSlug as PlanSlug,
-      interval,
-      successUrl,
-      cancelUrl,
-    })
+export const requestRefund = reqResAsyncHandler(
+  async (req: Request, res: Response) => {
+    const userResult = requireUserId(req, res);
+    if (!userResult.success) return;
+    const { userId } = userResult;
 
-    sendR(res, STATUS_RESPONSE.SUCCESS, "Checkout session created", {
-      checkoutUrl: session.url,
-      sessionId: session.id,
-    })
-  } catch (error) {
-    console.error("Checkout error:", error)
-    sendR(
-      res,
-      STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
-      error instanceof Error ? error.message : "Failed to create checkout session"
-    )
-  }
-})
-
-export const createCreditPackCheckoutSession = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const userResult = requireUser(req, res)
-  if (!userResult.success) return
-  const { userId, userEmail } = userResult
-
-  if (!isLemonSqueezyEnabled()) {
-    return sendR(res, STATUS_RESPONSE.SERVICE_UNAVAILABLE, "Payment provider is not configured")
-  }
-
-  const { credits, planSlug, successUrl, cancelUrl } = req.body
-
-  if (!credits || typeof credits !== "number" || credits < 100 || credits > 10000) {
-    return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Credits must be between 100 and 10000")
-  }
-
-  if (!planSlug || !["starter", "pro", "executive"].includes(planSlug)) {
-    return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Invalid plan slug")
-  }
-
-  try {
-    const session = await createCreditPackCheckout({
-      userId,
-      userEmail,
-      credits,
-      planSlug: planSlug as PlanSlug,
-      successUrl,
-      cancelUrl,
-    })
-
-    sendR(res, STATUS_RESPONSE.SUCCESS, "Credit pack checkout created", {
-      checkoutUrl: session.url,
-      sessionId: session.id,
-    })
-  } catch (error) {
-    console.error("Credit pack checkout error:", error)
-    sendR(
-      res,
-      STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
-      error instanceof Error ? error.message : "Failed to create credit pack checkout"
-    )
-  }
-})
-
-export const createPortalSession = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const userResult = requireUserId(req, res)
-  if (!userResult.success) return
-  const { userId } = userResult
-
-  if (!isLemonSqueezyEnabled()) {
-    return sendR(res, STATUS_RESPONSE.SERVICE_UNAVAILABLE, "Payment provider is not configured")
-  }
-
-  const subscription = await getUserSubscription(userId)
-
-  if (!subscription?.lemonsqueezy_customer_id) {
-    return sendR(res, STATUS_RESPONSE.NOT_FOUND, "No billing information found")
-  }
-
-  try {
-    const portalUrl = await getCustomerPortalUrl(subscription.lemonsqueezy_customer_id)
-
-    sendR(res, STATUS_RESPONSE.SUCCESS, "Portal URL retrieved", {
-      portalUrl,
-    })
-  } catch (error) {
-    console.error("Portal session error:", error)
-    sendR(
-      res,
-      STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
-      error instanceof Error ? error.message : "Failed to get portal URL"
-    )
-  }
-})
-
-export const cancelUserSubscription = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const userResult = requireUserId(req, res)
-  if (!userResult.success) return
-  const { userId } = userResult
-
-  if (!isLemonSqueezyEnabled()) {
-    return sendR(res, STATUS_RESPONSE.SERVICE_UNAVAILABLE, "Payment provider is not configured")
-  }
-
-  const subscription = await getUserSubscription(userId)
-
-  if (!subscription?.lemonsqueezy_subscription_id) {
-    return sendR(res, STATUS_RESPONSE.NOT_FOUND, "No active subscription found")
-  }
-
-  const { reason, immediate } = req.body
-
-  try {
-    const updatedSubscription = await cancelSubscription(
-      subscription.lemonsqueezy_subscription_id,
-      reason,
-      immediate === true
-    )
-
-    sendR(res, STATUS_RESPONSE.SUCCESS, "Subscription cancellation initiated", {
-      cancelAtPeriodEnd: updatedSubscription?.cancel_at_period_end,
-      currentPeriodEnd: updatedSubscription?.current_period_end,
-    })
-  } catch (error) {
-    console.error("Cancel subscription error:", error)
-    sendR(
-      res,
-      STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
-      error instanceof Error ? error.message : "Failed to cancel subscription"
-    )
-  }
-})
-
-export const requestRefund = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const userResult = requireUserId(req, res)
-  if (!userResult.success) return
-  const { userId } = userResult
-
-  if (!isLemonSqueezyEnabled()) {
-    return sendR(res, STATUS_RESPONSE.SERVICE_UNAVAILABLE, "Payment provider is not configured")
-  }
-
-  const subscription = await getUserSubscription(userId)
-
-  if (!subscription?.lemonsqueezy_subscription_id) {
-    return sendR(res, STATUS_RESPONSE.NOT_FOUND, "No active subscription found")
-  }
-
-  const { reason } = req.body
-
-  try {
-    const result = await processMoneyBackRefund(subscription.lemonsqueezy_subscription_id, reason)
-
-    if (result.success) {
-      return sendR(res, STATUS_RESPONSE.SUCCESS, result.message)
-    } else {
-      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, result.message)
+    if (!isLemonSqueezyEnabled()) {
+      return sendR(
+        res,
+        STATUS_RESPONSE.SERVICE_UNAVAILABLE,
+        "Payment provider is not configured"
+      );
     }
-  } catch (error) {
-    console.error("Refund error:", error)
-    sendR(
-      res,
-      STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
-      error instanceof Error ? error.message : "Failed to process refund"
-    )
+
+    const subscription = await getUserSubscription(userId);
+
+    if (!subscription?.lemonsqueezy_subscription_id) {
+      return sendR(
+        res,
+        STATUS_RESPONSE.NOT_FOUND,
+        "No active subscription found"
+      );
+    }
+
+    const { reason } = req.body;
+
+    try {
+      const result = await processMoneyBackRefund(
+        subscription.lemonsqueezy_subscription_id,
+        reason
+      );
+
+      if (result.success) {
+        return sendR(res, STATUS_RESPONSE.SUCCESS, result.message);
+      }
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, result.message);
+    } catch (error) {
+      console.error("Refund error:", error);
+      sendR(
+        res,
+        STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
+        error instanceof Error ? error.message : "Failed to process refund"
+      );
+    }
   }
-})
+);
 
-export const upgradeSubscription = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const userResult = requireUserId(req, res)
-  if (!userResult.success) return
-  const { userId } = userResult
+export const upgradeSubscription = reqResAsyncHandler(
+  async (req: Request, res: Response) => {
+    const userResult = requireUserId(req, res);
+    if (!userResult.success) return;
+    const { userId } = userResult;
 
-  if (!isLemonSqueezyEnabled()) {
-    return sendR(res, STATUS_RESPONSE.SERVICE_UNAVAILABLE, "Payment provider is not configured")
+    if (!isLemonSqueezyEnabled()) {
+      return sendR(
+        res,
+        STATUS_RESPONSE.SERVICE_UNAVAILABLE,
+        "Payment provider is not configured"
+      );
+    }
+
+    const { planSlug, interval } = req.body;
+
+    if (!(planSlug && ["starter", "pro", "executive"].includes(planSlug))) {
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Invalid plan slug");
+    }
+
+    if (!(interval && ["monthly", "yearly"].includes(interval))) {
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Invalid interval");
+    }
+
+    const existingSubscription = await getUserSubscription(userId);
+    if (!existingSubscription) {
+      return sendR(
+        res,
+        STATUS_RESPONSE.NOT_FOUND,
+        "No subscription found. Please create a subscription first."
+      );
+    }
+
+    if (!existingSubscription.lemonsqueezy_subscription_id) {
+      return sendR(
+        res,
+        STATUS_RESPONSE.BAD_REQUEST,
+        "Subscription is not linked to payment provider. Please complete checkout first."
+      );
+    }
+
+    try {
+      const result = await upgradeSubscriptionPlan({
+        userId,
+        newPlanSlug: planSlug as PlanSlug,
+        newInterval: interval,
+      });
+
+      sendR(
+        res,
+        STATUS_RESPONSE.SUCCESS,
+        "Subscription upgraded successfully",
+        {
+          subscription: {
+            id: result.subscription.id,
+            status: result.subscription.status,
+            interval: result.subscription.interval,
+            planId: result.subscription.plan_id,
+          },
+          prorated: result.prorated,
+        }
+      );
+    } catch (error) {
+      console.error("Upgrade subscription error:", error);
+      sendR(
+        res,
+        STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
+        error instanceof Error
+          ? error.message
+          : "Failed to upgrade subscription"
+      );
+    }
   }
+);
 
-  const { planSlug, interval } = req.body
-
-  if (!planSlug || !["starter", "pro", "executive"].includes(planSlug)) {
-    return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Invalid plan slug")
-  }
-
-  if (!interval || !["monthly", "yearly"].includes(interval)) {
-    return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Invalid interval")
-  }
-
-  const existingSubscription = await getUserSubscription(userId)
-  if (!existingSubscription) {
-    return sendR(res, STATUS_RESPONSE.NOT_FOUND, "No subscription found. Please create a subscription first.")
-  }
-
-  if (!existingSubscription.lemonsqueezy_subscription_id) {
-    return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Subscription is not linked to payment provider. Please complete checkout first.")
-  }
-
-  try {
-    const result = await upgradeSubscriptionPlan({
-      userId,
-      newPlanSlug: planSlug as PlanSlug,
-      newInterval: interval,
-    })
-
-    sendR(res, STATUS_RESPONSE.SUCCESS, "Subscription upgraded successfully", {
-      subscription: {
-        id: result.subscription.id,
-        status: result.subscription.status,
-        interval: result.subscription.interval,
-        planId: result.subscription.plan_id,
-      },
-      prorated: result.prorated,
-    })
-  } catch (error) {
-    console.error("Upgrade subscription error:", error)
-    sendR(
-      res,
-      STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
-      error instanceof Error ? error.message : "Failed to upgrade subscription"
-    )
-  }
-})
-
-function verifyWebhookSignature(rawBody: Buffer, signature: string, secret: string): boolean {
-  const hmac = crypto.createHmac("sha256", secret)
-  const digest = hmac.update(rawBody).digest("hex")
-  return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(digest))
+function verifyWebhookSignature(
+  rawBody: Buffer,
+  signature: string,
+  secret: string
+): boolean {
+  const hmac = crypto.createHmac("sha256", secret);
+  const digest = hmac.update(rawBody).digest("hex");
+  return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(digest));
 }
 
-export const handleWebhook = async (req: Request, res: Response): Promise<void> => {
+export const handleWebhook = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   if (!isLemonSqueezyEnabled()) {
-    res.status(503).json({ error: "Payment provider is not configured" })
-    return
+    res.status(503).json({ error: "Payment provider is not configured" });
+    return;
   }
 
-  const signature = req.headers["x-signature"] as string
-  const webhookSecret = env.lemonSqueezy.webhookSecret
+  const signature = req.headers["x-signature"] as string;
+  const webhookSecret = env.lemonSqueezy.webhookSecret;
 
   if (!signature) {
-    res.status(400).json({ error: "No signature provided" })
-    return
+    res.status(400).json({ error: "No signature provided" });
+    return;
   }
 
   if (!webhookSecret) {
-    console.error("LemonSqueezy webhook secret not configured")
-    res.status(500).json({ error: "Webhook secret not configured" })
-    return
+    console.error("LemonSqueezy webhook secret not configured");
+    res.status(500).json({ error: "Webhook secret not configured" });
+    return;
   }
 
-  const rawBody = req.body as Buffer
+  const rawBody = req.body as Buffer;
 
   if (!verifyWebhookSignature(rawBody, signature, webhookSecret)) {
-    console.error("Webhook signature verification failed")
-    res.status(400).json({ error: "Webhook signature verification failed" })
-    return
+    console.error("Webhook signature verification failed");
+    res.status(400).json({ error: "Webhook signature verification failed" });
+    return;
   }
 
   let event: {
     meta: {
-      event_name: string
-      custom_data?: Record<string, string>
-    }
+      event_name: string;
+      custom_data?: Record<string, string>;
+    };
     data: {
-      id: string
-      attributes: Record<string, unknown>
-    }
-  }
+      id: string;
+      attributes: Record<string, unknown>;
+    };
+  };
 
   try {
-    event = JSON.parse(rawBody.toString())
+    event = JSON.parse(rawBody.toString());
   } catch (err) {
-    console.error("Failed to parse webhook payload:", err)
-    res.status(400).json({ error: "Invalid JSON payload" })
-    return
+    console.error("Failed to parse webhook payload:", err);
+    res.status(400).json({ error: "Invalid JSON payload" });
+    return;
   }
 
-  const eventId = `${event.meta.event_name}_${event.data.id}_${Date.now()}`
-  const eventName = event.meta.event_name
+  const eventId = `${event.meta.event_name}_${event.data.id}_${Date.now()}`;
+  const eventName = event.meta.event_name;
 
-  const alreadyProcessed = await isWebhookEventProcessed(eventId)
+  const alreadyProcessed = await isWebhookEventProcessed(eventId);
   if (alreadyProcessed) {
-    console.log(`Webhook event ${eventId} already processed`)
-    res.status(200).json({ received: true, duplicate: true })
-    return
+    console.log(`Webhook event ${eventId} already processed`);
+    res.status(200).json({ received: true, duplicate: true });
+    return;
   }
 
-  await recordWebhookEvent(eventId, eventName, event)
+  await recordWebhookEvent(eventId, eventName, event);
 
   try {
-    const attrs = event.data.attributes as Record<string, unknown>
-    const customData = event.meta.custom_data || {}
+    const attrs = event.data.attributes as Record<string, unknown>;
+    const customData = event.meta.custom_data || {};
 
     switch (eventName) {
       case "order_created": {
@@ -435,8 +545,8 @@ export const handleWebhook = async (req: Request, res: Response): Promise<void> 
           status: String(attrs.status || ""),
           totalFormatted: String(attrs.total_formatted || ""),
           customData,
-        })
-        break
+        });
+        break;
       }
 
       case "subscription_created": {
@@ -450,8 +560,8 @@ export const handleWebhook = async (req: Request, res: Response): Promise<void> 
           endsAt: attrs.ends_at ? String(attrs.ends_at) : null,
           createdAt: String(attrs.created_at || new Date().toISOString()),
           customData,
-        })
-        break
+        });
+        break;
       }
 
       case "subscription_updated":
@@ -470,65 +580,87 @@ export const handleWebhook = async (req: Request, res: Response): Promise<void> 
           endsAt: attrs.ends_at ? String(attrs.ends_at) : null,
           createdAt: String(attrs.created_at || new Date().toISOString()),
           cancelledAt: attrs.cancelled_at ? String(attrs.cancelled_at) : null,
-        })
-        break
+        });
+        break;
       }
 
       case "subscription_payment_success": {
         await handleSubscriptionPaymentSuccess({
           id: event.data.id,
           renewsAt: attrs.renews_at ? String(attrs.renews_at) : null,
-        })
-        break
+        });
+        break;
       }
 
       case "subscription_payment_failed":
       case "subscription_payment_recovered": {
         if (eventName === "subscription_payment_failed") {
-          await handleSubscriptionPaymentFailed(event.data.id)
+          await handleSubscriptionPaymentFailed(event.data.id);
         }
-        break
+        break;
+      }
+
+      case "affiliate_created": {
+        const affiliateEmail = String(attrs.user_email || "");
+        const affiliateName = String(attrs.user_name || "");
+        console.log(
+          `Affiliate activated: ${affiliateName} (${affiliateEmail})`
+        );
+        break;
       }
 
       default:
-        console.log(`Unhandled event type: ${eventName}`)
+        console.log(`Unhandled event type: ${eventName}`);
     }
 
-    await recordWebhookEvent(eventId, eventName, event, true)
+    await recordWebhookEvent(eventId, eventName, event, true);
 
-    res.status(200).json({ received: true })
+    res.status(200).json({ received: true });
   } catch (error) {
-    console.error(`Error processing webhook ${eventName}:`, error)
+    console.error(`Error processing webhook ${eventName}:`, error);
     await recordWebhookEvent(
       eventId,
       eventName,
       event,
       false,
       error instanceof Error ? error.message : "Unknown error"
-    )
-    res.status(500).json({ error: "Webhook processing failed" })
+    );
+    res.status(500).json({ error: "Webhook processing failed" });
   }
-}
+};
 
-export const getBillingInfo = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const userResult = requireUserId(req, res)
-  if (!userResult.success) return
-  const { userId } = userResult
+export const getBillingInfo = reqResAsyncHandler(
+  async (req: Request, res: Response) => {
+    const userResult = requireUserId(req, res);
+    if (!userResult.success) return;
+    const { userId } = userResult;
 
-  if (!isLemonSqueezyEnabled()) {
-    return sendR(res, STATUS_RESPONSE.SERVICE_UNAVAILABLE, "Payment provider is not configured")
+    if (!isLemonSqueezyEnabled()) {
+      return sendR(
+        res,
+        STATUS_RESPONSE.SERVICE_UNAVAILABLE,
+        "Payment provider is not configured"
+      );
+    }
+
+    try {
+      const billingOverview = await getBillingOverview(userId);
+
+      sendR(
+        res,
+        STATUS_RESPONSE.SUCCESS,
+        "Billing overview retrieved",
+        billingOverview
+      );
+    } catch (error) {
+      console.error("Billing overview error:", error);
+      sendR(
+        res,
+        STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
+        error instanceof Error
+          ? error.message
+          : "Failed to get billing overview"
+      );
+    }
   }
-
-  try {
-    const billingOverview = await getBillingOverview(userId)
-
-    sendR(res, STATUS_RESPONSE.SUCCESS, "Billing overview retrieved", billingOverview)
-  } catch (error) {
-    console.error("Billing overview error:", error)
-    sendR(
-      res,
-      STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
-      error instanceof Error ? error.message : "Failed to get billing overview"
-    )
-  }
-})
+);

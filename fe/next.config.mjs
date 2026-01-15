@@ -1,3 +1,5 @@
+import { withSentryConfig } from '@sentry/nextjs'
+
 /** @type {import('next').NextConfig} */
 const isDev = process.env.NODE_ENV === 'development'
 
@@ -56,7 +58,7 @@ const nextConfig = {
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "font-src 'self' https://fonts.gstatic.com",
               "img-src 'self' data: blob: https: http:",
-              `connect-src 'self' ${isDev ? 'http://localhost:3000 ws://localhost:3000 ' : ''}https://*.supabase.co wss://*.supabase.co https://accounts.google.com https://api.openai.com https://raw.githubusercontent.com https://*.awsapprunner.com`,
+              `connect-src 'self' ${isDev ? 'http://localhost:3000 ws://localhost:3000 ' : ''}https://*.supabase.co wss://*.supabase.co https://accounts.google.com https://api.openai.com https://raw.githubusercontent.com https://*.awsapprunner.com https://*.ingest.sentry.io https://*.sentry.io`,
               "frame-src 'self' https://accounts.google.com",
               "frame-ancestors 'none'",
               "base-uri 'self'",
@@ -97,4 +99,17 @@ const nextConfig = {
   },
 }
 
-export default nextConfig
+export default withSentryConfig(nextConfig, {
+  org: 'individual-kl',
+  project: 'javascript-nextjs',
+
+  silent: !process.env.CI,
+
+  widenClientFileUpload: true,
+
+  tunnelRoute: '/monitoring',
+
+  disableLogger: true,
+
+  automaticVercelMonitors: true,
+})

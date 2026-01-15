@@ -8,6 +8,7 @@ import errorHandler from "@/middlewares/error-handler";
 import { apiRateLimiter } from "@/middlewares/rate-limiter";
 import { securityAuditMiddleware } from "@/middlewares/security-audit";
 import adminRoute from "@/routes/admin-route";
+import affiliateRoute from "@/routes/affiliate-route";
 import blogRoute from "@/routes/blog-route";
 import contactRoute from "@/routes/contact-route";
 import cronRoute from "@/routes/cron-route";
