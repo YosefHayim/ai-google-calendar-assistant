@@ -6,19 +6,7 @@ import MarketingLayout from '@/components/marketing/MarketingLayout'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import {
-  Briefcase,
-  MapPin,
-  Clock,
-  Users,
-  ArrowRight,
-  Sparkles,
-  Rocket,
-  Heart,
-  Coffee,
-  Zap,
-  Globe,
-} from 'lucide-react'
+import { Briefcase, MapPin, Clock, Users, ArrowRight, Sparkles, Rocket, Heart, Coffee, Zap, Globe } from 'lucide-react'
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
@@ -60,8 +48,7 @@ const positions = [
     type: 'Full-time',
     location: 'Remote',
     department: 'Engineering',
-    description:
-      'Develop robust APIs and services using Node.js/Bun, Express, and integrate with Google Calendar API.',
+    description: 'Develop robust APIs and services using Node.js/Bun, Express, and integrate with Google Calendar API.',
     gradient: 'from-amber-500 to-orange-500',
   },
 ]
@@ -111,7 +98,10 @@ export default function CareersPage() {
             Join our team and help millions of people take control of their time with AI-powered calendar intelligence.
           </motion.p>
 
-          <motion.div variants={fadeInUp} className="flex items-center justify-center gap-3 text-sm text-zinc-500 dark:text-zinc-400">
+          <motion.div
+            variants={fadeInUp}
+            className="flex items-center justify-center gap-3 text-sm text-zinc-500 dark:text-zinc-400"
+          >
             <div className="flex items-center gap-1.5">
               <Users className="w-4 h-4" />
               <span>Small, focused team</span>
@@ -166,12 +156,8 @@ export default function CareersPage() {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <h2 className="text-3xl md:text-4xl font-medium text-zinc-900 dark:text-zinc-100 mb-4">
-              Open Positions
-            </h2>
-            <p className="text-lg text-zinc-500 dark:text-zinc-400">
-              R&D roles currently accepting applications
-            </p>
+            <h2 className="text-3xl md:text-4xl font-medium text-zinc-900 dark:text-zinc-100 mb-4">Open Positions</h2>
+            <p className="text-lg text-zinc-500 dark:text-zinc-400">R&D roles currently accepting applications</p>
           </motion.div>
 
           <motion.div
@@ -184,8 +170,10 @@ export default function CareersPage() {
             {positions.map((position) => (
               <motion.div key={position.id} variants={fadeInUp}>
                 <Card className="group relative overflow-hidden hover:border-zinc-300 dark:hover:border-zinc-600 transition-all duration-300 hover:shadow-lg hover:shadow-zinc-200/50 dark:hover:shadow-zinc-900/50">
-                  <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${position.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
-                  
+                  <div
+                    className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${position.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
+                  />
+
                   <CardHeader className="pb-4">
                     <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                       <div className="flex-1">
@@ -197,9 +185,7 @@ export default function CareersPage() {
                         <CardTitle className="text-xl mb-2 group-hover:text-red-500 dark:group-hover:text-red-400 transition-colors">
                           {position.title}
                         </CardTitle>
-                        <CardDescription className="text-base">
-                          {position.description}
-                        </CardDescription>
+                        <CardDescription className="text-base">{position.description}</CardDescription>
                       </div>
                       <Link href={`/careers/apply/${position.id}`} className="flex-shrink-0">
                         <Button className="group/btn bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-zinc-200 dark:text-zinc-900">
@@ -209,7 +195,7 @@ export default function CareersPage() {
                       </Link>
                     </div>
                   </CardHeader>
-                  
+
                   <CardContent className="pt-0">
                     <div className="flex flex-wrap items-center gap-4 text-sm text-zinc-500 dark:text-zinc-400">
                       <div className="flex items-center gap-1.5">
@@ -242,9 +228,7 @@ export default function CareersPage() {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <h2 className="text-3xl md:text-4xl font-medium text-zinc-900 dark:text-zinc-100 mb-4">
-              Why Join Us?
-            </h2>
+            <h2 className="text-3xl md:text-4xl font-medium text-zinc-900 dark:text-zinc-100 mb-4">Why Join Us?</h2>
             <p className="text-lg text-zinc-500 dark:text-zinc-400">
               We believe great work happens when people are happy and empowered
             </p>
@@ -267,12 +251,8 @@ export default function CareersPage() {
                   <perk.icon className="w-6 h-6 text-red-500" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-medium text-zinc-900 dark:text-zinc-100 mb-1">
-                    {perk.title}
-                  </h3>
-                  <p className="text-zinc-500 dark:text-zinc-400 text-sm">
-                    {perk.description}
-                  </p>
+                  <h3 className="text-lg font-medium text-zinc-900 dark:text-zinc-100 mb-1">{perk.title}</h3>
+                  <p className="text-zinc-500 dark:text-zinc-400 text-sm">{perk.description}</p>
                 </div>
               </motion.div>
             ))}
@@ -292,7 +272,8 @@ export default function CareersPage() {
             Do Not See a Perfect Fit?
           </h2>
           <p className="text-lg text-zinc-500 dark:text-zinc-400 mb-8">
-            We are always looking for talented people. Send us your resume and tell us how you can contribute to our mission.
+            We are always looking for talented people. Send us your resume and tell us how you can contribute to our
+            mission.
           </p>
           <Link href="mailto:careers@askally.ai">
             <Button variant="outline" size="lg" className="h-12 px-8">

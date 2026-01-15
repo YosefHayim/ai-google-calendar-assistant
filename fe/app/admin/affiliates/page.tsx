@@ -1,6 +1,6 @@
-"use client";
+'use client'
 
-import { format } from "date-fns";
+import { format } from 'date-fns'
 import {
   ChevronLeft,
   ChevronRight,
@@ -11,45 +11,38 @@ import {
   RefreshCw,
   Search,
   Users2,
-} from "lucide-react";
-import { useState } from "react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import {
-  useAdminAffiliates,
-  useAffiliateSettings,
-} from "@/hooks/queries/admin";
-import { formatCurrency } from "@/lib/formatUtils";
-import type { AdminAffiliateListParams, AffiliateStatus } from "@/types/admin";
+} from 'lucide-react'
+import { useState } from 'react'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { useAdminAffiliates, useAffiliateSettings } from '@/hooks/queries/admin'
+import { formatCurrency } from '@/lib/formatUtils'
+import type { AdminAffiliateListParams, AffiliateStatus } from '@/types/admin'
 
 export default function AdminAffiliatesPage() {
-  const [search, setSearch] = useState("");
-  const [page, setPage] = useState(1);
-  const [statusFilter, setStatusFilter] = useState<AffiliateStatus | "">("");
+  const [search, setSearch] = useState('')
+  const [page, setPage] = useState(1)
+  const [statusFilter, setStatusFilter] = useState<AffiliateStatus | ''>('')
 
   const params: AdminAffiliateListParams = {
     page,
     limit: 20,
     search: search || undefined,
     status: statusFilter || undefined,
-  };
+  }
 
-  const { data, isLoading, refetch } = useAdminAffiliates(params);
-  const { data: settingsData, isLoading: settingsLoading } =
-    useAffiliateSettings();
+  const { data, isLoading, refetch } = useAdminAffiliates(params)
+  const { data: settingsData, isLoading: settingsLoading } = useAffiliateSettings()
 
   return (
     <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-bold text-2xl text-zinc-900 dark:text-white">
-            Affiliate Program
-          </h1>
+          <h1 className="font-bold text-2xl text-zinc-900 dark:text-white">Affiliate Program</h1>
           <p className="mt-1 text-zinc-500 dark:text-zinc-400">
-            View affiliates and program settings. Manage affiliates in Lemon
-            Squeezy.
+            View affiliates and program settings. Manage affiliates in Lemon Squeezy.
           </p>
         </div>
         <Button onClick={() => refetch()} size="sm" variant="outline">
@@ -65,13 +58,9 @@ export default function AdminAffiliatesPage() {
               <Percent className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
             </div>
             <div>
-              <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                Commission Rate
-              </p>
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">Commission Rate</p>
               <p className="font-bold text-2xl text-zinc-900 dark:text-white">
-                {settingsLoading
-                  ? "—"
-                  : `${settingsData?.settings.commissionRate}%`}
+                {settingsLoading ? '—' : `${settingsData?.settings.commissionRate}%`}
               </p>
             </div>
           </div>
@@ -83,13 +72,9 @@ export default function AdminAffiliatesPage() {
               <Clock className="h-5 w-5 text-blue-600 dark:text-blue-400" />
             </div>
             <div>
-              <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                Tracking Length
-              </p>
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">Tracking Length</p>
               <p className="font-bold text-2xl text-zinc-900 dark:text-white">
-                {settingsLoading
-                  ? "—"
-                  : `${settingsData?.settings.trackingLength} days`}
+                {settingsLoading ? '—' : `${settingsData?.settings.trackingLength} days`}
               </p>
             </div>
           </div>
@@ -101,13 +86,9 @@ export default function AdminAffiliatesPage() {
               <DollarSign className="h-5 w-5 text-amber-600 dark:text-amber-400" />
             </div>
             <div>
-              <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                Minimum Payout
-              </p>
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">Minimum Payout</p>
               <p className="font-bold text-2xl text-zinc-900 dark:text-white">
-                {settingsLoading
-                  ? "—"
-                  : formatCurrency(settingsData?.settings.minimumPayout ?? 0)}
+                {settingsLoading ? '—' : formatCurrency(settingsData?.settings.minimumPayout ?? 0)}
               </p>
             </div>
           </div>
@@ -119,12 +100,8 @@ export default function AdminAffiliatesPage() {
               <Users2 className="h-5 w-5 text-violet-600 dark:text-violet-400" />
             </div>
             <div>
-              <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                Total Affiliates
-              </p>
-              <p className="font-bold text-2xl text-zinc-900 dark:text-white">
-                {isLoading ? "—" : (data?.total ?? 0)}
-              </p>
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">Total Affiliates</p>
+              <p className="font-bold text-2xl text-zinc-900 dark:text-white">{isLoading ? '—' : (data?.total ?? 0)}</p>
             </div>
           </div>
         </Card>
@@ -135,11 +112,7 @@ export default function AdminAffiliatesPage() {
           <div className="flex flex-wrap gap-3">
             {settingsData?.dashboardUrls.affiliatesOverview && (
               <Button asChild size="sm" variant="outline">
-                <a
-                  href={settingsData.dashboardUrls.affiliatesOverview}
-                  rel="noopener noreferrer"
-                  target="_blank"
-                >
+                <a href={settingsData.dashboardUrls.affiliatesOverview} rel="noopener noreferrer" target="_blank">
                   <ExternalLink className="mr-2 h-4 w-4" />
                   View in Lemon Squeezy
                 </a>
@@ -147,11 +120,7 @@ export default function AdminAffiliatesPage() {
             )}
             {settingsData?.dashboardUrls.payouts && (
               <Button asChild size="sm" variant="outline">
-                <a
-                  href={settingsData.dashboardUrls.payouts}
-                  rel="noopener noreferrer"
-                  target="_blank"
-                >
+                <a href={settingsData.dashboardUrls.payouts} rel="noopener noreferrer" target="_blank">
                   <DollarSign className="mr-2 h-4 w-4" />
                   Manage Payouts
                 </a>
@@ -171,8 +140,8 @@ export default function AdminAffiliatesPage() {
             <Input
               className="pl-10"
               onChange={(e) => {
-                setSearch(e.target.value);
-                setPage(1);
+                setSearch(e.target.value)
+                setPage(1)
               }}
               placeholder="Search by name or email..."
               value={search}
@@ -181,8 +150,8 @@ export default function AdminAffiliatesPage() {
           <select
             className="rounded-md border border-zinc-200 bg-white px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900"
             onChange={(e) => {
-              setStatusFilter(e.target.value as AffiliateStatus | "");
-              setPage(1);
+              setStatusFilter(e.target.value as AffiliateStatus | '')
+              setPage(1)
             }}
             value={statusFilter}
           >
@@ -205,24 +174,12 @@ export default function AdminAffiliatesPage() {
               <table className="w-full">
                 <thead className="border-zinc-200 border-b dark:border-zinc-700">
                   <tr>
-                    <th className="p-4 text-left font-medium text-zinc-500 dark:text-zinc-400">
-                      Affiliate
-                    </th>
-                    <th className="p-4 text-left font-medium text-zinc-500 dark:text-zinc-400">
-                      Status
-                    </th>
-                    <th className="p-4 text-left font-medium text-zinc-500 dark:text-zinc-400">
-                      Total Earnings
-                    </th>
-                    <th className="p-4 text-left font-medium text-zinc-500 dark:text-zinc-400">
-                      Unpaid Earnings
-                    </th>
-                    <th className="p-4 text-left font-medium text-zinc-500 dark:text-zinc-400">
-                      Share Domain
-                    </th>
-                    <th className="p-4 text-left font-medium text-zinc-500 dark:text-zinc-400">
-                      Joined
-                    </th>
+                    <th className="p-4 text-left font-medium text-zinc-500 dark:text-zinc-400">Affiliate</th>
+                    <th className="p-4 text-left font-medium text-zinc-500 dark:text-zinc-400">Status</th>
+                    <th className="p-4 text-left font-medium text-zinc-500 dark:text-zinc-400">Total Earnings</th>
+                    <th className="p-4 text-left font-medium text-zinc-500 dark:text-zinc-400">Unpaid Earnings</th>
+                    <th className="p-4 text-left font-medium text-zinc-500 dark:text-zinc-400">Share Domain</th>
+                    <th className="p-4 text-left font-medium text-zinc-500 dark:text-zinc-400">Joined</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -235,18 +192,14 @@ export default function AdminAffiliatesPage() {
                         <div className="flex items-center gap-3">
                           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-200 dark:bg-zinc-700">
                             <span className="font-medium text-sm text-zinc-600 dark:text-zinc-300">
-                              {affiliate.userName?.[0]?.toUpperCase() ||
-                                affiliate.userEmail[0].toUpperCase()}
+                              {affiliate.userName?.[0]?.toUpperCase() || affiliate.userEmail[0].toUpperCase()}
                             </span>
                           </div>
                           <div>
                             <p className="font-medium text-zinc-900 dark:text-white">
-                              {affiliate.userName ||
-                                affiliate.userEmail.split("@")[0]}
+                              {affiliate.userName || affiliate.userEmail.split('@')[0]}
                             </p>
-                            <p className="text-sm text-zinc-500">
-                              {affiliate.userEmail}
-                            </p>
+                            <p className="text-sm text-zinc-500">{affiliate.userEmail}</p>
                           </div>
                         </div>
                       </td>
@@ -265,16 +218,13 @@ export default function AdminAffiliatesPage() {
                         </code>
                       </td>
                       <td className="p-4 text-sm text-zinc-500">
-                        {format(new Date(affiliate.createdAt), "MMM d, yyyy")}
+                        {format(new Date(affiliate.createdAt), 'MMM d, yyyy')}
                       </td>
                     </tr>
                   ))}
                   {data?.affiliates.length === 0 && (
                     <tr>
-                      <td
-                        className="p-8 text-center text-zinc-500 dark:text-zinc-400"
-                        colSpan={6}
-                      >
+                      <td className="p-8 text-center text-zinc-500 dark:text-zinc-400" colSpan={6}>
                         No affiliates found
                       </td>
                     </tr>
@@ -285,16 +235,10 @@ export default function AdminAffiliatesPage() {
 
             <div className="flex items-center justify-between border-zinc-200 border-t p-4 dark:border-zinc-700">
               <p className="text-sm text-zinc-500">
-                Showing {data?.affiliates.length || 0} of {data?.total || 0}{" "}
-                affiliates
+                Showing {data?.affiliates.length || 0} of {data?.total || 0} affiliates
               </p>
               <div className="flex gap-2">
-                <Button
-                  disabled={page === 1}
-                  onClick={() => setPage((p) => p - 1)}
-                  size="sm"
-                  variant="outline"
-                >
+                <Button disabled={page === 1} onClick={() => setPage((p) => p - 1)} size="sm" variant="outline">
                   <ChevronLeft className="mr-1 h-4 w-4" />
                   Previous
                 </Button>
@@ -313,16 +257,14 @@ export default function AdminAffiliatesPage() {
         )}
       </Card>
     </div>
-  );
+  )
 }
 
 function StatusBadge({ status }: { status: AffiliateStatus }) {
   const variants: Record<AffiliateStatus, string> = {
-    active:
-      "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
-    pending:
-      "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
-    disabled: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
-  };
-  return <Badge className={variants[status]}>{status}</Badge>;
+    active: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
+    pending: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
+    disabled: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
+  }
+  return <Badge className={variants[status]}>{status}</Badge>
 }

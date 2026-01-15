@@ -10,15 +10,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
-import {
-  ArrowLeft,
-  Send,
-  Briefcase,
-  MapPin,
-  Upload,
-  Sparkles,
-  CheckCircle2,
-} from 'lucide-react'
+import { ArrowLeft, Send, Briefcase, MapPin, Upload, Sparkles, CheckCircle2 } from 'lucide-react'
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
@@ -33,7 +25,10 @@ const staggerContainer = {
   },
 }
 
-const positions: Record<string, { title: string; type: string; location: string; department: string; description: string; gradient: string }> = {
+const positions: Record<
+  string,
+  { title: string; type: string; location: string; department: string; description: string; gradient: string }
+> = {
   'senior-fullstack-developer': {
     title: 'Senior Full Stack Developer',
     type: 'Full-time',
@@ -57,8 +52,7 @@ const positions: Record<string, { title: string; type: string; location: string;
     type: 'Full-time',
     location: 'Remote',
     department: 'Engineering',
-    description:
-      'Develop robust APIs and services using Node.js/Bun, Express, and integrate with Google Calendar API.',
+    description: 'Develop robust APIs and services using Node.js/Bun, Express, and integrate with Google Calendar API.',
     gradient: 'from-amber-500 to-orange-500',
   },
 }
@@ -82,9 +76,7 @@ export default function ApplyPage({ params }: PageProps) {
       <MarketingLayout>
         <section className="relative py-24 md:py-32 px-4 sm:px-6">
           <div className="max-w-2xl mx-auto text-center">
-            <h1 className="text-3xl font-medium text-zinc-900 dark:text-zinc-100 mb-4">
-              Position Not Found
-            </h1>
+            <h1 className="text-3xl font-medium text-zinc-900 dark:text-zinc-100 mb-4">Position Not Found</h1>
             <p className="text-zinc-500 dark:text-zinc-400 mb-8">
               The position you are looking for does not exist or is no longer available.
             </p>
@@ -120,8 +112,9 @@ export default function ApplyPage({ params }: PageProps) {
               Application Received!
             </h1>
             <p className="text-lg text-zinc-500 dark:text-zinc-400 mb-8">
-              Thank you for your interest in the <span className="font-medium text-zinc-700 dark:text-zinc-300">{position.title}</span> position.
-              We will review your application and get back to you soon.
+              Thank you for your interest in the{' '}
+              <span className="font-medium text-zinc-700 dark:text-zinc-300">{position.title}</span> position. We will
+              review your application and get back to you soon.
             </p>
             <Link href="/careers">
               <Button variant="outline" size="lg">
@@ -157,11 +150,7 @@ export default function ApplyPage({ params }: PageProps) {
             </Link>
           </motion.div>
 
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={staggerContainer}
-          >
+          <motion.div initial="hidden" animate="visible" variants={staggerContainer}>
             <motion.div variants={fadeInUp} className="mb-8">
               <Card className="relative overflow-hidden">
                 <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${position.gradient}`} />
@@ -176,9 +165,7 @@ export default function ApplyPage({ params }: PageProps) {
                     </Badge>
                   </div>
                   <CardTitle className="text-2xl md:text-3xl">{position.title}</CardTitle>
-                  <CardDescription className="text-base mt-2">
-                    {position.description}
-                  </CardDescription>
+                  <CardDescription className="text-base mt-2">{position.description}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="flex flex-wrap items-center gap-4 text-sm text-zinc-500 dark:text-zinc-400">
@@ -210,13 +197,7 @@ export default function ApplyPage({ params }: PageProps) {
                         <Label htmlFor="fullName" className="text-zinc-700 dark:text-zinc-300">
                           Full Name <span className="text-red-500">*</span>
                         </Label>
-                        <Input
-                          id="fullName"
-                          name="fullName"
-                          placeholder="John Doe"
-                          required
-                          className="h-11"
-                        />
+                        <Input id="fullName" name="fullName" placeholder="John Doe" required className="h-11" />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="email" className="text-zinc-700 dark:text-zinc-300">
@@ -238,13 +219,7 @@ export default function ApplyPage({ params }: PageProps) {
                         <Label htmlFor="phone" className="text-zinc-700 dark:text-zinc-300">
                           Phone Number
                         </Label>
-                        <Input
-                          id="phone"
-                          name="phone"
-                          type="tel"
-                          placeholder="+1 (555) 123-4567"
-                          className="h-11"
-                        />
+                        <Input id="phone" name="phone" type="tel" placeholder="+1 (555) 123-4567" className="h-11" />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="linkedin" className="text-zinc-700 dark:text-zinc-300">
@@ -280,7 +255,8 @@ export default function ApplyPage({ params }: PageProps) {
                           <div className="text-center">
                             <Upload className="w-8 h-8 text-zinc-400 mx-auto mb-2" />
                             <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                              <span className="font-medium text-zinc-700 dark:text-zinc-300">Click to upload</span> or drag and drop
+                              <span className="font-medium text-zinc-700 dark:text-zinc-300">Click to upload</span> or
+                              drag and drop
                             </p>
                             <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-1">
                               PDF, DOC, or DOCX (max 10MB)

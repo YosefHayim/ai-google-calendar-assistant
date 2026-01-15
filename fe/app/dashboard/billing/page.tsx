@@ -86,7 +86,8 @@ function BillingPageContent() {
       target_plan: plan.slug,
       target_plan_name: plan.name,
       target_plan_price: plan.pricing.monthly,
-      is_upgrade: (plan.pricing.monthly || 0) > ((plans?.find(p => p.slug === access?.plan_slug)?.pricing.monthly) || 0),
+      is_upgrade:
+        (plan.pricing.monthly || 0) > (plans?.find((p) => p.slug === access?.plan_slug)?.pricing.monthly || 0),
     })
 
     setActionLoading(`plan-${plan.id}`)
