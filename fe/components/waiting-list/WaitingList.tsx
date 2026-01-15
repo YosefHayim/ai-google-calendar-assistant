@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Mic, MessageSquare, Send, Smartphone, Shield, Zap, Clock } from 'lucide-react'
+import { usePostHog } from 'posthog-js/react'
 
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
@@ -29,6 +30,7 @@ const WaitingList: React.FC = () => {
   const [name, setName] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [position, setPosition] = useState<number | null>(null)
+  const posthog = usePostHog()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -43,6 +45,14 @@ const WaitingList: React.FC = () => {
       })
 
       setPosition(result.data?.position || null)
+
+      // Track successful waitlist signup
+      posthog?.capture('waitlist_signup_submitted', {
+        source: 'landing',
+        position: result.data?.position,
+        has_name: !!name,
+      })
+
       toast.success('Welcome to the waiting list!', {
         description: `You're #${result.data?.position} in line. We'll notify you when it's your turn!`,
       })

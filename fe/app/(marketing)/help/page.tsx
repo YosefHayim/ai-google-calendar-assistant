@@ -1,27 +1,28 @@
 'use client'
 
-import { useState } from 'react'
-import Link from 'next/link'
-import MarketingLayout from '@/components/marketing/MarketingLayout'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
-import { JsonLd } from '@/components/shared/JsonLd'
-import { generateFAQSchema, generateBreadcrumbSchema, generateWebPageSchema, SITE_CONFIG } from '@/lib/constants/seo'
 import {
-  Search,
+  ArrowRight,
   BookOpen,
   Calendar,
-  Sparkles,
   CreditCard,
-  Wrench,
-  MessageCircle,
-  ArrowRight,
   HelpCircle,
+  MessageCircle,
   Mic,
+  Search,
   Shield,
+  Sparkles,
+  Wrench,
   Zap,
 } from 'lucide-react'
+import { SITE_CONFIG, generateBreadcrumbSchema, generateFAQSchema, generateWebPageSchema } from '@/lib/constants/seo'
+
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { JsonLd } from '@/components/shared/JsonLd'
+import Link from 'next/link'
+import MarketingLayout from '@/components/marketing/MarketingLayout'
+import { useState } from 'react'
 
 const HELP_CATEGORIES = [
   {
@@ -169,7 +170,7 @@ const FAQ_DATA = {
     {
       question: 'How do I report a bug?',
       answer:
-        'We appreciate bug reports! Contact us through the Help > Contact Support option in your dashboard, or email support@askally.io with details about the issue, including steps to reproduce it.',
+        'We appreciate bug reports! Contact us through the Help > Contact Support option in your dashboard, or email hello@askally.io with details about the issue, including steps to reproduce it.',
     },
   ],
 }

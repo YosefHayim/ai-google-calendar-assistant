@@ -1,6 +1,7 @@
 'use client'
 
 import { useTranslation } from 'react-i18next'
+import { usePostHog } from 'posthog-js/react'
 
 import { AllyLogo, BetaBadge } from '@/components/shared/logo'
 import React, { useEffect } from 'react'
@@ -26,6 +27,7 @@ const LoginPage: React.FC = () => {
   const { t } = useTranslation()
   const router = useRouter()
   const searchParams = useSearchParams()
+  const posthog = usePostHog()
   const error = searchParams?.get('error')
   const [isLoading, setIsLoading] = React.useState(false)
 
@@ -37,6 +39,10 @@ const LoginPage: React.FC = () => {
 
   const handleGoogleLogin = () => {
     setIsLoading(true)
+    posthog?.capture('login_initiated', {
+      method: 'google',
+      source: 'login_page',
+    })
     window.location.href = `${ENV.API_BASE_URL}${ENDPOINTS.USERS_CALLBACK}`
   }
 

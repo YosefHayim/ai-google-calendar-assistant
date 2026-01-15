@@ -1,6 +1,7 @@
 'use client'
 
 import { useTranslation } from 'react-i18next'
+import { usePostHog } from 'posthog-js/react'
 
 import { AllyLogo, BetaBadge } from '@/components/shared/logo'
 import { ENDPOINTS } from '@/lib/api/endpoints'
@@ -21,10 +22,15 @@ const carouselImages = [
 
 const RegisterPage: React.FC = () => {
   const { t } = useTranslation()
+  const posthog = usePostHog()
   const [isLoading, setIsLoading] = React.useState(false)
 
   const handleGoogleSignUp = () => {
     setIsLoading(true)
+    posthog?.capture('signup_initiated', {
+      method: 'google',
+      source: 'register_page',
+    })
     window.location.href = `${ENV.API_BASE_URL}${ENDPOINTS.USERS_CALLBACK}`
   }
 

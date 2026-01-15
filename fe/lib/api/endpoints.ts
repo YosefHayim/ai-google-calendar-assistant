@@ -533,6 +533,10 @@ export const ENDPOINTS = {
    * Query: page, limit, adminUserId, actionType
    */
   ADMIN_AUDIT_LOGS: '/api/admin/audit-logs',
+
+  ADMIN_AFFILIATES: '/api/admin/affiliates',
+  ADMIN_AFFILIATES_SETTINGS: '/api/admin/affiliates/settings',
+  ADMIN_AFFILIATE_BY_ID: (id: string) => `/api/admin/affiliates/${id}`,
 } as const
 
 export type EndpointsType = typeof ENDPOINTS

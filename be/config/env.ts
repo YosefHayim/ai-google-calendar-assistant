@@ -1,5 +1,5 @@
-import dotenv from "dotenv";
 import path from "node:path";
+import dotenv from "dotenv";
 
 // Only load .env file in development - in production, env vars are injected by the platform
 if (process.env.NODE_ENV !== "production") {
@@ -15,7 +15,8 @@ const CONSTANTS = {
   SUPABASE_URL: "https://vdwjfekcsnurtjsieojv.supabase.co",
 
   // Google OAuth
-  GOOGLE_CLIENT_ID: "633918377873-vvlgvie0ksenm5jcvs3c74vhb17rdqsn.apps.googleusercontent.com",
+  GOOGLE_CLIENT_ID:
+    "633918377873-vvlgvie0ksenm5jcvs3c74vhb17rdqsn.apps.googleusercontent.com",
 
   // URLs (Production)
   PROD_BACKEND_URL: "https://i3fzcpnmmk.eu-central-1.awsapprunner.com/",
@@ -36,18 +37,25 @@ const CONSTANTS = {
 // Validation - Only secrets need to be in .env
 // ============================================================================
 
-const REQUIRED_SECRETS = ["SUPABASE_SERVICE_ROLE_KEY", "OPEN_API_KEY", "GOOGLE_CLIENT_SECRET"] as const;
+const REQUIRED_SECRETS = [
+  "SUPABASE_SERVICE_ROLE_KEY",
+  "OPEN_API_KEY",
+  "GOOGLE_CLIENT_SECRET",
+] as const;
 
 const missing = REQUIRED_SECRETS.filter((key) => !process.env[key]);
 if (missing.length > 0) {
-  throw new Error(`Missing required secret environment variables: ${missing.join(", ")}`);
+  throw new Error(
+    `Missing required secret environment variables: ${missing.join(", ")}`
+  );
 }
 
 // ============================================================================
 // Helper to get optional env vars with type safety
 // ============================================================================
 
-const getOptional = (key: string): string | undefined => process.env[key] || undefined;
+const getOptional = (key: string): string | undefined =>
+  process.env[key] || undefined;
 const getRequired = (key: string): string => process.env[key]!;
 
 // ============================================================================
@@ -69,7 +77,8 @@ const isProdPort = port === CONSTANTS.PROD_PORT;
 
 export const isTest = nodeEnv === "test";
 export const isDev = isDevPort && !isProdPort && nodeEnv !== "production";
-export const isProd = isProdPort || nodeEnv === "production" || (!isDev && !isTest);
+export const isProd =
+  isProdPort || nodeEnv === "production" || !(isDev || isTest);
 
 // ============================================================================
 // Server Configuration
@@ -180,6 +189,15 @@ const integrations = {
     get baseUrl(): string {
       return `https://graph.facebook.com/${this.apiVersion}`;
     },
+    get isFullyConfigured(): boolean {
+      return !!(
+        this.phoneNumberId &&
+        this.businessAccountId &&
+        this.accessToken &&
+        this.verifyToken &&
+        this.appSecret
+      );
+    },
   },
   slack: {
     appId: CONSTANTS.SLACK_APP_ID,
@@ -216,6 +234,18 @@ const atlassian = {
     get isEnabled(): boolean {
       return !!(this.url && this.username && this.apiToken);
     },
+  },
+} as const;
+
+// ============================================================================
+// PostHog Analytics Configuration
+// ============================================================================
+
+const posthog = {
+  apiKey: getOptional("POSTHOG_API_KEY"),
+  host: getOptional("POSTHOG_HOST") ?? "https://us.i.posthog.com",
+  get isEnabled(): boolean {
+    return !!this.apiKey;
   },
 } as const;
 
@@ -267,6 +297,7 @@ export const env = {
   google,
   openai,
   lemonSqueezy,
+  posthog,
   integrations,
   atlassian,
   resend,

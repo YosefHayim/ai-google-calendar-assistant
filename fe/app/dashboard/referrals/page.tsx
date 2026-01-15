@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { usePostHog } from 'posthog-js/react'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -30,12 +31,19 @@ export default function ReferralsPage() {
   const { data: referrals, isLoading: isLoadingReferrals } = useMyReferrals()
   const { data: stats, isLoading: isLoadingStats } = useReferralStats()
   const claimReward = useClaimReward()
+  const posthog = usePostHog()
 
   const handleCopy = async () => {
     if (!referralCode?.referralLink) return
     try {
       await navigator.clipboard.writeText(referralCode.referralLink)
       setCopied(true)
+
+      // Track referral link copied
+      posthog?.capture('referral_link_copied', {
+        referral_code: referralCode.referralCode,
+      })
+
       toast.success('Referral link copied!')
       setTimeout(() => setCopied(false), 2000)
     } catch {
@@ -52,6 +60,12 @@ export default function ReferralsPage() {
           text: 'Try Ask Ally - Your AI Calendar Assistant. Use my referral link to get started!',
           url: referralCode.referralLink,
         })
+
+        // Track referral link shared (native share API used)
+        posthog?.capture('referral_link_shared', {
+          referral_code: referralCode.referralCode,
+          method: 'native_share',
+        })
       } catch {
         handleCopy()
       }
@@ -61,6 +75,11 @@ export default function ReferralsPage() {
   }
 
   const handleClaimReward = (referralId: string) => {
+    // Track referral reward claim
+    posthog?.capture('referral_reward_claimed', {
+      referral_id: referralId,
+    })
+
     claimReward.mutate(referralId)
   }
 

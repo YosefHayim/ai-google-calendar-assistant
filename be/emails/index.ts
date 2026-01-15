@@ -18,7 +18,7 @@
  *
  *   // Option 1: Use React component directly (Resend supports this!)
  *   await resend.emails.send({
- *     from: "noreply@askally.io",
+ *     from: "hello@askally.io",
  *     to: user.email,
  *     subject: "Your Daily Digest",
  *     react: <DailyDigest userName="John" dateFormatted="Wednesday, January 15" events={[...]} />,
@@ -39,7 +39,7 @@
  *   );
  *
  *   await resend.emails.send({
- *     from: "noreply@askally.io",
+ *     from: "hello@askally.io",
  *     to: user.email,
  *     subject: "Your Daily Digest - 2 events today",
  *     html: html,

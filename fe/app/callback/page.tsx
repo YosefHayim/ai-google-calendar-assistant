@@ -4,6 +4,7 @@ import { Suspense, useEffect, useState, useMemo } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
+import { usePostHog } from 'posthog-js/react'
 import { AllyLogo } from '@/components/shared/logo'
 import { authService } from '@/services/auth.service'
 import { STORAGE_KEYS } from '@/lib/constants'
@@ -143,6 +144,7 @@ function CallbackContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { t } = useTranslation()
+  const posthog = usePostHog()
   const [error, setError] = useState<string | null>(null)
   const [progress, setProgress] = useState(0)
   const [messageIndex, setMessageIndex] = useState(0)
@@ -214,6 +216,20 @@ function CallbackContent() {
           setTimeout(() => router.push('/login?error=session_invalid'), 2000)
           return
         }
+
+        // Identify user in PostHog after successful authentication
+        const user = response.data
+        posthog?.identify(user.id, {
+          email: user.email,
+          name: user.name,
+          created_at: user.created_at,
+        })
+
+        // Track successful login/signup
+        posthog?.capture('user_authenticated', {
+          method: 'google',
+          is_new_user: !user.created_at || Date.now() - new Date(user.created_at).getTime() < 60000,
+        })
 
         setProgress(100)
 

@@ -28,6 +28,7 @@ export enum ROUTES {
   WEBHOOKS = "/webhooks",
   VOICE = "/api/voice",
   ADMIN = "/api/admin",
+  AFFILIATES = "/api/admin/affiliates",
   CRON = "/api/cron",
   TELEGRAM = "/api/telegram",
   SLACK = "/api/slack",

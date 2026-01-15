@@ -1,6 +1,7 @@
 'use client'
 
 import React, { Component, ErrorInfo, ReactNode } from 'react'
+import posthog from 'posthog-js'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 
@@ -35,6 +36,14 @@ export class ErrorBoundary extends Component<Props, State> {
     if (process.env.NODE_ENV === 'development') {
       console.error('ErrorBoundary caught an error:', error, errorInfo)
     }
+
+    // Report error to PostHog
+    posthog.capture('$exception', {
+      $exception_message: error.message,
+      $exception_type: error.name,
+      $exception_stack_trace_raw: error.stack,
+      component_stack: errorInfo.componentStack,
+    })
   }
 
   handleReset = (): void => {

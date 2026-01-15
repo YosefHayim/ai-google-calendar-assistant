@@ -170,7 +170,7 @@ export function generateOrganizationSchema() {
     sameAs: ['https://twitter.com/askally_io', 'https://t.me/AskAllyBot'],
     contactPoint: {
       '@type': 'ContactPoint',
-      email: 'support@askally.io',
+      email: 'hello@askally.io',
       contactType: 'customer support',
     },
   }

@@ -3,6 +3,7 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowRight, BadgeCheck, Minus, Plus, Zap } from 'lucide-react'
 import React, { useRef, useState } from 'react'
+import { usePostHog } from 'posthog-js/react'
 
 import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
@@ -44,6 +45,7 @@ export const PricingCard: React.FC<PricingCardProps> = ({ tier, paymentFrequency
   const [isLoading, setIsLoading] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const router = useRouter()
+  const posthog = usePostHog()
 
   const isPerUse = paymentFrequency === 'per use'
   const isCustomTier = tier.isCustom && isPerUse
@@ -82,6 +84,20 @@ export const PricingCard: React.FC<PricingCardProps> = ({ tier, paymentFrequency
 
   const handleGetStarted = async () => {
     setIsLoading(true)
+
+    // Track pricing plan selection
+    posthog?.capture('pricing_plan_selected', {
+      plan_id: tier.id,
+      plan_name: tier.name,
+      payment_frequency: paymentFrequency,
+      is_per_use: isPerUse,
+      is_custom_tier: isCustomTier,
+      price: typeof currentPrice === 'number' ? currentPrice : null,
+      custom_amount: isCustomTier ? customAmount : null,
+      is_highlighted: tier.highlighted,
+      is_popular: tier.popular,
+      is_authenticated: isAuthenticated,
+    })
 
     try {
       // If user is not authenticated, redirect to register first

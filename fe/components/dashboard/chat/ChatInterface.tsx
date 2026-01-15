@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { usePostHog } from 'posthog-js/react'
 
 import { AgentProfileSelector } from './AgentProfileSelector'
 import { AvatarView } from './AvatarView'
@@ -42,6 +43,7 @@ const ChatInterface: React.FC = () => {
 
   const { data: voiceData } = useVoicePreference()
   const { showOnboarding, completeOnboarding, closeOnboarding } = useOnboarding()
+  const posthog = usePostHog()
 
   const [input, setInput] = useState('')
   const [images, setImages] = useState<ImageFile[]>([])
@@ -202,6 +204,15 @@ const ChatInterface: React.FC = () => {
         ? `${textToSend || 'Please analyze these images and help me with any scheduling or calendar-related content.'}`
         : textToSend
 
+    // Track chat message sent event
+    posthog?.capture('chat_message_sent', {
+      has_images: images.length > 0,
+      image_count: images.length,
+      message_length: messageContent.length,
+      active_view: activeTab,
+      is_new_conversation: !selectedConversationId,
+    })
+
     const userMessage: Message = {
       id: Date.now().toString(),
       role: 'user',
@@ -259,13 +270,31 @@ const ChatInterface: React.FC = () => {
     speechRecognitionSupported,
     speechRecognitionError,
     interimTranscription,
-    startRecording,
+    startRecording: originalStartRecording,
     stopRecording,
     cancelRecording,
-    toggleRecording,
+    toggleRecording: originalToggleRecording,
   } = useSpeechRecognition((finalTranscription) => {
     handleSend(undefined, finalTranscription)
   })
+
+  // Wrap startRecording to track event
+  const startRecording = () => {
+    posthog?.capture('voice_recording_started', {
+      active_view: activeTab,
+    })
+    originalStartRecording()
+  }
+
+  // Wrap toggleRecording to track event when starting
+  const toggleRecording = () => {
+    if (!isRecording) {
+      posthog?.capture('voice_recording_started', {
+        active_view: activeTab,
+      })
+    }
+    originalToggleRecording()
+  }
 
   useMutedSpeechDetection({
     isRecording,

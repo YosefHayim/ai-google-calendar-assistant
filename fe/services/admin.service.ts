@@ -1,18 +1,22 @@
 import { apiClient } from '@/lib/api/client'
 import { ENDPOINTS } from '@/lib/api/endpoints'
 import type {
-  AdminDashboardStats,
-  SubscriptionDistribution,
-  AdminUserListResponse,
-  AdminUserListParams,
-  AdminUser,
-  AdminSubscriptionListResponse,
-  AdminPaymentListResponse,
+  AdminAffiliate,
+  AdminAffiliateListParams,
+  AdminAffiliateListResponse,
   AdminAuditLogListResponse,
-  UserStatus,
-  UserRole,
+  AdminDashboardStats,
+  AdminPaymentListResponse,
+  AdminSubscriptionListResponse,
+  AdminUser,
+  AdminUserListParams,
+  AdminUserListResponse,
+  AffiliateSettingsResponse,
   RevenueTrendPoint,
+  SubscriptionDistribution,
   SubscriptionTrendPoint,
+  UserRole,
+  UserStatus,
 } from '@/types/admin'
 
 interface ApiResponse<T> {
@@ -116,14 +120,14 @@ export const getAuditLogs = async (params: {
 // Dashboard Charts
 // ============================================
 
-export const getRevenueTrends = async (months: number = 6): Promise<RevenueTrendPoint[]> => {
+export const getRevenueTrends = async (months = 6): Promise<RevenueTrendPoint[]> => {
   const response = await apiClient.get<ApiResponse<RevenueTrendPoint[]>>(ENDPOINTS.ADMIN_DASHBOARD_REVENUE_TRENDS, {
     params: { months },
   })
   return response.data.data || []
 }
 
-export const getSubscriptionTrends = async (days: number = 7): Promise<SubscriptionTrendPoint[]> => {
+export const getSubscriptionTrends = async (days = 7): Promise<SubscriptionTrendPoint[]> => {
   const response = await apiClient.get<ApiResponse<SubscriptionTrendPoint[]>>(
     ENDPOINTS.ADMIN_DASHBOARD_SUBSCRIPTION_TRENDS,
     { params: { days } },
@@ -133,5 +137,20 @@ export const getSubscriptionTrends = async (days: number = 7): Promise<Subscript
 
 export const getAdminMe = async (): Promise<AdminUser> => {
   const response = await apiClient.get<ApiResponse<AdminUser>>(ENDPOINTS.ADMIN_ME)
+  return response.data.data!
+}
+
+export const getAffiliates = async (params: AdminAffiliateListParams): Promise<AdminAffiliateListResponse> => {
+  const response = await apiClient.get<ApiResponse<AdminAffiliateListResponse>>(ENDPOINTS.ADMIN_AFFILIATES, { params })
+  return response.data.data!
+}
+
+export const getAffiliateById = async (id: string): Promise<AdminAffiliate> => {
+  const response = await apiClient.get<ApiResponse<AdminAffiliate>>(ENDPOINTS.ADMIN_AFFILIATE_BY_ID(id))
+  return response.data.data!
+}
+
+export const getAffiliateSettings = async (): Promise<AffiliateSettingsResponse> => {
+  const response = await apiClient.get<ApiResponse<AffiliateSettingsResponse>>(ENDPOINTS.ADMIN_AFFILIATES_SETTINGS)
   return response.data.data!
 }

@@ -165,3 +165,52 @@ export interface SubscriptionTrendPoint {
   cancelledSubscriptions: number
   totalActive: number
 }
+
+export type AffiliateStatus = 'active' | 'pending' | 'disabled'
+
+export interface AdminAffiliate {
+  id: string
+  userName: string
+  userEmail: string
+  status: AffiliateStatus
+  applicationNote: string | null
+  totalEarnings: number
+  unpaidEarnings: number
+  shareDomain: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface AdminAffiliateListParams {
+  page?: number
+  limit?: number
+  status?: AffiliateStatus
+  search?: string
+}
+
+export interface AdminAffiliateListResponse {
+  affiliates: AdminAffiliate[]
+  total: number
+  page: number
+  totalPages: number
+}
+
+export interface AffiliateProgramSettings {
+  affiliateHubUrl: string
+  commissionRate: number
+  trackingLength: number
+  minimumPayout: number
+  autoApproval: boolean
+  subscriptionCommission: boolean
+}
+
+export interface AffiliateDashboardUrls {
+  affiliatesOverview: string
+  affiliateSettings: string
+  payouts: string
+}
+
+export interface AffiliateSettingsResponse {
+  settings: AffiliateProgramSettings
+  dashboardUrls: AffiliateDashboardUrls
+}

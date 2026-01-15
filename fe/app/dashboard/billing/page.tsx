@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation'
 import { useTranslation } from 'react-i18next'
 import { format } from 'date-fns'
 import { useQueryClient } from '@tanstack/react-query'
+import { usePostHog } from 'posthog-js/react'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -49,6 +50,7 @@ function BillingPageContent() {
   const { t } = useTranslation()
   const searchParams = useSearchParams()
   const queryClient = useQueryClient()
+  const posthog = usePostHog()
   const { access, plans, billingOverview, isLoading, refetchAll } = useBillingData()
   const [actionLoading, setActionLoading] = useState<string | null>(null)
   const [showSuccess, setShowSuccess] = useState(false)
@@ -77,6 +79,16 @@ function BillingPageContent() {
       await handleManageBilling()
       return
     }
+
+    // Track billing plan upgrade click
+    posthog?.capture('billing_plan_upgrade_clicked', {
+      current_plan: access?.plan_slug,
+      target_plan: plan.slug,
+      target_plan_name: plan.name,
+      target_plan_price: plan.pricing.monthly,
+      is_upgrade:
+        (plan.pricing.monthly || 0) > (plans?.find((p) => p.slug === access?.plan_slug)?.pricing.monthly || 0),
+    })
 
     setActionLoading(`plan-${plan.id}`)
     try {
@@ -109,6 +121,15 @@ function BillingPageContent() {
     setActionLoading('cancel')
     try {
       await cancelSubscription('User requested cancellation')
+
+      // Track successful subscription cancellation
+      posthog?.capture('subscription_cancelled', {
+        plan_slug: access?.plan_slug,
+        plan_name: access?.plan_name,
+        subscription_status: access?.subscription_status,
+        was_trial: access?.subscription_status === 'trialing',
+      })
+
       await refetchAll()
     } catch (error) {
       console.error('Failed to cancel subscription:', error)
@@ -127,6 +148,13 @@ function BillingPageContent() {
     try {
       const result = await requestRefund('User requested refund via billing page')
       if (result.success) {
+        // Track successful refund request
+        posthog?.capture('refund_requested', {
+          plan_slug: access?.plan_slug,
+          plan_name: access?.plan_name,
+          was_money_back_eligible: access?.money_back_eligible,
+        })
+
         setShowSuccess(true)
         setTimeout(() => setShowSuccess(false), 5000)
         await refetchAll()
