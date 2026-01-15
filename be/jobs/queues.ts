@@ -102,6 +102,26 @@ export async function scheduleRecurringJobs(): Promise<void> {
   )
   logger.info("  - Scheduled: daily-analytics-aggregation (daily at 4 AM)")
 
+  await scheduledQueue.add(
+    "token-refresh-check",
+    {},
+    {
+      repeat: { pattern: "0 */12 * * *" },
+      jobId: "token-refresh-check",
+    }
+  )
+  logger.info("  - Scheduled: token-refresh-check (every 12 hours)")
+
+  await scheduledQueue.add(
+    "monthly-usage-reset",
+    {},
+    {
+      repeat: { pattern: "0 0 1 * *" },
+      jobId: "monthly-usage-reset",
+    }
+  )
+  logger.info("  - Scheduled: monthly-usage-reset (1st of each month)")
+
   logger.info("BullMQ: All recurring jobs scheduled")
 }
 
