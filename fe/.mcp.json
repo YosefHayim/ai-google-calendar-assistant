@@ -3,7 +3,10 @@
     "task-master-ai": {
       "type": "stdio",
       "command": "npx",
-      "args": ["-y", "task-master-ai"],
+      "args": [
+        "-y",
+        "task-master-ai"
+      ],
       "env": {
         "TASK_MASTER_TOOLS": "core",
         "ANTHROPIC_API_KEY": "YOUR_ANTHROPIC_API_KEY_HERE",
@@ -16,6 +19,9 @@
         "AZURE_OPENAI_API_KEY": "YOUR_AZURE_KEY_HERE",
         "OLLAMA_API_KEY": "YOUR_OLLAMA_API_KEY_HERE"
       }
+    },
+    "Sentry": {
+      "url": "https://mcp.sentry.dev/mcp/individual-kl/javascript-nextjs"
     }
   }
 }
