@@ -8,7 +8,7 @@ import {
   Shield,
   Check,
   ArrowRight,
-  RefreshCw,
+  Loader2,
   ArrowDown,
   BadgeCheck,
   Minus,
@@ -139,16 +139,6 @@ export const SubscriptionTab: React.FC = () => {
     }
   }
 
-  const isNoBillingInfoError = (error: unknown): boolean => {
-    if (typeof error === 'object' && error !== null) {
-      const axiosError = error as { response?: { data?: { message?: string }; status?: number } }
-      const message = axiosError.response?.data?.message || ''
-      const status = axiosError.response?.status
-      return message.includes('No billing information') || status === 404
-    }
-    return false
-  }
-
   const handleManageBilling = async () => {
     setActionLoading('portal')
     try {
@@ -203,7 +193,7 @@ export const SubscriptionTab: React.FC = () => {
                   className="flex-1 sm:flex-none"
                 >
                   {actionLoading === 'portal' ? (
-                    <RefreshCw className="w-3 h-3 animate-spin" />
+                    <Loader2 className="w-4 h-4 animate-spin" />
                   ) : (
                     <>
                       Manage <ExternalLink className="w-3 h-3 ml-1" />
@@ -417,7 +407,7 @@ function PlanRow({ plan, selectedFrequency, actionType, isLoading, onAction, isP
               </Button>
             ) : isLoading ? (
               <Button disabled size="sm" className="min-w-20 sm:min-w-24">
-                <RefreshCw className="w-3 h-3 animate-spin" />
+                <Loader2 className="w-4 h-4 animate-spin" />
               </Button>
             ) : actionType === 'upgrade' ? (
               <Button
