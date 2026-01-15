@@ -19,12 +19,35 @@ const CONSTANTS = {
     "633918377873-vvlgvie0ksenm5jcvs3c74vhb17rdqsn.apps.googleusercontent.com",
 
   // URLs (Production)
-  PROD_BACKEND_URL: "https://i3fzcpnmmk.eu-central-1.awsapprunner.com/",
+  PROD_BACKEND_URL: "https://be.askally.io",
   PROD_FRONTEND_URL: "https://askally.io",
 
   // Slack
   SLACK_APP_ID: "A0A87Q52742",
   SLACK_CLIENT_ID: "10273441014227.10279821075138",
+
+  // LemonSqueezy (public IDs)
+  LEMONSQUEEZY_STORE_ID: "270009",
+  LEMONSQUEEZY_VARIANTS: {
+    STARTER_MONTHLY: "1204847",
+    STARTER_YEARLY: "1204888",
+    PRO_MONTHLY: "1204856",
+    PRO_YEARLY: "1204874",
+    EXECUTIVE_MONTHLY: "1204865",
+    EXECUTIVE_YEARLY: "1204889",
+    CREDITS: "1204898",
+  },
+
+  // LiveKit (public URL only)
+  LIVEKIT_WS_URL: "wss://ai-google-calendar-project-mljh2s1n.livekit.cloud",
+
+  // PostHog (public key - designed to be client-exposed)
+  POSTHOG_API_KEY: "phc_BzQm2gxcxiK0a5IiF2IbDPGDPmoRFrlBSe1vv9HQSHu",
+  POSTHOG_HOST: "https://us.i.posthog.com",
+
+  // Email addresses (not secrets)
+  RESEND_FROM_EMAIL: "yosefisabag@gmail.com",
+  SUPPORT_EMAIL: "yosefisabag@gmail.com",
 
   // Defaults
   DEV_PORT: 3000,
@@ -153,10 +176,24 @@ const openai = {
 
 const lemonSqueezy = {
   apiKey: getOptional("LEMONSQUEEZY_API_KEY"),
-  storeId: getOptional("LEMONSQUEEZY_STORE_ID"),
+  storeId: CONSTANTS.LEMONSQUEEZY_STORE_ID,
   webhookSecret: getOptional("LEMONSQUEEZY_WEBHOOK_SECRET"),
+  variants: CONSTANTS.LEMONSQUEEZY_VARIANTS,
   get isEnabled(): boolean {
-    return !!this.apiKey && !!this.storeId;
+    return !!this.apiKey;
+  },
+} as const;
+
+// ============================================================================
+// LiveKit Configuration
+// ============================================================================
+
+const livekit = {
+  wsUrl: CONSTANTS.LIVEKIT_WS_URL,
+  apiKey: getOptional("LIVEKIT_API_KEY"),
+  apiSecret: getOptional("LIVEKIT_API_SECRET"),
+  get isEnabled(): boolean {
+    return !!(this.apiKey && this.apiSecret);
   },
 } as const;
 
@@ -242,8 +279,8 @@ const atlassian = {
 // ============================================================================
 
 const posthog = {
-  apiKey: getOptional("POSTHOG_API_KEY"),
-  host: getOptional("POSTHOG_HOST") ?? "https://us.i.posthog.com",
+  apiKey: CONSTANTS.POSTHOG_API_KEY,
+  host: CONSTANTS.POSTHOG_HOST,
   get isEnabled(): boolean {
     return !!this.apiKey;
   },
@@ -256,8 +293,8 @@ const posthog = {
 const resend = {
   apiKey: getOptional("RESEND_API_KEY"),
   webhookSecret: getOptional("RESEND_WEBHOOK_SECRET"),
-  fromEmail: getOptional("RESEND_FROM_EMAIL") ?? "onboarding@resend.dev",
-  supportEmail: getOptional("SUPPORT_EMAIL") ?? "support@ally.sh",
+  fromEmail: CONSTANTS.RESEND_FROM_EMAIL,
+  supportEmail: CONSTANTS.SUPPORT_EMAIL,
   storeInboundAttachments: process.env.STORE_INBOUND_ATTACHMENTS === "true",
   get isEnabled(): boolean {
     return !!this.apiKey;
@@ -297,6 +334,7 @@ export const env = {
   google,
   openai,
   lemonSqueezy,
+  livekit,
   posthog,
   integrations,
   atlassian,
