@@ -27,14 +27,16 @@ export const getAffiliates = reqResAsyncHandler(
 );
 
 export const getAffiliateSettings = reqResAsyncHandler(
-  (_req: Request, res: Response) => {
+  async (_req: Request, res: Response) => {
     const settings = getAffiliateProgramSettings();
     const dashboardUrls = getAffiliateDashboardUrls();
 
-    return sendR(res, STATUS_RESPONSE.SUCCESS, "Affiliate settings retrieved", {
-      settings,
-      dashboardUrls,
-    });
+    return Promise.resolve(
+      sendR(res, STATUS_RESPONSE.SUCCESS, "Affiliate settings retrieved", {
+        settings,
+        dashboardUrls,
+      })
+    );
   }
 );
 
