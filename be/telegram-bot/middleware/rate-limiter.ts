@@ -8,7 +8,7 @@ import { logger } from "@/utils/logger";
 // Rate limit configurations
 const RATE_LIMITS = {
   auth: {
-    maxAttempts: 5,
+    maxAttempts: 10,
     windowMs: 15 * 60 * 1000, // 15 minutes
     keyPrefix: "tg:rate:auth:",
   },

@@ -12,6 +12,7 @@ import { env } from "@/config"
 import { googleTokenTgHandler } from "../middleware/google-token-tg-handler"
 import { logger } from "@/utils/logger"
 import { sessionExpiryMiddleware } from "../middleware/session-expiry"
+import { createRedisSessionStorage } from "../middleware/redis-session-storage"
 
 export type GlobalContext = SessionFlavor<SessionData> & Context
 
@@ -63,6 +64,7 @@ export const configureSession = (bot: Bot<GlobalContext>): void => {
         awaitingEmailChange: undefined,
       }),
       getSessionKey: (ctx) => ctx.from?.id?.toString(),
+      storage: createRedisSessionStorage<SessionData>(),
     })
   )
 }

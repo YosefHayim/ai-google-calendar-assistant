@@ -1,8 +1,7 @@
-import { auditLogger } from "@/utils/audit-logger"
-
 import type { GlobalContext } from "../init-bot";
 import type { MiddlewareFn } from "grammy";
 import { SUPABASE } from "@/config";
+import { auditLogger } from "@/utils/audit-logger"
 import { getTranslatorFromLanguageCode } from "../i18n";
 import { logger } from "@/utils/logger";
 import { resetRateLimit } from "./rate-limiter";
@@ -20,6 +19,7 @@ const sendEmailOtp = async (email: string): Promise<{ success: boolean; error?: 
       email,
       options: {
         shouldCreateUser: false,
+        
       },
     });
 
