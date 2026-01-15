@@ -7,6 +7,7 @@ import { useRouter, usePathname } from 'next/navigation'
 import {
   BadgeCheck,
   Bell,
+  CalendarDays,
   ChevronUp,
   Clock,
   CreditCard,
@@ -99,6 +100,13 @@ function NavSection() {
           },
         ]
       : []),
+    {
+      href: '/dashboard/calendar',
+      icon: CalendarDays,
+      label: t('sidebar.calendar') || 'Calendar',
+      id: 'tour-calendar',
+      description: t('sidebar.calendarDescription') || 'View and manage your calendar events',
+    },
     {
       href: '/dashboard/analytics',
       icon: PieChart,

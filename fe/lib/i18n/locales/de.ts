@@ -289,6 +289,8 @@ export const de: TranslationShape = {
     admin: 'Admin',
     adminDescription:
       'Zugriff auf das Admin-Dashboard zur Verwaltung von Benutzern, Abonnements und Systemeinstellungen',
+    calendar: 'Kalender',
+    calendarDescription: 'Termine anzeigen und verwalten in Monats-, Wochen-, Tages- und Listenansicht',
     analytics: 'Analytik',
     analyticsDescription: 'Sehen Sie Einblicke zur Zeitverteilung, Terminmustern und Produktivitätstrends',
     quickAddEvent: 'Schnell hinzufügen',

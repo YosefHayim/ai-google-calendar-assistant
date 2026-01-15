@@ -11,7 +11,7 @@ const PRIMARY_ORB_VERTICAL_OFFSET = 20
 
 export function NotFoundPage() {
   return (
-    <div className="w-full relative flex min-h-screen items-center justify-center overflow-hidden bg-[radial-gradient(circle_at_center,rgba(99,102,241,0.1),transparent_70%)] text-foreground">
+    <div className="w-full relative flex min-h-screen items-center justify-center overflow-hidden bg-[radial-gradient(circle_at_center,hsl(20_95%_49%/0.1),transparent_70%)] text-foreground">
       <div aria-hidden={true} className="-z-10 absolute inset-0 overflow-hidden">
         <motion.div
           animate={{
@@ -19,7 +19,7 @@ export function NotFoundPage() {
             y: [0, PRIMARY_ORB_VERTICAL_OFFSET, -PRIMARY_ORB_VERTICAL_OFFSET, 0],
             rotate: [0, 10, -10, 0],
           }}
-          className="absolute top-1/2 left-1/3 h-64 w-64 rounded-full bg-gradient-to-tr from-purple-500/20 to-blue-500/20 blur-3xl"
+          className="absolute top-1/2 left-1/3 h-64 w-64 rounded-full bg-gradient-to-tr from-orange-500/20 to-amber-500/20 blur-3xl"
           transition={{
             repeat: Number.POSITIVE_INFINITY,
             duration: 5,
@@ -31,7 +31,7 @@ export function NotFoundPage() {
             x: [0, -PRIMARY_ORB_HORIZONTAL_OFFSET, PRIMARY_ORB_HORIZONTAL_OFFSET, 0],
             y: [0, -PRIMARY_ORB_VERTICAL_OFFSET, PRIMARY_ORB_VERTICAL_OFFSET, 0],
           }}
-          className="absolute right-1/4 bottom-1/3 h-72 w-72 rounded-full bg-gradient-to-br from-indigo-400/10 to-pink-400/10 blur-3xl"
+          className="absolute right-1/4 bottom-1/3 h-72 w-72 rounded-full bg-gradient-to-br from-orange-400/10 to-yellow-400/10 blur-3xl"
           transition={{
             repeat: Number.POSITIVE_INFINITY,
             duration: 5,

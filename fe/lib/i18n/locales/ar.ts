@@ -271,6 +271,8 @@ export const ar: TranslationShape = {
     assistantDescription: 'تحدث مع مساعدك الذكي لإدارة الأحداث والجداول',
     admin: 'المشرف',
     adminDescription: 'الوصول إلى لوحة الإدارة لإدارة المستخدمين والاشتراكات وإعدادات النظام',
+    calendar: 'التقويم',
+    calendarDescription: 'عرض وإدارة أحداث التقويم بعروض الشهر والأسبوع واليوم والقائمة',
     analytics: 'التحليلات',
     analyticsDescription: 'عرض رؤى حول توزيع الوقت وأنماط الأحداث واتجاهات الإنتاجية',
     quickAddEvent: 'إضافة سريعة',

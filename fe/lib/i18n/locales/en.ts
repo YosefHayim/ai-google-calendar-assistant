@@ -300,6 +300,8 @@ export const en = {
     assistantDescription: 'Chat with your AI calendar assistant to manage events and schedules',
     admin: 'Admin',
     adminDescription: 'Access the admin dashboard to manage users, subscriptions, and system settings',
+    calendar: 'Calendar',
+    calendarDescription: 'View and manage your calendar events with month, week, day, and list views',
     analytics: 'Analytics',
     analyticsDescription: 'View insights on time allocation, event patterns, and productivity trends',
     quickAddEvent: 'Quick Add Event',
