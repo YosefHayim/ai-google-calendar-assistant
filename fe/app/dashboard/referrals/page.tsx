@@ -172,11 +172,7 @@ export default function ReferralsPage() {
                 title="Successful"
                 value={stats?.successful_referrals ?? 0}
               />
-              <StatCard
-                icon={<Clock className="w-5 h-5" />}
-                title="Pending"
-                value={stats?.pending_referrals ?? 0}
-              />
+              <StatCard icon={<Clock className="w-5 h-5" />} title="Pending" value={stats?.pending_referrals ?? 0} />
               <StatCard
                 icon={<Gift className="w-5 h-5" />}
                 title="Free Months Earned"
@@ -223,9 +219,7 @@ export default function ReferralsPage() {
                     <tr key={referral.id} className="border-b border-zinc-100 dark:border-zinc-800">
                       <td className="py-4 px-4">
                         <span className="text-zinc-900 dark:text-white">
-                          {referral.referred_email || (
-                            <span className="text-zinc-400 italic">Not yet used</span>
-                          )}
+                          {referral.referred_email || <span className="text-zinc-400 italic">Not yet used</span>}
                         </span>
                       </td>
                       <td className="py-4 px-4">{getStatusBadge(referral.status)}</td>
@@ -234,7 +228,8 @@ export default function ReferralsPage() {
                       </td>
                       <td className="py-4 px-4">
                         <span className="text-sm text-zinc-600 dark:text-zinc-400">
-                          {referral.reward_amount} {referral.reward_type === 'free_month' ? 'month' : referral.reward_type}
+                          {referral.reward_amount}{' '}
+                          {referral.reward_type === 'free_month' ? 'month' : referral.reward_type}
                         </span>
                       </td>
                       <td className="py-4 px-4 text-right">
@@ -245,11 +240,7 @@ export default function ReferralsPage() {
                             onClick={() => handleClaimReward(referral.id)}
                             disabled={claimReward.isPending}
                           >
-                            {claimReward.isPending ? (
-                              <Loader2 className="w-3 h-3 animate-spin" />
-                            ) : (
-                              'Claim Reward'
-                            )}
+                            {claimReward.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Claim Reward'}
                           </Button>
                         )}
                         {referral.status === 'rewarded' && (
@@ -273,9 +264,7 @@ export default function ReferralsPage() {
               </div>
               <div>
                 <h4 className="font-medium text-zinc-900 dark:text-white">Share your link</h4>
-                <p className="text-sm text-zinc-500 mt-1">
-                  Copy your unique referral link and share it with friends
-                </p>
+                <p className="text-sm text-zinc-500 mt-1">Copy your unique referral link and share it with friends</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
@@ -284,9 +273,7 @@ export default function ReferralsPage() {
               </div>
               <div>
                 <h4 className="font-medium text-zinc-900 dark:text-white">Friend subscribes</h4>
-                <p className="text-sm text-zinc-500 mt-1">
-                  When they sign up and subscribe to a paid plan
-                </p>
+                <p className="text-sm text-zinc-500 mt-1">When they sign up and subscribe to a paid plan</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
@@ -295,9 +282,7 @@ export default function ReferralsPage() {
               </div>
               <div>
                 <h4 className="font-medium text-zinc-900 dark:text-white">You both win</h4>
-                <p className="text-sm text-zinc-500 mt-1">
-                  You get 1 free month, and so does your friend!
-                </p>
+                <p className="text-sm text-zinc-500 mt-1">You get 1 free month, and so does your friend!</p>
               </div>
             </div>
           </div>

@@ -7,12 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import { JsonLd } from '@/components/shared/JsonLd'
-import {
-  generateFAQSchema,
-  generateBreadcrumbSchema,
-  generateWebPageSchema,
-  SITE_CONFIG,
-} from '@/lib/constants/seo'
+import { generateFAQSchema, generateBreadcrumbSchema, generateWebPageSchema, SITE_CONFIG } from '@/lib/constants/seo'
 import {
   Search,
   BookOpen,
@@ -142,32 +137,32 @@ const FAQ_DATA = {
     {
       question: 'Can I cancel my subscription?',
       answer:
-        'Yes, you can cancel anytime from Dashboard > Billing. Your subscription will remain active until the end of your current billing period, and you won\'t be charged again.',
+        "Yes, you can cancel anytime from Dashboard > Billing. Your subscription will remain active until the end of your current billing period, and you won't be charged again.",
     },
     {
       question: 'Do you offer refunds?',
       answer:
-        'We offer a 14-day money-back guarantee for new subscribers. If you\'re not satisfied, contact our support team within 14 days of your first payment for a full refund.',
+        "We offer a 14-day money-back guarantee for new subscribers. If you're not satisfied, contact our support team within 14 days of your first payment for a full refund.",
     },
   ],
   troubleshooting: [
     {
-      question: 'Why isn\'t my calendar syncing?',
+      question: "Why isn't my calendar syncing?",
       answer:
-        'First, check your internet connection. Then, try disconnecting and reconnecting your Google Calendar in Dashboard > Integrations. If the issue persists, ensure you\'ve granted all required permissions.',
+        "First, check your internet connection. Then, try disconnecting and reconnecting your Google Calendar in Dashboard > Integrations. If the issue persists, ensure you've granted all required permissions.",
     },
     {
-      question: 'Ally isn\'t understanding my requests correctly',
+      question: "Ally isn't understanding my requests correctly",
       answer:
         'Try being more specific with dates, times, and event details. For example, instead of "meeting tomorrow", say "team meeting tomorrow at 2pm for 1 hour". You can also rephrase your request differently.',
     },
     {
-      question: 'The voice feature isn\'t working',
+      question: "The voice feature isn't working",
       answer:
-        'Ensure your browser has permission to access your microphone. Check your browser settings and grant microphone access to the Ask Ally website. Also, make sure you\'re using a supported browser (Chrome, Edge, Safari).',
+        "Ensure your browser has permission to access your microphone. Check your browser settings and grant microphone access to the Ask Ally website. Also, make sure you're using a supported browser (Chrome, Edge, Safari).",
     },
     {
-      question: 'I\'m experiencing slow performance',
+      question: "I'm experiencing slow performance",
       answer:
         'Try refreshing the page or clearing your browser cache. If you have many events, the initial sync might take a moment. For persistent issues, contact our support team.',
     },
@@ -195,7 +190,7 @@ export function HelpCenterPage() {
   const filteredCategories = HELP_CATEGORIES.filter(
     (category) =>
       category.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      category.description.toLowerCase().includes(searchQuery.toLowerCase())
+      category.description.toLowerCase().includes(searchQuery.toLowerCase()),
   )
 
   const faqSchema = generateFAQSchema(ALL_FAQS)
@@ -309,9 +304,7 @@ export function HelpCenterPage() {
           <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-6">
             <MessageCircle className="w-8 h-8 text-primary" />
           </div>
-          <h2 className="text-2xl md:text-3xl font-medium text-zinc-900 dark:text-zinc-100 mb-4">
-            Still need help?
-          </h2>
+          <h2 className="text-2xl md:text-3xl font-medium text-zinc-900 dark:text-zinc-100 mb-4">Still need help?</h2>
           <p className="text-zinc-500 dark:text-zinc-400 mb-8 max-w-xl mx-auto">
             Can&apos;t find what you&apos;re looking for? Our support team is here to help you with any questions.
           </p>

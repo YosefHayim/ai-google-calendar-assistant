@@ -40,9 +40,7 @@ export function UserCard({ name, subtitle, avatarUrl, size = 'md', className, on
       </Avatar>
       <div className="min-w-0 flex-1">
         <p className={cn('font-medium text-zinc-900 dark:text-zinc-100 truncate', sizes.name)}>{name}</p>
-        {subtitle && (
-          <p className={cn('text-zinc-500 dark:text-zinc-400 truncate', sizes.subtitle)}>{subtitle}</p>
-        )}
+        {subtitle && <p className={cn('text-zinc-500 dark:text-zinc-400 truncate', sizes.subtitle)}>{subtitle}</p>}
       </div>
     </>
   )

@@ -81,12 +81,7 @@ export const PAGE_METADATA = {
     title: 'AI Secretary for Your Google Calendar',
     description:
       'Ask Ally is your intelligent calendar assistant. Manage Google Calendar with natural language, voice commands, and AI-powered scheduling. Available on web, Telegram, and WhatsApp.',
-    keywords: [
-      ...SITE_CONFIG.keywords,
-      'home automation',
-      'personal assistant AI',
-      'calendar management app',
-    ],
+    keywords: [...SITE_CONFIG.keywords, 'home automation', 'personal assistant AI', 'calendar management app'],
   },
   pricing: {
     title: 'Pricing Plans',
@@ -122,13 +117,13 @@ export const PAGE_METADATA = {
   changelog: {
     title: 'Changelog',
     description:
-      'See what\'s new in Ask Ally. Track our latest features, improvements, and bug fixes. Stay updated on the evolution of your AI calendar assistant.',
+      "See what's new in Ask Ally. Track our latest features, improvements, and bug fixes. Stay updated on the evolution of your AI calendar assistant.",
     keywords: ['Ask Ally changelog', 'product updates', 'new features', 'release notes'],
   },
   contact: {
     title: 'Contact Us',
     description:
-      'Get in touch with the Ask Ally team. We\'re here to help with questions, feedback, partnership inquiries, and enterprise solutions.',
+      "Get in touch with the Ask Ally team. We're here to help with questions, feedback, partnership inquiries, and enterprise solutions.",
     keywords: ['contact Ask Ally', 'support', 'feedback', 'enterprise inquiries'],
   },
   privacy: {
@@ -172,10 +167,7 @@ export function generateOrganizationSchema() {
     url: SITE_CONFIG.url,
     logo: `${SITE_CONFIG.url}/logo.png`,
     description: SITE_CONFIG.description,
-    sameAs: [
-      'https://twitter.com/askally_io',
-      'https://t.me/AskAllyBot',
-    ],
+    sameAs: ['https://twitter.com/askally_io', 'https://t.me/AskAllyBot'],
     contactPoint: {
       '@type': 'ContactPoint',
       email: 'support@askally.io',

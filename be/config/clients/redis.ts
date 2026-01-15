@@ -13,7 +13,6 @@ export const redisClient = new Redis(REDIS_URL, {
     return delay;
   },
   enableOfflineQueue: true,
-  lazyConnect: true, // Don't connect immediately - connect on first use
 });
 
 // Connection event handlers

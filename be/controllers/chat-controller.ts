@@ -23,6 +23,11 @@ import {
   PREFERENCE_DEFAULTS,
 } from "@/services/user-preferences-service";
 import type { CrossPlatformSyncPreference } from "@/services/user-preferences-service";
+import {
+  getCachedConversations,
+  setCachedConversations,
+  invalidateConversationsCache,
+} from "@/utils/cache/user-cache";
 
 const DEFAULT_LIMIT = 20;
 const DEFAULT_OFFSET = 0;
@@ -180,6 +185,19 @@ const getConversations = reqResAsyncHandler(
         Number.parseInt(req.query.offset as string, 10) || DEFAULT_OFFSET;
       const search = req.query.search as string | undefined;
 
+      const cached = await getCachedConversations(userId, limit, offset, search);
+      if (cached) {
+        return sendR(
+          res,
+          STATUS_RESPONSE.SUCCESS,
+          "Conversations retrieved successfully",
+          {
+            conversations: cached.conversations,
+            pagination: { limit, offset, count: cached.conversations.length },
+          },
+        );
+      }
+
       const syncPreference = await getCrossPlatformSyncPreference(userId);
       const includeAllSources =
         (
@@ -193,6 +211,8 @@ const getConversations = reqResAsyncHandler(
         search,
         includeAllSources,
       });
+
+      await setCachedConversations(userId, conversations, limit, offset, search);
 
       sendR(
         res,
@@ -282,6 +302,8 @@ const removeConversation = reqResAsyncHandler(
           "Conversation not found or already deleted",
         );
       }
+
+      await invalidateConversationsCache(userId);
 
       return sendR(
         res,
@@ -438,6 +460,8 @@ const deleteAllConversations = reqResAsyncHandler(
         );
       }
 
+      await invalidateConversationsCache(userId);
+
       sendR(res, STATUS_RESPONSE.SUCCESS, "All conversations deleted", {
         deletedCount: result.deletedCount,
       });
@@ -475,6 +499,8 @@ const resetMemory = reqResAsyncHandler(
         conversations: conversationsResult.deletedCount,
         redisContext: true,
       };
+
+      await invalidateConversationsCache(userId);
 
       sendR(res, STATUS_RESPONSE.SUCCESS, "Memory reset successfully", {
         ...totalDeleted,

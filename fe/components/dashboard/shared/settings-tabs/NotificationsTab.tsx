@@ -111,6 +111,7 @@ export const NotificationsTab: React.FC = () => {
         enabled: briefingData.value.enabled,
         time: briefingData.value.time,
         timezone: briefingData.value.timezone,
+        channel: briefingData.value.channel ?? 'email',
       })
     }
   }, [briefingData])
@@ -206,10 +207,7 @@ export const NotificationsTab: React.FC = () => {
   return (
     <div className="space-y-6">
       <Card>
-        <TabHeader
-          title="Notifications"
-          tooltip="Configure how and when Ally notifies you"
-        />
+        <TabHeader title="Notifications" tooltip="Configure how and when Ally notifies you" />
         <CardContent>
           <SettingsSection>
             <SettingsRow

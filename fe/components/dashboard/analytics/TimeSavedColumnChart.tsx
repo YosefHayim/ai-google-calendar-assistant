@@ -153,7 +153,8 @@ const TimeSavedColumnChart: React.FC<TimeSavedColumnChartProps> = ({ data }) => 
                 </div>
                 <div className="pt-1 border-t border-zinc-700 dark:border-zinc-600">
                   <span className="text-xs text-zinc-300 dark:text-zinc-400">
-                    Available Hours Left: <span className="font-bold text-white">{formatHours(availableHoursLeft)}</span>
+                    Available Hours Left:{' '}
+                    <span className="font-bold text-white">{formatHours(availableHoursLeft)}</span>
                   </span>
                 </div>
               </div>

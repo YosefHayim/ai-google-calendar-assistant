@@ -12,9 +12,7 @@ export default function BlogPostNotFound() {
             <BookOpen className="w-10 h-10 text-zinc-400 dark:text-zinc-600" />
           </div>
 
-          <h1 className="text-3xl md:text-4xl font-medium text-zinc-900 dark:text-zinc-100 mb-4">
-            Article Not Found
-          </h1>
+          <h1 className="text-3xl md:text-4xl font-medium text-zinc-900 dark:text-zinc-100 mb-4">Article Not Found</h1>
 
           <p className="text-lg text-zinc-500 dark:text-zinc-400 mb-8">
             The blog post you&apos;re looking for doesn&apos;t exist or has been moved.

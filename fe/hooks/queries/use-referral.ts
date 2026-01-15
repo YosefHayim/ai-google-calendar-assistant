@@ -37,13 +37,15 @@ export function useReferralStats() {
     queryKey: referralKeys.stats(),
     queryFn: async () => {
       const response = await referralService.getMyReferralStats()
-      return response.data?.stats ?? {
-        total_referrals: 0,
-        successful_referrals: 0,
-        pending_referrals: 0,
-        total_rewards_earned: 0,
-        total_free_months_earned: 0,
-      }
+      return (
+        response.data?.stats ?? {
+          total_referrals: 0,
+          successful_referrals: 0,
+          pending_referrals: 0,
+          total_rewards_earned: 0,
+          total_free_months_earned: 0,
+        }
+      )
     },
   })
 }
@@ -84,7 +86,7 @@ export function useApplyReferralCode() {
       return response.data
     },
     onSuccess: () => {
-      toast.success('Referral code applied! You\'ll receive your reward after signing up.')
+      toast.success("Referral code applied! You'll receive your reward after signing up.")
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Failed to apply referral code')
@@ -120,7 +122,9 @@ export function useClaimReward() {
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: referralKeys.all })
-      toast.success(`Reward claimed! You earned ${data?.rewardAmount} ${data?.rewardType === 'free_month' ? 'free month(s)' : data?.rewardType}`)
+      toast.success(
+        `Reward claimed! You earned ${data?.rewardAmount} ${data?.rewardType === 'free_month' ? 'free month(s)' : data?.rewardType}`,
+      )
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Failed to claim reward')

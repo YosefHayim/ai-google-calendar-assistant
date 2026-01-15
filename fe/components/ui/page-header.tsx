@@ -27,9 +27,7 @@ export function PageHeader({ title, description, icon, tooltip, action, classNam
             <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 truncate">{title}</h2>
             {tooltip && <InfoTooltip>{tooltip}</InfoTooltip>}
           </div>
-          {description && (
-            <p className="text-sm text-zinc-500 dark:text-zinc-400 truncate">{description}</p>
-          )}
+          {description && <p className="text-sm text-zinc-500 dark:text-zinc-400 truncate">{description}</p>}
         </div>
       </div>
       {action && <div className="shrink-0">{action}</div>}

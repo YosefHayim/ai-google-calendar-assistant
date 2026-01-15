@@ -240,8 +240,7 @@ const CHANGELOG_DATA: ChangelogEntry[] = [
       {
         type: 'improvement',
         title: 'Redis Compression & Runtime Tuning',
-        description:
-          'Optimized Redis with compression and performance tuning for faster response times.',
+        description: 'Optimized Redis with compression and performance tuning for faster response times.',
       },
     ],
   },
@@ -265,8 +264,7 @@ const CHANGELOG_DATA: ChangelogEntry[] = [
       {
         type: 'fix',
         title: 'Clear LocalStorage on Logout',
-        description:
-          'Fixed security issue where local storage data persisted after logout from the dashboard.',
+        description: 'Fixed security issue where local storage data persisted after logout from the dashboard.',
         icon: Bug,
       },
     ],
@@ -292,8 +290,7 @@ const CHANGELOG_DATA: ChangelogEntry[] = [
       {
         type: 'improvement',
         title: 'Health Check Endpoint',
-        description:
-          'Added /health endpoint for monitoring and load balancer integration in production deployments.',
+        description: 'Added /health endpoint for monitoring and load balancer integration in production deployments.',
       },
     ],
   },
@@ -311,8 +308,7 @@ const CHANGELOG_DATA: ChangelogEntry[] = [
       {
         type: 'feature',
         title: 'Conversation History with AI Titles',
-        description:
-          'All your conversations are saved with AI-generated titles for easy retrieval and context.',
+        description: 'All your conversations are saved with AI-generated titles for easy retrieval and context.',
       },
       {
         type: 'improvement',
@@ -343,8 +339,7 @@ const CHANGELOG_DATA: ChangelogEntry[] = [
       {
         type: 'improvement',
         title: 'Agent Session Persistence',
-        description:
-          'AI maintains conversation context across sessions with Supabase-backed state management.',
+        description: 'AI maintains conversation context across sessions with Supabase-backed state management.',
       },
     ],
   },
@@ -368,8 +363,7 @@ const CHANGELOG_DATA: ChangelogEntry[] = [
       {
         type: 'improvement',
         title: 'Inline Keyboards',
-        description:
-          'Telegram bot now features inline keyboards for quick event confirmation and action selection.',
+        description: 'Telegram bot now features inline keyboards for quick event confirmation and action selection.',
       },
     ],
   },
@@ -413,14 +407,12 @@ const CHANGELOG_DATA: ChangelogEntry[] = [
       {
         type: 'improvement',
         title: 'Zod Schema Validation',
-        description:
-          'Strong type safety with Zod schemas for all API inputs and tool parameters.',
+        description: 'Strong type safety with Zod schemas for all API inputs and tool parameters.',
       },
       {
         type: 'improvement',
         title: 'Error Handling Framework',
-        description:
-          'Comprehensive error handling with user-friendly messages and proper HTTP status codes.',
+        description: 'Comprehensive error handling with user-friendly messages and proper HTTP status codes.',
       },
     ],
   },
@@ -431,22 +423,19 @@ const CHANGELOG_DATA: ChangelogEntry[] = [
       {
         type: 'feature',
         title: 'Project Inception',
-        description:
-          'Initial Express + Bun backend setup with Google Calendar API integration. The journey begins!',
+        description: 'Initial Express + Bun backend setup with Google Calendar API integration. The journey begins!',
         icon: Sparkles,
       },
       {
         type: 'feature',
         title: 'Basic CRUD Operations',
-        description:
-          'Core calendar event operations: create, read, update, delete via REST API endpoints.',
+        description: 'Core calendar event operations: create, read, update, delete via REST API endpoints.',
         icon: Calendar,
       },
       {
         type: 'improvement',
         title: 'TypeScript Foundation',
-        description:
-          'Full TypeScript implementation with strict type checking and modern ES6+ patterns.',
+        description: 'Full TypeScript implementation with strict type checking and modern ES6+ patterns.',
       },
     ],
   },
@@ -459,7 +448,7 @@ export function ChangelogPage() {
   ])
   const pageSchema = generateWebPageSchema({
     title: 'Changelog - Ask Ally',
-    description: 'See what\'s new in Ask Ally. Track our latest features, improvements, and fixes.',
+    description: "See what's new in Ask Ally. Track our latest features, improvements, and fixes.",
     url: `${SITE_CONFIG.url}/changelog`,
   })
 

@@ -43,13 +43,7 @@ export function EmptyState({ icon, title, description, action, size = 'md', clas
   const sizes = sizeClasses[size]
 
   return (
-    <div
-      className={cn(
-        'flex flex-col items-center justify-center text-center',
-        sizes.container,
-        className,
-      )}
-    >
+    <div className={cn('flex flex-col items-center justify-center text-center', sizes.container, className)}>
       <div className={cn('text-zinc-300 dark:text-zinc-600', sizes.icon)}>{icon}</div>
       <p className={cn('font-medium text-zinc-700 dark:text-zinc-300', sizes.title)}>{title}</p>
       {description && (

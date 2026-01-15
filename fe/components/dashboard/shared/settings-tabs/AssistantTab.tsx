@@ -9,7 +9,6 @@ import {
   Check,
   Loader2,
   Play,
-
   Square,
   Volume2,
   Lightbulb,
@@ -359,10 +358,7 @@ export const AssistantTab: React.FC<AssistantTabProps> = () => {
       </Card>
 
       <Card>
-        <TabHeader
-          title="Memory Management"
-          tooltip="Control how Ally learns from your scheduling patterns"
-        />
+        <TabHeader title="Memory Management" tooltip="Control how Ally learns from your scheduling patterns" />
         <CardContent className="space-y-4">
           <SettingsSection>
             <SettingsRow

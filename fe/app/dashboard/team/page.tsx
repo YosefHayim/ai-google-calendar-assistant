@@ -6,13 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Textarea } from '@/components/ui/textarea'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import {
   Dialog,
   DialogContent,
@@ -47,12 +41,7 @@ import {
 import { toast } from 'sonner'
 import { formatDate, DATE_FORMATS } from '@/lib/formatUtils'
 import { EmptyState } from '@/components/ui/empty-state'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 
 export default function TeamPage() {
   const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false)
@@ -152,9 +141,7 @@ export default function TeamPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-zinc-900 dark:text-white">Team</h1>
-            <p className="text-zinc-500 dark:text-zinc-400 mt-1">
-              Invite team members to collaborate on your calendar
-            </p>
+            <p className="text-zinc-500 dark:text-zinc-400 mt-1">Invite team members to collaborate on your calendar</p>
           </div>
           <Dialog open={isInviteDialogOpen} onOpenChange={setIsInviteDialogOpen}>
             <DialogTrigger asChild>
@@ -166,9 +153,7 @@ export default function TeamPage() {
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Invite Team Member</DialogTitle>
-                <DialogDescription>
-                  Send an invitation to collaborate on your Ask Ally workspace
-                </DialogDescription>
+                <DialogDescription>Send an invitation to collaborate on your Ask Ally workspace</DialogDescription>
               </DialogHeader>
               <div className="space-y-4 py-4">
                 <div className="space-y-2">

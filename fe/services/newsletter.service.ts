@@ -22,9 +22,12 @@ export const newsletterService = {
   },
 
   async unsubscribe(email: string): Promise<ApiResponse<NewsletterResponse>> {
-    const { data: responseData } = await apiClient.post<ApiResponse<NewsletterResponse>>('/api/newsletter/unsubscribe', {
-      email,
-    })
+    const { data: responseData } = await apiClient.post<ApiResponse<NewsletterResponse>>(
+      '/api/newsletter/unsubscribe',
+      {
+        email,
+      },
+    )
     return responseData
   },
 

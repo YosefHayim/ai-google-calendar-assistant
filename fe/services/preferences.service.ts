@@ -162,9 +162,7 @@ export const preferencesService = {
     return data
   },
 
-  async updateGeoLocation(
-    value: GeoLocationFormData,
-  ): Promise<ApiResponse<PreferenceResponse<GeoLocationFormData>>> {
+  async updateGeoLocation(value: GeoLocationFormData): Promise<ApiResponse<PreferenceResponse<GeoLocationFormData>>> {
     const { data } = await apiClient.put<ApiResponse<PreferenceResponse<GeoLocationFormData>>>(
       ENDPOINTS.USER_PREFERENCES_GEO_LOCATION,
       value,
