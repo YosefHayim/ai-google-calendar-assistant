@@ -1,52 +1,63 @@
-import { ConnectionOptions } from "bullmq"
+import type { ConnectionOptions } from "bullmq"
 import { logger } from "@/utils/logger"
 
-/**
- * BullMQ Redis Connection Configuration
- *
- * IMPORTANT: BullMQ requires maxRetriesPerRequest: null for workers.
- * This is separate from the main Redis client used for caching.
- */
-
 const REDIS_URL = process.env.REDIS_URL || "redis://localhost:6379"
+const DEFAULT_REDIS_PORT = 6379
+const MAX_RECONNECT_ATTEMPTS = 10
+const MAX_RECONNECT_DELAY_MS = 3000
+const RECONNECT_DELAY_MULTIPLIER = 100
 
-// Parse Redis URL for connection options
-function parseRedisUrl(url: string): ConnectionOptions {
+type RedisConnectionInfo = {
+  host: string
+  port: number
+}
+
+function parseRedisUrl(url: string): {
+  connection: ConnectionOptions
+  info: RedisConnectionInfo
+} {
   try {
     const parsed = new URL(url)
+    const host = parsed.hostname
+    const port = Number.parseInt(parsed.port, 10) || DEFAULT_REDIS_PORT
+
     return {
-      host: parsed.hostname,
-      port: parseInt(parsed.port, 10) || 6379,
-      password: parsed.password || undefined,
-      username: parsed.username || undefined,
-      // BullMQ requirement: must be null for blocking operations in workers
-      maxRetriesPerRequest: null,
-      enableReadyCheck: false,
-      // Connection resilience
-      retryStrategy: (times: number) => {
-        if (times > 10) {
-          logger.error("BullMQ: Max Redis reconnection attempts reached")
-          return null
-        }
-        const delay = Math.min(times * 100, 3000)
-        logger.info(`BullMQ: Reconnecting to Redis in ${delay}ms...`)
-        return delay
+      connection: {
+        host,
+        port,
+        password: parsed.password || undefined,
+        username: parsed.username || undefined,
+        maxRetriesPerRequest: null,
+        enableReadyCheck: false,
+        retryStrategy: (times: number) => {
+          if (times > MAX_RECONNECT_ATTEMPTS) {
+            logger.error("BullMQ: Max Redis reconnection attempts reached")
+            return null
+          }
+          const delay = Math.min(
+            times * RECONNECT_DELAY_MULTIPLIER,
+            MAX_RECONNECT_DELAY_MS
+          )
+          logger.info(`BullMQ: Reconnecting to Redis in ${delay}ms...`)
+          return delay
+        },
       },
+      info: { host, port },
     }
   } catch {
-    // Fallback for simple redis://host:port format
     return {
-      host: "localhost",
-      port: 6379,
-      maxRetriesPerRequest: null,
-      enableReadyCheck: false,
+      connection: {
+        host: "localhost",
+        port: DEFAULT_REDIS_PORT,
+        maxRetriesPerRequest: null,
+        enableReadyCheck: false,
+      },
+      info: { host: "localhost", port: DEFAULT_REDIS_PORT },
     }
   }
 }
 
-export const bullmqConnection: ConnectionOptions = parseRedisUrl(REDIS_URL)
+const parsed = parseRedisUrl(REDIS_URL)
+export const bullmqConnection: ConnectionOptions = parsed.connection
 
-// Log connection info (without password)
-logger.info(
-  `BullMQ: Configured for Redis at ${bullmqConnection.host}:${bullmqConnection.port}`
-)
+logger.info(`BullMQ: Configured for Redis at ${parsed.info.host}:${parsed.info.port}`)

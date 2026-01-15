@@ -213,6 +213,7 @@ const generateAuthGoogleUrl = reqResAsyncHandler(
       if (tokens.access_token) {
         syncUserCalendarsAfterOAuth(
           userData.id,
+          normalizedEmail,
           tokens.access_token,
           tokens.refresh_token ?? undefined,
         );

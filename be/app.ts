@@ -7,6 +7,7 @@ import { env, ROUTES, STATUS_RESPONSE } from "@/config";
 import errorHandler from "@/middlewares/error-handler";
 import { apiRateLimiter } from "@/middlewares/rate-limiter";
 import { securityAuditMiddleware } from "@/middlewares/security-audit";
+import { initializeJobScheduler, shutdownJobScheduler } from "@/jobs";
 import adminRoute from "@/routes/admin-route";
 import affiliateRoute from "@/routes/affiliate-route";
 import blogRoute from "@/routes/blog-route";
@@ -161,3 +162,18 @@ app.listen(PORT, (error?: Error) => {
 startTelegramBot();
 initWhatsApp();
 initSlackBot();
+initializeJobScheduler().catch((err) => {
+  logger.error("Failed to initialize job scheduler:", err);
+});
+
+process.on("SIGTERM", async () => {
+  logger.info("SIGTERM received, shutting down gracefully...");
+  await shutdownJobScheduler();
+  process.exit(0);
+});
+
+process.on("SIGINT", async () => {
+  logger.info("SIGINT received, shutting down gracefully...");
+  await shutdownJobScheduler();
+  process.exit(0);
+});
