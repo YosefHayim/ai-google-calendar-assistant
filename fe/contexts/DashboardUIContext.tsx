@@ -117,10 +117,8 @@ export function DashboardUIProvider({ children }: { children: React.ReactNode })
 
   const handleSignOut = () => {
     closeSettings()
-    // Clear all auth-related localStorage items
-    localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN)
-    localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN)
-    localStorage.removeItem(STORAGE_KEYS.USER)
+    // Clear ALL localStorage items on logout
+    localStorage.clear()
     router.push('/login')
   }
 
