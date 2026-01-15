@@ -4,10 +4,12 @@ import { DashboardUIProvider, useDashboardUI } from '@/contexts/DashboardUIConte
 
 import { ChatProvider } from '@/contexts/ChatContext'
 import { OnboardingTour } from '@/components/dashboard/shared/OnboardingTour'
-import React, { Suspense } from 'react'
+import React, { Suspense, useEffect } from 'react'
 import SettingsModal from '@/components/dashboard/shared/SettingsModal'
 import Sidebar from '@/components/dashboard/shared/Sidebar'
 import { AnimatedHamburger } from '@/components/ui/animated-hamburger'
+import { useAuthContext } from '@/contexts/AuthContext'
+import { useRouter } from 'next/navigation'
 
 function DashboardLayoutContent({ children }: { children?: React.ReactNode }) {
   const {
@@ -64,14 +66,37 @@ function DashboardLayoutFallback() {
   )
 }
 
+function AuthGuard({ children }: { children: React.ReactNode }) {
+  const { isAuthenticated, isLoading } = useAuthContext()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      router.push('/login')
+    }
+  }, [isAuthenticated, isLoading, router])
+
+  if (isLoading) {
+    return <DashboardLayoutFallback />
+  }
+
+  if (!isAuthenticated) {
+    return <DashboardLayoutFallback />
+  }
+
+  return <>{children}</>
+}
+
 export default function DashboardLayout({ children }: { children?: React.ReactNode }) {
   return (
     <Suspense fallback={<DashboardLayoutFallback />}>
-      <DashboardUIProvider>
-        <ChatProvider>
-          <DashboardLayoutContent>{children}</DashboardLayoutContent>
-        </ChatProvider>
-      </DashboardUIProvider>
+      <AuthGuard>
+        <DashboardUIProvider>
+          <ChatProvider>
+            <DashboardLayoutContent>{children}</DashboardLayoutContent>
+          </ChatProvider>
+        </DashboardUIProvider>
+      </AuthGuard>
     </Suspense>
   )
 }

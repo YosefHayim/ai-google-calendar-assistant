@@ -93,7 +93,7 @@ const generateAuthGoogleUrl = reqResAsyncHandler(
       if (redirected) return;
     }
 
-    let forceConsent = true;
+    let forceConsent = false;
     let userEmail: string | undefined = req.user?.email;
 
     if (!userEmail && accessToken) {
@@ -122,8 +122,9 @@ const generateAuthGoogleUrl = reqResAsyncHandler(
           .limit(1)
           .maybeSingle();
 
-        forceConsent =
-          !existingToken?.refresh_token || !existingToken?.is_valid;
+        if (existingToken && (!existingToken.refresh_token || !existingToken.is_valid)) {
+          forceConsent = true;
+        }
       }
     }
 

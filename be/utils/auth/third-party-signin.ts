@@ -24,7 +24,7 @@ type OAuthResult = {
  * - Always includes `access_type: "offline"` to ensure refresh_token is returned
  */
 export async function initiateOAuthFlow(provider: PROVIDERS, options: { forceConsent?: boolean } = {}): Promise<OAuthResult> {
-  const { forceConsent = true } = options; // Default to true for first-time auth
+  const { forceConsent = false } = options;
   const queryParams: {
     access_type: string;
     prompt?: string;
