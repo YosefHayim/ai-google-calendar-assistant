@@ -16,6 +16,24 @@ type ConversationMessage = {
   name?: string;
 };
 
+const extractRequestFromText = (text: string): string | null => {
+  const patterns = [
+    /<user_request>\s*([\s\S]*?)\s*<\/user_request>/i,
+    /<current_request>\s*([\s\S]*?)\s*<\/current_request>/i,
+    /<request>\s*([\s\S]*?)\s*<\/request>/i,
+    /Current request:\s*(.+?)$/s,
+  ];
+
+  for (const pattern of patterns) {
+    const match = text.match(pattern);
+    if (match?.[1]) {
+      return match[1].trim();
+    }
+  }
+
+  return null;
+};
+
 /**
  * SECURITY: Extracts user's current request from conversation history to prevent context overflow.
  * Function call results (e.g., 100 calendar events JSON) would otherwise exceed the 5000 char limit.
@@ -23,11 +41,10 @@ type ConversationMessage = {
 const extractUserRequestForGuardrail = (input: string | ConversationMessage[]): string => {
   console.log("EXTRACT CALLED, input type:", typeof input, "length:", typeof input === "string" ? input.length : "N/A");
   if (typeof input === "string") {
-    // Extract content from <user_request> tags if present (from buildChatPromptWithContext)
-    const userRequestMatch = input.match(/<user_request>\s*([\s\S]*?)\s*<\/user_request>/i);
-    console.log("REGEX RESULT:", !!userRequestMatch, "captured:", userRequestMatch?.[1]);
-    if (userRequestMatch?.[1]) {
-      return userRequestMatch[1].trim();
+    const extracted = extractRequestFromText(input);
+    console.log("REGEX RESULT:", !!extracted, "captured:", extracted);
+    if (extracted) {
+      return extracted;
     }
     return input;
   }
@@ -44,13 +61,9 @@ const extractUserRequestForGuardrail = (input: string | ConversationMessage[]): 
     }
 
     if (typeof msg.content === "string") {
-      const currentRequestMatch = msg.content.match(/Current request:\s*(.+?)$/s);
-      if (currentRequestMatch?.[1]) {
-        return currentRequestMatch[1].trim();
-      }
-      const userRequestMatch = msg.content.match(/<user_request>\s*([\s\S]*?)\s*<\/user_request>/i);
-      if (userRequestMatch?.[1]) {
-        return userRequestMatch[1].trim();
+      const extracted = extractRequestFromText(msg.content);
+      if (extracted) {
+        return extracted;
       }
       return msg.content;
     }
@@ -61,9 +74,9 @@ const extractUserRequestForGuardrail = (input: string | ConversationMessage[]): 
         .map((c) => c.text || "")
         .join("\n");
       if (textContent) {
-        const userRequestMatch = textContent.match(/<user_request>\s*([\s\S]*?)\s*<\/user_request>/i);
-        if (userRequestMatch?.[1]) {
-          return userRequestMatch[1].trim();
+        const extracted = extractRequestFromText(textContent);
+        if (extracted) {
+          return extracted;
         }
         return textContent;
       }
@@ -86,8 +99,9 @@ const INJECTION_PATTERNS = [
   /\[system\]/i,
   /\{system\}/i,
   /<system>/i,
-  /<\/user_request>/i, // XML tag escape attempt
-  /<\/?(?:assistant|system|context|instructions?|prompt)>/i, // fake XML tags
+  /<\/user_request>/i,
+  /<\/current_request>/i,
+  /<\/?(?:assistant|system|instructions?|prompt)>/i,
   /jailbreak/i,
   /do\s+anything\s+now/i,
   /dan\s+mode/i,

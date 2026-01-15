@@ -986,14 +986,14 @@ export const handleProfileCommand = async (ctx: GlobalContext): Promise<void> =>
 export const handleWebsiteCommand = async (ctx: GlobalContext): Promise<void> => {
   const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
 
-  const frontendUrl = env.urls.frontend;
+  const dashboardUrl = "https://askally.io/dashboard";
 
   const response = ResponseBuilder.telegram()
     .direction(direction)
     .header("🌐", t("commands.website.header"))
     .text(t("commands.website.text"))
     .spacing()
-    .text(`👉 <a href="${frontendUrl}">${frontendUrl}</a>`)
+    .text(`👉 <a href="${dashboardUrl}">${dashboardUrl}</a>`)
     .build();
 
   await ctx.reply(response.content, { parse_mode: "HTML" });
