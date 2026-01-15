@@ -4,6 +4,7 @@ import { ArrowUpRight, CheckCircle2, Circle, List, Loader2, RefreshCw, Settings 
 import { GoogleCalendarIcon, TelegramIcon, WhatsAppIcon } from '@/components/shared/Icons'
 import { FaSlack } from 'react-icons/fa'
 import React, { useState } from 'react'
+import { usePostHog } from 'posthog-js/react'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
@@ -16,8 +17,21 @@ const IntegrationsDashboard: React.FC<IntegrationsDashboardProps> = () => {
   const [isWhatsAppModalOpen, setIsWhatsAppModalOpen] = useState(false)
   const { data: calendars, isLoading, isError, refetch } = useCalendars({ custom: true })
   const { data: slackStatus, isLoading: isSlackLoading, refetch: refetchSlack } = useSlackStatus()
+  const posthog = usePostHog()
 
   const calendarList = calendars || []
+
+  const handleSlackConnect = () => {
+    posthog?.capture('integration_slack_connect_clicked', {
+      is_already_connected: slackStatus?.isConnected,
+    })
+    window.location.href = slackStatus?.installUrl || `${process.env.NEXT_PUBLIC_API_URL}/api/slack/oauth/install`
+  }
+
+  const handleWhatsAppConnect = () => {
+    posthog?.capture('integration_whatsapp_connect_clicked')
+    setIsWhatsAppModalOpen(true)
+  }
 
   return (
     <div className="max-w-4xl mx-auto w-full p-2 relative">
@@ -68,7 +82,7 @@ const IntegrationsDashboard: React.FC<IntegrationsDashboardProps> = () => {
           <h3 className="text-lg font-medium text-zinc-900 dark:text-zinc-100 mb-1">WhatsApp</h3>
           <p className="text-sm text-zinc-500 mb-6">Sync Ally with WhatsApp for secure relay of messages.</p>
           <div className="pt-4 border-t border-zinc-100">
-            <Button onClick={() => setIsWhatsAppModalOpen(true)} className="w-full">
+            <Button onClick={handleWhatsAppConnect} className="w-full">
               Connect <WhatsAppIcon className="w-4 h-4" />
             </Button>
           </div>
@@ -103,10 +117,7 @@ const IntegrationsDashboard: React.FC<IntegrationsDashboardProps> = () => {
               </div>
             ) : (
               <Button
-                onClick={() =>
-                  (window.location.href =
-                    slackStatus?.installUrl || `${process.env.NEXT_PUBLIC_API_URL}/api/slack/oauth/install`)
-                }
+                onClick={handleSlackConnect}
                 className="w-full bg-[#4A154B] hover:bg-[#3a1039]"
                 disabled={isSlackLoading}
               >

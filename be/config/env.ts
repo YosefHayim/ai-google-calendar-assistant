@@ -238,6 +238,18 @@ const atlassian = {
 } as const;
 
 // ============================================================================
+// PostHog Analytics Configuration
+// ============================================================================
+
+const posthog = {
+  apiKey: getOptional("POSTHOG_API_KEY"),
+  host: getOptional("POSTHOG_HOST") ?? "https://us.i.posthog.com",
+  get isEnabled(): boolean {
+    return !!this.apiKey;
+  },
+} as const;
+
+// ============================================================================
 // Resend Email Configuration
 // ============================================================================
 
@@ -285,6 +297,7 @@ export const env = {
   google,
   openai,
   lemonSqueezy,
+  posthog,
   integrations,
   atlassian,
   resend,

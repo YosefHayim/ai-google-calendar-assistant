@@ -3,6 +3,7 @@
 import React, { useState, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Upload, X, CheckCircle, AlertCircle, Loader2 } from 'lucide-react'
+import { usePostHog } from 'posthog-js/react'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -47,6 +48,7 @@ const initialFormState: FormState = {
 
 export const ContactForm: React.FC = () => {
   const { t } = useTranslation()
+  const posthog = usePostHog()
   const [form, setForm] = useState<FormState>(initialFormState)
   const [files, setFiles] = useState<File[]>([])
   const [submissionState, setSubmissionState] = useState<SubmissionState>('idle')
@@ -154,6 +156,13 @@ export const ContactForm: React.FC = () => {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
+      })
+
+      // Track successful contact form submission
+      posthog?.capture('contact_form_submitted', {
+        subject: form.subject,
+        has_attachments: files.length > 0,
+        attachment_count: files.length,
       })
 
       setSubmissionState('success')
