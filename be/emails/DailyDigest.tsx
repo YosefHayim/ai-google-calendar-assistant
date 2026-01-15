@@ -13,7 +13,7 @@ import {
   Section,
   Text,
 } from "@react-email/components";
-import * as React from "react";
+import type * as React from "react";
 
 // ============================================
 // Types
@@ -66,7 +66,8 @@ const colors = {
 };
 
 const fonts = {
-  primary: "'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+  primary:
+    "'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
 };
 
 // ============================================
@@ -82,7 +83,7 @@ export const DailyDigest = ({
   dashboardUrl = "https://askally.io/dashboard",
   settingsUrl = "https://askally.io/settings",
   unsubscribeUrl,
-  logoUrl = "https://askally.io/logo.png",
+  logoUrl = "https://askally.io/logo.svg",
 }: DailyDigestProps) => {
   const eventCount = events.length;
   const hasEvents = eventCount > 0;
@@ -109,11 +110,11 @@ export const DailyDigest = ({
             <Section style={styles.header}>
               {logoUrl && (
                 <Img
-                  src={logoUrl}
                   alt="Ally"
-                  width="40"
                   height="40"
+                  src={logoUrl}
                   style={styles.logo}
+                  width="40"
                 />
               )}
               <Text style={styles.brandName}>Ally</Text>
@@ -194,14 +195,19 @@ export const DailyDigest = ({
                           )}
                         </Column>
                         <Column style={styles.eventDetailsColumn}>
-                          <Text style={styles.eventSummary}>{event.summary}</Text>
+                          <Text style={styles.eventSummary}>
+                            {event.summary}
+                          </Text>
                           {event.location && (
                             <Text style={styles.eventLocation}>
                               📍 {event.location}
                             </Text>
                           )}
                           {event.meetLink && (
-                            <Link href={event.meetLink} style={styles.eventMeetLink}>
+                            <Link
+                              href={event.meetLink}
+                              style={styles.eventMeetLink}
+                            >
                               🔗 Join meeting
                             </Link>
                           )}
@@ -280,7 +286,7 @@ function calculateTotalTime(events: CalendarEvent[]): string {
     if (!match) continue;
 
     for (const m of match) {
-      const num = parseInt(m, 10);
+      const num = Number.parseInt(m, 10);
       if (m.toLowerCase().includes("hour")) {
         totalMinutes += num * 60;
       } else {

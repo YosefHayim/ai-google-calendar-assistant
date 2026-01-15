@@ -170,6 +170,7 @@ docker-compose.override.yml
 *.js
 !jest.config.js
 *.config.js
+!ecosystem.config.js
 *.config.cjs
 *.config.mjs
 
