@@ -410,7 +410,7 @@ function CallbackContent() {
 
         {/* Brand tagline */}
         <motion.p
-          className="absolute bottom-8 text-zinc-400 dark:text-zinc-600 text-sm"
+          className="absolute bottom-8 text-zinc-400 dark:text-zinc-600 text-sm mb-2"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1 }}
