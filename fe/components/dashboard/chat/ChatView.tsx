@@ -1,7 +1,8 @@
 'use client'
 
 import React from 'react'
-import { AlertCircle } from 'lucide-react'
+import { AlertCircle, MessageCircle } from 'lucide-react'
+import { EmptyState } from '@/components/ui/empty-state'
 import { Message } from '@/types'
 import { MessageActions } from './MessageActions'
 import { EditableMessage } from './EditableMessage'
@@ -38,10 +39,22 @@ export const ChatView: React.FC<ChatViewProps> = ({
   const { editingMessageId, editText, setEditText, editInputRef, startEdit, cancelEdit, confirmEdit, handleKeyDown } =
     useMessageEdit(onEditAndResend)
 
+  const isEmpty = messages.length === 0 && !isLoading
+
   return (
     <div className="h-full overflow-y-auto px-4 pt-24 pb-32">
-      <div id="tour-chat-history">
-        {messages.map((msg) => {
+      {isEmpty ? (
+        <div className="flex items-center justify-center h-full min-h-[300px]">
+          <EmptyState
+            icon={<MessageCircle />}
+            title="Start a conversation"
+            description="Ask Ally to help manage your calendar, schedule events, or find free time."
+            size="lg"
+          />
+        </div>
+      ) : (
+        <div id="tour-chat-history">
+          {messages.map((msg) => {
           const isEditing = editingMessageId === msg.id
 
           return (
@@ -73,7 +86,8 @@ export const ChatView: React.FC<ChatViewProps> = ({
           )
         })}
         {isLoading && <StreamingMessage content={streamingText} currentTool={currentTool} isStreaming={isLoading} />}
-      </div>
+        </div>
+      )}
       {error && (
         <div className="flex justify-center mb-6">
           <div className="bg-red-50 dark:bg-red-900/20 border border-red-100 text-red-600 px-4 py-2 rounded-md flex items-center gap-2 text-sm">
