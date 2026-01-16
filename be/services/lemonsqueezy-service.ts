@@ -15,7 +15,9 @@ import {
   type Product,
   type Variant,
 } from "@lemonsqueezy/lemonsqueezy.js"
-import { SUPABASE, env } from "@/config";
+import { SUPABASE, env } from "@/config"
+import { redisClient, isRedisConnected } from "@/config/clients/redis"
+import { logger } from "@/utils/logger"
 import { initializeLemonSqueezy, LEMONSQUEEZY_CONFIG } from "@/config/clients/lemonsqueezy";
 import { ACTIVE_SUBSCRIPTION_STATUSES, VALID_SUBSCRIPTION_STATUSES } from "@/utils/db/subscription-status";
 

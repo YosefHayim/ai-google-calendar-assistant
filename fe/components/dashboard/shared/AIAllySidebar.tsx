@@ -1,11 +1,12 @@
 'use client'
 
 import { AnimatePresence, motion } from 'framer-motion'
-import { ArrowUp, ChevronDown, Mic, X } from 'lucide-react'
+import { ArrowUp, ChevronDown, MessageCircle, Mic, X } from 'lucide-react'
 import React, { useEffect, useRef, useState } from 'react'
 
 import { AIVoiceInput } from '@/components/ui/ai-voice-input'
 import { Button } from '@/components/ui/button'
+import { EmptyState } from '@/components/ui/empty-state'
 import { Input } from '@/components/ui/input'
 import { VoicePoweredOrb } from '@/components/ui/voice-powered-orb'
 import { cn } from '@/lib/utils'
@@ -260,9 +261,20 @@ const AIAllySidebar: React.FC<AIAllySidebarProps> = ({ isOpen, onClose, onOpen }
 
             {/* Messages Area */}
             <div className="flex-1 overflow-y-auto p-4 space-y-2 min-h-64 max-h-80 scrollbar-thin scrollbar-thumb-zinc-300 dark:scrollbar-thumb-zinc-700 scrollbar-track-transparent">
-              {messages.map((message, index) => (
-                <MessageBubble key={message.id} message={message} index={index} />
-              ))}
+              {messages.length === 0 ? (
+                <div className="flex items-center justify-center h-full">
+                  <EmptyState
+                    icon={<MessageCircle />}
+                    title="Start chatting"
+                    description="Ask Ally anything about your calendar."
+                    size="sm"
+                  />
+                </div>
+              ) : (
+                messages.map((message, index) => (
+                  <MessageBubble key={message.id} message={message} index={index} />
+                ))
+              )}
               <AnimatePresence>{isTyping && <TypingIndicator />}</AnimatePresence>
               <div ref={messagesEndRef} />
             </div>

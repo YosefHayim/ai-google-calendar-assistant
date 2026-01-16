@@ -1,6 +1,8 @@
 'use client'
 
+import { CalendarDays } from 'lucide-react'
 import { Card } from '@/components/ui/card'
+import { EmptyState } from '@/components/ui/empty-state'
 import { cn } from '@/lib/utils'
 import type { Event, ColorDefinition } from '../types'
 import { getEventsForMonth, getMonthDays, getEventColorsForDay } from '../utils/calendar-utils'
@@ -16,9 +18,20 @@ interface YearViewProps {
 export function YearView({ currentDate, events, onEventClick, onMonthClick, getColorClasses }: YearViewProps) {
   const year = currentDate.getFullYear()
   const months = Array.from({ length: 12 }, (_, i) => new Date(year, i, 1))
+  const hasNoEvents = events.length === 0
 
   return (
-    <Card className="p-4">
+    <Card className="p-4 relative">
+      {hasNoEvents && (
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/80 backdrop-blur-sm rounded-lg">
+          <EmptyState
+            icon={<CalendarDays />}
+            title="No events this year"
+            description="Start scheduling to see events on your calendar."
+            size="lg"
+          />
+        </div>
+      )}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
         {months.map((month) => {
           const monthEvents = getEventsForMonth(events, month)

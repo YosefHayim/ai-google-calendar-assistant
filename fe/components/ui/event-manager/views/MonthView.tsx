@@ -1,6 +1,8 @@
 'use client'
 
+import { CalendarDays } from 'lucide-react'
 import { Card } from '@/components/ui/card'
+import { EmptyState } from '@/components/ui/empty-state'
 import { cn } from '@/lib/utils'
 import type { Event, ColorDefinition } from '../types'
 import { getEventsForDay } from '../utils/calendar-utils'
@@ -37,8 +39,20 @@ export function MonthView({
     currentDay.setDate(currentDay.getDate() + 1)
   }
 
+  const hasNoEvents = events.length === 0
+
   return (
-    <Card className="overflow-hidden">
+    <Card className="overflow-hidden relative">
+      {hasNoEvents && (
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/80 backdrop-blur-sm">
+          <EmptyState
+            icon={<CalendarDays />}
+            title="No events scheduled"
+            description="Your calendar is clear for this month."
+            size="lg"
+          />
+        </div>
+      )}
       <div className="grid grid-cols-7 border-b">
         {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
           <div key={day} className="border-r p-2 text-center text-xs font-medium last:border-r-0 sm:text-sm">

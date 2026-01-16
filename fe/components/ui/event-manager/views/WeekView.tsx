@@ -1,7 +1,9 @@
 'use client'
 
 import React from 'react'
+import { CalendarDays } from 'lucide-react'
 import { Card } from '@/components/ui/card'
+import { EmptyState } from '@/components/ui/empty-state'
 import type { Event, ColorDefinition } from '../types'
 import { getWeekDays, getEventsForDayAndHour } from '../utils/calendar-utils'
 import { EventCard } from '../components/EventCard'
@@ -27,9 +29,20 @@ export function WeekView({
 }: WeekViewProps) {
   const weekDays = getWeekDays(currentDate)
   const hours = Array.from({ length: 24 }, (_, i) => i)
+  const hasNoEvents = events.length === 0
 
   return (
-    <Card className="overflow-auto">
+    <Card className="overflow-auto relative">
+      {hasNoEvents && (
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/80 backdrop-blur-sm">
+          <EmptyState
+            icon={<CalendarDays />}
+            title="No events this week"
+            description="Your week is open for scheduling."
+            size="lg"
+          />
+        </div>
+      )}
       <div className="grid grid-cols-8 border-b">
         <div className="border-r p-2 text-center text-xs font-medium sm:text-sm">Time</div>
         {weekDays.map((day) => (

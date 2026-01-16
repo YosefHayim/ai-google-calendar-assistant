@@ -1,7 +1,10 @@
 'use client'
 
 import { useScroll, useTransform, motion } from 'framer-motion'
+import { Clock } from 'lucide-react'
 import React, { useEffect, useRef, useState } from 'react'
+
+import { EmptyState } from '@/components/ui/empty-state'
 
 interface TimelineEntry {
   title: string
@@ -9,6 +12,21 @@ interface TimelineEntry {
 }
 
 export const Timeline = ({ data }: { data: TimelineEntry[] }) => {
+  if (!data || data.length === 0) {
+    return (
+      <div className="w-full bg-white dark:bg-[#030303] font-sans md:px-10 py-20">
+        <div className="max-w-7xl mx-auto flex items-center justify-center min-h-[300px]">
+          <EmptyState
+            icon={<Clock />}
+            title="No timeline entries"
+            description="There are no events to display in the timeline."
+            size="lg"
+          />
+        </div>
+      </div>
+    )
+  }
+
   const ref = useRef<HTMLDivElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const [height, setHeight] = useState(0)

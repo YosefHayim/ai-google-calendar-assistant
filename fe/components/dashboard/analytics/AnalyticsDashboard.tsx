@@ -1,7 +1,8 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { Info, RotateCw, LayoutDashboard, TrendingUp, Clock, Calendar, Heart } from 'lucide-react'
+import { EmptyState } from '@/components/ui/empty-state'
+import { Info, Lightbulb, RotateCw, LayoutDashboard, TrendingUp, Clock, Calendar, Heart } from 'lucide-react'
 import type { CalendarEvent } from '@/types/api'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
 import { ErrorState } from '@/components/ui/error-state'
@@ -257,7 +258,12 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ isLoading: init
                 ))
               ) : (
                 <div className="col-span-full flex flex-col items-center justify-center py-8 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl">
-                  <p className="text-zinc-500 dark:text-zinc-400">No insights available for this period</p>
+                  <EmptyState
+                    icon={<Lightbulb />}
+                    title="No insights yet"
+                    description="Add more events to your calendar to generate AI insights."
+                    size="md"
+                  />
                 </div>
               )}
             </div>
