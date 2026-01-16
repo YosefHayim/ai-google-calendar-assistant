@@ -192,12 +192,16 @@ export const buildErrorUrl = (errorMessage: string): string => {
 }
 
 /**
- * Meta requires unquoted JSON keys in the response.
- * Using JSON.stringify() will quote keys and fail Meta's validation.
+ * Format the data deletion response for Meta.
+ * Meta expects a JSON response with 'url' and 'confirmation_code' fields.
+ * The URL must be a valid HTTPS URL where users can check their deletion status.
  */
 export const formatMetaResponse = (
   url: string,
   confirmationCode: string
-): string => {
-  return `{ url: '${url}', confirmation_code: '${confirmationCode}' }`
+): DataDeletionResponse => {
+  return {
+    url,
+    confirmation_code: confirmationCode,
+  }
 }

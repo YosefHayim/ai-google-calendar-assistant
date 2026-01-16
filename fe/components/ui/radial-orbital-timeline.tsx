@@ -1,13 +1,12 @@
 'use client'
 
-'use client'
-
-import { ArrowRight, Link as LinkIcon, Sparkles, Zap } from 'lucide-react'
+import { ArrowRight, Clock, Link as LinkIcon, Sparkles, Zap } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import React, { useEffect, useRef, useState } from 'react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { EmptyState } from '@/components/ui/empty-state'
 
 interface TimelineItem {
   id: number
@@ -40,6 +39,19 @@ export default function RadialOrbitalTimeline({ timelineData }: RadialOrbitalTim
   const containerRef = useRef<HTMLDivElement>(null)
   const orbitRef = useRef<HTMLDivElement>(null)
   const nodeRefs = useRef<Record<number, HTMLDivElement | null>>({})
+
+  if (!timelineData || timelineData.length === 0) {
+    return (
+      <div className="w-full h-[700px] flex flex-col items-center justify-center bg-white dark:bg-[#030303]">
+        <EmptyState
+          icon={<Clock />}
+          title="No timeline data"
+          description="There are no events to display in the orbital timeline."
+          size="lg"
+        />
+      </div>
+    )
+  }
 
   const handleContainerClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === containerRef.current || e.target === orbitRef.current) {
