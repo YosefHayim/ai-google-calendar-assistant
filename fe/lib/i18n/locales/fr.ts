@@ -255,6 +255,9 @@ export const fr: TranslationShape = {
     errors: {
       noToken: "L'authentification a échoué. Veuillez réessayer.",
       callbackFailed: 'Le callback OAuth a échoué. Veuillez réessayer.',
+      sessionExpired: 'Votre session a expiré. Veuillez vous reconnecter.',
+      accountDeleted: 'Votre compte a été supprimé. Veuillez vous réinscrire.',
+      accountDeactivated: 'Votre compte a été désactivé. Veuillez contacter le support.',
     },
   },
 

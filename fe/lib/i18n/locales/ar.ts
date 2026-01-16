@@ -238,6 +238,9 @@ export const ar: TranslationShape = {
     errors: {
       noToken: 'فشل التحقق. حاول مرة أخرى.',
       callbackFailed: 'فشل OAuth callback. حاول مرة أخرى.',
+      sessionExpired: 'انتهت صلاحية جلستك. يرجى تسجيل الدخول مرة أخرى.',
+      accountDeleted: 'تم حذف حسابك. يرجى التسجيل مرة أخرى.',
+      accountDeactivated: 'تم إلغاء تنشيط حسابك. يرجى التواصل مع الدعم.',
     },
   },
 

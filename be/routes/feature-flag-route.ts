@@ -1,0 +1,24 @@
+import express from "express"
+import { featureFlagController } from "@/controllers/feature-flag-controller"
+import { supabaseAuth } from "@/middlewares/supabase-auth"
+import { adminAuth } from "@/middlewares/admin-auth"
+
+const router = express.Router()
+
+router.get("/", featureFlagController.getAllFlags)
+
+router.get("/enabled", supabaseAuth(), featureFlagController.getEnabledFlags)
+
+router.get("/check/:key", supabaseAuth(), featureFlagController.checkFlag)
+
+router.get("/:key", featureFlagController.getFlagByKey)
+
+router.post("/", supabaseAuth(), adminAuth(["admin"]), featureFlagController.createFlag)
+
+router.patch("/:id", supabaseAuth(), adminAuth(["admin"]), featureFlagController.updateFlag)
+
+router.patch("/:id/toggle", supabaseAuth(), adminAuth(["admin"]), featureFlagController.toggleFlag)
+
+router.delete("/:id", supabaseAuth(), adminAuth(["admin"]), featureFlagController.deleteFlag)
+
+export default router

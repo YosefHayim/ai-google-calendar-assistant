@@ -40,6 +40,7 @@ export enum ROUTES {
   REFERRAL = "/api/referral",
   TEAMS = "/api/teams",
   BLOG = "/api/blog",
+  FEATURE_FLAGS = "/api/feature-flags",
 }
 
 export enum PROVIDERS {

@@ -80,3 +80,18 @@ export {
   useAvailableCategories,
   useCreateBlogPost,
 } from './blog'
+
+// Feature flag hooks
+export {
+  featureFlagKeys,
+  useFeatureFlags,
+  useFeatureFlagByKey,
+  useCheckFeatureFlag,
+  useEnabledFeatureFlags,
+  useCreateFeatureFlag,
+  useUpdateFeatureFlag,
+  useToggleFeatureFlag,
+  useDeleteFeatureFlag,
+  useFeatureFlag,
+} from './feature-flags'
+export type { FeatureFlag, CreateFeatureFlagInput, UpdateFeatureFlagInput } from './feature-flags'

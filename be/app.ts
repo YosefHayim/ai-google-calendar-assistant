@@ -23,6 +23,7 @@ import cronRoute from "@/routes/cron-route";
 import errorHandler from "@/middlewares/error-handler";
 import eventsRoute from "@/routes/google-calendar/events-route";
 import express from "express";
+import featureFlagRoute from "@/routes/feature-flag-route";
 import helmet from "helmet";
 import { initSlackBot } from "@/slack-bot";
 import { initWhatsApp } from "@/whatsapp-bot/init-whatsapp";
@@ -133,6 +134,7 @@ app.use(ROUTES.WAITING_LIST, waitingListRoute);
 app.use(ROUTES.REFERRAL, referralRoute);
 app.use(ROUTES.TEAMS, teamInviteRoute);
 app.use(ROUTES.BLOG, blogRoute);
+app.use(ROUTES.FEATURE_FLAGS, featureFlagRoute);
 
 app.use((_req, res, _next) => {
   logger.error(`Opps! It looks like this route doesn't exist. ${_req.originalUrl}`);

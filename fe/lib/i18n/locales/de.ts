@@ -255,6 +255,9 @@ export const de: TranslationShape = {
     errors: {
       noToken: 'Authentifizierung fehlgeschlagen. Bitte erneut versuchen.',
       callbackFailed: 'OAuth-Callback fehlgeschlagen. Bitte erneut versuchen.',
+      sessionExpired: 'Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.',
+      accountDeleted: 'Ihr Konto wurde gelöscht. Bitte registrieren Sie sich erneut.',
+      accountDeactivated: 'Ihr Konto wurde deaktiviert. Bitte kontaktieren Sie den Support.',
     },
   },
 

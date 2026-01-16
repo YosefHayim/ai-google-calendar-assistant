@@ -80,7 +80,7 @@ export const supabaseAuth = (options: SupabaseAuthOptions = {}) => {
           );
         }
 
-        if (dbUser.status === "suspended" || dbUser.status === "deleted") {
+        if (dbUser.status === "suspended" || dbUser.status === "inactive") {
           return sendR(
             res,
             STATUS_RESPONSE.FORBIDDEN,

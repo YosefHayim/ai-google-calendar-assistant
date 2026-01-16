@@ -254,6 +254,9 @@ export const ru: TranslationShape = {
     errors: {
       noToken: 'Ошибка аутентификации. Попробуйте снова.',
       callbackFailed: 'OAuth callback не удался. Попробуйте снова.',
+      sessionExpired: 'Ваша сессия истекла. Пожалуйста, войдите снова.',
+      accountDeleted: 'Ваш аккаунт был удалён. Пожалуйста, зарегистрируйтесь снова.',
+      accountDeactivated: 'Ваш аккаунт был деактивирован. Пожалуйста, свяжитесь с поддержкой.',
     },
   },
 
