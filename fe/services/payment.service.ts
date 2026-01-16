@@ -280,3 +280,51 @@ export const isMoneyBackEligible = (moneyBackUntil: string | null): boolean => {
   if (!moneyBackUntil) return false
   return new Date(moneyBackUntil) > new Date()
 }
+
+// ============================================================================
+// Lemon Squeezy Products API
+// ============================================================================
+
+export interface LemonSqueezyProduct {
+  id: string
+  name: string
+  slug: string
+  description: string | null
+  price: number
+  priceFormatted: string
+  buyNowUrl: string
+  status: 'draft' | 'published'
+  testMode: boolean
+}
+
+export interface LemonSqueezyVariant {
+  id: string
+  name: string
+  slug: string
+  description: string | null
+  price: number
+  priceFormatted: string
+  isSubscription: boolean
+  interval: 'day' | 'week' | 'month' | 'year' | null
+  intervalCount: number | null
+  hasFreeTrial: boolean
+  trialInterval: 'day' | 'week' | 'month' | 'year' | null
+  trialIntervalCount: number | null
+  status: 'draft' | 'published' | 'pending'
+}
+
+export interface LemonSqueezyProductWithVariants extends LemonSqueezyProduct {
+  variants: LemonSqueezyVariant[]
+}
+
+export const getLemonSqueezyProducts = async (): Promise<LemonSqueezyProduct[]> => {
+  const response = await apiClient.get<ApiResponse<{ products: LemonSqueezyProduct[] }>>(ENDPOINTS.PAYMENTS_PRODUCTS)
+  return response.data.data?.products || []
+}
+
+export const getLemonSqueezyProductsWithVariants = async (): Promise<LemonSqueezyProductWithVariants[]> => {
+  const response = await apiClient.get<ApiResponse<{ products: LemonSqueezyProductWithVariants[] }>>(
+    ENDPOINTS.PAYMENTS_PRODUCTS_VARIANTS,
+  )
+  return response.data.data?.products || []
+}

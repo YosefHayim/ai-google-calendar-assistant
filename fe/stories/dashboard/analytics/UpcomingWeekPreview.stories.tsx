@@ -70,6 +70,7 @@ const balancedWeek: UpcomingWeekData = {
   totalEvents: 25,
   totalHours: 18.75,
   busiestDay: 'Friday',
+  freestDay: 'Saturday',
 }
 
 const packedWeek: UpcomingWeekData = {
@@ -85,6 +86,7 @@ const packedWeek: UpcomingWeekData = {
   totalEvents: 57,
   totalHours: 42.75,
   busiestDay: 'Tuesday',
+  freestDay: 'Sunday',
 }
 
 const lightWeek: UpcomingWeekData = {
@@ -100,6 +102,7 @@ const lightWeek: UpcomingWeekData = {
   totalEvents: 8,
   totalHours: 6,
   busiestDay: 'Thursday',
+  freestDay: 'Tuesday',
 }
 
 const emptyWeek: UpcomingWeekData = {
@@ -115,6 +118,7 @@ const emptyWeek: UpcomingWeekData = {
   totalEvents: 0,
   totalHours: 0,
   busiestDay: 'N/A',
+  freestDay: 'N/A',
 }
 
 export const Default: Story = {
@@ -162,7 +166,7 @@ export const Error: Story = {
     data: undefined,
     isLoading: false,
     isError: true,
-    onRetry: action('retry-clicked'),
+    onRetry: fn(),
   },
 }
 
@@ -179,6 +183,6 @@ export const WithRetryHandler: Story = {
     data: undefined,
     isLoading: false,
     isError: true,
-    onRetry: action('retry-clicked'),
+    onRetry: fn(),
   },
 }

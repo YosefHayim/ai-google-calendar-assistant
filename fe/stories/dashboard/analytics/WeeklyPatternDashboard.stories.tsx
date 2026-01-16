@@ -38,7 +38,7 @@ const fridayLight = createWeeklyPattern([2, 8, 8, 8, 8, 2, 1])
 export const Default: Story = {
   args: {
     data: balancedWeek,
-    onDayClick: action('day-clicked'),
+    onDayClick: fn(),
     isLoading: false,
   },
 }
@@ -46,7 +46,7 @@ export const Default: Story = {
 export const HeavyMidweek: Story = {
   args: {
     data: heavyMidweek,
-    onDayClick: action('day-clicked'),
+    onDayClick: fn(),
     isLoading: false,
   },
 }
@@ -54,7 +54,7 @@ export const HeavyMidweek: Story = {
 export const WeekendWarrior: Story = {
   args: {
     data: weekendWarrior,
-    onDayClick: action('day-clicked'),
+    onDayClick: fn(),
     isLoading: false,
   },
 }
@@ -62,7 +62,7 @@ export const WeekendWarrior: Story = {
 export const MondayHeavy: Story = {
   args: {
     data: mondayHeavy,
-    onDayClick: action('day-clicked'),
+    onDayClick: fn(),
     isLoading: false,
   },
 }
@@ -70,7 +70,7 @@ export const MondayHeavy: Story = {
 export const FridayLight: Story = {
   args: {
     data: fridayLight,
-    onDayClick: action('day-clicked'),
+    onDayClick: fn(),
     isLoading: false,
   },
 }
@@ -78,7 +78,7 @@ export const FridayLight: Story = {
 export const Loading: Story = {
   args: {
     data: [],
-    onDayClick: action('day-clicked'),
+    onDayClick: fn(),
     isLoading: true,
   },
 }
@@ -86,7 +86,7 @@ export const Loading: Story = {
 export const EmptyData: Story = {
   args: {
     data: [],
-    onDayClick: action('day-clicked'),
+    onDayClick: fn(),
     isLoading: false,
   },
 }
@@ -94,7 +94,7 @@ export const EmptyData: Story = {
 export const AllZeros: Story = {
   args: {
     data: createWeeklyPattern([0, 0, 0, 0, 0, 0, 0]),
-    onDayClick: action('day-clicked'),
+    onDayClick: fn(),
     isLoading: false,
   },
 }
@@ -102,7 +102,7 @@ export const AllZeros: Story = {
 export const VeryBusyWeek: Story = {
   args: {
     data: createWeeklyPattern([4, 10, 11, 12, 11, 10, 5]),
-    onDayClick: action('day-clicked'),
+    onDayClick: fn(),
     isLoading: false,
   },
 }
@@ -110,7 +110,7 @@ export const VeryBusyWeek: Story = {
 export const LightWeek: Story = {
   args: {
     data: createWeeklyPattern([0.5, 2, 1.5, 2.5, 2, 1, 0]),
-    onDayClick: action('day-clicked'),
+    onDayClick: fn(),
     isLoading: false,
   },
 }

@@ -42,21 +42,21 @@ const manyCalendars: CalendarBreakdownItem[] = [
 export const Default: Story = {
   args: {
     data: mockData,
-    onCalendarClick: action('calendar-clicked'),
+    onCalendarClick: fn(),
   },
 }
 
 export const SingleCalendar: Story = {
   args: {
     data: singleCalendar,
-    onCalendarClick: action('calendar-clicked'),
+    onCalendarClick: fn(),
   },
 }
 
 export const ManyCalendars: Story = {
   args: {
     data: manyCalendars,
-    onCalendarClick: action('calendar-clicked'),
+    onCalendarClick: fn(),
   },
 }
 
@@ -69,7 +69,7 @@ export const WithoutClickHandler: Story = {
 export const EmptyData: Story = {
   args: {
     data: [],
-    onCalendarClick: action('calendar-clicked'),
+    onCalendarClick: fn(),
   },
 }
 
@@ -80,7 +80,7 @@ export const HighHours: Story = {
       { category: 'Personal', hours: 32.2, color: '#0b8043', calendarId: 'personal' },
       { category: 'Exercise', hours: 15.0, color: '#e67c73', calendarId: 'exercise' },
     ],
-    onCalendarClick: action('calendar-clicked'),
+    onCalendarClick: fn(),
   },
 }
 
@@ -90,7 +90,7 @@ export const LowHours: Story = {
       { category: 'Work', hours: 2.5, color: '#4285f4', calendarId: 'work' },
       { category: 'Personal', hours: 1.2, color: '#0b8043', calendarId: 'personal' },
     ],
-    onCalendarClick: action('calendar-clicked'),
+    onCalendarClick: fn(),
   },
 }
 
@@ -98,7 +98,7 @@ export const DashboardDefault: StoryObj<typeof TimeAllocationDashboard> = {
   render: () => (
     <TimeAllocationDashboard
       data={mockData}
-      onCalendarClick={action('calendar-clicked')}
+      onCalendarClick={fn()}
       isLoading={false}
     />
   ),
@@ -108,7 +108,7 @@ export const DashboardLoading: StoryObj<typeof TimeAllocationDashboard> = {
   render: () => (
     <TimeAllocationDashboard
       data={[]}
-      onCalendarClick={action('calendar-clicked')}
+      onCalendarClick={fn()}
       isLoading={true}
     />
   ),
@@ -118,7 +118,7 @@ export const DashboardManyCalendars: StoryObj<typeof TimeAllocationDashboard> = 
   render: () => (
     <TimeAllocationDashboard
       data={manyCalendars}
-      onCalendarClick={action('calendar-clicked')}
+      onCalendarClick={fn()}
       isLoading={false}
     />
   ),
@@ -128,7 +128,7 @@ export const DashboardEmpty: StoryObj<typeof TimeAllocationDashboard> = {
   render: () => (
     <TimeAllocationDashboard
       data={[]}
-      onCalendarClick={action('calendar-clicked')}
+      onCalendarClick={fn()}
       isLoading={false}
     />
   ),

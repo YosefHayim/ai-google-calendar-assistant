@@ -83,7 +83,7 @@ export const Default: Story = {
   args: {
     data: balancedDistribution,
     totalEvents: 123,
-    onCategoryClick: action('category-clicked'),
+    onCategoryClick: fn(),
     isLoading: false,
   },
 }
@@ -92,7 +92,7 @@ export const ShortEventsHeavy: Story = {
   args: {
     data: shortHeavyDistribution,
     totalEvents: 137,
-    onCategoryClick: action('category-clicked'),
+    onCategoryClick: fn(),
     isLoading: false,
   },
 }
@@ -101,7 +101,7 @@ export const LongEventsHeavy: Story = {
   args: {
     data: longHeavyDistribution,
     totalEvents: 130,
-    onCategoryClick: action('category-clicked'),
+    onCategoryClick: fn(),
     isLoading: false,
   },
 }
@@ -110,7 +110,7 @@ export const Loading: Story = {
   args: {
     data: [],
     totalEvents: 0,
-    onCategoryClick: action('category-clicked'),
+    onCategoryClick: fn(),
     isLoading: true,
   },
 }
@@ -119,7 +119,7 @@ export const NoEvents: Story = {
   args: {
     data: createMockCategories({ short: 0, medium: 0, long: 0, extended: 0 }),
     totalEvents: 0,
-    onCategoryClick: action('category-clicked'),
+    onCategoryClick: fn(),
     isLoading: false,
   },
 }
@@ -128,7 +128,7 @@ export const SingleCategory: Story = {
   args: {
     data: createMockCategories({ short: 0, medium: 100, long: 0, extended: 0 }),
     totalEvents: 100,
-    onCategoryClick: action('category-clicked'),
+    onCategoryClick: fn(),
     isLoading: false,
   },
 }
@@ -142,7 +142,7 @@ export const HighVolume: Story = {
       extended: 87,
     }),
     totalEvents: 800,
-    onCategoryClick: action('category-clicked'),
+    onCategoryClick: fn(),
     isLoading: false,
   },
 }
@@ -156,7 +156,7 @@ export const LowVolume: Story = {
       extended: 2,
     }),
     totalEvents: 18,
-    onCategoryClick: action('category-clicked'),
+    onCategoryClick: fn(),
     isLoading: false,
   },
 }

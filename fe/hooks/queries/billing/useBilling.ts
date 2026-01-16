@@ -5,9 +5,11 @@ import {
   getSubscriptionStatus,
   getPlans,
   getBillingOverview,
+  getLemonSqueezyProductsWithVariants,
   type UserAccess,
   type Plan,
   type BillingOverview,
+  type LemonSqueezyProductWithVariants,
 } from '@/services/payment.service'
 import { QUERY_CONFIG, STORAGE_KEYS } from '@/lib/constants'
 
@@ -68,6 +70,7 @@ export const billingKeys = {
   subscriptionStatus: () => [...billingKeys.all, 'subscription-status'] as const,
   plans: () => [...billingKeys.all, 'plans'] as const,
   overview: () => [...billingKeys.all, 'overview'] as const,
+  lemonSqueezyProducts: () => [...billingKeys.all, 'lemon-squeezy-products'] as const,
 }
 
 export function useSubscriptionStatus(options?: { enabled?: boolean }) {
@@ -97,6 +100,15 @@ export function useBillingOverview(options?: { enabled?: boolean }) {
     queryFn: getBillingOverview,
     staleTime: QUERY_CONFIG.DEFAULT_STALE_TIME,
     enabled: options?.enabled ?? hasPreviousSession(),
+  })
+}
+
+export function useLemonSqueezyProducts(options?: { enabled?: boolean }) {
+  return useQuery<LemonSqueezyProductWithVariants[]>({
+    queryKey: billingKeys.lemonSqueezyProducts(),
+    queryFn: getLemonSqueezyProductsWithVariants,
+    staleTime: 10 * QUERY_CONFIG.DEFAULT_STALE_TIME,
+    enabled: options?.enabled !== false,
   })
 }
 

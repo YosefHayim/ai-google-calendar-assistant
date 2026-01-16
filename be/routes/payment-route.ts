@@ -12,6 +12,8 @@ import {
   upgradeSubscription,
   handleWebhook,
   getBillingInfo,
+  getLemonSqueezyProductsEndpoint,
+  getLemonSqueezyProductsWithVariantsEndpoint,
 } from "@/controllers/payment-controller"
 import { supabaseAuth } from "@/middlewares/supabase-auth"
 
@@ -20,6 +22,10 @@ const router = express.Router()
 router.get("/status", getPaymentStatus)
 
 router.get("/plans", getPlans)
+
+router.get("/products", getLemonSqueezyProductsEndpoint)
+
+router.get("/products/variants", getLemonSqueezyProductsWithVariantsEndpoint)
 
 router.post("/webhook", express.raw({ type: "application/json" }), (req, res) => handleWebhook(req, res))
 

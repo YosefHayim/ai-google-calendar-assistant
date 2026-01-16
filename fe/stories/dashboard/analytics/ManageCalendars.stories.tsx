@@ -73,8 +73,8 @@ export const Default: Story = {
   args: {
     calendars: mockCalendars,
     calendarMap,
-    onCalendarClick: action('calendar-clicked'),
-    onCreateCalendar: action('create-calendar'),
+    onCalendarClick: fn(),
+    onCreateCalendar: fn(),
     isLoading: false,
   },
 }
@@ -83,8 +83,8 @@ export const Loading: Story = {
   args: {
     calendars: [],
     calendarMap: new Map(),
-    onCalendarClick: action('calendar-clicked'),
-    onCreateCalendar: action('create-calendar'),
+    onCalendarClick: fn(),
+    onCreateCalendar: fn(),
     isLoading: true,
   },
 }
@@ -93,8 +93,8 @@ export const Empty: Story = {
   args: {
     calendars: [],
     calendarMap: new Map(),
-    onCalendarClick: action('calendar-clicked'),
-    onCreateCalendar: action('create-calendar'),
+    onCalendarClick: fn(),
+    onCreateCalendar: fn(),
     isLoading: false,
   },
 }
@@ -103,8 +103,8 @@ export const SingleCalendar: Story = {
   args: {
     calendars: [mockCalendars[0]],
     calendarMap: new Map([['primary', { name: 'Personal', color: '#4285f4' }]]),
-    onCalendarClick: action('calendar-clicked'),
-    onCreateCalendar: action('create-calendar'),
+    onCalendarClick: fn(),
+    onCreateCalendar: fn(),
     isLoading: false,
   },
 }
@@ -160,8 +160,8 @@ export const ManyCalendars: Story = {
       ['birthdays@google.com', { name: 'Birthdays', color: '#7986cb' }],
       ['team-meetings@work.com', { name: 'Team Meetings', color: '#33b679' }],
     ]),
-    onCalendarClick: action('calendar-clicked'),
-    onCreateCalendar: action('create-calendar'),
+    onCalendarClick: fn(),
+    onCreateCalendar: fn(),
     isLoading: false,
   },
 }
@@ -192,8 +192,8 @@ export const LongCalendarNames: Story = {
       ['long-name@example.com', { name: 'Very Long Calendar Name That Should Be Truncated', color: '#4285f4' }],
       ['another-long@example.com', { name: 'Another Extremely Long Calendar Name For Testing Purposes', color: '#0b8043' }],
     ]),
-    onCalendarClick: action('calendar-clicked'),
-    onCreateCalendar: action('create-calendar'),
+    onCalendarClick: fn(),
+    onCreateCalendar: fn(),
     isLoading: false,
   },
 }

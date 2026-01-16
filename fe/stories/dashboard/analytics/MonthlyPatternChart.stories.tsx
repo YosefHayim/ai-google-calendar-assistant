@@ -112,7 +112,7 @@ export const DashboardDefault: StoryObj<typeof MonthlyPatternDashboard> = {
   render: () => (
     <MonthlyPatternDashboard
       data={balancedData}
-      onDayClick={action('day-clicked')}
+      onDayClick={fn()}
       isLoading={false}
     />
   ),
@@ -122,7 +122,7 @@ export const DashboardLoading: StoryObj<typeof MonthlyPatternDashboard> = {
   render: () => (
     <MonthlyPatternDashboard
       data={[]}
-      onDayClick={action('day-clicked')}
+      onDayClick={fn()}
       isLoading={true}
     />
   ),
@@ -132,7 +132,7 @@ export const DashboardEmpty: StoryObj<typeof MonthlyPatternDashboard> = {
   render: () => (
     <MonthlyPatternDashboard
       data={[]}
-      onDayClick={action('day-clicked')}
+      onDayClick={fn()}
       isLoading={false}
     />
   ),
@@ -142,7 +142,7 @@ export const DashboardBusyEnd: StoryObj<typeof MonthlyPatternDashboard> = {
   render: () => (
     <MonthlyPatternDashboard
       data={busyEndData}
-      onDayClick={action('day-clicked')}
+      onDayClick={fn()}
       isLoading={false}
     />
   ),

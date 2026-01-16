@@ -6,11 +6,15 @@ import {
   getCustomer,
   listCustomers,
   listSubscriptionInvoices,
+  listProducts,
+  listVariants,
   type Checkout,
   type Subscription,
   type Customer,
   type SubscriptionInvoice,
-} from "@lemonsqueezy/lemonsqueezy.js";
+  type Product,
+  type Variant,
+} from "@lemonsqueezy/lemonsqueezy.js"
 import { SUPABASE, env } from "@/config";
 import { initializeLemonSqueezy, LEMONSQUEEZY_CONFIG } from "@/config/clients/lemonsqueezy";
 import { ACTIVE_SUBSCRIPTION_STATUSES, VALID_SUBSCRIPTION_STATUSES } from "@/utils/db/subscription-status";
@@ -822,3 +826,192 @@ export const getBillingOverview = async (userId: string): Promise<BillingOvervie
     transactions,
   };
 };
+
+// ============================================================================
+// Lemon Squeezy Products API
+// ============================================================================
+
+export interface LemonSqueezyProduct {
+  id: string
+  storeId: number
+  name: string
+  slug: string
+  description: string | null
+  status: "draft" | "published"
+  statusFormatted: string
+  price: number
+  priceFormatted: string
+  buyNowUrl: string
+  thumbUrl: string | null
+  largeThumbUrl: string | null
+  fromPrice: number | null
+  toPrice: number | null
+  payWhatYouWant: boolean
+  createdAt: string
+  updatedAt: string
+  testMode: boolean
+}
+
+export interface LemonSqueezyVariant {
+  id: string
+  productId: number
+  name: string
+  slug: string
+  description: string | null
+  price: number
+  priceFormatted: string
+  isSubscription: boolean
+  interval: "day" | "week" | "month" | "year" | null
+  intervalCount: number | null
+  hasFreeTrial: boolean
+  trialInterval: "day" | "week" | "month" | "year" | null
+  trialIntervalCount: number | null
+  payWhatYouWant: boolean
+  minPrice: number | null
+  suggestedPrice: number | null
+  status: "draft" | "published" | "pending"
+  statusFormatted: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface ProductWithVariants {
+  product: LemonSqueezyProduct
+  variants: LemonSqueezyVariant[]
+}
+
+/**
+ * Transform a raw Lemon Squeezy product response to our interface
+ */
+const transformProduct = (rawProduct: Product["data"]): LemonSqueezyProduct => {
+  const attrs = rawProduct.attributes
+  return {
+    id: rawProduct.id,
+    storeId: attrs.store_id,
+    name: attrs.name,
+    slug: attrs.slug,
+    description: attrs.description,
+    status: attrs.status as "draft" | "published",
+    statusFormatted: attrs.status_formatted,
+    price: attrs.price,
+    priceFormatted: attrs.price_formatted ?? "",
+    buyNowUrl: attrs.buy_now_url ?? "",
+    thumbUrl: attrs.thumb_url,
+    largeThumbUrl: attrs.large_thumb_url,
+    fromPrice: attrs.from_price,
+    toPrice: attrs.to_price,
+    payWhatYouWant: attrs.pay_what_you_want,
+    createdAt: attrs.created_at,
+    updatedAt: attrs.updated_at,
+    testMode: attrs.test_mode,
+  }
+}
+
+/**
+ * Transform a raw Lemon Squeezy variant response to our interface
+ */
+const transformVariant = (rawVariant: Variant["data"]): LemonSqueezyVariant => {
+  const attrs = rawVariant.attributes as Record<string, unknown>
+  return {
+    id: rawVariant.id,
+    productId: attrs.product_id as number,
+    name: attrs.name as string,
+    slug: attrs.slug as string,
+    description: attrs.description as string | null,
+    price: attrs.price as number,
+    priceFormatted: (attrs.price_formatted as string) ?? "",
+    isSubscription: attrs.is_subscription as boolean,
+    interval: attrs.interval as "day" | "week" | "month" | "year" | null,
+    intervalCount: attrs.interval_count as number | null,
+    hasFreeTrial: attrs.has_free_trial as boolean,
+    trialInterval: attrs.trial_interval as "day" | "week" | "month" | "year" | null,
+    trialIntervalCount: attrs.trial_interval_count as number | null,
+    payWhatYouWant: attrs.pay_what_you_want as boolean,
+    minPrice: attrs.min_price as number | null,
+    suggestedPrice: attrs.suggested_price as number | null,
+    status: attrs.status as "draft" | "published" | "pending",
+    statusFormatted: attrs.status_formatted as string,
+    createdAt: attrs.created_at as string,
+    updatedAt: attrs.updated_at as string,
+  }
+}
+
+/**
+ * Fetch all published products from Lemon Squeezy for the configured store
+ */
+export const getLemonSqueezyProducts = async (): Promise<LemonSqueezyProduct[]> => {
+  initializeLemonSqueezy()
+
+  const storeId = env.lemonSqueezy.storeId
+  if (!storeId) {
+    throw new Error("LemonSqueezy store ID not configured")
+  }
+
+  try {
+    const { data, error } = await listProducts({
+      filter: {
+        storeId: parseInt(storeId, 10),
+      },
+    })
+
+    if (error) {
+      throw new Error(`Failed to fetch products: ${error.message}`)
+    }
+
+    if (!data?.data) {
+      return []
+    }
+
+    // Filter to only published products and transform
+    return data.data
+      .filter((product) => product.attributes.status === "published")
+      .map(transformProduct)
+  } catch (error) {
+    console.error("Error fetching LemonSqueezy products:", error)
+    throw error
+  }
+}
+
+/**
+ * Fetch all variants for a specific product
+ */
+export const getLemonSqueezyVariants = async (productId: string): Promise<LemonSqueezyVariant[]> => {
+  initializeLemonSqueezy()
+
+  try {
+    const { data, error } = await listVariants({
+      filter: {
+        productId: parseInt(productId, 10),
+      },
+    })
+
+    if (error) {
+      throw new Error(`Failed to fetch variants: ${error.message}`)
+    }
+
+    if (!data?.data) {
+      return []
+    }
+
+    return data.data.map(transformVariant)
+  } catch (error) {
+    console.error("Error fetching LemonSqueezy variants:", error)
+    throw error
+  }
+}
+
+/**
+ * Fetch all products with their variants from Lemon Squeezy
+ */
+export const getLemonSqueezyProductsWithVariants = async (): Promise<ProductWithVariants[]> => {
+  const products = await getLemonSqueezyProducts()
+
+  const productsWithVariants = await Promise.all(
+    products.map(async (product) => {
+      const variants = await getLemonSqueezyVariants(product.id)
+      return { product, variants }
+    })
+  )
+
+  return productsWithVariants
+}

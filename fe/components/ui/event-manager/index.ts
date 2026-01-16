@@ -1,0 +1,20 @@
+export { EventManager } from './EventManager'
+export type { Event, ViewType, EventManagerProps, ColorDefinition, AvailableFilters, ActionResult } from './types'
+export { defaultColors, defaultCategories, defaultTags } from './types'
+
+export { EventCard } from './components/EventCard'
+export { EventDialog } from './components/EventDialog'
+export { CreateEventForm } from './components/CreateEventForm'
+export { ViewEventDetails } from './components/ViewEventDetails'
+export { FilterControls } from './components/FilterControls'
+export { ActiveFiltersDisplay } from './components/ActiveFiltersDisplay'
+export { ViewToggle } from './components/ViewToggle'
+
+export { YearView } from './views/YearView'
+export { MonthView } from './views/MonthView'
+export { WeekView } from './views/WeekView'
+export { DayView } from './views/DayView'
+export { ListView } from './views/ListView'
+
+export { useEventFilters } from './hooks/useEventFilters'
+export * from './utils/calendar-utils'

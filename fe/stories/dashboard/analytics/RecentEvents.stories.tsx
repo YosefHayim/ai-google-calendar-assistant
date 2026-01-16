@@ -102,7 +102,7 @@ const mockActivities: ProcessedActivity[] = [
 export const DefaultVertical: Story = {
   args: {
     activities: mockActivities,
-    onActivityClick: action('activity-clicked'),
+    onActivityClick: fn(),
     isLoading: false,
     layout: 'vertical',
   },
@@ -111,7 +111,7 @@ export const DefaultVertical: Story = {
 export const HorizontalLayout: Story = {
   args: {
     activities: mockActivities,
-    onActivityClick: action('activity-clicked'),
+    onActivityClick: fn(),
     isLoading: false,
     layout: 'horizontal',
   },
@@ -120,7 +120,7 @@ export const HorizontalLayout: Story = {
 export const Loading: Story = {
   args: {
     activities: [],
-    onActivityClick: action('activity-clicked'),
+    onActivityClick: fn(),
     isLoading: true,
     layout: 'vertical',
   },
@@ -129,7 +129,7 @@ export const Loading: Story = {
 export const LoadingHorizontal: Story = {
   args: {
     activities: [],
-    onActivityClick: action('activity-clicked'),
+    onActivityClick: fn(),
     isLoading: true,
     layout: 'horizontal',
   },
@@ -138,7 +138,7 @@ export const LoadingHorizontal: Story = {
 export const Empty: Story = {
   args: {
     activities: [],
-    onActivityClick: action('activity-clicked'),
+    onActivityClick: fn(),
     isLoading: false,
     layout: 'vertical',
   },
@@ -147,7 +147,7 @@ export const Empty: Story = {
 export const FewActivities: Story = {
   args: {
     activities: mockActivities.slice(0, 3),
-    onActivityClick: action('activity-clicked'),
+    onActivityClick: fn(),
     isLoading: false,
     layout: 'vertical',
   },
@@ -163,7 +163,7 @@ export const ManyActivities: Story = {
         timestamp: a.timestamp - 86400000 * (i + 1),
       })),
     ],
-    onActivityClick: action('activity-clicked'),
+    onActivityClick: fn(),
     isLoading: false,
     layout: 'vertical',
   },
@@ -193,7 +193,7 @@ export const LongEventNames: Story = {
         event: {} as ProcessedActivity['event'],
       },
     ],
-    onActivityClick: action('activity-clicked'),
+    onActivityClick: fn(),
     isLoading: false,
     layout: 'vertical',
   },
@@ -204,7 +204,7 @@ export const SingleCalendar: Story = {
     activities: mockActivities
       .filter((a) => a.calendarId === 'work')
       .map((a) => ({ ...a, calendarName: 'Work' })),
-    onActivityClick: action('activity-clicked'),
+    onActivityClick: fn(),
     isLoading: false,
     layout: 'vertical',
   },
@@ -213,7 +213,7 @@ export const SingleCalendar: Story = {
 export const HorizontalFiveCards: Story = {
   args: {
     activities: mockActivities.slice(0, 5),
-    onActivityClick: action('activity-clicked'),
+    onActivityClick: fn(),
     isLoading: false,
     layout: 'horizontal',
   },

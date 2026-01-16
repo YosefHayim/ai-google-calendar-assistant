@@ -25,7 +25,9 @@ import {
   recordWebhookEvent,
   updateSubscriptionFromWebhook,
   upgradeSubscriptionPlan,
-} from "@/services/lemonsqueezy-service";
+  getLemonSqueezyProducts,
+  getLemonSqueezyProductsWithVariants,
+} from "@/services/lemonsqueezy-service"
 import { requireUser, requireUserId } from "@/utils/auth";
 import { reqResAsyncHandler, sendR } from "@/utils/http";
 
@@ -653,14 +655,105 @@ export const getBillingInfo = reqResAsyncHandler(
         billingOverview
       );
     } catch (error) {
-      console.error("Billing overview error:", error);
+      console.error("Billing overview error:", error)
       sendR(
         res,
         STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
         error instanceof Error
           ? error.message
           : "Failed to get billing overview"
-      );
+      )
     }
   }
-);
+)
+
+export const getLemonSqueezyProductsEndpoint = reqResAsyncHandler(
+  async (_req: Request, res: Response) => {
+    if (!isLemonSqueezyEnabled()) {
+      return sendR(
+        res,
+        STATUS_RESPONSE.SERVICE_UNAVAILABLE,
+        "Payment provider is not configured"
+      )
+    }
+
+    try {
+      const products = await getLemonSqueezyProducts()
+
+      sendR(res, STATUS_RESPONSE.SUCCESS, "Products retrieved", {
+        products: products.map((product) => ({
+          id: product.id,
+          name: product.name,
+          slug: product.slug,
+          description: product.description,
+          price: product.price,
+          priceFormatted: product.priceFormatted,
+          buyNowUrl: product.buyNowUrl,
+          status: product.status,
+          testMode: product.testMode,
+        })),
+      })
+    } catch (error) {
+      console.error("Error fetching LemonSqueezy products:", error)
+      sendR(
+        res,
+        STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
+        error instanceof Error ? error.message : "Failed to fetch products"
+      )
+    }
+  }
+)
+
+export const getLemonSqueezyProductsWithVariantsEndpoint = reqResAsyncHandler(
+  async (_req: Request, res: Response) => {
+    if (!isLemonSqueezyEnabled()) {
+      return sendR(
+        res,
+        STATUS_RESPONSE.SERVICE_UNAVAILABLE,
+        "Payment provider is not configured"
+      )
+    }
+
+    try {
+      const productsWithVariants = await getLemonSqueezyProductsWithVariants()
+
+      const formattedProducts = productsWithVariants.map(({ product, variants }) => ({
+        id: product.id,
+        name: product.name,
+        slug: product.slug,
+        description: product.description,
+        price: product.price,
+        priceFormatted: product.priceFormatted,
+        buyNowUrl: product.buyNowUrl,
+        status: product.status,
+        testMode: product.testMode,
+        variants: variants.map((variant) => ({
+          id: variant.id,
+          name: variant.name,
+          slug: variant.slug,
+          description: variant.description,
+          price: variant.price,
+          priceFormatted: variant.priceFormatted,
+          isSubscription: variant.isSubscription,
+          interval: variant.interval,
+          intervalCount: variant.intervalCount,
+          hasFreeTrial: variant.hasFreeTrial,
+          trialInterval: variant.trialInterval,
+          trialIntervalCount: variant.trialIntervalCount,
+          status: variant.status,
+        })),
+      }))
+
+      sendR(res, STATUS_RESPONSE.SUCCESS, "Products with variants retrieved", {
+        products: formattedProducts,
+      })
+    } catch (error) {
+      console.error("Error fetching LemonSqueezy products with variants:", error)
+      sendR(
+        res,
+        STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
+        error instanceof Error ? error.message : "Failed to fetch products"
+      )
+    }
+  }
+)

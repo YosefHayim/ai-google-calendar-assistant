@@ -109,3 +109,107 @@ export const TIERS = Object.values(PLANS).map((plan) => ({
   highlighted: plan.highlighted,
   isCustom: plan.id === PLAN_SLUGS.EXECUTIVE,
 }))
+
+export type PricingTier = (typeof TIERS)[number]
+
+interface LemonSqueezyProduct {
+  id: string
+  name: string
+  slug: string
+  description: string | null
+  price: number
+  priceFormatted: string
+  buyNowUrl: string
+  status: 'draft' | 'published'
+  testMode: boolean
+  variants?: Array<{
+    id: string
+    name: string
+    slug: string
+    price: number
+    priceFormatted: string
+    isSubscription: boolean
+    interval: 'day' | 'week' | 'month' | 'year' | null
+    intervalCount: number | null
+  }>
+}
+
+type ProductNamePattern =
+  | 'starter'
+  | 'operational-pro'
+  | 'total-sovereignty'
+  | 'pay-per-use'
+
+const PRODUCT_NAME_MAPPINGS: Record<ProductNamePattern, { planId: PlanSlug; interval?: 'monthly' | 'yearly' }> = {
+  'starter': { planId: 'starter', interval: 'monthly' },
+  'operational-pro': { planId: 'pro', interval: 'monthly' },
+  'total-sovereignty': { planId: 'executive', interval: 'monthly' },
+  'pay-per-use': { planId: 'starter' },
+}
+
+const extractPlanInfo = (slug: string): { planId: PlanSlug; interval?: 'monthly' | 'yearly' } | null => {
+  const normalizedSlug = slug.toLowerCase()
+
+  if (normalizedSlug.includes('starter')) {
+    const interval = normalizedSlug.includes('yearly') ? 'yearly' : 'monthly'
+    return { planId: 'starter', interval }
+  }
+  if (normalizedSlug.includes('operational') || normalizedSlug.includes('pro')) {
+    const interval = normalizedSlug.includes('yearly') ? 'yearly' : 'monthly'
+    return { planId: 'pro', interval }
+  }
+  if (normalizedSlug.includes('sovereignty') || normalizedSlug.includes('executive')) {
+    const interval = normalizedSlug.includes('yearly') ? 'yearly' : 'monthly'
+    return { planId: 'executive', interval }
+  }
+  if (normalizedSlug.includes('pay-per-use') || normalizedSlug.includes('credits')) {
+    return { planId: 'starter' }
+  }
+
+  return null
+}
+
+export const transformLemonSqueezyProductsToTiers = (
+  products: LemonSqueezyProduct[]
+): PricingTier[] => {
+  const planPrices: Record<PlanSlug, { monthly: number; yearly: number; perUse: number; buyNowUrl: string }> = {
+    starter: { monthly: 0, yearly: 0, perUse: 3, buyNowUrl: '' },
+    pro: { monthly: 3, yearly: 2, perUse: 7, buyNowUrl: '' },
+    executive: { monthly: 7, yearly: 5, perUse: 10, buyNowUrl: '' },
+  }
+
+  for (const product of products) {
+    const planInfo = extractPlanInfo(product.slug)
+    if (!planInfo) continue
+
+    const { planId, interval } = planInfo
+    const priceInDollars = product.price / 100
+
+    if (interval === 'monthly') {
+      planPrices[planId].monthly = priceInDollars
+      planPrices[planId].buyNowUrl = product.buyNowUrl
+    } else if (interval === 'yearly') {
+      planPrices[planId].yearly = Math.round(priceInDollars / 12)
+    }
+  }
+
+  return Object.values(PLANS).map((plan) => {
+    const prices = planPrices[plan.id as PlanSlug]
+    return {
+      id: plan.id,
+      name: plan.name,
+      price: {
+        monthly: prices.monthly === 0 ? 'Free' : prices.monthly,
+        yearly: prices.yearly === 0 ? 'Free' : prices.yearly,
+        'per use': prices.perUse,
+      },
+      description: plan.description,
+      features: [...plan.features],
+      cta: plan.cta,
+      popular: plan.popular,
+      highlighted: plan.highlighted,
+      isCustom: plan.id === PLAN_SLUGS.EXECUTIVE,
+      buyNowUrl: prices.buyNowUrl,
+    }
+  })
+}
