@@ -12,6 +12,7 @@ import type {
   DailyBriefingFormData,
   CrossPlatformSyncFormData,
   GeoLocationFormData,
+  NotificationSettingsFormData,
 } from '@/lib/validations/preferences'
 import type { QueryHookOptions } from '../useQueryWrapper'
 
@@ -380,6 +381,62 @@ export function useUpdateGeoLocation() {
   return {
     updateGeoLocation: mutation.mutate,
     updateGeoLocationAsync: mutation.mutateAsync,
+    isUpdating: mutation.isPending,
+    isError: mutation.isError,
+    error: mutation.error,
+    isSuccess: mutation.isSuccess,
+    reset: mutation.reset,
+  }
+}
+
+/**
+ * Hook to fetch Notification Settings preference
+ */
+export function useNotificationSettings(options?: QueryHookOptions) {
+  const query = useQuery({
+    queryKey: queryKeys.preferences.notificationSettings(),
+    queryFn: async () => {
+      const response = await preferencesService.getNotificationSettings()
+      return response.data
+    },
+    staleTime: options?.staleTime ?? QUERY_CONFIG.USER_STALE_TIME,
+    enabled: options?.enabled ?? true,
+    refetchOnWindowFocus: options?.refetchOnWindowFocus ?? false,
+    refetchOnMount: options?.refetchOnMount ?? true,
+  })
+
+  return {
+    data: query.data ?? null,
+    isLoading: query.isLoading,
+    isFetching: query.isFetching,
+    isError: query.isError,
+    error: query.error,
+    refetch: query.refetch,
+  }
+}
+
+/**
+ * Hook to update Notification Settings preference
+ */
+export function useUpdateNotificationSettings() {
+  const queryClient = useQueryClient()
+
+  const mutation = useMutation({
+    mutationFn: (data: NotificationSettingsFormData) => preferencesService.updateNotificationSettings(data),
+    onSuccess: (response) => {
+      if (response.data) {
+        queryClient.setQueryData<PreferenceResponse<NotificationSettingsFormData>>(
+          queryKeys.preferences.notificationSettings(),
+          response.data,
+        )
+      }
+      queryClient.invalidateQueries({ queryKey: queryKeys.preferences.list() })
+    },
+  })
+
+  return {
+    updateNotificationSettings: mutation.mutate,
+    updateNotificationSettingsAsync: mutation.mutateAsync,
     isUpdating: mutation.isPending,
     isError: mutation.isError,
     error: mutation.error,

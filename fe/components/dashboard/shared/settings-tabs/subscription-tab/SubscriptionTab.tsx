@@ -124,6 +124,10 @@ export const SubscriptionTab: React.FC = () => {
   }
 
   const isPerUse = selectedFrequency === 'per use'
+  const isTrialing = access?.subscription_status === 'trialing'
+
+  // Filter out starter plan for trialing users - they should choose Pro or Executive
+  const displayPlans = isTrialing ? plans?.filter((plan) => plan.slug !== 'starter') : plans
 
   return (
     <div className="space-y-6">
@@ -132,6 +136,7 @@ export const SubscriptionTab: React.FC = () => {
         planName={access?.plan_name}
         subscriptionStatus={access?.subscription_status}
         interactionsRemaining={access?.interactions_remaining}
+        trialDaysLeft={access?.trial_days_left}
         isLoading={actionLoading === 'portal'}
         onManageBilling={handleManageBilling}
       />
@@ -151,7 +156,7 @@ export const SubscriptionTab: React.FC = () => {
       </div>
 
       <div className="space-y-2">
-        {plans?.map((plan) => (
+        {displayPlans?.map((plan) => (
           <PlanRow
             key={plan.id}
             plan={plan}

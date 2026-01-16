@@ -7,6 +7,7 @@ import type {
   DailyBriefingFormData,
   CrossPlatformSyncFormData,
   GeoLocationFormData,
+  NotificationSettingsFormData,
 } from '@/lib/validations/preferences'
 
 import { ENDPOINTS } from '@/lib/api/endpoints'
@@ -165,6 +166,23 @@ export const preferencesService = {
   async updateGeoLocation(value: GeoLocationFormData): Promise<ApiResponse<PreferenceResponse<GeoLocationFormData>>> {
     const { data } = await apiClient.put<ApiResponse<PreferenceResponse<GeoLocationFormData>>>(
       ENDPOINTS.USER_PREFERENCES_GEO_LOCATION,
+      value,
+    )
+    return data
+  },
+
+  async getNotificationSettings(): Promise<ApiResponse<PreferenceResponse<NotificationSettingsFormData>>> {
+    const { data } = await apiClient.get<ApiResponse<PreferenceResponse<NotificationSettingsFormData>>>(
+      ENDPOINTS.USER_PREFERENCES_BY_KEY('notification_settings'),
+    )
+    return data
+  },
+
+  async updateNotificationSettings(
+    value: NotificationSettingsFormData,
+  ): Promise<ApiResponse<PreferenceResponse<NotificationSettingsFormData>>> {
+    const { data } = await apiClient.put<ApiResponse<PreferenceResponse<NotificationSettingsFormData>>>(
+      ENDPOINTS.USER_PREFERENCES_NOTIFICATION_SETTINGS,
       value,
     )
     return data

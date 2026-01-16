@@ -5,8 +5,6 @@ export const NOTIFICATION_CHANNEL_OPTIONS: DropdownOption[] = [
   { value: 'telegram', label: 'Telegram' },
   { value: 'email', label: 'Email' },
   { value: 'push', label: 'Push' },
-  { value: 'push_email', label: 'Push & Email' },
-  { value: 'off', label: 'Off' },
 ]
 
 export const REMINDER_METHOD_OPTIONS: DropdownOption[] = [

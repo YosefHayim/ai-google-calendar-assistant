@@ -40,11 +40,14 @@ export async function transcribeAudio(
   mimeType = "audio/webm"
 ): Promise<TranscriptionResult> {
   try {
-    const extension = getExtensionFromMimeType(mimeType);
+    // Normalize MIME type by stripping codec specifications (e.g., "audio/webm;codecs=opus" -> "audio/webm")
+    // OpenAI's Whisper API doesn't accept MIME types with codec parameters
+    const normalizedMimeType = mimeType.split(";")[0].trim();
+    const extension = getExtensionFromMimeType(normalizedMimeType);
     const filename = `audio.${extension}`;
 
     const file = await OpenAI.toFile(Readable.from(audioBuffer), filename, {
-      type: mimeType,
+      type: normalizedMimeType,
     });
 
     const response = await openai.audio.transcriptions.create({

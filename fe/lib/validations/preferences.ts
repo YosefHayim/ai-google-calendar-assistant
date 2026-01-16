@@ -152,3 +152,20 @@ export type GeoLocationFormData = z.infer<typeof geoLocationSchema>
 export const geoLocationDefaults: GeoLocationFormData = {
   enabled: false,
 }
+
+export const NOTIFICATION_CHANNELS = ['telegram', 'email', 'push'] as const
+export type NotificationChannel = (typeof NOTIFICATION_CHANNELS)[number]
+
+export const notificationSettingsSchema = z.object({
+  eventConfirmations: z.array(z.enum(NOTIFICATION_CHANNELS)),
+  conflictAlerts: z.array(z.enum(NOTIFICATION_CHANNELS)),
+  featureUpdates: z.array(z.enum(NOTIFICATION_CHANNELS)),
+})
+
+export type NotificationSettingsFormData = z.infer<typeof notificationSettingsSchema>
+
+export const notificationSettingsDefaults: NotificationSettingsFormData = {
+  eventConfirmations: ['push'],
+  conflictAlerts: ['push'],
+  featureUpdates: ['email'],
+}

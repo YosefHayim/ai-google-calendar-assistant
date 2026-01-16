@@ -418,6 +418,12 @@ export const ENDPOINTS = {
   USER_PREFERENCES_GEO_LOCATION: '/api/users/preferences/geo_location',
 
   /**
+   * Update notification_settings preference
+   * Methods: PUT
+   */
+  USER_PREFERENCES_NOTIFICATION_SETTINGS: '/api/users/preferences/notification_settings',
+
+  /**
    * Submit contact form
    * Methods: POST
    * Body: multipart/form-data with name, email, subject, message, attachments[]

@@ -20,7 +20,8 @@ export type PreferenceKey =
   | "agent_profile"
   | "daily_briefing"
   | "cross_platform_sync"
-  | "geo_location";
+  | "geo_location"
+  | "notification_settings";
 
 export type AllyBrainPreference = {
   enabled: boolean;
@@ -74,6 +75,14 @@ export type GeoLocationPreference = {
   };
 };
 
+export type NotificationChannel = "telegram" | "email" | "push";
+
+export type NotificationSettingsPreference = {
+  eventConfirmations: NotificationChannel[];
+  conflictAlerts: NotificationChannel[];
+  featureUpdates: NotificationChannel[];
+};
+
 export type PreferenceValue =
   | AllyBrainPreference
   | ContextualSchedulingPreference
@@ -82,7 +91,8 @@ export type PreferenceValue =
   | AgentProfilePreference
   | DailyBriefingPreference
   | CrossPlatformSyncPreference
-  | GeoLocationPreference;
+  | GeoLocationPreference
+  | NotificationSettingsPreference;
 
 export type PreferenceResult<T> = {
   value: T;
@@ -112,6 +122,11 @@ export const PREFERENCE_DEFAULTS: Record<PreferenceKey, PreferenceValue> = {
   },
   cross_platform_sync: { enabled: true },
   geo_location: { enabled: false },
+  notification_settings: {
+    eventConfirmations: ["push"],
+    conflictAlerts: ["push"],
+    featureUpdates: ["email"],
+  },
 };
 
 export const VALID_PREFERENCE_KEYS: PreferenceKey[] = [
@@ -123,6 +138,7 @@ export const VALID_PREFERENCE_KEYS: PreferenceKey[] = [
   "daily_briefing",
   "cross_platform_sync",
   "geo_location",
+  "notification_settings",
 ];
 
 // ============================================
@@ -363,4 +379,16 @@ export async function getGeoLocationPreference(
   userId: string
 ): Promise<GeoLocationPreference | null> {
   return getPreference<GeoLocationPreference>(userId, "geo_location");
+}
+
+/**
+ * Get notification_settings preference
+ */
+export async function getNotificationSettingsPreference(
+  userId: string
+): Promise<NotificationSettingsPreference | null> {
+  return getPreference<NotificationSettingsPreference>(
+    userId,
+    "notification_settings"
+  );
 }

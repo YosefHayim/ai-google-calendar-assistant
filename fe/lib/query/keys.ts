@@ -69,6 +69,7 @@ export const queryKeys = {
     dailyBriefing: () => [...queryKeys.preferences.all, 'daily_briefing'] as const,
     crossPlatformSync: () => [...queryKeys.preferences.all, 'cross_platform_sync'] as const,
     geoLocation: () => [...queryKeys.preferences.all, 'geo_location'] as const,
+    notificationSettings: () => [...queryKeys.preferences.all, 'notification_settings'] as const,
   },
 
   // Agent Profiles queries

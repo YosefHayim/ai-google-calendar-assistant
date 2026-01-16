@@ -1,66 +1,133 @@
 'use client'
 
-import React, { useState } from 'react'
-import { CheckCircle, AlertTriangle, Sparkles } from 'lucide-react'
+import React, { useEffect, useState } from 'react'
+import { CheckCircle, AlertTriangle, Sparkles, Loader2, Check } from 'lucide-react'
+import { toast } from 'sonner'
 import { Card, CardContent } from '@/components/ui/card'
-import { SettingsRow, SettingsDropdown, SettingsSection, TabHeader } from '../../components'
+import { Button } from '@/components/ui/button'
+import { LoadingSection } from '@/components/ui/loading-spinner'
+import { SettingsRow, MultiSelectDropdown, SettingsSection, TabHeader } from '../../components'
 import { NOTIFICATION_CHANNEL_OPTIONS } from '../constants'
+import { useNotificationSettings, useUpdateNotificationSettings } from '@/hooks/queries'
+import { type NotificationSettingsFormData, notificationSettingsDefaults } from '@/lib/validations/preferences'
 
 export function NotificationsSection() {
-  const [eventConfirmations, setEventConfirmations] = useState('telegram')
-  const [conflictAlerts, setConflictAlerts] = useState('push_email')
-  const [featureUpdates, setFeatureUpdates] = useState('email')
+  const { data: notificationData, isLoading } = useNotificationSettings()
+  const { updateNotificationSettingsAsync, isUpdating, isSuccess } = useUpdateNotificationSettings()
+
+  const [settings, setSettings] = useState<NotificationSettingsFormData>(notificationSettingsDefaults)
+  const [isDirty, setIsDirty] = useState(false)
+
+  useEffect(() => {
+    if (notificationData?.value) {
+      setSettings({
+        eventConfirmations: notificationData.value.eventConfirmations,
+        conflictAlerts: notificationData.value.conflictAlerts,
+        featureUpdates: notificationData.value.featureUpdates,
+      })
+    }
+  }, [notificationData])
+
+  const handleEventConfirmationsChange = (values: string[]) => {
+    setSettings((prev) => ({ ...prev, eventConfirmations: values as NotificationSettingsFormData['eventConfirmations'] }))
+    setIsDirty(true)
+  }
+
+  const handleConflictAlertsChange = (values: string[]) => {
+    setSettings((prev) => ({ ...prev, conflictAlerts: values as NotificationSettingsFormData['conflictAlerts'] }))
+    setIsDirty(true)
+  }
+
+  const handleFeatureUpdatesChange = (values: string[]) => {
+    setSettings((prev) => ({ ...prev, featureUpdates: values as NotificationSettingsFormData['featureUpdates'] }))
+    setIsDirty(true)
+  }
+
+  const handleSave = async () => {
+    try {
+      await updateNotificationSettingsAsync(settings)
+      setIsDirty(false)
+      toast.success('Notification preferences saved')
+    } catch {
+      toast.error('Failed to save notification preferences')
+    }
+  }
 
   return (
     <Card>
       <TabHeader title="Notifications" tooltip="Configure how and when Ally notifies you" />
       <CardContent>
-        <SettingsSection>
-          <SettingsRow
-            id="event-confirmations"
-            title="Event Confirmations"
-            tooltip="Get an immediate confirmation message when Ally successfully adds or updates an event"
-            icon={<CheckCircle size={18} className="text-zinc-900 dark:text-primary" />}
-            control={
-              <SettingsDropdown
-                id="event-confirmations-dropdown"
-                value={eventConfirmations}
-                options={NOTIFICATION_CHANNEL_OPTIONS}
-                onChange={setEventConfirmations}
+        {isLoading ? (
+          <LoadingSection text="Loading notification settings..." />
+        ) : (
+          <div className="space-y-4">
+            <SettingsSection>
+              <SettingsRow
+                id="event-confirmations"
+                title="Event Confirmations"
+                tooltip="Get an immediate confirmation message when Ally successfully adds or updates an event"
+                icon={<CheckCircle size={18} className="text-zinc-900 dark:text-primary" />}
+                control={
+                  <MultiSelectDropdown
+                    id="event-confirmations-dropdown"
+                    values={settings.eventConfirmations}
+                    options={NOTIFICATION_CHANNEL_OPTIONS}
+                    onChange={handleEventConfirmationsChange}
+                    minSelections={0}
+                  />
+                }
               />
-            }
-          />
 
-          <SettingsRow
-            id="conflict-alerts"
-            title="Conflict Alerts"
-            tooltip="Get notified immediately if a new request overlaps with an existing commitment"
-            icon={<AlertTriangle size={18} className="text-zinc-900 dark:text-primary" />}
-            control={
-              <SettingsDropdown
-                id="conflict-alerts-dropdown"
-                value={conflictAlerts}
-                options={NOTIFICATION_CHANNEL_OPTIONS}
-                onChange={setConflictAlerts}
+              <SettingsRow
+                id="conflict-alerts"
+                title="Conflict Alerts"
+                tooltip="Get notified immediately if a new request overlaps with an existing commitment"
+                icon={<AlertTriangle size={18} className="text-zinc-900 dark:text-primary" />}
+                control={
+                  <MultiSelectDropdown
+                    id="conflict-alerts-dropdown"
+                    values={settings.conflictAlerts}
+                    options={NOTIFICATION_CHANNEL_OPTIONS}
+                    onChange={handleConflictAlertsChange}
+                    minSelections={0}
+                  />
+                }
               />
-            }
-          />
 
-          <SettingsRow
-            id="feature-updates"
-            title="Feature Updates"
-            tooltip="Stay in the loop on new integrations like WhatsApp and Notion"
-            icon={<Sparkles size={18} className="text-zinc-900 dark:text-primary" />}
-            control={
-              <SettingsDropdown
-                id="feature-updates-dropdown"
-                value={featureUpdates}
-                options={NOTIFICATION_CHANNEL_OPTIONS}
-                onChange={setFeatureUpdates}
+              <SettingsRow
+                id="feature-updates"
+                title="Feature Updates"
+                tooltip="Stay in the loop on new integrations like WhatsApp and Notion"
+                icon={<Sparkles size={18} className="text-zinc-900 dark:text-primary" />}
+                control={
+                  <MultiSelectDropdown
+                    id="feature-updates-dropdown"
+                    values={settings.featureUpdates}
+                    options={NOTIFICATION_CHANNEL_OPTIONS}
+                    onChange={handleFeatureUpdatesChange}
+                    minSelections={0}
+                  />
+                }
               />
-            }
-          />
-        </SettingsSection>
+            </SettingsSection>
+
+            <Button onClick={handleSave} disabled={!isDirty || isUpdating} className="w-full mt-4">
+              {isUpdating ? (
+                <>
+                  <Loader2 size={16} className="mr-2 animate-spin" />
+                  Saving...
+                </>
+              ) : isSuccess && !isDirty ? (
+                <>
+                  <Check size={16} className="mr-2" />
+                  Saved
+                </>
+              ) : (
+                'Save Changes'
+              )}
+            </Button>
+          </div>
+        )}
       </CardContent>
     </Card>
   )
