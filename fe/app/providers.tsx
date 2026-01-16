@@ -1,7 +1,10 @@
 'use client'
 
 import { AuthProvider } from '@/contexts/AuthContext'
+import { CommandPalette } from '@/components/shared/CommandPalette'
 import { ENV } from '@/lib/constants'
+import { ImpersonationBanner } from '@/components/admin/ImpersonationBanner'
+import { ImpersonationProvider } from '@/contexts/ImpersonationContext'
 import { LanguageProvider } from '@/contexts/LanguageContext'
 import { NotificationProvider } from '@/contexts/NotificationContext'
 import { PostHogProvider } from '@/contexts/PostHogContext'
@@ -30,9 +33,13 @@ export function Providers({ children }: { children: React.ReactNode }) {
         >
           <LanguageProvider>
             <AuthProvider>
-              <SocketProvider>
-                <NotificationProvider>{children}</NotificationProvider>
-              </SocketProvider>
+              <ImpersonationProvider>
+                <ImpersonationBanner />
+                <CommandPalette />
+                <SocketProvider>
+                  <NotificationProvider>{children}</NotificationProvider>
+                </SocketProvider>
+              </ImpersonationProvider>
             </AuthProvider>
           </LanguageProvider>
           <Toaster

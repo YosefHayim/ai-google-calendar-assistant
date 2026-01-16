@@ -639,9 +639,172 @@ export const getSubscriptionTrends = async (
   return trends;
 };
 
-/**
- * Get current admin user info
- */
 export const getAdminUserInfo = async (
   userId: string
 ): Promise<AdminUser | null> => getUserById(userId);
+
+export const createImpersonationSession = async (
+  targetUserId: string,
+  adminUserId: string
+): Promise<{
+  targetUser: AdminUser;
+  impersonationToken: string;
+}> => {
+  if (targetUserId === adminUserId) {
+    throw new Error("Cannot impersonate yourself");
+  }
+
+  const targetUser = await getUserById(targetUserId);
+  if (!targetUser) {
+    throw new Error("Target user not found");
+  }
+
+  const { data: sessionData, error } =
+    await SUPABASE.auth.admin.generateLink({
+      type: "magiclink",
+      email: targetUser.email,
+      options: {
+        redirectTo: `${process.env.FRONTEND_URL || "http://localhost:4000"}/dashboard`,
+      },
+    });
+
+  if (error || !sessionData) {
+    console.error("[Admin Service] Failed to create impersonation link:", error);
+    throw new Error("Failed to create impersonation session");
+  }
+
+  await logAdminAction({
+    adminUserId,
+    action: "user_impersonation_start",
+    resourceType: "user",
+    resourceId: targetUserId,
+    newValues: { targetEmail: targetUser.email },
+  });
+
+  const token = sessionData.properties?.hashed_token || "";
+
+  return {
+    targetUser,
+    impersonationToken: token,
+  };
+};
+
+export const revokeUserSessions = async (
+  targetUserId: string,
+  adminUserId: string
+): Promise<void> => {
+  if (targetUserId === adminUserId) {
+    throw new Error("Cannot revoke your own sessions");
+  }
+
+  const targetUser = await getUserById(targetUserId);
+  if (!targetUser) {
+    throw new Error("Target user not found");
+  }
+
+  const { error } = await SUPABASE.auth.admin.signOut(targetUserId, "global");
+
+  if (error) {
+    console.error("[Admin Service] Failed to revoke sessions:", error);
+    throw new Error(`Failed to revoke sessions: ${error.message}`);
+  }
+
+  await SUPABASE.from("users")
+    .update({ updated_at: new Date().toISOString() })
+    .eq("id", targetUserId);
+
+  await logAdminAction({
+    adminUserId,
+    action: "user_sessions_revoked",
+    resourceType: "user",
+    resourceId: targetUserId,
+    newValues: {
+      targetEmail: targetUser.email,
+      revokedAt: new Date().toISOString(),
+    },
+  });
+};
+
+export type BroadcastPayload = {
+  type: "info" | "warning" | "critical";
+  title: string;
+  message: string;
+  targetUserIds?: string[];
+  filters?: {
+    planSlug?: string;
+    status?: UserStatus;
+    lastActiveWithinDays?: number;
+  };
+};
+
+export const broadcastToUsers = async (
+  adminUserId: string,
+  payload: BroadcastPayload
+): Promise<{ sentTo: number }> => {
+  const userIds = await resolveTargetUserIds(payload);
+
+  await logAdminAction({
+    adminUserId,
+    action: "broadcast_sent",
+    resourceType: "notification",
+    resourceId: "broadcast",
+    newValues: {
+      type: payload.type,
+      title: payload.title,
+      sentToCount: userIds.length,
+    },
+  });
+
+  return { sentTo: userIds.length };
+};
+
+async function resolveTargetUserIds(
+  payload: BroadcastPayload
+): Promise<string[]> {
+  if (payload.targetUserIds && payload.targetUserIds.length > 0) {
+    return payload.targetUserIds;
+  }
+
+  if (payload.filters) {
+    return resolveFilteredUserIds(payload.filters);
+  }
+
+  const { data: users } = await SUPABASE.from("users")
+    .select("id")
+    .eq("status", "active");
+
+  return (users || []).map((u) => u.id);
+}
+
+async function resolveFilteredUserIds(filters: NonNullable<BroadcastPayload["filters"]>): Promise<string[]> {
+  let query = SUPABASE.from("users").select("id");
+
+  if (filters.status) {
+    query = query.eq("status", filters.status);
+  }
+
+  if (filters.lastActiveWithinDays) {
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - filters.lastActiveWithinDays);
+    query = query.gte("last_login_at", cutoff.toISOString());
+  }
+
+  const { data: users, error } = await query;
+  if (error) {
+    throw new Error(`Failed to fetch users for broadcast: ${error.message}`);
+  }
+
+  let userIds = (users || []).map((u) => u.id);
+
+  if (filters.planSlug) {
+    const { data: subs } = await SUPABASE.from("subscriptions")
+      .select("user_id, plans!inner(slug)")
+      .eq("plans.slug", filters.planSlug)
+      .in("status", [...ACTIVE_SUBSCRIPTION_STATUSES]);
+
+    const planUserIds = new Set((subs || []).map((s) => s.user_id));
+    userIds = userIds.filter((id) => planUserIds.has(id));
+  }
+
+  return userIds;
+}

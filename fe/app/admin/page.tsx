@@ -32,8 +32,10 @@ import {
 } from '@/hooks/queries/admin'
 
 import { Badge } from '@/components/ui/badge'
+import { BroadcastDialog } from '@/components/admin/BroadcastDialog'
 import { Button } from '@/components/ui/button'
-import React from 'react'
+import React, { useState } from 'react'
+import { Megaphone } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 // Helper to generate sparkline data from trends
@@ -48,6 +50,7 @@ const generateSparklineFromTrends = (
 }
 
 export default function AdminDashboardPage() {
+  const [showBroadcastDialog, setShowBroadcastDialog] = useState(false)
   const { data: stats, isLoading: statsLoading } = useDashboardStats()
   const { data: distribution, isLoading: distLoading } = useSubscriptionDistribution()
   const { data: recentPayments } = useRecentPayments({ limit: 5 })
@@ -83,6 +86,10 @@ export default function AdminDashboardPage() {
       <div className="mb-2 flex flex-col items-start justify-between space-y-2 md:flex-row md:items-center">
         <h1 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-white">Dashboard</h1>
         <div className="flex items-center space-x-2">
+          <Button variant="outline" onClick={() => setShowBroadcastDialog(true)}>
+            <Megaphone className="mr-2 h-4 w-4" />
+            Broadcast
+          </Button>
           <Button>
             <Download className="mr-2 h-4 w-4" />
             Download
@@ -93,6 +100,8 @@ export default function AdminDashboardPage() {
           </Button>
         </div>
       </div>
+
+      <BroadcastDialog open={showBroadcastDialog} onClose={() => setShowBroadcastDialog(false)} />
 
       {/* Tabs */}
       <Tabs defaultValue="overview" className="space-y-4">

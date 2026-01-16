@@ -25,8 +25,8 @@ export const subscriptionGuard = () =>
       }
 
       const wasTrialing = access.subscription_status === "canceled" ||
-        access.subscription_status === "expired" ||
-        access.subscription_status === "unpaid";
+        access.subscription_status === "unpaid" ||
+        access.subscription_status === null;
 
       const message = wasTrialing
         ? "Your trial has ended. Upgrade to Pro or Executive to continue using Ally's AI features and take control of your calendar."

@@ -557,6 +557,10 @@ export const ENDPOINTS = {
   ADMIN_AFFILIATES: '/api/admin/affiliates',
   ADMIN_AFFILIATES_SETTINGS: '/api/admin/affiliates/settings',
   ADMIN_AFFILIATE_BY_ID: (id: string) => `/api/admin/affiliates/${id}`,
+
+  ADMIN_USER_IMPERSONATE: (id: string) => `/api/admin/users/${id}/impersonate`,
+  ADMIN_USER_REVOKE_SESSIONS: (id: string) => `/api/admin/users/${id}/revoke-sessions`,
+  ADMIN_BROADCAST: '/api/admin/broadcast',
 } as const
 
 export type EndpointsType = typeof ENDPOINTS

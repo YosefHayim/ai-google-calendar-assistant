@@ -1,12 +1,16 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { User, Mail, Calendar, Globe, CreditCard, Shield } from 'lucide-react'
+import { User, Mail, Calendar, Globe, CreditCard, Shield, Eye, LogOut, Loader2 } from 'lucide-react'
 import type { AdminUser, UserStatus, UserRole } from '@/types/admin'
 import { format } from 'date-fns'
+import { impersonateUser, revokeUserSessions } from '@/services/admin.service'
+import { useImpersonation } from '@/contexts/ImpersonationContext'
+import { toast } from 'sonner'
 
 interface UserDetailsDialogProps {
   user: AdminUser
@@ -14,6 +18,35 @@ interface UserDetailsDialogProps {
 }
 
 export function UserDetailsDialog({ user, onClose }: UserDetailsDialogProps) {
+  const { startImpersonation } = useImpersonation()
+  const [isImpersonating, setIsImpersonating] = useState(false)
+  const [isRevokingSessions, setIsRevokingSessions] = useState(false)
+
+  const handleImpersonate = async () => {
+    setIsImpersonating(true)
+    try {
+      const result = await impersonateUser(user.id)
+      startImpersonation(result.targetUser, result.impersonationToken)
+    } catch (error) {
+      toast.error('Failed to impersonate user')
+      setIsImpersonating(false)
+    }
+  }
+
+  const handleRevokeSessions = async () => {
+    if (!confirm(`Force logout ${user.email} from all devices?`)) return
+
+    setIsRevokingSessions(true)
+    try {
+      await revokeUserSessions(user.id)
+      toast.success('User sessions revoked')
+    } catch (error) {
+      toast.error('Failed to revoke sessions')
+    } finally {
+      setIsRevokingSessions(false)
+    }
+  }
+
   return (
     <Dialog open onOpenChange={onClose}>
       <DialogContent className="max-w-2xl">
@@ -23,24 +56,55 @@ export function UserDetailsDialog({ user, onClose }: UserDetailsDialogProps) {
         </DialogHeader>
 
         <div className="space-y-6">
-          {/* User Header */}
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-full bg-zinc-200 dark:bg-zinc-700 flex items-center justify-center overflow-hidden">
-              {user.avatar_url ? (
-                <img src={user.avatar_url} alt="" className="w-16 h-16 rounded-full object-cover" />
-              ) : (
-                <User className="w-8 h-8 text-zinc-400" />
-              )}
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">
-                {user.display_name || `${user.first_name || ''} ${user.last_name || ''}`.trim() || 'No name'}
-              </h3>
-              <p className="text-zinc-500">{user.email}</p>
-              <div className="flex gap-2 mt-2">
-                <StatusBadge status={user.status} />
-                <RoleBadge role={user.role} />
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 rounded-full bg-zinc-200 dark:bg-zinc-700 flex items-center justify-center overflow-hidden">
+                {user.avatar_url ? (
+                  <img src={user.avatar_url} alt="" className="w-16 h-16 rounded-full object-cover" />
+                ) : (
+                  <User className="w-8 h-8 text-zinc-400" />
+                )}
               </div>
+              <div>
+                <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">
+                  {user.display_name || `${user.first_name || ''} ${user.last_name || ''}`.trim() || 'No name'}
+                </h3>
+                <p className="text-zinc-500">{user.email}</p>
+                <div className="flex gap-2 mt-2">
+                  <StatusBadge status={user.status} />
+                  <RoleBadge role={user.role} />
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-col gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleImpersonate}
+                disabled={isImpersonating || user.role === 'admin'}
+                className="text-amber-600 border-amber-300 hover:bg-amber-50"
+              >
+                {isImpersonating ? (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                ) : (
+                  <Eye className="w-4 h-4 mr-2" />
+                )}
+                View as User
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleRevokeSessions}
+                disabled={isRevokingSessions}
+                className="text-red-600 border-red-300 hover:bg-red-50"
+              >
+                {isRevokingSessions ? (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                ) : (
+                  <LogOut className="w-4 h-4 mr-2" />
+                )}
+                Force Logout
+              </Button>
             </div>
           </div>
 

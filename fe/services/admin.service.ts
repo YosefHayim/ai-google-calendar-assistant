@@ -154,3 +154,35 @@ export const getAffiliateSettings = async (): Promise<AffiliateSettingsResponse>
   const response = await apiClient.get<ApiResponse<AffiliateSettingsResponse>>(ENDPOINTS.ADMIN_AFFILIATES_SETTINGS)
   return response.data.data!
 }
+
+export const impersonateUser = async (
+  id: string
+): Promise<{ targetUser: AdminUser; impersonationToken: string }> => {
+  const response = await apiClient.post<
+    ApiResponse<{ targetUser: AdminUser; impersonationToken: string }>
+  >(ENDPOINTS.ADMIN_USER_IMPERSONATE(id))
+  return response.data.data!
+}
+
+export const revokeUserSessions = async (id: string): Promise<void> => {
+  await apiClient.post(ENDPOINTS.ADMIN_USER_REVOKE_SESSIONS(id))
+}
+
+export type BroadcastType = 'info' | 'warning' | 'critical'
+
+export interface BroadcastPayload {
+  type: BroadcastType
+  title: string
+  message: string
+  targetUserIds?: string[]
+  filters?: {
+    planSlug?: string
+    status?: string
+    lastActiveWithinDays?: number
+  }
+}
+
+export const broadcastNotification = async (payload: BroadcastPayload): Promise<{ sentTo: number }> => {
+  const response = await apiClient.post<ApiResponse<{ sentTo: number }>>(ENDPOINTS.ADMIN_BROADCAST, payload)
+  return response.data.data!
+}

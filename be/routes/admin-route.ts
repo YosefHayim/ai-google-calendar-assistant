@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  broadcastNotification,
   getAdminMe,
   getAuditLogs,
   getDashboardStats,
@@ -11,6 +12,8 @@ import {
   getUserById,
   getUsers,
   grantCredits,
+  impersonateUser,
+  revokeUserSessions,
   sendPasswordReset,
   updateUserRole,
   updateUserStatus,
@@ -40,6 +43,9 @@ router.patch("/users/:id/status", updateUserStatus);
 router.patch("/users/:id/role", updateUserRole);
 router.post("/users/:id/credits", grantCredits);
 router.post("/users/:id/password-reset", sendPasswordReset);
+router.post("/users/:id/impersonate", impersonateUser);
+router.post("/users/:id/revoke-sessions", revokeUserSessions);
+router.post("/broadcast", broadcastNotification);
 
 // Subscription endpoints
 router.get("/subscriptions", getSubscriptions);

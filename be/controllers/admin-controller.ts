@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 import { STATUS_RESPONSE } from "@/config";
+import { emitToUser } from "@/config/clients/socket-server";
 import type { AdminRequest } from "@/middlewares/admin-auth";
 import * as adminService from "@/services/admin-service";
 import type { AdminUserListParams, UserRole, UserStatus } from "@/types";
@@ -304,10 +305,6 @@ export const getSubscriptionTrends = reqResAsyncHandler(
   }
 );
 
-/**
- * GET /api/admin/me
- * Get current admin user info
- */
 export const getAdminMe = reqResAsyncHandler(
   async (req: AdminRequest, res: Response) => {
     const userResult = requireUserId(req, res);
@@ -327,5 +324,84 @@ export const getAdminMe = reqResAsyncHandler(
       "Admin user info retrieved",
       user
     );
+  }
+);
+
+export const impersonateUser = reqResAsyncHandler(
+  async (req: AdminRequest, res: Response) => {
+    const userResult = requireUserId(req, res);
+    if (!userResult.success) {
+      return;
+    }
+    const { userId: adminUserId } = userResult;
+
+    const { id: targetUserId } = req.params;
+
+    const result = await adminService.createImpersonationSession(
+      targetUserId,
+      adminUserId
+    );
+
+    return sendR(res, STATUS_RESPONSE.SUCCESS, "Impersonation session created", {
+      targetUser: result.targetUser,
+      impersonationToken: result.impersonationToken,
+    });
+  }
+);
+
+export const revokeUserSessions = reqResAsyncHandler(
+  async (req: AdminRequest, res: Response) => {
+    const userResult = requireUserId(req, res);
+    if (!userResult.success) {
+      return;
+    }
+    const { userId: adminUserId } = userResult;
+
+    const { id: targetUserId } = req.params;
+
+    await adminService.revokeUserSessions(targetUserId, adminUserId);
+
+    return sendR(res, STATUS_RESPONSE.SUCCESS, "User sessions revoked");
+  }
+);
+
+export const broadcastNotification = reqResAsyncHandler(
+  async (req: AdminRequest, res: Response) => {
+    const userResult = requireUserId(req, res);
+    if (!userResult.success) {
+      return;
+    }
+    const { userId: adminUserId } = userResult;
+
+    const { type, title, message, targetUserIds, filters } = req.body;
+
+    if (!type || !title || !message) {
+      return sendR(
+        res,
+        STATUS_RESPONSE.BAD_REQUEST,
+        "type, title, and message are required"
+      );
+    }
+
+    const result = await adminService.broadcastToUsers(adminUserId, {
+      type,
+      title,
+      message,
+      targetUserIds,
+      filters,
+    });
+
+    if (targetUserIds?.length) {
+      for (const userId of targetUserIds) {
+        emitToUser(userId, "notification", {
+          type: "system",
+          title,
+          message,
+          timestamp: new Date().toISOString(),
+        });
+      }
+    }
+
+    return sendR(res, STATUS_RESPONSE.SUCCESS, "Broadcast sent", result);
   }
 );
