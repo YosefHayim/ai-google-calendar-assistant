@@ -1,8 +1,12 @@
 import {
   type AllyBrainPreference,
+  type BrainInsight,
+  type BrainInsightImportance,
+  type AllyBrainAutoUpdateSettings,
   getPreference,
   PREFERENCE_DEFAULTS,
   updatePreference,
+  updateAllyBrainWithTimestamp,
   type VoicePreference,
 } from "@/services/user-preferences-service";
 import { telegramConversation } from "@/utils/conversation/TelegramConversationAdapter";
@@ -11,7 +15,13 @@ import { logger } from "@/utils/logger";
 const getUserIdFromTelegram = (telegramUserId: number) =>
   telegramConversation.getUserIdFromTelegram(telegramUserId);
 
-export type { AllyBrainPreference, VoicePreference };
+export type {
+  AllyBrainPreference,
+  VoicePreference,
+  BrainInsight,
+  BrainInsightImportance,
+  AllyBrainAutoUpdateSettings,
+};
 
 const DEFAULT_ALLY_BRAIN =
   PREFERENCE_DEFAULTS.ally_brain as AllyBrainPreference;
@@ -40,7 +50,7 @@ export const getAllyBrainForTelegram = async (
 
 export const updateAllyBrainForTelegram = async (
   telegramUserId: number,
-  value: AllyBrainPreference
+  value: Partial<AllyBrainPreference>
 ): Promise<boolean> => {
   try {
     const userId = await getUserIdFromTelegram(telegramUserId);
@@ -51,7 +61,7 @@ export const updateAllyBrainForTelegram = async (
       return false;
     }
 
-    await updatePreference(userId, "ally_brain", value);
+    await updateAllyBrainWithTimestamp(userId, value);
     return true;
   } catch (error) {
     logger.error(`ally-brain: Failed to update preference: ${error}`);

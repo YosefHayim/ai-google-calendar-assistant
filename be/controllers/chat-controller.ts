@@ -10,6 +10,10 @@ import {
   getCrossPlatformSyncPreference,
   PREFERENCE_DEFAULTS,
 } from "@/services/user-preferences-service";
+import {
+  buildAllyBrainContext,
+  processConversationForBrainUpdate,
+} from "@/services/brain-insight-service";
 import { unifiedContextStore } from "@/shared/context";
 import {
   generateConversationTitle,
@@ -53,11 +57,11 @@ async function buildChatPromptWithContext(
     params;
   const parts: string[] = [];
 
-  const allyBrain = await getAllyBrainPreference(userId);
-  if (allyBrain?.enabled && allyBrain?.instructions?.trim()) {
-    parts.push("--- User's Custom Instructions (Always Remember) ---");
-    parts.push(allyBrain.instructions);
-    parts.push("--- End Custom Instructions ---\n");
+  // Use enhanced brain context (includes both custom instructions AND learned insights)
+  const brainContext = await buildAllyBrainContext(userId);
+  if (brainContext) {
+    parts.push(brainContext);
+    parts.push("");
   }
 
   parts.push(`User Email: ${userEmail}`);
@@ -139,6 +143,12 @@ const sendChat = reqResAsyncHandler(
       );
       storeWebEmbeddingAsync(userId, message, "user");
       storeWebEmbeddingAsync(userId, finalOutput, "assistant");
+
+      // Process conversation for brain insights (async, non-blocking)
+      processConversationForBrainUpdate(userId, [
+        { role: "user", content: message },
+        { role: "assistant", content: finalOutput },
+      ]).catch((err) => console.error("Brain update error:", err));
 
       if (isNewConversation && conversationId) {
         generateConversationTitle(message)
@@ -408,6 +418,12 @@ const continueConversation = reqResAsyncHandler(
 
       storeWebEmbeddingAsync(userId, message, "user");
       storeWebEmbeddingAsync(userId, finalOutput, "assistant");
+
+      // Process conversation for brain insights (async, non-blocking)
+      processConversationForBrainUpdate(userId, [
+        { role: "user", content: message },
+        { role: "assistant", content: finalOutput },
+      ]).catch((err) => console.error("Brain update error:", err));
 
       sendR(res, STATUS_RESPONSE.SUCCESS, "Message processed successfully", {
         content: finalOutput,

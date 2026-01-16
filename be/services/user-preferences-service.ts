@@ -23,9 +23,35 @@ export type PreferenceKey =
   | "geo_location"
   | "notification_settings";
 
+export type BrainInsightImportance = "low" | "medium" | "high" | "critical";
+
+export type BrainInsight = {
+  id: string;
+  content: string;
+  importance: BrainInsightImportance;
+  category:
+    | "preference"
+    | "schedule"
+    | "location"
+    | "contact"
+    | "habit"
+    | "work"
+    | "other";
+  extractedAt: string;
+  source: "conversation" | "manual";
+};
+
+export type AllyBrainAutoUpdateSettings = {
+  enabled: boolean;
+  importanceThreshold: BrainInsightImportance;
+};
+
 export type AllyBrainPreference = {
   enabled: boolean;
   instructions: string;
+  updatedAt?: string;
+  autoUpdate?: AllyBrainAutoUpdateSettings;
+  insights?: BrainInsight[];
 };
 
 export type ContextualSchedulingPreference = {
@@ -105,7 +131,13 @@ export type PreferenceResult<T> = {
 // ============================================
 
 export const PREFERENCE_DEFAULTS: Record<PreferenceKey, PreferenceValue> = {
-  ally_brain: { enabled: false, instructions: "" },
+  ally_brain: {
+    enabled: false,
+    instructions: "",
+    updatedAt: undefined,
+    autoUpdate: { enabled: false, importanceThreshold: "medium" },
+    insights: [],
+  },
   contextual_scheduling: { enabled: true },
   reminder_defaults: {
     enabled: true,
@@ -391,4 +423,147 @@ export async function getNotificationSettingsPreference(
     userId,
     "notification_settings"
   );
+}
+
+// ============================================
+// Ally Brain Specific Functions
+// ============================================
+
+/**
+ * Update ally brain with automatic timestamp
+ */
+export async function updateAllyBrainWithTimestamp(
+  userId: string,
+  updates: Partial<AllyBrainPreference>
+): Promise<AllyBrainPreference> {
+  const current = await getAllyBrainPreference(userId);
+  const updated: AllyBrainPreference = {
+    enabled: updates.enabled ?? current?.enabled ?? false,
+    instructions: updates.instructions ?? current?.instructions ?? "",
+    updatedAt: new Date().toISOString(),
+    autoUpdate: updates.autoUpdate ?? current?.autoUpdate ?? {
+      enabled: false,
+      importanceThreshold: "medium",
+    },
+    insights: updates.insights ?? current?.insights ?? [],
+  };
+
+  await updatePreference(userId, "ally_brain", updated);
+  return updated;
+}
+
+/**
+ * Add a new insight to Ally's brain
+ */
+export async function addBrainInsight(
+  userId: string,
+  insight: Omit<BrainInsight, "id" | "extractedAt">
+): Promise<BrainInsight> {
+  const current = await getAllyBrainPreference(userId);
+  const insights = current?.insights ?? [];
+
+  const newInsight: BrainInsight = {
+    ...insight,
+    id: crypto.randomUUID(),
+    extractedAt: new Date().toISOString(),
+  };
+
+  // Check for duplicate content (avoid adding the same insight)
+  const isDuplicate = insights.some(
+    (existing) =>
+      existing.content.toLowerCase().trim() ===
+      newInsight.content.toLowerCase().trim()
+  );
+
+  if (!isDuplicate) {
+    insights.push(newInsight);
+    await updateAllyBrainWithTimestamp(userId, { insights });
+  }
+
+  return newInsight;
+}
+
+/**
+ * Remove an insight from Ally's brain
+ */
+export async function removeBrainInsight(
+  userId: string,
+  insightId: string
+): Promise<boolean> {
+  const current = await getAllyBrainPreference(userId);
+  if (!current?.insights) return false;
+
+  const filteredInsights = current.insights.filter((i) => i.id !== insightId);
+
+  if (filteredInsights.length === current.insights.length) {
+    return false; // Insight not found
+  }
+
+  await updateAllyBrainWithTimestamp(userId, { insights: filteredInsights });
+  return true;
+}
+
+/**
+ * Update auto-update settings for Ally's brain
+ */
+export async function updateAllyBrainAutoUpdateSettings(
+  userId: string,
+  settings: AllyBrainAutoUpdateSettings
+): Promise<AllyBrainPreference> {
+  return updateAllyBrainWithTimestamp(userId, { autoUpdate: settings });
+}
+
+/**
+ * Get insights filtered by importance threshold
+ */
+export async function getBrainInsightsAboveThreshold(
+  userId: string,
+  threshold: BrainInsightImportance
+): Promise<BrainInsight[]> {
+  const current = await getAllyBrainPreference(userId);
+  if (!current?.insights) return [];
+
+  const importanceOrder: BrainInsightImportance[] = [
+    "low",
+    "medium",
+    "high",
+    "critical",
+  ];
+  const thresholdIndex = importanceOrder.indexOf(threshold);
+
+  return current.insights.filter(
+    (insight) => importanceOrder.indexOf(insight.importance) >= thresholdIndex
+  );
+}
+
+/**
+ * Get time since last brain update
+ */
+export async function getTimeSinceLastBrainUpdate(
+  userId: string
+): Promise<{ milliseconds: number; formatted: string } | null> {
+  const current = await getAllyBrainPreference(userId);
+  if (!current?.updatedAt) return null;
+
+  const lastUpdate = new Date(current.updatedAt);
+  const now = new Date();
+  const milliseconds = now.getTime() - lastUpdate.getTime();
+
+  const seconds = Math.floor(milliseconds / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+
+  let formatted: string;
+  if (days > 0) {
+    formatted = days === 1 ? "1 day ago" : `${days} days ago`;
+  } else if (hours > 0) {
+    formatted = hours === 1 ? "1 hour ago" : `${hours} hours ago`;
+  } else if (minutes > 0) {
+    formatted = minutes === 1 ? "1 minute ago" : `${minutes} minutes ago`;
+  } else {
+    formatted = "Just now";
+  }
+
+  return { milliseconds, formatted };
 }

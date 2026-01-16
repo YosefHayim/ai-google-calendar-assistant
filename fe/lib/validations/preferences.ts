@@ -1,12 +1,59 @@
 import { z } from 'zod'
 
 /**
+ * Brain insight importance levels
+ */
+export const BRAIN_INSIGHT_IMPORTANCE = ['low', 'medium', 'high', 'critical'] as const
+export type BrainInsightImportance = (typeof BRAIN_INSIGHT_IMPORTANCE)[number]
+
+/**
+ * Brain insight categories
+ */
+export const BRAIN_INSIGHT_CATEGORIES = [
+  'preference',
+  'schedule',
+  'location',
+  'contact',
+  'habit',
+  'work',
+  'other',
+] as const
+export type BrainInsightCategory = (typeof BRAIN_INSIGHT_CATEGORIES)[number]
+
+/**
+ * Individual brain insight schema
+ */
+export const brainInsightSchema = z.object({
+  id: z.string(),
+  content: z.string(),
+  importance: z.enum(BRAIN_INSIGHT_IMPORTANCE),
+  category: z.enum(BRAIN_INSIGHT_CATEGORIES),
+  extractedAt: z.string(),
+  source: z.enum(['conversation', 'manual']),
+})
+
+export type BrainInsight = z.infer<typeof brainInsightSchema>
+
+/**
+ * Auto-update settings schema
+ */
+export const allyBrainAutoUpdateSchema = z.object({
+  enabled: z.boolean(),
+  importanceThreshold: z.enum(BRAIN_INSIGHT_IMPORTANCE),
+})
+
+export type AllyBrainAutoUpdateSettings = z.infer<typeof allyBrainAutoUpdateSchema>
+
+/**
  * Validation schema for Ally's Brain custom instructions
  * Max 1000 characters - error shown only when limit is reached
  */
 export const allyBrainSchema = z.object({
   enabled: z.boolean(),
   instructions: z.string().max(1000, 'Instructions must be 1000 characters or less'),
+  updatedAt: z.string().optional(),
+  autoUpdate: allyBrainAutoUpdateSchema.optional(),
+  insights: z.array(brainInsightSchema).optional(),
 })
 
 /**
@@ -58,6 +105,32 @@ export const REMINDER_TIME_OPTIONS = [
 export const allyBrainDefaults: AllyBrainFormData = {
   enabled: false,
   instructions: '',
+  updatedAt: undefined,
+  autoUpdate: { enabled: false, importanceThreshold: 'medium' },
+  insights: [],
+}
+
+/**
+ * Importance threshold options for UI
+ */
+export const IMPORTANCE_THRESHOLD_OPTIONS: { value: BrainInsightImportance; label: string; description: string }[] = [
+  { value: 'low', label: 'Low', description: 'Learn from any information mentioned' },
+  { value: 'medium', label: 'Medium', description: 'Learn useful personalization details' },
+  { value: 'high', label: 'High', description: 'Only learn important information' },
+  { value: 'critical', label: 'Critical', description: 'Only learn essential information' },
+]
+
+/**
+ * Category labels for insights
+ */
+export const INSIGHT_CATEGORY_LABELS: Record<BrainInsightCategory, string> = {
+  preference: 'Preference',
+  schedule: 'Schedule',
+  location: 'Location',
+  contact: 'Contact',
+  habit: 'Habit',
+  work: 'Work',
+  other: 'Other',
 }
 
 export const ALLY_BRAIN_PLACEHOLDER = `Example: I prefer morning meetings between 9-11am. My work days are Sunday through Thursday. Always add a 15-minute buffer between meetings. I take lunch at 1pm for an hour. When scheduling with clients, prefer video calls over in-person meetings.`
