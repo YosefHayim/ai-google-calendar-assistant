@@ -77,7 +77,9 @@ export const en = {
     changeLog: 'Change Log',
     description:
       'The executive-grade AI assistant designed for business owners to defend their deep work. From Free Exploratory access to Unlimited Executive Power. Built on the Ally Neural Protocol.',
-    systemStatus: 'All Systems Operational • High-Performance Engine',
+    systemOnline: 'All Systems Operational',
+    systemOffline: 'System Unavailable',
+    systemChecking: 'Checking Status...',
     chatOnTelegram: 'Chat with Ally on Telegram',
   },
 

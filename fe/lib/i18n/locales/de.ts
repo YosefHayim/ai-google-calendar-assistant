@@ -73,7 +73,9 @@ export const de: TranslationShape = {
     changeLog: 'Änderungsprotokoll',
     description:
       'Der KI-Assistent auf Führungsebene, entwickelt um Ihre Tiefenarbeit zu schützen. Von kostenlosem Zugang bis zu unbegrenzter Leistung. Basierend auf dem Ally Neural Protocol.',
-    systemStatus: 'Alle Systeme betriebsbereit • Hochleistungsmotor',
+    systemOnline: 'Alle Systeme betriebsbereit',
+    systemOffline: 'System nicht verfügbar',
+    systemChecking: 'Status wird überprüft...',
     chatOnTelegram: 'Mit Ally auf Telegram chatten',
   },
 

@@ -73,7 +73,9 @@ export const ru: TranslationShape = {
     changeLog: 'Журнал изменений',
     description:
       'ИИ-ассистент для руководителей, созданный для защиты вашего глубокого рабочего времени. От бесплатного доступа до неограниченной мощности. Построен на протоколе Ally Neural.',
-    systemStatus: 'Все системы работают • Высокопроизводительный движок',
+    systemOnline: 'Все системы работают',
+    systemOffline: 'Система недоступна',
+    systemChecking: 'Проверка статуса...',
     chatOnTelegram: 'Чат с Ally в Telegram',
   },
 

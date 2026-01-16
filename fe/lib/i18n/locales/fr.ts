@@ -73,7 +73,9 @@ export const fr: TranslationShape = {
     changeLog: 'Changelog',
     description:
       "L'assistant IA de niveau exécutif conçu pour protéger votre temps de travail profond. De l'accès gratuit à la puissance illimitée. Construit sur le protocole Ally Neural.",
-    systemStatus: 'Tous les systèmes opérationnels • Moteur haute performance',
+    systemOnline: 'Tous les systèmes opérationnels',
+    systemOffline: 'Système indisponible',
+    systemChecking: 'Vérification du statut...',
     chatOnTelegram: 'Discuter avec Ally sur Telegram',
   },
 

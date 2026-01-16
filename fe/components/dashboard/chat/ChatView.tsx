@@ -55,36 +55,36 @@ export const ChatView: React.FC<ChatViewProps> = ({
       ) : (
         <div id="tour-chat-history">
           {messages.map((msg) => {
-          const isEditing = editingMessageId === msg.id
+            const isEditing = editingMessageId === msg.id
 
-          return (
-            <div key={msg.id} className="group mb-8">
-              <EditableMessage
-                message={msg}
-                isEditing={isEditing}
-                editText={editText}
-                editInputRef={editInputRef}
-                onEditTextChange={setEditText}
-                onKeyDown={handleKeyDown}
-                onConfirm={confirmEdit}
-                onCancel={cancelEdit}
-              />
-              {!isEditing && (
-                <div className={`flex w-full ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                  <div className="max-w-[85%] md:max-w-[75%] w-full">
-                    <MessageActions
-                      msg={msg}
-                      isSpeaking={isSpeaking && speakingMessageId === msg.id}
-                      onResend={onResend}
-                      onEdit={() => startEdit(msg.id, msg.content)}
-                      onSpeak={(text) => onSpeak(text, msg.id)}
-                    />
+            return (
+              <div key={msg.id} className="group mb-8">
+                <EditableMessage
+                  message={msg}
+                  isEditing={isEditing}
+                  editText={editText}
+                  editInputRef={editInputRef}
+                  onEditTextChange={setEditText}
+                  onKeyDown={handleKeyDown}
+                  onConfirm={confirmEdit}
+                  onCancel={cancelEdit}
+                />
+                {!isEditing && (
+                  <div className={`flex w-full ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                    <div className="max-w-[85%] md:max-w-[75%] w-full">
+                      <MessageActions
+                        msg={msg}
+                        isSpeaking={isSpeaking && speakingMessageId === msg.id}
+                        onResend={onResend}
+                        onEdit={() => startEdit(msg.id, msg.content)}
+                        onSpeak={(text) => onSpeak(text, msg.id)}
+                      />
+                    </div>
                   </div>
-                </div>
-              )}
-            </div>
-          )
-        })}
+                )}
+              </div>
+            )
+          })}
         {isLoading && <StreamingMessage content={streamingText} currentTool={currentTool} isStreaming={isLoading} />}
         </div>
       )}

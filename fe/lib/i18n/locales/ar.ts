@@ -73,7 +73,9 @@ export const ar: TranslationShape = {
     changeLog: 'سجل التغييرات',
     description:
       'مساعد الذكاء الاصطناعي للمديرين التنفيذيين مصمم لحماية وقت عملك العميق. من الوصول المجاني إلى القوة غير المحدودة. مبني على بروتوكول Ally Neural.',
-    systemStatus: 'جميع الأنظمة تعمل • محرك عالي الأداء',
+    systemOnline: 'جميع الأنظمة تعمل',
+    systemOffline: 'النظام غير متاح',
+    systemChecking: 'جاري التحقق من الحالة...',
     chatOnTelegram: 'تحدث مع Ally على تيليجرام',
   },
 
