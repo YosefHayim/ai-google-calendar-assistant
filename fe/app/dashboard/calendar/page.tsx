@@ -7,7 +7,7 @@ import AIAllySidebar from '@/components/dashboard/shared/AIAllySidebar'
 import { LoadingSection } from '@/components/ui/loading-spinner'
 import { ErrorState } from '@/components/ui/error-state'
 import { Button } from '@/components/ui/button'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { CalendarFilterSelect } from '@/components/dashboard/analytics/CalendarFilterSelect'
 import { useCalendars } from '@/hooks/queries/calendars/useCalendars'
 import { useCreateEvent } from '@/hooks/queries/events/useCreateEvent'
 import { useUpdateEvent } from '@/hooks/queries/events/useUpdateEvent'
@@ -16,9 +16,9 @@ import { useGoogleCalendarStatus } from '@/hooks/queries/integrations/useGoogleC
 import { apiClient } from '@/lib/api/client'
 import { ENDPOINTS } from '@/lib/api/endpoints'
 import { toast } from 'sonner'
-import { CalendarDays, Link2, Filter } from 'lucide-react'
+import { CalendarDays, Link2, RefreshCw, Loader2 } from 'lucide-react'
 import { QuickEventDialog } from '@/components/dialogs/QuickEventDialog'
-import type { CalendarEvent, CreateEventRequest, UpdateEventRequest, CustomCalendar } from '@/types/api'
+import type { CalendarEvent, CreateEventRequest, UpdateEventRequest, CustomCalendar, CalendarListEntry } from '@/types/api'
 
 interface CalendarEventsGroup {
   calendarId: string
@@ -39,9 +39,30 @@ const GOOGLE_COLOR_TO_APP_COLOR: Record<string, string> = {
   '11': 'red',
 }
 
-const ALL_CALENDARS_VALUE = '__all__'
+function convertToCalendarListEntry(calendars: CustomCalendar[] | null | undefined): CalendarListEntry[] {
+  if (!calendars) return []
+  return calendars.map((cal) => ({
+    kind: 'calendar#calendarListEntry' as const,
+    etag: '',
+    id: cal.calendarId,
+    summary: cal.calendarName || cal.calendarId,
+    description: cal.calendarDescription || undefined,
+    timeZone: cal.timeZoneForCalendar || undefined,
+    backgroundColor: cal.calendarColorForEvents || '#6366f1',
+    accessRole: cal.accessRole || undefined,
+  }))
+}
 
-function transformCalendarEventToEvent(calendarEvent: CalendarEvent, calendarId?: string): Event {
+function getCalendarColorMap(calendars: CustomCalendar[] | null | undefined): Map<string, string> {
+  const map = new Map<string, string>()
+  if (!calendars) return map
+  for (const cal of calendars) {
+    map.set(cal.calendarId, cal.calendarColorForEvents || '#6366f1')
+  }
+  return map
+}
+
+function transformCalendarEventToEvent(calendarEvent: CalendarEvent, calendarId?: string, calendarColor?: string): Event {
   const startDate = calendarEvent.start.dateTime
     ? new Date(calendarEvent.start.dateTime)
     : calendarEvent.start.date
@@ -209,6 +230,7 @@ function CalendarContent() {
   const {
     data: allEventsData,
     isLoading: eventsLoading,
+    isFetching: eventsFetching,
     error: eventsError,
     refetch: refetchEvents,
   } = useQuery({
@@ -343,12 +365,28 @@ function CalendarContent() {
       <div className="flex-1 overflow-auto p-4 sm:p-6">
         <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <h1 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100">Calendar</h1>
-          <CalendarFilter
-            calendars={calendars}
-            selectedCalendarId={selectedCalendarId}
-            onCalendarChange={setSelectedCalendarId}
-            isLoading={calendarsLoading}
-          />
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => refetchEvents()}
+              disabled={eventsFetching}
+              className="h-9"
+            >
+              {eventsFetching ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <RefreshCw className="h-4 w-4 mr-2" />
+              )}
+              {eventsFetching ? 'Syncing...' : 'Sync'}
+            </Button>
+            <CalendarFilter
+              calendars={calendars}
+              selectedCalendarId={selectedCalendarId}
+              onCalendarChange={setSelectedCalendarId}
+              isLoading={calendarsLoading}
+            />
+          </div>
         </div>
         <EventManager
           events={events}

@@ -395,7 +395,7 @@ export function EventManager({
       {/* Header */}
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
-          <h2 className="text-xl font-semibold sm:text-2xl">
+          <h2 className="text-xl font-semibold sm:text-2xl min-w-[180px] sm:min-w-[220px]">
             {view === 'month' &&
               currentDate.toLocaleDateString('en-US', {
                 month: 'long',
