@@ -938,6 +938,9 @@ const transformVariant = (rawVariant: Variant["data"]): LemonSqueezyVariant => {
   }
 }
 
+// Cache TTL for Lemon Squeezy products (1 hour)
+const LS_PRODUCTS_CACHE_TTL = 3600
+
 /**
  * Fetch all published products from Lemon Squeezy for the configured store
  */
@@ -947,6 +950,21 @@ export const getLemonSqueezyProducts = async (): Promise<LemonSqueezyProduct[]> 
   const storeId = env.lemonSqueezy.storeId
   if (!storeId) {
     throw new Error("LemonSqueezy store ID not configured")
+  }
+
+  const cacheKey = `ls:products:${storeId}`
+
+  // Check cache first
+  if (isRedisConnected()) {
+    try {
+      const cached = await redisClient.get(cacheKey)
+      if (cached) {
+        logger.info("Returning cached Lemon Squeezy products")
+        return JSON.parse(cached)
+      }
+    } catch (cacheError) {
+      logger.warn("Redis cache read error for LS products", { error: cacheError })
+    }
   }
 
   try {
@@ -965,9 +983,21 @@ export const getLemonSqueezyProducts = async (): Promise<LemonSqueezyProduct[]> 
     }
 
     // Filter to only published products and transform
-    return data.data
+    const products = data.data
       .filter((product) => product.attributes.status === "published")
       .map(transformProduct)
+
+    // Cache the result
+    if (isRedisConnected()) {
+      try {
+        await redisClient.setex(cacheKey, LS_PRODUCTS_CACHE_TTL, JSON.stringify(products))
+        logger.info("Cached Lemon Squeezy products", { count: products.length })
+      } catch (cacheError) {
+        logger.warn("Redis cache write error for LS products", { error: cacheError })
+      }
+    }
+
+    return products
   } catch (error) {
     console.error("Error fetching LemonSqueezy products:", error)
     throw error
