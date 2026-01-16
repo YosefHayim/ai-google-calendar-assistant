@@ -1,12 +1,8 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
-  "extends": [
-    "ultracite"
-  ],
+  "extends": ["ultracite"],
   "files": {
-    "includes": [
-      "**/*.ts"
-    ]
+    "includes": ["**/*.ts"]
   },
   "formatter": {
     "lineWidth": 80
@@ -26,10 +22,7 @@
         "noConsole": {
           "level": "error",
           "options": {
-            "allow": [
-              "error",
-              "log"
-            ]
+            "allow": ["error", "log"]
           }
         }
       }

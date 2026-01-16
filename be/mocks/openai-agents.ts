@@ -53,7 +53,9 @@ export type MockAgentConfig = {
 /**
  * Default successful agent response
  */
-export const createMockAgentResponse = (overrides: Partial<MockAgentResponse> = {}): MockAgentResponse => ({
+export const createMockAgentResponse = (
+  overrides: Partial<MockAgentResponse> = {}
+): MockAgentResponse => ({
   id: `run_${Date.now()}`,
   object: "thread.run",
   created_at: Date.now(),
@@ -227,21 +229,30 @@ export class MockAgent {
   /**
    * Mock run method (primary agent execution method)
    */
-  async run(params: { messages?: MockAgentMessage[]; input?: string }): Promise<MockAgentResponse> {
+  async run(_params: {
+    messages?: MockAgentMessage[];
+    input?: string;
+  }): Promise<MockAgentResponse> {
     return Promise.resolve(this.mockResponse);
   }
 
   /**
    * Mock invoke method (alternative execution method)
    */
-  async invoke(params: { messages?: MockAgentMessage[]; input?: string }): Promise<MockAgentResponse> {
+  async invoke(params: {
+    messages?: MockAgentMessage[];
+    input?: string;
+  }): Promise<MockAgentResponse> {
     return this.run(params);
   }
 
   /**
    * Mock streaming method
    */
-  async *stream(params: { messages?: MockAgentMessage[]; input?: string }): AsyncGenerator<Partial<MockAgentResponse>> {
+  async *stream(_params: {
+    messages?: MockAgentMessage[];
+    input?: string;
+  }): AsyncGenerator<Partial<MockAgentResponse>> {
     yield { status: "in_progress" };
     yield { status: "in_progress", response: "Processing..." };
     yield this.mockResponse;
@@ -251,7 +262,10 @@ export class MockAgent {
 /**
  * Create a mock agent with predefined response
  */
-export const createMockAgent = (config: MockAgentConfig, mockResponse?: MockAgentResponse): MockAgent => {
+export const createMockAgent = (
+  config: MockAgentConfig,
+  mockResponse?: MockAgentResponse
+): MockAgent => {
   const agent = new MockAgent(config);
   if (mockResponse) {
     agent.setMockResponse(mockResponse);
@@ -266,89 +280,79 @@ export const mockAgentFactory = {
   /**
    * Create an agent that always succeeds
    */
-  createSuccessAgent: (config: MockAgentConfig) => {
-    return createMockAgent(config, mockAgentResponses.success);
-  },
+  createSuccessAgent: (config: MockAgentConfig) =>
+    createMockAgent(config, mockAgentResponses.success),
 
   /**
    * Create an agent that always fails
    */
-  createFailureAgent: (config: MockAgentConfig) => {
-    return createMockAgent(config, mockAgentResponses.failed);
-  },
+  createFailureAgent: (config: MockAgentConfig) =>
+    createMockAgent(config, mockAgentResponses.failed),
 
   /**
    * Create an agent that requires action
    */
-  createRequiresActionAgent: (config: MockAgentConfig) => {
-    return createMockAgent(config, mockAgentResponses.requiresAction);
-  },
+  createRequiresActionAgent: (config: MockAgentConfig) =>
+    createMockAgent(config, mockAgentResponses.requiresAction),
 
   /**
    * Create an event insertion agent
    */
-  createInsertEventAgent: (config: MockAgentConfig) => {
-    return createMockAgent(config, mockEventAgentResponses.insertEventSuccess);
-  },
+  createInsertEventAgent: (config: MockAgentConfig) =>
+    createMockAgent(config, mockEventAgentResponses.insertEventSuccess),
 
   /**
    * Create an event retrieval agent
    */
-  createGetEventAgent: (config: MockAgentConfig) => {
-    return createMockAgent(config, mockEventAgentResponses.getEventSuccess);
-  },
+  createGetEventAgent: (config: MockAgentConfig) =>
+    createMockAgent(config, mockEventAgentResponses.getEventSuccess),
 
   /**
    * Create an event update agent
    */
-  createUpdateEventAgent: (config: MockAgentConfig) => {
-    return createMockAgent(config, mockEventAgentResponses.updateEventSuccess);
-  },
+  createUpdateEventAgent: (config: MockAgentConfig) =>
+    createMockAgent(config, mockEventAgentResponses.updateEventSuccess),
 
   /**
    * Create an event deletion agent
    */
-  createDeleteEventAgent: (config: MockAgentConfig) => {
-    return createMockAgent(config, mockEventAgentResponses.deleteEventSuccess);
-  },
+  createDeleteEventAgent: (config: MockAgentConfig) =>
+    createMockAgent(config, mockEventAgentResponses.deleteEventSuccess),
 
   /**
    * Create a user validation agent
    */
-  createValidateUserAgent: (config: MockAgentConfig, shouldSucceed = true) => {
-    return createMockAgent(
+  createValidateUserAgent: (config: MockAgentConfig, shouldSucceed = true) =>
+    createMockAgent(
       config,
-      shouldSucceed ? mockAuthAgentResponses.validateUserSuccess : mockAuthAgentResponses.validateUserFailed,
-    );
-  },
+      shouldSucceed
+        ? mockAuthAgentResponses.validateUserSuccess
+        : mockAuthAgentResponses.validateUserFailed
+    ),
 
   /**
    * Create a user registration agent
    */
-  createRegisterUserAgent: (config: MockAgentConfig) => {
-    return createMockAgent(config, mockAuthAgentResponses.registerUserSuccess);
-  },
+  createRegisterUserAgent: (config: MockAgentConfig) =>
+    createMockAgent(config, mockAuthAgentResponses.registerUserSuccess),
 
   /**
    * Create an auth URL generation agent
    */
-  createGenerateAuthUrlAgent: (config: MockAgentConfig) => {
-    return createMockAgent(config, mockAuthAgentResponses.generateAuthUrlSuccess);
-  },
+  createGenerateAuthUrlAgent: (config: MockAgentConfig) =>
+    createMockAgent(config, mockAuthAgentResponses.generateAuthUrlSuccess),
 
   /**
    * Create a calendar type analysis agent
    */
-  createAnalyzeCalendarTypeAgent: (config: MockAgentConfig) => {
-    return createMockAgent(config, mockEventAgentResponses.analyzeCalendarTypeSuccess);
-  },
+  createAnalyzeCalendarTypeAgent: (config: MockAgentConfig) =>
+    createMockAgent(config, mockEventAgentResponses.analyzeCalendarTypeSuccess),
 
   /**
    * Create an event fields validation agent
    */
-  createValidateEventFieldsAgent: (config: MockAgentConfig) => {
-    return createMockAgent(config, mockEventAgentResponses.validateEventFieldsSuccess);
-  },
+  createValidateEventFieldsAgent: (config: MockAgentConfig) =>
+    createMockAgent(config, mockEventAgentResponses.validateEventFieldsSuccess),
 };
 
 /**
@@ -365,9 +369,8 @@ export const mockAgentErrors = {
 /**
  * Helper to create a mock agent error
  */
-export const createMockAgentError = (errorType: keyof typeof mockAgentErrors) => {
-  return mockAgentErrors[errorType];
-};
+export const createMockAgentError = (errorType: keyof typeof mockAgentErrors) =>
+  mockAgentErrors[errorType];
 
 /**
  * Mock tools for testing tool calls
@@ -399,6 +402,6 @@ export const resetMockAgentTools = () => {
 /**
  * Mock Agent class for Jest mocking
  */
-export const Agent = jest.fn<AnyFn>().mockImplementation((config: MockAgentConfig) => {
-  return new MockAgent(config);
-});
+export const Agent = jest
+  .fn<AnyFn>()
+  .mockImplementation((config: MockAgentConfig) => new MockAgent(config));

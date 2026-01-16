@@ -3,12 +3,12 @@
  * Handles WhatsApp Cloud API webhooks and integration endpoints
  */
 
-import express from "express"
-import { whatsAppController } from "@/controllers/whatsapp-controller"
-import { webhookSignatureMiddleware } from "@/whatsapp-bot/services/webhook-security"
-import { supabaseAuth } from "@/middlewares/supabase-auth"
+import express from "express";
+import { whatsAppController } from "@/controllers/whatsapp-controller";
+import { supabaseAuth } from "@/middlewares/supabase-auth";
+import { webhookSignatureMiddleware } from "@/whatsapp-bot/services/webhook-security";
 
-const router = express.Router()
+const router = express.Router();
 
 // ============================================================================
 // Public Webhook Endpoints (No auth - called by Meta)
@@ -19,7 +19,7 @@ const router = express.Router()
  * Webhook verification endpoint - Meta calls this to verify your webhook URL
  * Must respond with the challenge token
  */
-router.get("/", whatsAppController.verifyWebhook)
+router.get("/", whatsAppController.verifyWebhook);
 
 /**
  * POST /api/whatsapp
@@ -35,7 +35,7 @@ router.post(
   express.raw({ type: "application/json" }),
   webhookSignatureMiddleware,
   whatsAppController.handleWebhook
-)
+);
 
 // ============================================================================
 // Meta Callback Endpoints (No auth - called by Meta)
@@ -50,7 +50,7 @@ router.post(
   "/data-deletion",
   express.urlencoded({ extended: false }),
   whatsAppController.handleDataDeletion
-)
+);
 
 // ============================================================================
 // Protected Admin Endpoints
@@ -60,6 +60,6 @@ router.post(
  * GET /api/whatsapp/status
  * Returns integration configuration status (for admin dashboard)
  */
-router.get("/status", supabaseAuth(), whatsAppController.getStatus)
+router.get("/status", supabaseAuth(), whatsAppController.getStatus);
 
-export default router
+export default router;

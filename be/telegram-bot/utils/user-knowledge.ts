@@ -79,10 +79,7 @@ const fetchGapRecoverySettings = (_userId: string) =>
 
 // Preferences now stored in users.preferences JSONB column
 const fetchUserPreferences = (userId: string) =>
-  SUPABASE.from("users")
-    .select("preferences")
-    .eq("id", userId)
-    .single();
+  SUPABASE.from("users").select("preferences").eq("id", userId).single();
 
 type BuildKnowledgeParams = {
   user: {
@@ -210,7 +207,14 @@ export const gatherUserKnowledge = async (
       conversations,
       summaries,
       gapSettings,
-      preferences: preferences ? { preferences: preferences.preferences as Record<string, unknown> | null } : null,
+      preferences: preferences
+        ? {
+            preferences: preferences.preferences as Record<
+              string,
+              unknown
+            > | null,
+          }
+        : null,
     });
   } catch (error) {
     logger.error(

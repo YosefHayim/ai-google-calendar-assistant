@@ -1,8 +1,7 @@
 import { isRedisConnected, redisClient } from "@/config";
-import { logger } from "@/utils/logger";
-
 import type { GapCandidateDTO, GapRecoverySettings } from "@/types";
 import { DEFAULT_GAP_RECOVERY_SETTINGS } from "@/utils/calendar/gap-recovery";
+import { logger } from "@/utils/logger";
 
 const GAPS_CACHE_PREFIX = "gaps";
 const SETTINGS_CACHE_PREFIX = "gap_settings";
@@ -142,7 +141,9 @@ export async function getGapFromCache(
   gapId: string
 ): Promise<GapCandidateDTO | null> {
   const cached = await getCachedGaps(userId);
-  if (!cached) return null;
+  if (!cached) {
+    return null;
+  }
   return cached.gaps.find((g) => g.id === gapId) || null;
 }
 
@@ -164,14 +165,20 @@ export async function removeGapFromCache(
   userId: string,
   gapId: string
 ): Promise<boolean> {
-  if (!isRedisConnected()) return false;
+  if (!isRedisConnected()) {
+    return false;
+  }
 
   try {
     const cached = await getCachedGaps(userId);
-    if (!cached) return false;
+    if (!cached) {
+      return false;
+    }
 
     const index = cached.gaps.findIndex((g) => g.id === gapId);
-    if (index === -1) return false;
+    if (index === -1) {
+      return false;
+    }
 
     cached.gaps.splice(index, 1);
     await setCachedGaps(userId, cached.gaps);
@@ -193,7 +200,9 @@ export async function removeGapFromCache(
  * await invalidateGapsCache("user_123");
  */
 export async function invalidateGapsCache(userId: string): Promise<void> {
-  if (!isRedisConnected()) return;
+  if (!isRedisConnected()) {
+    return;
+  }
 
   try {
     const key = getGapsCacheKey(userId);
@@ -281,7 +290,9 @@ export async function saveUserSettings(
  * await invalidateUserSettings("user_123");
  */
 export async function invalidateUserSettings(userId: string): Promise<void> {
-  if (!isRedisConnected()) return;
+  if (!isRedisConnected()) {
+    return;
+  }
 
   try {
     const key = getSettingsCacheKey(userId);

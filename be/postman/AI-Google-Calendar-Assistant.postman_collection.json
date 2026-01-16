@@ -1,2522 +1,2522 @@
 {
-	"info": {
-		"_postman_id": "ai-google-calendar-assistant-collection",
-		"name": "AI Google Calendar Assistant API",
-		"description": "Complete API collection for the AI Google Calendar Assistant application.\n\n## Authentication\n\nMost endpoints require two levels of authentication:\n1. **Supabase Auth**: Bearer token in `Authorization` header\n2. **Google Calendar**: User must have authorized Google Calendar access\n\n## Getting Started\n\n1. Use the `/api/users/signin` or `/api/users/signup` endpoints to get your Supabase tokens\n2. Set the `access_token` environment variable with the returned session token\n3. Authorize Google Calendar via `/api/users/callback`\n4. You're ready to use all calendar and event endpoints!\n\n## Response Format\n\nAll responses follow this structure:\n```json\n{\n  \"status\": \"success\" | \"error\",\n  \"message\": \"Description\",\n  \"data\": {}\n}\n```",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-	},
-	"auth": {
-		"type": "bearer",
-		"bearer": [
-			{
-				"key": "token",
-				"value": "{{access_token}}",
-				"type": "string"
-			}
-		]
-	},
-	"variable": [
-		{
-			"key": "base_url",
-			"value": "http://localhost:3000/api",
-			"type": "string"
-		}
-	],
-	"item": [
-		{
-			"name": "Users (Authentication)",
-			"description": "User authentication and management endpoints.",
-			"item": [
-				{
-					"name": "Sign Up",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"email\": \"user@example.com\",\n    \"password\": \"yourSecurePassword123\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/users/signup",
-							"host": ["{{base_url}}"],
-							"path": ["users", "signup"]
-						},
-						"description": "Register a new user with email and password.\n\n**No authentication required**"
-					},
-					"response": [
-						{
-							"name": "Success",
-							"originalRequest": {
-								"method": "POST",
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"email\": \"user@example.com\",\n    \"password\": \"yourSecurePassword123\"\n}"
-								},
-								"url": {
-									"raw": "{{base_url}}/users/signup",
-									"host": ["{{base_url}}"],
-									"path": ["users", "signup"]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"body": "{\n    \"status\": \"success\",\n    \"message\": \"User signed up successfully\",\n    \"data\": {\n        \"user\": {\n            \"id\": \"uuid-here\",\n            \"email\": \"user@example.com\"\n        },\n        \"session\": {\n            \"access_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n            \"refresh_token\": \"refresh-token-here\",\n            \"expires_in\": 3600\n        }\n    }\n}"
-						}
-					]
-				},
-				{
-					"name": "Sign In",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"email\": \"user@example.com\",\n    \"password\": \"yourSecurePassword123\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/users/signin",
-							"host": ["{{base_url}}"],
-							"path": ["users", "signin"]
-						},
-						"description": "Sign in an existing user with email and password.\n\n**No authentication required**"
-					},
-					"response": [
-						{
-							"name": "Success",
-							"originalRequest": {
-								"method": "POST",
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"email\": \"user@example.com\",\n    \"password\": \"yourSecurePassword123\"\n}"
-								},
-								"url": {
-									"raw": "{{base_url}}/users/signin",
-									"host": ["{{base_url}}"],
-									"path": ["users", "signin"]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"body": "{\n    \"status\": \"success\",\n    \"message\": \"User signed in successfully\",\n    \"data\": {\n        \"user\": {\n            \"id\": \"uuid-here\",\n            \"email\": \"user@example.com\"\n        },\n        \"session\": {\n            \"access_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n            \"refresh_token\": \"refresh-token-here\",\n            \"expires_in\": 3600\n        }\n    }\n}"
-						}
-					]
-				},
-				{
-					"name": "Verify Email OTP",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"email\": \"user@example.com\",\n    \"token\": \"123456\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/users/verify-user-by-email-otp",
-							"host": ["{{base_url}}"],
-							"path": ["users", "verify-user-by-email-otp"]
-						},
-						"description": "Verify user's email using the OTP token sent to their email.\n\n**No authentication required**"
-					},
-					"response": []
-				},
-				{
-					"name": "Get Google OAuth URL",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/users/callback",
-							"host": ["{{base_url}}"],
-							"path": ["users", "callback"]
-						},
-						"description": "Get the Google OAuth authorization URL for Google Calendar access.\n\n**No authentication required**"
-					},
-					"response": []
-				},
-				{
-					"name": "Sign Up with Google",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/users/signup/google",
-							"host": ["{{base_url}}"],
-							"path": ["users", "signup", "google"]
-						},
-						"description": "Initiate Google OAuth sign up flow.\n\n**No authentication required**"
-					},
-					"response": []
-				},
-				{
-					"name": "Sign Up with GitHub",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/users/signup/github",
-							"host": ["{{base_url}}"],
-							"path": ["users", "signup", "github"]
-						},
-						"description": "Initiate GitHub OAuth sign up flow.\n\n**No authentication required**"
-					},
-					"response": []
-				},
-				{
-					"name": "Get Current User",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/users/get-user",
-							"host": ["{{base_url}}"],
-							"path": ["users", "get-user"]
-						},
-						"description": "Get the currently authenticated user's information.\n\n**Authentication: Required (Bearer Token)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Check Session",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/users/session",
-							"host": ["{{base_url}}"],
-							"path": ["users", "session"]
-						},
-						"description": "Check if the current session is valid.\n\n**Authentication: Required (Bearer Token)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Get User by ID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/users/:id",
-							"host": ["{{base_url}}"],
-							"path": ["users", ":id"],
-							"variable": [
-								{
-									"key": "id",
-									"value": "{{user_id}}",
-									"description": "User UUID"
-								}
-							]
-						},
-						"description": "Get user information by their ID.\n\n**Authentication: Required (Bearer Token)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Refresh Token",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"refresh_token\": \"{{refresh_token}}\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/users/refresh",
-							"host": ["{{base_url}}"],
-							"path": ["users", "refresh"]
-						},
-						"description": "Refresh the Supabase session using a refresh token.\n\n**Authentication: Required (Bearer Token)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Logout",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "POST",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/users/logout",
-							"host": ["{{base_url}}"],
-							"path": ["users", "logout"]
-						},
-						"description": "Logout the current user session.\n\n**No authentication required**"
-					},
-					"response": []
-				},
-				{
-					"name": "Deactivate User",
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"email\": \"user@example.com\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/users",
-							"host": ["{{base_url}}"],
-							"path": ["users"]
-						},
-						"description": "Deactivate the authenticated user's account.\n\n**Authentication: Required (Bearer Token)**"
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "User Preferences",
-			"description": "Manage user assistant preferences.",
-			"item": [
-				{
-					"name": "Get All Preferences",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/users/preferences",
-							"host": ["{{base_url}}"],
-							"path": ["users", "preferences"]
-						},
-						"description": "Get all assistant preferences for the authenticated user.\n\n**Authentication: Required (Bearer Token)**"
-					},
-					"response": [
-						{
-							"name": "Success",
-							"originalRequest": {
-								"method": "GET",
-								"url": {
-									"raw": "{{base_url}}/users/preferences",
-									"host": ["{{base_url}}"],
-									"path": ["users", "preferences"]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"body": "{\n    \"status\": \"success\",\n    \"message\": \"Preferences fetched successfully\",\n    \"data\": {\n        \"ally_brain\": {\n            \"enabled\": true,\n            \"level\": \"standard\"\n        },\n        \"contextual_scheduling\": {\n            \"enabled\": true,\n            \"work_hours_start\": \"09:00\",\n            \"work_hours_end\": \"17:00\"\n        }\n    }\n}"
-						}
-					]
-				},
-				{
-					"name": "Get Preference by Key",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/users/preferences/:key",
-							"host": ["{{base_url}}"],
-							"path": ["users", "preferences", ":key"],
-							"variable": [
-								{
-									"key": "key",
-									"value": "ally_brain",
-									"description": "Preference key (ally_brain, contextual_scheduling)"
-								}
-							]
-						},
-						"description": "Get a specific preference by key.\n\n**Authentication: Required (Bearer Token)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Update Ally Brain Preference",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"enabled\": true,\n    \"level\": \"advanced\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/users/preferences/ally_brain",
-							"host": ["{{base_url}}"],
-							"path": ["users", "preferences", "ally_brain"]
-						},
-						"description": "Update the ally_brain preference.\n\n**Authentication: Required (Bearer Token)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Update Contextual Scheduling Preference",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"enabled\": true,\n    \"work_hours_start\": \"09:00\",\n    \"work_hours_end\": \"18:00\",\n    \"timezone\": \"America/New_York\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/users/preferences/contextual_scheduling",
-							"host": ["{{base_url}}"],
-							"path": ["users", "preferences", "contextual_scheduling"]
-						},
-						"description": "Update the contextual_scheduling preference.\n\n**Authentication: Required (Bearer Token)**"
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Google Integration",
-			"description": "Manage Google Calendar integration status.",
-			"item": [
-				{
-					"name": "Get Google Calendar Integration Status",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/users/integrations/google-calendar",
-							"host": ["{{base_url}}"],
-							"path": ["users", "integrations", "google-calendar"]
-						},
-						"description": "Check the status of Google Calendar integration.\n\n**Authentication: Required (Bearer Token)**"
-					},
-					"response": [
-						{
-							"name": "Connected",
-							"originalRequest": {
-								"method": "GET",
-								"url": {
-									"raw": "{{base_url}}/users/integrations/google-calendar",
-									"host": ["{{base_url}}"],
-									"path": ["users", "integrations", "google-calendar"]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"body": "{\n    \"status\": \"success\",\n    \"message\": \"Integration status fetched\",\n    \"data\": {\n        \"connected\": true,\n        \"email\": \"user@gmail.com\",\n        \"expiresAt\": \"2024-01-20T10:30:00.000Z\"\n    }\n}"
-						}
-					]
-				},
-				{
-					"name": "Disconnect Google Calendar",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/users/integrations/google-calendar/disconnect",
-							"host": ["{{base_url}}"],
-							"path": ["users", "integrations", "google-calendar", "disconnect"]
-						},
-						"description": "Disconnect Google Calendar integration.\n\n**Authentication: Required (Bearer Token)**"
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Calendars",
-			"description": "Calendar management endpoints. All endpoints require Supabase authentication AND Google Calendar authorization.",
-			"item": [
-				{
-					"name": "Get All Calendars",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/calendars",
-							"host": ["{{base_url}}"],
-							"path": ["calendars"]
-						},
-						"description": "Get all calendars for the authenticated user.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Get Dry Calendar Info",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/calendars/dry-calendar-info",
-							"host": ["{{base_url}}"],
-							"path": ["calendars", "dry-calendar-info"]
-						},
-						"description": "Get token expiry information without making Google API calls.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Get Calendar by ID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/calendars/:id",
-							"host": ["{{base_url}}"],
-							"path": ["calendars", ":id"],
-							"variable": [
-								{
-									"key": "id",
-									"value": "primary",
-									"description": "Calendar ID (use 'primary' for main calendar)"
-								}
-							]
-						},
-						"description": "Get a specific calendar by its ID.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Create Calendar",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"summary\": \"Work Calendar\",\n    \"description\": \"Calendar for work-related events\",\n    \"location\": \"Office\",\n    \"timeZone\": \"America/New_York\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/calendars",
-							"host": ["{{base_url}}"],
-							"path": ["calendars"]
-						},
-						"description": "Create a new secondary calendar.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Update Calendar (Partial)",
-					"request": {
-						"method": "PATCH",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"summary\": \"Updated Calendar Name\",\n    \"description\": \"Updated description\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/calendars/:id",
-							"host": ["{{base_url}}"],
-							"path": ["calendars", ":id"],
-							"variable": [
-								{
-									"key": "id",
-									"value": "{{calendar_id}}",
-									"description": "Calendar ID"
-								}
-							]
-						},
-						"description": "Partially update a calendar's metadata.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Update Calendar (Full)",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"summary\": \"Full Updated Calendar\",\n    \"description\": \"Full updated description\",\n    \"location\": \"New Location\",\n    \"timeZone\": \"Europe/London\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/calendars/:id",
-							"host": ["{{base_url}}"],
-							"path": ["calendars", ":id"],
-							"variable": [
-								{
-									"key": "id",
-									"value": "{{calendar_id}}",
-									"description": "Calendar ID"
-								}
-							]
-						},
-						"description": "Fully update a calendar's metadata.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Delete Calendar",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/calendars/:id/delete",
-							"host": ["{{base_url}}"],
-							"path": ["calendars", ":id", "delete"],
-							"variable": [
-								{
-									"key": "id",
-									"value": "{{calendar_id}}",
-									"description": "Calendar ID (cannot delete 'primary')"
-								}
-							]
-						},
-						"description": "Delete a secondary calendar.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Clear Calendar Events",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/calendars/:id",
-							"host": ["{{base_url}}"],
-							"path": ["calendars", ":id"],
-							"variable": [
-								{
-									"key": "id",
-									"value": "primary",
-									"description": "Calendar ID"
-								}
-							]
-						},
-						"description": "Clear all events in a calendar.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Get Free/Busy Info",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/calendars/freebusy?timeMin=2024-01-15T00:00:00Z&timeMax=2024-01-22T00:00:00Z",
-							"host": ["{{base_url}}"],
-							"path": ["calendars", "freebusy"],
-							"query": [
-								{
-									"key": "timeMin",
-									"value": "2024-01-15T00:00:00Z",
-									"description": "Start of time range (ISO 8601)"
-								},
-								{
-									"key": "timeMax",
-									"value": "2024-01-22T00:00:00Z",
-									"description": "End of time range (ISO 8601)"
-								}
-							]
-						},
-						"description": "Get free/busy information for calendars within a time range.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Get Calendar Colors",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/calendars/colors",
-							"host": ["{{base_url}}"],
-							"path": ["calendars", "colors"]
-						},
-						"description": "Get all available calendar and event colors.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Get Calendar Color by ID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/calendars/colors/:id",
-							"host": ["{{base_url}}"],
-							"path": ["calendars", "colors", ":id"],
-							"variable": [
-								{
-									"key": "id",
-									"value": "1",
-									"description": "Color ID"
-								}
-							]
-						},
-						"description": "Get a specific calendar color by ID.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Get All Timezones",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/calendars/timezones",
-							"host": ["{{base_url}}"],
-							"path": ["calendars", "timezones"]
-						},
-						"description": "Get all available calendar timezones.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Get Timezone by ID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/calendars/timezones/:id",
-							"host": ["{{base_url}}"],
-							"path": ["calendars", "timezones", ":id"],
-							"variable": [
-								{
-									"key": "id",
-									"value": "America/New_York",
-									"description": "Timezone ID (IANA format)"
-								}
-							]
-						},
-						"description": "Get a specific timezone by ID.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Get All Calendar Settings",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/calendars/settings/all",
-							"host": ["{{base_url}}"],
-							"path": ["calendars", "settings", "all"]
-						},
-						"description": "Get all calendar settings for the user.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Get Calendar Settings",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/calendars/settings",
-							"host": ["{{base_url}}"],
-							"path": ["calendars", "settings"]
-						},
-						"description": "Get calendar settings.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Get Calendar Settings by ID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/calendars/settings/:id",
-							"host": ["{{base_url}}"],
-							"path": ["calendars", "settings", ":id"],
-							"variable": [
-								{
-									"key": "id",
-									"value": "timezone",
-									"description": "Setting ID (e.g., 'timezone', 'dateFieldOrder')"
-								}
-							]
-						},
-						"description": "Get a specific calendar setting by ID.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Calendar List",
-			"description": "Manage calendars on the user's calendar list.",
-			"item": [
-				{
-					"name": "List Calendars on User's List",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/calendars/list?minAccessRole=owner&showDeleted=false&showHidden=false",
-							"host": ["{{base_url}}"],
-							"path": ["calendars", "list"],
-							"query": [
-								{
-									"key": "minAccessRole",
-									"value": "owner",
-									"description": "Minimum access role: freeBusyReader, reader, writer, owner"
-								},
-								{
-									"key": "showDeleted",
-									"value": "false"
-								},
-								{
-									"key": "showHidden",
-									"value": "false"
-								}
-							]
-						},
-						"description": "List all calendars on the user's calendar list.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Add Calendar to User's List",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"id\": \"calendar-id@group.calendar.google.com\",\n    \"colorId\": \"1\",\n    \"hidden\": false,\n    \"selected\": true,\n    \"summaryOverride\": \"My Custom Name\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/calendars/list",
-							"host": ["{{base_url}}"],
-							"path": ["calendars", "list"]
-						},
-						"description": "Add an existing calendar to the user's calendar list.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Get Calendar from User's List",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/calendars/list/:id",
-							"host": ["{{base_url}}"],
-							"path": ["calendars", "list", ":id"],
-							"variable": [
-								{
-									"key": "id",
-									"value": "primary",
-									"description": "Calendar ID"
-								}
-							]
-						},
-						"description": "Get a specific calendar from the user's calendar list.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Update Calendar List Entry (Partial)",
-					"request": {
-						"method": "PATCH",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"colorId\": \"2\",\n    \"summaryOverride\": \"New Display Name\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/calendars/list/:id",
-							"host": ["{{base_url}}"],
-							"path": ["calendars", "list", ":id"],
-							"variable": [
-								{
-									"key": "id",
-									"value": "{{calendar_id}}",
-									"description": "Calendar ID"
-								}
-							]
-						},
-						"description": "Partially update a calendar's entry in the user's list.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Update Calendar List Entry (Full)",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"colorId\": \"3\",\n    \"hidden\": false,\n    \"selected\": true,\n    \"summaryOverride\": \"Full Update Name\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/calendars/list/:id",
-							"host": ["{{base_url}}"],
-							"path": ["calendars", "list", ":id"],
-							"variable": [
-								{
-									"key": "id",
-									"value": "{{calendar_id}}",
-									"description": "Calendar ID"
-								}
-							]
-						},
-						"description": "Fully update a calendar's entry in the user's list.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Remove Calendar from User's List",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/calendars/list/:id",
-							"host": ["{{base_url}}"],
-							"path": ["calendars", "list", ":id"],
-							"variable": [
-								{
-									"key": "id",
-									"value": "{{calendar_id}}",
-									"description": "Calendar ID"
-								}
-							]
-						},
-						"description": "Remove a calendar from the user's calendar list.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Watch Calendar List Changes",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"id\": \"unique-channel-id\",\n    \"type\": \"web_hook\",\n    \"address\": \"https://your-webhook-url.com/callback\",\n    \"token\": \"optional-token\",\n    \"expiration\": 1704067200000\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/calendars/list/watch",
-							"host": ["{{base_url}}"],
-							"path": ["calendars", "list", "watch"]
-						},
-						"description": "Watch for changes to the user's calendar list.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Events",
-			"description": "Calendar event management endpoints.",
-			"item": [
-				{
-					"name": "Get All Events",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/events?calendarId=primary&timeMin=2024-01-01T00:00:00Z&timeMax=2024-12-31T23:59:59Z",
-							"host": ["{{base_url}}"],
-							"path": ["events"],
-							"query": [
-								{
-									"key": "calendarId",
-									"value": "primary",
-									"description": "Calendar ID (default: 'primary')"
-								},
-								{
-									"key": "timeMin",
-									"value": "2024-01-01T00:00:00Z",
-									"description": "Lower bound for event start time (ISO 8601)"
-								},
-								{
-									"key": "timeMax",
-									"value": "2024-12-31T23:59:59Z",
-									"description": "Upper bound for event start time (ISO 8601)"
-								},
-								{
-									"key": "singleEvents",
-									"value": "true",
-									"description": "Expand recurring events",
-									"disabled": true
-								},
-								{
-									"key": "orderBy",
-									"value": "startTime",
-									"description": "Order by: startTime or updated",
-									"disabled": true
-								}
-							]
-						},
-						"description": "Get all events from a calendar within a time range.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Get Event by ID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/events/:id?calendarId=primary",
-							"host": ["{{base_url}}"],
-							"path": ["events", ":id"],
-							"query": [
-								{
-									"key": "calendarId",
-									"value": "primary"
-								}
-							],
-							"variable": [
-								{
-									"key": "id",
-									"value": "{{event_id}}",
-									"description": "Event ID"
-								}
-							]
-						},
-						"description": "Get a specific event by its ID.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Get Event Analytics",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/events/analytics?timeMin=2024-01-01T00:00:00Z&timeMax=2024-01-31T23:59:59Z",
-							"host": ["{{base_url}}"],
-							"path": ["events", "analytics"],
-							"query": [
-								{
-									"key": "timeMin",
-									"value": "2024-01-01T00:00:00Z",
-									"description": "Start of analysis period (ISO 8601)"
-								},
-								{
-									"key": "timeMax",
-									"value": "2024-01-31T23:59:59Z",
-									"description": "End of analysis period (ISO 8601)"
-								}
-							]
-						},
-						"description": "Get analytics for events within a date range.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Get AI-Powered Insights",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/events/insights?timeMin=2024-01-01T00:00:00Z&timeMax=2024-01-31T23:59:59Z",
-							"host": ["{{base_url}}"],
-							"path": ["events", "insights"],
-							"query": [
-								{
-									"key": "timeMin",
-									"value": "2024-01-01T00:00:00Z",
-									"description": "Start of period (ISO 8601)"
-								},
-								{
-									"key": "timeMax",
-									"value": "2024-01-31T23:59:59Z",
-									"description": "End of period (ISO 8601)"
-								}
-							]
-						},
-						"description": "Get AI-powered insights for calendar events.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": [
-						{
-							"name": "Success",
-							"originalRequest": {
-								"method": "GET",
-								"url": {
-									"raw": "{{base_url}}/events/insights?timeMin=2024-01-01T00:00:00Z&timeMax=2024-01-31T23:59:59Z",
-									"host": ["{{base_url}}"],
-									"path": ["events", "insights"]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"body": "{\n    \"status\": \"success\",\n    \"message\": \"Insights generated successfully\",\n    \"data\": {\n        \"summary\": \"You had 45 meetings this month...\",\n        \"recommendations\": [\n            \"Consider blocking focus time in the mornings\",\n            \"You have back-to-back meetings on Tuesdays\"\n        ],\n        \"patterns\": {\n            \"busiestDay\": \"Tuesday\",\n            \"averageMeetingDuration\": 45\n        }\n    }\n}"
-						}
-					]
-				},
-				{
-					"name": "Create Event",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"summary\": \"Team Meeting\",\n    \"description\": \"Weekly team sync to discuss progress\",\n    \"location\": \"Conference Room A\",\n    \"start\": {\n        \"dateTime\": \"2024-01-20T10:00:00\",\n        \"timeZone\": \"America/New_York\"\n    },\n    \"end\": {\n        \"dateTime\": \"2024-01-20T11:00:00\",\n        \"timeZone\": \"America/New_York\"\n    },\n    \"attendees\": [\n        {\n            \"email\": \"colleague@example.com\"\n        }\n    ],\n    \"reminders\": {\n        \"useDefault\": false,\n        \"overrides\": [\n            {\n                \"method\": \"popup\",\n                \"minutes\": 15\n            }\n        ]\n    }\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/events?calendarId=primary",
-							"host": ["{{base_url}}"],
-							"path": ["events"],
-							"query": [
-								{
-									"key": "calendarId",
-									"value": "primary"
-								}
-							]
-						},
-						"description": "Create a new calendar event.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Quick Add Event",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"text\": \"Meeting with John tomorrow at 3pm for 1 hour\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/events/quick-add?calendarId=primary",
-							"host": ["{{base_url}}"],
-							"path": ["events", "quick-add"],
-							"query": [
-								{
-									"key": "calendarId",
-									"value": "primary"
-								}
-							]
-						},
-						"description": "Quick add an event using natural language text.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Update Event",
-					"request": {
-						"method": "PATCH",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"summary\": \"Updated Meeting Title\",\n    \"description\": \"Updated description\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/events/:id?calendarId=primary",
-							"host": ["{{base_url}}"],
-							"path": ["events", ":id"],
-							"query": [
-								{
-									"key": "calendarId",
-									"value": "primary"
-								}
-							],
-							"variable": [
-								{
-									"key": "id",
-									"value": "{{event_id}}",
-									"description": "Event ID"
-								}
-							]
-						},
-						"description": "Update an existing event.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Delete Event",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/events/:id?calendarId=primary",
-							"host": ["{{base_url}}"],
-							"path": ["events", ":id"],
-							"query": [
-								{
-									"key": "calendarId",
-									"value": "primary"
-								}
-							],
-							"variable": [
-								{
-									"key": "id",
-									"value": "{{event_id}}",
-									"description": "Event ID"
-								}
-							]
-						},
-						"description": "Delete an event from the calendar.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Move Event to Another Calendar",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"eventId\": \"event-id-to-move\",\n    \"destination\": \"destination-calendar-id@group.calendar.google.com\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/events/move?calendarId=primary",
-							"host": ["{{base_url}}"],
-							"path": ["events", "move"],
-							"query": [
-								{
-									"key": "calendarId",
-									"value": "primary",
-									"description": "Source calendar ID"
-								}
-							]
-						},
-						"description": "Move an event from one calendar to another.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Import Event",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"iCalUID\": \"unique-ical-uid@example.com\",\n    \"summary\": \"Imported Event\",\n    \"start\": {\n        \"dateTime\": \"2024-01-25T10:00:00\",\n        \"timeZone\": \"America/New_York\"\n    },\n    \"end\": {\n        \"dateTime\": \"2024-01-25T11:00:00\",\n        \"timeZone\": \"America/New_York\"\n    }\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/events/import?calendarId=primary",
-							"host": ["{{base_url}}"],
-							"path": ["events", "import"],
-							"query": [
-								{
-									"key": "calendarId",
-									"value": "primary"
-								}
-							]
-						},
-						"description": "Import an event (creates a private copy).\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Get Recurring Event Instances",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/events/:id/instances?calendarId=primary&timeMin=2024-01-01T00:00:00Z&timeMax=2024-03-31T23:59:59Z",
-							"host": ["{{base_url}}"],
-							"path": ["events", ":id", "instances"],
-							"query": [
-								{
-									"key": "calendarId",
-									"value": "primary"
-								},
-								{
-									"key": "timeMin",
-									"value": "2024-01-01T00:00:00Z"
-								},
-								{
-									"key": "timeMax",
-									"value": "2024-03-31T23:59:59Z"
-								}
-							],
-							"variable": [
-								{
-									"key": "id",
-									"value": "{{event_id}}",
-									"description": "Recurring event ID"
-								}
-							]
-						},
-						"description": "Get all instances of a recurring event within a time range.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Watch Events",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"id\": \"unique-channel-id-for-events\",\n    \"type\": \"web_hook\",\n    \"address\": \"https://your-webhook-url.com/events-callback\",\n    \"token\": \"optional-verification-token\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/events/watch?calendarId=primary",
-							"host": ["{{base_url}}"],
-							"path": ["events", "watch"],
-							"query": [
-								{
-									"key": "calendarId",
-									"value": "primary"
-								}
-							]
-						},
-						"description": "Watch for changes to events in a calendar.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Gap Recovery",
-			"description": "AI-powered gap analysis and recovery for calendar scheduling.",
-			"item": [
-				{
-					"name": "Get Gaps (Analyze Calendar)",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/gaps?startDate=2024-01-15&endDate=2024-01-22&minGapMinutes=30",
-							"host": ["{{base_url}}"],
-							"path": ["gaps"],
-							"query": [
-								{
-									"key": "startDate",
-									"value": "2024-01-15",
-									"description": "Start date for gap analysis (YYYY-MM-DD)"
-								},
-								{
-									"key": "endDate",
-									"value": "2024-01-22",
-									"description": "End date for gap analysis (YYYY-MM-DD)"
-								},
-								{
-									"key": "minGapMinutes",
-									"value": "30",
-									"description": "Minimum gap duration to detect (optional)"
-								}
-							]
-						},
-						"description": "Analyze calendar for scheduling gaps.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": [
-						{
-							"name": "Success",
-							"originalRequest": {
-								"method": "GET",
-								"url": {
-									"raw": "{{base_url}}/gaps?startDate=2024-01-15&endDate=2024-01-22",
-									"host": ["{{base_url}}"],
-									"path": ["gaps"]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"body": "{\n    \"status\": \"success\",\n    \"message\": \"Gaps analyzed successfully\",\n    \"data\": {\n        \"gaps\": [\n            {\n                \"id\": \"gap-1\",\n                \"start\": \"2024-01-15T12:00:00Z\",\n                \"end\": \"2024-01-15T14:00:00Z\",\n                \"duration\": 120,\n                \"suggestions\": [\"Lunch break\", \"Focus time\"]\n            }\n        ],\n        \"totalGaps\": 5,\n        \"totalGapMinutes\": 480\n    }\n}"
-						}
-					]
-				},
-				{
-					"name": "Get Gaps Formatted",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/gaps/formatted?startDate=2024-01-15&endDate=2024-01-22",
-							"host": ["{{base_url}}"],
-							"path": ["gaps", "formatted"],
-							"query": [
-								{
-									"key": "startDate",
-									"value": "2024-01-15"
-								},
-								{
-									"key": "endDate",
-									"value": "2024-01-22"
-								}
-							]
-						},
-						"description": "Get gaps formatted for display in chat interfaces.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Fill Gap",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"summary\": \"Focus Time\",\n    \"description\": \"Deep work session\",\n    \"calendarId\": \"primary\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/gaps/:gapId/fill",
-							"host": ["{{base_url}}"],
-							"path": ["gaps", ":gapId", "fill"],
-							"variable": [
-								{
-									"key": "gapId",
-									"value": "gap-1",
-									"description": "Gap ID to fill"
-								}
-							]
-						},
-						"description": "Fill a gap with a new event.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Skip Gap",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"reason\": \"Need this time for personal errands\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/gaps/:gapId/skip",
-							"host": ["{{base_url}}"],
-							"path": ["gaps", ":gapId", "skip"],
-							"variable": [
-								{
-									"key": "gapId",
-									"value": "gap-1",
-									"description": "Gap ID to skip"
-								}
-							]
-						},
-						"description": "Skip a specific gap (mark as intentionally unused).\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Dismiss All Gaps",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/gaps/dismiss-all",
-							"host": ["{{base_url}}"],
-							"path": ["gaps", "dismiss-all"]
-						},
-						"description": "Dismiss all pending gaps.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Get Gap Recovery Settings",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/gaps/settings",
-							"host": ["{{base_url}}"],
-							"path": ["gaps", "settings"]
-						},
-						"description": "Get gap recovery feature settings.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Update Gap Recovery Settings",
-					"request": {
-						"method": "PATCH",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"enabled\": true,\n    \"minGapMinutes\": 30,\n    \"workHoursStart\": \"09:00\",\n    \"workHoursEnd\": \"17:00\",\n    \"excludeWeekends\": true\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/gaps/settings",
-							"host": ["{{base_url}}"],
-							"path": ["gaps", "settings"]
-						},
-						"description": "Update gap recovery settings.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Disable Gap Analysis",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/gaps/disable",
-							"host": ["{{base_url}}"],
-							"path": ["gaps", "disable"]
-						},
-						"description": "Disable gap analysis feature.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Chat (AI Assistant)",
-			"description": "AI-powered chat interface using OpenAI Agents SDK.",
-			"item": [
-				{
-					"name": "Send Chat Message",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"message\": \"Schedule a meeting with the team tomorrow at 2pm\",\n    \"conversationId\": \"optional-conversation-id\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/chat",
-							"host": ["{{base_url}}"],
-							"path": ["chat"]
-						},
-						"description": "Send a message to the AI assistant for calendar management.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": [
-						{
-							"name": "Success",
-							"originalRequest": {
-								"method": "POST",
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"message\": \"Schedule a meeting with the team tomorrow at 2pm\"\n}"
-								},
-								"url": {
-									"raw": "{{base_url}}/chat",
-									"host": ["{{base_url}}"],
-									"path": ["chat"]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"body": "{\n    \"status\": \"success\",\n    \"message\": \"Message processed\",\n    \"data\": {\n        \"response\": \"I've scheduled a team meeting for tomorrow at 2:00 PM. The event has been added to your primary calendar.\",\n        \"conversationId\": \"conv-123\",\n        \"actions\": [\n            {\n                \"type\": \"event_created\",\n                \"eventId\": \"event-456\"\n            }\n        ]\n    }\n}"
-						}
-					]
-				},
-				{
-					"name": "Get Conversations",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/chat/conversations?limit=20&offset=0",
-							"host": ["{{base_url}}"],
-							"path": ["chat", "conversations"],
-							"query": [
-								{
-									"key": "limit",
-									"value": "20",
-									"description": "Number of conversations to return"
-								},
-								{
-									"key": "offset",
-									"value": "0",
-									"description": "Pagination offset"
-								}
-							]
-						},
-						"description": "Get list of user's conversations.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Start New Conversation",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/chat/conversations/new",
-							"host": ["{{base_url}}"],
-							"path": ["chat", "conversations", "new"]
-						},
-						"description": "Start a new conversation (closes current active conversation).\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Get Conversation by ID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/chat/conversations/:id",
-							"host": ["{{base_url}}"],
-							"path": ["chat", "conversations", ":id"],
-							"variable": [
-								{
-									"key": "id",
-									"value": "{{conversation_id}}",
-									"description": "Conversation ID"
-								}
-							]
-						},
-						"description": "Get a specific conversation by ID.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Continue Conversation",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"message\": \"Actually, make it 3pm instead\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/chat/conversations/:id/messages",
-							"host": ["{{base_url}}"],
-							"path": ["chat", "conversations", ":id", "messages"],
-							"variable": [
-								{
-									"key": "id",
-									"value": "{{conversation_id}}",
-									"description": "Conversation ID"
-								}
-							]
-						},
-						"description": "Send a message to continue an existing conversation.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Delete Conversation",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/chat/conversations/:id",
-							"host": ["{{base_url}}"],
-							"path": ["chat", "conversations", ":id"],
-							"variable": [
-								{
-									"key": "id",
-									"value": "{{conversation_id}}",
-									"description": "Conversation ID"
-								}
-							]
-						},
-						"description": "Delete a conversation.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Voice",
-			"description": "Voice transcription endpoints.",
-			"item": [
-				{
-					"name": "Transcribe Audio",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "audio",
-									"type": "file",
-									"description": "Audio file (webm, mp3, mp4, m4a, wav, ogg, flac - max 25MB)"
-								}
-							]
-						},
-						"url": {
-							"raw": "{{base_url}}/voice/transcribe",
-							"host": ["{{base_url}}"],
-							"path": ["voice", "transcribe"]
-						},
-						"description": "Transcribe audio to text using OpenAI Whisper.\n\n**Authentication: Required (Bearer Token)**\n\n### Supported Formats\nwebm, mp3, mp4, m4a, wav, ogg, flac\n\n### Max File Size\n25MB"
-					},
-					"response": [
-						{
-							"name": "Success",
-							"originalRequest": {
-								"method": "POST",
-								"url": {
-									"raw": "{{base_url}}/voice/transcribe",
-									"host": ["{{base_url}}"],
-									"path": ["voice", "transcribe"]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"body": "{\n    \"status\": \"success\",\n    \"message\": \"Audio transcribed successfully\",\n    \"data\": {\n        \"text\": \"Schedule a meeting with John tomorrow at 3pm\",\n        \"language\": \"en\",\n        \"duration\": 3.5\n    }\n}"
-						}
-					]
-				}
-			]
-		},
-		{
-			"name": "Payments",
-			"description": "Stripe payment and subscription management.",
-			"item": [
-				{
-					"name": "Get Stripe Status",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/payments/status",
-							"host": ["{{base_url}}"],
-							"path": ["payments", "status"]
-						},
-						"description": "Check if Stripe is configured and get publishable key.\n\n**No authentication required**"
-					},
-					"response": []
-				},
-				{
-					"name": "Get Plans",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/payments/plans",
-							"host": ["{{base_url}}"],
-							"path": ["payments", "plans"]
-						},
-						"description": "Get all available subscription plans.\n\n**No authentication required**"
-					},
-					"response": [
-						{
-							"name": "Success",
-							"originalRequest": {
-								"method": "GET",
-								"url": {
-									"raw": "{{base_url}}/payments/plans",
-									"host": ["{{base_url}}"],
-									"path": ["payments", "plans"]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"body": "{\n    \"status\": \"success\",\n    \"message\": \"Plans fetched successfully\",\n    \"data\": [\n        {\n            \"slug\": \"starter\",\n            \"name\": \"Starter\",\n            \"price\": {\n                \"monthly\": 0,\n                \"yearly\": 0\n            },\n            \"features\": [\"Basic features\"],\n            \"limits\": {\n                \"credits\": 100\n            }\n        },\n        {\n            \"slug\": \"pro\",\n            \"name\": \"Pro\",\n            \"price\": {\n                \"monthly\": 9.99,\n                \"yearly\": 99.99\n            },\n            \"features\": [\"All features\", \"Priority support\"],\n            \"limits\": {\n                \"credits\": 1000\n            }\n        }\n    ]\n}"
-						}
-					]
-				},
-				{
-					"name": "Get Subscription Status",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/payments/subscription",
-							"host": ["{{base_url}}"],
-							"path": ["payments", "subscription"]
-						},
-						"description": "Get current user's subscription status.\n\n**Authentication: Required (Bearer Token)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Initialize Free Plan",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/payments/initialize-free",
-							"host": ["{{base_url}}"],
-							"path": ["payments", "initialize-free"]
-						},
-						"description": "Initialize free starter plan for user.\n\n**Authentication: Required (Bearer Token)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Create Subscription Checkout",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"planSlug\": \"pro\",\n    \"interval\": \"monthly\",\n    \"successUrl\": \"https://yourapp.com/success\",\n    \"cancelUrl\": \"https://yourapp.com/cancel\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/payments/checkout",
-							"host": ["{{base_url}}"],
-							"path": ["payments", "checkout"]
-						},
-						"description": "Create Stripe checkout session for subscription.\n\n**Authentication: Required (Bearer Token)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Create Credit Pack Checkout",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"credits\": 500,\n    \"planSlug\": \"pro\",\n    \"successUrl\": \"https://yourapp.com/success\",\n    \"cancelUrl\": \"https://yourapp.com/cancel\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/payments/checkout/credits",
-							"host": ["{{base_url}}"],
-							"path": ["payments", "checkout", "credits"]
-						},
-						"description": "Create Stripe checkout session for credit pack.\n\n**Authentication: Required (Bearer Token)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Create Portal Session",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"returnUrl\": \"https://yourapp.com/settings\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/payments/portal",
-							"host": ["{{base_url}}"],
-							"path": ["payments", "portal"]
-						},
-						"description": "Create Stripe billing portal session.\n\n**Authentication: Required (Bearer Token)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Cancel Subscription",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"reason\": \"No longer need the service\",\n    \"immediate\": false\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/payments/cancel",
-							"host": ["{{base_url}}"],
-							"path": ["payments", "cancel"]
-						},
-						"description": "Cancel subscription.\n\n**Authentication: Required (Bearer Token)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Request Refund",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"reason\": \"Service did not meet expectations\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/payments/refund",
-							"host": ["{{base_url}}"],
-							"path": ["payments", "refund"]
-						},
-						"description": "Request money-back refund (within 30-day guarantee).\n\n**Authentication: Required (Bearer Token)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Stripe Webhook",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Stripe-Signature",
-								"value": "{{stripe_signature}}",
-								"description": "Stripe webhook signature"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/payments/webhook",
-							"host": ["{{base_url}}"],
-							"path": ["payments", "webhook"]
-						},
-						"description": "Handle Stripe webhook events.\n\n**No authentication required** (verified via Stripe signature)"
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "ACL (Access Control)",
-			"description": "Access Control List management for calendars.",
-			"item": [
-				{
-					"name": "List ACL Rules",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/acl/:calendarId",
-							"host": ["{{base_url}}"],
-							"path": ["acl", ":calendarId"],
-							"variable": [
-								{
-									"key": "calendarId",
-									"value": "primary",
-									"description": "Calendar ID"
-								}
-							]
-						},
-						"description": "List all access control rules for a calendar.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Get ACL Rule",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/acl/:calendarId/:ruleId",
-							"host": ["{{base_url}}"],
-							"path": ["acl", ":calendarId", ":ruleId"],
-							"variable": [
-								{
-									"key": "calendarId",
-									"value": "primary"
-								},
-								{
-									"key": "ruleId",
-									"value": "user:someone@example.com"
-								}
-							]
-						},
-						"description": "Get a specific ACL rule.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Create ACL Rule",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"role\": \"reader\",\n    \"scope\": {\n        \"type\": \"user\",\n        \"value\": \"newuser@example.com\"\n    }\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/acl/:calendarId",
-							"host": ["{{base_url}}"],
-							"path": ["acl", ":calendarId"],
-							"variable": [
-								{
-									"key": "calendarId",
-									"value": "primary"
-								}
-							]
-						},
-						"description": "Create a new ACL rule to grant access.\n\n**Authentication: Required (Bearer Token + Google Calendar)**\n\n### Roles\n- none, freeBusyReader, reader, writer, owner"
-					},
-					"response": []
-				},
-				{
-					"name": "Update ACL Rule (Partial)",
-					"request": {
-						"method": "PATCH",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"role\": \"writer\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/acl/:calendarId/:ruleId",
-							"host": ["{{base_url}}"],
-							"path": ["acl", ":calendarId", ":ruleId"],
-							"variable": [
-								{
-									"key": "calendarId",
-									"value": "primary"
-								},
-								{
-									"key": "ruleId",
-									"value": "user:someone@example.com"
-								}
-							]
-						},
-						"description": "Partially update an ACL rule.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Update ACL Rule (Full)",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"role\": \"writer\",\n    \"scope\": {\n        \"type\": \"user\",\n        \"value\": \"someone@example.com\"\n    }\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/acl/:calendarId/:ruleId",
-							"host": ["{{base_url}}"],
-							"path": ["acl", ":calendarId", ":ruleId"],
-							"variable": [
-								{
-									"key": "calendarId",
-									"value": "primary"
-								},
-								{
-									"key": "ruleId",
-									"value": "user:someone@example.com"
-								}
-							]
-						},
-						"description": "Fully update an ACL rule.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Delete ACL Rule",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/acl/:calendarId/:ruleId",
-							"host": ["{{base_url}}"],
-							"path": ["acl", ":calendarId", ":ruleId"],
-							"variable": [
-								{
-									"key": "calendarId",
-									"value": "primary"
-								},
-								{
-									"key": "ruleId",
-									"value": "user:someone@example.com"
-								}
-							]
-						},
-						"description": "Delete an ACL rule (revoke access).\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				},
-				{
-					"name": "Watch ACL Changes",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"id\": \"unique-acl-channel-id\",\n    \"type\": \"web_hook\",\n    \"address\": \"https://your-webhook-url.com/acl-callback\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/acl/:calendarId/watch",
-							"host": ["{{base_url}}"],
-							"path": ["acl", ":calendarId", "watch"],
-							"variable": [
-								{
-									"key": "calendarId",
-									"value": "primary"
-								}
-							]
-						},
-						"description": "Watch for changes to ACL rules.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Channels",
-			"description": "Manage push notification channels.",
-			"item": [
-				{
-					"name": "Stop Channel",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"id\": \"channel-id-to-stop\",\n    \"resourceId\": \"resource-id-from-watch-response\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/channels/stop",
-							"host": ["{{base_url}}"],
-							"path": ["channels", "stop"]
-						},
-						"description": "Stop watching resources through a channel.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Contact",
-			"description": "Contact form submission.",
-			"item": [
-				{
-					"name": "Submit Contact Form",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "name",
-									"value": "John Doe",
-									"type": "text"
-								},
-								{
-									"key": "email",
-									"value": "john@example.com",
-									"type": "text"
-								},
-								{
-									"key": "subject",
-									"value": "Question about the service",
-									"type": "text"
-								},
-								{
-									"key": "message",
-									"value": "I have a question about your calendar assistant...",
-									"type": "text"
-								},
-								{
-									"key": "attachments",
-									"type": "file",
-									"description": "Optional attachments (max 5 files, 10MB each)"
-								}
-							]
-						},
-						"url": {
-							"raw": "{{base_url}}/contact",
-							"host": ["{{base_url}}"],
-							"path": ["contact"]
-						},
-						"description": "Submit a contact form with optional attachments.\n\n**No authentication required**\n\n### Allowed File Types\njpeg, png, gif, webp, pdf, txt, doc, docx, xls, xlsx, zip, csv\n\n### Limits\n- Max 5 files\n- Max 10MB per file"
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Webhooks",
-			"description": "External service webhooks.",
-			"item": [
-				{
-					"name": "Resend Inbound Email",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"from\": \"sender@example.com\",\n    \"to\": \"support@yourapp.com\",\n    \"subject\": \"Email subject\",\n    \"text\": \"Email body text\",\n    \"html\": \"<p>Email body HTML</p>\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:3000/webhooks/resend/inbound",
-							"protocol": "http",
-							"host": ["localhost"],
-							"port": "3000",
-							"path": ["webhooks", "resend", "inbound"]
-						},
-						"description": "Handle inbound emails from Resend.\n\n**No authentication required** (webhook endpoint)"
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "WhatsApp",
-			"description": "WhatsApp integration (under development).",
-			"item": [
-				{
-					"name": "Get WhatsApp Notifications",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/whatsapp",
-							"host": ["{{base_url}}"],
-							"path": ["whatsapp"]
-						},
-						"description": "Get WhatsApp notifications.\n\n**Authentication: Required (Bearer Token)**\n\n*Note: This feature is under development.*"
-					},
-					"response": []
-				}
-			]
-		}
-	]
+  "info": {
+    "_postman_id": "ai-google-calendar-assistant-collection",
+    "name": "AI Google Calendar Assistant API",
+    "description": "Complete API collection for the AI Google Calendar Assistant application.\n\n## Authentication\n\nMost endpoints require two levels of authentication:\n1. **Supabase Auth**: Bearer token in `Authorization` header\n2. **Google Calendar**: User must have authorized Google Calendar access\n\n## Getting Started\n\n1. Use the `/api/users/signin` or `/api/users/signup` endpoints to get your Supabase tokens\n2. Set the `access_token` environment variable with the returned session token\n3. Authorize Google Calendar via `/api/users/callback`\n4. You're ready to use all calendar and event endpoints!\n\n## Response Format\n\nAll responses follow this structure:\n```json\n{\n  \"status\": \"success\" | \"error\",\n  \"message\": \"Description\",\n  \"data\": {}\n}\n```",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{access_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000/api",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Users (Authentication)",
+      "description": "User authentication and management endpoints.",
+      "item": [
+        {
+          "name": "Sign Up",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"user@example.com\",\n    \"password\": \"yourSecurePassword123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/users/signup",
+              "host": ["{{base_url}}"],
+              "path": ["users", "signup"]
+            },
+            "description": "Register a new user with email and password.\n\n**No authentication required**"
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"email\": \"user@example.com\",\n    \"password\": \"yourSecurePassword123\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/users/signup",
+                  "host": ["{{base_url}}"],
+                  "path": ["users", "signup"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n    \"status\": \"success\",\n    \"message\": \"User signed up successfully\",\n    \"data\": {\n        \"user\": {\n            \"id\": \"uuid-here\",\n            \"email\": \"user@example.com\"\n        },\n        \"session\": {\n            \"access_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n            \"refresh_token\": \"refresh-token-here\",\n            \"expires_in\": 3600\n        }\n    }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Sign In",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"user@example.com\",\n    \"password\": \"yourSecurePassword123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/users/signin",
+              "host": ["{{base_url}}"],
+              "path": ["users", "signin"]
+            },
+            "description": "Sign in an existing user with email and password.\n\n**No authentication required**"
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"email\": \"user@example.com\",\n    \"password\": \"yourSecurePassword123\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/users/signin",
+                  "host": ["{{base_url}}"],
+                  "path": ["users", "signin"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n    \"status\": \"success\",\n    \"message\": \"User signed in successfully\",\n    \"data\": {\n        \"user\": {\n            \"id\": \"uuid-here\",\n            \"email\": \"user@example.com\"\n        },\n        \"session\": {\n            \"access_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n            \"refresh_token\": \"refresh-token-here\",\n            \"expires_in\": 3600\n        }\n    }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Verify Email OTP",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"user@example.com\",\n    \"token\": \"123456\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/users/verify-user-by-email-otp",
+              "host": ["{{base_url}}"],
+              "path": ["users", "verify-user-by-email-otp"]
+            },
+            "description": "Verify user's email using the OTP token sent to their email.\n\n**No authentication required**"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Google OAuth URL",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/callback",
+              "host": ["{{base_url}}"],
+              "path": ["users", "callback"]
+            },
+            "description": "Get the Google OAuth authorization URL for Google Calendar access.\n\n**No authentication required**"
+          },
+          "response": []
+        },
+        {
+          "name": "Sign Up with Google",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/signup/google",
+              "host": ["{{base_url}}"],
+              "path": ["users", "signup", "google"]
+            },
+            "description": "Initiate Google OAuth sign up flow.\n\n**No authentication required**"
+          },
+          "response": []
+        },
+        {
+          "name": "Sign Up with GitHub",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/signup/github",
+              "host": ["{{base_url}}"],
+              "path": ["users", "signup", "github"]
+            },
+            "description": "Initiate GitHub OAuth sign up flow.\n\n**No authentication required**"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Current User",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/get-user",
+              "host": ["{{base_url}}"],
+              "path": ["users", "get-user"]
+            },
+            "description": "Get the currently authenticated user's information.\n\n**Authentication: Required (Bearer Token)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Check Session",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/session",
+              "host": ["{{base_url}}"],
+              "path": ["users", "session"]
+            },
+            "description": "Check if the current session is valid.\n\n**Authentication: Required (Bearer Token)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Get User by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/:id",
+              "host": ["{{base_url}}"],
+              "path": ["users", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "{{user_id}}",
+                  "description": "User UUID"
+                }
+              ]
+            },
+            "description": "Get user information by their ID.\n\n**Authentication: Required (Bearer Token)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"refresh_token\": \"{{refresh_token}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/users/refresh",
+              "host": ["{{base_url}}"],
+              "path": ["users", "refresh"]
+            },
+            "description": "Refresh the Supabase session using a refresh token.\n\n**Authentication: Required (Bearer Token)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/logout",
+              "host": ["{{base_url}}"],
+              "path": ["users", "logout"]
+            },
+            "description": "Logout the current user session.\n\n**No authentication required**"
+          },
+          "response": []
+        },
+        {
+          "name": "Deactivate User",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"user@example.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/users",
+              "host": ["{{base_url}}"],
+              "path": ["users"]
+            },
+            "description": "Deactivate the authenticated user's account.\n\n**Authentication: Required (Bearer Token)**"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "User Preferences",
+      "description": "Manage user assistant preferences.",
+      "item": [
+        {
+          "name": "Get All Preferences",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/preferences",
+              "host": ["{{base_url}}"],
+              "path": ["users", "preferences"]
+            },
+            "description": "Get all assistant preferences for the authenticated user.\n\n**Authentication: Required (Bearer Token)**"
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{base_url}}/users/preferences",
+                  "host": ["{{base_url}}"],
+                  "path": ["users", "preferences"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n    \"status\": \"success\",\n    \"message\": \"Preferences fetched successfully\",\n    \"data\": {\n        \"ally_brain\": {\n            \"enabled\": true,\n            \"level\": \"standard\"\n        },\n        \"contextual_scheduling\": {\n            \"enabled\": true,\n            \"work_hours_start\": \"09:00\",\n            \"work_hours_end\": \"17:00\"\n        }\n    }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Preference by Key",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/preferences/:key",
+              "host": ["{{base_url}}"],
+              "path": ["users", "preferences", ":key"],
+              "variable": [
+                {
+                  "key": "key",
+                  "value": "ally_brain",
+                  "description": "Preference key (ally_brain, contextual_scheduling)"
+                }
+              ]
+            },
+            "description": "Get a specific preference by key.\n\n**Authentication: Required (Bearer Token)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Ally Brain Preference",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"enabled\": true,\n    \"level\": \"advanced\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/users/preferences/ally_brain",
+              "host": ["{{base_url}}"],
+              "path": ["users", "preferences", "ally_brain"]
+            },
+            "description": "Update the ally_brain preference.\n\n**Authentication: Required (Bearer Token)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Contextual Scheduling Preference",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"enabled\": true,\n    \"work_hours_start\": \"09:00\",\n    \"work_hours_end\": \"18:00\",\n    \"timezone\": \"America/New_York\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/users/preferences/contextual_scheduling",
+              "host": ["{{base_url}}"],
+              "path": ["users", "preferences", "contextual_scheduling"]
+            },
+            "description": "Update the contextual_scheduling preference.\n\n**Authentication: Required (Bearer Token)**"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Google Integration",
+      "description": "Manage Google Calendar integration status.",
+      "item": [
+        {
+          "name": "Get Google Calendar Integration Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/integrations/google-calendar",
+              "host": ["{{base_url}}"],
+              "path": ["users", "integrations", "google-calendar"]
+            },
+            "description": "Check the status of Google Calendar integration.\n\n**Authentication: Required (Bearer Token)**"
+          },
+          "response": [
+            {
+              "name": "Connected",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{base_url}}/users/integrations/google-calendar",
+                  "host": ["{{base_url}}"],
+                  "path": ["users", "integrations", "google-calendar"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n    \"status\": \"success\",\n    \"message\": \"Integration status fetched\",\n    \"data\": {\n        \"connected\": true,\n        \"email\": \"user@gmail.com\",\n        \"expiresAt\": \"2024-01-20T10:30:00.000Z\"\n    }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Disconnect Google Calendar",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/integrations/google-calendar/disconnect",
+              "host": ["{{base_url}}"],
+              "path": ["users", "integrations", "google-calendar", "disconnect"]
+            },
+            "description": "Disconnect Google Calendar integration.\n\n**Authentication: Required (Bearer Token)**"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Calendars",
+      "description": "Calendar management endpoints. All endpoints require Supabase authentication AND Google Calendar authorization.",
+      "item": [
+        {
+          "name": "Get All Calendars",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/calendars",
+              "host": ["{{base_url}}"],
+              "path": ["calendars"]
+            },
+            "description": "Get all calendars for the authenticated user.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Dry Calendar Info",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/calendars/dry-calendar-info",
+              "host": ["{{base_url}}"],
+              "path": ["calendars", "dry-calendar-info"]
+            },
+            "description": "Get token expiry information without making Google API calls.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Calendar by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/calendars/:id",
+              "host": ["{{base_url}}"],
+              "path": ["calendars", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "primary",
+                  "description": "Calendar ID (use 'primary' for main calendar)"
+                }
+              ]
+            },
+            "description": "Get a specific calendar by its ID.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Calendar",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"summary\": \"Work Calendar\",\n    \"description\": \"Calendar for work-related events\",\n    \"location\": \"Office\",\n    \"timeZone\": \"America/New_York\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/calendars",
+              "host": ["{{base_url}}"],
+              "path": ["calendars"]
+            },
+            "description": "Create a new secondary calendar.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Calendar (Partial)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"summary\": \"Updated Calendar Name\",\n    \"description\": \"Updated description\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/calendars/:id",
+              "host": ["{{base_url}}"],
+              "path": ["calendars", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "{{calendar_id}}",
+                  "description": "Calendar ID"
+                }
+              ]
+            },
+            "description": "Partially update a calendar's metadata.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Calendar (Full)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"summary\": \"Full Updated Calendar\",\n    \"description\": \"Full updated description\",\n    \"location\": \"New Location\",\n    \"timeZone\": \"Europe/London\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/calendars/:id",
+              "host": ["{{base_url}}"],
+              "path": ["calendars", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "{{calendar_id}}",
+                  "description": "Calendar ID"
+                }
+              ]
+            },
+            "description": "Fully update a calendar's metadata.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Calendar",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/calendars/:id/delete",
+              "host": ["{{base_url}}"],
+              "path": ["calendars", ":id", "delete"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "{{calendar_id}}",
+                  "description": "Calendar ID (cannot delete 'primary')"
+                }
+              ]
+            },
+            "description": "Delete a secondary calendar.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Clear Calendar Events",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/calendars/:id",
+              "host": ["{{base_url}}"],
+              "path": ["calendars", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "primary",
+                  "description": "Calendar ID"
+                }
+              ]
+            },
+            "description": "Clear all events in a calendar.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Free/Busy Info",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/calendars/freebusy?timeMin=2024-01-15T00:00:00Z&timeMax=2024-01-22T00:00:00Z",
+              "host": ["{{base_url}}"],
+              "path": ["calendars", "freebusy"],
+              "query": [
+                {
+                  "key": "timeMin",
+                  "value": "2024-01-15T00:00:00Z",
+                  "description": "Start of time range (ISO 8601)"
+                },
+                {
+                  "key": "timeMax",
+                  "value": "2024-01-22T00:00:00Z",
+                  "description": "End of time range (ISO 8601)"
+                }
+              ]
+            },
+            "description": "Get free/busy information for calendars within a time range.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Calendar Colors",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/calendars/colors",
+              "host": ["{{base_url}}"],
+              "path": ["calendars", "colors"]
+            },
+            "description": "Get all available calendar and event colors.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Calendar Color by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/calendars/colors/:id",
+              "host": ["{{base_url}}"],
+              "path": ["calendars", "colors", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1",
+                  "description": "Color ID"
+                }
+              ]
+            },
+            "description": "Get a specific calendar color by ID.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Timezones",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/calendars/timezones",
+              "host": ["{{base_url}}"],
+              "path": ["calendars", "timezones"]
+            },
+            "description": "Get all available calendar timezones.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Timezone by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/calendars/timezones/:id",
+              "host": ["{{base_url}}"],
+              "path": ["calendars", "timezones", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "America/New_York",
+                  "description": "Timezone ID (IANA format)"
+                }
+              ]
+            },
+            "description": "Get a specific timezone by ID.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Calendar Settings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/calendars/settings/all",
+              "host": ["{{base_url}}"],
+              "path": ["calendars", "settings", "all"]
+            },
+            "description": "Get all calendar settings for the user.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Calendar Settings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/calendars/settings",
+              "host": ["{{base_url}}"],
+              "path": ["calendars", "settings"]
+            },
+            "description": "Get calendar settings.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Calendar Settings by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/calendars/settings/:id",
+              "host": ["{{base_url}}"],
+              "path": ["calendars", "settings", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "timezone",
+                  "description": "Setting ID (e.g., 'timezone', 'dateFieldOrder')"
+                }
+              ]
+            },
+            "description": "Get a specific calendar setting by ID.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Calendar List",
+      "description": "Manage calendars on the user's calendar list.",
+      "item": [
+        {
+          "name": "List Calendars on User's List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/calendars/list?minAccessRole=owner&showDeleted=false&showHidden=false",
+              "host": ["{{base_url}}"],
+              "path": ["calendars", "list"],
+              "query": [
+                {
+                  "key": "minAccessRole",
+                  "value": "owner",
+                  "description": "Minimum access role: freeBusyReader, reader, writer, owner"
+                },
+                {
+                  "key": "showDeleted",
+                  "value": "false"
+                },
+                {
+                  "key": "showHidden",
+                  "value": "false"
+                }
+              ]
+            },
+            "description": "List all calendars on the user's calendar list.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Add Calendar to User's List",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"id\": \"calendar-id@group.calendar.google.com\",\n    \"colorId\": \"1\",\n    \"hidden\": false,\n    \"selected\": true,\n    \"summaryOverride\": \"My Custom Name\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/calendars/list",
+              "host": ["{{base_url}}"],
+              "path": ["calendars", "list"]
+            },
+            "description": "Add an existing calendar to the user's calendar list.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Calendar from User's List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/calendars/list/:id",
+              "host": ["{{base_url}}"],
+              "path": ["calendars", "list", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "primary",
+                  "description": "Calendar ID"
+                }
+              ]
+            },
+            "description": "Get a specific calendar from the user's calendar list.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Calendar List Entry (Partial)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"colorId\": \"2\",\n    \"summaryOverride\": \"New Display Name\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/calendars/list/:id",
+              "host": ["{{base_url}}"],
+              "path": ["calendars", "list", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "{{calendar_id}}",
+                  "description": "Calendar ID"
+                }
+              ]
+            },
+            "description": "Partially update a calendar's entry in the user's list.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Calendar List Entry (Full)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"colorId\": \"3\",\n    \"hidden\": false,\n    \"selected\": true,\n    \"summaryOverride\": \"Full Update Name\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/calendars/list/:id",
+              "host": ["{{base_url}}"],
+              "path": ["calendars", "list", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "{{calendar_id}}",
+                  "description": "Calendar ID"
+                }
+              ]
+            },
+            "description": "Fully update a calendar's entry in the user's list.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Remove Calendar from User's List",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/calendars/list/:id",
+              "host": ["{{base_url}}"],
+              "path": ["calendars", "list", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "{{calendar_id}}",
+                  "description": "Calendar ID"
+                }
+              ]
+            },
+            "description": "Remove a calendar from the user's calendar list.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Watch Calendar List Changes",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"id\": \"unique-channel-id\",\n    \"type\": \"web_hook\",\n    \"address\": \"https://your-webhook-url.com/callback\",\n    \"token\": \"optional-token\",\n    \"expiration\": 1704067200000\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/calendars/list/watch",
+              "host": ["{{base_url}}"],
+              "path": ["calendars", "list", "watch"]
+            },
+            "description": "Watch for changes to the user's calendar list.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Events",
+      "description": "Calendar event management endpoints.",
+      "item": [
+        {
+          "name": "Get All Events",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/events?calendarId=primary&timeMin=2024-01-01T00:00:00Z&timeMax=2024-12-31T23:59:59Z",
+              "host": ["{{base_url}}"],
+              "path": ["events"],
+              "query": [
+                {
+                  "key": "calendarId",
+                  "value": "primary",
+                  "description": "Calendar ID (default: 'primary')"
+                },
+                {
+                  "key": "timeMin",
+                  "value": "2024-01-01T00:00:00Z",
+                  "description": "Lower bound for event start time (ISO 8601)"
+                },
+                {
+                  "key": "timeMax",
+                  "value": "2024-12-31T23:59:59Z",
+                  "description": "Upper bound for event start time (ISO 8601)"
+                },
+                {
+                  "key": "singleEvents",
+                  "value": "true",
+                  "description": "Expand recurring events",
+                  "disabled": true
+                },
+                {
+                  "key": "orderBy",
+                  "value": "startTime",
+                  "description": "Order by: startTime or updated",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Get all events from a calendar within a time range.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Event by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/events/:id?calendarId=primary",
+              "host": ["{{base_url}}"],
+              "path": ["events", ":id"],
+              "query": [
+                {
+                  "key": "calendarId",
+                  "value": "primary"
+                }
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "{{event_id}}",
+                  "description": "Event ID"
+                }
+              ]
+            },
+            "description": "Get a specific event by its ID.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Event Analytics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/events/analytics?timeMin=2024-01-01T00:00:00Z&timeMax=2024-01-31T23:59:59Z",
+              "host": ["{{base_url}}"],
+              "path": ["events", "analytics"],
+              "query": [
+                {
+                  "key": "timeMin",
+                  "value": "2024-01-01T00:00:00Z",
+                  "description": "Start of analysis period (ISO 8601)"
+                },
+                {
+                  "key": "timeMax",
+                  "value": "2024-01-31T23:59:59Z",
+                  "description": "End of analysis period (ISO 8601)"
+                }
+              ]
+            },
+            "description": "Get analytics for events within a date range.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Get AI-Powered Insights",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/events/insights?timeMin=2024-01-01T00:00:00Z&timeMax=2024-01-31T23:59:59Z",
+              "host": ["{{base_url}}"],
+              "path": ["events", "insights"],
+              "query": [
+                {
+                  "key": "timeMin",
+                  "value": "2024-01-01T00:00:00Z",
+                  "description": "Start of period (ISO 8601)"
+                },
+                {
+                  "key": "timeMax",
+                  "value": "2024-01-31T23:59:59Z",
+                  "description": "End of period (ISO 8601)"
+                }
+              ]
+            },
+            "description": "Get AI-powered insights for calendar events.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{base_url}}/events/insights?timeMin=2024-01-01T00:00:00Z&timeMax=2024-01-31T23:59:59Z",
+                  "host": ["{{base_url}}"],
+                  "path": ["events", "insights"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n    \"status\": \"success\",\n    \"message\": \"Insights generated successfully\",\n    \"data\": {\n        \"summary\": \"You had 45 meetings this month...\",\n        \"recommendations\": [\n            \"Consider blocking focus time in the mornings\",\n            \"You have back-to-back meetings on Tuesdays\"\n        ],\n        \"patterns\": {\n            \"busiestDay\": \"Tuesday\",\n            \"averageMeetingDuration\": 45\n        }\n    }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create Event",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"summary\": \"Team Meeting\",\n    \"description\": \"Weekly team sync to discuss progress\",\n    \"location\": \"Conference Room A\",\n    \"start\": {\n        \"dateTime\": \"2024-01-20T10:00:00\",\n        \"timeZone\": \"America/New_York\"\n    },\n    \"end\": {\n        \"dateTime\": \"2024-01-20T11:00:00\",\n        \"timeZone\": \"America/New_York\"\n    },\n    \"attendees\": [\n        {\n            \"email\": \"colleague@example.com\"\n        }\n    ],\n    \"reminders\": {\n        \"useDefault\": false,\n        \"overrides\": [\n            {\n                \"method\": \"popup\",\n                \"minutes\": 15\n            }\n        ]\n    }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/events?calendarId=primary",
+              "host": ["{{base_url}}"],
+              "path": ["events"],
+              "query": [
+                {
+                  "key": "calendarId",
+                  "value": "primary"
+                }
+              ]
+            },
+            "description": "Create a new calendar event.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Quick Add Event",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"text\": \"Meeting with John tomorrow at 3pm for 1 hour\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/events/quick-add?calendarId=primary",
+              "host": ["{{base_url}}"],
+              "path": ["events", "quick-add"],
+              "query": [
+                {
+                  "key": "calendarId",
+                  "value": "primary"
+                }
+              ]
+            },
+            "description": "Quick add an event using natural language text.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Event",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"summary\": \"Updated Meeting Title\",\n    \"description\": \"Updated description\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/events/:id?calendarId=primary",
+              "host": ["{{base_url}}"],
+              "path": ["events", ":id"],
+              "query": [
+                {
+                  "key": "calendarId",
+                  "value": "primary"
+                }
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "{{event_id}}",
+                  "description": "Event ID"
+                }
+              ]
+            },
+            "description": "Update an existing event.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Event",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/events/:id?calendarId=primary",
+              "host": ["{{base_url}}"],
+              "path": ["events", ":id"],
+              "query": [
+                {
+                  "key": "calendarId",
+                  "value": "primary"
+                }
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "{{event_id}}",
+                  "description": "Event ID"
+                }
+              ]
+            },
+            "description": "Delete an event from the calendar.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Move Event to Another Calendar",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"eventId\": \"event-id-to-move\",\n    \"destination\": \"destination-calendar-id@group.calendar.google.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/events/move?calendarId=primary",
+              "host": ["{{base_url}}"],
+              "path": ["events", "move"],
+              "query": [
+                {
+                  "key": "calendarId",
+                  "value": "primary",
+                  "description": "Source calendar ID"
+                }
+              ]
+            },
+            "description": "Move an event from one calendar to another.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Import Event",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"iCalUID\": \"unique-ical-uid@example.com\",\n    \"summary\": \"Imported Event\",\n    \"start\": {\n        \"dateTime\": \"2024-01-25T10:00:00\",\n        \"timeZone\": \"America/New_York\"\n    },\n    \"end\": {\n        \"dateTime\": \"2024-01-25T11:00:00\",\n        \"timeZone\": \"America/New_York\"\n    }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/events/import?calendarId=primary",
+              "host": ["{{base_url}}"],
+              "path": ["events", "import"],
+              "query": [
+                {
+                  "key": "calendarId",
+                  "value": "primary"
+                }
+              ]
+            },
+            "description": "Import an event (creates a private copy).\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Recurring Event Instances",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/events/:id/instances?calendarId=primary&timeMin=2024-01-01T00:00:00Z&timeMax=2024-03-31T23:59:59Z",
+              "host": ["{{base_url}}"],
+              "path": ["events", ":id", "instances"],
+              "query": [
+                {
+                  "key": "calendarId",
+                  "value": "primary"
+                },
+                {
+                  "key": "timeMin",
+                  "value": "2024-01-01T00:00:00Z"
+                },
+                {
+                  "key": "timeMax",
+                  "value": "2024-03-31T23:59:59Z"
+                }
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "{{event_id}}",
+                  "description": "Recurring event ID"
+                }
+              ]
+            },
+            "description": "Get all instances of a recurring event within a time range.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Watch Events",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"id\": \"unique-channel-id-for-events\",\n    \"type\": \"web_hook\",\n    \"address\": \"https://your-webhook-url.com/events-callback\",\n    \"token\": \"optional-verification-token\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/events/watch?calendarId=primary",
+              "host": ["{{base_url}}"],
+              "path": ["events", "watch"],
+              "query": [
+                {
+                  "key": "calendarId",
+                  "value": "primary"
+                }
+              ]
+            },
+            "description": "Watch for changes to events in a calendar.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Gap Recovery",
+      "description": "AI-powered gap analysis and recovery for calendar scheduling.",
+      "item": [
+        {
+          "name": "Get Gaps (Analyze Calendar)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/gaps?startDate=2024-01-15&endDate=2024-01-22&minGapMinutes=30",
+              "host": ["{{base_url}}"],
+              "path": ["gaps"],
+              "query": [
+                {
+                  "key": "startDate",
+                  "value": "2024-01-15",
+                  "description": "Start date for gap analysis (YYYY-MM-DD)"
+                },
+                {
+                  "key": "endDate",
+                  "value": "2024-01-22",
+                  "description": "End date for gap analysis (YYYY-MM-DD)"
+                },
+                {
+                  "key": "minGapMinutes",
+                  "value": "30",
+                  "description": "Minimum gap duration to detect (optional)"
+                }
+              ]
+            },
+            "description": "Analyze calendar for scheduling gaps.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{base_url}}/gaps?startDate=2024-01-15&endDate=2024-01-22",
+                  "host": ["{{base_url}}"],
+                  "path": ["gaps"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n    \"status\": \"success\",\n    \"message\": \"Gaps analyzed successfully\",\n    \"data\": {\n        \"gaps\": [\n            {\n                \"id\": \"gap-1\",\n                \"start\": \"2024-01-15T12:00:00Z\",\n                \"end\": \"2024-01-15T14:00:00Z\",\n                \"duration\": 120,\n                \"suggestions\": [\"Lunch break\", \"Focus time\"]\n            }\n        ],\n        \"totalGaps\": 5,\n        \"totalGapMinutes\": 480\n    }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Gaps Formatted",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/gaps/formatted?startDate=2024-01-15&endDate=2024-01-22",
+              "host": ["{{base_url}}"],
+              "path": ["gaps", "formatted"],
+              "query": [
+                {
+                  "key": "startDate",
+                  "value": "2024-01-15"
+                },
+                {
+                  "key": "endDate",
+                  "value": "2024-01-22"
+                }
+              ]
+            },
+            "description": "Get gaps formatted for display in chat interfaces.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Fill Gap",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"summary\": \"Focus Time\",\n    \"description\": \"Deep work session\",\n    \"calendarId\": \"primary\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/gaps/:gapId/fill",
+              "host": ["{{base_url}}"],
+              "path": ["gaps", ":gapId", "fill"],
+              "variable": [
+                {
+                  "key": "gapId",
+                  "value": "gap-1",
+                  "description": "Gap ID to fill"
+                }
+              ]
+            },
+            "description": "Fill a gap with a new event.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Skip Gap",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"reason\": \"Need this time for personal errands\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/gaps/:gapId/skip",
+              "host": ["{{base_url}}"],
+              "path": ["gaps", ":gapId", "skip"],
+              "variable": [
+                {
+                  "key": "gapId",
+                  "value": "gap-1",
+                  "description": "Gap ID to skip"
+                }
+              ]
+            },
+            "description": "Skip a specific gap (mark as intentionally unused).\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Dismiss All Gaps",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/gaps/dismiss-all",
+              "host": ["{{base_url}}"],
+              "path": ["gaps", "dismiss-all"]
+            },
+            "description": "Dismiss all pending gaps.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Gap Recovery Settings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/gaps/settings",
+              "host": ["{{base_url}}"],
+              "path": ["gaps", "settings"]
+            },
+            "description": "Get gap recovery feature settings.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Gap Recovery Settings",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"enabled\": true,\n    \"minGapMinutes\": 30,\n    \"workHoursStart\": \"09:00\",\n    \"workHoursEnd\": \"17:00\",\n    \"excludeWeekends\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/gaps/settings",
+              "host": ["{{base_url}}"],
+              "path": ["gaps", "settings"]
+            },
+            "description": "Update gap recovery settings.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Disable Gap Analysis",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/gaps/disable",
+              "host": ["{{base_url}}"],
+              "path": ["gaps", "disable"]
+            },
+            "description": "Disable gap analysis feature.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Chat (AI Assistant)",
+      "description": "AI-powered chat interface using OpenAI Agents SDK.",
+      "item": [
+        {
+          "name": "Send Chat Message",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"message\": \"Schedule a meeting with the team tomorrow at 2pm\",\n    \"conversationId\": \"optional-conversation-id\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/chat",
+              "host": ["{{base_url}}"],
+              "path": ["chat"]
+            },
+            "description": "Send a message to the AI assistant for calendar management.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"message\": \"Schedule a meeting with the team tomorrow at 2pm\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/chat",
+                  "host": ["{{base_url}}"],
+                  "path": ["chat"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n    \"status\": \"success\",\n    \"message\": \"Message processed\",\n    \"data\": {\n        \"response\": \"I've scheduled a team meeting for tomorrow at 2:00 PM. The event has been added to your primary calendar.\",\n        \"conversationId\": \"conv-123\",\n        \"actions\": [\n            {\n                \"type\": \"event_created\",\n                \"eventId\": \"event-456\"\n            }\n        ]\n    }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Conversations",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/chat/conversations?limit=20&offset=0",
+              "host": ["{{base_url}}"],
+              "path": ["chat", "conversations"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Number of conversations to return"
+                },
+                {
+                  "key": "offset",
+                  "value": "0",
+                  "description": "Pagination offset"
+                }
+              ]
+            },
+            "description": "Get list of user's conversations.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Start New Conversation",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/chat/conversations/new",
+              "host": ["{{base_url}}"],
+              "path": ["chat", "conversations", "new"]
+            },
+            "description": "Start a new conversation (closes current active conversation).\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Conversation by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/chat/conversations/:id",
+              "host": ["{{base_url}}"],
+              "path": ["chat", "conversations", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "{{conversation_id}}",
+                  "description": "Conversation ID"
+                }
+              ]
+            },
+            "description": "Get a specific conversation by ID.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Continue Conversation",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"message\": \"Actually, make it 3pm instead\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/chat/conversations/:id/messages",
+              "host": ["{{base_url}}"],
+              "path": ["chat", "conversations", ":id", "messages"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "{{conversation_id}}",
+                  "description": "Conversation ID"
+                }
+              ]
+            },
+            "description": "Send a message to continue an existing conversation.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Conversation",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/chat/conversations/:id",
+              "host": ["{{base_url}}"],
+              "path": ["chat", "conversations", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "{{conversation_id}}",
+                  "description": "Conversation ID"
+                }
+              ]
+            },
+            "description": "Delete a conversation.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Voice",
+      "description": "Voice transcription endpoints.",
+      "item": [
+        {
+          "name": "Transcribe Audio",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "audio",
+                  "type": "file",
+                  "description": "Audio file (webm, mp3, mp4, m4a, wav, ogg, flac - max 25MB)"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/voice/transcribe",
+              "host": ["{{base_url}}"],
+              "path": ["voice", "transcribe"]
+            },
+            "description": "Transcribe audio to text using OpenAI Whisper.\n\n**Authentication: Required (Bearer Token)**\n\n### Supported Formats\nwebm, mp3, mp4, m4a, wav, ogg, flac\n\n### Max File Size\n25MB"
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{base_url}}/voice/transcribe",
+                  "host": ["{{base_url}}"],
+                  "path": ["voice", "transcribe"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n    \"status\": \"success\",\n    \"message\": \"Audio transcribed successfully\",\n    \"data\": {\n        \"text\": \"Schedule a meeting with John tomorrow at 3pm\",\n        \"language\": \"en\",\n        \"duration\": 3.5\n    }\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Payments",
+      "description": "Stripe payment and subscription management.",
+      "item": [
+        {
+          "name": "Get Stripe Status",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/payments/status",
+              "host": ["{{base_url}}"],
+              "path": ["payments", "status"]
+            },
+            "description": "Check if Stripe is configured and get publishable key.\n\n**No authentication required**"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Plans",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/payments/plans",
+              "host": ["{{base_url}}"],
+              "path": ["payments", "plans"]
+            },
+            "description": "Get all available subscription plans.\n\n**No authentication required**"
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{base_url}}/payments/plans",
+                  "host": ["{{base_url}}"],
+                  "path": ["payments", "plans"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n    \"status\": \"success\",\n    \"message\": \"Plans fetched successfully\",\n    \"data\": [\n        {\n            \"slug\": \"starter\",\n            \"name\": \"Starter\",\n            \"price\": {\n                \"monthly\": 0,\n                \"yearly\": 0\n            },\n            \"features\": [\"Basic features\"],\n            \"limits\": {\n                \"credits\": 100\n            }\n        },\n        {\n            \"slug\": \"pro\",\n            \"name\": \"Pro\",\n            \"price\": {\n                \"monthly\": 9.99,\n                \"yearly\": 99.99\n            },\n            \"features\": [\"All features\", \"Priority support\"],\n            \"limits\": {\n                \"credits\": 1000\n            }\n        }\n    ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Subscription Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/payments/subscription",
+              "host": ["{{base_url}}"],
+              "path": ["payments", "subscription"]
+            },
+            "description": "Get current user's subscription status.\n\n**Authentication: Required (Bearer Token)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Initialize Free Plan",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/payments/initialize-free",
+              "host": ["{{base_url}}"],
+              "path": ["payments", "initialize-free"]
+            },
+            "description": "Initialize free starter plan for user.\n\n**Authentication: Required (Bearer Token)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Subscription Checkout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"planSlug\": \"pro\",\n    \"interval\": \"monthly\",\n    \"successUrl\": \"https://yourapp.com/success\",\n    \"cancelUrl\": \"https://yourapp.com/cancel\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/payments/checkout",
+              "host": ["{{base_url}}"],
+              "path": ["payments", "checkout"]
+            },
+            "description": "Create Stripe checkout session for subscription.\n\n**Authentication: Required (Bearer Token)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Credit Pack Checkout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"credits\": 500,\n    \"planSlug\": \"pro\",\n    \"successUrl\": \"https://yourapp.com/success\",\n    \"cancelUrl\": \"https://yourapp.com/cancel\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/payments/checkout/credits",
+              "host": ["{{base_url}}"],
+              "path": ["payments", "checkout", "credits"]
+            },
+            "description": "Create Stripe checkout session for credit pack.\n\n**Authentication: Required (Bearer Token)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Portal Session",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"returnUrl\": \"https://yourapp.com/settings\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/payments/portal",
+              "host": ["{{base_url}}"],
+              "path": ["payments", "portal"]
+            },
+            "description": "Create Stripe billing portal session.\n\n**Authentication: Required (Bearer Token)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel Subscription",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"reason\": \"No longer need the service\",\n    \"immediate\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/payments/cancel",
+              "host": ["{{base_url}}"],
+              "path": ["payments", "cancel"]
+            },
+            "description": "Cancel subscription.\n\n**Authentication: Required (Bearer Token)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Request Refund",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"reason\": \"Service did not meet expectations\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/payments/refund",
+              "host": ["{{base_url}}"],
+              "path": ["payments", "refund"]
+            },
+            "description": "Request money-back refund (within 30-day guarantee).\n\n**Authentication: Required (Bearer Token)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Stripe Webhook",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Stripe-Signature",
+                "value": "{{stripe_signature}}",
+                "description": "Stripe webhook signature"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/payments/webhook",
+              "host": ["{{base_url}}"],
+              "path": ["payments", "webhook"]
+            },
+            "description": "Handle Stripe webhook events.\n\n**No authentication required** (verified via Stripe signature)"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "ACL (Access Control)",
+      "description": "Access Control List management for calendars.",
+      "item": [
+        {
+          "name": "List ACL Rules",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/acl/:calendarId",
+              "host": ["{{base_url}}"],
+              "path": ["acl", ":calendarId"],
+              "variable": [
+                {
+                  "key": "calendarId",
+                  "value": "primary",
+                  "description": "Calendar ID"
+                }
+              ]
+            },
+            "description": "List all access control rules for a calendar.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Get ACL Rule",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/acl/:calendarId/:ruleId",
+              "host": ["{{base_url}}"],
+              "path": ["acl", ":calendarId", ":ruleId"],
+              "variable": [
+                {
+                  "key": "calendarId",
+                  "value": "primary"
+                },
+                {
+                  "key": "ruleId",
+                  "value": "user:someone@example.com"
+                }
+              ]
+            },
+            "description": "Get a specific ACL rule.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Create ACL Rule",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"role\": \"reader\",\n    \"scope\": {\n        \"type\": \"user\",\n        \"value\": \"newuser@example.com\"\n    }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/acl/:calendarId",
+              "host": ["{{base_url}}"],
+              "path": ["acl", ":calendarId"],
+              "variable": [
+                {
+                  "key": "calendarId",
+                  "value": "primary"
+                }
+              ]
+            },
+            "description": "Create a new ACL rule to grant access.\n\n**Authentication: Required (Bearer Token + Google Calendar)**\n\n### Roles\n- none, freeBusyReader, reader, writer, owner"
+          },
+          "response": []
+        },
+        {
+          "name": "Update ACL Rule (Partial)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"role\": \"writer\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/acl/:calendarId/:ruleId",
+              "host": ["{{base_url}}"],
+              "path": ["acl", ":calendarId", ":ruleId"],
+              "variable": [
+                {
+                  "key": "calendarId",
+                  "value": "primary"
+                },
+                {
+                  "key": "ruleId",
+                  "value": "user:someone@example.com"
+                }
+              ]
+            },
+            "description": "Partially update an ACL rule.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Update ACL Rule (Full)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"role\": \"writer\",\n    \"scope\": {\n        \"type\": \"user\",\n        \"value\": \"someone@example.com\"\n    }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/acl/:calendarId/:ruleId",
+              "host": ["{{base_url}}"],
+              "path": ["acl", ":calendarId", ":ruleId"],
+              "variable": [
+                {
+                  "key": "calendarId",
+                  "value": "primary"
+                },
+                {
+                  "key": "ruleId",
+                  "value": "user:someone@example.com"
+                }
+              ]
+            },
+            "description": "Fully update an ACL rule.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete ACL Rule",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/acl/:calendarId/:ruleId",
+              "host": ["{{base_url}}"],
+              "path": ["acl", ":calendarId", ":ruleId"],
+              "variable": [
+                {
+                  "key": "calendarId",
+                  "value": "primary"
+                },
+                {
+                  "key": "ruleId",
+                  "value": "user:someone@example.com"
+                }
+              ]
+            },
+            "description": "Delete an ACL rule (revoke access).\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        },
+        {
+          "name": "Watch ACL Changes",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"id\": \"unique-acl-channel-id\",\n    \"type\": \"web_hook\",\n    \"address\": \"https://your-webhook-url.com/acl-callback\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/acl/:calendarId/watch",
+              "host": ["{{base_url}}"],
+              "path": ["acl", ":calendarId", "watch"],
+              "variable": [
+                {
+                  "key": "calendarId",
+                  "value": "primary"
+                }
+              ]
+            },
+            "description": "Watch for changes to ACL rules.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Channels",
+      "description": "Manage push notification channels.",
+      "item": [
+        {
+          "name": "Stop Channel",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"id\": \"channel-id-to-stop\",\n    \"resourceId\": \"resource-id-from-watch-response\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/channels/stop",
+              "host": ["{{base_url}}"],
+              "path": ["channels", "stop"]
+            },
+            "description": "Stop watching resources through a channel.\n\n**Authentication: Required (Bearer Token + Google Calendar)**"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Contact",
+      "description": "Contact form submission.",
+      "item": [
+        {
+          "name": "Submit Contact Form",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "John Doe",
+                  "type": "text"
+                },
+                {
+                  "key": "email",
+                  "value": "john@example.com",
+                  "type": "text"
+                },
+                {
+                  "key": "subject",
+                  "value": "Question about the service",
+                  "type": "text"
+                },
+                {
+                  "key": "message",
+                  "value": "I have a question about your calendar assistant...",
+                  "type": "text"
+                },
+                {
+                  "key": "attachments",
+                  "type": "file",
+                  "description": "Optional attachments (max 5 files, 10MB each)"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/contact",
+              "host": ["{{base_url}}"],
+              "path": ["contact"]
+            },
+            "description": "Submit a contact form with optional attachments.\n\n**No authentication required**\n\n### Allowed File Types\njpeg, png, gif, webp, pdf, txt, doc, docx, xls, xlsx, zip, csv\n\n### Limits\n- Max 5 files\n- Max 10MB per file"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Webhooks",
+      "description": "External service webhooks.",
+      "item": [
+        {
+          "name": "Resend Inbound Email",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"from\": \"sender@example.com\",\n    \"to\": \"support@yourapp.com\",\n    \"subject\": \"Email subject\",\n    \"text\": \"Email body text\",\n    \"html\": \"<p>Email body HTML</p>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/webhooks/resend/inbound",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["webhooks", "resend", "inbound"]
+            },
+            "description": "Handle inbound emails from Resend.\n\n**No authentication required** (webhook endpoint)"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "WhatsApp",
+      "description": "WhatsApp integration (under development).",
+      "item": [
+        {
+          "name": "Get WhatsApp Notifications",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/whatsapp",
+              "host": ["{{base_url}}"],
+              "path": ["whatsapp"]
+            },
+            "description": "Get WhatsApp notifications.\n\n**Authentication: Required (Bearer Token)**\n\n*Note: This feature is under development.*"
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
 }

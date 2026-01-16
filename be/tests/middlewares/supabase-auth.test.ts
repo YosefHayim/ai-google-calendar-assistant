@@ -15,17 +15,18 @@ jest.mock("@/utils/auth/cookie-utils", () => ({
 }));
 
 jest.mock("@/utils/auth/supabase-token", () => ({
-  validateSupabaseToken: (...args: unknown[]) => mockValidateSupabaseToken(...args),
-  refreshSupabaseSession: (...args: unknown[]) => mockRefreshSupabaseSession(...args),
+  validateSupabaseToken: (...args: unknown[]) =>
+    mockValidateSupabaseToken(...args),
+  refreshSupabaseSession: (...args: unknown[]) =>
+    mockRefreshSupabaseSession(...args),
 }));
 
 jest.mock("@/utils/http", () => ({
   sendR: (...args: unknown[]) => mockSendR(...args),
-  reqResAsyncHandler: <T extends (...args: unknown[]) => Promise<unknown>>(fn: T) => {
-    return (req: Request, res: Response, next: NextFunction) => {
-      return Promise.resolve(fn(req, res, next)).catch(next);
-    };
-  },
+  reqResAsyncHandler:
+    <T extends (...args: unknown[]) => Promise<unknown>>(fn: T) =>
+    (req: Request, res: Response, next: NextFunction) =>
+      Promise.resolve(fn(req, res, next)).catch(next),
 }));
 
 jest.mock("@/config", () => ({
@@ -71,10 +72,17 @@ describe("supabaseAuth Middleware", () => {
       };
       mockRequest.cookies = {};
 
-      mockValidateSupabaseToken.mockResolvedValue({ user: mockUser, needsRefresh: false });
+      mockValidateSupabaseToken.mockResolvedValue({
+        user: mockUser,
+        needsRefresh: false,
+      });
 
       const middleware = supabaseAuth();
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      await middleware(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
       expect(mockValidateSupabaseToken).toHaveBeenCalledWith("valid-token");
       expect(mockNext).toHaveBeenCalled();
@@ -84,10 +92,17 @@ describe("supabaseAuth Middleware", () => {
       mockRequest.cookies = { access_token: "cookie-token" };
       mockRequest.headers = { authorization: "Bearer header-token" };
 
-      mockValidateSupabaseToken.mockResolvedValue({ user: mockUser, needsRefresh: false });
+      mockValidateSupabaseToken.mockResolvedValue({
+        user: mockUser,
+        needsRefresh: false,
+      });
 
       const middleware = supabaseAuth();
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      await middleware(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
       expect(mockValidateSupabaseToken).toHaveBeenCalledWith("cookie-token");
     });
@@ -97,7 +112,11 @@ describe("supabaseAuth Middleware", () => {
       mockRequest.cookies = {};
 
       const middleware = supabaseAuth();
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      await middleware(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(
         mockResponse,
@@ -112,7 +131,11 @@ describe("supabaseAuth Middleware", () => {
       mockRequest.cookies = {};
 
       const middleware = supabaseAuth();
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      await middleware(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(
         mockResponse,
@@ -127,10 +150,17 @@ describe("supabaseAuth Middleware", () => {
       mockRequest.headers = { authorization: "Bearer valid-token" };
       mockRequest.cookies = {};
 
-      mockValidateSupabaseToken.mockResolvedValue({ user: mockUser, needsRefresh: false });
+      mockValidateSupabaseToken.mockResolvedValue({
+        user: mockUser,
+        needsRefresh: false,
+      });
 
       const middleware = supabaseAuth();
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      await middleware(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
       expect(mockRequest.user).toEqual(mockUser);
       expect(mockNext).toHaveBeenCalled();
@@ -141,10 +171,17 @@ describe("supabaseAuth Middleware", () => {
       mockRequest.headers = { authorization: "Bearer valid-token" };
       mockRequest.cookies = {};
 
-      mockValidateSupabaseToken.mockResolvedValue({ user: mockUser, needsRefresh: false });
+      mockValidateSupabaseToken.mockResolvedValue({
+        user: mockUser,
+        needsRefresh: false,
+      });
 
       const middleware = supabaseAuth();
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      await middleware(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
       expect(mockRequest.user).toEqual(mockUser);
       expect(mockRequest.user?.email).toBe("test@example.com");
@@ -156,7 +193,10 @@ describe("supabaseAuth Middleware", () => {
       mockRequest.headers = { authorization: "Bearer expired-token" };
       mockRequest.cookies = { refresh_token: "valid-refresh-token" };
 
-      mockValidateSupabaseToken.mockResolvedValue({ user: null, needsRefresh: true });
+      mockValidateSupabaseToken.mockResolvedValue({
+        user: null,
+        needsRefresh: true,
+      });
       mockRefreshSupabaseSession.mockResolvedValue({
         accessToken: "new-access-token",
         refreshToken: "new-refresh-token",
@@ -164,9 +204,15 @@ describe("supabaseAuth Middleware", () => {
       });
 
       const middleware = supabaseAuth();
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      await middleware(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
-      expect(mockRefreshSupabaseSession).toHaveBeenCalledWith("valid-refresh-token");
+      expect(mockRefreshSupabaseSession).toHaveBeenCalledWith(
+        "valid-refresh-token"
+      );
       expect(mockRequest.user).toEqual(mockUser);
       expect(mockSetAuthCookies).toHaveBeenCalledWith(
         mockResponse,
@@ -174,8 +220,14 @@ describe("supabaseAuth Middleware", () => {
         "new-refresh-token",
         mockUser
       );
-      expect(setHeaderMock).toHaveBeenCalledWith("access_token", "new-access-token");
-      expect(setHeaderMock).toHaveBeenCalledWith("refresh_token", "new-refresh-token");
+      expect(setHeaderMock).toHaveBeenCalledWith(
+        "access_token",
+        "new-access-token"
+      );
+      expect(setHeaderMock).toHaveBeenCalledWith(
+        "refresh_token",
+        "new-refresh-token"
+      );
       expect(mockNext).toHaveBeenCalled();
     });
 
@@ -186,7 +238,10 @@ describe("supabaseAuth Middleware", () => {
       };
       mockRequest.cookies = {};
 
-      mockValidateSupabaseToken.mockResolvedValue({ user: null, needsRefresh: true });
+      mockValidateSupabaseToken.mockResolvedValue({
+        user: null,
+        needsRefresh: true,
+      });
       mockRefreshSupabaseSession.mockResolvedValue({
         accessToken: "new-access-token",
         refreshToken: "new-refresh-token",
@@ -194,19 +249,32 @@ describe("supabaseAuth Middleware", () => {
       });
 
       const middleware = supabaseAuth();
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      await middleware(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
-      expect(mockRefreshSupabaseSession).toHaveBeenCalledWith("header-refresh-token");
+      expect(mockRefreshSupabaseSession).toHaveBeenCalledWith(
+        "header-refresh-token"
+      );
     });
 
     it("should return 401 when refresh token not available", async () => {
       mockRequest.headers = { authorization: "Bearer expired-token" };
       mockRequest.cookies = {};
 
-      mockValidateSupabaseToken.mockResolvedValue({ user: null, needsRefresh: true });
+      mockValidateSupabaseToken.mockResolvedValue({
+        user: null,
+        needsRefresh: true,
+      });
 
       const middleware = supabaseAuth();
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      await middleware(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(
         mockResponse,
@@ -221,10 +289,17 @@ describe("supabaseAuth Middleware", () => {
       mockRequest.headers = { authorization: "Bearer expired-token" };
       mockRequest.cookies = { refresh_token: "valid-refresh-token" };
 
-      mockValidateSupabaseToken.mockResolvedValue({ user: null, needsRefresh: true });
+      mockValidateSupabaseToken.mockResolvedValue({
+        user: null,
+        needsRefresh: true,
+      });
 
       const middleware = supabaseAuth({ autoRefresh: false });
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      await middleware(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
       expect(mockRefreshSupabaseSession).not.toHaveBeenCalled();
       expect(mockSendR).toHaveBeenCalledWith(
@@ -238,13 +313,22 @@ describe("supabaseAuth Middleware", () => {
       mockRequest.headers = { authorization: "Bearer expired-token" };
       mockRequest.cookies = { refresh_token: "invalid-refresh-token" };
 
-      mockValidateSupabaseToken.mockResolvedValue({ user: null, needsRefresh: true });
+      mockValidateSupabaseToken.mockResolvedValue({
+        user: null,
+        needsRefresh: true,
+      });
       mockRefreshSupabaseSession.mockRejectedValue(new Error("Refresh failed"));
 
-      const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+      const consoleSpy = jest
+        .spyOn(console, "error")
+        .mockImplementation(() => {});
 
       const middleware = supabaseAuth();
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      await middleware(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(
         mockResponse,
@@ -261,17 +345,26 @@ describe("supabaseAuth Middleware", () => {
       mockRequest.headers = { authorization: "Bearer expired-token" };
       mockRequest.cookies = { refresh_token: "valid-refresh-token" };
 
-      mockValidateSupabaseToken.mockResolvedValue({ user: null, needsRefresh: true });
+      mockValidateSupabaseToken.mockResolvedValue({
+        user: null,
+        needsRefresh: true,
+      });
       mockRefreshSupabaseSession.mockResolvedValue({
         accessToken: "new-token",
         refreshToken: "new-refresh",
         user: null,
       });
 
-      const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+      const consoleSpy = jest
+        .spyOn(console, "error")
+        .mockImplementation(() => {});
 
       const middleware = supabaseAuth();
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      await middleware(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(
         mockResponse,
@@ -287,17 +380,26 @@ describe("supabaseAuth Middleware", () => {
       mockRequest.headers = { authorization: "Bearer expired-token" };
       mockRequest.cookies = { refresh_token: "valid-refresh-token" };
 
-      mockValidateSupabaseToken.mockResolvedValue({ user: null, needsRefresh: true });
+      mockValidateSupabaseToken.mockResolvedValue({
+        user: null,
+        needsRefresh: true,
+      });
       mockRefreshSupabaseSession.mockResolvedValue({
         accessToken: "new-token",
         refreshToken: "new-refresh",
         user: { id: "user-123", email: null },
       });
 
-      const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+      const consoleSpy = jest
+        .spyOn(console, "error")
+        .mockImplementation(() => {});
 
       const middleware = supabaseAuth();
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      await middleware(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(
         mockResponse,
@@ -313,7 +415,10 @@ describe("supabaseAuth Middleware", () => {
       mockRequest.headers = { authorization: "Bearer expired-token" };
       mockRequest.cookies = { refresh_token: "valid-refresh-token" };
 
-      mockValidateSupabaseToken.mockResolvedValue({ user: null, needsRefresh: true });
+      mockValidateSupabaseToken.mockResolvedValue({
+        user: null,
+        needsRefresh: true,
+      });
       mockRefreshSupabaseSession.mockResolvedValue({
         accessToken: "new-access-token",
         refreshToken: "new-refresh-token",
@@ -321,9 +426,15 @@ describe("supabaseAuth Middleware", () => {
       });
 
       const middleware = supabaseAuth();
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      await middleware(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
-      expect(mockRequest.headers!.authorization).toBe("Bearer new-access-token");
+      expect(mockRequest.headers?.authorization).toBe(
+        "Bearer new-access-token"
+      );
     });
   });
 
@@ -332,10 +443,17 @@ describe("supabaseAuth Middleware", () => {
       mockRequest.headers = { authorization: "Bearer invalid-token" };
       mockRequest.cookies = {};
 
-      mockValidateSupabaseToken.mockResolvedValue({ user: null, needsRefresh: false });
+      mockValidateSupabaseToken.mockResolvedValue({
+        user: null,
+        needsRefresh: false,
+      });
 
       const middleware = supabaseAuth();
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      await middleware(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(
         mockResponse,
@@ -351,7 +469,10 @@ describe("supabaseAuth Middleware", () => {
       mockRequest.headers = { authorization: "Bearer expired-token" };
       mockRequest.cookies = { refresh_token: "refresh-token" };
 
-      mockValidateSupabaseToken.mockResolvedValue({ user: null, needsRefresh: true });
+      mockValidateSupabaseToken.mockResolvedValue({
+        user: null,
+        needsRefresh: true,
+      });
       mockRefreshSupabaseSession.mockResolvedValue({
         accessToken: "new-token",
         refreshToken: "new-refresh",
@@ -359,7 +480,11 @@ describe("supabaseAuth Middleware", () => {
       });
 
       const middleware = supabaseAuth(); // No options = default autoRefresh: true
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      await middleware(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
       expect(mockRefreshSupabaseSession).toHaveBeenCalled();
     });
@@ -368,10 +493,17 @@ describe("supabaseAuth Middleware", () => {
       mockRequest.headers = { authorization: "Bearer expired-token" };
       mockRequest.cookies = { refresh_token: "refresh-token" };
 
-      mockValidateSupabaseToken.mockResolvedValue({ user: null, needsRefresh: true });
+      mockValidateSupabaseToken.mockResolvedValue({
+        user: null,
+        needsRefresh: true,
+      });
 
       const middleware = supabaseAuth({ autoRefresh: false });
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      await middleware(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
       expect(mockRefreshSupabaseSession).not.toHaveBeenCalled();
       expect(mockSendR).toHaveBeenCalled();

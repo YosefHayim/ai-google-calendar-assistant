@@ -1,9 +1,8 @@
-import type { NextFunction, Request, Response } from "express";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
-import { mockFn } from "../test-utils";
-
+import type { NextFunction, Request, Response } from "express";
 // Now import after mocks
 import errorHandler from "../../middlewares/error-handler";
+import { mockFn } from "../test-utils";
 
 // Create mocks before imports
 const mockSendR = mockFn();
@@ -39,7 +38,12 @@ describe("errorHandler", () => {
       const error = new Error("Custom error") as Error & { status?: number };
       error.status = 404;
 
-      errorHandler(error, mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      errorHandler(
+        error,
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(mockResponse, 404, "Custom error");
     });
@@ -48,7 +52,12 @@ describe("errorHandler", () => {
       const error = new Error("Bad request") as Error & { status?: number };
       error.status = 400;
 
-      errorHandler(error, mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      errorHandler(
+        error,
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(mockResponse, 400, "Bad request");
     });
@@ -57,7 +66,12 @@ describe("errorHandler", () => {
       const error = new Error("Unauthorized") as Error & { status?: number };
       error.status = 401;
 
-      errorHandler(error, mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      errorHandler(
+        error,
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(mockResponse, 401, "Unauthorized");
     });
@@ -66,7 +80,12 @@ describe("errorHandler", () => {
       const error = new Error("Forbidden") as Error & { status?: number };
       error.status = 403;
 
-      errorHandler(error, mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      errorHandler(
+        error,
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(mockResponse, 403, "Forbidden");
     });
@@ -74,7 +93,12 @@ describe("errorHandler", () => {
     it("should default to 500 when no status is provided", () => {
       const error = new Error("Server error");
 
-      errorHandler(error, mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      errorHandler(
+        error,
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(mockResponse, 500, "Server error");
     });
@@ -83,45 +107,90 @@ describe("errorHandler", () => {
       const error = new Error() as Error & { status?: number };
       error.status = 500;
 
-      errorHandler(error, mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      errorHandler(
+        error,
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
-      expect(mockSendR).toHaveBeenCalledWith(mockResponse, 500, "Internal Server Error");
+      expect(mockSendR).toHaveBeenCalledWith(
+        mockResponse,
+        500,
+        "Internal Server Error"
+      );
     });
 
     it("should handle error with empty message", () => {
       const error = new Error("") as Error & { status?: number };
       error.status = 400;
 
-      errorHandler(error, mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      errorHandler(
+        error,
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
-      expect(mockSendR).toHaveBeenCalledWith(mockResponse, 400, "Internal Server Error");
+      expect(mockSendR).toHaveBeenCalledWith(
+        mockResponse,
+        400,
+        "Internal Server Error"
+      );
     });
   });
 
   describe("status code handling", () => {
     it("should handle 422 validation error", () => {
-      const error = new Error("Validation failed") as Error & { status?: number };
+      const error = new Error("Validation failed") as Error & {
+        status?: number;
+      };
       error.status = 422;
 
-      errorHandler(error, mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      errorHandler(
+        error,
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
-      expect(mockSendR).toHaveBeenCalledWith(mockResponse, 422, "Validation failed");
+      expect(mockSendR).toHaveBeenCalledWith(
+        mockResponse,
+        422,
+        "Validation failed"
+      );
     });
 
     it("should handle 503 service unavailable", () => {
-      const error = new Error("Service unavailable") as Error & { status?: number };
+      const error = new Error("Service unavailable") as Error & {
+        status?: number;
+      };
       error.status = 503;
 
-      errorHandler(error, mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      errorHandler(
+        error,
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
-      expect(mockSendR).toHaveBeenCalledWith(mockResponse, 503, "Service unavailable");
+      expect(mockSendR).toHaveBeenCalledWith(
+        mockResponse,
+        503,
+        "Service unavailable"
+      );
     });
 
     it("should handle status 0", () => {
       const error = new Error("Unknown") as Error & { status?: number };
       error.status = 0;
 
-      errorHandler(error, mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      errorHandler(
+        error,
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
       // 0 is falsy, so should default to 500
       expect(mockSendR).toHaveBeenCalledWith(mockResponse, 500, "Unknown");
@@ -134,7 +203,12 @@ describe("errorHandler", () => {
       const error = new Error(longMessage) as Error & { status?: number };
       error.status = 400;
 
-      errorHandler(error, mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      errorHandler(
+        error,
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(mockResponse, 400, longMessage);
     });
@@ -144,7 +218,12 @@ describe("errorHandler", () => {
       const error = new Error(specialMessage) as Error & { status?: number };
       error.status = 400;
 
-      errorHandler(error, mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      errorHandler(
+        error,
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(mockResponse, 400, specialMessage);
     });
@@ -153,7 +232,12 @@ describe("errorHandler", () => {
       const error = new Error("Test") as Error & { status?: number };
       error.status = 404;
 
-      errorHandler(error, mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      errorHandler(
+        error,
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
       expect(mockNext).not.toHaveBeenCalled();
     });
@@ -168,7 +252,12 @@ describe("errorHandler", () => {
       error.code = "CUSTOM_ERROR";
       error.details = { field: "email" };
 
-      errorHandler(error, mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      errorHandler(
+        error,
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(mockResponse, 400, "Custom error");
     });

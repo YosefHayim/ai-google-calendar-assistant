@@ -1,15 +1,15 @@
-import type { AgentProfile } from "./agent-profiles"
+import type { AgentProfile } from "./agent-profiles";
 
-export type ModelProvider = "openai" | "google" | "anthropic"
-export type ModelTier = "fast" | "balanced" | "powerful"
+export type ModelProvider = "openai" | "google" | "anthropic";
+export type ModelTier = "fast" | "balanced" | "powerful";
 
-export interface ModelSpec {
-  provider: ModelProvider
-  modelId: string
-  maxTokens: number
-  temperature: number
-  supportsTools: boolean
-}
+export type ModelSpec = {
+  provider: ModelProvider;
+  modelId: string;
+  maxTokens: number;
+  temperature: number;
+  supportsTools: boolean;
+};
 
 const OPENAI_MODELS: Record<ModelTier, ModelSpec> = {
   fast: {
@@ -33,7 +33,7 @@ const OPENAI_MODELS: Record<ModelTier, ModelSpec> = {
     temperature: 0.6,
     supportsTools: true,
   },
-}
+};
 
 const GOOGLE_MODELS: Record<ModelTier, ModelSpec> = {
   fast: {
@@ -57,7 +57,7 @@ const GOOGLE_MODELS: Record<ModelTier, ModelSpec> = {
     temperature: 0.6,
     supportsTools: true,
   },
-}
+};
 
 const ANTHROPIC_MODELS: Record<ModelTier, ModelSpec> = {
   fast: {
@@ -81,21 +81,21 @@ const ANTHROPIC_MODELS: Record<ModelTier, ModelSpec> = {
     temperature: 0.6,
     supportsTools: true,
   },
-}
+};
 
 const MODEL_REGISTRY: Record<ModelProvider, Record<ModelTier, ModelSpec>> = {
   openai: OPENAI_MODELS,
   google: GOOGLE_MODELS,
   anthropic: ANTHROPIC_MODELS,
-}
+};
 
 export function getModelSpec(profile: AgentProfile): ModelSpec {
-  const { provider, tier } = profile.modelConfig
-  const registry = MODEL_REGISTRY[provider]
+  const { provider, tier } = profile.modelConfig;
+  const registry = MODEL_REGISTRY[provider];
 
   if (!registry) {
-    return OPENAI_MODELS.balanced
+    return OPENAI_MODELS.balanced;
   }
 
-  return registry[tier] ?? OPENAI_MODELS.balanced
+  return registry[tier] ?? OPENAI_MODELS.balanced;
 }

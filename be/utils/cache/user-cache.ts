@@ -10,7 +10,7 @@ const USER_PROFILE_TTL_SECONDS = 10 * 60; // 10 minutes - profile data changes i
 const CONVERSATIONS_TTL_SECONDS = 60; // 1 minute - sidebar can tolerate slight staleness
 
 // Types
-export interface CachedUserProfile {
+export type CachedUserProfile = {
   id: string;
   email: string;
   phone?: string | null;
@@ -21,18 +21,18 @@ export interface CachedUserProfile {
   created_at?: string;
   updated_at?: string;
   cachedAt: string;
-}
+};
 
-export interface ConversationListItem {
+export type ConversationListItem = {
   id: string;
   title: string;
   messageCount: number;
   lastUpdated: string;
   createdAt: string;
   source?: string;
-}
+};
 
-export interface CachedConversations {
+export type CachedConversations = {
   conversations: ConversationListItem[];
   cachedAt: string;
   pagination: {
@@ -40,7 +40,7 @@ export interface CachedConversations {
     offset: number;
     search?: string;
   };
-}
+};
 
 // Key generators
 function getUserProfileKey(userId: string): string {
@@ -131,7 +131,9 @@ export async function setCachedUserProfile(
 export async function invalidateUserProfileCache(
   userId: string
 ): Promise<void> {
-  if (!isRedisConnected()) return;
+  if (!isRedisConnected()) {
+    return;
+  }
 
   try {
     const key = getUserProfileKey(userId);
@@ -231,7 +233,9 @@ export async function setCachedConversations(
 export async function invalidateConversationsCache(
   userId: string
 ): Promise<void> {
-  if (!isRedisConnected()) return;
+  if (!isRedisConnected()) {
+    return;
+  }
 
   try {
     // Use SCAN to find all matching keys (safer than KEYS in production)

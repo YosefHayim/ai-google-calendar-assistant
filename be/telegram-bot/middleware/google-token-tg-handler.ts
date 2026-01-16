@@ -1,3 +1,6 @@
+import type { MiddlewareFn } from "grammy";
+import { InlineKeyboard } from "grammy";
+import type { TokensProps } from "@/types";
 import { AuditEventType, auditLogger } from "@/utils/audit-logger";
 import {
   checkTokenExpiry,
@@ -7,13 +10,9 @@ import {
   persistGoogleTokens,
   refreshGoogleAccessToken,
 } from "@/utils/auth";
-
-import type { GlobalContext } from "../init-bot";
-import { InlineKeyboard } from "grammy";
-import type { MiddlewareFn } from "grammy";
-import type { TokensProps } from "@/types";
-import { getTranslatorFromLanguageCode } from "../i18n";
 import { logger } from "@/utils/logger";
+import { getTranslatorFromLanguageCode } from "../i18n";
+import type { GlobalContext } from "../init-bot";
 
 /**
  * Validation result for Google Calendar tokens
@@ -29,19 +28,32 @@ type TelegramTokenValidationResult = {
  * Validate Google Calendar tokens for Telegram user
  * Returns validated tokens or null if auth is required
  */
-const validateGoogleTokens = async (ctx: GlobalContext, email: string, langCode?: string): Promise<TelegramTokenValidationResult | null> => {
+const validateGoogleTokens = async (
+  ctx: GlobalContext,
+  email: string,
+  langCode?: string
+): Promise<TelegramTokenValidationResult | null> => {
   const { t } = getTranslatorFromLanguageCode(langCode);
   const { data: tokens, error } = await fetchGoogleTokensByEmail(email);
   if (error) {
-    logger.error(`Telegram Bot: Google Token: validateGoogleTokens middleware error: ${error}`);
-    console.error(`Telegram Bot: Google Token: validateGoogleTokens middleware error: ${error}`);
-    await ctx.reply("Error checking your calendar connection. Please try again.");
+    logger.error(
+      `Telegram Bot: Google Token: validateGoogleTokens middleware error: ${error}`
+    );
+    console.error(
+      `Telegram Bot: Google Token: validateGoogleTokens middleware error: ${error}`
+    );
+    await ctx.reply(
+      "Error checking your calendar connection. Please try again."
+    );
     return null;
   }
 
   if (!tokens) {
     const authUrl = generateGoogleAuthUrl({ forceConsent: true });
-    const keyboard = new InlineKeyboard().url(t("auth.googleCalendarConnectButton"), authUrl);
+    const keyboard = new InlineKeyboard().url(
+      t("auth.googleCalendarConnectButton"),
+      authUrl
+    );
     await ctx.reply(t("auth.googleCalendarConnect"), {
       parse_mode: "HTML",
       reply_markup: keyboard,
@@ -51,7 +63,10 @@ const validateGoogleTokens = async (ctx: GlobalContext, email: string, langCode?
 
   if (!tokens.is_active) {
     const authUrl = generateGoogleAuthUrl({ forceConsent: true });
-    const keyboard = new InlineKeyboard().url(t("auth.googleCalendarReconnectButton"), authUrl);
+    const keyboard = new InlineKeyboard().url(
+      t("auth.googleCalendarReconnectButton"),
+      authUrl
+    );
     await ctx.reply(t("auth.googleCalendarReconnect"), {
       parse_mode: "HTML",
       reply_markup: keyboard,
@@ -61,7 +76,10 @@ const validateGoogleTokens = async (ctx: GlobalContext, email: string, langCode?
 
   if (!tokens.refresh_token) {
     const authUrl = generateGoogleAuthUrl({ forceConsent: true });
-    const keyboard = new InlineKeyboard().url(t("auth.googleCalendarReconnectButton"), authUrl);
+    const keyboard = new InlineKeyboard().url(
+      t("auth.googleCalendarReconnectButton"),
+      authUrl
+    );
     await ctx.reply(t("auth.googleCalendarMissingPermissions"), {
       parse_mode: "HTML",
       reply_markup: keyboard,
@@ -88,13 +106,15 @@ const refreshGoogleTokensIfNeeded = async (
   const { tokens, isExpired, isNearExpiry } = validation;
   const { t } = getTranslatorFromLanguageCode(langCode);
 
-  if (!isExpired && !isNearExpiry) {
+  if (!(isExpired || isNearExpiry)) {
     return validation;
   }
 
   const email = tokens.email;
   if (!email) {
-    logger.error(`Telegram Bot: Google Token: refreshGoogleTokensIfNeeded middleware user email missing from tokens`);
+    logger.error(
+      "Telegram Bot: Google Token: refreshGoogleTokensIfNeeded middleware user email missing from tokens"
+    );
     await ctx.reply("Error with your calendar connection. Please try again.");
     return null;
   }
@@ -132,13 +152,20 @@ const refreshGoogleTokensIfNeeded = async (
     if (message.startsWith("REAUTH_REQUIRED:")) {
       await deactivateGoogleTokens(email);
 
-      auditLogger.log(AuditEventType.GOOGLE_REAUTH_REQUIRED, ctx.from?.id || 0, {
-        email,
-        reason: message,
-      });
+      auditLogger.log(
+        AuditEventType.GOOGLE_REAUTH_REQUIRED,
+        ctx.from?.id || 0,
+        {
+          email,
+          reason: message,
+        }
+      );
 
       const authUrl = generateGoogleAuthUrl({ forceConsent: true });
-      const keyboard = new InlineKeyboard().url(t("auth.googleCalendarReconnectButton"), authUrl);
+      const keyboard = new InlineKeyboard().url(
+        t("auth.googleCalendarReconnectButton"),
+        authUrl
+      );
       await ctx.reply(t("auth.googleCalendarSessionExpired"), {
         parse_mode: "HTML",
         reply_markup: keyboard,
@@ -146,8 +173,12 @@ const refreshGoogleTokensIfNeeded = async (
       return null;
     }
 
-    logger.error(`Telegram Bot: Google Token: refreshGoogleTokensIfNeeded middleware error: ${message}`);
-    await ctx.reply("Error refreshing your calendar connection. Please try again.");
+    logger.error(
+      `Telegram Bot: Google Token: refreshGoogleTokensIfNeeded middleware error: ${message}`
+    );
+    await ctx.reply(
+      "Error refreshing your calendar connection. Please try again."
+    );
     return null;
   }
 };
@@ -158,7 +189,10 @@ const refreshGoogleTokensIfNeeded = async (
  * Validates that the user has valid Google Calendar tokens and refreshes if needed.
  * Must be used after authTgHandler middleware (requires session.email to be set).
  */
-export const googleTokenTgHandler: MiddlewareFn<GlobalContext> = async (ctx, next) => {
+export const googleTokenTgHandler: MiddlewareFn<GlobalContext> = async (
+  ctx,
+  next
+) => {
   const email = ctx.session?.email;
   const langCode = ctx.session?.codeLang;
 
@@ -171,7 +205,11 @@ export const googleTokenTgHandler: MiddlewareFn<GlobalContext> = async (ctx, nex
     return;
   }
 
-  const refreshedValidation = await refreshGoogleTokensIfNeeded(ctx, validation, langCode);
+  const refreshedValidation = await refreshGoogleTokensIfNeeded(
+    ctx,
+    validation,
+    langCode
+  );
   if (!refreshedValidation) {
     return;
   }

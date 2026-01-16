@@ -1,3 +1,5 @@
+import { randomUUID } from "node:crypto";
+import type { calendar_v3 } from "googleapis";
 import type {
   DayOfWeek,
   FillGapRequest,
@@ -6,20 +8,16 @@ import type {
   GapCandidate,
   GapCandidateDTO,
   GapRecoverySettings,
-  InferenceType,
   InferredContext,
 } from "@/types";
-
-import { asyncHandler } from "../http/async-handlers";
-import type { calendar_v3 } from "googleapis";
-import { fetchCalendarEvents } from "./get-events";
 import { fetchCredentialsByEmail } from "../auth/get-user-calendar-tokens";
+import { asyncHandler } from "../http/async-handlers";
+import { fetchCalendarEvents } from "./get-events";
 import { initUserSupabaseCalendarWithTokensAndUpdateTokens } from "./init";
-import { randomUUID } from "node:crypto";
 import {
   getCombinedPatternsForLanguages,
-  matchTravelPatternMultilingual,
   isWorkRelatedEvent,
+  matchTravelPatternMultilingual,
   type TravelPatternSet,
 } from "./travel-patterns-i18n";
 
@@ -65,7 +63,8 @@ function formatDuration(durationMs: number): string {
 
   if (hours > 0 && minutes > 0) {
     return `${hours}h ${minutes}m`;
-  } else if (hours > 0) {
+  }
+  if (hours > 0) {
     return `${hours}h`;
   }
   return `${minutes}m`;
@@ -295,9 +294,13 @@ function detectMealBreak(
 
   if (isMealTime) {
     let mealType = "Meal";
-    if (startHour >= 7 && startHour <= 9) mealType = "Breakfast";
-    else if (startHour >= 11 && startHour <= 14) mealType = "Lunch";
-    else if (startHour >= 17 && startHour <= 20) mealType = "Dinner";
+    if (startHour >= 7 && startHour <= 9) {
+      mealType = "Breakfast";
+    } else if (startHour >= 11 && startHour <= 14) {
+      mealType = "Lunch";
+    } else if (startHour >= 17 && startHour <= 20) {
+      mealType = "Dinner";
+    }
 
     return {
       type: "meal_break",
@@ -447,7 +450,9 @@ function createGapBoundaryEvent(
  */
 function getEventEndTime(event: calendar_v3.Schema$Event): Date | null {
   const endStr = event.end?.dateTime || event.end?.date;
-  if (!endStr) return null;
+  if (!endStr) {
+    return null;
+  }
   return new Date(endStr);
 }
 
@@ -464,7 +469,9 @@ function getEventEndTime(event: calendar_v3.Schema$Event): Date | null {
  */
 function getEventStartTime(event: calendar_v3.Schema$Event): Date | null {
   const startStr = event.start?.dateTime || event.start?.date;
-  if (!startStr) return null;
+  if (!startStr) {
+    return null;
+  }
   return new Date(startStr);
 }
 
@@ -587,7 +594,9 @@ export const analyzeGaps = asyncHandler(
       const currentEnd = getEventEndTime(currentEvent);
       const nextStart = getEventStartTime(nextEvent);
 
-      if (!currentEnd || !nextStart) continue;
+      if (!(currentEnd && nextStart)) {
+        continue;
+      }
 
       const gapDurationMs = nextStart.getTime() - currentEnd.getTime();
 

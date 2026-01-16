@@ -1,13 +1,13 @@
-import type { Request, Response } from "express"
-import { reqResAsyncHandler, sendR } from "@/utils/http"
-import { STATUS_RESPONSE } from "@/config"
-import type { calendar_v3 } from "googleapis"
-import { updateUserSupabaseCalendarCategories } from "@/utils/calendar/update-categories"
+import type { Request, Response } from "express";
+import type { calendar_v3 } from "googleapis";
+import { STATUS_RESPONSE } from "@/config";
+import { updateUserSupabaseCalendarCategories } from "@/utils/calendar/update-categories";
+import { reqResAsyncHandler, sendR } from "@/utils/http";
 
 const getAllCalendars = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const calendar = req.calendar!
-    const r = await calendar.calendarList.list({ prettyPrint: true })
+    const calendar = req.calendar!;
+    const r = await calendar.calendarList.list({ prettyPrint: true });
 
     if (req.query.customCalendars === "true") {
       const allCalendars = r.data.items?.map(
@@ -21,20 +21,20 @@ const getAllCalendars = reqResAsyncHandler(
           timeZoneForCalendar: cal.timeZone,
           defaultReminders: cal.defaultReminders,
         })
-      )
+      );
 
       await updateUserSupabaseCalendarCategories(
         calendar,
-        req.user!.email!,
-        req.user!.id!
-      )
+        req.user?.email!,
+        req.user?.id!
+      );
 
       return sendR(
         res,
         STATUS_RESPONSE.SUCCESS,
         "Successfully received all custom calendars",
         allCalendars
-      )
+      );
     }
 
     return sendR(
@@ -42,13 +42,16 @@ const getAllCalendars = reqResAsyncHandler(
       STATUS_RESPONSE.SUCCESS,
       "Successfully received all calendars",
       r
-    )
+    );
   }
-)
+);
 
 const getAllCalendarColors = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const r = await req.calendar!.colors.get({ alt: "json" })
+    if (!req.calendar) {
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available")
+    }
+    const r = await req.calendar.colors.get({ alt: "json" })
     return sendR(
       res,
       STATUS_RESPONSE.SUCCESS,
@@ -60,7 +63,10 @@ const getAllCalendarColors = reqResAsyncHandler(
 
 const getAllCalendarTimezones = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const r = await req.calendar!.settings.get({ setting: "timezone" })
+    if (!req.calendar) {
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available")
+    }
+    const r = await req.calendar.settings.get({ setting: "timezone" })
     return sendR(
       res,
       STATUS_RESPONSE.SUCCESS,
@@ -72,7 +78,10 @@ const getAllCalendarTimezones = reqResAsyncHandler(
 
 const getCalendarInfoById = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const r = await req.calendar!.calendars.get({
+    if (!req.calendar) {
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available")
+    }
+    const r = await req.calendar.calendars.get({
       calendarId: req.params.id ?? "primary",
     })
     return sendR(
@@ -86,7 +95,10 @@ const getCalendarInfoById = reqResAsyncHandler(
 
 const getCalendarColorById = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const r = await req.calendar!.calendars.get({ calendarId: req.params.id })
+    if (!req.calendar) {
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available")
+    }
+    const r = await req.calendar.calendars.get({ calendarId: req.params.id })
     return sendR(
       res,
       STATUS_RESPONSE.SUCCESS,
@@ -98,7 +110,10 @@ const getCalendarColorById = reqResAsyncHandler(
 
 const getCalendarTimezoneById = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const r = await req.calendar!.settings.get({ setting: "timezone" })
+    if (!req.calendar) {
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available")
+    }
+    const r = await req.calendar.settings.get({ setting: "timezone" })
     return sendR(
       res,
       STATUS_RESPONSE.SUCCESS,
@@ -109,7 +124,10 @@ const getCalendarTimezoneById = reqResAsyncHandler(
 )
 
 const getFreeBusy = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const r = await req.calendar!.freebusy.query({
+  if (!req.calendar) {
+    return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available")
+  }
+  const r = await req.calendar.freebusy.query({
     prettyPrint: true,
     requestBody: {
       calendarExpansionMax: 50,
@@ -118,12 +136,20 @@ const getFreeBusy = reqResAsyncHandler(async (req: Request, res: Response) => {
       timeMax: new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString(),
     },
   })
-  return sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully received free busy", r)
+  return sendR(
+    res,
+    STATUS_RESPONSE.SUCCESS,
+    "Successfully received free busy",
+    r
+  )
 })
 
 const getSettingsOfCalendar = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const r = await req.calendar!.settings.get({ setting: "timezone" })
+    if (!req.calendar) {
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available")
+    }
+    const r = await req.calendar.settings.get({ setting: "timezone" })
     return sendR(
       res,
       STATUS_RESPONSE.SUCCESS,
@@ -135,7 +161,10 @@ const getSettingsOfCalendar = reqResAsyncHandler(
 
 const getSettingsOfCalendarById = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const r = await req.calendar!.settings.get({ setting: "timezone" })
+    if (!req.calendar) {
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available")
+    }
+    const r = await req.calendar.settings.get({ setting: "timezone" })
     return sendR(
       res,
       STATUS_RESPONSE.SUCCESS,
@@ -147,7 +176,12 @@ const getSettingsOfCalendarById = reqResAsyncHandler(
 
 const clearAllEventsOfCalendar = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const r = await req.calendar!.calendars.clear({ calendarId: req.params.id })
+    if (!req.calendar) {
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available")
+    }
+    const r = await req.calendar.calendars.clear({
+      calendarId: req.params.id,
+    })
     return sendR(
       res,
       STATUS_RESPONSE.SUCCESS,
@@ -159,7 +193,10 @@ const clearAllEventsOfCalendar = reqResAsyncHandler(
 
 const createCalendar = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const r = await req.calendar!.calendars.insert({
+    if (!req.calendar) {
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available")
+    }
+    const r = await req.calendar.calendars.insert({
       requestBody: {
         summary: req.body.summary,
         description: req.body.description,
@@ -179,14 +216,20 @@ const createCalendar = reqResAsyncHandler(
 
 const deleteCalendar = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    await req.calendar!.calendars.delete({ calendarId: req.params.id })
+    if (!req.calendar) {
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available")
+    }
+    await req.calendar.calendars.delete({ calendarId: req.params.id })
     return sendR(res, STATUS_RESPONSE.SUCCESS, "Calendar deleted successfully")
   }
 )
 
 const patchCalendar = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const r = await req.calendar!.calendars.patch({
+    if (!req.calendar) {
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available")
+    }
+    const r = await req.calendar.calendars.patch({
       calendarId: req.params.id,
       requestBody: req.body,
     })
@@ -202,7 +245,10 @@ const patchCalendar = reqResAsyncHandler(
 
 const updateCalendar = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const r = await req.calendar!.calendars.update({
+    if (!req.calendar) {
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available")
+    }
+    const r = await req.calendar.calendars.update({
       calendarId: req.params.id,
       requestBody: req.body,
     })
@@ -218,7 +264,10 @@ const updateCalendar = reqResAsyncHandler(
 
 const listAllSettings = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const r = await req.calendar!.settings.list()
+    if (!req.calendar) {
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available")
+    }
+    const r = await req.calendar.settings.list()
     return sendR(
       res,
       STATUS_RESPONSE.SUCCESS,
@@ -230,22 +279,27 @@ const listAllSettings = reqResAsyncHandler(
 
 const getDryCalendarInfo = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const tokenData = req.tokenData!
-    const expiryMs = tokenData.expiry_date!
-    const expiryDate = new Date(expiryMs).toISOString()
+    const tokenData = req.tokenData!;
+    const expiryMs = tokenData.expiry_date!;
+    const expiryDate = new Date(expiryMs).toISOString();
 
-    const now = Date.now()
-    const diffMs = expiryMs - now
-    const minutesLeft = Math.floor(diffMs / 1000 / 60)
+    const now = Date.now();
+    const diffMs = expiryMs - now;
+    const minutesLeft = Math.floor(diffMs / 1000 / 60);
 
-    sendR(res, STATUS_RESPONSE.SUCCESS, "Successfully retrieved dry calendar info", {
-      expiryDate,
-      isExpired: diffMs < 0,
-      expiresIn: diffMs > 0 ? `${minutesLeft} minutes` : "Expired",
-      debugExpiresInSeconds: Math.floor(diffMs / 1000),
-    })
+    sendR(
+      res,
+      STATUS_RESPONSE.SUCCESS,
+      "Successfully retrieved dry calendar info",
+      {
+        expiryDate,
+        isExpired: diffMs < 0,
+        expiresIn: diffMs > 0 ? `${minutesLeft} minutes` : "Expired",
+        debugExpiresInSeconds: Math.floor(diffMs / 1000),
+      }
+    );
   }
-)
+);
 
 export default {
   clearAllEventsOfCalendar,
@@ -264,4 +318,4 @@ export default {
   updateCalendar,
   listAllSettings,
   getDryCalendarInfo,
-}
+};

@@ -1,22 +1,22 @@
 import express from "express";
-import { supabaseAuth } from "@/middlewares/supabase-auth";
-import { adminAuth } from "@/middlewares/admin-auth";
 import {
+  getAdminMe,
+  getAuditLogs,
   getDashboardStats,
+  getPaymentHistory,
+  getRevenueTrends,
   getSubscriptionDistribution,
-  getUsers,
+  getSubscriptions,
+  getSubscriptionTrends,
   getUserById,
-  updateUserStatus,
-  updateUserRole,
+  getUsers,
   grantCredits,
   sendPasswordReset,
-  getPaymentHistory,
-  getSubscriptions,
-  getAuditLogs,
-  getRevenueTrends,
-  getSubscriptionTrends,
-  getAdminMe,
+  updateUserRole,
+  updateUserStatus,
 } from "@/controllers/admin-controller";
+import { adminAuth } from "@/middlewares/admin-auth";
+import { supabaseAuth } from "@/middlewares/supabase-auth";
 
 const router = express.Router();
 

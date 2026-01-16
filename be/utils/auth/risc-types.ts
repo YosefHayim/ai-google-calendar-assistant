@@ -76,7 +76,8 @@ export const RISC_EVENT_TYPES = {
     "https://schemas.openid.net/secevent/risc/event-type/verification",
 } as const;
 
-export type RiscEventType = (typeof RISC_EVENT_TYPES)[keyof typeof RISC_EVENT_TYPES];
+export type RiscEventType =
+  (typeof RISC_EVENT_TYPES)[keyof typeof RISC_EVENT_TYPES];
 
 /**
  * Result of processing a RISC event

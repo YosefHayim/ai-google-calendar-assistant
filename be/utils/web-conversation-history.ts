@@ -1,8 +1,8 @@
 import { SUPABASE } from "@/config/clients/supabase";
-import { logger } from "./logger";
-import type { userAndAiMessageProps } from "@/types";
 import type { Database } from "@/database.types";
-import { getStartOfDay, isToday } from "@/utils/date/date-helpers";
+import type { userAndAiMessageProps } from "@/types";
+import { isToday } from "@/utils/date/date-helpers";
+import { logger } from "./logger";
 
 const MAX_CONTEXT_LENGTH = 1000;
 
@@ -36,9 +36,8 @@ type WebConversationRow = {
  * const messages = [{ role: "user", content: "Hello" }, { role: "assistant", content: "Hi!" }];
  * const length = calculateContextLength(messages); // Returns 8
  */
-const calculateContextLength = (messages: userAndAiMessageProps[]): number => {
-  return messages.reduce((total, msg) => total + (msg.content?.length || 0), 0);
-};
+const calculateContextLength = (messages: userAndAiMessageProps[]): number =>
+  messages.reduce((total, msg) => total + (msg.content?.length || 0), 0);
 
 /**
  * @description Maps a message role string to the database enum type.
@@ -48,9 +47,8 @@ const calculateContextLength = (messages: userAndAiMessageProps[]): number => {
  * @example
  * const dbRole = mapRoleToDb("assistant"); // Returns MessageRole enum value
  */
-const mapRoleToDb = (role: "user" | "assistant" | "system"): MessageRole => {
-  return role as MessageRole;
-};
+const mapRoleToDb = (role: "user" | "assistant" | "system"): MessageRole =>
+  role as MessageRole;
 
 /**
  * @description Retrieves all user and assistant messages for a specific conversation.
@@ -62,9 +60,10 @@ const mapRoleToDb = (role: "user" | "assistant" | "system"): MessageRole => {
  * const messages = await getConversationMessages("conv-uuid-123");
  * // Returns: [{ role: "user", content: "..." }, { role: "assistant", content: "..." }]
  */
-const getConversationMessages = async (conversationId: string): Promise<userAndAiMessageProps[]> => {
-  const { data, error } = await SUPABASE
-    .from("conversation_messages")
+const getConversationMessages = async (
+  conversationId: string
+): Promise<userAndAiMessageProps[]> => {
+  const { data, error } = await SUPABASE.from("conversation_messages")
     .select("role, content, sequence_number")
     .eq("conversation_id", conversationId)
     .order("sequence_number", { ascending: true });
@@ -94,9 +93,10 @@ const getConversationMessages = async (conversationId: string): Promise<userAndA
  *   console.log(`Found conversation: ${todayConversation.id}`);
  * }
  */
-export const getWebTodayConversationState = async (userId: string): Promise<WebConversationRow | null> => {
-  const { data, error } = await SUPABASE
-    .from("conversations")
+export const getWebTodayConversationState = async (
+  userId: string
+): Promise<WebConversationRow | null> => {
+  const { data, error } = await SUPABASE.from("conversations")
     .select("*")
     .eq("user_id", userId)
     .eq("source", "web")
@@ -106,11 +106,15 @@ export const getWebTodayConversationState = async (userId: string): Promise<WebC
     .maybeSingle();
 
   if (error) {
-    logger.error(`Failed to fetch conversation state for user ${userId}: ${error.message}`);
+    logger.error(
+      `Failed to fetch conversation state for user ${userId}: ${error.message}`
+    );
     return null;
   }
 
-  if (!data) return null;
+  if (!data) {
+    return null;
+  }
 
   // Check if the conversation is from today
   const updatedAt = data.updated_at || data.created_at;
@@ -140,8 +144,9 @@ export const createWebConversationState = async (
   initialMessage?: userAndAiMessageProps
 ): Promise<{ id: string; context: ConversationContext } | null> => {
   // Create conversation
-  const { data: conversation, error: convError } = await SUPABASE
-    .from("conversations")
+  const { data: conversation, error: convError } = await SUPABASE.from(
+    "conversations"
+  )
     .insert({
       user_id: userId,
       source: "web",
@@ -152,12 +157,14 @@ export const createWebConversationState = async (
     .single();
 
   if (convError || !conversation) {
-    logger.error(`Failed to create conversation state for user ${userId}: ${convError?.message}`);
+    logger.error(
+      `Failed to create conversation state for user ${userId}: ${convError?.message}`
+    );
     return null;
   }
 
   // Add initial message if provided
-  if (initialMessage && initialMessage.content) {
+  if (initialMessage?.content) {
     await SUPABASE.from("conversation_messages").insert({
       conversation_id: conversation.id,
       role: mapRoleToDb(initialMessage.role),
@@ -194,8 +201,7 @@ export const updateWebConversationState = async (
   context: ConversationContext,
   messageCount: number
 ): Promise<boolean> => {
-  const { error } = await SUPABASE
-    .from("conversations")
+  const { error } = await SUPABASE.from("conversations")
     .update({
       message_count: messageCount,
       summary: context.summary,
@@ -206,7 +212,9 @@ export const updateWebConversationState = async (
     .eq("id", conversationId);
 
   if (error) {
-    logger.error(`Failed to update conversation state ${conversationId}: ${error.message}`);
+    logger.error(
+      `Failed to update conversation state ${conversationId}: ${error.message}`
+    );
     return false;
   }
 
@@ -222,9 +230,11 @@ export const updateWebConversationState = async (
  * @example
  * await updateWebConversationTitle("conv-123", "Weekly Team Sync Planning");
  */
-export const updateWebConversationTitle = async (conversationId: string, title: string): Promise<boolean> => {
-  const { error } = await SUPABASE
-    .from("conversations")
+export const updateWebConversationTitle = async (
+  conversationId: string,
+  title: string
+): Promise<boolean> => {
+  const { error } = await SUPABASE.from("conversations")
     .update({
       title,
       updated_at: new Date().toISOString(),
@@ -232,7 +242,9 @@ export const updateWebConversationTitle = async (conversationId: string, title: 
     .eq("id", conversationId);
 
   if (error) {
-    logger.error(`Failed to update conversation title ${conversationId}: ${error.message}`);
+    logger.error(
+      `Failed to update conversation title ${conversationId}: ${error.message}`
+    );
     return false;
   }
 
@@ -269,7 +281,9 @@ export const storeWebSummary = async (
     .eq("id", conversationId);
 
   if (error) {
-    logger.error(`Failed to store summary for conversation ${conversationId}: ${error.message}`);
+    logger.error(
+      `Failed to store summary for conversation ${conversationId}: ${error.message}`
+    );
     return false;
   }
 
@@ -285,9 +299,11 @@ export const storeWebSummary = async (
  * @example
  * await markWebAsSummarized("conv-123", "Previous: User asked about schedule. Current: Planning meetings.");
  */
-export const markWebAsSummarized = async (conversationId: string, summary: string): Promise<boolean> => {
-  const { error } = await SUPABASE
-    .from("conversations")
+export const markWebAsSummarized = async (
+  conversationId: string,
+  summary: string
+): Promise<boolean> => {
+  const { error } = await SUPABASE.from("conversations")
     .update({
       summary,
       updated_at: new Date().toISOString(),
@@ -295,7 +311,9 @@ export const markWebAsSummarized = async (conversationId: string, summary: strin
     .eq("id", conversationId);
 
   if (error) {
-    logger.error(`Failed to mark conversation ${conversationId} as summarized: ${error.message}`);
+    logger.error(
+      `Failed to mark conversation ${conversationId} as summarized: ${error.message}`
+    );
     return false;
   }
 
@@ -323,7 +341,8 @@ export const getOrCreateWebTodayContext = async (
       messages,
       summary: existingConversation.summary || undefined,
       title: existingConversation.title || undefined,
-      lastUpdated: existingConversation.updated_at || existingConversation.created_at,
+      lastUpdated:
+        existingConversation.updated_at || existingConversation.created_at,
     };
     return { stateId: existingConversation.id, context };
   }
@@ -331,7 +350,9 @@ export const getOrCreateWebTodayContext = async (
   const newState = await createWebConversationState(userId);
 
   if (!newState) {
-    logger.warn(`Failed to create conversation state for user ${userId}, using fallback`);
+    logger.warn(
+      `Failed to create conversation state for user ${userId}, using fallback`
+    );
     return {
       stateId: "",
       context: { messages: [], lastUpdated: new Date().toISOString() },
@@ -374,8 +395,7 @@ export const addWebMessageToContext = async (
   }
 
   // Get current sequence number
-  const { data: lastMsg } = await SUPABASE
-    .from("conversation_messages")
+  const { data: lastMsg } = await SUPABASE.from("conversation_messages")
     .select("sequence_number")
     .eq("conversation_id", stateId)
     .order("sequence_number", { ascending: false })
@@ -410,14 +430,25 @@ export const addWebMessageToContext = async (
       // Store summary with sequence range
       const firstSeq = nextSequence - context.messages.length + 1;
       const lastSeq = nextSequence - 2;
-      await storeWebSummary(stateId, userId, summary, messagesToSummarize.length, firstSeq, lastSeq);
+      await storeWebSummary(
+        stateId,
+        userId,
+        summary,
+        messagesToSummarize.length,
+        firstSeq,
+        lastSeq
+      );
 
-      context.summary = context.summary ? `${context.summary}\n\n${summary}` : summary;
+      context.summary = context.summary
+        ? `${context.summary}\n\n${summary}`
+        : summary;
       context.messages = recentMessages;
 
       await markWebAsSummarized(stateId, context.summary);
     } catch (error) {
-      logger.error(`Failed to summarize conversation for user ${userId}: ${error}`);
+      logger.error(
+        `Failed to summarize conversation for user ${userId}: ${error}`
+      );
       // Continue without summarization if it fails
     }
   }
@@ -449,7 +480,9 @@ export const buildWebContextPrompt = (context: ConversationContext): string => {
 
   if (context.messages.length > 0) {
     const messageHistory = context.messages
-      .map((msg) => `${msg.role === "user" ? "User" : "Assistant"}: ${msg.content}`)
+      .map(
+        (msg) => `${msg.role === "user" ? "User" : "Assistant"}: ${msg.content}`
+      )
       .join("\n");
     parts.push(`Recent messages:\n${messageHistory}`);
   }
@@ -467,7 +500,9 @@ export const buildWebContextPrompt = (context: ConversationContext): string => {
  * console.log(`Summary: ${context.summary}`);
  * console.log(`Messages: ${context.messages.length}`);
  */
-export const getWebConversationContext = async (userId: string): Promise<ConversationContext> => {
+export const getWebConversationContext = async (
+  userId: string
+): Promise<ConversationContext> => {
   const { context } = await getOrCreateWebTodayContext(userId);
   return context;
 };
@@ -505,13 +540,18 @@ export type FullConversation = {
  * const title = getConversationTitle(conversationRow, messages);
  * // Returns: "Meeting Schedule Discussion" or "New Conversation"
  */
-const getConversationTitle = (conversation: WebConversationRow, messages: userAndAiMessageProps[]): string => {
+const _getConversationTitle = (
+  conversation: WebConversationRow,
+  messages: userAndAiMessageProps[]
+): string => {
   if (conversation.title) {
     return conversation.title;
   }
 
   if (conversation.summary) {
-    const firstLine = conversation.summary.split("\n")[0].replace(/^[-•*]\s*/, "");
+    const firstLine = conversation.summary
+      .split("\n")[0]
+      .replace(/^[-•*]\s*/, "");
     return firstLine.length > 50 ? `${firstLine.slice(0, 47)}...` : firstLine;
   }
 
@@ -549,9 +589,10 @@ export const getWebConversationList = async (
   const offset = options?.offset || 0;
   const search = options?.search;
 
-  let query = SUPABASE
-    .from("conversations")
-    .select("id, message_count, title, summary, created_at, updated_at, last_message_at")
+  let query = SUPABASE.from("conversations")
+    .select(
+      "id, message_count, title, summary, created_at, updated_at, last_message_at"
+    )
     .eq("user_id", userId)
     .eq("source", "web");
 
@@ -565,7 +606,9 @@ export const getWebConversationList = async (
     .range(offset, offset + limit - 1);
 
   if (error) {
-    logger.error(`Failed to fetch conversation list for user ${userId}: ${error.message}`);
+    logger.error(
+      `Failed to fetch conversation list for user ${userId}: ${error.message}`
+    );
     return [];
   }
 
@@ -574,7 +617,8 @@ export const getWebConversationList = async (
     let title = row.title || "New Conversation";
     if (!row.title && row.summary) {
       const firstLine = row.summary.split("\n")[0].replace(/^[-•*]\s*/, "");
-      title = firstLine.length > 50 ? `${firstLine.slice(0, 47)}...` : firstLine;
+      title =
+        firstLine.length > 50 ? `${firstLine.slice(0, 47)}...` : firstLine;
     }
 
     return {
@@ -604,8 +648,7 @@ export const getWebConversationById = async (
   conversationId: string,
   userId: string
 ): Promise<FullConversation | null> => {
-  const { data, error } = await SUPABASE
-    .from("conversations")
+  const { data, error } = await SUPABASE.from("conversations")
     .select("*")
     .eq("id", conversationId)
     .eq("user_id", userId)
@@ -613,7 +656,9 @@ export const getWebConversationById = async (
     .single();
 
   if (error || !data) {
-    logger.error(`Failed to fetch conversation ${conversationId}: ${error?.message}`);
+    logger.error(
+      `Failed to fetch conversation ${conversationId}: ${error?.message}`
+    );
     return null;
   }
 
@@ -677,28 +722,33 @@ export const loadWebConversationIntoContext = async (
  *   console.log("Conversation deleted successfully");
  * }
  */
-export const deleteWebConversation = async (conversationId: string, userId: string): Promise<boolean> => {
+export const deleteWebConversation = async (
+  conversationId: string,
+  userId: string
+): Promise<boolean> => {
   // First delete all messages in the conversation
-  const { error: msgError } = await SUPABASE
-    .from("conversation_messages")
+  const { error: msgError } = await SUPABASE.from("conversation_messages")
     .delete()
     .eq("conversation_id", conversationId);
 
   if (msgError) {
-    logger.error(`Failed to delete messages for conversation ${conversationId}: ${msgError.message}`);
+    logger.error(
+      `Failed to delete messages for conversation ${conversationId}: ${msgError.message}`
+    );
     return false;
   }
 
   // Then delete the conversation itself
-  const { error } = await SUPABASE
-    .from("conversations")
+  const { error } = await SUPABASE.from("conversations")
     .delete()
     .eq("id", conversationId)
     .eq("user_id", userId)
     .eq("source", "web");
 
   if (error) {
-    logger.error(`Failed to delete conversation ${conversationId}: ${error.message}`);
+    logger.error(
+      `Failed to delete conversation ${conversationId}: ${error.message}`
+    );
     return false;
   }
 

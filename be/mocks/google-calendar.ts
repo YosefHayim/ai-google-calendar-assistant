@@ -160,7 +160,7 @@ export const createMockCalendarClient = () => {
         ...args.requestBody,
         id: `mock-event-${Date.now()}`,
       },
-    }),
+    })
   );
   mockEventsApi.update.mockImplementation((args: { requestBody: any }) =>
     Promise.resolve({
@@ -168,7 +168,7 @@ export const createMockCalendarClient = () => {
         ...mockCalendarEvent,
         ...args.requestBody,
       },
-    }),
+    })
   );
   mockEventsApi.patch.mockImplementation((args: { requestBody: any }) =>
     Promise.resolve({
@@ -176,7 +176,7 @@ export const createMockCalendarClient = () => {
         ...mockCalendarEvent,
         ...args.requestBody,
       },
-    }),
+    })
   );
   mockEventsApi.delete.mockResolvedValue({ data: {} });
 
@@ -265,7 +265,9 @@ export const createMockCalendarErrors = () => ({
 /**
  * Helper to create an error response matching Google API error format
  */
-export const createMockGoogleApiError = (errorType: keyof ReturnType<typeof createMockCalendarErrors>) => {
+export const createMockGoogleApiError = (
+  errorType: keyof ReturnType<typeof createMockCalendarErrors>
+) => {
   const errors = createMockCalendarErrors();
   const error = errors[errorType];
   const apiError = new Error(error.message) as Error & {
@@ -280,16 +282,22 @@ export const createMockGoogleApiError = (errorType: keyof ReturnType<typeof crea
 /**
  * Helper to create mock events with custom data
  */
-export const createMockEvent = (overrides: Partial<calendar_v3.Schema$Event> = {}): calendar_v3.Schema$Event => ({
+export const createMockEvent = (
+  overrides: Partial<calendar_v3.Schema$Event> = {}
+): calendar_v3.Schema$Event => ({
   ...mockCalendarEvent,
   ...overrides,
-  id: overrides.id || `mock-event-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+  id:
+    overrides.id ||
+    `mock-event-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
 });
 
 /**
  * Helper to create mock events list with custom events
  */
-export const createMockEventsList = (events: calendar_v3.Schema$Event[] = [mockCalendarEvent]): calendar_v3.Schema$Events => ({
+export const createMockEventsList = (
+  events: calendar_v3.Schema$Event[] = [mockCalendarEvent]
+): calendar_v3.Schema$Events => ({
   ...mockEventsList,
   items: events,
 });
@@ -343,16 +351,12 @@ export const mockDateUtils = {
   /**
    * Check if a date is in the past
    */
-  isPast: (dateString: string): boolean => {
-    return new Date(dateString) < new Date();
-  },
+  isPast: (dateString: string): boolean => new Date(dateString) < new Date(),
 
   /**
    * Check if a date is in the future
    */
-  isFuture: (dateString: string): boolean => {
-    return new Date(dateString) > new Date();
-  },
+  isFuture: (dateString: string): boolean => new Date(dateString) > new Date(),
 };
 
 /**
@@ -367,7 +371,7 @@ export const createMockOAuth2Client = () => ({
       data: {
         access_token: "mock-access-token",
         token_type: "Bearer",
-        expiry_date: Date.now() + 3600000,
+        expiry_date: Date.now() + 3_600_000,
       },
     },
   }),
@@ -375,17 +379,19 @@ export const createMockOAuth2Client = () => ({
     credentials: {
       access_token: "mock-refreshed-token",
       refresh_token: "mock-refresh-token",
-      expiry_date: Date.now() + 3600000,
+      expiry_date: Date.now() + 3_600_000,
     },
   }),
   getToken: jest.fn<AnyFn>().mockResolvedValue({
     tokens: {
       access_token: "mock-access-token",
       refresh_token: "mock-refresh-token",
-      expiry_date: Date.now() + 3600000,
+      expiry_date: Date.now() + 3_600_000,
     },
   }),
-  generateAuthUrl: jest.fn<AnyFn>().mockReturnValue("https://accounts.google.com/o/oauth2/v2/auth?mock=true"),
+  generateAuthUrl: jest
+    .fn<AnyFn>()
+    .mockReturnValue("https://accounts.google.com/o/oauth2/v2/auth?mock=true"),
   _clientId: "mock-client-id",
   _clientSecret: "mock-client-secret",
 });

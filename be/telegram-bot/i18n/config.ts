@@ -1,6 +1,6 @@
-import type { TranslationKey } from "./locales/en";
 import { ar } from "./locales/ar";
 import { de } from "./locales/de";
+import type { TranslationKey } from "./locales/en";
 import { en } from "./locales/en";
 import { fr } from "./locales/fr";
 import { he } from "./locales/he";
@@ -80,6 +80,8 @@ export function getDirection(locale: SupportedLocale): TextDirection {
 export function getLocaleFromLanguageCode(
   languageCode: string | undefined
 ): SupportedLocale {
-  if (!languageCode) return DEFAULT_LOCALE;
+  if (!languageCode) {
+    return DEFAULT_LOCALE;
+  }
   return LANGUAGE_CODE_MAP[languageCode] ?? DEFAULT_LOCALE;
 }

@@ -1,28 +1,36 @@
 import { SUPABASE } from "@/config";
+import type {
+  AdminAuditLogEntry,
+  AdminDashboardStats,
+  AdminPayment,
+  AdminUser,
+  AdminUserListParams,
+  AdminUserListResponse,
+  SubscriptionDistribution,
+  UserRole,
+  UserStatus,
+} from "@/types";
 import {
   ACTIVE_SUBSCRIPTION_STATUSES,
   MODIFIABLE_SUBSCRIPTION_STATUSES,
 } from "@/utils/db/subscription-status";
-import type {
-  AdminUser,
-  AdminDashboardStats,
-  SubscriptionDistribution,
-  AdminUserListParams,
-  AdminUserListResponse,
-  AdminAuditLogEntry,
-  AdminPayment,
-  UserRole,
-  UserStatus,
-} from "@/types";
 
 /**
  * Get dashboard KPI stats via direct queries
  */
 export const getDashboardStats = async (): Promise<AdminDashboardStats> => {
   const now = new Date();
-  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
-  const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
-  const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString();
+  const todayStart = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate()
+  ).toISOString();
+  const weekAgo = new Date(
+    now.getTime() - 7 * 24 * 60 * 60 * 1000
+  ).toISOString();
+  const monthAgo = new Date(
+    now.getTime() - 30 * 24 * 60 * 60 * 1000
+  ).toISOString();
 
   try {
     // Run all queries in parallel
@@ -35,11 +43,21 @@ export const getDashboardStats = async (): Promise<AdminDashboardStats> => {
       { count: activeSubscriptions },
     ] = await Promise.all([
       SUPABASE.from("users").select("id", { count: "exact", head: true }),
-      SUPABASE.from("users").select("id", { count: "exact", head: true }).eq("status", "active"),
-      SUPABASE.from("users").select("id", { count: "exact", head: true }).gte("created_at", todayStart),
-      SUPABASE.from("users").select("id", { count: "exact", head: true }).gte("created_at", weekAgo),
-      SUPABASE.from("users").select("id", { count: "exact", head: true }).gte("created_at", monthAgo),
-      SUPABASE.from("subscriptions").select("id", { count: "exact", head: true }).in("status", [...ACTIVE_SUBSCRIPTION_STATUSES]),
+      SUPABASE.from("users")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "active"),
+      SUPABASE.from("users")
+        .select("id", { count: "exact", head: true })
+        .gte("created_at", todayStart),
+      SUPABASE.from("users")
+        .select("id", { count: "exact", head: true })
+        .gte("created_at", weekAgo),
+      SUPABASE.from("users")
+        .select("id", { count: "exact", head: true })
+        .gte("created_at", monthAgo),
+      SUPABASE.from("subscriptions")
+        .select("id", { count: "exact", head: true })
+        .in("status", [...ACTIVE_SUBSCRIPTION_STATUSES]),
     ]);
 
     return {
@@ -66,7 +84,9 @@ export const getSubscriptionDistribution = async (): Promise<
 > => {
   try {
     // Get active subscriptions grouped by plan
-    const { data: subscriptions, error: subError } = await SUPABASE.from("subscriptions")
+    const { data: subscriptions, error: subError } = await SUPABASE.from(
+      "subscriptions"
+    )
       .select("plan_id")
       .in("status", [...ACTIVE_SUBSCRIPTION_STATUSES]);
 
@@ -75,8 +95,8 @@ export const getSubscriptionDistribution = async (): Promise<
     }
 
     // Get all plans
-    const { data: plans, error: planError } = await SUPABASE.from("plans")
-      .select("id, slug, name");
+    const { data: plans, error: planError } =
+      await SUPABASE.from("plans").select("id, slug, name");
 
     if (planError) {
       throw planError;
@@ -92,19 +112,24 @@ export const getSubscriptionDistribution = async (): Promise<
     }
 
     // Build distribution
-    const distribution: SubscriptionDistribution[] = (plans || []).map((plan) => {
-      const count = planCounts.get(plan.id) || 0;
-      return {
-        planSlug: plan.slug || "unknown",
-        planName: plan.name || "Unknown",
-        subscriberCount: count,
-        percentage: totalSubs > 0 ? Math.round((count / totalSubs) * 100) : 0,
-      };
-    }).filter((d) => d.subscriberCount > 0);
+    const distribution: SubscriptionDistribution[] = (plans || [])
+      .map((plan) => {
+        const count = planCounts.get(plan.id) || 0;
+        return {
+          planSlug: plan.slug || "unknown",
+          planName: plan.name || "Unknown",
+          subscriberCount: count,
+          percentage: totalSubs > 0 ? Math.round((count / totalSubs) * 100) : 0,
+        };
+      })
+      .filter((d) => d.subscriberCount > 0);
 
     return distribution;
   } catch (error) {
-    console.error("[Admin Service] Failed to fetch subscription distribution:", error);
+    console.error(
+      "[Admin Service] Failed to fetch subscription distribution:",
+      error
+    );
     throw new Error(`Failed to fetch subscription distribution: ${error}`);
   }
 };
@@ -157,19 +182,24 @@ export const getUserList = async (
 
     // Get subscriptions for these users
     const userIds = (data || []).map((u: any) => u.id);
-    const { data: subscriptions } = userIds.length > 0
-      ? await SUPABASE.from("subscriptions")
-          .select("*, plans(name, slug)")
-          .in("user_id", userIds)
-          .in("status", [...ACTIVE_SUBSCRIPTION_STATUSES, ...MODIFIABLE_SUBSCRIPTION_STATUSES])
-      : { data: [] };
+    const { data: subscriptions } =
+      userIds.length > 0
+        ? await SUPABASE.from("subscriptions")
+            .select("*, plans(name, slug)")
+            .in("user_id", userIds)
+            .in("status", [
+              ...ACTIVE_SUBSCRIPTION_STATUSES,
+              ...MODIFIABLE_SUBSCRIPTION_STATUSES,
+            ])
+        : { data: [] };
 
     // Get oauth tokens to check connection status
-    const { data: oauthTokens } = userIds.length > 0
-      ? await SUPABASE.from("oauth_tokens")
-          .select("user_id")
-          .in("user_id", userIds)
-      : { data: [] };
+    const { data: oauthTokens } =
+      userIds.length > 0
+        ? await SUPABASE.from("oauth_tokens")
+            .select("user_id")
+            .in("user_id", userIds)
+        : { data: [] };
 
     const subsByUser = new Map<string, any>();
     for (const sub of subscriptions || []) {
@@ -229,7 +259,9 @@ export const getUserList = async (
 /**
  * Get single user details by ID via direct queries
  */
-export const getUserById = async (userId: string): Promise<AdminUser | null> => {
+export const getUserById = async (
+  userId: string
+): Promise<AdminUser | null> => {
   try {
     const { data: user, error } = await SUPABASE.from("users")
       .select("*")
@@ -243,13 +275,18 @@ export const getUserById = async (userId: string): Promise<AdminUser | null> => 
       throw error;
     }
 
-    if (!user) return null;
+    if (!user) {
+      return null;
+    }
 
     // Get subscription
     const { data: subscription } = await SUPABASE.from("subscriptions")
       .select("*, plans(name, slug)")
       .eq("user_id", userId)
-      .in("status", [...ACTIVE_SUBSCRIPTION_STATUSES, ...MODIFIABLE_SUBSCRIPTION_STATUSES])
+      .in("status", [
+        ...ACTIVE_SUBSCRIPTION_STATUSES,
+        ...MODIFIABLE_SUBSCRIPTION_STATUSES,
+      ])
       .maybeSingle();
 
     // Check oauth connection
@@ -462,7 +499,9 @@ export const logAdminAction = async (_params: {
 }): Promise<void> => {
   // Audit logging disabled - table removed for simpler architecture
   // Console log for debugging if needed
-  console.log(`[Admin Action] ${_params.action} on ${_params.resourceType}/${_params.resourceId}`);
+  console.log(
+    `[Admin Action] ${_params.action} on ${_params.resourceType}/${_params.resourceId}`
+  );
 };
 
 /**
@@ -494,33 +533,42 @@ export const sendPasswordResetEmail = async (
 /**
  * Revenue trends data point
  */
-export interface RevenueTrendPoint {
+export type RevenueTrendPoint = {
   month: string;
   revenue: number;
   subscriptions: number;
-}
+};
 
 /**
  * Subscription trend data point
  */
-export interface SubscriptionTrendPoint {
+export type SubscriptionTrendPoint = {
   date: string;
   newSubscriptions: number;
   cancelledSubscriptions: number;
   totalActive: number;
-}
+};
 
 /**
  * Get monthly revenue trends for the last N months
  * Note: Revenue is now tracked via LemonSqueezy dashboard
  */
-export const getRevenueTrends = async (months: number = 6): Promise<RevenueTrendPoint[]> => {
+export const getRevenueTrends = async (
+  months = 6
+): Promise<RevenueTrendPoint[]> => {
   const trends: RevenueTrendPoint[] = [];
   const now = new Date();
 
   for (let i = months - 1; i >= 0; i--) {
     const startOfMonth = new Date(now.getFullYear(), now.getMonth() - i, 1);
-    const endOfMonth = new Date(now.getFullYear(), now.getMonth() - i + 1, 0, 23, 59, 59);
+    const endOfMonth = new Date(
+      now.getFullYear(),
+      now.getMonth() - i + 1,
+      0,
+      23,
+      59,
+      59
+    );
 
     // Get new subscriptions for this month
     const { count: subCount } = await SUPABASE.from("subscriptions")
@@ -528,7 +576,9 @@ export const getRevenueTrends = async (months: number = 6): Promise<RevenueTrend
       .gte("created_at", startOfMonth.toISOString())
       .lte("created_at", endOfMonth.toISOString());
 
-    const monthName = startOfMonth.toLocaleDateString("en-US", { month: "short" });
+    const monthName = startOfMonth.toLocaleDateString("en-US", {
+      month: "short",
+    });
 
     trends.push({
       month: monthName,
@@ -543,7 +593,9 @@ export const getRevenueTrends = async (months: number = 6): Promise<RevenueTrend
 /**
  * Get daily subscription trends for the last N days
  */
-export const getSubscriptionTrends = async (days: number = 7): Promise<SubscriptionTrendPoint[]> => {
+export const getSubscriptionTrends = async (
+  days = 7
+): Promise<SubscriptionTrendPoint[]> => {
   const trends: SubscriptionTrendPoint[] = [];
   const now = new Date();
 
@@ -590,6 +642,6 @@ export const getSubscriptionTrends = async (days: number = 7): Promise<Subscript
 /**
  * Get current admin user info
  */
-export const getAdminUserInfo = async (userId: string): Promise<AdminUser | null> => {
-  return getUserById(userId);
-};
+export const getAdminUserInfo = async (
+  userId: string
+): Promise<AdminUser | null> => getUserById(userId);

@@ -1,9 +1,14 @@
-import { PROVIDERS, REDIRECT_URI, SCOPES_STRING, STATUS_RESPONSE, SUPABASE } from "@/config";
-
 import type { AuthError } from "@supabase/supabase-js";
 import type { Response } from "express";
-import { logger } from "../logger";
+import {
+  type PROVIDERS,
+  REDIRECT_URI,
+  SCOPES_STRING,
+  STATUS_RESPONSE,
+  SUPABASE,
+} from "@/config";
 import sendR from "@/utils/send-response";
+import { logger } from "../logger";
 
 type OAuthResult = {
   url: string | null;
@@ -23,7 +28,10 @@ type OAuthResult = {
  * - Otherwise relies on refresh tokens for silent re-authentication
  * - Always includes `access_type: "offline"` to ensure refresh_token is returned
  */
-export async function initiateOAuthFlow(provider: PROVIDERS, options: { forceConsent?: boolean } = {}): Promise<OAuthResult> {
+export async function initiateOAuthFlow(
+  provider: PROVIDERS,
+  options: { forceConsent?: boolean } = {}
+): Promise<OAuthResult> {
   const { forceConsent = false } = options;
   const queryParams: {
     access_type: string;
@@ -65,7 +73,12 @@ export function redirectToOAuth(res: Response, url: string): void {
  */
 export function sendOAuthError(res: Response, error: AuthError): void {
   logger.error(`Auth: sendOAuthError called: error: ${error}`);
-  sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Failed to sign up user.", error);
+  sendR(
+    res,
+    STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
+    "Failed to sign up user.",
+    error
+  );
 }
 
 /**
@@ -76,15 +89,24 @@ export function sendOAuthError(res: Response, error: AuthError): void {
  * @param res - Express response object.
  * @param provider - The OAuth provider to use.
  */
-export async function supabaseThirdPartySignInOrSignUp(res: Response, provider: PROVIDERS): Promise<void> {
+export async function supabaseThirdPartySignInOrSignUp(
+  res: Response,
+  provider: PROVIDERS
+): Promise<void> {
   const { url, error } = await initiateOAuthFlow(provider);
   if (url) {
     redirectToOAuth(res, url);
     return;
   }
-  logger.error(`Auth: supabaseThirdPartySignInOrSignUp called: error: ${error}`);
-  logger.error(`Auth: supabaseThirdPartySignInOrSignUp called: error: ${error?.message}`);
-  logger.error(`Auth: supabaseThirdPartySignInOrSignUp called: error: ${error?.stack}`);
+  logger.error(
+    `Auth: supabaseThirdPartySignInOrSignUp called: error: ${error}`
+  );
+  logger.error(
+    `Auth: supabaseThirdPartySignInOrSignUp called: error: ${error?.message}`
+  );
+  logger.error(
+    `Auth: supabaseThirdPartySignInOrSignUp called: error: ${error?.stack}`
+  );
   if (error) {
     sendOAuthError(res, error);
   }

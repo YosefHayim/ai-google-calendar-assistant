@@ -1,51 +1,53 @@
 // Google token utilities
-export {
-  generateGoogleAuthUrl,
-  checkTokenExpiry,
-  fetchGoogleTokensByEmail,
-  refreshGoogleAccessToken,
-  persistGoogleTokens,
-  deactivateGoogleTokens,
-  NEAR_EXPIRY_BUFFER_MS,
-  type TokenExpiryStatus,
-  type RefreshedGoogleToken,
-} from "./google-token";
-
-// Supabase token utilities
-export {
-  validateSupabaseToken,
-  refreshSupabaseSession,
-  setSupabaseSession,
-  type SupabaseSessionResult,
-  type RefreshedSupabaseSession,
-} from "./supabase-token";
 
 // Legacy exports (kept for backwards compatibility)
 export { fetchCredentialsByEmail } from "./get-user-calendar-tokens";
-export { supabaseThirdPartySignInOrSignUp, initiateOAuthFlow, redirectToOAuth, sendOAuthError } from "./third-party-signin";
-export { updateUserSupabaseTokens } from "./update-tokens-of-user";
-
-// User authentication utilities
 export {
-  requireUser,
-  requireUserId,
-  getUserId,
-  getUserEmail,
-  isAuthenticated,
-  hasUserEmail,
-  type UserResult,
-  type UserIdExtractionResult,
-  type UserExtractionResult,
-  type UserExtractionError,
-} from "./require-user";
-
+  checkTokenExpiry,
+  deactivateGoogleTokens,
+  fetchGoogleTokensByEmail,
+  generateGoogleAuthUrl,
+  NEAR_EXPIRY_BUFFER_MS,
+  persistGoogleTokens,
+  type RefreshedGoogleToken,
+  refreshGoogleAccessToken,
+  type TokenExpiryStatus,
+} from "./google-token";
 // Ownership validation (anti-BOLA/IDOR)
 export {
-  validateResourceOwnership,
-  requireOwnership,
-  requireConversationOwnership,
-  requireEmailOwnership,
-  requireUserIdOwnership,
   type OwnedResourceType,
   type OwnershipValidationResult,
+  requireConversationOwnership,
+  requireEmailOwnership,
+  requireOwnership,
+  requireUserIdOwnership,
+  validateResourceOwnership,
 } from "./ownership-validation";
+// User authentication utilities
+export {
+  getUserEmail,
+  getUserId,
+  hasUserEmail,
+  isAuthenticated,
+  requireUser,
+  requireUserId,
+  type UserExtractionError,
+  type UserExtractionResult,
+  type UserIdExtractionResult,
+  type UserResult,
+} from "./require-user";
+// Supabase token utilities
+export {
+  type RefreshedSupabaseSession,
+  refreshSupabaseSession,
+  type SupabaseSessionResult,
+  setSupabaseSession,
+  validateSupabaseToken,
+} from "./supabase-token";
+export {
+  initiateOAuthFlow,
+  redirectToOAuth,
+  sendOAuthError,
+  supabaseThirdPartySignInOrSignUp,
+} from "./third-party-signin";
+export { updateUserSupabaseTokens } from "./update-tokens-of-user";

@@ -1,15 +1,14 @@
 export {
-  unifiedContextStore,
-  type Modality,
-  type EventReference,
-  type CalendarReference,
-  type ConversationContext,
-  type UserPreferencesContext,
-  type ContextSnapshot,
-} from "./unified-context-store"
-
-export {
   entityTracker,
-  type TrackedEvent,
   type TrackedCalendar,
-} from "./entity-tracker"
+  type TrackedEvent,
+} from "./entity-tracker";
+export {
+  type CalendarReference,
+  type ContextSnapshot,
+  type ConversationContext,
+  type EventReference,
+  type Modality,
+  type UserPreferencesContext,
+  unifiedContextStore,
+} from "./unified-context-store";

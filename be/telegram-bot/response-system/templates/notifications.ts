@@ -3,8 +3,8 @@
  * Pre-built templates for success, error, and info notifications
  */
 
-import { ResponseBuilder } from "../core/response-builder";
 import { sanitizeUserInput } from "../core/html-escaper";
+import { ResponseBuilder } from "../core/response-builder";
 
 // ============================================
 // Success Templates
@@ -51,7 +51,9 @@ export function eventDeletedTemplate(eventName: string): ResponseBuilder {
   return ResponseBuilder.telegram()
     .type("success")
     .header("✅", "Event Deleted")
-    .text(`"${sanitizeUserInput(eventName)}" has been removed from your calendar.`)
+    .text(
+      `"${sanitizeUserInput(eventName)}" has been removed from your calendar.`
+    )
     .footer(undefined, "Your calendar has been updated.");
 }
 
@@ -87,14 +89,18 @@ export function eventNotFoundTemplate(
   const builder = ResponseBuilder.telegram()
     .type("error")
     .header("😕", "Couldn't Find Meeting")
-    .text(`I couldn't find any event matching "${sanitizeUserInput(searchTerm)}".`);
+    .text(
+      `I couldn't find any event matching "${sanitizeUserInput(searchTerm)}".`
+    );
 
   if (suggestions && suggestions.length > 0) {
     const items = suggestions.map((s) => ({ text: s, bullet: "dot" as const }));
     builder.section("💡", "Did you mean:", items);
   }
 
-  return builder.footer("Try searching with different keywords or check your spelling.");
+  return builder.footer(
+    "Try searching with different keywords or check your spelling."
+  );
 }
 
 /**
@@ -248,7 +254,7 @@ export function statusTemplate(
       .type("success")
       .header("🟢", "All Systems Go!")
       .bulletList([
-        `Google Calendar: Connected`,
+        "Google Calendar: Connected",
         email ? `Account: ${email}` : "Account: Verified",
       ])
       .footer(undefined, "Everything is working smoothly!");

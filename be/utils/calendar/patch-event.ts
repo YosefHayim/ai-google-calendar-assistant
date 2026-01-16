@@ -1,5 +1,5 @@
-import { REQUEST_CONFIG_BASE } from "@/config";
 import type { calendar_v3 } from "googleapis";
+import { REQUEST_CONFIG_BASE } from "@/config";
 
 type PatchEventParams = {
   calendarEvents: calendar_v3.Resource$Events;
@@ -20,10 +20,14 @@ type PatchEventParams = {
  * normalizeCalendarId(null); // Returns null
  */
 function normalizeCalendarId(id: unknown): string | null {
-  if (!id || typeof id !== "string") return null;
+  if (!id || typeof id !== "string") {
+    return null;
+  }
   const trimmed = id.trim();
   // Reject obviously invalid values
-  if (trimmed === "" || trimmed === "/") return null;
+  if (trimmed === "" || trimmed === "/") {
+    return null;
+  }
   return trimmed;
 }
 
@@ -50,9 +54,20 @@ function generateMeetConferenceData(): calendar_v3.Schema$ConferenceData {
  * other fields are preserved. This is the preferred method for partial updates.
  * Supports adding Google Meet links to existing events via extra.addMeetLink.
  */
-export async function patchEvent({ calendarEvents, eventData, extra }: PatchEventParams) {
-  const body = (eventData as calendar_v3.Schema$Event & { calendarId?: string; email?: string }) || {};
-  const calendarId = normalizeCalendarId(extra?.calendarId) || normalizeCalendarId(body.calendarId) || "primary";
+export async function patchEvent({
+  calendarEvents,
+  eventData,
+  extra,
+}: PatchEventParams) {
+  const body =
+    (eventData as calendar_v3.Schema$Event & {
+      calendarId?: string;
+      email?: string;
+    }) || {};
+  const calendarId =
+    normalizeCalendarId(extra?.calendarId) ||
+    normalizeCalendarId(body.calendarId) ||
+    "primary";
   const eventId = (extra?.eventId as string) || body.id || "";
   const addMeetLink = extra?.addMeetLink === true;
 

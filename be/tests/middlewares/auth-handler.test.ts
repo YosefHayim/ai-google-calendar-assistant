@@ -1,9 +1,8 @@
-import type { NextFunction, Request, Response } from "express";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
-import { mockFn } from "../test-utils";
-
+import type { NextFunction, Request, Response } from "express";
 // Now import after mocks are set up
 import { authHandler } from "../../middlewares/auth-handler";
+import { mockFn } from "../test-utils";
 
 // Create mocks before imports
 const mockGetUser = mockFn();
@@ -61,7 +60,11 @@ describe("authHandler", () => {
         error: null,
       });
 
-      await authHandler(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      await authHandler(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
       expect(mockGetUser).toHaveBeenCalledWith("valid-token");
       expect(mockNext).toHaveBeenCalled();
@@ -78,9 +81,15 @@ describe("authHandler", () => {
         error: null,
       });
 
-      await authHandler(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      await authHandler(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
-      expect((mockRequest as Request & { user: typeof mockUser }).user).toEqual(mockUser);
+      expect((mockRequest as Request & { user: typeof mockUser }).user).toEqual(
+        mockUser
+      );
     });
 
     it("should handle Bearer token with extra spaces", async () => {
@@ -93,7 +102,11 @@ describe("authHandler", () => {
         error: null,
       });
 
-      await authHandler(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      await authHandler(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
       expect(mockGetUser).toHaveBeenCalledWith("  valid-token");
     });
@@ -103,9 +116,18 @@ describe("authHandler", () => {
     it("should return 401 when authorization header is missing", async () => {
       mockRequest.headers = {};
 
-      await authHandler(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      await authHandler(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
-      expect(mockSendR).toHaveBeenCalledWith(mockResponse, 401, "Missing authorization headers: ", undefined);
+      expect(mockSendR).toHaveBeenCalledWith(
+        mockResponse,
+        401,
+        "Missing authorization headers: ",
+        undefined
+      );
       expect(mockNext).not.toHaveBeenCalled();
     });
 
@@ -114,9 +136,18 @@ describe("authHandler", () => {
         authorization: "Bearer ",
       };
 
-      await authHandler(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      await authHandler(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
-      expect(mockSendR).toHaveBeenCalledWith(mockResponse, 401, "Missing authorization headers: ", "");
+      expect(mockSendR).toHaveBeenCalledWith(
+        mockResponse,
+        401,
+        "Missing authorization headers: ",
+        ""
+      );
     });
 
     it("should return 401 when user is not found", async () => {
@@ -129,9 +160,17 @@ describe("authHandler", () => {
         error: { message: "Invalid token" },
       });
 
-      await authHandler(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      await authHandler(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
-      expect(mockSendR).toHaveBeenCalledWith(mockResponse, 401, "You are not logged in, please logged in or register.");
+      expect(mockSendR).toHaveBeenCalledWith(
+        mockResponse,
+        401,
+        "You are not logged in, please logged in or register."
+      );
       expect(mockNext).not.toHaveBeenCalled();
     });
 
@@ -145,9 +184,17 @@ describe("authHandler", () => {
         error: null,
       });
 
-      await authHandler(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      await authHandler(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
-      expect(mockSendR).toHaveBeenCalledWith(mockResponse, 401, "You are not logged in, please logged in or register.");
+      expect(mockSendR).toHaveBeenCalledWith(
+        mockResponse,
+        401,
+        "You are not logged in, please logged in or register."
+      );
     });
   });
 
@@ -157,9 +204,18 @@ describe("authHandler", () => {
         authorization: "just-a-token",
       };
 
-      await authHandler(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      await authHandler(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
-      expect(mockSendR).toHaveBeenCalledWith(mockResponse, 401, "Missing authorization headers: ", "just-a-token");
+      expect(mockSendR).toHaveBeenCalledWith(
+        mockResponse,
+        401,
+        "Missing authorization headers: ",
+        "just-a-token"
+      );
     });
 
     it("should handle malformed authorization header", async () => {
@@ -167,9 +223,18 @@ describe("authHandler", () => {
         authorization: "InvalidFormat token-here",
       };
 
-      await authHandler(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      await authHandler(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
-      expect(mockSendR).toHaveBeenCalledWith(mockResponse, 401, "Missing authorization headers: ", "InvalidFormat token-here");
+      expect(mockSendR).toHaveBeenCalledWith(
+        mockResponse,
+        401,
+        "Missing authorization headers: ",
+        "InvalidFormat token-here"
+      );
     });
 
     it("should handle Supabase errors gracefully", async () => {
@@ -179,7 +244,13 @@ describe("authHandler", () => {
 
       mockGetUser.mockRejectedValue(new Error("Supabase connection error"));
 
-      await expect(authHandler(mockRequest as Request, mockResponse as Response, mockNext as NextFunction)).rejects.toThrow("Supabase connection error");
+      await expect(
+        authHandler(
+          mockRequest as Request,
+          mockResponse as Response,
+          mockNext as NextFunction
+        )
+      ).rejects.toThrow("Supabase connection error");
     });
 
     it("should handle very long tokens", async () => {
@@ -193,7 +264,11 @@ describe("authHandler", () => {
         error: null,
       });
 
-      await authHandler(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      await authHandler(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
       expect(mockGetUser).toHaveBeenCalledWith(longToken);
       expect(mockNext).toHaveBeenCalled();

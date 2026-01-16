@@ -1,11 +1,14 @@
 import type { Request, Response } from "express";
 import { STATUS_RESPONSE } from "@/config";
-import { reqResAsyncHandler, sendR } from "@/utils/http";
-import { parsePaginationParams, parseSortParams } from "@/utils/http/pagination";
-import { requireUserId } from "@/utils/auth/require-user";
-import * as adminService from "@/services/admin-service";
 import type { AdminRequest } from "@/middlewares/admin-auth";
+import * as adminService from "@/services/admin-service";
 import type { AdminUserListParams, UserRole, UserStatus } from "@/types";
+import { requireUserId } from "@/utils/auth/require-user";
+import { reqResAsyncHandler, sendR } from "@/utils/http";
+import {
+  parsePaginationParams,
+  parseSortParams,
+} from "@/utils/http/pagination";
 
 /**
  * GET /api/admin/dashboard/stats
@@ -14,7 +17,12 @@ import type { AdminUserListParams, UserRole, UserStatus } from "@/types";
 export const getDashboardStats = reqResAsyncHandler(
   async (_req: Request, res: Response) => {
     const stats = await adminService.getDashboardStats();
-    return sendR(res, STATUS_RESPONSE.SUCCESS, "Dashboard stats retrieved", stats);
+    return sendR(
+      res,
+      STATUS_RESPONSE.SUCCESS,
+      "Dashboard stats retrieved",
+      stats
+    );
   }
 );
 
@@ -83,7 +91,9 @@ export const getUserById = reqResAsyncHandler(
 export const updateUserStatus = reqResAsyncHandler(
   async (req: AdminRequest, res: Response) => {
     const userResult = requireUserId(req, res);
-    if (!userResult.success) return;
+    if (!userResult.success) {
+      return;
+    }
     const { userId: adminUserId } = userResult;
 
     const { id } = req.params;
@@ -110,7 +120,9 @@ export const updateUserStatus = reqResAsyncHandler(
 export const updateUserRole = reqResAsyncHandler(
   async (req: AdminRequest, res: Response) => {
     const userResult = requireUserId(req, res);
-    if (!userResult.success) return;
+    if (!userResult.success) {
+      return;
+    }
     const { userId: adminUserId } = userResult;
 
     const { id } = req.params;
@@ -118,7 +130,11 @@ export const updateUserRole = reqResAsyncHandler(
 
     // Prevent admin from changing their own role
     if (id === adminUserId) {
-      return sendR(res, STATUS_RESPONSE.FORBIDDEN, "Cannot modify your own role");
+      return sendR(
+        res,
+        STATUS_RESPONSE.FORBIDDEN,
+        "Cannot modify your own role"
+      );
     }
 
     await adminService.updateUserRole(id, role, adminUserId, reason);
@@ -133,7 +149,9 @@ export const updateUserRole = reqResAsyncHandler(
 export const grantCredits = reqResAsyncHandler(
   async (req: AdminRequest, res: Response) => {
     const userResult = requireUserId(req, res);
-    if (!userResult.success) return;
+    if (!userResult.success) {
+      return;
+    }
     const { userId: adminUserId } = userResult;
 
     const { id } = req.params;
@@ -159,7 +177,9 @@ export const grantCredits = reqResAsyncHandler(
 export const sendPasswordReset = reqResAsyncHandler(
   async (req: AdminRequest, res: Response) => {
     const userResult = requireUserId(req, res);
-    if (!userResult.success) return;
+    if (!userResult.success) {
+      return;
+    }
     const { userId: adminUserId } = userResult;
 
     const user = await adminService.getUserById(req.params.id);
@@ -188,7 +208,12 @@ export const getPaymentHistory = reqResAsyncHandler(
     };
 
     const result = await adminService.getPaymentHistory(params);
-    return sendR(res, STATUS_RESPONSE.SUCCESS, "Payment history retrieved", result);
+    return sendR(
+      res,
+      STATUS_RESPONSE.SUCCESS,
+      "Payment history retrieved",
+      result
+    );
   }
 );
 
@@ -247,9 +272,16 @@ export const getAuditLogs = reqResAsyncHandler(
  */
 export const getRevenueTrends = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const months = req.query.months ? parseInt(req.query.months as string, 10) : 6;
+    const months = req.query.months
+      ? Number.parseInt(req.query.months as string, 10)
+      : 6;
     const trends = await adminService.getRevenueTrends(months);
-    return sendR(res, STATUS_RESPONSE.SUCCESS, "Revenue trends retrieved", trends);
+    return sendR(
+      res,
+      STATUS_RESPONSE.SUCCESS,
+      "Revenue trends retrieved",
+      trends
+    );
   }
 );
 
@@ -259,9 +291,16 @@ export const getRevenueTrends = reqResAsyncHandler(
  */
 export const getSubscriptionTrends = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const days = req.query.days ? parseInt(req.query.days as string, 10) : 7;
+    const days = req.query.days
+      ? Number.parseInt(req.query.days as string, 10)
+      : 7;
     const trends = await adminService.getSubscriptionTrends(days);
-    return sendR(res, STATUS_RESPONSE.SUCCESS, "Subscription trends retrieved", trends);
+    return sendR(
+      res,
+      STATUS_RESPONSE.SUCCESS,
+      "Subscription trends retrieved",
+      trends
+    );
   }
 );
 
@@ -272,7 +311,9 @@ export const getSubscriptionTrends = reqResAsyncHandler(
 export const getAdminMe = reqResAsyncHandler(
   async (req: AdminRequest, res: Response) => {
     const userResult = requireUserId(req, res);
-    if (!userResult.success) return;
+    if (!userResult.success) {
+      return;
+    }
     const { userId } = userResult;
 
     const user = await adminService.getAdminUserInfo(userId);
@@ -280,6 +321,11 @@ export const getAdminMe = reqResAsyncHandler(
       return sendR(res, STATUS_RESPONSE.NOT_FOUND, "Admin user not found");
     }
 
-    return sendR(res, STATUS_RESPONSE.SUCCESS, "Admin user info retrieved", user);
+    return sendR(
+      res,
+      STATUS_RESPONSE.SUCCESS,
+      "Admin user info retrieved",
+      user
+    );
   }
 );

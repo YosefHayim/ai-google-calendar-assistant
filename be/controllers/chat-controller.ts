@@ -1,33 +1,32 @@
-import { InputGuardrailTripwireTriggered, run } from "@openai/agents";
+import { run } from "@openai/agents";
 import type { Request, Response } from "express";
-import { webConversation } from "@/utils/conversation/WebConversationAdapter";
-import {
-  generateConversationTitle,
-  summarizeMessages,
-} from "@/telegram-bot/utils/summarize";
-import {
-  getWebRelevantContext,
-  storeWebEmbeddingAsync,
-  deleteAllWebEmbeddings,
-} from "@/utils/web-embeddings";
-import { unifiedContextStore } from "@/shared/context";
-import { reqResAsyncHandler, sendR } from "@/utils/http";
-
-import type { AgentContext } from "@/ai-agents/tool-registry";
 import { ORCHESTRATOR_AGENT } from "@/ai-agents";
-import { STATUS_RESPONSE } from "@/config";
 import { createAgentSession } from "@/ai-agents/sessions";
+import type { AgentContext } from "@/ai-agents/tool-registry";
+import { STATUS_RESPONSE } from "@/config";
+import type { CrossPlatformSyncPreference } from "@/services/user-preferences-service";
 import {
   getAllyBrainPreference,
   getCrossPlatformSyncPreference,
   PREFERENCE_DEFAULTS,
 } from "@/services/user-preferences-service";
-import type { CrossPlatformSyncPreference } from "@/services/user-preferences-service";
+import { unifiedContextStore } from "@/shared/context";
+import {
+  generateConversationTitle,
+  summarizeMessages,
+} from "@/telegram-bot/utils/summarize";
 import {
   getCachedConversations,
-  setCachedConversations,
   invalidateConversationsCache,
+  setCachedConversations,
 } from "@/utils/cache/user-cache";
+import { webConversation } from "@/utils/conversation/WebConversationAdapter";
+import { reqResAsyncHandler, sendR } from "@/utils/http";
+import {
+  deleteAllWebEmbeddings,
+  getWebRelevantContext,
+  storeWebEmbeddingAsync,
+} from "@/utils/web-embeddings";
 
 const DEFAULT_LIMIT = 20;
 const DEFAULT_OFFSET = 0;
@@ -48,7 +47,7 @@ type PromptParams = {
 };
 
 async function buildChatPromptWithContext(
-  params: PromptParams,
+  params: PromptParams
 ): Promise<string> {
   const { message, conversationContext, semanticContext, userEmail, userId } =
     params;
@@ -76,9 +75,9 @@ async function buildChatPromptWithContext(
     parts.push("--- End Past Conversations ---");
   }
 
-  parts.push(`\n<user_request>`);
+  parts.push("\n<user_request>");
   parts.push(message);
-  parts.push(`</user_request>`);
+  parts.push("</user_request>");
 
   return parts.join("\n");
 }
@@ -131,12 +130,12 @@ const sendChat = reqResAsyncHandler(
       await webConversation.addMessageToContext(
         userId,
         { role: "user", content: message },
-        summarizeMessages,
+        summarizeMessages
       );
       await webConversation.addMessageToContext(
         userId,
         { role: "assistant", content: finalOutput },
-        summarizeMessages,
+        summarizeMessages
       );
       storeWebEmbeddingAsync(userId, message, "user");
       storeWebEmbeddingAsync(userId, finalOutput, "assistant");
@@ -144,7 +143,7 @@ const sendChat = reqResAsyncHandler(
       if (isNewConversation && conversationId) {
         generateConversationTitle(message)
           .then((title) =>
-            webConversation.updateConversationTitle(conversationId, title),
+            webConversation.updateConversationTitle(conversationId, title)
           )
           .catch(console.error);
       }
@@ -157,17 +156,17 @@ const sendChat = reqResAsyncHandler(
           content: finalOutput || "No response received",
           conversationId,
           timestamp: new Date().toISOString(),
-        },
+        }
       );
     } catch (error) {
       console.error("Chat error:", error);
       sendR(
         res,
         STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
-        "Error processing your request",
+        "Error processing your request"
       );
     }
-  },
+  }
 );
 
 const getConversations = reqResAsyncHandler(
@@ -185,7 +184,12 @@ const getConversations = reqResAsyncHandler(
         Number.parseInt(req.query.offset as string, 10) || DEFAULT_OFFSET;
       const search = req.query.search as string | undefined;
 
-      const cached = await getCachedConversations(userId, limit, offset, search);
+      const cached = await getCachedConversations(
+        userId,
+        limit,
+        offset,
+        search
+      );
       if (cached) {
         return sendR(
           res,
@@ -194,16 +198,15 @@ const getConversations = reqResAsyncHandler(
           {
             conversations: cached.conversations,
             pagination: { limit, offset, count: cached.conversations.length },
-          },
+          }
         );
       }
 
       const syncPreference = await getCrossPlatformSyncPreference(userId);
-      const includeAllSources =
-        (
-          syncPreference ||
-          (PREFERENCE_DEFAULTS.cross_platform_sync as CrossPlatformSyncPreference)
-        ).enabled;
+      const includeAllSources = (
+        syncPreference ||
+        (PREFERENCE_DEFAULTS.cross_platform_sync as CrossPlatformSyncPreference)
+      ).enabled;
 
       const conversations = await webConversation.getConversationList(userId, {
         limit,
@@ -212,7 +215,13 @@ const getConversations = reqResAsyncHandler(
         includeAllSources,
       });
 
-      await setCachedConversations(userId, conversations, limit, offset, search);
+      await setCachedConversations(
+        userId,
+        conversations,
+        limit,
+        offset,
+        search
+      );
 
       sendR(
         res,
@@ -221,17 +230,17 @@ const getConversations = reqResAsyncHandler(
         {
           conversations,
           pagination: { limit, offset, count: conversations.length },
-        },
+        }
       );
     } catch (error) {
       console.error("Error getting conversations:", error);
       sendR(
         res,
         STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
-        "Error retrieving conversations",
+        "Error retrieving conversations"
       );
     }
-  },
+  }
 );
 
 const getConversation = reqResAsyncHandler(
@@ -250,7 +259,7 @@ const getConversation = reqResAsyncHandler(
     try {
       const conversation = await webConversation.getConversationById(
         conversationId,
-        userId,
+        userId
       );
 
       if (!conversation) {
@@ -263,17 +272,17 @@ const getConversation = reqResAsyncHandler(
         "Conversation retrieved successfully",
         {
           conversation,
-        },
+        }
       );
     } catch (error) {
       console.error("Error getting conversation:", error);
       sendR(
         res,
         STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
-        "Error retrieving conversation",
+        "Error retrieving conversation"
       );
     }
-  },
+  }
 );
 
 const removeConversation = reqResAsyncHandler(
@@ -292,14 +301,14 @@ const removeConversation = reqResAsyncHandler(
     try {
       const deleted = await webConversation.deleteConversation(
         conversationId,
-        userId,
+        userId
       );
 
       if (!deleted) {
         return sendR(
           res,
           STATUS_RESPONSE.NOT_FOUND,
-          "Conversation not found or already deleted",
+          "Conversation not found or already deleted"
         );
       }
 
@@ -308,17 +317,17 @@ const removeConversation = reqResAsyncHandler(
       return sendR(
         res,
         STATUS_RESPONSE.SUCCESS,
-        "Conversation deleted successfully",
+        "Conversation deleted successfully"
       );
     } catch (error) {
       console.error("Error deleting conversation:", error);
       sendR(
         res,
         STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
-        "Error deleting conversation",
+        "Error deleting conversation"
       );
     }
-  },
+  }
 );
 
 type ContinueConversationRequest = {
@@ -347,7 +356,7 @@ const continueConversation = reqResAsyncHandler(
     try {
       const loaded = await webConversation.loadConversationIntoContext(
         conversationId,
-        userId,
+        userId
       );
 
       if (!loaded) {
@@ -355,7 +364,7 @@ const continueConversation = reqResAsyncHandler(
       }
 
       const conversationContext = webConversation.buildContextPrompt(
-        loaded.context,
+        loaded.context
       );
 
       const semanticContext = await getWebRelevantContext(userId, message, {
@@ -388,13 +397,13 @@ const continueConversation = reqResAsyncHandler(
         conversationId,
         userId,
         { role: "user", content: message },
-        summarizeMessages,
+        summarizeMessages
       );
       await webConversation.addMessageToConversation(
         conversationId,
         userId,
         { role: "assistant", content: finalOutput },
-        summarizeMessages,
+        summarizeMessages
       );
 
       storeWebEmbeddingAsync(userId, message, "user");
@@ -410,10 +419,10 @@ const continueConversation = reqResAsyncHandler(
       sendR(
         res,
         STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
-        "Error processing your request",
+        "Error processing your request"
       );
     }
-  },
+  }
 );
 
 const startNewConversation = reqResAsyncHandler(
@@ -435,10 +444,10 @@ const startNewConversation = reqResAsyncHandler(
       sendR(
         res,
         STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
-        "Error starting new conversation",
+        "Error starting new conversation"
       );
     }
-  },
+  }
 );
 
 const deleteAllConversations = reqResAsyncHandler(
@@ -456,7 +465,7 @@ const deleteAllConversations = reqResAsyncHandler(
         return sendR(
           res,
           STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
-          "Failed to delete conversations",
+          "Failed to delete conversations"
         );
       }
 
@@ -470,52 +479,48 @@ const deleteAllConversations = reqResAsyncHandler(
       sendR(
         res,
         STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
-        "Error deleting conversations",
+        "Error deleting conversations"
       );
     }
-  },
+  }
 );
 
-const resetMemory = reqResAsyncHandler(
-  async (req: Request, res: Response) => {
-    const userId = req.user?.id;
+const resetMemory = reqResAsyncHandler(async (req: Request, res: Response) => {
+  const userId = req.user?.id;
 
-    if (!userId) {
-      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
-    }
+  if (!userId) {
+    return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
+  }
 
-    try {
-      // Clear Redis context (temporary session data)
-      await unifiedContextStore.clearAll(userId);
+  try {
+    // Clear Redis context (temporary session data)
+    await unifiedContextStore.clearAll(userId);
 
-      // Delete all conversation embeddings (semantic memory)
-      const embeddingsResult = await deleteAllWebEmbeddings(userId);
+    // Delete all conversation embeddings (semantic memory)
+    const embeddingsResult = await deleteAllWebEmbeddings(userId);
 
-      // Delete all conversations (includes messages and summaries)
-      const conversationsResult = await webConversation.deleteAllConversations(userId);
+    // Delete all conversations (includes messages and summaries)
+    const conversationsResult =
+      await webConversation.deleteAllConversations(userId);
 
-      const totalDeleted = {
-        embeddings: embeddingsResult.deletedCount,
-        conversations: conversationsResult.deletedCount,
-        redisContext: true,
-      };
+    const totalDeleted = {
+      embeddings: embeddingsResult.deletedCount,
+      conversations: conversationsResult.deletedCount,
+      redisContext: true,
+    };
 
-      await invalidateConversationsCache(userId);
+    await invalidateConversationsCache(userId);
 
-      sendR(res, STATUS_RESPONSE.SUCCESS, "Memory reset successfully", {
-        ...totalDeleted,
-        message: "All learned patterns and conversation history have been cleared. Ally will relearn your preferences over time.",
-      });
-    } catch (error) {
-      console.error("Error resetting memory:", error);
-      sendR(
-        res,
-        STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
-        "Error resetting memory",
-      );
-    }
-  },
-);
+    sendR(res, STATUS_RESPONSE.SUCCESS, "Memory reset successfully", {
+      ...totalDeleted,
+      message:
+        "All learned patterns and conversation history have been cleared. Ally will relearn your preferences over time.",
+    });
+  } catch (error) {
+    console.error("Error resetting memory:", error);
+    sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Error resetting memory");
+  }
+});
 
 const createShareLink = reqResAsyncHandler(
   async (req: Request, res: Response) => {
@@ -535,14 +540,14 @@ const createShareLink = reqResAsyncHandler(
       const result = await webConversation.createShareLink(
         conversationId,
         userId,
-        expiresInDays,
+        expiresInDays
       );
 
       if (!result) {
         return sendR(
           res,
           STATUS_RESPONSE.NOT_FOUND,
-          "Conversation not found or access denied",
+          "Conversation not found or access denied"
         );
       }
 
@@ -555,10 +560,10 @@ const createShareLink = reqResAsyncHandler(
       sendR(
         res,
         STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
-        "Error creating share link",
+        "Error creating share link"
       );
     }
-  },
+  }
 );
 
 const revokeShareLink = reqResAsyncHandler(
@@ -577,14 +582,14 @@ const revokeShareLink = reqResAsyncHandler(
     try {
       const revoked = await webConversation.revokeShareLink(
         conversationId,
-        userId,
+        userId
       );
 
       if (!revoked) {
         return sendR(
           res,
           STATUS_RESPONSE.NOT_FOUND,
-          "Conversation not found or access denied",
+          "Conversation not found or access denied"
         );
       }
 
@@ -594,10 +599,10 @@ const revokeShareLink = reqResAsyncHandler(
       sendR(
         res,
         STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
-        "Error revoking share link",
+        "Error revoking share link"
       );
     }
-  },
+  }
 );
 
 const getShareStatus = reqResAsyncHandler(
@@ -616,7 +621,7 @@ const getShareStatus = reqResAsyncHandler(
     try {
       const status = await webConversation.getShareStatus(
         conversationId,
-        userId,
+        userId
       );
 
       if (!status) {
@@ -629,10 +634,10 @@ const getShareStatus = reqResAsyncHandler(
       sendR(
         res,
         STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
-        "Error getting share status",
+        "Error getting share status"
       );
     }
-  },
+  }
 );
 
 const getSharedConversation = reqResAsyncHandler(
@@ -650,7 +655,7 @@ const getSharedConversation = reqResAsyncHandler(
         return sendR(
           res,
           STATUS_RESPONSE.NOT_FOUND,
-          "Shared conversation not found or link has expired",
+          "Shared conversation not found or link has expired"
         );
       }
 
@@ -658,17 +663,17 @@ const getSharedConversation = reqResAsyncHandler(
         res,
         STATUS_RESPONSE.SUCCESS,
         "Shared conversation retrieved",
-        conversation,
+        conversation
       );
     } catch (error) {
       console.error("Error getting shared conversation:", error);
       sendR(
         res,
         STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
-        "Error retrieving shared conversation",
+        "Error retrieving shared conversation"
       );
     }
-  },
+  }
 );
 
 export const chatController = {

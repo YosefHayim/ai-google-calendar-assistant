@@ -6,11 +6,11 @@
  */
 
 import type { Request, Response } from "express";
-import { STATUS_RESPONSE, env } from "@/config";
+import { env, STATUS_RESPONSE } from "@/config";
+import { processRiscEvents } from "@/utils/auth/risc-event-handlers";
+import { verifyRiscToken } from "@/utils/auth/risc-jwt-verifier";
 import { reqResAsyncHandler, sendR } from "@/utils/http";
 import { logger } from "@/utils/logger";
-import { verifyRiscToken } from "@/utils/auth/risc-jwt-verifier";
-import { processRiscEvents } from "@/utils/auth/risc-event-handlers";
 
 /**
  * Handles incoming RISC Security Event Tokens from Google.
@@ -52,7 +52,7 @@ const handleRiscEvent = reqResAsyncHandler(
     // Verify the JWT
     const verification = await verifyRiscToken(token, expectedAudience);
 
-    if (!verification.valid || !verification.payload) {
+    if (!(verification.valid && verification.payload)) {
       logger.error("RISC: Token verification failed", {
         error: verification.error,
       });
@@ -100,13 +100,11 @@ const handleRiscEvent = reqResAsyncHandler(
  * Health check endpoint for the RISC receiver.
  * Can be used to verify the endpoint is reachable.
  */
-const healthCheck = reqResAsyncHandler(
-  async (_req: Request, res: Response) => {
-    return sendR(res, STATUS_RESPONSE.SUCCESS, "RISC endpoint is healthy", {
-      timestamp: new Date().toISOString(),
-      clientId: env.googleClientId,
-    });
-  }
+const healthCheck = reqResAsyncHandler(async (_req: Request, res: Response) =>
+  sendR(res, STATUS_RESPONSE.SUCCESS, "RISC endpoint is healthy", {
+    timestamp: new Date().toISOString(),
+    clientId: env.googleClientId,
+  })
 );
 
 export const riscController = {

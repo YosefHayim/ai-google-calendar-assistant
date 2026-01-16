@@ -12,7 +12,7 @@ export const updateUserStatusSchema = z.object({
  * Validation schema for granting credits
  */
 export const grantCreditsSchema = z.object({
-  credits: z.number().int().positive().max(100000),
+  credits: z.number().int().positive().max(100_000),
   reason: z.string().min(1).max(500),
 });
 

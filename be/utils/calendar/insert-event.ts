@@ -1,5 +1,5 @@
-import { REQUEST_CONFIG_BASE } from "@/config";
 import type { calendar_v3 } from "googleapis";
+import { REQUEST_CONFIG_BASE } from "@/config";
 
 type InsertEventParams = {
   calendarEvents: calendar_v3.Resource$Events;
@@ -31,9 +31,18 @@ function generateMeetConferenceData(): calendar_v3.Schema$ConferenceData {
  * const data = await insertEvent(params);
  *
  */
-export async function insertEvent({ calendarEvents, eventData, extra }: InsertEventParams) {
-  const body = (eventData as calendar_v3.Schema$Event & { calendarId?: string; email?: string }) || {};
-  const calendarId = (extra?.calendarId as string) || body.calendarId || "primary";
+export async function insertEvent({
+  calendarEvents,
+  eventData,
+  extra,
+}: InsertEventParams) {
+  const body =
+    (eventData as calendar_v3.Schema$Event & {
+      calendarId?: string;
+      email?: string;
+    }) || {};
+  const calendarId =
+    (extra?.calendarId as string) || body.calendarId || "primary";
   const addMeetLink = extra?.addMeetLink === true;
 
   const { calendarId: _cid, email: _email, ...requestBody } = body;

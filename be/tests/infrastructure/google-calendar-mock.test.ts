@@ -34,7 +34,10 @@ describe("Google Calendar Mock Factory", () => {
       });
 
       it("should allow custom mock implementation", async () => {
-        const customEvents = createMockEventsList([createMockEvent({ summary: "Custom Event 1" }), createMockEvent({ summary: "Custom Event 2" })]);
+        const customEvents = createMockEventsList([
+          createMockEvent({ summary: "Custom Event 1" }),
+          createMockEvent({ summary: "Custom Event 2" }),
+        ]);
 
         mockClient.events.list.mockResolvedValue({ data: customEvents });
 
@@ -63,7 +66,9 @@ describe("Google Calendar Mock Factory", () => {
       });
 
       it("should handle not found error", async () => {
-        mockClient.events.get.mockRejectedValue(createMockGoogleApiError("notFound"));
+        mockClient.events.get.mockRejectedValue(
+          createMockGoogleApiError("notFound")
+        );
 
         await expect(
           mockClient.events.get({
@@ -99,7 +104,9 @@ describe("Google Calendar Mock Factory", () => {
       });
 
       it("should handle invalid request error", async () => {
-        mockClient.events.insert.mockRejectedValue(createMockGoogleApiError("invalidRequest"));
+        mockClient.events.insert.mockRejectedValue(
+          createMockGoogleApiError("invalidRequest")
+        );
 
         await expect(
           mockClient.events.insert({
@@ -155,7 +162,9 @@ describe("Google Calendar Mock Factory", () => {
       });
 
       it("should handle not found error when deleting", async () => {
-        mockClient.events.delete.mockRejectedValue(createMockGoogleApiError("notFound"));
+        mockClient.events.delete.mockRejectedValue(
+          createMockGoogleApiError("notFound")
+        );
 
         await expect(
           mockClient.events.delete({
@@ -239,7 +248,10 @@ describe("Google Calendar Mock Factory", () => {
 
   describe("createMockEventsList", () => {
     it("should create events list with custom events", () => {
-      const events = [createMockEvent({ summary: "Event 1" }), createMockEvent({ summary: "Event 2" })];
+      const events = [
+        createMockEvent({ summary: "Event 1" }),
+        createMockEvent({ summary: "Event 2" }),
+      ];
 
       const eventsList = createMockEventsList(events);
 
@@ -408,7 +420,9 @@ describe("Google Calendar Mock Factory", () => {
     });
 
     it("should handle server errors", async () => {
-      mockClient.events.list.mockRejectedValue(createMockGoogleApiError("serverError"));
+      mockClient.events.list.mockRejectedValue(
+        createMockGoogleApiError("serverError")
+      );
 
       await expect(
         mockClient.events.list({
@@ -418,7 +432,9 @@ describe("Google Calendar Mock Factory", () => {
     });
 
     it("should handle service unavailable", async () => {
-      mockClient.events.get.mockRejectedValue(createMockGoogleApiError("serviceUnavailable"));
+      mockClient.events.get.mockRejectedValue(
+        createMockGoogleApiError("serviceUnavailable")
+      );
 
       await expect(
         mockClient.events.get({

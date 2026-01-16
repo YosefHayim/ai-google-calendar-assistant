@@ -1,7 +1,7 @@
-import { env } from "@/config";
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
 import winston from "winston";
+import { env } from "@/config";
 
 // Audit event types for authentication-related events
 export const AuditEventType = {
@@ -17,7 +17,8 @@ export const AuditEventType = {
   GOOGLE_REAUTH_REQUIRED: "GOOGLE_REAUTH_REQUIRED",
 } as const;
 
-export type AuditEventTypeValue = (typeof AuditEventType)[keyof typeof AuditEventType];
+export type AuditEventTypeValue =
+  (typeof AuditEventType)[keyof typeof AuditEventType];
 
 // Audit log entry structure
 export type AuditLogEntry = {
@@ -27,24 +28,29 @@ export type AuditLogEntry = {
   metadata: Record<string, unknown>;
 };
 
-const getDate = () => new Date().toISOString().split("T")[0]
-const logDir = "logs"
+const getDate = () => new Date().toISOString().split("T")[0];
+const logDir = "logs";
 
 const clearAuditLogOnStartup = () => {
-  if (!env.isDev) return
+  if (!env.isDev) {
+    return;
+  }
 
-  const auditLogFile = path.join(logDir, `${env.nodeEnv}-audit-${getDate()}.log`)
+  const auditLogFile = path.join(
+    logDir,
+    `${env.nodeEnv}-audit-${getDate()}.log`
+  );
 
   if (!fs.existsSync(logDir)) {
-    fs.mkdirSync(logDir, { recursive: true })
+    fs.mkdirSync(logDir, { recursive: true });
   }
 
   try {
-    fs.writeFileSync(auditLogFile, "", { flag: "w" })
+    fs.writeFileSync(auditLogFile, "", { flag: "w" });
   } catch {}
-}
+};
 
-clearAuditLogOnStartup()
+clearAuditLogOnStartup();
 
 // Custom formatter for audit logs - JSON per line
 const auditFormat = winston.format.printf((info) => {
@@ -54,7 +60,7 @@ const auditFormat = winston.format.printf((info) => {
     telegram_user_id: info.telegram_user_id as number,
     metadata: (info.metadata as Record<string, unknown>) || {},
   };
-  return JSON.stringify(entry) + "\n";
+  return `${JSON.stringify(entry)}\n`;
 });
 
 // Create dedicated audit logger with separate file transport
@@ -76,9 +82,10 @@ if (env.isDev) {
     new winston.transports.Console({
       format: winston.format.combine(
         winston.format.colorize(),
-        winston.format.printf((info) => {
-          return `[AUDIT] ${info.event_type} | user:${info.telegram_user_id} | ${JSON.stringify(info.metadata || {})}`;
-        })
+        winston.format.printf(
+          (info) =>
+            `[AUDIT] ${info.event_type} | user:${info.telegram_user_id} | ${JSON.stringify(info.metadata || {})}`
+        )
       ),
     })
   );
@@ -92,7 +99,11 @@ export const auditLogger = {
    * @param telegramUserId - The Telegram user ID (0 if unknown)
    * @param metadata - Additional context for the event
    */
-  log: (eventType: AuditEventTypeValue, telegramUserId: number, metadata: Record<string, unknown> = {}): void => {
+  log: (
+    eventType: AuditEventTypeValue,
+    telegramUserId: number,
+    metadata: Record<string, unknown> = {}
+  ): void => {
     auditWinstonLogger.info({
       event_type: eventType,
       telegram_user_id: telegramUserId,
@@ -110,7 +121,11 @@ export const auditLogger = {
    * @example
    * auditLogger.authSuccess(123456789, "user@example.com", "google");
    */
-  authSuccess: (telegramUserId: number, email: string, method = "email"): void => {
+  authSuccess: (
+    telegramUserId: number,
+    email: string,
+    method = "email"
+  ): void => {
     auditWinstonLogger.info({
       event_type: AuditEventType.AUTH_SUCCESS,
       telegram_user_id: telegramUserId,
@@ -146,7 +161,11 @@ export const auditLogger = {
    * @example
    * auditLogger.emailChange(123456789, "old@example.com", "new@example.com");
    */
-  emailChange: (telegramUserId: number, oldEmail: string, newEmail: string): void => {
+  emailChange: (
+    telegramUserId: number,
+    oldEmail: string,
+    newEmail: string
+  ): void => {
     auditWinstonLogger.info({
       event_type: AuditEventType.EMAIL_CHANGE,
       telegram_user_id: telegramUserId,
@@ -164,7 +183,11 @@ export const auditLogger = {
    * @example
    * auditLogger.tokenRefresh(123456789, "user@example.com", 3600000); // Token expires in 1 hour
    */
-  tokenRefresh: (telegramUserId: number, email: string, expiresInMs?: number): void => {
+  tokenRefresh: (
+    telegramUserId: number,
+    email: string,
+    expiresInMs?: number
+  ): void => {
     auditWinstonLogger.info({
       event_type: AuditEventType.TOKEN_REFRESH,
       telegram_user_id: telegramUserId,
@@ -182,7 +205,11 @@ export const auditLogger = {
    * @example
    * auditLogger.rateLimitHit(123456789, "api_requests", 60); // Limit resets in 60 seconds
    */
-  rateLimitHit: (telegramUserId: number, limitType: string, resetInSeconds: number): void => {
+  rateLimitHit: (
+    telegramUserId: number,
+    limitType: string,
+    resetInSeconds: number
+  ): void => {
     auditWinstonLogger.info({
       event_type: AuditEventType.RATE_LIMIT_HIT,
       telegram_user_id: telegramUserId,
@@ -200,7 +227,11 @@ export const auditLogger = {
    * @example
    * auditLogger.sessionExpired(123456789, "2024-01-15T10:30:00Z", 24);
    */
-  sessionExpired: (telegramUserId: number, lastActivityIso: string, inactiveHours: number): void => {
+  sessionExpired: (
+    telegramUserId: number,
+    lastActivityIso: string,
+    inactiveHours: number
+  ): void => {
     auditWinstonLogger.info({
       event_type: AuditEventType.SESSION_EXPIRED,
       telegram_user_id: telegramUserId,

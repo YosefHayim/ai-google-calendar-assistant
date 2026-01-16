@@ -19,15 +19,14 @@ jest.mock("@/config", () => ({
 
 jest.mock("@/utils/http", () => ({
   sendR: (...args: unknown[]) => mockSendR(...args),
-  reqResAsyncHandler: <T extends (...args: unknown[]) => Promise<unknown>>(fn: T) => {
-    return (req: Request, res: Response, next: NextFunction) => {
-      return Promise.resolve(fn(req, res, next)).catch(next);
-    };
-  },
+  reqResAsyncHandler:
+    <T extends (...args: unknown[]) => Promise<unknown>>(fn: T) =>
+    (req: Request, res: Response, next: NextFunction) =>
+      Promise.resolve(fn(req, res, next)).catch(next),
 }));
 
 // Import after mocks are defined
-import { adminAuth, type AdminRequest } from "../../middlewares/admin-auth";
+import { type AdminRequest, adminAuth } from "../../middlewares/admin-auth";
 
 describe("adminAuth Middleware", () => {
   let mockRequest: Partial<AdminRequest>;
@@ -49,9 +48,17 @@ describe("adminAuth Middleware", () => {
       mockRequest.user = undefined;
 
       const middleware = adminAuth();
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      await middleware(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
-      expect(mockSendR).toHaveBeenCalledWith(mockResponse, 401, "Authentication required");
+      expect(mockSendR).toHaveBeenCalledWith(
+        mockResponse,
+        401,
+        "Authentication required"
+      );
       expect(mockNext).not.toHaveBeenCalled();
     });
 
@@ -59,9 +66,17 @@ describe("adminAuth Middleware", () => {
       mockRequest.user = { email: "test@example.com" } as any;
 
       const middleware = adminAuth();
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      await middleware(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
-      expect(mockSendR).toHaveBeenCalledWith(mockResponse, 401, "Authentication required");
+      expect(mockSendR).toHaveBeenCalledWith(
+        mockResponse,
+        401,
+        "Authentication required"
+      );
     });
   });
 
@@ -79,7 +94,11 @@ describe("adminAuth Middleware", () => {
       });
 
       const middleware = adminAuth(["admin"]);
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      await middleware(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
       expect(mockNext).toHaveBeenCalled();
       expect(mockRequest.userRole).toBe("admin");
@@ -99,7 +118,11 @@ describe("adminAuth Middleware", () => {
       });
 
       const middleware = adminAuth(["admin", "moderator"]);
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      await middleware(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
       expect(mockNext).toHaveBeenCalled();
       expect(mockRequest.userRole).toBe("moderator");
@@ -118,7 +141,11 @@ describe("adminAuth Middleware", () => {
       });
 
       const middleware = adminAuth(["admin"]);
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      await middleware(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(
         mockResponse,
@@ -141,7 +168,11 @@ describe("adminAuth Middleware", () => {
       });
 
       const middleware = adminAuth(["admin"]);
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      await middleware(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(
         mockResponse,
@@ -163,7 +194,11 @@ describe("adminAuth Middleware", () => {
       });
 
       const middleware = adminAuth(); // Uses default ["admin"]
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      await middleware(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
       expect(mockNext).toHaveBeenCalled();
     });
@@ -183,9 +218,17 @@ describe("adminAuth Middleware", () => {
       });
 
       const middleware = adminAuth(["admin"]);
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      await middleware(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
-      expect(mockSendR).toHaveBeenCalledWith(mockResponse, 403, "Account suspended");
+      expect(mockSendR).toHaveBeenCalledWith(
+        mockResponse,
+        403,
+        "Account suspended"
+      );
       expect(mockNext).not.toHaveBeenCalled();
     });
 
@@ -202,7 +245,11 @@ describe("adminAuth Middleware", () => {
       });
 
       const middleware = adminAuth(["admin"]);
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      await middleware(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
       expect(mockNext).toHaveBeenCalled();
     });
@@ -210,7 +257,9 @@ describe("adminAuth Middleware", () => {
 
   describe("database error handling", () => {
     it("should return 403 when database query fails", async () => {
-      const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+      const consoleSpy = jest
+        .spyOn(console, "error")
+        .mockImplementation(() => {});
 
       mockSupabaseFrom.mockReturnValue({
         select: mockFn().mockReturnValue({
@@ -224,7 +273,11 @@ describe("adminAuth Middleware", () => {
       });
 
       const middleware = adminAuth(["admin"]);
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      await middleware(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(
         mockResponse,
@@ -237,7 +290,9 @@ describe("adminAuth Middleware", () => {
     });
 
     it("should return 403 when user not found in database", async () => {
-      const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+      const consoleSpy = jest
+        .spyOn(console, "error")
+        .mockImplementation(() => {});
 
       mockSupabaseFrom.mockReturnValue({
         select: mockFn().mockReturnValue({
@@ -251,7 +306,11 @@ describe("adminAuth Middleware", () => {
       });
 
       const middleware = adminAuth(["admin"]);
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      await middleware(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(
         mockResponse,
@@ -277,7 +336,11 @@ describe("adminAuth Middleware", () => {
       });
 
       const middleware = adminAuth(["admin"]);
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      await middleware(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
       expect(mockRequest.userRole).toBe("admin");
     });
@@ -295,7 +358,11 @@ describe("adminAuth Middleware", () => {
       });
 
       const middleware = adminAuth(["admin"]);
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      await middleware(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
       expect(mockSupabaseFrom).toHaveBeenCalledWith("users");
     });
@@ -315,7 +382,11 @@ describe("adminAuth Middleware", () => {
       });
 
       const middleware = adminAuth(["admin", "moderator", "support"]);
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      await middleware(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
       expect(mockNext).toHaveBeenCalled();
       expect(mockRequest.userRole).toBe("support");
@@ -334,7 +405,11 @@ describe("adminAuth Middleware", () => {
       });
 
       const middleware = adminAuth(["admin", "moderator"]);
-      await middleware(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      await middleware(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(
         mockResponse,

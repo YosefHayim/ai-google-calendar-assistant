@@ -1,4 +1,4 @@
-import { jest, describe, it, expect, beforeEach } from "@jest/globals";
+import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { mockFn } from "../test-utils";
 
 // Mock functions
@@ -11,7 +11,11 @@ const mockGetEvents = mockFn();
 // Mock the utils module to prevent lodash-es import
 jest.mock("@/ai-agents/utils", () => ({
   formatEventData: (event: unknown) => event,
-  parseToolArguments: (params: { email?: string; calendarId?: string; eventId?: string }) => ({
+  parseToolArguments: (params: {
+    email?: string;
+    calendarId?: string;
+    eventId?: string;
+  }) => ({
     email: params.email,
     calendarId: params.calendarId || "primary",
     eventId: params.eventId,
@@ -37,8 +41,10 @@ jest.mock("@/utils/calendar", () => ({
 }));
 
 jest.mock("@/utils/auth", () => ({
-  fetchCredentialsByEmail: (email: string) => mockFetchCredentialsByEmail(email),
-  generateGoogleAuthUrl: (options?: unknown) => mockGenerateGoogleAuthUrl(options),
+  fetchCredentialsByEmail: (email: string) =>
+    mockFetchCredentialsByEmail(email),
+  generateGoogleAuthUrl: (options?: unknown) =>
+    mockGenerateGoogleAuthUrl(options),
 }));
 
 jest.mock("@/utils/calendar/get-events", () => ({
@@ -46,7 +52,8 @@ jest.mock("@/utils/calendar/get-events", () => ({
 }));
 
 jest.mock("@/utils/http", () => ({
-  asyncHandler: <T extends (...args: unknown[]) => Promise<unknown>>(fn: T) => fn,
+  asyncHandler: <T extends (...args: unknown[]) => Promise<unknown>>(fn: T) =>
+    fn,
 }));
 
 // Import after mocks
@@ -55,7 +62,9 @@ import { EXECUTION_TOOLS } from "@/ai-agents/tool-execution";
 describe("Tool Execution", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockGenerateGoogleAuthUrl.mockReturnValue("https://accounts.google.com/oauth");
+    mockGenerateGoogleAuthUrl.mockReturnValue(
+      "https://accounts.google.com/oauth"
+    );
   });
 
   describe("generateGoogleAuthUrl", () => {
@@ -75,9 +84,9 @@ describe("Tool Execution", () => {
     });
 
     it("should throw error for invalid email", async () => {
-      await expect(EXECUTION_TOOLS.registerUser({ email: "invalid-email" })).rejects.toThrow(
-        "Invalid email address."
-      );
+      await expect(
+        EXECUTION_TOOLS.registerUser({ email: "invalid-email" })
+      ).rejects.toThrow("Invalid email address.");
     });
 
     it("should return auth URL for valid email", async () => {
@@ -86,7 +95,9 @@ describe("Tool Execution", () => {
         name: "Test User",
       });
 
-      expect(mockGenerateGoogleAuthUrl).toHaveBeenCalledWith({ forceConsent: true });
+      expect(mockGenerateGoogleAuthUrl).toHaveBeenCalledWith({
+        forceConsent: true,
+      });
       expect(result).toEqual({
         status: "needs_auth",
         email: "test@example.com",
@@ -104,7 +115,11 @@ describe("Tool Execution", () => {
         refresh_token: "refresh",
       });
       mockInitUserSupabaseCalendarWithTokensAndUpdateTokens.mockResolvedValue({
-        settings: { get: mockFn().mockResolvedValue({ data: { value: "America/New_York" } }) },
+        settings: {
+          get: mockFn().mockResolvedValue({
+            data: { value: "America/New_York" },
+          }),
+        },
       });
       mockEventsHandler.mockResolvedValue({ id: "event-123" });
     });
@@ -144,7 +159,9 @@ describe("Tool Execution", () => {
         end: { dateTime: "2024-01-15T11:00:00" },
       });
 
-      expect(mockInitUserSupabaseCalendarWithTokensAndUpdateTokens).toHaveBeenCalled();
+      expect(
+        mockInitUserSupabaseCalendarWithTokensAndUpdateTokens
+      ).toHaveBeenCalled();
     });
 
     it("should not apply timezone for all-day events", async () => {
@@ -171,9 +188,16 @@ describe("Tool Execution", () => {
         refresh_token: "refresh",
       });
       mockInitUserSupabaseCalendarWithTokensAndUpdateTokens.mockResolvedValue({
-        settings: { get: mockFn().mockResolvedValue({ data: { value: "America/New_York" } }) },
+        settings: {
+          get: mockFn().mockResolvedValue({
+            data: { value: "America/New_York" },
+          }),
+        },
       });
-      mockEventsHandler.mockResolvedValue({ id: "event-123", summary: "Updated" });
+      mockEventsHandler.mockResolvedValue({
+        id: "event-123",
+        summary: "Updated",
+      });
     });
 
     it("should throw error for invalid email", async () => {
@@ -205,7 +229,10 @@ describe("Tool Execution", () => {
       expect(mockEventsHandler).toHaveBeenCalledWith(
         null,
         "patch",
-        expect.objectContaining({ id: "event-123", summary: "Updated Meeting" }),
+        expect.objectContaining({
+          id: "event-123",
+          summary: "Updated Meeting",
+        }),
         expect.objectContaining({ eventId: "event-123" })
       );
       expect(result).toEqual({ id: "event-123", summary: "Updated" });
@@ -254,7 +281,10 @@ describe("Tool Execution", () => {
     });
 
     it("should search all calendars by default", async () => {
-      mockGetEvents.mockResolvedValue({ type: "standard", data: { items: [] } });
+      mockGetEvents.mockResolvedValue({
+        type: "standard",
+        data: { items: [] },
+      });
 
       const result = await EXECUTION_TOOLS.getEvent({
         email: "test@example.com",
@@ -268,7 +298,7 @@ describe("Tool Execution", () => {
     it("should search single calendar when searchAllCalendars is false", async () => {
       mockEventsHandler.mockResolvedValue({ items: [] });
 
-      const result = await EXECUTION_TOOLS.getEvent({
+      const _result = await EXECUTION_TOOLS.getEvent({
         email: "test@example.com",
         searchAllCalendars: false,
         calendarId: "primary",
@@ -289,18 +319,24 @@ describe("Tool Execution", () => {
         start: { dateTime: "2024-01-15T10:00:00Z" },
         end: { dateTime: "2024-01-15T11:00:00Z" },
       }));
-      mockGetEvents.mockResolvedValue({ type: "standard", data: { items: manyEvents } });
+      mockGetEvents.mockResolvedValue({
+        type: "standard",
+        data: { items: manyEvents },
+      });
 
-      const result = await EXECUTION_TOOLS.getEvent({
+      const result = (await EXECUTION_TOOLS.getEvent({
         email: "test@example.com",
-      }) as { allEvents: unknown[]; truncated: boolean };
+      })) as { allEvents: unknown[]; truncated: boolean };
 
       expect(result.allEvents.length).toBeLessThanOrEqual(100);
       expect(result.truncated).toBe(true);
     });
 
     it("should apply search query", async () => {
-      mockGetEvents.mockResolvedValue({ type: "standard", data: { items: [] } });
+      mockGetEvents.mockResolvedValue({
+        type: "standard",
+        data: { items: [] },
+      });
 
       await EXECUTION_TOOLS.getEvent({
         email: "test@example.com",

@@ -14,4 +14,4 @@ afterAll(() => {
 });
 
 // Increase timeout for integration-like tests
-jest.setTimeout(10000);
+jest.setTimeout(10_000);

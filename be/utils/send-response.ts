@@ -15,7 +15,12 @@ const ERROR = 400;
  * const data = await sendR(res, status, message, data);
  *
  */
-const sendR = (res: Response, status: number, message: string, data?: unknown) => {
+const sendR = (
+  res: Response,
+  status: number,
+  message: string,
+  data?: unknown
+) => {
   res.status(status).json({
     status: status >= ERROR ? "error" : "success",
     message,

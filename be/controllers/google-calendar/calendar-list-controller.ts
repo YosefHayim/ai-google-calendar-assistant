@@ -1,26 +1,34 @@
-import type { Request, Response } from "express"
-import { reqResAsyncHandler, sendR } from "@/utils/http"
-import { STATUS_RESPONSE } from "@/config"
+import type { Request, Response } from "express";
+import { STATUS_RESPONSE } from "@/config";
+import { reqResAsyncHandler, sendR } from "@/utils/http";
 
-const listCalendars = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const r = await req.calendar!.calendarList.list({
-    prettyPrint: true,
-    minAccessRole: req.query.minAccessRole as string,
-    showDeleted: req.query.showDeleted === "true",
-    showHidden: req.query.showHidden === "true",
-  })
+const listCalendars = reqResAsyncHandler(
+  async (req: Request, res: Response) => {
+    if (!req.calendar) {
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available")
+    }
+    const r = await req.calendar.calendarList.list({
+      prettyPrint: true,
+      minAccessRole: req.query.minAccessRole as string,
+      showDeleted: req.query.showDeleted === "true",
+      showHidden: req.query.showHidden === "true",
+    })
 
-  return sendR(
-    res,
-    STATUS_RESPONSE.SUCCESS,
-    "Successfully retrieved calendar list",
-    r.data
-  )
-})
+    return sendR(
+      res,
+      STATUS_RESPONSE.SUCCESS,
+      "Successfully retrieved calendar list",
+      r.data
+    )
+  }
+)
 
 const getCalendarListEntry = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const r = await req.calendar!.calendarList.get({
+    if (!req.calendar) {
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available")
+    }
+    const r = await req.calendar.calendarList.get({
       calendarId: req.params.id,
     })
 
@@ -35,7 +43,10 @@ const getCalendarListEntry = reqResAsyncHandler(
 
 const insertCalendarToList = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const r = await req.calendar!.calendarList.insert({
+    if (!req.calendar) {
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available")
+    }
+    const r = await req.calendar.calendarList.insert({
       requestBody: {
         id: req.body.id,
         colorId: req.body.colorId,
@@ -61,7 +72,10 @@ const insertCalendarToList = reqResAsyncHandler(
 
 const patchCalendarListEntry = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const r = await req.calendar!.calendarList.patch({
+    if (!req.calendar) {
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available")
+    }
+    const r = await req.calendar.calendarList.patch({
       calendarId: req.params.id,
       requestBody: req.body,
       colorRgbFormat: req.query.colorRgbFormat === "true",
@@ -78,7 +92,10 @@ const patchCalendarListEntry = reqResAsyncHandler(
 
 const updateCalendarListEntry = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const r = await req.calendar!.calendarList.update({
+    if (!req.calendar) {
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available")
+    }
+    const r = await req.calendar.calendarList.update({
       calendarId: req.params.id,
       requestBody: req.body,
       colorRgbFormat: req.query.colorRgbFormat === "true",
@@ -95,7 +112,10 @@ const updateCalendarListEntry = reqResAsyncHandler(
 
 const deleteCalendarFromList = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    await req.calendar!.calendarList.delete({
+    if (!req.calendar) {
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available")
+    }
+    await req.calendar.calendarList.delete({
       calendarId: req.params.id,
     })
 
@@ -109,7 +129,10 @@ const deleteCalendarFromList = reqResAsyncHandler(
 
 const watchCalendarList = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const r = await req.calendar!.calendarList.watch({
+    if (!req.calendar) {
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available")
+    }
+    const r = await req.calendar.calendarList.watch({
       requestBody: {
         id: req.body.id,
         type: req.body.type || "web_hook",
@@ -140,4 +163,4 @@ export default {
   updateCalendarListEntry,
   deleteCalendarFromList,
   watchCalendarList,
-}
+};

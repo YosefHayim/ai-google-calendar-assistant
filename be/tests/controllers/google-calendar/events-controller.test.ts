@@ -1,5 +1,5 @@
-import { jest, describe, it, expect, beforeEach } from "@jest/globals";
-import type { Request, Response, NextFunction } from "express";
+import { beforeEach, describe, expect, it, jest } from "@jest/globals";
+import type { NextFunction, Request, Response } from "express";
 import { mockFn } from "../../test-utils";
 
 // Mock functions
@@ -35,7 +35,7 @@ jest.mock("@/config", () => ({
 
 jest.mock("@/utils", () => ({
   eventsHandler: (...args: unknown[]) => mockEventsHandler(...args),
-  formatDate: (date: Date, includeTime?: boolean) => date.toISOString(),
+  formatDate: (date: Date, _includeTime?: boolean) => date.toISOString(),
 }));
 
 jest.mock("@/utils/cache/insights-cache", () => ({
@@ -45,11 +45,10 @@ jest.mock("@/utils/cache/insights-cache", () => ({
 
 jest.mock("@/utils/http", () => ({
   sendR: (...args: unknown[]) => mockSendR(...args),
-  reqResAsyncHandler: <T extends (...args: unknown[]) => Promise<unknown>>(fn: T) => {
-    return (req: Request, res: Response, next: NextFunction) => {
-      return Promise.resolve(fn(req, res, next)).catch(next);
-    };
-  },
+  reqResAsyncHandler:
+    <T extends (...args: unknown[]) => Promise<unknown>>(fn: T) =>
+    (req: Request, res: Response, next: NextFunction) =>
+      Promise.resolve(fn(req, res, next)).catch(next),
 }));
 
 jest.mock("@/utils/ai/insights-calculator", () => ({
@@ -58,15 +57,18 @@ jest.mock("@/utils/ai/insights-calculator", () => ({
 }));
 
 jest.mock("@/utils/ai/quick-add-orchestrator", () => ({
-  quickAddWithOrchestrator: (...args: unknown[]) => mockQuickAddWithOrchestrator(...args),
+  quickAddWithOrchestrator: (...args: unknown[]) =>
+    mockQuickAddWithOrchestrator(...args),
 }));
 
 jest.mock("@/utils/auth/get-user-calendar-tokens", () => ({
-  fetchCredentialsByEmail: (email: string) => mockFetchCredentialsByEmail(email),
+  fetchCredentialsByEmail: (email: string) =>
+    mockFetchCredentialsByEmail(email),
 }));
 
 jest.mock("@/ai-agents/insights-generator", () => ({
-  generateInsightsWithRetry: (...args: unknown[]) => mockGenerateInsightsWithRetry(...args),
+  generateInsightsWithRetry: (...args: unknown[]) =>
+    mockGenerateInsightsWithRetry(...args),
 }));
 
 jest.mock("@/utils/calendar/get-events", () => ({
@@ -119,7 +121,11 @@ describe("Events Controller", () => {
       mockFetchCredentialsByEmail.mockResolvedValue(null);
       mockReq.params = { id: "event-123" };
 
-      await eventsController.getEventById(mockReq as Request, mockRes as Response, mockNext);
+      await eventsController.getEventById(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(
         mockRes,
@@ -131,7 +137,11 @@ describe("Events Controller", () => {
     it("should return bad request if event ID is missing", async () => {
       mockReq.params = {};
 
-      await eventsController.getEventById(mockReq as Request, mockRes as Response, mockNext);
+      await eventsController.getEventById(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(
         mockRes,
@@ -145,12 +155,20 @@ describe("Events Controller", () => {
       mockReq.query = { calendarId: "primary" };
       const mockCalendar = {
         events: {
-          get: mockFn().mockResolvedValue({ data: { id: "event-123", summary: "Test Event" } }),
+          get: mockFn().mockResolvedValue({
+            data: { id: "event-123", summary: "Test Event" },
+          }),
         },
       };
-      mockInitUserSupabaseCalendarWithTokensAndUpdateTokens.mockResolvedValue(mockCalendar);
+      mockInitUserSupabaseCalendarWithTokensAndUpdateTokens.mockResolvedValue(
+        mockCalendar
+      );
 
-      await eventsController.getEventById(mockReq as Request, mockRes as Response, mockNext);
+      await eventsController.getEventById(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockCalendar.events.get).toHaveBeenCalledWith(
         expect.objectContaining({ eventId: "event-123", calendarId: "primary" })
@@ -168,7 +186,11 @@ describe("Events Controller", () => {
     it("should return not found if user tokens not found", async () => {
       mockFetchCredentialsByEmail.mockResolvedValue(null);
 
-      await eventsController.getAllEvents(mockReq as Request, mockRes as Response, mockNext);
+      await eventsController.getAllEvents(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(
         mockRes,
@@ -181,7 +203,11 @@ describe("Events Controller", () => {
       const mockEvents = [{ id: "event-1" }, { id: "event-2" }];
       mockEventsHandler.mockResolvedValue(mockEvents);
 
-      await eventsController.getAllEvents(mockReq as Request, mockRes as Response, mockNext);
+      await eventsController.getAllEvents(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockEventsHandler).toHaveBeenCalled();
       expect(mockSendR).toHaveBeenCalledWith(
@@ -203,7 +229,11 @@ describe("Events Controller", () => {
       const mockCreatedEvent = { id: "new-event-123", summary: "New Event" };
       mockEventsHandler.mockResolvedValue(mockCreatedEvent);
 
-      await eventsController.createEvent(mockReq as Request, mockRes as Response, mockNext);
+      await eventsController.createEvent(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockEventsHandler).toHaveBeenCalledWith(
         mockReq,
@@ -227,7 +257,11 @@ describe("Events Controller", () => {
       const mockUpdatedEvent = { id: "event-123", summary: "Updated Event" };
       mockEventsHandler.mockResolvedValue(mockUpdatedEvent);
 
-      await eventsController.updateEvent(mockReq as Request, mockRes as Response, mockNext);
+      await eventsController.updateEvent(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockEventsHandler).toHaveBeenCalledWith(
         mockReq,
@@ -248,13 +282,15 @@ describe("Events Controller", () => {
       mockReq.params = { id: "event-123" };
       mockEventsHandler.mockResolvedValue({ success: true });
 
-      await eventsController.deleteEvent(mockReq as Request, mockRes as Response, mockNext);
-
-      expect(mockEventsHandler).toHaveBeenCalledWith(
-        mockReq,
-        "delete",
-        { id: "event-123" }
+      await eventsController.deleteEvent(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
       );
+
+      expect(mockEventsHandler).toHaveBeenCalledWith(mockReq, "delete", {
+        id: "event-123",
+      });
       expect(mockSendR).toHaveBeenCalledWith(
         mockRes,
         expect.objectContaining({ code: 200 }),
@@ -268,7 +304,11 @@ describe("Events Controller", () => {
     it("should return unauthorized if user not authenticated", async () => {
       mockReq.user = undefined;
 
-      await eventsController.quickAddEvent(mockReq as Request, mockRes as Response, mockNext);
+      await eventsController.quickAddEvent(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(
         mockRes,
@@ -280,7 +320,11 @@ describe("Events Controller", () => {
     it("should return bad request if text is missing", async () => {
       mockReq.body = {};
 
-      await eventsController.quickAddEvent(mockReq as Request, mockRes as Response, mockNext);
+      await eventsController.quickAddEvent(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(
         mockRes,
@@ -300,7 +344,11 @@ describe("Events Controller", () => {
         eventUrl: "https://calendar.google.com/event/123",
       });
 
-      await eventsController.quickAddEvent(mockReq as Request, mockRes as Response, mockNext);
+      await eventsController.quickAddEvent(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockQuickAddWithOrchestrator).toHaveBeenCalledWith(
         "test@example.com",
@@ -330,7 +378,11 @@ describe("Events Controller", () => {
         calendarName: "Primary",
       });
 
-      await eventsController.quickAddEvent(mockReq as Request, mockRes as Response, mockNext);
+      await eventsController.quickAddEvent(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(
         mockRes,
@@ -349,7 +401,11 @@ describe("Events Controller", () => {
         error: "Could not parse event details",
       });
 
-      await eventsController.quickAddEvent(mockReq as Request, mockRes as Response, mockNext);
+      await eventsController.quickAddEvent(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(
         mockRes,
@@ -364,7 +420,11 @@ describe("Events Controller", () => {
       mockReq.user = undefined;
       mockReq.query = { timeMin: "2024-01-01", timeMax: "2024-01-31" };
 
-      await eventsController.getInsights(mockReq as Request, mockRes as Response, mockNext);
+      await eventsController.getInsights(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(
         mockRes,
@@ -376,7 +436,11 @@ describe("Events Controller", () => {
     it("should return bad request if timeMin or timeMax missing", async () => {
       mockReq.query = { timeMin: "2024-01-01" };
 
-      await eventsController.getInsights(mockReq as Request, mockRes as Response, mockNext);
+      await eventsController.getInsights(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(
         mockRes,
@@ -393,9 +457,17 @@ describe("Events Controller", () => {
       };
       mockGetCachedInsights.mockResolvedValue(cachedData);
 
-      await eventsController.getInsights(mockReq as Request, mockRes as Response, mockNext);
+      await eventsController.getInsights(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
-      expect(mockGetCachedInsights).toHaveBeenCalledWith("test@example.com", "2024-01-01", "2024-01-31");
+      expect(mockGetCachedInsights).toHaveBeenCalledWith(
+        "test@example.com",
+        "2024-01-01",
+        "2024-01-31"
+      );
       expect(mockSendR).toHaveBeenCalledWith(
         mockRes,
         expect.objectContaining({ code: 200 }),
@@ -411,12 +483,22 @@ describe("Events Controller", () => {
       const mockCalendar = {
         calendarList: {
           list: mockFn().mockResolvedValue({
-            data: { items: [{ id: "primary", summary: "Primary", backgroundColor: "#4285f4" }] },
+            data: {
+              items: [
+                {
+                  id: "primary",
+                  summary: "Primary",
+                  backgroundColor: "#4285f4",
+                },
+              ],
+            },
           }),
         },
         events: {},
       };
-      mockInitUserSupabaseCalendarWithTokensAndUpdateTokens.mockResolvedValue(mockCalendar);
+      mockInitUserSupabaseCalendarWithTokensAndUpdateTokens.mockResolvedValue(
+        mockCalendar
+      );
       mockGetEvents.mockResolvedValue({
         type: "standard",
         data: { items: [{ id: "event-1", summary: "Meeting" }] },
@@ -427,7 +509,11 @@ describe("Events Controller", () => {
       });
       mockSetCachedInsights.mockResolvedValue(undefined);
 
-      await eventsController.getInsights(mockReq as Request, mockRes as Response, mockNext);
+      await eventsController.getInsights(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockGenerateInsightsWithRetry).toHaveBeenCalledWith(
         { totalEvents: 1 },
@@ -452,14 +538,25 @@ describe("Events Controller", () => {
 
       const mockCalendar = {
         calendarList: {
-          list: mockFn().mockResolvedValue({ data: { items: [{ id: "primary" }] } }),
+          list: mockFn().mockResolvedValue({
+            data: { items: [{ id: "primary" }] },
+          }),
         },
         events: {},
       };
-      mockInitUserSupabaseCalendarWithTokensAndUpdateTokens.mockResolvedValue(mockCalendar);
-      mockGetEvents.mockResolvedValue({ type: "standard", data: { items: [] } });
+      mockInitUserSupabaseCalendarWithTokensAndUpdateTokens.mockResolvedValue(
+        mockCalendar
+      );
+      mockGetEvents.mockResolvedValue({
+        type: "standard",
+        data: { items: [] },
+      });
 
-      await eventsController.getInsights(mockReq as Request, mockRes as Response, mockNext);
+      await eventsController.getInsights(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(
         mockRes,
@@ -474,7 +571,11 @@ describe("Events Controller", () => {
     it("should return not found if user token not found", async () => {
       mockFetchCredentialsByEmail.mockResolvedValue(null);
 
-      await eventsController.getEventAnalytics(mockReq as Request, mockRes as Response, mockNext);
+      await eventsController.getEventAnalytics(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(
         mockRes,
@@ -493,13 +594,19 @@ describe("Events Controller", () => {
         },
         events: {},
       };
-      mockInitUserSupabaseCalendarWithTokensAndUpdateTokens.mockResolvedValue(mockCalendar);
+      mockInitUserSupabaseCalendarWithTokensAndUpdateTokens.mockResolvedValue(
+        mockCalendar
+      );
       mockGetEvents.mockResolvedValue({
         type: "standard",
         data: { items: [{ id: "event-1" }] },
       });
 
-      await eventsController.getEventAnalytics(mockReq as Request, mockRes as Response, mockNext);
+      await eventsController.getEventAnalytics(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockGetEvents).toHaveBeenCalledTimes(2); // primary + work
       expect(mockSendR).toHaveBeenCalledWith(
@@ -515,7 +622,11 @@ describe("Events Controller", () => {
     it("should return not found if user token not found", async () => {
       mockFetchCredentialsByEmail.mockResolvedValue(null);
 
-      await eventsController.watchEvents(mockReq as Request, mockRes as Response, mockNext);
+      await eventsController.watchEvents(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(
         mockRes,
@@ -528,12 +639,20 @@ describe("Events Controller", () => {
       mockReq.body = { id: "channel-123", type: "web_hook" };
       const mockCalendar = {
         events: {
-          watch: mockFn().mockResolvedValue({ data: { resourceId: "resource-123" } }),
+          watch: mockFn().mockResolvedValue({
+            data: { resourceId: "resource-123" },
+          }),
         },
       };
-      mockInitUserSupabaseCalendarWithTokensAndUpdateTokens.mockResolvedValue(mockCalendar);
+      mockInitUserSupabaseCalendarWithTokensAndUpdateTokens.mockResolvedValue(
+        mockCalendar
+      );
 
-      await eventsController.watchEvents(mockReq as Request, mockRes as Response, mockNext);
+      await eventsController.watchEvents(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockCalendar.events.watch).toHaveBeenCalled();
       expect(mockSendR).toHaveBeenCalledWith(
@@ -554,9 +673,15 @@ describe("Events Controller", () => {
           move: mockFn().mockResolvedValue({ data: { id: "moved-event" } }),
         },
       };
-      mockInitUserSupabaseCalendarWithTokensAndUpdateTokens.mockResolvedValue(mockCalendar);
+      mockInitUserSupabaseCalendarWithTokensAndUpdateTokens.mockResolvedValue(
+        mockCalendar
+      );
 
-      await eventsController.moveEvent(mockReq as Request, mockRes as Response, mockNext);
+      await eventsController.moveEvent(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockCalendar.events.move).toHaveBeenCalled();
       expect(mockSendR).toHaveBeenCalledWith(
@@ -579,9 +704,15 @@ describe("Events Controller", () => {
           }),
         },
       };
-      mockInitUserSupabaseCalendarWithTokensAndUpdateTokens.mockResolvedValue(mockCalendar);
+      mockInitUserSupabaseCalendarWithTokensAndUpdateTokens.mockResolvedValue(
+        mockCalendar
+      );
 
-      await eventsController.getEventInstances(mockReq as Request, mockRes as Response, mockNext);
+      await eventsController.getEventInstances(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockCalendar.events.instances).toHaveBeenCalledWith(
         expect.objectContaining({ eventId: "recurring-event-123" })
@@ -608,9 +739,15 @@ describe("Events Controller", () => {
           import: mockFn().mockResolvedValue({ data: { id: "imported-123" } }),
         },
       };
-      mockInitUserSupabaseCalendarWithTokensAndUpdateTokens.mockResolvedValue(mockCalendar);
+      mockInitUserSupabaseCalendarWithTokensAndUpdateTokens.mockResolvedValue(
+        mockCalendar
+      );
 
-      await eventsController.importEvent(mockReq as Request, mockRes as Response, mockNext);
+      await eventsController.importEvent(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockCalendar.events.import).toHaveBeenCalledWith(
         expect.objectContaining({

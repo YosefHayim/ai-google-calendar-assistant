@@ -14,7 +14,7 @@ const OTP_EXPIRY_MS = 10 * 60 * 1000;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const slackUsersTable = () => (SUPABASE as any).from("slack_users");
 
-interface SlackUserRow {
+type SlackUserRow = {
   id: string;
   slack_user_id: string;
   slack_team_id: string | null;
@@ -24,14 +24,14 @@ interface SlackUserRow {
   is_linked: boolean | null;
   last_activity_at: string | null;
   created_at: string | null;
-}
+};
 
-interface AuthResult {
+type AuthResult = {
   success: boolean;
   session: SlackSessionData;
   needsAuth: boolean;
   authMessage?: string;
-}
+};
 
 const sendEmailOtp = async (
   email: string
@@ -389,7 +389,7 @@ const linkSlackUserDirect = async (
   teamId: string,
   email: string,
   userId: string,
-  session: SlackSessionData
+  _session: SlackSessionData
 ): Promise<void> => {
   try {
     const userInfo = await client.users.info({ user: slackUserId });

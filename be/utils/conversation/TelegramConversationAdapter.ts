@@ -1,8 +1,8 @@
-import { SUPABASE } from "@/config/clients/supabase"
-import { logger } from "@/utils/logger"
-import type { userAndAiMessageProps } from "@/types"
-import type { ConversationContext, SummarizeFn } from "./types"
-import { ConversationService } from "./ConversationService"
+import { SUPABASE } from "@/config/clients/supabase";
+import type { userAndAiMessageProps } from "@/types";
+import { logger } from "@/utils/logger";
+import { ConversationService } from "./ConversationService";
+import type { ConversationContext, SummarizeFn } from "./types";
 
 const TELEGRAM_CONFIG = {
   maxContextLength: 1500,
@@ -11,7 +11,7 @@ const TELEGRAM_CONFIG = {
   maxContextPromptLength: 2000,
   maxSummaryDisplayLength: 800,
   maxMessagesDisplayLength: 1000,
-}
+};
 
 /**
  * @description Adapter class for managing Telegram-specific conversation operations.
@@ -22,7 +22,7 @@ const TELEGRAM_CONFIG = {
  * const context = await adapter.getOrCreateTodayContext(chatId, telegramUserId);
  */
 export class TelegramConversationAdapter {
-  private readonly service: ConversationService
+  private readonly service: ConversationService;
 
   /**
    * @description Creates a new TelegramConversationAdapter instance with Telegram-optimized configuration.
@@ -31,7 +31,7 @@ export class TelegramConversationAdapter {
    * const adapter = new TelegramConversationAdapter();
    */
   constructor() {
-    this.service = new ConversationService("telegram", TELEGRAM_CONFIG)
+    this.service = new ConversationService("telegram", TELEGRAM_CONFIG);
   }
 
   /**
@@ -49,13 +49,13 @@ export class TelegramConversationAdapter {
     const { data, error } = await SUPABASE.from("telegram_users")
       .select("user_id")
       .eq("telegram_user_id", telegramUserId)
-      .single()
+      .single();
 
     if (error || !data?.user_id) {
-      return null
+      return null;
     }
 
-    return data.user_id
+    return data.user_id;
   }
 
   /**
@@ -75,9 +75,9 @@ export class TelegramConversationAdapter {
     telegramUserId: number,
     chatId: number
   ): Promise<string | null> {
-    const existingUserId = await this.getUserIdFromTelegram(telegramUserId)
+    const existingUserId = await this.getUserIdFromTelegram(telegramUserId);
     if (existingUserId) {
-      return existingUserId
+      return existingUserId;
     }
 
     const { data: newTgUser, error: tgError } = await SUPABASE.from(
@@ -91,16 +91,16 @@ export class TelegramConversationAdapter {
         { onConflict: "telegram_user_id" }
       )
       .select("user_id")
-      .single()
+      .single();
 
     if (tgError || !newTgUser?.user_id) {
       logger.error(
         `Failed to ensure telegram user exists for chat ${chatId}: ${tgError?.message}`
-      )
-      return null
+      );
+      return null;
     }
 
-    return newTgUser.user_id
+    return newTgUser.user_id;
   }
 
   /**
@@ -112,7 +112,7 @@ export class TelegramConversationAdapter {
    * const conversation = await adapter.getTodayConversationState(987654321);
    */
   getTodayConversationState(chatId: number) {
-    return this.service.getTodayConversation(chatId)
+    return this.service.getTodayConversation(chatId);
   }
 
   /**
@@ -133,13 +133,13 @@ export class TelegramConversationAdapter {
     telegramUserId: number,
     initialMessage?: userAndAiMessageProps
   ): Promise<{ id: string; context: ConversationContext } | null> {
-    const userId = await this.ensureTelegramUserExists(telegramUserId, chatId)
+    const userId = await this.ensureTelegramUserExists(telegramUserId, chatId);
     if (!userId) {
-      logger.error(`Failed to get user_id for telegram user ${telegramUserId}`)
-      return null
+      logger.error(`Failed to get user_id for telegram user ${telegramUserId}`);
+      return null;
     }
 
-    return this.service.createConversation(userId, chatId, initialMessage)
+    return this.service.createConversation(userId, chatId, initialMessage);
   }
 
   /**
@@ -161,7 +161,7 @@ export class TelegramConversationAdapter {
       conversationId,
       context,
       messageCount
-    )
+    );
   }
 
   /**
@@ -186,14 +186,14 @@ export class TelegramConversationAdapter {
    * });
    */
   storeSummary(params: {
-    conversationId: string
-    userId: string
-    summaryText: string
-    messageCount: number
-    firstSequence: number
-    lastSequence: number
+    conversationId: string;
+    userId: string;
+    summaryText: string;
+    messageCount: number;
+    firstSequence: number;
+    lastSequence: number;
   }): Promise<boolean> {
-    return this.service.storeSummary(params)
+    return this.service.storeSummary(params);
   }
 
   /**
@@ -205,11 +205,8 @@ export class TelegramConversationAdapter {
    * @example
    * const success = await adapter.markAsSummarized("conv-123", "Discussion summary...");
    */
-  markAsSummarized(
-    conversationId: string,
-    summary: string
-  ): Promise<boolean> {
-    return this.service.markAsSummarized(conversationId, summary)
+  markAsSummarized(conversationId: string, summary: string): Promise<boolean> {
+    return this.service.markAsSummarized(conversationId, summary);
   }
 
   /**
@@ -226,40 +223,46 @@ export class TelegramConversationAdapter {
   async getOrCreateTodayContext(
     chatId: number,
     telegramUserId: number
-  ): Promise<{ stateId: string; context: ConversationContext; userId?: string }> {
-    const existingConversation = await this.getTodayConversationState(chatId)
+  ): Promise<{
+    stateId: string;
+    context: ConversationContext;
+    userId?: string;
+  }> {
+    const existingConversation = await this.getTodayConversationState(chatId);
 
     if (existingConversation) {
       const messages = await this.service.getConversationMessages(
         existingConversation.id
-      )
+      );
       const context: ConversationContext = {
         messages,
         summary: existingConversation.summary || undefined,
         lastUpdated:
           existingConversation.updated_at || existingConversation.created_at,
-      }
+      };
       return {
         stateId: existingConversation.id,
         context,
         userId: existingConversation.user_id,
-      }
+      };
     }
 
-    const newState = await this.createConversationState(chatId, telegramUserId)
+    const newState = await this.createConversationState(chatId, telegramUserId);
 
     if (!newState) {
-      logger.warn(`Failed to create conversation for chat ${chatId}, using fallback`)
+      logger.warn(
+        `Failed to create conversation for chat ${chatId}, using fallback`
+      );
       return {
         stateId: "",
         context: { messages: [], lastUpdated: new Date().toISOString() },
-      }
+      };
     }
 
     return {
       stateId: newState.id,
       context: newState.context,
-    }
+    };
   }
 
   /**
@@ -288,20 +291,20 @@ export class TelegramConversationAdapter {
     const { stateId, context, userId } = await this.getOrCreateTodayContext(
       chatId,
       telegramUserId
-    )
+    );
 
     if (!stateId) {
-      context.messages.push(message)
-      context.lastUpdated = new Date().toISOString()
-      return context
+      context.messages.push(message);
+      context.lastUpdated = new Date().toISOString();
+      return context;
     }
 
     if (!userId) {
-      const resolvedUserId = await this.getUserIdFromTelegram(telegramUserId)
+      const resolvedUserId = await this.getUserIdFromTelegram(telegramUserId);
       if (!resolvedUserId) {
-        context.messages.push(message)
-        context.lastUpdated = new Date().toISOString()
-        return context
+        context.messages.push(message);
+        context.lastUpdated = new Date().toISOString();
+        return context;
       }
       return this.service.addMessageAndMaybeSummarize({
         stateId,
@@ -309,7 +312,7 @@ export class TelegramConversationAdapter {
         context,
         message,
         summarizeFn,
-      })
+      });
     }
 
     return this.service.addMessageAndMaybeSummarize({
@@ -318,7 +321,7 @@ export class TelegramConversationAdapter {
       context,
       message,
       summarizeFn,
-    })
+    });
   }
 
   /**
@@ -331,7 +334,7 @@ export class TelegramConversationAdapter {
    * // Use prompt in AI request for context continuity
    */
   buildContextPrompt(context: ConversationContext): string {
-    return this.service.buildContextPrompt(context)
+    return this.service.buildContextPrompt(context);
   }
 
   /**
@@ -348,9 +351,12 @@ export class TelegramConversationAdapter {
     chatId: number,
     telegramUserId: number
   ): Promise<ConversationContext> {
-    const { context } = await this.getOrCreateTodayContext(chatId, telegramUserId)
-    return context
+    const { context } = await this.getOrCreateTodayContext(
+      chatId,
+      telegramUserId
+    );
+    return context;
   }
 }
 
-export const telegramConversation = new TelegramConversationAdapter()
+export const telegramConversation = new TelegramConversationAdapter();

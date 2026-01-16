@@ -1,17 +1,22 @@
-import { beforeEach, describe, expect, it, jest } from "@jest/globals";
+import { describe, expect, it, jest } from "@jest/globals";
 
 // Mock lodash-es before importing utils
 jest.mock("lodash-es", () => ({
-  isEmpty: (val: unknown) => !val || (typeof val === 'object' && Object.keys(val as object).length === 0),
+  isEmpty: (val: unknown) =>
+    !val ||
+    (typeof val === "object" && Object.keys(val as object).length === 0),
   isNil: (val: unknown) => val === null || val === undefined,
-  isPlainObject: (val: unknown) => typeof val === 'object' && val !== null && !Array.isArray(val),
-  omitBy: (obj: Record<string, unknown>, predicate: (val: unknown) => boolean) =>
+  isPlainObject: (val: unknown) =>
+    typeof val === "object" && val !== null && !Array.isArray(val),
+  omitBy: (
+    obj: Record<string, unknown>,
+    predicate: (val: unknown) => boolean
+  ) =>
     Object.fromEntries(Object.entries(obj).filter(([_, v]) => !predicate(v))),
 }));
 
-import { parseToolArguments, formatEventData } from "../../ai-agents/utils";
-
 import { TIMEZONE } from "@/config";
+import { formatEventData, parseToolArguments } from "../../ai-agents/utils";
 
 // Mock the Supabase client
 jest.mock("@/config", () => ({
@@ -241,7 +246,9 @@ describe("agent-utils", () => {
             timeZone: validTimezone,
           },
         };
-        expect(() => formatEventData(params)).toThrow("Event summary is required");
+        expect(() => formatEventData(params)).toThrow(
+          "Event summary is required"
+        );
       });
 
       it("should throw when start is missing", () => {
@@ -252,7 +259,9 @@ describe("agent-utils", () => {
             timeZone: validTimezone,
           },
         };
-        expect(() => formatEventData(params)).toThrow("Event start is required");
+        expect(() => formatEventData(params)).toThrow(
+          "Event start is required"
+        );
       });
 
       it("should throw when end is missing", () => {
@@ -276,7 +285,9 @@ describe("agent-utils", () => {
             dateTime: "2024-01-01T11:00:00Z",
           },
         };
-        expect(() => formatEventData(params)).toThrow("Event timeZone is required for timed events");
+        expect(() => formatEventData(params)).toThrow(
+          "Event timeZone is required for timed events"
+        );
       });
 
       it("should throw for invalid timezone", () => {
@@ -306,7 +317,9 @@ describe("agent-utils", () => {
             timeZone: TIMEZONE.AMERICA_LOS_ANGELES,
           },
         };
-        expect(() => formatEventData(params)).toThrow("Start and end time zones must match");
+        expect(() => formatEventData(params)).toThrow(
+          "Start and end time zones must match"
+        );
       });
     });
 
@@ -397,11 +410,17 @@ describe("agent-utils", () => {
             timeZone: validTimezone,
           },
         };
-        expect(() => formatEventData(params)).toThrow("Event summary is required");
+        expect(() => formatEventData(params)).toThrow(
+          "Event summary is required"
+        );
       });
 
       it("should handle multiple attendees", () => {
-        const attendees = [{ email: "user1@example.com" }, { email: "user2@example.com" }, { email: "user3@example.com" }];
+        const attendees = [
+          { email: "user1@example.com" },
+          { email: "user2@example.com" },
+          { email: "user3@example.com" },
+        ];
         const params = {
           summary: "Meeting",
           attendees,

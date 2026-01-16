@@ -1,55 +1,59 @@
-import { ACTION } from "@/config"
+import type { calendar_v3 } from "googleapis";
+import isEmail from "validator/lib/isEmail";
+import { ACTION } from "@/config";
+import type { HandlerContext } from "@/shared/types";
+import { fetchCredentialsByEmail } from "@/utils/auth";
 import {
   eventsHandler,
   initUserSupabaseCalendarWithTokensAndUpdateTokens,
-} from "@/utils/calendar"
-import { fetchCredentialsByEmail } from "@/utils/auth"
-import { getEvents } from "@/utils/calendar/get-events"
-import isEmail from "validator/lib/isEmail"
-import type { calendar_v3 } from "googleapis"
+} from "@/utils/calendar";
+import { getEvents } from "@/utils/calendar/get-events";
 import type {
+  DeleteEventParams,
+  EventTime,
   GetEventParams,
   InsertEventParams,
   UpdateEventParams,
-  DeleteEventParams,
-  EventTime,
-} from "../schemas"
-import type { HandlerContext } from "@/shared/types"
+} from "../schemas";
 
-type Event = calendar_v3.Schema$Event
+type Event = calendar_v3.Schema$Event;
 
-const MAX_EVENTS_TOTAL = 100
-const MAX_EVENTS_PER_CALENDAR = 50
+const MAX_EVENTS_TOTAL = 100;
+const MAX_EVENTS_PER_CALENDAR = 50;
 
 function isValidDateTime(dt: string): boolean {
-  if (!dt || dt.trim() === "") return false
-  const parsed = Date.parse(dt)
-  if (Number.isNaN(parsed)) return false
-  const year = new Date(parsed).getFullYear()
-  return year >= 2020 && year <= 2100
+  if (!dt || dt.trim() === "") {
+    return false;
+  }
+  const parsed = Date.parse(dt);
+  if (Number.isNaN(parsed)) {
+    return false;
+  }
+  const year = new Date(parsed).getFullYear();
+  return year >= 2020 && year <= 2100;
 }
 
 async function applyDefaultTimezoneIfNeeded(
   event: Partial<Event>,
-  email: string,
+  email: string
 ): Promise<Partial<Event>> {
-  const hasTimedStart = !!event.start?.dateTime
-  const hasTimedEnd = !!event.end?.dateTime
-  const hasStartTz = !!event.start?.timeZone
-  const hasEndTz = !!event.end?.timeZone
+  const hasTimedStart = !!event.start?.dateTime;
+  const hasTimedEnd = !!event.end?.dateTime;
+  const hasStartTz = !!event.start?.timeZone;
+  const hasEndTz = !!event.end?.timeZone;
 
-  if ((!hasTimedStart && !hasTimedEnd) || hasStartTz || hasEndTz) {
-    return event
+  if (!(hasTimedStart || hasTimedEnd) || hasStartTz || hasEndTz) {
+    return event;
   }
 
-  const tokenProps = await fetchCredentialsByEmail(email)
+  const tokenProps = await fetchCredentialsByEmail(email);
   const calendar =
-    await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenProps)
-  const tzResponse = await calendar.settings.get({ setting: "timezone" })
-  const defaultTimezone = tzResponse.data.value
+    await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenProps);
+  const tzResponse = await calendar.settings.get({ setting: "timezone" });
+  const defaultTimezone = tzResponse.data.value;
 
   if (!defaultTimezone) {
-    return event
+    return event;
   }
 
   return {
@@ -58,69 +62,83 @@ async function applyDefaultTimezoneIfNeeded(
       ? { ...event.start, timeZone: defaultTimezone }
       : event.start,
     end: event.end ? { ...event.end, timeZone: defaultTimezone } : event.end,
-  }
+  };
 }
 
 function formatEventData(eventLike: Partial<Event>): Event {
-  const event: Event = {}
+  const event: Event = {};
 
-  if (eventLike.summary) event.summary = eventLike.summary
-  if (eventLike.description) event.description = eventLike.description
-  if (eventLike.location) event.location = eventLike.location
-  if (eventLike.start) event.start = eventLike.start
-  if (eventLike.end) event.end = eventLike.end
-  if (eventLike.reminders) event.reminders = eventLike.reminders
+  if (eventLike.summary) {
+    event.summary = eventLike.summary;
+  }
+  if (eventLike.description) {
+    event.description = eventLike.description;
+  }
+  if (eventLike.location) {
+    event.location = eventLike.location;
+  }
+  if (eventLike.start) {
+    event.start = eventLike.start;
+  }
+  if (eventLike.end) {
+    event.end = eventLike.end;
+  }
+  if (eventLike.reminders) {
+    event.reminders = eventLike.reminders;
+  }
 
-  return event
+  return event;
 }
 
 function convertEventTime(time: EventTime | null): Event["start"] | undefined {
-  if (!time) return undefined
+  if (!time) {
+    return;
+  }
   return {
     date: time.date || undefined,
     dateTime: time.dateTime || undefined,
     timeZone: time.timeZone || undefined,
-  }
+  };
 }
 
-export type { HandlerContext }
+export type { HandlerContext };
 
 export async function getEventHandler(
   params: GetEventParams,
-  ctx: HandlerContext,
+  ctx: HandlerContext
 ): Promise<unknown> {
-  const { email } = ctx
+  const { email } = ctx;
 
-  if (!email || !isEmail(email)) {
-    throw new Error("Invalid email address.")
+  if (!(email && isEmail(email))) {
+    throw new Error("Invalid email address.");
   }
 
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-  const defaultTimeMin = today.toISOString()
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const defaultTimeMin = today.toISOString();
 
   const computeDefaultTimeMax = (timeMin: string): string => {
-    const minDate = new Date(timeMin)
-    const maxDate = new Date(minDate)
-    maxDate.setDate(maxDate.getDate() + 1)
-    maxDate.setHours(23, 59, 59, 999)
-    return maxDate.toISOString()
-  }
+    const minDate = new Date(timeMin);
+    const maxDate = new Date(minDate);
+    maxDate.setDate(maxDate.getDate() + 1);
+    maxDate.setHours(23, 59, 59, 999);
+    return maxDate.toISOString();
+  };
 
-  const effectiveTimeMin = params.timeMin ?? defaultTimeMin
+  const effectiveTimeMin = params.timeMin ?? defaultTimeMin;
   const effectiveTimeMax =
-    params.timeMax ?? computeDefaultTimeMax(effectiveTimeMin)
+    params.timeMax ?? computeDefaultTimeMax(effectiveTimeMin);
 
-  const searchAllCalendars = params.searchAllCalendars !== false
+  const searchAllCalendars = params.searchAllCalendars !== false;
 
   if (searchAllCalendars) {
-    const tokenData = await fetchCredentialsByEmail(email)
+    const tokenData = await fetchCredentialsByEmail(email);
     const calendar =
-      await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData)
+      await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData);
     const allCalendarIds =
       (await calendar.calendarList
         .list({ prettyPrint: true })
-        .then((r) => r.data.items?.map((cal) => cal.id))) || []
+        .then((r) => r.data.items?.map((cal) => cal.id))) || [];
 
     const allEventsResults = await Promise.all(
       allCalendarIds.map((calId) =>
@@ -136,39 +154,39 @@ export async function getEventHandler(
             singleEvents: true,
             orderBy: "startTime",
           },
-        }),
-      ),
-    )
+        })
+      )
+    );
 
     const aggregatedEvents: Array<{
-      id: string | null | undefined
-      calendarId: string
-      summary: string | null | undefined
-      description: string | undefined
-      start: Event["start"]
-      end: Event["end"]
-      location: string | null | undefined
-      status: string | null | undefined
-      htmlLink: string | null | undefined
-      hangoutLink: string | null | undefined
-      conferenceData: Event["conferenceData"] | undefined
-    }> = []
-    const calendarEventMap: { calendarId: string; eventCount: number }[] = []
-    let truncated = false
+      id: string | null | undefined;
+      calendarId: string;
+      summary: string | null | undefined;
+      description: string | undefined;
+      start: Event["start"];
+      end: Event["end"];
+      location: string | null | undefined;
+      status: string | null | undefined;
+      htmlLink: string | null | undefined;
+      hangoutLink: string | null | undefined;
+      conferenceData: Event["conferenceData"] | undefined;
+    }> = [];
+    const calendarEventMap: { calendarId: string; eventCount: number }[] = [];
+    let truncated = false;
 
     for (let i = 0; i < allEventsResults.length; i++) {
-      const result = allEventsResults[i]
-      const calId = allCalendarIds[i]
+      const result = allEventsResults[i];
+      const calId = allCalendarIds[i];
       const events =
-        result.type === "standard" ? (result.data.items ?? []) : []
+        result.type === "standard" ? (result.data.items ?? []) : [];
 
       if (events.length > 0) {
         calendarEventMap.push({
           calendarId: calId || "unknown",
           eventCount: events.length,
-        })
+        });
 
-        const remainingSlots = MAX_EVENTS_TOTAL - aggregatedEvents.length
+        const remainingSlots = MAX_EVENTS_TOTAL - aggregatedEvents.length;
         if (remainingSlots > 0) {
           const eventsToAdd = events.slice(0, remainingSlots).map((e) => ({
             id: e.id,
@@ -182,13 +200,13 @@ export async function getEventHandler(
             htmlLink: e.htmlLink,
             hangoutLink: e.hangoutLink,
             conferenceData: e.conferenceData,
-          }))
-          aggregatedEvents.push(...eventsToAdd)
+          }));
+          aggregatedEvents.push(...eventsToAdd);
           if (events.length > remainingSlots) {
-            truncated = true
+            truncated = true;
           }
         } else {
-          truncated = true
+          truncated = true;
         }
       }
     }
@@ -199,7 +217,7 @@ export async function getEventHandler(
       truncated,
       calendarSummary: calendarEventMap,
       allEvents: aggregatedEvents,
-    }
+    };
   }
 
   return eventsHandler(
@@ -214,18 +232,18 @@ export async function getEventHandler(
       q: params.q || "",
       singleEvents: true,
       orderBy: "startTime",
-    },
-  )
+    }
+  );
 }
 
 export async function insertEventHandler(
   params: InsertEventParams,
-  ctx: HandlerContext,
+  ctx: HandlerContext
 ): Promise<unknown> {
-  const { email } = ctx
+  const { email } = ctx;
 
-  if (!email || !isEmail(email)) {
-    throw new Error("Invalid email address.")
+  if (!(email && isEmail(email))) {
+    throw new Error("Invalid email address.");
   }
 
   const eventLike: Partial<Event> = {
@@ -234,65 +252,70 @@ export async function insertEventHandler(
     location: params.location || undefined,
     start: convertEventTime(params.start),
     end: convertEventTime(params.end),
-  }
+  };
 
-  const eventWithTimezone = await applyDefaultTimezoneIfNeeded(eventLike, email)
-  const eventData = formatEventData(eventWithTimezone)
+  const eventWithTimezone = await applyDefaultTimezoneIfNeeded(
+    eventLike,
+    email
+  );
+  const eventData = formatEventData(eventWithTimezone);
 
   return eventsHandler(null, ACTION.INSERT, eventData, {
     email,
     calendarId: params.calendarId ?? "primary",
     customEvents: false,
     addMeetLink: params.addMeetLink ?? false,
-  })
+  });
 }
 
 export async function updateEventHandler(
   params: UpdateEventParams,
-  ctx: HandlerContext,
+  ctx: HandlerContext
 ): Promise<unknown> {
-  const { email } = ctx
+  const { email } = ctx;
 
-  if (!email || !isEmail(email)) {
-    throw new Error("Invalid email address.")
+  if (!(email && isEmail(email))) {
+    throw new Error("Invalid email address.");
   }
 
   if (!params.eventId) {
-    throw new Error("eventId is required for update.")
+    throw new Error("eventId is required for update.");
   }
 
-  const updateData: Partial<Event> = { id: params.eventId }
+  const updateData: Partial<Event> = { id: params.eventId };
 
   if (params.summary && params.summary.trim() !== "") {
-    updateData.summary = params.summary
+    updateData.summary = params.summary;
   }
   if (params.description && params.description.trim() !== "") {
-    updateData.description = params.description
+    updateData.description = params.description;
   }
   if (params.location && params.location.trim() !== "") {
-    updateData.location = params.location
+    updateData.location = params.location;
   }
 
   if (params.start?.dateTime || params.start?.date) {
     if (params.start.dateTime && !isValidDateTime(params.start.dateTime)) {
-      throw new Error(`Invalid start dateTime format: ${params.start.dateTime}`)
+      throw new Error(
+        `Invalid start dateTime format: ${params.start.dateTime}`
+      );
     }
     const startWithTz = await applyDefaultTimezoneIfNeeded(
       { start: convertEventTime(params.start) },
-      email,
-    )
-    updateData.start = startWithTz.start
+      email
+    );
+    updateData.start = startWithTz.start;
   }
 
   if (params.end?.dateTime || params.end?.date) {
     if (params.end.dateTime && !isValidDateTime(params.end.dateTime)) {
-      throw new Error(`Invalid end dateTime format: ${params.end.dateTime}`)
+      throw new Error(`Invalid end dateTime format: ${params.end.dateTime}`);
     }
     const endWithTz = await applyDefaultTimezoneIfNeeded(
       { end: convertEventTime(params.end) },
-      email,
-    )
-    updateData.end = endWithTz.end
+      email
+    );
+    updateData.end = endWithTz.end;
   }
 
   return eventsHandler(null, ACTION.PATCH, updateData as Event, {
@@ -300,27 +323,27 @@ export async function updateEventHandler(
     calendarId: params.calendarId ?? "primary",
     eventId: params.eventId,
     addMeetLink: params.addMeetLink ?? false,
-  })
+  });
 }
 
 export async function deleteEventHandler(
   params: DeleteEventParams,
-  ctx: HandlerContext,
+  ctx: HandlerContext
 ): Promise<unknown> {
-  const { email } = ctx
+  const { email } = ctx;
 
-  if (!email || !isEmail(email)) {
-    throw new Error("Invalid email address.")
+  if (!(email && isEmail(email))) {
+    throw new Error("Invalid email address.");
   }
 
   if (!params.eventId) {
-    throw new Error("Event ID is required to delete event.")
+    throw new Error("Event ID is required to delete event.");
   }
 
   return eventsHandler(
     null,
     ACTION.DELETE,
     { id: params.eventId },
-    { email, calendarId: params.calendarId ?? "primary" },
-  )
+    { email, calendarId: params.calendarId ?? "primary" }
+  );
 }

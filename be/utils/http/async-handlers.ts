@@ -10,7 +10,15 @@ import type { NextFunction, Request, Response } from "express";
  * @returns Express middleware that catches async errors.
  */
 export const reqResAsyncHandler =
-  <H extends (req: Request, res: Response, next: NextFunction) => Promise<unknown>>(fn: H) =>
+  <
+    H extends (
+      req: Request,
+      res: Response,
+      next: NextFunction
+    ) => Promise<unknown>,
+  >(
+    fn: H
+  ) =>
   (req: Request, res: Response, next: NextFunction) => {
     fn(req, res, next).catch(next);
   };

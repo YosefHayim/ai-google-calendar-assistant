@@ -3,7 +3,7 @@
  * Handles bidirectional text for Hebrew and other RTL languages
  */
 
-import type { TextDirection, RtlStrategy } from "./types";
+import type { RtlStrategy, TextDirection } from "./types";
 
 /**
  * Unicode directional markers
@@ -77,12 +77,18 @@ export function containsArabic(text: string): boolean {
  * @returns true if text starts with RTL content
  */
 export function isRtlText(text: string): boolean {
-  if (!text) return false;
+  if (!text) {
+    return false;
+  }
 
   // Find first strong directional character
   for (const char of text) {
-    if (RTL_PATTERN.test(char)) return true;
-    if (/[a-zA-Z]/.test(char)) return false;
+    if (RTL_PATTERN.test(char)) {
+      return true;
+    }
+    if (/[a-zA-Z]/.test(char)) {
+      return false;
+    }
   }
 
   return false;
@@ -95,12 +101,16 @@ export function isRtlText(text: string): boolean {
  * @returns Detected direction
  */
 export function detectDirection(text: string): TextDirection {
-  if (!text) return "ltr";
+  if (!text) {
+    return "ltr";
+  }
 
   const rtlChars = (text.match(RTL_PATTERN) || []).length;
   const ltrChars = (text.match(/[a-zA-Z]/g) || []).length;
 
-  if (rtlChars === 0 && ltrChars === 0) return "ltr";
+  if (rtlChars === 0 && ltrChars === 0) {
+    return "ltr";
+  }
 
   return rtlChars > ltrChars ? "rtl" : "ltr";
 }
@@ -117,7 +127,9 @@ export function applyUnicodeDirection(
   text: string,
   direction: TextDirection
 ): string {
-  if (!text) return "";
+  if (!text) {
+    return "";
+  }
 
   const resolvedDir = direction === "auto" ? detectDirection(text) : direction;
 
@@ -140,7 +152,9 @@ export function applyLineBasedDirection(
   text: string,
   direction: TextDirection
 ): string {
-  if (!text) return "";
+  if (!text) {
+    return "";
+  }
 
   if (direction === "auto") {
     // Apply per-line direction detection
@@ -178,7 +192,9 @@ export function applyRtl(
   direction: TextDirection,
   strategy: RtlStrategy
 ): string {
-  if (!text) return "";
+  if (!text) {
+    return "";
+  }
 
   // If no RTL content and direction is auto/ltr, skip processing
   if (direction !== "rtl" && !containsRtl(text)) {
@@ -192,11 +208,12 @@ export function applyRtl(
     case "line-based":
       return applyLineBasedDirection(text, direction);
 
-    case "both":
+    case "both": {
       // Apply both strategies for maximum compatibility
       let result = applyLineBasedDirection(text, direction);
       result = applyUnicodeDirection(result, direction);
       return result;
+    }
 
     default:
       return text;

@@ -1,18 +1,18 @@
-import type { Session, AgentInputItem } from "@openai/agents";
+import type { AgentInputItem, Session } from "@openai/agents";
 import { MemorySession } from "@openai/agents";
 
 // Note: SupabaseAgentSession removed - agent_sessions table was dropped for simpler architecture
 export type SessionType = "memory";
 export type CompactionStrategy = "none" | "responses";
 
-export interface CompactionConfig {
+export type CompactionConfig = {
   /** Trigger compaction after N items (default: 50) */
   maxItems?: number;
   /** Model to use for summarization (default: gpt-4o-mini) */
   summaryModel?: string;
-}
+};
 
-export interface CreateSessionOptions {
+export type CreateSessionOptions = {
   /** User's unique identifier */
   userId: string;
   /** Agent name for session scoping */
@@ -25,7 +25,7 @@ export interface CreateSessionOptions {
   compaction?: CompactionStrategy;
   /** Configuration for compaction (if enabled) */
   compactionConfig?: CompactionConfig;
-}
+};
 
 /**
  * Factory for creating agent sessions with optional compaction
@@ -69,7 +69,10 @@ export function createAgentSession(options: CreateSessionOptions): Session {
  * Creates a compaction wrapper that automatically summarizes session history
  * when it exceeds the configured maxItems threshold.
  */
-function createCompactionWrapper(baseSession: Session, config?: CompactionConfig): Session {
+function createCompactionWrapper(
+  baseSession: Session,
+  config?: CompactionConfig
+): Session {
   const maxItems = config?.maxItems ?? 50;
 
   return {
@@ -86,7 +89,9 @@ function createCompactionWrapper(baseSession: Session, config?: CompactionConfig
       // Check if we need to compact
       const allItems = await baseSession.getItems();
       if (allItems.length > maxItems) {
-        console.log(`[Session] Items (${allItems.length}) exceed maxItems (${maxItems}), compaction recommended`);
+        console.log(
+          `[Session] Items (${allItems.length}) exceed maxItems (${maxItems}), compaction recommended`
+        );
       }
     },
 
@@ -102,7 +107,10 @@ export async function getSessionInfo(session: Session): Promise<{
   sessionId: string;
   itemCount: number;
 }> {
-  const [sessionId, items] = await Promise.all([session.getSessionId(), session.getItems()]);
+  const [sessionId, items] = await Promise.all([
+    session.getSessionId(),
+    session.getItems(),
+  ]);
 
   return {
     sessionId,

@@ -1,14 +1,20 @@
-import { ACCESS_TOKEN_COOKIE, REFRESH_TOKEN_COOKIE, setAuthCookies } from "@/utils/auth/cookie-utils";
-import type { NextFunction, Request, Response } from "express";
-import { reqResAsyncHandler, sendR } from "@/utils/http";
-import { refreshSupabaseSession, validateSupabaseToken } from "@/utils/auth/supabase-token";
-
-import { STATUS_RESPONSE } from "@/config";
 import type { User } from "@supabase/supabase-js";
+import type { NextFunction, Request, Response } from "express";
+import { STATUS_RESPONSE } from "@/config";
+import {
+  ACCESS_TOKEN_COOKIE,
+  REFRESH_TOKEN_COOKIE,
+  setAuthCookies,
+} from "@/utils/auth/cookie-utils";
+import {
+  refreshSupabaseSession,
+  validateSupabaseToken,
+} from "@/utils/auth/supabase-token";
+import { reqResAsyncHandler, sendR } from "@/utils/http";
 
 const REFRESH_TOKEN_HEADER = "refresh_token";
 const ACCESS_TOKEN_HEADER = "access_token";
-const USER_KEY = "user";
+const _USER_KEY = "user";
 
 export type SupabaseAuthOptions = {
   autoRefresh?: boolean;
@@ -40,91 +46,119 @@ export type SupabaseAuthOptions = {
 export const supabaseAuth = (options: SupabaseAuthOptions = {}) => {
   const { autoRefresh = true } = options;
 
-  return reqResAsyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-    // Token extraction priority: Cookie first, then Authorization header
-    const authHeader = req.headers.authorization;
-    const accessToken = req.cookies?.[ACCESS_TOKEN_COOKIE] || (authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : undefined);
+  return reqResAsyncHandler(
+    async (req: Request, res: Response, next: NextFunction) => {
+      // Token extraction priority: Cookie first, then Authorization header
+      const authHeader = req.headers.authorization;
+      const accessToken =
+        req.cookies?.[ACCESS_TOKEN_COOKIE] ||
+        (authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : undefined);
 
-    if (!accessToken) {
-      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "Missing authorization header or cookie");
-    }
-
-    // Validate current token
-    const validation = await validateSupabaseToken(accessToken);
-
-    // Token is valid - attach user and continue
-    if (validation.user) {
-      req.user = validation.user;
-      return next();
-    }
-
-    // Token invalid - check if we should try refresh
-    if (!autoRefresh || !validation.needsRefresh) {
-      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "Not authorized. Please login or register to continue.");
-    }
-
-    // Try to refresh using refresh token from cookie first, then header
-    const refreshToken = req.cookies?.[REFRESH_TOKEN_COOKIE] || (req.headers[REFRESH_TOKEN_HEADER] as string | undefined);
-
-    if (!refreshToken) {
-      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "Session expired. Please login again.", {
-        code: "SESSION_EXPIRED",
-      });
-    }
-
-    const userEmail = req.user?.email;
-
-    try {
-      // Refresh the session using the refresh token
-      const { accessToken: newAccessToken, refreshToken: newRefreshToken, user } = await refreshSupabaseSession(refreshToken);
-
-      // Validate that user and email are present after refresh
-      if (!user) {
-        console.error("[Supabase Auth] Refresh succeeded but no user returned");
-        throw new Error("No user returned from refresh");
+      if (!accessToken) {
+        return sendR(
+          res,
+          STATUS_RESPONSE.UNAUTHORIZED,
+          "Missing authorization header or cookie"
+        );
       }
 
-      if (!user.email) {
-        console.error(`[Supabase Auth] Refresh succeeded but user has no email. User ID: ${user.id}`);
-        throw new Error("User email missing after refresh");
+      // Validate current token
+      const validation = await validateSupabaseToken(accessToken);
+
+      // Token is valid - attach user and continue
+      if (validation.user) {
+        req.user = validation.user;
+        return next();
       }
 
-      // Log successful refresh with email for debugging
+      // Token invalid - check if we should try refresh
+      if (!(autoRefresh && validation.needsRefresh)) {
+        return sendR(
+          res,
+          STATUS_RESPONSE.UNAUTHORIZED,
+          "Not authorized. Please login or register to continue."
+        );
+      }
 
-      // Set user on request object for downstream middleware
-      req.user = user;
+      // Try to refresh using refresh token from cookie first, then header
+      const refreshToken =
+        req.cookies?.[REFRESH_TOKEN_COOKIE] ||
+        (req.headers[REFRESH_TOKEN_HEADER] as string | undefined);
 
-      // Update current request for downstream use
-      req.headers.authorization = `Bearer ${newAccessToken}`;
+      if (!refreshToken) {
+        return sendR(
+          res,
+          STATUS_RESPONSE.UNAUTHORIZED,
+          "Session expired. Please login again.",
+          {
+            code: "SESSION_EXPIRED",
+          }
+        );
+      }
 
-      // Set cookies for web browsers (this includes the new refresh token)
-      setAuthCookies(res, newAccessToken, newRefreshToken, user);
+      const userEmail = req.user?.email;
 
-      // Also send tokens in headers for API/mobile clients
-      res.setHeader(ACCESS_TOKEN_HEADER, newAccessToken);
-      res.setHeader(REFRESH_TOKEN_HEADER, newRefreshToken);
+      try {
+        // Refresh the session using the refresh token
+        const {
+          accessToken: newAccessToken,
+          refreshToken: newRefreshToken,
+          user,
+        } = await refreshSupabaseSession(refreshToken);
 
-      next();
-    } catch (error) {
-      const err = error as Error;
-      console.error(`[Supabase Auth] Session refresh failed for user: ${userEmail || "unknown"}`, err.message);
-      console.error("[Supabase Auth] Refresh error details:", {
-        message: err.message,
-        stack: err.stack,
-      });
+        // Validate that user and email are present after refresh
+        if (!user) {
+          console.error(
+            "[Supabase Auth] Refresh succeeded but no user returned"
+          );
+          throw new Error("No user returned from refresh");
+        }
 
-      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "Session expired. Please login again.", {
-        code: "SESSION_REFRESH_FAILED",
-      });
+        if (!user.email) {
+          console.error(
+            `[Supabase Auth] Refresh succeeded but user has no email. User ID: ${user.id}`
+          );
+          throw new Error("User email missing after refresh");
+        }
+
+        // Log successful refresh with email for debugging
+
+        // Set user on request object for downstream middleware
+        req.user = user;
+
+        // Update current request for downstream use
+        req.headers.authorization = `Bearer ${newAccessToken}`;
+
+        // Set cookies for web browsers (this includes the new refresh token)
+        setAuthCookies(res, newAccessToken, newRefreshToken, user);
+
+        // Also send tokens in headers for API/mobile clients
+        res.setHeader(ACCESS_TOKEN_HEADER, newAccessToken);
+        res.setHeader(REFRESH_TOKEN_HEADER, newRefreshToken);
+
+        next();
+      } catch (error) {
+        const err = error as Error;
+        console.error(
+          `[Supabase Auth] Session refresh failed for user: ${userEmail || "unknown"}`,
+          err.message
+        );
+        console.error("[Supabase Auth] Refresh error details:", {
+          message: err.message,
+          stack: err.stack,
+        });
+
+        return sendR(
+          res,
+          STATUS_RESPONSE.UNAUTHORIZED,
+          "Session expired. Please login again.",
+          {
+            code: "SESSION_REFRESH_FAILED",
+          }
+        );
+      }
     }
-  });
+  );
 };
 
-// Extend Express Request type (User is already declared in auth-handler, keeping for clarity)
-declare global {
-  namespace Express {
-    interface Request {
-      user?: User;
-    }
-  }
-}
+

@@ -3,11 +3,11 @@ import { z } from "zod";
 import { SUPABASE } from "@/config/clients";
 import { sendR } from "@/utils/http";
 
-interface InviteMetadata {
+type InviteMetadata = {
   team_name?: string;
   role?: string;
   message?: string;
-}
+};
 
 const createInviteSchema = z.object({
   inviteeEmail: z.string().email("Invalid email address"),
@@ -83,7 +83,9 @@ export const teamInviteController = {
         .select("*")
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       const inviteLink = `${process.env.FE_BASE_URL || "https://askally.io"}/invite/${invite.invite_token}`;
 
@@ -117,7 +119,9 @@ export const teamInviteController = {
         .eq("inviter_id", userId)
         .order("created_at", { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       const invites = invitations.map((inv) => {
         const meta = inv.metadata as InviteMetadata | null;
@@ -161,7 +165,9 @@ export const teamInviteController = {
         .in("status", ["pending"])
         .order("created_at", { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       const invites = invitations.map((inv) => {
         const meta = inv.metadata as InviteMetadata | null;
@@ -246,7 +252,9 @@ export const teamInviteController = {
         })
         .eq("id", invite.id);
 
-      if (updateError) throw updateError;
+      if (updateError) {
+        throw updateError;
+      }
 
       return sendR(res, 200, `Invite ${newStatus} successfully`, {
         status: newStatus,
@@ -296,7 +304,9 @@ export const teamInviteController = {
         })
         .eq("id", inviteId);
 
-      if (updateError) throw updateError;
+      if (updateError) {
+        throw updateError;
+      }
 
       return sendR(res, 200, "Invite cancelled successfully", null);
     } catch (error) {
@@ -350,7 +360,9 @@ export const teamInviteController = {
         })
         .eq("id", inviteId);
 
-      if (updateError) throw updateError;
+      if (updateError) {
+        throw updateError;
+      }
 
       const inviteLink = `${process.env.FE_BASE_URL || "https://askally.io"}/invite/${invite.invite_token}`;
 
@@ -426,7 +438,9 @@ export const teamInviteController = {
         .select("*")
         .single();
 
-      if (teamError) throw teamError;
+      if (teamError) {
+        throw teamError;
+      }
 
       const { error: memberError } = await SUPABASE.from("team_members").insert(
         {
@@ -436,7 +450,9 @@ export const teamInviteController = {
         }
       );
 
-      if (memberError) throw memberError;
+      if (memberError) {
+        throw memberError;
+      }
 
       return sendR(res, 201, "Team created successfully", { team });
     } catch (error) {
@@ -468,7 +484,9 @@ export const teamInviteController = {
         `)
         .eq("user_id", userId);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       const teams = memberships.map((m) => ({
         ...m.teams,
@@ -510,7 +528,9 @@ export const teamInviteController = {
         .select("user_id, role, joined_at")
         .eq("team_id", teamId);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return sendR(res, 200, "Team members retrieved", { members });
     } catch (error) {

@@ -1,8 +1,12 @@
-import { Agent, InputGuardrail, InputGuardrailTripwireTriggered, run } from "@openai/agents";
-
+import {
+  Agent,
+  type InputGuardrail,
+  InputGuardrailTripwireTriggered,
+  run,
+} from "@openai/agents";
+import { z } from "zod";
 import { MODELS } from "@/config";
 import { logger } from "@/utils/logger";
-import { z } from "zod";
 
 console.log("GUARDRAILS FILE LOADED - VERSION 2");
 
@@ -38,8 +42,15 @@ const extractRequestFromText = (text: string): string | null => {
  * SECURITY: Extracts user's current request from conversation history to prevent context overflow.
  * Function call results (e.g., 100 calendar events JSON) would otherwise exceed the 5000 char limit.
  */
-const extractUserRequestForGuardrail = (input: string | ConversationMessage[]): string => {
-  console.log("EXTRACT CALLED, input type:", typeof input, "length:", typeof input === "string" ? input.length : "N/A");
+const extractUserRequestForGuardrail = (
+  input: string | ConversationMessage[]
+): string => {
+  console.log(
+    "EXTRACT CALLED, input type:",
+    typeof input,
+    "length:",
+    typeof input === "string" ? input.length : "N/A"
+  );
   if (typeof input === "string") {
     const extracted = extractRequestFromText(input);
     console.log("REGEX RESULT:", !!extracted, "captured:", extracted);
@@ -85,7 +96,9 @@ const extractUserRequestForGuardrail = (input: string | ConversationMessage[]): 
 
   const fallbackStr = JSON.stringify(input);
   if (fallbackStr.length > MAX_INPUT_LENGTH) {
-    logger.warn(`AI: calendarSafetyGuardrail: Could not extract user request, truncating input from ${fallbackStr.length} to ${MAX_INPUT_LENGTH} chars`);
+    logger.warn(
+      `AI: calendarSafetyGuardrail: Could not extract user request, truncating input from ${fallbackStr.length} to ${MAX_INPUT_LENGTH} chars`
+    );
     return fallbackStr.substring(0, MAX_INPUT_LENGTH);
   }
   return fallbackStr;
@@ -109,14 +122,23 @@ const INJECTION_PATTERNS = [
   /act\s+as\s+if\s+you\s+(have\s+no|don't\s+have)\s+restrictions?/i,
 ];
 
-export const preCheckInput = (input: string): { safe: boolean; reason?: string } => {
+export const preCheckInput = (
+  input: string
+): { safe: boolean; reason?: string } => {
   if (input.length > MAX_INPUT_LENGTH) {
-    return { safe: false, reason: "Input too long. Please keep your message under 5000 characters." };
+    return {
+      safe: false,
+      reason: "Input too long. Please keep your message under 5000 characters.",
+    };
   }
 
   for (const pattern of INJECTION_PATTERNS) {
     if (pattern.test(input)) {
-      return { safe: false, reason: "I cannot process requests that attempt to modify my instructions." };
+      return {
+        safe: false,
+        reason:
+          "I cannot process requests that attempt to modify my instructions.",
+      };
     }
   }
 
@@ -124,12 +146,28 @@ export const preCheckInput = (input: string): { safe: boolean; reason?: string }
 };
 
 const SafetyCheckSchema = z.object({
-  isSafe: z.boolean().describe("True if the request is safe to proceed. False if it violates safety rules."),
+  isSafe: z
+    .boolean()
+    .describe(
+      "True if the request is safe to proceed. False if it violates safety rules."
+    ),
   violationType: z
-    .enum(["none", "mass_deletion", "vague_intent", "jailbreak_attempt", "pii_exposure", "rate_abuse"])
+    .enum([
+      "none",
+      "mass_deletion",
+      "vague_intent",
+      "jailbreak_attempt",
+      "pii_exposure",
+      "rate_abuse",
+    ])
     .describe("The category of the violation."),
   reasoning: z.string().describe("Explanation of why this input was flagged."),
-  userReply: z.string().optional().describe("A friendly error message to show the user if the guardrail trips."),
+  userReply: z
+    .string()
+    .optional()
+    .describe(
+      "A friendly error message to show the user if the guardrail trips."
+    ),
 });
 
 const safetyCheckAgent = new Agent({
@@ -173,7 +211,11 @@ const safetyCheckAgent = new Agent({
   outputType: SafetyCheckSchema,
 });
 
-const createGuardrailResult = (guardrailName: string, tripwireTriggered: boolean, outputInfo: unknown) => ({
+const createGuardrailResult = (
+  guardrailName: string,
+  tripwireTriggered: boolean,
+  outputInfo: unknown
+) => ({
   guardrail: { type: "input" as const, name: guardrailName },
   output: { tripwireTriggered, outputInfo },
 });
@@ -182,16 +224,24 @@ export const calendarSafetyGuardrail: InputGuardrail = {
   name: "Calendar Safety Protocols",
   runInParallel: false,
   execute: async ({ input, context }) => {
-    const userRequest = extractUserRequestForGuardrail(input as string | ConversationMessage[]);
+    const userRequest = extractUserRequestForGuardrail(
+      input as string | ConversationMessage[]
+    );
 
-    logger.info(`AI: calendarSafetyGuardrail: Extracted user request (${userRequest.length} chars): ${userRequest.substring(0, 200)}...`);
+    logger.info(
+      `AI: calendarSafetyGuardrail: Extracted user request (${userRequest.length} chars): ${userRequest.substring(0, 200)}...`
+    );
 
     const preCheck = preCheckInput(userRequest);
     if (!preCheck.safe) {
-      logger.info(`AI: calendarSafetyGuardrail: Pre-check failed for input: ${userRequest.substring(0, 100)}`);
+      logger.info(
+        `AI: calendarSafetyGuardrail: Pre-check failed for input: ${userRequest.substring(0, 100)}`
+      );
       throw new InputGuardrailTripwireTriggered(
         preCheck.reason || "I cannot process this request.",
-        createGuardrailResult("Calendar Safety Protocols - Pre-Check", true, { reason: preCheck.reason })
+        createGuardrailResult("Calendar Safety Protocols - Pre-Check", true, {
+          reason: preCheck.reason,
+        })
       );
     }
 
@@ -202,14 +252,23 @@ export const calendarSafetyGuardrail: InputGuardrail = {
     if (!safetyData) {
       throw new InputGuardrailTripwireTriggered(
         "Unable to verify request safety. Please try again.",
-        createGuardrailResult("Calendar Safety Protocols - Validation Failed", true, { reason: "No safety data returned" })
+        createGuardrailResult(
+          "Calendar Safety Protocols - Validation Failed",
+          true,
+          { reason: "No safety data returned" }
+        )
       );
     }
 
     if (!safetyData.isSafe) {
       throw new InputGuardrailTripwireTriggered(
-        safetyData.userReply || "I cannot fulfill that request due to safety protocols.",
-        createGuardrailResult(`Calendar Safety Protocols - ${safetyData.violationType}`, true, safetyData)
+        safetyData.userReply ||
+          "I cannot fulfill that request due to safety protocols.",
+        createGuardrailResult(
+          `Calendar Safety Protocols - ${safetyData.violationType}`,
+          true,
+          safetyData
+        )
       );
     }
 

@@ -1,4 +1,17 @@
-import { PARAMETERS_TOOLS, makeEventTime } from "./tool-schemas";
+import { tool } from "@openai/agents";
+import { z } from "zod";
+import { getEmailFromContext } from "@/shared/adapters/openai-adapter";
+import { type AgentContext, stringifyError } from "@/shared/types";
+import {
+  checkEventConflictsAllCalendars,
+  getCalendarDefaultReminders,
+  getUserIdByEmail,
+  getUserReminderPreferences,
+  resolveRemindersForEvent,
+  saveUserReminderPreferences,
+  updateCalendarDefaultReminders,
+  updateEventReminders,
+} from "@/utils/calendar";
 import {
   analyzeGapsForUser,
   fillGap,
@@ -12,23 +25,9 @@ import {
   summarizeEvents,
   validateUserDirect,
 } from "./direct-utilities";
-import {
-  checkEventConflictsAllCalendars,
-  getCalendarDefaultReminders,
-  updateCalendarDefaultReminders,
-  updateEventReminders,
-  getUserReminderPreferences,
-  saveUserReminderPreferences,
-  getUserIdByEmail,
-  resolveRemindersForEvent,
-} from "@/utils/calendar";
-
-import { EXECUTION_TOOLS } from "./tool-execution";
 import { TOOLS_DESCRIPTION } from "./tool-descriptions";
-import { tool } from "@openai/agents";
-import { z } from "zod";
-import { type AgentContext, stringifyError } from "@/shared/types";
-import { getEmailFromContext } from "@/shared/adapters/openai-adapter";
+import { EXECUTION_TOOLS } from "./tool-execution";
+import { makeEventTime, PARAMETERS_TOOLS } from "./tool-schemas";
 
 export type { AgentContext };
 
@@ -81,7 +80,7 @@ export const AGENT_TOOLS = {
         email,
       };
       return EXECUTION_TOOLS.updateEvent(
-        cleanedParams as Parameters<typeof EXECUTION_TOOLS.updateEvent>[0],
+        cleanedParams as Parameters<typeof EXECUTION_TOOLS.updateEvent>[0]
       );
     },
     errorFunction: (_, error) => `update_event: ${stringifyError(error)}`,
@@ -210,7 +209,7 @@ export const DIRECT_TOOLS = {
     }),
     execute: async (
       { summary, description, location, start, end },
-      runContext,
+      runContext
     ) => {
       const email = getEmailFromContext(runContext, "pre_create_validation");
       return preCreateValidation(email, {
@@ -256,7 +255,7 @@ export const DIRECT_TOOLS = {
         .boolean()
         .default(false)
         .describe(
-          "Set to true to add a Google Meet video conference link. Use when user asks for video call, meeting link, virtual meeting, or online meeting.",
+          "Set to true to add a Google Meet video conference link. Use when user asks for video call, meeting link, virtual meeting, or online meeting."
         ),
       reminders: PARAMETERS_TOOLS.setEventRemindersParameters.shape.reminders
         .nullable()
@@ -308,7 +307,7 @@ export const DIRECT_TOOLS = {
       eventsData: z.coerce
         .string()
         .describe(
-          "The response object from get_event_direct as a JSON string. When searchAllCalendars=true, it contains 'allEvents' array. When searchAllCalendars=false, it contains { type: 'standard', data: { items: [...] } }.",
+          "The response object from get_event_direct as a JSON string. When searchAllCalendars=true, it contains 'allEvents' array. When searchAllCalendars=false, it contains { type: 'standard', data: { items: [...] } }."
         ),
     }),
     execute: async ({ eventsData }) => {
@@ -404,7 +403,7 @@ export const DIRECT_TOOLS = {
     parameters: PARAMETERS_TOOLS.fillGapParameters,
     execute: async (
       { gapStart, gapEnd, summary, description, location, calendarId },
-      runContext,
+      runContext
     ) => {
       const email = getEmailFromContext(runContext, "fill_gap_direct");
       return await fillGap({
@@ -462,7 +461,7 @@ export const DIRECT_TOOLS = {
     execute: async ({ startTime, endTime, excludeEventId }, runContext) => {
       const email = getEmailFromContext(
         runContext,
-        "check_conflicts_all_calendars",
+        "check_conflicts_all_calendars"
       );
       return checkEventConflictsAllCalendars({
         email,
@@ -488,7 +487,7 @@ export const DIRECT_TOOLS = {
         email,
         calendarId ?? "primary",
         eventId,
-        reminders,
+        reminders
       );
     },
     errorFunction: (_, error) =>
@@ -505,7 +504,7 @@ export const DIRECT_TOOLS = {
     execute: async ({ calendarId }, runContext) => {
       const email = getEmailFromContext(
         runContext,
-        "get_calendar_default_reminders",
+        "get_calendar_default_reminders"
       );
       const result = await getCalendarDefaultReminders(email, calendarId);
       if (!result) {
@@ -527,12 +526,12 @@ export const DIRECT_TOOLS = {
     execute: async ({ calendarId, defaultReminders }, runContext) => {
       const email = getEmailFromContext(
         runContext,
-        "update_calendar_default_reminders",
+        "update_calendar_default_reminders"
       );
       return updateCalendarDefaultReminders(
         email,
         calendarId,
-        defaultReminders,
+        defaultReminders
       );
     },
     errorFunction: (_, error) =>
@@ -549,7 +548,7 @@ export const DIRECT_TOOLS = {
     execute: async (_params, runContext) => {
       const email = getEmailFromContext(
         runContext,
-        "get_user_reminder_preferences",
+        "get_user_reminder_preferences"
       );
       const userId = await getUserIdByEmail(email);
       if (!userId) {
@@ -577,11 +576,11 @@ export const DIRECT_TOOLS = {
     parameters: PARAMETERS_TOOLS.updateUserReminderPreferencesParameters,
     execute: async (
       { enabled, defaultReminders, useCalendarDefaults },
-      runContext,
+      runContext
     ) => {
       const email = getEmailFromContext(
         runContext,
-        "update_user_reminder_preferences",
+        "update_user_reminder_preferences"
       );
       const userId = await getUserIdByEmail(email);
       if (!userId) {

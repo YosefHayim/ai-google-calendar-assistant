@@ -1,9 +1,9 @@
-import type { InsightsMetrics } from "@/utils/ai/insights-calculator";
-import { MODELS } from "@/config";
 import OpenAI from "openai";
-import { env } from "@/config/env";
-import { logger } from "@/utils/logger";
 import { z } from "zod";
+import { MODELS } from "@/config";
+import { env } from "@/config/env";
+import type { InsightsMetrics } from "@/utils/ai/insights-calculator";
+import { logger } from "@/utils/logger";
 
 // ============================================================================
 // TYPES & SCHEMAS
@@ -32,22 +32,45 @@ export const INSIGHT_ICONS = [
   "pie-chart",
 ] as const;
 
-export const INSIGHT_COLORS = ["amber", "sky", "emerald", "rose", "indigo", "orange"] as const;
+export const INSIGHT_COLORS = [
+  "amber",
+  "sky",
+  "emerald",
+  "rose",
+  "indigo",
+  "orange",
+] as const;
 
 export type InsightIconName = (typeof INSIGHT_ICONS)[number];
 export type InsightColor = (typeof INSIGHT_COLORS)[number];
 
 export const InsightSchema = z.object({
-  id: z.string().describe("Unique identifier for the insight (e.g., 'busiest-day', 'focus-time')"),
+  id: z
+    .string()
+    .describe(
+      "Unique identifier for the insight (e.g., 'busiest-day', 'focus-time')"
+    ),
   icon: z.enum(INSIGHT_ICONS).describe("Icon name from the allowed set"),
-  title: z.string().max(25).describe("Short title for the insight card (max 25 chars)"),
-  value: z.string().max(15).describe("The main value to display (e.g., 'Tuesday', '8.5h', '+23%')"),
-  description: z.string().max(100).describe("Brief explanation of the insight (max 100 chars)"),
+  title: z
+    .string()
+    .max(25)
+    .describe("Short title for the insight card (max 25 chars)"),
+  value: z
+    .string()
+    .max(15)
+    .describe("The main value to display (e.g., 'Tuesday', '8.5h', '+23%')"),
+  description: z
+    .string()
+    .max(100)
+    .describe("Brief explanation of the insight (max 100 chars)"),
   color: z.enum(INSIGHT_COLORS).describe("Color theme for the card"),
 });
 
 export const InsightsResponseSchema = z.object({
-  insights: z.array(InsightSchema).length(10).describe("Exactly 10 unique insights"),
+  insights: z
+    .array(InsightSchema)
+    .length(10)
+    .describe("Exactly 10 unique insights"),
 });
 
 export type AIInsight = z.infer<typeof InsightSchema>;
@@ -124,7 +147,11 @@ const INSIGHTS_MODEL = MODELS.GPT_4_1_NANO;
  * @param periodEnd - End date of the analysis period
  * @returns Array of 10 AI-generated insights
  */
-export async function generateInsights(metrics: InsightsMetrics, periodStart: string, periodEnd: string): Promise<AIInsightsResponse> {
+export async function generateInsights(
+  metrics: InsightsMetrics,
+  periodStart: string,
+  periodEnd: string
+): Promise<AIInsightsResponse> {
   const openai = new OpenAI({ apiKey: env.openAiApiKey });
 
   logger.debug(`Generating insights for period ${periodStart} to ${periodEnd}`);
@@ -151,7 +178,7 @@ The insights array MUST contain exactly 10 items.`;
     messages: [
       {
         role: "system",
-        content: INSIGHTS_SYSTEM_PROMPT + "\n\n" + jsonSchemaInstruction,
+        content: `${INSIGHTS_SYSTEM_PROMPT}\n\n${jsonSchemaInstruction}`,
       },
       {
         role: "user",
@@ -176,7 +203,9 @@ ${JSON.stringify(metrics, null, 2)}`,
   try {
     parsed = JSON.parse(content);
   } catch {
-    throw new Error(`Failed to parse AI response as JSON: ${content.substring(0, 200)}`);
+    throw new Error(
+      `Failed to parse AI response as JSON: ${content.substring(0, 200)}`
+    );
   }
 
   const result = InsightsResponseSchema.safeParse(parsed);
@@ -186,7 +215,9 @@ ${JSON.stringify(metrics, null, 2)}`,
     throw new Error(`Invalid insights format: ${result.error.message}`);
   }
 
-  logger.debug(`Generated ${result.data.insights.length} insights successfully`);
+  logger.debug(
+    `Generated ${result.data.insights.length} insights successfully`
+  );
 
   return result.data;
 }
@@ -202,28 +233,40 @@ ${JSON.stringify(metrics, null, 2)}`,
  * @returns Array of 10 AI-generated insights
  * @throws Error if all retries fail
  */
-export async function generateInsightsWithRetry(metrics: InsightsMetrics, periodStart: string, periodEnd: string, maxRetries = 3): Promise<AIInsightsResponse> {
+export async function generateInsightsWithRetry(
+  metrics: InsightsMetrics,
+  periodStart: string,
+  periodEnd: string,
+  maxRetries = 3
+): Promise<AIInsightsResponse> {
   let lastError: Error | null = null;
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       const result = await generateInsights(metrics, periodStart, periodEnd);
-      logger.debug(`Generated insights successfully: ${JSON.stringify(result, null, 2)}`);
+      logger.debug(
+        `Generated insights successfully: ${JSON.stringify(result, null, 2)}`
+      );
       return result;
     } catch (error) {
       lastError = error instanceof Error ? error : new Error(String(error));
-      logger.warn(`Insights generation attempt ${attempt}/${maxRetries} failed: ${lastError.message}`);
+      logger.warn(
+        `Insights generation attempt ${attempt}/${maxRetries} failed: ${lastError.message}`
+      );
 
       if (attempt < maxRetries) {
         // Exponential backoff: 1s, 2s, 4s
-        const delayMs = 1000 * Math.pow(2, attempt - 1);
+        const delayMs = 1000 * 2 ** (attempt - 1);
         await sleep(delayMs);
       }
     }
   }
 
   logger.error(`All ${maxRetries} insight generation attempts failed`);
-  throw lastError || new Error("Failed to generate insights after multiple attempts");
+  throw (
+    lastError ||
+    new Error("Failed to generate insights after multiple attempts")
+  );
 }
 
 /**

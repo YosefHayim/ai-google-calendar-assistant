@@ -1,7 +1,7 @@
-import { REQUEST_CONFIG_BASE } from "@/config";
 import type { calendar_v3 } from "googleapis";
-import formatDate from "@/utils/date/format-date";
+import { REQUEST_CONFIG_BASE } from "@/config";
 import { getEventDurationString } from "@/utils/calendar/duration";
+import formatDate from "@/utils/date/format-date";
 
 type ListExtra = Partial<calendar_v3.Params$Resource$Events$List> & {
   includeCalendarName?: boolean;
@@ -11,7 +11,10 @@ type ListExtra = Partial<calendar_v3.Params$Resource$Events$List> & {
 
 type GetEventsParams = {
   calendarEvents: calendar_v3.Resource$Events;
-  req?: { body?: Record<string, unknown>; query?: Record<string, unknown> } | null;
+  req?: {
+    body?: Record<string, unknown>;
+    query?: Record<string, unknown>;
+  } | null;
   extra?: Record<string, unknown>;
 };
 
@@ -52,8 +55,17 @@ export type GetEventsResponse = CustomEventsResponse | StandardEventsResponse;
  *   maxResults: 50
  * });
  */
-function buildListParams(rawExtra: ListExtra): { listParams: calendar_v3.Params$Resource$Events$List; calendarId: string | undefined } {
-  const { email: _omitEmail, customEvents: _omitCustom, calendarId, includeCalendarName: _omitIncludeCalendarName = false, ...listExtraRaw } = rawExtra;
+function buildListParams(rawExtra: ListExtra): {
+  listParams: calendar_v3.Params$Resource$Events$List;
+  calendarId: string | undefined;
+} {
+  const {
+    email: _omitEmail,
+    customEvents: _omitCustom,
+    calendarId,
+    includeCalendarName: _omitIncludeCalendarName = false,
+    ...listExtraRaw
+  } = rawExtra;
 
   const listParams: calendar_v3.Params$Resource$Events$List = {
     ...REQUEST_CONFIG_BASE,
@@ -158,7 +170,9 @@ export async function fetchAllCalendarEvents(
  * const formatted = formatSingleEvent(calendarEvent);
  * // Returns { eventId: "abc123", summary: "Meeting", start: "Jan 15, 2025 10:00 AM", ... }
  */
-export function formatSingleEvent(event: calendar_v3.Schema$Event): FormattedEvent {
+export function formatSingleEvent(
+  event: calendar_v3.Schema$Event
+): FormattedEvent {
   const startDate = event.start?.date || event.start?.dateTime || null;
   const endDate = event.end?.date || event.end?.dateTime || null;
 
@@ -167,7 +181,8 @@ export function formatSingleEvent(event: calendar_v3.Schema$Event): FormattedEve
     summary: event.summary || "Untitled Event",
     description: event.description || null,
     location: event.location || null,
-    durationOfEvent: startDate && endDate ? getEventDurationString(startDate, endDate) : null,
+    durationOfEvent:
+      startDate && endDate ? getEventDurationString(startDate, endDate) : null,
     start: formatDate(startDate, true) || null,
     end: formatDate(endDate, true) || null,
   };
@@ -183,7 +198,10 @@ export function formatSingleEvent(event: calendar_v3.Schema$Event): FormattedEve
  * const response = formatCustomEventsResponse(events, "primary");
  * // Returns { type: "custom", calendarId: "primary", totalNumberOfEventsFound: 5, totalEventsFound: [...] }
  */
-export function formatCustomEventsResponse(events: calendar_v3.Schema$Event[], calendarId: string | undefined): CustomEventsResponse {
+export function formatCustomEventsResponse(
+  events: calendar_v3.Schema$Event[],
+  calendarId: string | undefined
+): CustomEventsResponse {
   const items = events.slice().reverse();
   const totalEventsFound = items.map(formatSingleEvent);
 
@@ -217,8 +235,16 @@ export function formatCustomEventsResponse(events: calendar_v3.Schema$Event[], c
  *   extra: { calendarId: "primary" }
  * });
  */
-export async function getEvents({ calendarEvents, req, extra }: GetEventsParams): Promise<GetEventsResponse> {
-  const rawExtra: ListExtra = { ...(extra as ListExtra), ...(req?.body ?? {}), ...(req?.query ?? {}) };
+export async function getEvents({
+  calendarEvents,
+  req,
+  extra,
+}: GetEventsParams): Promise<GetEventsResponse> {
+  const rawExtra: ListExtra = {
+    ...(extra as ListExtra),
+    ...(req?.body ?? {}),
+    ...(req?.query ?? {}),
+  };
   const customFlag = Boolean(rawExtra.customEvents);
   const { listParams, calendarId } = buildListParams(rawExtra);
 

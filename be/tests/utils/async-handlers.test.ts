@@ -1,7 +1,10 @@
+import { beforeEach, describe, expect, it, type jest } from "@jest/globals";
 import type { NextFunction, Request, Response } from "express";
-import { asyncHandler, reqResAsyncHandler } from "../../utils/http/async-handlers";
-import { beforeEach, describe, expect, it, jest } from "@jest/globals";
-import { mockFn, type AnyFn } from "../test-utils";
+import {
+  asyncHandler,
+  reqResAsyncHandler,
+} from "../../utils/http/async-handlers";
+import { type AnyFn, mockFn } from "../test-utils";
 
 describe("async-handlers", () => {
   describe("reqResAsyncHandler", () => {
@@ -19,7 +22,11 @@ describe("async-handlers", () => {
       const asyncFn = mockFn().mockResolvedValue(undefined);
       const handler = reqResAsyncHandler(asyncFn);
 
-      await handler(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      await handler(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
       expect(asyncFn).toHaveBeenCalledWith(mockRequest, mockResponse, mockNext);
     });
@@ -28,7 +35,11 @@ describe("async-handlers", () => {
       const asyncFn = mockFn().mockResolvedValue({ success: true });
       const handler = reqResAsyncHandler(asyncFn);
 
-      await handler(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      await handler(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
       expect(mockNext).not.toHaveBeenCalled();
     });
@@ -38,7 +49,11 @@ describe("async-handlers", () => {
       const asyncFn = mockFn().mockRejectedValue(error);
       const handler = reqResAsyncHandler(asyncFn);
 
-      await handler(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      await handler(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
       expect(mockNext).toHaveBeenCalledWith(error);
     });
@@ -50,7 +65,11 @@ describe("async-handlers", () => {
       });
       const handler = reqResAsyncHandler(asyncFn);
 
-      await handler(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      await handler(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
       expect(mockNext).toHaveBeenCalledWith(error);
     });
@@ -60,7 +79,11 @@ describe("async-handlers", () => {
       const asyncFn = mockFn().mockRejectedValue(customError);
       const handler = reqResAsyncHandler(asyncFn);
 
-      await handler(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      await handler(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
       expect(mockNext).toHaveBeenCalledWith(customError);
     });
@@ -71,7 +94,11 @@ describe("async-handlers", () => {
       });
       const handler = reqResAsyncHandler(asyncFn);
 
-      await handler(mockRequest as Request, mockResponse as Response, mockNext as NextFunction);
+      await handler(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext as NextFunction
+      );
 
       expect((mockRequest as Request & { userId?: string }).userId).toBe("123");
     });
@@ -96,7 +123,9 @@ describe("async-handlers", () => {
     });
 
     it("should pass arguments to wrapped function", async () => {
-      const fn = mockFn().mockImplementation((a: number, b: string) => `${a}-${b}`);
+      const fn = mockFn().mockImplementation(
+        (a: number, b: string) => `${a}-${b}`
+      );
       const handler = asyncHandler(fn);
 
       const result = await handler(42, "test");
@@ -105,7 +134,9 @@ describe("async-handlers", () => {
     });
 
     it("should handle multiple arguments", async () => {
-      const fn = mockFn().mockImplementation((...args: number[]) => args.reduce((a, b) => a + b, 0));
+      const fn = mockFn().mockImplementation((...args: number[]) =>
+        args.reduce((a, b) => a + b, 0)
+      );
       const handler = asyncHandler(fn);
 
       const result = await handler(1, 2, 3, 4, 5);
@@ -173,7 +204,7 @@ describe("async-handlers", () => {
     });
 
     it("should handle functions with no return value", async () => {
-      const fn = mockFn().mockImplementation(() => undefined);
+      const fn = mockFn().mockImplementation(() => {});
       const handler = asyncHandler(fn);
 
       const result = await handler();

@@ -1,13 +1,13 @@
-import type { Request, Response, NextFunction } from "express";
-import { logger } from "@/utils/logger";
 import crypto from "node:crypto";
+import type { NextFunction, Request, Response } from "express";
+import { logger } from "@/utils/logger";
 
 /**
  * SECURITY: Security audit logging middleware
  * Logs security-relevant events for compliance and incident response
  */
 
-export interface SecurityAuditEvent {
+export type SecurityAuditEvent = {
   timestamp: string;
   requestId: string;
   eventType: "AUTH" | "ACCESS" | "MODIFICATION" | "ERROR" | "SECURITY";
@@ -21,14 +21,12 @@ export interface SecurityAuditEvent {
   statusCode?: number;
   duration?: number;
   details?: Record<string, unknown>;
-}
+};
 
 /**
  * Generate a unique request ID for tracing
  */
-export const generateRequestId = (): string => {
-  return crypto.randomUUID();
-};
+export const generateRequestId = (): string => crypto.randomUUID();
 
 /**
  * Get client IP address, handling proxies
@@ -38,7 +36,9 @@ export const getClientIp = (req: Request): string => {
   const forwardedFor = req.headers["x-forwarded-for"];
   if (forwardedFor) {
     // Get the first IP in the chain (original client)
-    const ips = Array.isArray(forwardedFor) ? forwardedFor[0] : forwardedFor.split(",")[0];
+    const ips = Array.isArray(forwardedFor)
+      ? forwardedFor[0]
+      : forwardedFor.split(",")[0];
     return ips?.trim() || req.ip || "unknown";
   }
   return req.ip || req.socket?.remoteAddress || "unknown";
@@ -79,8 +79,11 @@ export const logSecurityEvent = (event: SecurityAuditEvent): void => {
  */
 const maskEmail = (email: string): string => {
   const [local, domain] = email.split("@");
-  if (!local || !domain) return "***@***.***";
-  const maskedLocal = local.length > 2 ? `${local[0]}***${local[local.length - 1]}` : "***";
+  if (!(local && domain)) {
+    return "***@***.***";
+  }
+  const maskedLocal =
+    local.length > 2 ? `${local[0]}***${local.at(-1)}` : "***";
   return `${maskedLocal}@${domain}`;
 };
 
@@ -88,7 +91,11 @@ const maskEmail = (email: string): string => {
  * Security audit middleware
  * Attaches request ID and logs security events
  */
-export const securityAuditMiddleware = (req: Request, res: Response, next: NextFunction): void => {
+export const securityAuditMiddleware = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void => {
   const startTime = Date.now();
   const requestId = generateRequestId();
 
@@ -126,9 +133,16 @@ export const securityAuditMiddleware = (req: Request, res: Response, next: NextF
 /**
  * Determine event type based on request/response
  */
-const getEventType = (req: Request, res: Response): SecurityAuditEvent["eventType"] => {
+const getEventType = (
+  req: Request,
+  res: Response
+): SecurityAuditEvent["eventType"] => {
   // Authentication events
-  if (req.path.includes("/signin") || req.path.includes("/signup") || req.path.includes("/logout")) {
+  if (
+    req.path.includes("/signin") ||
+    req.path.includes("/signup") ||
+    req.path.includes("/logout")
+  ) {
     return "AUTH";
   }
 
@@ -157,23 +171,45 @@ const getActionFromRoute = (req: Request): string => {
   const method = req.method;
 
   // Auth actions
-  if (path.includes("/signin")) return "user_signin";
-  if (path.includes("/signup")) return "user_signup";
-  if (path.includes("/logout")) return "user_logout";
-  if (path.includes("/callback")) return "oauth_callback";
-  if (path.includes("/verify")) return "verify_otp";
+  if (path.includes("/signin")) {
+    return "user_signin";
+  }
+  if (path.includes("/signup")) {
+    return "user_signup";
+  }
+  if (path.includes("/logout")) {
+    return "user_logout";
+  }
+  if (path.includes("/callback")) {
+    return "oauth_callback";
+  }
+  if (path.includes("/verify")) {
+    return "verify_otp";
+  }
 
   // User actions
-  if (path.includes("/users") && method === "DELETE") return "user_deactivate";
-  if (path.includes("/disconnect")) return "integration_disconnect";
+  if (path.includes("/users") && method === "DELETE") {
+    return "user_deactivate";
+  }
+  if (path.includes("/disconnect")) {
+    return "integration_disconnect";
+  }
 
   // Calendar actions
-  if (path.includes("/events") && method === "POST") return "event_create";
-  if (path.includes("/events") && method === "DELETE") return "event_delete";
-  if (path.includes("/events") && method === "PATCH") return "event_update";
+  if (path.includes("/events") && method === "POST") {
+    return "event_create";
+  }
+  if (path.includes("/events") && method === "DELETE") {
+    return "event_delete";
+  }
+  if (path.includes("/events") && method === "PATCH") {
+    return "event_update";
+  }
 
   // Chat actions
-  if (path.includes("/chat") && method === "POST") return "chat_message";
+  if (path.includes("/chat") && method === "POST") {
+    return "chat_message";
+  }
 
   return `${method.toLowerCase()}_${path.replace(/\//g, "_").slice(1)}`;
 };
@@ -183,7 +219,11 @@ const getActionFromRoute = (req: Request): string => {
  */
 const shouldLogEvent = (req: Request, res: Response): boolean => {
   // Always log auth events
-  if (req.path.includes("/signin") || req.path.includes("/signup") || req.path.includes("/logout")) {
+  if (
+    req.path.includes("/signin") ||
+    req.path.includes("/signup") ||
+    req.path.includes("/logout")
+  ) {
     return true;
   }
 
@@ -198,7 +238,11 @@ const shouldLogEvent = (req: Request, res: Response): boolean => {
   }
 
   // Log sensitive routes
-  if (req.path.includes("/callback") || req.path.includes("/token") || req.path.includes("/refresh")) {
+  if (
+    req.path.includes("/callback") ||
+    req.path.includes("/token") ||
+    req.path.includes("/refresh")
+  ) {
     return true;
   }
 
@@ -237,11 +281,4 @@ export const logAuthEvent = (
   });
 };
 
-// Extend Express Request type
-declare global {
-  namespace Express {
-    interface Request {
-      requestId?: string;
-    }
-  }
-}
+

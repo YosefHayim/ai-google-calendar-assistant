@@ -1,8 +1,8 @@
-import { MODELS } from "@/config/constants/ai";
 import OpenAI from "openai";
 import { env } from "@/config";
-import { logger } from "@/utils/logger";
+import { MODELS } from "@/config/constants/ai";
 import type { userAndAiMessageProps } from "@/types";
+import { logger } from "@/utils/logger";
 
 const openai = new OpenAI({ apiKey: env.openAiApiKey });
 
@@ -22,17 +22,18 @@ Do not include greetings or pleasantries. Focus on actionable information.
 Conversation to summarize:`;
 
 // Format messages for summarization
-const formatMessagesForSummary = (messages: userAndAiMessageProps[]): string => {
-  return messages
+const formatMessagesForSummary = (messages: userAndAiMessageProps[]): string =>
+  messages
     .map((msg) => {
       const role = msg.role === "user" ? "User" : "Assistant";
       return `${role}: ${msg.content || ""}`;
     })
     .join("\n");
-};
 
 // Summarize conversation messages using AI
-export const summarizeMessages = async (messages: userAndAiMessageProps[]): Promise<string> => {
+export const summarizeMessages = async (
+  messages: userAndAiMessageProps[]
+): Promise<string> => {
   if (messages.length === 0) {
     return "";
   }
@@ -46,7 +47,8 @@ export const summarizeMessages = async (messages: userAndAiMessageProps[]): Prom
       messages: [
         {
           role: "system",
-          content: "You are a helpful assistant that summarizes conversations concisely.",
+          content:
+            "You are a helpful assistant that summarizes conversations concisely.",
         },
         {
           role: "user",
@@ -60,12 +62,14 @@ export const summarizeMessages = async (messages: userAndAiMessageProps[]): Prom
     const summary = response.choices[0]?.message?.content?.trim();
 
     if (!summary) {
-      logger.error(`Telegram Bot: Summarize: No summary generated`);
+      logger.error("Telegram Bot: Summarize: No summary generated");
       throw new Error("No summary generated");
     }
     return summary;
   } catch (error) {
-    logger.error(`Telegram Bot: Summarize: Error summarizing messages: ${error}`);
+    logger.error(
+      `Telegram Bot: Summarize: Error summarizing messages: ${error}`
+    );
     console.error("Error summarizing messages:", error);
     // Fallback: create a simple summary
     return createFallbackSummary(messages);
@@ -92,7 +96,9 @@ The title should capture the main topic or intent. Do not use quotes or punctuat
 User's message:`;
 
 // Generate a short title for a conversation using AI (cheapest model)
-export const generateConversationTitle = async (firstUserMessage: string): Promise<string> => {
+export const generateConversationTitle = async (
+  firstUserMessage: string
+): Promise<string> => {
   if (!firstUserMessage?.trim()) {
     return "New Conversation";
   }
@@ -103,7 +109,8 @@ export const generateConversationTitle = async (firstUserMessage: string): Promi
       messages: [
         {
           role: "system",
-          content: "You are a helpful assistant that generates very short, descriptive titles for conversations.",
+          content:
+            "You are a helpful assistant that generates very short, descriptive titles for conversations.",
         },
         {
           role: "user",
@@ -117,7 +124,7 @@ export const generateConversationTitle = async (firstUserMessage: string): Promi
     const title = response.choices[0]?.message?.content?.trim();
 
     if (!title) {
-      logger.error(`Telegram Bot: Summarize: No title generated`);
+      logger.error("Telegram Bot: Summarize: No title generated");
       throw new Error("No title generated");
     }
 
@@ -125,11 +132,16 @@ export const generateConversationTitle = async (firstUserMessage: string): Promi
     const cleanTitle = title.replace(/^["']|["']$/g, "").slice(0, 50);
     return cleanTitle || "New Conversation";
   } catch (error) {
-    logger.error(`Telegram Bot: Summarize: Error generating conversation title: ${error}`);
+    logger.error(
+      `Telegram Bot: Summarize: Error generating conversation title: ${error}`
+    );
     console.error("Error generating conversation title:", error);
     // Fallback: use truncated first message
     const truncated = firstUserMessage.slice(0, 47);
-    const result = truncated.length < firstUserMessage.length ? `${truncated}...` : truncated;
+    const result =
+      truncated.length < firstUserMessage.length
+        ? `${truncated}...`
+        : truncated;
     return result;
   }
 };

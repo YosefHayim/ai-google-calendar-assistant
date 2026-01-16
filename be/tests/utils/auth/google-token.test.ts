@@ -1,4 +1,4 @@
-import { jest, describe, it, expect, beforeEach } from "@jest/globals";
+import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { mockFn } from "../../test-utils";
 
 // Mock functions
@@ -42,23 +42,25 @@ jest.mock("@/utils/date/timestamp-utils", () => ({
 
 jest.mock("@/utils/repositories/UserRepository", () => ({
   userRepository: {
-    findUserWithGoogleTokens: (email: string) => mockFindUserWithGoogleTokens(email),
+    findUserWithGoogleTokens: (email: string) =>
+      mockFindUserWithGoogleTokens(email),
     findUserIdByEmail: (email: string) => mockFindUserIdByEmail(email),
     updateGoogleTokens: (...args: unknown[]) => mockUpdateGoogleTokens(...args),
-    deactivateGoogleTokens: (userId: string) => mockDeactivateGoogleTokens(userId),
+    deactivateGoogleTokens: (userId: string) =>
+      mockDeactivateGoogleTokens(userId),
   },
 }));
 
 // Import after mocks
 import {
-  generateGoogleAuthUrl,
   checkTokenExpiry,
-  fetchGoogleTokensByEmail,
-  refreshGoogleAccessToken,
-  persistGoogleTokens,
   deactivateGoogleTokens,
+  fetchGoogleTokensByEmail,
+  generateGoogleAuthUrl,
   getUserIdByEmail,
   NEAR_EXPIRY_BUFFER_MS,
+  persistGoogleTokens,
+  refreshGoogleAccessToken,
 } from "@/utils/auth/google-token";
 
 describe("Google Token Utilities", () => {
@@ -68,7 +70,9 @@ describe("Google Token Utilities", () => {
 
   describe("generateGoogleAuthUrl", () => {
     it("should generate auth URL without consent prompt by default", () => {
-      mockGenerateAuthUrl.mockReturnValue("https://accounts.google.com/oauth?prompt=none");
+      mockGenerateAuthUrl.mockReturnValue(
+        "https://accounts.google.com/oauth?prompt=none"
+      );
 
       const url = generateGoogleAuthUrl();
 
@@ -82,7 +86,9 @@ describe("Google Token Utilities", () => {
     });
 
     it("should generate auth URL with consent prompt when forced", () => {
-      mockGenerateAuthUrl.mockReturnValue("https://accounts.google.com/oauth?prompt=consent");
+      mockGenerateAuthUrl.mockReturnValue(
+        "https://accounts.google.com/oauth?prompt=consent"
+      );
 
       const url = generateGoogleAuthUrl({ forceConsent: true });
 
@@ -119,7 +125,7 @@ describe("Google Token Utilities", () => {
     });
 
     it("should return expired for past date", () => {
-      const pastDate = Date.now() - 60000; // 1 minute ago
+      const pastDate = Date.now() - 60_000; // 1 minute ago
       const result = checkTokenExpiry(pastDate);
 
       expect(result.isExpired).toBe(true);
@@ -159,18 +165,26 @@ describe("Google Token Utilities", () => {
       const mockTokens = {
         access_token: "access-token",
         refresh_token: "refresh-token",
-        expiry_date: Date.now() + 3600000,
+        expiry_date: Date.now() + 3_600_000,
       };
-      mockFindUserWithGoogleTokens.mockResolvedValue({ data: mockTokens, error: null });
+      mockFindUserWithGoogleTokens.mockResolvedValue({
+        data: mockTokens,
+        error: null,
+      });
 
       const result = await fetchGoogleTokensByEmail("test@example.com");
 
-      expect(mockFindUserWithGoogleTokens).toHaveBeenCalledWith("test@example.com");
+      expect(mockFindUserWithGoogleTokens).toHaveBeenCalledWith(
+        "test@example.com"
+      );
       expect(result).toEqual({ data: mockTokens, error: null });
     });
 
     it("should return error if user not found", async () => {
-      mockFindUserWithGoogleTokens.mockResolvedValue({ data: null, error: "User not found" });
+      mockFindUserWithGoogleTokens.mockResolvedValue({
+        data: null,
+        error: "User not found",
+      });
 
       const result = await fetchGoogleTokensByEmail("notfound@example.com");
 
@@ -200,7 +214,7 @@ describe("Google Token Utilities", () => {
         scope: "calendar",
         id_token: "id-token",
       };
-      const newExpiry = Date.now() + 3600000;
+      const newExpiry = Date.now() + 3_600_000;
       mockRefreshAccessToken.mockResolvedValue({
         credentials: {
           access_token: "new-access-token",
@@ -301,7 +315,7 @@ describe("Google Token Utilities", () => {
 
       await persistGoogleTokens("test@example.com", {
         accessToken: "new-access-token",
-        expiryDate: Date.now() + 3600000,
+        expiryDate: Date.now() + 3_600_000,
       });
 
       expect(mockFindUserIdByEmail).toHaveBeenCalledWith("test@example.com");
@@ -338,9 +352,9 @@ describe("Google Token Utilities", () => {
     it("should throw error if user not found", async () => {
       mockFindUserIdByEmail.mockResolvedValue(null);
 
-      await expect(deactivateGoogleTokens("notfound@example.com")).rejects.toThrow(
-        "Failed to find user: User not found"
-      );
+      await expect(
+        deactivateGoogleTokens("notfound@example.com")
+      ).rejects.toThrow("Failed to find user: User not found");
     });
   });
 

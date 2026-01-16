@@ -5,27 +5,27 @@ export {
 export { getEventDurationString } from "./duration";
 export { eventsHandler } from "./events";
 export {
-  initUserSupabaseCalendarWithTokensAndUpdateTokens,
-  createCalendarFromValidatedTokens,
-  refreshAccessToken,
-  createCalendarClient,
-} from "./init";
-export {
   analyzeGaps,
   analyzeGapsForUser,
+  DEFAULT_GAP_RECOVERY_SETTINGS,
   fillGap,
   formatGapsForDisplay,
-  DEFAULT_GAP_RECOVERY_SETTINGS,
 } from "./gap-recovery";
 export {
-  getUserReminderPreferences,
-  getUserIdByEmail,
-  getCalendarDefaultReminders,
-  updateCalendarDefaultReminders,
-  updateEventReminders,
-  resolveRemindersForEvent,
-  saveUserReminderPreferences,
+  createCalendarClient,
+  createCalendarFromValidatedTokens,
+  initUserSupabaseCalendarWithTokensAndUpdateTokens,
+  refreshAccessToken,
+} from "./init";
+export {
   type EventReminder,
   type EventReminders,
+  getCalendarDefaultReminders,
+  getUserIdByEmail,
+  getUserReminderPreferences,
   type ReminderPreferences,
+  resolveRemindersForEvent,
+  saveUserReminderPreferences,
+  updateCalendarDefaultReminders,
+  updateEventReminders,
 } from "./reminders";

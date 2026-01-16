@@ -10,35 +10,35 @@ import {
   Preview,
   Section,
   Text,
-} from '@react-email/components';
-import type * as React from 'react';
+} from "@react-email/components";
+import type * as React from "react";
 
 // ============================================
 // Types
 // ============================================
 
-export interface WelcomeEmailProps {
+export type WelcomeEmailProps = {
   userName: string;
   dashboardUrl?: string;
   docsUrl?: string;
   supportUrl?: string;
   logoUrl?: string;
-}
+};
 
 // ============================================
 // Brand Colors & Styles
 // ============================================
 
 const colors = {
-  primary: '#f97316',
-  primaryHover: '#e1430d',
-  primaryDark: '#c83a0b',
-  background: '#f6f9fc',
-  white: '#ffffff',
-  text: '#0a0a0b',
-  textSecondary: '#737373',
-  textMuted: '#a3a3a3',
-  border: '#e5e5e5',
+  primary: "#f97316",
+  primaryHover: "#e1430d",
+  primaryDark: "#c83a0b",
+  background: "#f6f9fc",
+  white: "#ffffff",
+  text: "#0a0a0b",
+  textSecondary: "#737373",
+  textMuted: "#a3a3a3",
+  border: "#e5e5e5",
 };
 
 const fonts = {
@@ -51,11 +51,11 @@ const fonts = {
 // ============================================
 
 export const WelcomeEmail = ({
-  userName = 'there',
-  dashboardUrl = 'https://askally.io/dashboard',
-  docsUrl = 'https://askally.io/docs',
-  supportUrl = 'https://askally.io/support',
-  logoUrl = 'https://askally.io/logo.svg',
+  userName = "there",
+  dashboardUrl = "https://askally.io/dashboard",
+  docsUrl = "https://askally.io/docs",
+  supportUrl = "https://askally.io/support",
+  logoUrl = "https://askally.io/logo.svg",
 }: WelcomeEmailProps) => {
   return (
     <Html>
@@ -127,11 +127,11 @@ export const WelcomeEmail = ({
 
             {/* Help Links */}
             <Text style={styles.helpText}>
-              Need help getting started? Check out our{' '}
+              Need help getting started? Check out our{" "}
               <Link href={docsUrl} style={styles.link}>
                 documentation
-              </Link>{' '}
-              or reach out to our{' '}
+              </Link>{" "}
+              or reach out to our{" "}
               <Link href={supportUrl} style={styles.link}>
                 support team
               </Link>
@@ -167,108 +167,108 @@ const styles = {
   } as React.CSSProperties,
 
   container: {
-    maxWidth: '600px',
-    margin: '0 auto',
-    padding: '24px 16px',
+    maxWidth: "600px",
+    margin: "0 auto",
+    padding: "24px 16px",
   } as React.CSSProperties,
 
   card: {
     backgroundColor: colors.white,
-    borderRadius: '16px',
-    padding: '40px 48px',
-    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
+    borderRadius: "16px",
+    padding: "40px 48px",
+    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.08)",
   } as React.CSSProperties,
 
   header: {
-    textAlign: 'center' as const,
-    marginBottom: '8px',
+    textAlign: "center" as const,
+    marginBottom: "8px",
   } as React.CSSProperties,
 
   logo: {
-    margin: '0 auto',
-    display: 'block',
+    margin: "0 auto",
+    display: "block",
   } as React.CSSProperties,
 
   divider: {
     borderColor: colors.border,
-    borderWidth: '1px',
-    margin: '24px 0',
+    borderWidth: "1px",
+    margin: "24px 0",
   } as React.CSSProperties,
 
   heading: {
-    fontSize: '24px',
-    fontWeight: '600',
+    fontSize: "24px",
+    fontWeight: "600",
     color: colors.text,
-    margin: '0 0 16px',
-    lineHeight: '1.3',
+    margin: "0 0 16px",
+    lineHeight: "1.3",
   } as React.CSSProperties,
 
   paragraph: {
-    fontSize: '16px',
+    fontSize: "16px",
     color: colors.textSecondary,
-    lineHeight: '1.6',
-    margin: '0 0 16px',
+    lineHeight: "1.6",
+    margin: "0 0 16px",
   } as React.CSSProperties,
 
   featureList: {
-    margin: '24px 0',
-    paddingLeft: '16px',
+    margin: "24px 0",
+    paddingLeft: "16px",
   } as React.CSSProperties,
 
   feature: {
-    fontSize: '16px',
+    fontSize: "16px",
     color: colors.text,
-    lineHeight: '1.6',
-    margin: '0 0 12px',
+    lineHeight: "1.6",
+    margin: "0 0 12px",
   } as React.CSSProperties,
 
   ctaSection: {
-    textAlign: 'center' as const,
-    margin: '32px 0',
+    textAlign: "center" as const,
+    margin: "32px 0",
   } as React.CSSProperties,
 
   ctaButton: {
-    display: 'inline-block',
+    display: "inline-block",
     backgroundColor: colors.primary,
     color: colors.white,
-    fontSize: '16px',
-    fontWeight: '600',
-    padding: '14px 32px',
-    borderRadius: '8px',
-    textDecoration: 'none',
-    textAlign: 'center' as const,
+    fontSize: "16px",
+    fontWeight: "600",
+    padding: "14px 32px",
+    borderRadius: "8px",
+    textDecoration: "none",
+    textAlign: "center" as const,
   } as React.CSSProperties,
 
   helpText: {
-    fontSize: '16px',
+    fontSize: "16px",
     color: colors.textSecondary,
-    lineHeight: '1.6',
-    margin: '0 0 16px',
+    lineHeight: "1.6",
+    margin: "0 0 16px",
   } as React.CSSProperties,
 
   link: {
     color: colors.primary,
-    textDecoration: 'none',
+    textDecoration: "none",
   } as React.CSSProperties,
 
   signature: {
-    fontSize: '16px',
+    fontSize: "16px",
     color: colors.textSecondary,
-    margin: '24px 0 0',
+    margin: "24px 0 0",
   } as React.CSSProperties,
 
   footerDivider: {
     borderColor: colors.border,
-    borderWidth: '1px',
-    margin: '24px 0 16px',
+    borderWidth: "1px",
+    margin: "24px 0 16px",
   } as React.CSSProperties,
 
   footer: {
-    fontSize: '12px',
+    fontSize: "12px",
     color: colors.textMuted,
-    textAlign: 'center' as const,
+    textAlign: "center" as const,
     margin: 0,
-    lineHeight: '1.5',
+    lineHeight: "1.5",
   } as React.CSSProperties,
 };
 
