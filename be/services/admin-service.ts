@@ -14,6 +14,7 @@ import {
   ACTIVE_SUBSCRIPTION_STATUSES,
   MODIFIABLE_SUBSCRIPTION_STATUSES,
 } from "@/utils/db/subscription-status";
+import { invalidateUserProfileCache } from "@/utils/cache/user-cache";
 
 /**
  * Get dashboard KPI stats via direct queries
@@ -393,6 +394,9 @@ export const updateUserRole = async (
     console.error("[Admin Service] Failed to update user role:", error);
     throw new Error(`Failed to update user role: ${error.message}`);
   }
+
+  // Invalidate user profile cache so new role takes effect immediately
+  await invalidateUserProfileCache(userId);
 
   // Log admin action
   await logAdminAction({

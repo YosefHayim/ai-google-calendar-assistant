@@ -264,6 +264,9 @@ export const en = {
     errors: {
       noToken: 'Authentication failed. Please try again.',
       callbackFailed: 'OAuth callback failed. Please try again.',
+      sessionExpired: 'Your session has expired. Please sign in again.',
+      accountDeleted: 'Your account has been deleted. Please register again.',
+      accountDeactivated: 'Your account has been deactivated. Please contact support.',
     },
   },
 

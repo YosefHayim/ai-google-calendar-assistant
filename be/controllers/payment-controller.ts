@@ -11,11 +11,11 @@ import {
   createCheckoutSession,
   createCreditPackCheckout,
   ensureFreePlan,
-  getActivePlans,
   getBillingOverview,
   getCustomerPortalUrl,
   getLemonSqueezyProducts,
   getLemonSqueezyProductsWithVariants,
+  getPlansFromLemonSqueezy,
   getUserSubscription,
   handleOrderCreated,
   handleSubscriptionCreated,
@@ -46,7 +46,7 @@ export const getPaymentStatus = reqResAsyncHandler(
 
 export const getPlans = reqResAsyncHandler(
   async (_req: Request, res: Response) => {
-    const plans = await getActivePlans();
+    const plans = await getPlansFromLemonSqueezy();
 
     sendR(res, STATUS_RESPONSE.SUCCESS, "Plans retrieved", {
       plans: plans.map((plan) => ({
@@ -54,18 +54,11 @@ export const getPlans = reqResAsyncHandler(
         name: plan.name,
         slug: plan.slug,
         description: plan.description,
-        pricing: {
-          monthly: plan.price_monthly_cents / 100,
-          yearly: plan.price_yearly_cents / 100,
-          perUse: plan.price_per_use_cents / 100,
-        },
-        limits: {
-          aiInteractionsMonthly: plan.ai_interactions_monthly,
-          actionPackSize: plan.action_pack_size,
-        },
+        pricing: plan.pricing,
+        limits: plan.limits,
         features: plan.features,
-        isPopular: plan.is_popular,
-        isHighlighted: plan.is_highlighted,
+        isPopular: plan.isPopular,
+        isHighlighted: plan.isHighlighted,
       })),
     });
   }

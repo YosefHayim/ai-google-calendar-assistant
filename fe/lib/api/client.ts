@@ -13,6 +13,7 @@ interface SessionErrorResponse {
 
 const GOOGLE_REAUTH_CODES = ['GOOGLE_REAUTH_REQUIRED', 'GOOGLE_TOKEN_REFRESH_FAILED']
 const SUPABASE_SESSION_CODES = ['SESSION_EXPIRED', 'SESSION_REFRESH_FAILED']
+const FORCE_LOGOUT_CODES = ['USER_NOT_FOUND', 'ACCOUNT_DEACTIVATED']
 
 export const apiClient = axios.create({
   baseURL: ENV.API_BASE_URL,
@@ -79,9 +80,21 @@ apiClient.interceptors.response.use(
       return Promise.reject(error)
     }
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      const errorCode = error.response.data?.data?.code
+    const errorCode = error.response?.data?.data?.code
+    const isUnauthorized = error.response?.status === 401
+    const isForbidden = error.response?.status === 403
 
+    if ((isUnauthorized || isForbidden) && errorCode && FORCE_LOGOUT_CODES.includes(errorCode)) {
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN)
+        localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN)
+        const errorParam = errorCode === 'USER_NOT_FOUND' ? 'account_deleted' : 'account_deactivated'
+        window.location.href = `/login?error=${errorParam}`
+      }
+      return Promise.reject(error)
+    }
+
+    if (isUnauthorized && !originalRequest._retry) {
       if (errorCode && GOOGLE_REAUTH_CODES.includes(errorCode)) {
         if (typeof window !== 'undefined') {
           sessionStorage.setItem('google_reauth_required', 'true')

@@ -63,7 +63,10 @@ const LoginPage: React.FC = () => {
               <p className="text-red-600 dark:text-red-400 text-sm font-medium">
                 {error === 'no_token' && t('login.errors.noToken')}
                 {error === 'callback_failed' && t('login.errors.callbackFailed')}
-                {error !== 'no_token' && error !== 'callback_failed' && error}
+                {error === 'session_expired' && t('login.errors.sessionExpired', 'Your session has expired. Please sign in again.')}
+                {error === 'account_deleted' && t('login.errors.accountDeleted', 'Your account has been deleted. Please register again.')}
+                {error === 'account_deactivated' && t('login.errors.accountDeactivated', 'Your account has been deactivated. Please contact support.')}
+                {!['no_token', 'callback_failed', 'session_expired', 'account_deleted', 'account_deactivated'].includes(error) && error}
               </p>
             </div>
           )}

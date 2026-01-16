@@ -1,6 +1,6 @@
 import type { User } from "@supabase/supabase-js";
 import type { NextFunction, Request, Response } from "express";
-import { STATUS_RESPONSE } from "@/config";
+import { STATUS_RESPONSE, SUPABASE } from "@/config";
 import {
   ACCESS_TOKEN_COOKIE,
   REFRESH_TOKEN_COOKIE,
@@ -65,8 +65,30 @@ export const supabaseAuth = (options: SupabaseAuthOptions = {}) => {
       // Validate current token
       const validation = await validateSupabaseToken(accessToken);
 
-      // Token is valid - attach user and continue
       if (validation.user) {
+        const { data: dbUser } = await SUPABASE.from("users")
+          .select("id, status")
+          .eq("id", validation.user.id)
+          .single();
+
+        if (!dbUser) {
+          return sendR(
+            res,
+            STATUS_RESPONSE.UNAUTHORIZED,
+            "User account not found. Please register again.",
+            { code: "USER_NOT_FOUND" }
+          );
+        }
+
+        if (dbUser.status === "suspended" || dbUser.status === "deleted") {
+          return sendR(
+            res,
+            STATUS_RESPONSE.FORBIDDEN,
+            "Your account has been deactivated.",
+            { code: "ACCOUNT_DEACTIVATED" }
+          );
+        }
+
         req.user = validation.user;
         return next();
       }

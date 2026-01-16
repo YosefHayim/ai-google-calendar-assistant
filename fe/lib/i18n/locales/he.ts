@@ -248,6 +248,9 @@ export const he: TranslationShape = {
     errors: {
       noToken: 'האימות נכשל. נסה שוב.',
       callbackFailed: 'OAuth callback נכשל. נסה שוב.',
+      sessionExpired: 'פג תוקף ההתחברות שלך. אנא התחבר שוב.',
+      accountDeleted: 'החשבון שלך נמחק. אנא הירשם מחדש.',
+      accountDeactivated: 'החשבון שלך הושבת. אנא פנה לתמיכה.',
     },
   },
 

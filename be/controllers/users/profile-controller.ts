@@ -4,6 +4,7 @@ import { unifiedContextStore } from "@/shared/context";
 import {
   getCachedUserProfile,
   invalidateAllUserCache,
+  invalidateUserProfileCache,
   setCachedUserProfile,
 } from "@/utils/cache/user-cache";
 import { webConversation } from "@/utils/conversation/WebConversationAdapter";
@@ -21,7 +22,12 @@ const getCurrentUserInformation = reqResAsyncHandler(
         );
       }
 
-      const cached = await getCachedUserProfile(userId);
+      const forceRefresh = req.query.refresh === "true";
+      if (forceRefresh) {
+        await invalidateUserProfileCache(userId);
+      }
+
+      const cached = forceRefresh ? null : await getCachedUserProfile(userId);
       if (cached) {
         return sendR(
           res,

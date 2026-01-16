@@ -9,16 +9,16 @@ import { useQueryWrapper, QueryHookOptions } from '../useQueryWrapper'
 interface UseUserOptions extends QueryHookOptions {
   /** Whether to fetch custom user format with avatar_url */
   customUser?: boolean
+  /** Force refresh from database, bypassing cache */
+  refresh?: boolean
 }
 
-/**
- * Hook to fetch the current authenticated user
- */
 export function useUser(options?: UseUserOptions) {
   const customUser = options?.customUser ?? false
+  const refresh = options?.refresh ?? false
   const query = useQuery({
-    queryKey: [...queryKeys.auth.user(), customUser],
-    queryFn: () => authService.getUser(customUser),
+    queryKey: [...queryKeys.auth.user(), customUser, refresh],
+    queryFn: () => authService.getUser(customUser, refresh),
     staleTime: options?.staleTime ?? QUERY_CONFIG.USER_STALE_TIME,
     enabled: options?.enabled ?? true,
     refetchOnWindowFocus: options?.refetchOnWindowFocus ?? false,

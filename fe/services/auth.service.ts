@@ -19,9 +19,13 @@ export const authService = {
     return data
   },
 
-  async getUser(customUser = false): Promise<ApiResponse<User | CustomUser>> {
+  async getUser(customUser = false, refresh = false): Promise<ApiResponse<User | CustomUser>> {
+    const params: Record<string, string> = {}
+    if (customUser) params.customUser = 'true'
+    if (refresh) params.refresh = 'true'
+
     const { data } = await apiClient.get<ApiResponse<User | CustomUser>>(ENDPOINTS.USERS_GET_USER, {
-      params: customUser ? { customUser: 'true' } : undefined,
+      params: Object.keys(params).length > 0 ? params : undefined,
     })
     return data
   },

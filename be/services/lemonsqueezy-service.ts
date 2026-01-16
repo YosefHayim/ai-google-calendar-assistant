@@ -44,6 +44,78 @@ type LemonSqueezyStatus =
   | "cancelled"
   | "expired";
 
+export const PLAN_METADATA: Record<
+  PlanSlug,
+  {
+    features: string[]
+    limits: { aiInteractionsMonthly: number | null; actionPackSize: number }
+    isPopular: boolean
+    isHighlighted: boolean
+    displayOrder: number
+  }
+> = {
+  starter: {
+    features: [
+      "10 AI Interactions/mo",
+      "Google Calendar Sync",
+      "WhatsApp & Telegram",
+      "Basic Dashboard",
+    ],
+    limits: { aiInteractionsMonthly: 10, actionPackSize: 25 },
+    isPopular: false,
+    isHighlighted: false,
+    displayOrder: 1,
+  },
+  pro: {
+    features: [
+      "500 AI Interactions/mo",
+      "Google Calendar Sync",
+      "WhatsApp & Telegram",
+      "Detailed Analytics",
+      "Priority Support",
+    ],
+    limits: { aiInteractionsMonthly: 500, actionPackSize: 100 },
+    isPopular: true,
+    isHighlighted: false,
+    displayOrder: 2,
+  },
+  executive: {
+    features: [
+      "Unlimited Interactions",
+      "Google Calendar Sync",
+      "WhatsApp & Telegram",
+      "Advanced Analytics",
+      "Priority Support",
+      "Custom Integrations",
+    ],
+    limits: { aiInteractionsMonthly: null, actionPackSize: 1000 },
+    isPopular: false,
+    isHighlighted: true,
+    displayOrder: 3,
+  },
+}
+
+export type FrontendPlan = {
+  id: string
+  name: string
+  slug: PlanSlug
+  description: string | null
+  pricing: {
+    monthly: number
+    yearly: number
+    perUse: number
+  }
+  limits: {
+    aiInteractionsMonthly: number | null
+    actionPackSize: number | null
+  }
+  features: string[]
+  isPopular: boolean
+  isHighlighted: boolean
+  variantIdMonthly: string | null
+  variantIdYearly: string | null
+}
+
 // Map LemonSqueezy status to database enum
 const mapLemonSqueezyStatusToDb = (lsStatus: string): SubscriptionStatus => {
   const statusMap: Record<string, SubscriptionStatus> = {
@@ -428,23 +500,21 @@ export const createCheckoutSession = async (
     planSlug,
     interval,
     successUrl,
-    cancelUrl,
   } = params;
 
-  const plan = await getPlanBySlug(planSlug);
-  if (!plan) {
-    throw new Error(`Plan not found: ${planSlug}`);
-  }
-
-  const variantId =
-    interval === "monthly"
-      ? plan.lemonsqueezy_variant_id_monthly
-      : plan.lemonsqueezy_variant_id_yearly;
+  const [variantId, plan] = await Promise.all([
+    getVariantIdForPlan(planSlug, interval),
+    getPlanBySlug(planSlug),
+  ]);
 
   if (!variantId) {
     throw new Error(
-      `No LemonSqueezy variant configured for plan: ${planSlug} (${interval})`
+      `No LemonSqueezy variant found for plan: ${planSlug} (${interval})`
     );
+  }
+
+  if (!plan) {
+    throw new Error(`Plan not found in database: ${planSlug}`);
   }
 
   const storeId = env.lemonSqueezy.storeId;
@@ -1278,4 +1348,83 @@ export const getLemonSqueezyProductsWithVariants = async (): Promise<
   }
 
   return productsWithVariants;
+};
+
+const CENTS_TO_DOLLARS = 100;
+const MONTHS_PER_YEAR = 12;
+const DEFAULT_SORT_ORDER = 99;
+
+export const getPlansFromLemonSqueezy = async (): Promise<FrontendPlan[]> => {
+  const productsWithVariants = await getLemonSqueezyProductsWithVariants();
+
+  const plans: FrontendPlan[] = [];
+
+  for (const { product, variants } of productsWithVariants) {
+    const slug = product.slug as PlanSlug;
+    const metadata = PLAN_METADATA[slug];
+
+    if (!metadata) {
+      logger.warn(`No metadata found for product slug: ${slug}`)
+      continue;
+    }
+
+    const monthlyVariant = variants.find(
+      (v) => v.isSubscription && v.interval === "month"
+    );
+    const yearlyVariant = variants.find(
+      (v) => v.isSubscription && v.interval === "year"
+    );
+
+    const monthlyPrice = monthlyVariant
+      ? monthlyVariant.price / CENTS_TO_DOLLARS
+      : 0;
+    const yearlyPrice = yearlyVariant
+      ? yearlyVariant.price / CENTS_TO_DOLLARS / MONTHS_PER_YEAR
+      : 0;
+
+    const perUsePrice = metadata.limits.actionPackSize
+      ? Math.round(monthlyPrice / metadata.limits.actionPackSize * CENTS_TO_DOLLARS) / CENTS_TO_DOLLARS
+      : 0;
+
+    plans.push({
+      id: product.id,
+      name: product.name,
+      slug,
+      description: product.description,
+      pricing: {
+        monthly: monthlyPrice,
+        yearly: Math.round(yearlyPrice),
+        perUse: perUsePrice,
+      },
+      limits: {
+        aiInteractionsMonthly: metadata.limits.aiInteractionsMonthly,
+        actionPackSize: metadata.limits.actionPackSize,
+      },
+      features: metadata.features,
+      isPopular: metadata.isPopular,
+      isHighlighted: metadata.isHighlighted,
+      variantIdMonthly: monthlyVariant?.id || null,
+      variantIdYearly: yearlyVariant?.id || null,
+    });
+  }
+
+  return plans.sort((a, b) => {
+    const orderA = PLAN_METADATA[a.slug]?.displayOrder ?? DEFAULT_SORT_ORDER;
+    const orderB = PLAN_METADATA[b.slug]?.displayOrder ?? DEFAULT_SORT_ORDER;
+    return orderA - orderB;
+  });
+};
+
+export const getVariantIdForPlan = async (
+  planSlug: PlanSlug,
+  interval: PlanInterval
+): Promise<string | null> => {
+  const plans = await getPlansFromLemonSqueezy();
+  const plan = plans.find((p) => p.slug === planSlug);
+
+  if (!plan) {
+    return null;
+  }
+
+  return interval === "yearly" ? plan.variantIdYearly : plan.variantIdMonthly;
 };
