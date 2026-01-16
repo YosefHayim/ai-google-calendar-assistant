@@ -142,7 +142,74 @@ const generateAuthGoogleUrl = reqResAsyncHandler(
 
       const normalizedEmail = googleUser.email.toLowerCase().trim();
 
+      // First, sign in with Supabase Auth to get/create the auth user
+      // This must happen BEFORE creating the database user to ensure ID consistency
+      const { data: signInData, error: signInError } =
+        await SUPABASE.auth.signInWithIdToken({
+          provider: PROVIDERS.GOOGLE,
+          token: tokens.id_token!,
+          access_token: tokens.access_token!,
+        });
+
+      if (signInError || !signInData?.user) {
+        console.error("Supabase Auth Error:", signInError);
+        return sendR(
+          res,
+          STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
+          "Failed to sign in user via Supabase Auth.",
+          signInError
+        );
+      }
+
+      // Use the Supabase Auth user ID for the database record
+      // This ensures consistency between auth.users and public.users
+      const authUserId = signInData.user.id;
+
+      // Check if there's an existing user with this email but different ID (orphaned after re-registration)
+      const { data: existingUser } = await SUPABASE.from("users")
+        .select("id")
+        .ilike("email", normalizedEmail)
+        .limit(1)
+        .maybeSingle();
+
+      // If there's an existing user with a different ID, delete the orphaned record
+      // This can happen if:
+      // 1. User deleted their account (public.users deleted, auth.users deleted)
+      // 2. User re-registers with same OAuth provider
+      // 3. Supabase Auth creates a NEW user with a NEW ID
+      // 4. But somehow there's still an orphaned record with the old ID
+      if (existingUser && existingUser.id !== authUserId) {
+        console.log(
+          `Cleaning up orphaned user record: old ID ${existingUser.id}, new auth ID ${authUserId}`
+        );
+
+        // Delete orphaned oauth_tokens for the old user ID
+        const { error: deleteTokensError } = await SUPABASE.from("oauth_tokens")
+          .delete()
+          .eq("user_id", existingUser.id);
+
+        if (deleteTokensError) {
+          console.error(
+            `Failed to delete orphaned oauth_tokens for user ${existingUser.id}:`,
+            deleteTokensError
+          );
+        }
+
+        // Delete the orphaned user record
+        const { error: deleteUserError } = await SUPABASE.from("users")
+          .delete()
+          .eq("id", existingUser.id);
+
+        if (deleteUserError) {
+          console.error(
+            `Failed to delete orphaned user record ${existingUser.id}:`,
+            deleteUserError
+          );
+        }
+      }
+
       const userUpsertPayload = {
+        id: authUserId, // Use the Supabase Auth user ID
         email: normalizedEmail,
         first_name: googleUser.given_name ?? null,
         last_name: googleUser.family_name ?? null,
@@ -157,7 +224,7 @@ const generateAuthGoogleUrl = reqResAsyncHandler(
       };
 
       const { data: userData, error: userError } = await SUPABASE.from("users")
-        .upsert(userUpsertPayload, { onConflict: "email" })
+        .upsert(userUpsertPayload, { onConflict: "id" })
         .select("id")
         .single();
 
@@ -225,23 +292,7 @@ const generateAuthGoogleUrl = reqResAsyncHandler(
         );
       }
 
-      const { data: signInData, error: signInError } =
-        await SUPABASE.auth.signInWithIdToken({
-          provider: PROVIDERS.GOOGLE,
-          token: tokens.id_token!,
-          access_token: tokens.access_token!,
-        });
-
-      if (signInError) {
-        console.error("Supabase Auth Error:", signInError);
-        return sendR(
-          res,
-          STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
-          "Failed to sign in user via Supabase Auth.",
-          signInError
-        );
-      }
-
+      // signInData was already obtained earlier to ensure ID consistency
       if (signInData?.session) {
         setAuthCookies(
           res,

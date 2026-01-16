@@ -11,6 +11,7 @@ import {
 } from "./handlers/bot-config";
 import { registerCallbackHandlers } from "./handlers/callback-handlers";
 import { registerMessageHandler } from "./handlers/message-handler";
+import { staleMessageFilter } from "./middleware/stale-message-filter";
 
 export type { GlobalContext };
 
@@ -40,6 +41,11 @@ const initializeBot = (): Bot<GlobalContext> => {
   }
 
   bot = createBot();
+
+  // Stale message filter MUST run before session middleware
+  // to skip session processing for old messages accumulated during server downtime
+  bot.use(staleMessageFilter);
+
   configureSession(bot);
   configureMiddleware(bot);
   registerCallbackHandlers(bot);

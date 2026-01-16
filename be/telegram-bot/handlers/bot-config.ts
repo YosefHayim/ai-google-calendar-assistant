@@ -69,6 +69,8 @@ export const configureSession = (bot: Bot<GlobalContext>): void => {
 };
 
 export const configureMiddleware = (bot: Bot<GlobalContext>): void => {
+  // Note: staleMessageFilter is registered in init-bot.ts BEFORE session middleware
+  // to skip session processing for old messages accumulated during server downtime
   bot.use(sessionExpiryMiddleware);
   bot.use(authRateLimiter);
   bot.use(authTgHandler);
