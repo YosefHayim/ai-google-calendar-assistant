@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
-import AIAllySidebar from '@/components/dashboard/shared/AIAllySidebar'
+import { AIAllySidebar } from '@/components/dashboard/shared/AIAllySidebar'
 import { fn } from 'storybook/test'
 
 const meta: Meta<typeof AIAllySidebar> = {
@@ -16,7 +16,7 @@ const meta: Meta<typeof AIAllySidebar> = {
     },
   },
   decorators: [
-    (Story) => (
+    (Story: React.ComponentType) => (
       <div className="min-h-screen bg-zinc-100 dark:bg-zinc-900 p-8 relative">
         <div className="max-w-4xl mx-auto space-y-4">
           <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">Dashboard Content</h1>
@@ -122,7 +122,7 @@ export const DarkMode: Story = {
     onOpen: fn(),
   },
   decorators: [
-    (Story) => (
+    (Story: React.ComponentType) => (
       <div className="dark min-h-screen bg-zinc-950 p-8 relative">
         <div className="max-w-4xl mx-auto space-y-4">
           <h1 className="text-2xl font-bold text-zinc-100">Dashboard Content</h1>

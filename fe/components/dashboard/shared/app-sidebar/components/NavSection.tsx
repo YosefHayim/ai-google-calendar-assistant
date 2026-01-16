@@ -68,24 +68,24 @@ export function NavSection() {
   return (
     <SidebarGroup>
       <SidebarMenu>
-        {navItems.map((item) => {
-          const isActive = pathname === item.href
-          return (
-            <SidebarMenuItem key={item.href}>
-              <div className="flex items-center gap-1">
-                <SidebarMenuButton
-                  asChild
-                  isActive={isActive}
-                  tooltip={isCollapsed ? item.label : undefined}
-                  className="flex-1"
-                >
-                  <Link id={item.id} href={item.href} onClick={handleNavClick}>
-                    <item.icon className={isActive ? 'text-primary' : ''} />
-                    <span>{item.label}</span>
-                  </Link>
-                </SidebarMenuButton>
-                {item.description && !isCollapsed && (
-                  <TooltipProvider>
+        <TooltipProvider>
+          {navItems.map((item) => {
+            const isActive = pathname === item.href
+            return (
+              <SidebarMenuItem key={item.href}>
+                <div className="flex items-center gap-1">
+                  <SidebarMenuButton
+                    asChild
+                    isActive={isActive}
+                    tooltip={isCollapsed ? item.label : undefined}
+                    className="flex-1"
+                  >
+                    <Link id={item.id} href={item.href} onClick={handleNavClick}>
+                      <item.icon className={isActive ? 'text-primary' : ''} />
+                      <span>{item.label}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                  {item.description && !isCollapsed && (
                     <Tooltip delayDuration={200}>
                       <TooltipTrigger asChild>
                         <button
@@ -103,12 +103,12 @@ export function NavSection() {
                         <p className="text-xs leading-relaxed">{item.description}</p>
                       </TooltipContent>
                     </Tooltip>
-                  </TooltipProvider>
-                )}
-              </div>
-            </SidebarMenuItem>
-          )
-        })}
+                  )}
+                </div>
+              </SidebarMenuItem>
+            )
+          })}
+        </TooltipProvider>
       </SidebarMenu>
     </SidebarGroup>
   )

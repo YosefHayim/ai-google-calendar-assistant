@@ -26,6 +26,7 @@ export const ImageLightbox: React.FC<ImageLightboxProps> = ({
         {images.length > 1 && (
           <>
             <button
+              type="button"
               onClick={onPrevious}
               className="absolute left-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors disabled:opacity-50"
               disabled={currentIndex === 0}
@@ -33,6 +34,7 @@ export const ImageLightbox: React.FC<ImageLightboxProps> = ({
               <ChevronLeft className="w-8 h-8" />
             </button>
             <button
+              type="button"
               onClick={onNext}
               className="absolute right-12 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors disabled:opacity-50"
               disabled={currentIndex === images.length - 1}

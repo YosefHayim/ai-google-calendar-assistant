@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 import NumberFlow from '@number-flow/react'
 import { Zap } from 'lucide-react'
 import { useLanguage } from '@/contexts/LanguageContext'
-import { itemVariants } from '../constants'
+import { ITEM_VARIANTS } from '../constants'
 import { CircularProgress } from './CircularProgress'
 
 interface ProductivityCardProps {
@@ -19,7 +19,7 @@ export function ProductivityCard({ productivityScore, meetingLoad, focusTimePerc
 
   return (
     <motion.div
-      variants={itemVariants}
+      variants={ITEM_VARIANTS}
       className="col-span-1 sm:col-span-2 row-span-2 bg-gradient-to-br from-zinc-50 to-white dark:from-zinc-900/30 dark:to-zinc-950 border border-zinc-200/50 dark:border-zinc-800/30 rounded-xl p-4 sm:p-6 shadow-sm hover:shadow-md hover:border-zinc-300 dark:hover:border-zinc-700 transition-all overflow-hidden"
     >
       <div className="flex flex-col sm:flex-row items-start justify-between gap-3 mb-4">
@@ -36,7 +36,7 @@ export function ProductivityCard({ productivityScore, meetingLoad, focusTimePerc
             {t('analytics.stats.productivityDescription')}
           </p>
         </div>
-        <div className="hidden sm:block">
+        <div className="flex-shrink-0">
           <CircularProgress value={productivityScore} size={90} className="hidden sm:block" />
           <CircularProgress value={productivityScore} size={70} className="block sm:hidden" />
         </div>

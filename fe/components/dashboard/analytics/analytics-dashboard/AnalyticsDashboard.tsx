@@ -9,7 +9,7 @@ import { ANALYTICS_TABS, STORAGE_KEY, type TabId } from './constants'
 import { AnalyticsHeader, AIInsightsSection } from './components'
 
 import AnalyticsDashboardSkeleton from '../AnalyticsDashboardSkeleton'
-import BentoStatsGrid from '../BentoStatsGrid'
+import { BentoStatsGrid } from '../BentoStatsGrid'
 import CalendarEventsDialog from '@/components/dialogs/CalendarEventsDialog'
 import CalendarSettingsDialog from '@/components/dialogs/CalendarSettingsDialog'
 import CreateCalendarDialog from '@/components/dialogs/CreateCalendarDialog'
@@ -38,15 +38,23 @@ export function AnalyticsDashboard({ isLoading: initialLoading }: AnalyticsDashb
   const [isHydrated, setIsHydrated] = useState(false)
 
   useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY)
-    if (stored && ANALYTICS_TABS.some((tab) => tab.id === stored)) {
-      setActiveTabState(stored as TabId)
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY)
+      if (stored && ANALYTICS_TABS.some((tab) => tab.id === stored)) {
+        setActiveTabState(stored as TabId)
+      }
+    } catch {
+      // localStorage may be unavailable in private browsing mode
     }
     setIsHydrated(true)
   }, [])
 
   const setActiveTab = (tab: TabId) => {
-    localStorage.setItem(STORAGE_KEY, tab)
+    try {
+      localStorage.setItem(STORAGE_KEY, tab)
+    } catch {
+      // localStorage may be unavailable in private browsing mode
+    }
     setActiveTabState(tab)
   }
 

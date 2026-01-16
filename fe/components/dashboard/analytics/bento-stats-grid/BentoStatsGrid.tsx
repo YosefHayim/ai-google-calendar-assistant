@@ -17,7 +17,7 @@ import {
 import { useLanguage } from '@/contexts/LanguageContext'
 
 import type { BentoStatsGridProps } from './types'
-import { containerVariants } from './constants'
+import { CONTAINER_VARIANTS } from './constants'
 import { formatPeakHour } from './utils'
 import { LoadingSkeleton, ProductivityCard, StatCard } from './components'
 
@@ -46,7 +46,7 @@ export function BentoStatsGrid({ data, comparison, isLoading = false }: BentoSta
   return (
     <motion.div
       className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3"
-      variants={containerVariants}
+      variants={CONTAINER_VARIANTS}
       initial="hidden"
       animate="show"
     >
@@ -133,5 +133,3 @@ export function BentoStatsGrid({ data, comparison, isLoading = false }: BentoSta
     </motion.div>
   )
 }
-
-export default BentoStatsGrid

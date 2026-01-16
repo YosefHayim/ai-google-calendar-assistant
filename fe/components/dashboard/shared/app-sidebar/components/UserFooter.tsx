@@ -106,7 +106,14 @@ export function UserFooter({ onOpenSettings, onSignOut }: UserFooterProps) {
               <DropdownMenuSeparator />
 
               <DropdownMenuGroup>
-                <DropdownMenuItem className="cursor-pointer">
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  onClick={() =>
+                    handleMenuAction(() => {
+                      router.push('/pricing')
+                    })
+                  }
+                >
                   <Sparkles className="w-4 h-4" />
                   <span>Upgrade to Pro</span>
                 </DropdownMenuItem>
@@ -114,7 +121,10 @@ export function UserFooter({ onOpenSettings, onSignOut }: UserFooterProps) {
               <DropdownMenuSeparator />
 
               <DropdownMenuGroup>
-                <DropdownMenuItem className="cursor-pointer">
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  onClick={() => handleMenuAction(onOpenSettings)}
+                >
                   <BadgeCheck className="w-4 h-4" />
                   <span>Account</span>
                 </DropdownMenuItem>
@@ -129,7 +139,10 @@ export function UserFooter({ onOpenSettings, onSignOut }: UserFooterProps) {
                   <CreditCard className="w-4 h-4" />
                   <span>Billing</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer">
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  onClick={() => handleMenuAction(onOpenSettings)}
+                >
                   <Bell className="w-4 h-4" />
                   <span>Notifications</span>
                 </DropdownMenuItem>

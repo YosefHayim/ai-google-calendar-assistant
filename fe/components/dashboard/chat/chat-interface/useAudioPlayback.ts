@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { ttsCache } from '@/services/tts-cache.service'
 
@@ -17,6 +17,21 @@ export function useAudioPlayback(options: AudioPlaybackOptions = {}) {
 
   const audioContextRef = useRef<AudioContext | null>(null)
   const audioSourceRef = useRef<AudioBufferSourceNode | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (audioSourceRef.current) {
+        try {
+          audioSourceRef.current.stop()
+        } catch {
+          // Already stopped
+        }
+      }
+      if (audioContextRef.current) {
+        audioContextRef.current.close()
+      }
+    }
+  }, [])
 
   const stopSpeaking = useCallback(() => {
     if (audioSourceRef.current) {
@@ -41,15 +56,19 @@ export function useAudioPlayback(options: AudioPlaybackOptions = {}) {
 
       stopSpeaking()
 
-      if (!audioContextRef.current) {
-        audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)()
-      }
-
-      setIsSpeaking(true)
-      setSpeakingMessageId(messageId || null)
-      toast.info('Playing audio...')
-
       try {
+        if (!audioContextRef.current) {
+          audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)()
+        }
+        
+        if (audioContextRef.current.state === 'suspended') {
+          await audioContextRef.current.resume()
+        }
+
+        setIsSpeaking(true)
+        setSpeakingMessageId(messageId || null)
+        toast.info('Playing audio...')
+
         const audioArrayBuffer = await ttsCache.synthesize(text, options.voice)
         const audioBuffer = await audioContextRef.current.decodeAudioData(audioArrayBuffer)
 
@@ -64,13 +83,12 @@ export function useAudioPlayback(options: AudioPlaybackOptions = {}) {
           audioSourceRef.current = null
         }
         source.start()
-      } catch (audioError) {
-        console.error('Error fetching or playing audio:', audioError)
+      } catch (error) {
+        console.error('Error fetching or playing audio:', error)
         toast.error('Failed to play audio')
         setIsSpeaking(false)
         setSpeakingMessageId(null)
         audioSourceRef.current = null
-        throw new Error('Could not play audio response.')
       }
     },
     [isSpeaking, speakingMessageId, stopSpeaking, options.voice, options.playbackSpeed]

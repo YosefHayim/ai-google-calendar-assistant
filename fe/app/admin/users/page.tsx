@@ -153,7 +153,7 @@ export default function AdminUsersPage() {
                         <EmptyState
                           icon={<Users />}
                           title="No users found"
-                          description={search ? "Try adjusting your search or filters." : "No users in the system yet."}
+                          description={search || statusFilter || roleFilter ? "Try adjusting your search or filters." : "No users in the system yet."}
                           size="md"
                         />
                       </td>

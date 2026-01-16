@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
-import BentoStatsGrid from '@/components/dashboard/analytics/BentoStatsGrid'
+import { BentoStatsGrid } from '@/components/dashboard/analytics/BentoStatsGrid'
 import type { EnhancedAnalyticsData, ComparisonResult } from '@/types/analytics'
 
 const meta: Meta<typeof BentoStatsGrid> = {

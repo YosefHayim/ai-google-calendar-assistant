@@ -1,6 +1,6 @@
 import { Bell, Brain, CreditCard, Database, LayoutDashboard, Settings, Shield } from 'lucide-react'
 
-export type TabValue = 'general' | 'account' | 'notifications' | 'integrations' | 'assistant' | 'security' | 'data_controls'
+export type TabValue = 'general' | 'account' | 'notifications' | 'integrations' | 'assistant' | 'security' | 'dataControls'
 
 export interface TabConfig {
   id: TabValue
@@ -15,5 +15,5 @@ export const SETTINGS_TABS: TabConfig[] = [
   { id: 'assistant', label: "Ally's Brain", icon: Brain },
   { id: 'notifications', label: 'Notifications', icon: Bell },
   { id: 'security', label: 'Security', icon: Shield },
-  { id: 'data_controls', label: 'Data', icon: Database },
+  { id: 'dataControls', label: 'Data', icon: Database },
 ]

@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { EventManager, type Event } from '@/components/ui/event-manager'
-import AIAllySidebar from '@/components/dashboard/shared/AIAllySidebar'
+import { AIAllySidebar } from '@/components/dashboard/shared/AIAllySidebar'
 import { LoadingSection } from '@/components/ui/loading-spinner'
 import { ErrorState } from '@/components/ui/error-state'
 import { Button } from '@/components/ui/button'
@@ -169,7 +169,7 @@ function CalendarContent() {
 
   const isGoogleCalendarConnected = googleCalendarStatus?.isActive && !googleCalendarStatus?.isExpired
 
-  const { data: calendarsData, isLoading: calendarsLoading } = useQuery({
+  const { data: calendarsData, isLoading: calendarsLoading, error: calendarsError } = useQuery({
     queryKey: ['calendars-list'],
     queryFn: async () => {
       const response = await calendarsService.getCalendarList({
@@ -326,6 +326,18 @@ function CalendarContent() {
           title="Failed to load calendar"
           message={eventsError.message || 'Unable to fetch your calendar events. Please try again.'}
           onRetry={() => refetchEvents()}
+        />
+      </div>
+    )
+  }
+
+  if (calendarsError) {
+    return (
+      <div className="flex-1 flex items-center justify-center p-6">
+        <ErrorState
+          title="Failed to load calendars"
+          message={calendarsError instanceof Error ? calendarsError.message : 'Unable to fetch your calendars. Please try again.'}
+          onRetry={() => window.location.reload()}
         />
       </div>
     )

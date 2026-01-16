@@ -51,7 +51,19 @@ export function SettingsModal({ isOpen, onClose, onSignOut, isDarkMode, toggleTh
   })
 
   const router = useRouter()
-  const { mutate: disconnectGoogleCalendar, isPending: isDisconnecting } = useDisconnectGoogleCalendar()
+  const { mutate: disconnectGoogleCalendar, isPending: isDisconnecting } = useDisconnectGoogleCalendar({
+    onSuccess: () => {
+      setShowDisconnectGoogleDialog(false)
+      toast.success('Google Calendar disconnected', {
+        description: 'Your calendar integration has been removed.',
+      })
+    },
+    onError: (error: Error) => {
+      toast.error('Failed to disconnect Google Calendar', {
+        description: error.message || 'An error occurred',
+      })
+    },
+  })
   const { deleteAll: deleteAllConversations, isDeleting: isDeletingConversations } = useDeleteAllConversations()
   const { resetMemory: resetMemoryMutation, isResetting: isResettingMemory } = useResetMemory()
   const { mutateAsync: deactivateUserAsync, isPending: isDeactivating } = useDeactivateUser()
@@ -69,11 +81,7 @@ export function SettingsModal({ isOpen, onClose, onSignOut, isDarkMode, toggleTh
   }
 
   const confirmGoogleCalendarDisconnect = () => {
-    disconnectGoogleCalendar()
-    setShowDisconnectGoogleDialog(false)
-    toast.success('Google Calendar disconnected', {
-      description: 'Your calendar integration has been removed.',
-    })
+    disconnectGoogleCalendar(undefined)
   }
 
   const handleDeleteAllConversations = () => {
@@ -243,7 +251,7 @@ export function SettingsModal({ isOpen, onClose, onSignOut, isDarkMode, toggleTh
                   <SecurityTab />
                 </TabsContent>
 
-                <TabsContent value="data_controls" className="mt-0 data-[state=active]:pb-4">
+                <TabsContent value="dataControls" className="mt-0 data-[state=active]:pb-4">
                   <DataControlsTab
                     onDeleteAllConversations={handleDeleteAllConversations}
                     isDeletingConversations={isDeletingConversations}

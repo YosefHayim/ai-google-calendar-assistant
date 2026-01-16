@@ -60,6 +60,13 @@ export function ChatInterface() {
     }
   }, [])
 
+  // Cleanup image preview URLs on unmount to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      images.forEach((img) => URL.revokeObjectURL(img.preview))
+    }
+  }, [images])
+
   const handleStreamComplete = useCallback(
     (conversationId: string, fullResponse: string) => {
       const assistantMessage: Message = {
@@ -173,7 +180,12 @@ export function ChatInterface() {
       mimeType: img.mimeType,
     }))
 
-    await sendStreamingMessage(messageContent, selectedConversationId || undefined, imageData)
+    try {
+      await sendStreamingMessage(messageContent, selectedConversationId || undefined, imageData)
+    } catch (error) {
+      console.error('Failed to send message:', error)
+      setError(error instanceof Error ? error.message : 'Failed to send message')
+    }
   }
 
   const handleResend = (text: string) => {

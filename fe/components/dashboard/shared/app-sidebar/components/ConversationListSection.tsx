@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import { Check, Clock, Copy, Link as LinkIcon, MessageSquare, Search, Trash2, X } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -31,6 +31,15 @@ export function ConversationListSection() {
 
   const [sharingId, setSharingId] = React.useState<string | null>(null)
   const [copiedId, setCopiedId] = React.useState<string | null>(null)
+  const copiedTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (copiedTimeoutRef.current) {
+        clearTimeout(copiedTimeoutRef.current)
+      }
+    }
+  }, [])
 
   if (isCollapsed) return null
 
@@ -47,11 +56,15 @@ export function ConversationListSection() {
         toast.success('Share link copied to clipboard', {
           description: 'Link expires in 7 days',
         })
-        setTimeout(() => setCopiedId(null), 2000)
+        if (copiedTimeoutRef.current) {
+          clearTimeout(copiedTimeoutRef.current)
+        }
+        copiedTimeoutRef.current = setTimeout(() => setCopiedId(null), 2000)
       } else {
         toast.error('Failed to create share link')
       }
-    } catch {
+    } catch (error) {
+      console.error('Share failed:', error)
       toast.error('Failed to create share link')
     } finally {
       setSharingId(null)
@@ -103,34 +116,34 @@ export function ConversationListSection() {
             <p className="text-xs">{localSearchValue ? 'No matching conversations' : 'No conversations yet'}</p>
           </div>
         ) : (
-          <div className="space-y-1 px-2">
-            {conversations.slice(0, 15).map((conversation) => (
-              <div
-                key={conversation.id}
-                role="button"
-                tabIndex={0}
-                onClick={() => handleConversationClick(conversation)}
-                onKeyDown={(e) => e.key === 'Enter' && handleConversationClick(conversation)}
-                className={`w-full text-left p-2 rounded-md transition-colors group cursor-pointer ${
-                  selectedConversationId === conversation.id
-                    ? 'bg-sidebar-accent text-sidebar-accent-foreground'
-                    : 'hover:bg-sidebar-accent/50'
-                }`}
-              >
-                <div className="flex items-start justify-between gap-2">
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">
-                      <StreamingTitle
-                        title={conversation.title}
-                        isStreaming={streamingTitleConversationId === conversation.id}
-                      />
-                    </p>
-                    <div className="flex items-center gap-1 mt-0.5 text-xs text-zinc-400">
-                      <Clock className="w-3 h-3" />
-                      <span>{formatRelativeDate(conversation.lastUpdated)}</span>
+          <TooltipProvider>
+            <div className="space-y-1 px-2">
+              {conversations.slice(0, 15).map((conversation) => (
+                <div
+                  key={conversation.id}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => handleConversationClick(conversation)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleConversationClick(conversation)}
+                  className={`w-full text-left p-2 rounded-md transition-colors group cursor-pointer ${
+                    selectedConversationId === conversation.id
+                      ? 'bg-sidebar-accent text-sidebar-accent-foreground'
+                      : 'hover:bg-sidebar-accent/50'
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium truncate">
+                        <StreamingTitle
+                          title={conversation.title}
+                          isStreaming={streamingTitleConversationId === conversation.id}
+                        />
+                      </p>
+                      <div className="flex items-center gap-1 mt-0.5 text-xs text-zinc-400">
+                        <Clock className="w-3 h-3" />
+                        <span>{formatRelativeDate(conversation.lastUpdated)}</span>
+                      </div>
                     </div>
-                  </div>
-                  <TooltipProvider>
                     <div className="flex items-center gap-0.5">
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -166,11 +179,11 @@ export function ConversationListSection() {
                         <TooltipContent side="top">Delete conversation</TooltipContent>
                       </Tooltip>
                     </div>
-                  </TooltipProvider>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          </TooltipProvider>
         )}
       </SidebarGroupContent>
     </SidebarGroup>

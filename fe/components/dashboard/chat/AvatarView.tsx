@@ -91,6 +91,7 @@ export const AvatarView: React.FC<AvatarViewProps> = ({
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             className="hidden md:flex flex-col w-1/2 h-[70%] items-center justify-center"
           >
             <EmptyState

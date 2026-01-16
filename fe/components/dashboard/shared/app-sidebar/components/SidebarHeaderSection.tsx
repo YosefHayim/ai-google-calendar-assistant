@@ -2,7 +2,6 @@
 
 import React from 'react'
 import Link from 'next/link'
-import { useRouter, usePathname } from 'next/navigation'
 import { Plus } from 'lucide-react'
 
 import { AllyLogo, BetaBadge } from '@/components/shared/logo'
@@ -18,16 +17,11 @@ import { useSidebarContext } from '@/contexts/SidebarContext'
 export function SidebarHeaderSection() {
   const { isMobile, setOpenMobile } = useSidebar()
   const { handleNewChat } = useSidebarContext()
-  const pathname = usePathname()
-  const router = useRouter()
 
   const handleNewChatClick = () => {
     handleNewChat(() => {
       if (isMobile) setOpenMobile(false)
     })
-    if (pathname !== '/dashboard') {
-      router.push('/dashboard')
-    }
   }
 
   return (

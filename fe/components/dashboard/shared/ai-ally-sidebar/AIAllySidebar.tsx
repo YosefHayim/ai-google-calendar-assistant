@@ -2,10 +2,9 @@
 
 import React, { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ArrowUp, MessageCircle, Mic, X } from 'lucide-react'
+import { ArrowUp, Mic, X } from 'lucide-react'
 import { AIVoiceInput } from '@/components/ui/ai-voice-input'
 import { Button } from '@/components/ui/button'
-import { EmptyState } from '@/components/ui/empty-state'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
 import { useSpeechRecognition } from '@/hooks/useSpeechRecognition'
@@ -26,7 +25,7 @@ const QUICK_ACTIONS: QuickAction[] = [
 ]
 
 const INITIAL_MESSAGE: ChatMessage = {
-  id: 1,
+  id: Date.now(),
   text: "Hey! I'm Ally, your AI assistant. How can I help optimize your calendar today?",
   isUser: false,
 }
@@ -42,7 +41,7 @@ export function AIAllySidebar({ isOpen, onClose, onOpen }: AIAllySidebarProps) {
   const handleSendMessage = (textToSend: string = inputText) => {
     if (!textToSend.trim()) return
     const newMessage: ChatMessage = {
-      id: messages.length + 1,
+      id: Date.now(),
       text: textToSend,
       isUser: true,
     }
@@ -50,17 +49,19 @@ export function AIAllySidebar({ isOpen, onClose, onOpen }: AIAllySidebarProps) {
     setInputText('')
     setIsTyping(true)
 
-    setTimeout(() => {
+    const timeoutId = setTimeout(() => {
       setIsTyping(false)
       setMessages((prev) => [
         ...prev,
         {
-          id: prev.length + 1,
+          id: Date.now(),
           text: 'I understand! Let me analyze your calendar and suggest some optimizations.',
           isUser: false,
         },
       ])
     }, 1500)
+
+    return () => clearTimeout(timeoutId)
   }
 
   const {
@@ -90,7 +91,8 @@ export function AIAllySidebar({ isOpen, onClose, onOpen }: AIAllySidebarProps) {
 
   useEffect(() => {
     if (isOpen && inputRef.current && !isRecording) {
-      setTimeout(() => inputRef.current?.focus(), 300)
+      const timeoutId = setTimeout(() => inputRef.current?.focus(), 300)
+      return () => clearTimeout(timeoutId)
     }
   }, [isOpen, isRecording])
 
@@ -99,9 +101,10 @@ export function AIAllySidebar({ isOpen, onClose, onOpen }: AIAllySidebarProps) {
     inputRef.current?.focus()
   }
 
+  // Hide entire sidebar on mobile - not optimized for small screens
   return (
-    <>
-      <div className="hidden md:block fixed bottom-6 right-6 z-50">
+    <div className="hidden md:block">
+      <div className="fixed bottom-6 right-6 z-50">
         <AllyOrbButton onClick={() => onOpen?.()} isOpen={isOpen} />
       </div>
 
@@ -112,25 +115,14 @@ export function AIAllySidebar({ isOpen, onClose, onOpen }: AIAllySidebarProps) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-            className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-96 max-h-[80vh] flex flex-col rounded-2xl shadow-2xl shadow-black/20 dark:shadow-black/40 border border-zinc-200/60 dark:border-zinc-800/60 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-2xl overflow-hidden"
+            className="fixed bottom-6 right-6 z-50 w-96 max-h-[80vh] flex flex-col rounded-2xl shadow-2xl shadow-black/20 dark:shadow-black/40 border border-zinc-200/60 dark:border-zinc-800/60 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-2xl overflow-hidden"
           >
             <ChatHeader onClose={onClose} onMinimize={onClose} />
 
             <div className="flex-1 overflow-y-auto p-4 space-y-2 min-h-64 max-h-80 scrollbar-thin scrollbar-thumb-zinc-300 dark:scrollbar-thumb-zinc-700 scrollbar-track-transparent">
-              {messages.length === 0 ? (
-                <div className="flex items-center justify-center h-full">
-                  <EmptyState
-                    icon={<MessageCircle />}
-                    title="Start chatting"
-                    description="Ask Ally anything about your calendar."
-                    size="sm"
-                  />
-                </div>
-              ) : (
-                messages.map((message, index) => (
-                  <MessageBubble key={message.id} message={message} index={index} />
-                ))
-              )}
+              {messages.map((message, index) => (
+                <MessageBubble key={message.id} message={message} index={index} />
+              ))}
               <AnimatePresence>{isTyping && <TypingIndicator />}</AnimatePresence>
               <div ref={messagesEndRef} />
             </div>
@@ -213,8 +205,6 @@ export function AIAllySidebar({ isOpen, onClose, onOpen }: AIAllySidebarProps) {
           </motion.div>
         )}
       </AnimatePresence>
-    </>
+    </div>
   )
 }
-
-export default AIAllySidebar
