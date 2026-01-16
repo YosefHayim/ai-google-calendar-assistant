@@ -161,11 +161,4 @@ export const supabaseAuth = (options: SupabaseAuthOptions = {}) => {
   );
 };
 
-// Extend Express Request type (User is already declared in auth-handler, keeping for clarity)
-declare global {
-  namespace Express {
-    type Request = {
-      user?: User;
-    };
-  }
-}
+

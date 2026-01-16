@@ -281,11 +281,4 @@ export const logAuthEvent = (
   });
 };
 
-// Extend Express Request type
-declare global {
-  namespace Express {
-    type Request = {
-      requestId?: string;
-    };
-  }
-}
+

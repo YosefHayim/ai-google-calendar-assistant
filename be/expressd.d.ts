@@ -6,12 +6,13 @@ import type { TokensProps } from "./types";
 
 declare global {
   namespace Express {
-    type Request = {
-      user?: User;
-      googleTokenValidation?: GoogleTokenValidationResult;
-      validatedQuery?: Record<string, unknown>;
-      calendar?: calendar_v3.Calendar;
-      tokenData?: TokensProps;
-    };
+    interface Request {
+      user?: User
+      googleTokenValidation?: GoogleTokenValidationResult
+      validatedQuery?: Record<string, unknown>
+      calendar?: calendar_v3.Calendar
+      tokenData?: TokensProps
+      requestId?: string
+    }
   }
 }
