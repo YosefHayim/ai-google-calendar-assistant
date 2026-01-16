@@ -184,12 +184,28 @@ const generateAuthGoogleUrl = reqResAsyncHandler(
         );
 
         // Delete orphaned oauth_tokens for the old user ID
-        await SUPABASE.from("oauth_tokens")
+        const { error: deleteTokensError } = await SUPABASE.from("oauth_tokens")
           .delete()
           .eq("user_id", existingUser.id);
 
+        if (deleteTokensError) {
+          console.error(
+            `Failed to delete orphaned oauth_tokens for user ${existingUser.id}:`,
+            deleteTokensError
+          );
+        }
+
         // Delete the orphaned user record
-        await SUPABASE.from("users").delete().eq("id", existingUser.id);
+        const { error: deleteUserError } = await SUPABASE.from("users")
+          .delete()
+          .eq("id", existingUser.id);
+
+        if (deleteUserError) {
+          console.error(
+            `Failed to delete orphaned user record ${existingUser.id}:`,
+            deleteUserError
+          );
+        }
       }
 
       const userUpsertPayload = {

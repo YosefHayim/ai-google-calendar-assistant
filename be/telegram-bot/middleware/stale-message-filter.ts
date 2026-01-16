@@ -22,21 +22,25 @@ const STALE_MESSAGE_THRESHOLD_SECONDS = 60;
  * 2. Compares it against the current server time
  * 3. If the message is older than the threshold, silently discards it
  * 4. If the message is fresh, proceeds with normal processing
+ *
+ * Note: Callback queries are NOT filtered because ctx.callbackQuery.message.date
+ * returns the timestamp of the original message containing the button, not when
+ * the user clicked it. This would incorrectly filter valid button interactions
+ * on older messages.
  */
 export const staleMessageFilter: MiddlewareFn<GlobalContext> = async (
   ctx,
   next
 ) => {
-  // Extract the message timestamp from the update
-  // Telegram provides the date as Unix timestamp (seconds since epoch)
-  const messageDate =
-    ctx.message?.date ?? ctx.callbackQuery?.message?.date ?? null;
-
-  // If no date is available (e.g., inline queries, channel posts without date),
-  // proceed with normal processing
-  if (messageDate === null) {
+  // Only filter standard messages, not callback queries
+  // Callback query message.date is the original message time, not click time
+  if (!ctx.message) {
     return next();
   }
+
+  // Extract the message timestamp from the update
+  // Telegram provides the date as Unix timestamp (seconds since epoch)
+  const messageDate = ctx.message.date;
 
   // Calculate message age in seconds
   const currentTimeSeconds = Math.floor(Date.now() / 1000);
@@ -46,10 +50,9 @@ export const staleMessageFilter: MiddlewareFn<GlobalContext> = async (
   if (messageAgeSeconds > STALE_MESSAGE_THRESHOLD_SECONDS) {
     const userId = ctx.from?.id;
     const chatId = ctx.chat?.id;
-    const updateType = ctx.updateType;
 
     logger.info(
-      `Stale message filter: Discarding ${updateType} from user ${userId} in chat ${chatId}. ` +
+      `Stale message filter: Discarding message from user ${userId} in chat ${chatId}. ` +
         `Message age: ${messageAgeSeconds}s (threshold: ${STALE_MESSAGE_THRESHOLD_SECONDS}s)`
     );
 

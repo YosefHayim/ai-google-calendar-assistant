@@ -12,7 +12,6 @@ import {
 } from "../middleware/rate-limiter";
 import { createRedisSessionStorage } from "../middleware/redis-session-storage";
 import { sessionExpiryMiddleware } from "../middleware/session-expiry";
-import { staleMessageFilter } from "../middleware/stale-message-filter";
 
 export type GlobalContext = SessionFlavor<SessionData> & Context;
 
@@ -70,8 +69,8 @@ export const configureSession = (bot: Bot<GlobalContext>): void => {
 };
 
 export const configureMiddleware = (bot: Bot<GlobalContext>): void => {
-  // Stale message filter must be first to discard old messages before any processing
-  bot.use(staleMessageFilter);
+  // Note: staleMessageFilter is registered in init-bot.ts BEFORE session middleware
+  // to skip session processing for old messages accumulated during server downtime
   bot.use(sessionExpiryMiddleware);
   bot.use(authRateLimiter);
   bot.use(authTgHandler);
