@@ -24,12 +24,14 @@ const mockConflicts: QuickAddConflict[] = [
     summary: 'Sprint Review',
     start: '2026-01-17T14:00:00',
     end: '2026-01-17T15:00:00',
+    calendarName: 'Work',
   },
   {
     id: 'conflict-002',
     summary: '1:1 with Manager',
     start: '2026-01-17T14:30:00',
     end: '2026-01-17T15:00:00',
+    calendarName: 'Work',
   },
 ]
 
@@ -113,12 +115,7 @@ export const LoadingCreating: StoryObj<typeof LoadingView> = {
 
 export const Confirm: StoryObj<typeof ConfirmView> = {
   render: () => (
-    <ConfirmView
-      event={mockParsedEvent}
-      calendarName="Work"
-      message="Here's what I understood:"
-      onConfirm={fn()}
-    />
+    <ConfirmView event={mockParsedEvent} calendarName="Work" message="Here's what I understood:" onConfirm={fn()} />
   ),
   parameters: {
     docs: {
@@ -189,12 +186,7 @@ export const SuccessWithUrl: StoryObj<typeof SuccessView> = {
 
 export const SuccessWithoutUrl: StoryObj<typeof SuccessView> = {
   render: () => (
-    <SuccessView
-      message="Event added to your calendar!"
-      calendarName="Personal"
-      eventUrl=""
-      onClose={fn()}
-    />
+    <SuccessView message="Event added to your calendar!" calendarName="Personal" eventUrl="" onClose={fn()} />
   ),
   parameters: {
     docs: {
@@ -206,12 +198,7 @@ export const SuccessWithoutUrl: StoryObj<typeof SuccessView> = {
 }
 
 export const ErrorGeneric: StoryObj<typeof ErrorView> = {
-  render: () => (
-    <ErrorView
-      message="Failed to create event. Please try again."
-      onRetry={fn()}
-    />
-  ),
+  render: () => <ErrorView message="Failed to create event. Please try again." onRetry={fn()} />,
   parameters: {
     docs: {
       description: {
@@ -222,12 +209,7 @@ export const ErrorGeneric: StoryObj<typeof ErrorView> = {
 }
 
 export const ErrorTranscription: StoryObj<typeof ErrorView> = {
-  render: () => (
-    <ErrorView
-      message="Could not transcribe audio. Please try speaking more clearly."
-      onRetry={fn()}
-    />
-  ),
+  render: () => <ErrorView message="Could not transcribe audio. Please try speaking more clearly." onRetry={fn()} />,
   parameters: {
     docs: {
       description: {
@@ -239,10 +221,7 @@ export const ErrorTranscription: StoryObj<typeof ErrorView> = {
 
 export const ErrorParsing: StoryObj<typeof ErrorView> = {
   render: () => (
-    <ErrorView
-      message="Could not understand the event details. Please be more specific."
-      onRetry={fn()}
-    />
+    <ErrorView message="Could not understand the event details. Please be more specific." onRetry={fn()} />
   ),
   parameters: {
     docs: {
@@ -270,12 +249,7 @@ export const AllStates: StoryObj = {
       </div>
       <div className="w-72 p-6 bg-zinc-50 dark:bg-zinc-900/50 rounded-lg min-h-[300px] flex flex-col">
         <h4 className="text-xs font-semibold text-zinc-500 mb-4">CONFIRM</h4>
-        <ConfirmView
-          event={mockParsedEvent}
-          calendarName="Work"
-          message="Here's what I understood:"
-          onConfirm={fn()}
-        />
+        <ConfirmView event={mockParsedEvent} calendarName="Work" message="Here's what I understood:" onConfirm={fn()} />
       </div>
       <div className="w-72 p-6 bg-zinc-50 dark:bg-zinc-900/50 rounded-lg min-h-[300px] flex flex-col">
         <h4 className="text-xs font-semibold text-zinc-500 mb-4">CONFLICT</h4>
@@ -299,10 +273,7 @@ export const AllStates: StoryObj = {
       </div>
       <div className="w-72 p-6 bg-zinc-50 dark:bg-zinc-900/50 rounded-lg min-h-[300px] flex flex-col">
         <h4 className="text-xs font-semibold text-zinc-500 mb-4">ERROR</h4>
-        <ErrorView
-          message="Failed to create event."
-          onRetry={fn()}
-        />
+        <ErrorView message="Failed to create event." onRetry={fn()} />
       </div>
     </div>
   ),

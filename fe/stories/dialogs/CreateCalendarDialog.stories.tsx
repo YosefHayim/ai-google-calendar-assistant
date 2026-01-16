@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import CreateCalendarDialog from '@/components/dialogs/CreateCalendarDialog'
 import { fn } from 'storybook/test'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import type { CalendarListEntry } from '@/types/api'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -10,6 +11,24 @@ const queryClient = new QueryClient({
     },
   },
 })
+
+const mockExistingCalendars: CalendarListEntry[] = [
+  {
+    kind: 'calendar#calendarListEntry',
+    etag: '"abc123"',
+    id: 'primary@gmail.com',
+    summary: 'Primary Calendar',
+    backgroundColor: '#4285f4',
+    primary: true,
+  } as CalendarListEntry,
+  {
+    kind: 'calendar#calendarListEntry',
+    etag: '"def456"',
+    id: 'work@group.calendar.google.com',
+    summary: 'Work',
+    backgroundColor: '#0f9d58',
+  } as CalendarListEntry,
+]
 
 const meta: Meta<typeof CreateCalendarDialog> = {
   title: 'Dialogs/CreateCalendarDialog',
@@ -43,6 +62,7 @@ export const Default: Story = {
     isOpen: true,
     onClose: fn(),
     onSuccess: fn(),
+    existingCalendars: mockExistingCalendars,
   },
 }
 
@@ -50,9 +70,7 @@ export const WithSuggestions: Story = {
   render: () => (
     <div className="space-y-4 max-w-lg mx-auto">
       <div className="bg-zinc-50 dark:bg-zinc-900 rounded-lg p-6 space-y-3">
-        <h3 className="font-semibold text-zinc-700 dark:text-zinc-300">
-          Calendar Name Ideas:
-        </h3>
+        <h3 className="font-semibold text-zinc-700 dark:text-zinc-300">Calendar Name Ideas:</h3>
         <ul className="space-y-2 text-sm text-zinc-600 dark:text-zinc-400">
           <li className="flex items-center gap-2">
             <span className="w-3 h-3 rounded-full bg-blue-500" />
@@ -81,7 +99,12 @@ export const WithSuggestions: Story = {
         </ul>
       </div>
       <QueryClientProvider client={queryClient}>
-        <CreateCalendarDialog isOpen={true} onClose={fn()} onSuccess={fn()} />
+        <CreateCalendarDialog
+          isOpen={true}
+          onClose={fn()}
+          onSuccess={fn()}
+          existingCalendars={mockExistingCalendars}
+        />
       </QueryClientProvider>
     </div>
   ),
@@ -97,15 +120,11 @@ export const WithSuggestions: Story = {
 export const UseCases: Story = {
   render: () => (
     <div className="space-y-6 p-8 max-w-2xl mx-auto">
-      <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
-        Create Calendar Dialog
-      </h2>
-      
+      <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">Create Calendar Dialog</h2>
+
       <div className="grid gap-4">
         <div className="bg-white dark:bg-zinc-900 rounded-lg p-4 border border-zinc-200 dark:border-zinc-800">
-          <h3 className="font-semibold text-zinc-700 dark:text-zinc-300 mb-2">
-            When to Create Calendars
-          </h3>
+          <h3 className="font-semibold text-zinc-700 dark:text-zinc-300 mb-2">When to Create Calendars</h3>
           <ul className="text-sm text-zinc-600 dark:text-zinc-400 space-y-1">
             <li>• Separate work from personal events</li>
             <li>• Track specific projects or goals</li>
@@ -114,11 +133,9 @@ export const UseCases: Story = {
             <li>• Create themed calendars for different life areas</li>
           </ul>
         </div>
-        
+
         <div className="bg-white dark:bg-zinc-900 rounded-lg p-4 border border-zinc-200 dark:border-zinc-800">
-          <h3 className="font-semibold text-zinc-700 dark:text-zinc-300 mb-2">
-            Tips
-          </h3>
+          <h3 className="font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Tips</h3>
           <ul className="text-sm text-zinc-600 dark:text-zinc-400 space-y-1">
             <li>• Use descriptive names for easy identification</li>
             <li>• Press Enter to quickly create the calendar</li>
@@ -128,7 +145,12 @@ export const UseCases: Story = {
       </div>
 
       <QueryClientProvider client={queryClient}>
-        <CreateCalendarDialog isOpen={true} onClose={fn()} onSuccess={fn()} />
+        <CreateCalendarDialog
+          isOpen={true}
+          onClose={fn()}
+          onSuccess={fn()}
+          existingCalendars={mockExistingCalendars}
+        />
       </QueryClientProvider>
     </div>
   ),

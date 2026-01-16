@@ -3,23 +3,26 @@ import CalendarSettingsDialog from '@/components/dialogs/CalendarSettingsDialog'
 import { fn } from 'storybook/test'
 import type { CalendarListEntry } from '@/types/api'
 
-const createMockCalendar = (overrides: Partial<CalendarListEntry> = {}): CalendarListEntry => ({
-  id: 'work@group.calendar.google.com',
-  summary: 'Work Calendar',
-  description: 'Professional meetings and work-related events',
-  timeZone: 'America/Los_Angeles',
-  accessRole: 'owner',
-  backgroundColor: '#4285f4',
-  foregroundColor: '#ffffff',
-  colorId: '9',
-  primary: false,
-  selected: true,
-  defaultReminders: [
-    { method: 'popup', minutes: 30 },
-    { method: 'email', minutes: 1440 },
-  ],
-  ...overrides,
-})
+const createMockCalendar = (overrides: Partial<CalendarListEntry> = {}): CalendarListEntry =>
+  ({
+    kind: 'calendar#calendarListEntry',
+    etag: '"abc123"',
+    id: 'work@group.calendar.google.com',
+    summary: 'Work Calendar',
+    description: 'Professional meetings and work-related events',
+    timeZone: 'America/Los_Angeles',
+    accessRole: 'owner',
+    backgroundColor: '#4285f4',
+    foregroundColor: '#ffffff',
+    colorId: '9',
+    primary: false,
+    selected: true,
+    defaultReminders: [
+      { method: 'popup', minutes: 30 },
+      { method: 'email', minutes: 1440 },
+    ],
+    ...overrides,
+  }) as CalendarListEntry
 
 const meta: Meta<typeof CalendarSettingsDialog> = {
   title: 'Dialogs/CalendarSettingsDialog',
@@ -71,7 +74,7 @@ export const PrimaryCalendar: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'The primary calendar associated with the user\'s Google account.',
+        story: "The primary calendar associated with the user's Google account.",
       },
     },
   },
@@ -176,12 +179,14 @@ export const WithConferenceProperties: Story = {
 export const MinimalCalendar: Story = {
   args: {
     isOpen: true,
-    calendar: {
+    calendar: createMockCalendar({
       id: 'simple@group.calendar.google.com',
       summary: 'Simple Calendar',
+      description: undefined,
       backgroundColor: '#607d8b',
       accessRole: 'owner',
-    } as CalendarListEntry,
+      defaultReminders: [],
+    }),
     onClose: fn(),
   },
   parameters: {
@@ -197,6 +202,8 @@ export const FullyConfigured: Story = {
   args: {
     isOpen: true,
     calendar: {
+      kind: 'calendar#calendarListEntry',
+      etag: '"xyz789"',
       id: 'comprehensive@group.calendar.google.com',
       summary: 'Comprehensive Calendar',
       description: 'A fully configured calendar with all settings enabled',

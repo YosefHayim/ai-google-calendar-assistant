@@ -3,35 +3,38 @@ import EventDetailsDialog from '@/components/dialogs/EventDetailsDialog'
 import { fn } from 'storybook/test'
 import type { CalendarEvent } from '@/types/api'
 
-const createMockEvent = (overrides: Partial<CalendarEvent> = {}): CalendarEvent => ({
-  id: 'evt-details-001',
-  summary: 'Product Strategy Meeting',
-  description: 'Discuss Q1 roadmap priorities and resource allocation.\n\nAgenda:\n1. Review Q4 results\n2. Prioritize Q1 initiatives\n3. Assign ownership',
-  status: 'confirmed',
-  location: '123 Innovation Drive, San Francisco, CA 94102',
-  htmlLink: 'https://calendar.google.com/event?eid=details123',
-  created: '2026-01-10T10:00:00Z',
-  start: {
-    dateTime: '2026-01-16T14:00:00-08:00',
-    timeZone: 'America/Los_Angeles',
-  },
-  end: {
-    dateTime: '2026-01-16T15:30:00-08:00',
-    timeZone: 'America/Los_Angeles',
-  },
-  organizer: {
-    email: 'alex.johnson@company.com',
-    displayName: 'Alex Johnson',
-    self: false,
-  },
-  attendees: [
-    { email: 'sarah.chen@company.com', responseStatus: 'accepted' },
-    { email: 'mike.wilson@company.com', responseStatus: 'tentative' },
-    { email: 'lisa.garcia@company.com', responseStatus: 'needsAction' },
-    { email: 'david.kim@company.com', responseStatus: 'declined' },
-  ],
-  ...overrides,
-})
+const createMockEvent = (overrides: Partial<CalendarEvent> = {}): CalendarEvent =>
+  ({
+    kind: 'calendar#event',
+    id: 'evt-details-001',
+    etag: '"abc123"',
+    status: 'confirmed',
+    htmlLink: 'https://calendar.google.com/event?eid=details123',
+    summary: 'Product Strategy Meeting',
+    description:
+      'Discuss Q1 roadmap priorities and resource allocation.\n\nAgenda:\n1. Review Q4 results\n2. Prioritize Q1 initiatives\n3. Assign ownership',
+    location: '123 Innovation Drive, San Francisco, CA 94102',
+    creator: { email: 'alex.johnson@company.com' },
+    organizer: { email: 'alex.johnson@company.com' },
+    start: {
+      dateTime: '2026-01-16T14:00:00-08:00',
+      timeZone: 'America/Los_Angeles',
+    },
+    end: {
+      dateTime: '2026-01-16T15:30:00-08:00',
+      timeZone: 'America/Los_Angeles',
+    },
+    attendees: [
+      { email: 'sarah.chen@company.com', responseStatus: 'accepted' },
+      { email: 'mike.wilson@company.com', responseStatus: 'tentative' },
+      { email: 'lisa.garcia@company.com', responseStatus: 'needsAction' },
+      { email: 'david.kim@company.com', responseStatus: 'declined' },
+    ],
+    reminders: { useDefault: true },
+    created: '2026-01-10T10:00:00Z',
+    updated: '2026-01-10T10:00:00Z',
+    ...overrides,
+  }) as CalendarEvent
 
 const meta: Meta<typeof EventDetailsDialog> = {
   title: 'Dialogs/EventDetailsDialog',
@@ -143,7 +146,7 @@ export const NoAttendees: Story = {
       summary: 'Personal Focus Time',
       description: 'Blocked time for deep work on the new feature.',
       attendees: undefined,
-      organizer: { email: 'me@company.com', self: true },
+      organizer: { email: 'me@company.com' },
     }),
     calendarColor: '#673ab7',
     calendarName: 'Focus',
@@ -178,16 +181,19 @@ export const ManyAttendees: Story = {
 export const MinimalEvent: Story = {
   args: {
     isOpen: true,
-    event: {
+    event: createMockEvent({
       id: 'evt-minimal',
       summary: 'Quick Call',
+      description: undefined,
+      location: undefined,
+      attendees: undefined,
       start: {
         dateTime: '2026-01-16T10:00:00-08:00',
       },
       end: {
         dateTime: '2026-01-16T10:15:00-08:00',
       },
-    },
+    }),
     calendarColor: '#607d8b',
     calendarName: 'Quick',
     onClose: fn(),
