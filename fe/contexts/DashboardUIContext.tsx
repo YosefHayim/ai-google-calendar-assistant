@@ -8,6 +8,7 @@ import { toast } from 'sonner'
 
 import { useGoogleCalendarStatus } from '@/hooks/queries/integrations'
 import { useQueryClient } from '@tanstack/react-query'
+import { useAuthContext } from '@/contexts/AuthContext'
 
 const ONBOARDING_COMPLETE_KEY = 'allyOnBoardingComplete'
 
@@ -39,6 +40,7 @@ export function DashboardUIProvider({ children }: { children: React.ReactNode })
   const router = useRouter()
   const searchParams = useSearchParams()
   const queryClient = useQueryClient()
+  const { logout } = useAuthContext()
 
   const { data: googleCalendarStatus } = useGoogleCalendarStatus()
 
@@ -116,12 +118,12 @@ export function DashboardUIProvider({ children }: { children: React.ReactNode })
     localStorage.setItem(ONBOARDING_COMPLETE_KEY, 'true')
   }
 
-  const handleSignOut = () => {
+  const handleSignOut = useCallback(() => {
     closeSettings()
-    localStorage.clear()
+    logout()
     queryClient.clear()
     router.push('/login')
-  }
+  }, [closeSettings, logout, queryClient, router])
 
   const value: DashboardUIContextValue = {
     isSidebarOpen,

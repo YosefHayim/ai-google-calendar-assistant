@@ -45,6 +45,13 @@ export const AuthProvider = ({ children }: { children?: ReactNode }) => {
   )
 
   const logout = useCallback(() => {
+    // Clear localStorage tokens
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN)
+      localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN)
+      localStorage.removeItem(STORAGE_KEYS.USER)
+    }
+    // Clear auth query cache
     queryClient.setQueryData([...queryKeys.auth.user(), true], null)
     queryClient.invalidateQueries({ queryKey: queryKeys.auth.all })
   }, [queryClient])
