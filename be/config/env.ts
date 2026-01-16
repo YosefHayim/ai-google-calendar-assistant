@@ -85,10 +85,10 @@ const getOptional = (key: string): string | undefined =>
   process.env[key] || undefined;
 const getRequired = (key: string): string => {
   if (isTestEnv && !process.env[key]) {
-    return `test-${key.toLowerCase().replace(/_/g, "-")}`
+    return `test-${key.toLowerCase().replace(/_/g, "-")}`;
   }
-  return process.env[key]!
-}
+  return process.env[key]!;
+};
 
 // ============================================================================
 // Environment Detection
