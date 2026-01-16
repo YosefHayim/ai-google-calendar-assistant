@@ -108,7 +108,7 @@ export function EventManager({
     title: '',
     description: '',
     color: colors[0].value,
-    category: categories[0],
+    category: defaultCategories[0],
     tags: [],
   })
 
@@ -194,21 +194,16 @@ export function EventManager({
         if (!matchesSearch) return false
       }
 
-      // Color filter - check both hexColor and color
       if (selectedColors.length > 0) {
         const eventColorValue = event.hexColor || event.color
-        if (!selectedColors.includes(eventColorValue)) {
-          return false
-        }
+        if (!selectedColors.includes(eventColorValue)) return false
       }
 
-      // Tag filter
       if (selectedTags.length > 0) {
         const hasMatchingTag = event.tags?.some((tag) => selectedTags.includes(tag))
         if (!hasMatchingTag) return false
       }
 
-      // Category filter
       if (selectedCategories.length > 0 && event.category && !selectedCategories.includes(event.category)) {
         return false
       }
@@ -229,8 +224,7 @@ export function EventManager({
   const handleCreateEvent = useCallback(() => {
     if (!newEvent.title || !newEvent.startTime || !newEvent.endTime) return
 
-    const event: Event = {
-      id: Math.random().toString(36).substr(2, 9),
+    const event: Omit<Event, 'id'> = {
       title: newEvent.title,
       description: newEvent.description,
       startTime: newEvent.startTime,
@@ -241,7 +235,6 @@ export function EventManager({
       tags: newEvent.tags || [],
     }
 
-    setEvents((prev) => [...prev, event])
     onEventCreate?.(event)
     setIsDialogOpen(false)
     setIsCreating(false)
@@ -249,15 +242,14 @@ export function EventManager({
       title: '',
       description: '',
       color: colors[0].value,
-      category: categories[0],
+      category: defaultCategories[0],
       tags: [],
     })
-  }, [newEvent, colors, categories, onEventCreate])
+  }, [newEvent, colors, defaultCategories, onEventCreate])
 
   const handleUpdateEvent = useCallback(() => {
     if (!selectedEvent) return
 
-    setEvents((prev) => prev.map((e) => (e.id === selectedEvent.id ? selectedEvent : e)))
     onEventUpdate?.(selectedEvent.id, selectedEvent)
     setIsDialogOpen(false)
     setSelectedEvent(null)
@@ -265,7 +257,6 @@ export function EventManager({
 
   const handleDeleteEvent = useCallback(
     (id: string) => {
-      setEvents((prev) => prev.filter((e) => e.id !== id))
       onEventDelete?.(id)
       setIsDialogOpen(false)
       setSelectedEvent(null)
@@ -333,7 +324,6 @@ export function EventManager({
 
       if (changeDescription) {
         setAllyResponse(`Done! ${changeDescription}.`)
-        setEvents((prev) => prev.map((e) => (e.id === selectedEvent.id ? updatedEvent : e)))
         onEventUpdate?.(selectedEvent.id, updatedEvent)
         setActionResult({ type: 'updated', message: changeDescription })
         setTimeout(() => {
@@ -380,7 +370,6 @@ export function EventManager({
         endTime: newEndTime,
       }
 
-      setEvents((prev) => prev.map((e) => (e.id === draggedEvent.id ? updatedEvent : e)))
       onEventUpdate?.(draggedEvent.id, updatedEvent)
       setDraggedEvent(null)
     },
@@ -391,7 +380,9 @@ export function EventManager({
     (direction: 'prev' | 'next') => {
       setCurrentDate((prev) => {
         const newDate = new Date(prev)
-        if (view === 'month') {
+        if (view === 'year') {
+          newDate.setFullYear(prev.getFullYear() + (direction === 'next' ? 1 : -1))
+        } else if (view === 'month') {
           newDate.setMonth(prev.getMonth() + (direction === 'next' ? 1 : -1))
         } else if (view === 'week') {
           newDate.setDate(prev.getDate() + (direction === 'next' ? 7 : -7))
@@ -436,6 +427,7 @@ export function EventManager({
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
           <h2 className="text-xl font-semibold sm:text-2xl min-w-[180px] sm:min-w-[220px]">
+            {view === 'year' && currentDate.getFullYear()}
             {view === 'month' &&
               currentDate.toLocaleDateString('en-US', {
                 month: 'long',
@@ -469,13 +461,18 @@ export function EventManager({
         </div>
 
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-          {/* Mobile: Select dropdown */}
           <div className="sm:hidden">
-            <Select value={view} onValueChange={(value: 'month' | 'week' | 'day' | 'list') => setView(value)}>
+            <Select value={view} onValueChange={(value: ViewType) => setView(value)}>
               <SelectTrigger className="w-full">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="year">
+                  <div className="flex items-center gap-2">
+                    <CalendarRange className="h-4 w-4" />
+                    Year View
+                  </div>
+                </SelectItem>
                 <SelectItem value="month">
                   <div className="flex items-center gap-2">
                     <Calendar className="h-4 w-4" />
@@ -504,8 +501,16 @@ export function EventManager({
             </Select>
           </div>
 
-          {/* Desktop: Button group */}
           <div className="hidden sm:flex items-center gap-1 rounded-lg border bg-background p-1">
+            <Button
+              variant={view === 'year' ? 'secondary' : 'ghost'}
+              size="sm"
+              onClick={() => setView('year')}
+              className="h-8"
+            >
+              <CalendarRange className="h-4 w-4" />
+              <span className="ml-1">Year</span>
+            </Button>
             <Button
               variant={view === 'month' ? 'secondary' : 'ghost'}
               size="sm"
@@ -582,97 +587,101 @@ export function EventManager({
           )}
         </div>
 
-        {/* Mobile: Horizontal scroll with full-length buttons */}
         <div className="sm:hidden -mx-4 px-4">
           <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-            {/* Color Filter */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="gap-2 whitespace-nowrap flex-shrink-0 bg-transparent">
-                  <Filter className="h-4 w-4" />
-                  Colors
-                  {selectedColors.length > 0 && (
-                    <Badge variant="secondary" className="ml-1 h-5 px-1.5">
-                      {selectedColors.length}
-                    </Badge>
-                  )}
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-48">
-                <DropdownMenuLabel>Filter by Color</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                {colors.map((color) => (
-                  <DropdownMenuCheckboxItem
-                    key={color.value}
-                    checked={selectedColors.includes(color.value)}
-                    onCheckedChange={(checked) => {
-                      setSelectedColors((prev) =>
-                        checked ? [...prev, color.value] : prev.filter((c) => c !== color.value),
-                      )
-                    }}
-                  >
-                    <div className="flex items-center gap-2">
-                      <div className={cn('h-3 w-3 rounded', color.bg)} />
-                      {color.name}
-                    </div>
-                  </DropdownMenuCheckboxItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
+            {availableFilters.colors.length > 0 && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="gap-2 whitespace-nowrap flex-shrink-0 bg-transparent">
+                    <Filter className="h-4 w-4" />
+                    Colors
+                    {selectedColors.length > 0 && (
+                      <Badge variant="secondary" className="ml-1 h-5 px-1.5">
+                        {selectedColors.length}
+                      </Badge>
+                    )}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-48">
+                  <DropdownMenuLabel>Filter by Color</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  {availableFilters.colors.map((color) => (
+                    <DropdownMenuCheckboxItem
+                      key={color.value}
+                      checked={selectedColors.includes(color.value)}
+                      onCheckedChange={(checked) => {
+                        setSelectedColors((prev) =>
+                          checked ? [...prev, color.value] : prev.filter((c) => c !== color.value),
+                        )
+                      }}
+                    >
+                      <div className="flex items-center gap-2">
+                        <div
+                          className={cn('h-3 w-3 rounded', !color.hex && color.bg)}
+                          style={color.hex ? { backgroundColor: color.hex } : undefined}
+                        />
+                        {color.hex ? 'Calendar' : color.name}
+                      </div>
+                    </DropdownMenuCheckboxItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
 
-            {/* Tag Filter */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="gap-2 whitespace-nowrap flex-shrink-0 bg-transparent">
-                  <Filter className="h-4 w-4" />
-                  Tags
-                  {selectedTags.length > 0 && (
-                    <Badge variant="secondary" className="ml-1 h-5 px-1.5">
-                      {selectedTags.length}
-                    </Badge>
-                  )}
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-48">
-                <DropdownMenuLabel>Filter by Tag</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                {availableTags.map((tag) => (
-                  <DropdownMenuCheckboxItem
-                    key={tag}
-                    checked={selectedTags.includes(tag)}
-                    onCheckedChange={(checked) => {
-                      setSelectedTags((prev) => (checked ? [...prev, tag] : prev.filter((t) => t !== tag)))
-                    }}
-                  >
-                    {tag}
-                  </DropdownMenuCheckboxItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
+            {availableFilters.tags.length > 0 && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="gap-2 whitespace-nowrap flex-shrink-0 bg-transparent">
+                    <Filter className="h-4 w-4" />
+                    Tags
+                    {selectedTags.length > 0 && (
+                      <Badge variant="secondary" className="ml-1 h-5 px-1.5">
+                        {selectedTags.length}
+                      </Badge>
+                    )}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-48">
+                  <DropdownMenuLabel>Filter by Tag</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  {availableFilters.tags.map((tag) => (
+                    <DropdownMenuCheckboxItem
+                      key={tag}
+                      checked={selectedTags.includes(tag)}
+                      onCheckedChange={(checked) => {
+                        setSelectedTags((prev) => (checked ? [...prev, tag] : prev.filter((t) => t !== tag)))
+                      }}
+                    >
+                      {tag}
+                    </DropdownMenuCheckboxItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
 
-            {/* Category Filter */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="gap-2 whitespace-nowrap flex-shrink-0 bg-transparent">
-                  <Filter className="h-4 w-4" />
-                  Categories
-                  {selectedCategories.length > 0 && (
-                    <Badge variant="secondary" className="ml-1 h-5 px-1.5">
-                      {selectedCategories.length}
-                    </Badge>
-                  )}
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-48">
-                <DropdownMenuLabel>Filter by Category</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                {categories.map((category) => (
-                  <DropdownMenuCheckboxItem
-                    key={category}
-                    checked={selectedCategories.includes(category)}
-                    onCheckedChange={(checked) => {
-                      setSelectedCategories((prev) =>
-                        checked ? [...prev, category] : prev.filter((c) => c !== category),
+            {availableFilters.categories.length > 0 && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="gap-2 whitespace-nowrap flex-shrink-0 bg-transparent">
+                    <Filter className="h-4 w-4" />
+                    Categories
+                    {selectedCategories.length > 0 && (
+                      <Badge variant="secondary" className="ml-1 h-5 px-1.5">
+                        {selectedCategories.length}
+                      </Badge>
+                    )}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-48">
+                  <DropdownMenuLabel>Filter by Category</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  {availableFilters.categories.map((category) => (
+                    <DropdownMenuCheckboxItem
+                      key={category}
+                      checked={selectedCategories.includes(category)}
+                      onCheckedChange={(checked) => {
+                        setSelectedCategories((prev) =>
+                          checked ? [...prev, category] : prev.filter((c) => c !== category),
                       )
                     }}
                   >
@@ -696,104 +705,109 @@ export function EventManager({
           </div>
         </div>
 
-        {/* Desktop: Original layout */}
         <div className="hidden sm:flex items-center gap-2">
-          {/* Color Filter */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="gap-2 bg-transparent">
-                <Filter className="h-4 w-4" />
-                Colors
-                {selectedColors.length > 0 && (
-                  <Badge variant="secondary" className="ml-1 h-5 px-1">
-                    {selectedColors.length}
-                  </Badge>
-                )}
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
-              <DropdownMenuLabel>Filter by Color</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              {colors.map((color) => (
-                <DropdownMenuCheckboxItem
-                  key={color.value}
-                  checked={selectedColors.includes(color.value)}
-                  onCheckedChange={(checked) => {
-                    setSelectedColors((prev) =>
-                      checked ? [...prev, color.value] : prev.filter((c) => c !== color.value),
-                    )
-                  }}
-                >
-                  <div className="flex items-center gap-2">
-                    <div className={cn('h-3 w-3 rounded', color.bg)} />
-                    {color.name}
-                  </div>
-                </DropdownMenuCheckboxItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {availableFilters.colors.length > 0 && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="gap-2 bg-transparent">
+                  <Filter className="h-4 w-4" />
+                  Colors
+                  {selectedColors.length > 0 && (
+                    <Badge variant="secondary" className="ml-1 h-5 px-1">
+                      {selectedColors.length}
+                    </Badge>
+                  )}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuLabel>Filter by Color</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {availableFilters.colors.map((color) => (
+                  <DropdownMenuCheckboxItem
+                    key={color.value}
+                    checked={selectedColors.includes(color.value)}
+                    onCheckedChange={(checked) => {
+                      setSelectedColors((prev) =>
+                        checked ? [...prev, color.value] : prev.filter((c) => c !== color.value),
+                      )
+                    }}
+                  >
+                    <div className="flex items-center gap-2">
+                      <div
+                        className={cn('h-3 w-3 rounded', !color.hex && color.bg)}
+                        style={color.hex ? { backgroundColor: color.hex } : undefined}
+                      />
+                      {color.hex ? 'Calendar' : color.name}
+                    </div>
+                  </DropdownMenuCheckboxItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
 
-          {/* Tag Filter */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="gap-2 bg-transparent">
-                <Filter className="h-4 w-4" />
-                Tags
-                {selectedTags.length > 0 && (
-                  <Badge variant="secondary" className="ml-1 h-5 px-1">
-                    {selectedTags.length}
-                  </Badge>
-                )}
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
-              <DropdownMenuLabel>Filter by Tag</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              {availableTags.map((tag) => (
-                <DropdownMenuCheckboxItem
-                  key={tag}
-                  checked={selectedTags.includes(tag)}
-                  onCheckedChange={(checked) => {
-                    setSelectedTags((prev) => (checked ? [...prev, tag] : prev.filter((t) => t !== tag)))
-                  }}
-                >
-                  {tag}
-                </DropdownMenuCheckboxItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {availableFilters.tags.length > 0 && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="gap-2 bg-transparent">
+                  <Filter className="h-4 w-4" />
+                  Tags
+                  {selectedTags.length > 0 && (
+                    <Badge variant="secondary" className="ml-1 h-5 px-1">
+                      {selectedTags.length}
+                    </Badge>
+                  )}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuLabel>Filter by Tag</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {availableFilters.tags.map((tag) => (
+                  <DropdownMenuCheckboxItem
+                    key={tag}
+                    checked={selectedTags.includes(tag)}
+                    onCheckedChange={(checked) => {
+                      setSelectedTags((prev) => (checked ? [...prev, tag] : prev.filter((t) => t !== tag)))
+                    }}
+                  >
+                    {tag}
+                  </DropdownMenuCheckboxItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
 
-          {/* Category Filter */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="gap-2 bg-transparent">
-                <Filter className="h-4 w-4" />
-                Categories
-                {selectedCategories.length > 0 && (
-                  <Badge variant="secondary" className="ml-1 h-5 px-1">
-                    {selectedCategories.length}
-                  </Badge>
-                )}
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
-              <DropdownMenuLabel>Filter by Category</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              {categories.map((category) => (
-                <DropdownMenuCheckboxItem
-                  key={category}
-                  checked={selectedCategories.includes(category)}
-                  onCheckedChange={(checked) => {
-                    setSelectedCategories((prev) =>
-                      checked ? [...prev, category] : prev.filter((c) => c !== category),
-                    )
-                  }}
-                >
-                  {category}
-                </DropdownMenuCheckboxItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {availableFilters.categories.length > 0 && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="gap-2 bg-transparent">
+                  <Filter className="h-4 w-4" />
+                  Categories
+                  {selectedCategories.length > 0 && (
+                    <Badge variant="secondary" className="ml-1 h-5 px-1">
+                      {selectedCategories.length}
+                    </Badge>
+                  )}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuLabel>Filter by Category</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {availableFilters.categories.map((category) => (
+                  <DropdownMenuCheckboxItem
+                    key={category}
+                    checked={selectedCategories.includes(category)}
+                    onCheckedChange={(checked) => {
+                      setSelectedCategories((prev) =>
+                        checked ? [...prev, category] : prev.filter((c) => c !== category),
+                      )
+                    }}
+                  >
+                    {category}
+                  </DropdownMenuCheckboxItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
 
           {hasActiveFilters && (
             <Button variant="ghost" size="sm" onClick={clearFilters} className="gap-2">
@@ -808,11 +822,15 @@ export function EventManager({
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-sm text-muted-foreground">Active filters:</span>
           {selectedColors.map((colorValue) => {
-            const color = getColorClasses(colorValue)
+            const colorDef = availableFilters.colors.find((c) => c.value === colorValue)
+            const isHex = colorValue.startsWith('#')
             return (
               <Badge key={colorValue} variant="secondary" className="gap-1">
-                <div className={cn('h-2 w-2 rounded-full', color.bg)} />
-                {color.name}
+                <div
+                  className={cn('h-2 w-2 rounded-full', !isHex && colorDef?.bg)}
+                  style={isHex ? { backgroundColor: colorValue } : undefined}
+                />
+                {isHex ? 'Calendar' : colorDef?.name || colorValue}
                 <button
                   onClick={() => setSelectedColors((prev) => prev.filter((c) => c !== colorValue))}
                   className="ml-1 hover:text-foreground"
@@ -847,7 +865,22 @@ export function EventManager({
         </div>
       )}
 
-      {/* Calendar Views - Pass filteredEvents instead of events */}
+      {view === 'year' && (
+        <YearView
+          currentDate={currentDate}
+          events={filteredEvents}
+          onEventClick={(event) => {
+            setSelectedEvent(event)
+            setIsDialogOpen(true)
+          }}
+          onMonthClick={(month) => {
+            setCurrentDate(month)
+            setView('month')
+          }}
+          getColorClasses={getColorClasses}
+        />
+      )}
+
       {view === 'month' && (
         <MonthView
           currentDate={currentDate}
@@ -1453,7 +1486,128 @@ function EventCard({
   )
 }
 
-// Month View Component
+function YearView({
+  currentDate,
+  events,
+  onEventClick,
+  onMonthClick,
+  getColorClasses,
+}: {
+  currentDate: Date
+  events: Event[]
+  onEventClick: (event: Event) => void
+  onMonthClick: (month: Date) => void
+  getColorClasses: (color: string) => { bg: string; text: string }
+}) {
+  const year = currentDate.getFullYear()
+  const months = Array.from({ length: 12 }, (_, i) => new Date(year, i, 1))
+
+  const getEventsForMonth = (month: Date) => {
+    return events.filter((event) => {
+      const eventDate = event.startTime
+      return eventDate.getFullYear() === month.getFullYear() && eventDate.getMonth() === month.getMonth()
+    })
+  }
+
+  const getMonthDays = (month: Date) => {
+    const firstDay = new Date(month.getFullYear(), month.getMonth(), 1)
+    const startDate = new Date(firstDay)
+    startDate.setDate(startDate.getDate() - startDate.getDay())
+
+    const days: Date[] = []
+    const current = new Date(startDate)
+    for (let i = 0; i < 42; i++) {
+      days.push(new Date(current))
+      current.setDate(current.getDate() + 1)
+    }
+    return days
+  }
+
+  const hasEventOnDay = (day: Date, monthEvents: Event[]) => {
+    return monthEvents.some(
+      (event) =>
+        event.startTime.getFullYear() === day.getFullYear() &&
+        event.startTime.getMonth() === day.getMonth() &&
+        event.startTime.getDate() === day.getDate(),
+    )
+  }
+
+  const getEventColorsForDay = (day: Date, monthEvents: Event[]) => {
+    const dayEvents = monthEvents.filter(
+      (event) =>
+        event.startTime.getFullYear() === day.getFullYear() &&
+        event.startTime.getMonth() === day.getMonth() &&
+        event.startTime.getDate() === day.getDate(),
+    )
+    return dayEvents.slice(0, 3).map((e) => e.hexColor || getColorClasses(e.color).bg)
+  }
+
+  return (
+    <Card className="p-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+        {months.map((month) => {
+          const monthEvents = getEventsForMonth(month)
+          const days = getMonthDays(month)
+
+          return (
+            <div
+              key={month.getTime()}
+              className="cursor-pointer hover:bg-accent/50 rounded-lg p-2 transition-colors"
+              onClick={() => onMonthClick(month)}
+            >
+              <h3 className="text-sm font-semibold mb-2 text-center">
+                {month.toLocaleDateString('en-US', { month: 'short' })}
+              </h3>
+              <div className="grid grid-cols-7 gap-px text-[8px]">
+                {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, i) => (
+                  <div key={i} className="text-center text-muted-foreground font-medium">
+                    {d}
+                  </div>
+                ))}
+                {days.slice(0, 35).map((day, idx) => {
+                  const isCurrentMonth = day.getMonth() === month.getMonth()
+                  const isToday =
+                    day.toDateString() === new Date().toDateString() && isCurrentMonth
+                  const eventColors = isCurrentMonth ? getEventColorsForDay(day, monthEvents) : []
+
+                  return (
+                    <div
+                      key={idx}
+                      className={cn(
+                        'aspect-square flex flex-col items-center justify-center relative text-[9px]',
+                        !isCurrentMonth && 'text-muted-foreground/30',
+                        isToday && 'bg-primary text-primary-foreground rounded-full font-bold',
+                      )}
+                    >
+                      {day.getDate()}
+                      {eventColors.length > 0 && (
+                        <div className="absolute bottom-0 flex gap-px">
+                          {eventColors.map((color, i) => (
+                            <div
+                              key={i}
+                              className={cn('w-1 h-1 rounded-full', typeof color === 'string' && !color.startsWith('#') && color)}
+                              style={color.startsWith('#') ? { backgroundColor: color } : undefined}
+                            />
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+              {monthEvents.length > 0 && (
+                <div className="mt-1 text-[10px] text-muted-foreground text-center">
+                  {monthEvents.length} event{monthEvents.length !== 1 ? 's' : ''}
+                </div>
+              )}
+            </div>
+          )
+        })}
+      </div>
+    </Card>
+  )
+}
+
 function MonthView({
   currentDate,
   events,
