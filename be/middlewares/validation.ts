@@ -1,5 +1,5 @@
-import { z, ZodError, type ZodSchema } from "zod";
-import type { Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
+import { ZodError, type ZodSchema, z } from "zod";
 import { STATUS_RESPONSE } from "@/config";
 import { sendR } from "@/utils/http";
 
@@ -24,7 +24,7 @@ export const signUpSchema = z.object({
     .max(128, "Password must be less than 128 characters")
     .regex(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-      "Password must contain at least one uppercase letter, one lowercase letter, and one number",
+      "Password must contain at least one uppercase letter, one lowercase letter, and one number"
     ),
 });
 
@@ -89,7 +89,7 @@ export const createEventSchema = z.object({
     .max(1000, "Summary must be less than 1000 characters"),
   description: z
     .string()
-    .max(10000, "Description must be less than 10000 characters")
+    .max(10_000, "Description must be less than 10000 characters")
     .optional(),
   location: z
     .string()
@@ -117,7 +117,7 @@ export const createEventSchema = z.object({
         email: z.string().email("Invalid attendee email"),
         displayName: z.string().max(200).optional(),
         optional: z.boolean().optional(),
-      }),
+      })
     )
     .max(100, "Maximum 100 attendees allowed")
     .optional(),
@@ -129,8 +129,8 @@ export const createEventSchema = z.object({
         .array(
           z.object({
             method: z.enum(["email", "popup"]),
-            minutes: z.number().min(0).max(40320), // Max 4 weeks
-          }),
+            minutes: z.number().min(0).max(40_320), // Max 4 weeks
+          })
         )
         .max(5)
         .optional(),
@@ -147,7 +147,7 @@ export const chatMessageSchema = z.object({
   message: z
     .string()
     .min(1, "Message is required")
-    .max(10000, "Message must be less than 10000 characters")
+    .max(10_000, "Message must be less than 10000 characters")
     .transform((msg) => msg.trim()),
   conversationId: z.number().int().positive().optional(),
   sessionId: z.string().uuid().optional(),
@@ -268,7 +268,7 @@ export const fillGapSchema = z.object({
     .transform(sanitizeString),
   description: z
     .string()
-    .max(10000, "Description must be less than 10000 characters")
+    .max(10_000, "Description must be less than 10000 characters")
     .transform(sanitizeString)
     .optional(),
   location: z
@@ -390,7 +390,7 @@ export const preferenceKeyParamSchema = z.object({
         message:
           "Invalid preference key. Must be 'ally_brain', 'contextual_scheduling', 'reminder_defaults', 'voice_preference', 'daily_briefing', 'cross_platform_sync', or 'geo_location'",
       }),
-    },
+    }
   ),
 });
 
@@ -405,7 +405,7 @@ export type ContextualSchedulingBody = z.infer<
 
 export const eventReminderSchema = z.object({
   method: z.enum(["email", "popup"]),
-  minutes: z.number().int().min(0).max(40320),
+  minutes: z.number().int().min(0).max(40_320),
 });
 
 export const reminderPreferencesSchema = z.object({

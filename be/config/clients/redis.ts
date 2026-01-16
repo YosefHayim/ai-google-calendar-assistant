@@ -9,7 +9,7 @@ export const redisClient = new Redis(REDIS_URL, {
   maxRetriesPerRequest: 3,
   retryStrategy: (times) => {
     // Exponential backoff with max 30 seconds
-    const delay = Math.min(times * 100, 30000);
+    const delay = Math.min(times * 100, 30_000);
     return delay;
   },
   enableOfflineQueue: true,
@@ -29,9 +29,7 @@ redisClient.on("reconnecting", () => {
 });
 
 // Check if Redis is connected and ready
-export const isRedisConnected = (): boolean => {
-  return redisClient.status === "ready";
-};
+export const isRedisConnected = (): boolean => redisClient.status === "ready";
 
 // Graceful shutdown helper
 export const disconnectRedis = async (): Promise<void> => {

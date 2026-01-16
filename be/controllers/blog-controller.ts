@@ -83,8 +83,8 @@ export const blogController = {
         .eq("status", "published")
         .order("published_at", { ascending: false })
         .range(
-          Number.parseInt(offset),
-          Number.parseInt(offset) + Number.parseInt(limit) - 1
+          Number.parseInt(offset, 10),
+          Number.parseInt(offset, 10) + Number.parseInt(limit, 10) - 1
         );
 
       if (category && category !== "All") {
@@ -97,7 +97,9 @@ export const blogController = {
 
       const { data, error, count } = await query;
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return sendR(res, 200, "Blog posts retrieved successfully", {
         posts: data || [],
@@ -140,7 +142,9 @@ export const blogController = {
         .select("category")
         .eq("status", "published");
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       const categories = [
         ...new Set(data?.map((p: { category: string }) => p.category) || []),
@@ -168,7 +172,9 @@ export const blogController = {
         .order("published_at", { ascending: false })
         .limit(5);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return sendR(
         res,
@@ -184,7 +190,7 @@ export const blogController = {
 
   async getRelated(req: Request, res: Response) {
     const { slug } = req.params;
-    const limit = Number.parseInt(req.query.limit as string) || 3;
+    const limit = Number.parseInt(req.query.limit as string, 10) || 3;
 
     if (!slug) {
       return sendR(res, 400, "Slug is required", null);
@@ -208,7 +214,9 @@ export const blogController = {
         .order("published_at", { ascending: false })
         .limit(limit);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return sendR(
         res,
@@ -275,7 +283,9 @@ export const blogController = {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return sendR(res, 201, "Blog post created successfully", data);
     } catch (error) {

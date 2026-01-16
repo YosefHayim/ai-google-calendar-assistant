@@ -3,11 +3,11 @@ import { z } from "zod";
 import { SUPABASE } from "@/config/clients";
 import { sendR } from "@/utils/http";
 
-interface WaitlistMetadata {
+type WaitlistMetadata = {
   waitlist_position?: number;
   name?: string;
   [key: string]: unknown;
-}
+};
 
 const joinSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -70,7 +70,9 @@ export const waitingListController = {
           })
           .eq("email", email);
 
-        if (error) throw error;
+        if (error) {
+          throw error;
+        }
 
         return sendR(res, 201, "Successfully joined the waiting list!", {
           position: newPosition,
@@ -100,7 +102,9 @@ export const waitingListController = {
         },
       });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return sendR(res, 201, "Successfully joined the waiting list!", {
         position: newPosition,

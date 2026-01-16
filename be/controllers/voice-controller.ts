@@ -1,20 +1,20 @@
-import type { Request, Response } from "express"
-import { STATUS_RESPONSE } from "@/config"
-import { reqResAsyncHandler, sendR } from "@/utils/http"
-import { transcribeAudio } from "@/utils/ai/voice-transcription"
+import type { Request, Response } from "express";
+import { STATUS_RESPONSE } from "@/config";
+import { getVoicePreference } from "@/services/user-preferences-service";
 import {
+  type AgentTier,
+  DEFAULT_AGENT_PROFILE_ID,
+  formatProfileForClient,
+  getProfilesForTier,
+} from "@/shared/orchestrator";
+import {
+  DEFAULT_VOICE,
   generateSpeech,
   isValidVoice,
-  DEFAULT_VOICE,
   type TTSVoice,
-} from "@/utils/ai/text-to-speech"
-import { getVoicePreference } from "@/services/user-preferences-service"
-import {
-  DEFAULT_AGENT_PROFILE_ID,
-  getProfilesForTier,
-  formatProfileForClient,
-  type AgentTier,
-} from "@/shared/orchestrator"
+} from "@/utils/ai/text-to-speech";
+import { transcribeAudio } from "@/utils/ai/voice-transcription";
+import { reqResAsyncHandler, sendR } from "@/utils/http";
 
 const transcribe = reqResAsyncHandler(async (req: Request, res: Response) => {
   if (!req.file) {
@@ -27,7 +27,7 @@ const transcribe = reqResAsyncHandler(async (req: Request, res: Response) => {
     return sendR(
       res,
       STATUS_RESPONSE.BAD_REQUEST,
-      result.error ?? "Transcription failed.",
+      result.error ?? "Transcription failed."
     );
   }
 
@@ -46,7 +46,7 @@ const synthesize = reqResAsyncHandler(async (req: Request, res: Response) => {
     return sendR(
       res,
       STATUS_RESPONSE.BAD_REQUEST,
-      "Text is required for speech synthesis.",
+      "Text is required for speech synthesis."
     );
   }
 
@@ -63,11 +63,11 @@ const synthesize = reqResAsyncHandler(async (req: Request, res: Response) => {
 
   const result = await generateSpeech(text, voice);
 
-  if (!result.success || !result.audioBuffer) {
+  if (!(result.success && result.audioBuffer)) {
     return sendR(
       res,
       STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
-      result.error ?? "Speech synthesis failed.",
+      result.error ?? "Speech synthesis failed."
     );
   }
 
@@ -80,16 +80,18 @@ const synthesize = reqResAsyncHandler(async (req: Request, res: Response) => {
   return res.send(result.audioBuffer);
 });
 
-const getAgentProfiles = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const userTier = (req.query.tier as AgentTier) || "free"
+const getAgentProfiles = reqResAsyncHandler(
+  async (req: Request, res: Response) => {
+    const userTier = (req.query.tier as AgentTier) || "free";
 
-  const profiles = getProfilesForTier(userTier)
-  const formatted = profiles.map(formatProfileForClient)
+    const profiles = getProfilesForTier(userTier);
+    const formatted = profiles.map(formatProfileForClient);
 
-  return sendR(res, STATUS_RESPONSE.SUCCESS, "Agent profiles retrieved", {
-    profiles: formatted,
-    defaultProfileId: DEFAULT_AGENT_PROFILE_ID,
-  })
-})
+    return sendR(res, STATUS_RESPONSE.SUCCESS, "Agent profiles retrieved", {
+      profiles: formatted,
+      defaultProfileId: DEFAULT_AGENT_PROFILE_ID,
+    });
+  }
+);
 
-export default { transcribe, synthesize, getAgentProfiles }
+export default { transcribe, synthesize, getAgentProfiles };

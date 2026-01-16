@@ -3,24 +3,24 @@
  * Formats messages using Telegram's HTML subset
  */
 
-import type {
-  ChannelAdapter,
-  BaseMessage,
-  TextDirection,
-  BodySection,
-  ListItem,
-  MessageHeader,
-  MessageFooter,
-  ResponseConfig,
-} from "../core/types";
+import { defaultConfig } from "../core/config";
 import { escapeHtml } from "../core/html-escaper";
 import { applyRtl } from "../core/rtl-handler";
-import { defaultConfig } from "../core/config";
+import type {
+  BaseMessage,
+  BodySection,
+  ChannelAdapter,
+  ListItem,
+  MessageFooter,
+  MessageHeader,
+  ResponseConfig,
+  TextDirection,
+} from "../core/types";
 
 export class TelegramAdapter implements ChannelAdapter {
   readonly channel = "telegram" as const;
 
-  private config: ResponseConfig;
+  private readonly config: ResponseConfig;
 
   constructor(config?: Partial<ResponseConfig>) {
     this.config = { ...defaultConfig, ...config };
@@ -33,7 +33,7 @@ export class TelegramAdapter implements ChannelAdapter {
     const parts: string[] = [];
 
     // Format header
-    if (message.header && message.header.title) {
+    if (message.header?.title) {
       parts.push(this.formatHeader(message.header));
     }
 
@@ -132,7 +132,9 @@ export class TelegramAdapter implements ChannelAdapter {
    * Format a list of items
    */
   private formatList(items: ListItem[]): string {
-    return items.map((item, index) => this.formatListItem(item, index)).join("\n");
+    return items
+      .map((item, index) => this.formatListItem(item, index))
+      .join("\n");
   }
 
   /**

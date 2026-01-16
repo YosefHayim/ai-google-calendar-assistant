@@ -15,7 +15,7 @@ const router = express.Router();
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const slackUsersTable = () => (SUPABASE as any).from("slack_users");
 
-interface SlackUserRow {
+type SlackUserRow = {
   id: string;
   slack_user_id: string;
   slack_team_id: string | null;
@@ -24,7 +24,7 @@ interface SlackUserRow {
   user_id: string | null;
   is_linked: boolean | null;
   created_at: string | null;
-}
+};
 
 /**
  * Slack Events API Endpoint

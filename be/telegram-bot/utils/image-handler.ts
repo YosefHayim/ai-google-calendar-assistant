@@ -1,7 +1,7 @@
 import type { Api } from "grammy";
 import type { PhotoSize } from "grammy/types";
-import { logger } from "@/utils/logger";
 import type { ImageContent } from "@/shared/llm";
+import { logger } from "@/utils/logger";
 
 const MAX_IMAGES = 10;
 const MAX_IMAGE_SIZE_MB = 20;
@@ -86,11 +86,11 @@ function getBestPhoto(photos: PhotoSize[]): PhotoSize {
   });
 }
 
-export interface ProcessedImages {
+export type ProcessedImages = {
   images: ImageContent[];
   skippedCount: number;
   errorCount: number;
-}
+};
 
 /**
  * Process multiple photo messages into image content for the AI

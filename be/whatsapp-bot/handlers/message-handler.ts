@@ -18,16 +18,16 @@ import { logger } from "@/utils/logger";
 import { updateLastActivity } from "../services/conversation-window";
 import { downloadVoiceMessage, uploadMedia } from "../services/media";
 import {
-  markAsRead,
-  sendAudioMessage,
-  sendTextMessage,
-} from "../services/send-message";
-import {
   checkAuthRateLimit,
   checkMessageRateLimit,
   checkVoiceRateLimit,
   resetRateLimit,
 } from "../services/rate-limiter";
+import {
+  markAsRead,
+  sendAudioMessage,
+  sendTextMessage,
+} from "../services/send-message";
 import {
   handleOnboarding,
   resolveWhatsAppUser,
@@ -95,7 +95,7 @@ export const processIncomingMessage = (
 ): ProcessedMessage => ({
   from: message.from,
   messageId: message.id,
-  timestamp: new Date(Number.parseInt(message.timestamp) * 1000),
+  timestamp: new Date(Number.parseInt(message.timestamp, 10) * 1000),
   type: message.type,
   text: message.text?.body,
   mediaId:

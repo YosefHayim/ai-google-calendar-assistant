@@ -1,6 +1,6 @@
-import { jest, describe, it, expect, beforeEach } from "@jest/globals";
-import type { Request, Response, NextFunction } from "express";
 import crypto from "node:crypto";
+import { beforeEach, describe, expect, it, jest } from "@jest/globals";
+import type { NextFunction, Request, Response } from "express";
 import { mockFn } from "../test-utils";
 
 // Mock functions
@@ -53,42 +53,50 @@ jest.mock("@/services/lemonsqueezy-service", () => ({
   getActivePlans: () => mockGetActivePlans(),
   getUserSubscription: (userId: string) => mockGetUserSubscription(userId),
   checkUserAccess: (userId: string) => mockCheckUserAccess(userId),
-  createCheckoutSession: (params: unknown) => mockCreateCheckoutSession(params as { url: string; id: string }),
-  createCreditPackCheckout: (params: unknown) => mockCreateCreditPackCheckout(params as { url: string; id: string }),
-  getCustomerPortalUrl: (customerId: string) => mockGetCustomerPortalUrl(customerId),
+  createCheckoutSession: (params: unknown) =>
+    mockCreateCheckoutSession(params as { url: string; id: string }),
+  createCreditPackCheckout: (params: unknown) =>
+    mockCreateCreditPackCheckout(params as { url: string; id: string }),
+  getCustomerPortalUrl: (customerId: string) =>
+    mockGetCustomerPortalUrl(customerId),
   cancelSubscription: (...args: unknown[]) => mockCancelSubscription(...args),
-  processMoneyBackRefund: (...args: unknown[]) => mockProcessMoneyBackRefund(...args),
+  processMoneyBackRefund: (...args: unknown[]) =>
+    mockProcessMoneyBackRefund(...args),
   ensureFreePlan: (userId: string) => mockEnsureFreePlan(userId),
-  isWebhookEventProcessed: (eventId: string) => mockIsWebhookEventProcessed(eventId),
+  isWebhookEventProcessed: (eventId: string) =>
+    mockIsWebhookEventProcessed(eventId),
   recordWebhookEvent: (...args: unknown[]) => mockRecordWebhookEvent(...args),
   handleOrderCreated: (data: unknown) => mockHandleOrderCreated(data),
-  handleSubscriptionCreated: (data: unknown) => mockHandleSubscriptionCreated(data),
-  updateSubscriptionFromWebhook: (data: unknown) => mockUpdateSubscriptionFromWebhook(data),
-  handleSubscriptionPaymentSuccess: (data: unknown) => mockHandleSubscriptionPaymentSuccess(data),
-  handleSubscriptionPaymentFailed: (id: string) => mockHandleSubscriptionPaymentFailed(id),
+  handleSubscriptionCreated: (data: unknown) =>
+    mockHandleSubscriptionCreated(data),
+  updateSubscriptionFromWebhook: (data: unknown) =>
+    mockUpdateSubscriptionFromWebhook(data),
+  handleSubscriptionPaymentSuccess: (data: unknown) =>
+    mockHandleSubscriptionPaymentSuccess(data),
+  handleSubscriptionPaymentFailed: (id: string) =>
+    mockHandleSubscriptionPaymentFailed(id),
 }));
 
 jest.mock("@/utils/http", () => ({
   sendR: (...args: unknown[]) => mockSendR(...args),
-  reqResAsyncHandler: <T extends (...args: unknown[]) => Promise<unknown>>(fn: T) => {
-    return (req: Request, res: Response, next: NextFunction) => {
-      return Promise.resolve(fn(req, res, next)).catch(next);
-    };
-  },
+  reqResAsyncHandler:
+    <T extends (...args: unknown[]) => Promise<unknown>>(fn: T) =>
+    (req: Request, res: Response, next: NextFunction) =>
+      Promise.resolve(fn(req, res, next)).catch(next),
 }));
 
 // Import after mocks
 import {
+  cancelUserSubscription,
+  createCreditPackCheckoutSession,
+  createPortalSession,
+  createSubscriptionCheckout,
   getPaymentStatus,
   getPlans,
   getSubscriptionStatus,
-  initializeFreePlan,
-  createSubscriptionCheckout,
-  createCreditPackCheckoutSession,
-  createPortalSession,
-  cancelUserSubscription,
-  requestRefund,
   handleWebhook,
+  initializeFreePlan,
+  requestRefund,
 } from "@/controllers/payment-controller";
 
 describe("Payment Controller", () => {
@@ -199,7 +207,11 @@ describe("Payment Controller", () => {
     it("should return unauthorized if user not authenticated", async () => {
       mockReq.user = undefined;
 
-      await getSubscriptionStatus(mockReq as Request, mockRes as Response, mockNext);
+      await getSubscriptionStatus(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(
         mockRes,
@@ -220,7 +232,11 @@ describe("Payment Controller", () => {
         money_back_eligible_until: "2024-02-01",
       });
 
-      await getSubscriptionStatus(mockReq as Request, mockRes as Response, mockNext);
+      await getSubscriptionStatus(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockCheckUserAccess).toHaveBeenCalledWith("user-123");
       expect(mockGetUserSubscription).toHaveBeenCalledWith("user-123");
@@ -241,7 +257,11 @@ describe("Payment Controller", () => {
     it("should return unauthorized if user not authenticated", async () => {
       mockReq.user = undefined;
 
-      await initializeFreePlan(mockReq as Request, mockRes as Response, mockNext);
+      await initializeFreePlan(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(
         mockRes,
@@ -254,7 +274,11 @@ describe("Payment Controller", () => {
       const mockSub = { id: "sub-free", plan_id: "free" };
       mockEnsureFreePlan.mockResolvedValue(mockSub);
 
-      await initializeFreePlan(mockReq as Request, mockRes as Response, mockNext);
+      await initializeFreePlan(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockEnsureFreePlan).toHaveBeenCalledWith("user-123");
       expect(mockSendR).toHaveBeenCalledWith(
@@ -270,7 +294,11 @@ describe("Payment Controller", () => {
     it("should return unauthorized if user not authenticated", async () => {
       mockReq.user = undefined;
 
-      await createSubscriptionCheckout(mockReq as Request, mockRes as Response, mockNext);
+      await createSubscriptionCheckout(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(
         mockRes,
@@ -282,7 +310,11 @@ describe("Payment Controller", () => {
     it("should return service unavailable if payment not enabled", async () => {
       mockIsLemonSqueezyEnabled.mockReturnValue(false);
 
-      await createSubscriptionCheckout(mockReq as Request, mockRes as Response, mockNext);
+      await createSubscriptionCheckout(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(
         mockRes,
@@ -294,7 +326,11 @@ describe("Payment Controller", () => {
     it("should return bad request for invalid plan slug", async () => {
       mockReq.body = { planSlug: "invalid", interval: "monthly" };
 
-      await createSubscriptionCheckout(mockReq as Request, mockRes as Response, mockNext);
+      await createSubscriptionCheckout(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(
         mockRes,
@@ -306,7 +342,11 @@ describe("Payment Controller", () => {
     it("should return bad request for invalid interval", async () => {
       mockReq.body = { planSlug: "starter", interval: "weekly" };
 
-      await createSubscriptionCheckout(mockReq as Request, mockRes as Response, mockNext);
+      await createSubscriptionCheckout(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(
         mockRes,
@@ -322,7 +362,11 @@ describe("Payment Controller", () => {
         plan_id: "starter",
       });
 
-      await createSubscriptionCheckout(mockReq as Request, mockRes as Response, mockNext);
+      await createSubscriptionCheckout(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(
         mockRes,
@@ -345,7 +389,11 @@ describe("Payment Controller", () => {
         id: "session-123",
       });
 
-      await createSubscriptionCheckout(mockReq as Request, mockRes as Response, mockNext);
+      await createSubscriptionCheckout(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockCreateCheckoutSession).toHaveBeenCalled();
       expect(mockSendR).toHaveBeenCalledWith(
@@ -364,7 +412,11 @@ describe("Payment Controller", () => {
     it("should return bad request for invalid credits", async () => {
       mockReq.body = { credits: 50, planSlug: "starter" };
 
-      await createCreditPackCheckoutSession(mockReq as Request, mockRes as Response, mockNext);
+      await createCreditPackCheckoutSession(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(
         mockRes,
@@ -385,7 +437,11 @@ describe("Payment Controller", () => {
         id: "credit-session-123",
       });
 
-      await createCreditPackCheckoutSession(mockReq as Request, mockRes as Response, mockNext);
+      await createCreditPackCheckoutSession(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockCreateCreditPackCheckout).toHaveBeenCalled();
       expect(mockSendR).toHaveBeenCalledWith(
@@ -401,7 +457,11 @@ describe("Payment Controller", () => {
     it("should return not found if no billing info", async () => {
       mockGetUserSubscription.mockResolvedValue(null);
 
-      await createPortalSession(mockReq as Request, mockRes as Response, mockNext);
+      await createPortalSession(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(
         mockRes,
@@ -414,9 +474,15 @@ describe("Payment Controller", () => {
       mockGetUserSubscription.mockResolvedValue({
         lemonsqueezy_customer_id: "customer-123",
       });
-      mockGetCustomerPortalUrl.mockResolvedValue("https://portal.lemonsqueezy.com/customer-123");
+      mockGetCustomerPortalUrl.mockResolvedValue(
+        "https://portal.lemonsqueezy.com/customer-123"
+      );
 
-      await createPortalSession(mockReq as Request, mockRes as Response, mockNext);
+      await createPortalSession(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(
         mockRes,
@@ -431,7 +497,11 @@ describe("Payment Controller", () => {
     it("should return not found if no subscription", async () => {
       mockGetUserSubscription.mockResolvedValue(null);
 
-      await cancelUserSubscription(mockReq as Request, mockRes as Response, mockNext);
+      await cancelUserSubscription(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(
         mockRes,
@@ -450,9 +520,17 @@ describe("Payment Controller", () => {
       });
       mockReq.body = { reason: "Too expensive", immediate: false };
 
-      await cancelUserSubscription(mockReq as Request, mockRes as Response, mockNext);
+      await cancelUserSubscription(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
-      expect(mockCancelSubscription).toHaveBeenCalledWith("sub-123", "Too expensive", false);
+      expect(mockCancelSubscription).toHaveBeenCalledWith(
+        "sub-123",
+        "Too expensive",
+        false
+      );
       expect(mockSendR).toHaveBeenCalledWith(
         mockRes,
         expect.objectContaining({ code: 200 }),
@@ -475,7 +553,10 @@ describe("Payment Controller", () => {
 
       await requestRefund(mockReq as Request, mockRes as Response, mockNext);
 
-      expect(mockProcessMoneyBackRefund).toHaveBeenCalledWith("sub-123", "Not satisfied");
+      expect(mockProcessMoneyBackRefund).toHaveBeenCalledWith(
+        "sub-123",
+        "Not satisfied"
+      );
       expect(mockSendR).toHaveBeenCalledWith(
         mockRes,
         expect.objectContaining({ code: 200 }),
@@ -515,7 +596,9 @@ describe("Payment Controller", () => {
       await handleWebhook(mockReq as Request, mockRes as Response);
 
       expect(mockRes.status).toHaveBeenCalledWith(503);
-      expect(mockRes.json).toHaveBeenCalledWith({ error: "Payment provider is not configured" });
+      expect(mockRes.json).toHaveBeenCalledWith({
+        error: "Payment provider is not configured",
+      });
     });
 
     it("should return 400 if no signature provided", async () => {
@@ -524,11 +607,15 @@ describe("Payment Controller", () => {
       await handleWebhook(mockReq as Request, mockRes as Response);
 
       expect(mockRes.status).toHaveBeenCalledWith(400);
-      expect(mockRes.json).toHaveBeenCalledWith({ error: "No signature provided" });
+      expect(mockRes.json).toHaveBeenCalledWith({
+        error: "No signature provided",
+      });
     });
 
     it("should return 400 if signature verification fails", async () => {
-      const rawBody = Buffer.from(JSON.stringify({ meta: { event_name: "test" }, data: { id: "1" } }));
+      const rawBody = Buffer.from(
+        JSON.stringify({ meta: { event_name: "test" }, data: { id: "1" } })
+      );
       mockReq.body = rawBody;
       // Use a hex string of the same length as SHA-256 digest (64 chars)
       mockReq.headers = { "x-signature": "0".repeat(64) };
@@ -536,7 +623,9 @@ describe("Payment Controller", () => {
       await handleWebhook(mockReq as Request, mockRes as Response);
 
       expect(mockRes.status).toHaveBeenCalledWith(400);
-      expect(mockRes.json).toHaveBeenCalledWith({ error: "Webhook signature verification failed" });
+      expect(mockRes.json).toHaveBeenCalledWith({
+        error: "Webhook signature verification failed",
+      });
     });
 
     it("should return 400 for invalid JSON payload", async () => {
@@ -548,7 +637,9 @@ describe("Payment Controller", () => {
       await handleWebhook(mockReq as Request, mockRes as Response);
 
       expect(mockRes.status).toHaveBeenCalledWith(400);
-      expect(mockRes.json).toHaveBeenCalledWith({ error: "Invalid JSON payload" });
+      expect(mockRes.json).toHaveBeenCalledWith({
+        error: "Invalid JSON payload",
+      });
     });
 
     it("should skip duplicate events", async () => {
@@ -565,12 +656,18 @@ describe("Payment Controller", () => {
       await handleWebhook(mockReq as Request, mockRes as Response);
 
       expect(mockRes.status).toHaveBeenCalledWith(200);
-      expect(mockRes.json).toHaveBeenCalledWith({ received: true, duplicate: true });
+      expect(mockRes.json).toHaveBeenCalledWith({
+        received: true,
+        duplicate: true,
+      });
     });
 
     it("should process order_created event", async () => {
       const event = {
-        meta: { event_name: "order_created", custom_data: { userId: "user-123" } },
+        meta: {
+          event_name: "order_created",
+          custom_data: { userId: "user-123" },
+        },
         data: {
           id: "order-123",
           attributes: {
@@ -598,7 +695,10 @@ describe("Payment Controller", () => {
 
     it("should process subscription_created event", async () => {
       const event = {
-        meta: { event_name: "subscription_created", custom_data: { userId: "user-123" } },
+        meta: {
+          event_name: "subscription_created",
+          custom_data: { userId: "user-123" },
+        },
         data: {
           id: "sub-123",
           attributes: {
@@ -697,7 +797,9 @@ describe("Payment Controller", () => {
 
       await handleWebhook(mockReq as Request, mockRes as Response);
 
-      expect(mockHandleSubscriptionPaymentFailed).toHaveBeenCalledWith("sub-123");
+      expect(mockHandleSubscriptionPaymentFailed).toHaveBeenCalledWith(
+        "sub-123"
+      );
       expect(mockRes.status).toHaveBeenCalledWith(200);
     });
 
@@ -712,12 +814,16 @@ describe("Payment Controller", () => {
       mockReq.headers = { "x-signature": signature };
       mockIsWebhookEventProcessed.mockResolvedValue(false);
       mockRecordWebhookEvent.mockResolvedValue(undefined);
-      mockHandleSubscriptionCreated.mockRejectedValue(new Error("Processing failed"));
+      mockHandleSubscriptionCreated.mockRejectedValue(
+        new Error("Processing failed")
+      );
 
       await handleWebhook(mockReq as Request, mockRes as Response);
 
       expect(mockRes.status).toHaveBeenCalledWith(500);
-      expect(mockRes.json).toHaveBeenCalledWith({ error: "Webhook processing failed" });
+      expect(mockRes.json).toHaveBeenCalledWith({
+        error: "Webhook processing failed",
+      });
     });
   });
 });

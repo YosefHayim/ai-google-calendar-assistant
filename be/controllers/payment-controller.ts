@@ -14,6 +14,8 @@ import {
   getActivePlans,
   getBillingOverview,
   getCustomerPortalUrl,
+  getLemonSqueezyProducts,
+  getLemonSqueezyProductsWithVariants,
   getUserSubscription,
   handleOrderCreated,
   handleSubscriptionCreated,
@@ -25,9 +27,7 @@ import {
   recordWebhookEvent,
   updateSubscriptionFromWebhook,
   upgradeSubscriptionPlan,
-  getLemonSqueezyProducts,
-  getLemonSqueezyProductsWithVariants,
-} from "@/services/lemonsqueezy-service"
+} from "@/services/lemonsqueezy-service";
 import { requireUser, requireUserId } from "@/utils/auth";
 import { reqResAsyncHandler, sendR } from "@/utils/http";
 
@@ -74,7 +74,9 @@ export const getPlans = reqResAsyncHandler(
 export const getSubscriptionStatus = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     const userResult = requireUserId(req, res);
-    if (!userResult.success) return;
+    if (!userResult.success) {
+      return;
+    }
     const { userId } = userResult;
 
     const access = await checkUserAccess(userId);
@@ -101,7 +103,9 @@ export const getSubscriptionStatus = reqResAsyncHandler(
 export const initializeFreePlan = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     const userResult = requireUserId(req, res);
-    if (!userResult.success) return;
+    if (!userResult.success) {
+      return;
+    }
     const { userId } = userResult;
 
     const subscription = await ensureFreePlan(userId);
@@ -115,7 +119,9 @@ export const initializeFreePlan = reqResAsyncHandler(
 export const createSubscriptionCheckout = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     const userResult = requireUser(req, res);
-    if (!userResult.success) return;
+    if (!userResult.success) {
+      return;
+    }
     const { userId, userEmail } = userResult;
 
     if (!isLemonSqueezyEnabled()) {
@@ -187,7 +193,9 @@ export const createSubscriptionCheckout = reqResAsyncHandler(
 export const createCreditPackCheckoutSession = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     const userResult = requireUser(req, res);
-    if (!userResult.success) return;
+    if (!userResult.success) {
+      return;
+    }
     const { userId, userEmail } = userResult;
 
     if (!isLemonSqueezyEnabled()) {
@@ -247,7 +255,9 @@ export const createCreditPackCheckoutSession = reqResAsyncHandler(
 export const createPortalSession = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     const userResult = requireUserId(req, res);
-    if (!userResult.success) return;
+    if (!userResult.success) {
+      return;
+    }
     const { userId } = userResult;
 
     if (!isLemonSqueezyEnabled()) {
@@ -290,7 +300,9 @@ export const createPortalSession = reqResAsyncHandler(
 export const cancelUserSubscription = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     const userResult = requireUserId(req, res);
-    if (!userResult.success) return;
+    if (!userResult.success) {
+      return;
+    }
     const { userId } = userResult;
 
     if (!isLemonSqueezyEnabled()) {
@@ -343,7 +355,9 @@ export const cancelUserSubscription = reqResAsyncHandler(
 export const requestRefund = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     const userResult = requireUserId(req, res);
-    if (!userResult.success) return;
+    if (!userResult.success) {
+      return;
+    }
     const { userId } = userResult;
 
     if (!isLemonSqueezyEnabled()) {
@@ -390,7 +404,9 @@ export const requestRefund = reqResAsyncHandler(
 export const upgradeSubscription = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     const userResult = requireUserId(req, res);
-    if (!userResult.success) return;
+    if (!userResult.success) {
+      return;
+    }
     const { userId } = userResult;
 
     if (!isLemonSqueezyEnabled()) {
@@ -634,7 +650,9 @@ export const handleWebhook = async (
 export const getBillingInfo = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     const userResult = requireUserId(req, res);
-    if (!userResult.success) return;
+    if (!userResult.success) {
+      return;
+    }
     const { userId } = userResult;
 
     if (!isLemonSqueezyEnabled()) {
@@ -655,17 +673,17 @@ export const getBillingInfo = reqResAsyncHandler(
         billingOverview
       );
     } catch (error) {
-      console.error("Billing overview error:", error)
+      console.error("Billing overview error:", error);
       sendR(
         res,
         STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
         error instanceof Error
           ? error.message
           : "Failed to get billing overview"
-      )
+      );
     }
   }
-)
+);
 
 export const getLemonSqueezyProductsEndpoint = reqResAsyncHandler(
   async (_req: Request, res: Response) => {
@@ -674,11 +692,11 @@ export const getLemonSqueezyProductsEndpoint = reqResAsyncHandler(
         res,
         STATUS_RESPONSE.SERVICE_UNAVAILABLE,
         "Payment provider is not configured"
-      )
+      );
     }
 
     try {
-      const products = await getLemonSqueezyProducts()
+      const products = await getLemonSqueezyProducts();
 
       sendR(res, STATUS_RESPONSE.SUCCESS, "Products retrieved", {
         products: products.map((product) => ({
@@ -692,17 +710,17 @@ export const getLemonSqueezyProductsEndpoint = reqResAsyncHandler(
           status: product.status,
           testMode: product.testMode,
         })),
-      })
+      });
     } catch (error) {
-      console.error("Error fetching LemonSqueezy products:", error)
+      console.error("Error fetching LemonSqueezy products:", error);
       sendR(
         res,
         STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
         error instanceof Error ? error.message : "Failed to fetch products"
-      )
+      );
     }
   }
-)
+);
 
 export const getLemonSqueezyProductsWithVariantsEndpoint = reqResAsyncHandler(
   async (_req: Request, res: Response) => {
@@ -711,49 +729,54 @@ export const getLemonSqueezyProductsWithVariantsEndpoint = reqResAsyncHandler(
         res,
         STATUS_RESPONSE.SERVICE_UNAVAILABLE,
         "Payment provider is not configured"
-      )
+      );
     }
 
     try {
-      const productsWithVariants = await getLemonSqueezyProductsWithVariants()
+      const productsWithVariants = await getLemonSqueezyProductsWithVariants();
 
-      const formattedProducts = productsWithVariants.map(({ product, variants }) => ({
-        id: product.id,
-        name: product.name,
-        slug: product.slug,
-        description: product.description,
-        price: product.price,
-        priceFormatted: product.priceFormatted,
-        buyNowUrl: product.buyNowUrl,
-        status: product.status,
-        testMode: product.testMode,
-        variants: variants.map((variant) => ({
-          id: variant.id,
-          name: variant.name,
-          slug: variant.slug,
-          description: variant.description,
-          price: variant.price,
-          priceFormatted: variant.priceFormatted,
-          isSubscription: variant.isSubscription,
-          interval: variant.interval,
-          intervalCount: variant.intervalCount,
-          hasFreeTrial: variant.hasFreeTrial,
-          trialInterval: variant.trialInterval,
-          trialIntervalCount: variant.trialIntervalCount,
-          status: variant.status,
-        })),
-      }))
+      const formattedProducts = productsWithVariants.map(
+        ({ product, variants }) => ({
+          id: product.id,
+          name: product.name,
+          slug: product.slug,
+          description: product.description,
+          price: product.price,
+          priceFormatted: product.priceFormatted,
+          buyNowUrl: product.buyNowUrl,
+          status: product.status,
+          testMode: product.testMode,
+          variants: variants.map((variant) => ({
+            id: variant.id,
+            name: variant.name,
+            slug: variant.slug,
+            description: variant.description,
+            price: variant.price,
+            priceFormatted: variant.priceFormatted,
+            isSubscription: variant.isSubscription,
+            interval: variant.interval,
+            intervalCount: variant.intervalCount,
+            hasFreeTrial: variant.hasFreeTrial,
+            trialInterval: variant.trialInterval,
+            trialIntervalCount: variant.trialIntervalCount,
+            status: variant.status,
+          })),
+        })
+      );
 
       sendR(res, STATUS_RESPONSE.SUCCESS, "Products with variants retrieved", {
         products: formattedProducts,
-      })
+      });
     } catch (error) {
-      console.error("Error fetching LemonSqueezy products with variants:", error)
+      console.error(
+        "Error fetching LemonSqueezy products with variants:",
+        error
+      );
       sendR(
         res,
         STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
         error instanceof Error ? error.message : "Failed to fetch products"
-      )
+      );
     }
   }
-)
+);

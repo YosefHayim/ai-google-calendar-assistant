@@ -18,89 +18,88 @@
  * ```
  */
 
-// Core exports
-export {
-  // Main builder
-  ResponseBuilder,
-  // Configuration
-  defaultConfig,
-  mergeConfig,
-  TYPE_EMOJIS,
-  MINIMAL_EMOJIS,
-  // HTML utilities
-  escapeHtml,
-  escapeHtmlPreserving,
-  containsUnsafeHtml,
-  sanitizeUserInput,
-  unescapeHtml,
-  // RTL utilities
-  UNICODE_MARKERS,
-  containsRtl,
-  containsHebrew,
-  containsArabic,
-  isRtlText,
-  detectDirection,
-  applyUnicodeDirection,
-  applyLineBasedDirection,
-  applyRtl,
-  isolateDirection,
-  formatLabelValue,
-  formatInlineLabelValue,
-} from "./core";
+// Adapter exports
+export { createTelegramAdapter, TelegramAdapter } from "./adapters";
 
 // Type exports
 export type {
-  TextDirection,
-  RtlStrategy,
-  Channel,
-  EmojiStyle,
-  ResponseConfig,
-  MessageType,
-  MessageHeader,
-  MessageFooter,
-  BulletStyle,
-  ListItem,
-  BodySection,
   BaseMessage,
-  CalendarEvent,
-  DaySchedule,
-  WeekSchedule,
-  ChannelAdapter,
-  ResponseBuilderOptions,
+  BodySection,
   BuilderResult,
+  BulletStyle,
+  CalendarEvent,
+  Channel,
+  ChannelAdapter,
+  DaySchedule,
+  EmojiStyle,
+  ListItem,
+  MessageFooter,
+  MessageHeader,
+  MessageType,
+  ResponseBuilderOptions,
+  ResponseConfig,
+  RtlStrategy,
+  TextDirection,
+  WeekSchedule,
 } from "./core";
-
-// Adapter exports
-export { TelegramAdapter, createTelegramAdapter } from "./adapters";
+// Core exports
+export {
+  applyLineBasedDirection,
+  applyRtl,
+  applyUnicodeDirection,
+  containsArabic,
+  containsHebrew,
+  containsRtl,
+  containsUnsafeHtml,
+  // Configuration
+  defaultConfig,
+  detectDirection,
+  // HTML utilities
+  escapeHtml,
+  escapeHtmlPreserving,
+  formatInlineLabelValue,
+  formatLabelValue,
+  isolateDirection,
+  isRtlText,
+  MINIMAL_EMOJIS,
+  mergeConfig,
+  // Main builder
+  ResponseBuilder,
+  sanitizeUserInput,
+  TYPE_EMOJIS,
+  // RTL utilities
+  UNICODE_MARKERS,
+  unescapeHtml,
+} from "./core";
 
 // Template exports
 export {
-  // Calendar templates
-  weeklyCalendarTemplate,
-  todayScheduleTemplate,
-  tomorrowScheduleTemplate,
-  eventListTemplate,
-  freeTimeTemplate,
   busyTimeTemplate,
-  monthlyOverviewTemplate,
+  confirmationTemplate,
+  connectionErrorTemplate,
+  errorTemplate,
   // Success templates
   eventCreatedTemplate,
-  eventUpdatedTemplate,
   eventDeletedTemplate,
-  successTemplate,
+  eventListTemplate,
   // Error templates
   eventNotFoundTemplate,
-  connectionErrorTemplate,
+  eventUpdatedTemplate,
+  feedbackTemplate,
+  freeTimeTemplate,
+  helpTemplate,
+  loadingTemplate,
+  monthlyOverviewTemplate,
   permissionErrorTemplate,
+  sessionEndedTemplate,
+  settingsTemplate,
+  statusTemplate,
+  successTemplate,
   timeConflictTemplate,
-  errorTemplate,
+  todayScheduleTemplate,
+  tomorrowScheduleTemplate,
+  // Calendar templates
+  weeklyCalendarTemplate,
   // Info/Notification templates
   welcomeTemplate,
-  sessionEndedTemplate,
-  helpTemplate,
-  statusTemplate,
-  settingsTemplate,
-  feedbackTemplate,
-  loadingTemplate,
-  confirmationTemplate,
 } from "./templates";

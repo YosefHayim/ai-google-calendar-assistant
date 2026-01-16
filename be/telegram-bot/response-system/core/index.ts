@@ -2,36 +2,38 @@
  * Core module exports
  */
 
-// Types
-export * from "./types";
-
 // Configuration
-export { defaultConfig, mergeConfig, TYPE_EMOJIS, MINIMAL_EMOJIS } from "./config";
-
-// Response Builder
-export { ResponseBuilder } from "./response-builder";
-
+export {
+  defaultConfig,
+  MINIMAL_EMOJIS,
+  mergeConfig,
+  TYPE_EMOJIS,
+} from "./config";
 // HTML Escaping
 export {
+  containsUnsafeHtml,
   escapeHtml,
   escapeHtmlPreserving,
-  containsUnsafeHtml,
   sanitizeUserInput,
   unescapeHtml,
 } from "./html-escaper";
 
+// Response Builder
+export { ResponseBuilder } from "./response-builder";
 // RTL Handling
 export {
-  UNICODE_MARKERS,
-  containsRtl,
-  containsHebrew,
-  containsArabic,
-  isRtlText,
-  detectDirection,
-  applyUnicodeDirection,
   applyLineBasedDirection,
   applyRtl,
-  isolateDirection,
-  formatLabelValue,
+  applyUnicodeDirection,
+  containsArabic,
+  containsHebrew,
+  containsRtl,
+  detectDirection,
   formatInlineLabelValue,
+  formatLabelValue,
+  isolateDirection,
+  isRtlText,
+  UNICODE_MARKERS,
 } from "./rtl-handler";
+// Types
+export * from "./types";

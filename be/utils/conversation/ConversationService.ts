@@ -1,8 +1,9 @@
+import crypto from "node:crypto";
 import { SUPABASE } from "@/config/clients/supabase";
-import { logger } from "@/utils/logger";
-import { isToday } from "@/utils/date/date-helpers";
-import type { userAndAiMessageProps } from "@/types";
 import type { Database } from "@/database.types";
+import type { userAndAiMessageProps } from "@/types";
+import { isToday } from "@/utils/date/date-helpers";
+import { logger } from "@/utils/logger";
 import type {
   ConversationConfig,
   ConversationContext,
@@ -16,7 +17,6 @@ import type {
   WebConversationRow,
 } from "./types";
 import { DEFAULT_CONVERSATION_CONFIG } from "./types";
-import crypto from "node:crypto";
 
 type ConversationInsert =
   Database["public"]["Tables"]["conversations"]["Insert"];
@@ -91,7 +91,7 @@ export class ConversationService {
    */
   constructor(
     source: ConversationSource,
-    config: Partial<ConversationConfig> = {},
+    config: Partial<ConversationConfig> = {}
   ) {
     this.source = source;
     this.config = { ...DEFAULT_CONVERSATION_CONFIG, ...config };
@@ -108,9 +108,11 @@ export class ConversationService {
    * // Returns: [{ role: "user", content: "Hello" }, { role: "assistant", content: "Hi!" }]
    */
   async getConversationMessages(
-    conversationId: string,
+    conversationId: string
   ): Promise<userAndAiMessageProps[]> {
-    logger.info(`getConversationMessages: fetching messages for conversation ${conversationId}`);
+    logger.info(
+      `getConversationMessages: fetching messages for conversation ${conversationId}`
+    );
 
     const { data, error } = await SUPABASE.from("conversation_messages")
       .select("role, content, sequence_number, metadata")
@@ -118,16 +120,22 @@ export class ConversationService {
       .order("sequence_number", { ascending: true });
 
     if (error) {
-      logger.error(`getConversationMessages: error fetching messages for ${conversationId}: ${error.message}`);
+      logger.error(
+        `getConversationMessages: error fetching messages for ${conversationId}: ${error.message}`
+      );
       return [];
     }
 
     if (!data || data.length === 0) {
-      logger.warn(`getConversationMessages: no messages found for conversation ${conversationId}`);
+      logger.warn(
+        `getConversationMessages: no messages found for conversation ${conversationId}`
+      );
       return [];
     }
 
-    logger.info(`getConversationMessages: found ${data.length} messages for conversation ${conversationId}`);
+    logger.info(
+      `getConversationMessages: found ${data.length} messages for conversation ${conversationId}`
+    );
 
     return data
       .filter((msg) => msg.role === "user" || msg.role === "assistant")
@@ -138,7 +146,11 @@ export class ConversationService {
         };
 
         // Extract images from metadata if present
-        if (msg.metadata && typeof msg.metadata === "object" && "images" in msg.metadata) {
+        if (
+          msg.metadata &&
+          typeof msg.metadata === "object" &&
+          "images" in msg.metadata
+        ) {
           const metadata = msg.metadata as { images?: unknown };
           if (Array.isArray(metadata.images)) {
             message.images = metadata.images;
@@ -162,7 +174,7 @@ export class ConversationService {
    * const telegramConvo = await service.getTodayConversation(123456789);
    */
   async getTodayConversation(
-    identifier: string | number,
+    identifier: string | number
   ): Promise<WebConversationRow | TelegramConversationRow | null> {
     const isWeb = this.source === "web";
     const filterField = isWeb ? "user_id" : "external_chat_id";
@@ -178,7 +190,7 @@ export class ConversationService {
 
     if (error) {
       logger.error(
-        `Failed to fetch conversation for ${this.source} ${identifier}: ${error.message}`,
+        `Failed to fetch conversation for ${this.source} ${identifier}: ${error.message}`
       );
       return null;
     }
@@ -214,7 +226,7 @@ export class ConversationService {
   async createConversation(
     userId: string,
     externalChatId?: number,
-    initialMessage?: userAndAiMessageProps,
+    initialMessage?: userAndAiMessageProps
   ): Promise<{ id: string; context: ConversationContext } | null> {
     const insertData: ConversationInsert = {
       user_id: userId,
@@ -228,7 +240,7 @@ export class ConversationService {
     }
 
     const { data: conversation, error: convError } = await SUPABASE.from(
-      "conversations",
+      "conversations"
     )
       .insert(insertData)
       .select()
@@ -236,7 +248,7 @@ export class ConversationService {
 
     if (convError || !conversation) {
       logger.error(
-        `Failed to create ${this.source} conversation for user ${userId}: ${convError?.message}`,
+        `Failed to create ${this.source} conversation for user ${userId}: ${convError?.message}`
       );
       return null;
     }
@@ -277,7 +289,7 @@ export class ConversationService {
   async updateConversationState(
     conversationId: string,
     context: ConversationContext,
-    messageCount: number,
+    messageCount: number
   ): Promise<boolean> {
     const updateData: Database["public"]["Tables"]["conversations"]["Update"] =
       {
@@ -297,7 +309,7 @@ export class ConversationService {
 
     if (error) {
       logger.error(
-        `Failed to update conversation ${conversationId}: ${error.message}`,
+        `Failed to update conversation ${conversationId}: ${error.message}`
       );
       return false;
     }
@@ -323,7 +335,7 @@ export class ConversationService {
 
     if (error) {
       logger.error(
-        `Failed to update title for ${conversationId}: ${error.message}`,
+        `Failed to update title for ${conversationId}: ${error.message}`
       );
       return false;
     }
@@ -364,7 +376,7 @@ export class ConversationService {
 
     if (error) {
       logger.error(
-        `Failed to store summary for ${params.conversationId}: ${error.message}`,
+        `Failed to store summary for ${params.conversationId}: ${error.message}`
       );
       return false;
     }
@@ -383,7 +395,7 @@ export class ConversationService {
    */
   async markAsSummarized(
     conversationId: string,
-    summary: string,
+    summary: string
   ): Promise<boolean> {
     const { error } = await SUPABASE.from("conversations")
       .update({
@@ -394,7 +406,7 @@ export class ConversationService {
 
     if (error) {
       logger.error(
-        `Failed to mark ${conversationId} as summarized: ${error.message}`,
+        `Failed to mark ${conversationId} as summarized: ${error.message}`
       );
       return false;
     }
@@ -420,7 +432,7 @@ export class ConversationService {
   async condenseSummary(
     existingSummary: string,
     newSummary: string,
-    summarizeFn: SummarizeFn,
+    summarizeFn: SummarizeFn
   ): Promise<string> {
     const combined = `${existingSummary}\n\n${newSummary}`;
 
@@ -462,7 +474,7 @@ export class ConversationService {
    * });
    */
   async addMessageAndMaybeSummarize(
-    params: AddMessageParams,
+    params: AddMessageParams
   ): Promise<ConversationContext> {
     const { stateId, userId, context, message, summarizeFn } = params;
 
@@ -477,7 +489,7 @@ export class ConversationService {
 
     const hasImages = message.images && message.images.length > 0;
     logger.info(
-      `addMessageAndMaybeSummarize: stateId=${stateId}, role=${message.role}, hasContent=${!!message.content}, contentLen=${message.content?.length || 0}, hasImages=${hasImages}, nextSeq=${nextSequence}`,
+      `addMessageAndMaybeSummarize: stateId=${stateId}, role=${message.role}, hasContent=${!!message.content}, contentLen=${message.content?.length || 0}, hasImages=${hasImages}, nextSeq=${nextSequence}`
     );
 
     if (message.content || hasImages) {
@@ -485,30 +497,30 @@ export class ConversationService {
       const metadata = hasImages ? { images: message.images } : undefined;
 
       const { data: insertedMsg, error: insertError } = await SUPABASE.from(
-        "conversation_messages",
+        "conversation_messages"
       )
         .insert({
           conversation_id: stateId,
           role: mapRoleToDb(message.role),
           content: message.content || "",
           sequence_number: nextSequence,
-          metadata: metadata,
+          metadata,
         })
         .select()
         .single();
 
       if (insertError) {
         logger.error(
-          `Failed to insert message for conversation ${stateId}: ${insertError.message}`,
+          `Failed to insert message for conversation ${stateId}: ${insertError.message}`
         );
       } else {
         logger.info(
-          `Successfully inserted message ${insertedMsg?.id} for conversation ${stateId}${hasImages ? ` with ${message.images?.length} images` : ""}`,
+          `Successfully inserted message ${insertedMsg?.id} for conversation ${stateId}${hasImages ? ` with ${message.images?.length} images` : ""}`
         );
       }
     } else {
       logger.warn(
-        `Skipping message insert - no content: stateId=${stateId}, role=${message.role}`,
+        `Skipping message insert - no content: stateId=${stateId}, role=${message.role}`
       );
     }
 
@@ -543,7 +555,7 @@ export class ConversationService {
           context.summary = await this.condenseSummary(
             context.summary,
             newSummary,
-            summarizeFn,
+            summarizeFn
           );
         } else {
           context.summary = newSummary.slice(0, this.config.maxSummaryLength);
@@ -591,12 +603,12 @@ export class ConversationService {
       let messageHistory = context.messages
         .map(
           (msg) =>
-            `${msg.role === "user" ? "User" : "Assistant"}: ${msg.content}`,
+            `${msg.role === "user" ? "User" : "Assistant"}: ${msg.content}`
         )
         .join("\n");
       if (messageHistory.length > this.config.maxMessagesDisplayLength) {
         messageHistory = messageHistory.slice(
-          -this.config.maxMessagesDisplayLength,
+          -this.config.maxMessagesDisplayLength
         );
       }
       parts.push(`Recent messages:\n${messageHistory}`);
@@ -631,11 +643,11 @@ export class ConversationService {
   async getConversationList(
     userId: string,
     options?: {
-      limit?: number
-      offset?: number
-      search?: string
-      includeAllSources?: boolean
-    },
+      limit?: number;
+      offset?: number;
+      search?: string;
+      includeAllSources?: boolean;
+    }
   ): Promise<ConversationListItem[]> {
     const DEFAULT_LIMIT = 20;
     const MIN_SEARCH_LENGTH = 2;
@@ -643,11 +655,11 @@ export class ConversationService {
     const limit = options?.limit || DEFAULT_LIMIT;
     const offset = options?.offset || 0;
     const search = options?.search;
-    const includeAllSources = options?.includeAllSources || false;
+    const includeAllSources = options?.includeAllSources;
 
     let query = SUPABASE.from("conversations")
       .select(
-        "id, message_count, title, summary, created_at, updated_at, last_message_at, source",
+        "id, message_count, title, summary, created_at, updated_at, last_message_at, source"
       )
       .eq("user_id", userId);
 
@@ -665,7 +677,7 @@ export class ConversationService {
 
     if (error) {
       logger.error(
-        `Failed to fetch conversation list for user ${userId}: ${error.message}`,
+        `Failed to fetch conversation list for user ${userId}: ${error.message}`
       );
       return [];
     }
@@ -712,9 +724,11 @@ export class ConversationService {
    */
   async getConversationById(
     conversationId: string,
-    userId: string,
+    userId: string
   ): Promise<FullConversation | null> {
-    logger.info(`getConversationById: fetching conversation ${conversationId} for user ${userId}`);
+    logger.info(
+      `getConversationById: fetching conversation ${conversationId} for user ${userId}`
+    );
 
     // Don't filter by source - user_id check is sufficient for access control
     // This allows cross-platform sync to work (viewing telegram conversations via web, etc.)
@@ -726,16 +740,20 @@ export class ConversationService {
 
     if (error || !data) {
       logger.error(
-        `getConversationById: failed to fetch conversation ${conversationId}: ${error?.message}`,
+        `getConversationById: failed to fetch conversation ${conversationId}: ${error?.message}`
       );
       return null;
     }
 
-    logger.info(`getConversationById: found conversation ${conversationId}, message_count in DB: ${data.message_count}`);
+    logger.info(
+      `getConversationById: found conversation ${conversationId}, message_count in DB: ${data.message_count}`
+    );
 
     const messages = await this.getConversationMessages(conversationId);
 
-    logger.info(`getConversationById: returning conversation ${conversationId} with ${messages.length} messages (DB count: ${data.message_count})`);
+    logger.info(
+      `getConversationById: returning conversation ${conversationId} with ${messages.length} messages (DB count: ${data.message_count})`
+    );
 
     return {
       id: data.id,
@@ -765,23 +783,23 @@ export class ConversationService {
    */
   async loadConversationIntoContext(
     conversationId: string,
-    userId: string,
+    userId: string
   ): Promise<{ stateId: string; context: ConversationContext } | null> {
     logger.info(
-      `loadConversationIntoContext: loading ${conversationId} for user ${userId}`,
+      `loadConversationIntoContext: loading ${conversationId} for user ${userId}`
     );
 
     const conversation = await this.getConversationById(conversationId, userId);
 
     if (!conversation) {
       logger.warn(
-        `loadConversationIntoContext: conversation ${conversationId} not found for user ${userId}`,
+        `loadConversationIntoContext: conversation ${conversationId} not found for user ${userId}`
       );
       return null;
     }
 
     logger.info(
-      `loadConversationIntoContext: found conversation ${conversationId} with ${conversation.messages.length} messages`,
+      `loadConversationIntoContext: found conversation ${conversationId} with ${conversation.messages.length} messages`
     );
 
     return {
@@ -810,7 +828,7 @@ export class ConversationService {
    */
   async deleteConversation(
     conversationId: string,
-    userId: string,
+    userId: string
   ): Promise<boolean> {
     const { error: msgError } = await SUPABASE.from("conversation_messages")
       .delete()
@@ -818,7 +836,7 @@ export class ConversationService {
 
     if (msgError) {
       logger.error(
-        `Failed to delete messages for ${conversationId}: ${msgError.message}`,
+        `Failed to delete messages for ${conversationId}: ${msgError.message}`
       );
       return false;
     }
@@ -830,7 +848,7 @@ export class ConversationService {
 
     if (error) {
       logger.error(
-        `Failed to delete conversation ${conversationId}: ${error.message}`,
+        `Failed to delete conversation ${conversationId}: ${error.message}`
       );
       return false;
     }
@@ -857,7 +875,7 @@ export class ConversationService {
 
     if (error) {
       logger.error(
-        `Failed to close active conversation for user ${userId}: ${error.message}`,
+        `Failed to close active conversation for user ${userId}: ${error.message}`
       );
       return false;
     }
@@ -875,17 +893,20 @@ export class ConversationService {
    * const result = await service.deleteAllConversations("user-456");
    * console.log(`Deleted ${result.deletedCount} conversations`);
    */
-  async deleteAllConversations(userId: string): Promise<{ success: boolean; deletedCount: number }> {
+  async deleteAllConversations(
+    userId: string
+  ): Promise<{ success: boolean; deletedCount: number }> {
     // First, get all conversation IDs for this user
-    const { data: conversations, error: fetchError } = await SUPABASE
-      .from("conversations")
+    const { data: conversations, error: fetchError } = await SUPABASE.from(
+      "conversations"
+    )
       .select("id")
       .eq("user_id", userId)
       .eq("source", this.source);
 
     if (fetchError) {
       logger.error(
-        `Failed to fetch conversations for deletion for user ${userId}: ${fetchError.message}`,
+        `Failed to fetch conversations for deletion for user ${userId}: ${fetchError.message}`
       );
       return { success: false, deletedCount: 0 };
     }
@@ -897,34 +918,32 @@ export class ConversationService {
     const conversationIds = conversations.map((c) => c.id);
 
     // Delete all messages for these conversations
-    const { error: msgError } = await SUPABASE
-      .from("conversation_messages")
+    const { error: msgError } = await SUPABASE.from("conversation_messages")
       .delete()
       .in("conversation_id", conversationIds);
 
     if (msgError) {
       logger.error(
-        `Failed to delete messages for user ${userId}: ${msgError.message}`,
+        `Failed to delete messages for user ${userId}: ${msgError.message}`
       );
       return { success: false, deletedCount: 0 };
     }
 
     // Delete all conversations
-    const { error: convError } = await SUPABASE
-      .from("conversations")
+    const { error: convError } = await SUPABASE.from("conversations")
       .delete()
       .eq("user_id", userId)
       .eq("source", this.source);
 
     if (convError) {
       logger.error(
-        `Failed to delete conversations for user ${userId}: ${convError.message}`,
+        `Failed to delete conversations for user ${userId}: ${convError.message}`
       );
       return { success: false, deletedCount: 0 };
     }
 
     logger.info(
-      `Deleted ${conversationIds.length} conversations for user ${userId}`,
+      `Deleted ${conversationIds.length} conversations for user ${userId}`
     );
 
     return { success: true, deletedCount: conversationIds.length };
@@ -956,22 +975,27 @@ export class ConversationService {
   async createShareLink(
     conversationId: string,
     userId: string,
-    expiresInDays = 7,
+    expiresInDays = 7
   ): Promise<{ token: string; expiresAt: string } | null> {
-    logger.info(`createShareLink: attempting for conversation ${conversationId}, user ${userId}`)
+    logger.info(
+      `createShareLink: attempting for conversation ${conversationId}, user ${userId}`
+    );
 
-    const { data: conversation, error: fetchError } = await SUPABASE
-      .from("conversations")
+    const { data: conversation, error: fetchError } = await SUPABASE.from(
+      "conversations"
+    )
       .select("id, user_id")
       .eq("id", conversationId)
       .eq("user_id", userId)
       .single();
 
-    logger.info(`createShareLink: query result - data: ${JSON.stringify(conversation)}, error: ${fetchError?.message || "none"}`)
+    logger.info(
+      `createShareLink: query result - data: ${JSON.stringify(conversation)}, error: ${fetchError?.message || "none"}`
+    );
 
     if (fetchError || !conversation) {
       logger.error(
-        `createShareLink: conversation ${conversationId} not found for user ${userId} - error: ${fetchError?.message}`,
+        `createShareLink: conversation ${conversationId} not found for user ${userId} - error: ${fetchError?.message}`
       );
       return null;
     }
@@ -980,8 +1004,7 @@ export class ConversationService {
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + expiresInDays);
 
-    const { error: updateError } = await SUPABASE
-      .from("conversations")
+    const { error: updateError } = await SUPABASE.from("conversations")
       .update({
         share_token: token,
         share_expires_at: expiresAt.toISOString(),
@@ -991,13 +1014,13 @@ export class ConversationService {
 
     if (updateError) {
       logger.error(
-        `createShareLink: failed to update conversation ${conversationId}: ${updateError.message}`,
+        `createShareLink: failed to update conversation ${conversationId}: ${updateError.message}`
       );
       return null;
     }
 
     logger.info(
-      `createShareLink: created share link for conversation ${conversationId}, expires ${expiresAt.toISOString()}`,
+      `createShareLink: created share link for conversation ${conversationId}, expires ${expiresAt.toISOString()}`
     );
 
     return { token, expiresAt: expiresAt.toISOString() };
@@ -1014,10 +1037,9 @@ export class ConversationService {
    */
   async revokeShareLink(
     conversationId: string,
-    userId: string,
+    userId: string
   ): Promise<boolean> {
-    const { error } = await SUPABASE
-      .from("conversations")
+    const { error } = await SUPABASE.from("conversations")
       .update({
         share_token: null,
         share_expires_at: null,
@@ -1028,12 +1050,14 @@ export class ConversationService {
 
     if (error) {
       logger.error(
-        `revokeShareLink: failed to revoke share for ${conversationId}: ${error.message}`,
+        `revokeShareLink: failed to revoke share for ${conversationId}: ${error.message}`
       );
       return false;
     }
 
-    logger.info(`revokeShareLink: revoked share link for conversation ${conversationId}`);
+    logger.info(
+      `revokeShareLink: revoked share link for conversation ${conversationId}`
+    );
     return true;
   }
 
@@ -1049,15 +1073,18 @@ export class ConversationService {
    *   console.log(`Viewing shared conversation: ${shared.title}`);
    * }
    */
-  async getSharedConversation(token: string): Promise<SharedConversation | null> {
-    const { data: conversation, error } = await SUPABASE
-      .from("conversations")
+  async getSharedConversation(
+    token: string
+  ): Promise<SharedConversation | null> {
+    const { data: conversation, error } = await SUPABASE.from("conversations")
       .select("id, title, summary, created_at, share_expires_at, message_count")
       .eq("share_token", token)
       .single();
 
     if (error || !conversation) {
-      logger.warn(`getSharedConversation: invalid token or conversation not found`);
+      logger.warn(
+        "getSharedConversation: invalid token or conversation not found"
+      );
       return null;
     }
 
@@ -1066,7 +1093,7 @@ export class ConversationService {
       const expiresAt = new Date(conversation.share_expires_at);
       if (expiresAt < new Date()) {
         logger.warn(
-          `getSharedConversation: share link expired for conversation ${conversation.id}`,
+          `getSharedConversation: share link expired for conversation ${conversation.id}`
         );
         return null;
       }
@@ -1094,10 +1121,9 @@ export class ConversationService {
    */
   async getShareStatus(
     conversationId: string,
-    userId: string,
+    userId: string
   ): Promise<{ isShared: boolean; token?: string; expiresAt?: string } | null> {
-    const { data, error } = await SUPABASE
-      .from("conversations")
+    const { data, error } = await SUPABASE.from("conversations")
       .select("share_token, share_expires_at")
       .eq("id", conversationId)
       .eq("user_id", userId)

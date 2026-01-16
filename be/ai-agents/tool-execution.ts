@@ -1,22 +1,25 @@
-import { ACTION, SUPABASE } from "@/config";
+import type { calendar_v3 } from "googleapis";
+import isEmail from "validator/lib/isEmail";
+import { ACTION } from "@/config";
+import { fetchCredentialsByEmail, generateGoogleAuthUrl } from "@/utils/auth";
 import {
   eventsHandler,
   initUserSupabaseCalendarWithTokensAndUpdateTokens,
 } from "@/utils/calendar";
-import { fetchCredentialsByEmail, generateGoogleAuthUrl } from "@/utils/auth";
-import { formatEventData, parseToolArguments } from "./utils";
-
-import { asyncHandler } from "@/utils/http";
-import type { calendar_v3 } from "googleapis";
 import { getEvents } from "@/utils/calendar/get-events";
-import isEmail from "validator/lib/isEmail";
+import { asyncHandler } from "@/utils/http";
+import { formatEventData, parseToolArguments } from "./utils";
 
 type Event = calendar_v3.Schema$Event;
 
 function isValidDateTime(dt: string): boolean {
-  if (!dt || dt.trim() === "") return false;
+  if (!dt || dt.trim() === "") {
+    return false;
+  }
   const parsed = Date.parse(dt);
-  if (isNaN(parsed)) return false;
+  if (Number.isNaN(parsed)) {
+    return false;
+  }
   const year = new Date(parsed).getFullYear();
   return year >= 2020 && year <= 2100;
 }
@@ -27,7 +30,7 @@ function isValidDateTime(dt: string): boolean {
  */
 async function applyDefaultTimezoneIfNeeded(
   event: Partial<Event>,
-  email: string,
+  email: string
 ): Promise<Partial<Event>> {
   const hasTimedStart = !!event.start?.dateTime;
   const hasTimedEnd = !!event.end?.dateTime;
@@ -35,7 +38,7 @@ async function applyDefaultTimezoneIfNeeded(
   const hasEndTz = !!event.end?.timeZone;
 
   // If not a timed event or already has timezone, return as-is
-  if ((!hasTimedStart && !hasTimedEnd) || hasStartTz || hasEndTz) {
+  if (!(hasTimedStart || hasTimedEnd) || hasStartTz || hasEndTz) {
     return event;
   }
 
@@ -82,7 +85,7 @@ export const EXECUTION_TOOLS = {
         message:
           "Please authorize access to your Google Calendar using the provided URL.",
       };
-    },
+    }
   ),
 
   insertEvent: asyncHandler(
@@ -91,7 +94,7 @@ export const EXECUTION_TOOLS = {
         email: string;
         customEvents?: boolean;
         addMeetLink?: boolean;
-      },
+      }
     ) => {
       const { email, calendarId, eventLike } = parseToolArguments(params);
       if (!(email && isEmail(email))) {
@@ -101,7 +104,7 @@ export const EXECUTION_TOOLS = {
       // If timed event without timezone, fetch user's default calendar timezone
       const eventWithTimezone = await applyDefaultTimezoneIfNeeded(
         eventLike as Event,
-        email,
+        email
       );
       const eventData: Event = formatEventData(eventWithTimezone);
       return eventsHandler(null, ACTION.INSERT, eventData, {
@@ -110,12 +113,12 @@ export const EXECUTION_TOOLS = {
         customEvents: params.customEvents ?? false,
         addMeetLink: params.addMeetLink ?? false,
       });
-    },
+    }
   ),
 
   updateEvent: asyncHandler(
     async (
-      params: calendar_v3.Schema$Event & { email: string; eventId: string },
+      params: calendar_v3.Schema$Event & { email: string; eventId: string }
     ) => {
       const { email, calendarId, eventId, eventLike } =
         parseToolArguments(params);
@@ -144,12 +147,12 @@ export const EXECUTION_TOOLS = {
           !isValidDateTime(eventLike.start.dateTime)
         ) {
           throw new Error(
-            `Invalid start dateTime format: ${eventLike.start.dateTime}`,
+            `Invalid start dateTime format: ${eventLike.start.dateTime}`
           );
         }
         const startWithTz = await applyDefaultTimezoneIfNeeded(
           { start: eventLike.start } as Event,
-          email,
+          email
         );
         updateData.start = startWithTz.start;
       }
@@ -159,12 +162,12 @@ export const EXECUTION_TOOLS = {
           !isValidDateTime(eventLike.end.dateTime)
         ) {
           throw new Error(
-            `Invalid end dateTime format: ${eventLike.end.dateTime}`,
+            `Invalid end dateTime format: ${eventLike.end.dateTime}`
           );
         }
         const endWithTz = await applyDefaultTimezoneIfNeeded(
           { end: eventLike.end } as Event,
-          email,
+          email
         );
         updateData.end = endWithTz.end;
       }
@@ -174,7 +177,7 @@ export const EXECUTION_TOOLS = {
         calendarId: calendarId ?? "primary",
         eventId,
       });
-    },
+    }
   ),
 
   getEvent: asyncHandler(
@@ -186,7 +189,7 @@ export const EXECUTION_TOOLS = {
         timeMax?: string | null;
         searchAllCalendars?: boolean;
         calendarId?: string | null;
-      },
+      }
     ) => {
       // Default timeMin to start of today in RFC3339 format (required by Google Calendar API)
       const today = new Date();
@@ -220,7 +223,7 @@ export const EXECUTION_TOOLS = {
       // calendarId is added when iterating across calendars (see allEventsResults loop)
       const slimEvent = (
         event: calendar_v3.Schema$Event,
-        calendarId?: string | null,
+        calendarId?: string | null
       ) => ({
         id: event.id,
         calendarId: calendarId ?? event.organizer?.email ?? "primary", // Include calendar ID for updates
@@ -260,8 +263,8 @@ export const EXECUTION_TOOLS = {
                 singleEvents: true,
                 orderBy: "startTime",
               },
-            }),
-          ),
+            })
+          )
         );
 
         // Aggregate all events from all calendars (with limits)
@@ -320,9 +323,9 @@ export const EXECUTION_TOOLS = {
           q: params.q || "",
           singleEvents: true,
           orderBy: "startTime",
-        },
+        }
       );
-    },
+    }
   ),
 
   deleteEvent: asyncHandler(
@@ -342,8 +345,8 @@ export const EXECUTION_TOOLS = {
         null,
         ACTION.DELETE,
         { id: eventId },
-        { email, calendarId: calendarId ?? "primary" },
+        { email, calendarId: calendarId ?? "primary" }
       );
-    },
+    }
   ),
 };

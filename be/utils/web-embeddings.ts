@@ -10,8 +10,6 @@
  * 3. Implement actual embedding storage and search
  */
 
-import { logger } from "./logger";
-
 type WebEmbeddingMetadata = {
   role: "user" | "assistant";
   userId: string;
@@ -106,7 +104,9 @@ export const searchWebSimilarConversations = async (
  * ]);
  * // Returns: "Relevant past conversations:\n[85% relevant] User: Meeting at 3pm"
  */
-export const buildWebSemanticContext = (conversations: SimilarConversation[]): string => {
+export const buildWebSemanticContext = (
+  conversations: SimilarConversation[]
+): string => {
   if (conversations.length === 0) {
     return "";
   }

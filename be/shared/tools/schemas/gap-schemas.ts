@@ -1,4 +1,4 @@
-import { z } from "zod"
+import { z } from "zod";
 
 export const analyzeGapsSchema = z
   .object({
@@ -15,8 +15,8 @@ export const analyzeGapsSchema = z
       .describe("Calendar ID to analyze. Defaults to 'primary'."),
   })
   .describe(
-    "Parameters for analyzing gaps in the user's calendar. Email is automatically provided from user context.",
-  )
+    "Parameters for analyzing gaps in the user's calendar. Email is automatically provided from user context."
+  );
 
 export const fillGapSchema = z
   .object({
@@ -44,8 +44,8 @@ export const fillGapSchema = z
       .describe("Calendar ID to create the event in."),
   })
   .describe(
-    "Parameters for filling a gap with a new calendar event. Email is automatically provided from user context.",
-  )
+    "Parameters for filling a gap with a new calendar event. Email is automatically provided from user context."
+  );
 
 export const formatGapsDisplaySchema = z
   .object({
@@ -53,8 +53,8 @@ export const formatGapsDisplaySchema = z
       .string()
       .describe("The gaps array from analyze_gaps_direct as a JSON string."),
   })
-  .describe("Format gaps for display.")
+  .describe("Format gaps for display.");
 
-export type AnalyzeGapsParams = z.infer<typeof analyzeGapsSchema>
-export type FillGapParams = z.infer<typeof fillGapSchema>
-export type FormatGapsDisplayParams = z.infer<typeof formatGapsDisplaySchema>
+export type AnalyzeGapsParams = z.infer<typeof analyzeGapsSchema>;
+export type FillGapParams = z.infer<typeof fillGapSchema>;
+export type FormatGapsDisplayParams = z.infer<typeof formatGapsDisplaySchema>;

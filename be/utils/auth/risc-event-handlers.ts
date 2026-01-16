@@ -7,13 +7,13 @@
 
 import { logger } from "@/utils/logger";
 import { userRepository } from "@/utils/repositories/UserRepository";
+import { extractGoogleSubjectId } from "./risc-jwt-verifier";
 import {
   RISC_EVENT_TYPES,
-  type RiscSecurityEventToken,
-  type RiscEventResult,
   type RiscEventData,
+  type RiscEventResult,
+  type RiscSecurityEventToken,
 } from "./risc-types";
-import { extractGoogleSubjectId } from "./risc-jwt-verifier";
 
 /**
  * Processes all events in a RISC Security Event Token
@@ -30,7 +30,11 @@ export async function processRiscEvents(
   });
 
   for (const [eventType, eventData] of Object.entries(payload.events)) {
-    const result = await processRiscEvent(eventType, eventData, googleSubjectId);
+    const result = await processRiscEvent(
+      eventType,
+      eventData,
+      googleSubjectId
+    );
     results.push(result);
   }
 
@@ -105,7 +109,8 @@ async function handleTokensRevoked(
     `RISC: Handling tokens-revoked for Google subject: ${googleSubjectId}`
   );
 
-  const result = await userRepository.revokeTokensByGoogleSubjectId(googleSubjectId);
+  const result =
+    await userRepository.revokeTokensByGoogleSubjectId(googleSubjectId);
 
   if (!result.success) {
     return {
@@ -158,7 +163,8 @@ async function handleTokenRevoked(
   // For simplicity, we treat token-revoked the same as tokens-revoked
   // since we only store one set of tokens per user-provider combination.
   // A more sophisticated implementation could hash stored tokens and compare.
-  const result = await userRepository.revokeTokensByGoogleSubjectId(googleSubjectId);
+  const result =
+    await userRepository.revokeTokensByGoogleSubjectId(googleSubjectId);
 
   if (!result.success) {
     return {
@@ -207,7 +213,8 @@ async function handleSessionsRevoked(
   // Revoke tokens to force re-authentication
   // Note: Since we use Supabase Auth with cookie-based sessions,
   // revoking OAuth tokens will force re-authentication on next API call
-  const result = await userRepository.revokeTokensByGoogleSubjectId(googleSubjectId);
+  const result =
+    await userRepository.revokeTokensByGoogleSubjectId(googleSubjectId);
 
   if (!result.success) {
     return {
@@ -254,7 +261,8 @@ async function handleAccountDisabled(
     { reason: eventData.reason }
   );
 
-  const result = await userRepository.suspendUserByGoogleSubjectId(googleSubjectId);
+  const result =
+    await userRepository.suspendUserByGoogleSubjectId(googleSubjectId);
 
   if (!result.success) {
     return {
@@ -331,7 +339,8 @@ async function handleCredentialChangeRequired(
   );
 
   // Revoke tokens to force re-authentication after credential change
-  const result = await userRepository.revokeTokensByGoogleSubjectId(googleSubjectId);
+  const result =
+    await userRepository.revokeTokensByGoogleSubjectId(googleSubjectId);
 
   if (!result.success) {
     return {
@@ -378,7 +387,8 @@ async function handleAccountPurged(
   );
 
   // Revoke tokens - we don't delete user data, just invalidate Google connection
-  const result = await userRepository.revokeTokensByGoogleSubjectId(googleSubjectId);
+  const result =
+    await userRepository.revokeTokensByGoogleSubjectId(googleSubjectId);
 
   if (!result.success) {
     // User may not exist in our system - log but consider success

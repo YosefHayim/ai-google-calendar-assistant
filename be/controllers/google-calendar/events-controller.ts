@@ -37,22 +37,26 @@ const getEventById = reqResAsyncHandler(async (req: Request, res: Response) => {
       res,
       STATUS_RESPONSE.BAD_REQUEST,
       "Event ID is required in order to get specific event."
-    );
+    )
   }
 
-  const r = await req.calendar!.events.get({
+  if (!req.calendar) {
+    return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available")
+  }
+
+  const r = await req.calendar.events.get({
     ...REQUEST_CONFIG_BASE,
     calendarId: (req?.query?.calendarId as string) ?? "primary",
     eventId: req.params.id,
-  });
+  })
 
   return sendR(
     res,
     STATUS_RESPONSE.SUCCESS,
     "Event retrieved successfully",
     r.data
-  );
-});
+  )
+})
 
 /**
  * Get all events
@@ -321,7 +325,7 @@ const quickAddEvent = reqResAsyncHandler(
  *
  */
 const watchEvents = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const r = await req.calendar!.events.watch({
+  const r = await req.calendar?.events.watch({
     ...req.body,
     ...REQUEST_CONFIG_BASE,
     calendarId: (req.query.calendarId as string) ?? "primary",
@@ -341,7 +345,7 @@ const watchEvents = reqResAsyncHandler(async (req: Request, res: Response) => {
  *
  */
 const moveEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const r = await req.calendar!.events.move({
+  const r = await req.calendar?.events.move({
     ...req.body,
     ...REQUEST_CONFIG_BASE,
     calendarId: (req.query.calendarId as string) ?? "primary",
@@ -358,7 +362,10 @@ const moveEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
  */
 const getEventInstances = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const r = await req.calendar!.events.instances({
+    if (!req.calendar) {
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available")
+    }
+    const r = await req.calendar.events.instances({
       ...REQUEST_CONFIG_BASE,
       calendarId: (req.query.calendarId as string) ?? "primary",
       eventId: req.params.id,
@@ -367,16 +374,16 @@ const getEventInstances = reqResAsyncHandler(
       timeZone: req.query.timeZone as string,
       originalStart: req.query.originalStart as string,
       showDeleted: req.query.showDeleted === "true",
-    });
+    })
 
     return sendR(
       res,
       STATUS_RESPONSE.SUCCESS,
       "Event instances retrieved successfully",
       r.data
-    );
+    )
   }
-);
+)
 
 /**
  * Import an event (creates a private copy)
@@ -386,7 +393,10 @@ const getEventInstances = reqResAsyncHandler(
  * @returns {Promise<void>} The response object.
  */
 const importEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const r = await req.calendar!.events.import({
+  if (!req.calendar) {
+    return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available")
+  }
+  const r = await req.calendar.events.import({
     ...REQUEST_CONFIG_BASE,
     calendarId: (req.query.calendarId as string) ?? "primary",
     conferenceDataVersion: req.query.conferenceDataVersion
@@ -408,15 +418,15 @@ const importEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
       organizer: req.body.organizer,
       sequence: req.body.sequence,
     },
-  });
+  })
 
   return sendR(
     res,
     STATUS_RESPONSE.CREATED,
     "Event imported successfully",
     r.data
-  );
-});
+  )
+})
 
 /**
  * Get AI-powered insights for calendar events

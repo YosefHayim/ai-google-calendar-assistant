@@ -10,35 +10,35 @@ export type SSEEventType =
   | "error"
   | "heartbeat";
 
-export interface SSEEvent<T = unknown> {
+export type SSEEvent<T = unknown> = {
   type: SSEEventType;
   data: T;
   timestamp: string;
-}
+};
 
-export interface TextDeltaData {
+export type TextDeltaData = {
   delta: string;
   fullText?: string;
-}
+};
 
-export interface ToolStartData {
+export type ToolStartData = {
   tool: string;
   agent: string;
   args?: Record<string, unknown>;
-}
+};
 
-export interface ToolCompleteData {
+export type ToolCompleteData = {
   tool: string;
   result: "success" | "error";
   output?: string;
-}
+};
 
-export interface AgentSwitchData {
+export type AgentSwitchData = {
   from: string;
   to: string;
-}
+};
 
-export interface DoneData {
+export type DoneData = {
   conversationId: string;
   fullResponse: string;
   usage?: {
@@ -46,17 +46,17 @@ export interface DoneData {
     inputTokens?: number;
     outputTokens?: number;
   };
-}
+};
 
-export interface ErrorData {
+export type ErrorData = {
   message: string;
   code: string;
-}
+};
 
-export interface TitleGeneratedData {
+export type TitleGeneratedData = {
   conversationId: string;
   title: string;
-}
+};
 
 /**
  * @description Configures the HTTP response headers for Server-Sent Events (SSE) streaming.
@@ -94,7 +94,7 @@ export function setupSSEHeaders(res: Response): void {
 export function writeSSEEvent<T>(
   res: Response,
   eventType: SSEEventType,
-  data: T,
+  data: T
 ): void {
   const event: SSEEvent<T> = {
     type: eventType,
@@ -121,7 +121,7 @@ export function writeSSEEvent<T>(
 export function writeTextDelta(
   res: Response,
   delta: string,
-  fullText?: string,
+  fullText?: string
 ): void {
   writeSSEEvent<TextDeltaData>(res, "text_delta", { delta, fullText });
 }
@@ -141,7 +141,7 @@ export function writeToolStart(
   res: Response,
   tool: string,
   agent: string,
-  args?: Record<string, unknown>,
+  args?: Record<string, unknown>
 ): void {
   writeSSEEvent<ToolStartData>(res, "tool_start", { tool, agent, args });
 }
@@ -162,7 +162,7 @@ export function writeToolComplete(
   res: Response,
   tool: string,
   result: "success" | "error",
-  output?: string,
+  output?: string
 ): void {
   writeSSEEvent<ToolCompleteData>(res, "tool_complete", {
     tool,
@@ -184,7 +184,7 @@ export function writeToolComplete(
 export function writeAgentSwitch(
   res: Response,
   from: string,
-  to: string,
+  to: string
 ): void {
   writeSSEEvent<AgentSwitchData>(res, "agent_switch", { from, to });
 }
@@ -208,7 +208,7 @@ export function writeDone(
   res: Response,
   conversationId: string,
   fullResponse: string,
-  usage?: DoneData["usage"],
+  usage?: DoneData["usage"]
 ): void {
   writeSSEEvent<DoneData>(res, "done", { conversationId, fullResponse, usage });
 }
@@ -227,7 +227,7 @@ export function writeDone(
 export function writeError(
   res: Response,
   message: string,
-  code = "STREAM_ERROR",
+  code = "STREAM_ERROR"
 ): void {
   writeSSEEvent<ErrorData>(res, "error", { message, code });
 }
@@ -245,7 +245,7 @@ export function writeError(
 export function writeTitleGenerated(
   res: Response,
   conversationId: string,
-  title: string,
+  title: string
 ): void {
   writeSSEEvent<TitleGeneratedData>(res, "title_generated", {
     conversationId,
@@ -277,7 +277,7 @@ export function writeHeartbeat(res: Response): void {
  * // ... do streaming work ...
  * stopHeartbeat(); // Clean up when done
  */
-export function startHeartbeat(res: Response, intervalMs = 15000): () => void {
+export function startHeartbeat(res: Response, intervalMs = 15_000): () => void {
   const interval = setInterval(() => {
     if (!res.writableEnded) {
       writeHeartbeat(res);

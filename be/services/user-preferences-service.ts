@@ -22,57 +22,57 @@ export type PreferenceKey =
   | "cross_platform_sync"
   | "geo_location";
 
-export interface AllyBrainPreference {
+export type AllyBrainPreference = {
   enabled: boolean;
   instructions: string;
-}
+};
 
-export interface ContextualSchedulingPreference {
+export type ContextualSchedulingPreference = {
   enabled: boolean;
-}
+};
 
-export interface EventReminder {
+export type EventReminder = {
   method: "email" | "popup";
   minutes: number;
-}
+};
 
-export interface ReminderDefaultsPreference {
+export type ReminderDefaultsPreference = {
   enabled: boolean;
   defaultReminders: EventReminder[];
   useCalendarDefaults: boolean;
-}
+};
 
-export interface VoicePreference {
+export type VoicePreference = {
   enabled: boolean;
   voice: "alloy" | "echo" | "fable" | "onyx" | "nova" | "shimmer";
-}
+};
 
-export interface AgentProfilePreference {
+export type AgentProfilePreference = {
   profileId: string;
-}
+};
 
 export type BriefingChannel = "email" | "telegram" | "whatsapp" | "slack";
 
-export interface DailyBriefingPreference {
+export type DailyBriefingPreference = {
   enabled: boolean;
   time: string; // HH:MM (24-hour format)
   timezone: string; // IANA timezone (e.g., "America/New_York")
   lastSentDate?: string; // YYYY-MM-DD for duplicate prevention
   channel: BriefingChannel;
-}
+};
 
-export interface CrossPlatformSyncPreference {
+export type CrossPlatformSyncPreference = {
   enabled: boolean;
-}
+};
 
-export interface GeoLocationPreference {
+export type GeoLocationPreference = {
   enabled: boolean;
   lastKnownLocation?: {
     latitude: number;
     longitude: number;
     timestamp: string;
   };
-}
+};
 
 export type PreferenceValue =
   | AllyBrainPreference
@@ -84,11 +84,11 @@ export type PreferenceValue =
   | CrossPlatformSyncPreference
   | GeoLocationPreference;
 
-export interface PreferenceResult<T> {
+export type PreferenceResult<T> = {
   value: T;
   updatedAt?: string;
   isDefault: boolean;
-}
+};
 
 // ============================================
 // Default Values
@@ -104,7 +104,12 @@ export const PREFERENCE_DEFAULTS: Record<PreferenceKey, PreferenceValue> = {
   },
   voice_preference: { enabled: true, voice: "alloy" },
   agent_profile: { profileId: "" },
-  daily_briefing: { enabled: false, time: "08:00", timezone: "UTC", channel: "email" },
+  daily_briefing: {
+    enabled: false,
+    time: "08:00",
+    timezone: "UTC",
+    channel: "email",
+  },
   cross_platform_sync: { enabled: true },
   geo_location: { enabled: false },
 };
@@ -229,7 +234,7 @@ export async function getPreferenceWithMeta<T extends PreferenceValue>(
  */
 export async function getAllPreferences(
   userId: string,
-  _category: string = "assistant"
+  _category = "assistant"
 ): Promise<Record<string, PreferenceResult<PreferenceValue>>> {
   try {
     const preferences = await getUserPreferences(userId);
@@ -265,7 +270,7 @@ export async function updatePreference<T extends PreferenceValue>(
   userId: string,
   key: PreferenceKey,
   value: T,
-  _category: string = "assistant"
+  _category = "assistant"
 ): Promise<PreferenceResult<T>> {
   const preferences = await getUserPreferences(userId);
   preferences[key] = value as unknown as Json;

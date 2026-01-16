@@ -125,11 +125,15 @@ describe("getEventDurationString", () => {
     });
 
     it("should return null for invalid start date", () => {
-      expect(getEventDurationString("invalid", "2024-01-01T10:00:00Z")).toBeNull();
+      expect(
+        getEventDurationString("invalid", "2024-01-01T10:00:00Z")
+      ).toBeNull();
     });
 
     it("should return null for invalid end date", () => {
-      expect(getEventDurationString("2024-01-01T10:00:00Z", "invalid")).toBeNull();
+      expect(
+        getEventDurationString("2024-01-01T10:00:00Z", "invalid")
+      ).toBeNull();
     });
 
     it("should return null when end is before start", () => {

@@ -1,9 +1,8 @@
-import { isRedisConnected, redisClient } from "@/config";
-
-import type { GlobalContext } from "../init-bot";
 import type { MiddlewareFn } from "grammy";
+import { isRedisConnected, redisClient } from "@/config";
 import { auditLogger } from "@/utils/audit-logger";
 import { logger } from "@/utils/logger";
+import type { GlobalContext } from "../init-bot";
 
 // Rate limit configurations
 const RATE_LIMITS = {
@@ -31,13 +30,18 @@ type RateLimitResult = {
  * Check rate limit for a specific type and user
  * Uses Redis INCR with TTL for atomic rate limiting
  */
-const checkRateLimit = async (userId: number, type: RateLimitType): Promise<RateLimitResult> => {
+const checkRateLimit = async (
+  userId: number,
+  type: RateLimitType
+): Promise<RateLimitResult> => {
   const config = RATE_LIMITS[type];
   const key = `${config.keyPrefix}${userId}`;
 
   // Graceful degradation if Redis is unavailable
   if (!isRedisConnected()) {
-    logger.warn(`Rate limiter: Redis unavailable, allowing request for user ${userId}`);
+    logger.warn(
+      `Rate limiter: Redis unavailable, allowing request for user ${userId}`
+    );
     return { allowed: true, remaining: config.maxAttempts, resetInMs: 0 };
   }
 
@@ -75,12 +79,17 @@ const checkRateLimit = async (userId: number, type: RateLimitType): Promise<Rate
 /**
  * Reset rate limit for a user (e.g., after successful auth)
  */
-export const resetRateLimit = async (userId: number, type: RateLimitType): Promise<void> => {
+export const resetRateLimit = async (
+  userId: number,
+  type: RateLimitType
+): Promise<void> => {
   const key = `${RATE_LIMITS[type].keyPrefix}${userId}`;
   try {
     await redisClient.del(key);
   } catch (error) {
-    logger.error(`Rate limiter: Failed to reset limit for user ${userId}: ${error}`);
+    logger.error(
+      `Rate limiter: Failed to reset limit for user ${userId}: ${error}`
+    );
   }
 };
 
@@ -88,18 +97,28 @@ export const resetRateLimit = async (userId: number, type: RateLimitType): Promi
  * Rate limiter middleware for authentication attempts
  * Limits: 5 attempts per 15 minutes per telegram_user_id
  */
-export const authRateLimiter: MiddlewareFn<GlobalContext> = async (ctx, next) => {
+export const authRateLimiter: MiddlewareFn<GlobalContext> = async (
+  ctx,
+  next
+) => {
   const userId = ctx.from?.id;
-  if (!userId) return next();
+  if (!userId) {
+    return next();
+  }
 
-  const { allowed, remaining, resetInMs } = await checkRateLimit(userId, "auth");
+  const { allowed, remaining, resetInMs } = await checkRateLimit(
+    userId,
+    "auth"
+  );
 
   if (!allowed) {
-    const resetInMinutes = Math.ceil(resetInMs / 60000);
+    const resetInMinutes = Math.ceil(resetInMs / 60_000);
 
     auditLogger.rateLimitHit(userId, "auth", resetInMinutes * 60);
 
-    await ctx.reply(`Too many authentication attempts. Please try again in ${resetInMinutes} minute(s).`);
+    await ctx.reply(
+      `Too many authentication attempts. Please try again in ${resetInMinutes} minute(s).`
+    );
     return; // Stop middleware chain
   }
 
@@ -110,18 +129,28 @@ export const authRateLimiter: MiddlewareFn<GlobalContext> = async (ctx, next) =>
  * Rate limiter middleware for message processing
  * Limits: 30 messages per minute per telegram_user_id
  */
-export const messageRateLimiter: MiddlewareFn<GlobalContext> = async (ctx, next) => {
+export const messageRateLimiter: MiddlewareFn<GlobalContext> = async (
+  ctx,
+  next
+) => {
   const userId = ctx.from?.id;
-  if (!userId) return next();
+  if (!userId) {
+    return next();
+  }
 
-  const { allowed, remaining, resetInMs } = await checkRateLimit(userId, "messages");
+  const { allowed, remaining, resetInMs } = await checkRateLimit(
+    userId,
+    "messages"
+  );
 
   if (!allowed) {
     const resetInSeconds = Math.ceil(resetInMs / 1000);
 
     auditLogger.rateLimitHit(userId, "messages", resetInSeconds);
 
-    await ctx.reply(`You're sending messages too quickly. Please wait ${resetInSeconds} seconds.`);
+    await ctx.reply(
+      `You're sending messages too quickly. Please wait ${resetInSeconds} seconds.`
+    );
     return; // Stop middleware chain
   }
   return next();

@@ -1,61 +1,61 @@
 import type { Bot } from "grammy";
 import { InputFile } from "grammy";
-import type { GlobalContext } from "./bot-config";
+import type { ImageContent } from "@/shared/llm";
+import { generateSpeechForTelegram } from "@/utils/ai/text-to-speech";
+import { transcribeAudio } from "@/utils/ai/voice-transcription";
+import { logger } from "@/utils/logger";
 import { getTranslatorFromLanguageCode } from "../i18n";
 import {
+  CANCEL_RESPONSES,
   COMMANDS,
   CONFIRM_RESPONSES,
-  CANCEL_RESPONSES,
-  isDuplicateMessage,
   handlePendingEmailChange,
   initiateEmailChange,
+  isDuplicateMessage,
   startTypingIndicator,
 } from "../utils";
+import { getVoicePreferenceForTelegram } from "../utils/ally-brain";
 import {
-  handleExitCommand,
-  handleUsageCommand,
-  handleStartCommand,
-  handleHelpCommand,
-  handleTodayCommand,
-  handleTomorrowCommand,
-  handleWeekCommand,
-  handleMonthCommand,
-  handleFreeCommand,
-  handleBusyCommand,
-  handleQuickCommand,
-  handleCancelCommand,
-  handleRemindCommand,
-  handleStatusCommand,
-  handleSettingsCommand,
-  handleFeedbackCommand,
-  handleAnalyticsCommand,
-  handleCalendarsCommand,
-  handleSearchCommand,
-  handleCreateCommand,
-  handleUpdateCommand,
-  handleDeleteCommand,
-  handleChangeEmailCommand,
-  handleLanguageCommand,
   handleAboutMeCommand,
-  handleBrainCommand,
-  handleBrainInstructionsInput,
+  handleAnalyticsCommand,
   handleAsTextCommand,
   handleAsVoiceCommand,
+  handleBrainCommand,
+  handleBrainInstructionsInput,
+  handleBusyCommand,
+  handleCalendarsCommand,
+  handleCancelCommand,
+  handleChangeEmailCommand,
+  handleCreateCommand,
+  handleDeleteCommand,
+  handleExitCommand,
+  handleFeedbackCommand,
+  handleFreeCommand,
+  handleHelpCommand,
+  handleLanguageCommand,
+  handleMonthCommand,
   handleProfileCommand,
-  handleWebsiteCommand,
+  handleQuickCommand,
+  handleRemindCommand,
   handleRescheduleCommand,
+  handleSearchCommand,
+  handleSettingsCommand,
+  handleStartCommand,
+  handleStatusCommand,
+  handleTodayCommand,
+  handleTomorrowCommand,
+  handleUpdateCommand,
+  handleUsageCommand,
+  handleWebsiteCommand,
+  handleWeekCommand,
 } from "../utils/commands";
+import { processPhoto } from "../utils/image-handler";
 import {
   handleAgentRequest,
-  handleConfirmation,
   handleCancellation,
+  handleConfirmation,
 } from "./agent-handler";
-import { transcribeAudio } from "@/utils/ai/voice-transcription";
-import { generateSpeechForTelegram } from "@/utils/ai/text-to-speech";
-import { getVoicePreferenceForTelegram } from "../utils/ally-brain";
-import { processPhoto, MAX_IMAGES } from "../utils/image-handler";
-import { logger } from "@/utils/logger";
-import type { ImageContent } from "@/shared/llm";
+import type { GlobalContext } from "./bot-config";
 
 const MessageAction = {
   CONFIRM: "confirm",
@@ -85,7 +85,7 @@ const classifyConfirmationResponse = (text: string): MessageActionType => {
 
 const handlePendingConfirmation = async (
   ctx: GlobalContext,
-  text: string,
+  text: string
 ): Promise<void> => {
   const action = classifyConfirmationResponse(text);
   const { t } = getTranslatorFromLanguageCode(ctx.session.codeLang);
@@ -196,7 +196,7 @@ const AGENT_COMMANDS: Record<string, AgentCommand> = {
 
 const handleSessionStates = async (
   ctx: GlobalContext,
-  text: string,
+  text: string
 ): Promise<boolean> => {
   const { t } = getTranslatorFromLanguageCode(ctx.session.codeLang);
 
@@ -233,15 +233,15 @@ const handleSessionStates = async (
   return false;
 };
 
-interface MessageOptions {
+type MessageOptions = {
   respondWithVoice?: boolean;
   images?: ImageContent[];
-}
+};
 
 const handleFreeTextMessage = async (
   ctx: GlobalContext,
   text: string,
-  options: MessageOptions = {},
+  options: MessageOptions = {}
 ): Promise<void> => {
   const { t } = getTranslatorFromLanguageCode(ctx.session.codeLang);
 
@@ -256,7 +256,7 @@ const handleFreeTextMessage = async (
 const handleAgentRequestWithVoice = async (
   ctx: GlobalContext,
   text: string,
-  options: MessageOptions = {},
+  options: MessageOptions = {}
 ): Promise<void> => {
   const { respondWithVoice = false, images } = options;
   const telegramUserId = ctx.from?.id ?? 0;
@@ -265,7 +265,7 @@ const handleAgentRequestWithVoice = async (
 
   ctx.reply = async (
     textResponse: string,
-    other?: Parameters<typeof originalReply>[1],
+    other?: Parameters<typeof originalReply>[1]
   ) => {
     let sentAsVoice = false;
 
@@ -276,13 +276,13 @@ const handleAgentRequestWithVoice = async (
         const cleanText = textResponse.replace(/<[^>]*>/g, "");
         const ttsResult = await generateSpeechForTelegram(
           cleanText,
-          voicePref.voice,
+          voicePref.voice
         );
 
         if (ttsResult.success && ttsResult.audioBuffer) {
           try {
             await ctx.replyWithVoice(
-              new InputFile(ttsResult.audioBuffer, "response.ogg"),
+              new InputFile(ttsResult.audioBuffer, "response.ogg")
             );
             sentAsVoice = true;
 
@@ -340,19 +340,21 @@ const handleVoiceMessage = async (ctx: GlobalContext): Promise<void> => {
 
     const transcription = await transcribeAudio(audioBuffer, "audio/ogg");
 
-    if (!transcription.success || !transcription.text) {
+    if (!(transcription.success && transcription.text)) {
       stopTyping();
       await ctx.reply(transcription.error ?? t("errors.processingError"));
       return;
     }
 
     logger.info(
-      `TG Voice: Transcribed ${audioBuffer.length} bytes to "${transcription.text.substring(0, 50)}..." for user ${telegramUserId}`,
+      `TG Voice: Transcribed ${audioBuffer.length} bytes to "${transcription.text.substring(0, 50)}..." for user ${telegramUserId}`
     );
 
     // Stop typing before passing to agent (agent handler will start its own)
     stopTyping();
-    await handleFreeTextMessage(ctx, transcription.text, { respondWithVoice: true });
+    await handleFreeTextMessage(ctx, transcription.text, {
+      respondWithVoice: true,
+    });
   } catch (error) {
     logger.error(`TG Voice: Error processing voice message: ${error}`);
     await ctx.reply(t("errors.processingError"));
@@ -437,9 +439,7 @@ export const registerMessageHandler = (bot: Bot<GlobalContext>): void => {
 
       const images = [imageContent];
 
-      logger.info(
-        `TG Photo: Processing 1 image for user ${ctx.from?.id ?? 0}`,
-      );
+      logger.info(`TG Photo: Processing 1 image for user ${ctx.from?.id ?? 0}`);
 
       // Use caption as the message, or a default prompt
       const text = caption || t("common.analyzeImage");

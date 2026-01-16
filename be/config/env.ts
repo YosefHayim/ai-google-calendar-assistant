@@ -66,11 +66,15 @@ const REQUIRED_SECRETS = [
   "GOOGLE_CLIENT_SECRET",
 ] as const;
 
-const missing = REQUIRED_SECRETS.filter((key) => !process.env[key]);
-if (missing.length > 0) {
-  throw new Error(
-    `Missing required secret environment variables: ${missing.join(", ")}`
-  );
+const isTestEnv = process.env.TEST_ENV === "true" || process.env.NODE_ENV === "test";
+
+if (!isTestEnv) {
+  const missing = REQUIRED_SECRETS.filter((key) => !process.env[key]);
+  if (missing.length > 0) {
+    throw new Error(
+      `Missing required secret environment variables: ${missing.join(", ")}`
+    );
+  }
 }
 
 // ============================================================================
@@ -79,7 +83,12 @@ if (missing.length > 0) {
 
 const getOptional = (key: string): string | undefined =>
   process.env[key] || undefined;
-const getRequired = (key: string): string => process.env[key]!;
+const getRequired = (key: string): string => {
+  if (isTestEnv && !process.env[key]) {
+    return `test-${key.toLowerCase().replace(/_/g, "-")}`;
+  }
+  return process.env[key]!;
+};
 
 // ============================================================================
 // Environment Detection

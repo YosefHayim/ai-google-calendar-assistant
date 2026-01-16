@@ -1,8 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
-import { sendErrorResponse } from "@/utils/http";
-import type { HttpError } from "@/utils/http";
-
 import { STATUS_RESPONSE } from "@/config";
+import type { HttpError } from "@/utils/http";
+import { sendErrorResponse } from "@/utils/http";
 
 /**
  * Extract HTTP status from error
@@ -13,7 +12,11 @@ import { STATUS_RESPONSE } from "@/config";
 const getErrorStatus = (err: Error): number => {
   const errWithStatus = err as Error & { status?: number };
   const errWithCause = err as HttpError;
-  return errWithStatus.status || errWithCause.cause?.status || STATUS_RESPONSE.INTERNAL_SERVER_ERROR;
+  return (
+    errWithStatus.status ||
+    errWithCause.cause?.status ||
+    STATUS_RESPONSE.INTERNAL_SERVER_ERROR
+  );
 };
 
 /**
@@ -25,7 +28,12 @@ const getErrorStatus = (err: Error): number => {
  * @param {NextFunction} _next - The next function.
  * @description Handles errors and sends the error response to the client.
  */
-const errorHandler = (err: Error, _req: Request, res: Response, _next: NextFunction) => {
+const errorHandler = (
+  err: Error,
+  _req: Request,
+  res: Response,
+  _next: NextFunction
+) => {
   const status = getErrorStatus(err);
   const message = err.message || "Internal Server Error";
   sendErrorResponse(res, status, message);

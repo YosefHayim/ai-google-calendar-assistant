@@ -1,5 +1,5 @@
-import type { Database } from "@/database.types";
 import { jest } from "@jest/globals";
+import type { Database } from "@/database.types";
 
 /**
  * Mock Supabase user data
@@ -20,7 +20,7 @@ export const mockTokenData = {
   access_token: "mock-access-token",
   refresh_token: "mock-refresh-token",
   token_type: "Bearer",
-  expiry_date: Date.now() + 3600000,
+  expiry_date: Date.now() + 3_600_000,
   email: "test@example.com",
 };
 
@@ -49,65 +49,68 @@ export const mockUserRecord: Database["public"]["Tables"]["users"]["Row"] = {
 /**
  * Mock OAuth tokens (oauth_tokens table)
  */
-export const mockOAuthToken: Database["public"]["Tables"]["oauth_tokens"]["Row"] = {
-  id: "test-oauth-id",
-  user_id: "test-user-id",
-  provider: "google",
-  provider_user_id: "google-user-id",
-  access_token: "mock-access-token",
-  refresh_token: "mock-refresh-token",
-  token_type: "Bearer",
-  id_token: "mock-id-token",
-  scope: "https://www.googleapis.com/auth/calendar",
-  expires_at: new Date(Date.now() + 3600000).toISOString(),
-  refresh_token_expires_at: null,
-  is_valid: true,
-  last_refreshed_at: "2024-01-01T00:00:00Z",
-  refresh_error_count: 0,
-  created_at: "2024-01-01T00:00:00Z",
-  updated_at: "2024-01-01T00:00:00Z",
-};
+export const mockOAuthToken: Database["public"]["Tables"]["oauth_tokens"]["Row"] =
+  {
+    id: "test-oauth-id",
+    user_id: "test-user-id",
+    provider: "google",
+    provider_user_id: "google-user-id",
+    access_token: "mock-access-token",
+    refresh_token: "mock-refresh-token",
+    token_type: "Bearer",
+    id_token: "mock-id-token",
+    scope: "https://www.googleapis.com/auth/calendar",
+    expires_at: new Date(Date.now() + 3_600_000).toISOString(),
+    refresh_token_expires_at: null,
+    is_valid: true,
+    last_refreshed_at: "2024-01-01T00:00:00Z",
+    refresh_error_count: 0,
+    created_at: "2024-01-01T00:00:00Z",
+    updated_at: "2024-01-01T00:00:00Z",
+  };
 
 /**
  * Mock user calendar data (user_calendars table)
  */
-export const mockUserCalendar: Database["public"]["Tables"]["user_calendars"]["Row"] = {
-  id: "test-calendar-id",
-  user_id: "test-user-id",
-  calendar_id: "primary",
-  calendar_name: "Primary Calendar",
-  access_role: "owner",
-  timezone: "America/New_York",
-  is_primary: true,
-  is_visible: true,
-  notification_enabled: true,
-  default_reminders: null,
-  background_color: null,
-  foreground_color: null,
-  sync_token: null,
-  last_synced_at: null,
-  created_at: "2024-01-01T00:00:00Z",
-  updated_at: "2024-01-01T00:00:00Z",
-};
+export const mockUserCalendar: Database["public"]["Tables"]["user_calendars"]["Row"] =
+  {
+    id: "test-calendar-id",
+    user_id: "test-user-id",
+    calendar_id: "primary",
+    calendar_name: "Primary Calendar",
+    access_role: "owner",
+    timezone: "America/New_York",
+    is_primary: true,
+    is_visible: true,
+    notification_enabled: true,
+    default_reminders: null,
+    background_color: null,
+    foreground_color: null,
+    sync_token: null,
+    last_synced_at: null,
+    created_at: "2024-01-01T00:00:00Z",
+    updated_at: "2024-01-01T00:00:00Z",
+  };
 
 /**
  * Mock telegram user data (telegram_users table)
  */
-export const mockTelegramUser: Database["public"]["Tables"]["telegram_users"]["Row"] = {
-  id: "test-telegram-id",
-  user_id: "test-user-id",
-  telegram_user_id: 123456789,
-  telegram_chat_id: 123456789,
-  telegram_username: "testuser",
-  first_name: "Test",
-  language_code: "en",
-  is_bot: false,
-  is_linked: true,
-  pending_email: null,
-  last_activity_at: "2024-01-01T00:00:00Z",
-  created_at: "2024-01-01T00:00:00Z",
-  updated_at: "2024-01-01T00:00:00Z",
-};
+export const mockTelegramUser: Database["public"]["Tables"]["telegram_users"]["Row"] =
+  {
+    id: "test-telegram-id",
+    user_id: "test-user-id",
+    telegram_user_id: 123_456_789,
+    telegram_chat_id: 123_456_789,
+    telegram_username: "testuser",
+    first_name: "Test",
+    language_code: "en",
+    is_bot: false,
+    is_linked: true,
+    pending_email: null,
+    last_activity_at: "2024-01-01T00:00:00Z",
+    created_at: "2024-01-01T00:00:00Z",
+    updated_at: "2024-01-01T00:00:00Z",
+  };
 
 // Legacy alias for backwards compatibility
 export const mockTelegramLink = mockTelegramUser;
@@ -163,7 +166,9 @@ export const createMockSupabaseErrors = () => ({
 /**
  * Create a Supabase error object
  */
-export const createMockSupabaseError = (errorType: keyof ReturnType<typeof createMockSupabaseErrors>) => {
+export const createMockSupabaseError = (
+  errorType: keyof ReturnType<typeof createMockSupabaseErrors>
+) => {
   const errors = createMockSupabaseErrors();
   return errors[errorType];
 };
@@ -172,7 +177,7 @@ export const createMockSupabaseError = (errorType: keyof ReturnType<typeof creat
  * In-memory data store for testing
  */
 class InMemoryDataStore {
-  private data: Map<string, any[]> = new Map();
+  private readonly data: Map<string, any[]> = new Map();
 
   constructor() {
     // Initialize with default mock data (new schema)
@@ -214,7 +219,11 @@ class InMemoryDataStore {
     return newRecord;
   }
 
-  update(tableName: string, updates: any, filter: (record: any) => boolean): any[] {
+  update(
+    tableName: string,
+    updates: any,
+    filter: (record: any) => boolean
+  ): any[] {
     const table = this.getTable(tableName);
     const updatedRecords: any[] = [];
 
@@ -251,7 +260,7 @@ class InMemoryDataStore {
     return deletedRecords;
   }
 
-  select(tableName: string, columns: string = "*"): any[] {
+  select(tableName: string, _columns = "*"): any[] {
     return this.getTable(tableName);
   }
 }
@@ -259,10 +268,13 @@ class InMemoryDataStore {
 /**
  * Create a mock query builder with chainable methods
  */
-const createMockQueryBuilder = (tableName: string, dataStore: InMemoryDataStore) => {
-  let currentData: any[] = dataStore.getTable(tableName);
-  let selectColumns = "*";
-  let filters: Array<(record: any) => boolean> = [];
+const createMockQueryBuilder = (
+  tableName: string,
+  dataStore: InMemoryDataStore
+) => {
+  const currentData: any[] = dataStore.getTable(tableName);
+  let _selectColumns = "*";
+  const filters: Array<(record: any) => boolean> = [];
   let limitCount: number | null = null;
   let shouldReturnSingle = false;
   let updateData: any = null;
@@ -285,15 +297,20 @@ const createMockQueryBuilder = (tableName: string, dataStore: InMemoryDataStore)
       try {
         const inserted = dataStore.insert(tableName, insertData);
         return { data: inserted, error: null };
-      } catch (error: any) {
-        return { data: null, error: createMockSupabaseError("uniqueViolation") };
+      } catch (_error: any) {
+        return {
+          data: null,
+          error: createMockSupabaseError("uniqueViolation"),
+        };
       }
     }
 
     if (updateData) {
       const filterFn = (record: any) => {
         for (const filter of filters) {
-          if (!filter(record)) return false;
+          if (!filter(record)) {
+            return false;
+          }
         }
         return true;
       };
@@ -304,7 +321,9 @@ const createMockQueryBuilder = (tableName: string, dataStore: InMemoryDataStore)
     if (isDeleteOperation) {
       const filterFn = (record: any) => {
         for (const filter of filters) {
-          if (!filter(record)) return false;
+          if (!filter(record)) {
+            return false;
+          }
         }
         return true;
       };
@@ -325,8 +344,8 @@ const createMockQueryBuilder = (tableName: string, dataStore: InMemoryDataStore)
 
   const builder: any = {
     select: jest.fn((columns: string = "*") => {
-      selectColumns = columns;
-      return builder;
+      _selectColumns = columns
+      return builder
     }),
     insert: jest.fn((data: any) => {
       insertData = data;
@@ -382,13 +401,11 @@ const createMockQueryBuilder = (tableName: string, dataStore: InMemoryDataStore)
       filters.push((record) => record[column] === value);
       return builder;
     }),
-    not: jest.fn((column: string, operator: string, value: any) => {
+    not: jest.fn((column: string, _operator: string, value: any) => {
       filters.push((record) => record[column] !== value);
       return builder;
     }),
-    or: jest.fn((condition: string) => {
-      return builder;
-    }),
+    or: jest.fn((_condition: string) => builder),
     limit: jest.fn((count: number) => {
       limitCount = count;
       return builder;
@@ -405,9 +422,9 @@ const createMockQueryBuilder = (tableName: string, dataStore: InMemoryDataStore)
       }
       return result;
     }),
-    then: jest.fn((resolve: any) => {
-      return Promise.resolve(executeQuery()).then(resolve);
-    }),
+    then: jest.fn((resolve: any) =>
+      Promise.resolve(executeQuery()).then(resolve)
+    ),
   };
 
   return builder;
@@ -420,21 +437,36 @@ export const createMockSupabaseClient = (dataStore?: InMemoryDataStore) => {
   const store = dataStore || new InMemoryDataStore();
 
   const mockAuth = {
-    getUser: jest.fn(() => Promise.resolve({ data: { user: mockUser }, error: null })),
-    signInWithOAuth: jest.fn(() => Promise.resolve({ data: { url: "https://mock-oauth-url.com" }, error: null })),
+    getUser: jest.fn(() =>
+      Promise.resolve({ data: { user: mockUser }, error: null })
+    ),
+    signInWithOAuth: jest.fn(() =>
+      Promise.resolve({
+        data: { url: "https://mock-oauth-url.com" },
+        error: null,
+      })
+    ),
     signOut: jest.fn(() => Promise.resolve({ error: null })),
-    getSession: jest.fn(() => Promise.resolve({ data: { session: { user: mockUser } }, error: null })),
-    refreshSession: jest.fn(() => Promise.resolve({
-      data: { session: { user: mockUser, access_token: "new-token" } },
-      error: null,
-    })),
-    setSession: jest.fn(() => Promise.resolve({ data: { session: { user: mockUser } }, error: null })),
+    getSession: jest.fn(() =>
+      Promise.resolve({ data: { session: { user: mockUser } }, error: null })
+    ),
+    refreshSession: jest.fn(() =>
+      Promise.resolve({
+        data: { session: { user: mockUser, access_token: "new-token" } },
+        error: null,
+      })
+    ),
+    setSession: jest.fn(() =>
+      Promise.resolve({ data: { session: { user: mockUser } }, error: null })
+    ),
     onAuthStateChange: jest.fn(),
   };
 
   return {
     auth: mockAuth,
-    from: jest.fn((tableName: string) => createMockQueryBuilder(tableName, store)),
+    from: jest.fn((tableName: string) =>
+      createMockQueryBuilder(tableName, store)
+    ),
     rpc: jest.fn(),
     storage: {
       from: jest.fn(() => ({
@@ -453,6 +485,8 @@ export const createMockSupabaseClient = (dataStore?: InMemoryDataStore) => {
 /**
  * Helper to reset mock data store
  */
-export const resetMockDataStore = (client: ReturnType<typeof createMockSupabaseClient>) => {
+export const resetMockDataStore = (
+  client: ReturnType<typeof createMockSupabaseClient>
+) => {
   client.__dataStore.reset();
 };

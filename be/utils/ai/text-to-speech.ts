@@ -49,7 +49,7 @@ export type TTSResult = {
  */
 export async function generateSpeech(
   text: string,
-  voice: TTSVoice = DEFAULT_VOICE,
+  voice: TTSVoice = DEFAULT_VOICE
 ): Promise<TTSResult> {
   if (!text.trim()) {
     return { success: false, error: "No text provided for speech generation" };
@@ -58,7 +58,7 @@ export async function generateSpeech(
   const inputText =
     text.length > MAX_TTS_CHARS
       ? (logger.warn(
-          `TTS: Truncating text from ${text.length} to ${MAX_TTS_CHARS} chars`,
+          `TTS: Truncating text from ${text.length} to ${MAX_TTS_CHARS} chars`
         ),
         text.substring(0, MAX_TTS_CHARS))
       : text;
@@ -105,7 +105,7 @@ export async function generateSpeech(
  */
 export async function generateSpeechForTelegram(
   text: string,
-  voice: TTSVoice = DEFAULT_VOICE,
+  voice: TTSVoice = DEFAULT_VOICE
 ): Promise<TTSResult> {
   if (!text.trim()) {
     return { success: false, error: "No text provided for speech generation" };
@@ -114,7 +114,7 @@ export async function generateSpeechForTelegram(
   const inputText =
     text.length > MAX_TTS_CHARS
       ? (logger.warn(
-          `TTS: Truncating text from ${text.length} to ${MAX_TTS_CHARS} chars`,
+          `TTS: Truncating text from ${text.length} to ${MAX_TTS_CHARS} chars`
         ),
         text.substring(0, MAX_TTS_CHARS))
       : text;
@@ -131,7 +131,7 @@ export async function generateSpeechForTelegram(
     const audioBuffer = Buffer.from(arrayBuffer);
 
     logger.debug(
-      `TTS: Generated ${audioBuffer.length} bytes of Opus audio for Telegram`,
+      `TTS: Generated ${audioBuffer.length} bytes of Opus audio for Telegram`
     );
 
     return { success: true, audioBuffer };

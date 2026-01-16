@@ -1,37 +1,35 @@
-export type { HandlerContext } from "@/shared/types"
+export type { HandlerContext } from "@/shared/types";
+export type {
+  ConflictCheckResult,
+  PreCreateValidationResult,
+  SelectCalendarResult,
+  TimezoneResult,
+  UserCalendar,
+  ValidateUserResult,
+} from "./direct-handlers";
 
 export {
+  checkConflictsHandler,
+  getCalendarCategoriesByEmail,
+  getTimezoneHandler,
+  preCreateValidationHandler,
+  selectCalendarHandler,
+  validateUserHandler,
+} from "./direct-handlers";
+export {
+  deleteEventHandler,
   getEventHandler,
   insertEventHandler,
   updateEventHandler,
-  deleteEventHandler,
-} from "./event-handlers"
-
-export {
-  validateUserHandler,
-  getTimezoneHandler,
-  selectCalendarHandler,
-  checkConflictsHandler,
-  preCreateValidationHandler,
-  getCalendarCategoriesByEmail,
-} from "./direct-handlers"
+} from "./event-handlers";
 export type {
-  ValidateUserResult,
-  TimezoneResult,
-  SelectCalendarResult,
-  ConflictCheckResult,
-  PreCreateValidationResult,
-  UserCalendar,
-} from "./direct-handlers"
-
+  AnalyzeGapsResult,
+  FillGapResult,
+  FormatGapsResult,
+  GapCandidateDTO,
+} from "./gap-handlers";
 export {
   analyzeGapsHandler,
   fillGapHandler,
   formatGapsHandler,
-} from "./gap-handlers"
-export type {
-  GapCandidateDTO,
-  AnalyzeGapsResult,
-  FillGapResult,
-  FormatGapsResult,
-} from "./gap-handlers"
+} from "./gap-handlers";

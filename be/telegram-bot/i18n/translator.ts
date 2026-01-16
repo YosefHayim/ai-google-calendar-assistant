@@ -1,16 +1,16 @@
-import i18next, { type i18n, type TFunction } from "i18next"
+import i18next, { type i18n, type TFunction } from "i18next";
 import {
-  type SupportedLocale,
-  type TextDirection,
-  SUPPORTED_LOCALES,
   DEFAULT_LOCALE,
-  I18N_RESOURCES,
   getDirection,
   getLocaleFromLanguageCode,
-} from "./config"
+  I18N_RESOURCES,
+  SUPPORTED_LOCALES,
+  type SupportedLocale,
+  type TextDirection,
+} from "./config";
 
-export { SUPPORTED_LOCALES, getDirection, getLocaleFromLanguageCode }
-export type { SupportedLocale, TextDirection }
+export { SUPPORTED_LOCALES, getDirection, getLocaleFromLanguageCode };
+export type { SupportedLocale, TextDirection };
 
 const I18N_INIT_CONFIG = {
   lng: DEFAULT_LOCALE,
@@ -19,50 +19,58 @@ const I18N_INIT_CONFIG = {
   debug: false,
   interpolation: { escapeValue: false },
   resources: I18N_RESOURCES,
-} as const
+} as const;
 
-let i18nInstance: i18n | null = null
+let i18nInstance: i18n | null = null;
 
 export async function initI18n(): Promise<i18n> {
-  if (i18nInstance) return i18nInstance
+  if (i18nInstance) {
+    return i18nInstance;
+  }
 
-  i18nInstance = i18next.createInstance()
-  await i18nInstance.init(I18N_INIT_CONFIG)
-  return i18nInstance
+  i18nInstance = i18next.createInstance();
+  await i18nInstance.init(I18N_INIT_CONFIG);
+  return i18nInstance;
 }
 
 export function initI18nSync(): i18n {
-  if (i18nInstance) return i18nInstance
+  if (i18nInstance) {
+    return i18nInstance;
+  }
 
-  i18nInstance = i18next.createInstance()
-  i18nInstance.init({ ...I18N_INIT_CONFIG, initAsync: false })
-  return i18nInstance
+  i18nInstance = i18next.createInstance();
+  i18nInstance.init({ ...I18N_INIT_CONFIG, initAsync: false });
+  return i18nInstance;
 }
 
 export function getI18nInstance(): i18n {
-  if (!i18nInstance) return initI18nSync()
-  return i18nInstance
+  if (!i18nInstance) {
+    return initI18nSync();
+  }
+  return i18nInstance;
 }
 
-export interface I18nTranslator {
-  t: TFunction
-  locale: SupportedLocale
-  direction: TextDirection
-}
+export type I18nTranslator = {
+  t: TFunction;
+  locale: SupportedLocale;
+  direction: TextDirection;
+};
 
 export function getTranslator(locale: SupportedLocale): I18nTranslator {
-  const instance = getI18nInstance()
+  const instance = getI18nInstance();
   return {
     t: instance.getFixedT(locale),
     locale,
     direction: getDirection(locale),
-  }
+  };
 }
 
-export function getTranslatorFromLanguageCode(languageCode: string | undefined): I18nTranslator {
-  return getTranslator(getLocaleFromLanguageCode(languageCode))
+export function getTranslatorFromLanguageCode(
+  languageCode: string | undefined
+): I18nTranslator {
+  return getTranslator(getLocaleFromLanguageCode(languageCode));
 }
 
 export function createTranslator(locale: SupportedLocale): I18nTranslator {
-  return getTranslator(locale)
+  return getTranslator(locale);
 }

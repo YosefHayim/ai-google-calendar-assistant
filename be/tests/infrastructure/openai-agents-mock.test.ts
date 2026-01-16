@@ -1,8 +1,8 @@
+import { beforeEach, describe, expect, it } from "@jest/globals";
 import {
-  MockAgent,
-  createMockAgent,
   createMockAgentError,
   createMockAgentResponse,
+  MockAgent,
   mockAgentErrors,
   mockAgentFactory,
   mockAgentResponses,
@@ -11,7 +11,6 @@ import {
   mockEventAgentResponses,
   resetMockAgentTools,
 } from "../../mocks/openai-agents";
-import { beforeEach, describe, expect, it } from "@jest/globals";
 
 describe("OpenAI Agents Mock Factory", () => {
   describe("MockAgent Class", () => {
@@ -77,7 +76,7 @@ describe("OpenAI Agents Mock Factory", () => {
       }
 
       expect(chunks.length).toBeGreaterThan(0);
-      expect(chunks[chunks.length - 1].status).toBe("completed");
+      expect(chunks.at(-1).status).toBe("completed");
     });
 
     it("should include model settings", () => {
@@ -99,7 +98,9 @@ describe("OpenAI Agents Mock Factory", () => {
         handoffDescription: "Handles user validation",
       });
 
-      expect(agentWithHandoff.handoffDescription).toBe("Handles user validation");
+      expect(agentWithHandoff.handoffDescription).toBe(
+        "Handles user validation"
+      );
     });
   });
 
@@ -530,7 +531,9 @@ describe("OpenAI Agents Mock Factory", () => {
       });
 
       // Simulate workflow
-      const validateResult = await validateAgent.run({ input: "test@example.com" });
+      const validateResult = await validateAgent.run({
+        input: "test@example.com",
+      });
       const validateData = JSON.parse(validateResult.response || "{}");
 
       expect(validateData.isValid).toBe(true);

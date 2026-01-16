@@ -1,4 +1,4 @@
-import { startOfDay, isToday as dateFnsIsToday, parseISO } from "date-fns"
+import { isToday as dateFnsIsToday, parseISO, startOfDay } from "date-fns";
 
 /**
  * @description Returns a new Date object set to the start of the day (00:00:00.000) for the given date.
@@ -16,7 +16,8 @@ import { startOfDay, isToday as dateFnsIsToday, parseISO } from "date-fns"
  * const dayStart = getStartOfDay(specificDate)
  * // Returns: 2026-03-15T00:00:00.000Z
  */
-export const getStartOfDay = (date: Date = new Date()): Date => startOfDay(date)
+export const getStartOfDay = (date: Date = new Date()): Date =>
+  startOfDay(date);
 
 /**
  * @description Checks if the given ISO date string represents today's date.
@@ -33,4 +34,5 @@ export const getStartOfDay = (date: Date = new Date()): Date => startOfDay(date)
  * const result = isToday('2025-12-25T00:00:00Z')
  * // Returns: false
  */
-export const isToday = (dateString: string): boolean => dateFnsIsToday(parseISO(dateString))
+export const isToday = (dateString: string): boolean =>
+  dateFnsIsToday(parseISO(dateString));

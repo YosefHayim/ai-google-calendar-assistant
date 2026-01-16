@@ -1,7 +1,6 @@
 import type { Context, SessionFlavor } from "grammy";
 
 import type { SessionData } from "@/types";
-import { logger } from "@/utils/logger";
 
 type BotContext = SessionFlavor<SessionData> & Context;
 

@@ -1,10 +1,9 @@
-import { AGENT_TOOLS, DIRECT_TOOLS } from "./tool-registry";
-import { CURRENT_MODEL, MODELS } from "@/config";
-
-import { AGENT_INSTRUCTIONS } from "./agents-instructions";
 import { Agent } from "@openai/agents";
+import { CURRENT_MODEL, MODELS } from "@/config";
 import { HANDOFF_DESCRIPTIONS } from "./agent-handoff-descriptions";
+import { AGENT_INSTRUCTIONS } from "./agents-instructions";
 import { calendarSafetyGuardrail } from "./guardrails";
+import { AGENT_TOOLS, DIRECT_TOOLS } from "./tool-registry";
 
 // Model tiers for different agent complexity levels
 const FAST_MODEL = MODELS.GPT_4_1_NANO; // Simple tool-calling agents (fast, cheap)

@@ -1,6 +1,6 @@
-import { TIMEZONE } from "@/config";
 import validator from "validator";
 import { z } from "zod";
+import { TIMEZONE } from "@/config";
 
 // ═══════════════════════════════════════════════════════════════════════════
 // REMINDER SCHEMAS - Google Calendar API compliant
@@ -8,7 +8,7 @@ import { z } from "zod";
 // Methods: "email" or "popup"
 // ═══════════════════════════════════════════════════════════════════════════
 
-const REMINDER_MAX_MINUTES = 40320; // 4 weeks in minutes
+const REMINDER_MAX_MINUTES = 40_320; // 4 weeks in minutes
 
 export const reminderMethodSchema = z.enum(["email", "popup"], {
   description:
@@ -23,7 +23,7 @@ export const eventReminderSchema = z.object({
     .min(0, "Reminder minutes must be non-negative")
     .max(
       REMINDER_MAX_MINUTES,
-      `Reminder cannot be more than ${REMINDER_MAX_MINUTES} minutes (4 weeks) before event`,
+      `Reminder cannot be more than ${REMINDER_MAX_MINUTES} minutes (4 weeks) before event`
     ),
 });
 
@@ -37,7 +37,7 @@ export const eventRemindersSchema = z.object({
     .max(5, "Maximum 5 reminder overrides allowed")
     .default([])
     .describe(
-      "Custom reminders array. Required field - use empty array [] when useDefault is true, or provide up to 5 reminder objects when useDefault is false.",
+      "Custom reminders array. Required field - use empty array [] when useDefault is true, or provide up to 5 reminder objects when useDefault is false."
     ),
 });
 
@@ -51,7 +51,9 @@ const calendarSchema = z.coerce
   })
   .transform((val) => {
     // Reject obviously invalid values and normalize
-    if (!val || val === "/" || val.trim() === "") return null;
+    if (!val || val === "/" || val.trim() === "") {
+      return null;
+    }
     return val.trim();
   })
   .nullable();
@@ -110,7 +112,7 @@ const makeFullEventParams = () =>
       reminders: eventRemindersSchema.nullable().optional(),
     })
     .describe(
-      "Full event parameters including summary, description, location, start, end times, and optional reminders. Email is automatically provided from user context.",
+      "Full event parameters including summary, description, location, start, end times, and optional reminders. Email is automatically provided from user context."
     );
 
 export const PARAMETERS_TOOLS = {
@@ -161,12 +163,12 @@ export const PARAMETERS_TOOLS = {
         .nullable(),
     })
     .describe(
-      "Fetch events for the authenticated user. Email is automatically provided from user context. By default searches all calendars. IMPORTANT: Always provide timeMax to limit query scope.",
+      "Fetch events for the authenticated user. Email is automatically provided from user context. By default searches all calendars. IMPORTANT: Always provide timeMax to limit query scope."
     ),
 
   // INSERT event - no email needed
   insertEventParameters: makeFullEventParams().describe(
-    "Insert a new event into the user's calendar. Email is automatically provided from user context.",
+    "Insert a new event into the user's calendar. Email is automatically provided from user context."
   ),
 
   // UPDATE event - eventId required, all other fields optional with defaults
@@ -176,7 +178,7 @@ export const PARAMETERS_TOOLS = {
     .object({
       eventId: requiredString(
         "The ID of the event to update.",
-        "Event ID is required.",
+        "Event ID is required."
       ),
       calendarId: calendarSchema.default(null),
       summary: z.coerce
@@ -200,14 +202,18 @@ export const PARAMETERS_TOOLS = {
       start: makeEventTime()
         .transform((val) => {
           // Filter out empty values in start time object
-          if (!val) return null;
+          if (!val) {
+            return null;
+          }
           const cleaned = {
             date: val.date === "" ? null : val.date,
             dateTime: val.dateTime === "" ? null : val.dateTime,
             timeZone: val.timeZone === "" ? null : val.timeZone,
           };
           // Return null if all fields are empty/null
-          if (!cleaned.date && !cleaned.dateTime) return null;
+          if (!(cleaned.date || cleaned.dateTime)) {
+            return null;
+          }
           return cleaned;
         })
         .nullable()
@@ -215,21 +221,25 @@ export const PARAMETERS_TOOLS = {
       end: makeEventTime()
         .transform((val) => {
           // Filter out empty values in end time object
-          if (!val) return null;
+          if (!val) {
+            return null;
+          }
           const cleaned = {
             date: val.date === "" ? null : val.date,
             dateTime: val.dateTime === "" ? null : val.dateTime,
             timeZone: val.timeZone === "" ? null : val.timeZone,
           };
           // Return null if all fields are empty/null
-          if (!cleaned.date && !cleaned.dateTime) return null;
+          if (!(cleaned.date || cleaned.dateTime)) {
+            return null;
+          }
           return cleaned;
         })
         .nullable()
         .default(null),
     })
     .describe(
-      "Update an existing event by ID. CRITICAL: Only pass fields you want to change. Do NOT pass summary/description/location unless explicitly changing them. Empty strings are invalid.",
+      "Update an existing event by ID. CRITICAL: Only pass fields you want to change. Do NOT pass summary/description/location unless explicitly changing them. Empty strings are invalid."
     ),
 
   // DELETE event - no email needed
@@ -237,12 +247,12 @@ export const PARAMETERS_TOOLS = {
     .object({
       eventId: requiredString(
         "The ID of the event to delete.",
-        "Event ID is required.",
+        "Event ID is required."
       ),
       calendarId: calendarSchema,
     })
     .describe(
-      "Delete an event by ID. Use the calendarId from the event. Email is automatically provided from user context.",
+      "Delete an event by ID. Use the calendarId from the event. Email is automatically provided from user context."
     ),
 
   // Gap analysis parameters
@@ -261,7 +271,7 @@ export const PARAMETERS_TOOLS = {
         .describe("Calendar ID to analyze. Defaults to 'primary'."),
     })
     .describe(
-      "Parameters for analyzing gaps in the user's calendar. Email is automatically provided from user context.",
+      "Parameters for analyzing gaps in the user's calendar. Email is automatically provided from user context."
     ),
 
   // Fill gap parameters
@@ -291,7 +301,7 @@ export const PARAMETERS_TOOLS = {
         .describe("Calendar ID to create the event in."),
     })
     .describe(
-      "Parameters for filling a gap with a new calendar event. Email is automatically provided from user context.",
+      "Parameters for filling a gap with a new calendar event. Email is automatically provided from user context."
     ),
 
   // Check conflicts across all calendars parameters
@@ -308,11 +318,11 @@ export const PARAMETERS_TOOLS = {
         .nullable()
         .optional()
         .describe(
-          "Event ID to exclude from conflict check (the event being moved).",
+          "Event ID to exclude from conflict check (the event being moved)."
         ),
     })
     .describe(
-      "Check for conflicting events across ALL calendars. Use this when moving events to detect conflicts in other calendars.",
+      "Check for conflicting events across ALL calendars. Use this when moving events to detect conflicts in other calendars."
     ),
 
   // Reminder-related parameters
@@ -320,13 +330,13 @@ export const PARAMETERS_TOOLS = {
     .object({
       eventId: requiredString(
         "The ID of the event to update reminders for.",
-        "Event ID is required.",
+        "Event ID is required."
       ),
       calendarId: calendarSchema,
       reminders: eventRemindersSchema,
     })
     .describe(
-      "Set reminders for a specific event. Can use calendar defaults or custom overrides.",
+      "Set reminders for a specific event. Can use calendar defaults or custom overrides."
     ),
 
   getCalendarDefaultRemindersParameters: z
@@ -350,7 +360,7 @@ export const PARAMETERS_TOOLS = {
         .describe("Array of default reminders to set for the calendar."),
     })
     .describe(
-      "Update the default reminders for a calendar. These will be used when useDefault is true on events.",
+      "Update the default reminders for a calendar. These will be used when useDefault is true on events."
     ),
 
   getUserReminderPreferencesParameters: z
@@ -362,7 +372,7 @@ export const PARAMETERS_TOOLS = {
       enabled: z
         .boolean()
         .describe(
-          "Whether to automatically apply reminder preferences to new events.",
+          "Whether to automatically apply reminder preferences to new events."
         ),
       defaultReminders: z
         .array(eventReminderSchema)
@@ -372,7 +382,7 @@ export const PARAMETERS_TOOLS = {
         .boolean()
         .default(true)
         .describe(
-          "If true, use the calendar's defaults. If false, use the user's custom defaults.",
+          "If true, use the calendar's defaults. If false, use the user's custom defaults."
         ),
     })
     .describe("Update the user's reminder preferences stored in Ally's brain."),

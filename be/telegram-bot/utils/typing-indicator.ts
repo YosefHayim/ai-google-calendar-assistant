@@ -1,5 +1,5 @@
-import type { GlobalContext } from "../handlers/bot-config";
 import { logger } from "@/utils/logger";
+import type { GlobalContext } from "../handlers/bot-config";
 
 const TYPING_INTERVAL_MS = 4000; // Telegram typing indicator lasts ~5 seconds
 
@@ -16,7 +16,9 @@ export function startTypingIndicator(ctx: GlobalContext): () => void {
   let isActive = true;
 
   const sendTyping = async () => {
-    if (!isActive) return;
+    if (!isActive) {
+      return;
+    }
     try {
       await ctx.api.sendChatAction(chatId, "typing");
     } catch (error) {

@@ -51,7 +51,8 @@ export const de = {
     "/brain - Ally Ihre Präferenzen beibringen",
   "commands.help.sections.personalization.items.1":
     "/profile - KI-Assistentenprofil wählen",
-  "commands.help.sections.personalization.items.2": "/language - Sprache ändern",
+  "commands.help.sections.personalization.items.2":
+    "/language - Sprache ändern",
   "commands.help.sections.responseFormats.title": "Antwortformate",
   "commands.help.sections.responseFormats.items.0":
     "/astext - Letzte Antwort als Text wiederholen",
@@ -405,8 +406,10 @@ export const de = {
     "Sie haben eine ausstehende Terminerstellung. Bitte antworten Sie mit 'ja', um trotz Konflikten zu erstellen, oder 'nein', um abzubrechen.",
   "errors.processingPreviousRequest":
     "Moment, ich arbeite noch an Ihrer vorherigen Anfrage...",
-  "errors.imageProcessingError": "Das Bild konnte nicht verarbeitet werden. Bitte versuchen Sie es mit einem anderen Bild.",
-  "errors.tooManyImages": "Sie können bis zu {{max}} Bilder auf einmal senden. Einige Bilder wurden übersprungen.",
+  "errors.imageProcessingError":
+    "Das Bild konnte nicht verarbeitet werden. Bitte versuchen Sie es mit einem anderen Bild.",
+  "errors.tooManyImages":
+    "Sie können bis zu {{max}} Bilder auf einmal senden. Einige Bilder wurden übersprungen.",
 
   "common.confirm": "Bestätigen",
   "common.cancel": "Abbrechen",
@@ -414,7 +417,8 @@ export const de = {
   "common.no": "Nein",
   "common.eventCreationCancelled": "Terminerstellung abgebrochen.",
   "common.typeExitToStop": "Tippen Sie /exit, um zu stoppen.",
-  "common.analyzeImage": "Bitte analysieren Sie dieses Bild und sagen Sie mir, was Sie sehen. Wenn es Kalender- oder Terminplanungsinformationen enthält, helfen Sie mir, den Termin zu erstellen.",
+  "common.analyzeImage":
+    "Bitte analysieren Sie dieses Bild und sagen Sie mir, was Sie sehen. Wenn es Kalender- oder Terminplanungsinformationen enthält, helfen Sie mir, den Termin zu erstellen.",
 
   "botMenu.today": "Heutiger Zeitplan",
   "botMenu.tomorrow": "Agenda für morgen",
@@ -439,46 +443,67 @@ export const de = {
   "botMenu.asvoice": "Letzte als Sprache wiederholen",
 
   "commands.astext.header": "Letzte Antwort als Text",
-  "commands.astext.noLastResponse": "Keine vorherige Antwort zum Anzeigen. Senden Sie mir zuerst eine Nachricht!",
-  "commands.astext.alreadyText": "Die letzte Antwort wurde bereits als Text gesendet.",
+  "commands.astext.noLastResponse":
+    "Keine vorherige Antwort zum Anzeigen. Senden Sie mir zuerst eine Nachricht!",
+  "commands.astext.alreadyText":
+    "Die letzte Antwort wurde bereits als Text gesendet.",
 
   "commands.asvoice.header": "Letzte Antwort als Sprache",
-  "commands.asvoice.noLastResponse": "Keine vorherige Antwort zum Wiederholen. Senden Sie mir zuerst eine Nachricht!",
-  "commands.asvoice.alreadyVoice": "Die letzte Antwort wurde bereits als Sprachnachricht gesendet.",
+  "commands.asvoice.noLastResponse":
+    "Keine vorherige Antwort zum Wiederholen. Senden Sie mir zuerst eine Nachricht!",
+  "commands.asvoice.alreadyVoice":
+    "Die letzte Antwort wurde bereits als Sprachnachricht gesendet.",
   "commands.asvoice.generating": "Sprachnachricht wird generiert...",
-  "commands.asvoice.failed": "Sprachnachricht konnte nicht generiert werden. Hier ist der Text:",
+  "commands.asvoice.failed":
+    "Sprachnachricht konnte nicht generiert werden. Hier ist der Text:",
 
   "commands.website.header": "Web-Dashboard",
-  "commands.website.text": "Greifen Sie auf Ihr Kalender-Dashboard zu und verwalten Sie Ihre Einstellungen online:",
+  "commands.website.text":
+    "Greifen Sie auf Ihr Kalender-Dashboard zu und verwalten Sie Ihre Einstellungen online:",
   "botMenu.website": "Web-Dashboard öffnen",
 
   // Reschedule command
   "commands.reschedule.header": "Intelligentes Umplanen",
-  "commands.reschedule.text": "Sagen Sie mir, welchen Termin Sie verschieben möchten, und ich finde die besten Zeiten:",
-  "commands.reschedule.footerTip": "Beschreiben Sie einfach den Termin, den Sie verschieben möchten.",
+  "commands.reschedule.text":
+    "Sagen Sie mir, welchen Termin Sie verschieben möchten, und ich finde die besten Zeiten:",
+  "commands.reschedule.footerTip":
+    "Beschreiben Sie einfach den Termin, den Sie verschieben möchten.",
   "commands.reschedule.sections.howToUse.title": "Verwendung",
-  "commands.reschedule.sections.howToUse.items.0": "'Verschiebe mein 14-Uhr-Meeting'",
-  "commands.reschedule.sections.howToUse.items.1": "'Verlege den Zahnarzt auf nächste Woche'",
-  "commands.reschedule.sections.howToUse.items.2": "'Verschiebe das Standup auf den Nachmittag'",
+  "commands.reschedule.sections.howToUse.items.0":
+    "'Verschiebe mein 14-Uhr-Meeting'",
+  "commands.reschedule.sections.howToUse.items.1":
+    "'Verlege den Zahnarzt auf nächste Woche'",
+  "commands.reschedule.sections.howToUse.items.2":
+    "'Verschiebe das Standup auf den Nachmittag'",
   "commands.reschedule.sections.smartFeatures.title": "Intelligente Funktionen",
-  "commands.reschedule.sections.smartFeatures.items.0": "KI findet optimale Zeiten basierend auf Ihrem Zeitplan",
-  "commands.reschedule.sections.smartFeatures.items.1": "Prüft alle Kalender auf Konflikte",
-  "commands.reschedule.sections.smartFeatures.items.2": "Berücksichtigt Ihre Präferenzen aus /brain",
+  "commands.reschedule.sections.smartFeatures.items.0":
+    "KI findet optimale Zeiten basierend auf Ihrem Zeitplan",
+  "commands.reschedule.sections.smartFeatures.items.1":
+    "Prüft alle Kalender auf Konflikte",
+  "commands.reschedule.sections.smartFeatures.items.2":
+    "Berücksichtigt Ihre Präferenzen aus /brain",
   "commands.reschedule.suggestionsHeader": "Vorgeschlagene Zeiten",
-  "commands.reschedule.suggestionsText": "Hier sind die besten Zeiten für <b>{{event}}</b>:",
-  "commands.reschedule.noSuggestions": "Keine verfügbaren Zeiten in den nächsten 7 Tagen gefunden.",
+  "commands.reschedule.suggestionsText":
+    "Hier sind die besten Zeiten für <b>{{event}}</b>:",
+  "commands.reschedule.noSuggestions":
+    "Keine verfügbaren Zeiten in den nächsten 7 Tagen gefunden.",
   "commands.reschedule.selectTime": "Tippen Sie auf eine Zeit zum Umplanen:",
   "commands.reschedule.success": "Termin verschoben",
-  "commands.reschedule.successText": "<b>{{event}}</b> wurde auf {{time}} verschoben.",
+  "commands.reschedule.successText":
+    "<b>{{event}}</b> wurde auf {{time}} verschoben.",
   "commands.reschedule.failed": "Umplanung fehlgeschlagen",
-  "commands.reschedule.error": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
+  "commands.reschedule.error":
+    "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
   "commands.reschedule.unknownError": "Termin konnte nicht verschoben werden.",
-  "commands.reschedule.noSession": "Keine aktive Umplanung. Verwenden Sie /reschedule.",
-  "commands.reschedule.invalidSelection": "Ungültige Auswahl. Bitte versuchen Sie es erneut.",
+  "commands.reschedule.noSession":
+    "Keine aktive Umplanung. Verwenden Sie /reschedule.",
+  "commands.reschedule.invalidSelection":
+    "Ungültige Auswahl. Bitte versuchen Sie es erneut.",
   "commands.reschedule.applying": "Wird umgeplant...",
   "commands.reschedule.cancelled": "Umplanung abgebrochen.",
   "commands.reschedule.cancelledHeader": "Abgebrochen",
-  "commands.reschedule.cancelledText": "Keine Änderungen an Ihrem Kalender vorgenommen.",
+  "commands.reschedule.cancelledText":
+    "Keine Änderungen an Ihrem Kalender vorgenommen.",
   "commands.reschedule.keepOriginal": "Original behalten",
   "botMenu.reschedule": "Intelligentes Umplanen",
 } as const;

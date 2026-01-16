@@ -1,8 +1,8 @@
-import type { Database } from "@/database.types";
 import { SUPABASE } from "@/config/clients/supabase";
-import { logger } from "@/utils/logger";
+import type { Database } from "@/database.types";
 import type { userAndAiMessageProps } from "@/types";
-import { getStartOfDay, isToday } from "@/utils/date/date-helpers";
+import { isToday } from "@/utils/date/date-helpers";
+import { logger } from "@/utils/logger";
 
 const MAX_CONTEXT_LENGTH = 1500;
 const MAX_SUMMARY_LENGTH = 1000;
@@ -28,13 +28,11 @@ type ConversationRow = {
   last_message_at: string | null;
 };
 
-const calculateContextLength = (messages: userAndAiMessageProps[]): number => {
-  return messages.reduce((total, msg) => total + (msg.content?.length || 0), 0);
-};
+const calculateContextLength = (messages: userAndAiMessageProps[]): number =>
+  messages.reduce((total, msg) => total + (msg.content?.length || 0), 0);
 
-const mapRoleToDb = (role: "user" | "assistant" | "system"): MessageRole => {
-  return role as MessageRole;
-};
+const mapRoleToDb = (role: "user" | "assistant" | "system"): MessageRole =>
+  role as MessageRole;
 
 const condenseSummary = async (
   existingSummary: string,
@@ -49,7 +47,10 @@ const condenseSummary = async (
 
   try {
     const condensedSummary = await summarizeFn([
-      { role: "user", content: `Please condense this conversation summary:\n${combined}` },
+      {
+        role: "user",
+        content: `Please condense this conversation summary:\n${combined}`,
+      },
     ]);
     return condensedSummary.slice(0, MAX_SUMMARY_LENGTH);
   } catch {
@@ -57,8 +58,13 @@ const condenseSummary = async (
   }
 };
 
-export const getUserIdFromTelegram = async (telegramUserId: number): Promise<string | null> => {
-  const { data, error } = await SUPABASE.from("telegram_users").select("user_id").eq("telegram_user_id", telegramUserId).single();
+export const getUserIdFromTelegram = async (
+  telegramUserId: number
+): Promise<string | null> => {
+  const { data, error } = await SUPABASE.from("telegram_users")
+    .select("user_id")
+    .eq("telegram_user_id", telegramUserId)
+    .single();
 
   if (error || !data?.user_id) {
     return null;
@@ -67,7 +73,9 @@ export const getUserIdFromTelegram = async (telegramUserId: number): Promise<str
   return data.user_id;
 };
 
-export const getTodayConversationState = async (chatId: number): Promise<ConversationRow | null> => {
+export const getTodayConversationState = async (
+  chatId: number
+): Promise<ConversationRow | null> => {
   const { data, error } = await SUPABASE.from("conversations")
     .select("*")
     .eq("external_chat_id", chatId)
@@ -78,11 +86,15 @@ export const getTodayConversationState = async (chatId: number): Promise<Convers
     .maybeSingle();
 
   if (error) {
-    logger.error(`Failed to fetch conversation for chat ${chatId}: ${error.message}`);
+    logger.error(
+      `Failed to fetch conversation for chat ${chatId}: ${error.message}`
+    );
     return null;
   }
 
-  if (!data) return null;
+  if (!data) {
+    return null;
+  }
 
   const updatedAt = data.updated_at || data.created_at;
   if (!isToday(updatedAt)) {
@@ -92,7 +104,9 @@ export const getTodayConversationState = async (chatId: number): Promise<Convers
   return data as ConversationRow;
 };
 
-const getConversationMessages = async (conversationId: string): Promise<userAndAiMessageProps[]> => {
+const getConversationMessages = async (
+  conversationId: string
+): Promise<userAndAiMessageProps[]> => {
   const { data, error } = await SUPABASE.from("conversation_messages")
     .select("role, content, sequence_number")
     .eq("conversation_id", conversationId)
@@ -118,7 +132,9 @@ export const createConversationState = async (
   const userId = await getUserIdFromTelegram(telegramUserId);
 
   if (!userId) {
-    const { data: newTgUser, error: tgError } = await SUPABASE.from("telegram_users")
+    const { data: newTgUser, error: tgError } = await SUPABASE.from(
+      "telegram_users"
+    )
       .upsert(
         {
           telegram_user_id: telegramUserId,
@@ -130,7 +146,9 @@ export const createConversationState = async (
       .single();
 
     if (tgError || !newTgUser?.user_id) {
-      logger.error(`Failed to ensure telegram user exists for chat ${chatId}: ${tgError?.message}`);
+      logger.error(
+        `Failed to ensure telegram user exists for chat ${chatId}: ${tgError?.message}`
+      );
       return null;
     }
   }
@@ -141,7 +159,9 @@ export const createConversationState = async (
     return null;
   }
 
-  const { data: conversation, error: convError } = await SUPABASE.from("conversations")
+  const { data: conversation, error: convError } = await SUPABASE.from(
+    "conversations"
+  )
     .insert({
       user_id: finalUserId,
       source: "telegram",
@@ -153,11 +173,13 @@ export const createConversationState = async (
     .single();
 
   if (convError || !conversation) {
-    logger.error(`Failed to create conversation for chat ${chatId}: ${convError?.message}`);
+    logger.error(
+      `Failed to create conversation for chat ${chatId}: ${convError?.message}`
+    );
     return null;
   }
 
-  if (initialMessage && initialMessage.content) {
+  if (initialMessage?.content) {
     await SUPABASE.from("conversation_messages").insert({
       conversation_id: conversation.id,
       role: mapRoleToDb(initialMessage.role),
@@ -175,7 +197,11 @@ export const createConversationState = async (
   };
 };
 
-export const updateConversationState = async (conversationId: string, context: ConversationContext, messageCount: number): Promise<boolean> => {
+export const updateConversationState = async (
+  conversationId: string,
+  context: ConversationContext,
+  messageCount: number
+): Promise<boolean> => {
   const { error } = await SUPABASE.from("conversations")
     .update({
       message_count: messageCount,
@@ -186,7 +212,9 @@ export const updateConversationState = async (conversationId: string, context: C
     .eq("id", conversationId);
 
   if (error) {
-    logger.error(`Failed to update conversation ${conversationId}: ${error.message}`);
+    logger.error(
+      `Failed to update conversation ${conversationId}: ${error.message}`
+    );
     return false;
   }
 
@@ -210,14 +238,19 @@ export const storeSummary = async (
     .eq("id", conversationId);
 
   if (error) {
-    logger.error(`Failed to store summary for conversation ${conversationId}: ${error.message}`);
+    logger.error(
+      `Failed to store summary for conversation ${conversationId}: ${error.message}`
+    );
     return false;
   }
 
   return true;
 };
 
-export const markAsSummarized = async (conversationId: string, summary: string): Promise<boolean> => {
+export const markAsSummarized = async (
+  conversationId: string,
+  summary: string
+): Promise<boolean> => {
   const { error } = await SUPABASE.from("conversations")
     .update({
       summary,
@@ -226,7 +259,9 @@ export const markAsSummarized = async (conversationId: string, summary: string):
     .eq("id", conversationId);
 
   if (error) {
-    logger.error(`Failed to update summary for conversation ${conversationId}: ${error.message}`);
+    logger.error(
+      `Failed to update summary for conversation ${conversationId}: ${error.message}`
+    );
     return false;
   }
 
@@ -236,7 +271,11 @@ export const markAsSummarized = async (conversationId: string, summary: string):
 export const getOrCreateTodayContext = async (
   chatId: number,
   telegramUserId: number
-): Promise<{ stateId: string; context: ConversationContext; userId?: string }> => {
+): Promise<{
+  stateId: string;
+  context: ConversationContext;
+  userId?: string;
+}> => {
   const existingConversation = await getTodayConversationState(chatId);
 
   if (existingConversation) {
@@ -244,15 +283,22 @@ export const getOrCreateTodayContext = async (
     const context: ConversationContext = {
       messages,
       summary: existingConversation.summary || undefined,
-      lastUpdated: existingConversation.updated_at || existingConversation.created_at,
+      lastUpdated:
+        existingConversation.updated_at || existingConversation.created_at,
     };
-    return { stateId: existingConversation.id, context, userId: existingConversation.user_id };
+    return {
+      stateId: existingConversation.id,
+      context,
+      userId: existingConversation.user_id,
+    };
   }
 
   const newState = await createConversationState(chatId, telegramUserId);
 
   if (!newState) {
-    logger.warn(`Failed to create conversation for chat ${chatId}, using fallback`);
+    logger.warn(
+      `Failed to create conversation for chat ${chatId}, using fallback`
+    );
     return {
       stateId: "",
       context: { messages: [], lastUpdated: new Date().toISOString() },
@@ -271,7 +317,10 @@ export const addMessageToContext = async (
   message: userAndAiMessageProps,
   summarizeFn: (messages: userAndAiMessageProps[]) => Promise<string>
 ): Promise<ConversationContext> => {
-  const { stateId, context, userId } = await getOrCreateTodayContext(chatId, telegramUserId);
+  const { stateId, context, userId } = await getOrCreateTodayContext(
+    chatId,
+    telegramUserId
+  );
 
   if (!stateId) {
     context.messages.push(message);
@@ -289,7 +338,9 @@ export const addMessageToContext = async (
   const nextSequence = (lastMsg?.sequence_number || 0) + 1;
 
   if (message.content) {
-    const { error: insertError } = await SUPABASE.from("conversation_messages").insert({
+    const { error: insertError } = await SUPABASE.from(
+      "conversation_messages"
+    ).insert({
       conversation_id: stateId,
       role: mapRoleToDb(message.role),
       content: message.content,
@@ -297,7 +348,9 @@ export const addMessageToContext = async (
     });
 
     if (insertError) {
-      logger.error(`Failed to insert message for conversation ${stateId}: ${insertError.message}`);
+      logger.error(
+        `Failed to insert message for conversation ${stateId}: ${insertError.message}`
+      );
     }
   }
 
@@ -306,7 +359,8 @@ export const addMessageToContext = async (
 
   const totalLength = calculateContextLength(context.messages);
   const shouldSummarize =
-    (totalLength > MAX_CONTEXT_LENGTH || context.messages.length > MAX_MESSAGES_BEFORE_SUMMARIZE) &&
+    (totalLength > MAX_CONTEXT_LENGTH ||
+      context.messages.length > MAX_MESSAGES_BEFORE_SUMMARIZE) &&
     context.messages.length > 2 &&
     userId;
 
@@ -319,10 +373,21 @@ export const addMessageToContext = async (
 
       const firstSeq = nextSequence - context.messages.length + 1;
       const lastSeq = nextSequence - 2;
-      await storeSummary(stateId, userId, newSummary, messagesToSummarize.length, firstSeq, lastSeq);
+      await storeSummary(
+        stateId,
+        userId,
+        newSummary,
+        messagesToSummarize.length,
+        firstSeq,
+        lastSeq
+      );
 
       if (context.summary) {
-        context.summary = await condenseSummary(context.summary, newSummary, summarizeFn);
+        context.summary = await condenseSummary(
+          context.summary,
+          newSummary,
+          summarizeFn
+        );
       } else {
         context.summary = newSummary.slice(0, MAX_SUMMARY_LENGTH);
       }
@@ -331,7 +396,9 @@ export const addMessageToContext = async (
 
       await markAsSummarized(stateId, context.summary);
     } catch (error) {
-      logger.error(`Failed to summarize conversation for chat ${chatId}: ${error}`);
+      logger.error(
+        `Failed to summarize conversation for chat ${chatId}: ${error}`
+      );
     }
   }
 
@@ -350,14 +417,19 @@ export const buildContextPrompt = (context: ConversationContext): string => {
   const parts: string[] = [];
 
   if (context.summary) {
-    const truncatedSummary = context.summary.length > MAX_SUMMARY_DISPLAY_LENGTH 
-      ? context.summary.slice(-MAX_SUMMARY_DISPLAY_LENGTH) 
-      : context.summary;
+    const truncatedSummary =
+      context.summary.length > MAX_SUMMARY_DISPLAY_LENGTH
+        ? context.summary.slice(-MAX_SUMMARY_DISPLAY_LENGTH)
+        : context.summary;
     parts.push(`Previous conversation summary:\n${truncatedSummary}`);
   }
 
   if (context.messages.length > 0) {
-    let messageHistory = context.messages.map((msg) => `${msg.role === "user" ? "User" : "Assistant"}: ${msg.content}`).join("\n");
+    let messageHistory = context.messages
+      .map(
+        (msg) => `${msg.role === "user" ? "User" : "Assistant"}: ${msg.content}`
+      )
+      .join("\n");
     if (messageHistory.length > MAX_MESSAGES_DISPLAY_LENGTH) {
       messageHistory = messageHistory.slice(-MAX_MESSAGES_DISPLAY_LENGTH);
     }
@@ -365,15 +437,18 @@ export const buildContextPrompt = (context: ConversationContext): string => {
   }
 
   const result = parts.join("\n\n");
-  
+
   if (result.length > MAX_CONTEXT_PROMPT_LENGTH) {
     return result.slice(-MAX_CONTEXT_PROMPT_LENGTH);
   }
-  
+
   return result;
 };
 
-export const getConversationContext = async (chatId: number, telegramUserId: number): Promise<ConversationContext> => {
+export const getConversationContext = async (
+  chatId: number,
+  telegramUserId: number
+): Promise<ConversationContext> => {
   const { context } = await getOrCreateTodayContext(chatId, telegramUserId);
   return context;
 };

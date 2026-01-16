@@ -1,39 +1,33 @@
-export { AGENTS, HANDOFF_AGENTS, ORCHESTRATOR_AGENT } from "./agents"
-
-export { AGENT_TOOLS, type AgentContext } from "./tool-registry"
-
-export { AGENT_INSTRUCTIONS } from "./agents-instructions"
-export { HANDOFF_DESCRIPTIONS } from "./agent-handoff-descriptions"
-
-export { TOOLS_DESCRIPTION } from "./tool-descriptions"
-export { EXECUTION_TOOLS } from "./tool-execution"
-export { PARAMETERS_TOOLS } from "./tool-schemas"
-
-export { formatEventData, parseToolArguments } from "./utils"
-export { getCalendarCategoriesByEmail, type UserCalendar } from "@/shared"
-
+export { getCalendarCategoriesByEmail, type UserCalendar } from "@/shared";
+export { HANDOFF_DESCRIPTIONS } from "./agent-handoff-descriptions";
+export { AGENTS, HANDOFF_AGENTS, ORCHESTRATOR_AGENT } from "./agents";
+export { AGENT_INSTRUCTIONS } from "./agents-instructions";
 export {
-  validateUserDirect,
-  getUserDefaultTimezoneDirect,
-  validateEventDataDirect,
-  selectCalendarByRules,
-  checkConflictsDirect,
-  preCreateValidation,
-  summarizeEvents,
-  type ValidateUserResult,
-  type TimezoneResult,
-  type SelectCalendarResult,
   type ConflictCheckResult,
+  checkConflictsDirect,
+  getUserDefaultTimezoneDirect,
   type PreCreateValidationResult,
+  preCreateValidation,
+  type SelectCalendarResult,
+  selectCalendarByRules,
+  summarizeEvents,
+  type TimezoneResult,
   type ValidateEventResult,
-} from "./direct-utilities"
-
+  type ValidateUserResult,
+  validateEventDataDirect,
+  validateUserDirect,
+} from "./direct-utilities";
 // Note: SupabaseAgentSession removed - agent_sessions table dropped for simpler architecture
 export {
+  type CompactionConfig,
+  type CompactionStrategy,
+  type CreateSessionOptions,
   createAgentSession,
   getSessionInfo,
-  type CreateSessionOptions,
   type SessionType,
-  type CompactionStrategy,
-  type CompactionConfig,
-} from "./sessions"
+} from "./sessions";
+export { TOOLS_DESCRIPTION } from "./tool-descriptions";
+export { EXECUTION_TOOLS } from "./tool-execution";
+export { AGENT_TOOLS, type AgentContext } from "./tool-registry";
+export { PARAMETERS_TOOLS } from "./tool-schemas";
+export { formatEventData, parseToolArguments } from "./utils";
