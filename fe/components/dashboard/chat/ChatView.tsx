@@ -85,7 +85,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
               </div>
             )
           })}
-        {isLoading && <StreamingMessage content={streamingText} currentTool={currentTool} isStreaming={isLoading} />}
+          {isLoading && <StreamingMessage content={streamingText} currentTool={currentTool} isStreaming={isLoading} />}
         </div>
       )}
       {error && (

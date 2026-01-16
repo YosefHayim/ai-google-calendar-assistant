@@ -4,6 +4,13 @@ import MonthlyPatternDashboard from '@/components/dashboard/analytics/MonthlyPat
 import type { MonthlyPatternDataPoint } from '@/types/analytics'
 import { fn } from 'storybook/test'
 
+function seededRandom(seed: number): () => number {
+  return () => {
+    seed = (seed * 9301 + 49297) % 233280
+    return seed / 233280
+  }
+}
+
 const meta: Meta<typeof MonthlyPatternChart> = {
   title: 'Dashboard/Analytics/MonthlyPatternChart',
   component: MonthlyPatternChart,
@@ -16,8 +23,9 @@ const meta: Meta<typeof MonthlyPatternChart> = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-const generateMonthlyData = (pattern: 'balanced' | 'busyStart' | 'busyEnd' | 'midMonthPeak'): MonthlyPatternDataPoint[] => {
+const generateMonthlyData = (pattern: 'balanced' | 'busyStart' | 'busyEnd' | 'midMonthPeak', seed = 12345): MonthlyPatternDataPoint[] => {
   const days = 31
+  const random = seededRandom(seed)
 
   return Array.from({ length: days }, (_, i) => {
     const dayOfMonth = i + 1
@@ -25,16 +33,16 @@ const generateMonthlyData = (pattern: 'balanced' | 'busyStart' | 'busyEnd' | 'mi
 
     switch (pattern) {
       case 'busyStart':
-        baseHours = dayOfMonth <= 10 ? 6 + Math.random() * 4 : 2 + Math.random() * 3
+        baseHours = dayOfMonth <= 10 ? 6 + random() * 4 : 2 + random() * 3
         break
       case 'busyEnd':
-        baseHours = dayOfMonth >= 20 ? 6 + Math.random() * 4 : 2 + Math.random() * 3
+        baseHours = dayOfMonth >= 20 ? 6 + random() * 4 : 2 + random() * 3
         break
       case 'midMonthPeak':
-        baseHours = dayOfMonth >= 10 && dayOfMonth <= 20 ? 5 + Math.random() * 4 : 1 + Math.random() * 2
+        baseHours = dayOfMonth >= 10 && dayOfMonth <= 20 ? 5 + random() * 4 : 1 + random() * 2
         break
       default:
-        baseHours = 3 + Math.random() * 4
+        baseHours = 3 + random() * 4
     }
 
     const isWeekend = [6, 7, 13, 14, 20, 21, 27, 28].includes(dayOfMonth)
@@ -96,11 +104,12 @@ export const EmptyData: Story = {
   },
 }
 
+const sparseRandom = seededRandom(54321)
 export const SparseData: Story = {
   args: {
     data: Array.from({ length: 31 }, (_, i) => ({
       dayOfMonth: i + 1,
-      hours: [5, 12, 18, 25].includes(i + 1) ? 4 + Math.random() * 3 : 0,
+      hours: [5, 12, 18, 25].includes(i + 1) ? 4 + sparseRandom() * 3 : 0,
       eventCount: [5, 12, 18, 25].includes(i + 1) ? 5 : 0,
       events: [],
     })),

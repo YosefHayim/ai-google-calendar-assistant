@@ -22,12 +22,14 @@ const meta: Meta<typeof UpcomingWeekPreview> = {
 export default meta
 type Story = StoryObj<typeof meta>
 
+const FIXED_BASE_DATE = new Date('2026-01-15T00:00:00Z')
+
 const createDay = (
   offset: number,
   busynessLevel: UpcomingDayData['busynessLevel'],
   eventCount: number
 ): UpcomingDayData => {
-  const date = new Date()
+  const date = new Date(FIXED_BASE_DATE)
   date.setDate(date.getDate() + offset)
   const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
   const dayShorts = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
@@ -42,18 +44,24 @@ const createDay = (
     busynessLevel,
     eventCount,
     totalHours: eventCount * 0.75,
-    events: Array.from({ length: Math.min(eventCount, 5) }, (_, i) => ({
-      id: `event-${offset}-${i}`,
-      summary: `Event ${i + 1}`,
-      startTime: new Date(date.setHours(9 + i * 2)).toISOString(),
-      endTime: new Date(date.setHours(10 + i * 2)).toISOString(),
-      durationMinutes: 60,
-      isAllDay: false,
-      isRecurring: i === 0,
-      calendarId: 'work',
-      calendarName: 'Work',
-      calendarColor: '#4285f4',
-    })),
+    events: Array.from({ length: Math.min(eventCount, 5) }, (_, i) => {
+      const startTime = new Date(date)
+      startTime.setHours(9 + i * 2, 0, 0, 0)
+      const endTime = new Date(date)
+      endTime.setHours(10 + i * 2, 0, 0, 0)
+      return {
+        id: `event-${offset}-${i}`,
+        summary: `Event ${i + 1}`,
+        startTime: startTime.toISOString(),
+        endTime: endTime.toISOString(),
+        durationMinutes: 60,
+        isAllDay: false,
+        isRecurring: i === 0,
+        calendarId: 'work',
+        calendarName: 'Work',
+        calendarColor: '#4285f4',
+      }
+    }),
   }
 }
 

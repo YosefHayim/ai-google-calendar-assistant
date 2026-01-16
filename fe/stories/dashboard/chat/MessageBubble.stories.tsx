@@ -2,6 +2,10 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import MessageBubble from '@/components/dashboard/chat/MessageBubble'
 import type { MessageImage } from '@/types'
 
+const FIXED_TIMESTAMP = new Date('2026-01-15T14:30:00Z')
+const FIXED_TIMESTAMP_EARLIER = new Date('2026-01-15T14:29:00Z')
+const FIXED_TIMESTAMP_EARLIER_2 = new Date('2026-01-15T14:28:00Z')
+
 const meta: Meta<typeof MessageBubble> = {
   title: 'Dashboard/Chat/MessageBubble',
   component: MessageBubble,
@@ -25,7 +29,7 @@ export const UserMessage: Story = {
   args: {
     role: 'user',
     content: 'Schedule a meeting with Sarah tomorrow at 2pm',
-    timestamp: new Date(),
+    timestamp: FIXED_TIMESTAMP,
   },
 }
 
@@ -34,7 +38,7 @@ export const AssistantMessage: Story = {
     role: 'assistant',
     content:
       "I've scheduled a meeting with Sarah for tomorrow at 2:00 PM. The event has been added to your primary calendar. Would you like me to send her a calendar invitation?",
-    timestamp: new Date(),
+    timestamp: FIXED_TIMESTAMP,
   },
 }
 
@@ -53,7 +57,7 @@ export const MarkdownMessage: Story = {
 
 ### Notes
 You have a \`30 minute\` gap between meetings at 11:30 AM that could be used for focused work.`,
-    timestamp: new Date(),
+    timestamp: FIXED_TIMESTAMP,
   },
 }
 
@@ -72,7 +76,7 @@ const event = await calendar.createEvent({
 \`\`\`
 
 The event ID is \`evt_abc123\`.`,
-    timestamp: new Date(),
+    timestamp: FIXED_TIMESTAMP,
   },
 }
 
@@ -80,7 +84,7 @@ export const RTLUserMessage: Story = {
   args: {
     role: 'user',
     content: 'קבע פגישה עם שרה מחר בשעה 2',
-    timestamp: new Date(),
+    timestamp: FIXED_TIMESTAMP,
   },
 }
 
@@ -88,7 +92,7 @@ export const RTLAssistantMessage: Story = {
   args: {
     role: 'assistant',
     content: 'קבעתי פגישה עם שרה למחר בשעה 14:00. האירוע נוסף ליומן שלך. האם תרצה שאשלח לה הזמנה?',
-    timestamp: new Date(),
+    timestamp: FIXED_TIMESTAMP,
   },
 }
 
@@ -105,7 +109,7 @@ export const WithSingleImage: Story = {
         <MessageBubble
           role="user"
           content="Here's a screenshot of my calendar"
-          timestamp={new Date()}
+          timestamp={FIXED_TIMESTAMP}
           images={[mockImage]}
         />
         <p className="text-xs text-zinc-500 text-center">
@@ -151,7 +155,7 @@ Your time has been distributed across the following categories:
 - You might benefit from blocking 2-hour focus sessions in your calendar
 
 Would you like me to help you implement any of these suggestions?`,
-    timestamp: new Date(),
+    timestamp: FIXED_TIMESTAMP,
   },
 }
 
@@ -159,7 +163,7 @@ export const ShortMessage: Story = {
   args: {
     role: 'assistant',
     content: 'Done!',
-    timestamp: new Date(),
+    timestamp: FIXED_TIMESTAMP,
   },
 }
 
@@ -167,7 +171,7 @@ export const HiddenTimestamp: Story = {
   args: {
     role: 'user',
     content: 'What meetings do I have today?',
-    timestamp: new Date(),
+    timestamp: FIXED_TIMESTAMP,
     hideTimestamp: true,
   },
 }
@@ -178,7 +182,7 @@ export const Conversation: Story = {
       <MessageBubble
         role="user"
         content="What's on my calendar for tomorrow?"
-        timestamp={new Date(Date.now() - 60000)}
+        timestamp={FIXED_TIMESTAMP_EARLIER_2}
       />
       <MessageBubble
         role="assistant"
@@ -189,17 +193,17 @@ export const Conversation: Story = {
 3. **3:00 PM - 4:00 PM**: Client call with Acme Corp
 
 You have 4 hours and 30 minutes of free time available.`}
-        timestamp={new Date(Date.now() - 30000)}
+        timestamp={FIXED_TIMESTAMP_EARLIER}
       />
       <MessageBubble
         role="user"
         content="Can you reschedule the product review to 2pm?"
-        timestamp={new Date()}
+        timestamp={FIXED_TIMESTAMP}
       />
       <MessageBubble
         role="assistant"
         content="I've rescheduled the product review to 2:00 PM - 3:00 PM. I noticed this creates a conflict with your client call at 3:00 PM. Would you like me to adjust the client call as well?"
-        timestamp={new Date()}
+        timestamp={FIXED_TIMESTAMP}
       />
     </div>
   ),
@@ -211,22 +215,22 @@ export const MixedLanguageConversation: Story = {
       <MessageBubble
         role="user"
         content="Schedule a meeting for tomorrow"
-        timestamp={new Date(Date.now() - 60000)}
+        timestamp={FIXED_TIMESTAMP_EARLIER_2}
       />
       <MessageBubble
         role="assistant"
         content="I've created the meeting for tomorrow. What time would you like it to start?"
-        timestamp={new Date(Date.now() - 30000)}
+        timestamp={FIXED_TIMESTAMP_EARLIER}
       />
       <MessageBubble
         role="user"
         content="בשעה 10 בבוקר"
-        timestamp={new Date()}
+        timestamp={FIXED_TIMESTAMP}
       />
       <MessageBubble
         role="assistant"
         content="הפגישה נקבעה למחר בשעה 10:00. האם תרצה להוסיף משתתפים?"
-        timestamp={new Date()}
+        timestamp={FIXED_TIMESTAMP}
       />
     </div>
   ),
@@ -252,6 +256,6 @@ export const ListsAndTables: Story = {
 - [ ] Review Q4 planning doc
 - [ ] Prepare client presentation
 - [x] Submit expense report`,
-    timestamp: new Date(),
+    timestamp: FIXED_TIMESTAMP,
   },
 }

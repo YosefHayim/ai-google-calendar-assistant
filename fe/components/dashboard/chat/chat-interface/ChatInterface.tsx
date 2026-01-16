@@ -61,11 +61,18 @@ export function ChatInterface() {
   }, [])
 
   // Cleanup image preview URLs on unmount to prevent memory leaks
+  // Store images ref for cleanup to avoid revoking URLs that are still in use
+  const imagesRef = useRef(images)
+  useEffect(() => {
+    imagesRef.current = images
+  }, [images])
+
   useEffect(() => {
     return () => {
-      images.forEach((img) => URL.revokeObjectURL(img.preview))
+      // Only revoke on unmount using the latest ref value
+      imagesRef.current.forEach((img) => URL.revokeObjectURL(img.preview))
     }
-  }, [images])
+  }, [])
 
   const handleStreamComplete = useCallback(
     (conversationId: string, fullResponse: string) => {

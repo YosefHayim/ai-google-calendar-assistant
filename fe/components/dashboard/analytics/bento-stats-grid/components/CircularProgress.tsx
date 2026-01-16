@@ -11,10 +11,11 @@ interface CircularProgressProps {
 }
 
 export function CircularProgress({ value, size = 80, className = '' }: CircularProgressProps) {
+  const clampedValue = Math.min(100, Math.max(0, value))
   const strokeWidth = 8
   const radius = (size - strokeWidth) / 2
   const circumference = radius * 2 * Math.PI
-  const offset = circumference - (value / 100) * circumference
+  const offset = circumference - (clampedValue / 100) * circumference
 
   return (
     <div className={`relative flex-shrink-0 ${className}`} style={{ width: size, height: size }}>
@@ -43,7 +44,7 @@ export function CircularProgress({ value, size = 80, className = '' }: CircularP
       </svg>
       <div className="absolute inset-0 flex items-center justify-center">
         <span className="text-lg sm:text-xl font-bold text-zinc-900 dark:text-zinc-100">
-          <NumberFlow value={value} />
+          <NumberFlow value={clampedValue} />
         </span>
       </div>
     </div>
