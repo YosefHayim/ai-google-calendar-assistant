@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import { STATUS_RESPONSE, SUPABASE } from "@/config";
 import { unifiedContextStore } from "@/shared/context";
+import { clearAuthCookies } from "@/utils/auth/cookie-utils";
 import {
   getCachedUserProfile,
   invalidateAllUserCache,
@@ -240,6 +241,9 @@ const deActivateUser = reqResAsyncHandler(
       } else {
         deletionResults.supabaseAuth = true;
       }
+
+      // 6. Clear auth cookies to prevent stale session issues on re-registration
+      clearAuthCookies(res);
 
       return sendR(
         res,
