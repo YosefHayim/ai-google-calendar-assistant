@@ -169,9 +169,12 @@ export const DarkTheme: Story = {
   },
   decorators: [
     (Story) => (
-      <div className="p-6 bg-zinc-950 rounded-xl min-w-[400px]">
+      <div className="dark p-6 bg-zinc-950 rounded-xl min-w-[400px]">
         <Story />
       </div>
     ),
   ],
+  parameters: {
+    backgrounds: { default: 'dark' },
+  },
 }

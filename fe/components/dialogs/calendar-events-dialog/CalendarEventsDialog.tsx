@@ -67,11 +67,6 @@ export function CalendarEventsDialog({
   }, [filteredEvents, debouncedQuery, totalHours])
 
   const isFiltering = debouncedQuery.trim().length > 0
-
-  if (isLoading) {
-    return null
-  }
-
   const sortedEvents = sortEventsByStartTime(filteredEvents)
 
   return (

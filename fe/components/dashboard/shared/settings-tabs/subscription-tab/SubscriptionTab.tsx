@@ -93,6 +93,7 @@ export const SubscriptionTab: React.FC = () => {
       }
     } catch (error) {
       console.error('Checkout error:', error)
+      toast.error('Failed to process checkout. Please try again.')
     } finally {
       setActionLoading(null)
     }

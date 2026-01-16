@@ -7,8 +7,8 @@
 import crypto from "node:crypto";
 import { env } from "@/config";
 import { SUPABASE } from "@/config/clients/supabase";
-import { unifiedContextStore } from "@/shared/context";
 import { logger } from "@/utils/logger";
+import { unifiedContextStore } from "@/shared/context";
 
 const getAppSecret = (): string | undefined =>
   env.integrations.whatsapp.appSecret;
@@ -117,10 +117,15 @@ export const deleteWhatsAppUserData = async (
   );
 
   try {
-    const { data: waUsers } = await SUPABASE.from("whatsapp_users")
+    const { data: waUsers, error: selectError } = await SUPABASE.from("whatsapp_users")
       .select("id, whatsapp_phone, user_id")
       .or(`meta_user_id.eq.${metaUserId}`)
       .limit(10);
+
+    if (selectError) {
+      logger.error(`WhatsApp: Failed to query whatsapp_users: ${selectError.message}`)
+      throw new Error(`Database query failed: ${selectError.message}`)
+    }
 
     if (waUsers && waUsers.length > 0) {
       for (const waUser of waUsers) {
@@ -128,7 +133,11 @@ export const deleteWhatsAppUserData = async (
           .delete()
           .eq("id", waUser.id);
 
-        if (!deleteError) {
+        if (deleteError) {
+          logger.error(
+            `WhatsApp: Failed to delete whatsapp_users record for id ${waUser.id}: ${deleteError.message}`
+          );
+        } else {
           result.whatsappUser = true;
           logger.info(
             `WhatsApp: Deleted whatsapp_users record for phone ${waUser.whatsapp_phone}`
@@ -195,10 +204,16 @@ export const buildErrorUrl = (errorMessage: string): string => {
 };
 
 /**
- * Meta requires unquoted JSON keys in the response.
- * Using JSON.stringify() will quote keys and fail Meta's validation.
+ * Format the data deletion response for Meta.
+ * Meta expects a JSON response with 'url' and 'confirmation_code' fields.
+ * The URL must be a valid HTTPS URL where users can check their deletion status.
  */
 export const formatMetaResponse = (
   url: string,
   confirmationCode: string
-): string => `{ url: '${url}', confirmation_code: '${confirmationCode}' }`;
+): DataDeletionResponse => {
+  return {
+    url,
+    confirmation_code: confirmationCode,
+  };
+};

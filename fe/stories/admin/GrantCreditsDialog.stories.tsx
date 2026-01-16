@@ -221,9 +221,7 @@ export const DarkMode: Story = {
   decorators: [
     (Story) => (
       <div className="dark bg-zinc-950 p-8 rounded-lg">
-        <QueryClientProvider client={queryClient}>
-          <Story />
-        </QueryClientProvider>
+        <Story />
       </div>
     ),
   ],

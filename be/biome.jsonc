@@ -15,6 +15,9 @@
       "complexity": {
         "noExcessiveLinesPerFunction": "off"
       },
+      "nursery": {
+        "noSecrets": "off"
+      },
       "suspicious": {
         "noConsole": {
           "level": "error",

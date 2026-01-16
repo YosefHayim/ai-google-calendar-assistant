@@ -179,18 +179,30 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
 
         try {
           const newImages: ImageFile[] = await Promise.all(
-            itemsToProcess.map(async (item) => {
-              const file = item.getAsFile()
-              if (!file) throw new Error('No file from clipboard')
-              const preview = URL.createObjectURL(file)
-              const base64 = await fileToBase64(file)
-              return {
-                id: `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`,
-                file,
-                preview,
-                base64,
-              }
-            })
+            itemsToProcess
+              .map((item) => item.getAsFile())
+              .filter((file): file is File => {
+                if (!file) return false
+                if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
+                  toast.error(`Unsupported image type: ${file.type}`)
+                  return false
+                }
+                if (file.size > MAX_IMAGE_SIZE_MB * 1024 * 1024) {
+                  toast.error(`Image too large (max ${MAX_IMAGE_SIZE_MB}MB)`)
+                  return false
+                }
+                return true
+              })
+              .map(async (file) => {
+                const preview = URL.createObjectURL(file)
+                const base64 = await fileToBase64(file)
+                return {
+                  id: `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`,
+                  file,
+                  preview,
+                  base64,
+                }
+              })
           )
 
           onImagesChange([...images, ...newImages.filter(Boolean)])

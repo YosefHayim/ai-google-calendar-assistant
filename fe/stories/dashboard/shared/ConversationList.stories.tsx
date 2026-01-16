@@ -154,7 +154,7 @@ export const ManyConversations: Story = {
         title: `Additional conversation ${i + 1}`,
         lastUpdated: new Date(Date.now() - 1000 * 60 * 60 * 24 * (i + 8)).toISOString(),
         createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * (i + 9)).toISOString(),
-        messageCount: Math.floor(Math.random() * 10) + 1,
+        messageCount: (i % 10) + 1,
       })),
     ],
   },
