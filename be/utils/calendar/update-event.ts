@@ -1,5 +1,5 @@
-import { REQUEST_CONFIG_BASE } from "@/config";
 import type { calendar_v3 } from "googleapis";
+import { REQUEST_CONFIG_BASE } from "@/config";
 
 type UpdateEventParams = {
   calendarEvents: calendar_v3.Resource$Events;
@@ -20,17 +20,33 @@ type UpdateEventParams = {
  * normalizeCalendarId("/"); // Returns null
  */
 function normalizeCalendarId(id: unknown): string | null {
-  if (!id || typeof id !== "string") return null;
+  if (!id || typeof id !== "string") {
+    return null;
+  }
   const trimmed = id.trim();
   // Reject obviously invalid values
-  if (trimmed === "" || trimmed === "/") return null;
+  if (trimmed === "" || trimmed === "/") {
+    return null;
+  }
   return trimmed;
 }
 
-export async function updateEvent({ calendarEvents, eventData, extra, req }: UpdateEventParams) {
-  const body = (eventData as calendar_v3.Schema$Event & { calendarId?: string; email?: string }) || {};
+export async function updateEvent({
+  calendarEvents,
+  eventData,
+  extra,
+  req,
+}: UpdateEventParams) {
+  const body =
+    (eventData as calendar_v3.Schema$Event & {
+      calendarId?: string;
+      email?: string;
+    }) || {};
   const calendarId =
-    normalizeCalendarId(extra?.calendarId) || normalizeCalendarId(body.calendarId) || normalizeCalendarId(req?.query?.calendarId) || "primary";
+    normalizeCalendarId(extra?.calendarId) ||
+    normalizeCalendarId(body.calendarId) ||
+    normalizeCalendarId(req?.query?.calendarId) ||
+    "primary";
 
   const resp = await calendarEvents.update({
     ...REQUEST_CONFIG_BASE,

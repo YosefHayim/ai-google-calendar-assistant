@@ -21,7 +21,7 @@ const SLACK_SCOPES = [
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const slackWorkspacesTable = () => (SUPABASE as any).from("slack_workspaces");
 
-interface SlackWorkspaceRow {
+type SlackWorkspaceRow = {
   id: string;
   team_id: string;
   team_name: string | null;
@@ -30,9 +30,9 @@ interface SlackWorkspaceRow {
   app_id: string | null;
   scope: string | null;
   is_active: boolean | null;
-}
+};
 
-interface SlackWorkspaceInsert {
+type SlackWorkspaceInsert = {
   team_id: string;
   team_name?: string | null;
   bot_token: string;
@@ -48,14 +48,14 @@ interface SlackWorkspaceInsert {
   webhook_channel?: string | null;
   webhook_channel_id?: string | null;
   webhook_configuration_url?: string | null;
-}
+};
 
 interface SlackWorkspaceUpdate extends Partial<SlackWorkspaceInsert> {
   is_active?: boolean;
   installed_at?: string;
 }
 
-export interface SlackWorkspace {
+export type SlackWorkspace = {
   id: string;
   team_id: string;
   team_name: string | null;
@@ -64,13 +64,13 @@ export interface SlackWorkspace {
   app_id: string | null;
   scope: string | null;
   is_active: boolean | null;
-}
+};
 
-export interface OAuthExchangeResult {
+export type OAuthExchangeResult = {
   success: boolean;
   workspace?: SlackWorkspace;
   error?: string;
-}
+};
 
 export const generateInstallUrl = (state?: string): string => {
   const params = new URLSearchParams({

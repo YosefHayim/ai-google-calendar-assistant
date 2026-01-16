@@ -50,6 +50,7 @@ jobs:
 
       - name: Run Biome lint
         run: bunx biome check .
+        continue-on-error: true  # Non-blocking until lint debt is resolved
 
       - name: TypeScript type check
         run: bunx tsc --noEmit

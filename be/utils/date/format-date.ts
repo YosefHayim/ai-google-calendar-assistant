@@ -1,5 +1,5 @@
-import { isValid, parseISO } from "date-fns"
-import { logger } from "../logger"
+import { isValid, parseISO } from "date-fns";
+import { logger } from "../logger";
 
 /**
  * @description Formats a date into a human-readable localized string.
@@ -35,29 +35,29 @@ import { logger } from "../logger"
 const formatDate = (
   date: Date | string | null | undefined,
   withTime = false,
-  desiredLanguage = "he-IL",
+  desiredLanguage = "he-IL"
 ): string => {
   if (!date) {
-    logger.error("Date: formatDate called: date not found")
-    return "Invalid date"
+    logger.error("Date: formatDate called: date not found");
+    return "Invalid date";
   }
 
-  let parsed: Date
+  let parsed: Date;
   if (typeof date === "string") {
-    parsed = parseISO(date)
+    parsed = parseISO(date);
     if (!isValid(parsed)) {
-      parsed = new Date(date)
+      parsed = new Date(date);
     }
   } else if (date instanceof Date) {
-    parsed = date
+    parsed = date;
   } else {
-    logger.error("Date: formatDate called: invalid date")
-    return "Invalid date"
+    logger.error("Date: formatDate called: invalid date");
+    return "Invalid date";
   }
 
   if (!isValid(parsed)) {
-    logger.error("Date: formatDate called: invalid date")
-    return "Invalid date"
+    logger.error("Date: formatDate called: invalid date");
+    return "Invalid date";
   }
 
   const options: Intl.DateTimeFormatOptions = {
@@ -65,14 +65,14 @@ const formatDate = (
     year: "numeric",
     month: "long",
     day: "numeric",
-  }
+  };
 
   if (withTime) {
-    options.hour = "numeric"
-    options.minute = "numeric"
+    options.hour = "numeric";
+    options.minute = "numeric";
   }
 
-  return parsed.toLocaleDateString(desiredLanguage, options)
-}
+  return parsed.toLocaleDateString(desiredLanguage, options);
+};
 
-export default formatDate
+export default formatDate;

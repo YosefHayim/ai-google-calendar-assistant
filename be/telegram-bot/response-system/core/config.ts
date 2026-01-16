@@ -30,7 +30,9 @@ export const defaultConfig: ResponseConfig = {
  * @returns Complete configuration
  */
 export function mergeConfig(partial?: Partial<ResponseConfig>): ResponseConfig {
-  if (!partial) return { ...defaultConfig };
+  if (!partial) {
+    return { ...defaultConfig };
+  }
 
   return {
     ...defaultConfig,

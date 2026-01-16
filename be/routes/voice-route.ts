@@ -1,8 +1,11 @@
 import express from "express";
 import multer from "multer";
 import voiceController from "@/controllers/voice-controller";
+import {
+  voiceBurstLimiter,
+  voiceRateLimiter,
+} from "@/middlewares/rate-limiter";
 import { supabaseAuth } from "@/middlewares/supabase-auth";
-import { voiceRateLimiter, voiceBurstLimiter } from "@/middlewares/rate-limiter";
 
 const router = express.Router();
 
@@ -31,8 +34,8 @@ const upload = multer({
     } else {
       cb(
         new Error(
-          "Invalid audio format. Supported: webm, mp3, mp4, m4a, wav, ogg, flac",
-        ),
+          "Invalid audio format. Supported: webm, mp3, mp4, m4a, wav, ogg, flac"
+        )
       );
     }
   },
@@ -41,8 +44,19 @@ const upload = multer({
 router.use(supabaseAuth());
 
 // Voice endpoints with rate limiting to prevent billing spikes
-router.post("/transcribe", voiceBurstLimiter, voiceRateLimiter, upload.single("audio"), voiceController.transcribe)
-router.post("/synthesize", voiceBurstLimiter, voiceRateLimiter, voiceController.synthesize)
-router.get("/agents/profiles", voiceController.getAgentProfiles)
+router.post(
+  "/transcribe",
+  voiceBurstLimiter,
+  voiceRateLimiter,
+  upload.single("audio"),
+  voiceController.transcribe
+);
+router.post(
+  "/synthesize",
+  voiceBurstLimiter,
+  voiceRateLimiter,
+  voiceController.synthesize
+);
+router.get("/agents/profiles", voiceController.getAgentProfiles);
 
-export default router
+export default router;

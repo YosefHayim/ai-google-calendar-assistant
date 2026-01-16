@@ -1,8 +1,7 @@
-import { beforeEach, describe, expect, it, jest } from "@jest/globals";
-import { mockFn, type AnyFn } from "../test-utils";
-
+import { beforeEach, describe, expect, it, type jest } from "@jest/globals";
 import type { Response } from "express";
 import sendR from "../../utils/send-response";
+import { type AnyFn, mockFn } from "../test-utils";
 
 describe("sendR", () => {
   let mockResponse: Partial<Response>;
@@ -44,7 +43,9 @@ describe("sendR", () => {
     it("should handle status 399 as success", () => {
       sendR(mockResponse as Response, 399, "Edge case success");
 
-      expect(jsonMock).toHaveBeenCalledWith(expect.objectContaining({ status: "success" }));
+      expect(jsonMock).toHaveBeenCalledWith(
+        expect.objectContaining({ status: "success" })
+      );
     });
   });
 
@@ -63,7 +64,9 @@ describe("sendR", () => {
     it("should send error response with status 404", () => {
       sendR(mockResponse as Response, 404, "Not Found");
 
-      expect(jsonMock).toHaveBeenCalledWith(expect.objectContaining({ status: "error" }));
+      expect(jsonMock).toHaveBeenCalledWith(
+        expect.objectContaining({ status: "error" })
+      );
     });
 
     it("should send error response with status 500", () => {
@@ -131,7 +134,9 @@ describe("sendR", () => {
     it("should handle boundary status code 400", () => {
       sendR(mockResponse as Response, 400, "Boundary error");
 
-      expect(jsonMock).toHaveBeenCalledWith(expect.objectContaining({ status: "error" }));
+      expect(jsonMock).toHaveBeenCalledWith(
+        expect.objectContaining({ status: "error" })
+      );
     });
 
     it("should handle empty message", () => {

@@ -50,27 +50,22 @@ jest.mock("@lemonsqueezy/lemonsqueezy.js", () => mockLemonSqueezyFns);
 
 // Import after mocks
 import {
-  getActivePlans,
-  getPlanBySlug,
-  getPlanById,
-  getUserSubscription,
-  getSubscriptionByLemonSqueezyId,
-  checkUserAccess,
-  createSubscriptionRecord,
-  updateSubscriptionFromWebhook,
   cancelSubscription,
+  checkUserAccess,
   createCheckoutSession,
-  createCreditPackCheckout,
-  getCustomerPortalUrl,
-  isWebhookEventProcessed,
-  recordWebhookEvent,
-  handleOrderCreated,
-  handleSubscriptionCreated,
-  handleSubscriptionPaymentSuccess,
-  handleSubscriptionPaymentFailed,
-  recordUsage,
-  processMoneyBackRefund,
+  createSubscriptionRecord,
   ensureFreePlan,
+  getActivePlans,
+  getCustomerPortalUrl,
+  getPlanById,
+  getPlanBySlug,
+  getSubscriptionByLemonSqueezyId,
+  getUserSubscription,
+  isWebhookEventProcessed,
+  processMoneyBackRefund,
+  recordUsage,
+  recordWebhookEvent,
+  updateSubscriptionFromWebhook,
 } from "../../services/lemonsqueezy-service";
 
 describe("LemonSqueezy Service", () => {
@@ -111,7 +106,9 @@ describe("LemonSqueezy Service", () => {
         }),
       });
 
-      await expect(getActivePlans()).rejects.toThrow("Failed to fetch plans: Database error");
+      await expect(getActivePlans()).rejects.toThrow(
+        "Failed to fetch plans: Database error"
+      );
     });
 
     it("should return empty array when no plans found", async () => {
@@ -136,7 +133,10 @@ describe("LemonSqueezy Service", () => {
         select: mockFn().mockReturnValue({
           eq: mockFn().mockReturnValue({
             eq: mockFn().mockReturnValue({
-              maybeSingle: mockFn().mockResolvedValue({ data: mockPlan, error: null }),
+              maybeSingle: mockFn().mockResolvedValue({
+                data: mockPlan,
+                error: null,
+              }),
             }),
           }),
         }),
@@ -153,7 +153,10 @@ describe("LemonSqueezy Service", () => {
         select: mockFn().mockReturnValue({
           eq: mockFn().mockReturnValue({
             eq: mockFn().mockReturnValue({
-              maybeSingle: mockFn().mockResolvedValue({ data: null, error: null }),
+              maybeSingle: mockFn().mockResolvedValue({
+                data: null,
+                error: null,
+              }),
             }),
           }),
         }),
@@ -177,7 +180,9 @@ describe("LemonSqueezy Service", () => {
         }),
       });
 
-      await expect(getPlanBySlug("pro")).rejects.toThrow("Failed to fetch plan");
+      await expect(getPlanBySlug("pro")).rejects.toThrow(
+        "Failed to fetch plan"
+      );
     });
   });
 
@@ -188,7 +193,10 @@ describe("LemonSqueezy Service", () => {
       mockSupabase.from.mockReturnValue({
         select: mockFn().mockReturnValue({
           eq: mockFn().mockReturnValue({
-            maybeSingle: mockFn().mockResolvedValue({ data: mockPlan, error: null }),
+            maybeSingle: mockFn().mockResolvedValue({
+              data: mockPlan,
+              error: null,
+            }),
           }),
         }),
       });
@@ -234,7 +242,10 @@ describe("LemonSqueezy Service", () => {
             in: mockFn().mockReturnValue({
               order: mockFn().mockReturnValue({
                 limit: mockFn().mockReturnValue({
-                  maybeSingle: mockFn().mockResolvedValue({ data: null, error: null }),
+                  maybeSingle: mockFn().mockResolvedValue({
+                    data: null,
+                    error: null,
+                  }),
                 }),
               }),
             }),
@@ -249,12 +260,18 @@ describe("LemonSqueezy Service", () => {
 
   describe("getSubscriptionByLemonSqueezyId", () => {
     it("should return subscription by LemonSqueezy ID", async () => {
-      const mockSubscription = { id: "sub-123", lemonsqueezy_subscription_id: "ls-sub-123" };
+      const mockSubscription = {
+        id: "sub-123",
+        lemonsqueezy_subscription_id: "ls-sub-123",
+      };
 
       mockSupabase.from.mockReturnValue({
         select: mockFn().mockReturnValue({
           eq: mockFn().mockReturnValue({
-            maybeSingle: mockFn().mockResolvedValue({ data: mockSubscription, error: null }),
+            maybeSingle: mockFn().mockResolvedValue({
+              data: mockSubscription,
+              error: null,
+            }),
           }),
         }),
       });
@@ -272,7 +289,9 @@ describe("LemonSqueezy Service", () => {
         status: "active",
         ai_interactions_used: 50,
         credits_remaining: 100,
-        money_back_eligible_until: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000).toISOString(),
+        money_back_eligible_until: new Date(
+          Date.now() + 10 * 24 * 60 * 60 * 1000
+        ).toISOString(),
       };
 
       const mockPlan = {
@@ -289,7 +308,10 @@ describe("LemonSqueezy Service", () => {
             in: mockFn().mockReturnValue({
               order: mockFn().mockReturnValue({
                 limit: mockFn().mockReturnValue({
-                  maybeSingle: mockFn().mockResolvedValue({ data: mockSubscription, error: null }),
+                  maybeSingle: mockFn().mockResolvedValue({
+                    data: mockSubscription,
+                    error: null,
+                  }),
                 }),
               }),
             }),
@@ -312,7 +334,10 @@ describe("LemonSqueezy Service", () => {
       mockSupabase.from.mockReturnValueOnce({
         select: mockFn().mockReturnValue({
           eq: mockFn().mockReturnValue({
-            maybeSingle: mockFn().mockResolvedValue({ data: mockPlan, error: null }),
+            maybeSingle: mockFn().mockResolvedValue({
+              data: mockPlan,
+              error: null,
+            }),
           }),
         }),
       });
@@ -333,7 +358,10 @@ describe("LemonSqueezy Service", () => {
             in: mockFn().mockReturnValue({
               order: mockFn().mockReturnValue({
                 limit: mockFn().mockReturnValue({
-                  maybeSingle: mockFn().mockResolvedValue({ data: null, error: null }),
+                  maybeSingle: mockFn().mockResolvedValue({
+                    data: null,
+                    error: null,
+                  }),
                 }),
               }),
             }),
@@ -367,7 +395,10 @@ describe("LemonSqueezy Service", () => {
             in: mockFn().mockReturnValue({
               order: mockFn().mockReturnValue({
                 limit: mockFn().mockReturnValue({
-                  maybeSingle: mockFn().mockResolvedValue({ data: null, error: null }),
+                  maybeSingle: mockFn().mockResolvedValue({
+                    data: null,
+                    error: null,
+                  }),
                 }),
               }),
             }),
@@ -408,7 +439,10 @@ describe("LemonSqueezy Service", () => {
       mockSupabase.from.mockReturnValue({
         insert: mockFn().mockReturnValue({
           select: mockFn().mockReturnValue({
-            single: mockFn().mockResolvedValue({ data: mockSubscription, error: null }),
+            single: mockFn().mockResolvedValue({
+              data: mockSubscription,
+              error: null,
+            }),
           }),
         }),
       });
@@ -434,7 +468,10 @@ describe("LemonSqueezy Service", () => {
       mockSupabase.from.mockReturnValue({
         insert: mockFn().mockReturnValue({
           select: mockFn().mockReturnValue({
-            single: mockFn().mockResolvedValue({ data: mockSubscription, error: null }),
+            single: mockFn().mockResolvedValue({
+              data: mockSubscription,
+              error: null,
+            }),
           }),
         }),
       });
@@ -519,7 +556,7 @@ describe("LemonSqueezy Service", () => {
         id: "ls-sub-123",
         customerId: "ls-cust-123",
         variantId: "ls-var-123",
-        status: "cancelled",  // LemonSqueezy sends "cancelled"
+        status: "cancelled", // LemonSqueezy sends "cancelled"
         trialEndsAt: null,
         renewsAt: null,
         endsAt: null,
@@ -561,7 +598,11 @@ describe("LemonSqueezy Service", () => {
           eq: mockFn().mockReturnValue({
             select: mockFn().mockReturnValue({
               single: mockFn().mockResolvedValue({
-                data: { id: "sub-123", status: "active", cancel_at_period_end: true },
+                data: {
+                  id: "sub-123",
+                  status: "active",
+                  cancel_at_period_end: true,
+                },
                 error: null,
               }),
             }),
@@ -569,12 +610,19 @@ describe("LemonSqueezy Service", () => {
         }),
       });
 
-      const result = await cancelSubscription("ls-sub-123", "Not using anymore", false);
+      const result = await cancelSubscription(
+        "ls-sub-123",
+        "Not using anymore",
+        false
+      );
 
       expect(mockInitializeLemonSqueezy).toHaveBeenCalled();
-      expect(mockLemonSqueezyFns.updateSubscription).toHaveBeenCalledWith("ls-sub-123", {
-        cancelled: true,
-      });
+      expect(mockLemonSqueezyFns.updateSubscription).toHaveBeenCalledWith(
+        "ls-sub-123",
+        {
+          cancelled: true,
+        }
+      );
       expect(result?.cancel_at_period_end).toBe(true);
     });
 
@@ -597,7 +645,11 @@ describe("LemonSqueezy Service", () => {
         }),
       });
 
-      const result = await cancelSubscription("ls-sub-123", "Refund requested", true);
+      const result = await cancelSubscription(
+        "ls-sub-123",
+        "Refund requested",
+        true
+      );
 
       expect(mockLemonSqueezyFns.cancelSubscription).toHaveBeenCalled();
       expect(result?.status).toBe("canceled");
@@ -609,7 +661,10 @@ describe("LemonSqueezy Service", () => {
       mockSupabase.from.mockReturnValueOnce({
         select: mockFn().mockReturnValue({
           eq: mockFn().mockReturnValue({
-            maybeSingle: mockFn().mockResolvedValue({ data: null, error: null }),
+            maybeSingle: mockFn().mockResolvedValue({
+              data: null,
+              error: null,
+            }),
           }),
         }),
       });
@@ -634,7 +689,10 @@ describe("LemonSqueezy Service", () => {
         select: mockFn().mockReturnValue({
           eq: mockFn().mockReturnValue({
             eq: mockFn().mockReturnValue({
-              maybeSingle: mockFn().mockResolvedValue({ data: mockPlan, error: null }),
+              maybeSingle: mockFn().mockResolvedValue({
+                data: mockPlan,
+                error: null,
+              }),
             }),
           }),
         }),
@@ -679,7 +737,10 @@ describe("LemonSqueezy Service", () => {
         select: mockFn().mockReturnValue({
           eq: mockFn().mockReturnValue({
             eq: mockFn().mockReturnValue({
-              maybeSingle: mockFn().mockResolvedValue({ data: null, error: null }),
+              maybeSingle: mockFn().mockResolvedValue({
+                data: null,
+                error: null,
+              }),
             }),
           }),
         }),
@@ -696,13 +757,19 @@ describe("LemonSqueezy Service", () => {
     });
 
     it("should throw error when checkout creation fails", async () => {
-      const mockPlan = { id: "plan-123", lemonsqueezy_variant_id_monthly: "var-123" };
+      const mockPlan = {
+        id: "plan-123",
+        lemonsqueezy_variant_id_monthly: "var-123",
+      };
 
       mockSupabase.from.mockReturnValueOnce({
         select: mockFn().mockReturnValue({
           eq: mockFn().mockReturnValue({
             eq: mockFn().mockReturnValue({
-              maybeSingle: mockFn().mockResolvedValue({ data: mockPlan, error: null }),
+              maybeSingle: mockFn().mockResolvedValue({
+                data: mockPlan,
+                error: null,
+              }),
             }),
           }),
         }),
@@ -749,7 +816,9 @@ describe("LemonSqueezy Service", () => {
         error: { message: "Customer not found" },
       });
 
-      await expect(getCustomerPortalUrl("invalid-cust")).rejects.toThrow("Failed to get customer");
+      await expect(getCustomerPortalUrl("invalid-cust")).rejects.toThrow(
+        "Failed to get customer"
+      );
     });
 
     it("should throw error when portal URL not available", async () => {
@@ -801,7 +870,10 @@ describe("LemonSqueezy Service", () => {
       mockSupabase.from.mockReturnValue({
         select: mockFn().mockReturnValue({
           eq: mockFn().mockReturnValue({
-            maybeSingle: mockFn().mockResolvedValue({ data: null, error: null }),
+            maybeSingle: mockFn().mockResolvedValue({
+              data: null,
+              error: null,
+            }),
           }),
         }),
       });
@@ -817,20 +889,33 @@ describe("LemonSqueezy Service", () => {
         upsert: mockFn().mockResolvedValue({ error: null }),
       });
 
-      await recordWebhookEvent("event-123", "subscription_created", { data: "test" }, true);
+      await recordWebhookEvent(
+        "event-123",
+        "subscription_created",
+        { data: "test" },
+        true
+      );
 
-      expect(mockSupabase.from).toHaveBeenCalledWith("lemonsqueezy_webhook_events");
+      expect(mockSupabase.from).toHaveBeenCalledWith(
+        "lemonsqueezy_webhook_events"
+      );
     });
 
     it("should handle upsert errors gracefully", async () => {
-      const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+      const consoleSpy = jest
+        .spyOn(console, "error")
+        .mockImplementation(() => {});
 
       mockSupabase.from.mockReturnValue({
-        upsert: mockFn().mockResolvedValue({ error: { message: "Upsert failed" } }),
+        upsert: mockFn().mockResolvedValue({
+          error: { message: "Upsert failed" },
+        }),
       });
 
       // Should not throw
-      await recordWebhookEvent("event-123", "subscription_created", { data: "test" });
+      await recordWebhookEvent("event-123", "subscription_created", {
+        data: "test",
+      });
 
       expect(consoleSpy).toHaveBeenCalled();
       consoleSpy.mockRestore();
@@ -935,7 +1020,10 @@ describe("LemonSqueezy Service", () => {
               in: mockFn().mockReturnValue({
                 order: mockFn().mockReturnValue({
                   limit: mockFn().mockReturnValue({
-                    maybeSingle: mockFn().mockResolvedValue({ data: null, error: null }),
+                    maybeSingle: mockFn().mockResolvedValue({
+                      data: null,
+                      error: null,
+                    }),
                   }),
                 }),
               }),
@@ -959,7 +1047,9 @@ describe("LemonSqueezy Service", () => {
 
   describe("processMoneyBackRefund", () => {
     it("should process refund when eligible", async () => {
-      const futureDate = new Date(Date.now() + 10 * 24 * 60 * 60 * 1000).toISOString();
+      const futureDate = new Date(
+        Date.now() + 10 * 24 * 60 * 60 * 1000
+      ).toISOString();
 
       mockSupabase.from
         .mockReturnValueOnce({
@@ -1003,16 +1093,24 @@ describe("LemonSqueezy Service", () => {
           }),
         });
 
-      mockLemonSqueezyFns.cancelSubscription.mockResolvedValue({ data: {}, error: null });
+      mockLemonSqueezyFns.cancelSubscription.mockResolvedValue({
+        data: {},
+        error: null,
+      });
 
-      const result = await processMoneyBackRefund("ls-sub-123", "Changed my mind");
+      const result = await processMoneyBackRefund(
+        "ls-sub-123",
+        "Changed my mind"
+      );
 
       expect(result.success).toBe(true);
-      expect(result.message).toContain("cancelled");  // The message text still uses "cancelled"
+      expect(result.message).toContain("cancelled"); // The message text still uses "cancelled"
     });
 
     it("should reject refund when not eligible", async () => {
-      const pastDate = new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString();
+      const pastDate = new Date(
+        Date.now() - 10 * 24 * 60 * 60 * 1000
+      ).toISOString();
 
       mockSupabase.from.mockReturnValueOnce({
         select: mockFn().mockReturnValue({
@@ -1038,7 +1136,10 @@ describe("LemonSqueezy Service", () => {
       mockSupabase.from.mockReturnValueOnce({
         select: mockFn().mockReturnValue({
           eq: mockFn().mockReturnValue({
-            maybeSingle: mockFn().mockResolvedValue({ data: null, error: null }),
+            maybeSingle: mockFn().mockResolvedValue({
+              data: null,
+              error: null,
+            }),
           }),
         }),
       });
@@ -1077,7 +1178,11 @@ describe("LemonSqueezy Service", () => {
 
     it("should create starter plan subscription for new user", async () => {
       const starterPlan = { id: "plan-starter", slug: "starter" };
-      const newSubscription = { id: "new-sub-123", plan_id: "plan-starter", status: "active" };
+      const newSubscription = {
+        id: "new-sub-123",
+        plan_id: "plan-starter",
+        status: "active",
+      };
 
       mockSupabase.from
         .mockReturnValueOnce({
@@ -1086,7 +1191,10 @@ describe("LemonSqueezy Service", () => {
               in: mockFn().mockReturnValue({
                 order: mockFn().mockReturnValue({
                   limit: mockFn().mockReturnValue({
-                    maybeSingle: mockFn().mockResolvedValue({ data: null, error: null }),
+                    maybeSingle: mockFn().mockResolvedValue({
+                      data: null,
+                      error: null,
+                    }),
                   }),
                 }),
               }),
@@ -1097,7 +1205,10 @@ describe("LemonSqueezy Service", () => {
           select: mockFn().mockReturnValue({
             eq: mockFn().mockReturnValue({
               eq: mockFn().mockReturnValue({
-                maybeSingle: mockFn().mockResolvedValue({ data: starterPlan, error: null }),
+                maybeSingle: mockFn().mockResolvedValue({
+                  data: starterPlan,
+                  error: null,
+                }),
               }),
             }),
           }),
@@ -1105,7 +1216,10 @@ describe("LemonSqueezy Service", () => {
         .mockReturnValueOnce({
           insert: mockFn().mockReturnValue({
             select: mockFn().mockReturnValue({
-              single: mockFn().mockResolvedValue({ data: newSubscription, error: null }),
+              single: mockFn().mockResolvedValue({
+                data: newSubscription,
+                error: null,
+              }),
             }),
           }),
         });
@@ -1115,7 +1229,9 @@ describe("LemonSqueezy Service", () => {
     });
 
     it("should return null when starter plan not found", async () => {
-      const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+      const consoleSpy = jest
+        .spyOn(console, "error")
+        .mockImplementation(() => {});
 
       mockSupabase.from
         .mockReturnValueOnce({
@@ -1124,7 +1240,10 @@ describe("LemonSqueezy Service", () => {
               in: mockFn().mockReturnValue({
                 order: mockFn().mockReturnValue({
                   limit: mockFn().mockReturnValue({
-                    maybeSingle: mockFn().mockResolvedValue({ data: null, error: null }),
+                    maybeSingle: mockFn().mockResolvedValue({
+                      data: null,
+                      error: null,
+                    }),
                   }),
                 }),
               }),
@@ -1135,7 +1254,10 @@ describe("LemonSqueezy Service", () => {
           select: mockFn().mockReturnValue({
             eq: mockFn().mockReturnValue({
               eq: mockFn().mockReturnValue({
-                maybeSingle: mockFn().mockResolvedValue({ data: null, error: null }),
+                maybeSingle: mockFn().mockResolvedValue({
+                  data: null,
+                  error: null,
+                }),
               }),
             }),
           }),

@@ -10,29 +10,29 @@ import {
   Preview,
   Section,
   Text,
-} from '@react-email/components';
-import type * as React from 'react';
+} from "@react-email/components";
+import type * as React from "react";
 
-export interface NotificationEmailProps {
+export type NotificationEmailProps = {
   userName: string;
   eventTitle: string;
   eventTime: string;
   eventDate: string;
-  notificationType?: 'reminder' | 'update' | 'cancelled';
+  notificationType?: "reminder" | "update" | "cancelled";
   dashboardUrl?: string;
   settingsUrl?: string;
   logoUrl?: string;
-}
+};
 
 const colors = {
-  primary: '#f97316',
-  background: '#f6f9fc',
-  white: '#ffffff',
-  text: '#0a0a0b',
-  textSecondary: '#737373',
-  textMuted: '#a3a3a3',
-  border: '#e5e5e5',
-  cardBg: '#fafafa',
+  primary: "#f97316",
+  background: "#f6f9fc",
+  white: "#ffffff",
+  text: "#0a0a0b",
+  textSecondary: "#737373",
+  textMuted: "#a3a3a3",
+  border: "#e5e5e5",
+  cardBg: "#fafafa",
 };
 
 const fonts = {
@@ -41,51 +41,51 @@ const fonts = {
 };
 
 export const NotificationEmail = ({
-  userName = 'there',
-  eventTitle = 'Untitled Event',
-  eventTime = '10:00 AM',
-  eventDate = 'Today',
-  notificationType = 'reminder',
-  dashboardUrl = 'https://askally.io/dashboard',
-  settingsUrl = 'https://askally.io/settings/notifications',
-  logoUrl = 'https://askally.io/logo.svg',
+  userName = "there",
+  eventTitle = "Untitled Event",
+  eventTime = "10:00 AM",
+  eventDate = "Today",
+  notificationType = "reminder",
+  dashboardUrl = "https://askally.io/dashboard",
+  settingsUrl = "https://askally.io/settings/notifications",
+  logoUrl = "https://askally.io/logo.svg",
 }: NotificationEmailProps) => {
   const getNotificationMessage = () => {
     switch (notificationType) {
-      case 'reminder':
+      case "reminder":
         return `You have an upcoming event: "${eventTitle}" scheduled for ${eventDate} at ${eventTime}.`;
-      case 'update':
+      case "update":
         return `Your event "${eventTitle}" has been updated. It's now scheduled for ${eventDate} at ${eventTime}.`;
-      case 'cancelled':
+      case "cancelled":
         return `Your event "${eventTitle}" originally scheduled for ${eventDate} at ${eventTime} has been cancelled.`;
       default:
-        return '';
+        return "";
     }
   };
 
   const getTitle = () => {
     switch (notificationType) {
-      case 'reminder':
-        return 'Event Reminder';
-      case 'update':
-        return 'Event Updated';
-      case 'cancelled':
-        return 'Event Cancelled';
+      case "reminder":
+        return "Event Reminder";
+      case "update":
+        return "Event Updated";
+      case "cancelled":
+        return "Event Cancelled";
       default:
-        return 'Calendar Notification';
+        return "Calendar Notification";
     }
   };
 
-  const getEmoji = () => {
+  const _getEmoji = () => {
     switch (notificationType) {
-      case 'reminder':
-        return 'calendar';
-      case 'update':
-        return 'arrows_counterclockwise';
-      case 'cancelled':
-        return 'x';
+      case "reminder":
+        return "calendar";
+      case "update":
+        return "arrows_counterclockwise";
+      case "cancelled":
+        return "x";
       default:
-        return 'bell';
+        return "bell";
     }
   };
 
@@ -131,7 +131,7 @@ export const NotificationEmail = ({
               <Text style={styles.eventDetail}>{eventTime}</Text>
             </Section>
 
-            {notificationType !== 'cancelled' && (
+            {notificationType !== "cancelled" && (
               <Section style={styles.ctaSection}>
                 <Button href={dashboardUrl} style={styles.ctaButton}>
                   View Event Details
@@ -143,7 +143,7 @@ export const NotificationEmail = ({
 
             <Text style={styles.footer}>
               You're receiving this notification because you have event
-              reminders enabled. Manage your{' '}
+              reminders enabled. Manage your{" "}
               <Link href={settingsUrl} style={styles.link}>
                 notification preferences
               </Link>
@@ -171,102 +171,102 @@ const styles = {
   } as React.CSSProperties,
 
   container: {
-    maxWidth: '600px',
-    margin: '0 auto',
-    padding: '24px 16px',
+    maxWidth: "600px",
+    margin: "0 auto",
+    padding: "24px 16px",
   } as React.CSSProperties,
 
   card: {
     backgroundColor: colors.white,
-    borderRadius: '16px',
-    padding: '40px 48px',
-    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
+    borderRadius: "16px",
+    padding: "40px 48px",
+    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.08)",
   } as React.CSSProperties,
 
   logo: {
-    display: 'block',
+    display: "block",
   } as React.CSSProperties,
 
   divider: {
     borderColor: colors.border,
-    borderWidth: '1px',
-    margin: '24px 0',
+    borderWidth: "1px",
+    margin: "24px 0",
   } as React.CSSProperties,
 
   heading: {
-    fontSize: '24px',
-    fontWeight: '600',
+    fontSize: "24px",
+    fontWeight: "600",
     color: colors.text,
-    margin: '0 0 16px',
+    margin: "0 0 16px",
   } as React.CSSProperties,
 
   greeting: {
-    fontSize: '16px',
+    fontSize: "16px",
     color: colors.textSecondary,
-    margin: '0 0 8px',
+    margin: "0 0 8px",
   } as React.CSSProperties,
 
   message: {
-    fontSize: '16px',
+    fontSize: "16px",
     color: colors.textSecondary,
-    lineHeight: '1.6',
-    margin: '0 0 24px',
+    lineHeight: "1.6",
+    margin: "0 0 24px",
   } as React.CSSProperties,
 
   eventCard: {
     backgroundColor: colors.cardBg,
-    borderRadius: '12px',
-    padding: '20px 24px',
+    borderRadius: "12px",
+    padding: "20px 24px",
     border: `1px solid ${colors.border}`,
-    marginBottom: '24px',
+    marginBottom: "24px",
   } as React.CSSProperties,
 
   eventTitle: {
-    fontSize: '18px',
-    fontWeight: '600',
+    fontSize: "18px",
+    fontWeight: "600",
     color: colors.text,
-    margin: '0 0 8px',
+    margin: "0 0 8px",
   } as React.CSSProperties,
 
   eventDetail: {
-    fontSize: '14px',
+    fontSize: "14px",
     color: colors.textSecondary,
-    margin: '0 0 4px',
+    margin: "0 0 4px",
   } as React.CSSProperties,
 
   ctaSection: {
-    textAlign: 'center' as const,
-    marginBottom: '24px',
+    textAlign: "center" as const,
+    marginBottom: "24px",
   } as React.CSSProperties,
 
   ctaButton: {
-    display: 'inline-block',
+    display: "inline-block",
     backgroundColor: colors.primary,
     color: colors.white,
-    fontSize: '16px',
-    fontWeight: '600',
-    padding: '14px 32px',
-    borderRadius: '8px',
-    textDecoration: 'none',
+    fontSize: "16px",
+    fontWeight: "600",
+    padding: "14px 32px",
+    borderRadius: "8px",
+    textDecoration: "none",
   } as React.CSSProperties,
 
   footer: {
-    fontSize: '14px',
+    fontSize: "14px",
     color: colors.textSecondary,
-    lineHeight: '1.6',
-    margin: '0 0 16px',
+    lineHeight: "1.6",
+    margin: "0 0 16px",
   } as React.CSSProperties,
 
   link: {
     color: colors.primary,
-    textDecoration: 'none',
+    textDecoration: "none",
   } as React.CSSProperties,
 
   footerAddress: {
-    fontSize: '12px',
+    fontSize: "12px",
     color: colors.textMuted,
     margin: 0,
-    lineHeight: '1.5',
+    lineHeight: "1.5",
   } as React.CSSProperties,
 };
 

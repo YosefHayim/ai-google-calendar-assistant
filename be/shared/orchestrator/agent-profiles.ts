@@ -5,7 +5,7 @@
  * raw model IDs. Each profile defines personality, capabilities, and tier.
  */
 
-export type AgentTier = "free" | "pro" | "enterprise"
+export type AgentTier = "free" | "pro" | "enterprise";
 
 export type AgentCapability =
   | "calendar_read"
@@ -13,47 +13,53 @@ export type AgentCapability =
   | "gap_analysis"
   | "smart_scheduling"
   | "multi_calendar"
-  | "voice"
+  | "voice";
 
-export type VoiceStyle = "alloy" | "echo" | "fable" | "onyx" | "nova" | "shimmer"
+export type VoiceStyle =
+  | "alloy"
+  | "echo"
+  | "fable"
+  | "onyx"
+  | "nova"
+  | "shimmer";
 
-export interface AgentProfile {
+export type AgentProfile = {
   /** Unique identifier (e.g., "ally-pro") */
-  id: string
+  id: string;
   /** Display name for UI (e.g., "Ally Pro") */
-  displayName: string
+  displayName: string;
   /** Short tagline */
-  tagline: string
+  tagline: string;
   /** Description for users */
-  description: string
+  description: string;
   /** Which tier is required to use this agent */
-  tier: AgentTier
+  tier: AgentTier;
   /** Agent capabilities */
-  capabilities: AgentCapability[]
+  capabilities: AgentCapability[];
   /** Model configuration key (resolved by model-registry) */
   modelConfig: {
     /** Provider: openai, google, anthropic */
-    provider: "openai" | "google" | "anthropic"
+    provider: "openai" | "google" | "anthropic";
     /** Tier within provider: fast, balanced, powerful */
-    tier: "fast" | "balanced" | "powerful"
-  }
+    tier: "fast" | "balanced" | "powerful";
+  };
   /** Voice settings for TTS */
   voice: {
-    style: VoiceStyle
-    speed: number
-  }
+    style: VoiceStyle;
+    speed: number;
+  };
   /** System prompt personality adjustments */
   personality: {
     /** How concise vs detailed responses should be (0-1) */
-    conciseness: number
+    conciseness: number;
     /** How formal vs casual (0-1, 0=very formal) */
-    casualness: number
+    casualness: number;
     /** Custom personality notes appended to system prompt */
-    notes: string
-  }
+    notes: string;
+  };
   /** Version for future migrations */
-  version: "v1"
-}
+  version: "v1";
+};
 
 /**
  * Available Agent Profiles
@@ -132,11 +138,7 @@ export const AGENT_PROFILES: Record<string, AgentProfile> = {
     description:
       "Optimized for speed. Best for rapid-fire calendar queries and quick actions when every second counts.",
     tier: "pro",
-    capabilities: [
-      "calendar_read",
-      "calendar_write",
-      "voice",
-    ],
+    capabilities: ["calendar_read", "calendar_write", "voice"],
     modelConfig: {
       provider: "openai",
       tier: "fast",
@@ -248,27 +250,28 @@ export const AGENT_PROFILES: Record<string, AgentProfile> = {
     personality: {
       conciseness: 0.6,
       casualness: 0.4,
-      notes: "Thoughtful and precise. Excellent at understanding nuanced requests and providing clear explanations.",
+      notes:
+        "Thoughtful and precise. Excellent at understanding nuanced requests and providing clear explanations.",
     },
     version: "v1",
   },
-}
+};
 
 /** Default agent for new users */
-export const DEFAULT_AGENT_PROFILE_ID = "ally-lite"
+export const DEFAULT_AGENT_PROFILE_ID = "ally-lite";
 
 /** Get profile by ID with fallback */
 export function getAgentProfile(profileId: string): AgentProfile {
-  return AGENT_PROFILES[profileId] ?? AGENT_PROFILES[DEFAULT_AGENT_PROFILE_ID]
+  return AGENT_PROFILES[profileId] ?? AGENT_PROFILES[DEFAULT_AGENT_PROFILE_ID];
 }
 
 /** Get all profiles available for a tier */
 export function getProfilesForTier(tier: AgentTier): AgentProfile[] {
-  const tierOrder: AgentTier[] = ["free", "pro", "enterprise"]
-  const tierIndex = tierOrder.indexOf(tier)
+  const tierOrder: AgentTier[] = ["free", "pro", "enterprise"];
+  const tierIndex = tierOrder.indexOf(tier);
 
   return Object.values(AGENT_PROFILES).filter((profile) => {
-    const profileTierIndex = tierOrder.indexOf(profile.tier)
-    return profileTierIndex <= tierIndex
-  })
+    const profileTierIndex = tierOrder.indexOf(profile.tier);
+    return profileTierIndex <= tierIndex;
+  });
 }

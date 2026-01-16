@@ -84,7 +84,7 @@ export const sendTextMessage = async (
   // Truncate text if too long
   const truncatedText =
     text.length > MAX_TEXT_LENGTH
-      ? text.slice(0, MAX_TEXT_LENGTH - 3) + "..."
+      ? `${text.slice(0, MAX_TEXT_LENGTH - 3)}...`
       : text;
 
   const message: WhatsAppOutgoingMessage = {

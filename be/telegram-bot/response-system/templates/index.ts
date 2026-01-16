@@ -4,35 +4,35 @@
 
 // Calendar templates
 export {
-  weeklyCalendarTemplate,
-  todayScheduleTemplate,
-  tomorrowScheduleTemplate,
+  busyTimeTemplate,
   eventListTemplate,
   freeTimeTemplate,
-  busyTimeTemplate,
   monthlyOverviewTemplate,
+  todayScheduleTemplate,
+  tomorrowScheduleTemplate,
+  weeklyCalendarTemplate,
 } from "./calendar";
 
 // Notification templates
 export {
+  confirmationTemplate,
+  connectionErrorTemplate,
+  errorTemplate,
   // Success
   eventCreatedTemplate,
-  eventUpdatedTemplate,
   eventDeletedTemplate,
-  successTemplate,
   // Errors
   eventNotFoundTemplate,
-  connectionErrorTemplate,
+  eventUpdatedTemplate,
+  feedbackTemplate,
+  helpTemplate,
+  loadingTemplate,
   permissionErrorTemplate,
+  sessionEndedTemplate,
+  settingsTemplate,
+  statusTemplate,
+  successTemplate,
   timeConflictTemplate,
-  errorTemplate,
   // Info/Notifications
   welcomeTemplate,
-  sessionEndedTemplate,
-  helpTemplate,
-  statusTemplate,
-  settingsTemplate,
-  feedbackTemplate,
-  loadingTemplate,
-  confirmationTemplate,
 } from "./notifications";

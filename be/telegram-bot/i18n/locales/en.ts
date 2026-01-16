@@ -368,8 +368,10 @@ export const en = {
     "You have a pending event creation. Please reply 'yes' to create despite conflicts, or 'no' to cancel.",
   "errors.processingPreviousRequest":
     "Hold on, I'm still working on your previous request...",
-  "errors.imageProcessingError": "Unable to process the image. Please try again with a different image.",
-  "errors.tooManyImages": "You can send up to {{max}} images at once. Some images were skipped.",
+  "errors.imageProcessingError":
+    "Unable to process the image. Please try again with a different image.",
+  "errors.tooManyImages":
+    "You can send up to {{max}} images at once. Some images were skipped.",
 
   "common.confirm": "Confirm",
   "common.cancel": "Cancel",
@@ -377,7 +379,8 @@ export const en = {
   "common.no": "No",
   "common.eventCreationCancelled": "Event creation cancelled.",
   "common.typeExitToStop": "Type /exit to stop.",
-  "common.analyzeImage": "Please analyze this image and tell me what you see. If it contains calendar or scheduling information, help me create the event.",
+  "common.analyzeImage":
+    "Please analyze this image and tell me what you see. If it contains calendar or scheduling information, help me create the event.",
 
   "botMenu.today": "Today's schedule",
   "botMenu.tomorrow": "Tomorrow's agenda",
@@ -402,17 +405,22 @@ export const en = {
   "botMenu.asvoice": "Repeat last as voice",
 
   "commands.astext.header": "Last Response as Text",
-  "commands.astext.noLastResponse": "No previous response to show. Send me a message first!",
+  "commands.astext.noLastResponse":
+    "No previous response to show. Send me a message first!",
   "commands.astext.alreadyText": "The last response was already sent as text.",
 
   "commands.asvoice.header": "Last Response as Voice",
-  "commands.asvoice.noLastResponse": "No previous response to repeat. Send me a message first!",
-  "commands.asvoice.alreadyVoice": "The last response was already sent as voice.",
+  "commands.asvoice.noLastResponse":
+    "No previous response to repeat. Send me a message first!",
+  "commands.asvoice.alreadyVoice":
+    "The last response was already sent as voice.",
   "commands.asvoice.generating": "Generating voice message...",
-  "commands.asvoice.failed": "Failed to generate voice message. Here's the text instead:",
+  "commands.asvoice.failed":
+    "Failed to generate voice message. Here's the text instead:",
 
   "commands.profile.header": "AI Assistant Profile",
-  "commands.profile.description": "Choose which AI model powers your assistant. Each profile offers different capabilities and response styles.",
+  "commands.profile.description":
+    "Choose which AI model powers your assistant. Each profile offers different capabilities and response styles.",
   "commands.profile.noUser": "Could not identify user.",
   "commands.profile.currentProfile": "Current Profile",
   "commands.profile.tier": "Tier",
@@ -421,39 +429,53 @@ export const en = {
   "commands.profile.realtimeDisabled": "Text only",
   "commands.profile.selectPrompt": "Tap a profile below to switch:",
   "commands.profile.switched": "Switched to",
-  "commands.profile.updateFailed": "Failed to update profile. Please try again.",
+  "commands.profile.updateFailed":
+    "Failed to update profile. Please try again.",
   "commands.profile.invalidProfile": "Invalid profile selected.",
   "commands.profile.error": "An error occurred. Please try again.",
 
   "botMenu.profile": "Choose AI profile",
 
   "commands.website.header": "Web Dashboard",
-  "commands.website.text": "Access your calendar dashboard and manage your settings online:",
+  "commands.website.text":
+    "Access your calendar dashboard and manage your settings online:",
   "botMenu.website": "Open web dashboard",
 
   // Reschedule command
   "commands.reschedule.header": "Smart Reschedule",
-  "commands.reschedule.text": "Tell me which event to reschedule, and I'll find the best available times:",
+  "commands.reschedule.text":
+    "Tell me which event to reschedule, and I'll find the best available times:",
   "commands.reschedule.footerTip": "Just describe the event you want to move.",
   "commands.reschedule.sections.howToUse.title": "How to Use",
-  "commands.reschedule.sections.howToUse.items.0": "'Reschedule my 2pm meeting'",
-  "commands.reschedule.sections.howToUse.items.1": "'Move the dentist to next week'",
-  "commands.reschedule.sections.howToUse.items.2": "'Push team standup to afternoon'",
+  "commands.reschedule.sections.howToUse.items.0":
+    "'Reschedule my 2pm meeting'",
+  "commands.reschedule.sections.howToUse.items.1":
+    "'Move the dentist to next week'",
+  "commands.reschedule.sections.howToUse.items.2":
+    "'Push team standup to afternoon'",
   "commands.reschedule.sections.smartFeatures.title": "Smart Features",
-  "commands.reschedule.sections.smartFeatures.items.0": "AI finds optimal times based on your schedule",
-  "commands.reschedule.sections.smartFeatures.items.1": "Checks all calendars for conflicts",
-  "commands.reschedule.sections.smartFeatures.items.2": "Respects your preferences from /brain",
+  "commands.reschedule.sections.smartFeatures.items.0":
+    "AI finds optimal times based on your schedule",
+  "commands.reschedule.sections.smartFeatures.items.1":
+    "Checks all calendars for conflicts",
+  "commands.reschedule.sections.smartFeatures.items.2":
+    "Respects your preferences from /brain",
   "commands.reschedule.suggestionsHeader": "Suggested Times",
-  "commands.reschedule.suggestionsText": "Here are the best times to reschedule <b>{{event}}</b>:",
-  "commands.reschedule.noSuggestions": "No available slots found in the next 7 days. Try a longer time range.",
+  "commands.reschedule.suggestionsText":
+    "Here are the best times to reschedule <b>{{event}}</b>:",
+  "commands.reschedule.noSuggestions":
+    "No available slots found in the next 7 days. Try a longer time range.",
   "commands.reschedule.selectTime": "Tap a time to reschedule:",
   "commands.reschedule.success": "Event Rescheduled",
-  "commands.reschedule.successText": "<b>{{event}}</b> has been moved to {{time}}.",
+  "commands.reschedule.successText":
+    "<b>{{event}}</b> has been moved to {{time}}.",
   "commands.reschedule.failed": "Reschedule Failed",
   "commands.reschedule.error": "Something went wrong. Please try again.",
   "commands.reschedule.unknownError": "Unable to reschedule the event.",
-  "commands.reschedule.noSession": "No pending reschedule. Use /reschedule to start.",
-  "commands.reschedule.invalidSelection": "Invalid selection. Please try again.",
+  "commands.reschedule.noSession":
+    "No pending reschedule. Use /reschedule to start.",
+  "commands.reschedule.invalidSelection":
+    "Invalid selection. Please try again.",
   "commands.reschedule.applying": "Rescheduling...",
   "commands.reschedule.cancelled": "Reschedule cancelled.",
   "commands.reschedule.cancelledHeader": "Cancelled",

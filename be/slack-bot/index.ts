@@ -1,17 +1,17 @@
 export {
-  initSlackBot,
+  clearClientCache,
+  getClientForTeam,
   getSlackApp,
   getSlackReceiver,
-  getClientForTeam,
-  clearClientCache,
-} from "./init-bot"
-export { getSession, updateSession, resetSession } from "./utils/session"
-export { slackConversation } from "./utils/conversation-history"
-export { SlackResponseBuilder } from "./utils/response-builder"
+  initSlackBot,
+} from "./init-bot";
 export {
-  generateInstallUrl,
-  exchangeCodeForToken,
-  getWorkspaceToken,
   deactivateWorkspace,
+  exchangeCodeForToken,
+  generateInstallUrl,
   getAllActiveWorkspaces,
-} from "./services/oauth-service"
+  getWorkspaceToken,
+} from "./services/oauth-service";
+export { slackConversation } from "./utils/conversation-history";
+export { SlackResponseBuilder } from "./utils/response-builder";
+export { getSession, resetSession, updateSession } from "./utils/session";

@@ -3,35 +3,35 @@
  * The main entry point for the response rendering system
  */
 
+import { TelegramAdapter } from "../adapters/telegram-adapter";
+import { mergeConfig, TYPE_EMOJIS } from "./config";
+import { sanitizeUserInput } from "./html-escaper";
 import type {
   BaseMessage,
-  MessageHeader,
-  MessageFooter,
   BodySection,
-  ListItem,
-  MessageType,
-  TextDirection,
-  ResponseConfig,
   BuilderResult,
-  CalendarEvent,
-  DaySchedule,
-  WeekSchedule,
-  Channel,
   BulletStyle,
+  CalendarEvent,
+  Channel,
   ChannelAdapter,
+  DaySchedule,
+  ListItem,
+  MessageFooter,
+  MessageHeader,
+  MessageType,
+  ResponseConfig,
+  TextDirection,
+  WeekSchedule,
 } from "./types";
-import { TelegramAdapter } from "../adapters/telegram-adapter";
-import { defaultConfig, mergeConfig, TYPE_EMOJIS } from "./config";
-import { sanitizeUserInput } from "./html-escaper";
 
 export class ResponseBuilder {
-  private channel: Channel;
-  private config: ResponseConfig;
-  private adapter: ChannelAdapter;
+  private readonly channel: Channel;
+  private readonly config: ResponseConfig;
+  private readonly adapter: ChannelAdapter;
 
   private _type: MessageType = "info";
   private _header: MessageHeader | null = null;
-  private _body: BodySection[] = [];
+  private readonly _body: BodySection[] = [];
   private _footer: MessageFooter | null = null;
   private _direction: TextDirection = "auto";
 
@@ -178,7 +178,7 @@ export class ResponseBuilder {
    */
   separator(): this {
     if (this._body.length > 0) {
-      const last = this._body[this._body.length - 1];
+      const last = this._body.at(-1);
       last.separator = true;
     }
     return this;
@@ -407,11 +407,11 @@ export class ResponseBuilder {
       case "telegram":
         return "HTML";
       case "whatsapp":
-        return undefined; // WhatsApp uses its own formatting
+        return; // WhatsApp uses its own formatting
       case "web":
         return "html";
       default:
-        return undefined;
+        return;
     }
   }
 
@@ -447,11 +447,21 @@ export class ResponseBuilder {
     // Could be enhanced with calendar-based or time-based emoji selection
     const hour = new Date(event.start).getHours();
 
-    if (hour < 9) return "🌅"; // Early morning
-    if (hour < 12) return "☀️"; // Morning
-    if (hour < 14) return "🍽️"; // Lunch time
-    if (hour < 17) return "💼"; // Afternoon
-    if (hour < 20) return "🌆"; // Evening
+    if (hour < 9) {
+      return "🌅"; // Early morning
+    }
+    if (hour < 12) {
+      return "☀️"; // Morning
+    }
+    if (hour < 14) {
+      return "🍽️"; // Lunch time
+    }
+    if (hour < 17) {
+      return "💼"; // Afternoon
+    }
+    if (hour < 20) {
+      return "🌆"; // Evening
+    }
     return "🌙"; // Night
   }
 }

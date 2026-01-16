@@ -1,16 +1,18 @@
-import type { AgentProfile } from "./agent-profiles"
-import { getAgentProfile, DEFAULT_AGENT_PROFILE_ID } from "./agent-profiles"
+import type { AgentProfile } from "./agent-profiles";
+import { DEFAULT_AGENT_PROFILE_ID, getAgentProfile } from "./agent-profiles";
 
-export interface AgentProfileResponse {
-  id: string
-  displayName: string
-  tagline: string
-  description: string
-  tier: string
-  supportsVoice: boolean
-}
+export type AgentProfileResponse = {
+  id: string;
+  displayName: string;
+  tagline: string;
+  description: string;
+  tier: string;
+  supportsVoice: boolean;
+};
 
-export function formatProfileForClient(profile: AgentProfile): AgentProfileResponse {
+export function formatProfileForClient(
+  profile: AgentProfile
+): AgentProfileResponse {
   return {
     id: profile.id,
     displayName: profile.displayName,
@@ -18,7 +20,7 @@ export function formatProfileForClient(profile: AgentProfile): AgentProfileRespo
     description: profile.description,
     tier: profile.tier,
     supportsVoice: profile.capabilities.includes("voice"),
-  }
+  };
 }
 
-export { DEFAULT_AGENT_PROFILE_ID, getAgentProfile }
+export { DEFAULT_AGENT_PROFILE_ID, getAgentProfile };

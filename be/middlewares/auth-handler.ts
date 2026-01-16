@@ -14,19 +14,30 @@ import { reqResAsyncHandler, sendR } from "@/utils/http";
  * const data = await authHandler(req, res, next);
  *
  */
-export const authHandler = reqResAsyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-  const token = req.headers.authorization?.replace("Bearer ", "");
-  if (!token) {
-    return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "Missing authorization headers: ", token);
+export const authHandler = reqResAsyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const token = req.headers.authorization?.replace("Bearer ", "");
+    if (!token) {
+      return sendR(
+        res,
+        STATUS_RESPONSE.UNAUTHORIZED,
+        "Missing authorization headers: ",
+        token
+      );
+    }
+
+    const { data } = await SUPABASE.auth.getUser(token);
+
+    if (!data?.user) {
+      return sendR(
+        res,
+        STATUS_RESPONSE.UNAUTHORIZED,
+        "Not authorized. Please login or register to continue."
+      );
+    }
+
+    req.user = data.user;
+
+    next();
   }
-
-  const { data } = await SUPABASE.auth.getUser(token);
-
-  if (!data?.user) {
-    return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "Not authorized. Please login or register to continue.");
-  }
-
-  req.user = data.user;
-
-  next();
-});
+);

@@ -33,7 +33,8 @@ export const he = {
   "commands.help.sections.timeInsights.title": "תובנות זמן",
   "commands.help.sections.timeInsights.items.0": "/analytics - הבנת הזמן שלך",
   "commands.help.sections.timeInsights.items.1": "/calendars - היומנים שלך",
-  "commands.help.sections.timeInsights.items.2": "/aboutme - מה Ally יודעת עליך",
+  "commands.help.sections.timeInsights.items.2":
+    "/aboutme - מה Ally יודעת עליך",
   "commands.help.sections.personalization.title": "התאמה אישית",
   "commands.help.sections.personalization.items.0":
     "/brain - למד את Ally את ההעדפות שלך",
@@ -312,7 +313,7 @@ export const he = {
   "botMenu.brain": "למד את Ally את ההעדפות שלך",
 
   "auth.welcomePrompt":
-    "👋 <b>ברוכים הבאים ל-Ally!</b>\n\nאני העוזרת החכמה שלך ליומן. אני יכולה לעזור לך:\n\n📅 לתזמן ולנהל אירועים בשפה טבעית\n🔍 למצוא זמנים פנויים ולבדוק את הלו\"ז שלך\n📊 לקבל תובנות על איך אתה מבלה את הזמן שלך\n\n<b>בוא נתחיל בשני צעדים קצרים:</b>\n\n<b>שלב 1:</b> אימות האימייל שלך\n<b>שלב 2:</b> חיבור יומן Google\n\nאנא הזן את כתובת האימייל שלך כדי להתחיל:",
+    '👋 <b>ברוכים הבאים ל-Ally!</b>\n\nאני העוזרת החכמה שלך ליומן. אני יכולה לעזור לך:\n\n📅 לתזמן ולנהל אירועים בשפה טבעית\n🔍 למצוא זמנים פנויים ולבדוק את הלו"ז שלך\n📊 לקבל תובנות על איך אתה מבלה את הזמן שלך\n\n<b>בוא נתחיל בשני צעדים קצרים:</b>\n\n<b>שלב 1:</b> אימות האימייל שלך\n<b>שלב 2:</b> חיבור יומן Google\n\nאנא הזן את כתובת האימייל שלך כדי להתחיל:',
   "auth.enterOtpPrompt":
     "📧 <b>בדוק את תיבת הדואר שלך!</b>\n\nשלחתי קוד אימות בן 6 ספרות ל-<b>{{email}}</b>.\n\nאנא הזן את הקוד למטה (תקף ל-10 דקות).\n\n<i>אימייל לא נכון? פשוט הקלד את הנכון.</i>",
   "auth.otpExpired":
@@ -321,7 +322,7 @@ export const he = {
     "❌ קוד אימות לא תקין.\n\nאנא נסה שוב או הקלד כתובת אימייל אחרת.",
   "auth.otpInvalidWithNewEmail": "שגיאה: {{error}}",
   "auth.emailVerifiedSuccess":
-    "✅ <b>האימייל אומת!</b>\n\nמצוין, אתה באמצע הדרך.\n\n<b>השלב הבא:</b> חבר את יומן Google שלך כדי שאוכל לעזור לנהל את הלו\"ז שלך.",
+    '✅ <b>האימייל אומת!</b>\n\nמצוין, אתה באמצע הדרך.\n\n<b>השלב הבא:</b> חבר את יומן Google שלך כדי שאוכל לעזור לנהל את הלו"ז שלך.',
   "auth.dbSaveError": "שגיאה בשמירת האימייל. אנא נסה שוב.",
   "auth.enterOtpOrNewEmail":
     "אנא הזן את קוד האימות בן 6 הספרות, או הקלד כתובת אימייל אחרת:",
@@ -330,7 +331,7 @@ export const he = {
   "auth.otpSendFailed":
     "שליחת קוד האימות נכשלה: {{error}}\n\nאנא נסה עם כתובת אימייל אחרת.",
   "auth.googleCalendarConnect":
-    "🔗 <b>חיבור יומן Google</b>\n\nכדי לנהל את היומן שלך, אני צריכה הרשאה לגשת ליומן Google שלך.\n\n<b>מה אוכל לעשות לאחר החיבור:</b>\n• לצפות בלו\"ז שלך\n• ליצור ולעדכן אירועים\n• למצוא זמנים פנויים\n• לשלוח לך תזכורות\n\n<b>המידע שלך מאובטח:</b>\n• אני ניגשת רק לנתוני היומן\n• אפשר לבטל גישה בכל עת\n• המידע שלך לעולם לא משותף",
+    '🔗 <b>חיבור יומן Google</b>\n\nכדי לנהל את היומן שלך, אני צריכה הרשאה לגשת ליומן Google שלך.\n\n<b>מה אוכל לעשות לאחר החיבור:</b>\n• לצפות בלו"ז שלך\n• ליצור ולעדכן אירועים\n• למצוא זמנים פנויים\n• לשלוח לך תזכורות\n\n<b>המידע שלך מאובטח:</b>\n• אני ניגשת רק לנתוני היומן\n• אפשר לבטל גישה בכל עת\n• המידע שלך לעולם לא משותף',
   "auth.googleCalendarReconnect":
     "🔄 <b>התחבר מחדש ליומן Google</b>\n\nהגישה ליומן שלך פגה. אנא התחבר מחדש כדי להמשיך להשתמש ב-Ally.",
   "auth.googleCalendarMissingPermissions":
@@ -348,8 +349,10 @@ export const he = {
     "יש לך יצירת אירוע ממתינה. אנא השב 'כן' ליצירה למרות התנגשויות, או 'לא' לביטול.",
   "errors.processingPreviousRequest":
     "רגע, אני עדיין עובדת על הבקשה הקודמת שלך...",
-  "errors.imageProcessingError": "לא ניתן לעבד את התמונה. אנא נסה שוב עם תמונה אחרת.",
-  "errors.tooManyImages": "ניתן לשלוח עד {{max}} תמונות בבת אחת. חלק מהתמונות דולגו.",
+  "errors.imageProcessingError":
+    "לא ניתן לעבד את התמונה. אנא נסה שוב עם תמונה אחרת.",
+  "errors.tooManyImages":
+    "ניתן לשלוח עד {{max}} תמונות בבת אחת. חלק מהתמונות דולגו.",
 
   "common.confirm": "אישור",
   "common.cancel": "ביטול",
@@ -357,7 +360,8 @@ export const he = {
   "common.no": "לא",
   "common.eventCreationCancelled": "יצירת האירוע בוטלה.",
   "common.typeExitToStop": "הקלד /exit לסיום.",
-  "common.analyzeImage": "אנא נתח את התמונה הזו וספר לי מה אתה רואה. אם היא מכילה מידע על יומן או תזמון, עזור לי ליצור את האירוע.",
+  "common.analyzeImage":
+    "אנא נתח את התמונה הזו וספר לי מה אתה רואה. אם היא מכילה מידע על יומן או תזמון, עזור לי ליצור את האירוע.",
 
   "botMenu.today": "לו״ז להיום",
   "botMenu.tomorrow": "סדר יום למחר",
@@ -386,30 +390,40 @@ export const he = {
   "commands.astext.alreadyText": "התגובה האחרונה כבר נשלחה כטקסט.",
 
   "commands.asvoice.header": "התגובה האחרונה כהודעה קולית",
-  "commands.asvoice.noLastResponse": "אין תגובה קודמת לחזור עליה. שלח לי הודעה קודם!",
+  "commands.asvoice.noLastResponse":
+    "אין תגובה קודמת לחזור עליה. שלח לי הודעה קודם!",
   "commands.asvoice.alreadyVoice": "התגובה האחרונה כבר נשלחה כהודעה קולית.",
   "commands.asvoice.generating": "מייצר הודעה קולית...",
   "commands.asvoice.failed": "נכשל ביצירת הודעה קולית. הנה הטקסט במקום:",
 
   "commands.website.header": "לוח בקרה באינטרנט",
-  "commands.website.text": "גש ללוח הבקרה של היומן שלך ונהל את ההגדרות שלך אונליין:",
+  "commands.website.text":
+    "גש ללוח הבקרה של היומן שלך ונהל את ההגדרות שלך אונליין:",
   "botMenu.website": "פתח לוח בקרה באינטרנט",
 
   // Reschedule command
   "commands.reschedule.header": "תזמון מחדש חכם",
-  "commands.reschedule.text": "ספר לי איזה אירוע להזיז, ואמצא את הזמנים הטובים ביותר:",
+  "commands.reschedule.text":
+    "ספר לי איזה אירוע להזיז, ואמצא את הזמנים הטובים ביותר:",
   "commands.reschedule.footerTip": "פשוט תאר את האירוע שאתה רוצה להזיז.",
   "commands.reschedule.sections.howToUse.title": "איך להשתמש",
   "commands.reschedule.sections.howToUse.items.0": "'הזז את הפגישה של 14:00'",
-  "commands.reschedule.sections.howToUse.items.1": "'דחה את רופא השיניים לשבוע הבא'",
-  "commands.reschedule.sections.howToUse.items.2": "'הזז את הסטנדאפ לאחר הצהריים'",
+  "commands.reschedule.sections.howToUse.items.1":
+    "'דחה את רופא השיניים לשבוע הבא'",
+  "commands.reschedule.sections.howToUse.items.2":
+    "'הזז את הסטנדאפ לאחר הצהריים'",
   "commands.reschedule.sections.smartFeatures.title": "תכונות חכמות",
-  "commands.reschedule.sections.smartFeatures.items.0": "AI מוצא זמנים אופטימליים לפי לוח הזמנים שלך",
-  "commands.reschedule.sections.smartFeatures.items.1": "בודק את כל היומנים לאיתור התנגשויות",
-  "commands.reschedule.sections.smartFeatures.items.2": "מכבד את ההעדפות שלך מ-/brain",
+  "commands.reschedule.sections.smartFeatures.items.0":
+    "AI מוצא זמנים אופטימליים לפי לוח הזמנים שלך",
+  "commands.reschedule.sections.smartFeatures.items.1":
+    "בודק את כל היומנים לאיתור התנגשויות",
+  "commands.reschedule.sections.smartFeatures.items.2":
+    "מכבד את ההעדפות שלך מ-/brain",
   "commands.reschedule.suggestionsHeader": "זמנים מוצעים",
-  "commands.reschedule.suggestionsText": "הנה הזמנים הטובים ביותר לתזמון מחדש של <b>{{event}}</b>:",
-  "commands.reschedule.noSuggestions": "לא נמצאו זמנים פנויים ב-7 הימים הקרובים.",
+  "commands.reschedule.suggestionsText":
+    "הנה הזמנים הטובים ביותר לתזמון מחדש של <b>{{event}}</b>:",
+  "commands.reschedule.noSuggestions":
+    "לא נמצאו זמנים פנויים ב-7 הימים הקרובים.",
   "commands.reschedule.selectTime": "לחץ על זמן לתזמון מחדש:",
   "commands.reschedule.success": "האירוע תוזמן מחדש",
   "commands.reschedule.successText": "<b>{{event}}</b> הועבר ל-{{time}}.",

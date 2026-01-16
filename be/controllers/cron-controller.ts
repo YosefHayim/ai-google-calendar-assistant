@@ -59,10 +59,12 @@ function isWithinTimeWindow(
 
     const parts = formatter.formatToParts(now);
     const currentHour = Number.parseInt(
-      parts.find((p) => p.type === "hour")?.value ?? "0"
+      parts.find((p) => p.type === "hour")?.value ?? "0",
+      10
     );
     const currentMinute = Number.parseInt(
-      parts.find((p) => p.type === "minute")?.value ?? "0"
+      parts.find((p) => p.type === "minute")?.value ?? "0",
+      10
     );
 
     // Calculate minutes since midnight for both times
@@ -170,15 +172,19 @@ function buildBriefingEmailHtml(
       `;
 
   const totalMinutes = events.reduce((acc, event) => {
-    if (!event.durationOfEvent) return acc;
+    if (!event.durationOfEvent) {
+      return acc;
+    }
     const match = event.durationOfEvent.match(/(\d+)\s*hour|(\d+)\s*min/g);
-    if (!match) return acc;
+    if (!match) {
+      return acc;
+    }
     let minutes = 0;
     match.forEach((m) => {
       if (m.includes("hour")) {
-        minutes += Number.parseInt(m) * 60;
+        minutes += Number.parseInt(m, 10) * 60;
       } else {
-        minutes += Number.parseInt(m);
+        minutes += Number.parseInt(m, 10);
       }
     });
     return acc + minutes;
@@ -263,10 +269,16 @@ function buildBriefingEmailText(
     text += `You have ${eventCount} event${eventCount !== 1 ? "s" : ""} today:\n\n`;
     events.forEach((event, index) => {
       text += `${index + 1}. ${event.summary}\n`;
-      if (event.start) text += `   🕐 ${event.start}`;
-      if (event.durationOfEvent) text += ` (${event.durationOfEvent})`;
+      if (event.start) {
+        text += `   🕐 ${event.start}`;
+      }
+      if (event.durationOfEvent) {
+        text += ` (${event.durationOfEvent})`;
+      }
       text += "\n";
-      if (event.location) text += `   📍 ${event.location}\n`;
+      if (event.location) {
+        text += `   📍 ${event.location}\n`;
+      }
       text += "\n";
     });
   }
@@ -281,8 +293,12 @@ function buildBriefingEmailText(
  */
 function getGreeting(): string {
   const hour = new Date().getHours();
-  if (hour < 12) return "Good morning";
-  if (hour < 17) return "Good afternoon";
+  if (hour < 12) {
+    return "Good morning";
+  }
+  if (hour < 17) {
+    return "Good afternoon";
+  }
   return "Good evening";
 }
 

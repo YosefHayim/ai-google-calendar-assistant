@@ -1,7 +1,6 @@
-import type { AGENTS, AGENT_TOOLS } from "@/ai-agents";
-
 import type { User } from "@supabase/supabase-js";
 import type { calendar_v3 } from "googleapis";
+import type { AGENT_TOOLS, AGENTS } from "@/ai-agents";
 
 export type EventParametersProps = {
   summary?: string | null | undefined;
@@ -493,7 +492,11 @@ export type UserRole = "user" | "admin" | "moderator" | "support";
 /**
  * User status enum
  */
-export type UserStatus = "active" | "inactive" | "suspended" | "pending_verification";
+export type UserStatus =
+  | "active"
+  | "inactive"
+  | "suspended"
+  | "pending_verification";
 
 /**
  * Admin user representation with subscription info

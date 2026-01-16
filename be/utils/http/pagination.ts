@@ -7,26 +7,26 @@
 
 import type { Request } from "express";
 
-export interface PaginationParams {
+export type PaginationParams = {
   page: number;
   limit: number;
   offset: number;
-}
+};
 
-export interface PaginationResult<T> {
+export type PaginationResult<T> = {
   data: T[];
   total: number;
   page: number;
   totalPages: number;
   hasNext: boolean;
   hasPrev: boolean;
-}
+};
 
-export interface PaginationDefaults {
+export type PaginationDefaults = {
   page: number;
   limit: number;
   maxLimit: number;
-}
+};
 
 const DEFAULT_PAGINATION: PaginationDefaults = {
   page: 1,
@@ -51,10 +51,12 @@ export function parsePaginationParams(
 ): PaginationParams {
   const config = { ...DEFAULT_PAGINATION, ...defaults };
 
-  const page = query.page ? Math.max(1, parseInt(query.page as string, 10)) : config.page;
+  const page = query.page
+    ? Math.max(1, Number.parseInt(query.page as string, 10))
+    : config.page;
 
   let limit = query.limit
-    ? parseInt(query.limit as string, 10)
+    ? Number.parseInt(query.limit as string, 10)
     : config.limit;
 
   // Ensure limit is within bounds

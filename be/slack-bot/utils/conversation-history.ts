@@ -25,7 +25,7 @@ const slackIdToNumber = (slackUserId: string, teamId: string): number => {
   for (let i = 0; i < combined.length; i++) {
     const char = combined.charCodeAt(i);
     hash = (hash << 5) - hash + char;
-    hash = hash & hash;
+    hash &= hash;
   }
   return Math.abs(hash);
 };
@@ -71,7 +71,9 @@ export const getTodayConversationState = async (
     return null;
   }
 
-  if (!data) return null;
+  if (!data) {
+    return null;
+  }
 
   const updatedAt = data.updated_at || data.created_at;
   if (!isToday(updatedAt)) {

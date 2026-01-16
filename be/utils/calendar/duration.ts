@@ -13,14 +13,21 @@ const SECS_IN_MIN = 60;
  * getEventDurationString("2025-01-15T10:00:00Z", "2025-01-15T10:00:45Z"); // Returns "45s"
  * getEventDurationString(null, "2025-01-15T10:00:00Z"); // Returns null
  */
-export function getEventDurationString(startISO?: string | null, endISO?: string | null): string | null {
+export function getEventDurationString(
+  startISO?: string | null,
+  endISO?: string | null
+): string | null {
   if (!(startISO && endISO)) {
     return null;
   }
 
   const start = new Date(startISO);
   const end = new Date(endISO);
-  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime()) || end <= start) {
+  if (
+    Number.isNaN(start.getTime()) ||
+    Number.isNaN(end.getTime()) ||
+    end <= start
+  ) {
     return null;
   }
 

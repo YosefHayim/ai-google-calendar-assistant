@@ -1,10 +1,14 @@
 import type { AllMiddlewareArgs, SlackEventMiddlewareArgs } from "@slack/bolt";
-import { getSession, isDuplicateMessage } from "../utils/session";
-import { handleAgentRequest, handleCancellation, handleConfirmation } from "./agent-handler";
+import { logger } from "@/utils/logger";
+import { handleSlackAuth } from "../middleware/auth-handler";
 
 import { checkRateLimit } from "../middleware/rate-limiter";
-import { handleSlackAuth } from "../middleware/auth-handler";
-import { logger } from "@/utils/logger";
+import { getSession, isDuplicateMessage } from "../utils/session";
+import {
+  handleAgentRequest,
+  handleCancellation,
+  handleConfirmation,
+} from "./agent-handler";
 
 const TYPING_EMOJI = "hourglass_flowing_sand";
 
@@ -41,12 +45,13 @@ async function removeTypingIndicator(
 }
 
 type MessageArgs = SlackEventMiddlewareArgs<"message"> & AllMiddlewareArgs;
-type AppMentionArgs = SlackEventMiddlewareArgs<"app_mention"> & AllMiddlewareArgs;
+type AppMentionArgs = SlackEventMiddlewareArgs<"app_mention"> &
+  AllMiddlewareArgs;
 
 export const handleSlackMessage = async (args: MessageArgs): Promise<void> => {
   const { event, say, client } = args;
 
-  if (!("text" in event) || !event.text) {
+  if (!("text" in event && event.text)) {
     return;
   }
 
@@ -71,11 +76,15 @@ export const handleSlackMessage = async (args: MessageArgs): Promise<void> => {
     return;
   }
 
-  logger.info(`Slack Bot: Received message from user ${userId}: "${text.substring(0, 50)}..."`);
+  logger.info(
+    `Slack Bot: Received message from user ${userId}: "${text.substring(0, 50)}..."`
+  );
 
   const rateCheck = checkRateLimit(userId, "message");
   if (!rateCheck.allowed) {
-    await say(`You're sending messages too quickly. Please wait ${rateCheck.resetIn} seconds.`);
+    await say(
+      `You're sending messages too quickly. Please wait ${rateCheck.resetIn} seconds.`
+    );
     return;
   }
 
@@ -87,7 +96,9 @@ export const handleSlackMessage = async (args: MessageArgs): Promise<void> => {
   }
 
   if (!authResult.session.email) {
-    await say("I couldn't find your email. Please enter your email address to get started.");
+    await say(
+      "I couldn't find your email. Please enter your email address to get started."
+    );
     return;
   }
 
@@ -96,7 +107,11 @@ export const handleSlackMessage = async (args: MessageArgs): Promise<void> => {
   if (session.pendingConfirmation) {
     const lowerText = text.toLowerCase();
     if (lowerText === "yes" || lowerText === "confirm" || lowerText === "y") {
-      const response = await handleConfirmation(userId, teamId, authResult.session.email);
+      const response = await handleConfirmation(
+        userId,
+        teamId,
+        authResult.session.email
+      );
       await say(response);
       return;
     }
@@ -124,7 +139,9 @@ export const handleSlackMessage = async (args: MessageArgs): Promise<void> => {
     await say(response);
   } catch (error) {
     logger.error(`Slack Bot: Error processing message: ${error}`);
-    await say("Sorry, I encountered an error processing your request. Please try again.");
+    await say(
+      "Sorry, I encountered an error processing your request. Please try again."
+    );
   } finally {
     if (channel && ts) {
       await removeTypingIndicator(client, channel, ts);
@@ -145,11 +162,15 @@ export const handleAppMention = async (args: AppMentionArgs): Promise<void> => {
     return;
   }
 
-  logger.info(`Slack Bot: Received mention from user ${userId}: "${text.substring(0, 50)}..."`);
+  logger.info(
+    `Slack Bot: Received mention from user ${userId}: "${text.substring(0, 50)}..."`
+  );
 
   const rateCheck = checkRateLimit(userId, "message");
   if (!rateCheck.allowed) {
-    await say(`You're sending messages too quickly. Please wait ${rateCheck.resetIn} seconds.`);
+    await say(
+      `You're sending messages too quickly. Please wait ${rateCheck.resetIn} seconds.`
+    );
     return;
   }
 
@@ -161,7 +182,9 @@ export const handleAppMention = async (args: AppMentionArgs): Promise<void> => {
   }
 
   if (!authResult.session.email) {
-    await say("I couldn't find your email. Please enter your email address to get started.");
+    await say(
+      "I couldn't find your email. Please enter your email address to get started."
+    );
     return;
   }
 
@@ -185,7 +208,9 @@ export const handleAppMention = async (args: AppMentionArgs): Promise<void> => {
     await say(response);
   } catch (error) {
     logger.error(`Slack Bot: Error processing mention: ${error}`);
-    await say("Sorry, I encountered an error processing your request. Please try again.");
+    await say(
+      "Sorry, I encountered an error processing your request. Please try again."
+    );
   } finally {
     if (channel && ts) {
       await removeTypingIndicator(client, channel, ts);

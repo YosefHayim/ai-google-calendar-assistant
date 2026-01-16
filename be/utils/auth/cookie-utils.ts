@@ -1,7 +1,6 @@
 import type { CookieOptions, Response } from "express";
 
 import { env } from "@/config";
-import { logger } from "../logger";
 
 export const ACCESS_TOKEN_COOKIE = "access_token";
 export const REFRESH_TOKEN_COOKIE = "refresh_token";
@@ -22,7 +21,12 @@ const BASE_COOKIE_OPTIONS: CookieOptions = {
  * @param refreshToken - Supabase refresh token
  * @param user - Optional user object to store in cookie
  */
-export const setAuthCookies = (res: Response, accessToken: string, refreshToken: string, user?: object) => {
+export const setAuthCookies = (
+  res: Response,
+  accessToken: string,
+  refreshToken: string,
+  user?: object
+) => {
   res.cookie(ACCESS_TOKEN_COOKIE, accessToken, {
     ...BASE_COOKIE_OPTIONS,
     maxAge: 60 * 60 * 1000, // 1 hour for access token

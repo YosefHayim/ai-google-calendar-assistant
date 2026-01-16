@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import { z } from "zod";
 import { SUPABASE } from "@/config/clients";
 import sendR from "@/utils/send-response";
@@ -52,7 +52,9 @@ export const newsletterController = {
           })
           .eq("email", email);
 
-        if (error) throw error;
+        if (error) {
+          throw error;
+        }
 
         return sendR(res, 200, "Welcome back! You've been resubscribed.", {
           email,
@@ -67,7 +69,9 @@ export const newsletterController = {
         user_agent: userAgent,
       });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return sendR(res, 201, "Successfully subscribed to newsletter!", {
         email,
@@ -101,7 +105,7 @@ export const newsletterController = {
 
       const newTypes =
         existing.subscription_types?.filter(
-          (t: string) => t !== "newsletter",
+          (t: string) => t !== "newsletter"
         ) || [];
 
       const { error } = await SUPABASE.from("marketing_subscriptions")
@@ -114,7 +118,9 @@ export const newsletterController = {
         })
         .eq("email", email);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return sendR(res, 200, "Successfully unsubscribed from newsletter.", {
         email,

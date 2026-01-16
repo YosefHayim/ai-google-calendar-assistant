@@ -1,5 +1,5 @@
-import type { Database } from "@/database.types";
 import { createClient } from "@supabase/supabase-js";
+import type { Database } from "@/database.types";
 import { env } from "../env";
 
 /**
@@ -9,9 +9,13 @@ import { env } from "../env";
  * The auth.persistSession and auth.autoRefreshToken are disabled since this is
  * a server-side client that doesn't need session management.
  */
-export const SUPABASE = createClient<Database>(env.supabaseUrl, env.supabaseServiceRoleKey, {
-  auth: {
-    autoRefreshToken: false,
-    persistSession: false,
-  },
-});
+export const SUPABASE = createClient<Database>(
+  env.supabaseUrl,
+  env.supabaseServiceRoleKey,
+  {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+    },
+  }
+);

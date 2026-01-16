@@ -26,7 +26,9 @@ const HTML_ESCAPE_MAP: Record<string, string> = {
  * escapeHtml("Tom & Jerry") // "Tom &amp; Jerry"
  */
 export function escapeHtml(text: string): string {
-  if (!text) return "";
+  if (!text) {
+    return "";
+  }
 
   return text.replace(/[&<>"]/g, (char) => HTML_ESCAPE_MAP[char] || char);
 }
@@ -43,7 +45,9 @@ export function escapeHtmlPreserving(
   text: string,
   allowedTags: string[] = []
 ): string {
-  if (!text) return "";
+  if (!text) {
+    return "";
+  }
 
   // First, escape everything
   let escaped = escapeHtml(text);
@@ -54,9 +58,9 @@ export function escapeHtmlPreserving(
     const openPattern = new RegExp(`&lt;${tag}(&gt;|\\s[^&]*&gt;)`, "gi");
     const closePattern = new RegExp(`&lt;/${tag}&gt;`, "gi");
 
-    escaped = escaped.replace(openPattern, (match) => {
-      return match.replace(/&lt;/g, "<").replace(/&gt;/g, ">");
-    });
+    escaped = escaped.replace(openPattern, (match) =>
+      match.replace(/&lt;/g, "<").replace(/&gt;/g, ">")
+    );
     escaped = escaped.replace(closePattern, `</${tag}>`);
   }
 
@@ -70,7 +74,9 @@ export function escapeHtmlPreserving(
  * @returns true if text contains potentially dangerous HTML
  */
 export function containsUnsafeHtml(text: string): boolean {
-  if (!text) return false;
+  if (!text) {
+    return false;
+  }
 
   // Telegram allowed tags pattern
   const allowedPattern =
@@ -88,7 +94,9 @@ export function containsUnsafeHtml(text: string): boolean {
  * @returns Sanitized and escaped string
  */
 export function sanitizeUserInput(userInput: string): string {
-  if (!userInput) return "";
+  if (!userInput) {
+    return "";
+  }
 
   // Trim whitespace
   let sanitized = userInput.trim();
@@ -111,7 +119,9 @@ export function sanitizeUserInput(userInput: string): string {
  * @returns Unescaped string
  */
 export function unescapeHtml(text: string): string {
-  if (!text) return "";
+  if (!text) {
+    return "";
+  }
 
   return text
     .replace(/&amp;/g, "&")

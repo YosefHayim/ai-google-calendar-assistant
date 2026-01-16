@@ -1,5 +1,5 @@
-import { jest, describe, it, expect, beforeEach } from "@jest/globals";
-import type { Request, Response, NextFunction } from "express";
+import { beforeEach, describe, expect, it, jest } from "@jest/globals";
+import type { NextFunction, Request, Response } from "express";
 import { mockFn } from "../../test-utils";
 
 // Mock dependencies
@@ -25,7 +25,8 @@ jest.mock("@/config", () => ({
   SUPABASE: {
     auth: {
       signUp: (...args: unknown[]) => mockSignUp(...args),
-      signInWithPassword: (...args: unknown[]) => mockSignInWithPassword(...args),
+      signInWithPassword: (...args: unknown[]) =>
+        mockSignInWithPassword(...args),
       verifyOtp: (...args: unknown[]) => mockVerifyOtp(...args),
       refreshSession: (...args: unknown[]) => mockRefreshSession(...args),
     },
@@ -44,11 +45,10 @@ jest.mock("@/utils/auth", () => ({
 
 jest.mock("@/utils/http", () => ({
   sendR: (...args: unknown[]) => mockSendR(...args),
-  reqResAsyncHandler: <T extends (...args: unknown[]) => Promise<unknown>>(fn: T) => {
-    return (req: Request, res: Response, next: NextFunction) => {
-      return Promise.resolve(fn(req, res, next)).catch(next);
-    };
-  },
+  reqResAsyncHandler:
+    <T extends (...args: unknown[]) => Promise<unknown>>(fn: T) =>
+    (req: Request, res: Response, next: NextFunction) =>
+      Promise.resolve(fn(req, res, next)).catch(next),
 }));
 
 // Import after mocks
@@ -223,7 +223,10 @@ describe("authController", () => {
     it("should return error if signin fails", async () => {
       mockReq.body = { email: "test@example.com", password: "wrongpassword" };
       const mockError = { message: "Invalid credentials" };
-      mockSignInWithPassword.mockResolvedValue({ data: null, error: mockError });
+      mockSignInWithPassword.mockResolvedValue({
+        data: null,
+        error: mockError,
+      });
 
       await authController.signInUserReg(
         mockReq as Request,

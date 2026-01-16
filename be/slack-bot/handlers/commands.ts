@@ -1,16 +1,24 @@
-import type { AllMiddlewareArgs, SlackCommandMiddlewareArgs } from "@slack/bolt";
-
+import type {
+  AllMiddlewareArgs,
+  SlackCommandMiddlewareArgs,
+} from "@slack/bolt";
+import { logger } from "@/utils/logger";
+import { handleSlackAuth } from "../middleware/auth-handler";
 import { SlackResponseBuilder } from "../utils/response-builder";
 import { getSession } from "../utils/session";
 import { handleAgentRequest } from "./agent-handler";
-import { handleSlackAuth } from "../middleware/auth-handler";
-import { logger } from "@/utils/logger";
 
 type CommandArgs = SlackCommandMiddlewareArgs & AllMiddlewareArgs;
 
-const requireAuth = async (args: CommandArgs): Promise<{ authorized: boolean; email?: string }> => {
+const requireAuth = async (
+  args: CommandArgs
+): Promise<{ authorized: boolean; email?: string }> => {
   const { command, client, respond } = args;
-  const authResult = await handleSlackAuth(client, command.user_id, command.team_id);
+  const authResult = await handleSlackAuth(
+    client,
+    command.user_id,
+    command.team_id
+  );
 
   if (authResult.needsAuth) {
     await respond({
@@ -47,7 +55,10 @@ export const handleHelpCommand = async (args: CommandArgs): Promise<void> => {
       "`/ally search <query>` - Search calendar",
     ])
     .section("*📊 Time Insights*")
-    .bulletList(["`/ally analytics` - Understand your time", "`/ally calendars` - Your calendars"])
+    .bulletList([
+      "`/ally analytics` - Understand your time",
+      "`/ally calendars` - Your calendars",
+    ])
     .section("*🛠️ Settings*")
     .bulletList([
       "`/ally status` - Check connection",
@@ -56,7 +67,10 @@ export const handleHelpCommand = async (args: CommandArgs): Promise<void> => {
       "`/ally help` - Show this help",
     ])
     .divider()
-    .context(["💬 Or just message me naturally!", '_"How much deep work did I get this week vs last week?"_'])
+    .context([
+      "💬 Or just message me naturally!",
+      '_"How much deep work did I get this week vs last week?"_',
+    ])
     .build();
 
   await respond({
@@ -69,7 +83,9 @@ export const handleHelpCommand = async (args: CommandArgs): Promise<void> => {
 export const handleTodayCommand = async (args: CommandArgs): Promise<void> => {
   const { command, client, respond } = args;
   const auth = await requireAuth(args);
-  if (!auth.authorized || !auth.email) return;
+  if (!(auth.authorized && auth.email)) {
+    return;
+  }
 
   await respond({
     text: "Fetching today's schedule...",
@@ -97,10 +113,14 @@ export const handleTodayCommand = async (args: CommandArgs): Promise<void> => {
   }
 };
 
-export const handleTomorrowCommand = async (args: CommandArgs): Promise<void> => {
+export const handleTomorrowCommand = async (
+  args: CommandArgs
+): Promise<void> => {
   const { command, respond } = args;
   const auth = await requireAuth(args);
-  if (!auth.authorized || !auth.email) return;
+  if (!(auth.authorized && auth.email)) {
+    return;
+  }
 
   await respond({
     text: "Fetching tomorrow's schedule...",
@@ -131,7 +151,9 @@ export const handleTomorrowCommand = async (args: CommandArgs): Promise<void> =>
 export const handleWeekCommand = async (args: CommandArgs): Promise<void> => {
   const { command, respond } = args;
   const auth = await requireAuth(args);
-  if (!auth.authorized || !auth.email) return;
+  if (!(auth.authorized && auth.email)) {
+    return;
+  }
 
   await respond({
     text: "Fetching this week's schedule...",
@@ -162,7 +184,9 @@ export const handleWeekCommand = async (args: CommandArgs): Promise<void> => {
 export const handleMonthCommand = async (args: CommandArgs): Promise<void> => {
   const { command, respond } = args;
   const auth = await requireAuth(args);
-  if (!auth.authorized || !auth.email) return;
+  if (!(auth.authorized && auth.email)) {
+    return;
+  }
 
   await respond({
     text: "Fetching this month's overview...",
@@ -193,7 +217,9 @@ export const handleMonthCommand = async (args: CommandArgs): Promise<void> => {
 export const handleFreeCommand = async (args: CommandArgs): Promise<void> => {
   const { command, respond } = args;
   const auth = await requireAuth(args);
-  if (!auth.authorized || !auth.email) return;
+  if (!(auth.authorized && auth.email)) {
+    return;
+  }
 
   await respond({
     text: "Finding free time slots...",
@@ -224,7 +250,9 @@ export const handleFreeCommand = async (args: CommandArgs): Promise<void> => {
 export const handleBusyCommand = async (args: CommandArgs): Promise<void> => {
   const { command, respond } = args;
   const auth = await requireAuth(args);
-  if (!auth.authorized || !auth.email) return;
+  if (!(auth.authorized && auth.email)) {
+    return;
+  }
 
   await respond({
     text: "Checking your commitments...",
@@ -255,13 +283,20 @@ export const handleBusyCommand = async (args: CommandArgs): Promise<void> => {
 export const handleStatusCommand = async (args: CommandArgs): Promise<void> => {
   const { command, client, respond } = args;
 
-  const authResult = await handleSlackAuth(client, command.user_id, command.team_id);
+  const authResult = await handleSlackAuth(
+    client,
+    command.user_id,
+    command.team_id
+  );
 
   const session = getSession(command.user_id, command.team_id);
 
   const response = SlackResponseBuilder.create()
     .header("📊", "Ally Status")
-    .field("Connection", authResult.session.email ? "✅ Connected" : "❌ Not connected")
+    .field(
+      "Connection",
+      authResult.session.email ? "✅ Connected" : "❌ Not connected"
+    )
     .field("Email", authResult.session.email || "Not linked")
     .field("Messages", session.messageCount.toString())
     .build();
@@ -273,10 +308,15 @@ export const handleStatusCommand = async (args: CommandArgs): Promise<void> => {
   });
 };
 
-export const handleCreateCommand = async (args: CommandArgs, eventDescription: string): Promise<void> => {
+export const handleCreateCommand = async (
+  args: CommandArgs,
+  eventDescription: string
+): Promise<void> => {
   const { command, respond } = args;
   const auth = await requireAuth(args);
-  if (!auth.authorized || !auth.email) return;
+  if (!(auth.authorized && auth.email)) {
+    return;
+  }
 
   if (!eventDescription.trim()) {
     await respond({
@@ -312,10 +352,15 @@ export const handleCreateCommand = async (args: CommandArgs, eventDescription: s
   }
 };
 
-export const handleUpdateCommand = async (args: CommandArgs, updateDescription: string): Promise<void> => {
+export const handleUpdateCommand = async (
+  args: CommandArgs,
+  updateDescription: string
+): Promise<void> => {
   const { command, respond } = args;
   const auth = await requireAuth(args);
-  if (!auth.authorized || !auth.email) return;
+  if (!(auth.authorized && auth.email)) {
+    return;
+  }
 
   if (!updateDescription.trim()) {
     await respond({
@@ -351,10 +396,15 @@ export const handleUpdateCommand = async (args: CommandArgs, updateDescription: 
   }
 };
 
-export const handleDeleteCommand = async (args: CommandArgs, deleteDescription: string): Promise<void> => {
+export const handleDeleteCommand = async (
+  args: CommandArgs,
+  deleteDescription: string
+): Promise<void> => {
   const { command, respond } = args;
   const auth = await requireAuth(args);
-  if (!auth.authorized || !auth.email) return;
+  if (!(auth.authorized && auth.email)) {
+    return;
+  }
 
   if (!deleteDescription.trim()) {
     await respond({
@@ -390,10 +440,15 @@ export const handleDeleteCommand = async (args: CommandArgs, deleteDescription: 
   }
 };
 
-export const handleSearchCommand = async (args: CommandArgs, searchQuery: string): Promise<void> => {
+export const handleSearchCommand = async (
+  args: CommandArgs,
+  searchQuery: string
+): Promise<void> => {
   const { command, respond } = args;
   const auth = await requireAuth(args);
-  if (!auth.authorized || !auth.email) return;
+  if (!(auth.authorized && auth.email)) {
+    return;
+  }
 
   if (!searchQuery.trim()) {
     await respond({
@@ -429,10 +484,14 @@ export const handleSearchCommand = async (args: CommandArgs, searchQuery: string
   }
 };
 
-export const handleAnalyticsCommand = async (args: CommandArgs): Promise<void> => {
+export const handleAnalyticsCommand = async (
+  args: CommandArgs
+): Promise<void> => {
   const { command, respond } = args;
   const auth = await requireAuth(args);
-  if (!auth.authorized || !auth.email) return;
+  if (!(auth.authorized && auth.email)) {
+    return;
+  }
 
   await respond({
     text: "Analyzing your calendar...",
@@ -441,7 +500,8 @@ export const handleAnalyticsCommand = async (args: CommandArgs): Promise<void> =
 
   try {
     const response = await handleAgentRequest({
-      message: "Give me insights about how I spend my time. Show me analytics for this week.",
+      message:
+        "Give me insights about how I spend my time. Show me analytics for this week.",
       email: auth.email,
       slackUserId: command.user_id,
       teamId: command.team_id,
@@ -460,10 +520,14 @@ export const handleAnalyticsCommand = async (args: CommandArgs): Promise<void> =
   }
 };
 
-export const handleCalendarsCommand = async (args: CommandArgs): Promise<void> => {
+export const handleCalendarsCommand = async (
+  args: CommandArgs
+): Promise<void> => {
   const { command, respond } = args;
   const auth = await requireAuth(args);
-  if (!auth.authorized || !auth.email) return;
+  if (!(auth.authorized && auth.email)) {
+    return;
+  }
 
   await respond({
     text: "Fetching your calendars...",
@@ -491,21 +555,33 @@ export const handleCalendarsCommand = async (args: CommandArgs): Promise<void> =
   }
 };
 
-export const handleSettingsCommand = async (args: CommandArgs): Promise<void> => {
+export const handleSettingsCommand = async (
+  args: CommandArgs
+): Promise<void> => {
   const { command, client, respond } = args;
 
-  const authResult = await handleSlackAuth(client, command.user_id, command.team_id);
+  const authResult = await handleSlackAuth(
+    client,
+    command.user_id,
+    command.team_id
+  );
 
   const session = getSession(command.user_id, command.team_id);
 
   const response = SlackResponseBuilder.create()
     .header("⚙️", "Ally Settings")
     .field("Email", authResult.session.email || "Not linked")
-    .field("Connection", authResult.session.email ? "✅ Connected" : "❌ Not connected")
+    .field(
+      "Connection",
+      authResult.session.email ? "✅ Connected" : "❌ Not connected"
+    )
     .field("Messages this session", session.messageCount.toString())
     .divider()
     .section("*Available Settings*")
-    .bulletList(["`/ally status` - Check connection status", "`/ally feedback <message>` - Send feedback to the team"])
+    .bulletList([
+      "`/ally status` - Check connection status",
+      "`/ally feedback <message>` - Send feedback to the team",
+    ])
     .build();
 
   await respond({
@@ -515,7 +591,10 @@ export const handleSettingsCommand = async (args: CommandArgs): Promise<void> =>
   });
 };
 
-export const handleFeedbackCommand = async (args: CommandArgs, feedbackMessage: string): Promise<void> => {
+export const handleFeedbackCommand = async (
+  args: CommandArgs,
+  feedbackMessage: string
+): Promise<void> => {
   const { respond } = args;
 
   if (!feedbackMessage.trim()) {
@@ -530,7 +609,9 @@ export const handleFeedbackCommand = async (args: CommandArgs, feedbackMessage: 
 
   const response = SlackResponseBuilder.create()
     .header("💬", "Thanks for your feedback!")
-    .section("Your input helps us make Ally better. The team will review your message.")
+    .section(
+      "Your input helps us make Ally better. The team will review your message."
+    )
     .context(["We appreciate you taking the time to share your thoughts ✨"])
     .build();
 
@@ -541,7 +622,9 @@ export const handleFeedbackCommand = async (args: CommandArgs, feedbackMessage: 
   });
 };
 
-export const parseAndRouteCommand = async (args: CommandArgs): Promise<void> => {
+export const parseAndRouteCommand = async (
+  args: CommandArgs
+): Promise<void> => {
   const { command } = args;
   const text = command.text.trim().toLowerCase();
   const fullText = command.text.trim();
@@ -611,7 +694,9 @@ export const parseAndRouteCommand = async (args: CommandArgs): Promise<void> => 
   }
 
   const auth = await requireAuth(args);
-  if (!auth.authorized || !auth.email) return;
+  if (!(auth.authorized && auth.email)) {
+    return;
+  }
 
   const { respond } = args;
 

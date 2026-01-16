@@ -1,41 +1,43 @@
-import type { Request, Response } from "express"
-import { reqResAsyncHandler, sendR } from "@/utils/http"
-import { STATUS_RESPONSE } from "@/config"
+import type { Request, Response } from "express";
+import { STATUS_RESPONSE } from "@/config";
+import { reqResAsyncHandler, sendR } from "@/utils/http";
 
-const listCalendars = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const r = await req.calendar!.calendarList.list({
-    prettyPrint: true,
-    minAccessRole: req.query.minAccessRole as string,
-    showDeleted: req.query.showDeleted === "true",
-    showHidden: req.query.showHidden === "true",
-  })
+const listCalendars = reqResAsyncHandler(
+  async (req: Request, res: Response) => {
+    const r = await req.calendar?.calendarList.list({
+      prettyPrint: true,
+      minAccessRole: req.query.minAccessRole as string,
+      showDeleted: req.query.showDeleted === "true",
+      showHidden: req.query.showHidden === "true",
+    });
 
-  return sendR(
-    res,
-    STATUS_RESPONSE.SUCCESS,
-    "Successfully retrieved calendar list",
-    r.data
-  )
-})
+    return sendR(
+      res,
+      STATUS_RESPONSE.SUCCESS,
+      "Successfully retrieved calendar list",
+      r.data
+    );
+  }
+);
 
 const getCalendarListEntry = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const r = await req.calendar!.calendarList.get({
+    const r = await req.calendar?.calendarList.get({
       calendarId: req.params.id,
-    })
+    });
 
     return sendR(
       res,
       STATUS_RESPONSE.SUCCESS,
       "Successfully retrieved calendar list entry",
       r.data
-    )
+    );
   }
-)
+);
 
 const insertCalendarToList = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const r = await req.calendar!.calendarList.insert({
+    const r = await req.calendar?.calendarList.insert({
       requestBody: {
         id: req.body.id,
         colorId: req.body.colorId,
@@ -48,68 +50,68 @@ const insertCalendarToList = reqResAsyncHandler(
         summaryOverride: req.body.summaryOverride,
       },
       colorRgbFormat: req.query.colorRgbFormat === "true",
-    })
+    });
 
     return sendR(
       res,
       STATUS_RESPONSE.CREATED,
       "Calendar added to list successfully",
       r.data
-    )
+    );
   }
-)
+);
 
 const patchCalendarListEntry = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const r = await req.calendar!.calendarList.patch({
+    const r = await req.calendar?.calendarList.patch({
       calendarId: req.params.id,
       requestBody: req.body,
       colorRgbFormat: req.query.colorRgbFormat === "true",
-    })
+    });
 
     return sendR(
       res,
       STATUS_RESPONSE.SUCCESS,
       "Calendar list entry patched successfully",
       r.data
-    )
+    );
   }
-)
+);
 
 const updateCalendarListEntry = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const r = await req.calendar!.calendarList.update({
+    const r = await req.calendar?.calendarList.update({
       calendarId: req.params.id,
       requestBody: req.body,
       colorRgbFormat: req.query.colorRgbFormat === "true",
-    })
+    });
 
     return sendR(
       res,
       STATUS_RESPONSE.SUCCESS,
       "Calendar list entry updated successfully",
       r.data
-    )
+    );
   }
-)
+);
 
 const deleteCalendarFromList = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    await req.calendar!.calendarList.delete({
+    await req.calendar?.calendarList.delete({
       calendarId: req.params.id,
-    })
+    });
 
     return sendR(
       res,
       STATUS_RESPONSE.SUCCESS,
       "Calendar removed from list successfully"
-    )
+    );
   }
-)
+);
 
 const watchCalendarList = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const r = await req.calendar!.calendarList.watch({
+    const r = await req.calendar?.calendarList.watch({
       requestBody: {
         id: req.body.id,
         type: req.body.type || "web_hook",
@@ -121,16 +123,16 @@ const watchCalendarList = reqResAsyncHandler(
       minAccessRole: req.query.minAccessRole as string,
       showDeleted: req.query.showDeleted === "true",
       showHidden: req.query.showHidden === "true",
-    })
+    });
 
     return sendR(
       res,
       STATUS_RESPONSE.SUCCESS,
       "Calendar list watch created successfully",
       r.data
-    )
+    );
   }
-)
+);
 
 export default {
   listCalendars,
@@ -140,4 +142,4 @@ export default {
   updateCalendarListEntry,
   deleteCalendarFromList,
   watchCalendarList,
-}
+};

@@ -1,9 +1,9 @@
-import { asyncHandler } from "@/utils/http";
 import type { calendar_v3 } from "googleapis";
+import type { ConflictCheckResult, ConflictingEvent } from "@/shared/types";
 import { fetchCredentialsByEmail } from "@/utils/auth";
 import { formatDate } from "@/utils/date";
+import { asyncHandler } from "@/utils/http";
 import { initUserSupabaseCalendarWithTokensAndUpdateTokens } from "./init";
-import type { ConflictingEvent, ConflictCheckResult } from "@/shared/types";
 
 export type { ConflictingEvent, ConflictCheckResult };
 
@@ -63,12 +63,16 @@ export const checkEventConflicts = asyncHandler(
 
     const conflictingEvents: ConflictingEvent[] = events
       .filter((event: calendar_v3.Schema$Event) => {
-        if (!event.start || !event.end) return false;
+        if (!(event.start && event.end)) {
+          return false;
+        }
 
         const eventStart = event.start.dateTime || event.start.date;
         const eventEnd = event.end.dateTime || event.end.date;
 
-        if (!eventStart || !eventEnd) return false;
+        if (!(eventStart && eventEnd)) {
+          return false;
+        }
 
         const newStart = new Date(startTime).getTime();
         const newEnd = new Date(endTime).getTime();
@@ -93,7 +97,7 @@ export const checkEventConflicts = asyncHandler(
       hasConflicts: conflictingEvents.length > 0,
       conflictingEvents,
     };
-  },
+  }
 );
 
 /**
@@ -119,7 +123,7 @@ export const checkEventConflicts = asyncHandler(
  */
 export const checkEventConflictsAllCalendars = asyncHandler(
   async (
-    params: ConflictCheckAllCalendarsParams,
+    params: ConflictCheckAllCalendarsParams
   ): Promise<ConflictCheckResult> => {
     const { email, startTime, endTime, excludeEventId } = params;
 
@@ -152,13 +156,19 @@ export const checkEventConflictsAllCalendars = asyncHandler(
           const events = eventsResponse.data.items || [];
 
           events.forEach((event: calendar_v3.Schema$Event) => {
-            if (excludeEventId && event.id === excludeEventId) return;
-            if (!event.start || !event.end) return;
+            if (excludeEventId && event.id === excludeEventId) {
+              return;
+            }
+            if (!(event.start && event.end)) {
+              return;
+            }
 
             const eventStart = event.start.dateTime || event.start.date;
             const eventEnd = event.end.dateTime || event.end.date;
 
-            if (!eventStart || !eventEnd) return;
+            if (!(eventStart && eventEnd)) {
+              return;
+            }
 
             const newStart = new Date(startTime).getTime();
             const newEnd = new Date(endTime).getTime();
@@ -172,12 +182,12 @@ export const checkEventConflictsAllCalendars = asyncHandler(
                 start:
                   formatDate(
                     event.start?.dateTime || event.start?.date || "",
-                    true,
+                    true
                   ) || "",
                 end:
                   formatDate(
                     event.end?.dateTime || event.end?.date || "",
-                    true,
+                    true
                   ) || "",
                 calendarId: calId,
                 calendarName: calName,
@@ -187,15 +197,15 @@ export const checkEventConflictsAllCalendars = asyncHandler(
         } catch (error) {
           console.error(
             `Failed to check conflicts for calendar ${calId}:`,
-            error,
+            error
           );
         }
-      }),
+      })
     );
 
     return {
       hasConflicts: allConflicts.length > 0,
       conflictingEvents: allConflicts,
     };
-  },
+  }
 );

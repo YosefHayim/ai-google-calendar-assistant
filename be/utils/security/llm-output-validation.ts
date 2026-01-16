@@ -5,15 +5,15 @@
  * where malicious content in responses could affect downstream processing.
  */
 
-import { z } from "zod"
-import { logger } from "@/utils/logger"
+import { z } from "zod";
+import { logger } from "@/utils/logger";
 
-export interface ValidationResult<T> {
-  success: boolean
-  data?: T
-  error?: string
-  rawOutput?: unknown
-}
+export type ValidationResult<T> = {
+  success: boolean;
+  data?: T;
+  error?: string;
+  rawOutput?: unknown;
+};
 
 /**
  * @description Validates and parses LLM output against a Zod schema to ensure type safety
@@ -54,40 +54,45 @@ export function validateLLMJson<T>(
   output: unknown,
   schema: z.ZodSchema<T>
 ): ValidationResult<T> {
-
   try {
     if (output === null || output === undefined) {
-      return { success: false, error: "LLM returned null/undefined output" }
+      return { success: false, error: "LLM returned null/undefined output" };
     }
 
-    let parsed: unknown = output
+    let parsed: unknown = output;
 
     if (typeof output === "string") {
-      const jsonMatch = output.match(/```(?:json)?\s*([\s\S]*?)```/)
-      const jsonStr = jsonMatch ? jsonMatch[1].trim() : output.trim()
+      const jsonMatch = output.match(/```(?:json)?\s*([\s\S]*?)```/);
+      const jsonStr = jsonMatch ? jsonMatch[1].trim() : output.trim();
 
       try {
-        parsed = JSON.parse(jsonStr)
+        parsed = JSON.parse(jsonStr);
       } catch {
-        return { success: false, error: "Failed to parse LLM output as JSON", rawOutput: output }
+        return {
+          success: false,
+          error: "Failed to parse LLM output as JSON",
+          rawOutput: output,
+        };
       }
     }
 
-    const result = schema.safeParse(parsed)
+    const result = schema.safeParse(parsed);
 
     if (!result.success) {
-      logger.warn(`SECURITY: LLM output validation failed: ${result.error.message}`)
+      logger.warn(
+        `SECURITY: LLM output validation failed: ${result.error.message}`
+      );
       return {
         success: false,
         error: `Invalid LLM output structure: ${result.error.errors.map((e: z.ZodIssue) => e.message).join(", ")}`,
         rawOutput: parsed,
-      }
+      };
     }
 
-    return { success: true, data: result.data as T }
+    return { success: true, data: result.data as T };
   } catch (error) {
-    logger.error(`SECURITY: LLM output validation error: ${error}`)
-    return { success: false, error: "Validation error", rawOutput: output }
+    logger.error(`SECURITY: LLM output validation error: ${error}`);
+    return { success: false, error: "Validation error", rawOutput: output };
   }
 }
 
@@ -118,14 +123,14 @@ export function validateLLMJson<T>(
  * // Result: 'Check <a href="">this link</a>'
  */
 export function sanitizeLLMTextOutput(output: string): string {
-  let sanitized = output
+  let sanitized = output;
 
-  sanitized = sanitized.replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, "")
-  sanitized = sanitized.replace(/javascript:/gi, "")
-  sanitized = sanitized.replace(/on\w+\s*=/gi, "")
-  sanitized = sanitized.replace(/<iframe[\s\S]*?>[\s\S]*?<\/iframe>/gi, "")
+  sanitized = sanitized.replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, "");
+  sanitized = sanitized.replace(/javascript:/gi, "");
+  sanitized = sanitized.replace(/on\w+\s*=/gi, "");
+  sanitized = sanitized.replace(/<iframe[\s\S]*?>[\s\S]*?<\/iframe>/gi, "");
 
-  return sanitized.trim()
+  return sanitized.trim();
 }
 
 /**
@@ -161,40 +166,47 @@ export function sanitizeLLMTextOutput(output: string): string {
  * // Result: null
  */
 export function extractJsonFromLLMResponse(response: string): unknown | null {
-  const codeBlockMatch = response.match(/```(?:json)?\s*([\s\S]*?)```/)
+  const codeBlockMatch = response.match(/```(?:json)?\s*([\s\S]*?)```/);
   if (codeBlockMatch) {
     try {
-      return JSON.parse(codeBlockMatch[1].trim())
+      return JSON.parse(codeBlockMatch[1].trim());
     } catch {
-      return null
+      return null;
     }
   }
 
-  const jsonObjectMatch = response.match(/\{[\s\S]*\}/)
+  const jsonObjectMatch = response.match(/\{[\s\S]*\}/);
   if (jsonObjectMatch) {
     try {
-      return JSON.parse(jsonObjectMatch[0])
+      return JSON.parse(jsonObjectMatch[0]);
     } catch {
-      return null
+      return null;
     }
   }
 
-  const jsonArrayMatch = response.match(/\[[\s\S]*\]/)
+  const jsonArrayMatch = response.match(/\[[\s\S]*\]/);
   if (jsonArrayMatch) {
     try {
-      return JSON.parse(jsonArrayMatch[0])
+      return JSON.parse(jsonArrayMatch[0]);
     } catch {
-      return null
+      return null;
     }
   }
 
-  return null
+  return null;
 }
 
 export const CommonLLMSchemas = {
   SafetyCheck: z.object({
     isSafe: z.boolean(),
-    violationType: z.enum(["none", "mass_deletion", "vague_intent", "jailbreak_attempt", "pii_exposure", "rate_abuse"]),
+    violationType: z.enum([
+      "none",
+      "mass_deletion",
+      "vague_intent",
+      "jailbreak_attempt",
+      "pii_exposure",
+      "rate_abuse",
+    ]),
     reasoning: z.string(),
     userReply: z.string().optional(),
   }),
@@ -214,4 +226,4 @@ export const CommonLLMSchemas = {
     confidence: z.number().min(0).max(1),
     reasoning: z.string().optional(),
   }),
-}
+};

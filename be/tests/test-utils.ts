@@ -1,6 +1,6 @@
 import { jest } from "@jest/globals";
-import type { Request, Response, NextFunction } from "express";
 import type { User } from "@supabase/supabase-js";
+import type { Request, Response } from "express";
 
 // Type helper for flexible mock functions
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -10,17 +10,17 @@ const mockFn = () => jest.fn<AnyFn>();
 /**
  * Creates a mock Express Request object
  */
-export const createMockRequest = (overrides: Partial<Request> = {}): Partial<Request> => {
-  return {
-    headers: {},
-    cookies: {},
-    body: {},
-    params: {},
-    query: {},
-    user: undefined,
-    ...overrides,
-  };
-};
+export const createMockRequest = (
+  overrides: Partial<Request> = {}
+): Partial<Request> => ({
+  headers: {},
+  cookies: {},
+  body: {},
+  params: {},
+  query: {},
+  user: undefined,
+  ...overrides,
+});
 
 /**
  * Creates a mock Express Response object with chainable methods
@@ -52,15 +52,13 @@ export const createMockResponse = (): {
 /**
  * Creates a mock NextFunction
  */
-export const createMockNext = (): jest.Mock<AnyFn> => {
-  return mockFn();
-};
+export const createMockNext = (): jest.Mock<AnyFn> => mockFn();
 
 /**
  * Creates a mock Supabase user
  */
-export const createMockUser = (overrides: Partial<User> = {}): User => {
-  return {
+export const createMockUser = (overrides: Partial<User> = {}): User =>
+  ({
     id: "test-user-id",
     email: "test@example.com",
     aud: "authenticated",
@@ -71,26 +69,27 @@ export const createMockUser = (overrides: Partial<User> = {}): User => {
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     ...overrides,
-  } as User;
-};
+  }) as User;
 
 /**
  * Creates a mock admin user
  */
-export const createMockAdminUser = (overrides: Partial<User> = {}): User => {
-  return createMockUser({
+export const createMockAdminUser = (overrides: Partial<User> = {}): User =>
+  createMockUser({
     id: "admin-user-id",
     email: "admin@example.com",
     ...overrides,
   });
-};
 
 /**
  * Mock Supabase client factory
  */
 export const createMockSupabase = () => {
   const mockSingle = mockFn().mockResolvedValue({ data: null, error: null });
-  const mockMaybeSingle = mockFn().mockResolvedValue({ data: null, error: null });
+  const mockMaybeSingle = mockFn().mockResolvedValue({
+    data: null,
+    error: null,
+  });
   const mockSelect = mockFn().mockReturnValue({
     eq: mockFn().mockReturnValue({
       single: mockSingle,
@@ -116,7 +115,11 @@ export const createMockSupabase = () => {
     or: mockFn().mockReturnValue({
       eq: mockFn().mockReturnValue({
         order: mockFn().mockReturnValue({
-          range: mockFn().mockResolvedValue({ data: [], error: null, count: 0 }),
+          range: mockFn().mockResolvedValue({
+            data: [],
+            error: null,
+            count: 0,
+          }),
         }),
       }),
     }),
@@ -151,8 +154,14 @@ export const createMockSupabase = () => {
 
   const mockAuth = {
     getUser: mockFn().mockResolvedValue({ data: { user: null }, error: null }),
-    setSession: mockFn().mockResolvedValue({ data: { session: null }, error: null }),
-    refreshSession: mockFn().mockResolvedValue({ data: { session: null }, error: null }),
+    setSession: mockFn().mockResolvedValue({
+      data: { session: null },
+      error: null,
+    }),
+    refreshSession: mockFn().mockResolvedValue({
+      data: { session: null },
+      error: null,
+    }),
     resetPasswordForEmail: mockFn().mockResolvedValue({ error: null }),
   };
 
@@ -174,52 +183,51 @@ export const createMockSupabase = () => {
 /**
  * Mock LemonSqueezy functions
  */
-export const createMockLemonSqueezy = () => {
-  return {
-    createCheckout: mockFn().mockResolvedValue({
+export const createMockLemonSqueezy = () => ({
+  createCheckout: mockFn().mockResolvedValue({
+    data: {
       data: {
-        data: {
-          id: "checkout-id",
-          attributes: {
-            url: "https://checkout.lemonsqueezy.com/test",
-          },
+        id: "checkout-id",
+        attributes: {
+          url: "https://checkout.lemonsqueezy.com/test",
         },
       },
-      error: null,
-    }),
-    getSubscription: mockFn().mockResolvedValue({
-      data: { data: { attributes: {} } },
-      error: null,
-    }),
-    updateSubscription: mockFn().mockResolvedValue({
-      data: { data: { attributes: {} } },
-      error: null,
-    }),
-    cancelSubscription: mockFn().mockResolvedValue({
-      data: { data: { attributes: {} } },
-      error: null,
-    }),
-    getCustomer: mockFn().mockResolvedValue({
+    },
+    error: null,
+  }),
+  getSubscription: mockFn().mockResolvedValue({
+    data: { data: { attributes: {} } },
+    error: null,
+  }),
+  updateSubscription: mockFn().mockResolvedValue({
+    data: { data: { attributes: {} } },
+    error: null,
+  }),
+  cancelSubscription: mockFn().mockResolvedValue({
+    data: { data: { attributes: {} } },
+    error: null,
+  }),
+  getCustomer: mockFn().mockResolvedValue({
+    data: {
       data: {
-        data: {
-          attributes: {
-            urls: { customer_portal: "https://portal.lemonsqueezy.com/test" },
-          },
+        attributes: {
+          urls: { customer_portal: "https://portal.lemonsqueezy.com/test" },
         },
       },
-      error: null,
-    }),
-    listCustomers: mockFn().mockResolvedValue({
-      data: { data: [] },
-      error: null,
-    }),
-  };
-};
+    },
+    error: null,
+  }),
+  listCustomers: mockFn().mockResolvedValue({
+    data: { data: [] },
+    error: null,
+  }),
+});
 
 /**
  * Helper to wait for async operations
  */
-export const flushPromises = () => new Promise((resolve) => setImmediate(resolve));
+export const flushPromises = () =>
+  new Promise((resolve) => setImmediate(resolve));
 
 /**
  * Creates test data helpers
@@ -234,7 +242,7 @@ export const testData = {
     lemonsqueezy_variant_id_monthly: "ls-var-monthly-123",
     lemonsqueezy_variant_id_yearly: "ls-var-yearly-123",
     price_monthly_cents: 1999,
-    price_yearly_cents: 19999,
+    price_yearly_cents: 19_999,
     price_per_use_cents: 5,
     ai_interactions_monthly: 1000,
     action_pack_size: null,
@@ -255,9 +263,13 @@ export const testData = {
     trial_start: null,
     trial_end: null,
     current_period_start: new Date().toISOString(),
-    current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+    current_period_end: new Date(
+      Date.now() + 30 * 24 * 60 * 60 * 1000
+    ).toISOString(),
     first_payment_at: new Date().toISOString(),
-    money_back_eligible_until: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+    money_back_eligible_until: new Date(
+      Date.now() + 30 * 24 * 60 * 60 * 1000
+    ).toISOString(),
     cancel_at_period_end: false,
     canceled_at: null,
     cancellation_reason: null,

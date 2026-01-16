@@ -1,9 +1,9 @@
 import type { Request, Response } from "express";
-import { reqResAsyncHandler, sendR } from "@/utils/http";
 import { STATUS_RESPONSE } from "@/config";
-import { requireUserId } from "@/utils/auth/require-user";
-import * as preferencesService from "@/services/user-preferences-service";
 import type { PreferenceKey } from "@/services/user-preferences-service";
+import * as preferencesService from "@/services/user-preferences-service";
+import { requireUserId } from "@/utils/auth/require-user";
+import { reqResAsyncHandler, sendR } from "@/utils/http";
 
 /**
  * Get a user preference by key
@@ -12,12 +12,14 @@ import type { PreferenceKey } from "@/services/user-preferences-service";
 const getPreference = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     const userResult = requireUserId(req, res);
-    if (!userResult.success) return;
+    if (!userResult.success) {
+      return;
+    }
     const { userId } = userResult;
 
     const key = req.params.key;
 
-    if (!key || !preferencesService.isValidPreferenceKey(key)) {
+    if (!(key && preferencesService.isValidPreferenceKey(key))) {
       return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Invalid preference key");
     }
 
@@ -58,13 +60,15 @@ const getPreference = reqResAsyncHandler(
 const updatePreference = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     const userResult = requireUserId(req, res);
-    if (!userResult.success) return;
+    if (!userResult.success) {
+      return;
+    }
     const { userId } = userResult;
 
     const key = req.path.split("/").at(-1);
     const value = req.body;
 
-    if (!key || !preferencesService.isValidPreferenceKey(key)) {
+    if (!(key && preferencesService.isValidPreferenceKey(key))) {
       return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Invalid preference key");
     }
 
@@ -75,11 +79,16 @@ const updatePreference = reqResAsyncHandler(
         value
       );
 
-      return sendR(res, STATUS_RESPONSE.SUCCESS, "Preference saved successfully", {
-        key,
-        value: result.value,
-        updatedAt: result.updatedAt,
-      });
+      return sendR(
+        res,
+        STATUS_RESPONSE.SUCCESS,
+        "Preference saved successfully",
+        {
+          key,
+          value: result.value,
+          updatedAt: result.updatedAt,
+        }
+      );
     } catch (error) {
       console.error("Error updating preference:", error);
       return sendR(
@@ -98,7 +107,9 @@ const updatePreference = reqResAsyncHandler(
 const getAllPreferences = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     const userResult = requireUserId(req, res);
-    if (!userResult.success) return;
+    if (!userResult.success) {
+      return;
+    }
     const { userId } = userResult;
 
     try {

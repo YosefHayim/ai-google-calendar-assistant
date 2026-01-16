@@ -1,14 +1,13 @@
-import { OAUTH2CLIENT, REDIRECT_URI, SCOPES, env } from "@/config"
+import { google } from "googleapis";
+import { env, OAUTH2CLIENT, REDIRECT_URI, SCOPES } from "@/config";
+import type { TokensProps } from "@/types";
+import { isoToMs } from "../date/timestamp-utils";
+import { userRepository } from "../repositories/UserRepository";
 
-import type { TokensProps } from "@/types"
-import { google } from "googleapis"
-import { isoToMs } from "../date/timestamp-utils"
-import { userRepository } from "../repositories/UserRepository"
-
-const SECONDS_PER_MINUTE = 60
-const MS_PER_SECOND = 1000
-const NEAR_EXPIRY_MINUTES = 5
-const MINUTES_TO_MS = SECONDS_PER_MINUTE * MS_PER_SECOND
+const SECONDS_PER_MINUTE = 60;
+const MS_PER_SECOND = 1000;
+const NEAR_EXPIRY_MINUTES = 5;
+const MINUTES_TO_MS = SECONDS_PER_MINUTE * MS_PER_SECOND;
 
 /**
  * @description Creates a new OAuth2 client instance configured with the application's
@@ -27,7 +26,7 @@ const createFreshOAuth2Client = () =>
     env.googleClientId,
     env.googleClientSecret,
     REDIRECT_URI
-  )
+  );
 
 /**
  * @description Generates a Google OAuth2 authorization URL for user authentication.
@@ -51,30 +50,30 @@ const createFreshOAuth2Client = () =>
 export const generateGoogleAuthUrl = (
   options: { forceConsent?: boolean } = {}
 ): string => {
-  const { forceConsent = false } = options
+  const { forceConsent = false } = options;
 
   const authUrlOptions: {
-    access_type: string
-    scope: string[]
-    include_granted_scopes: boolean
-    redirect_uri: string
-    prompt?: string
+    access_type: string;
+    scope: string[];
+    include_granted_scopes: boolean;
+    redirect_uri: string;
+    prompt?: string;
   } = {
     access_type: "offline",
     scope: SCOPES,
     include_granted_scopes: true,
     redirect_uri: REDIRECT_URI,
-  }
+  };
 
   if (forceConsent) {
-    authUrlOptions.prompt = "consent"
+    authUrlOptions.prompt = "consent";
   }
 
-  return OAUTH2CLIENT.generateAuthUrl(authUrlOptions)
-}
+  return OAUTH2CLIENT.generateAuthUrl(authUrlOptions);
+};
 
 /** Buffer time in milliseconds before token expiry to trigger proactive refresh */
-export const NEAR_EXPIRY_BUFFER_MS = NEAR_EXPIRY_MINUTES * MINUTES_TO_MS
+export const NEAR_EXPIRY_BUFFER_MS = NEAR_EXPIRY_MINUTES * MINUTES_TO_MS;
 
 /**
  * @description Represents the expiry status of an OAuth token.
@@ -83,10 +82,10 @@ export const NEAR_EXPIRY_BUFFER_MS = NEAR_EXPIRY_MINUTES * MINUTES_TO_MS
  * @property {number | null} expiresInMs - Time until expiry in milliseconds, or null if expired.
  */
 export type TokenExpiryStatus = {
-  isExpired: boolean
-  isNearExpiry: boolean
-  expiresInMs: number | null
-}
+  isExpired: boolean;
+  isNearExpiry: boolean;
+  expiresInMs: number | null;
+};
 
 /**
  * @description Represents a refreshed Google OAuth token with new credentials.
@@ -94,9 +93,9 @@ export type TokenExpiryStatus = {
  * @property {number} expiryDate - The expiry timestamp in milliseconds since epoch.
  */
 export type RefreshedGoogleToken = {
-  accessToken: string
-  expiryDate: number
-}
+  accessToken: string;
+  expiryDate: number;
+};
 
 /**
  * @description Checks the expiry status of an OAuth token. Determines whether the token
@@ -125,22 +124,22 @@ export const checkTokenExpiry = (
   expiryDate: number | string | null | undefined
 ): TokenExpiryStatus => {
   if (!expiryDate) {
-    return { isExpired: true, isNearExpiry: true, expiresInMs: null }
+    return { isExpired: true, isNearExpiry: true, expiresInMs: null };
   }
 
   const expiryMs =
     typeof expiryDate === "string"
       ? new Date(expiryDate).getTime()
-      : expiryDate
+      : expiryDate;
 
-  const now = Date.now()
-  const expiresInMs = expiryMs - now
+  const now = Date.now();
+  const expiresInMs = expiryMs - now;
   return {
     isExpired: expiresInMs <= 0,
     isNearExpiry: expiresInMs > 0 && expiresInMs <= NEAR_EXPIRY_BUFFER_MS,
     expiresInMs: expiresInMs > 0 ? expiresInMs : null,
-  }
-}
+  };
+};
 
 /**
  * @description Fetches the Google OAuth tokens for a user by their email address.
@@ -163,7 +162,7 @@ export const checkTokenExpiry = (
 export const fetchGoogleTokensByEmail = (
   email: string
 ): Promise<{ data: TokensProps | null; error: string | null }> =>
-  userRepository.findUserWithGoogleTokens(email)
+  userRepository.findUserWithGoogleTokens(email);
 
 /**
  * @description Refreshes an expired or near-expiry Google OAuth access token using
@@ -194,12 +193,12 @@ export const refreshGoogleAccessToken = async (
   tokens: TokensProps
 ): Promise<RefreshedGoogleToken> => {
   if (!tokens.refresh_token) {
-    throw new Error("REAUTH_REQUIRED: No refresh token available")
+    throw new Error("REAUTH_REQUIRED: No refresh token available");
   }
 
-  const oauthClient = createFreshOAuth2Client()
+  const oauthClient = createFreshOAuth2Client();
 
-  const expiryDate = tokens.expiry_date ?? isoToMs(tokens.expires_at)
+  const expiryDate = tokens.expiry_date ?? isoToMs(tokens.expires_at);
 
   oauthClient.setCredentials({
     expiry_date: expiryDate,
@@ -208,67 +207,69 @@ export const refreshGoogleAccessToken = async (
     id_token: tokens.id_token ?? undefined,
     refresh_token: tokens.refresh_token,
     access_token: tokens.access_token ?? undefined,
-  })
+  });
 
   try {
-    const { credentials } = await oauthClient.refreshAccessToken()
+    const { credentials } = await oauthClient.refreshAccessToken();
 
     if (!credentials.access_token) {
-      throw new Error("No access token received from Google")
+      throw new Error("No access token received from Google");
     }
 
     if (!credentials.expiry_date) {
-      throw new Error("No expiry date received from Google")
+      throw new Error("No expiry date received from Google");
     }
 
     return {
       accessToken: credentials.access_token,
       expiryDate: credentials.expiry_date,
-    }
+    };
   } catch (e) {
     const err = e as Error & {
-      code?: string
-      response?: { data?: { error?: string; error_description?: string } }
-    }
+      code?: string;
+      response?: { data?: { error?: string; error_description?: string } };
+    };
 
-    const errorCode = err.code || err.response?.data?.error
+    const errorCode = err.code || err.response?.data?.error;
     const errorMessage =
-      err.message || err.response?.data?.error_description || ""
+      err.message || err.response?.data?.error_description || "";
 
     const invalidGrantErrors = [
       "invalid_grant",
       "invalid_request",
       "unauthorized_client",
-    ]
+    ];
 
     if (
       errorCode === "invalid_grant" ||
       invalidGrantErrors.some((code) =>
         errorMessage.toLowerCase().includes(code)
       ) ||
-      errorMessage.toLowerCase().includes("token has been expired or revoked") ||
+      errorMessage
+        .toLowerCase()
+        .includes("token has been expired or revoked") ||
       errorMessage.toLowerCase().includes("invalid_grant") ||
       errorMessage.toLowerCase().includes("token was not found")
     ) {
       console.error(
         "Google token refresh failed: Refresh token is invalid or expired",
         { code: errorCode, message: errorMessage }
-      )
+      );
       throw new Error(
         "REAUTH_REQUIRED: Refresh token is invalid, expired, or revoked. User must re-authenticate."
-      )
+      );
     }
 
     console.error("Google token refresh failed:", {
       code: errorCode,
       message: errorMessage,
       error: err,
-    })
+    });
     throw new Error(
       `TOKEN_REFRESH_FAILED: ${errorMessage || err.message || "Unknown error occurred"}`
-    )
+    );
   }
-}
+};
 
 /**
  * @description Persists refreshed Google OAuth tokens to the database for a user.
@@ -290,19 +291,19 @@ export const persistGoogleTokens = async (
   email: string,
   refreshedTokens: RefreshedGoogleToken
 ): Promise<void> => {
-  const userId = await userRepository.findUserIdByEmail(email)
+  const userId = await userRepository.findUserIdByEmail(email);
 
   if (!userId) {
-    console.error("Failed to find user for token persistence: User not found")
-    throw new Error("Failed to find user: User not found")
+    console.error("Failed to find user for token persistence: User not found");
+    throw new Error("Failed to find user: User not found");
   }
 
   await userRepository.updateGoogleTokens(
     userId,
     refreshedTokens.accessToken,
     refreshedTokens.expiryDate
-  )
-}
+  );
+};
 
 /**
  * @description Deactivates a user's Google OAuth tokens, marking them as invalid
@@ -325,15 +326,15 @@ export const persistGoogleTokens = async (
  * }
  */
 export const deactivateGoogleTokens = async (email: string): Promise<void> => {
-  const userId = await userRepository.findUserIdByEmail(email)
+  const userId = await userRepository.findUserIdByEmail(email);
 
   if (!userId) {
-    console.error("Failed to find user for token deactivation: User not found")
-    throw new Error("Failed to find user: User not found")
+    console.error("Failed to find user for token deactivation: User not found");
+    throw new Error("Failed to find user: User not found");
   }
 
-  await userRepository.deactivateGoogleTokens(userId)
-}
+  await userRepository.deactivateGoogleTokens(userId);
+};
 
 /**
  * @description Retrieves the internal user ID for a given email address.
@@ -353,4 +354,4 @@ export const deactivateGoogleTokens = async (email: string): Promise<void> => {
  * }
  */
 export const getUserIdByEmail = (email: string): Promise<string | null> =>
-  userRepository.findUserIdByEmail(email)
+  userRepository.findUserIdByEmail(email);

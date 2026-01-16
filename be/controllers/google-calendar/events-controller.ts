@@ -40,7 +40,7 @@ const getEventById = reqResAsyncHandler(async (req: Request, res: Response) => {
     );
   }
 
-  const r = await req.calendar!.events.get({
+  const r = await req.calendar?.events.get({
     ...REQUEST_CONFIG_BASE,
     calendarId: (req?.query?.calendarId as string) ?? "primary",
     eventId: req.params.id,
@@ -321,7 +321,7 @@ const quickAddEvent = reqResAsyncHandler(
  *
  */
 const watchEvents = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const r = await req.calendar!.events.watch({
+  const r = await req.calendar?.events.watch({
     ...req.body,
     ...REQUEST_CONFIG_BASE,
     calendarId: (req.query.calendarId as string) ?? "primary",
@@ -341,7 +341,7 @@ const watchEvents = reqResAsyncHandler(async (req: Request, res: Response) => {
  *
  */
 const moveEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const r = await req.calendar!.events.move({
+  const r = await req.calendar?.events.move({
     ...req.body,
     ...REQUEST_CONFIG_BASE,
     calendarId: (req.query.calendarId as string) ?? "primary",
@@ -358,7 +358,7 @@ const moveEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
  */
 const getEventInstances = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const r = await req.calendar!.events.instances({
+    const r = await req.calendar?.events.instances({
       ...REQUEST_CONFIG_BASE,
       calendarId: (req.query.calendarId as string) ?? "primary",
       eventId: req.params.id,
@@ -386,7 +386,7 @@ const getEventInstances = reqResAsyncHandler(
  * @returns {Promise<void>} The response object.
  */
 const importEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const r = await req.calendar!.events.import({
+  const r = await req.calendar?.events.import({
     ...REQUEST_CONFIG_BASE,
     calendarId: (req.query.calendarId as string) ?? "primary",
     conferenceDataVersion: req.query.conferenceDataVersion

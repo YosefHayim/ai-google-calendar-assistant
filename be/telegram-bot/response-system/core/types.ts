@@ -12,7 +12,7 @@ export type RtlStrategy = "line-based" | "unicode-markers" | "both";
 export type Channel = "telegram" | "whatsapp" | "web";
 export type EmojiStyle = "minimal" | "friendly" | "expressive";
 
-export interface ResponseConfig {
+export type ResponseConfig = {
   /** Default text direction */
   defaultDirection: TextDirection;
   /** RTL handling strategy */
@@ -21,7 +21,7 @@ export interface ResponseConfig {
   emojiStyle: EmojiStyle;
   /** Auto-escape HTML in user content */
   autoEscapeHtml: boolean;
-}
+};
 
 // ============================================
 // Message Structure Types
@@ -38,27 +38,27 @@ export type MessageType =
   | "confirmation"
   | "help";
 
-export interface MessageHeader {
+export type MessageHeader = {
   /** Primary emoji for visual scanning */
   emoji?: string;
   /** Main title/greeting */
   title: string;
   /** Optional subtitle/context */
   subtitle?: string;
-}
+};
 
-export interface MessageFooter {
+export type MessageFooter = {
   /** Tip or call-to-action */
   tip?: string;
   /** Next steps or suggestions */
   nextSteps?: string[];
   /** Closing message */
   closing?: string;
-}
+};
 
 export type BulletStyle = "dot" | "dash" | "number" | "emoji" | "none";
 
-export interface ListItem {
+export type ListItem = {
   /** Bullet style */
   bullet?: BulletStyle;
   /** Custom emoji for bullet (when bullet is 'emoji') */
@@ -69,9 +69,9 @@ export interface ListItem {
   detail?: string;
   /** Whether text should be emphasized (bold) */
   emphasis?: boolean;
-}
+};
 
-export interface BodySection {
+export type BodySection = {
   /** Section emoji */
   emoji?: string;
   /** Section title */
@@ -80,21 +80,21 @@ export interface BodySection {
   content: string | ListItem[];
   /** Add visual separator after section */
   separator?: boolean;
-}
+};
 
-export interface BaseMessage {
+export type BaseMessage = {
   type: MessageType;
   header: MessageHeader;
   body: string | BodySection[];
   footer?: MessageFooter;
   direction?: TextDirection;
-}
+};
 
 // ============================================
 // Calendar Event Types
 // ============================================
 
-export interface CalendarEvent {
+export type CalendarEvent = {
   id?: string;
   summary: string;
   start: Date | string;
@@ -102,15 +102,15 @@ export interface CalendarEvent {
   location?: string;
   calendarName?: string;
   isAllDay?: boolean;
-}
+};
 
-export interface DaySchedule {
+export type DaySchedule = {
   date: Date | string;
   events: CalendarEvent[];
   totalHours?: number;
-}
+};
 
-export interface WeekSchedule {
+export type WeekSchedule = {
   weekStart: Date | string;
   days: DaySchedule[];
   summary?: {
@@ -118,13 +118,13 @@ export interface WeekSchedule {
     totalHours: number;
     busiestDay?: string;
   };
-}
+};
 
 // ============================================
 // Adapter Interface
 // ============================================
 
-export interface ChannelAdapter {
+export type ChannelAdapter = {
   readonly channel: Channel;
 
   /** Format a complete message for this channel */
@@ -153,22 +153,22 @@ export interface ChannelAdapter {
 
   /** Get section separator for this channel */
   getSectionSeparator(): string;
-}
+};
 
 // ============================================
 // Builder Pattern Types
 // ============================================
 
-export interface ResponseBuilderOptions {
+export type ResponseBuilderOptions = {
   channel: Channel;
   config?: Partial<ResponseConfig>;
-}
+};
 
-export interface BuilderResult {
+export type BuilderResult = {
   /** Formatted message string */
   content: string;
   /** Parse mode for the channel (e.g., 'HTML' for Telegram) */
   parseMode?: string;
   /** Original structured message */
   message: BaseMessage;
-}
+};

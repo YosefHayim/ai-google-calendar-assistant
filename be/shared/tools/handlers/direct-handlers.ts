@@ -1,106 +1,106 @@
-import { fetchCredentialsByEmail } from "@/utils/auth"
+import type { calendar_v3 } from "googleapis";
+import OpenAI from "openai";
+import isEmail from "validator/lib/isEmail";
+import { env, MODELS, SUPABASE } from "@/config";
+import {
+  type ConflictCheckResult,
+  categorizeError,
+  type HandlerContext,
+} from "@/shared/types";
+import { fetchCredentialsByEmail } from "@/utils/auth";
 import {
   checkEventConflicts,
   checkEventConflictsAllCalendars,
   initUserSupabaseCalendarWithTokensAndUpdateTokens,
-} from "@/utils/calendar"
-import { userRepository } from "@/utils/repositories/UserRepository"
-import { MODELS, SUPABASE, env } from "@/config"
-import OpenAI from "openai"
-import isEmail from "validator/lib/isEmail"
-import type { calendar_v3 } from "googleapis"
+} from "@/utils/calendar";
+import { userRepository } from "@/utils/repositories/UserRepository";
 import type {
-  SelectCalendarParams,
   CheckConflictsParams,
   PreCreateValidationParams,
-} from "../schemas"
-import {
-  type HandlerContext,
-  type ConflictCheckResult,
-  categorizeError,
-} from "@/shared/types"
+  SelectCalendarParams,
+} from "../schemas";
 
-type Event = calendar_v3.Schema$Event
+type Event = calendar_v3.Schema$Event;
 
-const SUMMARIZATION_MODEL = MODELS.GPT_4_1_NANO
-const openai = new OpenAI({ apiKey: env.openAiApiKey })
+const SUMMARIZATION_MODEL = MODELS.GPT_4_1_NANO;
+const openai = new OpenAI({ apiKey: env.openAiApiKey });
 
-export type { HandlerContext, ConflictCheckResult }
+export type { HandlerContext, ConflictCheckResult };
 
 export type ValidateUserResult = {
-  exists: boolean
-  user?: Record<string, unknown>
-  error?: string
-}
+  exists: boolean;
+  user?: Record<string, unknown>;
+  error?: string;
+};
 
 export type TimezoneResult = {
-  timezone: string
-  error?: string
-}
+  timezone: string;
+  error?: string;
+};
 
 export type SelectCalendarResult = {
-  calendarId: string
-  calendarName: string
-  matchReason?: string
-}
+  calendarId: string;
+  calendarName: string;
+  matchReason?: string;
+};
 
 export type PreCreateValidationResult = {
-  valid: boolean
-  timezone: string
-  calendarId: string
-  calendarName: string
-  conflicts: ConflictCheckResult
-  error?: string
-}
+  valid: boolean;
+  timezone: string;
+  calendarId: string;
+  calendarName: string;
+  conflicts: ConflictCheckResult;
+  error?: string;
+};
 
 export async function validateUserHandler(
-  ctx: HandlerContext,
+  ctx: HandlerContext
 ): Promise<ValidateUserResult> {
-  const { email } = ctx
+  const { email } = ctx;
 
-  if (!email || !isEmail(email)) {
-    return { exists: false, error: "Invalid email address." }
+  if (!(email && isEmail(email))) {
+    return { exists: false, error: "Invalid email address." };
   }
 
   try {
-    const result = await userRepository.validateUserExists(email)
-    return result
+    const result = await userRepository.validateUserExists(email);
+    return result;
   } catch (error) {
-    const categorized = categorizeError(error)
-    return { exists: false, error: categorized.message }
+    const categorized = categorizeError(error);
+    return { exists: false, error: categorized.message };
   }
 }
 
 export async function getTimezoneHandler(
-  ctx: HandlerContext,
+  ctx: HandlerContext
 ): Promise<TimezoneResult> {
-  const { email } = ctx
+  const { email } = ctx;
 
-  if (!email || !isEmail(email)) {
-    return { timezone: "UTC", error: "Invalid email address." }
+  if (!(email && isEmail(email))) {
+    return { timezone: "UTC", error: "Invalid email address." };
   }
 
   try {
-    const user = await userRepository.findUserByEmail(email)
+    const user = await userRepository.findUserByEmail(email);
 
     if (user?.timezone) {
-      return { timezone: user.timezone }
+      return { timezone: user.timezone };
     }
 
-    const tokenProps = await fetchCredentialsByEmail(email)
+    const tokenProps = await fetchCredentialsByEmail(email);
     const calendar =
-      await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenProps)
-    const response = await calendar.settings.get({ setting: "timezone" })
-    const timezone = response.data.value || "UTC"
+      await initUserSupabaseCalendarWithTokensAndUpdateTokens(tokenProps);
+    const response = await calendar.settings.get({ setting: "timezone" });
+    const timezone = response.data.value || "UTC";
 
     if (user) {
-      userRepository.updateUserTimezone(email, timezone)
+      userRepository.updateUserTimezone(email, timezone);
     }
 
-    return { timezone }
+    return { timezone };
   } catch (error) {
-    const categorized = categorizeError(error)
-    console.error("Failed to get user timezone:", error)
+    const categorized = categorizeError(error);
+    console.error("Failed to get user timezone:", error);
 
     return {
       timezone: "UTC",
@@ -110,50 +110,54 @@ export async function getTimezoneHandler(
           : categorized.type === "database"
             ? "Database error - please try again in a moment."
             : "Failed to fetch timezone, using UTC.",
-    }
+    };
   }
 }
 
-export interface UserCalendar {
-  calendar_id: string
-  calendar_name: string
-}
+export type UserCalendar = {
+  calendar_id: string;
+  calendar_name: string;
+};
 
 export async function getCalendarCategoriesByEmail(
-  email: string,
+  email: string
 ): Promise<UserCalendar[]> {
-  const user = await userRepository.findUserByEmail(email)
-  if (!user) return []
+  const user = await userRepository.findUserByEmail(email);
+  if (!user) {
+    return [];
+  }
 
   const { data, error } = await SUPABASE.from("user_calendars")
     .select("calendar_id, calendar_name")
-    .eq("user_id", user.id)
+    .eq("user_id", user.id);
 
-  if (error || !data) return []
+  if (error || !data) {
+    return [];
+  }
 
   return data
     .filter((row): row is { calendar_id: string; calendar_name: string } =>
-      Boolean(row.calendar_id && row.calendar_name),
+      Boolean(row.calendar_id && row.calendar_name)
     )
     .map((row) => ({
       calendar_id: row.calendar_id,
       calendar_name: row.calendar_name,
-    }))
+    }));
 }
 
 export async function selectCalendarHandler(
   params: SelectCalendarParams,
-  ctx: HandlerContext,
+  ctx: HandlerContext
 ): Promise<SelectCalendarResult> {
-  const { email } = ctx
-  const calendars = await getCalendarCategoriesByEmail(email)
+  const { email } = ctx;
+  const calendars = await getCalendarCategoriesByEmail(email);
 
   if (!calendars || calendars.length === 0) {
     return {
       calendarId: "primary",
       calendarName: "Primary",
       matchReason: "No calendars found",
-    }
+    };
   }
 
   if (calendars.length === 1) {
@@ -161,17 +165,17 @@ export async function selectCalendarHandler(
       calendarId: calendars[0].calendar_id,
       calendarName: calendars[0].calendar_name,
       matchReason: "Only calendar available",
-    }
+    };
   }
 
   const eventContext =
     [params.summary, params.description, params.location]
       .filter(Boolean)
-      .join(" | ") || "No event details provided"
+      .join(" | ") || "No event details provided";
 
   const calendarOptions = calendars
     .map((c, i) => `${i + 1}. "${c.calendar_name}"`)
-    .join("\n")
+    .join("\n");
 
   try {
     const response = await openai.chat.completions.create({
@@ -200,63 +204,61 @@ Which calendar number is the best match?`,
       ],
       max_tokens: 10,
       temperature: 0,
-    })
+    });
 
-    const result = response.choices[0]?.message?.content?.trim()
-    const selectedIndex = Number.parseInt(result || "1", 10) - 1
+    const result = response.choices[0]?.message?.content?.trim();
+    const selectedIndex = Number.parseInt(result || "1", 10) - 1;
 
     if (selectedIndex >= 0 && selectedIndex < calendars.length) {
       return {
         calendarId: calendars[selectedIndex].calendar_id,
         calendarName: calendars[selectedIndex].calendar_name,
         matchReason: "AI semantic match",
-      }
+      };
     }
-
-    console.warn(`AI returned invalid calendar index: ${result}`)
     return {
       calendarId: calendars[0].calendar_id,
       calendarName: calendars[0].calendar_name,
       matchReason: "AI fallback to first",
-    }
+    };
   } catch (error) {
-    console.error("AI calendar selection failed:", error)
+    console.error("AI calendar selection failed:", error);
     const primary = calendars.find(
       (c) =>
         c.calendar_id === "primary" ||
-        c.calendar_name.toLowerCase().includes("primary"),
-    )
+        c.calendar_name.toLowerCase().includes("primary")
+    );
     return {
       calendarId: primary?.calendar_id || calendars[0].calendar_id,
       calendarName: primary?.calendar_name || calendars[0].calendar_name,
       matchReason: "AI error fallback",
-    }
+    };
   }
 }
 
 export async function checkConflictsHandler(
   params: CheckConflictsParams,
-  ctx: HandlerContext,
+  ctx: HandlerContext
 ): Promise<ConflictCheckResult> {
-  const { email } = ctx
+  const { email } = ctx;
 
-  if (!email || !isEmail(email)) {
+  if (!(email && isEmail(email))) {
     return {
       hasConflicts: false,
       conflictingEvents: [],
       error: "Invalid email address.",
-    }
+    };
   }
 
-  const startTime = params.start?.dateTime || params.start?.date
-  const endTime = params.end?.dateTime || params.end?.date
+  const startTime = params.start?.dateTime || params.start?.date;
+  const endTime = params.end?.dateTime || params.end?.date;
 
-  if (!startTime || !endTime) {
+  if (!(startTime && endTime)) {
     return {
       hasConflicts: false,
       conflictingEvents: [],
       error: "Start and end times required.",
-    }
+    };
   }
 
   try {
@@ -265,22 +267,22 @@ export async function checkConflictsHandler(
       calendarId: params.calendarId || "primary",
       startTime,
       endTime,
-    })
+    });
   } catch (error) {
-    console.error("Conflict check failed:", error)
+    console.error("Conflict check failed:", error);
     return {
       hasConflicts: false,
       conflictingEvents: [],
       error: "Failed to check conflicts.",
-    }
+    };
   }
 }
 
 export async function preCreateValidationHandler(
   params: PreCreateValidationParams,
-  ctx: HandlerContext,
+  ctx: HandlerContext
 ): Promise<PreCreateValidationResult> {
-  const { email } = ctx
+  const { email } = ctx;
 
   const [userResult, timezoneResult, calendarResult] = await Promise.all([
     validateUserHandler(ctx),
@@ -291,9 +293,9 @@ export async function preCreateValidationHandler(
         description: params.description || undefined,
         location: params.location || undefined,
       },
-      ctx,
+      ctx
     ),
-  ])
+  ]);
 
   if (!userResult.exists) {
     return {
@@ -303,23 +305,23 @@ export async function preCreateValidationHandler(
       calendarName: "Primary",
       conflicts: { hasConflicts: false, conflictingEvents: [] },
       error: userResult.error || "User not found or no tokens available.",
-    }
+    };
   }
 
   let conflicts: ConflictCheckResult = {
     hasConflicts: false,
     conflictingEvents: [],
-  }
+  };
 
   if (params.start && params.end) {
-    const startTime = params.start.dateTime || params.start.date
-    const endTime = params.end.dateTime || params.end.date
+    const startTime = params.start.dateTime || params.start.date;
+    const endTime = params.end.dateTime || params.end.date;
     if (startTime && endTime) {
       conflicts = await checkEventConflictsAllCalendars({
         email,
         startTime,
         endTime,
-      })
+      });
     }
   }
 
@@ -329,5 +331,5 @@ export async function preCreateValidationHandler(
     calendarId: calendarResult.calendarId,
     calendarName: calendarResult.calendarName,
     conflicts,
-  }
+  };
 }

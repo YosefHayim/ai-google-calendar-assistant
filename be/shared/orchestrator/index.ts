@@ -1,33 +1,33 @@
 export {
+  AGENT_PROFILES,
+  type AgentCapability,
   type AgentProfile,
   type AgentTier,
-  type AgentCapability,
-  type VoiceStyle,
-  AGENT_PROFILES,
   DEFAULT_AGENT_PROFILE_ID,
   getAgentProfile,
   getProfilesForTier,
-} from "./agent-profiles"
+  type VoiceStyle,
+} from "./agent-profiles";
 
 export {
-  type ModelProvider,
-  type ModelTier,
-  type ModelSpec,
   getModelSpec,
-} from "./model-registry"
+  type ModelProvider,
+  type ModelSpec,
+  type ModelTier,
+} from "./model-registry";
 
 export {
   type AgentProfileResponse,
   formatProfileForClient,
-} from "./orchestrator-factory"
+} from "./orchestrator-factory";
 
 export {
-  type Modality,
-  type TextAgentConfig,
   type CreateTextAgentOptions,
-  type StreamEvent,
-  type RunTextAgentOptions,
   createTextAgent,
+  type Modality,
+  type RunTextAgentOptions,
   runTextAgent,
+  type StreamEvent,
   supportsTools,
-} from "./text-agent-factory"
+  type TextAgentConfig,
+} from "./text-agent-factory";

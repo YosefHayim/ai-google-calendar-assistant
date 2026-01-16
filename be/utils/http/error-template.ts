@@ -1,5 +1,4 @@
 import type { Response } from "express";
-import { logger } from "../logger";
 
 export type HttpError = Error & { cause: { status: number } };
 
@@ -10,9 +9,8 @@ export type HttpError = Error & { cause: { status: number } };
  * @param {number} status - The HTTP status code.
  * @returns {HttpError} The error object with status in cause.
  */
-export const createHttpError = (message: string, status: number): HttpError => {
-  return new Error(message, { cause: { status } }) as HttpError;
-};
+export const createHttpError = (message: string, status: number): HttpError =>
+  new Error(message, { cause: { status } }) as HttpError;
 
 /**
  * Send an error response to the client
@@ -21,7 +19,11 @@ export const createHttpError = (message: string, status: number): HttpError => {
  * @param {number} status - The HTTP status code.
  * @param {string} message - The error message.
  */
-export const sendErrorResponse = (res: Response, status: number, message: string): void => {
+export const sendErrorResponse = (
+  res: Response,
+  status: number,
+  message: string
+): void => {
   res.status(status).json({
     status: "error",
     code: status,
@@ -50,7 +52,11 @@ export const throwHttpError = (message: string, status: number): never => {
  * @throws {HttpError} Always throws after optionally sending response.
  * @deprecated Use createHttpError, sendErrorResponse, or throwHttpError for clearer intent.
  */
-const errorTemplate = (message: string, status: number, res?: Response): never => {
+const errorTemplate = (
+  message: string,
+  status: number,
+  res?: Response
+): never => {
   if (res) {
     sendErrorResponse(res, status, message);
   }

@@ -1,24 +1,40 @@
-import express, { type NextFunction, type Request, type Response } from "express"
-import { STATUS_RESPONSE } from "@/config"
-import calendarController from "@/controllers/google-calendar/calendar-controller"
-import { googleTokenRefresh } from "@/middlewares/google-token-refresh"
-import { googleTokenValidation } from "@/middlewares/google-token-validation"
-import { withCalendarClient } from "@/middlewares/calendar-client"
-import { logger } from "@/utils/logger"
-import { sendR } from "@/utils/http"
-import { supabaseAuth } from "@/middlewares/supabase-auth"
+import express, {
+  type NextFunction,
+  type Request,
+  type Response,
+} from "express";
+import { STATUS_RESPONSE } from "@/config";
+import calendarController from "@/controllers/google-calendar/calendar-controller";
+import { withCalendarClient } from "@/middlewares/calendar-client";
+import { googleTokenRefresh } from "@/middlewares/google-token-refresh";
+import { googleTokenValidation } from "@/middlewares/google-token-validation";
+import { supabaseAuth } from "@/middlewares/supabase-auth";
+import { sendR } from "@/utils/http";
+import { logger } from "@/utils/logger";
 
-const router = express.Router()
+const router = express.Router();
 
-router.use(supabaseAuth(), googleTokenValidation, googleTokenRefresh(), withCalendarClient)
+router.use(
+  supabaseAuth(),
+  googleTokenValidation,
+  googleTokenRefresh(),
+  withCalendarClient
+);
 
-router.param("id", (_req: Request, res: Response, next: NextFunction, id: string) => {
-  if (!id) {
-    logger.error(`Google Calendar: Calendar: id not found`);
-    return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar ID parameter is required.");
+router.param(
+  "id",
+  (_req: Request, res: Response, next: NextFunction, id: string) => {
+    if (!id) {
+      logger.error("Google Calendar: Calendar: id not found");
+      return sendR(
+        res,
+        STATUS_RESPONSE.BAD_REQUEST,
+        "Calendar ID parameter is required."
+      );
+    }
+    next();
   }
-  next();
-});
+);
 
 // get info about all the calendars the user has
 router.get("/", calendarController.getAllCalendars);

@@ -6,36 +6,36 @@
  * handling and reduce code duplication across controllers.
  */
 
-import type { Request, Response } from "express";
 import type { User } from "@supabase/supabase-js";
+import type { Request, Response } from "express";
 import { STATUS_RESPONSE } from "@/config";
 import sendR from "@/utils/send-response";
 
 /**
  * Result type for user extraction utilities
  */
-export interface UserExtractionResult {
+export type UserExtractionResult = {
   success: true;
   userId: string;
   userEmail: string;
   user: User;
-}
+};
 
-export interface UserExtractionError {
+export type UserExtractionError = {
   success: false;
   handled: true;
-}
+};
 
 export type UserResult = UserExtractionResult | UserExtractionError;
 
 /**
  * Result type when only userId is required
  */
-export interface UserIdResult {
+export type UserIdResult = {
   success: true;
   userId: string;
   user: User;
-}
+};
 
 export type UserIdExtractionResult = UserIdResult | UserExtractionError;
 
@@ -87,7 +87,7 @@ export function requireUser(req: Request, res: Response): UserResult {
   const userId = user?.id;
   const userEmail = user?.email;
 
-  if (!userId || !userEmail) {
+  if (!(userId && userEmail)) {
     sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
     return { success: false, handled: true };
   }

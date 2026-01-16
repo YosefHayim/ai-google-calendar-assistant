@@ -10,8 +10,6 @@
  * 3. Implement actual embedding storage and search
  */
 
-import { logger } from "@/utils/logger";
-
 type EmbeddingMetadata = {
   role: "user" | "assistant";
   chatId: number;
@@ -57,7 +55,9 @@ export const searchSimilarConversations = async (
   return [];
 };
 
-export const buildSemanticContext = (conversations: SimilarConversation[]): string => {
+export const buildSemanticContext = (
+  conversations: SimilarConversation[]
+): string => {
   if (conversations.length === 0) {
     return "";
   }
@@ -72,7 +72,9 @@ export const buildSemanticContext = (conversations: SimilarConversation[]): stri
     contextParts.push(part);
   }
 
-  return contextParts.length > 0 ? `Relevant past conversations:\n${contextParts.join("\n")}` : "";
+  return contextParts.length > 0
+    ? `Relevant past conversations:\n${contextParts.join("\n")}`
+    : "";
 };
 
 // Store embedding in background (non-blocking) - stubbed

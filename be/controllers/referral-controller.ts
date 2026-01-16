@@ -3,12 +3,12 @@ import { z } from "zod";
 import { SUPABASE } from "@/config/clients";
 import sendR from "@/utils/send-response";
 
-interface InvitationMetadata {
+type InvitationMetadata = {
   referral_code?: string;
   team_name?: string;
   role?: string;
   message?: string;
-}
+};
 
 const createReferralSchema = z.object({
   referredEmail: z.string().email("Invalid email address").optional(),
@@ -65,7 +65,9 @@ export const referralController = {
         .select("metadata")
         .single();
 
-      if (insertError) throw insertError;
+      if (insertError) {
+        throw insertError;
+      }
 
       const metadata = newReferral.metadata as InvitationMetadata | null;
       const referralCode = metadata?.referral_code;
@@ -111,7 +113,9 @@ export const referralController = {
         .select("*")
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       const metadata = newReferral.metadata as InvitationMetadata | null;
       const referralCode = metadata?.referral_code;
@@ -171,7 +175,9 @@ export const referralController = {
         })
         .eq("id", referral.id);
 
-      if (updateError) throw updateError;
+      if (updateError) {
+        throw updateError;
+      }
 
       return sendR(res, 200, "Referral code applied successfully", {
         referrerEmail: referral.inviter_email,
@@ -219,7 +225,9 @@ export const referralController = {
         })
         .eq("id", referral.id);
 
-      if (updateError) throw updateError;
+      if (updateError) {
+        throw updateError;
+      }
 
       return sendR(res, 200, "Referral converted successfully", {
         rewardType: referral.reward_type,
@@ -245,7 +253,9 @@ export const referralController = {
         .eq("inviter_id", userId)
         .order("created_at", { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       const referrals = invitations.map((inv) => ({
         id: inv.id,
@@ -285,7 +295,9 @@ export const referralController = {
         .eq("invite_type", "referral")
         .eq("inviter_id", userId);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       const stats = {
         total_referrals: referrals?.length || 0,
@@ -351,7 +363,9 @@ export const referralController = {
         })
         .eq("id", referralId);
 
-      if (updateError) throw updateError;
+      if (updateError) {
+        throw updateError;
+      }
 
       return sendR(res, 200, "Reward claimed successfully", {
         rewardType: referral.reward_type,

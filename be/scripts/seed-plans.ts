@@ -1,18 +1,18 @@
 #!/usr/bin/env bun
-import { createClient } from "@supabase/supabase-js"
+import { createClient } from "@supabase/supabase-js";
 
 const SUPABASE_URL =
-  process.env.SUPABASE_URL || "https://vdwjfekcsnurtjsieojv.supabase.co"
-const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY
+  process.env.SUPABASE_URL || "https://vdwjfekcsnurtjsieojv.supabase.co";
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!SUPABASE_SERVICE_ROLE_KEY) {
   console.error(
     "Error: SUPABASE_SERVICE_ROLE_KEY environment variable is required"
-  )
-  process.exit(1)
+  );
+  process.exit(1);
 }
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
+const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
 const PLANS = [
   {
@@ -92,57 +92,63 @@ const PLANS = [
     lemonsqueezy_variant_id_yearly:
       process.env.LEMONSQUEEZY_EXECUTIVE_VARIANT_YEARLY || null,
   },
-]
+];
 
 async function seedPlans() {
-  console.log("Seeding plans...")
+  console.log("Seeding plans...");
 
   const { data: existingPlans, error: fetchError } = await supabase
     .from("plans")
-    .select("slug")
+    .select("slug");
 
   if (fetchError) {
-    console.error("Error fetching existing plans:", fetchError)
-    process.exit(1)
+    console.error("Error fetching existing plans:", fetchError);
+    process.exit(1);
   }
 
   console.log(
     `Found ${existingPlans?.length || 0} existing plans: ${existingPlans?.map((p) => p.slug).join(", ") || "none"}`
-  )
+  );
 
   const { data, error } = await supabase
     .from("plans")
     .upsert(PLANS, { onConflict: "slug" })
-    .select()
+    .select();
 
   if (error) {
-    console.error("Error seeding plans:", error)
-    process.exit(1)
+    console.error("Error seeding plans:", error);
+    process.exit(1);
   }
 
-  console.log(`Successfully seeded ${data?.length || 0} plans!`)
+  console.log(`Successfully seeded ${data?.length || 0} plans!`);
 
   for (const plan of data || []) {
-    console.log(`  - ${plan.name} (${plan.slug}): $${plan.price_monthly_cents / 100}/mo`)
+    console.log(
+      `  - ${plan.name} (${plan.slug}): $${plan.price_monthly_cents / 100}/mo`
+    );
   }
 
   const missingVariants = (data || []).filter(
     (p) =>
       p.slug !== "starter" &&
-      (!p.lemonsqueezy_variant_id_monthly || !p.lemonsqueezy_variant_id_yearly)
-  )
+      !(p.lemonsqueezy_variant_id_monthly && p.lemonsqueezy_variant_id_yearly)
+  );
 
   if (missingVariants.length > 0) {
-    console.log("\nWarning: The following plans are missing LemonSqueezy variant IDs:")
+    console.log(
+      "\nWarning: The following plans are missing LemonSqueezy variant IDs:"
+    );
     for (const plan of missingVariants) {
-      console.log(`  - ${plan.name}: Set LEMONSQUEEZY_${plan.slug.toUpperCase()}_VARIANT_MONTHLY and _YEARLY`)
+      console.log(
+        `  - ${plan.name}: Set LEMONSQUEEZY_${plan.slug.toUpperCase()}_VARIANT_MONTHLY and _YEARLY`
+      );
     }
   }
 
-  process.exit(0)
+  process.exit(0);
 }
 
 seedPlans().catch((err) => {
-  console.error("Seed script failed:", err)
-  process.exit(1)
-})
+  console.error("Seed script failed:", err);
+  process.exit(1);
+});

@@ -1,11 +1,11 @@
-import { asyncHandler } from "@/utils/http";
 import type { calendar_v3 } from "googleapis";
+import type { ConflictingEvent } from "@/shared/types";
 import { fetchCredentialsByEmail } from "@/utils/auth";
 import { formatDate } from "@/utils/date";
+import { asyncHandler } from "@/utils/http";
 import { initUserSupabaseCalendarWithTokensAndUpdateTokens } from "./init";
-import type { ConflictingEvent } from "@/shared/types";
 
-export interface RescheduleSuggestion {
+export type RescheduleSuggestion = {
   start: string;
   end: string;
   startFormatted: string;
@@ -13,18 +13,18 @@ export interface RescheduleSuggestion {
   dayOfWeek: string;
   score: number;
   reason: string;
-}
+};
 
-export interface RescheduleParams {
+export type RescheduleParams = {
   email: string;
   eventId: string;
   calendarId?: string;
   preferredTimeOfDay?: "morning" | "afternoon" | "evening" | "any";
   daysToSearch?: number;
   excludeWeekends?: boolean;
-}
+};
 
-export interface RescheduleResult {
+export type RescheduleResult = {
   success: boolean;
   event?: {
     id: string;
@@ -36,9 +36,17 @@ export interface RescheduleResult {
   suggestions: RescheduleSuggestion[];
   conflicts?: ConflictingEvent[];
   error?: string;
-}
+};
 
-const DAYS_OF_WEEK = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+const DAYS_OF_WEEK = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+];
 
 const TIME_PREFERENCES = {
   morning: { start: 8, end: 12, label: "Morning (8AM-12PM)" },
@@ -81,7 +89,8 @@ export const findRescheduleSuggestions = asyncHandler(
     } = params;
 
     const credentials = await fetchCredentialsByEmail(email);
-    const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(credentials);
+    const calendar =
+      await initUserSupabaseCalendarWithTokensAndUpdateTokens(credentials);
 
     // Get the event to reschedule
     let eventToReschedule: calendar_v3.Schema$Event;
@@ -91,7 +100,7 @@ export const findRescheduleSuggestions = asyncHandler(
         eventId,
       });
       eventToReschedule = eventResponse.data;
-    } catch (error) {
+    } catch (_error) {
       return {
         success: false,
         suggestions: [],
@@ -99,7 +108,7 @@ export const findRescheduleSuggestions = asyncHandler(
       };
     }
 
-    if (!eventToReschedule.start || !eventToReschedule.end) {
+    if (!(eventToReschedule.start && eventToReschedule.end)) {
       return {
         success: false,
         suggestions: [],
@@ -108,9 +117,15 @@ export const findRescheduleSuggestions = asyncHandler(
     }
 
     // Calculate event duration
-    const eventStart = new Date(eventToReschedule.start.dateTime || eventToReschedule.start.date || "");
-    const eventEnd = new Date(eventToReschedule.end.dateTime || eventToReschedule.end.date || "");
-    const durationMinutes = Math.round((eventEnd.getTime() - eventStart.getTime()) / (1000 * 60));
+    const eventStart = new Date(
+      eventToReschedule.start.dateTime || eventToReschedule.start.date || ""
+    );
+    const eventEnd = new Date(
+      eventToReschedule.end.dateTime || eventToReschedule.end.date || ""
+    );
+    const durationMinutes = Math.round(
+      (eventEnd.getTime() - eventStart.getTime()) / (1000 * 60)
+    );
 
     // Search window: from tomorrow to daysToSearch days
     const searchStart = new Date();
@@ -121,14 +136,18 @@ export const findRescheduleSuggestions = asyncHandler(
     searchEnd.setDate(searchEnd.getDate() + daysToSearch);
 
     // Get all events in search window across all calendars
-    const calendarListResponse = await calendar.calendarList.list({ prettyPrint: true });
+    const calendarListResponse = await calendar.calendarList.list({
+      prettyPrint: true,
+    });
     const allCalendars = calendarListResponse.data.items || [];
 
     const allBusySlots: { start: Date; end: Date }[] = [];
 
     await Promise.all(
       allCalendars.map(async (cal) => {
-        if (!cal.id) return;
+        if (!cal.id) {
+          return;
+        }
         try {
           const eventsResponse = await calendar.events.list({
             calendarId: cal.id,
@@ -140,10 +159,16 @@ export const findRescheduleSuggestions = asyncHandler(
 
           const events = eventsResponse.data.items || [];
           for (const event of events) {
-            if (event.id === eventId) continue; // Exclude the event being rescheduled
-            if (!event.start || !event.end) continue;
+            if (event.id === eventId) {
+              continue; // Exclude the event being rescheduled
+            }
+            if (!(event.start && event.end)) {
+              continue;
+            }
 
-            const start = new Date(event.start.dateTime || event.start.date || "");
+            const start = new Date(
+              event.start.dateTime || event.start.date || ""
+            );
             const end = new Date(event.end.dateTime || event.end.date || "");
             allBusySlots.push({ start, end });
           }
@@ -160,19 +185,30 @@ export const findRescheduleSuggestions = asyncHandler(
     const suggestions: RescheduleSuggestion[] = [];
     const timePrefs = TIME_PREFERENCES[preferredTimeOfDay];
 
-    for (let dayOffset = 1; dayOffset <= daysToSearch && suggestions.length < 5; dayOffset++) {
+    for (
+      let dayOffset = 1;
+      dayOffset <= daysToSearch && suggestions.length < 5;
+      dayOffset++
+    ) {
       const checkDate = new Date(searchStart);
       checkDate.setDate(searchStart.getDate() + dayOffset - 1);
 
       // Skip weekends if requested
-      if (excludeWeekends && (checkDate.getDay() === 0 || checkDate.getDay() === 6)) {
+      if (
+        excludeWeekends &&
+        (checkDate.getDay() === 0 || checkDate.getDay() === 6)
+      ) {
         continue;
       }
 
       const dayOfWeek = DAYS_OF_WEEK[checkDate.getDay()];
 
       // Check each hour in the preferred time range
-      for (let hour = timePrefs.start; hour <= timePrefs.end - Math.ceil(durationMinutes / 60); hour++) {
+      for (
+        let hour = timePrefs.start;
+        hour <= timePrefs.end - Math.ceil(durationMinutes / 60);
+        hour++
+      ) {
         const slotStart = new Date(checkDate);
         slotStart.setHours(hour, 0, 0, 0);
 
@@ -180,9 +216,9 @@ export const findRescheduleSuggestions = asyncHandler(
         slotEnd.setMinutes(slotStart.getMinutes() + durationMinutes);
 
         // Check if this slot conflicts with any busy time
-        const hasConflict = allBusySlots.some((busy) => {
-          return slotStart < busy.end && slotEnd > busy.start;
-        });
+        const hasConflict = allBusySlots.some(
+          (busy) => slotStart < busy.end && slotEnd > busy.start
+        );
 
         if (!hasConflict) {
           // Calculate score based on various factors
@@ -193,11 +229,13 @@ export const findRescheduleSuggestions = asyncHandler(
           score -= dayOffset * 5;
 
           // Prefer preferred time of day
-          if (preferredTimeOfDay !== "any") {
-            if (hour >= timePrefs.start && hour < timePrefs.end) {
-              score += 20;
-              reason = `${timePrefs.label}`;
-            }
+          if (
+            preferredTimeOfDay !== "any" &&
+            hour >= timePrefs.start &&
+            hour < timePrefs.end
+          ) {
+            score += 20;
+            reason = `${timePrefs.label}`;
           }
 
           // Prefer business hours (9-5)
@@ -214,7 +252,10 @@ export const findRescheduleSuggestions = asyncHandler(
 
           // Generate readable reason
           if (!reason) {
-            reason = dayOffset === 1 ? "Tomorrow" : `${dayOfWeek}, ${dayOffset} days from now`;
+            reason =
+              dayOffset === 1
+                ? "Tomorrow"
+                : `${dayOfWeek}, ${dayOffset} days from now`;
           }
 
           suggestions.push({
@@ -244,8 +285,18 @@ export const findRescheduleSuggestions = asyncHandler(
       event: {
         id: eventToReschedule.id || "",
         summary: eventToReschedule.summary || "Untitled Event",
-        start: formatDate(eventToReschedule.start.dateTime || eventToReschedule.start.date || "", true) || "",
-        end: formatDate(eventToReschedule.end.dateTime || eventToReschedule.end.date || "", true) || "",
+        start:
+          formatDate(
+            eventToReschedule.start.dateTime ||
+              eventToReschedule.start.date ||
+              "",
+            true
+          ) || "",
+        end:
+          formatDate(
+            eventToReschedule.end.dateTime || eventToReschedule.end.date || "",
+            true
+          ) || "",
         duration: durationMinutes,
       },
       suggestions: topSuggestions,
@@ -253,19 +304,19 @@ export const findRescheduleSuggestions = asyncHandler(
   }
 );
 
-export interface ApplyRescheduleParams {
+export type ApplyRescheduleParams = {
   email: string;
   eventId: string;
   calendarId?: string;
   newStart: string;
   newEnd: string;
-}
+};
 
-export interface ApplyRescheduleResult {
+export type ApplyRescheduleResult = {
   success: boolean;
   event?: calendar_v3.Schema$Event;
   error?: string;
-}
+};
 
 /**
  * @description Applies a reschedule suggestion by updating the event's start and end times.
@@ -293,7 +344,8 @@ export const applyReschedule = asyncHandler(
     const { email, eventId, calendarId = "primary", newStart, newEnd } = params;
 
     const credentials = await fetchCredentialsByEmail(email);
-    const calendar = await initUserSupabaseCalendarWithTokensAndUpdateTokens(credentials);
+    const calendar =
+      await initUserSupabaseCalendarWithTokensAndUpdateTokens(credentials);
 
     try {
       const patchedEvent = await calendar.events.patch({
@@ -312,7 +364,8 @@ export const applyReschedule = asyncHandler(
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Failed to reschedule event",
+        error:
+          error instanceof Error ? error.message : "Failed to reschedule event",
       };
     }
   }

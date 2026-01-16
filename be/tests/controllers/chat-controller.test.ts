@@ -1,6 +1,6 @@
-import { jest, describe, it, expect, beforeEach } from "@jest/globals";
-import type { Request, Response, NextFunction } from "express";
-import { mockFn, type AnyFn } from "../test-utils";
+import { beforeEach, describe, expect, it, jest } from "@jest/globals";
+import type { NextFunction, Request, Response } from "express";
+import { mockFn } from "../test-utils";
 
 // Mock functions
 const mockGetOrCreateTodayContext = mockFn();
@@ -23,26 +23,36 @@ const mockSendR = mockFn();
 
 jest.mock("@/utils/conversation/WebConversationAdapter", () => ({
   webConversation: {
-    getOrCreateTodayContext: (userId: string) => mockGetOrCreateTodayContext(userId),
+    getOrCreateTodayContext: (userId: string) =>
+      mockGetOrCreateTodayContext(userId),
     buildContextPrompt: (context: unknown) => mockBuildContextPrompt(context),
-    addMessageToContext: (...args: unknown[]) => mockAddMessageToContext(...args),
-    getConversationList: (...args: unknown[]) => mockGetConversationList(...args),
-    getConversationById: (...args: unknown[]) => mockGetConversationById(...args),
+    addMessageToContext: (...args: unknown[]) =>
+      mockAddMessageToContext(...args),
+    getConversationList: (...args: unknown[]) =>
+      mockGetConversationList(...args),
+    getConversationById: (...args: unknown[]) =>
+      mockGetConversationById(...args),
     deleteConversation: (...args: unknown[]) => mockDeleteConversation(...args),
-    loadConversationIntoContext: (...args: unknown[]) => mockLoadConversationIntoContext(...args),
-    closeActiveConversation: (userId: string) => mockCloseActiveConversation(userId),
-    updateConversationTitle: (...args: unknown[]) => mockUpdateConversationTitle(...args),
+    loadConversationIntoContext: (...args: unknown[]) =>
+      mockLoadConversationIntoContext(...args),
+    closeActiveConversation: (userId: string) =>
+      mockCloseActiveConversation(userId),
+    updateConversationTitle: (...args: unknown[]) =>
+      mockUpdateConversationTitle(...args),
   },
 }));
 
 jest.mock("@/telegram-bot/utils/summarize", () => ({
-  generateConversationTitle: (message: string) => mockGenerateConversationTitle(message),
+  generateConversationTitle: (message: string) =>
+    mockGenerateConversationTitle(message),
   summarizeMessages: mockSummarizeMessages,
 }));
 
 jest.mock("@/utils/web-embeddings", () => ({
-  getWebRelevantContext: (...args: unknown[]) => mockGetWebRelevantContext(...args),
-  storeWebEmbeddingAsync: (...args: unknown[]) => mockStoreWebEmbeddingAsync(...args),
+  getWebRelevantContext: (...args: unknown[]) =>
+    mockGetWebRelevantContext(...args),
+  storeWebEmbeddingAsync: (...args: unknown[]) =>
+    mockStoreWebEmbeddingAsync(...args),
 }));
 
 jest.mock("@openai/agents", () => ({
@@ -59,7 +69,8 @@ jest.mock("@/ai-agents", () => ({
 }));
 
 jest.mock("@/controllers/user-preferences-controller", () => ({
-  getAllyBrainPreference: (userId: string) => mockGetAllyBrainPreference(userId),
+  getAllyBrainPreference: (userId: string) =>
+    mockGetAllyBrainPreference(userId),
 }));
 
 jest.mock("@/config", () => ({
@@ -74,11 +85,10 @@ jest.mock("@/config", () => ({
 
 jest.mock("@/utils/http", () => ({
   sendR: (...args: unknown[]) => mockSendR(...args),
-  reqResAsyncHandler: <T extends (...args: unknown[]) => Promise<unknown>>(fn: T) => {
-    return (req: Request, res: Response, next: NextFunction) => {
-      return Promise.resolve(fn(req, res, next)).catch(next);
-    };
-  },
+  reqResAsyncHandler:
+    <T extends (...args: unknown[]) => Promise<unknown>>(fn: T) =>
+    (req: Request, res: Response, next: NextFunction) =>
+      Promise.resolve(fn(req, res, next)).catch(next),
 }));
 
 // Import after mocks
@@ -129,7 +139,11 @@ describe("Chat Controller", () => {
     it("should return bad request if message is empty", async () => {
       mockReq.body = { message: "" };
 
-      await chatController.sendChat(mockReq as Request, mockRes as Response, mockNext);
+      await chatController.sendChat(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(
         mockRes,
@@ -141,7 +155,11 @@ describe("Chat Controller", () => {
     it("should return bad request if message is whitespace", async () => {
       mockReq.body = { message: "   " };
 
-      await chatController.sendChat(mockReq as Request, mockRes as Response, mockNext);
+      await chatController.sendChat(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(
         mockRes,
@@ -154,7 +172,11 @@ describe("Chat Controller", () => {
       mockReq.body = { message: "Hello" };
       mockReq.user = undefined;
 
-      await chatController.sendChat(mockReq as Request, mockRes as Response, mockNext);
+      await chatController.sendChat(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(
         mockRes,
@@ -166,7 +188,11 @@ describe("Chat Controller", () => {
     it("should process chat message successfully", async () => {
       mockReq.body = { message: "Hello, AI!" };
 
-      await chatController.sendChat(mockReq as Request, mockRes as Response, mockNext);
+      await chatController.sendChat(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockGetOrCreateTodayContext).toHaveBeenCalledWith("user-123");
       expect(mockRun).toHaveBeenCalled();
@@ -190,7 +216,11 @@ describe("Chat Controller", () => {
         instructions: "Always be friendly",
       });
 
-      await chatController.sendChat(mockReq as Request, mockRes as Response, mockNext);
+      await chatController.sendChat(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockGetAllyBrainPreference).toHaveBeenCalledWith("user-123");
       expect(mockRun).toHaveBeenCalled();
@@ -204,7 +234,11 @@ describe("Chat Controller", () => {
         context: { messages: [], title: undefined },
       });
 
-      await chatController.sendChat(mockReq as Request, mockRes as Response, mockNext);
+      await chatController.sendChat(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       // Title generation is async, just verify chat completes
       expect(mockSendR).toHaveBeenCalledWith(
@@ -219,7 +253,11 @@ describe("Chat Controller", () => {
       mockReq.body = { message: "Hello" };
       mockRun.mockRejectedValue(new Error("AI service unavailable"));
 
-      await chatController.sendChat(mockReq as Request, mockRes as Response, mockNext);
+      await chatController.sendChat(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(
         mockRes,
@@ -233,7 +271,11 @@ describe("Chat Controller", () => {
     it("should return unauthorized if user not authenticated", async () => {
       mockReq.user = undefined;
 
-      await chatController.getConversations(mockReq as Request, mockRes as Response, mockNext);
+      await chatController.getConversations(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(
         mockRes,
@@ -249,7 +291,11 @@ describe("Chat Controller", () => {
       ];
       mockGetConversationList.mockResolvedValue(mockConversations);
 
-      await chatController.getConversations(mockReq as Request, mockRes as Response, mockNext);
+      await chatController.getConversations(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockGetConversationList).toHaveBeenCalledWith("user-123", {
         limit: 20,
@@ -271,7 +317,11 @@ describe("Chat Controller", () => {
       mockReq.query = { limit: "10", offset: "5", search: "test" };
       mockGetConversationList.mockResolvedValue([]);
 
-      await chatController.getConversations(mockReq as Request, mockRes as Response, mockNext);
+      await chatController.getConversations(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockGetConversationList).toHaveBeenCalledWith("user-123", {
         limit: 10,
@@ -283,7 +333,11 @@ describe("Chat Controller", () => {
     it("should handle errors gracefully", async () => {
       mockGetConversationList.mockRejectedValue(new Error("DB error"));
 
-      await chatController.getConversations(mockReq as Request, mockRes as Response, mockNext);
+      await chatController.getConversations(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(
         mockRes,
@@ -298,7 +352,11 @@ describe("Chat Controller", () => {
       mockReq.user = undefined;
       mockReq.params = { id: "conv-123" };
 
-      await chatController.getConversation(mockReq as Request, mockRes as Response, mockNext);
+      await chatController.getConversation(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(
         mockRes,
@@ -310,7 +368,11 @@ describe("Chat Controller", () => {
     it("should return bad request if conversation ID is missing", async () => {
       mockReq.params = {};
 
-      await chatController.getConversation(mockReq as Request, mockRes as Response, mockNext);
+      await chatController.getConversation(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(
         mockRes,
@@ -323,7 +385,11 @@ describe("Chat Controller", () => {
       mockReq.params = { id: "conv-123" };
       mockGetConversationById.mockResolvedValue(null);
 
-      await chatController.getConversation(mockReq as Request, mockRes as Response, mockNext);
+      await chatController.getConversation(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(
         mockRes,
@@ -337,9 +403,16 @@ describe("Chat Controller", () => {
       const mockConversation = { id: "conv-123", title: "Test", messages: [] };
       mockGetConversationById.mockResolvedValue(mockConversation);
 
-      await chatController.getConversation(mockReq as Request, mockRes as Response, mockNext);
+      await chatController.getConversation(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
-      expect(mockGetConversationById).toHaveBeenCalledWith("conv-123", "user-123");
+      expect(mockGetConversationById).toHaveBeenCalledWith(
+        "conv-123",
+        "user-123"
+      );
       expect(mockSendR).toHaveBeenCalledWith(
         mockRes,
         expect.objectContaining({ code: 200 }),
@@ -354,7 +427,11 @@ describe("Chat Controller", () => {
       mockReq.user = undefined;
       mockReq.params = { id: "conv-123" };
 
-      await chatController.removeConversation(mockReq as Request, mockRes as Response, mockNext);
+      await chatController.removeConversation(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(
         mockRes,
@@ -367,7 +444,11 @@ describe("Chat Controller", () => {
       mockReq.params = { id: "conv-123" };
       mockDeleteConversation.mockResolvedValue(false);
 
-      await chatController.removeConversation(mockReq as Request, mockRes as Response, mockNext);
+      await chatController.removeConversation(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(
         mockRes,
@@ -380,9 +461,16 @@ describe("Chat Controller", () => {
       mockReq.params = { id: "conv-123" };
       mockDeleteConversation.mockResolvedValue(true);
 
-      await chatController.removeConversation(mockReq as Request, mockRes as Response, mockNext);
+      await chatController.removeConversation(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
-      expect(mockDeleteConversation).toHaveBeenCalledWith("conv-123", "user-123");
+      expect(mockDeleteConversation).toHaveBeenCalledWith(
+        "conv-123",
+        "user-123"
+      );
       expect(mockSendR).toHaveBeenCalledWith(
         mockRes,
         expect.objectContaining({ code: 200 }),
@@ -397,7 +485,11 @@ describe("Chat Controller", () => {
       mockReq.params = { id: "conv-123" };
       mockReq.body = { message: "Hello" };
 
-      await chatController.continueConversation(mockReq as Request, mockRes as Response, mockNext);
+      await chatController.continueConversation(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(
         mockRes,
@@ -410,7 +502,11 @@ describe("Chat Controller", () => {
       mockReq.params = { id: "conv-123" };
       mockReq.body = { message: "" };
 
-      await chatController.continueConversation(mockReq as Request, mockRes as Response, mockNext);
+      await chatController.continueConversation(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(
         mockRes,
@@ -424,7 +520,11 @@ describe("Chat Controller", () => {
       mockReq.body = { message: "Hello" };
       mockLoadConversationIntoContext.mockResolvedValue(null);
 
-      await chatController.continueConversation(mockReq as Request, mockRes as Response, mockNext);
+      await chatController.continueConversation(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(
         mockRes,
@@ -440,9 +540,16 @@ describe("Chat Controller", () => {
         context: { messages: [{ role: "user", content: "Previous message" }] },
       });
 
-      await chatController.continueConversation(mockReq as Request, mockRes as Response, mockNext);
+      await chatController.continueConversation(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
-      expect(mockLoadConversationIntoContext).toHaveBeenCalledWith("conv-123", "user-123");
+      expect(mockLoadConversationIntoContext).toHaveBeenCalledWith(
+        "conv-123",
+        "user-123"
+      );
       expect(mockRun).toHaveBeenCalled();
       expect(mockSendR).toHaveBeenCalledWith(
         mockRes,
@@ -460,7 +567,11 @@ describe("Chat Controller", () => {
     it("should return unauthorized if user not authenticated", async () => {
       mockReq.user = undefined;
 
-      await chatController.startNewConversation(mockReq as Request, mockRes as Response, mockNext);
+      await chatController.startNewConversation(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(
         mockRes,
@@ -472,7 +583,11 @@ describe("Chat Controller", () => {
     it("should close active conversation and start new one", async () => {
       mockCloseActiveConversation.mockResolvedValue(undefined);
 
-      await chatController.startNewConversation(mockReq as Request, mockRes as Response, mockNext);
+      await chatController.startNewConversation(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockCloseActiveConversation).toHaveBeenCalledWith("user-123");
       expect(mockSendR).toHaveBeenCalledWith(
@@ -486,7 +601,11 @@ describe("Chat Controller", () => {
     it("should handle errors gracefully", async () => {
       mockCloseActiveConversation.mockRejectedValue(new Error("Failed"));
 
-      await chatController.startNewConversation(mockReq as Request, mockRes as Response, mockNext);
+      await chatController.startNewConversation(
+        mockReq as Request,
+        mockRes as Response,
+        mockNext
+      );
 
       expect(mockSendR).toHaveBeenCalledWith(
         mockRes,

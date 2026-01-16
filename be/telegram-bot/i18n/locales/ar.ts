@@ -35,7 +35,8 @@ export const ar = {
   "commands.help.sections.timeInsights.title": "رؤى الوقت",
   "commands.help.sections.timeInsights.items.0": "/analytics - افهم وقتك",
   "commands.help.sections.timeInsights.items.1": "/calendars - تقويماتك",
-  "commands.help.sections.timeInsights.items.2": "/aboutme - ماذا يعرف Ally عنك",
+  "commands.help.sections.timeInsights.items.2":
+    "/aboutme - ماذا يعرف Ally عنك",
   "commands.help.sections.personalization.title": "التخصيص",
   "commands.help.sections.personalization.items.0":
     "/brain - علّم Ally تفضيلاتك",
@@ -359,8 +360,10 @@ export const ar = {
   "errors.pendingEventPrompt":
     "لديك حدث قيد الإنشاء. يرجى الرد بـ 'نعم' للإنشاء رغم التعارضات، أو 'لا' للإلغاء.",
   "errors.processingPreviousRequest": "لحظة، ما زلت أعمل على طلبك السابق...",
-  "errors.imageProcessingError": "تعذر معالجة الصورة. يرجى المحاولة مرة أخرى بصورة مختلفة.",
-  "errors.tooManyImages": "يمكنك إرسال حتى {{max}} صور في المرة الواحدة. تم تخطي بعض الصور.",
+  "errors.imageProcessingError":
+    "تعذر معالجة الصورة. يرجى المحاولة مرة أخرى بصورة مختلفة.",
+  "errors.tooManyImages":
+    "يمكنك إرسال حتى {{max}} صور في المرة الواحدة. تم تخطي بعض الصور.",
 
   "common.confirm": "تأكيد",
   "common.cancel": "إلغاء",
@@ -368,7 +371,8 @@ export const ar = {
   "common.no": "لا",
   "common.eventCreationCancelled": "تم إلغاء إنشاء الحدث.",
   "common.typeExitToStop": "اكتب /exit للتوقف.",
-  "common.analyzeImage": "يرجى تحليل هذه الصورة وإخباري بما تراه. إذا كانت تحتوي على معلومات تقويم أو جدولة، ساعدني في إنشاء الحدث.",
+  "common.analyzeImage":
+    "يرجى تحليل هذه الصورة وإخباري بما تراه. إذا كانت تحتوي على معلومات تقويم أو جدولة، ساعدني في إنشاء الحدث.",
 
   "botMenu.today": "جدول اليوم",
   "botMenu.tomorrow": "أجندة الغد",
@@ -393,41 +397,55 @@ export const ar = {
   "botMenu.asvoice": "كرر الأخير كصوت",
 
   "commands.astext.header": "الرد الأخير كنص",
-  "commands.astext.noLastResponse": "لا توجد استجابة سابقة لعرضها. أرسل لي رسالة أولاً!",
+  "commands.astext.noLastResponse":
+    "لا توجد استجابة سابقة لعرضها. أرسل لي رسالة أولاً!",
   "commands.astext.alreadyText": "تم إرسال الرد الأخير كنص بالفعل.",
 
   "commands.asvoice.header": "الرد الأخير كصوت",
-  "commands.asvoice.noLastResponse": "لا توجد استجابة سابقة للتكرار. أرسل لي رسالة أولاً!",
+  "commands.asvoice.noLastResponse":
+    "لا توجد استجابة سابقة للتكرار. أرسل لي رسالة أولاً!",
   "commands.asvoice.alreadyVoice": "تم إرسال الرد الأخير كرسالة صوتية بالفعل.",
   "commands.asvoice.generating": "جارٍ إنشاء الرسالة الصوتية...",
-  "commands.asvoice.failed": "فشل في إنشاء الرسالة الصوتية. إليك النص بدلاً من ذلك:",
+  "commands.asvoice.failed":
+    "فشل في إنشاء الرسالة الصوتية. إليك النص بدلاً من ذلك:",
 
   "commands.website.header": "لوحة التحكم",
-  "commands.website.text": "الوصول إلى لوحة التحكم في التقويم وإدارة إعداداتك عبر الإنترنت:",
+  "commands.website.text":
+    "الوصول إلى لوحة التحكم في التقويم وإدارة إعداداتك عبر الإنترنت:",
   "botMenu.website": "فتح لوحة التحكم",
 
   // Reschedule command
   "commands.reschedule.header": "إعادة جدولة ذكية",
-  "commands.reschedule.text": "أخبرني بالحدث الذي تريد نقله، وسأجد أفضل الأوقات:",
+  "commands.reschedule.text":
+    "أخبرني بالحدث الذي تريد نقله، وسأجد أفضل الأوقات:",
   "commands.reschedule.footerTip": "فقط صف الحدث الذي تريد نقله.",
   "commands.reschedule.sections.howToUse.title": "كيفية الاستخدام",
-  "commands.reschedule.sections.howToUse.items.0": "'انقل اجتماع الساعة 2 ظهراً'",
-  "commands.reschedule.sections.howToUse.items.1": "'أجّل موعد طبيب الأسنان للأسبوع القادم'",
-  "commands.reschedule.sections.howToUse.items.2": "'انقل الاجتماع اليومي للمساء'",
+  "commands.reschedule.sections.howToUse.items.0":
+    "'انقل اجتماع الساعة 2 ظهراً'",
+  "commands.reschedule.sections.howToUse.items.1":
+    "'أجّل موعد طبيب الأسنان للأسبوع القادم'",
+  "commands.reschedule.sections.howToUse.items.2":
+    "'انقل الاجتماع اليومي للمساء'",
   "commands.reschedule.sections.smartFeatures.title": "ميزات ذكية",
-  "commands.reschedule.sections.smartFeatures.items.0": "الذكاء الاصطناعي يجد أفضل الأوقات بناءً على جدولك",
-  "commands.reschedule.sections.smartFeatures.items.1": "يتحقق من جميع التقويمات للتعارضات",
-  "commands.reschedule.sections.smartFeatures.items.2": "يحترم تفضيلاتك من /brain",
+  "commands.reschedule.sections.smartFeatures.items.0":
+    "الذكاء الاصطناعي يجد أفضل الأوقات بناءً على جدولك",
+  "commands.reschedule.sections.smartFeatures.items.1":
+    "يتحقق من جميع التقويمات للتعارضات",
+  "commands.reschedule.sections.smartFeatures.items.2":
+    "يحترم تفضيلاتك من /brain",
   "commands.reschedule.suggestionsHeader": "الأوقات المقترحة",
-  "commands.reschedule.suggestionsText": "إليك أفضل الأوقات لإعادة جدولة <b>{{event}}</b>:",
-  "commands.reschedule.noSuggestions": "لم يتم العثور على أوقات متاحة في الأيام السبعة القادمة.",
+  "commands.reschedule.suggestionsText":
+    "إليك أفضل الأوقات لإعادة جدولة <b>{{event}}</b>:",
+  "commands.reschedule.noSuggestions":
+    "لم يتم العثور على أوقات متاحة في الأيام السبعة القادمة.",
   "commands.reschedule.selectTime": "اضغط على وقت لإعادة الجدولة:",
   "commands.reschedule.success": "تمت إعادة جدولة الحدث",
   "commands.reschedule.successText": "تم نقل <b>{{event}}</b> إلى {{time}}.",
   "commands.reschedule.failed": "فشلت إعادة الجدولة",
   "commands.reschedule.error": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
   "commands.reschedule.unknownError": "تعذر إعادة جدولة الحدث.",
-  "commands.reschedule.noSession": "لا توجد إعادة جدولة قيد التنفيذ. استخدم /reschedule.",
+  "commands.reschedule.noSession":
+    "لا توجد إعادة جدولة قيد التنفيذ. استخدم /reschedule.",
   "commands.reschedule.invalidSelection": "اختيار غير صالح. حاول مرة أخرى.",
   "commands.reschedule.applying": "جارٍ إعادة الجدولة...",
   "commands.reschedule.cancelled": "تم إلغاء إعادة الجدولة.",

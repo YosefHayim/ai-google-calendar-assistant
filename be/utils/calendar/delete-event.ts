@@ -1,11 +1,14 @@
-import { REQUEST_CONFIG_BASE } from "@/config";
 import type { calendar_v3 } from "googleapis";
+import { REQUEST_CONFIG_BASE } from "@/config";
 
 type DeleteEventParams = {
   calendarEvents: calendar_v3.Resource$Events;
   eventData?: calendar_v3.Schema$Event | Record<string, string>;
   extra?: Record<string, unknown>;
-  req?: { body?: Record<string, unknown>; query?: Record<string, unknown> } | null;
+  req?: {
+    body?: Record<string, unknown>;
+    query?: Record<string, unknown>;
+  } | null;
 };
 
 /**
@@ -20,16 +23,28 @@ type DeleteEventParams = {
  * normalizeCalendarId("/"); // Returns null
  */
 function normalizeCalendarId(id: unknown): string | null {
-  if (!id || typeof id !== "string") return null;
+  if (!id || typeof id !== "string") {
+    return null;
+  }
   const trimmed = id.trim();
   // Reject obviously invalid values
-  if (trimmed === "" || trimmed === "/") return null;
+  if (trimmed === "" || trimmed === "/") {
+    return null;
+  }
   return trimmed;
 }
 
-export async function deleteEvent({ calendarEvents, eventData, extra, req }: DeleteEventParams) {
+export async function deleteEvent({
+  calendarEvents,
+  eventData,
+  extra,
+  req,
+}: DeleteEventParams) {
   const calendarId =
-    normalizeCalendarId(extra?.calendarId) || normalizeCalendarId(req?.body?.calendarId) || normalizeCalendarId(req?.query?.calendarId) || "primary";
+    normalizeCalendarId(extra?.calendarId) ||
+    normalizeCalendarId(req?.body?.calendarId) ||
+    normalizeCalendarId(req?.query?.calendarId) ||
+    "primary";
 
   const resp = await calendarEvents.delete({
     ...REQUEST_CONFIG_BASE,

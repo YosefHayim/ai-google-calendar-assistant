@@ -1,20 +1,20 @@
-import { MODELS } from "@/config/constants/ai"
-import { env } from "@/config"
-import OpenAI from "openai"
-import type { calendar_v3 } from "googleapis"
-import isEmail from "validator/lib/isEmail"
+import type { calendar_v3 } from "googleapis";
+import OpenAI from "openai";
+import isEmail from "validator/lib/isEmail";
+import { env } from "@/config";
+import { MODELS } from "@/config/constants/ai";
 import {
-  validateUserHandler,
-  getTimezoneHandler,
-  selectCalendarHandler,
-  checkConflictsHandler,
-  preCreateValidationHandler,
-  type ValidateUserResult,
-  type TimezoneResult,
-  type SelectCalendarResult,
   type ConflictCheckResult,
+  checkConflictsHandler,
+  getTimezoneHandler,
   type PreCreateValidationResult,
-} from "@/shared"
+  preCreateValidationHandler,
+  type SelectCalendarResult,
+  selectCalendarHandler,
+  type TimezoneResult,
+  type ValidateUserResult,
+  validateUserHandler,
+} from "@/shared";
 
 export type {
   ValidateUserResult,
@@ -22,23 +22,35 @@ export type {
   SelectCalendarResult,
   ConflictCheckResult,
   PreCreateValidationResult,
+};
+
+export {
+  formatEventData,
+  getCalendarCategoriesByEmail,
+  type UserCalendar,
+} from "./utils";
+
+type Event = calendar_v3.Schema$Event;
+
+export async function validateUserDirect(
+  email: string
+): Promise<ValidateUserResult> {
+  return validateUserHandler({ email });
 }
 
-export { formatEventData, type UserCalendar, getCalendarCategoriesByEmail } from "./utils"
-
-type Event = calendar_v3.Schema$Event
-
-export async function validateUserDirect(email: string): Promise<ValidateUserResult> {
-  return validateUserHandler({ email })
-}
-
-export async function getUserDefaultTimezoneDirect(email: string): Promise<TimezoneResult> {
-  return getTimezoneHandler({ email })
+export async function getUserDefaultTimezoneDirect(
+  email: string
+): Promise<TimezoneResult> {
+  return getTimezoneHandler({ email });
 }
 
 export async function selectCalendarByRules(
   email: string,
-  eventInfo: { summary?: string | null; description?: string | null; location?: string | null },
+  eventInfo: {
+    summary?: string | null;
+    description?: string | null;
+    location?: string | null;
+  }
 ): Promise<SelectCalendarResult> {
   return selectCalendarHandler(
     {
@@ -46,15 +58,15 @@ export async function selectCalendarByRules(
       description: eventInfo.description ?? undefined,
       location: eventInfo.location ?? undefined,
     },
-    { email },
-  )
+    { email }
+  );
 }
 
 export async function checkConflictsDirect(params: {
-  email: string
-  calendarId: string
-  start: calendar_v3.Schema$EventDateTime
-  end: calendar_v3.Schema$EventDateTime
+  email: string;
+  calendarId: string;
+  start: calendar_v3.Schema$EventDateTime;
+  end: calendar_v3.Schema$EventDateTime;
 }): Promise<ConflictCheckResult> {
   return checkConflictsHandler(
     {
@@ -70,13 +82,13 @@ export async function checkConflictsDirect(params: {
         timeZone: params.end.timeZone ?? null,
       },
     },
-    { email: params.email },
-  )
+    { email: params.email }
+  );
 }
 
 export async function preCreateValidation(
   email: string,
-  eventData: Partial<Event>,
+  eventData: Partial<Event>
 ): Promise<PreCreateValidationResult> {
   return preCreateValidationHandler(
     {
@@ -98,50 +110,50 @@ export async function preCreateValidation(
           }
         : null,
     },
-    { email },
-  )
+    { email }
+  );
 }
 
-import { formatEventData as formatEvent } from "./utils"
+import { formatEventData as formatEvent } from "./utils";
 
 export type ValidateEventResult = {
-  valid: boolean
-  event?: Event & { email: string }
-  error?: string
-}
+  valid: boolean;
+  event?: Event & { email: string };
+  error?: string;
+};
 
 export function validateEventDataDirect(
-  eventData: Partial<Event> & { email: string },
+  eventData: Partial<Event> & { email: string }
 ): ValidateEventResult {
-  const { email, ...eventLike } = eventData
+  const { email, ...eventLike } = eventData;
 
-  if (!email || !isEmail(email)) {
-    return { valid: false, error: "Invalid email address." }
+  if (!(email && isEmail(email))) {
+    return { valid: false, error: "Invalid email address." };
   }
 
   try {
-    const formatted = formatEvent(eventLike as Event)
-    return { valid: true, event: { ...formatted, email } }
+    const formatted = formatEvent(eventLike as Event);
+    return { valid: true, event: { ...formatted, email } };
   } catch (error) {
     return {
       valid: false,
       error: error instanceof Error ? error.message : "Invalid event data.",
-    }
+    };
   }
 }
 
-const openai = new OpenAI({ apiKey: env.openAiApiKey })
-const SUMMARIZATION_MODEL = MODELS.GPT_4_1_NANO
+const openai = new OpenAI({ apiKey: env.openAiApiKey });
+const SUMMARIZATION_MODEL = MODELS.GPT_4_1_NANO;
 
 export async function summarizeEvents(
-  events: calendar_v3.Schema$Event[],
+  events: calendar_v3.Schema$Event[]
 ): Promise<string> {
   if (!events || events.length === 0) {
-    return "I couldn't find any events matching that. Would you like me to search differently?"
+    return "I couldn't find any events matching that. Would you like me to search differently?";
   }
 
   try {
-    const eventsJson = JSON.stringify(events, null, 2)
+    const eventsJson = JSON.stringify(events, null, 2);
 
     const response = await openai.chat.completions.create({
       model: SUMMARIZATION_MODEL,
@@ -167,37 +179,42 @@ Rules:
         },
       ],
       temperature: 0.3,
-    })
+    });
 
-    const summary = response.choices[0]?.message?.content?.trim()
+    const summary = response.choices[0]?.message?.content?.trim();
 
     if (!summary) {
-      throw new Error("No summary generated")
+      throw new Error("No summary generated");
     }
 
-    return summary
+    return summary;
   } catch (error) {
-    console.error("Error summarizing events:", error)
-    return createFallbackEventSummary(events)
+    console.error("Error summarizing events:", error);
+    return createFallbackEventSummary(events);
   }
 }
 
-function createFallbackEventSummary(events: calendar_v3.Schema$Event[]): string {
+function createFallbackEventSummary(
+  events: calendar_v3.Schema$Event[]
+): string {
   if (events.length === 1) {
-    const event = events[0]
-    const title = event.summary || "Untitled Event"
-    const start = event.start?.dateTime || event.start?.date || "Unknown time"
-    const location = event.location ? ` at ${event.location}` : ""
-    return `I found "${title}" scheduled for ${start}${location}.`
+    const event = events[0];
+    const title = event.summary || "Untitled Event";
+    const start = event.start?.dateTime || event.start?.date || "Unknown time";
+    const location = event.location ? ` at ${event.location}` : "";
+    return `I found "${title}" scheduled for ${start}${location}.`;
   }
 
   return `I found ${events.length} events for you. Here's what I found:\n\n${events
     .slice(0, 10)
     .map((event, idx) => {
-      const title = event.summary || "Untitled Event"
-      const start = event.start?.dateTime || event.start?.date || "Unknown time"
-      const location = event.location ? ` - ${event.location}` : ""
-      return `${idx + 1}. "${title}" - ${start}${location}`
+      const title = event.summary || "Untitled Event";
+      const start =
+        event.start?.dateTime || event.start?.date || "Unknown time";
+      const location = event.location ? ` - ${event.location}` : "";
+      return `${idx + 1}. "${title}" - ${start}${location}`;
     })
-    .join("\n")}${events.length > 10 ? `\n\n...and ${events.length - 10} more events.` : ""}`
+    .join(
+      "\n"
+    )}${events.length > 10 ? `\n\n...and ${events.length - 10} more events.` : ""}`;
 }

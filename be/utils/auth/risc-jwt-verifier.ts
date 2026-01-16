@@ -5,11 +5,11 @@
  * @see https://developers.google.com/identity/protocols/risc
  */
 
-import * as crypto from "crypto";
+import * as crypto from "node:crypto";
 import { logger } from "@/utils/logger";
 import type {
-  GoogleJwks,
   GoogleJwk,
+  GoogleJwks,
   JwtHeader,
   RiscSecurityEventToken,
 } from "./risc-types";
@@ -115,8 +115,8 @@ function jwkToPem(jwk: GoogleJwk): string {
   const e = base64UrlDecodeToBuffer(jwk.e);
 
   // Build the RSA public key in DER format
-  const nLen = n.length;
-  const eLen = e.length;
+  const _nLen = n.length;
+  const _eLen = e.length;
 
   // ASN.1 INTEGER encoding helper
   const encodeInteger = (buf: Buffer): Buffer => {
@@ -279,7 +279,8 @@ export async function verifyRiscToken(
       }
     }
 
-    const matchingKey = key || findKeyById(await fetchGooglePublicKeys(), header.kid)!;
+    const matchingKey =
+      key || findKeyById(await fetchGooglePublicKeys(), header.kid)!;
 
     // 5. Convert JWK to PEM and verify signature
     const pem = jwkToPem(matchingKey);
@@ -333,7 +334,10 @@ export function extractGoogleSubjectId(
   const events = payload.events;
 
   for (const eventData of Object.values(events)) {
-    if (eventData.subject?.subject_type === "iss-sub" && eventData.subject.sub) {
+    if (
+      eventData.subject?.subject_type === "iss-sub" &&
+      eventData.subject.sub
+    ) {
       return eventData.subject.sub;
     }
   }
