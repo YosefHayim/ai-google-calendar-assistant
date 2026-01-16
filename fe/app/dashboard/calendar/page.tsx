@@ -8,7 +8,7 @@ import { LoadingSection } from '@/components/ui/loading-spinner'
 import { ErrorState } from '@/components/ui/error-state'
 import { Button } from '@/components/ui/button'
 import { CalendarFilterSelect } from '@/components/dashboard/analytics/CalendarFilterSelect'
-import { useCalendars } from '@/hooks/queries/calendars/useCalendars'
+import { calendarsService } from '@/services/calendars.service'
 import { useCreateEvent } from '@/hooks/queries/events/useCreateEvent'
 import { useUpdateEvent } from '@/hooks/queries/events/useUpdateEvent'
 import { useDeleteEvent } from '@/hooks/queries/events/useDeleteEvent'
@@ -18,7 +18,7 @@ import { ENDPOINTS } from '@/lib/api/endpoints'
 import { toast } from 'sonner'
 import { CalendarDays, Link2, RefreshCw, Loader2 } from 'lucide-react'
 import { QuickEventDialog } from '@/components/dialogs/QuickEventDialog'
-import type { CalendarEvent, CreateEventRequest, UpdateEventRequest, CustomCalendar, CalendarListEntry } from '@/types/api'
+import type { CalendarEvent, CreateEventRequest, UpdateEventRequest, CalendarListEntry } from '@/types/api'
 
 interface CalendarEventsGroup {
   calendarId: string
@@ -39,25 +39,11 @@ const GOOGLE_COLOR_TO_APP_COLOR: Record<string, string> = {
   '11': 'red',
 }
 
-function convertToCalendarListEntry(calendars: CustomCalendar[] | null | undefined): CalendarListEntry[] {
-  if (!calendars) return []
-  return calendars.map((cal) => ({
-    kind: 'calendar#calendarListEntry' as const,
-    etag: '',
-    id: cal.calendarId,
-    summary: cal.calendarName || cal.calendarId,
-    description: cal.calendarDescription || undefined,
-    timeZone: cal.timeZoneForCalendar || undefined,
-    backgroundColor: cal.calendarColorForEvents || '#6366f1',
-    accessRole: cal.accessRole || undefined,
-  }))
-}
-
-function getCalendarColorMap(calendars: CustomCalendar[] | null | undefined): Map<string, string> {
+function getCalendarColorMap(calendars: CalendarListEntry[] | undefined): Map<string, string> {
   const map = new Map<string, string>()
   if (!calendars) return map
   for (const cal of calendars) {
-    map.set(cal.calendarId, cal.calendarColorForEvents || '#6366f1')
+    map.set(cal.id, cal.backgroundColor || '#6366f1')
   }
   return map
 }
@@ -82,6 +68,7 @@ function transformCalendarEventToEvent(calendarEvent: CalendarEvent, calendarId?
     startTime: startDate,
     endTime: endDate,
     color: calendarEvent.colorId ? GOOGLE_COLOR_TO_APP_COLOR[calendarEvent.colorId] || 'blue' : 'blue',
+    hexColor: calendarColor,
     category: calendarEvent.location ? 'Meeting' : 'Task',
     attendees: calendarEvent.attendees?.map((a) => a.email) || [],
     tags: [],
@@ -128,56 +115,25 @@ function updateEventRequestFromPartialEvent(partialEvent: Partial<Event>): Updat
 
 function flattenAllCalendarEvents(
   allEventsGroups: CalendarEventsGroup[] | null | undefined,
-  selectedCalendarId: string,
+  selectedCalendarIds: string[],
+  calendarColorMap: Map<string, string>,
 ): Event[] {
   if (!allEventsGroups) return []
 
   const events: Event[] = []
+  const isAllSelected = selectedCalendarIds.length === 0
 
   for (const group of allEventsGroups) {
-    if (selectedCalendarId !== ALL_CALENDARS_VALUE && group.calendarId !== selectedCalendarId) {
+    if (!isAllSelected && !selectedCalendarIds.includes(group.calendarId)) {
       continue
     }
+    const calendarColor = calendarColorMap.get(group.calendarId)
     for (const event of group.events) {
-      events.push(transformCalendarEventToEvent(event, group.calendarId))
+      events.push(transformCalendarEventToEvent(event, group.calendarId, calendarColor))
     }
   }
 
   return events
-}
-
-function getCalendarNameById(calendars: CustomCalendar[] | null | undefined, calendarId: string): string {
-  if (!calendars) return calendarId
-  const calendar = calendars.find((c) => c.calendarId === calendarId)
-  return calendar?.calendarName || calendarId
-}
-
-interface CalendarFilterProps {
-  calendars: CustomCalendar[] | null | undefined
-  selectedCalendarId: string
-  onCalendarChange: (calendarId: string) => void
-  isLoading?: boolean
-}
-
-function CalendarFilter({ calendars, selectedCalendarId, onCalendarChange, isLoading }: CalendarFilterProps) {
-  return (
-    <div className="flex items-center gap-2">
-      <Filter className="h-4 w-4 text-muted-foreground hidden sm:block" />
-      <Select value={selectedCalendarId} onValueChange={onCalendarChange} disabled={isLoading}>
-        <SelectTrigger className="w-full sm:w-[200px] h-9 text-sm">
-          <SelectValue placeholder="Select calendar" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value={ALL_CALENDARS_VALUE}>All Calendars</SelectItem>
-          {calendars?.map((calendar) => (
-            <SelectItem key={calendar.calendarId} value={calendar.calendarId}>
-              {calendar.calendarName || calendar.calendarId}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </div>
-  )
 }
 
 function GoogleCalendarNotConnected({ authUrl }: { authUrl?: string }) {
@@ -206,16 +162,31 @@ function GoogleCalendarNotConnected({ authUrl }: { authUrl?: string }) {
 
 function CalendarContent() {
   const [isAllySidebarOpen, setIsAllySidebarOpen] = useState(false)
-  const [selectedCalendarId, setSelectedCalendarId] = useState<string>(ALL_CALENDARS_VALUE)
+  const [selectedCalendarIds, setSelectedCalendarIds] = useState<string[]>([])
   const [isQuickEventDialogOpen, setIsQuickEventDialogOpen] = useState(false)
 
   const { data: googleCalendarStatus, isLoading: isStatusLoading, error: statusError } = useGoogleCalendarStatus()
 
   const isGoogleCalendarConnected = googleCalendarStatus?.isActive && !googleCalendarStatus?.isExpired
 
-  const { data: calendars, isLoading: calendarsLoading } = useCalendars({
+  const { data: calendarsData, isLoading: calendarsLoading } = useQuery({
+    queryKey: ['calendars-list'],
+    queryFn: async () => {
+      const response = await calendarsService.getCalendarList({
+        minAccessRole: 'owner',
+        showDeleted: false,
+        showHidden: false,
+      })
+      if (response.status === 'error' || !response.data) {
+        throw new Error(response.message || 'Failed to fetch calendars')
+      }
+      return response.data.items || []
+    },
     enabled: isGoogleCalendarConnected,
+    retry: false,
   })
+
+  const calendars = calendarsData || []
 
   const dateRange = useMemo(() => {
     const now = new Date()
@@ -279,12 +250,14 @@ function CalendarContent() {
     },
   })
 
+  const calendarColorMap = useMemo(() => getCalendarColorMap(calendars), [calendars])
+
   const events = useMemo<Event[]>(() => {
-    return flattenAllCalendarEvents(allEventsData, selectedCalendarId)
-  }, [allEventsData, selectedCalendarId])
+    return flattenAllCalendarEvents(allEventsData, selectedCalendarIds, calendarColorMap)
+  }, [allEventsData, selectedCalendarIds, calendarColorMap])
 
   const handleEventCreate = (event: Omit<Event, 'id'>) => {
-    const targetCalendarId = selectedCalendarId !== ALL_CALENDARS_VALUE ? selectedCalendarId : undefined
+    const targetCalendarId = selectedCalendarIds.length === 1 ? selectedCalendarIds[0] : undefined
     const request = createEventRequestFromEvent(event, targetCalendarId)
     createEvent(request)
   }
@@ -380,10 +353,10 @@ function CalendarContent() {
               )}
               {eventsFetching ? 'Syncing...' : 'Sync'}
             </Button>
-            <CalendarFilter
-              calendars={calendars}
-              selectedCalendarId={selectedCalendarId}
-              onCalendarChange={setSelectedCalendarId}
+            <CalendarFilterSelect
+              calendars={calendarListEntries}
+              selectedCalendarIds={selectedCalendarIds}
+              onSelectionChange={setSelectedCalendarIds}
               isLoading={calendarsLoading}
             />
           </div>

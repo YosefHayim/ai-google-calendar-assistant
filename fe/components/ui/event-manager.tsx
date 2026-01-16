@@ -54,6 +54,7 @@ export interface Event {
   startTime: Date
   endTime: Date
   color: string
+  hexColor?: string
   category?: string
   attendees?: string[]
   tags?: string[]
@@ -1235,6 +1236,8 @@ function EventCard({
 }) {
   const [isHovered, setIsHovered] = useState(false)
   const colorClasses = getColorClasses(event.color)
+  const useHexColor = !!event.hexColor
+  const bgStyle = useHexColor ? { backgroundColor: event.hexColor } : undefined
 
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString('en-US', {
@@ -1267,10 +1270,11 @@ function EventCard({
         <div
           className={cn(
             'rounded px-1.5 py-0.5 text-xs font-medium transition-all duration-300',
-            colorClasses.bg,
+            !useHexColor && colorClasses.bg,
             'text-white truncate animate-in fade-in slide-in-from-top-1',
             isHovered && 'scale-105 shadow-lg z-10',
           )}
+          style={bgStyle}
         >
           {event.title}
         </div>
@@ -1280,7 +1284,7 @@ function EventCard({
               <div className="space-y-2">
                 <div className="flex items-start justify-between gap-2">
                   <h4 className="font-semibold text-sm leading-tight">{event.title}</h4>
-                  <div className={cn('h-3 w-3 rounded-full flex-shrink-0', colorClasses.bg)} />
+                  <div className={cn('h-3 w-3 rounded-full flex-shrink-0', !useHexColor && colorClasses.bg)} style={bgStyle} />
                 </div>
                 {event.description && <p className="text-xs text-muted-foreground line-clamp-2">{event.description}</p>}
                 <div className="flex items-center gap-1 text-xs text-muted-foreground">
@@ -1321,10 +1325,11 @@ function EventCard({
         onMouseLeave={() => setIsHovered(false)}
         className={cn(
           'cursor-pointer rounded-lg p-3 transition-all duration-300',
-          colorClasses.bg,
+          !useHexColor && colorClasses.bg,
           'text-white animate-in fade-in slide-in-from-left-2',
           isHovered && 'scale-[1.03] shadow-2xl ring-2 ring-white/50',
         )}
+        style={bgStyle}
       >
         <div className="font-semibold">{event.title}</div>
         {event.description && <div className="mt-1 text-sm opacity-90 line-clamp-2">{event.description}</div>}
@@ -1363,10 +1368,11 @@ function EventCard({
       <div
         className={cn(
           'cursor-pointer rounded px-2 py-1 text-xs font-medium transition-all duration-300',
-          colorClasses.bg,
+          !useHexColor && colorClasses.bg,
           'text-white animate-in fade-in slide-in-from-left-1',
           isHovered && 'scale-105 shadow-lg z-10',
         )}
+        style={bgStyle}
       >
         <div className="truncate">{event.title}</div>
       </div>
@@ -1376,7 +1382,7 @@ function EventCard({
             <div className="space-y-3">
               <div className="flex items-start justify-between gap-2">
                 <h4 className="font-semibold leading-tight">{event.title}</h4>
-                <div className={cn('h-4 w-4 rounded-full flex-shrink-0', colorClasses.bg)} />
+                <div className={cn('h-4 w-4 rounded-full flex-shrink-0', !useHexColor && colorClasses.bg)} style={bgStyle} />
               </div>
               {event.description && <p className="text-sm text-muted-foreground">{event.description}</p>}
               <div className="space-y-1.5">
@@ -1714,6 +1720,8 @@ function ListView({
             <div className="space-y-2">
               {dateEvents.map((event) => {
                 const colorClasses = getColorClasses(event.color)
+                const useHexColor = !!event.hexColor
+                const bgStyle = useHexColor ? { backgroundColor: event.hexColor } : undefined
                 return (
                   <div
                     key={event.id}
@@ -1721,7 +1729,7 @@ function ListView({
                     className="group cursor-pointer rounded-lg border bg-card p-3 transition-all hover:shadow-md hover:scale-[1.01] animate-in fade-in slide-in-from-bottom-2 duration-300 sm:p-4"
                   >
                     <div className="flex items-start gap-2 sm:gap-3">
-                      <div className={cn('mt-1 h-2.5 w-2.5 rounded-full sm:h-3 sm:w-3', colorClasses.bg)} />
+                      <div className={cn('mt-1 h-2.5 w-2.5 rounded-full sm:h-3 sm:w-3', !useHexColor && colorClasses.bg)} style={bgStyle} />
                       <div className="flex-1 min-w-0">
                         <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                           <div className="min-w-0">
