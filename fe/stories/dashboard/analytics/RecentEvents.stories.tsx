@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import RecentEvents from '@/components/dashboard/analytics/RecentEvents'
 import type { ProcessedActivity } from '@/types/analytics'
-import { action } from '@storybook/addon-actions'
+import { fn } from 'storybook/test'
 import { Calendar, Users, Video, Coffee, Briefcase, Phone, Dumbbell, Book } from 'lucide-react'
 
 const meta: Meta<typeof RecentEvents> = {

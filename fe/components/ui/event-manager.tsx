@@ -21,6 +21,7 @@ import {
   ChevronRight,
   Plus,
   Calendar,
+  CalendarRange,
   Clock,
   Grid3x3,
   List,
@@ -61,6 +62,8 @@ export interface Event {
   calendarId?: string
 }
 
+export type ViewType = 'month' | 'week' | 'day' | 'list' | 'year'
+
 export interface EventManagerProps {
   events?: Event[]
   onEventCreate?: (event: Omit<Event, 'id'>) => void
@@ -69,7 +72,7 @@ export interface EventManagerProps {
   onNewEventClick?: () => void
   categories?: string[]
   colors?: { name: string; value: string; bg: string; text: string }[]
-  defaultView?: 'month' | 'week' | 'day' | 'list'
+  defaultView?: ViewType
   className?: string
   availableTags?: string[]
 }
@@ -84,20 +87,19 @@ const defaultColors = [
 ]
 
 export function EventManager({
-  events: initialEvents = [],
+  events: propEvents = [],
   onEventCreate,
   onEventUpdate,
   onEventDelete,
   onNewEventClick,
-  categories = ['Meeting', 'Task', 'Reminder', 'Personal'],
+  categories: defaultCategories = ['Meeting', 'Task', 'Reminder', 'Personal'],
   colors = defaultColors,
   defaultView = 'month',
   className,
-  availableTags = ['Important', 'Urgent', 'Work', 'Personal', 'Team', 'Client'],
+  availableTags: defaultTags = ['Important', 'Urgent', 'Work', 'Personal', 'Team', 'Client'],
 }: EventManagerProps) {
-  const [events, setEvents] = useState<Event[]>(initialEvents)
   const [currentDate, setCurrentDate] = useState(new Date())
-  const [view, setView] = useState<'month' | 'week' | 'day' | 'list'>(defaultView)
+  const [view, setView] = useState<ViewType>(defaultView)
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [isCreating, setIsCreating] = useState(false)
@@ -144,8 +146,42 @@ export function EventManager({
     setActionResult(null)
   }, [])
 
+  const availableFilters = useMemo(() => {
+    const colorsSet = new Set<string>()
+    const hexColorsMap = new Map<string, string>()
+    const tagsSet = new Set<string>()
+    const categoriesSet = new Set<string>()
+
+    propEvents.forEach((event) => {
+      if (event.hexColor) {
+        hexColorsMap.set(event.hexColor, event.hexColor)
+      } else if (event.color) {
+        colorsSet.add(event.color)
+      }
+      event.tags?.forEach((tag) => tagsSet.add(tag))
+      if (event.category) categoriesSet.add(event.category)
+    })
+
+    const eventColors: { name: string; value: string; bg: string; text: string; hex?: string }[] = []
+    
+    hexColorsMap.forEach((hex) => {
+      eventColors.push({ name: hex, value: hex, bg: '', text: '', hex })
+    })
+
+    colorsSet.forEach((colorValue) => {
+      const colorDef = colors.find((c) => c.value === colorValue)
+      if (colorDef) eventColors.push(colorDef)
+    })
+
+    return {
+      colors: eventColors,
+      tags: Array.from(tagsSet),
+      categories: Array.from(categoriesSet),
+    }
+  }, [propEvents, colors])
+
   const filteredEvents = useMemo(() => {
-    return events.filter((event) => {
+    return propEvents.filter((event) => {
       // Search filter
       if (searchQuery) {
         const query = searchQuery.toLowerCase()
@@ -158,9 +194,12 @@ export function EventManager({
         if (!matchesSearch) return false
       }
 
-      // Color filter
-      if (selectedColors.length > 0 && !selectedColors.includes(event.color)) {
-        return false
+      // Color filter - check both hexColor and color
+      if (selectedColors.length > 0) {
+        const eventColorValue = event.hexColor || event.color
+        if (!selectedColors.includes(eventColorValue)) {
+          return false
+        }
       }
 
       // Tag filter
@@ -176,7 +215,7 @@ export function EventManager({
 
       return true
     })
-  }, [events, searchQuery, selectedColors, selectedTags, selectedCategories])
+  }, [propEvents, searchQuery, selectedColors, selectedTags, selectedCategories])
 
   const hasActiveFilters = selectedColors.length > 0 || selectedTags.length > 0 || selectedCategories.length > 0
 

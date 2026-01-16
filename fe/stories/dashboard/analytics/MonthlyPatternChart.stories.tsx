@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import MonthlyPatternChart from '@/components/dashboard/analytics/MonthlyPatternChart'
 import MonthlyPatternDashboard from '@/components/dashboard/analytics/MonthlyPatternDashboard'
 import type { MonthlyPatternDataPoint } from '@/types/analytics'
-import { action } from '@storybook/addon-actions'
+import { fn } from 'storybook/test'
 
 const meta: Meta<typeof MonthlyPatternChart> = {
   title: 'Dashboard/Analytics/MonthlyPatternChart',

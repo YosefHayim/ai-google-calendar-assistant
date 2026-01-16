@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import TimeAllocationChart from '@/components/dashboard/analytics/TimeAllocationChart'
 import TimeAllocationDashboard from '@/components/dashboard/analytics/TimeAllocationDashboard'
 import type { CalendarBreakdownItem } from '@/types/analytics'
-import { action } from '@storybook/addon-actions'
+import { fn } from 'storybook/test'
 
 const meta: Meta<typeof TimeAllocationChart> = {
   title: 'Dashboard/Analytics/TimeAllocationChart',

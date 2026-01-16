@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import WeeklyPatternDashboard from '@/components/dashboard/analytics/WeeklyPatternDashboard'
 import type { WeeklyPatternDataPoint } from '@/types/analytics'
-import { action } from '@storybook/addon-actions'
+import { fn } from 'storybook/test'
 
 const meta: Meta<typeof WeeklyPatternDashboard> = {
   title: 'Dashboard/Analytics/WeeklyPatternDashboard',

@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import ManageCalendars from '@/components/dashboard/analytics/ManageCalendars'
 import type { CalendarListEntry } from '@/types/api'
-import { action } from '@storybook/addon-actions'
+import { fn } from 'storybook/test'
 
 const meta: Meta<typeof ManageCalendars> = {
   title: 'Dashboard/Analytics/ManageCalendars',

@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import UpcomingWeekPreview from '@/components/dashboard/analytics/UpcomingWeekPreview'
 import type { UpcomingWeekData, UpcomingDayData } from '@/hooks/queries/analytics/useUpcomingWeekData'
-import { action } from '@storybook/addon-actions'
+import { fn } from 'storybook/test'
 
 const meta: Meta<typeof UpcomingWeekPreview> = {
   title: 'Dashboard/Analytics/UpcomingWeekPreview',

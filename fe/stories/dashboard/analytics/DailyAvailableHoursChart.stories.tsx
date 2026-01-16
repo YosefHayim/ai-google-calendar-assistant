@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import DailyAvailableHoursChart from '@/components/dashboard/analytics/DailyAvailableHoursChart'
 import DailyAvailableHoursDashboard from '@/components/dashboard/analytics/DailyAvailableHoursDashboard'
 import type { DailyAvailableHoursDataPoint } from '@/types/analytics'
-import { action } from '@storybook/addon-actions'
+import { fn } from 'storybook/test'
 
 const meta: Meta<typeof DailyAvailableHoursChart> = {
   title: 'Dashboard/Analytics/DailyAvailableHoursChart',

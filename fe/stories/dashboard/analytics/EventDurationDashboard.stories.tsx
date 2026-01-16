@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import EventDurationDashboard from '@/components/dashboard/analytics/EventDurationDashboard'
 import type { EventDurationCategory } from '@/types/analytics'
-import { action } from '@storybook/addon-actions'
+import { fn } from 'storybook/test'
 
 const meta: Meta<typeof EventDurationDashboard> = {
   title: 'Dashboard/Analytics/EventDurationDashboard',
