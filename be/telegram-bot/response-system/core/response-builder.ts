@@ -178,10 +178,12 @@ export class ResponseBuilder {
    */
   separator(): this {
     if (this._body.length > 0) {
-      const last = this._body.at(-1);
-      last.separator = true;
+      const last = this._body.at(-1)
+      if (last) {
+        last.separator = true
+      }
     }
-    return this;
+    return this
   }
 
   /**

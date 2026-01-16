@@ -150,7 +150,7 @@ export function projectEventFull(
     })),
     reminders: event.reminders
       ? {
-          useDefault: event.reminders.useDefault,
+          useDefault: event.reminders.useDefault ?? true,
           overrides: event.reminders.overrides?.map((o) => ({
             method: o.method || "popup",
             minutes: o.minutes || 10,

@@ -47,8 +47,8 @@ export function projectCalendarVoiceLite(
 ): CalendarProjectionVoiceLite {
   return {
     name: calendar.summary || "Unnamed Calendar",
-    primary: calendar.primary,
-  };
+    primary: calendar.primary ?? false,
+  }
 }
 
 export function projectCalendarChatStandard(
@@ -57,10 +57,10 @@ export function projectCalendarChatStandard(
   return {
     id: calendar.id || "",
     name: calendar.summary || "Unnamed Calendar",
-    primary: calendar.primary,
+    primary: calendar.primary ?? false,
     backgroundColor: calendar.backgroundColor || undefined,
     foregroundColor: calendar.foregroundColor || undefined,
-  };
+  }
 }
 
 export function projectCalendarFull(
@@ -71,14 +71,14 @@ export function projectCalendarFull(
     name: calendar.summary || "Unnamed Calendar",
     summary: calendar.summary || undefined,
     description: calendar.description || undefined,
-    primary: calendar.primary,
+    primary: calendar.primary ?? false,
     backgroundColor: calendar.backgroundColor || undefined,
     foregroundColor: calendar.foregroundColor || undefined,
     accessRole: calendar.accessRole || undefined,
     timeZone: calendar.timeZone || undefined,
     selected: calendar.selected ?? undefined,
     hidden: calendar.hidden ?? undefined,
-  };
+  }
 }
 
 export function projectCalendar(
