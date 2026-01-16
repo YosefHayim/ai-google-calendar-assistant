@@ -1,11 +1,12 @@
 'use client'
 
 import { AnimatePresence, motion } from 'framer-motion'
-import { Check, MessageSquare, X } from 'lucide-react'
+import { Check, MessageCircle, MessageSquare, X } from 'lucide-react'
 import React, { useEffect, useRef, useState } from 'react'
 
 import { AssistantAvatar } from './AssistantAvatar'
 import { Button } from '@/components/ui/button'
+import { EmptyState } from '@/components/ui/empty-state'
 import { Message } from '@/types'
 import { MessageActions } from './MessageActions'
 
@@ -33,6 +34,7 @@ export const AvatarView: React.FC<AvatarViewProps> = ({
   avatarScrollRef,
 }) => {
   const hasConversation = messages.length > 1
+  const isEmpty = messages.length === 0
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null)
   const [editText, setEditText] = useState('')
   const editInputRef = useRef<HTMLTextAreaElement>(null)
@@ -85,6 +87,21 @@ export const AvatarView: React.FC<AvatarViewProps> = ({
       </div>
 
       <AnimatePresence>
+        {isEmpty && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="hidden md:flex flex-col w-1/2 h-[70%] items-center justify-center"
+          >
+            <EmptyState
+              icon={<MessageCircle />}
+              title="Start a conversation"
+              description="Speak or type to interact with Ally and manage your calendar."
+              size="lg"
+            />
+          </motion.div>
+        )}
         {hasConversation && (
           <motion.div
             initial={{ opacity: 0, x: 20 }}

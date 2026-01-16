@@ -1,10 +1,11 @@
 'use client'
 
 import * as React from 'react'
-import { BarChart3, PieChart, CircleDot, Radar, BarChartHorizontal, Info } from 'lucide-react'
+import { BarChart3, PieChart, CircleDot, Clock, Radar, BarChartHorizontal, Info } from 'lucide-react'
 import { AnimatePresence, motion } from 'framer-motion'
 
 import { Button } from '@/components/ui/button'
+import { EmptyState } from '@/components/ui/empty-state'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
@@ -92,8 +93,13 @@ export const TimeAllocationDashboard: React.FC<TimeAllocationDashboardProps> = (
 
   if (totalHours === 0) {
     return (
-      <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-6 flex items-center justify-center h-full">
-        <p className="text-zinc-500">No time allocation data available.</p>
+      <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-6 flex items-center justify-center min-h-[200px]">
+        <EmptyState
+          icon={<Clock />}
+          title="No time data"
+          description="No calendar time allocation data available for this period."
+          size="md"
+        />
       </div>
     )
   }
