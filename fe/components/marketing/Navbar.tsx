@@ -2,7 +2,7 @@
 
 import { AllyLogo, BetaBadge } from '@/components/shared/logo'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Mail } from 'lucide-react'
+import { ArrowRight, Mail } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import { TelegramIcon, WhatsAppIcon } from '@/components/shared/Icons'
 import { usePathname, useRouter } from 'next/navigation'
@@ -14,6 +14,9 @@ import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button
 import { LanguageDropdown } from '@/components/shared/LanguageDropdown'
 import Link from 'next/link'
 import { ThemeToggle } from '../ui/theme-toggle'
+import { useAuthContext } from '@/contexts/AuthContext'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import type { CustomUser, User } from '@/types/api'
 
 // Custom Discord Icon consistent with Footer
 const DiscordIcon = ({ className }: { className?: string }) => (
@@ -22,12 +25,39 @@ const DiscordIcon = ({ className }: { className?: string }) => (
   </svg>
 )
 
+function getUserInfo(user: User | CustomUser | null) {
+  if (!user) return { name: '', initials: '', avatarUrl: '' }
+
+  let firstName: string | null | undefined
+  let lastName: string | null | undefined
+  let userAvatarUrl: string | null | undefined
+
+  if ('user_metadata' in user) {
+    firstName = user.user_metadata?.first_name
+    lastName = user.user_metadata?.last_name
+    userAvatarUrl = user.user_metadata?.avatar_url
+  } else {
+    firstName = user.first_name
+    lastName = user.last_name
+    userAvatarUrl = user.avatar_url
+  }
+
+  const name = [firstName, lastName].filter(Boolean).join(' ') || user.email?.split('@')[0] || ''
+  const initials = firstName && lastName
+    ? `${firstName[0]}${lastName[0]}`.toUpperCase()
+    : name.slice(0, 2).toUpperCase()
+
+  return { name, initials, avatarUrl: userAvatarUrl || '' }
+}
+
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
   const { t } = useTranslation()
+  const { isAuthenticated, user, isLoading } = useAuthContext()
+  const { name, initials, avatarUrl } = getUserInfo(user)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -91,21 +121,51 @@ const Navbar = () => {
         <div className="hidden md:flex items-center gap-3">
           <LanguageDropdown />
           <ThemeToggle className="scale-90" />
-          <Link
-            href="/login"
-            className="text-sm font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
-          >
-            {t('navbar.login')}
-          </Link>
-          <InteractiveHoverButton
-            text={t('navbar.getStarted')}
-            className="w-40 h-10 text-sm"
-            onClick={() => router.push('/register')}
-          />
+          {isAuthenticated && !isLoading ? (
+            <>
+              <div className="flex items-center gap-2 px-2">
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src={avatarUrl} alt={name} />
+                  <AvatarFallback className="bg-primary/10 text-primary text-xs font-medium">
+                    {initials}
+                  </AvatarFallback>
+                </Avatar>
+                <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300 max-w-[120px] truncate">
+                  {name}
+                </span>
+              </div>
+              <Button onClick={() => router.push('/dashboard')} className="gap-2">
+                {t('navbar.dashboard', 'Dashboard')}
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                className="text-sm font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+              >
+                {t('navbar.login')}
+              </Link>
+              <InteractiveHoverButton
+                text={t('navbar.getStarted')}
+                className="w-40 h-10 text-sm"
+                onClick={() => router.push('/register')}
+              />
+            </>
+          )}
         </div>
 
         {/* Mobile Toggle Section */}
         <div className="flex items-center gap-2 md:hidden">
+          {isAuthenticated && !isLoading && (
+            <Avatar className="h-7 w-7">
+              <AvatarImage src={avatarUrl} alt={name} />
+              <AvatarFallback className="bg-primary/10 text-primary text-[10px] font-medium">
+                {initials}
+              </AvatarFallback>
+            </Avatar>
+          )}
           <LanguageDropdown compact />
           <ThemeToggle className="scale-75" />
         </div>
@@ -202,24 +262,53 @@ const Navbar = () => {
               </div>
 
               <div className="flex flex-col gap-4 pt-8 border-t border-zinc-100 dark:border-zinc-800">
-                <InteractiveHoverButton
-                  text={t('navbar.login')}
-                  className="w-full h-14 text-lg bg-primary text-black border-primary border-2"
-                  dotClassName="bg-black group-hover:bg-black"
-                  hoverContentClassName="text-primary"
-                  onClick={() => {
-                    setIsMobileMenuOpen(false)
-                    router.push('/login')
-                  }}
-                />
-                <InteractiveHoverButton
-                  text={t('navbar.getStarted')}
-                  className="w-full h-14 text-lg"
-                  onClick={() => {
-                    setIsMobileMenuOpen(false)
-                    router.push('/register')
-                  }}
-                />
+                {isAuthenticated && !isLoading ? (
+                  <>
+                    <div className="flex items-center gap-3 mb-2">
+                      <Avatar className="h-10 w-10">
+                        <AvatarImage src={avatarUrl} alt={name} />
+                        <AvatarFallback className="bg-primary/10 text-primary text-sm font-medium">
+                          {initials}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">{name}</p>
+                        <p className="text-xs text-zinc-500 dark:text-zinc-400 truncate">{user?.email}</p>
+                      </div>
+                    </div>
+                    <Button
+                      onClick={() => {
+                        setIsMobileMenuOpen(false)
+                        router.push('/dashboard')
+                      }}
+                      className="w-full h-14 text-lg gap-2"
+                    >
+                      {t('navbar.dashboard', 'Dashboard')}
+                      <ArrowRight className="h-5 w-5" />
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <InteractiveHoverButton
+                      text={t('navbar.login')}
+                      className="w-full h-14 text-lg bg-primary text-black border-primary border-2"
+                      dotClassName="bg-black group-hover:bg-black"
+                      hoverContentClassName="text-primary"
+                      onClick={() => {
+                        setIsMobileMenuOpen(false)
+                        router.push('/login')
+                      }}
+                    />
+                    <InteractiveHoverButton
+                      text={t('navbar.getStarted')}
+                      className="w-full h-14 text-lg"
+                      onClick={() => {
+                        setIsMobileMenuOpen(false)
+                        router.push('/register')
+                      }}
+                    />
+                  </>
+                )}
               </div>
             </motion.div>
           </>

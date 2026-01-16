@@ -2,6 +2,7 @@
 
 import { AllyLogo, BetaBadge } from '@/components/shared/logo'
 import { TelegramIcon, WhatsAppIcon } from '@/components/shared/Icons'
+import { SystemStatus } from './SystemStatus'
 
 import Link from 'next/link'
 import { Mail } from 'lucide-react'
@@ -106,10 +107,7 @@ const Footer = () => {
         <div className="pt-10 border-t border-zinc-100 dark:border-zinc-800 flex flex-col md:flex-row items-center justify-between gap-6">
           <p className="text-xs text-zinc-400">© {currentYear} Ally Technologies Inc. All rights reserved.</p>
           <div className="flex items-center gap-6">
-            <span className="flex items-center gap-2 text-xs font-medium text-emerald-500 uppercase tracking-tight">
-              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              {t('footer.systemStatus')}
-            </span>
+            <SystemStatus />
           </div>
         </div>
       </div>

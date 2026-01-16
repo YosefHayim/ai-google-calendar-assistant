@@ -1,0 +1,36 @@
+'use client'
+
+import React from 'react'
+import { Mail } from 'lucide-react'
+import { InfoSection } from './InfoSection'
+
+interface Notification {
+  type: string
+  method: string
+}
+
+interface NotificationsSectionProps {
+  notifications: Notification[]
+}
+
+export function NotificationsSection({ notifications }: NotificationsSectionProps) {
+  if (!notifications || notifications.length === 0) return null
+
+  return (
+    <InfoSection
+      title="Notification Settings"
+      tooltipTitle="Notification Preferences"
+      tooltipDescription="How you receive notifications for events in this calendar (email, popup, etc.)."
+      icon={<Mail className="w-4 h-4 text-zinc-500" />}
+    >
+      <div className="space-y-1">
+        {notifications.map((notification, index) => (
+          <div key={index} className="text-sm text-zinc-600 dark:text-zinc-400">
+            <span className="capitalize">{notification.type.replace(/([A-Z])/g, ' $1').trim()}</span>
+            <span className="text-zinc-500 dark:text-zinc-400"> - {notification.method}</span>
+          </div>
+        ))}
+      </div>
+    </InfoSection>
+  )
+}
