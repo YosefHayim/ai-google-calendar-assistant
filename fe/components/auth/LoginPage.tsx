@@ -40,7 +40,10 @@ const LoginPage: React.FC = () => {
 
   return (
     <TubesBackground className="min-h-screen animate-in fade-in duration-500">
-      <div className="flex flex-col items-center justify-center min-h-screen p-8 lg:p-12 pointer-events-auto">
+      {/* Dark overlay for better contrast */}
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" />
+
+      <div className="relative flex flex-col items-center justify-center min-h-screen p-8 lg:p-12 pointer-events-auto">
         <Link
           href="/"
           className="absolute top-8 left-8 flex items-center gap-2 hover:opacity-80 transition-opacity z-50"
@@ -53,14 +56,14 @@ const LoginPage: React.FC = () => {
           </span>
         </Link>
 
-        <div className="w-full max-w-md bg-white/95 dark:bg-zinc-900/95 backdrop-blur-sm rounded-2xl p-8 shadow-2xl">
-          <h1 className="text-4xl md:text-5xl font-medium tracking-normal mb-4 text-zinc-900 dark:text-zinc-100">
+        <div className="w-full max-w-md bg-white/10 dark:bg-zinc-900/30 backdrop-blur-xl rounded-2xl p-8 shadow-2xl border border-white/20 dark:border-zinc-700/50">
+          <h1 className="text-4xl md:text-5xl font-medium tracking-normal mb-4 text-white">
             {t('login.title')}
           </h1>
-          <p className="text-zinc-500 dark:text-zinc-400 mb-8 text-lg font-medium">{t('login.subtitle')}</p>
+          <p className="text-zinc-200 dark:text-zinc-300 mb-8 text-lg font-medium">{t('login.subtitle')}</p>
           {error && (
-            <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-              <p className="text-red-600 dark:text-red-400 text-sm font-medium">
+            <div className="mb-6 p-4 bg-red-500/20 border border-red-400/30 rounded-lg backdrop-blur-sm">
+              <p className="text-red-200 text-sm font-medium">
                 {error === 'no_token' && t('login.errors.noToken')}
                 {error === 'callback_failed' && t('login.errors.callbackFailed')}
                 {error === 'session_expired' && t('login.errors.sessionExpired', 'Your session has expired. Please sign in again.')}
@@ -76,13 +79,13 @@ const LoginPage: React.FC = () => {
               loadingText={t('login.connecting')}
               isLoading={isLoading}
               Icon={<FcGoogle size={24} />}
-              className="w-full h-14 text-lg shadow-lg border-zinc-200 dark:border-zinc-700"
+              className="w-full h-14 text-lg shadow-lg border-white/20 dark:border-zinc-600/50 bg-white/90 dark:bg-zinc-800/90 hover:bg-white dark:hover:bg-zinc-700"
               onClick={handleGoogleLogin}
             />
           </div>
-          <p className="mt-8 text-center text-zinc-500 dark:text-zinc-400 text-sm">
+          <p className="mt-8 text-center text-zinc-300 dark:text-zinc-400 text-sm">
             {t('login.noAccount')}{' '}
-            <Link href="/register" className="text-primary font-medium hover:underline p-0">
+            <Link href="/register" className="text-white font-medium hover:underline p-0">
               {t('login.signUp')}
             </Link>
           </p>

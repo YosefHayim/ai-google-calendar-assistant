@@ -38,7 +38,10 @@ const RegisterPage: React.FC = () => {
 
   return (
     <TubesBackground className="min-h-screen animate-in fade-in duration-500">
-      <div className="flex flex-col items-center justify-center min-h-screen p-8 lg:p-12 pointer-events-auto">
+      {/* Dark overlay for better contrast */}
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" />
+
+      <div className="relative flex flex-col items-center justify-center min-h-screen p-8 lg:p-12 pointer-events-auto">
         <Link
           href="/"
           className="absolute top-8 left-8 flex items-center gap-2 hover:opacity-80 transition-opacity z-50"
@@ -51,35 +54,35 @@ const RegisterPage: React.FC = () => {
           </span>
         </Link>
 
-        <div className="w-full max-w-md bg-white/95 dark:bg-zinc-900/95 backdrop-blur-sm rounded-2xl p-8 shadow-2xl">
-          <h1 className="text-4xl md:text-5xl font-medium tracking-normal mb-4 text-zinc-900 dark:text-zinc-100">
+        <div className="w-full max-w-md bg-white/10 dark:bg-zinc-900/30 backdrop-blur-xl rounded-2xl p-8 shadow-2xl border border-white/20 dark:border-zinc-700/50">
+          <h1 className="text-4xl md:text-5xl font-medium tracking-normal mb-4 text-white">
             {t('register.title')}
           </h1>
-          <p className="text-zinc-500 dark:text-zinc-400 mb-8 text-lg font-medium">{t('register.subtitle')}</p>
+          <p className="text-zinc-200 dark:text-zinc-300 mb-8 text-lg font-medium">{t('register.subtitle')}</p>
           <div className="space-y-2">
             <InteractiveHoverButton
               text={t('register.signUpWithGoogle')}
               loadingText={t('register.connecting')}
               isLoading={isLoading}
               Icon={<FcGoogle size={24} />}
-              className="w-full h-14 text-lg shadow-lg border-zinc-200 dark:border-zinc-700"
+              className="w-full h-14 text-lg shadow-lg border-white/20 dark:border-zinc-600/50 bg-white/90 dark:bg-zinc-800/90 hover:bg-white dark:hover:bg-zinc-700"
               onClick={handleGoogleSignUp}
             />
           </div>
-          <p className="mt-8 text-center text-zinc-500 dark:text-zinc-400 text-sm">
+          <p className="mt-8 text-center text-zinc-300 dark:text-zinc-400 text-sm">
             {t('register.agreeToTerms')}{' '}
-            <Link href="/terms" className="text-primary hover:underline font-medium">
+            <Link href="/terms" className="text-white hover:underline font-medium">
               {t('register.termsOfService')}
             </Link>{' '}
             {t('register.and')}{' '}
-            <Link href="/privacy" className="text-primary hover:underline font-medium">
+            <Link href="/privacy" className="text-white hover:underline font-medium">
               {t('register.privacyPolicy')}
             </Link>
             .
           </p>
-          <p className="mt-4 text-center text-zinc-500 dark:text-zinc-400 text-sm">
+          <p className="mt-4 text-center text-zinc-300 dark:text-zinc-400 text-sm">
             {t('register.haveAccount')}{' '}
-            <Link href="/login" className="text-primary font-medium hover:underline p-0">
+            <Link href="/login" className="text-white font-medium hover:underline p-0">
               {t('register.login')}
             </Link>
           </p>
