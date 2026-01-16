@@ -30,16 +30,16 @@ function getUserInfo(user: User | CustomUser | null) {
 
   let firstName: string | null | undefined
   let lastName: string | null | undefined
-  let avatarUrl: string | null | undefined
+  let userAvatarUrl: string | null | undefined
 
-  if ('first_name' in user) {
-    firstName = user.first_name
-    lastName = user.last_name
-    avatarUrl = user.avatar_url
-  } else {
+  if ('user_metadata' in user) {
     firstName = user.user_metadata?.first_name
     lastName = user.user_metadata?.last_name
-    avatarUrl = user.user_metadata?.avatar_url
+    userAvatarUrl = user.user_metadata?.avatar_url
+  } else {
+    firstName = user.first_name
+    lastName = user.last_name
+    userAvatarUrl = user.avatar_url
   }
 
   const name = [firstName, lastName].filter(Boolean).join(' ') || user.email?.split('@')[0] || ''
@@ -47,7 +47,7 @@ function getUserInfo(user: User | CustomUser | null) {
     ? `${firstName[0]}${lastName[0]}`.toUpperCase()
     : name.slice(0, 2).toUpperCase()
 
-  return { name, initials, avatarUrl: avatarUrl || '' }
+  return { name, initials, avatarUrl: userAvatarUrl || '' }
 }
 
 const Navbar = () => {

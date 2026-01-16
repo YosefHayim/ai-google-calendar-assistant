@@ -1,0 +1,26 @@
+'use client'
+
+import React from 'react'
+import { InfoSection } from './InfoSection'
+
+interface BooleanStatusProps {
+  title: string
+  tooltipTitle: string
+  tooltipDescription: string
+  value: boolean
+  icon?: React.ReactNode
+}
+
+export function BooleanStatus({ title, tooltipTitle, tooltipDescription, value, icon }: BooleanStatusProps) {
+  return (
+    <InfoSection title={title} tooltipTitle={tooltipTitle} tooltipDescription={tooltipDescription} icon={icon}>
+      <div className="flex items-center gap-2">
+        {value ? (
+          <span className="text-sm text-emerald-600 dark:text-emerald-400 font-medium">Yes</span>
+        ) : (
+          <span className="text-sm text-zinc-500 dark:text-zinc-400">No</span>
+        )}
+      </div>
+    </InfoSection>
+  )
+}
