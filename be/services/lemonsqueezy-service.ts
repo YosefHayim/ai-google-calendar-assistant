@@ -999,7 +999,7 @@ export const getLemonSqueezyProducts = async (): Promise<LemonSqueezyProduct[]> 
 
     return products
   } catch (error) {
-    console.error("Error fetching LemonSqueezy products:", error)
+    logger.error("Error fetching LemonSqueezy products:", { error })
     throw error
   }
 }
@@ -1027,7 +1027,7 @@ export const getLemonSqueezyVariants = async (productId: string): Promise<LemonS
 
     return data.data.map(transformVariant)
   } catch (error) {
-    console.error("Error fetching LemonSqueezy variants:", error)
+    logger.error("Error fetching LemonSqueezy variants:", { error })
     throw error
   }
 }
@@ -1036,8 +1036,8 @@ export const getLemonSqueezyVariants = async (productId: string): Promise<LemonS
  * Fetch all products with their variants from Lemon Squeezy
  */
 export const getLemonSqueezyProductsWithVariants = async (): Promise<ProductWithVariants[]> => {
-  const storeId = env.lemonSqueezy.storeId || "default"
-  const cacheKey = `ls:products-with-variants:${storeId}`
+  const storeId = env.lemonSqueezy.storeId
+  const cacheKey = `ls:products-with-variants:${storeId ?? "unconfigured"}`
 
   if (isRedisConnected()) {
     try {

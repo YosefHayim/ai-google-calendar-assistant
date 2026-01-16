@@ -85,6 +85,13 @@ export const resetRateLimit = async (
   phoneNumber: string,
   type: RateLimitType
 ): Promise<void> => {
+  if (!isRedisConnected()) {
+    logger.warn(
+      `WhatsApp Rate Limiter: Redis unavailable, cannot reset limit for ${phoneNumber}`
+    )
+    return
+  }
+
   const key = `${RATE_LIMITS[type].keyPrefix}${phoneNumber}`
   try {
     await redisClient.del(key)
