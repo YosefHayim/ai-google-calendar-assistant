@@ -13,7 +13,7 @@ import {
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { EmptyState } from '@/components/ui/empty-state'
-import { InlineLoader } from '@/components/ui/inline-loader'
+import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { format } from 'date-fns'
 import { useTranslation } from 'react-i18next'
 import { useDebouncedCallback } from 'use-debounce'
@@ -155,7 +155,7 @@ export function DayEventsDialog({
           </h4>
           {isLoading ? (
             <div className="flex items-center justify-center py-8">
-              <InlineLoader size="md" />
+              <LoadingSpinner size="md" />
             </div>
           ) : events.length === 0 ? (
             <EmptyState

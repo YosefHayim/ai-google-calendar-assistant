@@ -4,7 +4,7 @@ import React, { useState, useMemo } from 'react'
 import { CalendarDays, Search } from 'lucide-react'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { EmptyState } from '@/components/ui/empty-state'
-import { InlineLoader } from '@/components/ui/inline-loader'
+import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import type { CalendarEventsDialogProps } from '@/types/analytics'
 import { useTranslation } from 'react-i18next'
 import { useDebouncedCallback } from 'use-debounce'
@@ -90,7 +90,7 @@ export function CalendarEventsDialog({
         <div className="flex-1 overflow-y-auto p-6 pt-2">
           {isLoading ? (
             <div className="flex items-center justify-center py-8">
-              <InlineLoader size="md" />
+              <LoadingSpinner size="md" />
             </div>
           ) : events.length === 0 ? (
             <EmptyState

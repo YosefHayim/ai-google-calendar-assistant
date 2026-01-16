@@ -15,7 +15,7 @@ export default function AdminSubscriptionsPage() {
   const [page, setPage] = useState(1)
   const [statusFilter, setStatusFilter] = useState<SubscriptionStatus | ''>('')
 
-  const { data, isLoading, refetch } = useAdminSubscriptions({
+  const { data, isLoading, refetch, isRefetching } = useAdminSubscriptions({
     page,
     limit: 20,
     search: search || undefined,
@@ -29,9 +29,9 @@ export default function AdminSubscriptionsPage() {
           <h1 className="text-2xl font-bold text-zinc-900 dark:text-white">Subscription Management</h1>
           <p className="text-zinc-500 dark:text-zinc-400 mt-1">View and manage all subscriptions</p>
         </div>
-        <Button variant="outline" size="sm" onClick={() => refetch()}>
-          <RefreshCw className="w-4 h-4 mr-2" />
-          Refresh
+        <Button variant="outline" size="sm" onClick={() => refetch()} disabled={isRefetching}>
+          <RefreshCw className={`w-4 h-4 mr-2 ${isRefetching ? 'animate-spin' : ''}`} />
+          {isRefetching ? 'Refreshing...' : 'Refresh'}
         </Button>
       </div>
 

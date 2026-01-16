@@ -25,6 +25,8 @@ import {
   ChevronRight,
 } from 'lucide-react'
 import { EmptyState } from '@/components/ui/empty-state'
+import { LoadingSpinner } from '@/components/ui/loading-spinner'
+import { useDebouncedCallback } from 'use-debounce'
 import { useAdminUsers, useUpdateUserStatus, useSendPasswordReset } from '@/hooks/queries/admin'
 import { GrantCreditsDialog } from '@/components/admin/GrantCreditsDialog'
 import { UserDetailsDialog } from '@/components/admin/UserDetailsDialog'
@@ -32,7 +34,8 @@ import type { AdminUser, UserStatus, UserRole, AdminUserListParams } from '@/typ
 import { format } from 'date-fns'
 
 export default function AdminUsersPage() {
-  const [search, setSearch] = useState('')
+  const [searchInput, setSearchInput] = useState('')
+  const [debouncedSearch, setDebouncedSearch] = useState('')
   const [page, setPage] = useState(1)
   const [statusFilter, setStatusFilter] = useState<UserStatus | ''>('')
   const [roleFilter, setRoleFilter] = useState<UserRole | ''>('')
@@ -40,15 +43,20 @@ export default function AdminUsersPage() {
   const [showCreditsDialog, setShowCreditsDialog] = useState(false)
   const [showDetailsDialog, setShowDetailsDialog] = useState(false)
 
+  const debouncedSetSearch = useDebouncedCallback((value: string) => {
+    setDebouncedSearch(value)
+    setPage(1)
+  }, 300)
+
   const params: AdminUserListParams = {
     page,
     limit: 20,
-    search: search || undefined,
+    search: debouncedSearch || undefined,
     status: statusFilter || undefined,
     role: roleFilter || undefined,
   }
 
-  const { data, isLoading, refetch } = useAdminUsers(params)
+  const { data, isLoading, refetch, isFetching } = useAdminUsers(params)
   const updateStatus = useUpdateUserStatus()
   const sendPasswordReset = useSendPasswordReset()
 
@@ -74,9 +82,9 @@ export default function AdminUsersPage() {
           <h1 className="text-2xl font-bold text-zinc-900 dark:text-white">User Management</h1>
           <p className="text-zinc-500 dark:text-zinc-400 mt-1">Manage all users and their accounts</p>
         </div>
-        <Button variant="outline" size="sm" onClick={() => refetch()}>
-          <RefreshCw className="w-4 h-4 mr-2" />
-          Refresh
+        <Button variant="outline" size="sm" onClick={() => refetch()} disabled={isFetching}>
+          <RefreshCw className={`w-4 h-4 mr-2 ${isFetching ? 'animate-spin' : ''}`} />
+          {isFetching ? 'Loading...' : 'Refresh'}
         </Button>
       </div>
 
@@ -87,10 +95,10 @@ export default function AdminUsersPage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
             <Input
               placeholder="Search by email or name..."
-              value={search}
+              value={searchInput}
               onChange={(e) => {
-                setSearch(e.target.value)
-                setPage(1)
+                setSearchInput(e.target.value)
+                debouncedSetSearch(e.target.value)
               }}
               className="pl-10"
             />
@@ -129,12 +137,13 @@ export default function AdminUsersPage() {
       {/* Users Table */}
       <Card>
         {isLoading ? (
-          <div className="p-8 text-center">
-            <RefreshCw className="w-8 h-8 animate-spin mx-auto text-primary" />
+          <div className="p-8 flex justify-center">
+            <LoadingSpinner size="lg" />
           </div>
         ) : (
           <>
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto relative">
+              {isFetching && !isLoading && <LoadingSpinner overlay />}
               <table className="w-full">
                 <thead className="border-b border-zinc-200 dark:border-zinc-700">
                   <tr>
@@ -153,7 +162,7 @@ export default function AdminUsersPage() {
                         <EmptyState
                           icon={<Users />}
                           title="No users found"
-                          description={search || statusFilter || roleFilter ? "Try adjusting your search or filters." : "No users in the system yet."}
+                          description={debouncedSearch || statusFilter || roleFilter ? "Try adjusting your search or filters." : "No users in the system yet."}
                           size="md"
                         />
                       </td>
