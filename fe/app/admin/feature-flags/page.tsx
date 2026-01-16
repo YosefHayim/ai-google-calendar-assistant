@@ -1,20 +1,5 @@
 'use client'
 
-import { useState } from 'react'
-import { Card } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Switch } from '@/components/ui/switch'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,17 +10,33 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { Label } from '@/components/ui/label'
-import { Search, RefreshCw, Plus, Trash2, Flag, Pencil } from 'lucide-react'
+import type { CreateFeatureFlagInput, FeatureFlag } from '@/services/feature-flags.service'
 import {
-  useFeatureFlags,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
+import { Flag, Pencil, Plus, RefreshCw, Search, Trash2 } from 'lucide-react'
+import {
   useCreateFeatureFlag,
-  useToggleFeatureFlag,
   useDeleteFeatureFlag,
+  useFeatureFlags,
+  useToggleFeatureFlag,
   useUpdateFeatureFlag,
 } from '@/hooks/queries/feature-flags'
-import type { FeatureFlag, CreateFeatureFlagInput } from '@/services/feature-flags.service'
+
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Switch } from '@/components/ui/switch'
 import { toast } from 'sonner'
+import { useState } from 'react'
 
 const TIER_OPTIONS = ['free', 'pro', 'enterprise']
 
@@ -54,8 +55,7 @@ export default function AdminFeatureFlagsPage() {
 
   const filteredFlags = flags?.filter(
     (flag) =>
-      flag.key.toLowerCase().includes(search.toLowerCase()) ||
-      flag.name.toLowerCase().includes(search.toLowerCase())
+      flag.key.toLowerCase().includes(search.toLowerCase()) || flag.name.toLowerCase().includes(search.toLowerCase()),
   )
 
   const handleToggle = async (flag: FeatureFlag) => {
@@ -98,15 +98,12 @@ export default function AdminFeatureFlagsPage() {
                 Create Flag
               </Button>
             </DialogTrigger>
-            <CreateFeatureFlagDialog
-              onSuccess={() => setCreateDialogOpen(false)}
-              createMutation={createMutation}
-            />
+            <CreateFeatureFlagDialog onSuccess={() => setCreateDialogOpen(false)} createMutation={createMutation} />
           </Dialog>
         </div>
       </div>
 
-<Card className="p-4">
+      <Card className="p-4">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
           <Input
@@ -118,7 +115,7 @@ export default function AdminFeatureFlagsPage() {
         </div>
       </Card>
 
-<Card>
+      <Card>
         {isLoading ? (
           <div className="p-8 text-center">
             <RefreshCw className="w-8 h-8 animate-spin mx-auto text-primary" />
@@ -182,9 +179,7 @@ export default function AdminFeatureFlagsPage() {
                             style={{ width: `${flag.rolloutPercentage}%` }}
                           />
                         </div>
-                        <span className="text-sm text-zinc-600 dark:text-zinc-300">
-                          {flag.rolloutPercentage}%
-                        </span>
+                        <span className="text-sm text-zinc-600 dark:text-zinc-300">{flag.rolloutPercentage}%</span>
                       </div>
                     </td>
                     <td className="p-4">
@@ -242,7 +237,7 @@ export default function AdminFeatureFlagsPage() {
         )}
       </Card>
 
-<Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
         {selectedFlag && (
           <EditFeatureFlagDialog
             flag={selectedFlag}
@@ -255,7 +250,7 @@ export default function AdminFeatureFlagsPage() {
         )}
       </Dialog>
 
-<AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Feature Flag</AlertDialogTitle>
@@ -377,9 +372,7 @@ function CreateFeatureFlagDialog({
               min="0"
               max="100"
               value={formData.rolloutPercentage}
-              onChange={(e) =>
-                setFormData((prev) => ({ ...prev, rolloutPercentage: parseInt(e.target.value) }))
-              }
+              onChange={(e) => setFormData((prev) => ({ ...prev, rolloutPercentage: parseInt(e.target.value) }))}
               className="w-full h-2 bg-zinc-200 rounded-lg appearance-none cursor-pointer dark:bg-zinc-700"
             />
           </div>
@@ -481,9 +474,7 @@ function EditFeatureFlagDialog({
               min="0"
               max="100"
               value={formData.rolloutPercentage}
-              onChange={(e) =>
-                setFormData((prev) => ({ ...prev, rolloutPercentage: parseInt(e.target.value) }))
-              }
+              onChange={(e) => setFormData((prev) => ({ ...prev, rolloutPercentage: parseInt(e.target.value) }))}
               className="w-full h-2 bg-zinc-200 rounded-lg appearance-none cursor-pointer dark:bg-zinc-700"
             />
           </div>
