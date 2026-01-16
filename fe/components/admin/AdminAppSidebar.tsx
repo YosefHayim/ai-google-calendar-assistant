@@ -6,6 +6,7 @@ import {
   ArrowLeft,
   CreditCard,
   FileText,
+  Flag,
   LayoutDashboard,
   PenSquare,
   Receipt,
@@ -34,6 +35,7 @@ const navItems = [
   { href: '/admin/subscriptions', icon: CreditCard, label: 'Subscriptions' },
   { href: '/admin/payments', icon: Receipt, label: 'Payments' },
   { href: '/admin/affiliates', icon: Users2, label: 'Affiliates' },
+  { href: '/admin/feature-flags', icon: Flag, label: 'Feature Flags' },
   { href: '/admin/audit-logs', icon: FileText, label: 'Audit Logs' },
   { href: '/admin/blog', icon: PenSquare, label: 'Blog' },
 ]

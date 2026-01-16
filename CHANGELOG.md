@@ -7,6 +7,49 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.141] - 2026-01-16
+
+### Features
+
+- **Admin**: Add "God Mode" admin capabilities
+  - User impersonation - view the app as any user for debugging/support
+  - Force logout - revoke all user sessions via Supabase Admin API
+  - Broadcast notifications - send targeted notifications with filters (tier, status)
+  - Impersonation banner with amber styling when viewing as another user
+
+- **Frontend**: Add Command Palette (Cmd+K / Ctrl+K)
+  - Quick navigation to dashboard sections
+  - Admin actions (users, audit logs, broadcast)
+  - Theme toggle and sign out
+  - Keyboard-first UX with fuzzy search
+
+- **Billing**: LemonSqueezy as single source of truth for pricing
+  - Plans fetched directly from LemonSqueezy API (no Supabase sync needed)
+  - `PLAN_METADATA` config for features, limits, and UI flags
+  - Variant IDs resolved automatically from LemonSqueezy products
+  - Checkout flow now uses live pricing data
+
+### Bug Fixes
+
+- **Auth**: Fix logout flow - now properly clears auth tokens while preserving onboarding state
+  - Previously `localStorage.clear()` wiped onboarding flag causing re-onboarding
+  - Now only clears `access_token`, `refresh_token`, and `user` keys
+  
+- **Redis**: Auto-fix eviction policy on startup
+  - Sets `maxmemory-policy` to `noeviction` if configured as `volatile-lru`
+  
+- **TypeScript**: Fix feature flag service build errors
+  - Cast Supabase client for `feature_flags` table (not in generated types)
+  - Fix user status comparison in auth middleware
+
+### Technical
+
+- New endpoints: `POST /api/admin/users/:id/impersonate`, `POST /api/admin/users/:id/revoke-sessions`, `POST /api/admin/broadcast`
+- New components: `ImpersonationContext`, `ImpersonationBanner`, `CommandPalette`, `BroadcastDialog`
+- New service functions: `getPlansFromLemonSqueezy()`, `getVariantIdForPlan()`
+
+---
+
 ## [1.0.140] - 2026-01-16
 
 ### Features

@@ -68,11 +68,12 @@ AI Google Calendar Assistant (Ask Ally) is a sophisticated calendar automation p
 | **AI Chat Interface** | Natural language calendar management with streaming responses |
 | **Multiple View Modes** | Chat view, Avatar view, and 3D wall calendar visualization |
 | **Conversation History** | Persistent conversations with AI-generated titles |
+| **Command Palette** | Quick navigation and actions via Cmd+K / Ctrl+K |
 | **Dark/Light Theme** | System-aware theme switching with cinematic glow toggle |
 | **Google OAuth** | Secure calendar integration with automatic token refresh |
 | **Quick Event Dialog** | Fast event creation with preview |
 | **Billing Dashboard** | Subscription management, payment history |
-| **Admin Dashboard** | User management, audit logs, credit management (admin only) |
+| **Admin Dashboard** | User management, impersonation, broadcast, audit logs (admin only) |
 
 ### AI Agent System
 
@@ -539,6 +540,9 @@ See `/fe/env.example` for all available options.
 | `GET` | `/users` | List all users |
 | `GET` | `/users/:id` | Get user details |
 | `POST` | `/users/:id/credits` | Grant credits |
+| `POST` | `/users/:id/impersonate` | View app as user (God Mode) |
+| `POST` | `/users/:id/revoke-sessions` | Force logout user |
+| `POST` | `/broadcast` | Send broadcast notification |
 | `GET` | `/audit-logs` | Get audit logs |
 | `GET` | `/payments` | Get payment history |
 

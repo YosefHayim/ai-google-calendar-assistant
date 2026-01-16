@@ -18,6 +18,7 @@ import calendarRoute from "@/routes/google-calendar/calendar-route";
 import channelsRoute from "@/routes/google-calendar/channels-route";
 import chatRoute from "@/routes/google-calendar/chat-route";
 import contactRoute from "@/routes/contact-route";
+import cookieParser from "cookie-parser";
 import cors from "cors";
 import cronRoute from "@/routes/cron-route";
 import errorHandler from "@/middlewares/error-handler";
@@ -88,7 +89,7 @@ app.use(apiRateLimiter);
 app.use(securityAuditMiddleware);
 
 app.use(express.json({ limit: "10mb" }));
-// app.use(cookieParser(''));
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(morgan("dev", { immediate: true }));
 app.use("/static", express.static(path.join(__dirname, "public")));

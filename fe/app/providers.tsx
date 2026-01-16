@@ -3,6 +3,7 @@
 import { AuthProvider } from '@/contexts/AuthContext'
 import { CommandPalette } from '@/components/shared/CommandPalette'
 import { ENV } from '@/lib/constants'
+import { FeatureFlagProvider } from '@/contexts/FeatureFlagContext'
 import { ImpersonationBanner } from '@/components/admin/ImpersonationBanner'
 import { ImpersonationProvider } from '@/contexts/ImpersonationContext'
 import { LanguageProvider } from '@/contexts/LanguageContext'
@@ -33,13 +34,15 @@ export function Providers({ children }: { children: React.ReactNode }) {
         >
           <LanguageProvider>
             <AuthProvider>
-              <ImpersonationProvider>
-                <ImpersonationBanner />
-                <CommandPalette />
-                <SocketProvider>
-                  <NotificationProvider>{children}</NotificationProvider>
-                </SocketProvider>
-              </ImpersonationProvider>
+              <FeatureFlagProvider>
+                <ImpersonationProvider>
+                  <ImpersonationBanner />
+                  <CommandPalette />
+                  <SocketProvider>
+                    <NotificationProvider>{children}</NotificationProvider>
+                  </SocketProvider>
+                </ImpersonationProvider>
+              </FeatureFlagProvider>
             </AuthProvider>
           </LanguageProvider>
           <Toaster

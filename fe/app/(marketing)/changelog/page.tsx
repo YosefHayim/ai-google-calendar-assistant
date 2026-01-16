@@ -4,7 +4,7 @@ import MarketingLayout from '@/components/marketing/MarketingLayout'
 import { Badge } from '@/components/ui/badge'
 import { JsonLd } from '@/components/shared/JsonLd'
 import { generateBreadcrumbSchema, generateWebPageSchema, SITE_CONFIG } from '@/lib/constants/seo'
-import { Sparkles, Bug, Zap, Calendar, Mic, Shield, Bell, BarChart3 } from 'lucide-react'
+import { Sparkles, Bug, Zap, Calendar, Mic, Shield, Bell, BarChart3, Command, Users, CreditCard } from 'lucide-react'
 
 type ChangeType = 'feature' | 'fix' | 'improvement'
 
@@ -26,6 +26,40 @@ const BADGE_STYLES: Record<ChangeType, { variant: 'default' | 'secondary' | 'out
 }
 
 const CHANGELOG_DATA: ChangelogEntry[] = [
+  {
+    version: '2.3.0',
+    date: 'January 16, 2026',
+    changes: [
+      {
+        type: 'feature',
+        title: 'Admin God Mode',
+        description:
+          'Admins can now impersonate users to debug issues, force logout sessions, and send targeted broadcast notifications to user groups.',
+        icon: Users,
+      },
+      {
+        type: 'feature',
+        title: 'Command Palette (Cmd+K)',
+        description:
+          'Lightning-fast navigation with keyboard shortcuts. Press Cmd+K (Mac) or Ctrl+K (Windows) to search and jump to any section instantly.',
+        icon: Command,
+      },
+      {
+        type: 'improvement',
+        title: 'LemonSqueezy Direct Integration',
+        description:
+          'Pricing plans now sync directly from LemonSqueezy API. No more manual configuration - prices update automatically.',
+        icon: CreditCard,
+      },
+      {
+        type: 'fix',
+        title: 'Logout Flow Fixed',
+        description:
+          'Fixed an issue where logging out would reset your onboarding progress. Your preferences are now preserved across sessions.',
+        icon: Bug,
+      },
+    ],
+  },
   {
     version: '2.2.1',
     date: 'January 14, 2026',

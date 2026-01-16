@@ -7,6 +7,60 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.141] - 2026-01-16
+
+### Features
+
+- **Admin**: Add user impersonation capability
+  - New `ImpersonationContext` for managing impersonation state
+  - `ImpersonationBanner` component with amber styling when viewing as another user
+  - "View as User" button in `UserDetailsDialog`
+
+- **Admin**: Add force logout capability
+  - "Force Logout" button in `UserDetailsDialog`
+  - Calls backend to revoke all user sessions via Supabase Admin API
+
+- **Admin**: Add broadcast notification system
+  - New `BroadcastDialog` component for sending notifications
+  - Support for notification types: info, warning, critical
+  - Target filters by subscription tier or all users
+
+- **UI**: Add Command Palette (Cmd+K / Ctrl+K)
+  - New `CommandPalette` component using `cmdk` library
+  - Quick navigation to dashboard sections
+  - Admin actions (users, audit logs, broadcast)
+  - Theme toggle and sign out actions
+
+### Bug Fixes
+
+- **Auth**: Fix logout flow to preserve onboarding state
+  - Previously `localStorage.clear()` wiped onboarding completion flag
+  - Now `logout()` only clears auth tokens: `access_token`, `refresh_token`, `user`
+  - User is properly redirected to `/login` after sign out
+
+### Files Changed
+
+#### New Components
+- `contexts/ImpersonationContext.tsx` - State management for admin impersonation
+- `components/admin/ImpersonationBanner.tsx` - Banner shown when impersonating
+- `components/admin/BroadcastDialog.tsx` - Dialog for sending broadcasts
+- `components/shared/CommandPalette.tsx` - Command palette component
+
+#### Modified Components
+- `contexts/AuthContext.tsx` - Updated `logout()` to clear localStorage tokens
+- `contexts/DashboardUIContext.tsx` - Updated `handleSignOut()` to use `logout()`
+- `components/admin/UserDetailsDialog.tsx` - Added impersonate and force logout buttons
+- `app/admin/page.tsx` - Added broadcast button to header
+- `app/providers.tsx` - Added ImpersonationProvider and CommandPalette
+
+#### New Services
+- `services/admin.service.ts` - Added `impersonateUser()`, `revokeUserSessions()`, `broadcastNotification()`
+
+#### New Endpoints
+- `lib/api/endpoints.ts` - Added `ADMIN_USER_IMPERSONATE`, `ADMIN_USER_REVOKE_SESSIONS`, `ADMIN_BROADCAST`
+
+---
+
 ## [1.0.140] - 2026-01-16
 
 ### Features
