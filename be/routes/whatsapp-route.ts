@@ -38,6 +38,21 @@ router.post(
 )
 
 // ============================================================================
+// Meta Callback Endpoints (No auth - called by Meta)
+// ============================================================================
+
+/**
+ * POST /api/whatsapp/data-deletion
+ * Data Deletion Callback - Meta calls this when users request data deletion
+ * Uses URL-encoded form data (application/x-www-form-urlencoded)
+ */
+router.post(
+  "/data-deletion",
+  express.urlencoded({ extended: false }),
+  whatsAppController.handleDataDeletion
+)
+
+// ============================================================================
 // Protected Admin Endpoints
 // ============================================================================
 

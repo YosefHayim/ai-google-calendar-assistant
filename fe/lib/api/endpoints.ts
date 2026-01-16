@@ -309,6 +309,20 @@ export const ENDPOINTS = {
    */
   PAYMENTS_BILLING: '/api/payments/billing',
 
+  /**
+   * Get products from Lemon Squeezy store
+   * Methods: GET
+   * Returns: products[]
+   */
+  PAYMENTS_PRODUCTS: '/api/payments/products',
+
+  /**
+   * Get products with variants from Lemon Squeezy store
+   * Methods: GET
+   * Returns: products[] with variants[]
+   */
+  PAYMENTS_PRODUCTS_VARIANTS: '/api/payments/products/variants',
+
   // ============================================
   // GAP RECOVERY ENDPOINTS
   // ============================================

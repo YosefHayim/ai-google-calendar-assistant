@@ -2,7 +2,7 @@
 
 import { useState, Suspense } from 'react'
 import AnalyticsDashboard from '@/components/dashboard/analytics/AnalyticsDashboard'
-import AIAllySidebar from '@/components/dashboard/shared/AIAllySidebar'
+import { AIAllySidebar } from '@/components/dashboard/shared/AIAllySidebar'
 import { AnalyticsProvider } from '@/contexts/AnalyticsContext'
 import { LoadingSection } from '@/components/ui/loading-spinner'
 

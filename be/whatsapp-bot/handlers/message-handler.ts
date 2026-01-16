@@ -23,6 +23,12 @@ import {
   sendTextMessage,
 } from "../services/send-message";
 import {
+  checkAuthRateLimit,
+  checkMessageRateLimit,
+  checkVoiceRateLimit,
+  resetRateLimit,
+} from "../services/rate-limiter";
+import {
   handleOnboarding,
   resolveWhatsAppUser,
 } from "../services/user-linking";
@@ -360,14 +366,10 @@ export const handleButtonReply = async (
   await sendTextMessage(from, "Got your selection! Processing...");
 };
 
-/**
- * Main message handler that routes messages to appropriate handlers
- */
 export const handleIncomingMessage = async (
   message: WhatsAppIncomingMessage,
   contact?: WhatsAppContact
 ): Promise<void> => {
-  // Check for duplicate messages
   if (isDuplicateMessage(message.id)) {
     logger.debug(`WhatsApp: Skipping duplicate message ${message.id}`);
     return;
@@ -376,17 +378,21 @@ export const handleIncomingMessage = async (
   const processed = processIncomingMessage(message, contact);
   const phoneNumber = processed.from;
 
-  // Update 24-hour messaging window activity
   await updateLastActivity(phoneNumber);
 
-  // Resolve user and check onboarding status
   const resolution = await resolveWhatsAppUser(
     phoneNumber,
     processed.contactName
   );
 
-  // Handle onboarding if needed (only for text and interactive messages)
   if (resolution.needsOnboarding) {
+    const authLimit = await checkAuthRateLimit(phoneNumber);
+    if (!authLimit.allowed) {
+      await markAsRead(message.id);
+      await sendTextMessage(phoneNumber, authLimit.message!);
+      return;
+    }
+
     if (message.type === "text" || message.type === "interactive") {
       const interactiveReply = message.interactive;
       const result = await handleOnboarding(
@@ -397,11 +403,13 @@ export const handleIncomingMessage = async (
       );
 
       if (result.handled) {
+        if (result.nextStep === "complete") {
+          await resetRateLimit(phoneNumber, "auth");
+        }
         await markAsRead(message.id);
         return;
       }
     } else {
-      // Non-text message during onboarding
       await markAsRead(message.id);
       await sendTextMessage(
         phoneNumber,
@@ -411,15 +419,28 @@ export const handleIncomingMessage = async (
     }
   }
 
-  // User is fully onboarded - route to appropriate handler
   switch (message.type) {
-    case "text":
+    case "text": {
+      const msgLimit = await checkMessageRateLimit(phoneNumber);
+      if (!msgLimit.allowed) {
+        await markAsRead(message.id);
+        await sendTextMessage(phoneNumber, msgLimit.message!);
+        return;
+      }
       await handleTextMessage(processed, false, resolution.email);
       break;
+    }
 
-    case "audio":
+    case "audio": {
+      const voiceLimit = await checkVoiceRateLimit(phoneNumber);
+      if (!voiceLimit.allowed) {
+        await markAsRead(message.id);
+        await sendTextMessage(phoneNumber, voiceLimit.message!);
+        return;
+      }
       await handleVoiceMessage(processed, resolution.email);
       break;
+    }
 
     case "interactive":
       await handleButtonReply(processed);

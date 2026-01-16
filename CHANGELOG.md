@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.140] - 2026-01-16
+
+### Features
+
+- **Billing**: Add dynamic Lemon Squeezy products integration for pricing page
+  - Backend: New endpoints `GET /api/payments/products` and `GET /api/payments/products/variants`
+  - Backend: Add `getLemonSqueezyProducts()`, `getLemonSqueezyVariants()`, `getLemonSqueezyProductsWithVariants()` to lemonsqueezy-service
+  - Frontend: Add `useLemonSqueezyProducts` hook with TanStack Query integration
+  - Frontend: Add `transformLemonSqueezyProductsToTiers()` for product-to-tier mapping
+  - Frontend: Pricing page now fetches real products from Lemon Squeezy API with fallback to hardcoded values
+
+### Bug Fixes
+
+- **Frontend**: Fix `categories` and `availableTags` references in event-manager.tsx to use `availableFilters.categories` and `availableFilters.tags`
+- **Frontend**: Fix type mismatch in EventDialog.tsx and ViewEventDetails.tsx where `onStop` callback passed `string | null` but `stopRecording` expected `string | undefined`
+- **Frontend**: Fix incorrect import path for `ActiveFiltersDisplay` in EventManager.tsx (was importing from FilterControls.tsx instead of ActiveFiltersDisplay.tsx)
+- **Storybook**: Replace undefined `action()` calls with `fn()` from `storybook/test` across multiple story files
+- **Storybook**: Add missing `freestDay` property to UpcomingWeekPreview mock data
+- **Storybook**: Fix ConversationList mock data to include required `messageCount` and `createdAt` properties, and change `lastUpdated` from Date to ISO string format
+
+---
+
 ## [1.0.139] - 2026-01-12
 
 ### Week of January 6-12, 2026

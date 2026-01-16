@@ -53,6 +53,9 @@ const mockLemonSqueezy = {
   cancelSubscription: mockFn().mockResolvedValue({
     data: { data: { attributes: { status: "cancelled", ends_at: new Date().toISOString() } } },
   }),
+  getCustomer: mockFn().mockResolvedValue({
+    data: { data: { id: "cust_123", attributes: { email: "test@example.com" } } },
+  }),
 }
 
 jest.mock("@/config", () => ({

@@ -174,7 +174,7 @@ describe("AI Chat Interaction Journey", () => {
     it("should chain multiple tool calls when needed", async () => {
       const userRequest = "Schedule a meeting and send invites to the team"
 
-      const toolCalls = [
+      const toolCalls: Array<{ name: string; result: unknown }> = [
         { name: "get_team_members", result: ["alice@example.com", "bob@example.com"] },
         {
           name: "create_event",
@@ -187,7 +187,8 @@ describe("AI Chat Interaction Journey", () => {
       ]
 
       expect(toolCalls).toHaveLength(3)
-      expect(toolCalls[1].result.attendees).toHaveLength(2)
+      const createEventResult = toolCalls[1].result as { attendees: string[] }
+      expect(createEventResult.attendees).toHaveLength(2)
     })
   })
 

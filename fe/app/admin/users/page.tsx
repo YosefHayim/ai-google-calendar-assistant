@@ -16,6 +16,7 @@ import {
   Search,
   MoreVertical,
   UserCog,
+  Users,
   CreditCard,
   Mail,
   Shield,
@@ -23,6 +24,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react'
+import { EmptyState } from '@/components/ui/empty-state'
 import { useAdminUsers, useUpdateUserStatus, useSendPasswordReset } from '@/hooks/queries/admin'
 import { GrantCreditsDialog } from '@/components/admin/GrantCreditsDialog'
 import { UserDetailsDialog } from '@/components/admin/UserDetailsDialog'
@@ -145,7 +147,18 @@ export default function AdminUsersPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {data?.users.map((user) => (
+                  {(!data?.users || data.users.length === 0) ? (
+                    <tr>
+                      <td colSpan={6} className="p-8">
+                        <EmptyState
+                          icon={<Users />}
+                          title="No users found"
+                          description={search || statusFilter || roleFilter ? "Try adjusting your search or filters." : "No users in the system yet."}
+                          size="md"
+                        />
+                      </td>
+                    </tr>
+                  ) : data.users.map((user) => (
                     <tr
                       key={user.id}
                       className="border-b border-zinc-100 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900/50"

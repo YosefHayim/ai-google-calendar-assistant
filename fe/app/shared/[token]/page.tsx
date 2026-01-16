@@ -2,13 +2,14 @@
 
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
-import { Calendar, Clock, AlertCircle, Sparkles, ArrowRight, User } from 'lucide-react'
+import { Calendar, Clock, AlertCircle, Sparkles, ArrowRight, User, MessageCircle } from 'lucide-react'
 import Link from 'next/link'
 import { getSharedConversation, type SharedConversation, type ChatMessage } from '@/services/chatService'
 import { formatRelativeDate } from '@/lib/dateUtils'
 import { cn } from '@/lib/utils'
 import { AllyLogo } from '@/components/shared/logo'
 import { Button } from '@/components/ui/button'
+import { EmptyState } from '@/components/ui/empty-state'
 
 function AllyAvatar() {
   return (
@@ -208,11 +209,22 @@ export default function SharedConversationPage() {
       </div>
 
       <main className="flex-1 max-w-3xl mx-auto w-full px-4 sm:px-6 py-4 sm:py-6 relative">
-        <div className="space-y-4 sm:space-y-5">
-          {conversation.messages.map((message, index) => (
-            <MessageBubble key={index} message={message} isUser={message.role === 'user'} isFirst={index === 0} />
-          ))}
-        </div>
+        {conversation.messages.length === 0 ? (
+          <div className="flex items-center justify-center min-h-[300px]">
+            <EmptyState
+              icon={<MessageCircle />}
+              title="No messages yet"
+              description="This conversation doesn't have any messages to display."
+              size="lg"
+            />
+          </div>
+        ) : (
+          <div className="space-y-4 sm:space-y-5">
+            {conversation.messages.map((message, index) => (
+              <MessageBubble key={index} message={message} isUser={message.role === 'user'} isFirst={index === 0} />
+            ))}
+          </div>
+        )}
       </main>
 
       <footer className="border-t border-zinc-200/80 dark:border-zinc-800/80 bg-white/50 dark:bg-zinc-950/50 backdrop-blur-sm">

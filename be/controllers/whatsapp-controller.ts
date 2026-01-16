@@ -4,11 +4,19 @@
  */
 
 import type { Request, Response } from "express"
-import { STATUS_RESPONSE } from "@/config"
+import { STATUS_RESPONSE, env } from "@/config"
 import { logger } from "@/utils/logger"
+import { Resend } from "resend"
 import { verifyWebhookSubscription } from "@/whatsapp-bot/services/webhook-security"
 import { handleIncomingMessage } from "@/whatsapp-bot/handlers/message-handler"
 import { isWhatsAppConfigured, getWhatsAppStatus } from "@/whatsapp-bot/init-whatsapp"
+import {
+  parseSignedRequest,
+  deleteWhatsAppUserData,
+  buildConfirmationUrl,
+  buildErrorUrl,
+  formatMetaResponse,
+} from "@/whatsapp-bot/services/data-deletion"
 import type {
   WhatsAppWebhookPayload,
   WhatsAppIncomingMessage,
@@ -152,8 +160,63 @@ const getStatus = (_req: Request, res: Response): void => {
   res.status(STATUS_RESPONSE.SUCCESS).json(status)
 }
 
+/**
+ * POST /api/whatsapp/data-deletion
+ * Meta Data Deletion Callback - handles user data deletion requests
+ * @see https://developers.facebook.com/docs/development/create-an-app/app-dashboard/data-deletion-callback
+ */
+const handleDataDeletion = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const signedRequest = req.body?.signed_request as string | undefined
+
+  if (!signedRequest) {
+    logger.warn("WhatsApp: Data deletion request missing signed_request")
+    res.status(STATUS_RESPONSE.BAD_REQUEST).json({
+      error: "Missing signed_request parameter",
+    })
+    return
+  }
+
+  const payload = parseSignedRequest(signedRequest)
+
+  if (!payload) {
+    logger.warn("WhatsApp: Invalid signed_request in data deletion")
+    res.status(STATUS_RESPONSE.FORBIDDEN).json({
+      error: "Invalid signed_request",
+    })
+    return
+  }
+
+  try {
+    const { confirmationCode } = await deleteWhatsAppUserData(payload.user_id)
+    const confirmationUrl = buildConfirmationUrl(confirmationCode, "success")
+
+    logger.info(
+      `WhatsApp: Data deletion completed for Meta user ${payload.user_id}, code: ${confirmationCode}`
+    )
+
+    res
+      .status(STATUS_RESPONSE.SUCCESS)
+      .type("json")
+      .send(formatMetaResponse(confirmationUrl, confirmationCode))
+  } catch (error) {
+    logger.error(`WhatsApp: Data deletion failed: ${error}`)
+
+    const errorUrl = buildErrorUrl("Data deletion failed. Please contact support.")
+    const errorCode = `ERR-${Date.now().toString(36)}`
+
+    res
+      .status(STATUS_RESPONSE.SUCCESS)
+      .type("json")
+      .send(formatMetaResponse(errorUrl, errorCode))
+  }
+}
+
 export const whatsAppController = {
   verifyWebhook,
   handleWebhook,
   getStatus,
+  handleDataDeletion,
 }

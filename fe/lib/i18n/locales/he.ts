@@ -79,7 +79,9 @@ export const he: TranslationShape = {
     changeLog: 'יומן שינויים',
     description:
       'עוזרת AI ברמת מנהלים שתוכננה לבעלי עסקים להגן על עבודתם העמוקה. מגישה חינמית ועד לכוח מנהלים בלתי מוגבל. בנויה על פרוטוקול Ally Neural.',
-    systemStatus: 'כל המערכות פעילות • מנוע ביצועים גבוהים',
+    systemOnline: 'כל המערכות פעילות',
+    systemOffline: 'המערכת אינה זמינה',
+    systemChecking: 'בודק סטטוס...',
     chatOnTelegram: 'שוחח עם אלי בטלגרם',
   },
 

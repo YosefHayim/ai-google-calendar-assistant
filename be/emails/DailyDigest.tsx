@@ -1,19 +1,6 @@
-import {
-  Body,
-  Column,
-  Container,
-  Head,
-  Heading,
-  Hr,
-  Html,
-  Img,
-  Link,
-  Preview,
-  Row,
-  Section,
-  Text,
-} from "@react-email/components";
 import type * as React from "react";
+
+import { Body, Column, Container, Head, Heading, Hr, Html, Img, Link, Preview, Row, Section, Text } from "@react-email/components";
 
 // ============================================
 // Types
@@ -66,8 +53,7 @@ const colors = {
 };
 
 const fonts = {
-  primary:
-    "'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+  primary: "'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
 };
 
 // ============================================
@@ -87,9 +73,8 @@ export const DailyDigest = ({
 }: DailyDigestProps) => {
   const eventCount = events.length;
   const hasEvents = eventCount > 0;
-  const previewText = hasEvents
-    ? `${eventCount} event${eventCount !== 1 ? "s" : ""} scheduled for ${dateFormatted}`
-    : `No events scheduled for ${dateFormatted}`;
+  const previewText =
+    hasEvents ? `${eventCount} event${eventCount !== 1 ? "s" : ""} scheduled for ${dateFormatted}` : `No events scheduled for ${dateFormatted}`;
 
   return (
     <Html>
@@ -108,15 +93,7 @@ export const DailyDigest = ({
           <Section style={styles.card}>
             {/* Header */}
             <Section style={styles.header}>
-              {logoUrl && (
-                <Img
-                  alt="Ally"
-                  height="40"
-                  src={logoUrl}
-                  style={styles.logo}
-                  width="40"
-                />
-              )}
+              {logoUrl && <Img alt="Ally" height="40" src={logoUrl} style={styles.logo} width="40" />}
               <Text style={styles.brandName}>Ally</Text>
             </Section>
 
@@ -153,17 +130,13 @@ export const DailyDigest = ({
                   <Column style={styles.statColumn}>
                     <Section style={styles.statBox}>
                       <Text style={styles.statNumber}>{eventCount}</Text>
-                      <Text style={styles.statLabel}>
-                        event{eventCount !== 1 ? "s" : ""}
-                      </Text>
+                      <Text style={styles.statLabel}>event{eventCount !== 1 ? "s" : ""}</Text>
                     </Section>
                   </Column>
                   <Column style={{ width: "16px" }} />
                   <Column style={styles.statColumn}>
                     <Section style={styles.statBoxCoral}>
-                      <Text style={styles.statNumberCoral}>
-                        {totalMeetingTime || calculateTotalTime(events)}
-                      </Text>
+                      <Text style={styles.statNumberCoral}>{totalMeetingTime || calculateTotalTime(events)}</Text>
                       <Text style={styles.statLabelCoral}>total time</Text>
                     </Section>
                   </Column>
@@ -175,39 +148,24 @@ export const DailyDigest = ({
             <Section style={styles.scheduleSection}>
               <Text style={styles.sectionTitle}>Today's Schedule</Text>
 
-              {hasEvents ? (
+              {hasEvents ?
                 <Section style={styles.eventsContainer}>
                   {events.map((event, index) => (
                     <Section key={event.id || index} style={styles.eventCard}>
                       <Row>
                         <Column style={styles.eventTimeColumn}>
                           <Text style={styles.eventTime}>{event.start}</Text>
-                          {event.duration && (
-                            <Text style={styles.eventDuration}>
-                              {event.duration}
-                            </Text>
-                          )}
+                          {event.duration && <Text style={styles.eventDuration}>{event.duration}</Text>}
                         </Column>
                         <Column style={styles.eventDivider}>
                           <Section style={styles.eventDot} />
-                          {index < events.length - 1 && (
-                            <Section style={styles.eventLine} />
-                          )}
+                          {index < events.length - 1 && <Section style={styles.eventLine} />}
                         </Column>
                         <Column style={styles.eventDetailsColumn}>
-                          <Text style={styles.eventSummary}>
-                            {event.summary}
-                          </Text>
-                          {event.location && (
-                            <Text style={styles.eventLocation}>
-                              📍 {event.location}
-                            </Text>
-                          )}
+                          <Text style={styles.eventSummary}>{event.summary}</Text>
+                          {event.location && <Text style={styles.eventLocation}>📍 {event.location}</Text>}
                           {event.meetLink && (
-                            <Link
-                              href={event.meetLink}
-                              style={styles.eventMeetLink}
-                            >
+                            <Link href={event.meetLink} style={styles.eventMeetLink}>
                               🔗 Join meeting
                             </Link>
                           )}
@@ -216,16 +174,12 @@ export const DailyDigest = ({
                     </Section>
                   ))}
                 </Section>
-              ) : (
-                <Section style={styles.noEventsContainer}>
+              : <Section style={styles.noEventsContainer}>
                   <Text style={styles.noEventsEmoji}>🎉</Text>
                   <Text style={styles.noEventsTitle}>No events today!</Text>
-                  <Text style={styles.noEventsText}>
-                    You have a clear schedule. Enjoy your free day or use this
-                    time to tackle something meaningful.
-                  </Text>
+                  <Text style={styles.noEventsText}>You have a clear schedule. Enjoy your free day or use this time to tackle something meaningful.</Text>
                 </Section>
-              )}
+              }
             </Section>
 
             {/* CTA Button */}
