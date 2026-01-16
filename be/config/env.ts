@@ -19,7 +19,7 @@ const CONSTANTS = {
     "633918377873-vvlgvie0ksenm5jcvs3c74vhb17rdqsn.apps.googleusercontent.com",
 
   // URLs (Production)
-  PROD_BACKEND_URL: "https://be.askally.io",
+  PROD_BACKEND_URL: "https://i3fzcpnmmk.eu-central-1.awsapprunner.com",
   PROD_FRONTEND_URL: "https://askally.io",
 
   // Slack
