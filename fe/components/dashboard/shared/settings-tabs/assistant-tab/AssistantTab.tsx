@@ -15,17 +15,28 @@ export const AssistantTab: React.FC<AssistantTabProps> = () => {
   const contextualToggleId = React.useId()
   const voiceToggleId = React.useId()
 
-  const { isLoading: isLoadingAllyBrain } = useAllyBrain()
-  const { isLoading: isLoadingContextual } = useContextualScheduling()
-  const { isLoading: isLoadingVoice } = useVoicePreference()
+  const { isLoading: isLoadingAllyBrain, isError: isErrorAllyBrain } = useAllyBrain()
+  const { isLoading: isLoadingContextual, isError: isErrorContextual } = useContextualScheduling()
+  const { isLoading: isLoadingVoice, isError: isErrorVoice } = useVoicePreference()
 
   const isLoading = isLoadingAllyBrain || isLoadingContextual || isLoadingVoice
+  const hasError = isErrorAllyBrain || isErrorContextual || isErrorVoice
 
   if (isLoading) {
     return (
       <Card>
         <CardContent>
           <LoadingSection text="Loading preferences..." />
+        </CardContent>
+      </Card>
+    )
+  }
+
+  if (hasError) {
+    return (
+      <Card>
+        <CardContent className="py-8 text-center">
+          <p className="text-muted-foreground">Failed to load preferences. Please try again later.</p>
         </CardContent>
       </Card>
     )

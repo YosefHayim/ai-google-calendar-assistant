@@ -1,5 +1,8 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "extends": [
+    "ultracite"
+  ],
   "files": {
     "includes": [
       "**/*.ts"
@@ -16,8 +19,7 @@
       "complexity": {
         "noExcessiveLinesPerFunction": "off"
       },
-      "security": {
-        // Disabled because API keys are loaded from env vars and test fixtures use placeholder values
+      "nursery": {
         "noSecrets": "off"
       },
       "suspicious": {

@@ -80,7 +80,9 @@ export function CreateEventForm({
               }
               onChange={(e) => {
                 const date = new Date(e.target.value)
-                onNewEventChange({ ...newEvent, startTime: date })
+                if (!isNaN(date.getTime())) {
+                  onNewEventChange({ ...newEvent, startTime: date })
+                }
               }}
             />
           </div>
@@ -99,7 +101,9 @@ export function CreateEventForm({
               }
               onChange={(e) => {
                 const date = new Date(e.target.value)
-                onNewEventChange({ ...newEvent, endTime: date })
+                if (!isNaN(date.getTime())) {
+                  onNewEventChange({ ...newEvent, endTime: date })
+                }
               }}
             />
           </div>
