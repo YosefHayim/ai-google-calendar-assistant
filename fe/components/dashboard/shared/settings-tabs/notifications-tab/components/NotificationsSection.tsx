@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { CheckCircle, AlertTriangle, Sparkles, Loader2, Check } from 'lucide-react'
+import { CheckCircle, AlertTriangle, Sparkles, Loader2, Check, Volume2, Globe } from 'lucide-react'
 import { toast } from 'sonner'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -10,10 +10,18 @@ import { SettingsRow, MultiSelectDropdown, SettingsSection, TabHeader } from '..
 import { NOTIFICATION_CHANNEL_OPTIONS } from '../constants'
 import { useNotificationSettings, useUpdateNotificationSettings } from '@/hooks/queries'
 import { type NotificationSettingsFormData, notificationSettingsDefaults } from '@/lib/validations/preferences'
+import { useNotificationContext } from '@/contexts/NotificationContext'
+import CinematicGlowToggle from '@/components/ui/cinematic-glow-toggle'
 
 export function NotificationsSection() {
   const { data: notificationData, isLoading } = useNotificationSettings()
   const { updateNotificationSettingsAsync, isUpdating, isSuccess } = useUpdateNotificationSettings()
+  const {
+    preferences: notificationPrefs,
+    setSoundEnabled,
+    setBrowserNotificationsEnabled,
+    requestBrowserPermission,
+  } = useNotificationContext()
 
   const [settings, setSettings] = useState<NotificationSettingsFormData>(notificationSettingsDefaults)
   const [isDirty, setIsDirty] = useState(false)
@@ -43,6 +51,25 @@ export function NotificationsSection() {
     setIsDirty(true)
   }
 
+  const handleSoundToggle = (enabled: boolean) => {
+    setSoundEnabled(enabled)
+    toast.success(enabled ? 'Sound notifications enabled' : 'Sound notifications disabled')
+  }
+
+  const handleBrowserNotificationToggle = async (enabled: boolean) => {
+    if (enabled && notificationPrefs.browserNotificationPermission !== 'granted') {
+      const permission = await requestBrowserPermission()
+      if (permission !== 'granted') {
+        toast.error('Browser notification permission denied')
+        return
+      }
+      toast.success('Browser notifications enabled')
+    } else {
+      setBrowserNotificationsEnabled(enabled)
+      toast.success(enabled ? 'Browser notifications enabled' : 'Browser notifications disabled')
+    }
+  }
+
   const handleSave = async () => {
     try {
       await updateNotificationSettingsAsync(settings)
@@ -61,7 +88,37 @@ export function NotificationsSection() {
           <LoadingSection text="Loading notification settings..." />
         ) : (
           <div className="space-y-4">
-            <SettingsSection>
+            <SettingsSection title="In-App Notifications">
+              <SettingsRow
+                id="sound-notifications"
+                title="Sound Effects"
+                tooltip="Play a sound when you receive a notification"
+                icon={<Volume2 size={18} className="text-zinc-900 dark:text-primary" />}
+                control={
+                  <CinematicGlowToggle
+                    id="sound-notifications-toggle"
+                    checked={notificationPrefs.soundEnabled}
+                    onChange={handleSoundToggle}
+                  />
+                }
+              />
+
+              <SettingsRow
+                id="browser-notifications"
+                title="Browser Notifications"
+                tooltip="Show notifications even when Ally is in the background"
+                icon={<Globe size={18} className="text-zinc-900 dark:text-primary" />}
+                control={
+                  <CinematicGlowToggle
+                    id="browser-notifications-toggle"
+                    checked={notificationPrefs.browserNotificationsEnabled}
+                    onChange={handleBrowserNotificationToggle}
+                  />
+                }
+              />
+            </SettingsSection>
+
+            <SettingsSection title="Notification Channels">
               <SettingsRow
                 id="event-confirmations"
                 title="Event Confirmations"

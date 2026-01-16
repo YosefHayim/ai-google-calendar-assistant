@@ -1,5 +1,11 @@
 import { Resend } from "resend"
-import { env, SUPABASE } from "@/config"
+import {
+  emitToUser,
+  env,
+  isUserConnected,
+  type NotificationPayload,
+  SUPABASE,
+} from "@/config"
 import { getBot } from "@/telegram-bot/init-bot"
 import {
   getNotificationSettingsPreference,
@@ -260,19 +266,49 @@ async function sendTelegram(
   }
 }
 
-function sendPush(
-  _userId: string,
-  _title: string,
-  _body: string
-): { success: boolean; error?: string } {
-  logger.debug("[NotificationDispatcher] Push notifications not yet implemented")
-  return { success: false, error: "Push notifications not yet implemented" }
+type PushOptions = {
+  userId: string
+  notificationType: NotificationPayload["type"]
+  title: string
+  body: string
+  eventData?: EventNotificationData
+}
+
+function sendPush(options: PushOptions): { success: boolean; error?: string } {
+  const { userId, notificationType, title, body, eventData } = options
+
+  if (!isUserConnected(userId)) {
+    logger.debug(`[NotificationDispatcher] User ${userId} not connected via WebSocket`)
+    return { success: false, error: "User not connected" }
+  }
+
+  const payload: NotificationPayload = {
+    type: notificationType,
+    title,
+    message: body,
+    data: eventData ? { event: eventData } : undefined,
+    timestamp: new Date().toISOString(),
+  }
+
+  const sent = emitToUser(userId, "notification", payload)
+
+  if (sent) {
+    logger.debug(`[NotificationDispatcher] Push notification sent to user ${userId}`)
+    return { success: true }
+  }
+
+  return { success: false, error: "Failed to emit notification" }
 }
 
 type DispatchContent = {
   email: { subject: string; html: string; text: string }
   telegram: string
-  push: { title: string; body: string }
+  push: {
+    title: string
+    body: string
+    notificationType: NotificationPayload["type"]
+    eventData?: EventNotificationData
+  }
 }
 
 async function sendToEmail(
@@ -307,10 +343,16 @@ async function sendToTelegram(
 
 function sendToPush(
   userId: string,
-  content: { title: string; body: string },
+  content: DispatchContent["push"],
   result: NotificationResult
 ): void {
-  const sendResult = sendPush(userId, content.title, content.body)
+  const sendResult = sendPush({
+    userId,
+    notificationType: content.notificationType,
+    title: content.title,
+    body: content.body,
+    eventData: content.eventData,
+  })
   if (sendResult.success) {
     result.channelsSucceeded.push("push")
   } else {
@@ -380,6 +422,8 @@ export async function dispatchEventConfirmation(
       push: {
         title: action === "created" ? "Event Created" : "Event Updated",
         body: event.summary,
+        notificationType: action === "created" ? "event_created" : "event_updated",
+        eventData: event,
       },
     }
 
@@ -442,6 +486,8 @@ export async function dispatchConflictAlert(
       push: {
         title: "Scheduling Conflict",
         body: `${event.summary} conflicts with ${conflicts.length} event(s)`,
+        notificationType: "conflict_alert",
+        eventData: event,
       },
     }
 

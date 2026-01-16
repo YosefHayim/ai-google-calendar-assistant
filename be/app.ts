@@ -1,4 +1,11 @@
+import { createServer } from "node:http"
 import { ROUTES, STATUS_RESPONSE, env } from "@/config";
+import {
+  getActiveConnectionCount,
+  getConnectedUserCount,
+  initSocketServer,
+  shutdownSocketServer,
+} from "@/config/clients/socket-server"
 import { initializeJobScheduler, shutdownJobScheduler } from "@/jobs";
 
 import aclRoute from "@/routes/google-calendar/acl-route";
@@ -95,8 +102,12 @@ app.get("/health", (_req, res) => {
     status: "ok",
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
-  });
-});
+    sockets: {
+      connectedUsers: getConnectedUserCount(),
+      activeConnections: getActiveConnectionCount(),
+    },
+  })
+})
 
 app.use(ROUTES.USERS, usersRoute);
 app.use(ROUTES.CALENDAR_LIST, calendarListRoute);
@@ -131,13 +142,17 @@ app.use((_req, res, _next) => {
 
 app.use(errorHandler);
 
-app.listen(PORT, (error?: Error) => {
-  if (error) {
-    logger.error("Error starting server:", error);
-    console.error("Error starting server:", error);
-    throw error;
-  }
+const httpServer = createServer(app);
+initSocketServer(httpServer);
+
+httpServer.listen(PORT, () => {
   console.log(`Server successfully started on port ${PORT}`);
+});
+
+httpServer.on("error", (error: Error) => {
+  logger.error("Error starting server:", error);
+  console.error("Error starting server:", error);
+  throw error;
 });
 
 startTelegramBot();
@@ -148,13 +163,15 @@ initializeJobScheduler().catch((err) => {
 });
 
 process.on("SIGTERM", async () => {
-  logger.info("SIGTERM received, shutting down gracefully...");
-  await shutdownJobScheduler();
-  process.exit(0);
-});
+  logger.info("SIGTERM received, shutting down gracefully...")
+  await shutdownSocketServer()
+  await shutdownJobScheduler()
+  process.exit(0)
+})
 
 process.on("SIGINT", async () => {
-  logger.info("SIGINT received, shutting down gracefully...");
-  await shutdownJobScheduler();
-  process.exit(0);
-});
+  logger.info("SIGINT received, shutting down gracefully...")
+  await shutdownSocketServer()
+  await shutdownJobScheduler()
+  process.exit(0)
+})

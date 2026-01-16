@@ -3,7 +3,7 @@
 import React from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { BadgeCheck, Bell, CreditCard, LogOut, MoreHorizontal, Settings, Sparkles } from 'lucide-react'
+import { BadgeCheck, CreditCard, LogOut, MoreHorizontal, Settings, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -15,6 +15,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import UserProfileCard from '@/components/dashboard/shared/UserProfileCard'
+import { NotificationInbox } from '@/components/dashboard/notifications'
 import { getUserDisplayInfo, type UserData } from '@/lib/user-utils'
 
 interface SidebarFooterProps {
@@ -45,6 +46,9 @@ export const SidebarFooter: React.FC<SidebarFooterProps> = ({
         <div className="flex-1 min-w-0">
           <UserProfileCard isOpen={isOpen} />
         </div>
+        {isOpen && (
+          <NotificationInbox triggerClassName="text-zinc-500 dark:text-zinc-400 flex-shrink-0 min-w-[44px] min-h-[44px] md:min-w-0 md:min-h-0" />
+        )}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
@@ -105,9 +109,15 @@ export const SidebarFooter: React.FC<SidebarFooterProps> = ({
                 <CreditCard className="w-4 h-4" />
                 <span>Billing</span>
               </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer">
-                <Bell className="w-4 h-4" />
-                <span>Notifications</span>
+              <DropdownMenuItem
+                className="cursor-pointer"
+                onClick={() => {
+                  onOpenSettings()
+                  onClose()
+                }}
+              >
+                <Settings className="w-4 h-4" />
+                <span>Notification Settings</span>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />

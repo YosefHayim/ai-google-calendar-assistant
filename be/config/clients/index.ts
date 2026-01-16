@@ -15,4 +15,14 @@ export {
   shutdownPostHog,
 } from "./posthog";
 export { disconnectRedis, isRedisConnected, redisClient } from "./redis";
+export {
+  emitToUser,
+  getActiveConnectionCount,
+  getConnectedUserCount,
+  getSocketServer,
+  initSocketServer,
+  isUserConnected,
+  type NotificationPayload,
+  shutdownSocketServer,
+} from "./socket-server";
 export { SUPABASE } from "./supabase";

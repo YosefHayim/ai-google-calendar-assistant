@@ -3,10 +3,12 @@
 import { AuthProvider } from '@/contexts/AuthContext'
 import { ENV } from '@/lib/constants'
 import { LanguageProvider } from '@/contexts/LanguageContext'
+import { NotificationProvider } from '@/contexts/NotificationContext'
 import { PostHogProvider } from '@/contexts/PostHogContext'
 import { PostHogPageview } from '@/components/shared/PostHogPageview'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { SocketProvider } from '@/contexts/SocketContext'
 import { ThemeProvider } from 'next-themes'
 import { Toaster } from 'sonner'
 import { createQueryClient } from '@/lib/query'
@@ -27,7 +29,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
           disableTransitionOnChange={false}
         >
           <LanguageProvider>
-            <AuthProvider>{children}</AuthProvider>
+            <AuthProvider>
+              <SocketProvider>
+                <NotificationProvider>{children}</NotificationProvider>
+              </SocketProvider>
+            </AuthProvider>
           </LanguageProvider>
           <Toaster
             position="bottom-center"
