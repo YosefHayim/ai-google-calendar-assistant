@@ -1036,6 +1036,21 @@ export const getLemonSqueezyVariants = async (productId: string): Promise<LemonS
  * Fetch all products with their variants from Lemon Squeezy
  */
 export const getLemonSqueezyProductsWithVariants = async (): Promise<ProductWithVariants[]> => {
+  const storeId = env.lemonSqueezy.storeId || "default"
+  const cacheKey = `ls:products-with-variants:${storeId}`
+
+  if (isRedisConnected()) {
+    try {
+      const cached = await redisClient.get(cacheKey)
+      if (cached) {
+        logger.info("Returning cached Lemon Squeezy products with variants")
+        return JSON.parse(cached)
+      }
+    } catch (cacheError) {
+      logger.warn("Redis cache read error for LS products with variants", { error: cacheError })
+    }
+  }
+
   const products = await getLemonSqueezyProducts()
 
   const productsWithVariants = await Promise.all(
@@ -1044,6 +1059,15 @@ export const getLemonSqueezyProductsWithVariants = async (): Promise<ProductWith
       return { product, variants }
     })
   )
+
+  if (isRedisConnected()) {
+    try {
+      await redisClient.setex(cacheKey, LS_PRODUCTS_CACHE_TTL, JSON.stringify(productsWithVariants))
+      logger.info("Cached Lemon Squeezy products with variants", { count: productsWithVariants.length })
+    } catch (cacheError) {
+      logger.warn("Redis cache write error for LS products with variants", { error: cacheError })
+    }
+  }
 
   return productsWithVariants
 }
