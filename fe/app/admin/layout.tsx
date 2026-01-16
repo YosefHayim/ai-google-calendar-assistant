@@ -4,7 +4,7 @@ import React from 'react'
 import { useRouter } from 'next/navigation'
 import { AdminAppSidebar } from '@/components/admin/AdminAppSidebar'
 import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar'
-import { RefreshCw } from 'lucide-react'
+import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { useDashboardStats } from '@/hooks/queries/admin/useDashboardStats'
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -27,7 +27,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   if (isLoading) {
     return (
       <div className="flex h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-950">
-        <RefreshCw className="w-8 h-8 animate-spin text-primary" />
+        <LoadingSpinner size="lg" />
       </div>
     )
   }

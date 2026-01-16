@@ -13,6 +13,7 @@ import {
   Users2,
 } from 'lucide-react'
 import { useState } from 'react'
+import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -165,8 +166,8 @@ export default function AdminAffiliatesPage() {
 
       <Card>
         {isLoading ? (
-          <div className="p-8 text-center">
-            <RefreshCw className="mx-auto h-8 w-8 animate-spin text-primary" />
+          <div className="p-8 flex justify-center">
+            <LoadingSpinner size="lg" />
           </div>
         ) : (
           <>

@@ -19,7 +19,8 @@ import {
   getBlogPostsByCategory,
   type BlogCategory,
 } from '@/lib/data/blog-posts'
-import { BookOpen, ArrowRight, Calendar, Clock, User, Mail, Sparkles, Loader2 } from 'lucide-react'
+import { BookOpen, ArrowRight, Calendar, Clock, User, Mail, Sparkles } from 'lucide-react'
+import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { formatBlogDate } from '@/lib/formatUtils'
 import { newsletterService } from '@/services/newsletter.service'
 import { toast } from 'sonner'
@@ -119,7 +120,7 @@ export default function BlogPage() {
 
           {postsLoading && (
             <div className="flex justify-center py-12">
-              <Loader2 className="w-8 h-8 animate-spin text-primary" />
+              <LoadingSpinner size="lg" />
             </div>
           )}
 

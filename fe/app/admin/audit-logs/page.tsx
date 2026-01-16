@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Search, RefreshCw, ChevronLeft, ChevronRight, FileText, User, Calendar } from 'lucide-react'
+import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { useAdminAuditLogs } from '@/hooks/queries/admin'
 import { format } from 'date-fns'
 
@@ -78,8 +79,8 @@ export default function AdminAuditLogsPage() {
       {/* Audit Logs List */}
       <Card>
         {isLoading ? (
-          <div className="p-8 text-center">
-            <RefreshCw className="w-8 h-8 animate-spin mx-auto text-primary" />
+          <div className="p-8 flex justify-center">
+            <LoadingSpinner size="lg" />
           </div>
         ) : (
           <>

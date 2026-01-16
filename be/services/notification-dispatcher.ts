@@ -1,3 +1,4 @@
+import { render } from "@react-email/components"
 import { Resend } from "resend"
 import {
   emitToUser,
@@ -6,6 +7,7 @@ import {
   type NotificationPayload,
   SUPABASE,
 } from "@/config"
+import { WelcomeEmail } from "@/emails/WelcomeEmail"
 import { getBot } from "@/telegram-bot/init-bot"
 import {
   getNotificationSettingsPreference,
@@ -395,20 +397,133 @@ export async function dispatchEventConfirmation(
     const userId = await userRepository.findUserIdByEmail(userEmail)
     if (!userId) {
       logger.warn(`[NotificationDispatcher] User not found for email: ${userEmail}`)
-      return result
-    }
+  return result
+}
 
     const settings = await getNotificationSettingsPreference(userId)
     const channels =
-      settings?.eventConfirmations ??
-      (PREFERENCE_DEFAULTS.notification_settings as NotificationSettingsPreference)
-        .eventConfirmations
+      settings?.conflictAlerts ??
+      (PREFERENCE_DEFAULTS.notification_settings as NotificationSettingsPreference).conflictAlerts
 
     if (channels.length === 0) {
-      logger.debug("[NotificationDispatcher] No channels configured for eventConfirmations")
+      logger.debug("[NotificationDispatcher] No channels configured for conflictAlerts")
       result.success = true
       return result
     }
+
+    const identifiers = await getChannelIdentifiers(userId)
+    if (!identifiers) {
+      result.errors.push({ channel: "email", error: "Failed to fetch user identifiers" })
+      return result
+    }
+
+    const content: DispatchContent = {
+      email: formatConflictAlertEmail(event, conflicts),
+      telegram: formatConflictAlertTelegram(event, conflicts),
+      push: {
+        title: "Scheduling Conflict",
+        body: `${event.summary} conflicts with ${conflicts.length} event(s)`,
+        notificationType: "conflict_alert",
+        eventData: event,
+      },
+    }
+
+    await dispatchToChannels(channels, identifiers, content, result)
+
+    result.success = result.channelsSucceeded.length > 0 || channels.length === 0
+    logger.info(
+      `[NotificationDispatcher] Conflict alert dispatched: ${result.channelsSucceeded.length}/${result.channelsAttempted.length} channels succeeded`
+    )
+  } catch (error) {
+    logger.error("[NotificationDispatcher] dispatchConflictAlert error:", error)
+    result.errors.push({
+      channel: "email",
+      error: error instanceof Error ? error.message : "Unknown error",
+    })
+  }
+
+  return result
+}
+
+export async function sendWelcomeEmail(
+  email: string,
+  userName: string
+): Promise<{ success: boolean; error?: string }> {
+  if (!env.resend.isEnabled) {
+    logger.debug("[NotificationDispatcher] Email service not configured, skipping welcome email")
+    return { success: false, error: "Email service not configured" }
+  }
+
+  try {
+    const dashboardUrl = `${env.urls.frontend}/dashboard`
+    const docsUrl = `${env.urls.frontend}/docs`
+    const supportUrl = `${env.urls.frontend}/support`
+
+    const html = await render(
+      WelcomeEmail({
+        userName,
+        dashboardUrl,
+        docsUrl,
+        supportUrl,
+      })
+    )
+
+    const { error } = await resend.emails.send({
+      from: env.resend.fromEmail,
+      to: email,
+      subject: "Welcome to Ally - Your AI Calendar Assistant is Ready!",
+      html,
+    })
+
+    if (error) {
+      logger.error(`[NotificationDispatcher] Welcome email failed for ${email}:`, error)
+      return { success: false, error: error.message }
+    }
+
+    logger.info(`[NotificationDispatcher] Welcome email sent to ${email}`)
+    return { success: true }
+  } catch (error) {
+    const errMsg = error instanceof Error ? error.message : "Unknown error"
+    logger.error(`[NotificationDispatcher] Welcome email error for ${email}:`, error)
+    return { success: false, error: errMsg }
+  }
+}
+
+  try {
+    const dashboardUrl = `${env.urls.frontend}/dashboard`
+    const docsUrl = `${env.urls.frontend}/docs`
+    const supportUrl = `${env.urls.frontend}/support`
+
+    const html = await render(
+      WelcomeEmail({
+        userName,
+        dashboardUrl,
+        docsUrl,
+        supportUrl,
+      })
+    )
+
+    const { error } = await resend.emails.send({
+      from: env.resend.fromEmail,
+      to: email,
+      subject: "Welcome to Ally - Your AI Calendar Assistant is Ready!",
+      html,
+    })
+
+    if (error) {
+      logger.error(`[NotificationDispatcher] Welcome email failed for ${email}:`, error)
+      return { success: false, error: error.message }
+    }
+
+    logger.info(`[NotificationDispatcher] Welcome email sent to ${email}`)
+    return { success: true }
+  } catch (error) {
+    const errMsg = error instanceof Error ? error.message : "Unknown error"
+    logger.error(`[NotificationDispatcher] Welcome email error for ${email}:`, error)
+    return { success: false, error: errMsg }
+  }
+}
+
 
     const identifiers = await getChannelIdentifiers(userId)
     if (!identifiers) {

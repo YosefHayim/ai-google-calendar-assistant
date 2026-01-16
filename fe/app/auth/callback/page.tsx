@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { useTranslation } from 'react-i18next'
 
 import { AllyLogo } from '@/components/shared/logo'
+import { LoadingSpinner } from '@/components/ui/loading-spinner'
 
 const ACCESS_TOKEN_HEADER = 'access_token'
 const REFRESH_TOKEN_HEADER = 'refresh_token'
@@ -72,10 +73,7 @@ function CallbackContent() {
             <p className="text-zinc-500 text-sm mt-2">{t('callback.redirectingToLogin')}</p>
           </div>
         ) : (
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-zinc-900 dark:border-white mx-auto mb-4"></div>
-            <p className="text-zinc-600 dark:text-zinc-400 font-medium">{t('callback.completingSignIn')}</p>
-          </div>
+          <LoadingSpinner size="lg" text={t('callback.completingSignIn')} />
         )}
       </div>
     </div>
@@ -91,10 +89,7 @@ function CallbackFallback() {
         <div className="w-16 h-16 bg-zinc-900 dark:bg-white rounded-xl flex items-center justify-center shadow-lg">
           <AllyLogo className="w-8 h-8 text-white dark:text-zinc-900" />
         </div>
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-zinc-900 dark:border-white mx-auto mb-4"></div>
-          <p className="text-zinc-600 dark:text-zinc-400 font-medium">{t('callback.loading')}</p>
-        </div>
+        <LoadingSpinner size="lg" text={t('callback.loading')} />
       </div>
     </div>
   )

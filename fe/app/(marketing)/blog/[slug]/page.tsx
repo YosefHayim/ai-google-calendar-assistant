@@ -23,8 +23,8 @@ import {
   BookOpen,
   ArrowRight,
   Check,
-  Loader2,
 } from 'lucide-react'
+import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { formatBlogDate } from '@/lib/formatUtils'
 import { useState } from 'react'
 
@@ -99,7 +99,7 @@ export default function BlogPostPage() {
     return (
       <MarketingLayout>
         <div className="flex justify-center items-center min-h-[60vh]">
-          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          <LoadingSpinner size="lg" />
         </div>
       </MarketingLayout>
     )

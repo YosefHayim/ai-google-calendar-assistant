@@ -21,6 +21,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { Flag, Pencil, Plus, RefreshCw, Search, Trash2 } from 'lucide-react'
+import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import {
   useCreateFeatureFlag,
   useDeleteFeatureFlag,
@@ -117,8 +118,8 @@ export default function AdminFeatureFlagsPage() {
 
       <Card>
         {isLoading ? (
-          <div className="p-8 text-center">
-            <RefreshCw className="w-8 h-8 animate-spin mx-auto text-primary" />
+          <div className="p-8 flex justify-center">
+            <LoadingSpinner size="lg" />
           </div>
         ) : (
           <div className="overflow-x-auto">

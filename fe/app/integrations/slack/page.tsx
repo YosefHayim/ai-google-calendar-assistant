@@ -2,7 +2,8 @@
 
 import { useSearchParams, useRouter } from 'next/navigation'
 import { useEffect, useState, Suspense } from 'react'
-import { CheckCircle2, XCircle, Loader2 } from 'lucide-react'
+import { CheckCircle2, XCircle } from 'lucide-react'
+import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { Button } from '@/components/ui/button'
 import { FaSlack } from 'react-icons/fa'
 
@@ -54,10 +55,7 @@ function SlackCallbackContent() {
   if (status === 'loading') {
     return (
       <div className="min-h-screen flex items-center justify-center bg-zinc-50 dark:bg-zinc-950">
-        <div className="text-center">
-          <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto mb-4" />
-          <p className="text-zinc-500">Processing Slack connection...</p>
-        </div>
+        <LoadingSpinner size="lg" text="Processing Slack connection..." />
       </div>
     )
   }
@@ -116,10 +114,7 @@ function SlackCallbackContent() {
 function SlackCallbackLoading() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-zinc-50 dark:bg-zinc-950">
-      <div className="text-center">
-        <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto mb-4" />
-        <p className="text-zinc-500">Loading...</p>
-      </div>
+      <LoadingSpinner size="lg" text="Loading..." />
     </div>
   )
 }
