@@ -61,7 +61,15 @@ function DataDeletionContent() {
 
             {error && (
               <div className="bg-red-50 dark:bg-red-900/20 rounded-xl p-4 border border-red-200 dark:border-red-800 mb-8">
-                <p className="text-sm text-red-600 dark:text-red-400">{decodeURIComponent(error)}</p>
+                <p className="text-sm text-red-600 dark:text-red-400">
+                  {(() => {
+                    try {
+                      return decodeURIComponent(error)
+                    } catch {
+                      return error
+                    }
+                  })()}
+                </p>
               </div>
             )}
           </>

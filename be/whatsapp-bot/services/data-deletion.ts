@@ -4,7 +4,7 @@
  * @see https://developers.facebook.com/docs/development/create-an-app/app-dashboard/data-deletion-callback
  */
 
-import crypto from "crypto"
+import crypto from "node:crypto"
 import { env } from "@/config"
 import { SUPABASE } from "@/config/clients/supabase"
 import { logger } from "@/utils/logger"
@@ -116,10 +116,15 @@ export const deleteWhatsAppUserData = async (
   )
 
   try {
-    const { data: waUsers } = await SUPABASE.from("whatsapp_users")
+    const { data: waUsers, error: selectError } = await SUPABASE.from("whatsapp_users")
       .select("id, whatsapp_phone, user_id")
       .or(`meta_user_id.eq.${metaUserId}`)
       .limit(10)
+
+    if (selectError) {
+      logger.error(`WhatsApp: Failed to query whatsapp_users: ${selectError.message}`)
+      throw new Error(`Database query failed: ${selectError.message}`)
+    }
 
     if (waUsers && waUsers.length > 0) {
       for (const waUser of waUsers) {
@@ -127,7 +132,11 @@ export const deleteWhatsAppUserData = async (
           .delete()
           .eq("id", waUser.id)
 
-        if (!deleteError) {
+        if (deleteError) {
+          logger.error(
+            `WhatsApp: Failed to delete whatsapp_users record for id ${waUser.id}: ${deleteError.message}`
+          )
+        } else {
           result.whatsappUser = true
           logger.info(
             `WhatsApp: Deleted whatsapp_users record for phone ${waUser.whatsapp_phone}`

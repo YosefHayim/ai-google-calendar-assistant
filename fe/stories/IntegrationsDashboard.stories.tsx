@@ -39,7 +39,7 @@ export const Default: Story = {
 export const DarkMode: Story = {
   decorators: [
     (Story) => (
-      <div className="dark min-h-screen bg-zinc-950 p-8">
+      <div className="dark min-h-screen bg-zinc-950">
         <Story />
       </div>
     ),

@@ -99,7 +99,7 @@ export const AnalyticsStep: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Highlights the Analytics section where users can track their productivity.',
+        story: 'Shows the onboarding tour starting from the Welcome step. Click Next to navigate to the Analytics step.',
       },
     },
   },
@@ -185,7 +185,7 @@ export const LastStep: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'The final step of the tour showing the Settings highlight. The "Next" button changes to "Start Audit" to complete the onboarding.',
+        story: 'Shows the onboarding tour starting from the Welcome step. Navigate through all steps to reach the final Settings step where the button changes to "Start Audit".',
       },
     },
   },
