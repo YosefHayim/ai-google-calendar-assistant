@@ -14,7 +14,7 @@ interface ViewSwitcherProps {
 
 export const ViewSwitcher: React.FC<ViewSwitcherProps> = ({ activeTab, onTabChange }) => {
   return (
-    <div className="absolute top-4 left-1/2 -translate-x-1/2 ml-4 z-30 flex flex-nowrap justify-center bg-white/80 dark:bg-zinc-800/80 backdrop-blur-md p-0.5 rounded-md shadow-lg border border-zinc-200 dark:border-zinc-700">
+    <div className="md:absolute md:top-4 md:left-1/2 md:-translate-x-1/2 md:ml-4 z-30 flex flex-nowrap justify-center bg-white/80 dark:bg-zinc-800/80 backdrop-blur-md p-0.5 rounded-md shadow-lg border border-zinc-200 dark:border-zinc-700">
       <Button
         variant="ghost"
         size="sm"

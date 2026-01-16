@@ -32,7 +32,7 @@ function DashboardLayoutContent({ children }: { children?: React.ReactNode }) {
         <AppSidebar onOpenSettings={openSettings} onSignOut={handleSignOut} />
 
         <SidebarInset className="flex-1 flex flex-col">
-          <header className="flex h-14 items-center gap-2 border-b border-zinc-200 dark:border-zinc-800 px-4 md:hidden">
+          <header className="sticky top-0 flex h-14 items-center gap-2 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 px-4 md:hidden z-40">
             <SidebarTrigger className="-ml-1" />
           </header>
           <main className="flex-1 flex flex-col overflow-hidden">{children}</main>
