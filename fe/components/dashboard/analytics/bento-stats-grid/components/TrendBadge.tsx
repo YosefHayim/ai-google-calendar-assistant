@@ -9,6 +9,7 @@ interface TrendBadgeProps {
 }
 
 export function TrendBadge({ direction, percentage }: TrendBadgeProps) {
-  const value = direction === 'up' ? percentage : direction === 'down' ? -percentage : 0
+  const absPercentage = Math.abs(percentage)
+  const value = direction === 'up' ? absPercentage : direction === 'down' ? -absPercentage : 0
   return <TrendText value={Number(value.toFixed(1))} />
 }

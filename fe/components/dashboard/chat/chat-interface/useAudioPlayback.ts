@@ -17,14 +17,15 @@ export function useAudioPlayback(options: AudioPlaybackOptions = {}) {
 
   const audioContextRef = useRef<AudioContext | null>(null)
   const audioSourceRef = useRef<AudioBufferSourceNode | null>(null)
+  const isProcessingRef = useRef(false)
 
   useEffect(() => {
     return () => {
       if (audioSourceRef.current) {
         try {
           audioSourceRef.current.stop()
-        } catch {
-          // Already stopped
+        } catch (_) {
+          // AudioBufferSourceNode.stop() throws if already stopped - this is expected behavior
         }
       }
       if (audioContextRef.current) {
@@ -50,11 +51,17 @@ export function useAudioPlayback(options: AudioPlaybackOptions = {}) {
     async (text: string, messageId?: string) => {
       if (messageId && speakingMessageId === messageId && isSpeaking) {
         stopSpeaking()
+        isProcessingRef.current = false
         toast.info('Audio stopped')
         return
       }
 
+      if (isProcessingRef.current) {
+        return
+      }
+
       stopSpeaking()
+      isProcessingRef.current = true
 
       try {
         if (!audioContextRef.current) {
@@ -81,6 +88,7 @@ export function useAudioPlayback(options: AudioPlaybackOptions = {}) {
           setIsSpeaking(false)
           setSpeakingMessageId(null)
           audioSourceRef.current = null
+          isProcessingRef.current = false
         }
         source.start()
       } catch (error) {
@@ -89,6 +97,7 @@ export function useAudioPlayback(options: AudioPlaybackOptions = {}) {
         setIsSpeaking(false)
         setSpeakingMessageId(null)
         audioSourceRef.current = null
+        isProcessingRef.current = false
       }
     },
     [isSpeaking, speakingMessageId, stopSpeaking, options.voice, options.playbackSpeed]
