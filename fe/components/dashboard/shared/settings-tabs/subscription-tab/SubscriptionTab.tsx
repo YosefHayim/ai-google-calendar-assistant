@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import { Info } from 'lucide-react'
 import { LoadingSection } from '@/components/ui/loading-spinner'
 import { Tab } from '@/components/ui/pricing-tab'
 import {
@@ -154,6 +155,15 @@ export const SubscriptionTab: React.FC = () => {
           ))}
         </div>
       </div>
+
+      {isTrialing && !isPerUse && (
+        <div className="flex items-start gap-3 p-3 rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800">
+          <Info className="h-4 w-4 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
+          <p className="text-amber-800 dark:text-amber-200 text-sm">
+            Select a plan to continue after your trial. You won't be charged until your trial ends.
+          </p>
+        </div>
+      )}
 
       <div className="space-y-2">
         {displayPlans?.map((plan) => (

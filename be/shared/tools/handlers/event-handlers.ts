@@ -1,6 +1,10 @@
 import type { calendar_v3 } from "googleapis";
 import isEmail from "validator/lib/isEmail";
 import { ACTION } from "@/config";
+import {
+  dispatchEventConfirmation,
+  type EventNotificationData,
+} from "@/services/notification-dispatcher";
 import type { HandlerContext } from "@/shared/types";
 import { fetchCredentialsByEmail } from "@/utils/auth";
 import {
@@ -8,6 +12,7 @@ import {
   initUserSupabaseCalendarWithTokensAndUpdateTokens,
 } from "@/utils/calendar";
 import { getEvents } from "@/utils/calendar/get-events";
+import { logger } from "@/utils/logger";
 import type {
   DeleteEventParams,
   EventTime,
@@ -259,13 +264,34 @@ export async function insertEventHandler(
     email
   );
   const eventData = formatEventData(eventWithTimezone);
+  const calendarId = params.calendarId ?? "primary";
 
-  return eventsHandler(null, ACTION.INSERT, eventData, {
+  const result = await eventsHandler(null, ACTION.INSERT, eventData, {
     email,
-    calendarId: params.calendarId ?? "primary",
+    calendarId,
     customEvents: false,
     addMeetLink: params.addMeetLink ?? false,
   });
+
+  const createdEvent = result as calendar_v3.Schema$Event;
+  if (createdEvent?.id) {
+    const notificationData: EventNotificationData = {
+      summary: createdEvent.summary || params.summary,
+      start: createdEvent.start?.dateTime || createdEvent.start?.date || "",
+      end: createdEvent.end?.dateTime || createdEvent.end?.date || "",
+      location: createdEvent.location || undefined,
+      calendarId,
+      htmlLink: createdEvent.htmlLink || undefined,
+    };
+
+    dispatchEventConfirmation(email, notificationData, "created").catch(
+      (err) => {
+        logger.error("[insertEventHandler] Notification dispatch failed:", err);
+      }
+    );
+  }
+
+  return result;
 }
 
 export async function updateEventHandler(
@@ -318,12 +344,34 @@ export async function updateEventHandler(
     updateData.end = endWithTz.end;
   }
 
-  return eventsHandler(null, ACTION.PATCH, updateData as Event, {
+  const calendarId = params.calendarId ?? "primary";
+
+  const result = await eventsHandler(null, ACTION.PATCH, updateData as Event, {
     email,
-    calendarId: params.calendarId ?? "primary",
+    calendarId,
     eventId: params.eventId,
     addMeetLink: params.addMeetLink ?? false,
   });
+
+  const updatedEvent = result as calendar_v3.Schema$Event;
+  if (updatedEvent?.id) {
+    const notificationData: EventNotificationData = {
+      summary: updatedEvent.summary || params.summary || "Event",
+      start: updatedEvent.start?.dateTime || updatedEvent.start?.date || "",
+      end: updatedEvent.end?.dateTime || updatedEvent.end?.date || "",
+      location: updatedEvent.location || undefined,
+      calendarId,
+      htmlLink: updatedEvent.htmlLink || undefined,
+    };
+
+    dispatchEventConfirmation(email, notificationData, "updated").catch(
+      (err) => {
+        logger.error("[updateEventHandler] Notification dispatch failed:", err);
+      }
+    );
+  }
+
+  return result;
 }
 
 export async function deleteEventHandler(

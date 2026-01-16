@@ -1,7 +1,7 @@
 'use client'
 
 import { AnimatePresence, motion } from 'framer-motion'
-import { Check, MessageCircle, MessageSquare, X } from 'lucide-react'
+import { Check, MessageSquare, X } from 'lucide-react'
 import React, { useEffect, useRef, useState } from 'react'
 
 import { AssistantAvatar } from './AssistantAvatar'
@@ -95,7 +95,7 @@ export const AvatarView: React.FC<AvatarViewProps> = ({
             className="hidden md:flex flex-col w-1/2 h-[70%] items-center justify-center"
           >
             <EmptyState
-              icon={<MessageCircle />}
+              icon={<MessageSquare />}
               title="Start a conversation"
               description="Speak or type to interact with Ally and manage your calendar."
               size="lg"

@@ -62,6 +62,8 @@ export {
   useUpdateCrossPlatformSync,
   useGeoLocation,
   useUpdateGeoLocation,
+  useNotificationSettings,
+  useUpdateNotificationSettings,
 } from './preferences'
 
 // Billing hooks

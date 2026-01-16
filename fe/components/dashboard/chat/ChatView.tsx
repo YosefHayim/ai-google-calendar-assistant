@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { AlertCircle, MessageCircle } from 'lucide-react'
+import { AlertCircle, MessageSquare } from 'lucide-react'
 import { EmptyState } from '@/components/ui/empty-state'
 import { Message } from '@/types'
 import { MessageActions } from './MessageActions'
@@ -46,7 +46,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
       {isEmpty ? (
         <div className="flex items-center justify-center h-full min-h-[300px]">
           <EmptyState
-            icon={<MessageCircle />}
+            icon={<MessageSquare />}
             title="Start a conversation"
             description="Ask Ally to help manage your calendar, schedule events, or find free time."
             size="lg"

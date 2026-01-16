@@ -8,6 +8,7 @@ export enum STATUS_RESPONSE {
   NOT_FOUND = 404,
   CONFLICT = 409,
   TOO_MANY_REQUESTS = 429,
+  PAYMENT_REQUIRED = 402,
   INTERNAL_SERVER_ERROR = 500,
   SERVICE_UNAVAILABLE = 503,
 }
@@ -34,6 +35,11 @@ export enum ROUTES {
   SLACK = "/api/slack",
   RISC = "/api/google/risc",
   SHARED = "/api/shared",
+  NEWSLETTER = "/api/newsletter",
+  WAITING_LIST = "/api/waitinglist",
+  REFERRAL = "/api/referral",
+  TEAMS = "/api/teams",
+  BLOG = "/api/blog",
 }
 
 export enum PROVIDERS {

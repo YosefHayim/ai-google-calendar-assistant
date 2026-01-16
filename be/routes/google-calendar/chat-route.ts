@@ -11,6 +11,7 @@ import {
   aiChatRateLimiter,
 } from "@/middlewares/rate-limiter";
 import { supabaseAuth } from "@/middlewares/supabase-auth";
+import { subscriptionGuard } from "@/middlewares/subscription-guard";
 import { sendR } from "@/utils";
 import { logger } from "@/utils/logger";
 
@@ -19,6 +20,7 @@ const router = Router();
 const authOnly = supabaseAuth();
 const withGoogleAuth = [
   supabaseAuth(),
+  subscriptionGuard(),
   googleTokenValidation,
   googleTokenRefresh(),
 ];
