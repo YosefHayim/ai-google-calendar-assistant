@@ -65,12 +65,12 @@ export function EventDialog({
     setActionResult(null)
   }, [])
 
-  const handleOpenChange = (newOpen: boolean) => {
+  const handleOpenChange = useCallback((newOpen: boolean) => {
     onOpenChange(newOpen)
     if (!newOpen) {
       resetAllyState()
     }
-  }
+  }, [onOpenChange, resetAllyState])
 
   const toggleTag = (tag: string) => {
     if (isCreating) {
@@ -88,77 +88,83 @@ export function EventDialog({
     setAllyResponse('')
     setActionResult(null)
 
-    await new Promise((resolve) => setTimeout(resolve, 800))
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 800))
 
-    const promptLower = allyPrompt.toLowerCase()
+      const promptLower = allyPrompt.toLowerCase()
 
-    if (promptLower.includes('delete') || promptLower.includes('remove') || promptLower.includes('cancel')) {
-      setAllyResponse("I'll delete this event for you.")
-      await new Promise((resolve) => setTimeout(resolve, 500))
-      onDeleteEvent(selectedEvent.id)
-      setActionResult({ type: 'deleted', message: 'Event deleted successfully' })
-      setTimeout(() => {
-        handleOpenChange(false)
-      }, 1500)
-    } else if (
-      promptLower.includes('change') ||
-      promptLower.includes('update') ||
-      promptLower.includes('move') ||
-      promptLower.includes('reschedule') ||
-      promptLower.includes('rename') ||
-      promptLower.includes('set')
-    ) {
-      let updatedEvent = { ...selectedEvent }
-      let changeDescription = ''
-
-      const titleMatch = promptLower.match(/(?:title|name|rename|call it)\s+(?:to\s+)?["']?([^"']+)["']?/i)
-      if (titleMatch) {
-        updatedEvent.title = titleMatch[1].trim()
-        changeDescription = `Updated title to "${updatedEvent.title}"`
-      }
-
-      const timeMatch = promptLower.match(/(?:to|at)\s+(\d{1,2})(?::(\d{2}))?\s*(am|pm)?/i)
-      if (timeMatch) {
-        let hours = parseInt(timeMatch[1])
-        const minutes = timeMatch[2] ? parseInt(timeMatch[2]) : 0
-        const ampm = timeMatch[3]?.toLowerCase()
-
-        if (ampm === 'pm' && hours < 12) hours += 12
-        if (ampm === 'am' && hours === 12) hours = 0
-
-        const newStartTime = new Date(selectedEvent.startTime)
-        newStartTime.setHours(hours, minutes)
-        const duration = selectedEvent.endTime.getTime() - selectedEvent.startTime.getTime()
-        const newEndTime = new Date(newStartTime.getTime() + duration)
-
-        updatedEvent.startTime = newStartTime
-        updatedEvent.endTime = newEndTime
-        changeDescription = changeDescription
-          ? `${changeDescription} and rescheduled to ${formatDate(newStartTime, 'TIME_12H')}`
-          : `Rescheduled to ${formatDate(newStartTime, 'TIME_12H')}`
-      }
-
-      if (changeDescription) {
-        setAllyResponse(`Done! ${changeDescription}.`)
-        onUpdateEvent(selectedEvent.id, updatedEvent)
-        setActionResult({ type: 'updated', message: changeDescription })
+      if (promptLower.includes('delete') || promptLower.includes('remove') || promptLower.includes('cancel')) {
+        setAllyResponse("I'll delete this event for you.")
+        await new Promise((resolve) => setTimeout(resolve, 500))
+        onDeleteEvent(selectedEvent.id)
+        setActionResult({ type: 'deleted', message: 'Event deleted successfully' })
         setTimeout(() => {
           handleOpenChange(false)
         }, 1500)
+      } else if (
+        promptLower.includes('change') ||
+        promptLower.includes('update') ||
+        promptLower.includes('move') ||
+        promptLower.includes('reschedule') ||
+        promptLower.includes('rename') ||
+        promptLower.includes('set')
+      ) {
+        let updatedEvent = { ...selectedEvent }
+        let changeDescription = ''
+
+        const titleMatch = promptLower.match(/(?:title|name|rename|call it)\s+(?:to\s+)?["']?([^"']+)["']?/i)
+        if (titleMatch) {
+          updatedEvent.title = titleMatch[1].trim()
+          changeDescription = `Updated title to "${updatedEvent.title}"`
+        }
+
+        const timeMatch = promptLower.match(/(?:to|at)\s+(\d{1,2})(?::(\d{2}))?\s*(am|pm)?/i)
+        if (timeMatch) {
+          let hours = parseInt(timeMatch[1])
+          const minutes = timeMatch[2] ? parseInt(timeMatch[2]) : 0
+          const ampm = timeMatch[3]?.toLowerCase()
+
+          if (ampm === 'pm' && hours < 12) hours += 12
+          if (ampm === 'am' && hours === 12) hours = 0
+
+          const newStartTime = new Date(selectedEvent.startTime)
+          newStartTime.setHours(hours, minutes)
+          const duration = selectedEvent.endTime.getTime() - selectedEvent.startTime.getTime()
+          const newEndTime = new Date(newStartTime.getTime() + duration)
+
+          updatedEvent.startTime = newStartTime
+          updatedEvent.endTime = newEndTime
+          changeDescription = changeDescription
+            ? `${changeDescription} and rescheduled to ${formatDate(newStartTime, 'TIME_12H')}`
+            : `Rescheduled to ${formatDate(newStartTime, 'TIME_12H')}`
+        }
+
+        if (changeDescription) {
+          setAllyResponse(`Done! ${changeDescription}.`)
+          onUpdateEvent(selectedEvent.id, updatedEvent)
+          setActionResult({ type: 'updated', message: changeDescription })
+          setTimeout(() => {
+            handleOpenChange(false)
+          }, 1500)
+        } else {
+          setAllyResponse(
+            "I understand you want to make changes. Could you be more specific? For example:\n• \"Change the title to Weekly Standup\"\n• \"Move it to 3pm\"\n• \"Reschedule to tomorrow at 10am\""
+          )
+        }
       } else {
         setAllyResponse(
-          "I understand you want to make changes. Could you be more specific? For example:\n• \"Change the title to Weekly Standup\"\n• \"Move it to 3pm\"\n• \"Reschedule to tomorrow at 10am\""
+          "I can help you modify or delete this event. Try asking me to:\n• \"Change the title to...\"\n• \"Move it to 3pm\"\n• \"Delete this event\""
         )
       }
-    } else {
-      setAllyResponse(
-        "I can help you modify or delete this event. Try asking me to:\n• \"Change the title to...\"\n• \"Move it to 3pm\"\n• \"Delete this event\""
-      )
+    } catch (error) {
+      console.error('Error processing Ally request:', error)
+      setAllyResponse('Sorry, something went wrong. Please try again.')
+      setActionResult({ type: 'error', message: 'Failed to process request' })
+    } finally {
+      setIsProcessing(false)
+      setAllyPrompt('')
     }
-
-    setIsProcessing(false)
-    setAllyPrompt('')
-  }, [allyPrompt, selectedEvent, isProcessing, onDeleteEvent, onUpdateEvent])
+  }, [allyPrompt, selectedEvent, isProcessing, onDeleteEvent, onUpdateEvent, handleOpenChange])
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>

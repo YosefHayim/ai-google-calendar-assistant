@@ -1,4 +1,4 @@
-import { useRef, useCallback, useEffect } from 'react'
+import { useRef, useCallback, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { voiceService } from '@/services/voice.service'
 import type { TTSVoice, PlaybackSpeed } from '@/lib/validations/preferences'
@@ -19,8 +19,8 @@ export function useVoicePreview({
 }: UseVoicePreviewOptions): UseVoicePreviewReturn {
   const audioContextRef = useRef<AudioContext | null>(null)
   const sourceRef = useRef<AudioBufferSourceNode | null>(null)
-  const isPlayingRef = useRef(false)
-  const isLoadingRef = useRef(false)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   const stopPreview = useCallback(() => {
     if (sourceRef.current) {
@@ -31,16 +31,16 @@ export function useVoicePreview({
       }
       sourceRef.current = null
     }
-    isPlayingRef.current = false
+    setIsPlaying(false)
   }, [])
 
   const playPreview = useCallback(async (voice: TTSVoice, speed: PlaybackSpeed) => {
-    if (isPlayingRef.current) {
+    if (isPlaying) {
       stopPreview()
       return
     }
 
-    isLoadingRef.current = true
+    setIsLoading(true)
     try {
       if (!audioContextRef.current || audioContextRef.current.state === 'closed') {
         audioContextRef.current = new (
@@ -61,21 +61,21 @@ export function useVoicePreview({
       source.playbackRate.value = speed
       source.connect(audioContextRef.current.destination)
       source.onended = () => {
-        isPlayingRef.current = false
+        setIsPlaying(false)
         sourceRef.current = null
       }
 
       sourceRef.current = source
-      isPlayingRef.current = true
-      isLoadingRef.current = false
+      setIsPlaying(true)
+      setIsLoading(false)
       source.start()
     } catch (error) {
       console.error('Error playing voice preview:', error)
       toast.error('Failed to play voice preview')
-      isPlayingRef.current = false
-      isLoadingRef.current = false
+      setIsPlaying(false)
+      setIsLoading(false)
     }
-  }, [previewText, stopPreview])
+  }, [previewText, stopPreview, isPlaying])
 
   useEffect(() => {
     return () => {
@@ -87,8 +87,8 @@ export function useVoicePreview({
   }, [stopPreview])
 
   return {
-    isPlaying: isPlayingRef.current,
-    isLoading: isLoadingRef.current,
+    isPlaying,
+    isLoading,
     playPreview,
     stopPreview,
   }

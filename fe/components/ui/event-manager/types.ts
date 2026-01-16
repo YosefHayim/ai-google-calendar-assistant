@@ -42,7 +42,7 @@ export interface AvailableFilters {
 }
 
 export interface ActionResult {
-  type: 'updated' | 'deleted' | 'none'
+  type: 'updated' | 'deleted' | 'none' | 'error'
   message: string
 }
 
