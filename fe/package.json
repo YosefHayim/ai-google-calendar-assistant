@@ -105,6 +105,7 @@
     "@types/uuid": "^10.0.0",
     "@vitest/browser-playwright": "^4.0.17",
     "@vitest/coverage-v8": "^4.0.17",
+    "add-skill": "^1.0.11",
     "autoprefixer": "^10.4.19",
     "babel-plugin-react-compiler": "^19.1.0-rc.2",
     "eslint": "^9.28.0",
