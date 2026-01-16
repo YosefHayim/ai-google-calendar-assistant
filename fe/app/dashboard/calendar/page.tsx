@@ -354,7 +354,7 @@ function CalendarContent() {
               {eventsFetching ? 'Syncing...' : 'Sync'}
             </Button>
             <CalendarFilterSelect
-              calendars={calendarListEntries}
+              calendars={calendars}
               selectedCalendarIds={selectedCalendarIds}
               onSelectionChange={setSelectedCalendarIds}
               isLoading={calendarsLoading}
