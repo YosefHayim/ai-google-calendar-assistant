@@ -66,18 +66,55 @@ export const supabaseAuth = (options: SupabaseAuthOptions = {}) => {
       const validation = await validateSupabaseToken(accessToken);
 
       if (validation.user) {
-        const { data: dbUser } = await SUPABASE.from("users")
+        let { data: dbUser } = await SUPABASE.from("users")
           .select("id, status")
           .eq("id", validation.user.id)
           .single();
 
         if (!dbUser) {
-          return sendR(
-            res,
-            STATUS_RESPONSE.UNAUTHORIZED,
-            "User account not found. Please register again.",
-            { code: "USER_NOT_FOUND" }
-          );
+          const userMetadata = validation.user.user_metadata || {};
+          const email = validation.user.email?.toLowerCase().trim();
+
+          if (!email) {
+            return sendR(
+              res,
+              STATUS_RESPONSE.UNAUTHORIZED,
+              "User email not found. Please register again.",
+              { code: "USER_NOT_FOUND" }
+            );
+          }
+
+          const { data: createdUser, error: createError } = await SUPABASE.from(
+            "users"
+          )
+            .upsert(
+              {
+                id: validation.user.id,
+                email,
+                first_name: userMetadata.given_name || userMetadata.name?.split(" ")[0] || null,
+                last_name: userMetadata.family_name || userMetadata.name?.split(" ").slice(1).join(" ") || null,
+                avatar_url: userMetadata.avatar_url || userMetadata.picture || null,
+                display_name: userMetadata.full_name || userMetadata.name || null,
+                email_verified: validation.user.email_confirmed_at !== null,
+                status: "active" as const,
+                last_login_at: new Date().toISOString(),
+                updated_at: new Date().toISOString(),
+              },
+              { onConflict: "id" }
+            )
+            .select("id, status")
+            .single();
+
+          if (createError || !createdUser) {
+            return sendR(
+              res,
+              STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
+              "Failed to create user account.",
+              { code: "USER_CREATE_FAILED" }
+            );
+          }
+
+          dbUser = createdUser;
         }
 
         if (dbUser.status === "suspended" || dbUser.status === "inactive") {
