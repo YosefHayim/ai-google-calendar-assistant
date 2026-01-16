@@ -150,7 +150,7 @@ export const deleteWhatsAppUserData = async (
       result.whatsappUser = true
     }
 
-    await logDeletionRequest(metaUserId, confirmationCode, result)
+    logDeletionRequest(metaUserId, confirmationCode, result)
 
     return { result, confirmationCode }
   } catch (error) {
@@ -170,9 +170,25 @@ const logDeletionRequest = (
   )
 }
 
-export const buildConfirmationUrl = (confirmationCode: string): string => {
+export const buildConfirmationUrl = (
+  confirmationCode: string,
+  status: "success" | "error" = "success"
+): string => {
   const baseUrl = env.urls.frontend
-  return `${baseUrl}/data-deletion-status?code=${encodeURIComponent(confirmationCode)}`
+  const params = new URLSearchParams({
+    code: confirmationCode,
+    status,
+  })
+  return `${baseUrl}/data-deletion-status?${params.toString()}`
+}
+
+export const buildErrorUrl = (errorMessage: string): string => {
+  const baseUrl = env.urls.frontend
+  const params = new URLSearchParams({
+    status: "error",
+    error: errorMessage,
+  })
+  return `${baseUrl}/data-deletion-status?${params.toString()}`
 }
 
 /**

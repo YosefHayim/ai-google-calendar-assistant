@@ -4,8 +4,9 @@
  */
 
 import type { Request, Response } from "express"
-import { STATUS_RESPONSE } from "@/config"
+import { STATUS_RESPONSE, env } from "@/config"
 import { logger } from "@/utils/logger"
+import { Resend } from "resend"
 import { verifyWebhookSubscription } from "@/whatsapp-bot/services/webhook-security"
 import { handleIncomingMessage } from "@/whatsapp-bot/handlers/message-handler"
 import { isWhatsAppConfigured, getWhatsAppStatus } from "@/whatsapp-bot/init-whatsapp"
@@ -13,6 +14,7 @@ import {
   parseSignedRequest,
   deleteWhatsAppUserData,
   buildConfirmationUrl,
+  buildErrorUrl,
   formatMetaResponse,
 } from "@/whatsapp-bot/services/data-deletion"
 import type {
@@ -189,7 +191,7 @@ const handleDataDeletion = async (
 
   try {
     const { confirmationCode } = await deleteWhatsAppUserData(payload.user_id)
-    const confirmationUrl = buildConfirmationUrl(confirmationCode)
+    const confirmationUrl = buildConfirmationUrl(confirmationCode, "success")
 
     logger.info(
       `WhatsApp: Data deletion completed for Meta user ${payload.user_id}, code: ${confirmationCode}`
@@ -201,9 +203,14 @@ const handleDataDeletion = async (
       .send(formatMetaResponse(confirmationUrl, confirmationCode))
   } catch (error) {
     logger.error(`WhatsApp: Data deletion failed: ${error}`)
-    res.status(STATUS_RESPONSE.INTERNAL_SERVER_ERROR).json({
-      error: "Data deletion failed",
-    })
+
+    const errorUrl = buildErrorUrl("Data deletion failed. Please contact support.")
+    const errorCode = `ERR-${Date.now().toString(36)}`
+
+    res
+      .status(STATUS_RESPONSE.SUCCESS)
+      .type("json")
+      .send(formatMetaResponse(errorUrl, errorCode))
   }
 }
 
