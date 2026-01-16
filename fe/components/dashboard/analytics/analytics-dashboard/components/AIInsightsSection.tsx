@@ -5,13 +5,13 @@ import { Info, Lightbulb } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/ui/empty-state'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
-import InsightCard from '../InsightCard'
-import InsightCardSkeleton from '../InsightCardSkeleton'
+import InsightCard from '../../InsightCard'
+import InsightCardSkeleton from '../../InsightCardSkeleton'
 import { getInsightIcon } from '@/lib/iconUtils'
-import type { InsightsData } from '@/types/analytics'
+import type { AIInsightsResponse } from '@/types/analytics'
 
 interface AIInsightsSectionProps {
-  insightsData: InsightsData | undefined
+  insightsData: AIInsightsResponse | undefined
   isLoading: boolean
   isError: boolean
   onRetry: () => void

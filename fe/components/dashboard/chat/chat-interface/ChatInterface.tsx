@@ -1,0 +1,308 @@
+'use client'
+
+import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { usePostHog } from 'posthog-js/react'
+import { toast } from 'sonner'
+
+import { AgentProfileSelector } from '../AgentProfileSelector'
+import { AvatarView } from '../AvatarView'
+import { ChatInput, ImageFile } from '../ChatInput'
+import { ChatView } from '../ChatView'
+import { ThreeDView } from '../ThreeDView'
+import { ViewSwitcher } from '../ViewSwitcher'
+import { LoadingSpinner } from '@/components/ui/loading-spinner'
+import { Message } from '@/types'
+import { useChatContext } from '@/contexts/ChatContext'
+import { useMutedSpeechDetection } from '@/hooks/useMutedSpeechDetection'
+import { useSpeechRecognition } from '@/hooks/useSpeechRecognition'
+import { useStreamingChat } from '@/hooks/useStreamingChat'
+import { useVoicePreference } from '@/hooks/queries'
+import { useAudioPlayback } from './useAudioPlayback'
+import type { ActiveTab } from './types'
+
+export function ChatInterface() {
+  const {
+    messages,
+    setMessages,
+    selectedConversationId,
+    setConversationId,
+    isLoadingConversation,
+    addConversationToList,
+    updateConversationTitle,
+    selectedProfileId,
+  } = useChatContext()
+
+  const { data: voiceData } = useVoicePreference()
+  const posthog = usePostHog()
+
+  const [input, setInput] = useState('')
+  const [images, setImages] = useState<ImageFile[]>([])
+  const [activeTab, setActiveTab] = useState<ActiveTab>('chat')
+  const [error, setError] = useState<string | null>(null)
+
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const avatarScrollRef = useRef<HTMLDivElement>(null)
+  const textInputRef = useRef<HTMLTextAreaElement>(null)
+  const isDocumentVisibleRef = useRef<boolean>(true)
+
+  const { isSpeaking, speakingMessageId, speakText } = useAudioPlayback({
+    voice: voiceData?.value?.voice,
+    playbackSpeed: voiceData?.value?.playbackSpeed,
+  })
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      isDocumentVisibleRef.current = !document.hidden
+    }
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+    }
+  }, [])
+
+  const handleStreamComplete = useCallback(
+    (conversationId: string, fullResponse: string) => {
+      const assistantMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: fullResponse,
+        timestamp: new Date(),
+      }
+      setMessages((prev) => [...prev, assistantMessage])
+
+      if (conversationId && !selectedConversationId) {
+        setConversationId(conversationId, true)
+        addConversationToList({
+          id: conversationId,
+          title: 'New Conversation',
+          messageCount: 2,
+          lastUpdated: new Date().toISOString(),
+          createdAt: new Date().toISOString(),
+        })
+      }
+
+      if (!isDocumentVisibleRef.current) {
+        const previewText = fullResponse.slice(0, 80) + (fullResponse.length > 80 ? '...' : '')
+        toast.success('Ally has responded', {
+          description: previewText,
+          duration: 8000,
+          action: {
+            label: 'View',
+            onClick: () => window.focus(),
+          },
+        })
+      }
+
+      if (fullResponse && (voiceData?.value?.enabled || activeTab === 'avatar')) {
+        speakText(fullResponse.split('\n')[0])
+      }
+    },
+    [
+      selectedConversationId,
+      setConversationId,
+      addConversationToList,
+      setMessages,
+      activeTab,
+      voiceData?.value?.enabled,
+      speakText,
+    ]
+  )
+
+  const handleStreamError = useCallback((errorMessage: string) => {
+    setError(errorMessage)
+  }, [])
+
+  const handleTitleGenerated = useCallback(
+    (conversationId: string, title: string) => {
+      updateConversationTitle(conversationId, title, true)
+    },
+    [updateConversationTitle]
+  )
+
+  const { streamingState, sendStreamingMessage, cancelStream, resetStreamingState } = useStreamingChat({
+    profileId: selectedProfileId,
+    onStreamComplete: handleStreamComplete,
+    onStreamError: handleStreamError,
+    onTitleGenerated: handleTitleGenerated,
+  })
+
+  const isLoading = streamingState.isStreaming
+
+  const handleSend = async (e?: React.FormEvent, textToSend: string = input) => {
+    e?.preventDefault()
+    if ((!textToSend.trim() && images.length === 0) || isLoading) return
+
+    const messageContent =
+      images.length > 0
+        ? `${textToSend || 'Please analyze these images and help me with any scheduling or calendar-related content.'}`
+        : textToSend
+
+    posthog?.capture('chat_message_sent', {
+      has_images: images.length > 0,
+      image_count: images.length,
+      message_length: messageContent.length,
+      active_view: activeTab,
+      is_new_conversation: !selectedConversationId,
+    })
+
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      role: 'user',
+      content: messageContent,
+      images:
+        images.length > 0
+          ? images.map((img) => ({
+              data: img.base64 || '',
+              mimeType: img.file.type as 'image/png' | 'image/jpeg' | 'image/webp' | 'image/gif',
+            }))
+          : undefined,
+      timestamp: new Date(),
+    }
+    setMessages((prev) => [...prev, userMessage])
+    setInput('')
+
+    images.forEach((img) => URL.revokeObjectURL(img.preview))
+    setImages([])
+
+    setError(null)
+    resetStreamingState()
+
+    const imageData = userMessage.images?.map((img) => ({
+      type: 'image' as const,
+      data: img.data,
+      mimeType: img.mimeType,
+    }))
+
+    await sendStreamingMessage(messageContent, selectedConversationId || undefined, imageData)
+  }
+
+  const handleResend = (text: string) => {
+    toast.info('Regenerating response...')
+    handleSend(undefined, text)
+  }
+
+  const handleEditAndResend = (messageId: string, newText: string) => {
+    const messageIndex = messages.findIndex((m) => m.id === messageId)
+    if (messageIndex === -1) return
+
+    const updatedMessages = messages.slice(0, messageIndex)
+    setMessages(updatedMessages)
+
+    handleSend(undefined, newText)
+  }
+
+  const handleCancel = () => {
+    cancelStream()
+  }
+
+  const {
+    isRecording,
+    speechRecognitionSupported,
+    speechRecognitionError,
+    interimTranscription,
+    startRecording: originalStartRecording,
+    stopRecording,
+    cancelRecording,
+    toggleRecording: originalToggleRecording,
+  } = useSpeechRecognition((finalTranscription) => {
+    handleSend(undefined, finalTranscription)
+  })
+
+  const startRecording = () => {
+    posthog?.capture('voice_recording_started', {
+      active_view: activeTab,
+    })
+    originalStartRecording()
+  }
+
+  const toggleRecording = () => {
+    if (!isRecording) {
+      posthog?.capture('voice_recording_started', {
+        active_view: activeTab,
+      })
+    }
+    originalToggleRecording()
+  }
+
+  useMutedSpeechDetection({
+    isRecording,
+    speechRecognitionSupported,
+    onActivateMic: toggleRecording,
+  })
+
+  useEffect(() => {
+    scrollToBottom()
+  }, [messages, isLoading, activeTab, streamingState.streamedText])
+
+  const scrollToBottom = () => {
+    scrollRef.current?.scrollIntoView({ behavior: 'smooth' })
+    avatarScrollRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }
+
+  return (
+    <div className="flex h-full w-full relative overflow-hidden">
+      <div className="flex-1 flex flex-col h-full  mx-auto w-full relative overflow-hidden">
+        <div className="absolute top-4 left-16 md:left-4 z-30">
+          <AgentProfileSelector />
+        </div>
+        <ViewSwitcher activeTab={activeTab} onTabChange={setActiveTab} />
+
+        {isLoadingConversation && <LoadingSpinner overlay />}
+
+        <div className="flex-1 relative h-full overflow-hidden">
+          {activeTab === 'avatar' ? (
+            <AvatarView
+              messages={messages}
+              isRecording={isRecording}
+              isSpeaking={isSpeaking}
+              speakingMessageId={speakingMessageId}
+              isLoading={isLoading}
+              onResend={handleResend}
+              onEditAndResend={handleEditAndResend}
+              onSpeak={speakText}
+              avatarScrollRef={avatarScrollRef}
+            />
+          ) : activeTab === '3d' ? (
+            <ThreeDView />
+          ) : (
+            <ChatView
+              messages={messages}
+              isLoading={isLoading}
+              error={error}
+              isSpeaking={isSpeaking}
+              speakingMessageId={speakingMessageId}
+              onResend={handleResend}
+              onEditAndResend={handleEditAndResend}
+              onSpeak={speakText}
+              scrollRef={scrollRef}
+              streamingText={streamingState.streamedText}
+              currentTool={streamingState.currentTool}
+            />
+          )}
+        </div>
+
+        <ChatInput
+          ref={textInputRef}
+          input={input}
+          isLoading={isLoading}
+          isRecording={isRecording}
+          speechRecognitionSupported={speechRecognitionSupported}
+          speechRecognitionError={speechRecognitionError}
+          interimTranscription={interimTranscription}
+          images={images}
+          onInputChange={setInput}
+          onSubmit={handleSend}
+          onToggleRecording={toggleRecording}
+          onStartRecording={startRecording}
+          onStopRecording={stopRecording}
+          onCancelRecording={cancelRecording}
+          onCancel={isLoading ? handleCancel : undefined}
+          onImagesChange={setImages}
+          data-onboarding="chat-input"
+        />
+      </div>
+    </div>
+  )
+}
+
+export default ChatInterface
