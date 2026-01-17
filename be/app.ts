@@ -1,14 +1,7 @@
-import { createServer } from "node:http"
+import { IncomingMessage, createServer } from "node:http";
 import { ROUTES, STATUS_RESPONSE, env } from "@/config";
-import {
-  getActiveConnectionCount,
-  getConnectedUserCount,
-  getSocketServer,
-  initSocketServer,
-  shutdownSocketServer,
-} from "@/config/clients/socket-server"
-import { getBot } from "@/telegram-bot/init-bot"
-import { getSlackReceiver } from "@/slack-bot/init-bot"
+import express, { Request } from "express";
+import { getActiveConnectionCount, getConnectedUserCount, getSocketServer, initSocketServer, shutdownSocketServer } from "@/config/clients/socket-server";
 import { initializeJobScheduler, shutdownJobScheduler } from "@/jobs";
 
 import aclRoute from "@/routes/google-calendar/acl-route";
@@ -26,8 +19,9 @@ import cors from "cors";
 import cronRoute from "@/routes/cron-route";
 import errorHandler from "@/middlewares/error-handler";
 import eventsRoute from "@/routes/google-calendar/events-route";
-import express from "express";
 import featureFlagRoute from "@/routes/feature-flag-route";
+import { getBot } from "@/telegram-bot/init-bot";
+import { getSlackReceiver } from "@/slack-bot/init-bot";
 import helmet from "helmet";
 import { initSlackBot } from "@/slack-bot";
 import { initWhatsApp } from "@/whatsapp-bot/init-whatsapp";
@@ -91,7 +85,14 @@ app.use(apiRateLimiter);
 // SECURITY: Add security audit logging for compliance
 app.use(securityAuditMiddleware);
 
-app.use(express.json({ limit: "10mb" }));
+app.use(
+  express.json({
+    limit: "10mb",
+    verify: (req, _res, buf) => {
+      (req as IncomingMessage & { rawBody?: string }).rawBody = buf.toString();
+    },
+  })
+);
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(morgan("dev", { immediate: true }));
@@ -103,9 +104,9 @@ app.get("/", (_req, res) => {
 });
 
 app.get("/health", (_req, res) => {
-  const bot = getBot()
-  const slackReceiver = getSlackReceiver()
-  const socketServer = getSocketServer()
+  const bot = getBot();
+  const slackReceiver = getSlackReceiver();
+  const socketServer = getSocketServer();
 
   res.status(STATUS_RESPONSE.SUCCESS).json({
     status: "ok",
@@ -126,8 +127,8 @@ app.get("/health", (_req, res) => {
         mode: "http",
       },
     },
-  })
-})
+  });
+});
 
 app.use(ROUTES.USERS, usersRoute);
 app.use(ROUTES.CALENDAR_LIST, calendarListRoute);
@@ -190,15 +191,15 @@ httpServer.on("error", (error: Error) => {
 });
 
 process.on("SIGTERM", async () => {
-  logger.info("SIGTERM received, shutting down gracefully...")
-  await shutdownSocketServer()
-  await shutdownJobScheduler()
-  process.exit(0)
-})
+  logger.info("SIGTERM received, shutting down gracefully...");
+  await shutdownSocketServer();
+  await shutdownJobScheduler();
+  process.exit(0);
+});
 
 process.on("SIGINT", async () => {
-  logger.info("SIGINT received, shutting down gracefully...")
-  await shutdownSocketServer()
-  await shutdownJobScheduler()
-  process.exit(0)
-})
+  logger.info("SIGINT received, shutting down gracefully...");
+  await shutdownSocketServer();
+  await shutdownJobScheduler();
+  process.exit(0);
+});
