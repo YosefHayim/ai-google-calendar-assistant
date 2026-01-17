@@ -4,7 +4,24 @@ import MarketingLayout from '@/components/marketing/MarketingLayout'
 import { Badge } from '@/components/ui/badge'
 import { JsonLd } from '@/components/shared/JsonLd'
 import { generateBreadcrumbSchema, generateWebPageSchema, SITE_CONFIG } from '@/lib/constants/seo'
-import { Sparkles, Bug, Zap, Calendar, Mic, Shield, Bell, BarChart3, Command, Users, CreditCard } from 'lucide-react'
+import {
+  Sparkles,
+  Bug,
+  Zap,
+  Calendar,
+  Mic,
+  Shield,
+  Bell,
+  BarChart3,
+  Command,
+  Users,
+  CreditCard,
+  Activity,
+  Flag,
+  Wifi,
+  Smartphone,
+  MessageSquare,
+} from 'lucide-react'
 
 type ChangeType = 'feature' | 'fix' | 'improvement'
 
@@ -26,6 +43,54 @@ const BADGE_STYLES: Record<ChangeType, { variant: 'default' | 'secondary' | 'out
 }
 
 const CHANGELOG_DATA: ChangelogEntry[] = [
+  {
+    version: '2.4.0',
+    date: 'January 17, 2026',
+    changes: [
+      {
+        type: 'feature',
+        title: 'Enhanced System Status Dashboard',
+        description:
+          'The footer now shows detailed service health including WebSocket connections, Telegram bot status, and Slack integration. Hover over the status indicator to see real-time uptime and connection counts.',
+        icon: Activity,
+      },
+      {
+        type: 'feature',
+        title: 'Feature Flag Management',
+        description:
+          'New admin panel for managing feature flags with audit logging. Control feature rollouts, A/B tests, and gradual deployments with full visibility.',
+        icon: Flag,
+      },
+      {
+        type: 'feature',
+        title: 'Real-time WebSocket Notifications',
+        description:
+          'Live notifications powered by WebSockets. Get instant alerts for calendar conflicts, subscription changes, and important updates without refreshing.',
+        icon: Wifi,
+      },
+      {
+        type: 'feature',
+        title: 'Smart Notification Dispatcher',
+        description:
+          'Welcome emails for new users and proactive conflict alerts when scheduling overlapping events. Ally keeps you informed automatically.',
+        icon: Bell,
+      },
+      {
+        type: 'improvement',
+        title: 'Mobile Dashboard Enhancements',
+        description:
+          'Improved mobile layout with sticky header and tabs for better navigation. Dashboard components now adapt seamlessly to smaller screens.',
+        icon: Smartphone,
+      },
+      {
+        type: 'fix',
+        title: 'Telegram Stale Message Filter',
+        description:
+          'Fixed an issue where old messages would flood in after server restarts. Ally now intelligently filters stale messages to prevent notification spam.',
+        icon: MessageSquare,
+      },
+    ],
+  },
   {
     version: '2.3.0',
     date: 'January 16, 2026',

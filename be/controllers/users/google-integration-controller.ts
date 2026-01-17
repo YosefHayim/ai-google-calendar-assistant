@@ -239,6 +239,17 @@ const generateAuthGoogleUrl = reqResAsyncHandler(
         );
       }
 
+      // Send welcome email for new users only (not returning users)
+      // A user is "new" if there was no existing user, or the existing user was orphaned and deleted
+      const isNewUser = !existingUser || existingUser.id !== authUserId
+      if (isNewUser) {
+        const userName = googleUser.given_name || normalizedEmail.split("@")[0]
+        // Fire and forget - don't block signup flow
+        sendWelcomeEmail(normalizedEmail, userName).catch((err) => {
+          console.error("Failed to send welcome email:", err)
+        })
+      }
+
       const tokenUpsertPayload: {
         user_id: string;
         provider: "google";
