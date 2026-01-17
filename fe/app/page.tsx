@@ -61,7 +61,7 @@ export default function HomePage() {
               Slack
             </a>
             <a
-              href={`https://api.whatsapp.com/send?phone=${process.env.NEXT_PUBLIC_WHATSAPP_PHONE_NUMBER}&text=Hello`}
+              href={`https://wa.me/message/VI5IQ3IXJUAVJ1`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366]/20 transition-colors text-sm font-medium"
