@@ -1,24 +1,25 @@
-import type { Request, Response } from "express";
+import type { Request, Response } from "express"
 import {
   env,
   OAUTH2CLIENT,
   PROVIDERS,
   STATUS_RESPONSE,
   SUPABASE,
-} from "@/config";
-import { generateGoogleAuthUrl } from "@/utils/auth";
+} from "@/config"
+import { sendWelcomeEmail } from "@/services/notification-dispatcher"
+import { generateGoogleAuthUrl } from "@/utils/auth"
 import {
   ACCESS_TOKEN_COOKIE,
   REFRESH_TOKEN_COOKIE,
   setAuthCookies,
-} from "@/utils/auth/cookie-utils";
+} from "@/utils/auth/cookie-utils"
 import {
   refreshSupabaseSession,
   validateSupabaseToken,
-} from "@/utils/auth/supabase-token";
-import { syncUserCalendarsAfterOAuth } from "@/utils/calendar/sync-calendars-after-oauth";
-import { msToIso } from "@/utils/date/timestamp-utils";
-import { reqResAsyncHandler, sendR } from "@/utils/http";
+} from "@/utils/auth/supabase-token"
+import { syncUserCalendarsAfterOAuth } from "@/utils/calendar/sync-calendars-after-oauth"
+import { msToIso } from "@/utils/date/timestamp-utils"
+import { reqResAsyncHandler, sendR } from "@/utils/http"
 
 async function checkExistingSessionAndRedirect(
   res: Response,

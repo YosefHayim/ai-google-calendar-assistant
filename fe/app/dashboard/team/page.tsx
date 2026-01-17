@@ -28,6 +28,9 @@ import {
   Copy,
   RefreshCw,
   Trash2,
+} from 'lucide-react'
+import { LoadingSpinner } from '@/components/ui/loading-spinner'
+import {
   Building2,
 } from 'lucide-react'
 import {
@@ -260,7 +263,7 @@ export default function TeamPage() {
 
           {isLoadingSent ? (
             <div className="flex items-center justify-center py-12">
-              <Loader2 className="w-6 h-6 animate-spin text-primary" />
+              <LoadingSpinner size="md" />
             </div>
           ) : !sentInvites || sentInvites.length === 0 ? (
             <EmptyState

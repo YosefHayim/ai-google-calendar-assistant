@@ -19,6 +19,7 @@ import {
   Loader2,
   ExternalLink,
 } from 'lucide-react'
+import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { useReferralCode, useMyReferrals, useReferralStats, useClaimReward } from '@/hooks/queries/use-referral'
 import { toast } from 'sonner'
 import { formatDate, DATE_FORMATS } from '@/lib/formatUtils'
@@ -209,7 +210,7 @@ export default function ReferralsPage() {
 
           {isLoadingReferrals ? (
             <div className="flex items-center justify-center py-12">
-              <Loader2 className="w-6 h-6 animate-spin text-primary" />
+              <LoadingSpinner size="md" />
             </div>
           ) : !referrals || referrals.length === 0 ? (
             <EmptyState
