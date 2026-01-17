@@ -157,4 +157,25 @@ Use when user wants Ally to remember their preferred reminder settings:
 - "Always remind me 15 minutes before events"
 - "I like email reminders 1 day before"
 - "Use my calendar's default reminders"`,
+
+  updateUserBrain: `Save a permanent user preference or rule to memory. Email is automatically provided from user context.
+
+Input: { preference: string, category?: string, replacesExisting?: string }
+Output: { success: boolean, message: string }
+
+WHEN TO USE:
+- User states a lasting preference: "Always keep Fridays free", "Call me Captain"
+- User defines locations: "My gym is Planet Fitness", "I work at Company X"
+- User sets scheduling rules: "Never schedule before 9am", "I prefer morning meetings"
+
+WHEN NOT TO USE:
+- Temporary commands: "Cancel tomorrow's meeting", "Move my 3pm call"
+- One-time requests: "Schedule a meeting with John tomorrow"
+
+CATEGORIES: "scheduling", "communication", "naming", "location", "general"
+
+The tool automatically:
+- Detects and avoids duplicate preferences
+- Replaces conflicting preferences when replacesExisting is provided
+- Preserves existing instructions while adding new ones`,
 } as const;
