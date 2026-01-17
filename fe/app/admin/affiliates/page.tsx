@@ -1,13 +1,13 @@
 'use client'
 
-import { format } from 'date-fns'
+import type { AdminAffiliateListParams, AffiliateStatus } from '@/types/admin'
 import {
+  Check,
   ChevronLeft,
   ChevronRight,
   Clock,
   Code2,
   Copy,
-  Check,
   DollarSign,
   ExternalLink,
   HelpCircle,
@@ -18,12 +18,6 @@ import {
   Settings,
   Users2,
 } from 'lucide-react'
-import { useState } from 'react'
-import { LoadingSpinner } from '@/components/ui/loading-spinner'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
 import {
   Dialog,
   DialogContent,
@@ -33,8 +27,15 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { useAdminAffiliates, useAffiliateSettings } from '@/hooks/queries/admin'
+
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { LoadingSpinner } from '@/components/ui/loading-spinner'
+import { format } from 'date-fns'
 import { formatCurrency } from '@/lib/formatUtils'
-import type { AdminAffiliateListParams, AffiliateStatus } from '@/types/admin'
+import { useState } from 'react'
 
 export default function AdminAffiliatesPage() {
   const [search, setSearch] = useState('')
@@ -72,9 +73,7 @@ export default function AdminAffiliatesPage() {
             <DialogContent className="max-w-2xl">
               <DialogHeader>
                 <DialogTitle>Affiliate Program Settings</DialogTitle>
-                <DialogDescription>
-                  Configure your affiliate program URLs and tracking code
-                </DialogDescription>
+                <DialogDescription>Configure your affiliate program URLs and tracking code</DialogDescription>
               </DialogHeader>
               {settingsLoading ? (
                 <div className="flex justify-center py-8">
@@ -349,23 +348,17 @@ function AffiliateSettingsContent({
     | undefined
 }) {
   if (!settings) {
-    return (
-      <div className="py-8 text-center text-zinc-500">
-        Unable to load affiliate settings
-      </div>
-    )
+    return <div className="py-8 text-center text-zinc-500">Unable to load affiliate settings</div>
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 overflow-auto">
       <div className="space-y-2">
         <div className="flex items-center gap-2">
           <Link2 className="h-4 w-4 text-zinc-500" />
           <h3 className="font-medium text-zinc-900 dark:text-white">Affiliate Signup URL</h3>
         </div>
-        <p className="text-sm text-zinc-500">
-          Anyone can apply to be your affiliate with this link
-        </p>
+        <p className="text-sm text-zinc-500">Anyone can apply to be your affiliate with this link</p>
         <div className="flex items-center gap-2">
           <div className="flex-1 rounded-md border border-zinc-200 bg-zinc-50 px-3 py-2 font-mono text-sm dark:border-zinc-700 dark:bg-zinc-900">
             {settings.affiliateHubUrl}
@@ -388,9 +381,7 @@ function AffiliateSettingsContent({
             <HelpCircle className="ml-1 h-3 w-3" />
           </a>
         </div>
-        <p className="text-sm text-zinc-500">
-          Set your default affiliate URL
-        </p>
+        <p className="text-sm text-zinc-500">Set your default affiliate URL</p>
         <div className="flex items-center gap-2">
           <div className="flex items-center rounded-md border border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
             <span className="px-3 py-2 text-sm text-zinc-500">https://</span>
@@ -433,31 +424,19 @@ function AffiliateSettingsContent({
         <p className="mb-3 text-sm text-zinc-500">Manage your affiliate program in Lemon Squeezy</p>
         <div className="flex flex-wrap gap-2">
           <Button asChild size="sm" variant="outline">
-            <a
-              href="https://app.lemonsqueezy.com/settings/affiliates"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
+            <a href="https://app.lemonsqueezy.com/settings/affiliates" rel="noopener noreferrer" target="_blank">
               <ExternalLink className="mr-2 h-4 w-4" />
               Affiliate Settings
             </a>
           </Button>
           <Button asChild size="sm" variant="outline">
-            <a
-              href="https://app.lemonsqueezy.com/affiliates"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
+            <a href="https://app.lemonsqueezy.com/affiliates" rel="noopener noreferrer" target="_blank">
               <Users2 className="mr-2 h-4 w-4" />
               View All Affiliates
             </a>
           </Button>
           <Button asChild size="sm" variant="outline">
-            <a
-              href="https://app.lemonsqueezy.com/affiliates/payouts"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
+            <a href="https://app.lemonsqueezy.com/affiliates/payouts" rel="noopener noreferrer" target="_blank">
               <DollarSign className="mr-2 h-4 w-4" />
               Manage Payouts
             </a>

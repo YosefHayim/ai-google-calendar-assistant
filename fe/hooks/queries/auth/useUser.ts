@@ -1,10 +1,11 @@
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
+import { QueryHookOptions, useQueryWrapper } from '../useQueryWrapper'
+
+import { QUERY_CONFIG } from '@/lib/constants'
 import { authService } from '@/services/auth.service'
 import { queryKeys } from '@/lib/query/keys'
-import { QUERY_CONFIG } from '@/lib/constants'
-import { useQueryWrapper, QueryHookOptions } from '../useQueryWrapper'
+import { useQuery } from '@tanstack/react-query'
 
 interface UseUserOptions extends QueryHookOptions {
   /** Whether to fetch custom user format with avatar_url */
@@ -15,7 +16,7 @@ interface UseUserOptions extends QueryHookOptions {
 
 export function useUser(options?: UseUserOptions) {
   const customUser = options?.customUser ?? false
-  const refresh = options?.refresh ?? false
+  const refresh = options?.refresh ?? true
   const query = useQuery({
     queryKey: [...queryKeys.auth.user(), customUser, refresh],
     queryFn: () => authService.getUser(customUser, refresh),

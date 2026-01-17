@@ -9,28 +9,44 @@ import { webConversation } from "@/utils/conversation/WebConversationAdapter";
 
 const getCurrentUserInformation = reqResAsyncHandler(async (req: Request, res: Response) => {
   const forceRefresh = req.query.refresh === "true";
-  if (forceRefresh) {
-    await invalidateUserProfileCache(req?.user?.id!);
+  const userId = req?.user?.id
+  const userEmail = req?.user?.email
+
+  if (!userId || !userEmail) {
+    return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated.")
   }
 
-  const cached = forceRefresh ? null : await getCachedUserProfile(req?.user?.id!);
+  if (forceRefresh) {
+    await invalidateUserProfileCache(userId);
+  }
+
+  const cached = forceRefresh ? null : await getCachedUserProfile(userId);
   if (cached) {
     return sendR(res, STATUS_RESPONSE.SUCCESS, "User fetched successfully.", cached);
   }
 
-  await setCachedUserProfile(req?.user?.id!, {
-    id: req?.user?.id!,
-    email: req?.user?.email!,
-    phone: req?.user?.phone!,
-    first_name: req?.user?.user_metadata?.first_name!,
-    last_name: req?.user?.user_metadata?.last_name!,
-    avatar_url: req?.user?.user_metadata?.avatar_url!,
-    role: req?.user?.role!,
-    created_at: req?.user?.created_at!,
-    updated_at: req?.user?.updated_at!,
-  });
+  const { data: dbUser } = await SUPABASE.from("users")
+    .select("role, first_name, last_name, timezone, status")
+    .eq("id", userId)
+    .single()
 
-  return sendR(res, STATUS_RESPONSE.SUCCESS, "User fetched successfully.", req.user);
+  const userProfile = {
+    id: userId,
+    email: userEmail,
+    phone: req?.user?.phone,
+    first_name: dbUser?.first_name || req?.user?.user_metadata?.first_name,
+    last_name: dbUser?.last_name || req?.user?.user_metadata?.last_name,
+    avatar_url: req?.user?.user_metadata?.avatar_url,
+    role: dbUser?.role || "user",
+    timezone: dbUser?.timezone,
+    status: dbUser?.status,
+    created_at: req?.user?.created_at,
+    updated_at: req?.user?.updated_at,
+  }
+
+  await setCachedUserProfile(userId, userProfile);
+
+  return sendR(res, STATUS_RESPONSE.SUCCESS, "User fetched successfully.", userProfile);
 });
 
 const getUserInformationById = reqResAsyncHandler(async (req: Request, res: Response) => {
