@@ -1,8 +1,9 @@
-import type { Request, Response } from "express";
 import { PROVIDERS, STATUS_RESPONSE, SUPABASE } from "@/config";
-import { supabaseThirdPartySignInOrSignUp } from "@/utils/auth";
+import type { Request, Response } from "express";
 import { clearAuthCookies, setAuthCookies } from "@/utils/auth/cookie-utils";
 import { reqResAsyncHandler, sendR } from "@/utils/http";
+
+import { supabaseThirdPartySignInOrSignUp } from "@/utils/auth";
 
 const signUpUserReg = reqResAsyncHandler(
   async (req: Request, res: Response) => {
@@ -140,7 +141,7 @@ const refreshToken = reqResAsyncHandler(async (req: Request, res: Response) => {
 
 const logout = reqResAsyncHandler(async (_req: Request, res: Response) => {
   clearAuthCookies(res);
-  return sendR(res, STATUS_RESPONSE.SUCCESS, "Logged out successfully.");
+  sendR(res, STATUS_RESPONSE.SUCCESS, "Logged out successfully.");
 });
 
 const checkSession = reqResAsyncHandler(async (req: Request, res: Response) =>
@@ -149,6 +150,20 @@ const checkSession = reqResAsyncHandler(async (req: Request, res: Response) =>
     userId: req.user?.id,
     email: req.user?.email,
   })
+);
+
+const restoreSession = reqResAsyncHandler(
+  async (req: Request, res: Response) => {
+    const newAccessToken = res.getHeader("access_token") as string | undefined
+    const newRefreshToken = res.getHeader("refresh_token") as string | undefined
+
+    sendR(res, STATUS_RESPONSE.SUCCESS, "Session restored.", {
+      authenticated: true,
+      user: req.user,
+      access_token: newAccessToken,
+      refresh_token: newRefreshToken,
+    })
+  }
 );
 
 export const authController = {
@@ -160,4 +175,5 @@ export const authController = {
   refreshToken,
   logout,
   checkSession,
+  restoreSession,
 };

@@ -64,6 +64,13 @@ export const ENDPOINTS = {
    */
   USERS_LOGOUT: '/api/users/logout',
 
+  /**
+   * Restore session from httpOnly cookies when localStorage is cleared
+   * Methods: GET
+   * Returns: authenticated, user, access_token, refresh_token
+   */
+  USERS_RESTORE_SESSION: '/api/users/restore-session',
+
   // ============================================
   // CALENDAR ENDPOINTS
   // ============================================

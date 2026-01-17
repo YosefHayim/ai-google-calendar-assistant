@@ -55,6 +55,8 @@ router.get(
 
 router.get("/session", supabaseAuth(), authController.checkSession);
 
+router.get("/restore-session", supabaseAuth(), authController.restoreSession);
+
 router.get(
   "/integrations/google-calendar",
   supabaseAuth(),

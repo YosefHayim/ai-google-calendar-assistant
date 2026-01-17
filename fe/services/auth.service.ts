@@ -1,7 +1,14 @@
-import { ApiResponse, AuthData, CustomUser, User } from '@/types/api'
+import type { ApiResponse, AuthData, CustomUser, User } from '@/types/api'
 
 import { ENDPOINTS } from '@/lib/api/endpoints'
 import { apiClient } from '@/lib/api/client'
+
+interface RestoreSessionResponse {
+  authenticated: boolean
+  user: User
+  access_token?: string
+  refresh_token?: string
+}
 
 export const authService = {
   async signIn(email: string, password: string): Promise<ApiResponse<AuthData>> {
@@ -47,5 +54,10 @@ export const authService = {
   getGitHubAuthUrl(): string {
     const baseUrl = apiClient.defaults.baseURL
     return `${baseUrl}${ENDPOINTS.USERS_SIGNUP_GITHUB}`
+  },
+
+  async restoreSession(): Promise<ApiResponse<RestoreSessionResponse>> {
+    const { data } = await apiClient.get<ApiResponse<RestoreSessionResponse>>(ENDPOINTS.USERS_RESTORE_SESSION)
+    return data
   },
 }
