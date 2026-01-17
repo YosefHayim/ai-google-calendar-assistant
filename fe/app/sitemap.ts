@@ -39,12 +39,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: post.featured ? 0.8 : 0.6,
   }))
 
-  const staticSitemap: MetadataRoute.Sitemap = staticPages.map(({ route, changeFrequency, priority, lastModified }) => ({
-    url: `${baseUrl}${route}`,
-    lastModified: lastModified || currentDate,
-    changeFrequency,
-    priority,
-  }))
+  const staticSitemap: MetadataRoute.Sitemap = staticPages.map(
+    ({ route, changeFrequency, priority, lastModified }) => ({
+      url: `${baseUrl}${route}`,
+      lastModified: lastModified || currentDate,
+      changeFrequency,
+      priority,
+    }),
+  )
 
   return [...staticSitemap, ...blogPages]
 }

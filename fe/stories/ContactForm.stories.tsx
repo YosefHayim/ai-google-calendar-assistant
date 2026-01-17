@@ -18,9 +18,7 @@ const meta: Meta<typeof ContactForm> = {
     (Story) => (
       <div className="w-full max-w-xl p-8 bg-background rounded-xl border border-zinc-200 dark:border-zinc-800">
         <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">Contact Us</h2>
-        <p className="text-zinc-500 dark:text-zinc-400 mb-6">
-          Have a question or need help? Fill out the form below.
-        </p>
+        <p className="text-zinc-500 dark:text-zinc-400 mb-6">Have a question or need help? Fill out the form below.</p>
         <Story />
       </div>
     ),
@@ -144,9 +142,7 @@ export const InPageContext: Story = {
   render: () => (
     <div className="max-w-4xl mx-auto">
       <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold text-zinc-900 dark:text-zinc-100 mb-4">
-          Get in Touch
-        </h1>
+        <h1 className="text-4xl font-bold text-zinc-900 dark:text-zinc-100 mb-4">Get in Touch</h1>
         <p className="text-lg text-zinc-500 dark:text-zinc-400 max-w-2xl mx-auto">
           Our support team is here to help. Send us a message and we&apos;ll respond within 24 hours.
         </p>
@@ -166,7 +162,9 @@ export const InPageContext: Story = {
           </div>
           <div className="p-6 bg-zinc-50 dark:bg-zinc-900 rounded-lg">
             <h3 className="font-semibold text-zinc-800 dark:text-zinc-200 mb-2">Enterprise</h3>
-            <p className="text-zinc-500 dark:text-zinc-400 text-sm">For enterprise inquiries, contact enterprise@askally.ai</p>
+            <p className="text-zinc-500 dark:text-zinc-400 text-sm">
+              For enterprise inquiries, contact enterprise@askally.ai
+            </p>
           </div>
         </div>
       </div>

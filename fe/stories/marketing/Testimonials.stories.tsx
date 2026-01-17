@@ -62,9 +62,7 @@ export const InPageContext: Story = {
       <div className="bg-white dark:bg-[#030303]">
         <section className="py-20 px-4">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-4">
-              Why Professionals Choose Ally
-            </h2>
+            <h2 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-4">Why Professionals Choose Ally</h2>
             <p className="text-zinc-600 dark:text-zinc-400">
               Join thousands of users who have transformed their calendar management.
             </p>
@@ -73,15 +71,11 @@ export const InPageContext: Story = {
         <Story />
         <section className="py-20 px-4 bg-zinc-50 dark:bg-zinc-900">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-4">
-              Ready to Get Started?
-            </h2>
+            <h2 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-4">Ready to Get Started?</h2>
             <p className="text-zinc-600 dark:text-zinc-400 mb-8">
               Try Ask Ally free for 14 days. No credit card required.
             </p>
-            <button className="px-8 py-3 bg-primary text-white rounded-full font-medium">
-              Start Free Trial
-            </button>
+            <button className="px-8 py-3 bg-primary text-white rounded-full font-medium">Start Free Trial</button>
           </div>
         </section>
       </div>
@@ -96,8 +90,7 @@ export const MobileView: Story = {
     },
     docs: {
       description: {
-        story:
-          'Mobile view showing single column layout. Additional columns are hidden on smaller screens.',
+        story: 'Mobile view showing single column layout. Additional columns are hidden on smaller screens.',
       },
     },
   },

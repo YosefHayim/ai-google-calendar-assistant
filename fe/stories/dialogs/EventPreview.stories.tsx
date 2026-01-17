@@ -166,10 +166,8 @@ export const NoCalendarName: Story = {
 export const AllVariants: Story = {
   render: () => (
     <div className="space-y-4 max-w-lg">
-      <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
-        Event Preview Variants
-      </h3>
-      
+      <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Event Preview Variants</h3>
+
       <div className="space-y-3">
         <div>
           <p className="text-xs font-medium text-zinc-500 mb-2">FULL DETAILS</p>
@@ -184,7 +182,7 @@ export const AllVariants: Story = {
             calendarName="Work"
           />
         </div>
-        
+
         <div>
           <p className="text-xs font-medium text-zinc-500 mb-2">DATE & TIME ONLY</p>
           <EventPreview
@@ -196,7 +194,7 @@ export const AllVariants: Story = {
             calendarName="Team"
           />
         </div>
-        
+
         <div>
           <p className="text-xs font-medium text-zinc-500 mb-2">MINIMAL</p>
           <EventPreview
@@ -205,7 +203,7 @@ export const AllVariants: Story = {
             }}
           />
         </div>
-        
+
         <div>
           <p className="text-xs font-medium text-zinc-500 mb-2">WITH LOCATION</p>
           <EventPreview

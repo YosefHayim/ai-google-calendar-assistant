@@ -1,15 +1,7 @@
 'use client'
 
 import React, { useState, useMemo } from 'react'
-import {
-  CalendarDays,
-  Clock,
-  Hash,
-  Hourglass,
-  Search,
-  Sun,
-  X,
-} from 'lucide-react'
+import { CalendarDays, Clock, Hash, Hourglass, Search, Sun, X } from 'lucide-react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { EmptyState } from '@/components/ui/empty-state'
@@ -174,12 +166,7 @@ export function DayEventsDialog({
           ) : (
             <ul className="space-y-2">
               {sortedFilteredEvents.map((event) => (
-                <EventListItem
-                  key={event.id}
-                  event={event}
-                  calendarMap={calendarMap}
-                  onEventClick={onEventClick}
-                />
+                <EventListItem key={event.id} event={event} calendarMap={calendarMap} onEventClick={onEventClick} />
               ))}
             </ul>
           )}

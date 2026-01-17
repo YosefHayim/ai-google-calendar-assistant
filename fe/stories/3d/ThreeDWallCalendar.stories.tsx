@@ -28,7 +28,8 @@ const meta: Meta<typeof ThreeDWallCalendar> = {
     layout: 'fullscreen',
     docs: {
       description: {
-        component: 'Interactive 3D wall calendar with tilt controls. Displays calendar events in a visually engaging grid layout.',
+        component:
+          'Interactive 3D wall calendar with tilt controls. Displays calendar events in a visually engaging grid layout.',
       },
     },
   },

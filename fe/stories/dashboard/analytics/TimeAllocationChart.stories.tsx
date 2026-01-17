@@ -95,41 +95,17 @@ export const LowHours: Story = {
 }
 
 export const DashboardDefault: StoryObj<typeof TimeAllocationDashboard> = {
-  render: () => (
-    <TimeAllocationDashboard
-      data={mockData}
-      onCalendarClick={fn()}
-      isLoading={false}
-    />
-  ),
+  render: () => <TimeAllocationDashboard data={mockData} onCalendarClick={fn()} isLoading={false} />,
 }
 
 export const DashboardLoading: StoryObj<typeof TimeAllocationDashboard> = {
-  render: () => (
-    <TimeAllocationDashboard
-      data={[]}
-      onCalendarClick={fn()}
-      isLoading={true}
-    />
-  ),
+  render: () => <TimeAllocationDashboard data={[]} onCalendarClick={fn()} isLoading={true} />,
 }
 
 export const DashboardManyCalendars: StoryObj<typeof TimeAllocationDashboard> = {
-  render: () => (
-    <TimeAllocationDashboard
-      data={manyCalendars}
-      onCalendarClick={fn()}
-      isLoading={false}
-    />
-  ),
+  render: () => <TimeAllocationDashboard data={manyCalendars} onCalendarClick={fn()} isLoading={false} />,
 }
 
 export const DashboardEmpty: StoryObj<typeof TimeAllocationDashboard> = {
-  render: () => (
-    <TimeAllocationDashboard
-      data={[]}
-      onCalendarClick={fn()}
-      isLoading={false}
-    />
-  ),
+  render: () => <TimeAllocationDashboard data={[]} onCalendarClick={fn()} isLoading={false} />,
 }

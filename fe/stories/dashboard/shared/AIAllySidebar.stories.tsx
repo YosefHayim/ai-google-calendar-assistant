@@ -25,7 +25,10 @@ const meta: Meta<typeof AIAllySidebar> = {
           </p>
           <div className="grid grid-cols-3 gap-4">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-32 bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700" />
+              <div
+                key={i}
+                className="h-32 bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700"
+              />
             ))}
           </div>
         </div>
@@ -61,7 +64,8 @@ export const Closed: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'The collapsed state showing only the floating orb button in the bottom-right corner. Click the orb to open the chat panel.',
+        story:
+          'The collapsed state showing only the floating orb button in the bottom-right corner. Click the orb to open the chat panel.',
       },
     },
   },
@@ -76,7 +80,8 @@ export const Open: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'The expanded chat panel with the welcome message and quick action buttons. The orb button is hidden when the panel is open.',
+        story:
+          'The expanded chat panel with the welcome message and quick action buttons. The orb button is hidden when the panel is open.',
       },
     },
   },
@@ -91,7 +96,8 @@ export const WithActiveConversation: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'The chat panel in an active conversation state. Messages are displayed with user messages on the right and AI responses on the left.',
+        story:
+          'The chat panel in an active conversation state. Messages are displayed with user messages on the right and AI responses on the left.',
       },
     },
   },
@@ -109,7 +115,8 @@ export const MobileView: Story = {
     },
     docs: {
       description: {
-        story: 'The chat panel adapts to mobile viewport. The floating orb is hidden on mobile (shown via hamburger menu instead).',
+        story:
+          'The chat panel adapts to mobile viewport. The floating orb is hidden on mobile (shown via hamburger menu instead).',
       },
     },
   },
@@ -126,9 +133,7 @@ export const DarkMode: Story = {
       <div className="dark min-h-screen bg-zinc-950 p-8 relative">
         <div className="max-w-4xl mx-auto space-y-4">
           <h1 className="text-2xl font-bold text-zinc-100">Dashboard Content</h1>
-          <p className="text-zinc-400">
-            This represents your dashboard content in dark mode.
-          </p>
+          <p className="text-zinc-400">This represents your dashboard content in dark mode.</p>
           <div className="grid grid-cols-3 gap-4">
             {[1, 2, 3].map((i) => (
               <div key={i} className="h-32 bg-zinc-800 rounded-xl shadow-sm border border-zinc-700" />
@@ -158,7 +163,8 @@ export const QuickActionsVisible: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Shows the quick action buttons that appear when the conversation is fresh. These help users discover common tasks like optimizing schedules or finding free time.',
+        story:
+          'Shows the quick action buttons that appear when the conversation is fresh. These help users discover common tasks like optimizing schedules or finding free time.',
       },
     },
   },

@@ -37,7 +37,8 @@ export function getUserDisplayInfo(user: UserData | null | undefined): UserDispl
     const firstName = user.first_name ?? ''
     const lastName = user.last_name ?? ''
     const displayName = user.display_name ?? ''
-    const fullName = displayName || [firstName, lastName].filter(Boolean).join(' ') || user.email?.split('@')[0] || 'User'
+    const fullName =
+      displayName || [firstName, lastName].filter(Boolean).join(' ') || user.email?.split('@')[0] || 'User'
     const initials = `${firstName[0] ?? ''}${lastName[0] ?? ''}`.toUpperCase() || user.email?.[0]?.toUpperCase() || 'U'
 
     return {

@@ -84,14 +84,10 @@ export const IntegrationCards: Story = {
   render: () => (
     <div className="max-w-4xl mx-auto p-8 space-y-8">
       <div className="text-center">
-        <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-4">
-          Available Integrations
-        </h1>
-        <p className="text-zinc-500 dark:text-zinc-400">
-          Connect Ally to your favorite platforms
-        </p>
+        <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-4">Available Integrations</h1>
+        <p className="text-zinc-500 dark:text-zinc-400">Connect Ally to your favorite platforms</p>
       </div>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="p-6 bg-white dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-800">
           <div className="flex items-center gap-3 mb-4">
@@ -107,7 +103,7 @@ export const IntegrationCards: Story = {
             Chat with Ally directly through @AllySyncBot on Telegram. Supports natural language scheduling.
           </p>
         </div>
-        
+
         <div className="p-6 bg-white dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-800">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center">
@@ -122,7 +118,7 @@ export const IntegrationCards: Story = {
             Connect WhatsApp for secure message relay and calendar management on the go.
           </p>
         </div>
-        
+
         <div className="p-6 bg-white dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-800">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
@@ -137,7 +133,7 @@ export const IntegrationCards: Story = {
             Add Ally to your Slack workspace for team calendar management and scheduling.
           </p>
         </div>
-        
+
         <div className="p-6 bg-white dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-800">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
@@ -153,7 +149,7 @@ export const IntegrationCards: Story = {
           </p>
         </div>
       </div>
-      
+
       <div className="p-6 bg-primary/5 dark:bg-primary/10 rounded-xl border border-primary/20">
         <h3 className="font-semibold text-zinc-800 dark:text-zinc-200 mb-2">Coming Soon</h3>
         <p className="text-sm text-zinc-600 dark:text-zinc-400">
@@ -174,9 +170,7 @@ export const IntegrationCards: Story = {
 export const CalendarList: Story = {
   render: () => (
     <div className="max-w-2xl mx-auto p-8 space-y-6">
-      <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">
-        Connected Google Calendars
-      </h2>
+      <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">Connected Google Calendars</h2>
       <div className="bg-white dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-800 p-6">
         <ul className="space-y-3">
           <li className="flex items-center gap-3">

@@ -84,11 +84,7 @@ export function UserDetailsDialog({ user, onClose }: UserDetailsDialogProps) {
                 disabled={isImpersonating || user.role === 'admin'}
                 className="text-amber-600 border-amber-300 hover:bg-amber-50"
               >
-                {isImpersonating ? (
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                ) : (
-                  <Eye className="w-4 h-4 mr-2" />
-                )}
+                {isImpersonating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Eye className="w-4 h-4 mr-2" />}
                 View as User
               </Button>
               <Button

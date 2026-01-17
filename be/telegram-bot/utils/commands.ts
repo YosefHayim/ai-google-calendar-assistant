@@ -1,16 +1,16 @@
-import { InlineKeyboard, InputFile } from "grammy"
-import { generateSpeechForTelegram } from "@/utils/ai/text-to-speech"
-import { telegramConversation } from "@/utils/conversation/TelegramConversationAdapter"
-import { logger } from "@/utils/logger"
-import type { SupportedLocale } from "../i18n"
+import { InlineKeyboard, InputFile } from "grammy";
+import { generateSpeechForTelegram } from "@/utils/ai/text-to-speech";
+import { telegramConversation } from "@/utils/conversation/TelegramConversationAdapter";
+import { logger } from "@/utils/logger";
+import type { SupportedLocale } from "../i18n";
 import {
   createTranslator,
   getTranslatorFromLanguageCode,
   SUPPORTED_LOCALES,
-} from "../i18n"
-import type { GlobalContext } from "../init-bot"
-import { ResponseBuilder } from "../response-system"
-import { getVoicePreferenceForTelegram } from "./ally-brain"
+} from "../i18n";
+import type { GlobalContext } from "../init-bot";
+import { ResponseBuilder } from "../response-system";
+import { getVoicePreferenceForTelegram } from "./ally-brain";
 import { resetSession } from "./session";
 import { gatherUserKnowledge } from "./user-knowledge";
 

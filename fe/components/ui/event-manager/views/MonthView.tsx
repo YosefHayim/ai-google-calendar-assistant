@@ -73,7 +73,7 @@ export function MonthView({
               className={cn(
                 'min-h-20 border-b border-r p-1 transition-colors last:border-r-0 sm:min-h-24 sm:p-2',
                 !isCurrentMonth && 'bg-muted/30',
-                'hover:bg-accent/50'
+                'hover:bg-accent/50',
               )}
               onDragOver={(e) => e.preventDefault()}
               onDrop={() => onDrop(day)}
@@ -81,7 +81,7 @@ export function MonthView({
               <div
                 className={cn(
                   'mb-1 flex h-5 w-5 items-center justify-center rounded-full text-xs sm:h-6 sm:w-6 sm:text-sm',
-                  isToday && 'bg-primary text-primary-foreground font-semibold'
+                  isToday && 'bg-primary text-primary-foreground font-semibold',
                 )}
               >
                 {day.getDate()}

@@ -30,9 +30,7 @@ import {
   Trash2,
 } from 'lucide-react'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
-import {
-  Building2,
-} from 'lucide-react'
+import { Building2 } from 'lucide-react'
 import {
   useSentInvites,
   useReceivedInvites,

@@ -106,12 +106,7 @@ export function CalendarEventsDialog({
           ) : (
             <ul className="space-y-2">
               {sortedEvents.map((event) => (
-                <EventListItem
-                  key={event.id}
-                  event={event}
-                  calendarColor={calendarColor}
-                  onEventClick={onEventClick}
-                />
+                <EventListItem key={event.id} event={event} calendarColor={calendarColor} onEventClick={onEventClick} />
               ))}
             </ul>
           )}

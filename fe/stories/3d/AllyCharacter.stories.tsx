@@ -1,10 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import dynamic from 'next/dynamic'
 
-const AllyCharacter = dynamic(
-  () => import('@/components/3d/ally-character').then((mod) => mod.AllyCharacter),
-  { ssr: false }
-)
+const AllyCharacter = dynamic(() => import('@/components/3d/ally-character').then((mod) => mod.AllyCharacter), {
+  ssr: false,
+})
 
 const meta: Meta<typeof AllyCharacter> = {
   title: '3D/AllyCharacter',
@@ -14,7 +13,8 @@ const meta: Meta<typeof AllyCharacter> = {
     layout: 'centered',
     docs: {
       description: {
-        component: '3D animated AI assistant character using Three.js. Supports various animation states for voice/chat interactions.',
+        component:
+          '3D animated AI assistant character using Three.js. Supports various animation states for voice/chat interactions.',
       },
     },
   },

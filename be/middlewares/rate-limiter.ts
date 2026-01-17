@@ -1,5 +1,5 @@
-import { STATUS_RESPONSE } from "@/config";
 import rateLimit from "express-rate-limit";
+import { STATUS_RESPONSE } from "@/config";
 import { sendR } from "@/utils/http";
 
 /**
@@ -15,10 +15,15 @@ export const authRateLimiter = rateLimit({
   standardHeaders: true, // Return rate limit info in headers
   legacyHeaders: false,
   handler: (_req, res) => {
-    sendR(res, STATUS_RESPONSE.TOO_MANY_REQUESTS, "Too many authentication attempts. Please try again in 15 minutes.", {
-      code: "RATE_LIMIT_EXCEEDED",
-      retryAfter: 15 * 60, // seconds
-    });
+    sendR(
+      res,
+      STATUS_RESPONSE.TOO_MANY_REQUESTS,
+      "Too many authentication attempts. Please try again in 15 minutes.",
+      {
+        code: "RATE_LIMIT_EXCEEDED",
+        retryAfter: 15 * 60, // seconds
+      }
+    );
   },
   skip: (_req) => {
     // Skip rate limiting for successful requests (optional)
@@ -40,10 +45,15 @@ export const otpRateLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   handler: (_req, res) => {
-    sendR(res, STATUS_RESPONSE.TOO_MANY_REQUESTS, "Too many verification attempts. Please try again in 5 minutes.", {
-      code: "RATE_LIMIT_EXCEEDED",
-      retryAfter: 5 * 60,
-    });
+    sendR(
+      res,
+      STATUS_RESPONSE.TOO_MANY_REQUESTS,
+      "Too many verification attempts. Please try again in 5 minutes.",
+      {
+        code: "RATE_LIMIT_EXCEEDED",
+        retryAfter: 5 * 60,
+      }
+    );
   },
 });
 
@@ -60,10 +70,15 @@ export const refreshRateLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   handler: (_req, res) => {
-    sendR(res, STATUS_RESPONSE.TOO_MANY_REQUESTS, "Too many refresh attempts. Please try again later.", {
-      code: "RATE_LIMIT_EXCEEDED",
-      retryAfter: 15 * 60,
-    });
+    sendR(
+      res,
+      STATUS_RESPONSE.TOO_MANY_REQUESTS,
+      "Too many refresh attempts. Please try again later.",
+      {
+        code: "RATE_LIMIT_EXCEEDED",
+        retryAfter: 15 * 60,
+      }
+    );
   },
 });
 
@@ -80,10 +95,15 @@ export const apiRateLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   handler: (_req, res) => {
-    sendR(res, STATUS_RESPONSE.TOO_MANY_REQUESTS, "Too many requests. Please slow down.", {
-      code: "RATE_LIMIT_EXCEEDED",
-      retryAfter: 60,
-    });
+    sendR(
+      res,
+      STATUS_RESPONSE.TOO_MANY_REQUESTS,
+      "Too many requests. Please slow down.",
+      {
+        code: "RATE_LIMIT_EXCEEDED",
+        retryAfter: 60,
+      }
+    );
   },
 });
 
@@ -102,10 +122,15 @@ export const aiChatRateLimiter = rateLimit({
   legacyHeaders: false,
   keyGenerator: (req) => req.user?.id || req.ip || "anonymous",
   handler: (_req, res) => {
-    sendR(res, STATUS_RESPONSE.TOO_MANY_REQUESTS, "Too many AI requests. Please wait before sending more messages.", {
-      code: "AI_RATE_LIMIT_EXCEEDED",
-      retryAfter: 60,
-    });
+    sendR(
+      res,
+      STATUS_RESPONSE.TOO_MANY_REQUESTS,
+      "Too many AI requests. Please wait before sending more messages.",
+      {
+        code: "AI_RATE_LIMIT_EXCEEDED",
+        retryAfter: 60,
+      }
+    );
   },
 });
 
@@ -123,10 +148,15 @@ export const aiChatBurstLimiter = rateLimit({
   legacyHeaders: false,
   keyGenerator: (req) => req.user?.id || req.ip || "anonymous",
   handler: (_req, res) => {
-    sendR(res, STATUS_RESPONSE.TOO_MANY_REQUESTS, "Too many requests in a short time. Please slow down.", {
-      code: "AI_BURST_LIMIT_EXCEEDED",
-      retryAfter: 10,
-    });
+    sendR(
+      res,
+      STATUS_RESPONSE.TOO_MANY_REQUESTS,
+      "Too many requests in a short time. Please slow down.",
+      {
+        code: "AI_BURST_LIMIT_EXCEEDED",
+        retryAfter: 10,
+      }
+    );
   },
 });
 
@@ -145,10 +175,15 @@ export const voiceRateLimiter = rateLimit({
   legacyHeaders: false,
   keyGenerator: (req) => req.user?.id || req.ip || "anonymous",
   handler: (_req, res) => {
-    sendR(res, STATUS_RESPONSE.TOO_MANY_REQUESTS, "Too many voice requests. Please wait before sending more audio.", {
-      code: "VOICE_RATE_LIMIT_EXCEEDED",
-      retryAfter: 60,
-    });
+    sendR(
+      res,
+      STATUS_RESPONSE.TOO_MANY_REQUESTS,
+      "Too many voice requests. Please wait before sending more audio.",
+      {
+        code: "VOICE_RATE_LIMIT_EXCEEDED",
+        retryAfter: 60,
+      }
+    );
   },
 });
 
@@ -166,10 +201,15 @@ export const voiceBurstLimiter = rateLimit({
   legacyHeaders: false,
   keyGenerator: (req) => req.user?.id || req.ip || "anonymous",
   handler: (_req, res) => {
-    sendR(res, STATUS_RESPONSE.TOO_MANY_REQUESTS, "Too many voice requests in a short time. Please slow down.", {
-      code: "VOICE_BURST_LIMIT_EXCEEDED",
-      retryAfter: 10,
-    });
+    sendR(
+      res,
+      STATUS_RESPONSE.TOO_MANY_REQUESTS,
+      "Too many voice requests in a short time. Please slow down.",
+      {
+        code: "VOICE_BURST_LIMIT_EXCEEDED",
+        retryAfter: 10,
+      }
+    );
   },
 });
 
@@ -183,14 +223,20 @@ export const voiceBurstLimiter = rateLimit({
 export const calendarAiRateLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
   max: 10, // 10 AI calendar requests per minute
-  message: "Too many calendar AI requests. Please wait before requesting more insights.",
+  message:
+    "Too many calendar AI requests. Please wait before requesting more insights.",
   standardHeaders: true,
   legacyHeaders: false,
   keyGenerator: (req) => req.user?.id || req.ip || "anonymous",
   handler: (_req, res) => {
-    sendR(res, STATUS_RESPONSE.TOO_MANY_REQUESTS, "Too many calendar AI requests. Please wait before requesting more insights.", {
-      code: "CALENDAR_AI_RATE_LIMIT_EXCEEDED",
-      retryAfter: 60,
-    });
+    sendR(
+      res,
+      STATUS_RESPONSE.TOO_MANY_REQUESTS,
+      "Too many calendar AI requests. Please wait before requesting more insights.",
+      {
+        code: "CALENDAR_AI_RATE_LIMIT_EXCEEDED",
+        retryAfter: 60,
+      }
+    );
   },
 });

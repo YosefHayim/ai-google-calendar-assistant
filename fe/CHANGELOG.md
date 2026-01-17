@@ -41,12 +41,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Files Changed
 
 #### New Components
+
 - `contexts/ImpersonationContext.tsx` - State management for admin impersonation
 - `components/admin/ImpersonationBanner.tsx` - Banner shown when impersonating
 - `components/admin/BroadcastDialog.tsx` - Dialog for sending broadcasts
 - `components/shared/CommandPalette.tsx` - Command palette component
 
 #### Modified Components
+
 - `contexts/AuthContext.tsx` - Updated `logout()` to clear localStorage tokens
 - `contexts/DashboardUIContext.tsx` - Updated `handleSignOut()` to use `logout()`
 - `components/admin/UserDetailsDialog.tsx` - Added impersonate and force logout buttons
@@ -54,9 +56,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `app/providers.tsx` - Added ImpersonationProvider and CommandPalette
 
 #### New Services
+
 - `services/admin.service.ts` - Added `impersonateUser()`, `revokeUserSessions()`, `broadcastNotification()`
 
 #### New Endpoints
+
 - `lib/api/endpoints.ts` - Added `ADMIN_USER_IMPERSONATE`, `ADMIN_USER_REVOKE_SESSIONS`, `ADMIN_BROADCAST`
 
 ---
@@ -96,17 +100,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Files Changed
 
 #### New/Modified Services
+
 - `services/payment.service.ts` - Added Lemon Squeezy product fetching functions
 
 #### New/Modified Hooks
+
 - `hooks/queries/billing/useBilling.ts` - Added `useLemonSqueezyProducts` hook
 - `hooks/queries/billing/index.ts` - Export new hook
 
 #### New/Modified Constants
+
 - `lib/constants/plans.ts` - Added `transformLemonSqueezyProductsToTiers()` and related types
 - `lib/api/endpoints.ts` - Added payment product endpoints
 
 #### Bug Fix Files
+
 - `components/ui/event-manager.tsx` - Fixed filter references
 - `components/ui/event-manager/EventManager.tsx` - Fixed import path
 - `components/ui/event-manager/components/EventDialog.tsx` - Fixed type conversion
@@ -125,4 +133,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-*For complete project changelog, see [/CHANGELOG.md](../CHANGELOG.md)*
+_For complete project changelog, see [/CHANGELOG.md](../CHANGELOG.md)_

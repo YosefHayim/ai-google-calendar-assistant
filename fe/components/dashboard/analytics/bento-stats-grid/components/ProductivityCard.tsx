@@ -43,9 +43,7 @@ export function ProductivityCard({ productivityScore, meetingLoad, focusTimePerc
       </div>
       <div className="grid grid-cols-2 gap-3 sm:gap-4 mt-4 pt-4 border-t border-zinc-100 dark:border-zinc-800">
         <div>
-          <p className="text-[10px] sm:text-xs text-zinc-500 dark:text-zinc-400">
-            {t('analytics.stats.meetingLoad')}
-          </p>
+          <p className="text-[10px] sm:text-xs text-zinc-500 dark:text-zinc-400">{t('analytics.stats.meetingLoad')}</p>
           <p className="text-base sm:text-lg font-semibold text-zinc-900 dark:text-zinc-100">
             <NumberFlow value={meetingLoad} />%
           </p>

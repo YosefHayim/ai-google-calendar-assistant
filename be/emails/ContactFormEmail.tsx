@@ -45,91 +45,89 @@ export const ContactFormEmail = ({
   message,
   attachmentCount = 0,
   logoUrl = "https://askally.io/logo.svg",
-}: ContactFormEmailProps) => {
-  return (
-    <Html>
-      <Head>
-        <title>New Contact Form Submission</title>
-        <style>
-          {`
+}: ContactFormEmailProps) => (
+  <Html>
+    <Head>
+      <title>New Contact Form Submission</title>
+      <style>
+        {`
             @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
           `}
-        </style>
-      </Head>
-      <Preview>
-        New message from {name}: {subject}
-      </Preview>
-      <Body style={styles.body}>
-        <Container style={styles.container}>
-          <Section style={styles.card}>
-            {logoUrl && (
-              <Img
-                alt="Ally"
-                height="48"
-                src={logoUrl}
-                style={styles.logo}
-                width="48"
-              />
-            )}
+      </style>
+    </Head>
+    <Preview>
+      New message from {name}: {subject}
+    </Preview>
+    <Body style={styles.body}>
+      <Container style={styles.container}>
+        <Section style={styles.card}>
+          {logoUrl && (
+            <Img
+              alt="Ally"
+              height="48"
+              src={logoUrl}
+              style={styles.logo}
+              width="48"
+            />
+          )}
 
-            <Hr style={styles.divider} />
+          <Hr style={styles.divider} />
 
-            <Text style={styles.heading}>New Contact Form Submission</Text>
+          <Text style={styles.heading}>New Contact Form Submission</Text>
 
-            <Text style={styles.subheading}>
-              Someone reached out through the website
-            </Text>
+          <Text style={styles.subheading}>
+            Someone reached out through the website
+          </Text>
 
-            <Section style={styles.detailsCard}>
-              <Section style={styles.detailRow}>
-                <Text style={styles.detailLabel}>From</Text>
-                <Text style={styles.detailValue}>{name}</Text>
-                <Text style={styles.detailEmail}>{email}</Text>
-              </Section>
-
-              <Hr style={styles.innerDivider} />
-
-              <Section style={styles.detailRow}>
-                <Text style={styles.detailLabel}>Subject</Text>
-                <Text style={styles.detailValue}>{subject}</Text>
-              </Section>
-
-              <Hr style={styles.innerDivider} />
-
-              <Section style={styles.detailRow}>
-                <Text style={styles.detailLabel}>Message</Text>
-                <Text style={styles.messageText}>{message}</Text>
-              </Section>
+          <Section style={styles.detailsCard}>
+            <Section style={styles.detailRow}>
+              <Text style={styles.detailLabel}>From</Text>
+              <Text style={styles.detailValue}>{name}</Text>
+              <Text style={styles.detailEmail}>{email}</Text>
             </Section>
 
-            {attachmentCount > 0 && (
-              <Section style={styles.attachmentBadge}>
-                <Text style={styles.attachmentText}>
-                  📎 {attachmentCount} attachment
-                  {attachmentCount > 1 ? "s" : ""} included
-                </Text>
-              </Section>
-            )}
+            <Hr style={styles.innerDivider} />
 
-            <Section style={styles.ctaSection}>
-              <Button href={`mailto:${email}`} style={styles.ctaButton}>
-                Reply to {name}
-              </Button>
+            <Section style={styles.detailRow}>
+              <Text style={styles.detailLabel}>Subject</Text>
+              <Text style={styles.detailValue}>{subject}</Text>
             </Section>
 
-            <Hr style={styles.divider} />
+            <Hr style={styles.innerDivider} />
 
-            <Text style={styles.footerAddress}>
-              Ally - Your AI Calendar Assistant
-              <br />
-              San Francisco, CA 94102
-            </Text>
+            <Section style={styles.detailRow}>
+              <Text style={styles.detailLabel}>Message</Text>
+              <Text style={styles.messageText}>{message}</Text>
+            </Section>
           </Section>
-        </Container>
-      </Body>
-    </Html>
-  );
-};
+
+          {attachmentCount > 0 && (
+            <Section style={styles.attachmentBadge}>
+              <Text style={styles.attachmentText}>
+                📎 {attachmentCount} attachment
+                {attachmentCount > 1 ? "s" : ""} included
+              </Text>
+            </Section>
+          )}
+
+          <Section style={styles.ctaSection}>
+            <Button href={`mailto:${email}`} style={styles.ctaButton}>
+              Reply to {name}
+            </Button>
+          </Section>
+
+          <Hr style={styles.divider} />
+
+          <Text style={styles.footerAddress}>
+            Ally - Your AI Calendar Assistant
+            <br />
+            San Francisco, CA 94102
+          </Text>
+        </Section>
+      </Container>
+    </Body>
+  </Html>
+);
 
 const styles = {
   body: {

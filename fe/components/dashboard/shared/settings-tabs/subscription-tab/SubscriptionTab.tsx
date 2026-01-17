@@ -129,9 +129,7 @@ export const SubscriptionTab: React.FC = () => {
   const isPerUse = selectedFrequency === 'per use'
   const isTrialing = access?.subscription_status === 'trialing'
 
-  const displayPlans = isTrialing
-    ? plans?.filter((plan) => plan.pricing.monthly > 0 || plan.pricing.yearly > 0)
-    : plans
+  const displayPlans = isTrialing ? plans?.filter((plan) => plan.pricing.monthly > 0 || plan.pricing.yearly > 0) : plans
 
   const currentPlan = plans?.find((p) => p.slug === access?.plan_slug)
 

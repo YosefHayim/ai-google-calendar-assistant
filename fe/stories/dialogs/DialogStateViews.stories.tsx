@@ -220,9 +220,7 @@ export const ErrorTranscription: StoryObj<typeof ErrorView> = {
 }
 
 export const ErrorParsing: StoryObj<typeof ErrorView> = {
-  render: () => (
-    <ErrorView message="Could not understand the event details. Please be more specific." onRetry={fn()} />
-  ),
+  render: () => <ErrorView message="Could not understand the event details. Please be more specific." onRetry={fn()} />,
   parameters: {
     docs: {
       description: {

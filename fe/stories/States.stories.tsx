@@ -198,11 +198,7 @@ export const StatesComparison: StoryObj = {
       </Card>
       <Card>
         <CardContent>
-          <ErrorState
-            title="Load failed"
-            message="Could not load calendar"
-            onRetry={() => {}}
-          />
+          <ErrorState title="Load failed" message="Could not load calendar" onRetry={() => {}} />
         </CardContent>
       </Card>
     </div>

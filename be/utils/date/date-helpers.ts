@@ -1,4 +1,10 @@
-import { getYear, isValid, isToday as dateFnsIsToday, parseISO, startOfDay } from "date-fns";
+import {
+  isToday as dateFnsIsToday,
+  getYear,
+  isValid,
+  parseISO,
+  startOfDay,
+} from "date-fns";
 
 /**
  * @description Returns a new Date object set to the start of the day (00:00:00.000) for the given date.

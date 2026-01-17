@@ -5,46 +5,46 @@ import { reqResAsyncHandler, sendR } from "@/utils/http";
 const listCalendars = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     if (!req.calendar) {
-      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available")
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available");
     }
     const r = await req.calendar.calendarList.list({
       prettyPrint: true,
       minAccessRole: req.query.minAccessRole as string,
       showDeleted: req.query.showDeleted === "true",
       showHidden: req.query.showHidden === "true",
-    })
+    });
 
     return sendR(
       res,
       STATUS_RESPONSE.SUCCESS,
       "Successfully retrieved calendar list",
       r.data
-    )
+    );
   }
-)
+);
 
 const getCalendarListEntry = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     if (!req.calendar) {
-      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available")
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available");
     }
     const r = await req.calendar.calendarList.get({
       calendarId: req.params.id,
-    })
+    });
 
     return sendR(
       res,
       STATUS_RESPONSE.SUCCESS,
       "Successfully retrieved calendar list entry",
       r.data
-    )
+    );
   }
-)
+);
 
 const insertCalendarToList = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     if (!req.calendar) {
-      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available")
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available");
     }
     const r = await req.calendar.calendarList.insert({
       requestBody: {
@@ -59,78 +59,78 @@ const insertCalendarToList = reqResAsyncHandler(
         summaryOverride: req.body.summaryOverride,
       },
       colorRgbFormat: req.query.colorRgbFormat === "true",
-    })
+    });
 
     return sendR(
       res,
       STATUS_RESPONSE.CREATED,
       "Calendar added to list successfully",
       r.data
-    )
+    );
   }
-)
+);
 
 const patchCalendarListEntry = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     if (!req.calendar) {
-      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available")
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available");
     }
     const r = await req.calendar.calendarList.patch({
       calendarId: req.params.id,
       requestBody: req.body,
       colorRgbFormat: req.query.colorRgbFormat === "true",
-    })
+    });
 
     return sendR(
       res,
       STATUS_RESPONSE.SUCCESS,
       "Calendar list entry patched successfully",
       r.data
-    )
+    );
   }
-)
+);
 
 const updateCalendarListEntry = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     if (!req.calendar) {
-      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available")
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available");
     }
     const r = await req.calendar.calendarList.update({
       calendarId: req.params.id,
       requestBody: req.body,
       colorRgbFormat: req.query.colorRgbFormat === "true",
-    })
+    });
 
     return sendR(
       res,
       STATUS_RESPONSE.SUCCESS,
       "Calendar list entry updated successfully",
       r.data
-    )
+    );
   }
-)
+);
 
 const deleteCalendarFromList = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     if (!req.calendar) {
-      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available")
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available");
     }
     await req.calendar.calendarList.delete({
       calendarId: req.params.id,
-    })
+    });
 
     return sendR(
       res,
       STATUS_RESPONSE.SUCCESS,
       "Calendar removed from list successfully"
-    )
+    );
   }
-)
+);
 
 const watchCalendarList = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     if (!req.calendar) {
-      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available")
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available");
     }
     const r = await req.calendar.calendarList.watch({
       requestBody: {
@@ -144,16 +144,16 @@ const watchCalendarList = reqResAsyncHandler(
       minAccessRole: req.query.minAccessRole as string,
       showDeleted: req.query.showDeleted === "true",
       showHidden: req.query.showHidden === "true",
-    })
+    });
 
     return sendR(
       res,
       STATUS_RESPONSE.SUCCESS,
       "Calendar list watch created successfully",
       r.data
-    )
+    );
   }
-)
+);
 
 export default {
   listCalendars,

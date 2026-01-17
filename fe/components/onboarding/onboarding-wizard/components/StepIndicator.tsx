@@ -20,7 +20,7 @@ export function StepIndicator({ totalSteps, currentStep }: StepIndicatorProps) {
                 ? 'w-8 bg-primary'
                 : index < currentStep
                   ? 'w-1.5 bg-primary/50'
-                  : 'w-1.5 bg-zinc-200 dark:bg-zinc-700'
+                  : 'w-1.5 bg-zinc-200 dark:bg-zinc-700',
             )}
           />
         ))}

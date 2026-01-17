@@ -57,9 +57,7 @@ export const DarkMode: Story = {
 export const InHeroContext: Story = {
   render: () => (
     <div className="text-center space-y-6 max-w-2xl mx-auto">
-      <h1 className="text-4xl font-bold text-zinc-900 dark:text-zinc-100">
-        Your AI Calendar Assistant
-      </h1>
+      <h1 className="text-4xl font-bold text-zinc-900 dark:text-zinc-100">Your AI Calendar Assistant</h1>
       <p className="text-lg text-zinc-500 dark:text-zinc-400">
         Schedule meetings, manage events, and stay productive with natural language.
       </p>
@@ -96,12 +94,10 @@ export const Features: Story = {
   render: () => (
     <div className="space-y-8 max-w-xl mx-auto">
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">
-          Avatar Tooltip Group Features
-        </h2>
+        <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">Avatar Tooltip Group Features</h2>
         <p className="text-zinc-500">Interactive social proof component</p>
       </div>
-      
+
       <div className="space-y-4">
         <div className="p-4 bg-zinc-50 dark:bg-zinc-900 rounded-lg">
           <h3 className="font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Stacked Avatars</h3>
@@ -112,7 +108,7 @@ export const Features: Story = {
             <li>- White border ring for separation</li>
           </ul>
         </div>
-        
+
         <div className="p-4 bg-zinc-50 dark:bg-zinc-900 rounded-lg">
           <h3 className="font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Hover Tooltips</h3>
           <ul className="text-sm text-zinc-600 dark:text-zinc-400 space-y-1">
@@ -122,7 +118,7 @@ export const Features: Story = {
             <li>- Dark/light mode aware colors</li>
           </ul>
         </div>
-        
+
         <div className="p-4 bg-zinc-50 dark:bg-zinc-900 rounded-lg">
           <h3 className="font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Star Rating</h3>
           <ul className="text-sm text-zinc-600 dark:text-zinc-400 space-y-1">
@@ -131,7 +127,7 @@ export const Features: Story = {
             <li>- Aligns with trust messaging</li>
           </ul>
         </div>
-        
+
         <div className="p-4 bg-zinc-50 dark:bg-zinc-900 rounded-lg">
           <h3 className="font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Trust Message</h3>
           <ul className="text-sm text-zinc-600 dark:text-zinc-400 space-y-1">
@@ -141,7 +137,7 @@ export const Features: Story = {
           </ul>
         </div>
       </div>
-      
+
       <div className="flex justify-center pt-4">
         <AvatarTooltipGroup />
       </div>

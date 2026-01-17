@@ -92,9 +92,7 @@ export function CurrentPlanCard({
             {interactionsRemaining !== null && interactionsRemaining !== undefined && (
               <div className="flex items-center justify-between text-sm">
                 <span className="text-zinc-500">AI Interactions</span>
-                <span className="font-medium text-zinc-900 dark:text-white">
-                  {interactionsRemaining} remaining
-                </span>
+                <span className="font-medium text-zinc-900 dark:text-white">{interactionsRemaining} remaining</span>
               </div>
             )}
             {isTrialing && (

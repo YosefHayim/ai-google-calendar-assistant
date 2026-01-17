@@ -9,7 +9,7 @@ export {
   type TrackedEvent,
   type UserPreferencesContext,
   unifiedContextStore,
-} from "./context"
+} from "./context";
 
 export {
   type ChatParams,
@@ -24,7 +24,7 @@ export {
   type StreamChunk,
   type ToolCall,
   type ToolDefinition,
-} from "./llm"
+} from "./llm";
 
 export {
   type CreateTextAgentOptions,
@@ -34,7 +34,7 @@ export {
   runTextAgent,
   type StreamEvent,
   type TextAgentConfig,
-} from "./orchestrator"
+} from "./orchestrator";
 
 export {
   AUTH_CONTEXT,
@@ -47,7 +47,7 @@ export {
   INTENT_RECOGNITION,
   RESPONSE_STYLE,
   TIME_INFERENCE,
-} from "./prompts"
+} from "./prompts";
 
 export {
   type AnalyzeGapsResult,
@@ -74,7 +74,7 @@ export {
   updateEventHandler,
   type ValidateUserResult,
   validateUserHandler,
-} from "./tools/handlers"
+} from "./tools/handlers";
 
 export {
   executeTool,
@@ -83,7 +83,7 @@ export {
   isToolAvailable,
   type ToolExecutionResult,
   type ToolExecutorContext,
-} from "./tools/tool-executor"
+} from "./tools/tool-executor";
 
 export {
   type AgentContext as SharedAgentContext,
@@ -94,4 +94,4 @@ export {
   type Modality,
   type ProjectionMode,
   stringifyError,
-} from "./types"
+} from "./types";

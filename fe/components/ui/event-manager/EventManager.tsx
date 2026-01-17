@@ -93,7 +93,7 @@ export function EventManager({
       setIsDialogOpen(false)
       setSelectedEvent(null)
     },
-    [onEventUpdate]
+    [onEventUpdate],
   )
 
   const handleDeleteEvent = useCallback(
@@ -102,7 +102,7 @@ export function EventManager({
       setIsDialogOpen(false)
       setSelectedEvent(null)
     },
-    [onEventDelete]
+    [onEventDelete],
   )
 
   const handleDragStart = useCallback((event: Event) => {
@@ -133,7 +133,7 @@ export function EventManager({
       onEventUpdate?.(draggedEvent.id, updatedEvent)
       setDraggedEvent(null)
     },
-    [draggedEvent, onEventUpdate]
+    [draggedEvent, onEventUpdate],
   )
 
   const navigateDate = useCallback(
@@ -152,7 +152,7 @@ export function EventManager({
         return newDate
       })
     },
-    [view]
+    [view],
   )
 
   const getColorClasses = useCallback(
@@ -160,7 +160,7 @@ export function EventManager({
       const color = colors.find((c) => c.value === colorValue)
       return color || colors[0]
     },
-    [colors]
+    [colors],
   )
 
   const handleEventClick = useCallback((event: Event) => {

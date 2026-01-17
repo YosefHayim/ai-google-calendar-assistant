@@ -267,7 +267,7 @@ export function AnalyticsDashboard({ isLoading: initialLoading }: AnalyticsDashb
           handleCalendarEventClick(
             event,
             selectedCalendarForEvents?.color || '#6366f1',
-            selectedCalendarForEvents?.name || ''
+            selectedCalendarForEvents?.name || '',
           )
         }}
       />

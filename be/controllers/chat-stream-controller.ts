@@ -1,4 +1,9 @@
-import { type RunAgentUpdatedStreamEvent, type RunItemStreamEvent, type RunRawModelStreamEvent, run } from "@openai/agents";
+import {
+  type RunAgentUpdatedStreamEvent,
+  type RunItemStreamEvent,
+  type RunRawModelStreamEvent,
+  run,
+} from "@openai/agents";
 import type { Request, Response } from "express";
 import { ORCHESTRATOR_AGENT } from "@/ai-agents";
 import { createAgentSession } from "@/ai-agents/sessions";
@@ -8,7 +13,10 @@ import { createCreditTransaction } from "@/services/credit-service";
 import { getAllyBrainPreference } from "@/services/user-preferences-service";
 import { unifiedContextStore } from "@/shared/context";
 import type { ImageContent } from "@/shared/llm";
-import { generateConversationTitle, summarizeMessages } from "@/telegram-bot/utils/summarize";
+import {
+  generateConversationTitle,
+  summarizeMessages,
+} from "@/telegram-bot/utils/summarize";
 import { webConversation } from "@/utils/conversation/WebConversationAdapter";
 import { sendR } from "@/utils/http";
 import {
@@ -24,12 +32,17 @@ import {
   writeToolComplete,
   writeToolStart,
 } from "@/utils/sse";
-import { getWebRelevantContext, storeWebEmbeddingAsync } from "@/utils/web-embeddings";
+import {
+  getWebRelevantContext,
+  storeWebEmbeddingAsync,
+} from "@/utils/web-embeddings";
 
 const EMBEDDING_THRESHOLD = 0.75;
 const EMBEDDING_LIMIT = 3;
 
-function parseToolOutput(output: unknown): { success?: boolean; message?: string; newInstructions?: string } | null {
+function parseToolOutput(
+  output: unknown
+): { success?: boolean; message?: string; newInstructions?: string } | null {
   if (!output) {
     return null;
   }
@@ -55,8 +68,18 @@ type PromptParams = {
   imageCount?: number;
 };
 
-async function buildChatPromptWithContext(params: PromptParams): Promise<string> {
-  const { message, conversationContext, semanticContext, userEmail, userId, hasImages, imageCount } = params;
+async function buildChatPromptWithContext(
+  params: PromptParams
+): Promise<string> {
+  const {
+    message,
+    conversationContext,
+    semanticContext,
+    userEmail,
+    userId,
+    hasImages,
+    imageCount,
+  } = params;
   const parts: string[] = [];
 
   const allyBrain = await getAllyBrainPreference(userId);
@@ -82,7 +105,9 @@ async function buildChatPromptWithContext(params: PromptParams): Promise<string>
   }
 
   if (hasImages && imageCount) {
-    parts.push(`\n[User has attached ${imageCount} image(s) to this message. Please analyze them and help with any calendar-related content you find.]`);
+    parts.push(
+      `\n[User has attached ${imageCount} image(s) to this message. Please analyze them and help with any calendar-related content you find.]`
+    );
   }
 
   parts.push("\n<user_request>");
@@ -92,7 +117,13 @@ async function buildChatPromptWithContext(params: PromptParams): Promise<string>
   return parts.join("\n");
 }
 
-async function handleOpenAIStreaming(res: Response, userId: string, userEmail: string, conversationId: string, fullPrompt: string): Promise<string> {
+async function handleOpenAIStreaming(
+  res: Response,
+  userId: string,
+  userEmail: string,
+  conversationId: string,
+  fullPrompt: string
+): Promise<string> {
   let fullResponse = "";
   let currentAgent = ORCHESTRATOR_AGENT.name;
 
@@ -150,9 +181,15 @@ async function handleOpenAIStreaming(res: Response, userId: string, userEmail: s
         if (toolName === "update_user_brain" && "output" in item) {
           const output = parseToolOutput(item.output);
           if (output?.success && output?.message) {
-            const action = output.message.includes("updated") ? "replaced" : "added";
+            const action = output.message.includes("updated")
+              ? "replaced"
+              : "added";
             const PREVIEW_LENGTH = 100;
-            writeMemoryUpdated(res, output.newInstructions?.slice(0, PREVIEW_LENGTH) || "", action);
+            writeMemoryUpdated(
+              res,
+              output.newInstructions?.slice(0, PREVIEW_LENGTH) || "",
+              action
+            );
           }
         }
       }
@@ -162,7 +199,10 @@ async function handleOpenAIStreaming(res: Response, userId: string, userEmail: s
   await stream.completed;
 
   if (!fullResponse && stream.finalOutput) {
-    fullResponse = typeof stream.finalOutput === "string" ? stream.finalOutput : String(stream.finalOutput);
+    fullResponse =
+      typeof stream.finalOutput === "string"
+        ? stream.finalOutput
+        : String(stream.finalOutput);
     writeTextDelta(res, fullResponse, fullResponse);
   }
 
@@ -181,7 +221,16 @@ type StreamingParams = {
 };
 
 async function handleStreamingResponse(params: StreamingParams): Promise<void> {
-  const { res, userId, userEmail, message, conversationId, isNewConversation, fullPrompt, images } = params;
+  const {
+    res,
+    userId,
+    userEmail,
+    message,
+    conversationId,
+    isNewConversation,
+    fullPrompt,
+    images,
+  } = params;
 
   setupSSEHeaders(res);
   const stopHeartbeat = startHeartbeat(res);
@@ -190,7 +239,11 @@ async function handleStreamingResponse(params: StreamingParams): Promise<void> {
   const creditCheck = await creditTx.begin();
 
   if (!creditCheck.hasCredits) {
-    writeError(res, "No credits remaining. Please upgrade your plan or purchase credits.", "NO_CREDITS");
+    writeError(
+      res,
+      "No credits remaining. Please upgrade your plan or purchase credits.",
+      "NO_CREDITS"
+    );
     stopHeartbeat();
     endSSEStream(res);
     return;
@@ -206,7 +259,13 @@ async function handleStreamingResponse(params: StreamingParams): Promise<void> {
   try {
     const tempConversationId = conversationId || `temp-${userId}-${Date.now()}`;
 
-    fullResponse = await handleOpenAIStreaming(res, userId, userEmail, tempConversationId, fullPrompt);
+    fullResponse = await handleOpenAIStreaming(
+      res,
+      userId,
+      userEmail,
+      tempConversationId,
+      fullPrompt
+    );
 
     if (fullResponse) {
       const messageImages = images?.map((img) => ({
@@ -226,8 +285,18 @@ async function handleStreamingResponse(params: StreamingParams): Promise<void> {
           finalConversationId = result.conversationId;
         }
       } else if (conversationId) {
-        await webConversation.addMessageToConversation(conversationId, userId, { role: "user", content: message, images: messageImages }, summarizeMessages);
-        await webConversation.addMessageToConversation(conversationId, userId, { role: "assistant", content: fullResponse }, summarizeMessages);
+        await webConversation.addMessageToConversation(
+          conversationId,
+          userId,
+          { role: "user", content: message, images: messageImages },
+          summarizeMessages
+        );
+        await webConversation.addMessageToConversation(
+          conversationId,
+          userId,
+          { role: "assistant", content: fullResponse },
+          summarizeMessages
+        );
       }
 
       storeWebEmbeddingAsync(userId, message, "user");
@@ -240,7 +309,10 @@ async function handleStreamingResponse(params: StreamingParams): Promise<void> {
     if (isNewConversation && finalConversationId) {
       try {
         const title = await generateConversationTitle(message);
-        await webConversation.updateConversationTitle(finalConversationId, title);
+        await webConversation.updateConversationTitle(
+          finalConversationId,
+          title
+        );
         writeTitleGenerated(res, finalConversationId, title);
       } catch (titleError) {
         console.error("Title generation error:", titleError);
@@ -248,7 +320,8 @@ async function handleStreamingResponse(params: StreamingParams): Promise<void> {
     }
   } catch (error) {
     console.error("Stream error:", error);
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
     writeError(res, errorMessage, "STREAM_ERROR");
     interactionSuccessful = false;
   } finally {
@@ -262,7 +335,10 @@ async function handleStreamingResponse(params: StreamingParams): Promise<void> {
   }
 }
 
-const streamChat = async (req: Request<unknown, unknown, StreamChatRequest>, res: Response): Promise<void> => {
+const streamChat = async (
+  req: Request<unknown, unknown, StreamChatRequest>,
+  res: Response
+): Promise<void> => {
   const { message, images } = req.body;
   const userId = req.user?.id;
   const userEmail = req.user?.email;
@@ -309,12 +385,19 @@ const streamChat = async (req: Request<unknown, unknown, StreamChatRequest>, res
       writeError(res, "Error processing your request", "INIT_ERROR");
       endSSEStream(res);
     } else {
-      sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Error processing your request");
+      sendR(
+        res,
+        STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
+        "Error processing your request"
+      );
     }
   }
 };
 
-const streamContinueConversation = async (req: Request<{ id: string }, unknown, StreamChatRequest>, res: Response): Promise<void> => {
+const streamContinueConversation = async (
+  req: Request<{ id: string }, unknown, StreamChatRequest>,
+  res: Response
+): Promise<void> => {
   const userId = req.user?.id;
   const userEmail = req.user?.email;
   const conversationId = req.params.id;
@@ -336,14 +419,19 @@ const streamContinueConversation = async (req: Request<{ id: string }, unknown, 
   }
 
   try {
-    const loaded = await webConversation.loadConversationIntoContext(conversationId, userId);
+    const loaded = await webConversation.loadConversationIntoContext(
+      conversationId,
+      userId
+    );
 
     if (!loaded) {
       sendR(res, STATUS_RESPONSE.NOT_FOUND, "Conversation not found");
       return;
     }
 
-    const conversationContext = webConversation.buildContextPrompt(loaded.context);
+    const conversationContext = webConversation.buildContextPrompt(
+      loaded.context
+    );
 
     const semanticContext = await getWebRelevantContext(userId, message || "", {
       threshold: EMBEDDING_THRESHOLD,
@@ -376,7 +464,11 @@ const streamContinueConversation = async (req: Request<{ id: string }, unknown, 
       writeError(res, "Error processing your request", "INIT_ERROR");
       endSSEStream(res);
     } else {
-      sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Error processing your request");
+      sendR(
+        res,
+        STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
+        "Error processing your request"
+      );
     }
   }
 };

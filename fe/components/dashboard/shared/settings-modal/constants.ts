@@ -1,6 +1,13 @@
 import { Bell, Brain, CreditCard, Database, LayoutDashboard, Settings, Shield } from 'lucide-react'
 
-export type TabValue = 'general' | 'account' | 'notifications' | 'integrations' | 'assistant' | 'security' | 'dataControls'
+export type TabValue =
+  | 'general'
+  | 'account'
+  | 'notifications'
+  | 'integrations'
+  | 'assistant'
+  | 'security'
+  | 'dataControls'
 
 export interface TabConfig {
   id: TabValue

@@ -24,8 +24,7 @@ export const Default: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          'Default use case grid showing all four primary use cases with their respective chat illustrations.',
+        story: 'Default use case grid showing all four primary use cases with their respective chat illustrations.',
       },
     },
   },
@@ -34,12 +33,8 @@ export const Default: Story = {
       <div className="py-20 px-4 bg-white dark:bg-[#030303]">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
-            <span className="text-xs font-bold text-primary uppercase tracking-[0.2em] mb-4 block">
-              Use Cases
-            </span>
-            <h2 className="text-4xl font-bold text-zinc-900 dark:text-zinc-100 mb-4">
-              How Professionals Use Ally
-            </h2>
+            <span className="text-xs font-bold text-primary uppercase tracking-[0.2em] mb-4 block">Use Cases</span>
+            <h2 className="text-4xl font-bold text-zinc-900 dark:text-zinc-100 mb-4">How Professionals Use Ally</h2>
             <p className="text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">
               Real scenarios where Ask Ally saves time and reduces calendar friction.
             </p>
@@ -65,9 +60,7 @@ export const DarkMode: Story = {
       <div className="dark py-20 px-4 bg-[#030303]">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
-            <span className="text-xs font-bold text-primary uppercase tracking-[0.2em] mb-4 block">
-              Use Cases
-            </span>
+            <span className="text-xs font-bold text-primary uppercase tracking-[0.2em] mb-4 block">Use Cases</span>
             <h2 className="text-4xl font-bold text-zinc-100 mb-4">How Professionals Use Ally</h2>
             <p className="text-zinc-400 max-w-2xl mx-auto">
               Real scenarios where Ask Ally saves time and reduces calendar friction.
@@ -110,9 +103,7 @@ export const IntelligentSchedulingFocus: Story = {
               </svg>
               Smart Scheduling
             </span>
-            <h3 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
-              Find the perfect time, every time
-            </h3>
+            <h3 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">Find the perfect time, every time</h3>
           </div>
           <Story />
         </div>
@@ -125,8 +116,7 @@ export const VoiceCommandFocus: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          'Showcasing voice-to-action capabilities - Record quick voice commands and Ally handles the rest.',
+        story: 'Showcasing voice-to-action capabilities - Record quick voice commands and Ally handles the rest.',
       },
     },
   },
@@ -150,9 +140,7 @@ export const VoiceCommandFocus: Story = {
               </svg>
               Voice Commands
             </span>
-            <h3 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
-              Speak naturally, get things done
-            </h3>
+            <h3 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">Speak naturally, get things done</h3>
           </div>
           <Story />
         </div>
@@ -220,8 +208,7 @@ export const WithCTA: Story = {
                 Ready to Transform Your Calendar?
               </h3>
               <p className="text-zinc-600 dark:text-zinc-400 mb-6 max-w-lg mx-auto">
-                Join thousands of professionals who have already simplified their scheduling with Ask
-                Ally.
+                Join thousands of professionals who have already simplified their scheduling with Ask Ally.
               </p>
               <div className="flex items-center justify-center gap-4">
                 <button className="px-8 py-3 bg-primary text-white rounded-full font-medium hover:bg-primary/90 transition-colors">

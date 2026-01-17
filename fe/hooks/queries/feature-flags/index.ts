@@ -68,8 +68,7 @@ export function useUpdateFeatureFlag() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ id, input }: { id: string; input: UpdateFeatureFlagInput }) =>
-      featureFlagsService.update(id, input),
+    mutationFn: ({ id, input }: { id: string; input: UpdateFeatureFlagInput }) => featureFlagsService.update(id, input),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: featureFlagKeys.all })
     },
@@ -80,8 +79,7 @@ export function useToggleFeatureFlag() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ id, enabled }: { id: string; enabled: boolean }) =>
-      featureFlagsService.toggle(id, enabled),
+    mutationFn: ({ id, enabled }: { id: string; enabled: boolean }) => featureFlagsService.toggle(id, enabled),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: featureFlagKeys.all })
     },

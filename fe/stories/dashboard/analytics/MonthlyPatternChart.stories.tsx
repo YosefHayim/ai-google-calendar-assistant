@@ -23,7 +23,10 @@ const meta: Meta<typeof MonthlyPatternChart> = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-const generateMonthlyData = (pattern: 'balanced' | 'busyStart' | 'busyEnd' | 'midMonthPeak', seed = 12345): MonthlyPatternDataPoint[] => {
+const generateMonthlyData = (
+  pattern: 'balanced' | 'busyStart' | 'busyEnd' | 'midMonthPeak',
+  seed = 12345,
+): MonthlyPatternDataPoint[] => {
   const days = 31
   const random = seededRandom(seed)
 
@@ -118,41 +121,17 @@ export const SparseData: Story = {
 }
 
 export const DashboardDefault: StoryObj<typeof MonthlyPatternDashboard> = {
-  render: () => (
-    <MonthlyPatternDashboard
-      data={balancedData}
-      onDayClick={fn()}
-      isLoading={false}
-    />
-  ),
+  render: () => <MonthlyPatternDashboard data={balancedData} onDayClick={fn()} isLoading={false} />,
 }
 
 export const DashboardLoading: StoryObj<typeof MonthlyPatternDashboard> = {
-  render: () => (
-    <MonthlyPatternDashboard
-      data={[]}
-      onDayClick={fn()}
-      isLoading={true}
-    />
-  ),
+  render: () => <MonthlyPatternDashboard data={[]} onDayClick={fn()} isLoading={true} />,
 }
 
 export const DashboardEmpty: StoryObj<typeof MonthlyPatternDashboard> = {
-  render: () => (
-    <MonthlyPatternDashboard
-      data={[]}
-      onDayClick={fn()}
-      isLoading={false}
-    />
-  ),
+  render: () => <MonthlyPatternDashboard data={[]} onDayClick={fn()} isLoading={false} />,
 }
 
 export const DashboardBusyEnd: StoryObj<typeof MonthlyPatternDashboard> = {
-  render: () => (
-    <MonthlyPatternDashboard
-      data={busyEndData}
-      onDayClick={fn()}
-      isLoading={false}
-    />
-  ),
+  render: () => <MonthlyPatternDashboard data={busyEndData} onDayClick={fn()} isLoading={false} />,
 }

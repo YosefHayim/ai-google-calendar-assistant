@@ -61,12 +61,10 @@ export const WithPageContext: Story = {
       <div className="min-h-screen flex flex-col bg-white dark:bg-[#030303]">
         <main className="flex-1 p-8">
           <div className="max-w-4xl mx-auto space-y-8">
-            <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100">
-              Ask Ally - AI Calendar Assistant
-            </h1>
+            <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100">Ask Ally - AI Calendar Assistant</h1>
             <p className="text-zinc-600 dark:text-zinc-400">
-              Transform your calendar management with natural language. Schedule meetings, block focus time,
-              and get intelligent insights - all through simple conversation.
+              Transform your calendar management with natural language. Schedule meetings, block focus time, and get
+              intelligent insights - all through simple conversation.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {['Voice Commands', 'Multi-Platform', 'Smart Analytics'].map((feature) => (

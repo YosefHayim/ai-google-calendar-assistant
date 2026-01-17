@@ -43,9 +43,8 @@ function getUserInfo(user: User | CustomUser | null) {
   }
 
   const name = [firstName, lastName].filter(Boolean).join(' ') || user.email?.split('@')[0] || ''
-  const initials = firstName && lastName
-    ? `${firstName[0]}${lastName[0]}`.toUpperCase()
-    : name.slice(0, 2).toUpperCase()
+  const initials =
+    firstName && lastName ? `${firstName[0]}${lastName[0]}`.toUpperCase() : name.slice(0, 2).toUpperCase()
 
   return { name, initials, avatarUrl: userAvatarUrl || '' }
 }
@@ -94,84 +93,84 @@ const Navbar = () => {
             : 'py-6 bg-transparent'
         }`}
       >
-      <div className="container mx-auto px-4 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 group">
-          <div className="w-8 h-8 bg-zinc-900 dark:bg-white rounded-md flex items-center justify-center text-white dark:text-zinc-900 shadow-sm group-hover:scale-110 transition-transform">
-            <AllyLogo className="w-5 h-5" />
-          </div>
-          <span className="font-medium text-xl tracking-tight flex items-center text-zinc-900 dark:text-zinc-100">
-            Ally <BetaBadge />
-          </span>
-        </Link>
+        <div className="container mx-auto px-4 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2 group">
+            <div className="w-8 h-8 bg-zinc-900 dark:bg-white rounded-md flex items-center justify-center text-white dark:text-zinc-900 shadow-sm group-hover:scale-110 transition-transform">
+              <AllyLogo className="w-5 h-5" />
+            </div>
+            <span className="font-medium text-xl tracking-tight flex items-center text-zinc-900 dark:text-zinc-100">
+              Ally <BetaBadge />
+            </span>
+          </Link>
 
-        {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <Link
-              key={link.name}
-              href={link.href}
-              className={`text-sm font-medium transition-colors hover:text-primary ${
-                pathname === link.href ? 'text-primary' : 'text-zinc-500 dark:text-zinc-400'
-              }`}
-            >
-              {link.name}
-            </Link>
-          ))}
-        </div>
-
-        <div className="hidden md:flex items-center gap-3">
-          <LanguageDropdown />
-          <ThemeToggle className="scale-90" />
-          {isAuthenticated && !isLoading ? (
-            <>
-              <div className="flex items-center gap-2 px-2">
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src={avatarUrl} alt={name} />
-                  <AvatarFallback className="bg-primary/10 text-primary text-xs font-medium">
-                    {initials}
-                  </AvatarFallback>
-                </Avatar>
-                <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300 max-w-[120px] truncate">
-                  {name}
-                </span>
-              </div>
-              <Button onClick={() => router.push('/dashboard')} className="gap-2">
-                {t('navbar.dashboard', 'Dashboard')}
-                <ArrowRight className="h-4 w-4" />
-              </Button>
-            </>
-          ) : (
-            <>
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center gap-8">
+            {navLinks.map((link) => (
               <Link
-                href="/login"
-                className="text-sm font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+                key={link.name}
+                href={link.href}
+                className={`text-sm font-medium transition-colors hover:text-primary ${
+                  pathname === link.href ? 'text-primary' : 'text-zinc-500 dark:text-zinc-400'
+                }`}
               >
-                {t('navbar.login')}
+                {link.name}
               </Link>
-              <InteractiveHoverButton
-                text={t('navbar.getStarted')}
-                className="w-40 h-10 text-sm"
-                onClick={() => router.push('/register')}
-              />
-            </>
-          )}
-        </div>
+            ))}
+          </div>
 
-        {/* Mobile Toggle Section */}
-        <div className="flex items-center gap-2 md:hidden">
-          {isAuthenticated && !isLoading && (
-            <Avatar className="h-7 w-7">
-              <AvatarImage src={avatarUrl} alt={name} />
-              <AvatarFallback className="bg-primary/10 text-primary text-[10px] font-medium">
-                {initials}
-              </AvatarFallback>
-            </Avatar>
-          )}
-          <LanguageDropdown compact />
-          <ThemeToggle className="scale-75" />
-          <AnimatedHamburger isOpen={isMobileMenuOpen} onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} />
+          <div className="hidden md:flex items-center gap-3">
+            <LanguageDropdown />
+            <ThemeToggle className="scale-90" />
+            {isAuthenticated && !isLoading ? (
+              <>
+                <div className="flex items-center gap-2 px-2">
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={avatarUrl} alt={name} />
+                    <AvatarFallback className="bg-primary/10 text-primary text-xs font-medium">
+                      {initials}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300 max-w-[120px] truncate">
+                    {name}
+                  </span>
+                </div>
+                <Button onClick={() => router.push('/dashboard')} className="gap-2">
+                  {t('navbar.dashboard', 'Dashboard')}
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="text-sm font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+                >
+                  {t('navbar.login')}
+                </Link>
+                <InteractiveHoverButton
+                  text={t('navbar.getStarted')}
+                  className="w-40 h-10 text-sm"
+                  onClick={() => router.push('/register')}
+                />
+              </>
+            )}
+          </div>
+
+          {/* Mobile Toggle Section */}
+          <div className="flex items-center gap-2 md:hidden">
+            {isAuthenticated && !isLoading && (
+              <Avatar className="h-7 w-7">
+                <AvatarImage src={avatarUrl} alt={name} />
+                <AvatarFallback className="bg-primary/10 text-primary text-[10px] font-medium">
+                  {initials}
+                </AvatarFallback>
+              </Avatar>
+            )}
+            <LanguageDropdown compact />
+            <ThemeToggle className="scale-75" />
+            <AnimatedHamburger isOpen={isMobileMenuOpen} onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} />
+          </div>
         </div>
-      </div>
       </nav>
 
       {/* Mobile Side Navigation - Outside nav to avoid backdrop-blur inheritance */}

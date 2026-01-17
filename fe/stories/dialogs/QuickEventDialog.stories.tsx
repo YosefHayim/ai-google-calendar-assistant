@@ -84,13 +84,9 @@ export const VoiceInputReady: Story = {
 export const ExamplesShowcase: Story = {
   render: () => (
     <div className="space-y-4 p-8 max-w-2xl mx-auto">
-      <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-6">
-        Quick Event Dialog Examples
-      </h2>
+      <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-6">Quick Event Dialog Examples</h2>
       <div className="bg-zinc-50 dark:bg-zinc-900 rounded-lg p-6 space-y-4">
-        <h3 className="font-semibold text-zinc-700 dark:text-zinc-300">
-          Natural Language Examples:
-        </h3>
+        <h3 className="font-semibold text-zinc-700 dark:text-zinc-300">Natural Language Examples:</h3>
         <ul className="space-y-2 text-sm text-zinc-600 dark:text-zinc-400">
           <li className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-primary" />

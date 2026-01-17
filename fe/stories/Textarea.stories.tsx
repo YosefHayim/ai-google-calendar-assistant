@@ -29,17 +29,15 @@ export const WithLabel: Story = {
   render: () => (
     <div className="grid w-[400px] gap-1.5">
       <Label htmlFor="event-description">Event Description</Label>
-      <Textarea
-        id="event-description"
-        placeholder="Add details about this calendar event..."
-      />
+      <Textarea id="event-description" placeholder="Add details about this calendar event..." />
     </div>
   ),
 }
 
 export const WithValue: Story = {
   args: {
-    defaultValue: 'Weekly team sync to discuss project progress, blockers, and upcoming milestones. Please come prepared with your status updates.',
+    defaultValue:
+      'Weekly team sync to discuss project progress, blockers, and upcoming milestones. Please come prepared with your status updates.',
   },
 }
 
@@ -77,9 +75,7 @@ Action Items:
 - Sarah to finalize design specs
 - Mike to set up follow-up meeting`}
       />
-      <p className="text-sm text-zinc-500">
-        Notes are automatically saved to your calendar event.
-      </p>
+      <p className="text-sm text-zinc-500">Notes are automatically saved to your calendar event.</p>
     </div>
   ),
 }
@@ -88,11 +84,7 @@ export const EventFeedback: Story = {
   render: () => (
     <div className="grid w-[400px] gap-1.5">
       <Label htmlFor="feedback">How was your meeting?</Label>
-      <Textarea
-        id="feedback"
-        placeholder="Share your thoughts about this event..."
-        rows={4}
-      />
+      <Textarea id="feedback" placeholder="Share your thoughts about this event..." rows={4} />
     </div>
   ),
 }

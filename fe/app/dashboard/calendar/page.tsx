@@ -48,7 +48,11 @@ function getCalendarColorMap(calendars: CalendarListEntry[] | undefined): Map<st
   return map
 }
 
-function transformCalendarEventToEvent(calendarEvent: CalendarEvent, calendarId?: string, calendarColor?: string): Event {
+function transformCalendarEventToEvent(
+  calendarEvent: CalendarEvent,
+  calendarId?: string,
+  calendarColor?: string,
+): Event {
   const startDate = calendarEvent.start.dateTime
     ? new Date(calendarEvent.start.dateTime)
     : calendarEvent.start.date
@@ -169,7 +173,11 @@ function CalendarContent() {
 
   const isGoogleCalendarConnected = googleCalendarStatus?.isActive && !googleCalendarStatus?.isExpired
 
-  const { data: calendarsData, isLoading: calendarsLoading, error: calendarsError } = useQuery({
+  const {
+    data: calendarsData,
+    isLoading: calendarsLoading,
+    error: calendarsError,
+  } = useQuery({
     queryKey: ['calendars-list'],
     queryFn: async () => {
       const response = await calendarsService.getCalendarList({
@@ -336,7 +344,11 @@ function CalendarContent() {
       <div className="flex-1 flex items-center justify-center p-6">
         <ErrorState
           title="Failed to load calendars"
-          message={calendarsError instanceof Error ? calendarsError.message : 'Unable to fetch your calendars. Please try again.'}
+          message={
+            calendarsError instanceof Error
+              ? calendarsError.message
+              : 'Unable to fetch your calendars. Please try again.'
+          }
           onRetry={() => window.location.reload()}
         />
       </div>

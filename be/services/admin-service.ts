@@ -533,17 +533,19 @@ export const createImpersonationSession = async (
     throw new Error("Target user not found");
   }
 
-  const { data: sessionData, error } =
-    await SUPABASE.auth.admin.generateLink({
-      type: "magiclink",
-      email: targetUser.email,
-      options: {
-        redirectTo: `${process.env.FRONTEND_URL || "http://localhost:4000"}/dashboard`,
-      },
-    });
+  const { data: sessionData, error } = await SUPABASE.auth.admin.generateLink({
+    type: "magiclink",
+    email: targetUser.email,
+    options: {
+      redirectTo: `${process.env.FRONTEND_URL || "http://localhost:4000"}/dashboard`,
+    },
+  });
 
   if (error || !sessionData) {
-    console.error("[Admin Service] Failed to create impersonation link:", error);
+    console.error(
+      "[Admin Service] Failed to create impersonation link:",
+      error
+    );
     throw new Error("Failed to create impersonation session");
   }
 
@@ -650,7 +652,9 @@ async function resolveTargetUserIds(
   return (users || []).map((u) => u.id);
 }
 
-async function resolveFilteredUserIds(filters: NonNullable<BroadcastPayload["filters"]>): Promise<string[]> {
+async function resolveFilteredUserIds(
+  filters: NonNullable<BroadcastPayload["filters"]>
+): Promise<string[]> {
   let query = SUPABASE.from("users").select("id");
 
   if (filters.status) {

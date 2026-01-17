@@ -10,12 +10,7 @@ import CinematicGlowToggle from '@/components/ui/cinematic-glow-toggle'
 import { SettingsRow, SettingsSection, SettingsDropdown, TabHeader } from '../../components'
 import { voiceService } from '@/services/voice.service'
 import { useVoicePreference, useUpdateVoicePreference } from '@/hooks/queries'
-import {
-  VOICE_OPTIONS,
-  type TTSVoice,
-  PLAYBACK_SPEED_OPTIONS,
-  type PlaybackSpeed,
-} from '@/lib/validations/preferences'
+import { VOICE_OPTIONS, type TTSVoice, PLAYBACK_SPEED_OPTIONS, type PlaybackSpeed } from '@/lib/validations/preferences'
 import { VOICE_PREVIEW_TEXT, VOICE_DROPDOWN_OPTIONS, SPEED_DROPDOWN_OPTIONS } from '../constants'
 
 interface VoiceSettingsSectionProps {

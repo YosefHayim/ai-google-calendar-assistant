@@ -94,7 +94,8 @@ export const Collapsed: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'The sidebar in its collapsed (icon-only) state. The conversation list is hidden and navigation shows only icons with tooltips.',
+        story:
+          'The sidebar in its collapsed (icon-only) state. The conversation list is hidden and navigation shows only icons with tooltips.',
       },
     },
   },
@@ -198,9 +199,7 @@ export const DarkMode: Story = {
           <Story />
           <main className="flex-1 p-8">
             <h1 className="text-2xl font-bold text-zinc-100">Dashboard Content</h1>
-            <p className="text-zinc-400 mt-2">
-              The sidebar in dark mode with proper contrast and styling.
-            </p>
+            <p className="text-zinc-400 mt-2">The sidebar in dark mode with proper contrast and styling.</p>
           </main>
         </div>
       </SidebarProvider>
@@ -229,7 +228,8 @@ export const WithoutSignOut: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'The sidebar without the Sign Out option in the user dropdown. Useful for embedded contexts where sign out is handled elsewhere.',
+        story:
+          'The sidebar without the Sign Out option in the user dropdown. Useful for embedded contexts where sign out is handled elsewhere.',
       },
     },
   },

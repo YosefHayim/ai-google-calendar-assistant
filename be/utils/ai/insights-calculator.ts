@@ -239,14 +239,14 @@ export function calculateInsightsMetrics(
       }
     : null;
 
-  const daysWithEvents = dayHoursArray.filter((d) => d.hours > 0)
-  const lastDayWithEvents = daysWithEvents.at(-1)
+  const daysWithEvents = dayHoursArray.filter((d) => d.hours > 0);
+  const lastDayWithEvents = daysWithEvents.at(-1);
   const quietestDay = lastDayWithEvents
     ? {
         day: formatDayName(lastDayWithEvents.date),
         hours: Math.round(lastDayWithEvents.hours * 10) / 10,
       }
-    : null
+    : null;
 
   // Count free days and overloaded days
   const uniqueDates = new Set<string>();

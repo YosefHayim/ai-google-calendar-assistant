@@ -2,10 +2,7 @@ import { z } from 'zod'
 import { BLOG_CATEGORIES } from '@/types/blog'
 
 export const blogPostSchema = z.object({
-  title: z
-    .string()
-    .min(10, 'Title must be at least 10 characters')
-    .max(200, 'Title must be at most 200 characters'),
+  title: z.string().min(10, 'Title must be at least 10 characters').max(200, 'Title must be at most 200 characters'),
   excerpt: z
     .string()
     .min(50, 'Excerpt must be at least 50 characters')

@@ -94,7 +94,7 @@ function EventDetailsCard({
         'rounded-xl p-4 space-y-3',
         'bg-gradient-to-br from-muted/60 via-muted/40 to-transparent',
         'border border-border/50',
-        'relative overflow-hidden'
+        'relative overflow-hidden',
       )}
     >
       <div className={cn('absolute top-0 left-0 w-1 h-full rounded-l-xl', getColorClasses(selectedEvent.color).bg)} />
@@ -155,7 +155,7 @@ function AllyResponseArea({
         'min-h-[80px] rounded-lg p-3 transition-all duration-300',
         'bg-gradient-to-br from-primary/5 to-transparent',
         'border border-primary/10',
-        allyResponse || isProcessing || actionResult ? 'opacity-100' : 'opacity-60'
+        allyResponse || isProcessing || actionResult ? 'opacity-100' : 'opacity-60',
       )}
     >
       {isProcessing ? (
@@ -169,7 +169,7 @@ function AllyResponseArea({
         <div
           className={cn(
             'flex items-center gap-2 text-sm animate-in fade-in slide-in-from-bottom-2 duration-300',
-            actionResult.type === 'deleted' ? 'text-red-500' : 'text-green-500'
+            actionResult.type === 'deleted' ? 'text-red-500' : 'text-green-500',
           )}
         >
           <CheckCircle2 className="h-5 w-5" />
@@ -246,7 +246,7 @@ function AllyInputArea({
               'min-h-[44px] max-h-[120px] resize-none flex-1',
               'bg-background/50 border-border/60',
               'focus:border-primary/50 focus:ring-primary/20',
-              'transition-all duration-200'
+              'transition-all duration-200',
             )}
             rows={1}
             disabled={isProcessing || !!actionResult}
@@ -280,7 +280,7 @@ function AllyInputArea({
           'bg-gradient-to-r from-primary to-primary/80',
           'hover:from-primary/90 hover:to-primary/70',
           'shadow-lg shadow-primary/20',
-          'transition-all duration-200'
+          'transition-all duration-200',
         )}
       >
         {isProcessing ? (

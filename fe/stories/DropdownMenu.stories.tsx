@@ -213,28 +213,15 @@ export const WithCheckboxes: Story = {
         <DropdownMenuContent className="w-56">
           <DropdownMenuLabel>Display Settings</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuCheckboxItem
-            checked={showCompleted}
-            onCheckedChange={setShowCompleted}
-          >
+          <DropdownMenuCheckboxItem checked={showCompleted} onCheckedChange={setShowCompleted}>
             Show Completed Events
           </DropdownMenuCheckboxItem>
-          <DropdownMenuCheckboxItem
-            checked={showCancelled}
-            onCheckedChange={setShowCancelled}
-          >
+          <DropdownMenuCheckboxItem checked={showCancelled} onCheckedChange={setShowCancelled}>
             Show Cancelled Events
           </DropdownMenuCheckboxItem>
           <DropdownMenuSeparator />
-          <DropdownMenuCheckboxItem
-            checked={notifications}
-            onCheckedChange={setNotifications}
-          >
-            {notifications ? (
-              <Bell className="mr-2 h-4 w-4" />
-            ) : (
-              <BellOff className="mr-2 h-4 w-4" />
-            )}
+          <DropdownMenuCheckboxItem checked={notifications} onCheckedChange={setNotifications}>
+            {notifications ? <Bell className="mr-2 h-4 w-4" /> : <BellOff className="mr-2 h-4 w-4" />}
             Notifications
           </DropdownMenuCheckboxItem>
         </DropdownMenuContent>

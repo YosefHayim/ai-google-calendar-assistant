@@ -1,6 +1,6 @@
-import { z } from "zod"
+import { z } from "zod";
 
-const MAX_PREFERENCE_LENGTH = 500
+const MAX_PREFERENCE_LENGTH = 500;
 
 export const updateUserBrainSchema = z.object({
   preference: z
@@ -9,7 +9,10 @@ export const updateUserBrainSchema = z.object({
         "The preference or rule to save. Must be a clear, concise statement. Example: 'Always keep Fridays free from meetings'",
     })
     .min(1, "Preference cannot be empty")
-    .max(MAX_PREFERENCE_LENGTH, `Preference must be under ${MAX_PREFERENCE_LENGTH} characters`),
+    .max(
+      MAX_PREFERENCE_LENGTH,
+      `Preference must be under ${MAX_PREFERENCE_LENGTH} characters`
+    ),
   category: z
     .string({
       description:
@@ -22,6 +25,6 @@ export const updateUserBrainSchema = z.object({
         "If this preference contradicts an existing one, provide the old rule text here to replace it",
     })
     .optional(),
-})
+});
 
-export type UpdateUserBrainParams = z.infer<typeof updateUserBrainSchema>
+export type UpdateUserBrainParams = z.infer<typeof updateUserBrainSchema>;

@@ -203,9 +203,7 @@ export class WebConversationAdapter {
     };
   }
 
-  async getTodayContextWithoutCreating(
-    userId: string
-  ): Promise<{
+  async getTodayContextWithoutCreating(userId: string): Promise<{
     stateId: string | null;
     context: ConversationContext;
     isNew: boolean;

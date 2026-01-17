@@ -63,15 +63,9 @@ export const LoadingState: Story = {
   render: () => {
     return (
       <div className="p-4 text-center text-zinc-500">
-        <p className="mb-4">
-          The AnalyticsDashboard requires the full AnalyticsContext with API data.
-        </p>
-        <p>
-          To test the full dashboard, run the application locally with proper backend connection.
-        </p>
-        <p className="mt-4 text-sm">
-          Individual chart components can be tested in their respective story files:
-        </p>
+        <p className="mb-4">The AnalyticsDashboard requires the full AnalyticsContext with API data.</p>
+        <p>To test the full dashboard, run the application locally with proper backend connection.</p>
+        <p className="mt-4 text-sm">Individual chart components can be tested in their respective story files:</p>
         <ul className="mt-2 text-sm list-disc list-inside">
           <li>BentoStatsGrid.stories.tsx</li>
           <li>TimeAllocationChart.stories.tsx</li>

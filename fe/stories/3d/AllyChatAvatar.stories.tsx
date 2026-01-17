@@ -9,7 +9,8 @@ const meta: Meta<typeof AllyChatAvatar> = {
     layout: 'centered',
     docs: {
       description: {
-        component: 'Chat avatar wrapper for the 3D Ally character. Maps chat states to animations with visual feedback.',
+        component:
+          'Chat avatar wrapper for the 3D Ally character. Maps chat states to animations with visual feedback.',
       },
     },
   },

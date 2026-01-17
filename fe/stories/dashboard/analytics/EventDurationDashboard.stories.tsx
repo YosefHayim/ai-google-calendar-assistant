@@ -15,7 +15,12 @@ const meta: Meta<typeof EventDurationDashboard> = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-const createMockCategories = (distribution: { short: number; medium: number; long: number; extended: number }): EventDurationCategory[] => {
+const createMockCategories = (distribution: {
+  short: number
+  medium: number
+  long: number
+  extended: number
+}): EventDurationCategory[] => {
   const total = distribution.short + distribution.medium + distribution.long + distribution.extended
 
   return [

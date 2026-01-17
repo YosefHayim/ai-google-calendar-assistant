@@ -12,16 +12,29 @@ import {
   type Variant,
 } from "@lemonsqueezy/lemonsqueezy.js";
 import { env, SUPABASE } from "@/config";
-import { initializeLemonSqueezy, LEMONSQUEEZY_CONFIG } from "@/config/clients/lemonsqueezy";
+import {
+  initializeLemonSqueezy,
+  LEMONSQUEEZY_CONFIG,
+} from "@/config/clients/lemonsqueezy";
 import { isRedisConnected, redisClient } from "@/config/clients/redis";
 import { logger } from "@/utils/logger";
 
 export type PlanSlug = "starter" | "pro" | "executive";
 export type PlanInterval = "monthly" | "yearly" | "one_time";
 
-export type LemonSqueezySubscriptionStatus = "on_trial" | "active" | "paused" | "past_due" | "unpaid" | "cancelled" | "expired";
+export type LemonSqueezySubscriptionStatus =
+  | "on_trial"
+  | "active"
+  | "paused"
+  | "past_due"
+  | "unpaid"
+  | "cancelled"
+  | "expired";
 
-export const PLAN_LIMITS: Record<PlanSlug, { aiInteractionsMonthly: number | null; actionPackSize: number }> = {
+export const PLAN_LIMITS: Record<
+  PlanSlug,
+  { aiInteractionsMonthly: number | null; actionPackSize: number }
+> = {
   starter: { aiInteractionsMonthly: 10, actionPackSize: 25 },
   pro: { aiInteractionsMonthly: 500, actionPackSize: 100 },
   executive: { aiInteractionsMonthly: null, actionPackSize: 1000 },
@@ -94,14 +107,20 @@ export type CreateCheckoutSessionParams = {
   cancelUrl?: string;
 };
 
-const ACTIVE_LS_STATUSES: LemonSqueezySubscriptionStatus[] = ["on_trial", "active", "paused"];
+const ACTIVE_LS_STATUSES: LemonSqueezySubscriptionStatus[] = [
+  "on_trial",
+  "active",
+  "paused",
+];
 const MILLISECONDS_PER_DAY = 86_400_000;
 const CENTS_TO_DOLLARS = 100;
 const MONTHS_PER_YEAR = 12;
 const DEFAULT_SORT_ORDER = 99;
 const LS_PRODUCTS_CACHE_TTL = 3600;
 
-export const getSubscriptionByEmail = async (email: string): Promise<LSSubscriptionInfo | null> => {
+export const getSubscriptionByEmail = async (
+  email: string
+): Promise<LSSubscriptionInfo | null> => {
   initializeLemonSqueezy();
 
   const storeId = env.lemonSqueezy.storeId;
@@ -117,7 +136,10 @@ export const getSubscriptionByEmail = async (email: string): Promise<LSSubscript
   });
 
   if (error) {
-    logger.error("Failed to fetch subscriptions from LemonSqueezy", { error, email });
+    logger.error("Failed to fetch subscriptions from LemonSqueezy", {
+      error,
+      email,
+    });
     throw new Error(`Failed to fetch subscriptions: ${error.message}`);
   }
 
@@ -125,7 +147,11 @@ export const getSubscriptionByEmail = async (email: string): Promise<LSSubscript
     return null;
   }
 
-  const activeSub = data.data.find((sub) => ACTIVE_LS_STATUSES.includes(sub.attributes.status as LemonSqueezySubscriptionStatus));
+  const activeSub = data.data.find((sub) =>
+    ACTIVE_LS_STATUSES.includes(
+      sub.attributes.status as LemonSqueezySubscriptionStatus
+    )
+  );
 
   const subscription = activeSub || data.data[0];
   const attrs = subscription.attributes;
@@ -152,13 +178,18 @@ export const getSubscriptionByEmail = async (email: string): Promise<LSSubscript
   };
 };
 
-export const getSubscriptionById = async (subscriptionId: string): Promise<LSSubscriptionInfo | null> => {
+export const getSubscriptionById = async (
+  subscriptionId: string
+): Promise<LSSubscriptionInfo | null> => {
   initializeLemonSqueezy();
 
   const { data, error } = await getSubscription(subscriptionId);
 
   if (error) {
-    logger.error("Failed to fetch subscription from LemonSqueezy", { error, subscriptionId });
+    logger.error("Failed to fetch subscription from LemonSqueezy", {
+      error,
+      subscriptionId,
+    });
     return null;
   }
 
@@ -190,8 +221,17 @@ export const getSubscriptionById = async (subscriptionId: string): Promise<LSSub
   };
 };
 
-export const getUserUsage = async (userId: string): Promise<{ aiInteractionsUsed: number; creditsRemaining: number; usageResetAt: string | null }> => {
-  const { data, error } = await SUPABASE.from("users").select("ai_interactions_used, credits_remaining, usage_reset_at").eq("id", userId).single();
+export const getUserUsage = async (
+  userId: string
+): Promise<{
+  aiInteractionsUsed: number;
+  creditsRemaining: number;
+  usageResetAt: string | null;
+}> => {
+  const { data, error } = await SUPABASE.from("users")
+    .select("ai_interactions_used, credits_remaining, usage_reset_at")
+    .eq("id", userId)
+    .single();
 
   if (error || !data) {
     return { aiInteractionsUsed: 0, creditsRemaining: 0, usageResetAt: null };
@@ -204,7 +244,11 @@ export const getUserUsage = async (userId: string): Promise<{ aiInteractionsUsed
   };
 };
 
-export const updateUserUsage = async (userId: string, aiInteractionsUsed: number, creditsRemaining?: number): Promise<void> => {
+export const updateUserUsage = async (
+  userId: string,
+  aiInteractionsUsed: number,
+  creditsRemaining?: number
+): Promise<void> => {
   const updateData: Record<string, unknown> = {
     ai_interactions_used: aiInteractionsUsed,
     updated_at: new Date().toISOString(),
@@ -214,7 +258,9 @@ export const updateUserUsage = async (userId: string, aiInteractionsUsed: number
     updateData.credits_remaining = creditsRemaining;
   }
 
-  const { error } = await SUPABASE.from("users").update(updateData).eq("id", userId);
+  const { error } = await SUPABASE.from("users")
+    .update(updateData)
+    .eq("id", userId);
 
   if (error) {
     logger.error("Failed to update user usage", { error, userId });
@@ -237,7 +283,10 @@ export const resetUserUsage = async (userId: string): Promise<void> => {
   }
 };
 
-const getPlanSlugFromVariantName = (variantName: string, productName: string): PlanSlug => {
+const getPlanSlugFromVariantName = (
+  variantName: string,
+  productName: string
+): PlanSlug => {
   const combined = `${productName} ${variantName}`.toLowerCase();
 
   if (combined.includes("executive") || combined.includes("sovereignty")) {
@@ -251,13 +300,22 @@ const getPlanSlugFromVariantName = (variantName: string, productName: string): P
 
 const DEFAULT_PLAN_LIMITS = { aiInteractionsMonthly: 10, actionPackSize: 25 };
 
-export const getPlanLimits = (planSlug: PlanSlug): { aiInteractionsMonthly: number | null; actionPackSize: number } =>
+export const getPlanLimits = (
+  planSlug: PlanSlug
+): { aiInteractionsMonthly: number | null; actionPackSize: number } =>
   PLAN_LIMITS[planSlug] ?? DEFAULT_PLAN_LIMITS;
 
-export const checkUserAccess = async (userId: string, email: string): Promise<UserAccess> => {
-  const [subscription, usage] = await Promise.all([getSubscriptionByEmail(email), getUserUsage(userId)]);
+export const checkUserAccess = async (
+  userId: string,
+  email: string
+): Promise<UserAccess> => {
+  const [subscription, usage] = await Promise.all([
+    getSubscriptionByEmail(email),
+    getUserUsage(userId),
+  ]);
 
-  const hasActiveSubscription = subscription && ACTIVE_LS_STATUSES.includes(subscription.status);
+  const hasActiveSubscription =
+    subscription && ACTIVE_LS_STATUSES.includes(subscription.status);
 
   if (!hasActiveSubscription) {
     return {
@@ -272,19 +330,28 @@ export const checkUserAccess = async (userId: string, email: string): Promise<Us
     };
   }
 
-  const planSlug = getPlanSlugFromVariantName(subscription.variantName, subscription.productName);
+  const planSlug = getPlanSlugFromVariantName(
+    subscription.variantName,
+    subscription.productName
+  );
   const limits = getPlanLimits(planSlug);
 
   let trialDaysLeft: number | null = null;
   if (subscription.status === "on_trial" && subscription.trialEndsAt) {
     const trialEnd = new Date(subscription.trialEndsAt);
     const now = new Date();
-    trialDaysLeft = Math.max(0, Math.ceil((trialEnd.getTime() - now.getTime()) / MILLISECONDS_PER_DAY));
+    trialDaysLeft = Math.max(
+      0,
+      Math.ceil((trialEnd.getTime() - now.getTime()) / MILLISECONDS_PER_DAY)
+    );
   }
 
   let interactionsRemaining: number | null = null;
   if (limits.aiInteractionsMonthly !== null) {
-    interactionsRemaining = Math.max(0, limits.aiInteractionsMonthly - usage.aiInteractionsUsed);
+    interactionsRemaining = Math.max(
+      0,
+      limits.aiInteractionsMonthly - usage.aiInteractionsUsed
+    );
   }
 
   return {
@@ -299,7 +366,11 @@ export const checkUserAccess = async (userId: string, email: string): Promise<Us
   };
 };
 
-export const cancelSubscription = async (subscriptionId: string, _reason?: string, cancelImmediately = false): Promise<LSSubscriptionInfo | null> => {
+export const cancelSubscription = async (
+  subscriptionId: string,
+  _reason?: string,
+  cancelImmediately = false
+): Promise<LSSubscriptionInfo | null> => {
   initializeLemonSqueezy();
 
   if (cancelImmediately) {
@@ -308,7 +379,9 @@ export const cancelSubscription = async (subscriptionId: string, _reason?: strin
       throw new Error(`Failed to cancel subscription: ${error.message}`);
     }
   } else {
-    const { error } = await updateSubscription(subscriptionId, { cancelled: true });
+    const { error } = await updateSubscription(subscriptionId, {
+      cancelled: true,
+    });
     if (error) {
       throw new Error(`Failed to cancel subscription: ${error.message}`);
     }
@@ -317,15 +390,20 @@ export const cancelSubscription = async (subscriptionId: string, _reason?: strin
   return getSubscriptionById(subscriptionId);
 };
 
-export const createCheckoutSession = async (params: CreateCheckoutSessionParams): Promise<{ url: string; id: string }> => {
+export const createCheckoutSession = async (
+  params: CreateCheckoutSessionParams
+): Promise<{ url: string; id: string }> => {
   initializeLemonSqueezy();
 
-  const { userId, userEmail, userName, planSlug, interval, successUrl } = params;
+  const { userId, userEmail, userName, planSlug, interval, successUrl } =
+    params;
 
   const variantId = await getVariantIdForPlan(planSlug, interval);
 
   if (!variantId) {
-    throw new Error(`No LemonSqueezy variant found for plan: ${planSlug} (${interval})`);
+    throw new Error(
+      `No LemonSqueezy variant found for plan: ${planSlug} (${interval})`
+    );
   }
 
   const storeId = env.lemonSqueezy.storeId;
@@ -371,7 +449,9 @@ export const createCheckoutSession = async (params: CreateCheckoutSessionParams)
   };
 };
 
-export const getCustomerPortalUrl = async (customerId: string): Promise<string> => {
+export const getCustomerPortalUrl = async (
+  customerId: string
+): Promise<string> => {
   initializeLemonSqueezy();
 
   const { data, error } = await getCustomer(customerId);
@@ -388,8 +468,13 @@ export const getCustomerPortalUrl = async (customerId: string): Promise<string> 
   return portalUrl;
 };
 
-export const isWebhookEventProcessed = async (eventId: string): Promise<boolean> => {
-  const { data } = await SUPABASE.from("lemonsqueezy_webhook_events").select("processed").eq("event_id", eventId).maybeSingle();
+export const isWebhookEventProcessed = async (
+  eventId: string
+): Promise<boolean> => {
+  const { data } = await SUPABASE.from("lemonsqueezy_webhook_events")
+    .select("processed")
+    .eq("event_id", eventId)
+    .maybeSingle();
 
   return data?.processed ?? false;
 };
@@ -402,8 +487,16 @@ type WebhookEventParams = {
   errorMessage?: string;
 };
 
-export const recordWebhookEvent = async (params: WebhookEventParams): Promise<void> => {
-  const { eventId, eventType, payload, processed = false, errorMessage } = params;
+export const recordWebhookEvent = async (
+  params: WebhookEventParams
+): Promise<void> => {
+  const {
+    eventId,
+    eventType,
+    payload,
+    processed = false,
+    errorMessage,
+  } = params;
   const { error } = await SUPABASE.from("lemonsqueezy_webhook_events").upsert({
     event_id: eventId,
     event_type: eventType,
@@ -418,11 +511,17 @@ export const recordWebhookEvent = async (params: WebhookEventParams): Promise<vo
   }
 };
 
-export const handleSubscriptionPaymentSuccess = async (email: string, providedUserId?: string): Promise<void> => {
+export const handleSubscriptionPaymentSuccess = async (
+  email: string,
+  providedUserId?: string
+): Promise<void> => {
   let targetUserId = providedUserId;
 
   if (!targetUserId) {
-    const { data: user } = await SUPABASE.from("users").select("id").eq("email", email).single();
+    const { data: user } = await SUPABASE.from("users")
+      .select("id")
+      .eq("email", email)
+      .single();
     if (!user) {
       logger.warn("User not found for payment success webhook", { email });
       return;
@@ -433,7 +532,11 @@ export const handleSubscriptionPaymentSuccess = async (email: string, providedUs
   await resetUserUsage(targetUserId);
 };
 
-export const recordUsage = async (userId: string, email: string, quantity = 1): Promise<boolean> => {
+export const recordUsage = async (
+  userId: string,
+  email: string,
+  quantity = 1
+): Promise<boolean> => {
   const access = await checkUserAccess(userId, email);
   if (!access.has_access) {
     return false;
@@ -443,9 +546,16 @@ export const recordUsage = async (userId: string, email: string, quantity = 1): 
   const planSlug = access.plan_slug as PlanSlug;
   const limits = getPlanLimits(planSlug);
 
-  if (limits.aiInteractionsMonthly !== null && usage.aiInteractionsUsed + quantity > limits.aiInteractionsMonthly) {
+  if (
+    limits.aiInteractionsMonthly !== null &&
+    usage.aiInteractionsUsed + quantity > limits.aiInteractionsMonthly
+  ) {
     if (usage.creditsRemaining >= quantity) {
-      await updateUserUsage(userId, usage.aiInteractionsUsed, usage.creditsRemaining - quantity);
+      await updateUserUsage(
+        userId,
+        usage.aiInteractionsUsed,
+        usage.creditsRemaining - quantity
+      );
       return true;
     }
     return false;
@@ -461,7 +571,9 @@ export type UpgradeSubscriptionParams = {
   newInterval: "monthly" | "yearly";
 };
 
-export const upgradeSubscriptionPlan = async (params: UpgradeSubscriptionParams): Promise<{ subscription: LSSubscriptionInfo; prorated: boolean }> => {
+export const upgradeSubscriptionPlan = async (
+  params: UpgradeSubscriptionParams
+): Promise<{ subscription: LSSubscriptionInfo; prorated: boolean }> => {
   initializeLemonSqueezy();
 
   const { email, newPlanSlug, newInterval } = params;
@@ -474,7 +586,9 @@ export const upgradeSubscriptionPlan = async (params: UpgradeSubscriptionParams)
   const newVariantId = await getVariantIdForPlan(newPlanSlug, newInterval);
 
   if (!newVariantId) {
-    throw new Error(`No LemonSqueezy variant configured for plan: ${newPlanSlug} (${newInterval})`);
+    throw new Error(
+      `No LemonSqueezy variant configured for plan: ${newPlanSlug} (${newInterval})`
+    );
   }
 
   const { error: lsError } = await updateSubscription(subscription.id, {
@@ -482,7 +596,9 @@ export const upgradeSubscriptionPlan = async (params: UpgradeSubscriptionParams)
   });
 
   if (lsError) {
-    throw new Error(`Failed to update subscription in LemonSqueezy: ${lsError.message}`);
+    throw new Error(
+      `Failed to update subscription in LemonSqueezy: ${lsError.message}`
+    );
   }
 
   const updatedSubscription = await getSubscriptionById(subscription.id);
@@ -523,7 +639,9 @@ export type BillingOverview = {
   transactions: TransactionInfo[];
 };
 
-export const getBillingOverview = async (email: string): Promise<BillingOverview> => {
+export const getBillingOverview = async (
+  email: string
+): Promise<BillingOverview> => {
   initializeLemonSqueezy();
 
   const subscription = await getSubscriptionByEmail(email);
@@ -539,11 +657,12 @@ export const getBillingOverview = async (email: string): Promise<BillingOverview
 
   if (subscription.id) {
     try {
-      const { data: invoicesData, error: invoicesError } = await listSubscriptionInvoices({
-        filter: {
-          subscriptionId: Number.parseInt(subscription.id, 10),
-        },
-      });
+      const { data: invoicesData, error: invoicesError } =
+        await listSubscriptionInvoices({
+          filter: {
+            subscriptionId: Number.parseInt(subscription.id, 10),
+          },
+        });
 
       if (!invoicesError && invoicesData?.data) {
         const invoiceTransactions = invoicesData.data.map((invoice) => {
@@ -579,7 +698,9 @@ export const getBillingOverview = async (email: string): Promise<BillingOverview
     }
   }
 
-  transactions.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  transactions.sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+  );
 
   return {
     paymentMethod: null,
@@ -674,7 +795,12 @@ const transformVariant = (rawVariant: Variant["data"]): LemonSqueezyVariant => {
     interval: attrs.interval as "day" | "week" | "month" | "year" | null,
     intervalCount: attrs.interval_count as number | null,
     hasFreeTrial: attrs.has_free_trial as boolean,
-    trialInterval: attrs.trial_interval as "day" | "week" | "month" | "year" | null,
+    trialInterval: attrs.trial_interval as
+      | "day"
+      | "week"
+      | "month"
+      | "year"
+      | null,
     trialIntervalCount: attrs.trial_interval_count as number | null,
     payWhatYouWant: attrs.pay_what_you_want as boolean,
     minPrice: attrs.min_price as number | null,
@@ -686,7 +812,9 @@ const transformVariant = (rawVariant: Variant["data"]): LemonSqueezyVariant => {
   };
 };
 
-export const getLemonSqueezyProducts = async (): Promise<LemonSqueezyProduct[]> => {
+export const getLemonSqueezyProducts = async (): Promise<
+  LemonSqueezyProduct[]
+> => {
   initializeLemonSqueezy();
 
   const storeId = env.lemonSqueezy.storeId;
@@ -704,7 +832,9 @@ export const getLemonSqueezyProducts = async (): Promise<LemonSqueezyProduct[]> 
         return JSON.parse(cached);
       }
     } catch (cacheError) {
-      logger.warn("Redis cache read error for LS products", { error: cacheError });
+      logger.warn("Redis cache read error for LS products", {
+        error: cacheError,
+      });
     }
   }
 
@@ -723,14 +853,24 @@ export const getLemonSqueezyProducts = async (): Promise<LemonSqueezyProduct[]> 
       return [];
     }
 
-    const products = data.data.filter((product) => product.attributes.status === "published").map(transformProduct);
+    const products = data.data
+      .filter((product) => product.attributes.status === "published")
+      .map(transformProduct);
 
     if (isRedisConnected()) {
       try {
-        await redisClient.setex(cacheKey, LS_PRODUCTS_CACHE_TTL, JSON.stringify(products));
-        logger.info("Cached Lemon Squeezy products", { count: products.length });
+        await redisClient.setex(
+          cacheKey,
+          LS_PRODUCTS_CACHE_TTL,
+          JSON.stringify(products)
+        );
+        logger.info("Cached Lemon Squeezy products", {
+          count: products.length,
+        });
       } catch (cacheError) {
-        logger.warn("Redis cache write error for LS products", { error: cacheError });
+        logger.warn("Redis cache write error for LS products", {
+          error: cacheError,
+        });
       }
     }
 
@@ -741,7 +881,9 @@ export const getLemonSqueezyProducts = async (): Promise<LemonSqueezyProduct[]> 
   }
 };
 
-export const getLemonSqueezyVariants = async (productId: string): Promise<LemonSqueezyVariant[]> => {
+export const getLemonSqueezyVariants = async (
+  productId: string
+): Promise<LemonSqueezyVariant[]> => {
   initializeLemonSqueezy();
 
   try {
@@ -766,7 +908,9 @@ export const getLemonSqueezyVariants = async (productId: string): Promise<LemonS
   }
 };
 
-export const getLemonSqueezyProductsWithVariants = async (): Promise<ProductWithVariants[]> => {
+export const getLemonSqueezyProductsWithVariants = async (): Promise<
+  ProductWithVariants[]
+> => {
   const storeId = env.lemonSqueezy.storeId;
   const cacheKey = `ls:products-with-variants:${storeId ?? "unconfigured"}`;
 
@@ -778,7 +922,9 @@ export const getLemonSqueezyProductsWithVariants = async (): Promise<ProductWith
         return JSON.parse(cached);
       }
     } catch (cacheError) {
-      logger.warn("Redis cache read error for LS products with variants", { error: cacheError });
+      logger.warn("Redis cache read error for LS products with variants", {
+        error: cacheError,
+      });
     }
   }
 
@@ -793,10 +939,18 @@ export const getLemonSqueezyProductsWithVariants = async (): Promise<ProductWith
 
   if (isRedisConnected()) {
     try {
-      await redisClient.setex(cacheKey, LS_PRODUCTS_CACHE_TTL, JSON.stringify(productsWithVariants));
-      logger.info("Cached Lemon Squeezy products with variants", { count: productsWithVariants.length });
+      await redisClient.setex(
+        cacheKey,
+        LS_PRODUCTS_CACHE_TTL,
+        JSON.stringify(productsWithVariants)
+      );
+      logger.info("Cached Lemon Squeezy products with variants", {
+        count: productsWithVariants.length,
+      });
     } catch (cacheError) {
-      logger.warn("Redis cache write error for LS products with variants", { error: cacheError });
+      logger.warn("Redis cache write error for LS products with variants", {
+        error: cacheError,
+      });
     }
   }
 
@@ -818,15 +972,21 @@ const extractBasePlanSlug = (productSlug: string): PlanSlug | null => {
   if (normalized.includes("operational") || normalized.includes("pro")) {
     return "pro";
   }
-  if (normalized.includes("sovereignty") || normalized.includes("sovereigtny") || normalized.includes("executive")) {
+  if (
+    normalized.includes("sovereignty") ||
+    normalized.includes("sovereigtny") ||
+    normalized.includes("executive")
+  ) {
     return "executive";
   }
 
   return null;
 };
 
-const isMonthlyProduct = (slug: string): boolean => slug.toLowerCase().includes("monthly");
-const isYearlyProduct = (slug: string): boolean => slug.toLowerCase().includes("yearly");
+const isMonthlyProduct = (slug: string): boolean =>
+  slug.toLowerCase().includes("monthly");
+const isYearlyProduct = (slug: string): boolean =>
+  slug.toLowerCase().includes("yearly");
 
 const stripHtml = (html: string | null): string => {
   if (!html) {
@@ -835,9 +995,10 @@ const stripHtml = (html: string | null): string => {
   return html.replace(HTML_TAG_REGEX, "").trim();
 };
 
-const extractPlanName = (productName: string): string => productName.replace(PLAN_NAME_SUFFIX_REGEX, "").trim();
+const extractPlanName = (productName: string): string =>
+  productName.replace(PLAN_NAME_SUFFIX_REGEX, "").trim();
 
-const getPlanDisplayOrder = (slug: string): number => {
+const _getPlanDisplayOrder = (slug: string): number => {
   if (slug.includes("starter")) {
     return PLAN_DISPLAY_ORDER_STARTER;
   }
@@ -850,7 +1011,9 @@ const getPlanDisplayOrder = (slug: string): number => {
   return DEFAULT_SORT_ORDER;
 };
 
-const getPlanFlags = (slug: string): { isPopular: boolean; isHighlighted: boolean } => {
+const getPlanFlags = (
+  slug: string
+): { isPopular: boolean; isHighlighted: boolean } => {
   if (slug.includes("pro") || slug.includes("operational")) {
     return { isPopular: true, isHighlighted: false };
   }
@@ -863,7 +1026,9 @@ const getPlanFlags = (slug: string): { isPopular: boolean; isHighlighted: boolea
 export const getPlansFromLemonSqueezy = async (): Promise<FrontendPlan[]> => {
   const productsWithVariants = await getLemonSqueezyProductsWithVariants();
 
-  logger.info(`[getPlansFromLemonSqueezy] Found ${productsWithVariants.length} products`);
+  logger.info(
+    `[getPlansFromLemonSqueezy] Found ${productsWithVariants.length} products`
+  );
 
   type PlanProducts = {
     monthlyProduct: ProductWithVariants | null;
@@ -874,15 +1039,22 @@ export const getPlansFromLemonSqueezy = async (): Promise<FrontendPlan[]> => {
 
   for (const item of productsWithVariants) {
     const basePlanSlug = extractBasePlanSlug(item.product.slug);
-    logger.info(`[getPlansFromLemonSqueezy] Product: ${item.product.slug} -> ${basePlanSlug}, variants: ${item.variants.length}`);
+    logger.info(
+      `[getPlansFromLemonSqueezy] Product: ${item.product.slug} -> ${basePlanSlug}, variants: ${item.variants.length}`
+    );
 
     if (!basePlanSlug) {
-      logger.warn(`Could not determine plan slug for product: ${item.product.slug}`);
+      logger.warn(
+        `Could not determine plan slug for product: ${item.product.slug}`
+      );
       continue;
     }
 
     if (!planProductsMap.has(basePlanSlug)) {
-      planProductsMap.set(basePlanSlug, { monthlyProduct: null, yearlyProduct: null });
+      planProductsMap.set(basePlanSlug, {
+        monthlyProduct: null,
+        yearlyProduct: null,
+      });
     }
 
     const planProducts = planProductsMap.get(basePlanSlug);
@@ -892,17 +1064,21 @@ export const getPlansFromLemonSqueezy = async (): Promise<FrontendPlan[]> => {
 
     if (isMonthlyProduct(item.product.slug)) {
       planProducts.monthlyProduct = item;
-      logger.info(`[getPlansFromLemonSqueezy] Assigned monthly product for ${basePlanSlug}`);
+      logger.info(
+        `[getPlansFromLemonSqueezy] Assigned monthly product for ${basePlanSlug}`
+      );
     } else if (isYearlyProduct(item.product.slug)) {
       planProducts.yearlyProduct = item;
-      logger.info(`[getPlansFromLemonSqueezy] Assigned yearly product for ${basePlanSlug}`);
+      logger.info(
+        `[getPlansFromLemonSqueezy] Assigned yearly product for ${basePlanSlug}`
+      );
     }
   }
 
   const plans: FrontendPlan[] = [];
 
   for (const [planSlug, { monthlyProduct, yearlyProduct }] of planProductsMap) {
-    if (!monthlyProduct && !yearlyProduct) {
+    if (!(monthlyProduct || yearlyProduct)) {
       logger.warn(`No products found for plan: ${planSlug}`);
       continue;
     }
@@ -912,22 +1088,38 @@ export const getPlansFromLemonSqueezy = async (): Promise<FrontendPlan[]> => {
       continue;
     }
 
-    const monthlyVariant = monthlyProduct?.variants.find((v) => v.isSubscription && v.interval === "month");
-    const yearlyVariant = yearlyProduct?.variants.find((v) => v.isSubscription && v.interval === "year");
+    const monthlyVariant = monthlyProduct?.variants.find(
+      (v) => v.isSubscription && v.interval === "month"
+    );
+    const yearlyVariant = yearlyProduct?.variants.find(
+      (v) => v.isSubscription && v.interval === "year"
+    );
 
-    const monthlyPrice = monthlyVariant ? monthlyVariant.price / CENTS_TO_DOLLARS : 0;
-    const yearlyPrice = yearlyVariant ? yearlyVariant.price / CENTS_TO_DOLLARS / MONTHS_PER_YEAR : 0;
+    const monthlyPrice = monthlyVariant
+      ? monthlyVariant.price / CENTS_TO_DOLLARS
+      : 0;
+    const yearlyPrice = yearlyVariant
+      ? yearlyVariant.price / CENTS_TO_DOLLARS / MONTHS_PER_YEAR
+      : 0;
 
     const limits = getPlanLimits(planSlug as PlanSlug);
-    const perUsePrice = limits.actionPackSize ? Math.round((monthlyPrice / limits.actionPackSize) * CENTS_TO_DOLLARS) / CENTS_TO_DOLLARS : 0;
+    const perUsePrice = limits.actionPackSize
+      ? Math.round((monthlyPrice / limits.actionPackSize) * CENTS_TO_DOLLARS) /
+        CENTS_TO_DOLLARS
+      : 0;
 
     const { isPopular, isHighlighted } = getPlanFlags(planSlug);
 
     const planName = extractPlanName(primaryProduct.name);
     const description = stripHtml(primaryProduct.description);
 
-    const hasFreeTrial = Boolean(monthlyVariant?.hasFreeTrial) || Boolean(yearlyVariant?.hasFreeTrial);
-    const trialDays = monthlyVariant?.trialIntervalCount ?? yearlyVariant?.trialIntervalCount ?? null;
+    const hasFreeTrial =
+      Boolean(monthlyVariant?.hasFreeTrial) ||
+      Boolean(yearlyVariant?.hasFreeTrial);
+    const trialDays =
+      monthlyVariant?.trialIntervalCount ??
+      yearlyVariant?.trialIntervalCount ??
+      null;
 
     plans.push({
       id: primaryProduct.id,
@@ -958,7 +1150,10 @@ export const getPlansFromLemonSqueezy = async (): Promise<FrontendPlan[]> => {
   return plans;
 };
 
-export const getVariantIdForPlan = async (planSlug: PlanSlug, interval: PlanInterval): Promise<string | null> => {
+export const getVariantIdForPlan = async (
+  planSlug: PlanSlug,
+  interval: PlanInterval
+): Promise<string | null> => {
   const plans = await getPlansFromLemonSqueezy();
   const plan = plans.find((p) => p.slug === planSlug);
 

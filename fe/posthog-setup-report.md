@@ -13,25 +13,25 @@ NEXT_PUBLIC_POSTHOG_HOST=https://us.i.posthog.com
 
 ## Events Implemented
 
-| Event Name | Description | File Path |
-|------------|-------------|-----------|
-| `login_initiated` | User clicks the Google login button on the login page | `components/auth/LoginPage.tsx` |
-| `signup_initiated` | User clicks the Google signup button on the register page | `components/auth/RegisterPage.tsx` |
-| `user_authenticated` | User successfully authenticated via OAuth callback | `app/callback/page.tsx` |
-| `waitlist_signup_submitted` | User submits the waiting list signup form | `components/waiting-list/WaitingList.tsx` |
-| `contact_form_submitted` | User submits the contact form successfully | `components/contact/ContactForm.tsx` |
-| `chat_message_sent` | User sends a chat message to the AI assistant | `components/dashboard/chat/ChatInterface.tsx` |
-| `voice_recording_started` | User starts voice recording for AI interaction | `components/dashboard/chat/ChatInterface.tsx` |
-| `pricing_plan_selected` | User clicks to select a pricing plan | `components/ui/pricing-card.tsx` |
-| `billing_plan_upgrade_clicked` | User clicks to upgrade their billing plan | `app/dashboard/billing/page.tsx` |
-| `subscription_cancelled` | User confirms subscription cancellation | `app/dashboard/billing/page.tsx` |
-| `refund_requested` | User confirms a refund request | `app/dashboard/billing/page.tsx` |
-| `integration_slack_connect_clicked` | User clicks to connect Slack integration | `components/dashboard/IntegrationsDashboard.tsx` |
-| `integration_whatsapp_connect_clicked` | User opens the WhatsApp connection modal | `components/dashboard/IntegrationsDashboard.tsx` |
-| `referral_link_copied` | User copies their referral link | `app/dashboard/referrals/page.tsx` |
-| `referral_link_shared` | User shares referral link using native share | `app/dashboard/referrals/page.tsx` |
-| `referral_reward_claimed` | User claims a referral reward | `app/dashboard/referrals/page.tsx` |
-| `$exception` | React error boundary catches an error | `components/shared/ErrorBoundary.tsx` |
+| Event Name                             | Description                                               | File Path                                        |
+| -------------------------------------- | --------------------------------------------------------- | ------------------------------------------------ |
+| `login_initiated`                      | User clicks the Google login button on the login page     | `components/auth/LoginPage.tsx`                  |
+| `signup_initiated`                     | User clicks the Google signup button on the register page | `components/auth/RegisterPage.tsx`               |
+| `user_authenticated`                   | User successfully authenticated via OAuth callback        | `app/callback/page.tsx`                          |
+| `waitlist_signup_submitted`            | User submits the waiting list signup form                 | `components/waiting-list/WaitingList.tsx`        |
+| `contact_form_submitted`               | User submits the contact form successfully                | `components/contact/ContactForm.tsx`             |
+| `chat_message_sent`                    | User sends a chat message to the AI assistant             | `components/dashboard/chat/ChatInterface.tsx`    |
+| `voice_recording_started`              | User starts voice recording for AI interaction            | `components/dashboard/chat/ChatInterface.tsx`    |
+| `pricing_plan_selected`                | User clicks to select a pricing plan                      | `components/ui/pricing-card.tsx`                 |
+| `billing_plan_upgrade_clicked`         | User clicks to upgrade their billing plan                 | `app/dashboard/billing/page.tsx`                 |
+| `subscription_cancelled`               | User confirms subscription cancellation                   | `app/dashboard/billing/page.tsx`                 |
+| `refund_requested`                     | User confirms a refund request                            | `app/dashboard/billing/page.tsx`                 |
+| `integration_slack_connect_clicked`    | User clicks to connect Slack integration                  | `components/dashboard/IntegrationsDashboard.tsx` |
+| `integration_whatsapp_connect_clicked` | User opens the WhatsApp connection modal                  | `components/dashboard/IntegrationsDashboard.tsx` |
+| `referral_link_copied`                 | User copies their referral link                           | `app/dashboard/referrals/page.tsx`               |
+| `referral_link_shared`                 | User shares referral link using native share              | `app/dashboard/referrals/page.tsx`               |
+| `referral_reward_claimed`              | User claims a referral reward                             | `app/dashboard/referrals/page.tsx`               |
+| `$exception`                           | React error boundary catches an error                     | `components/shared/ErrorBoundary.tsx`            |
 
 ## User Identification
 
@@ -51,13 +51,13 @@ To build insights and a dashboard for monitoring user behavior:
 
 2. **Recommended Insights to Create**:
 
-   | Insight Name | Type | Events/Query |
-   |--------------|------|--------------|
-   | Signup → Login Funnel | Funnel | `signup_initiated` → `user_authenticated` |
-   | Daily Active Users | Trends | Unique users with `chat_message_sent` |
+   | Insight Name              | Type   | Events/Query                                                                    |
+   | ------------------------- | ------ | ------------------------------------------------------------------------------- |
+   | Signup → Login Funnel     | Funnel | `signup_initiated` → `user_authenticated`                                       |
+   | Daily Active Users        | Trends | Unique users with `chat_message_sent`                                           |
    | Pricing Conversion Funnel | Funnel | `pricing_plan_selected` → `user_authenticated` → `billing_plan_upgrade_clicked` |
-   | Churn Analysis | Trends | `subscription_cancelled` over time |
-   | Feature Engagement | Trends | `chat_message_sent`, `voice_recording_started`, `integration_*` events |
+   | Churn Analysis            | Trends | `subscription_cancelled` over time                                              |
+   | Feature Engagement        | Trends | `chat_message_sent`, `voice_recording_started`, `integration_*` events          |
 
 3. **Quick Links**:
    - [PostHog Project](https://us.i.posthog.com)

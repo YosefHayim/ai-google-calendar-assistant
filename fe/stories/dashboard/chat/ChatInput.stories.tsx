@@ -85,13 +85,7 @@ export const WithImages: Story = {
       },
     ]
 
-    return (
-      <ChatInput
-        {...defaultArgs}
-        input="Here are my calendar screenshots"
-        images={mockImages}
-      />
-    )
+    return <ChatInput {...defaultArgs} input="Here are my calendar screenshots" images={mockImages} />
   },
 }
 
@@ -104,13 +98,7 @@ export const MaxImages: Story = {
       base64: '',
     }))
 
-    return (
-      <ChatInput
-        {...defaultArgs}
-        input="Maximum images reached"
-        images={mockImages}
-      />
-    )
+    return <ChatInput {...defaultArgs} input="Maximum images reached" images={mockImages} />
   },
 }
 

@@ -1,5 +1,13 @@
 export type { HandlerContext } from "@/shared/types";
 export type {
+  UpdateUserBrainParams,
+  UpdateUserBrainResult,
+} from "./brain-handlers";
+export {
+  getUserBrainHandler,
+  updateUserBrainHandler,
+} from "./brain-handlers";
+export type {
   ConflictCheckResult,
   PreCreateValidationResult,
   SelectCalendarResult,
@@ -7,7 +15,6 @@ export type {
   UserCalendar,
   ValidateUserResult,
 } from "./direct-handlers";
-
 export {
   checkConflictsHandler,
   getCalendarCategoriesByEmail,
@@ -33,11 +40,3 @@ export {
   fillGapHandler,
   formatGapsHandler,
 } from "./gap-handlers";
-export type {
-  UpdateUserBrainParams,
-  UpdateUserBrainResult,
-} from "./brain-handlers";
-export {
-  getUserBrainHandler,
-  updateUserBrainHandler,
-} from "./brain-handlers";

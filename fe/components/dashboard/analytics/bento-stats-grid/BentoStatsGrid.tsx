@@ -2,18 +2,7 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
-import {
-  Activity,
-  CalendarDays,
-  CalendarOff,
-  Clock,
-  Flame,
-  Repeat,
-  Star,
-  Sun,
-  Target,
-  Timer,
-} from 'lucide-react'
+import { Activity, CalendarDays, CalendarOff, Clock, Flame, Repeat, Star, Sun, Target, Timer } from 'lucide-react'
 import { useLanguage } from '@/contexts/LanguageContext'
 
 import type { BentoStatsGridProps } from './types'
@@ -61,7 +50,11 @@ export function BentoStatsGrid({ data, comparison, isLoading = false }: BentoSta
         label={t('analytics.stats.totalEvents')}
         value={totalEvents}
         description={`${data.daysWithEvents} ${t('analytics.stats.daysWithEvents')}`}
-        trend={totalEventsTrend ? { direction: totalEventsTrend.direction, percentage: totalEventsTrend.percentageChange } : undefined}
+        trend={
+          totalEventsTrend
+            ? { direction: totalEventsTrend.direction, percentage: totalEventsTrend.percentageChange }
+            : undefined
+        }
       />
 
       <StatCard
@@ -70,7 +63,11 @@ export function BentoStatsGrid({ data, comparison, isLoading = false }: BentoSta
         value={totalDurationHours}
         suffix="H"
         description={t('analytics.stats.avgPerEvent', { value: data.averageEventDuration.toFixed(1) })}
-        trend={totalDurationTrend ? { direction: totalDurationTrend.direction, percentage: totalDurationTrend.percentageChange } : undefined}
+        trend={
+          totalDurationTrend
+            ? { direction: totalDurationTrend.direction, percentage: totalDurationTrend.percentageChange }
+            : undefined
+        }
       />
 
       <StatCard

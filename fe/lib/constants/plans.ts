@@ -156,14 +156,10 @@ interface LemonSqueezyProduct {
   }>
 }
 
-type ProductNamePattern =
-  | 'starter'
-  | 'operational-pro'
-  | 'total-sovereignty'
-  | 'pay-per-use'
+type ProductNamePattern = 'starter' | 'operational-pro' | 'total-sovereignty' | 'pay-per-use'
 
 const PRODUCT_NAME_MAPPINGS: Record<ProductNamePattern, { planId: PlanSlug; interval?: 'monthly' | 'yearly' }> = {
-  'starter': { planId: 'starter', interval: 'monthly' },
+  starter: { planId: 'starter', interval: 'monthly' },
   'operational-pro': { planId: 'pro', interval: 'monthly' },
   'total-sovereignty': { planId: 'executive', interval: 'monthly' },
   'pay-per-use': { planId: 'starter' },
@@ -191,9 +187,7 @@ const extractPlanInfo = (slug: string): { planId: PlanSlug; interval?: 'monthly'
   return null
 }
 
-export const transformLemonSqueezyProductsToTiers = (
-  products: LemonSqueezyProduct[]
-): PricingTier[] => {
+export const transformLemonSqueezyProductsToTiers = (products: LemonSqueezyProduct[]): PricingTier[] => {
   const planPrices: Record<PlanSlug, { monthly: number; yearly: number; perUse: number; buyNowUrl: string }> = {
     starter: { monthly: 0, yearly: 0, perUse: 3, buyNowUrl: '' },
     pro: { monthly: 3, yearly: 2, perUse: 7, buyNowUrl: '' },

@@ -190,7 +190,10 @@ export const LongCalendarNames: Story = {
     ],
     calendarMap: new Map([
       ['long-name@example.com', { name: 'Very Long Calendar Name That Should Be Truncated', color: '#4285f4' }],
-      ['another-long@example.com', { name: 'Another Extremely Long Calendar Name For Testing Purposes', color: '#0b8043' }],
+      [
+        'another-long@example.com',
+        { name: 'Another Extremely Long Calendar Name For Testing Purposes', color: '#0b8043' },
+      ],
     ]),
     onCalendarClick: fn(),
     onCreateCalendar: fn(),

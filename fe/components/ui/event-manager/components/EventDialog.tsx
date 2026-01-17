@@ -65,12 +65,15 @@ export function EventDialog({
     setActionResult(null)
   }, [])
 
-  const handleOpenChange = useCallback((newOpen: boolean) => {
-    onOpenChange(newOpen)
-    if (!newOpen) {
-      resetAllyState()
-    }
-  }, [onOpenChange, resetAllyState])
+  const handleOpenChange = useCallback(
+    (newOpen: boolean) => {
+      onOpenChange(newOpen)
+      if (!newOpen) {
+        resetAllyState()
+      }
+    },
+    [onOpenChange, resetAllyState],
+  )
 
   const toggleTag = (tag: string) => {
     if (isCreating) {
@@ -148,12 +151,12 @@ export function EventDialog({
           }, 1500)
         } else {
           setAllyResponse(
-            "I understand you want to make changes. Could you be more specific? For example:\n• \"Change the title to Weekly Standup\"\n• \"Move it to 3pm\"\n• \"Reschedule to tomorrow at 10am\""
+            'I understand you want to make changes. Could you be more specific? For example:\n• "Change the title to Weekly Standup"\n• "Move it to 3pm"\n• "Reschedule to tomorrow at 10am"',
           )
         }
       } else {
         setAllyResponse(
-          "I can help you modify or delete this event. Try asking me to:\n• \"Change the title to...\"\n• \"Move it to 3pm\"\n• \"Delete this event\""
+          'I can help you modify or delete this event. Try asking me to:\n• "Change the title to..."\n• "Move it to 3pm"\n• "Delete this event"',
         )
       }
     } catch (error) {

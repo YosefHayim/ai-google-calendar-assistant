@@ -63,7 +63,7 @@ export function YearView({ currentDate, events, onEventClick, onMonthClick, getC
                       className={cn(
                         'aspect-square flex flex-col items-center justify-center relative text-[9px]',
                         !isCurrentMonth && 'text-muted-foreground/30',
-                        isToday && 'bg-primary text-primary-foreground rounded-full font-bold'
+                        isToday && 'bg-primary text-primary-foreground rounded-full font-bold',
                       )}
                     >
                       {day.getDate()}
@@ -74,7 +74,7 @@ export function YearView({ currentDate, events, onEventClick, onMonthClick, getC
                               key={i}
                               className={cn(
                                 'w-1 h-1 rounded-full',
-                                typeof color === 'string' && !color.startsWith('#') && color
+                                typeof color === 'string' && !color.startsWith('#') && color,
                               )}
                               style={color.startsWith('#') ? { backgroundColor: color } : undefined}
                             />

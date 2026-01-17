@@ -99,12 +99,7 @@ export const WithSuggestions: Story = {
         </ul>
       </div>
       <QueryClientProvider client={queryClient}>
-        <CreateCalendarDialog
-          isOpen={true}
-          onClose={fn()}
-          onSuccess={fn()}
-          existingCalendars={mockExistingCalendars}
-        />
+        <CreateCalendarDialog isOpen={true} onClose={fn()} onSuccess={fn()} existingCalendars={mockExistingCalendars} />
       </QueryClientProvider>
     </div>
   ),
@@ -145,12 +140,7 @@ export const UseCases: Story = {
       </div>
 
       <QueryClientProvider client={queryClient}>
-        <CreateCalendarDialog
-          isOpen={true}
-          onClose={fn()}
-          onSuccess={fn()}
-          existingCalendars={mockExistingCalendars}
-        />
+        <CreateCalendarDialog isOpen={true} onClose={fn()} onSuccess={fn()} existingCalendars={mockExistingCalendars} />
       </QueryClientProvider>
     </div>
   ),

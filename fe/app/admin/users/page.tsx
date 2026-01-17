@@ -156,108 +156,116 @@ export default function AdminUsersPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {(!data?.users || data.users.length === 0) ? (
+                  {!data?.users || data.users.length === 0 ? (
                     <tr>
                       <td colSpan={6} className="p-8">
                         <EmptyState
                           icon={<Users />}
                           title="No users found"
-                          description={debouncedSearch || statusFilter || roleFilter ? "Try adjusting your search or filters." : "No users in the system yet."}
+                          description={
+                            debouncedSearch || statusFilter || roleFilter
+                              ? 'Try adjusting your search or filters.'
+                              : 'No users in the system yet.'
+                          }
                           size="md"
                         />
                       </td>
                     </tr>
-                  ) : data.users.map((user) => (
-                    <tr
-                      key={user.id}
-                      className="border-b border-zinc-100 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900/50"
-                    >
-                      <td className="p-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-zinc-200 dark:bg-zinc-700 flex items-center justify-center overflow-hidden">
-                            {user.avatar_url ? (
-                              <img src={user.avatar_url} alt="" className="w-10 h-10 rounded-full object-cover" />
-                            ) : (
-                              <span className="text-sm font-medium text-zinc-600 dark:text-zinc-300">
-                                {user.email[0].toUpperCase()}
+                  ) : (
+                    data.users.map((user) => (
+                      <tr
+                        key={user.id}
+                        className="border-b border-zinc-100 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900/50"
+                      >
+                        <td className="p-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-zinc-200 dark:bg-zinc-700 flex items-center justify-center overflow-hidden">
+                              {user.avatar_url ? (
+                                <img src={user.avatar_url} alt="" className="w-10 h-10 rounded-full object-cover" />
+                              ) : (
+                                <span className="text-sm font-medium text-zinc-600 dark:text-zinc-300">
+                                  {user.email[0].toUpperCase()}
+                                </span>
+                              )}
+                            </div>
+                            <div>
+                              <p className="font-medium text-zinc-900 dark:text-white">
+                                {user.display_name || user.first_name || user.email.split('@')[0]}
+                              </p>
+                              <p className="text-sm text-zinc-500">{user.email}</p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <StatusBadge status={user.status} />
+                        </td>
+                        <td className="p-4">
+                          <RoleBadge role={user.role} />
+                        </td>
+                        <td className="p-4">
+                          {user.subscription ? (
+                            <div>
+                              <span className="text-sm font-medium text-zinc-900 dark:text-white">
+                                {user.subscription.plan_name}
                               </span>
-                            )}
-                          </div>
-                          <div>
-                            <p className="font-medium text-zinc-900 dark:text-white">
-                              {user.display_name || user.first_name || user.email.split('@')[0]}
-                            </p>
-                            <p className="text-sm text-zinc-500">{user.email}</p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="p-4">
-                        <StatusBadge status={user.status} />
-                      </td>
-                      <td className="p-4">
-                        <RoleBadge role={user.role} />
-                      </td>
-                      <td className="p-4">
-                        {user.subscription ? (
-                          <div>
-                            <span className="text-sm font-medium text-zinc-900 dark:text-white">
-                              {user.subscription.plan_name}
-                            </span>
-                            <p className="text-xs text-zinc-500">{user.subscription.status}</p>
-                          </div>
-                        ) : (
-                          <span className="text-sm text-zinc-400">No subscription</span>
-                        )}
-                      </td>
-                      <td className="p-4 text-sm text-zinc-500">{format(new Date(user.created_at), 'MMM d, yyyy')}</td>
-                      <td className="p-4 text-right">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm">
-                              <MoreVertical className="w-4 h-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem
-                              onClick={() => {
-                                setSelectedUser(user)
-                                setShowDetailsDialog(true)
-                              }}
-                            >
-                              <UserCog className="w-4 h-4 mr-2" /> View Details
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() => {
-                                setSelectedUser(user)
-                                setShowCreditsDialog(true)
-                              }}
-                            >
-                              <CreditCard className="w-4 h-4 mr-2" /> Grant Credits
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handlePasswordReset(user.id, user.email)}>
-                              <Mail className="w-4 h-4 mr-2" /> Send Password Reset
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            {user.status !== 'suspended' ? (
+                              <p className="text-xs text-zinc-500">{user.subscription.status}</p>
+                            </div>
+                          ) : (
+                            <span className="text-sm text-zinc-400">No subscription</span>
+                          )}
+                        </td>
+                        <td className="p-4 text-sm text-zinc-500">
+                          {format(new Date(user.created_at), 'MMM d, yyyy')}
+                        </td>
+                        <td className="p-4 text-right">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="sm">
+                                <MoreVertical className="w-4 h-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
                               <DropdownMenuItem
-                                className="text-red-600"
-                                onClick={() => handleStatusChange(user.id, 'suspended')}
+                                onClick={() => {
+                                  setSelectedUser(user)
+                                  setShowDetailsDialog(true)
+                                }}
                               >
-                                <Shield className="w-4 h-4 mr-2" /> Suspend User
+                                <UserCog className="w-4 h-4 mr-2" /> View Details
                               </DropdownMenuItem>
-                            ) : (
                               <DropdownMenuItem
-                                className="text-green-600"
-                                onClick={() => handleStatusChange(user.id, 'active')}
+                                onClick={() => {
+                                  setSelectedUser(user)
+                                  setShowCreditsDialog(true)
+                                }}
                               >
-                                <Shield className="w-4 h-4 mr-2" /> Activate User
+                                <CreditCard className="w-4 h-4 mr-2" /> Grant Credits
                               </DropdownMenuItem>
-                            )}
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </td>
-                    </tr>
-                  ))}
+                              <DropdownMenuItem onClick={() => handlePasswordReset(user.id, user.email)}>
+                                <Mail className="w-4 h-4 mr-2" /> Send Password Reset
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              {user.status !== 'suspended' ? (
+                                <DropdownMenuItem
+                                  className="text-red-600"
+                                  onClick={() => handleStatusChange(user.id, 'suspended')}
+                                >
+                                  <Shield className="w-4 h-4 mr-2" /> Suspend User
+                                </DropdownMenuItem>
+                              ) : (
+                                <DropdownMenuItem
+                                  className="text-green-600"
+                                  onClick={() => handleStatusChange(user.id, 'active')}
+                                >
+                                  <Shield className="w-4 h-4 mr-2" /> Activate User
+                                </DropdownMenuItem>
+                              )}
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>

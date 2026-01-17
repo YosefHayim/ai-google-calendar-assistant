@@ -25,16 +25,12 @@ export const Default: Story = {
     children: (
       <div className="py-20 px-4">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-5xl font-bold text-zinc-900 dark:text-zinc-100 mb-6">
-            Welcome to Ask Ally
-          </h1>
+          <h1 className="text-5xl font-bold text-zinc-900 dark:text-zinc-100 mb-6">Welcome to Ask Ally</h1>
           <p className="text-xl text-zinc-600 dark:text-zinc-400 mb-8">
             Your AI-powered calendar assistant that understands natural language.
           </p>
           <div className="flex items-center justify-center gap-4">
-            <button className="px-8 py-3 bg-primary text-white rounded-full font-medium">
-              Get Started Free
-            </button>
+            <button className="px-8 py-3 bg-primary text-white rounded-full font-medium">Get Started Free</button>
             <button className="px-8 py-3 bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-full font-medium">
               Watch Demo
             </button>
@@ -46,8 +42,7 @@ export const Default: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          'Default marketing layout with simple hero content. Notice the Navbar at top and Footer at bottom.',
+        story: 'Default marketing layout with simple hero content. Notice the Navbar at top and Footer at bottom.',
       },
     },
   },
@@ -63,12 +58,8 @@ export const DarkMode: Story = {
             Your AI-powered calendar assistant that understands natural language.
           </p>
           <div className="flex items-center justify-center gap-4">
-            <button className="px-8 py-3 bg-primary text-white rounded-full font-medium">
-              Get Started Free
-            </button>
-            <button className="px-8 py-3 bg-zinc-800 text-zinc-100 rounded-full font-medium">
-              Watch Demo
-            </button>
+            <button className="px-8 py-3 bg-primary text-white rounded-full font-medium">Get Started Free</button>
+            <button className="px-8 py-3 bg-zinc-800 text-zinc-100 rounded-full font-medium">Watch Demo</button>
           </div>
         </div>
       </div>
@@ -106,8 +97,8 @@ export const LandingPageExample: Story = {
               <span className="text-primary">Reimagined with AI</span>
             </h1>
             <p className="text-xl text-zinc-600 dark:text-zinc-400 mb-8 max-w-2xl mx-auto">
-              Schedule meetings, block focus time, and manage your calendar through natural
-              conversation. Works with Telegram, WhatsApp, and web.
+              Schedule meetings, block focus time, and manage your calendar through natural conversation. Works with
+              Telegram, WhatsApp, and web.
             </p>
             <div className="flex items-center justify-center gap-4">
               <button className="px-8 py-4 bg-primary text-white rounded-full font-medium text-lg shadow-lg shadow-primary/25">
@@ -123,9 +114,7 @@ export const LandingPageExample: Story = {
         <section className="py-20 px-4">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-zinc-900 dark:text-zinc-100 mb-4">
-                Built for Busy Professionals
-              </h2>
+              <h2 className="text-4xl font-bold text-zinc-900 dark:text-zinc-100 mb-4">Built for Busy Professionals</h2>
               <p className="text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">
                 Ally handles the complexity so you can focus on what matters.
               </p>
@@ -153,9 +142,7 @@ export const LandingPageExample: Story = {
                   className="p-8 bg-zinc-50 dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800"
                 >
                   <span className="text-4xl mb-4 block">{feature.icon}</span>
-                  <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">
-                    {feature.title}
-                  </h3>
+                  <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">{feature.title}</h3>
                   <p className="text-zinc-600 dark:text-zinc-400">{feature.description}</p>
                 </div>
               ))}
@@ -165,9 +152,7 @@ export const LandingPageExample: Story = {
 
         <section className="py-20 px-4 bg-zinc-900 dark:bg-zinc-100">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-4xl font-bold text-white dark:text-zinc-900 mb-4">
-              Ready to Transform Your Calendar?
-            </h2>
+            <h2 className="text-4xl font-bold text-white dark:text-zinc-900 mb-4">Ready to Transform Your Calendar?</h2>
             <p className="text-zinc-400 dark:text-zinc-600 mb-8">
               Join thousands of professionals who have simplified their scheduling.
             </p>
@@ -182,8 +167,7 @@ export const LandingPageExample: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          'Full landing page example with hero, features, and CTA sections wrapped in the marketing layout.',
+        story: 'Full landing page example with hero, features, and CTA sections wrapped in the marketing layout.',
       },
     },
   },
@@ -195,15 +179,9 @@ export const PricingPageExample: Story = {
       <section className="py-24 px-4">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <span className="text-xs font-bold text-primary uppercase tracking-[0.2em] mb-4 block">
-              Pricing
-            </span>
-            <h1 className="text-5xl font-bold text-zinc-900 dark:text-zinc-100 mb-4">
-              Simple, Transparent Pricing
-            </h1>
-            <p className="text-xl text-zinc-600 dark:text-zinc-400">
-              Start free. Upgrade when you need more.
-            </p>
+            <span className="text-xs font-bold text-primary uppercase tracking-[0.2em] mb-4 block">Pricing</span>
+            <h1 className="text-5xl font-bold text-zinc-900 dark:text-zinc-100 mb-4">Simple, Transparent Pricing</h1>
+            <p className="text-xl text-zinc-600 dark:text-zinc-400">Start free. Upgrade when you need more.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {[
@@ -255,17 +233,12 @@ export const PricingPageExample: Story = {
                 <h3 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">{plan.name}</h3>
                 <p className="text-4xl font-bold text-zinc-900 dark:text-zinc-100 mt-2">
                   {plan.price}
-                  {plan.price !== 'Custom' && (
-                    <span className="text-base font-normal text-zinc-500">/month</span>
-                  )}
+                  {plan.price !== 'Custom' && <span className="text-base font-normal text-zinc-500">/month</span>}
                 </p>
                 <p className="text-zinc-600 dark:text-zinc-400 mt-2">{plan.description}</p>
                 <ul className="mt-6 space-y-3">
                   {plan.features.map((feature) => (
-                    <li
-                      key={feature}
-                      className="flex items-center gap-2 text-zinc-700 dark:text-zinc-300"
-                    >
+                    <li key={feature} className="flex items-center gap-2 text-zinc-700 dark:text-zinc-300">
                       <svg
                         className="w-5 h-5 text-emerald-500 flex-shrink-0"
                         fill="none"
@@ -312,9 +285,7 @@ export const MobileView: Story = {
           <p className="text-zinc-600 dark:text-zinc-400 mb-6">
             AI-powered calendar management for busy professionals.
           </p>
-          <button className="w-full px-6 py-3 bg-primary text-white rounded-full font-medium">
-            Get Started
-          </button>
+          <button className="w-full px-6 py-3 bg-primary text-white rounded-full font-medium">Get Started</button>
         </div>
       </div>
     ),
@@ -325,8 +296,7 @@ export const MobileView: Story = {
     },
     docs: {
       description: {
-        story:
-          'Mobile view showing responsive Navbar with hamburger menu and stacked footer layout.',
+        story: 'Mobile view showing responsive Navbar with hamburger menu and stacked footer layout.',
       },
     },
   },

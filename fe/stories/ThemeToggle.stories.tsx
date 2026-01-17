@@ -52,14 +52,10 @@ export const InHeader: Story = {
             <line x1="3" y1="10" x2="21" y2="10" />
           </svg>
         </div>
-        <span className="font-semibold text-zinc-900 dark:text-zinc-100">
-          Ask Ally
-        </span>
+        <span className="font-semibold text-zinc-900 dark:text-zinc-100">Ask Ally</span>
       </div>
       <div className="flex items-center gap-4">
-        <span className="text-sm text-zinc-500 dark:text-zinc-400">
-          john@example.com
-        </span>
+        <span className="text-sm text-zinc-500 dark:text-zinc-400">john@example.com</span>
         <ThemeToggle />
       </div>
     </div>
@@ -108,47 +104,31 @@ export const InSettingsCard: Story = {
   render: () => (
     <div className="w-[400px] p-6 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg space-y-6">
       <div>
-        <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
-          Appearance
-        </h3>
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">
-          Customize how the app looks on your device
-        </p>
+        <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Appearance</h3>
+        <p className="text-sm text-zinc-500 dark:text-zinc-400">Customize how the app looks on your device</p>
       </div>
 
       <div className="space-y-4">
         <div className="flex items-center justify-between py-2">
           <div>
-            <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
-              Theme
-            </p>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400">
-              Switch between light and dark mode
-            </p>
+            <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">Theme</p>
+            <p className="text-xs text-zinc-500 dark:text-zinc-400">Switch between light and dark mode</p>
           </div>
           <ThemeToggle />
         </div>
 
         <div className="flex items-center justify-between py-2 border-t border-zinc-200 dark:border-zinc-800">
           <div>
-            <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
-              Compact View
-            </p>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400">
-              Show more events in calendar view
-            </p>
+            <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">Compact View</p>
+            <p className="text-xs text-zinc-500 dark:text-zinc-400">Show more events in calendar view</p>
           </div>
           <div className="h-6 w-11 rounded-full bg-zinc-200 dark:bg-zinc-800" />
         </div>
 
         <div className="flex items-center justify-between py-2 border-t border-zinc-200 dark:border-zinc-800">
           <div>
-            <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
-              Week Starts On
-            </p>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400">
-              Choose the first day of the week
-            </p>
+            <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">Week Starts On</p>
+            <p className="text-xs text-zinc-500 dark:text-zinc-400">Choose the first day of the week</p>
           </div>
           <span className="text-sm text-zinc-600 dark:text-zinc-400">Sunday</span>
         </div>

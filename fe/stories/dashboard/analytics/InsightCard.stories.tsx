@@ -111,20 +111,8 @@ export const InsightGrid: Story = {
         description="12% higher than last week"
         color="amber"
       />
-      <InsightCard
-        icon={Users}
-        title="Meeting Load"
-        value="24 hrs"
-        description="Optimal range achieved"
-        color="sky"
-      />
-      <InsightCard
-        icon={Coffee}
-        title="Deep Work"
-        value="18 blocks"
-        description="2+ hour sessions"
-        color="emerald"
-      />
+      <InsightCard icon={Users} title="Meeting Load" value="24 hrs" description="Optimal range achieved" color="sky" />
+      <InsightCard icon={Coffee} title="Deep Work" value="18 blocks" description="2+ hour sessions" color="emerald" />
       <InsightCard
         icon={TrendingUp}
         title="Productivity"

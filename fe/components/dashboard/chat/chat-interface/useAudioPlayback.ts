@@ -67,7 +67,7 @@ export function useAudioPlayback(options: AudioPlaybackOptions = {}) {
         if (!audioContextRef.current) {
           audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)()
         }
-        
+
         if (audioContextRef.current.state === 'suspended') {
           await audioContextRef.current.resume()
         }
@@ -100,7 +100,7 @@ export function useAudioPlayback(options: AudioPlaybackOptions = {}) {
         isProcessingRef.current = false
       }
     },
-    [isSpeaking, speakingMessageId, stopSpeaking, options.voice, options.playbackSpeed]
+    [isSpeaking, speakingMessageId, stopSpeaking, options.voice, options.playbackSpeed],
   )
 
   return {

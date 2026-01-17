@@ -86,14 +86,10 @@ export const Steps: Story = {
     <div className="min-h-screen bg-zinc-100 dark:bg-zinc-900 p-8">
       <div className="max-w-2xl mx-auto space-y-8">
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-4">
-            Onboarding Steps Overview
-          </h1>
-          <p className="text-zinc-500 dark:text-zinc-400">
-            5-step wizard introducing Ally&apos;s core features
-          </p>
+          <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-4">Onboarding Steps Overview</h1>
+          <p className="text-zinc-500 dark:text-zinc-400">5-step wizard introducing Ally&apos;s core features</p>
         </div>
-        
+
         <div className="space-y-4">
           <div className="p-6 bg-white dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-800">
             <div className="flex items-center gap-4">
@@ -106,7 +102,7 @@ export const Steps: Story = {
               </div>
             </div>
           </div>
-          
+
           <div className="p-6 bg-white dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-800">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
@@ -118,7 +114,7 @@ export const Steps: Story = {
               </div>
             </div>
           </div>
-          
+
           <div className="p-6 bg-white dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-800">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
@@ -130,7 +126,7 @@ export const Steps: Story = {
               </div>
             </div>
           </div>
-          
+
           <div className="p-6 bg-white dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-800">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
@@ -142,7 +138,7 @@ export const Steps: Story = {
               </div>
             </div>
           </div>
-          
+
           <div className="p-6 bg-white dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-800">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center">
@@ -155,7 +151,7 @@ export const Steps: Story = {
             </div>
           </div>
         </div>
-        
+
         <div className="p-6 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800">
           <h3 className="font-semibold text-blue-800 dark:text-blue-200 mb-2">Audio Features</h3>
           <ul className="space-y-1 text-sm text-blue-700 dark:text-blue-300">
@@ -186,7 +182,8 @@ export const WithAudioEnabled: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Wizard with audio narration enabled. Users can toggle the speaker icon to enable TTS narration for each step.',
+        story:
+          'Wizard with audio narration enabled. Users can toggle the speaker icon to enable TTS narration for each step.',
       },
     },
   },

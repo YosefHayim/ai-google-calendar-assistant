@@ -254,7 +254,8 @@ export const AnimationDemo: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Watch the smooth 1.5-second animation as the gauge fills on load. The animation uses Framer Motion with easeOut easing.',
+        story:
+          'Watch the smooth 1.5-second animation as the gauge fills on load. The animation uses Framer Motion with easeOut easing.',
       },
     },
   },

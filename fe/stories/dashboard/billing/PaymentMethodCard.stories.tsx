@@ -12,7 +12,7 @@ const meta: Meta<typeof PaymentMethodCard> = {
     docs: {
       description: {
         component:
-          'A visual credit card display showing the user\'s saved payment method with brand icon, masked card number, expiry date, and update action.',
+          "A visual credit card display showing the user's saved payment method with brand icon, masked card number, expiry date, and update action.",
       },
     },
   },

@@ -161,10 +161,7 @@ export const Interactive: Story = {
           onCancel={handleCancel}
         />
         {!isEditing && (
-          <button
-            onClick={() => setIsEditing(true)}
-            className="text-sm text-primary hover:underline"
-          >
+          <button onClick={() => setIsEditing(true)} className="text-sm text-primary hover:underline">
             Click to edit message
           </button>
         )}

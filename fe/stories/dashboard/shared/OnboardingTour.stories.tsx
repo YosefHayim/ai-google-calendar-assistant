@@ -26,17 +26,29 @@ const meta: Meta<typeof OnboardingTour> = {
               <div className="w-8 h-8 bg-primary rounded-lg" />
               <span className="font-bold text-lg text-zinc-900 dark:text-zinc-100">Ally</span>
             </div>
-            <div id="tour-assistant" className="px-3 py-2 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-sm font-medium text-zinc-900 dark:text-zinc-100">
+            <div
+              id="tour-assistant"
+              className="px-3 py-2 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-sm font-medium text-zinc-900 dark:text-zinc-100"
+            >
               Assistant
             </div>
-            <div id="tour-analytics" className="px-3 py-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-sm text-zinc-600 dark:text-zinc-400">
+            <div
+              id="tour-analytics"
+              className="px-3 py-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-sm text-zinc-600 dark:text-zinc-400"
+            >
               Analytics
             </div>
-            <div id="tour-integrations" className="px-3 py-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-sm text-zinc-600 dark:text-zinc-400">
+            <div
+              id="tour-integrations"
+              className="px-3 py-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-sm text-zinc-600 dark:text-zinc-400"
+            >
               Integrations
             </div>
             <div className="flex-1" />
-            <div id="tour-settings" className="px-3 py-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-sm text-zinc-600 dark:text-zinc-400">
+            <div
+              id="tour-settings"
+              className="px-3 py-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-sm text-zinc-600 dark:text-zinc-400"
+            >
               Settings
             </div>
           </aside>
@@ -68,7 +80,8 @@ export const WelcomeStep: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'The welcome step that introduces the user to Ally. This is a centered modal without a spotlight highlight.',
+        story:
+          'The welcome step that introduces the user to Ally. This is a centered modal without a spotlight highlight.',
       },
     },
   },
@@ -99,7 +112,8 @@ export const AnalyticsStep: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Shows the onboarding tour starting from the Welcome step. Click Next to navigate to the Analytics step.',
+        story:
+          'Shows the onboarding tour starting from the Welcome step. Click Next to navigate to the Analytics step.',
       },
     },
   },
@@ -185,7 +199,8 @@ export const LastStep: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Shows the onboarding tour starting from the Welcome step. Navigate through all steps to reach the final Settings step where the button changes to "Start Audit".',
+        story:
+          'Shows the onboarding tour starting from the Welcome step. Navigate through all steps to reach the final Settings step where the button changes to "Start Audit".',
       },
     },
   },

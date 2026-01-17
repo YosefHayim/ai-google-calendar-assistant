@@ -74,7 +74,7 @@ export function ImpersonationProvider({ children }: { children: ReactNode }) {
       startImpersonation,
       exitImpersonation,
     }),
-    [impersonationData, startImpersonation, exitImpersonation]
+    [impersonationData, startImpersonation, exitImpersonation],
   )
 
   return <ImpersonationContext.Provider value={value}>{children}</ImpersonationContext.Provider>

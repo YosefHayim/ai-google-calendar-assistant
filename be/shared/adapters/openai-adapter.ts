@@ -16,7 +16,7 @@ import {
   updateUserBrainHandler,
   validateUserHandler,
 } from "@/shared/tools/handlers";
-
+import { updateUserBrainSchema } from "@/shared/tools/schemas/brain-schemas";
 import { selectCalendarSchema } from "@/shared/tools/schemas/calendar-schemas";
 import {
   checkConflictsSchema,
@@ -31,7 +31,6 @@ import {
   fillGapSchema,
   formatGapsDisplaySchema,
 } from "@/shared/tools/schemas/gap-schemas";
-import { updateUserBrainSchema } from "@/shared/tools/schemas/brain-schemas";
 import { type AgentContext, stringifyError } from "@/shared/types";
 
 export type { AgentContext };

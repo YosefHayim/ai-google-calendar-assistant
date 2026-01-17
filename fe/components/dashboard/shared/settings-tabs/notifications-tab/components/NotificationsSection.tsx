@@ -37,7 +37,10 @@ export function NotificationsSection() {
   }, [notificationData])
 
   const handleEventConfirmationsChange = (values: string[]) => {
-    setSettings((prev) => ({ ...prev, eventConfirmations: values as NotificationSettingsFormData['eventConfirmations'] }))
+    setSettings((prev) => ({
+      ...prev,
+      eventConfirmations: values as NotificationSettingsFormData['eventConfirmations'],
+    }))
     setIsDirty(true)
   }
 

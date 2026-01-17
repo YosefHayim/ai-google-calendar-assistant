@@ -2,12 +2,7 @@
 
 import React from 'react'
 
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarRail,
-  useSidebar,
-} from '@/components/ui/sidebar'
+import { Sidebar, SidebarContent, SidebarRail, useSidebar } from '@/components/ui/sidebar'
 import { SidebarProvider as ChatSidebarProvider, useSidebarContext } from '@/contexts/SidebarContext'
 import { DeleteConfirmDialog } from '../sidebar-components/DeleteConfirmDialog'
 
@@ -18,12 +13,7 @@ import { UserFooter } from './components/UserFooter'
 import { SidebarHeaderSection } from './components/SidebarHeaderSection'
 
 function AppSidebarContent({ onOpenSettings, onSignOut }: AppSidebarProps) {
-  const {
-    conversationToDelete,
-    setConversationToDelete,
-    isDeletingConversation,
-    confirmDelete,
-  } = useSidebarContext()
+  const { conversationToDelete, setConversationToDelete, isDeletingConversation, confirmDelete } = useSidebarContext()
 
   return (
     <>

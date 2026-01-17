@@ -19,20 +19,19 @@ type FeatureFlagProviderProps = {
 export function FeatureFlagProvider({ children }: FeatureFlagProviderProps) {
   const { data: flags, isLoading, refetch } = useEnabledFeatureFlags()
 
-  const value = useMemo<FeatureFlagContextValue>(() => ({
-    flags: flags ?? {},
-    isLoading,
-    isEnabled: (key: string) => flags?.[key] ?? false,
-    refetch: () => {
-      refetch()
-    },
-  }), [flags, isLoading, refetch])
-
-  return (
-    <FeatureFlagContext.Provider value={value}>
-      {children}
-    </FeatureFlagContext.Provider>
+  const value = useMemo<FeatureFlagContextValue>(
+    () => ({
+      flags: flags ?? {},
+      isLoading,
+      isEnabled: (key: string) => flags?.[key] ?? false,
+      refetch: () => {
+        refetch()
+      },
+    }),
+    [flags, isLoading, refetch],
   )
+
+  return <FeatureFlagContext.Provider value={value}>{children}</FeatureFlagContext.Provider>
 }
 
 export function useFeatureFlagContext() {

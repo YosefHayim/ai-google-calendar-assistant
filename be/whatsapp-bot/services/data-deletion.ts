@@ -7,8 +7,8 @@
 import crypto from "node:crypto";
 import { env } from "@/config";
 import { SUPABASE } from "@/config/clients/supabase";
-import { logger } from "@/utils/logger";
 import { unifiedContextStore } from "@/shared/context";
+import { logger } from "@/utils/logger";
 
 const getAppSecret = (): string | undefined =>
   env.integrations.whatsapp.appSecret;
@@ -117,14 +117,18 @@ export const deleteWhatsAppUserData = async (
   );
 
   try {
-    const { data: waUsers, error: selectError } = await SUPABASE.from("whatsapp_users")
+    const { data: waUsers, error: selectError } = await SUPABASE.from(
+      "whatsapp_users"
+    )
       .select("id, whatsapp_phone, user_id")
       .or(`meta_user_id.eq.${metaUserId}`)
       .limit(10);
 
     if (selectError) {
-      logger.error(`WhatsApp: Failed to query whatsapp_users: ${selectError.message}`)
-      throw new Error(`Database query failed: ${selectError.message}`)
+      logger.error(
+        `WhatsApp: Failed to query whatsapp_users: ${selectError.message}`
+      );
+      throw new Error(`Database query failed: ${selectError.message}`);
     }
 
     if (waUsers && waUsers.length > 0) {
@@ -211,9 +215,7 @@ export const buildErrorUrl = (errorMessage: string): string => {
 export const formatMetaResponse = (
   url: string,
   confirmationCode: string
-): DataDeletionResponse => {
-  return {
-    url,
-    confirmation_code: confirmationCode,
-  };
-};
+): DataDeletionResponse => ({
+  url,
+  confirmation_code: confirmationCode,
+});

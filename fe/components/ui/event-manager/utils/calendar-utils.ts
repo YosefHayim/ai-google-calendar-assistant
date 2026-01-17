@@ -91,20 +91,20 @@ export function hasEventOnDay(day: Date, monthEvents: Event[]): boolean {
     (event) =>
       event.startTime.getFullYear() === day.getFullYear() &&
       event.startTime.getMonth() === day.getMonth() &&
-      event.startTime.getDate() === day.getDate()
+      event.startTime.getDate() === day.getDate(),
   )
 }
 
 export function getEventColorsForDay(
   day: Date,
   monthEvents: Event[],
-  getColorClasses: (color: string) => ColorDefinition
+  getColorClasses: (color: string) => ColorDefinition,
 ): string[] {
   const dayEvents = monthEvents.filter(
     (event) =>
       event.startTime.getFullYear() === day.getFullYear() &&
       event.startTime.getMonth() === day.getMonth() &&
-      event.startTime.getDate() === day.getDate()
+      event.startTime.getDate() === day.getDate(),
   )
   return dayEvents.slice(0, 3).map((e) => e.hexColor || getColorClasses(e.color).bg)
 }
@@ -126,7 +126,7 @@ export function groupEventsByDate(events: Event[]): Record<string, Event[]> {
       acc[dateKey].push(event)
       return acc
     },
-    {} as Record<string, Event[]>
+    {} as Record<string, Event[]>,
   )
 }
 

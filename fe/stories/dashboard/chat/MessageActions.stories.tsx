@@ -144,7 +144,9 @@ export const AllStates: Story = {
       </div>
 
       <div>
-        <p className="text-sm font-medium mb-2 text-zinc-600 dark:text-zinc-400">Assistant Message Actions (Speaking)</p>
+        <p className="text-sm font-medium mb-2 text-zinc-600 dark:text-zinc-400">
+          Assistant Message Actions (Speaking)
+        </p>
         <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-4">
           <MessageActions
             msg={baseAssistantMessage}

@@ -43,10 +43,7 @@ export function formatEventTimeRange(event: CalendarEvent): string {
   return 'N/A'
 }
 
-export function getCalendarInfo(
-  event: CalendarEvent,
-  calendarMap: Map<string, CalendarInfo>
-): CalendarInfo {
+export function getCalendarInfo(event: CalendarEvent, calendarMap: Map<string, CalendarInfo>): CalendarInfo {
   if (event.organizer?.email) {
     const info = calendarMap.get(event.organizer.email)
     if (info) return info

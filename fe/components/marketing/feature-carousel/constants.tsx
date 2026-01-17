@@ -1,12 +1,4 @@
-import {
-  AlertCircle,
-  BarChart3,
-  Calendar,
-  Mic,
-  NotebookTabs,
-  Plane,
-  ShieldCheck,
-} from 'lucide-react'
+import { AlertCircle, BarChart3, Calendar, Mic, NotebookTabs, Plane, ShieldCheck } from 'lucide-react'
 import { WhatsAppIcon } from '@/components/shared/Icons'
 import {
   SchedulingContent,

@@ -3,14 +3,12 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 const UseCaseSimulatorPlaceholder = () => (
   <div className="p-8 bg-background max-w-2xl mx-auto">
     <div className="text-center mb-8">
-      <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-4">
-        Use Case Simulator
-      </h1>
+      <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-4">Use Case Simulator</h1>
       <p className="text-zinc-500 dark:text-zinc-400">
         Interactive demo showing how Ally handles different scheduling scenarios
       </p>
     </div>
-    
+
     <div className="space-y-6">
       <div className="p-6 bg-amber-50 dark:bg-amber-900/20 rounded-xl border border-amber-200 dark:border-amber-800">
         <h3 className="font-semibold text-amber-800 dark:text-amber-200 mb-2">Component Under Development</h3>
@@ -18,7 +16,7 @@ const UseCaseSimulatorPlaceholder = () => (
           The UseCaseSimulator component is currently a placeholder. This story documents the planned functionality.
         </p>
       </div>
-      
+
       <div className="p-6 bg-white dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-800">
         <h3 className="font-semibold text-zinc-800 dark:text-zinc-200 mb-4">Planned Use Cases</h3>
         <ul className="space-y-3 text-sm text-zinc-600 dark:text-zinc-400">
@@ -69,7 +67,7 @@ const UseCaseSimulatorPlaceholder = () => (
           </li>
         </ul>
       </div>
-      
+
       <div className="p-6 bg-white dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-800">
         <h3 className="font-semibold text-zinc-800 dark:text-zinc-200 mb-4">Simulator Features</h3>
         <ul className="space-y-2 text-sm text-zinc-600 dark:text-zinc-400">
@@ -108,7 +106,7 @@ const meta: Meta<typeof UseCaseSimulatorPlaceholder> = {
     docs: {
       description: {
         component:
-          'An interactive simulator demonstrating Ally\'s capabilities across different use cases. Shows real-world scheduling scenarios with animated chat and calendar interactions. (Component currently under development)',
+          "An interactive simulator demonstrating Ally's capabilities across different use cases. Shows real-world scheduling scenarios with animated chat and calendar interactions. (Component currently under development)",
       },
     },
   },
@@ -121,7 +119,8 @@ export const Default: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Placeholder documentation for the UseCaseSimulator component. The actual component is under development.',
+        story:
+          'Placeholder documentation for the UseCaseSimulator component. The actual component is under development.',
       },
     },
   },

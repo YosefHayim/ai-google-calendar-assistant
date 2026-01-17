@@ -16,7 +16,10 @@ const meta: Meta<typeof DailyAvailableHoursChart> = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-const generateMockData = (days: number, variance: 'low' | 'medium' | 'high' = 'medium'): DailyAvailableHoursDataPoint[] => {
+const generateMockData = (
+  days: number,
+  variance: 'low' | 'medium' | 'high' = 'medium',
+): DailyAvailableHoursDataPoint[] => {
   const baseDate = new Date('2024-01-01')
   const varianceMap = { low: 2, medium: 4, high: 8 }
   const v = varianceMap[variance]
@@ -103,41 +106,17 @@ export const EmptyData: Story = {
 }
 
 export const DashboardDefault: StoryObj<typeof DailyAvailableHoursDashboard> = {
-  render: () => (
-    <DailyAvailableHoursDashboard
-      data={mockData14Days}
-      onDayClick={fn()}
-      isLoading={false}
-    />
-  ),
+  render: () => <DailyAvailableHoursDashboard data={mockData14Days} onDayClick={fn()} isLoading={false} />,
 }
 
 export const DashboardLoading: StoryObj<typeof DailyAvailableHoursDashboard> = {
-  render: () => (
-    <DailyAvailableHoursDashboard
-      data={[]}
-      onDayClick={fn()}
-      isLoading={true}
-    />
-  ),
+  render: () => <DailyAvailableHoursDashboard data={[]} onDayClick={fn()} isLoading={true} />,
 }
 
 export const DashboardEmpty: StoryObj<typeof DailyAvailableHoursDashboard> = {
-  render: () => (
-    <DailyAvailableHoursDashboard
-      data={[]}
-      onDayClick={fn()}
-      isLoading={false}
-    />
-  ),
+  render: () => <DailyAvailableHoursDashboard data={[]} onDayClick={fn()} isLoading={false} />,
 }
 
 export const DashboardThirtyDays: StoryObj<typeof DailyAvailableHoursDashboard> = {
-  render: () => (
-    <DailyAvailableHoursDashboard
-      data={mockData30Days}
-      onDayClick={fn()}
-      isLoading={false}
-    />
-  ),
+  render: () => <DailyAvailableHoursDashboard data={mockData30Days} onDayClick={fn()} isLoading={false} />,
 }

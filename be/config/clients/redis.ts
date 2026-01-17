@@ -25,10 +25,17 @@ redisClient.on("connect", () => {
 
 redisClient.on("ready", async () => {
   try {
-    await redisClient.config("SET", "maxmemory-policy", REQUIRED_EVICTION_POLICY);
+    await redisClient.config(
+      "SET",
+      "maxmemory-policy",
+      REQUIRED_EVICTION_POLICY
+    );
     logger.info(`Redis: Eviction policy set to "${REQUIRED_EVICTION_POLICY}"`);
   } catch (err) {
-    logger.warn(`Redis: Could not set eviction policy to "${REQUIRED_EVICTION_POLICY}". ` + `This may cause issues with session storage. Error: ${err}`);
+    logger.warn(
+      `Redis: Could not set eviction policy to "${REQUIRED_EVICTION_POLICY}". ` +
+        `This may cause issues with session storage. Error: ${err}`
+    );
   }
 });
 

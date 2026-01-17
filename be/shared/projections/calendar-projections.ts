@@ -48,7 +48,7 @@ export function projectCalendarVoiceLite(
   return {
     name: calendar.summary || "Unnamed Calendar",
     primary: calendar.primary ?? false,
-  }
+  };
 }
 
 export function projectCalendarChatStandard(
@@ -60,7 +60,7 @@ export function projectCalendarChatStandard(
     primary: calendar.primary ?? false,
     backgroundColor: calendar.backgroundColor || undefined,
     foregroundColor: calendar.foregroundColor || undefined,
-  }
+  };
 }
 
 export function projectCalendarFull(
@@ -78,7 +78,7 @@ export function projectCalendarFull(
     timeZone: calendar.timeZone || undefined,
     selected: calendar.selected ?? undefined,
     hidden: calendar.hidden ?? undefined,
-  }
+  };
 }
 
 export function projectCalendar(

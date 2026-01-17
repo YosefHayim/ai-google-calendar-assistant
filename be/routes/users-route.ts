@@ -14,6 +14,8 @@ import {
   refreshRateLimiter,
 } from "@/middlewares/rate-limiter";
 import { supabaseAuth } from "@/middlewares/supabase-auth";
+import { sendR } from "@/utils/http";
+import { logger } from "@/utils/logger";
 import {
   allyBrainSchema,
   contextualSchedulingSchema,
@@ -27,8 +29,6 @@ import {
   validate,
   voicePreferenceSchema,
 } from "@/validation";
-import { sendR } from "@/utils/http";
-import { logger } from "@/utils/logger";
 
 const router = express.Router();
 

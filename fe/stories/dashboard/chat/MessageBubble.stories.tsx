@@ -112,9 +112,7 @@ export const WithSingleImage: Story = {
           timestamp={FIXED_TIMESTAMP}
           images={[mockImage]}
         />
-        <p className="text-xs text-zinc-500 text-center">
-          Note: Images require base64 data to display properly
-        </p>
+        <p className="text-xs text-zinc-500 text-center">Note: Images require base64 data to display properly</p>
       </div>
     )
   },
@@ -179,11 +177,7 @@ export const HiddenTimestamp: Story = {
 export const Conversation: Story = {
   render: () => (
     <div className="space-y-2">
-      <MessageBubble
-        role="user"
-        content="What's on my calendar for tomorrow?"
-        timestamp={FIXED_TIMESTAMP_EARLIER_2}
-      />
+      <MessageBubble role="user" content="What's on my calendar for tomorrow?" timestamp={FIXED_TIMESTAMP_EARLIER_2} />
       <MessageBubble
         role="assistant"
         content={`You have 3 events scheduled for tomorrow:
@@ -195,11 +189,7 @@ export const Conversation: Story = {
 You have 4 hours and 30 minutes of free time available.`}
         timestamp={FIXED_TIMESTAMP_EARLIER}
       />
-      <MessageBubble
-        role="user"
-        content="Can you reschedule the product review to 2pm?"
-        timestamp={FIXED_TIMESTAMP}
-      />
+      <MessageBubble role="user" content="Can you reschedule the product review to 2pm?" timestamp={FIXED_TIMESTAMP} />
       <MessageBubble
         role="assistant"
         content="I've rescheduled the product review to 2:00 PM - 3:00 PM. I noticed this creates a conflict with your client call at 3:00 PM. Would you like me to adjust the client call as well?"
@@ -212,21 +202,13 @@ You have 4 hours and 30 minutes of free time available.`}
 export const MixedLanguageConversation: Story = {
   render: () => (
     <div className="space-y-2">
-      <MessageBubble
-        role="user"
-        content="Schedule a meeting for tomorrow"
-        timestamp={FIXED_TIMESTAMP_EARLIER_2}
-      />
+      <MessageBubble role="user" content="Schedule a meeting for tomorrow" timestamp={FIXED_TIMESTAMP_EARLIER_2} />
       <MessageBubble
         role="assistant"
         content="I've created the meeting for tomorrow. What time would you like it to start?"
         timestamp={FIXED_TIMESTAMP_EARLIER}
       />
-      <MessageBubble
-        role="user"
-        content="בשעה 10 בבוקר"
-        timestamp={FIXED_TIMESTAMP}
-      />
+      <MessageBubble role="user" content="בשעה 10 בבוקר" timestamp={FIXED_TIMESTAMP} />
       <MessageBubble
         role="assistant"
         content="הפגישה נקבעה למחר בשעה 10:00. האם תרצה להוסיף משתתפים?"

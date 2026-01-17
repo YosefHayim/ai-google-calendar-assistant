@@ -110,25 +110,27 @@ export const Features: Story = {
   render: () => (
     <div className="max-w-2xl mx-auto p-8 space-y-8">
       <div className="text-center">
-        <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-4">
-          Smart Reschedule Features
-        </h1>
-        <p className="text-zinc-500 dark:text-zinc-400">
-          AI-powered event rescheduling with conflict detection
-        </p>
+        <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-4">Smart Reschedule Features</h1>
+        <p className="text-zinc-500 dark:text-zinc-400">AI-powered event rescheduling with conflict detection</p>
       </div>
-      
+
       <div className="space-y-4">
         <div className="p-6 bg-white dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-800">
           <h3 className="font-semibold text-zinc-800 dark:text-zinc-200 mb-3">Time Preferences</h3>
           <div className="flex flex-wrap gap-2">
             <span className="px-3 py-1 bg-primary text-primary-foreground rounded-full text-sm">Any time</span>
-            <span className="px-3 py-1 bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 rounded-full text-sm">Morning</span>
-            <span className="px-3 py-1 bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 rounded-full text-sm">Afternoon</span>
-            <span className="px-3 py-1 bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 rounded-full text-sm">Evening</span>
+            <span className="px-3 py-1 bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 rounded-full text-sm">
+              Morning
+            </span>
+            <span className="px-3 py-1 bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 rounded-full text-sm">
+              Afternoon
+            </span>
+            <span className="px-3 py-1 bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 rounded-full text-sm">
+              Evening
+            </span>
           </div>
         </div>
-        
+
         <div className="p-6 bg-white dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-800">
           <h3 className="font-semibold text-zinc-800 dark:text-zinc-200 mb-3">Suggestion Features</h3>
           <ul className="space-y-2 text-sm text-zinc-600 dark:text-zinc-400">
@@ -150,7 +152,7 @@ export const Features: Story = {
             </li>
           </ul>
         </div>
-        
+
         <div className="p-6 bg-white dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-800">
           <h3 className="font-semibold text-zinc-800 dark:text-zinc-200 mb-3">Current Event Display</h3>
           <div className="flex items-center gap-2 text-sm text-zinc-500">
@@ -161,12 +163,14 @@ export const Features: Story = {
             <span className="ml-auto px-2 py-0.5 bg-zinc-100 dark:bg-zinc-800 rounded text-xs">60 min</span>
           </div>
         </div>
-        
+
         <div className="p-6 bg-white dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-800">
           <h3 className="font-semibold text-zinc-800 dark:text-zinc-200 mb-3">Suggested Slots Example</h3>
           <div className="space-y-2">
             <div className="flex items-center gap-3 p-3 border border-primary bg-primary/5 rounded-lg">
-              <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-medium">1</div>
+              <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-medium">
+                1
+              </div>
               <div className="flex-1">
                 <p className="font-medium text-sm">Tuesday</p>
                 <p className="text-xs text-zinc-500">2:00 PM - 3:00 PM</p>
@@ -174,7 +178,9 @@ export const Features: Story = {
               <span className="text-xs text-primary font-medium">Best match</span>
             </div>
             <div className="flex items-center gap-3 p-3 border border-zinc-200 dark:border-zinc-700 rounded-lg">
-              <div className="w-8 h-8 bg-zinc-100 dark:bg-zinc-800 rounded-full flex items-center justify-center text-sm font-medium">2</div>
+              <div className="w-8 h-8 bg-zinc-100 dark:bg-zinc-800 rounded-full flex items-center justify-center text-sm font-medium">
+                2
+              </div>
               <div className="flex-1">
                 <p className="font-medium text-sm">Wednesday</p>
                 <p className="text-xs text-zinc-500">9:00 AM - 10:00 AM</p>
@@ -182,7 +188,9 @@ export const Features: Story = {
               <span className="text-xs text-zinc-500">Morning slot</span>
             </div>
             <div className="flex items-center gap-3 p-3 border border-zinc-200 dark:border-zinc-700 rounded-lg">
-              <div className="w-8 h-8 bg-zinc-100 dark:bg-zinc-800 rounded-full flex items-center justify-center text-sm font-medium">3</div>
+              <div className="w-8 h-8 bg-zinc-100 dark:bg-zinc-800 rounded-full flex items-center justify-center text-sm font-medium">
+                3
+              </div>
               <div className="flex-1">
                 <p className="font-medium text-sm">Thursday</p>
                 <p className="text-xs text-zinc-500">4:00 PM - 5:00 PM</p>

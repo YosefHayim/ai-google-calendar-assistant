@@ -103,11 +103,7 @@ export function DailyBriefingSection() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Delivery Time</label>
-                    <TimePicker
-                      id="briefing-time"
-                      value={briefingSettings.time}
-                      onChange={handleBriefingTimeChange}
-                    />
+                    <TimePicker id="briefing-time" value={briefingSettings.time} onChange={handleBriefingTimeChange} />
                     <p className="text-xs text-zinc-500">Choose when you'd like to receive your daily briefing</p>
                   </div>
                   <div className="space-y-2">

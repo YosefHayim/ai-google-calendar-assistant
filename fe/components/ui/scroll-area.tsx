@@ -10,7 +10,10 @@ interface ScrollAreaProps extends React.HTMLAttributes<HTMLDivElement> {
 const ScrollArea = React.forwardRef<HTMLDivElement, ScrollAreaProps>(({ className, children, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn('relative overflow-auto scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent', className)}
+    className={cn(
+      'relative overflow-auto scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent',
+      className,
+    )}
     {...props}
   >
     {children}

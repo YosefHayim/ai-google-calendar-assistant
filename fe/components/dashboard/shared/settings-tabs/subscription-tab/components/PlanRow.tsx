@@ -2,18 +2,7 @@
 
 import React, { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import {
-  Crown,
-  Zap,
-  Shield,
-  Check,
-  ArrowRight,
-  Loader2,
-  ArrowDown,
-  BadgeCheck,
-  Minus,
-  Plus,
-} from 'lucide-react'
+import { Crown, Zap, Shield, Check, ArrowRight, Loader2, ArrowDown, BadgeCheck, Minus, Plus } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'

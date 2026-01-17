@@ -2,9 +2,13 @@ import React, { useEffect, useRef, useState } from 'react'
 import { cn } from '@/lib/utils'
 
 const randomColors = (count: number) => {
-  return new Array(count)
-    .fill(0)
-    .map(() => '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0'))
+  return new Array(count).fill(0).map(
+    () =>
+      '#' +
+      Math.floor(Math.random() * 16777215)
+        .toString(16)
+        .padStart(6, '0'),
+  )
 }
 
 interface TubesBackgroundProps {

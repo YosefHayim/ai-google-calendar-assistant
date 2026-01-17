@@ -59,7 +59,7 @@ export function CommandPalette() {
       setOpen(false)
       setSearch('')
     },
-    [router]
+    [router],
   )
 
   const commands: CommandItem[] = [
@@ -227,7 +227,10 @@ export function CommandPalette() {
             <Command.Empty className="py-6 text-center text-sm text-zinc-500">No results found.</Command.Empty>
 
             {groupedCommands.navigation.length > 0 && (
-              <Command.Group heading="Navigation" className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-zinc-500">
+              <Command.Group
+                heading="Navigation"
+                className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-zinc-500"
+              >
                 {groupedCommands.navigation.map((cmd) => (
                   <Command.Item
                     key={cmd.id}
@@ -243,7 +246,10 @@ export function CommandPalette() {
             )}
 
             {groupedCommands.admin.length > 0 && (
-              <Command.Group heading="Admin" className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-zinc-500">
+              <Command.Group
+                heading="Admin"
+                className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-zinc-500"
+              >
                 {groupedCommands.admin.map((cmd) => (
                   <Command.Item
                     key={cmd.id}
@@ -259,7 +265,10 @@ export function CommandPalette() {
             )}
 
             {groupedCommands.actions.length > 0 && (
-              <Command.Group heading="Actions" className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-zinc-500">
+              <Command.Group
+                heading="Actions"
+                className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-zinc-500"
+              >
                 {groupedCommands.actions.map((cmd) => (
                   <Command.Item
                     key={cmd.id}
@@ -275,7 +284,10 @@ export function CommandPalette() {
             )}
 
             {groupedCommands.help.length > 0 && (
-              <Command.Group heading="Help" className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-zinc-500">
+              <Command.Group
+                heading="Help"
+                className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-zinc-500"
+              >
                 {groupedCommands.help.map((cmd) => (
                   <Command.Item
                     key={cmd.id}

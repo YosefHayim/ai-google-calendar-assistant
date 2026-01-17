@@ -146,9 +146,7 @@ export const DarkMode: Story = {
             <div className="flex h-full items-center justify-center p-8">
               <div className="text-center text-zinc-400">
                 <p className="text-lg font-medium">Dark Mode Admin Panel</p>
-                <p className="text-sm mt-2">
-                  Full dark theme support for comfortable night-time administration
-                </p>
+                <p className="text-sm mt-2">Full dark theme support for comfortable night-time administration</p>
               </div>
             </div>
           </SidebarInset>

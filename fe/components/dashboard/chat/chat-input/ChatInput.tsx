@@ -15,12 +15,7 @@ import { toast } from 'sonner'
 import type { ChatInputProps, ImageFile } from './types'
 import { ImageLightbox } from './components/ImageLightbox'
 import { useAutoResizeTextarea } from './hooks/useAutoResizeTextarea'
-import {
-  MAX_IMAGES,
-  MAX_IMAGE_SIZE_MB,
-  ACCEPTED_IMAGE_TYPES,
-  MAX_INPUT_LENGTH,
-} from './utils/constants'
+import { MAX_IMAGES, MAX_IMAGE_SIZE_MB, ACCEPTED_IMAGE_TYPES, MAX_INPUT_LENGTH } from './utils/constants'
 import { fileToBase64 } from './utils/file-utils'
 
 export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
@@ -43,7 +38,7 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
       onCancel,
       onImagesChange,
     },
-    externalRef
+    externalRef,
   ) => {
     const isDisabled = isLoading && !onCancel
     const inputDirection = useMemo(() => getTextDirection(input), [input])
@@ -70,7 +65,7 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
           externalRef.current = node
         }
       },
-      [externalRef, textareaRef]
+      [externalRef, textareaRef],
     )
 
     useEffect(() => {
@@ -129,7 +124,7 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
                   preview,
                   base64,
                 }
-              })
+              }),
           )
 
           onImagesChange([...images, ...newImages])
@@ -139,7 +134,7 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
         }
         event.target.value = ''
       },
-      [images, onImagesChange]
+      [images, onImagesChange],
     )
 
     const removeImage = useCallback(
@@ -151,7 +146,7 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
         }
         onImagesChange(images.filter((img) => img.id !== id))
       },
-      [images, onImagesChange]
+      [images, onImagesChange],
     )
 
     const handlePaste = useCallback(
@@ -202,7 +197,7 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
                   preview,
                   base64,
                 }
-              })
+              }),
           )
 
           onImagesChange([...images, ...newImages.filter(Boolean)])
@@ -211,7 +206,7 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
           toast.error('Failed to process pasted images')
         }
       },
-      [images, onImagesChange]
+      [images, onImagesChange],
     )
 
     const handleSubmit = useCallback(
@@ -222,7 +217,7 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
           adjustHeight(true)
         }
       },
-      [hasContent, isLoading, isInputTooLong, onSubmit, adjustHeight]
+      [hasContent, isLoading, isInputTooLong, onSubmit, adjustHeight],
     )
 
     const canAddMoreImages = images.length < MAX_IMAGES
@@ -343,7 +338,7 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
                       'h-8 w-8 sm:h-10 sm:w-10 rounded-xl flex items-center justify-center transition-colors',
                       'text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200',
                       'hover:bg-zinc-100 dark:hover:bg-zinc-800',
-                      (isDisabled || !canAddMoreImages) && 'opacity-40 cursor-not-allowed'
+                      (isDisabled || !canAddMoreImages) && 'opacity-40 cursor-not-allowed',
                     )}
                     disabled={isDisabled || !canAddMoreImages}
                     title={canAddMoreImages ? 'Add images' : `Max ${MAX_IMAGES} images`}
@@ -361,7 +356,7 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
                       isRecording
                         ? 'text-red-500 bg-red-50 dark:bg-red-950/30'
                         : 'text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800',
-                      (isDisabled || !speechRecognitionSupported) && 'opacity-40 cursor-not-allowed'
+                      (isDisabled || !speechRecognitionSupported) && 'opacity-40 cursor-not-allowed',
                     )}
                     disabled={isDisabled || !speechRecognitionSupported}
                   >
@@ -394,7 +389,7 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
                       'placeholder:text-zinc-400 dark:placeholder:text-zinc-500 placeholder:italic placeholder:font-normal',
                       'text-zinc-900 dark:text-zinc-100',
                       inputDirection === 'rtl' && 'text-right',
-                      isInputTooLong && 'text-red-500'
+                      isInputTooLong && 'text-red-500',
                     )}
                     disabled={isDisabled}
                     dir={inputDirection}
@@ -407,7 +402,7 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
                         exit={{ opacity: 0, y: 5 }}
                         className={cn(
                           'absolute right-2 bottom-1 text-xs font-mono',
-                          isInputTooLong ? 'text-red-500' : 'text-zinc-400'
+                          isInputTooLong ? 'text-red-500' : 'text-zinc-400',
                         )}
                       >
                         {input.length}/{MAX_INPUT_LENGTH}
@@ -426,10 +421,7 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
                       className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl flex items-center justify-center bg-red-500 hover:bg-red-600 text-white shadow-lg transition-colors"
                       title="Cancel AI response"
                     >
-                      <motion.div
-                        animate={{ scale: [1, 1.1, 1] }}
-                        transition={{ repeat: Infinity, duration: 1.5 }}
-                      >
+                      <motion.div animate={{ scale: [1, 1.1, 1] }} transition={{ repeat: Infinity, duration: 1.5 }}>
                         <Pause className="w-4 h-4 sm:w-5 sm:h-5" />
                       </motion.div>
                     </motion.button>
@@ -443,7 +435,7 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
                         'h-10 w-10 sm:h-12 sm:w-12 rounded-xl flex items-center justify-center transition-all duration-200',
                         hasContent && !isLoading && !isInputTooLong
                           ? 'bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 shadow-lg hover:shadow-xl'
-                          : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-400 dark:text-zinc-500'
+                          : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-400 dark:text-zinc-500',
                       )}
                       title={isInputTooLong ? 'Message too long' : undefined}
                     >
@@ -457,7 +449,7 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
         </AnimatePresence>
       </div>
     )
-  }
+  },
 )
 
 ChatInput.displayName = 'ChatInput'

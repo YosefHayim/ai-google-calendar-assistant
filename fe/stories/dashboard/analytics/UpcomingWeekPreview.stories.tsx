@@ -27,7 +27,7 @@ const FIXED_BASE_DATE = new Date('2026-01-15T00:00:00Z')
 const createDay = (
   offset: number,
   busynessLevel: UpcomingDayData['busynessLevel'],
-  eventCount: number
+  eventCount: number,
 ): UpcomingDayData => {
   const date = new Date(FIXED_BASE_DATE)
   date.setDate(date.getDate() + offset)

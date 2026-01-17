@@ -120,7 +120,7 @@ export function ChatInterface() {
       activeTab,
       voiceData?.value?.enabled,
       speakText,
-    ]
+    ],
   )
 
   const handleStreamError = useCallback((errorMessage: string) => {
@@ -131,7 +131,7 @@ export function ChatInterface() {
     (conversationId: string, title: string) => {
       updateConversationTitle(conversationId, title, true)
     },
-    [updateConversationTitle]
+    [updateConversationTitle],
   )
 
   const handleMemoryUpdated = useCallback(
@@ -143,7 +143,7 @@ export function ChatInterface() {
         })
       }
     },
-    [queryClient]
+    [queryClient],
   )
 
   const { streamingState, sendStreamingMessage, cancelStream, resetStreamingState } = useStreamingChat({

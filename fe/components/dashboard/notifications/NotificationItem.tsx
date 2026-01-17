@@ -37,7 +37,9 @@ export function NotificationItem({ notification, onMarkAsRead, onClear }: Notifi
     <div
       className={cn(
         'group relative flex items-start gap-3 p-3 rounded-lg transition-colors',
-        notification.read ? 'bg-transparent hover:bg-zinc-50 dark:hover:bg-zinc-900' : 'bg-blue-50/50 dark:bg-blue-950/20',
+        notification.read
+          ? 'bg-transparent hover:bg-zinc-50 dark:hover:bg-zinc-900'
+          : 'bg-blue-50/50 dark:bg-blue-950/20',
       )}
     >
       <div className={cn('mt-0.5 flex-shrink-0', iconColor)}>
@@ -46,7 +48,12 @@ export function NotificationItem({ notification, onMarkAsRead, onClear }: Notifi
 
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-2">
-          <p className={cn('text-sm font-medium text-zinc-900 dark:text-zinc-100', !notification.read && 'font-semibold')}>
+          <p
+            className={cn(
+              'text-sm font-medium text-zinc-900 dark:text-zinc-100',
+              !notification.read && 'font-semibold',
+            )}
+          >
             {notification.title}
           </p>
           {!notification.read && <span className="w-2 h-2 rounded-full bg-blue-500 flex-shrink-0 mt-1.5" />}

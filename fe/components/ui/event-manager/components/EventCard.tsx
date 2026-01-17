@@ -46,7 +46,7 @@ export function EventCard({
             'rounded px-1.5 py-0.5 text-xs font-medium transition-all duration-300',
             !useHexColor && colorClasses.bg,
             'text-white truncate animate-in fade-in slide-in-from-top-1',
-            isHovered && 'scale-105 shadow-lg z-10'
+            isHovered && 'scale-105 shadow-lg z-10',
           )}
           style={bgStyle}
         >
@@ -104,7 +104,7 @@ export function EventCard({
           'cursor-pointer rounded-lg p-3 transition-all duration-300',
           !useHexColor && colorClasses.bg,
           'text-white animate-in fade-in slide-in-from-left-2',
-          isHovered && 'scale-[1.03] shadow-2xl ring-2 ring-white/50'
+          isHovered && 'scale-[1.03] shadow-2xl ring-2 ring-white/50',
         )}
         style={bgStyle}
       >
@@ -147,7 +147,7 @@ export function EventCard({
           'cursor-pointer rounded px-2 py-1 text-xs font-medium transition-all duration-300',
           !useHexColor && colorClasses.bg,
           'text-white animate-in fade-in slide-in-from-left-1',
-          isHovered && 'scale-105 shadow-lg z-10'
+          isHovered && 'scale-105 shadow-lg z-10',
         )}
         style={bgStyle}
       >

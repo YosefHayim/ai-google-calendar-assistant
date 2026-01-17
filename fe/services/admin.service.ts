@@ -155,12 +155,10 @@ export const getAffiliateSettings = async (): Promise<AffiliateSettingsResponse>
   return response.data.data!
 }
 
-export const impersonateUser = async (
-  id: string
-): Promise<{ targetUser: AdminUser; impersonationToken: string }> => {
-  const response = await apiClient.post<
-    ApiResponse<{ targetUser: AdminUser; impersonationToken: string }>
-  >(ENDPOINTS.ADMIN_USER_IMPERSONATE(id))
+export const impersonateUser = async (id: string): Promise<{ targetUser: AdminUser; impersonationToken: string }> => {
+  const response = await apiClient.post<ApiResponse<{ targetUser: AdminUser; impersonationToken: string }>>(
+    ENDPOINTS.ADMIN_USER_IMPERSONATE(id),
+  )
   return response.data.data!
 }
 

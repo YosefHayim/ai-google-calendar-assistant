@@ -7,7 +7,8 @@ const meta: Meta = {
     layout: 'centered',
     docs: {
       description: {
-        component: 'User profile display card shown in the sidebar footer. Shows avatar, name, and email with collapsed/expanded states.',
+        component:
+          'User profile display card shown in the sidebar footer. Shows avatar, name, and email with collapsed/expanded states.',
       },
     },
   },
@@ -16,26 +17,30 @@ const meta: Meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-const UserCard = ({ 
-  isOpen, 
-  name, 
-  email, 
-  avatarUrl 
-}: { 
+const UserCard = ({
+  isOpen,
+  name,
+  email,
+  avatarUrl,
+}: {
   isOpen: boolean
   name: string
   email: string
-  avatarUrl?: string 
+  avatarUrl?: string
 }) => {
-  const initials = name.split(' ').map(n => n[0]).join('').toUpperCase()
-  
+  const initials = name
+    .split(' ')
+    .map((n) => n[0])
+    .join('')
+    .toUpperCase()
+
   if (!isOpen) {
     return (
       <div className="flex justify-center p-2">
         {avatarUrl ? (
-          <img 
-            src={avatarUrl} 
-            alt={name} 
+          <img
+            src={avatarUrl}
+            alt={name}
             className="w-8 h-8 rounded-full object-cover ring-2 ring-zinc-200 dark:ring-zinc-700"
           />
         ) : (
@@ -46,13 +51,13 @@ const UserCard = ({
       </div>
     )
   }
-  
+
   return (
     <div className="flex items-center gap-3 p-3">
       {avatarUrl ? (
-        <img 
-          src={avatarUrl} 
-          alt={name} 
+        <img
+          src={avatarUrl}
+          alt={name}
           className="w-10 h-10 rounded-full object-cover ring-2 ring-zinc-200 dark:ring-zinc-700"
         />
       ) : (
@@ -71,7 +76,7 @@ const UserCard = ({
 export const OpenWithAvatar: Story = {
   render: () => (
     <div className="w-[280px] bg-zinc-50 dark:bg-zinc-950 p-2 rounded-xl border border-zinc-200 dark:border-zinc-800">
-      <UserCard 
+      <UserCard
         isOpen={true}
         name="Sarah Johnson"
         email="sarah.johnson@example.com"
@@ -84,11 +89,7 @@ export const OpenWithAvatar: Story = {
 export const OpenWithoutAvatar: Story = {
   render: () => (
     <div className="w-[280px] bg-zinc-50 dark:bg-zinc-950 p-2 rounded-xl border border-zinc-200 dark:border-zinc-800">
-      <UserCard 
-        isOpen={true}
-        name="John Smith"
-        email="john.smith@example.com"
-      />
+      <UserCard isOpen={true} name="John Smith" email="john.smith@example.com" />
     </div>
   ),
 }
@@ -96,7 +97,7 @@ export const OpenWithoutAvatar: Story = {
 export const CollapsedWithAvatar: Story = {
   render: () => (
     <div className="w-[60px] bg-zinc-50 dark:bg-zinc-950 p-2 rounded-xl border border-zinc-200 dark:border-zinc-800 flex justify-center">
-      <UserCard 
+      <UserCard
         isOpen={false}
         name="Sarah Johnson"
         email="sarah.johnson@example.com"
@@ -109,11 +110,7 @@ export const CollapsedWithAvatar: Story = {
 export const CollapsedWithoutAvatar: Story = {
   render: () => (
     <div className="w-[60px] bg-zinc-50 dark:bg-zinc-950 p-2 rounded-xl border border-zinc-200 dark:border-zinc-800 flex justify-center">
-      <UserCard 
-        isOpen={false}
-        name="John Smith"
-        email="john.smith@example.com"
-      />
+      <UserCard isOpen={false} name="John Smith" email="john.smith@example.com" />
     </div>
   ),
 }
@@ -121,7 +118,7 @@ export const CollapsedWithoutAvatar: Story = {
 export const LongName: Story = {
   render: () => (
     <div className="w-[280px] bg-zinc-50 dark:bg-zinc-950 p-2 rounded-xl border border-zinc-200 dark:border-zinc-800">
-      <UserCard 
+      <UserCard
         isOpen={true}
         name="Alexandra Richardson-Williamson"
         email="alexandra.richardson-williamson@verylongcompanyname.com"
@@ -141,7 +138,7 @@ export const InSidebar: Story = {
         <div className="h-32 bg-zinc-100 dark:bg-zinc-800 rounded-md mb-2" />
       </div>
       <div className="border-t border-zinc-200 dark:border-zinc-800">
-        <UserCard 
+        <UserCard
           isOpen={true}
           name="Sarah Johnson"
           email="sarah.johnson@example.com"
@@ -155,7 +152,7 @@ export const InSidebar: Story = {
 export const DarkMode: Story = {
   render: () => (
     <div className="w-[280px] bg-zinc-950 p-2 rounded-xl border border-zinc-800">
-      <UserCard 
+      <UserCard
         isOpen={true}
         name="Sarah Johnson"
         email="sarah.johnson@example.com"

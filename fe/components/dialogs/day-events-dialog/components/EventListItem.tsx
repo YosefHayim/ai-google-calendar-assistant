@@ -1,14 +1,7 @@
 'use client'
 
 import React from 'react'
-import {
-  CalendarDays,
-  CircleCheckBig,
-  CircleX,
-  Clock,
-  Hourglass,
-  MapPin,
-} from 'lucide-react'
+import { CalendarDays, CircleCheckBig, CircleX, Clock, Hourglass, MapPin } from 'lucide-react'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
 import type { CalendarEvent } from '@/types/api'
 import type { CalendarInfo } from '../types'
@@ -79,9 +72,7 @@ export function EventListItem({ event, calendarMap, onEventClick }: EventListIte
       </HoverCardTrigger>
       <HoverCardContent className="w-80">
         <div className="space-y-2">
-          <h4 className="font-semibold text-sm text-zinc-900 dark:text-zinc-100">
-            {event.summary || 'No Title'}
-          </h4>
+          <h4 className="font-semibold text-sm text-zinc-900 dark:text-zinc-100">{event.summary || 'No Title'}</h4>
           <div className="space-y-2 text-xs text-zinc-600 dark:text-zinc-400">
             <div className="flex items-center gap-2">
               <Clock size={16} />
@@ -102,9 +93,7 @@ export function EventListItem({ event, calendarMap, onEventClick }: EventListIte
               </div>
             )}
             {event.description && (
-              <p className="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-2 mt-2">
-                {event.description}
-              </p>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-2 mt-2">{event.description}</p>
             )}
           </div>
         </div>

@@ -342,10 +342,15 @@ export const impersonateUser = reqResAsyncHandler(
       adminUserId
     );
 
-    return sendR(res, STATUS_RESPONSE.SUCCESS, "Impersonation session created", {
-      targetUser: result.targetUser,
-      impersonationToken: result.impersonationToken,
-    });
+    return sendR(
+      res,
+      STATUS_RESPONSE.SUCCESS,
+      "Impersonation session created",
+      {
+        targetUser: result.targetUser,
+        impersonationToken: result.impersonationToken,
+      }
+    );
   }
 );
 
@@ -375,7 +380,7 @@ export const broadcastNotification = reqResAsyncHandler(
 
     const { type, title, message, targetUserIds, filters } = req.body;
 
-    if (!type || !title || !message) {
+    if (!(type && title && message)) {
       return sendR(
         res,
         STATUS_RESPONSE.BAD_REQUEST,

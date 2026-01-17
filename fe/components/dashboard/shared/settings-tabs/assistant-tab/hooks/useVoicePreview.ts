@@ -14,9 +14,7 @@ interface UseVoicePreviewReturn {
   stopPreview: () => void
 }
 
-export function useVoicePreview({
-  previewText,
-}: UseVoicePreviewOptions): UseVoicePreviewReturn {
+export function useVoicePreview({ previewText }: UseVoicePreviewOptions): UseVoicePreviewReturn {
   const audioContextRef = useRef<AudioContext | null>(null)
   const sourceRef = useRef<AudioBufferSourceNode | null>(null)
   const [isPlaying, setIsPlaying] = useState(false)
@@ -34,48 +32,51 @@ export function useVoicePreview({
     setIsPlaying(false)
   }, [])
 
-  const playPreview = useCallback(async (voice: TTSVoice, speed: PlaybackSpeed) => {
-    if (isPlaying) {
-      stopPreview()
-      return
-    }
-
-    setIsLoading(true)
-    try {
-      if (!audioContextRef.current || audioContextRef.current.state === 'closed') {
-        audioContextRef.current = new (
-          window.AudioContext ||
-          (window as typeof window & { webkitAudioContext: typeof AudioContext }).webkitAudioContext
-        )()
+  const playPreview = useCallback(
+    async (voice: TTSVoice, speed: PlaybackSpeed) => {
+      if (isPlaying) {
+        stopPreview()
+        return
       }
 
-      if (audioContextRef.current.state === 'suspended') {
-        await audioContextRef.current.resume()
-      }
+      setIsLoading(true)
+      try {
+        if (!audioContextRef.current || audioContextRef.current.state === 'closed') {
+          audioContextRef.current = new (
+            window.AudioContext ||
+            (window as typeof window & { webkitAudioContext: typeof AudioContext }).webkitAudioContext
+          )()
+        }
 
-      const audioArrayBuffer = await voiceService.synthesize(previewText, voice)
-      const audioBuffer = await audioContextRef.current.decodeAudioData(audioArrayBuffer)
+        if (audioContextRef.current.state === 'suspended') {
+          await audioContextRef.current.resume()
+        }
 
-      const source = audioContextRef.current.createBufferSource()
-      source.buffer = audioBuffer
-      source.playbackRate.value = speed
-      source.connect(audioContextRef.current.destination)
-      source.onended = () => {
+        const audioArrayBuffer = await voiceService.synthesize(previewText, voice)
+        const audioBuffer = await audioContextRef.current.decodeAudioData(audioArrayBuffer)
+
+        const source = audioContextRef.current.createBufferSource()
+        source.buffer = audioBuffer
+        source.playbackRate.value = speed
+        source.connect(audioContextRef.current.destination)
+        source.onended = () => {
+          setIsPlaying(false)
+          sourceRef.current = null
+        }
+
+        sourceRef.current = source
+        setIsPlaying(true)
+        setIsLoading(false)
+        source.start()
+      } catch (error) {
+        console.error('Error playing voice preview:', error)
+        toast.error('Failed to play voice preview')
         setIsPlaying(false)
-        sourceRef.current = null
+        setIsLoading(false)
       }
-
-      sourceRef.current = source
-      setIsPlaying(true)
-      setIsLoading(false)
-      source.start()
-    } catch (error) {
-      console.error('Error playing voice preview:', error)
-      toast.error('Failed to play voice preview')
-      setIsPlaying(false)
-      setIsLoading(false)
-    }
-  }, [previewText, stopPreview, isPlaying])
+    },
+    [previewText, stopPreview, isPlaying],
+  )
 
   useEffect(() => {
     return () => {

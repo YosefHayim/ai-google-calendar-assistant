@@ -51,7 +51,8 @@ export const WithTooltip: Story = {
     title: 'Focus Time',
     description: 'Blocks of uninterrupted work time',
     icon: <Calendar className="h-4 w-4" />,
-    tooltip: 'Focus time helps you protect deep work periods in your calendar. Events during focus time will be automatically declined.',
+    tooltip:
+      'Focus time helps you protect deep work periods in your calendar. Events during focus time will be automatically declined.',
   },
 }
 
@@ -111,11 +112,7 @@ export const BillingPage: Story = {
     title: 'Billing',
     description: 'Manage your subscription and payment methods',
     icon: <CreditCard className="h-4 w-4" />,
-    action: (
-      <Button size="sm">
-        Upgrade Plan
-      </Button>
-    ),
+    action: <Button size="sm">Upgrade Plan</Button>,
   },
 }
 
@@ -143,12 +140,7 @@ export const NotificationsPage: Story = {
 }
 
 export const SectionHeaderDefault: Story = {
-  render: () => (
-    <SectionHeader
-      title="Recent Events"
-      tooltip="Events from the last 7 days"
-    />
-  ),
+  render: () => <SectionHeader title="Recent Events" tooltip="Events from the last 7 days" />,
 }
 
 export const SectionHeaderWithAction: Story = {

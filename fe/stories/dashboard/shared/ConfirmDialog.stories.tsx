@@ -104,7 +104,8 @@ export const WarningVariant: Story = {
   args: {
     isOpen: true,
     title: 'Disconnect Integration',
-    description: 'This will disconnect your Google Calendar integration. You can reconnect it later from the settings page.',
+    description:
+      'This will disconnect your Google Calendar integration. You can reconnect it later from the settings page.',
     confirmLabel: 'Disconnect',
     cancelLabel: 'Keep Connected',
     variant: 'warning',
@@ -136,7 +137,8 @@ export const LoadingState: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Shows the loading state when an async operation is in progress. Both buttons are disabled during loading.',
+        story:
+          'Shows the loading state when an async operation is in progress. Both buttons are disabled during loading.',
       },
     },
   },
@@ -167,7 +169,8 @@ export const LongDescription: Story = {
   args: {
     isOpen: true,
     title: 'Remove Team Member',
-    description: 'This will remove the team member from your workspace. They will lose access to all shared calendars, conversations, and data. If they have any pending tasks, those will be reassigned to you. You can re-invite them later if needed.',
+    description:
+      'This will remove the team member from your workspace. They will lose access to all shared calendars, conversations, and data. If they have any pending tasks, those will be reassigned to you. You can re-invite them later if needed.',
     confirmLabel: 'Remove Member',
     cancelLabel: 'Cancel',
     variant: 'destructive',

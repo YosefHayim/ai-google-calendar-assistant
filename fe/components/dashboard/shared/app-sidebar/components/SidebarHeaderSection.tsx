@@ -5,13 +5,7 @@ import Link from 'next/link'
 import { Plus } from 'lucide-react'
 
 import { AllyLogo, BetaBadge } from '@/components/shared/logo'
-import {
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  useSidebar,
-} from '@/components/ui/sidebar'
+import { SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar'
 import { useSidebarContext } from '@/contexts/SidebarContext'
 
 export function SidebarHeaderSection() {

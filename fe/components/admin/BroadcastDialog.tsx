@@ -113,10 +113,7 @@ export function BroadcastDialog({ open, onClose }: BroadcastDialogProps) {
 
             <div className="space-y-2">
               <Label>Target Audience</Label>
-              <Select
-                value={targetFilter}
-                onValueChange={(v: 'all' | 'active' | 'recent') => setTargetFilter(v)}
-              >
+              <Select value={targetFilter} onValueChange={(v: 'all' | 'active' | 'recent') => setTargetFilter(v)}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -165,9 +162,7 @@ export function BroadcastDialog({ open, onClose }: BroadcastDialogProps) {
             <div className="flex items-start gap-3">
               <span className={typeConfig[type].color}>{typeConfig[type].icon}</span>
               <div>
-                <p className="font-medium text-sm text-zinc-900 dark:text-white">
-                  {title || 'Preview Title'}
-                </p>
+                <p className="font-medium text-sm text-zinc-900 dark:text-white">{title || 'Preview Title'}</p>
                 <p className="text-sm text-zinc-600 dark:text-zinc-300 mt-1">
                   {message || 'Preview message will appear here'}
                 </p>
@@ -181,11 +176,7 @@ export function BroadcastDialog({ open, onClose }: BroadcastDialogProps) {
             Cancel
           </Button>
           <Button onClick={handleSend} disabled={isSending || !title.trim() || !message.trim()}>
-            {isSending ? (
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-            ) : (
-              <Send className="w-4 h-4 mr-2" />
-            )}
+            {isSending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Send className="w-4 h-4 mr-2" />}
             Send Broadcast
           </Button>
         </div>

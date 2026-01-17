@@ -1,3 +1,4 @@
+"use strict";
 /** @type {import('jest').Config} */
 module.exports = {
   preset: "ts-jest",
@@ -16,9 +17,7 @@ module.exports = {
     "^@/(.*)$": "<rootDir>/$1",
   },
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
-  transformIgnorePatterns: [
-    "/node_modules/(?!(lodash-es)/)",
-  ],
+  transformIgnorePatterns: ["/node_modules/(?!(lodash-es)/)"],
   collectCoverageFrom: [
     "services/**/*.ts",
     "controllers/**/*.ts",

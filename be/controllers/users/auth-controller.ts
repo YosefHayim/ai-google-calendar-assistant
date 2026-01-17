@@ -1,14 +1,13 @@
-import { PROVIDERS, STATUS_RESPONSE, SUPABASE } from "@/config";
 import type { Request, Response } from "express";
+import { PROVIDERS, STATUS_RESPONSE, SUPABASE } from "@/config";
+import { supabaseThirdPartySignInOrSignUp } from "@/utils/auth";
 import {
   ACCESS_TOKEN_COOKIE,
-  REFRESH_TOKEN_COOKIE,
   clearAuthCookies,
+  REFRESH_TOKEN_COOKIE,
   setAuthCookies,
 } from "@/utils/auth/cookie-utils";
 import { reqResAsyncHandler, sendR } from "@/utils/http";
-
-import { supabaseThirdPartySignInOrSignUp } from "@/utils/auth";
 
 const signUpUserReg = reqResAsyncHandler(
   async (req: Request, res: Response) => {
@@ -159,20 +158,22 @@ const checkSession = reqResAsyncHandler(async (req: Request, res: Response) =>
 
 const restoreSession = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const refreshedAccess = res.getHeader("access_token") as string | undefined
-    const refreshedRefresh = res.getHeader("refresh_token") as string | undefined
+    const refreshedAccess = res.getHeader("access_token") as string | undefined;
+    const refreshedRefresh = res.getHeader("refresh_token") as
+      | string
+      | undefined;
 
     const accessTokenValue =
-      refreshedAccess || req.cookies?.[ACCESS_TOKEN_COOKIE]
+      refreshedAccess || req.cookies?.[ACCESS_TOKEN_COOKIE];
     const refreshTokenValue =
-      refreshedRefresh || req.cookies?.[REFRESH_TOKEN_COOKIE]
+      refreshedRefresh || req.cookies?.[REFRESH_TOKEN_COOKIE];
 
     sendR(res, STATUS_RESPONSE.SUCCESS, "Session restored.", {
       authenticated: true,
       user: req.user,
       access_token: accessTokenValue,
       refresh_token: refreshTokenValue,
-    })
+    });
   }
 );
 

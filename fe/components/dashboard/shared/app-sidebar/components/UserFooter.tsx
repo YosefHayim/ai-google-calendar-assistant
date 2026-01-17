@@ -3,15 +3,7 @@
 import React from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import {
-  BadgeCheck,
-  Bell,
-  ChevronUp,
-  CreditCard,
-  LogOut,
-  Settings,
-  Sparkles,
-} from 'lucide-react'
+import { BadgeCheck, Bell, ChevronUp, CreditCard, LogOut, Settings, Sparkles } from 'lucide-react'
 
 import {
   DropdownMenu,
@@ -22,13 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import {
-  SidebarFooter,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  useSidebar,
-} from '@/components/ui/sidebar'
+import { SidebarFooter, SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { useUser } from '@/hooks/queries/auth/useUser'
 import { getUserDisplayInfo } from '@/lib/user-utils'
@@ -121,10 +107,7 @@ export function UserFooter({ onOpenSettings, onSignOut }: UserFooterProps) {
               <DropdownMenuSeparator />
 
               <DropdownMenuGroup>
-                <DropdownMenuItem
-                  className="cursor-pointer"
-                  onClick={() => handleMenuAction(onOpenSettings)}
-                >
+                <DropdownMenuItem className="cursor-pointer" onClick={() => handleMenuAction(onOpenSettings)}>
                   <BadgeCheck className="w-4 h-4" />
                   <span>Account</span>
                 </DropdownMenuItem>
@@ -139,10 +122,7 @@ export function UserFooter({ onOpenSettings, onSignOut }: UserFooterProps) {
                   <CreditCard className="w-4 h-4" />
                   <span>Billing</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem
-                  className="cursor-pointer"
-                  onClick={() => handleMenuAction(onOpenSettings)}
-                >
+                <DropdownMenuItem className="cursor-pointer" onClick={() => handleMenuAction(onOpenSettings)}>
                   <Bell className="w-4 h-4" />
                   <span>Notifications</span>
                 </DropdownMenuItem>

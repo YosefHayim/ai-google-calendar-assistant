@@ -20,9 +20,7 @@ export function ImpersonationBanner() {
           <div className="flex items-center gap-2 bg-amber-400/50 px-3 py-1 rounded-full">
             <User className="w-4 h-4" />
             <span className="font-semibold">{impersonatedUser.email}</span>
-            {impersonatedUser.display_name && (
-              <span className="text-amber-800">({impersonatedUser.display_name})</span>
-            )}
+            {impersonatedUser.display_name && <span className="text-amber-800">({impersonatedUser.display_name})</span>}
           </div>
         </div>
         <Button

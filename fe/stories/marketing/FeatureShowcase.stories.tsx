@@ -34,12 +34,9 @@ export const Default: Story = {
       <div className="py-16 px-4 bg-white dark:bg-[#030303]">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-zinc-900 dark:text-zinc-100 mb-4">
-              Your Calendar, Everywhere
-            </h2>
+            <h2 className="text-4xl font-bold text-zinc-900 dark:text-zinc-100 mb-4">Your Calendar, Everywhere</h2>
             <p className="text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">
-              Manage your schedule from your favorite messaging platform. Natural conversations,
-              powerful results.
+              Manage your schedule from your favorite messaging platform. Natural conversations, powerful results.
             </p>
           </div>
           <Story />
@@ -95,9 +92,7 @@ export const TelegramView: Story = {
               </svg>
               Telegram Integration
             </span>
-            <h3 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
-              Chat with Ally on Telegram
-            </h3>
+            <h3 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">Chat with Ally on Telegram</h3>
           </div>
           <Story />
         </div>
@@ -113,8 +108,7 @@ export const MobileView: Story = {
     },
     docs: {
       description: {
-        story:
-          'Mobile-optimized view with adjusted carousel sizing and touch-friendly navigation.',
+        story: 'Mobile-optimized view with adjusted carousel sizing and touch-friendly navigation.',
       },
     },
   },

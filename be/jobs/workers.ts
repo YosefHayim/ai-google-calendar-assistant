@@ -1,34 +1,34 @@
-import { Worker } from "bullmq"
-import { logger } from "@/utils/logger"
-import { bullmqConnection } from "./connection"
-import { handleAnalyticsAggregation } from "./handlers/analytics-aggregation"
+import { Worker } from "bullmq";
+import { logger } from "@/utils/logger";
+import { bullmqConnection } from "./connection";
+import { handleAnalyticsAggregation } from "./handlers/analytics-aggregation";
 import {
   handleDailyDigestJob,
   handleEventReminderJob,
-} from "./handlers/notifications"
-import { handleStaleConversationsCleanup } from "./handlers/stale-conversations"
-import { handleTokenRefreshCheck } from "./handlers/token-refresh"
-import { handleUsageReset } from "./handlers/usage-reset"
-import { QUEUE_NAMES } from "./queues"
+} from "./handlers/notifications";
+import { handleStaleConversationsCleanup } from "./handlers/stale-conversations";
+import { handleTokenRefreshCheck } from "./handlers/token-refresh";
+import { handleUsageReset } from "./handlers/usage-reset";
+import { QUEUE_NAMES } from "./queues";
 
-const workers: Worker[] = []
+const workers: Worker[] = [];
 
 export function startWorkers(): void {
-  logger.info("BullMQ: Starting workers...")
+  logger.info("BullMQ: Starting workers...");
 
   const scheduledWorker = new Worker(
     QUEUE_NAMES.SCHEDULED,
     (job) => {
       switch (job.name) {
         case "stale-conversations-cleanup":
-          return handleStaleConversationsCleanup(job)
+          return handleStaleConversationsCleanup(job);
         case "token-refresh-check":
-          return handleTokenRefreshCheck(job)
+          return handleTokenRefreshCheck(job);
         case "monthly-usage-reset":
-          return handleUsageReset(job)
+          return handleUsageReset(job);
         default:
-          logger.warn(`Unknown scheduled job: ${job.name}`)
-          return Promise.resolve(null)
+          logger.warn(`Unknown scheduled job: ${job.name}`);
+          return Promise.resolve(null);
       }
     },
     {

@@ -10,13 +10,7 @@ import { cn } from '@/lib/utils'
 import { useSpeechRecognition } from '@/hooks/useSpeechRecognition'
 
 import type { AIAllySidebarProps, ChatMessage, QuickAction } from './types'
-import {
-  AllyOrbButton,
-  ChatHeader,
-  MessageBubble,
-  TypingIndicator,
-  QuickActionsBar,
-} from './components'
+import { AllyOrbButton, ChatHeader, MessageBubble, TypingIndicator, QuickActionsBar } from './components'
 
 const QUICK_ACTIONS: QuickAction[] = [
   { label: 'Optimize schedule', emoji: '📅' },

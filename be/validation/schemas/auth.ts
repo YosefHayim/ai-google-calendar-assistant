@@ -1,4 +1,4 @@
-import { z } from "zod"
+import { z } from "zod";
 
 export const signUpSchema = z.object({
   email: z
@@ -14,7 +14,7 @@ export const signUpSchema = z.object({
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
       "Password must contain at least one uppercase letter, one lowercase letter, and one number"
     ),
-})
+});
 
 export const signInSchema = z.object({
   email: z
@@ -26,7 +26,7 @@ export const signInSchema = z.object({
     .string()
     .min(1, "Password is required")
     .max(128, "Password must be less than 128 characters"),
-})
+});
 
 export const otpVerificationSchema = z.object({
   email: z
@@ -38,11 +38,11 @@ export const otpVerificationSchema = z.object({
     .string()
     .length(6, "OTP must be exactly 6 digits")
     .regex(/^\d{6}$/, "OTP must contain only digits"),
-})
+});
 
 export const refreshTokenSchema = z.object({
   refresh_token: z.string().min(1, "Refresh token is required"),
-})
+});
 
 export const deactivateUserSchema = z.object({
   email: z
@@ -50,4 +50,4 @@ export const deactivateUserSchema = z.object({
     .email("Invalid email format")
     .max(255, "Email must be less than 255 characters")
     .transform((email) => email.toLowerCase().trim()),
-})
+});

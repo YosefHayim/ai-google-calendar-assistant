@@ -1,25 +1,25 @@
-import type { Request, Response } from "express"
+import type { Request, Response } from "express";
 import {
   env,
   OAUTH2CLIENT,
   PROVIDERS,
   STATUS_RESPONSE,
   SUPABASE,
-} from "@/config"
-import { sendWelcomeEmail } from "@/services/notification-dispatcher"
-import { generateGoogleAuthUrl } from "@/utils/auth"
+} from "@/config";
+import { sendWelcomeEmail } from "@/services/notification-dispatcher";
+import { generateGoogleAuthUrl } from "@/utils/auth";
 import {
   ACCESS_TOKEN_COOKIE,
   REFRESH_TOKEN_COOKIE,
   setAuthCookies,
-} from "@/utils/auth/cookie-utils"
+} from "@/utils/auth/cookie-utils";
 import {
   refreshSupabaseSession,
   validateSupabaseToken,
-} from "@/utils/auth/supabase-token"
-import { syncUserCalendarsAfterOAuth } from "@/utils/calendar/sync-calendars-after-oauth"
-import { msToIso } from "@/utils/date/timestamp-utils"
-import { reqResAsyncHandler, sendR } from "@/utils/http"
+} from "@/utils/auth/supabase-token";
+import { syncUserCalendarsAfterOAuth } from "@/utils/calendar/sync-calendars-after-oauth";
+import { msToIso } from "@/utils/date/timestamp-utils";
+import { reqResAsyncHandler, sendR } from "@/utils/http";
 
 async function checkExistingSessionAndRedirect(
   res: Response,
@@ -241,13 +241,13 @@ const generateAuthGoogleUrl = reqResAsyncHandler(
 
       // Send welcome email for new users only (not returning users)
       // A user is "new" if there was no existing user, or the existing user was orphaned and deleted
-      const isNewUser = !existingUser || existingUser.id !== authUserId
+      const isNewUser = !existingUser || existingUser.id !== authUserId;
       if (isNewUser) {
-        const userName = googleUser.given_name || normalizedEmail.split("@")[0]
+        const userName = googleUser.given_name || normalizedEmail.split("@")[0];
         // Fire and forget - don't block signup flow
         sendWelcomeEmail(normalizedEmail, userName).catch((err) => {
-          console.error("Failed to send welcome email:", err)
-        })
+          console.error("Failed to send welcome email:", err);
+        });
       }
 
       const tokenUpsertPayload: {

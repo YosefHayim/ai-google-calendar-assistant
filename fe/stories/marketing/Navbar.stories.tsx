@@ -72,9 +72,7 @@ export const DarkMode: Story = {
         <div className="pt-32 px-8">
           <div className="max-w-4xl mx-auto space-y-8">
             <h1 className="text-4xl font-bold text-zinc-100">Dark Mode Navigation</h1>
-            <p className="text-zinc-400">
-              The navbar adapts seamlessly to dark mode with proper contrast ratios.
-            </p>
+            <p className="text-zinc-400">The navbar adapts seamlessly to dark mode with proper contrast ratios.</p>
             {Array.from({ length: 8 }).map((_, i) => (
               <div key={i} className="h-32 bg-zinc-800 rounded-xl border border-zinc-700 p-6">
                 <div className="h-4 w-3/4 bg-zinc-700 rounded" />
@@ -92,8 +90,7 @@ export const ScrolledState: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          'Shows the navbar after scrolling - with frosted glass background, shadow, and compact padding.',
+        story: 'Shows the navbar after scrolling - with frosted glass background, shadow, and compact padding.',
       },
     },
   },
@@ -104,9 +101,7 @@ export const ScrolledState: Story = {
         <div className="pt-24 px-8">
           <div className="max-w-4xl mx-auto">
             <div className="bg-white dark:bg-zinc-800 rounded-xl border border-zinc-200 dark:border-zinc-700 p-8">
-              <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-4">
-                Scrolled Navbar Preview
-              </h2>
+              <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-4">Scrolled Navbar Preview</h2>
               <p className="text-zinc-600 dark:text-zinc-400">
                 Scroll this page to observe the navbar&apos;s frosted glass effect activate.
               </p>
@@ -141,7 +136,10 @@ export const MobileView: Story = {
               Tap the hamburger menu icon to open the mobile navigation sidebar with full menu options.
             </p>
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="h-24 bg-white dark:bg-zinc-800 rounded-lg border border-zinc-200 dark:border-zinc-700" />
+              <div
+                key={i}
+                className="h-24 bg-white dark:bg-zinc-800 rounded-lg border border-zinc-200 dark:border-zinc-700"
+              />
             ))}
           </div>
         </div>

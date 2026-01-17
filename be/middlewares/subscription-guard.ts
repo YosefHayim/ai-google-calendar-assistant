@@ -11,7 +11,7 @@ export const subscriptionGuard = () =>
       const userId = req.user?.id;
       const userEmail = req.user?.email;
 
-      if (!userId || !userEmail) {
+      if (!(userId && userEmail)) {
         return sendR(
           res,
           STATUS_RESPONSE.UNAUTHORIZED,
@@ -25,7 +25,8 @@ export const subscriptionGuard = () =>
         return next();
       }
 
-      const wasTrialing = access.subscription_status === "cancelled" ||
+      const wasTrialing =
+        access.subscription_status === "cancelled" ||
         access.subscription_status === "unpaid" ||
         access.subscription_status === null;
 
@@ -33,20 +34,15 @@ export const subscriptionGuard = () =>
         ? "Your trial has ended. Upgrade to Pro or Executive to continue using Ally's AI features and take control of your calendar."
         : "Start your free trial to unlock Ally's AI-powered calendar management and reclaim your time.";
 
-      return sendR(
-        res,
-        STATUS_RESPONSE.PAYMENT_REQUIRED,
-        message,
-        {
-          code: SUBSCRIPTION_REQUIRED_CODE,
-          upgradeUrl: "/pricing",
-          features: [
-            "Unlimited AI conversations",
-            "Smart scheduling & rescheduling",
-            "Gap recovery analysis",
-            "Voice & messaging integrations",
-          ],
-        }
-      );
+      return sendR(res, STATUS_RESPONSE.PAYMENT_REQUIRED, message, {
+        code: SUBSCRIPTION_REQUIRED_CODE,
+        upgradeUrl: "/pricing",
+        features: [
+          "Unlimited AI conversations",
+          "Smart scheduling & rescheduling",
+          "Gap recovery analysis",
+          "Voice & messaging integrations",
+        ],
+      });
     }
   );

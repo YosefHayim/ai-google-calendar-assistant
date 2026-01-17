@@ -201,9 +201,7 @@ export const LongEventNames: Story = {
 
 export const SingleCalendar: Story = {
   args: {
-    activities: mockActivities
-      .filter((a) => a.calendarId === 'work')
-      .map((a) => ({ ...a, calendarName: 'Work' })),
+    activities: mockActivities.filter((a) => a.calendarId === 'work').map((a) => ({ ...a, calendarName: 'Work' })),
     onActivityClick: fn(),
     isLoading: false,
     layout: 'vertical',
