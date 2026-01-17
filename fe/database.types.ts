@@ -172,6 +172,170 @@ export type Database = {
         }
         Relationships: []
       }
+      feature_flag_audit_logs: {
+        Row: {
+          action: Database["public"]["Enums"]["feature_flag_audit_action"]
+          actor_email: string | null
+          actor_id: string
+          created_at: string
+          feature_flag_id: string | null
+          feature_flag_key: string
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          new_value: Json | null
+          previous_value: Json | null
+          user_agent: string | null
+        }
+        Insert: {
+          action: Database["public"]["Enums"]["feature_flag_audit_action"]
+          actor_email?: string | null
+          actor_id: string
+          created_at?: string
+          feature_flag_id?: string | null
+          feature_flag_key: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          new_value?: Json | null
+          previous_value?: Json | null
+          user_agent?: string | null
+        }
+        Update: {
+          action?: Database["public"]["Enums"]["feature_flag_audit_action"]
+          actor_email?: string | null
+          actor_id?: string
+          created_at?: string
+          feature_flag_id?: string | null
+          feature_flag_key?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          new_value?: Json | null
+          previous_value?: Json | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feature_flag_audit_logs_feature_flag_id_fkey"
+            columns: ["feature_flag_id"]
+            isOneToOne: false
+            referencedRelation: "feature_flags"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      feature_flag_webhook_deliveries: {
+        Row: {
+          attempt_number: number | null
+          created_at: string
+          duration_ms: number | null
+          error_message: string | null
+          event_type: Database["public"]["Enums"]["feature_flag_audit_action"]
+          feature_flag_id: string | null
+          feature_flag_key: string
+          id: string
+          payload: Json
+          response_body: string | null
+          response_status: number | null
+          success: boolean | null
+          webhook_id: string | null
+        }
+        Insert: {
+          attempt_number?: number | null
+          created_at?: string
+          duration_ms?: number | null
+          error_message?: string | null
+          event_type: Database["public"]["Enums"]["feature_flag_audit_action"]
+          feature_flag_id?: string | null
+          feature_flag_key: string
+          id?: string
+          payload: Json
+          response_body?: string | null
+          response_status?: number | null
+          success?: boolean | null
+          webhook_id?: string | null
+        }
+        Update: {
+          attempt_number?: number | null
+          created_at?: string
+          duration_ms?: number | null
+          error_message?: string | null
+          event_type?: Database["public"]["Enums"]["feature_flag_audit_action"]
+          feature_flag_id?: string | null
+          feature_flag_key?: string
+          id?: string
+          payload?: Json
+          response_body?: string | null
+          response_status?: number | null
+          success?: boolean | null
+          webhook_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feature_flag_webhook_deliveries_feature_flag_id_fkey"
+            columns: ["feature_flag_id"]
+            isOneToOne: false
+            referencedRelation: "feature_flags"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "feature_flag_webhook_deliveries_webhook_id_fkey"
+            columns: ["webhook_id"]
+            isOneToOne: false
+            referencedRelation: "feature_flag_webhooks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      feature_flag_webhooks: {
+        Row: {
+          created_at: string
+          enabled: boolean
+          events: string[]
+          headers: Json | null
+          id: string
+          last_status_code: number | null
+          last_triggered_at: string | null
+          name: string
+          retry_count: number | null
+          secret: string | null
+          timeout_ms: number | null
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          enabled?: boolean
+          events?: string[]
+          headers?: Json | null
+          id?: string
+          last_status_code?: number | null
+          last_triggered_at?: string | null
+          name: string
+          retry_count?: number | null
+          secret?: string | null
+          timeout_ms?: number | null
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          created_at?: string
+          enabled?: boolean
+          events?: string[]
+          headers?: Json | null
+          id?: string
+          last_status_code?: number | null
+          last_triggered_at?: string | null
+          name?: string
+          retry_count?: number | null
+          secret?: string | null
+          timeout_ms?: number | null
+          updated_at?: string
+          url?: string
+        }
+        Relationships: []
+      }
       feature_flags: {
         Row: {
           allowed_tiers: string[] | null
@@ -179,6 +343,7 @@ export type Database = {
           created_at: string
           description: string | null
           enabled: boolean
+          environment: Database["public"]["Enums"]["feature_flag_environment"]
           id: string
           key: string
           metadata: Json | null
@@ -192,6 +357,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           enabled?: boolean
+          environment?: Database["public"]["Enums"]["feature_flag_environment"]
           id?: string
           key: string
           metadata?: Json | null
@@ -205,6 +371,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           enabled?: boolean
+          environment?: Database["public"]["Enums"]["feature_flag_environment"]
           id?: string
           key?: string
           metadata?: Json | null
@@ -489,208 +656,6 @@ export type Database = {
             foreignKeyName: "oauth_tokens_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "v_admin_user_list"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "oauth_tokens_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_user_conversation_stats"
-            referencedColumns: ["user_id"]
-          },
-        ]
-      }
-      plans: {
-        Row: {
-          action_pack_size: number | null
-          ai_interactions_monthly: number | null
-          created_at: string | null
-          description: string | null
-          display_order: number | null
-          features: Json | null
-          id: string
-          is_active: boolean | null
-          is_highlighted: boolean | null
-          is_popular: boolean | null
-          lemonsqueezy_product_id: string | null
-          lemonsqueezy_variant_id_monthly: string | null
-          lemonsqueezy_variant_id_yearly: string | null
-          name: string
-          price_monthly_cents: number | null
-          price_per_use_cents: number | null
-          price_yearly_cents: number | null
-          slug: string
-          stripe_price_id_monthly: string | null
-          stripe_price_id_yearly: string | null
-          stripe_product_id: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          action_pack_size?: number | null
-          ai_interactions_monthly?: number | null
-          created_at?: string | null
-          description?: string | null
-          display_order?: number | null
-          features?: Json | null
-          id?: string
-          is_active?: boolean | null
-          is_highlighted?: boolean | null
-          is_popular?: boolean | null
-          lemonsqueezy_product_id?: string | null
-          lemonsqueezy_variant_id_monthly?: string | null
-          lemonsqueezy_variant_id_yearly?: string | null
-          name: string
-          price_monthly_cents?: number | null
-          price_per_use_cents?: number | null
-          price_yearly_cents?: number | null
-          slug: string
-          stripe_price_id_monthly?: string | null
-          stripe_price_id_yearly?: string | null
-          stripe_product_id?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          action_pack_size?: number | null
-          ai_interactions_monthly?: number | null
-          created_at?: string | null
-          description?: string | null
-          display_order?: number | null
-          features?: Json | null
-          id?: string
-          is_active?: boolean | null
-          is_highlighted?: boolean | null
-          is_popular?: boolean | null
-          lemonsqueezy_product_id?: string | null
-          lemonsqueezy_variant_id_monthly?: string | null
-          lemonsqueezy_variant_id_yearly?: string | null
-          name?: string
-          price_monthly_cents?: number | null
-          price_per_use_cents?: number | null
-          price_yearly_cents?: number | null
-          slug?: string
-          stripe_price_id_monthly?: string | null
-          stripe_price_id_yearly?: string | null
-          stripe_product_id?: string | null
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
-      subscriptions: {
-        Row: {
-          ai_interactions_used: number | null
-          cancel_at_period_end: boolean | null
-          canceled_at: string | null
-          cancellation_reason: string | null
-          created_at: string | null
-          credits_remaining: number | null
-          current_period_end: string | null
-          current_period_start: string | null
-          first_payment_at: string | null
-          id: string
-          interval: Database["public"]["Enums"]["plan_interval"] | null
-          lemonsqueezy_customer_id: string | null
-          lemonsqueezy_subscription_id: string | null
-          lemonsqueezy_variant_id: string | null
-          metadata: Json | null
-          money_back_eligible_until: string | null
-          plan_id: string
-          status: Database["public"]["Enums"]["subscription_status"] | null
-          stripe_customer_id: string | null
-          stripe_price_id: string | null
-          stripe_subscription_id: string | null
-          trial_end: string | null
-          trial_start: string | null
-          updated_at: string | null
-          user_id: string
-        }
-        Insert: {
-          ai_interactions_used?: number | null
-          cancel_at_period_end?: boolean | null
-          canceled_at?: string | null
-          cancellation_reason?: string | null
-          created_at?: string | null
-          credits_remaining?: number | null
-          current_period_end?: string | null
-          current_period_start?: string | null
-          first_payment_at?: string | null
-          id?: string
-          interval?: Database["public"]["Enums"]["plan_interval"] | null
-          lemonsqueezy_customer_id?: string | null
-          lemonsqueezy_subscription_id?: string | null
-          lemonsqueezy_variant_id?: string | null
-          metadata?: Json | null
-          money_back_eligible_until?: string | null
-          plan_id: string
-          status?: Database["public"]["Enums"]["subscription_status"] | null
-          stripe_customer_id?: string | null
-          stripe_price_id?: string | null
-          stripe_subscription_id?: string | null
-          trial_end?: string | null
-          trial_start?: string | null
-          updated_at?: string | null
-          user_id: string
-        }
-        Update: {
-          ai_interactions_used?: number | null
-          cancel_at_period_end?: boolean | null
-          canceled_at?: string | null
-          cancellation_reason?: string | null
-          created_at?: string | null
-          credits_remaining?: number | null
-          current_period_end?: string | null
-          current_period_start?: string | null
-          first_payment_at?: string | null
-          id?: string
-          interval?: Database["public"]["Enums"]["plan_interval"] | null
-          lemonsqueezy_customer_id?: string | null
-          lemonsqueezy_subscription_id?: string | null
-          lemonsqueezy_variant_id?: string | null
-          metadata?: Json | null
-          money_back_eligible_until?: string | null
-          plan_id?: string
-          status?: Database["public"]["Enums"]["subscription_status"] | null
-          stripe_customer_id?: string | null
-          stripe_price_id?: string | null
-          stripe_subscription_id?: string | null
-          trial_end?: string | null
-          trial_start?: string | null
-          updated_at?: string | null
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "subscriptions_plan_id_fkey"
-            columns: ["plan_id"]
-            isOneToOne: false
-            referencedRelation: "plans"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "subscriptions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "subscriptions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_active_users_with_calendar"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "subscriptions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_admin_user_list"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "subscriptions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
             referencedRelation: "v_user_conversation_stats"
             referencedColumns: ["user_id"]
           },
@@ -853,13 +818,6 @@ export type Database = {
             foreignKeyName: "telegram_users_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "v_admin_user_list"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "telegram_users_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
             referencedRelation: "v_user_conversation_stats"
             referencedColumns: ["user_id"]
           },
@@ -945,13 +903,6 @@ export type Database = {
             foreignKeyName: "user_calendars_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "v_admin_user_list"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "user_calendars_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
             referencedRelation: "v_user_conversation_stats"
             referencedColumns: ["user_id"]
           },
@@ -959,8 +910,10 @@ export type Database = {
       }
       users: {
         Row: {
+          ai_interactions_used: number | null
           avatar_url: string | null
           created_at: string
+          credits_remaining: number | null
           deactivated_at: string | null
           display_name: string | null
           email: string
@@ -975,10 +928,13 @@ export type Database = {
           status: Database["public"]["Enums"]["user_status"] | null
           timezone: string | null
           updated_at: string
+          usage_reset_at: string | null
         }
         Insert: {
+          ai_interactions_used?: number | null
           avatar_url?: string | null
           created_at?: string
+          credits_remaining?: number | null
           deactivated_at?: string | null
           display_name?: string | null
           email: string
@@ -993,10 +949,13 @@ export type Database = {
           status?: Database["public"]["Enums"]["user_status"] | null
           timezone?: string | null
           updated_at?: string
+          usage_reset_at?: string | null
         }
         Update: {
+          ai_interactions_used?: number | null
           avatar_url?: string | null
           created_at?: string
+          credits_remaining?: number | null
           deactivated_at?: string | null
           display_name?: string | null
           email?: string
@@ -1011,6 +970,7 @@ export type Database = {
           status?: Database["public"]["Enums"]["user_status"] | null
           timezone?: string | null
           updated_at?: string
+          usage_reset_at?: string | null
         }
         Relationships: []
       }
@@ -1125,13 +1085,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "v_active_users_with_calendar"
             referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "whatsapp_users_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_admin_user_list"
-            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "whatsapp_users_user_id_fkey"
@@ -1285,62 +1238,6 @@ export type Database = {
         }
         Relationships: []
       }
-      v_active_subscriptions: {
-        Row: {
-          ai_interactions_limit: number | null
-          ai_interactions_remaining: number | null
-          ai_interactions_used: number | null
-          cancel_at_period_end: boolean | null
-          canceled_at: string | null
-          current_period_end: string | null
-          current_period_start: string | null
-          display_name: string | null
-          email: string | null
-          first_payment_at: string | null
-          interval: Database["public"]["Enums"]["plan_interval"] | null
-          money_back_eligible_until: string | null
-          plan_name: string | null
-          plan_slug: string | null
-          status: Database["public"]["Enums"]["subscription_status"] | null
-          stripe_customer_id: string | null
-          stripe_subscription_id: string | null
-          subscription_created_at: string | null
-          subscription_id: string | null
-          trial_end: string | null
-          trial_start: string | null
-          user_id: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "subscriptions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "subscriptions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_active_users_with_calendar"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "subscriptions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_admin_user_list"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "subscriptions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "v_user_conversation_stats"
-            referencedColumns: ["user_id"]
-          },
-        ]
-      }
       v_active_users_with_calendar: {
         Row: {
           display_name: string | null
@@ -1351,46 +1248,6 @@ export type Database = {
           token_expires_at: string | null
           token_valid: boolean | null
           user_id: string | null
-        }
-        Relationships: []
-      }
-      v_admin_user_list: {
-        Row: {
-          ai_interactions_used: number | null
-          avatar_url: string | null
-          created_at: string | null
-          credits_remaining: number | null
-          current_period_end: string | null
-          display_name: string | null
-          email: string | null
-          email_verified: boolean | null
-          first_name: string | null
-          has_oauth_connected: boolean | null
-          id: string | null
-          last_name: string | null
-          locale: string | null
-          plan_name: string | null
-          plan_slug: string | null
-          role: Database["public"]["Enums"]["user_role"] | null
-          status: Database["public"]["Enums"]["user_status"] | null
-          subscription_id: string | null
-          subscription_interval:
-            | Database["public"]["Enums"]["plan_interval"]
-            | null
-          subscription_status:
-            | Database["public"]["Enums"]["subscription_status"]
-            | null
-          timezone: string | null
-          updated_at: string | null
-        }
-        Relationships: []
-      }
-      v_subscription_distribution: {
-        Row: {
-          percentage: number | null
-          plan_name: string | null
-          plan_slug: string | null
-          subscriber_count: number | null
         }
         Relationships: []
       }
@@ -1457,18 +1314,6 @@ export type Database = {
     }
     Functions: {
       check_trial_expirations: { Args: never; Returns: number }
-      check_user_access: {
-        Args: { p_user_id: string }
-        Returns: {
-          credits_remaining: number
-          has_access: boolean
-          interactions_remaining: number
-          money_back_eligible: boolean
-          plan_name: string
-          subscription_status: Database["public"]["Enums"]["subscription_status"]
-          trial_days_left: number
-        }[]
-      }
       cleanup_expired_sessions: { Args: never; Returns: number }
       cleanup_expired_sessions_v2: { Args: never; Returns: number }
       cleanup_old_pending_gaps:
@@ -1576,6 +1421,18 @@ export type Database = {
     Enums: {
       calendar_access_role: "owner" | "writer" | "reader" | "freeBusyReader"
       conversation_source: "web" | "telegram" | "whatsapp" | "api"
+      feature_flag_audit_action:
+        | "created"
+        | "updated"
+        | "deleted"
+        | "enabled"
+        | "disabled"
+        | "rollout_changed"
+        | "tiers_changed"
+        | "user_override_added"
+        | "user_override_removed"
+        | "environment_changed"
+      feature_flag_environment: "development" | "staging" | "production" | "all"
       gap_resolution_status:
         | "pending"
         | "filled"
@@ -1584,23 +1441,6 @@ export type Database = {
         | "expired"
       message_role: "user" | "assistant" | "system" | "tool"
       oauth_provider: "google" | "github" | "telegram" | "whatsapp"
-      payment_status:
-        | "pending"
-        | "succeeded"
-        | "failed"
-        | "refunded"
-        | "partially_refunded"
-        | "disputed"
-      plan_interval: "monthly" | "yearly" | "one_time"
-      subscription_status:
-        | "trialing"
-        | "active"
-        | "past_due"
-        | "canceled"
-        | "unpaid"
-        | "incomplete"
-        | "incomplete_expired"
-        | "paused"
       user_role: "user" | "admin" | "moderator" | "support"
       user_status: "active" | "inactive" | "suspended" | "pending_verification"
     }
@@ -1732,6 +1572,19 @@ export const Constants = {
     Enums: {
       calendar_access_role: ["owner", "writer", "reader", "freeBusyReader"],
       conversation_source: ["web", "telegram", "whatsapp", "api"],
+      feature_flag_audit_action: [
+        "created",
+        "updated",
+        "deleted",
+        "enabled",
+        "disabled",
+        "rollout_changed",
+        "tiers_changed",
+        "user_override_added",
+        "user_override_removed",
+        "environment_changed",
+      ],
+      feature_flag_environment: ["development", "staging", "production", "all"],
       gap_resolution_status: [
         "pending",
         "filled",
@@ -1741,25 +1594,6 @@ export const Constants = {
       ],
       message_role: ["user", "assistant", "system", "tool"],
       oauth_provider: ["google", "github", "telegram", "whatsapp"],
-      payment_status: [
-        "pending",
-        "succeeded",
-        "failed",
-        "refunded",
-        "partially_refunded",
-        "disputed",
-      ],
-      plan_interval: ["monthly", "yearly", "one_time"],
-      subscription_status: [
-        "trialing",
-        "active",
-        "past_due",
-        "canceled",
-        "unpaid",
-        "incomplete",
-        "incomplete_expired",
-        "paused",
-      ],
       user_role: ["user", "admin", "moderator", "support"],
       user_status: ["active", "inactive", "suspended", "pending_verification"],
     },
