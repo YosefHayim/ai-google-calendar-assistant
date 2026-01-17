@@ -21,10 +21,10 @@
  * logger.error("Failed to connect", { error: err.message });
  */
 
+import { env } from "@/config";
 import fs from "node:fs";
 import path from "node:path";
 import winston from "winston";
-import { env } from "@/config";
 
 // Returns strictly "YYYY-MM-DD" (e.g., "2024-01-03")
 const getDate = () => new Date().toISOString().split("T")[0];
@@ -33,7 +33,8 @@ const getDate = () => new Date().toISOString().split("T")[0];
 const logDir = "logs";
 
 const clearLogFilesOnStartup = () => {
-  if (!env.isDev) {
+  // Defensive check: ensure env is initialized before accessing properties
+  if (!env || !env.isDev) {
     return;
   }
 
@@ -58,38 +59,34 @@ const clearLogFilesOnStartup = () => {
 clearLogFilesOnStartup();
 
 // Custom Formatter: Stringify JSON + add an extra Newline (\n) for the gap
-const jsonWithGap = winston.format.printf(
-  (info) => `${JSON.stringify(info)}\n`
-);
+const jsonWithGap = winston.format.printf((info) => `${JSON.stringify(info)}\n`);
 
 // Build transports based on environment
 const transports: winston.transport[] = [];
 
-if (env.isDev) {
+// Defensive check: ensure env is initialized before accessing properties
+const isDev = env?.isDev ?? false;
+const nodeEnv = env?.nodeEnv ?? "production";
+
+if (isDev) {
   // Development: File logs + colorized console
   transports.push(
     new winston.transports.File({
-      filename: path.join(logDir, `${env.nodeEnv}-error-${getDate()}.log`),
+      filename: path.join(logDir, `${nodeEnv}-error-${getDate()}.log`),
       level: "error",
     }),
     new winston.transports.File({
-      filename: path.join(logDir, `${env.nodeEnv}-combined-${getDate()}.log`),
+      filename: path.join(logDir, `${nodeEnv}-combined-${getDate()}.log`),
     }),
     new winston.transports.Console({
-      format: winston.format.combine(
-        winston.format.colorize(),
-        winston.format.simple()
-      ),
+      format: winston.format.combine(winston.format.colorize(), winston.format.simple()),
     })
   );
 } else {
   // Production: Console only (captured by AWS App Runner / CloudWatch)
   transports.push(
     new winston.transports.Console({
-      format: winston.format.combine(
-        winston.format.timestamp(),
-        winston.format.json()
-      ),
+      format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
     })
   );
 }

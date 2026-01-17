@@ -85,14 +85,21 @@ app.use(apiRateLimiter);
 // SECURITY: Add security audit logging for compliance
 app.use(securityAuditMiddleware);
 
-app.use(
-  express.json({
-    limit: "10mb",
-    verify: (req, _res, buf) => {
-      (req as IncomingMessage & { rawBody?: string }).rawBody = buf.toString();
-    },
-  })
-);
+// JSON parser - skip WhatsApp webhook endpoint (needs raw body for signature verification)
+const jsonParser = express.json({
+  limit: "10mb",
+  verify: (req, _res, buf) => {
+    (req as IncomingMessage & { rawBody?: string }).rawBody = buf.toString();
+  },
+});
+
+app.use((req, res, next) => {
+  // Skip JSON parsing for WhatsApp webhook endpoint
+  if (req.path === ROUTES.WHATSAPP || req.path.startsWith(`${ROUTES.WHATSAPP}/`)) {
+    return next();
+  }
+  jsonParser(req, res, next);
+});
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(morgan("dev", { immediate: true }));
