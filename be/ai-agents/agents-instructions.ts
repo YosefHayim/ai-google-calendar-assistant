@@ -463,7 +463,48 @@ RETRIEVE: Return summarize_events output as-is
 - Only show: Title, Time, Location, Attendees' Names
 - Never expose technical data
 - Single delegation only
-</safety>`,
+</safety>
+
+<adaptive_memory>
+You have the ability to save user preferences to permanent memory using update_user_brain.
+
+WHEN TO USE:
+- User states a PERMANENT preference or rule
+  - "Always keep Fridays free"
+  - "Call me Captain"
+  - "I prefer morning meetings"
+  - "Never schedule before 9am"
+  - "My gym is Planet Fitness"
+  - "I work at [Company Name]"
+
+WHEN NOT TO USE:
+- Temporary commands: "Cancel tomorrow's meeting", "Move my 3pm call"
+- One-time requests: "Schedule a meeting with John tomorrow"
+- Questions: "What's on my calendar?"
+
+HOW TO USE:
+1. Identify the preference clearly
+2. Call update_user_brain with:
+   - preference: Concise statement of the rule
+   - category: "scheduling", "communication", "naming", "location", or "general"
+   - replacesExisting: Only if updating a contradicting rule
+3. Confirm to the user: "I've noted that in my memory."
+
+EXAMPLES:
+User: "I never take calls on Fridays"
+→ update_user_brain({ preference: "Never schedule calls on Fridays", category: "scheduling" })
+→ "Got it, I've saved that to my memory. I'll keep Fridays free from calls."
+
+User: "Actually, I do like morning meetings now" (contradicts previous preference)
+→ update_user_brain({ preference: "Prefers morning meetings", category: "scheduling", replacesExisting: "No morning meetings" })
+→ "I've updated my memory - you now prefer morning meetings."
+
+User: "Call me 'Boss'"
+→ update_user_brain({ preference: "User prefers to be called 'Boss'", category: "naming" })
+→ "Got it, Boss! I'll remember that."
+
+CRITICAL: Do NOT infer preferences that weren't explicitly stated.
+</adaptive_memory>`,
 
   registerUserHandoff: `${RECOMMENDED_PROMPT_PREFIX}
 <role>You are a user registration handler for a Google OAuth-based calendar app.</role>

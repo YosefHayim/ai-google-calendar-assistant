@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
 import { usePostHog } from 'posthog-js/react'
 import { toast } from 'sonner'
 
@@ -16,6 +17,7 @@ import { useMutedSpeechDetection } from '@/hooks/useMutedSpeechDetection'
 import { useSpeechRecognition } from '@/hooks/useSpeechRecognition'
 import { useStreamingChat } from '@/hooks/useStreamingChat'
 import { useVoicePreference } from '@/hooks/queries'
+import { queryKeys } from '@/lib/query'
 import { useAudioPlayback } from './useAudioPlayback'
 import type { ActiveTab } from './types'
 
@@ -31,6 +33,7 @@ export function ChatInterface() {
   } = useChatContext()
 
   const { data: voiceData } = useVoicePreference()
+  const queryClient = useQueryClient()
   const posthog = usePostHog()
 
   const [input, setInput] = useState('')
@@ -131,10 +134,23 @@ export function ChatInterface() {
     [updateConversationTitle]
   )
 
+  const handleMemoryUpdated = useCallback(
+    (_preference: string, action: 'added' | 'replaced' | 'duplicate') => {
+      if (action !== 'duplicate') {
+        queryClient.invalidateQueries({ queryKey: queryKeys.preferences.allyBrain() })
+        toast.success('Memory updated', {
+          description: action === 'added' ? "I've saved this to my memory." : "I've updated my memory.",
+        })
+      }
+    },
+    [queryClient]
+  )
+
   const { streamingState, sendStreamingMessage, cancelStream, resetStreamingState } = useStreamingChat({
     onStreamComplete: handleStreamComplete,
     onStreamError: handleStreamError,
     onTitleGenerated: handleTitleGenerated,
+    onMemoryUpdated: handleMemoryUpdated,
   })
 
   const isLoading = streamingState.isStreaming

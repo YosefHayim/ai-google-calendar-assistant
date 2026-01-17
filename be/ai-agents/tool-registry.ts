@@ -1,6 +1,8 @@
 import { tool } from "@openai/agents";
 import { z } from "zod";
 import { getEmailFromContext } from "@/shared/adapters/openai-adapter";
+import { updateUserBrainHandler } from "@/shared/tools/handlers";
+import { updateUserBrainSchema } from "@/shared/tools/schemas/brain-schemas";
 import { type AgentContext, stringifyError } from "@/shared/types";
 import {
   checkEventConflictsAllCalendars,
@@ -598,5 +600,17 @@ export const DIRECT_TOOLS = {
     },
     errorFunction: (_, error) =>
       `update_user_reminder_preferences: ${stringifyError(error)}`,
+  }),
+
+  update_user_brain: tool<typeof updateUserBrainSchema, AgentContext>({
+    name: "update_user_brain",
+    description:
+      "Save a permanent user preference or rule to Ally's memory. Use ONLY when user explicitly states a lasting preference (e.g., 'Always keep Fridays free', 'Call me Captain', 'I work at Company X'). Do NOT use for temporary commands like 'cancel tomorrow's meeting'. Returns confirmation message to include in response.",
+    parameters: updateUserBrainSchema,
+    execute: async (params, runContext) => {
+      const email = getEmailFromContext(runContext, "update_user_brain");
+      return updateUserBrainHandler(params, { email });
+    },
+    errorFunction: (_, error) => `update_user_brain: ${stringifyError(error)}`,
   }),
 };

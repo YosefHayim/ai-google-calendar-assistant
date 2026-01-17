@@ -13,6 +13,7 @@ import {
   preCreateValidationHandler,
   selectCalendarHandler,
   updateEventHandler,
+  updateUserBrainHandler,
   validateUserHandler,
 } from "@/shared/tools/handlers";
 
@@ -30,6 +31,7 @@ import {
   fillGapSchema,
   formatGapsDisplaySchema,
 } from "@/shared/tools/schemas/gap-schemas";
+import { updateUserBrainSchema } from "@/shared/tools/schemas/brain-schemas";
 import { type AgentContext, stringifyError } from "@/shared/types";
 
 export type { AgentContext };
@@ -236,8 +238,23 @@ export const GAP_TOOLS = {
   }),
 };
 
+export const BRAIN_TOOLS = {
+  update_user_brain: tool<typeof updateUserBrainSchema, AgentContext>({
+    name: "update_user_brain",
+    description:
+      "Save a permanent user preference or rule to memory. Use ONLY for lasting preferences the user explicitly states (e.g., 'Always keep Fridays free', 'Call me Captain'). Do NOT use for temporary commands like 'cancel tomorrow's meeting'.",
+    parameters: updateUserBrainSchema,
+    execute: async (params, runContext) => {
+      const email = getEmailFromContext(runContext, "update_user_brain");
+      return updateUserBrainHandler(params, createHandlerContext(email));
+    },
+    errorFunction: (_, error) => `update_user_brain: ${stringifyError(error)}`,
+  }),
+};
+
 export const SHARED_TOOLS = {
   ...EVENT_TOOLS,
   ...VALIDATION_TOOLS,
   ...GAP_TOOLS,
+  ...BRAIN_TOOLS,
 };

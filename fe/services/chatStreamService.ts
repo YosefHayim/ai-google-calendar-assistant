@@ -2,6 +2,7 @@ import type {
   AgentSwitchData,
   DoneData,
   ErrorData,
+  MemoryUpdatedData,
   SSEEvent,
   SSEEventType,
   StreamCallbacks,
@@ -130,6 +131,11 @@ export async function streamChatMessage(options: StreamChatOptions): Promise<Str
           case 'title_generated': {
             const data = event.data as TitleGeneratedData
             callbacks.onTitleGenerated?.(data.conversationId, data.title)
+            break
+          }
+          case 'memory_updated': {
+            const data = event.data as MemoryUpdatedData
+            callbacks.onMemoryUpdated?.(data.preference, data.action)
             break
           }
           case 'done': {

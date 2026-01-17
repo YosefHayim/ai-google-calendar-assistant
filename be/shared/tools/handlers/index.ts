@@ -33,3 +33,11 @@ export {
   fillGapHandler,
   formatGapsHandler,
 } from "./gap-handlers";
+export type {
+  UpdateUserBrainParams,
+  UpdateUserBrainResult,
+} from "./brain-handlers";
+export {
+  getUserBrainHandler,
+  updateUserBrainHandler,
+} from "./brain-handlers";

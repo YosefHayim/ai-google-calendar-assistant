@@ -12,6 +12,7 @@ import {
   preCreateValidationHandler,
   selectCalendarHandler,
   updateEventHandler,
+  updateUserBrainHandler,
   validateUserHandler,
 } from "./handlers";
 
@@ -43,6 +44,7 @@ const PARAMS_AND_CTX_HANDLERS: Record<string, ParamsAndCtxHandler> = {
   pre_create_validation: preCreateValidationHandler as ParamsAndCtxHandler,
   analyze_gaps_direct: analyzeGapsHandler as ParamsAndCtxHandler,
   fill_gap_direct: fillGapHandler as ParamsAndCtxHandler,
+  update_user_brain: updateUserBrainHandler as ParamsAndCtxHandler,
 };
 
 const CTX_ONLY_HANDLERS: Record<string, CtxOnlyHandler> = {

@@ -126,6 +126,7 @@ export const ORCHESTRATOR_AGENT = new Agent({
     AGENTS.generateGoogleAuthUrl.asTool({
       toolName: "generate_google_auth_url",
     }),
+    DIRECT_TOOLS.update_user_brain, // Adaptive memory - save permanent preferences
   ],
   inputGuardrails: [calendarSafetyGuardrail],
 });

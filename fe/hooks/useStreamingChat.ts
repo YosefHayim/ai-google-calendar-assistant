@@ -14,6 +14,7 @@ interface UseStreamingChatOptions {
   onStreamComplete?: (conversationId: string, fullResponse: string) => void
   onStreamError?: (error: string) => void
   onTitleGenerated?: (conversationId: string, title: string) => void
+  onMemoryUpdated?: (preference: string, action: 'added' | 'replaced' | 'duplicate') => void
 }
 
 interface UseStreamingChatReturn {
@@ -32,7 +33,7 @@ const initialState: StreamingState = {
 }
 
 export function useStreamingChat(options: UseStreamingChatOptions = {}): UseStreamingChatReturn {
-  const { onStreamComplete, onStreamError, onTitleGenerated } = options
+  const { onStreamComplete, onStreamError, onTitleGenerated, onMemoryUpdated } = options
   const [streamingState, setStreamingState] = useState<StreamingState>(initialState)
   const abortControllerRef = useRef<AbortController | null>(null)
 
@@ -101,6 +102,9 @@ export function useStreamingChat(options: UseStreamingChatOptions = {}): UseStre
           onTitleGenerated: (convId, title) => {
             onTitleGenerated?.(convId, title)
           },
+          onMemoryUpdated: (preference, action) => {
+            onMemoryUpdated?.(preference, action)
+          },
           onDone: (convId, fullResponse) => {
             setStreamingState((prev) => ({
               ...prev,
@@ -130,7 +134,7 @@ export function useStreamingChat(options: UseStreamingChatOptions = {}): UseStre
 
       abortControllerRef.current = null
     },
-    [onStreamComplete, onStreamError, onTitleGenerated],
+    [onStreamComplete, onStreamError, onTitleGenerated, onMemoryUpdated],
   )
 
   return {

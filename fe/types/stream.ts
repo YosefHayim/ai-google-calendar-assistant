@@ -4,6 +4,7 @@ export type SSEEventType =
   | 'tool_complete'
   | 'agent_switch'
   | 'title_generated'
+  | 'memory_updated'
   | 'done'
   | 'error'
   | 'heartbeat'
@@ -56,6 +57,11 @@ export interface TitleGeneratedData {
   title: string
 }
 
+export interface MemoryUpdatedData {
+  preference: string
+  action: 'added' | 'replaced' | 'duplicate'
+}
+
 export interface StreamingState {
   isStreaming: boolean
   streamedText: string
@@ -70,6 +76,7 @@ export interface StreamCallbacks {
   onToolComplete?: (tool: string, result: 'success' | 'error') => void
   onAgentSwitch?: (from: string, to: string) => void
   onTitleGenerated?: (conversationId: string, title: string) => void
+  onMemoryUpdated?: (preference: string, action: 'added' | 'replaced' | 'duplicate') => void
   onDone?: (conversationId: string, fullResponse: string) => void
   onError?: (message: string, code: string) => void
 }

@@ -6,6 +6,7 @@ export type SSEEventType =
   | "tool_complete"
   | "agent_switch"
   | "title_generated"
+  | "memory_updated"
   | "done"
   | "error"
   | "heartbeat";
@@ -56,6 +57,11 @@ export type ErrorData = {
 export type TitleGeneratedData = {
   conversationId: string;
   title: string;
+};
+
+export type MemoryUpdatedData = {
+  preference: string;
+  action: "added" | "replaced" | "duplicate";
 };
 
 /**
@@ -250,6 +256,17 @@ export function writeTitleGenerated(
   writeSSEEvent<TitleGeneratedData>(res, "title_generated", {
     conversationId,
     title,
+  });
+}
+
+export function writeMemoryUpdated(
+  res: Response,
+  preference: string,
+  action: MemoryUpdatedData["action"]
+): void {
+  writeSSEEvent<MemoryUpdatedData>(res, "memory_updated", {
+    preference,
+    action,
   });
 }
 
