@@ -7,22 +7,11 @@ import {
   initUserSupabaseCalendarWithTokensAndUpdateTokens,
 } from "@/utils/calendar";
 import { getEvents } from "@/utils/calendar/get-events";
+import { isValidDateTime } from "@/utils/date/date-helpers";
 import { asyncHandler } from "@/utils/http";
 import { formatEventData, parseToolArguments } from "./utils";
 
 type Event = calendar_v3.Schema$Event;
-
-function isValidDateTime(dt: string): boolean {
-  if (!dt || dt.trim() === "") {
-    return false;
-  }
-  const parsed = Date.parse(dt);
-  if (Number.isNaN(parsed)) {
-    return false;
-  }
-  const year = new Date(parsed).getFullYear();
-  return year >= 2020 && year <= 2100;
-}
 
 /**
  * Applies the user's default calendar timezone to timed events that don't have a timezone specified.

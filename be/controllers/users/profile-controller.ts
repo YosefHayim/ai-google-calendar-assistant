@@ -1,271 +1,124 @@
 import type { Request, Response } from "express";
 import { STATUS_RESPONSE, SUPABASE } from "@/config";
-import { unifiedContextStore } from "@/shared/context";
-import { clearAuthCookies } from "@/utils/auth/cookie-utils";
-import {
-  getCachedUserProfile,
-  invalidateAllUserCache,
-  invalidateUserProfileCache,
-  setCachedUserProfile,
-} from "@/utils/cache/user-cache";
-import { webConversation } from "@/utils/conversation/WebConversationAdapter";
+import { getCachedUserProfile, invalidateAllUserCache, invalidateUserProfileCache, setCachedUserProfile } from "@/utils/cache/user-cache";
 import { reqResAsyncHandler, sendR } from "@/utils/http";
 
-const getCurrentUserInformation = reqResAsyncHandler(
-  async (req: Request, res: Response) => {
-    if (req.query.customUser === "true") {
-      const userId = req.user?.id;
-      if (!userId) {
-        return sendR(
-          res,
-          STATUS_RESPONSE.UNAUTHORIZED,
-          "User not authenticated"
-        );
-      }
+import { clearAuthCookies } from "@/utils/auth/cookie-utils";
+import { unifiedContextStore } from "@/shared/context";
+import { webConversation } from "@/utils/conversation/WebConversationAdapter";
 
-      const forceRefresh = req.query.refresh === "true";
-      if (forceRefresh) {
-        await invalidateUserProfileCache(userId);
-      }
-
-      const cached = forceRefresh ? null : await getCachedUserProfile(userId);
-      if (cached) {
-        return sendR(
-          res,
-          STATUS_RESPONSE.SUCCESS,
-          "User fetched successfully.",
-          cached
-        );
-      }
-
-      let firstName: string | null | undefined =
-        req.user?.user_metadata?.first_name;
-      let lastName: string | null | undefined =
-        req.user?.user_metadata?.last_name;
-      let avatarUrl: string | null | undefined =
-        req.user?.user_metadata?.avatar_url;
-
-      let role: string | null = null;
-
-      if (req.user?.email) {
-        const normalizedEmail = req.user.email.toLowerCase().trim();
-        const { data: userData } = await SUPABASE.from("users")
-          .select("first_name, last_name, avatar_url, role")
-          .ilike("email", normalizedEmail)
-          .limit(1)
-          .maybeSingle();
-
-        if (userData) {
-          firstName = userData.first_name ?? firstName;
-          lastName = userData.last_name ?? lastName;
-          avatarUrl = userData.avatar_url ?? avatarUrl;
-          role = userData.role ?? null;
-        }
-      }
-
-      const customUser = {
-        id: req.user?.id,
-        email: req.user?.email,
-        phone: req.user?.phone,
-        first_name: firstName,
-        last_name: lastName,
-        avatar_url: avatarUrl,
-        role,
-        created_at: req.user?.created_at,
-        updated_at: req.user?.updated_at,
-      };
-
-      if (customUser.id && customUser.email) {
-        await setCachedUserProfile(userId, {
-          id: customUser.id,
-          email: customUser.email,
-          phone: customUser.phone,
-          first_name: customUser.first_name,
-          last_name: customUser.last_name,
-          avatar_url: customUser.avatar_url,
-          role: customUser.role,
-          created_at: customUser.created_at,
-          updated_at: customUser.updated_at,
-        });
-      }
-
-      return sendR(
-        res,
-        STATUS_RESPONSE.SUCCESS,
-        "User fetched successfully.",
-        customUser
-      );
-    }
-
-    return sendR(
-      res,
-      STATUS_RESPONSE.SUCCESS,
-      "User fetched successfully.",
-      req.user
-    );
+const getCurrentUserInformation = reqResAsyncHandler(async (req: Request, res: Response) => {
+  const forceRefresh = req.query.refresh === "true";
+  if (forceRefresh) {
+    await invalidateUserProfileCache(req?.user?.id!);
   }
-);
 
-const getUserInformationById = reqResAsyncHandler(
-  async (req: Request, res: Response) => {
-    const requestedId = req.params.id;
-    const currentUserEmail = req.user?.email;
-
-    if (!currentUserEmail) {
-      return sendR(
-        res,
-        STATUS_RESPONSE.UNAUTHORIZED,
-        "Authentication required."
-      );
-    }
-
-    const { data, error } = await SUPABASE.from("users")
-      .select(
-        "id, email, first_name, last_name, avatar_url, status, timezone, created_at"
-      )
-      .eq("id", requestedId)
-      .single();
-
-    if (error) {
-      return sendR(
-        res,
-        STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
-        "Failed to find user."
-      );
-    }
-
-    if (!data) {
-      return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User not found.");
-    }
-
-    if (data.email?.toLowerCase() !== currentUserEmail.toLowerCase()) {
-      return sendR(
-        res,
-        STATUS_RESPONSE.FORBIDDEN,
-        "You can only access your own user information."
-      );
-    }
-
-    return sendR(
-      res,
-      STATUS_RESPONSE.SUCCESS,
-      "User fetched successfully.",
-      data
-    );
+  const cached = forceRefresh ? null : await getCachedUserProfile(req?.user?.id!);
+  if (cached) {
+    return sendR(res, STATUS_RESPONSE.SUCCESS, "User fetched successfully.", cached);
   }
-);
 
-const deActivateUser = reqResAsyncHandler(
-  async (req: Request, res: Response) => {
-    // Use authenticated user's email for security (not body.email)
-    const userId = req.user?.id;
-    const email = req.user?.email?.toLowerCase().trim();
+  await setCachedUserProfile(req?.user?.id!, {
+    id: req?.user?.id!,
+    email: req?.user?.email!,
+    phone: req?.user?.phone!,
+    first_name: req?.user?.user_metadata?.first_name!,
+    last_name: req?.user?.user_metadata?.last_name!,
+    avatar_url: req?.user?.user_metadata?.avatar_url!,
+    role: req?.user?.role!,
+    created_at: req?.user?.created_at!,
+    updated_at: req?.user?.updated_at!,
+  });
 
-    if (!(userId && email)) {
-      return sendR(
-        res,
-        STATUS_RESPONSE.UNAUTHORIZED,
-        "Authentication required."
-      );
-    }
+  return sendR(res, STATUS_RESPONSE.SUCCESS, "User fetched successfully.", req.user);
+});
 
-    // Verify user exists in database
-    const { data: user, error: userError } = await SUPABASE.from("users")
-      .select("id")
-      .eq("id", userId)
-      .limit(1)
-      .maybeSingle();
+const getUserInformationById = reqResAsyncHandler(async (req: Request, res: Response) => {
+  const { data, error } = await SUPABASE.from("users")
+    .select("id, email, first_name, last_name, avatar_url, status, timezone, created_at")
+    .eq("id", req.params.id)
+    .single();
 
-    if (userError || !user) {
-      return sendR(
-        res,
-        STATUS_RESPONSE.NOT_FOUND,
-        "User not found.",
-        userError
-      );
-    }
-
-    const deletionResults = {
-      oauthTokens: false,
-      conversations: 0,
-      redisContext: false,
-      userRecord: false,
-      supabaseAuth: false,
-    };
-
-    try {
-      // 1. Revoke Google OAuth tokens (set invalid and clear sensitive data)
-      const { error: tokenError } = await SUPABASE.from("oauth_tokens")
-        .update({
-          is_valid: false,
-          access_token: "[DELETED]",
-          refresh_token: null,
-          id_token: null,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("user_id", userId)
-        .eq("provider", "google");
-
-      if (!tokenError) {
-        deletionResults.oauthTokens = true;
-      }
-
-      // 2. Delete all conversations and messages
-      const conversationsResult =
-        await webConversation.deleteAllConversations(userId);
-      deletionResults.conversations = conversationsResult.deletedCount;
-
-      // 3. Clear Redis context (cross-modal session data + caches)
-      await unifiedContextStore.clearAll(userId);
-      await invalidateAllUserCache(userId);
-      deletionResults.redisContext = true;
-
-      // 4. Delete user record from users table (this will cascade to related tables via FK)
-      const { error: deleteUserError } = await SUPABASE.from("users")
-        .delete()
-        .eq("id", userId);
-
-      if (!deleteUserError) {
-        deletionResults.userRecord = true;
-      }
-
-      // 5. Delete user from Supabase Auth
-      const { error: authDeleteError } =
-        await SUPABASE.auth.admin.deleteUser(userId);
-
-      if (authDeleteError) {
-        console.error(
-          "Failed to delete user from Supabase Auth:",
-          authDeleteError
-        );
-      } else {
-        deletionResults.supabaseAuth = true;
-      }
-
-      // 6. Clear auth cookies to prevent stale session issues on re-registration
-      clearAuthCookies(res);
-
-      return sendR(
-        res,
-        STATUS_RESPONSE.SUCCESS,
-        "Account deleted successfully.",
-        {
-          deleted: deletionResults,
-          message:
-            "Your account and all associated data have been permanently deleted.",
-        }
-      );
-    } catch (error) {
-      console.error("Error during account deletion:", error);
-      return sendR(
-        res,
-        STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
-        "Failed to delete account. Please try again or contact support.",
-        { partialDeletion: deletionResults }
-      );
-    }
+  if (error) {
+    return sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Failed to find user.");
   }
-);
+
+  if (!data) {
+    return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User not found.");
+  }
+
+  if (data.email?.toLowerCase() !== req.user?.email?.toLowerCase()) {
+    return sendR(res, STATUS_RESPONSE.FORBIDDEN, "You can only access your own user information.");
+  }
+
+  return sendR(res, STATUS_RESPONSE.SUCCESS, "User fetched successfully.", data);
+});
+
+const deActivateUser = reqResAsyncHandler(async (req: Request, res: Response) => {
+  const deletionResults = {
+    oauthTokens: false,
+    conversations: 0,
+    redisContext: false,
+    userRecord: false,
+    supabaseAuth: false,
+  };
+
+  try {
+    // 1. Revoke Google OAuth tokens (set invalid and clear sensitive data)
+    const { error: tokenError } = await SUPABASE.from("oauth_tokens")
+      .update({
+        is_valid: false,
+        access_token: "[DELETED]",
+        refresh_token: null,
+        id_token: null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("user_id", req.user!.id)
+      .eq("provider", "google");
+
+    if (!tokenError) {
+      deletionResults.oauthTokens = true;
+    }
+
+    // 2. Delete all conversations and messages
+    const conversationsResult = await webConversation.deleteAllConversations(req.user!.id);
+    deletionResults.conversations = conversationsResult.deletedCount;
+
+    // 3. Clear Redis context (cross-modal session data + caches)
+    await unifiedContextStore.clearAll(req.user!.id);
+    await invalidateAllUserCache(req.user!.id);
+    deletionResults.redisContext = true;
+
+    // 4. Delete user record from users table (this will cascade to related tables via FK)
+    const { error: deleteUserError } = await SUPABASE.from("users").delete().eq("id", req.user!.id);
+
+    if (!deleteUserError) {
+      deletionResults.userRecord = true;
+    }
+
+    // 5. Delete user from Supabase Auth
+    const { error: authDeleteError } = await SUPABASE.auth.admin.deleteUser(req.user!.id);
+
+    if (authDeleteError) {
+      console.error("Failed to delete user from Supabase Auth:", authDeleteError);
+    } else {
+      deletionResults.supabaseAuth = true;
+    }
+
+    // 6. Clear auth cookies to prevent stale session issues on re-registration
+    clearAuthCookies(res);
+
+    return sendR(res, STATUS_RESPONSE.SUCCESS, "Account deleted successfully.", {
+      deleted: deletionResults,
+      message: "Your account and all associated data have been permanently deleted.",
+    });
+  } catch (error) {
+    console.error("Error during account deletion:", error);
+    return sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Failed to delete account. Please try again or contact support.", {
+      partialDeletion: deletionResults,
+    });
+  }
+});
 
 export const profileController = {
   getCurrentUserInformation,

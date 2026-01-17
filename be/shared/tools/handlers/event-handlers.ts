@@ -12,6 +12,7 @@ import {
   initUserSupabaseCalendarWithTokensAndUpdateTokens,
 } from "@/utils/calendar";
 import { getEvents } from "@/utils/calendar/get-events";
+import { isValidDateTime } from "@/utils/date/date-helpers";
 import { logger } from "@/utils/logger";
 import type {
   DeleteEventParams,
@@ -25,18 +26,6 @@ type Event = calendar_v3.Schema$Event;
 
 const MAX_EVENTS_TOTAL = 100;
 const MAX_EVENTS_PER_CALENDAR = 50;
-
-function isValidDateTime(dt: string): boolean {
-  if (!dt || dt.trim() === "") {
-    return false;
-  }
-  const parsed = Date.parse(dt);
-  if (Number.isNaN(parsed)) {
-    return false;
-  }
-  const year = new Date(parsed).getFullYear();
-  return year >= 2020 && year <= 2100;
-}
 
 async function applyDefaultTimezoneIfNeeded(
   event: Partial<Event>,

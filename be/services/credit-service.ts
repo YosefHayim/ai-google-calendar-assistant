@@ -1,16 +1,11 @@
 import {
   checkUserAccess,
+  getPlanLimits,
   getUserUsage,
-  PLAN_METADATA,
   updateUserUsage,
   type PlanSlug,
 } from "@/services/lemonsqueezy-service"
 import { logger } from "@/utils/logger"
-
-const DEFAULT_LIMITS = { aiInteractionsMonthly: 10, actionPackSize: 25 }
-
-const getPlanLimits = (planSlug: PlanSlug): { aiInteractionsMonthly: number | null; actionPackSize: number } =>
-  PLAN_METADATA[planSlug]?.limits ?? DEFAULT_LIMITS
 
 const CREDIT_COST_PER_INTERACTION = 1
 

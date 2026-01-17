@@ -44,6 +44,9 @@ export const mockUserRecord: Database["public"]["Tables"]["users"]["Row"] = {
   created_at: "2024-01-01T00:00:00Z",
   updated_at: "2024-01-01T00:00:00Z",
   preferences: {},
+  ai_interactions_used: 0,
+  credits_remaining: 0,
+  usage_reset_at: null,
 };
 
 /**

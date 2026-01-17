@@ -27,7 +27,7 @@ import {
   signUpSchema,
   validate,
   voicePreferenceSchema,
-} from "@/middlewares/validation";
+} from "@/validation";
 import { sendR } from "@/utils/http";
 import { logger } from "@/utils/logger";
 

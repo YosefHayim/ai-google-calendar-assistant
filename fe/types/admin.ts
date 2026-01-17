@@ -202,6 +202,9 @@ export interface AffiliateProgramSettings {
   minimumPayout: number
   autoApproval: boolean
   subscriptionCommission: boolean
+  storeName: string
+  storeDomain: string
+  trackingScript: string
 }
 
 export interface AffiliateDashboardUrls {

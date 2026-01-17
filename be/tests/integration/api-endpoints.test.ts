@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
+import { isEmail } from "validator";
 import { mockFn } from "../test-utils";
 
 const mockSupabaseFrom = mockFn();
@@ -88,10 +89,9 @@ describe("API Endpoint Integration Tests", () => {
           "spaces in@email.com",
         ];
 
-        invalidEmails.forEach((email) => {
-          const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-          expect(isValid).toBe(false);
-        });
+        for (const email of invalidEmails) {
+          expect(isEmail(email)).toBe(false);
+        }
       });
 
       it("should reject weak passwords", () => {

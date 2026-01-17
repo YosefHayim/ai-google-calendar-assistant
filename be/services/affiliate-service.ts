@@ -60,6 +60,9 @@ export type AffiliateProgramSettings = {
   minimumPayout: number;
   autoApproval: boolean;
   subscriptionCommission: boolean;
+  storeName: string;
+  storeDomain: string;
+  trackingScript: string;
 };
 
 export type AffiliateDashboardUrls = {
@@ -189,6 +192,10 @@ export const getAffiliateProgramSettings = (): AffiliateProgramSettings => ({
   minimumPayout: 1000,
   autoApproval: false,
   subscriptionCommission: true,
+  storeName: "ally-ai-google-calendar-assitant",
+  storeDomain: "store.askally.io",
+  trackingScript: `<script>window.lemonSqueezyAffiliateConfig = { store: "ally-ai-google-calendar-assitant" };</script>
+<script src="https://lmsqueezy.com/affiliate.js" defer></script>`,
 });
 
 export const getAffiliateDashboardUrls = (): AffiliateDashboardUrls => ({

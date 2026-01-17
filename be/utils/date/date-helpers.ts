@@ -1,4 +1,4 @@
-import { isToday as dateFnsIsToday, parseISO, startOfDay } from "date-fns";
+import { getYear, isValid, isToday as dateFnsIsToday, parseISO, startOfDay } from "date-fns";
 
 /**
  * @description Returns a new Date object set to the start of the day (00:00:00.000) for the given date.
@@ -36,3 +36,18 @@ export const getStartOfDay = (date: Date = new Date()): Date =>
  */
 export const isToday = (dateString: string): boolean =>
   dateFnsIsToday(parseISO(dateString));
+
+const MIN_VALID_YEAR = 2020;
+const MAX_VALID_YEAR = 2100;
+
+export const isValidDateTime = (dt: string): boolean => {
+  if (!dt || dt.trim() === "") {
+    return false;
+  }
+  const parsed = parseISO(dt);
+  if (!isValid(parsed)) {
+    return false;
+  }
+  const year = getYear(parsed);
+  return year >= MIN_VALID_YEAR && year <= MAX_VALID_YEAR;
+};

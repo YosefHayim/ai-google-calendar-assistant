@@ -47,6 +47,10 @@
  */
 
 export {
+  ContactFormEmail,
+  type ContactFormEmailProps,
+} from "./ContactFormEmail";
+export {
   type CalendarEvent,
   DailyDigest,
   type DailyDigestProps,

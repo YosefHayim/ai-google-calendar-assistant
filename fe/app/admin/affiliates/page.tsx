@@ -5,11 +5,17 @@ import {
   ChevronLeft,
   ChevronRight,
   Clock,
+  Code2,
+  Copy,
+  Check,
   DollarSign,
   ExternalLink,
+  HelpCircle,
+  Link2,
   Percent,
   RefreshCw,
   Search,
+  Settings,
   Users2,
 } from 'lucide-react'
 import { useState } from 'react'
@@ -18,6 +24,14 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
 import { useAdminAffiliates, useAffiliateSettings } from '@/hooks/queries/admin'
 import { formatCurrency } from '@/lib/formatUtils'
 import type { AdminAffiliateListParams, AffiliateStatus } from '@/types/admin'
@@ -26,6 +40,7 @@ export default function AdminAffiliatesPage() {
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
   const [statusFilter, setStatusFilter] = useState<AffiliateStatus | ''>('')
+  const [settingsOpen, setSettingsOpen] = useState(false)
 
   const params: AdminAffiliateListParams = {
     page,
@@ -46,10 +61,35 @@ export default function AdminAffiliatesPage() {
             View affiliates and program settings. Manage affiliates in Lemon Squeezy.
           </p>
         </div>
-        <Button onClick={() => refetch()} size="sm" variant="outline">
-          <RefreshCw className="mr-2 h-4 w-4" />
-          Refresh
-        </Button>
+        <div className="flex gap-2">
+          <Dialog onOpenChange={setSettingsOpen} open={settingsOpen}>
+            <DialogTrigger asChild>
+              <Button size="sm" variant="outline">
+                <Settings className="mr-2 h-4 w-4" />
+                Settings
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>Affiliate Program Settings</DialogTitle>
+                <DialogDescription>
+                  Configure your affiliate program URLs and tracking code
+                </DialogDescription>
+              </DialogHeader>
+              {settingsLoading ? (
+                <div className="flex justify-center py-8">
+                  <LoadingSpinner size="lg" />
+                </div>
+              ) : (
+                <AffiliateSettingsContent settings={settingsData?.settings} />
+              )}
+            </DialogContent>
+          </Dialog>
+          <Button onClick={() => refetch()} size="sm" variant="outline">
+            <RefreshCw className="mr-2 h-4 w-4" />
+            Refresh
+          </Button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -268,4 +308,162 @@ function StatusBadge({ status }: { status: AffiliateStatus }) {
     disabled: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
   }
   return <Badge className={variants[status]}>{status}</Badge>
+}
+
+function CopyButton({ text, label }: { text: string; label: string }) {
+  const [copied, setCopied] = useState(false)
+
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(text)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  return (
+    <Button className="shrink-0" onClick={handleCopy} size="sm" variant="outline">
+      {copied ? (
+        <>
+          <Check className="mr-2 h-4 w-4 text-green-500" />
+          Copied!
+        </>
+      ) : (
+        <>
+          <Copy className="mr-2 h-4 w-4" />
+          {label}
+        </>
+      )}
+    </Button>
+  )
+}
+
+function AffiliateSettingsContent({
+  settings,
+}: {
+  settings:
+    | {
+        affiliateHubUrl: string
+        storeName: string
+        storeDomain: string
+        trackingScript: string
+      }
+    | undefined
+}) {
+  if (!settings) {
+    return (
+      <div className="py-8 text-center text-zinc-500">
+        Unable to load affiliate settings
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="space-y-2">
+        <div className="flex items-center gap-2">
+          <Link2 className="h-4 w-4 text-zinc-500" />
+          <h3 className="font-medium text-zinc-900 dark:text-white">Affiliate Signup URL</h3>
+        </div>
+        <p className="text-sm text-zinc-500">
+          Anyone can apply to be your affiliate with this link
+        </p>
+        <div className="flex items-center gap-2">
+          <div className="flex-1 rounded-md border border-zinc-200 bg-zinc-50 px-3 py-2 font-mono text-sm dark:border-zinc-700 dark:bg-zinc-900">
+            {settings.affiliateHubUrl}
+          </div>
+          <CopyButton label="Copy" text={settings.affiliateHubUrl} />
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <div className="flex items-center gap-2">
+          <Link2 className="h-4 w-4 text-zinc-500" />
+          <h3 className="font-medium text-zinc-900 dark:text-white">Affiliate Referral URL</h3>
+          <a
+            className="inline-flex items-center text-sm text-blue-500 hover:text-blue-600"
+            href="https://docs.lemonsqueezy.com/help/affiliates/how-referrals-work"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Help
+            <HelpCircle className="ml-1 h-3 w-3" />
+          </a>
+        </div>
+        <p className="text-sm text-zinc-500">
+          Set your default affiliate URL
+        </p>
+        <div className="flex items-center gap-2">
+          <div className="flex items-center rounded-md border border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
+            <span className="px-3 py-2 text-sm text-zinc-500">https://</span>
+            <div className="border-zinc-200 border-l px-3 py-2 font-mono text-sm dark:border-zinc-700">
+              {settings.storeDomain}
+            </div>
+          </div>
+          <CopyButton label="Copy" text={`https://${settings.storeDomain}`} />
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <div className="flex items-center gap-2">
+          <Code2 className="h-4 w-4 text-zinc-500" />
+          <h3 className="font-medium text-zinc-900 dark:text-white">Affiliate Tracking Script</h3>
+          <a
+            className="inline-flex items-center text-sm text-blue-500 hover:text-blue-600"
+            href="https://docs.lemonsqueezy.com/help/affiliates/tracking-affiliate-referrals"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Help
+            <HelpCircle className="ml-1 h-3 w-3" />
+          </a>
+        </div>
+        <p className="text-sm text-zinc-500">
+          Copy and paste the tracking code into the {'<head>'} or before the closing body tag of your website
+        </p>
+        <div className="relative">
+          <pre className="overflow-x-auto rounded-md border border-zinc-200 bg-zinc-950 p-4 font-mono text-sm text-zinc-100 dark:border-zinc-700">
+            <code>{settings.trackingScript}</code>
+          </pre>
+          <div className="absolute top-2 right-2">
+            <CopyButton label="Copy Code" text={settings.trackingScript} />
+          </div>
+        </div>
+      </div>
+
+      <div className="border-zinc-200 border-t pt-4 dark:border-zinc-700">
+        <p className="mb-3 text-sm text-zinc-500">Manage your affiliate program in Lemon Squeezy</p>
+        <div className="flex flex-wrap gap-2">
+          <Button asChild size="sm" variant="outline">
+            <a
+              href="https://app.lemonsqueezy.com/settings/affiliates"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              <ExternalLink className="mr-2 h-4 w-4" />
+              Affiliate Settings
+            </a>
+          </Button>
+          <Button asChild size="sm" variant="outline">
+            <a
+              href="https://app.lemonsqueezy.com/affiliates"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              <Users2 className="mr-2 h-4 w-4" />
+              View All Affiliates
+            </a>
+          </Button>
+          <Button asChild size="sm" variant="outline">
+            <a
+              href="https://app.lemonsqueezy.com/affiliates/payouts"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              <DollarSign className="mr-2 h-4 w-4" />
+              Manage Payouts
+            </a>
+          </Button>
+        </div>
+      </div>
+    </div>
+  )
 }
