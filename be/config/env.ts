@@ -1,5 +1,5 @@
-import path from "node:path";
 import dotenv from "dotenv";
+import path from "node:path";
 
 // Only load .env file in development - in production, env vars are injected by the platform
 if (process.env.NODE_ENV !== "production") {
@@ -15,8 +15,7 @@ const CONSTANTS = {
   SUPABASE_URL: "https://vdwjfekcsnurtjsieojv.supabase.co",
 
   // Google OAuth
-  GOOGLE_CLIENT_ID:
-    "633918377873-vvlgvie0ksenm5jcvs3c74vhb17rdqsn.apps.googleusercontent.com",
+  GOOGLE_CLIENT_ID: "633918377873-vvlgvie0ksenm5jcvs3c74vhb17rdqsn.apps.googleusercontent.com",
 
   // URLs (Production)
   PROD_BACKEND_URL: "https://be.askally.io",
@@ -60,20 +59,14 @@ const CONSTANTS = {
 // Validation - Only secrets need to be in .env
 // ============================================================================
 
-const REQUIRED_SECRETS = [
-  "SUPABASE_SERVICE_ROLE_KEY",
-  "OPEN_API_KEY",
-  "GOOGLE_CLIENT_SECRET",
-] as const;
+const REQUIRED_SECRETS = ["SUPABASE_SERVICE_ROLE_KEY", "OPEN_API_KEY", "GOOGLE_CLIENT_SECRET"] as const;
 
 const isTestEnv = process.env.TEST_ENV === "true" || process.env.NODE_ENV === "test";
 
 if (!isTestEnv) {
   const missing = REQUIRED_SECRETS.filter((key) => !process.env[key]);
   if (missing.length > 0) {
-    throw new Error(
-      `Missing required secret environment variables: ${missing.join(", ")}`
-    );
+    throw new Error(`Missing required secret environment variables: ${missing.join(", ")}`);
   }
 }
 
@@ -81,8 +74,7 @@ if (!isTestEnv) {
 // Helper to get optional env vars with type safety
 // ============================================================================
 
-const getOptional = (key: string): string | undefined =>
-  process.env[key] || undefined;
+const getOptional = (key: string): string | undefined => process.env[key] || undefined;
 const getRequired = (key: string): string => {
   if (isTestEnv && !process.env[key]) {
     return `test-${key.toLowerCase().replace(/_/g, "-")}`;
@@ -109,8 +101,7 @@ const isProdPort = port === CONSTANTS.PROD_PORT;
 
 export const isTest = nodeEnv === "test";
 export const isDev = isDevPort && !isProdPort && nodeEnv !== "production";
-export const isProd =
-  isProdPort || nodeEnv === "production" || !(isDev || isTest);
+export const isProd = isProdPort || nodeEnv === "production" || !(isDev || isTest);
 
 // ============================================================================
 // Server Configuration
@@ -118,7 +109,7 @@ export const isProd =
 
 const server = {
   nodeEnv,
-  port,
+  port: isDev ? CONSTANTS.DEV_PORT : CONSTANTS.PROD_PORT,
   host: process.env.HOST ?? CONSTANTS.DEFAULT_HOST,
   get baseUrl(): string {
     // In production, use hardcoded URL. In dev, use localhost.
@@ -236,13 +227,7 @@ const integrations = {
       return `https://graph.facebook.com/${this.apiVersion}`;
     },
     get isFullyConfigured(): boolean {
-      return !!(
-        this.phoneNumberId &&
-        this.businessAccountId &&
-        this.accessToken &&
-        this.verifyToken &&
-        this.appSecret
-      );
+      return !!(this.phoneNumberId && this.businessAccountId && this.accessToken && this.verifyToken && this.appSecret);
     },
   },
   slack: {
