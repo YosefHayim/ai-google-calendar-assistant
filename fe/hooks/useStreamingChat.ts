@@ -11,7 +11,6 @@ export interface ImageContent {
 }
 
 interface UseStreamingChatOptions {
-  profileId?: string | null
   onStreamComplete?: (conversationId: string, fullResponse: string) => void
   onStreamError?: (error: string) => void
   onTitleGenerated?: (conversationId: string, title: string) => void

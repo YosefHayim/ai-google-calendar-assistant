@@ -9,7 +9,7 @@ export {
   type TrackedEvent,
   type UserPreferencesContext,
   unifiedContextStore,
-} from "./context";
+} from "./context"
 
 export {
   type ChatParams,
@@ -17,8 +17,6 @@ export {
   createAnthropicProvider,
   createGoogleProvider,
   createOpenAIProvider,
-  createProviderFromProfile,
-  isOpenAIProvider,
   type LLMProvider,
   type Message,
   type MessageRole,
@@ -26,31 +24,17 @@ export {
   type StreamChunk,
   type ToolCall,
   type ToolDefinition,
-} from "./llm";
+} from "./llm"
+
 export {
-  AGENT_PROFILES,
-  type AgentCapability,
-  type AgentProfile,
-  type AgentProfileResponse,
-  type AgentTier,
   type CreateTextAgentOptions,
   createTextAgent,
-  DEFAULT_AGENT_PROFILE_ID,
-  formatProfileForClient,
-  getAgentProfile,
-  getModelSpec,
-  getProfilesForTier,
   type Modality as TextModality,
-  type ModelProvider,
-  type ModelSpec,
-  type ModelTier,
   type RunTextAgentOptions,
   runTextAgent,
   type StreamEvent,
-  supportsTools,
   type TextAgentConfig,
-  type VoiceStyle,
-} from "./orchestrator";
+} from "./orchestrator"
 
 export {
   AUTH_CONTEXT,
@@ -63,7 +47,7 @@ export {
   INTENT_RECOGNITION,
   RESPONSE_STYLE,
   TIME_INFERENCE,
-} from "./prompts";
+} from "./prompts"
 
 export {
   type AnalyzeGapsResult,
@@ -90,7 +74,7 @@ export {
   updateEventHandler,
   type ValidateUserResult,
   validateUserHandler,
-} from "./tools/handlers";
+} from "./tools/handlers"
 
 export {
   executeTool,
@@ -99,7 +83,7 @@ export {
   isToolAvailable,
   type ToolExecutionResult,
   type ToolExecutorContext,
-} from "./tools/tool-executor";
+} from "./tools/tool-executor"
 
 export {
   type AgentContext as SharedAgentContext,
@@ -110,4 +94,4 @@ export {
   type Modality,
   type ProjectionMode,
   stringifyError,
-} from "./types";
+} from "./types"

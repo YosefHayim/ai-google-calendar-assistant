@@ -4,7 +4,6 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { usePostHog } from 'posthog-js/react'
 import { toast } from 'sonner'
 
-import { AgentProfileSelector } from '../AgentProfileSelector'
 import { AvatarView } from '../AvatarView'
 import { ChatInput, ImageFile } from '../ChatInput'
 import { ChatView } from '../ChatView'
@@ -29,7 +28,6 @@ export function ChatInterface() {
     isLoadingConversation,
     addConversationToList,
     updateConversationTitle,
-    selectedProfileId,
   } = useChatContext()
 
   const { data: voiceData } = useVoicePreference()
@@ -134,7 +132,6 @@ export function ChatInterface() {
   )
 
   const { streamingState, sendStreamingMessage, cancelStream, resetStreamingState } = useStreamingChat({
-    profileId: selectedProfileId,
     onStreamComplete: handleStreamComplete,
     onStreamError: handleStreamError,
     onTitleGenerated: handleTitleGenerated,
@@ -267,16 +264,8 @@ export function ChatInterface() {
         </div>
 
         {/* Desktop absolute positioned elements */}
-        <div className="hidden md:block absolute top-4 left-4 z-30">
-          <AgentProfileSelector />
-        </div>
         <div className="hidden md:block">
           <ViewSwitcher activeTab={activeTab} onTabChange={setActiveTab} />
-        </div>
-
-        {/* Mobile agent profile selector */}
-        <div className="md:hidden absolute top-14 left-4 z-20">
-          <AgentProfileSelector />
         </div>
 
         {isLoadingConversation && <LoadingSpinner overlay />}

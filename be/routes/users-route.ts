@@ -4,7 +4,6 @@ import express, {
   type Response,
 } from "express";
 import { STATUS_RESPONSE } from "@/config";
-import { agentProfilesController } from "@/controllers/agent-profiles-controller";
 import { userPreferencesController } from "@/controllers/user-preferences-controller";
 import { authController } from "@/controllers/users/auth-controller";
 import { googleIntegrationController } from "@/controllers/users/google-integration-controller";
@@ -133,19 +132,6 @@ router.put(
   validate(crossPlatformSyncSchema, "body"),
   userPreferencesController.updatePreference
 );
-
-router.get("/agent-profiles", agentProfilesController.listProfiles);
-router.get(
-  "/agent-profiles/selected",
-  supabaseAuth(),
-  agentProfilesController.getUserSelectedProfile
-);
-router.put(
-  "/agent-profiles/selected",
-  supabaseAuth(),
-  agentProfilesController.setUserSelectedProfile
-);
-router.get("/agent-profiles/:id", agentProfilesController.getProfile);
 
 router.post(
   "/refresh",

@@ -57,6 +57,5 @@ router.post(
   voiceRateLimiter,
   voiceController.synthesize
 );
-router.get("/agents/profiles", voiceController.getAgentProfiles);
 
 export default router;

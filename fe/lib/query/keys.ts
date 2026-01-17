@@ -71,15 +71,6 @@ export const queryKeys = {
     geoLocation: () => [...queryKeys.preferences.all, 'geo_location'] as const,
     notificationSettings: () => [...queryKeys.preferences.all, 'notification_settings'] as const,
   },
-
-  // Agent Profiles queries
-  agentProfiles: {
-    all: ['agent-profiles'] as const,
-    list: (params?: { tier?: string; voiceOnly?: boolean }) =>
-      [...queryKeys.agentProfiles.all, 'list', params ?? {}] as const,
-    detail: (id: string) => [...queryKeys.agentProfiles.all, 'detail', id] as const,
-    selected: () => [...queryKeys.agentProfiles.all, 'selected'] as const,
-  },
 } as const
 
 /** Type helper for query keys */

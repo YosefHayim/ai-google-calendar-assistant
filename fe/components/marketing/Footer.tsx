@@ -2,12 +2,12 @@
 
 import { AllyLogo, BetaBadge } from '@/components/shared/logo'
 import { TelegramIcon, WhatsAppIcon } from '@/components/shared/Icons'
-import { SystemStatus } from './SystemStatus'
 
 import Link from 'next/link'
 import { Mail } from 'lucide-react'
 import React from 'react'
 import { SOCIAL_LINKS } from '@/lib/constants'
+import { SystemStatus } from './SystemStatus'
 import { useTranslation } from 'react-i18next'
 
 const Footer = () => {
@@ -34,7 +34,7 @@ const Footer = () => {
     {
       title: t('footer.resources'),
       links: [
-        { name: t('footer.blog'), href: '#' },
+        { name: t('footer.blog'), href: '/blog' },
         { name: t('footer.changeLog'), href: '/changelog' },
       ],
     },

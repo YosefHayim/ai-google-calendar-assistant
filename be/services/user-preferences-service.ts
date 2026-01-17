@@ -17,7 +17,6 @@ export type PreferenceKey =
   | "contextual_scheduling"
   | "reminder_defaults"
   | "voice_preference"
-  | "agent_profile"
   | "daily_briefing"
   | "cross_platform_sync"
   | "geo_location"
@@ -46,10 +45,6 @@ export type ReminderDefaultsPreference = {
 export type VoicePreference = {
   enabled: boolean;
   voice: "alloy" | "echo" | "fable" | "onyx" | "nova" | "shimmer";
-};
-
-export type AgentProfilePreference = {
-  profileId: string;
 };
 
 export type BriefingChannel = "email" | "telegram" | "whatsapp" | "slack";
@@ -88,7 +83,6 @@ export type PreferenceValue =
   | ContextualSchedulingPreference
   | ReminderDefaultsPreference
   | VoicePreference
-  | AgentProfilePreference
   | DailyBriefingPreference
   | CrossPlatformSyncPreference
   | GeoLocationPreference
@@ -113,7 +107,6 @@ export const PREFERENCE_DEFAULTS: Record<PreferenceKey, PreferenceValue> = {
     useCalendarDefaults: true,
   },
   voice_preference: { enabled: true, voice: "alloy" },
-  agent_profile: { profileId: "" },
   daily_briefing: {
     enabled: false,
     time: "08:00",
@@ -134,7 +127,6 @@ export const VALID_PREFERENCE_KEYS: PreferenceKey[] = [
   "contextual_scheduling",
   "reminder_defaults",
   "voice_preference",
-  "agent_profile",
   "daily_briefing",
   "cross_platform_sync",
   "geo_location",
@@ -340,15 +332,6 @@ export async function getVoicePreference(
   userId: string
 ): Promise<VoicePreference | null> {
   return getPreference<VoicePreference>(userId, "voice_preference");
-}
-
-/**
- * Get agent_profile preference
- */
-export async function getAgentProfilePreference(
-  userId: string
-): Promise<AgentProfilePreference | null> {
-  return getPreference<AgentProfilePreference>(userId, "agent_profile");
 }
 
 /**

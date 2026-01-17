@@ -1,27 +1,16 @@
-import { InlineKeyboard, InputFile } from "grammy";
-import {
-  AGENT_PROFILES,
-  getAgentProfile,
-} from "@/shared/orchestrator/agent-profiles";
-import { generateSpeechForTelegram } from "@/utils/ai/text-to-speech";
-import { telegramConversation } from "@/utils/conversation/TelegramConversationAdapter";
-import { logger } from "@/utils/logger";
-import type { SupportedLocale } from "../i18n";
+import { InlineKeyboard, InputFile } from "grammy"
+import { generateSpeechForTelegram } from "@/utils/ai/text-to-speech"
+import { telegramConversation } from "@/utils/conversation/TelegramConversationAdapter"
+import { logger } from "@/utils/logger"
+import type { SupportedLocale } from "../i18n"
 import {
   createTranslator,
   getTranslatorFromLanguageCode,
   SUPPORTED_LOCALES,
-} from "../i18n";
-import type { GlobalContext } from "../init-bot";
-import { ResponseBuilder } from "../response-system";
-import {
-  getAllAgentProfiles,
-  getProviderIcon,
-  getSelectedAgentProfileForTelegram,
-  getTierBadge,
-  setSelectedAgentProfileForTelegram,
-} from "./agent-profile";
-import { getVoicePreferenceForTelegram } from "./ally-brain";
+} from "../i18n"
+import type { GlobalContext } from "../init-bot"
+import { ResponseBuilder } from "../response-system"
+import { getVoicePreferenceForTelegram } from "./ally-brain"
 import { resetSession } from "./session";
 import { gatherUserKnowledge } from "./user-knowledge";
 
@@ -1151,71 +1140,6 @@ export const handleAsVoiceCommand = async (
   }
 };
 
-export const handleProfileCommand = async (
-  ctx: GlobalContext
-): Promise<void> => {
-  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
-  const telegramUserId = ctx.from?.id;
-
-  if (!telegramUserId) {
-    const response = ResponseBuilder.telegram()
-      .direction(direction)
-      .header("🤖", t("commands.profile.header"))
-      .text(t("commands.profile.noUser"))
-      .build();
-    await ctx.reply(response.content, { parse_mode: "HTML" });
-    return;
-  }
-
-  try {
-    const currentProfileId =
-      await getSelectedAgentProfileForTelegram(telegramUserId);
-    const currentProfile = getAgentProfile(currentProfileId);
-    const allProfiles = getAllAgentProfiles();
-
-    const keyboard = new InlineKeyboard();
-
-    for (const profile of allProfiles) {
-      const isSelected = profile.id === currentProfileId;
-      const providerIcon = getProviderIcon(profile.modelConfig.provider);
-      const tierBadge = getTierBadge(profile.tier);
-      const label = isSelected
-        ? `✓ ${profile.displayName} ${tierBadge}`
-        : `${providerIcon} ${profile.displayName} ${tierBadge}`;
-
-      keyboard.text(label, `profile:${profile.id}`).row();
-    }
-
-    const response = ResponseBuilder.telegram()
-      .direction(direction)
-      .header("🤖", t("commands.profile.header"))
-      .text(t("commands.profile.description"))
-      .spacing()
-      .text(
-        `<b>${t("commands.profile.currentProfile")}:</b> ${currentProfile.displayName}`
-      )
-      .text(`<i>${currentProfile.tagline}</i>`)
-      .spacing()
-      .text(`<b>${t("commands.profile.tier")}:</b> ${currentProfile.tier}`)
-      .spacing()
-      .text(t("commands.profile.selectPrompt"))
-      .build();
-
-    await ctx.reply(response.content, {
-      parse_mode: "HTML",
-      reply_markup: keyboard,
-    });
-  } catch (error) {
-    logger.error(`Telegram Bot: Failed to get profile settings: ${error}`);
-    const response = ResponseBuilder.telegram()
-      .direction(direction)
-      .header("🤖", t("commands.profile.header"))
-      .text(t("commands.profile.error"))
-      .build();
-    await ctx.reply(response.content, { parse_mode: "HTML" });
-  }
-};
-
 export const handleWebsiteCommand = async (
   ctx: GlobalContext
 ): Promise<void> => {
@@ -1232,44 +1156,6 @@ export const handleWebsiteCommand = async (
     .build();
 
   await ctx.reply(response.content, { parse_mode: "HTML" });
-};
-
-export const handleProfileSelection = async (
-  ctx: GlobalContext,
-  profileId: string
-): Promise<void> => {
-  const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
-  const telegramUserId = ctx.from?.id;
-
-  if (!telegramUserId) {
-    await ctx.answerCallbackQuery(t("commands.profile.noUser"));
-    return;
-  }
-
-  try {
-    if (!AGENT_PROFILES[profileId]) {
-      await ctx.answerCallbackQuery(t("commands.profile.invalidProfile"));
-      return;
-    }
-
-    const success = await setSelectedAgentProfileForTelegram(
-      telegramUserId,
-      profileId
-    );
-
-    if (success) {
-      const profile = getAgentProfile(profileId);
-      await ctx.answerCallbackQuery(
-        `${t("commands.profile.switched")} ${profile.displayName}`
-      );
-      await handleProfileCommand(ctx);
-    } else {
-      await ctx.answerCallbackQuery(t("commands.profile.updateFailed"));
-    }
-  } catch (error) {
-    logger.error(`Telegram Bot: Failed to update profile: ${error}`);
-    await ctx.answerCallbackQuery(t("commands.profile.error"));
-  }
 };
 
 export const handleRescheduleCommand = async (
