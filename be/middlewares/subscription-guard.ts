@@ -9,8 +9,9 @@ export const subscriptionGuard = () =>
   reqResAsyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
       const userId = req.user?.id;
+      const userEmail = req.user?.email;
 
-      if (!userId) {
+      if (!userId || !userEmail) {
         return sendR(
           res,
           STATUS_RESPONSE.UNAUTHORIZED,
@@ -18,13 +19,13 @@ export const subscriptionGuard = () =>
         );
       }
 
-      const access = await checkUserAccess(userId);
+      const access = await checkUserAccess(userId, userEmail);
 
       if (access.has_access) {
         return next();
       }
 
-      const wasTrialing = access.subscription_status === "canceled" ||
+      const wasTrialing = access.subscription_status === "cancelled" ||
         access.subscription_status === "unpaid" ||
         access.subscription_status === null;
 

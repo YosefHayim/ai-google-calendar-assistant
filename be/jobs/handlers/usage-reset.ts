@@ -1,106 +1,102 @@
-import type { Job } from "bullmq";
-import { SUPABASE } from "@/config/clients";
-import { logger } from "@/utils/logger";
+import type { Job } from "bullmq"
+import { SUPABASE } from "@/config/clients"
+import { logger } from "@/utils/logger"
 
-export type UsageResetJobData = Record<string, never>;
+export type UsageResetJobData = Record<string, never>
 
 export type UsageResetResult = {
-  subscriptionsReset: number;
-  errors: string[];
-};
-
-async function resetSubscriptionUsage(
-  subscriptionId: string,
-  now: Date
-): Promise<{ success: boolean; error?: string }> {
-  const newPeriodEnd = new Date(now);
-  newPeriodEnd.setMonth(newPeriodEnd.getMonth() + 1);
-
-  const { error: updateError } = await SUPABASE.from("subscriptions")
-    .update({
-      ai_interactions_used: 0,
-      current_period_start: now.toISOString(),
-      current_period_end: newPeriodEnd.toISOString(),
-      updated_at: now.toISOString(),
-    })
-    .eq("id", subscriptionId);
-
-  if (updateError) {
-    return { success: false, error: updateError.message };
-  }
-
-  return { success: true };
+  usersReset: number
+  errors: string[]
 }
 
-function shouldResetSubscription(periodEnd: string | null, now: Date): boolean {
-  if (!periodEnd) {
-    return true;
+const MONTHS_OFFSET = 1
+
+async function resetUserUsage(
+  userId: string,
+  now: Date
+): Promise<{ success: boolean; error?: string }> {
+  const newResetAt = new Date(now)
+  newResetAt.setMonth(newResetAt.getMonth() + MONTHS_OFFSET)
+
+  const { error: updateError } = await SUPABASE.from("users")
+    .update({
+      ai_interactions_used: 0,
+      usage_reset_at: now.toISOString(),
+      updated_at: now.toISOString(),
+    })
+    .eq("id", userId)
+
+  if (updateError) {
+    return { success: false, error: updateError.message }
   }
-  return now >= new Date(periodEnd);
+
+  return { success: true }
+}
+
+function shouldResetUsage(resetAt: string | null, now: Date): boolean {
+  if (!resetAt) {
+    return true
+  }
+  const resetDate = new Date(resetAt)
+  const nextReset = new Date(resetDate)
+  nextReset.setMonth(nextReset.getMonth() + MONTHS_OFFSET)
+  return now >= nextReset
 }
 
 export async function handleUsageReset(
   job: Job<UsageResetJobData>
 ): Promise<UsageResetResult> {
   const result: UsageResetResult = {
-    subscriptionsReset: 0,
+    usersReset: 0,
     errors: [],
-  };
+  }
 
-  logger.info(`[Job ${job.id}] Starting monthly usage reset...`);
+  logger.info(`[Job ${job.id}] Starting monthly usage reset...`)
 
   try {
-    const { data: activeSubscriptions, error: fetchError } =
-      await SUPABASE.from("subscriptions")
-        .select(
-          "id, user_id, ai_interactions_used, current_period_start, current_period_end"
-        )
-        .in("status", ["active", "trialing"])
-        .gt("ai_interactions_used", 0);
+    const { data: usersWithUsage, error: fetchError } =
+      await SUPABASE.from("users")
+        .select("id, ai_interactions_used, usage_reset_at")
+        .gt("ai_interactions_used", 0)
 
     if (fetchError) {
-      result.errors.push(`Fetch error: ${fetchError.message}`);
-      logger.error(`[Job ${job.id}] Error fetching subscriptions:`, fetchError);
-      throw fetchError;
+      result.errors.push(`Fetch error: ${fetchError.message}`)
+      logger.error(`[Job ${job.id}] Error fetching users:`, fetchError)
+      throw fetchError
     }
 
-    if (!activeSubscriptions || activeSubscriptions.length === 0) {
-      logger.info(`[Job ${job.id}] No subscriptions need usage reset`);
-      return result;
+    if (!usersWithUsage || usersWithUsage.length === 0) {
+      logger.info(`[Job ${job.id}] No users need usage reset`)
+      return result
     }
 
-    const now = new Date();
+    const now = new Date()
 
-    for (const subscription of activeSubscriptions) {
-      if (!shouldResetSubscription(subscription.current_period_end, now)) {
-        continue;
+    for (const user of usersWithUsage) {
+      if (!shouldResetUsage(user.usage_reset_at, now)) {
+        continue
       }
 
-      const resetOutcome = await resetSubscriptionUsage(subscription.id, now);
+      const resetOutcome = await resetUserUsage(user.id, now)
 
       if (resetOutcome.success) {
-        result.subscriptionsReset++;
-        logger.info(
-          `[Job ${job.id}] Reset usage for subscription ${subscription.id}`
-        );
+        result.usersReset++
+        logger.info(`[Job ${job.id}] Reset usage for user ${user.id}`)
       } else {
-        result.errors.push(
-          `Reset error for ${subscription.id}: ${resetOutcome.error}`
-        );
+        result.errors.push(`Reset error for ${user.id}: ${resetOutcome.error}`)
         logger.error(
-          `[Job ${job.id}] Error resetting ${subscription.id}:`,
+          `[Job ${job.id}] Error resetting ${user.id}:`,
           resetOutcome.error
-        );
+        )
       }
     }
 
-    logger.info(`[Job ${job.id}] Monthly usage reset completed`, result);
-    return result;
+    logger.info(`[Job ${job.id}] Monthly usage reset completed`, result)
+    return result
   } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : "Unknown error";
-    result.errors.push(errorMessage);
-    logger.error(`[Job ${job.id}] Monthly usage reset failed:`, error);
-    throw error;
+    const errorMessage = error instanceof Error ? error.message : "Unknown error"
+    result.errors.push(errorMessage)
+    logger.error(`[Job ${job.id}] Monthly usage reset failed:`, error)
+    throw error
   }
 }

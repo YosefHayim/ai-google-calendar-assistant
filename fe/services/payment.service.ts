@@ -5,7 +5,7 @@ import { apiClient } from '@/lib/api/client'
 // Types
 // ============================================================================
 
-export type PlanSlug = 'starter' | 'pro' | 'executive'
+export type PlanSlug = string
 export type PlanInterval = 'monthly' | 'yearly'
 export type SubscriptionStatus =
   | 'trialing'
@@ -20,7 +20,7 @@ export type SubscriptionStatus =
 export interface Plan {
   id: string
   name: string
-  slug: PlanSlug
+  slug: string
   description: string
   pricing: {
     monthly: number
@@ -34,6 +34,12 @@ export interface Plan {
   features: string[]
   isPopular: boolean
   isHighlighted: boolean
+  variantIdMonthly: string | null
+  variantIdYearly: string | null
+  buyNowUrlMonthly: string | null
+  buyNowUrlYearly: string | null
+  hasFreeTrial: boolean
+  trialDays: number | null
 }
 
 export interface PaymentStatus {
@@ -67,7 +73,7 @@ export interface UserAccess {
 }
 
 export interface CheckoutParams {
-  planSlug: PlanSlug
+  planSlug: string
   interval: PlanInterval
   successUrl?: string
   cancelUrl?: string
@@ -75,7 +81,7 @@ export interface CheckoutParams {
 
 export interface CreditPackCheckoutParams {
   credits: number
-  planSlug: PlanSlug
+  planSlug: string
   successUrl?: string
   cancelUrl?: string
 }

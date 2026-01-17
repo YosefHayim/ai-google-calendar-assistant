@@ -27,11 +27,11 @@ export function PlanRow({ plan, selectedFrequency, actionType, isLoading, onActi
   const isHighlighted = plan.isHighlighted
   const isPopular = plan.isPopular
   const isCurrentPlan = actionType === 'current'
-  const isExecutive = plan.slug === 'executive'
+  const isCustomTier = plan.isHighlighted
 
   const getPrice = () => {
     if (isPerUse) {
-      if (isExecutive) {
+      if (isCustomTier) {
         return customCredits / 100
       }
       return plan.pricing.perUse
@@ -43,14 +43,13 @@ export function PlanRow({ plan, selectedFrequency, actionType, isLoading, onActi
   const isFree = price === 0
 
   const getPlanIcon = () => {
-    switch (plan.slug) {
-      case 'executive':
-        return <Crown className="w-5 h-5 text-amber-500" />
-      case 'pro':
-        return <Zap className="w-5 h-5 text-primary" />
-      default:
-        return <Shield className="w-5 h-5 text-zinc-500" />
+    if (plan.isHighlighted) {
+      return <Crown className="w-5 h-5 text-amber-500" />
     }
+    if (plan.isPopular) {
+      return <Zap className="w-5 h-5 text-primary" />
+    }
+    return <Shield className="w-5 h-5 text-zinc-500" />
   }
 
   const adjustCredits = (delta: number) => {
@@ -162,7 +161,7 @@ export function PlanRow({ plan, selectedFrequency, actionType, isLoading, onActi
               </Button>
             ) : actionType === 'upgrade' ? (
               <Button
-                onClick={() => onAction(isExecutive && isPerUse ? customCredits : undefined)}
+                onClick={() => onAction(isCustomTier && isPerUse ? customCredits : undefined)}
                 size="sm"
                 className={cn('min-w-20 sm:min-w-24', isHighlighted && 'bg-white text-zinc-900 hover:bg-zinc-100')}
               >
@@ -183,7 +182,7 @@ export function PlanRow({ plan, selectedFrequency, actionType, isLoading, onActi
           </div>
         </div>
 
-        {isPerUse && isExecutive && (
+        {isPerUse && isCustomTier && (
           <div className="mt-3 pt-3 border-t border-white/10">
             <div className="flex flex-wrap items-center gap-3 sm:flex-nowrap">
               <button

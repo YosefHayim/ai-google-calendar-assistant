@@ -86,13 +86,14 @@ const Navbar = () => {
   ]
 
   return (
-    <nav
-      className={`fixed top-0 left-0 right-0 z-[60] transition-all duration-300 ${
-        isScrolled
-          ? 'py-3 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800 shadow-sm'
-          : 'py-6 bg-transparent'
-      }`}
-    >
+    <>
+      <nav
+        className={`fixed top-0 left-0 right-0 z-[60] transition-all duration-300 ${
+          isScrolled
+            ? 'py-3 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800 shadow-sm'
+            : 'py-6 bg-transparent'
+        }`}
+      >
       <div className="container mx-auto px-4 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 group">
           <div className="w-8 h-8 bg-zinc-900 dark:bg-white rounded-md flex items-center justify-center text-white dark:text-zinc-900 shadow-sm group-hover:scale-110 transition-transform">
@@ -168,15 +169,12 @@ const Navbar = () => {
           )}
           <LanguageDropdown compact />
           <ThemeToggle className="scale-75" />
+          <AnimatedHamburger isOpen={isMobileMenuOpen} onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} />
         </div>
       </div>
+      </nav>
 
-      {/* Mobile Hamburger - Fixed position, always accessible */}
-      <div className="fixed top-3 right-4 z-[90] md:hidden">
-        <AnimatedHamburger isOpen={isMobileMenuOpen} onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} />
-      </div>
-
-      {/* Mobile Side Navigation */}
+      {/* Mobile Side Navigation - Outside nav to avoid backdrop-blur inheritance */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <>
@@ -195,7 +193,7 @@ const Navbar = () => {
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed inset-y-0 left-0 w-[80%] max-w-sm bg-white dark:bg-zinc-950 z-[80] md:hidden shadow-2xl border-r border-zinc-200 dark:border-zinc-800 flex flex-col p-6 pt-10"
+              className="fixed inset-y-0 left-0 w-[80%] max-w-sm z-[80] md:hidden shadow-2xl border-r border-zinc-200 dark:border-zinc-800 flex flex-col p-6 pt-10 bg-[#ffffff] dark:bg-[#09090b]"
             >
               <div className="flex items-center mb-10">
                 <Link href="/" className="flex items-center gap-2" onClick={() => setIsMobileMenuOpen(false)}>
@@ -314,7 +312,7 @@ const Navbar = () => {
           </>
         )}
       </AnimatePresence>
-    </nav>
+    </>
   )
 }
 

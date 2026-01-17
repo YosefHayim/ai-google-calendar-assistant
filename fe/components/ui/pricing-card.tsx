@@ -34,12 +34,13 @@ export interface PricingTier {
 interface PricingCardProps {
   tier: PricingTier
   paymentFrequency: string
+  isCurrentPlan?: boolean
 }
 
 const MAX_CUSTOM_INTERACTIONS = 10000
 const MIN_CUSTOM_INTERACTIONS = 100
 
-export const PricingCard: React.FC<PricingCardProps> = ({ tier, paymentFrequency }) => {
+export const PricingCard: React.FC<PricingCardProps> = ({ tier, paymentFrequency, isCurrentPlan = false }) => {
   const [customAmount, setCustomAmount] = useState<number>(1000)
   const [isEditing, setIsEditing] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -121,18 +122,20 @@ export const PricingCard: React.FC<PricingCardProps> = ({ tier, paymentFrequency
         const credits = isCustomTier ? customAmount : (tier as any).action_pack_size || 25
         await redirectToCreditPackCheckout({
           credits,
-          planSlug: tier.id as PlanSlug,
+          planSlug: tier.id,
         })
       } else {
         // Subscription checkout
-        if (tier.id === 'starter') {
-          // Free plan - redirect to dashboard
+        const price = tier.price[paymentFrequency as keyof typeof tier.price]
+        const isFreePrice = price === 0 || price === 'Free'
+
+        if (isFreePrice) {
           router.push('/dashboard')
           return
         }
 
         await redirectToCheckout({
-          planSlug: tier.id as PlanSlug,
+          planSlug: tier.id,
           interval: paymentFrequency as PlanInterval,
         })
       }
@@ -165,7 +168,19 @@ export const PricingCard: React.FC<PricingCardProps> = ({ tier, paymentFrequency
 
         <h2 className={cn('flex items-center gap-3 text-xl font-medium capitalize z-10', getPrimaryTextColor())}>
           {tier.name}
-          {isPopular && (
+          {isCurrentPlan && (
+            <Badge
+              className={cn(
+                'mt-1 z-10 border-green-500/30',
+                isHighlighted
+                  ? 'bg-green-500/20 text-green-100 dark:bg-green-500/30 dark:text-green-200'
+                  : 'bg-green-500/20 text-green-700 dark:bg-green-500/20 dark:text-green-400',
+              )}
+            >
+              Current Plan
+            </Badge>
+          )}
+          {isPopular && !isCurrentPlan && (
             <Badge
               className={cn(
                 'mt-1 z-10 border-primary/30',
@@ -332,19 +347,33 @@ export const PricingCard: React.FC<PricingCardProps> = ({ tier, paymentFrequency
           </ul>
         </div>
 
-        <InteractiveHoverButton
-          text={isPerUse ? 'Buy Credit Pack' : tier.cta}
-          loadingText="Redirecting..."
-          isLoading={isLoading}
-          Icon={<ArrowRight className="w-5 h-5" />}
-          className={cn(
-            'w-full z-10 font-bold h-12',
-            isHighlighted
-              ? 'bg-white text-zinc-950 hover:bg-white/90 dark:bg-zinc-950 dark:text-white dark:hover:bg-zinc-900 border-white dark:border-zinc-950'
-              : '',
-          )}
-          onClick={handleGetStarted}
-        />
+        {isCurrentPlan ? (
+          <div
+            className={cn(
+              'w-full z-10 font-bold h-12 flex items-center justify-center rounded-lg border-2',
+              isHighlighted
+                ? 'bg-green-500/20 text-green-100 border-green-500/30 dark:bg-green-500/20 dark:text-green-200'
+                : 'bg-green-500/10 text-green-700 border-green-500/30 dark:bg-green-500/10 dark:text-green-400',
+            )}
+          >
+            <BadgeCheck className="w-5 h-5 mr-2" />
+            Your current plan
+          </div>
+        ) : (
+          <InteractiveHoverButton
+            text={isPerUse ? 'Buy Credit Pack' : tier.cta}
+            loadingText="Redirecting..."
+            isLoading={isLoading}
+            Icon={<ArrowRight className="w-5 h-5" />}
+            className={cn(
+              'w-full z-10 font-bold h-12',
+              isHighlighted
+                ? 'bg-white text-zinc-950 hover:bg-white/90 dark:bg-zinc-950 dark:text-white dark:hover:bg-zinc-900 border-white dark:border-zinc-950'
+                : '',
+            )}
+            onClick={handleGetStarted}
+          />
+        )}
       </Card>
 
       <style

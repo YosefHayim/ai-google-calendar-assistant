@@ -10,7 +10,6 @@ import {
   redirectToBillingPortal,
   upgradeSubscription,
   type Plan,
-  type PlanSlug,
   type PlanInterval,
 } from '@/services/payment.service'
 import { toast } from 'sonner'
@@ -18,7 +17,7 @@ import { useSubscriptionStatus, usePlans } from '@/hooks/queries/billing'
 import { CurrentPlanCard } from './components/CurrentPlanCard'
 import { PlanRow } from './components/PlanRow'
 import { PayAsYouGoCard } from './components/PayAsYouGoCard'
-import { PAYMENT_FREQUENCIES, PLAN_ORDER, CREDIT_PACK_SIZES, type ActionType } from './types'
+import { PAYMENT_FREQUENCIES, getPlanOrder, getCreditPackSize, type ActionType } from './types'
 
 export const SubscriptionTab: React.FC = () => {
   const { data: access, isLoading: accessLoading, refetch: refetchAccess } = useSubscriptionStatus()
@@ -30,12 +29,12 @@ export const SubscriptionTab: React.FC = () => {
 
   const getCurrentPlanOrder = (): number => {
     if (!access?.plan_slug) return -1
-    return PLAN_ORDER[access.plan_slug as PlanSlug] ?? -1
+    return getPlanOrder(access.plan_slug)
   }
 
-  const getActionType = (planSlug: PlanSlug): ActionType => {
+  const getActionType = (planSlug: string): ActionType => {
     const currentOrder = getCurrentPlanOrder()
-    const targetOrder = PLAN_ORDER[planSlug]
+    const targetOrder = getPlanOrder(planSlug)
 
     if (access?.plan_slug === planSlug) return 'current'
     if (targetOrder > currentOrder) return 'upgrade'
@@ -58,13 +57,16 @@ export const SubscriptionTab: React.FC = () => {
     setActionLoading(plan.id)
     try {
       if (isPerUse) {
-        const credits = customCredits || CREDIT_PACK_SIZES[plan.slug as PlanSlug] || 25
+        const credits = customCredits || getCreditPackSize(plan.slug)
         await redirectToCreditPackCheckout({
           credits,
-          planSlug: plan.slug as PlanSlug,
+          planSlug: plan.slug,
         })
       } else {
-        if (plan.slug === 'starter') {
+        const price = selectedFrequency === 'yearly' ? plan.pricing.yearly : plan.pricing.monthly
+        const isFreePrice = price === 0
+
+        if (isFreePrice) {
           try {
             await redirectToBillingPortal()
           } catch (error) {
@@ -81,13 +83,13 @@ export const SubscriptionTab: React.FC = () => {
 
         if (isLinkedToProvider) {
           await upgradeSubscription({
-            planSlug: plan.slug as PlanSlug,
+            planSlug: plan.slug,
             interval: selectedFrequency as PlanInterval,
           })
           await refetchAccess()
         } else {
           await redirectToCheckout({
-            planSlug: plan.slug as PlanSlug,
+            planSlug: plan.slug,
             interval: selectedFrequency as PlanInterval,
           })
         }
@@ -127,8 +129,11 @@ export const SubscriptionTab: React.FC = () => {
   const isPerUse = selectedFrequency === 'per use'
   const isTrialing = access?.subscription_status === 'trialing'
 
-  // Filter out starter plan for trialing users - they should choose Pro or Executive
-  const displayPlans = isTrialing ? plans?.filter((plan) => plan.slug !== 'starter') : plans
+  const displayPlans = isTrialing
+    ? plans?.filter((plan) => plan.pricing.monthly > 0 || plan.pricing.yearly > 0)
+    : plans
+
+  const currentPlan = plans?.find((p) => p.slug === access?.plan_slug)
 
   return (
     <div className="space-y-6">
@@ -140,6 +145,8 @@ export const SubscriptionTab: React.FC = () => {
         trialDaysLeft={access?.trial_days_left}
         isLoading={actionLoading === 'portal'}
         onManageBilling={handleManageBilling}
+        isHighlighted={currentPlan?.isHighlighted}
+        isPopular={currentPlan?.isPopular}
       />
 
       <div className="flex justify-center">
@@ -171,7 +178,7 @@ export const SubscriptionTab: React.FC = () => {
             key={plan.id}
             plan={plan}
             selectedFrequency={selectedFrequency}
-            actionType={getActionType(plan.slug as PlanSlug)}
+            actionType={getActionType(plan.slug)}
             isLoading={actionLoading === plan.id}
             onAction={(customCredits) => handlePlanAction(plan, customCredits)}
             isPerUse={isPerUse}

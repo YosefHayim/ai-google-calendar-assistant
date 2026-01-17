@@ -94,7 +94,27 @@ export const PLANS = {
 
 export const PAYMENT_FREQUENCIES: string[] = ['monthly', 'yearly', 'per use']
 
-export const TIERS = Object.values(PLANS).map((plan) => ({
+export interface PricingTier {
+  id: string
+  name: string
+  price: {
+    monthly: string | number
+    yearly: string | number
+    'per use': number
+  }
+  description: string
+  features: string[]
+  cta: string
+  popular: boolean
+  highlighted: boolean
+  isCustom: boolean
+  buyNowUrlMonthly?: string | null
+  buyNowUrlYearly?: string | null
+  hasFreeTrial?: boolean
+  trialDays?: number | null
+}
+
+export const TIERS: PricingTier[] = Object.values(PLANS).map((plan) => ({
   id: plan.id,
   name: plan.name,
   price: {
@@ -108,9 +128,11 @@ export const TIERS = Object.values(PLANS).map((plan) => ({
   popular: plan.popular,
   highlighted: plan.highlighted,
   isCustom: plan.id === PLAN_SLUGS.EXECUTIVE,
+  buyNowUrlMonthly: null,
+  buyNowUrlYearly: null,
+  hasFreeTrial: false,
+  trialDays: null,
 }))
-
-export type PricingTier = (typeof TIERS)[number]
 
 interface LemonSqueezyProduct {
   id: string
@@ -209,7 +231,10 @@ export const transformLemonSqueezyProductsToTiers = (
       popular: plan.popular,
       highlighted: plan.highlighted,
       isCustom: plan.id === PLAN_SLUGS.EXECUTIVE,
-      buyNowUrl: prices.buyNowUrl,
+      buyNowUrlMonthly: prices.buyNowUrl,
+      buyNowUrlYearly: null,
+      hasFreeTrial: false,
+      trialDays: null,
     }
   })
 }

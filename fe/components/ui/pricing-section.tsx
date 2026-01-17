@@ -9,9 +9,10 @@ interface PricingSectionProps {
   subtitle: string
   tiers: PricingTier[]
   frequencies: string[]
+  currentPlanSlug?: string | null
 }
 
-export function PricingSection({ title, subtitle, tiers, frequencies }: PricingSectionProps) {
+export function PricingSection({ title, subtitle, tiers, frequencies, currentPlanSlug }: PricingSectionProps) {
   const [selectedFrequency, setSelectedFrequency] = useState(frequencies[0])
 
   return (
@@ -36,7 +37,12 @@ export function PricingSection({ title, subtitle, tiers, frequencies }: PricingS
 
       <div className="grid w-full max-w-5xl gap-6 sm:grid-cols-2 xl:grid-cols-3 px-2">
         {tiers.map((tier) => (
-          <PricingCard key={tier.name} tier={tier} paymentFrequency={selectedFrequency} />
+          <PricingCard
+            key={tier.name}
+            tier={tier}
+            paymentFrequency={selectedFrequency}
+            isCurrentPlan={currentPlanSlug === tier.id}
+          />
         ))}
       </div>
     </section>

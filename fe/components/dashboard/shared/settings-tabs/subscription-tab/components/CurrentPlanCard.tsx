@@ -14,6 +14,8 @@ interface CurrentPlanCardProps {
   trialDaysLeft: number | null | undefined
   isLoading: boolean
   onManageBilling: () => void
+  isHighlighted?: boolean
+  isPopular?: boolean
 }
 
 export function CurrentPlanCard({
@@ -24,17 +26,18 @@ export function CurrentPlanCard({
   trialDaysLeft,
   isLoading,
   onManageBilling,
+  isHighlighted,
+  isPopular,
 }: CurrentPlanCardProps) {
   const isTrialing = subscriptionStatus === 'trialing'
-  const getPlanIcon = (slug: string) => {
-    switch (slug) {
-      case 'executive':
-        return <Crown className="w-5 h-5 text-amber-500" />
-      case 'pro':
-        return <Zap className="w-5 h-5 text-primary" />
-      default:
-        return <Shield className="w-5 h-5 text-zinc-500" />
+  const getPlanIcon = () => {
+    if (isHighlighted || planSlug?.includes('executive') || planSlug?.includes('sovereignty')) {
+      return <Crown className="w-5 h-5 text-amber-500" />
     }
+    if (isPopular || planSlug?.includes('pro') || planSlug?.includes('operational')) {
+      return <Zap className="w-5 h-5 text-primary" />
+    }
+    return <Shield className="w-5 h-5 text-zinc-500" />
   }
 
   if (!planName) return null
@@ -44,7 +47,7 @@ export function CurrentPlanCard({
       <CardContent className="p-3 sm:p-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
           <div className="flex items-center gap-3 min-w-0">
-            {getPlanIcon(planSlug || '')}
+            {getPlanIcon()}
             <div className="min-w-0 flex-1">
               <p className="text-xs text-zinc-500 dark:text-zinc-400">Current Plan</p>
               <p className="font-semibold text-zinc-900 dark:text-white truncate">{planName}</p>

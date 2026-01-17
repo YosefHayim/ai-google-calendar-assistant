@@ -3,10 +3,13 @@
 import React from 'react'
 import { PricingSection } from '@/components/ui/pricing-section'
 import { HandWrittenTitleDemo } from '@/components/ui/hand-writing-text-demo'
-import { PAYMENT_FREQUENCIES, TIERS, transformLemonSqueezyProductsToTiers } from '@/lib/constants/plans'
-import { useLemonSqueezyProducts } from '@/hooks/queries/billing'
+import { PAYMENT_FREQUENCIES, TIERS } from '@/lib/constants/plans'
+import { usePlans, useSubscriptionStatus } from '@/hooks/queries/billing'
 import { Skeleton } from '@/components/ui/skeleton'
 import { AlertCircle } from 'lucide-react'
+import { useAuthContext } from '@/contexts/AuthContext'
+import type { Plan } from '@/services/payment.service'
+import type { PricingTier } from '@/lib/constants/plans'
 
 export { PAYMENT_FREQUENCIES, TIERS }
 
@@ -52,15 +55,44 @@ function PricingError() {
   )
 }
 
+const transformPlansToTiers = (plans: Plan[]): PricingTier[] => {
+  return plans.map((plan) => ({
+    id: plan.slug,
+    name: plan.name,
+    price: {
+      monthly: plan.pricing.monthly === 0 ? 'Free' : plan.pricing.monthly,
+      yearly: plan.pricing.yearly === 0 ? 'Free' : plan.pricing.yearly,
+      'per use': plan.pricing.perUse,
+    },
+    description: plan.description,
+    features: plan.features,
+    cta: plan.isHighlighted ? 'Gain Sovereignty' : plan.isPopular ? 'Scale Rigor' : 'Start Audit',
+    popular: plan.isPopular,
+    highlighted: plan.isHighlighted,
+    isCustom: plan.isHighlighted,
+    buyNowUrlMonthly: plan.buyNowUrlMonthly,
+    buyNowUrlYearly: plan.buyNowUrlYearly,
+    hasFreeTrial: plan.hasFreeTrial,
+    trialDays: plan.trialDays,
+  }))
+}
+
 export function PricingSectionDemo() {
-  const { data: lsProducts, isLoading, isError } = useLemonSqueezyProducts()
+  const { data: plans, isLoading, isError } = usePlans()
+  const { isAuthenticated } = useAuthContext()
+  const { data: subscriptionStatus } = useSubscriptionStatus({ enabled: isAuthenticated })
+
+  const currentPlanSlug = React.useMemo(() => {
+    if (!subscriptionStatus?.plan_slug) return null
+    return subscriptionStatus.plan_slug
+  }, [subscriptionStatus])
 
   const tiers = React.useMemo(() => {
-    if (!lsProducts || lsProducts.length === 0) {
+    if (!plans || plans.length === 0) {
       return TIERS
     }
-    return transformLemonSqueezyProductsToTiers(lsProducts)
-  }, [lsProducts])
+    return transformPlansToTiers(plans)
+  }, [plans])
 
   return (
     <div className="relative flex flex-col justify-center items-center w-full min-h-[600px]">
@@ -73,7 +105,13 @@ export function PricingSectionDemo() {
       ) : (
         <>
           {isError && <PricingError />}
-          <PricingSection title="" subtitle="" frequencies={PAYMENT_FREQUENCIES} tiers={tiers} />
+          <PricingSection
+            title=""
+            subtitle=""
+            frequencies={PAYMENT_FREQUENCIES}
+            tiers={tiers}
+            currentPlanSlug={currentPlanSlug}
+          />
         </>
       )}
     </div>

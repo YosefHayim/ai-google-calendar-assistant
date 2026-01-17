@@ -264,7 +264,7 @@ async function handleStreamingResponse(params: StreamingParams): Promise<void> {
   setupSSEHeaders(res);
   const stopHeartbeat = startHeartbeat(res);
 
-  const creditTx = createCreditTransaction(userId);
+  const creditTx = createCreditTransaction(userId, userEmail);
   const creditCheck = await creditTx.begin();
 
   if (!creditCheck.hasCredits) {
