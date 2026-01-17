@@ -166,21 +166,27 @@ app.use(errorHandler);
 const httpServer = createServer(app);
 initSocketServer(httpServer);
 
-httpServer.listen(PORT, () => {
-  console.log(`Server successfully started on port ${PORT}`);
+// CRITICAL: Bind to 0.0.0.0 for AWS App Runner health checks
+// Without explicit host, Node may bind to 127.0.0.1 which fails container health checks
+httpServer.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server successfully started on port ${PORT} (0.0.0.0)`);
+
+  // Initialize integrations AFTER server is ready to accept health checks
+  // This prevents health check failures during slow bot initialization
+  setImmediate(() => {
+    startTelegramBot();
+    initWhatsApp();
+    initSlackBot();
+    initializeJobScheduler().catch((err) => {
+      logger.error("Failed to initialize job scheduler:", err);
+    });
+  });
 });
 
 httpServer.on("error", (error: Error) => {
   logger.error("Error starting server:", error);
   console.error("Error starting server:", error);
   throw error;
-});
-
-startTelegramBot();
-initWhatsApp();
-initSlackBot();
-initializeJobScheduler().catch((err) => {
-  logger.error("Failed to initialize job scheduler:", err);
 });
 
 process.on("SIGTERM", async () => {
