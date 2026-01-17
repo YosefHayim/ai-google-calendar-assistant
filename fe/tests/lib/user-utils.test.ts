@@ -73,11 +73,11 @@ describe('user-utils', () => {
 
         expect(result?.firstName).toBe('')
         expect(result?.lastName).toBe('')
-        expect(result?.fullName).toBe('User')
+        expect(result?.fullName).toBe('user')
         expect(result?.initials).toBe('U')
       })
 
-      it('should use email initial when names are empty', () => {
+      it('should use email prefix when names are empty', () => {
         const user: CustomUser = {
           id: '123',
           email: 'alice@example.com',
@@ -89,6 +89,7 @@ describe('user-utils', () => {
 
         const result = getUserDisplayInfo(user)
 
+        expect(result?.fullName).toBe('alice')
         expect(result?.initials).toBe('A')
       })
 
@@ -169,7 +170,7 @@ describe('user-utils', () => {
 
         expect(result?.firstName).toBe('')
         expect(result?.lastName).toBe('')
-        expect(result?.fullName).toBe('User')
+        expect(result?.fullName).toBe('bob')
         expect(result?.initials).toBe('B')
       })
     })

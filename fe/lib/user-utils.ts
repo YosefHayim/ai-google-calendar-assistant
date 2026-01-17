@@ -20,10 +20,10 @@ export interface UserDisplayInfo {
 
 /**
  * Type guard to check if user data is CustomUser (from our database)
- * CustomUser has first_name at the root level, User has it in user_metadata
+ * CustomUser has role at root level and no user_metadata, User has user_metadata
  */
 export function isCustomUser(user: UserData): user is CustomUser {
-  return 'first_name' in user
+  return !('user_metadata' in user)
 }
 
 /**
@@ -36,7 +36,8 @@ export function getUserDisplayInfo(user: UserData | null | undefined): UserDispl
   if (isCustomUser(user)) {
     const firstName = user.first_name ?? ''
     const lastName = user.last_name ?? ''
-    const fullName = [firstName, lastName].filter(Boolean).join(' ') || 'User'
+    const displayName = user.display_name ?? ''
+    const fullName = displayName || [firstName, lastName].filter(Boolean).join(' ') || user.email?.split('@')[0] || 'User'
     const initials = `${firstName[0] ?? ''}${lastName[0] ?? ''}`.toUpperCase() || user.email?.[0]?.toUpperCase() || 'U'
 
     return {
@@ -53,7 +54,7 @@ export function getUserDisplayInfo(user: UserData | null | undefined): UserDispl
   const metadata = user.user_metadata ?? {}
   const firstName = metadata.first_name ?? ''
   const lastName = metadata.last_name ?? ''
-  const fullName = [firstName, lastName].filter(Boolean).join(' ') || 'User'
+  const fullName = [firstName, lastName].filter(Boolean).join(' ') || user.email?.split('@')[0] || 'User'
   const initials = `${firstName[0] ?? ''}${lastName[0] ?? ''}`.toUpperCase() || user.email?.[0]?.toUpperCase() || 'U'
 
   return {

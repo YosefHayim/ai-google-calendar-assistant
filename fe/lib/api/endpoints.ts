@@ -58,6 +58,12 @@ export const ENDPOINTS = {
    */
   USERS_VERIFY_OTP: '/api/users/verify-user-by-email-otp',
 
+  /**
+   * Logout user and clear session cookies
+   * Methods: POST
+   */
+  USERS_LOGOUT: '/api/users/logout',
+
   // ============================================
   // CALENDAR ENDPOINTS
   // ============================================

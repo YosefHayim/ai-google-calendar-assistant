@@ -6,13 +6,14 @@ import { useUser } from '@/hooks/queries/auth/useUser'
 import { STORAGE_KEYS } from '@/lib/constants'
 import { useQueryClient } from '@tanstack/react-query'
 import { queryKeys } from '@/lib/query/keys'
+import { authService } from '@/services/auth.service'
 
 interface AuthContextType {
   user: User | CustomUser | null
   isLoading: boolean
   isAuthenticated: boolean
   login: (data: AuthData) => void
-  logout: () => void
+  logout: () => Promise<void>
   refreshUser: () => Promise<void>
 }
 
@@ -44,16 +45,18 @@ export const AuthProvider = ({ children }: { children?: ReactNode }) => {
     [queryClient],
   )
 
-  const logout = useCallback(() => {
-    // Clear localStorage tokens
+  const logout = useCallback(async () => {
+    try {
+      await authService.logout()
+    } catch {}
     if (typeof window !== 'undefined') {
       localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN)
       localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN)
       localStorage.removeItem(STORAGE_KEYS.USER)
     }
-    // Clear auth query cache
     queryClient.setQueryData([...queryKeys.auth.user(), true], null)
-    queryClient.invalidateQueries({ queryKey: queryKeys.auth.all })
+    queryClient.setQueryData([...queryKeys.auth.user(), true, false], null)
+    queryClient.removeQueries({ queryKey: queryKeys.auth.all })
   }, [queryClient])
 
   const refreshUser = useCallback(async () => {

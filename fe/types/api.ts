@@ -26,10 +26,12 @@ export interface CustomUser {
   phone?: string | null
   first_name?: string | null
   last_name?: string | null
+  display_name?: string | null
   avatar_url?: string | null
-  role?: 'user' | 'admin' | 'moderator' | 'support'
+  role?: 'user' | 'admin' | 'moderator' | 'support' | 'authenticated'
   created_at: string
   updated_at: string
+  cachedAt?: string
 }
 
 export interface Session {

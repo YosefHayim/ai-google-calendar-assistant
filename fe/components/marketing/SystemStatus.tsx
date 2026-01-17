@@ -1,10 +1,12 @@
 'use client'
 
 import { ENV, TIME } from '@/lib/constants'
-import { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { Server, Wifi } from 'lucide-react'
+import { SlackIcon, TelegramIcon } from '@/components/shared/Icons'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { Wifi, MessageCircle, Hash, Server } from 'lucide-react'
+import { useEffect, useState } from 'react'
+
+import { useTranslation } from 'react-i18next'
 
 type ServiceStatus = 'healthy' | 'disabled' | 'unavailable'
 
@@ -47,13 +49,17 @@ function ServiceIndicator({
   const isHealthy = status === 'healthy'
   const isDisabled = status === 'disabled'
 
+  const getStatusColor = () => {
+    if (isHealthy) return 'text-emerald-600 dark:text-emerald-400'
+    if (isDisabled) return 'text-zinc-400 dark:text-zinc-500'
+    return 'text-red-600 dark:text-red-400'
+  }
+
   return (
     <div className="flex items-center gap-1.5">
-      <Icon className={`w-3 h-3 ${isHealthy ? 'text-emerald-500' : isDisabled ? 'text-zinc-400' : 'text-red-500'}`} />
-      <span className={`text-[10px] ${isHealthy ? 'text-emerald-500' : isDisabled ? 'text-zinc-400' : 'text-red-500'}`}>
-        {name}
-      </span>
-      {detail && <span className="text-[9px] text-zinc-500">({detail})</span>}
+      <Icon className={`w-3 h-3 ${getStatusColor()}`} />
+      <span className={`text-[10px] font-medium ${getStatusColor()}`}>{name}</span>
+      {detail && <span className="text-[9px] text-zinc-500 dark:text-zinc-400">({detail})</span>}
     </div>
   )
 }
@@ -105,21 +111,25 @@ export function SystemStatus() {
     return `${minutes}m`
   }
 
+  const getStatusDotColor = () => {
+    if (isChecking) return 'bg-amber-500 dark:bg-amber-400'
+    if (isOnline) return 'bg-emerald-500 dark:bg-emerald-400'
+    return 'bg-red-500 dark:bg-red-400'
+  }
+
+  const getStatusTextColor = () => {
+    if (isChecking) return 'text-amber-600 dark:text-amber-400'
+    if (isOnline) return 'text-emerald-600 dark:text-emerald-400'
+    return 'text-red-600 dark:text-red-400'
+  }
+
   return (
     <TooltipProvider>
       <Tooltip delayDuration={200}>
         <TooltipTrigger asChild>
           <span className="flex items-center gap-2 text-xs font-medium uppercase tracking-tight cursor-default">
-            <div
-              className={`w-1.5 h-1.5 rounded-full ${
-                isChecking
-                  ? 'bg-yellow-500 animate-pulse'
-                  : isOnline
-                    ? 'bg-emerald-500 animate-pulse'
-                    : 'bg-red-500'
-              }`}
-            />
-            <span className={isChecking ? 'text-yellow-500' : isOnline ? 'text-emerald-500' : 'text-red-500'}>
+            <div className={`w-1.5 h-1.5 rounded-full animate-pulse ${getStatusDotColor()}`} />
+            <span className={getStatusTextColor()}>
               {isChecking
                 ? t('footer.systemChecking')
                 : isOnline
@@ -128,19 +138,25 @@ export function SystemStatus() {
             </span>
           </span>
         </TooltipTrigger>
-        <TooltipContent side="top" className="p-3 max-w-xs" sideOffset={8}>
+        <TooltipContent
+          side="top"
+          className="p-3 max-w-xs bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700"
+          sideOffset={8}
+        >
           {isChecking ? (
-            <p className="text-xs text-zinc-500">{t('footer.checkingServices')}</p>
+            <p className="text-xs text-zinc-600 dark:text-zinc-400">{t('footer.checkingServices')}</p>
           ) : !isOnline || !healthData ? (
-            <p className="text-xs text-red-500">{t('footer.serverUnreachable')}</p>
+            <p className="text-xs text-red-600 dark:text-red-400">{t('footer.serverUnreachable')}</p>
           ) : (
             <div className="space-y-3">
               <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-1.5">
-                  <Server className="w-3 h-3 text-emerald-500" />
-                  <span className="text-xs font-medium text-emerald-500">{t('footer.serverOnline')}</span>
+                  <Server className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
+                  <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400">
+                    {t('footer.serverOnline')}
+                  </span>
                 </div>
-                <span className="text-[10px] text-zinc-500">
+                <span className="text-[10px] text-zinc-500 dark:text-zinc-400">
                   {t('footer.uptime')}: {formatUptime(healthData.uptime)}
                 </span>
               </div>
@@ -157,22 +173,18 @@ export function SystemStatus() {
                   }
                 />
                 <ServiceIndicator
-                  icon={MessageCircle}
+                  icon={TelegramIcon}
                   name={t('footer.telegram')}
                   status={healthData.services.telegram.status}
                   detail={
-                    healthData.services.telegram.status === 'healthy'
-                      ? healthData.services.telegram.mode
-                      : undefined
+                    healthData.services.telegram.status === 'healthy' ? healthData.services.telegram.mode : undefined
                   }
                 />
                 <ServiceIndicator
-                  icon={Hash}
+                  icon={SlackIcon}
                   name={t('footer.slack')}
                   status={healthData.services.slack.status}
-                  detail={
-                    healthData.services.slack.status === 'healthy' ? healthData.services.slack.mode : undefined
-                  }
+                  detail={healthData.services.slack.status === 'healthy' ? healthData.services.slack.mode : undefined}
                 />
               </div>
             </div>

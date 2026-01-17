@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion'
 
 import { ArrowRight } from 'lucide-react'
+import { LoadingSpinner } from './loading-spinner'
 import React from 'react'
 import { cn } from '../../lib/utils'
 
@@ -12,29 +13,6 @@ interface InteractiveHoverButtonProps extends React.ButtonHTMLAttributes<HTMLBut
   dotClassName?: string
   hoverContentClassName?: string
 }
-
-/**
- * A minimalist, high-frequency loading indicator that mimics a data handshake.
- */
-const ProtocolLoader = () => (
-  <div className="relative flex items-center justify-center w-5 h-5">
-    <motion.div
-      className="absolute inset-0 border-2 border-white/20 rounded-full"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-    />
-    <motion.div
-      className="absolute inset-0 border-2 border-t-white rounded-full"
-      animate={{ rotate: 360 }}
-      transition={{ duration: 0.6, repeat: Infinity, ease: 'linear' }}
-    />
-    <motion.div
-      className="w-1 h-1 bg-white rounded-full"
-      animate={{ scale: [1, 1.5, 1], opacity: [0.5, 1, 0.5] }}
-      transition={{ duration: 1, repeat: Infinity }}
-    />
-  </div>
-)
 
 const InteractiveHoverButton = React.forwardRef<HTMLButtonElement, InteractiveHoverButtonProps>(
   (
@@ -77,7 +55,13 @@ const InteractiveHoverButton = React.forwardRef<HTMLButtonElement, InteractiveHo
         >
           <span className="whitespace-nowrap font-bold tracking-tight">{currentText}</span>
           <div className="shrink-0">
-            {isLoading ? <ProtocolLoader /> : Icon ? Icon : <ArrowRight className="w-5 h-5" />}
+            {isLoading ? (
+              <LoadingSpinner size="sm" className="border-white/20 border-t-white" />
+            ) : Icon ? (
+              Icon
+            ) : (
+              <ArrowRight className="w-5 h-5" />
+            )}
           </div>
         </div>
 

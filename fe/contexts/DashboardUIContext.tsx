@@ -118,9 +118,9 @@ export function DashboardUIProvider({ children }: { children: React.ReactNode })
     localStorage.setItem(ONBOARDING_COMPLETE_KEY, 'true')
   }
 
-  const handleSignOut = useCallback(() => {
+  const handleSignOut = useCallback(async () => {
     closeSettings()
-    logout()
+    await logout()
     queryClient.clear()
     router.push('/login')
   }, [closeSettings, logout, queryClient, router])

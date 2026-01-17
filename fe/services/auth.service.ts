@@ -35,6 +35,10 @@ export const authService = {
     return data
   },
 
+  async logout(): Promise<void> {
+    await apiClient.post(ENDPOINTS.USERS_LOGOUT)
+  },
+
   getGoogleAuthUrl(): string {
     const baseUrl = apiClient.defaults.baseURL
     return `${baseUrl}${ENDPOINTS.USERS_SIGNUP_GOOGLE}`

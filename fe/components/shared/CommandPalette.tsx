@@ -131,8 +131,8 @@ export function CommandPalette() {
       id: 'logout',
       label: 'Sign Out',
       icon: <LogOut className="w-4 h-4" />,
-      action: () => {
-        logout()
+      action: async () => {
+        await logout()
         navigate('/login')
       },
       keywords: ['logout', 'exit'],
