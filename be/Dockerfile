@@ -8,10 +8,6 @@
 ARG NODE_VERSION=22
 FROM node:${NODE_VERSION}-slim AS base
 
-# Configure pnpm
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
-
 # Install system dependencies
 # ca-certificates: enables TLS/SSL for secure HTTPS connections
 # curl: useful for health checks
@@ -19,8 +15,7 @@ RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y \
         ca-certificates \
         curl && \
-    rm -rf /var/lib/apt/lists/* && \
-    npm install -g pnpm@10
+    rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
@@ -30,10 +25,10 @@ WORKDIR /app
 FROM base AS deps
 
 # Copy package files for dependency installation
-COPY package.json pnpm-lock.yaml ./
+COPY package.json package-lock.json ./
 
 # Install all dependencies (including devDependencies for TypeScript build)
-RUN pnpm install --frozen-lockfile
+RUN npm ci
 
 # =============================================================================
 # Stage 3: Builder - Compile TypeScript to JavaScript
@@ -54,7 +49,7 @@ COPY . .
 
 # Build TypeScript to JavaScript
 # Output goes to /app/dist
-RUN pnpm build
+RUN npm run build
 
 # =============================================================================
 # Stage 4: Production Dependencies - Install only production deps
@@ -64,10 +59,10 @@ FROM base AS prod-deps
 WORKDIR /app
 
 # Copy package files
-COPY package.json pnpm-lock.yaml ./
+COPY package.json package-lock.json ./
 
 # Install only production dependencies
-RUN pnpm install --frozen-lockfile --prod
+RUN npm ci --omit=dev
 
 # =============================================================================
 # Stage 5: Runner - Minimal production image
