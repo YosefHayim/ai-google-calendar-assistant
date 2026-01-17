@@ -4,27 +4,14 @@
  */
 
 import type { Request, Response } from "express";
+import type { WhatsAppContact, WhatsAppIncomingMessage, WhatsAppMessageStatus, WhatsAppWebhookPayload } from "@/whatsapp-bot/types";
+import { buildConfirmationUrl, buildErrorUrl, deleteWhatsAppUserData, formatMetaResponse, parseSignedRequest } from "@/whatsapp-bot/services/data-deletion";
+import { getWhatsAppStatus, isWhatsAppConfigured } from "@/whatsapp-bot/init-whatsapp";
+
 import { STATUS_RESPONSE } from "@/config";
-import { logger } from "@/utils/logger";
 import { handleIncomingMessage } from "@/whatsapp-bot/handlers/message-handler";
-import {
-  getWhatsAppStatus,
-  isWhatsAppConfigured,
-} from "@/whatsapp-bot/init-whatsapp";
-import {
-  buildConfirmationUrl,
-  buildErrorUrl,
-  deleteWhatsAppUserData,
-  formatMetaResponse,
-  parseSignedRequest,
-} from "@/whatsapp-bot/services/data-deletion";
+import { logger } from "@/utils/logger";
 import { verifyWebhookSubscription } from "@/whatsapp-bot/services/webhook-security";
-import type {
-  WhatsAppContact,
-  WhatsAppIncomingMessage,
-  WhatsAppMessageStatus,
-  WhatsAppWebhookPayload,
-} from "@/whatsapp-bot/types";
 
 /**
  * GET /api/whatsapp
@@ -64,9 +51,7 @@ const handleWebhook = async (req: Request, res: Response): Promise<void> => {
 
     // Validate payload structure
     if (payload.object !== "whatsapp_business_account") {
-      logger.warn(
-        `WhatsApp: Unexpected webhook object type: ${payload.object}`
-      );
+      logger.warn(`WhatsApp: Unexpected webhook object type: ${payload.object}`);
       return;
     }
 
@@ -99,9 +84,7 @@ const handleWebhook = async (req: Request, res: Response): Promise<void> => {
         // Handle errors from the API
         if (value.errors) {
           for (const error of value.errors) {
-            logger.error(
-              `WhatsApp: API Error - Code: ${error.code}, Title: ${error.title}, Message: ${error.message || "N/A"}`
-            );
+            logger.error(`WhatsApp: API Error - Code: ${error.code}, Title: ${error.title}, Message: ${error.message || "N/A"}`);
           }
         }
       }
@@ -114,25 +97,15 @@ const handleWebhook = async (req: Request, res: Response): Promise<void> => {
 /**
  * Processes a single incoming message
  */
-const processMessage = async (
-  message: WhatsAppIncomingMessage,
-  contact?: WhatsAppContact
-): Promise<void> => {
-  const messagePreview =
-    message.type === "text"
-      ? message.text?.body?.slice(0, 50)
-      : `[${message.type}]`;
+const processMessage = async (message: WhatsAppIncomingMessage, contact?: WhatsAppContact): Promise<void> => {
+  const messagePreview = message.type === "text" ? message.text?.body?.slice(0, 50) : `[${message.type}]`;
 
-  logger.info(
-    `WhatsApp: Incoming ${message.type} from ${message.from}: ${messagePreview}`
-  );
+  logger.info(`WhatsApp: Incoming ${message.type} from ${message.from}: ${messagePreview}`);
 
   try {
     await handleIncomingMessage(message, contact);
   } catch (error) {
-    logger.error(
-      `WhatsApp: Error handling message ${message.id} from ${message.from}: ${error}`
-    );
+    logger.error(`WhatsApp: Error handling message ${message.id} from ${message.from}: ${error}`);
   }
 };
 
@@ -141,16 +114,12 @@ const processMessage = async (
  */
 const handleMessageStatus = (status: WhatsAppMessageStatus): void => {
   // Log status updates at debug level to avoid noise
-  logger.debug(
-    `WhatsApp: Message ${status.id} to ${status.recipient_id}: ${status.status}`
-  );
+  logger.debug(`WhatsApp: Message ${status.id} to ${status.recipient_id}: ${status.status}`);
 
   // Handle failed messages
   if (status.status === "failed" && status.errors) {
     for (const error of status.errors) {
-      logger.error(
-        `WhatsApp: Message failed - Code: ${error.code}, Title: ${error.title}`
-      );
+      logger.error(`WhatsApp: Message failed - Code: ${error.code}, Title: ${error.title}`);
     }
   }
 };
@@ -169,10 +138,7 @@ const getStatus = (_req: Request, res: Response): void => {
  * Meta Data Deletion Callback - handles user data deletion requests
  * @see https://developers.facebook.com/docs/development/create-an-app/app-dashboard/data-deletion-callback
  */
-const handleDataDeletion = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+const handleDataDeletion = async (req: Request, res: Response): Promise<void> => {
   const signedRequest = req.body?.signed_request as string | undefined;
 
   if (!signedRequest) {
@@ -197,26 +163,16 @@ const handleDataDeletion = async (
     const { confirmationCode } = await deleteWhatsAppUserData(payload.user_id);
     const confirmationUrl = buildConfirmationUrl(confirmationCode, "success");
 
-    logger.info(
-      `WhatsApp: Data deletion completed for Meta user ${payload.user_id}, code: ${confirmationCode}`
-    );
+    logger.info(`WhatsApp: Data deletion completed for Meta user ${payload.user_id}, code: ${confirmationCode}`);
 
-    res
-      .status(STATUS_RESPONSE.SUCCESS)
-      .type("json")
-      .send(formatMetaResponse(confirmationUrl, confirmationCode));
+    res.status(STATUS_RESPONSE.SUCCESS).type("json").send(formatMetaResponse(confirmationUrl, confirmationCode));
   } catch (error) {
     logger.error(`WhatsApp: Data deletion failed: ${error}`);
 
-    const errorUrl = buildErrorUrl(
-      "Data deletion failed. Please contact support."
-    );
+    const errorUrl = buildErrorUrl("Data deletion failed. Please contact support.");
     const errorCode = `ERR-${Date.now().toString(36)}`;
 
-    res
-      .status(STATUS_RESPONSE.SUCCESS)
-      .type("json")
-      .send(formatMetaResponse(errorUrl, errorCode));
+    res.status(STATUS_RESPONSE.SUCCESS).type("json").send(formatMetaResponse(errorUrl, errorCode));
   }
 };
 

@@ -1,9 +1,4 @@
-import {
-  type AllyBrainPreference,
-  getPreference,
-  PREFERENCE_DEFAULTS,
-  updatePreference,
-} from "@/services/user-preferences-service";
+import { type AllyBrainPreference, getPreference, PREFERENCE_DEFAULTS, updatePreference } from "@/services/user-preferences-service";
 import type { HandlerContext } from "@/shared/types";
 import { getUserIdByEmail } from "@/utils/auth/google-token";
 import { logger } from "@/utils/logger";
@@ -39,10 +34,7 @@ function parseInstructions(instructions: string): string[] {
     .filter((line) => line.length > 0 && line !== SECTION_MARKER);
 }
 
-function findConflictingPreference(
-  existingPrefs: string[],
-  replacesExisting?: string
-): number {
+function findConflictingPreference(existingPrefs: string[], replacesExisting?: string): number {
   if (!replacesExisting) {
     return -1;
   }
@@ -51,27 +43,16 @@ function findConflictingPreference(
 
   return existingPrefs.findIndex((pref) => {
     const normalizedPref = pref.toLowerCase().trim();
-    return (
-      normalizedPref === normalizedReplace ||
-      normalizedPref.includes(normalizedReplace) ||
-      normalizedReplace.includes(normalizedPref)
-    );
+    return normalizedPref === normalizedReplace || normalizedPref.includes(normalizedReplace) || normalizedReplace.includes(normalizedPref);
   });
 }
 
-function isDuplicatePreference(
-  existingPrefs: string[],
-  newPreference: string
-): boolean {
+function isDuplicatePreference(existingPrefs: string[], newPreference: string): boolean {
   const normalizedNew = newPreference.toLowerCase().trim();
 
   return existingPrefs.some((pref) => {
     const normalizedPref = pref.toLowerCase().trim();
-    return (
-      normalizedPref === normalizedNew ||
-      normalizedPref.includes(normalizedNew) ||
-      normalizedNew.includes(normalizedPref)
-    );
+    return normalizedPref === normalizedNew || normalizedPref.includes(normalizedNew) || normalizedNew.includes(normalizedPref);
   });
 }
 
@@ -99,10 +80,7 @@ function smartMergeInstructions(
     };
   }
 
-  const conflictIndex = findConflictingPreference(
-    existingPrefs,
-    replacesExisting
-  );
+  const conflictIndex = findConflictingPreference(existingPrefs, replacesExisting);
 
   if (conflictIndex !== -1) {
     existingPrefs[conflictIndex] = formattedNew;
@@ -119,12 +97,12 @@ function smartMergeInstructions(
   };
 }
 
-export async function updateUserBrainHandler(
-  params: UpdateUserBrainParams,
-  ctx: HandlerContext
-): Promise<UpdateUserBrainResult> {
+export async function updateUserBrainHandler(params: UpdateUserBrainParams, ctx: HandlerContext): Promise<UpdateUserBrainResult> {
   const { email } = ctx;
   const { preference, category, replacesExisting } = params;
+  // Convert empty strings to undefined for optional fields (for strict mode compatibility)
+  const categoryValue = category && category.trim() ? category : undefined;
+  const replacesExistingValue = replacesExisting && replacesExisting.trim() ? replacesExisting : undefined;
 
   if (!preference || preference.trim().length === 0) {
     return {
@@ -152,21 +130,11 @@ export async function updateUserBrainHandler(
       };
     }
 
-    const currentBrain = await getPreference<AllyBrainPreference>(
-      userId,
-      "ally_brain"
-    );
+    const currentBrain = await getPreference<AllyBrainPreference>(userId, "ally_brain");
 
-    const currentInstructions =
-      currentBrain?.instructions ||
-      (PREFERENCE_DEFAULTS.ally_brain as AllyBrainPreference).instructions;
+    const currentInstructions = currentBrain?.instructions || (PREFERENCE_DEFAULTS.ally_brain as AllyBrainPreference).instructions;
 
-    const { merged, action } = smartMergeInstructions(
-      currentInstructions,
-      preference,
-      category,
-      replacesExisting
-    );
+    const { merged, action } = smartMergeInstructions(currentInstructions, preference, categoryValue, replacesExistingValue);
 
     if (action === "duplicate") {
       return {
@@ -193,9 +161,7 @@ export async function updateUserBrainHandler(
 
     await updatePreference(userId, "ally_brain", updatedBrain);
 
-    logger.info(
-      `[updateUserBrainHandler] ${action} preference for user ${userId}: "${preference.substring(0, LOG_PREVIEW_LENGTH)}..."`
-    );
+    logger.info(`[updateUserBrainHandler] ${action} preference for user ${userId}: "${preference.substring(0, LOG_PREVIEW_LENGTH)}..."`);
 
     const actionMessages = {
       added: "I've saved this to my memory.",
@@ -220,9 +186,7 @@ export async function updateUserBrainHandler(
   }
 }
 
-export async function getUserBrainHandler(
-  ctx: HandlerContext
-): Promise<{ instructions: string; enabled: boolean }> {
+export async function getUserBrainHandler(ctx: HandlerContext): Promise<{ instructions: string; enabled: boolean }> {
   const { email } = ctx;
 
   try {
@@ -231,10 +195,7 @@ export async function getUserBrainHandler(
       return { instructions: "", enabled: false };
     }
 
-    const brain = await getPreference<AllyBrainPreference>(
-      userId,
-      "ally_brain"
-    );
+    const brain = await getPreference<AllyBrainPreference>(userId, "ally_brain");
 
     return {
       instructions: brain?.instructions || "",

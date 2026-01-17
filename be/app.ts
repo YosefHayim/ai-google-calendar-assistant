@@ -6,13 +6,7 @@ import express from "express";
 import helmet from "helmet";
 import morgan from "morgan";
 import { env, ROUTES, STATUS_RESPONSE } from "@/config";
-import {
-  getActiveConnectionCount,
-  getConnectedUserCount,
-  getSocketServer,
-  initSocketServer,
-  shutdownSocketServer,
-} from "@/config/clients/socket-server";
+import { getActiveConnectionCount, getConnectedUserCount, getSocketServer, initSocketServer, shutdownSocketServer } from "@/config/clients/socket-server";
 import { initializeJobScheduler, shutdownJobScheduler } from "@/jobs";
 import errorHandler from "@/middlewares/error-handler";
 import { apiRateLimiter } from "@/middlewares/rate-limiter";
@@ -69,30 +63,22 @@ app.use(
 
 // SECURITY: Configure CORS from environment
 // In production, this should be set to the actual frontend URL(s)
-const corsOrigins = env.isProd
-  ? [env.urls.frontend].filter(Boolean) // Production: only allow configured frontend
-  : [
-      "http://localhost:4000",
-      "http://127.0.0.1:4000",
-      env.urls.frontend,
-    ].filter(Boolean); // Development: allow localhost
+const corsOrigins =
+  env.isProd ?
+    [env.urls.frontend].filter(Boolean) // Production: only allow configured frontend
+  : ["http://localhost:4000", "http://127.0.0.1:4000", env.urls.frontend].filter(Boolean); // Development: allow localhost
 
 app.use(
   cors({
     origin: corsOrigins,
     credentials: true,
     exposedHeaders: [ACCESS_TOKEN_HEADER, REFRESH_TOKEN_HEADER, USER_KEY],
-    allowedHeaders: [
-      "Content-Type",
-      "Authorization",
-      REFRESH_TOKEN_HEADER,
-      USER_KEY,
-      ACCESS_TOKEN_HEADER,
-    ],
+    allowedHeaders: ["Content-Type", "Authorization", REFRESH_TOKEN_HEADER, USER_KEY, ACCESS_TOKEN_HEADER],
   })
 );
 
 // SECURITY: Apply general API rate limiting
+app.set("trust proxy", true);
 app.use(apiRateLimiter);
 
 // SECURITY: Add security audit logging for compliance
@@ -108,10 +94,7 @@ const jsonParser = express.json({
 
 app.use((req, res, next) => {
   // Skip JSON parsing for WhatsApp webhook endpoint
-  if (
-    req.path === ROUTES.WHATSAPP ||
-    req.path.startsWith(`${ROUTES.WHATSAPP}/`)
-  ) {
+  if (req.path === ROUTES.WHATSAPP || req.path.startsWith(`${ROUTES.WHATSAPP}/`)) {
     return next();
   }
   jsonParser(req, res, next);
@@ -123,9 +106,7 @@ app.use("/static", express.static(path.join(__dirname, "public")));
 
 app.get("/", (_req, res) => {
   console.log("AI Google Calendar Assistant Server is running.");
-  res
-    .status(STATUS_RESPONSE.SUCCESS)
-    .json({ message: "AI Google Calendar Assistant Server is running." });
+  res.status(STATUS_RESPONSE.SUCCESS).json({ message: "AI Google Calendar Assistant Server is running." });
 });
 
 app.get("/health", (_req, res) => {
@@ -144,15 +125,11 @@ app.get("/health", (_req, res) => {
         activeConnections: getActiveConnectionCount(),
       },
       telegram: {
-        status:
-          bot && env.integrations.telegram.isEnabled ? "healthy" : "disabled",
+        status: bot && env.integrations.telegram.isEnabled ? "healthy" : "disabled",
         mode: env.integrations.telegram.useWebhook ? "webhook" : "polling",
       },
       slack: {
-        status:
-          slackReceiver && env.integrations.slack.isEnabled
-            ? "healthy"
-            : "disabled",
+        status: slackReceiver && env.integrations.slack.isEnabled ? "healthy" : "disabled",
         mode: "http",
       },
     },
@@ -186,18 +163,9 @@ app.use(ROUTES.BLOG, blogRoute);
 app.use(ROUTES.FEATURE_FLAGS, featureFlagRoute);
 
 app.use((_req, res, _next) => {
-  logger.error(
-    `Opps! It looks like this route doesn't exist. ${_req.originalUrl}`
-  );
-  console.error(
-    "Opps! It looks like this route doesn't exist:",
-    _req.originalUrl
-  );
-  sendR(
-    res,
-    STATUS_RESPONSE.NOT_FOUND,
-    `Opps! It looks like this route doesn't exist. ${_req.originalUrl}`
-  );
+  logger.error(`Opps! It looks like this route doesn't exist. ${_req.originalUrl}`);
+  console.error("Opps! It looks like this route doesn't exist:", _req.originalUrl);
+  sendR(res, STATUS_RESPONSE.NOT_FOUND, `Opps! It looks like this route doesn't exist. ${_req.originalUrl}`);
 });
 
 app.use(errorHandler);
