@@ -39,7 +39,6 @@ export interface ImageContent {
 export interface StreamChatOptions {
   message: string
   conversationId?: string
-  profileId?: string
   images?: ImageContent[]
   callbacks: StreamCallbacks
   signal?: AbortSignal
@@ -53,16 +52,13 @@ export interface StreamResult {
 }
 
 export async function streamChatMessage(options: StreamChatOptions): Promise<StreamResult> {
-  const { message, conversationId, profileId, images, callbacks, signal } = options
+  const { message, conversationId, images, callbacks, signal } = options
 
   const url = conversationId
     ? `${ENV.API_BASE_URL}/api/chat/conversations/${conversationId}/messages/stream`
     : `${ENV.API_BASE_URL}/api/chat/stream`
 
-  const body: { message: string; profileId?: string; images?: ImageContent[] } = { message }
-  if (profileId) {
-    body.profileId = profileId
-  }
+  const body: { message: string; images?: ImageContent[] } = { message }
   if (images && images.length > 0) {
     body.images = images
   }

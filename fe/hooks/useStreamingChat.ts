@@ -32,7 +32,7 @@ const initialState: StreamingState = {
 }
 
 export function useStreamingChat(options: UseStreamingChatOptions = {}): UseStreamingChatReturn {
-  const { profileId: defaultProfileId, onStreamComplete, onStreamError, onTitleGenerated } = options
+  const { onStreamComplete, onStreamError, onTitleGenerated } = options
   const [streamingState, setStreamingState] = useState<StreamingState>(initialState)
   const abortControllerRef = useRef<AbortController | null>(null)
 
@@ -67,12 +67,9 @@ export function useStreamingChat(options: UseStreamingChatOptions = {}): UseStre
         error: null,
       })
 
-      const effectiveProfileId = defaultProfileId ?? undefined
-
       const result = await streamChatMessage({
         message,
         conversationId,
-        profileId: effectiveProfileId,
         images,
         signal: abortControllerRef.current.signal,
         callbacks: {
@@ -133,7 +130,7 @@ export function useStreamingChat(options: UseStreamingChatOptions = {}): UseStre
 
       abortControllerRef.current = null
     },
-    [defaultProfileId, onStreamComplete, onStreamError, onTitleGenerated],
+    [onStreamComplete, onStreamError, onTitleGenerated],
   )
 
   return {

@@ -81,6 +81,15 @@ export const en = {
     systemOffline: 'System Unavailable',
     systemChecking: 'Checking Status...',
     chatOnTelegram: 'Chat with Ally on Telegram',
+    // Service status tooltip
+    checkingServices: 'Checking services...',
+    serverUnreachable: 'Server unreachable',
+    serverOnline: 'Server Online',
+    uptime: 'Uptime',
+    websockets: 'WebSockets',
+    connections: 'connections',
+    telegram: 'Telegram',
+    slack: 'Slack',
   },
 
   // Home Page

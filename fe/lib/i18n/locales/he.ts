@@ -83,6 +83,14 @@ export const he: TranslationShape = {
     systemOffline: 'המערכת אינה זמינה',
     systemChecking: 'בודק סטטוס...',
     chatOnTelegram: 'שוחח עם אלי בטלגרם',
+    checkingServices: 'בודק שירותים...',
+    serverUnreachable: 'השרת אינו נגיש',
+    serverOnline: 'השרת פעיל',
+    uptime: 'זמן פעילות',
+    websockets: 'WebSockets',
+    connections: 'חיבורים',
+    telegram: 'טלגרם',
+    slack: 'Slack',
   },
 
   // Home Page

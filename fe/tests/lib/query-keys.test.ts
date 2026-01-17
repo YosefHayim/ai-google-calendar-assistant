@@ -163,29 +163,6 @@ describe('queryKeys', () => {
     })
   })
 
-  describe('agentProfiles keys', () => {
-    it('should generate agentProfiles.all key', () => {
-      expect(queryKeys.agentProfiles.all).toEqual(['agent-profiles'])
-    })
-
-    it('should generate agentProfiles.list key without params', () => {
-      expect(queryKeys.agentProfiles.list()).toEqual(['agent-profiles', 'list', {}])
-    })
-
-    it('should generate agentProfiles.list key with params', () => {
-      const params = { tier: 'pro', voiceOnly: true }
-      expect(queryKeys.agentProfiles.list(params)).toEqual(['agent-profiles', 'list', params])
-    })
-
-    it('should generate agentProfiles.detail key', () => {
-      expect(queryKeys.agentProfiles.detail('ally-pro')).toEqual(['agent-profiles', 'detail', 'ally-pro'])
-    })
-
-    it('should generate agentProfiles.selected key', () => {
-      expect(queryKeys.agentProfiles.selected()).toEqual(['agent-profiles', 'selected'])
-    })
-  })
-
   describe('key hierarchy', () => {
     it('should maintain parent-child relationships for cache invalidation', () => {
       const calendarAll = queryKeys.calendars.all

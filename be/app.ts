@@ -3,9 +3,12 @@ import { ROUTES, STATUS_RESPONSE, env } from "@/config";
 import {
   getActiveConnectionCount,
   getConnectedUserCount,
+  getSocketServer,
   initSocketServer,
   shutdownSocketServer,
 } from "@/config/clients/socket-server"
+import { getBot } from "@/telegram-bot/init-bot"
+import { getSlackReceiver } from "@/slack-bot/init-bot"
 import { initializeJobScheduler, shutdownJobScheduler } from "@/jobs";
 
 import aclRoute from "@/routes/google-calendar/acl-route";
@@ -100,13 +103,28 @@ app.get("/", (_req, res) => {
 });
 
 app.get("/health", (_req, res) => {
+  const bot = getBot()
+  const slackReceiver = getSlackReceiver()
+  const socketServer = getSocketServer()
+
   res.status(STATUS_RESPONSE.SUCCESS).json({
     status: "ok",
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
-    sockets: {
-      connectedUsers: getConnectedUserCount(),
-      activeConnections: getActiveConnectionCount(),
+    services: {
+      websockets: {
+        status: socketServer ? "healthy" : "unavailable",
+        connectedUsers: getConnectedUserCount(),
+        activeConnections: getActiveConnectionCount(),
+      },
+      telegram: {
+        status: bot && env.integrations.telegram.isEnabled ? "healthy" : "disabled",
+        mode: env.integrations.telegram.useWebhook ? "webhook" : "polling",
+      },
+      slack: {
+        status: slackReceiver && env.integrations.slack.isEnabled ? "healthy" : "disabled",
+        mode: "http",
+      },
     },
   })
 })

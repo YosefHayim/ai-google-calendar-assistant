@@ -77,6 +77,14 @@ export const fr: TranslationShape = {
     systemOffline: 'Système indisponible',
     systemChecking: 'Vérification du statut...',
     chatOnTelegram: 'Discuter avec Ally sur Telegram',
+    checkingServices: 'Vérification des services...',
+    serverUnreachable: 'Serveur inaccessible',
+    serverOnline: 'Serveur en ligne',
+    uptime: 'Disponibilité',
+    websockets: 'WebSockets',
+    connections: 'connexions',
+    telegram: 'Telegram',
+    slack: 'Slack',
   },
 
   home: {

@@ -10,12 +10,10 @@ import {
   handleBrainEditStart,
   handleBrainToggle,
   handleLanguageSelection,
-  handleProfileSelection,
 } from "../utils/commands";
 import type { GlobalContext } from "./bot-config";
 
 const LANGUAGE_CALLBACK_REGEX = /^language:(.+)$/;
-const PROFILE_CALLBACK_REGEX = /^profile:(.+)$/;
 
 export const registerCallbackHandlers = (bot: Bot<GlobalContext>): void => {
   bot.callbackQuery("settings:change_email", async (ctx) => {
@@ -82,10 +80,5 @@ export const registerCallbackHandlers = (bot: Bot<GlobalContext>): void => {
   bot.callbackQuery("brain:edit:replace", async (ctx) => {
     const { handleBrainEditModeSelect } = await import("../utils/commands.js");
     await handleBrainEditModeSelect(ctx, "replace");
-  });
-
-  bot.callbackQuery(PROFILE_CALLBACK_REGEX, async (ctx) => {
-    const profileId = ctx.match[1];
-    await handleProfileSelection(ctx, profileId);
   });
 };

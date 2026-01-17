@@ -77,6 +77,14 @@ export const ar: TranslationShape = {
     systemOffline: 'النظام غير متاح',
     systemChecking: 'جاري التحقق من الحالة...',
     chatOnTelegram: 'تحدث مع Ally على تيليجرام',
+    checkingServices: 'جاري فحص الخدمات...',
+    serverUnreachable: 'لا يمكن الوصول إلى الخادم',
+    serverOnline: 'الخادم متصل',
+    uptime: 'وقت التشغيل',
+    websockets: 'WebSockets',
+    connections: 'اتصالات',
+    telegram: 'تيليجرام',
+    slack: 'Slack',
   },
 
   home: {
