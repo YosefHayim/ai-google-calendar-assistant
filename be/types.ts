@@ -480,6 +480,32 @@ export type GapErrorCode =
   | "INVALID_TIME_RANGE"
   | "SETTINGS_VALIDATION_FAILED";
 
+/**
+ * Query parameters for gap analysis endpoint
+ */
+export type GapQueryParams = {
+  startDate?: string;
+  endDate?: string;
+  calendarId?: string;
+  lookbackDays?: number;
+  limit?: number;
+};
+
+/**
+ * Request to skip a gap
+ */
+export type SkipGapRequest = {
+  reason?: string;
+};
+
+/**
+ * Response from dismissing all gaps
+ */
+export type DismissAllGapsResponse = {
+  message: string;
+  dismissedCount: number;
+};
+
 // =============================================================================
 // Admin Dashboard Types
 // =============================================================================

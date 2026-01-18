@@ -93,6 +93,7 @@ export function ChatInterface() {
           messageCount: 2,
           lastUpdated: new Date().toISOString(),
           createdAt: new Date().toISOString(),
+          pinned: false,
         })
       }
 

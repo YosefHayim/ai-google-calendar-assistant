@@ -346,7 +346,7 @@ const createMockQueryBuilder = (
   };
 
   const builder: any = {
-    select: jest.fn((columns = "*") => {
+    select: jest.fn((columns: string = "*") => {
       _selectColumns = columns;
       return builder;
     }),

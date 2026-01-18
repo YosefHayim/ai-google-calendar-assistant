@@ -109,6 +109,12 @@ const getUserInformationById = reqResAsyncHandler(
 
 const deActivateUser = reqResAsyncHandler(
   async (req: Request, res: Response) => {
+    const userId = req.user?.id;
+
+    if (!userId) {
+      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
+    }
+
     const deletionResults = {
       oauthTokens: false,
       conversations: 0,
@@ -127,7 +133,7 @@ const deActivateUser = reqResAsyncHandler(
           id_token: null,
           updated_at: new Date().toISOString(),
         })
-        .eq("user_id", req.user?.id)
+        .eq("user_id", userId)
         .eq("provider", "google");
 
       if (!tokenError) {
@@ -136,19 +142,19 @@ const deActivateUser = reqResAsyncHandler(
 
       // 2. Delete all conversations and messages
       const conversationsResult = await webConversation.deleteAllConversations(
-        req.user?.id
+        userId
       );
       deletionResults.conversations = conversationsResult.deletedCount;
 
       // 3. Clear Redis context (cross-modal session data + caches)
-      await unifiedContextStore.clearAll(req.user?.id);
-      await invalidateAllUserCache(req.user?.id);
+      await unifiedContextStore.clearAll(userId);
+      await invalidateAllUserCache(userId);
       deletionResults.redisContext = true;
 
       // 4. Delete user record from users table (this will cascade to related tables via FK)
       const { error: deleteUserError } = await SUPABASE.from("users")
         .delete()
-        .eq("id", req.user?.id);
+        .eq("id", userId);
 
       if (!deleteUserError) {
         deletionResults.userRecord = true;
@@ -156,7 +162,7 @@ const deActivateUser = reqResAsyncHandler(
 
       // 5. Delete user from Supabase Auth
       const { error: authDeleteError } = await SUPABASE.auth.admin.deleteUser(
-        req.user?.id
+        userId
       );
 
       if (authDeleteError) {

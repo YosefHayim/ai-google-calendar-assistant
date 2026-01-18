@@ -323,6 +323,10 @@ const getConversation = reqResAsyncHandler(
     const userId = req.user?.id;
     const conversationId = req.params.id;
 
+    if (!userId) {
+      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
+    }
+
     try {
       const conversation = await webConversation.getConversationById(
         conversationId,

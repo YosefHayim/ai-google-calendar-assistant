@@ -1,4 +1,4 @@
-import type { DismissAllGapsResponse, FillGapRequest, GapQueryParams, SkipGapRequest } from "@/types/api";
+import type { DismissAllGapsResponse, FillGapRequest, GapQueryParams, SkipGapRequest } from "@/types";
 import type { NextFunction, Request, Response } from "express";
 import { analyzeGapsForUser, formatGapsForDisplay } from "@/utils/calendar/gap-recovery";
 import { reqResAsyncHandler, sendR } from "@/utils/http";
@@ -10,7 +10,11 @@ import { STATUS_RESPONSE } from "@/config/constants";
  * GET /api/gaps
  */
 const getGaps = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const userEmail = req.user!.email;
+  const userEmail = req.user?.email;
+
+  if (!userEmail) {
+    return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User email not available");
+  }
 
   const queryParams: GapQueryParams = {
     startDate: req.query.startDate as string,
@@ -55,7 +59,11 @@ const getGaps = reqResAsyncHandler(async (req: Request, res: Response) => {
  * GET /api/gaps/formatted
  */
 const getFormattedGaps = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const userEmail = req.user!.email;
+  const userEmail = req.user?.email;
+
+  if (!userEmail) {
+    return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User email not available");
+  }
 
   try {
     const gaps = await analyzeGapsForUser({

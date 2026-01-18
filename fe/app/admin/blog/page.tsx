@@ -22,7 +22,8 @@ import { toast } from 'sonner'
 // Icons & Utilities
 import { FileText, Loader2, Code, Copy, Check, Sparkles, Upload, FormInput } from 'lucide-react'
 import { useCreateBlogPost, useAvailableCategories } from '@/hooks/queries'
-import { useGenerateAIBlogPost } from '@/hooks/queries/blog'
+import { useGenerateAIBlogPost, blogKeys } from '@/hooks/queries/blog'
+import { blogService } from '@/services/blog.service'
 import { BLOG_CATEGORIES, type BlogCategory, type CreateBlogPostData } from '@/types/blog'
 import { useQueryClient } from '@tanstack/react-query'
 
@@ -128,7 +129,7 @@ const formSchema = z.object({
   category: z.string().min(1, { message: 'Category is required' }),
   tags: z.string().optional(),
   status: z.enum(['draft', 'published']),
-  featured: z.boolean().default(false),
+  featured: z.boolean(),
 })
 
 const aiFormSchema = z.object({
@@ -136,7 +137,7 @@ const aiFormSchema = z.object({
   category: z.string().optional(),
   keywords: z.string().optional(),
   targetAudience: z.string().optional(),
-  tone: z.enum(['professional', 'conversational', 'expert', 'educational']).default('professional'),
+  tone: z.enum(['professional', 'conversational', 'expert', 'educational']),
 })
 
 type FormValues = z.infer<typeof formSchema>

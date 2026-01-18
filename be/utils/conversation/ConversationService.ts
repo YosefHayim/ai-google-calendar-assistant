@@ -1313,6 +1313,7 @@ export class ConversationService {
       summary: conversation.summary || "",
       createdAt: conversation.created_at,
       lastMessageAt: conversation.last_message_at || conversation.created_at,
+      lastUpdated: conversation.last_message_at || conversation.created_at,
       messageCount: conversation.message_count || 0,
       source: conversation.source,
       archivedAt: conversation.archived_at || undefined,
