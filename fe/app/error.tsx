@@ -5,6 +5,7 @@ import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { useCallback, useEffect, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 import { useTranslation } from 'react-i18next'
 
 function formatErrorForCopy(error: Error & { digest?: string }): string {
@@ -128,7 +129,7 @@ export default function ErrorBoundary({ error, reset }: { error: Error & { diges
               disabled={isRetrying}
               className="w-full gap-2 bg-secondary text-white hover:bg-secondary dark:bg-secondary dark:text-foreground dark:hover:bg-accent font-semibold"
             >
-              <RefreshCw className={`h-4 w-4 ${isRetrying ? 'animate-spin' : ''}`} />
+              <RefreshCw className={cn('h-4 w-4', isRetrying && 'animate-spin')} />
               {isRetrying ? t('errors.retrying') : t('errors.tryAgain')}
             </Button>
 

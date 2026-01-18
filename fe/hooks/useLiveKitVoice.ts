@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useCallback, useRef, useEffect } from 'react'
-import { Room, RoomEvent, Track, RemoteTrack, RemoteTrackPublication, Participant } from 'livekit-client'
+import { Participant, RemoteTrack, RemoteTrackPublication, Room, RoomEvent, Track } from 'livekit-client'
+import { useCallback, useEffect, useRef, useState } from 'react'
+
 import { voiceService } from '@/services/voice.service'
 
 export type LiveKitVoiceState = 'idle' | 'connecting' | 'connected' | 'speaking' | 'listening' | 'error'
@@ -12,6 +13,18 @@ interface UseLiveKitVoiceOptions {
   onError?: (error: string) => void
 }
 
+/**
+ * Hook for managing real-time voice conversations using LiveKit.
+ *
+ * Handles connection to LiveKit room, audio track management, transcript processing,
+ * and microphone control for AI voice interactions.
+ *
+ * @param options - Configuration options for voice interaction callbacks
+ * @param options.onTranscript - Called when speech-to-text transcript is received
+ * @param options.onAgentSpeaking - Called when agent starts/stops speaking
+ * @param options.onError - Called when connection or audio errors occur
+ * @returns Object containing voice state, controls, and connection methods
+ */
 export function useLiveKitVoice(options: UseLiveKitVoiceOptions = {}) {
   const { onTranscript, onAgentSpeaking, onError } = options
 

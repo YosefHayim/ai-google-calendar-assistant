@@ -1,11 +1,12 @@
-import React, { useMemo, useState, useCallback } from 'react'
-import ReactMarkdown from 'react-markdown'
-import { Role, MessageImage } from '@/types'
-import remarkGfm from 'remark-gfm'
-import { getTextDirection } from '@/lib/utils'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
+import { MessageImage, Role } from '@/types'
+import React, { useCallback, useMemo, useState } from 'react'
+import { cn, getTextDirection } from '@/lib/utils'
+
+import ReactMarkdown from 'react-markdown'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
+import remarkGfm from 'remark-gfm'
 
 interface MessageBubbleProps {
   role: Role
@@ -107,20 +108,20 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ role, content, timestamp,
 
   return (
     <>
-      <div className={`flex w-full mb-2 ${isUser ? 'justify-end' : 'justify-start'}`}>
-        <div className={`max-w-[85%] md:max-w-[75%] flex flex-col ${isUser ? 'items-end' : 'items-start'}`}>
+      <div className={cn('flex w-full mb-2', isUser ? 'justify-end' : 'justify-start')}>
+        <div className={cn('max-w-[85%] md:max-w-[75%] flex flex-col', isUser ? 'items-end' : 'items-start')}>
           <div
-            className={`px-4 py-3 rounded-md text-sm leading-relaxed transition-all duration-200
-              ${
-                isUser
-                  ? 'bg-primary text-white rounded-tr-none shadow-md'
-                  : 'bg-background dark:bg-secondary border border dark:border text-zinc-800 dark:text-primary-foreground rounded-tl-none shadow-sm'
-              }`}
+            className={cn(
+              'px-4 py-3 rounded-md text-sm leading-relaxed transition-all duration-200',
+              isUser
+                ? 'bg-primary text-white rounded-tr-none shadow-md'
+                : 'bg-background dark:bg-secondary border border dark:border text-zinc-800 dark:text-primary-foreground rounded-tl-none shadow-sm'
+            )}
             dir={textDirection}
           >
             {/* Render images if present */}
             {hasImages && (
-              <div className={`flex flex-wrap gap-2 ${content ? 'mb-3' : ''}`}>
+              <div className={cn('flex flex-wrap gap-2', content && 'mb-3')}>
                 {images.map((image, index) => {
                   const imageSrc = `data:${image.mimeType};base64,${image.data}`
                   return (
@@ -142,14 +143,18 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ role, content, timestamp,
             )}
             {content && (
               <div
-                className={`prose prose-sm max-w-none ${isUser ? 'prose-invert' : 'prose-zinc dark:prose-invert'} ${isRTL ? 'text-right' : ''}`}
+                className={cn(
+                  'prose prose-sm max-w-none',
+                  isUser ? 'prose-invert' : 'prose-zinc dark:prose-invert',
+                  isRTL && 'text-right'
+                )}
               >
                 <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
               </div>
             )}
           </div>
           {!hideTimestamp && (
-            <span className={`text-xs text-muted-foreground mt-1 px-1 ${isRTL ? 'text-right w-full' : ''}`}>
+            <span className={cn('text-xs text-muted-foreground mt-1 px-1', isRTL && 'text-right w-full')}>
               {timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
             </span>
           )}

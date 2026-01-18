@@ -2,9 +2,11 @@
 
 import { Calendar, CalendarDays, Clock, ExternalLink, Hash, Hourglass } from 'lucide-react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../ui/dialog'
+import { formatDate, formatDuration, formatHours, formatTimeRange } from '@/lib/formatUtils'
+
 import { EmptyState } from '@/components/ui/empty-state'
-import { formatDuration, formatTimeRange, formatDate, formatHours } from '@/lib/formatUtils'
 import type { PatternEventSummary } from '@/types/analytics'
+import { cn } from '@/lib/utils'
 
 export interface EventsListDialogProps {
   isOpen: boolean
@@ -71,7 +73,10 @@ const EventsListDialog: React.FC<EventsListDialogProps> = ({ isOpen, title, subt
                 <li
                   key={event.id}
                   onClick={() => handleEventClick(event.htmlLink)}
-                  className={`flex items-start gap-3 group rounded-lg p-3 bg-muted dark:bg-secondary/50 transition-colors ${event.htmlLink ? 'cursor-pointer hover:bg-secondary dark:hover:bg-secondary' : ''}`}
+                  className={cn(
+                    'flex items-start gap-3 group rounded-lg p-3 bg-muted dark:bg-secondary/50 transition-colors',
+                    event.htmlLink && 'cursor-pointer hover:bg-secondary dark:hover:bg-secondary'
+                  )}
                 >
                   <div
                     className="w-8 h-8 rounded-md flex items-center justify-center shrink-0 mt-0.5"

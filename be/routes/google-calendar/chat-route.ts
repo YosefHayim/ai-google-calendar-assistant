@@ -39,6 +39,7 @@ router.param(
   }
 );
 
+// POST / - Send chat message
 router.post(
   "/",
   withGoogleAuth,
@@ -46,6 +47,7 @@ router.post(
   aiChatRateLimiter,
   chatController.sendChat
 );
+// POST /stream - Send chat message with streaming response
 router.post(
   "/stream",
   withGoogleAuth,
@@ -54,39 +56,48 @@ router.post(
   chatStreamController.streamChat
 );
 
+// GET /conversations - Get user conversations
 router.get("/conversations", supabaseAuth(), chatController.getConversations);
+// POST /conversations/new - Start new conversation
 router.post(
   "/conversations/new",
   supabaseAuth(),
   chatController.startNewConversation
 );
+// DELETE /conversations - Delete all conversations
 router.delete(
   "/conversations",
   supabaseAuth(),
   chatController.deleteAllConversations
 );
+// DELETE /memory - Reset user memory
 router.delete("/memory", supabaseAuth(), chatController.resetMemory);
+// GET /conversations/:id - Get specific conversation
 router.get(
   "/conversations/:id",
   supabaseAuth(),
   chatController.getConversation
 );
+// PATCH /conversations/:id - Update conversation title
 router.patch(
   "/conversations/:id",
   supabaseAuth(),
   chatController.updateConversationTitle
 );
+// PATCH /conversations/:id/pin - Toggle conversation pin status
 router.patch(
   "/conversations/:id/pin",
   supabaseAuth(),
   chatController.toggleConversationPinned
 );
+// DELETE /conversations/:id - Delete specific conversation
 router.delete(
   "/conversations/:id",
   supabaseAuth(),
   chatController.removeConversation
 );
 
+// POST /conversations/:id/messages - Continue conversation with new message
 router.post(
   "/conversations/:id/messages",
   withGoogleAuth,
@@ -94,6 +105,7 @@ router.post(
   aiChatRateLimiter,
   chatController.continueConversation
 );
+// POST /conversations/:id/messages/stream - Continue conversation with streaming response
 router.post(
   "/conversations/:id/messages/stream",
   withGoogleAuth,
@@ -102,16 +114,19 @@ router.post(
   chatStreamController.streamContinueConversation
 );
 
+// POST /conversations/:id/share - Create shareable link for conversation
 router.post(
   "/conversations/:id/share",
   supabaseAuth(),
   chatController.createShareLink
 );
+// DELETE /conversations/:id/share - Revoke shareable link
 router.delete(
   "/conversations/:id/share",
   supabaseAuth(),
   chatController.revokeShareLink
 );
+// GET /conversations/:id/share - Get sharing status
 router.get(
   "/conversations/:id/share",
   supabaseAuth(),

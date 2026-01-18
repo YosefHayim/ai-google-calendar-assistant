@@ -40,6 +40,18 @@ type BriefingResult = {
 /**
  * Check if the current time in a given timezone is within a window of the target time
  */
+/**
+ * Check if current time is within a specified time window in a given timezone.
+ *
+ * Determines whether the current time falls within a configurable
+ * minute window around a target time, accounting for timezone differences.
+ * Used for scheduling briefings and other time-sensitive cron jobs.
+ *
+ * @param targetTime - Target time in "HH:MM" format (24-hour)
+ * @param timezone - IANA timezone identifier (e.g., "America/New_York")
+ * @param windowMinutes - Minutes before/after target time to consider "within window" (default: 5)
+ * @returns True if current time is within the specified window
+ */
 function isWithinTimeWindow(
   targetTime: string,
   timezone: string,

@@ -14,6 +14,14 @@ interface UseUserOptions extends QueryHookOptions {
   refresh?: boolean
 }
 
+/**
+ * Hook to fetch the current authenticated user data.
+ *
+ * @param options - Query options for customizing the fetch behavior
+ * @param options.customUser - Whether to fetch custom user format with avatar_url
+ * @param options.refresh - Force refresh from database, bypassing cache
+ * @returns Normalized query state containing user data or null if not authenticated
+ */
 export function useUser(options?: UseUserOptions) {
   const customUser = options?.customUser ?? false
   const refresh = options?.refresh ?? true

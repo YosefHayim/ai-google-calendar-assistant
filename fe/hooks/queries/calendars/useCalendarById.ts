@@ -1,10 +1,11 @@
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
+import { QueryHookOptions, useQueryWrapper } from '../useQueryWrapper'
+
+import { QUERY_CONFIG } from '@/lib/constants'
 import { calendarsService } from '@/services/calendars.service'
 import { queryKeys } from '@/lib/query/keys'
-import { QUERY_CONFIG } from '@/lib/constants'
-import { useQueryWrapper, QueryHookOptions } from '../useQueryWrapper'
+import { useQuery } from '@tanstack/react-query'
 
 interface UseCalendarByIdOptions extends QueryHookOptions {
   /** The calendar ID to fetch */
@@ -12,7 +13,11 @@ interface UseCalendarByIdOptions extends QueryHookOptions {
 }
 
 /**
- * Hook to fetch a specific calendar by ID
+ * Hook to fetch a specific calendar by its Google Calendar ID.
+ *
+ * @param options - Query options including the required calendar ID
+ * @param options.id - The Google Calendar ID to fetch details for
+ * @returns Normalized query state containing the calendar object or null if not found
  */
 export function useCalendarById(options: UseCalendarByIdOptions) {
   const { id, ...queryOptions } = options

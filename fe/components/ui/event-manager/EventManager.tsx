@@ -1,24 +1,23 @@
 'use client'
 
-import { useState, useCallback } from 'react'
 import { ChevronLeft, ChevronRight, Plus } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
+import type { ColorDefinition, Event, EventManagerProps, ViewType } from './types'
+import { defaultCategories, defaultColors, defaultTags } from './types'
+import { useCallback, useState } from 'react'
 
-import type { Event, ViewType, ColorDefinition, EventManagerProps } from './types'
-import { defaultColors, defaultCategories, defaultTags } from './types'
+import { ActiveFiltersDisplay } from './components/ActiveFiltersDisplay'
+import { Button } from '@/components/ui/button'
+import { DayView } from './views/DayView'
+import { EventDialog } from './components/EventDialog'
+import { FilterControls } from './components/FilterControls'
+import { ListView } from './views/ListView'
+import { MonthView } from './views/MonthView'
+import { ViewToggle } from './components/ViewToggle'
+import { WeekView } from './views/WeekView'
+import { YearView } from './views/YearView'
+import { cn } from '@/lib/utils'
 import { getDateLabel } from './utils/calendar-utils'
 import { useEventFilters } from './hooks/useEventFilters'
-
-import { ViewToggle } from './components/ViewToggle'
-import { FilterControls } from './components/FilterControls'
-import { ActiveFiltersDisplay } from './components/ActiveFiltersDisplay'
-import { EventDialog } from './components/EventDialog'
-import { YearView } from './views/YearView'
-import { MonthView } from './views/MonthView'
-import { WeekView } from './views/WeekView'
-import { DayView } from './views/DayView'
-import { ListView } from './views/ListView'
 
 export function EventManager({
   events: propEvents = [],
@@ -191,8 +190,37 @@ export function EventManager({
   }, [])
 
   return (
-    <div className={cn('flex flex-col gap-4', className)}>
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+    <div className={cn('flex flex-col gap-3 sm:gap-4', className)}>
+      {/* Mobile Layout - Compact header */}
+      <div className="block md:hidden space-y-3">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-semibold truncate min-w-0 flex-1 mr-2">
+            {getDateLabel(view, currentDate)}
+          </h2>
+          <div className="flex items-center gap-1">
+            <Button variant="outline" size="icon" onClick={() => navigateDate('prev')} className="h-8 w-8">
+              <ChevronLeft className="h-3 w-3" />
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => setCurrentDate(new Date())} className="h-8 px-2 text-xs">
+              Today
+            </Button>
+            <Button variant="outline" size="icon" onClick={() => navigateDate('next')} className="h-8 w-8">
+              <ChevronRight className="h-3 w-3" />
+            </Button>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <ViewToggle view={view} onViewChange={setView} />
+          <Button onClick={handleNewEventClick} className="flex-1 h-9 text-sm">
+            <Plus className="mr-1 h-4 w-4" />
+            New Event
+          </Button>
+        </div>
+      </div>
+
+      {/* Tablet and Desktop Layout */}
+      <div className="hidden md:flex md:flex-col md:gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
           <h2 className="text-xl font-semibold sm:text-2xl min-w-[180px] sm:min-w-[220px]">
             {getDateLabel(view, currentDate)}

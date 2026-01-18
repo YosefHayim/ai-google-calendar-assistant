@@ -1,21 +1,31 @@
-import type { calendar_v3 } from "googleapis";
-import isEmail from "validator/lib/isEmail";
-import { ACTION } from "@/config";
-import { fetchCredentialsByEmail, generateGoogleAuthUrl } from "@/utils/auth";
 import {
   eventsHandler,
   initUserSupabaseCalendarWithTokensAndUpdateTokens,
 } from "@/utils/calendar";
-import { getEvents } from "@/utils/calendar/get-events";
-import { isValidDateTime } from "@/utils/date/date-helpers";
-import { asyncHandler } from "@/utils/http";
+import { fetchCredentialsByEmail, generateGoogleAuthUrl } from "@/utils/auth";
 import { formatEventData, parseToolArguments } from "./utils";
+
+import { ACTION } from "@/config";
+import { asyncHandler } from "@/utils/http";
+import type { calendar_v3 } from "googleapis";
+import { getEvents } from "@/utils/calendar/get-events";
+import isEmail from "validator/lib/isEmail";
+import { isValidDateTime } from "@/utils/date/date-helpers";
 
 type Event = calendar_v3.Schema$Event;
 
 /**
- * Applies the user's default calendar timezone to timed events that don't have a timezone specified.
- * All-day events (using date instead of dateTime) don't require a timezone.
+ * Apply user's default calendar timezone to timed events without timezone.
+ *
+ * For timed events (using dateTime instead of date) that lack explicit
+ * timezone information, fetches the user's Google Calendar default timezone
+ * and applies it to ensure proper event scheduling across timezones.
+ *
+ * All-day events are left unchanged as they don't require timezone info.
+ *
+ * @param event - Partial Google Calendar event object
+ * @param email - User's email to fetch their calendar settings
+ * @returns Promise resolving to event with default timezone applied if needed
  */
 async function applyDefaultTimezoneIfNeeded(
   event: Partial<Event>,
@@ -54,6 +64,18 @@ async function applyDefaultTimezoneIfNeeded(
 
 export const EXECUTION_TOOLS = {
   generateGoogleAuthUrl,
+  /**
+   * Register a new user with email validation and OAuth URL generation.
+   *
+   * Initiates user registration by validating the email and generating
+   * a Google OAuth URL for calendar authorization. Uses forced consent
+   * screen to ensure proper permissions on first authentication.
+   *
+   * @param params - Registration parameters
+   * @param params.email - User's email address (required)
+   * @param params.name - Optional user's name
+   * @returns Promise resolving to registration status with auth URL
+   */
   registerUser: asyncHandler(
     async (params: { email: string; name?: string }) => {
       if (!params.email) {
@@ -77,6 +99,19 @@ export const EXECUTION_TOOLS = {
     }
   ),
 
+  /**
+   * Create a new calendar event with timezone handling and optional features.
+   *
+   * Inserts a new event into the user's Google Calendar with automatic
+   * timezone application for timed events, optional Google Meet link
+   * generation, and support for custom event types.
+   *
+   * @param params - Event creation parameters including Google Calendar event data
+   * @param params.email - User's email for calendar access
+   * @param params.customEvents - Whether this is a custom event type (default: false)
+   * @param params.addMeetLink - Whether to automatically add a Google Meet link (default: false)
+   * @returns Promise resolving to created event data
+   */
   insertEvent: asyncHandler(
     async (
       params: calendar_v3.Schema$Event & {
@@ -105,6 +140,18 @@ export const EXECUTION_TOOLS = {
     }
   ),
 
+  /**
+   * Update an existing calendar event with new data.
+   *
+   * Modifies an existing Google Calendar event using its event ID.
+   * Applies timezone handling and validates user permissions before
+   * performing the update operation.
+   *
+   * @param params - Event update parameters
+   * @param params.email - User's email for calendar access
+   * @param params.eventId - Google Calendar event ID to update (required)
+   * @returns Promise resolving to updated event data
+   */
   updateEvent: asyncHandler(
     async (
       params: calendar_v3.Schema$Event & { email: string; eventId: string }
@@ -169,6 +216,22 @@ export const EXECUTION_TOOLS = {
     }
   ),
 
+  /**
+   * Retrieve calendar events with flexible filtering and search options.
+   *
+   * Fetches events from Google Calendar with support for time ranges,
+   * text search, and multi-calendar queries. Provides sensible defaults
+   * for time ranges to prevent excessive API calls.
+   *
+   * @param params - Event retrieval parameters
+   * @param params.email - User's email for calendar access
+   * @param params.q - Text search query to filter events
+   * @param params.timeMin - Start time for event range (ISO string, defaults to today)
+   * @param params.timeMax - End time for event range (ISO string, defaults to 24h after timeMin)
+   * @param params.searchAllCalendars - Whether to search across all user calendars
+   * @param params.calendarId - Specific calendar ID to search (default: "primary")
+   * @returns Promise resolving to matching calendar events
+   */
   getEvent: asyncHandler(
     async (
       params: calendar_v3.Schema$Event & {
@@ -317,6 +380,18 @@ export const EXECUTION_TOOLS = {
     }
   ),
 
+  /**
+   * Delete an existing calendar event.
+   *
+   * Permanently removes an event from the user's Google Calendar.
+   * Validates user permissions and event existence before deletion.
+   *
+   * @param params - Event deletion parameters
+   * @param params.eventId - Google Calendar event ID to delete (required)
+   * @param params.email - User's email for calendar access
+   * @param params.calendarId - Calendar ID containing the event (default: "primary")
+   * @returns Promise resolving to deletion confirmation
+   */
   deleteEvent: asyncHandler(
     (params: {
       eventId: string;

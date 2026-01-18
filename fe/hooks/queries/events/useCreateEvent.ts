@@ -1,13 +1,20 @@
 'use client'
 
+import type { ApiResponse, CalendarEvent, CreateEventRequest } from '@/types/api'
+import { MutationHookOptions, useMutationWrapper } from '../useMutationWrapper'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+
 import { eventsService } from '@/services/events.service'
 import { queryKeys } from '@/lib/query/keys'
-import { useMutationWrapper, MutationHookOptions } from '../useMutationWrapper'
-import type { CreateEventRequest, CalendarEvent, ApiResponse } from '@/types/api'
 
 /**
- * Hook to create a new calendar event
+ * Hook to create a new calendar event in Google Calendar.
+ *
+ * Automatically invalidates events list and free/busy caches upon successful creation
+ * to ensure the new event appears in subsequent queries and availability calculations.
+ *
+ * @param options - Mutation options for customizing the event creation behavior
+ * @returns Normalized mutation state for handling the event creation operation
  */
 export function useCreateEvent(options?: MutationHookOptions<CalendarEvent, CreateEventRequest>) {
   const queryClient = useQueryClient()

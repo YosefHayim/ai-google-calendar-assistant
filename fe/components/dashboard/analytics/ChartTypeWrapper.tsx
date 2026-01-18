@@ -1,9 +1,12 @@
 'use client'
 
 import * as React from 'react'
-import { BarChart3, LineChart, AreaChart, Layers, PieChart, CircleDot, Radar, BarChartHorizontal } from 'lucide-react'
+
 import { AnimatePresence, motion } from 'framer-motion'
+import { AreaChart, BarChart3, BarChartHorizontal, CircleDot, Layers, LineChart, PieChart, Radar } from 'lucide-react'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+
+import { cn } from '@/lib/utils'
 import { useLanguage } from '@/contexts/LanguageContext'
 
 const ALL_CHART_ICONS: Record<string, React.ComponentType<{ size?: number }>> = {
@@ -67,7 +70,7 @@ export function ChartTypeWrapper<T extends string>({
 
   return (
     <div className={className}>
-      <div className={`flex mb-4 ${tabsPosition === 'right' ? 'justify-end' : 'justify-start'}`}>
+      <div className={cn('flex mb-4', tabsPosition === 'right' ? 'justify-end' : 'justify-start')}>
         <Tabs value={chartType} onValueChange={(value) => setChartType(value as T)}>
           <TabsList className="h-8">
             {chartTypes.map((type) => {

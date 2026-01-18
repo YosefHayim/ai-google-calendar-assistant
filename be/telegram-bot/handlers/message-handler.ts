@@ -1,10 +1,3 @@
-import type { Bot } from "grammy";
-import { InputFile } from "grammy";
-import type { ImageContent } from "@/shared/llm";
-import { generateSpeechForTelegram } from "@/utils/ai/text-to-speech";
-import { transcribeAudio } from "@/utils/ai/voice-transcription";
-import { logger } from "@/utils/logger";
-import { getTranslatorFromLanguageCode } from "../i18n";
 import {
   CANCEL_RESPONSES,
   COMMANDS,
@@ -14,7 +7,6 @@ import {
   isDuplicateMessage,
   startTypingIndicator,
 } from "../utils";
-import { getVoicePreferenceForTelegram } from "../utils/ally-brain";
 import {
   handleAboutMeCommand,
   handleAnalyticsCommand,
@@ -48,13 +40,22 @@ import {
   handleWebsiteCommand,
   handleWeekCommand,
 } from "../utils/commands";
-import { processPhoto } from "../utils/image-handler";
 import {
   handleAgentRequest,
   handleCancellation,
   handleConfirmation,
 } from "./agent-handler";
+
+import type { Bot } from "grammy";
 import type { GlobalContext } from "./bot-config";
+import type { ImageContent } from "@/shared/llm";
+import { InputFile } from "grammy";
+import { generateSpeechForTelegram } from "@/utils/ai/text-to-speech";
+import { getTranslatorFromLanguageCode } from "../i18n";
+import { getVoicePreferenceForTelegram } from "../utils/ally-brain";
+import { logger } from "@/utils/logger";
+import { processPhoto } from "../utils/image-handler";
+import { transcribeAudio } from "@/utils/ai/voice-transcription";
 
 const MessageAction = {
   CONFIRM: "confirm",
@@ -64,6 +65,16 @@ const MessageAction = {
 
 type MessageActionType = (typeof MessageAction)[keyof typeof MessageAction];
 
+/**
+ * Classify user text as confirmation, cancellation, or neutral response.
+ *
+ * Analyzes user input to determine if they are confirming an action,
+ * canceling a pending operation, or providing a different response.
+ * Used for handling confirmation dialogs and user decision points.
+ *
+ * @param text - User's message text to classify
+ * @returns MessageActionType indicating CONFIRM, CANCEL, or OTHER
+ */
 const classifyConfirmationResponse = (text: string): MessageActionType => {
   const lowerText = text.toLowerCase();
 
@@ -312,6 +323,17 @@ const handleAgentRequestWithVoice = async (
   ctx.reply = originalReply;
 };
 
+/**
+ * Process incoming voice messages from Telegram users.
+ *
+ * Handles voice message transcription, AI processing, and response generation.
+ * Downloads voice file, transcribes audio to text, processes through AI agent,
+ * and responds with either text or voice based on user preferences.
+ * Includes typing indicators and comprehensive error handling.
+ *
+ * @param ctx - Telegram bot context containing voice message
+ * @returns Promise that resolves when voice message is fully processed
+ */
 const handleVoiceMessage = async (ctx: GlobalContext): Promise<void> => {
   const { t } = getTranslatorFromLanguageCode(ctx.session.codeLang);
   const telegramUserId = ctx.from?.id ?? 0;
@@ -361,6 +383,17 @@ const handleVoiceMessage = async (ctx: GlobalContext): Promise<void> => {
   }
 };
 
+/**
+ * Register all message event handlers for the Telegram bot.
+ *
+ * Sets up comprehensive message handling including voice messages,
+ * text messages, photos, and documents. Includes duplicate message
+ * filtering, session management, and proper error handling.
+ * Routes messages through appropriate processing pipelines.
+ *
+ * @param bot - Grammy bot instance to register handlers on
+ * @returns void - Modifies bot in place by adding event handlers
+ */
 export const registerMessageHandler = (bot: Bot<GlobalContext>): void => {
   bot.on("message:voice", async (ctx) => {
     const msgId = ctx.message.message_id;

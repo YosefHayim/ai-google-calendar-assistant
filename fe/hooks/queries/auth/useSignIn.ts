@@ -1,10 +1,11 @@
 'use client'
 
+import type { ApiResponse, AuthData } from '@/types/api'
+import { MutationHookOptions, useMutationWrapper } from '../useMutationWrapper'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+
 import { authService } from '@/services/auth.service'
 import { queryKeys } from '@/lib/query/keys'
-import { useMutationWrapper, MutationHookOptions } from '../useMutationWrapper'
-import type { AuthData, ApiResponse } from '@/types/api'
 
 interface SignInVariables {
   email: string
@@ -12,7 +13,13 @@ interface SignInVariables {
 }
 
 /**
- * Hook to sign in a user with email and password
+ * Hook to sign in a user with email and password.
+ *
+ * On successful sign-in, automatically invalidates the user query cache
+ * to ensure fresh user data is available.
+ *
+ * @param options - Mutation options for customizing the sign-in behavior
+ * @returns Normalized mutation state for handling the sign-in operation
  */
 export function useSignIn(options?: MutationHookOptions<AuthData, SignInVariables>) {
   const queryClient = useQueryClient()

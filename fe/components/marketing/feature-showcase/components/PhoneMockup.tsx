@@ -8,16 +8,33 @@ interface PhoneMockupProps {
 
 export const PhoneMockup = ({ children }: PhoneMockupProps) => (
   <div className="relative mx-auto">
-    <IPhoneMockup
-      model="15-pro"
-      color="space-black"
-      scale={0.68}
-      screenBg="#0E1621"
-      safeArea={false}
-      showHomeIndicator={true}
-      className="mx-auto"
-    >
-      <div className="h-full w-full">{children}</div>
-    </IPhoneMockup>
+    {/* Mobile scale */}
+    <div className="sm:hidden">
+      <IPhoneMockup
+        model="15-pro"
+        color="space-black"
+        scale={0.45}
+        screenBg="#0E1621"
+        safeArea={false}
+        showHomeIndicator={true}
+        className="mx-auto"
+      >
+        <div className="h-full w-full">{children}</div>
+      </IPhoneMockup>
+    </div>
+    {/* Tablet and desktop scale */}
+    <div className="hidden sm:block">
+      <IPhoneMockup
+        model="15-pro"
+        color="space-black"
+        scale={0.68}
+        screenBg="#0E1621"
+        safeArea={false}
+        showHomeIndicator={true}
+        className="mx-auto"
+      >
+        <div className="h-full w-full">{children}</div>
+      </IPhoneMockup>
+    </div>
   </div>
 )

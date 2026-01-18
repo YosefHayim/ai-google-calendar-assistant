@@ -11,6 +11,17 @@ export type UsageResetResult = {
 
 const MONTHS_OFFSET = 1;
 
+/**
+ * Reset a single user's AI usage counters and schedule next reset.
+ *
+ * Resets the user's AI interactions counter to zero and updates
+ * the usage reset timestamp. Calculates the next monthly reset date
+ * based on the current time plus one month offset.
+ *
+ * @param userId - The user's unique identifier
+ * @param now - Current timestamp for reset scheduling
+ * @returns Promise resolving to success status and optional error message
+ */
 async function resetUserUsage(
   userId: string,
   now: Date
@@ -33,6 +44,17 @@ async function resetUserUsage(
   return { success: true };
 }
 
+/**
+ * Determine if a user's usage should be reset based on reset schedule.
+ *
+ * Checks if the user's usage reset date has passed or if they
+ * don't have a reset date set (first-time reset). Uses monthly
+ * intervals for reset scheduling.
+ *
+ * @param resetAt - ISO string of last reset date, or null for new users
+ * @param now - Current timestamp for comparison
+ * @returns True if usage should be reset, false otherwise
+ */
 function shouldResetUsage(resetAt: string | null, now: Date): boolean {
   if (!resetAt) {
     return true;
@@ -43,6 +65,16 @@ function shouldResetUsage(resetAt: string | null, now: Date): boolean {
   return now >= nextReset;
 }
 
+/**
+ * Process monthly usage reset job for all eligible users.
+ *
+ * Background job that runs periodically to reset AI usage counters
+ * for users whose monthly reset date has passed. Updates user records
+ * and tracks success/failure statistics for monitoring.
+ *
+ * @param job - BullMQ job instance with job metadata
+ * @returns Promise resolving to reset results with user count and errors
+ */
 export async function handleUsageReset(
   job: Job<UsageResetJobData>
 ): Promise<UsageResetResult> {

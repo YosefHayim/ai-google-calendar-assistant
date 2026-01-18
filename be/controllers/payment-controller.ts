@@ -24,6 +24,17 @@ import {
 import { requireUser } from "@/utils/auth";
 import { reqResAsyncHandler, sendR } from "@/utils/http";
 
+/**
+ * Get the current payment system status and configuration.
+ *
+ * Returns information about whether the payment system is enabled,
+ * which provider is being used, and key configuration values like
+ * trial periods and refund windows.
+ *
+ * @param _req - Express request object (unused)
+ * @param res - Express response object
+ * @returns Promise resolving to payment system status information
+ */
 export const getPaymentStatus = reqResAsyncHandler(
   async (_req: Request, res: Response) => {
     const enabled = isLemonSqueezyEnabled();
@@ -37,6 +48,17 @@ export const getPaymentStatus = reqResAsyncHandler(
   }
 );
 
+/**
+ * Retrieve all available subscription plans from Lemon Squeezy.
+ *
+ * Fetches the complete list of pricing plans including monthly and yearly
+ * variants, features, limits, and purchase URLs. Plans are formatted
+ * for frontend consumption with pricing and feature information.
+ *
+ * @param _req - Express request object (unused)
+ * @param res - Express response object
+ * @returns Promise resolving to formatted plans array
+ */
 export const getPlans = reqResAsyncHandler(
   async (_req: Request, res: Response) => {
     const plans = await getPlansFromLemonSqueezy();
@@ -63,6 +85,22 @@ export const getPlans = reqResAsyncHandler(
   }
 );
 
+/**
+ * Get the authenticated user's current subscription status.
+ *
+ * Retrieves comprehensive subscription information including:
+ * - Access level and feature entitlements
+ * - Active subscription details (status, billing interval, trial info)
+ * - Cancellation status and renewal dates
+ * - Payment method information
+ *
+ * Requires user authentication.
+ *
+ * @param req - Express request object with authenticated user
+ * @param req.user - Authenticated user information
+ * @param res - Express response object
+ * @returns Promise resolving to subscription status and access information
+ */
 export const getSubscriptionStatus = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     const userResult = requireUser(req, res);

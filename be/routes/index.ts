@@ -34,6 +34,7 @@ import whatsAppRoute from "./whatsapp-route";
 
 export const initializeRoutes = (app: Express) => {
 
+  // GET /health - Application health check
   app.get("/health", (_req, res) => {
     const socketServer = getSocketServer();
     const telegramBot = getBot();

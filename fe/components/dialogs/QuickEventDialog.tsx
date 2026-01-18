@@ -1,16 +1,17 @@
 'use client'
 
-import React, { useState, useEffect, useCallback, useRef } from 'react'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
-import { AllyLogo } from '@/components/shared/logo'
 import { Calendar, Loader2, Mic, MicOff, Sparkles } from 'lucide-react'
+import { ConfirmView, ConflictView, ErrorView, InputView, LoadingView, SuccessView } from './quick-event'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import type { ParsedEventData, QuickAddConflict } from '@/types/api'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
+
+import { AllyLogo } from '@/components/shared/logo'
 import { AnimatePresence } from 'framer-motion'
+import { Button } from '@/components/ui/button'
 import { eventsService } from '@/services/events.service'
-import { voiceService } from '@/services/voice.service'
 import { toast } from 'sonner'
-import type { QuickAddConflict, ParsedEventData } from '@/types/api'
-import { InputView, LoadingView, ConfirmView, ConflictView, SuccessView, ErrorView } from './quick-event'
+import { voiceService } from '@/services/voice.service'
 
 type QuickEventDialogProps = {
   isOpen: boolean
@@ -204,14 +205,14 @@ export const QuickEventDialog: React.FC<QuickEventDialogProps> = ({ isOpen, onCl
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-2xl p-0 gap-0 overflow-hidden bg-background dark:bg-secondary border dark:border">
+      <DialogContent className="max-w-2xl w-[95vw] sm:w-full p-0 gap-0 overflow-hidden bg-background dark:bg-secondary border dark:border">
         <DialogHeader className="sr-only">
           <DialogTitle>Quick Add Event</DialogTitle>
           <DialogDescription>Add an event to your calendar using natural language or voice</DialogDescription>
         </DialogHeader>
 
-        <div className="flex min-h-[400px]">
-          <div className="flex-1 p-6 flex flex-col border-r border dark:border">
+        <div className="flex flex-col sm:flex-row min-h-[400px] sm:min-h-[500px]">
+          <div className="flex-1 p-4 sm:p-6 flex flex-col border-r border dark:border sm:border-r">
             <div className="flex items-center gap-2 mb-4">
               <Calendar className="w-5 h-5 text-primary" />
               <h3 className="text-lg font-semibold text-foreground dark:text-primary-foreground">Quick Add Event</h3>
@@ -247,7 +248,7 @@ Examples:
               </Button>
             </div>
 
-            <div className="mt-4 flex items-center justify-between">
+            <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
               <p className="text-xs text-muted-foreground">
                 {state === 'recording' ? 'Recording... Click mic to stop' : 'Press Enter to process'}
               </p>
@@ -256,6 +257,7 @@ Examples:
                 disabled={text.trim().length < MIN_TEXT_LENGTH || isDisabled}
                 variant="outline"
                 size="sm"
+                className="w-full sm:w-auto"
               >
                 {state === 'parsing' || state === 'transcribing' ? (
                   <>
@@ -272,7 +274,7 @@ Examples:
             </div>
           </div>
 
-          <div className="w-72 p-6 bg-muted dark:bg-secondary/50 flex flex-col">
+          <div className="w-full sm:w-72 p-4 sm:p-6 bg-muted dark:bg-secondary/50 flex flex-col border-t sm:border-t-0 sm:border-l border dark:border">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-10 h-10 bg-secondary dark:bg-background rounded-lg flex items-center justify-center">
                 <AllyLogo className="w-6 h-6 text-white dark:text-foreground" />

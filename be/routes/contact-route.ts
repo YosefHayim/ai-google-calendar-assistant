@@ -1,7 +1,7 @@
+import { apiRateLimiter } from "@/middlewares/rate-limiter";
+import { contactController } from "@/controllers/contact-controller";
 import express from "express";
 import multer from "multer";
-import { contactController } from "@/controllers/contact-controller";
-import { apiRateLimiter } from "@/middlewares/rate-limiter";
 
 const router = express.Router();
 
@@ -48,6 +48,7 @@ const upload = multer({
   fileFilter,
 });
 
+// POST / - Submit contact form with optional file attachments
 router.post(
   "/",
   apiRateLimiter,

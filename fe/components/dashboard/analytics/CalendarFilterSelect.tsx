@@ -1,11 +1,12 @@
 'use client'
 
 import { Calendar, Check, ChevronDown, X } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+
+import { Button } from '@/components/ui/button'
+import type { CalendarListEntry } from '@/types/api'
 import { cn } from '@/lib/utils'
 import { useTranslation } from 'react-i18next'
-import type { CalendarListEntry } from '@/types/api'
 
 interface CalendarFilterSelectProps {
   calendars: CalendarListEntry[]
@@ -62,16 +63,16 @@ export function CalendarFilterSelect({
         <Button
           variant="outline"
           size="sm"
-          className="h-9 w-full sm:w-auto gap-2 border dark:border bg-background dark:bg-secondary hover:bg-muted dark:hover:bg-secondary"
+          className="h-9 w-full gap-2 border dark:border bg-background dark:bg-secondary hover:bg-muted dark:hover:bg-secondary touch-manipulation"
           disabled={isLoading}
         >
-          <Calendar className="h-4 w-4 text-muted-foreground" />
-          <span className="max-w-[150px] truncate text-zinc-700 dark:text-zinc-300">{getSelectedCalendarNames()}</span>
-          <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
+          <Calendar className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+          <span className="truncate text-zinc-700 dark:text-zinc-300 text-sm">{getSelectedCalendarNames()}</span>
+          <ChevronDown className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0 ml-auto" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-64 p-0" align="start">
-        <div className="p-2 border-b border dark:border">
+      <PopoverContent className="w-80 sm:w-64 p-0" align="start">
+        <div className="p-3 border-b border dark:border sm:p-2">
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
               {t('analytics.calendarFilter.filterByCalendar', 'Filter by Calendar')}
@@ -80,7 +81,7 @@ export function CalendarFilterSelect({
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-6 px-2 text-xs text-muted-foreground hover:text-zinc-700 dark:hover:text-zinc-300"
+                className="h-7 px-2 text-xs text-muted-foreground hover:text-zinc-700 dark:hover:text-zinc-300 touch-manipulation sm:h-6"
                 onClick={handleClearSelection}
               >
                 <X className="h-3 w-3 mr-1" />
@@ -90,7 +91,7 @@ export function CalendarFilterSelect({
           </div>
         </div>
 
-        <div className="max-h-64 overflow-y-auto p-1">
+        <div className="max-h-80 overflow-y-auto p-1 sm:max-h-64">
           {/* All Calendars option */}
           <button
             type="button"
@@ -128,21 +129,23 @@ export function CalendarFilterSelect({
                 type="button"
                 onClick={() => handleToggleCalendar(calendar.id)}
                 className={cn(
-                  'flex w-full items-center gap-3 rounded-md px-2 py-2 text-sm transition-colors',
-                  'hover:bg-secondary dark:hover:bg-secondary',
+                  'flex w-full items-center gap-3 rounded-md px-3 py-3 text-sm transition-colors touch-manipulation',
+                  'hover:bg-secondary dark:hover:bg-secondary active:bg-accent/70',
+                  'sm:px-2 sm:py-2',
                   isSelected && 'bg-secondary dark:bg-secondary',
                 )}
               >
                 <div
                   className={cn(
-                    'flex h-4 w-4 items-center justify-center rounded border',
+                    'flex h-5 w-5 items-center justify-center rounded border flex-shrink-0',
+                    'sm:h-4 sm:w-4',
                     isSelected ? 'border-primary bg-primary text-white' : 'border-zinc-300 dark:border-zinc-600',
                   )}
                 >
-                  {isSelected && <Check className="h-3 w-3" />}
+                  {isSelected && <Check className="h-3 w-3 sm:h-3 sm:w-3" />}
                 </div>
                 <div className="h-3 w-3 rounded-full flex-shrink-0" style={{ backgroundColor: calendarColor }} />
-                <span className="truncate text-zinc-700 dark:text-zinc-300">{calendar.summary || calendar.id}</span>
+                <span className="truncate text-zinc-700 dark:text-zinc-300 text-sm sm:text-sm">{calendar.summary || calendar.id}</span>
               </button>
             )
           })}

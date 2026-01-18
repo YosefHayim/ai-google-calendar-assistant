@@ -1,11 +1,12 @@
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
+import { QueryHookOptions, useQueryWrapper } from '../useQueryWrapper'
+
+import type { EventQueryParams } from '@/types/api'
+import { QUERY_CONFIG } from '@/lib/constants'
 import { eventsService } from '@/services/events.service'
 import { queryKeys } from '@/lib/query/keys'
-import { QUERY_CONFIG } from '@/lib/constants'
-import { useQueryWrapper, QueryHookOptions } from '../useQueryWrapper'
-import type { EventQueryParams } from '@/types/api'
+import { useQuery } from '@tanstack/react-query'
 
 interface UseEventsOptions extends QueryHookOptions {
   /** Query parameters for filtering events */
@@ -13,7 +14,14 @@ interface UseEventsOptions extends QueryHookOptions {
 }
 
 /**
- * Hook to fetch events with optional filtering
+ * Hook to fetch calendar events with optional filtering and pagination.
+ *
+ * Supports filtering by date range, calendar IDs, search terms, and other criteria
+ * as defined by the EventQueryParams interface.
+ *
+ * @param options - Query options for customizing the fetch behavior
+ * @param options.params - Query parameters for filtering and pagination
+ * @returns Normalized query state containing array of calendar events
  */
 export function useEvents(options?: UseEventsOptions) {
   const params = options?.params

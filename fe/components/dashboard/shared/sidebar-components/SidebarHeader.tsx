@@ -7,6 +7,7 @@ import { AnimatedHamburger } from '@/components/ui/animated-hamburger'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import React from 'react'
+import { cn } from '@/lib/utils'
 
 interface SidebarHeaderProps {
   isOpen: boolean
@@ -18,7 +19,10 @@ interface SidebarHeaderProps {
 export const SidebarHeader: React.FC<SidebarHeaderProps> = ({ isOpen, onClose, onToggle, onNewChat }) => {
   return (
     <div
-      className={`flex items-center px-4 py-3 border-b border dark:border ${isOpen ? 'justify-between' : 'justify-center'}`}
+      className={cn(
+        'flex items-center px-4 py-3 border-b border dark:border',
+        isOpen ? 'justify-between' : 'justify-center'
+      )}
     >
       {isOpen && (
         <div className="flex items-center gap-2">

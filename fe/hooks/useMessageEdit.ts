@@ -14,6 +14,16 @@ export interface UseMessageEditReturn {
   isEditing: (messageId: string) => boolean
 }
 
+/**
+ * Hook for managing inline message editing functionality.
+ *
+ * Provides state management and event handlers for editing chat messages,
+ * including keyboard shortcuts (Enter to confirm, Escape to cancel) and
+ * automatic focus management.
+ *
+ * @param onEditAndResend - Callback function called when edit is confirmed with message ID and new text
+ * @returns Object containing editing state and control functions
+ */
 export function useMessageEdit(onEditAndResend: (messageId: string, newText: string) => void): UseMessageEditReturn {
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null)
   const [editText, setEditText] = useState('')

@@ -35,6 +35,21 @@ interface UseAnalyticsDataOptions {
   enabled?: boolean
 }
 
+/**
+ * Hook to fetch and process comprehensive calendar analytics data.
+ *
+ * Analyzes calendar events over a specified time period and generates detailed
+ * insights including productivity metrics, time distribution patterns,
+ * calendar breakdowns, and focus time calculations.
+ *
+ * @param options - Configuration options for analytics processing
+ * @param options.timeMin - Start date for analytics period
+ * @param options.timeMax - End date for analytics period
+ * @param options.calendarMap - Map of calendar IDs to names and colors
+ * @param options.calendarIds - Optional filter for specific calendar IDs
+ * @param options.enabled - Whether to enable the analytics query
+ * @returns Object containing processed analytics data, raw data, and loading states
+ */
 const WAKING_HOURS_PER_DAY = 16
 const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 const DAY_NAMES_SHORT = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']

@@ -1,10 +1,11 @@
 'use client'
 
-import { Clock } from 'lucide-react'
-import { Card } from '@/components/ui/card'
+import type { ColorDefinition, Event } from '../types'
+
 import { Badge } from '@/components/ui/badge'
+import { Card } from '@/components/ui/card'
+import { Clock } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import type { Event, ColorDefinition } from '../types'
 import { groupEventsByDate } from '../utils/calendar-utils'
 
 interface ListViewProps {
@@ -19,10 +20,10 @@ export function ListView({ events, onEventClick, getColorClasses }: ListViewProp
 
   return (
     <Card className="p-3 sm:p-4">
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         {Object.entries(groupedEvents).map(([date, dateEvents]) => (
-          <div key={date} className="space-y-3">
-            <h3 className="text-xs font-semibold text-muted-foreground sm:text-sm">{date}</h3>
+          <div key={date} className="space-y-2 sm:space-y-3">
+            <h3 className="text-xs font-semibold text-muted-foreground px-1 sm:text-sm">{date}</h3>
             <div className="space-y-2">
               {dateEvents.map((event) => {
                 const colorClasses = getColorClasses(event.color)
@@ -32,7 +33,7 @@ export function ListView({ events, onEventClick, getColorClasses }: ListViewProp
                   <div
                     key={event.id}
                     onClick={() => onEventClick(event)}
-                    className="group cursor-pointer rounded-lg border bg-card p-3 transition-all hover:shadow-md hover:scale-[1.01] animate-in fade-in slide-in-from-bottom-2 duration-300 sm:p-4"
+                    className="group cursor-pointer rounded-lg border bg-card p-3 transition-all hover:shadow-md hover:scale-[1.01] active:scale-[0.99] animate-in fade-in slide-in-from-bottom-2 duration-300 touch-manipulation sm:p-4"
                   >
                     <div className="flex items-start gap-2 sm:gap-3">
                       <div

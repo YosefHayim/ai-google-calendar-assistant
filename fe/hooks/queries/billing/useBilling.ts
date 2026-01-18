@@ -25,6 +25,13 @@ export const billingKeys = {
   lemonSqueezyProducts: () => [...billingKeys.all, 'lemon-squeezy-products'] as const,
 }
 
+/**
+ * Hook to fetch the current user's subscription status and access level.
+ *
+ * @param options - Query options for customizing the fetch behavior
+ * @param options.enabled - Whether to enable the query (default: based on session)
+ * @returns Query result containing user access information
+ */
 export function useSubscriptionStatus(options?: { enabled?: boolean }) {
   return useQuery<UserAccess>({
     queryKey: billingKeys.subscriptionStatus(),
@@ -34,6 +41,13 @@ export function useSubscriptionStatus(options?: { enabled?: boolean }) {
   })
 }
 
+/**
+ * Hook to fetch available subscription plans and pricing tiers.
+ *
+ * @param options - Query options for customizing the fetch behavior
+ * @param options.enabled - Whether to enable the query (default: true)
+ * @returns Query result containing array of available plans
+ */
 export function usePlans(options?: { enabled?: boolean }) {
   return useQuery<Plan[]>({
     queryKey: billingKeys.plans(),
@@ -46,6 +60,13 @@ export function usePlans(options?: { enabled?: boolean }) {
   })
 }
 
+/**
+ * Hook to fetch comprehensive billing overview including payment history and usage.
+ *
+ * @param options - Query options for customizing the fetch behavior
+ * @param options.enabled - Whether to enable the query (default: based on session)
+ * @returns Query result containing billing overview data
+ */
 export function useBillingOverview(options?: { enabled?: boolean }) {
   return useQuery<BillingOverview>({
     queryKey: billingKeys.overview(),
@@ -55,6 +76,13 @@ export function useBillingOverview(options?: { enabled?: boolean }) {
   })
 }
 
+/**
+ * Hook to fetch Lemon Squeezy products and variants for payment processing.
+ *
+ * @param options - Query options for customizing the fetch behavior
+ * @param options.enabled - Whether to enable the query (default: true)
+ * @returns Query result containing Lemon Squeezy product data
+ */
 export function useLemonSqueezyProducts(options?: { enabled?: boolean }) {
   return useQuery<LemonSqueezyProductWithVariants[]>({
     queryKey: billingKeys.lemonSqueezyProducts(),
@@ -64,6 +92,14 @@ export function useLemonSqueezyProducts(options?: { enabled?: boolean }) {
   })
 }
 
+/**
+ * Hook to fetch all billing-related data in parallel queries.
+ *
+ * Combines subscription status, plans, and billing overview into a single hook
+ * for efficient data loading and state management.
+ *
+ * @returns Object containing combined billing data and loading states
+ */
 export function useBillingData() {
   const results = useQueries({
     queries: [

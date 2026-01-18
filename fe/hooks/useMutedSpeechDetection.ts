@@ -15,6 +15,22 @@ interface UseMutedSpeechDetectionOptions {
 
 const SPEECH_FRAMES_THRESHOLD = 5
 
+/**
+ * Hook for detecting speech when microphone is muted during voice interactions.
+ *
+ * Monitors audio input levels and shows toast notifications when speech is detected
+ * while not actively recording, prompting users to activate their microphone.
+ * Uses Web Audio API for real-time audio analysis and RMS calculations.
+ *
+ * @param options - Configuration options for speech detection
+ * @param options.isRecording - Whether voice recording is currently active
+ * @param options.speechRecognitionSupported - Whether speech recognition is supported
+ * @param options.onActivateMic - Callback to activate microphone when speech is detected
+ * @param options.speechThreshold - RMS threshold for speech detection (default: 0.02)
+ * @param options.toastCooldownMs - Minimum time between toast notifications (default: 8000ms)
+ * @param options.enabled - Whether speech detection is enabled (default: true)
+ * @returns Object containing microphone permission status and listening controls
+ */
 export function useMutedSpeechDetection({
   isRecording,
   speechRecognitionSupported,

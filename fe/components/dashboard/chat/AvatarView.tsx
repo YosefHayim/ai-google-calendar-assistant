@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/ui/empty-state'
 import { Message } from '@/types'
 import { MessageActions } from './MessageActions'
+import { cn } from '@/lib/utils'
 
 interface AvatarViewProps {
   messages: Message[]
@@ -76,7 +77,10 @@ export const AvatarView: React.FC<AvatarViewProps> = ({
   return (
     <div className="absolute inset-0 z-10  dark:bg-secondary flex flex-col md:flex-row items-center justify-center p-4">
       <div
-        className={`flex flex-col items-center justify-center transition-all duration-700 w-full ${hasConversation ? 'md:w-1/2' : 'w-full'}`}
+        className={cn(
+          'flex flex-col items-center justify-center transition-all duration-700 w-full',
+          hasConversation ? 'md:w-1/2' : 'w-full'
+        )}
       >
         <AssistantAvatar
           isRecording={isRecording}
@@ -145,11 +149,12 @@ export const AvatarView: React.FC<AvatarViewProps> = ({
                       </div>
                     ) : (
                       <div
-                        className={`p-3 rounded-xl text-xs leading-relaxed max-w-[90%] shadow-sm ${
+                        className={cn(
+                          'p-3 rounded-xl text-xs leading-relaxed max-w-[90%] shadow-sm',
                           msg.role === 'assistant'
                             ? 'bg-secondary dark:bg-secondary text-zinc-800 dark:text-zinc-200 ml-0 mr-auto rounded-tl-none'
                             : 'bg-primary text-white ml-auto mr-0 rounded-tr-none'
-                        }`}
+                        )}
                       >
                         {msg.content}
                       </div>

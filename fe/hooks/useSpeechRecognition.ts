@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useRef, useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+
 import { transcribeAudio } from '@/services/voice.service'
 
 interface UseSpeechRecognitionReturn {
@@ -15,8 +16,14 @@ interface UseSpeechRecognitionReturn {
 }
 
 /**
- * Hook for speech recognition using OpenAI Whisper API
- * Supports automatic language detection for any language
+ * Hook for speech-to-text recognition using OpenAI Whisper API.
+ *
+ * Records audio from the user's microphone and transcribes it to text.
+ * Supports automatic language detection and handles microphone permissions,
+ * recording states, and transcription errors.
+ *
+ * @param onFinalTranscription - Callback function called with the transcribed text
+ * @returns Object containing recording state, controls, and transcription results
  */
 export const useSpeechRecognition = (onFinalTranscription: (text: string) => void): UseSpeechRecognitionReturn => {
   const [isRecording, setIsRecording] = useState(false)

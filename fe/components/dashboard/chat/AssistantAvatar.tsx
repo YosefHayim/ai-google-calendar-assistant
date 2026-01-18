@@ -3,6 +3,7 @@
 import React from 'react'
 import { Typewriter } from '@/components/ui/typewriter'
 import { VoicePoweredOrb } from '@/components/ui/voice-powered-orb'
+import { cn } from '@/lib/utils'
 
 interface AssistantAvatarProps {
   isRecording: boolean
@@ -14,21 +15,24 @@ interface AssistantAvatarProps {
 export const AssistantAvatar: React.FC<AssistantAvatarProps> = ({ isRecording, isSpeaking, isLoading, compact }) => {
   return (
     <div
-      className={`flex flex-col items-center justify-center transition-all duration-700 ${
+      className={cn(
+        'flex flex-col items-center justify-center transition-all duration-700',
         compact ? 'scale-75 md:scale-90' : 'h-full w-full animate-in zoom-in'
-      }`}
+      )}
     >
       <div
-        className={`relative flex items-center justify-center ${
+        className={cn(
+          'relative flex items-center justify-center',
           compact
             ? 'w-[200px] h-[200px] md:w-[300px] md:h-[300px]'
             : 'w-[280px] h-[280px] sm:w-[320px] sm:h-[320px] md:w-[450px] md:h-[450px]'
-        }`}
+        )}
       >
         <div
-          className={`absolute inset-0 rounded-full bg-primary/20 blur-[100px] transition-all duration-1000 ${
+          className={cn(
+            'absolute inset-0 rounded-full bg-primary/20 blur-[100px] transition-all duration-1000',
             isSpeaking || isLoading ? 'scale-125 opacity-40' : 'scale-100 opacity-10'
-          }`}
+          )}
         />
         <div className="w-full h-full relative">
           <VoicePoweredOrb
@@ -40,11 +44,12 @@ export const AssistantAvatar: React.FC<AssistantAvatarProps> = ({ isRecording, i
           />
         </div>
       </div>
-      <div className={`${compact ? 'mt-4' : 'mt-8'} text-center relative z-10 px-4`}>
+      <div className={cn('text-center relative z-10 px-4', compact ? 'mt-4' : 'mt-8')}>
         <div
-          className={`${
+          className={cn(
+            'font-medium text-foreground dark:text-primary-foreground tracking-tight flex flex-col items-center justify-center gap-2',
             compact ? 'text-xl' : 'text-3xl md:text-4xl'
-          } font-medium text-foreground dark:text-primary-foreground tracking-tight flex flex-col items-center justify-center gap-2`}
+          )}
         >
           <div className="flex items-center gap-3">
             <Typewriter

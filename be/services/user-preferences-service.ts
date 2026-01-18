@@ -5,8 +5,8 @@
  * Uses the users.preferences JSONB column for storage.
  */
 
-import { SUPABASE } from "@/config";
 import type { Json } from "@/database.types";
+import { SUPABASE } from "@/config";
 
 // ============================================
 // Types
@@ -189,6 +189,17 @@ async function setUserPreferences(
 /**
  * Get a single preference by key
  */
+/**
+ * Retrieve a single user preference value.
+ *
+ * Fetches a specific preference from the user's preferences JSONB column.
+ * Returns null if the preference doesn't exist or if there's an error.
+ * Type-safe with generic constraint to valid preference values.
+ *
+ * @param userId - The user's unique identifier
+ * @param key - The preference key to retrieve
+ * @returns The preference value or null if not found
+ */
 export async function getPreference<T extends PreferenceValue>(
   userId: string,
   key: PreferenceKey
@@ -273,6 +284,19 @@ export async function getAllPreferences(
 
 /**
  * Update a preference
+ */
+/**
+ * Update a single user preference value.
+ *
+ * Sets a specific preference in the user's preferences JSONB column.
+ * Creates the preferences record if it doesn't exist. Returns the
+ * updated value with metadata indicating it's not a default value.
+ *
+ * @param userId - The user's unique identifier
+ * @param key - The preference key to update
+ * @param value - The new preference value
+ * @param _category - Unused parameter for future categorization (default: "assistant")
+ * @returns Promise resolving to the updated preference with metadata
  */
 export async function updatePreference<T extends PreferenceValue>(
   userId: string,

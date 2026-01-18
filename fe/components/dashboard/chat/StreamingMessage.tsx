@@ -1,10 +1,11 @@
 'use client'
 
 import React, { useMemo } from 'react'
+import { cn, getTextDirection } from '@/lib/utils'
+
+import { Loader2 } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import { Loader2 } from 'lucide-react'
-import { getTextDirection } from '@/lib/utils'
 
 interface StreamingMessageProps {
   content: string
@@ -57,7 +58,7 @@ export const StreamingMessage: React.FC<StreamingMessageProps> = ({ content, cur
           )}
 
           {content && (
-            <div className={`prose prose-sm max-w-none prose-zinc dark:prose-invert ${isRTL ? 'text-right' : ''}`}>
+            <div className={cn('prose prose-sm max-w-none prose-zinc dark:prose-invert', isRTL && 'text-right')}>
               <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
             </div>
           )}

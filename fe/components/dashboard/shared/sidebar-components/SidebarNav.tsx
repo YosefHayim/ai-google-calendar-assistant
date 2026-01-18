@@ -5,6 +5,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 
 import Link from 'next/link'
 import React from 'react'
+import { cn } from '@/lib/utils'
 import { useLanguage } from '@/contexts/LanguageContext'
 import { useUser } from '@/hooks/queries/auth/useUser'
 
@@ -37,14 +38,16 @@ const NavLink: React.FC<NavLinkProps> = ({
         id={id}
         href={href}
         onClick={onClick}
-        className={`flex-1 flex items-center gap-3 p-3 md:p-2 rounded-lg transition-colors min-h-[44px] md:min-h-0 ${
+        className={cn(
+          'flex-1 flex items-center gap-3 p-3 md:p-2 rounded-lg transition-colors min-h-[44px] md:min-h-0',
           isActive
             ? 'bg-secondary dark:bg-secondary text-foreground dark:text-primary-foreground font-bold'
-            : 'text-muted-foreground dark:text-muted-foreground hover:bg-muted dark:hover:bg-secondary'
-        } ${!isOpen ? 'md:justify-center' : ''}`}
+            : 'text-muted-foreground dark:text-muted-foreground hover:bg-muted dark:hover:bg-secondary',
+          !isOpen && 'md:justify-center'
+        )}
       >
-        <Icon className={`w-5 h-5 shrink-0 ${isActive ? 'text-primary' : ''}`} />
-        <span className={`text-sm whitespace-nowrap ${!isOpen ? 'md:hidden' : ''}`}>{children}</span>
+        <Icon className={cn('w-5 h-5 shrink-0', isActive && 'text-primary')} />
+        <span className={cn('text-sm whitespace-nowrap', !isOpen && 'md:hidden')}>{children}</span>
       </Link>
       {description && isOpen && (
         <Tooltip delayDuration={200}>

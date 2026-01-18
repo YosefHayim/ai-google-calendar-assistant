@@ -19,67 +19,67 @@ export default function HomePage() {
 
   return (
     <MarketingLayout>
-      <section className="relative min-h-[90vh] flex items-center justify-center px-6 overflow-hidden">
+      <section className="relative min-h-[85vh] sm:min-h-[90vh] flex items-center justify-center px-4 sm:px-6 lg:px-8 overflow-hidden">
         <div className="absolute inset-0 grid-background opacity-50" />
         <div className="relative z-10 max-w-4xl mx-auto text-center">
-          <h1 className="text-5xl md:text-7xl font-medium tracking-tight text-foreground dark:text-primary-foreground mb-6">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-medium tracking-tight text-foreground dark:text-primary-foreground mb-4 sm:mb-6 px-2">
             {t('home.title')}
             <br />
             <span className="text-primary">{t('home.titleHighlight')}</span>
           </h1>
-          <p className="text-xl md:text-2xl text-muted-foreground dark:text-muted-foreground mb-12 max-w-2xl mx-auto font-medium">
+          <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground dark:text-muted-foreground mb-8 sm:mb-12 max-w-2xl mx-auto font-medium px-4 sm:px-0">
             {t('home.subtitle')}
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4 sm:px-0">
             <Link href="/register" className="w-full sm:w-auto">
-              <InteractiveHoverButton text={t('home.getStartedFree')} className="w-full sm:w-auto h-14 px-8 text-lg" />
+              <InteractiveHoverButton text={t('home.getStartedFree')} className="w-full sm:w-auto h-12 sm:h-14 px-6 sm:px-8 text-base sm:text-lg" />
             </Link>
             <Link href="/pricing" className="w-full sm:w-auto">
-              <Button variant="outline" className="w-full sm:w-auto rounded-md h-14 px-8 text-lg font-medium">
-                {t('home.viewPricing')} <ArrowRight className="w-5 h-5" />
+              <Button variant="outline" className="w-full sm:w-auto rounded-md h-12 sm:h-14 px-6 sm:px-8 text-base sm:text-lg font-medium">
+                {t('home.viewPricing')} <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
               </Button>
             </Link>
           </div>
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-2 text-muted-foreground dark:text-muted-foreground">
-            <span className="text-sm font-medium">{t('home.availableIn')}</span>
+          <div className="mt-6 sm:mt-8 flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-muted-foreground dark:text-muted-foreground px-4">
+            <span className="text-xs sm:text-sm font-medium">{t('home.availableIn')}</span>
             <a
               href={SOCIAL_LINKS.TELEGRAM_BOT}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#0088cc]/10 text-[#0088cc] hover:bg-[#0088cc]/20 transition-colors text-sm font-medium"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full bg-[#0088cc]/10 text-[#0088cc] hover:bg-[#0088cc]/20 transition-colors text-xs sm:text-sm font-medium touch-manipulation"
               aria-label="Connect via Telegram"
             >
-              <TelegramIcon className="w-4 h-4" />
-              Telegram
+              <TelegramIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <span className="hidden xs:inline">Telegram</span>
             </a>
             <a
               href="/api/slack/oauth/install"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#4A154B]/10 text-[#4A154B] dark:bg-[#E01E5A]/10 dark:text-[#E01E5A] hover:bg-[#4A154B]/20 dark:hover:bg-[#E01E5A]/20 transition-colors text-sm font-medium"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full bg-[#4A154B]/10 text-[#4A154B] dark:bg-[#E01E5A]/10 dark:text-[#E01E5A] hover:bg-[#4A154B]/20 dark:hover:bg-[#E01E5A]/20 transition-colors text-xs sm:text-sm font-medium touch-manipulation"
               aria-label="Add to Slack"
             >
-              <SlackIcon className="w-4 h-4" />
-              Slack
+              <SlackIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <span className="hidden xs:inline">Slack</span>
             </a>
             <a
               href={`https://wa.me/message/VI5IQ3IXJUAVJ1`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366]/20 transition-colors text-sm font-medium"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366]/20 transition-colors text-xs sm:text-sm font-medium touch-manipulation"
               aria-label="Add to WhatsApp"
             >
-              <WhatsAppIcon className="w-4 h-4" />
-              WhatsApp
+              <WhatsAppIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <span className="hidden xs:inline">WhatsApp</span>
             </a>
           </div>
         </div>
       </section>
 
-      <section className="py-16 md:py-24 px-4 sm:px-6 space-y-8 md:space-y-12">
-        <div className="text-center mb-8 md:mb-12">
-          <h2 className="text-3xl md:text-4xl font-medium text-foreground dark:text-primary-foreground mb-4">
+      <section className="py-12 sm:py-16 md:py-24 px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-8 md:space-y-12">
+        <div className="text-center mb-6 sm:mb-8 md:mb-12">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-medium text-foreground dark:text-primary-foreground mb-3 sm:mb-4 px-2">
             {t('home.featuresTitle')}
           </h2>
-          <p className="text-lg text-muted-foreground dark:text-muted-foreground max-w-2xl mx-auto">{t('home.featuresSubtitle')}</p>
+          <p className="text-base sm:text-lg text-muted-foreground dark:text-muted-foreground max-w-2xl mx-auto px-4">{t('home.featuresSubtitle')}</p>
         </div>
 
         <AnimatedFeatureSpotlight3D
@@ -129,14 +129,14 @@ export default function HomePage() {
 
       <Testimonials />
 
-      <section className="py-24 px-6">
+      <section className="py-16 sm:py-20 md:py-24 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-medium text-foreground dark:text-primary-foreground mb-6">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-medium text-foreground dark:text-primary-foreground mb-4 sm:mb-6 px-2">
             {t('home.ctaTitle')}
           </h2>
-          <p className="text-lg text-muted-foreground dark:text-muted-foreground mb-8">{t('home.ctaSubtitle')}</p>
+          <p className="text-base sm:text-lg text-muted-foreground dark:text-muted-foreground mb-6 sm:mb-8 px-4">{t('home.ctaSubtitle')}</p>
           <Link href="/register" className="w-full sm:w-auto sm:inline-flex">
-            <InteractiveHoverButton text={t('home.startForFree')} className="w-full sm:w-auto h-14 px-8 text-lg" />
+            <InteractiveHoverButton text={t('home.startForFree')} className="w-full sm:w-auto h-12 sm:h-14 px-6 sm:px-8 text-base sm:text-lg" />
           </Link>
         </div>
       </section>

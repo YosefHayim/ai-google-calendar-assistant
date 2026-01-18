@@ -1,20 +1,13 @@
+import { STATUS_RESPONSE, env } from "@/config";
+
 import express from "express";
-import { webhookCallback } from "grammy";
-import { env, STATUS_RESPONSE } from "@/config";
 import { getBot } from "@/telegram-bot/init-bot";
 import { logger } from "@/utils/logger";
+import { webhookCallback } from "grammy";
 
 const router = express.Router();
 
-/**
- * Telegram Webhook Endpoint
- *
- * Receives updates from Telegram when using webhook mode.
- * More reliable than long-polling for App Runner:
- * - No idle timeout issues
- * - No duplicate bot instances with auto-scaling
- * - Lower latency for responding to messages
- */
+// POST /webhook - Telegram webhook endpoint for receiving bot updates
 router.post("/webhook", async (req, res) => {
   try {
     const bot = getBot();
@@ -35,9 +28,7 @@ router.post("/webhook", async (req, res) => {
   }
 });
 
-/**
- * Health check for Telegram bot
- */
+// GET /health - Telegram bot health check
 router.get("/health", (_req, res) => {
   const bot = getBot();
   const isEnabled = env.integrations.telegram.isEnabled;

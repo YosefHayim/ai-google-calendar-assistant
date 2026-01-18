@@ -47,22 +47,27 @@ router.param(
   }
 );
 
+// GET /get-user - Get current user information
 router.get(
   "/get-user",
   supabaseAuth(),
   profileController.getCurrentUserInformation
 );
 
+// GET /session - Check user session validity
 router.get("/session", supabaseAuth(), authController.checkSession);
 
+// GET /restore-session - Restore user session
 router.get("/restore-session", supabaseAuth(), authController.restoreSession);
 
+// GET /integrations/google-calendar - Get Google Calendar integration status
 router.get(
   "/integrations/google-calendar",
   supabaseAuth(),
   googleIntegrationController.getGoogleCalendarIntegrationStatus
 );
 
+// POST /integrations/google-calendar/disconnect - Disconnect Google Calendar integration
 router.post(
   "/integrations/google-calendar/disconnect",
   supabaseAuth(),
@@ -73,14 +78,14 @@ router.post(
 // User Preferences Routes
 // ============================================
 
-// get all assistant preferences
+// GET /preferences - Get all user preferences
 router.get(
   "/preferences",
   supabaseAuth(),
   userPreferencesController.getAllPreferences
 );
 
-// get a specific preference by key
+// GET /preferences/:key - Get specific preference by key
 router.get(
   "/preferences/:key",
   supabaseAuth(),
@@ -88,7 +93,7 @@ router.get(
   userPreferencesController.getPreference
 );
 
-// update ally_brain preference
+// PUT /preferences/ally_brain - Update ally brain preference
 router.put(
   "/preferences/ally_brain",
   supabaseAuth(),
@@ -96,7 +101,7 @@ router.put(
   userPreferencesController.updatePreference
 );
 
-// update contextual_scheduling preference
+// PUT /preferences/contextual_scheduling - Update contextual scheduling preference
 router.put(
   "/preferences/contextual_scheduling",
   supabaseAuth(),
@@ -104,7 +109,7 @@ router.put(
   userPreferencesController.updatePreference
 );
 
-// update reminder_defaults preference
+// PUT /preferences/reminder_defaults - Update reminder defaults preference
 router.put(
   "/preferences/reminder_defaults",
   supabaseAuth(),
@@ -112,6 +117,7 @@ router.put(
   userPreferencesController.updatePreference
 );
 
+// PUT /preferences/voice_preference - Update voice preference
 router.put(
   "/preferences/voice_preference",
   supabaseAuth(),
@@ -119,7 +125,7 @@ router.put(
   userPreferencesController.updatePreference
 );
 
-// update daily_briefing preference
+// PUT /preferences/daily_briefing - Update daily briefing preference
 router.put(
   "/preferences/daily_briefing",
   supabaseAuth(),
@@ -127,7 +133,7 @@ router.put(
   userPreferencesController.updatePreference
 );
 
-// update cross_platform_sync preference
+// PUT /preferences/cross_platform_sync - Update cross-platform sync preference
 router.put(
   "/preferences/cross_platform_sync",
   supabaseAuth(),

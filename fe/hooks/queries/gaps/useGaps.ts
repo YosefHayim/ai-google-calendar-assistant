@@ -1,9 +1,10 @@
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
+import type { ApiResponse, GapQueryParams, GapsResponse } from '@/types/api'
+
 import { gapsService } from '@/services/gaps.service'
 import { queryKeys } from '@/lib/query/keys'
-import type { GapsResponse, GapQueryParams, ApiResponse } from '@/types/api'
+import { useQuery } from '@tanstack/react-query'
 
 export interface UseGapsOptions {
   enabled?: boolean
@@ -12,7 +13,14 @@ export interface UseGapsOptions {
 }
 
 /**
- * Hook to fetch analyzed gaps from the calendar
+ * Hook to fetch analyzed time gaps from the user's calendar.
+ *
+ * Analyzes calendar events to identify potential scheduling gaps and opportunities
+ * for better time management and productivity.
+ *
+ * @param params - Query parameters for filtering gap analysis
+ * @param options - Query options for customizing the fetch behavior
+ * @returns Object containing gap analysis data, settings, and query state
  */
 export function useGaps(params?: GapQueryParams, options?: UseGapsOptions) {
   const query = useQuery<ApiResponse<GapsResponse>, Error, GapsResponse | null>({

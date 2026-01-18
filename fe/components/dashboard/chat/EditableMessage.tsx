@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import type { Message } from '@/types'
 import MessageBubble from '@/components/dashboard/chat/MessageBubble'
 import React from 'react'
+import { cn } from '@/lib/utils'
 
 interface EditableMessageProps {
   message: Message
@@ -43,7 +44,7 @@ export const EditableMessage: React.FC<EditableMessageProps> = ({
   }
 
   return (
-    <div className={`flex w-full ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+    <div className={cn('flex w-full', message.role === 'user' ? 'justify-end' : 'justify-start')}>
       <div className="max-w-[85%] md:max-w-[75%] w-full flex flex-col gap-2">
         <textarea
           ref={editInputRef}

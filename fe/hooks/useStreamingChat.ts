@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useCallback, useRef } from 'react'
-import { streamChatMessage, createStreamAbortController } from '@/services/chatStreamService'
+import { createStreamAbortController, streamChatMessage } from '@/services/chatStreamService'
+import { useCallback, useRef, useState } from 'react'
+
 import type { StreamingState } from '@/types/stream'
 
 export interface ImageContent {
@@ -32,6 +33,20 @@ const initialState: StreamingState = {
   error: null,
 }
 
+/**
+ * Hook for managing streaming chat conversations with AI agents.
+ *
+ * Handles real-time text streaming, tool execution tracking, agent switching,
+ * and provides callbacks for various streaming events including completion,
+ * errors, and dynamic conversation updates.
+ *
+ * @param options - Configuration options for streaming callbacks and event handlers
+ * @param options.onStreamComplete - Called when streaming completes with conversation ID and full response
+ * @param options.onStreamError - Called when streaming encounters an error
+ * @param options.onTitleGenerated - Called when a conversation title is auto-generated
+ * @param options.onMemoryUpdated - Called when user preferences/memory are updated
+ * @returns Object containing streaming state and control functions
+ */
 export function useStreamingChat(options: UseStreamingChatOptions = {}): UseStreamingChatReturn {
   const { onStreamComplete, onStreamError, onTitleGenerated, onMemoryUpdated } = options
   const [streamingState, setStreamingState] = useState<StreamingState>(initialState)

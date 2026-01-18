@@ -48,6 +48,27 @@ type PromptParams = {
   userId: string;
 };
 
+/**
+ * Build a comprehensive chat prompt with user context and conversation history.
+ *
+ * Constructs a structured prompt that includes:
+ * - User's custom Ally Brain instructions (if enabled)
+ * - User email and current timestamp
+ * - Current conversation context
+ * - Semantically relevant past conversations
+ * - The user's current message
+ *
+ * This ensures the AI agent has complete context for providing personalized,
+ * contextually aware responses.
+ *
+ * @param params - The prompt building parameters
+ * @param params.message - The user's current message
+ * @param params.conversationContext - Today's conversation history
+ * @param params.semanticContext - Relevant past conversations from embeddings
+ * @param params.userEmail - User's email address for personalization
+ * @param params.userId - User ID for preference lookups
+ * @returns A fully formatted prompt string ready for AI processing
+ */
 async function buildChatPromptWithContext(
   params: PromptParams
 ): Promise<string> {
@@ -84,6 +105,28 @@ async function buildChatPromptWithContext(
   return parts.join("\n");
 }
 
+/**
+ * Handle chat message processing and AI response generation.
+ *
+ * Main chat endpoint that orchestrates the complete conversation flow:
+ * 1. Validates user authentication and message content
+ * 2. Retrieves or creates conversation context for today
+ * 3. Builds semantic context from relevant past conversations
+ * 4. Constructs a comprehensive prompt with all context
+ * 5. Runs the AI agent to generate a response
+ * 6. Stores both user and assistant messages in conversation history
+ * 7. Creates conversation embeddings for future semantic search
+ * 8. Generates conversation titles for new conversations
+ *
+ * This function is the core of the chat system, ensuring contextually
+ * aware, personalized responses across all user interactions.
+ *
+ * @param req - Express request object containing chat message
+ * @param req.body - ChatRequest with message and optional history
+ * @param req.user - Authenticated user information
+ * @param res - Express response object
+ * @returns Promise resolving to success/error response with chat content
+ */
 const sendChat = reqResAsyncHandler(
   async (req: Request<unknown, unknown, ChatRequest>, res: Response) => {
     const { message } = req.body;
@@ -171,6 +214,24 @@ const sendChat = reqResAsyncHandler(
   }
 );
 
+/**
+ * Retrieve paginated list of user conversations with optional search and caching.
+ *
+ * Fetches conversations for the authenticated user with support for:
+ * - Pagination (limit/offset)
+ * - Text search across conversation titles and content
+ * - Cross-platform conversation sync (if enabled)
+ * - Redis caching for performance optimization
+ *
+ * Cross-platform sync includes conversations from Telegram, WhatsApp,
+ * and other integrated platforms when the user has enabled this preference.
+ *
+ * @param req - Express request object
+ * @param req.query - Query parameters: limit, offset, search
+ * @param req.user - Authenticated user information
+ * @param res - Express response object
+ * @returns Promise resolving to paginated conversation list with metadata
+ */
 const getConversations = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     const userId = req.user?.id;
@@ -245,6 +306,18 @@ const getConversations = reqResAsyncHandler(
   }
 );
 
+/**
+ * Retrieve a specific conversation by ID with access control.
+ *
+ * Fetches a single conversation ensuring the authenticated user has
+ * access to it. Includes all messages and metadata for the conversation.
+ *
+ * @param req - Express request object
+ * @param req.params.id - Conversation ID to retrieve
+ * @param req.user - Authenticated user information
+ * @param res - Express response object
+ * @returns Promise resolving to conversation data or 404 if not found
+ */
 const getConversation = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     const userId = req.user?.id;
@@ -279,6 +352,18 @@ const getConversation = reqResAsyncHandler(
   }
 );
 
+/**
+ * Delete a conversation and all associated data.
+ *
+ * Permanently removes a conversation including all messages, embeddings,
+ * and related data. Only the conversation owner can perform this action.
+ *
+ * @param req - Express request object
+ * @param req.params.id - Conversation ID to delete
+ * @param req.user - Authenticated user information (must be owner)
+ * @param res - Express response object
+ * @returns Promise resolving to success confirmation or 404 if not found
+ */
 const removeConversation = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     const conversationId = req.params.id;
@@ -316,6 +401,20 @@ const removeConversation = reqResAsyncHandler(
   }
 );
 
+/**
+ * Update the title of an existing conversation.
+ *
+ * Allows users to manually set or modify conversation titles.
+ * Invalidates the conversation cache to ensure updated titles
+ * are reflected in subsequent API calls.
+ *
+ * @param req - Express request object
+ * @param req.params.id - Conversation ID to update
+ * @param req.body.title - New title for the conversation
+ * @param req.user - Authenticated user information
+ * @param res - Express response object
+ * @returns Promise resolving to success confirmation
+ */
 const updateConversationTitle = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     const conversationId = req.params.id;
@@ -357,6 +456,19 @@ const updateConversationTitle = reqResAsyncHandler(
   }
 );
 
+/**
+ * Toggle the pinned status of a conversation.
+ *
+ * Pins or unpins a conversation to/from the top of the conversation list.
+ * Pinned conversations are prioritized in the UI and API responses.
+ * Invalidates cache to reflect the status change immediately.
+ *
+ * @param req - Express request object
+ * @param req.params.id - Conversation ID to toggle
+ * @param req.user - Authenticated user information
+ * @param res - Express response object
+ * @returns Promise resolving to new pinned status
+ */
 const toggleConversationPinned = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     const conversationId = req.params.id;
@@ -396,6 +508,23 @@ type ContinueConversationRequest = {
   message: string;
 };
 
+/**
+ * Continue an existing conversation with a new message.
+ *
+ * Loads an existing conversation context and continues the dialogue
+ * with the AI agent. Maintains conversation continuity and context
+ * from previous messages while adding the new user message.
+ *
+ * The conversation must exist and the user must have access to it.
+ * Generates AI response and updates conversation history.
+ *
+ * @param req - Express request object
+ * @param req.params.id - Conversation ID to continue
+ * @param req.body.message - New message to add to conversation
+ * @param req.user - Authenticated user information
+ * @param res - Express response object
+ * @returns Promise resolving to AI response and updated conversation data
+ */
 const continueConversation = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     const userId = req.user?.id;
@@ -483,6 +612,18 @@ const continueConversation = reqResAsyncHandler(
   }
 );
 
+/**
+ * Start a new conversation by closing the current active conversation.
+ *
+ * Clears the current conversation context and prepares for a new
+ * conversation. This ensures clean separation between different
+ * conversation topics or sessions.
+ *
+ * @param req - Express request object
+ * @param req.user - Authenticated user information
+ * @param res - Express response object
+ * @returns Promise resolving to success confirmation
+ */
 const startNewConversation = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     const userId = req.user?.id;
@@ -508,6 +649,18 @@ const startNewConversation = reqResAsyncHandler(
   }
 );
 
+/**
+ * Delete all conversations for the authenticated user.
+ *
+ * Permanently removes all conversations, messages, and related data
+ * for the user. This is a destructive operation that cannot be undone.
+ * Invalidates conversation cache to reflect the changes.
+ *
+ * @param req - Express request object
+ * @param req.user - Authenticated user information
+ * @param res - Express response object
+ * @returns Promise resolving to deletion count and success status
+ */
 const deleteAllConversations = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     const userId = req.user?.id;
@@ -543,6 +696,23 @@ const deleteAllConversations = reqResAsyncHandler(
   }
 );
 
+/**
+ * Reset all AI memory and conversation data for the user.
+ *
+ * Performs a complete memory wipe including:
+ * - Redis context store (temporary session data)
+ * - Web conversation embeddings (semantic memory)
+ * - All conversations and messages
+ * - Conversation cache
+ *
+ * This allows users to start fresh with the AI, though it will
+ * relearn their preferences over time through new interactions.
+ *
+ * @param req - Express request object
+ * @param req.user - Authenticated user information
+ * @param res - Express response object
+ * @returns Promise resolving to deletion counts for each data type
+ */
 const resetMemory = reqResAsyncHandler(async (req: Request, res: Response) => {
   const userId = req.user?.id;
 
@@ -580,6 +750,22 @@ const resetMemory = reqResAsyncHandler(async (req: Request, res: Response) => {
   }
 });
 
+/**
+ * Create a shareable link for a conversation.
+ *
+ * Generates a secure, time-limited token that allows others to
+ * view the conversation without authentication. The link expires
+ * after a specified number of days (default 7).
+ *
+ * Only the conversation owner can create share links.
+ *
+ * @param req - Express request object
+ * @param req.params.id - Conversation ID to share
+ * @param req.body.expiresInDays - Days until link expires (default 7)
+ * @param req.user - Authenticated user information (must be owner)
+ * @param res - Express response object
+ * @returns Promise resolving to share token and expiration date
+ */
 const createShareLink = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     const userId = req.user?.id;
@@ -620,6 +806,20 @@ const createShareLink = reqResAsyncHandler(
   }
 );
 
+/**
+ * Revoke an existing share link for a conversation.
+ *
+ * Immediately invalidates any existing share tokens for the conversation,
+ * preventing further access through previously shared links.
+ *
+ * Only the conversation owner can revoke share links.
+ *
+ * @param req - Express request object
+ * @param req.params.id - Conversation ID to revoke sharing for
+ * @param req.user - Authenticated user information (must be owner)
+ * @param res - Express response object
+ * @returns Promise resolving to success confirmation
+ */
 const revokeShareLink = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     const userId = req.user?.id;
@@ -655,6 +855,20 @@ const revokeShareLink = reqResAsyncHandler(
   }
 );
 
+/**
+ * Get the sharing status of a conversation.
+ *
+ * Returns information about whether the conversation has an active
+ * share link, when it expires, and other sharing metadata.
+ *
+ * Only the conversation owner can check share status.
+ *
+ * @param req - Express request object
+ * @param req.params.id - Conversation ID to check
+ * @param req.user - Authenticated user information (must be owner)
+ * @param res - Express response object
+ * @returns Promise resolving to share status information
+ */
 const getShareStatus = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     const userId = req.user?.id;
@@ -686,6 +900,18 @@ const getShareStatus = reqResAsyncHandler(
   }
 );
 
+/**
+ * Retrieve a conversation via a share token.
+ *
+ * Allows public access to a conversation using a valid share token.
+ * Validates token authenticity and expiration before returning
+ * the conversation data. No authentication required for shared links.
+ *
+ * @param req - Express request object
+ * @param req.params.token - Share token for the conversation
+ * @param res - Express response object
+ * @returns Promise resolving to conversation data or 404 if invalid/expired
+ */
 const getSharedConversation = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     const token = req.params.token;

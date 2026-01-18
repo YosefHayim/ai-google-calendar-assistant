@@ -32,18 +32,52 @@ export {
 
 type Event = calendar_v3.Schema$Event;
 
+/**
+ * Validate user existence and access permissions directly.
+ *
+ * Performs direct validation of user email against the database
+ * to ensure the user exists and has proper calendar access permissions.
+ * Used by AI agents for direct tool execution without middleware overhead.
+ *
+ * @param email - User's email address to validate
+ * @returns Promise resolving to validation result with user status and permissions
+ */
 export async function validateUserDirect(
   email: string
 ): Promise<ValidateUserResult> {
   return validateUserHandler({ email });
 }
 
+/**
+ * Retrieve user's default calendar timezone directly.
+ *
+ * Fetches the user's Google Calendar default timezone setting
+ * without going through middleware layers. Used for timezone
+ * calculations in event operations.
+ *
+ * @param email - User's email address
+ * @returns Promise resolving to timezone information
+ */
 export async function getUserDefaultTimezoneDirect(
   email: string
 ): Promise<TimezoneResult> {
   return getTimezoneHandler({ email });
 }
 
+/**
+ * Select appropriate calendar for event based on intelligent rules.
+ *
+ * Analyzes event information (title, description, location) to determine
+ * the most suitable calendar for the event. Uses AI-powered calendar
+ * selection logic to match events to appropriate calendars.
+ *
+ * @param email - User's email address
+ * @param eventInfo - Event information for calendar selection
+ * @param eventInfo.summary - Event title/summary
+ * @param eventInfo.description - Event description
+ * @param eventInfo.location - Event location
+ * @returns Promise resolving to selected calendar with reasoning
+ */
 export async function selectCalendarByRules(
   email: string,
   eventInfo: {
@@ -62,6 +96,20 @@ export async function selectCalendarByRules(
   );
 }
 
+/**
+ * Check for scheduling conflicts in a specific calendar time slot.
+ *
+ * Validates whether a proposed time slot has any conflicting events
+ * in the specified calendar. Essential for preventing double-bookings
+ * and scheduling conflicts.
+ *
+ * @param params - Conflict checking parameters
+ * @param params.email - User's email address
+ * @param params.calendarId - Calendar ID to check for conflicts
+ * @param params.start - Event start time (Google Calendar format)
+ * @param params.end - Event end time (Google Calendar format)
+ * @returns Promise resolving to conflict analysis with any overlapping events
+ */
 export async function checkConflictsDirect(params: {
   email: string;
   calendarId: string;
@@ -86,6 +134,17 @@ export async function checkConflictsDirect(params: {
   );
 }
 
+/**
+ * Perform pre-creation validation on event data.
+ *
+ * Validates event data before creation to ensure it meets calendar
+ * requirements and business rules. Checks for required fields,
+ * valid date formats, and other constraints.
+ *
+ * @param email - User's email address
+ * @param eventData - Partial event data to validate
+ * @returns Promise resolving to validation results with any issues found
+ */
 export async function preCreateValidation(
   email: string,
   eventData: Partial<Event>
@@ -122,6 +181,16 @@ export type ValidateEventResult = {
   error?: string;
 };
 
+/**
+ * Validate and format event data for calendar operations.
+ *
+ * Performs direct validation and formatting of event data without
+ * middleware overhead. Ensures event data conforms to Google Calendar
+ * API requirements and includes necessary fields.
+ *
+ * @param eventData - Event data to validate including user email
+ * @returns Validation result with formatted event or error details
+ */
 export function validateEventDataDirect(
   eventData: Partial<Event> & { email: string }
 ): ValidateEventResult {
@@ -145,6 +214,16 @@ export function validateEventDataDirect(
 const openai = new OpenAI({ apiKey: env.openAiApiKey });
 const SUMMARIZATION_MODEL = MODELS.GPT_4_1_NANO;
 
+/**
+ * Generate AI-powered summary of calendar events for user display.
+ *
+ * Uses OpenAI to create a human-readable, formatted summary of calendar
+ * events optimized for messaging platforms like Telegram. Handles empty
+ * results gracefully and formats events with time, location, and title.
+ *
+ * @param events - Array of Google Calendar events to summarize
+ * @returns Promise resolving to formatted event summary or helpful message for empty results
+ */
 export async function summarizeEvents(
   events: calendar_v3.Schema$Event[]
 ): Promise<string> {

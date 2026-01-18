@@ -359,8 +359,36 @@ function CalendarContent() {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex-1 overflow-auto p-4 sm:p-6">
-        <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <div className="flex-1 overflow-auto p-3 sm:p-4 lg:p-6">
+        {/* Mobile Header - Compact */}
+        <div className="mb-4 block md:hidden">
+          <div className="flex items-center justify-between mb-3">
+            <h1 className="text-lg font-semibold text-foreground dark:text-primary-foreground">Calendar</h1>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => refetchEvents()}
+              disabled={eventsFetching}
+              className="h-8 px-3"
+            >
+              {eventsFetching ? (
+                <Loader2 className="h-3 w-3 animate-spin" />
+              ) : (
+                <RefreshCw className="h-3 w-3" />
+              )}
+              <span className="ml-1 text-xs">{eventsFetching ? 'Syncing' : 'Sync'}</span>
+            </Button>
+          </div>
+          <CalendarFilterSelect
+            calendars={calendars}
+            selectedCalendarIds={selectedCalendarIds}
+            onSelectionChange={setSelectedCalendarIds}
+            isLoading={calendarsLoading}
+          />
+        </div>
+
+        {/* Tablet and Desktop Header */}
+        <div className="mb-4 hidden md:flex md:items-center md:justify-between gap-3">
           <h1 className="text-xl font-semibold text-foreground dark:text-primary-foreground">Calendar</h1>
           <div className="flex items-center gap-2">
             <Button

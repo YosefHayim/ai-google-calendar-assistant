@@ -1,9 +1,17 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 const ONBOARDING_STORAGE_KEY = 'ally-onboarding-completed'
 
+/**
+ * Hook for managing user onboarding flow state and persistence.
+ *
+ * Tracks whether the user has completed onboarding using localStorage
+ * and provides controls to show, hide, complete, or reset the onboarding process.
+ *
+ * @returns Object containing onboarding state and control functions
+ */
 export function useOnboarding() {
   const [showOnboarding, setShowOnboarding] = useState(false)
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(true)

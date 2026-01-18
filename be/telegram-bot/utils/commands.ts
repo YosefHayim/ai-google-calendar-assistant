@@ -1,22 +1,44 @@
 import { InlineKeyboard, InputFile } from "grammy";
-import { generateSpeechForTelegram } from "@/utils/ai/text-to-speech";
-import { telegramConversation } from "@/utils/conversation/TelegramConversationAdapter";
-import { logger } from "@/utils/logger";
-import type { SupportedLocale } from "../i18n";
 import {
+  SUPPORTED_LOCALES,
   createTranslator,
   getTranslatorFromLanguageCode,
-  SUPPORTED_LOCALES,
 } from "../i18n";
+
 import type { GlobalContext } from "../init-bot";
 import { ResponseBuilder } from "../response-system";
-import { getVoicePreferenceForTelegram } from "./ally-brain";
-import { resetSession } from "./session";
+import type { SupportedLocale } from "../i18n";
 import { gatherUserKnowledge } from "./user-knowledge";
+import { generateSpeechForTelegram } from "@/utils/ai/text-to-speech";
+import { getVoicePreferenceForTelegram } from "./ally-brain";
+import { logger } from "@/utils/logger";
+import { resetSession } from "./session";
+import { telegramConversation } from "@/utils/conversation/TelegramConversationAdapter";
 
+/**
+ * Get internal user ID from Telegram user ID.
+ *
+ * Maps Telegram's numeric user ID to the internal user identifier
+ * used throughout the application for database operations and user tracking.
+ *
+ * @param telegramUserId - Telegram's numeric user identifier
+ * @returns Internal user ID string
+ */
 const _getUserIdFromTelegram = (telegramUserId: number) =>
   telegramConversation.getUserIdFromTelegram(telegramUserId);
 
+/**
+ * Build response sections from translation keys for structured messaging.
+ *
+ * Creates organized sections in Telegram responses using translation keys,
+ * emojis, and item counts. Automatically handles bullet points and emphasis
+ * for consistent formatting across different languages.
+ *
+ * @param builder - Telegram response builder instance
+ * @param t - Translation function for internationalization
+ * @param sectionKeys - Array of section configurations with keys, emojis, and item counts
+ * @returns Updated response builder with sections added
+ */
 const buildSectionsFromKeys = (
   builder: ReturnType<typeof ResponseBuilder.telegram>,
   t: (key: string) => string,
@@ -41,6 +63,16 @@ const buildSectionsFromKeys = (
   return builder;
 };
 
+/**
+ * Handle the /usage command to show bot capabilities and features.
+ *
+ * Displays a comprehensive overview of the bot's functionality including
+ * scheduling, calendar management, AI assistance, and available commands.
+ * Uses the response builder system for consistent formatting and i18n support.
+ *
+ * @param ctx - Telegram bot context with session and translation data
+ * @returns Promise that resolves when usage information is sent
+ */
 export const handleUsageCommand = async (ctx: GlobalContext): Promise<void> => {
   const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
 
@@ -64,6 +96,16 @@ export const handleUsageCommand = async (ctx: GlobalContext): Promise<void> => {
   await ctx.reply(response.content, { parse_mode: "HTML" });
 };
 
+/**
+ * Handle the /start command for bot initialization and welcome.
+ *
+ * Provides a welcome message and initial instructions when users first
+ * interact with the bot. Sets up the conversation context and guides
+ * users toward calendar authorization and feature discovery.
+ *
+ * @param ctx - Telegram bot context with session and translation data
+ * @returns Promise that resolves when welcome message is sent
+ */
 export const handleStartCommand = async (ctx: GlobalContext): Promise<void> => {
   const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
 
@@ -84,6 +126,16 @@ export const handleStartCommand = async (ctx: GlobalContext): Promise<void> => {
   await ctx.reply(response.content, { parse_mode: "HTML" });
 };
 
+/**
+ * Handle the /help command to provide assistance and guidance.
+ *
+ * Offers contextual help based on user state, including setup instructions,
+ * common commands, troubleshooting tips, and links to additional resources.
+ * Adapts content based on whether user is authorized and their usage patterns.
+ *
+ * @param ctx - Telegram bot context with session and translation data
+ * @returns Promise that resolves when help information is sent
+ */
 export const handleHelpCommand = async (ctx: GlobalContext): Promise<void> => {
   const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
 
@@ -135,6 +187,16 @@ export const handleExitCommand = async (ctx: GlobalContext): Promise<void> => {
   await ctx.reply(response.content, { parse_mode: "HTML" });
 };
 
+/**
+ * Handle the /today command to show today's calendar events.
+ *
+ * Retrieves and displays all calendar events scheduled for the current day.
+ * Includes time, location, and title information in a user-friendly format.
+ * Handles timezone considerations and provides appropriate messages for empty days.
+ *
+ * @param ctx - Telegram bot context with session and translation data
+ * @returns Promise that resolves when today's events are displayed
+ */
 export const handleTodayCommand = async (ctx: GlobalContext): Promise<void> => {
   const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);
 
@@ -243,6 +305,17 @@ export const handleQuickCommand = async (ctx: GlobalContext): Promise<void> => {
   await ctx.reply(response.content, { parse_mode: "HTML" });
 };
 
+/**
+ * Handle the /create command to show event creation examples and patterns.
+ *
+ * Provides comprehensive guidance on creating calendar events through
+ * natural language, including examples for meetings, focus sessions,
+ * time-specific events, and calendar targeting. Uses structured sections
+ * to organize different creation patterns and use cases.
+ *
+ * @param ctx - Telegram bot context with session and translation data
+ * @returns Promise that resolves when creation guidance is displayed
+ */
 export const handleCreateCommand = async (
   ctx: GlobalContext
 ): Promise<void> => {
@@ -359,6 +432,16 @@ export const handleCancelCommand = async (
   await ctx.reply(response.content, { parse_mode: "HTML" });
 };
 
+/**
+ * Handle the /search command to demonstrate calendar search capabilities.
+ *
+ * Shows users how to search their calendar events using keywords,
+ * date filters, and various search patterns. Provides examples for
+ * finding events by title, description, location, and time ranges.
+ *
+ * @param ctx - Telegram bot context with session and translation data
+ * @returns Promise that resolves when search guidance is displayed
+ */
 export const handleSearchCommand = async (
   ctx: GlobalContext
 ): Promise<void> => {

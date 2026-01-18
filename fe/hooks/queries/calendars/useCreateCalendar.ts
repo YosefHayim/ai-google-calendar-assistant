@@ -8,7 +8,13 @@ import { calendarsService } from '@/services/calendars.service'
 import { queryKeys } from '@/lib/query/keys'
 
 /**
- * Hook to create a new calendar event
+ * Hook to create a new calendar in the user's Google Calendar account.
+ *
+ * Automatically invalidates the calendars list cache upon successful creation
+ * to ensure the new calendar appears in subsequent queries.
+ *
+ * @param options - Mutation options for customizing the calendar creation behavior
+ * @returns Normalized mutation state for handling the calendar creation operation
  */
 export function useCreateCalendar(options?: MutationHookOptions<CreateCalendarResponse, CreateCalendarRequest>) {
   const queryClient = useQueryClient()

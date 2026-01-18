@@ -1,14 +1,14 @@
 'use client'
 
-import React from 'react'
-import { motion } from 'framer-motion'
 import { Activity, CalendarDays, CalendarOff, Clock, Flame, Repeat, Star, Sun, Target, Timer } from 'lucide-react'
-import { useLanguage } from '@/contexts/LanguageContext'
+import { LoadingSkeleton, ProductivityCard, StatCard } from './components'
 
 import type { BentoStatsGridProps } from './types'
 import { CONTAINER_VARIANTS } from './constants'
+import React from 'react'
 import { formatPeakHour } from './utils'
-import { LoadingSkeleton, ProductivityCard, StatCard } from './components'
+import { motion } from 'framer-motion'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 export function BentoStatsGrid({ data, comparison, isLoading = false }: BentoStatsGridProps) {
   const { t } = useLanguage()
@@ -34,7 +34,7 @@ export function BentoStatsGrid({ data, comparison, isLoading = false }: BentoSta
 
   return (
     <motion.div
-      className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3"
+      className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3"
       variants={CONTAINER_VARIANTS}
       initial="hidden"
       animate="show"

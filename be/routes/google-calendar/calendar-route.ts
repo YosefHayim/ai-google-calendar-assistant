@@ -36,46 +36,49 @@ router.param(
   }
 );
 
-// get info about all the calendars the user has
+// GET / - Get all user calendars
 router.get("/", calendarController.getAllCalendars);
 
-// get dry calendar info like expiry date of the token
+// GET /dry-calendar-info - Get dry calendar info (token expiry, etc.)
 router.get("/dry-calendar-info", calendarController.getDryCalendarInfo);
 
-// create a new secondary calendar
+// POST / - Create new secondary calendar
 router.post("/", calendarController.createCalendar);
 
-// get all user settings
+// GET /settings/all - Get all user settings
 router.get("/settings/all", calendarController.listAllSettings);
 
-// get settings of calendar
+// GET /settings - Get calendar settings
 router.get("/settings", calendarController.getSettingsOfCalendar);
+// GET /settings/:id - Get calendar settings by ID
 router.get("/settings/:id", calendarController.getSettingsOfCalendarById);
 
-// get free busy
+// GET /freebusy - Get free/busy information
 router.get("/freebusy", calendarController.getFreeBusy);
 
-// get calendar colors
+// GET /colors - Get all calendar colors
 router.get("/colors", calendarController.getAllCalendarColors);
+// GET /colors/:id - Get calendar color by ID
 router.get("/colors/:id", calendarController.getCalendarColorById);
 
-// get calendar timezone
+// GET /timezones - Get all calendar timezones
 router.get("/timezones", calendarController.getAllCalendarTimezones);
+// GET /timezones/:id - Get calendar timezone by ID
 router.get("/timezones/:id", calendarController.getCalendarTimezoneById);
 
-// get calendar overview by id - MUST be last (catches all /:id patterns)
+// GET /:id - Get calendar info by ID
 router.get("/:id", calendarController.getCalendarInfoById);
 
-// partial update of calendar metadata
+// PATCH /:id - Partial update calendar metadata
 router.patch("/:id", calendarController.patchCalendar);
 
-// full update of calendar metadata
+// PUT /:id - Full update calendar metadata
 router.put("/:id", calendarController.updateCalendar);
 
-// delete a secondary calendar (different from clear)
+// DELETE /:id/delete - Delete secondary calendar
 router.delete("/:id/delete", calendarController.deleteCalendar);
 
-// clear all events of calendar by id
+// DELETE /:id - Clear all events from calendar
 router.delete("/:id", calendarController.clearAllEventsOfCalendar);
 
 export default router;

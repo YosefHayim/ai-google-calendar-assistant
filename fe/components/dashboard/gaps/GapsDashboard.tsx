@@ -1,0 +1,263 @@
+'use client'
+
+import React, { useState, useMemo } from 'react'
+import { motion } from 'framer-motion'
+import { CalendarDays, Clock, Target, Zap, Settings, TrendingUp, AlertTriangle, CheckCircle2 } from 'lucide-react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Progress } from '@/components/ui/progress'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { EmptyState } from '@/components/ui/empty-state'
+import { ErrorState } from '@/components/ui/error-state'
+import { useGaps } from '@/hooks/queries/gaps/useGaps'
+import { useGapMutations } from '@/hooks/queries/gaps/useGapMutations'
+import { GapsHeader } from './components/GapsHeader'
+import { GapCard } from './components/GapCard'
+import { GapsSettings } from './components/GapsSettings'
+import { GapsAnalytics } from './components/GapsAnalytics'
+import { formatDate, formatDuration } from '@/lib/formatUtils'
+import type { GapCandidate } from '@/types/api'
+
+const GapsDashboard: React.FC = () => {
+  const [activeTab, setActiveTab] = useState<'gaps' | 'analytics' | 'settings'>('gaps')
+
+  const { data: gapsData, isLoading, isError, error, refetch } = useGaps()
+  const { fillGap, skipGap, dismissAllGaps } = useGapMutations()
+
+  const gaps = gapsData?.gaps ?? []
+  const settings = gapsData?.settings
+  const analyzedRange = gapsData?.analyzedRange
+  const totalCount = gapsData?.totalCount ?? 0
+
+  // Calculate analytics
+  const analytics = useMemo(() => {
+    const totalGaps = gaps.length
+    const highConfidenceGaps = gaps.filter(gap => gap.confidence >= 0.8).length
+    const totalPotentialHours = gaps.reduce((sum, gap) => sum + gap.durationMinutes, 0) / 60
+    const averageGapSize = totalGaps > 0 ? totalPotentialHours / totalGaps : 0
+
+    return {
+      totalGaps,
+      highConfidenceGaps,
+      totalPotentialHours: Math.round(totalPotentialHours * 10) / 10,
+      averageGapSize: Math.round(averageGapSize * 10) / 10,
+    }
+  }, [gaps])
+
+  const handleFillGap = async (gapId: string, summary: string, calendarId?: string) => {
+    await fillGap.mutateAsync({
+      gapId,
+      summary,
+      calendarId,
+    })
+    refetch()
+  }
+
+  const handleSkipGap = async (gapId: string, reason?: string) => {
+    await skipGap.mutateAsync({
+      gapId,
+      reason,
+    })
+    refetch()
+  }
+
+  const handleDismissAll = async () => {
+    await dismissAllGaps.mutateAsync()
+    refetch()
+  }
+
+  if (isError) {
+    return (
+      <div className="max-w-7xl mx-auto w-full p-3 sm:p-4 animate-in fade-in duration-500">
+        <ErrorState
+          title="Failed to load gaps analysis"
+          message={error?.message || 'Unable to fetch your calendar gaps. Please try again.'}
+          onRetry={() => refetch()}
+          fullPage
+        />
+      </div>
+    )
+  }
+
+  if (isLoading) {
+    return (
+      <div className="max-w-7xl mx-auto w-full p-3 sm:p-4 animate-in fade-in duration-500">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <Card key={i} className="p-4">
+              <div className="animate-pulse">
+                <div className="h-4 bg-muted rounded w-3/4 mb-2"></div>
+                <div className="h-8 bg-muted rounded w-1/2 mb-2"></div>
+                <div className="h-3 bg-muted rounded w-full"></div>
+              </div>
+            </Card>
+          ))}
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Card key={i} className="p-4">
+              <div className="animate-pulse space-y-3">
+                <div className="h-4 bg-muted rounded w-1/2"></div>
+                <div className="h-3 bg-muted rounded w-3/4"></div>
+                <div className="h-3 bg-muted rounded w-1/2"></div>
+                <div className="h-8 bg-muted rounded w-20"></div>
+              </div>
+            </Card>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="max-w-7xl mx-auto w-full p-3 sm:p-4 animate-in fade-in duration-500 bg-muted dark:bg-secondary">
+      <GapsHeader
+        analyzedRange={analyzedRange}
+        totalGaps={totalCount}
+        onRefresh={() => refetch()}
+        isRefreshing={false}
+      />
+
+      {/* Overview Stats */}
+      <motion.div
+        className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <Card className="p-4">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Gaps</CardTitle>
+            <Target className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{analytics.totalGaps}</div>
+            <p className="text-xs text-muted-foreground">
+              Potential opportunities
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="p-4">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">High Confidence</CardTitle>
+            <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{analytics.highConfidenceGaps}</div>
+            <p className="text-xs text-muted-foreground">
+              {analytics.totalGaps > 0 ? Math.round((analytics.highConfidenceGaps / analytics.totalGaps) * 100) : 0}% of total
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="p-4">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Potential Hours</CardTitle>
+            <Clock className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{analytics.totalPotentialHours}h</div>
+            <p className="text-xs text-muted-foreground">
+              Available for scheduling
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="p-4">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Avg Gap Size</CardTitle>
+            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{analytics.averageGapSize}h</div>
+            <p className="text-xs text-muted-foreground">
+              Average gap duration
+            </p>
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      {/* Main Content Tabs */}
+      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)} className="w-full">
+        <TabsList className="grid w-full grid-cols-3 h-10 sm:h-11 mb-4">
+          <TabsTrigger value="gaps" className="text-xs sm:text-sm gap-1 sm:gap-2">
+            <Target className="h-4 w-4" />
+            <span className="hidden xs:inline">Gaps</span>
+          </TabsTrigger>
+          <TabsTrigger value="analytics" className="text-xs sm:text-sm gap-1 sm:gap-2">
+            <TrendingUp className="h-4 w-4" />
+            <span className="hidden xs:inline">Analytics</span>
+          </TabsTrigger>
+          <TabsTrigger value="settings" className="text-xs sm:text-sm gap-1 sm:gap-2">
+            <Settings className="h-4 w-4" />
+            <span className="hidden xs:inline">Settings</span>
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="gaps" className="space-y-4">
+          {gaps.length === 0 ? (
+            <Card className="p-8">
+              <EmptyState
+                icon={<CalendarDays />}
+                title="No gaps found"
+                description="Your calendar looks well-scheduled! No significant time gaps were detected in the analyzed period."
+                size="lg"
+              />
+            </Card>
+          ) : (
+            <motion.div
+              className="grid grid-cols-1 lg:grid-cols-2 gap-4"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
+            >
+              {gaps.map((gap, index) => (
+                <GapCard
+                  key={gap.id}
+                  gap={gap}
+                  index={index}
+                  onFillGap={handleFillGap}
+                  onSkipGap={handleSkipGap}
+                  isLoading={fillGap.isPending || skipGap.isPending}
+                />
+              ))}
+            </motion.div>
+          )}
+
+          {gaps.length > 0 && (
+            <div className="flex justify-center pt-4">
+              <Button
+                variant="outline"
+                onClick={handleDismissAll}
+                disabled={dismissAllGaps.isPending}
+                className="gap-2"
+              >
+                <AlertTriangle className="h-4 w-4" />
+                Dismiss All Gaps
+              </Button>
+            </div>
+          )}
+        </TabsContent>
+
+        <TabsContent value="analytics" className="space-y-4">
+          <GapsAnalytics
+            gaps={gaps}
+            analyzedRange={analyzedRange}
+            settings={settings}
+          />
+        </TabsContent>
+
+        <TabsContent value="settings" className="space-y-4">
+          <GapsSettings
+            settings={settings}
+            onSettingsChange={() => refetch()}
+          />
+        </TabsContent>
+      </Tabs>
+    </div>
+  )
+}
+
+export default GapsDashboard

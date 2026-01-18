@@ -1,10 +1,3 @@
-import { InputGuardrailTripwireTriggered } from "@openai/agents";
-import { ORCHESTRATOR_AGENT } from "@/ai-agents";
-import { unifiedContextStore } from "@/shared/context";
-import type { ImageContent } from "@/shared/llm";
-import { activateAgent } from "@/utils/ai";
-import { logger } from "@/utils/logger";
-import { getTranslatorFromLanguageCode } from "../i18n";
 import {
   buildAgentPromptWithContext,
   buildConfirmationPrompt,
@@ -14,8 +7,16 @@ import {
   summarizeMessages,
   telegramConversation,
 } from "../utils";
-import { getAllyBrainForTelegram } from "../utils/ally-brain";
+
 import type { GlobalContext } from "./bot-config";
+import type { ImageContent } from "@/shared/llm";
+import { InputGuardrailTripwireTriggered } from "@openai/agents";
+import { ORCHESTRATOR_AGENT } from "@/ai-agents";
+import { activateAgent } from "@/utils/ai";
+import { getAllyBrainForTelegram } from "../utils/ally-brain";
+import { getTranslatorFromLanguageCode } from "../i18n";
+import { logger } from "@/utils/logger";
+import { unifiedContextStore } from "@/shared/context";
 
 const CONFLICT_PARTS_MIN_LENGTH = 3;
 
@@ -23,6 +24,19 @@ export type AgentRequestOptions = {
   images?: ImageContent[];
 };
 
+/**
+ * Process user messages through the AI agent orchestration system.
+ *
+ * Main entry point for AI-powered conversation handling in Telegram.
+ * Builds comprehensive context, runs AI agent, handles responses,
+ * and manages conversation state. Includes error handling, typing
+ * indicators, and cross-modal context synchronization.
+ *
+ * @param ctx - Telegram bot context with session data
+ * @param message - User's text message to process
+ * @param _options - Optional processing options (images, etc.)
+ * @returns Promise that resolves when AI response is sent
+ */
 export const handleAgentRequest = async (
   ctx: GlobalContext,
   message: string,
@@ -129,6 +143,16 @@ export const handleAgentRequest = async (
   }
 };
 
+/**
+ * Process user confirmation for pending actions.
+ *
+ * Handles user approval of scheduled actions, executing the confirmed
+ * operation and clearing the pending confirmation state. Used for
+ * two-step confirmation flows like event creation or deletion.
+ *
+ * @param ctx - Telegram bot context with pending confirmation data
+ * @returns Promise that resolves when confirmation is processed
+ */
 export const handleConfirmation = async (ctx: GlobalContext): Promise<void> => {
   const pending = ctx.session.pendingConfirmation;
   const { t } = getTranslatorFromLanguageCode(ctx.session.codeLang);
@@ -199,12 +223,32 @@ export const handleConfirmation = async (ctx: GlobalContext): Promise<void> => {
   }
 };
 
+/**
+ * Cancel pending confirmation and clear session state.
+ *
+ * Aborts any pending confirmation dialog and resets the session
+ * to a clean state. Provides user feedback about the cancellation.
+ *
+ * @param ctx - Telegram bot context with session data
+ * @returns Promise that resolves when cancellation is processed
+ */
 export const handleCancellation = async (ctx: GlobalContext): Promise<void> => {
   const { t } = getTranslatorFromLanguageCode(ctx.session.codeLang);
   ctx.session.pendingConfirmation = undefined;
   await ctx.reply(t("common.eventCreationCancelled"));
 };
 
+/**
+ * Handle AI agent responses that indicate scheduling conflicts.
+ *
+ * Processes special conflict response format from the AI agent,
+ * parsing conflict details and presenting them to the user for
+ * decision-making. Supports structured conflict resolution flows.
+ *
+ * @param ctx - Telegram bot context with session data
+ * @param output - AI agent output containing conflict information
+ * @returns Promise that resolves when conflict response is handled
+ */
 export const handleConflictResponse = async (
   ctx: GlobalContext,
   output: string

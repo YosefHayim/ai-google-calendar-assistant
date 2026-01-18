@@ -1,12 +1,13 @@
 'use client'
 
+import type { ColorDefinition, Event } from '../types'
+
 import { CalendarDays } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { EmptyState } from '@/components/ui/empty-state'
-import { cn } from '@/lib/utils'
-import type { Event, ColorDefinition } from '../types'
-import { getEventsForDay } from '../utils/calendar-utils'
 import { EventCard } from '../components/EventCard'
+import { cn } from '@/lib/utils'
+import { getEventsForDay } from '../utils/calendar-utils'
 
 interface MonthViewProps {
   currentDate: Date
@@ -71,23 +72,27 @@ export function MonthView({
             <div
               key={index}
               className={cn(
-                'min-h-20 border-b border-r p-1 transition-colors last:border-r-0 sm:min-h-24 sm:p-2',
+                'min-h-16 border-b border-r p-1 transition-colors last:border-r-0 touch-manipulation',
+                'sm:min-h-20 md:min-h-24',
+                'sm:p-1.5 md:p-2',
                 !isCurrentMonth && 'bg-muted/30',
-                'hover:bg-accent/50',
+                'hover:bg-accent/50 active:bg-accent/70',
               )}
               onDragOver={(e) => e.preventDefault()}
               onDrop={() => onDrop(day)}
             >
               <div
                 className={cn(
-                  'mb-1 flex h-5 w-5 items-center justify-center rounded-full text-xs sm:h-6 sm:w-6 sm:text-sm',
+                  'mb-1 flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium',
+                  'sm:h-6 sm:w-6 sm:text-sm',
+                  'md:h-7 md:w-7 md:text-sm',
                   isToday && 'bg-primary text-primary-foreground font-semibold',
                 )}
               >
                 {day.getDate()}
               </div>
-              <div className="space-y-1">
-                {dayEvents.slice(0, 3).map((event) => (
+              <div className="space-y-0.5 sm:space-y-1">
+                {dayEvents.slice(0, window.innerWidth < 640 ? 2 : 3).map((event) => (
                   <EventCard
                     key={event.id}
                     event={event}
@@ -98,8 +103,10 @@ export function MonthView({
                     variant="compact"
                   />
                 ))}
-                {dayEvents.length > 3 && (
-                  <div className="text-[10px] text-muted-foreground sm:text-xs">+{dayEvents.length - 3} more</div>
+                {dayEvents.length > (window.innerWidth < 640 ? 2 : 3) && (
+                  <div className="text-[9px] text-muted-foreground sm:text-[10px] md:text-xs truncate">
+                    +{dayEvents.length - (window.innerWidth < 640 ? 2 : 3)} more
+                  </div>
                 )}
               </div>
             </div>

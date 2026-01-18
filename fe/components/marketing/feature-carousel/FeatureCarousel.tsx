@@ -1,11 +1,13 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import React, { useEffect, useState } from 'react'
+
 import { Button } from '@/components/ui/button'
-import { PhoneFrame } from './components'
 import { FEATURES } from './constants'
+import { PhoneFrame } from './components'
+import { cn } from '@/lib/utils'
 
 export function FeatureCarousel() {
   const [active, setActive] = useState(0)
@@ -83,7 +85,10 @@ export function FeatureCarousel() {
                   key={i}
                   variant="ghost"
                   onClick={() => setActive(i)}
-                  className={`h-1.5 p-0 rounded-full transition-all duration-500 mb-2 min-w-0 ${i === active ? 'w-8 bg-primary hover:bg-primary' : 'w-2 bg-accent dark:border-zinc-700 hover:bg-zinc-300'}`}
+                  className={cn(
+                    'h-1.5 p-0 rounded-full transition-all duration-500 mb-2 min-w-0',
+                    i === active ? 'w-8 bg-primary hover:bg-primary' : 'w-2 bg-accent dark:border-zinc-700 hover:bg-zinc-300'
+                  )}
                 />
               ))}
             </div>

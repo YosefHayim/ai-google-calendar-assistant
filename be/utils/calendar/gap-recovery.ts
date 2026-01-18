@@ -57,6 +57,16 @@ const DEFAULT_PATTERNS = getCombinedPatternsForLanguages(["en"]);
  * formatDuration(7200000); // Returns "2h"
  * formatDuration(5400000); // Returns "1h 30m"
  */
+/**
+ * Format a duration in milliseconds to a human-readable string.
+ *
+ * Converts millisecond duration to a concise "Xh Ym" format,
+ * omitting units that are zero (e.g., "2h" for 2 hours exactly,
+ * "30m" for 30 minutes, "1h 30m" for 1.5 hours).
+ *
+ * @param durationMs - Duration in milliseconds
+ * @returns Formatted duration string (e.g., "2h 30m", "45m")
+ */
 function formatDuration(durationMs: number): string {
   const hours = Math.floor(durationMs / MS_PER_HOUR);
   const minutes = Math.floor((durationMs % MS_PER_HOUR) / MS_PER_MINUTE);

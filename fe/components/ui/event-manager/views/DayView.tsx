@@ -1,11 +1,12 @@
 'use client'
 
+import type { ColorDefinition, Event } from '../types'
+
 import { CalendarDays } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { EmptyState } from '@/components/ui/empty-state'
-import type { Event, ColorDefinition } from '../types'
-import { getEventsForHour } from '../utils/calendar-utils'
 import { EventCard } from '../components/EventCard'
+import { getEventsForHour } from '../utils/calendar-utils'
 
 interface DayViewProps {
   currentDate: Date
@@ -47,15 +48,15 @@ export function DayView({
           return (
             <div
               key={hour}
-              className="flex border-b last:border-b-0"
+              className="flex border-b last:border-b-0 touch-manipulation"
               onDragOver={(e) => e.preventDefault()}
               onDrop={() => onDrop(currentDate, hour)}
             >
-              <div className="w-14 flex-shrink-0 border-r p-2 text-xs text-muted-foreground sm:w-20 sm:p-3 sm:text-sm">
+              <div className="w-12 flex-shrink-0 border-r p-1.5 text-[10px] text-muted-foreground sm:w-14 sm:p-2 sm:text-xs md:w-20 md:p-3 md:text-sm">
                 {hour.toString().padStart(2, '0')}:00
               </div>
-              <div className="min-h-16 flex-1 p-1 transition-colors hover:bg-accent/50 sm:min-h-20 sm:p-2">
-                <div className="space-y-2">
+              <div className="min-h-12 flex-1 p-1 transition-colors hover:bg-accent/50 active:bg-accent/70 sm:min-h-16 md:min-h-20 sm:p-1.5 md:p-2">
+                <div className="space-y-1 sm:space-y-2">
                   {hourEvents.map((event) => (
                     <EventCard
                       key={event.id}

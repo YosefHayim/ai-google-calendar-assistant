@@ -1,12 +1,14 @@
 'use client'
 
-import React from 'react'
 import { AlertCircle, MessageSquare } from 'lucide-react'
+
+import { EditableMessage } from './EditableMessage'
 import { EmptyState } from '@/components/ui/empty-state'
 import { Message } from '@/types'
 import { MessageActions } from './MessageActions'
-import { EditableMessage } from './EditableMessage'
+import React from 'react'
 import { StreamingMessage } from './StreamingMessage'
+import { cn } from '@/lib/utils'
 import { useMessageEdit } from '@/hooks/useMessageEdit'
 
 interface ChatViewProps {
@@ -42,9 +44,9 @@ export const ChatView: React.FC<ChatViewProps> = ({
   const isEmpty = messages.length === 0 && !isLoading
 
   return (
-    <div className="h-full overflow-y-auto px-4 pt-24 pb-32">
+    <div className="h-full overflow-y-auto px-3 sm:px-4 pt-20 sm:pt-24 pb-24 sm:pb-32">
       {isEmpty ? (
-        <div className="flex items-center justify-center h-full min-h-[300px]">
+        <div className="flex items-center justify-center h-full min-h-[250px] sm:min-h-[300px] px-4">
           <EmptyState
             icon={<MessageSquare />}
             title="Start a conversation"
@@ -53,12 +55,12 @@ export const ChatView: React.FC<ChatViewProps> = ({
           />
         </div>
       ) : (
-        <div id="tour-chat-history">
+        <div id="tour-chat-history" className="space-y-4 sm:space-y-6">
           {messages.map((msg) => {
             const isEditing = editingMessageId === msg.id
 
             return (
-              <div key={msg.id} className="group mb-8">
+              <div key={msg.id} className="group mb-6 sm:mb-8">
                 <EditableMessage
                   message={msg}
                   isEditing={isEditing}
@@ -70,8 +72,8 @@ export const ChatView: React.FC<ChatViewProps> = ({
                   onCancel={cancelEdit}
                 />
                 {!isEditing && (
-                  <div className={`flex w-full ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                    <div className="max-w-[85%] md:max-w-[75%] w-full">
+                  <div className={cn('flex w-full', msg.role === 'user' ? 'justify-end' : 'justify-start')}>
+                    <div className="max-w-[90%] sm:max-w-[85%] md:max-w-[75%] w-full">
                       <MessageActions
                         msg={msg}
                         isSpeaking={isSpeaking && speakingMessageId === msg.id}
@@ -89,9 +91,9 @@ export const ChatView: React.FC<ChatViewProps> = ({
         </div>
       )}
       {error && (
-        <div className="flex justify-center mb-6">
-          <div className="bg-destructive/5 dark:bg-red-900/20 border border-red-100 text-destructive px-4 py-2 rounded-md flex items-center gap-2 text-sm">
-            <AlertCircle size={16} /> {error}
+        <div className="flex justify-center mb-4 sm:mb-6 px-4">
+          <div className="bg-destructive/5 dark:bg-red-900/20 border border-red-100 text-destructive px-3 sm:px-4 py-2 rounded-md flex items-center gap-2 text-xs sm:text-sm">
+            <AlertCircle size={14} className="sm:w-4 sm:h-4" /> {error}
           </div>
         </div>
       )}

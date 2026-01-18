@@ -17,6 +17,7 @@ import {
 import UserProfileCard from '@/components/dashboard/shared/UserProfileCard'
 import { NotificationInbox } from '@/components/dashboard/notifications'
 import { getUserDisplayInfo, type UserData } from '@/lib/user-utils'
+import { cn } from '@/lib/utils'
 
 interface SidebarFooterProps {
   isOpen: boolean
@@ -42,7 +43,7 @@ export const SidebarFooter: React.FC<SidebarFooterProps> = ({
 
   return (
     <div className="p-4 border-t border dark:border">
-      <div className={`flex items-center gap-2 ${!isOpen ? 'md:justify-center' : ''}`}>
+      <div className={cn('flex items-center gap-2', !isOpen && 'md:justify-center')}>
         <div className="flex-1 min-w-0">
           <UserProfileCard isOpen={isOpen} />
         </div>

@@ -23,6 +23,16 @@ const LOG_PREVIEW_LENGTH = 50;
 const PREFERENCE_SEPARATOR = "\n";
 const SECTION_MARKER = "---";
 
+/**
+ * Parse user brain instructions into individual preference lines.
+ *
+ * Splits instruction text by newlines, trims whitespace, and filters
+ * out empty lines and section markers. Used to break down complex
+ * instruction sets into manageable preference units.
+ *
+ * @param instructions - Raw instruction text with multiple preferences
+ * @returns Array of cleaned, non-empty preference strings
+ */
 function parseInstructions(instructions: string): string[] {
   if (!instructions.trim()) {
     return [];
@@ -34,6 +44,17 @@ function parseInstructions(instructions: string): string[] {
     .filter((line) => line.length > 0 && line !== SECTION_MARKER);
 }
 
+/**
+ * Find index of a conflicting preference in existing preferences array.
+ *
+ * Performs fuzzy matching to detect preferences that should be replaced.
+ * Uses case-insensitive comparison and partial string matching to handle
+ * variations in how users might specify the same preference.
+ *
+ * @param existingPrefs - Array of existing preference strings
+ * @param replacesExisting - Preference name to find and replace
+ * @returns Index of conflicting preference, or -1 if none found
+ */
 function findConflictingPreference(existingPrefs: string[], replacesExisting?: string): number {
   if (!replacesExisting) {
     return -1;
@@ -47,6 +68,16 @@ function findConflictingPreference(existingPrefs: string[], replacesExisting?: s
   });
 }
 
+/**
+ * Check if a new preference duplicates an existing one.
+ *
+ * Prevents adding redundant preferences by checking for exact or
+ * near-exact matches in the existing preference array.
+ *
+ * @param existingPrefs - Array of existing preference strings
+ * @param newPreference - New preference to check for duplication
+ * @returns True if preference already exists (case-insensitive)
+ */
 function isDuplicatePreference(existingPrefs: string[], newPreference: string): boolean {
   const normalizedNew = newPreference.toLowerCase().trim();
 
@@ -97,6 +128,20 @@ function smartMergeInstructions(
   };
 }
 
+/**
+ * Update user brain preferences for personalized AI responses.
+ *
+ * Adds, replaces, or categorizes user preferences that guide AI behavior.
+ * Supports conflict resolution when replacing existing preferences and
+ * validates input length and content requirements.
+ *
+ * @param params - Update parameters
+ * @param params.preference - The preference text to add/update
+ * @param params.category - Optional category for organization
+ * @param params.replacesExisting - Name of preference to replace
+ * @param ctx - Handler context with user email
+ * @returns Promise resolving to update result with success status and details
+ */
 export async function updateUserBrainHandler(params: UpdateUserBrainParams, ctx: HandlerContext): Promise<UpdateUserBrainResult> {
   const { email } = ctx;
   const { preference, category, replacesExisting } = params;
@@ -186,6 +231,15 @@ export async function updateUserBrainHandler(params: UpdateUserBrainParams, ctx:
   }
 }
 
+/**
+ * Retrieve user's current brain preferences and enabled status.
+ *
+ * Fetches the user's Ally Brain configuration including all personalized
+ * instructions and whether the feature is currently enabled for their account.
+ *
+ * @param ctx - Handler context with user email
+ * @returns Promise resolving to brain instructions and enabled status
+ */
 export async function getUserBrainHandler(ctx: HandlerContext): Promise<{ instructions: string; enabled: boolean }> {
   const { email } = ctx;
 

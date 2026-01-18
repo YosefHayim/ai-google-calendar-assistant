@@ -1,14 +1,23 @@
 'use client'
 
+import { MutationHookOptions, useMutationWrapper } from '../useMutationWrapper'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+
+import type { ApiResponse } from '@/types/api'
+import { STORAGE_KEYS } from '@/lib/constants'
 import { authService } from '@/services/auth.service'
 import { queryKeys } from '@/lib/query/keys'
-import { STORAGE_KEYS } from '@/lib/constants'
-import { useMutationWrapper, MutationHookOptions } from '../useMutationWrapper'
-import type { ApiResponse } from '@/types/api'
 
 /**
- * Hook to deactivate the current user's account
+ * Hook to deactivate the current user's account.
+ *
+ * Permanently deactivates the user account and performs cleanup:
+ * - Clears all authentication and user data caches
+ * - Removes calendar and event caches
+ * - Clears stored tokens from localStorage to prevent stale sessions
+ *
+ * @param options - Mutation options for customizing the deactivation behavior
+ * @returns Normalized mutation state for handling the account deactivation operation
  */
 export function useDeactivateUser(options?: MutationHookOptions<null, void>) {
   const queryClient = useQueryClient()
