@@ -25,6 +25,7 @@ import type { CrossPlatformSyncPreference } from "@/services/user-preferences-se
 import { ORCHESTRATOR_AGENT } from "@/ai-agents";
 import { STATUS_RESPONSE } from "@/config";
 import { createAgentSession } from "@/ai-agents/sessions";
+import { logger } from "@/utils/logger";
 import { run } from "@openai/agents";
 import { unifiedContextStore } from "@/shared/context";
 import { webConversation } from "@/utils/conversation/WebConversationAdapter";
@@ -362,37 +363,13 @@ const toggleConversationPinned = reqResAsyncHandler(
     const userId = req.user!.id;
 
     try {
-      // First, check if the conversation exists and belongs to the user
-      const { data: conversation, error } = await webConversation.supabase
-        .from('conversations')
-        .select('id, pinned')
-        .eq('id', conversationId)
-        .eq('user_id', userId)
-        .single();
+      const result = await webConversation.toggleConversationPinned(conversationId, userId);
 
-      if (error || !conversation) {
+      if (!result.success) {
         return sendR(
           res,
           STATUS_RESPONSE.NOT_FOUND,
-          "Conversation not found"
-        );
-      }
-
-      // Toggle the pinned status
-      const newPinnedStatus = !conversation.pinned;
-
-      const { error: updateError } = await webConversation.supabase
-        .from('conversations')
-        .update({ pinned: newPinnedStatus })
-        .eq('id', conversationId)
-        .eq('user_id', userId);
-
-      if (updateError) {
-        console.error("Error toggling conversation pinned status:", updateError);
-        return sendR(
-          res,
-          STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
-          "Error updating conversation pinned status"
+          "Conversation not found or update failed"
         );
       }
 
@@ -401,11 +378,11 @@ const toggleConversationPinned = reqResAsyncHandler(
       return sendR(
         res,
         STATUS_RESPONSE.SUCCESS,
-        `Conversation ${newPinnedStatus ? 'pinned' : 'unpinned'} successfully`,
-        { pinned: newPinnedStatus }
+        `Conversation ${result.pinned ? 'pinned' : 'unpinned'} successfully`,
+        { pinned: result.pinned }
       );
     } catch (error) {
-      console.error("Error toggling conversation pinned status:", error);
+      logger.error(`Error toggling conversation pinned status: ${error}`);
       sendR(
         res,
         STATUS_RESPONSE.INTERNAL_SERVER_ERROR,

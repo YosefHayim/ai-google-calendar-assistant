@@ -1,6 +1,3 @@
-import type { userAndAiMessageProps } from "@/types";
-import { logger } from "@/utils/logger";
-import { ConversationService } from "./ConversationService";
 import type {
   ConversationContext,
   ConversationListItem,
@@ -8,6 +5,11 @@ import type {
   SharedConversation,
   SummarizeFn,
 } from "./types";
+
+import { ConversationService } from "./ConversationService";
+import { SUPABASE } from "@/config/clients/supabase";
+import { logger } from "@/utils/logger";
+import type { userAndAiMessageProps } from "@/types";
 
 const WEB_CONFIG = {
   maxContextLength: 1000,
@@ -107,6 +109,54 @@ export class WebConversationAdapter {
     title: string
   ): Promise<boolean> {
     return this.service.updateTitle(conversationId, title);
+  }
+
+  /**
+   * @description Toggles the pinned status of a conversation.
+   * @param {string} conversationId - The unique identifier of the conversation.
+   * @param {string} userId - The user ID to ensure ownership.
+   * @returns {Promise<{ success: boolean; pinned?: boolean }>} Object with success status and new pinned state.
+   * @example
+   * const result = await adapter.toggleConversationPinned("conv-123", "user-456");
+   * if (result.success) {
+   *   console.log(`Conversation is now ${result.pinned ? 'pinned' : 'unpinned'}`);
+   * }
+   */
+  async toggleConversationPinned(
+    conversationId: string,
+    userId: string
+  ): Promise<{ success: boolean; pinned?: boolean }> {
+    try {
+      // First, check if the conversation exists and belongs to the user
+      const { data: conversation, error } = await SUPABASE
+        .from('conversations')
+        .select('id, pinned')
+        .eq('id', conversationId)
+        .eq('user_id', userId)
+        .single();
+
+      if (error || !conversation) {
+        return { success: false };
+      }
+
+      // Toggle the pinned status
+      const newPinnedStatus = !conversation.pinned;
+
+      const { error: updateError } = await SUPABASE
+        .from('conversations')
+        .update({ pinned: newPinnedStatus })
+        .eq('id', conversationId)
+        .eq('user_id', userId);
+
+      if (updateError) {
+        return { success: false };
+      }
+
+      return { success: true, pinned: newPinnedStatus };
+    } catch (error) {
+      logger.error(`Error toggling conversation pinned status: ${error}`);
+      return { success: false };
+    }
   }
 
   /**

@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input'
 import { StreamingTitle } from '../../sidebar-components/StreamingTitle'
 import { createShareLink, toggleConversationPinned, type ConversationListItem } from '@/services/chatService'
 import { formatRelativeDate } from '@/lib/dateUtils'
+import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
 import { useChatContext } from '@/contexts/ChatContext'
 import { useForm } from 'react-hook-form'
@@ -195,11 +196,12 @@ export function ConversationListSection() {
                   tabIndex={0}
                   onClick={() => handleConversationClick(conversation)}
                   onKeyDown={(e) => e.key === 'Enter' && handleConversationClick(conversation)}
-                  className={`w-full text-left p-2 rounded-md transition-colors group cursor-pointer ${
+                  className={cn(
+                    'w-full text-left p-2 rounded-md transition-colors group cursor-pointer',
                     selectedConversationId === conversation.id
                       ? 'bg-sidebar-accent text-sidebar-accent-foreground'
                       : 'hover:bg-sidebar-accent/50'
-                  }`}
+                  )}
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex-1 min-w-0">
@@ -222,11 +224,14 @@ export function ConversationListSection() {
                             size="icon"
                             onClick={(e) => handleTogglePin(e, conversation.id)}
                             disabled={pinningId === conversation.id}
-                            className={`h-6 w-6 opacity-0 group-hover:opacity-100 hover:bg-accent text-muted-foreground hover:text-primary ${
-                              conversation.pinned ? 'text-primary' : ''
-                            }`}
+                            className={cn(
+                              'h-6 w-6 hover:bg-accent text-muted-foreground hover:text-primary',
+                              conversation.pinned
+                                ? 'opacity-100 text-primary'
+                                : 'opacity-0 group-hover:opacity-100'
+                            )}
                           >
-                            <Pin className={`w-3 h-3 ${conversation.pinned ? 'fill-current' : ''}`} />
+                            <Pin className={cn('w-3 h-3', conversation.pinned && 'fill-current')} />
                           </Button>
                         </TooltipTrigger>
                         <TooltipContent side="top">{conversation.pinned ? 'Unpin' : 'Pin'}</TooltipContent>
