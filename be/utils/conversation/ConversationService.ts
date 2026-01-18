@@ -662,7 +662,8 @@ export class ConversationService {
       .select(
         "id, message_count, title, summary, created_at, updated_at, last_message_at, source, pinned"
       )
-      .eq("user_id", userId);
+      .eq("user_id", userId)
+      .is("archived_at", null); // Only show non-archived conversations
 
     if (!includeAllSources) {
       query = query.eq("source", this.source);

@@ -1,2 +1,2 @@
 export { useGaps } from './useGaps'
-export { useFillGap, useSkipGap, useDismissAllGaps, useDisableGapAnalysis } from './useGapMutations'
+export { useFillGap, useSkipGap, useDismissAllGaps, useDisableGapAnalysis, useGapMutations } from './useGapMutations'

@@ -124,7 +124,7 @@ export const supabaseAuth = (options: SupabaseAuthOptions = {}) => {
         );
       }
 
-      const userEmail = req.user?.email;
+      const userEmail = req.user!.email;
 
       try {
         // Refresh the session using the refresh token

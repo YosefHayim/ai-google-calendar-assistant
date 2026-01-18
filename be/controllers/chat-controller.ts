@@ -406,6 +406,20 @@ const archiveConversation = reqResAsyncHandler(
     const conversationId = req.params.id;
 
     try {
+      // First check if conversation exists and belongs to user
+      const existingConversation = await webConversation.getConversationById(
+        conversationId,
+        req.user!.id
+      );
+
+      if (!existingConversation) {
+        return sendR(
+          res,
+          STATUS_RESPONSE.NOT_FOUND,
+          "Conversation not found"
+        );
+      }
+
       const archived = await webConversation.archiveConversation(
         conversationId,
         req.user!.id
@@ -414,8 +428,8 @@ const archiveConversation = reqResAsyncHandler(
       if (!archived) {
         return sendR(
           res,
-          STATUS_RESPONSE.NOT_FOUND,
-          "Conversation not found or already archived"
+          STATUS_RESPONSE.BAD_REQUEST,
+          "Conversation is already archived"
         );
       }
 
@@ -442,6 +456,20 @@ const restoreConversation = reqResAsyncHandler(
     const conversationId = req.params.id;
 
     try {
+      // First check if conversation exists and belongs to user
+      const existingConversation = await webConversation.getConversationById(
+        conversationId,
+        req.user!.id
+      );
+
+      if (!existingConversation) {
+        return sendR(
+          res,
+          STATUS_RESPONSE.NOT_FOUND,
+          "Conversation not found"
+        );
+      }
+
       const restored = await webConversation.restoreConversation(
         conversationId,
         req.user!.id
@@ -450,8 +478,8 @@ const restoreConversation = reqResAsyncHandler(
       if (!restored) {
         return sendR(
           res,
-          STATUS_RESPONSE.NOT_FOUND,
-          "Conversation not found or not archived"
+          STATUS_RESPONSE.BAD_REQUEST,
+          "Conversation is not archived"
         );
       }
 

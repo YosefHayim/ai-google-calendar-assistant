@@ -13,6 +13,7 @@ import contactRoute from "./contact-route";
 import cronRoute from "./cron-route";
 import eventsRoute from "./google-calendar/events-route";
 import featureFlagRoute from "./feature-flag-route";
+import gapsRoute from "./gaps-route";
 import { getActiveConnectionCount } from "@/config/clients";
 import { getBot } from "@/telegram-bot/init-bot";
 import { getSlackReceiver } from "@/slack-bot/init-bot";
@@ -101,6 +102,7 @@ app.use(ROUTES.REFERRAL, referralRoute);
 app.use(ROUTES.TEAMS, teamInviteRoute);
 app.use(ROUTES.BLOG, blogRoute);
 app.use(ROUTES.FEATURE_FLAGS, featureFlagRoute);
+app.use(ROUTES.GAPS, gapsRoute);
 
 app.use((_req, res, _next) => {
   logger.error(`Opps! It looks like this route doesn't exist. ${_req.originalUrl}`);

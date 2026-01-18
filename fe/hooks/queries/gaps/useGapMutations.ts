@@ -1,9 +1,10 @@
 'use client'
 
+import type { DismissAllGapsResponse, FillGapRequest, FillGapResponse, SkipGapResponse } from '@/types/api'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+
 import { gapsService } from '@/services/gaps.service'
 import { queryKeys } from '@/lib/query/keys'
-import type { FillGapRequest, FillGapResponse, SkipGapResponse, DismissAllGapsResponse } from '@/types/api'
 import { toast } from 'sonner'
 
 /**
@@ -114,4 +115,22 @@ export function useDisableGapAnalysis() {
       })
     },
   })
+}
+
+/**
+ * Combined hook that provides all gap mutation operations
+ * Returns an object with all the gap mutation hooks
+ */
+export function useGapMutations() {
+  const fillGap = useFillGap()
+  const skipGap = useSkipGap()
+  const dismissAllGaps = useDismissAllGaps()
+  const disableGapAnalysis = useDisableGapAnalysis()
+
+  return {
+    fillGap,
+    skipGap,
+    dismissAllGaps,
+    disableGapAnalysis,
+  }
 }

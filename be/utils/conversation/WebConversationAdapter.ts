@@ -573,6 +573,44 @@ export class WebConversationAdapter {
   getSharedConversation(token: string): Promise<SharedConversation | null> {
     return this.service.getSharedConversation(token);
   }
+
+  /**
+   * @description Archives a conversation by setting the archived_at timestamp.
+   * @param {string} conversationId - The unique identifier of the conversation to archive.
+   * @param {string} userId - The UUID of the user who owns the conversation.
+   * @returns {Promise<boolean>} True if archiving succeeded, false if the conversation wasn't found or failed.
+   */
+  archiveConversation(conversationId: string, userId: string): Promise<boolean> {
+    return this.service.archiveConversation(conversationId, userId);
+  }
+
+  /**
+   * @description Restores an archived conversation by clearing the archived_at timestamp.
+   * @param {string} conversationId - The unique identifier of the conversation to restore.
+   * @param {string} userId - The UUID of the user who owns the conversation.
+   * @returns {Promise<boolean>} True if restoration succeeded, false if the conversation wasn't found or failed.
+   */
+  restoreConversation(conversationId: string, userId: string): Promise<boolean> {
+    return this.service.restoreConversation(conversationId, userId);
+  }
+
+  /**
+   * @description Gets all archived conversations for a user.
+   * @param {string} userId - The UUID of the user whose archived conversations to retrieve.
+   * @returns {Promise<ConversationListItem[]>} Array of archived conversation list items.
+   */
+  getArchivedConversations(userId: string): Promise<ConversationListItem[]> {
+    return this.service.getArchivedConversations(userId);
+  }
+
+  /**
+   * @description Restores all archived conversations for a user.
+   * @param {string} userId - The UUID of the user whose archived conversations should be restored.
+   * @returns {Promise<boolean>} True if restoration succeeded, false if it failed.
+   */
+  restoreAllArchivedConversations(userId: string): Promise<boolean> {
+    return this.service.restoreAllArchivedConversations(userId);
+  }
 }
 
 export const webConversation = new WebConversationAdapter();
