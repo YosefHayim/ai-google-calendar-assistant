@@ -1,25 +1,26 @@
-import type { Request, Response } from "express";
-import {
-  env,
-  OAUTH2CLIENT,
-  PROVIDERS,
-  STATUS_RESPONSE,
-  SUPABASE,
-} from "@/config";
-import { sendWelcomeEmail } from "@/services/notification-dispatcher";
-import { generateGoogleAuthUrl } from "@/utils/auth";
 import {
   ACCESS_TOKEN_COOKIE,
   REFRESH_TOKEN_COOKIE,
   setAuthCookies,
 } from "@/utils/auth/cookie-utils";
 import {
+  OAUTH2CLIENT,
+  PROVIDERS,
+  STATUS_RESPONSE,
+  SUPABASE,
+  env,
+} from "@/config";
+import type { Request, Response } from "express";
+import {
   refreshSupabaseSession,
   validateSupabaseToken,
 } from "@/utils/auth/supabase-token";
-import { syncUserCalendarsAfterOAuth } from "@/utils/calendar/sync-calendars-after-oauth";
-import { msToIso } from "@/utils/date/timestamp-utils";
 import { reqResAsyncHandler, sendR } from "@/utils/http";
+
+import { generateGoogleAuthUrl } from "@/utils/auth";
+import { msToIso } from "@/utils/date/timestamp-utils";
+import { sendWelcomeEmail } from "@/services/notification-dispatcher";
+import { syncUserCalendarsAfterOAuth } from "@/utils/calendar/sync-calendars-after-oauth";
 
 async function checkExistingSessionAndRedirect(
   res: Response,
@@ -245,7 +246,7 @@ const generateAuthGoogleUrl = reqResAsyncHandler(
       if (isNewUser) {
         const userName = googleUser.given_name || normalizedEmail.split("@")[0];
         // Fire and forget - don't block signup flow
-        sendWelcomeEmail(normalizedEmail, userName).catch((err) => {
+        await sendWelcomeEmail(normalizedEmail, userName).catch((err) => {
           console.error("Failed to send welcome email:", err);
         });
       }

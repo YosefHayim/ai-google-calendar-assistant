@@ -1,10 +1,19 @@
 import type { Server as HttpServer } from "node:http";
 import type { Socket } from "socket.io";
 import { Server as SocketIOServer } from "socket.io";
+import { authenticateSocket } from "@/middlewares/socket-auth";
 import { env } from "@/config/env";
 import { getAllowedOrigins } from "@/utils/security/cors-config";
 import { logger } from "@/utils/logger";
 import { validateSupabaseToken } from "@/utils/auth/supabase-token";
+
+const PING_TIMEOUT_MS = 60_000;
+const PING_INTERVAL_MS = 25_000;
+const MAX_HTTP_BUFFER_SIZE = 1_000_000;
+const CONNECTION_TIMEOUT_MS = 45_000;
+const MAX_DISCONNECTION_DURATION_MS = 120_000;
+const SHUTDOWN_NOTIFY_DELAY_MS = 2000;
+const CLIENT_RECONNECT_DELAY_MS = 5000;
 
 export type NotificationPayload = {
   type: "event_created" | "event_updated" | "conflict_alert" | "system";
@@ -37,7 +46,7 @@ type SocketData = {
   email: string;
 };
 
-type TypedSocket = Socket<
+export type TypedSocket = Socket<
   ClientToServerEvents,
   ServerToClientEvents,
   InterServerEvents,
@@ -50,55 +59,8 @@ type TypedServer = SocketIOServer<
   SocketData
 >;
 
-const PING_TIMEOUT_MS = 60_000;
-const PING_INTERVAL_MS = 25_000;
-const MAX_HTTP_BUFFER_SIZE = 1_000_000;
-const CONNECTION_TIMEOUT_MS = 45_000;
-const MAX_DISCONNECTION_DURATION_MS = 120_000;
-const SHUTDOWN_NOTIFY_DELAY_MS = 2000;
-const CLIENT_RECONNECT_DELAY_MS = 5000;
-
 let io: TypedServer | null = null;
 const userSockets = new Map<string, Set<string>>();
-
-async function authenticateSocket(
-  socket: TypedSocket,
-  next: (err?: Error) => void
-): Promise<void> {
-  const token =
-    socket.handshake.auth.token ||
-    socket.handshake.headers.authorization?.replace("Bearer ", "");
-
-  if (!token) {
-    const err = new Error("Authentication required");
-    (err as Error & { data: unknown }).data = { code: "NO_TOKEN" };
-    return next(err);
-  }
-
-  try {
-    const validation = await validateSupabaseToken(token);
-    if (!validation.user) {
-      const err = new Error("Invalid or expired token");
-      (err as Error & { data: unknown }).data = {
-        code: "INVALID_TOKEN",
-        needsRefresh: validation.needsRefresh,
-      };
-      return next(err);
-    }
-
-    socket.data = {
-      userId: validation.user.id,
-      email: validation.user.email || "",
-    };
-
-    next();
-  } catch (error) {
-    logger.error("[Socket] Auth error:", error);
-    const err = new Error("Authentication failed");
-    (err as Error & { data: unknown }).data = { code: "AUTH_ERROR" };
-    next(err);
-  }
-}
 
 function handleConnection(socket: TypedSocket): void {
   const { userId, email } = socket.data;

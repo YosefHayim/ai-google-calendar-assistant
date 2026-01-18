@@ -17,7 +17,7 @@ const PORT = env.port;
 initializeMiddlewares(app);
 
 app.get("/health", (_req, res) => {
-  res.status(STATUS_RESPONSE.SUCCESS).json({ status: "ok", uptime: process.uptime() });
+  res.status(STATUS_RESPONSE.SUCCESS).json({ status: "ok", uptime: process.uptime(),message: "Server is running" });
 });
 
 initializeRoutes(app);
