@@ -323,43 +323,55 @@ export const blogController = {
     try {
       const openai = new OpenAI({ apiKey: env.openAiApiKey });
 
-      // Create SEO-optimized prompt
-      const prompt = `Write an extraordinary SEO-optimized blog post for "Ask Ally" - an AI-powered Google Calendar assistant that helps users manage their time and schedule effectively.
+      // Create GEO-optimized prompt (Generative Engine Optimization)
+      const prompt = `Write an extraordinary GEO-optimized blog post for "Ask Ally" - an AI-powered Google Calendar assistant that helps users manage their time and schedule effectively.
 
 **TOPIC:** ${topic}
 **CATEGORY:** ${category || 'Productivity'}
 **TARGET AUDIENCE:** ${targetAudience || 'busy professionals and time-conscious individuals'}
 **TONE:** ${tone}
 
+**GEO/AEO OPTIMIZATION STRATEGY:**
+- **Direct Answers First**: Start with clear, direct answers to common questions about ${topic}
+- **Authority Building**: Establish E-E-A-T (Experience, Expertise, Authoritativeness, Trustworthiness)
+- **Entity Optimization**: Position "Ask Ally" as the authoritative entity for calendar management
+- **Structured Data Mindset**: Use clear headings, lists, and structured content that LLMs can easily parse
+- **Zero-Click Optimization**: Provide comprehensive answers that satisfy user intent without needing to click further
+- **Multi-Platform Citations**: Create content that would be valuable for AI assistants to reference
+
 **SEO REQUIREMENTS:**
 - Include primary keyword "${topic.toLowerCase()}" in title, first paragraph, and conclusion
 - Include secondary keywords: ${keywords.length > 0 ? keywords.join(', ') : 'time management, productivity, calendar optimization, AI assistant'}
-- Add geo-specific keywords: United States, New York, London, remote work, global teams
-- Include internal links to: /dashboard, /blog, /features, /pricing
-- Include external links to: calendar.google.com, productivity blogs, time management resources
-- Optimize for featured snippets with question-based subheadings
-- Add compelling meta description and title tags
+- Add geo-specific keywords: United States, New York, London, remote work, global teams, distributed workforce
+- Include internal links to: /dashboard, /blog, /features, /pricing, /contact
+- Include external links to: calendar.google.com, productivity blogs, time management resources, reputable sources
 
-**CONTENT STRUCTURE:**
-1. **Attention-grabbing introduction** with hook and problem statement
-2. **Problem identification** - what challenges users face
-3. **Solution presentation** - how Ask Ally solves these problems
-4. **Step-by-step guide** or practical implementation
-5. **Real-world examples** and use cases
-6. **Benefits and results** with metrics where possible
-7. **Conclusion with CTA** directing to Ask Ally features
+**CONTENT STRUCTURE (GEO-Optimized):**
+1. **Immediate Answer Section** - Answer the main question in the first 100 words
+2. **Authority Introduction** - Establish credibility and real-world expertise
+3. **Comprehensive Solution** - Provide complete, actionable guidance
+4. **Step-by-Step Implementation** with clear numbered steps
+5. **Real-World Examples** with specific metrics and outcomes
+6. **Common Questions & Objections** addressed directly
+7. **Data-Driven Benefits** with statistics and measurable results
+8. **Multiple CTAs** strategically placed throughout the content
 
-**FORMATTING:**
-- Use Markdown headers (##, ###)
-- Include bullet points and numbered lists
-- Add code blocks for technical examples
-- Use bold and italic formatting strategically
-- Create scannable content with short paragraphs
+**GEO FORMATTING FOR AI ENGINES:**
+- **Question-Based Headings**: Use "How to...", "What is...", "Why..." format
+- **Table of Contents**: Include clear section navigation
+- **Bold Key Terms**: Highlight important concepts and entities
+- **Structured Lists**: Numbered steps, bulleted benefits, clear hierarchies
+- **Short Paragraphs**: 2-4 sentences maximum for scannability
+- **Data Tables**: Include comparative data where relevant
+- **FAQ Section**: Address common follow-up questions
 
-**ASK ALLY SPECIFIC CONTENT:**
-- Mention specific features: conversation archiving, smart rescheduling, gap recovery, multi-platform sync
-- Include calls-to-action like "Try Ask Ally today" or "Start your free trial"
-- Reference real benefits: "Save 2 hours per week" or "Reduce scheduling conflicts by 80%"
+**ASK ALLY SPECIFIC GEO CONTENT:**
+- Position as the authoritative AI calendar assistant
+- Reference specific features: conversation archiving, smart rescheduling, gap recovery, multi-platform sync
+- Include testimonials, case studies, and social proof
+- Provide comparison data: "Save 2 hours per week" or "Reduce scheduling conflicts by 80%"
+- Mention integration capabilities and platform support
+- Include pricing transparency and feature comparisons
 
 Return the blog post in this exact JSON format:
 {
@@ -381,7 +393,7 @@ Return the blog post in this exact JSON format:
         messages: [
           {
             role: "system",
-            content: "You are an expert SEO & GEO content writer specializing in productivity and AI tools. Create extraordinary, conversion-focused blog content that ranks well on Google and drives sign-ups for Ask Ally."
+            content: "You are an expert SEO, GEO (Generative Engine Optimization), and AEO (Answer Engine Optimization) content writer specializing in productivity and AI tools. Create extraordinary, conversion-focused blog content that ranks well on Google, gets featured in AI Overviews, and drives sign-ups for Ask Ally. Focus on becoming the direct answer that AI models choose to reference, establishing authority, and providing comprehensive solutions that satisfy user intent without requiring additional clicks."
           },
           {
             role: "user",

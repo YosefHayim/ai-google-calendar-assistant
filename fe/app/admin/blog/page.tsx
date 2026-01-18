@@ -102,16 +102,18 @@ Wrap up with key takeaways and a call to action.`,
   },
 }
 
-const AI_PROMPT_TEMPLATE = `Generate blog posts for Ask Ally (an AI-powered Google Calendar assistant) using this exact JSON structure:
+const AI_PROMPT_TEMPLATE = `Generate GEO-optimized blog posts for Ask Ally (an AI-powered Google Calendar assistant) using this exact JSON structure:
 
 ${JSON.stringify(JSON_TEMPLATE, null, 2)}
 
-REQUIREMENTS:
+GEO REQUIREMENTS:
 - Each post must follow the validation rules specified in _instructions
 - Use only the supported categories: ${BLOG_CATEGORIES.join(', ')}
 - Content should be helpful, actionable, and relevant to calendar management, productivity, or time optimization
-- Write in a professional but approachable tone
+- Write in a professional but approachable tone with E-E-A-T authority
 - Include Markdown formatting for headers, lists, and code blocks where appropriate
+- Optimize for AI search engines with direct answers, structured data, and entity recognition
+- Focus on becoming the authoritative source that AI models reference
 
 Generate [NUMBER] unique blog posts about [TOPIC/THEME]. Return only the JSON array of posts (without the _instructions field).`
 
@@ -317,7 +319,7 @@ export default function AdminBlogPage() {
           </TabsTrigger>
           <TabsTrigger value="ai" className="gap-2">
             <Sparkles className="w-4 h-4" />
-            AI Generate
+            GEO AI Generate
           </TabsTrigger>
           <TabsTrigger value="json" className="gap-2">
             <Code className="w-4 h-4" />
@@ -569,6 +571,33 @@ export default function AdminBlogPage() {
                   </p>
                 </div>
 
+                <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                  <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-2">🤖 GEO/AEO Optimization Features</h4>
+                  <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
+                    <li>• <strong>Direct Answer First</strong> - Immediate solutions in opening paragraphs</li>
+                    <li>• <strong>E-E-A-T Authority</strong> - Establishes expertise and trustworthiness</li>
+                    <li>• <strong>Entity Optimization</strong> - Positions Ask Ally as authoritative entity</li>
+                    <li>• <strong>Zero-Click Content</strong> - Comprehensive answers for AI search results</li>
+                    <li>• <strong>Structured Data</strong> - LLM-parseable content with clear hierarchies</li>
+                    <li>• <strong>Multi-Platform Citations</strong> - Content valuable for AI assistants to reference</li>
+                  </ul>
+                </div>
+
+                <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                  <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-2">🤖 GEO/AEO Optimization Features</h4>
+                  <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
+                    <li>• <strong>Direct Answer First</strong> - Immediate solutions in opening paragraphs</li>
+                    <li>• <strong>E-E-A-T Authority</strong> - Establishes expertise and trustworthiness</li>
+                    <li>• <strong>Entity Optimization</strong> - Positions Ask Ally as authoritative entity</li>
+                    <li>• <strong>Zero-Click Content</strong> - Comprehensive answers for AI search results</li>
+                    <li>• <strong>Structured Data</strong> - LLM-parseable content with clear hierarchies</li>
+                    <li>• <strong>Multi-Platform Citations</strong> - Content valuable for AI assistants to reference</li>
+                  </ul>
+                </div>
+
+                <div>
+                </div>
+
                 <div className="space-y-2">
                   {/* CHANGED FROM FormLabel TO Label TO FIX ERROR */}
                   <Label htmlFor="bulkJson">JSON Payload</Label>
@@ -647,10 +676,10 @@ export default function AdminBlogPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Sparkles className="w-5 h-5 text-primary" />
-                AI-Powered Blog Generation
+                GEO AI-Powered Blog Generation
               </CardTitle>
               <CardDescription>
-                Generate extraordinary SEO-optimized blog posts with AI. Includes geo-targeting, internal/external links, and conversion-focused content.
+                Generate extraordinary GEO-optimized blog posts with AI. Includes Generative Engine Optimization for AI search, geo-targeting, entity optimization, and conversion-focused content that ranks in AI Overviews.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -784,15 +813,15 @@ export default function AdminBlogPage() {
                     )}
                   />
 
-                  <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-                    <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-2">🤖 AI Generation Features</h4>
+                  <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                    <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-2">🚀 GEO/AEO Optimization Engine</h4>
                     <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
-                      <li>• SEO-optimized title and meta description</li>
-                      <li>• Geo-targeting keywords (US, UK, remote work)</li>
-                      <li>• Internal links to Ask Ally features</li>
-                      <li>• Conversion-focused calls-to-action</li>
-                      <li>• Structured content with headers and lists</li>
-                      <li>• Featured snippet optimization</li>
+                      <li>• <strong>Zero-Click Optimization</strong> - Direct answers for AI search results</li>
+                      <li>• <strong>E-E-A-T Authority</strong> - Experience, Expertise, Authoritativeness, Trust</li>
+                      <li>• <strong>Entity Recognition</strong> - Positions Ask Ally as authoritative calendar AI</li>
+                      <li>• <strong>LLM-Structured Content</strong> - Parseable by Large Language Models</li>
+                      <li>• <strong>Multi-Platform Citations</strong> - Valuable for AI assistants to reference</li>
+                      <li>• <strong>Question-Based Headings</strong> - Optimized for AI Overviews</li>
                     </ul>
                   </div>
 
@@ -808,12 +837,12 @@ export default function AdminBlogPage() {
                       {generateAI.isPending ? (
                         <>
                           <Loader2 className="w-4 h-4 animate-spin" />
-                          Generating...
+                          Generating GEO-Optimized Content...
                         </>
                       ) : (
                         <>
                           <Sparkles className="w-4 h-4" />
-                          Generate with AI
+                          Generate with GEO AI
                         </>
                       )}
                     </Button>
@@ -838,8 +867,8 @@ export default function AdminBlogPage() {
                 </Button>
               </div>
               <p className="text-sm text-muted-foreground dark:text-muted-foreground">
-                Copy this prompt and paste it to any AI (ChatGPT, Claude, etc.) to generate blog posts. Replace [NUMBER]
-                and [TOPIC/THEME] with your requirements.
+                Copy this GEO-optimized prompt and paste it to any AI (ChatGPT, Claude, etc.) to generate blog posts that rank in AI search results. Replace [NUMBER]
+                and [TOPIC/THEME] with your requirements for Generative Engine Optimization.
               </p>
               <div className="relative">
                 <pre className="bg-secondary text-primary-foreground p-4 rounded-lg overflow-x-auto text-xs leading-relaxed max-h-[300px] overflow-y-auto">
@@ -899,27 +928,25 @@ export default function AdminBlogPage() {
               <li className="flex items-start gap-2">
                 <span className="text-primary mt-1">1.</span>
                 <span>
-                  <strong>Copy the AI Prompt</strong> and paste it into ChatGPT, Claude, or any other AI assistant
+                  <strong>GEO-Optimized Content</strong> - Posts are optimized for AI search engines (Google AI Overviews, ChatGPT, etc.)
                 </span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-primary mt-1">2.</span>
                 <span>
-                  <strong>Customize the request</strong> by replacing [NUMBER] with how many posts you want and
-                  [TOPIC/THEME] with your desired subject
+                  <strong>Direct Answers First</strong> - Content provides immediate solutions to rank in zero-click search results
                 </span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-primary mt-1">3.</span>
                 <span>
-                  <strong>Review the generated JSON</strong> and make any necessary edits before importing
+                  <strong>E-E-A-T Authority</strong> - Establishes Ask Ally as the authoritative AI calendar assistant
                 </span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-primary mt-1">4.</span>
                 <span>
-                  <strong>Use the Editor tab</strong> to manually create individual posts or import the AI-generated
-                  content
+                  <strong>Use the AI Generate Tab</strong> for one-click GEO-optimized blog creation with your custom parameters
                 </span>
               </li>
             </ul>
