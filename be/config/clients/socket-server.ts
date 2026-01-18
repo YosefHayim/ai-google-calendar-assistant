@@ -2,8 +2,9 @@ import type { Server as HttpServer } from "node:http";
 import type { Socket } from "socket.io";
 import { Server as SocketIOServer } from "socket.io";
 import { env } from "@/config/env";
-import { validateSupabaseToken } from "@/utils/auth/supabase-token";
+import { getAllowedOrigins } from "@/utils/security/cors-config";
 import { logger } from "@/utils/logger";
+import { validateSupabaseToken } from "@/utils/auth/supabase-token";
 
 export type NotificationPayload = {
   type: "event_created" | "event_updated" | "conflict_alert" | "system";
@@ -59,17 +60,6 @@ const CLIENT_RECONNECT_DELAY_MS = 5000;
 
 let io: TypedServer | null = null;
 const userSockets = new Map<string, Set<string>>();
-
-function getCorsOrigins(): string[] {
-  if (env.isProd) {
-    return [env.urls.frontend].filter(Boolean) as string[];
-  }
-  return [
-    "http://localhost:4000",
-    "http://127.0.0.1:4000",
-    env.urls.frontend,
-  ].filter(Boolean) as string[];
-}
 
 async function authenticateSocket(
   socket: TypedSocket,
@@ -149,7 +139,7 @@ export function initSocketServer(httpServer: HttpServer): TypedServer {
     SocketData
   >(httpServer, {
     cors: {
-      origin: getCorsOrigins(),
+      origin: getAllowedOrigins(),
       credentials: true,
     },
     path: "/socket.io",

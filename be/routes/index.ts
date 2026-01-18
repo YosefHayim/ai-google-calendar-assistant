@@ -1,0 +1,65 @@
+import { ROUTES, STATUS_RESPONSE } from "@/config";
+
+import type { Express } from "express";
+import aclRoute from "./google-calendar/acl-route";
+import adminRoute from "./admin-route";
+import affiliateRoute from "./affiliate-route";
+import blogRoute from "./blog-route";
+import calendarListRoute from "./google-calendar/calendar-list-route";
+import calendarRoute from "./google-calendar/calendar-route";
+import channelsRoute from "./google-calendar/channels-route";
+import chatRoute from "./google-calendar/chat-route";
+import contactRoute from "./contact-route";
+import cronRoute from "./cron-route";
+import eventsRoute from "./google-calendar/events-route";
+import featureFlagRoute from "./feature-flag-route";
+import { logger } from "@/utils/logger";
+import newsletterRoute from "./newsletter-route";
+import paymentRoute from "./payment-route";
+import referralRoute from "./referral-route";
+import riscRoute from "./risc-route";
+import { sendR } from "@/utils";
+import sharedRoute from "./shared-route";
+import slackRoute from "./slack-route";
+import teamInviteRoute from "./team-invite-route";
+import telegramRoute from "./telegram-route";
+import usersRoute from "./users-route";
+import voiceRoute from "./voice-route";
+import waitingListRoute from "./waiting-list-route";
+import webhooksRoute from "./webhooks-route";
+import whatsAppRoute from "./whatsapp-route";
+
+export const initializeRoutes = (app: Express) => {
+app.use(ROUTES.USERS, usersRoute);
+app.use(ROUTES.CALENDAR_LIST, calendarListRoute);
+app.use(ROUTES.CALENDAR, calendarRoute);
+app.use(ROUTES.EVENTS, eventsRoute);
+app.use(ROUTES.ACL, aclRoute);
+app.use(ROUTES.CHANNELS, channelsRoute);
+app.use(ROUTES.WHATSAPP, whatsAppRoute);
+app.use(ROUTES.CHAT, chatRoute);
+app.use(ROUTES.PAYMENTS, paymentRoute);
+app.use(ROUTES.CONTACT, contactRoute);
+app.use(ROUTES.WEBHOOKS, webhooksRoute);
+app.use(ROUTES.VOICE, voiceRoute);
+app.use(ROUTES.ADMIN, adminRoute);
+app.use(ROUTES.AFFILIATES, affiliateRoute);
+app.use(ROUTES.CRON, cronRoute);
+app.use(ROUTES.TELEGRAM, telegramRoute);
+app.use(ROUTES.RISC, riscRoute);
+app.use(ROUTES.SLACK, slackRoute);
+app.use(ROUTES.SHARED, sharedRoute);
+app.use(ROUTES.NEWSLETTER, newsletterRoute);
+app.use(ROUTES.WAITING_LIST, waitingListRoute);
+app.use(ROUTES.REFERRAL, referralRoute);
+app.use(ROUTES.TEAMS, teamInviteRoute);
+app.use(ROUTES.BLOG, blogRoute);
+app.use(ROUTES.FEATURE_FLAGS, featureFlagRoute);
+
+app.use((_req, res, _next) => {
+  logger.error(`Opps! It looks like this route doesn't exist. ${_req.originalUrl}`);
+  console.error("Opps! It looks like this route doesn't exist:", _req.originalUrl);
+  sendR(res, STATUS_RESPONSE.NOT_FOUND, `Opps! It looks like this route doesn't exist. ${_req.originalUrl}`);
+});
+
+};

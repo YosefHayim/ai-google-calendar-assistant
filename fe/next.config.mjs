@@ -4,6 +4,17 @@ import { withSentryConfig } from '@sentry/nextjs'
 const isDev = process.env.NODE_ENV === 'development'
 
 const nextConfig = {
+  webpack: (config) => {
+    if (isDev) {
+      config.module.rules.push({
+        test: /\.(jsx|tsx)$/,
+        exclude: /node_modules/,
+        enforce: "pre",
+        use: "@ternary-std/nextjs-webpack-component-tagger",
+      });
+    }
+    return config;
+  },
   output: 'standalone',
   experimental: {
     swcPlugins: isDev
