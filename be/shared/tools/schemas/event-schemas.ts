@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { TIMEZONE } from "@/config";
 
 export const calendarIdSchema = z.coerce
   .string({
@@ -35,7 +34,7 @@ export const eventTimeSchema = z
       .nullable(),
     timeZone: z.coerce
       .string({
-        description: `IANA Time Zone Database name, e.g. "${TIMEZONE.ASIA_JERUSALEM}"`,
+        description: 'IANA Time Zone Database name, e.g. "Asia/Jerusalem"',
         invalid_type_error: "Must be a valid IANA Time Zone Database name.",
       })
       .nullable(),

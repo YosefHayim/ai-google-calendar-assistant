@@ -10,7 +10,14 @@ export {
 type Event = calendar_v3.Schema$Event;
 type EDT = calendar_v3.Schema$EventDateTime;
 
-const ALLOWED_TZ = new Set<string>(Object.values(TIMEZONE) as string[]);
+let _ALLOWED_TZ: Set<string> | null = null;
+
+function getAllowedTimezones(): Set<string> {
+  if (!_ALLOWED_TZ) {
+    _ALLOWED_TZ = new Set<string>(Object.values(TIMEZONE) as string[]);
+  }
+  return _ALLOWED_TZ;
+}
 
 /**
  * @description Recursively removes null, undefined, empty strings, empty objects, and empty arrays
@@ -193,14 +200,15 @@ export function validateAndResolveTimezone(
     throw new Error("Event timeZone is required for timed events.");
   }
 
-  if (tzStart && !ALLOWED_TZ.has(tzStart)) {
+  const allowedTz = getAllowedTimezones();
+  if (tzStart && !allowedTz.has(tzStart)) {
     throw new Error(
-      `Invalid timeZone: ${tzStart}. Allowed: ${Array.from(ALLOWED_TZ).join(", ")}`
+      `Invalid timeZone: ${tzStart}. Allowed: ${Array.from(allowedTz).join(", ")}`
     );
   }
-  if (tzEnd && !ALLOWED_TZ.has(tzEnd)) {
+  if (tzEnd && !allowedTz.has(tzEnd)) {
     throw new Error(
-      `Invalid timeZone: ${tzEnd}. Allowed: ${Array.from(ALLOWED_TZ).join(", ")}`
+      `Invalid timeZone: ${tzEnd}. Allowed: ${Array.from(allowedTz).join(", ")}`
     );
   }
   if (tzStart && tzEnd && tzStart !== tzEnd) {

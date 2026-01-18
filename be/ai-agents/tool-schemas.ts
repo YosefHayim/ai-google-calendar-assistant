@@ -1,6 +1,5 @@
 import validator from "validator";
 import { z } from "zod";
-import { TIMEZONE } from "@/config";
 
 // ═══════════════════════════════════════════════════════════════════════════
 // REMINDER SCHEMAS - Google Calendar API compliant
@@ -88,7 +87,7 @@ export const makeEventTime = () =>
       timeZone: z.coerce
         .string({
           invalid_type_error: "Must be a valid IANA Time Zone Database name.",
-          message: `Must be a valid IANA Time Zone Database name. Example:"${TIMEZONE.ASIA_JERUSALEM}":`,
+          message: 'Must be a valid IANA Time Zone Database name. Example: "Asia/Jerusalem"',
           description:
             'The time zone in which the time is specified. (Formatted as an IANA Time Zone Database name, e.g. "Asia/Jerusalem".) ',
         })
