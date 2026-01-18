@@ -37,7 +37,7 @@ export function DesktopSidebar({ onSignOut }: DesktopSidebarProps) {
       <Button
         variant="ghost"
         onClick={onSignOut}
-        className="w-full justify-start gap-2 px-2 py-1.5 text-muted-foreground text-xs font-medium mt-auto hover:bg-destructive/5 dark:hover:bg-red-900/20 hover:text-destructive dark:hover:text-red-400"
+        className="w-full justify-start gap-2 px-2 py-1.5 text-muted-foreground text-xs font-medium mt-auto hover:bg-destructive/10 hover:text-destructive"
       >
         <LogOut size={14} /> Sign Out
       </Button>

@@ -1146,4 +1146,147 @@ export class ConversationService {
       expiresAt: data.share_expires_at || undefined,
     };
   }
+
+  /**
+   * @description Archives a conversation by setting the archived_at timestamp.
+   * Archived conversations are hidden from the main conversation list but can be restored.
+   * @param {string} conversationId - The unique identifier of the conversation to archive.
+   * @param {string} userId - The UUID of the user who owns the conversation.
+   * @returns {Promise<boolean>} True if archiving succeeded, false if the conversation wasn't found or failed.
+   * @example
+   * const success = await service.archiveConversation("conv-123", "user-456");
+   * if (success) {
+   *   console.log("Conversation archived successfully");
+   * }
+   */
+  async archiveConversation(
+    conversationId: string,
+    userId: string
+  ): Promise<boolean> {
+    const { error } = await SUPABASE.from("conversations")
+      .update({
+        archived_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      })
+      .eq("id", conversationId)
+      .eq("user_id", userId)
+      .is("archived_at", null); // Only archive if not already archived
+
+    if (error) {
+      logger.error(
+        `Failed to archive conversation ${conversationId}: ${error.message}`
+      );
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
+   * @description Restores an archived conversation by clearing the archived_at timestamp.
+   * @param {string} conversationId - The unique identifier of the conversation to restore.
+   * @param {string} userId - The UUID of the user who owns the conversation.
+   * @returns {Promise<boolean>} True if restoration succeeded, false if the conversation wasn't found or failed.
+   * @example
+   * const success = await service.restoreConversation("conv-123", "user-456");
+   * if (success) {
+   *   console.log("Conversation restored successfully");
+   * }
+   */
+  async restoreConversation(
+    conversationId: string,
+    userId: string
+  ): Promise<boolean> {
+    const { error } = await SUPABASE.from("conversations")
+      .update({
+        archived_at: null,
+        updated_at: new Date().toISOString()
+      })
+      .eq("id", conversationId)
+      .eq("user_id", userId)
+      .not("archived_at", "is", null); // Only restore if archived
+
+    if (error) {
+      logger.error(
+        `Failed to restore conversation ${conversationId}: ${error.message}`
+      );
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
+   * @description Restores all archived conversations for a user.
+   * @param {string} userId - The UUID of the user whose archived conversations should be restored.
+   * @returns {Promise<boolean>} True if restoration succeeded, false if it failed.
+   * @example
+   * const success = await service.restoreAllArchivedConversations("user-456");
+   * if (success) {
+   *   console.log("All archived conversations restored successfully");
+   * }
+   */
+  async restoreAllArchivedConversations(userId: string): Promise<boolean> {
+    const { error } = await SUPABASE.from("conversations")
+      .update({
+        archived_at: null,
+        updated_at: new Date().toISOString()
+      })
+      .eq("user_id", userId)
+      .not("archived_at", "is", null);
+
+    if (error) {
+      logger.error(
+        `Failed to restore all archived conversations for user ${userId}: ${error.message}`
+      );
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
+   * @description Gets all archived conversations for a user.
+   * @param {string} userId - The UUID of the user whose archived conversations to retrieve.
+   * @returns {Promise<ConversationListItem[]>} Array of archived conversation list items.
+   * @example
+   * const archived = await service.getArchivedConversations("user-456");
+   * console.log(`Found ${archived.length} archived conversations`);
+   */
+  async getArchivedConversations(userId: string): Promise<ConversationListItem[]> {
+    const { data, error } = await SUPABASE.from("conversations")
+      .select(`
+        id,
+        title,
+        summary,
+        created_at,
+        last_message_at,
+        message_count,
+        source,
+        archived_at,
+        pinned,
+        is_active
+      `)
+      .eq("user_id", userId)
+      .not("archived_at", "is", null)
+      .order("archived_at", { ascending: false });
+
+    if (error) {
+      logger.error(`Failed to get archived conversations for user ${userId}: ${error.message}`);
+      return [];
+    }
+
+    return (data || []).map(conversation => ({
+      id: conversation.id,
+      title: conversation.title || "Untitled Conversation",
+      summary: conversation.summary || "",
+      createdAt: conversation.created_at,
+      lastMessageAt: conversation.last_message_at || conversation.created_at,
+      messageCount: conversation.message_count || 0,
+      source: conversation.source,
+      archivedAt: conversation.archived_at || undefined,
+      pinned: conversation.pinned || false,
+      isActive: conversation.is_active || false,
+    }));
+  }
 }

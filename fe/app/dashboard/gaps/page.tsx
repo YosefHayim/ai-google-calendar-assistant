@@ -1,8 +1,8 @@
 'use client'
 
-import { Suspense } from 'react'
 import GapsDashboard from '@/components/dashboard/gaps/GapsDashboard'
 import { LoadingSection } from '@/components/ui/loading-spinner'
+import { Suspense } from 'react'
 
 function GapsContent() {
   return <GapsDashboard />

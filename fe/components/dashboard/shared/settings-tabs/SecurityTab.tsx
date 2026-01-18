@@ -32,7 +32,7 @@ export const SecurityTab: React.FC = () => {
             tooltip="View and manage your active login sessions across devices"
             icon={<Monitor size={18} className="text-foreground dark:text-primary" />}
             control={
-              <Button variant="ghost" size="sm" className="gap-1 text-muted-foreground dark:text-muted-foreground hover:text-zinc-700">
+              <Button variant="ghost" size="sm" className="gap-1 text-muted-foreground hover:text-foreground">
                 1 (Current) <ChevronRight className="w-4 h-4" />
               </Button>
             }

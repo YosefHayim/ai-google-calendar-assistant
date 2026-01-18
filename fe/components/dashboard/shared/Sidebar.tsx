@@ -1,6 +1,6 @@
 'use client'
 
-import { ConversationList, DeleteConfirmDialog, SidebarFooter, SidebarHeader, SidebarNav } from './sidebar-components'
+import { ConversationList, DeleteConfirmDialog, ArchiveConfirmDialog, SidebarFooter, SidebarHeader, SidebarNav } from './sidebar-components'
 import { SidebarProvider, useSidebarContext } from '@/contexts/SidebarContext'
 
 import React from 'react'
@@ -24,13 +24,18 @@ const SidebarContent: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle, onO
     conversationToDelete,
     setConversationToDelete,
     isDeletingConversation,
+    conversationToArchive,
+    setConversationToArchive,
+    isArchivingConversation,
     localSearchValue,
     handleSearchChange,
     handleClearSearch,
     handleNewChat,
     handleSelectConversation,
     initiateDelete,
+    initiateArchive,
     confirmDelete,
+    confirmArchive,
   } = useSidebarContext()
 
   return (
@@ -40,6 +45,13 @@ const SidebarContent: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle, onO
         onClose={() => setConversationToDelete(null)}
         onConfirm={confirmDelete}
         isLoading={isDeletingConversation}
+      />
+
+      <ArchiveConfirmDialog
+        isOpen={!!conversationToArchive}
+        onClose={() => setConversationToArchive(null)}
+        onConfirm={confirmArchive}
+        isLoading={isArchivingConversation}
       />
 
       {isOpen && (
@@ -74,6 +86,7 @@ const SidebarContent: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle, onO
               onClearSearch={handleClearSearch}
               onSelectConversation={(conv) => handleSelectConversation(conv, onClose)}
               onInitiateDelete={initiateDelete}
+              onInitiateArchive={initiateArchive}
             />
           )}
 

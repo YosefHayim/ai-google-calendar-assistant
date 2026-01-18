@@ -1,6 +1,6 @@
 'use client'
 
-import { Brain, Loader2, MessageSquareX, Trash2, MessageCircleX, Eraser, UserX } from 'lucide-react'
+import { Brain, Loader2, MessageSquareX, Trash2, MessageCircleX, Eraser, UserX, Archive } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { SettingsRow, SettingsSection, TabHeader } from './components'
 
@@ -10,6 +10,7 @@ import React from 'react'
 interface DataControlsTabProps {
   onDeleteAllConversations: () => void
   isDeletingConversations: boolean
+  onViewArchivedConversations: () => void
   onResetMemory: () => void
   isResettingMemory: boolean
   onDeleteAccount: () => void
@@ -18,6 +19,7 @@ interface DataControlsTabProps {
 export const DataControlsTab: React.FC<DataControlsTabProps> = ({
   onDeleteAllConversations,
   isDeletingConversations,
+  onViewArchivedConversations,
   onResetMemory,
   isResettingMemory,
   onDeleteAccount,
@@ -50,6 +52,26 @@ export const DataControlsTab: React.FC<DataControlsTabProps> = ({
                   <MessageSquareX className="w-4 h-4" />
                 )}
                 Clear History
+              </Button>
+            }
+          />
+        </SettingsSection>
+
+        <SettingsSection showDivider className="mt-4">
+          <SettingsRow
+            id="archived-conversations"
+            title="Archived Conversations"
+            tooltip="View and restore conversations you've previously archived. Archived conversations are hidden from your main chat list."
+            icon={<Archive size={18} className="text-foreground dark:text-primary" />}
+            control={
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onViewArchivedConversations}
+                className="gap-2 text-muted-foreground hover:text-foreground border-muted hover:bg-muted"
+              >
+                <Archive className="w-4 h-4" />
+                View Archived
               </Button>
             }
           />

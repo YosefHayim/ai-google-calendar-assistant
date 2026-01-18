@@ -14,7 +14,7 @@ export function MobileSignOut({ onSignOut }: MobileSignOutProps) {
       <Button
         variant="ghost"
         onClick={onSignOut}
-        className="w-full justify-center gap-2 py-2 text-muted-foreground text-sm font-medium hover:bg-destructive/5 dark:hover:bg-red-900/20 hover:text-destructive dark:hover:text-red-400"
+        className="w-full justify-center gap-2 py-2 text-muted-foreground text-sm font-medium hover:bg-destructive/10 hover:text-destructive"
       >
         <LogOut size={14} /> Sign Out
       </Button>

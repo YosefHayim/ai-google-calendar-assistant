@@ -1,10 +1,17 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Check, Clock, Copy, Link, MessageSquare, Search, Trash2, X } from 'lucide-react'
+import { Check, Clock, Copy, Link, MessageSquare, Search, Trash2, X, Archive, MoreHorizontal } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu'
 import { formatRelativeDate } from '@/lib/dateUtils'
 import type { ConversationListItem } from '@/services/chatService'
 import { createShareLink } from '@/services/chatService'
@@ -22,6 +29,7 @@ interface ConversationListProps {
   onClearSearch: () => void
   onSelectConversation: (conversation: ConversationListItem) => void
   onInitiateDelete: (e: React.MouseEvent, id: string) => void
+  onInitiateArchive: (e: React.MouseEvent, id: string) => void
 }
 
 export const ConversationList: React.FC<ConversationListProps> = ({
@@ -35,6 +43,7 @@ export const ConversationList: React.FC<ConversationListProps> = ({
   onClearSearch,
   onSelectConversation,
   onInitiateDelete,
+  onInitiateArchive,
 }) => {
   const [sharingId, setSharingId] = useState<string | null>(null)
   const [copiedId, setCopiedId] = useState<string | null>(null)
@@ -129,43 +138,48 @@ export const ConversationList: React.FC<ConversationListProps> = ({
                     <span>{formatRelativeDate(conversation.lastUpdated)}</span>
                   </div>
                 </div>
-                <TooltipProvider>
-                  <div className="flex items-center gap-0.5">
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={(e) => handleShare(e, conversation.id)}
-                          disabled={sharingId === conversation.id}
-                          className="h-6 w-6 opacity-0 group-hover:opacity-100 hover:bg-primary/10 dark:hover:bg-blue-900/30 text-muted-foreground hover:text-primary"
-                        >
-                          {copiedId === conversation.id ? (
-                            <Check className="w-3 h-3 text-green-600" />
-                          ) : sharingId === conversation.id ? (
-                            <Copy className="w-3 h-3 animate-pulse" />
-                          ) : (
-                            <Link className="w-3 h-3" />
-                          )}
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent side="top">Share conversation</TooltipContent>
-                    </Tooltip>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={(e) => onInitiateDelete(e, conversation.id)}
-                          className="h-6 w-6 opacity-0 group-hover:opacity-100 hover:bg-destructive/10 dark:hover:bg-red-900/30 text-muted-foreground hover:text-destructive"
-                        >
-                          <Trash2 className="w-3 h-3" />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent side="top">Delete conversation</TooltipContent>
-                    </Tooltip>
-                  </div>
-                </TooltipProvider>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6 opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-foreground"
+                    >
+                      <MoreHorizontal className="w-3 h-3" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-48">
+                    <DropdownMenuItem
+                      onClick={(e) => handleShare(e, conversation.id)}
+                      disabled={sharingId === conversation.id}
+                      className="cursor-pointer"
+                    >
+                      {copiedId === conversation.id ? (
+                        <Check className="w-4 h-4 mr-2 text-green-600" />
+                      ) : sharingId === conversation.id ? (
+                        <Copy className="w-4 h-4 mr-2 animate-pulse" />
+                      ) : (
+                        <Link className="w-4 h-4 mr-2" />
+                      )}
+                      {copiedId === conversation.id ? 'Link copied!' : 'Share conversation'}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={(e) => onInitiateArchive(e, conversation.id)}
+                      className="cursor-pointer text-orange-600 focus:text-orange-600"
+                    >
+                      <Archive className="w-4 h-4 mr-2" />
+                      Archive conversation
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={(e) => onInitiateDelete(e, conversation.id)}
+                      className="cursor-pointer text-destructive focus:text-destructive"
+                    >
+                      <Trash2 className="w-4 h-4 mr-2" />
+                      Delete conversation
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             </div>
           ))}

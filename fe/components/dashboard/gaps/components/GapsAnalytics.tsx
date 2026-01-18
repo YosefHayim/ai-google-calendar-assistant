@@ -1,13 +1,14 @@
 'use client'
 
-import React, { useMemo } from 'react'
-import { motion } from 'framer-motion'
+import { BarChart3, Calendar, Clock, Target, TrendingUp } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import type { GapCandidate, GapRecoverySettings } from '@/types/api'
+import React, { useMemo } from 'react'
+import { formatDate, formatDuration } from '@/lib/formatUtils'
+
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
-import { Clock, TrendingUp, Target, BarChart3, Calendar } from 'lucide-react'
-import { formatDate, formatDuration } from '@/lib/formatUtils'
-import type { GapCandidate, GapRecoverySettings } from '@/types/api'
+import { motion } from 'framer-motion'
 
 interface GapsAnalyticsProps {
   gaps: GapCandidate[]

@@ -148,6 +148,58 @@ export const deleteAllConversations = async (): Promise<{ success: boolean; dele
   }
 }
 
+/**
+ * Archive a conversation
+ */
+export const archiveConversation = async (conversationId: string): Promise<boolean> => {
+  try {
+    await apiClient.post(`/api/chat/conversations/${conversationId}/archive`)
+    return true
+  } catch {
+    return false
+  }
+}
+
+/**
+ * Restore a conversation from archive
+ */
+export const restoreConversation = async (conversationId: string): Promise<boolean> => {
+  try {
+    await apiClient.post(`/api/chat/conversations/${conversationId}/restore`)
+    return true
+  } catch {
+    return false
+  }
+}
+
+/**
+ * Get all archived conversations
+ */
+export const getArchivedConversations = async (): Promise<ConversationListResponse> => {
+  try {
+    const response = await apiClient.get('/api/chat/conversations/archived')
+    return {
+      conversations: response.data?.data?.conversations || [],
+      total: response.data?.data?.conversations?.length || 0,
+      hasMore: false,
+    }
+  } catch {
+    return { conversations: [], total: 0, hasMore: false }
+  }
+}
+
+/**
+ * Restore all archived conversations
+ */
+export const restoreAllArchivedConversations = async (): Promise<boolean> => {
+  try {
+    await apiClient.post('/api/chat/conversations/archived/restore-all')
+    return true
+  } catch {
+    return false
+  }
+}
+
 export const continueConversation = async (conversationId: string, message: string): Promise<ChatResponse> => {
   const response = await apiClient.post(`/api/chat/conversations/${conversationId}/messages`, {
     message,

@@ -96,6 +96,30 @@ router.delete(
   supabaseAuth(),
   chatController.removeConversation
 );
+// POST /conversations/:id/archive - Archive specific conversation
+router.post(
+  "/conversations/:id/archive",
+  supabaseAuth(),
+  chatController.archiveConversation
+);
+// POST /conversations/:id/restore - Restore specific conversation
+router.post(
+  "/conversations/:id/restore",
+  supabaseAuth(),
+  chatController.restoreConversation
+);
+// GET /conversations/archived - Get all archived conversations
+router.get(
+  "/conversations/archived",
+  supabaseAuth(),
+  chatController.getArchivedConversations
+);
+// POST /conversations/archived/restore-all - Restore all archived conversations
+router.post(
+  "/conversations/archived/restore-all",
+  supabaseAuth(),
+  chatController.restoreAllArchivedConversations
+);
 
 // POST /conversations/:id/messages - Continue conversation with new message
 router.post(

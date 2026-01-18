@@ -67,6 +67,10 @@ export type ConversationListItem = {
   createdAt: string;
   pinned: boolean;
   source?: ConversationSource;
+  archivedAt?: string;
+  isActive?: boolean;
+  lastMessageAt?: string;
+  summary?: string;
 };
 
 /**

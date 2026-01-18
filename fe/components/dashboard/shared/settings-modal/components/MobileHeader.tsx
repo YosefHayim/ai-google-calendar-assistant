@@ -18,7 +18,7 @@ export function MobileHeader({ onClose }: MobileHeaderProps) {
         </div>
         <h2 className="font-semibold text-foreground dark:text-primary-foreground text-sm">Settings</h2>
       </div>
-      <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8 text-muted-foreground hover:text-zinc-700">
+      <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8 text-muted-foreground hover:text-foreground">
         <X className="w-4 h-4" />
       </Button>
     </div>

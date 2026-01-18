@@ -1,14 +1,14 @@
 'use client'
 
-import React from 'react'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { CalendarDays, Info, PieChart, Shield, Sparkles } from 'lucide-react'
-
+import { CalendarDays, Info, PieChart, Shield, Sparkles, Target } from 'lucide-react'
 import { SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { useUser } from '@/hooks/queries/auth/useUser'
+
+import Link from 'next/link'
+import React from 'react'
 import { useLanguage } from '@/contexts/LanguageContext'
+import { usePathname } from 'next/navigation'
+import { useUser } from '@/hooks/queries/auth/useUser'
 
 export function NavSection() {
   const pathname = usePathname()
@@ -50,6 +50,13 @@ export function NavSection() {
       label: t('sidebar.analytics'),
       id: 'tour-analytics',
       description: t('sidebar.analyticsDescription'),
+    },
+    {
+      href: '/dashboard/gaps',
+      icon: Target,
+      label: 'Gap Analysis',
+      id: 'tour-gaps',
+      description: 'Discover scheduling opportunities in your calendar',
     },
   ]
 

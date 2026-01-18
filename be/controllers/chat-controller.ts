@@ -401,6 +401,135 @@ const removeConversation = reqResAsyncHandler(
   }
 );
 
+const archiveConversation = reqResAsyncHandler(
+  async (req: Request, res: Response) => {
+    const conversationId = req.params.id;
+
+    try {
+      const archived = await webConversation.archiveConversation(
+        conversationId,
+        req.user!.id
+      );
+
+      if (!archived) {
+        return sendR(
+          res,
+          STATUS_RESPONSE.NOT_FOUND,
+          "Conversation not found or already archived"
+        );
+      }
+
+      await invalidateConversationsCache(req.user!.id);
+
+      return sendR(
+        res,
+        STATUS_RESPONSE.SUCCESS,
+        "Conversation archived successfully"
+      );
+    } catch (error) {
+      console.error("Error archiving conversation:", error);
+      sendR(
+        res,
+        STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
+        "Error archiving conversation"
+      );
+    }
+  }
+);
+
+const restoreConversation = reqResAsyncHandler(
+  async (req: Request, res: Response) => {
+    const conversationId = req.params.id;
+
+    try {
+      const restored = await webConversation.restoreConversation(
+        conversationId,
+        req.user!.id
+      );
+
+      if (!restored) {
+        return sendR(
+          res,
+          STATUS_RESPONSE.NOT_FOUND,
+          "Conversation not found or not archived"
+        );
+      }
+
+      await invalidateConversationsCache(req.user!.id);
+
+      return sendR(
+        res,
+        STATUS_RESPONSE.SUCCESS,
+        "Conversation restored successfully"
+      );
+    } catch (error) {
+      console.error("Error restoring conversation:", error);
+      sendR(
+        res,
+        STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
+        "Error restoring conversation"
+      );
+    }
+  }
+);
+
+const getArchivedConversations = reqResAsyncHandler(
+  async (req: Request, res: Response) => {
+    try {
+      const archivedConversations = await webConversation.getArchivedConversations(
+        req.user!.id
+      );
+
+      return sendR(
+        res,
+        STATUS_RESPONSE.SUCCESS,
+        "Archived conversations retrieved successfully",
+        { conversations: archivedConversations }
+      );
+    } catch (error) {
+      console.error("Error getting archived conversations:", error);
+      sendR(
+        res,
+        STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
+        "Error retrieving archived conversations"
+      );
+    }
+  }
+);
+
+const restoreAllArchivedConversations = reqResAsyncHandler(
+  async (req: Request, res: Response) => {
+    try {
+      const restored = await webConversation.restoreAllArchivedConversations(
+        req.user!.id
+      );
+
+      if (!restored) {
+        return sendR(
+          res,
+          STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
+          "Failed to restore archived conversations"
+        );
+      }
+
+      await invalidateConversationsCache(req.user!.id);
+
+      return sendR(
+        res,
+        STATUS_RESPONSE.SUCCESS,
+        "All archived conversations restored successfully"
+      );
+    } catch (error) {
+      console.error("Error restoring all archived conversations:", error);
+      sendR(
+        res,
+        STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
+        "Error restoring archived conversations"
+      );
+    }
+  }
+);
+
 /**
  * Update the title of an existing conversation.
  *
@@ -955,6 +1084,10 @@ export const chatController = {
   updateConversationTitle,
   toggleConversationPinned,
   removeConversation,
+  archiveConversation,
+  restoreConversation,
+  getArchivedConversations,
+  restoreAllArchivedConversations,
   continueConversation,
   startNewConversation,
   deleteAllConversations,

@@ -48,7 +48,7 @@ const getGoogleCalendarStatusBadge = (
   if (status?.isSynced) {
     if (status.isActive && !status.isExpired) {
       return (
-        <Badge className="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
+        <Badge className="bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400">
           <CheckCircle2 size={14} className="mr-1" /> Connected
         </Badge>
       )
@@ -136,7 +136,7 @@ export const IntegrationsTab: React.FC<IntegrationsTabProps> = ({
                     size="sm"
                     onClick={onDisconnect}
                     disabled={isGoogleCalendarBusy}
-                    className="flex-1 text-destructive hover:text-red-700 border-destructive/20 hover:bg-destructive/5 dark:border-red-900/30 dark:hover:bg-red-900/20"
+                    className="flex-1 text-destructive hover:text-destructive border-destructive/20 hover:bg-destructive/10"
                   >
                     {isDisconnecting ? (
                       <Loader2 size={14} className="mr-2 animate-spin" />

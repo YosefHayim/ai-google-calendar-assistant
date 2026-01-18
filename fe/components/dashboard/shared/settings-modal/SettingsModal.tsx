@@ -25,6 +25,7 @@ import {
   SubscriptionTab,
 } from '../settings-tabs'
 import { ConfirmDialog } from '../ConfirmDialog'
+import { ArchivedConversationsDialog } from '../../dialogs/ArchivedConversationsDialog'
 import { MobileHeader, MobileTabBar, DesktopSidebar, MobileSignOut } from './components'
 
 interface SettingsModalProps {
@@ -37,6 +38,7 @@ interface SettingsModalProps {
 
 export function SettingsModal({ isOpen, onClose, onSignOut, isDarkMode, toggleTheme }: SettingsModalProps) {
   const [showDeleteConversationsDialog, setShowDeleteConversationsDialog] = useState(false)
+  const [showArchivedConversationsDialog, setShowArchivedConversationsDialog] = useState(false)
   const [showDisconnectGoogleDialog, setShowDisconnectGoogleDialog] = useState(false)
   const [showResetMemoryDialog, setShowResetMemoryDialog] = useState(false)
   const [showDeleteAccountDialog, setShowDeleteAccountDialog] = useState(false)
@@ -86,6 +88,10 @@ export function SettingsModal({ isOpen, onClose, onSignOut, isDarkMode, toggleTh
 
   const handleDeleteAllConversations = () => {
     setShowDeleteConversationsDialog(true)
+  }
+
+  const handleViewArchivedConversations = () => {
+    setShowArchivedConversationsDialog(true)
   }
 
   const confirmDeleteAllConversations = () => {
@@ -208,7 +214,7 @@ export function SettingsModal({ isOpen, onClose, onSignOut, isDarkMode, toggleTh
                   variant="ghost"
                   size="icon"
                   onClick={onClose}
-                  className="h-8 w-8 text-muted-foreground hover:text-zinc-700"
+                  className="h-8 w-8 text-muted-foreground hover:text-foreground"
                 >
                   <X className="w-4 h-4" />
                 </Button>
@@ -255,6 +261,7 @@ export function SettingsModal({ isOpen, onClose, onSignOut, isDarkMode, toggleTh
                   <DataControlsTab
                     onDeleteAllConversations={handleDeleteAllConversations}
                     isDeletingConversations={isDeletingConversations}
+                    onViewArchivedConversations={handleViewArchivedConversations}
                     onResetMemory={handleResetMemory}
                     isResettingMemory={isResettingMemory}
                     onDeleteAccount={handleDeleteAccount}
@@ -267,6 +274,11 @@ export function SettingsModal({ isOpen, onClose, onSignOut, isDarkMode, toggleTh
           </Tabs>
         </DialogContent>
       </Dialog>
+
+      <ArchivedConversationsDialog
+        isOpen={showArchivedConversationsDialog}
+        onClose={() => setShowArchivedConversationsDialog(false)}
+      />
     </>
   )
 }

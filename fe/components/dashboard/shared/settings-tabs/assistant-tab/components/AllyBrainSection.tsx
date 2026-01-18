@@ -129,8 +129,8 @@ export const AllyBrainSection: React.FC<AllyBrainSectionProps> = ({ toggleId }) 
                       disabled={!speechRecognitionSupported || !!speechRecognitionError}
                       className={`h-8 px-2 gap-1.5 ${
                         isVoiceRecording
-                          ? 'text-destructive hover:text-destructive dark:text-red-400 dark:hover:text-red-300'
-                          : 'text-muted-foreground hover:text-zinc-700 dark:text-muted-foreground dark:hover:text-zinc-200'
+                          ? 'text-destructive hover:text-destructive'
+                          : 'text-muted-foreground hover:text-foreground'
                       }`}
                       title={
                         !speechRecognitionSupported
@@ -181,7 +181,7 @@ export const AllyBrainSection: React.FC<AllyBrainSectionProps> = ({ toggleId }) 
                             isOverLimit
                               ? 'text-destructive'
                               : charCount >= MAX_CHARS - 50
-                                ? 'text-amber-500'
+                                ? 'text-orange-500'
                                 : 'text-muted-foreground'
                           }`}
                         >
