@@ -1,9 +1,10 @@
 'use client'
 
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { blogService } from '@/services/blog.service'
 import type { BlogQueryParams, CreateBlogPostData } from '@/types/blog'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+
 import { QUERY_CONFIG } from '@/lib/constants'
+import { blogService } from '@/services/blog.service'
 import { toast } from 'sonner'
 
 export const blogKeys = {
@@ -102,6 +103,40 @@ export function useCreateBlogPost() {
       toast.error('Failed to create blog post', {
         description: error.message || 'Please try again.',
       })
+    },
+  })
+}
+
+export function useGenerateAIBlogPost(options?: {
+  onSuccess?: () => void
+  onError?: (error: Error) => void
+}) {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (generateData: {
+      topic: string
+      category?: string
+      keywords?: string[]
+      targetAudience?: string
+      tone?: 'professional' | 'conversational' | 'expert' | 'educational'
+    }) => {
+      const response = await blogService.generateAI(generateData)
+      return response.data
+    },
+    onSuccess: (data, variables, context) => {
+      queryClient.invalidateQueries({ queryKey: blogKeys.all })
+      toast.success('AI-generated blog post created!', {
+        description: `Post created successfully. URL: ${data?.url}`,
+        duration: 10000,
+      })
+      options?.onSuccess?.()
+    },
+    onError: (error: Error, variables, context) => {
+      toast.error('Failed to generate blog post', {
+        description: error.message || 'Please try again.',
+      })
+      options?.onError?.(error)
     },
   })
 }

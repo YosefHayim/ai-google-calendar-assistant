@@ -79,6 +79,7 @@ export {
   useRelatedPosts,
   useAvailableCategories,
   useCreateBlogPost,
+  useGenerateAIBlogPost,
 } from './blog'
 
 // Feature flag hooks

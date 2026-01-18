@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { blogController } from "@/controllers/blog-controller";
 import { adminAuth } from "@/middlewares/admin-auth";
-import { supabaseAuth } from "@/middlewares/supabase-auth";
+import { blogController } from "@/controllers/blog-controller";
 import { reqResAsyncHandler } from "@/utils/http";
+import { supabaseAuth } from "@/middlewares/supabase-auth";
 
 const router = Router();
 
@@ -21,6 +21,13 @@ router.post(
   supabaseAuth(),
   adminAuth(["admin"]),
   reqResAsyncHandler(blogController.create)
+);
+
+router.post(
+  "/generate-ai",
+  supabaseAuth(),
+  adminAuth(["admin"]),
+  reqResAsyncHandler(blogController.generateAI)
 );
 
 export default router;

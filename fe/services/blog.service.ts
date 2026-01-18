@@ -1,7 +1,8 @@
-import type { ApiResponse } from '@/types/api'
-import type { BlogPost, BlogPostsResponse, BlogQueryParams, CreateBlogPostData, BlogCategory } from '@/types/blog'
-import { apiClient } from '@/lib/api/client'
+import type { BlogCategory, BlogPost, BlogPostsResponse, BlogQueryParams, CreateBlogPostData } from '@/types/blog'
+
 import { ASSETS } from '@/lib/constants'
+import type { ApiResponse } from '@/types/api'
+import { apiClient } from '@/lib/api/client'
 
 export function getBlogImageUrl(imageKey: string | null | undefined): string | undefined {
   if (!imageKey) return undefined
@@ -59,6 +60,17 @@ export const blogService = {
 
   async create(postData: CreateBlogPostData): Promise<ApiResponse<BlogPost>> {
     const { data } = await apiClient.post<ApiResponse<BlogPost>>('/api/blog', postData)
+    return data
+  },
+
+  async generateAI(generateData: {
+    topic: string
+    category?: BlogCategory
+    keywords?: string[]
+    targetAudience?: string
+    tone?: 'professional' | 'conversational' | 'expert' | 'educational'
+  }): Promise<ApiResponse<BlogPost & { url: string }>> {
+    const { data } = await apiClient.post<ApiResponse<BlogPost & { url: string }>>('/api/blog/generate-ai', generateData)
     return data
   },
 }

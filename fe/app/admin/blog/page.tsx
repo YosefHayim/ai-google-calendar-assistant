@@ -22,10 +22,9 @@ import { toast } from 'sonner'
 // Icons & Utilities
 import { FileText, Loader2, Code, Copy, Check, Sparkles, Upload, FormInput } from 'lucide-react'
 import { useCreateBlogPost, useAvailableCategories } from '@/hooks/queries'
+import { useGenerateAIBlogPost } from '@/hooks/queries/blog'
 import { BLOG_CATEGORIES, type BlogCategory, type CreateBlogPostData } from '@/types/blog'
-import { blogService } from '@/services/blog.service'
 import { useQueryClient } from '@tanstack/react-query'
-import { blogKeys } from '@/hooks/queries/blog'
 
 // ------------------------------------------------------------------
 // Constants & Templates
@@ -130,6 +129,14 @@ const formSchema = z.object({
   featured: z.boolean().default(false),
 })
 
+const aiFormSchema = z.object({
+  topic: z.string().trim().min(3, { message: 'Topic must be at least 3 characters' }).max(100, { message: 'Topic must be less than 100 characters' }),
+  category: z.string().optional(),
+  keywords: z.string().optional(),
+  targetAudience: z.string().optional(),
+  tone: z.enum(['professional', 'conversational', 'expert', 'educational']).default('professional'),
+})
+
 type FormValues = z.infer<typeof formSchema>
 
 // ------------------------------------------------------------------
@@ -163,6 +170,25 @@ export default function AdminBlogPage() {
       tags: '',
       status: 'published',
       featured: false,
+    },
+  })
+
+  // AI Form Definition
+  const aiForm = useForm<z.infer<typeof aiFormSchema>>({
+    resolver: zodResolver(aiFormSchema),
+    defaultValues: {
+      topic: '',
+      category: 'Productivity',
+      keywords: '',
+      targetAudience: 'busy professionals and time-conscious individuals',
+      tone: 'professional',
+    },
+  })
+
+  // AI Generate Mutation
+  const generateAI = useGenerateAIBlogPost({
+    onSuccess: () => {
+      aiForm.reset()
     },
   })
 
@@ -284,10 +310,14 @@ export default function AdminBlogPage() {
       </div>
 
       <Tabs defaultValue="editor" className="w-full">
-        <TabsList className="grid w-full max-w-md grid-cols-2">
+        <TabsList className="grid w-full max-w-lg grid-cols-3">
           <TabsTrigger value="editor" className="gap-2">
             <FileText className="w-4 h-4" />
             Editor
+          </TabsTrigger>
+          <TabsTrigger value="ai" className="gap-2">
+            <Sparkles className="w-4 h-4" />
+            AI Generate
           </TabsTrigger>
           <TabsTrigger value="json" className="gap-2">
             <Code className="w-4 h-4" />
@@ -610,6 +640,188 @@ export default function AdminBlogPage() {
               </Card>
             </TabsContent>
           </Tabs>
+        </TabsContent>
+
+        <TabsContent value="ai" className="mt-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-primary" />
+                AI-Powered Blog Generation
+              </CardTitle>
+              <CardDescription>
+                Generate extraordinary SEO-optimized blog posts with AI. Includes geo-targeting, internal/external links, and conversion-focused content.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Form {...aiForm}>
+                <form onSubmit={aiForm.handleSubmit((data) => {
+                  const keywords = data.keywords ? data.keywords.split(',').map(k => k.trim()).filter(Boolean) : []
+                  generateAI.mutate({
+                    topic: data.topic,
+                    category: data.category as BlogCategory,
+                    keywords,
+                    targetAudience: data.targetAudience,
+                    tone: data.tone,
+                  })
+                })} className="space-y-6">
+                  {/* Topic */}
+                  <FormField
+                    control={aiForm.control}
+                    name="topic"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Topic <span className="text-destructive">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="e.g., Time Management Techniques, Calendar Optimization, Productivity Hacks"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          The main topic or keyword for your blog post. Will be optimized for SEO.
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Category */}
+                    <FormField
+                      control={aiForm.control}
+                      name="category"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Category</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select a category" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {categories.map((cat) => (
+                                <SelectItem key={cat} value={cat}>
+                                  {cat}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    {/* Tone */}
+                    <FormField
+                      control={aiForm.control}
+                      name="tone"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Tone</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select writing tone" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="professional">Professional</SelectItem>
+                              <SelectItem value="conversational">Conversational</SelectItem>
+                              <SelectItem value="expert">Expert</SelectItem>
+                              <SelectItem value="educational">Educational</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormDescription>Writing style for the generated content</FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  {/* Keywords */}
+                  <FormField
+                    control={aiForm.control}
+                    name="keywords"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Additional Keywords</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="time management, productivity, calendar, AI assistant"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          Comma-separated keywords to include in SEO optimization (optional)
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* Target Audience */}
+                  <FormField
+                    control={aiForm.control}
+                    name="targetAudience"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Target Audience</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="busy professionals, entrepreneurs, remote workers"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          Who is this blog post written for? Helps tailor the content and messaging.
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                    <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-2">🤖 AI Generation Features</h4>
+                    <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
+                      <li>• SEO-optimized title and meta description</li>
+                      <li>• Geo-targeting keywords (US, UK, remote work)</li>
+                      <li>• Internal links to Ask Ally features</li>
+                      <li>• Conversion-focused calls-to-action</li>
+                      <li>• Structured content with headers and lists</li>
+                      <li>• Featured snippet optimization</li>
+                    </ul>
+                  </div>
+
+                  <div className="flex justify-end gap-3 pt-4 border-t border-border">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => aiForm.reset()}
+                    >
+                      Reset Form
+                    </Button>
+                    <Button type="submit" disabled={generateAI.isPending} className="gap-2">
+                      {generateAI.isPending ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          Generating...
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="w-4 h-4" />
+                          Generate with AI
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </form>
+              </Form>
+            </CardContent>
+          </Card>
         </TabsContent>
 
         <TabsContent value="json" className="mt-6 space-y-6">
