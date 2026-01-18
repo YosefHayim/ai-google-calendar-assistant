@@ -30,12 +30,12 @@ export const Default: Story = {
   },
   decorators: [
     (Story) => (
-      <div className="py-20 px-4 bg-white dark:bg-[#030303]">
+      <div className="py-20 px-4 bg-background dark:bg-[#030303]">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
             <span className="text-xs font-bold text-primary uppercase tracking-[0.2em] mb-4 block">Use Cases</span>
-            <h2 className="text-4xl font-bold text-zinc-900 dark:text-zinc-100 mb-4">How Professionals Use Ally</h2>
-            <p className="text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">
+            <h2 className="text-4xl font-bold text-foreground dark:text-primary-foreground mb-4">How Professionals Use Ally</h2>
+            <p className="text-zinc-600 dark:text-muted-foreground max-w-2xl mx-auto">
               Real scenarios where Ask Ally saves time and reduces calendar friction.
             </p>
           </div>
@@ -61,8 +61,8 @@ export const DarkMode: Story = {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
             <span className="text-xs font-bold text-primary uppercase tracking-[0.2em] mb-4 block">Use Cases</span>
-            <h2 className="text-4xl font-bold text-zinc-100 mb-4">How Professionals Use Ally</h2>
-            <p className="text-zinc-400 max-w-2xl mx-auto">
+            <h2 className="text-4xl font-bold text-primary-foreground mb-4">How Professionals Use Ally</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
               Real scenarios where Ask Ally saves time and reduces calendar friction.
             </p>
           </div>
@@ -87,7 +87,7 @@ export const IntelligentSchedulingFocus: Story = {
       <div className="py-16 px-4 bg-gradient-to-br from-blue-50 to-white dark:from-blue-950/20 dark:to-[#030303]">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-8">
-            <span className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full text-sm font-medium mb-4">
+            <span className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 dark:bg-blue-900/30 text-primary dark:text-blue-400 rounded-full text-sm font-medium mb-4">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="w-4 h-4"
@@ -103,7 +103,7 @@ export const IntelligentSchedulingFocus: Story = {
               </svg>
               Smart Scheduling
             </span>
-            <h3 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">Find the perfect time, every time</h3>
+            <h3 className="text-2xl font-bold text-foreground dark:text-primary-foreground">Find the perfect time, every time</h3>
           </div>
           <Story />
         </div>
@@ -140,7 +140,7 @@ export const VoiceCommandFocus: Story = {
               </svg>
               Voice Commands
             </span>
-            <h3 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">Speak naturally, get things done</h3>
+            <h3 className="text-2xl font-bold text-foreground dark:text-primary-foreground">Speak naturally, get things done</h3>
           </div>
           <Story />
         </div>
@@ -162,7 +162,7 @@ export const MobileView: Story = {
   },
   decorators: [
     (Story) => (
-      <div className="py-12 px-4 bg-white dark:bg-[#030303]">
+      <div className="py-12 px-4 bg-background dark:bg-[#030303]">
         <Story />
       </div>
     ),
@@ -182,7 +182,7 @@ export const TabletView: Story = {
   },
   decorators: [
     (Story) => (
-      <div className="py-16 px-4 bg-white dark:bg-[#030303]">
+      <div className="py-16 px-4 bg-background dark:bg-[#030303]">
         <Story />
       </div>
     ),
@@ -199,22 +199,22 @@ export const WithCTA: Story = {
   },
   decorators: [
     (Story) => (
-      <div className="py-16 px-4 bg-white dark:bg-[#030303]">
+      <div className="py-16 px-4 bg-background dark:bg-[#030303]">
         <div className="max-w-5xl mx-auto">
           <Story />
           <div className="mt-16 text-center">
-            <div className="p-8 bg-zinc-50 dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800">
-              <h3 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-4">
+            <div className="p-8 bg-muted dark:bg-secondary rounded-2xl border border dark:border">
+              <h3 className="text-2xl font-bold text-foreground dark:text-primary-foreground mb-4">
                 Ready to Transform Your Calendar?
               </h3>
-              <p className="text-zinc-600 dark:text-zinc-400 mb-6 max-w-lg mx-auto">
+              <p className="text-zinc-600 dark:text-muted-foreground mb-6 max-w-lg mx-auto">
                 Join thousands of professionals who have already simplified their scheduling with Ask Ally.
               </p>
               <div className="flex items-center justify-center gap-4">
                 <button className="px-8 py-3 bg-primary text-white rounded-full font-medium hover:bg-primary/90 transition-colors">
                   Get Started Free
                 </button>
-                <button className="px-8 py-3 bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-full font-medium hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors">
+                <button className="px-8 py-3 bg-secondary dark:bg-secondary text-foreground dark:text-primary-foreground rounded-full font-medium hover:bg-accent dark:hover:bg-zinc-700 transition-colors">
                   See Pricing
                 </button>
               </div>

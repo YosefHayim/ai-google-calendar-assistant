@@ -57,8 +57,8 @@ export default function AdminAffiliatesPage() {
     <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-bold text-2xl text-zinc-900 dark:text-white">Affiliate Program</h1>
-          <p className="mt-1 text-zinc-500 dark:text-zinc-400">
+          <h1 className="font-bold text-2xl text-foreground dark:text-white">Affiliate Program</h1>
+          <p className="mt-1 text-muted-foreground dark:text-muted-foreground">
             View affiliates and program settings. Manage affiliates in Lemon Squeezy.
           </p>
         </div>
@@ -98,8 +98,8 @@ export default function AdminAffiliatesPage() {
               <Percent className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
             </div>
             <div>
-              <p className="text-sm text-zinc-500 dark:text-zinc-400">Commission Rate</p>
-              <p className="font-bold text-2xl text-zinc-900 dark:text-white">
+              <p className="text-sm text-muted-foreground dark:text-muted-foreground">Commission Rate</p>
+              <p className="font-bold text-2xl text-foreground dark:text-white">
                 {settingsLoading ? '—' : `${settingsData?.settings.commissionRate}%`}
               </p>
             </div>
@@ -108,12 +108,12 @@ export default function AdminAffiliatesPage() {
 
         <Card className="border-blue-100 bg-gradient-to-br from-blue-50 to-white p-5 dark:border-blue-900/30 dark:from-blue-950/20 dark:to-zinc-900">
           <div className="flex items-center gap-3">
-            <div className="rounded-xl bg-blue-100 p-2.5 dark:bg-blue-900/40">
-              <Clock className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+            <div className="rounded-xl bg-primary/10 p-2.5 dark:bg-blue-900/40">
+              <Clock className="h-5 w-5 text-primary dark:text-blue-400" />
             </div>
             <div>
-              <p className="text-sm text-zinc-500 dark:text-zinc-400">Tracking Length</p>
-              <p className="font-bold text-2xl text-zinc-900 dark:text-white">
+              <p className="text-sm text-muted-foreground dark:text-muted-foreground">Tracking Length</p>
+              <p className="font-bold text-2xl text-foreground dark:text-white">
                 {settingsLoading ? '—' : `${settingsData?.settings.trackingLength} days`}
               </p>
             </div>
@@ -123,11 +123,11 @@ export default function AdminAffiliatesPage() {
         <Card className="border-amber-100 bg-gradient-to-br from-amber-50 to-white p-5 dark:border-amber-900/30 dark:from-amber-950/20 dark:to-zinc-900">
           <div className="flex items-center gap-3">
             <div className="rounded-xl bg-amber-100 p-2.5 dark:bg-amber-900/40">
-              <DollarSign className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+              <DollarSign className="h-5 w-5 text-amber-700 dark:text-amber-400" />
             </div>
             <div>
-              <p className="text-sm text-zinc-500 dark:text-zinc-400">Minimum Payout</p>
-              <p className="font-bold text-2xl text-zinc-900 dark:text-white">
+              <p className="text-sm text-muted-foreground dark:text-muted-foreground">Minimum Payout</p>
+              <p className="font-bold text-2xl text-foreground dark:text-white">
                 {settingsLoading ? '—' : formatCurrency(settingsData?.settings.minimumPayout ?? 0)}
               </p>
             </div>
@@ -140,8 +140,8 @@ export default function AdminAffiliatesPage() {
               <Users2 className="h-5 w-5 text-violet-600 dark:text-violet-400" />
             </div>
             <div>
-              <p className="text-sm text-zinc-500 dark:text-zinc-400">Total Affiliates</p>
-              <p className="font-bold text-2xl text-zinc-900 dark:text-white">{isLoading ? '—' : (data?.total ?? 0)}</p>
+              <p className="text-sm text-muted-foreground dark:text-muted-foreground">Total Affiliates</p>
+              <p className="font-bold text-2xl text-foreground dark:text-white">{isLoading ? '—' : (data?.total ?? 0)}</p>
             </div>
           </div>
         </Card>
@@ -167,7 +167,7 @@ export default function AdminAffiliatesPage() {
               </Button>
             )}
           </div>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
+          <p className="text-sm text-muted-foreground dark:text-muted-foreground">
             Affiliate management is handled in Lemon Squeezy dashboard
           </p>
         </div>
@@ -176,7 +176,7 @@ export default function AdminAffiliatesPage() {
       <Card className="p-4">
         <div className="flex flex-wrap gap-4">
           <div className="relative min-w-48 flex-1">
-            <Search className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 text-zinc-400" />
+            <Search className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 text-muted-foreground" />
             <Input
               className="pl-10"
               onChange={(e) => {
@@ -188,7 +188,7 @@ export default function AdminAffiliatesPage() {
             />
           </div>
           <select
-            className="rounded-md border border-zinc-200 bg-white px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900"
+            className="rounded-md border border bg-background px-3 py-2 text-sm dark:border-zinc-700 dark:bg-secondary"
             onChange={(e) => {
               setStatusFilter(e.target.value as AffiliateStatus | '')
               setPage(1)
@@ -212,59 +212,59 @@ export default function AdminAffiliatesPage() {
           <>
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="border-zinc-200 border-b dark:border-zinc-700">
+                <thead className="border border-b dark:border-zinc-700">
                   <tr>
-                    <th className="p-4 text-left font-medium text-zinc-500 dark:text-zinc-400">Affiliate</th>
-                    <th className="p-4 text-left font-medium text-zinc-500 dark:text-zinc-400">Status</th>
-                    <th className="p-4 text-left font-medium text-zinc-500 dark:text-zinc-400">Total Earnings</th>
-                    <th className="p-4 text-left font-medium text-zinc-500 dark:text-zinc-400">Unpaid Earnings</th>
-                    <th className="p-4 text-left font-medium text-zinc-500 dark:text-zinc-400">Share Domain</th>
-                    <th className="p-4 text-left font-medium text-zinc-500 dark:text-zinc-400">Joined</th>
+                    <th className="p-4 text-left font-medium text-muted-foreground dark:text-muted-foreground">Affiliate</th>
+                    <th className="p-4 text-left font-medium text-muted-foreground dark:text-muted-foreground">Status</th>
+                    <th className="p-4 text-left font-medium text-muted-foreground dark:text-muted-foreground">Total Earnings</th>
+                    <th className="p-4 text-left font-medium text-muted-foreground dark:text-muted-foreground">Unpaid Earnings</th>
+                    <th className="p-4 text-left font-medium text-muted-foreground dark:text-muted-foreground">Share Domain</th>
+                    <th className="p-4 text-left font-medium text-muted-foreground dark:text-muted-foreground">Joined</th>
                   </tr>
                 </thead>
                 <tbody>
                   {data?.affiliates.map((affiliate) => (
                     <tr
-                      className="border-zinc-100 border-b hover:bg-zinc-50 dark:border-zinc-800 dark:hover:bg-zinc-900/50"
+                      className="border-zinc-100 border-b hover:bg-muted dark:border dark:hover:bg-secondary/50"
                       key={affiliate.id}
                     >
                       <td className="p-4">
                         <div className="flex items-center gap-3">
-                          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-200 dark:bg-zinc-700">
+                          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-accent dark:bg-zinc-700">
                             <span className="font-medium text-sm text-zinc-600 dark:text-zinc-300">
                               {affiliate.userName?.[0]?.toUpperCase() || affiliate.userEmail[0].toUpperCase()}
                             </span>
                           </div>
                           <div>
-                            <p className="font-medium text-zinc-900 dark:text-white">
+                            <p className="font-medium text-foreground dark:text-white">
                               {affiliate.userName || affiliate.userEmail.split('@')[0]}
                             </p>
-                            <p className="text-sm text-zinc-500">{affiliate.userEmail}</p>
+                            <p className="text-sm text-muted-foreground">{affiliate.userEmail}</p>
                           </div>
                         </div>
                       </td>
                       <td className="p-4">
                         <StatusBadge status={affiliate.status} />
                       </td>
-                      <td className="p-4 font-medium text-sm text-zinc-900 dark:text-white">
+                      <td className="p-4 font-medium text-sm text-foreground dark:text-white">
                         {formatCurrency(affiliate.totalEarnings)}
                       </td>
-                      <td className="p-4 font-medium text-sm text-zinc-900 dark:text-white">
+                      <td className="p-4 font-medium text-sm text-foreground dark:text-white">
                         {formatCurrency(affiliate.unpaidEarnings)}
                       </td>
                       <td className="p-4">
-                        <code className="rounded bg-zinc-100 px-2 py-1 font-mono text-xs text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
+                        <code className="rounded bg-secondary px-2 py-1 font-mono text-xs text-zinc-700 dark:bg-secondary dark:text-zinc-300">
                           {affiliate.shareDomain}
                         </code>
                       </td>
-                      <td className="p-4 text-sm text-zinc-500">
+                      <td className="p-4 text-sm text-muted-foreground">
                         {format(new Date(affiliate.createdAt), 'MMM d, yyyy')}
                       </td>
                     </tr>
                   ))}
                   {data?.affiliates.length === 0 && (
                     <tr>
-                      <td className="p-8 text-center text-zinc-500 dark:text-zinc-400" colSpan={6}>
+                      <td className="p-8 text-center text-muted-foreground dark:text-muted-foreground" colSpan={6}>
                         No affiliates found
                       </td>
                     </tr>
@@ -273,8 +273,8 @@ export default function AdminAffiliatesPage() {
               </table>
             </div>
 
-            <div className="flex items-center justify-between border-zinc-200 border-t p-4 dark:border-zinc-700">
-              <p className="text-sm text-zinc-500">
+            <div className="flex items-center justify-between border border-t p-4 dark:border-zinc-700">
+              <p className="text-sm text-muted-foreground">
                 Showing {data?.affiliates.length || 0} of {data?.total || 0} affiliates
               </p>
               <div className="flex gap-2">
@@ -304,7 +304,7 @@ function StatusBadge({ status }: { status: AffiliateStatus }) {
   const variants: Record<AffiliateStatus, string> = {
     active: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
     pending: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
-    disabled: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
+    disabled: 'bg-destructive/10 text-red-800 dark:bg-red-900/30 dark:text-red-400',
   }
   return <Badge className={variants[status]}>{status}</Badge>
 }
@@ -322,7 +322,7 @@ function CopyButton({ text, label }: { text: string; label: string }) {
     <Button className="shrink-0" onClick={handleCopy} size="sm" variant="outline">
       {copied ? (
         <>
-          <Check className="mr-2 h-4 w-4 text-green-500" />
+          <Check className="mr-2 h-4 w-4 text-green-600" />
           Copied!
         </>
       ) : (
@@ -348,19 +348,19 @@ function AffiliateSettingsContent({
     | undefined
 }) {
   if (!settings) {
-    return <div className="py-8 text-center text-zinc-500">Unable to load affiliate settings</div>
+    return <div className="py-8 text-center text-muted-foreground">Unable to load affiliate settings</div>
   }
 
   return (
     <div className="space-y-6 overflow-auto">
       <div className="space-y-2">
         <div className="flex items-center gap-2">
-          <Link2 className="h-4 w-4 text-zinc-500" />
-          <h3 className="font-medium text-zinc-900 dark:text-white">Affiliate Signup URL</h3>
+          <Link2 className="h-4 w-4 text-muted-foreground" />
+          <h3 className="font-medium text-foreground dark:text-white">Affiliate Signup URL</h3>
         </div>
-        <p className="text-sm text-zinc-500">Anyone can apply to be your affiliate with this link</p>
+        <p className="text-sm text-muted-foreground">Anyone can apply to be your affiliate with this link</p>
         <div className="flex items-center gap-2">
-          <div className="flex-1 rounded-md border border-zinc-200 bg-zinc-50 px-3 py-2 font-mono text-sm dark:border-zinc-700 dark:bg-zinc-900">
+          <div className="flex-1 rounded-md border border bg-muted px-3 py-2 font-mono text-sm dark:border-zinc-700 dark:bg-secondary">
             {settings.affiliateHubUrl}
           </div>
           <CopyButton label="Copy" text={settings.affiliateHubUrl} />
@@ -369,10 +369,10 @@ function AffiliateSettingsContent({
 
       <div className="space-y-2">
         <div className="flex items-center gap-2">
-          <Link2 className="h-4 w-4 text-zinc-500" />
-          <h3 className="font-medium text-zinc-900 dark:text-white">Affiliate Referral URL</h3>
+          <Link2 className="h-4 w-4 text-muted-foreground" />
+          <h3 className="font-medium text-foreground dark:text-white">Affiliate Referral URL</h3>
           <a
-            className="inline-flex items-center text-sm text-blue-500 hover:text-blue-600"
+            className="inline-flex items-center text-sm text-primary hover:text-primary"
             href="https://docs.lemonsqueezy.com/help/affiliates/how-referrals-work"
             rel="noopener noreferrer"
             target="_blank"
@@ -381,11 +381,11 @@ function AffiliateSettingsContent({
             <HelpCircle className="ml-1 h-3 w-3" />
           </a>
         </div>
-        <p className="text-sm text-zinc-500">Set your default affiliate URL</p>
+        <p className="text-sm text-muted-foreground">Set your default affiliate URL</p>
         <div className="flex items-center gap-2">
-          <div className="flex items-center rounded-md border border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
-            <span className="px-3 py-2 text-sm text-zinc-500">https://</span>
-            <div className="border-zinc-200 border-l px-3 py-2 font-mono text-sm dark:border-zinc-700">
+          <div className="flex items-center rounded-md border border bg-muted dark:border-zinc-700 dark:bg-secondary">
+            <span className="px-3 py-2 text-sm text-muted-foreground">https://</span>
+            <div className="border border-l px-3 py-2 font-mono text-sm dark:border-zinc-700">
               {settings.storeDomain}
             </div>
           </div>
@@ -395,10 +395,10 @@ function AffiliateSettingsContent({
 
       <div className="space-y-2">
         <div className="flex items-center gap-2">
-          <Code2 className="h-4 w-4 text-zinc-500" />
-          <h3 className="font-medium text-zinc-900 dark:text-white">Affiliate Tracking Script</h3>
+          <Code2 className="h-4 w-4 text-muted-foreground" />
+          <h3 className="font-medium text-foreground dark:text-white">Affiliate Tracking Script</h3>
           <a
-            className="inline-flex items-center text-sm text-blue-500 hover:text-blue-600"
+            className="inline-flex items-center text-sm text-primary hover:text-primary"
             href="https://docs.lemonsqueezy.com/help/affiliates/tracking-affiliate-referrals"
             rel="noopener noreferrer"
             target="_blank"
@@ -407,11 +407,11 @@ function AffiliateSettingsContent({
             <HelpCircle className="ml-1 h-3 w-3" />
           </a>
         </div>
-        <p className="text-sm text-zinc-500">
+        <p className="text-sm text-muted-foreground">
           Copy and paste the tracking code into the {'<head>'} or before the closing body tag of your website
         </p>
         <div className="relative">
-          <pre className="overflow-x-auto rounded-md border border-zinc-200 bg-zinc-950 p-4 font-mono text-sm text-zinc-100 dark:border-zinc-700">
+          <pre className="overflow-x-auto rounded-md border border bg-secondary p-4 font-mono text-sm text-primary-foreground dark:border-zinc-700">
             <code>{settings.trackingScript}</code>
           </pre>
           <div className="absolute top-2 right-2">
@@ -420,8 +420,8 @@ function AffiliateSettingsContent({
         </div>
       </div>
 
-      <div className="border-zinc-200 border-t pt-4 dark:border-zinc-700">
-        <p className="mb-3 text-sm text-zinc-500">Manage your affiliate program in Lemon Squeezy</p>
+      <div className="border border-t pt-4 dark:border-zinc-700">
+        <p className="mb-3 text-sm text-muted-foreground">Manage your affiliate program in Lemon Squeezy</p>
         <div className="flex flex-wrap gap-2">
           <Button asChild size="sm" variant="outline">
             <a href="https://app.lemonsqueezy.com/settings/affiliates" rel="noopener noreferrer" target="_blank">

@@ -88,13 +88,13 @@ export default function ReferralsPage() {
     switch (status) {
       case 'pending':
         return (
-          <Badge variant="outline" className="text-yellow-600 border-yellow-300 bg-yellow-50">
+          <Badge variant="outline" className="text-yellow-700 border-yellow-300 bg-yellow-50">
             <Clock className="w-3 h-3 mr-1" /> Pending
           </Badge>
         )
       case 'signed_up':
         return (
-          <Badge variant="outline" className="text-blue-600 border-blue-300 bg-blue-50">
+          <Badge variant="outline" className="text-primary border-blue-300 bg-primary/5">
             <Users className="w-3 h-3 mr-1" /> Signed Up
           </Badge>
         )
@@ -112,7 +112,7 @@ export default function ReferralsPage() {
         )
       case 'expired':
         return (
-          <Badge variant="outline" className="text-gray-600 border-gray-300 bg-gray-50">
+          <Badge variant="outline" className="text-foreground border-gray-300 bg-muted">
             <XCircle className="w-3 h-3 mr-1" /> Expired
           </Badge>
         )
@@ -125,8 +125,8 @@ export default function ReferralsPage() {
     <div className="flex-1 p-6 overflow-auto">
       <div className="max-w-4xl mx-auto space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-900 dark:text-white">Referral Program</h1>
-          <p className="text-zinc-500 dark:text-zinc-400 mt-1">
+          <h1 className="text-2xl font-bold text-foreground dark:text-white">Referral Program</h1>
+          <p className="text-muted-foreground dark:text-muted-foreground mt-1">
             Invite friends and earn free months when they subscribe
           </p>
         </div>
@@ -137,10 +137,10 @@ export default function ReferralsPage() {
               <Gift className="w-6 h-6 text-primary" />
             </div>
             <div className="flex-1">
-              <h2 className="text-lg font-semibold text-zinc-900 dark:text-white">
+              <h2 className="text-lg font-semibold text-foreground dark:text-white">
                 Invite a friend, get 1 month free!
               </h2>
-              <p className="text-zinc-600 dark:text-zinc-400 mt-1 text-sm">
+              <p className="text-zinc-600 dark:text-muted-foreground mt-1 text-sm">
                 For every friend who signs up and subscribes to a paid plan, you both get 1 free month of Ask Ally Pro.
               </p>
             </div>
@@ -154,7 +154,7 @@ export default function ReferralsPage() {
               <Input
                 readOnly
                 value={isLoadingCode ? 'Loading...' : referralCode?.referralLink || ''}
-                className="flex-1 bg-white dark:bg-zinc-800"
+                className="flex-1 bg-background dark:bg-secondary"
               />
               <Button variant="outline" onClick={handleCopy} disabled={isLoadingCode || !referralCode}>
                 {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
@@ -165,7 +165,7 @@ export default function ReferralsPage() {
               </Button>
             </div>
             {referralCode?.referralCode && (
-              <p className="text-xs text-zinc-500 mt-2">
+              <p className="text-xs text-muted-foreground mt-2">
                 Referral code: <span className="font-mono font-medium">{referralCode.referralCode}</span>
               </p>
             )}
@@ -204,8 +204,8 @@ export default function ReferralsPage() {
 
         <Card className="p-6">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">Your Referrals</h3>
-            <TrendingUp className="w-5 h-5 text-zinc-400" />
+            <h3 className="text-lg font-semibold text-foreground dark:text-white">Your Referrals</h3>
+            <TrendingUp className="w-5 h-5 text-muted-foreground" />
           </div>
 
           {isLoadingReferrals ? (
@@ -226,28 +226,28 @@ export default function ReferralsPage() {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-zinc-200 dark:border-zinc-700">
-                    <th className="text-left py-3 px-4 text-sm font-medium text-zinc-500">Email</th>
-                    <th className="text-left py-3 px-4 text-sm font-medium text-zinc-500">Status</th>
-                    <th className="text-left py-3 px-4 text-sm font-medium text-zinc-500">Date</th>
-                    <th className="text-left py-3 px-4 text-sm font-medium text-zinc-500">Reward</th>
-                    <th className="text-right py-3 px-4 text-sm font-medium text-zinc-500">Action</th>
+                  <tr className="border-b border dark:border-zinc-700">
+                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Email</th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Status</th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Date</th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Reward</th>
+                    <th className="text-right py-3 px-4 text-sm font-medium text-muted-foreground">Action</th>
                   </tr>
                 </thead>
                 <tbody>
                   {referrals.map((referral) => (
-                    <tr key={referral.id} className="border-b border-zinc-100 dark:border-zinc-800">
+                    <tr key={referral.id} className="border-b border-zinc-100 dark:border">
                       <td className="py-4 px-4">
-                        <span className="text-zinc-900 dark:text-white">
-                          {referral.referred_email || <span className="text-zinc-400 italic">Not yet used</span>}
+                        <span className="text-foreground dark:text-white">
+                          {referral.referred_email || <span className="text-muted-foreground italic">Not yet used</span>}
                         </span>
                       </td>
                       <td className="py-4 px-4">{getStatusBadge(referral.status)}</td>
-                      <td className="py-4 px-4 text-sm text-zinc-500">
+                      <td className="py-4 px-4 text-sm text-muted-foreground">
                         {formatDate(referral.created_at, DATE_FORMATS.FULL)}
                       </td>
                       <td className="py-4 px-4">
-                        <span className="text-sm text-zinc-600 dark:text-zinc-400">
+                        <span className="text-sm text-zinc-600 dark:text-muted-foreground">
                           {referral.reward_amount}{' '}
                           {referral.reward_type === 'free_month' ? 'month' : referral.reward_type}
                         </span>
@@ -276,15 +276,15 @@ export default function ReferralsPage() {
         </Card>
 
         <Card className="p-6">
-          <h3 className="text-lg font-semibold text-zinc-900 dark:text-white mb-4">How it works</h3>
+          <h3 className="text-lg font-semibold text-foreground dark:text-white mb-4">How it works</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="flex items-start gap-3">
               <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold">
                 1
               </div>
               <div>
-                <h4 className="font-medium text-zinc-900 dark:text-white">Share your link</h4>
-                <p className="text-sm text-zinc-500 mt-1">Copy your unique referral link and share it with friends</p>
+                <h4 className="font-medium text-foreground dark:text-white">Share your link</h4>
+                <p className="text-sm text-muted-foreground mt-1">Copy your unique referral link and share it with friends</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
@@ -292,8 +292,8 @@ export default function ReferralsPage() {
                 2
               </div>
               <div>
-                <h4 className="font-medium text-zinc-900 dark:text-white">Friend subscribes</h4>
-                <p className="text-sm text-zinc-500 mt-1">When they sign up and subscribe to a paid plan</p>
+                <h4 className="font-medium text-foreground dark:text-white">Friend subscribes</h4>
+                <p className="text-sm text-muted-foreground mt-1">When they sign up and subscribe to a paid plan</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
@@ -301,8 +301,8 @@ export default function ReferralsPage() {
                 3
               </div>
               <div>
-                <h4 className="font-medium text-zinc-900 dark:text-white">You both win</h4>
-                <p className="text-sm text-zinc-500 mt-1">You get 1 free month, and so does your friend!</p>
+                <h4 className="font-medium text-foreground dark:text-white">You both win</h4>
+                <p className="text-sm text-muted-foreground mt-1">You get 1 free month, and so does your friend!</p>
               </div>
             </div>
           </div>

@@ -17,7 +17,7 @@ interface UpcomingWeekPreviewProps {
 }
 
 const BUSYNESS_COLORS = {
-  free: 'bg-zinc-100 dark:bg-zinc-800',
+  free: 'bg-secondary dark:bg-secondary',
   light: 'bg-emerald-100 dark:bg-emerald-900/40',
   moderate: 'bg-sky-100 dark:bg-sky-900/40',
   busy: 'bg-amber-100 dark:bg-amber-900/40',
@@ -25,7 +25,7 @@ const BUSYNESS_COLORS = {
 }
 
 const BUSYNESS_BORDER_COLORS = {
-  free: 'border-zinc-200 dark:border-zinc-700',
+  free: 'border dark:border-zinc-700',
   light: 'border-emerald-300 dark:border-emerald-800',
   moderate: 'border-sky-300 dark:border-sky-800',
   busy: 'border-amber-300 dark:border-amber-800',
@@ -54,18 +54,18 @@ const DayCard: React.FC<{ day: UpcomingDayData }> = ({ day }) => {
           `}
         >
           {day.isToday && (
-            <span className="absolute -top-1.5 sm:-top-2 left-1/2 -translate-x-1/2 text-[8px] sm:text-[10px] font-bold text-indigo-600 dark:text-indigo-400 bg-white dark:bg-zinc-950 px-0.5 sm:px-1 rounded">
+            <span className="absolute -top-1.5 sm:-top-2 left-1/2 -translate-x-1/2 text-[8px] sm:text-[10px] font-bold text-indigo-600 dark:text-indigo-400 bg-background dark:bg-secondary px-0.5 sm:px-1 rounded">
               TODAY
             </span>
           )}
           {day.isTomorrow && !day.isToday && (
-            <span className="absolute -top-1.5 sm:-top-2 left-1/2 -translate-x-1/2 text-[8px] sm:text-[10px] font-medium text-zinc-500 bg-white dark:bg-zinc-950 px-0.5 sm:px-1 rounded">
+            <span className="absolute -top-1.5 sm:-top-2 left-1/2 -translate-x-1/2 text-[8px] sm:text-[10px] font-medium text-muted-foreground bg-background dark:bg-secondary px-0.5 sm:px-1 rounded">
               TMR
             </span>
           )}
 
-          <span className="text-[10px] sm:text-xs font-medium text-zinc-500 dark:text-zinc-400">{day.dayShort}</span>
-          <span className="text-base sm:text-lg font-bold text-zinc-900 dark:text-zinc-100">
+          <span className="text-[10px] sm:text-xs font-medium text-muted-foreground dark:text-muted-foreground">{day.dayShort}</span>
+          <span className="text-base sm:text-lg font-bold text-foreground dark:text-primary-foreground">
             {format(day.date, 'd')}
           </span>
 
@@ -98,21 +98,21 @@ const DayCard: React.FC<{ day: UpcomingDayData }> = ({ day }) => {
             ))}
           </div>
 
-          <span className="text-[8px] sm:text-[10px] text-zinc-500 dark:text-zinc-400 mt-0.5 sm:mt-1 truncate max-w-full">
+          <span className="text-[8px] sm:text-[10px] text-muted-foreground dark:text-muted-foreground mt-0.5 sm:mt-1 truncate max-w-full">
             {day.eventCount} {day.eventCount === 1 ? 'evt' : 'evts'}
           </span>
         </div>
       </HoverCardTrigger>
 
       <HoverCardContent className="w-72 p-0" side="bottom" align="center">
-        <div className="p-3 border-b border-zinc-200 dark:border-zinc-800">
+        <div className="p-3 border-b border dark:border">
           <div className="flex items-center justify-between">
-            <h4 className="font-semibold text-zinc-900 dark:text-zinc-100">{day.dayName}</h4>
+            <h4 className="font-semibold text-foreground dark:text-primary-foreground">{day.dayName}</h4>
             <span className={`text-xs px-2 py-0.5 rounded-full ${BUSYNESS_COLORS[day.busynessLevel]} font-medium`}>
               {BUSYNESS_TEXT[day.busynessLevel]}
             </span>
           </div>
-          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
+          <p className="text-xs text-muted-foreground dark:text-muted-foreground mt-1">
             {day.eventCount} events • {day.totalHours} hours scheduled
           </p>
         </div>
@@ -123,7 +123,7 @@ const DayCard: React.FC<{ day: UpcomingDayData }> = ({ day }) => {
               {day.events.slice(0, 5).map((event, idx) => (
                 <div
                   key={`${event.id}-${idx}`}
-                  className="flex items-start gap-2 p-2 rounded-md hover:bg-zinc-50 dark:hover:bg-zinc-900/50"
+                  className="flex items-start gap-2 p-2 rounded-md hover:bg-muted dark:hover:bg-secondary/50"
                 >
                   <div
                     className="w-1 h-full min-h-[2rem] rounded-full flex-shrink-0"
@@ -131,33 +131,33 @@ const DayCard: React.FC<{ day: UpcomingDayData }> = ({ day }) => {
                   />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5">
-                      <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate flex-1">
+                      <p className="text-sm font-medium text-foreground dark:text-primary-foreground truncate flex-1">
                         {event.summary}
                       </p>
                       {event.isRecurring && (
                         <span title="Recurring event">
-                          <Repeat className="w-3 h-3 text-zinc-400 flex-shrink-0" />
+                          <Repeat className="w-3 h-3 text-muted-foreground flex-shrink-0" />
                         </span>
                       )}
                     </div>
-                    <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                    <p className="text-xs text-muted-foreground dark:text-muted-foreground">
                       {event.isAllDay
                         ? 'All day'
                         : `${format(new Date(event.startTime), 'h:mm a')} • ${Math.round(event.durationMinutes)} min`}
                     </p>
-                    <p className="text-xs text-zinc-400 dark:text-zinc-500 truncate">{event.calendarName}</p>
+                    <p className="text-xs text-muted-foreground dark:text-muted-foreground truncate">{event.calendarName}</p>
                   </div>
                 </div>
               ))}
               {day.events.length > 5 && (
-                <p className="text-xs text-zinc-500 dark:text-zinc-400 text-center py-2">
+                <p className="text-xs text-muted-foreground dark:text-muted-foreground text-center py-2">
                   +{day.events.length - 5} more events
                 </p>
               )}
             </div>
           </div>
         ) : (
-          <div className="p-4 text-center text-zinc-500 dark:text-zinc-400 text-sm">No events scheduled</div>
+          <div className="p-4 text-center text-muted-foreground dark:text-muted-foreground text-sm">No events scheduled</div>
         )}
       </HoverCardContent>
     </HoverCard>
@@ -172,7 +172,7 @@ const UpcomingWeekPreview: React.FC<UpcomingWeekPreviewProps> = ({
 }) => {
   if (isLoading) {
     return (
-      <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-sm p-4 sm:p-6">
+      <div className="bg-background dark:bg-secondary border border dark:border rounded-xl shadow-sm p-4 sm:p-6">
         <div className="flex items-center gap-2 mb-2">
           <Skeleton className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg" />
           <Skeleton className="h-4 sm:h-5 w-28 sm:w-36" />
@@ -189,15 +189,15 @@ const UpcomingWeekPreview: React.FC<UpcomingWeekPreviewProps> = ({
 
   if (isError) {
     return (
-      <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-sm p-4 sm:p-6">
+      <div className="bg-background dark:bg-secondary border border dark:border rounded-xl shadow-sm p-4 sm:p-6">
         <div className="flex items-center gap-2 mb-3 sm:mb-4">
           <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-rose-100 dark:bg-rose-900/50 flex items-center justify-center">
             <AlertCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-rose-600 dark:text-rose-400" />
           </div>
-          <h3 className="font-semibold text-sm sm:text-base text-zinc-900 dark:text-zinc-100">Upcoming Week</h3>
+          <h3 className="font-semibold text-sm sm:text-base text-foreground dark:text-primary-foreground">Upcoming Week</h3>
         </div>
         <div className="text-center py-6 sm:py-8">
-          <p className="text-sm sm:text-base text-zinc-500 dark:text-zinc-400 mb-3 sm:mb-4">
+          <p className="text-sm sm:text-base text-muted-foreground dark:text-muted-foreground mb-3 sm:mb-4">
             Failed to load upcoming events
           </p>
           {onRetry && (
@@ -215,22 +215,22 @@ const UpcomingWeekPreview: React.FC<UpcomingWeekPreviewProps> = ({
   }
 
   return (
-    <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-sm p-4 sm:p-6 hover:shadow-md transition-shadow">
+    <div className="bg-background dark:bg-secondary border border dark:border rounded-xl shadow-sm p-4 sm:p-6 hover:shadow-md transition-shadow">
       <div className="flex items-center justify-between mb-1 gap-2">
         <div className="flex items-center gap-2 min-w-0">
-          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center flex-shrink-0">
-            <CalendarDays className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-zinc-900 dark:text-primary" />
+          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-secondary dark:bg-secondary flex items-center justify-center flex-shrink-0">
+            <CalendarDays className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-foreground dark:text-primary" />
           </div>
-          <h3 className="font-semibold text-sm sm:text-base text-zinc-900 dark:text-zinc-100 truncate">
+          <h3 className="font-semibold text-sm sm:text-base text-foreground dark:text-primary-foreground truncate">
             Upcoming Week
           </h3>
         </div>
-        <div className="flex items-center gap-1 text-[10px] sm:text-xs text-zinc-500 dark:text-zinc-400 flex-shrink-0">
+        <div className="flex items-center gap-1 text-[10px] sm:text-xs text-muted-foreground dark:text-muted-foreground flex-shrink-0">
           <Clock className="w-3 h-3" />
           <span>{data.totalHours} hrs</span>
         </div>
       </div>
-      <p className="text-[10px] sm:text-xs text-zinc-500 dark:text-zinc-400 mb-3 sm:mb-4 ml-9 sm:ml-10 truncate">
+      <p className="text-[10px] sm:text-xs text-muted-foreground dark:text-muted-foreground mb-3 sm:mb-4 ml-9 sm:ml-10 truncate">
         {data.totalEvents} events • Busiest: {data.busiestDay}
       </p>
 
@@ -242,22 +242,22 @@ const UpcomingWeekPreview: React.FC<UpcomingWeekPreviewProps> = ({
       </div>
 
       {/* Legend */}
-      <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-zinc-200 dark:border-zinc-800">
+      <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border dark:border">
         <div className="flex items-center gap-1 sm:gap-1.5">
           <StatusDot color="green" size="xs" className="sm:w-2 sm:h-2" />
-          <span className="text-[10px] sm:text-xs text-zinc-500 dark:text-zinc-400">Light</span>
+          <span className="text-[10px] sm:text-xs text-muted-foreground dark:text-muted-foreground">Light</span>
         </div>
         <div className="flex items-center gap-1 sm:gap-1.5">
           <StatusDot color="blue" size="xs" className="sm:w-2 sm:h-2" />
-          <span className="text-[10px] sm:text-xs text-zinc-500 dark:text-zinc-400">Moderate</span>
+          <span className="text-[10px] sm:text-xs text-muted-foreground dark:text-muted-foreground">Moderate</span>
         </div>
         <div className="flex items-center gap-1 sm:gap-1.5">
           <StatusDot color="yellow" size="xs" className="sm:w-2 sm:h-2" />
-          <span className="text-[10px] sm:text-xs text-zinc-500 dark:text-zinc-400">Busy</span>
+          <span className="text-[10px] sm:text-xs text-muted-foreground dark:text-muted-foreground">Busy</span>
         </div>
         <div className="flex items-center gap-1 sm:gap-1.5">
           <StatusDot color="red" size="xs" className="sm:w-2 sm:h-2" />
-          <span className="text-[10px] sm:text-xs text-zinc-500 dark:text-zinc-400">Packed</span>
+          <span className="text-[10px] sm:text-xs text-muted-foreground dark:text-muted-foreground">Packed</span>
         </div>
       </div>
 

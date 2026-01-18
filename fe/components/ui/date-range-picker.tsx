@@ -163,7 +163,7 @@ export function DatePickerWithRange({ className, date, setDate }: DatePickerWith
         'justify-start font-normal w-auto lg:w-full',
         activePreset === presetKey
           ? 'bg-primary text-primary-foreground hover:bg-primary/90'
-          : 'hover:bg-zinc-100 dark:hover:bg-zinc-800',
+          : 'hover:bg-secondary dark:hover:bg-secondary',
       )}
       onClick={() => setPreset(presetKey)}
     >

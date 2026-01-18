@@ -61,12 +61,12 @@ const CreateCalendarDialog: React.FC<CreateCalendarDialogProps> = ({ isOpen, onC
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
-      <DialogContent className="sm:max-w-md bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800">
+      <DialogContent className="sm:max-w-md bg-background dark:bg-secondary border dark:border">
         <DialogHeader>
-          <DialogTitle className="text-lg font-medium text-zinc-900 dark:text-zinc-100">
+          <DialogTitle className="text-lg font-medium text-foreground dark:text-primary-foreground">
             Create New Calendar
           </DialogTitle>
-          <DialogDescription className="text-sm text-zinc-500 dark:text-zinc-400">
+          <DialogDescription className="text-sm text-muted-foreground dark:text-muted-foreground">
             Enter a name for your new calendar. It will be added to your Google Calendar account.
           </DialogDescription>
         </DialogHeader>
@@ -77,7 +77,7 @@ const CreateCalendarDialog: React.FC<CreateCalendarDialogProps> = ({ isOpen, onC
             value={calendarPrompt}
             onChange={(e) => setCalendarPrompt(e.target.value)}
             placeholder="e.g., Work Projects, Personal Goals, Fitness"
-            className="w-full p-3 rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-300 focus:border-transparent placeholder:text-zinc-400"
+            className="w-full p-3 rounded-md border border dark:border bg-background dark:bg-secondary text-foreground dark:text-primary-foreground text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-300 focus:border-transparent placeholder:text-muted-foreground"
             disabled={isCreatingCalendar}
             autoFocus
             onKeyDown={(e) => {

@@ -50,7 +50,7 @@ export const MemoryManagementSection: React.FC<MemoryManagementSectionProps> = (
             id="contextual-scheduling"
             title="Contextual Scheduling"
             tooltip="Allow Ally to remember your preferred meeting durations, buffer times, and recurring locations"
-            icon={<CalendarCheck size={18} className="text-zinc-900 dark:text-primary" />}
+            icon={<CalendarCheck size={18} className="text-foreground dark:text-primary" />}
             control={
               <CinematicGlowToggle
                 id={toggleId}
@@ -65,7 +65,7 @@ export const MemoryManagementSection: React.FC<MemoryManagementSectionProps> = (
             title="Learned Patterns"
             tooltip="Amount of scheduling patterns Ally has learned from your calendar activity"
             icon={<Database size={18} className="text-slate-500 dark:text-slate-400" />}
-            control={<span className="text-sm text-zinc-500 dark:text-zinc-400">{memoryUsage}</span>}
+            control={<span className="text-sm text-muted-foreground dark:text-muted-foreground">{memoryUsage}</span>}
           />
         </SettingsSection>
       </CardContent>

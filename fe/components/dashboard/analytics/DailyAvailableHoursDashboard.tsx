@@ -41,8 +41,8 @@ export const DailyAvailableHoursDashboard: React.FC<DailyAvailableHoursDashboard
 
   if (isLoading) {
     return (
-      <Card className="lg:col-span-3 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 py-0">
-        <CardHeader className="flex flex-col items-stretch border-b border-zinc-200 dark:border-zinc-800 !p-0 sm:flex-row">
+      <Card className="lg:col-span-3 bg-background dark:bg-secondary border border dark:border py-0">
+        <CardHeader className="flex flex-col items-stretch border-b border dark:border !p-0 sm:flex-row">
           <div className="flex flex-1 flex-col justify-center gap-1 px-6 pt-4 pb-3 sm:!py-4">
             <div className="flex items-center gap-2">
               <Skeleton className="w-5 h-5" />
@@ -51,11 +51,11 @@ export const DailyAvailableHoursDashboard: React.FC<DailyAvailableHoursDashboard
             <Skeleton className="h-4 w-56 mt-1" />
           </div>
           <div className="flex">
-            <div className="flex flex-1 flex-col justify-center gap-1 border-t border-zinc-200 dark:border-zinc-800 px-6 py-4 sm:border-t-0 sm:border-l sm:px-8 sm:py-6">
+            <div className="flex flex-1 flex-col justify-center gap-1 border-t border dark:border px-6 py-4 sm:border-t-0 sm:border-l sm:px-8 sm:py-6">
               <Skeleton className="h-3 w-24" />
               <Skeleton className="h-8 w-16 mt-1" />
             </div>
-            <div className="flex flex-1 flex-col justify-center gap-1 border-t border-l border-zinc-200 dark:border-zinc-800 px-6 py-4 sm:border-t-0 sm:px-8 sm:py-6">
+            <div className="flex flex-1 flex-col justify-center gap-1 border-t border-l border dark:border px-6 py-4 sm:border-t-0 sm:px-8 sm:py-6">
               <Skeleton className="h-3 w-20" />
               <Skeleton className="h-8 w-16 mt-1" />
             </div>
@@ -73,7 +73,7 @@ export const DailyAvailableHoursDashboard: React.FC<DailyAvailableHoursDashboard
 
   if (!data || data.length === 0) {
     return (
-      <Card className="lg:col-span-3 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800">
+      <Card className="lg:col-span-3 bg-background dark:bg-secondary border border dark:border">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Clock className="w-5 h-5 text-primary" />
@@ -106,10 +106,10 @@ export const DailyAvailableHoursDashboard: React.FC<DailyAvailableHoursDashboard
   }
 
   return (
-    <Card className="lg:col-span-3 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 py-0">
-      <CardHeader className="flex flex-col items-stretch border-b border-zinc-200 dark:border-zinc-800 !p-0 sm:flex-row">
+    <Card className="lg:col-span-3 bg-background dark:bg-secondary border border dark:border py-0">
+      <CardHeader className="flex flex-col items-stretch border-b border dark:border !p-0 sm:flex-row">
         <div className="flex flex-1 flex-col justify-center gap-1 px-6 pt-4 pb-3 sm:!py-4">
-          <CardTitle className="flex items-center gap-2 text-zinc-900 dark:text-zinc-100">
+          <CardTitle className="flex items-center gap-2 text-foreground dark:text-primary-foreground">
             <Clock className="w-5 h-5 text-primary" />
             {t('analytics.charts.dailyHours')}
             <HoverCard>
@@ -117,7 +117,7 @@ export const DailyAvailableHoursDashboard: React.FC<DailyAvailableHoursDashboard
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-6 w-6 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
+                  className="h-6 w-6 text-muted-foreground hover:text-zinc-600 dark:hover:text-zinc-300"
                 >
                   <Info size={16} />
                 </Button>
@@ -125,27 +125,27 @@ export const DailyAvailableHoursDashboard: React.FC<DailyAvailableHoursDashboard
               <HoverCardContent>
                 <div className="space-y-2">
                   <h4 className="font-semibold text-sm">{t('analytics.charts.dailyHours')}</h4>
-                  <p className="text-xs text-zinc-600 dark:text-zinc-400">
+                  <p className="text-xs text-zinc-600 dark:text-muted-foreground">
                     {t('analytics.charts.dailyHoursTooltip', { hours: CALENDAR_CONSTANTS.WAKING_HOURS_PER_DAY })}
                   </p>
                 </div>
               </HoverCardContent>
             </HoverCard>
           </CardTitle>
-          <CardDescription className="text-zinc-500 dark:text-zinc-400 text-xs font-medium italic">
+          <CardDescription className="text-muted-foreground dark:text-muted-foreground text-xs font-medium italic">
             {t('analytics.charts.dailyHoursDescription')}
           </CardDescription>
         </div>
         <div className="flex">
-          <div className="relative z-30 flex flex-1 flex-col justify-center gap-1 border-t border-zinc-200 dark:border-zinc-800 px-6 py-4 text-left sm:border-t-0 sm:border-l sm:px-6 sm:py-4 lg:px-8 lg:py-6">
-            <span className="text-zinc-500 dark:text-zinc-400 text-xs">{t('analytics.charts.totalAvailable')}</span>
-            <span className="text-lg leading-none font-bold text-zinc-900 dark:text-zinc-100 sm:text-xl lg:text-3xl">
+          <div className="relative z-30 flex flex-1 flex-col justify-center gap-1 border-t border dark:border px-6 py-4 text-left sm:border-t-0 sm:border-l sm:px-6 sm:py-4 lg:px-8 lg:py-6">
+            <span className="text-muted-foreground dark:text-muted-foreground text-xs">{t('analytics.charts.totalAvailable')}</span>
+            <span className="text-lg leading-none font-bold text-foreground dark:text-primary-foreground sm:text-xl lg:text-3xl">
               {formatNumber(totalAvailableHours, 1)}H
             </span>
           </div>
-          <div className="relative z-30 flex flex-1 flex-col justify-center gap-1 border-t border-l border-zinc-200 dark:border-zinc-800 px-6 py-4 text-left sm:border-t-0 sm:px-6 sm:py-4 lg:px-8 lg:py-6">
-            <span className="text-zinc-500 dark:text-zinc-400 text-xs">{t('analytics.charts.dailyAvg')}</span>
-            <span className="text-lg leading-none font-bold text-zinc-900 dark:text-zinc-100 sm:text-xl lg:text-3xl">
+          <div className="relative z-30 flex flex-1 flex-col justify-center gap-1 border-t border-l border dark:border px-6 py-4 text-left sm:border-t-0 sm:px-6 sm:py-4 lg:px-8 lg:py-6">
+            <span className="text-muted-foreground dark:text-muted-foreground text-xs">{t('analytics.charts.dailyAvg')}</span>
+            <span className="text-lg leading-none font-bold text-foreground dark:text-primary-foreground sm:text-xl lg:text-3xl">
               {formatNumber(averageAvailableHours, 1)}H
             </span>
           </div>

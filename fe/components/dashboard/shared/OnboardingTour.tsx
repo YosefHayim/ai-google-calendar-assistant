@@ -103,7 +103,7 @@ export const OnboardingTour: React.FC<{ onComplete: () => void }> = ({ onComplet
     <div className="fixed inset-0 z-[9999] pointer-events-none overflow-hidden">
       {/* Overlay: Simple Dim on Mobile, Hole-punch on Desktop */}
       <motion.div
-        className="absolute inset-0 bg-black/70 backdrop-blur-[2px] pointer-events-auto transition-all duration-500"
+        className="absolute inset-0 bg-foreground/70 backdrop-blur-[2px] pointer-events-auto transition-all duration-500"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         style={{
@@ -127,7 +127,7 @@ export const OnboardingTour: React.FC<{ onComplete: () => void }> = ({ onComplet
           }}
           exit={{ opacity: 0, scale: 0.95 }}
           transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-          className={`fixed pointer-events-auto w-[92%] max-w-80 bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-zinc-200 dark:border-zinc-800 p-6 flex flex-col gap-4 ${
+          className={`fixed pointer-events-auto w-[92%] max-w-80 bg-background dark:bg-secondary rounded-2xl shadow-2xl border border dark:border p-6 flex flex-col gap-4 ${
             isMobile || step.position === 'center' || !spotlightRect ? 'top-1/2 left-1/2' : 'absolute'
           }`}
           style={
@@ -148,15 +148,15 @@ export const OnboardingTour: React.FC<{ onComplete: () => void }> = ({ onComplet
               variant="ghost"
               size="icon"
               onClick={onComplete}
-              className="h-7 w-7 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200"
+              className="h-7 w-7 text-muted-foreground hover:text-zinc-600 dark:hover:text-zinc-200"
             >
               <X size={16} />
             </Button>
           </div>
 
           <div>
-            <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-2 tracking-tight">{step.title}</h3>
-            <p className="text-sm text-zinc-500 dark:text-zinc-400 font-medium leading-relaxed">{step.content}</p>
+            <h3 className="text-xl font-bold text-foreground dark:text-primary-foreground mb-2 tracking-tight">{step.title}</h3>
+            <p className="text-sm text-muted-foreground dark:text-muted-foreground font-medium leading-relaxed">{step.content}</p>
           </div>
 
           <div className="flex items-center justify-between mt-4">
@@ -165,7 +165,7 @@ export const OnboardingTour: React.FC<{ onComplete: () => void }> = ({ onComplet
                 <div
                   key={i}
                   className={`h-1 rounded-full transition-all duration-300 ${
-                    i === currentStep ? 'w-6 bg-primary' : 'w-1 bg-zinc-200 dark:bg-zinc-800'
+                    i === currentStep ? 'w-6 bg-primary' : 'w-1 bg-accent dark:bg-secondary'
                   }`}
                 />
               ))}

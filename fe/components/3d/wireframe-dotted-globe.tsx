@@ -303,8 +303,8 @@ export default function RotatingEarth({
     return (
       <div className={`flex items-center justify-center p-8 ${className}`}>
         <div className="text-center">
-          <p className="text-red-500 font-semibold mb-2">Error loading Earth visualization</p>
-          <p className="text-zinc-500 text-sm">{error}</p>
+          <p className="text-destructive font-semibold mb-2">Error loading Earth visualization</p>
+          <p className="text-muted-foreground text-sm">{error}</p>
         </div>
       </div>
     )
@@ -314,7 +314,7 @@ export default function RotatingEarth({
     <div className={`relative ${className}`}>
       <canvas ref={canvasRef} className="w-full h-auto" style={{ maxWidth: '100%', height: 'auto' }} />
       {!hideControls && (
-        <div className="absolute bottom-4 left-4 text-xs text-zinc-400 font-bold uppercase tracking-widest px-2 py-1 rounded bg-black/50 backdrop-blur-sm">
+        <div className="absolute bottom-4 left-4 text-xs text-muted-foreground font-bold uppercase tracking-widest px-2 py-1 rounded bg-foreground/50 backdrop-blur-sm">
           Drag to rotate • Scroll to zoom
         </div>
       )}

@@ -60,8 +60,8 @@ export const StatusBadges: Story = {
     <div className="flex gap-2">
       <Badge className="bg-green-500 hover:bg-green-600">Active</Badge>
       <Badge className="bg-yellow-500 hover:bg-yellow-600">Pending</Badge>
-      <Badge className="bg-red-500 hover:bg-red-600">Inactive</Badge>
-      <Badge className="bg-blue-500 hover:bg-blue-600">In Progress</Badge>
+      <Badge className="bg-destructive hover:bg-destructive">Inactive</Badge>
+      <Badge className="bg-primary hover:bg-primary">In Progress</Badge>
     </div>
   ),
 }

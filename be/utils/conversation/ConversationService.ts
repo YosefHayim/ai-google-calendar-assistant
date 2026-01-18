@@ -1,9 +1,3 @@
-import crypto from "node:crypto";
-import { SUPABASE } from "@/config/clients/supabase";
-import type { Database } from "@/database.types";
-import type { userAndAiMessageProps } from "@/types";
-import { isToday } from "@/utils/date/date-helpers";
-import { logger } from "@/utils/logger";
 import type {
   ConversationConfig,
   ConversationContext,
@@ -16,7 +10,14 @@ import type {
   TelegramConversationRow,
   WebConversationRow,
 } from "./types";
+
 import { DEFAULT_CONVERSATION_CONFIG } from "./types";
+import type { Database } from "@/database.types";
+import { SUPABASE } from "@/config/clients/supabase";
+import crypto from "node:crypto";
+import { isToday } from "@/utils/date/date-helpers";
+import { logger } from "@/utils/logger";
+import type { userAndAiMessageProps } from "@/types";
 
 type ConversationInsert =
   Database["public"]["Tables"]["conversations"]["Insert"];
@@ -659,7 +660,7 @@ export class ConversationService {
 
     let query = SUPABASE.from("conversations")
       .select(
-        "id, message_count, title, summary, created_at, updated_at, last_message_at, source"
+        "id, message_count, title, summary, created_at, updated_at, last_message_at, source, pinned"
       )
       .eq("user_id", userId);
 
@@ -672,6 +673,7 @@ export class ConversationService {
     }
 
     const { data, error } = await query
+      .order("pinned", { ascending: false, nullsFirst: false })
       .order("updated_at", { ascending: false, nullsFirst: false })
       .range(offset, offset + limit - 1);
 
@@ -700,6 +702,7 @@ export class ConversationService {
         messageCount: row.message_count || 0,
         lastUpdated: row.last_message_at || row.updated_at || row.created_at,
         createdAt: row.created_at,
+        pinned: row.pinned || false,
       };
 
       if (includeAllSources && row.source) {

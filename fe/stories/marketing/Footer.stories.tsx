@@ -58,11 +58,11 @@ export const WithPageContext: Story = {
   },
   decorators: [
     (Story) => (
-      <div className="min-h-screen flex flex-col bg-white dark:bg-[#030303]">
+      <div className="min-h-screen flex flex-col bg-background dark:bg-[#030303]">
         <main className="flex-1 p-8">
           <div className="max-w-4xl mx-auto space-y-8">
-            <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100">Ask Ally - AI Calendar Assistant</h1>
-            <p className="text-zinc-600 dark:text-zinc-400">
+            <h1 className="text-3xl font-bold text-foreground dark:text-primary-foreground">Ask Ally - AI Calendar Assistant</h1>
+            <p className="text-zinc-600 dark:text-muted-foreground">
               Transform your calendar management with natural language. Schedule meetings, block focus time, and get
               intelligent insights - all through simple conversation.
             </p>
@@ -70,10 +70,10 @@ export const WithPageContext: Story = {
               {['Voice Commands', 'Multi-Platform', 'Smart Analytics'].map((feature) => (
                 <div
                   key={feature}
-                  className="p-6 bg-zinc-50 dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800"
+                  className="p-6 bg-muted dark:bg-secondary rounded-xl border border dark:border"
                 >
-                  <h3 className="font-semibold text-zinc-900 dark:text-zinc-100">{feature}</h3>
-                  <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-2">
+                  <h3 className="font-semibold text-foreground dark:text-primary-foreground">{feature}</h3>
+                  <p className="text-sm text-muted-foreground dark:text-muted-foreground mt-2">
                     Experience the future of calendar management.
                   </p>
                 </div>

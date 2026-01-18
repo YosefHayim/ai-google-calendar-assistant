@@ -43,7 +43,7 @@ export function CircularProgress({ value, size = 80, className = '' }: CircularP
         />
       </svg>
       <div className="absolute inset-0 flex items-center justify-center">
-        <span className="text-lg sm:text-xl font-bold text-zinc-900 dark:text-zinc-100">
+        <span className="text-lg sm:text-xl font-bold text-foreground dark:text-primary-foreground">
           <NumberFlow value={clampedValue} />
         </span>
       </div>

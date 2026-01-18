@@ -57,7 +57,7 @@ const meta: Meta<typeof ThreeDWallCalendar> = {
   },
   decorators: [
     (Story) => (
-      <div className="min-h-screen bg-zinc-950 p-8">
+      <div className="min-h-screen bg-secondary p-8">
         <Story />
       </div>
     ),
@@ -147,7 +147,7 @@ export const DarkMode: Story = {
   },
   decorators: [
     (Story) => (
-      <div className="min-h-screen bg-black p-8">
+      <div className="min-h-screen bg-foreground p-8">
         <Story />
       </div>
     ),

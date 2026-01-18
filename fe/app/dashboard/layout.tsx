@@ -26,13 +26,13 @@ function DashboardLayoutContent({ children }: { children?: React.ReactNode }) {
 
   return (
     <SidebarProvider defaultOpen={true}>
-      <div className="flex min-h-screen w-full bg-zinc-50 dark:bg-zinc-950">
+      <div className="flex min-h-screen w-full bg-muted dark:bg-secondary">
         {showTour && <OnboardingTour onComplete={completeTour} />}
 
         <AppSidebar onOpenSettings={openSettings} onSignOut={handleSignOut} />
 
         <SidebarInset className="flex-1 flex flex-col">
-          <header className="sticky top-0 flex h-14 items-center gap-2 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 px-4 md:hidden z-40">
+          <header className="sticky top-0 flex h-14 items-center gap-2 border-b border dark:border bg-muted dark:bg-secondary px-4 md:hidden z-40">
             <SidebarTrigger className="-ml-1" />
           </header>
           <main className="flex-1 flex flex-col overflow-hidden">{children}</main>
@@ -52,7 +52,7 @@ function DashboardLayoutContent({ children }: { children?: React.ReactNode }) {
 
 function DashboardLayoutFallback() {
   return (
-    <div className="flex h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-950">
+    <div className="flex h-screen items-center justify-center bg-muted dark:bg-secondary">
       <LoadingSpinner size="lg" />
     </div>
   )

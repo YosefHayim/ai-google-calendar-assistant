@@ -12,7 +12,7 @@ const meta: Meta<typeof ConversationList> = {
   },
   decorators: [
     (Story) => (
-      <div className="w-[280px] h-[500px] bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl overflow-hidden">
+      <div className="w-[280px] h-[500px] bg-background dark:bg-secondary border border dark:border rounded-xl overflow-hidden">
         <Story />
       </div>
     ),
@@ -226,13 +226,13 @@ export const InSidebarContext: Story = {
   args: defaultArgs,
   decorators: [
     (Story) => (
-      <div className="w-[280px] bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl">
-        <div className="p-4 border-b border-zinc-200 dark:border-zinc-800">
+      <div className="w-[280px] bg-background dark:bg-secondary border border dark:border rounded-xl">
+        <div className="p-4 border-b border dark:border">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
               <span className="text-primary text-sm font-bold">A</span>
             </div>
-            <span className="font-semibold text-zinc-900 dark:text-zinc-100">Ask Ally</span>
+            <span className="font-semibold text-foreground dark:text-primary-foreground">Ask Ally</span>
           </div>
         </div>
         <div className="h-[400px] overflow-hidden">

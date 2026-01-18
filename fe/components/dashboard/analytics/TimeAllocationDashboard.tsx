@@ -67,8 +67,8 @@ export const TimeAllocationDashboard: React.FC<TimeAllocationDashboardProps> = (
 
   if (isLoading) {
     return (
-      <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm">
-        <div className="p-3 sm:p-4 pb-2 border-b border-zinc-200 dark:border-zinc-800">
+      <div className="bg-background dark:bg-secondary border border dark:border rounded-md shadow-sm">
+        <div className="p-3 sm:p-4 pb-2 border-b border dark:border">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
             <div className="flex items-center gap-2">
               <Skeleton className="h-4 sm:h-5 w-24 sm:w-32" />
@@ -93,7 +93,7 @@ export const TimeAllocationDashboard: React.FC<TimeAllocationDashboardProps> = (
 
   if (totalHours === 0) {
     return (
-      <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-6 flex items-center justify-center min-h-[200px]">
+      <div className="bg-background dark:bg-secondary border border dark:border rounded-md shadow-sm p-6 flex items-center justify-center min-h-[200px]">
         <EmptyState
           icon={<Clock />}
           title="No time data"
@@ -128,10 +128,10 @@ export const TimeAllocationDashboard: React.FC<TimeAllocationDashboardProps> = (
   }
 
   return (
-    <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm">
-      <div className="p-3 sm:p-4 pb-2 border-b border-zinc-200 dark:border-zinc-800">
+    <div className="bg-background dark:bg-secondary border border dark:border rounded-md shadow-sm">
+      <div className="p-3 sm:p-4 pb-2 border-b border dark:border">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
-          <h3 className="font-medium text-sm sm:text-base text-zinc-900 dark:text-zinc-100 flex items-center gap-2 flex-wrap">
+          <h3 className="font-medium text-sm sm:text-base text-foreground dark:text-primary-foreground flex items-center gap-2 flex-wrap">
             <span className="flex items-center gap-2">
               Time Allocation
               <HoverCard>
@@ -139,7 +139,7 @@ export const TimeAllocationDashboard: React.FC<TimeAllocationDashboardProps> = (
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-5 w-5 sm:h-6 sm:w-6 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
+                    className="h-5 w-5 sm:h-6 sm:w-6 text-muted-foreground hover:text-zinc-600 dark:hover:text-zinc-300"
                   >
                     <Info size={14} className="sm:hidden" />
                     <Info size={16} className="hidden sm:block" />
@@ -148,7 +148,7 @@ export const TimeAllocationDashboard: React.FC<TimeAllocationDashboardProps> = (
                 <HoverCardContent>
                   <div className="space-y-2">
                     <h4 className="font-semibold text-sm">Time Allocation</h4>
-                    <p className="text-xs text-zinc-600 dark:text-zinc-400">
+                    <p className="text-xs text-zinc-600 dark:text-muted-foreground">
                       Visual breakdown of how your time is distributed across different calendars. Each segment
                       represents the total hours spent in that calendar during the selected date range.
                     </p>
@@ -156,7 +156,7 @@ export const TimeAllocationDashboard: React.FC<TimeAllocationDashboardProps> = (
                 </HoverCardContent>
               </HoverCard>
             </span>
-            <span className="text-xs sm:text-sm font-normal text-zinc-500">{formatNumber(totalHours, 1)}H total</span>
+            <span className="text-xs sm:text-sm font-normal text-muted-foreground">{formatNumber(totalHours, 1)}H total</span>
           </h3>
 
           <Tabs value={chartType} onValueChange={(value) => setChartType(value as ChartType)}>
@@ -211,7 +211,7 @@ export const TimeAllocationDashboard: React.FC<TimeAllocationDashboardProps> = (
                     key={item.category}
                     className={`border border-transparent hover:border-black hover:border flex items-center gap-2 sm:gap-3 text-xs sm:text-sm rounded-md p-1.5 sm:p-2 -m-1.5 sm:-m-2 transition-colors ${
                       onCalendarClick && item.calendarId
-                        ? 'cursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-900/50'
+                        ? 'cursor-pointer hover:bg-secondary dark:hover:bg-secondary/50'
                         : ''
                     }`}
                     style={{ backgroundColor: `${safeColor}10` }}
@@ -235,10 +235,10 @@ export const TimeAllocationDashboard: React.FC<TimeAllocationDashboardProps> = (
                     <span className="flex-1 font-medium text-zinc-800 dark:text-zinc-200 truncate">
                       {item.category}
                     </span>
-                    <span className="font-mono text-zinc-500 dark:text-zinc-400 text-[10px] sm:text-xs flex-shrink-0">
+                    <span className="font-mono text-muted-foreground dark:text-muted-foreground text-[10px] sm:text-xs flex-shrink-0">
                       {formatNumber(item.hours, 1)}H
                     </span>
-                    <span className="text-[10px] sm:text-xs text-zinc-400 w-7 sm:w-8 text-right flex-shrink-0">
+                    <span className="text-[10px] sm:text-xs text-muted-foreground w-7 sm:w-8 text-right flex-shrink-0">
                       {calculatePercentage(item.hours, totalHours, 0)}%
                     </span>
                   </li>

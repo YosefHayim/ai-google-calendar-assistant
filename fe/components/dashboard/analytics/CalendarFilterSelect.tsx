@@ -62,16 +62,16 @@ export function CalendarFilterSelect({
         <Button
           variant="outline"
           size="sm"
-          className="h-9 w-full sm:w-auto gap-2 border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-800"
+          className="h-9 w-full sm:w-auto gap-2 border dark:border bg-background dark:bg-secondary hover:bg-muted dark:hover:bg-secondary"
           disabled={isLoading}
         >
-          <Calendar className="h-4 w-4 text-zinc-500" />
+          <Calendar className="h-4 w-4 text-muted-foreground" />
           <span className="max-w-[150px] truncate text-zinc-700 dark:text-zinc-300">{getSelectedCalendarNames()}</span>
-          <ChevronDown className="h-3.5 w-3.5 text-zinc-400" />
+          <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-64 p-0" align="start">
-        <div className="p-2 border-b border-zinc-200 dark:border-zinc-800">
+        <div className="p-2 border-b border dark:border">
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
               {t('analytics.calendarFilter.filterByCalendar', 'Filter by Calendar')}
@@ -80,7 +80,7 @@ export function CalendarFilterSelect({
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-6 px-2 text-xs text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300"
+                className="h-6 px-2 text-xs text-muted-foreground hover:text-zinc-700 dark:hover:text-zinc-300"
                 onClick={handleClearSelection}
               >
                 <X className="h-3 w-3 mr-1" />
@@ -97,8 +97,8 @@ export function CalendarFilterSelect({
             onClick={handleSelectAll}
             className={cn(
               'flex w-full items-center gap-3 rounded-md px-2 py-2 text-sm transition-colors',
-              'hover:bg-zinc-100 dark:hover:bg-zinc-800',
-              isAllSelected && 'bg-zinc-100 dark:bg-zinc-800',
+              'hover:bg-secondary dark:hover:bg-secondary',
+              isAllSelected && 'bg-secondary dark:bg-secondary',
             )}
           >
             <div
@@ -109,13 +109,13 @@ export function CalendarFilterSelect({
             >
               {isAllSelected && <Check className="h-3 w-3" />}
             </div>
-            <Calendar className="h-4 w-4 text-zinc-500" />
+            <Calendar className="h-4 w-4 text-muted-foreground" />
             <span className="text-zinc-700 dark:text-zinc-300">
               {t('analytics.calendarFilter.allCalendars', 'All Calendars')}
             </span>
           </button>
 
-          <div className="my-1 h-px bg-zinc-200 dark:bg-zinc-800" />
+          <div className="my-1 h-px bg-accent dark:bg-secondary" />
 
           {/* Individual calendars */}
           {calendars.map((calendar) => {
@@ -129,8 +129,8 @@ export function CalendarFilterSelect({
                 onClick={() => handleToggleCalendar(calendar.id)}
                 className={cn(
                   'flex w-full items-center gap-3 rounded-md px-2 py-2 text-sm transition-colors',
-                  'hover:bg-zinc-100 dark:hover:bg-zinc-800',
-                  isSelected && 'bg-zinc-100 dark:bg-zinc-800',
+                  'hover:bg-secondary dark:hover:bg-secondary',
+                  isSelected && 'bg-secondary dark:bg-secondary',
                 )}
               >
                 <div
@@ -148,7 +148,7 @@ export function CalendarFilterSelect({
           })}
 
           {calendars.length === 0 && (
-            <div className="px-2 py-4 text-center text-sm text-zinc-500">
+            <div className="px-2 py-4 text-center text-sm text-muted-foreground">
               {t('analytics.calendarFilter.noCalendars', 'No calendars available')}
             </div>
           )}

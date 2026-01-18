@@ -20,31 +20,31 @@ export function ColorDisplay({ backgroundColor, foregroundColor, colorId }: Colo
         {backgroundColor && (
           <div className="flex items-center gap-3">
             <div
-              className="w-8 h-8 rounded-md border border-zinc-200 dark:border-zinc-800"
+              className="w-8 h-8 rounded-md border border dark:border"
               style={{ backgroundColor }}
             />
             <div>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400">Background</p>
-              <p className="text-sm text-zinc-600 dark:text-zinc-400 font-mono">{backgroundColor}</p>
+              <p className="text-xs text-muted-foreground dark:text-muted-foreground">Background</p>
+              <p className="text-sm text-zinc-600 dark:text-muted-foreground font-mono">{backgroundColor}</p>
             </div>
           </div>
         )}
         {foregroundColor && (
           <div className="flex items-center gap-3">
             <div
-              className="w-8 h-8 rounded-md border border-zinc-200 dark:border-zinc-800"
+              className="w-8 h-8 rounded-md border border dark:border"
               style={{ backgroundColor: foregroundColor }}
             />
             <div>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400">Foreground</p>
-              <p className="text-sm text-zinc-600 dark:text-zinc-400 font-mono">{foregroundColor}</p>
+              <p className="text-xs text-muted-foreground dark:text-muted-foreground">Foreground</p>
+              <p className="text-sm text-zinc-600 dark:text-muted-foreground font-mono">{foregroundColor}</p>
             </div>
           </div>
         )}
         {colorId && (
           <div className="flex items-center gap-2">
-            <p className="text-xs text-zinc-500 dark:text-zinc-400">Color ID</p>
-            <p className="text-sm text-zinc-600 dark:text-zinc-400">{colorId}</p>
+            <p className="text-xs text-muted-foreground dark:text-muted-foreground">Color ID</p>
+            <p className="text-sm text-zinc-600 dark:text-muted-foreground">{colorId}</p>
           </div>
         )}
       </div>

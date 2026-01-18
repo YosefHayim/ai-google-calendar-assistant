@@ -35,7 +35,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, interval = 5000 }
           <div
             key={index}
             className={`h-2 w-2 rounded-full transition-all duration-300 ${
-              index === currentIndex ? 'bg-primary scale-125' : 'bg-white/50 dark:bg-zinc-700/50'
+              index === currentIndex ? 'bg-primary scale-125' : 'bg-background/50 dark:bg-zinc-700/50'
             }`}
           />
         ))}

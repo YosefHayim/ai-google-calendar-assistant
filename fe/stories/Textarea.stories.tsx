@@ -75,7 +75,7 @@ Action Items:
 - Sarah to finalize design specs
 - Mike to set up follow-up meeting`}
       />
-      <p className="text-sm text-zinc-500">Notes are automatically saved to your calendar event.</p>
+      <p className="text-sm text-muted-foreground">Notes are automatically saved to your calendar event.</p>
     </div>
   ),
 }

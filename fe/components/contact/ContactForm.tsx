@@ -180,9 +180,9 @@ export const ContactForm: React.FC = () => {
   if (submissionState === 'success') {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center">
-        <CheckCircle className="w-16 h-16 text-green-500 mb-4" />
-        <h3 className="text-2xl font-medium text-zinc-900 dark:text-zinc-100 mb-2">{t('contact.form.success')}</h3>
-        <p className="text-zinc-500 dark:text-zinc-400 mb-6">
+        <CheckCircle className="w-16 h-16 text-green-600 mb-4" />
+        <h3 className="text-2xl font-medium text-foreground dark:text-primary-foreground mb-2">{t('contact.form.success')}</h3>
+        <p className="text-muted-foreground dark:text-muted-foreground mb-6">
           We&apos;ve received your message and will get back to you soon.
         </p>
         <Button onClick={() => setSubmissionState('idle')} variant="outline">
@@ -244,7 +244,7 @@ export const ContactForm: React.FC = () => {
           value={form.message}
           onChange={handleInputChange}
           disabled={submissionState === 'loading'}
-          className="flex w-full rounded-lg border border-zinc-200 dark:border-zinc-800 bg-background px-3 py-2 text-sm text-foreground shadow-sm shadow-black/5 transition-shadow placeholder:text-muted-foreground/70 focus-visible:border-primary focus-visible:outline-none focus-visible:ring-[0.01px] focus-visible:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-50 resize-none"
+          className="flex w-full rounded-lg border border dark:border bg-background px-3 py-2 text-sm text-foreground shadow-sm shadow-black/5 transition-shadow placeholder:text-muted-foreground/70 focus-visible:border-primary focus-visible:outline-none focus-visible:ring-[0.01px] focus-visible:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-50 resize-none"
         />
       </div>
 
@@ -256,7 +256,7 @@ export const ContactForm: React.FC = () => {
           onDrop={handleDrop}
           className={cn(
             'border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors',
-            isDragOver ? 'border-primary bg-primary/5' : 'border-zinc-200 dark:border-zinc-800 hover:border-primary/50',
+            isDragOver ? 'border-primary bg-primary/5' : 'border dark:border hover:border-primary/50',
             submissionState === 'loading' && 'opacity-50 cursor-not-allowed',
           )}
         >
@@ -270,9 +270,9 @@ export const ContactForm: React.FC = () => {
             accept={ALLOWED_FILE_TYPES.join(',')}
           />
           <label htmlFor="file-upload" className="cursor-pointer">
-            <Upload className="w-8 h-8 mx-auto mb-2 text-zinc-400" />
-            <p className="text-sm text-zinc-500 dark:text-zinc-400">Drag and drop files here, or click to browse</p>
-            <p className="text-xs text-zinc-400 mt-1">
+            <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
+            <p className="text-sm text-muted-foreground dark:text-muted-foreground">Drag and drop files here, or click to browse</p>
+            <p className="text-xs text-muted-foreground mt-1">
               Max {MAX_FILES} files, {MAX_FILE_SIZE_MB}MB each
             </p>
           </label>
@@ -283,7 +283,7 @@ export const ContactForm: React.FC = () => {
             {files.map((file, index) => (
               <div
                 key={`${file.name}-${index}`}
-                className="flex items-center justify-between p-2 bg-zinc-50 dark:bg-zinc-900 rounded-lg"
+                className="flex items-center justify-between p-2 bg-muted dark:bg-secondary rounded-lg"
               >
                 <span className="text-sm text-zinc-700 dark:text-zinc-300 truncate max-w-[200px]">{file.name}</span>
                 <Button
@@ -291,7 +291,7 @@ export const ContactForm: React.FC = () => {
                   variant="ghost"
                   size="icon"
                   onClick={() => removeFile(index)}
-                  className="h-6 w-6 text-zinc-400 hover:text-red-500"
+                  className="h-6 w-6 text-muted-foreground hover:text-destructive"
                   disabled={submissionState === 'loading'}
                 >
                   <X className="w-4 h-4" />
@@ -303,7 +303,7 @@ export const ContactForm: React.FC = () => {
       </div>
 
       {errorMessage && (
-        <div className="flex items-center gap-2 p-3 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg">
+        <div className="flex items-center gap-2 p-3 bg-destructive/5 dark:bg-red-900/20 text-destructive dark:text-red-400 rounded-lg">
           <AlertCircle className="w-4 h-4 flex-shrink-0" />
           <span className="text-sm">{errorMessage}</span>
         </div>

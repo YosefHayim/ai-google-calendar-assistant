@@ -88,17 +88,15 @@ const Navbar = () => {
     <>
       <nav
         className={`fixed top-0 left-0 right-0 z-[60] transition-all duration-300 ${
-          isScrolled
-            ? 'py-3 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800 shadow-sm'
-            : 'py-6 bg-transparent'
+          isScrolled ? 'py-3 bg-background/80 backdrop-blur-md border-b border shadow-sm' : 'py-6 bg-transparent'
         }`}
       >
         <div className="container mx-auto px-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-8 h-8 bg-zinc-900 dark:bg-white rounded-md flex items-center justify-center text-white dark:text-zinc-900 shadow-sm group-hover:scale-110 transition-transform">
+            <div className="w-8 h-8 bg-foreground dark:bg-background rounded-md flex items-center justify-center text-background dark:text-foreground shadow-sm group-hover:scale-110 transition-transform">
               <AllyLogo className="w-5 h-5" />
             </div>
-            <span className="font-medium text-xl tracking-tight flex items-center text-zinc-900 dark:text-zinc-100">
+            <span className="font-medium text-xl tracking-tight flex items-center text-foreground">
               Ally <BetaBadge />
             </span>
           </Link>
@@ -110,7 +108,7 @@ const Navbar = () => {
                 key={link.name}
                 href={link.href}
                 className={`text-sm font-medium transition-colors hover:text-primary ${
-                  pathname === link.href ? 'text-primary' : 'text-zinc-500 dark:text-zinc-400'
+                  pathname === link.href ? 'text-primary' : 'text-muted-foreground dark:text-muted-foreground'
                 }`}
               >
                 {link.name}
@@ -143,7 +141,7 @@ const Navbar = () => {
               <>
                 <Link
                   href="/login"
-                  className="text-sm font-medium text-zinc-500 dark:text-zinc-400 hover:text-primary dark:hover:text-zinc-100 transition-colors"
+                  className="text-sm font-medium text-muted-foreground dark:text-muted-foreground hover:text-primary dark:hover:text-primary-foreground transition-colors"
                 >
                   {t('navbar.login')}
                 </Link>
@@ -183,7 +181,7 @@ const Navbar = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsMobileMenuOpen(false)}
-              className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[70] md:hidden"
+              className="fixed inset-0 bg-foreground/40 backdrop-blur-sm z-[70] md:hidden"
             />
 
             {/* Left Sidebar */}
@@ -192,14 +190,14 @@ const Navbar = () => {
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed inset-y-0 left-0 w-[80%] max-w-sm z-[80] md:hidden shadow-2xl border-r border-zinc-200 dark:border-zinc-800 flex flex-col p-6 pt-10 bg-[#ffffff] dark:bg-[#09090b]"
+              className="fixed inset-y-0 left-0 w-[80%] max-w-sm z-[80] md:hidden shadow-2xl border-r border dark:border flex flex-col p-6 pt-10 bg-[#ffffff] dark:bg-[#09090b]"
             >
               <div className="flex items-center mb-10">
                 <Link href="/" className="flex items-center gap-2" onClick={() => setIsMobileMenuOpen(false)}>
-                  <div className="w-8 h-8 bg-zinc-900 dark:bg-white rounded-md flex items-center justify-center text-white dark:text-zinc-900">
+                  <div className="w-8 h-8 bg-secondary dark:bg-background rounded-md flex items-center justify-center text-white dark:text-foreground">
                     <AllyLogo className="w-5 h-5" />
                   </div>
-                  <span className="font-medium text-xl tracking-tight flex items-center text-zinc-900 dark:text-zinc-100">
+                  <span className="font-medium text-xl tracking-tight flex items-center text-foreground dark:text-primary-foreground">
                     Ally <BetaBadge />
                   </span>
                 </Link>
@@ -212,7 +210,7 @@ const Navbar = () => {
                     href={link.href}
                     onClick={() => setIsMobileMenuOpen(false)}
                     className={`text-xl font-medium transition-colors ${
-                      pathname === link.href ? 'text-primary' : 'text-zinc-900 dark:text-zinc-100'
+                      pathname === link.href ? 'text-primary' : 'text-foreground dark:text-primary-foreground'
                     }`}
                   >
                     {link.name}
@@ -226,7 +224,7 @@ const Navbar = () => {
                   href="https://discord.gg"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2.5 bg-zinc-100 dark:bg-zinc-900 rounded-lg text-zinc-500 hover:text-primary transition-colors"
+                  className="p-2.5 bg-secondary rounded-lg text-muted-foreground hover:text-primary transition-colors"
                   title="Discord"
                 >
                   <DiscordIcon className="w-5 h-5" />
@@ -235,7 +233,7 @@ const Navbar = () => {
                   href="https://t.me"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2.5 bg-zinc-100 dark:bg-zinc-900 rounded-lg text-zinc-500 hover:text-primary transition-colors"
+                  className="p-2.5 bg-secondary rounded-lg text-muted-foreground hover:text-primary transition-colors"
                   title="Telegram"
                 >
                   <TelegramIcon className="w-5 h-5" />
@@ -244,21 +242,21 @@ const Navbar = () => {
                   href="https://wa.me"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2.5 bg-zinc-100 dark:bg-zinc-900 rounded-lg text-zinc-500 hover:text-primary transition-colors"
+                  className="p-2.5 bg-secondary rounded-lg text-muted-foreground hover:text-primary transition-colors"
                   title="WhatsApp"
                 >
                   <WhatsAppIcon className="w-5 h-5" />
                 </a>
                 <a
                   href="mailto:hello@askally.io"
-                  className="p-2.5 bg-zinc-100 dark:bg-zinc-900 rounded-lg text-zinc-500 hover:text-primary transition-colors"
+                  className="p-2.5 bg-secondary rounded-lg text-muted-foreground hover:text-primary transition-colors"
                   title="Email"
                 >
                   <Mail className="w-5 h-5" />
                 </a>
               </div>
 
-              <div className="flex flex-col gap-4 pt-8 border-t border-zinc-100 dark:border-zinc-800">
+              <div className="flex flex-col gap-4 pt-8 border-t border-zinc-100 dark:border">
                 {isAuthenticated && !isLoading ? (
                   <>
                     <div className="flex items-center gap-3 mb-2">
@@ -269,8 +267,8 @@ const Navbar = () => {
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">{name}</p>
-                        <p className="text-xs text-zinc-500 dark:text-zinc-400 truncate">{user?.email}</p>
+                        <p className="text-sm font-medium text-foreground dark:text-primary-foreground truncate">{name}</p>
+                        <p className="text-xs text-muted-foreground dark:text-muted-foreground truncate">{user?.email}</p>
                       </div>
                     </div>
                     <Button
@@ -289,7 +287,7 @@ const Navbar = () => {
                     <InteractiveHoverButton
                       text={t('navbar.login')}
                       className="w-full h-14 text-lg bg-primary text-black border-primary border-2"
-                      dotClassName="bg-black group-hover:bg-black"
+                      dotClassName="bg-foreground group-hover:bg-foreground"
                       hoverContentClassName="text-primary"
                       onClick={() => {
                         setIsMobileMenuOpen(false)

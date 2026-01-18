@@ -22,12 +22,12 @@ export default function HomePage() {
       <section className="relative min-h-[90vh] flex items-center justify-center px-6 overflow-hidden">
         <div className="absolute inset-0 grid-background opacity-50" />
         <div className="relative z-10 max-w-4xl mx-auto text-center">
-          <h1 className="text-5xl md:text-7xl font-medium tracking-tight text-zinc-900 dark:text-zinc-100 mb-6">
+          <h1 className="text-5xl md:text-7xl font-medium tracking-tight text-foreground dark:text-primary-foreground mb-6">
             {t('home.title')}
             <br />
             <span className="text-primary">{t('home.titleHighlight')}</span>
           </h1>
-          <p className="text-xl md:text-2xl text-zinc-500 dark:text-zinc-400 mb-12 max-w-2xl mx-auto font-medium">
+          <p className="text-xl md:text-2xl text-muted-foreground dark:text-muted-foreground mb-12 max-w-2xl mx-auto font-medium">
             {t('home.subtitle')}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -40,7 +40,7 @@ export default function HomePage() {
               </Button>
             </Link>
           </div>
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-2 text-zinc-500 dark:text-zinc-400">
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-2 text-muted-foreground dark:text-muted-foreground">
             <span className="text-sm font-medium">{t('home.availableIn')}</span>
             <a
               href={SOCIAL_LINKS.TELEGRAM_BOT}
@@ -76,10 +76,10 @@ export default function HomePage() {
 
       <section className="py-16 md:py-24 px-4 sm:px-6 space-y-8 md:space-y-12">
         <div className="text-center mb-8 md:mb-12">
-          <h2 className="text-3xl md:text-4xl font-medium text-zinc-900 dark:text-zinc-100 mb-4">
+          <h2 className="text-3xl md:text-4xl font-medium text-foreground dark:text-primary-foreground mb-4">
             {t('home.featuresTitle')}
           </h2>
-          <p className="text-lg text-zinc-500 dark:text-zinc-400 max-w-2xl mx-auto">{t('home.featuresSubtitle')}</p>
+          <p className="text-lg text-muted-foreground dark:text-muted-foreground max-w-2xl mx-auto">{t('home.featuresSubtitle')}</p>
         </div>
 
         <AnimatedFeatureSpotlight3D
@@ -131,10 +131,10 @@ export default function HomePage() {
 
       <section className="py-24 px-6">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-medium text-zinc-900 dark:text-zinc-100 mb-6">
+          <h2 className="text-3xl md:text-4xl font-medium text-foreground dark:text-primary-foreground mb-6">
             {t('home.ctaTitle')}
           </h2>
-          <p className="text-lg text-zinc-500 dark:text-zinc-400 mb-8">{t('home.ctaSubtitle')}</p>
+          <p className="text-lg text-muted-foreground dark:text-muted-foreground mb-8">{t('home.ctaSubtitle')}</p>
           <Link href="/register" className="w-full sm:w-auto sm:inline-flex">
             <InteractiveHoverButton text={t('home.startForFree')} className="w-full sm:w-auto h-14 px-8 text-lg" />
           </Link>

@@ -6,12 +6,12 @@ import React from 'react'
 
 const TwoDTabSkeleton: React.FC = () => {
   return (
-    <div className="absolute inset-0 z-10 bg-white dark:bg-zinc-950 flex flex-col md:flex-row items-center justify-center p-4">
+    <div className="absolute inset-0 z-10 bg-background dark:bg-secondary flex flex-col md:flex-row items-center justify-center p-4">
       {/* Avatar Section */}
       <div className="flex flex-col items-center justify-center transition-all duration-700 w-full md:w-1/2">
         {/* Avatar Circle Skeleton */}
         <div className="relative flex items-center justify-center w-[280px] h-[280px] sm:w-[320px] sm:h-[320px] md:w-[450px] md:h-[450px]">
-          <div className="absolute inset-0 rounded-full bg-zinc-200 dark:bg-zinc-800 blur-[100px] opacity-20" />
+          <div className="absolute inset-0 rounded-full bg-accent dark:bg-secondary blur-[100px] opacity-20" />
           <Skeleton className="w-full h-full rounded-full" />
         </div>
 
@@ -23,8 +23,8 @@ const TwoDTabSkeleton: React.FC = () => {
       </div>
 
       {/* Conversation Context Sidebar Skeleton */}
-      <div className="hidden md:flex flex-col w-1/2 h-[70%] border-l border-zinc-200 dark:border-zinc-800 px-8 py-4">
-        <div className="flex items-center gap-2 mb-6 text-zinc-400">
+      <div className="hidden md:flex flex-col w-1/2 h-[70%] border-l border dark:border px-8 py-4">
+        <div className="flex items-center gap-2 mb-6 text-muted-foreground">
           <MessageSquare className="w-3.5 h-3.5" />
           <Skeleton className="h-3 w-24" />
         </div>

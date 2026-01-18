@@ -8,7 +8,7 @@ interface SkeletonProps {
 }
 
 export function Skeleton({ className, style }: SkeletonProps) {
-  return <div className={cn('animate-pulse rounded-md bg-zinc-200 dark:bg-zinc-800', className)} style={style} />
+  return <div className={cn('animate-pulse rounded-md bg-accent dark:bg-secondary', className)} style={style} />
 }
 
 // Card skeleton with icon, title, and value
@@ -16,7 +16,7 @@ export function SkeletonCard({ className }: SkeletonProps) {
   return (
     <div
       className={cn(
-        'bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md p-4 sm:p-6 shadow-sm',
+        'bg-background dark:bg-secondary border border dark:border rounded-md p-4 sm:p-6 shadow-sm',
         className,
       )}
     >
@@ -32,7 +32,7 @@ export function SkeletonInsightCard({ className }: SkeletonProps) {
   return (
     <div
       className={cn(
-        'bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-3 sm:p-4 md:p-6 flex flex-col gap-2 sm:gap-3 md:gap-4',
+        'bg-background dark:bg-secondary border border dark:border rounded-md shadow-sm p-3 sm:p-4 md:p-6 flex flex-col gap-2 sm:gap-3 md:gap-4',
         className,
       )}
     >
@@ -56,7 +56,7 @@ export function SkeletonChart({ className }: SkeletonProps) {
   return (
     <div
       className={cn(
-        'bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-4 sm:p-6',
+        'bg-background dark:bg-secondary border border dark:border rounded-md shadow-sm p-4 sm:p-6',
         className,
       )}
     >
@@ -81,7 +81,7 @@ export function SkeletonLineChart({ className }: SkeletonProps) {
   return (
     <div
       className={cn(
-        'bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-6',
+        'bg-background dark:bg-secondary border border dark:border rounded-md shadow-sm p-6',
         className,
       )}
     >
@@ -97,7 +97,7 @@ export function SkeletonLineChart({ className }: SkeletonProps) {
         {[0, 0.25, 0.5, 0.75, 1].map((ratio) => (
           <div
             key={ratio}
-            className="absolute left-4 right-4 h-px bg-zinc-200 dark:bg-zinc-800 opacity-50"
+            className="absolute left-4 right-4 h-px bg-accent dark:bg-secondary opacity-50"
             style={{ top: `${ratio * 100}%` }}
           />
         ))}
@@ -137,14 +137,14 @@ export function SkeletonDonutChart({ className }: SkeletonProps) {
   return (
     <div
       className={cn(
-        'bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-4 sm:p-6 flex flex-col xl:flex-row items-center gap-4 sm:gap-6 h-full',
+        'bg-background dark:bg-secondary border border dark:border rounded-md shadow-sm p-4 sm:p-6 flex flex-col xl:flex-row items-center gap-4 sm:gap-6 h-full',
         className,
       )}
     >
       <div className="relative w-32 h-32 sm:w-44 sm:h-44 flex-shrink-0">
         <Skeleton className="w-full h-full rounded-full" />
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-full bg-white dark:bg-zinc-950" />
+          <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-full bg-background dark:bg-secondary" />
         </div>
       </div>
       <div className="w-full space-y-1.5 sm:space-y-2">
@@ -167,7 +167,7 @@ export function SkeletonList({ items = 4, className }: SkeletonProps & { items?:
   return (
     <div
       className={cn(
-        'bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-4 sm:p-6',
+        'bg-background dark:bg-secondary border border dark:border rounded-md shadow-sm p-4 sm:p-6',
         className,
       )}
     >
@@ -198,7 +198,7 @@ export function SkeletonCalendarSources({ items = 4, className }: SkeletonProps 
   return (
     <div
       className={cn(
-        'bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-4 sm:p-6',
+        'bg-background dark:bg-secondary border border dark:border rounded-md shadow-sm p-4 sm:p-6',
         className,
       )}
     >
@@ -227,7 +227,7 @@ export function SkeletonHeatmap({ className }: SkeletonProps) {
   return (
     <div
       className={cn(
-        'bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-6',
+        'bg-background dark:bg-secondary border border dark:border rounded-md shadow-sm p-6',
         className,
       )}
     >
@@ -256,7 +256,7 @@ export function SkeletonIntegrationCard({ className }: SkeletonProps) {
   return (
     <div
       className={cn(
-        'bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md p-6 shadow-sm',
+        'bg-background dark:bg-secondary border border dark:border rounded-md p-6 shadow-sm',
         className,
       )}
     >
@@ -267,7 +267,7 @@ export function SkeletonIntegrationCard({ className }: SkeletonProps) {
       <Skeleton className="h-5 w-24 mb-2" />
       <Skeleton className="h-4 w-full mb-1" />
       <Skeleton className="h-4 w-3/4 mb-6" />
-      <div className="pt-4 border-t border-zinc-100 dark:border-zinc-800">
+      <div className="pt-4 border-t border-zinc-100 dark:border">
         <Skeleton className="h-9 w-full rounded-md" />
       </div>
     </div>
@@ -283,7 +283,7 @@ export function SkeletonMessageBubble({ isUser = false, className }: SkeletonPro
           'px-4 py-3 rounded-md shadow-sm max-w-[85%] md:max-w-[75%]',
           isUser
             ? 'bg-primary/20 rounded-tr-none'
-            : 'bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-tl-none',
+            : 'bg-background dark:bg-secondary border border dark:border rounded-tl-none',
         )}
       >
         <Skeleton className={cn('h-4 mb-2', isUser ? 'w-32' : 'w-48')} />

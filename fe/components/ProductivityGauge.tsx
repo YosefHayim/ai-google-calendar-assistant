@@ -41,13 +41,13 @@ const ProductivityGauge: React.FC<ProductivityGaugeProps> = ({ score }) => {
           />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-4xl font-bold text-zinc-900 dark:text-zinc-100">{score}</span>
-          <span className="text-xs font-medium text-zinc-500">Score</span>
+          <span className="text-4xl font-bold text-foreground dark:text-primary-foreground">{score}</span>
+          <span className="text-xs font-medium text-muted-foreground">Score</span>
         </div>
       </div>
       <div className="text-center">
-        <h4 className="font-medium text-zinc-900 dark:text-zinc-100">Productivity Score</h4>
-        <p className="text-xs text-zinc-500">Based on task completion & focus time.</p>
+        <h4 className="font-medium text-foreground dark:text-primary-foreground">Productivity Score</h4>
+        <p className="text-xs text-muted-foreground">Based on task completion & focus time.</p>
       </div>
     </div>
   )

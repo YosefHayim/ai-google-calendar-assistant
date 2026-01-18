@@ -10,7 +10,7 @@ const meta: Meta<typeof AssistantAvatar> = {
   },
   decorators: [
     (Story) => (
-      <div className="w-[600px] h-[600px] bg-zinc-50 dark:bg-zinc-950 flex items-center justify-center rounded-xl">
+      <div className="w-[600px] h-[600px] bg-muted dark:bg-secondary flex items-center justify-center rounded-xl">
         <Story />
       </div>
     ),
@@ -74,7 +74,7 @@ export const Compact: Story = {
   },
   decorators: [
     (Story) => (
-      <div className="w-[400px] h-[400px] bg-zinc-50 dark:bg-zinc-950 flex items-center justify-center rounded-xl">
+      <div className="w-[400px] h-[400px] bg-muted dark:bg-secondary flex items-center justify-center rounded-xl">
         <Story />
       </div>
     ),
@@ -90,7 +90,7 @@ export const CompactRecording: Story = {
   },
   decorators: [
     (Story) => (
-      <div className="w-[400px] h-[400px] bg-zinc-50 dark:bg-zinc-950 flex items-center justify-center rounded-xl">
+      <div className="w-[400px] h-[400px] bg-muted dark:bg-secondary flex items-center justify-center rounded-xl">
         <Story />
       </div>
     ),
@@ -106,7 +106,7 @@ export const CompactSpeaking: Story = {
   },
   decorators: [
     (Story) => (
-      <div className="w-[400px] h-[400px] bg-zinc-50 dark:bg-zinc-950 flex items-center justify-center rounded-xl">
+      <div className="w-[400px] h-[400px] bg-muted dark:bg-secondary flex items-center justify-center rounded-xl">
         <Story />
       </div>
     ),
@@ -122,7 +122,7 @@ export const CompactLoading: Story = {
   },
   decorators: [
     (Story) => (
-      <div className="w-[400px] h-[400px] bg-zinc-50 dark:bg-zinc-950 flex items-center justify-center rounded-xl">
+      <div className="w-[400px] h-[400px] bg-muted dark:bg-secondary flex items-center justify-center rounded-xl">
         <Story />
       </div>
     ),
@@ -138,7 +138,7 @@ export const DarkBackground: Story = {
   },
   decorators: [
     (Story) => (
-      <div className="w-[600px] h-[600px] bg-zinc-900 flex items-center justify-center rounded-xl">
+      <div className="w-[600px] h-[600px] bg-secondary flex items-center justify-center rounded-xl">
         <Story />
       </div>
     ),
@@ -149,26 +149,26 @@ export const AllStates: Story = {
   render: () => (
     <div className="grid grid-cols-2 gap-8">
       <div className="text-center">
-        <p className="text-sm font-medium mb-4 text-zinc-600 dark:text-zinc-400">Idle</p>
-        <div className="w-[250px] h-[250px] bg-zinc-100 dark:bg-zinc-900 rounded-xl flex items-center justify-center">
+        <p className="text-sm font-medium mb-4 text-zinc-600 dark:text-muted-foreground">Idle</p>
+        <div className="w-[250px] h-[250px] bg-secondary dark:bg-secondary rounded-xl flex items-center justify-center">
           <AssistantAvatar isRecording={false} isSpeaking={false} isLoading={false} compact={true} />
         </div>
       </div>
       <div className="text-center">
-        <p className="text-sm font-medium mb-4 text-zinc-600 dark:text-zinc-400">Recording</p>
-        <div className="w-[250px] h-[250px] bg-zinc-100 dark:bg-zinc-900 rounded-xl flex items-center justify-center">
+        <p className="text-sm font-medium mb-4 text-zinc-600 dark:text-muted-foreground">Recording</p>
+        <div className="w-[250px] h-[250px] bg-secondary dark:bg-secondary rounded-xl flex items-center justify-center">
           <AssistantAvatar isRecording={true} isSpeaking={false} isLoading={false} compact={true} />
         </div>
       </div>
       <div className="text-center">
-        <p className="text-sm font-medium mb-4 text-zinc-600 dark:text-zinc-400">Speaking</p>
-        <div className="w-[250px] h-[250px] bg-zinc-100 dark:bg-zinc-900 rounded-xl flex items-center justify-center">
+        <p className="text-sm font-medium mb-4 text-zinc-600 dark:text-muted-foreground">Speaking</p>
+        <div className="w-[250px] h-[250px] bg-secondary dark:bg-secondary rounded-xl flex items-center justify-center">
           <AssistantAvatar isRecording={false} isSpeaking={true} isLoading={false} compact={true} />
         </div>
       </div>
       <div className="text-center">
-        <p className="text-sm font-medium mb-4 text-zinc-600 dark:text-zinc-400">Loading</p>
-        <div className="w-[250px] h-[250px] bg-zinc-100 dark:bg-zinc-900 rounded-xl flex items-center justify-center">
+        <p className="text-sm font-medium mb-4 text-zinc-600 dark:text-muted-foreground">Loading</p>
+        <div className="w-[250px] h-[250px] bg-secondary dark:bg-secondary rounded-xl flex items-center justify-center">
           <AssistantAvatar isRecording={false} isSpeaking={false} isLoading={true} compact={true} />
         </div>
       </div>
@@ -176,7 +176,7 @@ export const AllStates: Story = {
   ),
   decorators: [
     (Story) => (
-      <div className="p-8 bg-zinc-50 dark:bg-zinc-950 rounded-xl">
+      <div className="p-8 bg-muted dark:bg-secondary rounded-xl">
         <Story />
       </div>
     ),

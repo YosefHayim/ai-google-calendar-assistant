@@ -30,7 +30,7 @@ const HELP_CATEGORIES = [
     title: 'Getting Started',
     description: 'Learn the basics of Ask Ally',
     icon: BookOpen,
-    color: 'bg-blue-500/10 text-blue-500',
+    color: 'bg-primary/10 text-primary',
   },
   {
     id: 'calendar-integration',
@@ -58,7 +58,7 @@ const HELP_CATEGORIES = [
     title: 'Troubleshooting',
     description: 'Fix common issues',
     icon: Wrench,
-    color: 'bg-red-500/10 text-red-500',
+    color: 'bg-destructive/10 text-destructive',
   },
 ]
 
@@ -214,14 +214,14 @@ export function HelpCenterPage() {
             <HelpCircle className="w-4 h-4" />
             Help Center
           </div>
-          <h1 className="text-4xl md:text-5xl font-medium tracking-tight text-zinc-900 dark:text-zinc-100 mb-4">
+          <h1 className="text-4xl md:text-5xl font-medium tracking-tight text-foreground dark:text-primary-foreground mb-4">
             How can we help you?
           </h1>
-          <p className="text-lg text-zinc-500 dark:text-zinc-400 mb-8 max-w-2xl mx-auto">
+          <p className="text-lg text-muted-foreground dark:text-muted-foreground mb-8 max-w-2xl mx-auto">
             Find answers to common questions, learn how to use Ask Ally, and get the support you need.
           </p>
           <div className="relative max-w-xl mx-auto">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-400" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
             <Input
               type="search"
               placeholder="Search for help articles..."
@@ -235,18 +235,18 @@ export function HelpCenterPage() {
 
       <section className="py-12 px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-xl font-medium text-zinc-900 dark:text-zinc-100 mb-6">Popular Topics</h2>
+          <h2 className="text-xl font-medium text-foreground dark:text-primary-foreground mb-6">Popular Topics</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {POPULAR_TOPICS.map((topic) => (
               <a
                 key={topic.title}
                 href={topic.href}
-                className="flex items-center gap-3 p-4 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-primary/50 dark:hover:border-primary/50 transition-colors"
+                className="flex items-center gap-3 p-4 rounded-xl bg-background dark:bg-secondary border border dark:border hover:border-primary/50 dark:hover:border-primary/50 transition-colors"
               >
                 <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
                   <topic.icon className="w-5 h-5 text-primary" />
                 </div>
-                <span className="font-medium text-zinc-900 dark:text-zinc-100">{topic.title}</span>
+                <span className="font-medium text-foreground dark:text-primary-foreground">{topic.title}</span>
               </a>
             ))}
           </div>
@@ -255,7 +255,7 @@ export function HelpCenterPage() {
 
       <section className="py-12 px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-xl font-medium text-zinc-900 dark:text-zinc-100 mb-6">Browse by Category</h2>
+          <h2 className="text-xl font-medium text-foreground dark:text-primary-foreground mb-6">Browse by Category</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-12">
             {filteredCategories.map((category) => (
               <button
@@ -264,21 +264,21 @@ export function HelpCenterPage() {
                 className={`text-left p-6 rounded-xl border transition-all ${
                   activeCategory === category.id
                     ? 'bg-primary/5 border-primary/50 dark:border-primary/50'
-                    : 'bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700'
+                    : 'bg-background dark:bg-secondary border dark:border hover:border-zinc-300 dark:hover:border-zinc-700'
                 }`}
               >
                 <div className={`w-12 h-12 rounded-xl ${category.color} flex items-center justify-center mb-4`}>
                   <category.icon className="w-6 h-6" />
                 </div>
-                <h3 className="text-lg font-medium text-zinc-900 dark:text-zinc-100 mb-1">{category.title}</h3>
-                <p className="text-sm text-zinc-500 dark:text-zinc-400">{category.description}</p>
+                <h3 className="text-lg font-medium text-foreground dark:text-primary-foreground mb-1">{category.title}</h3>
+                <p className="text-sm text-muted-foreground dark:text-muted-foreground">{category.description}</p>
               </button>
             ))}
           </div>
 
           {activeCategory && FAQ_DATA[activeCategory as keyof typeof FAQ_DATA] && (
-            <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 md:p-8">
-              <h3 className="text-xl font-medium text-zinc-900 dark:text-zinc-100 mb-6">
+            <div className="bg-background dark:bg-secondary rounded-2xl border border dark:border p-6 md:p-8">
+              <h3 className="text-xl font-medium text-foreground dark:text-primary-foreground mb-6">
                 {HELP_CATEGORIES.find((c) => c.id === activeCategory)?.title} FAQs
               </h3>
               <Accordion type="single" collapsible className="space-y-2">
@@ -286,12 +286,12 @@ export function HelpCenterPage() {
                   <AccordionItem
                     key={index}
                     value={`item-${index}`}
-                    className="border border-zinc-200 dark:border-zinc-800 rounded-lg px-4 data-[state=open]:bg-zinc-50 dark:data-[state=open]:bg-zinc-800/50"
+                    className="border border dark:border rounded-lg px-4 data-[state=open]:bg-muted dark:data-[state=open]:bg-secondary/50"
                   >
-                    <AccordionTrigger className="text-left text-zinc-900 dark:text-zinc-100 hover:no-underline py-4">
+                    <AccordionTrigger className="text-left text-foreground dark:text-primary-foreground hover:no-underline py-4">
                       {faq.question}
                     </AccordionTrigger>
-                    <AccordionContent className="text-zinc-500 dark:text-zinc-400 pb-4">{faq.answer}</AccordionContent>
+                    <AccordionContent className="text-muted-foreground dark:text-muted-foreground pb-4">{faq.answer}</AccordionContent>
                   </AccordionItem>
                 ))}
               </Accordion>
@@ -300,13 +300,13 @@ export function HelpCenterPage() {
         </div>
       </section>
 
-      <section className="py-16 md:py-24 px-4 sm:px-6 bg-zinc-50 dark:bg-zinc-900/50">
+      <section className="py-16 md:py-24 px-4 sm:px-6 bg-muted dark:bg-secondary/50">
         <div className="max-w-4xl mx-auto text-center">
           <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-6">
             <MessageCircle className="w-8 h-8 text-primary" />
           </div>
-          <h2 className="text-2xl md:text-3xl font-medium text-zinc-900 dark:text-zinc-100 mb-4">Still need help?</h2>
-          <p className="text-zinc-500 dark:text-zinc-400 mb-8 max-w-xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-medium text-foreground dark:text-primary-foreground mb-4">Still need help?</h2>
+          <p className="text-muted-foreground dark:text-muted-foreground mb-8 max-w-xl mx-auto">
             Can&apos;t find what you&apos;re looking for? Our support team is here to help you with any questions.
           </p>
           <Link href="/contact">

@@ -102,7 +102,7 @@ const Testimonials = () => {
   const { t } = useTranslation()
 
   return (
-    <section className="py-20 md:py-28 relative overflow-hidden bg-zinc-50 dark:bg-zinc-950">
+    <section className="py-20 md:py-28 relative overflow-hidden bg-muted dark:bg-secondary">
       <div className="absolute inset-0 z-0 opacity-30 pointer-events-none" aria-hidden="true">
         <div className="absolute top-[10%] left-[10%] h-[300px] w-[300px] rounded-full bg-[radial-gradient(circle_farthest-side,rgba(var(--primary-rgb,34,197,94),0.15),rgba(255,255,255,0))]" />
         <div className="absolute bottom-[10%] right-[10%] h-[300px] w-[300px] rounded-full bg-[radial-gradient(circle_farthest-side,rgba(139,92,246,0.1),rgba(255,255,255,0))]" />
@@ -118,11 +118,11 @@ const Testimonials = () => {
         >
           <p className="text-xs font-bold text-primary uppercase tracking-[0.2em] mb-4">{t('testimonials.badge')}</p>
 
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight text-center text-zinc-900 dark:text-zinc-100">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight text-center text-foreground dark:text-primary-foreground">
             {t('testimonials.title')}
           </h2>
 
-          <p className="text-center mt-5 text-zinc-500 dark:text-zinc-400 max-w-md">
+          <p className="text-center mt-5 text-muted-foreground dark:text-muted-foreground max-w-md">
             {t('testimonials.subtitle', 'See what early users are saying about Ally. Your feedback could be here too!')}
           </p>
 

@@ -275,7 +275,7 @@ export function ChatInterface() {
     <div className="flex h-full w-full relative overflow-hidden">
       <div className="flex-1 flex flex-col h-full mx-auto w-full relative overflow-hidden">
         {/* Mobile header for tabs */}
-        <div className="md:hidden flex justify-center py-2 bg-zinc-50/80 dark:bg-zinc-950/80 backdrop-blur-sm border-b border-zinc-200/50 dark:border-zinc-800/50">
+        <div className="md:hidden flex justify-center py-2 bg-muted/80 dark:bg-secondary/80 backdrop-blur-sm border-b border/50 dark:border/50">
           <ViewSwitcher activeTab={activeTab} onTabChange={setActiveTab} />
         </div>
 

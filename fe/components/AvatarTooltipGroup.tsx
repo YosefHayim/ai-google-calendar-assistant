@@ -29,7 +29,7 @@ const TooltipAvatar: React.FC<AvatarProps & { index: number }> = ({ src, name, f
             initial={{ opacity: 0, y: 10, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 5, scale: 0.95 }}
-            className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-xs font-bold rounded shadow-xl whitespace-nowrap z-50 pointer-events-none"
+            className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-secondary dark:bg-background text-white dark:text-foreground text-xs font-bold rounded shadow-xl whitespace-nowrap z-50 pointer-events-none"
           >
             {name}
             <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-zinc-900 dark:border-t-white" />
@@ -37,13 +37,13 @@ const TooltipAvatar: React.FC<AvatarProps & { index: number }> = ({ src, name, f
         )}
       </AnimatePresence>
       <div
-        className="relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full border-2 border-white dark:border-zinc-950 bg-zinc-100 dark:bg-zinc-800 transition-transform hover:scale-110 hover:z-10 cursor-pointer"
+        className="relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full border-2 border-white dark:border-zinc-950 bg-secondary dark:bg-secondary transition-transform hover:scale-110 hover:z-10 cursor-pointer"
         style={{ marginLeft: index === 0 ? 0 : '-12px' }}
       >
         {src ? (
           <img className="aspect-square h-full w-full object-cover" src={src} alt={name} />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-xs font-bold text-zinc-500">
+          <div className="flex h-full w-full items-center justify-center text-xs font-bold text-muted-foreground">
             {fallback}
           </div>
         )}
@@ -73,8 +73,8 @@ const AvatarTooltipGroup = () => {
               <Star key={index} className="size-3.5 fill-amber-400 text-amber-400" />
             ))}
           </div>
-          <p className="text-xs text-left font-medium text-zinc-500 dark:text-zinc-400 leading-none">
-            Trusted by <strong className="text-zinc-900 dark:text-zinc-100">5,000+</strong> Business Owners
+          <p className="text-xs text-left font-medium text-muted-foreground dark:text-muted-foreground leading-none">
+            Trusted by <strong className="text-foreground dark:text-primary-foreground">5,000+</strong> Business Owners
           </p>
         </div>
       </div>

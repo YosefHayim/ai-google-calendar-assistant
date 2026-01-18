@@ -252,13 +252,13 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
                     <img
                       src={image.preview}
                       alt="Upload preview"
-                      className="w-14 h-14 sm:w-16 sm:h-16 object-cover rounded-lg border border-zinc-200 dark:border-zinc-700 cursor-pointer hover:opacity-80 transition-opacity"
+                      className="w-14 h-14 sm:w-16 sm:h-16 object-cover rounded-lg border border dark:border-zinc-700 cursor-pointer hover:opacity-80 transition-opacity"
                     />
                   </button>
                   <button
                     type="button"
                     onClick={() => removeImage(image.id)}
-                    className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity shadow-sm"
+                    className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-destructive hover:bg-destructive text-white rounded-full flex items-center justify-center opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity shadow-sm"
                     title="Remove image"
                   >
                     <Trash2 className="w-3 h-3" />
@@ -288,7 +288,7 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.2 }}
-              className="relative flex flex-col items-center justify-center backdrop-blur-xl bg-white/80 dark:bg-zinc-900/80 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-2xl p-4 transition-all"
+              className="relative flex flex-col items-center justify-center backdrop-blur-xl bg-background/80 dark:bg-secondary/80 border border dark:border rounded-2xl shadow-2xl p-4 transition-all"
             >
               <AIVoiceInput
                 onStart={onStartRecording}
@@ -303,7 +303,7 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
                 variant="ghost"
                 size="icon"
                 onClick={onCancelRecording}
-                className="absolute top-3 right-3 sm:top-4 sm:right-4 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
+                className="absolute top-3 right-3 sm:top-4 sm:right-4 text-muted-foreground hover:text-zinc-600 dark:hover:text-zinc-300"
               >
                 <X className="w-5 h-5" />
               </Button>
@@ -316,7 +316,7 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
               onSubmit={handleSubmit}
-              className="relative backdrop-blur-xl bg-white/90 dark:bg-zinc-900/90 border border-zinc-200/80 dark:border-zinc-800/80 rounded-2xl shadow-2xl overflow-hidden"
+              className="relative backdrop-blur-xl bg-background/90 dark:bg-secondary/90 border border/80 dark:border/80 rounded-2xl shadow-2xl overflow-hidden"
             >
               <Input
                 ref={fileInputRef}
@@ -336,8 +336,8 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
                     onClick={() => fileInputRef.current?.click()}
                     className={cn(
                       'h-8 w-8 sm:h-10 sm:w-10 rounded-xl flex items-center justify-center transition-colors',
-                      'text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200',
-                      'hover:bg-zinc-100 dark:hover:bg-zinc-800',
+                      'text-muted-foreground hover:text-zinc-700 dark:hover:text-zinc-200',
+                      'hover:bg-secondary dark:hover:bg-secondary',
                       (isDisabled || !canAddMoreImages) && 'opacity-40 cursor-not-allowed',
                     )}
                     disabled={isDisabled || !canAddMoreImages}
@@ -354,8 +354,8 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
                     className={cn(
                       'h-8 w-8 sm:h-10 sm:w-10 rounded-xl flex items-center justify-center transition-colors',
                       isRecording
-                        ? 'text-red-500 bg-red-50 dark:bg-red-950/30'
-                        : 'text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800',
+                        ? 'text-destructive bg-destructive/5 dark:bg-red-950/30'
+                        : 'text-muted-foreground hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-secondary dark:hover:bg-secondary',
                       (isDisabled || !speechRecognitionSupported) && 'opacity-40 cursor-not-allowed',
                     )}
                     disabled={isDisabled || !speechRecognitionSupported}
@@ -386,10 +386,10 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
                       'w-full min-h-[100px] max-h-[200px] overflow-y-auto resize-none',
                       'bg-transparent border-0 shadow-none outline-none',
                       'py-3 px-2 sm:px-3 text-sm sm:text-base font-medium',
-                      'placeholder:text-zinc-400 dark:placeholder:text-zinc-500 placeholder:italic placeholder:font-normal',
-                      'text-zinc-900 dark:text-zinc-100',
+                      'placeholder:text-muted-foreground dark:placeholder:text-muted-foreground placeholder:italic placeholder:font-normal',
+                      'text-foreground dark:text-primary-foreground',
                       inputDirection === 'rtl' && 'text-right',
-                      isInputTooLong && 'text-red-500',
+                      isInputTooLong && 'text-destructive',
                     )}
                     disabled={isDisabled}
                     dir={inputDirection}
@@ -402,7 +402,7 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
                         exit={{ opacity: 0, y: 5 }}
                         className={cn(
                           'absolute right-2 bottom-1 text-xs font-mono',
-                          isInputTooLong ? 'text-red-500' : 'text-zinc-400',
+                          isInputTooLong ? 'text-destructive' : 'text-muted-foreground',
                         )}
                       >
                         {input.length}/{MAX_INPUT_LENGTH}
@@ -418,7 +418,7 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={onCancel}
-                      className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl flex items-center justify-center bg-red-500 hover:bg-red-600 text-white shadow-lg transition-colors"
+                      className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl flex items-center justify-center bg-destructive hover:bg-destructive text-white shadow-lg transition-colors"
                       title="Cancel AI response"
                     >
                       <motion.div animate={{ scale: [1, 1.1, 1] }} transition={{ repeat: Infinity, duration: 1.5 }}>
@@ -434,8 +434,8 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
                       className={cn(
                         'h-10 w-10 sm:h-12 sm:w-12 rounded-xl flex items-center justify-center transition-all duration-200',
                         hasContent && !isLoading && !isInputTooLong
-                          ? 'bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 shadow-lg hover:shadow-xl'
-                          : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-400 dark:text-zinc-500',
+                          ? 'bg-secondary dark:bg-secondary text-white dark:text-foreground shadow-lg hover:shadow-xl'
+                          : 'bg-secondary dark:bg-secondary text-muted-foreground dark:text-muted-foreground',
                       )}
                       title={isInputTooLong ? 'Message too long' : undefined}
                     >

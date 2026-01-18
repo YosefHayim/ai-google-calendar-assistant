@@ -88,8 +88,8 @@ export function PaymentMethodCard({ paymentMethod, onUpdate, className }: Paymen
       <Card className={cn('p-6', className)}>
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-lg font-semibold text-zinc-900 dark:text-white mb-1">Payment Method</h3>
-            <p className="text-sm text-zinc-500 dark:text-zinc-400">No payment method on file</p>
+            <h3 className="text-lg font-semibold text-foreground dark:text-white mb-1">Payment Method</h3>
+            <p className="text-sm text-muted-foreground dark:text-muted-foreground">No payment method on file</p>
           </div>
           {onUpdate && (
             <Button variant="outline" size="sm" onClick={onUpdate}>
@@ -108,7 +108,7 @@ export function PaymentMethodCard({ paymentMethod, onUpdate, className }: Paymen
   return (
     <Card className={cn('p-6', className)}>
       <div className="flex items-start justify-between mb-4">
-        <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">Payment Method</h3>
+        <h3 className="text-lg font-semibold text-foreground dark:text-white">Payment Method</h3>
         {onUpdate && (
           <Button variant="ghost" size="sm" onClick={onUpdate}>
             Update
@@ -119,25 +119,25 @@ export function PaymentMethodCard({ paymentMethod, onUpdate, className }: Paymen
       <div className="bg-gradient-to-br from-zinc-800 to-zinc-900 dark:from-zinc-700 dark:to-zinc-800 rounded-xl p-4 shadow-lg">
         <div className="flex items-center justify-between mb-6">
           <CardIcon className="w-12 h-8" />
-          {paymentMethod.isDefault && <span className="text-xs text-zinc-400 uppercase tracking-wider">Default</span>}
+          {paymentMethod.isDefault && <span className="text-xs text-muted-foreground uppercase tracking-wider">Default</span>}
         </div>
 
         <div className="space-y-2">
           <div className="flex items-center gap-2">
-            <span className="text-zinc-400 text-lg tracking-widest">••••</span>
-            <span className="text-zinc-400 text-lg tracking-widest">••••</span>
-            <span className="text-zinc-400 text-lg tracking-widest">••••</span>
+            <span className="text-muted-foreground text-lg tracking-widest">••••</span>
+            <span className="text-muted-foreground text-lg tracking-widest">••••</span>
+            <span className="text-muted-foreground text-lg tracking-widest">••••</span>
             <span className="text-white text-lg tracking-widest font-mono">{paymentMethod.last4}</span>
           </div>
 
           <div className="flex items-center justify-between">
             <div>
-              <span className="text-xs text-zinc-500 uppercase block">Expires</span>
+              <span className="text-xs text-muted-foreground uppercase block">Expires</span>
               <span className="text-white font-mono">
                 {expiryMonth}/{expiryYear}
               </span>
             </div>
-            <span className="text-xs text-zinc-500 uppercase">
+            <span className="text-xs text-muted-foreground uppercase">
               {paymentMethod.brand.charAt(0).toUpperCase() + paymentMethod.brand.slice(1)}
             </span>
           </div>

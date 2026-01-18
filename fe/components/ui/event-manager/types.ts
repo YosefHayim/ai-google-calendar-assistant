@@ -47,12 +47,12 @@ export interface ActionResult {
 }
 
 export const defaultColors: ColorDefinition[] = [
-  { name: 'Blue', value: 'blue', bg: 'bg-blue-500', text: 'text-blue-700' },
+  { name: 'Blue', value: 'blue', bg: 'bg-primary', text: 'text-blue-700' },
   { name: 'Green', value: 'green', bg: 'bg-green-500', text: 'text-green-700' },
   { name: 'Purple', value: 'purple', bg: 'bg-purple-500', text: 'text-purple-700' },
   { name: 'Orange', value: 'orange', bg: 'bg-orange-500', text: 'text-orange-700' },
   { name: 'Pink', value: 'pink', bg: 'bg-pink-500', text: 'text-pink-700' },
-  { name: 'Red', value: 'red', bg: 'bg-red-500', text: 'text-red-700' },
+  { name: 'Red', value: 'red', bg: 'bg-destructive', text: 'text-red-700' },
 ]
 
 export const defaultCategories = ['Meeting', 'Task', 'Reminder', 'Personal']

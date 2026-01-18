@@ -11,7 +11,7 @@ const meta: Meta<typeof ViewSwitcher> = {
   },
   decorators: [
     (Story) => (
-      <div className="relative w-[400px] h-[100px] bg-zinc-100 dark:bg-zinc-900 rounded-xl">
+      <div className="relative w-[400px] h-[100px] bg-secondary dark:bg-secondary rounded-xl">
         <Story />
       </div>
     ),
@@ -49,7 +49,7 @@ export const Interactive: Story = {
     return (
       <div className="space-y-4">
         <ViewSwitcher activeTab={activeTab} onTabChange={setActiveTab} />
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-sm text-zinc-500">
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-sm text-muted-foreground">
           Current view: <span className="font-bold text-zinc-700 dark:text-zinc-300">{activeTab}</span>
         </div>
       </div>
@@ -64,7 +64,7 @@ export const OnLightBackground: Story = {
   },
   decorators: [
     (Story) => (
-      <div className="relative w-[400px] h-[100px] bg-white rounded-xl border border-zinc-200">
+      <div className="relative w-[400px] h-[100px] bg-background rounded-xl border border">
         <Story />
       </div>
     ),
@@ -78,7 +78,7 @@ export const OnDarkBackground: Story = {
   },
   decorators: [
     (Story) => (
-      <div className="relative w-[400px] h-[100px] bg-zinc-950 rounded-xl">
+      <div className="relative w-[400px] h-[100px] bg-secondary rounded-xl">
         <Story />
       </div>
     ),
@@ -108,20 +108,20 @@ export const AllTabs: Story = {
   render: () => (
     <div className="space-y-6">
       <div className="text-center">
-        <p className="text-sm font-medium mb-2 text-zinc-600 dark:text-zinc-400">Chat View Selected</p>
-        <div className="relative w-[400px] h-[80px] bg-zinc-100 dark:bg-zinc-900 rounded-xl mx-auto">
+        <p className="text-sm font-medium mb-2 text-zinc-600 dark:text-muted-foreground">Chat View Selected</p>
+        <div className="relative w-[400px] h-[80px] bg-secondary dark:bg-secondary rounded-xl mx-auto">
           <ViewSwitcher activeTab="chat" onTabChange={() => {}} />
         </div>
       </div>
       <div className="text-center">
-        <p className="text-sm font-medium mb-2 text-zinc-600 dark:text-zinc-400">2D Avatar View Selected</p>
-        <div className="relative w-[400px] h-[80px] bg-zinc-100 dark:bg-zinc-900 rounded-xl mx-auto">
+        <p className="text-sm font-medium mb-2 text-zinc-600 dark:text-muted-foreground">2D Avatar View Selected</p>
+        <div className="relative w-[400px] h-[80px] bg-secondary dark:bg-secondary rounded-xl mx-auto">
           <ViewSwitcher activeTab="avatar" onTabChange={() => {}} />
         </div>
       </div>
       <div className="text-center">
-        <p className="text-sm font-medium mb-2 text-zinc-600 dark:text-zinc-400">3D View Selected</p>
-        <div className="relative w-[400px] h-[80px] bg-zinc-100 dark:bg-zinc-900 rounded-xl mx-auto">
+        <p className="text-sm font-medium mb-2 text-zinc-600 dark:text-muted-foreground">3D View Selected</p>
+        <div className="relative w-[400px] h-[80px] bg-secondary dark:bg-secondary rounded-xl mx-auto">
           <ViewSwitcher activeTab="3d" onTabChange={() => {}} />
         </div>
       </div>
@@ -129,7 +129,7 @@ export const AllTabs: Story = {
   ),
   decorators: [
     (Story) => (
-      <div className="p-8 bg-zinc-50 dark:bg-zinc-950 rounded-xl">
+      <div className="p-8 bg-muted dark:bg-secondary rounded-xl">
         <Story />
       </div>
     ),

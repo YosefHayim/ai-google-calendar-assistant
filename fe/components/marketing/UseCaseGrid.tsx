@@ -19,11 +19,11 @@ const USE_CASE_CONFIG: UseCaseItem[] = [
     key: 'intelligentScheduling',
     illustration: (t) => (
       <div className="space-y-2">
-        <div className="text-xs font-medium bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 p-2 rounded-md rounded-br-none self-end flex items-center gap-2 max-w-max ml-auto">
+        <div className="text-xs font-medium bg-secondary text-white dark:bg-secondary dark:text-foreground p-2 rounded-md rounded-br-none self-end flex items-center gap-2 max-w-max ml-auto">
           <User size={16} />
           <span>{t('useCases.intelligentScheduling.userMessage')}</span>
         </div>
-        <div className="text-xs font-medium bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 p-2 rounded-md rounded-bl-none self-start flex items-center gap-2 max-w-max mr-auto">
+        <div className="text-xs font-medium bg-secondary dark:bg-secondary text-zinc-700 dark:text-zinc-300 p-2 rounded-md rounded-bl-none self-start flex items-center gap-2 max-w-max mr-auto">
           <AllyLogo className="w-4 h-4" />
           <div className="flex flex-col">
             <span>{t('useCases.intelligentScheduling.allyResponse')}</span>
@@ -41,10 +41,10 @@ const USE_CASE_CONFIG: UseCaseItem[] = [
     key: 'focusProtection',
     illustration: (t) => (
       <div className="space-y-2">
-        <div className="text-xs font-medium bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 p-2 rounded-md rounded-br-none self-end max-w-max ml-auto">
+        <div className="text-xs font-medium bg-secondary text-white dark:bg-secondary dark:text-foreground p-2 rounded-md rounded-br-none self-end max-w-max ml-auto">
           {t('useCases.focusProtection.userMessage')}
         </div>
-        <div className="text-xs font-medium bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 p-2 rounded-md rounded-bl-none self-start max-w-max mr-auto">
+        <div className="text-xs font-medium bg-secondary dark:bg-secondary text-zinc-700 dark:text-zinc-300 p-2 rounded-md rounded-bl-none self-start max-w-max mr-auto">
           {t('useCases.focusProtection.allyResponse')}
           <span className="font-bold text-primary"> {t('useCases.focusProtection.focusModeActive')}</span>
         </div>
@@ -56,10 +56,10 @@ const USE_CASE_CONFIG: UseCaseItem[] = [
     key: 'travelAgent',
     illustration: (t) => (
       <div className="space-y-2">
-        <div className="text-xs font-medium bg-red-500 text-white p-2 rounded-md">
+        <div className="text-xs font-medium bg-destructive text-white p-2 rounded-md">
           {t('useCases.travelAgent.delayAlert')}
         </div>
-        <div className="text-xs font-medium bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 p-2 rounded-md rounded-bl-none self-start max-w-max mr-auto flex items-center gap-2">
+        <div className="text-xs font-medium bg-secondary dark:bg-secondary text-zinc-700 dark:text-zinc-300 p-2 rounded-md rounded-bl-none self-start max-w-max mr-auto flex items-center gap-2">
           <AllyLogo className="w-4 h-4" />
           <span>{t('useCases.travelAgent.allyResponse')}</span>
         </div>
@@ -71,7 +71,7 @@ const USE_CASE_CONFIG: UseCaseItem[] = [
     key: 'voiceToAction',
     illustration: (t) => (
       <div className="space-y-2">
-        <div className="text-xs font-medium bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 p-2 rounded-md rounded-br-none self-end max-w-max ml-auto flex items-center gap-2">
+        <div className="text-xs font-medium bg-secondary text-white dark:bg-secondary dark:text-foreground p-2 rounded-md rounded-br-none self-end max-w-max ml-auto flex items-center gap-2">
           <div className="flex items-center gap-0.5 h-3">
             {[...Array(5)].map((_, i) => (
               <div
@@ -83,7 +83,7 @@ const USE_CASE_CONFIG: UseCaseItem[] = [
           </div>
           <span>{t('useCases.voiceToAction.userMessage')}</span>
         </div>
-        <div className="text-xs font-medium bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 p-2 rounded-md rounded-bl-none self-start max-w-max mr-auto">
+        <div className="text-xs font-medium bg-secondary dark:bg-secondary text-zinc-700 dark:text-zinc-300 p-2 rounded-md rounded-bl-none self-start max-w-max mr-auto">
           {t('useCases.voiceToAction.allyResponse')}
         </div>
       </div>
@@ -106,22 +106,22 @@ const UseCaseGrid = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.5 }}
               transition={{ delay: i * 0.1 }}
-              className="bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-xl p-6 flex flex-col justify-between hover:border-primary/30 dark:hover:border-primary/30 transition-colors"
+              className="bg-muted dark:bg-secondary/50 border border dark:border rounded-xl p-6 flex flex-col justify-between hover:border-primary/30 dark:hover:border-primary/30 transition-colors"
             >
               <div>
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 bg-white dark:bg-zinc-800 rounded-lg flex items-center justify-center border border-zinc-200 dark:border-zinc-700">
+                  <div className="w-10 h-10 bg-background dark:bg-secondary rounded-lg flex items-center justify-center border border dark:border-zinc-700">
                     <Icon className="w-5 h-5 text-primary" />
                   </div>
-                  <h3 className="text-lg font-medium text-zinc-900 dark:text-zinc-100">
+                  <h3 className="text-lg font-medium text-foreground dark:text-primary-foreground">
                     {t(`useCases.${useCase.key}.title`)}
                   </h3>
                 </div>
-                <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-6">
+                <p className="text-sm text-muted-foreground dark:text-muted-foreground mb-6">
                   {t(`useCases.${useCase.key}.description`)}
                 </p>
               </div>
-              <div className="bg-white dark:bg-zinc-800/50 p-4 rounded-md border border-zinc-200 dark:border-zinc-700 min-h-[100px] flex flex-col justify-center">
+              <div className="bg-background dark:bg-secondary/50 p-4 rounded-md border border dark:border-zinc-700 min-h-[100px] flex flex-col justify-center">
                 {useCase.illustration(t)}
               </div>
             </motion.div>

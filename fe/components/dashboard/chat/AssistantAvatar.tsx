@@ -44,7 +44,7 @@ export const AssistantAvatar: React.FC<AssistantAvatarProps> = ({ isRecording, i
         <div
           className={`${
             compact ? 'text-xl' : 'text-3xl md:text-4xl'
-          } font-medium text-zinc-900 dark:text-zinc-100 tracking-tight flex flex-col items-center justify-center gap-2`}
+          } font-medium text-foreground dark:text-primary-foreground tracking-tight flex flex-col items-center justify-center gap-2`}
         >
           <div className="flex items-center gap-3">
             <Typewriter
@@ -62,15 +62,15 @@ export const AssistantAvatar: React.FC<AssistantAvatarProps> = ({ isRecording, i
               }
               speed={45}
               waitTime={4000}
-              className="min-h-[1.5em] text-zinc-900 dark:text-zinc-100"
+              className="min-h-[1.5em] text-foreground dark:text-primary-foreground"
               cursorChar="_"
               cursorClassName="text-primary ml-1"
             />
           </div>
 
           {isRecording && (
-            <div className="flex items-center gap-2 text-red-500 text-xs font-bold uppercase tracking-widest animate-pulse mt-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-red-500" />
+            <div className="flex items-center gap-2 text-destructive text-xs font-bold uppercase tracking-widest animate-pulse mt-2">
+              <div className="w-1.5 h-1.5 rounded-full bg-destructive" />
               Listening...
             </div>
           )}

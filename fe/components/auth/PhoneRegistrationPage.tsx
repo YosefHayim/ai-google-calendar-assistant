@@ -61,25 +61,25 @@ const PhoneRegistrationPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-[#030303] flex flex-col relative overflow-hidden">
+    <div className="min-h-screen bg-background dark:bg-[#030303] flex flex-col relative overflow-hidden">
       <BackgroundPattern1 className="flex-1 flex flex-col items-center justify-center pt-0 pb-0">
         <div className="w-full max-w-md px-6 relative z-10">
           <div className="flex flex-col items-center text-center mb-10">
             <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mb-6 shadow-xl shadow-primary/10 border border-primary/20">
               <ShieldCheck className="w-10 h-10" />
             </div>
-            <h1 className="text-4xl font-medium tracking-tight text-zinc-900 dark:text-zinc-100 mb-4 leading-tight">
+            <h1 className="text-4xl font-medium tracking-tight text-foreground dark:text-primary-foreground mb-4 leading-tight">
               Secure your <span className="text-primary italic">Office.</span>
             </h1>
-            <p className="text-zinc-500 dark:text-zinc-400 text-lg font-medium leading-relaxed">
+            <p className="text-muted-foreground dark:text-muted-foreground text-lg font-medium leading-relaxed">
               Ally uses 2FA for all executive accounts. Enter your mobile number to establish your secure identity.
             </p>
           </div>
 
           <form onSubmit={handleSendOTP} className="space-y-2">
             <div className="flex flex-col gap-2">
-              <div className="relative group bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl flex items-stretch focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all overflow-hidden shadow-sm">
-                <div className="relative border-r border-zinc-200 dark:border-zinc-800 flex items-center bg-zinc-100/50 dark:bg-zinc-800/30">
+              <div className="relative group bg-muted dark:bg-secondary border border dark:border rounded-2xl flex items-stretch focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all overflow-hidden shadow-sm">
+                <div className="relative border-r border dark:border flex items-center bg-secondary/50 dark:bg-secondary/30">
                   <select
                     className="absolute inset-0 opacity-0 cursor-pointer z-10 w-full"
                     value={selectedCountry.code}
@@ -97,15 +97,15 @@ const PhoneRegistrationPage: React.FC = () => {
                       ))}
                   </select>
                   <div className="px-4 py-5 flex items-center gap-2 pointer-events-none">
-                    <span className="text-lg font-bold text-zinc-900 dark:text-zinc-100 min-w-[3rem] text-center">
+                    <span className="text-lg font-bold text-foreground dark:text-primary-foreground min-w-[3rem] text-center">
                       {selectedCountry.dialCode}
                     </span>
-                    <ChevronDown className="w-4 h-4 text-zinc-400" />
+                    <ChevronDown className="w-4 h-4 text-muted-foreground" />
                   </div>
                 </div>
 
                 <div className="flex-1 relative">
-                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-primary transition-colors">
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors">
                     <Phone size={16} />
                   </div>
                   <Input
@@ -118,7 +118,7 @@ const PhoneRegistrationPage: React.FC = () => {
                   />
                 </div>
               </div>
-              <p className="text-xs text-zinc-400 font-bold uppercase tracking-widest pl-2">
+              <p className="text-xs text-muted-foreground font-bold uppercase tracking-widest pl-2">
                 International Carrier Rates May Apply
               </p>
             </div>
@@ -133,7 +133,7 @@ const PhoneRegistrationPage: React.FC = () => {
           <Button
             onClick={() => router.push('/register')}
             variant="ghost"
-            className="mt-8 w-full text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 font-medium text-sm"
+            className="mt-8 w-full text-muted-foreground hover:text-foreground dark:hover:text-primary-foreground font-medium text-sm"
           >
             <ArrowLeft size={16} />
             Back to registration
@@ -141,7 +141,7 @@ const PhoneRegistrationPage: React.FC = () => {
         </div>
       </BackgroundPattern1>
 
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-2 opacity-30 select-none text-zinc-900 dark:text-white">
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-2 opacity-30 select-none text-foreground dark:text-white">
         <AllyLogo className="w-4 h-4" />
         <span className="text-xs font-bold uppercase tracking-[0.3em]">Ally Protocol Security</span>
       </div>

@@ -10,7 +10,7 @@ const meta: Meta<typeof StreamingMessage> = {
   },
   decorators: [
     (Story) => (
-      <div className="max-w-2xl mx-auto bg-zinc-50 dark:bg-zinc-950 p-6 rounded-xl">
+      <div className="max-w-2xl mx-auto bg-muted dark:bg-secondary p-6 rounded-xl">
         <Story />
       </div>
     ),
@@ -136,27 +136,27 @@ export const AllToolStates: Story = {
   render: () => (
     <div className="space-y-4">
       <div>
-        <p className="text-xs font-medium mb-2 text-zinc-500">Thinking (no tool)</p>
+        <p className="text-xs font-medium mb-2 text-muted-foreground">Thinking (no tool)</p>
         <StreamingMessage content="" currentTool={null} isStreaming={true} />
       </div>
       <div>
-        <p className="text-xs font-medium mb-2 text-zinc-500">parse_event_text</p>
+        <p className="text-xs font-medium mb-2 text-muted-foreground">parse_event_text</p>
         <StreamingMessage content="" currentTool="parse_event_text" isStreaming={true} />
       </div>
       <div>
-        <p className="text-xs font-medium mb-2 text-zinc-500">pre_create_validation</p>
+        <p className="text-xs font-medium mb-2 text-muted-foreground">pre_create_validation</p>
         <StreamingMessage content="" currentTool="pre_create_validation" isStreaming={true} />
       </div>
       <div>
-        <p className="text-xs font-medium mb-2 text-zinc-500">insert_event_direct</p>
+        <p className="text-xs font-medium mb-2 text-muted-foreground">insert_event_direct</p>
         <StreamingMessage content="" currentTool="insert_event_direct" isStreaming={true} />
       </div>
       <div>
-        <p className="text-xs font-medium mb-2 text-zinc-500">Streaming with content</p>
+        <p className="text-xs font-medium mb-2 text-muted-foreground">Streaming with content</p>
         <StreamingMessage content="I'm creating your event now..." currentTool={null} isStreaming={true} />
       </div>
       <div>
-        <p className="text-xs font-medium mb-2 text-zinc-500">Completed</p>
+        <p className="text-xs font-medium mb-2 text-muted-foreground">Completed</p>
         <StreamingMessage content="Your event has been created!" currentTool={null} isStreaming={false} />
       </div>
     </div>

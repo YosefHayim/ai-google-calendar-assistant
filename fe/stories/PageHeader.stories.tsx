@@ -182,7 +182,7 @@ export const PageWithSections: Story = {
             </Button>
           }
         />
-        <div className="h-32 bg-zinc-100 dark:bg-zinc-900 rounded-md flex items-center justify-center text-zinc-400">
+        <div className="h-32 bg-secondary dark:bg-secondary rounded-md flex items-center justify-center text-muted-foreground">
           Chart Placeholder
         </div>
       </div>
@@ -196,14 +196,14 @@ export const PageWithSections: Story = {
             </Button>
           }
         />
-        <div className="h-48 bg-zinc-100 dark:bg-zinc-900 rounded-md flex items-center justify-center text-zinc-400">
+        <div className="h-48 bg-secondary dark:bg-secondary rounded-md flex items-center justify-center text-muted-foreground">
           Activity List Placeholder
         </div>
       </div>
 
       <div className="space-y-4">
         <SectionHeader title="Connected Calendars" />
-        <div className="h-24 bg-zinc-100 dark:bg-zinc-900 rounded-md flex items-center justify-center text-zinc-400">
+        <div className="h-24 bg-secondary dark:bg-secondary rounded-md flex items-center justify-center text-muted-foreground">
           Calendar Sources Placeholder
         </div>
       </div>

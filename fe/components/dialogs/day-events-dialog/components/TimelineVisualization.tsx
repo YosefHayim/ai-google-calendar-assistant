@@ -13,11 +13,11 @@ interface TimelineVisualizationProps {
 
 export function TimelineVisualization({ events, calendarMap }: TimelineVisualizationProps) {
   return (
-    <div className="px-6 py-4 border-b border-zinc-200 dark:border-zinc-800">
+    <div className="px-6 py-4 border-b border dark:border">
       <div className="flex items-center gap-2 mb-2">
-        <span className="text-xs font-medium text-zinc-600 dark:text-zinc-400">Day Overview</span>
+        <span className="text-xs font-medium text-zinc-600 dark:text-muted-foreground">Day Overview</span>
       </div>
-      <div className="relative h-8 bg-zinc-100 dark:bg-zinc-800 rounded-md overflow-hidden">
+      <div className="relative h-8 bg-secondary dark:bg-secondary rounded-md overflow-hidden">
         <div className="absolute inset-y-0 left-0 bg-emerald-100 dark:bg-emerald-900/30" style={{ width: '100%' }} />
         {events.map((event, index) => {
           if (!event.start?.dateTime || !event.end?.dateTime) return null
@@ -62,7 +62,7 @@ export function TimelineVisualization({ events, calendarMap }: TimelineVisualiza
               className="absolute h-full border-l border-zinc-300 dark:border-zinc-600"
               style={{ left: `${(hour / 24) * 100}%` }}
             >
-              <span className="absolute -top-5 -translate-x-1/2 text-[10px] text-zinc-400">
+              <span className="absolute -top-5 -translate-x-1/2 text-[10px] text-muted-foreground">
                 {hour === 12 ? '12pm' : hour < 12 ? `${hour}am` : `${hour - 12}pm`}
               </span>
             </div>
@@ -70,8 +70,8 @@ export function TimelineVisualization({ events, calendarMap }: TimelineVisualiza
         </div>
       </div>
       <div className="flex justify-between mt-1">
-        <span className="text-[10px] text-zinc-400">12am</span>
-        <span className="text-[10px] text-zinc-400">12pm</span>
+        <span className="text-[10px] text-muted-foreground">12am</span>
+        <span className="text-[10px] text-muted-foreground">12pm</span>
       </div>
     </div>
   )

@@ -28,7 +28,7 @@ export const ImageLightbox: React.FC<ImageLightboxProps> = ({
             <button
               type="button"
               onClick={onPrevious}
-              className="absolute left-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors disabled:opacity-50"
+              className="absolute left-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-background/10 hover:bg-background/20 text-white transition-colors disabled:opacity-50"
               disabled={currentIndex === 0}
             >
               <ChevronLeft className="w-8 h-8" />
@@ -36,7 +36,7 @@ export const ImageLightbox: React.FC<ImageLightboxProps> = ({
             <button
               type="button"
               onClick={onNext}
-              className="absolute right-12 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors disabled:opacity-50"
+              className="absolute right-12 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-background/10 hover:bg-background/20 text-white transition-colors disabled:opacity-50"
               disabled={currentIndex === images.length - 1}
             >
               <ChevronRight className="w-8 h-8" />
@@ -51,7 +51,7 @@ export const ImageLightbox: React.FC<ImageLightboxProps> = ({
             className="max-w-full max-h-[85vh] object-contain rounded-lg"
           />
           {images.length > 1 && (
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-black/50 text-white text-sm">
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-foreground/50 text-white text-sm">
               {currentIndex + 1} / {images.length}
             </div>
           )}

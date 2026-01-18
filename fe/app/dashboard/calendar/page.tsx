@@ -148,8 +148,8 @@ function GoogleCalendarNotConnected({ authUrl }: { authUrl?: string }) {
           <CalendarDays className="h-8 w-8 text-primary" />
         </div>
         <div className="space-y-2">
-          <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Connect Google Calendar</h3>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
+          <h3 className="text-lg font-semibold text-foreground dark:text-primary-foreground">Connect Google Calendar</h3>
+          <p className="text-sm text-muted-foreground dark:text-muted-foreground">
             Connect your Google Calendar to view and manage your events directly from Ally.
           </p>
         </div>
@@ -361,7 +361,7 @@ function CalendarContent() {
     <div className="flex flex-col h-full">
       <div className="flex-1 overflow-auto p-4 sm:p-6">
         <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <h1 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100">Calendar</h1>
+          <h1 className="text-xl font-semibold text-foreground dark:text-primary-foreground">Calendar</h1>
           <div className="flex items-center gap-2">
             <Button
               variant="outline"

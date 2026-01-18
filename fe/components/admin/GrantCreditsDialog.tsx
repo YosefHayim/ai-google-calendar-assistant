@@ -72,7 +72,7 @@ export function GrantCreditsDialog({ user, onClose }: GrantCreditsDialogProps) {
               onChange={(e) => setCredits(e.target.value)}
               required
             />
-            <p className="text-xs text-zinc-500">
+            <p className="text-xs text-muted-foreground">
               Current balance: {user.subscription?.credits_remaining || 0} credits
             </p>
           </div>
@@ -86,7 +86,7 @@ export function GrantCreditsDialog({ user, onClose }: GrantCreditsDialogProps) {
               onChange={(e) => setReason(e.target.value)}
               rows={3}
             />
-            <p className="text-xs text-zinc-500">This will be logged for audit purposes</p>
+            <p className="text-xs text-muted-foreground">This will be logged for audit purposes</p>
           </div>
 
           <DialogFooter className="gap-2">

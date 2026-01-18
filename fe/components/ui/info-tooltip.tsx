@@ -54,7 +54,7 @@ export function InfoTooltip({
       <HoverCardTrigger asChild>
         <span
           className={cn(
-            'inline-flex cursor-help text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors',
+            'inline-flex cursor-help text-muted-foreground hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors',
             iconClassName,
           )}
         >
@@ -63,7 +63,7 @@ export function InfoTooltip({
       </HoverCardTrigger>
       <HoverCardContent side={side} align={align} className={cn(width, 'text-xs', contentClassName)}>
         {title && <p className="font-medium mb-1">{title}</p>}
-        <div className="text-zinc-500 dark:text-zinc-400">{children}</div>
+        <div className="text-muted-foreground dark:text-muted-foreground">{children}</div>
       </HoverCardContent>
     </HoverCard>
   )

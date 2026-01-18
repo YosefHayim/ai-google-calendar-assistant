@@ -24,10 +24,10 @@ export function PageHeader({ title, description, icon, tooltip, action, classNam
         )}
         <div className="min-w-0">
           <div className="flex items-center gap-1.5">
-            <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 truncate">{title}</h2>
+            <h2 className="text-lg font-semibold text-foreground dark:text-primary-foreground truncate">{title}</h2>
             {tooltip && <InfoTooltip>{tooltip}</InfoTooltip>}
           </div>
-          {description && <p className="text-sm text-zinc-500 dark:text-zinc-400 truncate">{description}</p>}
+          {description && <p className="text-sm text-muted-foreground dark:text-muted-foreground truncate">{description}</p>}
         </div>
       </div>
       {action && <div className="shrink-0">{action}</div>}

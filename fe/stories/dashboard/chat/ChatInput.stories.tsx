@@ -11,7 +11,7 @@ const meta: Meta<typeof ChatInput> = {
   },
   decorators: [
     (Story) => (
-      <div className="max-w-2xl mx-auto bg-zinc-50 dark:bg-zinc-950 p-4 rounded-xl">
+      <div className="max-w-2xl mx-auto bg-muted dark:bg-secondary p-4 rounded-xl">
         <Story />
       </div>
     ),

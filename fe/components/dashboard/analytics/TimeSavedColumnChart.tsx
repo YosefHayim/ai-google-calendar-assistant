@@ -134,7 +134,7 @@ const TimeSavedColumnChart: React.FC<TimeSavedColumnChartProps> = ({ data }) => 
 
           return (
             <div
-              className="absolute p-3 text-xs bg-zinc-900 dark:bg-zinc-800 text-white rounded-lg shadow-xl pointer-events-none border border-white/10 dark:border-zinc-700 min-w-[180px] z-50"
+              className="absolute p-3 text-xs bg-secondary dark:bg-secondary text-white rounded-lg shadow-xl pointer-events-none border border-white/10 dark:border-zinc-700 min-w-[180px] z-50"
               style={{
                 left: `${((padding + hoveredIndex * (barWidth + barSpacing) + barWidth / 2) / width) * 100}%`,
                 top: `${((padding + plotHeight - getBarHeight(point.hours) - 60) / height) * 100}%`,
@@ -144,15 +144,15 @@ const TimeSavedColumnChart: React.FC<TimeSavedColumnChartProps> = ({ data }) => 
             >
               <div className="flex flex-col gap-1.5">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-xs text-zinc-400 font-bold uppercase tracking-wider">Day {point.day}</span>
-                  <span className="text-xs text-zinc-400 font-medium">{formattedDate}</span>
+                  <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider">Day {point.day}</span>
+                  <span className="text-xs text-muted-foreground font-medium">{formattedDate}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-primary" />
                   <span className="text-sm font-bold text-white">{formatHours(point.hours)} saved</span>
                 </div>
                 <div className="pt-1 border-t border-zinc-700 dark:border-zinc-600">
-                  <span className="text-xs text-zinc-300 dark:text-zinc-400">
+                  <span className="text-xs text-zinc-300 dark:text-muted-foreground">
                     Available Hours Left:{' '}
                     <span className="font-bold text-white">{formatHours(availableHoursLeft)}</span>
                   </span>

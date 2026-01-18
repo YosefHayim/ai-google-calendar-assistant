@@ -51,15 +51,15 @@ function ServiceIndicator({
 
   const getStatusColor = () => {
     if (isHealthy) return 'text-emerald-600 dark:text-emerald-400'
-    if (isDisabled) return 'text-zinc-400 dark:text-zinc-500'
-    return 'text-red-600 dark:text-red-400'
+    if (isDisabled) return 'text-muted-foreground dark:text-muted-foreground'
+    return 'text-destructive dark:text-red-400'
   }
 
   return (
     <div className="flex items-center gap-1.5">
       <Icon className={`w-3 h-3 ${getStatusColor()}`} />
       <span className={`text-[10px] font-medium ${getStatusColor()}`}>{name}</span>
-      {detail && <span className="text-[9px] text-zinc-500 dark:text-zinc-400">({detail})</span>}
+      {detail && <span className="text-[9px] text-muted-foreground dark:text-muted-foreground">({detail})</span>}
     </div>
   )
 }
@@ -114,13 +114,13 @@ export function SystemStatus() {
   const getStatusDotColor = () => {
     if (isChecking) return 'bg-amber-500 dark:bg-amber-400'
     if (isOnline) return 'bg-emerald-500 dark:bg-emerald-400'
-    return 'bg-red-500 dark:bg-red-400'
+    return 'bg-destructive dark:bg-red-400'
   }
 
   const getStatusTextColor = () => {
-    if (isChecking) return 'text-amber-600 dark:text-amber-400'
+    if (isChecking) return 'text-amber-700 dark:text-amber-400'
     if (isOnline) return 'text-emerald-600 dark:text-emerald-400'
-    return 'text-red-600 dark:text-red-400'
+    return 'text-destructive dark:text-red-400'
   }
 
   return (
@@ -140,13 +140,13 @@ export function SystemStatus() {
         </TooltipTrigger>
         <TooltipContent
           side="top"
-          className="p-3 max-w-xs bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700"
+          className="p-3 max-w-xs bg-background dark:bg-secondary border border dark:border-zinc-700"
           sideOffset={8}
         >
           {isChecking ? (
-            <p className="text-xs text-zinc-600 dark:text-zinc-400">{t('footer.checkingServices')}</p>
+            <p className="text-xs text-zinc-600 dark:text-muted-foreground">{t('footer.checkingServices')}</p>
           ) : !isOnline || !healthData ? (
-            <p className="text-xs text-red-600 dark:text-red-400">{t('footer.serverUnreachable')}</p>
+            <p className="text-xs text-destructive dark:text-red-400">{t('footer.serverUnreachable')}</p>
           ) : (
             <div className="space-y-3">
               <div className="flex items-center justify-between gap-4">
@@ -156,13 +156,13 @@ export function SystemStatus() {
                     {t('footer.serverOnline')}
                   </span>
                 </div>
-                <span className="text-[10px] text-zinc-500 dark:text-zinc-400">
+                <span className="text-[10px] text-muted-foreground dark:text-muted-foreground">
                   {t('footer.uptime')}: {formatUptime(healthData.uptime)}
                 </span>
               </div>
 
               {healthData.services && (
-                <div className="border-t border-zinc-200 dark:border-zinc-700 pt-2 space-y-1.5">
+                <div className="border-t border dark:border-zinc-700 pt-2 space-y-1.5">
                   {healthData.services.websockets && (
                     <ServiceIndicator
                       icon={Wifi}
@@ -181,7 +181,9 @@ export function SystemStatus() {
                       name={t('footer.telegram')}
                       status={healthData.services.telegram.status}
                       detail={
-                        healthData.services.telegram.status === 'healthy' ? healthData.services.telegram.mode : undefined
+                        healthData.services.telegram.status === 'healthy'
+                          ? healthData.services.telegram.mode
+                          : undefined
                       }
                     />
                   )}
@@ -190,7 +192,9 @@ export function SystemStatus() {
                       icon={SlackIcon}
                       name={t('footer.slack')}
                       status={healthData.services.slack.status}
-                      detail={healthData.services.slack.status === 'healthy' ? healthData.services.slack.mode : undefined}
+                      detail={
+                        healthData.services.slack.status === 'healthy' ? healthData.services.slack.mode : undefined
+                      }
                     />
                   )}
                 </div>

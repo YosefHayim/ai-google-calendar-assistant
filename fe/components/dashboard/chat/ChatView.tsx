@@ -90,7 +90,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
       )}
       {error && (
         <div className="flex justify-center mb-6">
-          <div className="bg-red-50 dark:bg-red-900/20 border border-red-100 text-red-600 px-4 py-2 rounded-md flex items-center gap-2 text-sm">
+          <div className="bg-destructive/5 dark:bg-red-900/20 border border-red-100 text-destructive px-4 py-2 rounded-md flex items-center gap-2 text-sm">
             <AlertCircle size={16} /> {error}
           </div>
         </div>

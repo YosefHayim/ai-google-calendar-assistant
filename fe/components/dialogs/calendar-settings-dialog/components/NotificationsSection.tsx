@@ -21,13 +21,13 @@ export function NotificationsSection({ notifications }: NotificationsSectionProp
       title="Notification Settings"
       tooltipTitle="Notification Preferences"
       tooltipDescription="How you receive notifications for events in this calendar (email, popup, etc.)."
-      icon={<Mail className="w-4 h-4 text-zinc-500" />}
+      icon={<Mail className="w-4 h-4 text-muted-foreground" />}
     >
       <div className="space-y-1">
         {notifications.map((notification, index) => (
-          <div key={index} className="text-sm text-zinc-600 dark:text-zinc-400">
+          <div key={index} className="text-sm text-zinc-600 dark:text-muted-foreground">
             <span className="capitalize">{notification.type.replace(/([A-Z])/g, ' $1').trim()}</span>
-            <span className="text-zinc-500 dark:text-zinc-400"> - {notification.method}</span>
+            <span className="text-muted-foreground dark:text-muted-foreground"> - {notification.method}</span>
           </div>
         ))}
       </div>

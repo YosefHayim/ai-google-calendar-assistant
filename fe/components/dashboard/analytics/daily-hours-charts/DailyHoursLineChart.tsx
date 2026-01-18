@@ -48,28 +48,28 @@ export const DailyHoursLineChart: React.FC<DailyHoursLineChartProps> = ({ data, 
           axisLine={false}
           tickMargin={8}
           minTickGap={32}
-          className="text-zinc-500 dark:text-zinc-400"
+          className="text-muted-foreground dark:text-muted-foreground"
           tick={{ fill: 'currentColor', fontSize: 12 }}
         />
         <YAxis
           tickLine={false}
           axisLine={false}
           tickMargin={8}
-          className="text-zinc-500 dark:text-zinc-400"
+          className="text-muted-foreground dark:text-muted-foreground"
           tick={{ fill: 'currentColor', fontSize: 11 }}
           tickFormatter={(value) => `${value}h`}
         />
         <ChartTooltip
           content={
             <ChartTooltipContent
-              className="w-[180px] bg-zinc-900 dark:bg-zinc-800 text-white border-zinc-700"
+              className="w-[180px] bg-secondary dark:bg-secondary text-white border-zinc-700"
               nameKey="hours"
               labelFormatter={(value, payload) => {
                 if (payload && payload[0]) {
                   const point = payload[0].payload as DailyAvailableHoursDataPoint
                   return (
                     <div className="flex flex-col gap-1">
-                      <span className="text-zinc-400 text-xs">Day {point.day}</span>
+                      <span className="text-muted-foreground text-xs">Day {point.day}</span>
                       <span className="font-medium">{format(new Date(point.date), 'MMM dd, yyyy')}</span>
                     </div>
                   )

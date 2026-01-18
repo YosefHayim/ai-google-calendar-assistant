@@ -12,14 +12,14 @@ interface PlatformToggleProps {
 
 export const PlatformToggle = ({ platform, onToggle }: PlatformToggleProps) => (
   <div className="relative flex justify-center md:justify-end mb-8 z-50 md:pr-8">
-    <div className="inline-flex items-center p-1 rounded-full bg-zinc-100 dark:bg-zinc-800/80 backdrop-blur-sm border border-zinc-200 dark:border-zinc-700 shadow-lg">
+    <div className="inline-flex items-center p-1 rounded-full bg-secondary dark:bg-secondary/80 backdrop-blur-sm border border dark:border-zinc-700 shadow-lg">
       <button
         onClick={() => onToggle('telegram')}
         className={cn(
           'relative flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300',
           platform === 'telegram'
             ? 'text-white'
-            : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200',
+            : 'text-zinc-600 dark:text-muted-foreground hover:text-foreground dark:hover:text-zinc-200',
         )}
       >
         {platform === 'telegram' && (
@@ -38,7 +38,7 @@ export const PlatformToggle = ({ platform, onToggle }: PlatformToggleProps) => (
           'relative flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300',
           platform === 'slack'
             ? 'text-white'
-            : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200',
+            : 'text-zinc-600 dark:text-muted-foreground hover:text-foreground dark:hover:text-zinc-200',
         )}
       >
         {platform === 'slack' && (
@@ -57,7 +57,7 @@ export const PlatformToggle = ({ platform, onToggle }: PlatformToggleProps) => (
           'relative flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300',
           platform === 'whatsapp'
             ? 'text-white'
-            : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200',
+            : 'text-zinc-600 dark:text-muted-foreground hover:text-foreground dark:hover:text-zinc-200',
         )}
       >
         {platform === 'whatsapp' && (

@@ -191,7 +191,7 @@ export function SettingsModal({ isOpen, onClose, onSignOut, isDarkMode, toggleTh
       />
 
       <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-        <DialogContent className="w-[calc(100%-2rem)] max-w-3xl h-[85dvh] sm:h-[600px] p-0 gap-0 overflow-hidden bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 [&>button]:hidden">
+        <DialogContent className="w-[calc(100%-2rem)] max-w-3xl h-[85dvh] sm:h-[600px] p-0 gap-0 overflow-hidden bg-background dark:bg-secondary border dark:border [&>button]:hidden">
           <DialogHeader className="sr-only">
             <DialogTitle>Settings</DialogTitle>
             <DialogDescription>Manage your Ally preferences and settings.</DialogDescription>
@@ -208,7 +208,7 @@ export function SettingsModal({ isOpen, onClose, onSignOut, isDarkMode, toggleTh
                   variant="ghost"
                   size="icon"
                   onClick={onClose}
-                  className="h-8 w-8 text-zinc-500 hover:text-zinc-700"
+                  className="h-8 w-8 text-muted-foreground hover:text-zinc-700"
                 >
                   <X className="w-4 h-4" />
                 </Button>

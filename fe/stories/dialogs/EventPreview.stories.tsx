@@ -17,7 +17,7 @@ const meta: Meta<typeof EventPreview> = {
   },
   decorators: [
     (Story) => (
-      <div className="w-80 p-4 bg-zinc-50 dark:bg-zinc-900/50 rounded-lg">
+      <div className="w-80 p-4 bg-muted dark:bg-secondary/50 rounded-lg">
         <Story />
       </div>
     ),
@@ -166,11 +166,11 @@ export const NoCalendarName: Story = {
 export const AllVariants: Story = {
   render: () => (
     <div className="space-y-4 max-w-lg">
-      <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Event Preview Variants</h3>
+      <h3 className="text-lg font-semibold text-foreground dark:text-primary-foreground">Event Preview Variants</h3>
 
       <div className="space-y-3">
         <div>
-          <p className="text-xs font-medium text-zinc-500 mb-2">FULL DETAILS</p>
+          <p className="text-xs font-medium text-muted-foreground mb-2">FULL DETAILS</p>
           <EventPreview
             event={{
               summary: 'Product Demo',
@@ -184,7 +184,7 @@ export const AllVariants: Story = {
         </div>
 
         <div>
-          <p className="text-xs font-medium text-zinc-500 mb-2">DATE & TIME ONLY</p>
+          <p className="text-xs font-medium text-muted-foreground mb-2">DATE & TIME ONLY</p>
           <EventPreview
             event={{
               summary: 'Quick Sync',
@@ -196,7 +196,7 @@ export const AllVariants: Story = {
         </div>
 
         <div>
-          <p className="text-xs font-medium text-zinc-500 mb-2">MINIMAL</p>
+          <p className="text-xs font-medium text-muted-foreground mb-2">MINIMAL</p>
           <EventPreview
             event={{
               summary: 'Remember to call John',
@@ -205,7 +205,7 @@ export const AllVariants: Story = {
         </div>
 
         <div>
-          <p className="text-xs font-medium text-zinc-500 mb-2">WITH LOCATION</p>
+          <p className="text-xs font-medium text-muted-foreground mb-2">WITH LOCATION</p>
           <EventPreview
             event={{
               summary: 'Dinner Reservation',

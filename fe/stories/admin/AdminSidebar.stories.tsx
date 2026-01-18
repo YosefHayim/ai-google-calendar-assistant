@@ -16,7 +16,7 @@ const meta: Meta<typeof AdminSidebar> = {
   },
   decorators: [
     (Story) => (
-      <div className="h-screen bg-zinc-50 dark:bg-zinc-950">
+      <div className="h-screen bg-muted dark:bg-secondary">
         <Story />
       </div>
     ),
@@ -107,7 +107,7 @@ export const DarkMode: Story = {
   },
   decorators: [
     (Story) => (
-      <div className="dark h-screen bg-zinc-950">
+      <div className="dark h-screen bg-secondary">
         <Story />
       </div>
     ),

@@ -40,6 +40,7 @@ export interface ConversationListItem {
   messageCount: number
   lastUpdated: string
   createdAt: string
+  pinned: boolean
 }
 
 export interface FullConversation {
@@ -103,6 +104,20 @@ export const updateConversationTitle = async (conversationId: string, title: str
     return true
   } catch {
     return false
+  }
+}
+
+export const toggleConversationPinned = async (
+  conversationId: string,
+): Promise<{ success: boolean; pinned?: boolean }> => {
+  try {
+    const response = await apiClient.patch(`/api/chat/conversations/${conversationId}/pin`)
+    return {
+      success: true,
+      pinned: response.data?.data?.pinned,
+    }
+  } catch {
+    return { success: false }
   }
 }
 

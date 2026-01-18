@@ -17,17 +17,17 @@ const meta: Meta<typeof AIAllySidebar> = {
   },
   decorators: [
     (Story: React.ComponentType) => (
-      <div className="min-h-screen bg-zinc-100 dark:bg-zinc-900 p-8 relative">
+      <div className="min-h-screen bg-secondary dark:bg-secondary p-8 relative">
         <div className="max-w-4xl mx-auto space-y-4">
-          <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">Dashboard Content</h1>
-          <p className="text-zinc-600 dark:text-zinc-400">
+          <h1 className="text-2xl font-bold text-foreground dark:text-primary-foreground">Dashboard Content</h1>
+          <p className="text-zinc-600 dark:text-muted-foreground">
             This represents your dashboard content. The AI Ally sidebar appears as a floating chat panel.
           </p>
           <div className="grid grid-cols-3 gap-4">
             {[1, 2, 3].map((i) => (
               <div
                 key={i}
-                className="h-32 bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700"
+                className="h-32 bg-background dark:bg-secondary rounded-xl shadow-sm border border dark:border-zinc-700"
               />
             ))}
           </div>
@@ -130,13 +130,13 @@ export const DarkMode: Story = {
   },
   decorators: [
     (Story: React.ComponentType) => (
-      <div className="dark min-h-screen bg-zinc-950 p-8 relative">
+      <div className="dark min-h-screen bg-secondary p-8 relative">
         <div className="max-w-4xl mx-auto space-y-4">
-          <h1 className="text-2xl font-bold text-zinc-100">Dashboard Content</h1>
-          <p className="text-zinc-400">This represents your dashboard content in dark mode.</p>
+          <h1 className="text-2xl font-bold text-primary-foreground">Dashboard Content</h1>
+          <p className="text-muted-foreground">This represents your dashboard content in dark mode.</p>
           <div className="grid grid-cols-3 gap-4">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-32 bg-zinc-800 rounded-xl shadow-sm border border-zinc-700" />
+              <div key={i} className="h-32 bg-secondary rounded-xl shadow-sm border border-zinc-700" />
             ))}
           </div>
         </div>

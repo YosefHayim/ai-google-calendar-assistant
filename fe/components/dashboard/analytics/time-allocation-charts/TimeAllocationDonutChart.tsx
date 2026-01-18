@@ -45,7 +45,7 @@ export const TimeAllocationDonutChart: React.FC<TimeAllocationDonutChartProps> =
             if (active && payload && payload.length > 0) {
               const item = payload[0].payload as CalendarBreakdownItem & { percentage: number }
               return (
-                <div className="rounded-lg border border-zinc-700 bg-zinc-900 dark:bg-zinc-800 px-3 py-2 text-white shadow-xl">
+                <div className="rounded-lg border border-zinc-700 bg-secondary dark:bg-secondary px-3 py-2 text-white shadow-xl">
                   <div className="flex items-center gap-2 mb-1">
                     <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: getValidHexColor(item.color) }} />
                     <span className="font-medium text-sm">{item.category}</span>

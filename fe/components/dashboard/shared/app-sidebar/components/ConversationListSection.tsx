@@ -2,14 +2,8 @@
 
 import * as z from 'zod'
 
-import { Check, Clock, Copy, Link as LinkIcon, MessageSquare, Pencil, Search, Trash2, X } from 'lucide-react'
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
+import { Check, Clock, Copy, Link as LinkIcon, MessageSquare, Pencil, Pin, Search, Trash2, X } from 'lucide-react'
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import React, { useEffect, useRef, useState } from 'react'
 import { SidebarGroup, SidebarGroupContent, SidebarGroupLabel, useSidebar } from '@/components/ui/sidebar'
@@ -18,7 +12,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { StreamingTitle } from '../../sidebar-components/StreamingTitle'
-import { createShareLink } from '@/services/chatService'
+import { createShareLink, toggleConversationPinned, type ConversationListItem } from '@/services/chatService'
 import { formatRelativeDate } from '@/lib/dateUtils'
 import { toast } from 'sonner'
 import { useChatContext } from '@/contexts/ChatContext'
@@ -41,7 +35,10 @@ export function ConversationListSection() {
 
   const [sharingId, setSharingId] = useState<string | null>(null)
   const [copiedId, setCopiedId] = useState<string | null>(null)
-  const [conversationToChangeTitleDialog, setConversationToChangeTitleDialog] = useState<ConversationListItem | null>(null)
+  const [conversationToChangeTitleDialog, setConversationToChangeTitleDialog] = useState<ConversationListItem | null>(
+    null,
+  )
+  const [pinningId, setPinningId] = useState<string | null>(null)
 
   const { updateConversationTitle: updateTitle, isUpdating } = useUpdateConversationTitle({
     onSuccess: () => {
@@ -116,6 +113,25 @@ export function ConversationListSection() {
     }
   }
 
+  const handleTogglePin = async (e: React.MouseEvent, conversationId: string) => {
+    e.stopPropagation()
+    setPinningId(conversationId)
+
+    try {
+      const result = await toggleConversationPinned(conversationId)
+      if (result.success) {
+        toast.success(`Conversation ${result.pinned ? 'pinned' : 'unpinned'} successfully`)
+      } else {
+        toast.error('Failed to toggle conversation pin status')
+      }
+    } catch (error) {
+      console.error('Error toggling conversation pin:', error)
+      toast.error('Failed to toggle conversation pin status')
+    } finally {
+      setPinningId(null)
+    }
+  }
+
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     if (!conversationToChangeTitleDialog) return
 
@@ -133,24 +149,24 @@ export function ConversationListSection() {
 
   return (
     <SidebarGroup className="flex-1 overflow-hidden">
-      <SidebarGroupLabel className="text-xs font-medium text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">
+      <SidebarGroupLabel className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
         Recent Chats
       </SidebarGroupLabel>
       <div className="relative px-2 mb-2">
-        <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 z-10" />
+        <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground z-10" />
         <Input
           type="text"
           value={localSearchValue}
           onChange={handleSearchChange}
           placeholder="Search conversations..."
-          className="w-full pl-9 pr-8 bg-zinc-100 dark:bg-zinc-800 border-0 h-8"
+          className="w-full pl-9 pr-8 bg-secondary border-0 h-8"
         />
         {localSearchValue && (
           <Button
             variant="ghost"
             size="icon"
             onClick={handleClearSearch}
-            className="absolute right-3 top-1/2 -translate-y-1/2 h-6 w-6 text-zinc-400"
+            className="absolute right-3 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground"
           >
             <X className="w-3 h-3" />
           </Button>
@@ -161,11 +177,11 @@ export function ConversationListSection() {
         {isLoadingConversations || isSearching ? (
           <div className="space-y-2 px-2">
             {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="animate-pulse h-12 bg-zinc-100 dark:bg-zinc-800 rounded-md" />
+              <div key={i} className="animate-pulse h-12 bg-secondary rounded-md" />
             ))}
           </div>
         ) : conversations.length === 0 ? (
-          <div className="text-center py-4 text-zinc-400 dark:text-zinc-500 px-2">
+          <div className="text-center py-4 text-muted-foreground px-2">
             <MessageSquare className="w-8 h-8 mx-auto mb-2 opacity-50" />
             <p className="text-xs">{localSearchValue ? 'No matching conversations' : 'No conversations yet'}</p>
           </div>
@@ -193,7 +209,7 @@ export function ConversationListSection() {
                           isStreaming={streamingTitleConversationId === conversation.id}
                         />
                       </p>
-                      <div className="flex items-center gap-1 mt-0.5 text-xs text-zinc-400">
+                      <div className="flex items-center gap-1 mt-0.5 text-xs text-muted-foreground">
                         <Clock className="w-3 h-3" />
                         <span>{formatRelativeDate(conversation.lastUpdated)}</span>
                       </div>
@@ -204,12 +220,29 @@ export function ConversationListSection() {
                           <Button
                             variant="ghost"
                             size="icon"
+                            onClick={(e) => handleTogglePin(e, conversation.id)}
+                            disabled={pinningId === conversation.id}
+                            className={`h-6 w-6 opacity-0 group-hover:opacity-100 hover:bg-accent text-muted-foreground hover:text-primary ${
+                              conversation.pinned ? 'text-primary' : ''
+                            }`}
+                          >
+                            <Pin className={`w-3 h-3 ${conversation.pinned ? 'fill-current' : ''}`} />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="top">{conversation.pinned ? 'Unpin' : 'Pin'}</TooltipContent>
+                      </Tooltip>
+
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
                             onClick={(e) => handleShare(e, conversation.id)}
                             disabled={sharingId === conversation.id}
-                            className="h-6 w-6 opacity-0 group-hover:opacity-100 hover:bg-blue-100 dark:hover:bg-blue-900/30 text-zinc-400 hover:text-blue-500"
+                            className="h-6 w-6 opacity-0 group-hover:opacity-100 hover:bg-accent text-muted-foreground hover:text-primary"
                           >
                             {copiedId === conversation.id ? (
-                              <Check className="w-3 h-3 text-green-500" />
+                              <Check className="w-3 h-3 text-green-600" />
                             ) : sharingId === conversation.id ? (
                               <Copy className="w-3 h-3 animate-pulse" />
                             ) : (
@@ -226,7 +259,7 @@ export function ConversationListSection() {
                             variant="ghost"
                             size="icon"
                             onClick={(e) => handleChangeConversationTitle(e, conversation.id)}
-                            className="h-6 w-6 opacity-0 group-hover:opacity-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
+                            className="h-6 w-6 opacity-0 group-hover:opacity-100 hover:bg-accent text-muted-foreground hover:text-foreground"
                           >
                             <Pencil className="w-3 h-3" />
                           </Button>
@@ -240,7 +273,7 @@ export function ConversationListSection() {
                             variant="ghost"
                             size="icon"
                             onClick={(e) => initiateDelete(e, conversation.id)}
-                            className="h-6 w-6 opacity-0 group-hover:opacity-100 hover:bg-red-100 dark:hover:bg-red-900/30 text-zinc-400 hover:text-red-500"
+                            className="h-6 w-6 opacity-0 group-hover:opacity-100 hover:bg-destructive/10 text-muted-foreground hover:text-destructive"
                           >
                             <Trash2 className="w-3 h-3" />
                           </Button>
@@ -278,12 +311,7 @@ export function ConversationListSection() {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input
-                          {...field}
-                          placeholder="New title..."
-                          autoFocus
-                          disabled={isUpdating}
-                        />
+                        <Input {...field} placeholder="New title..." autoFocus disabled={isUpdating} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

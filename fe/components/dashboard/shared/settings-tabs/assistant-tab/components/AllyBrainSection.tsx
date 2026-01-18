@@ -87,7 +87,7 @@ export const AllyBrainSection: React.FC<AllyBrainSectionProps> = ({ toggleId }) 
       <TabHeader
         title="Ally's Brain"
         tooltip="Teach Ally about your preferences. These instructions will be remembered in every conversation"
-        icon={<Brain className="w-5 h-5 text-zinc-900 dark:text-primary" />}
+        icon={<Brain className="w-5 h-5 text-foreground dark:text-primary" />}
       />
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -96,7 +96,7 @@ export const AllyBrainSection: React.FC<AllyBrainSectionProps> = ({ toggleId }) 
               id="ally-brain-toggle"
               title="Enable Custom Instructions"
               tooltip="When enabled, Ally will always consider these instructions in all conversations"
-              icon={<Lightbulb size={18} className="text-zinc-900 dark:text-primary" />}
+              icon={<Lightbulb size={18} className="text-foreground dark:text-primary" />}
               control={
                 <CinematicGlowToggle
                   id={toggleId}
@@ -129,8 +129,8 @@ export const AllyBrainSection: React.FC<AllyBrainSectionProps> = ({ toggleId }) 
                       disabled={!speechRecognitionSupported || !!speechRecognitionError}
                       className={`h-8 px-2 gap-1.5 ${
                         isVoiceRecording
-                          ? 'text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300'
-                          : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200'
+                          ? 'text-destructive hover:text-destructive dark:text-red-400 dark:hover:text-red-300'
+                          : 'text-muted-foreground hover:text-zinc-700 dark:text-muted-foreground dark:hover:text-zinc-200'
                       }`}
                       title={
                         !speechRecognitionSupported
@@ -160,11 +160,11 @@ export const AllyBrainSection: React.FC<AllyBrainSectionProps> = ({ toggleId }) 
                     id="instructions"
                     placeholder={ALLY_BRAIN_PLACEHOLDER}
                     rows={5}
-                    className={`w-full px-3 py-2 text-sm rounded-lg border bg-white dark:bg-zinc-900 
-                      placeholder:text-zinc-400 dark:placeholder:text-zinc-500
+                    className={`w-full px-3 py-2 text-sm rounded-lg border bg-background dark:bg-secondary 
+                      placeholder:text-muted-foreground dark:placeholder:text-muted-foreground
                       focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary
                       transition-colors resize-none
-                      ${isOverLimit ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20' : 'border-zinc-200 dark:border-zinc-700'}
+                      ${isOverLimit ? 'border-destructive focus:border-destructive focus:ring-red-500/20' : 'border dark:border-zinc-700'}
                     `}
                   />
 
@@ -179,10 +179,10 @@ export const AllyBrainSection: React.FC<AllyBrainSectionProps> = ({ toggleId }) 
                         <span
                           className={`text-xs font-medium ${
                             isOverLimit
-                              ? 'text-red-500'
+                              ? 'text-destructive'
                               : charCount >= MAX_CHARS - 50
                                 ? 'text-amber-500'
-                                : 'text-zinc-400'
+                                : 'text-muted-foreground'
                           }`}
                         >
                           {charCount}/{MAX_CHARS}
@@ -192,7 +192,7 @@ export const AllyBrainSection: React.FC<AllyBrainSectionProps> = ({ toggleId }) 
                   </AnimatePresence>
 
                   {errors.instructions && (
-                    <p className="text-xs text-red-500 flex items-center gap-1">
+                    <p className="text-xs text-destructive flex items-center gap-1">
                       <AlertTriangle size={12} />
                       {errors.instructions.message}
                     </p>

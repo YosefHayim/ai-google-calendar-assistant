@@ -65,6 +65,7 @@ export type ConversationListItem = {
   messageCount: number;
   lastUpdated: string;
   createdAt: string;
+  pinned: boolean;
   source?: ConversationSource;
 };
 

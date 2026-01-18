@@ -79,8 +79,8 @@ export default function AdminUsersPage() {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-900 dark:text-white">User Management</h1>
-          <p className="text-zinc-500 dark:text-zinc-400 mt-1">Manage all users and their accounts</p>
+          <h1 className="text-2xl font-bold text-foreground dark:text-white">User Management</h1>
+          <p className="text-muted-foreground dark:text-muted-foreground mt-1">Manage all users and their accounts</p>
         </div>
         <Button variant="outline" size="sm" onClick={() => refetch()} disabled={isFetching}>
           <RefreshCw className={`w-4 h-4 mr-2 ${isFetching ? 'animate-spin' : ''}`} />
@@ -92,7 +92,7 @@ export default function AdminUsersPage() {
       <Card className="p-4">
         <div className="flex flex-wrap gap-4">
           <div className="relative flex-1 min-w-48">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
               placeholder="Search by email or name..."
               value={searchInput}
@@ -109,7 +109,7 @@ export default function AdminUsersPage() {
               setStatusFilter(e.target.value as UserStatus | '')
               setPage(1)
             }}
-            className="px-3 py-2 border border-zinc-200 dark:border-zinc-700 rounded-md bg-white dark:bg-zinc-900 text-sm"
+            className="px-3 py-2 border border dark:border-zinc-700 rounded-md bg-background dark:bg-secondary text-sm"
           >
             <option value="">All Status</option>
             <option value="active">Active</option>
@@ -123,7 +123,7 @@ export default function AdminUsersPage() {
               setRoleFilter(e.target.value as UserRole | '')
               setPage(1)
             }}
-            className="px-3 py-2 border border-zinc-200 dark:border-zinc-700 rounded-md bg-white dark:bg-zinc-900 text-sm"
+            className="px-3 py-2 border border dark:border-zinc-700 rounded-md bg-background dark:bg-secondary text-sm"
           >
             <option value="">All Roles</option>
             <option value="user">User</option>
@@ -145,14 +145,14 @@ export default function AdminUsersPage() {
             <div className="overflow-x-auto relative">
               {isFetching && !isLoading && <LoadingSpinner overlay />}
               <table className="w-full">
-                <thead className="border-b border-zinc-200 dark:border-zinc-700">
+                <thead className="border-b border dark:border-zinc-700">
                   <tr>
-                    <th className="text-left p-4 font-medium text-zinc-500 dark:text-zinc-400">User</th>
-                    <th className="text-left p-4 font-medium text-zinc-500 dark:text-zinc-400">Status</th>
-                    <th className="text-left p-4 font-medium text-zinc-500 dark:text-zinc-400">Role</th>
-                    <th className="text-left p-4 font-medium text-zinc-500 dark:text-zinc-400">Subscription</th>
-                    <th className="text-left p-4 font-medium text-zinc-500 dark:text-zinc-400">Joined</th>
-                    <th className="text-right p-4 font-medium text-zinc-500 dark:text-zinc-400">Actions</th>
+                    <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">User</th>
+                    <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">Status</th>
+                    <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">Role</th>
+                    <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">Subscription</th>
+                    <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">Joined</th>
+                    <th className="text-right p-4 font-medium text-muted-foreground dark:text-muted-foreground">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -175,11 +175,11 @@ export default function AdminUsersPage() {
                     data.users.map((user) => (
                       <tr
                         key={user.id}
-                        className="border-b border-zinc-100 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900/50"
+                        className="border-b border-zinc-100 dark:border hover:bg-muted dark:hover:bg-secondary/50"
                       >
                         <td className="p-4">
                           <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-zinc-200 dark:bg-zinc-700 flex items-center justify-center overflow-hidden">
+                            <div className="w-10 h-10 rounded-full bg-accent dark:bg-zinc-700 flex items-center justify-center overflow-hidden">
                               {user.avatar_url ? (
                                 <img src={user.avatar_url} alt="" className="w-10 h-10 rounded-full object-cover" />
                               ) : (
@@ -189,10 +189,10 @@ export default function AdminUsersPage() {
                               )}
                             </div>
                             <div>
-                              <p className="font-medium text-zinc-900 dark:text-white">
+                              <p className="font-medium text-foreground dark:text-white">
                                 {user.display_name || user.first_name || user.email.split('@')[0]}
                               </p>
-                              <p className="text-sm text-zinc-500">{user.email}</p>
+                              <p className="text-sm text-muted-foreground">{user.email}</p>
                             </div>
                           </div>
                         </td>
@@ -205,16 +205,16 @@ export default function AdminUsersPage() {
                         <td className="p-4">
                           {user.subscription ? (
                             <div>
-                              <span className="text-sm font-medium text-zinc-900 dark:text-white">
+                              <span className="text-sm font-medium text-foreground dark:text-white">
                                 {user.subscription.plan_name}
                               </span>
-                              <p className="text-xs text-zinc-500">{user.subscription.status}</p>
+                              <p className="text-xs text-muted-foreground">{user.subscription.status}</p>
                             </div>
                           ) : (
-                            <span className="text-sm text-zinc-400">No subscription</span>
+                            <span className="text-sm text-muted-foreground">No subscription</span>
                           )}
                         </td>
-                        <td className="p-4 text-sm text-zinc-500">
+                        <td className="p-4 text-sm text-muted-foreground">
                           {format(new Date(user.created_at), 'MMM d, yyyy')}
                         </td>
                         <td className="p-4 text-right">
@@ -247,7 +247,7 @@ export default function AdminUsersPage() {
                               <DropdownMenuSeparator />
                               {user.status !== 'suspended' ? (
                                 <DropdownMenuItem
-                                  className="text-red-600"
+                                  className="text-destructive"
                                   onClick={() => handleStatusChange(user.id, 'suspended')}
                                 >
                                   <Shield className="w-4 h-4 mr-2" /> Suspend User
@@ -271,8 +271,8 @@ export default function AdminUsersPage() {
             </div>
 
             {/* Pagination */}
-            <div className="flex items-center justify-between p-4 border-t border-zinc-200 dark:border-zinc-700">
-              <p className="text-sm text-zinc-500">
+            <div className="flex items-center justify-between p-4 border-t border dark:border-zinc-700">
+              <p className="text-sm text-muted-foreground">
                 Showing {data?.users.length || 0} of {data?.total || 0} users
               </p>
               <div className="flex gap-2">
@@ -321,8 +321,8 @@ export default function AdminUsersPage() {
 function StatusBadge({ status }: { status: UserStatus }) {
   const variants: Record<UserStatus, string> = {
     active: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
-    inactive: 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400',
-    suspended: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
+    inactive: 'bg-secondary text-gray-800 dark:bg-gray-900/30 dark:text-muted-foreground',
+    suspended: 'bg-destructive/10 text-red-800 dark:bg-red-900/30 dark:text-red-400',
     pending_verification: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
   }
   return <Badge className={variants[status]}>{status.replace('_', ' ')}</Badge>
@@ -331,9 +331,9 @@ function StatusBadge({ status }: { status: UserStatus }) {
 function RoleBadge({ role }: { role: UserRole }) {
   const variants: Record<UserRole, string> = {
     admin: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400',
-    moderator: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
+    moderator: 'bg-primary/10 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
     support: 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-400',
-    user: 'bg-zinc-100 text-zinc-800 dark:bg-zinc-900/30 dark:text-zinc-400',
+    user: 'bg-secondary text-zinc-800 dark:bg-secondary/30 dark:text-muted-foreground',
   }
   return <Badge className={variants[role]}>{role}</Badge>
 }

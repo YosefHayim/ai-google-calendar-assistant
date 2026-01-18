@@ -35,7 +35,7 @@ export const MessageActions: React.FC<MessageActionsProps> = ({ msg, isSpeaking,
           variant="ghost"
           size="icon"
           onClick={handleCopy}
-          className="h-7 w-7 text-zinc-400 hover:text-primary"
+          className="h-7 w-7 text-muted-foreground hover:text-primary"
           title="Copy message"
         >
           {copied ? <Check size={16} className="text-orange-500" /> : <Copy size={16} />}
@@ -44,12 +44,12 @@ export const MessageActions: React.FC<MessageActionsProps> = ({ msg, isSpeaking,
           variant="ghost"
           size="icon"
           onClick={() => onSpeak(msg.content)}
-          className="h-7 w-7 text-zinc-400 hover:text-primary"
+          className="h-7 w-7 text-muted-foreground hover:text-primary"
           title="Hear response"
         >
           <Volume2 size={16} className={isSpeaking ? 'animate-pulse text-primary' : ''} />
         </Button>
-        <span className="text-xs font-bold text-zinc-400 uppercase tracking-tighter">
+        <span className="text-xs font-bold text-muted-foreground uppercase tracking-tighter">
           {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
         </span>
       </div>
@@ -58,16 +58,16 @@ export const MessageActions: React.FC<MessageActionsProps> = ({ msg, isSpeaking,
 
   return (
     <div className="flex items-center justify-end gap-3 mt-1.5 px-1">
-      <div className="flex items-center gap-1 text-xs font-bold text-zinc-400 uppercase tracking-tighter">
+      <div className="flex items-center gap-1 text-xs font-bold text-muted-foreground uppercase tracking-tighter">
         <Clock className="w-2.5 h-2.5" />
         {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
       </div>
-      <div className="flex items-center gap-1 border-l border-zinc-200 dark:border-zinc-800 pl-2">
+      <div className="flex items-center gap-1 border-l border dark:border pl-2">
         <Button
           variant="ghost"
           size="icon"
           onClick={handleCopy}
-          className="h-7 w-7 text-zinc-400 hover:text-primary"
+          className="h-7 w-7 text-muted-foreground hover:text-primary"
           title="Copy message"
         >
           {copied ? <Check size={16} className="text-orange-500" /> : <Copy size={16} />}
@@ -76,7 +76,7 @@ export const MessageActions: React.FC<MessageActionsProps> = ({ msg, isSpeaking,
           variant="ghost"
           size="icon"
           onClick={() => onResend(msg.content)}
-          className="h-7 w-7 text-zinc-400 hover:text-primary"
+          className="h-7 w-7 text-muted-foreground hover:text-primary"
           title="Reset / Re-trigger"
         >
           <RotateCcw size={16} />
@@ -85,7 +85,7 @@ export const MessageActions: React.FC<MessageActionsProps> = ({ msg, isSpeaking,
           variant="ghost"
           size="icon"
           onClick={() => onSpeak(msg.content)}
-          className="h-7 w-7 text-zinc-400 hover:text-primary"
+          className="h-7 w-7 text-muted-foreground hover:text-primary"
           title="Hear message"
         >
           <Volume2 size={16} />
@@ -94,7 +94,7 @@ export const MessageActions: React.FC<MessageActionsProps> = ({ msg, isSpeaking,
           variant="ghost"
           size="icon"
           onClick={onEdit}
-          className="h-7 w-7 text-zinc-400 hover:text-primary"
+          className="h-7 w-7 text-muted-foreground hover:text-primary"
           title="Edit & Resend"
         >
           <Edit2 size={16} />

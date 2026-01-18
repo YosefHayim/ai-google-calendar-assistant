@@ -133,7 +133,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ isDarkMode, toggleTheme,
         <CardDescription>Manage your profile and preferences.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-2">
-        <div className="flex flex-wrap items-center gap-4 pb-4 border-b border-zinc-100 dark:border-zinc-800 sm:flex-nowrap">
+        <div className="flex flex-wrap items-center gap-4 pb-4 border-b border-zinc-100 dark:border sm:flex-nowrap">
           {avatarUrl ? (
             <Image
               src={avatarUrl}
@@ -143,15 +143,15 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ isDarkMode, toggleTheme,
               className="rounded-xl object-cover flex-shrink-0"
             />
           ) : (
-            <div className="h-14 w-14 rounded-xl bg-zinc-200 dark:bg-zinc-700 flex items-center justify-center flex-shrink-0">
+            <div className="h-14 w-14 rounded-xl bg-accent dark:bg-zinc-700 flex items-center justify-center flex-shrink-0">
               <span className="text-lg font-medium text-zinc-600 dark:text-zinc-300">{initials}</span>
             </div>
           )}
           <div className="flex-1 min-w-0">
-            <h4 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 truncate">{fullName}</h4>
-            <p className="text-sm text-zinc-500 truncate">{email}</p>
+            <h4 className="text-base font-semibold text-foreground dark:text-primary-foreground truncate">{fullName}</h4>
+            <p className="text-sm text-muted-foreground truncate">{email}</p>
             {createdAt && (
-              <p className="text-xs text-zinc-400 mt-1">
+              <p className="text-xs text-muted-foreground mt-1">
                 Member since {new Date(createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
               </p>
             )}
@@ -163,7 +163,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ isDarkMode, toggleTheme,
             id="appearance"
             title="Appearance"
             tooltip="Choose your preferred color theme for the interface"
-            icon={<Palette size={18} className="text-zinc-900 dark:text-primary" />}
+            icon={<Palette size={18} className="text-foreground dark:text-primary" />}
             control={
               <SettingsDropdown
                 id="appearance-dropdown"
@@ -178,7 +178,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ isDarkMode, toggleTheme,
             id="timezone"
             title="Default Timezone"
             tooltip="Events will be scheduled in this timezone unless specified otherwise"
-            icon={<Globe size={18} className="text-zinc-900 dark:text-primary" />}
+            icon={<Globe size={18} className="text-foreground dark:text-primary" />}
             control={
               <SettingsDropdown
                 id="timezone-dropdown"
@@ -193,7 +193,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ isDarkMode, toggleTheme,
             id="time-format"
             title="Time Format"
             tooltip="Display format for event times throughout the app"
-            icon={<Clock size={18} className="text-zinc-900 dark:text-primary" />}
+            icon={<Clock size={18} className="text-foreground dark:text-primary" />}
             control={
               <SettingsDropdown
                 id="time-format-dropdown"
@@ -208,7 +208,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ isDarkMode, toggleTheme,
             id="geo-location"
             title="Real-time Location"
             tooltip="When enabled, Ally uses your current location to provide context for event creation (e.g., suggesting nearby venues)"
-            icon={<MapPin size={18} className="text-zinc-900 dark:text-primary" />}
+            icon={<MapPin size={18} className="text-foreground dark:text-primary" />}
             control={
               <CinematicGlowToggle
                 id={geoLocationToggleId}

@@ -21,14 +21,14 @@ export function RemindersList({ reminders }: RemindersListProps) {
       title="Default Reminders"
       tooltipTitle="Default Reminder Settings"
       tooltipDescription="Default reminders that are applied to all events in this calendar unless overridden."
-      icon={<Bell className="w-4 h-4 text-zinc-500" />}
+      icon={<Bell className="w-4 h-4 text-muted-foreground" />}
     >
       <div className="space-y-1">
         {reminders.map((reminder, index) => (
-          <div key={index} className="text-sm text-zinc-600 dark:text-zinc-400">
+          <div key={index} className="text-sm text-zinc-600 dark:text-muted-foreground">
             <span className="capitalize">{reminder.method}</span>
             {reminder.minutes !== undefined && (
-              <span className="text-zinc-500 dark:text-zinc-400">
+              <span className="text-muted-foreground dark:text-muted-foreground">
                 {' '}
                 - {reminder.minutes} {reminder.minutes === 1 ? 'minute' : 'minutes'} before
               </span>

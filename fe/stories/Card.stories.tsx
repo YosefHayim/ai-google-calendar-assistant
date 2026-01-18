@@ -90,19 +90,19 @@ export const PricingCard: Story = {
       </CardHeader>
       <CardContent>
         <div className="text-3xl font-bold">
-          $4<span className="text-sm font-normal text-zinc-500">/month</span>
+          $4<span className="text-sm font-normal text-muted-foreground">/month</span>
         </div>
         <ul className="mt-4 space-y-2 text-sm">
           <li className="flex items-center">
-            <span className="mr-2 text-green-500">✓</span>
+            <span className="mr-2 text-green-600">✓</span>
             500 AI interactions/month
           </li>
           <li className="flex items-center">
-            <span className="mr-2 text-green-500">✓</span>
+            <span className="mr-2 text-green-600">✓</span>
             Voice & Telegram integration
           </li>
           <li className="flex items-center">
-            <span className="mr-2 text-green-500">✓</span>
+            <span className="mr-2 text-green-600">✓</span>
             Priority support
           </li>
         </ul>
@@ -122,7 +122,7 @@ export const StatCard: Story = {
         <CardTitle className="text-3xl">$45,231</CardTitle>
       </CardHeader>
       <CardContent>
-        <p className="text-xs text-green-500">+20.1% from last month</p>
+        <p className="text-xs text-green-600">+20.1% from last month</p>
       </CardContent>
     </Card>
   ),
@@ -137,7 +137,7 @@ export const CardGrid: Story = {
           <CardTitle className="text-2xl">2,350</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-xs text-green-500">+180 this week</p>
+          <p className="text-xs text-green-600">+180 this week</p>
         </CardContent>
       </Card>
       <Card>
@@ -146,7 +146,7 @@ export const CardGrid: Story = {
           <CardTitle className="text-2xl">573</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-xs text-green-500">+201 since last hour</p>
+          <p className="text-xs text-green-600">+201 since last hour</p>
         </CardContent>
       </Card>
       <Card>
@@ -155,7 +155,7 @@ export const CardGrid: Story = {
           <CardTitle className="text-2xl">12.3%</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-xs text-red-500">+4.1% from last week</p>
+          <p className="text-xs text-destructive">+4.1% from last week</p>
         </CardContent>
       </Card>
     </div>
@@ -166,10 +166,10 @@ export const EmptyState: Story = {
   render: () => (
     <Card className="w-[400px]">
       <CardContent className="flex flex-col items-center justify-center py-10">
-        <div className="rounded-full bg-zinc-100 dark:bg-zinc-800 p-4 mb-4">
+        <div className="rounded-full bg-secondary dark:bg-secondary p-4 mb-4">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-8 w-8 text-zinc-400"
+            className="h-8 w-8 text-muted-foreground"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"

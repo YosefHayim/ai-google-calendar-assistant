@@ -45,7 +45,7 @@ export const FEATURES: Feature[] = [
               <div className="font-semibold mb-2 text-white">📅 Today's Schedule</div>
               <div className="space-y-1.5">
                 <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-blue-500" />
+                  <span className="w-2 h-2 rounded-full bg-primary" />
                   <span>9:30 AM - Team Standup (30m)</span>
                 </div>
                 <div className="flex items-center gap-2">
@@ -198,7 +198,7 @@ export const FEATURES: Feature[] = [
                   ⚡ Productivity: <span className="text-purple-400">87%</span>
                 </div>
               </div>
-              <div className="mt-2 text-xs text-zinc-400">Best day: Wednesday (5h focus)</div>
+              <div className="mt-2 text-xs text-muted-foreground">Best day: Wednesday (5h focus)</div>
             </div>
           ),
           time: '5:00 PM',
@@ -253,7 +253,7 @@ export const FEATURES: Feature[] = [
                   ⚡ Productivity: <span className="text-purple-400">87%</span>
                 </div>
               </div>
-              <div className="mt-2 text-xs text-zinc-400">Best day: Wednesday (5h focus)</div>
+              <div className="mt-2 text-xs text-muted-foreground">Best day: Wednesday (5h focus)</div>
             </div>
           ),
           time: '5:00 PM',
@@ -277,7 +277,7 @@ export const FEATURES: Feature[] = [
             <div>
               <div className="font-medium mb-2">🧠 Ally Brain</div>
               <div className="text-sm mb-2">Teach me your preferences!</div>
-              <div className="text-xs text-zinc-400 space-y-1">
+              <div className="text-xs text-muted-foreground space-y-1">
                 <div>Current: "Schedule meetings 10AM-4PM"</div>
                 <div className="text-primary">Tap to edit your instructions</div>
               </div>
@@ -337,7 +337,7 @@ export const FEATURES: Feature[] = [
             <div>
               <div className="font-medium mb-2">🧠 Ally Brain</div>
               <div className="text-sm mb-2">Teach me your preferences!</div>
-              <div className="text-xs text-zinc-400 space-y-1">
+              <div className="text-xs text-muted-foreground space-y-1">
                 <div>Current: "Schedule meetings 10AM-4PM"</div>
                 <div className="text-primary">Reply to update your instructions</div>
               </div>
@@ -376,12 +376,12 @@ export const FEATURES: Feature[] = [
               <div className="font-medium mb-2">🔍 Found it!</div>
               <div className="text-sm">
                 Last meeting with Sarah:
-                <div className="mt-1 p-2 bg-white/10 rounded-lg">
+                <div className="mt-1 p-2 bg-background/10 rounded-lg">
                   <div className="font-medium">Project Kickoff</div>
-                  <div className="text-xs text-zinc-400">Jan 5th, 3:00 PM (1h)</div>
+                  <div className="text-xs text-muted-foreground">Jan 5th, 3:00 PM (1h)</div>
                 </div>
               </div>
-              <div className="mt-2 text-xs text-zinc-400">Next scheduled: Jan 15th</div>
+              <div className="mt-2 text-xs text-muted-foreground">Next scheduled: Jan 15th</div>
             </div>
           ),
           time: '3:00 PM',
@@ -394,7 +394,7 @@ export const FEATURES: Feature[] = [
         {
           type: 'ally',
           content: (
-            <div className="bg-[#2B2D31] rounded-lg p-3 border-l-4 border-blue-500">
+            <div className="bg-[#2B2D31] rounded-lg p-3 border-l-4 border-primary">
               <div className="font-semibold mb-2 text-white">🔍 Found it!</div>
               <div className="text-sm mb-2">Last meeting with Sarah:</div>
               <div className="bg-[#1E1F22] rounded-lg p-3">
@@ -421,12 +421,12 @@ export const FEATURES: Feature[] = [
               <div className="font-medium mb-2">🔍 Found it!</div>
               <div className="text-sm">
                 Last meeting with Sarah:
-                <div className="mt-1 p-2 bg-white/10 rounded-lg">
+                <div className="mt-1 p-2 bg-background/10 rounded-lg">
                   <div className="font-medium">Project Kickoff</div>
-                  <div className="text-xs text-zinc-400">Jan 5th, 3:00 PM (1h)</div>
+                  <div className="text-xs text-muted-foreground">Jan 5th, 3:00 PM (1h)</div>
                 </div>
               </div>
-              <div className="mt-2 text-xs text-zinc-400">Next scheduled: Jan 15th</div>
+              <div className="mt-2 text-xs text-muted-foreground">Next scheduled: Jan 15th</div>
             </div>
           ),
           time: '3:00 PM',
@@ -452,14 +452,14 @@ export const FEATURES: Feature[] = [
                 <Calendar className="w-4 h-4 text-primary" />
                 <span className="font-medium">New Event</span>
               </div>
-              <div className="p-2 bg-white/10 rounded-lg text-sm">
+              <div className="p-2 bg-background/10 rounded-lg text-sm">
                 <div className="font-medium">Lunch with Alex</div>
-                <div className="text-xs text-zinc-400">Tomorrow, 12:00 PM - 1:00 PM</div>
+                <div className="text-xs text-muted-foreground">Tomorrow, 12:00 PM - 1:00 PM</div>
               </div>
               <div className="mt-2 text-xs">Create this event?</div>
               <div className="flex gap-2 mt-2">
                 <span className="px-3 py-1 bg-emerald-500/20 text-emerald-400 rounded-full text-xs">Yes</span>
-                <span className="px-3 py-1 bg-white/10 rounded-full text-xs">No</span>
+                <span className="px-3 py-1 bg-background/10 rounded-full text-xs">No</span>
               </div>
             </div>
           ),
@@ -503,14 +503,14 @@ export const FEATURES: Feature[] = [
                 <Calendar className="w-4 h-4 text-primary" />
                 <span className="font-medium">New Event</span>
               </div>
-              <div className="p-2 bg-white/10 rounded-lg text-sm">
+              <div className="p-2 bg-background/10 rounded-lg text-sm">
                 <div className="font-medium">Lunch with Alex</div>
-                <div className="text-xs text-zinc-400">Tomorrow, 12:00 PM - 1:00 PM</div>
+                <div className="text-xs text-muted-foreground">Tomorrow, 12:00 PM - 1:00 PM</div>
               </div>
               <div className="mt-2 text-xs">Create this event?</div>
               <div className="flex gap-2 mt-2">
                 <span className="px-3 py-1 bg-emerald-500/20 text-emerald-400 rounded-full text-xs">Yes</span>
-                <span className="px-3 py-1 bg-white/10 rounded-full text-xs">No</span>
+                <span className="px-3 py-1 bg-background/10 rounded-full text-xs">No</span>
               </div>
             </div>
           ),
@@ -540,7 +540,7 @@ export const FEATURES: Feature[] = [
                   <span
                     key={lang}
                     className={`px-2 py-1 rounded-lg text-xs ${
-                      lang.includes('English') ? 'bg-primary/30 text-primary' : 'bg-white/10'
+                      lang.includes('English') ? 'bg-primary/30 text-primary' : 'bg-background/10'
                     }`}
                   >
                     {lang}
@@ -594,7 +594,7 @@ export const FEATURES: Feature[] = [
                   <span
                     key={lang}
                     className={`px-2 py-1 rounded-lg text-xs ${
-                      lang.includes('English') ? 'bg-primary/30 text-primary' : 'bg-white/10'
+                      lang.includes('English') ? 'bg-primary/30 text-primary' : 'bg-background/10'
                     }`}
                   >
                     {lang}

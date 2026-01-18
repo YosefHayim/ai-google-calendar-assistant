@@ -18,7 +18,7 @@ export default function FAQs() {
     <section className="py-16 md:py-24 w-full">
       <div className="mx-auto max-w-4xl px-6">
         <div className="space-y-22">
-          <h2 className="text-zinc-900 dark:text-zinc-100 text-center text-4xl font-medium tracking-normal">
+          <h2 className="text-foreground dark:text-primary-foreground text-center text-4xl font-medium tracking-normal">
             {t('faq.title')}
           </h2>
 
@@ -27,21 +27,21 @@ export default function FAQs() {
               <div className="group" key={item.id}>
                 <AccordionItem
                   value={item.id}
-                  className="data-[state=open]:bg-zinc-50 dark:data-[state=open]:bg-zinc-900 peer rounded-md border-none px-5 py-1 data-[state=open]:border-none md:px-7"
+                  className="data-[state=open]:bg-muted dark:data-[state=open]:bg-secondary peer rounded-md border-none px-5 py-1 data-[state=open]:border-none md:px-7"
                 >
-                  <AccordionTrigger className="cursor-pointer text-base text-zinc-900 dark:text-zinc-100 hover:no-underline">
+                  <AccordionTrigger className="cursor-pointer text-base text-foreground dark:text-primary-foreground hover:no-underline">
                     {item.question}
                   </AccordionTrigger>
                   <AccordionContent>
-                    <p className="text-base text-zinc-500 dark:text-zinc-400">{item.answer}</p>
+                    <p className="text-base text-muted-foreground dark:text-muted-foreground">{item.answer}</p>
                   </AccordionContent>
                 </AccordionItem>
-                <hr className="mx-5 -mb-px group-last:hidden peer-data-[state=open]:opacity-0 border-zinc-200 dark:border-zinc-800 md:mx-7" />
+                <hr className="mx-5 -mb-px group-last:hidden peer-data-[state=open]:opacity-0 border dark:border md:mx-7" />
               </div>
             ))}
           </Accordion>
 
-          <p className="text-zinc-500 dark:text-zinc-400 text-center">
+          <p className="text-muted-foreground dark:text-muted-foreground text-center">
             {t('faq.contactCta')}{' '}
             <a href="/contact" className="text-primary font-medium hover:underline">
               {t('faq.operationsTeam')}

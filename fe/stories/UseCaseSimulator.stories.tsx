@@ -3,8 +3,8 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 const UseCaseSimulatorPlaceholder = () => (
   <div className="p-8 bg-background max-w-2xl mx-auto">
     <div className="text-center mb-8">
-      <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-4">Use Case Simulator</h1>
-      <p className="text-zinc-500 dark:text-zinc-400">
+      <h1 className="text-3xl font-bold text-foreground dark:text-primary-foreground mb-4">Use Case Simulator</h1>
+      <p className="text-muted-foreground dark:text-muted-foreground">
         Interactive demo showing how Ally handles different scheduling scenarios
       </p>
     </div>
@@ -17,16 +17,16 @@ const UseCaseSimulatorPlaceholder = () => (
         </p>
       </div>
 
-      <div className="p-6 bg-white dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-800">
+      <div className="p-6 bg-background dark:bg-secondary rounded-xl border border dark:border">
         <h3 className="font-semibold text-zinc-800 dark:text-zinc-200 mb-4">Planned Use Cases</h3>
-        <ul className="space-y-3 text-sm text-zinc-600 dark:text-zinc-400">
+        <ul className="space-y-3 text-sm text-zinc-600 dark:text-muted-foreground">
           <li className="flex items-start gap-3">
-            <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
-              <span className="text-blue-600 dark:text-blue-400 text-xs font-bold">1</span>
+            <div className="w-8 h-8 bg-primary/10 dark:bg-blue-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
+              <span className="text-primary dark:text-blue-400 text-xs font-bold">1</span>
             </div>
             <div>
               <p className="font-medium text-zinc-700 dark:text-zinc-300">Quick Meeting Scheduling</p>
-              <p className="text-zinc-500">User says &quot;Schedule a team sync tomorrow at 10am&quot;</p>
+              <p className="text-muted-foreground">User says &quot;Schedule a team sync tomorrow at 10am&quot;</p>
             </div>
           </li>
           <li className="flex items-start gap-3">
@@ -35,7 +35,7 @@ const UseCaseSimulatorPlaceholder = () => (
             </div>
             <div>
               <p className="font-medium text-zinc-700 dark:text-zinc-300">Conflict Resolution</p>
-              <p className="text-zinc-500">Ally detects a conflict and suggests alternatives</p>
+              <p className="text-muted-foreground">Ally detects a conflict and suggests alternatives</p>
             </div>
           </li>
           <li className="flex items-start gap-3">
@@ -44,7 +44,7 @@ const UseCaseSimulatorPlaceholder = () => (
             </div>
             <div>
               <p className="font-medium text-zinc-700 dark:text-zinc-300">Recurring Events</p>
-              <p className="text-zinc-500">Setting up weekly standup meetings</p>
+              <p className="text-muted-foreground">Setting up weekly standup meetings</p>
             </div>
           </li>
           <li className="flex items-start gap-3">
@@ -53,7 +53,7 @@ const UseCaseSimulatorPlaceholder = () => (
             </div>
             <div>
               <p className="font-medium text-zinc-700 dark:text-zinc-300">Reschedule Flow</p>
-              <p className="text-zinc-500">Moving an existing event to a new time</p>
+              <p className="text-muted-foreground">Moving an existing event to a new time</p>
             </div>
           </li>
           <li className="flex items-start gap-3">
@@ -62,15 +62,15 @@ const UseCaseSimulatorPlaceholder = () => (
             </div>
             <div>
               <p className="font-medium text-zinc-700 dark:text-zinc-300">Multi-Calendar Query</p>
-              <p className="text-zinc-500">&quot;What&apos;s on my work calendar this week?&quot;</p>
+              <p className="text-muted-foreground">&quot;What&apos;s on my work calendar this week?&quot;</p>
             </div>
           </li>
         </ul>
       </div>
 
-      <div className="p-6 bg-white dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-800">
+      <div className="p-6 bg-background dark:bg-secondary rounded-xl border border dark:border">
         <h3 className="font-semibold text-zinc-800 dark:text-zinc-200 mb-4">Simulator Features</h3>
-        <ul className="space-y-2 text-sm text-zinc-600 dark:text-zinc-400">
+        <ul className="space-y-2 text-sm text-zinc-600 dark:text-muted-foreground">
           <li className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-primary" />
             Interactive chat simulation with typed responses
@@ -129,7 +129,7 @@ export const Default: Story = {
 export const DarkMode: Story = {
   decorators: [
     (Story) => (
-      <div className="dark bg-zinc-950 min-h-screen">
+      <div className="dark bg-secondary min-h-screen">
         <Story />
       </div>
     ),

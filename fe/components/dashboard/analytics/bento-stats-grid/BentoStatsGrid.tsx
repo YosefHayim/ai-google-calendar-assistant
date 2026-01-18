@@ -46,7 +46,7 @@ export function BentoStatsGrid({ data, comparison, isLoading = false }: BentoSta
       />
 
       <StatCard
-        icon={<CalendarDays className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-zinc-900 dark:text-primary" />}
+        icon={<CalendarDays className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-foreground dark:text-primary" />}
         label={t('analytics.stats.totalEvents')}
         value={totalEvents}
         description={`${data.daysWithEvents} ${t('analytics.stats.daysWithEvents')}`}
@@ -58,7 +58,7 @@ export function BentoStatsGrid({ data, comparison, isLoading = false }: BentoSta
       />
 
       <StatCard
-        icon={<Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-zinc-900 dark:text-primary" />}
+        icon={<Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-foreground dark:text-primary" />}
         label={t('analytics.stats.totalHours')}
         value={totalDurationHours}
         suffix="H"
@@ -71,28 +71,28 @@ export function BentoStatsGrid({ data, comparison, isLoading = false }: BentoSta
       />
 
       <StatCard
-        icon={<Activity className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-zinc-900 dark:text-primary" />}
+        icon={<Activity className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-foreground dark:text-primary" />}
         label={t('analytics.stats.avgPerDay')}
         value={productivityMetrics.averageEventsPerDay}
         description={t('analytics.stats.eventsPerDay')}
       />
 
       <StatCard
-        icon={<Sun className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-zinc-900 dark:text-primary" />}
+        icon={<Sun className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-foreground dark:text-primary" />}
         label={t('analytics.stats.peakHour')}
         value={formatPeakHour(productivityMetrics.peakHour)}
         description={t('analytics.stats.mostScheduledTime')}
       />
 
       <StatCard
-        icon={<Target className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-zinc-900 dark:text-primary" />}
+        icon={<Target className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-foreground dark:text-primary" />}
         label={t('analytics.stats.focusBlocks')}
         value={focusTimeMetrics.totalFocusBlocks}
         description={t('analytics.stats.focusBlocksDescription')}
       />
 
       <StatCard
-        icon={<Flame className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-zinc-900 dark:text-primary" />}
+        icon={<Flame className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-foreground dark:text-primary" />}
         label={t('analytics.stats.busiestDay')}
         value={busiestDayHours}
         suffix="H"
@@ -100,7 +100,7 @@ export function BentoStatsGrid({ data, comparison, isLoading = false }: BentoSta
       />
 
       <StatCard
-        icon={<Timer className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-zinc-900 dark:text-primary" />}
+        icon={<Timer className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-foreground dark:text-primary" />}
         label={t('analytics.stats.longestEvent')}
         value={longestEvent}
         suffix="H"
@@ -108,21 +108,21 @@ export function BentoStatsGrid({ data, comparison, isLoading = false }: BentoSta
       />
 
       <StatCard
-        icon={<CalendarOff className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-zinc-900 dark:text-primary" />}
+        icon={<CalendarOff className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-foreground dark:text-primary" />}
         label={t('analytics.stats.freeDays')}
         value={eventFreeDays}
         description={t('analytics.stats.daysWithoutEvents')}
       />
 
       <StatCard
-        icon={<Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-zinc-900 dark:text-primary" />}
+        icon={<Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-foreground dark:text-primary" />}
         label={t('analytics.stats.allDay')}
         value={allDayEventsCount}
         description={t('analytics.stats.allDayEvents')}
       />
 
       <StatCard
-        icon={<Repeat className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-zinc-900 dark:text-primary" />}
+        icon={<Repeat className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-foreground dark:text-primary" />}
         label={t('analytics.stats.recurring')}
         value={recurringEventsCount}
         description={t('analytics.stats.recurringEvents')}

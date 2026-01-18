@@ -150,7 +150,7 @@ const ScheduleHealthScore: React.FC<ScheduleHealthScoreProps> = ({ data, isLoadi
 
   if (isLoading) {
     return (
-      <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-sm p-4 sm:p-6">
+      <div className="bg-background dark:bg-secondary border border dark:border rounded-xl shadow-sm p-4 sm:p-6">
         <div className="flex items-center gap-2 mb-2">
           <Skeleton className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg" />
           <Skeleton className="h-4 sm:h-5 w-28 sm:w-36" />
@@ -197,19 +197,19 @@ const ScheduleHealthScore: React.FC<ScheduleHealthScoreProps> = ({ data, isLoadi
   const strokeDashoffset = circumference - (percentage / 100) * circumference
 
   return (
-    <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-sm p-4 sm:p-6 hover:shadow-md transition-shadow">
+    <div className="bg-background dark:bg-secondary border border dark:border rounded-xl shadow-sm p-4 sm:p-6 hover:shadow-md transition-shadow">
       <div className="flex items-center justify-between mb-1 gap-2">
         <div className="flex items-center gap-2 min-w-0">
-          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center flex-shrink-0">
-            <Activity className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-zinc-900 dark:text-primary" />
+          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-secondary dark:bg-secondary flex items-center justify-center flex-shrink-0">
+            <Activity className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-foreground dark:text-primary" />
           </div>
-          <h3 className="font-semibold text-sm sm:text-base text-zinc-900 dark:text-zinc-100 truncate">
+          <h3 className="font-semibold text-sm sm:text-base text-foreground dark:text-primary-foreground truncate">
             Schedule Health
           </h3>
         </div>
         <span className={`text-xs sm:text-sm font-medium flex-shrink-0 ${overall.color}`}>{overall.label}</span>
       </div>
-      <p className="text-[10px] sm:text-xs text-zinc-500 dark:text-zinc-400 mb-3 sm:mb-4 ml-9 sm:ml-10">
+      <p className="text-[10px] sm:text-xs text-muted-foreground dark:text-muted-foreground mb-3 sm:mb-4 ml-9 sm:ml-10">
         Overall schedule wellness
       </p>
 
@@ -268,8 +268,8 @@ const ScheduleHealthScore: React.FC<ScheduleHealthScoreProps> = ({ data, isLoadi
           </svg>
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="text-center">
-              <span className="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-zinc-100">{percentage}</span>
-              <span className="text-sm sm:text-lg text-zinc-500">/100</span>
+              <span className="text-2xl sm:text-3xl font-bold text-foreground dark:text-primary-foreground">{percentage}</span>
+              <span className="text-sm sm:text-lg text-muted-foreground">/100</span>
             </div>
           </div>
         </div>
@@ -280,20 +280,20 @@ const ScheduleHealthScore: React.FC<ScheduleHealthScoreProps> = ({ data, isLoadi
         {factors.map((factor) => (
           <div
             key={factor.id}
-            className="flex items-center gap-2 sm:gap-3 p-1.5 sm:p-2 rounded-lg hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors group"
+            className="flex items-center gap-2 sm:gap-3 p-1.5 sm:p-2 rounded-lg hover:bg-muted dark:hover:bg-secondary/50 transition-colors group"
           >
-            <factor.icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-zinc-400 flex-shrink-0" />
+            <factor.icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-muted-foreground flex-shrink-0" />
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between gap-2">
                 <span className="text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 truncate">{factor.label}</span>
                 <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
-                  <span className="text-xs sm:text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                  <span className="text-xs sm:text-sm font-medium text-foreground dark:text-primary-foreground">
                     {factor.score}/{factor.maxScore}
                   </span>
                   {getStatusIcon(factor.status)}
                 </div>
               </div>
-              <div className="h-1 sm:h-1.5 bg-zinc-200 dark:bg-zinc-800 rounded-full mt-1 overflow-hidden">
+              <div className="h-1 sm:h-1.5 bg-accent dark:bg-secondary rounded-full mt-1 overflow-hidden">
                 <div
                   className={`h-full rounded-full transition-all duration-300 ${
                     factor.status === 'good'
@@ -305,7 +305,7 @@ const ScheduleHealthScore: React.FC<ScheduleHealthScoreProps> = ({ data, isLoadi
                   style={{ width: `${(factor.score / factor.maxScore) * 100}%` }}
                 />
               </div>
-              <p className="text-[10px] sm:text-xs text-zinc-500 dark:text-zinc-400 mt-1 opacity-0 group-hover:opacity-100 transition-opacity line-clamp-1">
+              <p className="text-[10px] sm:text-xs text-muted-foreground dark:text-muted-foreground mt-1 opacity-0 group-hover:opacity-100 transition-opacity line-clamp-1">
                 {factor.tip}
               </p>
             </div>

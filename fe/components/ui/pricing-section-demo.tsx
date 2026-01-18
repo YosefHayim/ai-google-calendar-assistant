@@ -20,7 +20,7 @@ function PricingSkeleton() {
         {[1, 2, 3].map((i) => (
           <div
             key={i}
-            className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl p-6 shadow-sm"
+            className="bg-background dark:bg-secondary border border dark:border rounded-xl p-6 shadow-sm"
           >
             <Skeleton className="h-6 w-24 mb-2" />
             <Skeleton className="h-4 w-full mb-6" />
@@ -47,8 +47,8 @@ function PricingError() {
       <div className="flex justify-center mb-4">
         <AlertCircle className="h-12 w-12 text-amber-500" />
       </div>
-      <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-2">Unable to load pricing</h3>
-      <p className="text-zinc-600 dark:text-zinc-400 mb-4">
+      <h3 className="text-lg font-semibold text-foreground dark:text-primary-foreground mb-2">Unable to load pricing</h3>
+      <p className="text-zinc-600 dark:text-muted-foreground mb-4">
         We couldn&apos;t fetch the latest pricing information. Showing default plans below.
       </p>
     </div>

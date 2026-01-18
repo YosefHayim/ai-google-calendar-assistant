@@ -20,14 +20,14 @@ interface AIInsightsSectionProps {
 export function AIInsightsSection({ insightsData, isLoading, isError, onRetry }: AIInsightsSectionProps) {
   return (
     <div>
-      <h3 className="text-base sm:text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-3 sm:mb-4 flex items-center gap-2">
+      <h3 className="text-base sm:text-lg font-semibold text-foreground dark:text-primary-foreground mb-3 sm:mb-4 flex items-center gap-2">
         AI Insights
         <HoverCard>
           <HoverCardTrigger asChild>
             <Button
               variant="ghost"
               size="icon"
-              className="h-6 w-6 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
+              className="h-6 w-6 text-muted-foreground hover:text-zinc-600 dark:hover:text-zinc-300"
             >
               <Info size={16} />
             </Button>
@@ -35,7 +35,7 @@ export function AIInsightsSection({ insightsData, isLoading, isError, onRetry }:
           <HoverCardContent>
             <div className="space-y-2">
               <h4 className="font-semibold text-sm">Performance Intelligence</h4>
-              <p className="text-xs text-zinc-600 dark:text-zinc-400">
+              <p className="text-xs text-zinc-600 dark:text-muted-foreground">
                 AI-powered insights about your productivity patterns, focus velocity, and schedule optimization
                 opportunities.
               </p>
@@ -47,8 +47,8 @@ export function AIInsightsSection({ insightsData, isLoading, isError, onRetry }:
         {isLoading ? (
           Array.from({ length: 5 }).map((_, i) => <InsightCardSkeleton key={i} />)
         ) : isError ? (
-          <div className="col-span-full flex flex-col items-center justify-center py-8 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl">
-            <p className="text-zinc-500 dark:text-zinc-400 mb-4">Failed to load insights</p>
+          <div className="col-span-full flex flex-col items-center justify-center py-8 bg-background dark:bg-secondary border border dark:border rounded-xl">
+            <p className="text-muted-foreground dark:text-muted-foreground mb-4">Failed to load insights</p>
             <Button onClick={onRetry} size="sm">
               Retry
             </Button>
@@ -65,7 +65,7 @@ export function AIInsightsSection({ insightsData, isLoading, isError, onRetry }:
             />
           ))
         ) : (
-          <div className="col-span-full flex flex-col items-center justify-center py-8 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl">
+          <div className="col-span-full flex flex-col items-center justify-center py-8 bg-background dark:bg-secondary border border dark:border rounded-xl">
             <EmptyState
               icon={<Lightbulb />}
               title="No insights yet"

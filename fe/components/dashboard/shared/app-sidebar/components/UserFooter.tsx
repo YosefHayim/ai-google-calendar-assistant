@@ -49,7 +49,7 @@ export function UserFooter({ onOpenSettings, onSignOut }: UserFooterProps) {
               >
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage src={avatarUrl} alt={fullName} />
-                  <AvatarFallback className="rounded-lg bg-zinc-200 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300">
+                  <AvatarFallback className="rounded-lg bg-accent dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300">
                     {initials}
                   </AvatarFallback>
                 </Avatar>
@@ -79,7 +79,7 @@ export function UserFooter({ onOpenSettings, onSignOut }: UserFooterProps) {
                       className="rounded-lg object-cover flex-shrink-0 h-8 w-8"
                     />
                   ) : (
-                    <div className="h-8 w-8 rounded-lg bg-zinc-200 dark:bg-zinc-700 flex items-center justify-center flex-shrink-0">
+                    <div className="h-8 w-8 rounded-lg bg-accent dark:bg-zinc-700 flex items-center justify-center flex-shrink-0">
                       <span className="text-xs font-medium text-zinc-600 dark:text-zinc-300">{initials}</span>
                     </div>
                   )}
@@ -143,7 +143,7 @@ export function UserFooter({ onOpenSettings, onSignOut }: UserFooterProps) {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     onClick={() => handleMenuAction(onSignOut)}
-                    className="cursor-pointer hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-500 dark:hover:text-red-400"
+                    className="cursor-pointer hover:bg-destructive/5 dark:hover:bg-red-900/20 hover:text-destructive dark:hover:text-red-400"
                   >
                     <LogOut className="w-4 h-4" />
                     <span>Log out</span>

@@ -47,7 +47,7 @@ export const WhatsAppChat = ({ messages }: WhatsAppChatProps) => (
             <div className="bg-[#005C4B] text-white px-3 py-2 rounded-lg rounded-tr-none max-w-[85%] shadow-sm">
               {msg.isVoice ? (
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-full bg-background/20 flex items-center justify-center">
                     <Mic className="w-4 h-4" />
                   </div>
                   <VoiceWaveform />

@@ -62,15 +62,15 @@ function CallbackContent() {
   }, [searchParams, router, t])
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-white dark:bg-[#030303]">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-background dark:bg-[#030303]">
       <div className="flex flex-col items-center gap-4">
-        <div className="w-16 h-16 bg-zinc-900 dark:bg-white rounded-xl flex items-center justify-center shadow-lg">
-          <AllyLogo className="w-8 h-8 text-white dark:text-zinc-900" />
+        <div className="w-16 h-16 bg-secondary dark:bg-background rounded-xl flex items-center justify-center shadow-lg">
+          <AllyLogo className="w-8 h-8 text-white dark:text-foreground" />
         </div>
         {error ? (
           <div className="text-center">
-            <p className="text-red-500 font-medium">{error}</p>
-            <p className="text-zinc-500 text-sm mt-2">{t('callback.redirectingToLogin')}</p>
+            <p className="text-destructive font-medium">{error}</p>
+            <p className="text-muted-foreground text-sm mt-2">{t('callback.redirectingToLogin')}</p>
           </div>
         ) : (
           <LoadingSpinner size="lg" text={t('callback.completingSignIn')} />
@@ -84,10 +84,10 @@ function CallbackFallback() {
   const { t } = useTranslation()
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-white dark:bg-[#030303]">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-background dark:bg-[#030303]">
       <div className="flex flex-col items-center gap-4">
-        <div className="w-16 h-16 bg-zinc-900 dark:bg-white rounded-xl flex items-center justify-center shadow-lg">
-          <AllyLogo className="w-8 h-8 text-white dark:text-zinc-900" />
+        <div className="w-16 h-16 bg-secondary dark:bg-background rounded-xl flex items-center justify-center shadow-lg">
+          <AllyLogo className="w-8 h-8 text-white dark:text-foreground" />
         </div>
         <LoadingSpinner size="lg" text={t('callback.loading')} />
       </div>

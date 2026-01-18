@@ -53,7 +53,7 @@ export default function AboutPage() {
         >
           <motion.h1
             variants={fadeInUp}
-            className="text-4xl md:text-6xl lg:text-7xl font-medium tracking-tight text-zinc-900 dark:text-zinc-100 mb-6"
+            className="text-4xl md:text-6xl lg:text-7xl font-medium tracking-tight text-foreground dark:text-primary-foreground mb-6"
           >
             {t('about.heroTitle')}
             <br />
@@ -62,14 +62,14 @@ export default function AboutPage() {
 
           <motion.p
             variants={fadeInUp}
-            className="text-xl md:text-2xl text-zinc-500 dark:text-zinc-400 max-w-3xl mx-auto"
+            className="text-xl md:text-2xl text-muted-foreground dark:text-muted-foreground max-w-3xl mx-auto"
           >
             {t('about.heroSubtitle')}
           </motion.p>
         </motion.div>
       </section>
 
-      <section className="py-16 md:py-24 px-4 sm:px-6 bg-zinc-50 dark:bg-zinc-900/50">
+      <section className="py-16 md:py-24 px-4 sm:px-6 bg-muted dark:bg-secondary/50">
         <div className="max-w-6xl mx-auto">
           <motion.div
             className="text-center mb-16"
@@ -78,10 +78,10 @@ export default function AboutPage() {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <h2 className="text-3xl md:text-5xl font-medium text-zinc-900 dark:text-zinc-100 mb-4">
+            <h2 className="text-3xl md:text-5xl font-medium text-foreground dark:text-primary-foreground mb-4">
               {t('about.problemTitle')}
             </h2>
-            <p className="text-lg text-zinc-500 dark:text-zinc-400 max-w-2xl mx-auto">{t('about.problemSubtitle')}</p>
+            <p className="text-lg text-muted-foreground dark:text-muted-foreground max-w-2xl mx-auto">{t('about.problemSubtitle')}</p>
           </motion.div>
 
           <motion.div
@@ -100,13 +100,13 @@ export default function AboutPage() {
               <motion.div
                 key={index}
                 variants={fadeInUp}
-                className="p-6 rounded-2xl bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 hover:border-orange-300 dark:hover:border-orange-700 transition-colors"
+                className="p-6 rounded-2xl bg-background dark:bg-secondary border border dark:border-zinc-700 hover:border-orange-300 dark:hover:border-orange-700 transition-colors"
               >
                 <div className="w-12 h-12 rounded-xl bg-orange-500/10 flex items-center justify-center mb-4">
                   <problem.icon className="w-6 h-6 text-orange-500" />
                 </div>
-                <h3 className="text-lg font-medium text-zinc-900 dark:text-zinc-100 mb-2">{t(problem.titleKey)}</h3>
-                <p className="text-zinc-500 dark:text-zinc-400 text-sm">{t(problem.descKey)}</p>
+                <h3 className="text-lg font-medium text-foreground dark:text-primary-foreground mb-2">{t(problem.titleKey)}</h3>
+                <p className="text-muted-foreground dark:text-muted-foreground text-sm">{t(problem.descKey)}</p>
               </motion.div>
             ))}
           </motion.div>
@@ -129,12 +129,12 @@ export default function AboutPage() {
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
             >
-              <h2 className="text-3xl md:text-5xl font-medium text-zinc-900 dark:text-zinc-100 mb-6">
+              <h2 className="text-3xl md:text-5xl font-medium text-foreground dark:text-primary-foreground mb-6">
                 {t('about.visionTitle')}
               </h2>
               <div className="space-y-4">
-                <p className="text-lg text-zinc-500 dark:text-zinc-400">{t('about.visionP1')}</p>
-                <p className="text-lg text-zinc-500 dark:text-zinc-400">{t('about.visionP2')}</p>
+                <p className="text-lg text-muted-foreground dark:text-muted-foreground">{t('about.visionP1')}</p>
+                <p className="text-lg text-muted-foreground dark:text-muted-foreground">{t('about.visionP2')}</p>
               </div>
             </motion.div>
 
@@ -153,7 +153,7 @@ export default function AboutPage() {
                 <motion.div
                   key={index}
                   variants={fadeInUp}
-                  className="flex items-start gap-4 p-5 rounded-xl bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800"
+                  className="flex items-start gap-4 p-5 rounded-xl bg-muted dark:bg-secondary/50 border border dark:border"
                 >
                   <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
                     <belief.icon className="w-5 h-5 text-primary" />
@@ -166,7 +166,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="py-16 md:py-24 px-4 sm:px-6 bg-zinc-900 dark:bg-zinc-950 text-white">
+      <section className="py-16 md:py-24 px-4 sm:px-6 bg-secondary dark:bg-secondary text-white">
         <div className="max-w-6xl mx-auto">
           <motion.div
             className="text-center mb-16"
@@ -175,7 +175,7 @@ export default function AboutPage() {
             viewport={{ once: true }}
           >
             <h2 className="text-3xl md:text-5xl font-medium mb-4">{t('about.impactTitle')}</h2>
-            <p className="text-lg text-zinc-400 max-w-2xl mx-auto">{t('about.impactSubtitle')}</p>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">{t('about.impactSubtitle')}</p>
           </motion.div>
 
           <motion.div
@@ -214,7 +214,7 @@ export default function AboutPage() {
               <motion.div
                 key={index}
                 variants={fadeInUp}
-                className="relative p-6 rounded-2xl bg-zinc-800/50 border border-zinc-700 overflow-hidden group"
+                className="relative p-6 rounded-2xl bg-secondary/50 border border-zinc-700 overflow-hidden group"
               >
                 <div
                   className={`absolute inset-0 bg-gradient-to-br ${impact.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}
@@ -225,7 +225,7 @@ export default function AboutPage() {
                   <impact.icon className="w-7 h-7 text-white" />
                 </div>
                 <h3 className="text-xl font-semibold text-white mb-2">{t(impact.titleKey)}</h3>
-                <p className="text-zinc-400 text-sm">{t(impact.descKey)}</p>
+                <p className="text-muted-foreground text-sm">{t(impact.descKey)}</p>
               </motion.div>
             ))}
           </motion.div>
@@ -240,10 +240,10 @@ export default function AboutPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl md:text-5xl font-medium text-zinc-900 dark:text-zinc-100 mb-4">
+            <h2 className="text-3xl md:text-5xl font-medium text-foreground dark:text-primary-foreground mb-4">
               {t('about.differenceTitle')}
             </h2>
-            <p className="text-lg text-zinc-500 dark:text-zinc-400 max-w-2xl mx-auto">
+            <p className="text-lg text-muted-foreground dark:text-muted-foreground max-w-2xl mx-auto">
               {t('about.differenceSubtitle')}
             </p>
           </motion.div>
@@ -268,9 +268,9 @@ export default function AboutPage() {
                 icon: MessageCircle,
                 titleKey: 'about.differenceMultiPlatform',
                 descKey: 'about.differenceMultiPlatformDesc',
-                highlight: 'bg-blue-500/10 text-blue-600 dark:text-blue-400',
-                iconBg: 'bg-blue-500/10',
-                iconColor: 'text-blue-500',
+                highlight: 'bg-primary/10 text-primary dark:text-blue-400',
+                iconBg: 'bg-primary/10',
+                iconColor: 'text-primary',
               },
               {
                 icon: Brain,
@@ -285,8 +285,8 @@ export default function AboutPage() {
                 <div className={`w-16 h-16 rounded-2xl ${diff.iconBg} flex items-center justify-center mx-auto mb-6`}>
                   <diff.icon className={`w-8 h-8 ${diff.iconColor}`} />
                 </div>
-                <h3 className="text-xl font-medium text-zinc-900 dark:text-zinc-100 mb-3">{t(diff.titleKey)}</h3>
-                <p className="text-zinc-500 dark:text-zinc-400">{t(diff.descKey)}</p>
+                <h3 className="text-xl font-medium text-foreground dark:text-primary-foreground mb-3">{t(diff.titleKey)}</h3>
+                <p className="text-muted-foreground dark:text-muted-foreground">{t(diff.descKey)}</p>
               </motion.div>
             ))}
           </motion.div>
@@ -301,17 +301,17 @@ export default function AboutPage() {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="text-3xl md:text-5xl font-medium text-zinc-900 dark:text-zinc-100 mb-6">
+          <h2 className="text-3xl md:text-5xl font-medium text-foreground dark:text-primary-foreground mb-6">
             {t('about.ctaTitle')}
           </h2>
-          <p className="text-xl text-zinc-500 dark:text-zinc-400 mb-10 max-w-2xl mx-auto">{t('about.ctaSubtitle')}</p>
+          <p className="text-xl text-muted-foreground dark:text-muted-foreground mb-10 max-w-2xl mx-auto">{t('about.ctaSubtitle')}</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/register" className="w-full sm:w-auto">
               <InteractiveHoverButton text={t('about.ctaPrimary')} className="w-full sm:w-auto h-14 px-8 text-lg" />
             </Link>
             <Link
               href="/pricing"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 h-14 px-8 text-lg font-medium rounded-md border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 h-14 px-8 text-lg font-medium rounded-md border border dark:border-zinc-700 text-foreground dark:text-primary-foreground hover:bg-muted dark:hover:bg-secondary transition-colors"
             >
               {t('about.ctaSecondary')}
               <ArrowRight className="w-5 h-5" />

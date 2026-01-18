@@ -84,7 +84,7 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
                 <CalendarDays className="w-6 h-6" style={{ color: calendarColor }} />
               </div>
               <div className="space-y-1.5">
-                <DialogTitle className="text-xl font-bold text-zinc-900 dark:text-zinc-100 leading-tight">
+                <DialogTitle className="text-xl font-bold text-foreground dark:text-primary-foreground leading-tight">
                   {event.summary || 'No Title'}
                 </DialogTitle>
 
@@ -126,16 +126,16 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
           </DialogHeader>
 
           {/* Primary Info Grid (Time & Location) */}
-          <div className="bg-zinc-50 dark:bg-zinc-900/50 rounded-lg border border-zinc-100 dark:border-zinc-800 p-4 space-y-2">
+          <div className="bg-muted dark:bg-secondary/50 rounded-lg border border-zinc-100 dark:border p-4 space-y-2">
             {/* Time Range */}
             <div className="flex items-center gap-3 text-sm">
               <div className="w-5 flex justify-center">
-                <CalendarClock className="w-4 h-4 text-zinc-400" />
+                <CalendarClock className="w-4 h-4 text-muted-foreground" />
               </div>
               <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 text-zinc-700 dark:text-zinc-300 font-medium">
                 <span>{formatDate(event.start.dateTime || event.start.date)}</span>
-                <ArrowRight className="w-3 h-3 text-zinc-400 hidden sm:block" />
-                <span className="sm:hidden text-xs text-zinc-400">to</span>
+                <ArrowRight className="w-3 h-3 text-muted-foreground hidden sm:block" />
+                <span className="sm:hidden text-xs text-muted-foreground">to</span>
                 <span>{formatDate(event.end.dateTime || event.end.date)}</span>
               </div>
             </div>
@@ -143,9 +143,9 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
             {/* Duration & Timezone */}
             <div className="flex items-center gap-3 text-sm">
               <div className="w-5 flex justify-center">
-                <Hourglass className="w-4 h-4 text-zinc-400" />
+                <Hourglass className="w-4 h-4 text-muted-foreground" />
               </div>
-              <div className="flex items-center gap-2 text-zinc-600 dark:text-zinc-400">
+              <div className="flex items-center gap-2 text-zinc-600 dark:text-muted-foreground">
                 <span>
                   {formatDistanceStrict(
                     new Date(event.start.dateTime || event.start.date || ''),
@@ -153,7 +153,7 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
                   )}
                 </span>
                 {event.start.timeZone && (
-                  <span className="text-xs px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-500">
+                  <span className="text-xs px-1.5 py-0.5 rounded bg-accent dark:bg-secondary text-muted-foreground">
                     {event.start.timeZone}
                   </span>
                 )}
@@ -164,13 +164,13 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
             {event.location && (
               <div className="flex items-start gap-3 text-sm pt-1">
                 <div className="w-5 flex justify-center mt-0.5">
-                  <MapPin className="w-4 h-4 text-zinc-400" />
+                  <MapPin className="w-4 h-4 text-muted-foreground" />
                 </div>
                 <a
                   href={`https://maps.google.com/?q=$?q=${encodeURIComponent(event.location)}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="text-zinc-600 dark:text-zinc-400 hover:text-primary underline decoration-dotted underline-offset-4"
+                  className="text-zinc-600 dark:text-muted-foreground hover:text-primary underline decoration-dotted underline-offset-4"
                 >
                   {event.location}
                 </a>
@@ -182,7 +182,7 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
           {event.description && (
             <div className="flex gap-3">
               <div className="w-5 flex justify-center shrink-0 mt-1">
-                <AlignLeft className="w-4 h-4 text-zinc-400" />
+                <AlignLeft className="w-4 h-4 text-muted-foreground" />
               </div>
               <div className="text-sm text-zinc-600 dark:text-zinc-300 whitespace-pre-wrap leading-relaxed overflow-hidden">
                 <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(event.description) }} />
@@ -192,14 +192,14 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
 
           {/* People Section */}
           {(event.organizer || (event.attendees && event.attendees.length > 0)) && (
-            <div className="border-t border-zinc-100 dark:border-zinc-800 pt-4 space-y-4">
+            <div className="border-t border-zinc-100 dark:border pt-4 space-y-4">
               {event.organizer && (
                 <div className="flex items-center gap-3">
                   <div className="w-5 flex justify-center">
-                    <User className="w-4 h-4 text-zinc-400" />
+                    <User className="w-4 h-4 text-muted-foreground" />
                   </div>
                   <div className="text-sm w-auto overflow-hidden">
-                    <span className="text-zinc-500 dark:text-zinc-500 text-xs uppercase font-bold mr-2">Organizer</span>
+                    <span className="text-muted-foreground dark:text-muted-foreground text-xs uppercase font-bold mr-2">Organizer</span>
                     <span className="text-zinc-700 dark:text-zinc-300 font-medium ">{event.organizer.email}</span>
                   </div>
                 </div>
@@ -208,20 +208,20 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
               {event.attendees && event.attendees.length > 0 && (
                 <div className="flex items-start gap-3">
                   <div className="w-5 flex justify-center mt-1">
-                    <Users className="w-4 h-4 text-zinc-400" />
+                    <Users className="w-4 h-4 text-muted-foreground" />
                   </div>
                   <div className="flex-1">
-                    <div className="text-zinc-500 dark:text-zinc-500 text-xs uppercase font-bold mb-2">
+                    <div className="text-muted-foreground dark:text-muted-foreground text-xs uppercase font-bold mb-2">
                       Attendees ({event.attendees.length})
                     </div>
                     <div className="grid grid-cols-1 gap-2 max-h-32 overflow-y-auto pr-2 custom-scrollbar">
                       {event.attendees.map((attendee, idx) => (
                         <div
                           key={idx}
-                          className="flex items-center justify-between text-sm bg-zinc-50 dark:bg-zinc-800/50 rounded px-2 py-1.5"
+                          className="flex items-center justify-between text-sm bg-muted dark:bg-secondary/50 rounded px-2 py-1.5"
                         >
                           <span
-                            className="text-zinc-600 dark:text-zinc-400 truncate max-w-[200px]"
+                            className="text-zinc-600 dark:text-muted-foreground truncate max-w-[200px]"
                             title={attendee.email}
                           >
                             {attendee.email}
@@ -233,7 +233,7 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
                                   ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
                                   : attendee.responseStatus === 'declined'
                                     ? 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400'
-                                    : 'bg-zinc-200 text-zinc-600 dark:bg-zinc-700 dark:text-zinc-400'
+                                    : 'bg-accent text-zinc-600 dark:bg-zinc-700 dark:text-muted-foreground'
                               }`}
                             >
                               {attendee.responseStatus}
@@ -249,8 +249,8 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
           )}
 
           {/* Footer Meta */}
-          <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-zinc-100 dark:border-zinc-800">
-            <div className="flex items-center gap-4 text-xs text-zinc-400">
+          <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-zinc-100 dark:border">
+            <div className="flex items-center gap-4 text-xs text-muted-foreground">
               {event.created && (
                 <div className="flex items-center gap-1" title="Date Created">
                   <Info size={12} />

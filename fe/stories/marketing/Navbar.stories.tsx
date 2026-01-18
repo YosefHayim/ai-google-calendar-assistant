@@ -21,19 +21,19 @@ const meta: Meta<typeof Navbar> = {
         <Story />
         <div className="pt-32 px-8">
           <div className="max-w-4xl mx-auto space-y-8">
-            <h1 className="text-4xl font-bold text-zinc-900 dark:text-zinc-100">
+            <h1 className="text-4xl font-bold text-foreground dark:text-primary-foreground">
               Scroll down to see navbar transition
             </h1>
-            <p className="text-zinc-600 dark:text-zinc-400">
+            <p className="text-zinc-600 dark:text-muted-foreground">
               The navbar transforms from transparent to a frosted glass effect when you scroll past 20px.
             </p>
             {Array.from({ length: 10 }).map((_, i) => (
               <div
                 key={i}
-                className="h-32 bg-white dark:bg-zinc-800 rounded-xl border border-zinc-200 dark:border-zinc-700 p-6"
+                className="h-32 bg-background dark:bg-secondary rounded-xl border border dark:border-zinc-700 p-6"
               >
-                <div className="h-4 w-3/4 bg-zinc-100 dark:bg-zinc-700 rounded" />
-                <div className="h-4 w-1/2 bg-zinc-100 dark:bg-zinc-700 rounded mt-4" />
+                <div className="h-4 w-3/4 bg-secondary dark:bg-zinc-700 rounded" />
+                <div className="h-4 w-1/2 bg-secondary dark:bg-zinc-700 rounded mt-4" />
               </div>
             ))}
           </div>
@@ -71,10 +71,10 @@ export const DarkMode: Story = {
         <Story />
         <div className="pt-32 px-8">
           <div className="max-w-4xl mx-auto space-y-8">
-            <h1 className="text-4xl font-bold text-zinc-100">Dark Mode Navigation</h1>
-            <p className="text-zinc-400">The navbar adapts seamlessly to dark mode with proper contrast ratios.</p>
+            <h1 className="text-4xl font-bold text-primary-foreground">Dark Mode Navigation</h1>
+            <p className="text-muted-foreground">The navbar adapts seamlessly to dark mode with proper contrast ratios.</p>
             {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="h-32 bg-zinc-800 rounded-xl border border-zinc-700 p-6">
+              <div key={i} className="h-32 bg-secondary rounded-xl border border-zinc-700 p-6">
                 <div className="h-4 w-3/4 bg-zinc-700 rounded" />
                 <div className="h-4 w-1/2 bg-zinc-700 rounded mt-4" />
               </div>
@@ -96,13 +96,13 @@ export const ScrolledState: Story = {
   },
   decorators: [
     (Story) => (
-      <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
+      <div className="min-h-screen bg-muted dark:bg-secondary">
         <Story />
         <div className="pt-24 px-8">
           <div className="max-w-4xl mx-auto">
-            <div className="bg-white dark:bg-zinc-800 rounded-xl border border-zinc-200 dark:border-zinc-700 p-8">
-              <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-4">Scrolled Navbar Preview</h2>
-              <p className="text-zinc-600 dark:text-zinc-400">
+            <div className="bg-background dark:bg-secondary rounded-xl border border dark:border-zinc-700 p-8">
+              <h2 className="text-2xl font-bold text-foreground dark:text-primary-foreground mb-4">Scrolled Navbar Preview</h2>
+              <p className="text-zinc-600 dark:text-muted-foreground">
                 Scroll this page to observe the navbar&apos;s frosted glass effect activate.
               </p>
             </div>
@@ -127,18 +127,18 @@ export const MobileView: Story = {
   },
   decorators: [
     (Story) => (
-      <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
+      <div className="min-h-screen bg-muted dark:bg-secondary">
         <Story />
         <div className="pt-24 px-4">
           <div className="space-y-4">
-            <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">Mobile Navigation</h2>
-            <p className="text-sm text-zinc-600 dark:text-zinc-400">
+            <h2 className="text-xl font-bold text-foreground dark:text-primary-foreground">Mobile Navigation</h2>
+            <p className="text-sm text-zinc-600 dark:text-muted-foreground">
               Tap the hamburger menu icon to open the mobile navigation sidebar with full menu options.
             </p>
             {Array.from({ length: 6 }).map((_, i) => (
               <div
                 key={i}
-                className="h-24 bg-white dark:bg-zinc-800 rounded-lg border border-zinc-200 dark:border-zinc-700"
+                className="h-24 bg-background dark:bg-secondary rounded-lg border border dark:border-zinc-700"
               />
             ))}
           </div>

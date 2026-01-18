@@ -34,7 +34,7 @@ export function useUpdateConversationTitle(options?: MutationHookOptions<boolean
             return { ...oldData, title: variables.title }
           }
           return oldData
-        }
+        },
       )
       options?.onSuccess?.(data, variables)
     },

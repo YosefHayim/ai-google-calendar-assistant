@@ -109,7 +109,7 @@ export function AIAllySidebar({ isOpen, onClose, onOpen }: AIAllySidebarProps) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-            className="fixed bottom-6 right-6 z-50 w-96 max-h-[80vh] flex flex-col rounded-2xl shadow-2xl shadow-black/20 dark:shadow-black/40 border border-zinc-200/60 dark:border-zinc-800/60 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-2xl overflow-hidden"
+            className="fixed bottom-6 right-6 z-50 w-96 max-h-[80vh] flex flex-col rounded-2xl shadow-2xl shadow-black/20 dark:shadow-black/40 border border/60 dark:border/60 bg-background/95 dark:bg-secondary/95 backdrop-blur-2xl overflow-hidden"
           >
             <ChatHeader onClose={onClose} onMinimize={onClose} />
 
@@ -125,9 +125,9 @@ export function AIAllySidebar({ isOpen, onClose, onOpen }: AIAllySidebarProps) {
               <QuickActionsBar actions={QUICK_ACTIONS} onActionClick={handleQuickAction} />
             )}
 
-            <div className="p-3 border-t border-zinc-200/50 dark:border-zinc-800/50 bg-zinc-50/50 dark:bg-zinc-900/50">
+            <div className="p-3 border-t border/50 dark:border/50 bg-muted/50 dark:bg-secondary/50">
               {isRecording ? (
-                <div className="relative flex flex-col items-center justify-center bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-3">
+                <div className="relative flex flex-col items-center justify-center bg-background dark:bg-secondary border border dark:border rounded-2xl p-3">
                   <AIVoiceInput
                     onStart={startRecording}
                     onStop={(duration, text) => handleStopRecording(text ?? '')}
@@ -142,7 +142,7 @@ export function AIAllySidebar({ isOpen, onClose, onOpen }: AIAllySidebarProps) {
                     variant="ghost"
                     size="icon"
                     onClick={cancelRecording}
-                    className="absolute top-2 right-2 h-7 w-7 text-zinc-400"
+                    className="absolute top-2 right-2 h-7 w-7 text-muted-foreground"
                   >
                     <X size={16} />
                   </Button>
@@ -153,14 +153,14 @@ export function AIAllySidebar({ isOpen, onClose, onOpen }: AIAllySidebarProps) {
                     e.preventDefault()
                     handleSendMessage()
                   }}
-                  className="relative flex items-center bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-1.5 gap-1.5"
+                  className="relative flex items-center bg-background dark:bg-secondary border border dark:border rounded-2xl p-1.5 gap-1.5"
                 >
                   <Button
                     type="button"
                     variant="ghost"
                     size="icon"
                     onClick={toggleRecording}
-                    className="h-10 w-10 flex-shrink-0 text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
+                    className="h-10 w-10 flex-shrink-0 text-muted-foreground hover:text-foreground dark:hover:text-primary-foreground"
                     disabled={!speechRecognitionSupported}
                     title="Voice input"
                   >
@@ -183,8 +183,8 @@ export function AIAllySidebar({ isOpen, onClose, onOpen }: AIAllySidebarProps) {
                     className={cn(
                       'h-10 w-10 flex-shrink-0 rounded-xl',
                       inputText.trim()
-                        ? 'bg-zinc-950 dark:bg-zinc-100 text-white dark:text-zinc-950 hover:bg-zinc-800 dark:hover:bg-zinc-200'
-                        : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-300 dark:text-zinc-600',
+                        ? 'bg-secondary dark:bg-secondary text-white dark:text-zinc-950 hover:bg-secondary dark:hover:bg-accent'
+                        : 'bg-secondary dark:bg-secondary text-zinc-300 dark:text-zinc-600',
                     )}
                   >
                     <ArrowUp className="w-5 h-5" />
@@ -192,7 +192,7 @@ export function AIAllySidebar({ isOpen, onClose, onOpen }: AIAllySidebarProps) {
                 </form>
               )}
 
-              <p className="text-center text-xs text-zinc-400 dark:text-zinc-500 mt-2 font-medium">
+              <p className="text-center text-xs text-muted-foreground dark:text-muted-foreground mt-2 font-medium">
                 Powered by Ally AI
               </p>
             </div>

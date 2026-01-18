@@ -18,7 +18,7 @@ export default function CinematicGlowToggle({ id, checked, onChange, className }
     <div
       id={id}
       className={cn(
-        'flex items-center gap-3 p-1 rounded-full bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-800 shadow-inner cursor-pointer transition-all duration-300',
+        'flex items-center gap-3 p-1 rounded-full bg-secondary dark:bg-secondary/50 border border dark:border shadow-inner cursor-pointer transition-all duration-300',
         className,
       )}
       onClick={() => onChange(!checked)}
@@ -27,7 +27,7 @@ export default function CinematicGlowToggle({ id, checked, onChange, className }
       <span
         className={cn(
           'text-xs font-bold tracking-wider transition-colors duration-300 ml-2 select-none',
-          !checked ? 'text-zinc-500 dark:text-zinc-400' : 'text-zinc-300 dark:text-zinc-700',
+          !checked ? 'text-muted-foreground dark:text-muted-foreground' : 'text-zinc-300 dark:text-zinc-700',
         )}
       >
         OFF
@@ -54,7 +54,7 @@ export default function CinematicGlowToggle({ id, checked, onChange, className }
           whileTap={{ scale: 0.9 }}
         >
           {/* Thumb Highlight (Gloss) */}
-          <div className="absolute top-0.5 left-1 w-1.5 h-0.5 bg-white/40 rounded-full blur-[0.5px]" />
+          <div className="absolute top-0.5 left-1 w-1.5 h-0.5 bg-background/40 rounded-full blur-[0.5px]" />
 
           {/* Active Glow */}
           {checked && (

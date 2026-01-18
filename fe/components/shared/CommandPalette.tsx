@@ -207,38 +207,38 @@ export function CommandPalette() {
 
   return (
     <div className="fixed inset-0 z-[9999]">
-      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setOpen(false)} />
+      <div className="fixed inset-0 bg-foreground/50 backdrop-blur-sm" onClick={() => setOpen(false)} />
       <div className="fixed left-1/2 top-1/4 -translate-x-1/2 w-full max-w-lg">
-        <Command className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-2xl overflow-hidden">
-          <div className="flex items-center border-b border-zinc-200 dark:border-zinc-800 px-4">
-            <Search className="w-4 h-4 text-zinc-400 mr-3" />
+        <Command className="rounded-xl border border dark:border bg-background dark:bg-secondary shadow-2xl overflow-hidden">
+          <div className="flex items-center border-b border dark:border px-4">
+            <Search className="w-4 h-4 text-muted-foreground mr-3" />
             <Command.Input
               value={search}
               onValueChange={setSearch}
               placeholder="Search commands..."
-              className="flex-1 py-4 text-sm bg-transparent outline-none placeholder:text-zinc-400"
+              className="flex-1 py-4 text-sm bg-transparent outline-none placeholder:text-muted-foreground"
               autoFocus
             />
-            <kbd className="hidden sm:inline-flex h-5 select-none items-center gap-1 rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 px-1.5 font-mono text-[10px] font-medium text-zinc-500">
+            <kbd className="hidden sm:inline-flex h-5 select-none items-center gap-1 rounded border border dark:border-zinc-700 bg-secondary dark:bg-secondary px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
               ESC
             </kbd>
           </div>
           <Command.List className="max-h-80 overflow-y-auto p-2">
-            <Command.Empty className="py-6 text-center text-sm text-zinc-500">No results found.</Command.Empty>
+            <Command.Empty className="py-6 text-center text-sm text-muted-foreground">No results found.</Command.Empty>
 
             {groupedCommands.navigation.length > 0 && (
               <Command.Group
                 heading="Navigation"
-                className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-zinc-500"
+                className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground"
               >
                 {groupedCommands.navigation.map((cmd) => (
                   <Command.Item
                     key={cmd.id}
                     value={cmd.label}
                     onSelect={cmd.action}
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer text-sm text-zinc-700 dark:text-zinc-300 aria-selected:bg-zinc-100 dark:aria-selected:bg-zinc-800"
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer text-sm text-zinc-700 dark:text-zinc-300 aria-selected:bg-secondary dark:aria-selected:bg-secondary"
                   >
-                    <span className="text-zinc-400">{cmd.icon}</span>
+                    <span className="text-muted-foreground">{cmd.icon}</span>
                     {cmd.label}
                   </Command.Item>
                 ))}
@@ -248,14 +248,14 @@ export function CommandPalette() {
             {groupedCommands.admin.length > 0 && (
               <Command.Group
                 heading="Admin"
-                className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-zinc-500"
+                className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground"
               >
                 {groupedCommands.admin.map((cmd) => (
                   <Command.Item
                     key={cmd.id}
                     value={cmd.label}
                     onSelect={cmd.action}
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer text-sm text-zinc-700 dark:text-zinc-300 aria-selected:bg-zinc-100 dark:aria-selected:bg-zinc-800"
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer text-sm text-zinc-700 dark:text-zinc-300 aria-selected:bg-secondary dark:aria-selected:bg-secondary"
                   >
                     <span className="text-purple-500">{cmd.icon}</span>
                     {cmd.label}
@@ -267,16 +267,16 @@ export function CommandPalette() {
             {groupedCommands.actions.length > 0 && (
               <Command.Group
                 heading="Actions"
-                className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-zinc-500"
+                className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground"
               >
                 {groupedCommands.actions.map((cmd) => (
                   <Command.Item
                     key={cmd.id}
                     value={cmd.label}
                     onSelect={cmd.action}
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer text-sm text-zinc-700 dark:text-zinc-300 aria-selected:bg-zinc-100 dark:aria-selected:bg-zinc-800"
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer text-sm text-zinc-700 dark:text-zinc-300 aria-selected:bg-secondary dark:aria-selected:bg-secondary"
                   >
-                    <span className="text-zinc-400">{cmd.icon}</span>
+                    <span className="text-muted-foreground">{cmd.icon}</span>
                     {cmd.label}
                   </Command.Item>
                 ))}
@@ -286,26 +286,26 @@ export function CommandPalette() {
             {groupedCommands.help.length > 0 && (
               <Command.Group
                 heading="Help"
-                className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-zinc-500"
+                className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground"
               >
                 {groupedCommands.help.map((cmd) => (
                   <Command.Item
                     key={cmd.id}
                     value={cmd.label}
                     onSelect={cmd.action}
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer text-sm text-zinc-700 dark:text-zinc-300 aria-selected:bg-zinc-100 dark:aria-selected:bg-zinc-800"
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer text-sm text-zinc-700 dark:text-zinc-300 aria-selected:bg-secondary dark:aria-selected:bg-secondary"
                   >
-                    <span className="text-zinc-400">{cmd.icon}</span>
+                    <span className="text-muted-foreground">{cmd.icon}</span>
                     {cmd.label}
                   </Command.Item>
                 ))}
               </Command.Group>
             )}
           </Command.List>
-          <div className="border-t border-zinc-200 dark:border-zinc-800 px-4 py-2 flex items-center justify-between text-xs text-zinc-400">
+          <div className="border-t border dark:border px-4 py-2 flex items-center justify-between text-xs text-muted-foreground">
             <span>Navigate with arrow keys</span>
             <span>
-              <kbd className="px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 font-mono">Enter</kbd> to select
+              <kbd className="px-1.5 py-0.5 rounded bg-secondary dark:bg-secondary font-mono">Enter</kbd> to select
             </span>
           </div>
         </Command>

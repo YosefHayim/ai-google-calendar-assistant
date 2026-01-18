@@ -23,7 +23,7 @@ export function InlineLoader({ size = 'md', className, label }: InlineLoaderProp
   return (
     <span className={cn('inline-flex items-center gap-2', className)}>
       <Loader2 className={cn(sizeClasses[size], 'animate-spin')} />
-      {label && <span className="text-sm text-zinc-500 dark:text-zinc-400">{label}</span>}
+      {label && <span className="text-sm text-muted-foreground dark:text-muted-foreground">{label}</span>}
     </span>
   )
 }
@@ -45,7 +45,7 @@ export function FullPageLoader({ label = 'Loading...' }: FullPageLoaderProps) {
   return (
     <div className="flex flex-col items-center justify-center min-h-[200px] gap-3">
       <Loader2 className="w-8 h-8 animate-spin text-primary" />
-      <p className="text-sm text-zinc-500 dark:text-zinc-400">{label}</p>
+      <p className="text-sm text-muted-foreground dark:text-muted-foreground">{label}</p>
     </div>
   )
 }

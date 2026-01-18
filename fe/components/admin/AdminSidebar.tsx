@@ -29,11 +29,11 @@ export function AdminSidebar() {
   const pathname = usePathname()
 
   return (
-    <div className="flex h-screen w-64 flex-col border-zinc-200 border-r bg-white dark:border-zinc-800 dark:bg-zinc-900">
-      <div className="border-zinc-200 border-b p-4 dark:border-zinc-800">
+    <div className="flex h-screen w-64 flex-col border border-r bg-background dark:border dark:bg-secondary">
+      <div className="border border-b p-4 dark:border">
         <div className="flex items-center gap-2">
           <Shield className="h-6 w-6 text-primary" />
-          <h2 className="font-bold text-lg text-zinc-900 dark:text-white">Admin Panel</h2>
+          <h2 className="font-bold text-lg text-foreground dark:text-white">Admin Panel</h2>
         </div>
       </div>
 
@@ -47,7 +47,7 @@ export function AdminSidebar() {
                 'flex items-center gap-3 rounded-lg px-3 py-2 font-medium text-sm transition-colors',
                 isActive
                   ? 'bg-primary text-white'
-                  : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white',
+                  : 'text-zinc-600 hover:bg-secondary hover:text-foreground dark:text-muted-foreground dark:hover:bg-secondary dark:hover:text-white',
               )}
               href={item.href}
               key={item.href}
@@ -59,9 +59,9 @@ export function AdminSidebar() {
         })}
       </nav>
 
-      <div className="border-zinc-200 border-t p-4 dark:border-zinc-800">
+      <div className="border border-t p-4 dark:border">
         <Link
-          className="flex items-center gap-3 rounded-lg px-3 py-2 font-medium text-sm text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white"
+          className="flex items-center gap-3 rounded-lg px-3 py-2 font-medium text-sm text-zinc-600 transition-colors hover:bg-secondary hover:text-foreground dark:text-muted-foreground dark:hover:bg-secondary dark:hover:text-white"
           href="/dashboard"
         >
           <ArrowLeft className="h-5 w-5" />

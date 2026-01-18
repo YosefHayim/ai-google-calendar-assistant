@@ -168,11 +168,11 @@ export function ThreeDWallCalendar({
                     zIndex: Math.round(100 - Math.abs(rowOffset)),
                   }}
                 >
-                  <Card className="h-full overflow-visible bg-white/80 dark:bg-zinc-900/80 backdrop-blur-sm border-zinc-200 dark:border-zinc-800">
+                  <Card className="h-full overflow-visible bg-background/80 dark:bg-secondary/80 backdrop-blur-sm border dark:border">
                     <CardContent className="p-3 h-full flex flex-col">
                       <div className="flex justify-between items-start">
-                        <div className="text-xs font-bold text-zinc-900 dark:text-zinc-100">{format(day, 'd')}</div>
-                        <div className="text-xs font-bold uppercase text-zinc-400">{format(day, 'EEE')}</div>
+                        <div className="text-xs font-bold text-foreground dark:text-primary-foreground">{format(day, 'd')}</div>
+                        <div className="text-xs font-bold uppercase text-muted-foreground">{format(day, 'EEE')}</div>
                       </div>
 
                       {/* events */}
@@ -201,13 +201,13 @@ export function ThreeDWallCalendar({
                                 <div className="flex justify-between items-center gap-2">
                                   <div className="flex flex-col">
                                     <span className="text-xs font-bold">{ev.title}</span>
-                                    <span className="text-xs text-zinc-500">{format(new Date(ev.date), 'p')}</span>
+                                    <span className="text-xs text-muted-foreground">{format(new Date(ev.date), 'p')}</span>
                                   </div>
                                   {!hideControls && onRemoveEvent && (
                                     <Button
                                       variant="ghost"
                                       size="icon"
-                                      className="h-6 w-6 text-red-500 hover:bg-red-50"
+                                      className="h-6 w-6 text-destructive hover:bg-destructive/5"
                                       onClick={() => onRemoveEvent(ev.id)}
                                     >
                                       <Trash2 className="h-3 w-3" />
@@ -220,7 +220,7 @@ export function ThreeDWallCalendar({
                         })}
                       </div>
 
-                      <div className="mt-1 text-xs font-bold text-zinc-400 uppercase tracking-tighter">
+                      <div className="mt-1 text-xs font-bold text-muted-foreground uppercase tracking-tighter">
                         {dayEvents.length > 0 ? `${dayEvents.length} Tasks` : ''}
                       </div>
                     </CardContent>

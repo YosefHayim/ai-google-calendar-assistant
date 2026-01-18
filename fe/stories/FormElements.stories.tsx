@@ -34,7 +34,7 @@ export const BasicForm: Story = {
           <textarea
             id="message"
             placeholder="Your message..."
-            className="flex min-h-[80px] w-full rounded-lg border border-zinc-200 dark:border-zinc-800 bg-background px-3 py-2 text-sm placeholder:text-muted-foreground/70 focus-visible:border-primary focus-visible:outline-none focus-visible:ring-[0.01px] focus-visible:ring-primary/20"
+            className="flex min-h-[80px] w-full rounded-lg border border dark:border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground/70 focus-visible:border-primary focus-visible:outline-none focus-visible:ring-[0.01px] focus-visible:ring-primary/20"
           />
         </div>
       </CardContent>
@@ -84,7 +84,7 @@ export const LoginForm: Story = {
       </CardContent>
       <CardFooter className="flex flex-col space-y-4">
         <Button className="w-full">Sign in</Button>
-        <p className="text-center text-sm text-zinc-500">
+        <p className="text-center text-sm text-muted-foreground">
           Don&apos;t have an account?{' '}
           <Button variant="link" className="px-0 h-auto">
             Sign up
@@ -132,7 +132,7 @@ export const SignupForm: Story = {
         <div className="space-y-2">
           <Label htmlFor="signup-password">Password</Label>
           <Input id="signup-password" type="password" />
-          <p className="text-xs text-zinc-500">Must be at least 8 characters</p>
+          <p className="text-xs text-muted-foreground">Must be at least 8 characters</p>
         </div>
         <div className="space-y-2">
           <Label htmlFor="confirm-password">Confirm Password</Label>
@@ -171,7 +171,7 @@ export const SettingsForm: Story = {
             <textarea
               id="bio"
               placeholder="Tell us about yourself..."
-              className="flex min-h-[100px] w-full rounded-lg border border-zinc-200 dark:border-zinc-800 bg-background px-3 py-2 text-sm placeholder:text-muted-foreground/70 focus-visible:border-primary focus-visible:outline-none"
+              className="flex min-h-[100px] w-full rounded-lg border border dark:border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground/70 focus-visible:border-primary focus-visible:outline-none"
               defaultValue="Software developer passionate about building great products."
             />
           </div>
@@ -211,16 +211,16 @@ export const InlineValidation: Story = {
             defaultValue="valid@email.com"
             className="border-green-500 focus-visible:border-green-500 focus-visible:ring-green-500/20"
           />
-          <p className="text-xs text-green-500">Email is available</p>
+          <p className="text-xs text-green-600">Email is available</p>
         </div>
         <div className="space-y-2">
           <Label htmlFor="error-input">Error Input</Label>
           <Input
             id="error-input"
             defaultValue="invalid-email"
-            className="border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500/20"
+            className="border-destructive focus-visible:border-destructive focus-visible:ring-red-500/20"
           />
-          <p className="text-xs text-red-500">Please enter a valid email address</p>
+          <p className="text-xs text-destructive">Please enter a valid email address</p>
         </div>
         <div className="space-y-2">
           <Label htmlFor="warning-input">Warning Input</Label>

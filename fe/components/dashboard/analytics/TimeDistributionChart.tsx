@@ -42,7 +42,7 @@ const TimeDistributionChart: React.FC<TimeDistributionChartProps> = ({ data, isL
 
   if (isLoading) {
     return (
-      <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-sm p-6">
+      <div className="bg-background dark:bg-secondary border border dark:border rounded-xl shadow-sm p-6">
         <div className="flex items-center gap-2 mb-2">
           <Skeleton className="w-5 h-5 rounded" />
           <Skeleton className="h-5 w-28" />
@@ -63,17 +63,17 @@ const TimeDistributionChart: React.FC<TimeDistributionChartProps> = ({ data, isL
   const hasData = total > 0
 
   return (
-    <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
+    <div className="bg-background dark:bg-secondary border border dark:border rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
       <div className="flex items-center gap-2 mb-1">
-        <div className="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center">
-          <Clock className="w-4 h-4 text-zinc-900 dark:text-primary" />
+        <div className="w-8 h-8 rounded-lg bg-secondary dark:bg-secondary flex items-center justify-center">
+          <Clock className="w-4 h-4 text-foreground dark:text-primary" />
         </div>
-        <h3 className="font-semibold text-zinc-900 dark:text-zinc-100">Time of Day</h3>
+        <h3 className="font-semibold text-foreground dark:text-primary-foreground">Time of Day</h3>
       </div>
-      <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-4 ml-10">When your events are scheduled</p>
+      <p className="text-xs text-muted-foreground dark:text-muted-foreground mb-4 ml-10">When your events are scheduled</p>
 
       {!hasData ? (
-        <div className="h-[160px] flex items-center justify-center text-zinc-400 dark:text-zinc-600">
+        <div className="h-[160px] flex items-center justify-center text-muted-foreground dark:text-zinc-600">
           No events in this period
         </div>
       ) : (
@@ -119,8 +119,8 @@ const TimeDistributionChart: React.FC<TimeDistributionChartProps> = ({ data, isL
             </ResponsiveContainer>
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
               <div className="text-center">
-                <p className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">{total}</p>
-                <p className="text-xs text-zinc-500">events</p>
+                <p className="text-2xl font-bold text-foreground dark:text-primary-foreground">{total}</p>
+                <p className="text-xs text-muted-foreground">events</p>
               </div>
             </div>
           </div>
@@ -136,7 +136,7 @@ const TimeDistributionChart: React.FC<TimeDistributionChartProps> = ({ data, isL
               <div className="w-3 h-3 rounded-sm flex-shrink-0" style={{ backgroundColor: period.color }} />
               <div className="flex-1 min-w-0">
                 <span className="text-zinc-700 dark:text-zinc-300 truncate">{period.label}</span>
-                <span className="text-zinc-400 dark:text-zinc-500 ml-1">
+                <span className="text-muted-foreground dark:text-muted-foreground ml-1">
                   {count} ({percentage}%)
                 </span>
               </div>

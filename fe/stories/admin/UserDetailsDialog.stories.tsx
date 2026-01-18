@@ -322,7 +322,7 @@ export const DarkMode: Story = {
   },
   decorators: [
     (Story) => (
-      <div className="dark bg-zinc-950 p-8 rounded-lg">
+      <div className="dark bg-secondary p-8 rounded-lg">
         <Story />
       </div>
     ),
@@ -335,7 +335,7 @@ export const DarkMode: Story = {
 export const AllStatusTypes: Story = {
   render: () => (
     <div className="space-y-4">
-      <p className="text-sm text-zinc-500 mb-4">
+      <p className="text-sm text-muted-foreground mb-4">
         Click through the controls to see different user statuses: active, inactive, suspended, pending_verification
       </p>
       <UserDetailsDialog user={mockUsers.activeProUser} onClose={() => {}} />
@@ -346,7 +346,7 @@ export const AllStatusTypes: Story = {
 export const AllRoleTypes: Story = {
   render: () => (
     <div className="space-y-4">
-      <p className="text-sm text-zinc-500 mb-4">
+      <p className="text-sm text-muted-foreground mb-4">
         This demonstrates the admin role badge styling. Use controls to see: user, admin, moderator, support
       </p>
       <UserDetailsDialog user={mockUsers.enterpriseAdmin} onClose={() => {}} />

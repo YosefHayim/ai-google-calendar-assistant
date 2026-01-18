@@ -27,8 +27,8 @@ export default function AdminSubscriptionsPage() {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-900 dark:text-white">Subscription Management</h1>
-          <p className="text-zinc-500 dark:text-zinc-400 mt-1">View and manage all subscriptions</p>
+          <h1 className="text-2xl font-bold text-foreground dark:text-white">Subscription Management</h1>
+          <p className="text-muted-foreground dark:text-muted-foreground mt-1">View and manage all subscriptions</p>
         </div>
         <Button variant="outline" size="sm" onClick={() => refetch()} disabled={isRefetching}>
           <RefreshCw className={`w-4 h-4 mr-2 ${isRefetching ? 'animate-spin' : ''}`} />
@@ -40,7 +40,7 @@ export default function AdminSubscriptionsPage() {
       <Card className="p-4">
         <div className="flex flex-wrap gap-4">
           <div className="relative flex-1 min-w-48">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
               placeholder="Search by user email..."
               value={search}
@@ -57,7 +57,7 @@ export default function AdminSubscriptionsPage() {
               setStatusFilter(e.target.value as SubscriptionStatus | '')
               setPage(1)
             }}
-            className="px-3 py-2 border border-zinc-200 dark:border-zinc-700 rounded-md bg-white dark:bg-zinc-900 text-sm"
+            className="px-3 py-2 border border dark:border-zinc-700 rounded-md bg-background dark:bg-secondary text-sm"
           >
             <option value="">All Status</option>
             <option value="active">Active</option>
@@ -79,32 +79,32 @@ export default function AdminSubscriptionsPage() {
           <>
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="border-b border-zinc-200 dark:border-zinc-700">
+                <thead className="border-b border dark:border-zinc-700">
                   <tr>
-                    <th className="text-left p-4 font-medium text-zinc-500 dark:text-zinc-400">User</th>
-                    <th className="text-left p-4 font-medium text-zinc-500 dark:text-zinc-400">Plan</th>
-                    <th className="text-left p-4 font-medium text-zinc-500 dark:text-zinc-400">Status</th>
-                    <th className="text-left p-4 font-medium text-zinc-500 dark:text-zinc-400">Credits</th>
-                    <th className="text-left p-4 font-medium text-zinc-500 dark:text-zinc-400">AI Interactions</th>
-                    <th className="text-left p-4 font-medium text-zinc-500 dark:text-zinc-400">Period End</th>
+                    <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">User</th>
+                    <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">Plan</th>
+                    <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">Status</th>
+                    <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">Credits</th>
+                    <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">AI Interactions</th>
+                    <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">Period End</th>
                   </tr>
                 </thead>
                 <tbody>
                   {data?.subscriptions.map((sub) => (
                     <tr
                       key={sub.id}
-                      className="border-b border-zinc-100 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900/50"
+                      className="border-b border-zinc-100 dark:border hover:bg-muted dark:hover:bg-secondary/50"
                     >
                       <td className="p-4">
                         <div>
-                          <p className="font-medium text-zinc-900 dark:text-white">{sub.userEmail}</p>
-                          <p className="text-xs text-zinc-400">{sub.userId}</p>
+                          <p className="font-medium text-foreground dark:text-white">{sub.userEmail}</p>
+                          <p className="text-xs text-muted-foreground">{sub.userId}</p>
                         </div>
                       </td>
                       <td className="p-4">
                         <div className="flex items-center gap-2">
-                          <CreditCard className="w-4 h-4 text-zinc-400" />
-                          <span className="font-medium text-zinc-900 dark:text-white">{sub.planName}</span>
+                          <CreditCard className="w-4 h-4 text-muted-foreground" />
+                          <span className="font-medium text-foreground dark:text-white">{sub.planName}</span>
                         </div>
                       </td>
                       <td className="p-4">
@@ -112,14 +112,14 @@ export default function AdminSubscriptionsPage() {
                       </td>
                       <td className="p-4 text-sm text-zinc-600 dark:text-zinc-300">{sub.creditsRemaining}</td>
                       <td className="p-4 text-sm text-zinc-600 dark:text-zinc-300">{sub.aiInteractionsUsed}</td>
-                      <td className="p-4 text-sm text-zinc-500">
+                      <td className="p-4 text-sm text-muted-foreground">
                         {sub.currentPeriodEnd ? format(new Date(sub.currentPeriodEnd), 'MMM d, yyyy') : '-'}
                       </td>
                     </tr>
                   ))}
                   {(!data?.subscriptions || data.subscriptions.length === 0) && (
                     <tr>
-                      <td colSpan={6} className="p-8 text-center text-zinc-500">
+                      <td colSpan={6} className="p-8 text-center text-muted-foreground">
                         No subscriptions found
                       </td>
                     </tr>
@@ -129,8 +129,8 @@ export default function AdminSubscriptionsPage() {
             </div>
 
             {/* Pagination */}
-            <div className="flex items-center justify-between p-4 border-t border-zinc-200 dark:border-zinc-700">
-              <p className="text-sm text-zinc-500">
+            <div className="flex items-center justify-between p-4 border-t border dark:border-zinc-700">
+              <p className="text-sm text-muted-foreground">
                 Showing {data?.subscriptions.length || 0} of {data?.total || 0} subscriptions
               </p>
               <div className="flex gap-2">
@@ -159,9 +159,9 @@ export default function AdminSubscriptionsPage() {
 function SubscriptionStatusBadge({ status }: { status: SubscriptionStatus }) {
   const variants: Record<SubscriptionStatus, string> = {
     active: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
-    trialing: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
-    cancelled: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
-    expired: 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400',
+    trialing: 'bg-primary/10 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
+    cancelled: 'bg-destructive/10 text-red-800 dark:bg-red-900/30 dark:text-red-400',
+    expired: 'bg-secondary text-gray-800 dark:bg-gray-900/30 dark:text-muted-foreground',
     paused: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
   }
   return <Badge className={variants[status]}>{status}</Badge>

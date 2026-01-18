@@ -95,7 +95,7 @@ const BentoGridSection: React.FC = () => {
       cta: t('bento.features.secure.cta'),
       background: (
         <div className="absolute inset-0 flex items-end justify-end p-4">
-          <Lock className="w-32 h-32 text-zinc-100 dark:text-zinc-800/40 -mr-8 -mb-8" />
+          <Lock className="w-32 h-32 text-primary-foreground dark:text-zinc-800/40 -mr-8 -mb-8" />
         </div>
       ),
       className: 'md:col-start-3 md:col-end-4 md:row-start-3 md:row-end-4',
@@ -103,11 +103,11 @@ const BentoGridSection: React.FC = () => {
   ]
 
   return (
-    <section className="bg-white dark:bg-[#030303] px-4 py-24">
+    <section className="bg-background dark:bg-[#030303] px-4 py-24">
       <div className="max-w-7xl w-full mx-auto">
         <div className="text-center mb-16">
           <motion.h2
-            className="text-4xl md:text-6xl font-medium tracking-normal mb-4 text-zinc-900 dark:text-zinc-100"
+            className="text-4xl md:text-6xl font-medium tracking-normal mb-4 text-foreground dark:text-primary-foreground"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.8 }}
@@ -115,7 +115,7 @@ const BentoGridSection: React.FC = () => {
             {t('bento.title')}
           </motion.h2>
           <motion.p
-            className="text-zinc-500 max-w-2xl mx-auto text-lg font-medium"
+            className="text-muted-foreground max-w-2xl mx-auto text-lg font-medium"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.8 }}

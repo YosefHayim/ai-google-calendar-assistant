@@ -15,7 +15,7 @@ const meta: Meta<typeof MessageBubble> = {
   },
   decorators: [
     (Story) => (
-      <div className="max-w-2xl mx-auto bg-zinc-50 dark:bg-zinc-950 p-6 rounded-xl">
+      <div className="max-w-2xl mx-auto bg-muted dark:bg-secondary p-6 rounded-xl">
         <Story />
       </div>
     ),
@@ -112,7 +112,7 @@ export const WithSingleImage: Story = {
           timestamp={FIXED_TIMESTAMP}
           images={[mockImage]}
         />
-        <p className="text-xs text-zinc-500 text-center">Note: Images require base64 data to display properly</p>
+        <p className="text-xs text-muted-foreground text-center">Note: Images require base64 data to display properly</p>
       </div>
     )
   },

@@ -8,7 +8,7 @@ type StatusDotSize = 'xs' | 'sm' | 'md' | 'lg'
 
 const colorClasses: Record<StatusDotColor, string> = {
   green: 'bg-emerald-500',
-  red: 'bg-red-500',
+  red: 'bg-destructive',
   yellow: 'bg-amber-500',
   blue: 'bg-sky-500',
   purple: 'bg-purple-500',
@@ -67,7 +67,7 @@ export function StatusIndicator({ status, size = 'sm', showLabel = false, classN
   return (
     <span className={cn('inline-flex items-center gap-1.5', className)}>
       <StatusDot color={config.color} size={size} pulse={status === 'online' || status === 'active'} />
-      {showLabel && <span className="text-xs text-zinc-500 dark:text-zinc-400">{config.label}</span>}
+      {showLabel && <span className="text-xs text-muted-foreground dark:text-muted-foreground">{config.label}</span>}
     </span>
   )
 }

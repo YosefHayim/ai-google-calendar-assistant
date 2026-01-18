@@ -169,7 +169,7 @@ function AllyResponseArea({
         <div
           className={cn(
             'flex items-center gap-2 text-sm animate-in fade-in slide-in-from-bottom-2 duration-300',
-            actionResult.type === 'deleted' ? 'text-red-500' : 'text-green-500',
+            actionResult.type === 'deleted' ? 'text-destructive' : 'text-green-600',
           )}
         >
           <CheckCircle2 className="h-5 w-5" />
@@ -216,7 +216,7 @@ function AllyInputArea({
   return (
     <div className="space-y-2">
       {isRecording ? (
-        <div className="relative flex flex-col items-center justify-center bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-4 transition-all">
+        <div className="relative flex flex-col items-center justify-center bg-background dark:bg-secondary border border dark:border rounded-xl p-4 transition-all">
           <AIVoiceInput
             onStart={startRecording}
             onStop={(duration, text) => stopRecording(text ?? undefined)}
@@ -231,7 +231,7 @@ function AllyInputArea({
             variant="ghost"
             size="icon"
             onClick={cancelRecording}
-            className="absolute top-2 right-2 text-zinc-400 hover:text-zinc-600"
+            className="absolute top-2 right-2 text-muted-foreground hover:text-zinc-600"
           >
             <X className="w-4 h-4" />
           </Button>

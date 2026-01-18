@@ -48,14 +48,14 @@ const MessageImageLightbox: React.FC<MessageImageLightboxProps> = ({
           <>
             <button
               onClick={onPrevious}
-              className="absolute left-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors disabled:opacity-50"
+              className="absolute left-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-background/10 hover:bg-background/20 text-white transition-colors disabled:opacity-50"
               disabled={currentIndex === 0}
             >
               <ChevronLeft className="w-8 h-8" />
             </button>
             <button
               onClick={onNext}
-              className="absolute right-12 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors disabled:opacity-50"
+              className="absolute right-12 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-background/10 hover:bg-background/20 text-white transition-colors disabled:opacity-50"
               disabled={currentIndex === images.length - 1}
             >
               <ChevronRight className="w-8 h-8" />
@@ -70,7 +70,7 @@ const MessageImageLightbox: React.FC<MessageImageLightboxProps> = ({
             className="max-w-full max-h-[85vh] object-contain rounded-lg"
           />
           {images.length > 1 && (
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-black/50 text-white text-sm">
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-foreground/50 text-white text-sm">
               {currentIndex + 1} / {images.length}
             </div>
           )}
@@ -114,7 +114,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ role, content, timestamp,
               ${
                 isUser
                   ? 'bg-primary text-white rounded-tr-none shadow-md'
-                  : 'bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-100 rounded-tl-none shadow-sm'
+                  : 'bg-background dark:bg-secondary border border dark:border text-zinc-800 dark:text-primary-foreground rounded-tl-none shadow-sm'
               }`}
             dir={textDirection}
           >
@@ -149,7 +149,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ role, content, timestamp,
             )}
           </div>
           {!hideTimestamp && (
-            <span className={`text-xs text-zinc-400 mt-1 px-1 ${isRTL ? 'text-right w-full' : ''}`}>
+            <span className={`text-xs text-muted-foreground mt-1 px-1 ${isRTL ? 'text-right w-full' : ''}`}>
               {timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
             </span>
           )}

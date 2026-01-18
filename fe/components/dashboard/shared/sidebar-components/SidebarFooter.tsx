@@ -41,20 +41,20 @@ export const SidebarFooter: React.FC<SidebarFooterProps> = ({
   const avatarUrl = userInfo?.avatarUrl
 
   return (
-    <div className="p-4 border-t border-zinc-200 dark:border-zinc-800">
+    <div className="p-4 border-t border dark:border">
       <div className={`flex items-center gap-2 ${!isOpen ? 'md:justify-center' : ''}`}>
         <div className="flex-1 min-w-0">
           <UserProfileCard isOpen={isOpen} />
         </div>
         {isOpen && (
-          <NotificationInbox triggerClassName="text-zinc-500 dark:text-zinc-400 flex-shrink-0 min-w-[44px] min-h-[44px] md:min-w-0 md:min-h-0" />
+          <NotificationInbox triggerClassName="text-muted-foreground dark:text-muted-foreground flex-shrink-0 min-w-[44px] min-h-[44px] md:min-w-0 md:min-h-0" />
         )}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
               size="icon"
-              className="text-zinc-500 dark:text-zinc-400 flex-shrink-0 min-w-[44px] min-h-[44px] md:min-w-0 md:min-h-0"
+              className="text-muted-foreground dark:text-muted-foreground flex-shrink-0 min-w-[44px] min-h-[44px] md:min-w-0 md:min-h-0"
               onClick={(e) => e.stopPropagation()}
               suppressHydrationWarning
             >
@@ -74,7 +74,7 @@ export const SidebarFooter: React.FC<SidebarFooterProps> = ({
                     className="rounded-lg object-cover flex-shrink-0 h-8 w-8"
                   />
                 ) : (
-                  <div className="h-8 w-8 rounded-lg bg-zinc-200 dark:bg-zinc-700 flex items-center justify-center flex-shrink-0">
+                  <div className="h-8 w-8 rounded-lg bg-accent dark:bg-zinc-700 flex items-center justify-center flex-shrink-0">
                     <span className="text-xs font-medium text-zinc-600 dark:text-zinc-300">{initials}</span>
                   </div>
                 )}
@@ -139,7 +139,7 @@ export const SidebarFooter: React.FC<SidebarFooterProps> = ({
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={onSignOut}
-                  className="cursor-pointer hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-500 dark:hover:text-red-400"
+                  className="cursor-pointer hover:bg-destructive/5 dark:hover:bg-red-900/20 hover:text-destructive dark:hover:text-red-400"
                 >
                   <LogOut className="w-4 h-4" />
                   <span>Log out</span>

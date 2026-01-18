@@ -76,6 +76,11 @@ router.patch(
   supabaseAuth(),
   chatController.updateConversationTitle
 );
+router.patch(
+  "/conversations/:id/pin",
+  supabaseAuth(),
+  chatController.toggleConversationPinned
+);
 router.delete(
   "/conversations/:id",
   supabaseAuth(),

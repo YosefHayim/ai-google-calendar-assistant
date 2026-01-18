@@ -12,10 +12,10 @@ const STATS = [
 ]
 
 export const WebAnalyticsView = () => (
-  <div className="h-full p-4 bg-zinc-50 dark:bg-zinc-900">
+  <div className="h-full p-4 bg-muted dark:bg-secondary">
     <div className="flex items-center justify-between mb-4">
-      <h3 className="font-semibold text-zinc-900 dark:text-white text-sm">Weekly Insights</h3>
-      <select className="text-xs bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg px-2 py-1">
+      <h3 className="font-semibold text-foreground dark:text-white text-sm">Weekly Insights</h3>
+      <select className="text-xs bg-background dark:bg-secondary border border dark:border-zinc-700 rounded-lg px-2 py-1">
         <option>This Week</option>
       </select>
     </div>
@@ -25,14 +25,14 @@ export const WebAnalyticsView = () => (
           key={stat.label}
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="p-3 rounded-xl bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700"
+          className="p-3 rounded-xl bg-background dark:bg-secondary border border dark:border-zinc-700"
         >
           <div className="flex items-center gap-2 mb-1">
             <stat.icon className="w-4 h-4 text-primary" />
-            <span className="text-xs text-zinc-500">{stat.label}</span>
+            <span className="text-xs text-muted-foreground">{stat.label}</span>
           </div>
-          <div className="text-lg font-bold text-zinc-900 dark:text-white">{stat.value}</div>
-          <div className={cn('text-xs font-medium', stat.positive ? 'text-emerald-500' : 'text-red-500')}>
+          <div className="text-lg font-bold text-foreground dark:text-white">{stat.value}</div>
+          <div className={cn('text-xs font-medium', stat.positive ? 'text-emerald-500' : 'text-destructive')}>
             {stat.change} vs last week
           </div>
         </motion.div>

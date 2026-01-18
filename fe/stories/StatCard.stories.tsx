@@ -59,17 +59,17 @@ export const WithNegativeTrend: Story = {
 
 export const MeetingsToday: Story = {
   args: {
-    icon: <Users className="h-4 w-4 text-blue-500" />,
+    icon: <Users className="h-4 w-4 text-primary" />,
     title: 'Meetings Today',
     value: '6',
     description: '3 remaining',
-    iconBgColor: 'bg-blue-500/10',
+    iconBgColor: 'bg-primary/10',
   },
 }
 
 export const TasksCompleted: Story = {
   args: {
-    icon: <CheckCircle2 className="h-4 w-4 text-green-500" />,
+    icon: <CheckCircle2 className="h-4 w-4 text-green-600" />,
     title: 'Tasks Completed',
     value: '24',
     description: 'This week',
@@ -117,11 +117,11 @@ export const StatsGrid: Story = {
         iconBgColor="bg-orange-500/10"
       />
       <StatCard
-        icon={<Users className="h-4 w-4 text-blue-500" />}
+        icon={<Users className="h-4 w-4 text-primary" />}
         title="Meetings"
         value="32"
         description="With 18 attendees"
-        iconBgColor="bg-blue-500/10"
+        iconBgColor="bg-primary/10"
         trend={{ value: 5, isPositive: false }}
       />
       <StatCard
@@ -156,8 +156,8 @@ export const WithChildren: Story = {
       description="Next 24 hours"
       className="w-[280px]"
     >
-      <div className="mt-2 pt-3 border-t border-zinc-200 dark:border-zinc-800">
-        <ul className="text-xs text-zinc-600 dark:text-zinc-400 space-y-1">
+      <div className="mt-2 pt-3 border-t border dark:border">
+        <ul className="text-xs text-zinc-600 dark:text-muted-foreground space-y-1">
           <li>09:00 - Team Standup</li>
           <li>11:00 - Client Call</li>
           <li>14:00 - Design Review</li>

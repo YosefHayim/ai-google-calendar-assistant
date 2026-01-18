@@ -17,8 +17,8 @@ type Story = StoryObj<typeof ChartTypeWrapper<string>>
 const SAMPLE_CHART_TYPES = ['bar', 'line', 'area'] as const
 
 const MockChart = ({ type }: { type: string }) => (
-  <div className="h-[200px] bg-zinc-100 dark:bg-zinc-800 rounded-lg flex items-center justify-center">
-    <span className="text-zinc-500 dark:text-zinc-400 font-medium capitalize">{type} Chart Placeholder</span>
+  <div className="h-[200px] bg-secondary dark:bg-secondary rounded-lg flex items-center justify-center">
+    <span className="text-muted-foreground dark:text-muted-foreground font-medium capitalize">{type} Chart Placeholder</span>
   </div>
 )
 

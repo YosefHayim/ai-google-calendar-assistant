@@ -49,7 +49,7 @@ const meta: Meta = {
   },
   decorators: [
     (Story) => (
-      <div className="w-72 p-6 bg-zinc-50 dark:bg-zinc-900/50 rounded-lg min-h-[300px] flex flex-col">
+      <div className="w-72 p-6 bg-muted dark:bg-secondary/50 rounded-lg min-h-[300px] flex flex-col">
         <Story />
       </div>
     ),
@@ -233,24 +233,24 @@ export const ErrorParsing: StoryObj<typeof ErrorView> = {
 export const AllStates: StoryObj = {
   render: () => (
     <div className="grid grid-cols-2 md:grid-cols-3 gap-4 p-4">
-      <div className="w-72 p-6 bg-zinc-50 dark:bg-zinc-900/50 rounded-lg min-h-[300px] flex flex-col">
-        <h4 className="text-xs font-semibold text-zinc-500 mb-4">INPUT</h4>
+      <div className="w-72 p-6 bg-muted dark:bg-secondary/50 rounded-lg min-h-[300px] flex flex-col">
+        <h4 className="text-xs font-semibold text-muted-foreground mb-4">INPUT</h4>
         <InputView state="input" />
       </div>
-      <div className="w-72 p-6 bg-zinc-50 dark:bg-zinc-900/50 rounded-lg min-h-[300px] flex flex-col">
-        <h4 className="text-xs font-semibold text-zinc-500 mb-4">RECORDING</h4>
+      <div className="w-72 p-6 bg-muted dark:bg-secondary/50 rounded-lg min-h-[300px] flex flex-col">
+        <h4 className="text-xs font-semibold text-muted-foreground mb-4">RECORDING</h4>
         <InputView state="recording" />
       </div>
-      <div className="w-72 p-6 bg-zinc-50 dark:bg-zinc-900/50 rounded-lg min-h-[300px] flex flex-col">
-        <h4 className="text-xs font-semibold text-zinc-500 mb-4">LOADING</h4>
+      <div className="w-72 p-6 bg-muted dark:bg-secondary/50 rounded-lg min-h-[300px] flex flex-col">
+        <h4 className="text-xs font-semibold text-muted-foreground mb-4">LOADING</h4>
         <LoadingView message="Understanding your request..." />
       </div>
-      <div className="w-72 p-6 bg-zinc-50 dark:bg-zinc-900/50 rounded-lg min-h-[300px] flex flex-col">
-        <h4 className="text-xs font-semibold text-zinc-500 mb-4">CONFIRM</h4>
+      <div className="w-72 p-6 bg-muted dark:bg-secondary/50 rounded-lg min-h-[300px] flex flex-col">
+        <h4 className="text-xs font-semibold text-muted-foreground mb-4">CONFIRM</h4>
         <ConfirmView event={mockParsedEvent} calendarName="Work" message="Here's what I understood:" onConfirm={fn()} />
       </div>
-      <div className="w-72 p-6 bg-zinc-50 dark:bg-zinc-900/50 rounded-lg min-h-[300px] flex flex-col">
-        <h4 className="text-xs font-semibold text-zinc-500 mb-4">CONFLICT</h4>
+      <div className="w-72 p-6 bg-muted dark:bg-secondary/50 rounded-lg min-h-[300px] flex flex-col">
+        <h4 className="text-xs font-semibold text-muted-foreground mb-4">CONFLICT</h4>
         <ConflictView
           event={mockParsedEvent}
           calendarName="Work"
@@ -260,8 +260,8 @@ export const AllStates: StoryObj = {
           onCancel={fn()}
         />
       </div>
-      <div className="w-72 p-6 bg-zinc-50 dark:bg-zinc-900/50 rounded-lg min-h-[300px] flex flex-col">
-        <h4 className="text-xs font-semibold text-zinc-500 mb-4">SUCCESS</h4>
+      <div className="w-72 p-6 bg-muted dark:bg-secondary/50 rounded-lg min-h-[300px] flex flex-col">
+        <h4 className="text-xs font-semibold text-muted-foreground mb-4">SUCCESS</h4>
         <SuccessView
           message="Event added to your calendar!"
           calendarName="Work"
@@ -269,8 +269,8 @@ export const AllStates: StoryObj = {
           onClose={fn()}
         />
       </div>
-      <div className="w-72 p-6 bg-zinc-50 dark:bg-zinc-900/50 rounded-lg min-h-[300px] flex flex-col">
-        <h4 className="text-xs font-semibold text-zinc-500 mb-4">ERROR</h4>
+      <div className="w-72 p-6 bg-muted dark:bg-secondary/50 rounded-lg min-h-[300px] flex flex-col">
+        <h4 className="text-xs font-semibold text-muted-foreground mb-4">ERROR</h4>
         <ErrorView message="Failed to create event." onRetry={fn()} />
       </div>
     </div>

@@ -24,7 +24,7 @@ const ManageCalendars: React.FC<ManageCalendarsProps> = ({
 }) => {
   if (isLoading) {
     return (
-      <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-4 sm:p-6">
+      <div className="bg-background dark:bg-secondary border border dark:border rounded-md shadow-sm p-4 sm:p-6">
         <div className="gap-2 mb-4 sm:mb-6 flex items-center justify-between">
           <div className="min-w-0">
             <div className="flex items-center gap-2">
@@ -49,15 +49,15 @@ const ManageCalendars: React.FC<ManageCalendarsProps> = ({
   }
 
   return (
-    <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-4 sm:p-6">
+    <div className="bg-background dark:bg-secondary border border dark:border rounded-md shadow-sm p-4 sm:p-6">
       <div className="gap-2 mb-4 sm:mb-6 flex items-center justify-between">
         {/* Left Side: Text Stack */}
         <div className="min-w-0">
-          <h3 className="font-bold text-sm sm:text-base text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
-            <CalendarDays className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-zinc-400 flex-shrink-0" />
+          <h3 className="font-bold text-sm sm:text-base text-foreground dark:text-primary-foreground flex items-center gap-2">
+            <CalendarDays className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-muted-foreground flex-shrink-0" />
             <span className="truncate">Managed Calendars</span>
           </h3>
-          <div className="text-[10px] sm:text-xs text-zinc-500 dark:text-zinc-400 mt-0.5 sm:mt-1">
+          <div className="text-[10px] sm:text-xs text-muted-foreground dark:text-muted-foreground mt-0.5 sm:mt-1">
             <span>Total calendars:</span> {calendars?.length}
           </div>
         </div>
@@ -68,7 +68,7 @@ const ManageCalendars: React.FC<ManageCalendarsProps> = ({
           onClick={onCreateCalendar}
           size="icon"
           variant={'ghost'}
-          className="h-7 w-7 sm:h-8 sm:w-8 rounded-md border border-dashed border-zinc-300 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-900/30 hover:text-zinc-900 dark:hover:text-zinc-100 transition-all active:scale-[0.98] flex-shrink-0"
+          className="h-7 w-7 sm:h-8 sm:w-8 rounded-md border border-dashed border-zinc-300 dark:border-zinc-700 text-muted-foreground dark:text-muted-foreground hover:bg-muted dark:hover:bg-secondary/30 hover:text-foreground dark:hover:text-primary-foreground transition-all active:scale-[0.98] flex-shrink-0"
         >
           <Plus size={12} className="sm:hidden" />
           <Plus size={14} className="hidden sm:block" />
@@ -85,7 +85,7 @@ const ManageCalendars: React.FC<ManageCalendarsProps> = ({
             return (
               <div
                 key={calendar.id}
-                className="border border-transparent hover:border-black hover:border flex items-center gap-2 sm:gap-3 p-1.5 sm:p-2 rounded-md hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors group cursor-pointer"
+                className="border border-transparent hover:border-black hover:border flex items-center gap-2 sm:gap-3 p-1.5 sm:p-2 rounded-md hover:bg-muted dark:hover:bg-secondary/50 transition-colors group cursor-pointer"
                 style={{ backgroundColor: `${color}08` }}
                 onClick={() => {
                   onCalendarClick(calendar)
@@ -106,7 +106,7 @@ const ManageCalendars: React.FC<ManageCalendarsProps> = ({
             )
           })
         ) : (
-          <p className="text-xs sm:text-sm text-zinc-500">No calendars found.</p>
+          <p className="text-xs sm:text-sm text-muted-foreground">No calendars found.</p>
         )}
       </div>
     </div>

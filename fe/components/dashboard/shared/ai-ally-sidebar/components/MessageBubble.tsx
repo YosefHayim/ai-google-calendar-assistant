@@ -23,7 +23,7 @@ export function MessageBubble({ message, index }: MessageBubbleProps) {
           'max-w-[85%] rounded-2xl px-4 py-2.5 shadow-sm',
           message.isUser
             ? 'bg-gradient-to-br from-primary to-orange-500 text-white rounded-br-md'
-            : 'bg-zinc-100 dark:bg-zinc-800/80 text-zinc-900 dark:text-zinc-100 rounded-bl-md border border-zinc-200/50 dark:border-zinc-700/50',
+            : 'bg-secondary dark:bg-secondary/80 text-foreground dark:text-primary-foreground rounded-bl-md border border/50 dark:border-zinc-700/50',
         )}
       >
         <p className="text-sm leading-relaxed">{message.text}</p>

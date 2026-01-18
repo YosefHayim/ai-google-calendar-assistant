@@ -68,7 +68,7 @@ const WaitingList: React.FC = () => {
   }
 
   return (
-    <div className="relative min-h-screen w-full bg-white dark:bg-[#030303] flex flex-col items-center justify-center py-20 px-4 overflow-hidden animate-in fade-in duration-500">
+    <div className="relative min-h-screen w-full bg-background dark:bg-[#030303] flex flex-col items-center justify-center py-20 px-4 overflow-hidden animate-in fade-in duration-500">
       {/* Background Sparkles */}
       <div className="absolute inset-0 w-full h-full">
         <SparklesCore
@@ -81,7 +81,7 @@ const WaitingList: React.FC = () => {
           particleColor="#FFFFFF"
         />
         {/* Radial Gradient for clean edges and focus */}
-        <div className="absolute inset-0 w-full h-full bg-white dark:bg-[#030303] [mask-image:radial-gradient(450px_300px_at_center,transparent_20%,white)] dark:[mask-image:radial-gradient(450px_300px_at_center,transparent_20%,black)]"></div>
+        <div className="absolute inset-0 w-full h-full bg-background dark:bg-[#030303] [mask-image:radial-gradient(450px_300px_at_center,transparent_20%,white)] dark:[mask-image:radial-gradient(450px_300px_at_center,transparent_20%,black)]"></div>
       </div>
 
       {/* Subtle ambient glow behind content */}
@@ -107,11 +107,11 @@ const WaitingList: React.FC = () => {
           </Badge>
         </motion.div>
 
-        <h1 className="text-center text-5xl font-medium tracking-tight md:text-7xl lg:text-8xl text-zinc-900 dark:text-zinc-100 leading-none">
+        <h1 className="text-center text-5xl font-medium tracking-tight md:text-7xl lg:text-8xl text-foreground dark:text-primary-foreground leading-none">
           Your Calendar, <br />
           <span className="text-primary italic">Listening.</span>
         </h1>
-        <p className="mt-8 text-zinc-500 dark:text-zinc-400 text-xl font-medium max-w-lg mx-auto leading-relaxed">
+        <p className="mt-8 text-muted-foreground dark:text-muted-foreground text-xl font-medium max-w-lg mx-auto leading-relaxed">
           Just say it. Ally schedules it. Across voice, chat, Telegram, and WhatsApp. No forms. No friction. Just you
           and your time, finally working together.
         </p>
@@ -131,12 +131,12 @@ const WaitingList: React.FC = () => {
               transition={{ duration: 0.5, delay: 0.4 + platform.delay }}
               className="group flex flex-col items-center gap-2"
             >
-              <div className="relative p-3 rounded-xl bg-zinc-100/80 dark:bg-zinc-900/80 border border-zinc-200/50 dark:border-zinc-800/50 backdrop-blur-sm transition-all duration-300 group-hover:border-primary/40 group-hover:bg-primary/5 dark:group-hover:bg-primary/10 group-hover:scale-110">
-                <platform.icon className="w-5 h-5 text-zinc-500 dark:text-zinc-400 group-hover:text-primary transition-colors duration-300" />
+              <div className="relative p-3 rounded-xl bg-secondary/80 dark:bg-secondary/80 border border/50 dark:border/50 backdrop-blur-sm transition-all duration-300 group-hover:border-primary/40 group-hover:bg-primary/5 dark:group-hover:bg-primary/10 group-hover:scale-110">
+                <platform.icon className="w-5 h-5 text-muted-foreground dark:text-muted-foreground group-hover:text-primary transition-colors duration-300" />
                 {/* Subtle glow on hover */}
                 <div className="absolute inset-0 rounded-xl bg-primary/0 group-hover:bg-primary/5 blur-xl transition-all duration-300 pointer-events-none" />
               </div>
-              <span className="text-[10px] uppercase tracking-wider text-zinc-400 dark:text-zinc-600 font-medium group-hover:text-zinc-600 dark:group-hover:text-zinc-400 transition-colors duration-300">
+              <span className="text-[10px] uppercase tracking-wider text-muted-foreground dark:text-zinc-600 font-medium group-hover:text-zinc-600 dark:group-hover:text-muted-foreground transition-colors duration-300">
                 {platform.label}
               </span>
             </motion.div>
@@ -184,7 +184,7 @@ const WaitingList: React.FC = () => {
           )}
         </form>
 
-        <p className="mt-6 text-xs text-zinc-400 font-medium">
+        <p className="mt-6 text-xs text-muted-foreground font-medium">
           Join 2,000+ professionals reclaiming their time. We'll notify you the moment you're in.
         </p>
 
@@ -193,7 +193,7 @@ const WaitingList: React.FC = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.8 }}
-          className="mt-10 pt-8 border-t border-zinc-200/30 dark:border-zinc-800/30"
+          className="mt-10 pt-8 border-t border/30 dark:border/30"
         >
           <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4">
             {trustIndicators.map((indicator, index) => (
@@ -202,7 +202,7 @@ const WaitingList: React.FC = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.5, delay: 0.9 + index * 0.1 }}
-                className="flex items-center gap-2 text-zinc-400 dark:text-zinc-500"
+                className="flex items-center gap-2 text-muted-foreground dark:text-muted-foreground"
               >
                 <indicator.icon className="w-4 h-4" />
                 <span className="text-xs font-medium">{indicator.label}</span>

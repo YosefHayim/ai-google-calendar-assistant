@@ -75,7 +75,7 @@ export function DailyBriefingSection() {
       <TabHeader
         title="Daily Briefing"
         tooltip="Receive a summary of your day's schedule every morning via email"
-        icon={<Mail className="w-5 h-5 text-zinc-900 dark:text-primary" />}
+        icon={<Mail className="w-5 h-5 text-foreground dark:text-primary" />}
       />
       <CardContent>
         {isLoadingBriefing ? (
@@ -87,7 +87,7 @@ export function DailyBriefingSection() {
                 id="briefing-enabled"
                 title="Enable Daily Briefing"
                 tooltip="When enabled, you'll receive an email each morning with your schedule for the day"
-                icon={<CalendarDays size={18} className="text-zinc-900 dark:text-primary" />}
+                icon={<CalendarDays size={18} className="text-foreground dark:text-primary" />}
                 control={
                   <CinematicGlowToggle
                     id={dailyBriefingToggleId}
@@ -104,7 +104,7 @@ export function DailyBriefingSection() {
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Delivery Time</label>
                     <TimePicker id="briefing-time" value={briefingSettings.time} onChange={handleBriefingTimeChange} />
-                    <p className="text-xs text-zinc-500">Choose when you'd like to receive your daily briefing</p>
+                    <p className="text-xs text-muted-foreground">Choose when you'd like to receive your daily briefing</p>
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Timezone</label>
@@ -113,7 +113,7 @@ export function DailyBriefingSection() {
                       value={briefingSettings.timezone}
                       onChange={handleBriefingTimezoneChange}
                     />
-                    <p className="text-xs text-zinc-500">Your briefing will be sent based on this timezone</p>
+                    <p className="text-xs text-muted-foreground">Your briefing will be sent based on this timezone</p>
                   </div>
                 </div>
               </div>

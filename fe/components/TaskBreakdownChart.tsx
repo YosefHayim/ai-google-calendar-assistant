@@ -48,8 +48,8 @@ const TaskBreakdownChart: React.FC<TaskBreakdownChartProps> = ({ data }) => {
           })}
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-3xl font-bold text-zinc-900 dark:text-zinc-100">{total}</span>
-          <span className="text-xs font-medium text-zinc-500">Tasks</span>
+          <span className="text-3xl font-bold text-foreground dark:text-primary-foreground">{total}</span>
+          <span className="text-xs font-medium text-muted-foreground">Tasks</span>
         </div>
       </div>
       <ul className="space-y-2">
@@ -58,7 +58,7 @@ const TaskBreakdownChart: React.FC<TaskBreakdownChartProps> = ({ data }) => {
             <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: item.color }} />
             <div className="flex items-baseline justify-between w-40">
               <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">{item.name}</span>
-              <span className="text-xs font-mono text-zinc-500">{((item.value / total) * 100).toFixed(0)}%</span>
+              <span className="text-xs font-mono text-muted-foreground">{((item.value / total) * 100).toFixed(0)}%</span>
             </div>
           </li>
         ))}

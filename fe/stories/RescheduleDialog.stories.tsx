@@ -110,30 +110,30 @@ export const Features: Story = {
   render: () => (
     <div className="max-w-2xl mx-auto p-8 space-y-8">
       <div className="text-center">
-        <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-4">Smart Reschedule Features</h1>
-        <p className="text-zinc-500 dark:text-zinc-400">AI-powered event rescheduling with conflict detection</p>
+        <h1 className="text-3xl font-bold text-foreground dark:text-primary-foreground mb-4">Smart Reschedule Features</h1>
+        <p className="text-muted-foreground dark:text-muted-foreground">AI-powered event rescheduling with conflict detection</p>
       </div>
 
       <div className="space-y-4">
-        <div className="p-6 bg-white dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-800">
+        <div className="p-6 bg-background dark:bg-secondary rounded-xl border border dark:border">
           <h3 className="font-semibold text-zinc-800 dark:text-zinc-200 mb-3">Time Preferences</h3>
           <div className="flex flex-wrap gap-2">
             <span className="px-3 py-1 bg-primary text-primary-foreground rounded-full text-sm">Any time</span>
-            <span className="px-3 py-1 bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 rounded-full text-sm">
+            <span className="px-3 py-1 bg-secondary dark:bg-secondary text-zinc-700 dark:text-zinc-300 rounded-full text-sm">
               Morning
             </span>
-            <span className="px-3 py-1 bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 rounded-full text-sm">
+            <span className="px-3 py-1 bg-secondary dark:bg-secondary text-zinc-700 dark:text-zinc-300 rounded-full text-sm">
               Afternoon
             </span>
-            <span className="px-3 py-1 bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 rounded-full text-sm">
+            <span className="px-3 py-1 bg-secondary dark:bg-secondary text-zinc-700 dark:text-zinc-300 rounded-full text-sm">
               Evening
             </span>
           </div>
         </div>
 
-        <div className="p-6 bg-white dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-800">
+        <div className="p-6 bg-background dark:bg-secondary rounded-xl border border dark:border">
           <h3 className="font-semibold text-zinc-800 dark:text-zinc-200 mb-3">Suggestion Features</h3>
-          <ul className="space-y-2 text-sm text-zinc-600 dark:text-zinc-400">
+          <ul className="space-y-2 text-sm text-zinc-600 dark:text-muted-foreground">
             <li className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-green-500" />
               Conflict-free time slots only
@@ -153,18 +153,18 @@ export const Features: Story = {
           </ul>
         </div>
 
-        <div className="p-6 bg-white dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-800">
+        <div className="p-6 bg-background dark:bg-secondary rounded-xl border border dark:border">
           <h3 className="font-semibold text-zinc-800 dark:text-zinc-200 mb-3">Current Event Display</h3>
-          <div className="flex items-center gap-2 text-sm text-zinc-500">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <span className="font-medium">Current:</span>
             <span>Mon, Jan 20 at 10:00 AM</span>
             <span>→</span>
             <span>11:00 AM</span>
-            <span className="ml-auto px-2 py-0.5 bg-zinc-100 dark:bg-zinc-800 rounded text-xs">60 min</span>
+            <span className="ml-auto px-2 py-0.5 bg-secondary dark:bg-secondary rounded text-xs">60 min</span>
           </div>
         </div>
 
-        <div className="p-6 bg-white dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-800">
+        <div className="p-6 bg-background dark:bg-secondary rounded-xl border border dark:border">
           <h3 className="font-semibold text-zinc-800 dark:text-zinc-200 mb-3">Suggested Slots Example</h3>
           <div className="space-y-2">
             <div className="flex items-center gap-3 p-3 border border-primary bg-primary/5 rounded-lg">
@@ -173,29 +173,29 @@ export const Features: Story = {
               </div>
               <div className="flex-1">
                 <p className="font-medium text-sm">Tuesday</p>
-                <p className="text-xs text-zinc-500">2:00 PM - 3:00 PM</p>
+                <p className="text-xs text-muted-foreground">2:00 PM - 3:00 PM</p>
               </div>
               <span className="text-xs text-primary font-medium">Best match</span>
             </div>
-            <div className="flex items-center gap-3 p-3 border border-zinc-200 dark:border-zinc-700 rounded-lg">
-              <div className="w-8 h-8 bg-zinc-100 dark:bg-zinc-800 rounded-full flex items-center justify-center text-sm font-medium">
+            <div className="flex items-center gap-3 p-3 border border dark:border-zinc-700 rounded-lg">
+              <div className="w-8 h-8 bg-secondary dark:bg-secondary rounded-full flex items-center justify-center text-sm font-medium">
                 2
               </div>
               <div className="flex-1">
                 <p className="font-medium text-sm">Wednesday</p>
-                <p className="text-xs text-zinc-500">9:00 AM - 10:00 AM</p>
+                <p className="text-xs text-muted-foreground">9:00 AM - 10:00 AM</p>
               </div>
-              <span className="text-xs text-zinc-500">Morning slot</span>
+              <span className="text-xs text-muted-foreground">Morning slot</span>
             </div>
-            <div className="flex items-center gap-3 p-3 border border-zinc-200 dark:border-zinc-700 rounded-lg">
-              <div className="w-8 h-8 bg-zinc-100 dark:bg-zinc-800 rounded-full flex items-center justify-center text-sm font-medium">
+            <div className="flex items-center gap-3 p-3 border border dark:border-zinc-700 rounded-lg">
+              <div className="w-8 h-8 bg-secondary dark:bg-secondary rounded-full flex items-center justify-center text-sm font-medium">
                 3
               </div>
               <div className="flex-1">
                 <p className="font-medium text-sm">Thursday</p>
-                <p className="text-xs text-zinc-500">4:00 PM - 5:00 PM</p>
+                <p className="text-xs text-muted-foreground">4:00 PM - 5:00 PM</p>
               </div>
-              <span className="text-xs text-zinc-500">End of day</span>
+              <span className="text-xs text-muted-foreground">End of day</span>
             </div>
           </div>
         </div>
@@ -222,7 +222,7 @@ export const DarkMode: Story = {
   },
   decorators: [
     (Story) => (
-      <div className="dark min-h-screen bg-zinc-950 flex items-center justify-center p-8">
+      <div className="dark min-h-screen bg-secondary flex items-center justify-center p-8">
         <Story />
       </div>
     ),

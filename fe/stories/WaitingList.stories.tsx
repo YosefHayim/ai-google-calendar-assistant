@@ -86,17 +86,17 @@ export const TabletView: Story = {
 
 export const Features: Story = {
   render: () => (
-    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 p-8">
+    <div className="min-h-screen bg-muted dark:bg-secondary p-8">
       <div className="max-w-2xl mx-auto space-y-8">
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-4">Waiting List Features</h1>
-          <p className="text-zinc-500 dark:text-zinc-400">Key elements of the waiting list page design</p>
+          <h1 className="text-3xl font-bold text-foreground dark:text-primary-foreground mb-4">Waiting List Features</h1>
+          <p className="text-muted-foreground dark:text-muted-foreground">Key elements of the waiting list page design</p>
         </div>
 
         <div className="grid gap-6">
-          <div className="p-6 bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800">
+          <div className="p-6 bg-background dark:bg-secondary rounded-xl border border dark:border">
             <h3 className="font-semibold text-zinc-800 dark:text-zinc-200 mb-3">Visual Effects</h3>
-            <ul className="space-y-2 text-sm text-zinc-600 dark:text-zinc-400">
+            <ul className="space-y-2 text-sm text-zinc-600 dark:text-muted-foreground">
               <li>Animated sparkle particles in background</li>
               <li>Radial gradient mask for depth</li>
               <li>Ambient glow behind content</li>
@@ -104,9 +104,9 @@ export const Features: Story = {
             </ul>
           </div>
 
-          <div className="p-6 bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800">
+          <div className="p-6 bg-background dark:bg-secondary rounded-xl border border dark:border">
             <h3 className="font-semibold text-zinc-800 dark:text-zinc-200 mb-3">Platform Icons</h3>
-            <ul className="space-y-2 text-sm text-zinc-600 dark:text-zinc-400">
+            <ul className="space-y-2 text-sm text-zinc-600 dark:text-muted-foreground">
               <li>Voice - Microphone icon</li>
               <li>Web Chat - Message square icon</li>
               <li>Telegram - Paper plane icon</li>
@@ -114,9 +114,9 @@ export const Features: Story = {
             </ul>
           </div>
 
-          <div className="p-6 bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800">
+          <div className="p-6 bg-background dark:bg-secondary rounded-xl border border dark:border">
             <h3 className="font-semibold text-zinc-800 dark:text-zinc-200 mb-3">Trust Indicators</h3>
-            <ul className="space-y-2 text-sm text-zinc-600 dark:text-zinc-400">
+            <ul className="space-y-2 text-sm text-zinc-600 dark:text-muted-foreground">
               <li>Enterprise-grade security badge</li>
               <li>Sub-second response time</li>
               <li>5+ hours saved per week stat</li>
@@ -124,9 +124,9 @@ export const Features: Story = {
             </ul>
           </div>
 
-          <div className="p-6 bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800">
+          <div className="p-6 bg-background dark:bg-secondary rounded-xl border border dark:border">
             <h3 className="font-semibold text-zinc-800 dark:text-zinc-200 mb-3">Form Features</h3>
-            <ul className="space-y-2 text-sm text-zinc-600 dark:text-zinc-400">
+            <ul className="space-y-2 text-sm text-zinc-600 dark:text-muted-foreground">
               <li>Optional name field</li>
               <li>Required email field</li>
               <li>Interactive hover button</li>

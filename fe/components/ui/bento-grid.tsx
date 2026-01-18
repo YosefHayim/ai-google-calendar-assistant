@@ -31,18 +31,18 @@ const BentoCard: React.FC<{
     className={cn(
       'group relative col-span-1 flex flex-col justify-between overflow-hidden rounded-xl transition-all duration-300',
       // light styles
-      'bg-white [box-shadow:0_0_0_1px_rgba(0,0,0,.03),0_2px_4px_rgba(0,0,0,.05),0_12px_24px_rgba(0,0,0,.05)]',
+      'bg-background [box-shadow:0_0_0_1px_rgba(0,0,0,.03),0_2px_4px_rgba(0,0,0,.05),0_12px_24px_rgba(0,0,0,.05)]',
       // dark styles
-      'transform-gpu dark:bg-zinc-900/50 dark:[border:1px_solid_rgba(255,255,255,.1)] dark:[box-shadow:0_-20px_80px_-20px_#ffffff1f_inset]',
+      'transform-gpu dark:bg-secondary/50 dark:[border:1px_solid_rgba(255,255,255,.1)] dark:[box-shadow:0_-20px_80px_-20px_#ffffff1f_inset]',
       className,
     )}
   >
     <div className="absolute inset-0 z-0">{background}</div>
 
     <div className="pointer-events-none z-10 flex transform-gpu flex-col gap-1 p-4 md:p-6 transition-all duration-300 group-hover:-translate-y-10">
-      <Icon className="h-8 w-8 md:h-12 md:w-12 origin-left transform-gpu text-zinc-900 dark:text-zinc-100 transition-all duration-300 ease-in-out group-hover:scale-75" />
-      <h3 className="text-lg md:text-xl font-semibold text-zinc-900 dark:text-zinc-100">{name}</h3>
-      <p className="max-w-lg text-zinc-500 dark:text-zinc-400 text-xs md:text-sm line-clamp-3 md:line-clamp-none">
+      <Icon className="h-8 w-8 md:h-12 md:w-12 origin-left transform-gpu text-foreground dark:text-primary-foreground transition-all duration-300 ease-in-out group-hover:scale-75" />
+      <h3 className="text-lg md:text-xl font-semibold text-foreground dark:text-primary-foreground">{name}</h3>
+      <p className="max-w-lg text-muted-foreground dark:text-muted-foreground text-xs md:text-sm line-clamp-3 md:line-clamp-none">
         {description}
       </p>
     </div>
@@ -64,7 +64,7 @@ const BentoCard: React.FC<{
         </a>
       </Button>
     </div>
-    <div className="pointer-events-none absolute inset-0 transform-gpu transition-all duration-300 group-hover:bg-zinc-950/[.03] group-hover:dark:bg-zinc-100/[.02]" />
+    <div className="pointer-events-none absolute inset-0 transform-gpu transition-all duration-300 group-hover:bg-secondary/[.03] group-hover:dark:bg-secondary/[.02]" />
   </div>
 )
 

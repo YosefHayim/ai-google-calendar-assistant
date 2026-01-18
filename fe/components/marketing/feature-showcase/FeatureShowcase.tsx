@@ -45,13 +45,13 @@ export function FeatureShowcase() {
         <div className="relative" onMouseEnter={() => setIsPaused(true)} onMouseLeave={() => setIsPaused(false)}>
           <button
             onClick={prevSlide}
-            className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/80 dark:bg-zinc-800/80 backdrop-blur-sm shadow-xl flex items-center justify-center text-zinc-600 dark:text-zinc-400 hover:text-primary hover:scale-110 transition-all border border-zinc-200 dark:border-zinc-700"
+            className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-background/80 dark:bg-secondary/80 backdrop-blur-sm shadow-xl flex items-center justify-center text-zinc-600 dark:text-muted-foreground hover:text-primary hover:scale-110 transition-all border border dark:border-zinc-700"
           >
             <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
           </button>
           <button
             onClick={nextSlide}
-            className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/80 dark:bg-zinc-800/80 backdrop-blur-sm shadow-xl flex items-center justify-center text-zinc-600 dark:text-zinc-400 hover:text-primary hover:scale-110 transition-all border border-zinc-200 dark:border-zinc-700"
+            className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-background/80 dark:bg-secondary/80 backdrop-blur-sm shadow-xl flex items-center justify-center text-zinc-600 dark:text-muted-foreground hover:text-primary hover:scale-110 transition-all border border dark:border-zinc-700"
           >
             <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
           </button>
@@ -158,7 +158,7 @@ export function FeatureShowcase() {
               <button
                 key={index}
                 onClick={() => setActiveIndex(index)}
-                className="h-2 rounded-full overflow-hidden bg-zinc-200 dark:bg-zinc-700 transition-all duration-300"
+                className="h-2 rounded-full overflow-hidden bg-accent dark:bg-zinc-700 transition-all duration-300"
                 style={{ width: index === activeIndex ? 48 : 12 }}
               >
                 <motion.div

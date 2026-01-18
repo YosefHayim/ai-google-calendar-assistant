@@ -12,7 +12,7 @@ const meta: Meta<typeof EditableMessage> = {
   },
   decorators: [
     (Story) => (
-      <div className="max-w-2xl mx-auto bg-zinc-50 dark:bg-zinc-950 p-6 rounded-xl">
+      <div className="max-w-2xl mx-auto bg-muted dark:bg-secondary p-6 rounded-xl">
         <Story />
       </div>
     ),
@@ -174,7 +174,7 @@ export const EditingStates: Story = {
   render: () => (
     <div className="space-y-8">
       <div>
-        <p className="text-sm font-medium mb-3 text-zinc-600 dark:text-zinc-400">User Message - View Mode</p>
+        <p className="text-sm font-medium mb-3 text-zinc-600 dark:text-muted-foreground">User Message - View Mode</p>
         <EditableMessage
           message={userMessage}
           isEditing={false}
@@ -188,7 +188,7 @@ export const EditingStates: Story = {
       </div>
 
       <div>
-        <p className="text-sm font-medium mb-3 text-zinc-600 dark:text-zinc-400">User Message - Edit Mode</p>
+        <p className="text-sm font-medium mb-3 text-zinc-600 dark:text-muted-foreground">User Message - Edit Mode</p>
         <EditableMessage
           message={userMessage}
           isEditing={true}
@@ -202,7 +202,7 @@ export const EditingStates: Story = {
       </div>
 
       <div>
-        <p className="text-sm font-medium mb-3 text-zinc-600 dark:text-zinc-400">Assistant Message - View Mode</p>
+        <p className="text-sm font-medium mb-3 text-zinc-600 dark:text-muted-foreground">Assistant Message - View Mode</p>
         <EditableMessage
           message={assistantMessage}
           isEditing={false}
@@ -216,7 +216,7 @@ export const EditingStates: Story = {
       </div>
 
       <div>
-        <p className="text-sm font-medium mb-3 text-zinc-600 dark:text-zinc-400">Assistant Message - Edit Mode</p>
+        <p className="text-sm font-medium mb-3 text-zinc-600 dark:text-muted-foreground">Assistant Message - Edit Mode</p>
         <EditableMessage
           message={assistantMessage}
           isEditing={true}

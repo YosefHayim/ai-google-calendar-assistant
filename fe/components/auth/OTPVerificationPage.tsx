@@ -76,17 +76,17 @@ const OTPVerificationPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-[#030303] flex flex-col relative overflow-hidden">
+    <div className="min-h-screen bg-background dark:bg-[#030303] flex flex-col relative overflow-hidden">
       <BackgroundPattern1 className="flex-1 flex flex-col items-center justify-center pt-0 pb-0">
         <div className="w-full max-w-md px-6 relative z-10">
           <div className="flex flex-col items-center text-center mb-10">
             <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mb-6 shadow-xl shadow-primary/10 border border-primary/20">
               {isSuccess ? <CheckCircle2 className="w-10 h-10 text-emerald-500" /> : <Lock className="w-10 h-10" />}
             </div>
-            <h1 className="text-4xl font-medium tracking-tight text-zinc-900 dark:text-zinc-100 mb-4">
+            <h1 className="text-4xl font-medium tracking-tight text-foreground dark:text-primary-foreground mb-4">
               {isSuccess ? 'Identity Verified' : 'Verify Protocol'}
             </h1>
-            <p className="text-zinc-500 dark:text-zinc-400 text-lg font-medium leading-relaxed">
+            <p className="text-muted-foreground dark:text-muted-foreground text-lg font-medium leading-relaxed">
               {isSuccess
                 ? 'Security handshake complete. Redirecting to your dashboard...'
                 : `Enter the 6-digit code we sent to your device ending in ${phone?.slice(-4) || '...'}`}
@@ -122,14 +122,14 @@ const OTPVerificationPage: React.FC = () => {
                   />
 
                   <div className="flex flex-col items-center gap-2">
-                    <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                    <p className="text-sm font-medium text-muted-foreground dark:text-muted-foreground">
                       Didn&apos;t receive code?{' '}
                       {canResend ? (
                         <Button onClick={handleResend} type="button" variant="link" className="p-0 h-auto font-bold">
                           Send again
                         </Button>
                       ) : (
-                        <span className="text-zinc-400 dark:text-zinc-600 italic">
+                        <span className="text-muted-foreground dark:text-zinc-600 italic">
                           Retry in 0:{timer.toString().padStart(2, '0')}
                         </span>
                       )}
@@ -141,7 +141,7 @@ const OTPVerificationPage: React.FC = () => {
               <Button
                 onClick={() => router.push('/phone-registration')}
                 variant="ghost"
-                className="mt-12 w-full text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 font-medium text-xs uppercase tracking-widest"
+                className="mt-12 w-full text-muted-foreground hover:text-foreground dark:hover:text-primary-foreground font-medium text-xs uppercase tracking-widest"
               >
                 <ArrowLeft className="w-3.5 h-3.5" /> Edit Phone Number
               </Button>
@@ -150,7 +150,7 @@ const OTPVerificationPage: React.FC = () => {
         </div>
       </BackgroundPattern1>
 
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-2 opacity-30 select-none text-zinc-900 dark:text-white">
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-2 opacity-30 select-none text-foreground dark:text-white">
         <AllyLogo className="w-4 h-4" />
         <span className="text-xs font-bold uppercase tracking-[0.3em]">Encrypted Session Active</span>
       </div>

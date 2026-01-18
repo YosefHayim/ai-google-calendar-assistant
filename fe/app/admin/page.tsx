@@ -84,7 +84,7 @@ export default function AdminDashboardPage() {
     <div className="space-y-4 p-4">
       {/* Header */}
       <div className="mb-2 flex flex-col items-start justify-between space-y-2 md:flex-row md:items-center">
-        <h1 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-white">Dashboard</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-foreground dark:text-white">Dashboard</h1>
         <div className="flex items-center space-x-2">
           <Button variant="outline" onClick={() => setShowBroadcastDialog(true)}>
             <Megaphone className="mr-2 h-4 w-4" />
@@ -494,7 +494,7 @@ function StatCardWithSparkline({
           <div
             className={cn(
               'flex items-center gap-1',
-              trendUp ? 'text-emerald-500 dark:text-emerald-400' : 'text-red-500 dark:text-red-400',
+              trendUp ? 'text-emerald-500 dark:text-emerald-400' : 'text-destructive dark:text-red-400',
             )}
           >
             <p className="text-[13px] font-medium leading-none">{trend}%</p>
@@ -684,21 +684,21 @@ function AdminDashboardSkeleton() {
   return (
     <div className="space-y-4 p-4">
       <div className="mb-2 flex flex-col items-start justify-between space-y-2 md:flex-row md:items-center">
-        <div className="h-8 w-48 animate-pulse rounded bg-zinc-200 dark:bg-zinc-800" />
+        <div className="h-8 w-48 animate-pulse rounded bg-accent dark:bg-secondary" />
         <div className="flex items-center space-x-2">
-          <div className="h-9 w-24 animate-pulse rounded bg-zinc-200 dark:bg-zinc-800" />
-          <div className="h-9 w-32 animate-pulse rounded bg-zinc-200 dark:bg-zinc-800" />
+          <div className="h-9 w-24 animate-pulse rounded bg-accent dark:bg-secondary" />
+          <div className="h-9 w-32 animate-pulse rounded bg-accent dark:bg-secondary" />
         </div>
       </div>
-      <div className="h-9 w-96 animate-pulse rounded bg-zinc-200 dark:bg-zinc-800" />
+      <div className="h-9 w-96 animate-pulse rounded bg-accent dark:bg-secondary" />
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         {[...Array(4)].map((_, i) => (
-          <Card key={i} className="h-32 animate-pulse bg-zinc-100 p-6 dark:bg-zinc-800" />
+          <Card key={i} className="h-32 animate-pulse bg-secondary p-6 dark:bg-secondary" />
         ))}
       </div>
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {[...Array(2)].map((_, i) => (
-          <Card key={i} className="h-64 animate-pulse bg-zinc-100 p-6 dark:bg-zinc-800" />
+          <Card key={i} className="h-64 animate-pulse bg-secondary p-6 dark:bg-secondary" />
         ))}
       </div>
     </div>

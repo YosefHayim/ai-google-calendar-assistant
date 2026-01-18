@@ -200,7 +200,7 @@ export function AIVoiceInput({
             'group w-16 h-16 rounded-xl flex items-center justify-center transition-colors',
             isRecordingProp
               ? 'bg-none' // No specific background when active, the spinner is the focus
-              : 'bg-none hover:bg-black/10 dark:hover:bg-white/10',
+              : 'bg-none hover:bg-foreground/10 dark:hover:bg-background/10',
             isButtonDisabled && 'opacity-50 cursor-not-allowed',
           )}
           type="button"
@@ -235,7 +235,7 @@ export function AIVoiceInput({
                 'w-0.5 rounded-full transition-all',
                 isRecordingProp
                   ? 'bg-primary dark:bg-primary duration-75'
-                  : 'bg-black/10 dark:bg-white/10 duration-300 h-1',
+                  : 'bg-foreground/10 dark:bg-background/10 duration-300 h-1',
               )}
               style={
                 isRecordingProp && isClient
@@ -250,7 +250,7 @@ export function AIVoiceInput({
 
         <p className="h-4 text-xs text-black/70 dark:text-white/70">
           {speechRecognitionError ? (
-            <span className="text-red-500">{speechRecognitionError}</span>
+            <span className="text-destructive">{speechRecognitionError}</span>
           ) : isRecordingProp ? (
             'Listening... (speak in any language)'
           ) : (

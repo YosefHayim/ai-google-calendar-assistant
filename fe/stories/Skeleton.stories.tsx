@@ -146,19 +146,19 @@ export const Sizes: Story = {
   render: () => (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-2">
-        <span className="text-sm text-zinc-500 w-20">Small:</span>
+        <span className="text-sm text-muted-foreground w-20">Small:</span>
         <Skeleton className="h-2 w-[100px]" />
       </div>
       <div className="flex items-center gap-2">
-        <span className="text-sm text-zinc-500 w-20">Medium:</span>
+        <span className="text-sm text-muted-foreground w-20">Medium:</span>
         <Skeleton className="h-4 w-[150px]" />
       </div>
       <div className="flex items-center gap-2">
-        <span className="text-sm text-zinc-500 w-20">Large:</span>
+        <span className="text-sm text-muted-foreground w-20">Large:</span>
         <Skeleton className="h-8 w-[200px]" />
       </div>
       <div className="flex items-center gap-2">
-        <span className="text-sm text-zinc-500 w-20">XL:</span>
+        <span className="text-sm text-muted-foreground w-20">XL:</span>
         <Skeleton className="h-12 w-[250px]" />
       </div>
     </div>
@@ -170,19 +170,19 @@ export const Shapes: Story = {
     <div className="flex items-center gap-6">
       <div className="text-center">
         <Skeleton className="h-16 w-16 rounded-full mb-2" />
-        <span className="text-xs text-zinc-500">Circle</span>
+        <span className="text-xs text-muted-foreground">Circle</span>
       </div>
       <div className="text-center">
         <Skeleton className="h-16 w-16 rounded-md mb-2" />
-        <span className="text-xs text-zinc-500">Rounded</span>
+        <span className="text-xs text-muted-foreground">Rounded</span>
       </div>
       <div className="text-center">
         <Skeleton className="h-16 w-16 rounded-none mb-2" />
-        <span className="text-xs text-zinc-500">Square</span>
+        <span className="text-xs text-muted-foreground">Square</span>
       </div>
       <div className="text-center">
         <Skeleton className="h-16 w-32 rounded-md mb-2" />
-        <span className="text-xs text-zinc-500">Rectangle</span>
+        <span className="text-xs text-muted-foreground">Rectangle</span>
       </div>
     </div>
   ),

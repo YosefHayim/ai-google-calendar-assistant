@@ -36,7 +36,7 @@ const meta: Meta<typeof AllyChatAvatar> = {
   },
   decorators: [
     (Story) => (
-      <div className="flex items-center justify-center p-8 bg-zinc-950 min-h-[300px]">
+      <div className="flex items-center justify-center p-8 bg-secondary min-h-[300px]">
         <Story />
       </div>
     ),
@@ -125,19 +125,19 @@ export const AllSizes: Story = {
     <div className="flex items-end gap-8">
       <div className="flex flex-col items-center">
         <AllyChatAvatar chatState="idle" size="sm" showBackground />
-        <span className="mt-2 text-xs text-zinc-400">Small</span>
+        <span className="mt-2 text-xs text-muted-foreground">Small</span>
       </div>
       <div className="flex flex-col items-center">
         <AllyChatAvatar chatState="idle" size="md" showBackground />
-        <span className="mt-2 text-xs text-zinc-400">Medium</span>
+        <span className="mt-2 text-xs text-muted-foreground">Medium</span>
       </div>
       <div className="flex flex-col items-center">
         <AllyChatAvatar chatState="idle" size="lg" showBackground />
-        <span className="mt-2 text-xs text-zinc-400">Large</span>
+        <span className="mt-2 text-xs text-muted-foreground">Large</span>
       </div>
       <div className="flex flex-col items-center">
         <AllyChatAvatar chatState="idle" size="xl" showBackground />
-        <span className="mt-2 text-xs text-zinc-400">XL</span>
+        <span className="mt-2 text-xs text-muted-foreground">XL</span>
       </div>
     </div>
   ),
@@ -149,7 +149,7 @@ export const AllStates: Story = {
       {(['idle', 'listening', 'processing', 'speaking', 'error'] as const).map((state) => (
         <div key={state} className="flex flex-col items-center">
           <AllyChatAvatar chatState={state} size="md" showBackground />
-          <span className="mt-2 text-xs text-zinc-400 capitalize">{state}</span>
+          <span className="mt-2 text-xs text-muted-foreground capitalize">{state}</span>
         </div>
       ))}
     </div>

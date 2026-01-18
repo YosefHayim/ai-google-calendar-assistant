@@ -24,9 +24,9 @@ export function StepContent({ step }: StepContentProps) {
           </div>
         </div>
 
-        <h2 className="text-2xl font-bold text-zinc-900 dark:text-white mb-2">{step.title}</h2>
+        <h2 className="text-2xl font-bold text-foreground dark:text-white mb-2">{step.title}</h2>
         <p className="text-sm text-primary font-medium mb-4">{step.description}</p>
-        <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed">{step.content}</p>
+        <p className="text-zinc-600 dark:text-muted-foreground leading-relaxed">{step.content}</p>
       </motion.div>
     </AnimatePresence>
   )

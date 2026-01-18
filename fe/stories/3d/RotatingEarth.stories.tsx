@@ -33,7 +33,7 @@ const meta: Meta<typeof RotatingEarth> = {
   },
   decorators: [
     (Story) => (
-      <div className="flex items-center justify-center p-8 bg-zinc-950">
+      <div className="flex items-center justify-center p-8 bg-secondary">
         <Story />
       </div>
     ),
@@ -92,7 +92,7 @@ export const InHeroSection: Story = {
         </div>
         <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-8">
           <h1 className="text-4xl font-bold text-white mb-4">Your AI Calendar Assistant</h1>
-          <p className="text-lg text-zinc-400 max-w-md">Manage your schedule naturally, from anywhere in the world.</p>
+          <p className="text-lg text-muted-foreground max-w-md">Manage your schedule naturally, from anywhere in the world.</p>
         </div>
       </div>
     ),

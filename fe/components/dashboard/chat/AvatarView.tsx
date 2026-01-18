@@ -74,7 +74,7 @@ export const AvatarView: React.FC<AvatarViewProps> = ({
   }
 
   return (
-    <div className="absolute inset-0 z-10  dark:bg-zinc-950 flex flex-col md:flex-row items-center justify-center p-4">
+    <div className="absolute inset-0 z-10  dark:bg-secondary flex flex-col md:flex-row items-center justify-center p-4">
       <div
         className={`flex flex-col items-center justify-center transition-all duration-700 w-full ${hasConversation ? 'md:w-1/2' : 'w-full'}`}
       >
@@ -107,9 +107,9 @@ export const AvatarView: React.FC<AvatarViewProps> = ({
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 20 }}
-            className="hidden md:flex flex-col w-1/2 h-[70%] border-l border-zinc-200 dark:border-zinc-800 px-8 py-4 overflow-y-auto"
+            className="hidden md:flex flex-col w-1/2 h-[70%] border-l border dark:border px-8 py-4 overflow-y-auto"
           >
-            <div className="flex items-center gap-2 mb-6 text-zinc-400 font-bold text-xs uppercase tracking-widest">
+            <div className="flex items-center gap-2 mb-6 text-muted-foreground font-bold text-xs uppercase tracking-widest">
               <MessageSquare className="w-3.5 h-3.5" /> Live Context
             </div>
             <div className="flex-1 space-y-2">
@@ -125,7 +125,7 @@ export const AvatarView: React.FC<AvatarViewProps> = ({
                           value={editText}
                           onChange={(e) => setEditText(e.target.value)}
                           onKeyDown={handleKeyDown}
-                          className="p-3 rounded-xl text-xs leading-relaxed bg-primary/10 text-zinc-900 dark:text-zinc-100 border-2 border-primary rounded-tr-none resize-none min-h-[60px] focus:outline-none focus:ring-2 focus:ring-primary/50"
+                          className="p-3 rounded-xl text-xs leading-relaxed bg-primary/10 text-foreground dark:text-primary-foreground border-2 border-primary rounded-tr-none resize-none min-h-[60px] focus:outline-none focus:ring-2 focus:ring-primary/50"
                           rows={Math.min(5, editText.split('\n').length + 1)}
                         />
                         <div className="flex justify-end gap-2">
@@ -147,7 +147,7 @@ export const AvatarView: React.FC<AvatarViewProps> = ({
                       <div
                         className={`p-3 rounded-xl text-xs leading-relaxed max-w-[90%] shadow-sm ${
                           msg.role === 'assistant'
-                            ? 'bg-zinc-100 dark:bg-zinc-900 text-zinc-800 dark:text-zinc-200 ml-0 mr-auto rounded-tl-none'
+                            ? 'bg-secondary dark:bg-secondary text-zinc-800 dark:text-zinc-200 ml-0 mr-auto rounded-tl-none'
                             : 'bg-primary text-white ml-auto mr-0 rounded-tr-none'
                         }`}
                       >

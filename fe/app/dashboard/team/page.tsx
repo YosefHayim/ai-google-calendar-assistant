@@ -90,7 +90,7 @@ export default function TeamPage() {
     switch (status) {
       case 'pending':
         return (
-          <Badge variant="outline" className="text-yellow-600 border-yellow-300 bg-yellow-50">
+          <Badge variant="outline" className="text-yellow-700 border-yellow-300 bg-yellow-50">
             <Clock className="w-3 h-3 mr-1" /> Pending
           </Badge>
         )
@@ -102,19 +102,19 @@ export default function TeamPage() {
         )
       case 'declined':
         return (
-          <Badge variant="outline" className="text-red-600 border-red-300 bg-red-50">
+          <Badge variant="outline" className="text-destructive border-red-300 bg-destructive/5">
             <XCircle className="w-3 h-3 mr-1" /> Declined
           </Badge>
         )
       case 'expired':
         return (
-          <Badge variant="outline" className="text-gray-600 border-gray-300 bg-gray-50">
+          <Badge variant="outline" className="text-foreground border-gray-300 bg-muted">
             <Clock className="w-3 h-3 mr-1" /> Expired
           </Badge>
         )
       case 'cancelled':
         return (
-          <Badge variant="outline" className="text-gray-600 border-gray-300 bg-gray-50">
+          <Badge variant="outline" className="text-foreground border-gray-300 bg-muted">
             Cancelled
           </Badge>
         )
@@ -128,9 +128,9 @@ export default function TeamPage() {
       case 'admin':
         return <Badge className="bg-purple-100 text-purple-800">Admin</Badge>
       case 'member':
-        return <Badge className="bg-blue-100 text-blue-800">Member</Badge>
+        return <Badge className="bg-primary/10 text-blue-800">Member</Badge>
       case 'viewer':
-        return <Badge className="bg-gray-100 text-gray-800">Viewer</Badge>
+        return <Badge className="bg-secondary text-gray-800">Viewer</Badge>
       default:
         return <Badge>{role}</Badge>
     }
@@ -141,8 +141,8 @@ export default function TeamPage() {
       <div className="max-w-4xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-zinc-900 dark:text-white">Team</h1>
-            <p className="text-zinc-500 dark:text-zinc-400 mt-1">Invite team members to collaborate on your calendar</p>
+            <h1 className="text-2xl font-bold text-foreground dark:text-white">Team</h1>
+            <p className="text-muted-foreground dark:text-muted-foreground mt-1">Invite team members to collaborate on your calendar</p>
           </div>
           <Dialog open={isInviteDialogOpen} onOpenChange={setIsInviteDialogOpen}>
             <DialogTrigger asChild>
@@ -210,22 +210,22 @@ export default function TeamPage() {
           <Card className="p-6 border-primary/20 bg-primary/5">
             <div className="flex items-center gap-2 mb-4">
               <Mail className="w-5 h-5 text-primary" />
-              <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">Pending Invitations</h3>
+              <h3 className="text-lg font-semibold text-foreground dark:text-white">Pending Invitations</h3>
               <Badge className="bg-primary text-white">{receivedInvites.length}</Badge>
             </div>
             <div className="space-y-3">
               {receivedInvites.map((invite) => (
                 <div
                   key={invite.id}
-                  className="flex items-center justify-between p-4 rounded-lg bg-white dark:bg-zinc-800 border"
+                  className="flex items-center justify-between p-4 rounded-lg bg-background dark:bg-secondary border"
                 >
                   <div>
-                    <p className="font-medium text-zinc-900 dark:text-white">{invite.inviter_email}</p>
-                    <p className="text-sm text-zinc-500">
+                    <p className="font-medium text-foreground dark:text-white">{invite.inviter_email}</p>
+                    <p className="text-sm text-muted-foreground">
                       {invite.team_name || 'Personal workspace'} • {getRoleBadge(invite.role)}
                     </p>
                     {invite.message && (
-                      <p className="text-sm text-zinc-600 dark:text-zinc-400 mt-1 italic">"{invite.message}"</p>
+                      <p className="text-sm text-zinc-600 dark:text-muted-foreground mt-1 italic">"{invite.message}"</p>
                     )}
                   </div>
                   <div className="flex gap-2">
@@ -254,8 +254,8 @@ export default function TeamPage() {
         <Card className="p-6">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
-              <Users className="w-5 h-5 text-zinc-500" />
-              <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">Sent Invites</h3>
+              <Users className="w-5 h-5 text-muted-foreground" />
+              <h3 className="text-lg font-semibold text-foreground dark:text-white">Sent Invites</h3>
             </div>
           </div>
 
@@ -277,23 +277,23 @@ export default function TeamPage() {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-zinc-200 dark:border-zinc-700">
-                    <th className="text-left py-3 px-4 text-sm font-medium text-zinc-500">Email</th>
-                    <th className="text-left py-3 px-4 text-sm font-medium text-zinc-500">Role</th>
-                    <th className="text-left py-3 px-4 text-sm font-medium text-zinc-500">Status</th>
-                    <th className="text-left py-3 px-4 text-sm font-medium text-zinc-500">Sent</th>
-                    <th className="text-right py-3 px-4 text-sm font-medium text-zinc-500">Actions</th>
+                  <tr className="border-b border dark:border-zinc-700">
+                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Email</th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Role</th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Status</th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Sent</th>
+                    <th className="text-right py-3 px-4 text-sm font-medium text-muted-foreground">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {sentInvites.map((invite) => (
-                    <tr key={invite.id} className="border-b border-zinc-100 dark:border-zinc-800">
+                    <tr key={invite.id} className="border-b border-zinc-100 dark:border">
                       <td className="py-4 px-4">
-                        <span className="text-zinc-900 dark:text-white">{invite.invitee_email}</span>
+                        <span className="text-foreground dark:text-white">{invite.invitee_email}</span>
                       </td>
                       <td className="py-4 px-4">{getRoleBadge(invite.role)}</td>
                       <td className="py-4 px-4">{getStatusBadge(invite.status)}</td>
-                      <td className="py-4 px-4 text-sm text-zinc-500">
+                      <td className="py-4 px-4 text-sm text-muted-foreground">
                         {formatDate(invite.created_at, DATE_FORMATS.FULL)}
                       </td>
                       <td className="py-4 px-4 text-right">
@@ -321,7 +321,7 @@ export default function TeamPage() {
                               <DropdownMenuItem
                                 onClick={() => cancelInvite.mutate(invite.id)}
                                 disabled={cancelInvite.isPending}
-                                className="text-red-600"
+                                className="text-destructive"
                               >
                                 <Trash2 className="w-4 h-4 mr-2" />
                                 Cancel
@@ -339,32 +339,32 @@ export default function TeamPage() {
         </Card>
 
         <Card className="p-6">
-          <h3 className="text-lg font-semibold text-zinc-900 dark:text-white mb-4">Team Roles</h3>
+          <h3 className="text-lg font-semibold text-foreground dark:text-white mb-4">Team Roles</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="p-4 rounded-lg bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800">
               <div className="flex items-center gap-2 mb-2">
                 <Building2 className="w-5 h-5 text-purple-600" />
-                <h4 className="font-medium text-zinc-900 dark:text-white">Admin</h4>
+                <h4 className="font-medium text-foreground dark:text-white">Admin</h4>
               </div>
-              <p className="text-sm text-zinc-600 dark:text-zinc-400">
+              <p className="text-sm text-zinc-600 dark:text-muted-foreground">
                 Full access to all calendars, can invite and manage team members
               </p>
             </div>
-            <div className="p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
+            <div className="p-4 rounded-lg bg-primary/5 dark:bg-blue-900/20 border border-primary/20 dark:border-blue-800">
               <div className="flex items-center gap-2 mb-2">
-                <Users className="w-5 h-5 text-blue-600" />
-                <h4 className="font-medium text-zinc-900 dark:text-white">Member</h4>
+                <Users className="w-5 h-5 text-primary" />
+                <h4 className="font-medium text-foreground dark:text-white">Member</h4>
               </div>
-              <p className="text-sm text-zinc-600 dark:text-zinc-400">
+              <p className="text-sm text-zinc-600 dark:text-muted-foreground">
                 Can view and edit shared calendars, create and modify events
               </p>
             </div>
-            <div className="p-4 rounded-lg bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-700">
+            <div className="p-4 rounded-lg bg-muted dark:bg-gray-900/20 border border dark:border-gray-700">
               <div className="flex items-center gap-2 mb-2">
-                <Users className="w-5 h-5 text-gray-600" />
-                <h4 className="font-medium text-zinc-900 dark:text-white">Viewer</h4>
+                <Users className="w-5 h-5 text-foreground" />
+                <h4 className="font-medium text-foreground dark:text-white">Viewer</h4>
               </div>
-              <p className="text-sm text-zinc-600 dark:text-zinc-400">
+              <p className="text-sm text-zinc-600 dark:text-muted-foreground">
                 Read-only access to shared calendars, cannot make changes
               </p>
             </div>

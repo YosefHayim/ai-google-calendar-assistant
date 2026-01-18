@@ -204,17 +204,17 @@ export const QuickEventDialog: React.FC<QuickEventDialogProps> = ({ isOpen, onCl
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-2xl p-0 gap-0 overflow-hidden bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800">
+      <DialogContent className="max-w-2xl p-0 gap-0 overflow-hidden bg-background dark:bg-secondary border dark:border">
         <DialogHeader className="sr-only">
           <DialogTitle>Quick Add Event</DialogTitle>
           <DialogDescription>Add an event to your calendar using natural language or voice</DialogDescription>
         </DialogHeader>
 
         <div className="flex min-h-[400px]">
-          <div className="flex-1 p-6 flex flex-col border-r border-zinc-200 dark:border-zinc-800">
+          <div className="flex-1 p-6 flex flex-col border-r border dark:border">
             <div className="flex items-center gap-2 mb-4">
               <Calendar className="w-5 h-5 text-primary" />
-              <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Quick Add Event</h3>
+              <h3 className="text-lg font-semibold text-foreground dark:text-primary-foreground">Quick Add Event</h3>
             </div>
 
             <div className="relative flex-1">
@@ -228,7 +228,7 @@ Examples:
 • Meeting with John tomorrow at 3pm
 • Lunch at Cafe Roma on Friday 12:30pm for 1 hour
 • Team standup every Monday at 9am`}
-                className="w-full h-full resize-none bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-4 pr-12 text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary/50"
+                className="w-full h-full resize-none bg-muted dark:bg-secondary border border dark:border rounded-lg p-4 pr-12 text-foreground dark:text-primary-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
                 disabled={isDisabled}
               />
               <Button
@@ -239,8 +239,8 @@ Examples:
                 disabled={isDisabled}
                 className={`absolute right-3 top-3 rounded-full ${
                   state === 'recording'
-                    ? 'bg-red-500 text-white animate-pulse hover:bg-red-600'
-                    : 'bg-zinc-200 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-300 dark:hover:bg-zinc-600'
+                    ? 'bg-destructive text-white animate-pulse hover:bg-destructive'
+                    : 'bg-accent dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-300 dark:hover:bg-zinc-600'
                 }`}
               >
                 {state === 'recording' ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
@@ -248,7 +248,7 @@ Examples:
             </div>
 
             <div className="mt-4 flex items-center justify-between">
-              <p className="text-xs text-zinc-400">
+              <p className="text-xs text-muted-foreground">
                 {state === 'recording' ? 'Recording... Click mic to stop' : 'Press Enter to process'}
               </p>
               <Button
@@ -272,14 +272,14 @@ Examples:
             </div>
           </div>
 
-          <div className="w-72 p-6 bg-zinc-50 dark:bg-zinc-900/50 flex flex-col">
+          <div className="w-72 p-6 bg-muted dark:bg-secondary/50 flex flex-col">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-zinc-900 dark:bg-white rounded-lg flex items-center justify-center">
-                <AllyLogo className="w-6 h-6 text-white dark:text-zinc-900" />
+              <div className="w-10 h-10 bg-secondary dark:bg-background rounded-lg flex items-center justify-center">
+                <AllyLogo className="w-6 h-6 text-white dark:text-foreground" />
               </div>
               <div>
-                <h4 className="font-semibold text-zinc-900 dark:text-zinc-100">Ally</h4>
-                <p className="text-xs text-zinc-500">Your AI Assistant</p>
+                <h4 className="font-semibold text-foreground dark:text-primary-foreground">Ally</h4>
+                <p className="text-xs text-muted-foreground">Your AI Assistant</p>
               </div>
             </div>
 

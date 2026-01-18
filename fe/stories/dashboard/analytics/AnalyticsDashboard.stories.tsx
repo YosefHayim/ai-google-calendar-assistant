@@ -62,7 +62,7 @@ export const Loading: Story = {
 export const LoadingState: Story = {
   render: () => {
     return (
-      <div className="p-4 text-center text-zinc-500">
+      <div className="p-4 text-center text-muted-foreground">
         <p className="mb-4">The AnalyticsDashboard requires the full AnalyticsContext with API data.</p>
         <p>To test the full dashboard, run the application locally with proper backend connection.</p>
         <p className="mt-4 text-sm">Individual chart components can be tested in their respective story files:</p>

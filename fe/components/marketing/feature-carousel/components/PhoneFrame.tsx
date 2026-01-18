@@ -9,17 +9,17 @@ interface PhoneFrameProps {
 
 export function PhoneFrame({ children }: PhoneFrameProps) {
   return (
-    <div className="relative mx-auto w-[280px] h-[580px] bg-zinc-900 rounded-[3rem] border-[8px] border-zinc-800 shadow-2xl overflow-hidden ring-1 ring-white/10">
+    <div className="relative mx-auto w-[280px] h-[580px] bg-secondary rounded-[3rem] border-[8px] border shadow-2xl overflow-hidden ring-1 ring-white/10">
       {/* Side Buttons */}
       <div className="absolute -left-[10px] top-24 w-[2px] h-12 bg-zinc-700 rounded-l-md" />
       <div className="absolute -left-[10px] top-40 w-[2px] h-16 bg-zinc-700 rounded-l-md" />
       <div className="absolute -right-[10px] top-32 w-[2px] h-20 bg-zinc-700 rounded-r-md" />
 
       {/* Screen Content */}
-      <div className="w-full h-full bg-white dark:bg-zinc-950 relative flex flex-col pt-12">
+      <div className="w-full h-full bg-background dark:bg-secondary relative flex flex-col pt-12">
         {/* Dynamic Island */}
-        <div className="absolute top-3 left-1/2 -translate-x-1/2 w-24 h-6 bg-black rounded-full z-50 flex items-center justify-center">
-          <div className="w-1.5 h-1.5 rounded-full bg-blue-500/20 mr-1" />
+        <div className="absolute top-3 left-1/2 -translate-x-1/2 w-24 h-6 bg-foreground rounded-full z-50 flex items-center justify-center">
+          <div className="w-1.5 h-1.5 rounded-full bg-primary/20 mr-1" />
         </div>
 
         {/* Status Bar */}

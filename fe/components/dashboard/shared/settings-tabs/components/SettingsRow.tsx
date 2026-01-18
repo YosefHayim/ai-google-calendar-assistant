@@ -31,7 +31,7 @@ export const SettingsRow: React.FC<SettingsRowProps> = ({ title, tooltip, contro
           {icon && <span className="flex-shrink-0 mr-1.5">{icon}</span>}
           <span
             id={id ? `${id}-label` : undefined}
-            className="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate"
+            className="text-sm font-medium text-foreground dark:text-primary-foreground truncate"
           >
             {title}
           </span>
@@ -43,7 +43,7 @@ export const SettingsRow: React.FC<SettingsRowProps> = ({ title, tooltip, contro
                 type="button"
                 variant="ghost"
                 size="icon"
-                className="h-5 w-5 sm:h-6 sm:w-6 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 flex-shrink-0"
+                className="h-5 w-5 sm:h-6 sm:w-6 text-muted-foreground hover:text-zinc-600 dark:hover:text-zinc-300 flex-shrink-0"
                 aria-label={`More info about ${title}`}
               >
                 <HelpCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />

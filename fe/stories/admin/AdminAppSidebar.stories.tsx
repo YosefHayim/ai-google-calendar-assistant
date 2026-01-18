@@ -18,11 +18,11 @@ const meta: Meta<typeof AdminAppSidebar> = {
   decorators: [
     (Story) => (
       <SidebarProvider>
-        <div className="flex h-screen w-full bg-zinc-50 dark:bg-zinc-950">
+        <div className="flex h-screen w-full bg-muted dark:bg-secondary">
           <Story />
           <SidebarInset>
             <div className="flex h-full items-center justify-center p-8">
-              <div className="text-center text-zinc-500">
+              <div className="text-center text-muted-foreground">
                 <p className="text-lg font-medium">Admin Dashboard Content Area</p>
                 <p className="text-sm mt-2">
                   This sidebar uses shadcn/ui&apos;s Sidebar component with collapsible functionality
@@ -113,11 +113,11 @@ export const CollapsedState: Story = {
   decorators: [
     (Story) => (
       <SidebarProvider defaultOpen={false}>
-        <div className="flex h-screen w-full bg-zinc-50 dark:bg-zinc-950">
+        <div className="flex h-screen w-full bg-muted dark:bg-secondary">
           <Story />
           <SidebarInset>
             <div className="flex h-full items-center justify-center p-8">
-              <div className="text-center text-zinc-500">
+              <div className="text-center text-muted-foreground">
                 <p className="text-lg font-medium">Collapsed Sidebar View</p>
                 <p className="text-sm mt-2">Hover over icons to see tooltips</p>
               </div>
@@ -140,11 +140,11 @@ export const DarkMode: Story = {
   decorators: [
     (Story) => (
       <SidebarProvider>
-        <div className="dark flex h-screen w-full bg-zinc-950">
+        <div className="dark flex h-screen w-full bg-secondary">
           <Story />
           <SidebarInset>
             <div className="flex h-full items-center justify-center p-8">
-              <div className="text-center text-zinc-400">
+              <div className="text-center text-muted-foreground">
                 <p className="text-lg font-medium">Dark Mode Admin Panel</p>
                 <p className="text-sm mt-2">Full dark theme support for comfortable night-time administration</p>
               </div>

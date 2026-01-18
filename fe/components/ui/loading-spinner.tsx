@@ -32,9 +32,9 @@ export function LoadingSpinner({ size = 'md', className, overlay = false, text }
 
   if (overlay) {
     return (
-      <div className="absolute inset-0 bg-white/80 dark:bg-zinc-950/80 z-20 flex flex-col items-center justify-center gap-3">
+      <div className="absolute inset-0 bg-background/80 dark:bg-secondary/80 z-20 flex flex-col items-center justify-center gap-3">
         {spinner}
-        {text && <p className="text-sm text-zinc-500 dark:text-zinc-400">{text}</p>}
+        {text && <p className="text-sm text-muted-foreground dark:text-muted-foreground">{text}</p>}
       </div>
     )
   }
@@ -43,7 +43,7 @@ export function LoadingSpinner({ size = 'md', className, overlay = false, text }
     return (
       <div className="flex flex-col items-center justify-center gap-3">
         {spinner}
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">{text}</p>
+        <p className="text-sm text-muted-foreground dark:text-muted-foreground">{text}</p>
       </div>
     )
   }

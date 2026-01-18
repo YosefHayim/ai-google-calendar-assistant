@@ -79,17 +79,17 @@ export function DayEventsDialog({
               <Sun size={20} className="text-primary" />
             </div>
             <div className="flex-1 text-left">
-              <DialogTitle className="text-xl font-bold text-zinc-900 dark:text-zinc-100">{formattedDate}</DialogTitle>
+              <DialogTitle className="text-xl font-bold text-foreground dark:text-primary-foreground">{formattedDate}</DialogTitle>
               <DialogDescription className="sr-only">Events and availability for {formattedDate}</DialogDescription>
 
               <div className="flex flex-wrap gap-4 mt-2">
-                <div className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-2">
+                <div className="text-xs text-muted-foreground dark:text-muted-foreground flex items-center gap-2">
                   <Clock size={12} className="text-primary" />
                   <span>
                     {t('dialogs.dayEvents.available', 'Available')}: {formatHours(availableHours)}
                   </span>
                 </div>
-                <div className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-2">
+                <div className="text-xs text-muted-foreground dark:text-muted-foreground flex items-center gap-2">
                   <Hourglass size={12} className="text-primary" />
                   <span>
                     {isFiltering
@@ -100,7 +100,7 @@ export function DayEventsDialog({
                       : `${t('dialogs.dayEvents.busy', 'Busy')}: ${formatHours(busyHours)}`}
                   </span>
                 </div>
-                <div className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-2">
+                <div className="text-xs text-muted-foreground dark:text-muted-foreground flex items-center gap-2">
                   <Hash size={12} className="text-primary" />
                   <span>
                     {isFiltering
@@ -119,9 +119,9 @@ export function DayEventsDialog({
         <TimelineVisualization events={events} calendarMap={calendarMap} />
 
         {events.length > 0 && (
-          <div className="px-6 py-2 border-b border-zinc-200 dark:border-zinc-800">
+          <div className="px-6 py-2 border-b border dark:border">
             <div className="relative">
-              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
               <Input
                 type="text"
                 placeholder={t('dialogs.eventSearch.placeholder', 'Search by title or description...')}
@@ -132,7 +132,7 @@ export function DayEventsDialog({
               {inputValue && (
                 <button
                   onClick={clearSearch}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-zinc-600 dark:hover:text-zinc-300"
                 >
                   <X size={14} />
                 </button>

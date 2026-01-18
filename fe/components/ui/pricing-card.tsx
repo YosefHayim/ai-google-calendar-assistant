@@ -58,10 +58,10 @@ export const PricingCard: React.FC<PricingCardProps> = ({ tier, paymentFrequency
   const isPopular = tier.popular
 
   const getPrimaryTextColor = () =>
-    isHighlighted ? 'text-white dark:text-zinc-950' : 'text-zinc-900 dark:text-zinc-100'
+    isHighlighted ? 'text-white dark:text-zinc-950' : 'text-foreground dark:text-primary-foreground'
 
   const getSecondaryTextColor = () =>
-    isHighlighted ? 'text-white/70 dark:text-zinc-950/70' : 'text-zinc-500 dark:text-zinc-400'
+    isHighlighted ? 'text-white/70 dark:text-zinc-950/70' : 'text-muted-foreground dark:text-muted-foreground'
 
   const adjustAmount = (delta: number) => {
     setCustomAmount((prev) => Math.max(MIN_CUSTOM_INTERACTIONS, Math.min(MAX_CUSTOM_INTERACTIONS, prev + delta)))
@@ -158,8 +158,8 @@ export const PricingCard: React.FC<PricingCardProps> = ({ tier, paymentFrequency
         className={cn(
           'relative flex flex-col gap-8 overflow-hidden p-6 transition-all duration-300 h-full',
           isHighlighted
-            ? 'bg-zinc-950 text-white dark:bg-primary dark:text-zinc-950 border-none shadow-2xl'
-            : 'bg-white text-zinc-900 dark:bg-zinc-900 dark:text-zinc-100',
+            ? 'bg-secondary text-white dark:bg-primary dark:text-zinc-950 border-none shadow-2xl'
+            : 'bg-background text-foreground dark:bg-secondary dark:text-primary-foreground',
           isPopular && 'ring-2 ring-primary',
         )}
       >
@@ -185,7 +185,7 @@ export const PricingCard: React.FC<PricingCardProps> = ({ tier, paymentFrequency
               className={cn(
                 'mt-1 z-10 border-primary/30',
                 isHighlighted
-                  ? 'bg-white/10 text-white dark:bg-zinc-950/20 dark:text-zinc-950'
+                  ? 'bg-background/10 text-white dark:bg-secondary/20 dark:text-zinc-950'
                   : 'bg-primary/20 text-primary',
               )}
             >
@@ -235,12 +235,12 @@ export const PricingCard: React.FC<PricingCardProps> = ({ tier, paymentFrequency
 
         <div className="flex-1 space-y-2 z-10">
           {isCustomTier && (
-            <div className="space-y-2 p-4 rounded-2xl bg-white/5 border border-white/10 animate-in fade-in slide-in-from-bottom-2 duration-500">
+            <div className="space-y-2 p-4 rounded-2xl bg-background/5 border border-white/10 animate-in fade-in slide-in-from-bottom-2 duration-500">
               <div className="flex items-center justify-between">
                 <label
                   className={cn(
                     'text-xs font-bold uppercase tracking-widest opacity-70',
-                    isHighlighted ? 'text-white' : 'text-zinc-500',
+                    isHighlighted ? 'text-white' : 'text-muted-foreground',
                   )}
                 >
                   Custom Pack Size
@@ -252,7 +252,7 @@ export const PricingCard: React.FC<PricingCardProps> = ({ tier, paymentFrequency
                 <button
                   type="button"
                   onClick={() => adjustAmount(-100)}
-                  className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors shrink-0"
+                  className="w-10 h-10 rounded-full bg-background/10 flex items-center justify-center hover:bg-background/20 transition-colors shrink-0"
                 >
                   <Minus size={16} />
                 </button>
@@ -294,7 +294,7 @@ export const PricingCard: React.FC<PricingCardProps> = ({ tier, paymentFrequency
                 <button
                   type="button"
                   onClick={() => adjustAmount(100)}
-                  className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors shrink-0"
+                  className="w-10 h-10 rounded-full bg-background/10 flex items-center justify-center hover:bg-background/20 transition-colors shrink-0"
                 >
                   <Plus size={16} />
                 </button>
@@ -308,7 +308,7 @@ export const PricingCard: React.FC<PricingCardProps> = ({ tier, paymentFrequency
                   step="100"
                   value={customAmount}
                   onChange={(e) => setCustomAmount(parseInt(e.target.value))}
-                  className="absolute w-full h-1 bg-white/10 rounded-full appearance-none cursor-pointer accent-amber-400 z-10"
+                  className="absolute w-full h-1 bg-background/10 rounded-full appearance-none cursor-pointer accent-amber-400 z-10"
                 />
                 <motion.div
                   className="absolute h-1 bg-amber-400 rounded-full pointer-events-none"
@@ -368,7 +368,7 @@ export const PricingCard: React.FC<PricingCardProps> = ({ tier, paymentFrequency
             className={cn(
               'w-full z-10 font-bold h-12',
               isHighlighted
-                ? 'bg-white text-zinc-950 hover:bg-white/90 dark:bg-zinc-950 dark:text-white dark:hover:bg-zinc-900 border-white dark:border-zinc-950'
+                ? 'bg-background text-zinc-950 hover:bg-background/90 dark:bg-secondary dark:text-white dark:hover:bg-secondary border-white dark:border-zinc-950'
                 : '',
             )}
             onClick={handleGetStarted}

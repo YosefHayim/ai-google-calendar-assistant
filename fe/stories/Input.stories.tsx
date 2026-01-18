@@ -92,7 +92,7 @@ export const WithLabelAndHelper: Story = {
     <div className="grid w-full max-w-sm items-center gap-1.5">
       <Label htmlFor="email-helper">Email</Label>
       <Input type="email" id="email-helper" placeholder="Enter your email" />
-      <p className="text-sm text-zinc-500">We&apos;ll never share your email.</p>
+      <p className="text-sm text-muted-foreground">We&apos;ll never share your email.</p>
     </div>
   ),
 }
@@ -119,7 +119,7 @@ export const NumberInput: Story = {
 export const WithIconPrefix: Story = {
   render: () => (
     <div className="relative w-full max-w-sm">
-      <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
+      <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
       <Input type="search" placeholder="Search..." className="pl-10" />
     </div>
   ),

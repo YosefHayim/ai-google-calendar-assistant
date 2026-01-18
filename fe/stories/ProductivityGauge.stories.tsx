@@ -143,7 +143,7 @@ export const ScoreComparison: Story = {
         <div className="w-40 h-40">
           <ProductivityGauge score={25} />
         </div>
-        <p className="mt-2 text-sm font-medium text-red-500">Needs Improvement</p>
+        <p className="mt-2 text-sm font-medium text-destructive">Needs Improvement</p>
       </div>
       <div className="text-center">
         <div className="w-40 h-40">
@@ -155,7 +155,7 @@ export const ScoreComparison: Story = {
         <div className="w-40 h-40">
           <ProductivityGauge score={75} />
         </div>
-        <p className="mt-2 text-sm font-medium text-green-500">Good</p>
+        <p className="mt-2 text-sm font-medium text-green-600">Good</p>
       </div>
       <div className="text-center">
         <div className="w-40 h-40">
@@ -184,11 +184,11 @@ export const ScoreComparison: Story = {
 export const InDashboardContext: Story = {
   render: () => (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl">
-      <div className="p-6 bg-white dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-800">
+      <div className="p-6 bg-background dark:bg-secondary rounded-xl border border dark:border">
         <h3 className="font-semibold text-zinc-800 dark:text-zinc-200 mb-4">Today&apos;s Score</h3>
         <ProductivityGauge score={82} />
       </div>
-      <div className="p-6 bg-white dark:bg-zinc-950 rounded-xl border border-zinc-200 dark:border-zinc-800">
+      <div className="p-6 bg-background dark:bg-secondary rounded-xl border border dark:border">
         <h3 className="font-semibold text-zinc-800 dark:text-zinc-200 mb-4">Weekly Average</h3>
         <ProductivityGauge score={71} />
       </div>
@@ -196,7 +196,7 @@ export const InDashboardContext: Story = {
   ),
   decorators: [
     (Story) => (
-      <div className="p-8 bg-zinc-50 dark:bg-zinc-950">
+      <div className="p-8 bg-muted dark:bg-secondary">
         <Story />
       </div>
     ),
@@ -216,7 +216,7 @@ export const DarkMode: Story = {
   },
   decorators: [
     (Story) => (
-      <div className="dark p-8 bg-zinc-950 w-[280px] h-[280px]">
+      <div className="dark p-8 bg-secondary w-[280px] h-[280px]">
         <Story />
       </div>
     ),

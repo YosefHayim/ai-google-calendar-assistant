@@ -9,7 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton'
  */
 const InsightCardSkeleton: React.FC = () => {
   return (
-    <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-3 sm:p-4 md:p-6 flex flex-col gap-2 sm:gap-3 md:gap-4">
+    <div className="bg-background dark:bg-secondary border border dark:border rounded-md shadow-sm p-3 sm:p-4 md:p-6 flex flex-col gap-2 sm:gap-3 md:gap-4">
       <div className="flex items-center gap-2 sm:gap-3">
         {/* Icon skeleton */}
         <Skeleton className="w-7 h-7 sm:w-8 sm:h-8 rounded-md shrink-0" />

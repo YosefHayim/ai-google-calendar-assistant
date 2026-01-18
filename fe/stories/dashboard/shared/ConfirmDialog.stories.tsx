@@ -201,7 +201,7 @@ export const DarkMode: Story = {
   },
   decorators: [
     (Story) => (
-      <div className="dark min-h-screen bg-zinc-950 flex items-center justify-center p-8">
+      <div className="dark min-h-screen bg-secondary flex items-center justify-center p-8">
         <Story />
       </div>
     ),

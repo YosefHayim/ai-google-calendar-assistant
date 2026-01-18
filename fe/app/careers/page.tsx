@@ -65,7 +65,7 @@ export default function CareersPage() {
     <MarketingLayout>
       <section className="relative py-24 md:py-32 px-4 sm:px-6 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-red-500/5 via-transparent to-transparent dark:from-red-500/10" />
-        <div className="absolute top-20 left-1/4 w-96 h-96 bg-red-500/10 rounded-full blur-3xl" />
+        <div className="absolute top-20 left-1/4 w-96 h-96 bg-destructive/10 rounded-full blur-3xl" />
         <div className="absolute bottom-20 right-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
 
@@ -76,7 +76,7 @@ export default function CareersPage() {
           variants={staggerContainer}
         >
           <motion.div variants={fadeInUp} className="mb-6">
-            <Badge className="bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20 px-4 py-1.5 text-sm font-medium">
+            <Badge className="bg-destructive/10 text-destructive dark:text-red-400 border-destructive/20 px-4 py-1.5 text-sm font-medium">
               <Sparkles className="w-4 h-4 mr-2" />
               We are Hiring
             </Badge>
@@ -84,23 +84,23 @@ export default function CareersPage() {
 
           <motion.h1
             variants={fadeInUp}
-            className="text-4xl md:text-6xl lg:text-7xl font-medium tracking-tight text-zinc-900 dark:text-zinc-100 mb-6"
+            className="text-4xl md:text-6xl lg:text-7xl font-medium tracking-tight text-foreground dark:text-primary-foreground mb-6"
           >
             Build the Future of
             <br />
-            <span className="text-red-500 dark:text-red-400">Time Management</span>
+            <span className="text-destructive dark:text-red-400">Time Management</span>
           </motion.h1>
 
           <motion.p
             variants={fadeInUp}
-            className="text-xl md:text-2xl text-zinc-500 dark:text-zinc-400 max-w-3xl mx-auto mb-8"
+            className="text-xl md:text-2xl text-muted-foreground dark:text-muted-foreground max-w-3xl mx-auto mb-8"
           >
             Join our team and help millions of people take control of their time with AI-powered calendar intelligence.
           </motion.p>
 
           <motion.div
             variants={fadeInUp}
-            className="flex items-center justify-center gap-3 text-sm text-zinc-500 dark:text-zinc-400"
+            className="flex items-center justify-center gap-3 text-sm text-muted-foreground dark:text-muted-foreground"
           >
             <div className="flex items-center gap-1.5">
               <Users className="w-4 h-4" />
@@ -128,17 +128,17 @@ export default function CareersPage() {
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-red-500/10 via-orange-500/10 to-amber-500/10 dark:from-red-500/20 dark:via-orange-500/20 dark:to-amber-500/20 border border-red-500/20 dark:border-red-500/30 p-6">
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-red-500/10 via-orange-500/10 to-amber-500/10 dark:from-red-500/20 dark:via-orange-500/20 dark:to-amber-500/20 border border-destructive/20 dark:border-destructive/30 p-6">
             <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-red-500/20 to-transparent rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
             <div className="relative flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center flex-shrink-0">
                 <Sparkles className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-1">
+                <h3 className="text-lg font-semibold text-foreground dark:text-primary-foreground mb-1">
                   More Positions Coming Soon
                 </h3>
-                <p className="text-zinc-600 dark:text-zinc-400 text-sm">
+                <p className="text-zinc-600 dark:text-muted-foreground text-sm">
                   We are growing fast! Check back regularly for new opportunities in design, product, and more.
                 </p>
               </div>
@@ -156,8 +156,8 @@ export default function CareersPage() {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <h2 className="text-3xl md:text-4xl font-medium text-zinc-900 dark:text-zinc-100 mb-4">Open Positions</h2>
-            <p className="text-lg text-zinc-500 dark:text-zinc-400">R&D roles currently accepting applications</p>
+            <h2 className="text-3xl md:text-4xl font-medium text-foreground dark:text-primary-foreground mb-4">Open Positions</h2>
+            <p className="text-lg text-muted-foreground dark:text-muted-foreground">R&D roles currently accepting applications</p>
           </motion.div>
 
           <motion.div
@@ -182,13 +182,13 @@ export default function CareersPage() {
                             {position.department}
                           </Badge>
                         </div>
-                        <CardTitle className="text-xl mb-2 group-hover:text-red-500 dark:group-hover:text-red-400 transition-colors">
+                        <CardTitle className="text-xl mb-2 group-hover:text-destructive dark:group-hover:text-red-400 transition-colors">
                           {position.title}
                         </CardTitle>
                         <CardDescription className="text-base">{position.description}</CardDescription>
                       </div>
                       <Link href={`/careers/apply/${position.id}`} className="flex-shrink-0">
-                        <Button className="group/btn bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-zinc-200 dark:text-zinc-900">
+                        <Button className="group/btn bg-secondary hover:bg-secondary dark:bg-secondary dark:hover:bg-accent dark:text-foreground">
                           Apply Now
                           <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
                         </Button>
@@ -197,7 +197,7 @@ export default function CareersPage() {
                   </CardHeader>
 
                   <CardContent className="pt-0">
-                    <div className="flex flex-wrap items-center gap-4 text-sm text-zinc-500 dark:text-zinc-400">
+                    <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground dark:text-muted-foreground">
                       <div className="flex items-center gap-1.5">
                         <Briefcase className="w-4 h-4" />
                         <span>{position.type}</span>
@@ -219,7 +219,7 @@ export default function CareersPage() {
         </div>
       </section>
 
-      <section className="py-16 md:py-24 px-4 sm:px-6 bg-zinc-50 dark:bg-zinc-900/50">
+      <section className="py-16 md:py-24 px-4 sm:px-6 bg-muted dark:bg-secondary/50">
         <div className="max-w-4xl mx-auto">
           <motion.div
             className="text-center mb-12"
@@ -228,8 +228,8 @@ export default function CareersPage() {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <h2 className="text-3xl md:text-4xl font-medium text-zinc-900 dark:text-zinc-100 mb-4">Why Join Us?</h2>
-            <p className="text-lg text-zinc-500 dark:text-zinc-400">
+            <h2 className="text-3xl md:text-4xl font-medium text-foreground dark:text-primary-foreground mb-4">Why Join Us?</h2>
+            <p className="text-lg text-muted-foreground dark:text-muted-foreground">
               We believe great work happens when people are happy and empowered
             </p>
           </motion.div>
@@ -245,14 +245,14 @@ export default function CareersPage() {
               <motion.div
                 key={index}
                 variants={fadeInUp}
-                className="flex items-start gap-4 p-6 rounded-2xl bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700"
+                className="flex items-start gap-4 p-6 rounded-2xl bg-background dark:bg-secondary border border dark:border-zinc-700"
               >
-                <div className="w-12 h-12 rounded-xl bg-red-500/10 flex items-center justify-center flex-shrink-0">
-                  <perk.icon className="w-6 h-6 text-red-500" />
+                <div className="w-12 h-12 rounded-xl bg-destructive/10 flex items-center justify-center flex-shrink-0">
+                  <perk.icon className="w-6 h-6 text-destructive" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-medium text-zinc-900 dark:text-zinc-100 mb-1">{perk.title}</h3>
-                  <p className="text-zinc-500 dark:text-zinc-400 text-sm">{perk.description}</p>
+                  <h3 className="text-lg font-medium text-foreground dark:text-primary-foreground mb-1">{perk.title}</h3>
+                  <p className="text-muted-foreground dark:text-muted-foreground text-sm">{perk.description}</p>
                 </div>
               </motion.div>
             ))}
@@ -268,10 +268,10 @@ export default function CareersPage() {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="text-3xl md:text-4xl font-medium text-zinc-900 dark:text-zinc-100 mb-4">
+          <h2 className="text-3xl md:text-4xl font-medium text-foreground dark:text-primary-foreground mb-4">
             Do Not See a Perfect Fit?
           </h2>
-          <p className="text-lg text-zinc-500 dark:text-zinc-400 mb-8">
+          <p className="text-lg text-muted-foreground dark:text-muted-foreground mb-8">
             We are always looking for talented people. Send us your resume and tell us how you can contribute to our
             mission.
           </p>

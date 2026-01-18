@@ -141,7 +141,7 @@ export const EventActions: Story = {
           Invite Guests
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="text-red-600 focus:text-red-600">
+        <DropdownMenuItem className="text-destructive focus:text-destructive">
           <Trash2 className="mr-2 h-4 w-4" />
           Delete Event
         </DropdownMenuItem>
@@ -268,7 +268,7 @@ export const UserMenu: Story = {
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium">John Doe</p>
-            <p className="text-xs text-zinc-500">john@example.com</p>
+            <p className="text-xs text-muted-foreground">john@example.com</p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />

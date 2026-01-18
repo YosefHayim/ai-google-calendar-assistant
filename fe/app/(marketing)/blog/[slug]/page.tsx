@@ -60,7 +60,7 @@ function ShareButtons({ title, url }: { title: string; url: string }) {
   return (
     <>
       <div className="flex items-center gap-2">
-        <span className="text-sm text-zinc-500 dark:text-zinc-400 mr-2">Share:</span>
+        <span className="text-sm text-muted-foreground dark:text-muted-foreground mr-2">Share:</span>
         <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleTwitterShare}>
           <Twitter className="h-4 w-4" />
         </Button>
@@ -68,12 +68,12 @@ function ShareButtons({ title, url }: { title: string; url: string }) {
           <Linkedin className="h-4 w-4" />
         </Button>
         <Button variant="ghost" size="icon" className="h-8 w-8" onClick={copyToClipboard}>
-          {showCopyCheck ? <Check className="h-4 w-4 text-green-500" /> : <LinkIcon className="h-4 w-4" />}
+          {showCopyCheck ? <Check className="h-4 w-4 text-green-600" /> : <LinkIcon className="h-4 w-4" />}
         </Button>
       </div>
 
       {toastMessage && (
-        <div className="fixed bottom-4 right-4 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 px-4 py-2 rounded-lg shadow-lg animate-in fade-in slide-in-from-bottom-2 duration-300">
+        <div className="fixed bottom-4 right-4 bg-secondary dark:bg-secondary text-white dark:text-foreground px-4 py-2 rounded-lg shadow-lg animate-in fade-in slide-in-from-bottom-2 duration-300">
           {toastMessage}
         </div>
       )}
@@ -180,7 +180,7 @@ export default function BlogPostPage() {
         <div className="max-w-3xl mx-auto">
           <Link
             href="/blog"
-            className="inline-flex items-center gap-2 text-sm text-zinc-500 dark:text-zinc-400 hover:text-primary mb-8 transition-colors"
+            className="inline-flex items-center gap-2 text-sm text-muted-foreground dark:text-muted-foreground hover:text-primary mb-8 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Blog
@@ -192,19 +192,19 @@ export default function BlogPostPage() {
               {post.featured && <Badge variant="secondary">Featured</Badge>}
             </div>
 
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-medium tracking-tight text-zinc-900 dark:text-zinc-100 mb-6 leading-tight">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-medium tracking-tight text-foreground dark:text-primary-foreground mb-6 leading-tight">
               {post.title}
             </h1>
 
-            <p className="text-xl text-zinc-500 dark:text-zinc-400 mb-8">{post.excerpt}</p>
+            <p className="text-xl text-muted-foreground dark:text-muted-foreground mb-8">{post.excerpt}</p>
 
-            <div className="flex flex-wrap items-center gap-6 text-sm text-zinc-500 dark:text-zinc-400 pb-8 border-b border-zinc-200 dark:border-zinc-800">
+            <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground dark:text-muted-foreground pb-8 border-b border dark:border">
               <div className="flex items-center gap-2">
                 <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
                   <User className="w-5 h-5 text-primary" />
                 </div>
                 <div>
-                  <p className="font-medium text-zinc-900 dark:text-zinc-100">{author.name}</p>
+                  <p className="font-medium text-foreground dark:text-primary-foreground">{author.name}</p>
                   <p className="text-xs">{author.role}</p>
                 </div>
               </div>
@@ -227,17 +227,17 @@ export default function BlogPostPage() {
               prose-p:leading-relaxed prose-p:mb-4
               prose-li:leading-relaxed
               prose-a:text-primary prose-a:no-underline hover:prose-a:underline
-              prose-strong:text-zinc-900 dark:prose-strong:text-zinc-100
+              prose-strong:text-foreground dark:prose-strong:text-primary-foreground
               prose-code:text-primary prose-code:bg-primary/10 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded
-              prose-pre:bg-zinc-900 prose-pre:border prose-pre:border-zinc-800
-              prose-blockquote:border-primary prose-blockquote:bg-zinc-50 dark:prose-blockquote:bg-zinc-900 prose-blockquote:py-1 prose-blockquote:px-6 prose-blockquote:rounded-r-lg
+              prose-pre:bg-secondary prose-pre:border prose-pre:border
+              prose-blockquote:border-primary prose-blockquote:bg-muted dark:prose-blockquote:bg-secondary prose-blockquote:py-1 prose-blockquote:px-6 prose-blockquote:rounded-r-lg
               prose-ul:my-4 prose-ol:my-4"
             dangerouslySetInnerHTML={{ __html: formatMarkdownToHtml(post.content) }}
           />
 
-          <div className="mt-12 pt-8 border-t border-zinc-200 dark:border-zinc-800">
+          <div className="mt-12 pt-8 border-t border dark:border">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-sm text-zinc-500 dark:text-zinc-400 mr-2">Tags:</span>
+              <span className="text-sm text-muted-foreground dark:text-muted-foreground mr-2">Tags:</span>
               {post.tags.map((tag) => (
                 <Badge key={tag} variant="outline" className="text-xs">
                   {tag}
@@ -246,7 +246,7 @@ export default function BlogPostPage() {
             </div>
           </div>
 
-          <div className="mt-8 pt-8 border-t border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
+          <div className="mt-8 pt-8 border-t border dark:border flex items-center justify-between">
             <ShareButtons title={post.title} url={postUrl} />
             <Link href="/register">
               <Button className="gap-2">
@@ -259,13 +259,13 @@ export default function BlogPostPage() {
       </article>
 
       {relatedPosts.length > 0 && (
-        <section className="py-16 md:py-24 px-4 sm:px-6 bg-zinc-50 dark:bg-zinc-900/50">
+        <section className="py-16 md:py-24 px-4 sm:px-6 bg-muted dark:bg-secondary/50">
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-2xl md:text-3xl font-medium text-zinc-900 dark:text-zinc-100 mb-8">Related Articles</h2>
+            <h2 className="text-2xl md:text-3xl font-medium text-foreground dark:text-primary-foreground mb-8">Related Articles</h2>
             <div className="grid md:grid-cols-3 gap-6">
               {relatedPosts.map((relatedPost) => (
                 <Link key={relatedPost.slug} href={`/blog/${relatedPost.slug}`}>
-                  <Card className="h-full overflow-hidden border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors group">
+                  <Card className="h-full overflow-hidden border dark:border hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors group">
                     <div className="aspect-video relative overflow-hidden bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-zinc-800 dark:to-zinc-900">
                       {getImageSrc(relatedPost) ? (
                         <Image
@@ -285,10 +285,10 @@ export default function BlogPostPage() {
                       <Badge variant="secondary" className="mb-3">
                         {relatedPost.category}
                       </Badge>
-                      <h3 className="font-medium text-zinc-900 dark:text-zinc-100 mb-2 line-clamp-2 group-hover:text-primary transition-colors">
+                      <h3 className="font-medium text-foreground dark:text-primary-foreground mb-2 line-clamp-2 group-hover:text-primary transition-colors">
                         {relatedPost.title}
                       </h3>
-                      <p className="text-sm text-zinc-500 dark:text-zinc-400 line-clamp-2">{relatedPost.excerpt}</p>
+                      <p className="text-sm text-muted-foreground dark:text-muted-foreground line-clamp-2">{relatedPost.excerpt}</p>
                     </CardContent>
                   </Card>
                 </Link>
@@ -300,10 +300,10 @@ export default function BlogPostPage() {
 
       <section className="py-16 md:py-24 px-4 sm:px-6">
         <div className="max-w-2xl mx-auto text-center">
-          <h2 className="text-2xl md:text-3xl font-medium text-zinc-900 dark:text-zinc-100 mb-4">
+          <h2 className="text-2xl md:text-3xl font-medium text-foreground dark:text-primary-foreground mb-4">
             Ready to transform your calendar?
           </h2>
-          <p className="text-zinc-500 dark:text-zinc-400 mb-8">
+          <p className="text-muted-foreground dark:text-muted-foreground mb-8">
             Join thousands of professionals who use Ask Ally to manage their time more effectively.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">

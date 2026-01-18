@@ -45,7 +45,7 @@ describe('colorUtils', () => {
 
   describe('getActivityLevelColor', () => {
     it('should return muted color for zero activity', () => {
-      expect(getActivityLevelColor(0)).toBe('bg-zinc-100 dark:bg-zinc-800/50')
+      expect(getActivityLevelColor(0)).toBe('bg-secondary dark:bg-secondary/50')
     })
 
     it('should return lightest primary for low activity (1-4)', () => {
@@ -83,8 +83,8 @@ describe('colorUtils', () => {
     })
 
     it('should return muted color for Rest and unknown types', () => {
-      expect(getHealthActivityColor('Rest')).toBe('bg-zinc-100 dark:bg-zinc-800/50')
-      expect(getHealthActivityColor('Unknown' as HealthActivity)).toBe('bg-zinc-100 dark:bg-zinc-800/50')
+      expect(getHealthActivityColor('Rest')).toBe('bg-secondary dark:bg-secondary/50')
+      expect(getHealthActivityColor('Unknown' as HealthActivity)).toBe('bg-secondary dark:bg-secondary/50')
     })
   })
 
@@ -92,7 +92,7 @@ describe('colorUtils', () => {
     it('should return correct classes for amber', () => {
       const result = getInsightColorClasses('amber')
       expect(result.bg).toBe('bg-amber-100/50 dark:bg-amber-900/30')
-      expect(result.text).toBe('text-amber-600 dark:text-amber-500')
+      expect(result.text).toBe('text-amber-700 dark:text-amber-500')
     })
 
     it('should return correct classes for sky', () => {
@@ -128,7 +128,7 @@ describe('colorUtils', () => {
     it('should fallback to amber for unknown colors', () => {
       const result = getInsightColorClasses('unknown' as InsightColor)
       expect(result.bg).toBe('bg-amber-100/50 dark:bg-amber-900/30')
-      expect(result.text).toBe('text-amber-600 dark:text-amber-500')
+      expect(result.text).toBe('text-amber-700 dark:text-amber-500')
     })
   })
 })

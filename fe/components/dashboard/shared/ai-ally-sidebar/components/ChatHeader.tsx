@@ -13,7 +13,7 @@ interface ChatHeaderProps {
 
 export function ChatHeader({ onClose, onMinimize }: ChatHeaderProps) {
   return (
-    <div className="relative flex items-center justify-between px-4 py-3 border-b border-zinc-200/50 dark:border-zinc-800/50 bg-gradient-to-r from-zinc-50/80 to-white/80 dark:from-zinc-900/80 dark:to-zinc-950/80 backdrop-blur-xl rounded-t-2xl">
+    <div className="relative flex items-center justify-between px-4 py-3 border-b border/50 dark:border/50 bg-gradient-to-r from-zinc-50/80 to-white/80 dark:from-zinc-900/80 dark:to-zinc-950/80 backdrop-blur-xl rounded-t-2xl">
       <motion.div
         className="absolute bottom-0 left-4 right-4 h-0.5 bg-gradient-to-r from-primary via-orange-500 to-primary rounded-full"
         initial={{ scaleX: 0 }}
@@ -26,7 +26,7 @@ export function ChatHeader({ onClose, onMinimize }: ChatHeaderProps) {
           <VoicePoweredOrb enableVoiceControl={false} className="w-full h-full" maxRotationSpeed={0.2} />
         </div>
         <div>
-          <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-1.5">
+          <h3 className="text-sm font-bold text-foreground dark:text-primary-foreground flex items-center gap-1.5">
             Ally
             <span className="px-1.5 py-0.5 text-xs font-bold uppercase tracking-wider bg-primary/10 text-primary rounded-md">
               AI
@@ -41,7 +41,7 @@ export function ChatHeader({ onClose, onMinimize }: ChatHeaderProps) {
           variant="ghost"
           size="icon"
           onClick={onMinimize}
-          className="h-8 w-8 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
+          className="h-8 w-8 text-muted-foreground hover:text-zinc-600 dark:hover:text-zinc-300"
           title="Minimize"
         >
           <ChevronDown size={16} />
@@ -50,7 +50,7 @@ export function ChatHeader({ onClose, onMinimize }: ChatHeaderProps) {
           variant="ghost"
           size="icon"
           onClick={onClose}
-          className="h-8 w-8 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
+          className="h-8 w-8 text-muted-foreground hover:text-zinc-600 dark:hover:text-zinc-300"
           title="Close"
         >
           <X size={16} />

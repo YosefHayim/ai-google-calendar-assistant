@@ -27,7 +27,7 @@ const MonthlyPatternChart: React.FC<MonthlyPatternChartProps> = ({ data, isLoadi
 
   if (isLoading) {
     return (
-      <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-sm p-6">
+      <div className="bg-background dark:bg-secondary border border dark:border rounded-xl shadow-sm p-6">
         <div className="flex items-center gap-2 mb-2">
           <Skeleton className="w-5 h-5 rounded" />
           <Skeleton className="h-5 w-32" />
@@ -41,17 +41,17 @@ const MonthlyPatternChart: React.FC<MonthlyPatternChartProps> = ({ data, isLoadi
   const hasData = filteredData.length > 0
 
   return (
-    <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
+    <div className="bg-background dark:bg-secondary border border dark:border rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
       <div className="flex items-center gap-2 mb-1">
-        <div className="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center">
-          <Calendar className="w-4 h-4 text-zinc-900 dark:text-primary" />
+        <div className="w-8 h-8 rounded-lg bg-secondary dark:bg-secondary flex items-center justify-center">
+          <Calendar className="w-4 h-4 text-foreground dark:text-primary" />
         </div>
-        <h3 className="font-semibold text-zinc-900 dark:text-zinc-100">Monthly Pattern</h3>
+        <h3 className="font-semibold text-foreground dark:text-primary-foreground">Monthly Pattern</h3>
       </div>
-      <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-6 ml-10">Hours scheduled per day of month</p>
+      <p className="text-xs text-muted-foreground dark:text-muted-foreground mb-6 ml-10">Hours scheduled per day of month</p>
 
       {!hasData ? (
-        <div className="h-[200px] flex items-center justify-center text-zinc-400 dark:text-zinc-600">
+        <div className="h-[200px] flex items-center justify-center text-muted-foreground dark:text-zinc-600">
           No events scheduled in this period
         </div>
       ) : (

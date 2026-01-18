@@ -38,7 +38,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   const getButtonStyles = () => {
     switch (variant) {
       case 'destructive':
-        return 'bg-red-500 hover:bg-red-600 text-white'
+        return 'bg-destructive hover:bg-destructive text-white'
       case 'warning':
         return 'bg-amber-500 hover:bg-amber-600 text-white'
       default:
@@ -65,10 +65,10 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && !isLoading && onClose()}>
-      <DialogContent className="sm:max-w-md bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800">
+      <DialogContent className="sm:max-w-md bg-background dark:bg-secondary border dark:border">
         <DialogHeader>
-          <DialogTitle className="text-zinc-900 dark:text-zinc-100">{title}</DialogTitle>
-          <DialogDescription className="text-zinc-500 dark:text-zinc-400">{description}</DialogDescription>
+          <DialogTitle className="text-foreground dark:text-primary-foreground">{title}</DialogTitle>
+          <DialogDescription className="text-muted-foreground dark:text-muted-foreground">{description}</DialogDescription>
         </DialogHeader>
         <DialogFooter className="sm:justify-end gap-2 mt-4">
           <Button
@@ -76,7 +76,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
             variant="outline"
             onClick={onClose}
             disabled={isLoading}
-            className="border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100"
+            className="border dark:border text-foreground dark:text-primary-foreground"
           >
             {cancelLabel}
           </Button>

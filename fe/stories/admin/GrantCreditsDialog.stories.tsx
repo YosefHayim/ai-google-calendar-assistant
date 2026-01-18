@@ -220,7 +220,7 @@ export const DarkMode: Story = {
   },
   decorators: [
     (Story) => (
-      <div className="dark bg-zinc-950 p-8 rounded-lg">
+      <div className="dark bg-secondary p-8 rounded-lg">
         <Story />
       </div>
     ),

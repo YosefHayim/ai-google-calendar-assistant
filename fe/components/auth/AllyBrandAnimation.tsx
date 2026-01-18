@@ -211,7 +211,7 @@ export function AllyBrandAnimation() {
       </motion.svg>
 
       <motion.p
-        className="absolute bottom-8 text-sm font-medium tracking-widest text-zinc-400 dark:text-zinc-500 uppercase"
+        className="absolute bottom-8 text-sm font-medium tracking-widest text-muted-foreground dark:text-muted-foreground uppercase"
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 2.5, duration: 0.8 }}

@@ -47,7 +47,7 @@ export const AnimatedHamburger: React.FC<AnimatedHamburgerProps> = ({ isOpen, on
     <button
       onClick={onClick}
       className={cn(
-        'relative flex items-center justify-center w-10 h-10 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none group',
+        'relative flex items-center justify-center w-10 h-10 rounded-md hover:bg-secondary dark:hover:bg-secondary transition-colors focus:outline-none group',
         className,
       )}
       aria-label={isOpen ? 'Close menu' : 'Open menu'}
@@ -65,7 +65,7 @@ export const AnimatedHamburger: React.FC<AnimatedHamburgerProps> = ({ isOpen, on
       >
         {/* Top Bar */}
         <motion.span
-          className="absolute left-0 w-full bg-zinc-900 dark:bg-zinc-100 rounded-full"
+          className="absolute left-0 w-full bg-secondary dark:bg-secondary rounded-full"
           style={{ height: barHeight }}
           variants={topBarVariants}
           transition={{ duration: 0.2 }}
@@ -73,7 +73,7 @@ export const AnimatedHamburger: React.FC<AnimatedHamburgerProps> = ({ isOpen, on
 
         {/* Middle Bar */}
         <motion.span
-          className="absolute left-0 top-1/2 -translate-y-1/2 w-full bg-zinc-900 dark:bg-zinc-100 rounded-full"
+          className="absolute left-0 top-1/2 -translate-y-1/2 w-full bg-secondary dark:bg-secondary rounded-full"
           style={{ height: barHeight }}
           variants={middleBarVariants}
           transition={{ duration: 0.1 }}
@@ -81,7 +81,7 @@ export const AnimatedHamburger: React.FC<AnimatedHamburgerProps> = ({ isOpen, on
 
         {/* Bottom Bar */}
         <motion.span
-          className="absolute left-0 w-full bg-zinc-900 dark:bg-zinc-100 rounded-full"
+          className="absolute left-0 w-full bg-secondary dark:bg-secondary rounded-full"
           style={{ height: barHeight }}
           variants={bottomBarVariants}
           transition={{

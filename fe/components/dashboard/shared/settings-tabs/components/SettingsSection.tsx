@@ -17,8 +17,8 @@ export const SettingsSection: React.FC<SettingsSectionProps> = ({
   showDivider = false,
 }) => {
   return (
-    <div className={cn(showDivider && 'pt-4 border-t border-zinc-100 dark:border-zinc-800', className)}>
-      {title && <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-2">{title}</div>}
+    <div className={cn(showDivider && 'pt-4 border-t border-zinc-100 dark:border', className)}>
+      {title && <div className="text-sm font-semibold text-foreground dark:text-primary-foreground mb-2">{title}</div>}
       <div className="space-y-1">{children}</div>
     </div>
   )

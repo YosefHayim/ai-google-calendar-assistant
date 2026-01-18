@@ -26,7 +26,7 @@ export const FEATURES: FeatureItem[] = [
     title: 'Intelligent Scheduling',
     description: 'Ally orchestrates complex meetings across teams and timezones with zero friction.',
     icon: Calendar,
-    color: 'text-blue-500',
+    color: 'text-primary',
     content: <SchedulingContent />,
   },
   {
@@ -83,7 +83,7 @@ export const FEATURES: FeatureItem[] = [
     title: 'Leverage Analytics',
     description: 'Quantify your impact with deep insights into your productivity patterns.',
     icon: BarChart3,
-    color: 'text-zinc-900 dark:text-white',
+    color: 'text-foreground dark:text-white',
     content: <IntelligenceContent />,
   },
 ]

@@ -39,16 +39,16 @@ export function DialogHeaderSection({
           <CalendarDays size={12} style={{ color: calendarColor }} />
         </div>
         <div className="flex-1 text-left">
-          <DialogTitle className="text-xl font-bold text-zinc-900 dark:text-zinc-100">{calendarName}</DialogTitle>
+          <DialogTitle className="text-xl font-bold text-foreground dark:text-primary-foreground">{calendarName}</DialogTitle>
           <DialogDescription className="sr-only">Details for {calendarName} events</DialogDescription>
 
-          <div className="text-xs text-zinc-500 dark:text-zinc-400 flex gap-2">
+          <div className="text-xs text-muted-foreground dark:text-muted-foreground flex gap-2">
             <Calendar size={12} style={{ color: calendarColor }} />
             {dateRange?.from && dateRange?.to
               ? `Events from ${format(dateRange.from, 'MMM dd, yyyy')} to ${format(dateRange.to, 'MMM dd, yyyy')}`
               : 'Events'}
           </div>
-          <div className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-2">
+          <div className="text-xs text-muted-foreground dark:text-muted-foreground flex items-center gap-2">
             <Clock size={12} style={{ color: calendarColor }} />
             <span>
               {isFiltering
@@ -59,7 +59,7 @@ export function DialogHeaderSection({
                 : `${t('dialogs.eventSearch.totalHours', 'Total hours')}: ${totalHours?.toFixed(1) || 'N/A'}h`}
             </span>
           </div>
-          <div className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-2">
+          <div className="text-xs text-muted-foreground dark:text-muted-foreground flex items-center gap-2">
             <Hash size={12} style={{ color: calendarColor }} />
             <span>
               {isFiltering

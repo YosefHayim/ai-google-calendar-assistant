@@ -83,7 +83,7 @@ const CalendarFilterSelectWithState = ({
         onSelectionChange={setSelectedIds}
         isLoading={isLoading}
       />
-      <div className="text-sm text-zinc-500">
+      <div className="text-sm text-muted-foreground">
         Selected: {selectedIds.length === 0 ? 'All Calendars' : selectedIds.join(', ')}
       </div>
     </div>

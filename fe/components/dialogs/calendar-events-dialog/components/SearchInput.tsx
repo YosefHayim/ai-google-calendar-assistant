@@ -17,7 +17,7 @@ export function SearchInput({ value, onChange, onClear }: SearchInputProps) {
   return (
     <div className="px-6 pb-2">
       <div className="relative">
-        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
+        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
         <Input
           type="text"
           placeholder={t('dialogs.eventSearch.placeholder', 'Search by title or description...')}
@@ -28,7 +28,7 @@ export function SearchInput({ value, onChange, onClear }: SearchInputProps) {
         {value && (
           <button
             onClick={onClear}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-zinc-600 dark:hover:text-zinc-300"
           >
             <X size={14} />
           </button>

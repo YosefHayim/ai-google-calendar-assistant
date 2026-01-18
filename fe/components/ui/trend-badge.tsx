@@ -26,16 +26,16 @@ export function TrendBadge({
   const absValue = Math.abs(value)
 
   const colorClass = isNeutral
-    ? 'text-zinc-500 dark:text-zinc-400'
+    ? 'text-muted-foreground dark:text-muted-foreground'
     : isPositive
       ? 'text-emerald-600 dark:text-emerald-400'
-      : 'text-red-600 dark:text-red-400'
+      : 'text-destructive dark:text-red-400'
 
   const bgClass = isNeutral
-    ? 'bg-zinc-100 dark:bg-zinc-800'
+    ? 'bg-secondary dark:bg-secondary'
     : isPositive
       ? 'bg-emerald-50 dark:bg-emerald-900/20'
-      : 'bg-red-50 dark:bg-red-900/20'
+      : 'bg-destructive/5 dark:bg-red-900/20'
 
   const iconSize = size === 'sm' ? 'w-3 h-3' : 'w-4 h-4'
   const textSize = size === 'sm' ? 'text-xs' : 'text-sm'
@@ -74,7 +74,7 @@ export function TrendText({ value, suffix = '%', className }: TrendTextProps) {
   const isPositive = value > 0
   const isNeutral = value === 0
 
-  const colorClass = isNeutral ? 'text-zinc-500' : isPositive ? 'text-emerald-500' : 'text-red-500'
+  const colorClass = isNeutral ? 'text-muted-foreground' : isPositive ? 'text-emerald-500' : 'text-destructive'
 
   return (
     <span className={cn('text-xs font-medium', colorClass, className)}>

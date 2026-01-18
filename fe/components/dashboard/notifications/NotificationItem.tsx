@@ -21,15 +21,15 @@ const NOTIFICATION_ICONS = {
 } as const
 
 const NOTIFICATION_COLORS = {
-  event_created: 'text-green-500',
-  event_updated: 'text-blue-500',
+  event_created: 'text-green-600',
+  event_updated: 'text-primary',
   conflict_alert: 'text-amber-500',
-  system: 'text-zinc-500',
+  system: 'text-muted-foreground',
 } as const
 
 export function NotificationItem({ notification, onMarkAsRead, onClear }: NotificationItemProps) {
   const Icon = NOTIFICATION_ICONS[notification.type] || Bell
-  const iconColor = NOTIFICATION_COLORS[notification.type] || 'text-zinc-500'
+  const iconColor = NOTIFICATION_COLORS[notification.type] || 'text-muted-foreground'
 
   const formattedTime = formatDistanceToNow(new Date(notification.timestamp), { addSuffix: true })
 
@@ -38,8 +38,8 @@ export function NotificationItem({ notification, onMarkAsRead, onClear }: Notifi
       className={cn(
         'group relative flex items-start gap-3 p-3 rounded-lg transition-colors',
         notification.read
-          ? 'bg-transparent hover:bg-zinc-50 dark:hover:bg-zinc-900'
-          : 'bg-blue-50/50 dark:bg-blue-950/20',
+          ? 'bg-transparent hover:bg-muted dark:hover:bg-secondary'
+          : 'bg-primary/5/50 dark:bg-blue-950/20',
       )}
     >
       <div className={cn('mt-0.5 flex-shrink-0', iconColor)}>
@@ -50,16 +50,16 @@ export function NotificationItem({ notification, onMarkAsRead, onClear }: Notifi
         <div className="flex items-start justify-between gap-2">
           <p
             className={cn(
-              'text-sm font-medium text-zinc-900 dark:text-zinc-100',
+              'text-sm font-medium text-foreground dark:text-primary-foreground',
               !notification.read && 'font-semibold',
             )}
           >
             {notification.title}
           </p>
-          {!notification.read && <span className="w-2 h-2 rounded-full bg-blue-500 flex-shrink-0 mt-1.5" />}
+          {!notification.read && <span className="w-2 h-2 rounded-full bg-primary flex-shrink-0 mt-1.5" />}
         </div>
-        <p className="text-sm text-zinc-600 dark:text-zinc-400 line-clamp-2 mt-0.5">{notification.message}</p>
-        <p className="text-xs text-zinc-500 dark:text-zinc-500 mt-1">{formattedTime}</p>
+        <p className="text-sm text-zinc-600 dark:text-muted-foreground line-clamp-2 mt-0.5">{notification.message}</p>
+        <p className="text-xs text-muted-foreground dark:text-muted-foreground mt-1">{formattedTime}</p>
       </div>
 
       <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -80,7 +80,7 @@ export function NotificationItem({ notification, onMarkAsRead, onClear }: Notifi
         <Button
           variant="ghost"
           size="icon"
-          className="h-7 w-7 text-zinc-500 hover:text-red-500"
+          className="h-7 w-7 text-muted-foreground hover:text-destructive"
           onClick={(e) => {
             e.stopPropagation()
             onClear(notification.id)

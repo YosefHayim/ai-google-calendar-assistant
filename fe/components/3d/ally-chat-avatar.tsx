@@ -130,10 +130,10 @@ export function AllyChatAvatar({
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0, opacity: 0 }}
-            className="absolute -top-1 -right-1 w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center"
+            className="absolute -top-1 -right-1 w-4 h-4 bg-primary rounded-full flex items-center justify-center"
           >
             <motion.div
-              className="w-2 h-2 bg-white rounded-full"
+              className="w-2 h-2 bg-background rounded-full"
               animate={{ scale: [1, 1.5, 1] }}
               transition={{ duration: 1, repeat: Infinity }}
             />
@@ -171,7 +171,7 @@ export function AllyFullAvatar({ chatState, audioLevel = 0, className = '' }: Al
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="px-3 py-1 bg-black/50 backdrop-blur-sm rounded-full text-white text-sm"
+            className="px-3 py-1 bg-foreground/50 backdrop-blur-sm rounded-full text-white text-sm"
           >
             {chatState === 'idle' && 'Ready to help'}
             {chatState === 'listening' && 'Listening...'}

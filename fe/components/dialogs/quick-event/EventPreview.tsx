@@ -11,20 +11,20 @@ interface EventPreviewProps {
 
 export const EventPreview: React.FC<EventPreviewProps> = ({ event, calendarName }) => {
   return (
-    <div className="bg-white dark:bg-zinc-900 rounded-lg p-3 border border-zinc-200 dark:border-zinc-800 space-y-2 mb-3 text-left">
+    <div className="bg-background dark:bg-secondary rounded-lg p-3 border border dark:border space-y-2 mb-3 text-left">
       <div className="flex items-start gap-2">
-        <FileText className="w-4 h-4 text-zinc-400 mt-0.5 flex-shrink-0" />
+        <FileText className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
         <div className="min-w-0">
-          <p className="text-xs text-zinc-400">Event</p>
-          <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">{event.summary}</p>
+          <p className="text-xs text-muted-foreground">Event</p>
+          <p className="text-sm font-medium text-foreground dark:text-primary-foreground truncate">{event.summary}</p>
         </div>
       </div>
       {(event.date || event.time) && (
         <div className="flex items-start gap-2">
-          <Clock className="w-4 h-4 text-zinc-400 mt-0.5 flex-shrink-0" />
+          <Clock className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
           <div>
-            <p className="text-xs text-zinc-400">When</p>
-            <p className="text-sm text-zinc-900 dark:text-zinc-100">
+            <p className="text-xs text-muted-foreground">When</p>
+            <p className="text-sm text-foreground dark:text-primary-foreground">
               {event.date} {event.time && `at ${event.time}`}
               {event.duration && ` (${event.duration})`}
             </p>
@@ -33,19 +33,19 @@ export const EventPreview: React.FC<EventPreviewProps> = ({ event, calendarName 
       )}
       {event.location && (
         <div className="flex items-start gap-2">
-          <MapPin className="w-4 h-4 text-zinc-400 mt-0.5 flex-shrink-0" />
+          <MapPin className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
           <div>
-            <p className="text-xs text-zinc-400">Location</p>
-            <p className="text-sm text-zinc-900 dark:text-zinc-100">{event.location}</p>
+            <p className="text-xs text-muted-foreground">Location</p>
+            <p className="text-sm text-foreground dark:text-primary-foreground">{event.location}</p>
           </div>
         </div>
       )}
       {calendarName && (
         <div className="flex items-start gap-2">
-          <Calendar className="w-4 h-4 text-zinc-400 mt-0.5 flex-shrink-0" />
+          <Calendar className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
           <div>
-            <p className="text-xs text-zinc-400">Calendar</p>
-            <p className="text-sm text-zinc-900 dark:text-zinc-100">{calendarName}</p>
+            <p className="text-xs text-muted-foreground">Calendar</p>
+            <p className="text-sm text-foreground dark:text-primary-foreground">{calendarName}</p>
           </div>
         </div>
       )}

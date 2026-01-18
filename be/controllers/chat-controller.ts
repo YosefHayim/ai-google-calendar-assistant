@@ -356,6 +356,65 @@ const updateConversationTitle = reqResAsyncHandler(
   }
 );
 
+const toggleConversationPinned = reqResAsyncHandler(
+  async (req: Request, res: Response) => {
+    const conversationId = req.params.id;
+    const userId = req.user!.id;
+
+    try {
+      // First, check if the conversation exists and belongs to the user
+      const { data: conversation, error } = await webConversation.supabase
+        .from('conversations')
+        .select('id, pinned')
+        .eq('id', conversationId)
+        .eq('user_id', userId)
+        .single();
+
+      if (error || !conversation) {
+        return sendR(
+          res,
+          STATUS_RESPONSE.NOT_FOUND,
+          "Conversation not found"
+        );
+      }
+
+      // Toggle the pinned status
+      const newPinnedStatus = !conversation.pinned;
+
+      const { error: updateError } = await webConversation.supabase
+        .from('conversations')
+        .update({ pinned: newPinnedStatus })
+        .eq('id', conversationId)
+        .eq('user_id', userId);
+
+      if (updateError) {
+        console.error("Error toggling conversation pinned status:", updateError);
+        return sendR(
+          res,
+          STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
+          "Error updating conversation pinned status"
+        );
+      }
+
+      await invalidateConversationsCache(userId);
+
+      return sendR(
+        res,
+        STATUS_RESPONSE.SUCCESS,
+        `Conversation ${newPinnedStatus ? 'pinned' : 'unpinned'} successfully`,
+        { pinned: newPinnedStatus }
+      );
+    } catch (error) {
+      console.error("Error toggling conversation pinned status:", error);
+      sendR(
+        res,
+        STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
+        "Error toggling conversation pinned status"
+      );
+    }
+  }
+);
+
 type ContinueConversationRequest = {
   message: string;
 };
@@ -691,6 +750,7 @@ export const chatController = {
   getConversations,
   getConversation,
   updateConversationTitle,
+  toggleConversationPinned,
   removeConversation,
   continueConversation,
   startNewConversation,

@@ -31,12 +31,12 @@ export const Default: Story = {
   },
   decorators: [
     (Story) => (
-      <div className="py-20 px-4 bg-white dark:bg-[#030303]">
+      <div className="py-20 px-4 bg-background dark:bg-[#030303]">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <span className="text-xs font-bold text-primary uppercase tracking-[0.2em] mb-4 block">Features</span>
-            <h2 className="text-4xl font-bold text-zinc-900 dark:text-zinc-100 mb-4">Built for Busy Professionals</h2>
-            <p className="text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">
+            <h2 className="text-4xl font-bold text-foreground dark:text-primary-foreground mb-4">Built for Busy Professionals</h2>
+            <p className="text-zinc-600 dark:text-muted-foreground max-w-2xl mx-auto">
               Ask Ally anticipates your needs and handles the complexity of modern scheduling.
             </p>
           </div>
@@ -62,8 +62,8 @@ export const DarkMode: Story = {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <span className="text-xs font-bold text-primary uppercase tracking-[0.2em] mb-4 block">Features</span>
-            <h2 className="text-4xl font-bold text-zinc-100 mb-4">Built for Busy Professionals</h2>
-            <p className="text-zinc-400 max-w-2xl mx-auto">
+            <h2 className="text-4xl font-bold text-primary-foreground mb-4">Built for Busy Professionals</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
               Ask Ally anticipates your needs and handles the complexity of modern scheduling.
             </p>
           </div>
@@ -127,7 +127,7 @@ export const MobileView: Story = {
   },
   decorators: [
     (Story) => (
-      <div className="py-8 px-4 bg-white dark:bg-[#030303]">
+      <div className="py-8 px-4 bg-background dark:bg-[#030303]">
         <Story />
       </div>
     ),
@@ -147,7 +147,7 @@ export const TabletView: Story = {
   },
   decorators: [
     (Story) => (
-      <div className="py-12 px-4 bg-white dark:bg-[#030303]">
+      <div className="py-12 px-4 bg-background dark:bg-[#030303]">
         <Story />
       </div>
     ),
@@ -164,18 +164,18 @@ export const WithCTA: Story = {
   },
   decorators: [
     (Story) => (
-      <div className="py-16 px-4 bg-white dark:bg-[#030303]">
+      <div className="py-16 px-4 bg-background dark:bg-[#030303]">
         <div className="max-w-6xl mx-auto">
           <Story />
           <div className="mt-12 text-center">
-            <p className="text-zinc-600 dark:text-zinc-400 mb-6">
+            <p className="text-zinc-600 dark:text-muted-foreground mb-6">
               Ready to experience intelligent calendar management?
             </p>
             <div className="flex items-center justify-center gap-4">
               <button className="px-8 py-3 bg-primary text-white rounded-full font-medium hover:bg-primary/90 transition-colors">
                 Start Free Trial
               </button>
-              <button className="px-8 py-3 bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-full font-medium hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors">
+              <button className="px-8 py-3 bg-secondary dark:bg-secondary text-foreground dark:text-primary-foreground rounded-full font-medium hover:bg-accent dark:hover:bg-zinc-700 transition-colors">
                 Watch Demo
               </button>
             </div>

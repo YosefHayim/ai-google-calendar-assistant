@@ -37,7 +37,7 @@ export function CurrentPlanCard({
     if (isPopular || planSlug?.includes('pro') || planSlug?.includes('operational')) {
       return <Zap className="w-5 h-5 text-primary" />
     }
-    return <Shield className="w-5 h-5 text-zinc-500" />
+    return <Shield className="w-5 h-5 text-muted-foreground" />
   }
 
   if (!planName) return null
@@ -49,11 +49,11 @@ export function CurrentPlanCard({
           <div className="flex items-center gap-3 min-w-0">
             {getPlanIcon()}
             <div className="min-w-0 flex-1">
-              <p className="text-xs text-zinc-500 dark:text-zinc-400">Current Plan</p>
-              <p className="font-semibold text-zinc-900 dark:text-white truncate">{planName}</p>
+              <p className="text-xs text-muted-foreground dark:text-muted-foreground">Current Plan</p>
+              <p className="font-semibold text-foreground dark:text-white truncate">{planName}</p>
             </div>
             {isTrialing && trialDaysLeft !== null && trialDaysLeft !== undefined ? (
-              <Badge className="bg-amber-500/20 text-amber-600 dark:text-amber-400 text-xs sm:hidden">
+              <Badge className="bg-amber-500/20 text-amber-700 dark:text-amber-400 text-xs sm:hidden">
                 <Clock className="w-3 h-3 mr-1" />
                 {trialDaysLeft} {trialDaysLeft === 1 ? 'day' : 'days'} left
               </Badge>
@@ -63,7 +63,7 @@ export function CurrentPlanCard({
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
             {isTrialing && trialDaysLeft !== null && trialDaysLeft !== undefined ? (
-              <Badge className="bg-amber-500/20 text-amber-600 dark:text-amber-400 text-xs hidden sm:inline-flex">
+              <Badge className="bg-amber-500/20 text-amber-700 dark:text-amber-400 text-xs hidden sm:inline-flex">
                 <Clock className="w-3 h-3 mr-1" />
                 {trialDaysLeft} {trialDaysLeft === 1 ? 'day' : 'days'} left
               </Badge>
@@ -91,12 +91,12 @@ export function CurrentPlanCard({
           <div className="mt-3 pt-3 border-t border-primary/10 space-y-2">
             {interactionsRemaining !== null && interactionsRemaining !== undefined && (
               <div className="flex items-center justify-between text-sm">
-                <span className="text-zinc-500">AI Interactions</span>
-                <span className="font-medium text-zinc-900 dark:text-white">{interactionsRemaining} remaining</span>
+                <span className="text-muted-foreground">AI Interactions</span>
+                <span className="font-medium text-foreground dark:text-white">{interactionsRemaining} remaining</span>
               </div>
             )}
             {isTrialing && (
-              <p className="text-xs text-zinc-500 dark:text-zinc-400">
+              <p className="text-xs text-muted-foreground dark:text-muted-foreground">
                 Your trial gives you full access. Choose a plan below to continue after your trial ends.
               </p>
             )}

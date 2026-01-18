@@ -517,6 +517,7 @@ export type ConversationListItem = {
   messageCount: number;
   lastUpdated: string;
   createdAt: string;
+  pinned: boolean;
 };
 
 export type FullConversation = {
@@ -591,7 +592,7 @@ export const getWebConversationList = async (
 
   let query = SUPABASE.from("conversations")
     .select(
-      "id, message_count, title, summary, created_at, updated_at, last_message_at"
+      "id, message_count, title, summary, created_at, updated_at, last_message_at, pinned"
     )
     .eq("user_id", userId)
     .eq("source", "web");
@@ -602,6 +603,7 @@ export const getWebConversationList = async (
   }
 
   const { data, error } = await query
+    .order("pinned", { ascending: false, nullsFirst: false })
     .order("updated_at", { ascending: false, nullsFirst: false })
     .range(offset, offset + limit - 1);
 
@@ -627,6 +629,7 @@ export const getWebConversationList = async (
       messageCount: row.message_count || 0,
       lastUpdated: row.last_message_at || row.updated_at || row.created_at,
       createdAt: row.created_at,
+      pinned: row.pinned || false,
     };
   });
 };

@@ -59,25 +59,25 @@ export const InPageContext: Story = {
   },
   decorators: [
     (Story) => (
-      <div className="bg-white dark:bg-[#030303]">
+      <div className="bg-background dark:bg-[#030303]">
         <section className="py-20 px-4">
           <div className="max-w-4xl mx-auto text-center">
             <span className="text-xs font-bold text-primary uppercase tracking-[0.2em] mb-4 block">Why Ask Ally</span>
-            <h2 className="text-4xl font-bold text-zinc-900 dark:text-zinc-100 mb-4">
+            <h2 className="text-4xl font-bold text-foreground dark:text-primary-foreground mb-4">
               The Smartest Way to Manage Your Time
             </h2>
-            <p className="text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">
+            <p className="text-zinc-600 dark:text-muted-foreground max-w-2xl mx-auto">
               Stop wrestling with your calendar. Let AI handle the complexity while you focus on what matters.
             </p>
           </div>
         </section>
         <Story />
-        <section className="py-20 px-4 bg-zinc-50 dark:bg-zinc-900">
+        <section className="py-20 px-4 bg-muted dark:bg-secondary">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-8">Trusted by Teams Everywhere</h2>
+            <h2 className="text-3xl font-bold text-foreground dark:text-primary-foreground mb-8">Trusted by Teams Everywhere</h2>
             <div className="flex items-center justify-center gap-12 opacity-50">
               {['Startup Co', 'Tech Corp', 'Agency Inc', 'Enterprise Ltd'].map((name) => (
-                <span key={name} className="text-lg font-bold text-zinc-400">
+                <span key={name} className="text-lg font-bold text-muted-foreground">
                   {name}
                 </span>
               ))}

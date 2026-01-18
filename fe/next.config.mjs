@@ -9,11 +9,11 @@ const nextConfig = {
       config.module.rules.push({
         test: /\.(jsx|tsx)$/,
         exclude: /node_modules/,
-        enforce: "pre",
-        use: "@ternary-std/nextjs-webpack-component-tagger",
-      });
+        enforce: 'pre',
+        use: '@ternary-std/nextjs-webpack-component-tagger',
+      })
     }
-    return config;
+    return config
   },
   output: 'standalone',
   experimental: {

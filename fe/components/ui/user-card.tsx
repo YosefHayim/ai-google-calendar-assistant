@@ -34,13 +34,13 @@ export function UserCard({ name, subtitle, avatarUrl, size = 'md', className, on
     <>
       <Avatar className={cn(sizes.avatar, 'shrink-0')}>
         <AvatarImage src={avatarUrl} alt={name} />
-        <AvatarFallback className="bg-zinc-200 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300">
+        <AvatarFallback className="bg-accent dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300">
           {initials}
         </AvatarFallback>
       </Avatar>
       <div className="min-w-0 flex-1">
-        <p className={cn('font-medium text-zinc-900 dark:text-zinc-100 truncate', sizes.name)}>{name}</p>
-        {subtitle && <p className={cn('text-zinc-500 dark:text-zinc-400 truncate', sizes.subtitle)}>{subtitle}</p>}
+        <p className={cn('font-medium text-foreground dark:text-primary-foreground truncate', sizes.name)}>{name}</p>
+        {subtitle && <p className={cn('text-muted-foreground dark:text-muted-foreground truncate', sizes.subtitle)}>{subtitle}</p>}
       </div>
     </>
   )
@@ -65,10 +65,10 @@ export function UserCardSkeleton({ size = 'md', className }: { size?: UserCardSi
 
   return (
     <div className={cn('flex items-center gap-2.5', className)}>
-      <div className={cn(sizes.avatar, 'rounded-full bg-zinc-200 dark:bg-zinc-700 animate-pulse shrink-0')} />
+      <div className={cn(sizes.avatar, 'rounded-full bg-accent dark:bg-zinc-700 animate-pulse shrink-0')} />
       <div className="flex-1 space-y-1.5">
-        <div className="h-3 w-24 bg-zinc-200 dark:bg-zinc-700 rounded animate-pulse" />
-        <div className="h-2 w-32 bg-zinc-200 dark:bg-zinc-700 rounded animate-pulse" />
+        <div className="h-3 w-24 bg-accent dark:bg-zinc-700 rounded animate-pulse" />
+        <div className="h-2 w-32 bg-accent dark:bg-zinc-700 rounded animate-pulse" />
       </div>
     </div>
   )

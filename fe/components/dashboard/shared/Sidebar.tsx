@@ -43,12 +43,12 @@ const SidebarContent: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle, onO
       />
 
       {isOpen && (
-        <div className="fixed inset-0 bg-black/20 dark:bg-black/60 backdrop-blur-sm z-40 md:hidden" onClick={onClose} />
+        <div className="fixed inset-0 bg-foreground/20 dark:bg-foreground/60 backdrop-blur-sm z-40 md:hidden" onClick={onClose} />
       )}
 
       <aside
         id="tour-sidebar"
-        className={`fixed inset-y-0 left-0 z-50 flex flex-col bg-white dark:bg-zinc-950 border-r border-zinc-200 dark:border-zinc-800 transition-all duration-300 ${
+        className={`fixed inset-y-0 left-0 z-50 flex flex-col bg-background dark:bg-secondary border-r border dark:border transition-all duration-300 ${
           isOpen ? 'w-64' : 'w-0 md:w-20'
         }`}
       >

@@ -18,7 +18,7 @@ export function QuickActionsBar({ actions, onActionClick }: QuickActionsBarProps
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.3 }}
     >
-      <p className="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-2">Quick Actions</p>
+      <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">Quick Actions</p>
       <div className="flex flex-wrap gap-2">
         {actions.map((action) => (
           <Button

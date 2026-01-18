@@ -13,12 +13,12 @@ interface DesktopSidebarProps {
 
 export function DesktopSidebar({ onSignOut }: DesktopSidebarProps) {
   return (
-    <div className="hidden sm:flex w-52 bg-zinc-50 dark:bg-zinc-900/50 border-r border-zinc-200 dark:border-zinc-800 flex-col p-3 flex-shrink-0">
+    <div className="hidden sm:flex w-52 bg-muted dark:bg-secondary/50 border-r border dark:border flex-col p-3 flex-shrink-0">
       <div className="flex items-center gap-2 mb-4 px-2">
-        <div className="w-8 h-8 bg-zinc-900 dark:bg-white rounded-md flex items-center justify-center text-white dark:text-zinc-900">
+        <div className="w-8 h-8 bg-secondary dark:bg-background rounded-md flex items-center justify-center text-white dark:text-foreground">
           <AllyLogo className="w-5 h-5" />
         </div>
-        <h2 className="font-semibold text-zinc-900 dark:text-zinc-100 text-sm">Ally Settings</h2>
+        <h2 className="font-semibold text-foreground dark:text-primary-foreground text-sm">Ally Settings</h2>
       </div>
 
       <TabsList className="flex-1 flex flex-col h-full justify-start bg-transparent p-0 gap-1">
@@ -26,7 +26,7 @@ export function DesktopSidebar({ onSignOut }: DesktopSidebarProps) {
           <TabsTrigger
             key={tab.id}
             value={tab.id}
-            className="w-full justify-start gap-2 px-2 py-1.5 rounded-md text-xs font-medium transition-all data-[state=active]:bg-white data-[state=active]:dark:bg-zinc-800 data-[state=active]:text-zinc-900 data-[state=active]:dark:text-zinc-100 data-[state=active]:shadow-sm text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800/70"
+            className="w-full justify-start gap-2 px-2 py-1.5 rounded-md text-xs font-medium transition-all data-[state=active]:bg-background data-[state=active]:dark:bg-secondary data-[state=active]:text-foreground data-[state=active]:dark:text-primary-foreground data-[state=active]:shadow-sm text-muted-foreground hover:bg-secondary dark:hover:bg-secondary/70"
           >
             <tab.icon size={14} />
             {tab.label}
@@ -37,7 +37,7 @@ export function DesktopSidebar({ onSignOut }: DesktopSidebarProps) {
       <Button
         variant="ghost"
         onClick={onSignOut}
-        className="w-full justify-start gap-2 px-2 py-1.5 text-zinc-500 text-xs font-medium mt-auto hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-500 dark:hover:text-red-400"
+        className="w-full justify-start gap-2 px-2 py-1.5 text-muted-foreground text-xs font-medium mt-auto hover:bg-destructive/5 dark:hover:bg-red-900/20 hover:text-destructive dark:hover:text-red-400"
       >
         <LogOut size={14} /> Sign Out
       </Button>

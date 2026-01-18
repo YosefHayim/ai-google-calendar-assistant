@@ -18,7 +18,7 @@ export function BooleanStatus({ title, tooltipTitle, tooltipDescription, value, 
         {value ? (
           <span className="text-sm text-emerald-600 dark:text-emerald-400 font-medium">Yes</span>
         ) : (
-          <span className="text-sm text-zinc-500 dark:text-zinc-400">No</span>
+          <span className="text-sm text-muted-foreground dark:text-muted-foreground">No</span>
         )}
       </div>
     </InfoSection>

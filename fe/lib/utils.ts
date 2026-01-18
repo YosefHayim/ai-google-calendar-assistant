@@ -13,8 +13,8 @@ import { twMerge } from 'tailwind-merge'
  *
  * @example
  * // Basic usage
- * cn('px-2 py-1', 'bg-red-500')
- * // => 'px-2 py-1 bg-red-500'
+ * cn('px-2 py-1', 'bg-destructive')
+ * // => 'px-2 py-1 bg-destructive'
  *
  * @example
  * // Conflicting classes are resolved (last wins)

@@ -115,7 +115,7 @@ export const IntegrationsTab: React.FC<IntegrationsTabProps> = ({
               id="google-calendar"
               title="Google Calendar"
               tooltip="Connect your Google Calendar to let Ally manage your events and schedule"
-              icon={<SiGooglecalendar size={18} className="text-blue-600 dark:text-blue-400" />}
+              icon={<SiGooglecalendar size={18} className="text-primary dark:text-blue-400" />}
               control={getGoogleCalendarStatusBadge(isGoogleCalendarLoading, googleCalendarStatus)}
             />
 
@@ -136,7 +136,7 @@ export const IntegrationsTab: React.FC<IntegrationsTabProps> = ({
                     size="sm"
                     onClick={onDisconnect}
                     disabled={isGoogleCalendarBusy}
-                    className="flex-1 text-red-600 hover:text-red-700 border-red-200 hover:bg-red-50 dark:border-red-900/30 dark:hover:bg-red-900/20"
+                    className="flex-1 text-destructive hover:text-red-700 border-destructive/20 hover:bg-destructive/5 dark:border-red-900/30 dark:hover:bg-red-900/20"
                   >
                     {isDisconnecting ? (
                       <Loader2 size={14} className="mr-2 animate-spin" />

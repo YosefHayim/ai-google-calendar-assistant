@@ -20,11 +20,11 @@ export function InfoSection({ title, tooltipTitle, tooltipDescription, icon, chi
         {title}
         <HoverCard>
           <HoverCardTrigger asChild>
-            <Info className="w-3.5 h-3.5 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 cursor-help" />
+            <Info className="w-3.5 h-3.5 text-muted-foreground hover:text-zinc-600 dark:hover:text-zinc-300 cursor-help" />
           </HoverCardTrigger>
           <HoverCardContent className="w-64 text-xs">
             <p className="font-medium mb-1">{tooltipTitle}</p>
-            <p className="text-zinc-500 dark:text-zinc-400">{tooltipDescription}</p>
+            <p className="text-muted-foreground dark:text-muted-foreground">{tooltipDescription}</p>
           </HoverCardContent>
         </HoverCard>
       </h4>

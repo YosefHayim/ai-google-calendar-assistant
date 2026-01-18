@@ -19,10 +19,10 @@ export function PricingSection({ title, subtitle, tiers, frequencies, currentPla
     <section className="flex flex-col items-center gap-10 py-10 w-full">
       <div className="space-y-2 text-center">
         <div className="space-y-2">
-          <h1 className="text-4xl font-medium md:text-5xl text-zinc-900 dark:text-zinc-100">{title}</h1>
-          <p className="text-zinc-500 dark:text-zinc-400">{subtitle}</p>
+          <h1 className="text-4xl font-medium md:text-5xl text-foreground dark:text-primary-foreground">{title}</h1>
+          <p className="text-muted-foreground dark:text-muted-foreground">{subtitle}</p>
         </div>
-        <div className="mx-auto flex w-fit rounded-full bg-zinc-100 dark:bg-zinc-800 p-1">
+        <div className="mx-auto flex w-fit rounded-full bg-secondary dark:bg-secondary p-1">
           {frequencies.map((freq) => (
             <Tab
               key={freq}

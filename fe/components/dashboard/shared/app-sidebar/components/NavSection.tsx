@@ -84,7 +84,7 @@ export function NavSection() {
                       <TooltipTrigger asChild>
                         <button
                           type="button"
-                          className="p-1 rounded-md text-zinc-400 hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors flex items-center justify-center"
+                          className="p-1 rounded-md text-muted-foreground hover:text-zinc-600 dark:text-muted-foreground dark:hover:text-zinc-300 hover:bg-secondary dark:hover:bg-secondary transition-colors flex items-center justify-center"
                           aria-label="More information"
                         >
                           <Info className="w-3.5 h-3.5" />
@@ -92,7 +92,7 @@ export function NavSection() {
                       </TooltipTrigger>
                       <TooltipContent
                         side="right"
-                        className="max-w-[220px] bg-zinc-900 dark:bg-zinc-800 text-zinc-100 border-zinc-700"
+                        className="max-w-[220px] bg-secondary dark:bg-secondary text-primary-foreground border-zinc-700"
                       >
                         <p className="text-xs leading-relaxed">{item.description}</p>
                       </TooltipContent>

@@ -30,7 +30,7 @@ export const TabHeader: React.FC<TabHeaderProps> = ({ title, tooltip, icon }) =>
                   type="button"
                   variant="ghost"
                   size="icon"
-                  className="h-5 w-5 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
+                  className="h-5 w-5 text-muted-foreground hover:text-zinc-600 dark:hover:text-zinc-300"
                   aria-label={`More info about ${title}`}
                 >
                   <Info className="w-3.5 h-3.5" />

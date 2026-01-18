@@ -155,7 +155,7 @@ export function OnboardingWizard({ isOpen, onClose, onComplete }: OnboardingWiza
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="relative w-full max-w-lg bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl overflow-hidden"
+            className="relative w-full max-w-lg bg-background dark:bg-secondary rounded-2xl shadow-2xl overflow-hidden"
           >
             <div className="absolute top-4 right-4 flex items-center gap-2 z-10">
               <Button
@@ -168,7 +168,7 @@ export function OnboardingWizard({ isOpen, onClose, onComplete }: OnboardingWiza
                 {audioEnabled ? (
                   <Volume2 className={cn('w-4 h-4', isPlaying && 'text-primary animate-pulse')} />
                 ) : (
-                  <VolumeX className="w-4 h-4 text-zinc-400" />
+                  <VolumeX className="w-4 h-4 text-muted-foreground" />
                 )}
               </Button>
               <Button variant="ghost" size="icon" onClick={handleSkip} className="h-8 w-8 rounded-full">

@@ -27,9 +27,9 @@ export function AllyOrbButton({ onClick, isOpen }: AllyOrbButtonProps) {
         <VoicePoweredOrb enableVoiceControl={false} className="w-full h-full" maxRotationSpeed={0.3} />
       </div>
 
-      <div className="absolute -left-28 top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-lg bg-zinc-900 dark:bg-zinc-800 text-white text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-xl">
+      <div className="absolute -left-28 top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-lg bg-secondary dark:bg-secondary text-white text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-xl">
         Chat with Ally
-        <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1 w-2 h-2 bg-zinc-900 dark:bg-zinc-800 rotate-45" />
+        <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1 w-2 h-2 bg-secondary dark:bg-secondary rotate-45" />
       </div>
     </motion.button>
   )

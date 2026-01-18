@@ -26,7 +26,7 @@ const RecentEvents: React.FC<RecentEventsProps> = ({
 
   if (isLoading) {
     return (
-      <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-4 sm:p-6 flex-1">
+      <div className="bg-background dark:bg-secondary border border dark:border rounded-md shadow-sm p-4 sm:p-6 flex-1">
         <div className="mb-4 sm:mb-6 flex items-center gap-2">
           <Skeleton className="w-4 h-4" />
           <Skeleton className="h-4 sm:h-5 w-28 sm:w-32" />
@@ -41,7 +41,7 @@ const RecentEvents: React.FC<RecentEventsProps> = ({
               key={i}
               className={
                 isHorizontal
-                  ? 'flex flex-col gap-2 p-3 border border-zinc-200 dark:border-zinc-800 rounded-lg'
+                  ? 'flex flex-col gap-2 p-3 border border dark:border rounded-lg'
                   : 'flex items-start gap-3 p-2 -m-2'
               }
             >
@@ -58,17 +58,17 @@ const RecentEvents: React.FC<RecentEventsProps> = ({
   }
 
   return (
-    <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-md shadow-sm p-4 sm:p-6 flex-1">
+    <div className="bg-background dark:bg-secondary border border dark:border rounded-md shadow-sm p-4 sm:p-6 flex-1">
       <div className="mb-4 sm:mb-6 flex items-center justify-between">
-        <h3 className="font-bold text-sm sm:text-base text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
-          <ListChecks className="w-4 h-4 text-zinc-400 flex-shrink-0" />
+        <h3 className="font-bold text-sm sm:text-base text-foreground dark:text-primary-foreground flex items-center gap-2">
+          <ListChecks className="w-4 h-4 text-muted-foreground flex-shrink-0" />
           <span className="truncate">{isHorizontal ? '5' : activities?.length} Recent Events</span>
           <HoverCard>
             <HoverCardTrigger asChild>
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-6 w-6 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 flex-shrink-0"
+                className="h-6 w-6 text-muted-foreground hover:text-zinc-600 dark:hover:text-zinc-300 flex-shrink-0"
               >
                 <Info size={16} />
               </Button>
@@ -76,7 +76,7 @@ const RecentEvents: React.FC<RecentEventsProps> = ({
             <HoverCardContent>
               <div className="space-y-2">
                 <h4 className="font-semibold text-sm">Recent Events</h4>
-                <p className="text-xs text-zinc-600 dark:text-zinc-400">
+                <p className="text-xs text-zinc-600 dark:text-muted-foreground">
                   A real-time feed of your most recent calendar events and activities. Click on any item to view
                   detailed information about the event.
                 </p>
@@ -96,7 +96,7 @@ const RecentEvents: React.FC<RecentEventsProps> = ({
             return isHorizontal ? (
               <div
                 key={i}
-                className="border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 flex flex-col gap-2 sm:gap-3 group cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-900/50 rounded-lg p-3 sm:p-4 transition-colors"
+                className="border border dark:border hover:border-zinc-400 dark:hover:border-zinc-600 flex flex-col gap-2 sm:gap-3 group cursor-pointer hover:bg-muted dark:hover:bg-secondary/50 rounded-lg p-3 sm:p-4 transition-colors"
                 data-calendar-id={activity.calendarId || ''}
                 onClick={() => onActivityClick(activity)}
               >
@@ -112,7 +112,7 @@ const RecentEvents: React.FC<RecentEventsProps> = ({
                       <Icon size={18} style={{ color: activity.calendarColor || '#6366f1' }} />
                     </span>
                   </div>
-                  <p className="text-[10px] sm:text-xs text-zinc-400 font-bold uppercase">{activity.time}</p>
+                  <p className="text-[10px] sm:text-xs text-muted-foreground font-bold uppercase">{activity.time}</p>
                 </div>
                 <p className="text-xs sm:text-sm font-semibold text-zinc-800 dark:text-zinc-200 line-clamp-2">
                   {activity.action}
@@ -133,7 +133,7 @@ const RecentEvents: React.FC<RecentEventsProps> = ({
             ) : (
               <div
                 key={i}
-                className="border border-transparent hover:border-black hover:border flex items-start gap-3 group cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-900/50 rounded-md p-2 -m-2 transition-colors"
+                className="border border-transparent hover:border-black hover:border flex items-start gap-3 group cursor-pointer hover:bg-muted dark:hover:bg-secondary/50 rounded-md p-2 -m-2 transition-colors"
                 data-calendar-id={activity.calendarId || ''}
                 onClick={() => onActivityClick(activity)}
               >
@@ -148,7 +148,7 @@ const RecentEvents: React.FC<RecentEventsProps> = ({
                     {activity.action}
                   </p>
                   <div className="flex items-center gap-2 mt-0.5">
-                    <p className="text-xs text-zinc-400 font-bold uppercase">{activity.time}</p>
+                    <p className="text-xs text-muted-foreground font-bold uppercase">{activity.time}</p>
                     {activity.calendarName && (
                       <span
                         className="text-xs font-bold px-1.5 py-0.5 rounded border"
@@ -168,7 +168,7 @@ const RecentEvents: React.FC<RecentEventsProps> = ({
           })}
         </div>
       ) : (
-        <p className="text-sm text-zinc-500">No recent activities found for this period.</p>
+        <p className="text-sm text-muted-foreground">No recent activities found for this period.</p>
       )}
     </div>
   )

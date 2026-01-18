@@ -51,9 +51,9 @@ export const EventDurationPieChart: React.FC<EventDurationPieChartProps> = ({ da
                 if (active && payload && payload.length > 0) {
                   const category = payload[0].payload as EventDurationCategory
                   return (
-                    <div className="bg-zinc-900 dark:bg-zinc-800 text-white px-3 py-2 rounded-lg shadow-lg">
+                    <div className="bg-secondary dark:bg-secondary text-white px-3 py-2 rounded-lg shadow-lg">
                       <p className="font-medium">{category.label}</p>
-                      <p className="text-xs text-zinc-400">{category.range}</p>
+                      <p className="text-xs text-muted-foreground">{category.range}</p>
                       <p className="text-sm">
                         {category.count} events ({category.percentage.toFixed(0)}%)
                       </p>

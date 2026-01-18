@@ -39,7 +39,7 @@ export const Default: Story = {
 export const DarkMode: Story = {
   decorators: [
     (Story) => (
-      <div className="dark p-8 bg-zinc-950">
+      <div className="dark p-8 bg-secondary">
         <Story />
       </div>
     ),
@@ -57,8 +57,8 @@ export const DarkMode: Story = {
 export const InHeroContext: Story = {
   render: () => (
     <div className="text-center space-y-6 max-w-2xl mx-auto">
-      <h1 className="text-4xl font-bold text-zinc-900 dark:text-zinc-100">Your AI Calendar Assistant</h1>
-      <p className="text-lg text-zinc-500 dark:text-zinc-400">
+      <h1 className="text-4xl font-bold text-foreground dark:text-primary-foreground">Your AI Calendar Assistant</h1>
+      <p className="text-lg text-muted-foreground dark:text-muted-foreground">
         Schedule meetings, manage events, and stay productive with natural language.
       </p>
       <div className="flex justify-center">
@@ -68,7 +68,7 @@ export const InHeroContext: Story = {
         <button className="px-6 py-3 bg-primary text-primary-foreground rounded-lg font-medium">
           Get Started Free
         </button>
-        <button className="px-6 py-3 bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-lg font-medium">
+        <button className="px-6 py-3 bg-secondary dark:bg-secondary text-foreground dark:text-primary-foreground rounded-lg font-medium">
           Watch Demo
         </button>
       </div>
@@ -94,14 +94,14 @@ export const Features: Story = {
   render: () => (
     <div className="space-y-8 max-w-xl mx-auto">
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">Avatar Tooltip Group Features</h2>
-        <p className="text-zinc-500">Interactive social proof component</p>
+        <h2 className="text-2xl font-bold text-foreground dark:text-primary-foreground mb-2">Avatar Tooltip Group Features</h2>
+        <p className="text-muted-foreground">Interactive social proof component</p>
       </div>
 
       <div className="space-y-4">
-        <div className="p-4 bg-zinc-50 dark:bg-zinc-900 rounded-lg">
+        <div className="p-4 bg-muted dark:bg-secondary rounded-lg">
           <h3 className="font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Stacked Avatars</h3>
-          <ul className="text-sm text-zinc-600 dark:text-zinc-400 space-y-1">
+          <ul className="text-sm text-zinc-600 dark:text-muted-foreground space-y-1">
             <li>- Overlapping circular avatars with negative margin</li>
             <li>- Fallback initials for missing images</li>
             <li>- Scale-up animation on hover</li>
@@ -109,9 +109,9 @@ export const Features: Story = {
           </ul>
         </div>
 
-        <div className="p-4 bg-zinc-50 dark:bg-zinc-900 rounded-lg">
+        <div className="p-4 bg-muted dark:bg-secondary rounded-lg">
           <h3 className="font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Hover Tooltips</h3>
-          <ul className="text-sm text-zinc-600 dark:text-zinc-400 space-y-1">
+          <ul className="text-sm text-zinc-600 dark:text-muted-foreground space-y-1">
             <li>- Animated tooltip with user name</li>
             <li>- Framer Motion entrance/exit</li>
             <li>- Pointer triangle indicator</li>
@@ -119,18 +119,18 @@ export const Features: Story = {
           </ul>
         </div>
 
-        <div className="p-4 bg-zinc-50 dark:bg-zinc-900 rounded-lg">
+        <div className="p-4 bg-muted dark:bg-secondary rounded-lg">
           <h3 className="font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Star Rating</h3>
-          <ul className="text-sm text-zinc-600 dark:text-zinc-400 space-y-1">
+          <ul className="text-sm text-zinc-600 dark:text-muted-foreground space-y-1">
             <li>- 5 filled amber stars</li>
             <li>- Small size (3.5) for subtlety</li>
             <li>- Aligns with trust messaging</li>
           </ul>
         </div>
 
-        <div className="p-4 bg-zinc-50 dark:bg-zinc-900 rounded-lg">
+        <div className="p-4 bg-muted dark:bg-secondary rounded-lg">
           <h3 className="font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Trust Message</h3>
-          <ul className="text-sm text-zinc-600 dark:text-zinc-400 space-y-1">
+          <ul className="text-sm text-zinc-600 dark:text-muted-foreground space-y-1">
             <li>- &quot;Trusted by X+ Business Owners&quot;</li>
             <li>- Bold number highlight</li>
             <li>- Subtle secondary text color</li>

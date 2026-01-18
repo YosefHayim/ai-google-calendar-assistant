@@ -148,7 +148,7 @@ const TimeSavedChart: React.FC<TimeSavedChartProps> = ({ data }) => {
       {/* Tooltip Overlay */}
       {hoveredData && (
         <div
-          className="absolute p-2.5 text-xs bg-zinc-900 dark:bg-zinc-800 text-white rounded-lg shadow-xl pointer-events-none border border-white/10 dark:border-zinc-700"
+          className="absolute p-2.5 text-xs bg-secondary dark:bg-secondary text-white rounded-lg shadow-xl pointer-events-none border border-white/10 dark:border-zinc-700"
           style={{
             left: `${(hoveredData.x / width) * 100}%`,
             top: `${(hoveredData.y / height) * 100}%`,
@@ -158,7 +158,7 @@ const TimeSavedChart: React.FC<TimeSavedChartProps> = ({ data }) => {
           }}
         >
           <div className="flex flex-col gap-0.5">
-            <span className="text-xs text-zinc-400 font-bold uppercase tracking-wider">{hoveredData.day}</span>
+            <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider">{hoveredData.day}</span>
             <span className="text-sm font-bold text-white flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-primary" />
               {formatHours(hoveredData.hours)} saved

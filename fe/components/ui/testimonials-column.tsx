@@ -34,7 +34,7 @@ export const TestimonialsColumn = (props: { className?: string; testimonials: Te
               {props.testimonials.map(({ text, name, role, isPlaceholder }, i) => {
                 const cardContent = (
                   <>
-                    <div className="text-sm leading-relaxed text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-700 dark:group-hover:text-zinc-300">
+                    <div className="text-sm leading-relaxed text-muted-foreground dark:text-muted-foreground group-hover:text-zinc-700 dark:group-hover:text-zinc-300">
                       {text}
                     </div>
                     <div className="flex items-center gap-3 mt-5">

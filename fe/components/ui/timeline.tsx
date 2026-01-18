@@ -14,7 +14,7 @@ interface TimelineEntry {
 export const Timeline = ({ data }: { data: TimelineEntry[] }) => {
   if (!data || data.length === 0) {
     return (
-      <div className="w-full bg-white dark:bg-[#030303] font-sans md:px-10 py-20">
+      <div className="w-full bg-background dark:bg-[#030303] font-sans md:px-10 py-20">
         <div className="max-w-7xl mx-auto flex items-center justify-center min-h-[300px]">
           <EmptyState
             icon={<Clock />}
@@ -47,12 +47,12 @@ export const Timeline = ({ data }: { data: TimelineEntry[] }) => {
   const opacityTransform = useTransform(scrollYProgress, [0, 0.1], [0, 1])
 
   return (
-    <div className="w-full bg-white dark:bg-[#030303] font-sans md:px-10" ref={containerRef}>
+    <div className="w-full bg-background dark:bg-[#030303] font-sans md:px-10" ref={containerRef}>
       <div className="max-w-7xl mx-auto py-20 px-4 md:px-8 lg:px-10">
-        <h2 className="text-3xl md:text-6xl mb-4 text-zinc-900 dark:text-zinc-100 max-w-4xl font-medium tracking-tight">
+        <h2 className="text-3xl md:text-6xl mb-4 text-foreground dark:text-primary-foreground max-w-4xl font-medium tracking-tight">
           The Manifesto of Command
         </h2>
-        <p className="text-zinc-500 dark:text-zinc-400 text-sm md:text-xl max-w-xl font-medium">
+        <p className="text-muted-foreground dark:text-muted-foreground text-sm md:text-xl max-w-xl font-medium">
           Tracking the evolution of Ally from a scheduling tool to a quantitative neural protocol for business owners.
         </p>
       </div>
@@ -61,8 +61,8 @@ export const Timeline = ({ data }: { data: TimelineEntry[] }) => {
         {data.map((item, index) => (
           <div key={index} className="flex justify-start pt-10 md:pt-40 md:gap-10">
             <div className="sticky flex flex-col md:flex-row z-40 items-center top-40 self-start max-w-xs lg:max-w-sm md:w-full">
-              <div className="h-10 absolute left-3 md:left-3 w-10 rounded-full bg-white dark:bg-zinc-950 flex items-center justify-center border border-zinc-200 dark:border-zinc-800">
-                <div className="h-4 w-4 rounded-full bg-zinc-200 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700" />
+              <div className="h-10 absolute left-3 md:left-3 w-10 rounded-full bg-background dark:bg-secondary flex items-center justify-center border border dark:border">
+                <div className="h-4 w-4 rounded-full bg-accent dark:bg-secondary border border-zinc-300 dark:border-zinc-700" />
               </div>
               <h3 className="hidden md:block text-xl md:pl-20 md:text-5xl font-bold text-zinc-300 dark:text-zinc-800 ">
                 {item.title}
@@ -70,7 +70,7 @@ export const Timeline = ({ data }: { data: TimelineEntry[] }) => {
             </div>
 
             <div className="relative pl-20 pr-4 md:pl-4 w-full">
-              <h3 className="md:hidden block text-2xl mb-4 text-left font-bold text-zinc-500 dark:text-zinc-500">
+              <h3 className="md:hidden block text-2xl mb-4 text-left font-bold text-muted-foreground dark:text-muted-foreground">
                 {item.title}
               </h3>
               {item.content}{' '}

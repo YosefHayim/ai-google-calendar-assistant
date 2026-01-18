@@ -58,7 +58,7 @@ function AllyCharacterLazy({
     return (
       <div className="w-full h-full flex items-center justify-center">
         <div className="text-center">
-          <p className="text-red-500 mb-2">{error}</p>
+          <p className="text-destructive mb-2">{error}</p>
           <Button variant="outline" onClick={() => window.location.reload()}>
             Reload Page
           </Button>
@@ -72,7 +72,7 @@ function AllyCharacterLazy({
       <div className="w-full h-full flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <Loader2 className="w-8 h-8 animate-spin text-purple-500" />
-          <p className="text-sm text-zinc-500">Loading 3D viewer...</p>
+          <p className="text-sm text-muted-foreground">Loading 3D viewer...</p>
         </div>
       </div>
     )
@@ -147,7 +147,7 @@ export const ThreeDView: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           className="absolute top-4 left-1/2 -translate-x-1/2"
         >
-          <div className="px-4 py-2 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-sm rounded-full shadow-lg border border-purple-200 dark:border-purple-800">
+          <div className="px-4 py-2 bg-background/80 dark:bg-secondary/80 backdrop-blur-sm rounded-full shadow-lg border border-purple-200 dark:border-purple-800">
             <p className="text-sm font-medium text-purple-700 dark:text-purple-300">
               Meet Ally - Your AI Calendar Assistant
             </p>
@@ -159,9 +159,9 @@ export const ThreeDView: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="p-4 bg-white/50 dark:bg-zinc-900/50 backdrop-blur-sm border-t border-purple-100 dark:border-purple-900"
+        className="p-4 bg-background/50 dark:bg-secondary/50 backdrop-blur-sm border-t border-purple-100 dark:border-purple-900"
       >
-        <p className="text-xs text-center text-zinc-500 dark:text-zinc-400 mb-3">Try different animations</p>
+        <p className="text-xs text-center text-muted-foreground dark:text-muted-foreground mb-3">Try different animations</p>
         <div className="flex flex-wrap justify-center gap-2">
           {ANIMATION_BUTTONS.map(({ state, icon, label }) => (
             <Button

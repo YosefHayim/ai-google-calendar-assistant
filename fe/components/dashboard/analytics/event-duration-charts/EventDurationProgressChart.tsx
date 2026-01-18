@@ -34,7 +34,7 @@ export const EventDurationProgressChart: React.FC<EventDurationProgressChartProp
   return (
     <>
       <div className="space-y-6">
-        <div className="relative h-8 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden flex">
+        <div className="relative h-8 bg-secondary dark:bg-secondary rounded-full overflow-hidden flex">
           {segments.map((segment, index) => (
             <Button
               key={segment.key}
@@ -66,16 +66,16 @@ export const EventDurationProgressChart: React.FC<EventDurationProgressChartProp
             <Button
               key={cat.key}
               variant="ghost"
-              className="flex items-center gap-2 text-left hover:bg-zinc-50 dark:hover:bg-zinc-800/50 rounded-lg p-1 -m-1 h-auto justify-start"
+              className="flex items-center gap-2 text-left hover:bg-muted dark:hover:bg-secondary/50 rounded-lg p-1 -m-1 h-auto justify-start"
               onClick={() => handleCategoryClick(cat)}
             >
               <div className="w-3 h-3 rounded-sm flex-shrink-0" style={{ backgroundColor: cat.color }} />
               <div className="flex-1 min-w-0">
                 <div className="flex items-baseline gap-1">
                   <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">{cat.label}</span>
-                  <span className="text-xs text-zinc-400 dark:text-zinc-500">({cat.range})</span>
+                  <span className="text-xs text-muted-foreground dark:text-muted-foreground">({cat.range})</span>
                 </div>
-                <div className="text-xs text-zinc-500 dark:text-zinc-400">
+                <div className="text-xs text-muted-foreground dark:text-muted-foreground">
                   {cat.count} events ({totalEvents > 0 ? ((cat.count / totalEvents) * 100).toFixed(0) : 0}%)
                 </div>
               </div>

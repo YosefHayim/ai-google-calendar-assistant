@@ -54,38 +54,38 @@ function SlackCallbackContent() {
 
   if (status === 'loading') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-zinc-50 dark:bg-zinc-950">
+      <div className="min-h-screen flex items-center justify-center bg-muted dark:bg-secondary">
         <LoadingSpinner size="lg" text="Processing Slack connection..." />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-zinc-50 dark:bg-zinc-950 p-4">
-      <div className="bg-white dark:bg-zinc-900 rounded-lg shadow-lg p-8 max-w-md w-full text-center">
+    <div className="min-h-screen flex items-center justify-center bg-muted dark:bg-secondary p-4">
+      <div className="bg-background dark:bg-secondary rounded-lg shadow-lg p-8 max-w-md w-full text-center">
         <div
           className={`w-16 h-16 rounded-full mx-auto mb-6 flex items-center justify-center ${
-            status === 'success' ? 'bg-green-100 dark:bg-green-900/30' : 'bg-red-100 dark:bg-red-900/30'
+            status === 'success' ? 'bg-green-100 dark:bg-green-900/30' : 'bg-destructive/10 dark:bg-red-900/30'
           }`}
         >
           {status === 'success' ? (
             <CheckCircle2 className="w-8 h-8 text-green-600" />
           ) : (
-            <XCircle className="w-8 h-8 text-red-600" />
+            <XCircle className="w-8 h-8 text-destructive" />
           )}
         </div>
 
         <div className="flex items-center justify-center gap-2 mb-4">
           <FaSlack className="w-6 h-6 text-[#4A154B]" />
-          <h1 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100">
+          <h1 className="text-xl font-semibold text-foreground dark:text-primary-foreground">
             {status === 'success' ? 'Connected to Slack!' : 'Connection Failed'}
           </h1>
         </div>
 
-        <p className="text-zinc-500 dark:text-zinc-400 mb-2">{message}</p>
+        <p className="text-muted-foreground dark:text-muted-foreground mb-2">{message}</p>
 
         {status === 'success' && teamName && (
-          <p className="text-sm text-zinc-400 mb-6">
+          <p className="text-sm text-muted-foreground mb-6">
             Workspace: <span className="font-medium text-zinc-600 dark:text-zinc-300">{teamName}</span>
           </p>
         )}
@@ -113,7 +113,7 @@ function SlackCallbackContent() {
 
 function SlackCallbackLoading() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-zinc-50 dark:bg-zinc-950">
+    <div className="min-h-screen flex items-center justify-center bg-muted dark:bg-secondary">
       <LoadingSpinner size="lg" text="Loading..." />
     </div>
   )

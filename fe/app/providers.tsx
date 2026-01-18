@@ -49,7 +49,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
             position="bottom-center"
             toastOptions={{
               className:
-                'bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 w-[calc(100vw-2rem)] sm:w-auto sm:min-w-[356px] sm:max-w-[420px] mx-auto',
+                'bg-background dark:bg-secondary border dark:border text-foreground dark:text-primary-foreground w-[calc(100vw-2rem)] sm:w-auto sm:min-w-[356px] sm:max-w-[420px] mx-auto',
               duration: 4000,
             }}
             richColors

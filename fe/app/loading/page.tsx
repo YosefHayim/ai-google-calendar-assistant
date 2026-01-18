@@ -65,14 +65,14 @@ function LoadingContent() {
   }, [searchParams, restoreSessionIfNeeded])
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-white dark:bg-zinc-950">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-background dark:bg-secondary">
       <div className="flex flex-col items-center gap-6">
         <LoadingSpinner size="lg" />
 
         <AnimatePresence mode="wait">
           <motion.p
             key={isRestoring ? 'restoring' : messageIndex}
-            className="text-zinc-600 dark:text-zinc-400 font-medium text-base"
+            className="text-zinc-600 dark:text-muted-foreground font-medium text-base"
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
@@ -90,7 +90,7 @@ function LoadingFallback() {
   const { t } = useTranslation()
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-white dark:bg-zinc-950">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-background dark:bg-secondary">
       <LoadingSpinner size="lg" text={t('common.loading')} />
     </div>
   )

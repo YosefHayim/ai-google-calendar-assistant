@@ -84,8 +84,8 @@ export default function AdminFeatureFlagsPage() {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-900 dark:text-white">Feature Flags</h1>
-          <p className="text-zinc-500 dark:text-zinc-400 mt-1">Manage feature flags and rollout settings</p>
+          <h1 className="text-2xl font-bold text-foreground dark:text-white">Feature Flags</h1>
+          <p className="text-muted-foreground dark:text-muted-foreground mt-1">Manage feature flags and rollout settings</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={() => refetch()}>
@@ -106,7 +106,7 @@ export default function AdminFeatureFlagsPage() {
 
       <Card className="p-4">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
             placeholder="Search by key or name..."
             value={search}
@@ -124,20 +124,20 @@ export default function AdminFeatureFlagsPage() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="border-b border-zinc-200 dark:border-zinc-700">
+              <thead className="border-b border dark:border-zinc-700">
                 <tr>
-                  <th className="text-left p-4 font-medium text-zinc-500 dark:text-zinc-400">Flag</th>
-                  <th className="text-left p-4 font-medium text-zinc-500 dark:text-zinc-400">Status</th>
-                  <th className="text-left p-4 font-medium text-zinc-500 dark:text-zinc-400">Rollout</th>
-                  <th className="text-left p-4 font-medium text-zinc-500 dark:text-zinc-400">Tiers</th>
-                  <th className="text-right p-4 font-medium text-zinc-500 dark:text-zinc-400">Actions</th>
+                  <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">Flag</th>
+                  <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">Status</th>
+                  <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">Rollout</th>
+                  <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">Tiers</th>
+                  <th className="text-right p-4 font-medium text-muted-foreground dark:text-muted-foreground">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredFlags?.map((flag) => (
                   <tr
                     key={flag.id}
-                    className="border-b border-zinc-100 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900/50"
+                    className="border-b border-zinc-100 dark:border hover:bg-muted dark:hover:bg-secondary/50"
                   >
                     <td className="p-4">
                       <div className="flex items-start gap-3">
@@ -145,10 +145,10 @@ export default function AdminFeatureFlagsPage() {
                           <Flag className="h-4 w-4 text-primary" />
                         </div>
                         <div>
-                          <p className="font-medium text-zinc-900 dark:text-white">{flag.name}</p>
-                          <p className="text-xs text-zinc-500 font-mono">{flag.key}</p>
+                          <p className="font-medium text-foreground dark:text-white">{flag.name}</p>
+                          <p className="text-xs text-muted-foreground font-mono">{flag.key}</p>
                           {flag.description && (
-                            <p className="text-xs text-zinc-400 mt-1 max-w-xs truncate">{flag.description}</p>
+                            <p className="text-xs text-muted-foreground mt-1 max-w-xs truncate">{flag.description}</p>
                           )}
                         </div>
                       </div>
@@ -165,7 +165,7 @@ export default function AdminFeatureFlagsPage() {
                           className={
                             flag.enabled
                               ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
-                              : 'bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400'
+                              : 'bg-secondary text-zinc-600 dark:bg-secondary dark:text-muted-foreground'
                           }
                         >
                           {flag.enabled ? 'Enabled' : 'Disabled'}
@@ -174,7 +174,7 @@ export default function AdminFeatureFlagsPage() {
                     </td>
                     <td className="p-4">
                       <div className="flex items-center gap-2">
-                        <div className="w-20 h-2 bg-zinc-200 dark:bg-zinc-700 rounded-full overflow-hidden">
+                        <div className="w-20 h-2 bg-accent dark:bg-zinc-700 rounded-full overflow-hidden">
                           <div
                             className="h-full bg-primary rounded-full"
                             style={{ width: `${flag.rolloutPercentage}%` }}
@@ -213,7 +213,7 @@ export default function AdminFeatureFlagsPage() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                          className="text-destructive hover:text-destructive hover:bg-destructive/5 dark:hover:bg-red-900/20"
                           onClick={() => {
                             setSelectedFlag(flag)
                             setDeleteDialogOpen(true)
@@ -227,7 +227,7 @@ export default function AdminFeatureFlagsPage() {
                 ))}
                 {(!filteredFlags || filteredFlags.length === 0) && (
                   <tr>
-                    <td colSpan={5} className="p-8 text-center text-zinc-500">
+                    <td colSpan={5} className="p-8 text-center text-muted-foreground">
                       {search ? 'No feature flags match your search' : 'No feature flags found'}
                     </td>
                   </tr>
@@ -263,7 +263,7 @@ export default function AdminFeatureFlagsPage() {
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDelete}
-              className="bg-red-500 hover:bg-red-600"
+              className="bg-destructive hover:bg-destructive"
               disabled={deleteMutation.isPending}
             >
               {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
@@ -336,7 +336,7 @@ function CreateFeatureFlagDialog({
               onChange={(e) => setFormData((prev) => ({ ...prev, key: e.target.value }))}
               required
             />
-            <p className="text-xs text-zinc-500">Unique identifier used in code (snake_case)</p>
+            <p className="text-xs text-muted-foreground">Unique identifier used in code (snake_case)</p>
           </div>
           <div className="space-y-2">
             <Label htmlFor="name">Name</Label>
@@ -374,7 +374,7 @@ function CreateFeatureFlagDialog({
               max="100"
               value={formData.rolloutPercentage}
               onChange={(e) => setFormData((prev) => ({ ...prev, rolloutPercentage: parseInt(e.target.value) }))}
-              className="w-full h-2 bg-zinc-200 rounded-lg appearance-none cursor-pointer dark:bg-zinc-700"
+              className="w-full h-2 bg-accent rounded-lg appearance-none cursor-pointer dark:bg-zinc-700"
             />
           </div>
           <div className="space-y-2">
@@ -476,7 +476,7 @@ function EditFeatureFlagDialog({
               max="100"
               value={formData.rolloutPercentage}
               onChange={(e) => setFormData((prev) => ({ ...prev, rolloutPercentage: parseInt(e.target.value) }))}
-              className="w-full h-2 bg-zinc-200 rounded-lg appearance-none cursor-pointer dark:bg-zinc-700"
+              className="w-full h-2 bg-accent rounded-lg appearance-none cursor-pointer dark:bg-zinc-700"
             />
           </div>
           <div className="space-y-2">

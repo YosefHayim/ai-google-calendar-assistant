@@ -69,11 +69,11 @@ export const Default: Story = {
 export const WithSuggestions: Story = {
   render: () => (
     <div className="space-y-4 max-w-lg mx-auto">
-      <div className="bg-zinc-50 dark:bg-zinc-900 rounded-lg p-6 space-y-3">
+      <div className="bg-muted dark:bg-secondary rounded-lg p-6 space-y-3">
         <h3 className="font-semibold text-zinc-700 dark:text-zinc-300">Calendar Name Ideas:</h3>
-        <ul className="space-y-2 text-sm text-zinc-600 dark:text-zinc-400">
+        <ul className="space-y-2 text-sm text-zinc-600 dark:text-muted-foreground">
           <li className="flex items-center gap-2">
-            <span className="w-3 h-3 rounded-full bg-blue-500" />
+            <span className="w-3 h-3 rounded-full bg-primary" />
             Work Projects
           </li>
           <li className="flex items-center gap-2">
@@ -115,12 +115,12 @@ export const WithSuggestions: Story = {
 export const UseCases: Story = {
   render: () => (
     <div className="space-y-6 p-8 max-w-2xl mx-auto">
-      <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">Create Calendar Dialog</h2>
+      <h2 className="text-2xl font-bold text-foreground dark:text-primary-foreground">Create Calendar Dialog</h2>
 
       <div className="grid gap-4">
-        <div className="bg-white dark:bg-zinc-900 rounded-lg p-4 border border-zinc-200 dark:border-zinc-800">
+        <div className="bg-background dark:bg-secondary rounded-lg p-4 border border dark:border">
           <h3 className="font-semibold text-zinc-700 dark:text-zinc-300 mb-2">When to Create Calendars</h3>
-          <ul className="text-sm text-zinc-600 dark:text-zinc-400 space-y-1">
+          <ul className="text-sm text-zinc-600 dark:text-muted-foreground space-y-1">
             <li>• Separate work from personal events</li>
             <li>• Track specific projects or goals</li>
             <li>• Organize events by category (fitness, social, etc.)</li>
@@ -129,9 +129,9 @@ export const UseCases: Story = {
           </ul>
         </div>
 
-        <div className="bg-white dark:bg-zinc-900 rounded-lg p-4 border border-zinc-200 dark:border-zinc-800">
+        <div className="bg-background dark:bg-secondary rounded-lg p-4 border border dark:border">
           <h3 className="font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Tips</h3>
-          <ul className="text-sm text-zinc-600 dark:text-zinc-400 space-y-1">
+          <ul className="text-sm text-zinc-600 dark:text-muted-foreground space-y-1">
             <li>• Use descriptive names for easy identification</li>
             <li>• Press Enter to quickly create the calendar</li>
             <li>• New calendars sync automatically with Google Calendar</li>

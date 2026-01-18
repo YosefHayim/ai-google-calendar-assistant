@@ -48,7 +48,7 @@ export const TimeAllocationHorizontalBarChart: React.FC<TimeAllocationHorizontal
           axisLine={false}
           tickMargin={8}
           width={100}
-          className="text-zinc-500 dark:text-zinc-400"
+          className="text-muted-foreground dark:text-muted-foreground"
           tick={{ fill: 'currentColor', fontSize: 11 }}
         />
         <XAxis
@@ -56,14 +56,14 @@ export const TimeAllocationHorizontalBarChart: React.FC<TimeAllocationHorizontal
           tickLine={false}
           axisLine={false}
           tickMargin={8}
-          className="text-zinc-500 dark:text-zinc-400"
+          className="text-muted-foreground dark:text-muted-foreground"
           tick={{ fill: 'currentColor', fontSize: 11 }}
           tickFormatter={(value) => `${value}h`}
         />
         <ChartTooltip
           content={
             <ChartTooltipContent
-              className="w-[180px] bg-zinc-900 dark:bg-zinc-800 text-white border-zinc-700"
+              className="w-[180px] bg-secondary dark:bg-secondary text-white border-zinc-700"
               formatter={(value, name, item) => {
                 const payload = item.payload as CalendarBreakdownItem & { percentage: number }
                 return (

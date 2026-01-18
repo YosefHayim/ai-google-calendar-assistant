@@ -148,7 +148,7 @@ export const SubscriptionTab: React.FC = () => {
       />
 
       <div className="flex justify-center">
-        <div className="flex rounded-full bg-zinc-100 dark:bg-zinc-800 p-1">
+        <div className="flex rounded-full bg-secondary dark:bg-secondary p-1">
           {PAYMENT_FREQUENCIES.map((freq) => (
             <Tab
               key={freq}
@@ -163,7 +163,7 @@ export const SubscriptionTab: React.FC = () => {
 
       {isTrialing && !isPerUse && (
         <div className="flex items-start gap-3 p-3 rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800">
-          <Info className="h-4 w-4 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
+          <Info className="h-4 w-4 text-amber-700 dark:text-amber-400 flex-shrink-0 mt-0.5" />
           <p className="text-amber-800 dark:text-amber-200 text-sm">
             Select a plan to continue after your trial. You won't be charged until your trial ends.
           </p>

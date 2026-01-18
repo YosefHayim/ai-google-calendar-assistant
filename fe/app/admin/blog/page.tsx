@@ -279,8 +279,8 @@ export default function AdminBlogPage() {
   return (
     <div className="p-6 space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-zinc-900 dark:text-white">Create Blog Post</h1>
-        <p className="text-zinc-500 dark:text-zinc-400 mt-1">Write and publish new blog articles</p>
+        <h1 className="text-2xl font-bold text-foreground dark:text-white">Create Blog Post</h1>
+        <p className="text-muted-foreground dark:text-muted-foreground mt-1">Write and publish new blog articles</p>
       </div>
 
       <Tabs defaultValue="editor" className="w-full">
@@ -324,7 +324,7 @@ export default function AdminBlogPage() {
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>
-                              Title <span className="text-red-500">*</span>
+                              Title <span className="text-destructive">*</span>
                             </FormLabel>
                             <FormControl>
                               <Input placeholder="Enter a compelling title for your post..." {...field} />
@@ -342,7 +342,7 @@ export default function AdminBlogPage() {
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>
-                              Excerpt <span className="text-red-500">*</span>
+                              Excerpt <span className="text-destructive">*</span>
                             </FormLabel>
                             <FormControl>
                               <Textarea
@@ -364,7 +364,7 @@ export default function AdminBlogPage() {
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>
-                              Content <span className="text-red-500">*</span>
+                              Content <span className="text-destructive">*</span>
                             </FormLabel>
                             <FormControl>
                               <Textarea
@@ -388,7 +388,7 @@ export default function AdminBlogPage() {
                           render={({ field }) => (
                             <FormItem>
                               <FormLabel>
-                                Category <span className="text-red-500">*</span>
+                                Category <span className="text-destructive">*</span>
                               </FormLabel>
                               <Select onValueChange={field.onChange} defaultValue={field.value}>
                                 <FormControl>
@@ -491,7 +491,7 @@ export default function AdminBlogPage() {
                         />
                       </div>
 
-                      <div className="flex justify-end gap-3 pt-4 border-t border-zinc-200 dark:border-zinc-700">
+                      <div className="flex justify-end gap-3 pt-4 border-t border dark:border-zinc-700">
                         <Button
                           type="button"
                           variant="outline"
@@ -532,8 +532,8 @@ export default function AdminBlogPage() {
             <TabsContent value="bulk">
               <Card className="p-6 space-y-6">
                 <div>
-                  <h3 className="font-semibold text-zinc-900 dark:text-white mb-2">Bulk Create from JSON</h3>
-                  <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                  <h3 className="font-semibold text-foreground dark:text-white mb-2">Bulk Create from JSON</h3>
+                  <p className="text-sm text-muted-foreground dark:text-muted-foreground">
                     Paste a JSON array of blog posts to create multiple posts in one request. Use the JSON Template tab
                     for the expected format.
                   </p>
@@ -564,10 +564,10 @@ export default function AdminBlogPage() {
                       setBulkError(null)
                     }}
                     rows={16}
-                    className={`font-mono text-sm ${bulkError ? 'border-red-500' : ''}`}
+                    className={`font-mono text-sm ${bulkError ? 'border-destructive' : ''}`}
                   />
-                  {bulkError && <p className="text-sm text-red-500">{bulkError}</p>}
-                  <p className="text-xs text-zinc-500">
+                  {bulkError && <p className="text-sm text-destructive">{bulkError}</p>}
+                  <p className="text-xs text-muted-foreground">
                     Accepts either a JSON array of posts or an object with a &quot;posts&quot; array
                   </p>
                 </div>
@@ -575,12 +575,12 @@ export default function AdminBlogPage() {
                 {isBulkCreating && bulkProgress.total > 0 && (
                   <div className="space-y-2">
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-zinc-600 dark:text-zinc-400">Creating posts...</span>
+                      <span className="text-zinc-600 dark:text-muted-foreground">Creating posts...</span>
                       <span className="font-medium">
                         {bulkProgress.current} / {bulkProgress.total}
                       </span>
                     </div>
-                    <div className="w-full bg-zinc-200 dark:bg-zinc-700 rounded-full h-2">
+                    <div className="w-full bg-accent dark:bg-zinc-700 rounded-full h-2">
                       <div
                         className="bg-primary h-2 rounded-full transition-all duration-300"
                         style={{ width: `${(bulkProgress.current / bulkProgress.total) * 100}%` }}
@@ -589,7 +589,7 @@ export default function AdminBlogPage() {
                   </div>
                 )}
 
-                <div className="flex justify-end gap-3 pt-4 border-t border-zinc-200 dark:border-zinc-700">
+                <div className="flex justify-end gap-3 pt-4 border-t border dark:border-zinc-700">
                   <Button type="button" variant="outline" onClick={() => setBulkJson('')} disabled={isBulkCreating}>
                     Clear
                   </Button>
@@ -618,19 +618,19 @@ export default function AdminBlogPage() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Sparkles className="w-5 h-5 text-primary" />
-                  <h3 className="font-semibold text-zinc-900 dark:text-white">AI Prompt Template</h3>
+                  <h3 className="font-semibold text-foreground dark:text-white">AI Prompt Template</h3>
                 </div>
                 <Button variant="outline" size="sm" onClick={() => handleCopy('prompt')} className="gap-2">
-                  {copied === 'prompt' ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
+                  {copied === 'prompt' ? <Check className="w-4 h-4 text-green-600" /> : <Copy className="w-4 h-4" />}
                   {copied === 'prompt' ? 'Copied!' : 'Copy Prompt'}
                 </Button>
               </div>
-              <p className="text-sm text-zinc-500 dark:text-zinc-400">
+              <p className="text-sm text-muted-foreground dark:text-muted-foreground">
                 Copy this prompt and paste it to any AI (ChatGPT, Claude, etc.) to generate blog posts. Replace [NUMBER]
                 and [TOPIC/THEME] with your requirements.
               </p>
               <div className="relative">
-                <pre className="bg-zinc-950 text-zinc-100 p-4 rounded-lg overflow-x-auto text-xs leading-relaxed max-h-[300px] overflow-y-auto">
+                <pre className="bg-secondary text-primary-foreground p-4 rounded-lg overflow-x-auto text-xs leading-relaxed max-h-[300px] overflow-y-auto">
                   {AI_PROMPT_TEMPLATE}
                 </pre>
               </div>
@@ -642,20 +642,20 @@ export default function AdminBlogPage() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Code className="w-5 h-5 text-primary" />
-                  <h3 className="font-semibold text-zinc-900 dark:text-white">JSON Payload Structure</h3>
+                  <h3 className="font-semibold text-foreground dark:text-white">JSON Payload Structure</h3>
                 </div>
                 <Button variant="outline" size="sm" onClick={() => handleCopy('template')} className="gap-2">
-                  {copied === 'template' ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
+                  {copied === 'template' ? <Check className="w-4 h-4 text-green-600" /> : <Copy className="w-4 h-4" />}
                   {copied === 'template' ? 'Copied!' : 'Copy JSON'}
                 </Button>
               </div>
-              <p className="text-sm text-zinc-500 dark:text-zinc-400">
+              <p className="text-sm text-muted-foreground dark:text-muted-foreground">
                 This is the expected payload structure for creating blog posts. The{' '}
-                <code className="px-1 py-0.5 bg-zinc-100 dark:bg-zinc-800 rounded text-xs">_instructions</code> field
+                <code className="px-1 py-0.5 bg-secondary dark:bg-secondary rounded text-xs">_instructions</code> field
                 contains validation rules and tips.
               </p>
               <div className="relative">
-                <pre className="bg-zinc-950 text-zinc-100 p-4 rounded-lg overflow-x-auto text-xs leading-relaxed max-h-[500px] overflow-y-auto">
+                <pre className="bg-secondary text-primary-foreground p-4 rounded-lg overflow-x-auto text-xs leading-relaxed max-h-[500px] overflow-y-auto">
                   <code>{JSON.stringify(JSON_TEMPLATE, null, 2)}</code>
                 </pre>
               </div>
@@ -664,7 +664,7 @@ export default function AdminBlogPage() {
 
           <Card className="p-6 bg-primary/5 border-primary/20">
             <div className="space-y-3">
-              <h3 className="font-semibold text-zinc-900 dark:text-white flex items-center gap-2">
+              <h3 className="font-semibold text-foreground dark:text-white flex items-center gap-2">
                 <FileText className="w-5 h-5 text-primary" />
                 Supported Categories
               </h3>
@@ -675,15 +675,15 @@ export default function AdminBlogPage() {
                   </Badge>
                 ))}
               </div>
-              <p className="text-sm text-zinc-500 dark:text-zinc-400">
+              <p className="text-sm text-muted-foreground dark:text-muted-foreground">
                 When generating posts with AI, ensure the category field uses one of these exact values.
               </p>
             </div>
           </Card>
 
           <Card className="p-6">
-            <h3 className="font-semibold text-zinc-900 dark:text-white mb-4">Quick Tips</h3>
-            <ul className="space-y-2 text-sm text-zinc-600 dark:text-zinc-400">
+            <h3 className="font-semibold text-foreground dark:text-white mb-4">Quick Tips</h3>
+            <ul className="space-y-2 text-sm text-zinc-600 dark:text-muted-foreground">
               <li className="flex items-start gap-2">
                 <span className="text-primary mt-1">1.</span>
                 <span>

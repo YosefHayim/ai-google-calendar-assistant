@@ -87,7 +87,7 @@ export function AnimatedTestimonials({
     <section
       ref={sectionRef}
       id="testimonials"
-      className={`py-24 overflow-hidden bg-zinc-50/50 dark:bg-zinc-900/10 ${className || ''}`}
+      className={`py-24 overflow-hidden bg-muted/50 dark:bg-secondary/10 ${className || ''}`}
     >
       <div className="container mx-auto px-4 md:px-6">
         <motion.div
@@ -105,11 +105,11 @@ export function AnimatedTestimonials({
                 </div>
               )}
 
-              <h2 className="text-3xl font-medium tracking-tight sm:text-4xl md:text-5xl text-zinc-900 dark:text-zinc-100">
+              <h2 className="text-3xl font-medium tracking-tight sm:text-4xl md:text-5xl text-foreground dark:text-primary-foreground">
                 {title}
               </h2>
 
-              <p className="max-w-[600px] text-zinc-500 dark:text-zinc-400 md:text-xl/relaxed font-medium">
+              <p className="max-w-[600px] text-muted-foreground dark:text-muted-foreground md:text-xl/relaxed font-medium">
                 {subtitle}
               </p>
 
@@ -142,7 +142,7 @@ export function AnimatedTestimonials({
                 transition={{ duration: 0.5, ease: 'easeInOut' as const }}
                 style={{ zIndex: activeIndex === index ? 10 : 0 }}
               >
-                <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 shadow-xl rounded-2xl p-8 md:p-10 h-full flex flex-col transition-all">
+                <div className="bg-background dark:bg-secondary border border dark:border shadow-xl rounded-2xl p-8 md:p-10 h-full flex flex-col transition-all">
                   <div className="mb-6 flex gap-1">
                     {Array(testimonial.rating)
                       .fill(0)
@@ -161,13 +161,13 @@ export function AnimatedTestimonials({
                   <Separator className="my-6" />
 
                   <div className="flex items-center gap-4">
-                    <Avatar className="h-14 w-14 border-2 border-zinc-100 dark:border-zinc-800">
+                    <Avatar className="h-14 w-14 border-2 border-zinc-100 dark:border">
                       <AvatarImage src={testimonial.avatar} alt={testimonial.name} />
                       <AvatarFallback>{testimonial.name.charAt(0)}</AvatarFallback>
                     </Avatar>
                     <div>
-                      <h3 className="font-bold text-zinc-900 dark:text-zinc-100">{testimonial.name}</h3>
-                      <p className="text-sm text-zinc-500 dark:text-zinc-400 font-medium">
+                      <h3 className="font-bold text-foreground dark:text-primary-foreground">{testimonial.name}</h3>
+                      <p className="text-sm text-muted-foreground dark:text-muted-foreground font-medium">
                         {testimonial.role}, {testimonial.company}
                       </p>
                     </div>

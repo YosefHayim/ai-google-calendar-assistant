@@ -38,7 +38,7 @@ export function PlanRow({ plan, selectedFrequency, actionType, isLoading, onActi
     if (plan.isPopular) {
       return <Zap className="w-5 h-5 text-primary" />
     }
-    return <Shield className="w-5 h-5 text-zinc-500" />
+    return <Shield className="w-5 h-5 text-muted-foreground" />
   }
 
   const adjustCredits = (delta: number) => {
@@ -49,7 +49,7 @@ export function PlanRow({ plan, selectedFrequency, actionType, isLoading, onActi
     <Card
       className={cn(
         'transition-all duration-200',
-        isHighlighted && 'bg-zinc-900 dark:bg-primary border-none',
+        isHighlighted && 'bg-secondary dark:bg-primary border-none',
         isPopular && !isHighlighted && 'ring-1 ring-primary',
         isCurrentPlan && 'ring-1 ring-green-500',
       )}
@@ -63,7 +63,7 @@ export function PlanRow({ plan, selectedFrequency, actionType, isLoading, onActi
                 <span
                   className={cn(
                     'font-semibold',
-                    isHighlighted ? 'text-white dark:text-zinc-900' : 'text-zinc-900 dark:text-white',
+                    isHighlighted ? 'text-white dark:text-foreground' : 'text-foreground dark:text-white',
                   )}
                 >
                   {plan.name}
@@ -73,7 +73,7 @@ export function PlanRow({ plan, selectedFrequency, actionType, isLoading, onActi
                     className={cn(
                       'text-xs',
                       isHighlighted
-                        ? 'bg-white/20 text-white dark:bg-zinc-900/20 dark:text-zinc-900'
+                        ? 'bg-background/20 text-white dark:bg-secondary/20 dark:text-foreground'
                         : 'bg-primary/20 text-primary',
                     )}
                   >
@@ -85,7 +85,7 @@ export function PlanRow({ plan, selectedFrequency, actionType, isLoading, onActi
               <p
                 className={cn(
                   'text-xs mt-0.5 line-clamp-2',
-                  isHighlighted ? 'text-white/70 dark:text-zinc-900/70' : 'text-zinc-500',
+                  isHighlighted ? 'text-white/70 dark:text-foreground/70' : 'text-muted-foreground',
                 )}
               >
                 {plan.description}
@@ -106,7 +106,7 @@ export function PlanRow({ plan, selectedFrequency, actionType, isLoading, onActi
                   <span
                     className={cn(
                       'text-lg font-bold',
-                      isHighlighted ? 'text-white dark:text-zinc-900' : 'text-zinc-900 dark:text-white',
+                      isHighlighted ? 'text-white dark:text-foreground' : 'text-foreground dark:text-white',
                     )}
                   >
                     Free
@@ -123,13 +123,13 @@ export function PlanRow({ plan, selectedFrequency, actionType, isLoading, onActi
                       value={price}
                       className={cn(
                         'text-lg font-bold',
-                        isHighlighted ? 'text-white dark:text-zinc-900' : 'text-zinc-900 dark:text-white',
+                        isHighlighted ? 'text-white dark:text-foreground' : 'text-foreground dark:text-white',
                       )}
                     />
                     <span
                       className={cn(
                         'text-xs ml-1',
-                        isHighlighted ? 'text-white/60 dark:text-zinc-900/60' : 'text-zinc-400',
+                        isHighlighted ? 'text-white/60 dark:text-foreground/60' : 'text-muted-foreground',
                       )}
                     >
                       {isPerUse ? '/pack' : '/mo'}
@@ -152,7 +152,7 @@ export function PlanRow({ plan, selectedFrequency, actionType, isLoading, onActi
               <Button
                 onClick={() => onAction(isCustomTier && isPerUse ? customCredits : undefined)}
                 size="sm"
-                className={cn('min-w-20 sm:min-w-24', isHighlighted && 'bg-white text-zinc-900 hover:bg-zinc-100')}
+                className={cn('min-w-20 sm:min-w-24', isHighlighted && 'bg-background text-foreground hover:bg-secondary')}
               >
                 {isPerUse ? 'Buy' : 'Upgrade'}
                 <ArrowRight className="w-3 h-3 ml-1" />
@@ -162,7 +162,7 @@ export function PlanRow({ plan, selectedFrequency, actionType, isLoading, onActi
                 onClick={() => onAction()}
                 variant="outline"
                 size="sm"
-                className={cn('min-w-20 sm:min-w-24', isHighlighted && 'border-white/30 text-white hover:bg-white/10')}
+                className={cn('min-w-20 sm:min-w-24', isHighlighted && 'border-white/30 text-white hover:bg-background/10')}
               >
                 {isPerUse ? 'Buy' : 'Downgrade'}
                 <ArrowDown className="w-3 h-3 ml-1" />
@@ -177,7 +177,7 @@ export function PlanRow({ plan, selectedFrequency, actionType, isLoading, onActi
               <button
                 type="button"
                 onClick={() => adjustCredits(-100)}
-                className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-colors text-white dark:text-zinc-900"
+                className="w-7 h-7 rounded-full bg-background/20 flex items-center justify-center hover:bg-background/30 transition-colors text-white dark:text-foreground"
               >
                 <Minus size={12} />
               </button>
@@ -189,22 +189,22 @@ export function PlanRow({ plan, selectedFrequency, actionType, isLoading, onActi
                   step={100}
                   value={customCredits}
                   onChange={(e) => setCustomCredits(parseInt(e.target.value))}
-                  className="w-full h-1 bg-white/20 rounded-full appearance-none cursor-pointer accent-amber-400"
+                  className="w-full h-1 bg-background/20 rounded-full appearance-none cursor-pointer accent-amber-400"
                 />
               </div>
               <button
                 type="button"
                 onClick={() => adjustCredits(100)}
-                className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-colors text-white dark:text-zinc-900"
+                className="w-7 h-7 rounded-full bg-background/20 flex items-center justify-center hover:bg-background/30 transition-colors text-white dark:text-foreground"
               >
                 <Plus size={12} />
               </button>
               <div className="text-right min-w-20">
                 <NumberFlow
                   value={customCredits}
-                  className="text-sm font-bold font-mono text-white dark:text-zinc-900"
+                  className="text-sm font-bold font-mono text-white dark:text-foreground"
                 />
-                <p className="text-xs text-white/50 dark:text-zinc-900/50">credits</p>
+                <p className="text-xs text-white/50 dark:text-foreground/50">credits</p>
               </div>
             </div>
           </div>
@@ -217,8 +217,8 @@ export function PlanRow({ plan, selectedFrequency, actionType, isLoading, onActi
               className={cn(
                 'inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full',
                 isHighlighted
-                  ? 'bg-white/10 text-white/80 dark:bg-zinc-900/10 dark:text-zinc-900/80'
-                  : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400',
+                  ? 'bg-background/10 text-white/80 dark:bg-secondary/10 dark:text-foreground/80'
+                  : 'bg-secondary dark:bg-secondary text-zinc-600 dark:text-muted-foreground',
               )}
             >
               <BadgeCheck className="w-3 h-3" />

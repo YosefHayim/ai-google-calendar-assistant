@@ -26,7 +26,7 @@ const ChatTabSkeleton: React.FC = () => {
 
       {/* Input Section Skeleton */}
       <div className="absolute bottom-0 left-0 right-0 p-4 z-20 bg-gradient-to-t from-white dark:from-zinc-950 via-white/80 to-transparent">
-        <div className="relative flex items-center bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-2xl p-2 gap-2">
+        <div className="relative flex items-center bg-background dark:bg-secondary border border dark:border rounded-2xl shadow-2xl p-2 gap-2">
           <Skeleton className="w-12 h-12 rounded-xl" />
           <Skeleton className="flex-1 h-12 rounded-lg" />
           <Skeleton className="w-12 h-12 rounded-xl" />

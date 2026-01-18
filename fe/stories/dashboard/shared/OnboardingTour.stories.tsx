@@ -17,45 +17,45 @@ const meta: Meta<typeof OnboardingTour> = {
   },
   decorators: [
     (Story) => (
-      <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 relative">
+      <div className="min-h-screen bg-muted dark:bg-secondary relative">
         {/* Mock dashboard layout with tour target elements */}
         <div className="flex">
           {/* Mock Sidebar */}
-          <aside className="w-64 h-screen bg-white dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-800 p-4 space-y-2">
+          <aside className="w-64 h-screen bg-background dark:bg-secondary border-r border dark:border p-4 space-y-2">
             <div className="flex items-center gap-2 mb-6">
               <div className="w-8 h-8 bg-primary rounded-lg" />
-              <span className="font-bold text-lg text-zinc-900 dark:text-zinc-100">Ally</span>
+              <span className="font-bold text-lg text-foreground dark:text-primary-foreground">Ally</span>
             </div>
             <div
               id="tour-assistant"
-              className="px-3 py-2 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-sm font-medium text-zinc-900 dark:text-zinc-100"
+              className="px-3 py-2 rounded-lg bg-secondary dark:bg-secondary text-sm font-medium text-foreground dark:text-primary-foreground"
             >
               Assistant
             </div>
             <div
               id="tour-analytics"
-              className="px-3 py-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-sm text-zinc-600 dark:text-zinc-400"
+              className="px-3 py-2 rounded-lg hover:bg-secondary dark:hover:bg-secondary text-sm text-zinc-600 dark:text-muted-foreground"
             >
               Analytics
             </div>
             <div
               id="tour-integrations"
-              className="px-3 py-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-sm text-zinc-600 dark:text-zinc-400"
+              className="px-3 py-2 rounded-lg hover:bg-secondary dark:hover:bg-secondary text-sm text-zinc-600 dark:text-muted-foreground"
             >
               Integrations
             </div>
             <div className="flex-1" />
             <div
               id="tour-settings"
-              className="px-3 py-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-sm text-zinc-600 dark:text-zinc-400"
+              className="px-3 py-2 rounded-lg hover:bg-secondary dark:hover:bg-secondary text-sm text-zinc-600 dark:text-muted-foreground"
             >
               Settings
             </div>
           </aside>
           {/* Mock Main Content */}
           <main className="flex-1 p-8">
-            <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-4">Welcome to Ally</h1>
-            <p className="text-zinc-600 dark:text-zinc-400">Your AI-powered calendar assistant</p>
+            <h1 className="text-2xl font-bold text-foreground dark:text-primary-foreground mb-4">Welcome to Ally</h1>
+            <p className="text-zinc-600 dark:text-muted-foreground">Your AI-powered calendar assistant</p>
           </main>
         </div>
         <Story />
@@ -125,10 +125,10 @@ export const MobileView: Story = {
   },
   decorators: [
     (Story) => (
-      <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 relative">
+      <div className="min-h-screen bg-muted dark:bg-secondary relative">
         <main className="p-4">
-          <h1 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-4">Ally Dashboard</h1>
-          <p className="text-zinc-600 dark:text-zinc-400">Mobile onboarding view</p>
+          <h1 className="text-xl font-bold text-foreground dark:text-primary-foreground mb-4">Ally Dashboard</h1>
+          <p className="text-zinc-600 dark:text-muted-foreground">Mobile onboarding view</p>
         </main>
         <Story />
       </div>
@@ -152,30 +152,30 @@ export const DarkMode: Story = {
   },
   decorators: [
     (Story) => (
-      <div className="dark min-h-screen bg-zinc-950 relative">
+      <div className="dark min-h-screen bg-secondary relative">
         <div className="flex">
-          <aside className="w-64 h-screen bg-zinc-900 border-r border-zinc-800 p-4 space-y-2">
+          <aside className="w-64 h-screen bg-secondary border-r border p-4 space-y-2">
             <div className="flex items-center gap-2 mb-6">
               <div className="w-8 h-8 bg-primary rounded-lg" />
-              <span className="font-bold text-lg text-zinc-100">Ally</span>
+              <span className="font-bold text-lg text-primary-foreground">Ally</span>
             </div>
-            <div id="tour-assistant" className="px-3 py-2 rounded-lg bg-zinc-800 text-sm font-medium text-zinc-100">
+            <div id="tour-assistant" className="px-3 py-2 rounded-lg bg-secondary text-sm font-medium text-primary-foreground">
               Assistant
             </div>
-            <div id="tour-analytics" className="px-3 py-2 rounded-lg text-sm text-zinc-400">
+            <div id="tour-analytics" className="px-3 py-2 rounded-lg text-sm text-muted-foreground">
               Analytics
             </div>
-            <div id="tour-integrations" className="px-3 py-2 rounded-lg text-sm text-zinc-400">
+            <div id="tour-integrations" className="px-3 py-2 rounded-lg text-sm text-muted-foreground">
               Integrations
             </div>
             <div className="flex-1" />
-            <div id="tour-settings" className="px-3 py-2 rounded-lg text-sm text-zinc-400">
+            <div id="tour-settings" className="px-3 py-2 rounded-lg text-sm text-muted-foreground">
               Settings
             </div>
           </aside>
           <main className="flex-1 p-8">
-            <h1 className="text-2xl font-bold text-zinc-100 mb-4">Welcome to Ally</h1>
-            <p className="text-zinc-400">Your AI-powered calendar assistant</p>
+            <h1 className="text-2xl font-bold text-primary-foreground mb-4">Welcome to Ally</h1>
+            <p className="text-muted-foreground">Your AI-powered calendar assistant</p>
           </main>
         </div>
         <Story />

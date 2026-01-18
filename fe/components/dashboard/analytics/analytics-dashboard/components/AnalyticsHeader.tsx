@@ -35,11 +35,11 @@ export function AnalyticsHeader({
     <header className="flex flex-col gap-3 sm:gap-4">
       {date?.from && date?.to && (
         <div className="flex flex-wrap items-baseline gap-1.5 sm:gap-2">
-          <span className="text-sm sm:text-base text-zinc-500 dark:text-zinc-400">Analytics for</span>
-          <span className="text-sm sm:text-base font-semibold text-zinc-900 dark:text-zinc-100">
+          <span className="text-sm sm:text-base text-muted-foreground dark:text-muted-foreground">Analytics for</span>
+          <span className="text-sm sm:text-base font-semibold text-foreground dark:text-primary-foreground">
             {format(date.from, 'MMM dd, yyyy')} - {format(date.to, 'MMM dd, yyyy')}
           </span>
-          <span className="text-xs sm:text-sm text-zinc-400 dark:text-zinc-500">
+          <span className="text-xs sm:text-sm text-muted-foreground dark:text-muted-foreground">
             ({getDaysBetween(date.from, date.to)} days)
           </span>
         </div>

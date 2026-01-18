@@ -167,7 +167,7 @@ export const InDarkContainer: Story = {
   },
   decorators: [
     (Story) => (
-      <div className="dark w-[600px] h-[400px] bg-zinc-900 p-4 rounded-2xl">
+      <div className="dark w-[600px] h-[400px] bg-secondary p-4 rounded-2xl">
         <Story />
       </div>
     ),

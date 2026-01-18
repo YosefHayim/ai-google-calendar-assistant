@@ -32,16 +32,16 @@ export const InputView: React.FC<InputViewProps> = ({ state }) => (
   >
     <div
       className={`w-16 h-16 rounded-full flex items-center justify-center mb-4 ${
-        state === 'recording' ? 'bg-red-100 dark:bg-red-900/30' : 'bg-zinc-200 dark:bg-zinc-800'
+        state === 'recording' ? 'bg-destructive/10 dark:bg-red-900/30' : 'bg-accent dark:bg-secondary'
       }`}
     >
       {state === 'recording' ? (
-        <Mic className="w-8 h-8 text-red-500 animate-pulse" />
+        <Mic className="w-8 h-8 text-destructive animate-pulse" />
       ) : (
-        <Calendar className="w-8 h-8 text-zinc-400" />
+        <Calendar className="w-8 h-8 text-muted-foreground" />
       )}
     </div>
-    <p className="text-sm text-zinc-500 dark:text-zinc-400">
+    <p className="text-sm text-muted-foreground dark:text-muted-foreground">
       {state === 'recording' ? 'Listening... Speak your event details' : 'Type or speak your event details'}
     </p>
   </motion.div>
@@ -114,13 +114,13 @@ export const ConflictView: React.FC<ConflictViewProps> = ({
     exit={{ opacity: 0, y: -10 }}
     className="flex-1 flex flex-col"
   >
-    <p className="text-sm text-amber-600 dark:text-amber-400 mb-3">{message}</p>
+    <p className="text-sm text-amber-700 dark:text-amber-400 mb-3">{message}</p>
     <EventPreview event={event} calendarName={calendarName} />
     {conflicts.length > 0 && (
       <div className="mb-3 p-2 bg-amber-50 dark:bg-amber-900/20 rounded border border-amber-200 dark:border-amber-800">
         <p className="text-xs font-medium text-amber-700 dark:text-amber-300 mb-1">Conflicts with:</p>
         {conflicts.slice(0, 3).map((c) => (
-          <p key={c.id} className="text-xs text-amber-600 dark:text-amber-400">
+          <p key={c.id} className="text-xs text-amber-700 dark:text-amber-400">
             • {c.summary}
           </p>
         ))}
@@ -156,7 +156,7 @@ export const SuccessView: React.FC<SuccessViewProps> = ({ message, calendarName,
       <Check className="w-8 h-8 text-green-600 dark:text-green-400" />
     </div>
     <p className="text-sm font-medium text-green-600 dark:text-green-400">{message}</p>
-    {calendarName && <p className="text-xs text-zinc-500 mt-1">Added to {calendarName}</p>}
+    {calendarName && <p className="text-xs text-muted-foreground mt-1">Added to {calendarName}</p>}
     {eventUrl && (
       <a
         href={eventUrl}
@@ -187,10 +187,10 @@ export const ErrorView: React.FC<ErrorViewProps> = ({ message, onRetry }) => (
     exit={{ opacity: 0, y: -10 }}
     className="flex-1 flex flex-col items-center justify-center text-center"
   >
-    <div className="w-16 h-16 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mb-4">
-      <AlertCircle className="w-8 h-8 text-red-600 dark:text-red-400" />
+    <div className="w-16 h-16 rounded-full bg-destructive/10 dark:bg-red-900/30 flex items-center justify-center mb-4">
+      <AlertCircle className="w-8 h-8 text-destructive dark:text-red-400" />
     </div>
-    <p className="text-sm text-red-600 dark:text-red-400 mb-4">{message}</p>
+    <p className="text-sm text-destructive dark:text-red-400 mb-4">{message}</p>
     <Button onClick={onRetry} variant="outline" size="sm">
       Try Again
     </Button>

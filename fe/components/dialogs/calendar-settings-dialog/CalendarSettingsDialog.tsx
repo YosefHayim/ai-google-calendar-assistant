@@ -45,8 +45,8 @@ export function CalendarSettingsDialog({ isOpen, calendar, onClose }: CalendarSe
                 <CalendarDays className="w-5 h-5" style={{ color: calendarColor }} />
               </div>
               <div className="flex-1">
-                <DialogTitle className="text-xl font-bold text-zinc-900 dark:text-zinc-100">{displayName}</DialogTitle>
-                <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Calendar Settings</p>
+                <DialogTitle className="text-xl font-bold text-foreground dark:text-primary-foreground">{displayName}</DialogTitle>
+                <p className="text-xs text-muted-foreground dark:text-muted-foreground mt-1">Calendar Settings</p>
               </div>
             </div>
           </DialogHeader>
@@ -57,7 +57,7 @@ export function CalendarSettingsDialog({ isOpen, calendar, onClose }: CalendarSe
               tooltipTitle="Unique Calendar Identifier"
               tooltipDescription="A unique ID assigned by Google Calendar to identify this calendar. Used internally for API calls and syncing."
             >
-              <p className="text-sm text-zinc-600 dark:text-zinc-400 font-mono break-all">{calendar.id}</p>
+              <p className="text-sm text-zinc-600 dark:text-muted-foreground font-mono break-all">{calendar.id}</p>
             </InfoSection>
 
             {calendar.summary && (
@@ -66,7 +66,7 @@ export function CalendarSettingsDialog({ isOpen, calendar, onClose }: CalendarSe
                 tooltipTitle="Calendar Name"
                 tooltipDescription="The display name of this calendar as shown in Google Calendar."
               >
-                <p className="text-sm text-zinc-600 dark:text-zinc-400">{calendar.summary}</p>
+                <p className="text-sm text-zinc-600 dark:text-muted-foreground">{calendar.summary}</p>
               </InfoSection>
             )}
 
@@ -76,7 +76,7 @@ export function CalendarSettingsDialog({ isOpen, calendar, onClose }: CalendarSe
                 tooltipTitle="Calendar Description"
                 tooltipDescription="A user-defined description explaining the purpose or content of this calendar."
               >
-                <p className="text-sm text-zinc-600 dark:text-zinc-400">{calendar.description}</p>
+                <p className="text-sm text-zinc-600 dark:text-muted-foreground">{calendar.description}</p>
               </InfoSection>
             )}
 
@@ -86,7 +86,7 @@ export function CalendarSettingsDialog({ isOpen, calendar, onClose }: CalendarSe
                 tooltipTitle="Calendar Location"
                 tooltipDescription="The geographic location associated with this calendar. Useful for region-specific calendars."
               >
-                <p className="text-sm text-zinc-600 dark:text-zinc-400">{calendarEntry.location}</p>
+                <p className="text-sm text-zinc-600 dark:text-muted-foreground">{calendarEntry.location}</p>
               </InfoSection>
             )}
 
@@ -96,7 +96,7 @@ export function CalendarSettingsDialog({ isOpen, calendar, onClose }: CalendarSe
                 tooltipTitle="Calendar Timezone"
                 tooltipDescription="The default timezone for events in this calendar. All-day events and recurring events use this timezone."
               >
-                <p className="text-sm text-zinc-600 dark:text-zinc-400">{calendar.timeZone}</p>
+                <p className="text-sm text-zinc-600 dark:text-muted-foreground">{calendar.timeZone}</p>
               </InfoSection>
             )}
 
@@ -106,7 +106,7 @@ export function CalendarSettingsDialog({ isOpen, calendar, onClose }: CalendarSe
                 tooltipTitle="Your Access Level"
                 tooltipDescription="Your permission level: Owner (full control), Writer (edit events), Reader (view only), or FreeBusyReader (availability only)."
               >
-                <p className="text-sm text-zinc-600 dark:text-zinc-400 capitalize">{calendar.accessRole}</p>
+                <p className="text-sm text-zinc-600 dark:text-muted-foreground capitalize">{calendar.accessRole}</p>
               </InfoSection>
             )}
 
@@ -120,7 +120,7 @@ export function CalendarSettingsDialog({ isOpen, calendar, onClose }: CalendarSe
                 tooltipTitle="Primary Calendar Status"
                 tooltipDescription="Indicates whether this is your primary calendar. The primary calendar is typically your main personal calendar."
                 value={calendar.primary}
-                icon={<Star className="w-4 h-4 text-zinc-500" />}
+                icon={<Star className="w-4 h-4 text-muted-foreground" />}
               />
             )}
 
@@ -130,7 +130,7 @@ export function CalendarSettingsDialog({ isOpen, calendar, onClose }: CalendarSe
                 tooltipTitle="Calendar Selection Status"
                 tooltipDescription="Indicates whether this calendar is currently selected and visible in your calendar view."
                 value={calendar.selected}
-                icon={<CheckCircle className="w-4 h-4 text-zinc-500" />}
+                icon={<CheckCircle className="w-4 h-4 text-muted-foreground" />}
               />
             )}
 

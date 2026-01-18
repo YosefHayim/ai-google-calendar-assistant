@@ -161,7 +161,7 @@ export const ErrorStateCustomIcon: StoryObj<typeof ErrorState> = {
     <ErrorState
       title="No internet connection"
       message="Please check your network settings and try again."
-      icon={<WifiOff className="h-6 w-6 text-red-600 dark:text-red-400" />}
+      icon={<WifiOff className="h-6 w-6 text-destructive dark:text-red-400" />}
       onRetry={fn()}
     />
   ),

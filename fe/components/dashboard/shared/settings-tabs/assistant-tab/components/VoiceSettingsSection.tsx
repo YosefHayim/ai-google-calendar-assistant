@@ -158,7 +158,7 @@ export const VoiceSettingsSection: React.FC<VoiceSettingsSectionProps> = ({ togg
       <TabHeader
         title="Voice Settings"
         tooltip="Choose how Ally speaks to you in voice responses"
-        icon={<Volume2 className="w-5 h-5 text-zinc-900 dark:text-primary" />}
+        icon={<Volume2 className="w-5 h-5 text-foreground dark:text-primary" />}
       />
       <CardContent className="space-y-4">
         <SettingsSection>
@@ -166,7 +166,7 @@ export const VoiceSettingsSection: React.FC<VoiceSettingsSectionProps> = ({ togg
             id="voice-enabled"
             title="Enable Voice Responses"
             tooltip="When enabled, Ally will respond with voice in chat and when you send voice messages on Telegram"
-            icon={<Mic size={18} className="text-zinc-900 dark:text-primary" />}
+            icon={<Mic size={18} className="text-foreground dark:text-primary" />}
             control={
               <CinematicGlowToggle
                 id={toggleId}
@@ -191,7 +191,7 @@ export const VoiceSettingsSection: React.FC<VoiceSettingsSectionProps> = ({ togg
                   id="voice-selection"
                   title="Voice"
                   tooltip="Choose which voice Ally uses for audio responses"
-                  icon={<Music size={18} className="text-zinc-900 dark:text-primary" />}
+                  icon={<Music size={18} className="text-foreground dark:text-primary" />}
                   control={
                     <div className="flex items-center gap-2 w-full sm:w-auto">
                       <SettingsDropdown
@@ -225,7 +225,7 @@ export const VoiceSettingsSection: React.FC<VoiceSettingsSectionProps> = ({ togg
                   id="playback-speed"
                   title="Playback Speed"
                   tooltip="Adjust how fast Ally speaks. Default is 1x (normal speed)"
-                  icon={<Gauge size={18} className="text-zinc-900 dark:text-primary" />}
+                  icon={<Gauge size={18} className="text-foreground dark:text-primary" />}
                   control={
                     <SettingsDropdown
                       value={selectedPlaybackSpeed.toString()}

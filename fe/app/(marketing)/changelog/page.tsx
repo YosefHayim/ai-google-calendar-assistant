@@ -561,16 +561,16 @@ export function ChangelogPage() {
               <Sparkles className="w-4 h-4" />
               What&apos;s New
             </div>
-            <h1 className="text-4xl md:text-5xl font-medium tracking-tight text-zinc-900 dark:text-zinc-100 mb-4">
+            <h1 className="text-4xl md:text-5xl font-medium tracking-tight text-foreground dark:text-primary-foreground mb-4">
               Changelog
             </h1>
-            <p className="text-lg text-zinc-500 dark:text-zinc-400 max-w-2xl mx-auto">
+            <p className="text-lg text-muted-foreground dark:text-muted-foreground max-w-2xl mx-auto">
               Stay up to date with the latest features, improvements, and fixes we&apos;ve shipped for Ask Ally.
             </p>
           </div>
 
           <div className="relative">
-            <div className="absolute left-0 md:left-1/2 top-0 bottom-0 w-px bg-zinc-200 dark:bg-zinc-800 md:-translate-x-1/2" />
+            <div className="absolute left-0 md:left-1/2 top-0 bottom-0 w-px bg-accent dark:bg-secondary md:-translate-x-1/2" />
 
             <div className="space-y-12">
               {CHANGELOG_DATA.map((entry) => (
@@ -579,11 +579,11 @@ export function ChangelogPage() {
                     <div className="md:w-1/2 md:text-right md:pr-12">
                       <div className="sticky top-24">
                         <div className="inline-flex items-center gap-3 mb-2">
-                          <span className="text-2xl font-semibold text-zinc-900 dark:text-zinc-100">
+                          <span className="text-2xl font-semibold text-foreground dark:text-primary-foreground">
                             v{entry.version}
                           </span>
                         </div>
-                        <p className="text-sm text-zinc-500 dark:text-zinc-400">{entry.date}</p>
+                        <p className="text-sm text-muted-foreground dark:text-muted-foreground">{entry.date}</p>
                       </div>
                     </div>
 
@@ -593,7 +593,7 @@ export function ChangelogPage() {
                       {entry.changes.map((change, changeIndex) => (
                         <div
                           key={changeIndex}
-                          className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 p-5 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors"
+                          className="bg-background dark:bg-secondary rounded-xl border border dark:border p-5 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors"
                         >
                           <div className="flex items-start gap-4">
                             {change.icon && (
@@ -606,9 +606,9 @@ export function ChangelogPage() {
                                 <Badge variant={BADGE_STYLES[change.type].variant}>
                                   {BADGE_STYLES[change.type].label}
                                 </Badge>
-                                <h3 className="font-medium text-zinc-900 dark:text-zinc-100">{change.title}</h3>
+                                <h3 className="font-medium text-foreground dark:text-primary-foreground">{change.title}</h3>
                               </div>
-                              <p className="text-sm text-zinc-500 dark:text-zinc-400">{change.description}</p>
+                              <p className="text-sm text-muted-foreground dark:text-muted-foreground">{change.description}</p>
                             </div>
                           </div>
                         </div>
@@ -621,7 +621,7 @@ export function ChangelogPage() {
           </div>
 
           <div className="mt-16 text-center">
-            <p className="text-zinc-500 dark:text-zinc-400">
+            <p className="text-muted-foreground dark:text-muted-foreground">
               Want to see what we&apos;re working on next?{' '}
               <a href="mailto:hello@askally.io" className="text-primary hover:underline">
                 Get in touch

@@ -76,8 +76,8 @@ export default function ApplyPage({ params }: PageProps) {
       <MarketingLayout>
         <section className="relative py-24 md:py-32 px-4 sm:px-6">
           <div className="max-w-2xl mx-auto text-center">
-            <h1 className="text-3xl font-medium text-zinc-900 dark:text-zinc-100 mb-4">Position Not Found</h1>
-            <p className="text-zinc-500 dark:text-zinc-400 mb-8">
+            <h1 className="text-3xl font-medium text-foreground dark:text-primary-foreground mb-4">Position Not Found</h1>
+            <p className="text-muted-foreground dark:text-muted-foreground mb-8">
               The position you are looking for does not exist or is no longer available.
             </p>
             <Link href="/careers">
@@ -108,10 +108,10 @@ export default function ApplyPage({ params }: PageProps) {
             <div className="w-20 h-20 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto mb-6">
               <CheckCircle2 className="w-10 h-10 text-emerald-500" />
             </div>
-            <h1 className="text-3xl md:text-4xl font-medium text-zinc-900 dark:text-zinc-100 mb-4">
+            <h1 className="text-3xl md:text-4xl font-medium text-foreground dark:text-primary-foreground mb-4">
               Application Received!
             </h1>
-            <p className="text-lg text-zinc-500 dark:text-zinc-400 mb-8">
+            <p className="text-lg text-muted-foreground dark:text-muted-foreground mb-8">
               Thank you for your interest in the{' '}
               <span className="font-medium text-zinc-700 dark:text-zinc-300">{position.title}</span> position. We will
               review your application and get back to you soon.
@@ -143,7 +143,7 @@ export default function ApplyPage({ params }: PageProps) {
           >
             <Link
               href="/careers"
-              className="inline-flex items-center text-sm text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+              className="inline-flex items-center text-sm text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-primary-foreground transition-colors"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to all positions
@@ -168,7 +168,7 @@ export default function ApplyPage({ params }: PageProps) {
                   <CardDescription className="text-base mt-2">{position.description}</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex flex-wrap items-center gap-4 text-sm text-zinc-500 dark:text-zinc-400">
+                  <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground dark:text-muted-foreground">
                     <div className="flex items-center gap-1.5">
                       <Briefcase className="w-4 h-4" />
                       <span>{position.type}</span>
@@ -195,13 +195,13 @@ export default function ApplyPage({ params }: PageProps) {
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="fullName" className="text-zinc-700 dark:text-zinc-300">
-                          Full Name <span className="text-red-500">*</span>
+                          Full Name <span className="text-destructive">*</span>
                         </Label>
                         <Input id="fullName" name="fullName" placeholder="John Doe" required className="h-11" />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="email" className="text-zinc-700 dark:text-zinc-300">
-                          Email <span className="text-red-500">*</span>
+                          Email <span className="text-destructive">*</span>
                         </Label>
                         <Input
                           id="email"
@@ -251,14 +251,14 @@ export default function ApplyPage({ params }: PageProps) {
                     <div className="space-y-2">
                       <Label className="text-zinc-700 dark:text-zinc-300">Resume</Label>
                       <div className="relative">
-                        <div className="flex items-center justify-center w-full h-32 border-2 border-dashed border-zinc-200 dark:border-zinc-700 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors cursor-pointer">
+                        <div className="flex items-center justify-center w-full h-32 border-2 border-dashed border dark:border-zinc-700 rounded-xl bg-muted dark:bg-secondary/50 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors cursor-pointer">
                           <div className="text-center">
-                            <Upload className="w-8 h-8 text-zinc-400 mx-auto mb-2" />
-                            <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                            <Upload className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+                            <p className="text-sm text-muted-foreground dark:text-muted-foreground">
                               <span className="font-medium text-zinc-700 dark:text-zinc-300">Click to upload</span> or
                               drag and drop
                             </p>
-                            <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-1">
+                            <p className="text-xs text-muted-foreground dark:text-muted-foreground mt-1">
                               PDF, DOC, or DOCX (max 10MB)
                             </p>
                           </div>
@@ -287,7 +287,7 @@ export default function ApplyPage({ params }: PageProps) {
                       <Button
                         type="submit"
                         size="lg"
-                        className="w-full sm:w-auto h-12 px-8 bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-zinc-200 dark:text-zinc-900"
+                        className="w-full sm:w-auto h-12 px-8 bg-secondary hover:bg-secondary dark:bg-secondary dark:hover:bg-accent dark:text-foreground"
                       >
                         <Send className="w-4 h-4 mr-2" />
                         Submit Application

@@ -93,7 +93,7 @@ export function DefaultRemindersSection() {
       <TabHeader
         title="Default Reminders"
         tooltip="Configure default reminders that Ally will apply when creating new events"
-        icon={<Bell className="w-5 h-5 text-zinc-900 dark:text-primary" />}
+        icon={<Bell className="w-5 h-5 text-foreground dark:text-primary" />}
       />
       <CardContent>
         {isLoadingReminders ? (
@@ -105,7 +105,7 @@ export function DefaultRemindersSection() {
                 id="reminder-enabled"
                 title="Apply Default Reminders"
                 tooltip="When enabled, Ally will automatically add your preferred reminders to new events"
-                icon={<BellRing size={18} className="text-zinc-900 dark:text-primary" />}
+                icon={<BellRing size={18} className="text-foreground dark:text-primary" />}
                 control={
                   <CinematicGlowToggle
                     id={reminderToggleId}
@@ -136,13 +136,13 @@ export function DefaultRemindersSection() {
               <div className="space-y-2 pt-2">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Custom Reminders</span>
-                  <span className="text-xs text-zinc-500">
+                  <span className="text-xs text-muted-foreground">
                     {reminderSettings.defaultReminders.length}/{MAX_REMINDERS}
                   </span>
                 </div>
 
                 {reminderSettings.defaultReminders.length === 0 ? (
-                  <p className="text-sm text-zinc-500 dark:text-zinc-400 py-2">
+                  <p className="text-sm text-muted-foreground dark:text-muted-foreground py-2">
                     No custom reminders configured. Add one below.
                   </p>
                 ) : (
@@ -150,7 +150,7 @@ export function DefaultRemindersSection() {
                     {reminderSettings.defaultReminders.map((reminder, index) => (
                       <div
                         key={index}
-                        className="flex flex-wrap items-center gap-2 p-3 rounded-lg bg-zinc-50 dark:bg-zinc-800/50 sm:flex-nowrap"
+                        className="flex flex-wrap items-center gap-2 p-3 rounded-lg bg-muted dark:bg-secondary/50 sm:flex-nowrap"
                       >
                         <SettingsDropdown
                           id={`reminder-method-${index}`}
@@ -170,7 +170,7 @@ export function DefaultRemindersSection() {
                           variant="ghost"
                           size="icon"
                           onClick={() => handleRemoveReminder(index)}
-                          className="h-9 w-9 text-zinc-500 hover:text-red-500"
+                          className="h-9 w-9 text-muted-foreground hover:text-destructive"
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>

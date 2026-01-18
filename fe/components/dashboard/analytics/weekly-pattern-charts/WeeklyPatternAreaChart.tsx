@@ -66,10 +66,10 @@ export const WeeklyPatternAreaChart: React.FC<WeeklyPatternAreaChartProps> = ({ 
                 if (active && payload && payload.length > 0) {
                   const point = payload[0].payload as WeeklyPatternDataPoint
                   return (
-                    <div className="bg-zinc-900 dark:bg-zinc-800 text-white px-3 py-2 rounded-lg shadow-lg">
+                    <div className="bg-secondary dark:bg-secondary text-white px-3 py-2 rounded-lg shadow-lg">
                       <p className="font-medium">{point.day}</p>
                       <p className="text-sm">{point.hours}h scheduled</p>
-                      <p className="text-xs text-zinc-400">{point.eventCount} events</p>
+                      <p className="text-xs text-muted-foreground">{point.eventCount} events</p>
                       {point.events.length > 0 && <p className="text-xs text-indigo-400 mt-1">Click to view events</p>}
                     </div>
                   )

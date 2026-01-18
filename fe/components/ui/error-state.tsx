@@ -32,11 +32,11 @@ export function ErrorState({
         className,
       )}
     >
-      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/20">
-        {icon || <AlertCircle className="h-6 w-6 text-red-600 dark:text-red-400" />}
+      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10 dark:bg-red-900/20">
+        {icon || <AlertCircle className="h-6 w-6 text-destructive dark:text-red-400" />}
       </div>
-      {title && <h3 className="font-semibold text-zinc-900 dark:text-zinc-100">{title}</h3>}
-      <p className="text-sm text-zinc-500 dark:text-zinc-400 max-w-sm">{message}</p>
+      {title && <h3 className="font-semibold text-foreground dark:text-primary-foreground">{title}</h3>}
+      <p className="text-sm text-muted-foreground dark:text-muted-foreground max-w-sm">{message}</p>
       {onRetry && (
         <Button variant="outline" size="sm" onClick={onRetry} className="mt-2 gap-2">
           <RefreshCw className="h-4 w-4" />

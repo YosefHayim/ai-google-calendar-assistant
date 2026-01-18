@@ -40,18 +40,18 @@ describe('cn utility function', () => {
     })
 
     it('should resolve text color conflicts', () => {
-      const result = cn('text-red-500', 'text-blue-500')
-      expect(result).toBe('text-blue-500')
+      const result = cn('text-destructive', 'text-primary')
+      expect(result).toBe('text-primary')
     })
 
     it('should resolve background color conflicts', () => {
-      const result = cn('bg-white', 'bg-gray-100')
-      expect(result).toBe('bg-gray-100')
+      const result = cn('bg-background', 'bg-secondary')
+      expect(result).toBe('bg-secondary')
     })
 
     it('should keep non-conflicting classes', () => {
-      const result = cn('p-4', 'text-red-500', 'bg-white')
-      expect(result).toBe('p-4 text-red-500 bg-white')
+      const result = cn('p-4', 'text-destructive', 'bg-background')
+      expect(result).toBe('p-4 text-destructive bg-background')
     })
 
     it('should handle complex conflict resolution', () => {

@@ -122,7 +122,7 @@ export function AnalyticsDashboard({ isLoading: initialLoading }: AnalyticsDashb
 
   if (isAnalyticsError) {
     return (
-      <div className="max-w-7xl mx-auto w-full p-6 bg-zinc-50 dark:bg-zinc-950 flex flex-col items-center justify-center min-h-[50vh]">
+      <div className="max-w-7xl mx-auto w-full p-6 bg-muted dark:bg-secondary flex flex-col items-center justify-center min-h-[50vh]">
         <ErrorState
           title="Error Loading Analytics"
           message={analyticsError?.message || 'Failed to fetch analytics data. Please try again.'}
@@ -149,7 +149,7 @@ export function AnalyticsDashboard({ isLoading: initialLoading }: AnalyticsDashb
   } = processedData
 
   return (
-    <div className="max-w-7xl mx-auto w-full p-3 sm:p-4 animate-in fade-in duration-500 overflow-y-auto bg-zinc-50 dark:bg-zinc-950 space-y-4 sm:space-y-6">
+    <div className="max-w-7xl mx-auto w-full p-3 sm:p-4 animate-in fade-in duration-500 overflow-y-auto bg-muted dark:bg-secondary space-y-4 sm:space-y-6">
       <AnalyticsHeader
         date={date}
         setDate={setDate}

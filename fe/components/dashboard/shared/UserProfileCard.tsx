@@ -16,7 +16,7 @@ function UserProfileCard({ isOpen }: UserProfileCardProps) {
     if (!isOpen) {
       return (
         <div className="flex items-center justify-center p-2 rounded-md md:justify-center">
-          <div className="w-9 h-9 rounded-full bg-zinc-200 dark:bg-zinc-700 animate-pulse shrink-0" />
+          <div className="w-9 h-9 rounded-full bg-accent dark:bg-zinc-700 animate-pulse shrink-0" />
         </div>
       )
     }
@@ -33,7 +33,7 @@ function UserProfileCard({ isOpen }: UserProfileCardProps) {
       <div className="flex items-center justify-center p-2 rounded-md md:justify-center">
         <Avatar className="h-9 w-9 shrink-0">
           <AvatarImage src={avatarUrl} alt={fullName} />
-          <AvatarFallback className="bg-zinc-200 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300">
+          <AvatarFallback className="bg-accent dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300">
             {initials}
           </AvatarFallback>
         </Avatar>

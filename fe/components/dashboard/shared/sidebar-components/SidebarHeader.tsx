@@ -18,16 +18,16 @@ interface SidebarHeaderProps {
 export const SidebarHeader: React.FC<SidebarHeaderProps> = ({ isOpen, onClose, onToggle, onNewChat }) => {
   return (
     <div
-      className={`flex items-center px-4 py-3 border-b border-zinc-200 dark:border-zinc-800 ${isOpen ? 'justify-between' : 'justify-center'}`}
+      className={`flex items-center px-4 py-3 border-b border dark:border ${isOpen ? 'justify-between' : 'justify-center'}`}
     >
       {isOpen && (
         <div className="flex items-center gap-2">
           <AnimatedHamburger isOpen={true} onClick={onClose} className="md:hidden" />
           <Link href="/dashboard" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-zinc-900 dark:bg-white rounded-md flex items-center justify-center text-white dark:text-zinc-900">
+            <div className="w-8 h-8 bg-secondary dark:bg-background rounded-md flex items-center justify-center text-white dark:text-foreground">
               <AllyLogo className="w-5 h-5" />
             </div>
-            <span className="font-medium text-lg tracking-normal flex items-center text-zinc-900 dark:text-zinc-100">
+            <span className="font-medium text-lg tracking-normal flex items-center text-foreground dark:text-primary-foreground">
               Ally <BetaBadge />
             </span>
           </Link>
@@ -42,7 +42,7 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = ({ isOpen, onClose, o
         >
           <Plus className="w-5 h-5" />
         </Button>
-        <Button variant="ghost" size="icon" onClick={onToggle} className="text-zinc-500 hidden md:flex">
+        <Button variant="ghost" size="icon" onClick={onToggle} className="text-muted-foreground hidden md:flex">
           {isOpen ? <ChevronLeft className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
         </Button>
       </div>

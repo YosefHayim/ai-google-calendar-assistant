@@ -45,7 +45,7 @@ const LoginPage: React.FC = () => {
           href="/"
           className="absolute top-8 left-8 flex items-center gap-2 hover:opacity-80 transition-opacity z-50"
         >
-          <div className="w-9 h-9 bg-zinc-900 dark:bg-white rounded-md flex items-center justify-center shadow-lg text-white dark:text-zinc-900">
+          <div className="w-9 h-9 bg-secondary dark:bg-background rounded-md flex items-center justify-center shadow-lg text-white dark:text-foreground">
             <AllyLogo className="w-5 h-5" />
           </div>
           <span className="font-medium text-2xl tracking-normal flex items-center text-white drop-shadow-[0_0_10px_rgba(0,0,0,0.8)]">
@@ -53,14 +53,14 @@ const LoginPage: React.FC = () => {
           </span>
         </Link>
 
-        <div className="w-full max-w-md bg-white/95 dark:bg-zinc-900/95 backdrop-blur-sm rounded-2xl p-8 shadow-2xl">
-          <h1 className="text-4xl md:text-5xl font-medium tracking-normal mb-4 text-zinc-900 dark:text-zinc-100">
+        <div className="w-full max-w-md bg-background/95 dark:bg-secondary/95 backdrop-blur-sm rounded-2xl p-8 shadow-2xl">
+          <h1 className="text-4xl md:text-5xl font-medium tracking-normal mb-4 text-foreground dark:text-primary-foreground">
             {t('login.title')}
           </h1>
-          <p className="text-zinc-500 dark:text-zinc-400 mb-8 text-lg font-medium">{t('login.subtitle')}</p>
+          <p className="text-muted-foreground dark:text-muted-foreground mb-8 text-lg font-medium">{t('login.subtitle')}</p>
           {error && (
-            <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-              <p className="text-red-600 dark:text-red-400 text-sm font-medium">
+            <div className="mb-6 p-4 bg-destructive/5 dark:bg-red-900/20 border border-destructive/20 dark:border-red-800 rounded-lg">
+              <p className="text-destructive dark:text-red-400 text-sm font-medium">
                 {error === 'no_token' && t('login.errors.noToken')}
                 {error === 'callback_failed' && t('login.errors.callbackFailed')}
                 {error === 'session_expired' &&
@@ -81,11 +81,11 @@ const LoginPage: React.FC = () => {
               loadingText={t('login.connecting')}
               isLoading={isLoading}
               Icon={<FcGoogle size={24} />}
-              className="w-full h-14 text-lg shadow-lg border-zinc-200 dark:border-zinc-700"
+              className="w-full h-14 text-lg shadow-lg border dark:border-zinc-700"
               onClick={handleGoogleLogin}
             />
           </div>
-          <p className="mt-8 text-center text-zinc-500 dark:text-zinc-400 text-sm">
+          <p className="mt-8 text-center text-muted-foreground dark:text-muted-foreground text-sm">
             {t('login.noAccount')}{' '}
             <Link href="/register" className="text-primary font-medium hover:underline p-0">
               {t('login.signUp')}

@@ -25,11 +25,11 @@ const meta: Meta<typeof AppSidebar> = {
   decorators: [
     (Story) => (
       <SidebarProvider defaultOpen={true}>
-        <div className="flex h-screen bg-zinc-50 dark:bg-zinc-950">
+        <div className="flex h-screen bg-muted dark:bg-secondary">
           <Story />
           <main className="flex-1 p-8">
-            <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">Dashboard Content</h1>
-            <p className="text-zinc-600 dark:text-zinc-400 mt-2">
+            <h1 className="text-2xl font-bold text-foreground dark:text-primary-foreground">Dashboard Content</h1>
+            <p className="text-zinc-600 dark:text-muted-foreground mt-2">
               This represents your main dashboard area. The sidebar provides navigation and conversation history.
             </p>
           </main>
@@ -79,11 +79,11 @@ export const Collapsed: Story = {
   decorators: [
     (Story) => (
       <SidebarProvider defaultOpen={false}>
-        <div className="flex h-screen bg-zinc-50 dark:bg-zinc-950">
+        <div className="flex h-screen bg-muted dark:bg-secondary">
           <Story />
           <main className="flex-1 p-8">
-            <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">Dashboard Content</h1>
-            <p className="text-zinc-600 dark:text-zinc-400 mt-2">
+            <h1 className="text-2xl font-bold text-foreground dark:text-primary-foreground">Dashboard Content</h1>
+            <p className="text-zinc-600 dark:text-muted-foreground mt-2">
               The sidebar is collapsed, showing only icons. Hover over items to see tooltips.
             </p>
           </main>
@@ -166,10 +166,10 @@ export const MobileView: Story = {
   decorators: [
     (Story) => (
       <SidebarProvider defaultOpen={true}>
-        <div className="flex h-screen bg-zinc-50 dark:bg-zinc-950">
+        <div className="flex h-screen bg-muted dark:bg-secondary">
           <Story />
           <main className="flex-1 p-4">
-            <h1 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">Mobile Dashboard</h1>
+            <h1 className="text-xl font-bold text-foreground dark:text-primary-foreground">Mobile Dashboard</h1>
           </main>
         </div>
       </SidebarProvider>
@@ -195,11 +195,11 @@ export const DarkMode: Story = {
   decorators: [
     (Story) => (
       <SidebarProvider defaultOpen={true}>
-        <div className="dark flex h-screen bg-zinc-950">
+        <div className="dark flex h-screen bg-secondary">
           <Story />
           <main className="flex-1 p-8">
-            <h1 className="text-2xl font-bold text-zinc-100">Dashboard Content</h1>
-            <p className="text-zinc-400 mt-2">The sidebar in dark mode with proper contrast and styling.</p>
+            <h1 className="text-2xl font-bold text-primary-foreground">Dashboard Content</h1>
+            <p className="text-muted-foreground mt-2">The sidebar in dark mode with proper contrast and styling.</p>
           </main>
         </div>
       </SidebarProvider>

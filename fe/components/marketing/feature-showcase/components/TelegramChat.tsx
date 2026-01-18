@@ -14,7 +14,7 @@ interface TelegramChatProps {
 
 export const TelegramChat = ({ messages }: TelegramChatProps) => (
   <div className="h-full flex flex-col bg-[#0E1621]">
-    <div className="bg-[#17212B] px-4 py-3 flex items-center gap-3 border-b border-zinc-800">
+    <div className="bg-[#17212B] px-4 py-3 flex items-center gap-3 border-b border">
       <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center">
         <AllyLogo className="w-6 h-6 text-white" />
       </div>
@@ -49,7 +49,7 @@ export const TelegramChat = ({ messages }: TelegramChatProps) => (
             <div className="bg-[#2B5278] text-white px-3 py-2 rounded-xl rounded-tr-sm max-w-[85%] shadow-sm">
               {msg.isVoice ? (
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-full bg-background/20 flex items-center justify-center">
                     <Mic className="w-4 h-4" />
                   </div>
                   <VoiceWaveform />
@@ -81,7 +81,7 @@ export const TelegramChat = ({ messages }: TelegramChatProps) => (
       ))}
     </div>
 
-    <div className="bg-[#17212B] px-3 py-2 flex items-center gap-2 border-t border-zinc-800">
+    <div className="bg-[#17212B] px-3 py-2 flex items-center gap-2 border-t border">
       <button className="p-2 text-[#6C7883] hover:text-white transition-colors">
         <Plus className="w-6 h-6" />
       </button>

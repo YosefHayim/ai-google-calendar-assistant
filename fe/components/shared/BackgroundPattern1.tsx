@@ -9,7 +9,7 @@ interface BackgroundPattern1Props {
 
 const BackgroundPattern1 = ({ className, children }: BackgroundPattern1Props) => {
   return (
-    <section className={cn('relative min-h-screen w-full overflow-hidden bg-white dark:bg-[#030303]', className)}>
+    <section className={cn('relative min-h-screen w-full overflow-hidden bg-background dark:bg-[#030303]', className)}>
       <PatternPlaceholder />
       {/* Top Primary Radial Background Pattern */}
       <div

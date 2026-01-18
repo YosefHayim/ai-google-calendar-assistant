@@ -137,7 +137,7 @@ export const AllStates: Story = {
           <div style={{ width: '150px', height: '150px', background: '#09090b', borderRadius: '8px' }}>
             <AllyCharacter animationState={state} autoRotate scale={0.8} />
           </div>
-          <span className="mt-2 text-sm text-zinc-400 capitalize">{state}</span>
+          <span className="mt-2 text-sm text-muted-foreground capitalize">{state}</span>
         </div>
       ))}
     </div>

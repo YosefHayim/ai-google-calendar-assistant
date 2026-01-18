@@ -19,7 +19,7 @@ interface BroadcastDialogProps {
 const typeConfig: Record<BroadcastType, { icon: React.ReactNode; color: string; label: string }> = {
   info: {
     icon: <Info className="w-4 h-4" />,
-    color: 'text-blue-500',
+    color: 'text-primary',
     label: 'Info',
   },
   warning: {
@@ -29,7 +29,7 @@ const typeConfig: Record<BroadcastType, { icon: React.ReactNode; color: string; 
   },
   critical: {
     icon: <AlertCircle className="w-4 h-4" />,
-    color: 'text-red-500',
+    color: 'text-destructive',
     label: 'Critical',
   },
 }
@@ -93,7 +93,7 @@ export function BroadcastDialog({ open, onClose }: BroadcastDialogProps) {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="info">
-                    <span className="flex items-center gap-2 text-blue-500">
+                    <span className="flex items-center gap-2 text-primary">
                       <Info className="w-4 h-4" /> Info
                     </span>
                   </SelectItem>
@@ -103,7 +103,7 @@ export function BroadcastDialog({ open, onClose }: BroadcastDialogProps) {
                     </span>
                   </SelectItem>
                   <SelectItem value="critical">
-                    <span className="flex items-center gap-2 text-red-500">
+                    <span className="flex items-center gap-2 text-destructive">
                       <AlertCircle className="w-4 h-4" /> Critical
                     </span>
                   </SelectItem>
@@ -147,22 +147,22 @@ export function BroadcastDialog({ open, onClose }: BroadcastDialogProps) {
               rows={3}
               maxLength={500}
             />
-            <p className="text-xs text-zinc-400 text-right">{message.length}/500</p>
+            <p className="text-xs text-muted-foreground text-right">{message.length}/500</p>
           </div>
 
           <div
             className={`p-4 rounded-lg border ${
               type === 'info'
-                ? 'bg-blue-50 border-blue-200 dark:bg-blue-950/30 dark:border-blue-800'
+                ? 'bg-primary/5 border-primary/20 dark:bg-blue-950/30 dark:border-blue-800'
                 : type === 'warning'
                   ? 'bg-amber-50 border-amber-200 dark:bg-amber-950/30 dark:border-amber-800'
-                  : 'bg-red-50 border-red-200 dark:bg-red-950/30 dark:border-red-800'
+                  : 'bg-destructive/5 border-destructive/20 dark:bg-red-950/30 dark:border-red-800'
             }`}
           >
             <div className="flex items-start gap-3">
               <span className={typeConfig[type].color}>{typeConfig[type].icon}</span>
               <div>
-                <p className="font-medium text-sm text-zinc-900 dark:text-white">{title || 'Preview Title'}</p>
+                <p className="font-medium text-sm text-foreground dark:text-white">{title || 'Preview Title'}</p>
                 <p className="text-sm text-zinc-600 dark:text-zinc-300 mt-1">
                   {message || 'Preview message will appear here'}
                 </p>
