@@ -1,7 +1,8 @@
 import type { calendar_v3 } from "googleapis";
 import OpenAI from "openai";
 import isEmail from "validator/lib/isEmail";
-import { env, MODELS, SUPABASE } from "@/config";
+import { env, SUPABASE } from "@/config";
+import { MODELS } from "@/config/constants/ai";
 import {
   type ConflictCheckResult,
   categorizeError,
