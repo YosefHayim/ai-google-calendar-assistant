@@ -404,15 +404,31 @@ const removeConversation = reqResAsyncHandler(
 const archiveConversation = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     const conversationId = req.params.id;
+    const userId = req.user!.id;
+
+    logger.info(`Archive conversation request: conversationId=${conversationId}, userId=${userId}`);
+
+    // Validate UUID format
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(conversationId)) {
+      logger.error(`Invalid conversation ID format: ${conversationId}`);
+      return sendR(
+        res,
+        STATUS_RESPONSE.BAD_REQUEST,
+        "Invalid conversation ID format"
+      );
+    }
 
     try {
       // First check if conversation exists and belongs to user
+      logger.info(`Checking if conversation exists: ${conversationId}`);
       const existingConversation = await webConversation.getConversationById(
         conversationId,
-        req.user!.id
+        userId
       );
 
       if (!existingConversation) {
+        logger.warn(`Conversation not found: ${conversationId} for user ${userId}`);
         return sendR(
           res,
           STATUS_RESPONSE.NOT_FOUND,
@@ -420,12 +436,14 @@ const archiveConversation = reqResAsyncHandler(
         );
       }
 
+      logger.info(`Conversation found, attempting to archive: ${conversationId}`);
       const archived = await webConversation.archiveConversation(
         conversationId,
-        req.user!.id
+        userId
       );
 
       if (!archived) {
+        logger.warn(`Failed to archive conversation (might already be archived): ${conversationId}`);
         return sendR(
           res,
           STATUS_RESPONSE.BAD_REQUEST,
@@ -433,7 +451,8 @@ const archiveConversation = reqResAsyncHandler(
         );
       }
 
-      await invalidateConversationsCache(req.user!.id);
+      logger.info(`Conversation archived successfully: ${conversationId}, invalidating cache`);
+      await invalidateConversationsCache(userId);
 
       return sendR(
         res,
@@ -441,8 +460,8 @@ const archiveConversation = reqResAsyncHandler(
         "Conversation archived successfully"
       );
     } catch (error) {
-      console.error("Error archiving conversation:", error);
-      sendR(
+      logger.error(`Error archiving conversation ${conversationId}:`, error);
+      return sendR(
         res,
         STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
         "Error archiving conversation"

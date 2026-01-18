@@ -1164,14 +1164,35 @@ export class ConversationService {
     conversationId: string,
     userId: string
   ): Promise<boolean> {
-    const { error } = await SUPABASE.from("conversations")
+    logger.info(`ConversationService.archiveConversation: ${conversationId} for user ${userId}`);
+
+    // First check if conversation exists and is not already archived
+    const { data: existing, error: checkError } = await SUPABASE
+      .from("conversations")
+      .select("id, archived_at")
+      .eq("id", conversationId)
+      .eq("user_id", userId)
+      .single();
+
+    if (checkError || !existing) {
+      logger.error(`Conversation not found for archiving: ${conversationId}, error: ${checkError?.message}`);
+      return false;
+    }
+
+    if (existing.archived_at) {
+      logger.info(`Conversation already archived: ${conversationId}`);
+      return false;
+    }
+
+    // Now archive the conversation
+    const { data, error } = await SUPABASE.from("conversations")
       .update({
         archived_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       })
       .eq("id", conversationId)
       .eq("user_id", userId)
-      .is("archived_at", null); // Only archive if not already archived
+      .select();
 
     if (error) {
       logger.error(
@@ -1180,7 +1201,8 @@ export class ConversationService {
       return false;
     }
 
-    return true;
+    logger.info(`Archive result for ${conversationId}: ${data?.length || 0} rows affected`);
+    return (data?.length || 0) > 0;
   }
 
   /**
