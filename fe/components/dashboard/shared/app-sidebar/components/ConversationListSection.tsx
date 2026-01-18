@@ -2,7 +2,7 @@
 
 import * as z from 'zod'
 
-import { Check, Clock, Copy, Link as LinkIcon, MessageSquare, Pencil, Pin, Search, Trash2, X } from 'lucide-react'
+import { Check, Clock, Copy, Link as LinkIcon, MessageSquare, Pencil, Pin, Search, Trash2, X, MoreHorizontal } from 'lucide-react'
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import React, { useEffect, useRef, useState } from 'react'
@@ -11,6 +11,13 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu'
 import { StreamingTitle } from '../../sidebar-components/StreamingTitle'
 import { createShareLink, toggleConversationPinned, type ConversationListItem } from '@/services/chatService'
 import { formatRelativeDate } from '@/lib/dateUtils'
@@ -216,76 +223,61 @@ export function ConversationListSection() {
                         <span>{formatRelativeDate(conversation.lastUpdated)}</span>
                       </div>
                     </div>
-                    <div className="flex items-center gap-0.5">
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={(e) => handleTogglePin(e, conversation.id)}
-                            disabled={pinningId === conversation.id}
-                            className={cn(
-                              'h-6 w-6 hover:bg-accent text-muted-foreground hover:text-primary',
-                              conversation.pinned
-                                ? 'opacity-100 text-primary'
-                                : 'opacity-0 group-hover:opacity-100'
-                            )}
-                          >
-                            <Pin className={cn('w-3 h-3', conversation.pinned && 'fill-current')} />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent side="top">{conversation.pinned ? 'Unpin' : 'Pin'}</TooltipContent>
-                      </Tooltip>
-
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={(e) => handleShare(e, conversation.id)}
-                            disabled={sharingId === conversation.id}
-                            className="h-6 w-6 opacity-0 group-hover:opacity-100 hover:bg-accent text-muted-foreground hover:text-primary"
-                          >
-                            {copiedId === conversation.id ? (
-                              <Check className="w-3 h-3 text-green-600" />
-                            ) : sharingId === conversation.id ? (
-                              <Copy className="w-3 h-3 animate-pulse" />
-                            ) : (
-                              <LinkIcon className="w-3 h-3" />
-                            )}
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent side="top">Share</TooltipContent>
-                      </Tooltip>
-
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={(e) => handleChangeConversationTitle(e, conversation.id)}
-                            className="h-6 w-6 opacity-0 group-hover:opacity-100 hover:bg-accent text-muted-foreground hover:text-foreground"
-                          >
-                            <Pencil className="w-3 h-3" />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent side="top">Rename</TooltipContent>
-                      </Tooltip>
-
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={(e) => initiateDelete(e, conversation.id)}
-                            className="h-6 w-6 opacity-0 group-hover:opacity-100 hover:bg-destructive/10 text-muted-foreground hover:text-destructive"
-                          >
-                            <Trash2 className="w-3 h-3" />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent side="top">Delete</TooltipContent>
-                      </Tooltip>
-                    </div>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className={cn(
+                            'h-6 w-6 text-muted-foreground hover:text-foreground',
+                            conversation.pinned
+                              ? 'opacity-100'
+                              : 'opacity-0 group-hover:opacity-100'
+                          )}
+                        >
+                          <MoreHorizontal className="w-3 h-3" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-48">
+                        <DropdownMenuItem
+                          onClick={(e) => handleTogglePin(e, conversation.id)}
+                          disabled={pinningId === conversation.id}
+                          className="cursor-pointer"
+                        >
+                          <Pin className={cn('w-4 h-4 mr-2', conversation.pinned && 'fill-current')} />
+                          {conversation.pinned ? 'Unpin' : 'Pin'}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={(e) => handleShare(e, conversation.id)}
+                          disabled={sharingId === conversation.id}
+                          className="cursor-pointer"
+                        >
+                          {copiedId === conversation.id ? (
+                            <Check className="w-4 h-4 mr-2 text-green-600" />
+                          ) : sharingId === conversation.id ? (
+                            <Copy className="w-4 h-4 mr-2 animate-pulse" />
+                          ) : (
+                            <LinkIcon className="w-4 h-4 mr-2" />
+                          )}
+                          {copiedId === conversation.id ? 'Link copied!' : 'Share'}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={(e) => handleChangeConversationTitle(e, conversation.id)}
+                          className="cursor-pointer"
+                        >
+                          <Pencil className="w-4 h-4 mr-2" />
+                          Rename
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          onClick={(e) => initiateDelete(e, conversation.id)}
+                          className="cursor-pointer text-destructive focus:text-destructive"
+                        >
+                          <Trash2 className="w-4 h-4 mr-2" />
+                          Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
                 </div>
               ))}

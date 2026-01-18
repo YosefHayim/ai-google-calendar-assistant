@@ -1,12 +1,13 @@
 'use client'
 
-import React, { createContext, useContext, useState, useCallback, useMemo } from 'react'
+import React, { createContext, useCallback, useContext, useMemo, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
-import { useDebouncedCallback } from 'use-debounce'
-import { useChatContext } from '@/contexts/ChatContext'
-import { toast } from 'sonner'
+
 import type { ConversationListItem } from '@/services/chatService'
+import { toast } from 'sonner'
 import { useArchiveConversation } from '@/hooks/queries/conversations'
+import { useChatContext } from '@/contexts/ChatContext'
+import { useDebouncedCallback } from 'use-debounce'
 
 interface SidebarContextValue {
   pathname: string

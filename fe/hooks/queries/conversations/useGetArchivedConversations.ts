@@ -1,10 +1,10 @@
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
+import type { ConversationListResponse } from '@/services/chatService'
+import type { UseQueryOptions } from '@tanstack/react-query'
 import { getArchivedConversations } from '@/services/chatService'
 import { queryKeys } from '@/lib/query'
-import type { UseQueryOptions } from '@tanstack/react-query'
-import type { ConversationListResponse } from '@/services/chatService'
+import { useQuery } from '@tanstack/react-query'
 
 /**
  * Hook to get all archived conversations for the current user

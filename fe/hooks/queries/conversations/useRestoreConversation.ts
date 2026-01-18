@@ -1,9 +1,10 @@
 'use client'
 
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { restoreConversation } from '@/services/chatService'
-import { queryKeys } from '@/lib/query'
+
 import type { MutationHookOptions } from '../useMutationWrapper'
+import { queryKeys } from '@/lib/query'
+import { restoreConversation } from '@/services/chatService'
 
 /**
  * Hook to restore a conversation from archive by ID

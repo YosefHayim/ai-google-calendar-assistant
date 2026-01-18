@@ -1,6 +1,6 @@
 'use client'
 
-import { ConversationList, DeleteConfirmDialog, ArchiveConfirmDialog, SidebarFooter, SidebarHeader, SidebarNav } from './sidebar-components'
+import { ArchiveConfirmDialog, ConversationList, DeleteConfirmDialog, SidebarFooter, SidebarHeader, SidebarNav } from './sidebar-components'
 import { SidebarProvider, useSidebarContext } from '@/contexts/SidebarContext'
 
 import React from 'react'

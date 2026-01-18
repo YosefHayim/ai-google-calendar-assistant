@@ -1,9 +1,10 @@
 'use client'
 
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+
+import type { MutationHookOptions } from '../useMutationWrapper'
 import { archiveConversation } from '@/services/chatService'
 import { queryKeys } from '@/lib/query'
-import type { MutationHookOptions } from '../useMutationWrapper'
 
 /**
  * Hook to archive a conversation by ID

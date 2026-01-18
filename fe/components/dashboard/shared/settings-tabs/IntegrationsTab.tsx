@@ -48,13 +48,13 @@ const getGoogleCalendarStatusBadge = (
   if (status?.isSynced) {
     if (status.isActive && !status.isExpired) {
       return (
-        <Badge className="bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400">
+        <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
           <CheckCircle2 size={14} className="mr-1" /> Connected
         </Badge>
       )
     }
     return (
-      <Badge className="bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
+      <Badge className="bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400">
         <AlertTriangle size={14} className="mr-1" /> {status.isExpired ? 'Expired' : 'Inactive'}
       </Badge>
     )
@@ -115,7 +115,7 @@ export const IntegrationsTab: React.FC<IntegrationsTabProps> = ({
               id="google-calendar"
               title="Google Calendar"
               tooltip="Connect your Google Calendar to let Ally manage your events and schedule"
-              icon={<SiGooglecalendar size={18} className="text-primary dark:text-blue-400" />}
+              icon={<SiGooglecalendar size={18} className="text-primary" />}
               control={getGoogleCalendarStatusBadge(isGoogleCalendarLoading, googleCalendarStatus)}
             />
 
@@ -166,7 +166,7 @@ export const IntegrationsTab: React.FC<IntegrationsTabProps> = ({
               id="cross-platform-sync"
               title="Cross-Platform Sync"
               tooltip="When enabled, conversations from Telegram and other platforms will appear in your web chat history"
-              icon={<RefreshCcw size={18} className="text-emerald-500 dark:text-emerald-400" />}
+              icon={<RefreshCcw size={18} className="text-primary" />}
               control={
                 <CinematicGlowToggle
                   id={crossPlatformSyncToggleId}
@@ -182,7 +182,7 @@ export const IntegrationsTab: React.FC<IntegrationsTabProps> = ({
               id="telegram"
               title="Telegram Bot"
               tooltip="Chat with Ally on Telegram to manage your calendar on the go"
-              icon={<FaTelegram size={18} className="text-sky-500 dark:text-sky-400" />}
+              icon={<FaTelegram size={18} className="text-muted-foreground" />}
               control={
                 <Button variant="outline" size="sm" asChild>
                   <a
@@ -203,7 +203,7 @@ export const IntegrationsTab: React.FC<IntegrationsTabProps> = ({
               id="whatsapp"
               title="WhatsApp"
               tooltip="WhatsApp integration is coming soon - join the waitlist to get early access"
-              icon={<FaWhatsapp size={18} className="text-green-600 dark:text-green-400" />}
+              icon={<FaWhatsapp size={18} className="text-muted-foreground" />}
               control={
                 <div className="flex items-center gap-2">
                   <Badge variant="secondary">Coming Soon</Badge>

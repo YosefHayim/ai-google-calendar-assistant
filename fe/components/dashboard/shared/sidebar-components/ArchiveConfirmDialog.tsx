@@ -1,7 +1,7 @@
 'use client'
 
-import React from 'react'
 import { ConfirmDialog } from '../ConfirmDialog'
+import React from 'react'
 
 interface ArchiveConfirmDialogProps {
   isOpen: boolean
