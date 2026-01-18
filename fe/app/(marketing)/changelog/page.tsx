@@ -1,27 +1,28 @@
 'use client'
 
-import MarketingLayout from '@/components/marketing/MarketingLayout'
-import { Badge } from '@/components/ui/badge'
-import { JsonLd } from '@/components/shared/JsonLd'
-import { generateBreadcrumbSchema, generateWebPageSchema, SITE_CONFIG } from '@/lib/constants/seo'
 import {
-  Sparkles,
+  Activity,
+  BarChart3,
+  Bell,
   Bug,
-  Zap,
   Calendar,
+  Command,
+  CreditCard,
+  Flag,
+  MessageSquare,
   Mic,
   Shield,
-  Bell,
-  BarChart3,
-  Command,
-  Users,
-  CreditCard,
-  Activity,
-  Flag,
-  Wifi,
   Smartphone,
-  MessageSquare,
+  Sparkles,
+  Users,
+  Wifi,
+  Zap,
 } from 'lucide-react'
+import { SITE_CONFIG, generateBreadcrumbSchema, generateWebPageSchema } from '@/lib/constants/seo'
+
+import { Badge } from '@/components/ui/badge'
+import { JsonLd } from '@/components/shared/JsonLd'
+import MarketingLayout from '@/components/marketing/MarketingLayout'
 
 type ChangeType = 'feature' | 'fix' | 'improvement'
 
@@ -44,50 +45,92 @@ const BADGE_STYLES: Record<ChangeType, { variant: 'default' | 'secondary' | 'out
 
 const CHANGELOG_DATA: ChangelogEntry[] = [
   {
-    version: '2.4.0',
-    date: 'January 17, 2026',
+    version: '2.5.0',
+    date: 'January 18, 2026',
     changes: [
       {
         type: 'feature',
-        title: 'Enhanced System Status Dashboard',
+        title: 'Conversation Archiving & Restoration',
         description:
-          'The footer now shows detailed service health including WebSocket connections, Telegram bot status, and Slack integration. Hover over the status indicator to see real-time uptime and connection counts.',
+          'Complete E2E conversation management system. Archive conversations to hide them from your main chat list while preserving data, then restore them anytime from Settings → Data Controls.',
+        icon: MessageSquare,
+      },
+      {
+        type: 'feature',
+        title: 'Conversation Pinning',
+        description:
+          'Pin important conversations for easy access. Pinned conversations appear at the top of your conversation list with visual indicators.',
+        icon: MessageSquare,
+      },
+      {
+        type: 'feature',
+        title: 'Admin God Mode',
+        description:
+          'User impersonation for debugging, force logout capabilities, and targeted broadcast notifications to user groups. Full admin control panel.',
+        icon: Users,
+      },
+      {
+        type: 'feature',
+        title: 'Command Palette (Cmd+K / Ctrl+K)',
+        description:
+          'Lightning-fast navigation with keyboard shortcuts. Search and jump to any section instantly with this powerful command interface.',
+        icon: Command,
+      },
+      {
+        type: 'feature',
+        title: 'Blog Management System',
+        description:
+          'Full-featured content management with bulk upload, templates, and automatic sitemap generation. Create and manage blog posts seamlessly.',
+        icon: Sparkles,
+      },
+      {
+        type: 'feature',
+        title: 'Session Restoration',
+        description:
+          'Intelligent session management that preserves your context and conversation state across browser sessions for seamless UX.',
         icon: Activity,
       },
       {
         type: 'feature',
-        title: 'Feature Flag Management',
+        title: 'Adaptive Memory System',
         description:
-          'New admin panel for managing feature flags with audit logging. Control feature rollouts, A/B tests, and gradual deployments with full visibility.',
+          'AI-powered user preference learning with the updateUserBrain tool. Dynamic memory adaptation based on your behavior patterns.',
+        icon: Sparkles,
+      },
+      {
+        type: 'feature',
+        title: 'Advanced Feature Flag System',
+        description:
+          'Complete feature management with audit services and webhook integration. Control rollouts, A/B tests, and deployments with full visibility.',
         icon: Flag,
       },
       {
         type: 'feature',
-        title: 'Real-time WebSocket Notifications',
+        title: 'Enhanced WhatsApp Integration',
         description:
-          'Live notifications powered by WebSockets. Get instant alerts for calendar conflicts, subscription changes, and important updates without refreshing.',
-        icon: Wifi,
-      },
-      {
-        type: 'feature',
-        title: 'Smart Notification Dispatcher',
-        description:
-          'Welcome emails for new users and proactive conflict alerts when scheduling overlapping events. Ally keeps you informed automatically.',
-        icon: Bell,
+          'Improved messaging capabilities with GDPR-compliant data deletion, robust callback handling, and enhanced message formatting.',
+        icon: MessageSquare,
       },
       {
         type: 'improvement',
-        title: 'Mobile Dashboard Enhancements',
+        title: 'Mobile Dashboard Overhaul',
         description:
-          'Improved mobile layout with sticky header and tabs for better navigation. Dashboard components now adapt seamlessly to smaller screens.',
+          'Major UX improvements with sticky headers and tabs, better touch interactions, and seamless adaptation to all screen sizes.',
         icon: Smartphone,
       },
       {
-        type: 'fix',
-        title: 'Telegram Stale Message Filter',
+        type: 'feature',
+        title: 'System Health Monitoring',
         description:
-          'Fixed an issue where old messages would flood in after server restarts. Ally now intelligently filters stale messages to prevent notification spam.',
-        icon: MessageSquare,
+          'Real-time system status with WebSocket connections, detailed health check endpoints, and comprehensive service monitoring.',
+        icon: Activity,
+      },
+      {
+        type: 'improvement',
+        title: 'Dropdown Menu Interface',
+        description:
+          'Replaced individual action buttons with clean 3-dots dropdown menus throughout the app for better organization and modern UX.',
+        icon: Sparkles,
       },
     ],
   },

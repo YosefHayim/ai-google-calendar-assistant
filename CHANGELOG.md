@@ -7,6 +7,93 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.142] - 2026-01-18
+
+### Features
+
+- **Conversation Management**: Complete E2E conversation archiving and restoration system
+  - Archive conversations to hide them from main chat list while preserving data
+  - Restore individual conversations or all archived conversations at once
+  - Dedicated "Archived Conversations" dialog accessible from Settings → Data Controls
+  - Archive/unarchive conversations directly from conversation list dropdown menu
+
+- **Conversation Pinning**: Pin important conversations for easy access
+  - Pin/unpin conversations from the conversation dropdown menu
+  - Pinned conversations appear at the top of the conversation list
+  - Visual indicators for pinned status
+
+- **Admin Dashboard Enhancements**: God-mode admin capabilities
+  - **User Impersonation**: View the app as any user for debugging/support
+  - **Broadcast Notifications**: Send targeted notifications with user filters (tier, status, custom)
+  - **Session Management**: Force logout users via Supabase Admin API
+  - **Command Palette**: Quick navigation and admin actions (Cmd+K / Ctrl+K)
+
+- **Blog Management System**: Full-featured blog post creation and management
+  - **Bulk Upload**: Form validation and bulk blog post creation
+  - **Templates**: Enhanced blog templates with rich content support
+  - **Sitemap Integration**: Automatic sitemap generation for SEO
+  - **Web App Manifest**: PWA support for "Ask Ally" web app
+
+- **Session Restoration**: Intelligent session management for improved UX
+  - Automatic session restoration on app reload
+  - Preserves user context and conversation state
+  - Seamless experience across browser sessions
+
+- **Adaptive Memory System**: Smart user preference learning
+  - **updateUserBrain Tool**: AI-powered preference management
+  - Dynamic memory adaptation based on user behavior
+  - Enhanced personalization across all features
+
+- **Feature Flag System**: Advanced feature management
+  - **Audit Services**: Complete audit trail for feature flag changes
+  - **Webhook Integration**: Real-time notifications for feature updates
+  - Centralized feature flag management system
+
+- **WhatsApp Integration**: Enhanced messaging capabilities
+  - **Data Deletion**: GDPR-compliant data deletion with rate limiting
+  - **Callback System**: Robust webhook handling and error recovery
+  - Improved message formatting and link handling
+
+- **Mobile Dashboard**: Significant UX improvements for mobile users
+  - **Sticky Header/Tabs**: Better navigation on mobile devices
+  - **Layout Optimization**: Improved responsive design
+  - **Touch Interactions**: Enhanced mobile gesture support
+
+- **Telegram Enhancements**: Anti-spam and performance improvements
+  - **Stale Message Filter**: Prevents backlog spam after server restarts
+  - **Message Processing**: Improved handling of delayed messages
+  - **Rate Limiting**: Better protection against message floods
+
+- **System Health Monitoring**: Comprehensive health check system
+  - **Status Components**: Real-time system health indicators
+  - **Enhanced Endpoints**: Detailed health check responses
+  - **WebSocket Support**: Real-time notifications and updates
+
+- **UI/UX Enhancements**:
+  - **Dropdown Menus**: Replaced individual action buttons with clean 3-dots dropdown menus
+  - **RadioGroup Components**: New form components for better option selection
+  - **Switch Components**: Enhanced toggle functionality with @radix-ui/react-switch
+  - **Notification Settings**: Granular control over user notifications
+
+### Bug Fixes
+
+- **Authentication**: Fixed re-registration loop after account deletion
+- **TypeScript**: Resolved Express Request type extensions and Jest compatibility
+- **CI/CD**: Fixed bun lockfile issues, cache busting, and test configuration
+- **Mobile Layout**: Removed ineffective sticky positioning and improved responsive design
+- **Environment**: Updated production backend URLs and configuration validation
+- **Dependencies**: Switched from pnpm to npm in Dockerfile for better compatibility
+
+### Technical
+
+- **92 commits** across 40+ features since previous version
+- **New API Endpoints**: `/api/chat/conversations/:id/archive`, `/api/chat/conversations/:id/restore`, `/api/chat/conversations/archived`, `/api/admin/users/:id/impersonate`, `/api/admin/broadcast`
+- **New Components**: `ArchivedConversationsDialog`, `ImpersonationBanner`, `SystemStatus`, `CommandPalette`, `RadioGroup`, `BlogManagement`
+- **Database Changes**: Added `archived_at` field support, blog posts table, feature flags audit
+- **Performance**: Redis compression, WebSocket optimization, stale message filtering
+
+---
+
 ## [1.0.141] - 2026-01-16
 
 ### Features
@@ -215,26 +302,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Category | Count |
 |----------|-------|
-| Total Commits | 139 |
-| Features | 70+ |
-| Bug Fixes | 16 |
-| Refactoring | 17 |
-| Documentation | 6 |
-| Chores | 9 |
+| Total Commits | 231 |
+| Features | 110+ |
+| Bug Fixes | 25+ |
+| Refactoring | 25+ |
+| Documentation | 8 |
+| Chores | 10+ |
 
 ### Key Highlights
 
-1. **Google RISC Integration** - Added Cross-Account Protection for enhanced security
-2. **CloudFront CDN** - Improved performance with CDN and multi-stage Docker builds
-3. **WhatsApp Integration** - Full WhatsApp Cloud API support for messaging
-4. **LemonSqueezy Migration** - Moved from Stripe to LemonSqueezy for subscriptions
-5. **Image Upload Support** - AI vision capabilities for both Telegram and web
-6. **Smart Rescheduling** - Intelligent event rescheduling across platforms
-7. **Voice Features** - TTS, voice preferences, and transcription capabilities
-8. **3D Character** - Ally 3D character with animations
-9. **Admin Dashboard** - Full admin panel with user management
-10. **Analytics** - Enhanced dashboards with weekly/monthly pattern charts
+1. **Conversation Archiving** - Complete E2E conversation management system
+2. **Admin God Mode** - User impersonation, broadcast notifications, command palette
+3. **Blog Management** - Full-featured content management system
+4. **Adaptive Memory** - AI-powered user preference learning
+5. **Mobile Dashboard** - Significant UX improvements for mobile users
+6. **Feature Flag System** - Advanced feature management with audit trails
+7. **Session Restoration** - Intelligent session management
+8. **WhatsApp Integration** - Enhanced messaging with GDPR compliance
+9. **Google RISC Integration** - Added Cross-Account Protection for enhanced security
+10. **CloudFront CDN** - Improved performance with CDN and multi-stage Docker builds
+11. **LemonSqueezy Migration** - Moved from Stripe to LemonSqueezy for subscriptions
+12. **3D Character** - Ally 3D character with animations
+13. **Voice Features** - TTS, voice preferences, and transcription capabilities
 
 ---
 
-*Generated on 2026-01-12*
+*Generated on 2026-01-18*
