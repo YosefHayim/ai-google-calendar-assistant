@@ -2,7 +2,7 @@
 
 import * as z from 'zod'
 
-import { Check, Clock, Copy, Link as LinkIcon, MessageSquare, Pencil, Pin, Search, Trash2, X, MoreHorizontal } from 'lucide-react'
+import { Archive, Check, Clock, Copy, Link as LinkIcon, MessageSquare, Pencil, Pin, Search, Trash2, X, MoreHorizontal } from 'lucide-react'
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import React, { useEffect, useRef, useState } from 'react'
@@ -19,6 +19,7 @@ import {
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu'
 import { StreamingTitle } from '../../sidebar-components/StreamingTitle'
+import { ArchiveConfirmDialog } from '../../sidebar-components/ArchiveConfirmDialog'
 import { createShareLink, toggleConversationPinned, type ConversationListItem } from '@/services/chatService'
 import { formatRelativeDate } from '@/lib/dateUtils'
 import { cn } from '@/lib/utils'
@@ -38,7 +39,7 @@ export function ConversationListSection() {
   const isCollapsed = state === 'collapsed'
   const { conversations, isLoadingConversations, selectedConversationId, isSearching, streamingTitleConversationId } =
     useChatContext()
-  const { localSearchValue, handleSearchChange, handleClearSearch, handleSelectConversation, initiateDelete } =
+  const { localSearchValue, handleSearchChange, handleClearSearch, handleSelectConversation, initiateDelete, initiateArchive, conversationToArchive, setConversationToArchive, isArchivingConversation, confirmArchive } =
     useSidebarContext()
 
   const [sharingId, setSharingId] = useState<string | null>(null)
@@ -139,6 +140,7 @@ export function ConversationListSection() {
       setPinningId(null)
     }
   }
+
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     if (!conversationToChangeTitleDialog) return
@@ -270,6 +272,13 @@ export function ConversationListSection() {
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
+                          onClick={(e) => initiateArchive(e, conversation.id)}
+                          className="cursor-pointer"
+                        >
+                          <Archive className="w-4 h-4 mr-2" />
+                          Archive
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
                           onClick={(e) => initiateDelete(e, conversation.id)}
                           className="cursor-pointer text-destructive focus:text-destructive"
                         >
@@ -332,6 +341,13 @@ export function ConversationListSection() {
           </Form>
         </DialogContent>
       </Dialog>
+
+      <ArchiveConfirmDialog
+        isOpen={!!conversationToArchive}
+        onClose={() => setConversationToArchive?.(null)}
+        onConfirm={confirmArchive}
+        isLoading={isArchivingConversation}
+      />
     </SidebarGroup>
   )
 }

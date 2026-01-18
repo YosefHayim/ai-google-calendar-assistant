@@ -1,20 +1,5 @@
 'use client'
 
-import React, { useState } from 'react'
-import { X } from 'lucide-react'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { Tabs, TabsContent } from '@/components/ui/tabs'
-import { Button } from '@/components/ui/button'
-import { toast } from 'sonner'
-import { useRouter } from 'next/navigation'
-import {
-  useDeactivateUser,
-  useDeleteAllConversations,
-  useDisconnectGoogleCalendar,
-  useGoogleCalendarStatus,
-  useResetMemory,
-  useUser,
-} from '@/hooks/queries'
 import {
   AssistantTab,
   DataControlsTab,
@@ -24,9 +9,25 @@ import {
   SecurityTab,
   SubscriptionTab,
 } from '../settings-tabs'
+import { DesktopSidebar, MobileHeader, MobileSignOut, MobileTabBar } from './components'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import React, { useState } from 'react'
+import { Tabs, TabsContent } from '@/components/ui/tabs'
+import {
+  useDeactivateUser,
+  useDeleteAllConversations,
+  useDisconnectGoogleCalendar,
+  useGoogleCalendarStatus,
+  useResetMemory,
+  useUser,
+} from '@/hooks/queries'
+
+import { ArchivedConversationsDialog } from '@/components/dialogs/ArchivedConversationsDialog'
+import { Button } from '@/components/ui/button'
 import { ConfirmDialog } from '../ConfirmDialog'
-import { ArchivedConversationsDialog } from '../../dialogs/ArchivedConversationsDialog'
-import { MobileHeader, MobileTabBar, DesktopSidebar, MobileSignOut } from './components'
+import { X } from 'lucide-react'
+import { toast } from 'sonner'
+import { useRouter } from 'next/navigation'
 
 interface SettingsModalProps {
   isOpen: boolean

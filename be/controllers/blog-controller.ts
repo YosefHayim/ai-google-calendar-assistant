@@ -458,7 +458,7 @@ Return the blog post in this exact JSON format:
       }
 
       // Return the post data with the full URL
-      const fullUrl = `${process.env.FRONTEND_URL || 'https://askally.io'}/blog/${slug}`;
+      const fullUrl = `${env.baseUrl}/blog/${slug}`;
 
       return sendR(res, 201, "AI-generated blog post created successfully", {
         ...data,
