@@ -1,21 +1,22 @@
 'use client'
 
-import React, { useState } from 'react'
-import { Check, Clock, Copy, Link, MessageSquare, Search, Trash2, X, Archive, MoreHorizontal } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { Archive, Check, Clock, Copy, Link, MessageSquare, MoreHorizontal, Search, Trash2, X } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger,
   DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { formatRelativeDate } from '@/lib/dateUtils'
+import React, { useState } from 'react'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+
+import { Button } from '@/components/ui/button'
 import type { ConversationListItem } from '@/services/chatService'
-import { createShareLink } from '@/services/chatService'
+import { Input } from '@/components/ui/input'
 import { StreamingTitle } from './StreamingTitle'
+import { createShareLink } from '@/services/chatService'
+import { formatRelativeDate } from '@/lib/dateUtils'
 import { toast } from 'sonner'
 
 interface ConversationListProps {
@@ -165,7 +166,7 @@ export const ConversationList: React.FC<ConversationListProps> = ({
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       onClick={(e) => onInitiateArchive(e, conversation.id)}
-                      className="cursor-pointer text-orange-600 focus:text-orange-600"
+                      className="cursor-pointer text-destructive focus:text-destructive"
                     >
                       <Archive className="w-4 h-4 mr-2" />
                       Archive conversation

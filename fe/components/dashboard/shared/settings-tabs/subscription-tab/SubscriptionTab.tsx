@@ -162,9 +162,9 @@ export const SubscriptionTab: React.FC = () => {
       </div>
 
       {isTrialing && !isPerUse && (
-        <div className="flex items-start gap-3 p-3 rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800">
-          <Info className="h-4 w-4 text-amber-700 dark:text-amber-400 flex-shrink-0 mt-0.5" />
-          <p className="text-amber-800 dark:text-amber-200 text-sm">
+        <div className="flex items-start gap-3 p-3 rounded-lg bg-accent/50 border border-accent">
+          <Info className="h-4 w-4 text-accent-foreground flex-shrink-0 mt-0.5" />
+          <p className="text-accent-foreground text-sm">
             Select a plan to continue after your trial. You won't be charged until your trial ends.
           </p>
         </div>

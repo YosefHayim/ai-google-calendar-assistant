@@ -10,6 +10,7 @@ import { EmptyState } from '@/components/ui/empty-state'
 import React from 'react'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { formatDate } from '@/lib/formatUtils'
+import { formatRelativeDate } from '@/lib/dateUtils'
 import { toast } from 'sonner'
 
 interface ArchivedConversationsDialogProps {
@@ -134,14 +135,14 @@ export function ArchivedConversationsDialog({ isOpen, onClose }: ArchivedConvers
                         {conversation.archivedAt && (
                           <div className="flex items-center gap-1">
                             <Archive className="w-3 h-3" />
-                            Archived {formatDate(conversation.archivedAt, 'RELATIVE')}
+                            Archived {formatRelativeDate(conversation.archivedAt)}
                           </div>
                         )}
 
                         {conversation.lastMessageAt && (
                           <div className="flex items-center gap-1">
                             <Calendar className="w-3 h-3" />
-                            Last updated {formatDate(conversation.lastMessageAt, 'RELATIVE')}
+                            Last updated {formatRelativeDate(conversation.lastMessageAt)}
                           </div>
                         )}
                       </div>

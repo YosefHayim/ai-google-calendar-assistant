@@ -571,9 +571,9 @@ export default function AdminBlogPage() {
                   </p>
                 </div>
 
-                <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-                  <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-2">🤖 GEO/AEO Optimization Features</h4>
-                  <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
+                <div className="bg-accent/30 border border-accent rounded-lg p-4">
+                  <h4 className="font-medium text-accent-foreground mb-2">🤖 GEO/AEO Optimization Features</h4>
+                  <ul className="text-sm text-muted-foreground space-y-1">
                     <li>• <strong>Direct Answer First</strong> - Immediate solutions in opening paragraphs</li>
                     <li>• <strong>E-E-A-T Authority</strong> - Establishes expertise and trustworthiness</li>
                     <li>• <strong>Entity Optimization</strong> - Positions Ask Ally as authoritative entity</li>
@@ -583,9 +583,9 @@ export default function AdminBlogPage() {
                   </ul>
                 </div>
 
-                <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-                  <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-2">🤖 GEO/AEO Optimization Features</h4>
-                  <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
+                <div className="bg-accent/30 border border-accent rounded-lg p-4">
+                  <h4 className="font-medium text-accent-foreground mb-2">🤖 GEO/AEO Optimization Features</h4>
+                  <ul className="text-sm text-muted-foreground space-y-1">
                     <li>• <strong>Direct Answer First</strong> - Immediate solutions in opening paragraphs</li>
                     <li>• <strong>E-E-A-T Authority</strong> - Establishes expertise and trustworthiness</li>
                     <li>• <strong>Entity Optimization</strong> - Positions Ask Ally as authoritative entity</li>
@@ -813,9 +813,9 @@ export default function AdminBlogPage() {
                     )}
                   />
 
-                  <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-                    <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-2">🚀 GEO/AEO Optimization Engine</h4>
-                    <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
+                  <div className="bg-accent/30 border border-accent rounded-lg p-4">
+                    <h4 className="font-medium text-accent-foreground mb-2">🚀 GEO/AEO Optimization Engine</h4>
+                    <ul className="text-sm text-muted-foreground space-y-1">
                       <li>• <strong>Zero-Click Optimization</strong> - Direct answers for AI search results</li>
                       <li>• <strong>E-E-A-T Authority</strong> - Experience, Expertise, Authoritativeness, Trust</li>
                       <li>• <strong>Entity Recognition</strong> - Positions Ask Ally as authoritative calendar AI</li>

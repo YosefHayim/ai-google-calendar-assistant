@@ -7,22 +7,22 @@ import {
   Circle,
   Loader2,
   Plus,
+  RefreshCcw,
   RefreshCw,
   X,
-  RefreshCcw,
 } from 'lucide-react'
-import { FaTelegram, FaWhatsapp, FaSlack } from 'react-icons/fa'
-import { SiGooglecalendar } from 'react-icons/si'
 import { Card, CardContent } from '@/components/ui/card'
+import { FaSlack, FaTelegram, FaWhatsapp } from 'react-icons/fa'
+import React, { useEffect, useState } from 'react'
 import { SettingsRow, SettingsSection, TabHeader } from './components'
+import { useCrossPlatformSync, useUpdateCrossPlatformSync } from '@/hooks/queries'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import type { GoogleCalendarIntegrationStatus } from '@/types/api'
-import React, { useEffect, useState } from 'react'
-import { toast } from 'sonner'
 import CinematicGlowToggle from '@/components/ui/cinematic-glow-toggle'
-import { useCrossPlatformSync, useUpdateCrossPlatformSync } from '@/hooks/queries'
+import type { GoogleCalendarIntegrationStatus } from '@/types/api'
+import { SiGooglecalendar } from 'react-icons/si'
+import { toast } from 'sonner'
 
 interface IntegrationsTabProps {
   googleCalendarStatus: GoogleCalendarIntegrationStatus | null | undefined
@@ -54,7 +54,7 @@ const getGoogleCalendarStatusBadge = (
       )
     }
     return (
-      <Badge className="bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400">
+      <Badge variant="outline" className="text-muted-foreground border-muted-foreground/20">
         <AlertTriangle size={14} className="mr-1" /> {status.isExpired ? 'Expired' : 'Inactive'}
       </Badge>
     )

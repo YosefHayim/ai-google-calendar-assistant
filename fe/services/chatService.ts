@@ -41,6 +41,11 @@ export interface ConversationListItem {
   lastUpdated: string
   createdAt: string
   pinned: boolean
+  archivedAt?: string
+  isActive?: boolean
+  lastMessageAt?: string
+  summary?: string
+  source?: string
 }
 
 export interface FullConversation {

@@ -1,10 +1,11 @@
 'use client'
 
-import React from 'react'
-import { LogOut } from 'lucide-react'
 import { TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Button } from '@/components/ui/button'
+
 import { AllyLogo } from '@/components/shared/logo'
+import { Button } from '@/components/ui/button'
+import { LogOut } from 'lucide-react'
+import React from 'react'
 import { SETTINGS_TABS } from '../constants'
 
 interface DesktopSidebarProps {
@@ -13,9 +14,9 @@ interface DesktopSidebarProps {
 
 export function DesktopSidebar({ onSignOut }: DesktopSidebarProps) {
   return (
-    <div className="hidden sm:flex w-52 bg-muted dark:bg-secondary/50 border-r border dark:border flex-col p-3 flex-shrink-0">
+    <div className="hidden sm:flex w-52 bg-secondary dark:bg-secondary/50 border-r border-border dark:border-border flex-col p-3 flex-shrink-0">
       <div className="flex items-center gap-2 mb-4 px-2">
-        <div className="w-8 h-8 bg-secondary dark:bg-background rounded-md flex items-center justify-center text-white dark:text-foreground">
+        <div className="w-8 h-8 bg-secondary dark:bg-background rounded-md flex items-center justify-center text-primary-foreground">
           <AllyLogo className="w-5 h-5" />
         </div>
         <h2 className="font-semibold text-foreground dark:text-primary-foreground text-sm">Ally Settings</h2>
@@ -26,7 +27,7 @@ export function DesktopSidebar({ onSignOut }: DesktopSidebarProps) {
           <TabsTrigger
             key={tab.id}
             value={tab.id}
-            className="w-full justify-start gap-2 px-2 py-1.5 rounded-md text-xs font-medium transition-all data-[state=active]:bg-background data-[state=active]:dark:bg-secondary data-[state=active]:text-foreground data-[state=active]:dark:text-primary-foreground data-[state=active]:shadow-sm text-muted-foreground hover:bg-secondary dark:hover:bg-secondary/70"
+            className="w-full justify-start gap-2 px-2 py-1.5 rounded-md text-xs font-medium transition-all data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground"
           >
             <tab.icon size={14} />
             {tab.label}

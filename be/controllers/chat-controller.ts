@@ -522,10 +522,14 @@ const restoreConversation = reqResAsyncHandler(
 
 const getArchivedConversations = reqResAsyncHandler(
   async (req: Request, res: Response) => {
+    const userId = req.user!.id;
+
+    logger.info(`Get archived conversations request for user: ${userId}`);
+
     try {
-      const archivedConversations = await webConversation.getArchivedConversations(
-        req.user!.id
-      );
+      const archivedConversations = await webConversation.getArchivedConversations(userId);
+
+      logger.info(`Found ${archivedConversations.length} archived conversations for user ${userId}`);
 
       return sendR(
         res,
@@ -534,7 +538,7 @@ const getArchivedConversations = reqResAsyncHandler(
         { conversations: archivedConversations }
       );
     } catch (error) {
-      console.error("Error getting archived conversations:", error);
+      logger.error(`Error getting archived conversations for user ${userId}:`, error);
       sendR(
         res,
         STATUS_RESPONSE.INTERNAL_SERVER_ERROR,

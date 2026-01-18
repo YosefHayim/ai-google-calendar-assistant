@@ -1,10 +1,11 @@
 'use client'
 
-import React from 'react'
-import { Crown, Zap, Shield, Loader2, ExternalLink, Clock } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
+import { Clock, Crown, ExternalLink, Loader2, Shield, Zap } from 'lucide-react'
+
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import React from 'react'
 
 interface CurrentPlanCardProps {
   planSlug: string | null | undefined
@@ -32,7 +33,7 @@ export function CurrentPlanCard({
   const isTrialing = subscriptionStatus === 'trialing'
   const getPlanIcon = () => {
     if (isHighlighted || planSlug?.includes('executive') || planSlug?.includes('sovereignty')) {
-      return <Crown className="w-5 h-5 text-amber-500" />
+      return <Crown className="w-5 h-5 text-primary" />
     }
     if (isPopular || planSlug?.includes('pro') || planSlug?.includes('operational')) {
       return <Zap className="w-5 h-5 text-primary" />
@@ -53,7 +54,7 @@ export function CurrentPlanCard({
               <p className="font-semibold text-foreground dark:text-white truncate">{planName}</p>
             </div>
             {isTrialing && trialDaysLeft !== null && trialDaysLeft !== undefined ? (
-              <Badge className="bg-amber-500/20 text-amber-700 dark:text-amber-400 text-xs sm:hidden">
+              <Badge variant="default" className="text-xs sm:hidden">
                 <Clock className="w-3 h-3 mr-1" />
                 {trialDaysLeft} {trialDaysLeft === 1 ? 'day' : 'days'} left
               </Badge>
@@ -63,7 +64,7 @@ export function CurrentPlanCard({
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
             {isTrialing && trialDaysLeft !== null && trialDaysLeft !== undefined ? (
-              <Badge className="bg-amber-500/20 text-amber-700 dark:text-amber-400 text-xs hidden sm:inline-flex">
+              <Badge variant="default" className="text-xs hidden sm:inline-flex">
                 <Clock className="w-3 h-3 mr-1" />
                 {trialDaysLeft} {trialDaysLeft === 1 ? 'day' : 'days'} left
               </Badge>

@@ -72,6 +72,18 @@ router.delete(
 );
 // DELETE /memory - Reset user memory
 router.delete("/memory", supabaseAuth(), chatController.resetMemory);
+// GET /conversations/archived - Get all archived conversations
+router.get(
+  "/conversations/archived",
+  supabaseAuth(),
+  chatController.getArchivedConversations
+);
+// POST /conversations/archived/restore-all - Restore all archived conversations
+router.post(
+  "/conversations/archived/restore-all",
+  supabaseAuth(),
+  chatController.restoreAllArchivedConversations
+);
 // GET /conversations/:id - Get specific conversation
 router.get(
   "/conversations/:id",
@@ -90,12 +102,6 @@ router.patch(
   supabaseAuth(),
   chatController.toggleConversationPinned
 );
-// DELETE /conversations/:id - Delete specific conversation
-router.delete(
-  "/conversations/:id",
-  supabaseAuth(),
-  chatController.removeConversation
-);
 // POST /conversations/:id/archive - Archive specific conversation
 router.post(
   "/conversations/:id/archive",
@@ -108,17 +114,11 @@ router.post(
   supabaseAuth(),
   chatController.restoreConversation
 );
-// GET /conversations/archived - Get all archived conversations
-router.get(
-  "/conversations/archived",
+// DELETE /conversations/:id - Delete specific conversation
+router.delete(
+  "/conversations/:id",
   supabaseAuth(),
-  chatController.getArchivedConversations
-);
-// POST /conversations/archived/restore-all - Restore all archived conversations
-router.post(
-  "/conversations/archived/restore-all",
-  supabaseAuth(),
-  chatController.restoreAllArchivedConversations
+  chatController.removeConversation
 );
 
 // POST /conversations/:id/messages - Continue conversation with new message

@@ -1,14 +1,15 @@
 'use client'
 
-import React, { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Crown, Zap, Shield, Check, ArrowRight, Loader2, ArrowDown, BadgeCheck, Minus, Plus } from 'lucide-react'
+import { ArrowDown, ArrowRight, BadgeCheck, Check, Crown, Loader2, Minus, Plus, Shield, Zap } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
+import React, { useState } from 'react'
+
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import NumberFlow from '@number-flow/react'
-import { cn } from '@/lib/utils'
 import type { PlanRowProps } from '../types'
+import { cn } from '@/lib/utils'
 
 export function PlanRow({ plan, selectedFrequency, actionType, isLoading, onAction, isPerUse }: PlanRowProps) {
   const [customCredits, setCustomCredits] = useState(1000)
@@ -33,7 +34,7 @@ export function PlanRow({ plan, selectedFrequency, actionType, isLoading, onActi
 
   const getPlanIcon = () => {
     if (plan.isHighlighted) {
-      return <Crown className="w-5 h-5 text-amber-500" />
+      return <Crown className="w-5 h-5 text-primary" />
     }
     if (plan.isPopular) {
       return <Zap className="w-5 h-5 text-primary" />

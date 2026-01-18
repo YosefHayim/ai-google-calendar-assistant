@@ -599,8 +599,11 @@ export class WebConversationAdapter {
    * @param {string} userId - The UUID of the user whose archived conversations to retrieve.
    * @returns {Promise<ConversationListItem[]>} Array of archived conversation list items.
    */
-  getArchivedConversations(userId: string): Promise<ConversationListItem[]> {
-    return this.service.getArchivedConversations(userId);
+  async getArchivedConversations(userId: string): Promise<ConversationListItem[]> {
+    logger.info(`WebConversationAdapter.getArchivedConversations: userId=${userId}`);
+    const result = await this.service.getArchivedConversations(userId);
+    logger.info(`WebConversationAdapter.getArchivedConversations: found ${result.length} archived conversations`);
+    return result;
   }
 
   /**

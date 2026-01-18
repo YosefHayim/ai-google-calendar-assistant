@@ -1277,6 +1277,8 @@ export class ConversationService {
    * console.log(`Found ${archived.length} archived conversations`);
    */
   async getArchivedConversations(userId: string): Promise<ConversationListItem[]> {
+    logger.info(`ConversationService.getArchivedConversations: userId=${userId}`);
+
     const { data, error } = await SUPABASE.from("conversations")
       .select(`
         id,
@@ -1296,7 +1298,13 @@ export class ConversationService {
 
     if (error) {
       logger.error(`Failed to get archived conversations for user ${userId}: ${error.message}`);
+      logger.error(`Error details:`, error);
       return [];
+    }
+
+    logger.info(`ConversationService.getArchivedConversations: found ${data?.length || 0} archived conversations`);
+    if (data && data.length > 0) {
+      logger.info(`First conversation:`, { id: data[0].id, title: data[0].title, archived_at: data[0].archived_at });
     }
 
     return (data || []).map(conversation => ({

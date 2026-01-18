@@ -1,8 +1,5 @@
 'use client'
 
-import React, { useCallback, useEffect } from 'react'
-import { Loader2 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -11,6 +8,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import React, { useCallback, useEffect } from 'react'
+
+import { Button } from '@/components/ui/button'
+import { Loader2 } from 'lucide-react'
 
 export interface ConfirmDialogProps {
   isOpen: boolean
@@ -40,7 +41,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
       case 'destructive':
         return 'bg-destructive hover:bg-destructive text-white'
       case 'warning':
-        return 'bg-amber-500 hover:bg-amber-600 text-white'
+        return 'bg-orange-500 hover:bg-orange-600 text-white'
       default:
         return ''
     }

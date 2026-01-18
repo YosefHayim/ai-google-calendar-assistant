@@ -181,7 +181,7 @@ export const AllyBrainSection: React.FC<AllyBrainSectionProps> = ({ toggleId }) 
                             isOverLimit
                               ? 'text-destructive'
                               : charCount >= MAX_CHARS - 50
-                                ? 'text-orange-500'
+                                ? 'text-warning'
                                 : 'text-muted-foreground'
                           }`}
                         >

@@ -1,6 +1,6 @@
 'use client'
 
-import { Brain, Loader2, MessageSquareX, Trash2, MessageCircleX, Eraser, UserX, Archive } from 'lucide-react'
+import { Archive, Brain, Eraser, Loader2, MessageCircleX, MessageSquareX, Trash2, UserX } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { SettingsRow, SettingsSection, TabHeader } from './components'
 
@@ -44,7 +44,7 @@ export const DataControlsTab: React.FC<DataControlsTabProps> = ({
                 size="sm"
                 onClick={onDeleteAllConversations}
                 disabled={isDeletingConversations}
-                className="gap-2 text-amber-700 hover:text-amber-700 border-amber-200 hover:bg-amber-50 dark:border-amber-900/30 dark:hover:bg-amber-900/20"
+                className="gap-2 text-destructive hover:text-destructive border-destructive/20 hover:bg-destructive/10"
               >
                 {isDeletingConversations ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -89,7 +89,7 @@ export const DataControlsTab: React.FC<DataControlsTabProps> = ({
                 size="sm"
                 onClick={onResetMemory}
                 disabled={isResettingMemory}
-                className="gap-2 text-amber-700 hover:text-amber-700 border-amber-200 hover:bg-amber-50 dark:border-amber-900/30 dark:hover:bg-amber-900/20"
+                className="gap-2 text-destructive hover:text-destructive border-destructive/20 hover:bg-destructive/10"
               >
                 {isResettingMemory ? <Loader2 className="w-4 h-4 animate-spin" /> : <Brain className="w-4 h-4" />}
                 Reset Memory
