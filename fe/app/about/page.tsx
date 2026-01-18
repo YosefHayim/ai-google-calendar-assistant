@@ -1,26 +1,26 @@
 'use client'
 
-import { useTranslation } from 'react-i18next'
-import { motion } from 'framer-motion'
-
-import MarketingLayout from '@/components/marketing/MarketingLayout'
-import Link from 'next/link'
-import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button'
 import {
-  Clock,
-  Shield,
-  Brain,
-  Target,
-  Lock,
-  Zap,
-  MessageCircle,
-  Calendar,
-  BarChart3,
-  Layers,
-  Eye,
-  Mic,
   ArrowRight,
+  BarChart3,
+  Brain,
+  Calendar,
+  Clock,
+  Eye,
+  Layers,
+  Lock,
+  MessageCircle,
+  Mic,
+  Shield,
+  Target,
+  Zap,
 } from 'lucide-react'
+
+import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button'
+import Link from 'next/link'
+import MarketingLayout from '@/components/marketing/MarketingLayout'
+import { motion } from 'framer-motion'
+import { useTranslation } from 'react-i18next'
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
@@ -41,8 +41,8 @@ export default function AboutPage() {
   return (
     <MarketingLayout>
       <section className="relative py-24 md:py-32 px-4 sm:px-6 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-red-500/5 via-transparent to-transparent dark:from-red-500/10" />
-        <div className="absolute top-20 left-1/4 w-96 h-96 bg-red-500/10 rounded-full blur-3xl" />
+        <div className="absolute inset-0 bg-gradient-to-b from-orange-500/5 via-transparent to-transparent dark:from-orange-500/10" />
+        <div className="absolute top-20 left-1/4 w-96 h-96 bg-orange-500/10 rounded-full blur-3xl" />
         <div className="absolute bottom-20 right-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
 
         <motion.div
@@ -57,7 +57,7 @@ export default function AboutPage() {
           >
             {t('about.heroTitle')}
             <br />
-            <span className="text-red-500 dark:text-red-400">{t('about.heroTitleHighlight')}</span>
+            <span className="text-orange-500 dark:text-orange-400">{t('about.heroTitleHighlight')}</span>
           </motion.h1>
 
           <motion.p
@@ -100,10 +100,10 @@ export default function AboutPage() {
               <motion.div
                 key={index}
                 variants={fadeInUp}
-                className="p-6 rounded-2xl bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 hover:border-red-300 dark:hover:border-red-700 transition-colors"
+                className="p-6 rounded-2xl bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 hover:border-orange-300 dark:hover:border-orange-700 transition-colors"
               >
-                <div className="w-12 h-12 rounded-xl bg-red-500/10 flex items-center justify-center mb-4">
-                  <problem.icon className="w-6 h-6 text-red-500" />
+                <div className="w-12 h-12 rounded-xl bg-orange-500/10 flex items-center justify-center mb-4">
+                  <problem.icon className="w-6 h-6 text-orange-500" />
                 </div>
                 <h3 className="text-lg font-medium text-zinc-900 dark:text-zinc-100 mb-2">{t(problem.titleKey)}</h3>
                 <p className="text-zinc-500 dark:text-zinc-400 text-sm">{t(problem.descKey)}</p>
@@ -208,7 +208,7 @@ export default function AboutPage() {
                 icon: Mic,
                 titleKey: 'about.impactVoice',
                 descKey: 'about.impactVoiceDesc',
-                gradient: 'from-orange-500 to-red-600',
+                gradient: 'from-orange-500 to-orange-600',
               },
             ].map((impact, index) => (
               <motion.div

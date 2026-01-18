@@ -1,9 +1,10 @@
 import type { Request, Response } from "express";
+import { STATUS_RESPONSE, env } from "@/config";
+import { reqResAsyncHandler, sendR } from "@/utils/http";
+
+import { ContactFormEmail } from "@/emails";
 import { Resend } from "resend";
 import { isEmail } from "validator";
-import { env, STATUS_RESPONSE } from "@/config";
-import { ContactFormEmail } from "@/emails";
-import { reqResAsyncHandler, sendR } from "@/utils/http";
 import { logger } from "@/utils/logger";
 
 const resend = new Resend(env.resend.apiKey);
@@ -77,7 +78,7 @@ const submitContactForm = reqResAsyncHandler(
         from: env.resend.fromEmail,
         to: env.resend.supportEmail,
         replyTo: email,
-        subject: `[Contact Form] ${subject}`,
+        subject: `[Contact Form] ${subject} from ${name}`,
         react: ContactFormEmail({
           name,
           email,

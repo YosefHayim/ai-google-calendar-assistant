@@ -1,5 +1,5 @@
-import path from "node:path";
 import dotenv from "dotenv";
+import path from "node:path";
 
 // Only load .env file in development - in production, env vars are injected by the platform
 if (process.env.NODE_ENV !== "production") {
@@ -46,14 +46,14 @@ const CONSTANTS = {
   POSTHOG_HOST: "https://us.i.posthog.com",
 
   // Email addresses (not secrets)
-  RESEND_FROM_EMAIL: "yosefisabag@gmail.com",
-  SUPPORT_EMAIL: "yosefisabag@gmail.com",
+  RESEND_FROM_EMAIL: "hello@askally.io",
+  SUPPORT_EMAIL: "support@askally.io",
 
   // Defaults
   DEV_PORT: 3000,
   PROD_PORT: 8080,
   DEFAULT_HOST: "localhost",
-  WHATSAPP_API_VERSION: "v22.0",
+  WHATSAPP_API_VERSION: "v24.0",
 } as const;
 
 // ============================================================================

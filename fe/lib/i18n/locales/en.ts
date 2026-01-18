@@ -761,7 +761,7 @@ export const en = {
 
   // FAQ Section
   faq: {
-    title: 'Common Inquiries',
+    title: 'Frequently Asked Questions',
     contactCta: 'Need an organization-wide deployment? Contact our',
     operationsTeam: 'operations team',
     questions: {

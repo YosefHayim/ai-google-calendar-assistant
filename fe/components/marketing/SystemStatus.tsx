@@ -12,19 +12,19 @@ type ServiceStatus = 'healthy' | 'disabled' | 'unavailable'
 
 type HealthResponse = {
   status: 'ok' | 'error'
-  timestamp: string
+  timestamp?: string
   uptime: number
-  services: {
-    websockets: {
+  services?: {
+    websockets?: {
       status: ServiceStatus
-      connectedUsers: number
+      connectedUsers?: number
       activeConnections: number
     }
-    telegram: {
+    telegram?: {
       status: ServiceStatus
       mode: 'webhook' | 'polling'
     }
-    slack: {
+    slack?: {
       status: ServiceStatus
       mode: string
     }
@@ -161,32 +161,40 @@ export function SystemStatus() {
                 </span>
               </div>
 
-              <div className="border-t border-zinc-200 dark:border-zinc-700 pt-2 space-y-1.5">
-                <ServiceIndicator
-                  icon={Wifi}
-                  name={t('footer.websockets')}
-                  status={healthData.services.websockets.status}
-                  detail={
-                    healthData.services.websockets.status === 'healthy'
-                      ? `${healthData.services.websockets.activeConnections} ${t('footer.connections')}`
-                      : undefined
-                  }
-                />
-                <ServiceIndicator
-                  icon={TelegramIcon}
-                  name={t('footer.telegram')}
-                  status={healthData.services.telegram.status}
-                  detail={
-                    healthData.services.telegram.status === 'healthy' ? healthData.services.telegram.mode : undefined
-                  }
-                />
-                <ServiceIndicator
-                  icon={SlackIcon}
-                  name={t('footer.slack')}
-                  status={healthData.services.slack.status}
-                  detail={healthData.services.slack.status === 'healthy' ? healthData.services.slack.mode : undefined}
-                />
-              </div>
+              {healthData.services && (
+                <div className="border-t border-zinc-200 dark:border-zinc-700 pt-2 space-y-1.5">
+                  {healthData.services.websockets && (
+                    <ServiceIndicator
+                      icon={Wifi}
+                      name={t('footer.websockets')}
+                      status={healthData.services.websockets.status}
+                      detail={
+                        healthData.services.websockets.status === 'healthy'
+                          ? `${healthData.services.websockets.activeConnections} ${t('footer.connections')}`
+                          : undefined
+                      }
+                    />
+                  )}
+                  {healthData.services.telegram && (
+                    <ServiceIndicator
+                      icon={TelegramIcon}
+                      name={t('footer.telegram')}
+                      status={healthData.services.telegram.status}
+                      detail={
+                        healthData.services.telegram.status === 'healthy' ? healthData.services.telegram.mode : undefined
+                      }
+                    />
+                  )}
+                  {healthData.services.slack && (
+                    <ServiceIndicator
+                      icon={SlackIcon}
+                      name={t('footer.slack')}
+                      status={healthData.services.slack.status}
+                      detail={healthData.services.slack.status === 'healthy' ? healthData.services.slack.mode : undefined}
+                    />
+                  )}
+                </div>
+              )}
             </div>
           )}
         </TooltipContent>

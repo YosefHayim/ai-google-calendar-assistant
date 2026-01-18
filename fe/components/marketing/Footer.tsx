@@ -19,7 +19,6 @@ const Footer = () => {
       title: t('footer.product'),
       links: [
         { name: t('footer.pricing'), href: '/pricing' },
-        { name: t('footer.executivePower'), href: '/pricing' },
       ],
     },
     {

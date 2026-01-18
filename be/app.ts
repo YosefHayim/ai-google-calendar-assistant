@@ -1,4 +1,9 @@
 import { STATUS_RESPONSE, env } from "@/config";
+import {
+  getActiveConnectionCount,
+  getConnectedUserCount,
+  getSocketServer,
+} from "@/config/clients";
 
 import { bootstrapServices } from "./utils/bootstrap";
 import { createServer } from "node:http";
@@ -15,11 +20,6 @@ const app = express();
 const PORT = env.port;
 
 initializeMiddlewares(app);
-
-app.get("/health", (_req, res) => {
-  res.status(STATUS_RESPONSE.SUCCESS).json({ status: "ok", uptime: process.uptime(),message: "Server is running" });
-});
-
 initializeRoutes(app);
 
 app.use((_req, res) => {

@@ -1,3 +1,5 @@
+import type * as React from "react";
+
 import {
   Body,
   Button,
@@ -10,7 +12,6 @@ import {
   Section,
   Text,
 } from "@react-email/components";
-import type * as React from "react";
 
 export type ContactFormEmailProps = {
   name: string;
@@ -120,8 +121,6 @@ export const ContactFormEmail = ({
 
           <Text style={styles.footerAddress}>
             Ally - Your AI Calendar Assistant
-            <br />
-            San Francisco, CA 94102
           </Text>
         </Section>
       </Container>

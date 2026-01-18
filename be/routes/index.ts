@@ -1,4 +1,4 @@
-import { ROUTES, STATUS_RESPONSE } from "@/config";
+import { ROUTES, STATUS_RESPONSE, env, getConnectedUserCount, getSocketServer } from "@/config";
 
 import type { Express } from "express";
 import aclRoute from "./google-calendar/acl-route";
@@ -13,6 +13,9 @@ import contactRoute from "./contact-route";
 import cronRoute from "./cron-route";
 import eventsRoute from "./google-calendar/events-route";
 import featureFlagRoute from "./feature-flag-route";
+import { getActiveConnectionCount } from "@/config/clients";
+import { getBot } from "@/telegram-bot/init-bot";
+import { getSlackReceiver } from "@/slack-bot/init-bot";
 import { logger } from "@/utils/logger";
 import newsletterRoute from "./newsletter-route";
 import paymentRoute from "./payment-route";
@@ -30,6 +33,48 @@ import webhooksRoute from "./webhooks-route";
 import whatsAppRoute from "./whatsapp-route";
 
 export const initializeRoutes = (app: Express) => {
+
+  app.get("/health", (_req, res) => {
+    const socketServer = getSocketServer();
+    const telegramBot = getBot();
+    const slackReceiver = getSlackReceiver();
+  
+    const websocketsStatus = socketServer
+      ? "healthy"
+      : "unavailable";
+    const telegramStatus = telegramBot && env.integrations.telegram.isEnabled
+      ? "healthy"
+      : env.integrations.telegram.isEnabled
+        ? "unavailable"
+        : "disabled";
+    const slackStatus = slackReceiver && env.integrations.slack.isEnabled
+      ? "healthy"
+      : env.integrations.slack.isEnabled
+        ? "unavailable"
+        : "disabled";
+  
+    res.status(STATUS_RESPONSE.SUCCESS).json({
+      status: "ok",
+      timestamp: new Date().toISOString(),
+      uptime: Math.floor(process.uptime()),
+      services: {
+        websockets: {
+          status: websocketsStatus,
+          connectedUsers: getConnectedUserCount(),
+          activeConnections: getActiveConnectionCount(),
+        },
+        telegram: {
+          status: telegramStatus,
+          mode: env.integrations.telegram.useWebhook ? "webhook" : "polling",
+        },
+        slack: {
+          status: slackStatus,
+          mode: "http",
+        },
+      },
+    });
+  });
+
 app.use(ROUTES.USERS, usersRoute);
 app.use(ROUTES.CALENDAR_LIST, calendarListRoute);
 app.use(ROUTES.CALENDAR, calendarRoute);

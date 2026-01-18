@@ -3,10 +3,11 @@
 import { AllyLogo, BetaBadge } from '@/components/shared/logo'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowRight, Mail } from 'lucide-react'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import type { CustomUser, User } from '@/types/api'
 import React, { useEffect, useState } from 'react'
 import { TelegramIcon, WhatsAppIcon } from '@/components/shared/Icons'
 import { usePathname, useRouter } from 'next/navigation'
-import { useTranslation } from 'react-i18next'
 
 import { AnimatedHamburger } from '@/components/ui/animated-hamburger'
 import { Button } from '@/components/ui/button'
@@ -15,8 +16,7 @@ import { LanguageDropdown } from '@/components/shared/LanguageDropdown'
 import Link from 'next/link'
 import { ThemeToggle } from '../ui/theme-toggle'
 import { useAuthContext } from '@/contexts/AuthContext'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import type { CustomUser, User } from '@/types/api'
+import { useTranslation } from 'react-i18next'
 
 // Custom Discord Icon consistent with Footer
 const DiscordIcon = ({ className }: { className?: string }) => (
@@ -143,7 +143,7 @@ const Navbar = () => {
               <>
                 <Link
                   href="/login"
-                  className="text-sm font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+                  className="text-sm font-medium text-zinc-500 dark:text-zinc-400 hover:text-primary dark:hover:text-zinc-100 transition-colors"
                 >
                   {t('navbar.login')}
                 </Link>
