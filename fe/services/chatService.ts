@@ -97,6 +97,15 @@ export const getConversation = async (conversationId: string): Promise<FullConve
   }
 }
 
+export const updateConversationTitle = async (conversationId: string, title: string): Promise<boolean> => {
+  try {
+    await apiClient.patch(`/api/chat/conversations/${conversationId}`, { title })
+    return true
+  } catch {
+    return false
+  }
+}
+
 /**
  * Delete a conversation
  */

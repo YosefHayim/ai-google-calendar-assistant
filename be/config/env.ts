@@ -1,13 +1,5 @@
-import dotenv from "dotenv";
-import path from "node:path";
-
-// Only load .env file in development - in production, env vars are injected by the platform
-if (process.env.NODE_ENV !== "production") {
-  dotenv.config({ path: path.resolve(__dirname, "../.env") });
-}
-
 // ============================================================================
-// Hardcoded Constants (Non-Secrets)
+// CONSTANTS (Non-Secrets - All hardcoded values)
 // ============================================================================
 
 const CONSTANTS = {
@@ -38,9 +30,6 @@ const CONSTANTS = {
     CREDITS: "1204898",
   },
 
-  // LiveKit (public URL only)
-  LIVEKIT_WS_URL: "wss://ai-google-calendar-project-mljh2s1n.livekit.cloud",
-
   // PostHog (public key - designed to be client-exposed)
   POSTHOG_API_KEY: "phc_BzQm2gxcxiK0a5IiF2IbDPGDPmoRFrlBSe1vv9HQSHu",
   POSTHOG_HOST: "https://us.i.posthog.com",
@@ -49,7 +38,7 @@ const CONSTANTS = {
   RESEND_FROM_EMAIL: "hello@askally.io",
   SUPPORT_EMAIL: "support@askally.io",
 
-  // Defaults
+  // Server defaults
   DEV_PORT: 3000,
   PROD_PORT: 8080,
   DEFAULT_HOST: "localhost",
@@ -57,7 +46,7 @@ const CONSTANTS = {
 } as const;
 
 // ============================================================================
-// Validation - Only secrets need to be in .env
+// REQUIRED SECRETS (Must be in .env file)
 // ============================================================================
 
 const REQUIRED_SECRETS = [
@@ -66,33 +55,46 @@ const REQUIRED_SECRETS = [
   "GOOGLE_CLIENT_SECRET",
 ] as const;
 
-const isTestEnv =
-  process.env.TEST_ENV === "true" || process.env.NODE_ENV === "test";
+// ============================================================================
+// ENVIRONMENT SETUP
+// ============================================================================
 
-if (!isTestEnv) {
-  const missing = REQUIRED_SECRETS.filter((key) => !process.env[key]);
-  if (missing.length > 0) {
-    throw new Error(
-      `Missing required secret environment variables: ${missing.join(", ")}`
-    );
-  }
+import * as dotenv from "dotenv";
+import * as path from "path";
+
+// Load .env file only in development - production uses injected env vars
+if (process.env.NODE_ENV !== "production") {
+  dotenv.config({ path: path.resolve(__dirname, "../.env") });
 }
 
 // ============================================================================
-// Helper to get optional env vars with type safety
+// VALIDATION (Check for required secrets)
+// ============================================================================
+
+const missingSecrets = REQUIRED_SECRETS.filter((key) => !process.env[key]);
+if (missingSecrets.length > 0) {
+  throw new Error(
+    `Missing required secret environment variables: ${missingSecrets.join(", ")}`
+  );
+}
+
+// ============================================================================
+// HELPER FUNCTIONS (Type-safe environment variable access)
 // ============================================================================
 
 const getOptional = (key: string): string | undefined =>
   process.env[key] || undefined;
+
 const getRequired = (key: string): string => {
-  if (isTestEnv && !process.env[key]) {
-    return `test-${key.toLowerCase().replace(/_/g, "-")}`;
+  const value = process.env[key];
+  if (!value) {
+    throw new Error(`Required environment variable "${key}" is not set`);
   }
-  return process.env[key]!;
+  return value;
 };
 
 // ============================================================================
-// Environment Detection
+// ENVIRONMENT DETECTION (Based on NODE_ENV and PORT)
 // ============================================================================
 
 /**
@@ -102,19 +104,18 @@ const getRequired = (key: string): string => {
  * - Falls back to NODE_ENV if PORT matches neither
  */
 const port = Number(process.env.PORT) || CONSTANTS.DEV_PORT;
-const nodeEnv = process.env.NODE_ENV;
+const nodeEnv = process.env.NODE_ENV || "development";
 
 // Port-based detection: 3000 = dev, 8080 = prod
 const isDevPort = port === CONSTANTS.DEV_PORT;
 const isProdPort = port === CONSTANTS.PROD_PORT;
 
-export const isTest = nodeEnv === "test";
 export const isDev = isDevPort && !isProdPort && nodeEnv !== "production";
 export const isProd =
-  isProdPort || nodeEnv === "production" || !(isDev || isTest);
+  isProdPort || nodeEnv === "production" || !isDevPort;
 
 // ============================================================================
-// Server Configuration
+// SERVER CONFIGURATION
 // ============================================================================
 
 const server = {
@@ -122,9 +123,7 @@ const server = {
   port: isDev ? CONSTANTS.DEV_PORT : CONSTANTS.PROD_PORT,
   host: process.env.HOST ?? CONSTANTS.DEFAULT_HOST,
   get baseUrl(): string {
-    // In production, use hardcoded URL. In dev, use localhost.
     if (isProd) {
-      // Remove trailing slash to prevent double slashes in URL concatenation
       return CONSTANTS.PROD_BACKEND_URL.replace(/\/+$/, "");
     }
     const url = process.env.BASE_URL ?? `http://${this.host}:${this.port}`;
@@ -133,7 +132,7 @@ const server = {
 } as const;
 
 // ============================================================================
-// URLs Configuration
+// URL CONFIGURATIONS
 // ============================================================================
 
 const urls = {
@@ -144,7 +143,6 @@ const urls = {
     return `${server.baseUrl}/api/users/callback`;
   },
   get frontend(): string {
-    // In production, use hardcoded URL. In dev, use localhost.
     if (isProd) {
       return CONSTANTS.PROD_FRONTEND_URL;
     }
@@ -154,7 +152,7 @@ const urls = {
 } as const;
 
 // ============================================================================
-// Supabase Configuration
+// SERVICE CONFIGURATIONS
 // ============================================================================
 
 const supabase = {
@@ -162,27 +160,15 @@ const supabase = {
   serviceRoleKey: getRequired("SUPABASE_SERVICE_ROLE_KEY"),
 } as const;
 
-// ============================================================================
-// Google Configuration
-// ============================================================================
-
 const google = {
   clientId: CONSTANTS.GOOGLE_CLIENT_ID,
   clientSecret: getRequired("GOOGLE_CLIENT_SECRET"),
   apiKey: getOptional("GOOGLE_API_KEY"),
 } as const;
 
-// ============================================================================
-// OpenAI Configuration
-// ============================================================================
-
 const openai = {
   apiKey: getRequired("OPEN_API_KEY"),
 } as const;
-
-// ============================================================================
-// LemonSqueezy Configuration
-// ============================================================================
 
 const lemonSqueezy = {
   apiKey: getOptional("LEMONSQUEEZY_API_KEY"),
@@ -194,21 +180,28 @@ const lemonSqueezy = {
   },
 } as const;
 
-// ============================================================================
-// LiveKit Configuration
-// ============================================================================
 
-const livekit = {
-  wsUrl: CONSTANTS.LIVEKIT_WS_URL,
-  apiKey: getOptional("LIVEKIT_API_KEY"),
-  apiSecret: getOptional("LIVEKIT_API_SECRET"),
+const posthog = {
+  apiKey: CONSTANTS.POSTHOG_API_KEY,
+  host: CONSTANTS.POSTHOG_HOST,
   get isEnabled(): boolean {
-    return !!(this.apiKey && this.apiSecret);
+    return !!this.apiKey;
+  },
+} as const;
+
+const resend = {
+  apiKey: getOptional("RESEND_API_KEY"),
+  webhookSecret: getOptional("RESEND_WEBHOOK_SECRET"),
+  fromEmail: CONSTANTS.RESEND_FROM_EMAIL,
+  supportEmail: CONSTANTS.SUPPORT_EMAIL,
+  storeInboundAttachments: process.env.STORE_INBOUND_ATTACHMENTS === "true",
+  get isEnabled(): boolean {
+    return !!this.apiKey;
   },
 } as const;
 
 // ============================================================================
-// Integrations Configuration
+// INTEGRATION CONFIGURATIONS
 // ============================================================================
 
 const integrations = {
@@ -259,7 +252,7 @@ const integrations = {
 } as const;
 
 // ============================================================================
-// Jira/Confluence Configuration (optional)
+// ATLASSIAN CONFIGURATIONS (Jira/Confluence - Optional)
 // ============================================================================
 
 const atlassian = {
@@ -285,42 +278,11 @@ const atlassian = {
 } as const;
 
 // ============================================================================
-// PostHog Analytics Configuration
+// TESTING CONFIGURATION
 // ============================================================================
 
-const posthog = {
-  apiKey: CONSTANTS.POSTHOG_API_KEY,
-  host: CONSTANTS.POSTHOG_HOST,
-  get isEnabled(): boolean {
-    return !!this.apiKey;
-  },
-} as const;
-
 // ============================================================================
-// Resend Email Configuration
-// ============================================================================
-
-const resend = {
-  apiKey: getOptional("RESEND_API_KEY"),
-  webhookSecret: getOptional("RESEND_WEBHOOK_SECRET"),
-  fromEmail: CONSTANTS.RESEND_FROM_EMAIL,
-  supportEmail: CONSTANTS.SUPPORT_EMAIL,
-  storeInboundAttachments: process.env.STORE_INBOUND_ATTACHMENTS === "true",
-  get isEnabled(): boolean {
-    return !!this.apiKey;
-  },
-} as const;
-
-// ============================================================================
-// Testing Configuration
-// ============================================================================
-
-const testing = {
-  testEmail: getOptional("TEST_EMAIL"),
-} as const;
-
-// ============================================================================
-// Exported Configuration Object
+// MAIN EXPORT OBJECT
 // ============================================================================
 
 export const env = {
@@ -328,28 +290,30 @@ export const env = {
   nodeEnv: server.nodeEnv,
   isDev,
   isProd,
-  isTest,
 
   // Server
   port: server.port,
   host: server.host,
   baseUrl: server.baseUrl,
 
-  // URLs (for easy access)
+  // URLs
   urls,
 
-  // Services (grouped)
+  // Core services
   server,
   supabase,
   google,
   openai,
+
+  // Optional services
   lemonSqueezy,
-  livekit,
   posthog,
+  resend,
+
+  // Integrations
   integrations,
   atlassian,
-  resend,
-  testing,
+
 
   // Legacy flat accessors (for backwards compatibility)
   supabaseUrl: supabase.url,
@@ -359,11 +323,10 @@ export const env = {
   googleApiKey: google.apiKey,
   openAiApiKey: openai.apiKey,
   telegramAccessToken: integrations.telegram.accessToken,
-  testEmail: testing.testEmail,
-} as const;
+} 
 
 // ============================================================================
-// Backwards Compatibility Exports
+// BACKWARDS COMPATIBILITY EXPORTS
 // ============================================================================
 
 export const REDIRECT_URI = urls.authCallback;

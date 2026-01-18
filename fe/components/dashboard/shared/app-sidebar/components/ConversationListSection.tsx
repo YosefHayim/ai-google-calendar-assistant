@@ -1,20 +1,35 @@
 'use client'
 
-import React, { useEffect, useRef } from 'react'
-import { Check, Clock, Copy, Link as LinkIcon, MessageSquare, Search, Trash2, X } from 'lucide-react'
-import { toast } from 'sonner'
+import * as z from 'zod'
 
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { Check, Clock, Copy, Link as LinkIcon, MessageSquare, Pencil, Search, Trash2, X } from 'lucide-react'
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
+import React, { useEffect, useRef, useState } from 'react'
 import { SidebarGroup, SidebarGroupContent, SidebarGroupLabel, useSidebar } from '@/components/ui/sidebar'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
-import { useChatContext } from '@/contexts/ChatContext'
-import { useSidebarContext } from '@/contexts/SidebarContext'
-import { formatRelativeDate } from '@/lib/dateUtils'
-import type { ConversationListItem } from '@/services/chatService'
-import { createShareLink } from '@/services/chatService'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { StreamingTitle } from '../../sidebar-components/StreamingTitle'
+import { createShareLink } from '@/services/chatService'
+import { formatRelativeDate } from '@/lib/dateUtils'
+import { toast } from 'sonner'
+import { useChatContext } from '@/contexts/ChatContext'
+import { useForm } from 'react-hook-form'
+import { useSidebarContext } from '@/contexts/SidebarContext'
+import { useUpdateConversationTitle } from '@/hooks/queries/conversations'
+import { zodResolver } from '@hookform/resolvers/zod'
+
+const formSchema = z.object({
+  title: z.string().min(1, 'Title is required').max(100, 'Title is too long'),
+})
 
 export function ConversationListSection() {
   const { state, isMobile, setOpenMobile } = useSidebar()
@@ -24,9 +39,36 @@ export function ConversationListSection() {
   const { localSearchValue, handleSearchChange, handleClearSearch, handleSelectConversation, initiateDelete } =
     useSidebarContext()
 
-  const [sharingId, setSharingId] = React.useState<string | null>(null)
-  const [copiedId, setCopiedId] = React.useState<string | null>(null)
+  const [sharingId, setSharingId] = useState<string | null>(null)
+  const [copiedId, setCopiedId] = useState<string | null>(null)
+  const [conversationToChangeTitleDialog, setConversationToChangeTitleDialog] = useState<ConversationListItem | null>(null)
+
+  const { updateConversationTitle: updateTitle, isUpdating } = useUpdateConversationTitle({
+    onSuccess: () => {
+      toast.success('Title updated successfully')
+      setConversationToChangeTitleDialog(null)
+    },
+    onError: (error) => {
+      console.error('Failed to update title:', error)
+      toast.error('Failed to update title')
+    },
+  })
+
   const copiedTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      title: '',
+    },
+  })
+
+  // Sync form value when dialog opens
+  useEffect(() => {
+    if (conversationToChangeTitleDialog) {
+      form.reset({ title: conversationToChangeTitleDialog.title })
+    }
+  }, [conversationToChangeTitleDialog, form])
 
   useEffect(() => {
     return () => {
@@ -64,6 +106,23 @@ export function ConversationListSection() {
     } finally {
       setSharingId(null)
     }
+  }
+
+  const handleChangeConversationTitle = (e: React.MouseEvent, conversationId: string) => {
+    e.stopPropagation()
+    const conversation = conversations.find((c) => c.id === conversationId)
+    if (conversation) {
+      setConversationToChangeTitleDialog(conversation)
+    }
+  }
+
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    if (!conversationToChangeTitleDialog) return
+
+    updateTitle({
+      conversationId: conversationToChangeTitleDialog.id,
+      title: values.title,
+    })
   }
 
   const handleConversationClick = (conversation: ConversationListItem) => {
@@ -158,8 +217,23 @@ export function ConversationListSection() {
                             )}
                           </Button>
                         </TooltipTrigger>
-                        <TooltipContent side="top">Share conversation</TooltipContent>
+                        <TooltipContent side="top">Share</TooltipContent>
                       </Tooltip>
+
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={(e) => handleChangeConversationTitle(e, conversation.id)}
+                            className="h-6 w-6 opacity-0 group-hover:opacity-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
+                          >
+                            <Pencil className="w-3 h-3" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="top">Rename</TooltipContent>
+                      </Tooltip>
+
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Button
@@ -171,7 +245,7 @@ export function ConversationListSection() {
                             <Trash2 className="w-3 h-3" />
                           </Button>
                         </TooltipTrigger>
-                        <TooltipContent side="top">Delete conversation</TooltipContent>
+                        <TooltipContent side="top">Delete</TooltipContent>
                       </Tooltip>
                     </div>
                   </div>
@@ -181,6 +255,58 @@ export function ConversationListSection() {
           </TooltipProvider>
         )}
       </SidebarGroupContent>
+
+      <Dialog
+        open={!!conversationToChangeTitleDialog}
+        onOpenChange={(open) => {
+          if (!open) {
+            setConversationToChangeTitleDialog(null)
+            form.reset()
+          }
+        }}
+      >
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Rename Conversation</DialogTitle>
+          </DialogHeader>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <div className="py-2">
+                <FormField
+                  control={form.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder="New title..."
+                          autoFocus
+                          disabled={isUpdating}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <DialogFooter>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setConversationToChangeTitleDialog(null)}
+                  disabled={isUpdating}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={isUpdating}>
+                  {isUpdating ? 'Saving...' : 'Save Changes'}
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
     </SidebarGroup>
   )
 }

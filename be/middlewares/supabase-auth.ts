@@ -1,11 +1,11 @@
-import type { NextFunction, Request, Response } from "express";
-import { STATUS_RESPONSE, SUPABASE } from "@/config";
 import {
   ACCESS_TOKEN_COOKIE,
-  clearAuthCookies,
   REFRESH_TOKEN_COOKIE,
+  clearAuthCookies,
   setAuthCookies,
 } from "@/utils/auth/cookie-utils";
+import type { NextFunction, Request, Response } from "express";
+import { STATUS_RESPONSE, SUPABASE } from "@/config";
 import {
   refreshSupabaseSession,
   validateSupabaseToken,

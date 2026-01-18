@@ -1,7 +1,7 @@
+import { env } from "@/config";
 import fs from "node:fs";
 import path from "node:path";
 import winston from "winston";
-import { env } from "@/config";
 
 // Audit event types for authentication-related events
 export const AuditEventType = {
@@ -38,7 +38,7 @@ const clearAuditLogOnStartup = () => {
 
   const auditLogFile = path.join(
     logDir,
-    `${env.nodeEnv}-audit-${getDate()}.log`
+    `${env.nodeEnv}-audit-${getDate()}.json`
   );
 
   if (!fs.existsSync(logDir)) {
@@ -69,9 +69,9 @@ const auditWinstonLogger = winston.createLogger({
   format: winston.format.combine(winston.format.timestamp(), auditFormat),
   defaultMeta: { service: "telegram-auth-audit" },
   transports: [
-    // Audit logs -> logs/development-audit-2024-01-03.log
+    // Audit logs -> logs/development-audit-2024-01-03.json
     new winston.transports.File({
-      filename: path.join(logDir, `${env.nodeEnv}-audit-${getDate()}.log`),
+      filename: path.join(logDir, `${env.nodeEnv}-audit-${getDate()}.json`),
     }),
   ],
 });

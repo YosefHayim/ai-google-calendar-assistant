@@ -1,16 +1,14 @@
-import { run } from "@openai/agents";
-import type { Request, Response } from "express";
-import { ORCHESTRATOR_AGENT } from "@/ai-agents";
-import { createAgentSession } from "@/ai-agents/sessions";
-import type { AgentContext } from "@/ai-agents/tool-registry";
-import { STATUS_RESPONSE } from "@/config";
-import type { CrossPlatformSyncPreference } from "@/services/user-preferences-service";
 import {
+  PREFERENCE_DEFAULTS,
   getAllyBrainPreference,
   getCrossPlatformSyncPreference,
-  PREFERENCE_DEFAULTS,
 } from "@/services/user-preferences-service";
-import { unifiedContextStore } from "@/shared/context";
+import type { Request, Response } from "express";
+import {
+  deleteAllWebEmbeddings,
+  getWebRelevantContext,
+  storeWebEmbeddingAsync,
+} from "@/utils/web-embeddings";
 import {
   generateConversationTitle,
   summarizeMessages,
@@ -20,13 +18,16 @@ import {
   invalidateConversationsCache,
   setCachedConversations,
 } from "@/utils/cache/user-cache";
-import { webConversation } from "@/utils/conversation/WebConversationAdapter";
 import { reqResAsyncHandler, sendR } from "@/utils/http";
-import {
-  deleteAllWebEmbeddings,
-  getWebRelevantContext,
-  storeWebEmbeddingAsync,
-} from "@/utils/web-embeddings";
+
+import type { AgentContext } from "@/ai-agents/tool-registry";
+import type { CrossPlatformSyncPreference } from "@/services/user-preferences-service";
+import { ORCHESTRATOR_AGENT } from "@/ai-agents";
+import { STATUS_RESPONSE } from "@/config";
+import { createAgentSession } from "@/ai-agents/sessions";
+import { run } from "@openai/agents";
+import { unifiedContextStore } from "@/shared/context";
+import { webConversation } from "@/utils/conversation/WebConversationAdapter";
 
 const DEFAULT_LIMIT = 20;
 const DEFAULT_OFFSET = 0;
@@ -248,14 +249,6 @@ const getConversation = reqResAsyncHandler(
     const userId = req.user?.id;
     const conversationId = req.params.id;
 
-    if (!userId) {
-      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
-    }
-
-    if (!conversationId) {
-      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Invalid conversation ID");
-    }
-
     try {
       const conversation = await webConversation.getConversationById(
         conversationId,
@@ -287,21 +280,13 @@ const getConversation = reqResAsyncHandler(
 
 const removeConversation = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const userId = req.user?.id;
     const conversationId = req.params.id;
 
-    if (!userId) {
-      return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
-    }
-
-    if (!conversationId) {
-      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Invalid conversation ID");
-    }
 
     try {
       const deleted = await webConversation.deleteConversation(
         conversationId,
-        userId
+        req.user!.id
       );
 
       if (!deleted) {
@@ -312,7 +297,7 @@ const removeConversation = reqResAsyncHandler(
         );
       }
 
-      await invalidateConversationsCache(userId);
+      await invalidateConversationsCache(req.user!.id);
 
       return sendR(
         res,
@@ -325,6 +310,47 @@ const removeConversation = reqResAsyncHandler(
         res,
         STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
         "Error deleting conversation"
+      );
+    }
+  }
+);
+
+const updateConversationTitle = reqResAsyncHandler(
+  async (req: Request, res: Response) => {
+    const conversationId = req.params.id;
+    const { title } = req.body;
+
+    if (!title?.trim()) {
+      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Title is required");
+    }
+
+    try {
+      const updated = await webConversation.updateConversationTitle(
+        conversationId,
+        title.trim()
+      );
+
+      if (!updated) {
+        return sendR(
+          res,
+          STATUS_RESPONSE.NOT_FOUND,
+          "Conversation not found or update failed"
+        );
+      }
+
+      await invalidateConversationsCache(req.user!.id);
+
+      return sendR(
+        res,
+        STATUS_RESPONSE.SUCCESS,
+        "Conversation title updated successfully"
+      );
+    } catch (error) {
+      console.error("Error updating conversation title:", error);
+      sendR(
+        res,
+        STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
+        "Error updating conversation title"
       );
     }
   }
@@ -343,10 +369,6 @@ const continueConversation = reqResAsyncHandler(
 
     if (!userId) {
       return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
-    }
-
-    if (!conversationId) {
-      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Invalid conversation ID");
     }
 
     if (!message?.trim()) {
@@ -532,10 +554,6 @@ const createShareLink = reqResAsyncHandler(
       return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
     }
 
-    if (!conversationId) {
-      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Invalid conversation ID");
-    }
-
     try {
       const result = await webConversation.createShareLink(
         conversationId,
@@ -575,10 +593,6 @@ const revokeShareLink = reqResAsyncHandler(
       return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
     }
 
-    if (!conversationId) {
-      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Invalid conversation ID");
-    }
-
     try {
       const revoked = await webConversation.revokeShareLink(
         conversationId,
@@ -612,10 +626,6 @@ const getShareStatus = reqResAsyncHandler(
 
     if (!userId) {
       return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
-    }
-
-    if (!conversationId) {
-      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Invalid conversation ID");
     }
 
     try {
@@ -680,6 +690,7 @@ export const chatController = {
   sendChat,
   getConversations,
   getConversation,
+  updateConversationTitle,
   removeConversation,
   continueConversation,
   startNewConversation,

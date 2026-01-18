@@ -408,11 +408,6 @@ const streamContinueConversation = async (
     return;
   }
 
-  if (!conversationId) {
-    sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Invalid conversation ID");
-    return;
-  }
-
   if (!message?.trim() && (!images || images.length === 0)) {
     sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Message or images required");
     return;

@@ -1,9 +1,10 @@
-import type { Request, Response } from "express";
-import { generateInsightsWithRetry } from "@/ai-agents/insights-generator";
 import { ACTION, REQUEST_CONFIG_BASE, STATUS_RESPONSE } from "@/config";
+import type { Request, Response } from "express";
+import {
+  applyReschedule,
+  findRescheduleSuggestions,
+} from "@/utils/calendar/reschedule";
 import { eventsHandler, formatDate } from "@/utils";
-import { calculateInsightsMetrics } from "@/utils/ai/insights-calculator";
-import { quickAddWithOrchestrator } from "@/utils/ai/quick-add-orchestrator";
 import {
   getCachedEvents,
   invalidateEventsCache,
@@ -13,12 +14,12 @@ import {
   getCachedInsights,
   setCachedInsights,
 } from "@/utils/cache/insights-cache";
-import { getEvents } from "@/utils/calendar/get-events";
-import {
-  applyReschedule,
-  findRescheduleSuggestions,
-} from "@/utils/calendar/reschedule";
 import { reqResAsyncHandler, sendR } from "@/utils/http";
+
+import { calculateInsightsMetrics } from "@/utils/ai/insights-calculator";
+import { generateInsightsWithRetry } from "@/ai-agents/insights-generator";
+import { getEvents } from "@/utils/calendar/get-events";
+import { quickAddWithOrchestrator } from "@/utils/ai/quick-add-orchestrator";
 
 /**
  * Get event by event ID
@@ -32,14 +33,6 @@ import { reqResAsyncHandler, sendR } from "@/utils/http";
  *
  */
 const getEventById = reqResAsyncHandler(async (req: Request, res: Response) => {
-  if (!req.params.id) {
-    return sendR(
-      res,
-      STATUS_RESPONSE.BAD_REQUEST,
-      "Event ID is required in order to get specific event."
-    );
-  }
-
   if (!req.calendar) {
     return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available");
   }
@@ -567,9 +560,6 @@ const getRescheduleSuggestions = reqResAsyncHandler(
     }
 
     const { eventId } = req.params;
-    if (!eventId) {
-      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Event ID is required.");
-    }
 
     const {
       calendarId = "primary",
@@ -629,9 +619,6 @@ const rescheduleEvent = reqResAsyncHandler(
     }
 
     const { eventId } = req.params;
-    if (!eventId) {
-      return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Event ID is required.");
-    }
 
     const {
       newStart,
