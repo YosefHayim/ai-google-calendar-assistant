@@ -583,7 +583,7 @@ const CHANGELOG_DATA: ChangelogEntry[] = [
   },
 ]
 
-export function ChangelogPage() {
+function ChangelogPage() {
   const breadcrumbSchema = generateBreadcrumbSchema([
     { name: 'Home', url: SITE_CONFIG.url },
     { name: 'Changelog', url: `${SITE_CONFIG.url}/changelog` },
@@ -666,7 +666,7 @@ export function ChangelogPage() {
           <div className="mt-16 text-center">
             <p className="text-muted-foreground dark:text-muted-foreground">
               Want to see what we&apos;re working on next?{' '}
-              <a href="mailto:hello@askally.io" className="text-primary hover:underline">
+              <a href="/contact" className="text-primary hover:underline">
                 Get in touch
               </a>{' '}
               to share your feature requests.
