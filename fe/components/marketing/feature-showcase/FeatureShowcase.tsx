@@ -1,20 +1,20 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { TelegramIcon, SlackIcon, WhatsAppIcon } from '@/components/shared/Icons'
-import { cn } from '@/lib/utils'
+import { SlackIcon, TelegramIcon, WhatsAppIcon } from '@/components/shared/Icons'
+import { useCallback, useEffect, useState } from 'react'
 
-import type { Platform } from './types'
 import { FEATURES } from './data/features'
 import { PhoneMockup } from './components/PhoneMockup'
+import type { Platform } from './types'
 import { PlatformToggle } from './components/PlatformToggle'
-import { TelegramChat } from './components/TelegramChat'
 import { SlackChat } from './components/SlackChat'
+import { TelegramChat } from './components/TelegramChat'
 import { WhatsAppChat } from './components/WhatsAppChat'
+import { cn } from '@/lib/utils'
 
-export function FeatureShowcase() {
+export const FeatureShowcase = React.memo(function FeatureShowcase() {
   const [activeIndex, setActiveIndex] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
   const [platform, setPlatform] = useState<Platform>('telegram')
@@ -179,6 +179,8 @@ export function FeatureShowcase() {
       </div>
     </section>
   )
-}
+})
+
+FeatureShowcase.displayName = 'FeatureShowcase'
 
 export default FeatureShowcase

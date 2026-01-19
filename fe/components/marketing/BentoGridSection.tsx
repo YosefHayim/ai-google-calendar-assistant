@@ -16,7 +16,7 @@ const MOCK_EVENTS: CalendarEvent[] = [
   { id: 'event-4', title: 'Product Sync', date: '2024-01-18T09:00:00.000Z' },
 ]
 
-const BentoGridSection: React.FC = () => {
+const BentoGridSection: React.FC = React.memo(() => {
   const { t } = useTranslation()
 
   const features = [
@@ -150,5 +150,9 @@ const BentoGridSection: React.FC = () => {
     </section>
   )
 }
+
+})
+
+BentoGridSection.displayName = 'BentoGridSection'
 
 export default BentoGridSection

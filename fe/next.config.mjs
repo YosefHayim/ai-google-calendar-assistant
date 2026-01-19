@@ -33,10 +33,14 @@ const nextConfig = {
       : [],
   },
   reactCompiler: true,
-  compiler: {
-    removeConsole: process.env.NODE_ENV === 'production',
-  },
   reactStrictMode: true,
+  // Performance optimizations
+  swcMinify: true,
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production' ? {
+      exclude: ['error']
+    } : false,
+  },
   images: {
     remotePatterns: [
       {
@@ -148,6 +152,75 @@ export default withSentryConfig(
     // Disable source maps in production since Sentry handles them
     if (!dev) {
       config.devtool = false
+    }
+
+    // Aggressive optimizations for production
+    if (!dev) {
+      // Enable webpack optimizations
+      config.optimization = {
+        ...config.optimization,
+        moduleIds: 'deterministic',
+        chunkIds: 'deterministic',
+        concatenateModules: true,
+        flagIncludedChunks: true,
+        occurrenceOrder: true,
+        providedExports: true,
+        usedExports: true,
+        splitChunks: {
+          ...config.optimization.splitChunks,
+          cacheGroups: {
+            ...config.optimization.splitChunks?.cacheGroups,
+            // Separate large vendor chunks
+            vendor: {
+              test: /[\\/]node_modules[\\/]/,
+              name: 'vendors',
+              chunks: 'all',
+              priority: 10,
+            },
+            // Separate React and related libraries
+            react: {
+              test: /[\\/]node_modules[\\/](react|react-dom|framer-motion|@radix-ui)[\\/]/,
+              name: 'react-vendor',
+              chunks: 'all',
+              priority: 20,
+            },
+            // Separate chart libraries
+            charts: {
+              test: /[\\/]node_modules[\\/](recharts|d3|@tsparticles)[\\/]/,
+              name: 'charts-vendor',
+              chunks: 'all',
+              priority: 15,
+            },
+            // Separate UI libraries
+            ui: {
+              test: /[\\/]node_modules[\\/](lucide-react|@headlessui|class-variance-authority|clsx|tailwind-merge)[\\/]/,
+              name: 'ui-vendor',
+              chunks: 'all',
+              priority: 15,
+            },
+          },
+        },
+      }
+
+      // Add terser options for better minification
+      if (config.optimization.minimizer) {
+        config.optimization.minimizer.forEach((minimizer) => {
+          if (minimizer.options && minimizer.options.terserOptions) {
+            minimizer.options.terserOptions = {
+              ...minimizer.options.terserOptions,
+              compress: {
+                ...minimizer.options.terserOptions.compress,
+                drop_console: true,
+                drop_debugger: true,
+                pure_funcs: ['console.log', 'console.info', 'console.debug'],
+              },
+              mangle: {
+                safari10: true,
+              },
+            }
+          }
+        })
+      }
     }
 
     return config

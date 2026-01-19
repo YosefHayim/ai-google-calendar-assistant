@@ -6,15 +6,24 @@ import { SlackIcon, TelegramIcon, WhatsAppIcon } from '@/components/shared/Icons
 import { AnimatedFeatureSpotlight3D } from '@/components/ui/animated-feature-spotlight3d'
 import BentoGridSection from '@/components/marketing/BentoGridSection'
 import { Button } from '@/components/ui/button'
-import FeatureShowcase from '@/components/marketing/FeatureShowcase'
 import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button'
 import Link from 'next/link'
 import MarketingLayout from '@/components/marketing/MarketingLayout'
 import { SOCIAL_LINKS } from '@/lib/constants'
-import Testimonials from '@/components/marketing/Testimonials'
+import dynamic from 'next/dynamic'
 import { useTranslation } from 'react-i18next'
 
-export default function HomePage() {
+const FeatureShowcase = dynamic(() => import('@/components/marketing/FeatureShowcase'), {
+  loading: () => <div className="h-96 bg-muted animate-pulse rounded-lg" />,
+  ssr: false,
+})
+
+const Testimonials = dynamic(() => import('@/components/marketing/Testimonials'), {
+  loading: () => <div className="h-64 bg-muted animate-pulse rounded-lg" />,
+  ssr: false,
+})
+
+const HomePage = React.memo(function HomePage() {
   const { t } = useTranslation()
 
   return (
@@ -142,4 +151,8 @@ export default function HomePage() {
       </section>
     </MarketingLayout>
   )
-}
+})
+
+HomePage.displayName = 'HomePage'
+
+export default HomePage

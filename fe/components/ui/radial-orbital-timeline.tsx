@@ -101,10 +101,10 @@ export default function RadialOrbitalTimeline({ timelineData }: RadialOrbitalTim
     if (autoRotate && viewMode === 'orbital') {
       rotationTimer = setInterval(() => {
         setRotationAngle((prev) => {
-          const newAngle = (prev + 0.3) % 360
-          return Number(newAngle.toFixed(3))
+          const newAngle = (prev + 0.5) % 360 // Slightly faster rotation
+          return Number(newAngle.toFixed(1)) // Less precision to reduce calculations
         })
-      }, 50)
+      }, 100) // Reduced frequency from 50ms to 100ms
     }
 
     return () => {
