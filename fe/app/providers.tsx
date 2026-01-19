@@ -1,5 +1,7 @@
 'use client'
 
+import { useEffect, useState } from 'react'
+
 import { AuthProvider } from '@/contexts/AuthContext'
 import { CommandPalette } from '@/components/shared/CommandPalette'
 import { ENV } from '@/lib/constants'
@@ -15,7 +17,7 @@ import { ThemeProvider } from 'next-themes'
 import { Toaster } from 'sonner'
 import { createQueryClient } from '@/lib/query'
 import dynamic from 'next/dynamic'
-import { useState } from 'react'
+import { initWebVitals } from '@/lib/web-vitals'
 
 const PostHogProvider = dynamic(() => import('@/contexts/PostHogContext').then(mod => ({ default: mod.PostHogProvider })), {
   loading: () => null,
@@ -29,6 +31,11 @@ const PostHogPageview = dynamic(() => import('@/components/shared/PostHogPagevie
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(() => createQueryClient())
+
+  // Initialize Web Vitals monitoring
+  useEffect(() => {
+    initWebVitals()
+  }, [])
 
   return (
     <PostHogProvider>

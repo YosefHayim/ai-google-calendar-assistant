@@ -19,6 +19,8 @@ const nextConfig = {
   output: 'standalone',
   experimental: {
     optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
+    optimizeCss: true,
+    scrollRestoration: true,
     swcPlugins: isDev
       ? [
           [
@@ -35,7 +37,8 @@ const nextConfig = {
   reactCompiler: true,
   reactStrictMode: true,
   // Performance optimizations
-  swcMinify: true,
+  poweredByHeader: false,
+  compress: true,
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production' ? {
       exclude: ['error']
@@ -61,6 +64,9 @@ const nextConfig = {
       },
     ],
     minimumCacheTTL: 60,
+    formats: ['image/webp', 'image/avif'],
+    dangerouslyAllowSVG: false,
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
   async headers() {
     return [
@@ -116,6 +122,31 @@ const nextConfig = {
           {
             key: 'Cross-Origin-Opener-Policy',
             value: 'same-origin',
+          },
+          // Performance headers
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+        ],
+      },
+      // Static assets caching
+      {
+        source: '/_next/static/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      // Images caching
+      {
+        source: '/api/(.*).(jpg|jpeg|png|gif|webp|avif|svg)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=86400, s-maxage=86400',
           },
         ],
       },

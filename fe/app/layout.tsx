@@ -35,25 +35,48 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning={true}>
+    <html lang="en" suppressHydrationWarning>
       <head>
+        {/* Font preconnects */}
         <link href="https://fonts.googleapis.com" rel="preconnect" />
         <link crossOrigin="anonymous" href="https://fonts.gstatic.com" rel="preconnect" />
-        <link
-          rel="preconnect"
-          href="https://fonts.googleapis.com"
-        />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin=""
-        />
+
+        {/* DNS prefetch for external domains */}
+        <link rel="dns-prefetch" href="//accounts.google.com" />
+        <link rel="dns-prefetch" href="//www.googletagmanager.com" />
+        <link rel="dns-prefetch" href="//lmsqueezy.com" />
+        <link rel="dns-prefetch" href="//images.unsplash.com" />
+        <link rel="dns-prefetch" href="//raw.githubusercontent.com" />
+        <link rel="dns-prefetch" href="//be.askally.io" />
+
+        {/* Preconnect to critical third parties */}
+        <link rel="preconnect" href="https://accounts.google.com" />
+        <link rel="preconnect" href="https://www.googletagmanager.com" />
+        <link rel="preconnect" href="https://lmsqueezy.com" />
+        <link rel="preconnect" href="https://images.unsplash.com" />
+        <link rel="preconnect" href="https://raw.githubusercontent.com" />
+
+        {/* Font loading with preload for critical fonts */}
         <link
           href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&family=Playfair+Display:wght@400..900&display=swap"
           rel="stylesheet"
           media="print"
           onLoad="this.media='all'"
         />
+
+        {/* Preload critical resources */}
+        <link
+          rel="preload"
+          href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400&display=swap"
+          as="style"
+          onLoad="this.onload=null;this.rel='stylesheet'"
+        />
+        <noscript>
+          <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400&display=swap"
+          />
+        </noscript>
         {/* Favicons */}
         <link rel="icon" type="image/x-icon" href="/favicon/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png" />
