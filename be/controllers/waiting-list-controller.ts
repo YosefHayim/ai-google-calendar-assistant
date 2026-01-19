@@ -1,7 +1,8 @@
 import type { Request, Response } from "express";
-import { z } from "zod";
+
 import { SUPABASE } from "@/config/clients";
 import { sendR } from "@/utils/http";
+import { z } from "zod";
 
 type WaitlistMetadata = {
   waitlist_position?: number;

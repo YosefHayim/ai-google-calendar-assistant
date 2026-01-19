@@ -1,9 +1,11 @@
-import type { Request, Response } from "express";
-import { STATUS_RESPONSE } from "@/config";
-import type { PreferenceKey } from "@/services/user-preferences-service";
 import * as preferencesService from "@/services/user-preferences-service";
-import { requireUserId } from "@/utils/auth/require-user";
+
+import type { Request, Response } from "express";
 import { reqResAsyncHandler, sendR } from "@/utils/http";
+
+import type { PreferenceKey } from "@/services/user-preferences-service";
+import { STATUS_RESPONSE } from "@/config";
+import { requireUserId } from "@/utils/auth/require-user";
 
 /**
  * Get a user preference by key
