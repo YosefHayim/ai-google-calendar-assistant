@@ -4,7 +4,7 @@ export const SITE_CONFIG = {
   name: 'Ask Ally',
   url: 'https://askally.io',
   description:
-    'Ask Ally is an AI-powered calendar assistant that helps you manage your Google Calendar with natural language commands, voice input, and smart scheduling.',
+    'Ask Ally, the AI Google Calendar Assistant, is an AI-powered scheduling assistant that helps you manage your Google Calendar with natural language commands, voice input, and smart scheduling.',
   ogImage: 'https://askally.io/logo.svg',
   creator: '@askally_io',
   keywords: [
@@ -80,7 +80,7 @@ export const PAGE_METADATA = {
   home: {
     title: 'AI Secretary for Your Google Calendar',
     description:
-      'Ask Ally is your intelligent calendar assistant. Manage Google Calendar with natural language, voice commands, and AI-powered scheduling. Available on web, Telegram, and WhatsApp.',
+      'Ask Ally, the AI Google Calendar Assistant, is your intelligent scheduling assistant. Manage Google Calendar with natural language, voice commands, and AI-powered scheduling. Available on web, Telegram, and WhatsApp.',
     keywords: [...SITE_CONFIG.keywords, 'home automation', 'personal assistant AI', 'calendar management app'],
   },
   pricing: {
@@ -92,7 +92,7 @@ export const PAGE_METADATA = {
   about: {
     title: 'About Us',
     description:
-      'Learn about Ask Ally - the AI-powered calendar assistant built to save you time. Our mission is to eliminate calendar chaos and give you back your most valuable resource: time.',
+      'Learn about Ask Ally, the AI Google Calendar Assistant, built to save you time. Our mission is to eliminate calendar chaos and give you back your most valuable resource: time.',
     keywords: ['about Ask Ally', 'AI calendar company', 'productivity startup', 'calendar automation team'],
   },
   help: {
@@ -155,6 +155,23 @@ export const PAGE_METADATA = {
     description:
       'Create your free Ask Ally account. Get started with AI-powered calendar management, natural language scheduling, and voice commands.',
     keywords: ['Ask Ally signup', 'create account', 'free calendar AI', 'register'],
+  },
+  compare: {
+    title: 'Ask Ally vs Other Calendar Tools & Services',
+    description:
+      'Ask Ally, the AI Google Calendar Assistant, is a productivity SaaS tool - not an accessibility service or consulting firm. Compare Ask Ally to Calendly, Motion, Reclaim.ai and other calendar tools.',
+    keywords: [
+      'Ask Ally comparison',
+      'Ask Ally vs Calendly',
+      'Ask Ally vs Motion',
+      'Ask Ally vs Reclaim',
+      'AI calendar assistant comparison',
+      'Google Calendar AI tools',
+      'productivity calendar software',
+      'calendar automation tools',
+      'Ask Ally productivity tool',
+      'AI scheduling assistant',
+    ],
   },
 }
 

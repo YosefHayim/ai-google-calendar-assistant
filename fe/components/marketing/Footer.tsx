@@ -1,10 +1,9 @@
 'use client'
 
 import { AllyLogo, BetaBadge } from '@/components/shared/logo'
-import { TelegramIcon, WhatsAppIcon } from '@/components/shared/Icons'
+import { SlackIcon, TelegramIcon, WhatsAppIcon } from '@/components/shared/Icons'
 
 import Link from 'next/link'
-import { Mail } from 'lucide-react'
 import React from 'react'
 import { SOCIAL_LINKS } from '@/lib/constants'
 import { SystemStatus } from './SystemStatus'
@@ -17,7 +16,10 @@ const Footer = () => {
   const sections = [
     {
       title: t('footer.product'),
-      links: [{ name: t('footer.pricing'), href: '/pricing' }],
+      links: [
+        { name: t('footer.pricing'), href: '/pricing' },
+        { name: 'Why Ally?', href: '/compare' },
+      ],
     },
     {
       title: t('footer.company'),
@@ -62,6 +64,15 @@ const Footer = () => {
                 <TelegramIcon className="w-5 h-5" />
               </a>
               <a
+                href={SOCIAL_LINKS.SLACK}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 bg-secondary dark:bg-secondary rounded-md text-muted-foreground hover:text-[#4A154B] dark:hover:text-[#E01E5A] transition-colors"
+                title="Slack"
+              >
+                <SlackIcon className="w-5 h-5" />
+              </a>
+              <a
                 href={SOCIAL_LINKS.WHATSAPP}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -69,13 +80,6 @@ const Footer = () => {
                 title="WhatsApp"
               >
                 <WhatsAppIcon className="w-5 h-5" />
-              </a>
-              <a
-                href={SOCIAL_LINKS.EMAIL}
-                className="p-2 bg-secondary dark:bg-secondary rounded-md text-muted-foreground hover:text-primary transition-colors"
-                title="Email"
-              >
-                <Mail className="w-5 h-5" />
               </a>
             </div>
           </div>
