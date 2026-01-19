@@ -186,8 +186,8 @@ export function GapCard({ gap, index, onFillGap, onSkipGap, isLoading }: GapCard
                         </SelectTrigger>
                         <SelectContent>
                           {calendars.map((calendar) => (
-                            <SelectItem key={calendar.id} value={calendar.id}>
-                              {calendar.summary || calendar.id}
+                            <SelectItem key={calendar.calendarId} value={calendar.calendarId}>
+                              {calendar.calendarName || calendar.calendarId}
                             </SelectItem>
                           ))}
                         </SelectContent>

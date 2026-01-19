@@ -29,6 +29,7 @@ const mockConversations: ConversationListItem[] = [
     lastUpdated: new Date(Date.now() - 1000 * 60 * 5).toISOString(),
     createdAt: new Date(Date.now() - 1000 * 60 * 60).toISOString(),
     messageCount: 5,
+    pinned: false,
   },
   {
     id: 'conv-2',
@@ -36,6 +37,7 @@ const mockConversations: ConversationListItem[] = [
     lastUpdated: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 3).toISOString(),
     messageCount: 8,
+    pinned: true,
   },
   {
     id: 'conv-3',
@@ -43,6 +45,7 @@ const mockConversations: ConversationListItem[] = [
     lastUpdated: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 25).toISOString(),
     messageCount: 3,
+    pinned: false,
   },
   {
     id: 'conv-4',
@@ -50,6 +53,7 @@ const mockConversations: ConversationListItem[] = [
     lastUpdated: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2).toISOString(),
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2).toISOString(),
     messageCount: 2,
+    pinned: false,
   },
   {
     id: 'conv-5',
@@ -57,6 +61,7 @@ const mockConversations: ConversationListItem[] = [
     lastUpdated: new Date(Date.now() - 1000 * 60 * 60 * 24 * 3).toISOString(),
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 4).toISOString(),
     messageCount: 12,
+    pinned: false,
   },
   {
     id: 'conv-6',
@@ -64,6 +69,7 @@ const mockConversations: ConversationListItem[] = [
     lastUpdated: new Date(Date.now() - 1000 * 60 * 60 * 24 * 5).toISOString(),
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 6).toISOString(),
     messageCount: 4,
+    pinned: false,
   },
   {
     id: 'conv-7',
@@ -71,6 +77,7 @@ const mockConversations: ConversationListItem[] = [
     lastUpdated: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7).toISOString(),
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 8).toISOString(),
     messageCount: 6,
+    pinned: false,
   },
 ]
 
@@ -85,6 +92,7 @@ const defaultArgs = {
   onClearSearch: () => {},
   onSelectConversation: () => {},
   onInitiateDelete: () => {},
+  onInitiateArchive: () => {},
 }
 
 export const Default: Story = {
@@ -155,6 +163,7 @@ export const ManyConversations: Story = {
         lastUpdated: new Date(Date.now() - 1000 * 60 * 60 * 24 * (i + 8)).toISOString(),
         createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * (i + 9)).toISOString(),
         messageCount: (i % 10) + 1,
+        pinned: false,
       })),
     ],
   },
@@ -170,6 +179,7 @@ export const LongTitles: Story = {
         lastUpdated: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
         createdAt: new Date(Date.now() - 1000 * 60 * 60).toISOString(),
         messageCount: 7,
+        pinned: false,
       },
       {
         id: 'conv-long-2',
@@ -177,6 +187,7 @@ export const LongTitles: Story = {
         lastUpdated: new Date(Date.now() - 1000 * 60 * 60 * 4).toISOString(),
         createdAt: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString(),
         messageCount: 4,
+        pinned: false,
       },
       {
         id: 'conv-long-3',
@@ -184,6 +195,7 @@ export const LongTitles: Story = {
         lastUpdated: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
         createdAt: new Date(Date.now() - 1000 * 60 * 60 * 25).toISOString(),
         messageCount: 3,
+        pinned: false,
       },
     ],
   },
@@ -217,6 +229,7 @@ export const Interactive: Story = {
         onClearSearch={() => setSearchValue('')}
         onSelectConversation={(conv) => setSelectedId(conv.id)}
         onInitiateDelete={handleDelete}
+        onInitiateArchive={() => {}}
       />
     )
   },

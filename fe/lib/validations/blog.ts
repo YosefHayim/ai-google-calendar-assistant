@@ -12,7 +12,7 @@ export const blogPostSchema = z.object({
     .min(100, 'Content must be at least 100 characters')
     .max(50000, 'Content must be at most 50,000 characters'),
   category: z.enum(BLOG_CATEGORIES, {
-    errorMap: () => ({ message: 'Please select a valid category' }),
+    message: 'Please select a valid category',
   }),
   tags: z.string().optional(),
   featured: z.boolean().default(false),

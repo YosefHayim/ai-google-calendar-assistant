@@ -8,6 +8,7 @@ import { Card } from '@/components/ui/card'
 import { EmptyState } from '@/components/ui/empty-state'
 import { EventCard } from '../components/EventCard'
 import React from 'react'
+import { cn } from '@/lib/utils'
 
 interface WeekViewProps {
   currentDate: Date

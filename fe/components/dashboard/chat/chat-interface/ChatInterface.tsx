@@ -8,7 +8,6 @@ import { toast } from 'sonner'
 import { AvatarView } from '../AvatarView'
 import { ChatInput, ImageFile } from '../ChatInput'
 import { ChatView } from '../ChatView'
-import { ThreeDView } from '../ThreeDView'
 import { ViewSwitcher } from '../ViewSwitcher'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { Message } from '@/types'
@@ -300,8 +299,6 @@ export function ChatInterface() {
               onSpeak={speakText}
               avatarScrollRef={avatarScrollRef}
             />
-          ) : activeTab === '3d' ? (
-            <ThreeDView />
           ) : (
             <ChatView
               messages={messages}

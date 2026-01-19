@@ -1,4 +1,4 @@
-export type ActiveTab = 'chat' | 'avatar' | '3d'
+export type ActiveTab = 'chat' | 'avatar'
 
 declare global {
   interface Window {

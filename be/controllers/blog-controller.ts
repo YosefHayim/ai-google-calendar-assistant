@@ -303,6 +303,26 @@ export const blogController = {
       return sendR(res, 201, "Blog post created successfully", data);
     } catch (error) {
       console.error("Blog create error:", error);
+      if (error && typeof error === "object") {
+        const supabaseError = error as {
+          code?: string;
+          message?: string;
+          details?: string;
+          hint?: string;
+        };
+        console.error("Supabase error details:", {
+          code: supabaseError.code,
+          message: supabaseError.message,
+          details: supabaseError.details,
+          hint: supabaseError.hint,
+        });
+        return sendR(
+          res,
+          500,
+          `Failed to create blog post: ${supabaseError.message || "Unknown error"}`,
+          { code: supabaseError.code, hint: supabaseError.hint }
+        );
+      }
       return sendR(res, 500, "Failed to create blog post", null);
     }
   },

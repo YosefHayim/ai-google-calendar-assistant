@@ -40,7 +40,7 @@ export function GapsHeader({ analyzedRange, totalGaps, onRefresh, isRefreshing }
             text="Refresh"
             loadingText="Analyzing..."
             isLoading={isRefreshing}
-            Icon={RotateCw}
+            Icon={<RotateCw className="h-4 w-4" />}
             onClick={onRefresh}
             className="h-9"
           />

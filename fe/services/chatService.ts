@@ -183,13 +183,24 @@ export const restoreConversation = async (conversationId: string): Promise<boole
 export const getArchivedConversations = async (): Promise<ConversationListResponse> => {
   try {
     const response = await apiClient.get('/api/chat/conversations/archived')
+    const conversations = response.data?.data?.conversations || []
     return {
-      conversations: response.data?.data?.conversations || [],
-      total: response.data?.data?.conversations?.length || 0,
-      hasMore: false,
+      conversations,
+      status: 'success',
+      message: 'Archived conversations retrieved',
+      pagination: {
+        limit: conversations.length,
+        offset: 0,
+        count: conversations.length,
+      },
     }
   } catch {
-    return { conversations: [], total: 0, hasMore: false }
+    return {
+      conversations: [],
+      status: 'error',
+      message: 'Failed to retrieve archived conversations',
+      pagination: { limit: 0, offset: 0, count: 0 },
+    }
   }
 }
 

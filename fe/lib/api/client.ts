@@ -1,9 +1,5 @@
 import { ENV, STORAGE_KEYS } from '../constants'
-import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios'
-
-interface RetryableRequestConfig extends InternalAxiosRequestConfig {
-  _retry?: boolean
-}
+import axios, { type AxiosError } from 'axios'
 
 interface SessionErrorResponse {
   data?: {
@@ -42,24 +38,6 @@ apiClient.interceptors.request.use(
   (error) => Promise.reject(error),
 )
 
-let isRefreshing = false
-let failedQueue: Array<{
-  resolve: (value?: unknown) => void
-  reject: (reason?: unknown) => void
-}> = []
-
-const processQueue = (error: AxiosError | null) => {
-  failedQueue.forEach((prom) => {
-    if (error) {
-      prom.reject(error)
-    } else {
-      prom.resolve()
-    }
-  })
-
-  failedQueue = []
-}
-
 apiClient.interceptors.response.use(
   (response) => {
     if (typeof window !== 'undefined') {
@@ -75,8 +53,7 @@ apiClient.interceptors.response.use(
     return response
   },
   async (error: AxiosError<SessionErrorResponse>) => {
-    const originalRequest = error.config as RetryableRequestConfig | undefined
-    if (!originalRequest) {
+    if (!error.config) {
       return Promise.reject(error)
     }
 
@@ -94,7 +71,7 @@ apiClient.interceptors.response.use(
       return Promise.reject(error)
     }
 
-    if (isUnauthorized && !originalRequest._retry) {
+    if (isUnauthorized) {
       if (errorCode && GOOGLE_REAUTH_CODES.includes(errorCode)) {
         if (typeof window !== 'undefined') {
           sessionStorage.setItem('google_reauth_required', 'true')
@@ -104,33 +81,16 @@ apiClient.interceptors.response.use(
       }
 
       if (errorCode && SUPABASE_SESSION_CODES.includes(errorCode)) {
-        if (isRefreshing) {
-          return new Promise((resolve, reject) => {
-            failedQueue.push({ resolve, reject })
-          })
-            .then(() => apiClient(originalRequest))
-            .catch((err) => Promise.reject(err))
+        // Session expired - clear tokens and redirect to login
+        // Don't retry - the backend already tried to refresh and it failed
+        if (typeof window !== 'undefined') {
+          // CRITICAL: Clear tokens BEFORE redirecting to prevent infinite loop
+          // Without this, LoginPage sees stale token → fires useUser → gets 401 → redirects again
+          localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN)
+          localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN)
+          window.location.href = '/login?error=session_expired'
         }
-
-        originalRequest._retry = true
-        isRefreshing = true
-
-        try {
-          const response = await apiClient(originalRequest)
-          isRefreshing = false
-          processQueue(null)
-          return response
-        } catch (refreshError) {
-          isRefreshing = false
-          const axiosRefreshError = axios.isAxiosError(refreshError) ? refreshError : null
-          processQueue(axiosRefreshError)
-
-          if (typeof window !== 'undefined') {
-            window.location.href = '/login?error=session_expired'
-          }
-
-          return Promise.reject(refreshError)
-        }
+        return Promise.reject(error)
       }
     }
 

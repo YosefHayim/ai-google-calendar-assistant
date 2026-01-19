@@ -1,12 +1,12 @@
 'use client'
 
-import { Box, MessageSquare, User } from 'lucide-react'
+import { MessageSquare, User } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 
 import { Button } from '@/components/ui/button'
 import React from 'react'
 
-type ActiveTab = 'chat' | 'avatar' | '3d'
+type ActiveTab = 'chat' | 'avatar'
 
 interface ViewSwitcherProps {
   activeTab: ActiveTab
@@ -54,26 +54,6 @@ export const ViewSwitcher: React.FC<ViewSwitcherProps> = ({ activeTab, onTabChan
           </TooltipTrigger>
           <TooltipContent>
             <p>2D Avatar View</p>
-          </TooltipContent>
-        </Tooltip>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => onTabChange('3d')}
-        className={`flex items-center gap-1.5 sm:gap-2 rounded-md text-xs font-bold touch-manipulation px-2.5 sm:px-3 ${
-          activeTab === '3d'
-            ? 'bg-secondary dark:bg-secondary shadow-sm text-white dark:text-foreground hover:bg-secondary dark:hover:bg-secondary hover:text-white dark:hover:text-foreground'
-            : 'text-muted-foreground hover:bg-secondary dark:hover:bg-secondary hover:text-foreground dark:hover:text-foreground'
-        }`}
-            >
-              <Box className="w-3.5 h-3.5" />
-              <span className="hidden xs:inline">3D</span>
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>3D Avatar View</p>
           </TooltipContent>
         </Tooltip>
       </div>

@@ -49,8 +49,10 @@ const GapsDashboard: React.FC = () => {
   const handleFillGap = async (gapId: string, summary: string, calendarId?: string) => {
     await fillGap.mutateAsync({
       gapId,
-      summary,
-      calendarId,
+      data: {
+        summary,
+        calendarId,
+      },
     })
     refetch()
   }

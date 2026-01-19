@@ -35,16 +35,9 @@ export const AvatarActive: Story = {
   },
 }
 
-export const ThreeDActive: Story = {
-  args: {
-    activeTab: '3d',
-    onTabChange: () => {},
-  },
-}
-
 export const Interactive: Story = {
   render: function InteractiveViewSwitcher() {
-    const [activeTab, setActiveTab] = useState<'chat' | 'avatar' | '3d'>('chat')
+    const [activeTab, setActiveTab] = useState<'chat' | 'avatar'>('chat')
 
     return (
       <div className="space-y-4">
@@ -87,7 +80,7 @@ export const OnDarkBackground: Story = {
 
 export const OnImageBackground: Story = {
   args: {
-    activeTab: '3d',
+    activeTab: 'avatar',
     onTabChange: () => {},
   },
   decorators: [
@@ -117,12 +110,6 @@ export const AllTabs: Story = {
         <p className="text-sm font-medium mb-2 text-zinc-600 dark:text-muted-foreground">2D Avatar View Selected</p>
         <div className="relative w-[400px] h-[80px] bg-secondary dark:bg-secondary rounded-xl mx-auto">
           <ViewSwitcher activeTab="avatar" onTabChange={() => {}} />
-        </div>
-      </div>
-      <div className="text-center">
-        <p className="text-sm font-medium mb-2 text-zinc-600 dark:text-muted-foreground">3D View Selected</p>
-        <div className="relative w-[400px] h-[80px] bg-secondary dark:bg-secondary rounded-xl mx-auto">
-          <ViewSwitcher activeTab="3d" onTabChange={() => {}} />
         </div>
       </div>
     </div>

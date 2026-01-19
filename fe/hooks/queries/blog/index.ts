@@ -1,6 +1,6 @@
 'use client'
 
-import type { BlogQueryParams, CreateBlogPostData } from '@/types/blog'
+import type { BlogCategory, BlogQueryParams, CreateBlogPostData } from '@/types/blog'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { QUERY_CONFIG } from '@/lib/constants'
@@ -116,7 +116,7 @@ export function useGenerateAIBlogPost(options?: {
   return useMutation({
     mutationFn: async (generateData: {
       topic: string
-      category?: string
+      category?: BlogCategory
       keywords?: string[]
       targetAudience?: string
       tone?: 'professional' | 'conversational' | 'expert' | 'educational'
