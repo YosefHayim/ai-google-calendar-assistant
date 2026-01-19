@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight, Sparkles, X } from 'lucide-react'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 
@@ -68,7 +68,7 @@ export const OnboardingTour: React.FC<{ onComplete: () => void }> = ({ onComplet
     return () => window.removeEventListener('resize', checkMobile)
   }, [])
 
-  const updateSpotlight = () => {
+  const updateSpotlight = useCallback(() => {
     // CRITICAL: Disable spotlight (highlights) on mobile entirely
     if (isMobile || step.position === 'center') {
       setSpotlightRect(null)
@@ -78,13 +78,18 @@ export const OnboardingTour: React.FC<{ onComplete: () => void }> = ({ onComplet
     if (element) {
       setSpotlightRect(element.getBoundingClientRect())
     }
-  }
+  }, [isMobile, step.position, step.targetId])
 
   useEffect(() => {
     updateSpotlight()
     window.addEventListener('resize', updateSpotlight)
     return () => window.removeEventListener('resize', updateSpotlight)
   }, [updateSpotlight])
+
+  // Update spotlight when step changes
+  useEffect(() => {
+    updateSpotlight()
+  }, [currentStep, updateSpotlight])
 
   const next = () => {
     if (currentStep < TOUR_STEPS.length - 1) {

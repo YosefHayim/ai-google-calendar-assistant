@@ -29,7 +29,7 @@ const BentoGridSection: React.FC = () => {
       background: (
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent">
           <Image
-            src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=2670&auto=format&fit=crop"
+            src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=800&h=600&auto=format&fit=crop"
             className="absolute right-[-10%] top-[-10%] opacity-10 dark:opacity-20 grayscale group-hover:grayscale-0 transition-all duration-500"
             alt="Focus"
             width={800}
@@ -54,8 +54,9 @@ const BentoGridSection: React.FC = () => {
               events={MOCK_EVENTS}
               panelWidth={140}
               panelHeight={100}
-              columns={5}
+              columns={3}
               hideControls={true}
+              maxDays={12}
             />
           </div>
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-zinc-100 dark:from-zinc-800/50 to-transparent opacity-40"></div>

@@ -25,6 +25,7 @@ interface ThreeDWallCalendarProps {
   panelHeight?: number
   columns?: number
   hideControls?: boolean
+  maxDays?: number
 }
 
 export function ThreeDWallCalendar({
@@ -35,6 +36,7 @@ export function ThreeDWallCalendar({
   panelHeight = 120,
   columns = 7,
   hideControls = false,
+  maxDays,
 }: ThreeDWallCalendarProps) {
   const [dateRef, setDateRef] = useState<Date>(new Date())
   const [title, setTitle] = useState('')
@@ -48,10 +50,11 @@ export function ThreeDWallCalendar({
   const dragStart = useRef<{ x: number; y: number } | null>(null)
 
   // month days
-  const days = eachDayOfInterval({
+  const allDays = eachDayOfInterval({
     start: startOfMonth(dateRef),
     end: endOfMonth(dateRef),
   })
+  const days = maxDays ? allDays.slice(0, maxDays) : allDays
 
   const eventsForDay = (d: Date) =>
     events.filter((ev) => format(new Date(ev.date), 'yyyy-MM-dd') === format(d, 'yyyy-MM-dd'))

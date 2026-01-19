@@ -18,11 +18,31 @@ export default function RotatingEarth({
   hideControls = false,
 }: RotatingEarthProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const [_isLoading, setIsLoading] = useState(true)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const [isInView, setIsInView] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!canvasRef.current) return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !isInView) {
+          setIsInView(true)
+          setIsLoading(true)
+        }
+      },
+      { threshold: 0.1, rootMargin: '100px' }
+    )
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current)
+    }
+
+    return () => observer.disconnect()
+  }, [isInView])
+
+  useEffect(() => {
+    if (!isInView || !canvasRef.current) return
 
     const canvas = canvasRef.current
     const context = canvas.getContext('2d')
@@ -288,8 +308,10 @@ export default function RotatingEarth({
     canvas.addEventListener('mousedown', handleMouseDown)
     canvas.addEventListener('wheel', handleWheel, { passive: false })
 
-    // Load the world data
-    loadWorldData()
+    // Load the world data only when component is in view
+    if (isInView) {
+      loadWorldData()
+    }
 
     // Cleanup
     return () => {
@@ -297,7 +319,7 @@ export default function RotatingEarth({
       canvas.removeEventListener('mousedown', handleMouseDown)
       canvas.removeEventListener('wheel', handleWheel)
     }
-  }, [width, height, hideControls])
+  }, [width, height, hideControls, isInView])
 
   if (error) {
     return (
@@ -311,9 +333,18 @@ export default function RotatingEarth({
   }
 
   return (
-    <div className={`relative ${className}`}>
-      <canvas ref={canvasRef} className="w-full h-auto" style={{ maxWidth: '100%', height: 'auto' }} />
-      {!hideControls && (
+    <div ref={containerRef} className={`relative ${className}`}>
+      {!isInView && (
+        <div className="w-full h-full min-h-[200px] bg-muted animate-pulse rounded-lg flex items-center justify-center">
+          <div className="text-muted-foreground text-sm">Loading globe...</div>
+        </div>
+      )}
+      <canvas
+        ref={canvasRef}
+        className={`w-full h-auto ${isInView ? 'opacity-100' : 'opacity-0'}`}
+        style={{ maxWidth: '100%', height: 'auto' }}
+      />
+      {!hideControls && isInView && (
         <div className="absolute bottom-4 left-4 text-xs text-muted-foreground font-bold uppercase tracking-widest px-2 py-1 rounded bg-foreground/50 backdrop-blur-sm">
           Drag to rotate • Scroll to zoom
         </div>

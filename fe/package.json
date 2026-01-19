@@ -2,6 +2,16 @@
   "name": "google-ai-personal-assistant",
   "displayName": "Google AI Personal Assistant",
   "version": "1.0.139",
+  "browserslist": [
+    ">0.3%",
+    "not dead",
+    "not op_mini all",
+    "not ie 11",
+    "Chrome >= 88",
+    "Firefox >= 85",
+    "Safari >= 14",
+    "Edge >= 88"
+  ],
   "scripts": {
     "build": "next build",
     "analyze": "ANALYZE=true next build --webpack",

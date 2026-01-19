@@ -1,9 +1,10 @@
 'use client'
 
 import * as React from 'react'
-import { motion, useMotionValue, useTransform } from 'framer-motion'
+import { motion, useMotionValue, useTransform, type TargetAndTransition } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { Button, type ButtonProps } from '@/components/ui/button'
+import { useState, useRef, useEffect } from 'react'
 
 interface AnimatedFeatureSpotlight3DProps extends React.HTMLAttributes<HTMLElement> {
   preheaderIcon?: React.ReactNode
@@ -17,6 +18,69 @@ interface AnimatedFeatureSpotlight3DProps extends React.HTMLAttributes<HTMLEleme
   reverse?: boolean
   onButtonClick?: () => void
   headingId?: string
+}
+
+// Lazy loading image component
+interface LazyImageProps {
+  src: string
+  alt: string
+  className?: string
+  whileHover?: TargetAndTransition
+  transition?: Record<string, unknown>
+}
+
+const LazyImage = ({ src, alt, className, whileHover, transition }: LazyImageProps) => {
+  const [isLoaded, setIsLoaded] = useState(false)
+  const [isInView, setIsInView] = useState(false)
+  const [hasError, setHasError] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsInView(true)
+          observer.disconnect()
+        }
+      },
+      { threshold: 0.1, rootMargin: '50px' }
+    )
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current)
+    }
+
+    return () => observer.disconnect()
+  }, [])
+
+  const handleLoad = () => setIsLoaded(true)
+  const handleError = () => setHasError(true)
+
+  return (
+    <div ref={containerRef} className="relative w-full h-full">
+      {!isLoaded && !hasError && (
+        <div className="absolute inset-0 bg-muted animate-pulse rounded-xl flex items-center justify-center">
+          <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin opacity-50" />
+        </div>
+      )}
+      {hasError && (
+        <div className="absolute inset-0 bg-muted rounded-xl flex items-center justify-center">
+          <div className="text-muted-foreground text-sm">Failed to load image</div>
+        </div>
+      )}
+      {isInView && (
+        <motion.img
+          src={src}
+          alt={alt}
+          className={cn(className, isLoaded ? 'opacity-100' : 'opacity-0')}
+          onLoad={handleLoad}
+          onError={handleError}
+          transition={{ duration: 0.3, ...transition }}
+          whileHover={whileHover}
+        />
+      )}
+    </div>
+  )
 }
 
 export const AnimatedFeatureSpotlight3D = React.forwardRef<HTMLElement, AnimatedFeatureSpotlight3DProps>(
@@ -38,7 +102,8 @@ export const AnimatedFeatureSpotlight3D = React.forwardRef<HTMLElement, Animated
     },
     ref,
   ) => {
-    const uniqueHeadingId = headingId || `feature-spotlight-heading-${React.useId()}`
+    const componentId = React.useId()
+    const uniqueHeadingId = headingId || `feature-spotlight-heading-${componentId}`
     const x = useMotionValue(0)
     const y = useMotionValue(0)
     const rotateX = useTransform(y, [-100, 100], [15, -15])
@@ -134,7 +199,7 @@ export const AnimatedFeatureSpotlight3D = React.forwardRef<HTMLElement, Animated
               transition={{ type: 'spring', stiffness: 200, damping: 15 }}
               className="w-full max-w-sm relative"
             >
-              <motion.img
+              <LazyImage
                 src={imageUrl}
                 alt={imageAlt}
                 className="w-full object-contain rounded-xl"

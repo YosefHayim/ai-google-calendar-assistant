@@ -6,7 +6,6 @@ import type { Metadata, Viewport } from 'next'
 import { JsonLd } from '@/components/shared/JsonLd'
 import { Providers } from '@/app/providers'
 import Script from 'next/script'
-import { headers } from 'next/headers'
 
 export const metadata: Metadata = {
   ...BASE_METADATA,
@@ -35,18 +34,14 @@ export const viewport: Viewport = {
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  // Get CSP nonce from middleware
-  const headersList = headers()
-  const cspNonce = headersList.get('x-nonce') || ''
-
   return (
     <html lang="en" suppressHydrationWarning={true}>
       <head>
         <link href="https://fonts.googleapis.com" rel="preconnect" />
         <link crossOrigin="anonymous" href="https://fonts.gstatic.com" rel="preconnect" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&family=Playfair+Display:wght@400..900&display=swap"
-          rel="stylesheet"
+        <Script
+          src="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&family=Playfair+Display:wght@400..900&display=swap"
+          strategy="afterInteractive"
         />
         {/* Favicons */}
         <link rel="icon" type="image/x-icon" href="/favicon/favicon.ico" />
@@ -57,7 +52,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <JsonLd data={[generateOrganizationSchema(), generateSoftwareApplicationSchema()]} />
         {/* Google Analytics */}
         <Script src="https://www.googletagmanager.com/gtag/js?id=G-47MKM3CTD8" strategy="afterInteractive" />
-        <Script id="google-analytics" strategy="afterInteractive" nonce={cspNonce}>
+        <Script id="google-analytics" strategy="afterInteractive">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
@@ -66,7 +61,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           `}
         </Script>
         {/* Lemon Squeezy Affiliate Tracking */}
-        <Script id="lemonsqueezy-affiliate-config" strategy="beforeInteractive" nonce={cspNonce}>
+        <Script id="lemonsqueezy-affiliate-config" strategy="beforeInteractive">
           {`window.lemonSqueezyAffiliateConfig = { store: "ally-ai-google-calendar-assitant" };`}
         </Script>
         <Script src="https://lmsqueezy.com/affiliate.js" strategy="afterInteractive" />

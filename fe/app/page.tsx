@@ -91,7 +91,7 @@ export default function HomePage() {
             </>
           }
           description={t('home.voiceCommandsDesc')}
-          imageUrl="https://images.unsplash.com/photo-1589254065878-42c9da997008?w=600&h=400&fit=crop&q=80"
+          imageUrl="https://images.unsplash.com/photo-1589254065878-42c9da997008?w=400&h=300&fit=crop&q=80"
           imageAlt="Voice assistant microphone"
         />
 
@@ -104,7 +104,7 @@ export default function HomePage() {
             </>
           }
           description={t('home.smartSchedulingDesc')}
-          imageUrl="https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=600&h=400&fit=crop&q=80"
+          imageUrl="https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=400&h=300&fit=crop&q=80"
           imageAlt="Calendar scheduling"
           reverse
         />
@@ -118,7 +118,7 @@ export default function HomePage() {
             </>
           }
           description={t('home.timeOptimizationDesc')}
-          imageUrl="https://images.unsplash.com/photo-1434626881859-194d67b2b86f?w=600&h=400&fit=crop&q=80"
+          imageUrl="https://images.unsplash.com/photo-1434626881859-194d67b2b86f?w=400&h=300&fit=crop&q=80"
           imageAlt="Time optimization analytics"
         />
       </section>

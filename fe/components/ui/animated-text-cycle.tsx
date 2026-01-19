@@ -12,20 +12,31 @@ interface AnimatedTextCycleProps {
 
 export default function AnimatedTextCycle({ words, interval = 5000, className = '' }: AnimatedTextCycleProps) {
   const [currentIndex, setCurrentIndex] = useState(0)
-  const [width, setWidth] = useState('auto')
+  const [widths, setWidths] = useState<number[]>([])
   const measureRef = useRef<HTMLDivElement>(null)
 
-  // Get the width of the current word
+  // Pre-measure all word widths to avoid forced reflows
   useEffect(() => {
-    if (measureRef.current) {
+    if (measureRef.current && words.length > 0) {
       const elements = measureRef.current.children
-      if (elements.length > currentIndex) {
-        // Add a small buffer to prevent text wrapping
-        const newWidth = elements[currentIndex].getBoundingClientRect().width
-        setWidth(`${newWidth}px`)
-      }
+      const measuredWidths: number[] = []
+
+      // Use requestAnimationFrame to measure after the next repaint
+      requestAnimationFrame(() => {
+        for (let i = 0; i < Math.min(elements.length, words.length); i++) {
+          const element = elements[i] as HTMLElement
+          if (element) {
+            // Add a small buffer to prevent text wrapping
+            measuredWidths[i] = element.getBoundingClientRect().width + 4
+          }
+        }
+        setWidths(measuredWidths)
+      })
     }
-  }, [currentIndex, words])
+  }, [words])
+
+  // Get current width from pre-measured widths
+  const currentWidth = widths[currentIndex] || 'auto'
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -82,7 +93,7 @@ export default function AnimatedTextCycle({ words, interval = 5000, className = 
       <motion.span
         className="relative inline-block"
         animate={{
-          width,
+          width: currentWidth,
           transition: {
             type: 'spring',
             stiffness: 150,
