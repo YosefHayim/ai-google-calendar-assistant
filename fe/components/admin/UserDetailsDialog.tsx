@@ -46,6 +46,7 @@ export function UserDetailsDialog({ user, onClose }: UserDetailsDialogProps) {
       await revokeUserSessions(user.id)
       toast.success(t('toast.userSessionsRevoked'))
     } catch (error) {
+      console.error(error)
       toast.error(t('toast.userSessionsRevokeFailed'))
     } finally {
       setIsRevokingSessions(false)

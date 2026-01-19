@@ -114,7 +114,7 @@ export function ChatInterface() {
         speakText(fullResponse.split('\n')[0])
       }
     },
-    [
+    [t,
       selectedConversationId,
       setConversationId,
       addConversationToList,
@@ -145,7 +145,7 @@ export function ChatInterface() {
         })
       }
     },
-    [queryClient],
+    [t, queryClient],
   )
 
   const { streamingState, sendStreamingMessage, cancelStream, resetStreamingState } = useStreamingChat({

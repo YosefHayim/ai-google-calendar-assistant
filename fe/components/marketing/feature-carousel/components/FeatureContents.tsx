@@ -40,7 +40,8 @@ export function WhatsAppContent() {
             <WhatsAppIcon className="w-4 h-4" />
             <span className="text-xs opacity-70 font-bold uppercase tracking-wider">Ally AI</span>
           </div>
-          <span>"Move the board call back 15 mins and notify stakeholders."</span>
+          <span>
+          &quot;Move the board call back 15 mins and notify stakeholders.&quot;</span>
         </div>
       </div>
       <div className="flex justify-end">
@@ -130,7 +131,7 @@ export function ConflictContent() {
       </div>
       <div className="flex justify-center">
         <div className="p-3 bg-secondary dark:bg-secondary text-white dark:text-foreground rounded-xl shadow-xl text-center border-white/10">
-          <p className="text-xs font-bold uppercase opacity-60">Ally's Solution</p>
+          <p className="text-xs font-bold uppercase opacity-60">Ally&apos;s Solution</p>
           <p className="text-xs font-bold">Record one, attend the other</p>
         </div>
       </div>
@@ -153,7 +154,7 @@ export function VoiceContent() {
         ))}
       </div>
       <div className="text-center italic text-muted-foreground dark:text-muted-foreground text-xs px-4 font-medium">
-        "Remind me to check the Q3 forecasts when I land."
+        &quot;Remind me to check the Q3 forecasts when I land.&quot;
       </div>
       <div className="bg-emerald-50 dark:bg-emerald-950/30 border-emerald-100 -emerald-900/50 px-3 py-1.5 rounded-full text-emerald-600 dark:text-emerald-400 text-xs font-bold flex items-center gap-2">
         <Check size={16} />

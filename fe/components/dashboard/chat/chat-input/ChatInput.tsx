@@ -136,7 +136,7 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
         }
         event.target.value = ''
       },
-      [images, onImagesChange],
+      [t, images, onImagesChange],
     )
 
     const removeImage = useCallback(
@@ -208,7 +208,7 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
           toast.error(t('toast.pastedImagesProcessingFailed'))
         }
       },
-      [images, onImagesChange],
+      [t, images, onImagesChange],
     )
 
     const handleSubmit = useCallback(

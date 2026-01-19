@@ -6,7 +6,6 @@ import {
   SkeletonChart,
   SkeletonDonutChart,
   SkeletonInsightCard,
-  SkeletonList,
 } from '@/components/ui/skeleton'
 
 import React from 'react'

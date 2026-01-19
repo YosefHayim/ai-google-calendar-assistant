@@ -3,8 +3,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { toast } from 'sonner'
-import { useTranslation } from 'react-i18next'
 import { ttsCache } from '@/services/tts-cache.service'
+import { useTranslation } from 'react-i18next'
 
 type VoiceType = 'alloy' | 'echo' | 'fable' | 'onyx' | 'nova' | 'shimmer'
 
@@ -103,7 +103,7 @@ export function useAudioPlayback(options: AudioPlaybackOptions = {}) {
         isProcessingRef.current = false
       }
     },
-    [isSpeaking, speakingMessageId, stopSpeaking, options.voice, options.playbackSpeed],
+    [t, isSpeaking, speakingMessageId, stopSpeaking, options.voice, options.playbackSpeed],
   )
 
   return {

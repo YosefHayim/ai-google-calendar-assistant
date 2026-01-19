@@ -56,6 +56,7 @@ export function GapsSettings({ settings, onSettingsChange }: GapsSettingsProps) 
       toast.success(t('toast.gapsSettingsSaved'))
       onSettingsChange()
     } catch (error) {
+      console.error(error)
       toast.error(t('toast.gapsSettingsSaveFailed'))
     } finally {
       setIsLoading(false)
@@ -183,7 +184,7 @@ export function GapsSettings({ settings, onSettingsChange }: GapsSettingsProps) 
                   {DAYS_OF_WEEK.map((day) => (
                     <Badge
                       key={day.value}
-                      variant={settings.ignoredDays.includes(day.value as any) ? 'default' : 'secondary'}
+                      variant={settings.ignoredDays.includes(day.value) ? 'default' : 'secondary'}
                       className="cursor-pointer text-xs"
                       onClick={() => {
                         // Handle day toggle
