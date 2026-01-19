@@ -6,7 +6,7 @@ import type { TokensProps } from "./types";
 
 declare global {
   namespace Express {
-    type Request = {
+    interface Request  {
       rawBody?: string;
       user?: User;
       googleTokenValidation?: GoogleTokenValidationResult;

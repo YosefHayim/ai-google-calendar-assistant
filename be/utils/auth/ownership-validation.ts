@@ -6,6 +6,7 @@
  */
 
 import type { Request, Response } from "express";
+
 import { STATUS_RESPONSE } from "@/config";
 import { SUPABASE } from "@/config/clients";
 import { logger } from "@/utils/logger";
@@ -86,7 +87,7 @@ export async function requireOwnership(
   resourceType: OwnedResourceType,
   resourceId: string
 ): Promise<boolean> {
-  const userId = req.user?.id;
+  const userId = req.user!.id;
 
   if (!userId) {
     sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
@@ -148,7 +149,7 @@ export function requireUserIdOwnership(
   res: Response,
   targetUserId: string
 ): boolean {
-  const userId = req.user?.id;
+  const userId = req.user!.id;
 
   if (!userId) {
     sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");

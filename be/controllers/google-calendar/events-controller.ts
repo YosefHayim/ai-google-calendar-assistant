@@ -1,9 +1,10 @@
-import type { Request, Response } from "express";
-import { generateInsightsWithRetry } from "@/ai-agents/insights-generator";
 import { ACTION, REQUEST_CONFIG_BASE, STATUS_RESPONSE } from "@/config";
+import type { Request, Response } from "express";
+import {
+  applyReschedule,
+  findRescheduleSuggestions,
+} from "@/utils/calendar/reschedule";
 import { eventsHandler, formatDate } from "@/utils";
-import { calculateInsightsMetrics } from "@/utils/ai/insights-calculator";
-import { quickAddWithOrchestrator } from "@/utils/ai/quick-add-orchestrator";
 import {
   getCachedEvents,
   invalidateEventsCache,
@@ -13,12 +14,12 @@ import {
   getCachedInsights,
   setCachedInsights,
 } from "@/utils/cache/insights-cache";
-import { getEvents } from "@/utils/calendar/get-events";
-import {
-  applyReschedule,
-  findRescheduleSuggestions,
-} from "@/utils/calendar/reschedule";
 import { reqResAsyncHandler, sendR } from "@/utils/http";
+
+import { calculateInsightsMetrics } from "@/utils/ai/insights-calculator";
+import { generateInsightsWithRetry } from "@/ai-agents/insights-generator";
+import { getEvents } from "@/utils/calendar/get-events";
+import { quickAddWithOrchestrator } from "@/utils/ai/quick-add-orchestrator";
 
 /**
  * Get event by event ID
@@ -62,7 +63,7 @@ const getEventById = reqResAsyncHandler(async (req: Request, res: Response) => {
  *
  */
 const getAllEvents = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const userId = req.user?.id;
+  const userId = req.user!.id;
   const calendarId = (req.query.calendarId as string) || "primary";
   const timeMin = req.query.timeMin as string | undefined;
   const timeMax = req.query.timeMax as string | undefined;
@@ -123,8 +124,8 @@ const createEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
     addMeetLink: addMeetLink === true,
   });
 
-  if (req.user?.id) {
-    await invalidateEventsCache(req.user.id);
+  if (req.user!.id) {
+    await invalidateEventsCache(req.user!.id);
   }
 
   return sendR(res, STATUS_RESPONSE.CREATED, "Event created successfully", r);
@@ -147,8 +148,8 @@ const updateEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
     ...req.body,
   });
 
-  if (req.user?.id) {
-    await invalidateEventsCache(req.user.id);
+  if (req.user!.id) {
+    await invalidateEventsCache(req.user!.id);
   }
 
   return sendR(res, STATUS_RESPONSE.SUCCESS, "Event updated successfully", r);
@@ -170,8 +171,8 @@ const deleteEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
     id: req.params.id as string,
   });
 
-  if (req.user?.id) {
-    await invalidateEventsCache(req.user.id);
+  if (req.user!.id) {
+    await invalidateEventsCache(req.user!.id);
   }
 
   return sendR(res, STATUS_RESPONSE.SUCCESS, "Event deleted successfully", r);

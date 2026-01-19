@@ -1,8 +1,22 @@
-import type { calendar_v3 } from "googleapis";
-import OpenAI from "openai";
-import isEmail from "validator/lib/isEmail";
-import { env } from "@/config";
+import {
+  ConflictCheckResult,
+  PreCreateValidationResult,
+  SelectCalendarResult,
+  TimezoneResult,
+  ValidateUserResult,
+  checkConflictsHandler,
+  getTimezoneHandler,
+  preCreateValidationHandler,
+  selectCalendarHandler,
+  validateUserHandler,
+} from "@/shared";
+
 import { MODELS } from "@/config/constants/ai";
+import OpenAI from "openai";
+import type { calendar_v3 } from "googleapis";
+import { env } from "@/config";
+import { formatEventData as formatEvent } from "./utils";
+import isEmail from "validator/lib/isEmail";
 
 export type {
   ConflictCheckResult,
@@ -12,13 +26,6 @@ export type {
   ValidateUserResult,
 } from "@/shared/tools/handlers";
 
-import {
-  checkConflictsHandler,
-  getTimezoneHandler,
-  preCreateValidationHandler,
-  selectCalendarHandler,
-  validateUserHandler,
-} from "@/shared";
 
 
 type Event = calendar_v3.Schema$Event;
@@ -162,7 +169,6 @@ export function preCreateValidation(
   );
 }
 
-import { formatEventData as formatEvent } from "./utils";
 
 export type ValidateEventResult = {
   valid: boolean;

@@ -1,7 +1,8 @@
 import type { Request, Response } from "express";
-import { z } from "zod";
+
 import { SUPABASE } from "@/config/clients";
 import { sendR } from "@/utils/http";
+import { z } from "zod";
 
 type InviteMetadata = {
   team_name?: string;
@@ -28,7 +29,7 @@ const createTeamSchema = z.object({
 
 export const teamInviteController = {
   async createInvite(req: Request, res: Response) {
-    const userId = req.user?.id;
+    const userId = req.user!.id;
     const userEmail = req.user?.email;
 
     if (!(userId && userEmail)) {
@@ -106,7 +107,7 @@ export const teamInviteController = {
   },
 
   async getSentInvites(req: Request, res: Response) {
-    const userId = req.user?.id;
+    const userId = req.user!.id;
 
     if (!userId) {
       return sendR(res, 401, "Unauthorized", null);
@@ -197,7 +198,7 @@ export const teamInviteController = {
   },
 
   async respondToInvite(req: Request, res: Response) {
-    const userId = req.user?.id;
+    const userId = req.user!.id;
     const userEmail = req.user?.email;
 
     if (!(userId && userEmail)) {
@@ -268,7 +269,7 @@ export const teamInviteController = {
   },
 
   async cancelInvite(req: Request, res: Response) {
-    const userId = req.user?.id;
+    const userId = req.user!.id;
     const inviteId = req.params.id as string;
 
     if (!userId) {
@@ -316,7 +317,7 @@ export const teamInviteController = {
   },
 
   async resendInvite(req: Request, res: Response) {
-    const userId = req.user?.id;
+    const userId = req.user!.id;
     const inviteId = req.params.id as string;
 
     if (!userId) {
@@ -417,7 +418,7 @@ export const teamInviteController = {
   },
 
   async createTeam(req: Request, res: Response) {
-    const userId = req.user?.id;
+    const userId = req.user!.id;
 
     if (!userId) {
       return sendR(res, 401, "Unauthorized", null);
@@ -464,7 +465,7 @@ export const teamInviteController = {
   },
 
   async getMyTeams(req: Request, res: Response) {
-    const userId = req.user?.id;
+    const userId = req.user!.id;
 
     if (!userId) {
       return sendR(res, 401, "Unauthorized", null);
@@ -504,7 +505,7 @@ export const teamInviteController = {
   },
 
   async getTeamMembers(req: Request, res: Response) {
-    const userId = req.user?.id;
+    const userId = req.user!.id;
     const teamId = Array.isArray(req.params.teamId)
       ? req.params.teamId[0]
       : req.params.teamId;

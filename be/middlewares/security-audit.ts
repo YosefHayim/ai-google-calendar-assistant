@@ -1,6 +1,7 @@
-import { randomUUID } from "node:crypto";
 import type { NextFunction, Request, Response } from "express";
+
 import { logger } from "@/utils/logger";
+import { randomUUID } from "node:crypto";
 
 /**
  * SECURITY: Security audit logging middleware
@@ -115,7 +116,7 @@ export const securityAuditMiddleware = (
         requestId,
         eventType,
         action: getActionFromRoute(req),
-        userId: req.user?.id,
+        userId: req.user!.id,
         userEmail: req.user?.email,
         ip: getClientIp(req),
         userAgent: req.headers["user-agent"] || "unknown",
@@ -268,7 +269,7 @@ export const logAuthEvent = (
     requestId: req.requestId || generateRequestId(),
     eventType: success ? "AUTH" : "SECURITY",
     action,
-    userId: req.user?.id,
+    userId: req.user!.id,
     userEmail: req.user?.email,
     ip: getClientIp(req),
     userAgent: req.headers["user-agent"] || "unknown",

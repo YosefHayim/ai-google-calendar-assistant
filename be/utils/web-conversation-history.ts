@@ -1,8 +1,8 @@
-import { SUPABASE } from "@/config/clients/supabase";
 import type { Database } from "@/database.types";
-import type { userAndAiMessageProps } from "@/types";
+import { SUPABASE } from "@/config/clients/supabase";
 import { isToday } from "@/utils/date/date-helpers";
 import { logger } from "./logger";
+import type { userAndAiMessageProps } from "@/types";
 
 const MAX_CONTEXT_LENGTH = 1000;
 
@@ -629,7 +629,7 @@ export const getWebConversationList = async (
       messageCount: row.message_count || 0,
       lastUpdated: row.last_message_at || row.updated_at || row.created_at,
       createdAt: row.created_at,
-      pinned: row.pinned,
+      pinned: row.pinned || false,
     };
   });
 };

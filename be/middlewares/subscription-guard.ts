@@ -1,14 +1,15 @@
 import type { NextFunction, Request, Response } from "express";
+import { reqResAsyncHandler, sendR } from "@/utils/http";
+
 import { STATUS_RESPONSE } from "@/config";
 import { checkUserAccess } from "@/services/lemonsqueezy-service";
-import { reqResAsyncHandler, sendR } from "@/utils/http";
 
 const SUBSCRIPTION_REQUIRED_CODE = "SUBSCRIPTION_REQUIRED";
 
 export const subscriptionGuard = () =>
   reqResAsyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
-      const userId = req.user?.id;
+      const userId = req.user!.id;
       const userEmail = req.user?.email;
 
       if (!(userId && userEmail)) {

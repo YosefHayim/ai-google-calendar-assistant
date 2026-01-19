@@ -109,7 +109,7 @@ const fetchFromLemonSqueezy = async <T>(
     throw new Error(`Lemon Squeezy API error: ${response.status} - ${error}`);
   }
 
-  return response.json();
+  return response.json() as Promise<T>;
 };
 
 const mapAffiliateToAdmin = (

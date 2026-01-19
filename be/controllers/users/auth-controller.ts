@@ -1,13 +1,14 @@
-import type { Request, Response } from "express";
-import { PROVIDERS, STATUS_RESPONSE, SUPABASE } from "@/config";
-import { supabaseThirdPartySignInOrSignUp } from "@/utils/auth";
 import {
   ACCESS_TOKEN_COOKIE,
-  clearAuthCookies,
   REFRESH_TOKEN_COOKIE,
+  clearAuthCookies,
   setAuthCookies,
 } from "@/utils/auth/cookie-utils";
+import { PROVIDERS, STATUS_RESPONSE, SUPABASE } from "@/config";
+import type { Request, Response } from "express";
 import { reqResAsyncHandler, sendR } from "@/utils/http";
+
+import { supabaseThirdPartySignInOrSignUp } from "@/utils/auth";
 
 const signUpUserReg = reqResAsyncHandler(
   async (req: Request, res: Response) => {
@@ -151,7 +152,7 @@ const logout = reqResAsyncHandler(async (_req: Request, res: Response) => {
 const checkSession = reqResAsyncHandler(async (req: Request, res: Response) =>
   sendR(res, STATUS_RESPONSE.SUCCESS, "Session is valid.", {
     authenticated: true,
-    userId: req.user?.id,
+    userId: req.user!.id,
     email: req.user?.email,
   })
 );

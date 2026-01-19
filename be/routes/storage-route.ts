@@ -1,9 +1,10 @@
+import { reqResAsyncHandler, sendR } from "@/utils/http";
+
+import { StorageService } from "@/services/storage-service";
 import express from "express";
+import { logger } from "@/utils/logger";
 import multer from "multer";
 import { supabaseAuth } from "@/middlewares/supabase-auth";
-import { StorageService } from "@/services/storage-service";
-import { reqResAsyncHandler, sendR } from "@/utils/http";
-import { logger } from "@/utils/logger";
 
 const router = express.Router();
 
@@ -25,7 +26,7 @@ router.post(
   supabaseAuth(),
   upload.single("avatar"),
   reqResAsyncHandler(async (req, res) => {
-    const userId = req.user?.id;
+    const userId = req.user!.id;
     if (!userId) {
       return sendR(res, 401, "Authentication required");
     }
@@ -68,7 +69,7 @@ router.post(
   supabaseAuth(),
   upload.single("attachment"),
   reqResAsyncHandler(async (req, res) => {
-    const userId = req.user?.id;
+    const userId = req.user!.id;
     if (!userId) {
       return sendR(res, 401, "Authentication required");
     }
@@ -112,7 +113,7 @@ router.get(
     const path: string = Array.isArray(pathParam)
       ? pathParam.join("/")
       : pathParam || "";
-    const userId = req.user?.id;
+    const userId = req.user!.id;
 
     if (!userId) {
       return sendR(res, 401, "Authentication required");
@@ -167,7 +168,7 @@ router.delete(
     const path: string = Array.isArray(pathParam)
       ? pathParam.join("/")
       : pathParam || "";
-    const userId = req.user?.id;
+    const userId = req.user!.id;
 
     if (!userId) {
       return sendR(res, 401, "Authentication required");
@@ -199,7 +200,7 @@ router.get(
   supabaseAuth(),
   reqResAsyncHandler(async (req, res) => {
     const bucket = req.params.bucket as string;
-    const userId = req.user?.id;
+    const userId = req.user!.id;
     const { limit = "20", offset = "0" } = req.query as {
       limit?: string;
       offset?: string;

@@ -1,9 +1,3 @@
-import { randomBytes } from "node:crypto";
-import { SUPABASE } from "@/config/clients/supabase";
-import type { Database } from "@/database.types";
-import type { userAndAiMessageProps } from "@/types";
-import { isToday } from "@/utils/date/date-helpers";
-import { logger } from "@/utils/logger";
 import type {
   ConversationConfig,
   ConversationContext,
@@ -16,7 +10,14 @@ import type {
   TelegramConversationRow,
   WebConversationRow,
 } from "./types";
+
 import { DEFAULT_CONVERSATION_CONFIG } from "./types";
+import type { Database } from "@/database.types";
+import { SUPABASE } from "@/config/clients/supabase";
+import { isToday } from "@/utils/date/date-helpers";
+import { logger } from "@/utils/logger";
+import { randomBytes } from "node:crypto";
+import type { userAndAiMessageProps } from "@/types";
 
 type ConversationInsert =
   Database["public"]["Tables"]["conversations"]["Insert"];
@@ -1335,8 +1336,8 @@ export class ConversationService {
       messageCount: conversation.message_count || 0,
       source: conversation.source,
       archivedAt: conversation.archived_at || undefined,
-      pinned: conversation.pinned,
-      isActive: conversation.is_active,
+      pinned: conversation.pinned || false,
+      isActive: conversation.is_active || false,
     }));
   }
 }

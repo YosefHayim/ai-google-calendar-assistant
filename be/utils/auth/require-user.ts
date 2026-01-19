@@ -6,9 +6,10 @@
  * handling and reduce code duplication across controllers.
  */
 
-import type { User } from "@supabase/supabase-js";
 import type { Request, Response } from "express";
+
 import { STATUS_RESPONSE } from "@/config";
+import type { User } from "@supabase/supabase-js";
 import sendR from "@/utils/send-response";
 
 /**
@@ -105,7 +106,7 @@ export function requireUser(req: Request, res: Response): UserResult {
  * @returns User ID or undefined
  */
 export function getUserId(req: Request): string | undefined {
-  return req.user?.id;
+  return req.user!.id;
 }
 
 /**
@@ -125,7 +126,7 @@ export function getUserEmail(req: Request): string | undefined {
  * @returns True if user is authenticated
  */
 export function isAuthenticated(req: Request): boolean {
-  return Boolean(req.user?.id);
+  return Boolean(req.user!.id);
 }
 
 /**

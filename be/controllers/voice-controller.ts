@@ -48,8 +48,8 @@ const synthesize = reqResAsyncHandler(async (req: Request, res: Response) => {
 
   if (requestedVoice && isValidVoice(requestedVoice)) {
     voice = requestedVoice;
-  } else if (req.user?.id) {
-    const pref = await getVoicePreference(req.user.id);
+  } else if (req.user!.id) {
+    const pref = await getVoicePreference(req.user!.id);
     if (pref?.voice && isValidVoice(pref.voice)) {
       voice = pref.voice;
     }

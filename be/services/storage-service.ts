@@ -329,7 +329,7 @@ export class StorageService {
    */
   private static getFileExtension(fileName: string): string {
     const parts = fileName.split(".");
-    return parts.length > 1 ? parts.at(-1).toLowerCase() : "";
+    return parts.length > 1 ? parts[parts.length - 1].toLowerCase() : "";
   }
 
   /**

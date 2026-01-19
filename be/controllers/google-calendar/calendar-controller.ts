@@ -1,8 +1,9 @@
 import type { Request, Response } from "express";
-import type { calendar_v3 } from "googleapis";
-import { STATUS_RESPONSE } from "@/config";
-import { updateUserSupabaseCalendarCategories } from "@/utils/calendar/update-categories";
 import { reqResAsyncHandler, sendR } from "@/utils/http";
+
+import { STATUS_RESPONSE } from "@/config";
+import type { calendar_v3 } from "googleapis";
+import { updateUserSupabaseCalendarCategories } from "@/utils/calendar/update-categories";
 
 const getAllCalendars = reqResAsyncHandler(
   async (req: Request, res: Response) => {
@@ -26,7 +27,7 @@ const getAllCalendars = reqResAsyncHandler(
       await updateUserSupabaseCalendarCategories(
         calendar,
         req.user?.email!,
-        req.user?.id!
+        req.user!.id!
       );
 
       return sendR(

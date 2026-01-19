@@ -1,7 +1,8 @@
 import type { NextFunction, Request, Response } from "express";
 import { STATUS_RESPONSE, SUPABASE } from "@/config";
-import type { UserRole } from "@/types";
 import { reqResAsyncHandler, sendR } from "@/utils/http";
+
+import type { UserRole } from "@/types";
 
 /**
  * Admin Authorization Middleware Factory
@@ -21,7 +22,7 @@ import { reqResAsyncHandler, sendR } from "@/utils/http";
 export const adminAuth = (allowedRoles: UserRole[] = ["admin"]) => {
   return reqResAsyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
-      const userId = req.user?.id;
+      const userId = req.user!.id;
 
       if (!userId) {
         return sendR(

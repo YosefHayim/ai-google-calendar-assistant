@@ -1,7 +1,8 @@
 import type { Request, Response } from "express";
-import { z } from "zod";
+
 import { SUPABASE } from "@/config/clients";
 import sendR from "@/utils/send-response";
+import { z } from "zod";
 
 type InvitationMetadata = {
   referral_code?: string;
@@ -25,7 +26,7 @@ const claimRewardSchema = z.object({
 
 export const referralController = {
   async getMyReferralCode(req: Request, res: Response) {
-    const userId = req.user?.id;
+    const userId = req.user!.id;
     const userEmail = req.user?.email;
 
     if (!(userId && userEmail)) {
@@ -82,7 +83,7 @@ export const referralController = {
   },
 
   async createReferral(req: Request, res: Response) {
-    const userId = req.user?.id;
+    const userId = req.user!.id;
     const userEmail = req.user?.email;
 
     if (!(userId && userEmail)) {
@@ -190,7 +191,7 @@ export const referralController = {
   },
 
   async convertReferral(req: Request, res: Response) {
-    const userId = req.user?.id;
+    const userId = req.user!.id;
     const userEmail = req.user?.email;
 
     if (!(userId && userEmail)) {
@@ -240,7 +241,7 @@ export const referralController = {
   },
 
   async getMyReferrals(req: Request, res: Response) {
-    const userId = req.user?.id;
+    const userId = req.user!.id;
 
     if (!userId) {
       return sendR(res, 401, "Unauthorized", null);
@@ -283,7 +284,7 @@ export const referralController = {
   },
 
   async getMyReferralStats(req: Request, res: Response) {
-    const userId = req.user?.id;
+    const userId = req.user!.id;
 
     if (!userId) {
       return sendR(res, 401, "Unauthorized", null);
@@ -327,7 +328,7 @@ export const referralController = {
   },
 
   async claimReward(req: Request, res: Response) {
-    const userId = req.user?.id;
+    const userId = req.user!.id;
 
     if (!userId) {
       return sendR(res, 401, "Unauthorized", null);

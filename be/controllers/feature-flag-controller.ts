@@ -1,6 +1,4 @@
 import type { Request, Response } from "express";
-import { STATUS_RESPONSE } from "@/config/constants/http";
-import type { FeatureFlagCheckContext } from "@/services/feature-flag-service";
 import {
   createFeatureFlag,
   deleteFeatureFlag,
@@ -12,6 +10,9 @@ import {
   updateFeatureFlag,
 } from "@/services/feature-flag-service";
 import { reqResAsyncHandler, sendR } from "@/utils/http";
+
+import type { FeatureFlagCheckContext } from "@/services/feature-flag-service";
+import { STATUS_RESPONSE } from "@/config/constants/http";
 
 const getAllFlags = reqResAsyncHandler(async (_req: Request, res: Response) => {
   const flags = await getAllFeatureFlags();
@@ -32,7 +33,7 @@ const getFlagByKey = reqResAsyncHandler(async (req: Request, res: Response) => {
 const checkFlag = reqResAsyncHandler(async (req: Request, res: Response) => {
   const key = req.params.key as string;
   const context: FeatureFlagCheckContext = {
-    userId: req.user?.id,
+    userId: req.user!.id,
     userTier: (req.user?.app_metadata as Record<string, string> | undefined)
       ?.tier,
   };
@@ -46,7 +47,7 @@ const checkFlag = reqResAsyncHandler(async (req: Request, res: Response) => {
 const getEnabledFlags = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     const context: FeatureFlagCheckContext = {
-      userId: req.user?.id,
+      userId: req.user!.id,
       userTier: (req.user?.app_metadata as Record<string, string> | undefined)
         ?.tier,
     };

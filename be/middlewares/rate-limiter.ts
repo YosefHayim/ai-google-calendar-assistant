@@ -1,5 +1,5 @@
-import rateLimit from "express-rate-limit";
 import { STATUS_RESPONSE } from "@/config";
+import rateLimit from "express-rate-limit";
 import { sendR } from "@/utils/http";
 
 /**
@@ -120,7 +120,7 @@ export const aiChatRateLimiter = rateLimit({
   message: "Too many AI requests. Please wait before sending more messages.",
   standardHeaders: true,
   legacyHeaders: false,
-  keyGenerator: (req) => req.user?.id || req.ip || "anonymous",
+  keyGenerator: (req) => req.user!.id || req.ip || "anonymous",
   handler: (_req, res) => {
     sendR(
       res,
@@ -146,7 +146,7 @@ export const aiChatBurstLimiter = rateLimit({
   message: "Too many requests in a short time. Please slow down.",
   standardHeaders: true,
   legacyHeaders: false,
-  keyGenerator: (req) => req.user?.id || req.ip || "anonymous",
+  keyGenerator: (req) => req.user!.id || req.ip || "anonymous",
   handler: (_req, res) => {
     sendR(
       res,
@@ -173,7 +173,7 @@ export const voiceRateLimiter = rateLimit({
   message: "Too many voice requests. Please wait before sending more audio.",
   standardHeaders: true,
   legacyHeaders: false,
-  keyGenerator: (req) => req.user?.id || req.ip || "anonymous",
+  keyGenerator: (req) => req.user!.id || req.ip || "anonymous",
   handler: (_req, res) => {
     sendR(
       res,
@@ -199,7 +199,7 @@ export const voiceBurstLimiter = rateLimit({
   message: "Too many voice requests in a short time. Please slow down.",
   standardHeaders: true,
   legacyHeaders: false,
-  keyGenerator: (req) => req.user?.id || req.ip || "anonymous",
+  keyGenerator: (req) => req.user!.id || req.ip || "anonymous",
   handler: (_req, res) => {
     sendR(
       res,
@@ -227,7 +227,7 @@ export const calendarAiRateLimiter = rateLimit({
     "Too many calendar AI requests. Please wait before requesting more insights.",
   standardHeaders: true,
   legacyHeaders: false,
-  keyGenerator: (req) => req.user?.id || req.ip || "anonymous",
+  keyGenerator: (req) => req.user!.id || req.ip || "anonymous",
   handler: (_req, res) => {
     sendR(
       res,

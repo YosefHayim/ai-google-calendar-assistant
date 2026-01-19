@@ -340,7 +340,7 @@ const streamChat = async (
   res: Response
 ): Promise<void> => {
   const { message, images } = req.body;
-  const userId = req.user?.id;
+  const userId = req.user!.id;
   const userEmail = req.user?.email;
 
   if (!message?.trim() && (!images || images.length === 0)) {
@@ -398,7 +398,7 @@ const streamContinueConversation = async (
   req: Request<{ id: string }, unknown, StreamChatRequest>,
   res: Response
 ): Promise<void> => {
-  const userId = req.user?.id;
+  const userId = req.user!.id;
   const userEmail = req.user?.email;
   const conversationId = req.params.id as string;
   const { message, images } = req.body;

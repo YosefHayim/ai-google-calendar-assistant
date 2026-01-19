@@ -1,16 +1,14 @@
-import { run } from "@openai/agents";
-import type { Request, Response } from "express";
-import { ORCHESTRATOR_AGENT } from "@/ai-agents/agents";
-import { createAgentSession } from "@/ai-agents/sessions/session-factory";
-import type { AgentContext } from "@/ai-agents/tool-registry";
-import { STATUS_RESPONSE } from "@/config";
-import type { CrossPlatformSyncPreference } from "@/services/user-preferences-service";
 import {
+  PREFERENCE_DEFAULTS,
   getAllyBrainPreference,
   getCrossPlatformSyncPreference,
-  PREFERENCE_DEFAULTS,
 } from "@/services/user-preferences-service";
-import { unifiedContextStore } from "@/shared/context";
+import type { Request, Response } from "express";
+import {
+  deleteAllWebEmbeddings,
+  getWebRelevantContext,
+  storeWebEmbeddingAsync,
+} from "@/utils/web-embeddings";
 import {
   generateConversationTitle,
   summarizeMessages,
@@ -20,14 +18,17 @@ import {
   invalidateConversationsCache,
   setCachedConversations,
 } from "@/utils/cache/user-cache";
-import { webConversation } from "@/utils/conversation/WebConversationAdapter";
 import { reqResAsyncHandler, sendR } from "@/utils/http";
+
+import type { AgentContext } from "@/ai-agents/tool-registry";
+import type { CrossPlatformSyncPreference } from "@/services/user-preferences-service";
+import { ORCHESTRATOR_AGENT } from "@/ai-agents/agents";
+import { STATUS_RESPONSE } from "@/config";
+import { createAgentSession } from "@/ai-agents/sessions/session-factory";
 import { logger } from "@/utils/logger";
-import {
-  deleteAllWebEmbeddings,
-  getWebRelevantContext,
-  storeWebEmbeddingAsync,
-} from "@/utils/web-embeddings";
+import { run } from "@openai/agents";
+import { unifiedContextStore } from "@/shared/context";
+import { webConversation } from "@/utils/conversation/WebConversationAdapter";
 
 const DEFAULT_LIMIT = 20;
 const DEFAULT_OFFSET = 0;
@@ -129,7 +130,7 @@ async function buildChatPromptWithContext(
 const sendChat = reqResAsyncHandler(
   async (req: Request<unknown, unknown, ChatRequest>, res: Response) => {
     const { message } = req.body;
-    const userId = req.user?.id;
+    const userId = req.user!.id;
     const userEmail = req.user?.email;
 
     if (!message?.trim()) {
@@ -233,7 +234,7 @@ const sendChat = reqResAsyncHandler(
  */
 const getConversations = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const userId = req.user?.id;
+    const userId = req.user!.id;
 
     if (!userId) {
       return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
@@ -319,7 +320,7 @@ const getConversations = reqResAsyncHandler(
  */
 const getConversation = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const userId = req.user?.id;
+    const userId = req.user!.id;
     const conversationId = req.params.id as string;
 
     if (!userId) {
@@ -374,7 +375,7 @@ const removeConversation = reqResAsyncHandler(
     try {
       const deleted = await webConversation.deleteConversation(
         conversationId,
-        req.user?.id
+        req.user!.id
       );
 
       if (!deleted) {
@@ -385,7 +386,7 @@ const removeConversation = reqResAsyncHandler(
         );
       }
 
-      await invalidateConversationsCache(req.user?.id);
+      await invalidateConversationsCache(req.user!.id);
 
       return sendR(
         res,
@@ -406,7 +407,7 @@ const removeConversation = reqResAsyncHandler(
 const archiveConversation = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     const conversationId = req.params.id as string;
-    const userId = req.user?.id;
+    const userId = req.user!.id;
 
     logger.info(
       `Archive conversation request: conversationId=${conversationId}, userId=${userId}`
@@ -487,7 +488,7 @@ const restoreConversation = reqResAsyncHandler(
       // First check if conversation exists and belongs to user
       const existingConversation = await webConversation.getConversationById(
         conversationId,
-        req.user?.id
+        req.user!.id
       );
 
       if (!existingConversation) {
@@ -496,7 +497,7 @@ const restoreConversation = reqResAsyncHandler(
 
       const restored = await webConversation.restoreConversation(
         conversationId,
-        req.user?.id
+        req.user!.id
       );
 
       if (!restored) {
@@ -507,7 +508,7 @@ const restoreConversation = reqResAsyncHandler(
         );
       }
 
-      await invalidateConversationsCache(req.user?.id);
+      await invalidateConversationsCache(req.user!.id);
 
       return sendR(
         res,
@@ -527,7 +528,7 @@ const restoreConversation = reqResAsyncHandler(
 
 const getArchivedConversations = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const userId = req.user?.id;
+    const userId = req.user!.id;
 
     logger.info(`Get archived conversations request for user: ${userId}`);
 
@@ -563,7 +564,7 @@ const restoreAllArchivedConversations = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     try {
       const restored = await webConversation.restoreAllArchivedConversations(
-        req.user?.id
+        req.user!.id
       );
 
       if (!restored) {
@@ -574,7 +575,7 @@ const restoreAllArchivedConversations = reqResAsyncHandler(
         );
       }
 
-      await invalidateConversationsCache(req.user?.id);
+      await invalidateConversationsCache(req.user!.id);
 
       return sendR(
         res,
@@ -629,7 +630,7 @@ const updateConversationTitle = reqResAsyncHandler(
         );
       }
 
-      await invalidateConversationsCache(req.user?.id);
+      await invalidateConversationsCache(req.user!.id);
 
       return sendR(
         res,
@@ -663,7 +664,7 @@ const updateConversationTitle = reqResAsyncHandler(
 const toggleConversationPinned = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     const conversationId = req.params.id as string;
-    const userId = req.user?.id;
+    const userId = req.user!.id;
 
     try {
       const result = await webConversation.toggleConversationPinned(
@@ -721,7 +722,7 @@ type ContinueConversationRequest = {
  */
 const continueConversation = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const userId = req.user?.id;
+    const userId = req.user!.id;
     const userEmail = req.user?.email;
     const conversationId = req.params.id as string;
     const { message } = req.body as ContinueConversationRequest;
@@ -820,7 +821,7 @@ const continueConversation = reqResAsyncHandler(
  */
 const startNewConversation = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const userId = req.user?.id;
+    const userId = req.user!.id;
 
     if (!userId) {
       return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
@@ -857,7 +858,7 @@ const startNewConversation = reqResAsyncHandler(
  */
 const deleteAllConversations = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const userId = req.user?.id;
+    const userId = req.user!.id;
 
     if (!userId) {
       return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
@@ -908,7 +909,7 @@ const deleteAllConversations = reqResAsyncHandler(
  * @returns Promise resolving to deletion counts for each data type
  */
 const resetMemory = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const userId = req.user?.id;
+  const userId = req.user!.id;
 
   if (!userId) {
     return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
@@ -962,7 +963,7 @@ const resetMemory = reqResAsyncHandler(async (req: Request, res: Response) => {
  */
 const createShareLink = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const userId = req.user?.id;
+    const userId = req.user!.id;
     const conversationId = req.params.id as string;
     const expiresInDays = req.body.expiresInDays || 7;
 
@@ -1016,7 +1017,7 @@ const createShareLink = reqResAsyncHandler(
  */
 const revokeShareLink = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const userId = req.user?.id;
+    const userId = req.user!.id;
     const conversationId = req.params.id as string;
 
     if (!userId) {
@@ -1065,7 +1066,7 @@ const revokeShareLink = reqResAsyncHandler(
  */
 const getShareStatus = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const userId = req.user?.id;
+    const userId = req.user!.id;
     const conversationId = req.params.id as string;
 
     if (!userId) {
