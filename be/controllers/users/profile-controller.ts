@@ -75,7 +75,7 @@ const getUserInformationById = reqResAsyncHandler(
       .select(
         "id, email, first_name, last_name, avatar_url, status, timezone, created_at"
       )
-      .eq("id", req.params.id)
+      .eq("id", req.params.id as string)
       .single();
 
     if (error) {

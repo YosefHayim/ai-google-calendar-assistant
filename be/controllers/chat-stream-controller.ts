@@ -400,7 +400,7 @@ const streamContinueConversation = async (
 ): Promise<void> => {
   const userId = req.user?.id;
   const userEmail = req.user?.email;
-  const conversationId = req.params.id;
+  const conversationId = req.params.id as string;
   const { message, images } = req.body;
 
   if (!userId) {

@@ -269,7 +269,7 @@ export const teamInviteController = {
 
   async cancelInvite(req: Request, res: Response) {
     const userId = req.user?.id;
-    const inviteId = req.params.id;
+    const inviteId = req.params.id as string;
 
     if (!userId) {
       return sendR(res, 401, "Unauthorized", null);
@@ -317,7 +317,7 @@ export const teamInviteController = {
 
   async resendInvite(req: Request, res: Response) {
     const userId = req.user?.id;
-    const inviteId = req.params.id;
+    const inviteId = req.params.id as string;
 
     if (!userId) {
       return sendR(res, 401, "Unauthorized", null);

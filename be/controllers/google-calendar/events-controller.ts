@@ -40,7 +40,7 @@ const getEventById = reqResAsyncHandler(async (req: Request, res: Response) => {
   const r = await req.calendar.events.get({
     ...REQUEST_CONFIG_BASE,
     calendarId: (req?.query?.calendarId as string) ?? "primary",
-    eventId: req.params.id,
+    eventId: req.params.id as string,
   });
 
   return sendR(
@@ -144,7 +144,7 @@ const createEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
  */
 const updateEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
   const r = await eventsHandler(req, ACTION.UPDATE, {
-    id: req.params.id,
+    id: req.params.id as string,
     ...req.body,
   });
 
@@ -167,7 +167,7 @@ const updateEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
  *
  */
 const deleteEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const r = await eventsHandler(req, ACTION.DELETE, { id: req.params.id });
+  const r = await eventsHandler(req, ACTION.DELETE, { id: req.params.id as string });
 
   if (req.user?.id) {
     await invalidateEventsCache(req.user.id);
@@ -361,7 +361,7 @@ const getEventInstances = reqResAsyncHandler(
     const r = await req.calendar.events.instances({
       ...REQUEST_CONFIG_BASE,
       calendarId: (req.query.calendarId as string) ?? "primary",
-      eventId: req.params.id,
+      eventId: req.params.id as string,
       timeMin: req.query.timeMin as string,
       timeMax: req.query.timeMax as string,
       timeZone: req.query.timeZone as string,

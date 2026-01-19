@@ -19,7 +19,7 @@ const getAllFlags = reqResAsyncHandler(async (_req: Request, res: Response) => {
 });
 
 const getFlagByKey = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const { key } = req.params;
+  const key = req.params.key as string;
   const flag = await getFeatureFlagByKey(key);
 
   if (!flag) {
@@ -30,7 +30,7 @@ const getFlagByKey = reqResAsyncHandler(async (req: Request, res: Response) => {
 });
 
 const checkFlag = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const { key } = req.params;
+  const key = req.params.key as string;
   const context: FeatureFlagCheckContext = {
     userId: req.user?.id,
     userTier: (req.user?.app_metadata as Record<string, string> | undefined)
@@ -107,7 +107,7 @@ const createFlagHandler = reqResAsyncHandler(
 
 const updateFlagHandler = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const {
       key,
       name,
@@ -140,7 +140,7 @@ const updateFlagHandler = reqResAsyncHandler(
 
 const toggleFlagHandler = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const { enabled } = req.body;
 
     if (typeof enabled !== "boolean") {
@@ -163,7 +163,7 @@ const toggleFlagHandler = reqResAsyncHandler(
 
 const deleteFlagHandler = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const success = await deleteFeatureFlag(id);
 
     if (!success) {

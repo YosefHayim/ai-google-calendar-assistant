@@ -29,7 +29,7 @@ const getCalendarListEntry = reqResAsyncHandler(
       return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available");
     }
     const r = await req.calendar.calendarList.get({
-      calendarId: req.params.id,
+      calendarId: req.params.id as string,
     });
 
     return sendR(
@@ -76,7 +76,7 @@ const patchCalendarListEntry = reqResAsyncHandler(
       return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available");
     }
     const r = await req.calendar.calendarList.patch({
-      calendarId: req.params.id,
+      calendarId: req.params.id as string,
       requestBody: req.body,
       colorRgbFormat: req.query.colorRgbFormat === "true",
     });
@@ -96,7 +96,7 @@ const updateCalendarListEntry = reqResAsyncHandler(
       return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available");
     }
     const r = await req.calendar.calendarList.update({
-      calendarId: req.params.id,
+      calendarId: req.params.id as string,
       requestBody: req.body,
       colorRgbFormat: req.query.colorRgbFormat === "true",
     });
@@ -116,7 +116,7 @@ const deleteCalendarFromList = reqResAsyncHandler(
       return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available");
     }
     await req.calendar.calendarList.delete({
-      calendarId: req.params.id,
+      calendarId: req.params.id as string,
     });
 
     return sendR(

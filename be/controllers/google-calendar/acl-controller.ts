@@ -7,7 +7,7 @@ const listAclRules = reqResAsyncHandler(async (req: Request, res: Response) => {
     return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available");
   }
   const r = await req.calendar.acl.list({
-    calendarId: req.params.calendarId,
+    calendarId: req.params.calendarId as string,
     showDeleted: req.query.showDeleted === "true",
   });
   return sendR(
@@ -23,8 +23,8 @@ const getAclRule = reqResAsyncHandler(async (req: Request, res: Response) => {
     return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available");
   }
   const r = await req.calendar.acl.get({
-    calendarId: req.params.calendarId,
-    ruleId: req.params.ruleId,
+    calendarId: req.params.calendarId as string,
+    ruleId: req.params.ruleId as string,
   });
   return sendR(
     res,
@@ -40,7 +40,7 @@ const insertAclRule = reqResAsyncHandler(
       return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available");
     }
     const r = await req.calendar.acl.insert({
-      calendarId: req.params.calendarId,
+      calendarId: req.params.calendarId as string,
       sendNotifications: req.query.sendNotifications === "true",
       requestBody: {
         role: req.body.role,
@@ -64,8 +64,8 @@ const patchAclRule = reqResAsyncHandler(async (req: Request, res: Response) => {
     return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available");
   }
   const r = await req.calendar.acl.patch({
-    calendarId: req.params.calendarId,
-    ruleId: req.params.ruleId,
+    calendarId: req.params.calendarId as string,
+    ruleId: req.params.ruleId as string,
     sendNotifications: req.query.sendNotifications === "true",
     requestBody: req.body,
   });
@@ -83,8 +83,8 @@ const updateAclRule = reqResAsyncHandler(
       return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available");
     }
     const r = await req.calendar.acl.update({
-      calendarId: req.params.calendarId,
-      ruleId: req.params.ruleId,
+      calendarId: req.params.calendarId as string,
+      ruleId: req.params.ruleId as string,
       sendNotifications: req.query.sendNotifications === "true",
       requestBody: req.body,
     });
@@ -103,8 +103,8 @@ const deleteAclRule = reqResAsyncHandler(
       return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available");
     }
     await req.calendar.acl.delete({
-      calendarId: req.params.calendarId,
-      ruleId: req.params.ruleId,
+      calendarId: req.params.calendarId as string,
+      ruleId: req.params.ruleId as string,
     });
     return sendR(res, STATUS_RESPONSE.SUCCESS, "ACL rule deleted successfully");
   }
@@ -115,7 +115,7 @@ const watchAcl = reqResAsyncHandler(async (req: Request, res: Response) => {
     return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available");
   }
   const r = await req.calendar.acl.watch({
-    calendarId: req.params.calendarId,
+    calendarId: req.params.calendarId as string,
     showDeleted: req.query.showDeleted === "true",
     requestBody: {
       id: req.body.id,

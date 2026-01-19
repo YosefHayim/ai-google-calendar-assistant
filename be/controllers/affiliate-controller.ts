@@ -42,7 +42,7 @@ export const getAffiliateSettings = reqResAsyncHandler(
 
 export const getAffiliateById = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const affiliate = await getAffiliateByIdService(req.params.id);
+    const affiliate = await getAffiliateByIdService(req.params.id as string);
 
     if (!affiliate) {
       return sendR(res, STATUS_RESPONSE.NOT_FOUND, "Affiliate not found");

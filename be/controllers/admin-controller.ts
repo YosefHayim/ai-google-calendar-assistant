@@ -77,7 +77,7 @@ export const getUsers = reqResAsyncHandler(
  */
 export const getUserById = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const user = await adminService.getUserById(req.params.id);
+    const user = await adminService.getUserById(req.params.id as string);
     if (!user) {
       return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User not found");
     }
@@ -109,7 +109,7 @@ export const updateUserStatus = reqResAsyncHandler(
       );
     }
 
-    await adminService.updateUserStatus(id, status, adminUserId, reason);
+    await adminService.updateUserStatus(id as string, status, adminUserId, reason);
     return sendR(res, STATUS_RESPONSE.SUCCESS, "User status updated");
   }
 );
@@ -138,7 +138,7 @@ export const updateUserRole = reqResAsyncHandler(
       );
     }
 
-    await adminService.updateUserRole(id, role, adminUserId, reason);
+    await adminService.updateUserRole(id as string, role, adminUserId, reason);
     return sendR(res, STATUS_RESPONSE.SUCCESS, "User role updated");
   }
 );
@@ -166,7 +166,7 @@ export const grantCredits = reqResAsyncHandler(
       );
     }
 
-    await adminService.grantCredits(id, credits, adminUserId, reason);
+    await adminService.grantCredits(id as string, credits, adminUserId, reason);
     return sendR(res, STATUS_RESPONSE.SUCCESS, "Credits granted successfully");
   }
 );
@@ -183,7 +183,7 @@ export const sendPasswordReset = reqResAsyncHandler(
     }
     const { userId: adminUserId } = userResult;
 
-    const user = await adminService.getUserById(req.params.id);
+    const user = await adminService.getUserById(req.params.id as string);
     if (!user) {
       return sendR(res, STATUS_RESPONSE.NOT_FOUND, "User not found");
     }
@@ -338,7 +338,7 @@ export const impersonateUser = reqResAsyncHandler(
     const { id: targetUserId } = req.params;
 
     const result = await adminService.createImpersonationSession(
-      targetUserId,
+      targetUserId as string,
       adminUserId
     );
 
@@ -364,7 +364,7 @@ export const revokeUserSessions = reqResAsyncHandler(
 
     const { id: targetUserId } = req.params;
 
-    await adminService.revokeUserSessions(targetUserId, adminUserId);
+    await adminService.revokeUserSessions(targetUserId as string, adminUserId);
 
     return sendR(res, STATUS_RESPONSE.SUCCESS, "User sessions revoked");
   }

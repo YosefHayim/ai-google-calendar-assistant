@@ -321,7 +321,7 @@ const getConversations = reqResAsyncHandler(
 const getConversation = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     const userId = req.user?.id;
-    const conversationId = req.params.id;
+    const conversationId = req.params.id as string;
 
     if (!userId) {
       return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
@@ -370,7 +370,7 @@ const getConversation = reqResAsyncHandler(
  */
 const removeConversation = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const conversationId = req.params.id;
+    const conversationId = req.params.id as string;
 
 
     try {
@@ -407,7 +407,7 @@ const removeConversation = reqResAsyncHandler(
 
 const archiveConversation = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const conversationId = req.params.id;
+    const conversationId = req.params.id as string;
     const userId = req.user!.id;
 
     logger.info(`Archive conversation request: conversationId=${conversationId}, userId=${userId}`);
@@ -476,7 +476,7 @@ const archiveConversation = reqResAsyncHandler(
 
 const restoreConversation = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const conversationId = req.params.id;
+    const conversationId = req.params.id as string;
 
     try {
       // First check if conversation exists and belongs to user
@@ -601,7 +601,7 @@ const restoreAllArchivedConversations = reqResAsyncHandler(
  */
 const updateConversationTitle = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const conversationId = req.params.id;
+    const conversationId = req.params.id as string;
     const { title } = req.body;
 
     if (!title?.trim()) {
@@ -655,7 +655,7 @@ const updateConversationTitle = reqResAsyncHandler(
  */
 const toggleConversationPinned = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const conversationId = req.params.id;
+    const conversationId = req.params.id as string;
     const userId = req.user!.id;
 
     try {
@@ -713,7 +713,7 @@ const continueConversation = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     const userId = req.user?.id;
     const userEmail = req.user?.email;
-    const conversationId = req.params.id;
+    const conversationId = req.params.id as string;
     const { message } = req.body as ContinueConversationRequest;
 
     if (!userId) {
@@ -953,7 +953,7 @@ const resetMemory = reqResAsyncHandler(async (req: Request, res: Response) => {
 const createShareLink = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     const userId = req.user?.id;
-    const conversationId = req.params.id;
+    const conversationId = req.params.id as string;
     const expiresInDays = req.body.expiresInDays || 7;
 
     if (!userId) {
@@ -1007,7 +1007,7 @@ const createShareLink = reqResAsyncHandler(
 const revokeShareLink = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     const userId = req.user?.id;
-    const conversationId = req.params.id;
+    const conversationId = req.params.id as string;
 
     if (!userId) {
       return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
@@ -1056,7 +1056,7 @@ const revokeShareLink = reqResAsyncHandler(
 const getShareStatus = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     const userId = req.user?.id;
-    const conversationId = req.params.id;
+    const conversationId = req.params.id as string;
 
     if (!userId) {
       return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User not authenticated");
@@ -1098,7 +1098,7 @@ const getShareStatus = reqResAsyncHandler(
  */
 const getSharedConversation = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const token = req.params.token;
+    const token = req.params.token as string;
 
     if (!token) {
       return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Share token is required");

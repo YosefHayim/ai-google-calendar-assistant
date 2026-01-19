@@ -82,7 +82,7 @@ const getCalendarInfoById = reqResAsyncHandler(
       return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available");
     }
     const r = await req.calendar.calendars.get({
-      calendarId: req.params.id ?? "primary",
+      calendarId: (req.params.id as string) ?? "primary",
     });
     return sendR(
       res,
@@ -98,7 +98,7 @@ const getCalendarColorById = reqResAsyncHandler(
     if (!req.calendar) {
       return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available");
     }
-    const r = await req.calendar.calendars.get({ calendarId: req.params.id });
+    const r = await req.calendar.calendars.get({ calendarId: req.params.id as string });
     return sendR(
       res,
       STATUS_RESPONSE.SUCCESS,
@@ -180,7 +180,7 @@ const clearAllEventsOfCalendar = reqResAsyncHandler(
       return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available");
     }
     const r = await req.calendar.calendars.clear({
-      calendarId: req.params.id,
+      calendarId: req.params.id as string,
     });
     return sendR(
       res,
@@ -219,7 +219,7 @@ const deleteCalendar = reqResAsyncHandler(
     if (!req.calendar) {
       return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available");
     }
-    await req.calendar.calendars.delete({ calendarId: req.params.id });
+    await req.calendar.calendars.delete({ calendarId: req.params.id as string });
     return sendR(res, STATUS_RESPONSE.SUCCESS, "Calendar deleted successfully");
   }
 );
@@ -230,7 +230,7 @@ const patchCalendar = reqResAsyncHandler(
       return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available");
     }
     const r = await req.calendar.calendars.patch({
-      calendarId: req.params.id,
+      calendarId: req.params.id as string,
       requestBody: req.body,
     });
 
@@ -249,7 +249,7 @@ const updateCalendar = reqResAsyncHandler(
       return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available");
     }
     const r = await req.calendar.calendars.update({
-      calendarId: req.params.id,
+      calendarId: req.params.id as string,
       requestBody: req.body,
     });
 
