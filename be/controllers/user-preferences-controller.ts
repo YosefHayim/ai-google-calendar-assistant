@@ -17,7 +17,7 @@ const getPreference = reqResAsyncHandler(
     }
     const { userId } = userResult;
 
-    const key = req.params.key;
+    const key = Array.isArray(req.params.key) ? req.params.key[0] : req.params.key;
 
     if (!(key && preferencesService.isValidPreferenceKey(key))) {
       return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Invalid preference key");

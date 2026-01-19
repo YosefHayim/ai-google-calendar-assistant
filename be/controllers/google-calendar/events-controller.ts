@@ -559,7 +559,7 @@ const getRescheduleSuggestions = reqResAsyncHandler(
       );
     }
 
-    const { eventId } = req.params;
+    const eventId = Array.isArray(req.params.eventId) ? req.params.eventId[0] : req.params.eventId;
 
     const {
       calendarId = "primary",
@@ -567,19 +567,25 @@ const getRescheduleSuggestions = reqResAsyncHandler(
       daysToSearch = "7",
       excludeWeekends = "false",
     } = req.query as {
-      calendarId?: string;
-      preferredTimeOfDay?: "morning" | "afternoon" | "evening" | "any";
-      daysToSearch?: string;
-      excludeWeekends?: string;
+      calendarId?: string | string[];
+      preferredTimeOfDay?: string | string[];
+      daysToSearch?: string | string[];
+      excludeWeekends?: string | string[];
     };
+
+    // Ensure query parameters are strings, not arrays
+    const calendarIdStr = Array.isArray(calendarId) ? calendarId[0] : calendarId;
+    const preferredTimeOfDayStr = Array.isArray(preferredTimeOfDay) ? preferredTimeOfDay[0] : preferredTimeOfDay;
+    const daysToSearchStr = Array.isArray(daysToSearch) ? daysToSearch[0] : daysToSearch;
+    const excludeWeekendsStr = Array.isArray(excludeWeekends) ? excludeWeekends[0] : excludeWeekends;
 
     const result = await findRescheduleSuggestions({
       email,
       eventId,
-      calendarId,
-      preferredTimeOfDay,
-      daysToSearch: Number.parseInt(daysToSearch, 10),
-      excludeWeekends: excludeWeekends === "true",
+      calendarId: calendarIdStr,
+      preferredTimeOfDay: preferredTimeOfDayStr as "morning" | "afternoon" | "evening" | "any",
+      daysToSearch: Number.parseInt(daysToSearchStr || "7", 10),
+      excludeWeekends: excludeWeekendsStr === "true",
     });
 
     if (!result.success) {
@@ -618,19 +624,24 @@ const rescheduleEvent = reqResAsyncHandler(
       );
     }
 
-    const { eventId } = req.params;
+    const eventId = Array.isArray(req.params.eventId) ? req.params.eventId[0] : req.params.eventId;
 
     const {
       newStart,
       newEnd,
       calendarId = "primary",
     } = req.body as {
-      newStart: string;
-      newEnd: string;
-      calendarId?: string;
+      newStart: string | string[];
+      newEnd: string | string[];
+      calendarId?: string | string[];
     };
 
-    if (!(newStart && newEnd)) {
+    // Ensure body parameters are strings, not arrays
+    const newStartStr = Array.isArray(newStart) ? newStart[0] : newStart;
+    const newEndStr = Array.isArray(newEnd) ? newEnd[0] : newEnd;
+    const calendarIdStr = Array.isArray(calendarId) ? calendarId[0] : calendarId;
+
+    if (!(newStartStr && newEndStr)) {
       return sendR(
         res,
         STATUS_RESPONSE.BAD_REQUEST,
@@ -641,9 +652,9 @@ const rescheduleEvent = reqResAsyncHandler(
     const result = await applyReschedule({
       email,
       eventId,
-      calendarId,
-      newStart,
-      newEnd,
+      calendarId: calendarIdStr,
+      newStart: newStartStr,
+      newEnd: newEndStr,
     });
 
     if (!result.success) {

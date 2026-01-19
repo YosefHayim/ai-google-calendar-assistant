@@ -378,7 +378,7 @@ export const referralController = {
   },
 
   async validateReferralCode(req: Request, res: Response) {
-    const code = req.params.code;
+    const code = Array.isArray(req.params.code) ? req.params.code[0] : req.params.code;
 
     if (!code) {
       return sendR(res, 400, "Referral code is required", null);

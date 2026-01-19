@@ -122,7 +122,7 @@ export const waitingListController = {
   },
 
   async getPosition(req: Request, res: Response) {
-    const { email } = req.params;
+    const email = Array.isArray(req.params.email) ? req.params.email[0] : req.params.email;
 
     if (!email) {
       return sendR(res, 400, "Email is required", null);
