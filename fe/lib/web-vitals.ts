@@ -8,9 +8,6 @@ type Metric = {
 }
 
 const reportWebVitals = (metric: Metric) => {
-  // Only report in production and when analytics is available
-  if (process.env.NODE_ENV !== 'production') return
-
   // Send to analytics endpoint
   const body = JSON.stringify({
     name: metric.name,

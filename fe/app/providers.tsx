@@ -24,7 +24,7 @@ const PostHogProvider = dynamic(() => import('@/contexts/PostHogContext').then(m
   ssr: false,
 })
 
-const PostHogPageview = dynamic(() => import('@/components/shared/PostHogPageview'), {
+const PostHogPageview = dynamic(() => import('@/components/shared/PostHogPageview').then(mod => ({ default: mod.default })), {
   loading: () => null,
   ssr: false,
 })

@@ -1,5 +1,6 @@
 'use client'
 
+import React from 'react'
 import { ArrowRight, Calendar, Clock, Mic } from 'lucide-react'
 import { SlackIcon, TelegramIcon, WhatsAppIcon } from '@/components/shared/Icons'
 

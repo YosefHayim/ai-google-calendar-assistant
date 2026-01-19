@@ -1,5 +1,6 @@
 'use client'
 
+import React from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { SlackIcon, TelegramIcon, WhatsAppIcon } from '@/components/shared/Icons'
