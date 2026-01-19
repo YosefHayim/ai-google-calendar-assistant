@@ -1,15 +1,16 @@
-import type { ApiResponse, TimezoneOption } from '@/types/api'
 import type {
   AllyBrainFormData,
   ContextualSchedulingFormData,
-  ReminderDefaultsFormData,
-  VoicePreferenceFormData,
-  DailyBriefingFormData,
   CrossPlatformSyncFormData,
+  DailyBriefingFormData,
+  DisplayPreferencesFormData,
   GeoLocationFormData,
   NotificationSettingsFormData,
-  DisplayPreferencesFormData,
+  PersonaFormData,
+  ReminderDefaultsFormData,
+  VoicePreferenceFormData,
 } from '@/lib/validations/preferences'
+import type { ApiResponse, TimezoneOption } from '@/types/api'
 
 import { ENDPOINTS } from '@/lib/api/endpoints'
 import { apiClient } from '@/lib/api/client'
@@ -201,6 +202,21 @@ export const preferencesService = {
   ): Promise<ApiResponse<PreferenceResponse<DisplayPreferencesFormData>>> {
     const { data } = await apiClient.put<ApiResponse<PreferenceResponse<DisplayPreferencesFormData>>>(
       ENDPOINTS.USER_PREFERENCES_DISPLAY,
+      value,
+    )
+    return data
+  },
+
+  async getPersona(): Promise<ApiResponse<PreferenceResponse<PersonaFormData>>> {
+    const { data } = await apiClient.get<ApiResponse<PreferenceResponse<PersonaFormData>>>(
+      ENDPOINTS.USER_PREFERENCES_BY_KEY('persona'),
+    )
+    return data
+  },
+
+  async updatePersona(value: PersonaFormData): Promise<ApiResponse<PreferenceResponse<PersonaFormData>>> {
+    const { data } = await apiClient.put<ApiResponse<PreferenceResponse<PersonaFormData>>>(
+      ENDPOINTS.USER_PREFERENCES_BY_KEY('persona'),
       value,
     )
     return data

@@ -1,5 +1,5 @@
-import { z } from "zod";
 import { sanitizeString } from "../middleware";
+import { z } from "zod";
 
 export const allyBrainSchema = z.object({
   enabled: z.boolean(),
@@ -42,11 +42,12 @@ export const preferenceKeyParamSchema = z.object({
       "geo_location",
       "notification_settings",
       "display_preferences",
+      "persona",
     ],
     {
       errorMap: () => ({
         message:
-          "Invalid preference key. Must be 'ally_brain', 'contextual_scheduling', 'reminder_defaults', 'voice_preference', 'daily_briefing', 'cross_platform_sync', 'geo_location', 'notification_settings', or 'display_preferences'",
+          "Invalid preference key. Must be 'ally_brain', 'contextual_scheduling', 'reminder_defaults', 'voice_preference', 'daily_briefing', 'cross_platform_sync', 'geo_location', 'notification_settings', 'display_preferences', or 'persona'",
       }),
     }
   ),
@@ -137,3 +138,13 @@ export const displayPreferencesSchema = z.object({
 })
 
 export type DisplayPreferencesBody = z.infer<typeof displayPreferencesSchema>
+
+export const personaSchema = z.object({
+  persona: z.enum(['solopreneur', 'developer', 'manager', 'student', 'freelancer']).nullable(),
+  painPoint: z.enum(['too_many_meetings', 'no_deep_work', 'forgetting_tasks', 'manual_scheduling']).nullable(),
+  notificationFrequency: z.enum(['realtime', 'daily_digest', 'weekly_summary']),
+  onboardingCompleted: z.boolean(),
+  onboardingCompletedAt: z.string().optional(),
+})
+
+export type PersonaBody = z.infer<typeof personaSchema>

@@ -21,7 +21,8 @@ export type PreferenceKey =
   | "cross_platform_sync"
   | "geo_location"
   | "notification_settings"
-  | "display_preferences";
+  | "display_preferences"
+  | "persona";
 
 export type AllyBrainPreference = {
   enabled: boolean;
@@ -84,6 +85,14 @@ export type DisplayPreference = {
   timeFormat: "12h" | "24h";
 };
 
+export type PersonaPreference = {
+  persona: 'solopreneur' | 'developer' | 'manager' | 'student' | 'freelancer' | null;
+  painPoint: 'too_many_meetings' | 'no_deep_work' | 'forgetting_tasks' | 'manual_scheduling' | null;
+  notificationFrequency: 'realtime' | 'daily_digest' | 'weekly_summary';
+  onboardingCompleted: boolean;
+  onboardingCompletedAt?: string;
+};
+
 export type PreferenceValue =
   | AllyBrainPreference
   | ContextualSchedulingPreference
@@ -93,7 +102,8 @@ export type PreferenceValue =
   | CrossPlatformSyncPreference
   | GeoLocationPreference
   | NotificationSettingsPreference
-  | DisplayPreference;
+  | DisplayPreference
+  | PersonaPreference;
 
 export type PreferenceResult<T> = {
   value: T;
@@ -131,6 +141,12 @@ export const PREFERENCE_DEFAULTS: Record<PreferenceKey, PreferenceValue> = {
     timezone: "UTC",
     timeFormat: "12h",
   },
+  persona: {
+    persona: null,
+    painPoint: null,
+    notificationFrequency: 'daily_digest',
+    onboardingCompleted: false
+  },
 };
 
 export const VALID_PREFERENCE_KEYS: PreferenceKey[] = [
@@ -143,6 +159,7 @@ export const VALID_PREFERENCE_KEYS: PreferenceKey[] = [
   "geo_location",
   "notification_settings",
   "display_preferences",
+  "persona",
 ];
 
 // ============================================
@@ -419,4 +436,13 @@ export async function getDisplayPreference(
   userId: string
 ): Promise<DisplayPreference | null> {
   return getPreference<DisplayPreference>(userId, "display_preferences");
+}
+
+/**
+ * Get persona preference
+ */
+export async function getPersonaPreference(
+  userId: string
+): Promise<PersonaPreference | null> {
+  return getPreference<PersonaPreference>(userId, "persona");
 }

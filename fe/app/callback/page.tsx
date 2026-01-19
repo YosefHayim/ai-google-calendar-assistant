@@ -88,10 +88,20 @@ function CallbackContent() {
           created_at: user.created_at,
         })
 
+        const isNewUser = !user.created_at || Date.now() - new Date(user.created_at).getTime() < 60000
+
         posthog?.capture('user_authenticated', {
           method: 'google',
-          is_new_user: !user.created_at || Date.now() - new Date(user.created_at).getTime() < 60000,
+          is_new_user: isNewUser,
         })
+
+        // Check if new user needs onboarding
+        if (isNewUser) {
+          setTimeout(() => {
+            window.location.href = '/onboarding'
+          }, 500)
+          return
+        }
 
         const pendingPlanStr = localStorage.getItem('pending_plan')
         if (pendingPlanStr) {
