@@ -53,19 +53,21 @@ export default function ErrorBoundary({ error, reset }: { error: Error & { diges
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-muted p-6 dark:bg-secondary">
       <div className="w-full max-w-md animate-in fade-in zoom-in-95 duration-300">
-        <Card className="border shadow-xl dark:border dark:bg-secondary/50 backdrop-blur-sm">
+        <Card className="border shadow-xl  dark:bg-secondary/50 backdrop-blur-sm">
           <CardHeader className="items-center text-center pb-2">
-            <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-50 border border-amber-100 dark:bg-amber-900/20 dark:border-amber-900/30 shadow-sm">
+            <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-50 border-amber-100 dark:bg-amber-900/20 -amber-900/30 shadow-sm">
               <AlertTriangle className="h-8 w-8 text-amber-700 dark:text-amber-500" />
             </div>
-            <h2 className="text-2xl font-bold tracking-tight text-foreground dark:text-zinc-50">{t('errors.hitSnag')}</h2>
+            <h2 className="text-2xl font-bold tracking-tight text-foreground dark:text-zinc-50">
+              {t('errors.hitSnag')}
+            </h2>
             <p className="mt-2 text-sm text-muted-foreground dark:text-muted-foreground leading-relaxed max-w-[90%]">
               {t('errors.hitSnagDesc')}
             </p>
           </CardHeader>
 
           <CardContent className="space-y-4 pt-4">
-            <details className="group rounded-xl border border bg-background px-4 py-3 dark:border dark:bg-secondary transition-all hover:border-zinc-300 dark:hover:border-zinc-700">
+            <details className="group rounded-xl border bg-background px-4 py-3  dark:bg-secondary transition-all hover:border-zinc-300 dark:hover:border-zinc-700">
               <summary className="flex cursor-pointer items-center justify-between text-xs font-medium uppercase tracking-wider text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-zinc-200">
                 <span>{t('errors.viewSystemLogs')}</span>
                 <div className="flex items-center gap-2">
@@ -94,8 +96,8 @@ export default function ErrorBoundary({ error, reset }: { error: Error & { diges
                 </div>
               </summary>
 
-              <div className="mt-3 space-y-2 pt-2 border-t border-zinc-100 dark:border/50">
-                <div className="flex items-start gap-2 rounded-md bg-destructive/5 p-3 dark:bg-red-900/10 border border-red-100 dark:border-red-900/20">
+              <div className="mt-3 space-y-2 pt-2 border-t border-zinc-100 /50">
+                <div className="flex items-start gap-2 rounded-md bg-destructive/5 p-3 dark:bg-red-900/10 border-red-100 -red-900/20">
                   <AlertCircle className="h-4 w-4 shrink-0 text-destructive dark:text-red-400 mt-0.5" />
                   <p className="text-xs font-medium text-red-800 dark:text-red-300 break-all font-mono">
                     {error.message || 'Unknown Application Error'}
@@ -137,14 +139,14 @@ export default function ErrorBoundary({ error, reset }: { error: Error & { diges
               <Button
                 onClick={() => window.location.reload()}
                 variant="outline"
-                className="w-full border dark:border dark:bg-transparent dark:hover:bg-secondary text-xs"
+                className="w-full dark:bg-transparent dark:hover:bg-secondary text-xs"
               >
                 {t('errors.reloadPage')}
               </Button>
               <Button
                 onClick={() => (window.location.href = '/')}
                 variant="outline"
-                className="w-full gap-2 border dark:border dark:bg-transparent dark:hover:bg-secondary text-xs"
+                className="w-full gap-2 dark:bg-transparent dark:hover:bg-secondary text-xs"
               >
                 <Home className="h-3.5 w-3.5" />
                 {t('errors.returnHome')}

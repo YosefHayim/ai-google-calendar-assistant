@@ -48,16 +48,13 @@ const PromoCountdown = ({ targetDate, onExpired }: PromoCountdownProps) => {
     <div className="flex items-center gap-2 text-sm font-mono">
       <Clock className="w-4 h-4" />
       <span className="text-primary font-bold">
-        {String(timeLeft.hours).padStart(2, '0')}:
-        {String(timeLeft.minutes).padStart(2, '0')}:
+        {String(timeLeft.hours).padStart(2, '0')}:{String(timeLeft.minutes).padStart(2, '0')}:
         {String(timeLeft.seconds).padStart(2, '0')}
       </span>
       <span className="text-muted-foreground">{t('trial.remaining', 'remaining')}</span>
     </div>
   )
 }
-
-
 
 interface TrialExpirationBannerProps {
   onUpgrade: () => void
@@ -72,9 +69,8 @@ export function TrialExpirationBanner({ onUpgrade, onDismiss }: TrialExpirationB
   useEffect(() => {
     if (!isLoading && access) {
       // Show banner if trial days left <= 14 and user is in trial
-      const shouldShow = access.trial_days_left !== null &&
-                        access.trial_days_left <= 14 &&
-                        access.subscription_status === 'trialing'
+      const shouldShow =
+        access.trial_days_left !== null && access.trial_days_left <= 14 && access.subscription_status === 'trialing'
       setIsVisible(shouldShow)
     }
   }, [access, isLoading])
@@ -96,7 +92,7 @@ export function TrialExpirationBanner({ onUpgrade, onDismiss }: TrialExpirationB
         animate={{ opacity: 1, transform: 'translateY(0px)' }}
         exit={{ opacity: 0, transform: 'translateY(-10px)' }}
         transition={{ duration: 0.3 }}
-        className="w-full bg-gradient-to-r from-primary/10 via-orange-500/10 to-red-500/10 border-b border-primary/20 dark:border-primary/30"
+        className="w-full bg-gradient-to-r from-primary/10 via-orange-500/10 to-red-500/10 border-b border-primary/20 -primary/30"
       >
         <div className="max-w-7xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
@@ -104,18 +100,23 @@ export function TrialExpirationBanner({ onUpgrade, onDismiss }: TrialExpirationB
               <div className="flex items-center gap-2">
                 <Sparkles className="w-5 h-5 text-primary" />
                 <span className="font-semibold text-foreground">
-                {isExpired
-                  ? t('trial.expired', 'Trial Expired')
-                  : t('trial.daysLeft', '{{count}} Day Left', { count: trialDaysLeft }).replace('{{count}}', trialDaysLeft.toString())
-                }
-              </span>
+                  {isExpired
+                    ? t('trial.expired', 'Trial Expired')
+                    : t('trial.daysLeft', '{{count}} Day Left', { count: trialDaysLeft }).replace(
+                        '{{count}}',
+                        trialDaysLeft.toString(),
+                      )}
+                </span>
               </div>
 
               <div className="hidden sm:block text-sm text-muted-foreground">
                 {isExpired
                   ? t('trial.expiredDescription', 'Your trial has expired – upgrade now to keep your access.')
-                  : t('trial.activeDescription', 'Your free trial ends in {{count}} day. Don\'t lose access to your AI assistant.', { count: trialDaysLeft })
-                }
+                  : t(
+                      'trial.activeDescription',
+                      "Your free trial ends in {{count}} day. Don't lose access to your AI assistant.",
+                      { count: trialDaysLeft },
+                    )}
               </div>
             </div>
 
@@ -157,8 +158,11 @@ export function TrialExpirationBanner({ onUpgrade, onDismiss }: TrialExpirationB
           <div className="sm:hidden mt-2 text-sm text-muted-foreground">
             {isExpired
               ? t('trial.expiredDescription', 'Your trial has expired – upgrade now to keep your access.')
-              : t('trial.activeDescription', 'Your free trial ends in {{count}} day. Don\'t lose access to your AI assistant.', { count: trialDaysLeft })
-            }
+              : t(
+                  'trial.activeDescription',
+                  "Your free trial ends in {{count}} day. Don't lose access to your AI assistant.",
+                  { count: trialDaysLeft },
+                )}
           </div>
         </div>
       </motion.div>

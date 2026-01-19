@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+
 import { cn } from '@/lib/utils'
 
 interface StatCardProps {
@@ -30,7 +31,7 @@ export function StatCard({
   return (
     <div
       className={cn(
-        'bg-background dark:bg-secondary border border dark:border rounded-md shadow-sm p-3 sm:p-4 md:p-6 flex flex-col gap-2 sm:gap-3 md:gap-4 min-w-0',
+        'bg-background dark:bg-secondary rounded-md shadow-sm p-3 sm:p-4 md:p-6 flex flex-col gap-2 sm:gap-3 md:gap-4 min-w-0',
         className,
       )}
     >
@@ -38,7 +39,9 @@ export function StatCard({
         <div className={cn('w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-md shrink-0', iconBgColor)}>
           {icon}
         </div>
-        <h3 className="text-xs sm:text-sm font-medium text-muted-foreground dark:text-muted-foreground truncate">{title}</h3>
+        <h3 className="text-xs sm:text-sm font-medium text-muted-foreground dark:text-muted-foreground truncate">
+          {title}
+        </h3>
       </div>
       <div className="min-w-0">
         <div className="flex items-baseline gap-2">
@@ -53,7 +56,9 @@ export function StatCard({
           )}
         </div>
         {description && (
-          <p className="text-xs sm:text-sm text-muted-foreground dark:text-muted-foreground mt-1 truncate">{description}</p>
+          <p className="text-xs sm:text-sm text-muted-foreground dark:text-muted-foreground mt-1 truncate">
+            {description}
+          </p>
         )}
       </div>
       {children}
@@ -65,7 +70,7 @@ export function StatCardSkeleton({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        'bg-background dark:bg-secondary border border dark:border rounded-md shadow-sm p-3 sm:p-4 md:p-6 flex flex-col gap-2 sm:gap-3 md:gap-4',
+        'bg-background dark:bg-secondary rounded-md shadow-sm p-3 sm:p-4 md:p-6 flex flex-col gap-2 sm:gap-3 md:gap-4',
         className,
       )}
     >

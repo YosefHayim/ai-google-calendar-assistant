@@ -101,10 +101,4 @@ export {
 export type { FeatureFlag, CreateFeatureFlagInput, UpdateFeatureFlagInput } from './feature-flags'
 
 // Storage hooks
-export {
-  useUploadAvatar,
-  useUploadAttachment,
-  useDeleteFile,
-  useGetFileUrl,
-  useListUserFiles,
-} from './storage'
+export { useUploadAvatar, useUploadAttachment, useDeleteFile, useGetFileUrl, useListUserFiles } from './storage'

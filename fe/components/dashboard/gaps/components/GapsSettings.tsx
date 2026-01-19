@@ -14,6 +14,7 @@ import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
 import { motion } from 'framer-motion'
 import { toast } from 'sonner'
+import { useTranslation } from 'react-i18next'
 
 interface GapsSettingsProps {
   settings?: GapRecoverySettings
@@ -31,6 +32,7 @@ const DAYS_OF_WEEK = [
 ] as const
 
 export function GapsSettings({ settings, onSettingsChange }: GapsSettingsProps) {
+  const { t } = useTranslation()
   const [isLoading, setIsLoading] = useState(false)
 
   if (!settings) {
@@ -50,7 +52,7 @@ export function GapsSettings({ settings, onSettingsChange }: GapsSettingsProps) 
     try {
       // Here you would implement the API call to save settings
       // For now, just simulate saving
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      await new Promise((resolve) => setTimeout(resolve, 1000))
       toast.success(t('toast.gapsSettingsSaved'))
       onSettingsChange()
     } catch (error) {
@@ -72,28 +74,20 @@ export function GapsSettings({ settings, onSettingsChange }: GapsSettingsProps) 
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Basic Settings */}
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.1 }}
-        >
+        <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }}>
           <Card className="p-6">
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 <Settings className="h-5 w-5" />
                 Basic Settings
               </CardTitle>
-              <CardDescription>
-                Configure the fundamental gap detection parameters
-              </CardDescription>
+              <CardDescription>Configure the fundamental gap detection parameters</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
                   <Label className="text-sm font-medium">Auto Gap Analysis</Label>
-                  <p className="text-xs text-muted-foreground">
-                    Automatically analyze calendar for gaps
-                  </p>
+                  <p className="text-xs text-muted-foreground">Automatically analyze calendar for gaps</p>
                 </div>
                 <Switch
                   checked={settings.autoGapAnalysis}
@@ -150,29 +144,21 @@ export function GapsSettings({ settings, onSettingsChange }: GapsSettingsProps) 
                   min="1"
                   max="90"
                 />
-                <p className="text-xs text-muted-foreground">
-                  How far back to analyze for gap detection
-                </p>
+                <p className="text-xs text-muted-foreground">How far back to analyze for gap detection</p>
               </div>
             </CardContent>
           </Card>
         </motion.div>
 
         {/* Advanced Settings */}
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.2 }}
-        >
+        <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}>
           <Card className="p-6">
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 <Zap className="h-5 w-5" />
                 Advanced Settings
               </CardTitle>
-              <CardDescription>
-                Fine-tune gap detection with advanced options
-              </CardDescription>
+              <CardDescription>Fine-tune gap detection with advanced options</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
@@ -188,9 +174,7 @@ export function GapsSettings({ settings, onSettingsChange }: GapsSettingsProps) 
                     <SelectItem value="0.8">Very High (80%)</SelectItem>
                   </SelectContent>
                 </Select>
-                <p className="text-xs text-muted-foreground">
-                  Minimum confidence level for gap suggestions
-                </p>
+                <p className="text-xs text-muted-foreground">Minimum confidence level for gap suggestions</p>
               </div>
 
               <div className="space-y-2">
@@ -199,7 +183,7 @@ export function GapsSettings({ settings, onSettingsChange }: GapsSettingsProps) 
                   {DAYS_OF_WEEK.map((day) => (
                     <Badge
                       key={day.value}
-                      variant={settings.ignoredDays.includes(day.value as any) ? "default" : "secondary"}
+                      variant={settings.ignoredDays.includes(day.value as any) ? 'default' : 'secondary'}
                       className="cursor-pointer text-xs"
                       onClick={() => {
                         // Handle day toggle
@@ -209,29 +193,21 @@ export function GapsSettings({ settings, onSettingsChange }: GapsSettingsProps) 
                     </Badge>
                   ))}
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  Days of the week to ignore during gap analysis
-                </p>
+                <p className="text-xs text-muted-foreground">Days of the week to ignore during gap analysis</p>
               </div>
             </CardContent>
           </Card>
         </motion.div>
 
         {/* Calendar Settings */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-        >
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
           <Card className="p-6">
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 <Calendar className="h-5 w-5" />
                 Calendar Settings
               </CardTitle>
-              <CardDescription>
-                Choose which calendars to include in gap analysis
-              </CardDescription>
+              <CardDescription>Choose which calendars to include in gap analysis</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -268,31 +244,23 @@ export function GapsSettings({ settings, onSettingsChange }: GapsSettingsProps) 
         </motion.div>
 
         {/* Language Settings */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-        >
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
           <Card className="p-6">
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 <Clock className="h-5 w-5" />
                 Language Support
               </CardTitle>
-              <CardDescription>
-                Supported languages for gap analysis
-              </CardDescription>
+              <CardDescription>Supported languages for gap analysis</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
                     <Label className="text-sm font-medium">Language Setup Complete</Label>
-                    <p className="text-xs text-muted-foreground">
-                      Multi-language gap detection enabled
-                    </p>
+                    <p className="text-xs text-muted-foreground">Multi-language gap detection enabled</p>
                   </div>
-                  <Badge variant={settings.languageSetupComplete ? "default" : "secondary"}>
+                  <Badge variant={settings.languageSetupComplete ? 'default' : 'secondary'}>
                     {settings.languageSetupComplete ? 'Complete' : 'Pending'}
                   </Badge>
                 </div>
@@ -332,8 +300,8 @@ export function GapsSettings({ settings, onSettingsChange }: GapsSettingsProps) 
       <Alert>
         <AlertTriangle className="h-4 w-4" />
         <AlertDescription>
-          Changes to gap analysis settings may take a few minutes to take effect.
-          The analysis runs periodically in the background.
+          Changes to gap analysis settings may take a few minutes to take effect. The analysis runs periodically in the
+          background.
         </AlertDescription>
       </Alert>
     </div>

@@ -153,7 +153,10 @@ export function PlanRow({ plan, selectedFrequency, actionType, isLoading, onActi
               <Button
                 onClick={() => onAction(isCustomTier && isPerUse ? customCredits : undefined)}
                 size="sm"
-                className={cn('min-w-20 sm:min-w-24', isHighlighted && 'bg-background text-foreground hover:bg-secondary')}
+                className={cn(
+                  'min-w-20 sm:min-w-24',
+                  isHighlighted && 'bg-background text-foreground hover:bg-secondary',
+                )}
               >
                 {isPerUse ? 'Buy' : 'Upgrade'}
                 <ArrowRight className="w-3 h-3 ml-1" />
@@ -163,7 +166,10 @@ export function PlanRow({ plan, selectedFrequency, actionType, isLoading, onActi
                 onClick={() => onAction()}
                 variant="outline"
                 size="sm"
-                className={cn('min-w-20 sm:min-w-24', isHighlighted && 'border-white/30 text-white hover:bg-background/10')}
+                className={cn(
+                  'min-w-20 sm:min-w-24',
+                  isHighlighted && 'border-white/30 text-white hover:bg-background/10',
+                )}
               >
                 {isPerUse ? 'Buy' : 'Downgrade'}
                 <ArrowDown className="w-3 h-3 ml-1" />

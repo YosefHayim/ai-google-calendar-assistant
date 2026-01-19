@@ -45,7 +45,7 @@ const DailyAvailableHoursChart: React.FC<DailyAvailableHoursChartProps> = ({ dat
 
   if (!data || data.length === 0) {
     return (
-      <Card className="lg:col-span-3 bg-background dark:bg-secondary border border dark:border">
+      <Card className="lg:col-span-3 bg-background dark:bg-secondary border ">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Clock className="w-5 h-5 text-primary" />
@@ -58,8 +58,8 @@ const DailyAvailableHoursChart: React.FC<DailyAvailableHoursChartProps> = ({ dat
   }
 
   return (
-    <Card className="lg:col-span-3 bg-background dark:bg-secondary border border dark:border py-0">
-      <CardHeader className="flex flex-col items-stretch border-b border dark:border !p-0 sm:flex-row">
+    <Card className="lg:col-span-3 bg-background dark:bg-secondary py-0">
+      <CardHeader className="flex flex-col items-stretch border-b !p-0 sm:flex-row">
         <div className="flex flex-1 flex-col justify-center gap-1 px-6 pt-4 pb-3 sm:!py-4">
           <CardTitle className="flex items-center gap-2 text-foreground dark:text-primary-foreground">
             <Clock className="w-5 h-5 text-primary" />
@@ -91,13 +91,13 @@ const DailyAvailableHoursChart: React.FC<DailyAvailableHoursChartProps> = ({ dat
           </CardDescription>
         </div>
         <div className="flex">
-          <div className="relative z-30 flex flex-1 flex-col justify-center gap-1 border-t border dark:border px-6 py-4 text-left sm:border-t-0 sm:border-l sm:px-6 sm:py-4 lg:px-8 lg:py-6">
+          <div className="relative z-30 flex flex-1 flex-col justify-center gap-1 border-t px-6 py-4 text-left sm:border-t-0 sm:border-l sm:px-6 sm:py-4 lg:px-8 lg:py-6">
             <span className="text-muted-foreground dark:text-muted-foreground text-xs">Total Available</span>
             <span className="text-lg leading-none font-bold text-foreground dark:text-primary-foreground sm:text-xl lg:text-3xl">
               {formatHours(totalAvailableHours)}
             </span>
           </div>
-          <div className="relative z-30 flex flex-1 flex-col justify-center gap-1 border-t border-l border dark:border px-6 py-4 text-left sm:border-t-0 sm:px-6 sm:py-4 lg:px-8 lg:py-6">
+          <div className="relative z-30 flex flex-1 flex-col justify-center gap-1 border-t border-l px-6 py-4 text-left sm:border-t-0 sm:px-6 sm:py-4 lg:px-8 lg:py-6">
             <span className="text-muted-foreground dark:text-muted-foreground text-xs">Daily Avg</span>
             <span className="text-lg leading-none font-bold text-foreground dark:text-primary-foreground sm:text-xl lg:text-3xl">
               {formatHours(averageAvailableHours)}

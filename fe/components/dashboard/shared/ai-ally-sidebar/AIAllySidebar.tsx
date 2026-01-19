@@ -109,7 +109,7 @@ export function AIAllySidebar({ isOpen, onClose, onOpen }: AIAllySidebarProps) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-            className="fixed bottom-6 right-6 z-50 w-96 max-h-[80vh] flex flex-col rounded-2xl shadow-2xl shadow-black/20 dark:shadow-black/40 border border/60 dark:border/60 bg-background/95 dark:bg-secondary/95 backdrop-blur-2xl overflow-hidden"
+            className="fixed bottom-6 right-6 z-50 w-96 max-h-[80vh] flex flex-col rounded-2xl shadow-2xl shadow-black/20 dark:shadow-black/40 border/60 /60 bg-background/95 dark:bg-secondary/95 backdrop-blur-2xl overflow-hidden"
           >
             <ChatHeader onClose={onClose} onMinimize={onClose} />
 
@@ -125,9 +125,9 @@ export function AIAllySidebar({ isOpen, onClose, onOpen }: AIAllySidebarProps) {
               <QuickActionsBar actions={QUICK_ACTIONS} onActionClick={handleQuickAction} />
             )}
 
-            <div className="p-3 border-t border/50 dark:border/50 bg-muted/50 dark:bg-secondary/50">
+            <div className="p-3 border-t border/50 /50 bg-muted/50 dark:bg-secondary/50">
               {isRecording ? (
-                <div className="relative flex flex-col items-center justify-center bg-background dark:bg-secondary border border dark:border rounded-2xl p-3">
+                <div className="relative flex flex-col items-center justify-center bg-background dark:bg-secondary rounded-2xl p-3">
                   <AIVoiceInput
                     onStart={startRecording}
                     onStop={(duration, text) => handleStopRecording(text ?? '')}
@@ -154,7 +154,7 @@ export function AIAllySidebar({ isOpen, onClose, onOpen }: AIAllySidebarProps) {
                     e.preventDefault()
                     handleSendMessage()
                   }}
-                  className="relative flex items-center bg-background dark:bg-secondary border border dark:border rounded-2xl p-1.5 gap-1.5"
+                  className="relative flex items-center bg-background dark:bg-secondary rounded-2xl p-1.5 gap-1.5"
                 >
                   <Button
                     type="button"

@@ -202,7 +202,9 @@ export const EditingStates: Story = {
       </div>
 
       <div>
-        <p className="text-sm font-medium mb-3 text-zinc-600 dark:text-muted-foreground">Assistant Message - View Mode</p>
+        <p className="text-sm font-medium mb-3 text-zinc-600 dark:text-muted-foreground">
+          Assistant Message - View Mode
+        </p>
         <EditableMessage
           message={assistantMessage}
           isEditing={false}
@@ -216,7 +218,9 @@ export const EditingStates: Story = {
       </div>
 
       <div>
-        <p className="text-sm font-medium mb-3 text-zinc-600 dark:text-muted-foreground">Assistant Message - Edit Mode</p>
+        <p className="text-sm font-medium mb-3 text-zinc-600 dark:text-muted-foreground">
+          Assistant Message - Edit Mode
+        </p>
         <EditableMessage
           message={assistantMessage}
           isEditing={true}

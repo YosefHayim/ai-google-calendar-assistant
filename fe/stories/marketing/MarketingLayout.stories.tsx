@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
+
 import MarketingLayout from '@/components/marketing/MarketingLayout'
 
 const meta: Meta<typeof MarketingLayout> = {
@@ -59,7 +60,9 @@ export const DarkMode: Story = {
           </p>
           <div className="flex items-center justify-center gap-4">
             <button className="px-8 py-3 bg-primary text-white rounded-full font-medium">Get Started Free</button>
-            <button className="px-8 py-3 bg-secondary text-primary-foreground rounded-full font-medium">Watch Demo</button>
+            <button className="px-8 py-3 bg-secondary text-primary-foreground rounded-full font-medium">
+              Watch Demo
+            </button>
           </div>
         </div>
       </div>
@@ -114,7 +117,9 @@ export const LandingPageExample: Story = {
         <section className="py-20 px-4">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-foreground dark:text-primary-foreground mb-4">Built for Busy Professionals</h2>
+              <h2 className="text-4xl font-bold text-foreground dark:text-primary-foreground mb-4">
+                Built for Busy Professionals
+              </h2>
               <p className="text-zinc-600 dark:text-muted-foreground max-w-2xl mx-auto">
                 Ally handles the complexity so you can focus on what matters.
               </p>
@@ -137,12 +142,11 @@ export const LandingPageExample: Story = {
                   icon: '📊',
                 },
               ].map((feature) => (
-                <div
-                  key={feature.title}
-                  className="p-8 bg-muted dark:bg-secondary rounded-2xl border border dark:border"
-                >
+                <div key={feature.title} className="p-8 bg-muted dark:bg-secondary rounded-2xl border ">
                   <span className="text-4xl mb-4 block">{feature.icon}</span>
-                  <h3 className="text-xl font-bold text-foreground dark:text-primary-foreground mb-2">{feature.title}</h3>
+                  <h3 className="text-xl font-bold text-foreground dark:text-primary-foreground mb-2">
+                    {feature.title}
+                  </h3>
                   <p className="text-zinc-600 dark:text-muted-foreground">{feature.description}</p>
                 </div>
               ))}
@@ -152,7 +156,9 @@ export const LandingPageExample: Story = {
 
         <section className="py-20 px-4 bg-secondary dark:bg-secondary">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-4xl font-bold text-white dark:text-foreground mb-4">Ready to Transform Your Calendar?</h2>
+            <h2 className="text-4xl font-bold text-white dark:text-foreground mb-4">
+              Ready to Transform Your Calendar?
+            </h2>
             <p className="text-muted-foreground dark:text-zinc-600 mb-8">
               Join thousands of professionals who have simplified their scheduling.
             </p>
@@ -180,7 +186,9 @@ export const PricingPageExample: Story = {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <span className="text-xs font-bold text-primary uppercase tracking-[0.2em] mb-4 block">Pricing</span>
-            <h1 className="text-5xl font-bold text-foreground dark:text-primary-foreground mb-4">Simple, Transparent Pricing</h1>
+            <h1 className="text-5xl font-bold text-foreground dark:text-primary-foreground mb-4">
+              Simple, Transparent Pricing
+            </h1>
             <p className="text-xl text-zinc-600 dark:text-muted-foreground">Start free. Upgrade when you need more.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
@@ -222,7 +230,7 @@ export const PricingPageExample: Story = {
                 className={`p-8 rounded-2xl border ${
                   plan.popular
                     ? 'bg-primary/5 border-primary ring-2 ring-primary/20'
-                    : 'bg-background dark:bg-secondary border dark:border'
+                    : 'bg-background dark:bg-secondary border '
                 }`}
               >
                 {plan.popular && (
@@ -233,7 +241,9 @@ export const PricingPageExample: Story = {
                 <h3 className="text-2xl font-bold text-foreground dark:text-primary-foreground">{plan.name}</h3>
                 <p className="text-4xl font-bold text-foreground dark:text-primary-foreground mt-2">
                   {plan.price}
-                  {plan.price !== 'Custom' && <span className="text-base font-normal text-muted-foreground">/month</span>}
+                  {plan.price !== 'Custom' && (
+                    <span className="text-base font-normal text-muted-foreground">/month</span>
+                  )}
                 </p>
                 <p className="text-zinc-600 dark:text-muted-foreground mt-2">{plan.description}</p>
                 <ul className="mt-6 space-y-3">

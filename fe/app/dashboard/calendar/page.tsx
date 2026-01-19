@@ -148,7 +148,9 @@ function GoogleCalendarNotConnected({ authUrl }: { authUrl?: string }) {
           <CalendarDays className="h-8 w-8 text-primary" />
         </div>
         <div className="space-y-2">
-          <h3 className="text-lg font-semibold text-foreground dark:text-primary-foreground">Connect Google Calendar</h3>
+          <h3 className="text-lg font-semibold text-foreground dark:text-primary-foreground">
+            Connect Google Calendar
+          </h3>
           <p className="text-sm text-muted-foreground dark:text-muted-foreground">
             Connect your Google Calendar to view and manage your events directly from Ally.
           </p>
@@ -371,11 +373,7 @@ function CalendarContent() {
               disabled={eventsFetching}
               className="h-8 px-3"
             >
-              {eventsFetching ? (
-                <Loader2 className="h-3 w-3 animate-spin" />
-              ) : (
-                <RefreshCw className="h-3 w-3" />
-              )}
+              {eventsFetching ? <Loader2 className="h-3 w-3 animate-spin" /> : <RefreshCw className="h-3 w-3" />}
               <span className="ml-1 text-xs">{eventsFetching ? 'Syncing' : 'Sync'}</span>
             </Button>
           </div>

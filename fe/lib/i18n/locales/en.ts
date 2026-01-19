@@ -586,7 +586,8 @@ export const en = {
     timeFormat12h: '12-hour (AM/PM)',
     timeFormat24h: '24-hour',
     realTimeLocation: 'Real-time Location',
-    realTimeLocationTooltip: 'When enabled, Ally uses your current location to provide context for event creation (e.g., suggesting nearby venues)',
+    realTimeLocationTooltip:
+      'When enabled, Ally uses your current location to provide context for event creation (e.g., suggesting nearby venues)',
     memberSince: 'Member since',
     languageTooltip: 'Choose your preferred language for the interface',
     general: 'General',
@@ -866,7 +867,7 @@ export const en = {
       daysLeft: '{{count}} Day Left',
       expired: 'Trial Expired',
       expiredDescription: 'Your trial has expired – upgrade now to keep your access.',
-      activeDescription: 'Your free trial ends in {{count}} day. Don\'t lose access to your AI assistant.',
+      activeDescription: "Your free trial ends in {{count}} day. Don't lose access to your AI assistant.",
       remaining: 'remaining',
       getDeal: 'Get the Deal',
     },
@@ -1118,7 +1119,8 @@ export const en = {
       noActiveCalendarSourcesFound: 'No active calendar sources found.',
       connectWhatsApp: 'Connect WhatsApp',
       neuralLinks: 'Neural Links',
-      executiveGradeAI: 'The executive-grade AI assistant designed for business owners to defend their deep work. From Free Exploratory access to Unlimited Executive Power. Built on the Ally Neural Protocol.',
+      executiveGradeAI:
+        'The executive-grade AI assistant designed for business owners to defend their deep work. From Free Exploratory access to Unlimited Executive Power. Built on the Ally Neural Protocol.',
       systemOnline: 'All Systems Operational',
       systemOffline: 'System Unavailable',
       systemChecking: 'Checking Status...',
@@ -1187,7 +1189,7 @@ export const en = {
     admin: {
       grantCredits: {
         title: 'Grant Credits',
-        description: 'Add credits to {{user}}\'s account',
+        description: "Add credits to {{user}}'s account",
         creditAmount: 'Credit Amount',
         creditPlaceholder: 'Enter number of credits',
         currentBalance: 'Current balance: {{count}} credits',

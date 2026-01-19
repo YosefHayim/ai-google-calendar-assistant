@@ -28,7 +28,9 @@ export function PageHeader({ title, description, icon, tooltip, action, classNam
             <h2 className="text-lg font-semibold text-foreground dark:text-primary-foreground truncate">{title}</h2>
             {tooltip && <InfoTooltip>{tooltip}</InfoTooltip>}
           </div>
-          {description && <p className="text-sm text-muted-foreground dark:text-muted-foreground truncate">{description}</p>}
+          {description && (
+            <p className="text-sm text-muted-foreground dark:text-muted-foreground truncate">{description}</p>
+          )}
         </div>
       </div>
       {action && <div className="shrink-0">{action}</div>}

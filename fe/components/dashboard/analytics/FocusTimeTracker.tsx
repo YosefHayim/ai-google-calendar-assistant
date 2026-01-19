@@ -15,7 +15,7 @@ interface FocusTimeTrackerProps {
 const FocusTimeTracker: React.FC<FocusTimeTrackerProps> = ({ data, totalDays, isLoading = false }) => {
   if (isLoading) {
     return (
-      <div className="bg-background dark:bg-secondary border border dark:border rounded-xl shadow-sm p-4 sm:p-6">
+      <div className="bg-background dark:bg-secondary rounded-xl shadow-sm p-4 sm:p-6">
         <div className="flex items-center gap-2 mb-2">
           <Skeleton className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg" />
           <Skeleton className="h-4 sm:h-5 w-28 sm:w-32" />
@@ -79,13 +79,15 @@ const FocusTimeTracker: React.FC<FocusTimeTrackerProps> = ({ data, totalDays, is
   const quality = getFocusQuality(data.focusTimePercentage)
 
   return (
-    <div className="bg-background dark:bg-secondary border border dark:border rounded-xl shadow-sm p-4 sm:p-6 hover:shadow-md transition-shadow">
+    <div className="bg-background dark:bg-secondary rounded-xl shadow-sm p-4 sm:p-6 hover:shadow-md transition-shadow">
       <div className="flex items-center justify-between mb-1 gap-2">
         <div className="flex items-center gap-2 min-w-0">
           <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-secondary dark:bg-secondary flex items-center justify-center flex-shrink-0">
             <Target className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-foreground dark:text-primary" />
           </div>
-          <h3 className="font-semibold text-sm sm:text-base text-foreground dark:text-primary-foreground truncate">Focus Time</h3>
+          <h3 className="font-semibold text-sm sm:text-base text-foreground dark:text-primary-foreground truncate">
+            Focus Time
+          </h3>
         </div>
         <span className={`text-xs sm:text-sm font-medium flex-shrink-0 ${quality.color}`}>{quality.label}</span>
       </div>
@@ -111,17 +113,21 @@ const FocusTimeTracker: React.FC<FocusTimeTrackerProps> = ({ data, totalDays, is
                 </span>
                 <span className="text-base sm:text-lg font-bold text-foreground dark:text-primary-foreground flex-shrink-0">
                   {stat.value}
-                  <span className="text-[10px] sm:text-xs font-normal text-muted-foreground ml-0.5 sm:ml-1">{stat.suffix}</span>
+                  <span className="text-[10px] sm:text-xs font-normal text-muted-foreground ml-0.5 sm:ml-1">
+                    {stat.suffix}
+                  </span>
                 </span>
               </div>
-              <p className="text-[10px] sm:text-xs text-muted-foreground dark:text-muted-foreground truncate">{stat.description}</p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground dark:text-muted-foreground truncate">
+                {stat.description}
+              </p>
             </div>
           </div>
         ))}
       </div>
 
       {/* Focus Progress Bar */}
-      <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border dark:border">
+      <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border ">
         <div className="flex items-center justify-between text-[10px] sm:text-xs mb-1.5 sm:mb-2 gap-2">
           <span className="text-muted-foreground dark:text-muted-foreground truncate">Focus vs Meeting Time</span>
           <span className="font-medium text-zinc-700 dark:text-zinc-300 flex-shrink-0">

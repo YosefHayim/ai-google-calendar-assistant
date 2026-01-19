@@ -62,14 +62,18 @@ export function EventListItem({ event, calendarColor, onEventClick }: EventListI
               )}
             </div>
             {event.location && (
-              <p className="text-xs text-muted-foreground dark:text-muted-foreground mt-1 line-clamp-1">{event.location}</p>
+              <p className="text-xs text-muted-foreground dark:text-muted-foreground mt-1 line-clamp-1">
+                {event.location}
+              </p>
             )}
           </div>
         </li>
       </HoverCardTrigger>
       <HoverCardContent className="w-80">
         <div className="space-y-2">
-          <h4 className="font-semibold text-sm text-foreground dark:text-primary-foreground">{event.summary || 'No Title'}</h4>
+          <h4 className="font-semibold text-sm text-foreground dark:text-primary-foreground">
+            {event.summary || 'No Title'}
+          </h4>
           <div className="space-y-2 text-xs text-zinc-600 dark:text-muted-foreground">
             <div className="flex items-center gap-2">
               <Clock size={16} />
@@ -107,7 +111,9 @@ export function EventListItem({ event, calendarColor, onEventClick }: EventListI
               </div>
             )}
             {event.description && (
-              <p className="text-xs text-muted-foreground dark:text-muted-foreground line-clamp-2 mt-2">{event.description}</p>
+              <p className="text-xs text-muted-foreground dark:text-muted-foreground line-clamp-2 mt-2">
+                {event.description}
+              </p>
             )}
           </div>
         </div>

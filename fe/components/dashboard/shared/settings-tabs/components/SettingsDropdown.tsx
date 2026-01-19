@@ -1,9 +1,10 @@
 'use client'
 
-import React from 'react'
-import { ChevronDown, Check } from 'lucide-react'
+import { Check, ChevronDown } from 'lucide-react'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+
 import { Button } from '@/components/ui/button'
+import React from 'react'
 import { cn } from '@/lib/utils'
 
 export interface DropdownOption {
@@ -137,7 +138,7 @@ export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
               <div
                 className={cn(
                   'w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors',
-                  isSelected ? 'bg-primary border-primary' : 'border-zinc-300 dark:border-zinc-600',
+                  isSelected ? 'bg-primary border-primary' : 'border-zinc-300 -zinc-600',
                 )}
               >
                 {isSelected && <Check className="w-3 h-3 text-white" />}

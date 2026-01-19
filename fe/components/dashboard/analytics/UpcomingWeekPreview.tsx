@@ -27,10 +27,10 @@ const BUSYNESS_COLORS = {
 
 const BUSYNESS_BORDER_COLORS = {
   free: 'border-border',
-  light: 'border-emerald-300 dark:border-emerald-800',
-  moderate: 'border-sky-300 dark:border-sky-800',
+  light: 'border-emerald-300 -emerald-800',
+  moderate: 'border-sky-300 -sky-800',
   busy: 'border-primary/30',
-  packed: 'border-rose-300 dark:border-rose-800',
+  packed: 'border-rose-300 -rose-800',
 }
 
 const BUSYNESS_TEXT = {
@@ -65,7 +65,9 @@ const DayCard: React.FC<{ day: UpcomingDayData }> = ({ day }) => {
             </span>
           )}
 
-          <span className="text-[10px] sm:text-xs font-medium text-muted-foreground dark:text-muted-foreground">{day.dayShort}</span>
+          <span className="text-[10px] sm:text-xs font-medium text-muted-foreground dark:text-muted-foreground">
+            {day.dayShort}
+          </span>
           <span className="text-base sm:text-lg font-bold text-foreground dark:text-primary-foreground">
             {format(day.date, 'd')}
           </span>
@@ -106,7 +108,7 @@ const DayCard: React.FC<{ day: UpcomingDayData }> = ({ day }) => {
       </HoverCardTrigger>
 
       <HoverCardContent className="w-72 p-0" side="bottom" align="center">
-        <div className="p-3 border-b border dark:border">
+        <div className="p-3 border-b border ">
           <div className="flex items-center justify-between">
             <h4 className="font-semibold text-foreground dark:text-primary-foreground">{day.dayName}</h4>
             <span className={`text-xs px-2 py-0.5 rounded-full ${BUSYNESS_COLORS[day.busynessLevel]} font-medium`}>
@@ -146,7 +148,9 @@ const DayCard: React.FC<{ day: UpcomingDayData }> = ({ day }) => {
                         ? 'All day'
                         : `${format(new Date(event.startTime), 'h:mm a')} • ${Math.round(event.durationMinutes)} min`}
                     </p>
-                    <p className="text-xs text-muted-foreground dark:text-muted-foreground truncate">{event.calendarName}</p>
+                    <p className="text-xs text-muted-foreground dark:text-muted-foreground truncate">
+                      {event.calendarName}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -158,7 +162,9 @@ const DayCard: React.FC<{ day: UpcomingDayData }> = ({ day }) => {
             </div>
           </div>
         ) : (
-          <div className="p-4 text-center text-muted-foreground dark:text-muted-foreground text-sm">No events scheduled</div>
+          <div className="p-4 text-center text-muted-foreground dark:text-muted-foreground text-sm">
+            No events scheduled
+          </div>
         )}
       </HoverCardContent>
     </HoverCard>
@@ -173,7 +179,7 @@ const UpcomingWeekPreview: React.FC<UpcomingWeekPreviewProps> = ({
 }) => {
   if (isLoading) {
     return (
-      <div className="bg-background dark:bg-secondary border border dark:border rounded-xl shadow-sm p-4 sm:p-6">
+      <div className="bg-background dark:bg-secondary rounded-xl shadow-sm p-4 sm:p-6">
         <div className="flex items-center gap-2 mb-2">
           <Skeleton className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg" />
           <Skeleton className="h-4 sm:h-5 w-28 sm:w-36" />
@@ -190,12 +196,14 @@ const UpcomingWeekPreview: React.FC<UpcomingWeekPreviewProps> = ({
 
   if (isError) {
     return (
-      <div className="bg-background dark:bg-secondary border border dark:border rounded-xl shadow-sm p-4 sm:p-6">
+      <div className="bg-background dark:bg-secondary rounded-xl shadow-sm p-4 sm:p-6">
         <div className="flex items-center gap-2 mb-3 sm:mb-4">
           <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-rose-100 dark:bg-rose-900/50 flex items-center justify-center">
             <AlertCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-rose-600 dark:text-rose-400" />
           </div>
-          <h3 className="font-semibold text-sm sm:text-base text-foreground dark:text-primary-foreground">Upcoming Week</h3>
+          <h3 className="font-semibold text-sm sm:text-base text-foreground dark:text-primary-foreground">
+            Upcoming Week
+          </h3>
         </div>
         <div className="text-center py-6 sm:py-8">
           <p className="text-sm sm:text-base text-muted-foreground dark:text-muted-foreground mb-3 sm:mb-4">
@@ -216,7 +224,7 @@ const UpcomingWeekPreview: React.FC<UpcomingWeekPreviewProps> = ({
   }
 
   return (
-    <div className="bg-background dark:bg-secondary border border dark:border rounded-xl shadow-sm p-4 sm:p-6 hover:shadow-md transition-shadow">
+    <div className="bg-background dark:bg-secondary rounded-xl shadow-sm p-4 sm:p-6 hover:shadow-md transition-shadow">
       <div className="flex items-center justify-between mb-1 gap-2">
         <div className="flex items-center gap-2 min-w-0">
           <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-secondary dark:bg-secondary flex items-center justify-center flex-shrink-0">
@@ -243,7 +251,7 @@ const UpcomingWeekPreview: React.FC<UpcomingWeekPreviewProps> = ({
       </div>
 
       {/* Legend */}
-      <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border dark:border">
+      <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border ">
         <div className="flex items-center gap-1 sm:gap-1.5">
           <StatusDot color="green" size="xs" className="sm:w-2 sm:h-2" />
           <span className="text-[10px] sm:text-xs text-muted-foreground dark:text-muted-foreground">Light</span>
@@ -264,7 +272,7 @@ const UpcomingWeekPreview: React.FC<UpcomingWeekPreviewProps> = ({
 
       {/* Alert for packed days */}
       {data.days.some((d) => d.busynessLevel === 'packed') && (
-        <div className="mt-2 sm:mt-3 p-1.5 sm:p-2 rounded-lg bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-800 flex items-center gap-1.5 sm:gap-2">
+        <div className="mt-2 sm:mt-3 p-1.5 sm:p-2 rounded-lg bg-rose-50 dark:bg-rose-900/20 border-rose-200 -rose-800 flex items-center gap-1.5 sm:gap-2">
           <AlertCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-rose-500 flex-shrink-0" />
           <p className="text-[10px] sm:text-xs text-rose-700 dark:text-rose-300">
             You have packed days ahead. Consider rescheduling some events.

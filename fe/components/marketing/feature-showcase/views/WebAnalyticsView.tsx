@@ -1,8 +1,9 @@
 'use client'
 
-import { motion } from 'framer-motion'
 import { BarChart3, Brain, Calendar, Clock } from 'lucide-react'
+
 import { cn } from '@/lib/utils'
+import { motion } from 'framer-motion'
 
 const STATS = [
   { label: 'Focus Time', value: '18h', change: '+23%', icon: Brain, positive: true },
@@ -15,7 +16,7 @@ export const WebAnalyticsView = () => (
   <div className="h-full p-4 bg-muted dark:bg-secondary">
     <div className="flex items-center justify-between mb-4">
       <h3 className="font-semibold text-foreground dark:text-white text-sm">Weekly Insights</h3>
-      <select className="text-xs bg-background dark:bg-secondary border border dark:border-zinc-700 rounded-lg px-2 py-1">
+      <select className="text-xs bg-background dark:bg-secondary  rounded-lg px-2 py-1">
         <option>This Week</option>
       </select>
     </div>
@@ -25,7 +26,7 @@ export const WebAnalyticsView = () => (
           key={stat.label}
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="p-3 rounded-xl bg-background dark:bg-secondary border border dark:border-zinc-700"
+          className="p-3 rounded-xl bg-background dark:bg-secondary "
         >
           <div className="flex items-center gap-2 mb-1">
             <stat.icon className="w-4 h-4 text-primary" />

@@ -80,7 +80,7 @@ const OTPVerificationPage: React.FC = () => {
       <BackgroundPattern1 className="flex-1 flex flex-col items-center justify-center pt-0 pb-0">
         <div className="w-full max-w-md px-6 relative z-10">
           <div className="flex flex-col items-center text-center mb-10">
-            <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mb-6 shadow-xl shadow-primary/10 border border-primary/20">
+            <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mb-6 shadow-xl shadow-primary/10 border-primary/20">
               {isSuccess ? <CheckCircle2 className="w-10 h-10 text-emerald-500" /> : <Lock className="w-10 h-10" />}
             </div>
             <h1 className="text-4xl font-medium tracking-tight text-foreground dark:text-primary-foreground mb-4">

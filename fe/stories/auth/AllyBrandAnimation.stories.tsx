@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
+
 import { AllyBrandAnimation } from '@/components/auth/AllyBrandAnimation'
 
 const meta: Meta<typeof AllyBrandAnimation> = {
@@ -54,7 +55,7 @@ export const InContainerDark: Story = {
   decorators: [
     (Story) => (
       <div className="dark flex items-center justify-center min-h-screen bg-gradient-to-br from-zinc-900 to-zinc-950">
-        <div className="w-[500px] h-[400px] rounded-2xl bg-secondary shadow-2xl overflow-hidden border border">
+        <div className="w-[500px] h-[400px] rounded-2xl bg-secondary shadow-2xl overflow-hidden border">
           <Story />
         </div>
       </div>

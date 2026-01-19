@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
+
 import { RescheduleDialog } from '@/components/dashboard/RescheduleDialog'
 import { fn } from 'storybook/test'
 
@@ -110,12 +111,16 @@ export const Features: Story = {
   render: () => (
     <div className="max-w-2xl mx-auto p-8 space-y-8">
       <div className="text-center">
-        <h1 className="text-3xl font-bold text-foreground dark:text-primary-foreground mb-4">Smart Reschedule Features</h1>
-        <p className="text-muted-foreground dark:text-muted-foreground">AI-powered event rescheduling with conflict detection</p>
+        <h1 className="text-3xl font-bold text-foreground dark:text-primary-foreground mb-4">
+          Smart Reschedule Features
+        </h1>
+        <p className="text-muted-foreground dark:text-muted-foreground">
+          AI-powered event rescheduling with conflict detection
+        </p>
       </div>
 
       <div className="space-y-4">
-        <div className="p-6 bg-background dark:bg-secondary rounded-xl border border dark:border">
+        <div className="p-6 bg-background dark:bg-secondary rounded-xl border ">
           <h3 className="font-semibold text-zinc-800 dark:text-zinc-200 mb-3">Time Preferences</h3>
           <div className="flex flex-wrap gap-2">
             <span className="px-3 py-1 bg-primary text-primary-foreground rounded-full text-sm">Any time</span>
@@ -131,7 +136,7 @@ export const Features: Story = {
           </div>
         </div>
 
-        <div className="p-6 bg-background dark:bg-secondary rounded-xl border border dark:border">
+        <div className="p-6 bg-background dark:bg-secondary rounded-xl border ">
           <h3 className="font-semibold text-zinc-800 dark:text-zinc-200 mb-3">Suggestion Features</h3>
           <ul className="space-y-2 text-sm text-zinc-600 dark:text-muted-foreground">
             <li className="flex items-center gap-2">
@@ -153,7 +158,7 @@ export const Features: Story = {
           </ul>
         </div>
 
-        <div className="p-6 bg-background dark:bg-secondary rounded-xl border border dark:border">
+        <div className="p-6 bg-background dark:bg-secondary rounded-xl border ">
           <h3 className="font-semibold text-zinc-800 dark:text-zinc-200 mb-3">Current Event Display</h3>
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <span className="font-medium">Current:</span>
@@ -164,10 +169,10 @@ export const Features: Story = {
           </div>
         </div>
 
-        <div className="p-6 bg-background dark:bg-secondary rounded-xl border border dark:border">
+        <div className="p-6 bg-background dark:bg-secondary rounded-xl border ">
           <h3 className="font-semibold text-zinc-800 dark:text-zinc-200 mb-3">Suggested Slots Example</h3>
           <div className="space-y-2">
-            <div className="flex items-center gap-3 p-3 border border-primary bg-primary/5 rounded-lg">
+            <div className="flex items-center gap-3 p-3 border-primary bg-primary/5 rounded-lg">
               <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-medium">
                 1
               </div>
@@ -177,7 +182,7 @@ export const Features: Story = {
               </div>
               <span className="text-xs text-primary font-medium">Best match</span>
             </div>
-            <div className="flex items-center gap-3 p-3 border border dark:border-zinc-700 rounded-lg">
+            <div className="flex items-center gap-3 p-3  rounded-lg">
               <div className="w-8 h-8 bg-secondary dark:bg-secondary rounded-full flex items-center justify-center text-sm font-medium">
                 2
               </div>
@@ -187,7 +192,7 @@ export const Features: Story = {
               </div>
               <span className="text-xs text-muted-foreground">Morning slot</span>
             </div>
-            <div className="flex items-center gap-3 p-3 border border dark:border-zinc-700 rounded-lg">
+            <div className="flex items-center gap-3 p-3  rounded-lg">
               <div className="w-8 h-8 bg-secondary dark:bg-secondary rounded-full flex items-center justify-center text-sm font-medium">
                 3
               </div>

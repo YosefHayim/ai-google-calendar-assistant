@@ -10,6 +10,7 @@ import { SparklesCore } from '@/components/ui/sparkles'
 import { motion } from 'framer-motion'
 import { toast } from 'sonner'
 import { usePostHog } from 'posthog-js/react'
+import { useTranslation } from 'react-i18next'
 import { waitingListService } from '@/services/waiting-list.service'
 
 const platforms = [
@@ -26,6 +27,7 @@ const trustIndicators = [
 ]
 
 const WaitingList: React.FC = () => {
+  const { t } = useTranslation()
   const [email, setEmail] = useState('')
   const [name, setName] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -131,7 +133,7 @@ const WaitingList: React.FC = () => {
               transition={{ duration: 0.5, delay: 0.4 + platform.delay }}
               className="group flex flex-col items-center gap-2"
             >
-              <div className="relative p-3 rounded-xl bg-secondary/80 dark:bg-secondary/80 border border/50 dark:border/50 backdrop-blur-sm transition-all duration-300 group-hover:border-primary/40 group-hover:bg-primary/5 dark:group-hover:bg-primary/10 group-hover:scale-110">
+              <div className="relative p-3 rounded-xl bg-secondary/80 dark:bg-secondary/80 border/50 /50 backdrop-blur-sm transition-all duration-300 group-hover:border-primary/40 group-hover:bg-primary/5 dark:group-hover:bg-primary/10 group-hover:scale-110">
                 <platform.icon className="w-5 h-5 text-muted-foreground dark:text-muted-foreground group-hover:text-primary transition-colors duration-300" />
                 {/* Subtle glow on hover */}
                 <div className="absolute inset-0 rounded-xl bg-primary/0 group-hover:bg-primary/5 blur-xl transition-all duration-300 pointer-events-none" />
@@ -175,7 +177,7 @@ const WaitingList: React.FC = () => {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.3 }}
-              className="mt-6 p-4 rounded-lg bg-primary/10 border border-primary/20"
+              className="mt-6 p-4 rounded-lg bg-primary/10 border-primary/20"
             >
               <p className="text-center text-primary font-medium">
                 You're <strong>#{position}</strong> on the waiting list!
@@ -193,7 +195,7 @@ const WaitingList: React.FC = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.8 }}
-          className="mt-10 pt-8 border-t border/30 dark:border/30"
+          className="mt-10 pt-8 border-t border/30 /30"
         >
           <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4">
             {trustIndicators.map((indicator, index) => (

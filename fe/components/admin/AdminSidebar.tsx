@@ -11,9 +11,10 @@ import {
   Users,
   Users2,
 } from 'lucide-react'
+
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
+import { usePathname } from 'next/navigation'
 
 const navItems = [
   { href: '/admin', icon: LayoutDashboard, label: 'Dashboard' },
@@ -29,8 +30,8 @@ export function AdminSidebar() {
   const pathname = usePathname()
 
   return (
-    <div className="flex h-screen w-64 flex-col border border-r bg-background dark:border dark:bg-secondary">
-      <div className="border border-b p-4 dark:border">
+    <div className="flex h-screen w-64 flex-col border-r bg-background  dark:bg-secondary">
+      <div className="border-b p-4 ">
         <div className="flex items-center gap-2">
           <Shield className="h-6 w-6 text-primary" />
           <h2 className="font-bold text-lg text-foreground dark:text-white">Admin Panel</h2>
@@ -59,7 +60,7 @@ export function AdminSidebar() {
         })}
       </nav>
 
-      <div className="border border-t p-4 dark:border">
+      <div className="border-t p-4 ">
         <Link
           className="flex items-center gap-3 rounded-lg px-3 py-2 font-medium text-sm text-zinc-600 transition-colors hover:bg-secondary hover:text-foreground dark:text-muted-foreground dark:hover:bg-secondary dark:hover:text-white"
           href="/dashboard"

@@ -1,25 +1,26 @@
 'use client'
 
-import { Command } from 'cmdk'
-import { useRouter } from 'next/navigation'
-import { useCallback, useEffect, useState } from 'react'
 import {
+  BarChart3,
   Calendar,
-  Home,
-  MessageSquare,
-  Search,
-  Settings,
-  User,
-  Users,
   CreditCard,
   FileText,
-  BarChart3,
-  Shield,
   HelpCircle,
+  Home,
   LogOut,
+  MessageSquare,
   Mic,
+  Search,
+  Settings,
+  Shield,
+  User,
+  Users,
 } from 'lucide-react'
+import { useCallback, useEffect, useState } from 'react'
+
+import { Command } from 'cmdk'
 import { useAuthContext } from '@/contexts/AuthContext'
+import { useRouter } from 'next/navigation'
 
 interface CommandItem {
   id: string
@@ -209,8 +210,8 @@ export function CommandPalette() {
     <div className="fixed inset-0 z-[9999]">
       <div className="fixed inset-0 bg-foreground/50 backdrop-blur-sm" onClick={() => setOpen(false)} />
       <div className="fixed left-1/2 top-1/4 -translate-x-1/2 w-full max-w-lg">
-        <Command className="rounded-xl border border dark:border bg-background dark:bg-secondary shadow-2xl overflow-hidden">
-          <div className="flex items-center border-b border dark:border px-4">
+        <Command className="rounded-xl bg-background dark:bg-secondary shadow-2xl overflow-hidden">
+          <div className="flex items-center border-b px-4">
             <Search className="w-4 h-4 text-muted-foreground mr-3" />
             <Command.Input
               value={search}
@@ -219,7 +220,7 @@ export function CommandPalette() {
               className="flex-1 py-4 text-sm bg-transparent outline-none placeholder:text-muted-foreground"
               autoFocus
             />
-            <kbd className="hidden sm:inline-flex h-5 select-none items-center gap-1 rounded border border dark:border-zinc-700 bg-secondary dark:bg-secondary px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
+            <kbd className="hidden sm:inline-flex h-5 select-none items-center gap-1 rounded  bg-secondary dark:bg-secondary px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
               ESC
             </kbd>
           </div>
@@ -302,7 +303,7 @@ export function CommandPalette() {
               </Command.Group>
             )}
           </Command.List>
-          <div className="border-t border dark:border px-4 py-2 flex items-center justify-between text-xs text-muted-foreground">
+          <div className="border-t px-4 py-2 flex items-center justify-between text-xs text-muted-foreground">
             <span>Navigate with arrow keys</span>
             <span>
               <kbd className="px-1.5 py-0.5 rounded bg-secondary dark:bg-secondary font-mono">Enter</kbd> to select

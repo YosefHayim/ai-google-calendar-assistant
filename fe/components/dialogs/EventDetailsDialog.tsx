@@ -199,7 +199,9 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
                     <User className="w-4 h-4 text-muted-foreground" />
                   </div>
                   <div className="text-sm w-auto overflow-hidden">
-                    <span className="text-muted-foreground dark:text-muted-foreground text-xs uppercase font-bold mr-2">Organizer</span>
+                    <span className="text-muted-foreground dark:text-muted-foreground text-xs uppercase font-bold mr-2">
+                      Organizer
+                    </span>
                     <span className="text-foreground font-medium ">{event.organizer.email}</span>
                   </div>
                 </div>
@@ -220,10 +222,7 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
                           key={idx}
                           className="flex items-center justify-between text-sm bg-muted dark:bg-secondary/50 rounded px-2 py-1.5"
                         >
-                          <span
-                            className="text-muted-foreground truncate max-w-[200px]"
-                            title={attendee.email}
-                          >
+                          <span className="text-muted-foreground truncate max-w-[200px]" title={attendee.email}>
                             {attendee.email}
                           </span>
                           {attendee.responseStatus && (

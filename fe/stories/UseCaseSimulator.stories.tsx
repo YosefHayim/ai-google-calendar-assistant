@@ -10,14 +10,14 @@ const UseCaseSimulatorPlaceholder = () => (
     </div>
 
     <div className="space-y-6">
-      <div className="p-6 bg-amber-50 dark:bg-amber-900/20 rounded-xl border border-amber-200 dark:border-amber-800">
+      <div className="p-6 bg-amber-50 dark:bg-amber-900/20 rounded-xl border-amber-200 -amber-800">
         <h3 className="font-semibold text-amber-800 dark:text-amber-200 mb-2">Component Under Development</h3>
         <p className="text-sm text-amber-700 dark:text-amber-300">
           The UseCaseSimulator component is currently a placeholder. This story documents the planned functionality.
         </p>
       </div>
 
-      <div className="p-6 bg-background dark:bg-secondary rounded-xl border border dark:border">
+      <div className="p-6 bg-background dark:bg-secondary rounded-xl border ">
         <h3 className="font-semibold text-zinc-800 dark:text-zinc-200 mb-4">Planned Use Cases</h3>
         <ul className="space-y-3 text-sm text-zinc-600 dark:text-muted-foreground">
           <li className="flex items-start gap-3">
@@ -68,7 +68,7 @@ const UseCaseSimulatorPlaceholder = () => (
         </ul>
       </div>
 
-      <div className="p-6 bg-background dark:bg-secondary rounded-xl border border dark:border">
+      <div className="p-6 bg-background dark:bg-secondary rounded-xl border ">
         <h3 className="font-semibold text-zinc-800 dark:text-zinc-200 mb-4">Simulator Features</h3>
         <ul className="space-y-2 text-sm text-zinc-600 dark:text-muted-foreground">
           <li className="flex items-center gap-2">

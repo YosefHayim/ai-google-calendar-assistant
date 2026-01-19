@@ -1,9 +1,10 @@
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { expect, userEvent, within } from 'storybook/test'
+
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 
 const meta: Meta = {
   title: 'Forms/Form Elements',
@@ -34,7 +35,7 @@ export const BasicForm: Story = {
           <textarea
             id="message"
             placeholder="Your message..."
-            className="flex min-h-[80px] w-full rounded-lg border border dark:border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground/70 focus-visible:border-primary focus-visible:outline-none focus-visible:ring-[0.01px] focus-visible:ring-primary/20"
+            className="flex min-h-[80px] w-full rounded-lg bg-background px-3 py-2 text-sm placeholder:text-muted-foreground/70 focus-visible:border-primary focus-visible:outline-none focus-visible:ring-[0.01px] focus-visible:ring-primary/20"
           />
         </div>
       </CardContent>
@@ -171,7 +172,7 @@ export const SettingsForm: Story = {
             <textarea
               id="bio"
               placeholder="Tell us about yourself..."
-              className="flex min-h-[100px] w-full rounded-lg border border dark:border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground/70 focus-visible:border-primary focus-visible:outline-none"
+              className="flex min-h-[100px] w-full rounded-lg bg-background px-3 py-2 text-sm placeholder:text-muted-foreground/70 focus-visible:border-primary focus-visible:outline-none"
               defaultValue="Software developer passionate about building great products."
             />
           </div>

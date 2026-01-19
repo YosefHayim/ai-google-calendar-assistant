@@ -43,7 +43,7 @@ const LazyImage = ({ src, alt, className, whileHover, transition }: LazyImagePro
           observer.disconnect()
         }
       },
-      { threshold: 0.1, rootMargin: '50px' }
+      { threshold: 0.1, rootMargin: '50px' },
     )
 
     if (containerRef.current) {
@@ -126,7 +126,7 @@ export const AnimatedFeatureSpotlight3D = React.forwardRef<HTMLElement, Animated
       <section
         ref={ref}
         className={cn(
-          'w-full max-w-6xl mx-auto p-6 md:p-12 rounded-2xl bg-muted dark:bg-secondary border border dark:border overflow-hidden',
+          'w-full max-w-6xl mx-auto p-6 md:p-12 rounded-2xl bg-muted dark:bg-secondary  overflow-hidden',
           className,
         )}
         aria-labelledby={uniqueHeadingId}

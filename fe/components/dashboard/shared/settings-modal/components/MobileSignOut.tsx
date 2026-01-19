@@ -1,8 +1,8 @@
 'use client'
 
-import React from 'react'
-import { LogOut } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { LogOut } from 'lucide-react'
+import React from 'react'
 
 interface MobileSignOutProps {
   onSignOut?: () => void
@@ -10,7 +10,7 @@ interface MobileSignOutProps {
 
 export function MobileSignOut({ onSignOut }: MobileSignOutProps) {
   return (
-    <div className="sm:hidden mt-4 pt-3 border-t border dark:border">
+    <div className="sm:hidden mt-4 pt-3 border-t border ">
       <Button
         variant="ghost"
         onClick={onSignOut}

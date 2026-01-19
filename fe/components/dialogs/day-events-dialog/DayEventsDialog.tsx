@@ -1,20 +1,20 @@
 'use client'
 
-import React, { useState, useMemo } from 'react'
 import { CalendarDays, Clock, Hash, Hourglass, Search, Sun, X } from 'lucide-react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { EmptyState } from '@/components/ui/empty-state'
-import { LoadingSpinner } from '@/components/ui/loading-spinner'
-import { format } from 'date-fns'
-import { useTranslation } from 'react-i18next'
-import { useDebouncedCallback } from 'use-debounce'
-import { formatHours } from '@/lib/formatUtils'
+import { EventListItem, TimelineVisualization } from './components'
+import React, { useMemo, useState } from 'react'
+import { calculateFilteredBusyHours, sortEventsByStartTime } from './utils'
 
 import type { DayEventsDialogProps } from './types'
+import { EmptyState } from '@/components/ui/empty-state'
+import { Input } from '@/components/ui/input'
+import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { WAKING_HOURS_PER_DAY } from './types'
-import { calculateFilteredBusyHours, sortEventsByStartTime } from './utils'
-import { TimelineVisualization, EventListItem } from './components'
+import { format } from 'date-fns'
+import { formatHours } from '@/lib/formatUtils'
+import { useDebouncedCallback } from 'use-debounce'
+import { useTranslation } from 'react-i18next'
 
 export function DayEventsDialog({
   isOpen,
@@ -79,7 +79,9 @@ export function DayEventsDialog({
               <Sun size={20} className="text-primary" />
             </div>
             <div className="flex-1 text-left">
-              <DialogTitle className="text-xl font-bold text-foreground dark:text-primary-foreground">{formattedDate}</DialogTitle>
+              <DialogTitle className="text-xl font-bold text-foreground dark:text-primary-foreground">
+                {formattedDate}
+              </DialogTitle>
               <DialogDescription className="sr-only">Events and availability for {formattedDate}</DialogDescription>
 
               <div className="flex flex-wrap gap-4 mt-2">
@@ -119,7 +121,7 @@ export function DayEventsDialog({
         <TimelineVisualization events={events} calendarMap={calendarMap} />
 
         {events.length > 0 && (
-          <div className="px-6 py-2 border-b border dark:border">
+          <div className="px-6 py-2 border-b border ">
             <div className="relative">
               <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
               <Input

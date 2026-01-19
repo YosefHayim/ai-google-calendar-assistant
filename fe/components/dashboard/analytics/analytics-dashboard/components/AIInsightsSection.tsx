@@ -1,14 +1,15 @@
 'use client'
 
-import React from 'react'
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
 import { Info, Lightbulb } from 'lucide-react'
+
+import type { AIInsightsResponse } from '@/types/analytics'
 import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/ui/empty-state'
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
 import InsightCard from '../../InsightCard'
 import InsightCardSkeleton from '../../InsightCardSkeleton'
+import React from 'react'
 import { getInsightIcon } from '@/lib/iconUtils'
-import type { AIInsightsResponse } from '@/types/analytics'
 
 interface AIInsightsSectionProps {
   insightsData: AIInsightsResponse | undefined
@@ -47,7 +48,7 @@ export function AIInsightsSection({ insightsData, isLoading, isError, onRetry }:
         {isLoading ? (
           Array.from({ length: 5 }).map((_, i) => <InsightCardSkeleton key={i} />)
         ) : isError ? (
-          <div className="col-span-full flex flex-col items-center justify-center py-8 bg-background dark:bg-secondary border border dark:border rounded-xl">
+          <div className="col-span-full flex flex-col items-center justify-center py-8 bg-background dark:bg-secondary rounded-xl">
             <p className="text-muted-foreground dark:text-muted-foreground mb-4">Failed to load insights</p>
             <Button onClick={onRetry} size="sm">
               Retry
@@ -65,7 +66,7 @@ export function AIInsightsSection({ insightsData, isLoading, isError, onRetry }:
             />
           ))
         ) : (
-          <div className="col-span-full flex flex-col items-center justify-center py-8 bg-background dark:bg-secondary border border dark:border rounded-xl">
+          <div className="col-span-full flex flex-col items-center justify-center py-8 bg-background dark:bg-secondary rounded-xl">
             <EmptyState
               icon={<Lightbulb />}
               title="No insights yet"

@@ -1,11 +1,12 @@
 'use client'
 
-import React from 'react'
-import { useRouter } from 'next/navigation'
+import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
+
 import { AdminAppSidebar } from '@/components/admin/AdminAppSidebar'
-import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
+import React from 'react'
 import { useDashboardStats } from '@/hooks/queries/admin/useDashboardStats'
+import { useRouter } from 'next/navigation'
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter()
@@ -47,7 +48,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <div className="flex min-h-screen w-full bg-muted dark:bg-secondary">
         <AdminAppSidebar />
         <SidebarInset className="flex-1 flex flex-col">
-          <header className="flex h-14 items-center gap-2 border-b border dark:border px-4 md:hidden">
+          <header className="flex h-14 items-center gap-2 border-b px-4 md:hidden">
             <SidebarTrigger className="-ml-1" />
           </header>
           <main className="flex-1 overflow-auto">{children}</main>

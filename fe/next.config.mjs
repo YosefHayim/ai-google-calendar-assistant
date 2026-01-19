@@ -40,9 +40,12 @@ const nextConfig = {
   poweredByHeader: false,
   compress: true,
   compiler: {
-    removeConsole: process.env.NODE_ENV === 'production' ? {
-      exclude: ['error']
-    } : false,
+    removeConsole:
+      process.env.NODE_ENV === 'production'
+        ? {
+            exclude: ['error'],
+          }
+        : false,
   },
   images: {
     remotePatterns: [
@@ -88,7 +91,7 @@ const nextConfig = {
               "base-uri 'self'",
               "form-action 'self'",
               "object-src 'none'",
-              "upgrade-insecure-requests",
+              'upgrade-insecure-requests',
             ].join('; '),
           },
           {
@@ -154,9 +157,7 @@ const nextConfig = {
   },
 }
 
-export default withSentryConfig(
-  process.env.ANALYZE === 'true' ? withBundleAnalyzer(nextConfig) : nextConfig,
-  {
+export default withSentryConfig(process.env.ANALYZE === 'true' ? withBundleAnalyzer(nextConfig) : nextConfig, {
   // For all available options, see:
   // https://www.npmjs.com/package/@sentry/webpack-plugin#options
 

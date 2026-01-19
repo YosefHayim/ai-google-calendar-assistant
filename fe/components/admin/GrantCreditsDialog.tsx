@@ -61,7 +61,9 @@ export function GrantCreditsDialog({ user, onClose }: GrantCreditsDialogProps) {
             <CreditCard className="w-5 h-5 text-primary" />
             {t('admin.grantCredits.title')}
           </DialogTitle>
-          <DialogDescription>{t('admin.grantCredits.description', { user: user.display_name || user.email })}</DialogDescription>
+          <DialogDescription>
+            {t('admin.grantCredits.description', { user: user.display_name || user.email })}
+          </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">

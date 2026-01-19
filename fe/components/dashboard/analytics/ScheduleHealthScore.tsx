@@ -150,7 +150,7 @@ const ScheduleHealthScore: React.FC<ScheduleHealthScoreProps> = ({ data, isLoadi
 
   if (isLoading) {
     return (
-      <div className="bg-background dark:bg-secondary border border dark:border rounded-xl shadow-sm p-4 sm:p-6">
+      <div className="bg-background dark:bg-secondary rounded-xl shadow-sm p-4 sm:p-6">
         <div className="flex items-center gap-2 mb-2">
           <Skeleton className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg" />
           <Skeleton className="h-4 sm:h-5 w-28 sm:w-36" />
@@ -197,7 +197,7 @@ const ScheduleHealthScore: React.FC<ScheduleHealthScoreProps> = ({ data, isLoadi
   const strokeDashoffset = circumference - (percentage / 100) * circumference
 
   return (
-    <div className="bg-background dark:bg-secondary border border dark:border rounded-xl shadow-sm p-4 sm:p-6 hover:shadow-md transition-shadow">
+    <div className="bg-background dark:bg-secondary rounded-xl shadow-sm p-4 sm:p-6 hover:shadow-md transition-shadow">
       <div className="flex items-center justify-between mb-1 gap-2">
         <div className="flex items-center gap-2 min-w-0">
           <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-secondary dark:bg-secondary flex items-center justify-center flex-shrink-0">
@@ -268,7 +268,9 @@ const ScheduleHealthScore: React.FC<ScheduleHealthScoreProps> = ({ data, isLoadi
           </svg>
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="text-center">
-              <span className="text-2xl sm:text-3xl font-bold text-foreground dark:text-primary-foreground">{percentage}</span>
+              <span className="text-2xl sm:text-3xl font-bold text-foreground dark:text-primary-foreground">
+                {percentage}
+              </span>
               <span className="text-sm sm:text-lg text-muted-foreground">/100</span>
             </div>
           </div>

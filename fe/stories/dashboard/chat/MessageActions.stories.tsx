@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
-import { MessageActions } from '@/components/dashboard/chat/MessageActions'
+
 import { Message } from '@/types'
+import { MessageActions } from '@/components/dashboard/chat/MessageActions'
 
 const meta: Meta<typeof MessageActions> = {
   title: 'Dashboard/Chat/MessageActions',
@@ -81,7 +82,7 @@ export const WithLongTimestamp: Story = {
 export const InContext: Story = {
   render: () => (
     <div className="space-y-4">
-      <div className="bg-background dark:bg-secondary border border dark:border rounded-lg p-4">
+      <div className="bg-background dark:bg-secondary rounded-lg p-4">
         <div className="flex justify-end mb-2">
           <div className="bg-primary text-white px-4 py-2 rounded-lg rounded-tr-none max-w-[80%]">
             {baseUserMessage.content}
@@ -96,7 +97,7 @@ export const InContext: Story = {
         />
       </div>
 
-      <div className="bg-background dark:bg-secondary border border dark:border rounded-lg p-4">
+      <div className="bg-background dark:bg-secondary rounded-lg p-4">
         <div className="flex justify-start mb-2">
           <div className="bg-secondary dark:bg-secondary px-4 py-2 rounded-lg rounded-tl-none max-w-[80%]">
             {baseAssistantMessage.content}
@@ -119,7 +120,7 @@ export const AllStates: Story = {
     <div className="space-y-6">
       <div>
         <p className="text-sm font-medium mb-2 text-zinc-600 dark:text-muted-foreground">User Message Actions</p>
-        <div className="bg-background dark:bg-secondary border border dark:border rounded-lg p-4">
+        <div className="bg-background dark:bg-secondary rounded-lg p-4">
           <MessageActions
             msg={baseUserMessage}
             isSpeaking={false}
@@ -131,8 +132,10 @@ export const AllStates: Story = {
       </div>
 
       <div>
-        <p className="text-sm font-medium mb-2 text-zinc-600 dark:text-muted-foreground">Assistant Message Actions (Idle)</p>
-        <div className="bg-background dark:bg-secondary border border dark:border rounded-lg p-4">
+        <p className="text-sm font-medium mb-2 text-zinc-600 dark:text-muted-foreground">
+          Assistant Message Actions (Idle)
+        </p>
+        <div className="bg-background dark:bg-secondary rounded-lg p-4">
           <MessageActions
             msg={baseAssistantMessage}
             isSpeaking={false}
@@ -147,7 +150,7 @@ export const AllStates: Story = {
         <p className="text-sm font-medium mb-2 text-zinc-600 dark:text-muted-foreground">
           Assistant Message Actions (Speaking)
         </p>
-        <div className="bg-background dark:bg-secondary border border dark:border rounded-lg p-4">
+        <div className="bg-background dark:bg-secondary rounded-lg p-4">
           <MessageActions
             msg={baseAssistantMessage}
             isSpeaking={true}

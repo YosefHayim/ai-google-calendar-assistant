@@ -1,31 +1,32 @@
 'use client'
 
-import { useParams, notFound } from 'next/navigation'
-import Link from 'next/link'
-import Image from 'next/image'
-import MarketingLayout from '@/components/marketing/MarketingLayout'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
-import { JsonLd } from '@/components/shared/JsonLd'
-import { generateBreadcrumbSchema, generateArticleSchema, SITE_CONFIG } from '@/lib/constants/seo'
-import { useBlogPost, useRelatedPosts } from '@/hooks/queries'
-import { getBlogImageUrl } from '@/services/blog.service'
-import { getBlogPostBySlug, getRelatedPosts as getStaticRelatedPosts } from '@/lib/data/blog-posts'
 import {
   ArrowLeft,
-  Calendar,
-  Clock,
-  User,
-  Twitter,
-  Linkedin,
-  Link as LinkIcon,
-  BookOpen,
   ArrowRight,
+  BookOpen,
+  Calendar,
   Check,
+  Clock,
+  Link as LinkIcon,
+  Linkedin,
+  Twitter,
+  User,
 } from 'lucide-react'
+import { Card, CardContent } from '@/components/ui/card'
+import { SITE_CONFIG, generateArticleSchema, generateBreadcrumbSchema } from '@/lib/constants/seo'
+import { getBlogPostBySlug, getRelatedPosts as getStaticRelatedPosts } from '@/lib/data/blog-posts'
+import { notFound, useParams } from 'next/navigation'
+import { useBlogPost, useRelatedPosts } from '@/hooks/queries'
+
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import Image from 'next/image'
+import { JsonLd } from '@/components/shared/JsonLd'
+import Link from 'next/link'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
+import MarketingLayout from '@/components/marketing/MarketingLayout'
 import { formatBlogDate } from '@/lib/formatUtils'
+import { getBlogImageUrl } from '@/services/blog.service'
 import { useState } from 'react'
 
 function ShareButtons({ title, url }: { title: string; url: string }) {
@@ -198,7 +199,7 @@ export default function BlogPostPage() {
 
             <p className="text-xl text-muted-foreground dark:text-muted-foreground mb-8">{post.excerpt}</p>
 
-            <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground dark:text-muted-foreground pb-8 border-b border dark:border">
+            <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground dark:text-muted-foreground pb-8 border-b border ">
               <div className="flex items-center gap-2">
                 <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
                   <User className="w-5 h-5 text-primary" />
@@ -235,7 +236,7 @@ export default function BlogPostPage() {
             dangerouslySetInnerHTML={{ __html: formatMarkdownToHtml(post.content) }}
           />
 
-          <div className="mt-12 pt-8 border-t border dark:border">
+          <div className="mt-12 pt-8 border-t border ">
             <div className="flex flex-wrap items-center gap-2">
               <span className="text-sm text-muted-foreground dark:text-muted-foreground mr-2">Tags:</span>
               {post.tags.map((tag) => (
@@ -246,7 +247,7 @@ export default function BlogPostPage() {
             </div>
           </div>
 
-          <div className="mt-8 pt-8 border-t border dark:border flex items-center justify-between">
+          <div className="mt-8 pt-8 border-t flex items-center justify-between">
             <ShareButtons title={post.title} url={postUrl} />
             <Link href="/register">
               <Button className="gap-2">
@@ -261,11 +262,13 @@ export default function BlogPostPage() {
       {relatedPosts.length > 0 && (
         <section className="py-16 md:py-24 px-4 sm:px-6 bg-muted dark:bg-secondary/50">
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-2xl md:text-3xl font-medium text-foreground dark:text-primary-foreground mb-8">Related Articles</h2>
+            <h2 className="text-2xl md:text-3xl font-medium text-foreground dark:text-primary-foreground mb-8">
+              Related Articles
+            </h2>
             <div className="grid md:grid-cols-3 gap-6">
               {relatedPosts.map((relatedPost) => (
                 <Link key={relatedPost.slug} href={`/blog/${relatedPost.slug}`}>
-                  <Card className="h-full overflow-hidden border dark:border hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors group">
+                  <Card className="h-full overflow-hidden hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors group">
                     <div className="aspect-video relative overflow-hidden bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-zinc-800 dark:to-zinc-900">
                       {getImageSrc(relatedPost) ? (
                         <Image
@@ -288,7 +291,9 @@ export default function BlogPostPage() {
                       <h3 className="font-medium text-foreground dark:text-primary-foreground mb-2 line-clamp-2 group-hover:text-primary transition-colors">
                         {relatedPost.title}
                       </h3>
-                      <p className="text-sm text-muted-foreground dark:text-muted-foreground line-clamp-2">{relatedPost.excerpt}</p>
+                      <p className="text-sm text-muted-foreground dark:text-muted-foreground line-clamp-2">
+                        {relatedPost.excerpt}
+                      </p>
                     </CardContent>
                   </Card>
                 </Link>

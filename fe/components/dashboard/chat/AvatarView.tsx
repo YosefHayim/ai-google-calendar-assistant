@@ -79,7 +79,7 @@ export const AvatarView: React.FC<AvatarViewProps> = ({
       <div
         className={cn(
           'flex flex-col items-center justify-center transition-all duration-700 w-full',
-          hasConversation ? 'md:w-1/2' : 'w-full'
+          hasConversation ? 'md:w-1/2' : 'w-full',
         )}
       >
         <AssistantAvatar
@@ -111,7 +111,7 @@ export const AvatarView: React.FC<AvatarViewProps> = ({
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 20 }}
-            className="hidden md:flex flex-col w-1/2 h-[70%] border-l border dark:border px-8 py-4 overflow-y-auto"
+            className="hidden md:flex flex-col w-1/2 h-[70%] border-l px-8 py-4 overflow-y-auto"
           >
             <div className="flex items-center gap-2 mb-6 text-muted-foreground font-bold text-xs uppercase tracking-widest">
               <MessageSquare className="w-3.5 h-3.5" /> Live Context
@@ -153,7 +153,7 @@ export const AvatarView: React.FC<AvatarViewProps> = ({
                           'p-3 rounded-xl text-xs leading-relaxed max-w-[90%] shadow-sm',
                           msg.role === 'assistant'
                             ? 'bg-secondary dark:bg-secondary text-foreground ml-0 mr-auto rounded-tl-none'
-                            : 'bg-primary text-white ml-auto mr-0 rounded-tr-none'
+                            : 'bg-primary text-white ml-auto mr-0 rounded-tr-none',
                         )}
                       >
                         {msg.content}

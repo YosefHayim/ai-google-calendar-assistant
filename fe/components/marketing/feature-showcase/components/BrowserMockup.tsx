@@ -8,7 +8,7 @@ interface BrowserMockupProps {
 
 export const BrowserMockup = ({ children }: BrowserMockupProps) => (
   <div className="relative mx-auto w-full max-w-[520px] h-[380px]">
-    <div className="absolute inset-0 bg-secondary dark:bg-secondary rounded-xl shadow-2xl border border dark:border-zinc-700 overflow-hidden">
+    <div className="absolute inset-0 bg-secondary dark:bg-secondary rounded-xl shadow-2xl  overflow-hidden">
       {/* Browser header */}
       <div className="h-11 bg-accent dark:bg-zinc-700 flex items-center px-4 gap-2">
         <div className="flex gap-2">

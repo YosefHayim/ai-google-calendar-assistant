@@ -18,7 +18,7 @@ export default function CinematicGlowToggle({ id, checked, onChange, className }
     <div
       id={id}
       className={cn(
-        'flex items-center gap-3 p-1 rounded-full bg-secondary dark:bg-secondary/50 border border dark:border shadow-inner cursor-pointer transition-all duration-300',
+        'flex items-center gap-3 p-1 rounded-full bg-secondary dark:bg-secondary/50 shadow-inner cursor-pointer transition-all duration-300',
         className,
       )}
       onClick={() => onChange(!checked)}
@@ -44,7 +44,7 @@ export default function CinematicGlowToggle({ id, checked, onChange, className }
       >
         {/* Switch Thumb */}
         <motion.div
-          className="absolute top-1 left-1 w-4 h-4 rounded-full border border-white/20 shadow-lg z-10"
+          className="absolute top-1 left-1 w-4 h-4 rounded-full border-white/20 shadow-lg z-10"
           initial={false}
           animate={{
             x: checked ? 24 : 0,

@@ -20,14 +20,14 @@ const TimeAllocationChart: React.FC<TimeAllocationChartProps> = ({ data, onCalen
 
   if (totalHours === 0) {
     return (
-      <div className="bg-background dark:bg-secondary border border dark:border rounded-md shadow-sm p-6 flex items-center justify-center h-full">
+      <div className="bg-background dark:bg-secondary rounded-md shadow-sm p-6 flex items-center justify-center h-full">
         <p className="text-muted-foreground">No time allocation data available.</p>
       </div>
     )
   }
 
   return (
-    <div className="bg-background dark:bg-secondary border border dark:border rounded-md shadow-sm p-6 flex flex-col xl:flex-row items-center gap-2">
+    <div className="bg-background dark:bg-secondary rounded-md shadow-sm p-6 flex flex-col xl:flex-row items-center gap-2">
       <div className="relative w-44 h-44 flex-shrink-0">
         <svg className="w-full h-full" viewBox="0 0 180 180">
           <circle
@@ -66,7 +66,9 @@ const TimeAllocationChart: React.FC<TimeAllocationChartProps> = ({ data, onCalen
           })}
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-3xl font-bold text-foreground dark:text-primary-foreground">{formatHours(totalHours)}</span>
+          <span className="text-3xl font-bold text-foreground dark:text-primary-foreground">
+            {formatHours(totalHours)}
+          </span>
           <span className="text-xs font-medium text-muted-foreground">Tracked</span>
         </div>
       </div>
@@ -75,11 +77,7 @@ const TimeAllocationChart: React.FC<TimeAllocationChartProps> = ({ data, onCalen
           Time Allocation
           <HoverCard>
             <HoverCardTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-6 w-6 text-muted-foreground hover:text-foreground"
-              >
+              <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-foreground">
                 <Info size={16} />
               </Button>
             </HoverCardTrigger>
@@ -100,8 +98,10 @@ const TimeAllocationChart: React.FC<TimeAllocationChartProps> = ({ data, onCalen
             return (
               <li
                 key={item.category}
-                className={`border border-transparent hover:border-black hover:border flex items-center gap-3 text-sm rounded-md p-2 -m-2 transition-colors ${
-                  onCalendarClick && item.calendarId ? 'cursor-pointer hover:bg-secondary dark:hover:bg-secondary/50' : ''
+                className={`border-transparent hover:border-black hover:border flex items-center gap-3 text-sm rounded-md p-2 -m-2 transition-colors ${
+                  onCalendarClick && item.calendarId
+                    ? 'cursor-pointer hover:bg-secondary dark:hover:bg-secondary/50'
+                    : ''
                 }`}
                 data-calendar-id={item.calendarId || ''}
                 style={{ backgroundColor: `${safeColor}10` }}
@@ -113,7 +113,9 @@ const TimeAllocationChart: React.FC<TimeAllocationChartProps> = ({ data, onCalen
               >
                 <div className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: safeColor }} />
                 <span className="flex-1 font-medium text-foreground truncate">{item.category}</span>
-                <span className="font-mono text-muted-foreground dark:text-muted-foreground">{formatHours(item.hours)}</span>
+                <span className="font-mono text-muted-foreground dark:text-muted-foreground">
+                  {formatHours(item.hours)}
+                </span>
                 <span className="text-xs text-muted-foreground w-10 text-right">
                   {calculatePercentage(item.hours, totalHours, 0)}%
                 </span>

@@ -63,7 +63,7 @@ export function CalendarFilterSelect({
         <Button
           variant="outline"
           size="sm"
-          className="h-9 w-full gap-2 border dark:border bg-background dark:bg-secondary hover:bg-muted dark:hover:bg-secondary touch-manipulation"
+          className="h-9 w-full gap-2 bg-background dark:bg-secondary hover:bg-muted dark:hover:bg-secondary touch-manipulation"
           disabled={isLoading}
         >
           <Calendar className="h-4 w-4 text-muted-foreground flex-shrink-0" />
@@ -72,7 +72,7 @@ export function CalendarFilterSelect({
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-80 sm:w-64 p-0" align="start">
-        <div className="p-3 border-b border dark:border sm:p-2">
+        <div className="p-3 border-b sm:p-2">
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium text-muted-foreground">
               {t('analytics.calendarFilter.filterByCalendar', 'Filter by Calendar')}
@@ -111,9 +111,7 @@ export function CalendarFilterSelect({
               {isAllSelected && <Check className="h-3 w-3" />}
             </div>
             <Calendar className="h-4 w-4 text-muted-foreground" />
-            <span className="text-muted-foreground">
-              {t('analytics.calendarFilter.allCalendars', 'All Calendars')}
-            </span>
+            <span className="text-muted-foreground">{t('analytics.calendarFilter.allCalendars', 'All Calendars')}</span>
           </button>
 
           <div className="my-1 h-px bg-accent dark:bg-secondary" />
@@ -145,7 +143,9 @@ export function CalendarFilterSelect({
                   {isSelected && <Check className="h-3 w-3 sm:h-3 sm:w-3" />}
                 </div>
                 <div className="h-3 w-3 rounded-full flex-shrink-0" style={{ backgroundColor: calendarColor }} />
-                <span className="truncate text-muted-foreground text-sm sm:text-sm">{calendar.summary || calendar.id}</span>
+                <span className="truncate text-muted-foreground text-sm sm:text-sm">
+                  {calendar.summary || calendar.id}
+                </span>
               </button>
             )
           })}

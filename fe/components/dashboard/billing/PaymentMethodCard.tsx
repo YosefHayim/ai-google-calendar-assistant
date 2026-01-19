@@ -119,7 +119,9 @@ export function PaymentMethodCard({ paymentMethod, onUpdate, className }: Paymen
       <div className="bg-gradient-to-br from-zinc-800 to-zinc-900 dark:from-zinc-700 dark:to-zinc-800 rounded-xl p-4 shadow-lg">
         <div className="flex items-center justify-between mb-6">
           <CardIcon className="w-12 h-8" />
-          {paymentMethod.isDefault && <span className="text-xs text-muted-foreground uppercase tracking-wider">Default</span>}
+          {paymentMethod.isDefault && (
+            <span className="text-xs text-muted-foreground uppercase tracking-wider">Default</span>
+          )}
         </div>
 
         <div className="space-y-2">

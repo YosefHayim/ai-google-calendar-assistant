@@ -45,7 +45,9 @@ export function CalendarSettingsDialog({ isOpen, calendar, onClose }: CalendarSe
                 <CalendarDays className="w-5 h-5" style={{ color: calendarColor }} />
               </div>
               <div className="flex-1">
-                <DialogTitle className="text-xl font-bold text-foreground dark:text-primary-foreground">{displayName}</DialogTitle>
+                <DialogTitle className="text-xl font-bold text-foreground dark:text-primary-foreground">
+                  {displayName}
+                </DialogTitle>
                 <p className="text-xs text-muted-foreground dark:text-muted-foreground mt-1">Calendar Settings</p>
               </div>
             </div>

@@ -12,6 +12,7 @@ import { Label } from '@/components/ui/label'
 import CinematicGlowToggle from '@/components/ui/cinematic-glow-toggle'
 import { SettingsRow, SettingsSection, TabHeader } from '../../components'
 import { useSpeechRecognition } from '@/hooks/useSpeechRecognition'
+import { useTranslation } from 'react-i18next'
 import { useAllyBrain, useUpdateAllyBrain } from '@/hooks/queries'
 import {
   allyBrainSchema,
@@ -26,6 +27,7 @@ interface AllyBrainSectionProps {
 }
 
 export const AllyBrainSection: React.FC<AllyBrainSectionProps> = ({ toggleId }) => {
+  const { t } = useTranslation()
   const { data: allyBrainData, isLoading: isLoadingAllyBrain } = useAllyBrain()
   const { updateAllyBrainAsync, isUpdating: isUpdatingAllyBrain, isSuccess: isAllyBrainSuccess } = useUpdateAllyBrain()
 
@@ -57,7 +59,11 @@ export const AllyBrainSection: React.FC<AllyBrainSectionProps> = ({ toggleId }) 
     toggleRecording,
   } = useSpeechRecognition(handleVoiceTranscription)
 
-  console.log('[AllyBrainSection] Voice state:', { isVoiceRecording, speechRecognitionSupported, speechRecognitionError })
+  console.log('[AllyBrainSection] Voice state:', {
+    isVoiceRecording,
+    speechRecognitionSupported,
+    speechRecognitionError,
+  })
 
   useEffect(() => {
     if (speechRecognitionError) {
@@ -137,7 +143,10 @@ export const AllyBrainSection: React.FC<AllyBrainSectionProps> = ({ toggleId }) 
                       variant="ghost"
                       size="sm"
                       onClick={() => {
-                        console.log('[AllyBrainSection] Voice button clicked, speechRecognitionSupported:', speechRecognitionSupported)
+                        console.log(
+                          '[AllyBrainSection] Voice button clicked, speechRecognitionSupported:',
+                          speechRecognitionSupported,
+                        )
                         toggleRecording()
                       }}
                       disabled={!speechRecognitionSupported}

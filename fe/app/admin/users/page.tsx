@@ -111,7 +111,7 @@ export default function AdminUsersPage() {
               setStatusFilter(e.target.value as UserStatus | '')
               setPage(1)
             }}
-            className="px-3 py-2 border border dark:border-zinc-700 rounded-md bg-background dark:bg-secondary text-sm"
+            className="px-3 py-2 border-zinc-700 rounded-md bg-background dark:bg-secondary text-sm"
           >
             <option value="">All Status</option>
             <option value="active">Active</option>
@@ -125,7 +125,7 @@ export default function AdminUsersPage() {
               setRoleFilter(e.target.value as UserRole | '')
               setPage(1)
             }}
-            className="px-3 py-2 border border dark:border-zinc-700 rounded-md bg-background dark:bg-secondary text-sm"
+            className="px-3 py-2  rounded-md bg-background dark:bg-secondary text-sm"
           >
             <option value="">All Roles</option>
             <option value="user">User</option>
@@ -147,14 +147,22 @@ export default function AdminUsersPage() {
             <div className="overflow-x-auto relative">
               {isFetching && !isLoading && <LoadingSpinner overlay />}
               <table className="w-full">
-                <thead className="border-b border dark:border-zinc-700">
+                <thead className="border-b ">
                   <tr>
                     <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">User</th>
-                    <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">Status</th>
+                    <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">
+                      Status
+                    </th>
                     <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">Role</th>
-                    <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">Subscription</th>
-                    <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">Joined</th>
-                    <th className="text-right p-4 font-medium text-muted-foreground dark:text-muted-foreground">Actions</th>
+                    <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">
+                      Subscription
+                    </th>
+                    <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">
+                      Joined
+                    </th>
+                    <th className="text-right p-4 font-medium text-muted-foreground dark:text-muted-foreground">
+                      Actions
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -175,15 +183,18 @@ export default function AdminUsersPage() {
                     </tr>
                   ) : (
                     data.users.map((user) => (
-                      <tr
-                        key={user.id}
-                        className="border-b border-zinc-100 dark:border hover:bg-muted dark:hover:bg-secondary/50"
-                      >
+                      <tr key={user.id} className="border-b border-zinc-100  hover:bg-muted dark:hover:bg-secondary/50">
                         <td className="p-4">
                           <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-full bg-accent dark:bg-zinc-700 flex items-center justify-center overflow-hidden">
                               {user.avatar_url ? (
-                                <Image src={user.avatar_url} alt="" className="w-10 h-10 rounded-full object-cover" width={40} height={40} />
+                                <Image
+                                  src={user.avatar_url}
+                                  alt=""
+                                  className="w-10 h-10 rounded-full object-cover"
+                                  width={40}
+                                  height={40}
+                                />
                               ) : (
                                 <span className="text-sm font-medium text-zinc-600 dark:text-zinc-300">
                                   {user.email[0].toUpperCase()}
@@ -273,7 +284,7 @@ export default function AdminUsersPage() {
             </div>
 
             {/* Pagination */}
-            <div className="flex items-center justify-between p-4 border-t border dark:border-zinc-700">
+            <div className="flex items-center justify-between p-4 border-t ">
               <p className="text-sm text-muted-foreground">
                 Showing {data?.users.length || 0} of {data?.total || 0} users
               </p>

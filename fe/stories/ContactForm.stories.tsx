@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
+
 import { ContactForm } from '@/components/contact/ContactForm'
 
 const meta: Meta<typeof ContactForm> = {
@@ -16,9 +17,11 @@ const meta: Meta<typeof ContactForm> = {
   },
   decorators: [
     (Story) => (
-      <div className="w-full max-w-xl p-8 bg-background rounded-xl border border dark:border">
+      <div className="w-full max-w-xl p-8 bg-background rounded-xl border ">
         <h2 className="text-2xl font-bold text-foreground dark:text-primary-foreground mb-2">Contact Us</h2>
-        <p className="text-muted-foreground dark:text-muted-foreground mb-6">Have a question or need help? Fill out the form below.</p>
+        <p className="text-muted-foreground dark:text-muted-foreground mb-6">
+          Have a question or need help? Fill out the form below.
+        </p>
         <Story />
       </div>
     ),
@@ -148,7 +151,7 @@ export const InPageContext: Story = {
         </p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div className="md:col-span-2 bg-background dark:bg-secondary p-8 rounded-xl border border dark:border">
+        <div className="md:col-span-2 bg-background dark:bg-secondary p-8 rounded-xl border ">
           <ContactForm />
         </div>
         <div className="space-y-6">

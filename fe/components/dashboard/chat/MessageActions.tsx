@@ -6,6 +6,7 @@ import React, { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Message } from '@/types'
 import { toast } from 'sonner'
+import { useTranslation } from 'react-i18next'
 
 interface MessageActionsProps {
   msg: Message
@@ -16,6 +17,7 @@ interface MessageActionsProps {
 }
 
 export const MessageActions: React.FC<MessageActionsProps> = ({ msg, isSpeaking, onResend, onEdit, onSpeak }) => {
+  const { t } = useTranslation()
   const [copied, setCopied] = useState(false)
 
   const handleCopy = async () => {
@@ -63,7 +65,7 @@ export const MessageActions: React.FC<MessageActionsProps> = ({ msg, isSpeaking,
         <Clock className="w-2.5 h-2.5" />
         {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
       </div>
-      <div className="flex items-center gap-1 border-l border dark:border pl-2">
+      <div className="flex items-center gap-1 border-l pl-2">
         <Button
           variant="ghost"
           size="icon"

@@ -39,7 +39,9 @@ export function StatCard({ icon, label, value, suffix, description, trend }: Sta
         </p>
         {trend && <TrendBadge direction={trend.direction} percentage={trend.percentage} />}
       </div>
-      <p className="text-[10px] sm:text-xs text-muted-foreground dark:text-muted-foreground mt-1 truncate">{description}</p>
+      <p className="text-[10px] sm:text-xs text-muted-foreground dark:text-muted-foreground mt-1 truncate">
+        {description}
+      </p>
     </motion.div>
   )
 }

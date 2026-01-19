@@ -94,7 +94,7 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({ userData, className 
         // Extract path from URL - this is a simplified approach
         // In a real implementation, you'd want to store the path separately
         const urlParts = avatarUrl.split('/')
-        const avatarsIndex = urlParts.findIndex(part => part === 'avatars')
+        const avatarsIndex = urlParts.findIndex((part) => part === 'avatars')
         if (avatarsIndex !== -1 && avatarsIndex < urlParts.length - 1) {
           const path = urlParts.slice(avatarsIndex).join('/')
           await deleteAvatar({ bucket: 'avatars', path })
@@ -118,31 +118,23 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({ userData, className 
           <div className="relative group">
             <div
               className={cn(
-                "relative h-24 w-24 rounded-full border-4 border-dashed transition-colors",
+                'relative h-24 w-24 rounded-full border-4 border-dashed transition-colors',
                 isDragOver
-                  ? "border-primary bg-primary/5"
+                  ? 'border-primary bg-primary/5'
                   : avatarUrl
-                  ? "border-transparent"
-                  : "border-muted-foreground/25 hover:border-primary/50",
-                isLoading && "opacity-50"
+                    ? 'border-transparent'
+                    : 'border-muted-foreground/25 hover:border-primary/50',
+                isLoading && 'opacity-50',
               )}
               onDrop={handleDrop}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
             >
               {avatarUrl ? (
-                <Image
-                  src={avatarUrl}
-                  alt={fullName}
-                  fill
-                  className="rounded-full object-cover"
-                  sizes="96px"
-                />
+                <Image src={avatarUrl} alt={fullName} fill className="rounded-full object-cover" sizes="96px" />
               ) : (
                 <div className="h-full w-full rounded-full bg-accent flex items-center justify-center">
-                  <span className="text-2xl font-medium text-muted-foreground">
-                    {initials}
-                  </span>
+                  <span className="text-2xl font-medium text-muted-foreground">{initials}</span>
                 </div>
               )}
 
@@ -187,11 +179,13 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({ userData, className 
             <p className="text-sm font-medium">
               {avatarUrl
                 ? t('settings.avatar.changeAvatar', 'Change your avatar')
-                : t('settings.avatar.uploadAvatar', 'Upload an avatar')
-              }
+                : t('settings.avatar.uploadAvatar', 'Upload an avatar')}
             </p>
             <p className="text-xs text-muted-foreground max-w-xs">
-              {t('settings.avatar.uploadHint', 'Drag and drop an image or click to browse. Max size: 5MB. Supported formats: JPEG, PNG, WebP.')}
+              {t(
+                'settings.avatar.uploadHint',
+                'Drag and drop an image or click to browse. Max size: 5MB. Supported formats: JPEG, PNG, WebP.',
+              )}
             </p>
           </div>
 
@@ -213,8 +207,7 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({ userData, className 
                 <Upload className="mr-2 h-4 w-4" />
                 {avatarUrl
                   ? t('settings.avatar.changeImage', 'Change Image')
-                  : t('settings.avatar.uploadImage', 'Upload Image')
-                }
+                  : t('settings.avatar.uploadImage', 'Upload Image')}
               </>
             )}
           </Button>

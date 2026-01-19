@@ -74,13 +74,13 @@ export function AllyBrandAnimation() {
       />
 
       <motion.div
-        className="absolute w-96 h-96 rounded-full border border-[#F54C0F]/10 dark:border-[#F54C0F]/20"
+        className="absolute w-96 h-96 rounded-full border-[#F54C0F]/10 -[#F54C0F]/20"
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 1.5, delay: 2 }}
       />
       <motion.div
-        className="absolute w-[28rem] h-[28rem] rounded-full border border-[#F54C0F]/5 dark:border-[#F54C0F]/10"
+        className="absolute w-[28rem] h-[28rem] rounded-full border-[#F54C0F]/5 -[#F54C0F]/10"
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 1.8, delay: 2.2 }}

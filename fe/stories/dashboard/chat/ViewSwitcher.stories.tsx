@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
+
 import { ViewSwitcher } from '@/components/dashboard/chat/ViewSwitcher'
 import { useState } from 'react'
 
@@ -57,7 +58,7 @@ export const OnLightBackground: Story = {
   },
   decorators: [
     (Story) => (
-      <div className="relative w-[400px] h-[100px] bg-background rounded-xl border border">
+      <div className="relative w-[400px] h-[100px] bg-background rounded-xl border">
         <Story />
       </div>
     ),

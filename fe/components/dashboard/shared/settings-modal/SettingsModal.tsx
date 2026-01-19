@@ -28,6 +28,7 @@ import { ConfirmDialog } from '../ConfirmDialog'
 import { X } from 'lucide-react'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
+import { useTranslation } from 'react-i18next'
 
 interface SettingsModalProps {
   isOpen: boolean
@@ -38,6 +39,7 @@ interface SettingsModalProps {
 }
 
 export function SettingsModal({ isOpen, onClose, onSignOut, isDarkMode, toggleTheme }: SettingsModalProps) {
+  const { t } = useTranslation()
   const [showDeleteConversationsDialog, setShowDeleteConversationsDialog] = useState(false)
   const [showArchivedConversationsDialog, setShowArchivedConversationsDialog] = useState(false)
   const [showDisconnectGoogleDialog, setShowDisconnectGoogleDialog] = useState(false)
@@ -198,7 +200,7 @@ export function SettingsModal({ isOpen, onClose, onSignOut, isDarkMode, toggleTh
       />
 
       <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-        <DialogContent className="w-[calc(100%-2rem)] max-w-3xl h-[85dvh] sm:h-[600px] p-0 gap-0 overflow-hidden bg-background dark:bg-secondary border dark:border [&>button]:hidden">
+        <DialogContent className="w-[calc(100%-2rem)] max-w-3xl h-[85dvh] sm:h-[600px] p-0 gap-0 overflow-hidden bg-background dark:bg-secondary [&>button]:hidden">
           <DialogHeader className="sr-only">
             <DialogTitle>Settings</DialogTitle>
             <DialogDescription>Manage your Ally preferences and settings.</DialogDescription>

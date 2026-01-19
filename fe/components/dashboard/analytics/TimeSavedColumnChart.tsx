@@ -144,7 +144,9 @@ const TimeSavedColumnChart: React.FC<TimeSavedColumnChartProps> = ({ data }) => 
             >
               <div className="flex flex-col gap-1.5">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider">Day {point.day}</span>
+                  <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider">
+                    Day {point.day}
+                  </span>
                   <span className="text-xs text-muted-foreground font-medium">{formattedDate}</span>
                 </div>
                 <div className="flex items-center gap-1.5">

@@ -11,6 +11,7 @@ import { AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { eventsService } from '@/services/events.service'
 import { toast } from 'sonner'
+import { useTranslation } from 'react-i18next'
 import { voiceService } from '@/services/voice.service'
 
 type QuickEventDialogProps = {
@@ -33,6 +34,7 @@ type DialogState =
 const MIN_TEXT_LENGTH = 5
 
 export const QuickEventDialog: React.FC<QuickEventDialogProps> = ({ isOpen, onClose, onEventCreated }) => {
+  const { t } = useTranslation()
   const [text, setText] = useState('')
   const [state, setState] = useState<DialogState>('input')
   const [parsedEvent, setParsedEvent] = useState<ParsedEventData | null>(null)
@@ -205,14 +207,14 @@ export const QuickEventDialog: React.FC<QuickEventDialogProps> = ({ isOpen, onCl
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-2xl w-[95vw] sm:w-full p-0 gap-0 overflow-hidden bg-background dark:bg-secondary border dark:border">
+      <DialogContent className="max-w-2xl w-[95vw] sm:w-full p-0 gap-0 overflow-hidden bg-background dark:bg-secondary border ">
         <DialogHeader className="sr-only">
           <DialogTitle>Quick Add Event</DialogTitle>
           <DialogDescription>Add an event to your calendar using natural language or voice</DialogDescription>
         </DialogHeader>
 
         <div className="flex flex-col sm:flex-row min-h-[400px] sm:min-h-[500px]">
-          <div className="flex-1 p-4 sm:p-6 flex flex-col border-r border dark:border sm:border-r">
+          <div className="flex-1 p-4 sm:p-6 flex flex-col border-r sm:border-r">
             <div className="flex items-center gap-2 mb-4">
               <Calendar className="w-5 h-5 text-primary" />
               <h3 className="text-lg font-semibold text-foreground dark:text-primary-foreground">Quick Add Event</h3>
@@ -229,7 +231,7 @@ Examples:
 • Meeting with John tomorrow at 3pm
 • Lunch at Cafe Roma on Friday 12:30pm for 1 hour
 • Team standup every Monday at 9am`}
-                className="w-full h-full resize-none bg-muted dark:bg-secondary border border dark:border rounded-lg p-4 pr-12 text-foreground dark:text-primary-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                className="w-full h-full resize-none bg-muted dark:bg-secondary rounded-lg p-4 pr-12 text-foreground dark:text-primary-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
                 disabled={isDisabled}
               />
               <Button
@@ -274,7 +276,7 @@ Examples:
             </div>
           </div>
 
-          <div className="w-full sm:w-72 p-4 sm:p-6 bg-muted dark:bg-secondary/50 flex flex-col border-t sm:border-t-0 sm:border-l border dark:border">
+          <div className="w-full sm:w-72 p-4 sm:p-6 bg-muted dark:bg-secondary/50 flex flex-col border-t sm:border-t-0 sm:border-l border ">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-10 h-10 bg-secondary dark:bg-background rounded-lg flex items-center justify-center">
                 <AllyLogo className="w-6 h-6 text-white dark:text-foreground" />

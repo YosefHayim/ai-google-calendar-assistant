@@ -1,24 +1,24 @@
 'use client'
 
-import Link from 'next/link'
-import { motion } from 'framer-motion'
 import {
+  AlertCircle,
+  ArrowRight,
+  Brain,
   Calendar,
   Check,
-  X,
-  Mic,
-  MessageCircle,
-  Brain,
-  Zap,
   Clock,
+  MessageCircle,
+  Mic,
   Shield,
-  ArrowRight,
-  AlertCircle,
   Smartphone,
+  X,
+  Zap,
 } from 'lucide-react'
 
-import MarketingLayout from '@/components/marketing/MarketingLayout'
 import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button'
+import Link from 'next/link'
+import MarketingLayout from '@/components/marketing/MarketingLayout'
+import { motion } from 'framer-motion'
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
@@ -144,7 +144,7 @@ export default function ComparePage() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          <div className="p-6 rounded-2xl bg-orange-500/10 border border-orange-500/20 dark:bg-orange-500/5 dark:border-orange-500/10">
+          <div className="p-6 rounded-2xl bg-orange-500/10 border-orange-500/20 dark:bg-orange-500/5 -orange-500/10">
             <div className="flex items-start gap-4">
               <div className="w-12 h-12 rounded-xl bg-orange-500/20 flex items-center justify-center flex-shrink-0">
                 <AlertCircle className="w-6 h-6 text-orange-500" />
@@ -224,7 +224,7 @@ export default function ComparePage() {
               <motion.div
                 key={index}
                 variants={fadeInUp}
-                className="p-6 rounded-2xl bg-background dark:bg-secondary border dark:border-zinc-700 hover:border-orange-300 dark:hover:border-orange-700 transition-colors"
+                className="p-6 rounded-2xl bg-background dark:bg-secondary  hover:border-orange-300 dark:hover:border-orange-700 transition-colors"
               >
                 <div className="w-12 h-12 rounded-xl bg-orange-500/10 flex items-center justify-center mb-4">
                   <feature.icon className="w-6 h-6 text-orange-500" />
@@ -263,7 +263,7 @@ export default function ComparePage() {
           >
             <table className="w-full min-w-[800px]">
               <thead>
-                <tr className="border-b dark:border-zinc-700">
+                <tr className="border-b -zinc-700">
                   <th className="text-left py-4 px-4 font-medium text-muted-foreground">Feature</th>
                   {competitors.map((competitor) => (
                     <th
@@ -284,7 +284,7 @@ export default function ComparePage() {
                 {Object.entries(featureLabels).map(([featureKey, { label, icon: Icon }], index) => (
                   <tr
                     key={featureKey}
-                    className={`border-b dark:border-zinc-700 ${index % 2 === 0 ? 'bg-muted/50 dark:bg-secondary/30' : ''}`}
+                    className={`border-b -zinc-700 ${index % 2 === 0 ? 'bg-muted/50 dark:bg-secondary/30' : ''}`}
                   >
                     <td className="py-4 px-4">
                       <div className="flex items-center gap-3">
@@ -353,11 +353,7 @@ export default function ComparePage() {
                   'Ally Bank and other financial institutions exist. Ask Ally has no affiliation with any financial services. We are strictly a productivity software company.',
               },
             ].map((item, index) => (
-              <motion.div
-                key={index}
-                variants={fadeInUp}
-                className="p-6 rounded-2xl bg-background dark:bg-zinc-800 border dark:border-zinc-700"
-              >
+              <motion.div key={index} variants={fadeInUp} className="p-6 rounded-2xl bg-background dark:bg-zinc-800 ">
                 <h3 className="text-lg font-semibold text-foreground dark:text-primary-foreground mb-2">
                   {item.category}
                 </h3>
@@ -367,7 +363,7 @@ export default function ComparePage() {
           </motion.div>
 
           <motion.div
-            className="mt-12 p-6 rounded-2xl bg-orange-500/10 border border-orange-500/20 text-center"
+            className="mt-12 p-6 rounded-2xl bg-orange-500/10 border-orange-500/20 text-center"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -401,7 +397,7 @@ export default function ComparePage() {
             </Link>
             <Link
               href="/pricing"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 h-14 px-8 text-lg font-medium rounded-md border dark:border-zinc-700 text-foreground dark:text-primary-foreground hover:bg-muted dark:hover:bg-secondary transition-colors"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 h-14 px-8 text-lg font-medium rounded-md  text-foreground dark:text-primary-foreground hover:bg-muted dark:hover:bg-secondary transition-colors"
             >
               View Pricing
               <ArrowRight className="w-5 h-5" />

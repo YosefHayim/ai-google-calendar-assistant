@@ -10,7 +10,13 @@ import { SettingsRow, SettingsDropdown, SettingsSection, type DropdownOption } f
 import CinematicGlowToggle from '@/components/ui/cinematic-glow-toggle'
 import { getUserDisplayInfo, type UserData } from '@/lib/user-utils'
 import { SUPPORTED_LANGUAGES, LANGUAGE_STORAGE_KEY, type SupportedLanguageCode } from '@/lib/i18n/config'
-import { useGeoLocation, useUpdateGeoLocation, useDisplayPreferences, useUpdateDisplayPreferences, useTimezonesList } from '@/hooks/queries'
+import {
+  useGeoLocation,
+  useUpdateGeoLocation,
+  useDisplayPreferences,
+  useUpdateDisplayPreferences,
+  useTimezonesList,
+} from '@/hooks/queries'
 import { AvatarUpload } from './components/AvatarUpload'
 import i18n from '@/lib/i18n/config'
 
@@ -23,7 +29,7 @@ interface GeneralTabProps {
   isUserLoading: boolean
 }
 
-const LANGUAGE_OPTIONS: DropdownOption[] = SUPPORTED_LANGUAGES.map(lang => ({
+const LANGUAGE_OPTIONS: DropdownOption[] = SUPPORTED_LANGUAGES.map((lang) => ({
   value: lang.code,
   label: `${lang.flag} ${lang.nativeName}`,
 }))
@@ -182,7 +188,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ isDarkMode, toggleTheme,
     localStorage.setItem(LANGUAGE_STORAGE_KEY, newLang)
 
     // Update document direction for RTL languages
-    const langConfig = SUPPORTED_LANGUAGES.find(l => l.code === newLang)
+    const langConfig = SUPPORTED_LANGUAGES.find((l) => l.code === newLang)
     document.documentElement.dir = langConfig?.dir || 'ltr'
     document.documentElement.lang = newLang
 
@@ -203,7 +209,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ isDarkMode, toggleTheme,
         <CardDescription>{t('settings.generalDescription', 'Manage your profile and preferences.')}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-2">
-        <div className="flex flex-wrap items-center gap-4 pb-4 border-b  dark:border sm:flex-nowrap">
+        <div className="flex flex-wrap items-center gap-4 pb-4 border-b   sm:flex-nowrap">
           {avatarUrl ? (
             <Image
               src={avatarUrl}
@@ -218,11 +224,14 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ isDarkMode, toggleTheme,
             </div>
           )}
           <div className="flex-1 min-w-0">
-            <h4 className="text-base font-semibold text-foreground dark:text-primary-foreground truncate">{fullName}</h4>
+            <h4 className="text-base font-semibold text-foreground dark:text-primary-foreground truncate">
+              {fullName}
+            </h4>
             <p className="text-sm text-muted-foreground truncate">{email}</p>
             {createdAt && (
               <p className="text-xs text-muted-foreground mt-1">
-                {t('settings.memberSince', 'Member since')} {new Date(createdAt).toLocaleDateString(i18n.language, { month: 'long', year: 'numeric' })}
+                {t('settings.memberSince', 'Member since')}{' '}
+                {new Date(createdAt).toLocaleDateString(i18n.language, { month: 'long', year: 'numeric' })}
               </p>
             )}
           </div>
@@ -261,7 +270,11 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ isDarkMode, toggleTheme,
                 options={[
                   { value: 'light', label: t('settings.themeLight', 'Light'), icon: <Sun className="w-4 h-4" /> },
                   { value: 'dark', label: t('settings.themeDark', 'Dark'), icon: <Moon className="w-4 h-4" /> },
-                  { value: 'system', label: t('settings.themeSystem', 'System'), icon: <Monitor className="w-4 h-4" /> },
+                  {
+                    value: 'system',
+                    label: t('settings.themeSystem', 'System'),
+                    icon: <Monitor className="w-4 h-4" />,
+                  },
                 ]}
                 onChange={handleAppearanceChange}
               />
@@ -271,14 +284,21 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ isDarkMode, toggleTheme,
           <SettingsRow
             id="timezone"
             title={t('settings.defaultTimezone', 'Default Timezone')}
-            tooltip={t('settings.timezoneTooltip', 'Events will be scheduled in this timezone unless specified otherwise')}
+            tooltip={t(
+              'settings.timezoneTooltip',
+              'Events will be scheduled in this timezone unless specified otherwise',
+            )}
             icon={<Globe size={18} className="text-foreground dark:text-primary" />}
             control={
               <SettingsDropdown
                 id="timezone-dropdown"
                 value={timezone}
                 options={timezoneOptions}
-                onChange={isUpdatingDisplayPreferences || isLoadingDisplayPreferences || isLoadingTimezones ? () => {} : handleTimezoneChange}
+                onChange={
+                  isUpdatingDisplayPreferences || isLoadingDisplayPreferences || isLoadingTimezones
+                    ? () => {}
+                    : handleTimezoneChange
+                }
               />
             }
           />
@@ -296,7 +316,9 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ isDarkMode, toggleTheme,
                   { value: '12h', label: t('settings.timeFormat12h', '12-hour (AM/PM)') },
                   { value: '24h', label: t('settings.timeFormat24h', '24-hour') },
                 ]}
-                onChange={isUpdatingDisplayPreferences || isLoadingDisplayPreferences ? () => {} : handleTimeFormatChange}
+                onChange={
+                  isUpdatingDisplayPreferences || isLoadingDisplayPreferences ? () => {} : handleTimeFormatChange
+                }
               />
             }
           />
@@ -304,7 +326,10 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ isDarkMode, toggleTheme,
           <SettingsRow
             id="geo-location"
             title={t('settings.realTimeLocation', 'Real-time Location')}
-            tooltip={t('settings.realTimeLocationTooltip', 'When enabled, Ally uses your current location to provide context for event creation (e.g., suggesting nearby venues)')}
+            tooltip={t(
+              'settings.realTimeLocationTooltip',
+              'When enabled, Ally uses your current location to provide context for event creation (e.g., suggesting nearby venues)',
+            )}
             icon={<MapPin size={18} className="text-foreground dark:text-primary" />}
             control={
               <CinematicGlowToggle

@@ -40,9 +40,13 @@ const EventsListDialog: React.FC<EventsListDialogProps> = ({ isOpen, title, subt
               <CalendarDays size={20} className="text-primary" />
             </div>
             <div className="flex-1 text-left">
-              <DialogTitle className="text-xl font-bold text-foreground dark:text-primary-foreground">{title}</DialogTitle>
+              <DialogTitle className="text-xl font-bold text-foreground dark:text-primary-foreground">
+                {title}
+              </DialogTitle>
               <DialogDescription className="sr-only">Events for {title}</DialogDescription>
-              {subtitle && <p className="text-sm text-muted-foreground dark:text-muted-foreground mt-0.5">{subtitle}</p>}
+              {subtitle && (
+                <p className="text-sm text-muted-foreground dark:text-muted-foreground mt-0.5">{subtitle}</p>
+              )}
 
               <div className="flex flex-wrap gap-4 mt-2">
                 <div className="text-xs text-muted-foreground dark:text-muted-foreground flex items-center gap-2">
@@ -75,7 +79,7 @@ const EventsListDialog: React.FC<EventsListDialogProps> = ({ isOpen, title, subt
                   onClick={() => handleEventClick(event.htmlLink)}
                   className={cn(
                     'flex items-start gap-3 group rounded-lg p-3 bg-muted dark:bg-secondary/50 transition-colors',
-                    event.htmlLink && 'cursor-pointer hover:bg-secondary dark:hover:bg-secondary'
+                    event.htmlLink && 'cursor-pointer hover:bg-secondary dark:hover:bg-secondary',
                   )}
                 >
                   <div
@@ -86,9 +90,7 @@ const EventsListDialog: React.FC<EventsListDialogProps> = ({ isOpen, title, subt
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <p className="text-sm font-semibold text-foreground truncate flex-1">
-                        {event.summary}
-                      </p>
+                      <p className="text-sm font-semibold text-foreground truncate flex-1">{event.summary}</p>
                       {event.htmlLink && (
                         <ExternalLink className="w-3.5 h-3.5 text-muted-foreground dark:text-muted-foreground shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
                       )}

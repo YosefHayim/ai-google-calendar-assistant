@@ -1,6 +1,13 @@
 'use client'
 
-import { ArchiveConfirmDialog, ConversationList, DeleteConfirmDialog, SidebarFooter, SidebarHeader, SidebarNav } from './sidebar-components'
+import {
+  ArchiveConfirmDialog,
+  ConversationList,
+  DeleteConfirmDialog,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarNav,
+} from './sidebar-components'
 import { SidebarProvider, useSidebarContext } from '@/contexts/SidebarContext'
 
 import React from 'react'
@@ -55,12 +62,15 @@ const SidebarContent: React.FC<SidebarProps> = ({ isOpen, onClose, onToggle, onO
       />
 
       {isOpen && (
-        <div className="fixed inset-0 bg-foreground/20 dark:bg-foreground/60 backdrop-blur-sm z-40 md:hidden" onClick={onClose} />
+        <div
+          className="fixed inset-0 bg-foreground/20 dark:bg-foreground/60 backdrop-blur-sm z-40 md:hidden"
+          onClick={onClose}
+        />
       )}
 
       <aside
         id="tour-sidebar"
-        className={`fixed inset-y-0 left-0 z-50 flex flex-col bg-background dark:bg-secondary border-r border dark:border transition-all duration-300 ${
+        className={`fixed inset-y-0 left-0 z-50 flex flex-col bg-background dark:bg-secondary border-r transition-all duration-300 ${
           isOpen ? 'w-64' : 'w-0 md:w-20'
         }`}
       >

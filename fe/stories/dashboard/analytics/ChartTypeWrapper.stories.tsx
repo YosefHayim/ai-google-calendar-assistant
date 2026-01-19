@@ -18,7 +18,9 @@ const SAMPLE_CHART_TYPES = ['bar', 'line', 'area'] as const
 
 const MockChart = ({ type }: { type: string }) => (
   <div className="h-[200px] bg-secondary dark:bg-secondary rounded-lg flex items-center justify-center">
-    <span className="text-muted-foreground dark:text-muted-foreground font-medium capitalize">{type} Chart Placeholder</span>
+    <span className="text-muted-foreground dark:text-muted-foreground font-medium capitalize">
+      {type} Chart Placeholder
+    </span>
   </div>
 )
 
@@ -109,7 +111,7 @@ export const WithCustomClassName: Story = {
           chartId="custom-class-chart"
           chartTypes={SAMPLE_CHART_TYPES}
           defaultType="bar"
-          className="border border-dashed border-zinc-300 dark:border-zinc-700 p-4 rounded-lg"
+          className="border-dashed border-zinc-300 -zinc-700 p-4 rounded-lg"
         >
           {(chartType) => <MockChart type={chartType} />}
         </ChartTypeWrapper>

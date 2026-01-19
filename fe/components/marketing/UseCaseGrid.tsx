@@ -1,6 +1,6 @@
 'use client'
 
-import { BrainCircuit, CalendarDays, Check, Mic, Plane, User, LucideIcon } from 'lucide-react'
+import { BrainCircuit, CalendarDays, Check, LucideIcon, Mic, Plane, User } from 'lucide-react'
 
 import { AllyLogo } from '@/components/shared/logo'
 import React from 'react'
@@ -106,11 +106,11 @@ const UseCaseGrid = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.5 }}
               transition={{ delay: i * 0.1 }}
-              className="bg-muted dark:bg-secondary/50 border border dark:border rounded-xl p-6 flex flex-col justify-between hover:border-primary/30 dark:hover:border-primary/30 transition-colors"
+              className="bg-muted dark:bg-secondary/50 rounded-xl p-6 flex flex-col justify-between hover:border-primary/30 dark:hover:border-primary/30 transition-colors"
             >
               <div>
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 bg-background dark:bg-secondary rounded-lg flex items-center justify-center border border dark:border-zinc-700">
+                  <div className="w-10 h-10 bg-background dark:bg-secondary rounded-lg flex items-center justify-center ">
                     <Icon className="w-5 h-5 text-primary" />
                   </div>
                   <h3 className="text-lg font-medium text-foreground dark:text-primary-foreground">
@@ -121,7 +121,7 @@ const UseCaseGrid = () => {
                   {t(`useCases.${useCase.key}.description`)}
                 </p>
               </div>
-              <div className="bg-background dark:bg-secondary/50 p-4 rounded-md border border dark:border-zinc-700 min-h-[100px] flex flex-col justify-center">
+              <div className="bg-background dark:bg-secondary/50 p-4 rounded-md  min-h-[100px] flex flex-col justify-center">
                 {useCase.illustration(t)}
               </div>
             </motion.div>

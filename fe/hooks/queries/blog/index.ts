@@ -107,10 +107,7 @@ export function useCreateBlogPost() {
   })
 }
 
-export function useGenerateAIBlogPost(options?: {
-  onSuccess?: () => void
-  onError?: (error: Error) => void
-}) {
+export function useGenerateAIBlogPost(options?: { onSuccess?: () => void; onError?: (error: Error) => void }) {
   const queryClient = useQueryClient()
 
   return useMutation({

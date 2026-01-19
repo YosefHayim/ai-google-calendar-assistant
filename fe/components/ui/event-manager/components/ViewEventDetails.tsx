@@ -94,7 +94,7 @@ function EventDetailsCard({
       className={cn(
         'rounded-xl p-4 space-y-3',
         'bg-gradient-to-br from-muted/60 via-muted/40 to-transparent',
-        'border border-border/50',
+        'border-border/50',
         'relative overflow-hidden',
       )}
     >
@@ -155,7 +155,7 @@ function AllyResponseArea({
       className={cn(
         'min-h-[80px] rounded-lg p-3 transition-all duration-300',
         'bg-gradient-to-br from-primary/5 to-transparent',
-        'border border-primary/10',
+        'border-primary/10',
         allyResponse || isProcessing || actionResult ? 'opacity-100' : 'opacity-60',
       )}
     >

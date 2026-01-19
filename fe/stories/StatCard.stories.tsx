@@ -1,6 +1,6 @@
+import { BarChart3, Calendar, CheckCircle2, Clock, TrendingUp, Users } from 'lucide-react'
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { StatCard, StatCardSkeleton } from '@/components/ui/stat-card'
-import { Calendar, Clock, Users, TrendingUp, CheckCircle2, BarChart3 } from 'lucide-react'
 
 const meta: Meta<typeof StatCard> = {
   title: 'UI/StatCard',
@@ -156,7 +156,7 @@ export const WithChildren: Story = {
       description="Next 24 hours"
       className="w-[280px]"
     >
-      <div className="mt-2 pt-3 border-t border dark:border">
+      <div className="mt-2 pt-3 border-t border ">
         <ul className="text-xs text-zinc-600 dark:text-muted-foreground space-y-1">
           <li>09:00 - Team Standup</li>
           <li>11:00 - Client Call</li>

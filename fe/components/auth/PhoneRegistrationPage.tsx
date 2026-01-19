@@ -65,7 +65,7 @@ const PhoneRegistrationPage: React.FC = () => {
       <BackgroundPattern1 className="flex-1 flex flex-col items-center justify-center pt-0 pb-0">
         <div className="w-full max-w-md px-6 relative z-10">
           <div className="flex flex-col items-center text-center mb-10">
-            <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mb-6 shadow-xl shadow-primary/10 border border-primary/20">
+            <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mb-6 shadow-xl shadow-primary/10 border-primary/20">
               <ShieldCheck className="w-10 h-10" />
             </div>
             <h1 className="text-4xl font-medium tracking-tight text-foreground dark:text-primary-foreground mb-4 leading-tight">
@@ -78,8 +78,8 @@ const PhoneRegistrationPage: React.FC = () => {
 
           <form onSubmit={handleSendOTP} className="space-y-2">
             <div className="flex flex-col gap-2">
-              <div className="relative group bg-muted dark:bg-secondary border border dark:border rounded-2xl flex items-stretch focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all overflow-hidden shadow-sm">
-                <div className="relative border-r border dark:border flex items-center bg-secondary/50 dark:bg-secondary/30">
+              <div className="relative group bg-muted dark:bg-secondary rounded-2xl flex items-stretch focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all overflow-hidden shadow-sm">
+                <div className="relative border-r flex items-center bg-secondary/50 dark:bg-secondary/30">
                   <select
                     className="absolute inset-0 opacity-0 cursor-pointer z-10 w-full"
                     value={selectedCountry.code}

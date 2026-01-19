@@ -1,13 +1,6 @@
 'use client'
 
-import {
-  ArrowLeft,
-  ArrowRight,
-  Brain,
-  Calendar,
-  CheckSquare,
-  Settings,
-} from 'lucide-react'
+import { ArrowLeft, ArrowRight, Brain, Calendar, CheckSquare, Settings } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { useEffect, useState } from 'react'
 
@@ -69,10 +62,8 @@ export default function PainPointPage() {
   }, [router])
 
   const handlePainPointToggle = (painPointId: PainPointOption['id']) => {
-    setSelectedPainPoints(prev =>
-      prev.includes(painPointId)
-        ? prev.filter(id => id !== painPointId)
-        : [...prev, painPointId]
+    setSelectedPainPoints((prev) =>
+      prev.includes(painPointId) ? prev.filter((id) => id !== painPointId) : [...prev, painPointId],
     )
   }
 
@@ -105,9 +96,7 @@ export default function PainPointPage() {
             >
               <Card
                 className={`cursor-pointer transition-all duration-200 hover:shadow-md ${
-                  selectedPainPoints.includes(painPoint.id)
-                    ? 'ring-2 ring-primary bg-primary/5'
-                    : 'hover:bg-muted/50'
+                  selectedPainPoints.includes(painPoint.id) ? 'ring-2 ring-primary bg-primary/5' : 'hover:bg-muted/50'
                 }`}
                 onClick={() => handlePainPointToggle(painPoint.id)}
               >
@@ -118,11 +107,11 @@ export default function PainPointPage() {
                       onChange={() => handlePainPointToggle(painPoint.id)}
                       className="mt-1"
                     />
-                    <div className={`p-2 rounded-lg ${
-                      selectedPainPoints.includes(painPoint.id)
-                        ? 'bg-primary text-primary-foreground'
-                        : 'bg-muted'
-                    }`}>
+                    <div
+                      className={`p-2 rounded-lg ${
+                        selectedPainPoints.includes(painPoint.id) ? 'bg-primary text-primary-foreground' : 'bg-muted'
+                      }`}
+                    >
                       {painPoint.icon}
                     </div>
                     <div className="flex-1">
@@ -132,10 +121,7 @@ export default function PainPointPage() {
                         <span className="font-medium">We'll help with:</span>
                         <div className="flex flex-wrap gap-2 mt-2">
                           {painPoint.solutions.map((solution) => (
-                            <span
-                              key={solution}
-                              className="text-xs bg-muted px-2 py-1 rounded-full"
-                            >
+                            <span key={solution} className="text-xs bg-muted px-2 py-1 rounded-full">
                               {solution}
                             </span>
                           ))}
@@ -154,12 +140,7 @@ export default function PainPointPage() {
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back
           </Button>
-          <Button
-            onClick={handleContinue}
-            disabled={selectedPainPoints.length === 0}
-            size="lg"
-            className="px-8"
-          >
+          <Button onClick={handleContinue} disabled={selectedPainPoints.length === 0} size="lg" className="px-8">
             Continue
             <ArrowRight className="w-4 h-4 ml-2" />
           </Button>

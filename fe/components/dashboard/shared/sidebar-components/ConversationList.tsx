@@ -18,6 +18,7 @@ import { StreamingTitle } from './StreamingTitle'
 import { createShareLink } from '@/services/chatService'
 import { formatRelativeDate } from '@/lib/dateUtils'
 import { toast } from 'sonner'
+import { useTranslation } from 'react-i18next'
 
 interface ConversationListProps {
   conversations: ConversationListItem[]
@@ -46,6 +47,7 @@ export const ConversationList: React.FC<ConversationListProps> = ({
   onInitiateDelete,
   onInitiateArchive,
 }) => {
+  const { t } = useTranslation()
   const [sharingId, setSharingId] = useState<string | null>(null)
   const [copiedId, setCopiedId] = useState<string | null>(null)
 
@@ -76,7 +78,9 @@ export const ConversationList: React.FC<ConversationListProps> = ({
   return (
     <div className="flex-1 mt-4 px-4 overflow-y-auto flex flex-col">
       <div className="flex items-center justify-between mb-2 px-2">
-        <p className="text-xs font-medium text-muted-foreground dark:text-muted-foreground uppercase tracking-wider">Recent Chats</p>
+        <p className="text-xs font-medium text-muted-foreground dark:text-muted-foreground uppercase tracking-wider">
+          Recent Chats
+        </p>
       </div>
 
       <div className="relative mb-3">

@@ -61,7 +61,9 @@ export const PricingCard: React.FC<PricingCardProps> = ({ tier, paymentFrequency
     isHighlighted ? 'text-primary-foreground dark:text-foreground' : 'text-foreground dark:text-primary-foreground'
 
   const getSecondaryTextColor = () =>
-    isHighlighted ? 'text-primary-foreground/70 dark:text-foreground/70' : 'text-muted-foreground dark:text-muted-foreground'
+    isHighlighted
+      ? 'text-primary-foreground/70 dark:text-foreground/70'
+      : 'text-muted-foreground dark:text-muted-foreground'
 
   const adjustAmount = (delta: number) => {
     setCustomAmount((prev) => Math.max(MIN_CUSTOM_INTERACTIONS, Math.min(MAX_CUSTOM_INTERACTIONS, prev + delta)))
@@ -235,7 +237,7 @@ export const PricingCard: React.FC<PricingCardProps> = ({ tier, paymentFrequency
 
         <div className="flex-1 space-y-2 z-10">
           {isCustomTier && (
-            <div className="space-y-2 p-4 rounded-2xl bg-background/5 border border-white/10 animate-in fade-in slide-in-from-bottom-2 duration-500">
+            <div className="space-y-2 p-4 rounded-2xl bg-background/5 border-white/10 animate-in fade-in slide-in-from-bottom-2 duration-500">
               <div className="flex items-center justify-between">
                 <label
                   className={cn(
@@ -340,7 +342,10 @@ export const PricingCard: React.FC<PricingCardProps> = ({ tier, paymentFrequency
                   )}
                 >
                   <BadgeCheck
-                    className={cn('h-4 w-4 shrink-0', isHighlighted ? 'text-primary-foreground dark:text-foreground' : 'text-primary')}
+                    className={cn(
+                      'h-4 w-4 shrink-0',
+                      isHighlighted ? 'text-primary-foreground dark:text-foreground' : 'text-primary',
+                    )}
                   />
                   {feature.replace(/Subscription:|Per Use:/gi, '').trim()}
                 </li>
@@ -369,7 +374,7 @@ export const PricingCard: React.FC<PricingCardProps> = ({ tier, paymentFrequency
             className={cn(
               'w-full z-10 font-bold h-12',
               isHighlighted
-                ? 'bg-background text-foreground hover:bg-background/90 dark:bg-secondary dark:text-primary-foreground dark:hover:bg-secondary border-primary-foreground dark:border-foreground'
+                ? 'bg-background text-foreground hover:bg-background/90 dark:bg-secondary dark:text-primary-foreground dark:hover:bg-secondary border-primary-foreground -foreground'
                 : '',
             )}
             onClick={handleGetStarted}

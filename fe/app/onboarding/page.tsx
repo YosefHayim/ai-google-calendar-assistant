@@ -1,13 +1,6 @@
 'use client'
 
-import {
-  ArrowRight,
-  Briefcase,
-  Code,
-  GraduationCap,
-  User,
-  Users,
-} from 'lucide-react'
+import { ArrowRight, Briefcase, Code, GraduationCap, User, Users } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 
 import { Button } from '@/components/ui/button'
@@ -92,19 +85,17 @@ export default function PersonaSelectionPage() {
             >
               <Card
                 className={`cursor-pointer transition-all duration-200 hover:shadow-md ${
-                  selectedPersona === persona.id
-                    ? 'ring-2 ring-primary bg-primary/5'
-                    : 'hover:bg-muted/50'
+                  selectedPersona === persona.id ? 'ring-2 ring-primary bg-primary/5' : 'hover:bg-muted/50'
                 }`}
                 onClick={() => setSelectedPersona(persona.id)}
               >
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
-                    <div className={`p-3 rounded-lg ${
-                      selectedPersona === persona.id
-                        ? 'bg-primary text-primary-foreground'
-                        : 'bg-muted'
-                    }`}>
+                    <div
+                      className={`p-3 rounded-lg ${
+                        selectedPersona === persona.id ? 'bg-primary text-primary-foreground' : 'bg-muted'
+                      }`}
+                    >
                       {persona.icon}
                     </div>
                     <div className="flex-1">
@@ -112,17 +103,12 @@ export default function PersonaSelectionPage() {
                       <p className="text-muted-foreground mb-3">{persona.description}</p>
                       <div className="flex flex-wrap gap-2">
                         {persona.features.slice(0, 3).map((feature) => (
-                          <span
-                            key={feature}
-                            className="text-xs bg-muted px-2 py-1 rounded-full"
-                          >
+                          <span key={feature} className="text-xs bg-muted px-2 py-1 rounded-full">
                             {feature}
                           </span>
                         ))}
                         {persona.features.length > 3 && (
-                          <span className="text-xs text-muted-foreground">
-                            +{persona.features.length - 3} more
-                          </span>
+                          <span className="text-xs text-muted-foreground">+{persona.features.length - 3} more</span>
                         )}
                       </div>
                     </div>
@@ -134,12 +120,7 @@ export default function PersonaSelectionPage() {
         </div>
 
         <div className="flex justify-end pt-4">
-          <Button
-            onClick={handleContinue}
-            disabled={!selectedPersona}
-            size="lg"
-            className="px-8"
-          >
+          <Button onClick={handleContinue} disabled={!selectedPersona} size="lg" className="px-8">
             Continue
             <ArrowRight className="w-4 h-4 ml-2" />
           </Button>

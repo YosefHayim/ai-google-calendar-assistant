@@ -14,7 +14,7 @@ import React from 'react'
 const BentoStatsSkeleton: React.FC = () => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3">
-      <div className="col-span-1 sm:col-span-2 row-span-2 bg-background dark:bg-secondary border border dark:border rounded-xl p-4 sm:p-6">
+      <div className="col-span-1 sm:col-span-2 row-span-2 bg-background dark:bg-secondary rounded-xl p-4 sm:p-6">
         <div className="flex flex-col sm:flex-row items-start justify-between gap-3 mb-4">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
@@ -38,10 +38,7 @@ const BentoStatsSkeleton: React.FC = () => {
       </div>
 
       {Array.from({ length: 10 }).map((_, i) => (
-        <div
-          key={i}
-          className="bg-background dark:bg-secondary border border dark:border rounded-xl p-3 sm:p-5"
-        >
+        <div key={i} className="bg-background dark:bg-secondary rounded-xl p-3 sm:p-5">
           <div className="flex items-center gap-2 mb-2 sm:mb-3">
             <Skeleton className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex-shrink-0" />
             <Skeleton className="h-3 w-14 sm:w-16" />
@@ -56,8 +53,8 @@ const BentoStatsSkeleton: React.FC = () => {
 
 const DailyHoursChartSkeleton: React.FC = () => {
   return (
-    <div className="lg:col-span-3 bg-background dark:bg-secondary border border dark:border rounded-xl py-0">
-      <div className="flex flex-col items-stretch border-b border dark:border !p-0 sm:flex-row">
+    <div className="lg:col-span-3 bg-background dark:bg-secondary rounded-xl py-0">
+      <div className="flex flex-col items-stretch border-b !p-0 sm:flex-row">
         <div className="flex flex-1 flex-col justify-center gap-1 px-6 pt-4 pb-3 sm:!py-4">
           <div className="flex items-center gap-2">
             <Skeleton className="w-5 h-5" />
@@ -66,11 +63,11 @@ const DailyHoursChartSkeleton: React.FC = () => {
           <Skeleton className="h-4 w-56 mt-1" />
         </div>
         <div className="flex">
-          <div className="flex flex-1 flex-col justify-center gap-1 border-t border dark:border px-6 py-4 sm:border-t-0 sm:border-l sm:px-8 sm:py-6">
+          <div className="flex flex-1 flex-col justify-center gap-1 border-t px-6 py-4 sm:border-t-0 sm:border-l sm:px-8 sm:py-6">
             <Skeleton className="h-3 w-24" />
             <Skeleton className="h-8 w-16 mt-1" />
           </div>
-          <div className="flex flex-1 flex-col justify-center gap-1 border-t border-l border dark:border px-6 py-4 sm:border-t-0 sm:px-8 sm:py-6">
+          <div className="flex flex-1 flex-col justify-center gap-1 border-t border-l px-6 py-4 sm:border-t-0 sm:px-8 sm:py-6">
             <Skeleton className="h-3 w-20" />
             <Skeleton className="h-8 w-16 mt-1" />
           </div>
@@ -88,14 +85,14 @@ const DailyHoursChartSkeleton: React.FC = () => {
 
 const RecentEventsSkeleton: React.FC = () => {
   return (
-    <div className="bg-background dark:bg-secondary border border dark:border rounded-md shadow-sm p-4 sm:p-6">
+    <div className="bg-background dark:bg-secondary rounded-md shadow-sm p-4 sm:p-6">
       <div className="mb-4 sm:mb-6 flex items-center gap-2">
         <Skeleton className="w-4 h-4" />
         <Skeleton className="h-5 w-28 sm:w-32" />
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
         {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="flex flex-col gap-2 p-3 border border dark:border rounded-lg">
+          <div key={i} className="flex flex-col gap-2 p-3 rounded-lg">
             <div className="flex items-center gap-2 sm:gap-3">
               <Skeleton className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex-shrink-0" />
               <Skeleton className="h-3 w-10 sm:w-12" />
@@ -113,10 +110,7 @@ const BottomRowSkeleton: React.FC = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
       {Array.from({ length: 3 }).map((_, i) => (
-        <div
-          key={i}
-          className="bg-background dark:bg-secondary border border dark:border rounded-xl p-4 sm:p-6"
-        >
+        <div key={i} className="bg-background dark:bg-secondary rounded-xl p-4 sm:p-6">
           <div className="flex items-center gap-2 mb-3 sm:mb-4">
             <Skeleton className="w-5 h-5" />
             <Skeleton className="h-5 w-28 sm:w-32" />

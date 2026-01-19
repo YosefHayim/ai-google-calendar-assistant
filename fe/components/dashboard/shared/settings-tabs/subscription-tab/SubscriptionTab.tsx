@@ -18,8 +18,10 @@ import { CurrentPlanCard } from './components/CurrentPlanCard'
 import { PlanRow } from './components/PlanRow'
 import { PayAsYouGoCard } from './components/PayAsYouGoCard'
 import { PAYMENT_FREQUENCIES, getPlanOrder, getCreditPackSize, type ActionType } from './types'
+import { useTranslation } from 'react-i18next'
 
 export const SubscriptionTab: React.FC = () => {
+  const { t } = useTranslation()
   const { data: access, isLoading: accessLoading, refetch: refetchAccess } = useSubscriptionStatus()
   const { data: plans, isLoading: plansLoading } = usePlans()
   const [selectedFrequency, setSelectedFrequency] = useState<string>('monthly')
@@ -162,7 +164,7 @@ export const SubscriptionTab: React.FC = () => {
       </div>
 
       {isTrialing && !isPerUse && (
-        <div className="flex items-start gap-3 p-3 rounded-lg bg-accent/50 border border-accent">
+        <div className="flex items-start gap-3 p-3 rounded-lg bg-accent/50 border-accent">
           <Info className="h-4 w-4 text-accent-foreground flex-shrink-0 mt-0.5" />
           <p className="text-accent-foreground text-sm">
             Select a plan to continue after your trial. You won't be charged until your trial ends.

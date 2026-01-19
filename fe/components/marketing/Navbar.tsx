@@ -190,7 +190,7 @@ const Navbar = () => {
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed inset-y-0 left-0 w-[80%] max-w-sm z-[80] md:hidden shadow-2xl border-r border dark:border flex flex-col p-6 pt-10 bg-[#ffffff] dark:bg-[#09090b]"
+              className="fixed inset-y-0 left-0 w-[80%] max-w-sm z-[80] md:hidden shadow-2xl border-r flex flex-col p-6 pt-10 bg-[#ffffff] dark:bg-[#09090b]"
             >
               <div className="flex items-center mb-10">
                 <Link href="/" className="flex items-center gap-2" onClick={() => setIsMobileMenuOpen(false)}>
@@ -256,7 +256,7 @@ const Navbar = () => {
                 </a>
               </div>
 
-              <div className="flex flex-col gap-4 pt-8 border-t border-zinc-100 dark:border">
+              <div className="flex flex-col gap-4 pt-8 border-t border-zinc-100 ">
                 {isAuthenticated && !isLoading ? (
                   <>
                     <div className="flex items-center gap-3 mb-2">
@@ -267,8 +267,12 @@ const Navbar = () => {
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-foreground dark:text-primary-foreground truncate">{name}</p>
-                        <p className="text-xs text-muted-foreground dark:text-muted-foreground truncate">{user?.email}</p>
+                        <p className="text-sm font-medium text-foreground dark:text-primary-foreground truncate">
+                          {name}
+                        </p>
+                        <p className="text-xs text-muted-foreground dark:text-muted-foreground truncate">
+                          {user?.email}
+                        </p>
                       </div>
                     </div>
                     <Button

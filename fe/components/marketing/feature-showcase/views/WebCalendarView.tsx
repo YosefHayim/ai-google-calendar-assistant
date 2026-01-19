@@ -1,8 +1,9 @@
 'use client'
 
-import { motion } from 'framer-motion'
 import { Brain, Plus } from 'lucide-react'
+
 import { cn } from '@/lib/utils'
+import { motion } from 'framer-motion'
 
 const EVENTS = [
   { time: '9:00 AM', title: 'Team Standup', duration: '30m', color: 'bg-primary' },
@@ -30,7 +31,7 @@ export const WebCalendarView = () => (
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.2 + i * 0.1 }}
           className={cn(
-            'flex items-center gap-3 p-3 rounded-xl bg-background dark:bg-secondary border border dark:border-zinc-700',
+            'flex items-center gap-3 p-3 rounded-xl bg-background dark:bg-secondary ',
             event.focus && 'ring-2 ring-emerald-500/50',
           )}
         >

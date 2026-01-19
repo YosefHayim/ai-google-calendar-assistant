@@ -81,7 +81,7 @@ const UserCard = ({
 
 export const OpenWithAvatar: Story = {
   render: () => (
-    <div className="w-[280px] bg-muted dark:bg-secondary p-2 rounded-xl border border dark:border">
+    <div className="w-[280px] bg-muted dark:bg-secondary p-2 rounded-xl border ">
       <UserCard
         isOpen={true}
         name="Sarah Johnson"
@@ -94,7 +94,7 @@ export const OpenWithAvatar: Story = {
 
 export const OpenWithoutAvatar: Story = {
   render: () => (
-    <div className="w-[280px] bg-muted dark:bg-secondary p-2 rounded-xl border border dark:border">
+    <div className="w-[280px] bg-muted dark:bg-secondary p-2 rounded-xl border ">
       <UserCard isOpen={true} name="John Smith" email="john.smith@example.com" />
     </div>
   ),
@@ -102,7 +102,7 @@ export const OpenWithoutAvatar: Story = {
 
 export const CollapsedWithAvatar: Story = {
   render: () => (
-    <div className="w-[60px] bg-muted dark:bg-secondary p-2 rounded-xl border border dark:border flex justify-center">
+    <div className="w-[60px] bg-muted dark:bg-secondary p-2 rounded-xl flex justify-center">
       <UserCard
         isOpen={false}
         name="Sarah Johnson"
@@ -115,7 +115,7 @@ export const CollapsedWithAvatar: Story = {
 
 export const CollapsedWithoutAvatar: Story = {
   render: () => (
-    <div className="w-[60px] bg-muted dark:bg-secondary p-2 rounded-xl border border dark:border flex justify-center">
+    <div className="w-[60px] bg-muted dark:bg-secondary p-2 rounded-xl flex justify-center">
       <UserCard isOpen={false} name="John Smith" email="john.smith@example.com" />
     </div>
   ),
@@ -123,7 +123,7 @@ export const CollapsedWithoutAvatar: Story = {
 
 export const LongName: Story = {
   render: () => (
-    <div className="w-[280px] bg-muted dark:bg-secondary p-2 rounded-xl border border dark:border">
+    <div className="w-[280px] bg-muted dark:bg-secondary p-2 rounded-xl border ">
       <UserCard
         isOpen={true}
         name="Alexandra Richardson-Williamson"
@@ -136,14 +136,14 @@ export const LongName: Story = {
 
 export const InSidebar: Story = {
   render: () => (
-    <div className="w-[240px] bg-background dark:bg-secondary border border dark:border rounded-xl">
-      <div className="p-3 border-b border dark:border">
+    <div className="w-[240px] bg-background dark:bg-secondary rounded-xl">
+      <div className="p-3 border-b border ">
         <div className="text-sm font-semibold text-foreground dark:text-primary-foreground">Ask Ally</div>
       </div>
       <div className="flex-1 p-2">
         <div className="h-32 bg-secondary dark:bg-secondary rounded-md mb-2" />
       </div>
-      <div className="border-t border dark:border">
+      <div className="border-t border ">
         <UserCard
           isOpen={true}
           name="Sarah Johnson"
@@ -157,7 +157,7 @@ export const InSidebar: Story = {
 
 export const DarkMode: Story = {
   render: () => (
-    <div className="w-[280px] bg-secondary p-2 rounded-xl border border">
+    <div className="w-[280px] bg-secondary p-2 rounded-xl border">
       <UserCard
         isOpen={true}
         name="Sarah Johnson"

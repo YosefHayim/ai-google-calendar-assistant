@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
+
 import { ConversationList } from '@/components/dashboard/shared/sidebar-components/ConversationList'
 import type { ConversationListItem } from '@/services/chatService'
 import { useState } from 'react'
@@ -12,7 +13,7 @@ const meta: Meta<typeof ConversationList> = {
   },
   decorators: [
     (Story) => (
-      <div className="w-[280px] h-[500px] bg-background dark:bg-secondary border border dark:border rounded-xl overflow-hidden">
+      <div className="w-[280px] h-[500px] bg-background dark:bg-secondary rounded-xl overflow-hidden">
         <Story />
       </div>
     ),
@@ -239,8 +240,8 @@ export const InSidebarContext: Story = {
   args: defaultArgs,
   decorators: [
     (Story) => (
-      <div className="w-[280px] bg-background dark:bg-secondary border border dark:border rounded-xl">
-        <div className="p-4 border-b border dark:border">
+      <div className="w-[280px] bg-background dark:bg-secondary rounded-xl">
+        <div className="p-4 border-b border ">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
               <span className="text-primary text-sm font-bold">A</span>

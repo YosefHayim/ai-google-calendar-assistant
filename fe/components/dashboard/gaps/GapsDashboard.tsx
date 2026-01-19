@@ -34,7 +34,7 @@ const GapsDashboard: React.FC = () => {
   // Calculate analytics
   const analytics = useMemo(() => {
     const totalGaps = gaps.length
-    const highConfidenceGaps = gaps.filter(gap => gap.confidence >= 0.8).length
+    const highConfidenceGaps = gaps.filter((gap) => gap.confidence >= 0.8).length
     const totalPotentialHours = gaps.reduce((sum, gap) => sum + gap.durationMinutes, 0) / 60
     const averageGapSize = totalGaps > 0 ? totalPotentialHours / totalGaps : 0
 
@@ -136,9 +136,7 @@ const GapsDashboard: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{analytics.totalGaps}</div>
-            <p className="text-xs text-muted-foreground">
-              Potential opportunities
-            </p>
+            <p className="text-xs text-muted-foreground">Potential opportunities</p>
           </CardContent>
         </Card>
 
@@ -150,7 +148,8 @@ const GapsDashboard: React.FC = () => {
           <CardContent>
             <div className="text-2xl font-bold">{analytics.highConfidenceGaps}</div>
             <p className="text-xs text-muted-foreground">
-              {analytics.totalGaps > 0 ? Math.round((analytics.highConfidenceGaps / analytics.totalGaps) * 100) : 0}% of total
+              {analytics.totalGaps > 0 ? Math.round((analytics.highConfidenceGaps / analytics.totalGaps) * 100) : 0}% of
+              total
             </p>
           </CardContent>
         </Card>
@@ -162,9 +161,7 @@ const GapsDashboard: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{analytics.totalPotentialHours}h</div>
-            <p className="text-xs text-muted-foreground">
-              Available for scheduling
-            </p>
+            <p className="text-xs text-muted-foreground">Available for scheduling</p>
           </CardContent>
         </Card>
 
@@ -175,9 +172,7 @@ const GapsDashboard: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{analytics.averageGapSize}h</div>
-            <p className="text-xs text-muted-foreground">
-              Average gap duration
-            </p>
+            <p className="text-xs text-muted-foreground">Average gap duration</p>
           </CardContent>
         </Card>
       </motion.div>
@@ -245,18 +240,11 @@ const GapsDashboard: React.FC = () => {
         </TabsContent>
 
         <TabsContent value="analytics" className="space-y-4">
-          <GapsAnalytics
-            gaps={gaps}
-            analyzedRange={analyzedRange}
-            settings={settings}
-          />
+          <GapsAnalytics gaps={gaps} analyzedRange={analyzedRange} settings={settings} />
         </TabsContent>
 
         <TabsContent value="settings" className="space-y-4">
-          <GapsSettings
-            settings={settings}
-            onSettingsChange={() => refetch()}
-          />
+          <GapsSettings settings={settings} onSettingsChange={() => refetch()} />
         </TabsContent>
       </Tabs>
     </div>

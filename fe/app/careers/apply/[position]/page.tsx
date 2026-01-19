@@ -1,16 +1,17 @@
 'use client'
 
-import { useState, use } from 'react'
-import { motion } from 'framer-motion'
-import Link from 'next/link'
-import MarketingLayout from '@/components/marketing/MarketingLayout'
+import { ArrowLeft, Briefcase, CheckCircle2, MapPin, Send, Sparkles, Upload } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { use, useState } from 'react'
+
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
-import { ArrowLeft, Send, Briefcase, MapPin, Upload, Sparkles, CheckCircle2 } from 'lucide-react'
+import Link from 'next/link'
+import MarketingLayout from '@/components/marketing/MarketingLayout'
+import { Textarea } from '@/components/ui/textarea'
+import { motion } from 'framer-motion'
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
@@ -76,7 +77,9 @@ export default function ApplyPage({ params }: PageProps) {
       <MarketingLayout>
         <section className="relative py-24 md:py-32 px-4 sm:px-6">
           <div className="max-w-2xl mx-auto text-center">
-            <h1 className="text-3xl font-medium text-foreground dark:text-primary-foreground mb-4">Position Not Found</h1>
+            <h1 className="text-3xl font-medium text-foreground dark:text-primary-foreground mb-4">
+              Position Not Found
+            </h1>
             <p className="text-muted-foreground dark:text-muted-foreground mb-8">
               The position you are looking for does not exist or is no longer available.
             </p>
@@ -251,7 +254,7 @@ export default function ApplyPage({ params }: PageProps) {
                     <div className="space-y-2">
                       <Label className="text-zinc-700 dark:text-zinc-300">Resume</Label>
                       <div className="relative">
-                        <div className="flex items-center justify-center w-full h-32 border-2 border-dashed border dark:border-zinc-700 rounded-xl bg-muted dark:bg-secondary/50 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors cursor-pointer">
+                        <div className="flex items-center justify-center w-full h-32 border-2 border-dashed  rounded-xl bg-muted dark:bg-secondary/50 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors cursor-pointer">
                           <div className="text-center">
                             <Upload className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
                             <p className="text-sm text-muted-foreground dark:text-muted-foreground">

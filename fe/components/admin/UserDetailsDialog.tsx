@@ -32,6 +32,7 @@ export function UserDetailsDialog({ user, onClose }: UserDetailsDialogProps) {
       const result = await impersonateUser(user.id)
       startImpersonation(result.targetUser, result.impersonationToken)
     } catch (error) {
+      console.error(error)
       toast.error(t('toast.userImpersonationFailed'))
       setIsImpersonating(false)
     }
@@ -64,7 +65,13 @@ export function UserDetailsDialog({ user, onClose }: UserDetailsDialogProps) {
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 rounded-full bg-accent dark:bg-zinc-700 flex items-center justify-center overflow-hidden">
                 {user.avatar_url ? (
-                  <Image src={user.avatar_url} alt="" className="w-16 h-16 rounded-full object-cover" width={64} height={64} />
+                  <Image
+                    src={user.avatar_url}
+                    alt=""
+                    className="w-16 h-16 rounded-full object-cover"
+                    width={64}
+                    height={64}
+                  />
                 ) : (
                   <User className="w-8 h-8 text-muted-foreground" />
                 )}
@@ -165,7 +172,9 @@ export function UserDetailsDialog({ user, onClose }: UserDetailsDialogProps) {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">AI Interactions Used</p>
-                  <p className="font-medium text-foreground dark:text-white">{user.subscription.ai_interactions_used}</p>
+                  <p className="font-medium text-foreground dark:text-white">
+                    {user.subscription.ai_interactions_used}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Credits Remaining</p>

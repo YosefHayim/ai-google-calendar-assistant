@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
+
 import IntegrationsDashboard from '@/components/dashboard/IntegrationsDashboard'
 
 const meta: Meta<typeof IntegrationsDashboard> = {
@@ -89,7 +90,7 @@ export const IntegrationCards: Story = {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="p-6 bg-background dark:bg-secondary rounded-xl border border dark:border">
+        <div className="p-6 bg-background dark:bg-secondary rounded-xl border ">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 bg-primary/10 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
               <span className="text-primary text-xl">T</span>
@@ -104,7 +105,7 @@ export const IntegrationCards: Story = {
           </p>
         </div>
 
-        <div className="p-6 bg-background dark:bg-secondary rounded-xl border border dark:border">
+        <div className="p-6 bg-background dark:bg-secondary rounded-xl border ">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center">
               <span className="text-emerald-500 text-xl">W</span>
@@ -119,7 +120,7 @@ export const IntegrationCards: Story = {
           </p>
         </div>
 
-        <div className="p-6 bg-background dark:bg-secondary rounded-xl border border dark:border">
+        <div className="p-6 bg-background dark:bg-secondary rounded-xl border ">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
               <span className="text-[#4A154B] text-xl">S</span>
@@ -134,7 +135,7 @@ export const IntegrationCards: Story = {
           </p>
         </div>
 
-        <div className="p-6 bg-background dark:bg-secondary rounded-xl border border dark:border">
+        <div className="p-6 bg-background dark:bg-secondary rounded-xl border ">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 bg-primary/10 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
               <span className="text-primary text-xl">G</span>
@@ -150,7 +151,7 @@ export const IntegrationCards: Story = {
         </div>
       </div>
 
-      <div className="p-6 bg-primary/5 dark:bg-primary/10 rounded-xl border border-primary/20">
+      <div className="p-6 bg-primary/5 dark:bg-primary/10 rounded-xl border-primary/20">
         <h3 className="font-semibold text-zinc-800 dark:text-zinc-200 mb-2">Coming Soon</h3>
         <p className="text-sm text-zinc-600 dark:text-muted-foreground">
           Microsoft Outlook, Zoom, Google Meet integrations are in development.
@@ -171,7 +172,7 @@ export const CalendarList: Story = {
   render: () => (
     <div className="max-w-2xl mx-auto p-8 space-y-6">
       <h2 className="text-xl font-bold text-foreground dark:text-primary-foreground">Connected Google Calendars</h2>
-      <div className="bg-background dark:bg-secondary rounded-xl border border dark:border p-6">
+      <div className="bg-background dark:bg-secondary rounded-xl p-6">
         <ul className="space-y-3">
           <li className="flex items-center gap-3">
             <div className="w-3 h-3 rounded-full bg-[#4285F4]" />

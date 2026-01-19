@@ -39,7 +39,9 @@ export function DialogHeaderSection({
           <CalendarDays size={12} style={{ color: calendarColor }} />
         </div>
         <div className="flex-1 text-left">
-          <DialogTitle className="text-xl font-bold text-foreground dark:text-primary-foreground">{calendarName}</DialogTitle>
+          <DialogTitle className="text-xl font-bold text-foreground dark:text-primary-foreground">
+            {calendarName}
+          </DialogTitle>
           <DialogDescription className="sr-only">Details for {calendarName} events</DialogDescription>
 
           <div className="text-xs text-muted-foreground dark:text-muted-foreground flex gap-2">

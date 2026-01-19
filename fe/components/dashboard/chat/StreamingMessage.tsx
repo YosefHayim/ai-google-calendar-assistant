@@ -41,7 +41,7 @@ export const StreamingMessage: React.FC<StreamingMessageProps> = ({ content, cur
     <div className="flex w-full mb-2 justify-start">
       <div className="max-w-[85%] md:max-w-[75%] flex flex-col items-start">
         <div
-          className="px-4 py-3 rounded-md rounded-tl-none text-sm leading-relaxed bg-background dark:bg-secondary border border-border text-foreground shadow-sm"
+          className="px-4 py-3 rounded-md rounded-tl-none text-sm leading-relaxed bg-background dark:bg-secondary border-border text-foreground shadow-sm"
           dir={content ? textDirection : undefined}
         >
           {showToolIndicator && (
@@ -51,9 +51,7 @@ export const StreamingMessage: React.FC<StreamingMessageProps> = ({ content, cur
                 <div className="absolute inset-0 rounded-full bg-primary/20 animate-pulse" />
                 <Loader2 className="w-4 h-4 animate-spin text-primary" />
               </div>
-              <span className="text-xs font-medium text-muted-foreground">
-                {getToolDisplayName(currentTool)}
-              </span>
+              <span className="text-xs font-medium text-muted-foreground">{getToolDisplayName(currentTool)}</span>
             </div>
           )}
 

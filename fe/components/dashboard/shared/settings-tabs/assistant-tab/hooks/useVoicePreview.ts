@@ -2,6 +2,7 @@ import type { PlaybackSpeed, TTSVoice } from '@/lib/validations/preferences'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { toast } from 'sonner'
+import { useTranslation } from 'react-i18next'
 import { voiceService } from '@/services/voice.service'
 
 interface UseVoicePreviewOptions {
@@ -16,6 +17,7 @@ interface UseVoicePreviewReturn {
 }
 
 export function useVoicePreview({ previewText }: UseVoicePreviewOptions): UseVoicePreviewReturn {
+  const { t } = useTranslation()
   const audioContextRef = useRef<AudioContext | null>(null)
   const sourceRef = useRef<AudioBufferSourceNode | null>(null)
   const [isPlaying, setIsPlaying] = useState(false)

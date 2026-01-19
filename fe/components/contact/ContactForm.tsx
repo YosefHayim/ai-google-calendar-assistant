@@ -1,15 +1,15 @@
 'use client'
 
-import React, { useState, useCallback } from 'react'
-import { useTranslation } from 'react-i18next'
-import { Upload, X, CheckCircle, AlertCircle, Loader2 } from 'lucide-react'
-import { usePostHog } from 'posthog-js/react'
+import { AlertCircle, CheckCircle, Loader2, Upload, X } from 'lucide-react'
+import React, { useCallback, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { cn } from '@/lib/utils'
 import { apiClient } from '@/lib/api/client'
+import { cn } from '@/lib/utils'
+import { usePostHog } from 'posthog-js/react'
+import { useTranslation } from 'react-i18next'
 
 type FormState = {
   name: string
@@ -181,7 +181,9 @@ export const ContactForm: React.FC = () => {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center">
         <CheckCircle className="w-16 h-16 text-green-600 mb-4" />
-        <h3 className="text-2xl font-medium text-foreground dark:text-primary-foreground mb-2">{t('contact.form.success')}</h3>
+        <h3 className="text-2xl font-medium text-foreground dark:text-primary-foreground mb-2">
+          {t('contact.form.success')}
+        </h3>
         <p className="text-muted-foreground dark:text-muted-foreground mb-6">
           We&apos;ve received your message and will get back to you soon.
         </p>
@@ -244,7 +246,7 @@ export const ContactForm: React.FC = () => {
           value={form.message}
           onChange={handleInputChange}
           disabled={submissionState === 'loading'}
-          className="flex w-full rounded-lg border border dark:border bg-background px-3 py-2 text-sm text-foreground shadow-sm shadow-black/5 transition-shadow placeholder:text-muted-foreground/70 focus-visible:border-primary focus-visible:outline-none focus-visible:ring-[0.01px] focus-visible:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-50 resize-none"
+          className="flex w-full rounded-lg bg-background px-3 py-2 text-sm text-foreground shadow-sm shadow-black/5 transition-shadow placeholder:text-muted-foreground/70 focus-visible:border-primary focus-visible:outline-none focus-visible:ring-[0.01px] focus-visible:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-50 resize-none"
         />
       </div>
 
@@ -256,7 +258,7 @@ export const ContactForm: React.FC = () => {
           onDrop={handleDrop}
           className={cn(
             'border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors',
-            isDragOver ? 'border-primary bg-primary/5' : 'border dark:border hover:border-primary/50',
+            isDragOver ? 'border-primary bg-primary/5' : 'hover:border-primary/50',
             submissionState === 'loading' && 'opacity-50 cursor-not-allowed',
           )}
         >
@@ -271,7 +273,9 @@ export const ContactForm: React.FC = () => {
           />
           <label htmlFor="file-upload" className="cursor-pointer">
             <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
-            <p className="text-sm text-muted-foreground dark:text-muted-foreground">Drag and drop files here, or click to browse</p>
+            <p className="text-sm text-muted-foreground dark:text-muted-foreground">
+              Drag and drop files here, or click to browse
+            </p>
             <p className="text-xs text-muted-foreground mt-1">
               Max {MAX_FILES} files, {MAX_FILE_SIZE_MB}MB each
             </p>

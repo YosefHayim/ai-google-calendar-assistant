@@ -1,7 +1,7 @@
 'use client'
 
-import MarketingLayout from '@/components/marketing/MarketingLayout'
 import Link from 'next/link'
+import MarketingLayout from '@/components/marketing/MarketingLayout'
 
 export default function PrivacyPolicyPage() {
   const lastUpdated = 'January 11, 2026'
@@ -25,7 +25,9 @@ export default function PrivacyPolicyPage() {
           <div className="prose prose-zinc dark:prose-invert max-w-none">
             {/* Introduction */}
             <section className="mb-12">
-              <h2 className="text-2xl font-medium text-foreground dark:text-primary-foreground mb-4">1. Introduction</h2>
+              <h2 className="text-2xl font-medium text-foreground dark:text-primary-foreground mb-4">
+                1. Introduction
+              </h2>
               <p className="text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4">
                 Welcome to Ally (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;). Ally Technologies Inc. operates
                 the Ally application and related services (collectively, the &quot;Service&quot;). This Privacy Policy
@@ -39,8 +41,10 @@ export default function PrivacyPolicyPage() {
 
             {/* Contact Information */}
             <section className="mb-12">
-              <h2 className="text-2xl font-medium text-foreground dark:text-primary-foreground mb-4">2. Contact Information</h2>
-              <div className="bg-muted dark:bg-secondary/50 rounded-xl p-6 border border dark:border">
+              <h2 className="text-2xl font-medium text-foreground dark:text-primary-foreground mb-4">
+                2. Contact Information
+              </h2>
+              <div className="bg-muted dark:bg-secondary/50 rounded-xl p-6 border ">
                 <p className="text-zinc-600 dark:text-zinc-300 mb-2">
                   <strong>Company:</strong> Ally Technologies Inc.
                 </p>
@@ -61,7 +65,9 @@ export default function PrivacyPolicyPage() {
 
             {/* Information We Collect */}
             <section className="mb-12">
-              <h2 className="text-2xl font-medium text-foreground dark:text-primary-foreground mb-4">3. Information We Collect</h2>
+              <h2 className="text-2xl font-medium text-foreground dark:text-primary-foreground mb-4">
+                3. Information We Collect
+              </h2>
 
               <h3 className="text-xl font-medium text-foreground dark:text-primary-foreground mb-3 mt-6">
                 3.1 Information You Provide
@@ -114,8 +120,10 @@ export default function PrivacyPolicyPage() {
             </section>
 
             {/* Google User Data - CRITICAL SECTION */}
-            <section className="mb-12 bg-primary/5 dark:bg-blue-950/30 rounded-xl p-6 border border-primary/20 dark:border-blue-800">
-              <h2 className="text-2xl font-medium text-foreground dark:text-primary-foreground mb-4">4. Google User Data</h2>
+            <section className="mb-12 bg-primary/5 dark:bg-blue-950/30 rounded-xl p-6 border-primary/20 -blue-800">
+              <h2 className="text-2xl font-medium text-foreground dark:text-primary-foreground mb-4">
+                4. Google User Data
+              </h2>
               <p className="text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4">
                 This section specifically addresses how Ally accesses, uses, stores, and shares Google user data
                 obtained through Google OAuth authentication.
@@ -129,28 +137,30 @@ export default function PrivacyPolicyPage() {
                 of our AI calendar assistant:
               </p>
 
-              <h4 className="text-lg font-medium text-foreground dark:text-primary-foreground mb-2 mt-4">Authentication Scopes</h4>
+              <h4 className="text-lg font-medium text-foreground dark:text-primary-foreground mb-2 mt-4">
+                Authentication Scopes
+              </h4>
               <div className="overflow-x-auto mb-4">
                 <table className="w-full text-sm text-zinc-600 dark:text-zinc-300 border-collapse">
                   <thead>
-                    <tr className="border-b border dark:border-zinc-700">
+                    <tr className="border-b ">
                       <th className="text-left py-2 pr-4 font-medium">Scope</th>
                       <th className="text-left py-2 font-medium">Purpose & Justification</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr className="border-b border-zinc-100 dark:border">
+                    <tr className="border-b border-zinc-100 ">
                       <td className="py-2 pr-4 font-mono text-xs">openid</td>
                       <td className="py-2">Required for secure authentication using OpenID Connect protocol</td>
                     </tr>
-                    <tr className="border-b border-zinc-100 dark:border">
+                    <tr className="border-b border-zinc-100 ">
                       <td className="py-2 pr-4 font-mono text-xs">email</td>
                       <td className="py-2">
                         Access your email address to create your account and send important notifications about your
                         calendar
                       </td>
                     </tr>
-                    <tr className="border-b border-zinc-100 dark:border">
+                    <tr className="border-b border-zinc-100 ">
                       <td className="py-2 pr-4 font-mono text-xs">profile</td>
                       <td className="py-2">
                         Access your name and profile picture to personalize your Ally dashboard experience
@@ -160,66 +170,68 @@ export default function PrivacyPolicyPage() {
                 </table>
               </div>
 
-              <h4 className="text-lg font-medium text-foreground dark:text-primary-foreground mb-2 mt-4">Calendar Access Scopes</h4>
+              <h4 className="text-lg font-medium text-foreground dark:text-primary-foreground mb-2 mt-4">
+                Calendar Access Scopes
+              </h4>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm text-zinc-600 dark:text-zinc-300 border-collapse">
                   <thead>
-                    <tr className="border-b border dark:border-zinc-700">
+                    <tr className="border-b ">
                       <th className="text-left py-2 pr-4 font-medium">Scope</th>
                       <th className="text-left py-2 font-medium">Purpose & Justification</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr className="border-b border-zinc-100 dark:border">
+                    <tr className="border-b border-zinc-100 ">
                       <td className="py-2 pr-4 font-mono text-xs">calendar</td>
                       <td className="py-2">
                         <strong>Full calendar access:</strong> Required to create, edit, move, and delete events when
                         you instruct Ally via chat. This is the core functionality of our AI assistant.
                       </td>
                     </tr>
-                    <tr className="border-b border-zinc-100 dark:border">
+                    <tr className="border-b border-zinc-100 ">
                       <td className="py-2 pr-4 font-mono text-xs">calendar.events</td>
                       <td className="py-2">
                         <strong>Event management:</strong> Enables Ally to create new events, update existing ones, and
                         delete events across all your calendars based on your natural language instructions.
                       </td>
                     </tr>
-                    <tr className="border-b border-zinc-100 dark:border">
+                    <tr className="border-b border-zinc-100 ">
                       <td className="py-2 pr-4 font-mono text-xs">calendar.events.owned</td>
                       <td className="py-2">
                         <strong>Your owned events:</strong> Manage events that you own (created by you), ensuring Ally
                         can properly handle event modifications and deletions.
                       </td>
                     </tr>
-                    <tr className="border-b border-zinc-100 dark:border">
+                    <tr className="border-b border-zinc-100 ">
                       <td className="py-2 pr-4 font-mono text-xs">calendar.events.owned.readonly</td>
                       <td className="py-2">
                         <strong>Read your owned events:</strong> View events you created to provide analytics, insights,
                         and AI-powered schedule optimization suggestions.
                       </td>
                     </tr>
-                    <tr className="border-b border-zinc-100 dark:border">
+                    <tr className="border-b border-zinc-100 ">
                       <td className="py-2 pr-4 font-mono text-xs">calendar.readonly</td>
                       <td className="py-2">
                         <strong>View calendar data:</strong> Read your calendar to understand your schedule, detect
                         conflicts, find available time slots, and provide intelligent scheduling suggestions.
                       </td>
                     </tr>
-                    <tr className="border-b border-zinc-100 dark:border">
+                    <tr className="border-b border-zinc-100 ">
                       <td className="py-2 pr-4 font-mono text-xs">calendar.calendarlist</td>
                       <td className="py-2">
                         <strong>Calendar list access:</strong> View and manage your list of calendars so you can choose
                         which calendars Ally should work with.
                       </td>
                     </tr>
-                    <tr className="border-b border-zinc-100 dark:border">
+                    <tr className="border-b border-zinc-100 ">
                       <td className="py-2 pr-4 font-mono text-xs">calendar.calendarlist.readonly</td>
                       <td className="py-2">
                         <strong>View calendar list:</strong> See all your calendars (work, personal, shared) to display
                         them in your dashboard and let you select which ones to manage.
                       </td>
                     </tr>
-                    <tr className="border-b border-zinc-100 dark:border">
+                    <tr className="border-b border-zinc-100 ">
                       <td className="py-2 pr-4 font-mono text-xs">calendar.freebusy</td>
                       <td className="py-2">
                         <strong>Free/busy information:</strong> Check when you&apos;re available or busy to help
@@ -237,7 +249,7 @@ export default function PrivacyPolicyPage() {
                 </table>
               </div>
 
-              <div className="bg-primary/5 dark:bg-blue-950/30 rounded-lg p-4 border border-primary/20 dark:border-blue-800 mt-4">
+              <div className="bg-primary/5 dark:bg-blue-950/30 rounded-lg p-4 border-primary/20 -blue-800 mt-4">
                 <p className="text-zinc-700 dark:text-zinc-200 text-sm">
                   <strong>Why we need these permissions:</strong> Ally is a full-featured AI calendar assistant that
                   manages your schedule through natural language. To understand commands like &quot;Move my 3pm meeting
@@ -284,7 +296,7 @@ export default function PrivacyPolicyPage() {
               <h3 className="text-xl font-medium text-foreground dark:text-primary-foreground mb-3 mt-6">
                 4.4 No Human Access to Your Data
               </h3>
-              <div className="bg-green-50 dark:bg-green-950/30 rounded-lg p-4 border border-green-200 dark:border-green-800 mb-4">
+              <div className="bg-green-50 dark:bg-green-950/30 rounded-lg p-4 border-green-200 -green-800 mb-4">
                 <p className="text-zinc-700 dark:text-zinc-200 font-medium">
                   Ally employees and contractors do not read your Google Calendar data unless:
                 </p>
@@ -298,7 +310,7 @@ export default function PrivacyPolicyPage() {
               <h3 className="text-xl font-medium text-foreground dark:text-primary-foreground mb-3 mt-6">
                 4.5 Google API Services User Data Policy Compliance
               </h3>
-              <div className="bg-amber-50 dark:bg-amber-950/30 rounded-lg p-4 border border-amber-200 dark:border-amber-800">
+              <div className="bg-amber-50 dark:bg-amber-950/30 rounded-lg p-4 border-amber-200 -amber-800">
                 <p className="text-zinc-700 dark:text-zinc-200 leading-relaxed">
                   <strong>
                     Ally&apos;s use and transfer to any other app of information received from Google APIs will adhere
@@ -342,7 +354,7 @@ export default function PrivacyPolicyPage() {
               </p>
 
               <div className="space-y-4">
-                <div className="bg-muted dark:bg-secondary/50 rounded-lg p-4 border border dark:border">
+                <div className="bg-muted dark:bg-secondary/50 rounded-lg p-4 border ">
                   <h4 className="font-medium text-foreground dark:text-primary-foreground mb-2">OpenAI</h4>
                   <p className="text-sm text-zinc-600 dark:text-zinc-300">
                     <strong>Purpose:</strong> AI processing of your messages and calendar context to generate
@@ -354,7 +366,7 @@ export default function PrivacyPolicyPage() {
                   </p>
                 </div>
 
-                <div className="bg-muted dark:bg-secondary/50 rounded-lg p-4 border border dark:border">
+                <div className="bg-muted dark:bg-secondary/50 rounded-lg p-4 border ">
                   <h4 className="font-medium text-foreground dark:text-primary-foreground mb-2">Supabase</h4>
                   <p className="text-sm text-zinc-600 dark:text-zinc-300">
                     <strong>Purpose:</strong> Secure database hosting and authentication services.
@@ -365,7 +377,7 @@ export default function PrivacyPolicyPage() {
                   </p>
                 </div>
 
-                <div className="bg-muted dark:bg-secondary/50 rounded-lg p-4 border border dark:border">
+                <div className="bg-muted dark:bg-secondary/50 rounded-lg p-4 border ">
                   <h4 className="font-medium text-foreground dark:text-primary-foreground mb-2">Lemon Squeezy</h4>
                   <p className="text-sm text-zinc-600 dark:text-zinc-300">
                     <strong>Purpose:</strong> Payment processing for subscription plans.
@@ -375,7 +387,7 @@ export default function PrivacyPolicyPage() {
                   </p>
                 </div>
 
-                <div className="bg-muted dark:bg-secondary/50 rounded-lg p-4 border border dark:border">
+                <div className="bg-muted dark:bg-secondary/50 rounded-lg p-4 border ">
                   <h4 className="font-medium text-foreground dark:text-primary-foreground mb-2">Telegram Bot API</h4>
                   <p className="text-sm text-zinc-600 dark:text-zinc-300">
                     <strong>Purpose:</strong> Enable chat-based calendar management via Telegram.
@@ -385,8 +397,10 @@ export default function PrivacyPolicyPage() {
                   </p>
                 </div>
 
-                <div className="bg-muted dark:bg-secondary/50 rounded-lg p-4 border border dark:border">
-                  <h4 className="font-medium text-foreground dark:text-primary-foreground mb-2">WhatsApp Business API (Meta)</h4>
+                <div className="bg-muted dark:bg-secondary/50 rounded-lg p-4 border ">
+                  <h4 className="font-medium text-foreground dark:text-primary-foreground mb-2">
+                    WhatsApp Business API (Meta)
+                  </h4>
                   <p className="text-sm text-zinc-600 dark:text-zinc-300">
                     <strong>Purpose:</strong> Enable chat-based calendar management via WhatsApp messaging.
                   </p>
@@ -417,7 +431,9 @@ export default function PrivacyPolicyPage() {
 
             {/* Data Retention */}
             <section className="mb-12">
-              <h2 className="text-2xl font-medium text-foreground dark:text-primary-foreground mb-4">7. Data Retention</h2>
+              <h2 className="text-2xl font-medium text-foreground dark:text-primary-foreground mb-4">
+                7. Data Retention
+              </h2>
               <ul className="list-disc pl-6 text-zinc-600 dark:text-zinc-300 space-y-2">
                 <li>
                   <strong>Account Data:</strong> Retained while your account is active and for up to 30 days after
@@ -542,7 +558,7 @@ export default function PrivacyPolicyPage() {
               <p className="text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4">
                 If you have any questions about this Privacy Policy or our data practices, please contact us:
               </p>
-              <div className="bg-muted dark:bg-secondary/50 rounded-xl p-6 border border dark:border">
+              <div className="bg-muted dark:bg-secondary/50 rounded-xl p-6 border ">
                 <p className="text-zinc-600 dark:text-zinc-300 mb-2">
                   <strong>Email:</strong>{' '}
                   <a href="mailto:hello@askally.io" className="text-primary hover:underline">
@@ -556,7 +572,7 @@ export default function PrivacyPolicyPage() {
             </section>
 
             {/* Back to Home */}
-            <div className="pt-8 border-t border dark:border">
+            <div className="pt-8 border-t border ">
               <Link href="/" className="text-primary hover:underline">
                 &larr; Back to Home
               </Link>

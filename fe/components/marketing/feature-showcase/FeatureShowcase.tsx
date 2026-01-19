@@ -1,6 +1,5 @@
 'use client'
 
-import React from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { SlackIcon, TelegramIcon, WhatsAppIcon } from '@/components/shared/Icons'
@@ -10,6 +9,7 @@ import { FEATURES } from './data/features'
 import { PhoneMockup } from './components/PhoneMockup'
 import type { Platform } from './types'
 import { PlatformToggle } from './components/PlatformToggle'
+import React from 'react'
 import { SlackChat } from './components/SlackChat'
 import { TelegramChat } from './components/TelegramChat'
 import { WhatsAppChat } from './components/WhatsAppChat'
@@ -46,13 +46,13 @@ export const FeatureShowcase = React.memo(function FeatureShowcase() {
         <div className="relative" onMouseEnter={() => setIsPaused(true)} onMouseLeave={() => setIsPaused(false)}>
           <button
             onClick={prevSlide}
-            className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-background/80 dark:bg-secondary/80 backdrop-blur-sm shadow-xl flex items-center justify-center text-zinc-600 dark:text-muted-foreground hover:text-primary hover:scale-110 transition-all border border dark:border-zinc-700"
+            className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-background/80 dark:bg-secondary/80 backdrop-blur-sm shadow-xl flex items-center justify-center text-zinc-600 dark:text-muted-foreground hover:text-primary hover:scale-110 transition-all "
           >
             <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
           </button>
           <button
             onClick={nextSlide}
-            className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-background/80 dark:bg-secondary/80 backdrop-blur-sm shadow-xl flex items-center justify-center text-zinc-600 dark:text-muted-foreground hover:text-primary hover:scale-110 transition-all border border dark:border-zinc-700"
+            className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-background/80 dark:bg-secondary/80 backdrop-blur-sm shadow-xl flex items-center justify-center text-zinc-600 dark:text-muted-foreground hover:text-primary hover:scale-110 transition-all "
           >
             <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
           </button>

@@ -241,7 +241,7 @@ export function HelpCenterPage() {
               <a
                 key={topic.title}
                 href={topic.href}
-                className="flex items-center gap-3 p-4 rounded-xl bg-background dark:bg-secondary border border dark:border hover:border-primary/50 dark:hover:border-primary/50 transition-colors"
+                className="flex items-center gap-3 p-4 rounded-xl bg-background dark:bg-secondary hover:border-primary/50 dark:hover:border-primary/50 transition-colors"
               >
                 <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
                   <topic.icon className="w-5 h-5 text-primary" />
@@ -263,21 +263,23 @@ export function HelpCenterPage() {
                 onClick={() => setActiveCategory(activeCategory === category.id ? null : category.id)}
                 className={`text-left p-6 rounded-xl border transition-all ${
                   activeCategory === category.id
-                    ? 'bg-primary/5 border-primary/50 dark:border-primary/50'
-                    : 'bg-background dark:bg-secondary border dark:border hover:border-zinc-300 dark:hover:border-zinc-700'
+                    ? 'bg-primary/5 border-primary/50 -primary/50'
+                    : 'bg-background dark:bg-secondary hover:border-zinc-300 dark:hover:border-zinc-700'
                 }`}
               >
                 <div className={`w-12 h-12 rounded-xl ${category.color} flex items-center justify-center mb-4`}>
                   <category.icon className="w-6 h-6" />
                 </div>
-                <h3 className="text-lg font-medium text-foreground dark:text-primary-foreground mb-1">{category.title}</h3>
+                <h3 className="text-lg font-medium text-foreground dark:text-primary-foreground mb-1">
+                  {category.title}
+                </h3>
                 <p className="text-sm text-muted-foreground dark:text-muted-foreground">{category.description}</p>
               </button>
             ))}
           </div>
 
           {activeCategory && FAQ_DATA[activeCategory as keyof typeof FAQ_DATA] && (
-            <div className="bg-background dark:bg-secondary rounded-2xl border border dark:border p-6 md:p-8">
+            <div className="bg-background dark:bg-secondary rounded-2xl p-6 md:p-8">
               <h3 className="text-xl font-medium text-foreground dark:text-primary-foreground mb-6">
                 {HELP_CATEGORIES.find((c) => c.id === activeCategory)?.title} FAQs
               </h3>
@@ -286,12 +288,14 @@ export function HelpCenterPage() {
                   <AccordionItem
                     key={index}
                     value={`item-${index}`}
-                    className="border border dark:border rounded-lg px-4 data-[state=open]:bg-muted dark:data-[state=open]:bg-secondary/50"
+                    className="rounded-lg px-4 data-[state=open]:bg-muted dark:data-[state=open]:bg-secondary/50"
                   >
                     <AccordionTrigger className="text-left text-foreground dark:text-primary-foreground hover:no-underline py-4">
                       {faq.question}
                     </AccordionTrigger>
-                    <AccordionContent className="text-muted-foreground dark:text-muted-foreground pb-4">{faq.answer}</AccordionContent>
+                    <AccordionContent className="text-muted-foreground dark:text-muted-foreground pb-4">
+                      {faq.answer}
+                    </AccordionContent>
                   </AccordionItem>
                 ))}
               </Accordion>
@@ -305,7 +309,9 @@ export function HelpCenterPage() {
           <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-6">
             <MessageCircle className="w-8 h-8 text-primary" />
           </div>
-          <h2 className="text-2xl md:text-3xl font-medium text-foreground dark:text-primary-foreground mb-4">Still need help?</h2>
+          <h2 className="text-2xl md:text-3xl font-medium text-foreground dark:text-primary-foreground mb-4">
+            Still need help?
+          </h2>
           <p className="text-muted-foreground dark:text-muted-foreground mb-8 max-w-xl mx-auto">
             Can&apos;t find what you&apos;re looking for? Our support team is here to help you with any questions.
           </p>

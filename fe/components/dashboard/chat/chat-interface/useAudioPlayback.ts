@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { toast } from 'sonner'
+import { useTranslation } from 'react-i18next'
 import { ttsCache } from '@/services/tts-cache.service'
 
 type VoiceType = 'alloy' | 'echo' | 'fable' | 'onyx' | 'nova' | 'shimmer'
@@ -13,6 +14,7 @@ interface AudioPlaybackOptions {
 }
 
 export function useAudioPlayback(options: AudioPlaybackOptions = {}) {
+  const { t } = useTranslation()
   const [isSpeaking, setIsSpeaking] = useState(false)
   const [speakingMessageId, setSpeakingMessageId] = useState<string | null>(null)
 

@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
+
 import Footer from '@/components/marketing/Footer'
 
 const meta: Meta<typeof Footer> = {
@@ -61,17 +62,16 @@ export const WithPageContext: Story = {
       <div className="min-h-screen flex flex-col bg-background dark:bg-[#030303]">
         <main className="flex-1 p-8">
           <div className="max-w-4xl mx-auto space-y-8">
-            <h1 className="text-3xl font-bold text-foreground dark:text-primary-foreground">Ask Ally - AI Calendar Assistant</h1>
+            <h1 className="text-3xl font-bold text-foreground dark:text-primary-foreground">
+              Ask Ally - AI Calendar Assistant
+            </h1>
             <p className="text-zinc-600 dark:text-muted-foreground">
               Transform your calendar management with natural language. Schedule meetings, block focus time, and get
               intelligent insights - all through simple conversation.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {['Voice Commands', 'Multi-Platform', 'Smart Analytics'].map((feature) => (
-                <div
-                  key={feature}
-                  className="p-6 bg-muted dark:bg-secondary rounded-xl border border dark:border"
-                >
+                <div key={feature} className="p-6 bg-muted dark:bg-secondary rounded-xl border ">
                   <h3 className="font-semibold text-foreground dark:text-primary-foreground">{feature}</h3>
                   <p className="text-sm text-muted-foreground dark:text-muted-foreground mt-2">
                     Experience the future of calendar management.

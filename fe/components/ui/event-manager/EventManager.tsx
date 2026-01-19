@@ -194,9 +194,7 @@ export function EventManager({
       {/* Mobile Layout - Compact header */}
       <div className="block md:hidden space-y-3">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold truncate min-w-0 flex-1 mr-2">
-            {getDateLabel(view, currentDate)}
-          </h2>
+          <h2 className="text-lg font-semibold truncate min-w-0 flex-1 mr-2">{getDateLabel(view, currentDate)}</h2>
           <div className="flex items-center gap-1">
             <Button variant="outline" size="icon" onClick={() => navigateDate('prev')} className="h-8 w-8">
               <ChevronLeft className="h-3 w-3" />

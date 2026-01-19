@@ -19,19 +19,17 @@ const statusConfig: Record<TransactionStatus, { label: string; icon: typeof Chec
   succeeded: {
     label: 'Paid',
     icon: CheckCircle2,
-    className:
-      'bg-primary/5 text-primary border border-primary/20',
+    className: 'bg-primary/5 text-primary border-primary/20',
   },
   pending: {
     label: 'Pending',
     icon: Clock,
-    className:
-      'bg-yellow-50 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 border border-yellow-200 dark:border-yellow-800',
+    className: 'bg-yellow-50 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 border-yellow-200 -yellow-800',
   },
   failed: {
     label: 'Failed',
     icon: XCircle,
-    className: 'bg-destructive/5 text-destructive border border-destructive/20',
+    className: 'bg-destructive/5 text-destructive border-destructive/20',
   },
 }
 
@@ -59,7 +57,7 @@ function MobileTransactionCard({
   onToggle: () => void
 }) {
   return (
-    <div className="bg-background dark:bg-secondary border border dark:border rounded-lg overflow-hidden">
+    <div className="bg-background dark:bg-secondary rounded-lg overflow-hidden">
       <Button
         type="button"
         variant="ghost"
@@ -104,7 +102,9 @@ function MobileTransactionCard({
               Download Invoice
             </Button>
           ) : (
-            <span className="block text-center text-sm text-muted-foreground dark:text-muted-foreground">No invoice available</span>
+            <span className="block text-center text-sm text-muted-foreground dark:text-muted-foreground">
+              No invoice available
+            </span>
           )}
         </div>
       )}

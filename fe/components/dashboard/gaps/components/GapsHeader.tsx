@@ -52,7 +52,8 @@ export function GapsHeader({ analyzedRange, totalGaps, onRefresh, isRefreshing }
           <div className="flex items-center gap-2">
             <Calendar className="h-4 w-4" />
             <span>
-              Analyzing period: {formatDate(new Date(analyzedRange.start), 'SHORT')} - {formatDate(new Date(analyzedRange.end), 'SHORT')}
+              Analyzing period: {formatDate(new Date(analyzedRange.start), 'SHORT')} -{' '}
+              {formatDate(new Date(analyzedRange.end), 'SHORT')}
             </span>
           </div>
           <div className="hidden sm:block text-muted-foreground/60">•</div>

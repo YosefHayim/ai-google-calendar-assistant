@@ -14,7 +14,7 @@ interface TimelineVisualizationProps {
 
 export function TimelineVisualization({ events, calendarMap }: TimelineVisualizationProps) {
   return (
-    <div className="px-6 py-4 border-b border dark:border">
+    <div className="px-6 py-4 border-b border ">
       <div className="flex items-center gap-2 mb-2">
         <span className="text-xs font-medium text-zinc-600 dark:text-muted-foreground">Day Overview</span>
       </div>

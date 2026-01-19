@@ -567,7 +567,8 @@ export const he: TranslationShape = {
     timeFormat12h: '12 שעות (AM/PM)',
     timeFormat24h: '24 שעות',
     realTimeLocation: 'מיקום בזמן אמת',
-    realTimeLocationTooltip: 'כאשר מופעל, Ally משתמש במיקום הנוכחי שלך כדי לספק הקשר ליצירת אירועים (למשל, הצעת מקומות בקרבת מקום)',
+    realTimeLocationTooltip:
+      'כאשר מופעל, Ally משתמש במיקום הנוכחי שלך כדי לספק הקשר ליצירת אירועים (למשל, הצעת מקומות בקרבת מקום)',
     memberSince: 'חבר מ',
     languageTooltip: 'בחר את השפה המועדפת עליך לממשק',
     general: 'כללי',
@@ -1046,7 +1047,7 @@ export const he: TranslationShape = {
       potentialHours: 'שעות פוטנציאליות',
       avgGapSize: 'גודל פערים ממוצע',
       analysisPeriod: 'תקופת ניתוח',
-      chat: 'צ\'אט',
+      chat: "צ'אט",
       gaps: 'פערים',
       analytics: 'ניתוחים',
       settings: 'הגדרות',
@@ -1065,7 +1066,8 @@ export const he: TranslationShape = {
       noActiveCalendarSourcesFound: 'לא נמצאו מקורות לוח שנה פעילים.',
       connectWhatsApp: 'חבר WhatsApp',
       neuralLinks: 'קישורים נוירונים',
-      executiveGradeAI: 'עוזר הAI ברמה מנהלתית שנועד לבעלי עסקים להגן על עבודתם העמוקה. מגישה חקירה חינמית לכוח מנהלתית בלתי מוגבל. בנוי על פרוטוקול הנוירונים של Ally.',
+      executiveGradeAI:
+        'עוזר הAI ברמה מנהלתית שנועד לבעלי עסקים להגן על עבודתם העמוקה. מגישה חקירה חינמית לכוח מנהלתית בלתי מוגבל. בנוי על פרוטוקול הנוירונים של Ally.',
       systemOnline: 'כל המערכות תקינות',
       systemOffline: 'המערכת לא זמינה',
       systemChecking: 'בודק סטטוס...',

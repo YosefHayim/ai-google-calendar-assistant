@@ -92,7 +92,7 @@ export default function AdminAffiliatesPage() {
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="border-emerald-100 bg-gradient-to-br from-emerald-50 to-white p-5 dark:border-emerald-900/30 dark:from-emerald-950/20 dark:to-zinc-900">
+        <Card className="border-emerald-100 bg-gradient-to-br from-emerald-50 to-white p-5 -emerald-900/30 dark:from-emerald-950/20 dark:to-zinc-900">
           <div className="flex items-center gap-3">
             <div className="rounded-xl bg-emerald-100 p-2.5 dark:bg-emerald-900/40">
               <Percent className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
@@ -106,7 +106,7 @@ export default function AdminAffiliatesPage() {
           </div>
         </Card>
 
-        <Card className="border-blue-100 bg-gradient-to-br from-blue-50 to-white p-5 dark:border-blue-900/30 dark:from-blue-950/20 dark:to-zinc-900">
+        <Card className="border-blue-100 bg-gradient-to-br from-blue-50 to-white p-5 -blue-900/30 dark:from-blue-950/20 dark:to-zinc-900">
           <div className="flex items-center gap-3">
             <div className="rounded-xl bg-primary/10 p-2.5 dark:bg-blue-900/40">
               <Clock className="h-5 w-5 text-primary dark:text-blue-400" />
@@ -120,7 +120,7 @@ export default function AdminAffiliatesPage() {
           </div>
         </Card>
 
-        <Card className="border-amber-100 bg-gradient-to-br from-amber-50 to-white p-5 dark:border-amber-900/30 dark:from-amber-950/20 dark:to-zinc-900">
+        <Card className="border-amber-100 bg-gradient-to-br from-amber-50 to-white p-5 -amber-900/30 dark:from-amber-950/20 dark:to-zinc-900">
           <div className="flex items-center gap-3">
             <div className="rounded-xl bg-amber-100 p-2.5 dark:bg-amber-900/40">
               <DollarSign className="h-5 w-5 text-amber-700 dark:text-amber-400" />
@@ -134,14 +134,16 @@ export default function AdminAffiliatesPage() {
           </div>
         </Card>
 
-        <Card className="border-violet-100 bg-gradient-to-br from-violet-50 to-white p-5 dark:border-violet-900/30 dark:from-violet-950/20 dark:to-zinc-900">
+        <Card className="border-violet-100 bg-gradient-to-br from-violet-50 to-white p-5 -violet-900/30 dark:from-violet-950/20 dark:to-zinc-900">
           <div className="flex items-center gap-3">
             <div className="rounded-xl bg-violet-100 p-2.5 dark:bg-violet-900/40">
               <Users2 className="h-5 w-5 text-violet-600 dark:text-violet-400" />
             </div>
             <div>
               <p className="text-sm text-muted-foreground dark:text-muted-foreground">Total Affiliates</p>
-              <p className="font-bold text-2xl text-foreground dark:text-white">{isLoading ? '—' : (data?.total ?? 0)}</p>
+              <p className="font-bold text-2xl text-foreground dark:text-white">
+                {isLoading ? '—' : (data?.total ?? 0)}
+              </p>
             </div>
           </div>
         </Card>
@@ -188,7 +190,7 @@ export default function AdminAffiliatesPage() {
             />
           </div>
           <select
-            className="rounded-md border border bg-background px-3 py-2 text-sm dark:border-zinc-700 dark:bg-secondary"
+            className="rounded-md border bg-background px-3 py-2 text-sm -zinc-700 dark:bg-secondary"
             onChange={(e) => {
               setStatusFilter(e.target.value as AffiliateStatus | '')
               setPage(1)
@@ -212,20 +214,32 @@ export default function AdminAffiliatesPage() {
           <>
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="border border-b dark:border-zinc-700">
+                <thead className="border-b -zinc-700">
                   <tr>
-                    <th className="p-4 text-left font-medium text-muted-foreground dark:text-muted-foreground">Affiliate</th>
-                    <th className="p-4 text-left font-medium text-muted-foreground dark:text-muted-foreground">Status</th>
-                    <th className="p-4 text-left font-medium text-muted-foreground dark:text-muted-foreground">Total Earnings</th>
-                    <th className="p-4 text-left font-medium text-muted-foreground dark:text-muted-foreground">Unpaid Earnings</th>
-                    <th className="p-4 text-left font-medium text-muted-foreground dark:text-muted-foreground">Share Domain</th>
-                    <th className="p-4 text-left font-medium text-muted-foreground dark:text-muted-foreground">Joined</th>
+                    <th className="p-4 text-left font-medium text-muted-foreground dark:text-muted-foreground">
+                      Affiliate
+                    </th>
+                    <th className="p-4 text-left font-medium text-muted-foreground dark:text-muted-foreground">
+                      Status
+                    </th>
+                    <th className="p-4 text-left font-medium text-muted-foreground dark:text-muted-foreground">
+                      Total Earnings
+                    </th>
+                    <th className="p-4 text-left font-medium text-muted-foreground dark:text-muted-foreground">
+                      Unpaid Earnings
+                    </th>
+                    <th className="p-4 text-left font-medium text-muted-foreground dark:text-muted-foreground">
+                      Share Domain
+                    </th>
+                    <th className="p-4 text-left font-medium text-muted-foreground dark:text-muted-foreground">
+                      Joined
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   {data?.affiliates.map((affiliate) => (
                     <tr
-                      className="border-zinc-100 border-b hover:bg-muted dark:border dark:hover:bg-secondary/50"
+                      className="border-zinc-100 border-b hover:bg-muted  dark:hover:bg-secondary/50"
                       key={affiliate.id}
                     >
                       <td className="p-4">
@@ -273,7 +287,7 @@ export default function AdminAffiliatesPage() {
               </table>
             </div>
 
-            <div className="flex items-center justify-between border border-t p-4 dark:border-zinc-700">
+            <div className="flex items-center justify-between border-t p-4 -zinc-700">
               <p className="text-sm text-muted-foreground">
                 Showing {data?.affiliates.length || 0} of {data?.total || 0} affiliates
               </p>
@@ -360,7 +374,7 @@ function AffiliateSettingsContent({
         </div>
         <p className="text-sm text-muted-foreground">Anyone can apply to be your affiliate with this link</p>
         <div className="flex items-center gap-2">
-          <div className="flex-1 rounded-md border border bg-muted px-3 py-2 font-mono text-sm dark:border-zinc-700 dark:bg-secondary">
+          <div className="flex-1 rounded-md border bg-muted px-3 py-2 font-mono text-sm -zinc-700 dark:bg-secondary">
             {settings.affiliateHubUrl}
           </div>
           <CopyButton label="Copy" text={settings.affiliateHubUrl} />
@@ -383,11 +397,9 @@ function AffiliateSettingsContent({
         </div>
         <p className="text-sm text-muted-foreground">Set your default affiliate URL</p>
         <div className="flex items-center gap-2">
-          <div className="flex items-center rounded-md border border bg-muted dark:border-zinc-700 dark:bg-secondary">
+          <div className="flex items-center rounded-md border bg-muted -zinc-700 dark:bg-secondary">
             <span className="px-3 py-2 text-sm text-muted-foreground">https://</span>
-            <div className="border border-l px-3 py-2 font-mono text-sm dark:border-zinc-700">
-              {settings.storeDomain}
-            </div>
+            <div className="border-l px-3 py-2 font-mono text-sm -zinc-700">{settings.storeDomain}</div>
           </div>
           <CopyButton label="Copy" text={`https://${settings.storeDomain}`} />
         </div>
@@ -411,7 +423,7 @@ function AffiliateSettingsContent({
           Copy and paste the tracking code into the {'<head>'} or before the closing body tag of your website
         </p>
         <div className="relative">
-          <pre className="overflow-x-auto rounded-md border border bg-secondary p-4 font-mono text-sm text-primary-foreground dark:border-zinc-700">
+          <pre className="overflow-x-auto rounded-md border bg-secondary p-4 font-mono text-sm text-primary-foreground -zinc-700">
             <code>{settings.trackingScript}</code>
           </pre>
           <div className="absolute top-2 right-2">
@@ -420,7 +432,7 @@ function AffiliateSettingsContent({
         </div>
       </div>
 
-      <div className="border border-t pt-4 dark:border-zinc-700">
+      <div className="border-t pt-4 -zinc-700">
         <p className="mb-3 text-sm text-muted-foreground">Manage your affiliate program in Lemon Squeezy</p>
         <div className="flex flex-wrap gap-2">
           <Button asChild size="sm" variant="outline">

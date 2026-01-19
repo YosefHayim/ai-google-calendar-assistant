@@ -1,16 +1,17 @@
 'use client'
 
+import { ChevronLeft, ChevronRight, ExternalLink, Receipt, RefreshCw, Search } from 'lucide-react'
 import React, { useState } from 'react'
+
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Search, RefreshCw, ChevronLeft, ChevronRight, Receipt, ExternalLink } from 'lucide-react'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
-import { useAdminPayments } from '@/hooks/queries/admin'
 import type { PaymentStatus } from '@/types/admin'
 import { format } from 'date-fns'
 import { formatCurrency } from '@/lib/formatUtils'
+import { useAdminPayments } from '@/hooks/queries/admin'
 
 export default function AdminPaymentsPage() {
   const [search, setSearch] = useState('')
@@ -58,7 +59,7 @@ export default function AdminPaymentsPage() {
               setStatusFilter(e.target.value as PaymentStatus | '')
               setPage(1)
             }}
-            className="px-3 py-2 border border dark:border-zinc-700 rounded-md bg-background dark:bg-secondary text-sm"
+            className="px-3 py-2  rounded-md bg-background dark:bg-secondary text-sm"
           >
             <option value="">All Status</option>
             <option value="succeeded">Succeeded</option>
@@ -79,21 +80,29 @@ export default function AdminPaymentsPage() {
           <>
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="border-b border dark:border-zinc-700">
+                <thead className="border-b ">
                   <tr>
                     <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">Date</th>
                     <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">User</th>
-                    <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">Amount</th>
-                    <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">Status</th>
-                    <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">Order ID</th>
-                    <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">Receipt</th>
+                    <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">
+                      Amount
+                    </th>
+                    <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">
+                      Status
+                    </th>
+                    <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">
+                      Order ID
+                    </th>
+                    <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">
+                      Receipt
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   {data?.payments.map((payment) => (
                     <tr
                       key={payment.id}
-                      className="border-b border-zinc-100 dark:border hover:bg-muted dark:hover:bg-secondary/50"
+                      className="border-b border-zinc-100  hover:bg-muted dark:hover:bg-secondary/50"
                     >
                       <td className="p-4 text-sm text-zinc-600 dark:text-zinc-300">
                         {format(new Date(payment.createdAt), 'MMM d, yyyy HH:mm')}
@@ -140,7 +149,7 @@ export default function AdminPaymentsPage() {
             </div>
 
             {/* Pagination */}
-            <div className="flex items-center justify-between p-4 border-t border dark:border-zinc-700">
+            <div className="flex items-center justify-between p-4 border-t ">
               <p className="text-sm text-muted-foreground">
                 Showing {data?.payments.length || 0} of {data?.total || 0} payments
               </p>

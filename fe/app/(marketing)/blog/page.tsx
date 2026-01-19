@@ -127,7 +127,7 @@ export default function BlogPage() {
           {!postsLoading && featuredPost && activeCategory === 'All' && (
             <div className="mb-12">
               <Link href={`/blog/${featuredPost.slug}`}>
-                <Card className="overflow-hidden border dark:border hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors group">
+                <Card className="overflow-hidden hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors group">
                   <div className="grid md:grid-cols-2 gap-0">
                     <div className="aspect-video md:aspect-auto relative overflow-hidden bg-gradient-to-br from-primary/20 via-purple-500/20 to-pink-500/20 min-h-[250px]">
                       {getImageSrc(featuredPost) ? (
@@ -150,7 +150,9 @@ export default function BlogPage() {
                         <div className="absolute inset-0 flex items-center justify-center">
                           <div className="text-center p-8">
                             <Sparkles className="w-16 h-16 text-primary/60 mx-auto mb-4 group-hover:scale-110 transition-transform" />
-                            <span className="text-sm text-muted-foreground dark:text-muted-foreground">Featured Article</span>
+                            <span className="text-sm text-muted-foreground dark:text-muted-foreground">
+                              Featured Article
+                            </span>
                           </div>
                         </div>
                       )}
@@ -195,7 +197,7 @@ export default function BlogPage() {
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {regularPosts.map((post) => (
                 <Link key={post.slug} href={`/blog/${post.slug}`}>
-                  <Card className="h-full overflow-hidden border dark:border hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors group">
+                  <Card className="h-full overflow-hidden hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors group">
                     <div className="aspect-video relative overflow-hidden bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-zinc-800 dark:to-zinc-900">
                       {getImageSrc(post) ? (
                         <Image
@@ -218,7 +220,9 @@ export default function BlogPage() {
                       <h3 className="text-lg font-medium text-foreground dark:text-primary-foreground mb-2 line-clamp-2 group-hover:text-primary transition-colors">
                         {post.title}
                       </h3>
-                      <p className="text-sm text-muted-foreground dark:text-muted-foreground mb-4 line-clamp-2">{post.excerpt}</p>
+                      <p className="text-sm text-muted-foreground dark:text-muted-foreground mb-4 line-clamp-2">
+                        {post.excerpt}
+                      </p>
                       <div className="flex items-center justify-between text-xs text-muted-foreground dark:text-muted-foreground">
                         <span className="flex items-center gap-1">
                           <User className="w-3 h-3" />

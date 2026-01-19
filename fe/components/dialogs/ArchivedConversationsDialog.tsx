@@ -2,7 +2,11 @@
 
 import { Archive, Calendar, Loader2, MessageSquare, RotateCcw } from 'lucide-react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { useGetArchivedConversations, useRestoreAllArchivedConversations, useRestoreConversation } from '@/hooks/queries/conversations'
+import {
+  useGetArchivedConversations,
+  useRestoreAllArchivedConversations,
+  useRestoreConversation,
+} from '@/hooks/queries/conversations'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -12,6 +16,7 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { formatDate } from '@/lib/formatUtils'
 import { formatRelativeDate } from '@/lib/dateUtils'
 import { toast } from 'sonner'
+import { useTranslation } from 'react-i18next'
 
 interface ArchivedConversationsDialogProps {
   isOpen: boolean
@@ -19,7 +24,12 @@ interface ArchivedConversationsDialogProps {
 }
 
 export function ArchivedConversationsDialog({ isOpen, onClose }: ArchivedConversationsDialogProps) {
-  const { data: archivedData, isLoading, refetch } = useGetArchivedConversations({
+  const { t } = useTranslation()
+  const {
+    data: archivedData,
+    isLoading,
+    refetch,
+  } = useGetArchivedConversations({
     enabled: isOpen,
   })
 
@@ -84,11 +94,7 @@ export function ArchivedConversationsDialog({ isOpen, onClose }: ArchivedConvers
                 disabled={isRestoringAll}
                 className="gap-2"
               >
-                {isRestoringAll ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <RotateCcw className="w-4 h-4" />
-                )}
+                {isRestoringAll ? <Loader2 className="w-4 h-4 animate-spin" /> : <RotateCcw className="w-4 h-4" />}
                 Restore All
               </Button>
             </div>
@@ -116,9 +122,7 @@ export function ArchivedConversationsDialog({ isOpen, onClose }: ArchivedConvers
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
                         <MessageSquare className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-                        <h4 className="font-medium truncate">
-                          {conversation.title || 'Untitled Conversation'}
-                        </h4>
+                        <h4 className="font-medium truncate">{conversation.title || 'Untitled Conversation'}</h4>
                         {conversation.pinned && (
                           <Badge variant="secondary" className="text-xs">
                             Pinned
@@ -148,9 +152,7 @@ export function ArchivedConversationsDialog({ isOpen, onClose }: ArchivedConvers
                       </div>
 
                       {conversation.summary && (
-                        <p className="text-sm text-muted-foreground mt-2 line-clamp-2">
-                          {conversation.summary}
-                        </p>
+                        <p className="text-sm text-muted-foreground mt-2 line-clamp-2">{conversation.summary}</p>
                       )}
                     </div>
 
@@ -161,11 +163,7 @@ export function ArchivedConversationsDialog({ isOpen, onClose }: ArchivedConvers
                       disabled={isRestoring}
                       className="ml-4 gap-2 flex-shrink-0"
                     >
-                      {isRestoring ? (
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                      ) : (
-                        <RotateCcw className="w-4 h-4" />
-                      )}
+                      {isRestoring ? <Loader2 className="w-4 h-4 animate-spin" /> : <RotateCcw className="w-4 h-4" />}
                       Restore
                     </Button>
                   </div>

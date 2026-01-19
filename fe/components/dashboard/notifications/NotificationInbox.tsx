@@ -1,9 +1,6 @@
 'use client'
 
-import React from 'react'
 import { Bell, CheckCheck, Trash2 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,9 +8,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { useNotificationContext } from '@/contexts/NotificationContext'
+
+import { Button } from '@/components/ui/button'
 import { NotificationItem } from './NotificationItem'
+import React from 'react'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { cn } from '@/lib/utils'
+import { useNotificationContext } from '@/contexts/NotificationContext'
 
 interface NotificationInboxProps {
   triggerClassName?: string
@@ -38,7 +39,7 @@ export function NotificationInbox({ triggerClassName }: NotificationInboxProps) 
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-80 sm:w-96 p-0">
-        <div className="flex items-center justify-between px-4 py-3 border-b border dark:border">
+        <div className="flex items-center justify-between px-4 py-3 border-b border ">
           <h3 className="font-semibold text-foreground dark:text-primary-foreground">Notifications</h3>
           {notifications.length > 0 && (
             <div className="flex items-center gap-1">

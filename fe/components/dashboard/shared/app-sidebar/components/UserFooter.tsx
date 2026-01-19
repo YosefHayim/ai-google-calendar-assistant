@@ -51,9 +51,7 @@ export function UserFooter({ onOpenSettings, onSignOut }: UserFooterProps) {
               >
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage src={avatarUrl} alt={fullName} />
-                  <AvatarFallback className="rounded-lg bg-accent text-muted-foreground">
-                    {initials}
-                  </AvatarFallback>
+                  <AvatarFallback className="rounded-lg bg-accent text-muted-foreground">{initials}</AvatarFallback>
                 </Avatar>
                 {!isCollapsed && (
                   <div className="grid flex-1 text-left text-sm leading-tight">

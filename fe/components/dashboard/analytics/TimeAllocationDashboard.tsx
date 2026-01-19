@@ -67,8 +67,8 @@ export const TimeAllocationDashboard: React.FC<TimeAllocationDashboardProps> = (
 
   if (isLoading) {
     return (
-      <div className="bg-background dark:bg-secondary border border dark:border rounded-md shadow-sm">
-        <div className="p-3 sm:p-4 pb-2 border-b border dark:border">
+      <div className="bg-background dark:bg-secondary rounded-md shadow-sm">
+        <div className="p-3 sm:p-4 pb-2 border-b border ">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
             <div className="flex items-center gap-2">
               <Skeleton className="h-4 sm:h-5 w-24 sm:w-32" />
@@ -93,7 +93,7 @@ export const TimeAllocationDashboard: React.FC<TimeAllocationDashboardProps> = (
 
   if (totalHours === 0) {
     return (
-      <div className="bg-background dark:bg-secondary border border dark:border rounded-md shadow-sm p-6 flex items-center justify-center min-h-[200px]">
+      <div className="bg-background dark:bg-secondary rounded-md shadow-sm p-6 flex items-center justify-center min-h-[200px]">
         <EmptyState
           icon={<Clock />}
           title="No time data"
@@ -128,8 +128,8 @@ export const TimeAllocationDashboard: React.FC<TimeAllocationDashboardProps> = (
   }
 
   return (
-    <div className="bg-background dark:bg-secondary border border dark:border rounded-md shadow-sm">
-      <div className="p-3 sm:p-4 pb-2 border-b border dark:border">
+    <div className="bg-background dark:bg-secondary rounded-md shadow-sm">
+      <div className="p-3 sm:p-4 pb-2 border-b border ">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
           <h3 className="font-medium text-sm sm:text-base text-foreground dark:text-primary-foreground flex items-center gap-2 flex-wrap">
             <span className="flex items-center gap-2">
@@ -156,7 +156,9 @@ export const TimeAllocationDashboard: React.FC<TimeAllocationDashboardProps> = (
                 </HoverCardContent>
               </HoverCard>
             </span>
-            <span className="text-xs sm:text-sm font-normal text-muted-foreground">{formatNumber(totalHours, 1)}H total</span>
+            <span className="text-xs sm:text-sm font-normal text-muted-foreground">
+              {formatNumber(totalHours, 1)}H total
+            </span>
           </h3>
 
           <Tabs value={chartType} onValueChange={(value) => setChartType(value as ChartType)}>
@@ -209,7 +211,7 @@ export const TimeAllocationDashboard: React.FC<TimeAllocationDashboardProps> = (
                 return (
                   <li
                     key={item.category}
-                    className={`border border-transparent hover:border-black hover:border flex items-center gap-2 sm:gap-3 text-xs sm:text-sm rounded-md p-1.5 sm:p-2 -m-1.5 sm:-m-2 transition-colors ${
+                    className={`border-transparent hover:border-black hover:border flex items-center gap-2 sm:gap-3 text-xs sm:text-sm rounded-md p-1.5 sm:p-2 -m-1.5 sm:-m-2 transition-colors ${
                       onCalendarClick && item.calendarId
                         ? 'cursor-pointer hover:bg-secondary dark:hover:bg-secondary/50'
                         : ''
@@ -232,9 +234,7 @@ export const TimeAllocationDashboard: React.FC<TimeAllocationDashboardProps> = (
                       className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-sm flex-shrink-0"
                       style={{ backgroundColor: safeColor }}
                     />
-                    <span className="flex-1 font-medium text-foreground truncate">
-                      {item.category}
-                    </span>
+                    <span className="flex-1 font-medium text-foreground truncate">{item.category}</span>
                     <span className="font-mono text-muted-foreground dark:text-muted-foreground text-[10px] sm:text-xs flex-shrink-0">
                       {formatNumber(item.hours, 1)}H
                     </span>

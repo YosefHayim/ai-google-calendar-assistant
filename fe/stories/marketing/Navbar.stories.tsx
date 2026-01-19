@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
+
 import Navbar from '@/components/marketing/Navbar'
 
 const meta: Meta<typeof Navbar> = {
@@ -28,10 +29,7 @@ const meta: Meta<typeof Navbar> = {
               The navbar transforms from transparent to a frosted glass effect when you scroll past 20px.
             </p>
             {Array.from({ length: 10 }).map((_, i) => (
-              <div
-                key={i}
-                className="h-32 bg-background dark:bg-secondary rounded-xl border border dark:border-zinc-700 p-6"
-              >
+              <div key={i} className="h-32 bg-background dark:bg-secondary rounded-xl  p-6">
                 <div className="h-4 w-3/4 bg-secondary dark:bg-zinc-700 rounded" />
                 <div className="h-4 w-1/2 bg-secondary dark:bg-zinc-700 rounded mt-4" />
               </div>
@@ -72,9 +70,11 @@ export const DarkMode: Story = {
         <div className="pt-32 px-8">
           <div className="max-w-4xl mx-auto space-y-8">
             <h1 className="text-4xl font-bold text-primary-foreground">Dark Mode Navigation</h1>
-            <p className="text-muted-foreground">The navbar adapts seamlessly to dark mode with proper contrast ratios.</p>
+            <p className="text-muted-foreground">
+              The navbar adapts seamlessly to dark mode with proper contrast ratios.
+            </p>
             {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="h-32 bg-secondary rounded-xl border border-zinc-700 p-6">
+              <div key={i} className="h-32 bg-secondary rounded-xl border-zinc-700 p-6">
                 <div className="h-4 w-3/4 bg-zinc-700 rounded" />
                 <div className="h-4 w-1/2 bg-zinc-700 rounded mt-4" />
               </div>
@@ -100,8 +100,10 @@ export const ScrolledState: Story = {
         <Story />
         <div className="pt-24 px-8">
           <div className="max-w-4xl mx-auto">
-            <div className="bg-background dark:bg-secondary rounded-xl border border dark:border-zinc-700 p-8">
-              <h2 className="text-2xl font-bold text-foreground dark:text-primary-foreground mb-4">Scrolled Navbar Preview</h2>
+            <div className="bg-background dark:bg-secondary rounded-xl  p-8">
+              <h2 className="text-2xl font-bold text-foreground dark:text-primary-foreground mb-4">
+                Scrolled Navbar Preview
+              </h2>
               <p className="text-zinc-600 dark:text-muted-foreground">
                 Scroll this page to observe the navbar&apos;s frosted glass effect activate.
               </p>
@@ -136,10 +138,7 @@ export const MobileView: Story = {
               Tap the hamburger menu icon to open the mobile navigation sidebar with full menu options.
             </p>
             {Array.from({ length: 6 }).map((_, i) => (
-              <div
-                key={i}
-                className="h-24 bg-background dark:bg-secondary rounded-lg border border dark:border-zinc-700"
-              />
+              <div key={i} className="h-24 bg-background dark:bg-secondary rounded-lg " />
             ))}
           </div>
         </div>

@@ -1,30 +1,31 @@
 'use client'
 
-import { useState } from 'react'
-import { usePostHog } from 'posthog-js/react'
-import { Card } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Badge } from '@/components/ui/badge'
 import {
-  Gift,
-  Users,
-  Copy,
   Check,
+  CheckCircle2,
+  Clock,
+  Copy,
+  ExternalLink,
+  Gift,
+  Loader2,
   Share2,
   TrendingUp,
-  Clock,
-  CheckCircle2,
+  Users,
   XCircle,
-  Loader2,
-  ExternalLink,
 } from 'lucide-react'
-import { LoadingSpinner } from '@/components/ui/loading-spinner'
-import { useReferralCode, useMyReferrals, useReferralStats, useClaimReward } from '@/hooks/queries/use-referral'
-import { toast } from 'sonner'
-import { formatDate, DATE_FORMATS } from '@/lib/formatUtils'
+import { DATE_FORMATS, formatDate } from '@/lib/formatUtils'
 import { StatCard, StatCardSkeleton } from '@/components/ui/stat-card'
+import { useClaimReward, useMyReferrals, useReferralCode, useReferralStats } from '@/hooks/queries/use-referral'
+
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
 import { EmptyState } from '@/components/ui/empty-state'
+import { Input } from '@/components/ui/input'
+import { LoadingSpinner } from '@/components/ui/loading-spinner'
+import { toast } from 'sonner'
+import { usePostHog } from 'posthog-js/react'
+import { useState } from 'react'
 
 export default function ReferralsPage() {
   const [copied, setCopied] = useState(false)
@@ -226,7 +227,7 @@ export default function ReferralsPage() {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border dark:border-zinc-700">
+                  <tr className="border-b ">
                     <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Email</th>
                     <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Status</th>
                     <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Date</th>
@@ -236,10 +237,12 @@ export default function ReferralsPage() {
                 </thead>
                 <tbody>
                   {referrals.map((referral) => (
-                    <tr key={referral.id} className="border-b border-zinc-100 dark:border">
+                    <tr key={referral.id} className="border-b border-zinc-100 ">
                       <td className="py-4 px-4">
                         <span className="text-foreground dark:text-white">
-                          {referral.referred_email || <span className="text-muted-foreground italic">Not yet used</span>}
+                          {referral.referred_email || (
+                            <span className="text-muted-foreground italic">Not yet used</span>
+                          )}
                         </span>
                       </td>
                       <td className="py-4 px-4">{getStatusBadge(referral.status)}</td>
@@ -284,7 +287,9 @@ export default function ReferralsPage() {
               </div>
               <div>
                 <h4 className="font-medium text-foreground dark:text-white">Share your link</h4>
-                <p className="text-sm text-muted-foreground mt-1">Copy your unique referral link and share it with friends</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Copy your unique referral link and share it with friends
+                </p>
               </div>
             </div>
             <div className="flex items-start gap-3">

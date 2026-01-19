@@ -87,7 +87,8 @@ export const SOCIAL_LINKS = {
   SLACK: `${ENV.API_BASE_URL}/api/slack/oauth/install`,
   TELEGRAM_BOT: 'https://t.me/ai_schedule_event_server_bot',
   DISCORD: 'https://discord.gg/ally',
-  WHATSAPP: 'https://api.whatsapp.com/send/?phone=972525839496&text=Hi+Ally%21+I%27d+like+to+try+the+calendar+assistant.&type=phone_number&app_absent=0',
+  WHATSAPP:
+    'https://api.whatsapp.com/send/?phone=972525839496&text=Hi+Ally%21+I%27d+like+to+try+the+calendar+assistant.&type=phone_number&app_absent=0',
   EMAIL: 'mailto:hello@askally.io',
 } as const
 

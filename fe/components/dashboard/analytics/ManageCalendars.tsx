@@ -3,9 +3,9 @@
 import { CalendarDays, CheckCircle, Plus } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
-import { Skeleton } from '@/components/ui/skeleton'
 import type { CalendarListEntry } from '@/types/api'
 import React from 'react'
+import { Skeleton } from '@/components/ui/skeleton'
 
 interface ManageCalendarsProps {
   calendars: CalendarListEntry[]
@@ -24,7 +24,7 @@ const ManageCalendars: React.FC<ManageCalendarsProps> = ({
 }) => {
   if (isLoading) {
     return (
-      <div className="bg-background dark:bg-secondary border border dark:border rounded-md shadow-sm p-4 sm:p-6">
+      <div className="bg-background dark:bg-secondary rounded-md shadow-sm p-4 sm:p-6">
         <div className="gap-2 mb-4 sm:mb-6 flex items-center justify-between">
           <div className="min-w-0">
             <div className="flex items-center gap-2">
@@ -49,7 +49,7 @@ const ManageCalendars: React.FC<ManageCalendarsProps> = ({
   }
 
   return (
-    <div className="bg-background dark:bg-secondary border border dark:border rounded-md shadow-sm p-4 sm:p-6">
+    <div className="bg-background dark:bg-secondary rounded-md shadow-sm p-4 sm:p-6">
       <div className="gap-2 mb-4 sm:mb-6 flex items-center justify-between">
         {/* Left Side: Text Stack */}
         <div className="min-w-0">
@@ -68,7 +68,7 @@ const ManageCalendars: React.FC<ManageCalendarsProps> = ({
           onClick={onCreateCalendar}
           size="icon"
           variant={'ghost'}
-          className="h-7 w-7 sm:h-8 sm:w-8 rounded-md border border-dashed border-zinc-300 dark:border-zinc-700 text-muted-foreground dark:text-muted-foreground hover:bg-muted dark:hover:bg-secondary/30 hover:text-foreground dark:hover:text-primary-foreground transition-all active:scale-[0.98] flex-shrink-0"
+          className="h-7 w-7 sm:h-8 sm:w-8 rounded-md border-dashed border-zinc-300 -zinc-700 text-muted-foreground dark:text-muted-foreground hover:bg-muted dark:hover:bg-secondary/30 hover:text-foreground dark:hover:text-primary-foreground transition-all active:scale-[0.98] flex-shrink-0"
         >
           <Plus size={12} className="sm:hidden" />
           <Plus size={14} className="hidden sm:block" />
@@ -85,7 +85,7 @@ const ManageCalendars: React.FC<ManageCalendarsProps> = ({
             return (
               <div
                 key={calendar.id}
-                className="border border-transparent hover:border-black hover:border flex items-center gap-2 sm:gap-3 p-1.5 sm:p-2 rounded-md hover:bg-muted dark:hover:bg-secondary/50 transition-colors group cursor-pointer"
+                className="border-transparent hover:border-black hover:border flex items-center gap-2 sm:gap-3 p-1.5 sm:p-2 rounded-md hover:bg-muted dark:hover:bg-secondary/50 transition-colors group cursor-pointer"
                 style={{ backgroundColor: `${color}08` }}
                 onClick={() => {
                   onCalendarClick(calendar)
@@ -98,7 +98,7 @@ const ManageCalendars: React.FC<ManageCalendarsProps> = ({
                 <span className="flex-1 text-xs sm:text-sm font-bold text-zinc-800 dark:text-zinc-200 truncate">
                   {displayName}
                 </span>
-                <span className="font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 rounded border border-emerald-200 dark:border-emerald-800 uppercase tracking-tighter flex-shrink-0">
+                <span className="font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 rounded border-emerald-200 -emerald-800 uppercase tracking-tighter flex-shrink-0">
                   <CheckCircle size={10} className="sm:hidden" />
                   <CheckCircle size={12} className="hidden sm:block" />
                 </span>

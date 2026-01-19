@@ -554,7 +554,8 @@ export const de: TranslationShape = {
     timeFormat12h: '12-Stunden (AM/PM)',
     timeFormat24h: '24-Stunden',
     realTimeLocation: 'Echtzeit-Standort',
-    realTimeLocationTooltip: 'Wenn aktiviert, verwendet Ally Ihren aktuellen Standort, um Kontext für die Ereigniserstellung bereitzustellen (z. B. Vorschlag nahegelegener Orte)',
+    realTimeLocationTooltip:
+      'Wenn aktiviert, verwendet Ally Ihren aktuellen Standort, um Kontext für die Ereigniserstellung bereitzustellen (z. B. Vorschlag nahegelegener Orte)',
     memberSince: 'Mitglied seit',
     languageTooltip: 'Wählen Sie Ihre bevorzugte Sprache für die Benutzeroberfläche',
     general: 'Allgemein',
@@ -828,7 +829,8 @@ export const de: TranslationShape = {
         'Die Testversion beinhaltet vollen Zugang zu allen Funktionen. Keine Gebühr bis zum Ende der Testversion.',
       expired: 'Testversion abgelaufen',
       expiredDescription: 'Ihre Testversion ist abgelaufen – upgraden Sie jetzt, um Ihren Zugang zu behalten.',
-      activeDescription: 'Ihre kostenlose Testversion endet in {{count}} Tag. Verlieren Sie nicht den Zugang zu Ihrem KI-Assistenten.',
+      activeDescription:
+        'Ihre kostenlose Testversion endet in {{count}} Tag. Verlieren Sie nicht den Zugang zu Ihrem KI-Assistenten.',
       remaining: 'verbleibend',
       getDeal: 'Angebot sichern',
     },
@@ -1063,7 +1065,8 @@ export const de: TranslationShape = {
       noActiveCalendarSourcesFound: 'Keine aktiven Kalenderquellen gefunden.',
       connectWhatsApp: 'WhatsApp verbinden',
       neuralLinks: 'Neuronale Verbindungen',
-      executiveGradeAI: 'Der KI-Assistent der Executive-Klasse, entwickelt für Geschäftsinhaber, um ihre konzentrierte Arbeit zu schützen. Von kostenlosem Explorationszugang bis zu unbegrenzter Executive-Power. Aufgebaut auf dem Ally Neural Protocol.',
+      executiveGradeAI:
+        'Der KI-Assistent der Executive-Klasse, entwickelt für Geschäftsinhaber, um ihre konzentrierte Arbeit zu schützen. Von kostenlosem Explorationszugang bis zu unbegrenzter Executive-Power. Aufgebaut auf dem Ally Neural Protocol.',
       systemOnline: 'Alle Systeme betriebsbereit',
       systemOffline: 'System nicht verfügbar',
       systemChecking: 'Status wird überprüft...',

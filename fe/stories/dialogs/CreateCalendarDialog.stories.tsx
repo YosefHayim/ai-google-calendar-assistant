@@ -1,8 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+
+import type { CalendarListEntry } from '@/types/api'
 import CreateCalendarDialog from '@/components/dialogs/CreateCalendarDialog'
 import { fn } from 'storybook/test'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import type { CalendarListEntry } from '@/types/api'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -118,7 +119,7 @@ export const UseCases: Story = {
       <h2 className="text-2xl font-bold text-foreground dark:text-primary-foreground">Create Calendar Dialog</h2>
 
       <div className="grid gap-4">
-        <div className="bg-background dark:bg-secondary rounded-lg p-4 border border dark:border">
+        <div className="bg-background dark:bg-secondary rounded-lg p-4 border ">
           <h3 className="font-semibold text-zinc-700 dark:text-zinc-300 mb-2">When to Create Calendars</h3>
           <ul className="text-sm text-zinc-600 dark:text-muted-foreground space-y-1">
             <li>• Separate work from personal events</li>
@@ -129,7 +130,7 @@ export const UseCases: Story = {
           </ul>
         </div>
 
-        <div className="bg-background dark:bg-secondary rounded-lg p-4 border border dark:border">
+        <div className="bg-background dark:bg-secondary rounded-lg p-4 border ">
           <h3 className="font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Tips</h3>
           <ul className="text-sm text-zinc-600 dark:text-muted-foreground space-y-1">
             <li>• Use descriptive names for easy identification</li>

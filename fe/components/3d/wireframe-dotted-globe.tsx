@@ -31,7 +31,7 @@ export default function RotatingEarth({
           setIsLoading(true)
         }
       },
-      { threshold: 0.1, rootMargin: '100px' }
+      { threshold: 0.1, rootMargin: '100px' },
     )
 
     if (containerRef.current) {

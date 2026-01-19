@@ -62,7 +62,9 @@ export const InPageContext: Story = {
       <div className="bg-background dark:bg-[#030303]">
         <section className="py-20 px-4">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl font-bold text-foreground dark:text-primary-foreground mb-4">Why Professionals Choose Ally</h2>
+            <h2 className="text-3xl font-bold text-foreground dark:text-primary-foreground mb-4">
+              Why Professionals Choose Ally
+            </h2>
             <p className="text-zinc-600 dark:text-muted-foreground">
               Join thousands of users who have transformed their calendar management.
             </p>
@@ -71,7 +73,9 @@ export const InPageContext: Story = {
         <Story />
         <section className="py-20 px-4 bg-muted dark:bg-secondary">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl font-bold text-foreground dark:text-primary-foreground mb-4">Ready to Get Started?</h2>
+            <h2 className="text-3xl font-bold text-foreground dark:text-primary-foreground mb-4">
+              Ready to Get Started?
+            </h2>
             <p className="text-zinc-600 dark:text-muted-foreground mb-8">
               Try Ask Ally free for 14 days. No credit card required.
             </p>

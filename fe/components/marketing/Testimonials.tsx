@@ -1,11 +1,11 @@
 'use client'
 
+import { MessageSquarePlus, Send } from 'lucide-react'
+import { Testimonial, TestimonialsColumn } from '@/components/ui/testimonials-column'
+
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { MessageSquarePlus, Send } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-
-import { TestimonialsColumn, Testimonial } from '@/components/ui/testimonials-column'
 
 const placeholderTestimonials: Testimonial[] = [
   {
@@ -140,7 +140,7 @@ const Testimonials = () => {
               <Send className="w-4 h-4" />
               {t('testimonials.feedbackButton', 'Share Your Feedback')}
             </Link>
-            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20">
+            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border-primary/20">
               <MessageSquarePlus className="w-4 h-4 text-primary" />
               <span className="text-sm font-medium text-primary">{t('testimonials.cta', 'Be one of the first')}</span>
             </div>

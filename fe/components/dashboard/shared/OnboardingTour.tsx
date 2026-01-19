@@ -133,7 +133,7 @@ export const OnboardingTour: React.FC<{ onComplete: () => void }> = ({ onComplet
           }}
           exit={{ opacity: 0, scale: 0.95 }}
           transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-          className={`fixed pointer-events-auto w-[92%] max-w-80 bg-background dark:bg-secondary rounded-2xl shadow-2xl border border dark:border p-6 flex flex-col gap-4 ${
+          className={`fixed pointer-events-auto w-[92%] max-w-80 bg-background dark:bg-secondary rounded-2xl shadow-2xl p-6 flex flex-col gap-4 ${
             isMobile || step.position === 'center' || !spotlightRect ? 'top-1/2 left-1/2' : 'absolute'
           }`}
           style={
@@ -161,8 +161,12 @@ export const OnboardingTour: React.FC<{ onComplete: () => void }> = ({ onComplet
           </div>
 
           <div>
-            <h3 className="text-xl font-bold text-foreground dark:text-primary-foreground mb-2 tracking-tight">{step.title}</h3>
-            <p className="text-sm text-muted-foreground dark:text-muted-foreground font-medium leading-relaxed">{step.content}</p>
+            <h3 className="text-xl font-bold text-foreground dark:text-primary-foreground mb-2 tracking-tight">
+              {step.title}
+            </h3>
+            <p className="text-sm text-muted-foreground dark:text-muted-foreground font-medium leading-relaxed">
+              {step.content}
+            </p>
           </div>
 
           <div className="flex items-center justify-between mt-4">

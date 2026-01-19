@@ -100,7 +100,10 @@ export default function SuccessPage() {
       const personaData = {
         ...personaDefaults,
         persona: persona as 'solopreneur' | 'developer' | 'manager' | 'student' | 'freelancer' | null,
-        painPoint: painPoints.length > 0 ? (painPoints[0] as 'too_many_meetings' | 'no_deep_work' | 'forgetting_tasks' | 'manual_scheduling') : null,
+        painPoint:
+          painPoints.length > 0
+            ? (painPoints[0] as 'too_many_meetings' | 'no_deep_work' | 'forgetting_tasks' | 'manual_scheduling')
+            : null,
         notificationFrequency: notificationFrequency as 'realtime' | 'daily_digest' | 'weekly_summary',
         onboardingCompleted: true,
         onboardingCompletedAt: new Date().toISOString(),
@@ -172,11 +175,7 @@ export default function SuccessPage() {
         </div>
 
         {/* Additional info */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-        >
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
           <Card className="bg-gradient-to-r from-primary/10 to-primary/5 border-primary/20">
             <CardContent className="p-6">
               <div className="flex items-start gap-3">
@@ -201,12 +200,7 @@ export default function SuccessPage() {
           transition={{ delay: 0.5 }}
           className="flex justify-center pt-4"
         >
-          <Button
-            onClick={handleComplete}
-            disabled={isLoading}
-            size="lg"
-            className="px-12 py-3 text-lg"
-          >
+          <Button onClick={handleComplete} disabled={isLoading} size="lg" className="px-12 py-3 text-lg">
             {isLoading ? 'Setting up...' : 'Start using Ally'}
             {!isLoading && <ArrowRight className="w-5 h-5 ml-2" />}
           </Button>

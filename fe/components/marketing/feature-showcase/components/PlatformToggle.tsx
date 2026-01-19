@@ -1,9 +1,10 @@
 'use client'
 
-import { motion } from 'framer-motion'
-import { TelegramIcon, SlackIcon, WhatsAppIcon } from '@/components/shared/Icons'
-import { cn } from '@/lib/utils'
+import { SlackIcon, TelegramIcon, WhatsAppIcon } from '@/components/shared/Icons'
+
 import type { Platform } from '../types'
+import { cn } from '@/lib/utils'
+import { motion } from 'framer-motion'
 
 interface PlatformToggleProps {
   platform: Platform
@@ -12,7 +13,7 @@ interface PlatformToggleProps {
 
 export const PlatformToggle = ({ platform, onToggle }: PlatformToggleProps) => (
   <div className="relative flex justify-center md:justify-end mb-8 z-50 md:pr-8">
-    <div className="inline-flex items-center p-1 rounded-full bg-secondary dark:bg-secondary/80 backdrop-blur-sm border border dark:border-zinc-700 shadow-lg">
+    <div className="inline-flex items-center p-1 rounded-full bg-secondary dark:bg-secondary/80 backdrop-blur-sm  shadow-lg">
       <button
         onClick={() => onToggle('telegram')}
         className={cn(

@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
+
 import { AIAllySidebar } from '@/components/dashboard/shared/AIAllySidebar'
 import { fn } from 'storybook/test'
 
@@ -25,10 +26,7 @@ const meta: Meta<typeof AIAllySidebar> = {
           </p>
           <div className="grid grid-cols-3 gap-4">
             {[1, 2, 3].map((i) => (
-              <div
-                key={i}
-                className="h-32 bg-background dark:bg-secondary rounded-xl shadow-sm border border dark:border-zinc-700"
-              />
+              <div key={i} className="h-32 bg-background dark:bg-secondary rounded-xl shadow-sm " />
             ))}
           </div>
         </div>
@@ -136,7 +134,7 @@ export const DarkMode: Story = {
           <p className="text-muted-foreground">This represents your dashboard content in dark mode.</p>
           <div className="grid grid-cols-3 gap-4">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-32 bg-secondary rounded-xl shadow-sm border border-zinc-700" />
+              <div key={i} className="h-32 bg-secondary rounded-xl shadow-sm border-zinc-700" />
             ))}
           </div>
         </div>

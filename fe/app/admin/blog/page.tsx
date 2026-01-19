@@ -133,7 +133,11 @@ const formSchema = z.object({
 })
 
 const aiFormSchema = z.object({
-  topic: z.string().trim().min(3, { message: 'Topic must be at least 3 characters' }).max(100, { message: 'Topic must be less than 100 characters' }),
+  topic: z
+    .string()
+    .trim()
+    .min(3, { message: 'Topic must be at least 3 characters' })
+    .max(100, { message: 'Topic must be less than 100 characters' }),
   category: z.string().optional(),
   keywords: z.string().optional(),
   targetAudience: z.string().optional(),
@@ -524,7 +528,7 @@ export default function AdminBlogPage() {
                         />
                       </div>
 
-                      <div className="flex justify-end gap-3 pt-4 border-t border dark:border-zinc-700">
+                      <div className="flex justify-end gap-3 pt-4 border-t ">
                         <Button
                           type="button"
                           variant="outline"
@@ -572,32 +576,55 @@ export default function AdminBlogPage() {
                   </p>
                 </div>
 
-                <div className="bg-accent/30 border border-accent rounded-lg p-4">
+                <div className="bg-accent/30 border-accent rounded-lg p-4">
                   <h4 className="font-medium text-accent-foreground mb-2">🤖 GEO/AEO Optimization Features</h4>
                   <ul className="text-sm text-muted-foreground space-y-1">
-                    <li>• <strong>Direct Answer First</strong> - Immediate solutions in opening paragraphs</li>
-                    <li>• <strong>E-E-A-T Authority</strong> - Establishes expertise and trustworthiness</li>
-                    <li>• <strong>Entity Optimization</strong> - Positions Ask Ally as authoritative entity</li>
-                    <li>• <strong>Zero-Click Content</strong> - Comprehensive answers for AI search results</li>
-                    <li>• <strong>Structured Data</strong> - LLM-parseable content with clear hierarchies</li>
-                    <li>• <strong>Multi-Platform Citations</strong> - Content valuable for AI assistants to reference</li>
+                    <li>
+                      • <strong>Direct Answer First</strong> - Immediate solutions in opening paragraphs
+                    </li>
+                    <li>
+                      • <strong>E-E-A-T Authority</strong> - Establishes expertise and trustworthiness
+                    </li>
+                    <li>
+                      • <strong>Entity Optimization</strong> - Positions Ask Ally as authoritative entity
+                    </li>
+                    <li>
+                      • <strong>Zero-Click Content</strong> - Comprehensive answers for AI search results
+                    </li>
+                    <li>
+                      • <strong>Structured Data</strong> - LLM-parseable content with clear hierarchies
+                    </li>
+                    <li>
+                      • <strong>Multi-Platform Citations</strong> - Content valuable for AI assistants to reference
+                    </li>
                   </ul>
                 </div>
 
-                <div className="bg-accent/30 border border-accent rounded-lg p-4">
+                <div className="bg-accent/30 border-accent rounded-lg p-4">
                   <h4 className="font-medium text-accent-foreground mb-2">🤖 GEO/AEO Optimization Features</h4>
                   <ul className="text-sm text-muted-foreground space-y-1">
-                    <li>• <strong>Direct Answer First</strong> - Immediate solutions in opening paragraphs</li>
-                    <li>• <strong>E-E-A-T Authority</strong> - Establishes expertise and trustworthiness</li>
-                    <li>• <strong>Entity Optimization</strong> - Positions Ask Ally as authoritative entity</li>
-                    <li>• <strong>Zero-Click Content</strong> - Comprehensive answers for AI search results</li>
-                    <li>• <strong>Structured Data</strong> - LLM-parseable content with clear hierarchies</li>
-                    <li>• <strong>Multi-Platform Citations</strong> - Content valuable for AI assistants to reference</li>
+                    <li>
+                      • <strong>Direct Answer First</strong> - Immediate solutions in opening paragraphs
+                    </li>
+                    <li>
+                      • <strong>E-E-A-T Authority</strong> - Establishes expertise and trustworthiness
+                    </li>
+                    <li>
+                      • <strong>Entity Optimization</strong> - Positions Ask Ally as authoritative entity
+                    </li>
+                    <li>
+                      • <strong>Zero-Click Content</strong> - Comprehensive answers for AI search results
+                    </li>
+                    <li>
+                      • <strong>Structured Data</strong> - LLM-parseable content with clear hierarchies
+                    </li>
+                    <li>
+                      • <strong>Multi-Platform Citations</strong> - Content valuable for AI assistants to reference
+                    </li>
                   </ul>
                 </div>
 
-                <div>
-                </div>
+                <div></div>
 
                 <div className="space-y-2">
                   {/* CHANGED FROM FormLabel TO Label TO FIX ERROR */}
@@ -649,7 +676,7 @@ export default function AdminBlogPage() {
                   </div>
                 )}
 
-                <div className="flex justify-end gap-3 pt-4 border-t border dark:border-zinc-700">
+                <div className="flex justify-end gap-3 pt-4 border-t ">
                   <Button type="button" variant="outline" onClick={() => setBulkJson('')} disabled={isBulkCreating}>
                     Clear
                   </Button>
@@ -680,21 +707,30 @@ export default function AdminBlogPage() {
                 GEO AI-Powered Blog Generation
               </CardTitle>
               <CardDescription>
-                Generate extraordinary GEO-optimized blog posts with AI. Includes Generative Engine Optimization for AI search, geo-targeting, entity optimization, and conversion-focused content that ranks in AI Overviews.
+                Generate extraordinary GEO-optimized blog posts with AI. Includes Generative Engine Optimization for AI
+                search, geo-targeting, entity optimization, and conversion-focused content that ranks in AI Overviews.
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Form {...aiForm}>
-                <form onSubmit={aiForm.handleSubmit((data) => {
-                  const keywords = data.keywords ? data.keywords.split(',').map(k => k.trim()).filter(Boolean) : []
-                  generateAI.mutate({
-                    topic: data.topic,
-                    category: data.category as BlogCategory,
-                    keywords,
-                    targetAudience: data.targetAudience,
-                    tone: data.tone,
-                  })
-                })} className="space-y-6">
+                <form
+                  onSubmit={aiForm.handleSubmit((data) => {
+                    const keywords = data.keywords
+                      ? data.keywords
+                          .split(',')
+                          .map((k) => k.trim())
+                          .filter(Boolean)
+                      : []
+                    generateAI.mutate({
+                      topic: data.topic,
+                      category: data.category as BlogCategory,
+                      keywords,
+                      targetAudience: data.targetAudience,
+                      tone: data.tone,
+                    })
+                  })}
+                  className="space-y-6"
+                >
                   {/* Topic */}
                   <FormField
                     control={aiForm.control}
@@ -780,10 +816,7 @@ export default function AdminBlogPage() {
                       <FormItem>
                         <FormLabel>Additional Keywords</FormLabel>
                         <FormControl>
-                          <Input
-                            placeholder="time management, productivity, calendar, AI assistant"
-                            {...field}
-                          />
+                          <Input placeholder="time management, productivity, calendar, AI assistant" {...field} />
                         </FormControl>
                         <FormDescription>
                           Comma-separated keywords to include in SEO optimization (optional)
@@ -801,10 +834,7 @@ export default function AdminBlogPage() {
                       <FormItem>
                         <FormLabel>Target Audience</FormLabel>
                         <FormControl>
-                          <Input
-                            placeholder="busy professionals, entrepreneurs, remote workers"
-                            {...field}
-                          />
+                          <Input placeholder="busy professionals, entrepreneurs, remote workers" {...field} />
                         </FormControl>
                         <FormDescription>
                           Who is this blog post written for? Helps tailor the content and messaging.
@@ -814,24 +844,32 @@ export default function AdminBlogPage() {
                     )}
                   />
 
-                  <div className="bg-accent/30 border border-accent rounded-lg p-4">
+                  <div className="bg-accent/30 border-accent rounded-lg p-4">
                     <h4 className="font-medium text-accent-foreground mb-2">🚀 GEO/AEO Optimization Engine</h4>
                     <ul className="text-sm text-muted-foreground space-y-1">
-                      <li>• <strong>Zero-Click Optimization</strong> - Direct answers for AI search results</li>
-                      <li>• <strong>E-E-A-T Authority</strong> - Experience, Expertise, Authoritativeness, Trust</li>
-                      <li>• <strong>Entity Recognition</strong> - Positions Ask Ally as authoritative calendar AI</li>
-                      <li>• <strong>LLM-Structured Content</strong> - Parseable by Large Language Models</li>
-                      <li>• <strong>Multi-Platform Citations</strong> - Valuable for AI assistants to reference</li>
-                      <li>• <strong>Question-Based Headings</strong> - Optimized for AI Overviews</li>
+                      <li>
+                        • <strong>Zero-Click Optimization</strong> - Direct answers for AI search results
+                      </li>
+                      <li>
+                        • <strong>E-E-A-T Authority</strong> - Experience, Expertise, Authoritativeness, Trust
+                      </li>
+                      <li>
+                        • <strong>Entity Recognition</strong> - Positions Ask Ally as authoritative calendar AI
+                      </li>
+                      <li>
+                        • <strong>LLM-Structured Content</strong> - Parseable by Large Language Models
+                      </li>
+                      <li>
+                        • <strong>Multi-Platform Citations</strong> - Valuable for AI assistants to reference
+                      </li>
+                      <li>
+                        • <strong>Question-Based Headings</strong> - Optimized for AI Overviews
+                      </li>
                     </ul>
                   </div>
 
                   <div className="flex justify-end gap-3 pt-4 border-t border-border">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => aiForm.reset()}
-                    >
+                    <Button type="button" variant="outline" onClick={() => aiForm.reset()}>
                       Reset Form
                     </Button>
                     <Button type="submit" disabled={generateAI.isPending} className="gap-2">
@@ -868,8 +906,9 @@ export default function AdminBlogPage() {
                 </Button>
               </div>
               <p className="text-sm text-muted-foreground dark:text-muted-foreground">
-                Copy this GEO-optimized prompt and paste it to any AI (ChatGPT, Claude, etc.) to generate blog posts that rank in AI search results. Replace [NUMBER]
-                and [TOPIC/THEME] with your requirements for Generative Engine Optimization.
+                Copy this GEO-optimized prompt and paste it to any AI (ChatGPT, Claude, etc.) to generate blog posts
+                that rank in AI search results. Replace [NUMBER] and [TOPIC/THEME] with your requirements for Generative
+                Engine Optimization.
               </p>
               <div className="relative">
                 <pre className="bg-secondary text-primary-foreground p-4 rounded-lg overflow-x-auto text-xs leading-relaxed max-h-[300px] overflow-y-auto">
@@ -929,13 +968,15 @@ export default function AdminBlogPage() {
               <li className="flex items-start gap-2">
                 <span className="text-primary mt-1">1.</span>
                 <span>
-                  <strong>GEO-Optimized Content</strong> - Posts are optimized for AI search engines (Google AI Overviews, ChatGPT, etc.)
+                  <strong>GEO-Optimized Content</strong> - Posts are optimized for AI search engines (Google AI
+                  Overviews, ChatGPT, etc.)
                 </span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-primary mt-1">2.</span>
                 <span>
-                  <strong>Direct Answers First</strong> - Content provides immediate solutions to rank in zero-click search results
+                  <strong>Direct Answers First</strong> - Content provides immediate solutions to rank in zero-click
+                  search results
                 </span>
               </li>
               <li className="flex items-start gap-2">
@@ -947,7 +988,8 @@ export default function AdminBlogPage() {
               <li className="flex items-start gap-2">
                 <span className="text-primary mt-1">4.</span>
                 <span>
-                  <strong>Use the AI Generate Tab</strong> for one-click GEO-optimized blog creation with your custom parameters
+                  <strong>Use the AI Generate Tab</strong> for one-click GEO-optimized blog creation with your custom
+                  parameters
                 </span>
               </li>
             </ul>

@@ -1,8 +1,8 @@
 'use client'
 
-import { Skeleton } from '@/components/ui/skeleton'
 import { MessageSquare } from 'lucide-react'
 import React from 'react'
+import { Skeleton } from '@/components/ui/skeleton'
 
 const TwoDTabSkeleton: React.FC = () => {
   return (
@@ -23,7 +23,7 @@ const TwoDTabSkeleton: React.FC = () => {
       </div>
 
       {/* Conversation Context Sidebar Skeleton */}
-      <div className="hidden md:flex flex-col w-1/2 h-[70%] border-l border dark:border px-8 py-4">
+      <div className="hidden md:flex flex-col w-1/2 h-[70%] border-l px-8 py-4">
         <div className="flex items-center gap-2 mb-6 text-muted-foreground">
           <MessageSquare className="w-3.5 h-3.5" />
           <Skeleton className="h-3 w-24" />

@@ -1,18 +1,18 @@
 'use client'
 
-import { useTranslation } from 'react-i18next'
-import { usePostHog } from 'posthog-js/react'
-
 import { AllyLogo, BetaBadge } from '@/components/shared/logo'
+import React, { useEffect } from 'react'
+
 import { ENDPOINTS } from '@/lib/api/endpoints'
 import { ENV } from '@/lib/constants'
 import { FcGoogle } from 'react-icons/fc'
-import { TubesBackground } from '@/components/ui/neon-flow'
 import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button'
 import Link from 'next/link'
-import React, { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { TubesBackground } from '@/components/ui/neon-flow'
 import { useAuthContext } from '@/contexts/AuthContext'
+import { usePostHog } from 'posthog-js/react'
+import { useRouter } from 'next/navigation'
+import { useTranslation } from 'react-i18next'
 
 const RegisterPage: React.FC = () => {
   const { t } = useTranslation()
@@ -55,14 +55,16 @@ const RegisterPage: React.FC = () => {
           <h1 className="text-4xl md:text-5xl font-medium tracking-normal mb-4 text-foreground dark:text-primary-foreground">
             {t('register.title')}
           </h1>
-          <p className="text-muted-foreground dark:text-muted-foreground mb-8 text-lg font-medium">{t('register.subtitle')}</p>
+          <p className="text-muted-foreground dark:text-muted-foreground mb-8 text-lg font-medium">
+            {t('register.subtitle')}
+          </p>
           <div className="space-y-2">
             <InteractiveHoverButton
               text={t('register.signUpWithGoogle')}
               loadingText={t('register.connecting')}
               isLoading={isLoading}
               Icon={<FcGoogle size={24} />}
-              className="w-full h-14 text-lg shadow-lg border dark:border-zinc-700"
+              className="w-full h-14 text-lg shadow-lg "
               onClick={handleGoogleSignUp}
             />
           </div>

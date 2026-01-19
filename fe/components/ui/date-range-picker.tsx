@@ -24,6 +24,7 @@ import { DateRange } from 'react-day-picker'
 import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
+import { useTranslation } from 'react-i18next'
 
 interface DatePickerWithRangeProps extends React.HTMLAttributes<HTMLDivElement> {
   date: DateRange | undefined
@@ -42,6 +43,7 @@ type PresetKey =
   | 'custom'
 
 export function DatePickerWithRange({ className, date, setDate }: DatePickerWithRangeProps) {
+  const { t } = useTranslation()
   const [isOpen, setIsOpen] = React.useState(false)
   const [internalDate, setInternalDate] = React.useState<DateRange | undefined>(date)
   const [isCompareEnabled, setIsCompareEnabled] = React.useState(false)

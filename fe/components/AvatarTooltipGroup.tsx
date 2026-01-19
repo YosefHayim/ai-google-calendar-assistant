@@ -33,12 +33,12 @@ const TooltipAvatar: React.FC<AvatarProps & { index: number }> = ({ src, name, f
             className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-secondary dark:bg-background text-white dark:text-foreground text-xs font-bold rounded shadow-xl whitespace-nowrap z-50 pointer-events-none"
           >
             {name}
-            <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-zinc-900 dark:border-t-white" />
+            <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-zinc-900 -t-white" />
           </motion.div>
         )}
       </AnimatePresence>
       <div
-        className="relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full border-2 border-white dark:border-zinc-950 bg-secondary dark:bg-secondary transition-transform hover:scale-110 hover:z-10 cursor-pointer"
+        className="relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full border-2 border-white -zinc-950 bg-secondary dark:bg-secondary transition-transform hover:scale-110 hover:z-10 cursor-pointer"
         style={{ marginLeft: index === 0 ? 0 : '-12px' }}
       >
         {src ? (

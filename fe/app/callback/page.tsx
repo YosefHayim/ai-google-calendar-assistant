@@ -157,7 +157,9 @@ function CallbackContent() {
             </div>
             <div>
               <p className="text-destructive dark:text-red-400 font-medium text-lg">{error}</p>
-              <p className="text-muted-foreground dark:text-muted-foreground text-sm mt-1">{t('callback.redirectingToLogin')}</p>
+              <p className="text-muted-foreground dark:text-muted-foreground text-sm mt-1">
+                {t('callback.redirectingToLogin')}
+              </p>
             </div>
           </div>
         ) : (

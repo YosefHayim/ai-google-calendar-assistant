@@ -47,7 +47,7 @@ function DashboardLayoutContent({ children }: { children?: React.ReactNode }) {
         <SidebarInset className="flex-1 flex flex-col">
           <TrialExpirationBanner onUpgrade={handleUpgrade} />
 
-          <header className="sticky top-0 flex h-14 items-center gap-2 border-b border dark:border bg-muted dark:bg-secondary px-4 md:hidden z-40">
+          <header className="sticky top-0 flex h-14 items-center gap-2 border-b bg-muted dark:bg-secondary px-4 md:hidden z-40">
             <SidebarTrigger className="-ml-1" />
           </header>
           <main className="flex-1 flex flex-col overflow-hidden">{children}</main>

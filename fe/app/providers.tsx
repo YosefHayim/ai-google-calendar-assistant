@@ -19,15 +19,21 @@ import { createQueryClient } from '@/lib/query'
 import dynamic from 'next/dynamic'
 import { initWebVitals } from '@/lib/web-vitals'
 
-const PostHogProvider = dynamic(() => import('@/contexts/PostHogContext').then(mod => ({ default: mod.PostHogProvider })), {
-  loading: () => null,
-  ssr: false,
-})
+const PostHogProvider = dynamic(
+  () => import('@/contexts/PostHogContext').then((mod) => ({ default: mod.PostHogProvider })),
+  {
+    loading: () => null,
+    ssr: false,
+  },
+)
 
-const PostHogPageview = dynamic(() => import('@/components/shared/PostHogPageview').then(mod => mod.PostHogPageview), {
-  loading: () => null,
-  ssr: false,
-})
+const PostHogPageview = dynamic(
+  () => import('@/components/shared/PostHogPageview').then((mod) => mod.PostHogPageview),
+  {
+    loading: () => null,
+    ssr: false,
+  },
+)
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(() => createQueryClient())
@@ -65,7 +71,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
             position="bottom-center"
             toastOptions={{
               className:
-                'bg-background dark:bg-secondary border dark:border text-foreground dark:text-primary-foreground w-[calc(100vw-2rem)] sm:w-auto sm:min-w-[356px] sm:max-w-[420px] mx-auto',
+                'bg-background dark:bg-secondary text-foreground dark:text-primary-foreground w-[calc(100vw-2rem)] sm:w-auto sm:min-w-[356px] sm:max-w-[420px] mx-auto',
               duration: 4000,
             }}
             richColors

@@ -39,7 +39,9 @@ const IntegrationsDashboard: React.FC<IntegrationsDashboardProps> = () => {
     <div className="max-w-4xl mx-auto w-full p-2 relative">
       <header className="mb-10 flex justify-between items-end">
         <div>
-          <h1 className="text-2xl font-medium text-foreground dark:text-primary-foreground mb-2">{t('integrations.title')}</h1>
+          <h1 className="text-2xl font-medium text-foreground dark:text-primary-foreground mb-2">
+            {t('integrations.title')}
+          </h1>
           <p className="text-muted-foreground dark:text-muted-foreground">{t('integrations.description')}</p>
         </div>
         <Button
@@ -53,16 +55,18 @@ const IntegrationsDashboard: React.FC<IntegrationsDashboardProps> = () => {
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-        <div className="bg-background dark:bg-secondary border border dark:border rounded-md p-6 shadow-sm">
+        <div className="bg-background dark:bg-secondary   rounded-md p-6 shadow-sm">
           <div className="flex items-start justify-between mb-6">
             <div className="p-3 bg-primary/5 dark:bg-blue-900/30 text-primary rounded-md">
               <TelegramIcon />
             </div>
-            <div className="flex items-center gap-1.5 bg-primary/5 text-primary p-1 rounded-full text-xs font-medium border border-primary/20">
+            <div className="flex items-center gap-1.5 bg-primary/5 text-primary p-1 rounded-full text-xs font-medium border-primary/20">
               <CheckCircle2 size={16} /> Connected
             </div>
           </div>
-          <h3 className="text-lg font-medium text-foreground dark:text-primary-foreground mb-1">{t('integrations.telegram.title')}</h3>
+          <h3 className="text-lg font-medium text-foreground dark:text-primary-foreground mb-1">
+            {t('integrations.telegram.title')}
+          </h3>
           <p className="text-sm text-muted-foreground mb-6">{t('integrations.telegram.description')}</p>
           <div className="flex items-center justify-between pt-4 border-t border-border">
             <span className="text-xs font-mono text-muted-foreground">@AllySyncBot</span>
@@ -72,16 +76,18 @@ const IntegrationsDashboard: React.FC<IntegrationsDashboardProps> = () => {
           </div>
         </div>
 
-        <div className="bg-background dark:bg-secondary border border dark:border rounded-md p-6 shadow-sm">
+        <div className="bg-background dark:bg-secondary   rounded-md p-6 shadow-sm">
           <div className="flex items-start justify-between mb-6">
             <div className="p-3 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-500 rounded-md">
               <WhatsAppIcon />
             </div>
-            <div className="flex items-center gap-1.5 bg-secondary text-muted-foreground p-1 rounded-full text-xs font-medium border border">
+            <div className="flex items-center gap-1.5 bg-secondary text-muted-foreground p-1 rounded-full text-xs font-medium border">
               <Circle size={16} /> {t('integrations.status.disconnected')}
             </div>
           </div>
-          <h3 className="text-lg font-medium text-foreground dark:text-primary-foreground mb-1">{t('integrations.whatsapp.title')}</h3>
+          <h3 className="text-lg font-medium text-foreground dark:text-primary-foreground mb-1">
+            {t('integrations.whatsapp.title')}
+          </h3>
           <p className="text-sm text-muted-foreground mb-6">{t('integrations.whatsapp.description')}</p>
           <div className="pt-4 border-t border-border">
             <Button onClick={handleWhatsAppConnect} className="w-full">
@@ -90,7 +96,7 @@ const IntegrationsDashboard: React.FC<IntegrationsDashboardProps> = () => {
           </div>
         </div>
 
-        <div className="bg-background dark:bg-secondary border border dark:border rounded-md p-6 shadow-sm">
+        <div className="bg-background dark:bg-secondary rounded-md p-6 shadow-sm">
           <div className="flex items-start justify-between mb-6">
             <div className="p-3 bg-purple-50 dark:bg-purple-900/30 text-[#4A154B] rounded-md">
               <FaSlack className="w-5 h-5" />
@@ -98,21 +104,25 @@ const IntegrationsDashboard: React.FC<IntegrationsDashboardProps> = () => {
             {isSlackLoading ? (
               <Skeleton className="w-24 h-6 rounded-full" />
             ) : slackStatus?.isConnected ? (
-              <div className="flex items-center gap-1.5 bg-primary/5 text-primary p-1 rounded-full text-xs font-medium border border-primary/20">
+              <div className="flex items-center gap-1.5 bg-primary/5 text-primary p-1 rounded-full text-xs font-medium border-primary/20">
                 <CheckCircle2 size={16} /> Connected
               </div>
             ) : (
-              <div className="flex items-center gap-1.5 bg-secondary text-muted-foreground p-1 rounded-full text-xs font-medium border border">
+              <div className="flex items-center gap-1.5 bg-secondary text-muted-foreground p-1 rounded-full text-xs font-medium border">
                 <Circle size={16} /> Not connected
               </div>
             )}
           </div>
-          <h3 className="text-lg font-medium text-foreground dark:text-primary-foreground mb-1">{t('integrations.slack.title')}</h3>
+          <h3 className="text-lg font-medium text-foreground dark:text-primary-foreground mb-1">
+            {t('integrations.slack.title')}
+          </h3>
           <p className="text-sm text-muted-foreground mb-6">{t('integrations.slack.description')}</p>
           <div className="pt-4 border-t border-border">
             {slackStatus?.isConnected ? (
               <div className="flex items-center justify-between">
-                <span className="text-xs font-mono text-muted-foreground">@{slackStatus.slackUsername || 'Connected'}</span>
+                <span className="text-xs font-mono text-muted-foreground">
+                  @{slackStatus.slackUsername || 'Connected'}
+                </span>
                 <Button variant="ghost" size="sm" className="text-sm font-medium" onClick={() => refetchSlack()}>
                   <RefreshCw className="w-3.5 h-3.5" /> Refresh
                 </Button>
@@ -130,16 +140,18 @@ const IntegrationsDashboard: React.FC<IntegrationsDashboardProps> = () => {
           </div>
         </div>
 
-        <div className="bg-background dark:bg-secondary border border dark:border rounded-md p-6 shadow-sm md:col-span-2">
+        <div className="bg-background dark:bg-secondary rounded-md p-6 shadow-sm md:col-span-2">
           <div className="flex items-start justify-between mb-6">
             <div className="p-3 bg-primary/5 dark:bg-blue-900/30 text-primary rounded-md">
               <GoogleCalendarIcon className="w-5 h-5" />
             </div>
-            <div className="flex items-center gap-1.5 bg-primary/5 text-primary p-1 rounded-full text-xs font-medium border border-primary/20">
+            <div className="flex items-center gap-1.5 bg-primary/5 text-primary p-1 rounded-full text-xs font-medium border-primary/20">
               <CheckCircle2 size={16} /> API Active
             </div>
           </div>
-          <h3 className="text-lg font-medium text-foreground dark:text-primary-foreground mb-1">{t('integrations.googleCalendar.title')}</h3>
+          <h3 className="text-lg font-medium text-foreground dark:text-primary-foreground mb-1">
+            {t('integrations.googleCalendar.title')}
+          </h3>
           <p className="text-sm text-muted-foreground mb-6">
             Sync your calendars with Ally for seamless scheduling and conflict resolution.
           </p>
@@ -166,13 +178,17 @@ const IntegrationsDashboard: React.FC<IntegrationsDashboardProps> = () => {
               </div>
             ) : isError ? (
               <div className="py-4 text-center">
-                <p className="text-xs text-destructive font-bold uppercase tracking-tight">{t('integrations.googleCalendar.failedToLoad')}</p>
+                <p className="text-xs text-destructive font-bold uppercase tracking-tight">
+                  {t('integrations.googleCalendar.failedToLoad')}
+                </p>
                 <Button variant="link" onClick={() => refetch()} className="text-xs text-primary p-0 h-auto mt-1">
                   Try again
                 </Button>
               </div>
             ) : calendarList.length === 0 ? (
-              <div className="py-8 text-center text-muted-foreground text-xs italic">{t('integrations.googleCalendar.noSources')}</div>
+              <div className="py-8 text-center text-muted-foreground text-xs italic">
+                {t('integrations.googleCalendar.noSources')}
+              </div>
             ) : (
               <ul className="space-y-2">
                 {calendarList.map((cal) => (
@@ -181,9 +197,7 @@ const IntegrationsDashboard: React.FC<IntegrationsDashboardProps> = () => {
                       className="w-2.5 h-2.5 rounded-full"
                       style={{ backgroundColor: cal.calendarColorForEvents || '#f26306' }}
                     />
-                    <span className="flex-1 font-medium text-foreground">
-                      {cal.calendarName || 'Unnamed Calendar'}
-                    </span>
+                    <span className="flex-1 font-medium text-foreground">{cal.calendarName || 'Unnamed Calendar'}</span>
                     <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
                       {cal.accessRole || 'reader'}
                     </span>

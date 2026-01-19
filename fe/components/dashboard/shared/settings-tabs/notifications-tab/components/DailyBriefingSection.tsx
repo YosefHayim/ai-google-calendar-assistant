@@ -10,8 +10,10 @@ import CinematicGlowToggle from '@/components/ui/cinematic-glow-toggle'
 import { SettingsRow, SettingsSection, TabHeader, TimePicker, TimezoneSelector } from '../../components'
 import { useDailyBriefing, useUpdateDailyBriefing } from '@/hooks/queries'
 import { type DailyBriefingFormData, dailyBriefingDefaults } from '@/lib/validations/preferences'
+import { useTranslation } from 'react-i18next'
 
 export function DailyBriefingSection() {
+  const { t } = useTranslation()
   const dailyBriefingToggleId = React.useId()
 
   const { data: briefingData, isLoading: isLoadingBriefing } = useDailyBriefing()
@@ -104,7 +106,9 @@ export function DailyBriefingSection() {
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-foreground">Delivery Time</label>
                     <TimePicker id="briefing-time" value={briefingSettings.time} onChange={handleBriefingTimeChange} />
-                    <p className="text-xs text-muted-foreground">Choose when you'd like to receive your daily briefing</p>
+                    <p className="text-xs text-muted-foreground">
+                      Choose when you'd like to receive your daily briefing
+                    </p>
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-foreground">Timezone</label>

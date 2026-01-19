@@ -1,7 +1,7 @@
 'use client'
 
-import React from 'react'
 import { InfoSection } from './InfoSection'
+import React from 'react'
 
 interface ColorDisplayProps {
   backgroundColor?: string
@@ -19,10 +19,7 @@ export function ColorDisplay({ backgroundColor, foregroundColor, colorId }: Colo
       <div className="space-y-2">
         {backgroundColor && (
           <div className="flex items-center gap-3">
-            <div
-              className="w-8 h-8 rounded-md border border dark:border"
-              style={{ backgroundColor }}
-            />
+            <div className="w-8 h-8 rounded-md border " style={{ backgroundColor }} />
             <div>
               <p className="text-xs text-muted-foreground dark:text-muted-foreground">Background</p>
               <p className="text-sm text-zinc-600 dark:text-muted-foreground font-mono">{backgroundColor}</p>
@@ -31,10 +28,7 @@ export function ColorDisplay({ backgroundColor, foregroundColor, colorId }: Colo
         )}
         {foregroundColor && (
           <div className="flex items-center gap-3">
-            <div
-              className="w-8 h-8 rounded-md border border dark:border"
-              style={{ backgroundColor: foregroundColor }}
-            />
+            <div className="w-8 h-8 rounded-md border " style={{ backgroundColor: foregroundColor }} />
             <div>
               <p className="text-xs text-muted-foreground dark:text-muted-foreground">Foreground</p>
               <p className="text-sm text-zinc-600 dark:text-muted-foreground font-mono">{foregroundColor}</p>

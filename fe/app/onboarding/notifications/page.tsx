@@ -1,13 +1,6 @@
 'use client'
 
-import {
-  ArrowLeft,
-  ArrowRight,
-  Bell,
-  CheckCircle,
-  Clock,
-  Mail,
-} from 'lucide-react'
+import { ArrowLeft, ArrowRight, Bell, CheckCircle, Clock, Mail } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { useEffect, useState } from 'react'
@@ -43,7 +36,7 @@ const notificationOptions: NotificationOption[] = [
   {
     id: 'daily_digest',
     title: 'Daily digest',
-    description: 'Receive a summary of your day\'s events and updates',
+    description: "Receive a summary of your day's events and updates",
     icon: <Mail className="w-6 h-6" />,
     features: ['Daily event summary', 'Conflict alerts bundled', 'Weekly feature updates'],
     preview: [
@@ -87,7 +80,7 @@ export default function NotificationsPage() {
     router.push('/onboarding/pain-point')
   }
 
-  const selectedOption = notificationOptions.find(option => option.id === selectedFrequency)
+  const selectedOption = notificationOptions.find((option) => option.id === selectedFrequency)
 
   return (
     <OnboardingLayoutContent
@@ -97,7 +90,10 @@ export default function NotificationsPage() {
       subtitle="Choose your preferred notification style"
     >
       <div className="space-y-6">
-        <RadioGroup value={selectedFrequency} onValueChange={(value) => setSelectedFrequency(value as NotificationOption['id'])}>
+        <RadioGroup
+          value={selectedFrequency}
+          onValueChange={(value) => setSelectedFrequency(value as NotificationOption['id'])}
+        >
           <div className="grid gap-4">
             {notificationOptions.map((option, index) => (
               <motion.div
@@ -108,19 +104,17 @@ export default function NotificationsPage() {
               >
                 <Card
                   className={`cursor-pointer transition-all duration-200 ${
-                    selectedFrequency === option.id
-                      ? 'ring-2 ring-primary bg-primary/5'
-                      : 'hover:bg-muted/50'
+                    selectedFrequency === option.id ? 'ring-2 ring-primary bg-primary/5' : 'hover:bg-muted/50'
                   }`}
                 >
                   <CardHeader className="pb-3">
                     <div className="flex items-start gap-3">
                       <RadioGroupItem value={option.id} id={option.id} className="mt-1" />
-                      <div className={`p-2 rounded-lg ${
-                        selectedFrequency === option.id
-                          ? 'bg-primary text-primary-foreground'
-                          : 'bg-muted'
-                      }`}>
+                      <div
+                        className={`p-2 rounded-lg ${
+                          selectedFrequency === option.id ? 'bg-primary text-primary-foreground' : 'bg-muted'
+                        }`}
+                      >
                         {option.icon}
                       </div>
                       <div className="flex-1">
@@ -137,10 +131,7 @@ export default function NotificationsPage() {
                         <h4 className="font-medium text-sm mb-2">You'll receive:</h4>
                         <div className="flex flex-wrap gap-2">
                           {option.features.map((feature) => (
-                            <span
-                              key={feature}
-                              className="text-xs bg-muted px-2 py-1 rounded-full"
-                            >
+                            <span key={feature} className="text-xs bg-muted px-2 py-1 rounded-full">
                               {feature}
                             </span>
                           ))}

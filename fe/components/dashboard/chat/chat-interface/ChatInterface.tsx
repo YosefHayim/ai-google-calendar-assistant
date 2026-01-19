@@ -18,9 +18,11 @@ import { usePostHog } from 'posthog-js/react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useSpeechRecognition } from '@/hooks/useSpeechRecognition'
 import { useStreamingChat } from '@/hooks/useStreamingChat'
+import { useTranslation } from 'react-i18next'
 import { useVoicePreference } from '@/hooks/queries'
 
 export function ChatInterface() {
+  const { t } = useTranslation()
   const {
     messages,
     setMessages,
@@ -275,7 +277,7 @@ export function ChatInterface() {
     <div className="flex h-full w-full relative overflow-hidden">
       <div className="flex-1 flex flex-col h-full mx-auto w-full relative overflow-hidden">
         {/* Mobile header for tabs */}
-        <div className="md:hidden flex justify-center py-2 bg-muted/80 dark:bg-secondary/80 backdrop-blur-sm border-b border/50 dark:border/50">
+        <div className="md:hidden flex justify-center py-2 bg-muted/80 dark:bg-secondary/80 backdrop-blur-sm border-b border/50 /50">
           <ViewSwitcher activeTab={activeTab} onTabChange={setActiveTab} />
         </div>
 

@@ -18,8 +18,10 @@ import { InteractiveHoverButton } from '../ui/interactive-hover-button'
 import { calendarsService } from '@/services/calendars.service'
 import { toast } from 'sonner'
 import { useQueryClient } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
 
 const CreateCalendarDialog: React.FC<CreateCalendarDialogProps> = ({ isOpen, onClose, onSuccess }) => {
+  const { t } = useTranslation()
   const [calendarPrompt, setCalendarPrompt] = useState('')
   const [isCreatingCalendar, setIsCreatingCalendar] = useState(false)
   const queryClient = useQueryClient()
@@ -61,7 +63,7 @@ const CreateCalendarDialog: React.FC<CreateCalendarDialogProps> = ({ isOpen, onC
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
-      <DialogContent className="sm:max-w-md bg-background dark:bg-secondary border dark:border">
+      <DialogContent className="sm:max-w-md bg-background dark:bg-secondary border ">
         <DialogHeader>
           <DialogTitle className="text-lg font-medium text-foreground dark:text-primary-foreground">
             Create New Calendar

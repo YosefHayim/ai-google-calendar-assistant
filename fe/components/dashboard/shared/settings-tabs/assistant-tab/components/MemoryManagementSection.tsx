@@ -8,12 +8,14 @@ import { useContextualScheduling, useUpdateContextualScheduling } from '@/hooks/
 
 import CinematicGlowToggle from '@/components/ui/cinematic-glow-toggle'
 import { toast } from 'sonner'
+import { useTranslation } from 'react-i18next'
 
 interface MemoryManagementSectionProps {
   toggleId: string
 }
 
 export const MemoryManagementSection: React.FC<MemoryManagementSectionProps> = ({ toggleId }) => {
+  const { t } = useTranslation()
   const { data: contextualData } = useContextualScheduling()
   const { updateContextualScheduling, isUpdating: isUpdatingContextual } = useUpdateContextualScheduling()
 

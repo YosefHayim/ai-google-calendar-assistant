@@ -138,11 +138,7 @@ export function SystemStatus() {
             </span>
           </span>
         </TooltipTrigger>
-        <TooltipContent
-          side="top"
-          className="p-3 max-w-xs bg-background dark:bg-secondary border border dark:border-zinc-700"
-          sideOffset={8}
-        >
+        <TooltipContent side="top" className="p-3 max-w-xs bg-background dark:bg-secondary " sideOffset={8}>
           {isChecking ? (
             <p className="text-xs text-zinc-600 dark:text-muted-foreground">{t('footer.checkingServices')}</p>
           ) : !isOnline || !healthData ? (
@@ -162,7 +158,7 @@ export function SystemStatus() {
               </div>
 
               {healthData.services && (
-                <div className="border-t border dark:border-zinc-700 pt-2 space-y-1.5">
+                <div className="border-t  pt-2 space-y-1.5">
                   {healthData.services.websockets && (
                     <ServiceIndicator
                       icon={Wifi}

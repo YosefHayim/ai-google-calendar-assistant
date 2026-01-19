@@ -81,7 +81,9 @@ export default function AboutPage() {
             <h2 className="text-3xl md:text-5xl font-medium text-foreground dark:text-primary-foreground mb-4">
               {t('about.problemTitle')}
             </h2>
-            <p className="text-lg text-muted-foreground dark:text-muted-foreground max-w-2xl mx-auto">{t('about.problemSubtitle')}</p>
+            <p className="text-lg text-muted-foreground dark:text-muted-foreground max-w-2xl mx-auto">
+              {t('about.problemSubtitle')}
+            </p>
           </motion.div>
 
           <motion.div
@@ -100,12 +102,14 @@ export default function AboutPage() {
               <motion.div
                 key={index}
                 variants={fadeInUp}
-                className="p-6 rounded-2xl bg-background dark:bg-secondary border border dark:border-zinc-700 hover:border-orange-300 dark:hover:border-orange-700 transition-colors"
+                className="p-6 rounded-2xl bg-background dark:bg-secondary  hover:border-orange-300 dark:hover:border-orange-700 transition-colors"
               >
                 <div className="w-12 h-12 rounded-xl bg-orange-500/10 flex items-center justify-center mb-4">
                   <problem.icon className="w-6 h-6 text-orange-500" />
                 </div>
-                <h3 className="text-lg font-medium text-foreground dark:text-primary-foreground mb-2">{t(problem.titleKey)}</h3>
+                <h3 className="text-lg font-medium text-foreground dark:text-primary-foreground mb-2">
+                  {t(problem.titleKey)}
+                </h3>
                 <p className="text-muted-foreground dark:text-muted-foreground text-sm">{t(problem.descKey)}</p>
               </motion.div>
             ))}
@@ -153,7 +157,7 @@ export default function AboutPage() {
                 <motion.div
                   key={index}
                   variants={fadeInUp}
-                  className="flex items-start gap-4 p-5 rounded-xl bg-muted dark:bg-secondary/50 border border dark:border"
+                  className="flex items-start gap-4 p-5 rounded-xl bg-muted dark:bg-secondary/50 border "
                 >
                   <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
                     <belief.icon className="w-5 h-5 text-primary" />
@@ -214,7 +218,7 @@ export default function AboutPage() {
               <motion.div
                 key={index}
                 variants={fadeInUp}
-                className="relative p-6 rounded-2xl bg-secondary/50 border border-zinc-700 overflow-hidden group"
+                className="relative p-6 rounded-2xl bg-secondary/50 border-zinc-700 overflow-hidden group"
               >
                 <div
                   className={`absolute inset-0 bg-gradient-to-br ${impact.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}
@@ -285,7 +289,9 @@ export default function AboutPage() {
                 <div className={`w-16 h-16 rounded-2xl ${diff.iconBg} flex items-center justify-center mx-auto mb-6`}>
                   <diff.icon className={`w-8 h-8 ${diff.iconColor}`} />
                 </div>
-                <h3 className="text-xl font-medium text-foreground dark:text-primary-foreground mb-3">{t(diff.titleKey)}</h3>
+                <h3 className="text-xl font-medium text-foreground dark:text-primary-foreground mb-3">
+                  {t(diff.titleKey)}
+                </h3>
                 <p className="text-muted-foreground dark:text-muted-foreground">{t(diff.descKey)}</p>
               </motion.div>
             ))}
@@ -304,14 +310,16 @@ export default function AboutPage() {
           <h2 className="text-3xl md:text-5xl font-medium text-foreground dark:text-primary-foreground mb-6">
             {t('about.ctaTitle')}
           </h2>
-          <p className="text-xl text-muted-foreground dark:text-muted-foreground mb-10 max-w-2xl mx-auto">{t('about.ctaSubtitle')}</p>
+          <p className="text-xl text-muted-foreground dark:text-muted-foreground mb-10 max-w-2xl mx-auto">
+            {t('about.ctaSubtitle')}
+          </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/register" className="w-full sm:w-auto">
               <InteractiveHoverButton text={t('about.ctaPrimary')} className="w-full sm:w-auto h-14 px-8 text-lg" />
             </Link>
             <Link
               href="/pricing"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 h-14 px-8 text-lg font-medium rounded-md border border dark:border-zinc-700 text-foreground dark:text-primary-foreground hover:bg-muted dark:hover:bg-secondary transition-colors"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 h-14 px-8 text-lg font-medium rounded-md  text-foreground dark:text-primary-foreground hover:bg-muted dark:hover:bg-secondary transition-colors"
             >
               {t('about.ctaSecondary')}
               <ArrowRight className="w-5 h-5" />

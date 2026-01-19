@@ -35,7 +35,9 @@ export const Default: Story = {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <span className="text-xs font-bold text-primary uppercase tracking-[0.2em] mb-4 block">Features</span>
-            <h2 className="text-4xl font-bold text-foreground dark:text-primary-foreground mb-4">Built for Busy Professionals</h2>
+            <h2 className="text-4xl font-bold text-foreground dark:text-primary-foreground mb-4">
+              Built for Busy Professionals
+            </h2>
             <p className="text-zinc-600 dark:text-muted-foreground max-w-2xl mx-auto">
               Ask Ally anticipates your needs and handles the complexity of modern scheduling.
             </p>

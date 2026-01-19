@@ -12,13 +12,7 @@ interface OnboardingLayoutProps {
   subtitle?: string
 }
 
-function OnboardingLayoutContent({
-  children,
-  currentStep,
-  totalSteps,
-  title,
-  subtitle,
-}: OnboardingLayoutProps) {
+function OnboardingLayoutContent({ children, currentStep, totalSteps, title, subtitle }: OnboardingLayoutProps) {
   const progress = (currentStep / totalSteps) * 100
 
   return (
@@ -27,7 +21,9 @@ function OnboardingLayoutContent({
       <div className="w-full bg-background/80 backdrop-blur-sm border-b">
         <div className="max-w-2xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between text-sm text-muted-foreground mb-2">
-            <span>Step {currentStep} of {totalSteps}</span>
+            <span>
+              Step {currentStep} of {totalSteps}
+            </span>
             <span>{Math.round(progress)}% complete</span>
           </div>
           <Progress value={progress} className="h-2" />
@@ -65,11 +61,7 @@ function OnboardingLayoutContent({
           </div>
 
           {/* Content */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-          >
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
             {children}
           </motion.div>
         </motion.div>
@@ -82,10 +74,6 @@ function OnboardingLayoutContent({
 export { OnboardingLayoutContent }
 
 // Default export for Next.js layout
-export default function OnboardingLayout({
-  children,
-}: {
-  children: ReactNode
-}) {
+export default function OnboardingLayout({ children }: { children: ReactNode }) {
   return children
 }

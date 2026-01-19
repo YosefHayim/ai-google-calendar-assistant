@@ -1,12 +1,19 @@
 'use client'
 
-import { useState } from 'react'
-import { Card } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Badge } from '@/components/ui/badge'
-import { Textarea } from '@/components/ui/textarea'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  CheckCircle2,
+  Clock,
+  Copy,
+  Loader2,
+  Mail,
+  MoreHorizontal,
+  RefreshCw,
+  Trash2,
+  UserPlus,
+  Users,
+  XCircle,
+} from 'lucide-react'
+import { DATE_FORMATS, formatDate } from '@/lib/formatUtils'
 import {
   Dialog,
   DialogContent,
@@ -16,33 +23,27 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import {
-  Users,
-  UserPlus,
-  Mail,
-  Clock,
-  CheckCircle2,
-  XCircle,
-  MoreHorizontal,
-  Loader2,
-  Copy,
-  RefreshCw,
-  Trash2,
-} from 'lucide-react'
-import { LoadingSpinner } from '@/components/ui/loading-spinner'
-import { Building2 } from 'lucide-react'
-import {
-  useSentInvites,
-  useReceivedInvites,
-  useCreateInvite,
   useCancelInvite,
+  useCreateInvite,
+  useReceivedInvites,
   useResendInvite,
   useRespondToInvite,
+  useSentInvites,
 } from '@/hooks/queries/use-team-invite'
-import { toast } from 'sonner'
-import { formatDate, DATE_FORMATS } from '@/lib/formatUtils'
+
+import { Badge } from '@/components/ui/badge'
+import { Building2 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
 import { EmptyState } from '@/components/ui/empty-state'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { Input } from '@/components/ui/input'
+import { LoadingSpinner } from '@/components/ui/loading-spinner'
+import { Textarea } from '@/components/ui/textarea'
+import { toast } from 'sonner'
+import { useState } from 'react'
 
 export default function TeamPage() {
   const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false)
@@ -142,7 +143,9 @@ export default function TeamPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-foreground dark:text-white">Team</h1>
-            <p className="text-muted-foreground dark:text-muted-foreground mt-1">Invite team members to collaborate on your calendar</p>
+            <p className="text-muted-foreground dark:text-muted-foreground mt-1">
+              Invite team members to collaborate on your calendar
+            </p>
           </div>
           <Dialog open={isInviteDialogOpen} onOpenChange={setIsInviteDialogOpen}>
             <DialogTrigger asChild>
@@ -277,7 +280,7 @@ export default function TeamPage() {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border dark:border-zinc-700">
+                  <tr className="border-b ">
                     <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Email</th>
                     <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Role</th>
                     <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Status</th>
@@ -287,7 +290,7 @@ export default function TeamPage() {
                 </thead>
                 <tbody>
                   {sentInvites.map((invite) => (
-                    <tr key={invite.id} className="border-b border-zinc-100 dark:border">
+                    <tr key={invite.id} className="border-b border-zinc-100 ">
                       <td className="py-4 px-4">
                         <span className="text-foreground dark:text-white">{invite.invitee_email}</span>
                       </td>
@@ -341,7 +344,7 @@ export default function TeamPage() {
         <Card className="p-6">
           <h3 className="text-lg font-semibold text-foreground dark:text-white mb-4">Team Roles</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="p-4 rounded-lg bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800">
+            <div className="p-4 rounded-lg bg-purple-50 dark:bg-purple-900/20 border-purple-200 -purple-800">
               <div className="flex items-center gap-2 mb-2">
                 <Building2 className="w-5 h-5 text-purple-600" />
                 <h4 className="font-medium text-foreground dark:text-white">Admin</h4>
@@ -350,7 +353,7 @@ export default function TeamPage() {
                 Full access to all calendars, can invite and manage team members
               </p>
             </div>
-            <div className="p-4 rounded-lg bg-primary/5 dark:bg-blue-900/20 border border-primary/20 dark:border-blue-800">
+            <div className="p-4 rounded-lg bg-primary/5 dark:bg-blue-900/20 border-primary/20 -blue-800">
               <div className="flex items-center gap-2 mb-2">
                 <Users className="w-5 h-5 text-primary" />
                 <h4 className="font-medium text-foreground dark:text-white">Member</h4>
@@ -359,7 +362,7 @@ export default function TeamPage() {
                 Can view and edit shared calendars, create and modify events
               </p>
             </div>
-            <div className="p-4 rounded-lg bg-muted dark:bg-gray-900/20 border border dark:border-gray-700">
+            <div className="p-4 rounded-lg bg-muted dark:bg-gray-900/20 border -gray-700">
               <div className="flex items-center gap-2 mb-2">
                 <Users className="w-5 h-5 text-foreground" />
                 <h4 className="font-medium text-foreground dark:text-white">Viewer</h4>

@@ -1,12 +1,13 @@
 'use client'
 
-import { motion } from 'framer-motion'
-import Link from 'next/link'
-import MarketingLayout from '@/components/marketing/MarketingLayout'
+import { ArrowRight, Briefcase, Clock, Coffee, Globe, Heart, MapPin, Rocket, Sparkles, Users, Zap } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Briefcase, MapPin, Clock, Users, ArrowRight, Sparkles, Rocket, Heart, Coffee, Zap, Globe } from 'lucide-react'
+import Link from 'next/link'
+import MarketingLayout from '@/components/marketing/MarketingLayout'
+import { motion } from 'framer-motion'
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
@@ -128,7 +129,7 @@ export default function CareersPage() {
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-red-500/10 via-orange-500/10 to-amber-500/10 dark:from-red-500/20 dark:via-orange-500/20 dark:to-amber-500/20 border border-destructive/20 dark:border-destructive/30 p-6">
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-red-500/10 via-orange-500/10 to-amber-500/10 dark:from-red-500/20 dark:via-orange-500/20 dark:to-amber-500/20 border-destructive/20 -destructive/30 p-6">
             <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-red-500/20 to-transparent rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
             <div className="relative flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center flex-shrink-0">
@@ -156,8 +157,12 @@ export default function CareersPage() {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <h2 className="text-3xl md:text-4xl font-medium text-foreground dark:text-primary-foreground mb-4">Open Positions</h2>
-            <p className="text-lg text-muted-foreground dark:text-muted-foreground">R&D roles currently accepting applications</p>
+            <h2 className="text-3xl md:text-4xl font-medium text-foreground dark:text-primary-foreground mb-4">
+              Open Positions
+            </h2>
+            <p className="text-lg text-muted-foreground dark:text-muted-foreground">
+              R&D roles currently accepting applications
+            </p>
           </motion.div>
 
           <motion.div
@@ -228,7 +233,9 @@ export default function CareersPage() {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <h2 className="text-3xl md:text-4xl font-medium text-foreground dark:text-primary-foreground mb-4">Why Join Us?</h2>
+            <h2 className="text-3xl md:text-4xl font-medium text-foreground dark:text-primary-foreground mb-4">
+              Why Join Us?
+            </h2>
             <p className="text-lg text-muted-foreground dark:text-muted-foreground">
               We believe great work happens when people are happy and empowered
             </p>
@@ -245,13 +252,15 @@ export default function CareersPage() {
               <motion.div
                 key={index}
                 variants={fadeInUp}
-                className="flex items-start gap-4 p-6 rounded-2xl bg-background dark:bg-secondary border border dark:border-zinc-700"
+                className="flex items-start gap-4 p-6 rounded-2xl bg-background dark:bg-secondary "
               >
                 <div className="w-12 h-12 rounded-xl bg-destructive/10 flex items-center justify-center flex-shrink-0">
                   <perk.icon className="w-6 h-6 text-destructive" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-medium text-foreground dark:text-primary-foreground mb-1">{perk.title}</h3>
+                  <h3 className="text-lg font-medium text-foreground dark:text-primary-foreground mb-1">
+                    {perk.title}
+                  </h3>
                   <p className="text-muted-foreground dark:text-muted-foreground text-sm">{perk.description}</p>
                 </div>
               </motion.div>

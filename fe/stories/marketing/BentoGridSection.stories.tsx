@@ -74,7 +74,9 @@ export const InPageContext: Story = {
         <Story />
         <section className="py-20 px-4 bg-muted dark:bg-secondary">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl font-bold text-foreground dark:text-primary-foreground mb-8">Trusted by Teams Everywhere</h2>
+            <h2 className="text-3xl font-bold text-foreground dark:text-primary-foreground mb-8">
+              Trusted by Teams Everywhere
+            </h2>
             <div className="flex items-center justify-center gap-12 opacity-50">
               {['Startup Co', 'Tech Corp', 'Agency Inc', 'Enterprise Ltd'].map((name) => (
                 <span key={name} className="text-lg font-bold text-muted-foreground">

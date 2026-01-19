@@ -42,10 +42,16 @@ const HomePage = React.memo(function HomePage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4 sm:px-0">
             <Link href="/register" className="w-full sm:w-auto">
-              <InteractiveHoverButton text={t('home.getStartedFree')} className="w-full sm:w-auto h-12 sm:h-14 px-6 sm:px-8 text-base sm:text-lg" />
+              <InteractiveHoverButton
+                text={t('home.getStartedFree')}
+                className="w-full sm:w-auto h-12 sm:h-14 px-6 sm:px-8 text-base sm:text-lg"
+              />
             </Link>
             <Link href="/pricing" className="w-full sm:w-auto">
-              <Button variant="outline" className="w-full sm:w-auto rounded-md h-12 sm:h-14 px-6 sm:px-8 text-base sm:text-lg font-medium">
+              <Button
+                variant="outline"
+                className="w-full sm:w-auto rounded-md h-12 sm:h-14 px-6 sm:px-8 text-base sm:text-lg font-medium"
+              >
                 {t('home.viewPricing')} <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
               </Button>
             </Link>
@@ -89,7 +95,9 @@ const HomePage = React.memo(function HomePage() {
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-medium text-foreground dark:text-primary-foreground mb-3 sm:mb-4 px-2">
             {t('home.featuresTitle')}
           </h2>
-          <p className="text-base sm:text-lg text-muted-foreground dark:text-muted-foreground max-w-2xl mx-auto px-4">{t('home.featuresSubtitle')}</p>
+          <p className="text-base sm:text-lg text-muted-foreground dark:text-muted-foreground max-w-2xl mx-auto px-4">
+            {t('home.featuresSubtitle')}
+          </p>
         </div>
 
         <AnimatedFeatureSpotlight3D
@@ -144,9 +152,14 @@ const HomePage = React.memo(function HomePage() {
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-medium text-foreground dark:text-primary-foreground mb-4 sm:mb-6 px-2">
             {t('home.ctaTitle')}
           </h2>
-          <p className="text-base sm:text-lg text-muted-foreground dark:text-muted-foreground mb-6 sm:mb-8 px-4">{t('home.ctaSubtitle')}</p>
+          <p className="text-base sm:text-lg text-muted-foreground dark:text-muted-foreground mb-6 sm:mb-8 px-4">
+            {t('home.ctaSubtitle')}
+          </p>
           <Link href="/register" className="w-full sm:w-auto sm:inline-flex">
-            <InteractiveHoverButton text={t('home.startForFree')} className="w-full sm:w-auto h-12 sm:h-14 px-6 sm:px-8 text-base sm:text-lg" />
+            <InteractiveHoverButton
+              text={t('home.startForFree')}
+              className="w-full sm:w-auto h-12 sm:h-14 px-6 sm:px-8 text-base sm:text-lg"
+            />
           </Link>
         </div>
       </section>

@@ -14,7 +14,7 @@ interface ChatHeaderProps {
 
 export function ChatHeader({ onClose, onMinimize }: ChatHeaderProps) {
   return (
-    <div className="relative flex items-center justify-between px-4 py-3 border-b border/50 dark:border/50 bg-gradient-to-r from-zinc-50/80 to-white/80 dark:from-zinc-900/80 dark:to-zinc-950/80 backdrop-blur-xl rounded-t-2xl">
+    <div className="relative flex items-center justify-between px-4 py-3 border-b border/50 /50 bg-gradient-to-r from-zinc-50/80 to-white/80 dark:from-zinc-900/80 dark:to-zinc-950/80 backdrop-blur-xl rounded-t-2xl">
       <motion.div
         className="absolute bottom-0 left-4 right-4 h-0.5 bg-gradient-to-r from-primary via-orange-500 to-primary rounded-full"
         initial={{ scaleX: 0 }}

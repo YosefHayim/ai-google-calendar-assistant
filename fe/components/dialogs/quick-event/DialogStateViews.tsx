@@ -118,7 +118,7 @@ export const ConflictView: React.FC<ConflictViewProps> = ({
     <p className="text-sm text-amber-700 dark:text-amber-400 mb-3">{message}</p>
     <EventPreview event={event} calendarName={calendarName} />
     {conflicts.length > 0 && (
-      <div className="mb-3 p-2 bg-amber-50 dark:bg-amber-900/20 rounded border border-amber-200 dark:border-amber-800">
+      <div className="mb-3 p-2 bg-amber-50 dark:bg-amber-900/20 rounded border-amber-200 -amber-800">
         <p className="text-xs font-medium text-amber-700 dark:text-amber-300 mb-1">Conflicts with:</p>
         {conflicts.slice(0, 3).map((c) => (
           <p key={c.id} className="text-xs text-amber-700 dark:text-amber-400">

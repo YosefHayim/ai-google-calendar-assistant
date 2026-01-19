@@ -155,10 +155,10 @@ export function BroadcastDialog({ open, onClose }: BroadcastDialogProps) {
           <div
             className={`p-4 rounded-lg border ${
               type === 'info'
-                ? 'bg-primary/5 border-primary/20 dark:bg-blue-950/30 dark:border-blue-800'
+                ? 'bg-primary/5 border-primary/20 dark:bg-blue-950/30 -blue-800'
                 : type === 'warning'
-                  ? 'bg-amber-50 border-amber-200 dark:bg-amber-950/30 dark:border-amber-800'
-                  : 'bg-destructive/5 border-destructive/20 dark:bg-red-950/30 dark:border-red-800'
+                  ? 'bg-amber-50 border-amber-200 dark:bg-amber-950/30 -amber-800'
+                  : 'bg-destructive/5 border-destructive/20 dark:bg-red-950/30 -red-800'
             }`}
           >
             <div className="flex items-start gap-3">

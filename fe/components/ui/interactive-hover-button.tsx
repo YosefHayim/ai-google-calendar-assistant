@@ -26,7 +26,7 @@ const InteractiveHoverButton = React.forwardRef<HTMLButtonElement, InteractiveHo
         ref={ref}
         disabled={isLoading || props.disabled}
         className={cn(
-          'group relative h-9 cursor-pointer overflow-hidden rounded-lg border border dark:border bg-background dark:bg-secondary px-3 py-2 text-center font-semibold text-foreground dark:text-primary-foreground transition-all duration-300',
+          'group relative h-9 cursor-pointer overflow-hidden rounded-lg bg-background dark:bg-secondary px-3 py-2 text-center font-semibold text-foreground dark:text-primary-foreground transition-all duration-300',
           isLoading && 'cursor-wait border-primary/50',
           className,
         )}

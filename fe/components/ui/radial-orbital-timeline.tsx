@@ -192,9 +192,9 @@ export default function RadialOrbitalTimeline({ timelineData }: RadialOrbitalTim
             onMouseEnter={() => setIsHubHovered(true)}
             onMouseLeave={() => setIsHubHovered(false)}
           >
-            <div className="absolute w-20 h-20 rounded-full border border-primary/20 animate-ping opacity-70"></div>
+            <div className="absolute w-20 h-20 rounded-full border-primary/20 animate-ping opacity-70"></div>
             <div
-              className="absolute w-24 h-24 rounded-full border border-primary/10 animate-ping opacity-50"
+              className="absolute w-24 h-24 rounded-full border-primary/10 animate-ping opacity-50"
               style={{ animationDelay: '0.5s' }}
             ></div>
             <div className="w-8 h-8 rounded-full bg-background dark:bg-secondary backdrop-blur-md flex items-center justify-center transition-transform group-hover/hub:scale-110">
@@ -259,7 +259,7 @@ export default function RadialOrbitalTimeline({ timelineData }: RadialOrbitalTim
                       ? 'border-primary/50 shadow-xl shadow-primary/30'
                       : isRelated
                         ? 'border-primary animate-pulse'
-                        : 'border border-border'
+                        : 'border-border'
                   }
                   transition-all duration-300 transform
                   ${isExpanded ? 'scale-125' : isHubHovered ? 'scale-110' : 'hover:scale-110'}
@@ -280,7 +280,7 @@ export default function RadialOrbitalTimeline({ timelineData }: RadialOrbitalTim
                 </div>
 
                 {isExpanded && (
-                  <Card className="absolute top-24 left-1/2 -translate-x-1/2 w-72 bg-background/95 dark:bg-secondary/95 backdrop-blur-xl border dark:border shadow-2xl overflow-visible z-50">
+                  <Card className="absolute top-24 left-1/2 -translate-x-1/2 w-72 bg-background/95 dark:bg-secondary/95 backdrop-blur-xl shadow-2xl overflow-visible z-50">
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-px h-3 bg-primary/50"></div>
                     <CardHeader className="pb-2 p-4">
                       <div className="flex justify-between items-center mb-1">
@@ -291,7 +291,9 @@ export default function RadialOrbitalTimeline({ timelineData }: RadialOrbitalTim
                               ? 'OPTIMIZING'
                               : 'QUEUED'}
                         </Badge>
-                        <span className="text-xs font-bold text-muted-foreground uppercase tracking-tighter">{item.date}</span>
+                        <span className="text-xs font-bold text-muted-foreground uppercase tracking-tighter">
+                          {item.date}
+                        </span>
                       </div>
                       <CardTitle className="text-sm font-bold text-foreground dark:text-primary-foreground uppercase tracking-tight">
                         {item.title}
@@ -320,7 +322,9 @@ export default function RadialOrbitalTimeline({ timelineData }: RadialOrbitalTim
                         <div className="mt-4 pt-3 border-t border-border">
                           <div className="flex items-center mb-2">
                             <LinkIcon size={10} className="text-muted-foreground mr-1" />
-                            <h4 className="text-xs uppercase tracking-widest font-bold text-muted-foreground">Neural Links</h4>
+                            <h4 className="text-xs uppercase tracking-widest font-bold text-muted-foreground">
+                              Neural Links
+                            </h4>
                           </div>
                           <div className="flex flex-wrap gap-1">
                             {item.relatedIds.map((relatedId) => {

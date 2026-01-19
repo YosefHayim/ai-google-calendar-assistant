@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
-import { ThemeToggle } from '@/components/ui/theme-toggle'
+
 import { ThemeProvider } from 'next-themes'
+import { ThemeToggle } from '@/components/ui/theme-toggle'
 
 const meta: Meta<typeof ThemeToggle> = {
   title: 'UI/ThemeToggle',
@@ -33,7 +34,7 @@ export const WithCustomClass: Story = {
 
 export const InHeader: Story = {
   render: () => (
-    <div className="flex items-center justify-between w-[600px] p-4 bg-background dark:bg-secondary border border dark:border rounded-lg">
+    <div className="flex items-center justify-between w-[600px] p-4 bg-background dark:bg-secondary rounded-lg">
       <div className="flex items-center gap-3">
         <div className="h-8 w-8 rounded-md bg-primary/10 flex items-center justify-center">
           <svg
@@ -64,8 +65,8 @@ export const InHeader: Story = {
 
 export const InSidebar: Story = {
   render: () => (
-    <div className="w-[280px] p-4 bg-background dark:bg-secondary border border dark:border rounded-lg space-y-4">
-      <div className="flex items-center gap-2 pb-4 border-b border dark:border">
+    <div className="w-[280px] p-4 bg-background dark:bg-secondary rounded-lg space-y-4">
+      <div className="flex items-center gap-2 pb-4 border-b border ">
         <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
           <span className="text-xs font-medium text-primary">JD</span>
         </div>
@@ -90,7 +91,7 @@ export const InSidebar: Story = {
         </div>
       </nav>
 
-      <div className="pt-4 border-t border dark:border">
+      <div className="pt-4 border-t border ">
         <div className="flex items-center justify-between">
           <span className="text-sm text-muted-foreground dark:text-muted-foreground">Theme</span>
           <ThemeToggle />
@@ -102,30 +103,36 @@ export const InSidebar: Story = {
 
 export const InSettingsCard: Story = {
   render: () => (
-    <div className="w-[400px] p-6 bg-background dark:bg-secondary border border dark:border rounded-lg space-y-6">
+    <div className="w-[400px] p-6 bg-background dark:bg-secondary rounded-lg space-y-6">
       <div>
         <h3 className="text-lg font-semibold text-foreground dark:text-primary-foreground">Appearance</h3>
-        <p className="text-sm text-muted-foreground dark:text-muted-foreground">Customize how the app looks on your device</p>
+        <p className="text-sm text-muted-foreground dark:text-muted-foreground">
+          Customize how the app looks on your device
+        </p>
       </div>
 
       <div className="space-y-4">
         <div className="flex items-center justify-between py-2">
           <div>
             <p className="text-sm font-medium text-foreground dark:text-primary-foreground">Theme</p>
-            <p className="text-xs text-muted-foreground dark:text-muted-foreground">Switch between light and dark mode</p>
+            <p className="text-xs text-muted-foreground dark:text-muted-foreground">
+              Switch between light and dark mode
+            </p>
           </div>
           <ThemeToggle />
         </div>
 
-        <div className="flex items-center justify-between py-2 border-t border dark:border">
+        <div className="flex items-center justify-between py-2 border-t border ">
           <div>
             <p className="text-sm font-medium text-foreground dark:text-primary-foreground">Compact View</p>
-            <p className="text-xs text-muted-foreground dark:text-muted-foreground">Show more events in calendar view</p>
+            <p className="text-xs text-muted-foreground dark:text-muted-foreground">
+              Show more events in calendar view
+            </p>
           </div>
           <div className="h-6 w-11 rounded-full bg-accent dark:bg-secondary" />
         </div>
 
-        <div className="flex items-center justify-between py-2 border-t border dark:border">
+        <div className="flex items-center justify-between py-2 border-t border ">
           <div>
             <p className="text-sm font-medium text-foreground dark:text-primary-foreground">Week Starts On</p>
             <p className="text-xs text-muted-foreground dark:text-muted-foreground">Choose the first day of the week</p>

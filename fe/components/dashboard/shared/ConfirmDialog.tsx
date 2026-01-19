@@ -66,10 +66,12 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && !isLoading && onClose()}>
-      <DialogContent className="sm:max-w-md bg-background dark:bg-secondary border dark:border">
+      <DialogContent className="sm:max-w-md bg-background dark:bg-secondary border ">
         <DialogHeader>
           <DialogTitle className="text-foreground dark:text-primary-foreground">{title}</DialogTitle>
-          <DialogDescription className="text-muted-foreground dark:text-muted-foreground">{description}</DialogDescription>
+          <DialogDescription className="text-muted-foreground dark:text-muted-foreground">
+            {description}
+          </DialogDescription>
         </DialogHeader>
         <DialogFooter className="sm:justify-end gap-2 mt-4">
           <Button
@@ -77,7 +79,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
             variant="outline"
             onClick={onClose}
             disabled={isLoading}
-            className="border dark:border text-foreground dark:text-primary-foreground"
+            className="text-foreground dark:text-primary-foreground"
           >
             {cancelLabel}
           </Button>

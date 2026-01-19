@@ -240,7 +240,7 @@ function BillingPageContent() {
         </div>
 
         {showSuccess && (
-          <Card className="p-4 bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
+          <Card className="p-4 bg-green-50 dark:bg-green-900/20 border-green-200 -green-800">
             <div className="flex items-center gap-3">
               <Check className="w-5 h-5 text-green-600" />
               <div>
@@ -275,7 +275,7 @@ function BillingPageContent() {
           </div>
 
           {access?.trial_days_left !== null && access?.trial_days_left !== undefined && access.trial_days_left > 0 && (
-            <div className="mt-4 p-4 rounded-lg bg-primary/5 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800">
+            <div className="mt-4 p-4 rounded-lg bg-primary/5 dark:bg-blue-900/20 border-blue-100 -blue-800">
               <div className="flex items-center gap-2">
                 <Clock className="w-4 h-4 text-primary" />
                 <p className="text-sm font-medium text-blue-800 dark:text-blue-200">
@@ -287,7 +287,7 @@ function BillingPageContent() {
           )}
 
           {access?.money_back_eligible && (
-            <div className="mt-4 p-4 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-800">
+            <div className="mt-4 p-4 rounded-lg bg-green-50 dark:bg-green-900/20 border-green-100 -green-800">
               <div className="flex items-center gap-2">
                 <Shield className="w-4 h-4 text-green-600" />
                 <p className="text-sm font-medium text-green-800 dark:text-green-200">{t('billing.moneyBack.title')}</p>
@@ -297,7 +297,7 @@ function BillingPageContent() {
           )}
 
           {access?.subscription?.cancelAtPeriodEnd && (
-            <div className="mt-4 p-4 rounded-lg bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-100 dark:border-yellow-800">
+            <div className="mt-4 p-4 rounded-lg bg-yellow-50 dark:bg-yellow-900/20 border-yellow-100 -yellow-800">
               <div className="flex items-center gap-2">
                 <AlertCircle className="w-4 h-4 text-yellow-700" />
                 <p className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
@@ -320,7 +320,9 @@ function BillingPageContent() {
             <h3 className="text-lg font-semibold text-foreground dark:text-white mb-4">{t('billing.usage.title')}</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="p-4 rounded-lg bg-muted dark:bg-secondary">
-                <p className="text-sm text-muted-foreground dark:text-muted-foreground">{t('billing.usage.aiInteractions')}</p>
+                <p className="text-sm text-muted-foreground dark:text-muted-foreground">
+                  {t('billing.usage.aiInteractions')}
+                </p>
                 <p className="text-2xl font-bold text-foreground dark:text-white mt-1">
                   {access?.interactions_remaining === null ? (
                     <span className="text-green-600">{t('billing.usage.unlimited')}</span>
@@ -330,7 +332,9 @@ function BillingPageContent() {
                 </p>
               </div>
               <div className="p-4 rounded-lg bg-muted dark:bg-secondary">
-                <p className="text-sm text-muted-foreground dark:text-muted-foreground">{t('billing.usage.creditBalance')}</p>
+                <p className="text-sm text-muted-foreground dark:text-muted-foreground">
+                  {t('billing.usage.creditBalance')}
+                </p>
                 <p className="text-2xl font-bold text-foreground dark:text-white mt-1">
                   {t('billing.usage.credits', { count: access?.credits_remaining || 0 })}
                 </p>
@@ -345,7 +349,9 @@ function BillingPageContent() {
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
               <Receipt className="w-5 h-5 text-muted-foreground" />
-              <h3 className="text-lg font-semibold text-foreground dark:text-white">{t('billing.transactions.title')}</h3>
+              <h3 className="text-lg font-semibold text-foreground dark:text-white">
+                {t('billing.transactions.title')}
+              </h3>
             </div>
           </div>
           <TransactionHistoryTable transactions={billingOverview?.transactions || []} />
@@ -359,9 +365,7 @@ function BillingPageContent() {
                 <div
                   key={plan.id}
                   className={`p-4 rounded-lg border ${
-                    plan.slug === access?.plan_slug
-                      ? 'border-primary bg-primary/5'
-                      : 'border dark:border-zinc-700'
+                    plan.slug === access?.plan_slug ? 'border-primary bg-primary/5' : ''
                   }`}
                 >
                   <div className="flex items-center justify-between">
@@ -412,8 +416,12 @@ function BillingPageContent() {
             {access?.subscription && !access.subscription.cancelAtPeriodEnd && (
               <div className="flex items-center justify-between p-4 rounded-lg bg-muted dark:bg-secondary">
                 <div>
-                  <p className="font-medium text-foreground dark:text-white">{t('billing.actions.cancelSubscription')}</p>
-                  <p className="text-sm text-muted-foreground dark:text-muted-foreground">{t('billing.actions.cancelDesc')}</p>
+                  <p className="font-medium text-foreground dark:text-white">
+                    {t('billing.actions.cancelSubscription')}
+                  </p>
+                  <p className="text-sm text-muted-foreground dark:text-muted-foreground">
+                    {t('billing.actions.cancelDesc')}
+                  </p>
                 </div>
                 <Button variant="outline" onClick={handleCancelSubscription} disabled={actionLoading === 'cancel'}>
                   {actionLoading === 'cancel' ? (
@@ -429,7 +437,9 @@ function BillingPageContent() {
               <div className="flex items-center justify-between p-4 rounded-lg bg-green-50 dark:bg-green-900/20">
                 <div>
                   <p className="font-medium text-foreground dark:text-white">{t('billing.actions.requestRefund')}</p>
-                  <p className="text-sm text-muted-foreground dark:text-muted-foreground">{t('billing.actions.refundDesc')}</p>
+                  <p className="text-sm text-muted-foreground dark:text-muted-foreground">
+                    {t('billing.actions.refundDesc')}
+                  </p>
                 </div>
                 <Button variant="outline" onClick={handleRefund} disabled={actionLoading === 'refund'}>
                   {actionLoading === 'refund' ? (

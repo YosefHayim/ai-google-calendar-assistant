@@ -2,7 +2,14 @@
 
 import { ArrowRight, Calendar, Check, Clock, X, Zap } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
 import React, { useState } from 'react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { formatDate, formatDuration } from '@/lib/formatUtils'
@@ -83,14 +90,17 @@ export function GapCard({ gap, index, onFillGap, onSkipGap, isLoading }: GapCard
                 {formatDuration(gap.durationMinutes)}
               </CardTitle>
               <CardDescription className="text-sm">
-                {formatDate(startDate, 'SHORT')} • {startDate.toLocaleTimeString('en-US', {
+                {formatDate(startDate, 'SHORT')} •{' '}
+                {startDate.toLocaleTimeString('en-US', {
                   hour: 'numeric',
                   minute: '2-digit',
-                  hour12: true
-                })} - {endDate.toLocaleTimeString('en-US', {
+                  hour12: true,
+                })}{' '}
+                -{' '}
+                {endDate.toLocaleTimeString('en-US', {
                   hour: 'numeric',
                   minute: '2-digit',
-                  hour12: true
+                  hour12: true,
                 })}
               </CardDescription>
             </div>
@@ -196,11 +206,7 @@ export function GapCard({ gap, index, onFillGap, onSkipGap, isLoading }: GapCard
                   )}
 
                   <div className="flex gap-2 pt-2">
-                    <Button
-                      onClick={handleFillGap}
-                      disabled={!eventSummary.trim() || isLoading}
-                      className="flex-1"
-                    >
+                    <Button onClick={handleFillGap} disabled={!eventSummary.trim() || isLoading} className="flex-1">
                       {isLoading ? 'Creating...' : 'Create Event'}
                     </Button>
                     <Button variant="outline" onClick={() => setShowFillDialog(false)}>
@@ -239,12 +245,7 @@ export function GapCard({ gap, index, onFillGap, onSkipGap, isLoading }: GapCard
                   </div>
 
                   <div className="flex gap-2 pt-2">
-                    <Button
-                      onClick={handleSkipGap}
-                      disabled={isLoading}
-                      variant="outline"
-                      className="flex-1"
-                    >
+                    <Button onClick={handleSkipGap} disabled={isLoading} variant="outline" className="flex-1">
                       {isLoading ? 'Skipping...' : 'Skip Gap'}
                     </Button>
                     <Button variant="ghost" onClick={() => setShowSkipDialog(false)}>

@@ -1,15 +1,16 @@
 'use client'
 
+import { ChevronLeft, ChevronRight, CreditCard, RefreshCw, Search } from 'lucide-react'
 import React, { useState } from 'react'
+
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Search, RefreshCw, ChevronLeft, ChevronRight, CreditCard } from 'lucide-react'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
-import { useAdminSubscriptions } from '@/hooks/queries/admin'
 import type { SubscriptionStatus } from '@/types/admin'
 import { format } from 'date-fns'
+import { useAdminSubscriptions } from '@/hooks/queries/admin'
 
 export default function AdminSubscriptionsPage() {
   const [search, setSearch] = useState('')
@@ -57,7 +58,7 @@ export default function AdminSubscriptionsPage() {
               setStatusFilter(e.target.value as SubscriptionStatus | '')
               setPage(1)
             }}
-            className="px-3 py-2 border border dark:border-zinc-700 rounded-md bg-background dark:bg-secondary text-sm"
+            className="px-3 py-2  rounded-md bg-background dark:bg-secondary text-sm"
           >
             <option value="">All Status</option>
             <option value="active">Active</option>
@@ -79,22 +80,27 @@ export default function AdminSubscriptionsPage() {
           <>
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="border-b border dark:border-zinc-700">
+                <thead className="border-b ">
                   <tr>
                     <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">User</th>
                     <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">Plan</th>
-                    <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">Status</th>
-                    <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">Credits</th>
-                    <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">AI Interactions</th>
-                    <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">Period End</th>
+                    <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">
+                      Status
+                    </th>
+                    <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">
+                      Credits
+                    </th>
+                    <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">
+                      AI Interactions
+                    </th>
+                    <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">
+                      Period End
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   {data?.subscriptions.map((sub) => (
-                    <tr
-                      key={sub.id}
-                      className="border-b border-zinc-100 dark:border hover:bg-muted dark:hover:bg-secondary/50"
-                    >
+                    <tr key={sub.id} className="border-b border-zinc-100  hover:bg-muted dark:hover:bg-secondary/50">
                       <td className="p-4">
                         <div>
                           <p className="font-medium text-foreground dark:text-white">{sub.userEmail}</p>
@@ -129,7 +135,7 @@ export default function AdminSubscriptionsPage() {
             </div>
 
             {/* Pagination */}
-            <div className="flex items-center justify-between p-4 border-t border dark:border-zinc-700">
+            <div className="flex items-center justify-between p-4 border-t ">
               <p className="text-sm text-muted-foreground">
                 Showing {data?.subscriptions.length || 0} of {data?.total || 0} subscriptions
               </p>

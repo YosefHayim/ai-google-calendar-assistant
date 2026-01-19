@@ -2,12 +2,25 @@
 
 import * as z from 'zod'
 
-import { Archive, Check, Clock, Copy, Link as LinkIcon, MessageSquare, Pencil, Pin, Search, Trash2, X, MoreHorizontal } from 'lucide-react'
+import {
+  Archive,
+  Check,
+  Clock,
+  Copy,
+  Link as LinkIcon,
+  MessageSquare,
+  Pencil,
+  Pin,
+  Search,
+  Trash2,
+  X,
+  MoreHorizontal,
+} from 'lucide-react'
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import React, { useEffect, useRef, useState } from 'react'
 import { SidebarGroup, SidebarGroupContent, SidebarGroupLabel, useSidebar } from '@/components/ui/sidebar'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { TooltipProvider } from '@/components/ui/tooltip'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -24,6 +37,7 @@ import { createShareLink, toggleConversationPinned, type ConversationListItem } 
 import { formatRelativeDate } from '@/lib/dateUtils'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
+import { useTranslation } from 'react-i18next'
 import { useChatContext } from '@/contexts/ChatContext'
 import { useForm } from 'react-hook-form'
 import { useSidebarContext } from '@/contexts/SidebarContext'
@@ -35,12 +49,23 @@ const formSchema = z.object({
 })
 
 export function ConversationListSection() {
+  const { t } = useTranslation()
   const { state, isMobile, setOpenMobile } = useSidebar()
   const isCollapsed = state === 'collapsed'
   const { conversations, isLoadingConversations, selectedConversationId, isSearching, streamingTitleConversationId } =
     useChatContext()
-  const { localSearchValue, handleSearchChange, handleClearSearch, handleSelectConversation, initiateDelete, initiateArchive, conversationToArchive, setConversationToArchive, isArchivingConversation, confirmArchive } =
-    useSidebarContext()
+  const {
+    localSearchValue,
+    handleSearchChange,
+    handleClearSearch,
+    handleSelectConversation,
+    initiateDelete,
+    initiateArchive,
+    conversationToArchive,
+    setConversationToArchive,
+    isArchivingConversation,
+    confirmArchive,
+  } = useSidebarContext()
 
   const [sharingId, setSharingId] = useState<string | null>(null)
   const [copiedId, setCopiedId] = useState<string | null>(null)
@@ -141,7 +166,6 @@ export function ConversationListSection() {
     }
   }
 
-
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     if (!conversationToChangeTitleDialog) return
 
@@ -209,7 +233,7 @@ export function ConversationListSection() {
                     'w-full text-left p-2 rounded-md transition-colors group cursor-pointer',
                     selectedConversationId === conversation.id
                       ? 'bg-sidebar-accent text-sidebar-accent-foreground'
-                      : 'hover:bg-sidebar-accent/50'
+                      : 'hover:bg-sidebar-accent/50',
                   )}
                 >
                   <div className="flex items-start justify-between gap-2">
@@ -232,9 +256,7 @@ export function ConversationListSection() {
                           size="icon"
                           className={cn(
                             'h-6 w-6 text-muted-foreground hover:text-foreground',
-                            conversation.pinned
-                              ? 'opacity-100'
-                              : 'opacity-0 group-hover:opacity-100'
+                            conversation.pinned ? 'opacity-100' : 'opacity-0 group-hover:opacity-100',
                           )}
                         >
                           <MoreHorizontal className="w-3 h-3" />

@@ -1,7 +1,8 @@
 'use client'
 
-import { motion } from 'framer-motion'
 import { Brain, Calendar, Clock, Languages } from 'lucide-react'
+
+import { motion } from 'framer-motion'
 
 const PREFERENCES = [
   { label: 'Preferred meeting times', value: '10 AM - 4 PM', icon: Clock },
@@ -28,7 +29,7 @@ export const WebBrainView = () => (
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.1 * i }}
-          className="flex items-center justify-between p-3 rounded-xl bg-background dark:bg-secondary border border dark:border-zinc-700"
+          className="flex items-center justify-between p-3 rounded-xl bg-background dark:bg-secondary "
         >
           <div className="flex items-center gap-3">
             <pref.icon className="w-4 h-4 text-muted-foreground" />

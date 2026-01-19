@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
+
 import { OnboardingWizard } from '@/components/onboarding/OnboardingWizard'
 import { fn } from 'storybook/test'
 
@@ -86,12 +87,16 @@ export const Steps: Story = {
     <div className="min-h-screen bg-secondary dark:bg-secondary p-8">
       <div className="max-w-2xl mx-auto space-y-8">
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-foreground dark:text-primary-foreground mb-4">Onboarding Steps Overview</h1>
-          <p className="text-muted-foreground dark:text-muted-foreground">5-step wizard introducing Ally&apos;s core features</p>
+          <h1 className="text-3xl font-bold text-foreground dark:text-primary-foreground mb-4">
+            Onboarding Steps Overview
+          </h1>
+          <p className="text-muted-foreground dark:text-muted-foreground">
+            5-step wizard introducing Ally&apos;s core features
+          </p>
         </div>
 
         <div className="space-y-4">
-          <div className="p-6 bg-background dark:bg-secondary rounded-xl border border dark:border">
+          <div className="p-6 bg-background dark:bg-secondary rounded-xl border ">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
                 <span className="text-2xl">1</span>
@@ -103,7 +108,7 @@ export const Steps: Story = {
             </div>
           </div>
 
-          <div className="p-6 bg-background dark:bg-secondary rounded-xl border border dark:border">
+          <div className="p-6 bg-background dark:bg-secondary rounded-xl border ">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
                 <span className="text-2xl">2</span>
@@ -115,7 +120,7 @@ export const Steps: Story = {
             </div>
           </div>
 
-          <div className="p-6 bg-background dark:bg-secondary rounded-xl border border dark:border">
+          <div className="p-6 bg-background dark:bg-secondary rounded-xl border ">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
                 <span className="text-2xl">3</span>
@@ -127,7 +132,7 @@ export const Steps: Story = {
             </div>
           </div>
 
-          <div className="p-6 bg-background dark:bg-secondary rounded-xl border border dark:border">
+          <div className="p-6 bg-background dark:bg-secondary rounded-xl border ">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
                 <span className="text-2xl">4</span>
@@ -139,7 +144,7 @@ export const Steps: Story = {
             </div>
           </div>
 
-          <div className="p-6 bg-background dark:bg-secondary rounded-xl border border dark:border">
+          <div className="p-6 bg-background dark:bg-secondary rounded-xl border ">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center">
                 <span className="text-2xl text-green-600">5</span>
@@ -152,7 +157,7 @@ export const Steps: Story = {
           </div>
         </div>
 
-        <div className="p-6 bg-primary/5 dark:bg-blue-900/20 rounded-xl border border-primary/20 dark:border-blue-800">
+        <div className="p-6 bg-primary/5 dark:bg-blue-900/20 rounded-xl border-primary/20 -blue-800">
           <h3 className="font-semibold text-blue-800 dark:text-blue-200 mb-2">Audio Features</h3>
           <ul className="space-y-1 text-sm text-blue-700 dark:text-blue-300">
             <li>Optional audio narration for each step</li>

@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
+
 import ProductivityGauge from '@/components/ProductivityGauge'
 
 const meta: Meta<typeof ProductivityGauge> = {
@@ -184,11 +185,11 @@ export const ScoreComparison: Story = {
 export const InDashboardContext: Story = {
   render: () => (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl">
-      <div className="p-6 bg-background dark:bg-secondary rounded-xl border border dark:border">
+      <div className="p-6 bg-background dark:bg-secondary rounded-xl border ">
         <h3 className="font-semibold text-zinc-800 dark:text-zinc-200 mb-4">Today&apos;s Score</h3>
         <ProductivityGauge score={82} />
       </div>
-      <div className="p-6 bg-background dark:bg-secondary rounded-xl border border dark:border">
+      <div className="p-6 bg-background dark:bg-secondary rounded-xl border ">
         <h3 className="font-semibold text-zinc-800 dark:text-zinc-200 mb-4">Weekly Average</h3>
         <ProductivityGauge score={71} />
       </div>

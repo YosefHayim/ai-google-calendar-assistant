@@ -11,6 +11,7 @@ import { SettingsRow, SettingsSection, SettingsDropdown, TabHeader } from '../..
 import { voiceService } from '@/services/voice.service'
 import { useVoicePreference, useUpdateVoicePreference } from '@/hooks/queries'
 import { VOICE_OPTIONS, type TTSVoice, PLAYBACK_SPEED_OPTIONS, type PlaybackSpeed } from '@/lib/validations/preferences'
+import { useTranslation } from 'react-i18next'
 import { VOICE_PREVIEW_TEXT, VOICE_DROPDOWN_OPTIONS, SPEED_DROPDOWN_OPTIONS } from '../constants'
 
 interface VoiceSettingsSectionProps {
@@ -18,6 +19,7 @@ interface VoiceSettingsSectionProps {
 }
 
 export const VoiceSettingsSection: React.FC<VoiceSettingsSectionProps> = ({ toggleId }) => {
+  const { t } = useTranslation()
   const { data: voiceData } = useVoicePreference()
   const { updateVoicePreference, isUpdating: isUpdatingVoice } = useUpdateVoicePreference()
 
@@ -60,7 +62,9 @@ export const VoiceSettingsSection: React.FC<VoiceSettingsSectionProps> = ({ togg
       { enabled: voiceEnabled, voice: typedVoice, playbackSpeed: selectedPlaybackSpeed },
       {
         onSuccess: () => {
-          toast.success(t('toast.voiceChanged', { voice: VOICE_OPTIONS.find((v) => v.value === typedVoice)?.label || typedVoice }))
+          toast.success(
+            t('toast.voiceChanged', { voice: VOICE_OPTIONS.find((v) => v.value === typedVoice)?.label || typedVoice }),
+          )
         },
         onError: () => {
           setSelectedVoice(voiceData?.value?.voice || 'alloy')
@@ -77,9 +81,11 @@ export const VoiceSettingsSection: React.FC<VoiceSettingsSectionProps> = ({ togg
       { enabled: voiceEnabled, voice: selectedVoice, playbackSpeed: typedSpeed },
       {
         onSuccess: () => {
-          toast.success(t('toast.playbackSpeedChanged', {
-            speed: PLAYBACK_SPEED_OPTIONS.find((s) => s.value === typedSpeed)?.label || `${typedSpeed}x`
-          }))
+          toast.success(
+            t('toast.playbackSpeedChanged', {
+              speed: PLAYBACK_SPEED_OPTIONS.find((s) => s.value === typedSpeed)?.label || `${typedSpeed}x`,
+            }),
+          )
         },
         onError: () => {
           setSelectedPlaybackSpeed((voiceData?.value?.playbackSpeed as PlaybackSpeed) || 1)

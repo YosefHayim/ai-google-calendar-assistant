@@ -1,18 +1,18 @@
 'use client'
 
-import { useTranslation } from 'react-i18next'
-import { usePostHog } from 'posthog-js/react'
-
 import { AllyLogo, BetaBadge } from '@/components/shared/logo'
 import React, { useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+
 import { ENDPOINTS } from '@/lib/api/endpoints'
 import { ENV } from '@/lib/constants'
 import { FcGoogle } from 'react-icons/fc'
-import { TubesBackground } from '@/components/ui/neon-flow'
 import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button'
 import Link from 'next/link'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { TubesBackground } from '@/components/ui/neon-flow'
 import { useAuthContext } from '@/contexts/AuthContext'
+import { usePostHog } from 'posthog-js/react'
+import { useTranslation } from 'react-i18next'
 
 const LoginPage: React.FC = () => {
   const { t } = useTranslation()
@@ -57,9 +57,11 @@ const LoginPage: React.FC = () => {
           <h1 className="text-4xl md:text-5xl font-medium tracking-normal mb-4 text-foreground dark:text-primary-foreground">
             {t('login.title')}
           </h1>
-          <p className="text-muted-foreground dark:text-muted-foreground mb-8 text-lg font-medium">{t('login.subtitle')}</p>
+          <p className="text-muted-foreground dark:text-muted-foreground mb-8 text-lg font-medium">
+            {t('login.subtitle')}
+          </p>
           {error && (
-            <div className="mb-6 p-4 bg-destructive/5 dark:bg-red-900/20 border border-destructive/20 dark:border-red-800 rounded-lg">
+            <div className="mb-6 p-4 bg-destructive/5 dark:bg-red-900/20 border-destructive/20 -red-800 rounded-lg">
               <p className="text-destructive dark:text-red-400 text-sm font-medium">
                 {error === 'no_token' && t('login.errors.noToken')}
                 {error === 'callback_failed' && t('login.errors.callbackFailed')}
@@ -81,7 +83,7 @@ const LoginPage: React.FC = () => {
               loadingText={t('login.connecting')}
               isLoading={isLoading}
               Icon={<FcGoogle size={24} />}
-              className="w-full h-14 text-lg shadow-lg border dark:border-zinc-700"
+              className="w-full h-14 text-lg shadow-lg "
               onClick={handleGoogleLogin}
             />
           </div>

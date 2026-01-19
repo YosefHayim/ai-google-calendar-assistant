@@ -14,12 +14,7 @@ export function Skeleton({ className, style }: SkeletonProps) {
 // Card skeleton with icon, title, and value
 export function SkeletonCard({ className }: SkeletonProps) {
   return (
-    <div
-      className={cn(
-        'bg-background dark:bg-secondary border-border rounded-md p-4 sm:p-6 shadow-sm',
-        className,
-      )}
-    >
+    <div className={cn('bg-background dark:bg-secondary border-border rounded-md p-4 sm:p-6 shadow-sm', className)}>
       <Skeleton className="w-8 h-8 sm:w-10 sm:h-10 rounded-md mb-3 sm:mb-4" />
       <Skeleton className="h-6 sm:h-8 w-14 sm:w-16 mb-1.5 sm:mb-2" />
       <Skeleton className="h-3 w-20 sm:w-24" />
@@ -54,12 +49,7 @@ const CHART_BAR_HEIGHTS = [45, 72, 38, 65, 28, 55, 80, 42, 68, 35, 58, 48]
 // Chart skeleton (column chart)
 export function SkeletonChart({ className }: SkeletonProps) {
   return (
-    <div
-      className={cn(
-        'bg-background dark:bg-secondary border-border rounded-md shadow-sm p-4 sm:p-6',
-        className,
-      )}
-    >
+    <div className={cn('bg-background dark:bg-secondary border-border rounded-md shadow-sm p-4 sm:p-6', className)}>
       <div className="mb-4 sm:mb-6">
         <div className="flex items-center gap-2 mb-1.5 sm:mb-2">
           <Skeleton className="w-4 h-4 sm:w-5 sm:h-5 rounded" />
@@ -79,12 +69,7 @@ export function SkeletonChart({ className }: SkeletonProps) {
 // Line chart skeleton
 export function SkeletonLineChart({ className }: SkeletonProps) {
   return (
-    <div
-      className={cn(
-        'bg-background dark:bg-secondary border-border rounded-md shadow-sm p-6',
-        className,
-      )}
-    >
+    <div className={cn('bg-background dark:bg-secondary border-border rounded-md shadow-sm p-6', className)}>
       <div className="mb-6">
         <div className="flex items-center gap-2 mb-2">
           <Skeleton className="w-5 h-5 rounded" />
@@ -165,12 +150,7 @@ export function SkeletonDonutChart({ className }: SkeletonProps) {
 // List skeleton
 export function SkeletonList({ items = 4, className }: SkeletonProps & { items?: number }) {
   return (
-    <div
-      className={cn(
-        'bg-background dark:bg-secondary border-border rounded-md shadow-sm p-4 sm:p-6',
-        className,
-      )}
-    >
+    <div className={cn('bg-background dark:bg-secondary border-border rounded-md shadow-sm p-4 sm:p-6', className)}>
       <div className="flex items-center justify-between mb-4 sm:mb-6 gap-2">
         <div className="flex items-center gap-2 min-w-0">
           <Skeleton className="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded flex-shrink-0" />
@@ -196,12 +176,7 @@ export function SkeletonList({ items = 4, className }: SkeletonProps & { items?:
 // Calendar sources skeleton
 export function SkeletonCalendarSources({ items = 4, className }: SkeletonProps & { items?: number }) {
   return (
-    <div
-      className={cn(
-        'bg-background dark:bg-secondary border-border rounded-md shadow-sm p-4 sm:p-6',
-        className,
-      )}
-    >
+    <div className={cn('bg-background dark:bg-secondary border-border rounded-md shadow-sm p-4 sm:p-6', className)}>
       <div className="mb-4 sm:mb-6">
         <div className="flex items-center gap-2">
           <Skeleton className="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded" />
@@ -225,12 +200,7 @@ export function SkeletonCalendarSources({ items = 4, className }: SkeletonProps 
 // Heatmap skeleton
 export function SkeletonHeatmap({ className }: SkeletonProps) {
   return (
-    <div
-      className={cn(
-        'bg-background dark:bg-secondary border-border rounded-md shadow-sm p-6',
-        className,
-      )}
-    >
+    <div className={cn('bg-background dark:bg-secondary border-border rounded-md shadow-sm p-6', className)}>
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <Skeleton className="w-4 h-4 rounded" />
@@ -254,12 +224,7 @@ export function SkeletonHeatmap({ className }: SkeletonProps) {
 // Integration card skeleton
 export function SkeletonIntegrationCard({ className }: SkeletonProps) {
   return (
-    <div
-      className={cn(
-        'bg-background dark:bg-secondary border-border rounded-md p-6 shadow-sm',
-        className,
-      )}
-    >
+    <div className={cn('bg-background dark:bg-secondary border-border rounded-md p-6 shadow-sm', className)}>
       <div className="flex items-start justify-between mb-6">
         <Skeleton className="w-11 h-11 rounded-md" />
         <Skeleton className="w-24 h-6 rounded-full" />
@@ -281,9 +246,7 @@ export function SkeletonMessageBubble({ isUser = false, className }: SkeletonPro
       <div
         className={cn(
           'px-4 py-3 rounded-md shadow-sm max-w-[85%] md:max-w-[75%]',
-          isUser
-            ? 'bg-primary/20 rounded-tr-none'
-            : 'bg-background dark:bg-secondary border-border rounded-tl-none',
+          isUser ? 'bg-primary/20 rounded-tr-none' : 'bg-background dark:bg-secondary border-border rounded-tl-none',
         )}
       >
         <Skeleton className={cn('h-4 mb-2', isUser ? 'w-32' : 'w-48')} />

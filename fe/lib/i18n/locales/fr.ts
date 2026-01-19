@@ -549,17 +549,18 @@ export const fr: TranslationShape = {
     themeDark: 'Sombre',
     themeSystem: 'Système',
     appearance: 'Apparence',
-    appearanceTooltip: 'Choisissez votre jeu de couleurs préféré pour l\'interface',
+    appearanceTooltip: "Choisissez votre jeu de couleurs préféré pour l'interface",
     defaultTimezone: 'Fuseau horaire par défaut',
     timezoneTooltip: 'Les événements seront planifiés dans ce fuseau horaire sauf indication contraire',
-    timeFormat: 'Format de l\'heure',
-    timeFormatTooltip: 'Format d\'affichage des heures d\'événements dans l\'application',
+    timeFormat: "Format de l'heure",
+    timeFormatTooltip: "Format d'affichage des heures d'événements dans l'application",
     timeFormat12h: '12 heures (AM/PM)',
     timeFormat24h: '24 heures',
     realTimeLocation: 'Localisation en temps réel',
-    realTimeLocationTooltip: 'Lorsqu\'activé, Ally utilise votre position actuelle pour fournir du contexte lors de la création d\'événements (par exemple, suggérer des lieux à proximité)',
+    realTimeLocationTooltip:
+      "Lorsqu'activé, Ally utilise votre position actuelle pour fournir du contexte lors de la création d'événements (par exemple, suggérer des lieux à proximité)",
     memberSince: 'Membre depuis',
-    languageTooltip: 'Choisissez votre langue préférée pour l\'interface',
+    languageTooltip: "Choisissez votre langue préférée pour l'interface",
     general: 'Général',
     generalDescription: 'Gérez votre profil et vos préférences',
   },
@@ -827,11 +828,12 @@ export const fr: TranslationShape = {
       daysLeft: '{{count}} jour restant',
       fullAccess:
         "L'essai inclut un accès complet à toutes les fonctionnalités. Aucun frais jusqu'à la fin de l'essai.",
-      expired: 'Période d\'essai expirée',
-      expiredDescription: 'Votre période d\'essai a expiré – mettez à niveau maintenant pour conserver votre accès.',
-      activeDescription: 'Votre essai gratuit se termine dans {{count}} jour. Ne perdez pas l\'accès à votre assistant IA.',
+      expired: "Période d'essai expirée",
+      expiredDescription: "Votre période d'essai a expiré – mettez à niveau maintenant pour conserver votre accès.",
+      activeDescription:
+        "Votre essai gratuit se termine dans {{count}} jour. Ne perdez pas l'accès à votre assistant IA.",
       remaining: 'restant',
-      getDeal: 'Obtenir l\'offre',
+      getDeal: "Obtenir l'offre",
     },
     moneyBack: {
       title: 'Garantie de remboursement de 30 jours active',
@@ -890,14 +892,15 @@ export const fr: TranslationShape = {
       // General settings
       timezoneUpdated: 'Fuseau horaire mis à jour',
       timezoneUpdateFailed: 'Échec de la mise à jour du fuseau horaire',
-      timeFormatUpdated: 'Format d\'heure mis à jour',
-      timeFormatUpdateFailed: 'Échec de la mise à jour du format d\'heure',
+      timeFormatUpdated: "Format d'heure mis à jour",
+      timeFormatUpdateFailed: "Échec de la mise à jour du format d'heure",
       realTimeLocationEnabled: 'Localisation en temps réel activée',
       realTimeLocationDisabled: 'Localisation en temps réel désactivée',
-      locationEnableFailed: 'Échec de l\'activation de la localisation',
+      locationEnableFailed: "Échec de l'activation de la localisation",
       locationDisableFailed: 'Échec de la désactivation de la localisation',
       locationAccessDenied: 'Accès à la localisation refusé',
-      locationAccessDeniedDescription: 'Veuillez activer l\'accès à la localisation dans les paramètres de votre navigateur.',
+      locationAccessDeniedDescription:
+        "Veuillez activer l'accès à la localisation dans les paramètres de votre navigateur.",
 
       // Integrations
       crossPlatformSyncEnabled: 'Synchronisation multiplateforme activée',
@@ -928,7 +931,7 @@ export const fr: TranslationShape = {
       shareLinkCreateFailed: 'Échec de la création du lien de partage',
       conversationPinned: 'Conversation épinglée avec succès',
       conversationUnpinned: 'Conversation désépinglée avec succès',
-      conversationPinFailed: 'Échec de l\'épinglage de la conversation',
+      conversationPinFailed: "Échec de l'épinglage de la conversation",
 
       // Archived conversations
       conversationRestored: 'Conversation restaurée avec succès',
@@ -972,7 +975,7 @@ export const fr: TranslationShape = {
       voiceUpdateFailed: 'Échec de la mise à jour de la voix',
       playbackSpeedChanged: 'Vitesse de lecture changée en {{speed}}x',
       playbackSpeedUpdateFailed: 'Échec de la mise à jour de la vitesse de lecture',
-      voicePreviewFailed: 'Échec de la lecture de l\'aperçu vocal',
+      voicePreviewFailed: "Échec de la lecture de l'aperçu vocal",
 
       // Messages
       messageCopied: 'Message copié dans le presse-papiers',
@@ -994,32 +997,32 @@ export const fr: TranslationShape = {
       calendarCreateFailedGeneric: 'Échec de la création du calendrier. Veuillez réessayer.',
 
       // Waiting list
-      waitingListWelcome: 'Bienvenue sur la liste d\'attente !',
+      waitingListWelcome: "Bienvenue sur la liste d'attente !",
       waitingListError: 'Erreur',
 
       // Admin
-      userImpersonationFailed: 'Échec de l\'emprunt d\'identité utilisateur',
+      userImpersonationFailed: "Échec de l'emprunt d'identité utilisateur",
       userSessionsRevoked: 'Sessions utilisateur révoquées',
       userSessionsRevokeFailed: 'Échec de la révocation des sessions',
 
       // Broadcast
       broadcastTitleRequired: 'Titre et message requis',
       broadcastSent: 'Diffusion envoyée à {{count}} utilisateurs',
-      broadcastSendFailed: 'Échec de l\'envoi de la diffusion',
+      broadcastSendFailed: "Échec de l'envoi de la diffusion",
 
       // Billing
       alreadyOnFreePlan: 'Vous êtes déjà sur le plan gratuit',
-      billingPortalOpenFailed: 'Échec de l\'ouverture du portail de facturation',
+      billingPortalOpenFailed: "Échec de l'ouverture du portail de facturation",
       checkoutProcessFailed: 'Échec du traitement de la commande. Veuillez réessayer.',
       redirectingToCheckout: 'Redirection vers la commande pour configurer la facturation...',
 
       // Voice preview
-      voicePreviewError: 'Échec de la lecture de l\'aperçu vocal',
+      voicePreviewError: "Échec de la lecture de l'aperçu vocal",
 
       // Chat input
       maxImagesAllowed: 'Maximum {{count}} images autorisées',
       imageProcessingFailed: 'Échec du traitement des images',
-      unsupportedImageType: 'Type d\'image non supporté : {{type}}',
+      unsupportedImageType: "Type d'image non supporté : {{type}}",
       imageTooLarge: 'Image trop grande (max {{size}}MB)',
       pastedImagesProcessingFailed: 'Échec du traitement des images collées',
     },
@@ -1043,16 +1046,16 @@ export const fr: TranslationShape = {
       totalGaps: 'Total des écarts',
       highConfidence: 'Haute confiance',
       potentialHours: 'Heures potentielles',
-      avgGapSize: 'Taille moyenne d\'écart',
-      analysisPeriod: 'Période d\'analyse',
+      avgGapSize: "Taille moyenne d'écart",
+      analysisPeriod: "Période d'analyse",
       chat: 'Chat',
       gaps: 'Écarts',
       analytics: 'Analyses',
       settings: 'Paramètres',
       after: 'Après :',
       before: 'Avant :',
-      fillGap: 'Remplir l\'écart avec un événement',
-      eventTitle: 'Titre de l\'événement *',
+      fillGap: "Remplir l'écart avec un événement",
+      eventTitle: "Titre de l'événement *",
       skipThisGap: 'Ignorer cet écart',
       reason: 'Raison (Optionnel)',
       integrations: 'Intégrations',
@@ -1064,7 +1067,8 @@ export const fr: TranslationShape = {
       noActiveCalendarSourcesFound: 'Aucune source de calendrier active trouvée.',
       connectWhatsApp: 'Connecter WhatsApp',
       neuralLinks: 'Liens neuraux',
-      executiveGradeAI: 'L\'assistant IA de grade exécutif conçu pour les propriétaires d\'entreprise afin de défendre leur travail profond. De l\'accès exploratoire gratuit à la puissance exécutive illimitée. Construit sur le protocole neuronal Ally.',
+      executiveGradeAI:
+        "L'assistant IA de grade exécutif conçu pour les propriétaires d'entreprise afin de défendre leur travail profond. De l'accès exploratoire gratuit à la puissance exécutive illimitée. Construit sur le protocole neuronal Ally.",
       systemOnline: 'Tous les systèmes opérationnels',
       systemOffline: 'Système indisponible',
       systemChecking: 'Vérification du statut...',
@@ -1076,7 +1080,7 @@ export const fr: TranslationShape = {
       websockets: 'WebSockets',
       connections: 'connexions',
       privacyPolicy: 'Politique de confidentialité',
-      termsOfService: 'Conditions d\'utilisation',
+      termsOfService: "Conditions d'utilisation",
       product: 'Produit',
       pricing: 'Tarification',
       executivePower: 'Puissance exécutive',
@@ -1114,7 +1118,7 @@ export const fr: TranslationShape = {
       },
       slack: {
         title: 'Slack',
-        description: 'Ajoutez Ally à votre espace de travail Slack pour la gestion d\'agenda d\'équipe.',
+        description: "Ajoutez Ally à votre espace de travail Slack pour la gestion d'agenda d'équipe.",
       },
       googleCalendar: {
         title: 'Google Calendar',
@@ -1139,13 +1143,13 @@ export const fr: TranslationShape = {
         currentBalance: 'Solde actuel : {{count}} crédits',
         reasonLabel: 'Raison (optionnel)',
         reasonPlaceholder: 'ex. : Compensation pour problème de service, bonus promotionnel...',
-        auditNote: 'Cela sera enregistré pour des raisons d\'audit',
+        auditNote: "Cela sera enregistré pour des raisons d'audit",
         cancel: 'Annuler',
         granting: 'Accord en cours...',
         grantCredits: 'Accorder des crédits',
         invalidAmount: 'Veuillez entrer un montant de crédit valide',
         success: '{{count}} crédits accordés avec succès à {{email}}',
-        failed: 'Échec de l\'accord des crédits : {{error}}',
+        failed: "Échec de l'accord des crédits : {{error}}",
       },
     },
   },

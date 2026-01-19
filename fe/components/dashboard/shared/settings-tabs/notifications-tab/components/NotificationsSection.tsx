@@ -12,8 +12,10 @@ import { useNotificationSettings, useUpdateNotificationSettings } from '@/hooks/
 import { type NotificationSettingsFormData, notificationSettingsDefaults } from '@/lib/validations/preferences'
 import { useNotificationContext } from '@/contexts/NotificationContext'
 import CinematicGlowToggle from '@/components/ui/cinematic-glow-toggle'
+import { useTranslation } from 'react-i18next'
 
 export function NotificationsSection() {
+  const { t } = useTranslation()
   const { data: notificationData, isLoading } = useNotificationSettings()
   const { updateNotificationSettingsAsync, isUpdating, isSuccess } = useUpdateNotificationSettings()
   const {

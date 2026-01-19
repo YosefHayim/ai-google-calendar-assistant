@@ -1,6 +1,7 @@
 'use client'
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
+
 import { useTranslation } from 'react-i18next'
 
 const FAQ_KEYS = ['interactions', 'sovereignty', 'audit', 'dataTraining', 'credits'] as const
@@ -36,7 +37,7 @@ export default function FAQs() {
                     <p className="text-base text-muted-foreground dark:text-muted-foreground">{item.answer}</p>
                   </AccordionContent>
                 </AccordionItem>
-                <hr className="mx-5 -mb-px group-last:hidden peer-data-[state=open]:opacity-0 border dark:border md:mx-7" />
+                <hr className="mx-5 -mb-px group-last:hidden peer-data-[state=open]:opacity-0 md:mx-7" />
               </div>
             ))}
           </Accordion>

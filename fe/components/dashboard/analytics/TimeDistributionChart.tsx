@@ -1,9 +1,10 @@
 'use client'
 
-import React, { useMemo } from 'react'
-import { Clock } from 'lucide-react'
-import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts'
+import { Cell, Pie, PieChart, ResponsiveContainer } from 'recharts'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
+import React, { useMemo } from 'react'
+
+import { Clock } from 'lucide-react'
 import { Skeleton } from '@/components/ui/skeleton'
 import type { TimeOfDayDistribution } from '@/types/analytics'
 
@@ -42,7 +43,7 @@ const TimeDistributionChart: React.FC<TimeDistributionChartProps> = ({ data, isL
 
   if (isLoading) {
     return (
-      <div className="bg-background dark:bg-secondary border border dark:border rounded-xl shadow-sm p-6">
+      <div className="bg-background dark:bg-secondary rounded-xl shadow-sm p-6">
         <div className="flex items-center gap-2 mb-2">
           <Skeleton className="w-5 h-5 rounded" />
           <Skeleton className="h-5 w-28" />
@@ -63,14 +64,16 @@ const TimeDistributionChart: React.FC<TimeDistributionChartProps> = ({ data, isL
   const hasData = total > 0
 
   return (
-    <div className="bg-background dark:bg-secondary border border dark:border rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
+    <div className="bg-background dark:bg-secondary rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
       <div className="flex items-center gap-2 mb-1">
         <div className="w-8 h-8 rounded-lg bg-secondary dark:bg-secondary flex items-center justify-center">
           <Clock className="w-4 h-4 text-foreground dark:text-primary" />
         </div>
         <h3 className="font-semibold text-foreground dark:text-primary-foreground">Time of Day</h3>
       </div>
-      <p className="text-xs text-muted-foreground dark:text-muted-foreground mb-4 ml-10">When your events are scheduled</p>
+      <p className="text-xs text-muted-foreground dark:text-muted-foreground mb-4 ml-10">
+        When your events are scheduled
+      </p>
 
       {!hasData ? (
         <div className="h-[160px] flex items-center justify-center text-muted-foreground dark:text-zinc-600">

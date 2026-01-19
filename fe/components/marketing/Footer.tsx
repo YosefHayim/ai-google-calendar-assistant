@@ -40,7 +40,7 @@ const Footer = () => {
   ]
 
   return (
-    <footer className="bg-background dark:bg-[#030303] border-t border dark:border pt-20 pb-10">
+    <footer className="bg-background dark:bg-[#030303] border-t pt-20 pb-10">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-16">
           <div className="lg:col-span-2">
@@ -52,7 +52,9 @@ const Footer = () => {
                 Ally <BetaBadge />
               </span>
             </Link>
-            <p className="text-muted-foreground dark:text-muted-foreground max-w-sm mb-8 leading-relaxed">{t('footer.description')}</p>
+            <p className="text-muted-foreground dark:text-muted-foreground max-w-sm mb-8 leading-relaxed">
+              {t('footer.description')}
+            </p>
             <div className="flex items-center gap-4">
               <a
                 href={SOCIAL_LINKS.TELEGRAM_BOT}
@@ -105,7 +107,7 @@ const Footer = () => {
           ))}
         </div>
 
-        <div className="pt-10 border-t border-zinc-100 dark:border flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="pt-10 border-t border-zinc-100  flex flex-col md:flex-row items-center justify-between gap-6">
           <p className="text-xs text-muted-foreground">© {currentYear} Ally Technologies Inc. All rights reserved.</p>
           <div className="flex items-center gap-6">
             <SystemStatus />

@@ -11,15 +11,12 @@ export function LoadingSkeleton() {
         <div
           key={i}
           className={cn(
-            'bg-background dark:bg-secondary border border dark:border rounded-xl p-3 sm:p-5',
-            i === 0 && 'col-span-1 sm:col-span-2 row-span-2'
+            'bg-background dark:bg-secondary rounded-xl p-3 sm:p-5',
+            i === 0 && 'col-span-1 sm:col-span-2 row-span-2',
           )}
         >
           <Skeleton className="h-4 w-16 sm:w-20 mb-2 sm:mb-3" />
-          <Skeleton className={cn(
-            'mb-2',
-            i === 0 ? 'h-16 w-16 sm:h-20 sm:w-20' : 'h-6 sm:h-8 w-20 sm:w-24'
-          )} />
+          <Skeleton className={cn('mb-2', i === 0 ? 'h-16 w-16 sm:h-20 sm:w-20' : 'h-6 sm:h-8 w-20 sm:w-24')} />
           <Skeleton className="h-3 w-24 sm:w-32" />
         </div>
       ))}

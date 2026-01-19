@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
+
 import WaitingList from '@/components/waiting-list/WaitingList'
 
 const meta: Meta<typeof WaitingList> = {
@@ -89,12 +90,16 @@ export const Features: Story = {
     <div className="min-h-screen bg-muted dark:bg-secondary p-8">
       <div className="max-w-2xl mx-auto space-y-8">
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-foreground dark:text-primary-foreground mb-4">Waiting List Features</h1>
-          <p className="text-muted-foreground dark:text-muted-foreground">Key elements of the waiting list page design</p>
+          <h1 className="text-3xl font-bold text-foreground dark:text-primary-foreground mb-4">
+            Waiting List Features
+          </h1>
+          <p className="text-muted-foreground dark:text-muted-foreground">
+            Key elements of the waiting list page design
+          </p>
         </div>
 
         <div className="grid gap-6">
-          <div className="p-6 bg-background dark:bg-secondary rounded-xl border border dark:border">
+          <div className="p-6 bg-background dark:bg-secondary rounded-xl border ">
             <h3 className="font-semibold text-zinc-800 dark:text-zinc-200 mb-3">Visual Effects</h3>
             <ul className="space-y-2 text-sm text-zinc-600 dark:text-muted-foreground">
               <li>Animated sparkle particles in background</li>
@@ -104,7 +109,7 @@ export const Features: Story = {
             </ul>
           </div>
 
-          <div className="p-6 bg-background dark:bg-secondary rounded-xl border border dark:border">
+          <div className="p-6 bg-background dark:bg-secondary rounded-xl border ">
             <h3 className="font-semibold text-zinc-800 dark:text-zinc-200 mb-3">Platform Icons</h3>
             <ul className="space-y-2 text-sm text-zinc-600 dark:text-muted-foreground">
               <li>Voice - Microphone icon</li>
@@ -114,7 +119,7 @@ export const Features: Story = {
             </ul>
           </div>
 
-          <div className="p-6 bg-background dark:bg-secondary rounded-xl border border dark:border">
+          <div className="p-6 bg-background dark:bg-secondary rounded-xl border ">
             <h3 className="font-semibold text-zinc-800 dark:text-zinc-200 mb-3">Trust Indicators</h3>
             <ul className="space-y-2 text-sm text-zinc-600 dark:text-muted-foreground">
               <li>Enterprise-grade security badge</li>
@@ -124,7 +129,7 @@ export const Features: Story = {
             </ul>
           </div>
 
-          <div className="p-6 bg-background dark:bg-secondary rounded-xl border border dark:border">
+          <div className="p-6 bg-background dark:bg-secondary rounded-xl border ">
             <h3 className="font-semibold text-zinc-800 dark:text-zinc-200 mb-3">Form Features</h3>
             <ul className="space-y-2 text-sm text-zinc-600 dark:text-muted-foreground">
               <li>Optional name field</li>

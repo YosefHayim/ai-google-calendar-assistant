@@ -208,7 +208,8 @@ export const painPointAdjustments: Record<string, Partial<FeatureConfiguration>>
   too_many_meetings: {
     allyBrain: {
       enabled: true,
-      instructions: 'Prioritize meeting optimization, suggest meeting limits, and help identify opportunities to reduce meeting load.',
+      instructions:
+        'Prioritize meeting optimization, suggest meeting limits, and help identify opportunities to reduce meeting load.',
     },
     notificationSettings: {
       eventConfirmations: ['push'], // Reduce email notifications
@@ -305,14 +306,14 @@ export const notificationFrequencyAdjustments: Record<string, Partial<FeatureCon
 export function generateAutoConfiguration(
   persona: string,
   painPoints: string[],
-  notificationFrequency: string
+  notificationFrequency: string,
 ): FeatureConfiguration {
   // Start with persona base configuration
   const baseConfig = personaConfigurations[persona] || {}
 
   // Apply pain point adjustments
   const configWithPainPoints = { ...baseConfig }
-  painPoints.forEach(painPoint => {
+  painPoints.forEach((painPoint) => {
     const adjustments = painPointAdjustments[painPoint]
     if (adjustments) {
       Object.assign(configWithPainPoints, adjustments)
@@ -335,7 +336,7 @@ export function generateAutoConfiguration(
 export async function applyAutoConfiguration(
   persona: string,
   painPoints: string[],
-  notificationFrequency: string
+  notificationFrequency: string,
 ): Promise<void> {
   const config = generateAutoConfiguration(persona, painPoints, notificationFrequency)
 
@@ -347,31 +348,32 @@ export async function applyAutoConfiguration(
       preferencesService.updateAllyBrain({
         enabled: config.allyBrain.enabled,
         instructions: config.allyBrain.instructions,
-      })
+      }),
     )
   }
 
   if (config.contextualScheduling) {
-    promises.push(
-      preferencesService.updateContextualScheduling(config.contextualScheduling)
-    )
+    promises.push(preferencesService.updateContextualScheduling(config.contextualScheduling))
   }
 
-  if (config.dailyBriefing && config.dailyBriefing.time && config.dailyBriefing.timezone && config.dailyBriefing.channel) {
+  if (
+    config.dailyBriefing &&
+    config.dailyBriefing.time &&
+    config.dailyBriefing.timezone &&
+    config.dailyBriefing.channel
+  ) {
     promises.push(
       preferencesService.updateDailyBriefing({
         enabled: config.dailyBriefing.enabled,
         time: config.dailyBriefing.time,
         timezone: config.dailyBriefing.timezone,
         channel: config.dailyBriefing.channel,
-      })
+      }),
     )
   }
 
   if (config.notificationSettings) {
-    promises.push(
-      preferencesService.updateNotificationSettings(config.notificationSettings)
-    )
+    promises.push(preferencesService.updateNotificationSettings(config.notificationSettings))
   }
 
   if (config.voicePreference && config.voicePreference.playbackSpeed !== undefined) {
@@ -380,14 +382,12 @@ export async function applyAutoConfiguration(
         enabled: config.voicePreference.enabled,
         voice: config.voicePreference.voice,
         playbackSpeed: config.voicePreference.playbackSpeed,
-      })
+      }),
     )
   }
 
   if (config.displayPreferences) {
-    promises.push(
-      preferencesService.updateDisplayPreferences(config.displayPreferences)
-    )
+    promises.push(preferencesService.updateDisplayPreferences(config.displayPreferences))
   }
 
   await Promise.all(promises)

@@ -19,6 +19,7 @@ import {
 } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
+import React, { useState } from 'react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { formatCurrency, formatNumber } from '@/lib/formatUtils'
@@ -34,7 +35,6 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { BroadcastDialog } from '@/components/admin/BroadcastDialog'
 import { Button } from '@/components/ui/button'
-import React, { useState } from 'react'
 import { Megaphone } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -293,7 +293,7 @@ export default function AdminDashboardPage() {
                 <CardContent className="h-[calc(100%_-_102px)]">
                   <div className="mb-4 flex items-center gap-4">
                     <input
-                      className="flex h-9 w-full max-w-sm rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                      className="flex h-9 w-full max-w-sm rounded-md border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                       placeholder="Filter emails..."
                     />
                     <Button variant="outline" className="ml-auto">

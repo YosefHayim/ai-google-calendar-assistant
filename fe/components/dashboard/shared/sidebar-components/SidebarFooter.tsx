@@ -42,7 +42,7 @@ export const SidebarFooter: React.FC<SidebarFooterProps> = ({
   const avatarUrl = userInfo?.avatarUrl
 
   return (
-    <div className="p-4 border-t border dark:border">
+    <div className="p-4 border-t border ">
       <div className={cn('flex items-center gap-2', !isOpen && 'md:justify-center')}>
         <div className="flex-1 min-w-0">
           <UserProfileCard isOpen={isOpen} />

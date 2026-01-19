@@ -8,10 +8,7 @@ export async function POST(request: NextRequest) {
     const { name, value, id, delta, timestamp, url } = body
 
     if (!name || typeof value !== 'number' || !id) {
-      return NextResponse.json(
-        { error: 'Invalid metric data' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'Invalid metric data' }, { status: 400 })
     }
 
     // In a real application, you would send this to your analytics service
@@ -37,9 +34,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error('Error processing web vitals:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

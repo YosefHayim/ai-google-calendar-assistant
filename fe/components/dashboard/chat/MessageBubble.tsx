@@ -116,7 +116,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ role, content, timestamp,
               'px-4 py-3 rounded-md text-sm leading-relaxed transition-all duration-200',
               isUser
                 ? 'bg-primary text-white rounded-tr-none shadow-md'
-                : 'bg-background dark:bg-secondary border border-border text-foreground rounded-tl-none shadow-sm'
+                : 'bg-background dark:bg-secondary border-border text-foreground rounded-tl-none shadow-sm',
             )}
             dir={textDirection}
           >
@@ -147,7 +147,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ role, content, timestamp,
                 className={cn(
                   'prose prose-sm max-w-none',
                   isUser ? 'prose-invert' : 'prose-zinc dark:prose-invert',
-                  isRTL && 'text-right'
+                  isRTL && 'text-right',
                 )}
               >
                 <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>

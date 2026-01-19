@@ -15,7 +15,6 @@ import {
   Smartphone,
   Sparkles,
   Users,
-  Wifi,
   Zap,
 } from 'lucide-react'
 import { SITE_CONFIG, generateBreadcrumbSchema, generateWebPageSchema } from '@/lib/constants/seo'
@@ -630,13 +629,13 @@ function ChangelogPage() {
                       </div>
                     </div>
 
-                    <div className="absolute left-0 md:left-1/2 top-2 w-3 h-3 rounded-full bg-primary border-4 border-white dark:border-zinc-950 md:-translate-x-1/2 z-10" />
+                    <div className="absolute left-0 md:left-1/2 top-2 w-3 h-3 rounded-full bg-primary border-4 border-white -zinc-950 md:-translate-x-1/2 z-10" />
 
                     <div className="md:w-1/2 pl-6 md:pl-12 space-y-4">
                       {entry.changes.map((change, changeIndex) => (
                         <div
                           key={changeIndex}
-                          className="bg-background dark:bg-secondary rounded-xl border border dark:border p-5 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors"
+                          className="bg-background dark:bg-secondary rounded-xl  p-5 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors"
                         >
                           <div className="flex items-start gap-4">
                             {change.icon && (
@@ -649,9 +648,13 @@ function ChangelogPage() {
                                 <Badge variant={BADGE_STYLES[change.type].variant}>
                                   {BADGE_STYLES[change.type].label}
                                 </Badge>
-                                <h3 className="font-medium text-foreground dark:text-primary-foreground">{change.title}</h3>
+                                <h3 className="font-medium text-foreground dark:text-primary-foreground">
+                                  {change.title}
+                                </h3>
                               </div>
-                              <p className="text-sm text-muted-foreground dark:text-muted-foreground">{change.description}</p>
+                              <p className="text-sm text-muted-foreground dark:text-muted-foreground">
+                                {change.description}
+                              </p>
                             </div>
                           </div>
                         </div>

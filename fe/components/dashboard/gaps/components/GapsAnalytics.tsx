@@ -26,23 +26,22 @@ export function GapsAnalytics({ gaps, analyzedRange, settings }: GapsAnalyticsPr
     const totalHours = totalMinutes / 60
 
     // Confidence distribution
-    const highConfidence = gaps.filter(g => g.confidence >= 0.8).length
-    const mediumConfidence = gaps.filter(g => g.confidence >= 0.6 && g.confidence < 0.8).length
-    const lowConfidence = gaps.filter(g => g.confidence < 0.6).length
+    const highConfidence = gaps.filter((g) => g.confidence >= 0.8).length
+    const mediumConfidence = gaps.filter((g) => g.confidence >= 0.6 && g.confidence < 0.8).length
+    const lowConfidence = gaps.filter((g) => g.confidence < 0.6).length
 
     // Duration distribution
-    const shortGaps = gaps.filter(g => g.durationMinutes < 60).length
-    const mediumGaps = gaps.filter(g => g.durationMinutes >= 60 && g.durationMinutes < 120).length
-    const longGaps = gaps.filter(g => g.durationMinutes >= 120).length
+    const shortGaps = gaps.filter((g) => g.durationMinutes < 60).length
+    const mediumGaps = gaps.filter((g) => g.durationMinutes >= 60 && g.durationMinutes < 120).length
+    const longGaps = gaps.filter((g) => g.durationMinutes >= 120).length
 
     // Average gap size
     const avgGapSize = totalGaps > 0 ? totalMinutes / totalGaps : 0
 
     // Largest gap
-    const largestGap = gaps.reduce((max, gap) =>
-      gap.durationMinutes > max.durationMinutes ? gap : max,
-      { durationMinutes: 0 } as GapCandidate
-    )
+    const largestGap = gaps.reduce((max, gap) => (gap.durationMinutes > max.durationMinutes ? gap : max), {
+      durationMinutes: 0,
+    } as GapCandidate)
 
     return {
       totalGaps,
@@ -70,11 +69,7 @@ export function GapsAnalytics({ gaps, analyzedRange, settings }: GapsAnalyticsPr
     <div className="space-y-6">
       {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-        >
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
           <Card className="p-4">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Potential Hours</CardTitle>
@@ -82,18 +77,12 @@ export function GapsAnalytics({ gaps, analyzedRange, settings }: GapsAnalyticsPr
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{analytics.totalHours}h</div>
-              <p className="text-xs text-muted-foreground">
-                Available for scheduling
-              </p>
+              <p className="text-xs text-muted-foreground">Available for scheduling</p>
             </CardContent>
           </Card>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-        >
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
           <Card className="p-4">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Average Gap</CardTitle>
@@ -101,18 +90,12 @@ export function GapsAnalytics({ gaps, analyzedRange, settings }: GapsAnalyticsPr
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{formatDuration(analytics.avgGapSize)}</div>
-              <p className="text-xs text-muted-foreground">
-                Typical gap size
-              </p>
+              <p className="text-xs text-muted-foreground">Typical gap size</p>
             </CardContent>
           </Card>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-        >
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
           <Card className="p-4">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Largest Gap</CardTitle>
@@ -120,18 +103,12 @@ export function GapsAnalytics({ gaps, analyzedRange, settings }: GapsAnalyticsPr
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{formatDuration(analytics.largestGap?.durationMinutes || 0)}</div>
-              <p className="text-xs text-muted-foreground">
-                Best opportunity
-              </p>
+              <p className="text-xs text-muted-foreground">Best opportunity</p>
             </CardContent>
           </Card>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-        >
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
           <Card className="p-4">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Analysis Period</CardTitle>
@@ -151,20 +128,14 @@ export function GapsAnalytics({ gaps, analyzedRange, settings }: GapsAnalyticsPr
 
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.5 }}
-        >
+        <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.5 }}>
           <Card className="p-6">
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 <BarChart3 className="h-5 w-5" />
                 Confidence Distribution
               </CardTitle>
-              <CardDescription>
-                How confident our AI is about each gap suggestion
-              </CardDescription>
+              <CardDescription>How confident our AI is about each gap suggestion</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {chartData.map((item, index) => (
@@ -183,20 +154,14 @@ export function GapsAnalytics({ gaps, analyzedRange, settings }: GapsAnalyticsPr
           </Card>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.6 }}
-        >
+        <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.6 }}>
           <Card className="p-6">
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 <Clock className="h-5 w-5" />
                 Duration Distribution
               </CardTitle>
-              <CardDescription>
-                Breakdown of gap sizes by duration
-              </CardDescription>
+              <CardDescription>Breakdown of gap sizes by duration</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {durationData.map((item, index) => (
@@ -218,17 +183,11 @@ export function GapsAnalytics({ gaps, analyzedRange, settings }: GapsAnalyticsPr
 
       {/* Settings Summary */}
       {settings && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7 }}
-        >
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7 }}>
           <Card className="p-6">
             <CardHeader>
               <CardTitle className="text-lg">Analysis Settings</CardTitle>
-              <CardDescription>
-                Current configuration for gap detection
-              </CardDescription>
+              <CardDescription>Current configuration for gap detection</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
@@ -246,7 +205,7 @@ export function GapsAnalytics({ gaps, analyzedRange, settings }: GapsAnalyticsPr
                 </div>
                 <div>
                   <span className="text-muted-foreground">Auto Analysis:</span>
-                  <Badge variant={settings.autoGapAnalysis ? "default" : "secondary"} className="ml-2">
+                  <Badge variant={settings.autoGapAnalysis ? 'default' : 'secondary'} className="ml-2">
                     {settings.autoGapAnalysis ? 'Enabled' : 'Disabled'}
                   </Badge>
                 </div>

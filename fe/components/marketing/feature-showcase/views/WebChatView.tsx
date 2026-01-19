@@ -1,14 +1,14 @@
 'use client'
 
-import { motion } from 'framer-motion'
-import { Volume2 } from 'lucide-react'
 import { AllyLogo } from '@/components/shared/logo'
+import { Volume2 } from 'lucide-react'
+import { motion } from 'framer-motion'
 
 const SCHEDULE_ITEMS = ['9:00 AM - Team Sync', '2:00 PM - Project Review', '4:30 PM - 1:1 with Manager']
 
 export const WebChatView = () => (
   <div className="h-full flex flex-col bg-muted dark:bg-secondary">
-    <div className="p-4 bg-background dark:bg-secondary border-b border dark:border-zinc-700">
+    <div className="p-4 bg-background dark:bg-secondary border-b ">
       <div className="flex items-center gap-3">
         <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center">
           <AllyLogo className="w-6 h-6 text-white" />
@@ -35,7 +35,7 @@ export const WebChatView = () => (
         transition={{ delay: 0.5 }}
         className="flex justify-start"
       >
-        <div className="bg-background dark:bg-secondary border border dark:border-zinc-700 px-4 py-3 rounded-2xl rounded-tl-sm text-sm max-w-[85%]">
+        <div className="bg-background dark:bg-secondary  px-4 py-3 rounded-2xl rounded-tl-sm text-sm max-w-[85%]">
           <p className="text-zinc-700 dark:text-zinc-300 mb-2">
             Tomorrow you have <strong>3 meetings</strong> scheduled:
           </p>

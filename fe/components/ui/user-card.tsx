@@ -36,13 +36,13 @@ export function UserCard({ name, subtitle, avatarUrl, size = 'md', className, on
     <>
       <Avatar className={cn(sizes.avatar, 'shrink-0')}>
         <AvatarImage src={avatarUrl} alt={name} />
-        <AvatarFallback className="bg-accent text-muted-foreground">
-          {initials}
-        </AvatarFallback>
+        <AvatarFallback className="bg-accent text-muted-foreground">{initials}</AvatarFallback>
       </Avatar>
       <div className="min-w-0 flex-1">
         <p className={cn('font-medium text-foreground dark:text-primary-foreground truncate', sizes.name)}>{name}</p>
-        {subtitle && <p className={cn('text-muted-foreground dark:text-muted-foreground truncate', sizes.subtitle)}>{subtitle}</p>}
+        {subtitle && (
+          <p className={cn('text-muted-foreground dark:text-muted-foreground truncate', sizes.subtitle)}>{subtitle}</p>
+        )}
       </div>
     </>
   )

@@ -10,7 +10,7 @@ import { useQuery } from '@tanstack/react-query'
  * Hook to get all archived conversations for the current user
  */
 export function useGetArchivedConversations(
-  options?: Omit<UseQueryOptions<ConversationListResponse>, 'queryKey' | 'queryFn'>
+  options?: Omit<UseQueryOptions<ConversationListResponse>, 'queryKey' | 'queryFn'>,
 ) {
   return useQuery<ConversationListResponse>({
     queryKey: queryKeys.conversations.archived(),

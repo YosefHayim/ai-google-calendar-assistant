@@ -16,6 +16,7 @@ import { fileToBase64 } from './utils/file-utils'
 import { getTextDirection } from '@/lib/utils'
 import { toast } from 'sonner'
 import { useAutoResizeTextarea } from './hooks/useAutoResizeTextarea'
+import { useTranslation } from 'react-i18next'
 import { validateInputLength } from '@/lib/security/sanitize'
 
 export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
@@ -40,6 +41,7 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
     },
     externalRef,
   ) => {
+    const { t } = useTranslation()
     const isDisabled = isLoading && !onCancel
     const inputDirection = useMemo(() => getTextDirection(input), [input])
     const fileInputRef = useRef<HTMLInputElement>(null)
@@ -290,7 +292,7 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.2 }}
-              className="relative flex flex-col items-center justify-center backdrop-blur-xl bg-background/80 dark:bg-secondary/80 border border dark:border rounded-2xl shadow-2xl p-4 transition-all"
+              className="relative flex flex-col items-center justify-center backdrop-blur-xl bg-background/80 dark:bg-secondary/80 rounded-2xl shadow-2xl p-4 transition-all"
             >
               <AIVoiceInput
                 onStart={onStartRecording}
@@ -319,7 +321,7 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
               onSubmit={handleSubmit}
-              className="relative backdrop-blur-xl bg-background/90 dark:bg-secondary/90 border border/80 dark:border/80 rounded-2xl shadow-2xl overflow-hidden"
+              className="relative backdrop-blur-xl bg-background/90 dark:bg-secondary/90 border/80 /80 rounded-2xl shadow-2xl overflow-hidden"
             >
               <Input
                 ref={fileInputRef}

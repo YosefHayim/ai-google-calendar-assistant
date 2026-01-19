@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
+
 import UseCaseGrid from '@/components/marketing/UseCaseGrid'
 
 const meta: Meta<typeof UseCaseGrid> = {
@@ -34,7 +35,9 @@ export const Default: Story = {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
             <span className="text-xs font-bold text-primary uppercase tracking-[0.2em] mb-4 block">Use Cases</span>
-            <h2 className="text-4xl font-bold text-foreground dark:text-primary-foreground mb-4">How Professionals Use Ally</h2>
+            <h2 className="text-4xl font-bold text-foreground dark:text-primary-foreground mb-4">
+              How Professionals Use Ally
+            </h2>
             <p className="text-zinc-600 dark:text-muted-foreground max-w-2xl mx-auto">
               Real scenarios where Ask Ally saves time and reduces calendar friction.
             </p>
@@ -103,7 +106,9 @@ export const IntelligentSchedulingFocus: Story = {
               </svg>
               Smart Scheduling
             </span>
-            <h3 className="text-2xl font-bold text-foreground dark:text-primary-foreground">Find the perfect time, every time</h3>
+            <h3 className="text-2xl font-bold text-foreground dark:text-primary-foreground">
+              Find the perfect time, every time
+            </h3>
           </div>
           <Story />
         </div>
@@ -140,7 +145,9 @@ export const VoiceCommandFocus: Story = {
               </svg>
               Voice Commands
             </span>
-            <h3 className="text-2xl font-bold text-foreground dark:text-primary-foreground">Speak naturally, get things done</h3>
+            <h3 className="text-2xl font-bold text-foreground dark:text-primary-foreground">
+              Speak naturally, get things done
+            </h3>
           </div>
           <Story />
         </div>
@@ -203,7 +210,7 @@ export const WithCTA: Story = {
         <div className="max-w-5xl mx-auto">
           <Story />
           <div className="mt-16 text-center">
-            <div className="p-8 bg-muted dark:bg-secondary rounded-2xl border border dark:border">
+            <div className="p-8 bg-muted dark:bg-secondary rounded-2xl border ">
               <h3 className="text-2xl font-bold text-foreground dark:text-primary-foreground mb-4">
                 Ready to Transform Your Calendar?
               </h3>

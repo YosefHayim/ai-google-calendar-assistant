@@ -94,7 +94,9 @@ export const Features: Story = {
   render: () => (
     <div className="space-y-8 max-w-xl mx-auto">
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-foreground dark:text-primary-foreground mb-2">Avatar Tooltip Group Features</h2>
+        <h2 className="text-2xl font-bold text-foreground dark:text-primary-foreground mb-2">
+          Avatar Tooltip Group Features
+        </h2>
         <p className="text-muted-foreground">Interactive social proof component</p>
       </div>
 

@@ -24,6 +24,7 @@ import type { GoogleCalendarIntegrationStatus } from '@/types/api'
 import { SOCIAL_LINKS } from '@/lib/constants'
 import { SiGooglecalendar } from 'react-icons/si'
 import { toast } from 'sonner'
+import { useTranslation } from 'react-i18next'
 
 interface IntegrationsTabProps {
   googleCalendarStatus: GoogleCalendarIntegrationStatus | null | undefined
@@ -76,6 +77,7 @@ export const IntegrationsTab: React.FC<IntegrationsTabProps> = ({
   onResync,
   onDisconnect,
 }) => {
+  const { t } = useTranslation()
   const googleIsConnected =
     googleCalendarStatus?.isSynced && googleCalendarStatus.isActive && !googleCalendarStatus.isExpired
 
@@ -207,12 +209,7 @@ export const IntegrationsTab: React.FC<IntegrationsTabProps> = ({
               icon={<FaWhatsapp size={18} className="text-muted-foreground" />}
               control={
                 <Button variant="outline" size="sm" asChild>
-                  <a
-                    className="w-full"
-                    href={SOCIAL_LINKS.WHATSAPP}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
+                  <a className="w-full" href={SOCIAL_LINKS.WHATSAPP} target="_blank" rel="noreferrer">
                     Open <ArrowUpRight size={14} className="ml-1" />
                   </a>
                 </Button>
@@ -228,12 +225,7 @@ export const IntegrationsTab: React.FC<IntegrationsTabProps> = ({
               icon={<FaSlack size={18} className="text-purple-600 dark:text-purple-400" />}
               control={
                 <Button variant="outline" size="sm" asChild>
-                  <a
-                    className="w-full"
-                    href={SOCIAL_LINKS.SLACK}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
+                  <a className="w-full" href={SOCIAL_LINKS.SLACK} target="_blank" rel="noreferrer">
                     Open <ArrowUpRight size={14} className="ml-1" />
                   </a>
                 </Button>

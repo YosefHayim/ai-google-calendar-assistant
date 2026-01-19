@@ -112,7 +112,9 @@ export const WithSingleImage: Story = {
           timestamp={FIXED_TIMESTAMP}
           images={[mockImage]}
         />
-        <p className="text-xs text-muted-foreground text-center">Note: Images require base64 data to display properly</p>
+        <p className="text-xs text-muted-foreground text-center">
+          Note: Images require base64 data to display properly
+        </p>
       </div>
     )
   },

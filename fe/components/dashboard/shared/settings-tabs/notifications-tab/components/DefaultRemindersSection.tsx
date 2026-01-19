@@ -15,8 +15,10 @@ import {
   reminderDefaultsDefaults,
 } from '@/lib/validations/preferences'
 import { REMINDER_METHOD_OPTIONS, REMINDER_TIME_DROPDOWN_OPTIONS, MAX_REMINDERS } from '../constants'
+import { useTranslation } from 'react-i18next'
 
 export function DefaultRemindersSection() {
+  const { t } = useTranslation()
   const reminderToggleId = React.useId()
   const calendarDefaultsToggleId = React.useId()
 

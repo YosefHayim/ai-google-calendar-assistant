@@ -171,10 +171,12 @@ export function ThreeDWallCalendar({
                     zIndex: Math.round(100 - Math.abs(rowOffset)),
                   }}
                 >
-                  <Card className="h-full overflow-visible bg-background/80 dark:bg-secondary/80 backdrop-blur-sm border dark:border">
+                  <Card className="h-full overflow-visible bg-background/80 dark:bg-secondary/80 backdrop-blur-sm border ">
                     <CardContent className="p-3 h-full flex flex-col">
                       <div className="flex justify-between items-start">
-                        <div className="text-xs font-bold text-foreground dark:text-primary-foreground">{format(day, 'd')}</div>
+                        <div className="text-xs font-bold text-foreground dark:text-primary-foreground">
+                          {format(day, 'd')}
+                        </div>
                         <div className="text-xs font-bold uppercase text-muted-foreground">{format(day, 'EEE')}</div>
                       </div>
 
@@ -204,7 +206,9 @@ export function ThreeDWallCalendar({
                                 <div className="flex justify-between items-center gap-2">
                                   <div className="flex flex-col">
                                     <span className="text-xs font-bold">{ev.title}</span>
-                                    <span className="text-xs text-muted-foreground">{format(new Date(ev.date), 'p')}</span>
+                                    <span className="text-xs text-muted-foreground">
+                                      {format(new Date(ev.date), 'p')}
+                                    </span>
                                   </div>
                                   {!hideControls && onRemoveEvent && (
                                     <Button

@@ -1,20 +1,20 @@
 'use client'
 
 import * as React from 'react'
+
 import { CalendarDays, Info } from 'lucide-react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
 
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
-import { useLanguage } from '@/contexts/LanguageContext'
-import type { WeeklyPatternDataPoint } from '@/types/analytics'
-import { formatNumber } from '@/lib/dataUtils'
 import { ChartTypeWrapper } from './ChartTypeWrapper'
-
-import { WeeklyPatternBarChart } from './weekly-pattern-charts/WeeklyPatternBarChart'
-import { WeeklyPatternLineChart } from './weekly-pattern-charts/WeeklyPatternLineChart'
+import { Skeleton } from '@/components/ui/skeleton'
 import { WeeklyPatternAreaChart } from './weekly-pattern-charts/WeeklyPatternAreaChart'
+import { WeeklyPatternBarChart } from './weekly-pattern-charts/WeeklyPatternBarChart'
+import type { WeeklyPatternDataPoint } from '@/types/analytics'
+import { WeeklyPatternLineChart } from './weekly-pattern-charts/WeeklyPatternLineChart'
+import { formatNumber } from '@/lib/dataUtils'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 const CHART_TYPES = ['bar', 'line', 'area'] as const
 type WeeklyChartType = (typeof CHART_TYPES)[number]
@@ -42,8 +42,8 @@ export const WeeklyPatternDashboard: React.FC<WeeklyPatternDashboardProps> = ({
 
   if (isLoading) {
     return (
-      <Card className="bg-background dark:bg-secondary border border dark:border py-0">
-        <CardHeader className="flex flex-col items-stretch border-b border dark:border !p-0 sm:flex-row">
+      <Card className="bg-background dark:bg-secondary py-0">
+        <CardHeader className="flex flex-col items-stretch border-b !p-0 sm:flex-row">
           <div className="flex flex-1 flex-col justify-center gap-1 px-4 sm:px-6 pt-3 sm:pt-4 pb-2 sm:pb-3 sm:!py-4">
             <div className="flex items-center gap-2">
               <Skeleton className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -52,11 +52,11 @@ export const WeeklyPatternDashboard: React.FC<WeeklyPatternDashboardProps> = ({
             <Skeleton className="h-3 sm:h-4 w-36 sm:w-48 mt-1" />
           </div>
           <div className="flex">
-            <div className="flex flex-1 flex-col justify-center gap-1 border-t border dark:border px-4 sm:px-6 py-3 sm:py-4 sm:border-t-0 sm:border-l lg:px-8 lg:py-6">
+            <div className="flex flex-1 flex-col justify-center gap-1 border-t px-4 sm:px-6 py-3 sm:py-4 sm:border-t-0 sm:border-l lg:px-8 lg:py-6">
               <Skeleton className="h-2.5 sm:h-3 w-16 sm:w-20" />
               <Skeleton className="h-6 sm:h-8 w-12 sm:w-16 mt-1" />
             </div>
-            <div className="flex flex-1 flex-col justify-center gap-1 border-t border-l border dark:border px-4 sm:px-6 py-3 sm:py-4 sm:border-t-0 lg:px-8 lg:py-6">
+            <div className="flex flex-1 flex-col justify-center gap-1 border-t border-l px-4 sm:px-6 py-3 sm:py-4 sm:border-t-0 lg:px-8 lg:py-6">
               <Skeleton className="h-2.5 sm:h-3 w-12 sm:w-16" />
               <Skeleton className="h-6 sm:h-8 w-10 sm:w-12 mt-1" />
             </div>
@@ -74,7 +74,7 @@ export const WeeklyPatternDashboard: React.FC<WeeklyPatternDashboardProps> = ({
 
   if (!data || data.length === 0) {
     return (
-      <Card className="bg-background dark:bg-secondary border border dark:border">
+      <Card className="bg-background dark:bg-secondary border ">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <CalendarDays className="w-5 h-5 text-primary" />
@@ -102,8 +102,8 @@ export const WeeklyPatternDashboard: React.FC<WeeklyPatternDashboardProps> = ({
   }
 
   return (
-    <Card className="bg-background dark:bg-secondary border border dark:border py-0">
-      <CardHeader className="flex flex-col items-stretch border-b border dark:border !p-0 sm:flex-row">
+    <Card className="bg-background dark:bg-secondary py-0">
+      <CardHeader className="flex flex-col items-stretch border-b !p-0 sm:flex-row">
         <div className="flex flex-1 flex-col justify-center gap-1 px-4 sm:px-6 pt-3 sm:pt-4 pb-2 sm:pb-3 sm:!py-4">
           <CardTitle className="flex items-center gap-2 text-sm sm:text-base text-foreground dark:text-primary-foreground">
             <CalendarDays className="w-4 h-4 sm:w-5 sm:h-5 text-foreground dark:text-primary flex-shrink-0" />
@@ -134,7 +134,7 @@ export const WeeklyPatternDashboard: React.FC<WeeklyPatternDashboardProps> = ({
           </CardDescription>
         </div>
         <div className="flex">
-          <div className="relative z-30 flex flex-1 flex-col justify-center gap-0.5 sm:gap-1 border-t border dark:border px-4 sm:px-6 py-2 sm:py-4 text-left sm:border-t-0 sm:border-l lg:px-8 lg:py-6">
+          <div className="relative z-30 flex flex-1 flex-col justify-center gap-0.5 sm:gap-1 border-t px-4 sm:px-6 py-2 sm:py-4 text-left sm:border-t-0 sm:border-l lg:px-8 lg:py-6">
             <span className="text-muted-foreground dark:text-muted-foreground text-[10px] sm:text-xs">
               {t('analytics.charts.totalHours')}
             </span>
@@ -142,7 +142,7 @@ export const WeeklyPatternDashboard: React.FC<WeeklyPatternDashboardProps> = ({
               {formatNumber(totalHours, 1)}H
             </span>
           </div>
-          <div className="relative z-30 flex flex-1 flex-col justify-center gap-0.5 sm:gap-1 border-t border-l border dark:border px-4 sm:px-6 py-2 sm:py-4 text-left sm:border-t-0 lg:px-8 lg:py-6">
+          <div className="relative z-30 flex flex-1 flex-col justify-center gap-0.5 sm:gap-1 border-t border-l px-4 sm:px-6 py-2 sm:py-4 text-left sm:border-t-0 lg:px-8 lg:py-6">
             <span className="text-muted-foreground dark:text-muted-foreground text-[10px] sm:text-xs">
               {t('analytics.charts.totalEventsLabel')}
             </span>

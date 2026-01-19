@@ -21,7 +21,6 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { Flag, Pencil, Plus, RefreshCw, Search, Trash2 } from 'lucide-react'
-import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import {
   useCreateFeatureFlag,
   useDeleteFeatureFlag,
@@ -35,6 +34,7 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { Switch } from '@/components/ui/switch'
 import { toast } from 'sonner'
 import { useState } from 'react'
@@ -85,7 +85,9 @@ export default function AdminFeatureFlagsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground dark:text-white">Feature Flags</h1>
-          <p className="text-muted-foreground dark:text-muted-foreground mt-1">Manage feature flags and rollout settings</p>
+          <p className="text-muted-foreground dark:text-muted-foreground mt-1">
+            Manage feature flags and rollout settings
+          </p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={() => refetch()}>
@@ -124,21 +126,22 @@ export default function AdminFeatureFlagsPage() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="border-b border dark:border-zinc-700">
+              <thead className="border-b ">
                 <tr>
                   <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">Flag</th>
                   <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">Status</th>
-                  <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">Rollout</th>
+                  <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">
+                    Rollout
+                  </th>
                   <th className="text-left p-4 font-medium text-muted-foreground dark:text-muted-foreground">Tiers</th>
-                  <th className="text-right p-4 font-medium text-muted-foreground dark:text-muted-foreground">Actions</th>
+                  <th className="text-right p-4 font-medium text-muted-foreground dark:text-muted-foreground">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {filteredFlags?.map((flag) => (
-                  <tr
-                    key={flag.id}
-                    className="border-b border-zinc-100 dark:border hover:bg-muted dark:hover:bg-secondary/50"
-                  >
+                  <tr key={flag.id} className="border-b border-zinc-100  hover:bg-muted dark:hover:bg-secondary/50">
                     <td className="p-4">
                       <div className="flex items-start gap-3">
                         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">

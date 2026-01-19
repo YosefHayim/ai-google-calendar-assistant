@@ -70,7 +70,10 @@ export const blogService = {
     targetAudience?: string
     tone?: 'professional' | 'conversational' | 'expert' | 'educational'
   }): Promise<ApiResponse<BlogPost & { url: string }>> {
-    const { data } = await apiClient.post<ApiResponse<BlogPost & { url: string }>>('/api/blog/generate-ai', generateData)
+    const { data } = await apiClient.post<ApiResponse<BlogPost & { url: string }>>(
+      '/api/blog/generate-ai',
+      generateData,
+    )
     return data
   },
 }

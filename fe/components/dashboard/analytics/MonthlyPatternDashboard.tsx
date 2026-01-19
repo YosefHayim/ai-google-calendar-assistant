@@ -46,8 +46,8 @@ export const MonthlyPatternDashboard: React.FC<MonthlyPatternDashboardProps> = (
 
   if (isLoading) {
     return (
-      <Card className="bg-background dark:bg-secondary border border dark:border py-0">
-        <CardHeader className="flex flex-col items-stretch border-b border dark:border !p-0 sm:flex-row">
+      <Card className="bg-background dark:bg-secondary py-0">
+        <CardHeader className="flex flex-col items-stretch border-b !p-0 sm:flex-row">
           <div className="flex flex-1 flex-col justify-center gap-1 px-6 pt-4 pb-3 sm:!py-4">
             <div className="flex items-center gap-2">
               <Skeleton className="w-5 h-5" />
@@ -56,11 +56,11 @@ export const MonthlyPatternDashboard: React.FC<MonthlyPatternDashboardProps> = (
             <Skeleton className="h-4 w-48 mt-1" />
           </div>
           <div className="flex">
-            <div className="flex flex-1 flex-col justify-center gap-1 border-t border dark:border px-6 py-4 sm:border-t-0 sm:border-l sm:px-8 sm:py-6">
+            <div className="flex flex-1 flex-col justify-center gap-1 border-t px-6 py-4 sm:border-t-0 sm:border-l sm:px-8 sm:py-6">
               <Skeleton className="h-3 w-20" />
               <Skeleton className="h-8 w-16 mt-1" />
             </div>
-            <div className="flex flex-1 flex-col justify-center gap-1 border-t border-l border dark:border px-6 py-4 sm:border-t-0 sm:px-8 sm:py-6">
+            <div className="flex flex-1 flex-col justify-center gap-1 border-t border-l px-6 py-4 sm:border-t-0 sm:px-8 sm:py-6">
               <Skeleton className="h-3 w-16" />
               <Skeleton className="h-8 w-12 mt-1" />
             </div>
@@ -78,7 +78,7 @@ export const MonthlyPatternDashboard: React.FC<MonthlyPatternDashboardProps> = (
 
   if (!data || data.length === 0 || filteredData.length === 0) {
     return (
-      <Card className="bg-background dark:bg-secondary border border dark:border">
+      <Card className="bg-background dark:bg-secondary border ">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Calendar className="w-5 h-5 text-primary" />
@@ -106,28 +106,22 @@ export const MonthlyPatternDashboard: React.FC<MonthlyPatternDashboardProps> = (
   }
 
   return (
-    <Card className="bg-background dark:bg-secondary border border dark:border py-0">
-      <CardHeader className="flex flex-col items-stretch border-b border dark:border !p-0 sm:flex-row">
+    <Card className="bg-background dark:bg-secondary py-0">
+      <CardHeader className="flex flex-col items-stretch border-b !p-0 sm:flex-row">
         <div className="flex flex-1 flex-col justify-center gap-1 px-6 pt-4 pb-3 sm:!py-4">
           <CardTitle className="flex items-center gap-2 text-foreground dark:text-primary-foreground">
             <Calendar className="w-5 h-5 text-foreground dark:text-primary" />
             {t('analytics.charts.monthlyPattern')}
             <HoverCard>
               <HoverCardTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-6 w-6 text-muted-foreground hover:text-foreground"
-                >
+                <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-foreground">
                   <Info size={16} />
                 </Button>
               </HoverCardTrigger>
               <HoverCardContent>
                 <div className="space-y-2">
                   <h4 className="font-semibold text-sm">{t('analytics.charts.monthlyPattern')}</h4>
-                  <p className="text-xs text-muted-foreground">
-                    {t('analytics.charts.monthlyPatternTooltip')}
-                  </p>
+                  <p className="text-xs text-muted-foreground">{t('analytics.charts.monthlyPatternTooltip')}</p>
                 </div>
               </HoverCardContent>
             </HoverCard>
@@ -137,14 +131,18 @@ export const MonthlyPatternDashboard: React.FC<MonthlyPatternDashboardProps> = (
           </CardDescription>
         </div>
         <div className="flex">
-          <div className="relative z-30 flex flex-1 flex-col justify-center gap-1 border-t border dark:border px-6 py-4 text-left sm:border-t-0 sm:border-l sm:px-6 sm:py-4 lg:px-8 lg:py-6">
-            <span className="text-muted-foreground dark:text-muted-foreground text-xs">{t('analytics.charts.totalHours')}</span>
+          <div className="relative z-30 flex flex-1 flex-col justify-center gap-1 border-t px-6 py-4 text-left sm:border-t-0 sm:border-l sm:px-6 sm:py-4 lg:px-8 lg:py-6">
+            <span className="text-muted-foreground dark:text-muted-foreground text-xs">
+              {t('analytics.charts.totalHours')}
+            </span>
             <span className="text-lg leading-none font-bold text-foreground dark:text-primary-foreground sm:text-xl lg:text-3xl">
               {formatNumber(totalHours, 1)}H
             </span>
           </div>
-          <div className="relative z-30 flex flex-1 flex-col justify-center gap-1 border-t border-l border dark:border px-6 py-4 text-left sm:border-t-0 sm:px-6 sm:py-4 lg:px-8 lg:py-6">
-            <span className="text-muted-foreground dark:text-muted-foreground text-xs">{t('analytics.charts.totalEventsLabel')}</span>
+          <div className="relative z-30 flex flex-1 flex-col justify-center gap-1 border-t border-l px-6 py-4 text-left sm:border-t-0 sm:px-6 sm:py-4 lg:px-8 lg:py-6">
+            <span className="text-muted-foreground dark:text-muted-foreground text-xs">
+              {t('analytics.charts.totalEventsLabel')}
+            </span>
             <span className="text-lg leading-none font-bold text-foreground dark:text-primary-foreground sm:text-xl lg:text-3xl">
               {formatNumber(totalEvents)}
             </span>

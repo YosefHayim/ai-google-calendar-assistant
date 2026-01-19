@@ -34,9 +34,7 @@ function UserProfileCard({ isOpen }: UserProfileCardProps) {
       <div className="flex items-center justify-center p-2 rounded-md md:justify-center">
         <Avatar className="h-9 w-9 shrink-0">
           <AvatarImage src={avatarUrl} alt={fullName} />
-          <AvatarFallback className="bg-accent text-muted-foreground">
-            {initials}
-          </AvatarFallback>
+          <AvatarFallback className="bg-accent text-muted-foreground">{initials}</AvatarFallback>
         </Avatar>
       </div>
     )

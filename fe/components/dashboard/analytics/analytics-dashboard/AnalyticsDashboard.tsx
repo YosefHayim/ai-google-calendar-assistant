@@ -19,7 +19,7 @@ import { useAIInsights } from '@/hooks/queries/analytics/useAIInsights'
 import { useAnalyticsContext } from '@/contexts/AnalyticsContext'
 
 // Dynamically import heavy chart components
-const BentoStatsGrid = dynamic(() => import('../BentoStatsGrid').then(mod => ({ default: mod.BentoStatsGrid })), {
+const BentoStatsGrid = dynamic(() => import('../BentoStatsGrid').then((mod) => ({ default: mod.BentoStatsGrid })), {
   loading: () => <div className="h-32 bg-muted rounded-lg animate-pulse" />,
   ssr: false,
 })

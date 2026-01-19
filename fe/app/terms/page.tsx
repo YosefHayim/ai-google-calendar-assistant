@@ -1,7 +1,7 @@
 'use client'
 
-import MarketingLayout from '@/components/marketing/MarketingLayout'
 import Link from 'next/link'
+import MarketingLayout from '@/components/marketing/MarketingLayout'
 
 export default function TermsOfServicePage() {
   const lastUpdated = 'January 11, 2026'
@@ -25,7 +25,9 @@ export default function TermsOfServicePage() {
           <div className="prose prose-zinc dark:prose-invert max-w-none">
             {/* Introduction */}
             <section className="mb-12">
-              <h2 className="text-2xl font-medium text-foreground dark:text-primary-foreground mb-4">1. Acceptance of Terms</h2>
+              <h2 className="text-2xl font-medium text-foreground dark:text-primary-foreground mb-4">
+                1. Acceptance of Terms
+              </h2>
               <p className="text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4">
                 By accessing or using Ally (the &quot;Service&quot;), operated by Ally Technologies Inc.
                 (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;), you agree to be bound by these Terms of Service
@@ -39,7 +41,9 @@ export default function TermsOfServicePage() {
 
             {/* Description of Service */}
             <section className="mb-12">
-              <h2 className="text-2xl font-medium text-foreground dark:text-primary-foreground mb-4">2. Description of Service</h2>
+              <h2 className="text-2xl font-medium text-foreground dark:text-primary-foreground mb-4">
+                2. Description of Service
+              </h2>
               <p className="text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4">
                 Ally is an AI-powered calendar assistant that integrates with Google Calendar. Our Service provides:
               </p>
@@ -54,7 +58,9 @@ export default function TermsOfServicePage() {
 
             {/* Account Registration */}
             <section className="mb-12">
-              <h2 className="text-2xl font-medium text-foreground dark:text-primary-foreground mb-4">3. Account Registration</h2>
+              <h2 className="text-2xl font-medium text-foreground dark:text-primary-foreground mb-4">
+                3. Account Registration
+              </h2>
               <p className="text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4">
                 To use Ally, you must create an account and connect your Google Calendar. By registering, you agree to:
               </p>
@@ -99,7 +105,7 @@ export default function TermsOfServicePage() {
                 </li>
               </ul>
 
-              <div className="bg-amber-50 dark:bg-amber-950/30 rounded-lg p-4 border border-amber-200 dark:border-amber-800 mt-4">
+              <div className="bg-amber-50 dark:bg-amber-950/30 rounded-lg p-4 border-amber-200 -amber-800 mt-4">
                 <p className="text-zinc-700 dark:text-zinc-200 leading-relaxed">
                   <strong>Important:</strong> Ally&apos;s use and transfer of information received from Google APIs
                   adheres to the{' '}
@@ -118,7 +124,9 @@ export default function TermsOfServicePage() {
 
             {/* Acceptable Use */}
             <section className="mb-12">
-              <h2 className="text-2xl font-medium text-foreground dark:text-primary-foreground mb-4">5. Acceptable Use</h2>
+              <h2 className="text-2xl font-medium text-foreground dark:text-primary-foreground mb-4">
+                5. Acceptable Use
+              </h2>
               <p className="text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4">
                 You agree to use the Service only for lawful purposes and in compliance with these Terms. You agree NOT
                 to:
@@ -154,13 +162,17 @@ export default function TermsOfServicePage() {
                 6. Subscription and Payment
               </h2>
 
-              <h3 className="text-xl font-medium text-foreground dark:text-primary-foreground mb-3 mt-6">6.1 Free Tier</h3>
+              <h3 className="text-xl font-medium text-foreground dark:text-primary-foreground mb-3 mt-6">
+                6.1 Free Tier
+              </h3>
               <p className="text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4">
                 Ally offers a free tier with limited features. Free accounts are subject to usage limits and may not
                 include all features available to paid subscribers.
               </p>
 
-              <h3 className="text-xl font-medium text-foreground dark:text-primary-foreground mb-3 mt-6">6.2 Paid Subscriptions</h3>
+              <h3 className="text-xl font-medium text-foreground dark:text-primary-foreground mb-3 mt-6">
+                6.2 Paid Subscriptions
+              </h3>
               <p className="text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4">
                 Paid subscriptions provide access to premium features. By subscribing, you agree to:
               </p>
@@ -170,7 +182,9 @@ export default function TermsOfServicePage() {
                 <li>Provide accurate billing information</li>
               </ul>
 
-              <h3 className="text-xl font-medium text-foreground dark:text-primary-foreground mb-3 mt-6">6.3 Cancellation</h3>
+              <h3 className="text-xl font-medium text-foreground dark:text-primary-foreground mb-3 mt-6">
+                6.3 Cancellation
+              </h3>
               <p className="text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4">
                 You may cancel your subscription at any time from your account settings. Upon cancellation:
               </p>
@@ -180,7 +194,9 @@ export default function TermsOfServicePage() {
                 <li>Access to premium features will be removed at the end of the billing period</li>
               </ul>
 
-              <h3 className="text-xl font-medium text-foreground dark:text-primary-foreground mb-3 mt-6">6.4 Refunds</h3>
+              <h3 className="text-xl font-medium text-foreground dark:text-primary-foreground mb-3 mt-6">
+                6.4 Refunds
+              </h3>
               <p className="text-zinc-600 dark:text-zinc-300 leading-relaxed">
                 Subscription fees are generally non-refundable. However, we may consider refund requests on a
                 case-by-case basis. Contact{' '}
@@ -193,7 +209,9 @@ export default function TermsOfServicePage() {
 
             {/* Intellectual Property */}
             <section className="mb-12">
-              <h2 className="text-2xl font-medium text-foreground dark:text-primary-foreground mb-4">7. Intellectual Property</h2>
+              <h2 className="text-2xl font-medium text-foreground dark:text-primary-foreground mb-4">
+                7. Intellectual Property
+              </h2>
               <p className="text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4">
                 The Service, including its original content, features, and functionality, is owned by Ally Technologies
                 Inc. and is protected by intellectual property laws. This includes:
@@ -224,7 +242,9 @@ export default function TermsOfServicePage() {
 
             {/* Third-Party Services */}
             <section className="mb-12">
-              <h2 className="text-2xl font-medium text-foreground dark:text-primary-foreground mb-4">9. Third-Party Services</h2>
+              <h2 className="text-2xl font-medium text-foreground dark:text-primary-foreground mb-4">
+                9. Third-Party Services
+              </h2>
               <p className="text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4">
                 The Service integrates with third-party services, including:
               </p>
@@ -292,8 +312,10 @@ export default function TermsOfServicePage() {
 
             {/* Disclaimers */}
             <section className="mb-12">
-              <h2 className="text-2xl font-medium text-foreground dark:text-primary-foreground mb-4">10. Disclaimers</h2>
-              <div className="bg-muted dark:bg-secondary/50 rounded-lg p-4 border border dark:border">
+              <h2 className="text-2xl font-medium text-foreground dark:text-primary-foreground mb-4">
+                10. Disclaimers
+              </h2>
+              <div className="bg-muted dark:bg-secondary/50 rounded-lg p-4 border ">
                 <p className="text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4">
                   <strong>
                     THE SERVICE IS PROVIDED &quot;AS IS&quot; AND &quot;AS AVAILABLE&quot; WITHOUT WARRANTIES OF ANY
@@ -320,7 +342,7 @@ export default function TermsOfServicePage() {
               <h2 className="text-2xl font-medium text-foreground dark:text-primary-foreground mb-4">
                 11. Limitation of Liability
               </h2>
-              <div className="bg-muted dark:bg-secondary/50 rounded-lg p-4 border border dark:border">
+              <div className="bg-muted dark:bg-secondary/50 rounded-lg p-4 border ">
                 <p className="text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4">
                   <strong>
                     TO THE MAXIMUM EXTENT PERMITTED BY LAW, ALLY TECHNOLOGIES INC. SHALL NOT BE LIABLE FOR ANY INDIRECT,
@@ -343,7 +365,9 @@ export default function TermsOfServicePage() {
 
             {/* Indemnification */}
             <section className="mb-12">
-              <h2 className="text-2xl font-medium text-foreground dark:text-primary-foreground mb-4">12. Indemnification</h2>
+              <h2 className="text-2xl font-medium text-foreground dark:text-primary-foreground mb-4">
+                12. Indemnification
+              </h2>
               <p className="text-zinc-600 dark:text-zinc-300 leading-relaxed">
                 You agree to indemnify, defend, and hold harmless Ally Technologies Inc. and its officers, directors,
                 employees, and agents from any claims, damages, losses, or expenses arising from:
@@ -358,7 +382,9 @@ export default function TermsOfServicePage() {
 
             {/* Termination */}
             <section className="mb-12">
-              <h2 className="text-2xl font-medium text-foreground dark:text-primary-foreground mb-4">13. Termination</h2>
+              <h2 className="text-2xl font-medium text-foreground dark:text-primary-foreground mb-4">
+                13. Termination
+              </h2>
               <p className="text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4">
                 <strong>By You:</strong> You may terminate your account at any time by disconnecting your Google
                 Calendar and deleting your account from the dashboard, or by contacting us at{' '}
@@ -385,7 +411,9 @@ export default function TermsOfServicePage() {
 
             {/* Changes to Terms */}
             <section className="mb-12">
-              <h2 className="text-2xl font-medium text-foreground dark:text-primary-foreground mb-4">14. Changes to Terms</h2>
+              <h2 className="text-2xl font-medium text-foreground dark:text-primary-foreground mb-4">
+                14. Changes to Terms
+              </h2>
               <p className="text-zinc-600 dark:text-zinc-300 leading-relaxed">
                 We reserve the right to modify these Terms at any time. We will notify you of material changes by
                 posting the updated Terms on this page and updating the &quot;Last Updated&quot; date. Your continued
@@ -395,7 +423,9 @@ export default function TermsOfServicePage() {
 
             {/* Governing Law */}
             <section className="mb-12">
-              <h2 className="text-2xl font-medium text-foreground dark:text-primary-foreground mb-4">15. Governing Law</h2>
+              <h2 className="text-2xl font-medium text-foreground dark:text-primary-foreground mb-4">
+                15. Governing Law
+              </h2>
               <p className="text-zinc-600 dark:text-zinc-300 leading-relaxed">
                 These Terms shall be governed by and construed in accordance with the laws of the State of Delaware,
                 United States, without regard to its conflict of law provisions. Any disputes arising from these Terms
@@ -405,7 +435,9 @@ export default function TermsOfServicePage() {
 
             {/* Severability */}
             <section className="mb-12">
-              <h2 className="text-2xl font-medium text-foreground dark:text-primary-foreground mb-4">16. Severability</h2>
+              <h2 className="text-2xl font-medium text-foreground dark:text-primary-foreground mb-4">
+                16. Severability
+              </h2>
               <p className="text-zinc-600 dark:text-zinc-300 leading-relaxed">
                 If any provision of these Terms is found to be unenforceable, the remaining provisions will continue in
                 full force and effect.
@@ -414,7 +446,9 @@ export default function TermsOfServicePage() {
 
             {/* Entire Agreement */}
             <section className="mb-12">
-              <h2 className="text-2xl font-medium text-foreground dark:text-primary-foreground mb-4">17. Entire Agreement</h2>
+              <h2 className="text-2xl font-medium text-foreground dark:text-primary-foreground mb-4">
+                17. Entire Agreement
+              </h2>
               <p className="text-zinc-600 dark:text-zinc-300 leading-relaxed">
                 These Terms, together with our{' '}
                 <Link href="/privacy" className="text-primary hover:underline">
@@ -430,7 +464,7 @@ export default function TermsOfServicePage() {
               <p className="text-zinc-600 dark:text-zinc-300 leading-relaxed mb-4">
                 If you have any questions about these Terms of Service, please contact us:
               </p>
-              <div className="bg-muted dark:bg-secondary/50 rounded-xl p-6 border border dark:border">
+              <div className="bg-muted dark:bg-secondary/50 rounded-xl p-6 border ">
                 <p className="text-zinc-600 dark:text-zinc-300 mb-2">
                   <strong>Email:</strong>{' '}
                   <a href="mailto:hello@askally.io" className="text-primary hover:underline">
@@ -444,7 +478,7 @@ export default function TermsOfServicePage() {
             </section>
 
             {/* Back to Home */}
-            <div className="pt-8 border-t border dark:border">
+            <div className="pt-8 border-t border ">
               <Link href="/" className="text-primary hover:underline">
                 &larr; Back to Home
               </Link>

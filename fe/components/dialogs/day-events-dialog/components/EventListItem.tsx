@@ -36,9 +36,7 @@ export function EventListItem({ event, calendarMap, onEventClick }: EventListIte
             <CalendarDays size={16} style={{ color: calendarColor }} />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-foreground line-clamp-1">
-              {event.summary || 'No Title'}
-            </p>
+            <p className="text-sm font-semibold text-foreground line-clamp-1">{event.summary || 'No Title'}</p>
             <div className="flex items-center gap-2 mt-1 flex-wrap">
               <div className="text-xs text-muted-foreground font-bold uppercase flex items-center gap-2">
                 <Clock size={12} style={{ color: calendarColor }} />
@@ -73,7 +71,9 @@ export function EventListItem({ event, calendarMap, onEventClick }: EventListIte
       </HoverCardTrigger>
       <HoverCardContent className="w-80">
         <div className="space-y-2">
-          <h4 className="font-semibold text-sm text-foreground dark:text-primary-foreground">{event.summary || 'No Title'}</h4>
+          <h4 className="font-semibold text-sm text-foreground dark:text-primary-foreground">
+            {event.summary || 'No Title'}
+          </h4>
           <div className="space-y-2 text-xs text-muted-foreground">
             <div className="flex items-center gap-2">
               <Clock size={16} />
@@ -94,7 +94,9 @@ export function EventListItem({ event, calendarMap, onEventClick }: EventListIte
               </div>
             )}
             {event.description && (
-              <p className="text-xs text-muted-foreground dark:text-muted-foreground line-clamp-2 mt-2">{event.description}</p>
+              <p className="text-xs text-muted-foreground dark:text-muted-foreground line-clamp-2 mt-2">
+                {event.description}
+              </p>
             )}
           </div>
         </div>

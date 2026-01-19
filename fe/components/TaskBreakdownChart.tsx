@@ -58,7 +58,9 @@ const TaskBreakdownChart: React.FC<TaskBreakdownChartProps> = ({ data }) => {
             <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: item.color }} />
             <div className="flex items-baseline justify-between w-40">
               <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">{item.name}</span>
-              <span className="text-xs font-mono text-muted-foreground">{((item.value / total) * 100).toFixed(0)}%</span>
+              <span className="text-xs font-mono text-muted-foreground">
+                {((item.value / total) * 100).toFixed(0)}%
+              </span>
             </div>
           </li>
         ))}

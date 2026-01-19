@@ -17,7 +17,7 @@ export const AssistantAvatar: React.FC<AssistantAvatarProps> = ({ isRecording, i
     <div
       className={cn(
         'flex flex-col items-center justify-center transition-all duration-700',
-        compact ? 'scale-75 md:scale-90' : 'h-full w-full animate-in zoom-in'
+        compact ? 'scale-75 md:scale-90' : 'h-full w-full animate-in zoom-in',
       )}
     >
       <div
@@ -25,13 +25,13 @@ export const AssistantAvatar: React.FC<AssistantAvatarProps> = ({ isRecording, i
           'relative flex items-center justify-center',
           compact
             ? 'w-[200px] h-[200px] md:w-[300px] md:h-[300px]'
-            : 'w-[280px] h-[280px] sm:w-[320px] sm:h-[320px] md:w-[450px] md:h-[450px]'
+            : 'w-[280px] h-[280px] sm:w-[320px] sm:h-[320px] md:w-[450px] md:h-[450px]',
         )}
       >
         <div
           className={cn(
             'absolute inset-0 rounded-full bg-primary/20 blur-[100px] transition-all duration-1000',
-            isSpeaking || isLoading ? 'scale-125 opacity-40' : 'scale-100 opacity-10'
+            isSpeaking || isLoading ? 'scale-125 opacity-40' : 'scale-100 opacity-10',
           )}
         />
         <div className="w-full h-full relative">
@@ -48,7 +48,7 @@ export const AssistantAvatar: React.FC<AssistantAvatarProps> = ({ isRecording, i
         <div
           className={cn(
             'font-medium text-foreground dark:text-primary-foreground tracking-tight flex flex-col items-center justify-center gap-2',
-            compact ? 'text-xl' : 'text-3xl md:text-4xl'
+            compact ? 'text-xl' : 'text-3xl md:text-4xl',
           )}
         >
           <div className="flex items-center gap-3">

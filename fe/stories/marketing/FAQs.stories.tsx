@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
+
 import FAQs from '@/components/marketing/FAQs'
 
 const meta: Meta<typeof FAQs> = {
@@ -69,7 +70,9 @@ export const InPageContext: Story = {
         <section className="py-20 px-4 bg-muted dark:bg-secondary">
           <div className="max-w-4xl mx-auto text-center">
             <span className="text-xs font-bold text-primary uppercase tracking-[0.2em] mb-4 block">Pricing</span>
-            <h2 className="text-4xl font-bold text-foreground dark:text-primary-foreground mb-4">Simple, Transparent Pricing</h2>
+            <h2 className="text-4xl font-bold text-foreground dark:text-primary-foreground mb-4">
+              Simple, Transparent Pricing
+            </h2>
             <p className="text-zinc-600 dark:text-muted-foreground max-w-2xl mx-auto mb-12">
               Choose the plan that fits your workflow. All plans include core features.
             </p>
@@ -90,7 +93,7 @@ export const InPageContext: Story = {
               ].map((plan) => (
                 <div
                   key={plan.name}
-                  className={`p-6 bg-background dark:bg-secondary rounded-xl border ${plan.popular ? 'border-primary ring-2 ring-primary/20' : 'border dark:border-zinc-700'}`}
+                  className={`p-6 bg-background dark:bg-secondary rounded-xl border ${plan.popular ? 'border-primary ring-2 ring-primary/20' : ''}`}
                 >
                   {plan.popular && (
                     <span className="text-xs font-bold text-primary uppercase mb-2 block">Most Popular</span>
@@ -102,7 +105,10 @@ export const InPageContext: Story = {
                   </p>
                   <ul className="mt-4 space-y-2">
                     {plan.features.map((feature) => (
-                      <li key={feature} className="text-sm text-zinc-600 dark:text-muted-foreground flex items-center gap-2">
+                      <li
+                        key={feature}
+                        className="text-sm text-zinc-600 dark:text-muted-foreground flex items-center gap-2"
+                      >
                         <svg className="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
@@ -118,8 +124,12 @@ export const InPageContext: Story = {
         <Story />
         <section className="py-20 px-4">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl font-bold text-foreground dark:text-primary-foreground mb-4">Still Have Questions?</h2>
-            <p className="text-zinc-600 dark:text-muted-foreground mb-8">Our team is here to help. Reach out anytime.</p>
+            <h2 className="text-3xl font-bold text-foreground dark:text-primary-foreground mb-4">
+              Still Have Questions?
+            </h2>
+            <p className="text-zinc-600 dark:text-muted-foreground mb-8">
+              Our team is here to help. Reach out anytime.
+            </p>
             <button className="px-8 py-3 bg-secondary dark:bg-background text-white dark:text-foreground rounded-full font-medium">
               Contact Us
             </button>
@@ -162,7 +172,7 @@ export const SingleExpanded: Story = {
     (Story) => (
       <div className="py-16 px-4 bg-background dark:bg-[#030303]">
         <div className="max-w-4xl mx-auto mb-8">
-          <div className="p-4 bg-primary/5 dark:bg-blue-950/30 border border-primary/20 dark:border-blue-800 rounded-lg">
+          <div className="p-4 bg-primary/5 dark:bg-blue-950/30 border-primary/20 -blue-800 rounded-lg">
             <p className="text-sm text-blue-700 dark:text-blue-300">
               <strong>Tip:</strong> Click on any question to expand it. The accordion uses single-selection mode, so
               expanding one question will automatically collapse any other open question.

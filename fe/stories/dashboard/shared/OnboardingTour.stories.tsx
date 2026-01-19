@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
+
 import { OnboardingTour } from '@/components/dashboard/shared/OnboardingTour'
 import { fn } from 'storybook/test'
 
@@ -21,7 +22,7 @@ const meta: Meta<typeof OnboardingTour> = {
         {/* Mock dashboard layout with tour target elements */}
         <div className="flex">
           {/* Mock Sidebar */}
-          <aside className="w-64 h-screen bg-background dark:bg-secondary border-r border dark:border p-4 space-y-2">
+          <aside className="w-64 h-screen bg-background dark:bg-secondary border-r p-4 space-y-2">
             <div className="flex items-center gap-2 mb-6">
               <div className="w-8 h-8 bg-primary rounded-lg" />
               <span className="font-bold text-lg text-foreground dark:text-primary-foreground">Ally</span>
@@ -159,7 +160,10 @@ export const DarkMode: Story = {
               <div className="w-8 h-8 bg-primary rounded-lg" />
               <span className="font-bold text-lg text-primary-foreground">Ally</span>
             </div>
-            <div id="tour-assistant" className="px-3 py-2 rounded-lg bg-secondary text-sm font-medium text-primary-foreground">
+            <div
+              id="tour-assistant"
+              className="px-3 py-2 rounded-lg bg-secondary text-sm font-medium text-primary-foreground"
+            >
               Assistant
             </div>
             <div id="tour-analytics" className="px-3 py-2 rounded-lg text-sm text-muted-foreground">

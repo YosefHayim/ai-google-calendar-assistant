@@ -1,12 +1,12 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
-import { Skeleton } from '@/components/ui/skeleton'
 import { Info, ListChecks } from 'lucide-react'
 
+import { Button } from '@/components/ui/button'
 import type { ProcessedActivity } from '@/types/analytics'
 import React from 'react'
+import { Skeleton } from '@/components/ui/skeleton'
 
 interface RecentEventsProps {
   activities: ProcessedActivity[]
@@ -26,7 +26,7 @@ const RecentEvents: React.FC<RecentEventsProps> = ({
 
   if (isLoading) {
     return (
-      <div className="bg-background dark:bg-secondary border border dark:border rounded-md shadow-sm p-4 sm:p-6 flex-1">
+      <div className="bg-background dark:bg-secondary rounded-md shadow-sm p-4 sm:p-6 flex-1">
         <div className="mb-4 sm:mb-6 flex items-center gap-2">
           <Skeleton className="w-4 h-4" />
           <Skeleton className="h-4 sm:h-5 w-28 sm:w-32" />
@@ -39,11 +39,7 @@ const RecentEvents: React.FC<RecentEventsProps> = ({
           {Array.from({ length: isHorizontal ? 5 : 5 }).map((_, i) => (
             <div
               key={i}
-              className={
-                isHorizontal
-                  ? 'flex flex-col gap-2 p-3 border border dark:border rounded-lg'
-                  : 'flex items-start gap-3 p-2 -m-2'
-              }
+              className={isHorizontal ? 'flex flex-col gap-2 p-3 rounded-lg' : 'flex items-start gap-3 p-2 -m-2'}
             >
               <Skeleton className="w-8 h-8 rounded-md flex-shrink-0" />
               <div className="flex-1 min-w-0">
@@ -58,7 +54,7 @@ const RecentEvents: React.FC<RecentEventsProps> = ({
   }
 
   return (
-    <div className="bg-background dark:bg-secondary border border dark:border rounded-md shadow-sm p-4 sm:p-6 flex-1">
+    <div className="bg-background dark:bg-secondary rounded-md shadow-sm p-4 sm:p-6 flex-1">
       <div className="mb-4 sm:mb-6 flex items-center justify-between">
         <h3 className="font-bold text-sm sm:text-base text-foreground dark:text-primary-foreground flex items-center gap-2">
           <ListChecks className="w-4 h-4 text-muted-foreground flex-shrink-0" />
@@ -96,7 +92,7 @@ const RecentEvents: React.FC<RecentEventsProps> = ({
             return isHorizontal ? (
               <div
                 key={i}
-                className="border border dark:border hover:border-zinc-400 dark:hover:border-zinc-600 flex flex-col gap-2 sm:gap-3 group cursor-pointer hover:bg-muted dark:hover:bg-secondary/50 rounded-lg p-3 sm:p-4 transition-colors"
+                className="hover:border-zinc-400 dark:hover:border-zinc-600 flex flex-col gap-2 sm:gap-3 group cursor-pointer hover:bg-muted dark:hover:bg-secondary/50 rounded-lg p-3 sm:p-4 transition-colors"
                 data-calendar-id={activity.calendarId || ''}
                 onClick={() => onActivityClick(activity)}
               >
@@ -133,7 +129,7 @@ const RecentEvents: React.FC<RecentEventsProps> = ({
             ) : (
               <div
                 key={i}
-                className="border border-transparent hover:border-black hover:border flex items-start gap-3 group cursor-pointer hover:bg-muted dark:hover:bg-secondary/50 rounded-md p-2 -m-2 transition-colors"
+                className="border-transparent hover:border-black hover:border flex items-start gap-3 group cursor-pointer hover:bg-muted dark:hover:bg-secondary/50 rounded-md p-2 -m-2 transition-colors"
                 data-calendar-id={activity.calendarId || ''}
                 onClick={() => onActivityClick(activity)}
               >

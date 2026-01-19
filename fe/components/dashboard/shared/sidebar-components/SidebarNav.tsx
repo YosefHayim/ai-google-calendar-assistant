@@ -43,7 +43,7 @@ const NavLink: React.FC<NavLinkProps> = ({
           isActive
             ? 'bg-secondary dark:bg-secondary text-foreground dark:text-primary-foreground font-bold'
             : 'text-muted-foreground dark:text-muted-foreground hover:bg-muted dark:hover:bg-secondary',
-          !isOpen && 'md:justify-center'
+          !isOpen && 'md:justify-center',
         )}
       >
         <Icon className={cn('w-5 h-5 shrink-0', isActive && 'text-primary')} />

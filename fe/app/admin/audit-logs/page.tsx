@@ -1,14 +1,15 @@
 'use client'
 
+import { Calendar, ChevronLeft, ChevronRight, FileText, RefreshCw, Search, User } from 'lucide-react'
 import React, { useState } from 'react'
+
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Search, RefreshCw, ChevronLeft, ChevronRight, FileText, User, Calendar } from 'lucide-react'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
-import { useAdminAuditLogs } from '@/hooks/queries/admin'
 import { format } from 'date-fns'
+import { useAdminAuditLogs } from '@/hooks/queries/admin'
 
 export default function AdminAuditLogsPage() {
   const [search, setSearch] = useState('')
@@ -35,7 +36,9 @@ export default function AdminAuditLogsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground dark:text-white">Audit Logs</h1>
-          <p className="text-muted-foreground dark:text-muted-foreground mt-1">Track admin actions and system changes</p>
+          <p className="text-muted-foreground dark:text-muted-foreground mt-1">
+            Track admin actions and system changes
+          </p>
         </div>
         <Button variant="outline" size="sm" onClick={() => refetch()}>
           <RefreshCw className="w-4 h-4 mr-2" />
@@ -64,7 +67,7 @@ export default function AdminAuditLogsPage() {
               setActionFilter(e.target.value)
               setPage(1)
             }}
-            className="px-3 py-2 border border dark:border-zinc-700 rounded-md bg-background dark:bg-secondary text-sm"
+            className="px-3 py-2  rounded-md bg-background dark:bg-secondary text-sm"
           >
             <option value="">All Actions</option>
             {actionTypes.map((action) => (
@@ -128,7 +131,7 @@ export default function AdminAuditLogsPage() {
             </div>
 
             {/* Pagination */}
-            <div className="flex items-center justify-between p-4 border-t border dark:border-zinc-700">
+            <div className="flex items-center justify-between p-4 border-t ">
               <p className="text-sm text-muted-foreground">
                 Showing {data?.logs.length || 0} of {data?.total || 0} logs
               </p>

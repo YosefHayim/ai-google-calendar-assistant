@@ -1,11 +1,12 @@
 'use client'
 
-import { useSearchParams } from 'next/navigation'
-import Link from 'next/link'
-import { Suspense } from 'react'
-import { CheckCircle2, XCircle, AlertCircle, MessageCircle } from 'lucide-react'
-import MarketingLayout from '@/components/marketing/MarketingLayout'
+import { AlertCircle, CheckCircle2, MessageCircle, XCircle } from 'lucide-react'
+
 import { Button } from '@/components/ui/button'
+import Link from 'next/link'
+import MarketingLayout from '@/components/marketing/MarketingLayout'
+import { Suspense } from 'react'
+import { useSearchParams } from 'next/navigation'
 
 function DataDeletionContent() {
   const searchParams = useSearchParams()
@@ -34,7 +35,7 @@ function DataDeletionContent() {
               conversation history, and any linked preferences.
             </p>
 
-            <div className="bg-muted dark:bg-secondary/50 rounded-xl p-6 border border dark:border mb-8">
+            <div className="bg-muted dark:bg-secondary/50 rounded-xl p-6 mb-8">
               <p className="text-sm text-muted-foreground dark:text-muted-foreground mb-2">Confirmation Code</p>
               <p className="font-mono text-lg text-foreground dark:text-primary-foreground select-all">{code}</p>
             </div>
@@ -60,7 +61,7 @@ function DataDeletionContent() {
             </p>
 
             {error && (
-              <div className="bg-destructive/5 dark:bg-red-900/20 rounded-xl p-4 border border-destructive/20 dark:border-red-800 mb-8">
+              <div className="bg-destructive/5 dark:bg-red-900/20 rounded-xl p-4 border-destructive/20 -red-800 mb-8">
                 <p className="text-sm text-destructive dark:text-red-400">
                   {(() => {
                     try {
@@ -103,7 +104,7 @@ function DataDeletionContent() {
           </Button>
         </div>
 
-        <div className="mt-12 pt-8 border-t border dark:border">
+        <div className="mt-12 pt-8 border-t border ">
           <h2 className="text-lg font-medium text-foreground dark:text-primary-foreground mb-4">What happens next?</h2>
           <ul className="text-left text-sm text-zinc-600 dark:text-muted-foreground space-y-3">
             <li className="flex items-start gap-3">
