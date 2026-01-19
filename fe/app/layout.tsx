@@ -56,27 +56,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preconnect" href="https://images.unsplash.com" />
         <link rel="preconnect" href="https://raw.githubusercontent.com" />
 
-        {/* Font loading with preload for critical fonts */}
-        <link
-          href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&family=Playfair+Display:wght@400..900&display=swap"
-          rel="stylesheet"
-          media="print"
-          onLoad="this.media='all'"
+        {/* Font loading - using non-blocking approach */}
+        <Script
+          src="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&family=Playfair+Display:wght@400..900&display=swap"
+          strategy="afterInteractive"
         />
-
-        {/* Preload critical resources */}
-        <link
-          rel="preload"
-          href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400&display=swap"
-          as="style"
-          onLoad="this.onload=null;this.rel='stylesheet'"
-        />
-        <noscript>
-          <link
-            rel="stylesheet"
-            href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400&display=swap"
-          />
-        </noscript>
         {/* Favicons */}
         <link rel="icon" type="image/x-icon" href="/favicon/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png" />
