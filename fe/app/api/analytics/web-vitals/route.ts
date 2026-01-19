@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
       timestamp,
       url,
       userAgent: request.headers.get('user-agent'),
-      ip: request.ip || request.headers.get('x-forwarded-for'),
+      ip: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip'),
     })
 
     // You could also store this in a database or send to services like:
