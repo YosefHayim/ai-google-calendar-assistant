@@ -104,9 +104,8 @@ COPY --from=prod-deps --chown=appuser:appuser /app/package.json ./
 # Copy compiled JavaScript from builder stage
 COPY --from=builder --chown=appuser:appuser /app/dist ./dist
 
-# Copy any public/static assets if they exist
-# Using a conditional pattern to avoid errors if directory doesn't exist
-COPY --from=builder --chown=appuser:appuser /app/public ./public 2>/dev/null || true
+# Copy public/static assets
+COPY --from=builder --chown=appuser:appuser /app/public ./public
 
 # Switch to non-privileged user
 USER appuser
