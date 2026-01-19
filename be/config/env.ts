@@ -120,7 +120,7 @@ export const isProd =
 
 const server = {
   nodeEnv,
-  port: isDev ? CONSTANTS.DEV_PORT : CONSTANTS.PROD_PORT,
+  port,
   host: process.env.HOST ?? CONSTANTS.DEFAULT_HOST,
   get baseUrl(): string {
     if (isProd) {
