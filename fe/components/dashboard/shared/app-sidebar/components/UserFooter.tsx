@@ -1,10 +1,7 @@
 'use client'
 
-import React from 'react'
-import Image from 'next/image'
-import { useRouter } from 'next/navigation'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { BadgeCheck, Bell, ChevronUp, CreditCard, LogOut, Settings, Sparkles } from 'lucide-react'
-
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,12 +12,17 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { SidebarFooter, SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { useUser } from '@/hooks/queries/auth/useUser'
-import { getUserDisplayInfo } from '@/lib/user-utils'
+
+import Image from 'next/image'
+import React from 'react'
 import type { UserFooterProps } from '../types'
+import { getUserDisplayInfo } from '@/lib/user-utils'
+import { useRouter } from 'next/navigation'
+import { useTranslation } from 'react-i18next'
+import { useUser } from '@/hooks/queries/auth/useUser'
 
 export function UserFooter({ onOpenSettings, onSignOut }: UserFooterProps) {
+  const { t } = useTranslation()
   const router = useRouter()
   const { data: userData } = useUser({ customUser: true })
   const { state, isMobile, setOpenMobile } = useSidebar()
@@ -49,7 +51,7 @@ export function UserFooter({ onOpenSettings, onSignOut }: UserFooterProps) {
               >
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage src={avatarUrl} alt={fullName} />
-                  <AvatarFallback className="rounded-lg bg-accent dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300">
+                  <AvatarFallback className="rounded-lg bg-accent text-muted-foreground">
                     {initials}
                   </AvatarFallback>
                 </Avatar>
@@ -79,8 +81,8 @@ export function UserFooter({ onOpenSettings, onSignOut }: UserFooterProps) {
                       className="rounded-lg object-cover flex-shrink-0 h-8 w-8"
                     />
                   ) : (
-                    <div className="h-8 w-8 rounded-lg bg-accent dark:bg-zinc-700 flex items-center justify-center flex-shrink-0">
-                      <span className="text-xs font-medium text-zinc-600 dark:text-zinc-300">{initials}</span>
+                    <div className="h-8 w-8 rounded-lg bg-accent flex items-center justify-center flex-shrink-0">
+                      <span className="text-xs font-medium text-muted-foreground">{initials}</span>
                     </div>
                   )}
                   <div className="grid flex-1 text-left text-sm leading-tight min-w-0">
@@ -101,7 +103,7 @@ export function UserFooter({ onOpenSettings, onSignOut }: UserFooterProps) {
                   }
                 >
                   <Sparkles className="w-4 h-4" />
-                  <span>Upgrade to Pro</span>
+                  <span>{t('sidebar.upgradeToPro')}</span>
                 </DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
@@ -109,7 +111,7 @@ export function UserFooter({ onOpenSettings, onSignOut }: UserFooterProps) {
               <DropdownMenuGroup>
                 <DropdownMenuItem className="cursor-pointer" onClick={() => handleMenuAction(onOpenSettings)}>
                   <BadgeCheck className="w-4 h-4" />
-                  <span>Account</span>
+                  <span>{t('sidebar.account')}</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   className="cursor-pointer"
@@ -120,11 +122,11 @@ export function UserFooter({ onOpenSettings, onSignOut }: UserFooterProps) {
                   }
                 >
                   <CreditCard className="w-4 h-4" />
-                  <span>Billing</span>
+                  <span>{t('sidebar.billing')}</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem className="cursor-pointer" onClick={() => handleMenuAction(onOpenSettings)}>
                   <Bell className="w-4 h-4" />
-                  <span>Notifications</span>
+                  <span>{t('sidebar.notifications')}</span>
                 </DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
@@ -135,7 +137,7 @@ export function UserFooter({ onOpenSettings, onSignOut }: UserFooterProps) {
                 className="cursor-pointer"
               >
                 <Settings className="w-4 h-4" />
-                <span>Settings</span>
+                <span>{t('sidebar.settings')}</span>
               </DropdownMenuItem>
 
               {onSignOut && (
@@ -143,10 +145,10 @@ export function UserFooter({ onOpenSettings, onSignOut }: UserFooterProps) {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     onClick={() => handleMenuAction(onSignOut)}
-                    className="cursor-pointer hover:bg-destructive/5 dark:hover:bg-red-900/20 hover:text-destructive dark:hover:text-red-400"
+                    className="cursor-pointer hover:bg-destructive/5 hover:text-destructive"
                   >
                     <LogOut className="w-4 h-4" />
-                    <span>Log out</span>
+                    <span>{t('sidebar.logOut')}</span>
                   </DropdownMenuItem>
                 </>
               )}

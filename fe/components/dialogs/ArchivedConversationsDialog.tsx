@@ -25,11 +25,11 @@ export function ArchivedConversationsDialog({ isOpen, onClose }: ArchivedConvers
 
   const { restoreConversation, isRestoring } = useRestoreConversation({
     onSuccess: () => {
-      toast.success('Conversation restored successfully')
+      toast.success(t('toast.conversationRestored'))
       refetch()
     },
     onError: (error) => {
-      toast.error('Failed to restore conversation', {
+      toast.error(t('toast.conversationRestoreFailed'), {
         description: error.message || 'An error occurred',
       })
     },
@@ -37,12 +37,12 @@ export function ArchivedConversationsDialog({ isOpen, onClose }: ArchivedConvers
 
   const { restoreAllArchivedConversations, isRestoring: isRestoringAll } = useRestoreAllArchivedConversations({
     onSuccess: () => {
-      toast.success('All archived conversations restored successfully')
+      toast.success(t('toast.allConversationsRestored'))
       refetch()
       onClose()
     },
     onError: (error) => {
-      toast.error('Failed to restore conversations', {
+      toast.error(t('toast.conversationsRestoreFailed'), {
         description: error.message || 'An error occurred',
       })
     },

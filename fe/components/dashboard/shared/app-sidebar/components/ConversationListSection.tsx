@@ -51,12 +51,12 @@ export function ConversationListSection() {
 
   const { updateConversationTitle: updateTitle, isUpdating } = useUpdateConversationTitle({
     onSuccess: () => {
-      toast.success('Title updated successfully')
+      toast.success(t('toast.titleUpdated'))
       setConversationToChangeTitleDialog(null)
     },
     onError: (error) => {
       console.error('Failed to update title:', error)
-      toast.error('Failed to update title')
+      toast.error(t('toast.titleUpdateFailed'))
     },
   })
 
@@ -96,7 +96,7 @@ export function ConversationListSection() {
         const shareUrl = `${window.location.origin}/shared/${result.token}`
         await navigator.clipboard.writeText(shareUrl)
         setCopiedId(conversationId)
-        toast.success('Share link copied to clipboard', {
+        toast.success(t('toast.shareLinkCopied'), {
           description: 'Link expires in 7 days',
         })
         if (copiedTimeoutRef.current) {
@@ -104,7 +104,7 @@ export function ConversationListSection() {
         }
         copiedTimeoutRef.current = setTimeout(() => setCopiedId(null), 2000)
       } else {
-        toast.error('Failed to create share link')
+        toast.error(t('toast.shareLinkCreateFailed'))
       }
     } catch (error) {
       console.error('Share failed:', error)
@@ -129,13 +129,13 @@ export function ConversationListSection() {
     try {
       const result = await toggleConversationPinned(conversationId)
       if (result.success) {
-        toast.success(`Conversation ${result.pinned ? 'pinned' : 'unpinned'} successfully`)
+        toast.success(result.pinned ? t('toast.conversationPinned') : t('toast.conversationUnpinned'))
       } else {
-        toast.error('Failed to toggle conversation pin status')
+        toast.error(t('toast.conversationPinFailed'))
       }
     } catch (error) {
       console.error('Error toggling conversation pin:', error)
-      toast.error('Failed to toggle conversation pin status')
+      toast.error(t('toast.conversationPinFailed'))
     } finally {
       setPinningId(null)
     }

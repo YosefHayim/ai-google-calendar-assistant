@@ -1,10 +1,11 @@
 'use client'
 
-import React from 'react'
-import { Calendar, AlertTriangle, Bell, Info, X, Check } from 'lucide-react'
+import { AlertTriangle, Bell, Calendar, Check, Info, X } from 'lucide-react'
+
 import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
+import React from 'react'
 import type { StoredNotification } from '@/contexts/NotificationContext'
+import { cn } from '@/lib/utils'
 import { formatDistanceToNow } from 'date-fns'
 
 interface NotificationItemProps {
@@ -23,7 +24,7 @@ const NOTIFICATION_ICONS = {
 const NOTIFICATION_COLORS = {
   event_created: 'text-green-600',
   event_updated: 'text-primary',
-  conflict_alert: 'text-amber-500',
+  conflict_alert: 'text-primary',
   system: 'text-muted-foreground',
 } as const
 
@@ -58,7 +59,7 @@ export function NotificationItem({ notification, onMarkAsRead, onClear }: Notifi
           </p>
           {!notification.read && <span className="w-2 h-2 rounded-full bg-primary flex-shrink-0 mt-1.5" />}
         </div>
-        <p className="text-sm text-zinc-600 dark:text-muted-foreground line-clamp-2 mt-0.5">{notification.message}</p>
+        <p className="text-sm text-muted-foreground line-clamp-2 mt-0.5">{notification.message}</p>
         <p className="text-xs text-muted-foreground dark:text-muted-foreground mt-1">{formattedTime}</p>
       </div>
 

@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+
 import { cn } from '@/lib/utils'
 
 type StatusDotColor = 'green' | 'red' | 'yellow' | 'blue' | 'purple' | 'orange' | 'zinc' | 'primary'
@@ -9,11 +10,11 @@ type StatusDotSize = 'xs' | 'sm' | 'md' | 'lg'
 const colorClasses: Record<StatusDotColor, string> = {
   green: 'bg-emerald-500',
   red: 'bg-destructive',
-  yellow: 'bg-amber-500',
+  yellow: 'bg-primary',
   blue: 'bg-sky-500',
   purple: 'bg-purple-500',
   orange: 'bg-orange-500',
-  zinc: 'bg-zinc-400 dark:bg-zinc-500',
+  zinc: 'bg-muted-foreground/60',
   primary: 'bg-primary',
 }
 

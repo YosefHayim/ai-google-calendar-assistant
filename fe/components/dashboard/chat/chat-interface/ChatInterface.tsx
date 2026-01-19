@@ -1,24 +1,24 @@
 'use client'
 
-import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { useQueryClient } from '@tanstack/react-query'
-import { usePostHog } from 'posthog-js/react'
-import { toast } from 'sonner'
-
-import { AvatarView } from '../AvatarView'
 import { ChatInput, ImageFile } from '../ChatInput'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
+
+import type { ActiveTab } from './types'
+import { AvatarView } from '../AvatarView'
 import { ChatView } from '../ChatView'
-import { ViewSwitcher } from '../ViewSwitcher'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { Message } from '@/types'
+import { ViewSwitcher } from '../ViewSwitcher'
+import { queryKeys } from '@/lib/query'
+import { toast } from 'sonner'
+import { useAudioPlayback } from './useAudioPlayback'
 import { useChatContext } from '@/contexts/ChatContext'
 import { useMutedSpeechDetection } from '@/hooks/useMutedSpeechDetection'
+import { usePostHog } from 'posthog-js/react'
+import { useQueryClient } from '@tanstack/react-query'
 import { useSpeechRecognition } from '@/hooks/useSpeechRecognition'
 import { useStreamingChat } from '@/hooks/useStreamingChat'
 import { useVoicePreference } from '@/hooks/queries'
-import { queryKeys } from '@/lib/query'
-import { useAudioPlayback } from './useAudioPlayback'
-import type { ActiveTab } from './types'
 
 export function ChatInterface() {
   const {
@@ -98,7 +98,7 @@ export function ChatInterface() {
 
       if (!isDocumentVisibleRef.current) {
         const previewText = fullResponse.slice(0, 80) + (fullResponse.length > 80 ? '...' : '')
-        toast.success('Ally has responded', {
+        toast.success(t('toast.allyResponded'), {
           description: previewText,
           duration: 8000,
           action: {
@@ -138,7 +138,7 @@ export function ChatInterface() {
     (_preference: string, action: 'added' | 'replaced' | 'duplicate') => {
       if (action !== 'duplicate') {
         queryClient.invalidateQueries({ queryKey: queryKeys.preferences.allyBrain() })
-        toast.success('Memory updated', {
+        toast.success(t('toast.memoryUpdated'), {
           description: action === 'added' ? "I've saved this to my memory." : "I've updated my memory.",
         })
       }
@@ -209,7 +209,7 @@ export function ChatInterface() {
   }
 
   const handleResend = (text: string) => {
-    toast.info('Regenerating response...')
+    toast.info(t('toast.regeneratingResponse'))
     handleSend(undefined, text)
   }
 

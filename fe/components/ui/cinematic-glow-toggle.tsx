@@ -27,7 +27,7 @@ export default function CinematicGlowToggle({ id, checked, onChange, className }
       <span
         className={cn(
           'text-xs font-bold tracking-wider transition-colors duration-300 ml-2 select-none',
-          !checked ? 'text-muted-foreground dark:text-muted-foreground' : 'text-zinc-300 dark:text-zinc-700',
+          !checked ? 'text-muted-foreground' : 'text-muted-foreground',
         )}
       >
         OFF
@@ -67,7 +67,7 @@ export default function CinematicGlowToggle({ id, checked, onChange, className }
       <span
         className={cn(
           'text-xs font-bold tracking-wider transition-colors duration-300 mr-2 select-none',
-          checked ? 'text-primary drop-shadow-[0_0_8px_rgba(242,99,6,0.4)]' : 'text-zinc-300 dark:text-zinc-700',
+          checked ? 'text-primary drop-shadow-[0_0_8px_rgba(242,99,6,0.4)]' : 'text-muted-foreground',
         )}
       >
         ON

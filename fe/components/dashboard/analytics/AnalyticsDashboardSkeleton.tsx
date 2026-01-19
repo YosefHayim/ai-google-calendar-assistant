@@ -25,7 +25,7 @@ const BentoStatsSkeleton: React.FC = () => {
           </div>
           <Skeleton className="w-[70px] h-[70px] sm:w-[90px] sm:h-[90px] rounded-full flex-shrink-0" />
         </div>
-        <div className="grid grid-cols-2 gap-3 sm:gap-4 mt-4 pt-4 border-t border-zinc-100 dark:border">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 mt-4 pt-4 border-t border-border">
           <div>
             <Skeleton className="h-3 w-16 sm:w-20 mb-1" />
             <Skeleton className="h-5 sm:h-6 w-10 sm:w-12" />

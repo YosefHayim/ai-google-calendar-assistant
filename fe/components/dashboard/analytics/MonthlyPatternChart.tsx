@@ -1,11 +1,12 @@
 'use client'
 
-import React, { useMemo } from 'react'
-import { Calendar } from 'lucide-react'
-import { Bar, BarChart, XAxis, YAxis, ResponsiveContainer, Cell } from 'recharts'
+import { Bar, BarChart, Cell, ResponsiveContainer, XAxis, YAxis } from 'recharts'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
-import { Skeleton } from '@/components/ui/skeleton'
+import React, { useMemo } from 'react'
+
+import { Calendar } from 'lucide-react'
 import type { MonthlyPatternDataPoint } from '@/types/analytics'
+import { Skeleton } from '@/components/ui/skeleton'
 
 interface MonthlyPatternChartProps {
   data: MonthlyPatternDataPoint[]
@@ -51,7 +52,7 @@ const MonthlyPatternChart: React.FC<MonthlyPatternChartProps> = ({ data, isLoadi
       <p className="text-xs text-muted-foreground dark:text-muted-foreground mb-6 ml-10">Hours scheduled per day of month</p>
 
       {!hasData ? (
-        <div className="h-[200px] flex items-center justify-center text-muted-foreground dark:text-zinc-600">
+        <div className="h-[200px] flex items-center justify-center text-muted-foreground">
           No events scheduled in this period
         </div>
       ) : (

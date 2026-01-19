@@ -1,10 +1,18 @@
 'use client'
 
-import React, { useState } from 'react'
-import { Card } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
+import type { AdminUser, AdminUserListParams, UserRole, UserStatus } from '@/types/admin'
+import {
+  ChevronLeft,
+  ChevronRight,
+  CreditCard,
+  Mail,
+  MoreVertical,
+  RefreshCw,
+  Search,
+  Shield,
+  UserCog,
+  Users,
+} from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,26 +20,20 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import {
-  Search,
-  MoreVertical,
-  UserCog,
-  Users,
-  CreditCard,
-  Mail,
-  Shield,
-  RefreshCw,
-  ChevronLeft,
-  ChevronRight,
-} from 'lucide-react'
+import React, { useState } from 'react'
+import { useAdminUsers, useSendPasswordReset, useUpdateUserStatus } from '@/hooks/queries/admin'
+
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
 import { EmptyState } from '@/components/ui/empty-state'
-import { LoadingSpinner } from '@/components/ui/loading-spinner'
-import { useDebouncedCallback } from 'use-debounce'
-import { useAdminUsers, useUpdateUserStatus, useSendPasswordReset } from '@/hooks/queries/admin'
 import { GrantCreditsDialog } from '@/components/admin/GrantCreditsDialog'
+import Image from 'next/image'
+import { Input } from '@/components/ui/input'
+import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { UserDetailsDialog } from '@/components/admin/UserDetailsDialog'
-import type { AdminUser, UserStatus, UserRole, AdminUserListParams } from '@/types/admin'
 import { format } from 'date-fns'
+import { useDebouncedCallback } from 'use-debounce'
 
 export default function AdminUsersPage() {
   const [searchInput, setSearchInput] = useState('')
@@ -181,7 +183,7 @@ export default function AdminUsersPage() {
                           <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-full bg-accent dark:bg-zinc-700 flex items-center justify-center overflow-hidden">
                               {user.avatar_url ? (
-                                <img src={user.avatar_url} alt="" className="w-10 h-10 rounded-full object-cover" />
+                                <Image src={user.avatar_url} alt="" className="w-10 h-10 rounded-full object-cover" width={40} height={40} />
                               ) : (
                                 <span className="text-sm font-medium text-zinc-600 dark:text-zinc-300">
                                   {user.email[0].toUpperCase()}

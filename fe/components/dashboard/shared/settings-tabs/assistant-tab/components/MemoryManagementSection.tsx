@@ -32,11 +32,11 @@ export const MemoryManagementSection: React.FC<MemoryManagementSectionProps> = (
       { enabled: checked },
       {
         onSuccess: () => {
-          toast.success(checked ? 'Contextual scheduling enabled' : 'Contextual scheduling disabled')
+          toast.success(checked ? t('toast.contextualSchedulingEnabled') : t('toast.contextualSchedulingDisabled'))
         },
         onError: () => {
           setContextualEnabled(!checked)
-          toast.error('Failed to update preference')
+          toast.error(t('toast.memoryManagementUpdateFailed'))
         },
       },
     )

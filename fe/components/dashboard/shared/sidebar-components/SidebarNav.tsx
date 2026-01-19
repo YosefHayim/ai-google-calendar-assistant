@@ -54,7 +54,7 @@ const NavLink: React.FC<NavLinkProps> = ({
           <TooltipTrigger asChild>
             <button
               type="button"
-              className="p-2 md:p-1 rounded-md text-muted-foreground hover:text-zinc-600 dark:text-muted-foreground dark:hover:text-zinc-300 hover:bg-secondary dark:hover:bg-secondary transition-colors min-w-[36px] min-h-[36px] md:min-w-0 md:min-h-0 flex items-center justify-center"
+              className="p-2 md:p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary dark:hover:bg-secondary transition-colors min-w-[36px] min-h-[36px] md:min-w-0 md:min-h-0 flex items-center justify-center"
               aria-label="More information"
             >
               <Info className="w-3.5 h-3.5" />
@@ -62,7 +62,7 @@ const NavLink: React.FC<NavLinkProps> = ({
           </TooltipTrigger>
           <TooltipContent
             side="right"
-            className="max-w-[220px] bg-secondary dark:bg-secondary text-primary-foreground border-zinc-700"
+            className="max-w-[220px] bg-secondary dark:bg-secondary text-primary-foreground border-border"
           >
             <p className="text-xs leading-relaxed">{description}</p>
           </TooltipContent>

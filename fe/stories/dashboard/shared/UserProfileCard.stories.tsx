@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 
+import Image from 'next/image'
+
 const meta: Meta = {
   title: 'Dashboard/Shared/UserProfileCard',
   tags: ['autodocs'],
@@ -38,10 +40,12 @@ const UserCard = ({
     return (
       <div className="flex justify-center p-2">
         {avatarUrl ? (
-          <img
+          <Image
             src={avatarUrl}
             alt={name}
             className="w-8 h-8 rounded-full object-cover ring-2 ring-border dark:ring-zinc-700"
+            width={32}
+            height={32}
           />
         ) : (
           <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center ring-2 ring-border dark:ring-zinc-700">
@@ -55,10 +59,12 @@ const UserCard = ({
   return (
     <div className="flex items-center gap-3 p-3">
       {avatarUrl ? (
-        <img
+        <Image
           src={avatarUrl}
           alt={name}
           className="w-10 h-10 rounded-full object-cover ring-2 ring-border dark:ring-zinc-700"
+          width={40}
+          height={40}
         />
       ) : (
         <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center ring-2 ring-border dark:ring-zinc-700">

@@ -545,6 +545,20 @@ export const de: TranslationShape = {
     themeLight: 'Hell',
     themeDark: 'Dunkel',
     themeSystem: 'System',
+    appearance: 'Erscheinungsbild',
+    appearanceTooltip: 'Wählen Sie Ihr bevorzugtes Farbschema für die Benutzeroberfläche',
+    defaultTimezone: 'Standardzeitzone',
+    timezoneTooltip: 'Ereignisse werden in dieser Zeitzone geplant, es sei denn, es wird anders angegeben',
+    timeFormat: 'Zeitformat',
+    timeFormatTooltip: 'Anzeigeformat für Ereigniszeiten in der gesamten App',
+    timeFormat12h: '12-Stunden (AM/PM)',
+    timeFormat24h: '24-Stunden',
+    realTimeLocation: 'Echtzeit-Standort',
+    realTimeLocationTooltip: 'Wenn aktiviert, verwendet Ally Ihren aktuellen Standort, um Kontext für die Ereigniserstellung bereitzustellen (z. B. Vorschlag nahegelegener Orte)',
+    memberSince: 'Mitglied seit',
+    languageTooltip: 'Wählen Sie Ihre bevorzugte Sprache für die Benutzeroberfläche',
+    general: 'Allgemein',
+    generalDescription: 'Verwalten Sie Ihr Profil und Ihre Einstellungen',
   },
 
   dialogs: {
@@ -809,9 +823,14 @@ export const de: TranslationShape = {
       free: 'Kostenlos',
     },
     trial: {
-      daysLeft: '{{days}} Tage Ihrer Testversion verbleiben',
+      daysLeft: '{{count}} Tag verbleibend',
       fullAccess:
         'Die Testversion beinhaltet vollen Zugang zu allen Funktionen. Keine Gebühr bis zum Ende der Testversion.',
+      expired: 'Testversion abgelaufen',
+      expiredDescription: 'Ihre Testversion ist abgelaufen – upgraden Sie jetzt, um Ihren Zugang zu behalten.',
+      activeDescription: 'Ihre kostenlose Testversion endet in {{count}} Tag. Verlieren Sie nicht den Zugang zu Ihrem KI-Assistenten.',
+      remaining: 'verbleibend',
+      getDeal: 'Angebot sichern',
     },
     moneyBack: {
       title: '30-Tage-Geld-zurück-Garantie aktiv',
@@ -863,6 +882,270 @@ export const de: TranslationShape = {
         'Sind Sie sicher, dass Sie eine vollständige Rückerstattung anfordern möchten? Ihr Abonnement wird sofort gekündigt und der Zugang wird widerrufen.',
       refundButton: 'Rückerstattung anfordern',
       nevermindButton: 'Abbrechen',
+    },
+
+    // Toast messages
+    toast: {
+      // General settings
+      timezoneUpdated: 'Zeitzone aktualisiert',
+      timezoneUpdateFailed: 'Zeitzone konnte nicht aktualisiert werden',
+      timeFormatUpdated: 'Zeitformat aktualisiert',
+      timeFormatUpdateFailed: 'Zeitformat konnte nicht aktualisiert werden',
+      realTimeLocationEnabled: 'Echtzeit-Standort aktiviert',
+      realTimeLocationDisabled: 'Echtzeit-Standort deaktiviert',
+      locationEnableFailed: 'Standort konnte nicht aktiviert werden',
+      locationDisableFailed: 'Standort konnte nicht deaktiviert werden',
+      locationAccessDenied: 'Standortzugriff verweigert',
+      locationAccessDeniedDescription: 'Bitte aktivieren Sie den Standortzugriff in Ihren Browsereinstellungen.',
+
+      // Integrations
+      crossPlatformSyncEnabled: 'Cross-Plattform-Synchronisation aktiviert',
+      crossPlatformSyncDisabled: 'Cross-Plattform-Synchronisation deaktiviert',
+      integrationUpdateFailed: 'Einstellung konnte nicht aktualisiert werden',
+
+      // Assistant settings
+      voiceInputError: 'Spracheingabefehler',
+      customInstructionsSaved: 'Benutzerdefinierte Anweisungen gespeichert',
+      instructionsSaveFailed: 'Anweisungen konnten nicht gespeichert werden',
+      contextualSchedulingEnabled: 'Kontextuelle Terminplanung aktiviert',
+      contextualSchedulingDisabled: 'Kontextuelle Terminplanung deaktiviert',
+      memoryManagementUpdateFailed: 'Einstellung konnte nicht aktualisiert werden',
+
+      // Chat
+      allyResponded: 'Ally hat geantwortet',
+      memoryUpdated: 'Speicher aktualisiert',
+      regeneratingResponse: 'Antwort wird neu generiert...',
+
+      // Gaps
+      gapsSettingsSaved: 'Einstellungen erfolgreich gespeichert',
+      gapsSettingsSaveFailed: 'Einstellungen konnten nicht gespeichert werden',
+
+      // Conversations
+      titleUpdated: 'Titel erfolgreich aktualisiert',
+      titleUpdateFailed: 'Titel konnte nicht aktualisiert werden',
+      shareLinkCopied: 'Freigabelink in die Zwischenablage kopiert',
+      shareLinkCreateFailed: 'Freigabelink konnte nicht erstellt werden',
+      conversationPinned: 'Unterhaltung erfolgreich angeheftet',
+      conversationUnpinned: 'Unterhaltung erfolgreich losgelöst',
+      conversationPinFailed: 'Unterhaltung konnte nicht angeheftet werden',
+
+      // Archived conversations
+      conversationRestored: 'Unterhaltung erfolgreich wiederhergestellt',
+      conversationRestoreFailed: 'Unterhaltung konnte nicht wiederhergestellt werden',
+      allConversationsRestored: 'Alle archivierten Unterhaltungen erfolgreich wiederhergestellt',
+      conversationsRestoreFailed: 'Unterhaltungen konnten nicht wiederhergestellt werden',
+
+      // Settings modal
+      googleCalendarDisconnected: 'Google Calendar getrennt',
+      googleCalendarDisconnectFailed: 'Google Calendar konnte nicht getrennt werden',
+      conversationsDeleted: 'Unterhaltungen gelöscht',
+      conversationsDeleteFailed: 'Unterhaltungen konnten nicht gelöscht werden',
+      memoryCleared: 'Speicher gelöscht',
+      memoryClearFailed: 'Speicher konnte nicht zurückgesetzt werden',
+      accountDeleted: 'Konto erfolgreich gelöscht',
+      accountDeleteFailed: 'Konto konnte nicht gelöscht werden',
+
+      // Quick event
+      microphoneAccessDenied: 'Mikrofonzugriff verweigert',
+      eventCreated: 'Termin erfolgreich erstellt',
+
+      // Notifications
+      reminderPreferencesSaved: 'Erinnerungseinstellungen gespeichert',
+      reminderPreferencesSaveFailed: 'Erinnerungseinstellungen konnten nicht gespeichert werden',
+      soundNotificationsEnabled: 'Tonbenachrichtigungen aktiviert',
+      soundNotificationsDisabled: 'Tonbenachrichtigungen deaktiviert',
+      browserNotificationPermissionDenied: 'Browser-Benachrichtigungsberechtigung verweigert',
+      browserNotificationsEnabled: 'Browser-Benachrichtigungen aktiviert',
+      notificationPreferencesSaved: 'Benachrichtigungseinstellungen gespeichert',
+      notificationPreferencesSaveFailed: 'Benachrichtigungseinstellungen konnten nicht gespeichert werden',
+
+      // Daily briefing
+      dailyBriefingPreferencesSaved: 'Tägliche Briefing-Einstellungen gespeichert',
+      dailyBriefingPreferencesSaveFailed: 'Tägliche Briefing-Einstellungen konnten nicht gespeichert werden',
+
+      // Voice settings
+      voiceResponseEnabled: 'Sprachantworten aktiviert',
+      voiceResponseDisabled: 'Sprachantworten deaktiviert',
+      voicePreferenceUpdateFailed: 'Spracheinstellung konnte nicht aktualisiert werden',
+      voiceChanged: 'Sprache zu {{voice}} gewechselt',
+      voiceUpdateFailed: 'Sprache konnte nicht aktualisiert werden',
+      playbackSpeedChanged: 'Wiedergabegeschwindigkeit zu {{speed}}x gewechselt',
+      playbackSpeedUpdateFailed: 'Wiedergabegeschwindigkeit konnte nicht aktualisiert werden',
+      voicePreviewFailed: 'Sprachvorschau konnte nicht abgespielt werden',
+
+      // Messages
+      messageCopied: 'Nachricht in die Zwischenablage kopiert',
+      messageCopyFailed: 'Nachricht konnte nicht kopiert werden',
+
+      // Audio playback
+      audioStopped: 'Audio gestoppt',
+      audioPlaying: 'Audio wird abgespielt...',
+      audioPlayFailed: 'Audio konnte nicht abgespielt werden',
+
+      // Date range picker
+      dateRangeApplied: 'Datumsbereich angewendet',
+      dateRangeSelectBoth: 'Bitte wählen Sie Start- und Enddatum aus',
+
+      // Calendar creation
+      calendarNameRequired: 'Bitte geben Sie einen Namen für Ihren Kalender ein',
+      calendarCreated: 'Kalender erfolgreich erstellt!',
+      calendarCreateFailed: 'Kalender konnte nicht erstellt werden',
+      calendarCreateFailedGeneric: 'Kalender konnte nicht erstellt werden. Bitte versuchen Sie es erneut.',
+
+      // Waiting list
+      waitingListWelcome: 'Willkommen auf der Warteliste!',
+      waitingListError: 'Fehler',
+
+      // Admin
+      userImpersonationFailed: 'Benutzeridentität konnte nicht übernommen werden',
+      userSessionsRevoked: 'Benutzersitzungen widerrufen',
+      userSessionsRevokeFailed: 'Sitzungen konnten nicht widerrufen werden',
+
+      // Broadcast
+      broadcastTitleRequired: 'Titel und Nachricht sind erforderlich',
+      broadcastSent: 'Broadcast an {{count}} Benutzer gesendet',
+      broadcastSendFailed: 'Broadcast konnte nicht gesendet werden',
+
+      // Billing
+      alreadyOnFreePlan: 'Sie sind bereits auf dem kostenlosen Tarif',
+      billingPortalOpenFailed: 'Abrechnungsportal konnte nicht geöffnet werden',
+      checkoutProcessFailed: 'Bezahlvorgang fehlgeschlagen. Bitte versuchen Sie es erneut.',
+      redirectingToCheckout: 'Weiterleitung zur Kasse zur Einrichtung der Abrechnung...',
+
+      // Voice preview
+      voicePreviewError: 'Sprachvorschau konnte nicht abgespielt werden',
+
+      // Chat input
+      maxImagesAllowed: 'Maximal {{count}} Bilder erlaubt',
+      imageProcessingFailed: 'Bilder konnten nicht verarbeitet werden',
+      unsupportedImageType: 'Nicht unterstützter Bildtyp: {{type}}',
+      imageTooLarge: 'Bild zu groß (max. {{size}}MB)',
+      pastedImagesProcessingFailed: 'Eingefügte Bilder konnten nicht verarbeitet werden',
+    },
+
+    // UI Text
+    ui: {
+      // Common UI elements
+      stop: 'Stopp',
+      voice: 'Sprache',
+      time: 'Zeit',
+      organizer: 'Organisator',
+      created: 'Erstellt',
+      transactionId: 'Transaktions-ID',
+      noInvoiceAvailable: 'Keine Rechnung verfügbar',
+      noTransactionsYet: 'Noch keine Transaktionen',
+      date: 'Datum',
+      description: 'Beschreibung',
+      amount: 'Betrag',
+      status: 'Status',
+      invoice: 'Rechnung',
+      totalGaps: 'Gesamt-Lücken',
+      highConfidence: 'Hohe Zuverlässigkeit',
+      potentialHours: 'Potenzielle Stunden',
+      avgGapSize: 'Durchschnittliche Lückengröße',
+      analysisPeriod: 'Analysezeitraum',
+      chat: 'Chat',
+      gaps: 'Lücken',
+      analytics: 'Analysen',
+      settings: 'Einstellungen',
+      after: 'Nach:',
+      before: 'Vor:',
+      fillGap: 'Lücke mit Termin füllen',
+      eventTitle: 'Termintitel *',
+      skipThisGap: 'Diese Lücke überspringen',
+      reason: 'Grund (Optional)',
+      integrations: 'Integrationen',
+      telegram: 'Telegram',
+      whatsapp: 'WhatsApp',
+      slack: 'Slack',
+      googleCalendar: 'Google Calendar',
+      failedToLoadCalendarData: 'Kalenderdaten konnten nicht geladen werden.',
+      noActiveCalendarSourcesFound: 'Keine aktiven Kalenderquellen gefunden.',
+      connectWhatsApp: 'WhatsApp verbinden',
+      neuralLinks: 'Neuronale Verbindungen',
+      executiveGradeAI: 'Der KI-Assistent der Executive-Klasse, entwickelt für Geschäftsinhaber, um ihre konzentrierte Arbeit zu schützen. Von kostenlosem Explorationszugang bis zu unbegrenzter Executive-Power. Aufgebaut auf dem Ally Neural Protocol.',
+      systemOnline: 'Alle Systeme betriebsbereit',
+      systemOffline: 'System nicht verfügbar',
+      systemChecking: 'Status wird überprüft...',
+      chatOnTelegram: 'Mit Ally auf Telegram chatten',
+      checkingServices: 'Dienste werden überprüft...',
+      serverUnreachable: 'Server nicht erreichbar',
+      serverOnline: 'Server online',
+      uptime: 'Betriebszeit',
+      websockets: 'WebSockets',
+      connections: 'Verbindungen',
+      privacyPolicy: 'Datenschutzrichtlinie',
+      termsOfService: 'Nutzungsbedingungen',
+      product: 'Produkt',
+      pricing: 'Preise',
+      executivePower: 'Executive-Power',
+      company: 'Unternehmen',
+      aboutUs: 'Über uns',
+      careers: 'Karriere',
+      resources: 'Ressourcen',
+      blog: 'Änderungsprotokoll',
+      changeLog: 'Änderungsprotokoll',
+    },
+
+    // Sidebar/User Footer
+    sidebar: {
+      upgradeToPro: 'Auf Pro upgraden',
+      account: 'Konto',
+      billing: 'Abrechnung',
+      notifications: 'Benachrichtigungen',
+      settings: 'Einstellungen',
+      logOut: 'Abmelden',
+    },
+
+    // Integrations
+    integrations: {
+      title: 'Integrationen',
+      description: 'Verbinden und verwalten Sie Ihren Executive-Arbeitsbereich.',
+      telegram: {
+        title: 'Telegram',
+        description: 'Interagieren Sie direkt mit Ally über Ihren Telegram-Bot.',
+        settings: 'Einstellungen',
+      },
+      whatsapp: {
+        title: 'WhatsApp',
+        description: 'Synchronisieren Sie Ally mit WhatsApp für sichere Nachrichtenübertragung.',
+        connect: 'Verbinden',
+      },
+      slack: {
+        title: 'Slack',
+        description: 'Fügen Sie Ally zu Ihrem Slack-Arbeitsbereich für Team-Kalenderverwaltung hinzu.',
+      },
+      googleCalendar: {
+        title: 'Google Calendar',
+        failedToLoad: 'Kalenderdaten konnten nicht geladen werden.',
+        noSources: 'Keine aktiven Kalenderquellen gefunden.',
+      },
+      status: {
+        connected: 'Verbunden',
+        disconnected: 'Getrennt',
+      },
+      connectWhatsApp: 'WhatsApp verbinden',
+      refresh: 'Aktualisieren',
+    },
+
+    // Admin
+    admin: {
+      grantCredits: {
+        title: 'Guthaben gewähren',
+        description: 'Guthaben zum Konto von {{user}} hinzufügen',
+        creditAmount: 'Guthabenbetrag',
+        creditPlaceholder: 'Anzahl der Guthaben eingeben',
+        currentBalance: 'Aktueller Saldo: {{count}} Guthaben',
+        reasonLabel: 'Grund (optional)',
+        reasonPlaceholder: 'z.B. Entschädigung für Serviceproblem, Werbebonus...',
+        auditNote: 'Dies wird für Audit-Zwecke protokolliert',
+        cancel: 'Abbrechen',
+        granting: 'Gewähren...',
+        grantCredits: 'Guthaben gewähren',
+        invalidAmount: 'Bitte geben Sie einen gültigen Guthabenbetrag ein',
+        success: '{{count}} Guthaben erfolgreich an {{email}} gewährt',
+        failed: 'Guthaben konnten nicht gewährt werden: {{error}}',
+      },
     },
   },
 } as const

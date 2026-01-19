@@ -1,8 +1,8 @@
 'use client'
 
 import { Moon, Sun } from 'lucide-react'
-
 import React, { useEffect, useState } from 'react'
+
 import { cn } from '@/components/../lib/utils'
 import { useTheme } from 'next-themes'
 
@@ -25,12 +25,12 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
     return (
       <div
         className={cn(
-          'flex w-16 h-8 p-1 rounded-full transition-all duration-300 bg-accent dark:bg-secondary border border dark:border',
+          'flex w-16 h-8 p-1 rounded-full transition-all duration-300 bg-accent dark:bg-secondary border-border',
           className,
         )}
       >
         <div className="flex justify-between items-center w-full">
-          <div className="flex justify-center items-center w-6 h-6 rounded-full bg-zinc-300 dark:bg-secondary" />
+          <div className="flex justify-center items-center w-6 h-6 rounded-full bg-muted" />
           <div className="flex justify-center items-center w-6 h-6 rounded-full" />
         </div>
       </div>
@@ -41,7 +41,7 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
     <div
       className={cn(
         'flex w-16 h-8 p-1 rounded-full cursor-pointer transition-all duration-300',
-        isDarkMode ? 'bg-secondary border border' : 'bg-background border border',
+        isDarkMode ? 'bg-secondary border-border' : 'bg-background border-border',
         className,
       )}
       onClick={() => setTheme(isDarkMode ? 'light' : 'dark')}
@@ -63,7 +63,7 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
           {isDarkMode ? (
             <Moon className="w-4 h-4 text-white" strokeWidth={1.5} />
           ) : (
-            <Sun className="w-4 h-4 text-zinc-700" strokeWidth={1.5} />
+            <Sun className="w-4 h-4 text-foreground" strokeWidth={1.5} />
           )}
         </div>
         <div

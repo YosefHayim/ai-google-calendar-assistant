@@ -81,7 +81,7 @@ export const DailyHoursStackedChart: React.FC<DailyHoursStackedChartProps> = ({ 
         <ChartTooltip
           content={
             <ChartTooltipContent
-              className="w-[200px] bg-secondary dark:bg-secondary text-white border-zinc-700"
+              className="w-[200px] bg-secondary dark:bg-secondary text-primary-foreground border-border"
               labelFormatter={(value, payload) => {
                 if (payload && payload[0]) {
                   const point = payload[0].payload as DailyAvailableHoursDataPoint & {

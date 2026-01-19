@@ -1,6 +1,8 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
+
+import Image from 'next/image'
 
 interface ImageCarouselProps {
   images: string[]
@@ -21,13 +23,16 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, interval = 5000 }
   return (
     <div className="relative h-full w-full overflow-hidden rounded-md">
       {images.map((src, index) => (
-        <img
+        <Image
           key={index}
           src={src}
           alt={`Carousel image ${index + 1}`}
           className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ease-in-out ${
             index === currentIndex ? 'opacity-100' : 'opacity-0'
           }`}
+          fill
+          sizes="100vw"
+          priority={index === 0}
         />
       ))}
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex space-x-2 z-10">

@@ -1,15 +1,15 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
-import { sumBy } from '@/lib/dataUtils'
-import { formatHours, calculatePercentage } from '@/lib/formatUtils'
+import { calculatePercentage, formatHours } from '@/lib/formatUtils'
 
+import { Button } from '@/components/ui/button'
 import { Info } from 'lucide-react'
 import React from 'react'
 import type { TimeAllocationChartProps } from '@/types/analytics'
 import { getValidHexColor } from '@/lib/colorUtils'
 import { motion } from 'framer-motion'
+import { sumBy } from '@/lib/dataUtils'
 
 const TimeAllocationChart: React.FC<TimeAllocationChartProps> = ({ data, onCalendarClick }) => {
   const totalHours = sumBy(data, 'hours')
@@ -37,7 +37,7 @@ const TimeAllocationChart: React.FC<TimeAllocationChartProps> = ({ data, onCalen
             fill="transparent"
             stroke="currentColor"
             strokeWidth={strokeWidth}
-            className="text-primary-foreground dark:text-zinc-800"
+            className="text-primary-foreground dark:text-foreground"
           />
           {data.map((item, index) => {
             const percentage = item.hours / totalHours
@@ -78,7 +78,7 @@ const TimeAllocationChart: React.FC<TimeAllocationChartProps> = ({ data, onCalen
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-6 w-6 text-muted-foreground hover:text-zinc-600 dark:hover:text-zinc-300"
+                className="h-6 w-6 text-muted-foreground hover:text-foreground"
               >
                 <Info size={16} />
               </Button>
@@ -86,7 +86,7 @@ const TimeAllocationChart: React.FC<TimeAllocationChartProps> = ({ data, onCalen
             <HoverCardContent>
               <div className="space-y-2">
                 <h4 className="font-semibold text-sm">Time Allocation</h4>
-                <p className="text-xs text-zinc-600 dark:text-muted-foreground">
+                <p className="text-xs text-muted-foreground">
                   Visual breakdown of how your time is distributed across different calendars. Each segment represents
                   the total hours spent in that calendar during the selected date range.
                 </p>
@@ -112,7 +112,7 @@ const TimeAllocationChart: React.FC<TimeAllocationChartProps> = ({ data, onCalen
                 }}
               >
                 <div className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: safeColor }} />
-                <span className="flex-1 font-medium text-zinc-800 dark:text-zinc-200 truncate">{item.category}</span>
+                <span className="flex-1 font-medium text-foreground truncate">{item.category}</span>
                 <span className="font-mono text-muted-foreground dark:text-muted-foreground">{formatHours(item.hours)}</span>
                 <span className="text-xs text-muted-foreground w-10 text-right">
                   {calculatePercentage(item.hours, totalHours, 0)}%

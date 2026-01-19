@@ -1,10 +1,10 @@
 'use client'
 
-import React from 'react'
-import { motion } from 'framer-motion'
-import NumberFlow from '@number-flow/react'
 import { ITEM_VARIANTS } from '../constants'
+import NumberFlow from '@number-flow/react'
+import React from 'react'
 import { TrendBadge } from './TrendBadge'
+import { motion } from 'framer-motion'
 
 interface StatCardProps {
   icon: React.ReactNode
@@ -22,7 +22,7 @@ export function StatCard({ icon, label, value, suffix, description, trend }: Sta
   return (
     <motion.div
       variants={ITEM_VARIANTS}
-      className="bg-background dark:bg-secondary border border dark:border rounded-xl p-3 sm:p-5 shadow-sm hover:shadow-md hover:border-zinc-300 dark:hover:border-zinc-700 transition-all overflow-hidden"
+      className="bg-background dark:bg-secondary border-border rounded-xl p-3 sm:p-5 shadow-sm hover:shadow-md hover:border-border transition-all overflow-hidden"
     >
       <div className="flex items-center gap-2 mb-2 sm:mb-3 min-w-0">
         <div className="w-7 h-7 sm:w-8 sm:h-8 flex-shrink-0 rounded-lg bg-secondary dark:bg-secondary flex items-center justify-center">

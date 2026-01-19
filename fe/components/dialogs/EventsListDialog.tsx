@@ -86,7 +86,7 @@ const EventsListDialog: React.FC<EventsListDialogProps> = ({ isOpen, title, subt
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <p className="text-sm font-semibold text-zinc-800 dark:text-zinc-200 truncate flex-1">
+                      <p className="text-sm font-semibold text-foreground truncate flex-1">
                         {event.summary}
                       </p>
                       {event.htmlLink && (
@@ -99,7 +99,7 @@ const EventsListDialog: React.FC<EventsListDialogProps> = ({ isOpen, title, subt
                         <CalendarDays size={12} />
                         <span>{formatDate(event.eventDate, 'WEEKDAY_SHORT')}</span>
                       </div>
-                      <span className="text-zinc-300 dark:text-zinc-600">•</span>
+                      <span className="text-muted-foreground">•</span>
                       <div className="text-xs text-muted-foreground dark:text-muted-foreground flex items-center gap-1">
                         <Clock size={12} />
                         <span>{formatTimeRange(event.startTime, event.endTime)}</span>
@@ -111,7 +111,7 @@ const EventsListDialog: React.FC<EventsListDialogProps> = ({ isOpen, title, subt
                         <Hourglass size={12} />
                         <span className="font-medium">{formatDuration(event.durationMinutes)}</span>
                       </div>
-                      <span className="text-zinc-300 dark:text-zinc-600">•</span>
+                      <span className="text-muted-foreground">•</span>
                       <div className="text-xs text-muted-foreground dark:text-muted-foreground flex items-center gap-1">
                         <Calendar size={12} />
                         <span className="truncate max-w-[150px]">{event.calendarName}</span>

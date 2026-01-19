@@ -99,3 +99,12 @@ export {
   useFeatureFlag,
 } from './feature-flags'
 export type { FeatureFlag, CreateFeatureFlagInput, UpdateFeatureFlagInput } from './feature-flags'
+
+// Storage hooks
+export {
+  useUploadAvatar,
+  useUploadAttachment,
+  useDeleteFile,
+  useGetFileUrl,
+  useListUserFiles,
+} from './storage'

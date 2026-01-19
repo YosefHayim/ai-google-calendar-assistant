@@ -57,12 +57,12 @@ export function SettingsModal({ isOpen, onClose, onSignOut, isDarkMode, toggleTh
   const { mutate: disconnectGoogleCalendar, isPending: isDisconnecting } = useDisconnectGoogleCalendar({
     onSuccess: () => {
       setShowDisconnectGoogleDialog(false)
-      toast.success('Google Calendar disconnected', {
+      toast.success(t('toast.googleCalendarDisconnected'), {
         description: 'Your calendar integration has been removed.',
       })
     },
     onError: (error: Error) => {
-      toast.error('Failed to disconnect Google Calendar', {
+      toast.error(t('toast.googleCalendarDisconnectFailed'), {
         description: error.message || 'An error occurred',
       })
     },
@@ -99,12 +99,12 @@ export function SettingsModal({ isOpen, onClose, onSignOut, isDarkMode, toggleTh
     deleteAllConversations(undefined, {
       onSuccess: () => {
         setShowDeleteConversationsDialog(false)
-        toast.success('Conversations deleted', {
+        toast.success(t('toast.conversationsDeleted'), {
           description: 'All your chat history has been permanently deleted.',
         })
       },
       onError: (error) => {
-        toast.error('Failed to delete conversations', {
+        toast.error(t('toast.conversationsDeleteFailed'), {
           description: error instanceof Error ? error.message : 'An error occurred',
         })
       },
@@ -119,12 +119,12 @@ export function SettingsModal({ isOpen, onClose, onSignOut, isDarkMode, toggleTh
     resetMemoryMutation(undefined, {
       onSuccess: (data) => {
         setShowResetMemoryDialog(false)
-        toast.success('Memory cleared', {
+        toast.success(t('toast.memoryCleared'), {
           description: data.message || 'Ally will relearn your scheduling habits over time.',
         })
       },
       onError: (error) => {
-        toast.error('Failed to reset memory', {
+        toast.error(t('toast.memoryClearFailed'), {
           description: error instanceof Error ? error.message : 'An error occurred',
         })
       },
@@ -139,13 +139,13 @@ export function SettingsModal({ isOpen, onClose, onSignOut, isDarkMode, toggleTh
     try {
       await deactivateUserAsync()
       setShowDeleteAccountDialog(false)
-      toast.success('Account deleted successfully', {
+      toast.success(t('toast.accountDeleted'), {
         description: 'Your account and all associated data have been permanently deleted.',
       })
       onSignOut?.()
       router.push('/')
     } catch (error) {
-      toast.error('Failed to delete account', {
+      toast.error(t('toast.accountDeleteFailed'), {
         description: error instanceof Error ? error.message : 'An error occurred while deleting your account.',
       })
     }

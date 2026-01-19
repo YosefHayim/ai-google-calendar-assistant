@@ -16,7 +16,7 @@ export function SkeletonCard({ className }: SkeletonProps) {
   return (
     <div
       className={cn(
-        'bg-background dark:bg-secondary border border dark:border rounded-md p-4 sm:p-6 shadow-sm',
+        'bg-background dark:bg-secondary border-border rounded-md p-4 sm:p-6 shadow-sm',
         className,
       )}
     >
@@ -32,7 +32,7 @@ export function SkeletonInsightCard({ className }: SkeletonProps) {
   return (
     <div
       className={cn(
-        'bg-background dark:bg-secondary border border dark:border rounded-md shadow-sm p-3 sm:p-4 md:p-6 flex flex-col gap-2 sm:gap-3 md:gap-4',
+        'bg-background dark:bg-secondary border-border rounded-md shadow-sm p-3 sm:p-4 md:p-6 flex flex-col gap-2 sm:gap-3 md:gap-4',
         className,
       )}
     >
@@ -56,7 +56,7 @@ export function SkeletonChart({ className }: SkeletonProps) {
   return (
     <div
       className={cn(
-        'bg-background dark:bg-secondary border border dark:border rounded-md shadow-sm p-4 sm:p-6',
+        'bg-background dark:bg-secondary border-border rounded-md shadow-sm p-4 sm:p-6',
         className,
       )}
     >
@@ -81,7 +81,7 @@ export function SkeletonLineChart({ className }: SkeletonProps) {
   return (
     <div
       className={cn(
-        'bg-background dark:bg-secondary border border dark:border rounded-md shadow-sm p-6',
+        'bg-background dark:bg-secondary border-border rounded-md shadow-sm p-6',
         className,
       )}
     >
@@ -108,7 +108,7 @@ export function SkeletonLineChart({ className }: SkeletonProps) {
             fill="none"
             stroke="currentColor"
             strokeWidth="2"
-            className="text-zinc-300 dark:text-zinc-700"
+            className="text-muted-foreground"
             opacity="0.5"
           />
         </svg>
@@ -119,7 +119,7 @@ export function SkeletonLineChart({ className }: SkeletonProps) {
           return (
             <div
               key={i}
-              className="absolute w-2 h-2 rounded-full bg-zinc-300 dark:bg-zinc-700"
+              className="absolute w-2 h-2 rounded-full bg-muted"
               style={{
                 left: `${(x / 400) * 100}%`,
                 top: `${(y / 200) * 100}%`,
@@ -137,7 +137,7 @@ export function SkeletonDonutChart({ className }: SkeletonProps) {
   return (
     <div
       className={cn(
-        'bg-background dark:bg-secondary border border dark:border rounded-md shadow-sm p-4 sm:p-6 flex flex-col xl:flex-row items-center gap-4 sm:gap-6 h-full',
+        'bg-background dark:bg-secondary border-border rounded-md shadow-sm p-4 sm:p-6 flex flex-col xl:flex-row items-center gap-4 sm:gap-6 h-full',
         className,
       )}
     >
@@ -167,7 +167,7 @@ export function SkeletonList({ items = 4, className }: SkeletonProps & { items?:
   return (
     <div
       className={cn(
-        'bg-background dark:bg-secondary border border dark:border rounded-md shadow-sm p-4 sm:p-6',
+        'bg-background dark:bg-secondary border-border rounded-md shadow-sm p-4 sm:p-6',
         className,
       )}
     >
@@ -198,7 +198,7 @@ export function SkeletonCalendarSources({ items = 4, className }: SkeletonProps 
   return (
     <div
       className={cn(
-        'bg-background dark:bg-secondary border border dark:border rounded-md shadow-sm p-4 sm:p-6',
+        'bg-background dark:bg-secondary border-border rounded-md shadow-sm p-4 sm:p-6',
         className,
       )}
     >
@@ -227,7 +227,7 @@ export function SkeletonHeatmap({ className }: SkeletonProps) {
   return (
     <div
       className={cn(
-        'bg-background dark:bg-secondary border border dark:border rounded-md shadow-sm p-6',
+        'bg-background dark:bg-secondary border-border rounded-md shadow-sm p-6',
         className,
       )}
     >
@@ -256,7 +256,7 @@ export function SkeletonIntegrationCard({ className }: SkeletonProps) {
   return (
     <div
       className={cn(
-        'bg-background dark:bg-secondary border border dark:border rounded-md p-6 shadow-sm',
+        'bg-background dark:bg-secondary border-border rounded-md p-6 shadow-sm',
         className,
       )}
     >
@@ -267,7 +267,7 @@ export function SkeletonIntegrationCard({ className }: SkeletonProps) {
       <Skeleton className="h-5 w-24 mb-2" />
       <Skeleton className="h-4 w-full mb-1" />
       <Skeleton className="h-4 w-3/4 mb-6" />
-      <div className="pt-4 border-t border-zinc-100 dark:border">
+      <div className="pt-4 border-t border-border">
         <Skeleton className="h-9 w-full rounded-md" />
       </div>
     </div>
@@ -283,7 +283,7 @@ export function SkeletonMessageBubble({ isUser = false, className }: SkeletonPro
           'px-4 py-3 rounded-md shadow-sm max-w-[85%] md:max-w-[75%]',
           isUser
             ? 'bg-primary/20 rounded-tr-none'
-            : 'bg-background dark:bg-secondary border border dark:border rounded-tl-none',
+            : 'bg-background dark:bg-secondary border-border rounded-tl-none',
         )}
       >
         <Skeleton className={cn('h-4 mb-2', isUser ? 'w-32' : 'w-48')} />

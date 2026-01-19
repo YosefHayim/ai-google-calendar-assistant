@@ -174,7 +174,7 @@ const ScheduleHealthScore: React.FC<ScheduleHealthScoreProps> = ({ data, isLoadi
   const getOverallStatus = (score: number): { label: string; color: string; bgColor: string } => {
     if (score >= 80) return { label: 'Excellent', color: 'text-emerald-500', bgColor: 'stroke-emerald-500' }
     if (score >= 60) return { label: 'Good', color: 'text-sky-500', bgColor: 'stroke-sky-500' }
-    if (score >= 40) return { label: 'Fair', color: 'text-amber-500', bgColor: 'stroke-amber-500' }
+    if (score >= 40) return { label: 'Fair', color: 'text-primary', bgColor: 'stroke-primary' }
     return { label: 'Needs Work', color: 'text-rose-500', bgColor: 'stroke-rose-500' }
   }
 
@@ -183,7 +183,7 @@ const ScheduleHealthScore: React.FC<ScheduleHealthScoreProps> = ({ data, isLoadi
       case 'good':
         return <CheckCircle className="w-4 h-4 text-emerald-500" />
       case 'warning':
-        return <AlertTriangle className="w-4 h-4 text-amber-500" />
+        return <AlertTriangle className="w-4 h-4 text-primary" />
       case 'bad':
         return <AlertTriangle className="w-4 h-4 text-rose-500" />
     }
@@ -299,7 +299,7 @@ const ScheduleHealthScore: React.FC<ScheduleHealthScoreProps> = ({ data, isLoadi
                     factor.status === 'good'
                       ? 'bg-emerald-500'
                       : factor.status === 'warning'
-                        ? 'bg-amber-500'
+                        ? 'bg-primary'
                         : 'bg-rose-500'
                   }`}
                   style={{ width: `${(factor.score / factor.maxScore) * 100}%` }}

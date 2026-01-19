@@ -1,16 +1,16 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
+import type { AIAllySidebarProps, ChatMessage, QuickAction } from './types'
+import { AllyOrbButton, ChatHeader, MessageBubble, QuickActionsBar, TypingIndicator } from './components'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowUp, Mic, X } from 'lucide-react'
+import React, { useEffect, useRef, useState } from 'react'
+
 import { AIVoiceInput } from '@/components/ui/ai-voice-input'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
 import { useSpeechRecognition } from '@/hooks/useSpeechRecognition'
-
-import type { AIAllySidebarProps, ChatMessage, QuickAction } from './types'
-import { AllyOrbButton, ChatHeader, MessageBubble, TypingIndicator, QuickActionsBar } from './components'
 
 const QUICK_ACTIONS: QuickAction[] = [
   { label: 'Optimize schedule', emoji: '📅' },
@@ -183,8 +183,8 @@ export function AIAllySidebar({ isOpen, onClose, onOpen }: AIAllySidebarProps) {
                     className={cn(
                       'h-10 w-10 flex-shrink-0 rounded-xl',
                       inputText.trim()
-                        ? 'bg-secondary dark:bg-secondary text-white dark:text-zinc-950 hover:bg-secondary dark:hover:bg-accent'
-                        : 'bg-secondary dark:bg-secondary text-zinc-300 dark:text-zinc-600',
+                        ? 'bg-secondary dark:bg-secondary text-primary-foreground hover:bg-secondary dark:hover:bg-accent'
+                        : 'bg-secondary dark:bg-secondary text-muted-foreground',
                     )}
                   >
                     <ArrowUp className="w-5 h-5" />

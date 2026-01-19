@@ -108,12 +108,12 @@ export const TimeAllocationRadarChart: React.FC<TimeAllocationRadarChartProps> =
             if (active && payload && payload.length > 0) {
               const item = payload[0].payload as (typeof chartData)[0]
               return (
-                <div className="rounded-lg border border-zinc-700 bg-secondary dark:bg-secondary px-3 py-2 text-white shadow-xl">
+                <div className="rounded-lg border-border bg-secondary dark:bg-secondary px-3 py-2 text-primary-foreground shadow-xl">
                   <div className="flex items-center gap-2 mb-1">
                     <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: item.color }} />
                     <span className="font-medium text-sm">{item.category}</span>
                   </div>
-                  <div className="text-zinc-300 text-xs">{item.hours.toFixed(1)} hours</div>
+                  <div className="text-muted-foreground text-xs">{item.hours.toFixed(1)} hours</div>
                 </div>
               )
             }

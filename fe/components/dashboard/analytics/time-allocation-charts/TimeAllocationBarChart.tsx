@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Cell } from 'recharts'
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Cell, ResponsiveContainer } from 'recharts'
 
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from '@/components/ui/chart'
 import type { CalendarBreakdownItem } from '@/types/analytics'
@@ -53,13 +53,13 @@ export const TimeAllocationBarChart: React.FC<TimeAllocationBarChartProps> = ({ 
         <ChartTooltip
           content={
             <ChartTooltipContent
-              className="w-[160px] bg-secondary dark:bg-secondary text-white border-zinc-700"
+              className="w-[160px] bg-secondary dark:bg-secondary text-primary-foreground border-border"
               formatter={(value, name, item) => {
                 const payload = item.payload as CalendarBreakdownItem
                 return (
                   <div className="flex flex-col gap-1">
                     <span className="font-medium">{payload.category}</span>
-                    <span className="text-zinc-300">{Number(value).toFixed(1)} hours</span>
+                    <span className="text-muted-foreground">{Number(value).toFixed(1)} hours</span>
                   </div>
                 )
               }}

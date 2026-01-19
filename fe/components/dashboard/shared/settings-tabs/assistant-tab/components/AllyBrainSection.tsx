@@ -61,7 +61,7 @@ export const AllyBrainSection: React.FC<AllyBrainSectionProps> = ({ toggleId }) 
 
   useEffect(() => {
     if (speechRecognitionError) {
-      toast.error('Voice input error', {
+      toast.error(t('toast.voiceInputError'), {
         description: speechRecognitionError,
       })
     }
@@ -85,11 +85,11 @@ export const AllyBrainSection: React.FC<AllyBrainSectionProps> = ({ toggleId }) 
   const onSubmit = async (data: AllyBrainFormData) => {
     try {
       await updateAllyBrainAsync(data)
-      toast.success('Custom instructions saved', {
+      toast.success(t('toast.customInstructionsSaved'), {
         description: 'Ally will remember these in all your conversations.',
       })
     } catch {
-      toast.error('Failed to save instructions')
+      toast.error(t('toast.instructionsSaveFailed'))
     }
   }
 
@@ -157,12 +157,12 @@ export const AllyBrainSection: React.FC<AllyBrainSectionProps> = ({ toggleId }) 
                       {isVoiceRecording ? (
                         <>
                           <MicOff size={16} className="animate-pulse" />
-                          <span className="text-xs">Stop</span>
+                          <span className="text-xs">{t('ui.stop')}</span>
                         </>
                       ) : (
                         <>
                           <Mic size={16} />
-                          <span className="text-xs">Voice</span>
+                          <span className="text-xs">{t('ui.voice')}</span>
                         </>
                       )}
                     </Button>
@@ -191,7 +191,7 @@ export const AllyBrainSection: React.FC<AllyBrainSectionProps> = ({ toggleId }) 
                       placeholder:text-muted-foreground dark:placeholder:text-muted-foreground
                       focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary
                       transition-colors resize-none
-                      ${isOverLimit ? 'border-destructive focus:border-destructive focus:ring-red-500/20' : 'border dark:border-zinc-700'}
+                      ${isOverLimit ? 'border-destructive focus:border-destructive focus:ring-destructive/20' : 'border-border'}
                     `}
                   />
 

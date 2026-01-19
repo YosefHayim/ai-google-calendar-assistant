@@ -1,9 +1,9 @@
 'use client'
 
-import React from 'react'
-import { motion } from 'framer-motion'
-import { cn } from '@/lib/utils'
 import type { ChatMessage } from '../types'
+import React from 'react'
+import { cn } from '@/lib/utils'
+import { motion } from 'framer-motion'
 
 interface MessageBubbleProps {
   message: ChatMessage
@@ -23,7 +23,7 @@ export function MessageBubble({ message, index }: MessageBubbleProps) {
           'max-w-[85%] rounded-2xl px-4 py-2.5 shadow-sm',
           message.isUser
             ? 'bg-gradient-to-br from-primary to-orange-500 text-white rounded-br-md'
-            : 'bg-secondary dark:bg-secondary/80 text-foreground dark:text-primary-foreground rounded-bl-md border border/50 dark:border-zinc-700/50',
+            : 'bg-secondary dark:bg-secondary/80 text-foreground dark:text-primary-foreground rounded-bl-md border-border/50',
         )}
       >
         <p className="text-sm leading-relaxed">{message.text}</p>

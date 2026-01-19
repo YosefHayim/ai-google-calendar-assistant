@@ -1,14 +1,16 @@
 'use client'
 
 import { DashboardUIProvider, useDashboardUI } from '@/contexts/DashboardUIContext'
-
-import { ChatProvider } from '@/contexts/ChatContext'
-import { OnboardingTour } from '@/components/dashboard/shared/OnboardingTour'
 import React, { Suspense, useEffect } from 'react'
-import SettingsModal from '@/components/dashboard/shared/SettingsModal'
+import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
+
 import { AppSidebar } from '@/components/dashboard/shared/AppSidebar'
-import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar'
+import { ChatProvider } from '@/contexts/ChatContext'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
+import { OnboardingTour } from '@/components/dashboard/shared/OnboardingTour'
+import SettingsModal from '@/components/dashboard/shared/SettingsModal'
+import { TrialExpirationBanner } from '@/components/dashboard/shared/TrialExpirationBanner'
+import { redirectToCheckout } from '@/services/payment.service'
 import { useAuthContext } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
 
@@ -24,6 +26,17 @@ function DashboardLayoutContent({ children }: { children?: React.ReactNode }) {
     handleSignOut,
   } = useDashboardUI()
 
+  const handleUpgrade = async () => {
+    try {
+      await redirectToCheckout({
+        planSlug: 'pro',
+        interval: 'yearly',
+      })
+    } catch (error) {
+      console.error('Failed to redirect to checkout:', error)
+    }
+  }
+
   return (
     <SidebarProvider defaultOpen={true}>
       <div className="flex min-h-screen w-full bg-muted dark:bg-secondary">
@@ -32,6 +45,8 @@ function DashboardLayoutContent({ children }: { children?: React.ReactNode }) {
         <AppSidebar onOpenSettings={openSettings} onSignOut={handleSignOut} />
 
         <SidebarInset className="flex-1 flex flex-col">
+          <TrialExpirationBanner onUpgrade={handleUpgrade} />
+
           <header className="sticky top-0 flex h-14 items-center gap-2 border-b border dark:border bg-muted dark:bg-secondary px-4 md:hidden z-40">
             <SidebarTrigger className="-ml-1" />
           </header>

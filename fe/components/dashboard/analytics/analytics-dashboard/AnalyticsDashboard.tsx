@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
+import dynamic from 'next/dynamic'
 import type { CalendarEvent } from '@/types/api'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ErrorState } from '@/components/ui/error-state'
@@ -9,25 +10,74 @@ import { ANALYTICS_TABS, STORAGE_KEY, type TabId } from './constants'
 import { AnalyticsHeader, AIInsightsSection } from './components'
 
 import AnalyticsDashboardSkeleton from '../AnalyticsDashboardSkeleton'
-import { BentoStatsGrid } from '../BentoStatsGrid'
 import CalendarEventsDialog from '@/components/dialogs/CalendarEventsDialog'
 import CalendarSettingsDialog from '@/components/dialogs/CalendarSettingsDialog'
 import CreateCalendarDialog from '@/components/dialogs/CreateCalendarDialog'
-import DailyAvailableHoursDashboard from '../DailyAvailableHoursDashboard'
 import DayEventsDialog from '@/components/dialogs/DayEventsDialog'
 import EventDetailsDialog from '@/components/dialogs/EventDetailsDialog'
-import EventDurationDashboard from '../EventDurationDashboard'
-import FocusTimeTracker from '../FocusTimeTracker'
-import ManageCalendars from '../ManageCalendars'
-import MonthlyPatternDashboard from '../MonthlyPatternDashboard'
-import RecentEvents from '../RecentEvents'
-import ScheduleHealthScore from '../ScheduleHealthScore'
-import TimeAllocationDashboard from '../TimeAllocationDashboard'
-import TimeDistributionChart from '../TimeDistributionChart'
-import UpcomingWeekPreview from '../UpcomingWeekPreview'
-import WeeklyPatternDashboard from '../WeeklyPatternDashboard'
 import { useAIInsights } from '@/hooks/queries/analytics/useAIInsights'
 import { useAnalyticsContext } from '@/contexts/AnalyticsContext'
+
+// Dynamically import heavy chart components
+const BentoStatsGrid = dynamic(() => import('../BentoStatsGrid').then(mod => ({ default: mod.BentoStatsGrid })), {
+  loading: () => <div className="h-32 bg-muted rounded-lg animate-pulse" />,
+  ssr: false,
+})
+
+const DailyAvailableHoursDashboard = dynamic(() => import('../DailyAvailableHoursDashboard'), {
+  loading: () => <div className="h-64 bg-muted rounded-lg animate-pulse" />,
+  ssr: false,
+})
+
+const EventDurationDashboard = dynamic(() => import('../EventDurationDashboard'), {
+  loading: () => <div className="h-64 bg-muted rounded-lg animate-pulse" />,
+  ssr: false,
+})
+
+const FocusTimeTracker = dynamic(() => import('../FocusTimeTracker'), {
+  loading: () => <div className="h-32 bg-muted rounded-lg animate-pulse" />,
+  ssr: false,
+})
+
+const ManageCalendars = dynamic(() => import('../ManageCalendars'), {
+  loading: () => <div className="h-64 bg-muted rounded-lg animate-pulse" />,
+  ssr: false,
+})
+
+const MonthlyPatternDashboard = dynamic(() => import('../MonthlyPatternDashboard'), {
+  loading: () => <div className="h-64 bg-muted rounded-lg animate-pulse" />,
+  ssr: false,
+})
+
+const RecentEvents = dynamic(() => import('../RecentEvents'), {
+  loading: () => <div className="h-32 bg-muted rounded-lg animate-pulse" />,
+  ssr: false,
+})
+
+const ScheduleHealthScore = dynamic(() => import('../ScheduleHealthScore'), {
+  loading: () => <div className="h-32 bg-muted rounded-lg animate-pulse" />,
+  ssr: false,
+})
+
+const TimeAllocationDashboard = dynamic(() => import('../TimeAllocationDashboard'), {
+  loading: () => <div className="h-64 bg-muted rounded-lg animate-pulse" />,
+  ssr: false,
+})
+
+const TimeDistributionChart = dynamic(() => import('../TimeDistributionChart'), {
+  loading: () => <div className="h-64 bg-muted rounded-lg animate-pulse" />,
+  ssr: false,
+})
+
+const UpcomingWeekPreview = dynamic(() => import('../UpcomingWeekPreview'), {
+  loading: () => <div className="h-32 bg-muted rounded-lg animate-pulse" />,
+  ssr: false,
+})
+
+const WeeklyPatternDashboard = dynamic(() => import('../WeeklyPatternDashboard'), {
+  loading: () => <div className="h-64 bg-muted rounded-lg animate-pulse" />,
+  ssr: false,
+})
 
 interface AnalyticsDashboardProps {
   isLoading?: boolean

@@ -1,10 +1,11 @@
 'use client'
 
-import React from 'react'
-import { motion } from 'framer-motion'
 import { ChevronDown, X } from 'lucide-react'
+
 import { Button } from '@/components/ui/button'
+import React from 'react'
 import { VoicePoweredOrb } from '@/components/ui/voice-powered-orb'
+import { motion } from 'framer-motion'
 
 interface ChatHeaderProps {
   onClose: () => void
@@ -41,7 +42,7 @@ export function ChatHeader({ onClose, onMinimize }: ChatHeaderProps) {
           variant="ghost"
           size="icon"
           onClick={onMinimize}
-          className="h-8 w-8 text-muted-foreground hover:text-zinc-600 dark:hover:text-zinc-300"
+          className="h-8 w-8 text-muted-foreground hover:text-foreground"
           title="Minimize"
         >
           <ChevronDown size={16} />
@@ -50,7 +51,7 @@ export function ChatHeader({ onClose, onMinimize }: ChatHeaderProps) {
           variant="ghost"
           size="icon"
           onClick={onClose}
-          className="h-8 w-8 text-muted-foreground hover:text-zinc-600 dark:hover:text-zinc-300"
+          className="h-8 w-8 text-muted-foreground hover:text-foreground"
           title="Close"
         >
           <X size={16} />

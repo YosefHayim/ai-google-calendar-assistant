@@ -41,7 +41,7 @@ export const StreamingMessage: React.FC<StreamingMessageProps> = ({ content, cur
     <div className="flex w-full mb-2 justify-start">
       <div className="max-w-[85%] md:max-w-[75%] flex flex-col items-start">
         <div
-          className="px-4 py-3 rounded-md rounded-tl-none text-sm leading-relaxed bg-background dark:bg-secondary border border dark:border text-zinc-800 dark:text-primary-foreground shadow-sm"
+          className="px-4 py-3 rounded-md rounded-tl-none text-sm leading-relaxed bg-background dark:bg-secondary border border-border text-foreground shadow-sm"
           dir={content ? textDirection : undefined}
         >
           {showToolIndicator && (
@@ -51,7 +51,7 @@ export const StreamingMessage: React.FC<StreamingMessageProps> = ({ content, cur
                 <div className="absolute inset-0 rounded-full bg-primary/20 animate-pulse" />
                 <Loader2 className="w-4 h-4 animate-spin text-primary" />
               </div>
-              <span className="text-xs font-medium text-zinc-600 dark:text-muted-foreground">
+              <span className="text-xs font-medium text-muted-foreground">
                 {getToolDisplayName(currentTool)}
               </span>
             </div>
@@ -73,7 +73,7 @@ export const StreamingMessage: React.FC<StreamingMessageProps> = ({ content, cur
                 <div className="relative w-4 h-4 rounded-full bg-gradient-to-br from-primary to-orange-600 animate-pulse shadow-lg shadow-primary/40" />
               </div>
               <div className="flex flex-col gap-1">
-                <span className="text-xs font-medium text-zinc-700 dark:text-zinc-300">Ally is thinking...</span>
+                <span className="text-xs font-medium text-muted-foreground">Ally is thinking...</span>
                 <div className="flex gap-1">
                   <div className="w-1 h-1 bg-primary/60 rounded-full animate-bounce" />
                   <div className="w-1 h-1 bg-primary/60 rounded-full animate-bounce [animation-delay:0.15s]" />

@@ -43,11 +43,11 @@ export const VoiceSettingsSection: React.FC<VoiceSettingsSectionProps> = ({ togg
       { enabled: checked, voice: selectedVoice, playbackSpeed: selectedPlaybackSpeed },
       {
         onSuccess: () => {
-          toast.success(checked ? 'Voice responses enabled' : 'Voice responses disabled')
+          toast.success(checked ? t('toast.voiceResponseEnabled') : t('toast.voiceResponseDisabled'))
         },
         onError: () => {
           setVoiceEnabled(!checked)
-          toast.error('Failed to update voice preference')
+          toast.error(t('toast.voicePreferenceUpdateFailed'))
         },
       },
     )
@@ -60,11 +60,11 @@ export const VoiceSettingsSection: React.FC<VoiceSettingsSectionProps> = ({ togg
       { enabled: voiceEnabled, voice: typedVoice, playbackSpeed: selectedPlaybackSpeed },
       {
         onSuccess: () => {
-          toast.success(`Voice changed to ${VOICE_OPTIONS.find((v) => v.value === typedVoice)?.label || typedVoice}`)
+          toast.success(t('toast.voiceChanged', { voice: VOICE_OPTIONS.find((v) => v.value === typedVoice)?.label || typedVoice }))
         },
         onError: () => {
           setSelectedVoice(voiceData?.value?.voice || 'alloy')
-          toast.error('Failed to update voice')
+          toast.error(t('toast.voiceUpdateFailed'))
         },
       },
     )
@@ -77,13 +77,13 @@ export const VoiceSettingsSection: React.FC<VoiceSettingsSectionProps> = ({ togg
       { enabled: voiceEnabled, voice: selectedVoice, playbackSpeed: typedSpeed },
       {
         onSuccess: () => {
-          toast.success(
-            `Playback speed changed to ${PLAYBACK_SPEED_OPTIONS.find((s) => s.value === typedSpeed)?.label || `${typedSpeed}x`}`,
-          )
+          toast.success(t('toast.playbackSpeedChanged', {
+            speed: PLAYBACK_SPEED_OPTIONS.find((s) => s.value === typedSpeed)?.label || `${typedSpeed}x`
+          }))
         },
         onError: () => {
           setSelectedPlaybackSpeed((voiceData?.value?.playbackSpeed as PlaybackSpeed) || 1)
-          toast.error('Failed to update playback speed')
+          toast.error(t('toast.playbackSpeedUpdateFailed'))
         },
       },
     )
@@ -138,7 +138,7 @@ export const VoiceSettingsSection: React.FC<VoiceSettingsSectionProps> = ({ togg
       source.start()
     } catch (error) {
       console.error('Error playing voice preview:', error)
-      toast.error('Failed to play voice preview')
+      toast.error(t('toast.voicePreviewFailed'))
       setIsPreviewPlaying(false)
       setIsPreviewLoading(false)
     }

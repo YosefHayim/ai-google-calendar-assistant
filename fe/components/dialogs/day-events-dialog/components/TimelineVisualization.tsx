@@ -1,9 +1,10 @@
 'use client'
 
-import React from 'react'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
+
 import type { CalendarEvent } from '@/types/api'
 import type { CalendarInfo } from '../types'
+import React from 'react'
 import { getCalendarInfo } from '../utils'
 
 interface TimelineVisualizationProps {
@@ -59,7 +60,7 @@ export function TimelineVisualization({ events, calendarMap }: TimelineVisualiza
           {[6, 12, 18].map((hour) => (
             <div
               key={hour}
-              className="absolute h-full border-l border-zinc-300 dark:border-zinc-600"
+              className="absolute h-full border-l border-border"
               style={{ left: `${(hour / 24) * 100}%` }}
             >
               <span className="absolute -top-5 -translate-x-1/2 text-[10px] text-muted-foreground">

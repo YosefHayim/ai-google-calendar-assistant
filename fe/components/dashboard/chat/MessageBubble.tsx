@@ -4,6 +4,7 @@ import { MessageImage, Role } from '@/types'
 import React, { useCallback, useMemo, useState } from 'react'
 import { cn, getTextDirection } from '@/lib/utils'
 
+import Image from 'next/image'
 import ReactMarkdown from 'react-markdown'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import remarkGfm from 'remark-gfm'
@@ -115,7 +116,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ role, content, timestamp,
               'px-4 py-3 rounded-md text-sm leading-relaxed transition-all duration-200',
               isUser
                 ? 'bg-primary text-white rounded-tr-none shadow-md'
-                : 'bg-background dark:bg-secondary border border dark:border text-zinc-800 dark:text-primary-foreground rounded-tl-none shadow-sm'
+                : 'bg-background dark:bg-secondary border border-border text-foreground rounded-tl-none shadow-sm'
             )}
             dir={textDirection}
           >

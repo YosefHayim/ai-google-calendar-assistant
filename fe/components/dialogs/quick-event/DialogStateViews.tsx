@@ -1,11 +1,12 @@
 'use client'
 
+import { AlertCircle, Calendar, Check, ExternalLink, Loader2, Mic } from 'lucide-react'
+import type { ParsedEventData, QuickAddConflict } from '@/types/api'
+
+import { Button } from '@/components/ui/button'
+import { EventPreview } from './EventPreview'
 import React from 'react'
 import { motion } from 'framer-motion'
-import { AlertCircle, Calendar, Check, ExternalLink, Loader2, Mic } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import type { ParsedEventData, QuickAddConflict } from '@/types/api'
-import { EventPreview } from './EventPreview'
 
 type DialogState =
   | 'input'
@@ -62,7 +63,7 @@ export const LoadingView: React.FC<LoadingViewProps> = ({ message }) => (
     <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
       <Loader2 className="w-8 h-8 text-primary animate-spin" />
     </div>
-    <p className="text-sm text-zinc-600 dark:text-zinc-300">{message}</p>
+    <p className="text-sm text-muted-foreground">{message}</p>
   </motion.div>
 )
 

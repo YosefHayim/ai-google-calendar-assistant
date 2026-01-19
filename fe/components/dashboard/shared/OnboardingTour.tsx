@@ -3,6 +3,7 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight, Sparkles, X } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
+
 import { Button } from '@/components/ui/button'
 
 interface Step {
@@ -148,7 +149,7 @@ export const OnboardingTour: React.FC<{ onComplete: () => void }> = ({ onComplet
               variant="ghost"
               size="icon"
               onClick={onComplete}
-              className="h-7 w-7 text-muted-foreground hover:text-zinc-600 dark:hover:text-zinc-200"
+              className="h-7 w-7 text-muted-foreground hover:text-foreground"
             >
               <X size={16} />
             </Button>

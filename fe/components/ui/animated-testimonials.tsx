@@ -119,7 +119,7 @@ export function AnimatedTestimonials({
                     key={index}
                     onClick={() => setActiveIndex(index)}
                     className={`h-2.5 rounded-full transition-all duration-300 ${
-                      activeIndex === index ? 'w-10 bg-primary' : 'bg-zinc-300 dark:bg-zinc-700 w-2.5'
+                      activeIndex === index ? 'w-10 bg-primary' : 'bg-muted w-2.5'
                     }`}
                     aria-label={`View testimonial ${index + 1}`}
                   />
@@ -142,18 +142,18 @@ export function AnimatedTestimonials({
                 transition={{ duration: 0.5, ease: 'easeInOut' as const }}
                 style={{ zIndex: activeIndex === index ? 10 : 0 }}
               >
-                <div className="bg-background dark:bg-secondary border border dark:border shadow-xl rounded-2xl p-8 md:p-10 h-full flex flex-col transition-all">
+                <div className="bg-background dark:bg-secondary border-border shadow-xl rounded-2xl p-8 md:p-10 h-full flex flex-col transition-all">
                   <div className="mb-6 flex gap-1">
                     {Array(testimonial.rating)
                       .fill(0)
                       .map((_, i) => (
-                        <Star key={i} className="h-5 w-5 fill-amber-400 text-amber-400" />
+                        <Star key={i} className="h-5 w-5 fill-primary text-primary" />
                       ))}
                   </div>
 
                   <div className="relative mb-8 flex-1">
                     <Quote className="absolute -top-4 -left-4 h-12 w-12 text-primary/10 rotate-180" />
-                    <p className="relative z-10 text-xl font-medium leading-relaxed text-zinc-800 dark:text-zinc-200">
+                    <p className="relative z-10 text-xl font-medium leading-relaxed text-foreground">
                       "{testimonial.content}"
                     </p>
                   </div>
@@ -161,7 +161,7 @@ export function AnimatedTestimonials({
                   <Separator className="my-6" />
 
                   <div className="flex items-center gap-4">
-                    <Avatar className="h-14 w-14 border-2 border-zinc-100 dark:border">
+                    <Avatar className="h-14 w-14 border-2 border-border">
                       <AvatarImage src={testimonial.avatar} alt={testimonial.name} />
                       <AvatarFallback>{testimonial.name.charAt(0)}</AvatarFallback>
                     </Avatar>

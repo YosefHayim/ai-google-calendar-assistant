@@ -1,11 +1,13 @@
 'use client'
 
+import { BentoCard, BentoGrid } from '@/components/ui/bento-grid'
+import { Brain, Globe, Layout, Lock, Zap } from 'lucide-react'
+import { CalendarEvent, RotatingEarth, ThreeDWallCalendar } from '@/components/3d'
+
+import Image from 'next/image'
 import React from 'react'
 import { motion } from 'framer-motion'
-import { Lock, Globe, Brain, Zap, Layout } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { BentoCard, BentoGrid } from '@/components/ui/bento-grid'
-import { RotatingEarth, ThreeDWallCalendar, CalendarEvent } from '@/components/3d'
 
 const MOCK_EVENTS: CalendarEvent[] = [
   { id: 'event-1', title: 'Strategy Session', date: '2024-01-15T09:00:00.000Z' },
@@ -26,10 +28,14 @@ const BentoGridSection: React.FC = () => {
       cta: t('bento.features.deepWork.cta'),
       background: (
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent">
-          <img
+          <Image
             src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=2670&auto=format&fit=crop"
             className="absolute right-[-10%] top-[-10%] opacity-10 dark:opacity-20 grayscale group-hover:grayscale-0 transition-all duration-500"
             alt="Focus"
+            width={800}
+            height={600}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            priority
           />
         </div>
       ),

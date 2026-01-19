@@ -1,19 +1,21 @@
 'use client'
 
 import { ArrowUpRight, CheckCircle2, Circle, List, Loader2, RefreshCw, Settings } from 'lucide-react'
-import { GoogleCalendarIcon, TelegramIcon, WhatsAppIcon } from '@/components/shared/Icons'
-import { FaSlack } from 'react-icons/fa'
-import React, { useState } from 'react'
-import { usePostHog } from 'posthog-js/react'
-import { Button } from '@/components/ui/button'
-import { Skeleton } from '@/components/ui/skeleton'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-
+import { GoogleCalendarIcon, TelegramIcon, WhatsAppIcon } from '@/components/shared/Icons'
+import React, { useState } from 'react'
 import { useCalendars, useSlackStatus } from '@/hooks/queries'
+
+import { Button } from '@/components/ui/button'
+import { FaSlack } from 'react-icons/fa'
+import { Skeleton } from '@/components/ui/skeleton'
+import { usePostHog } from 'posthog-js/react'
+import { useTranslation } from 'react-i18next'
 
 interface IntegrationsDashboardProps {}
 
 const IntegrationsDashboard: React.FC<IntegrationsDashboardProps> = () => {
+  const { t } = useTranslation()
   const [isWhatsAppModalOpen, setIsWhatsAppModalOpen] = useState(false)
   const { data: calendars, isLoading, isError, refetch } = useCalendars({ custom: true })
   const { data: slackStatus, isLoading: isSlackLoading, refetch: refetchSlack } = useSlackStatus()
@@ -37,8 +39,8 @@ const IntegrationsDashboard: React.FC<IntegrationsDashboardProps> = () => {
     <div className="max-w-4xl mx-auto w-full p-2 relative">
       <header className="mb-10 flex justify-between items-end">
         <div>
-          <h1 className="text-2xl font-medium text-foreground dark:text-primary-foreground mb-2">Integrations</h1>
-          <p className="text-muted-foreground dark:text-muted-foreground">Connect and manage your executive workspace.</p>
+          <h1 className="text-2xl font-medium text-foreground dark:text-primary-foreground mb-2">{t('integrations.title')}</h1>
+          <p className="text-muted-foreground dark:text-muted-foreground">{t('integrations.description')}</p>
         </div>
         <Button
           variant="ghost"
@@ -46,7 +48,7 @@ const IntegrationsDashboard: React.FC<IntegrationsDashboardProps> = () => {
           className="text-muted-foreground hover:text-primary text-xs font-bold uppercase tracking-widest"
         >
           <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
-          Refresh
+          {t('integrations.refresh')}
         </Button>
       </header>
 
@@ -56,16 +58,16 @@ const IntegrationsDashboard: React.FC<IntegrationsDashboardProps> = () => {
             <div className="p-3 bg-primary/5 dark:bg-blue-900/30 text-primary rounded-md">
               <TelegramIcon />
             </div>
-            <div className="flex items-center gap-1.5 bg-green-50 text-green-700 p-1 rounded-full text-xs font-medium border border-green-100">
+            <div className="flex items-center gap-1.5 bg-primary/5 text-primary p-1 rounded-full text-xs font-medium border border-primary/20">
               <CheckCircle2 size={16} /> Connected
             </div>
           </div>
-          <h3 className="text-lg font-medium text-foreground dark:text-primary-foreground mb-1">Telegram</h3>
-          <p className="text-sm text-muted-foreground mb-6">Interact with Ally directly through your Telegram bot.</p>
-          <div className="flex items-center justify-between pt-4 border-t border-zinc-100">
+          <h3 className="text-lg font-medium text-foreground dark:text-primary-foreground mb-1">{t('integrations.telegram.title')}</h3>
+          <p className="text-sm text-muted-foreground mb-6">{t('integrations.telegram.description')}</p>
+          <div className="flex items-center justify-between pt-4 border-t border-border">
             <span className="text-xs font-mono text-muted-foreground">@AllySyncBot</span>
             <Button variant="ghost" size="sm" className="text-sm font-medium">
-              <span>Settings</span> <ArrowUpRight className="w-3.5 h-3.5" />
+              <span>{t('integrations.telegram.settings')}</span> <ArrowUpRight className="w-3.5 h-3.5" />
             </Button>
           </div>
         </div>
@@ -76,14 +78,14 @@ const IntegrationsDashboard: React.FC<IntegrationsDashboardProps> = () => {
               <WhatsAppIcon />
             </div>
             <div className="flex items-center gap-1.5 bg-secondary text-muted-foreground p-1 rounded-full text-xs font-medium border border">
-              <Circle size={16} /> Disconnected
+              <Circle size={16} /> {t('integrations.status.disconnected')}
             </div>
           </div>
-          <h3 className="text-lg font-medium text-foreground dark:text-primary-foreground mb-1">WhatsApp</h3>
-          <p className="text-sm text-muted-foreground mb-6">Sync Ally with WhatsApp for secure relay of messages.</p>
-          <div className="pt-4 border-t border-zinc-100">
+          <h3 className="text-lg font-medium text-foreground dark:text-primary-foreground mb-1">{t('integrations.whatsapp.title')}</h3>
+          <p className="text-sm text-muted-foreground mb-6">{t('integrations.whatsapp.description')}</p>
+          <div className="pt-4 border-t border-border">
             <Button onClick={handleWhatsAppConnect} className="w-full">
-              Connect <WhatsAppIcon className="w-4 h-4" />
+              {t('integrations.whatsapp.connect')} <WhatsAppIcon className="w-4 h-4" />
             </Button>
           </div>
         </div>
@@ -96,7 +98,7 @@ const IntegrationsDashboard: React.FC<IntegrationsDashboardProps> = () => {
             {isSlackLoading ? (
               <Skeleton className="w-24 h-6 rounded-full" />
             ) : slackStatus?.isConnected ? (
-              <div className="flex items-center gap-1.5 bg-green-50 text-green-700 p-1 rounded-full text-xs font-medium border border-green-100">
+              <div className="flex items-center gap-1.5 bg-primary/5 text-primary p-1 rounded-full text-xs font-medium border border-primary/20">
                 <CheckCircle2 size={16} /> Connected
               </div>
             ) : (
@@ -105,9 +107,9 @@ const IntegrationsDashboard: React.FC<IntegrationsDashboardProps> = () => {
               </div>
             )}
           </div>
-          <h3 className="text-lg font-medium text-foreground dark:text-primary-foreground mb-1">Slack</h3>
-          <p className="text-sm text-muted-foreground mb-6">Add Ally to your Slack workspace for team calendar management.</p>
-          <div className="pt-4 border-t border-zinc-100">
+          <h3 className="text-lg font-medium text-foreground dark:text-primary-foreground mb-1">{t('integrations.slack.title')}</h3>
+          <p className="text-sm text-muted-foreground mb-6">{t('integrations.slack.description')}</p>
+          <div className="pt-4 border-t border-border">
             {slackStatus?.isConnected ? (
               <div className="flex items-center justify-between">
                 <span className="text-xs font-mono text-muted-foreground">@{slackStatus.slackUsername || 'Connected'}</span>
@@ -133,17 +135,17 @@ const IntegrationsDashboard: React.FC<IntegrationsDashboardProps> = () => {
             <div className="p-3 bg-primary/5 dark:bg-blue-900/30 text-primary rounded-md">
               <GoogleCalendarIcon className="w-5 h-5" />
             </div>
-            <div className="flex items-center gap-1.5 bg-green-50 text-green-700 p-1 rounded-full text-xs font-medium border border-green-100">
+            <div className="flex items-center gap-1.5 bg-primary/5 text-primary p-1 rounded-full text-xs font-medium border border-primary/20">
               <CheckCircle2 size={16} /> API Active
             </div>
           </div>
-          <h3 className="text-lg font-medium text-foreground dark:text-primary-foreground mb-1">Google Calendar</h3>
+          <h3 className="text-lg font-medium text-foreground dark:text-primary-foreground mb-1">{t('integrations.googleCalendar.title')}</h3>
           <p className="text-sm text-muted-foreground mb-6">
             Sync your calendars with Ally for seamless scheduling and conflict resolution.
           </p>
-          <div className="pt-4 border-t border-zinc-100 dark:border">
+          <div className="pt-4 border-t border-border">
             <div className="flex justify-between items-center mb-4">
-              <h4 className="text-sm font-medium text-zinc-700 dark:text-zinc-300 flex items-center gap-2">
+              <h4 className="text-sm font-medium text-foreground flex items-center gap-2">
                 <List className="w-4 h-4 text-muted-foreground" />
                 {isLoading ? 'Fetching Calendars...' : 'Synced Sources'}
               </h4>
@@ -164,13 +166,13 @@ const IntegrationsDashboard: React.FC<IntegrationsDashboardProps> = () => {
               </div>
             ) : isError ? (
               <div className="py-4 text-center">
-                <p className="text-xs text-destructive font-bold uppercase tracking-tight">Failed to load calendar data.</p>
+                <p className="text-xs text-destructive font-bold uppercase tracking-tight">{t('integrations.googleCalendar.failedToLoad')}</p>
                 <Button variant="link" onClick={() => refetch()} className="text-xs text-primary p-0 h-auto mt-1">
                   Try again
                 </Button>
               </div>
             ) : calendarList.length === 0 ? (
-              <div className="py-8 text-center text-muted-foreground text-xs italic">No active calendar sources found.</div>
+              <div className="py-8 text-center text-muted-foreground text-xs italic">{t('integrations.googleCalendar.noSources')}</div>
             ) : (
               <ul className="space-y-2">
                 {calendarList.map((cal) => (
@@ -179,7 +181,7 @@ const IntegrationsDashboard: React.FC<IntegrationsDashboardProps> = () => {
                       className="w-2.5 h-2.5 rounded-full"
                       style={{ backgroundColor: cal.calendarColorForEvents || '#f26306' }}
                     />
-                    <span className="flex-1 font-medium text-zinc-800 dark:text-zinc-200">
+                    <span className="flex-1 font-medium text-foreground">
                       {cal.calendarName || 'Unnamed Calendar'}
                     </span>
                     <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
@@ -197,7 +199,7 @@ const IntegrationsDashboard: React.FC<IntegrationsDashboardProps> = () => {
       <Dialog open={isWhatsAppModalOpen} onOpenChange={setIsWhatsAppModalOpen}>
         <DialogContent className="max-w-sm">
           <DialogHeader>
-            <DialogTitle>Connect WhatsApp</DialogTitle>
+            <DialogTitle>{t('integrations.connectWhatsApp')}</DialogTitle>
             <DialogDescription>
               To connect WhatsApp, please follow the instructions in your Ally Node console.
             </DialogDescription>

@@ -75,8 +75,8 @@ export const SidebarFooter: React.FC<SidebarFooterProps> = ({
                     className="rounded-lg object-cover flex-shrink-0 h-8 w-8"
                   />
                 ) : (
-                  <div className="h-8 w-8 rounded-lg bg-accent dark:bg-zinc-700 flex items-center justify-center flex-shrink-0">
-                    <span className="text-xs font-medium text-zinc-600 dark:text-zinc-300">{initials}</span>
+                  <div className="h-8 w-8 rounded-lg bg-accent flex items-center justify-center flex-shrink-0">
+                    <span className="text-xs font-medium text-muted-foreground">{initials}</span>
                   </div>
                 )}
                 <div className="grid flex-1 text-left text-sm leading-tight min-w-0">
@@ -140,7 +140,7 @@ export const SidebarFooter: React.FC<SidebarFooterProps> = ({
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={onSignOut}
-                  className="cursor-pointer hover:bg-destructive/5 dark:hover:bg-red-900/20 hover:text-destructive dark:hover:text-red-400"
+                  className="cursor-pointer hover:bg-destructive/5 hover:text-destructive"
                 >
                   <LogOut className="w-4 h-4" />
                   <span>Log out</span>

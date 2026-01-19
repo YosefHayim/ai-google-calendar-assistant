@@ -43,7 +43,7 @@ export function BroadcastDialog({ open, onClose }: BroadcastDialogProps) {
 
   const handleSend = async () => {
     if (!title.trim() || !message.trim()) {
-      toast.error('Title and message are required')
+      toast.error(t('toast.broadcastTitleRequired'))
       return
     }
 
@@ -63,13 +63,13 @@ export function BroadcastDialog({ open, onClose }: BroadcastDialogProps) {
         filters,
       })
 
-      toast.success(`Broadcast sent to ${result.sentTo} users`)
+      toast.success(t('toast.broadcastSent', { count: result.sentTo }))
       setTitle('')
       setMessage('')
       setType('info')
       onClose()
     } catch {
-      toast.error('Failed to send broadcast')
+      toast.error(t('toast.broadcastSendFailed'))
     } finally {
       setIsSending(false)
     }

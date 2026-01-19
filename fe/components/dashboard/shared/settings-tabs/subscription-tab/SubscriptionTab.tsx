@@ -71,9 +71,9 @@ export const SubscriptionTab: React.FC = () => {
             await redirectToBillingPortal()
           } catch (error) {
             if (isNoBillingInfoError(error)) {
-              toast.info('You are already on the free plan')
+              toast.info(t('toast.alreadyOnFreePlan'))
             } else {
-              toast.error('Failed to open billing portal')
+              toast.error(t('toast.billingPortalOpenFailed'))
             }
           }
           return
@@ -96,7 +96,7 @@ export const SubscriptionTab: React.FC = () => {
       }
     } catch (error) {
       console.error('Checkout error:', error)
-      toast.error('Failed to process checkout. Please try again.')
+      toast.error(t('toast.checkoutProcessFailed'))
     } finally {
       setActionLoading(null)
     }
@@ -108,10 +108,10 @@ export const SubscriptionTab: React.FC = () => {
       await redirectToBillingPortal()
     } catch (error) {
       if (isNoBillingInfoError(error)) {
-        toast.info('Redirecting to checkout to set up billing...')
+        toast.info(t('toast.redirectingToCheckout'))
         await redirectToCheckout({ planSlug: 'pro', interval: 'monthly' })
       } else {
-        toast.error('Failed to open billing portal')
+        toast.error(t('toast.billingPortalOpenFailed'))
       }
     } finally {
       setActionLoading(null)

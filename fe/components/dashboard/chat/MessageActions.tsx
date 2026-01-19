@@ -1,7 +1,8 @@
 'use client'
 
-import React, { useState } from 'react'
 import { Check, Clock, Copy, Edit2, RotateCcw, Volume2 } from 'lucide-react'
+import React, { useState } from 'react'
+
 import { Button } from '@/components/ui/button'
 import { Message } from '@/types'
 import { toast } from 'sonner'
@@ -21,10 +22,10 @@ export const MessageActions: React.FC<MessageActionsProps> = ({ msg, isSpeaking,
     try {
       await navigator.clipboard.writeText(msg.content)
       setCopied(true)
-      toast.success('Message copied to clipboard')
+      toast.success(t('toast.messageCopied'))
       setTimeout(() => setCopied(false), 2000)
     } catch {
-      toast.error('Failed to copy message')
+      toast.error(t('toast.messageCopyFailed'))
     }
   }
 

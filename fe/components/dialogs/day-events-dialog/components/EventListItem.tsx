@@ -1,11 +1,12 @@
 'use client'
 
-import React from 'react'
 import { CalendarDays, CircleCheckBig, CircleX, Clock, Hourglass, MapPin } from 'lucide-react'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
+import { formatEventTimeRange, getCalendarInfo, getEventDuration } from '../utils'
+
 import type { CalendarEvent } from '@/types/api'
 import type { CalendarInfo } from '../types'
-import { getEventDuration, formatEventTimeRange, getCalendarInfo } from '../utils'
+import React from 'react'
 
 interface EventListItemProps {
   event: CalendarEvent
@@ -35,7 +36,7 @@ export function EventListItem({ event, calendarMap, onEventClick }: EventListIte
             <CalendarDays size={16} style={{ color: calendarColor }} />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-zinc-800 dark:text-zinc-200 line-clamp-1">
+            <p className="text-sm font-semibold text-foreground line-clamp-1">
               {event.summary || 'No Title'}
             </p>
             <div className="flex items-center gap-2 mt-1 flex-wrap">
@@ -73,7 +74,7 @@ export function EventListItem({ event, calendarMap, onEventClick }: EventListIte
       <HoverCardContent className="w-80">
         <div className="space-y-2">
           <h4 className="font-semibold text-sm text-foreground dark:text-primary-foreground">{event.summary || 'No Title'}</h4>
-          <div className="space-y-2 text-xs text-zinc-600 dark:text-muted-foreground">
+          <div className="space-y-2 text-xs text-muted-foreground">
             <div className="flex items-center gap-2">
               <Clock size={16} />
               <span>{eventTimeRange}</span>

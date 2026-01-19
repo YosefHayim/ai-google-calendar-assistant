@@ -1,13 +1,14 @@
 'use client'
 
-import React from 'react'
-import { CalendarDays, Clock, AlertCircle, Repeat } from 'lucide-react'
-import { format } from 'date-fns'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Button } from '@/components/ui/button'
+import { AlertCircle, CalendarDays, Clock, Repeat } from 'lucide-react'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
+import type { UpcomingDayData, UpcomingWeekData } from '@/hooks/queries/analytics/useUpcomingWeekData'
+
+import { Button } from '@/components/ui/button'
+import React from 'react'
+import { Skeleton } from '@/components/ui/skeleton'
 import { StatusDot } from '@/components/ui/status-dot'
-import type { UpcomingWeekData, UpcomingDayData } from '@/hooks/queries/analytics/useUpcomingWeekData'
+import { format } from 'date-fns'
 
 interface UpcomingWeekPreviewProps {
   data: UpcomingWeekData | undefined
@@ -20,15 +21,15 @@ const BUSYNESS_COLORS = {
   free: 'bg-secondary dark:bg-secondary',
   light: 'bg-emerald-100 dark:bg-emerald-900/40',
   moderate: 'bg-sky-100 dark:bg-sky-900/40',
-  busy: 'bg-amber-100 dark:bg-amber-900/40',
+  busy: 'bg-primary/10',
   packed: 'bg-rose-100 dark:bg-rose-900/40',
 }
 
 const BUSYNESS_BORDER_COLORS = {
-  free: 'border dark:border-zinc-700',
+  free: 'border-border',
   light: 'border-emerald-300 dark:border-emerald-800',
   moderate: 'border-sky-300 dark:border-sky-800',
-  busy: 'border-amber-300 dark:border-amber-800',
+  busy: 'border-primary/30',
   packed: 'border-rose-300 dark:border-rose-800',
 }
 
@@ -88,11 +89,11 @@ const DayCard: React.FC<{ day: UpcomingDayData }> = ({ day }) => {
                     ? day.busynessLevel === 'packed'
                       ? 'bg-rose-500'
                       : day.busynessLevel === 'busy'
-                        ? 'bg-amber-500'
+                        ? 'bg-primary'
                         : day.busynessLevel === 'moderate'
                           ? 'bg-sky-500'
                           : 'bg-emerald-500'
-                    : 'bg-zinc-300 dark:bg-zinc-600'
+                    : 'bg-muted'
                 }`}
               />
             ))}

@@ -23,7 +23,7 @@ export function LoadingSpinner({ size = 'md', className, overlay = false, text }
   const spinner = (
     <div
       className={cn(
-        'animate-spin rounded-full border-zinc-300 border-t-zinc-900 dark:border-zinc-600 dark:border-t-zinc-100',
+        'animate-spin rounded-full border-muted border-t-foreground dark:border-secondary dark:border-t-primary-foreground',
         sizeClasses[size],
         className,
       )}

@@ -15,7 +15,7 @@ const InsightCard: React.FC<InsightCardProps> = ({ icon: Icon, title, value, des
         >
           <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
         </div>
-        <h3 className="min-w-0 font-semibold text-zinc-600 dark:text-muted-foreground text-xs sm:text-sm line-clamp-2">
+        <h3 className="min-w-0 font-semibold text-muted-foreground text-xs sm:text-sm line-clamp-2">
           {title}
         </h3>
       </div>

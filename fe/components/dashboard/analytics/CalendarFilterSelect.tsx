@@ -67,21 +67,21 @@ export function CalendarFilterSelect({
           disabled={isLoading}
         >
           <Calendar className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-          <span className="truncate text-zinc-700 dark:text-zinc-300 text-sm">{getSelectedCalendarNames()}</span>
+          <span className="truncate text-muted-foreground text-sm">{getSelectedCalendarNames()}</span>
           <ChevronDown className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0 ml-auto" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-80 sm:w-64 p-0" align="start">
         <div className="p-3 border-b border dark:border sm:p-2">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+            <span className="text-sm font-medium text-muted-foreground">
               {t('analytics.calendarFilter.filterByCalendar', 'Filter by Calendar')}
             </span>
             {!isAllSelected && (
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-7 px-2 text-xs text-muted-foreground hover:text-zinc-700 dark:hover:text-zinc-300 touch-manipulation sm:h-6"
+                className="h-7 px-2 text-xs text-muted-foreground hover:text-foreground touch-manipulation sm:h-6"
                 onClick={handleClearSelection}
               >
                 <X className="h-3 w-3 mr-1" />
@@ -105,13 +105,13 @@ export function CalendarFilterSelect({
             <div
               className={cn(
                 'flex h-4 w-4 items-center justify-center rounded border',
-                isAllSelected ? 'border-primary bg-primary text-white' : 'border-zinc-300 dark:border-zinc-600',
+                isAllSelected ? 'border-primary bg-primary text-primary-foreground' : 'border-border',
               )}
             >
               {isAllSelected && <Check className="h-3 w-3" />}
             </div>
             <Calendar className="h-4 w-4 text-muted-foreground" />
-            <span className="text-zinc-700 dark:text-zinc-300">
+            <span className="text-muted-foreground">
               {t('analytics.calendarFilter.allCalendars', 'All Calendars')}
             </span>
           </button>
@@ -139,13 +139,13 @@ export function CalendarFilterSelect({
                   className={cn(
                     'flex h-5 w-5 items-center justify-center rounded border flex-shrink-0',
                     'sm:h-4 sm:w-4',
-                    isSelected ? 'border-primary bg-primary text-white' : 'border-zinc-300 dark:border-zinc-600',
+                    isSelected ? 'border-primary bg-primary text-primary-foreground' : 'border-border',
                   )}
                 >
                   {isSelected && <Check className="h-3 w-3 sm:h-3 sm:w-3" />}
                 </div>
                 <div className="h-3 w-3 rounded-full flex-shrink-0" style={{ backgroundColor: calendarColor }} />
-                <span className="truncate text-zinc-700 dark:text-zinc-300 text-sm sm:text-sm">{calendar.summary || calendar.id}</span>
+                <span className="truncate text-muted-foreground text-sm sm:text-sm">{calendar.summary || calendar.id}</span>
               </button>
             )
           })}

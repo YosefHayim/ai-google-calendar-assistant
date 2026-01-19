@@ -1,9 +1,9 @@
 'use client'
 
-import React from 'react'
 import Link from 'next/link'
-import { motion } from 'framer-motion'
 import { MessageSquarePlus } from 'lucide-react'
+import React from 'react'
+import { motion } from 'framer-motion'
 
 export interface Testimonial {
   text: string
@@ -34,7 +34,7 @@ export const TestimonialsColumn = (props: { className?: string; testimonials: Te
               {props.testimonials.map(({ text, name, role, isPlaceholder }, i) => {
                 const cardContent = (
                   <>
-                    <div className="text-sm leading-relaxed text-muted-foreground dark:text-muted-foreground group-hover:text-zinc-700 dark:group-hover:text-zinc-300">
+                    <div className="text-sm leading-relaxed text-muted-foreground group-hover:text-foreground">
                       {text}
                     </div>
                     <div className="flex items-center gap-3 mt-5">

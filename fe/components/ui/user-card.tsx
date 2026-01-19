@@ -1,8 +1,10 @@
 'use client'
 
 import * as React from 'react'
-import { cn } from '@/lib/utils'
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+
+import { cn } from '@/lib/utils'
 
 type UserCardSize = 'sm' | 'md' | 'lg'
 
@@ -34,7 +36,7 @@ export function UserCard({ name, subtitle, avatarUrl, size = 'md', className, on
     <>
       <Avatar className={cn(sizes.avatar, 'shrink-0')}>
         <AvatarImage src={avatarUrl} alt={name} />
-        <AvatarFallback className="bg-accent dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300">
+        <AvatarFallback className="bg-accent text-muted-foreground">
           {initials}
         </AvatarFallback>
       </Avatar>
@@ -65,10 +67,10 @@ export function UserCardSkeleton({ size = 'md', className }: { size?: UserCardSi
 
   return (
     <div className={cn('flex items-center gap-2.5', className)}>
-      <div className={cn(sizes.avatar, 'rounded-full bg-accent dark:bg-zinc-700 animate-pulse shrink-0')} />
+      <div className={cn(sizes.avatar, 'rounded-full bg-accent animate-pulse shrink-0')} />
       <div className="flex-1 space-y-1.5">
-        <div className="h-3 w-24 bg-accent dark:bg-zinc-700 rounded animate-pulse" />
-        <div className="h-2 w-32 bg-accent dark:bg-zinc-700 rounded animate-pulse" />
+        <div className="h-3 w-24 bg-accent rounded animate-pulse" />
+        <div className="h-2 w-32 bg-accent rounded animate-pulse" />
       </div>
     </div>
   )

@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+
 import { Button } from '@/components/ui/button'
 import type { EventDurationCategory } from '@/types/analytics'
 import EventsListDialog from '@/components/dialogs/EventsListDialog'
@@ -72,7 +73,7 @@ export const EventDurationProgressChart: React.FC<EventDurationProgressChartProp
               <div className="w-3 h-3 rounded-sm flex-shrink-0" style={{ backgroundColor: cat.color }} />
               <div className="flex-1 min-w-0">
                 <div className="flex items-baseline gap-1">
-                  <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">{cat.label}</span>
+                  <span className="text-sm font-medium text-muted-foreground">{cat.label}</span>
                   <span className="text-xs text-muted-foreground dark:text-muted-foreground">({cat.range})</span>
                 </div>
                 <div className="text-xs text-muted-foreground dark:text-muted-foreground">

@@ -1,22 +1,22 @@
 'use client'
 
+import { ACCEPTED_IMAGE_TYPES, MAX_IMAGES, MAX_IMAGE_SIZE_MB, MAX_INPUT_LENGTH } from './utils/constants'
+import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowUp, ImagePlus, Mic, Pause, Trash2, X } from 'lucide-react'
-import { validateInputLength } from '@/lib/security/sanitize'
+import type { ChatInputProps, ImageFile } from './types'
 import React, { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
 
 import { AIVoiceInput } from '@/components/ui/ai-voice-input'
 import { Button } from '@/components/ui/button'
+import Image from 'next/image'
+import { ImageLightbox } from './components/ImageLightbox'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
+import { fileToBase64 } from './utils/file-utils'
 import { getTextDirection } from '@/lib/utils'
 import { toast } from 'sonner'
-
-import type { ChatInputProps, ImageFile } from './types'
-import { ImageLightbox } from './components/ImageLightbox'
 import { useAutoResizeTextarea } from './hooks/useAutoResizeTextarea'
-import { MAX_IMAGES, MAX_IMAGE_SIZE_MB, ACCEPTED_IMAGE_TYPES, MAX_INPUT_LENGTH } from './utils/constants'
-import { fileToBase64 } from './utils/file-utils'
+import { validateInputLength } from '@/lib/security/sanitize'
 
 export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
   (
@@ -95,14 +95,14 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
 
         const remainingSlots = MAX_IMAGES - images.length
         if (remainingSlots === 0) {
-          toast.error(`Maximum ${MAX_IMAGES} images allowed`)
+          toast.error(t('toast.maxImagesAllowed', { count: MAX_IMAGES }))
           event.target.value = ''
           return
         }
 
         const allFiles = Array.from(files)
         if (allFiles.length > remainingSlots) {
-          toast.error(`Maximum ${MAX_IMAGES} images allowed`)
+          toast.error(t('toast.maxImagesAllowed', { count: MAX_IMAGES }))
         }
 
         const filesToAdd = allFiles.slice(0, remainingSlots)
@@ -130,7 +130,7 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
           onImagesChange([...images, ...newImages])
         } catch (error) {
           console.error('Failed to process images:', error)
-          toast.error('Failed to process images')
+          toast.error(t('toast.imageProcessingFailed'))
         }
         event.target.value = ''
       },
@@ -162,12 +162,12 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
 
         const remainingSlots = MAX_IMAGES - images.length
         if (remainingSlots === 0) {
-          toast.error(`Maximum ${MAX_IMAGES} images allowed`)
+          toast.error(t('toast.maxImagesAllowed', { count: MAX_IMAGES }))
           return
         }
 
         if (imageItems.length > remainingSlots) {
-          toast.error(`Maximum ${MAX_IMAGES} images allowed`)
+          toast.error(t('toast.maxImagesAllowed', { count: MAX_IMAGES }))
         }
 
         const itemsToProcess = imageItems.slice(0, remainingSlots)
@@ -179,11 +179,11 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
               .filter((file): file is File => {
                 if (!file) return false
                 if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
-                  toast.error(`Unsupported image type: ${file.type}`)
+                  toast.error(t('toast.unsupportedImageType', { type: file.type }))
                   return false
                 }
                 if (file.size > MAX_IMAGE_SIZE_MB * 1024 * 1024) {
-                  toast.error(`Image too large (max ${MAX_IMAGE_SIZE_MB}MB)`)
+                  toast.error(t('toast.imageTooLarge', { size: MAX_IMAGE_SIZE_MB }))
                   return false
                 }
                 return true
@@ -203,7 +203,7 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
           onImagesChange([...images, ...newImages.filter(Boolean)])
         } catch (error) {
           console.error('Failed to process pasted images:', error)
-          toast.error('Failed to process pasted images')
+          toast.error(t('toast.pastedImagesProcessingFailed'))
         }
       },
       [images, onImagesChange],
@@ -247,12 +247,14 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
                   <button
                     type="button"
                     onClick={() => openLightbox(index)}
-                    className="block focus:outline-none focus:ring-2 focus:ring-zinc-500 dark:focus:ring-zinc-400 rounded-lg"
+                    className="block focus:outline-none focus:ring-2 focus:ring-ring rounded-lg"
                   >
-                    <img
+                    <Image
                       src={image.preview}
                       alt="Upload preview"
-                      className="w-14 h-14 sm:w-16 sm:h-16 object-cover rounded-lg border border dark:border-zinc-700 cursor-pointer hover:opacity-80 transition-opacity"
+                      className="w-14 h-14 sm:w-16 sm:h-16 object-cover rounded-lg border-border cursor-pointer hover:opacity-80 transition-opacity"
+                      width={64}
+                      height={64}
                     />
                   </button>
                   <button
@@ -303,7 +305,7 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
                 variant="ghost"
                 size="icon"
                 onClick={onCancelRecording}
-                className="absolute top-3 right-3 sm:top-4 sm:right-4 text-muted-foreground hover:text-zinc-600 dark:hover:text-zinc-300"
+                className="absolute top-3 right-3 sm:top-4 sm:right-4 text-muted-foreground hover:text-foreground"
               >
                 <X className="w-5 h-5" />
               </Button>
@@ -336,7 +338,7 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
                     onClick={() => fileInputRef.current?.click()}
                     className={cn(
                       'h-8 w-8 sm:h-10 sm:w-10 rounded-xl flex items-center justify-center transition-colors',
-                      'text-muted-foreground hover:text-zinc-700 dark:hover:text-zinc-200',
+                      'text-muted-foreground hover:text-foreground',
                       'hover:bg-secondary dark:hover:bg-secondary',
                       (isDisabled || !canAddMoreImages) && 'opacity-40 cursor-not-allowed',
                     )}
@@ -354,8 +356,8 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
                     className={cn(
                       'h-8 w-8 sm:h-10 sm:w-10 rounded-xl flex items-center justify-center transition-colors',
                       isRecording
-                        ? 'text-destructive bg-destructive/5 dark:bg-red-950/30'
-                        : 'text-muted-foreground hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-secondary dark:hover:bg-secondary',
+                        ? 'text-destructive bg-destructive/5'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-secondary dark:hover:bg-secondary',
                       (isDisabled || !speechRecognitionSupported) && 'opacity-40 cursor-not-allowed',
                     )}
                     disabled={isDisabled || !speechRecognitionSupported}

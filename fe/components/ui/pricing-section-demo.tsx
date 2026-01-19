@@ -1,15 +1,16 @@
 'use client'
 
-import React from 'react'
-import { PricingSection } from '@/components/ui/pricing-section'
-import { HandWrittenTitleDemo } from '@/components/ui/hand-writing-text-demo'
 import { PAYMENT_FREQUENCIES, TIERS } from '@/lib/constants/plans'
 import { usePlans, useSubscriptionStatus } from '@/hooks/queries/billing'
-import { Skeleton } from '@/components/ui/skeleton'
+
 import { AlertCircle } from 'lucide-react'
-import { useAuthContext } from '@/contexts/AuthContext'
+import { HandWrittenTitleDemo } from '@/components/ui/hand-writing-text-demo'
 import type { Plan } from '@/services/payment.service'
+import { PricingSection } from '@/components/ui/pricing-section'
 import type { PricingTier } from '@/lib/constants/plans'
+import React from 'react'
+import { Skeleton } from '@/components/ui/skeleton'
+import { useAuthContext } from '@/contexts/AuthContext'
 
 export { PAYMENT_FREQUENCIES, TIERS }
 
@@ -20,7 +21,7 @@ function PricingSkeleton() {
         {[1, 2, 3].map((i) => (
           <div
             key={i}
-            className="bg-background dark:bg-secondary border border dark:border rounded-xl p-6 shadow-sm"
+            className="bg-background dark:bg-secondary border-border rounded-xl p-6 shadow-sm"
           >
             <Skeleton className="h-6 w-24 mb-2" />
             <Skeleton className="h-4 w-full mb-6" />
@@ -45,10 +46,10 @@ function PricingError() {
   return (
     <div className="w-full max-w-md mx-auto text-center py-12">
       <div className="flex justify-center mb-4">
-        <AlertCircle className="h-12 w-12 text-amber-500" />
+        <AlertCircle className="h-12 w-12 text-primary" />
       </div>
       <h3 className="text-lg font-semibold text-foreground dark:text-primary-foreground mb-2">Unable to load pricing</h3>
-      <p className="text-zinc-600 dark:text-muted-foreground mb-4">
+      <p className="text-muted-foreground mb-4">
         We couldn&apos;t fetch the latest pricing information. Showing default plans below.
       </p>
     </div>

@@ -1,21 +1,24 @@
 'use client'
 
-import React, { useState } from 'react'
+import { CreditCard, Loader2 } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
   DialogDescription,
   DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from '@/components/ui/dialog'
+import React, { useState } from 'react'
+
+import type { AdminUser } from '@/types/admin'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { CreditCard, Loader2 } from 'lucide-react'
+import { toast } from 'sonner'
 import { useGrantCredits } from '@/hooks/queries/admin'
-import type { AdminUser } from '@/types/admin'
+import { useTranslation } from 'react-i18next'
 
 interface GrantCreditsDialogProps {
   user: AdminUser
@@ -23,6 +26,7 @@ interface GrantCreditsDialogProps {
 }
 
 export function GrantCreditsDialog({ user, onClose }: GrantCreditsDialogProps) {
+  const { t } = useTranslation()
   const [credits, setCredits] = useState('')
   const [reason, setReason] = useState('')
   const grantCredits = useGrantCredits()
@@ -31,7 +35,7 @@ export function GrantCreditsDialog({ user, onClose }: GrantCreditsDialogProps) {
     e.preventDefault()
     const creditAmount = parseInt(credits, 10)
     if (isNaN(creditAmount) || creditAmount <= 0) {
-      alert('Please enter a valid credit amount')
+      toast.error(t('admin.grantCredits.invalidAmount'))
       return
     }
 
@@ -39,11 +43,11 @@ export function GrantCreditsDialog({ user, onClose }: GrantCreditsDialogProps) {
       { id: user.id, credits: creditAmount, reason: reason || '' },
       {
         onSuccess: () => {
-          alert(`Successfully granted ${creditAmount} credits to ${user.email}`)
+          toast.success(t('admin.grantCredits.success', { count: creditAmount, email: user.email }))
           onClose()
         },
         onError: (error) => {
-          alert(`Failed to grant credits: ${error.message}`)
+          toast.error(t('admin.grantCredits.failed', { error: error.message }))
         },
       },
     )
@@ -55,52 +59,52 @@ export function GrantCreditsDialog({ user, onClose }: GrantCreditsDialogProps) {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <CreditCard className="w-5 h-5 text-primary" />
-            Grant Credits
+            {t('admin.grantCredits.title')}
           </DialogTitle>
-          <DialogDescription>Add credits to {user.display_name || user.email}&apos;s account</DialogDescription>
+          <DialogDescription>{t('admin.grantCredits.description', { user: user.display_name || user.email })}</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="credits">Credit Amount</Label>
+            <Label htmlFor="credits">{t('admin.grantCredits.creditAmount')}</Label>
             <Input
               id="credits"
               type="number"
               min="1"
-              placeholder="Enter number of credits"
+              placeholder={t('admin.grantCredits.creditPlaceholder')}
               value={credits}
               onChange={(e) => setCredits(e.target.value)}
               required
             />
             <p className="text-xs text-muted-foreground">
-              Current balance: {user.subscription?.credits_remaining || 0} credits
+              {t('admin.grantCredits.currentBalance', { count: user.subscription?.credits_remaining || 0 })}
             </p>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="reason">Reason (optional)</Label>
+            <Label htmlFor="reason">{t('admin.grantCredits.reasonLabel')}</Label>
             <Textarea
               id="reason"
-              placeholder="e.g., Compensation for service issue, promotional bonus..."
+              placeholder={t('admin.grantCredits.reasonPlaceholder')}
               value={reason}
               onChange={(e) => setReason(e.target.value)}
               rows={3}
             />
-            <p className="text-xs text-muted-foreground">This will be logged for audit purposes</p>
+            <p className="text-xs text-muted-foreground">{t('admin.grantCredits.auditNote')}</p>
           </div>
 
           <DialogFooter className="gap-2">
             <Button type="button" variant="outline" onClick={onClose}>
-              Cancel
+              {t('admin.grantCredits.cancel')}
             </Button>
             <Button type="submit" disabled={grantCredits.isPending}>
               {grantCredits.isPending ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Granting...
+                  {t('admin.grantCredits.granting')}
                 </>
               ) : (
-                'Grant Credits'
+                t('admin.grantCredits.grantCredits')
               )}
             </Button>
           </DialogFooter>

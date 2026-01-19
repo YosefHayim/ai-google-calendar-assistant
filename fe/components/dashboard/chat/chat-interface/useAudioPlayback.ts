@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
+
 import { toast } from 'sonner'
 import { ttsCache } from '@/services/tts-cache.service'
 
@@ -52,7 +53,7 @@ export function useAudioPlayback(options: AudioPlaybackOptions = {}) {
       if (messageId && speakingMessageId === messageId && isSpeaking) {
         stopSpeaking()
         isProcessingRef.current = false
-        toast.info('Audio stopped')
+        toast.info(t('toast.audioStopped'))
         return
       }
 
@@ -74,7 +75,7 @@ export function useAudioPlayback(options: AudioPlaybackOptions = {}) {
 
         setIsSpeaking(true)
         setSpeakingMessageId(messageId || null)
-        toast.info('Playing audio...')
+        toast.info(t('toast.audioPlaying'))
 
         const audioArrayBuffer = await ttsCache.synthesize(text, options.voice)
         const audioBuffer = await audioContextRef.current.decodeAudioData(audioArrayBuffer)
@@ -93,7 +94,7 @@ export function useAudioPlayback(options: AudioPlaybackOptions = {}) {
         source.start()
       } catch (error) {
         console.error('Error fetching or playing audio:', error)
-        toast.error('Failed to play audio')
+        toast.error(t('toast.audioPlayFailed'))
         setIsSpeaking(false)
         setSpeakingMessageId(null)
         audioSourceRef.current = null

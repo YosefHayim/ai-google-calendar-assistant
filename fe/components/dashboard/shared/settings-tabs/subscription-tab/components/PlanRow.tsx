@@ -52,7 +52,7 @@ export function PlanRow({ plan, selectedFrequency, actionType, isLoading, onActi
         'transition-all duration-200',
         isHighlighted && 'bg-secondary dark:bg-primary border-none',
         isPopular && !isHighlighted && 'ring-1 ring-primary',
-        isCurrentPlan && 'ring-1 ring-green-500',
+        isCurrentPlan && 'ring-1 ring-primary',
       )}
     >
       <CardContent className="p-3 sm:p-4">
@@ -219,7 +219,7 @@ export function PlanRow({ plan, selectedFrequency, actionType, isLoading, onActi
                 'inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full',
                 isHighlighted
                   ? 'bg-background/10 text-white/80 dark:bg-secondary/10 dark:text-foreground/80'
-                  : 'bg-secondary dark:bg-secondary text-zinc-600 dark:text-muted-foreground',
+                  : 'bg-secondary dark:bg-secondary text-muted-foreground',
               )}
             >
               <BadgeCheck className="w-3 h-3" />

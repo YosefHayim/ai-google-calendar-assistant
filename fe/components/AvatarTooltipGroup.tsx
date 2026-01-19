@@ -3,6 +3,7 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import React, { useState } from 'react'
 
+import Image from 'next/image'
 import { Star } from 'lucide-react'
 
 interface AvatarProps {
@@ -41,7 +42,7 @@ const TooltipAvatar: React.FC<AvatarProps & { index: number }> = ({ src, name, f
         style={{ marginLeft: index === 0 ? 0 : '-12px' }}
       >
         {src ? (
-          <img className="aspect-square h-full w-full object-cover" src={src} alt={name} />
+          <Image className="aspect-square h-full w-full object-cover" src={src} alt={name} width={40} height={40} />
         ) : (
           <div className="flex h-full w-full items-center justify-center text-xs font-bold text-muted-foreground">
             {fallback}

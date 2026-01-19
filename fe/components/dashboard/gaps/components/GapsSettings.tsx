@@ -51,10 +51,10 @@ export function GapsSettings({ settings, onSettingsChange }: GapsSettingsProps) 
       // Here you would implement the API call to save settings
       // For now, just simulate saving
       await new Promise(resolve => setTimeout(resolve, 1000))
-      toast.success('Settings saved successfully')
+      toast.success(t('toast.gapsSettingsSaved'))
       onSettingsChange()
     } catch (error) {
-      toast.error('Failed to save settings')
+      toast.error(t('toast.gapsSettingsSaveFailed'))
     } finally {
       setIsLoading(false)
     }

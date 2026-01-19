@@ -1,3 +1,4 @@
+import withBundleAnalyzer from '@next/bundle-analyzer'
 import { withSentryConfig } from '@sentry/nextjs'
 
 /** @type {import('next').NextConfig} */
@@ -17,6 +18,7 @@ const nextConfig = {
   },
   output: 'standalone',
   experimental: {
+    optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
     swcPlugins: isDev
       ? [
           [
@@ -65,11 +67,11 @@ const nextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://accounts.google.com",
+              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://accounts.google.com https://*.googletagmanager.com",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "font-src 'self' https://fonts.gstatic.com",
               "img-src 'self' data: blob: https: http:",
-              `connect-src 'self' ${isDev ? 'http://localhost:3000 ws://localhost:3000 ' : ''}https://*.supabase.co wss://*.supabase.co https://accounts.google.com https://api.openai.com https://raw.githubusercontent.com https://*.awsapprunner.com https://*.ingest.sentry.io https://*.sentry.io https://*.posthog.com`,
+              `connect-src 'self' ${isDev ? 'http://localhost:3000 ws://localhost:3000 ' : ''}https://*.supabase.co wss://*.supabase.co https://accounts.google.com https://api.openai.com https://raw.githubusercontent.com https://*.awsapprunner.com https://*.ingest.sentry.io https://*.sentry.io https://*.posthog.com https://be.askally.io https://lmsqueezy.com`,
               "frame-src 'self' https://accounts.google.com",
               "worker-src 'self' blob:",
               "frame-ancestors 'none'",
@@ -111,7 +113,9 @@ const nextConfig = {
   },
 }
 
-export default withSentryConfig(nextConfig, {
+export default withSentryConfig(
+  process.env.ANALYZE === 'true' ? withBundleAnalyzer(nextConfig) : nextConfig,
+  {
   // For all available options, see:
   // https://www.npmjs.com/package/@sentry/webpack-plugin#options
 

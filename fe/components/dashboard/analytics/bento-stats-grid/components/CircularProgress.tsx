@@ -1,7 +1,7 @@
 'use client'
 
-import React from 'react'
 import NumberFlow from '@number-flow/react'
+import React from 'react'
 import { getScoreColor } from '../utils'
 
 interface CircularProgressProps {
@@ -27,7 +27,7 @@ export function CircularProgress({ value, size = 80, className = '' }: CircularP
           fill="none"
           stroke="currentColor"
           strokeWidth={strokeWidth}
-          className="text-zinc-200 dark:text-zinc-800"
+          className="text-muted"
         />
         <circle
           cx={size / 2}

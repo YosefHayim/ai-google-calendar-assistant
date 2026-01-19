@@ -577,6 +577,20 @@ export const en = {
     themeLight: 'Light',
     themeDark: 'Dark',
     themeSystem: 'System',
+    appearance: 'Appearance',
+    appearanceTooltip: 'Choose your preferred color theme for the interface',
+    defaultTimezone: 'Default Timezone',
+    timezoneTooltip: 'Events will be scheduled in this timezone unless specified otherwise',
+    timeFormat: 'Time Format',
+    timeFormatTooltip: 'Display format for event times throughout the app',
+    timeFormat12h: '12-hour (AM/PM)',
+    timeFormat24h: '24-hour',
+    realTimeLocation: 'Real-time Location',
+    realTimeLocationTooltip: 'When enabled, Ally uses your current location to provide context for event creation (e.g., suggesting nearby venues)',
+    memberSince: 'Member since',
+    languageTooltip: 'Choose your preferred language for the interface',
+    general: 'General',
+    generalDescription: 'Manage your profile and preferences.',
   },
 
   // Dialogs
@@ -848,8 +862,13 @@ export const en = {
 
     // Trial info
     trial: {
-      daysLeft: '{{days}} days left in your free trial',
       fullAccess: 'Your trial includes full access to all features. No charge until trial ends.',
+      daysLeft: '{{count}} Day Left',
+      expired: 'Trial Expired',
+      expiredDescription: 'Your trial has expired – upgrade now to keep your access.',
+      activeDescription: 'Your free trial ends in {{count}} day. Don\'t lose access to your AI assistant.',
+      remaining: 'remaining',
+      getDeal: 'Get the Deal',
     },
 
     // Money-back guarantee
@@ -918,6 +937,270 @@ export const en = {
         'Are you sure you want to request a full refund? Your subscription will be cancelled immediately and access will be revoked.',
       refundButton: 'Request Refund',
       nevermindButton: 'Never Mind',
+    },
+
+    // Toast messages
+    toast: {
+      // General settings
+      timezoneUpdated: 'Timezone updated',
+      timezoneUpdateFailed: 'Failed to update timezone',
+      timeFormatUpdated: 'Time format updated',
+      timeFormatUpdateFailed: 'Failed to update time format',
+      realTimeLocationEnabled: 'Real-time location enabled',
+      realTimeLocationDisabled: 'Real-time location disabled',
+      locationEnableFailed: 'Failed to enable location',
+      locationDisableFailed: 'Failed to disable location',
+      locationAccessDenied: 'Location access denied',
+      locationAccessDeniedDescription: 'Please enable location access in your browser settings.',
+
+      // Integrations
+      crossPlatformSyncEnabled: 'Cross-platform sync enabled',
+      crossPlatformSyncDisabled: 'Cross-platform sync disabled',
+      integrationUpdateFailed: 'Failed to update preference',
+
+      // Assistant settings
+      voiceInputError: 'Voice input error',
+      customInstructionsSaved: 'Custom instructions saved',
+      instructionsSaveFailed: 'Failed to save instructions',
+      contextualSchedulingEnabled: 'Contextual scheduling enabled',
+      contextualSchedulingDisabled: 'Contextual scheduling disabled',
+      memoryManagementUpdateFailed: 'Failed to update preference',
+
+      // Chat
+      allyResponded: 'Ally has responded',
+      memoryUpdated: 'Memory updated',
+      regeneratingResponse: 'Regenerating response...',
+
+      // Gaps
+      gapsSettingsSaved: 'Settings saved successfully',
+      gapsSettingsSaveFailed: 'Failed to save settings',
+
+      // Conversations
+      titleUpdated: 'Title updated successfully',
+      titleUpdateFailed: 'Failed to update title',
+      shareLinkCopied: 'Share link copied to clipboard',
+      shareLinkCreateFailed: 'Failed to create share link',
+      conversationPinned: 'Conversation pinned successfully',
+      conversationUnpinned: 'Conversation unpinned successfully',
+      conversationPinFailed: 'Failed to toggle conversation pin status',
+
+      // Archived conversations
+      conversationRestored: 'Conversation restored successfully',
+      conversationRestoreFailed: 'Failed to restore conversation',
+      allConversationsRestored: 'All archived conversations restored successfully',
+      conversationsRestoreFailed: 'Failed to restore conversations',
+
+      // Settings modal
+      googleCalendarDisconnected: 'Google Calendar disconnected',
+      googleCalendarDisconnectFailed: 'Failed to disconnect Google Calendar',
+      conversationsDeleted: 'Conversations deleted',
+      conversationsDeleteFailed: 'Failed to delete conversations',
+      memoryCleared: 'Memory cleared',
+      memoryClearFailed: 'Failed to reset memory',
+      accountDeleted: 'Account deleted successfully',
+      accountDeleteFailed: 'Failed to delete account',
+
+      // Quick event
+      microphoneAccessDenied: 'Microphone access denied',
+      eventCreated: 'Event created successfully',
+
+      // Notifications
+      reminderPreferencesSaved: 'Reminder preferences saved',
+      reminderPreferencesSaveFailed: 'Failed to save reminder preferences',
+      soundNotificationsEnabled: 'Sound notifications enabled',
+      soundNotificationsDisabled: 'Sound notifications disabled',
+      browserNotificationPermissionDenied: 'Browser notification permission denied',
+      browserNotificationsEnabled: 'Browser notifications enabled',
+      notificationPreferencesSaved: 'Notification preferences saved',
+      notificationPreferencesSaveFailed: 'Failed to save notification preferences',
+
+      // Daily briefing
+      dailyBriefingPreferencesSaved: 'Daily briefing preferences saved',
+      dailyBriefingPreferencesSaveFailed: 'Failed to save daily briefing preferences',
+
+      // Voice settings
+      voiceResponseEnabled: 'Voice responses enabled',
+      voiceResponseDisabled: 'Voice responses disabled',
+      voicePreferenceUpdateFailed: 'Failed to update voice preference',
+      voiceChanged: 'Voice changed to {{voice}}',
+      voiceUpdateFailed: 'Failed to update voice',
+      playbackSpeedChanged: 'Playback speed changed to {{speed}}x',
+      playbackSpeedUpdateFailed: 'Failed to update playback speed',
+      voicePreviewFailed: 'Failed to play voice preview',
+
+      // Messages
+      messageCopied: 'Message copied to clipboard',
+      messageCopyFailed: 'Failed to copy message',
+
+      // Audio playback
+      audioStopped: 'Audio stopped',
+      audioPlaying: 'Playing audio...',
+      audioPlayFailed: 'Failed to play audio',
+
+      // Date range picker
+      dateRangeApplied: 'Date range applied',
+      dateRangeSelectBoth: 'Please select both start and end dates',
+
+      // Calendar creation
+      calendarNameRequired: 'Please enter a name for your calendar',
+      calendarCreated: 'Calendar created successfully!',
+      calendarCreateFailed: 'Failed to create calendar',
+      calendarCreateFailedGeneric: 'Failed to create calendar. Please try again.',
+
+      // Waiting list
+      waitingListWelcome: 'Welcome to the waiting list!',
+      waitingListError: 'Error',
+
+      // Admin
+      userImpersonationFailed: 'Failed to impersonate user',
+      userSessionsRevoked: 'User sessions revoked',
+      userSessionsRevokeFailed: 'Failed to revoke sessions',
+
+      // Broadcast
+      broadcastTitleRequired: 'Title and message are required',
+      broadcastSent: 'Broadcast sent to {{count}} users',
+      broadcastSendFailed: 'Failed to send broadcast',
+
+      // Billing
+      alreadyOnFreePlan: 'You are already on the free plan',
+      billingPortalOpenFailed: 'Failed to open billing portal',
+      checkoutProcessFailed: 'Failed to process checkout. Please try again.',
+      redirectingToCheckout: 'Redirecting to checkout to set up billing...',
+
+      // Voice preview
+      voicePreviewError: 'Failed to play voice preview',
+
+      // Chat input
+      maxImagesAllowed: 'Maximum {{count}} images allowed',
+      imageProcessingFailed: 'Failed to process images',
+      unsupportedImageType: 'Unsupported image type: {{type}}',
+      imageTooLarge: 'Image too large (max {{size}}MB)',
+      pastedImagesProcessingFailed: 'Failed to process pasted images',
+    },
+
+    // UI Text
+    ui: {
+      // Common UI elements
+      stop: 'Stop',
+      voice: 'Voice',
+      time: 'Time',
+      organizer: 'Organizer',
+      created: 'Created',
+      transactionId: 'Transaction ID',
+      noInvoiceAvailable: 'No invoice available',
+      noTransactionsYet: 'No transactions yet',
+      date: 'Date',
+      description: 'Description',
+      amount: 'Amount',
+      status: 'Status',
+      invoice: 'Invoice',
+      totalGaps: 'Total Gaps',
+      highConfidence: 'High Confidence',
+      potentialHours: 'Potential Hours',
+      avgGapSize: 'Avg Gap Size',
+      analysisPeriod: 'Analysis Period',
+      chat: 'Chat',
+      gaps: 'Gaps',
+      analytics: 'Analytics',
+      settings: 'Settings',
+      after: 'After:',
+      before: 'Before:',
+      fillGap: 'Fill Gap with Event',
+      eventTitle: 'Event Title *',
+      skipThisGap: 'Skip This Gap',
+      reason: 'Reason (Optional)',
+      integrations: 'Integrations',
+      telegram: 'Telegram',
+      whatsapp: 'WhatsApp',
+      slack: 'Slack',
+      googleCalendar: 'Google Calendar',
+      failedToLoadCalendarData: 'Failed to load calendar data.',
+      noActiveCalendarSourcesFound: 'No active calendar sources found.',
+      connectWhatsApp: 'Connect WhatsApp',
+      neuralLinks: 'Neural Links',
+      executiveGradeAI: 'The executive-grade AI assistant designed for business owners to defend their deep work. From Free Exploratory access to Unlimited Executive Power. Built on the Ally Neural Protocol.',
+      systemOnline: 'All Systems Operational',
+      systemOffline: 'System Unavailable',
+      systemChecking: 'Checking Status...',
+      chatOnTelegram: 'Chat with Ally on Telegram',
+      checkingServices: 'Checking services...',
+      serverUnreachable: 'Server unreachable',
+      serverOnline: 'Server Online',
+      uptime: 'Uptime',
+      websockets: 'WebSockets',
+      connections: 'connections',
+      privacyPolicy: 'Privacy Policy',
+      termsOfService: 'Terms of Service',
+      product: 'Product',
+      pricing: 'Pricing',
+      executivePower: 'Executive Power',
+      company: 'Company',
+      aboutUs: 'About Us',
+      careers: 'Careers',
+      resources: 'Resources',
+      blog: 'Change Log',
+      changeLog: 'Change Log',
+    },
+
+    // Sidebar/User Footer
+    sidebar: {
+      upgradeToPro: 'Upgrade to Pro',
+      account: 'Account',
+      billing: 'Billing',
+      notifications: 'Notifications',
+      settings: 'Settings',
+      logOut: 'Log out',
+    },
+
+    // Integrations
+    integrations: {
+      title: 'Integrations',
+      description: 'Connect and manage your executive workspace.',
+      telegram: {
+        title: 'Telegram',
+        description: 'Interact with Ally directly through your Telegram bot.',
+        settings: 'Settings',
+      },
+      whatsapp: {
+        title: 'WhatsApp',
+        description: 'Sync Ally with WhatsApp for secure relay of messages.',
+        connect: 'Connect',
+      },
+      slack: {
+        title: 'Slack',
+        description: 'Add Ally to your Slack workspace for team calendar management.',
+      },
+      googleCalendar: {
+        title: 'Google Calendar',
+        failedToLoad: 'Failed to load calendar data.',
+        noSources: 'No active calendar sources found.',
+      },
+      status: {
+        connected: 'Connected',
+        disconnected: 'Disconnected',
+      },
+      connectWhatsApp: 'Connect WhatsApp',
+      refresh: 'Refresh',
+    },
+
+    // Admin
+    admin: {
+      grantCredits: {
+        title: 'Grant Credits',
+        description: 'Add credits to {{user}}\'s account',
+        creditAmount: 'Credit Amount',
+        creditPlaceholder: 'Enter number of credits',
+        currentBalance: 'Current balance: {{count}} credits',
+        reasonLabel: 'Reason (optional)',
+        reasonPlaceholder: 'e.g., Compensation for service issue, promotional bonus...',
+        auditNote: 'This will be logged for audit purposes',
+        cancel: 'Cancel',
+        granting: 'Granting...',
+        grantCredits: 'Grant Credits',
+        invalidAmount: 'Please enter a valid credit amount',
+        success: 'Successfully granted {{count}} credits to {{email}}',
+        failed: 'Failed to grant credits: {{error}}',
+      },
     },
   },
 } as const

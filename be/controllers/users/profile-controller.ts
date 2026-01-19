@@ -69,6 +69,72 @@ const getCurrentUserInformation = reqResAsyncHandler(
   }
 );
 
+const updateUserProfile = reqResAsyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = req?.user?.id;
+    const userEmail = req?.user?.email;
+
+    if (!(userId && userEmail)) {
+      return sendR(
+        res,
+        STATUS_RESPONSE.UNAUTHORIZED,
+        "User not authenticated."
+      );
+    }
+
+    const { avatar_url, first_name, last_name } = req.body;
+
+    // Update user metadata in Supabase Auth
+    if (avatar_url !== undefined || first_name !== undefined || last_name !== undefined) {
+      const metadata: any = {};
+      if (avatar_url !== undefined) metadata.avatar_url = avatar_url;
+      if (first_name !== undefined) metadata.first_name = first_name;
+      if (last_name !== undefined) metadata.last_name = last_name;
+
+      const { error: authError } = await SUPABASE.auth.admin.updateUserById(userId, {
+        user_metadata: metadata
+      });
+
+      if (authError) {
+        return sendR(
+          res,
+          STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
+          "Failed to update user profile."
+        );
+      }
+    }
+
+    // Update custom user fields in database if needed
+    if (first_name !== undefined || last_name !== undefined) {
+      const dbUpdate: any = {};
+      if (first_name !== undefined) dbUpdate.first_name = first_name;
+      if (last_name !== undefined) dbUpdate.last_name = last_name;
+
+      const { error: dbError } = await SUPABASE
+        .from("users")
+        .update(dbUpdate)
+        .eq("id", userId);
+
+      if (dbError) {
+        return sendR(
+          res,
+          STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
+          "Failed to update user profile in database."
+        );
+      }
+    }
+
+    // Invalidate cache
+    await invalidateUserProfileCache(userId);
+
+    return sendR(
+      res,
+      STATUS_RESPONSE.SUCCESS,
+      "User profile updated successfully."
+    );
+  }
+);
+
 const getUserInformationById = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     const { data, error } = await SUPABASE.from("users")
@@ -204,5 +270,6 @@ const deActivateUser = reqResAsyncHandler(
 export const profileController = {
   getCurrentUserInformation,
   getUserInformationById,
+  updateUserProfile,
   deActivateUser,
 };

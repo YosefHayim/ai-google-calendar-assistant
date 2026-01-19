@@ -1,14 +1,15 @@
 'use client'
 
+import type { ActionResult, ColorDefinition, Event } from '../types'
+import { Calendar, CheckCircle2, Clock, FileText, Mic, Send, Sparkles, Tag, X } from 'lucide-react'
 import { DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { formatDate, formatTimeRange } from '@/lib/formatUtils'
+
+import { AIVoiceInput } from '@/components/ui/ai-voice-input'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
-import { Badge } from '@/components/ui/badge'
-import { Calendar, Clock, FileText, Tag, Sparkles, Send, Mic, X, CheckCircle2 } from 'lucide-react'
-import { AIVoiceInput } from '@/components/ui/ai-voice-input'
-import { formatDate, formatTimeRange } from '@/lib/formatUtils'
 import { cn } from '@/lib/utils'
-import type { Event, ColorDefinition, ActionResult } from '../types'
 
 interface ViewEventDetailsProps {
   selectedEvent: Event | null
@@ -216,7 +217,7 @@ function AllyInputArea({
   return (
     <div className="space-y-2">
       {isRecording ? (
-        <div className="relative flex flex-col items-center justify-center bg-background dark:bg-secondary border border dark:border rounded-xl p-4 transition-all">
+        <div className="relative flex flex-col items-center justify-center bg-background dark:bg-secondary border-border rounded-xl p-4 transition-all">
           <AIVoiceInput
             onStart={startRecording}
             onStop={(duration, text) => stopRecording(text ?? undefined)}
@@ -231,7 +232,7 @@ function AllyInputArea({
             variant="ghost"
             size="icon"
             onClick={cancelRecording}
-            className="absolute top-2 right-2 text-muted-foreground hover:text-zinc-600"
+            className="absolute top-2 right-2 text-muted-foreground hover:text-foreground"
           >
             <X className="w-4 h-4" />
           </Button>

@@ -1,15 +1,15 @@
 'use client'
 
+import { Clock, MessageSquare, Mic, Send, Shield, Smartphone, Zap } from 'lucide-react'
 import React, { useState } from 'react'
-import { motion } from 'framer-motion'
-import { Mic, MessageSquare, Send, Smartphone, Shield, Zap, Clock } from 'lucide-react'
-import { usePostHog } from 'posthog-js/react'
 
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button'
 import { SparklesCore } from '@/components/ui/sparkles'
+import { motion } from 'framer-motion'
 import { toast } from 'sonner'
+import { usePostHog } from 'posthog-js/react'
 import { waitingListService } from '@/services/waiting-list.service'
 
 const platforms = [
@@ -53,13 +53,13 @@ const WaitingList: React.FC = () => {
         has_name: !!name,
       })
 
-      toast.success('Welcome to the waiting list!', {
+      toast.success(t('toast.waitingListWelcome'), {
         description: `You're #${result.data?.position} in line. We'll notify you when it's your turn!`,
       })
       setEmail('')
       setName('')
     } catch (error: any) {
-      toast.error('Error', {
+      toast.error(t('toast.waitingListError'), {
         description: error.response?.data?.message || 'Failed to join waiting list. Please try again.',
       })
     } finally {

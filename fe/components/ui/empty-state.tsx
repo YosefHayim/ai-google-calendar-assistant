@@ -1,8 +1,9 @@
 'use client'
 
 import * as React from 'react'
-import { cn } from '@/lib/utils'
+
 import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 
 type EmptyStateSize = 'sm' | 'md' | 'lg'
 
@@ -44,8 +45,8 @@ export function EmptyState({ icon, title, description, action, size = 'md', clas
 
   return (
     <div className={cn('flex flex-col items-center justify-center text-center', sizes.container, className)}>
-      <div className={cn('text-zinc-300 dark:text-zinc-600', sizes.icon)}>{icon}</div>
-      <p className={cn('font-medium text-zinc-700 dark:text-zinc-300', sizes.title)}>{title}</p>
+      <div className={cn('text-muted-foreground', sizes.icon)}>{icon}</div>
+      <p className={cn('font-medium text-foreground', sizes.title)}>{title}</p>
       {description && (
         <p className={cn('text-muted-foreground dark:text-muted-foreground max-w-xs', sizes.description)}>{description}</p>
       )}

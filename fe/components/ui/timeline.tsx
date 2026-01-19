@@ -1,9 +1,9 @@
 'use client'
 
-import { useScroll, useTransform, motion } from 'framer-motion'
-import { Clock } from 'lucide-react'
 import React, { useEffect, useRef, useState } from 'react'
+import { motion, useScroll, useTransform } from 'framer-motion'
 
+import { Clock } from 'lucide-react'
 import { EmptyState } from '@/components/ui/empty-state'
 
 interface TimelineEntry {
@@ -61,10 +61,10 @@ export const Timeline = ({ data }: { data: TimelineEntry[] }) => {
         {data.map((item, index) => (
           <div key={index} className="flex justify-start pt-10 md:pt-40 md:gap-10">
             <div className="sticky flex flex-col md:flex-row z-40 items-center top-40 self-start max-w-xs lg:max-w-sm md:w-full">
-              <div className="h-10 absolute left-3 md:left-3 w-10 rounded-full bg-background dark:bg-secondary flex items-center justify-center border border dark:border">
-                <div className="h-4 w-4 rounded-full bg-accent dark:bg-secondary border border-zinc-300 dark:border-zinc-700" />
+              <div className="h-10 absolute left-3 md:left-3 w-10 rounded-full bg-background dark:bg-secondary flex items-center justify-center border-border">
+                <div className="h-4 w-4 rounded-full bg-accent dark:bg-secondary border border-border" />
               </div>
-              <h3 className="hidden md:block text-xl md:pl-20 md:text-5xl font-bold text-zinc-300 dark:text-zinc-800 ">
+              <h3 className="hidden md:block text-xl md:pl-20 md:text-5xl font-bold text-muted-foreground">
                 {item.title}
               </h3>
             </div>

@@ -102,7 +102,7 @@ export const QuickEventDialog: React.FC<QuickEventDialogProps> = ({ isOpen, onCl
       setState('recording')
       setAllyMessage('Listening... Click again to stop.')
     } catch {
-      toast.error('Microphone access denied', {
+      toast.error(t('toast.microphoneAccessDenied'), {
         description: 'Please allow microphone access to use voice input.',
       })
     }
@@ -138,7 +138,7 @@ export const QuickEventDialog: React.FC<QuickEventDialogProps> = ({ isOpen, onCl
         setParsedEvent(data.parsed ?? null)
         setCalendarName(data.calendarName ?? '')
         setEventUrl(data.eventUrl ?? '')
-        toast.success('Event created successfully')
+        toast.success(t('toast.eventCreated'))
         onEventCreated?.()
       } else if (response.requiresConfirmation) {
         const conflictData = response.data
@@ -167,7 +167,7 @@ export const QuickEventDialog: React.FC<QuickEventDialogProps> = ({ isOpen, onCl
       setParsedEvent(response.data.parsed ?? null)
       setCalendarName(response.data.calendarName ?? '')
       setEventUrl(response.data.eventUrl ?? '')
-      toast.success('Event created successfully')
+      toast.success(t('toast.eventCreated'))
       onEventCreated?.()
     } else {
       setState('error')
@@ -241,7 +241,7 @@ Examples:
                 className={`absolute right-3 top-3 rounded-full ${
                   state === 'recording'
                     ? 'bg-destructive text-white animate-pulse hover:bg-destructive'
-                    : 'bg-accent dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-300 dark:hover:bg-zinc-600'
+                    : 'bg-accent text-muted-foreground hover:bg-muted'
                 }`}
               >
                 {state === 'recording' ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}

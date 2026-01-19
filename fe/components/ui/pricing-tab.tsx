@@ -2,10 +2,10 @@
 'use client'
 
 import * as React from 'react'
-import { motion } from 'framer-motion'
 
-import { cn } from '@/components/../lib/utils'
 import { Badge } from '@/components/ui/badge'
+import { cn } from '@/components/../lib/utils'
+import { motion } from 'framer-motion'
 
 interface TabProps {
   text: string
@@ -29,7 +29,7 @@ export const Tab: React.FC<TabProps> = ({ text, selected, setSelected, discount 
         <motion.span
           layoutId="tab"
           transition={{ type: 'spring', duration: 0.4 }}
-          className="absolute inset-0 z-0 rounded-full bg-background dark:bg-zinc-700 shadow-sm"
+          className="absolute inset-0 z-0 rounded-full bg-background dark:bg-secondary shadow-sm"
         />
       )}
       {discount && (

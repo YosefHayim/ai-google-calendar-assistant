@@ -1,20 +1,20 @@
 'use client'
 
 import * as React from 'react'
+
 import { Calendar, Info } from 'lucide-react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
 
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
-import { useLanguage } from '@/contexts/LanguageContext'
-import type { MonthlyPatternDataPoint } from '@/types/analytics'
-import { formatNumber } from '@/lib/dataUtils'
 import { ChartTypeWrapper } from './ChartTypeWrapper'
-
-import { MonthlyPatternBarChart } from './monthly-pattern-charts/MonthlyPatternBarChart'
-import { MonthlyPatternLineChart } from './monthly-pattern-charts/MonthlyPatternLineChart'
 import { MonthlyPatternAreaChart } from './monthly-pattern-charts/MonthlyPatternAreaChart'
+import { MonthlyPatternBarChart } from './monthly-pattern-charts/MonthlyPatternBarChart'
+import type { MonthlyPatternDataPoint } from '@/types/analytics'
+import { MonthlyPatternLineChart } from './monthly-pattern-charts/MonthlyPatternLineChart'
+import { Skeleton } from '@/components/ui/skeleton'
+import { formatNumber } from '@/lib/dataUtils'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 const CHART_TYPES = ['bar', 'line', 'area'] as const
 type MonthlyChartType = (typeof CHART_TYPES)[number]
@@ -117,7 +117,7 @@ export const MonthlyPatternDashboard: React.FC<MonthlyPatternDashboardProps> = (
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-6 w-6 text-muted-foreground hover:text-zinc-600 dark:hover:text-zinc-300"
+                  className="h-6 w-6 text-muted-foreground hover:text-foreground"
                 >
                   <Info size={16} />
                 </Button>
@@ -125,7 +125,7 @@ export const MonthlyPatternDashboard: React.FC<MonthlyPatternDashboardProps> = (
               <HoverCardContent>
                 <div className="space-y-2">
                   <h4 className="font-semibold text-sm">{t('analytics.charts.monthlyPattern')}</h4>
-                  <p className="text-xs text-zinc-600 dark:text-muted-foreground">
+                  <p className="text-xs text-muted-foreground">
                     {t('analytics.charts.monthlyPatternTooltip')}
                   </p>
                 </div>

@@ -126,13 +126,13 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
           </DialogHeader>
 
           {/* Primary Info Grid (Time & Location) */}
-          <div className="bg-muted dark:bg-secondary/50 rounded-lg border border-zinc-100 dark:border p-4 space-y-2">
+          <div className="bg-muted dark:bg-secondary/50 rounded-lg border-border p-4 space-y-2">
             {/* Time Range */}
             <div className="flex items-center gap-3 text-sm">
               <div className="w-5 flex justify-center">
                 <CalendarClock className="w-4 h-4 text-muted-foreground" />
               </div>
-              <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 text-zinc-700 dark:text-zinc-300 font-medium">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 text-foreground font-medium">
                 <span>{formatDate(event.start.dateTime || event.start.date)}</span>
                 <ArrowRight className="w-3 h-3 text-muted-foreground hidden sm:block" />
                 <span className="sm:hidden text-xs text-muted-foreground">to</span>
@@ -145,7 +145,7 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
               <div className="w-5 flex justify-center">
                 <Hourglass className="w-4 h-4 text-muted-foreground" />
               </div>
-              <div className="flex items-center gap-2 text-zinc-600 dark:text-muted-foreground">
+              <div className="flex items-center gap-2 text-muted-foreground">
                 <span>
                   {formatDistanceStrict(
                     new Date(event.start.dateTime || event.start.date || ''),
@@ -170,7 +170,7 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
                   href={`https://maps.google.com/?q=$?q=${encodeURIComponent(event.location)}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="text-zinc-600 dark:text-muted-foreground hover:text-primary underline decoration-dotted underline-offset-4"
+                  className="text-muted-foreground hover:text-primary underline decoration-dotted underline-offset-4"
                 >
                   {event.location}
                 </a>
@@ -184,7 +184,7 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
               <div className="w-5 flex justify-center shrink-0 mt-1">
                 <AlignLeft className="w-4 h-4 text-muted-foreground" />
               </div>
-              <div className="text-sm text-zinc-600 dark:text-zinc-300 whitespace-pre-wrap leading-relaxed overflow-hidden">
+              <div className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed overflow-hidden">
                 <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(event.description) }} />
               </div>
             </div>
@@ -192,7 +192,7 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
 
           {/* People Section */}
           {(event.organizer || (event.attendees && event.attendees.length > 0)) && (
-            <div className="border-t border-zinc-100 dark:border pt-4 space-y-4">
+            <div className="border-t border-border pt-4 space-y-4">
               {event.organizer && (
                 <div className="flex items-center gap-3">
                   <div className="w-5 flex justify-center">
@@ -200,7 +200,7 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
                   </div>
                   <div className="text-sm w-auto overflow-hidden">
                     <span className="text-muted-foreground dark:text-muted-foreground text-xs uppercase font-bold mr-2">Organizer</span>
-                    <span className="text-zinc-700 dark:text-zinc-300 font-medium ">{event.organizer.email}</span>
+                    <span className="text-foreground font-medium ">{event.organizer.email}</span>
                   </div>
                 </div>
               )}
@@ -221,7 +221,7 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
                           className="flex items-center justify-between text-sm bg-muted dark:bg-secondary/50 rounded px-2 py-1.5"
                         >
                           <span
-                            className="text-zinc-600 dark:text-muted-foreground truncate max-w-[200px]"
+                            className="text-muted-foreground truncate max-w-[200px]"
                             title={attendee.email}
                           >
                             {attendee.email}
@@ -233,7 +233,7 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
                                   ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
                                   : attendee.responseStatus === 'declined'
                                     ? 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400'
-                                    : 'bg-accent text-zinc-600 dark:bg-zinc-700 dark:text-muted-foreground'
+                                    : 'bg-accent text-muted-foreground'
                               }`}
                             >
                               {attendee.responseStatus}
@@ -249,7 +249,7 @@ const EventDetailsDialog: React.FC<EventDetailsDialogProps> = ({
           )}
 
           {/* Footer Meta */}
-          <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-zinc-100 dark:border">
+          <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-border">
             <div className="flex items-center gap-4 text-xs text-muted-foreground">
               {event.created && (
                 <div className="flex items-center gap-1" title="Date Created">

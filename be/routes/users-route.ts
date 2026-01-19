@@ -175,6 +175,7 @@ router.post(
   authController.refreshToken
 );
 
+router.patch("/profile", supabaseAuth(), profileController.updateUserProfile);
 router.delete("/", supabaseAuth(), profileController.deActivateUser);
 
 router.get("/callback", googleIntegrationController.generateAuthGoogleUrl);

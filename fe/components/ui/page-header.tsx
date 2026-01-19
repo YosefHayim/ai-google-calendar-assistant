@@ -1,8 +1,9 @@
 'use client'
 
 import * as React from 'react'
-import { cn } from '@/lib/utils'
+
 import { InfoTooltip } from '@/components/ui/info-tooltip'
+import { cn } from '@/lib/utils'
 
 interface PageHeaderProps {
   title: string
@@ -46,7 +47,7 @@ export function SectionHeader({ title, tooltip, action, className }: SectionHead
   return (
     <div className={cn('flex items-center justify-between gap-2', className)}>
       <div className="flex items-center gap-1.5">
-        <h3 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">{title}</h3>
+        <h3 className="text-sm font-semibold text-foreground">{title}</h3>
         {tooltip && <InfoTooltip>{tooltip}</InfoTooltip>}
       </div>
       {action}

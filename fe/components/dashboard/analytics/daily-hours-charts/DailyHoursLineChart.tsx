@@ -62,7 +62,7 @@ export const DailyHoursLineChart: React.FC<DailyHoursLineChartProps> = ({ data, 
         <ChartTooltip
           content={
             <ChartTooltipContent
-              className="w-[180px] bg-secondary dark:bg-secondary text-white border-zinc-700"
+              className="w-[180px] bg-secondary dark:bg-secondary text-primary-foreground border-border"
               nameKey="hours"
               labelFormatter={(value, payload) => {
                 if (payload && payload[0]) {

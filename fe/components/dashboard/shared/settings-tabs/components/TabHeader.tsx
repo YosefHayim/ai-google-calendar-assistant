@@ -1,10 +1,11 @@
 'use client'
 
-import React from 'react'
-import { Info } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import { CardHeader, CardTitle } from '@/components/ui/card'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+
+import { Button } from '@/components/ui/button'
+import { Info } from 'lucide-react'
+import React from 'react'
 
 interface TabHeaderProps {
   title: string
@@ -30,7 +31,7 @@ export const TabHeader: React.FC<TabHeaderProps> = ({ title, tooltip, icon }) =>
                   type="button"
                   variant="ghost"
                   size="icon"
-                  className="h-5 w-5 text-muted-foreground hover:text-zinc-600 dark:hover:text-zinc-300"
+                  className="h-5 w-5 text-muted-foreground hover:text-foreground"
                   aria-label={`More info about ${title}`}
                 >
                   <Info className="w-3.5 h-3.5" />

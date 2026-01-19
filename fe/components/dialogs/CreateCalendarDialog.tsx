@@ -32,7 +32,7 @@ const CreateCalendarDialog: React.FC<CreateCalendarDialogProps> = ({ isOpen, onC
 
   const handleCreate = async () => {
     if (!calendarPrompt.trim()) {
-      toast.error('Please enter a name for your calendar')
+      toast.error(t('toast.calendarNameRequired'))
       return
     }
 
@@ -44,16 +44,16 @@ const CreateCalendarDialog: React.FC<CreateCalendarDialogProps> = ({ isOpen, onC
       })
 
       if (response.status === 'success') {
-        toast.success('Calendar created successfully!')
+        toast.success(t('toast.calendarCreated'))
         queryClient.invalidateQueries({ queryKey: ['calendars-list'] })
         onSuccess?.()
         handleClose()
       } else {
-        toast.error(response.message || 'Failed to create calendar')
+        toast.error(response.message || t('toast.calendarCreateFailed'))
       }
     } catch (error) {
       console.error('Error creating calendar:', error)
-      toast.error('Failed to create calendar. Please try again.')
+      toast.error(t('toast.calendarCreateFailedGeneric'))
     } finally {
       setIsCreatingCalendar(false)
     }
@@ -77,7 +77,7 @@ const CreateCalendarDialog: React.FC<CreateCalendarDialogProps> = ({ isOpen, onC
             value={calendarPrompt}
             onChange={(e) => setCalendarPrompt(e.target.value)}
             placeholder="e.g., Work Projects, Personal Goals, Fitness"
-            className="w-full p-3 rounded-md border border dark:border bg-background dark:bg-secondary text-foreground dark:text-primary-foreground text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-300 focus:border-transparent placeholder:text-muted-foreground"
+            className="w-full p-3 rounded-md border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent placeholder:text-muted-foreground"
             disabled={isCreatingCalendar}
             autoFocus
             onKeyDown={(e) => {

@@ -59,12 +59,12 @@ export const ConversationList: React.FC<ConversationListProps> = ({
         const shareUrl = `${window.location.origin}/shared/${result.token}`
         await navigator.clipboard.writeText(shareUrl)
         setCopiedId(conversationId)
-        toast.success('Share link copied to clipboard', {
+        toast.success(t('toast.shareLinkCopied'), {
           description: 'Link expires in 7 days',
         })
         setTimeout(() => setCopiedId(null), 2000)
       } else {
-        toast.error('Failed to create share link')
+        toast.error(t('toast.shareLinkCreateFailed'))
       }
     } catch {
       toast.error('Failed to create share link')

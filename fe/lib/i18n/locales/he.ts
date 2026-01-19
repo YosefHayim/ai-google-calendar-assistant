@@ -558,6 +558,20 @@ export const he: TranslationShape = {
     themeLight: 'בהיר',
     themeDark: 'כהה',
     themeSystem: 'מערכת',
+    appearance: 'מראה',
+    appearanceTooltip: 'בחר את ערכת הצבעים המועדפת עליך לממשק',
+    defaultTimezone: 'אזור זמן ברירת מחדל',
+    timezoneTooltip: 'אירועים יתוזמנו באזור זמן זה אלא אם צוין אחרת',
+    timeFormat: 'פורמט זמן',
+    timeFormatTooltip: 'פורמט תצוגה לשעות אירועים בכל האפליקציה',
+    timeFormat12h: '12 שעות (AM/PM)',
+    timeFormat24h: '24 שעות',
+    realTimeLocation: 'מיקום בזמן אמת',
+    realTimeLocationTooltip: 'כאשר מופעל, Ally משתמש במיקום הנוכחי שלך כדי לספק הקשר ליצירת אירועים (למשל, הצעת מקומות בקרבת מקום)',
+    memberSince: 'חבר מ',
+    languageTooltip: 'בחר את השפה המועדפת עליך לממשק',
+    general: 'כללי',
+    generalDescription: 'נהל את הפרופיל וההעדפות שלך',
   },
 
   // Dialogs
@@ -814,8 +828,13 @@ export const he: TranslationShape = {
       free: 'חינם',
     },
     trial: {
-      daysLeft: '{{days}} ימים נותרו בתקופת הניסיון',
+      daysLeft: '{{count}} יום נותר',
       fullAccess: 'תקופת הניסיון כוללת גישה מלאה לכל התכונות. ללא חיוב עד סוף תקופת הניסיון.',
+      expired: 'תקופת הניסיון הסתיימה',
+      expiredDescription: 'תקופת הניסיון שלך הסתיימה – שדרג עכשיו כדי לשמור על הגישה.',
+      activeDescription: 'תקופת הניסיון החינמית שלך מסתיימת בעוד {{count}} יום. אל תאבד גישה לעוזר הAI שלך.',
+      remaining: 'נותרו',
+      getDeal: 'קבל את ההצעה',
     },
     moneyBack: {
       title: 'ערבות החזר כספי של 30 יום פעילה',
@@ -865,6 +884,270 @@ export const he: TranslationShape = {
       refundDescription: 'האם אתה בטוח שברצונך לבקש החזר מלא? המנוי שלך יבוטל מיד והגישה תבוטל.',
       refundButton: 'בקש החזר',
       nevermindButton: 'ביטול',
+    },
+
+    // Toast messages
+    toast: {
+      // General settings
+      timezoneUpdated: 'אזור זמן עודכן',
+      timezoneUpdateFailed: 'נכשל בעדכון אזור זמן',
+      timeFormatUpdated: 'פורמט זמן עודכן',
+      timeFormatUpdateFailed: 'נכשל בעדכון פורמט זמן',
+      realTimeLocationEnabled: 'מיקום בזמן אמת הופעל',
+      realTimeLocationDisabled: 'מיקום בזמן אמת בוטל',
+      locationEnableFailed: 'נכשל בהפעלת מיקום',
+      locationDisableFailed: 'נכשל בביטול מיקום',
+      locationAccessDenied: 'גישה למיקום נדחתה',
+      locationAccessDeniedDescription: 'אנא אפשר גישה למיקום בהגדרות הדפדפן שלך.',
+
+      // Integrations
+      crossPlatformSyncEnabled: 'סנכרון בין פלטפורמות הופעל',
+      crossPlatformSyncDisabled: 'סנכרון בין פלטפורמות בוטל',
+      integrationUpdateFailed: 'נכשל בעדכון העדפה',
+
+      // Assistant settings
+      voiceInputError: 'שגיאת קלט קולי',
+      customInstructionsSaved: 'הוראות מותאמות נשמרו',
+      instructionsSaveFailed: 'נכשל בשמירת הוראות',
+      contextualSchedulingEnabled: 'תזמון הקשרי הופעל',
+      contextualSchedulingDisabled: 'תזמון הקשרי בוטל',
+      memoryManagementUpdateFailed: 'נכשל בעדכון העדפה',
+
+      // Chat
+      allyResponded: 'אלי ענתה',
+      memoryUpdated: 'זיכרון עודכן',
+      regeneratingResponse: 'מייצר תגובה מחדש...',
+
+      // Gaps
+      gapsSettingsSaved: 'הגדרות נשמרו בהצלחה',
+      gapsSettingsSaveFailed: 'נכשל בשמירת הגדרות',
+
+      // Conversations
+      titleUpdated: 'כותרת עודכנה בהצלחה',
+      titleUpdateFailed: 'נכשל בעדכון כותרת',
+      shareLinkCopied: 'קישור שיתוף הועתק ללוח',
+      shareLinkCreateFailed: 'נכשל ביצירת קישור שיתוף',
+      conversationPinned: 'שיחה נעוצה בהצלחה',
+      conversationUnpinned: 'שיחה בוטלה נעיצתה בהצלחה',
+      conversationPinFailed: 'נכשל בנעיצת שיחה',
+
+      // Archived conversations
+      conversationRestored: 'שיחה שוחזרה בהצלחה',
+      conversationRestoreFailed: 'נכשל בשחזור שיחה',
+      allConversationsRestored: 'כל השיחות שנמחקו שוחזרו בהצלחה',
+      conversationsRestoreFailed: 'נכשל בשחזור שיחות',
+
+      // Settings modal
+      googleCalendarDisconnected: 'Google Calendar נותק',
+      googleCalendarDisconnectFailed: 'נכשל בניתוק Google Calendar',
+      conversationsDeleted: 'שיחות נמחקו',
+      conversationsDeleteFailed: 'נכשל במחיקת שיחות',
+      memoryCleared: 'זיכרון נמחק',
+      memoryClearFailed: 'נכשל באיפוס זיכרון',
+      accountDeleted: 'חשבון נמחק בהצלחה',
+      accountDeleteFailed: 'נכשל במחיקת חשבון',
+
+      // Quick event
+      microphoneAccessDenied: 'גישה למיקרופון נדחתה',
+      eventCreated: 'אירוע נוצר בהצלחה',
+
+      // Notifications
+      reminderPreferencesSaved: 'העדפות תזכורת נשמרו',
+      reminderPreferencesSaveFailed: 'נכשל בשמירת העדפות תזכורת',
+      soundNotificationsEnabled: 'התראות קוליות הופעלו',
+      soundNotificationsDisabled: 'התראות קוליות בוטלו',
+      browserNotificationPermissionDenied: 'הרשאת התראות דפדפן נדחתה',
+      browserNotificationsEnabled: 'התראות דפדפן הופעלו',
+      notificationPreferencesSaved: 'העדפות התראות נשמרו',
+      notificationPreferencesSaveFailed: 'נכשל בשמירת העדפות התראות',
+
+      // Daily briefing
+      dailyBriefingPreferencesSaved: 'העדפות תדרוך יומי נשמרו',
+      dailyBriefingPreferencesSaveFailed: 'נכשל בשמירת העדפות תדרוך יומי',
+
+      // Voice settings
+      voiceResponseEnabled: 'תגובות קוליות הופעלו',
+      voiceResponseDisabled: 'תגובות קוליות בוטלו',
+      voicePreferenceUpdateFailed: 'נכשל בעדכון העדפה קולית',
+      voiceChanged: 'קול שונה ל-{{voice}}',
+      voiceUpdateFailed: 'נכשל בעדכון קול',
+      playbackSpeedChanged: 'מהירות השמעה שונתה ל-{{speed}}x',
+      playbackSpeedUpdateFailed: 'נכשל בעדכון מהירות השמעה',
+      voicePreviewFailed: 'נכשל בהשמעת תצוגה מקדימה של הקול',
+
+      // Messages
+      messageCopied: 'הודעה הועתקה ללוח',
+      messageCopyFailed: 'נכשל בהעתקת הודעה',
+
+      // Audio playback
+      audioStopped: 'אודיו הופסק',
+      audioPlaying: 'מנגן אודיו...',
+      audioPlayFailed: 'נכשל בהשמעת אודיו',
+
+      // Date range picker
+      dateRangeApplied: 'טווח תאריכים הוחל',
+      dateRangeSelectBoth: 'אנא בחר תאריך התחלה וסיום',
+
+      // Calendar creation
+      calendarNameRequired: 'אנא הכנס שם ללוח השנה שלך',
+      calendarCreated: 'לוח שנה נוצר בהצלחה!',
+      calendarCreateFailed: 'נכשל ביצירת לוח שנה',
+      calendarCreateFailedGeneric: 'נכשל ביצירת לוח שנה. אנא נסה שוב.',
+
+      // Waiting list
+      waitingListWelcome: 'ברוך הבא לרשימת ההמתנה!',
+      waitingListError: 'שגיאה',
+
+      // Admin
+      userImpersonationFailed: 'נכשל בחיקוי משתמש',
+      userSessionsRevoked: 'סשני משתמש בוטלו',
+      userSessionsRevokeFailed: 'נכשל בביטול סשנים',
+
+      // Broadcast
+      broadcastTitleRequired: 'כותרת והודעה נדרשים',
+      broadcastSent: 'שידור נשלח ל-{{count}} משתמשים',
+      broadcastSendFailed: 'נכשל בשליחת שידור',
+
+      // Billing
+      alreadyOnFreePlan: 'אתה כבר בתוכנית החינמית',
+      billingPortalOpenFailed: 'נכשל בפתיחת פורטל חיוב',
+      checkoutProcessFailed: 'נכשל בעיבוד התשלום. אנא נסה שוב.',
+      redirectingToCheckout: 'מפנה לתשלום להגדרת חיוב...',
+
+      // Voice preview
+      voicePreviewError: 'נכשל בהשמעת תצוגה מקדימה של הקול',
+
+      // Chat input
+      maxImagesAllowed: 'מקסימום {{count}} תמונות מותרות',
+      imageProcessingFailed: 'נכשל בעיבוד תמונות',
+      unsupportedImageType: 'סוג תמונה לא נתמך: {{type}}',
+      imageTooLarge: 'תמונה גדולה מדי (מקסימום {{size}}MB)',
+      pastedImagesProcessingFailed: 'נכשל בעיבוד תמונות מודבקות',
+    },
+
+    // UI Text
+    ui: {
+      // Common UI elements
+      stop: 'עצור',
+      voice: 'קול',
+      time: 'זמן',
+      organizer: 'מארגן',
+      created: 'נוצר',
+      transactionId: 'מזהה עסקה',
+      noInvoiceAvailable: 'אין חשבונית זמינה',
+      noTransactionsYet: 'אין עסקאות עדיין',
+      date: 'תאריך',
+      description: 'תיאור',
+      amount: 'סכום',
+      status: 'סטטוס',
+      invoice: 'חשבונית',
+      totalGaps: 'סה"כ פערים',
+      highConfidence: 'ביטחון גבוה',
+      potentialHours: 'שעות פוטנציאליות',
+      avgGapSize: 'גודל פערים ממוצע',
+      analysisPeriod: 'תקופת ניתוח',
+      chat: 'צ\'אט',
+      gaps: 'פערים',
+      analytics: 'ניתוחים',
+      settings: 'הגדרות',
+      after: 'אחרי:',
+      before: 'לפני:',
+      fillGap: 'מלא פערים עם אירוע',
+      eventTitle: 'כותרת אירוע *',
+      skipThisGap: 'דלג על פערים זה',
+      reason: 'סיבה (אופציונלי)',
+      integrations: 'אינטגרציות',
+      telegram: 'Telegram',
+      whatsapp: 'WhatsApp',
+      slack: 'Slack',
+      googleCalendar: 'Google Calendar',
+      failedToLoadCalendarData: 'נכשל בטעינת נתוני לוח שנה.',
+      noActiveCalendarSourcesFound: 'לא נמצאו מקורות לוח שנה פעילים.',
+      connectWhatsApp: 'חבר WhatsApp',
+      neuralLinks: 'קישורים נוירונים',
+      executiveGradeAI: 'עוזר הAI ברמה מנהלתית שנועד לבעלי עסקים להגן על עבודתם העמוקה. מגישה חקירה חינמית לכוח מנהלתית בלתי מוגבל. בנוי על פרוטוקול הנוירונים של Ally.',
+      systemOnline: 'כל המערכות תקינות',
+      systemOffline: 'המערכת לא זמינה',
+      systemChecking: 'בודק סטטוס...',
+      chatOnTelegram: 'שוחח עם Ally בTelegram',
+      checkingServices: 'בודק שירותים...',
+      serverUnreachable: 'שרת לא נגיש',
+      serverOnline: 'שרת מקוון',
+      uptime: 'זמן פעולה',
+      websockets: 'WebSockets',
+      connections: 'חיבורים',
+      privacyPolicy: 'מדיניות פרטיות',
+      termsOfService: 'תנאי שירות',
+      product: 'מוצר',
+      pricing: 'תמחור',
+      executivePower: 'כוח מנהלתית',
+      company: 'חברה',
+      aboutUs: 'אודותינו',
+      careers: 'קריירה',
+      resources: 'משאבים',
+      blog: 'יומן שינויים',
+      changeLog: 'יומן שינויים',
+    },
+
+    // Sidebar/User Footer
+    sidebar: {
+      upgradeToPro: 'שדרג לפרו',
+      account: 'חשבון',
+      billing: 'חיוב',
+      notifications: 'התראות',
+      settings: 'הגדרות',
+      logOut: 'התנתק',
+    },
+
+    // Integrations
+    integrations: {
+      title: 'אינטגרציות',
+      description: 'חבר ונהל את מרחב העבודה המנהלי שלך.',
+      telegram: {
+        title: 'Telegram',
+        description: 'תקשר עם אלי ישירות דרך הבוט שלך בטלגרם.',
+        settings: 'הגדרות',
+      },
+      whatsapp: {
+        title: 'WhatsApp',
+        description: 'סנכרן את אלי עם WhatsApp להעברה מאובטחת של הודעות.',
+        connect: 'חבר',
+      },
+      slack: {
+        title: 'Slack',
+        description: 'הוסף את אלי למרחב העבודה שלך ב-Slack לניהול לוח שנה קבוצתי.',
+      },
+      googleCalendar: {
+        title: 'Google Calendar',
+        failedToLoad: 'נכשל בטעינת נתוני לוח שנה.',
+        noSources: 'לא נמצאו מקורות לוח שנה פעילים.',
+      },
+      status: {
+        connected: 'מחובר',
+        disconnected: 'מנותק',
+      },
+      connectWhatsApp: 'חבר WhatsApp',
+      refresh: 'רענן',
+    },
+
+    // Admin
+    admin: {
+      grantCredits: {
+        title: 'הענק קרדיטים',
+        description: 'הוסף קרדיטים לחשבון של {{user}}',
+        creditAmount: 'כמות קרדיטים',
+        creditPlaceholder: 'הכנס מספר קרדיטים',
+        currentBalance: 'יתרה נוכחית: {{count}} קרדיטים',
+        reasonLabel: 'סיבה (אופציונלי)',
+        reasonPlaceholder: 'למשל: פיצוי עבור בעיית שירות, בונוס קידומי...',
+        auditNote: 'זה יירשם למטרות ביקורת',
+        cancel: 'ביטול',
+        granting: 'מעניק...',
+        grantCredits: 'הענק קרדיטים',
+        invalidAmount: 'אנא הכנס כמות קרדיטים תקינה',
+        success: '{{count}} קרדיטים הוענקו בהצלחה ל-{{email}}',
+        failed: 'נכשל בהענקת קרדיטים: {{error}}',
+      },
     },
   },
 } as const

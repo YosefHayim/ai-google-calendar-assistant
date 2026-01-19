@@ -148,7 +148,7 @@ const TimeSavedChart: React.FC<TimeSavedChartProps> = ({ data }) => {
       {/* Tooltip Overlay */}
       {hoveredData && (
         <div
-          className="absolute p-2.5 text-xs bg-secondary dark:bg-secondary text-white rounded-lg shadow-xl pointer-events-none border border-white/10 dark:border-zinc-700"
+          className="absolute p-2.5 text-xs bg-secondary dark:bg-secondary text-primary-foreground rounded-lg shadow-xl pointer-events-none border-border"
           style={{
             left: `${(hoveredData.x / width) * 100}%`,
             top: `${(hoveredData.y / height) * 100}%`,

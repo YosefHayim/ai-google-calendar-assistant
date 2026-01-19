@@ -20,7 +20,7 @@ const statusConfig: Record<TransactionStatus, { label: string; icon: typeof Chec
     label: 'Paid',
     icon: CheckCircle2,
     className:
-      'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-800',
+      'bg-primary/5 text-primary border border-primary/20',
   },
   pending: {
     label: 'Pending',
@@ -31,7 +31,7 @@ const statusConfig: Record<TransactionStatus, { label: string; icon: typeof Chec
   failed: {
     label: 'Failed',
     icon: XCircle,
-    className: 'bg-destructive/5 dark:bg-red-900/30 text-red-700 dark:text-red-300 border border-destructive/20 dark:border-red-800',
+    className: 'bg-destructive/5 text-destructive border border-destructive/20',
   },
 }
 
@@ -88,10 +88,10 @@ function MobileTransactionCard({
       </Button>
 
       {isExpanded && (
-        <div className="px-4 pb-4 pt-2 border-t border-zinc-100 dark:border space-y-2">
+        <div className="px-4 pb-4 pt-2 border-t border-border space-y-2">
           <div className="flex items-center justify-between text-sm">
             <span className="text-muted-foreground dark:text-muted-foreground">Transaction ID</span>
-            <span className="font-mono text-xs text-zinc-700 dark:text-zinc-300">{transaction.id}</span>
+            <span className="font-mono text-xs text-muted-foreground">{transaction.id}</span>
           </div>
           {transaction.invoiceUrl ? (
             <Button
@@ -118,7 +118,7 @@ export function TransactionHistoryTable({ transactions, className }: Transaction
   if (transactions.length === 0) {
     return (
       <div className={cn('text-center py-12', className)}>
-        <Receipt className="w-12 h-12 mx-auto text-zinc-300 dark:text-zinc-700 mb-4" />
+        <Receipt className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
         <p className="text-muted-foreground dark:text-muted-foreground">No transactions yet</p>
       </div>
     )
@@ -140,7 +140,7 @@ export function TransactionHistoryTable({ transactions, className }: Transaction
           <TableBody>
             {transactions.map((transaction) => (
               <TableRow key={transaction.id}>
-                <TableCell className="text-zinc-600 dark:text-muted-foreground">
+                <TableCell className="text-muted-foreground">
                   {format(new Date(transaction.date), 'MMM dd, yyyy')}
                 </TableCell>
                 <TableCell className="font-medium text-foreground dark:text-primary-foreground">

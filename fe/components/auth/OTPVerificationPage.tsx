@@ -129,7 +129,7 @@ const OTPVerificationPage: React.FC = () => {
                           Send again
                         </Button>
                       ) : (
-                        <span className="text-muted-foreground dark:text-zinc-600 italic">
+                        <span className="text-muted-foreground italic">
                           Retry in 0:{timer.toString().padStart(2, '0')}
                         </span>
                       )}

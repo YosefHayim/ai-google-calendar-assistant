@@ -80,11 +80,11 @@ export function DefaultRemindersSection() {
     try {
       await updateReminderDefaultsAsync(reminderSettings)
       setIsReminderDirty(false)
-      toast.success('Reminder preferences saved', {
+      toast.success(t('toast.reminderPreferencesSaved'), {
         description: 'Your default reminders will be applied to new events.',
       })
     } catch {
-      toast.error('Failed to save reminder preferences')
+      toast.error(t('toast.reminderPreferencesSaveFailed'))
     }
   }
 
@@ -120,7 +120,7 @@ export function DefaultRemindersSection() {
                   id="use-calendar-defaults"
                   title="Use Calendar Defaults"
                   tooltip="Use the default reminders configured in your Google Calendar instead of custom ones"
-                  icon={<CalendarCog size={18} className="text-slate-500 dark:text-slate-400" />}
+                  icon={<CalendarCog size={18} className="text-muted-foreground" />}
                   control={
                     <CinematicGlowToggle
                       id={calendarDefaultsToggleId}
@@ -135,7 +135,7 @@ export function DefaultRemindersSection() {
             {reminderSettings.enabled && !reminderSettings.useCalendarDefaults && (
               <div className="space-y-2 pt-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Custom Reminders</span>
+                  <span className="text-sm font-medium text-foreground">Custom Reminders</span>
                   <span className="text-xs text-muted-foreground">
                     {reminderSettings.defaultReminders.length}/{MAX_REMINDERS}
                   </span>

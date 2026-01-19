@@ -56,20 +56,20 @@ export function NotificationsSection() {
 
   const handleSoundToggle = (enabled: boolean) => {
     setSoundEnabled(enabled)
-    toast.success(enabled ? 'Sound notifications enabled' : 'Sound notifications disabled')
+    toast.success(enabled ? t('toast.soundNotificationsEnabled') : t('toast.soundNotificationsDisabled'))
   }
 
   const handleBrowserNotificationToggle = async (enabled: boolean) => {
     if (enabled && notificationPrefs.browserNotificationPermission !== 'granted') {
       const permission = await requestBrowserPermission()
       if (permission !== 'granted') {
-        toast.error('Browser notification permission denied')
+        toast.error(t('toast.browserNotificationPermissionDenied'))
         return
       }
-      toast.success('Browser notifications enabled')
+      toast.success(t('toast.browserNotificationsEnabled'))
     } else {
       setBrowserNotificationsEnabled(enabled)
-      toast.success(enabled ? 'Browser notifications enabled' : 'Browser notifications disabled')
+      toast.success(enabled ? t('toast.browserNotificationsEnabled') : t('toast.soundNotificationsDisabled'))
     }
   }
 
@@ -77,9 +77,9 @@ export function NotificationsSection() {
     try {
       await updateNotificationSettingsAsync(settings)
       setIsDirty(false)
-      toast.success('Notification preferences saved')
+      toast.success(t('toast.notificationPreferencesSaved'))
     } catch {
-      toast.error('Failed to save notification preferences')
+      toast.error(t('toast.notificationPreferencesSaveFailed'))
     }
   }
 

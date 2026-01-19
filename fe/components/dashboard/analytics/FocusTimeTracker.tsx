@@ -37,8 +37,8 @@ const FocusTimeTracker: React.FC<FocusTimeTrackerProps> = ({ data, totalDays, is
       value: data.totalFocusBlocks,
       suffix: 'blocks',
       description: '2+ hour uninterrupted periods',
-      color: 'text-amber-500',
-      bgColor: 'bg-amber-100 dark:bg-amber-900/30',
+      color: 'text-primary',
+      bgColor: 'bg-primary/10',
     },
     {
       icon: Clock,
@@ -72,7 +72,7 @@ const FocusTimeTracker: React.FC<FocusTimeTrackerProps> = ({ data, totalDays, is
   const getFocusQuality = (percentage: number): { label: string; color: string } => {
     if (percentage >= 70) return { label: 'Excellent', color: 'text-emerald-500' }
     if (percentage >= 50) return { label: 'Good', color: 'text-sky-500' }
-    if (percentage >= 30) return { label: 'Fair', color: 'text-amber-500' }
+    if (percentage >= 30) return { label: 'Fair', color: 'text-primary' }
     return { label: 'Needs Improvement', color: 'text-rose-500' }
   }
 

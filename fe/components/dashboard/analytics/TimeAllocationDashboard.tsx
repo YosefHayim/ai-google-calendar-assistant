@@ -1,23 +1,23 @@
 'use client'
 
 import * as React from 'react'
-import { BarChart3, PieChart, CircleDot, Clock, Radar, BarChartHorizontal, Info } from 'lucide-react'
+
 import { AnimatePresence, motion } from 'framer-motion'
+import { BarChart3, BarChartHorizontal, CircleDot, Clock, Info, PieChart, Radar } from 'lucide-react'
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { calculatePercentage, formatNumber, sumBy } from '@/lib/dataUtils'
 
 import { Button } from '@/components/ui/button'
+import type { CalendarBreakdownItem } from '@/types/analytics'
 import { EmptyState } from '@/components/ui/empty-state'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
-import type { CalendarBreakdownItem } from '@/types/analytics'
-import { sumBy, calculatePercentage, formatNumber } from '@/lib/dataUtils'
-import { getValidHexColor } from '@/lib/colorUtils'
-
 import { TimeAllocationBarChart } from './time-allocation-charts/TimeAllocationBarChart'
-import { TimeAllocationPieChart } from './time-allocation-charts/TimeAllocationPieChart'
 import { TimeAllocationDonutChart } from './time-allocation-charts/TimeAllocationDonutChart'
-import { TimeAllocationRadarChart } from './time-allocation-charts/TimeAllocationRadarChart'
 import { TimeAllocationHorizontalBarChart } from './time-allocation-charts/TimeAllocationHorizontalBarChart'
+import { TimeAllocationPieChart } from './time-allocation-charts/TimeAllocationPieChart'
+import { TimeAllocationRadarChart } from './time-allocation-charts/TimeAllocationRadarChart'
+import { getValidHexColor } from '@/lib/colorUtils'
 
 const CHART_TYPES = ['bar', 'pie', 'donut', 'radar', 'horizontal'] as const
 type ChartType = (typeof CHART_TYPES)[number]
@@ -139,7 +139,7 @@ export const TimeAllocationDashboard: React.FC<TimeAllocationDashboardProps> = (
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-5 w-5 sm:h-6 sm:w-6 text-muted-foreground hover:text-zinc-600 dark:hover:text-zinc-300"
+                    className="h-5 w-5 sm:h-6 sm:w-6 text-muted-foreground hover:text-foreground"
                   >
                     <Info size={14} className="sm:hidden" />
                     <Info size={16} className="hidden sm:block" />
@@ -148,7 +148,7 @@ export const TimeAllocationDashboard: React.FC<TimeAllocationDashboardProps> = (
                 <HoverCardContent>
                   <div className="space-y-2">
                     <h4 className="font-semibold text-sm">Time Allocation</h4>
-                    <p className="text-xs text-zinc-600 dark:text-muted-foreground">
+                    <p className="text-xs text-muted-foreground">
                       Visual breakdown of how your time is distributed across different calendars. Each segment
                       represents the total hours spent in that calendar during the selected date range.
                     </p>
@@ -232,7 +232,7 @@ export const TimeAllocationDashboard: React.FC<TimeAllocationDashboardProps> = (
                       className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-sm flex-shrink-0"
                       style={{ backgroundColor: safeColor }}
                     />
-                    <span className="flex-1 font-medium text-zinc-800 dark:text-zinc-200 truncate">
+                    <span className="flex-1 font-medium text-foreground truncate">
                       {item.category}
                     </span>
                     <span className="font-mono text-muted-foreground dark:text-muted-foreground text-[10px] sm:text-xs flex-shrink-0">

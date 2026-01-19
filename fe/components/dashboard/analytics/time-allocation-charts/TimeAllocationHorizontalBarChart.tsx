@@ -63,13 +63,13 @@ export const TimeAllocationHorizontalBarChart: React.FC<TimeAllocationHorizontal
         <ChartTooltip
           content={
             <ChartTooltipContent
-              className="w-[180px] bg-secondary dark:bg-secondary text-white border-zinc-700"
+              className="w-[180px] bg-secondary dark:bg-secondary text-primary-foreground border-border"
               formatter={(value, name, item) => {
                 const payload = item.payload as CalendarBreakdownItem & { percentage: number }
                 return (
                   <div className="flex flex-col gap-1">
                     <span className="font-medium">{payload.category}</span>
-                    <span className="text-zinc-300">
+                    <span className="text-muted-foreground">
                       {Number(value).toFixed(1)} hours ({payload.percentage}%)
                     </span>
                   </div>

@@ -152,7 +152,7 @@ export const AvatarView: React.FC<AvatarViewProps> = ({
                         className={cn(
                           'p-3 rounded-xl text-xs leading-relaxed max-w-[90%] shadow-sm',
                           msg.role === 'assistant'
-                            ? 'bg-secondary dark:bg-secondary text-zinc-800 dark:text-zinc-200 ml-0 mr-auto rounded-tl-none'
+                            ? 'bg-secondary dark:bg-secondary text-foreground ml-0 mr-auto rounded-tl-none'
                             : 'bg-primary text-white ml-auto mr-0 rounded-tr-none'
                         )}
                       >

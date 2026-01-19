@@ -1,8 +1,10 @@
 'use client'
 
 import * as React from 'react'
-import { Info } from 'lucide-react'
+
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
+
+import { Info } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface InfoTooltipProps {
@@ -54,7 +56,7 @@ export function InfoTooltip({
       <HoverCardTrigger asChild>
         <span
           className={cn(
-            'inline-flex cursor-help text-muted-foreground hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors',
+            'inline-flex cursor-help text-muted-foreground hover:text-foreground transition-colors',
             iconClassName,
           )}
         >

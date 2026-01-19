@@ -25,6 +25,7 @@ import riscRoute from "./risc-route";
 import { sendR } from "@/utils";
 import sharedRoute from "./shared-route";
 import slackRoute from "./slack-route";
+import storageRoute from "./storage-route";
 import teamInviteRoute from "./team-invite-route";
 import telegramRoute from "./telegram-route";
 import timezonesRoute from "./timezones-route";
@@ -105,6 +106,7 @@ app.use(ROUTES.BLOG, blogRoute);
 app.use(ROUTES.FEATURE_FLAGS, featureFlagRoute);
 app.use(ROUTES.GAPS, gapsRoute);
 app.use(ROUTES.TIMEZONES, timezonesRoute);
+app.use(ROUTES.STORAGE, storageRoute);
 
 app.use((_req, res, _next) => {
   logger.error(`Opps! It looks like this route doesn't exist. ${_req.originalUrl}`);

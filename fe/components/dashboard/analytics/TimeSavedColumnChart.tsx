@@ -4,8 +4,8 @@ import React, { useRef, useState } from 'react'
 import { calculateAvailableHoursLeft, calculateMax } from '@/lib/dataUtils'
 
 import { CALENDAR_CONSTANTS } from '@/lib/constants'
-import { formatHours } from '@/lib/formatUtils'
 import { format } from 'date-fns'
+import { formatHours } from '@/lib/formatUtils'
 import { motion } from 'framer-motion'
 import { useContainerDimensions } from '@/hooks/useContainerDimensions'
 
@@ -134,7 +134,7 @@ const TimeSavedColumnChart: React.FC<TimeSavedColumnChartProps> = ({ data }) => 
 
           return (
             <div
-              className="absolute p-3 text-xs bg-secondary dark:bg-secondary text-white rounded-lg shadow-xl pointer-events-none border border-white/10 dark:border-zinc-700 min-w-[180px] z-50"
+              className="absolute p-3 text-xs bg-secondary dark:bg-secondary text-primary-foreground rounded-lg shadow-xl pointer-events-none border-border min-w-[180px] z-50"
               style={{
                 left: `${((padding + hoveredIndex * (barWidth + barSpacing) + barWidth / 2) / width) * 100}%`,
                 top: `${((padding + plotHeight - getBarHeight(point.hours) - 60) / height) * 100}%`,
@@ -151,7 +151,7 @@ const TimeSavedColumnChart: React.FC<TimeSavedColumnChartProps> = ({ data }) => 
                   <span className="w-1.5 h-1.5 rounded-full bg-primary" />
                   <span className="text-sm font-bold text-white">{formatHours(point.hours)} saved</span>
                 </div>
-                <div className="pt-1 border-t border-zinc-700 dark:border-zinc-600">
+                <div className="pt-1 border-t border-border">
                   <span className="text-xs text-zinc-300 dark:text-muted-foreground">
                     Available Hours Left:{' '}
                     <span className="font-bold text-white">{formatHours(availableHoursLeft)}</span>

@@ -1,7 +1,8 @@
-import { useRef, useCallback, useEffect, useState } from 'react'
+import type { PlaybackSpeed, TTSVoice } from '@/lib/validations/preferences'
+import { useCallback, useEffect, useRef, useState } from 'react'
+
 import { toast } from 'sonner'
 import { voiceService } from '@/services/voice.service'
-import type { TTSVoice, PlaybackSpeed } from '@/lib/validations/preferences'
 
 interface UseVoicePreviewOptions {
   previewText: string
@@ -70,7 +71,7 @@ export function useVoicePreview({ previewText }: UseVoicePreviewOptions): UseVoi
         source.start()
       } catch (error) {
         console.error('Error playing voice preview:', error)
-        toast.error('Failed to play voice preview')
+        toast.error(t('toast.voicePreviewError'))
         setIsPlaying(false)
         setIsLoading(false)
       }

@@ -1,4 +1,5 @@
 'use client'
+
 import React from 'react'
 import { SparklesCore } from '@/components/ui/sparkles' // Adjusted import path
 
@@ -32,7 +33,7 @@ export function SparklesPreview() {
 
 export function SparklesPreviewDark() {
   return (
-    <div className="h-[40rem] relative w-full bg-slate-950 flex flex-col items-center justify-center overflow-hidden rounded-md">
+    <div className="h-[40rem] relative w-full bg-foreground flex flex-col items-center justify-center overflow-hidden rounded-md">
       <div className="w-full absolute inset-0 h-screen">
         <SparklesCore
           id="tsparticlesfullpage"

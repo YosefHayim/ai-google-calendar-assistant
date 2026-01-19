@@ -96,11 +96,11 @@ export const IntegrationsTab: React.FC<IntegrationsTabProps> = ({
       { enabled: checked },
       {
         onSuccess: () => {
-          toast.success(checked ? 'Cross-platform sync enabled' : 'Cross-platform sync disabled')
+          toast.success(checked ? t('toast.crossPlatformSyncEnabled') : t('toast.crossPlatformSyncDisabled'))
         },
         onError: () => {
           setSyncEnabled(!checked)
-          toast.error('Failed to update preference')
+          toast.error(t('toast.integrationUpdateFailed'))
         },
       },
     )

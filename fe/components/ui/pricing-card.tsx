@@ -58,10 +58,10 @@ export const PricingCard: React.FC<PricingCardProps> = ({ tier, paymentFrequency
   const isPopular = tier.popular
 
   const getPrimaryTextColor = () =>
-    isHighlighted ? 'text-white dark:text-zinc-950' : 'text-foreground dark:text-primary-foreground'
+    isHighlighted ? 'text-primary-foreground dark:text-foreground' : 'text-foreground dark:text-primary-foreground'
 
   const getSecondaryTextColor = () =>
-    isHighlighted ? 'text-white/70 dark:text-zinc-950/70' : 'text-muted-foreground dark:text-muted-foreground'
+    isHighlighted ? 'text-primary-foreground/70 dark:text-foreground/70' : 'text-muted-foreground dark:text-muted-foreground'
 
   const adjustAmount = (delta: number) => {
     setCustomAmount((prev) => Math.max(MIN_CUSTOM_INTERACTIONS, Math.min(MAX_CUSTOM_INTERACTIONS, prev + delta)))
@@ -158,7 +158,7 @@ export const PricingCard: React.FC<PricingCardProps> = ({ tier, paymentFrequency
         className={cn(
           'relative flex flex-col gap-8 overflow-hidden p-6 transition-all duration-300 h-full',
           isHighlighted
-            ? 'bg-secondary text-white dark:bg-primary dark:text-zinc-950 border-none shadow-2xl'
+            ? 'bg-secondary text-primary-foreground dark:bg-primary dark:text-foreground border-none shadow-2xl'
             : 'bg-background text-foreground dark:bg-secondary dark:text-primary-foreground',
           isPopular && 'ring-2 ring-primary',
         )}
@@ -171,10 +171,10 @@ export const PricingCard: React.FC<PricingCardProps> = ({ tier, paymentFrequency
           {isCurrentPlan && (
             <Badge
               className={cn(
-                'mt-1 z-10 border-green-500/30',
+                'mt-1 z-10 border-primary/30',
                 isHighlighted
-                  ? 'bg-green-500/20 text-green-100 dark:bg-green-500/30 dark:text-green-200'
-                  : 'bg-green-500/20 text-green-700 dark:bg-green-500/20 dark:text-green-400',
+                  ? 'bg-primary/20 text-primary-foreground dark:bg-primary/30 dark:text-primary-foreground'
+                  : 'bg-primary/20 text-primary dark:bg-primary/20 dark:text-primary-foreground',
               )}
             >
               Current Plan
@@ -185,7 +185,7 @@ export const PricingCard: React.FC<PricingCardProps> = ({ tier, paymentFrequency
               className={cn(
                 'mt-1 z-10 border-primary/30',
                 isHighlighted
-                  ? 'bg-background/10 text-white dark:bg-secondary/20 dark:text-zinc-950'
+                  ? 'bg-background/10 text-primary-foreground dark:bg-secondary/20 dark:text-foreground'
                   : 'bg-primary/20 text-primary',
               )}
             >
@@ -245,7 +245,7 @@ export const PricingCard: React.FC<PricingCardProps> = ({ tier, paymentFrequency
                 >
                   Custom Pack Size
                 </label>
-                <Zap className="w-3 h-3 text-amber-400 animate-pulse" />
+                <Zap className="w-3 h-3 text-primary animate-pulse" />
               </div>
 
               <div className="flex items-center justify-between gap-4">
@@ -311,7 +311,7 @@ export const PricingCard: React.FC<PricingCardProps> = ({ tier, paymentFrequency
                   className="absolute w-full h-1 bg-background/10 rounded-full appearance-none cursor-pointer accent-amber-400 z-10"
                 />
                 <motion.div
-                  className="absolute h-1 bg-amber-400 rounded-full pointer-events-none"
+                  className="absolute h-1 bg-primary rounded-full pointer-events-none"
                   initial={false}
                   animate={{ width: `${(customAmount / MAX_CUSTOM_INTERACTIONS) * 100}%` }}
                 />
@@ -335,11 +335,11 @@ export const PricingCard: React.FC<PricingCardProps> = ({ tier, paymentFrequency
                   key={index}
                   className={cn(
                     'flex items-center gap-2 text-sm font-medium',
-                    isHighlighted ? 'text-white/80 dark:text-zinc-950/80' : 'text-zinc-600 dark:text-zinc-300',
+                    isHighlighted ? 'text-primary-foreground/80 dark:text-foreground/80' : 'text-muted-foreground',
                   )}
                 >
                   <BadgeCheck
-                    className={cn('h-4 w-4 shrink-0', isHighlighted ? 'text-white dark:text-zinc-950' : 'text-primary')}
+                    className={cn('h-4 w-4 shrink-0', isHighlighted ? 'text-primary-foreground dark:text-foreground' : 'text-primary')}
                   />
                   {feature.replace(/Subscription:|Per Use:/gi, '').trim()}
                 </li>
@@ -368,7 +368,7 @@ export const PricingCard: React.FC<PricingCardProps> = ({ tier, paymentFrequency
             className={cn(
               'w-full z-10 font-bold h-12',
               isHighlighted
-                ? 'bg-background text-zinc-950 hover:bg-background/90 dark:bg-secondary dark:text-white dark:hover:bg-secondary border-white dark:border-zinc-950'
+                ? 'bg-background text-foreground hover:bg-background/90 dark:bg-secondary dark:text-primary-foreground dark:hover:bg-secondary border-primary-foreground dark:border-foreground'
                 : '',
             )}
             onClick={handleGetStarted}

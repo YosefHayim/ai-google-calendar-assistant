@@ -19,9 +19,9 @@ import {
 
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
-import { Label } from '@/components/ui/label'
 import CinematicGlowToggle from './cinematic-glow-toggle'
 import { DateRange } from 'react-day-picker'
+import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -93,9 +93,9 @@ export function DatePickerWithRange({ className, date, setDate }: DatePickerWith
     if (internalDate?.from && internalDate?.to) {
       setDate(internalDate)
       setIsOpen(false)
-      toast.success('Date range applied')
+      toast.success(t('toast.dateRangeApplied'))
     } else {
-      toast.error('Please select both start and end dates')
+      toast.error(t('toast.dateRangeSelectBoth'))
     }
   }
 

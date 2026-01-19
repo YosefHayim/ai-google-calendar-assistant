@@ -154,11 +154,11 @@ export default function RadialOrbitalTimeline({ timelineData }: RadialOrbitalTim
       case 'completed':
         return 'text-white bg-primary border-primary'
       case 'in-progress':
-        return 'text-foreground bg-background border-zinc-900'
+        return 'text-foreground bg-background border-border'
       case 'pending':
-        return 'text-white bg-secondary/40 border-zinc-500/50'
+        return 'text-white bg-secondary/40 border-border/50'
       default:
-        return 'text-white bg-secondary/40 border-zinc-500/50'
+        return 'text-white bg-secondary/40 border-border/50'
     }
   }
 
@@ -202,7 +202,7 @@ export default function RadialOrbitalTimeline({ timelineData }: RadialOrbitalTim
             </div>
           </div>
 
-          <div className="absolute w-96 h-96 rounded-full border border dark:border opacity-50"></div>
+          <div className="absolute w-96 h-96 rounded-full border-border opacity-50"></div>
 
           {timelineData.map((item, index) => {
             const position = calculateNodePosition(index, timelineData.length)
@@ -256,10 +256,10 @@ export default function RadialOrbitalTimeline({ timelineData }: RadialOrbitalTim
                   border 
                   ${
                     isExpanded || isHubHovered
-                      ? 'border-amber-400/50 shadow-xl shadow-primary/30'
+                      ? 'border-primary/50 shadow-xl shadow-primary/30'
                       : isRelated
                         ? 'border-primary animate-pulse'
-                        : 'border dark:border-zinc-700'
+                        : 'border border-border'
                   }
                   transition-all duration-300 transform
                   ${isExpanded ? 'scale-125' : isHubHovered ? 'scale-110' : 'hover:scale-110'}
@@ -297,10 +297,10 @@ export default function RadialOrbitalTimeline({ timelineData }: RadialOrbitalTim
                         {item.title}
                       </CardTitle>
                     </CardHeader>
-                    <CardContent className="text-xs text-zinc-600 dark:text-muted-foreground p-4 pt-0">
+                    <CardContent className="text-xs text-muted-foreground p-4 pt-0">
                       <p className="leading-relaxed">{item.content}</p>
 
-                      <div className="mt-4 pt-3 border-t border-zinc-100 dark:border">
+                      <div className="mt-4 pt-3 border-t border-border">
                         <div className="flex justify-between items-center text-xs font-bold mb-1 uppercase tracking-wider">
                           <span className="flex items-center text-muted-foreground">
                             <Zap size={10} className="mr-1 text-primary" />
@@ -317,7 +317,7 @@ export default function RadialOrbitalTimeline({ timelineData }: RadialOrbitalTim
                       </div>
 
                       {item.relatedIds.length > 0 && (
-                        <div className="mt-4 pt-3 border-t border-zinc-100 dark:border">
+                        <div className="mt-4 pt-3 border-t border-border">
                           <div className="flex items-center mb-2">
                             <LinkIcon size={10} className="text-muted-foreground mr-1" />
                             <h4 className="text-xs uppercase tracking-widest font-bold text-muted-foreground">Neural Links</h4>
@@ -330,7 +330,7 @@ export default function RadialOrbitalTimeline({ timelineData }: RadialOrbitalTim
                                   key={relatedId}
                                   variant="outline"
                                   size="sm"
-                                  className="flex items-center h-6 px-2 py-0 text-xs rounded-md border dark:border bg-muted dark:bg-secondary/50 hover:bg-primary/10 text-zinc-600 dark:text-muted-foreground hover:text-primary transition-all"
+                                  className="flex items-center h-6 px-2 py-0 text-xs rounded-md border bg-muted dark:bg-secondary/50 hover:bg-primary/10 text-muted-foreground hover:text-primary transition-all"
                                   onClick={(e) => {
                                     e.stopPropagation()
                                     toggleItem(relatedId)

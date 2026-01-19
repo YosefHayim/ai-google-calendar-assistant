@@ -1,16 +1,18 @@
 'use client'
 
+import type { AdminUser, UserRole, UserStatus } from '@/types/admin'
+import { Calendar, CreditCard, Eye, Globe, Loader2, LogOut, Mail, Shield, User } from 'lucide-react'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import React, { useState } from 'react'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
+import { impersonateUser, revokeUserSessions } from '@/services/admin.service'
+
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { User, Mail, Calendar, Globe, CreditCard, Shield, Eye, LogOut, Loader2 } from 'lucide-react'
-import type { AdminUser, UserStatus, UserRole } from '@/types/admin'
+import Image from 'next/image'
 import { format } from 'date-fns'
-import { impersonateUser, revokeUserSessions } from '@/services/admin.service'
-import { useImpersonation } from '@/contexts/ImpersonationContext'
 import { toast } from 'sonner'
+import { useImpersonation } from '@/contexts/ImpersonationContext'
 
 interface UserDetailsDialogProps {
   user: AdminUser
@@ -28,7 +30,7 @@ export function UserDetailsDialog({ user, onClose }: UserDetailsDialogProps) {
       const result = await impersonateUser(user.id)
       startImpersonation(result.targetUser, result.impersonationToken)
     } catch (error) {
-      toast.error('Failed to impersonate user')
+      toast.error(t('toast.userImpersonationFailed'))
       setIsImpersonating(false)
     }
   }
@@ -39,9 +41,9 @@ export function UserDetailsDialog({ user, onClose }: UserDetailsDialogProps) {
     setIsRevokingSessions(true)
     try {
       await revokeUserSessions(user.id)
-      toast.success('User sessions revoked')
+      toast.success(t('toast.userSessionsRevoked'))
     } catch (error) {
-      toast.error('Failed to revoke sessions')
+      toast.error(t('toast.userSessionsRevokeFailed'))
     } finally {
       setIsRevokingSessions(false)
     }
@@ -60,7 +62,7 @@ export function UserDetailsDialog({ user, onClose }: UserDetailsDialogProps) {
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 rounded-full bg-accent dark:bg-zinc-700 flex items-center justify-center overflow-hidden">
                 {user.avatar_url ? (
-                  <img src={user.avatar_url} alt="" className="w-16 h-16 rounded-full object-cover" />
+                  <Image src={user.avatar_url} alt="" className="w-16 h-16 rounded-full object-cover" width={64} height={64} />
                 ) : (
                   <User className="w-8 h-8 text-muted-foreground" />
                 )}
