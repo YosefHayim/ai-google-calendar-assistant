@@ -1001,7 +1001,7 @@ export const ru: TranslationShape = {
   },
 
   // UI Text
-  ui: {
+    ui: {
     // Common UI elements
     stop: 'Стоп',
     voice: 'Голос',

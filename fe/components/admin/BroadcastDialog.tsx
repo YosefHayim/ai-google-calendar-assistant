@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -35,6 +36,7 @@ const typeConfig: Record<BroadcastType, { icon: React.ReactNode; color: string; 
 }
 
 export function BroadcastDialog({ open, onClose }: BroadcastDialogProps) {
+  const { t } = useTranslation()
   const [type, setType] = useState<BroadcastType>('info')
   const [title, setTitle] = useState('')
   const [message, setMessage] = useState('')

@@ -13,6 +13,7 @@ import Image from 'next/image'
 import { format } from 'date-fns'
 import { toast } from 'sonner'
 import { useImpersonation } from '@/contexts/ImpersonationContext'
+import { useTranslation } from 'react-i18next'
 
 interface UserDetailsDialogProps {
   user: AdminUser
@@ -20,6 +21,7 @@ interface UserDetailsDialogProps {
 }
 
 export function UserDetailsDialog({ user, onClose }: UserDetailsDialogProps) {
+  const { t } = useTranslation()
   const { startImpersonation } = useImpersonation()
   const [isImpersonating, setIsImpersonating] = useState(false)
   const [isRevokingSessions, setIsRevokingSessions] = useState(false)
