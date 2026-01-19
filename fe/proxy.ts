@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-export function middleware(request: NextRequest) {
-  // Middleware is currently only used for the matcher configuration
+export function proxy(_request: NextRequest) {
+  // Proxy is currently only used for the matcher configuration
   // CSP is handled in next.config.mjs for better reliability
   return NextResponse.next()
 }
