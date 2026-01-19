@@ -1,3 +1,10 @@
+import type { Bot } from "grammy";
+import { InputFile } from "grammy";
+import type { ImageContent } from "@/shared/llm";
+import { generateSpeechForTelegram } from "@/utils/ai/text-to-speech";
+import { transcribeAudio } from "@/utils/ai/voice-transcription";
+import { logger } from "@/utils/logger";
+import { getTranslatorFromLanguageCode } from "../i18n";
 import {
   CANCEL_RESPONSES,
   COMMANDS,
@@ -7,6 +14,7 @@ import {
   isDuplicateMessage,
   startTypingIndicator,
 } from "../utils";
+import { getVoicePreferenceForTelegram } from "../utils/ally-brain";
 import {
   handleAboutMeCommand,
   handleAnalyticsCommand,
@@ -40,22 +48,13 @@ import {
   handleWebsiteCommand,
   handleWeekCommand,
 } from "../utils/commands";
+import { processPhoto } from "../utils/image-handler";
 import {
   handleAgentRequest,
   handleCancellation,
   handleConfirmation,
 } from "./agent-handler";
-
-import type { Bot } from "grammy";
 import type { GlobalContext } from "./bot-config";
-import type { ImageContent } from "@/shared/llm";
-import { InputFile } from "grammy";
-import { generateSpeechForTelegram } from "@/utils/ai/text-to-speech";
-import { getTranslatorFromLanguageCode } from "../i18n";
-import { getVoicePreferenceForTelegram } from "../utils/ally-brain";
-import { logger } from "@/utils/logger";
-import { processPhoto } from "../utils/image-handler";
-import { transcribeAudio } from "@/utils/ai/voice-transcription";
 
 const MessageAction = {
   CONFIRM: "confirm",

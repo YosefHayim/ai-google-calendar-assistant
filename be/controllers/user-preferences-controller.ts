@@ -1,11 +1,9 @@
-import * as preferencesService from "@/services/user-preferences-service";
-
 import type { Request, Response } from "express";
-import { reqResAsyncHandler, sendR } from "@/utils/http";
-
-import type { PreferenceKey } from "@/services/user-preferences-service";
 import { STATUS_RESPONSE } from "@/config";
+import type { PreferenceKey } from "@/services/user-preferences-service";
+import * as preferencesService from "@/services/user-preferences-service";
 import { requireUserId } from "@/utils/auth/require-user";
+import { reqResAsyncHandler, sendR } from "@/utils/http";
 
 /**
  * Get a user preference by key
@@ -19,7 +17,9 @@ const getPreference = reqResAsyncHandler(
     }
     const { userId } = userResult;
 
-    const key = Array.isArray(req.params.key) ? req.params.key[0] : req.params.key;
+    const key = Array.isArray(req.params.key)
+      ? req.params.key[0]
+      : req.params.key;
 
     if (!(key && preferencesService.isValidPreferenceKey(key))) {
       return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Invalid preference key");

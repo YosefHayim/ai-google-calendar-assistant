@@ -87,7 +87,8 @@ export const makeEventTime = () =>
       timeZone: z.coerce
         .string({
           invalid_type_error: "Must be a valid IANA Time Zone Database name.",
-          message: 'Must be a valid IANA Time Zone Database name. Example: "Asia/Jerusalem"',
+          message:
+            'Must be a valid IANA Time Zone Database name. Example: "Asia/Jerusalem"',
           description:
             'The time zone in which the time is specified. (Formatted as an IANA Time Zone Database name, e.g. "Asia/Jerusalem".) ',
         })

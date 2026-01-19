@@ -1,3 +1,9 @@
+import { randomBytes } from "node:crypto";
+import { SUPABASE } from "@/config/clients/supabase";
+import type { Database } from "@/database.types";
+import type { userAndAiMessageProps } from "@/types";
+import { isToday } from "@/utils/date/date-helpers";
+import { logger } from "@/utils/logger";
 import type {
   ConversationConfig,
   ConversationContext,
@@ -10,14 +16,7 @@ import type {
   TelegramConversationRow,
   WebConversationRow,
 } from "./types";
-
 import { DEFAULT_CONVERSATION_CONFIG } from "./types";
-import type { Database } from "@/database.types";
-import { SUPABASE } from "@/config/clients/supabase";
-import crypto from "node:crypto";
-import { isToday } from "@/utils/date/date-helpers";
-import { logger } from "@/utils/logger";
-import type { userAndAiMessageProps } from "@/types";
 
 type ConversationInsert =
   Database["public"]["Tables"]["conversations"]["Insert"];
@@ -959,7 +958,7 @@ export class ConversationService {
    * @returns {string} A unique share token.
    */
   private generateShareToken(): string {
-    return crypto.randomBytes(16).toString("hex");
+    return randomBytes(16).toString("hex");
   }
 
   /**
@@ -1164,18 +1163,23 @@ export class ConversationService {
     conversationId: string,
     userId: string
   ): Promise<boolean> {
-    logger.info(`ConversationService.archiveConversation: ${conversationId} for user ${userId}`);
+    logger.info(
+      `ConversationService.archiveConversation: ${conversationId} for user ${userId}`
+    );
 
     // First check if conversation exists and is not already archived
-    const { data: existing, error: checkError } = await SUPABASE
-      .from("conversations")
+    const { data: existing, error: checkError } = await SUPABASE.from(
+      "conversations"
+    )
       .select("id, archived_at")
       .eq("id", conversationId)
       .eq("user_id", userId)
       .single();
 
     if (checkError || !existing) {
-      logger.error(`Conversation not found for archiving: ${conversationId}, error: ${checkError?.message}`);
+      logger.error(
+        `Conversation not found for archiving: ${conversationId}, error: ${checkError?.message}`
+      );
       return false;
     }
 
@@ -1188,7 +1192,7 @@ export class ConversationService {
     const { data, error } = await SUPABASE.from("conversations")
       .update({
         archived_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq("id", conversationId)
       .eq("user_id", userId)
@@ -1201,7 +1205,9 @@ export class ConversationService {
       return false;
     }
 
-    logger.info(`Archive result for ${conversationId}: ${data?.length || 0} rows affected`);
+    logger.info(
+      `Archive result for ${conversationId}: ${data?.length || 0} rows affected`
+    );
     return (data?.length || 0) > 0;
   }
 
@@ -1223,7 +1229,7 @@ export class ConversationService {
     const { error } = await SUPABASE.from("conversations")
       .update({
         archived_at: null,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq("id", conversationId)
       .eq("user_id", userId)
@@ -1253,7 +1259,7 @@ export class ConversationService {
     const { error } = await SUPABASE.from("conversations")
       .update({
         archived_at: null,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq("user_id", userId)
       .not("archived_at", "is", null);
@@ -1276,8 +1282,12 @@ export class ConversationService {
    * const archived = await service.getArchivedConversations("user-456");
    * console.log(`Found ${archived.length} archived conversations`);
    */
-  async getArchivedConversations(userId: string): Promise<ConversationListItem[]> {
-    logger.info(`ConversationService.getArchivedConversations: userId=${userId}`);
+  async getArchivedConversations(
+    userId: string
+  ): Promise<ConversationListItem[]> {
+    logger.info(
+      `ConversationService.getArchivedConversations: userId=${userId}`
+    );
 
     const { data, error } = await SUPABASE.from("conversations")
       .select(`
@@ -1297,17 +1307,25 @@ export class ConversationService {
       .order("archived_at", { ascending: false });
 
     if (error) {
-      logger.error(`Failed to get archived conversations for user ${userId}: ${error.message}`);
-      logger.error(`Error details:`, error);
+      logger.error(
+        `Failed to get archived conversations for user ${userId}: ${error.message}`
+      );
+      logger.error("Error details:", error);
       return [];
     }
 
-    logger.info(`ConversationService.getArchivedConversations: found ${data?.length || 0} archived conversations`);
+    logger.info(
+      `ConversationService.getArchivedConversations: found ${data?.length || 0} archived conversations`
+    );
     if (data && data.length > 0) {
-      logger.info(`First conversation:`, { id: data[0].id, title: data[0].title, archived_at: data[0].archived_at });
+      logger.info("First conversation:", {
+        id: data[0].id,
+        title: data[0].title,
+        archived_at: data[0].archived_at,
+      });
     }
 
-    return (data || []).map(conversation => ({
+    return (data || []).map((conversation) => ({
       id: conversation.id,
       title: conversation.title || "Untitled Conversation",
       summary: conversation.summary || "",
@@ -1317,8 +1335,8 @@ export class ConversationService {
       messageCount: conversation.message_count || 0,
       source: conversation.source,
       archivedAt: conversation.archived_at || undefined,
-      pinned: conversation.pinned || false,
-      isActive: conversation.is_active || false,
+      pinned: conversation.pinned,
+      isActive: conversation.is_active,
     }));
   }
 }

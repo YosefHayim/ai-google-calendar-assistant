@@ -1,10 +1,10 @@
 import type { Request, Response } from "express";
 
 import OpenAI from "openai";
-import { SUPABASE } from "@/config/clients";
-import { env } from "@/config";
-import sendR from "@/utils/send-response";
 import { z } from "zod";
+import { env } from "@/config";
+import { SUPABASE } from "@/config/clients";
+import sendR from "@/utils/send-response";
 
 // Blog posts table is not yet in database.types.ts - use untyped queries
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -54,13 +54,21 @@ const createPostSchema = z.object({
 });
 
 const generatePostSchema = z.object({
-  topic: z.string().min(3, "Topic must be at least 3 characters").max(100, "Topic must be less than 100 characters"),
-  category: z.enum(BLOG_CATEGORIES, {
-    errorMap: () => ({ message: "Invalid category" }),
-  }).optional(),
+  topic: z
+    .string()
+    .min(3, "Topic must be at least 3 characters")
+    .max(100, "Topic must be less than 100 characters"),
+  category: z
+    .enum(BLOG_CATEGORIES, {
+      errorMap: () => ({ message: "Invalid category" }),
+    })
+    .optional(),
   keywords: z.array(z.string()).optional().default([]),
   targetAudience: z.string().optional(),
-  tone: z.enum(["professional", "conversational", "expert", "educational"]).optional().default("professional"),
+  tone: z
+    .enum(["professional", "conversational", "expert", "educational"])
+    .optional()
+    .default("professional"),
 });
 
 function generateSlug(title: string): string {
@@ -347,8 +355,8 @@ export const blogController = {
       const prompt = `Write an extraordinary GEO-optimized blog post for "Ask Ally" - an AI-powered Google Calendar assistant that helps users manage their time and schedule effectively.
 
 **TOPIC:** ${topic}
-**CATEGORY:** ${category || 'Productivity'}
-**TARGET AUDIENCE:** ${targetAudience || 'busy professionals and time-conscious individuals'}
+**CATEGORY:** ${category || "Productivity"}
+**TARGET AUDIENCE:** ${targetAudience || "busy professionals and time-conscious individuals"}
 **TONE:** ${tone}
 
 **GEO/AEO OPTIMIZATION STRATEGY:**
@@ -361,7 +369,7 @@ export const blogController = {
 
 **SEO REQUIREMENTS:**
 - Include primary keyword "${topic.toLowerCase()}" in title, first paragraph, and conclusion
-- Include secondary keywords: ${keywords.length > 0 ? keywords.join(', ') : 'time management, productivity, calendar optimization, AI assistant'}
+- Include secondary keywords: ${keywords.length > 0 ? keywords.join(", ") : "time management, productivity, calendar optimization, AI assistant"}
 - Add geo-specific keywords: United States, New York, London, remote work, global teams, distributed workforce
 - Include internal links to: /dashboard, /blog, /features, /pricing, /contact
 - Include external links to: calendar.google.com, productivity blogs, time management resources, reputable sources
@@ -398,7 +406,7 @@ Return the blog post in this exact JSON format:
   "title": "SEO-optimized title here",
   "excerpt": "Compelling 50-160 character excerpt for meta description",
   "content": "Full blog post content in Markdown format",
-  "category": "${category || 'Productivity'}",
+  "category": "${category || "Productivity"}",
   "tags": ["array", "of", "relevant", "tags"],
   "seo": {
     "title": "Custom SEO title (50-60 characters)",
@@ -413,12 +421,13 @@ Return the blog post in this exact JSON format:
         messages: [
           {
             role: "system",
-            content: "You are an expert SEO, GEO (Generative Engine Optimization), and AEO (Answer Engine Optimization) content writer specializing in productivity and AI tools. Create extraordinary, conversion-focused blog content that ranks well on Google, gets featured in AI Overviews, and drives sign-ups for Ask Ally. Focus on becoming the direct answer that AI models choose to reference, establishing authority, and providing comprehensive solutions that satisfy user intent without requiring additional clicks."
+            content:
+              "You are an expert SEO, GEO (Generative Engine Optimization), and AEO (Answer Engine Optimization) content writer specializing in productivity and AI tools. Create extraordinary, conversion-focused blog content that ranks well on Google, gets featured in AI Overviews, and drives sign-ups for Ask Ally. Focus on becoming the direct answer that AI models choose to reference, establishing authority, and providing comprehensive solutions that satisfy user intent without requiring additional clicks.",
           },
           {
             role: "user",
-            content: prompt
-          }
+            content: prompt,
+          },
         ],
         temperature: 0.7,
         max_tokens: 4000,
@@ -461,7 +470,7 @@ Return the blog post in this exact JSON format:
         seo: generatedPost.seo || {
           title: generatedPost.title,
           description: generatedPost.excerpt,
-          keywords: keywords || []
+          keywords: keywords || [],
         },
         status: "published",
         published_at: new Date().toISOString(),
@@ -482,9 +491,8 @@ Return the blog post in this exact JSON format:
 
       return sendR(res, 201, "AI-generated blog post created successfully", {
         ...data,
-        url: fullUrl
+        url: fullUrl,
       });
-
     } catch (error) {
       console.error("AI blog generation error:", error);
       return sendR(res, 500, "Failed to generate blog post with AI", null);

@@ -6,6 +6,16 @@ import type { InsightsMetrics } from "@/utils/ai/insights-calculator";
 import { logger } from "@/utils/logger";
 
 // ============================================================================
+// CONSTANTS
+// ============================================================================
+
+const MAX_INSIGHT_TITLE_LENGTH = 25;
+const MAX_INSIGHT_VALUE_LENGTH = 15;
+const MAX_INSIGHT_DESCRIPTION_LENGTH = 100;
+const ERROR_SUBSTRING_LENGTH = 200;
+const BASE_BACKOFF_DELAY_MS = 1000;
+
+// ============================================================================
 // TYPES & SCHEMAS
 // ============================================================================
 
@@ -53,15 +63,15 @@ export const InsightSchema = z.object({
   icon: z.enum(INSIGHT_ICONS).describe("Icon name from the allowed set"),
   title: z
     .string()
-    .max(25)
+    .max(MAX_INSIGHT_TITLE_LENGTH)
     .describe("Short title for the insight card (max 25 chars)"),
   value: z
     .string()
-    .max(15)
+    .max(MAX_INSIGHT_VALUE_LENGTH)
     .describe("The main value to display (e.g., 'Tuesday', '8.5h', '+23%')"),
   description: z
     .string()
-    .max(100)
+    .max(MAX_INSIGHT_DESCRIPTION_LENGTH)
     .describe("Brief explanation of the insight (max 100 chars)"),
   color: z.enum(INSIGHT_COLORS).describe("Color theme for the card"),
 });
@@ -204,7 +214,7 @@ ${JSON.stringify(metrics, null, 2)}`,
     parsed = JSON.parse(content);
   } catch {
     throw new Error(
-      `Failed to parse AI response as JSON: ${content.substring(0, 200)}`
+      `Failed to parse AI response as JSON: ${content.substring(0, ERROR_SUBSTRING_LENGTH)}`
     );
   }
 
@@ -256,7 +266,7 @@ export async function generateInsightsWithRetry(
 
       if (attempt < maxRetries) {
         // Exponential backoff: 1s, 2s, 4s
-        const delayMs = 1000 * 2 ** (attempt - 1);
+        const delayMs = BASE_BACKOFF_DELAY_MS * 2 ** (attempt - 1);
         await sleep(delayMs);
       }
     }

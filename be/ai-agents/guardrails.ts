@@ -9,6 +9,15 @@ import { MODELS } from "@/config";
 import { logger } from "@/utils/logger";
 
 const MAX_INPUT_LENGTH = 5000;
+const LOG_SUBSTRING_LENGTH = 200;
+const PRECHECK_LOG_SUBSTRING_LENGTH = 100;
+
+const REQUEST_EXTRACTION_PATTERNS = [
+  /<user_request>\s*([\s\S]*?)\s*<\/user_request>/i,
+  /<current_request>\s*([\s\S]*?)\s*<\/current_request>/i,
+  /<request>\s*([\s\S]*?)\s*<\/request>/i,
+  /Current request:\s*(.+?)$/s,
+];
 
 type ConversationMessage = {
   role?: string;
@@ -19,14 +28,7 @@ type ConversationMessage = {
 };
 
 const extractRequestFromText = (text: string): string | null => {
-  const patterns = [
-    /<user_request>\s*([\s\S]*?)\s*<\/user_request>/i,
-    /<current_request>\s*([\s\S]*?)\s*<\/current_request>/i,
-    /<request>\s*([\s\S]*?)\s*<\/request>/i,
-    /Current request:\s*(.+?)$/s,
-  ];
-
-  for (const pattern of patterns) {
+  for (const pattern of REQUEST_EXTRACTION_PATTERNS) {
     const match = text.match(pattern);
     if (match?.[1]) {
       return match[1].trim();
@@ -227,13 +229,13 @@ export const calendarSafetyGuardrail: InputGuardrail = {
     );
 
     logger.info(
-      `AI: calendarSafetyGuardrail: Extracted user request (${userRequest.length} chars): ${userRequest.substring(0, 200)}...`
+      `AI: calendarSafetyGuardrail: Extracted user request (${userRequest.length} chars): ${userRequest.substring(0, LOG_SUBSTRING_LENGTH)}...`
     );
 
     const preCheck = preCheckInput(userRequest);
     if (!preCheck.safe) {
       logger.info(
-        `AI: calendarSafetyGuardrail: Pre-check failed for input: ${userRequest.substring(0, 100)}`
+        `AI: calendarSafetyGuardrail: Pre-check failed for input: ${userRequest.substring(0, PRECHECK_LOG_SUBSTRING_LENGTH)}`
       );
       throw new InputGuardrailTripwireTriggered(
         preCheck.reason || "I cannot process this request.",

@@ -1,6 +1,7 @@
 import { run } from "@openai/agents";
 import type { calendar_v3 } from "googleapis";
-import { type AgentContext, HANDOFF_AGENTS } from "@/ai-agents";
+import { HANDOFF_AGENTS } from "@/ai-agents/agents";
+import type { AgentContext } from "@/ai-agents/tool-registry";
 
 const CONFLICT_DETECTED_PREFIX = "CONFLICT_DETECTED::";
 const MIN_CONFLICT_PARTS = 2;

@@ -29,7 +29,7 @@ jest.mock("@/utils/http", () => ({
 import { type AdminRequest, adminAuth } from "../../middlewares/admin-auth";
 
 describe("adminAuth Middleware", () => {
-  let mockRequest: Partial<AdminRequest>;
+  let mockRequest: Partial<AdminRequest> & { user?: any };
   let mockResponse: Partial<Response>;
   let mockNext: ReturnType<typeof mockFn>;
 

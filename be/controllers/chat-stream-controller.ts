@@ -5,8 +5,8 @@ import {
   run,
 } from "@openai/agents";
 import type { Request, Response } from "express";
-import { ORCHESTRATOR_AGENT } from "@/ai-agents";
-import { createAgentSession } from "@/ai-agents/sessions";
+import { ORCHESTRATOR_AGENT } from "@/ai-agents/agents";
+import { createAgentSession } from "@/ai-agents/sessions/session-factory";
 import type { AgentContext } from "@/ai-agents/tool-registry";
 import { STATUS_RESPONSE } from "@/config";
 import { createCreditTransaction } from "@/services/credit-service";

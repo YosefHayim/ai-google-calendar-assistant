@@ -98,7 +98,9 @@ const getCalendarColorById = reqResAsyncHandler(
     if (!req.calendar) {
       return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available");
     }
-    const r = await req.calendar.calendars.get({ calendarId: req.params.id as string });
+    const r = await req.calendar.calendars.get({
+      calendarId: req.params.id as string,
+    });
     return sendR(
       res,
       STATUS_RESPONSE.SUCCESS,
@@ -219,7 +221,9 @@ const deleteCalendar = reqResAsyncHandler(
     if (!req.calendar) {
       return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Calendar not available");
     }
-    await req.calendar.calendars.delete({ calendarId: req.params.id as string });
+    await req.calendar.calendars.delete({
+      calendarId: req.params.id as string,
+    });
     return sendR(res, STATUS_RESPONSE.SUCCESS, "Calendar deleted successfully");
   }
 );

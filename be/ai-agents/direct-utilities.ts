@@ -3,32 +3,23 @@ import OpenAI from "openai";
 import isEmail from "validator/lib/isEmail";
 import { env } from "@/config";
 import { MODELS } from "@/config/constants/ai";
+
+export type {
+  ConflictCheckResult,
+  PreCreateValidationResult,
+  SelectCalendarResult,
+  TimezoneResult,
+  ValidateUserResult,
+} from "@/shared/tools/handlers";
+
 import {
-  type ConflictCheckResult,
   checkConflictsHandler,
   getTimezoneHandler,
-  type PreCreateValidationResult,
   preCreateValidationHandler,
-  type SelectCalendarResult,
   selectCalendarHandler,
-  type TimezoneResult,
-  type ValidateUserResult,
   validateUserHandler,
 } from "@/shared";
 
-export type {
-  ValidateUserResult,
-  TimezoneResult,
-  SelectCalendarResult,
-  ConflictCheckResult,
-  PreCreateValidationResult,
-};
-
-export {
-  formatEventData,
-  getCalendarCategoriesByEmail,
-  type UserCalendar,
-} from "./utils";
 
 type Event = calendar_v3.Schema$Event;
 
@@ -42,9 +33,7 @@ type Event = calendar_v3.Schema$Event;
  * @param email - User's email address to validate
  * @returns Promise resolving to validation result with user status and permissions
  */
-export async function validateUserDirect(
-  email: string
-): Promise<ValidateUserResult> {
+export function validateUserDirect(email: string): Promise<ValidateUserResult> {
   return validateUserHandler({ email });
 }
 
@@ -58,7 +47,7 @@ export async function validateUserDirect(
  * @param email - User's email address
  * @returns Promise resolving to timezone information
  */
-export async function getUserDefaultTimezoneDirect(
+export function getUserDefaultTimezoneDirect(
   email: string
 ): Promise<TimezoneResult> {
   return getTimezoneHandler({ email });
@@ -78,7 +67,7 @@ export async function getUserDefaultTimezoneDirect(
  * @param eventInfo.location - Event location
  * @returns Promise resolving to selected calendar with reasoning
  */
-export async function selectCalendarByRules(
+export function selectCalendarByRules(
   email: string,
   eventInfo: {
     summary?: string | null;
@@ -110,7 +99,7 @@ export async function selectCalendarByRules(
  * @param params.end - Event end time (Google Calendar format)
  * @returns Promise resolving to conflict analysis with any overlapping events
  */
-export async function checkConflictsDirect(params: {
+export function checkConflictsDirect(params: {
   email: string;
   calendarId: string;
   start: calendar_v3.Schema$EventDateTime;
@@ -145,7 +134,7 @@ export async function checkConflictsDirect(params: {
  * @param eventData - Partial event data to validate
  * @returns Promise resolving to validation results with any issues found
  */
-export async function preCreateValidation(
+export function preCreateValidation(
   email: string,
   eventData: Partial<Event>
 ): Promise<PreCreateValidationResult> {

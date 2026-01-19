@@ -1,16 +1,15 @@
+import type { calendar_v3 } from "googleapis";
+import isEmail from "validator/lib/isEmail";
+import { ACTION } from "@/config";
+import { fetchCredentialsByEmail, generateGoogleAuthUrl } from "@/utils/auth";
 import {
   eventsHandler,
   initUserSupabaseCalendarWithTokensAndUpdateTokens,
 } from "@/utils/calendar";
-import { fetchCredentialsByEmail, generateGoogleAuthUrl } from "@/utils/auth";
-import { formatEventData, parseToolArguments } from "./utils";
-
-import { ACTION } from "@/config";
-import { asyncHandler } from "@/utils/http";
-import type { calendar_v3 } from "googleapis";
 import { getEvents } from "@/utils/calendar/get-events";
-import isEmail from "validator/lib/isEmail";
 import { isValidDateTime } from "@/utils/date/date-helpers";
+import { asyncHandler } from "@/utils/http";
+import { formatEventData, parseToolArguments } from "./utils";
 
 type Event = calendar_v3.Schema$Event;
 
@@ -76,28 +75,26 @@ export const EXECUTION_TOOLS = {
    * @param params.name - Optional user's name
    * @returns Promise resolving to registration status with auth URL
    */
-  registerUser: asyncHandler(
-    async (params: { email: string; name?: string }) => {
-      if (!params.email) {
-        throw new Error("Email is required for registration.");
-      }
-      if (!isEmail(params.email)) {
-        throw new Error("Invalid email address.");
-      }
-
-      // This app uses Google OAuth for authentication - generate OAuth URL for the user
-      // Force consent screen for first-time authentication
-      const authUrl = generateGoogleAuthUrl({ forceConsent: true });
-      return {
-        status: "needs_auth",
-        email: params.email,
-        name: params.name,
-        authUrl,
-        message:
-          "Please authorize access to your Google Calendar using the provided URL.",
-      };
+  registerUser: asyncHandler((params: { email: string; name?: string }) => {
+    if (!params.email) {
+      throw new Error("Email is required for registration.");
     }
-  ),
+    if (!isEmail(params.email)) {
+      throw new Error("Invalid email address.");
+    }
+
+    // This app uses Google OAuth for authentication - generate OAuth URL for the user
+    // Force consent screen for first-time authentication
+    const authUrl = generateGoogleAuthUrl({ forceConsent: true });
+    return {
+      status: "needs_auth",
+      email: params.email,
+      name: params.name,
+      authUrl,
+      message:
+        "Please authorize access to your Google Calendar using the provided URL.",
+    };
+  }),
 
   /**
    * Create a new calendar event with timezone handling and optional features.

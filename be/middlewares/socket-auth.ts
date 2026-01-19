@@ -1,6 +1,6 @@
-import { TypedSocket } from "@/config/clients/socket-server";
-import { logger } from "@/utils/logger";
+import type { TypedSocket } from "@/config/clients/socket-server";
 import { validateSupabaseToken } from "@/utils";
+import { logger } from "@/utils/logger";
 
 export async function authenticateSocket(
   socket: TypedSocket,

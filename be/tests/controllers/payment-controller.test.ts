@@ -1,4 +1,4 @@
-import crypto from "node:crypto";
+import { randomBytes, createHmac } from "node:crypto";
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import type { NextFunction, Request, Response } from "express";
 import { mockFn } from "../test-utils";
@@ -100,7 +100,7 @@ import {
 } from "@/controllers/payment-controller";
 
 describe("Payment Controller", () => {
-  let mockReq: Partial<Request>;
+  let mockReq: Partial<Request> & { user?: any };
   let mockRes: Partial<Response>;
   let mockNext: NextFunction;
 
@@ -586,7 +586,7 @@ describe("Payment Controller", () => {
 
   describe("handleWebhook", () => {
     const createSignature = (body: Buffer, secret: string): string => {
-      const hmac = crypto.createHmac("sha256", secret);
+      const hmac = createHmac("sha256", secret);
       return hmac.update(body).digest("hex");
     };
 

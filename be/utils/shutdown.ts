@@ -1,6 +1,6 @@
-import { logger } from "@/utils/logger";
-import { shutdownJobScheduler } from "@/jobs";
 import { shutdownSocketServer } from "@/config/clients/socket-server";
+import { shutdownJobScheduler } from "@/jobs";
+import { logger } from "@/utils/logger";
 
 /**
  * Handles graceful shutdown for all active connections and workers.
@@ -10,10 +10,7 @@ export const handleShutdown = async (signal: string) => {
 
   try {
     // Run shutdown tasks in parallel to save time
-    await Promise.all([
-      shutdownSocketServer(),
-      shutdownJobScheduler(),
-    ]);
+    await Promise.all([shutdownSocketServer(), shutdownJobScheduler()]);
 
     logger.info("Graceful shutdown complete. Exiting process.");
     process.exit(0);

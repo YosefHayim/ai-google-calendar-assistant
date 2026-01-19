@@ -84,7 +84,7 @@ jest.mock("@/utils/calendar/init", () => ({
 import eventsController from "@/controllers/google-calendar/events-controller";
 
 describe("Events Controller", () => {
-  let mockReq: Partial<Request>;
+  let mockReq: Partial<Request> & { user?: any };
   let mockRes: Partial<Response>;
   let mockNext: NextFunction;
 

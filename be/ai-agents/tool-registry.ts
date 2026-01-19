@@ -14,7 +14,11 @@ import {
   updateCalendarDefaultReminders,
   updateEventReminders,
 } from "@/utils/calendar";
-import { analyzeGapsForUser, fillGap, formatGapsForDisplay } from "@/utils/calendar/gap-recovery";
+import {
+  analyzeGapsForUser,
+  fillGap,
+  formatGapsForDisplay,
+} from "@/utils/calendar/gap-recovery";
 import {
   checkConflictsDirect,
   getUserDefaultTimezoneDirect,
@@ -35,14 +39,16 @@ export const AGENT_TOOLS = {
     description: TOOLS_DESCRIPTION.generateGoogleAuthUrlDescription,
     parameters: PARAMETERS_TOOLS.generateGoogleAuthUrlParameters,
     execute: EXECUTION_TOOLS.generateGoogleAuthUrl,
-    errorFunction: (_, error) => `generate_google_auth_url: ${stringifyError(error)}`,
+    errorFunction: (_, error) =>
+      `generate_google_auth_url: ${stringifyError(error)}`,
   }),
   register_user_via_db: tool({
     name: "register_user_via_db",
     description: TOOLS_DESCRIPTION.registerUserViaDb,
     parameters: PARAMETERS_TOOLS.registerUserParameters,
     execute: EXECUTION_TOOLS.registerUser,
-    errorFunction: (_, error) => `register_user_via_db: ${stringifyError(error)}`,
+    errorFunction: (_, error) =>
+      `register_user_via_db: ${stringifyError(error)}`,
   }),
   // GET event - email from context
   get_event: tool<typeof PARAMETERS_TOOLS.getEventParameters, AgentContext>({
@@ -56,7 +62,10 @@ export const AGENT_TOOLS = {
     errorFunction: (_, error) => `get_event: ${stringifyError(error)}`,
   }),
   // UPDATE event - email from context
-  update_event: tool<typeof PARAMETERS_TOOLS.updateEventParameters, AgentContext>({
+  update_event: tool<
+    typeof PARAMETERS_TOOLS.updateEventParameters,
+    AgentContext
+  >({
     name: "update_event",
     description: TOOLS_DESCRIPTION.updateEvent,
     parameters: PARAMETERS_TOOLS.updateEventParameters,
@@ -72,12 +81,17 @@ export const AGENT_TOOLS = {
         end: params.end ?? undefined,
         email,
       };
-      return EXECUTION_TOOLS.updateEvent(cleanedParams as Parameters<typeof EXECUTION_TOOLS.updateEvent>[0]);
+      return EXECUTION_TOOLS.updateEvent(
+        cleanedParams as Parameters<typeof EXECUTION_TOOLS.updateEvent>[0]
+      );
     },
     errorFunction: (_, error) => `update_event: ${stringifyError(error)}`,
   }),
   // DELETE event - email from context
-  delete_event: tool<typeof PARAMETERS_TOOLS.deleteEventParameter, AgentContext>({
+  delete_event: tool<
+    typeof PARAMETERS_TOOLS.deleteEventParameter,
+    AgentContext
+  >({
     name: "delete_event",
     description: TOOLS_DESCRIPTION.deleteEvent,
     parameters: PARAMETERS_TOOLS.deleteEventParameter,
@@ -106,7 +120,8 @@ export const DIRECT_TOOLS = {
       const email = getEmailFromContext(runContext, "validate_user_direct");
       return validateUserDirect(email);
     },
-    errorFunction: (_, error) => `validate_user_direct: ${stringifyError(error)}`,
+    errorFunction: (_, error) =>
+      `validate_user_direct: ${stringifyError(error)}`,
   }),
 
   // Get timezone - email from context
@@ -119,7 +134,8 @@ export const DIRECT_TOOLS = {
       const email = getEmailFromContext(runContext, "get_timezone_direct");
       return getUserDefaultTimezoneDirect(email);
     },
-    errorFunction: (_, error) => `get_timezone_direct: ${stringifyError(error)}`,
+    errorFunction: (_, error) =>
+      `get_timezone_direct: ${stringifyError(error)}`,
   }),
 
   // Select calendar - email from context
@@ -143,7 +159,8 @@ export const DIRECT_TOOLS = {
       const email = getEmailFromContext(runContext, "select_calendar_direct");
       return selectCalendarByRules(email, { summary, description, location });
     },
-    errorFunction: (_, error) => `select_calendar_direct: ${stringifyError(error)}`,
+    errorFunction: (_, error) =>
+      `select_calendar_direct: ${stringifyError(error)}`,
   }),
 
   // Check conflicts - email from context
@@ -167,7 +184,8 @@ export const DIRECT_TOOLS = {
       const email = getEmailFromContext(runContext, "check_conflicts_direct");
       return checkConflictsDirect({ email, calendarId, start, end });
     },
-    errorFunction: (_, error) => `check_conflicts_direct: ${stringifyError(error)}`,
+    errorFunction: (_, error) =>
+      `check_conflicts_direct: ${stringifyError(error)}`,
   }),
 
   // Pre-create validation - email from context
@@ -191,7 +209,10 @@ export const DIRECT_TOOLS = {
       start: makeEventTime().nullable(),
       end: makeEventTime().nullable(),
     }),
-    execute: async ({ summary, description, location, start, end }, runContext) => {
+    execute: async (
+      { summary, description, location, start, end },
+      runContext
+    ) => {
       const email = getEmailFromContext(runContext, "pre_create_validation");
       return preCreateValidation(email, {
         summary: summary ?? undefined,
@@ -201,7 +222,8 @@ export const DIRECT_TOOLS = {
         end: end ?? undefined,
       });
     },
-    errorFunction: (_, error) => `pre_create_validation: ${stringifyError(error)}`,
+    errorFunction: (_, error) =>
+      `pre_create_validation: ${stringifyError(error)}`,
   }),
 
   insert_event_direct: tool<
@@ -213,7 +235,11 @@ export const DIRECT_TOOLS = {
       start: ReturnType<typeof makeEventTime>;
       end: ReturnType<typeof makeEventTime>;
       addMeetLink: z.ZodDefault<z.ZodBoolean>;
-      reminders: z.ZodOptional<z.ZodNullable<typeof PARAMETERS_TOOLS.setEventRemindersParameters.shape.reminders>>;
+      reminders: z.ZodOptional<
+        z.ZodNullable<
+          typeof PARAMETERS_TOOLS.setEventRemindersParameters.shape.reminders
+        >
+      >;
     }>,
     AgentContext
   >({
@@ -233,7 +259,9 @@ export const DIRECT_TOOLS = {
         .describe(
           "Set to true to add a Google Meet video conference link. Use when user asks for video call, meeting link, virtual meeting, or online meeting."
         ),
-      reminders: PARAMETERS_TOOLS.setEventRemindersParameters.shape.reminders.nullable().optional(),
+      reminders: PARAMETERS_TOOLS.setEventRemindersParameters.shape.reminders
+        .nullable()
+        .optional(),
     }),
     execute: async (params, runContext) => {
       const email = getEmailFromContext(runContext, "insert_event_direct");
@@ -252,11 +280,15 @@ export const DIRECT_TOOLS = {
         addMeetLink: params.addMeetLink ?? false,
       });
     },
-    errorFunction: (_, error) => `insert_event_direct: ${stringifyError(error)}`,
+    errorFunction: (_, error) =>
+      `insert_event_direct: ${stringifyError(error)}`,
   }),
 
   // Get event direct - email from context
-  get_event_direct: tool<typeof PARAMETERS_TOOLS.getEventParameters, AgentContext>({
+  get_event_direct: tool<
+    typeof PARAMETERS_TOOLS.getEventParameters,
+    AgentContext
+  >({
     name: "get_event_direct",
     description:
       "Direct event retrieval - bypasses AI agent. Searches for events by optional keywords, and time range. Returns raw JSON events array. Email is automatically provided from user context.",
@@ -284,7 +316,8 @@ export const DIRECT_TOOLS = {
       // Parse JSON string to object
       let parsedData: unknown;
       try {
-        parsedData = typeof eventsData === "string" ? JSON.parse(eventsData) : eventsData;
+        parsedData =
+          typeof eventsData === "string" ? JSON.parse(eventsData) : eventsData;
       } catch {
         return { error: "Invalid JSON string provided for eventsData" };
       }
@@ -329,7 +362,10 @@ export const DIRECT_TOOLS = {
   // ═══════════════════════════════════════════════════════════════════════════
 
   // Analyze gaps - email from context
-  analyze_gaps_direct: tool<typeof PARAMETERS_TOOLS.analyzeGapsParameters, AgentContext>({
+  analyze_gaps_direct: tool<
+    typeof PARAMETERS_TOOLS.analyzeGapsParameters,
+    AgentContext
+  >({
     name: "analyze_gaps_direct",
     description: TOOLS_DESCRIPTION.analyzeGaps,
     parameters: PARAMETERS_TOOLS.analyzeGapsParameters,
@@ -355,15 +391,22 @@ export const DIRECT_TOOLS = {
         },
       };
     },
-    errorFunction: (_, error) => `analyze_gaps_direct: ${stringifyError(error)}`,
+    errorFunction: (_, error) =>
+      `analyze_gaps_direct: ${stringifyError(error)}`,
   }),
 
   // Fill gap - email from context
-  fill_gap_direct: tool<typeof PARAMETERS_TOOLS.fillGapParameters, AgentContext>({
+  fill_gap_direct: tool<
+    typeof PARAMETERS_TOOLS.fillGapParameters,
+    AgentContext
+  >({
     name: "fill_gap_direct",
     description: TOOLS_DESCRIPTION.fillGap,
     parameters: PARAMETERS_TOOLS.fillGapParameters,
-    execute: async ({ gapStart, gapEnd, summary, description, location, calendarId }, runContext) => {
+    execute: async (
+      { gapStart, gapEnd, summary, description, location, calendarId },
+      runContext
+    ) => {
       const email = getEmailFromContext(runContext, "fill_gap_direct");
       return await fillGap({
         email,
@@ -387,7 +430,9 @@ export const DIRECT_TOOLS = {
     name: "format_gaps_display",
     description: TOOLS_DESCRIPTION.formatGapsForDisplay,
     parameters: z.object({
-      gapsJson: z.coerce.string().describe("The gaps array from analyze_gaps_direct as a JSON string."),
+      gapsJson: z.coerce
+        .string()
+        .describe("The gaps array from analyze_gaps_direct as a JSON string."),
     }),
     execute: async ({ gapsJson }) => {
       let gaps: Parameters<typeof formatGapsForDisplay>[0];
@@ -403,16 +448,23 @@ export const DIRECT_TOOLS = {
         count: Array.isArray(gaps) ? gaps.length : 0,
       };
     },
-    errorFunction: (_, error) => `format_gaps_display: ${stringifyError(error)}`,
+    errorFunction: (_, error) =>
+      `format_gaps_display: ${stringifyError(error)}`,
   }),
 
-  check_conflicts_all_calendars: tool<typeof PARAMETERS_TOOLS.checkConflictsAllCalendarsParameters, AgentContext>({
+  check_conflicts_all_calendars: tool<
+    typeof PARAMETERS_TOOLS.checkConflictsAllCalendarsParameters,
+    AgentContext
+  >({
     name: "check_conflicts_all_calendars",
     description:
       "Checks for event conflicts across ALL user calendars for a given time range. Returns conflicting events from ANY calendar, not just the target calendar. Use when moving events to detect conflicts in other calendars. Can exclude a specific event ID (the event being moved) to avoid self-conflict.",
     parameters: PARAMETERS_TOOLS.checkConflictsAllCalendarsParameters,
     execute: async ({ startTime, endTime, excludeEventId }, runContext) => {
-      const email = getEmailFromContext(runContext, "check_conflicts_all_calendars");
+      const email = getEmailFromContext(
+        runContext,
+        "check_conflicts_all_calendars"
+      );
       return checkEventConflictsAllCalendars({
         email,
         startTime,
@@ -420,52 +472,86 @@ export const DIRECT_TOOLS = {
         excludeEventId: excludeEventId ?? undefined,
       });
     },
-    errorFunction: (_, error) => `check_conflicts_all_calendars: ${stringifyError(error)}`,
+    errorFunction: (_, error) =>
+      `check_conflicts_all_calendars: ${stringifyError(error)}`,
   }),
 
-  set_event_reminders: tool<typeof PARAMETERS_TOOLS.setEventRemindersParameters, AgentContext>({
+  set_event_reminders: tool<
+    typeof PARAMETERS_TOOLS.setEventRemindersParameters,
+    AgentContext
+  >({
     name: "set_event_reminders",
     description: TOOLS_DESCRIPTION.setEventReminders,
     parameters: PARAMETERS_TOOLS.setEventRemindersParameters,
     execute: async ({ eventId, calendarId, reminders }, runContext) => {
       const email = getEmailFromContext(runContext, "set_event_reminders");
-      return updateEventReminders(email, calendarId ?? "primary", eventId, reminders);
+      return updateEventReminders(
+        email,
+        calendarId ?? "primary",
+        eventId,
+        reminders
+      );
     },
-    errorFunction: (_, error) => `set_event_reminders: ${stringifyError(error)}`,
+    errorFunction: (_, error) =>
+      `set_event_reminders: ${stringifyError(error)}`,
   }),
 
-  get_calendar_default_reminders: tool<typeof PARAMETERS_TOOLS.getCalendarDefaultRemindersParameters, AgentContext>({
+  get_calendar_default_reminders: tool<
+    typeof PARAMETERS_TOOLS.getCalendarDefaultRemindersParameters,
+    AgentContext
+  >({
     name: "get_calendar_default_reminders",
     description: TOOLS_DESCRIPTION.getCalendarDefaultReminders,
     parameters: PARAMETERS_TOOLS.getCalendarDefaultRemindersParameters,
     execute: async ({ calendarId }, runContext) => {
-      const email = getEmailFromContext(runContext, "get_calendar_default_reminders");
+      const email = getEmailFromContext(
+        runContext,
+        "get_calendar_default_reminders"
+      );
       const result = await getCalendarDefaultReminders(email, calendarId);
       if (!result) {
         return { error: "Could not retrieve calendar reminders" };
       }
       return result;
     },
-    errorFunction: (_, error) => `get_calendar_default_reminders: ${stringifyError(error)}`,
+    errorFunction: (_, error) =>
+      `get_calendar_default_reminders: ${stringifyError(error)}`,
   }),
 
-  update_calendar_default_reminders: tool<typeof PARAMETERS_TOOLS.updateCalendarDefaultRemindersParameters, AgentContext>({
+  update_calendar_default_reminders: tool<
+    typeof PARAMETERS_TOOLS.updateCalendarDefaultRemindersParameters,
+    AgentContext
+  >({
     name: "update_calendar_default_reminders",
     description: TOOLS_DESCRIPTION.updateCalendarDefaultReminders,
     parameters: PARAMETERS_TOOLS.updateCalendarDefaultRemindersParameters,
     execute: async ({ calendarId, defaultReminders }, runContext) => {
-      const email = getEmailFromContext(runContext, "update_calendar_default_reminders");
-      return updateCalendarDefaultReminders(email, calendarId, defaultReminders);
+      const email = getEmailFromContext(
+        runContext,
+        "update_calendar_default_reminders"
+      );
+      return updateCalendarDefaultReminders(
+        email,
+        calendarId,
+        defaultReminders
+      );
     },
-    errorFunction: (_, error) => `update_calendar_default_reminders: ${stringifyError(error)}`,
+    errorFunction: (_, error) =>
+      `update_calendar_default_reminders: ${stringifyError(error)}`,
   }),
 
-  get_user_reminder_preferences: tool<typeof PARAMETERS_TOOLS.getUserReminderPreferencesParameters, AgentContext>({
+  get_user_reminder_preferences: tool<
+    typeof PARAMETERS_TOOLS.getUserReminderPreferencesParameters,
+    AgentContext
+  >({
     name: "get_user_reminder_preferences",
     description: TOOLS_DESCRIPTION.getUserReminderPreferences,
     parameters: PARAMETERS_TOOLS.getUserReminderPreferencesParameters,
     execute: async (_params, runContext) => {
-      const email = getEmailFromContext(runContext, "get_user_reminder_preferences");
+      const email = getEmailFromContext(
+        runContext,
+        "get_user_reminder_preferences"
+      );
       const userId = await getUserIdByEmail(email);
       if (!userId) {
         return { error: "User not found" };
@@ -479,15 +565,25 @@ export const DIRECT_TOOLS = {
         }
       );
     },
-    errorFunction: (_, error) => `get_user_reminder_preferences: ${stringifyError(error)}`,
+    errorFunction: (_, error) =>
+      `get_user_reminder_preferences: ${stringifyError(error)}`,
   }),
 
-  update_user_reminder_preferences: tool<typeof PARAMETERS_TOOLS.updateUserReminderPreferencesParameters, AgentContext>({
+  update_user_reminder_preferences: tool<
+    typeof PARAMETERS_TOOLS.updateUserReminderPreferencesParameters,
+    AgentContext
+  >({
     name: "update_user_reminder_preferences",
     description: TOOLS_DESCRIPTION.updateUserReminderPreferences,
     parameters: PARAMETERS_TOOLS.updateUserReminderPreferencesParameters,
-    execute: async ({ enabled, defaultReminders, useCalendarDefaults }, runContext) => {
-      const email = getEmailFromContext(runContext, "update_user_reminder_preferences");
+    execute: async (
+      { enabled, defaultReminders, useCalendarDefaults },
+      runContext
+    ) => {
+      const email = getEmailFromContext(
+        runContext,
+        "update_user_reminder_preferences"
+      );
       const userId = await getUserIdByEmail(email);
       if (!userId) {
         return { error: "User not found" };
@@ -502,7 +598,8 @@ export const DIRECT_TOOLS = {
         preferences: { enabled, defaultReminders, useCalendarDefaults },
       };
     },
-    errorFunction: (_, error) => `update_user_reminder_preferences: ${stringifyError(error)}`,
+    errorFunction: (_, error) =>
+      `update_user_reminder_preferences: ${stringifyError(error)}`,
   }),
 
   update_user_brain: tool<typeof updateUserBrainSchema, AgentContext>({

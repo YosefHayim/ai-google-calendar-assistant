@@ -5,13 +5,18 @@ const MAX_PREFERENCE_LENGTH = 500;
 export const updateUserBrainSchema = z.object({
   preference: z
     .string({
-      description: "The preference or rule to save. Must be a clear, concise statement. Example: 'Always keep Fridays free from meetings'",
+      description:
+        "The preference or rule to save. Must be a clear, concise statement. Example: 'Always keep Fridays free from meetings'",
     })
     .min(1, "Preference cannot be empty")
-    .max(MAX_PREFERENCE_LENGTH, `Preference must be under ${MAX_PREFERENCE_LENGTH} characters`),
+    .max(
+      MAX_PREFERENCE_LENGTH,
+      `Preference must be under ${MAX_PREFERENCE_LENGTH} characters`
+    ),
   category: z
     .string({
-      description: "Optional category for organization. Examples: 'scheduling', 'communication', 'naming', 'general'. Leave empty if not categorizing.",
+      description:
+        "Optional category for organization. Examples: 'scheduling', 'communication', 'naming', 'general'. Leave empty if not categorizing.",
     })
     .default(""),
   replacesExisting: z

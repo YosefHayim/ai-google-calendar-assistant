@@ -1,4 +1,9 @@
-import { type AllyBrainPreference, getPreference, PREFERENCE_DEFAULTS, updatePreference } from "@/services/user-preferences-service";
+import {
+  type AllyBrainPreference,
+  getPreference,
+  PREFERENCE_DEFAULTS,
+  updatePreference,
+} from "@/services/user-preferences-service";
 import type { HandlerContext } from "@/shared/types";
 import { getUserIdByEmail } from "@/utils/auth/google-token";
 import { logger } from "@/utils/logger";
@@ -55,7 +60,10 @@ function parseInstructions(instructions: string): string[] {
  * @param replacesExisting - Preference name to find and replace
  * @returns Index of conflicting preference, or -1 if none found
  */
-function findConflictingPreference(existingPrefs: string[], replacesExisting?: string): number {
+function findConflictingPreference(
+  existingPrefs: string[],
+  replacesExisting?: string
+): number {
   if (!replacesExisting) {
     return -1;
   }
@@ -64,7 +72,11 @@ function findConflictingPreference(existingPrefs: string[], replacesExisting?: s
 
   return existingPrefs.findIndex((pref) => {
     const normalizedPref = pref.toLowerCase().trim();
-    return normalizedPref === normalizedReplace || normalizedPref.includes(normalizedReplace) || normalizedReplace.includes(normalizedPref);
+    return (
+      normalizedPref === normalizedReplace ||
+      normalizedPref.includes(normalizedReplace) ||
+      normalizedReplace.includes(normalizedPref)
+    );
   });
 }
 
@@ -78,12 +90,19 @@ function findConflictingPreference(existingPrefs: string[], replacesExisting?: s
  * @param newPreference - New preference to check for duplication
  * @returns True if preference already exists (case-insensitive)
  */
-function isDuplicatePreference(existingPrefs: string[], newPreference: string): boolean {
+function isDuplicatePreference(
+  existingPrefs: string[],
+  newPreference: string
+): boolean {
   const normalizedNew = newPreference.toLowerCase().trim();
 
   return existingPrefs.some((pref) => {
     const normalizedPref = pref.toLowerCase().trim();
-    return normalizedPref === normalizedNew || normalizedPref.includes(normalizedNew) || normalizedNew.includes(normalizedPref);
+    return (
+      normalizedPref === normalizedNew ||
+      normalizedPref.includes(normalizedNew) ||
+      normalizedNew.includes(normalizedPref)
+    );
   });
 }
 
@@ -111,7 +130,10 @@ function smartMergeInstructions(
     };
   }
 
-  const conflictIndex = findConflictingPreference(existingPrefs, replacesExisting);
+  const conflictIndex = findConflictingPreference(
+    existingPrefs,
+    replacesExisting
+  );
 
   if (conflictIndex !== -1) {
     existingPrefs[conflictIndex] = formattedNew;
@@ -142,12 +164,17 @@ function smartMergeInstructions(
  * @param ctx - Handler context with user email
  * @returns Promise resolving to update result with success status and details
  */
-export async function updateUserBrainHandler(params: UpdateUserBrainParams, ctx: HandlerContext): Promise<UpdateUserBrainResult> {
+export async function updateUserBrainHandler(
+  params: UpdateUserBrainParams,
+  ctx: HandlerContext
+): Promise<UpdateUserBrainResult> {
   const { email } = ctx;
   const { preference, category, replacesExisting } = params;
   // Convert empty strings to undefined for optional fields (for strict mode compatibility)
-  const categoryValue = category && category.trim() ? category : undefined;
-  const replacesExistingValue = replacesExisting && replacesExisting.trim() ? replacesExisting : undefined;
+  const categoryValue = category?.trim() ? category : undefined;
+  const replacesExistingValue = replacesExisting?.trim()
+    ? replacesExisting
+    : undefined;
 
   if (!preference || preference.trim().length === 0) {
     return {
@@ -175,11 +202,21 @@ export async function updateUserBrainHandler(params: UpdateUserBrainParams, ctx:
       };
     }
 
-    const currentBrain = await getPreference<AllyBrainPreference>(userId, "ally_brain");
+    const currentBrain = await getPreference<AllyBrainPreference>(
+      userId,
+      "ally_brain"
+    );
 
-    const currentInstructions = currentBrain?.instructions || (PREFERENCE_DEFAULTS.ally_brain as AllyBrainPreference).instructions;
+    const currentInstructions =
+      currentBrain?.instructions ||
+      (PREFERENCE_DEFAULTS.ally_brain as AllyBrainPreference).instructions;
 
-    const { merged, action } = smartMergeInstructions(currentInstructions, preference, categoryValue, replacesExistingValue);
+    const { merged, action } = smartMergeInstructions(
+      currentInstructions,
+      preference,
+      categoryValue,
+      replacesExistingValue
+    );
 
     if (action === "duplicate") {
       return {
@@ -206,7 +243,9 @@ export async function updateUserBrainHandler(params: UpdateUserBrainParams, ctx:
 
     await updatePreference(userId, "ally_brain", updatedBrain);
 
-    logger.info(`[updateUserBrainHandler] ${action} preference for user ${userId}: "${preference.substring(0, LOG_PREVIEW_LENGTH)}..."`);
+    logger.info(
+      `[updateUserBrainHandler] ${action} preference for user ${userId}: "${preference.substring(0, LOG_PREVIEW_LENGTH)}..."`
+    );
 
     const actionMessages = {
       added: "I've saved this to my memory.",
@@ -240,7 +279,9 @@ export async function updateUserBrainHandler(params: UpdateUserBrainParams, ctx:
  * @param ctx - Handler context with user email
  * @returns Promise resolving to brain instructions and enabled status
  */
-export async function getUserBrainHandler(ctx: HandlerContext): Promise<{ instructions: string; enabled: boolean }> {
+export async function getUserBrainHandler(
+  ctx: HandlerContext
+): Promise<{ instructions: string; enabled: boolean }> {
   const { email } = ctx;
 
   try {
@@ -249,7 +290,10 @@ export async function getUserBrainHandler(ctx: HandlerContext): Promise<{ instru
       return { instructions: "", enabled: false };
     }
 
-    const brain = await getPreference<AllyBrainPreference>(userId, "ally_brain");
+    const brain = await getPreference<AllyBrainPreference>(
+      userId,
+      "ally_brain"
+    );
 
     return {
       instructions: brain?.instructions || "",

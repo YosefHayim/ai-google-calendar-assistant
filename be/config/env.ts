@@ -59,8 +59,8 @@ const REQUIRED_SECRETS = [
 // ENVIRONMENT SETUP
 // ============================================================================
 
+import * as path from "node:path";
 import * as dotenv from "dotenv";
-import * as path from "path";
 
 // Load .env file only in development - production uses injected env vars
 if (process.env.NODE_ENV !== "production") {
@@ -111,8 +111,7 @@ const isDevPort = port === CONSTANTS.DEV_PORT;
 const isProdPort = port === CONSTANTS.PROD_PORT;
 
 export const isDev = isDevPort && !isProdPort && nodeEnv !== "production";
-export const isProd =
-  isProdPort || nodeEnv === "production" || !isDevPort;
+export const isProd = isProdPort || nodeEnv === "production" || !isDevPort;
 
 // ============================================================================
 // SERVER CONFIGURATION
@@ -179,7 +178,6 @@ const lemonSqueezy = {
     return !!this.apiKey;
   },
 } as const;
-
 
 const posthog = {
   apiKey: CONSTANTS.POSTHOG_API_KEY,
@@ -314,7 +312,6 @@ export const env = {
   integrations,
   atlassian,
 
-
   // Legacy flat accessors (for backwards compatibility)
   supabaseUrl: supabase.url,
   supabaseServiceRoleKey: supabase.serviceRoleKey,
@@ -323,7 +320,7 @@ export const env = {
   googleApiKey: google.apiKey,
   openAiApiKey: openai.apiKey,
   telegramAccessToken: integrations.telegram.accessToken,
-} 
+};
 
 // ============================================================================
 // BACKWARDS COMPATIBILITY EXPORTS

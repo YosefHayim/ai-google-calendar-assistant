@@ -2,29 +2,29 @@ import type { FileObject } from "@supabase/storage-js";
 import { SUPABASE } from "@/config/clients/supabase";
 import { logger } from "@/utils/logger";
 
-export interface UploadResult {
+export type UploadResult = {
   success: boolean;
   url?: string;
   path?: string;
   error?: string;
-}
+};
 
-export interface DownloadResult {
+export type DownloadResult = {
   success: boolean;
   data?: Buffer;
   error?: string;
-}
+};
 
-export interface DeleteResult {
+export type DeleteResult = {
   success: boolean;
   error?: string;
-}
+};
 
-export interface ListFilesResult {
+export type ListFilesResult = {
   success: boolean;
   files?: FileObject[];
   error?: string;
-}
+};
 
 /**
  * Supabase Storage Service
@@ -32,9 +32,9 @@ export interface ListFilesResult {
  */
 export class StorageService {
   private static readonly BUCKETS = {
-    AVATARS: 'avatars',
-    ATTACHMENTS: 'attachments',
-    TEMP: 'temp',
+    AVATARS: "avatars",
+    ATTACHMENTS: "attachments",
+    TEMP: "temp",
   } as const;
 
   private static readonly MAX_FILE_SIZE = {
@@ -43,13 +43,19 @@ export class StorageService {
   } as const;
 
   private static readonly ALLOWED_MIME_TYPES = {
-    AVATAR: ['image/jpeg', 'image/png', 'image/webp'],
+    AVATAR: ["image/jpeg", "image/png", "image/webp"],
     ATTACHMENT: [
-      'image/jpeg', 'image/png', 'image/webp', 'image/gif',
-      'application/pdf',
-      'text/plain', 'text/csv',
-      'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-      'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      "image/jpeg",
+      "image/png",
+      "image/webp",
+      "image/gif",
+      "application/pdf",
+      "text/plain",
+      "text/csv",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "application/vnd.ms-excel",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     ],
   } as const;
 
@@ -79,9 +85,9 @@ export class StorageService {
       }
 
       // Get the public URL for the uploaded file
-      const { data: { publicUrl } } = SUPABASE.storage
-        .from(bucket)
-        .getPublicUrl(data.path);
+      const {
+        data: { publicUrl },
+      } = SUPABASE.storage.from(bucket).getPublicUrl(data.path);
 
       logger.info(`Storage: File uploaded successfully - ${data.path}`);
 
@@ -92,14 +98,17 @@ export class StorageService {
       };
     } catch (error) {
       logger.error(`Storage: Unexpected error during upload - ${error}`);
-      return { success: false, error: 'Unexpected error during upload' };
+      return { success: false, error: "Unexpected error during upload" };
     }
   }
 
   /**
    * Downloads a file from Supabase Storage
    */
-  static async downloadFile(bucket: string, path: string): Promise<DownloadResult> {
+  static async downloadFile(
+    bucket: string,
+    path: string
+  ): Promise<DownloadResult> {
     try {
       const { data, error } = await SUPABASE.storage
         .from(bucket)
@@ -122,7 +131,7 @@ export class StorageService {
       };
     } catch (error) {
       logger.error(`Storage: Unexpected error during download - ${error}`);
-      return { success: false, error: 'Unexpected error during download' };
+      return { success: false, error: "Unexpected error during download" };
     }
   }
 
@@ -131,9 +140,7 @@ export class StorageService {
    */
   static async deleteFile(bucket: string, path: string): Promise<DeleteResult> {
     try {
-      const { error } = await SUPABASE.storage
-        .from(bucket)
-        .remove([path]);
+      const { error } = await SUPABASE.storage.from(bucket).remove([path]);
 
       if (error) {
         logger.error(`Storage: Delete failed - ${error.message}`);
@@ -145,7 +152,7 @@ export class StorageService {
       return { success: true };
     } catch (error) {
       logger.error(`Storage: Unexpected error during delete - ${error}`);
-      return { success: false, error: 'Unexpected error during delete' };
+      return { success: false, error: "Unexpected error during delete" };
     }
   }
 
@@ -179,7 +186,7 @@ export class StorageService {
       };
     } catch (error) {
       logger.error(`Storage: Unexpected error during list - ${error}`);
-      return { success: false, error: 'Unexpected error during list' };
+      return { success: false, error: "Unexpected error during list" };
     }
   }
 
@@ -193,24 +200,32 @@ export class StorageService {
     mimeType: string
   ): Promise<UploadResult> {
     // Validate file size
-    if (file.length > this.MAX_FILE_SIZE.AVATAR) {
-      return { success: false, error: 'Avatar file size exceeds 5MB limit' };
+    if (file.length > StorageService.MAX_FILE_SIZE.AVATAR) {
+      return { success: false, error: "Avatar file size exceeds 5MB limit" };
     }
 
     // Validate MIME type
-    if (!this.ALLOWED_MIME_TYPES.AVATAR.includes(mimeType as any)) {
-      return { success: false, error: 'Invalid avatar file type. Only JPEG, PNG, and WebP are allowed' };
+    if (!StorageService.ALLOWED_MIME_TYPES.AVATAR.includes(mimeType as any)) {
+      return {
+        success: false,
+        error: "Invalid avatar file type. Only JPEG, PNG, and WebP are allowed",
+      };
     }
 
     // Generate unique filename
-    const fileExt = this.getFileExtension(fileName);
+    const fileExt = StorageService.getFileExtension(fileName);
     const uniqueFileName = `${userId}/avatar_${Date.now()}.${fileExt}`;
     const path = `avatars/${uniqueFileName}`;
 
-    return this.uploadFile(this.BUCKETS.AVATARS, path, file, {
-      contentType: mimeType,
-      upsert: true, // Allow overwriting existing avatar
-    });
+    return StorageService.uploadFile(
+      StorageService.BUCKETS.AVATARS,
+      path,
+      file,
+      {
+        contentType: mimeType,
+        upsert: true, // Allow overwriting existing avatar
+      }
+    );
   }
 
   /**
@@ -223,32 +238,42 @@ export class StorageService {
     mimeType: string
   ): Promise<UploadResult> {
     // Validate file size
-    if (file.length > this.MAX_FILE_SIZE.ATTACHMENT) {
-      return { success: false, error: 'Attachment file size exceeds 50MB limit' };
+    if (file.length > StorageService.MAX_FILE_SIZE.ATTACHMENT) {
+      return {
+        success: false,
+        error: "Attachment file size exceeds 50MB limit",
+      };
     }
 
     // Validate MIME type
-    if (!this.ALLOWED_MIME_TYPES.ATTACHMENT.includes(mimeType as any)) {
-      return { success: false, error: 'Invalid attachment file type' };
+    if (
+      !StorageService.ALLOWED_MIME_TYPES.ATTACHMENT.includes(mimeType as any)
+    ) {
+      return { success: false, error: "Invalid attachment file type" };
     }
 
     // Generate unique filename
-    const fileExt = this.getFileExtension(fileName);
+    const fileExt = StorageService.getFileExtension(fileName);
     const uniqueFileName = `${userId}/attachment_${Date.now()}_${Math.random().toString(36).substring(2)}.${fileExt}`;
     const path = `attachments/${uniqueFileName}`;
 
-    return this.uploadFile(this.BUCKETS.ATTACHMENTS, path, file, {
-      contentType: mimeType,
-    });
+    return StorageService.uploadFile(
+      StorageService.BUCKETS.ATTACHMENTS,
+      path,
+      file,
+      {
+        contentType: mimeType,
+      }
+    );
   }
 
   /**
    * Gets the public URL for a file
    */
   static getPublicUrl(bucket: string, path: string): string {
-    const { data: { publicUrl } } = SUPABASE.storage
-      .from(bucket)
-      .getPublicUrl(path);
+    const {
+      data: { publicUrl },
+    } = SUPABASE.storage.from(bucket).getPublicUrl(path);
 
     return publicUrl;
   }
@@ -259,7 +284,7 @@ export class StorageService {
   static async getSignedUrl(
     bucket: string,
     path: string,
-    expiresIn: number = 3600 // 1 hour
+    expiresIn = 3600 // 1 hour
   ): Promise<{ success: boolean; url?: string; error?: string }> {
     try {
       const { data, error } = await SUPABASE.storage
@@ -274,7 +299,7 @@ export class StorageService {
       return { success: true, url: data.signedUrl };
     } catch (error) {
       logger.error(`Storage: Unexpected error creating signed URL - ${error}`);
-      return { success: false, error: 'Unexpected error creating signed URL' };
+      return { success: false, error: "Unexpected error creating signed URL" };
     }
   }
 
@@ -284,10 +309,13 @@ export class StorageService {
   static validateFile(
     file: Buffer,
     maxSize: number,
-    allowedTypes: string[]
+    _allowedTypes: string[]
   ): { valid: boolean; error?: string } {
     if (file.length > maxSize) {
-      return { valid: false, error: `File size exceeds ${maxSize / (1024 * 1024)}MB limit` };
+      return {
+        valid: false,
+        error: `File size exceeds ${maxSize / (1024 * 1024)}MB limit`,
+      };
     }
 
     // Note: MIME type validation should be done by the caller with proper MIME detection
@@ -300,14 +328,14 @@ export class StorageService {
    * Extracts file extension from filename
    */
   private static getFileExtension(fileName: string): string {
-    const parts = fileName.split('.');
-    return parts.length > 1 ? parts[parts.length - 1].toLowerCase() : '';
+    const parts = fileName.split(".");
+    return parts.length > 1 ? parts.at(-1).toLowerCase() : "";
   }
 
   /**
    * Gets bucket constants for external use
    */
   static get BUCKET_NAMES() {
-    return this.BUCKETS;
+    return StorageService.BUCKETS;
   }
 }

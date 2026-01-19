@@ -1,9 +1,16 @@
-import type { DismissAllGapsResponse, FillGapRequest, GapQueryParams, SkipGapRequest } from "@/types";
-import type { NextFunction, Request, Response } from "express";
-import { analyzeGapsForUser, formatGapsForDisplay } from "@/utils/calendar/gap-recovery";
-import { reqResAsyncHandler, sendR } from "@/utils/http";
-
+import type { Request, Response } from "express";
 import { STATUS_RESPONSE } from "@/config/constants";
+import type {
+  DismissAllGapsResponse,
+  FillGapRequest,
+  GapQueryParams,
+  SkipGapRequest,
+} from "@/types";
+import {
+  analyzeGapsForUser,
+  formatGapsForDisplay,
+} from "@/utils/calendar/gap-recovery";
+import { reqResAsyncHandler, sendR } from "@/utils/http";
 
 /**
  * Get analyzed gaps from the user's calendar
@@ -20,8 +27,12 @@ const getGaps = reqResAsyncHandler(async (req: Request, res: Response) => {
     startDate: req.query.startDate as string,
     endDate: req.query.endDate as string,
     calendarId: req.query.calendarId as string,
-    lookbackDays: req.query.lookbackDays ? parseInt(req.query.lookbackDays as string) : undefined,
-    limit: req.query.limit ? parseInt(req.query.limit as string) : undefined,
+    lookbackDays: req.query.lookbackDays
+      ? Number.parseInt(req.query.lookbackDays as string, 10)
+      : undefined,
+    limit: req.query.limit
+      ? Number.parseInt(req.query.limit as string, 10)
+      : undefined,
   };
 
   try {
@@ -38,7 +49,9 @@ const getGaps = reqResAsyncHandler(async (req: Request, res: Response) => {
     };
 
     const analyzedRange = {
-      start: new Date(Date.now() - (queryParams.lookbackDays || 7) * 24 * 60 * 60 * 1000).toISOString(),
+      start: new Date(
+        Date.now() - (queryParams.lookbackDays || 7) * 24 * 60 * 60 * 1000
+      ).toISOString(),
       end: new Date().toISOString(),
     };
 
@@ -50,7 +63,11 @@ const getGaps = reqResAsyncHandler(async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error("Error getting gaps:", error);
-    return sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Failed to retrieve gaps");
+    return sendR(
+      res,
+      STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
+      "Failed to retrieve gaps"
+    );
   }
 });
 
@@ -58,39 +75,54 @@ const getGaps = reqResAsyncHandler(async (req: Request, res: Response) => {
  * Get formatted gaps for chat display
  * GET /api/gaps/formatted
  */
-const getFormattedGaps = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const userEmail = req.user?.email;
+const getFormattedGaps = reqResAsyncHandler(
+  async (req: Request, res: Response) => {
+    const userEmail = req.user?.email;
 
-  if (!userEmail) {
-    return sendR(res, STATUS_RESPONSE.UNAUTHORIZED, "User email not available");
+    if (!userEmail) {
+      return sendR(
+        res,
+        STATUS_RESPONSE.UNAUTHORIZED,
+        "User email not available"
+      );
+    }
+
+    try {
+      const gaps = await analyzeGapsForUser({
+        email: userEmail,
+        lookbackDays: 7,
+        calendarId: "primary",
+      });
+
+      const formatted = formatGapsForDisplay(gaps);
+
+      return sendR(
+        res,
+        STATUS_RESPONSE.SUCCESS,
+        "Formatted gaps retrieved successfully",
+        {
+          formatted,
+        }
+      );
+    } catch (error) {
+      console.error("Error getting formatted gaps:", error);
+      return sendR(
+        res,
+        STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
+        "Failed to retrieve formatted gaps"
+      );
+    }
   }
-
-  try {
-    const gaps = await analyzeGapsForUser({
-      email: userEmail,
-      lookbackDays: 7,
-      calendarId: "primary",
-    });
-
-    const formatted = formatGapsForDisplay(gaps);
-
-    return sendR(res, STATUS_RESPONSE.SUCCESS, "Formatted gaps retrieved successfully", {
-      formatted,
-    });
-  } catch (error) {
-    console.error("Error getting formatted gaps:", error);
-    return sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Failed to retrieve formatted gaps");
-  }
-});
+);
 
 /**
  * Fill a gap with a new event
  * POST /api/gaps/:gapId/fill
  */
 const fillGap = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const gapId = req.params.gapId;
-  const userEmail = req.user!.email;
-  const requestData: FillGapRequest = req.body;
+  const _gapId = req.params.gapId;
+  const _userEmail = req.user?.email;
+  const _requestData: FillGapRequest = req.body;
 
   try {
     // Note: The gap filling logic would need to be implemented
@@ -101,7 +133,11 @@ const fillGap = reqResAsyncHandler(async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error("Error filling gap:", error);
-    return sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Failed to fill gap");
+    return sendR(
+      res,
+      STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
+      "Failed to fill gap"
+    );
   }
 });
 
@@ -110,15 +146,19 @@ const fillGap = reqResAsyncHandler(async (req: Request, res: Response) => {
  * POST /api/gaps/:gapId/skip
  */
 const skipGap = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const gapId = req.params.gapId;
-  const requestData: SkipGapRequest = req.body;
+  const _gapId = req.params.gapId;
+  const _requestData: SkipGapRequest = req.body;
 
   try {
     // Note: Gap skipping logic would need to be implemented
     return sendR(res, STATUS_RESPONSE.SUCCESS, "Gap skipped successfully");
   } catch (error) {
     console.error("Error skipping gap:", error);
-    return sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Failed to skip gap");
+    return sendR(
+      res,
+      STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
+      "Failed to skip gap"
+    );
   }
 });
 
@@ -126,36 +166,58 @@ const skipGap = reqResAsyncHandler(async (req: Request, res: Response) => {
  * Dismiss all pending gaps
  * POST /api/gaps/dismiss-all
  */
-const dismissAllGaps = reqResAsyncHandler(async (req: Request, res: Response) => {
-  try {
-    // Note: Dismiss all gaps logic would need to be implemented
-    const response: DismissAllGapsResponse = {
-      message: "All gaps dismissed successfully",
-      dismissedCount: 0,
-    };
+const dismissAllGaps = reqResAsyncHandler(
+  async (_req: Request, res: Response) => {
+    try {
+      // Note: Dismiss all gaps logic would need to be implemented
+      const response: DismissAllGapsResponse = {
+        message: "All gaps dismissed successfully",
+        dismissedCount: 0,
+      };
 
-    return sendR(res, STATUS_RESPONSE.SUCCESS, "All gaps dismissed successfully", response);
-  } catch (error) {
-    console.error("Error dismissing all gaps:", error);
-    return sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Failed to dismiss gaps");
+      return sendR(
+        res,
+        STATUS_RESPONSE.SUCCESS,
+        "All gaps dismissed successfully",
+        response
+      );
+    } catch (error) {
+      console.error("Error dismissing all gaps:", error);
+      return sendR(
+        res,
+        STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
+        "Failed to dismiss gaps"
+      );
+    }
   }
-});
+);
 
 /**
  * Disable gap analysis feature
  * POST /api/gaps/disable
  */
-const disableGapAnalysis = reqResAsyncHandler(async (req: Request, res: Response) => {
-  try {
-    // Note: Disable gap analysis logic would need to be implemented
-    return sendR(res, STATUS_RESPONSE.SUCCESS, "Gap analysis disabled successfully", {
-      message: "Gap analysis has been disabled",
-    });
-  } catch (error) {
-    console.error("Error disabling gap analysis:", error);
-    return sendR(res, STATUS_RESPONSE.INTERNAL_SERVER_ERROR, "Failed to disable gap analysis");
+const disableGapAnalysis = reqResAsyncHandler(
+  async (_req: Request, res: Response) => {
+    try {
+      // Note: Disable gap analysis logic would need to be implemented
+      return sendR(
+        res,
+        STATUS_RESPONSE.SUCCESS,
+        "Gap analysis disabled successfully",
+        {
+          message: "Gap analysis has been disabled",
+        }
+      );
+    } catch (error) {
+      console.error("Error disabling gap analysis:", error);
+      return sendR(
+        res,
+        STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
+        "Failed to disable gap analysis"
+      );
+    }
   }
-});
+);
 
 export {
   getGaps,

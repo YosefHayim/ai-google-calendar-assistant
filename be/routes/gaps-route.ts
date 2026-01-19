@@ -1,4 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
+import { Router } from "express";
+import { STATUS_RESPONSE } from "@/config/constants";
 import {
   disableGapAnalysis,
   dismissAllGaps,
@@ -7,32 +9,32 @@ import {
   getGaps,
   skipGap,
 } from "@/controllers/gaps-controller";
-
-import { Router } from "express";
-import { STATUS_RESPONSE } from "@/config/constants";
 import { googleTokenRefresh } from "@/middlewares/google-token-refresh";
 import { googleTokenValidation } from "@/middlewares/google-token-validation";
-import { logger } from "@/utils/logger";
-import { sendR } from "@/utils";
 import { supabaseAuth } from "@/middlewares/supabase-auth";
+import { sendR } from "@/utils";
+import { logger } from "@/utils/logger";
 
 const router = Router();
 
 // Apply authentication middleware to all gaps routes
-const withAuth = [
-  supabaseAuth(),
-  googleTokenValidation,
-  googleTokenRefresh(),
-];
+const withAuth = [supabaseAuth(), googleTokenValidation, googleTokenRefresh()];
 
 // Gap parameter validation
-router.param("gapId", (_req: Request, res: Response, next: NextFunction, gapId: string) => {
-  if (!gapId) {
-    logger.error("Gaps: gapId not found");
-    return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Gap ID parameter is required.");
+router.param(
+  "gapId",
+  (_req: Request, res: Response, next: NextFunction, gapId: string) => {
+    if (!gapId) {
+      logger.error("Gaps: gapId not found");
+      return sendR(
+        res,
+        STATUS_RESPONSE.BAD_REQUEST,
+        "Gap ID parameter is required."
+      );
+    }
+    next();
   }
-  next();
-});
+);
 
 // GET /api/gaps - Get analyzed gaps
 router.get("/", withAuth, getGaps);

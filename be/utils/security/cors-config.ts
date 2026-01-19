@@ -6,7 +6,7 @@ import { env } from "@/config";
  */
 export const getAllowedOrigins = (): string[] => {
   const primaryOrigin = env.urls.frontend;
-  
+
   // If we are in production, strictly allow only the frontend URL
   if (env.isProd) {
     return primaryOrigin ? [primaryOrigin] : [];
@@ -16,7 +16,7 @@ export const getAllowedOrigins = (): string[] => {
   const devOrigins = [
     "http://localhost:4000",
     "http://127.0.0.1:4000",
-    "http://localhost:3000", 
+    "http://localhost:3000",
     "http://127.0.0.1:3000",
     primaryOrigin,
   ];
@@ -28,7 +28,9 @@ export const getAllowedOrigins = (): string[] => {
  * Validation function used by Socket.io or manual CORS checks
  */
 export const isOriginAllowed = (origin: string | undefined): boolean => {
-  if (!origin) return false;
+  if (!origin) {
+    return false;
+  }
   const allowed = getAllowedOrigins();
   return allowed.includes(origin);
 };

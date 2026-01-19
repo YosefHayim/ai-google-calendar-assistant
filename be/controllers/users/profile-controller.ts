@@ -1,16 +1,15 @@
 import type { Request, Response } from "express";
 import { STATUS_RESPONSE, SUPABASE } from "@/config";
+import { unifiedContextStore } from "@/shared/context";
+import { clearAuthCookies } from "@/utils/auth/cookie-utils";
 import {
   getCachedUserProfile,
   invalidateAllUserCache,
   invalidateUserProfileCache,
   setCachedUserProfile,
 } from "@/utils/cache/user-cache";
-import { reqResAsyncHandler, sendR } from "@/utils/http";
-
-import { clearAuthCookies } from "@/utils/auth/cookie-utils";
-import { unifiedContextStore } from "@/shared/context";
 import { webConversation } from "@/utils/conversation/WebConversationAdapter";
+import { reqResAsyncHandler, sendR } from "@/utils/http";
 
 const getCurrentUserInformation = reqResAsyncHandler(
   async (req: Request, res: Response) => {
@@ -86,15 +85,28 @@ const updateUserProfile = reqResAsyncHandler(
     const { avatar_url, first_name, last_name } = req.body;
 
     // Update user metadata in Supabase Auth
-    if (avatar_url !== undefined || first_name !== undefined || last_name !== undefined) {
+    if (
+      avatar_url !== undefined ||
+      first_name !== undefined ||
+      last_name !== undefined
+    ) {
       const metadata: any = {};
-      if (avatar_url !== undefined) metadata.avatar_url = avatar_url;
-      if (first_name !== undefined) metadata.first_name = first_name;
-      if (last_name !== undefined) metadata.last_name = last_name;
+      if (avatar_url !== undefined) {
+        metadata.avatar_url = avatar_url;
+      }
+      if (first_name !== undefined) {
+        metadata.first_name = first_name;
+      }
+      if (last_name !== undefined) {
+        metadata.last_name = last_name;
+      }
 
-      const { error: authError } = await SUPABASE.auth.admin.updateUserById(userId, {
-        user_metadata: metadata
-      });
+      const { error: authError } = await SUPABASE.auth.admin.updateUserById(
+        userId,
+        {
+          user_metadata: metadata,
+        }
+      );
 
       if (authError) {
         return sendR(
@@ -108,11 +120,14 @@ const updateUserProfile = reqResAsyncHandler(
     // Update custom user fields in database if needed
     if (first_name !== undefined || last_name !== undefined) {
       const dbUpdate: any = {};
-      if (first_name !== undefined) dbUpdate.first_name = first_name;
-      if (last_name !== undefined) dbUpdate.last_name = last_name;
+      if (first_name !== undefined) {
+        dbUpdate.first_name = first_name;
+      }
+      if (last_name !== undefined) {
+        dbUpdate.last_name = last_name;
+      }
 
-      const { error: dbError } = await SUPABASE
-        .from("users")
+      const { error: dbError } = await SUPABASE.from("users")
         .update(dbUpdate)
         .eq("id", userId);
 
@@ -208,9 +223,8 @@ const deActivateUser = reqResAsyncHandler(
       }
 
       // 2. Delete all conversations and messages
-      const conversationsResult = await webConversation.deleteAllConversations(
-        userId
-      );
+      const conversationsResult =
+        await webConversation.deleteAllConversations(userId);
       deletionResults.conversations = conversationsResult.deletedCount;
 
       // 3. Clear Redis context (cross-modal session data + caches)
@@ -228,9 +242,8 @@ const deActivateUser = reqResAsyncHandler(
       }
 
       // 5. Delete user from Supabase Auth
-      const { error: authDeleteError } = await SUPABASE.auth.admin.deleteUser(
-        userId
-      );
+      const { error: authDeleteError } =
+        await SUPABASE.auth.admin.deleteUser(userId);
 
       if (authDeleteError) {
         console.error(

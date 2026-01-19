@@ -1,10 +1,9 @@
-import { reqResAsyncHandler, sendR } from "@/utils/http";
-
-import { StorageService } from "@/services/storage-service";
 import express from "express";
-import { logger } from "@/utils/logger";
 import multer from "multer";
 import { supabaseAuth } from "@/middlewares/supabase-auth";
+import { StorageService } from "@/services/storage-service";
+import { reqResAsyncHandler, sendR } from "@/utils/http";
+import { logger } from "@/utils/logger";
 
 const router = express.Router();
 
@@ -45,7 +44,7 @@ router.post(
     );
 
     if (!result.success) {
-      return sendR(res, 400, result.error || 'Unknown error');
+      return sendR(res, 400, result.error || "Unknown error");
     }
 
     // TODO: Update user profile in database with new avatar URL
@@ -88,7 +87,7 @@ router.post(
     );
 
     if (!result.success) {
-      return sendR(res, 400, result.error || 'Unknown error');
+      return sendR(res, 400, result.error || "Unknown error");
     }
 
     logger.info(`Attachment uploaded for user ${userId}: ${result.path}`);
@@ -110,7 +109,9 @@ router.get(
   reqResAsyncHandler(async (req, res) => {
     const bucket = req.params.bucket as string;
     const pathParam = req.params.path;
-    const path: string = Array.isArray(pathParam) ? pathParam.join('/') : (pathParam || '');
+    const path: string = Array.isArray(pathParam)
+      ? pathParam.join("/")
+      : pathParam || "";
     const userId = req.user?.id;
 
     if (!userId) {
@@ -130,13 +131,23 @@ router.get(
       }
 
       // For private files, we could return a signed URL or stream the file
-      const signedUrlResult = await StorageService.getSignedUrl(bucket, path as string, 3600); // 1 hour expiry
+      const signedUrlResult = await StorageService.getSignedUrl(
+        bucket,
+        path as string,
+        3600
+      ); // 1 hour expiry
 
       if (!signedUrlResult.success) {
-        return sendR(res, 500, signedUrlResult.error || 'Failed to generate signed URL');
+        return sendR(
+          res,
+          500,
+          signedUrlResult.error || "Failed to generate signed URL"
+        );
       }
 
-      return sendR(res, 200, "File URL retrieved", { url: signedUrlResult.url });
+      return sendR(res, 200, "File URL retrieved", {
+        url: signedUrlResult.url,
+      });
     }
 
     return sendR(res, 400, "Invalid bucket");
@@ -153,7 +164,9 @@ router.delete(
   reqResAsyncHandler(async (req, res) => {
     const bucket = req.params.bucket as string;
     const pathParam = req.params.path;
-    const path: string = Array.isArray(pathParam) ? pathParam.join('/') : (pathParam || '');
+    const path: string = Array.isArray(pathParam)
+      ? pathParam.join("/")
+      : pathParam || "";
     const userId = req.user?.id;
 
     if (!userId) {
@@ -168,7 +181,7 @@ router.delete(
     const result = await StorageService.deleteFile(bucket, path as string);
 
     if (!result.success) {
-      return sendR(res, 400, result.error || 'Unknown error');
+      return sendR(res, 400, result.error || "Unknown error");
     }
 
     logger.info(`File deleted by user ${userId}: ${bucket}/${path}`);
@@ -187,20 +200,23 @@ router.get(
   reqResAsyncHandler(async (req, res) => {
     const bucket = req.params.bucket as string;
     const userId = req.user?.id;
-    const { limit = "20", offset = "0" } = req.query as { limit?: string; offset?: string };
+    const { limit = "20", offset = "0" } = req.query as {
+      limit?: string;
+      offset?: string;
+    };
 
     if (!userId) {
       return sendR(res, 401, "Authentication required");
     }
 
     const result = await StorageService.listFiles(bucket, {
-      limit: parseInt(limit as string),
-      offset: parseInt(offset as string),
+      limit: Number.parseInt(limit as string, 10),
+      offset: Number.parseInt(offset as string, 10),
       prefix: `${userId}/`, // Only show user's files
     });
 
     if (!result.success) {
-      return sendR(res, 500, result.error || 'Unknown error');
+      return sendR(res, 500, result.error || "Unknown error");
     }
 
     sendR(res, 200, "Files retrieved successfully", {

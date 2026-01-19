@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { adminAuth } from "@/middlewares/admin-auth";
 import { blogController } from "@/controllers/blog-controller";
-import { reqResAsyncHandler } from "@/utils/http";
+import { adminAuth } from "@/middlewares/admin-auth";
 import { supabaseAuth } from "@/middlewares/supabase-auth";
+import { reqResAsyncHandler } from "@/utils/http";
 
 const router = Router();
 

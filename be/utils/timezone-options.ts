@@ -1,27 +1,27 @@
-import { TIMEZONE } from "@/config/constants/timezone"
+import { TIMEZONE } from "@/config/constants/timezone";
 
 export type TimezoneOption = {
-  value: string
-  label: string
-}
+  value: string;
+  label: string;
+};
 
 function formatTimezoneLabel(tz: string): string {
   if (tz === "Etc/UTC") {
-    return "UTC"
+    return "UTC";
   }
   if (tz === "CET") {
-    return "CET (Central European Time)"
+    return "CET (Central European Time)";
   }
 
-  const parts = tz.split("/")
+  const parts = tz.split("/");
   if (parts.length === 1) {
-    return tz
+    return tz;
   }
 
-  const region = parts[0]
-  const city = parts.slice(1).join(" / ").replace(/_/g, " ")
+  const region = parts[0];
+  const city = parts.slice(1).join(" / ").replace(/_/g, " ");
 
-  return `${city} (${region})`
+  return `${city} (${region})`;
 }
 
 export function getTimezoneOptions(): TimezoneOption[] {
@@ -30,5 +30,5 @@ export function getTimezoneOptions(): TimezoneOption[] {
       value: tz,
       label: formatTimezoneLabel(tz),
     }))
-    .sort((a, b) => a.label.localeCompare(b.label))
+    .sort((a, b) => a.label.localeCompare(b.label));
 }

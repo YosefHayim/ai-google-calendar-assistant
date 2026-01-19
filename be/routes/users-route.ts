@@ -150,7 +150,7 @@ router.put(
   supabaseAuth(),
   validate(notificationSettingsSchema, "body"),
   userPreferencesController.updatePreference
-)
+);
 
 // PUT /preferences/geo_location - Update geo location preference
 router.put(
@@ -158,7 +158,7 @@ router.put(
   supabaseAuth(),
   validate(geoLocationSchema, "body"),
   userPreferencesController.updatePreference
-)
+);
 
 // PUT /preferences/display_preferences - Update display preferences (timezone, time format)
 router.put(
@@ -166,7 +166,7 @@ router.put(
   supabaseAuth(),
   validate(displayPreferencesSchema, "body"),
   userPreferencesController.updatePreference
-)
+);
 
 router.post(
   "/refresh",

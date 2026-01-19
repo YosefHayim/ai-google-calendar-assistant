@@ -1,19 +1,18 @@
 import { InlineKeyboard, InputFile } from "grammy";
+import { generateSpeechForTelegram } from "@/utils/ai/text-to-speech";
+import { telegramConversation } from "@/utils/conversation/TelegramConversationAdapter";
+import { logger } from "@/utils/logger";
+import type { SupportedLocale } from "../i18n";
 import {
-  SUPPORTED_LOCALES,
   createTranslator,
   getTranslatorFromLanguageCode,
+  SUPPORTED_LOCALES,
 } from "../i18n";
-
 import type { GlobalContext } from "../init-bot";
 import { ResponseBuilder } from "../response-system";
-import type { SupportedLocale } from "../i18n";
-import { gatherUserKnowledge } from "./user-knowledge";
-import { generateSpeechForTelegram } from "@/utils/ai/text-to-speech";
 import { getVoicePreferenceForTelegram } from "./ally-brain";
-import { logger } from "@/utils/logger";
 import { resetSession } from "./session";
-import { telegramConversation } from "@/utils/conversation/TelegramConversationAdapter";
+import { gatherUserKnowledge } from "./user-knowledge";
 
 /**
  * Get internal user ID from Telegram user ID.

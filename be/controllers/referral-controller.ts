@@ -1,8 +1,7 @@
 import type { Request, Response } from "express";
-
+import { z } from "zod";
 import { SUPABASE } from "@/config/clients";
 import sendR from "@/utils/send-response";
-import { z } from "zod";
 
 type InvitationMetadata = {
   referral_code?: string;
@@ -379,7 +378,9 @@ export const referralController = {
   },
 
   async validateReferralCode(req: Request, res: Response) {
-    const code = Array.isArray(req.params.code) ? req.params.code[0] : req.params.code;
+    const code = Array.isArray(req.params.code)
+      ? req.params.code[0]
+      : req.params.code;
 
     if (!code) {
       return sendR(res, 400, "Referral code is required", null);

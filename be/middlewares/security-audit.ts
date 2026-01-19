@@ -1,4 +1,4 @@
-import crypto from "node:crypto";
+import { randomUUID } from "node:crypto";
 import type { NextFunction, Request, Response } from "express";
 import { logger } from "@/utils/logger";
 
@@ -26,7 +26,7 @@ export type SecurityAuditEvent = {
 /**
  * Generate a unique request ID for tracing
  */
-export const generateRequestId = (): string => crypto.randomUUID();
+export const generateRequestId = (): string => randomUUID();
 
 /**
  * Get client IP address, handling proxies
@@ -83,7 +83,7 @@ const maskEmail = (email: string): string => {
     return "***@***.***";
   }
   const maskedLocal =
-    local.length > 2 ? `${local[0]}***${local.at(-1)}` : "***";
+    local.length > 2 ? `${local[0]}***${local[local.length - 1]}` : "***";
   return `${maskedLocal}@${domain}`;
 };
 

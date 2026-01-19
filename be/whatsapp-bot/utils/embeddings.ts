@@ -26,7 +26,7 @@ type SimilarConversation = {
 /**
  * Generates an embedding vector for text - stubbed
  */
-export const generateEmbedding = async (_text: string): Promise<number[]> => {
+export const generateEmbedding = (_text: string): number[] => {
   // Embeddings disabled - conversation_embeddings table dropped
   return [];
 };
@@ -34,13 +34,13 @@ export const generateEmbedding = async (_text: string): Promise<number[]> => {
 /**
  * Stores a conversation embedding in the database - stubbed
  */
-export const storeConversationEmbedding = async (
-  _phoneNumber: string,
-  _content: string,
-  _role: "user" | "assistant",
-  _messageId?: string,
-  _conversationId?: string
-): Promise<boolean> => {
+export const storeConversationEmbedding = (_params: {
+  phoneNumber: string;
+  content: string;
+  role: "user" | "assistant";
+  messageId?: string;
+  conversationId?: string;
+}): boolean => {
   // Embeddings disabled - conversation_embeddings table dropped
   return true;
 };
@@ -48,14 +48,14 @@ export const storeConversationEmbedding = async (
 /**
  * Searches for similar conversations using vector similarity - stubbed
  */
-export const searchSimilarConversations = async (
+export const searchSimilarConversations = (
   _phoneNumber: string,
   _query: string,
   _options?: {
     threshold?: number;
     limit?: number;
   }
-): Promise<SimilarConversation[]> => {
+): SimilarConversation[] => {
   // Embeddings disabled - conversation_embeddings table dropped
   return [];
 };
@@ -101,14 +101,14 @@ export const storeEmbeddingAsync = (
 /**
  * Gets relevant context for a query - stubbed
  */
-export const getRelevantContext = async (
+export const getRelevantContext = (
   _phoneNumber: string,
   _query: string,
   _options?: {
     threshold?: number;
     limit?: number;
   }
-): Promise<string> => {
+): string => {
   // Embeddings disabled - conversation_embeddings table dropped
   return "";
 };

@@ -24,10 +24,10 @@ export type WelcomeEmailProps = {
 const colors = {
   background: "#09090b", // --background (dark)
   foreground: "#fafafa", // --foreground
-  primary: "#f26306",    // --primary (the orange)
-  border: "#27272a",     // --border
-  muted: "#a1a1aa",      // --muted-foreground
-  card: "#09090b",       // --card
+  primary: "#f26306", // --primary (the orange)
+  border: "#27272a", // --border
+  muted: "#a1a1aa", // --muted-foreground
+  card: "#09090b", // --card
 };
 
 export const WelcomeEmail = ({
@@ -53,24 +53,27 @@ export const WelcomeEmail = ({
           {/* Main Card */}
           <Section style={styles.card}>
             {/* Header / Logo */}
-            <Section style={{ textAlign: "center" as const, marginBottom: "32px" }}>
+            <Section
+              style={{ textAlign: "center" as const, marginBottom: "32px" }}
+            >
               <Img
-                src={logoUrl}
-                width="48"
-                height="48"
                 alt="Ally"
+                height="48"
+                src={logoUrl}
                 style={styles.logo}
+                width="48"
               />
             </Section>
 
             {/* Headline - dir="auto" handles LTR/RTL mix */}
-            <Text style={styles.heading} dir="auto">
+            <Text dir="auto" style={styles.heading}>
               Your calendar, mastered. Welcome, {userName}.
             </Text>
 
             <Text style={styles.paragraph}>
-              Ally is now active. As your private AI secretary, I am here to 
-              <strong> defend your deep work</strong> and automate the logistics of your day.
+              Ally is now active. As your private AI secretary, I am here to
+              <strong> defend your deep work</strong> and automate the logistics
+              of your day.
             </Text>
 
             {/* Feature Blocks (Simulating your UI's clean grid) */}
@@ -79,9 +82,9 @@ export const WelcomeEmail = ({
               <Text style={styles.infoText}>
                 "Ally, find 2 hours for deep work tomorrow morning."
               </Text>
-              
+
               <Hr style={styles.innerDivider} />
-              
+
               <Text style={styles.infoTitle}>STRATEGY</Text>
               <Text style={styles.infoText}>
                 Your "No-Meeting" zones are now being monitored and protected.
@@ -89,7 +92,9 @@ export const WelcomeEmail = ({
             </Section>
 
             {/* CTA */}
-            <Section style={{ textAlign: "center" as const, margin: "42px 0 20px" }}>
+            <Section
+              style={{ textAlign: "center" as const, margin: "42px 0 20px" }}
+            >
               <Button href={dashboardUrl} style={styles.button}>
                 Enter Dashboard
               </Button>
@@ -100,15 +105,28 @@ export const WelcomeEmail = ({
             {/* Footer Links */}
             <Section style={{ textAlign: "center" as const }}>
               <Text style={styles.footerLinks}>
-                <Link href={docsUrl} style={styles.link}>Documentation</Link>
-                <span style={{ margin: "0 10px", color: colors.border }}>|</span>
-                <Link href={supportUrl} style={styles.link}>Support</Link>
+                <Link href={docsUrl} style={styles.link}>
+                  Documentation
+                </Link>
+                <span style={{ margin: "0 10px", color: colors.border }}>
+                  |
+                </span>
+                <Link href={supportUrl} style={styles.link}>
+                  Support
+                </Link>
               </Text>
             </Section>
 
             <Text style={styles.signature}>
-              Ally<br />
-              <span style={{ fontSize: "12px", color: colors.muted, fontWeight: "normal" }}>
+              Ally
+              <br />
+              <span
+                style={{
+                  fontSize: "12px",
+                  color: colors.muted,
+                  fontWeight: "normal",
+                }}
+              >
                 Executive AI Secretary
               </span>
             </Text>

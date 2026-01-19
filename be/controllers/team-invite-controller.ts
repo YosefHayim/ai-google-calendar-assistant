@@ -1,8 +1,7 @@
 import type { Request, Response } from "express";
-
+import { z } from "zod";
 import { SUPABASE } from "@/config/clients";
 import { sendR } from "@/utils/http";
-import { z } from "zod";
 
 type InviteMetadata = {
   team_name?: string;
@@ -378,7 +377,9 @@ export const teamInviteController = {
   },
 
   async getInviteByToken(req: Request, res: Response) {
-    const token = Array.isArray(req.params.token) ? req.params.token[0] : req.params.token;
+    const token = Array.isArray(req.params.token)
+      ? req.params.token[0]
+      : req.params.token;
 
     if (!token) {
       return sendR(res, 400, "Invite token is required", null);
@@ -504,7 +505,9 @@ export const teamInviteController = {
 
   async getTeamMembers(req: Request, res: Response) {
     const userId = req.user?.id;
-    const teamId = Array.isArray(req.params.teamId) ? req.params.teamId[0] : req.params.teamId;
+    const teamId = Array.isArray(req.params.teamId)
+      ? req.params.teamId[0]
+      : req.params.teamId;
 
     if (!userId) {
       return sendR(res, 401, "Unauthorized", null);

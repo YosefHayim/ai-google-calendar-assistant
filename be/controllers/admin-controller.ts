@@ -109,7 +109,12 @@ export const updateUserStatus = reqResAsyncHandler(
       );
     }
 
-    await adminService.updateUserStatus(id as string, status, adminUserId, reason);
+    await adminService.updateUserStatus(
+      id as string,
+      status,
+      adminUserId,
+      reason
+    );
     return sendR(res, STATUS_RESPONSE.SUCCESS, "User status updated");
   }
 );

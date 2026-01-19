@@ -614,7 +614,7 @@ export const getWebConversationList = async (
     return [];
   }
 
-  return (data || []).map((row) => {
+  return data.map((row) => {
     // Generate title from available data
     let title = row.title || "New Conversation";
     if (!row.title && row.summary) {
@@ -629,7 +629,7 @@ export const getWebConversationList = async (
       messageCount: row.message_count || 0,
       lastUpdated: row.last_message_at || row.updated_at || row.created_at,
       createdAt: row.created_at,
-      pinned: row.pinned || false,
+      pinned: row.pinned,
     };
   });
 };

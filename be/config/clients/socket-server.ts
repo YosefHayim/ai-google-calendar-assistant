@@ -2,10 +2,8 @@ import type { Server as HttpServer } from "node:http";
 import type { Socket } from "socket.io";
 import { Server as SocketIOServer } from "socket.io";
 import { authenticateSocket } from "@/middlewares/socket-auth";
-import { env } from "@/config/env";
-import { getAllowedOrigins } from "@/utils/security/cors-config";
 import { logger } from "@/utils/logger";
-import { validateSupabaseToken } from "@/utils/auth/supabase-token";
+import { getAllowedOrigins } from "@/utils/security/cors-config";
 
 const PING_TIMEOUT_MS = 60_000;
 const PING_INTERVAL_MS = 25_000;

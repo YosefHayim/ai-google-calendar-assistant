@@ -1,3 +1,7 @@
+import { SUPABASE } from "@/config/clients/supabase";
+import type { userAndAiMessageProps } from "@/types";
+import { logger } from "@/utils/logger";
+import { ConversationService } from "./ConversationService";
 import type {
   ConversationContext,
   ConversationListItem,
@@ -5,11 +9,6 @@ import type {
   SharedConversation,
   SummarizeFn,
 } from "./types";
-
-import { ConversationService } from "./ConversationService";
-import { SUPABASE } from "@/config/clients/supabase";
-import { logger } from "@/utils/logger";
-import type { userAndAiMessageProps } from "@/types";
 
 const WEB_CONFIG = {
   maxContextLength: 1000,
@@ -128,11 +127,10 @@ export class WebConversationAdapter {
   ): Promise<{ success: boolean; pinned?: boolean }> {
     try {
       // First, check if the conversation exists and belongs to the user
-      const { data: conversation, error } = await SUPABASE
-        .from('conversations')
-        .select('id, pinned')
-        .eq('id', conversationId)
-        .eq('user_id', userId)
+      const { data: conversation, error } = await SUPABASE.from("conversations")
+        .select("id, pinned")
+        .eq("id", conversationId)
+        .eq("user_id", userId)
         .single();
 
       if (error || !conversation) {
@@ -142,11 +140,10 @@ export class WebConversationAdapter {
       // Toggle the pinned status
       const newPinnedStatus = !conversation.pinned;
 
-      const { error: updateError } = await SUPABASE
-        .from('conversations')
+      const { error: updateError } = await SUPABASE.from("conversations")
         .update({ pinned: newPinnedStatus })
-        .eq('id', conversationId)
-        .eq('user_id', userId);
+        .eq("id", conversationId)
+        .eq("user_id", userId);
 
       if (updateError) {
         return { success: false };
@@ -580,7 +577,10 @@ export class WebConversationAdapter {
    * @param {string} userId - The UUID of the user who owns the conversation.
    * @returns {Promise<boolean>} True if archiving succeeded, false if the conversation wasn't found or failed.
    */
-  archiveConversation(conversationId: string, userId: string): Promise<boolean> {
+  archiveConversation(
+    conversationId: string,
+    userId: string
+  ): Promise<boolean> {
     return this.service.archiveConversation(conversationId, userId);
   }
 
@@ -590,7 +590,10 @@ export class WebConversationAdapter {
    * @param {string} userId - The UUID of the user who owns the conversation.
    * @returns {Promise<boolean>} True if restoration succeeded, false if the conversation wasn't found or failed.
    */
-  restoreConversation(conversationId: string, userId: string): Promise<boolean> {
+  restoreConversation(
+    conversationId: string,
+    userId: string
+  ): Promise<boolean> {
     return this.service.restoreConversation(conversationId, userId);
   }
 
@@ -599,10 +602,16 @@ export class WebConversationAdapter {
    * @param {string} userId - The UUID of the user whose archived conversations to retrieve.
    * @returns {Promise<ConversationListItem[]>} Array of archived conversation list items.
    */
-  async getArchivedConversations(userId: string): Promise<ConversationListItem[]> {
-    logger.info(`WebConversationAdapter.getArchivedConversations: userId=${userId}`);
+  async getArchivedConversations(
+    userId: string
+  ): Promise<ConversationListItem[]> {
+    logger.info(
+      `WebConversationAdapter.getArchivedConversations: userId=${userId}`
+    );
     const result = await this.service.getArchivedConversations(userId);
-    logger.info(`WebConversationAdapter.getArchivedConversations: found ${result.length} archived conversations`);
+    logger.info(
+      `WebConversationAdapter.getArchivedConversations: found ${result.length} archived conversations`
+    );
     return result;
   }
 

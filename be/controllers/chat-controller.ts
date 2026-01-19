@@ -1,14 +1,16 @@
+import { run } from "@openai/agents";
+import type { Request, Response } from "express";
+import { ORCHESTRATOR_AGENT } from "@/ai-agents/agents";
+import { createAgentSession } from "@/ai-agents/sessions/session-factory";
+import type { AgentContext } from "@/ai-agents/tool-registry";
+import { STATUS_RESPONSE } from "@/config";
+import type { CrossPlatformSyncPreference } from "@/services/user-preferences-service";
 import {
-  PREFERENCE_DEFAULTS,
   getAllyBrainPreference,
   getCrossPlatformSyncPreference,
+  PREFERENCE_DEFAULTS,
 } from "@/services/user-preferences-service";
-import type { Request, Response } from "express";
-import {
-  deleteAllWebEmbeddings,
-  getWebRelevantContext,
-  storeWebEmbeddingAsync,
-} from "@/utils/web-embeddings";
+import { unifiedContextStore } from "@/shared/context";
 import {
   generateConversationTitle,
   summarizeMessages,
@@ -18,17 +20,14 @@ import {
   invalidateConversationsCache,
   setCachedConversations,
 } from "@/utils/cache/user-cache";
-import { reqResAsyncHandler, sendR } from "@/utils/http";
-
-import type { AgentContext } from "@/ai-agents/tool-registry";
-import type { CrossPlatformSyncPreference } from "@/services/user-preferences-service";
-import { ORCHESTRATOR_AGENT } from "@/ai-agents";
-import { STATUS_RESPONSE } from "@/config";
-import { createAgentSession } from "@/ai-agents/sessions";
-import { logger } from "@/utils/logger";
-import { run } from "@openai/agents";
-import { unifiedContextStore } from "@/shared/context";
 import { webConversation } from "@/utils/conversation/WebConversationAdapter";
+import { reqResAsyncHandler, sendR } from "@/utils/http";
+import { logger } from "@/utils/logger";
+import {
+  deleteAllWebEmbeddings,
+  getWebRelevantContext,
+  storeWebEmbeddingAsync,
+} from "@/utils/web-embeddings";
 
 const DEFAULT_LIMIT = 20;
 const DEFAULT_OFFSET = 0;
@@ -372,11 +371,10 @@ const removeConversation = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     const conversationId = req.params.id as string;
 
-
     try {
       const deleted = await webConversation.deleteConversation(
         conversationId,
-        req.user!.id
+        req.user?.id
       );
 
       if (!deleted) {
@@ -387,7 +385,7 @@ const removeConversation = reqResAsyncHandler(
         );
       }
 
-      await invalidateConversationsCache(req.user!.id);
+      await invalidateConversationsCache(req.user?.id);
 
       return sendR(
         res,
@@ -408,12 +406,15 @@ const removeConversation = reqResAsyncHandler(
 const archiveConversation = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     const conversationId = req.params.id as string;
-    const userId = req.user!.id;
+    const userId = req.user?.id;
 
-    logger.info(`Archive conversation request: conversationId=${conversationId}, userId=${userId}`);
+    logger.info(
+      `Archive conversation request: conversationId=${conversationId}, userId=${userId}`
+    );
 
     // Validate UUID format
-    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    const uuidRegex =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     if (!uuidRegex.test(conversationId)) {
       logger.error(`Invalid conversation ID format: ${conversationId}`);
       return sendR(
@@ -432,22 +433,24 @@ const archiveConversation = reqResAsyncHandler(
       );
 
       if (!existingConversation) {
-        logger.warn(`Conversation not found: ${conversationId} for user ${userId}`);
-        return sendR(
-          res,
-          STATUS_RESPONSE.NOT_FOUND,
-          "Conversation not found"
+        logger.warn(
+          `Conversation not found: ${conversationId} for user ${userId}`
         );
+        return sendR(res, STATUS_RESPONSE.NOT_FOUND, "Conversation not found");
       }
 
-      logger.info(`Conversation found, attempting to archive: ${conversationId}`);
+      logger.info(
+        `Conversation found, attempting to archive: ${conversationId}`
+      );
       const archived = await webConversation.archiveConversation(
         conversationId,
         userId
       );
 
       if (!archived) {
-        logger.warn(`Failed to archive conversation (might already be archived): ${conversationId}`);
+        logger.warn(
+          `Failed to archive conversation (might already be archived): ${conversationId}`
+        );
         return sendR(
           res,
           STATUS_RESPONSE.BAD_REQUEST,
@@ -455,7 +458,9 @@ const archiveConversation = reqResAsyncHandler(
         );
       }
 
-      logger.info(`Conversation archived successfully: ${conversationId}, invalidating cache`);
+      logger.info(
+        `Conversation archived successfully: ${conversationId}, invalidating cache`
+      );
       await invalidateConversationsCache(userId);
 
       return sendR(
@@ -482,20 +487,16 @@ const restoreConversation = reqResAsyncHandler(
       // First check if conversation exists and belongs to user
       const existingConversation = await webConversation.getConversationById(
         conversationId,
-        req.user!.id
+        req.user?.id
       );
 
       if (!existingConversation) {
-        return sendR(
-          res,
-          STATUS_RESPONSE.NOT_FOUND,
-          "Conversation not found"
-        );
+        return sendR(res, STATUS_RESPONSE.NOT_FOUND, "Conversation not found");
       }
 
       const restored = await webConversation.restoreConversation(
         conversationId,
-        req.user!.id
+        req.user?.id
       );
 
       if (!restored) {
@@ -506,7 +507,7 @@ const restoreConversation = reqResAsyncHandler(
         );
       }
 
-      await invalidateConversationsCache(req.user!.id);
+      await invalidateConversationsCache(req.user?.id);
 
       return sendR(
         res,
@@ -526,14 +527,17 @@ const restoreConversation = reqResAsyncHandler(
 
 const getArchivedConversations = reqResAsyncHandler(
   async (req: Request, res: Response) => {
-    const userId = req.user!.id;
+    const userId = req.user?.id;
 
     logger.info(`Get archived conversations request for user: ${userId}`);
 
     try {
-      const archivedConversations = await webConversation.getArchivedConversations(userId);
+      const archivedConversations =
+        await webConversation.getArchivedConversations(userId);
 
-      logger.info(`Found ${archivedConversations.length} archived conversations for user ${userId}`);
+      logger.info(
+        `Found ${archivedConversations.length} archived conversations for user ${userId}`
+      );
 
       return sendR(
         res,
@@ -542,7 +546,10 @@ const getArchivedConversations = reqResAsyncHandler(
         { conversations: archivedConversations }
       );
     } catch (error) {
-      logger.error(`Error getting archived conversations for user ${userId}:`, error);
+      logger.error(
+        `Error getting archived conversations for user ${userId}:`,
+        error
+      );
       sendR(
         res,
         STATUS_RESPONSE.INTERNAL_SERVER_ERROR,
@@ -556,7 +563,7 @@ const restoreAllArchivedConversations = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     try {
       const restored = await webConversation.restoreAllArchivedConversations(
-        req.user!.id
+        req.user?.id
       );
 
       if (!restored) {
@@ -567,7 +574,7 @@ const restoreAllArchivedConversations = reqResAsyncHandler(
         );
       }
 
-      await invalidateConversationsCache(req.user!.id);
+      await invalidateConversationsCache(req.user?.id);
 
       return sendR(
         res,
@@ -622,7 +629,7 @@ const updateConversationTitle = reqResAsyncHandler(
         );
       }
 
-      await invalidateConversationsCache(req.user!.id);
+      await invalidateConversationsCache(req.user?.id);
 
       return sendR(
         res,
@@ -656,10 +663,13 @@ const updateConversationTitle = reqResAsyncHandler(
 const toggleConversationPinned = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     const conversationId = req.params.id as string;
-    const userId = req.user!.id;
+    const userId = req.user?.id;
 
     try {
-      const result = await webConversation.toggleConversationPinned(conversationId, userId);
+      const result = await webConversation.toggleConversationPinned(
+        conversationId,
+        userId
+      );
 
       if (!result.success) {
         return sendR(
@@ -674,7 +684,7 @@ const toggleConversationPinned = reqResAsyncHandler(
       return sendR(
         res,
         STATUS_RESPONSE.SUCCESS,
-        `Conversation ${result.pinned ? 'pinned' : 'unpinned'} successfully`,
+        `Conversation ${result.pinned ? "pinned" : "unpinned"} successfully`,
         { pinned: result.pinned }
       );
     } catch (error) {

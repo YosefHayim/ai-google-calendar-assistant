@@ -1,10 +1,9 @@
-import { ACTION, REQUEST_CONFIG_BASE, STATUS_RESPONSE } from "@/config";
 import type { Request, Response } from "express";
-import {
-  applyReschedule,
-  findRescheduleSuggestions,
-} from "@/utils/calendar/reschedule";
+import { generateInsightsWithRetry } from "@/ai-agents/insights-generator";
+import { ACTION, REQUEST_CONFIG_BASE, STATUS_RESPONSE } from "@/config";
 import { eventsHandler, formatDate } from "@/utils";
+import { calculateInsightsMetrics } from "@/utils/ai/insights-calculator";
+import { quickAddWithOrchestrator } from "@/utils/ai/quick-add-orchestrator";
 import {
   getCachedEvents,
   invalidateEventsCache,
@@ -14,12 +13,12 @@ import {
   getCachedInsights,
   setCachedInsights,
 } from "@/utils/cache/insights-cache";
-import { reqResAsyncHandler, sendR } from "@/utils/http";
-
-import { calculateInsightsMetrics } from "@/utils/ai/insights-calculator";
-import { generateInsightsWithRetry } from "@/ai-agents/insights-generator";
 import { getEvents } from "@/utils/calendar/get-events";
-import { quickAddWithOrchestrator } from "@/utils/ai/quick-add-orchestrator";
+import {
+  applyReschedule,
+  findRescheduleSuggestions,
+} from "@/utils/calendar/reschedule";
+import { reqResAsyncHandler, sendR } from "@/utils/http";
 
 /**
  * Get event by event ID
@@ -167,7 +166,9 @@ const updateEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
  *
  */
 const deleteEvent = reqResAsyncHandler(async (req: Request, res: Response) => {
-  const r = await eventsHandler(req, ACTION.DELETE, { id: req.params.id as string });
+  const r = await eventsHandler(req, ACTION.DELETE, {
+    id: req.params.id as string,
+  });
 
   if (req.user?.id) {
     await invalidateEventsCache(req.user.id);
@@ -559,7 +560,9 @@ const getRescheduleSuggestions = reqResAsyncHandler(
       );
     }
 
-    const eventId = Array.isArray(req.params.eventId) ? req.params.eventId[0] : req.params.eventId;
+    const eventId = Array.isArray(req.params.eventId)
+      ? req.params.eventId[0]
+      : req.params.eventId;
 
     const {
       calendarId = "primary",
@@ -574,16 +577,28 @@ const getRescheduleSuggestions = reqResAsyncHandler(
     };
 
     // Ensure query parameters are strings, not arrays
-    const calendarIdStr = Array.isArray(calendarId) ? calendarId[0] : calendarId;
-    const preferredTimeOfDayStr = Array.isArray(preferredTimeOfDay) ? preferredTimeOfDay[0] : preferredTimeOfDay;
-    const daysToSearchStr = Array.isArray(daysToSearch) ? daysToSearch[0] : daysToSearch;
-    const excludeWeekendsStr = Array.isArray(excludeWeekends) ? excludeWeekends[0] : excludeWeekends;
+    const calendarIdStr = Array.isArray(calendarId)
+      ? calendarId[0]
+      : calendarId;
+    const preferredTimeOfDayStr = Array.isArray(preferredTimeOfDay)
+      ? preferredTimeOfDay[0]
+      : preferredTimeOfDay;
+    const daysToSearchStr = Array.isArray(daysToSearch)
+      ? daysToSearch[0]
+      : daysToSearch;
+    const excludeWeekendsStr = Array.isArray(excludeWeekends)
+      ? excludeWeekends[0]
+      : excludeWeekends;
 
     const result = await findRescheduleSuggestions({
       email,
       eventId,
       calendarId: calendarIdStr,
-      preferredTimeOfDay: preferredTimeOfDayStr as "morning" | "afternoon" | "evening" | "any",
+      preferredTimeOfDay: preferredTimeOfDayStr as
+        | "morning"
+        | "afternoon"
+        | "evening"
+        | "any",
       daysToSearch: Number.parseInt(daysToSearchStr || "7", 10),
       excludeWeekends: excludeWeekendsStr === "true",
     });
@@ -624,7 +639,9 @@ const rescheduleEvent = reqResAsyncHandler(
       );
     }
 
-    const eventId = Array.isArray(req.params.eventId) ? req.params.eventId[0] : req.params.eventId;
+    const eventId = Array.isArray(req.params.eventId)
+      ? req.params.eventId[0]
+      : req.params.eventId;
 
     const {
       newStart,
@@ -639,7 +656,9 @@ const rescheduleEvent = reqResAsyncHandler(
     // Ensure body parameters are strings, not arrays
     const newStartStr = Array.isArray(newStart) ? newStart[0] : newStart;
     const newEndStr = Array.isArray(newEnd) ? newEnd[0] : newEnd;
-    const calendarIdStr = Array.isArray(calendarId) ? calendarId[0] : calendarId;
+    const calendarIdStr = Array.isArray(calendarId)
+      ? calendarId[0]
+      : calendarId;
 
     if (!(newStartStr && newEndStr)) {
       return sendR(

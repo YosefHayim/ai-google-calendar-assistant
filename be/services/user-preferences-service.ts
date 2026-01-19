@@ -5,8 +5,8 @@
  * Uses the users.preferences JSONB column for storage.
  */
 
-import type { Json } from "@/database.types";
 import { SUPABASE } from "@/config";
+import type { Json } from "@/database.types";
 
 // ============================================
 // Types
@@ -86,9 +86,20 @@ export type DisplayPreference = {
 };
 
 export type PersonaPreference = {
-  persona: 'solopreneur' | 'developer' | 'manager' | 'student' | 'freelancer' | null;
-  painPoint: 'too_many_meetings' | 'no_deep_work' | 'forgetting_tasks' | 'manual_scheduling' | null;
-  notificationFrequency: 'realtime' | 'daily_digest' | 'weekly_summary';
+  persona:
+    | "solopreneur"
+    | "developer"
+    | "manager"
+    | "student"
+    | "freelancer"
+    | null;
+  painPoint:
+    | "too_many_meetings"
+    | "no_deep_work"
+    | "forgetting_tasks"
+    | "manual_scheduling"
+    | null;
+  notificationFrequency: "realtime" | "daily_digest" | "weekly_summary";
   onboardingCompleted: boolean;
   onboardingCompletedAt?: string;
 };
@@ -144,8 +155,8 @@ export const PREFERENCE_DEFAULTS: Record<PreferenceKey, PreferenceValue> = {
   persona: {
     persona: null,
     painPoint: null,
-    notificationFrequency: 'daily_digest',
-    onboardingCompleted: false
+    notificationFrequency: "daily_digest",
+    onboardingCompleted: false,
   },
 };
 

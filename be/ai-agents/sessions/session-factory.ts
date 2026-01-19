@@ -5,6 +5,8 @@ import { MemorySession } from "@openai/agents";
 export type SessionType = "memory";
 export type CompactionStrategy = "none" | "responses";
 
+const DEFAULT_MAX_ITEMS = 50;
+
 export type CompactionConfig = {
   /** Trigger compaction after N items (default: 50) */
   maxItems?: number;
@@ -73,7 +75,7 @@ function createCompactionWrapper(
   baseSession: Session,
   config?: CompactionConfig
 ): Session {
-  const maxItems = config?.maxItems ?? 50;
+  const maxItems = config?.maxItems ?? DEFAULT_MAX_ITEMS;
 
   return {
     getSessionId: () => baseSession.getSessionId(),

@@ -1,9 +1,9 @@
 import { type Agent, run, type Session } from "@openai/agents";
-import { AGENTS } from "@/ai-agents";
+import { AGENTS } from "@/ai-agents/agents";
 import {
   type CreateSessionOptions,
   createAgentSession,
-} from "@/ai-agents/sessions";
+} from "@/ai-agents/sessions/session-factory";
 import type { AgentContext } from "@/ai-agents/tool-registry";
 import type { AGENTS_LIST } from "@/types";
 import { asyncHandler } from "../http/async-handlers";

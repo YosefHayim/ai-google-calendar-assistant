@@ -1,5 +1,5 @@
-import { sanitizeString } from "../middleware";
 import { z } from "zod";
+import { sanitizeString } from "../middleware";
 
 export const allyBrainSchema = z.object({
   enabled: z.boolean(),
@@ -120,31 +120,40 @@ export const dailyBriefingSchema = z.object({
 
 export type DailyBriefingBody = z.infer<typeof dailyBriefingSchema>;
 
-const notificationChannelSchema = z.enum(["push", "email", "telegram"])
+const notificationChannelSchema = z.enum(["push", "email", "telegram"]);
 
 export const notificationSettingsSchema = z.object({
   eventConfirmations: z.array(notificationChannelSchema),
   conflictAlerts: z.array(notificationChannelSchema),
   featureUpdates: z.array(notificationChannelSchema),
-})
+});
 
 export type NotificationSettingsBody = z.infer<
   typeof notificationSettingsSchema
->
+>;
 
 export const displayPreferencesSchema = z.object({
   timezone: ianaTimezoneSchema,
   timeFormat: z.enum(["12h", "24h"]),
-})
+});
 
-export type DisplayPreferencesBody = z.infer<typeof displayPreferencesSchema>
+export type DisplayPreferencesBody = z.infer<typeof displayPreferencesSchema>;
 
 export const personaSchema = z.object({
-  persona: z.enum(['solopreneur', 'developer', 'manager', 'student', 'freelancer']).nullable(),
-  painPoint: z.enum(['too_many_meetings', 'no_deep_work', 'forgetting_tasks', 'manual_scheduling']).nullable(),
-  notificationFrequency: z.enum(['realtime', 'daily_digest', 'weekly_summary']),
+  persona: z
+    .enum(["solopreneur", "developer", "manager", "student", "freelancer"])
+    .nullable(),
+  painPoint: z
+    .enum([
+      "too_many_meetings",
+      "no_deep_work",
+      "forgetting_tasks",
+      "manual_scheduling",
+    ])
+    .nullable(),
+  notificationFrequency: z.enum(["realtime", "daily_digest", "weekly_summary"]),
   onboardingCompleted: z.boolean(),
   onboardingCompletedAt: z.string().optional(),
-})
+});
 
-export type PersonaBody = z.infer<typeof personaSchema>
+export type PersonaBody = z.infer<typeof personaSchema>;

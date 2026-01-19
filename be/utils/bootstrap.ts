@@ -1,8 +1,8 @@
-import { initSlackBot } from "@/slack-bot";
-import { initWhatsApp } from "@/whatsapp-bot/init-whatsapp";
 import { initializeJobScheduler } from "@/jobs";
-import { logger } from "@/utils/logger";
+import { initSlackBot } from "@/slack-bot";
 import { startTelegramBot } from "@/telegram-bot/init-bot";
+import { logger } from "@/utils/logger";
+import { initWhatsApp } from "@/whatsapp-bot/init-whatsapp";
 
 /**
  * Initializes heavy background services without blocking the main event loop.

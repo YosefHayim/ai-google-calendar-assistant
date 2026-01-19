@@ -1,3 +1,10 @@
+import { InputGuardrailTripwireTriggered } from "@openai/agents";
+import { ORCHESTRATOR_AGENT } from "@/ai-agents/agents";
+import { unifiedContextStore } from "@/shared/context";
+import type { ImageContent } from "@/shared/llm";
+import { activateAgent } from "@/utils/ai";
+import { logger } from "@/utils/logger";
+import { getTranslatorFromLanguageCode } from "../i18n";
 import {
   buildAgentPromptWithContext,
   buildConfirmationPrompt,
@@ -7,16 +14,8 @@ import {
   summarizeMessages,
   telegramConversation,
 } from "../utils";
-
-import type { GlobalContext } from "./bot-config";
-import type { ImageContent } from "@/shared/llm";
-import { InputGuardrailTripwireTriggered } from "@openai/agents";
-import { ORCHESTRATOR_AGENT } from "@/ai-agents";
-import { activateAgent } from "@/utils/ai";
 import { getAllyBrainForTelegram } from "../utils/ally-brain";
-import { getTranslatorFromLanguageCode } from "../i18n";
-import { logger } from "@/utils/logger";
-import { unifiedContextStore } from "@/shared/context";
+import type { GlobalContext } from "./bot-config";
 
 const CONFLICT_PARTS_MIN_LENGTH = 3;
 

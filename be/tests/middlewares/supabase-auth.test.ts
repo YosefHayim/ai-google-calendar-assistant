@@ -39,7 +39,7 @@ jest.mock("@/config", () => ({
 import { supabaseAuth } from "../../middlewares/supabase-auth";
 
 describe("supabaseAuth Middleware", () => {
-  let mockRequest: Partial<Request>;
+  let mockRequest: Partial<Request> & { user?: any };
   let mockResponse: Partial<Response>;
   let mockNext: ReturnType<typeof mockFn>;
   let setHeaderMock: ReturnType<typeof mockFn>;

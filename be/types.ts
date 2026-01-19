@@ -1,6 +1,7 @@
 import type { User } from "@supabase/supabase-js";
 import type { calendar_v3 } from "googleapis";
-import type { AGENT_TOOLS, AGENTS } from "@/ai-agents";
+import type { AGENTS } from "@/ai-agents/agents";
+import type { AGENT_TOOLS } from "@/ai-agents/tool-registry";
 
 export type EventParametersProps = {
   summary?: string | null | undefined;

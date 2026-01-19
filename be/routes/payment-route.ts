@@ -1,3 +1,4 @@
+import express from "express";
 import {
   cancelUserSubscription,
   createCreditPackCheckoutSession,
@@ -14,8 +15,6 @@ import {
   requestRefund,
   upgradeSubscription,
 } from "@/controllers/payment-controller";
-
-import express from "express";
 import { supabaseAuth } from "@/middlewares/supabase-auth";
 
 const router = express.Router();

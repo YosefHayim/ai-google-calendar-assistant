@@ -12,7 +12,7 @@ const mockFn = () => jest.fn<AnyFn>();
  */
 export const createMockRequest = (
   overrides: Partial<Request> = {}
-): Partial<Request> => ({
+): Partial<Request> & { user?: User } => ({
   headers: {},
   cookies: {},
   body: {},

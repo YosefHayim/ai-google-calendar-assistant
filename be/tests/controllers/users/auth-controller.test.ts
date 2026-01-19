@@ -55,7 +55,7 @@ jest.mock("@/utils/http", () => ({
 import { authController } from "@/controllers/users/auth-controller";
 
 describe("authController", () => {
-  let mockReq: Partial<Request>;
+  let mockReq: Partial<Request> & { user?: any };
   let mockRes: Partial<Response>;
   let mockNext: NextFunction;
 

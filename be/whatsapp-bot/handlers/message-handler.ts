@@ -1,5 +1,5 @@
 import { InputGuardrailTripwireTriggered } from "@openai/agents";
-import { ORCHESTRATOR_AGENT } from "@/ai-agents";
+import { ORCHESTRATOR_AGENT } from "@/ai-agents/agents";
 import { unifiedContextStore } from "@/shared/context";
 import { activateAgent } from "@/utils/ai";
 import { generateSpeechForTelegram } from "@/utils/ai/text-to-speech";
