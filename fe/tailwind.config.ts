@@ -1,4 +1,5 @@
 import type { Config } from 'tailwindcss'
+import animate from 'tailwindcss-animate'
 // FIX: Replaced require with an ES module import to resolve TypeScript error.
 import typography from '@tailwindcss/typography'
 
@@ -117,6 +118,6 @@ const config: Config = {
       },
     },
   },
-  plugins: [typography, require('tailwindcss-animate')],
+plugins: [typography, animate],
 }
 export default config

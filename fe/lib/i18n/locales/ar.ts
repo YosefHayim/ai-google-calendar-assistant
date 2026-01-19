@@ -828,25 +828,28 @@ export const ar: TranslationShape = {
       downgrade: 'تخفيض',
       currentPlan: 'الخطة الحالية',
     },
+
     actions: {
       title: 'إجراءات الاشتراك',
       cancelSubscription: 'إلغاء الاشتراك',
-      cancelDesc: 'ستحتفظ بالوصول حتى نهاية فترة الفوترة الحالية',
+      cancelDesc: 'ستحتفظ بالوصول حتى نهاية فترة الفوترة',
       cancel: 'إلغاء',
       requestRefund: 'طلب استرداد كامل',
       refundDesc: 'ضمان استرداد الأموال لمدة 30 يوماً - بدون أسئلة',
     },
+
     confirm: {
       cancelTitle: 'إلغاء الاشتراك',
-      cancelDescription: 'هل أنت متأكد من رغبتك في إلغاء اشتراكك؟ ستحتفظ بالوصول لجميع الميزات حتى نهاية فترة الفوترة الحالية.',
-      cancelTrialDescription: 'هل أنت متأكد من رغبتك في إلغاء فترتك التجريبية؟ ستفقد الوصول للميزات المميزة فوراً.',
+      cancelDescription: 'هل أنت متأكد أنك تريد إلغاء اشتراكك؟ ستظل لديك صلاحية الوصول حتى نهاية فترة الفوترة.',
+      cancelTrialDescription: 'هل أنت متأكد أنك تريد إلغاء الفترة التجريبية؟ ستفقد الوصول إلى الميزات المميزة فوراً.',
       cancelButton: 'نعم، إلغاء',
       keepButton: 'الاحتفاظ بالاشتراك',
       refundTitle: 'طلب استرداد',
-      refundDescription: 'هل أنت متأكد من رغبتك في طلب استرداد كامل؟ سيتم إلغاء اشتراكك فوراً وسيتم إلغاء الوصول.',
+      refundDescription: 'هل أنت متأكد أنك تريد طلب استرداد كامل؟ سيتم إلغاء اشتراكك فوراً وسيتم إلغاء الوصول.',
       refundButton: 'طلب استرداد',
-      nevermindButton: 'لا بأس',
+      nevermindButton: 'تراجع',
     },
+
     toast: {
       timezoneUpdated: 'تم تحديث المنطقة الزمنية',
       timezoneUpdateFailed: 'فشل في تحديث المنطقة الزمنية',
@@ -1057,289 +1060,5 @@ export const ar: TranslationShape = {
         failed: 'فشل في منح الرصيد: {{error}}',
       },
     },
-    },
-    plans: {
-      title: 'الخطط المتاحة',
-      popular: 'شائع',
-      perMonth: '/شهر',
-      unlimitedInteractions: 'تفاعلات غير محدودة',
-      interactionsPerMonth: '{{count}} تفاعل/شهر',
-      upgrade: 'ترقية',
-      downgrade: 'تخفيض',
-      currentPlan: 'الخطة الحالية',
-    },
-    actions: {
-      title: 'إجراءات الاشتراك',
-      cancelSubscription: 'إلغاء الاشتراك',
-      cancelDesc: 'ستحتفظ بالوصول حتى نهاية فترة الفوترة',
-      cancel: 'إلغاء',
-      requestRefund: 'طلب استرداد كامل',
-      refundDesc: 'ضمان استرداد الأموال لمدة 30 يوماً - بدون أسئلة',
-    },
-    confirm: {
-      cancelTitle: 'إلغاء الاشتراك',
-      cancelDescription: 'هل أنت متأكد أنك تريد إلغاء اشتراكك؟ ستظل لديك صلاحية الوصول حتى نهاية فترة الفوترة.',
-      cancelTrialDescription: 'هل أنت متأكد أنك تريد إلغاء الفترة التجريبية؟ ستفقد الوصول إلى الميزات المميزة فوراً.',
-      cancelButton: 'نعم، إلغاء',
-      keepButton: 'الاحتفاظ بالاشتراك',
-      refundTitle: 'طلب استرداد',
-      refundDescription: 'هل أنت متأكد أنك تريد طلب استرداد كامل؟ سيتم إلغاء اشتراكك فوراً وسيتم إلغاء الوصول.',
-      refundButton: 'طلب استرداد',
-      nevermindButton: 'تراجع',
-    },
-  },
-
-    // Toast messages
-    toast: {
-    // General settings
-    timezoneUpdated: 'تم تحديث المنطقة الزمنية',
-    timezoneUpdateFailed: 'فشل في تحديث المنطقة الزمنية',
-    timeFormatUpdated: 'تم تحديث تنسيق الوقت',
-    timeFormatUpdateFailed: 'فشل في تحديث تنسيق الوقت',
-    realTimeLocationEnabled: 'تم تفعيل الموقع في الوقت الفعلي',
-    realTimeLocationDisabled: 'تم تعطيل الموقع في الوقت الفعلي',
-    locationEnableFailed: 'فشل في تفعيل الموقع',
-    locationDisableFailed: 'فشل في تعطيل الموقع',
-    locationAccessDenied: 'تم رفض الوصول إلى الموقع',
-    locationAccessDeniedDescription: 'يرجى تفعيل الوصول إلى الموقع في إعدادات المتصفح الخاص بك.',
-
-    // Integrations
-    crossPlatformSyncEnabled: 'تم تفعيل المزامنة عبر المنصات',
-    crossPlatformSyncDisabled: 'تم تعطيل المزامنة عبر المنصات',
-    integrationUpdateFailed: 'فشل في تحديث التفضيل',
-
-    // Assistant settings
-    voiceInputError: 'خطأ في إدخال الصوت',
-    customInstructionsSaved: 'تم حفظ التعليمات المخصصة',
-    instructionsSaveFailed: 'فشل في حفظ التعليمات',
-    contextualSchedulingEnabled: 'تم تفعيل الجدولة السياقية',
-    contextualSchedulingDisabled: 'تم تعطيل الجدولة السياقية',
-    memoryManagementUpdateFailed: 'فشل في تحديث التفضيل',
-
-    // Chat
-    allyResponded: 'ردت علي',
-    memoryUpdated: 'تم تحديث الذاكرة',
-    regeneratingResponse: 'إعادة إنشاء الرد...',
-
-    // Gaps
-    gapsSettingsSaved: 'تم حفظ الإعدادات بنجاح',
-    gapsSettingsSaveFailed: 'فشل في حفظ الإعدادات',
-
-    // Conversations
-    titleUpdated: 'تم تحديث العنوان بنجاح',
-    titleUpdateFailed: 'فشل في تحديث العنوان',
-    shareLinkCopied: 'تم نسخ رابط المشاركة إلى الحافظة',
-    shareLinkCreateFailed: 'فشل في إنشاء رابط المشاركة',
-    conversationPinned: 'تم تثبيت المحادثة بنجاح',
-    conversationUnpinned: 'تم إلغاء تثبيت المحادثة بنجاح',
-    conversationPinFailed: 'فشل في تبديل حالة تثبيت المحادثة',
-
-    // Archived conversations
-    conversationRestored: 'تم استعادة المحادثة بنجاح',
-    conversationRestoreFailed: 'فشل في استعادة المحادثة',
-    allConversationsRestored: 'تم استعادة جميع المحادثات المؤرشفة بنجاح',
-    conversationsRestoreFailed: 'فشل في استعادة المحادثات',
-
-    // Settings modal
-    googleCalendarDisconnected: 'تم فصل Google Calendar',
-    googleCalendarDisconnectFailed: 'فشل في فصل Google Calendar',
-    conversationsDeleted: 'تم حذف المحادثات',
-    conversationsDeleteFailed: 'فشل في حذف المحادثات',
-    memoryCleared: 'تم مسح الذاكرة',
-    memoryClearFailed: 'فشل في إعادة تعيين الذاكرة',
-    accountDeleted: 'تم حذف الحساب بنجاح',
-    accountDeleteFailed: 'فشل في حذف الحساب',
-
-    // Quick event
-    microphoneAccessDenied: 'تم رفض الوصول إلى الميكروفون',
-    eventCreated: 'تم إنشاء الحدث بنجاح',
-
-    // Notifications
-    reminderPreferencesSaved: 'تم حفظ تفضيلات التذكير',
-    reminderPreferencesSaveFailed: 'فشل في حفظ تفضيلات التذكير',
-    soundNotificationsEnabled: 'تم تفعيل الإشعارات الصوتية',
-    soundNotificationsDisabled: 'تم تعطيل الإشعارات الصوتية',
-    browserNotificationPermissionDenied: 'تم رفض إذن إشعار المتصفح',
-    browserNotificationsEnabled: 'تم تفعيل إشعارات المتصفح',
-    notificationPreferencesSaved: 'تم حفظ تفضيلات الإشعار',
-    notificationPreferencesSaveFailed: 'فشل في حفظ تفضيلات الإشعار',
-
-    // Daily briefing
-    dailyBriefingPreferencesSaved: 'تم حفظ تفضيلات التلخيص اليومي',
-    dailyBriefingPreferencesSaveFailed: 'فشل في حفظ تفضيلات التلخيص اليومي',
-
-    // Voice settings
-    voiceResponseEnabled: 'تم تفعيل الردود الصوتية',
-    voiceResponseDisabled: 'تم تعطيل الردود الصوتية',
-    voicePreferenceUpdateFailed: 'فشل في تحديث التفضيل الصوتي',
-    voiceChanged: 'تم تغيير الصوت إلى {{voice}}',
-    voiceUpdateFailed: 'فشل في تحديث الصوت',
-    playbackSpeedChanged: 'تم تغيير سرعة التشغيل إلى {{speed}}x',
-    playbackSpeedUpdateFailed: 'فشل في تحديث سرعة التشغيل',
-    voicePreviewFailed: 'فشل في تشغيل معاينة الصوت',
-
-    // Messages
-    messageCopied: 'تم نسخ الرسالة إلى الحافظة',
-    messageCopyFailed: 'فشل في نسخ الرسالة',
-
-    // Audio playback
-    audioStopped: 'تم إيقاف الصوت',
-    audioPlaying: 'جارٍ تشغيل الصوت...',
-    audioPlayFailed: 'فشل في تشغيل الصوت',
-
-    // Date range picker
-    dateRangeApplied: 'تم تطبيق نطاق التاريخ',
-    dateRangeSelectBoth: 'يرجى تحديد تاريخ البداية وتاريخ النهاية',
-
-    // Calendar creation
-    calendarNameRequired: 'يرجى إدخال اسم للتقويم الخاص بك',
-    calendarCreated: 'تم إنشاء التقويم بنجاح!',
-    calendarCreateFailed: 'فشل في إنشاء التقويم',
-    calendarCreateFailedGeneric: 'فشل في إنشاء التقويم. يرجى المحاولة مرة أخرى.',
-
-    // Waiting list
-    waitingListWelcome: 'مرحباً بك في قائمة الانتظار!',
-    waitingListError: 'خطأ',
-
-    // Admin
-    userImpersonationFailed: 'فشل في انتحال شخصية المستخدم',
-    userSessionsRevoked: 'تم إلغاء جلسات المستخدم',
-    userSessionsRevokeFailed: 'فشل في إلغاء الجلسات',
-
-    // Broadcast
-    broadcastTitleRequired: 'العنوان والرسالة مطلوبان',
-    broadcastSent: 'تم إرسال البث إلى {{count}} مستخدم',
-    broadcastSendFailed: 'فشل في إرسال البث',
-
-    // Billing
-    alreadyOnFreePlan: 'أنت بالفعل على الخطة المجانية',
-    billingPortalOpenFailed: 'فشل في فتح بوابة الفوترة',
-    checkoutProcessFailed: 'فشل في معالجة الدفع. يرجى المحاولة مرة أخرى.',
-    redirectingToCheckout: 'إعادة توجيه إلى الدفع لإعداد الفوترة...',
-
-    // Voice preview
-    voicePreviewError: 'فشل في تشغيل معاينة الصوت',
-
-    // Chat input
-    maxImagesAllowed: 'الحد الأقصى {{count}} صور مسموحة',
-    imageProcessingFailed: 'فشل في معالجة الصور',
-    unsupportedImageType: 'نوع الصورة غير مدعوم: {{type}}',
-    imageTooLarge: 'الصورة كبيرة جداً (الحد الأقصى {{size}}MB)',
-    pastedImagesProcessingFailed: 'فشل في معالجة الصور الملصقة',
-  },
-
-  // UI Text
-    ui: {
-      // Common UI elements
-      stop: 'توقف',
-      voice: 'صوت',
-      time: 'الوقت',
-      organizer: 'المنظم',
-      created: 'تم الإنشاء',
-      transactionId: 'معرف المعاملة',
-      noInvoiceAvailable: 'لا توجد فاتورة متاحة',
-      noTransactionsYet: 'لا توجد معاملات بعد',
-      date: 'التاريخ',
-      description: 'الوصف',
-      amount: 'المبلغ',
-      status: 'الحالة',
-      invoice: 'الفاتورة',
-      totalGaps: 'إجمالي الفجوات',
-      highConfidence: 'ثقة عالية',
-      potentialHours: 'الساعات المحتملة',
-      avgGapSize: 'متوسط حجم الفجوة',
-      analysisPeriod: 'فترة التحليل',
-      chat: 'دردشة',
-      gaps: 'فجوات',
-      analytics: 'التحليلات',
-      settings: 'الإعدادات',
-      after: 'بعد:',
-      before: 'قبل:',
-      fillGap: 'ملء الفجوة بحدث',
-      eventTitle: 'عنوان الحدث *',
-      skipThisGap: 'تخطي هذه الفجوة',
-      reason: 'السبب (اختياري)',
-      integrations: 'التكاملات',
-      telegram: 'Telegram',
-      whatsapp: 'WhatsApp',
-      slack: 'Slack',
-      googleCalendar: 'Google Calendar',
-      failedToLoadCalendarData: 'فشل في تحميل بيانات التقويم.',
-      noActiveCalendarSourcesFound: 'لم يتم العثور على مصادر تقويم نشطة.',
-      connectWhatsApp: 'ربط WhatsApp',
-      neuralLinks: 'الروابط العصبية',
-      executiveGradeAI: 'مساعد الذكاء الاصطناعي من الدرجة التنفيذية المصمم لأصحاب الأعمال لحماية عملهم العميق. من الوصول الاستكشافي المجاني إلى الطاقة التنفيذية غير المحدودة. مبني على بروتوكول Ally العصبي.',
-      systemOnline: 'جميع الأنظمة تعمل',
-      systemOffline: 'النظام غير متاح',
-      systemChecking: 'جارٍ فحص الحالة...',
-      chatOnTelegram: 'الدردشة مع Ally على Telegram',
-      checkingServices: 'جارٍ فحص الخدمات...',
-      serverUnreachable: 'الخادم غير قابل للوصول',
-      serverOnline: 'الخادم متصل',
-      uptime: 'وقت التشغيل',
-      websockets: 'WebSockets',
-      connections: 'الاتصالات',
-      privacyPolicy: 'سياسة الخصوصية',
-      termsOfService: 'شروط الخدمة',
-      product: 'المنتج',
-      pricing: 'التسعير',
-      executivePower: 'الطاقة التنفيذية',
-      company: 'الشركة',
-      aboutUs: 'من نحن',
-      careers: 'الوظائف',
-      resources: 'الموارد',
-      blog: 'سجل التغييرات',
-      changeLog: 'سجل التغييرات',
-    },
-
-    // Integrations
-    integrations: {
-      title: 'التكاملات',
-      description: 'ربط وإدارة مساحة العمل التنفيذية الخاصة بك.',
-      telegram: {
-        title: 'Telegram',
-        description: 'تفاعل مع Ally مباشرة من خلال بوت Telegram الخاص بك.',
-        settings: 'الإعدادات',
-      },
-      whatsapp: {
-        title: 'WhatsApp',
-        description: 'مزامنة Ally مع WhatsApp لنقل الرسائل بشكل آمن.',
-        connect: 'ربط',
-      },
-      slack: {
-        title: 'Slack',
-        description: 'أضف Ally إلى مساحة عمل Slack الخاصة بك لإدارة تقويم الفريق.',
-      },
-      googleCalendar: {
-        title: 'Google Calendar',
-        failedToLoad: 'فشل في تحميل بيانات التقويم.',
-        noSources: 'لم يتم العثور على مصادر تقويم نشطة.',
-      },
-      status: {
-        connected: 'متصل',
-        disconnected: 'غير متصل',
-      },
-      connectWhatsApp: 'ربط WhatsApp',
-      refresh: 'تحديث',
-    },
-
-    // Admin
-    admin: {
-      grantCredits: {
-        title: 'منح الائتمانات',
-        description: 'إضافة ائتمانات إلى حساب {{user}}',
-        creditAmount: 'مبلغ الائتمان',
-        creditPlaceholder: 'أدخل عدد الائتمانات',
-        currentBalance: 'الرصيد الحالي: {{count}} ائتمانات',
-        reasonLabel: 'السبب (اختياري)',
-        reasonPlaceholder: 'مثال: تعويض عن مشكلة في الخدمة، مكافأة ترويجية...',
-        auditNote: 'سيتم تسجيل هذا لأغراض التدقيق',
-        cancel: 'إلغاء',
-        granting: 'جارٍ المنح...',
-        grantCredits: 'منح الائتمانات',
-        invalidAmount: 'يرجى إدخال مبلغ ائتمان صحيح',
-        success: 'تم منح {{count}} ائتمانات بنجاح إلى {{email}}',
-        failed: 'فشل في منح الائتمانات: {{error}}',
-      },
-    },
-} as const
+  }
+}
