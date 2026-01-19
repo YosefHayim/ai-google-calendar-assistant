@@ -306,6 +306,7 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
                 size="icon"
                 onClick={onCancelRecording}
                 className="absolute top-3 right-3 sm:top-4 sm:right-4 text-muted-foreground hover:text-foreground"
+                aria-label="Cancel recording"
               >
                 <X className="w-5 h-5" />
               </Button>

@@ -148,9 +148,9 @@ export default function NotificationsPage() {
                       </div>
                       {selectedFrequency === option.id && (
                         <motion.div
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: 'auto' }}
-                          exit={{ opacity: 0, height: 0 }}
+                          initial={{ opacity: 0, transform: 'translateY(-10px)' }}
+                          animate={{ opacity: 1, transform: 'translateY(0px)' }}
+                          exit={{ opacity: 0, transform: 'translateY(-10px)' }}
                           className="border-t pt-3"
                         >
                           <h4 className="font-medium text-sm mb-2">Preview:</h4>

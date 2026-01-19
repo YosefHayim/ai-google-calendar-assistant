@@ -1,10 +1,11 @@
 'use client'
 
-import React from 'react'
-import { motion } from 'framer-motion'
 import { AlertCircle, ArrowRight, Check, MapPin, ShieldCheck } from 'lucide-react'
+
 import { AllyLogo } from '@/components/shared/logo'
+import React from 'react'
 import { WhatsAppIcon } from '@/components/shared/Icons'
+import { motion } from 'framer-motion'
 
 export function SchedulingContent() {
   return (
@@ -144,9 +145,10 @@ export function VoiceContent() {
         {[...Array(8)].map((_, i) => (
           <motion.div
             key={i}
-            className="w-1 bg-primary rounded-full"
-            animate={{ height: [8, 30, 15, 25, 8] }}
+            className="w-1 bg-primary rounded-full origin-bottom"
+            animate={{ scaleY: [0.27, 1, 0.5, 0.83, 0.27] }}
             transition={{ duration: 1, repeat: Infinity, delay: i * 0.1 }}
+            style={{ height: '30px' }}
           />
         ))}
       </div>
@@ -176,10 +178,11 @@ export function IntelligenceContent() {
         {[30, 60, 40, 90, 60, 80, 50, 95].map((h, i) => (
           <motion.div
             key={i}
-            className="flex-1 bg-primary/80 rounded-t-[2px]"
-            initial={{ height: 0 }}
-            animate={{ height: `${h}%` }}
+            className="flex-1 bg-primary/80 rounded-t-[2px] origin-bottom"
+            initial={{ scaleY: 0 }}
+            animate={{ scaleY: h / 100 }}
             transition={{ delay: i * 0.05, duration: 0.8 }}
+            style={{ height: '100%' }}
           />
         ))}
       </div>

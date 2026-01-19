@@ -2,7 +2,6 @@
 
 import { AuthProvider } from '@/contexts/AuthContext'
 import { CommandPalette } from '@/components/shared/CommandPalette'
-import dynamic from 'next/dynamic'
 import { ENV } from '@/lib/constants'
 import { FeatureFlagProvider } from '@/contexts/FeatureFlagContext'
 import { ImpersonationBanner } from '@/components/admin/ImpersonationBanner'
@@ -15,6 +14,7 @@ import { SocketProvider } from '@/contexts/SocketContext'
 import { ThemeProvider } from 'next-themes'
 import { Toaster } from 'sonner'
 import { createQueryClient } from '@/lib/query'
+import dynamic from 'next/dynamic'
 import { useState } from 'react'
 
 const PostHogProvider = dynamic(() => import('@/contexts/PostHogContext').then(mod => ({ default: mod.PostHogProvider })), {

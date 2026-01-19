@@ -6,6 +6,7 @@ import type { Metadata, Viewport } from 'next'
 import { JsonLd } from '@/components/shared/JsonLd'
 import { Providers } from '@/app/providers'
 import Script from 'next/script'
+import { headers } from 'next/headers'
 
 export const metadata: Metadata = {
   ...BASE_METADATA,
@@ -34,6 +35,10 @@ export const viewport: Viewport = {
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  // Get CSP nonce from middleware
+  const headersList = headers()
+  const cspNonce = headersList.get('x-nonce') || ''
+
   return (
     <html lang="en" suppressHydrationWarning={true}>
       <head>
@@ -52,7 +57,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <JsonLd data={[generateOrganizationSchema(), generateSoftwareApplicationSchema()]} />
         {/* Google Analytics */}
         <Script src="https://www.googletagmanager.com/gtag/js?id=G-47MKM3CTD8" strategy="afterInteractive" />
-        <Script id="google-analytics" strategy="afterInteractive">
+        <Script id="google-analytics" strategy="afterInteractive" nonce={cspNonce}>
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
@@ -61,7 +66,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           `}
         </Script>
         {/* Lemon Squeezy Affiliate Tracking */}
-        <Script id="lemonsqueezy-affiliate-config" strategy="beforeInteractive">
+        <Script id="lemonsqueezy-affiliate-config" strategy="beforeInteractive" nonce={cspNonce}>
           {`window.lemonSqueezyAffiliateConfig = { store: "ally-ai-google-calendar-assitant" };`}
         </Script>
         <Script src="https://lmsqueezy.com/affiliate.js" strategy="afterInteractive" />

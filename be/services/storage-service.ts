@@ -1,6 +1,6 @@
+import type { FileObject } from "@supabase/storage-js";
 import { SUPABASE } from "@/config/clients/supabase";
 import { logger } from "@/utils/logger";
-import type { FileObject } from "@supabase/storage-js";
 
 export interface UploadResult {
   success: boolean;

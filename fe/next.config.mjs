@@ -64,22 +64,6 @@ const nextConfig = {
         source: '/(.*)',
         headers: [
           {
-            key: 'Content-Security-Policy',
-            value: [
-              "default-src 'self'",
-              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://accounts.google.com https://*.googletagmanager.com",
-              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-              "font-src 'self' https://fonts.gstatic.com",
-              "img-src 'self' data: blob: https: http:",
-              `connect-src 'self' ${isDev ? 'http://localhost:3000 ws://localhost:3000 ' : ''}https://*.supabase.co wss://*.supabase.co https://accounts.google.com https://api.openai.com https://raw.githubusercontent.com https://*.awsapprunner.com https://*.ingest.sentry.io https://*.sentry.io https://*.posthog.com https://be.askally.io https://lmsqueezy.com`,
-              "frame-src 'self' https://accounts.google.com",
-              "worker-src 'self' blob:",
-              "frame-ancestors 'none'",
-              "base-uri 'self'",
-              "form-action 'self'",
-            ].join('; '),
-          },
-          {
             key: 'X-Frame-Options',
             value: 'DENY',
           },
@@ -106,6 +90,10 @@ const nextConfig = {
           {
             key: 'X-XSS-Protection',
             value: '1; mode=block',
+          },
+          {
+            key: 'Cross-Origin-Opener-Policy',
+            value: 'same-origin',
           },
         ],
       },
@@ -138,7 +126,16 @@ export default withSentryConfig(
   // side errors will fail.
   tunnelRoute: '/monitoring',
 
-  webpack: {
+  webpack: (config, { dev }) => {
+    // Disable source maps in production since Sentry handles them
+    if (!dev) {
+      config.devtool = false
+    }
+
+    return config
+  },
+
+  sentry: {
     // Enables automatic instrumentation of Vercel Cron Monitors. (Does not yet work with App Router route handlers.)
     // See the following for more information:
     // https://docs.sentry.io/product/crons/

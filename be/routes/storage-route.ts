@@ -1,9 +1,10 @@
-import express from "express";
-import multer from "multer";
-import { StorageService } from "@/services/storage-service";
-import { supabaseAuth } from "@/middlewares/supabase-auth";
 import { reqResAsyncHandler, sendR } from "@/utils/http";
+
+import { StorageService } from "@/services/storage-service";
+import express from "express";
 import { logger } from "@/utils/logger";
+import multer from "multer";
+import { supabaseAuth } from "@/middlewares/supabase-auth";
 
 const router = express.Router();
 

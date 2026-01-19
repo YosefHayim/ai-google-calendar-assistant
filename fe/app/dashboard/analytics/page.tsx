@@ -1,10 +1,11 @@
 'use client'
 
-import { useState, Suspense } from 'react'
-import dynamic from 'next/dynamic'
+import { Suspense, useState } from 'react'
+
 import AnalyticsDashboard from '@/components/dashboard/analytics/AnalyticsDashboard'
 import { AnalyticsProvider } from '@/contexts/AnalyticsContext'
 import { LoadingSection } from '@/components/ui/loading-spinner'
+import dynamic from 'next/dynamic'
 
 const AIAllySidebar = dynamic(() => import('@/components/dashboard/shared/AIAllySidebar').then(mod => ({ default: mod.AIAllySidebar })), {
   loading: () => null,

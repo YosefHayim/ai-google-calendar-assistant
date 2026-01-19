@@ -180,7 +180,7 @@ export default function BlogPage() {
                           </span>
                         </div>
                         <Button variant="ghost" className="gap-2">
-                          Read More
+                          Read: {featuredPost.title}
                           <ArrowRight className="w-4 h-4" />
                         </Button>
                       </div>

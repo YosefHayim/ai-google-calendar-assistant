@@ -2,8 +2,9 @@
 
 'use client'
 
-import React, { useEffect, useRef, FC } from 'react'
-import { Renderer, Program, Mesh, Triangle, Vec3 } from 'ogl'
+import { Mesh, Program, Renderer, Triangle, Vec3 } from 'ogl'
+import React, { FC, useEffect, useRef } from 'react'
+
 import { cn } from '@/components/../lib/utils'
 
 interface VoicePoweredOrbProps {
@@ -299,7 +300,10 @@ export const VoicePoweredOrb: FC<VoicePoweredOrbProps> = ({
       glContext = rendererInstance.gl
       glContext.clearColor(0, 0, 0, 0)
 
-      container.innerHTML = ''
+      // Clear container safely for Trusted Types
+      while (container.firstChild) {
+        container.removeChild(container.firstChild)
+      }
       container.appendChild(glContext.canvas as HTMLCanvasElement)
 
       const geometry = new Triangle(glContext as any)

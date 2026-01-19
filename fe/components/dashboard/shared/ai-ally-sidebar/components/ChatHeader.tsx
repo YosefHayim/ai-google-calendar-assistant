@@ -43,7 +43,7 @@ export function ChatHeader({ onClose, onMinimize }: ChatHeaderProps) {
           size="icon"
           onClick={onMinimize}
           className="h-8 w-8 text-muted-foreground hover:text-foreground"
-          title="Minimize"
+          aria-label="Minimize chat"
         >
           <ChevronDown size={16} />
         </Button>
@@ -52,7 +52,7 @@ export function ChatHeader({ onClose, onMinimize }: ChatHeaderProps) {
           size="icon"
           onClick={onClose}
           className="h-8 w-8 text-muted-foreground hover:text-foreground"
-          title="Close"
+          aria-label="Close chat"
         >
           <X size={16} />
         </Button>

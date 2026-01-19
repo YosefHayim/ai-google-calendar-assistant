@@ -143,6 +143,7 @@ export function AIAllySidebar({ isOpen, onClose, onOpen }: AIAllySidebarProps) {
                     size="icon"
                     onClick={cancelRecording}
                     className="absolute top-2 right-2 h-7 w-7 text-muted-foreground"
+                    aria-label="Cancel voice recording"
                   >
                     <X size={16} />
                   </Button>
@@ -162,7 +163,7 @@ export function AIAllySidebar({ isOpen, onClose, onOpen }: AIAllySidebarProps) {
                     onClick={toggleRecording}
                     className="h-10 w-10 flex-shrink-0 text-muted-foreground hover:text-foreground dark:hover:text-primary-foreground"
                     disabled={!speechRecognitionSupported}
-                    title="Voice input"
+                    aria-label="Toggle voice input"
                   >
                     <Mic className="w-5 h-5" />
                   </Button>
@@ -186,6 +187,7 @@ export function AIAllySidebar({ isOpen, onClose, onOpen }: AIAllySidebarProps) {
                         ? 'bg-secondary dark:bg-secondary text-primary-foreground hover:bg-secondary dark:hover:bg-accent'
                         : 'bg-secondary dark:bg-secondary text-muted-foreground',
                     )}
+                    aria-label="Send message"
                   >
                     <ArrowUp className="w-5 h-5" />
                   </Button>

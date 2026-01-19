@@ -311,9 +311,10 @@ export const PricingCard: React.FC<PricingCardProps> = ({ tier, paymentFrequency
                   className="absolute w-full h-1 bg-background/10 rounded-full appearance-none cursor-pointer accent-amber-400 z-10"
                 />
                 <motion.div
-                  className="absolute h-1 bg-primary rounded-full pointer-events-none"
+                  className="absolute h-1 bg-primary rounded-full pointer-events-none origin-left"
                   initial={false}
-                  animate={{ width: `${(customAmount / MAX_CUSTOM_INTERACTIONS) * 100}%` }}
+                  animate={{ scaleX: customAmount / MAX_CUSTOM_INTERACTIONS }}
+                  style={{ width: '100%' }}
                 />
               </div>
 

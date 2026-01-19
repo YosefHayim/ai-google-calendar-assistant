@@ -1,15 +1,16 @@
 import type { Request, Response } from "express";
 import { STATUS_RESPONSE, SUPABASE } from "@/config";
-import { unifiedContextStore } from "@/shared/context";
-import { clearAuthCookies } from "@/utils/auth/cookie-utils";
 import {
   getCachedUserProfile,
   invalidateAllUserCache,
   invalidateUserProfileCache,
   setCachedUserProfile,
 } from "@/utils/cache/user-cache";
-import { webConversation } from "@/utils/conversation/WebConversationAdapter";
 import { reqResAsyncHandler, sendR } from "@/utils/http";
+
+import { clearAuthCookies } from "@/utils/auth/cookie-utils";
+import { unifiedContextStore } from "@/shared/context";
+import { webConversation } from "@/utils/conversation/WebConversationAdapter";
 
 const getCurrentUserInformation = reqResAsyncHandler(
   async (req: Request, res: Response) => {

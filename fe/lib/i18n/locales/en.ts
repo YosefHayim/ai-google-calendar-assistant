@@ -734,7 +734,7 @@ export const en = {
         name: 'Defend Your Deep Work',
         description:
           'Ally automatically shields your most important work blocks from interruptions by intelligently rescheduling conflicts.',
-        cta: 'Learn more',
+        cta: 'Learn more about deep work',
       },
       flexibleScheduling: {
         name: 'Flexible Scheduling',

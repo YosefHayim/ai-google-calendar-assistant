@@ -16,6 +16,7 @@ interface AnimatedFeatureSpotlight3DProps extends React.HTMLAttributes<HTMLEleme
   imageAlt?: string
   reverse?: boolean
   onButtonClick?: () => void
+  headingId?: string
 }
 
 export const AnimatedFeatureSpotlight3D = React.forwardRef<HTMLElement, AnimatedFeatureSpotlight3DProps>(
@@ -32,10 +33,12 @@ export const AnimatedFeatureSpotlight3D = React.forwardRef<HTMLElement, Animated
       imageAlt = 'Feature image',
       reverse = false,
       onButtonClick,
+      headingId,
       ...props
     },
     ref,
   ) => {
+    const uniqueHeadingId = headingId || `feature-spotlight-heading-${React.useId()}`
     const x = useMotionValue(0)
     const y = useMotionValue(0)
     const rotateX = useTransform(y, [-100, 100], [15, -15])
@@ -61,7 +64,7 @@ export const AnimatedFeatureSpotlight3D = React.forwardRef<HTMLElement, Animated
           'w-full max-w-6xl mx-auto p-6 md:p-12 rounded-2xl bg-muted dark:bg-secondary border border dark:border overflow-hidden',
           className,
         )}
-        aria-labelledby="feature-spotlight-heading"
+        aria-labelledby={uniqueHeadingId}
         {...props}
       >
         <div
@@ -82,7 +85,7 @@ export const AnimatedFeatureSpotlight3D = React.forwardRef<HTMLElement, Animated
               <span>{preheaderText}</span>
             </div>
             <motion.h2
-              id="feature-spotlight-heading"
+              id={uniqueHeadingId}
               className="text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight text-foreground dark:text-primary-foreground"
               initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}

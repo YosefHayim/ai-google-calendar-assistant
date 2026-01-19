@@ -121,9 +121,9 @@ export const AllyBrainSection: React.FC<AllyBrainSectionProps> = ({ toggleId }) 
           <AnimatePresence>
             {watchedEnabled && (
               <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
+                initial={{ opacity: 0, transform: 'translateY(-10px)' }}
+                animate={{ opacity: 1, transform: 'translateY(0px)' }}
+                exit={{ opacity: 0, transform: 'translateY(-10px)' }}
                 transition={{ duration: 0.2 }}
                 className="overflow-hidden"
               >

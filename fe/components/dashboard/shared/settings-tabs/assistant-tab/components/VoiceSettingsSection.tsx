@@ -180,9 +180,9 @@ export const VoiceSettingsSection: React.FC<VoiceSettingsSectionProps> = ({ togg
         <AnimatePresence>
           {voiceEnabled && (
             <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
+              initial={{ opacity: 0, transform: 'translateY(-10px)' }}
+              animate={{ opacity: 1, transform: 'translateY(0px)' }}
+              exit={{ opacity: 0, transform: 'translateY(-10px)' }}
               transition={{ duration: 0.2 }}
               className="overflow-hidden"
             >
@@ -207,7 +207,7 @@ export const VoiceSettingsSection: React.FC<VoiceSettingsSectionProps> = ({ togg
                         onClick={playVoicePreview}
                         disabled={isPreviewLoading || isUpdatingVoice}
                         className="flex-shrink-0"
-                        title={isPreviewPlaying ? 'Stop preview' : 'Preview voice'}
+                        aria-label={isPreviewPlaying ? 'Stop voice preview' : 'Preview voice'}
                       >
                         {isPreviewLoading ? (
                           <Loader2 className="w-4 h-4 animate-spin" />
