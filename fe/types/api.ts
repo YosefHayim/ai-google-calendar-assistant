@@ -230,6 +230,11 @@ export interface TimezoneInfo {
   value: string
 }
 
+export interface TimezoneOption {
+  value: string
+  label: string
+}
+
 // Free/busy response
 export interface FreeBusyResponse {
   [calendarId: string]: {

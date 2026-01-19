@@ -21,6 +21,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import CinematicGlowToggle from '@/components/ui/cinematic-glow-toggle'
 import type { GoogleCalendarIntegrationStatus } from '@/types/api'
+import { SOCIAL_LINKS } from '@/lib/constants'
 import { SiGooglecalendar } from 'react-icons/si'
 import { toast } from 'sonner'
 
@@ -202,12 +203,19 @@ export const IntegrationsTab: React.FC<IntegrationsTabProps> = ({
             <SettingsRow
               id="whatsapp"
               title="WhatsApp"
-              tooltip="WhatsApp integration is coming soon - join the waitlist to get early access"
+              tooltip="Chat with Ally on WhatsApp to manage your calendar on the go"
               icon={<FaWhatsapp size={18} className="text-muted-foreground" />}
               control={
-                <div className="flex items-center gap-2">
-                  <Badge variant="secondary">Coming Soon</Badge>
-                </div>
+                <Button variant="outline" size="sm" asChild>
+                  <a
+                    className="w-full"
+                    href={SOCIAL_LINKS.WHATSAPP}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Open <ArrowUpRight size={14} className="ml-1" />
+                  </a>
+                </Button>
               }
             />
           </SettingsSection>
@@ -216,12 +224,19 @@ export const IntegrationsTab: React.FC<IntegrationsTabProps> = ({
             <SettingsRow
               id="slack"
               title="Slack"
-              tooltip="Slack integration is coming soon - manage your calendar directly from your workspace"
+              tooltip="Connect Ally to your Slack workspace to manage your calendar directly from Slack"
               icon={<FaSlack size={18} className="text-purple-600 dark:text-purple-400" />}
               control={
-                <div className="flex items-center gap-2">
-                  <Badge variant="secondary">Coming Soon</Badge>
-                </div>
+                <Button variant="outline" size="sm" asChild>
+                  <a
+                    className="w-full"
+                    href={SOCIAL_LINKS.SLACK}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Open <ArrowUpRight size={14} className="ml-1" />
+                  </a>
+                </Button>
               }
             />
           </SettingsSection>

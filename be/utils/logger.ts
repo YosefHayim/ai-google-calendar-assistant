@@ -40,8 +40,8 @@ const clearLogFilesOnStartup = () => {
 
   const date = getDate();
   const logFiles = [
-    path.join(logDir, `${env.nodeEnv}-error-${date}.json`),
-    path.join(logDir, `${env.nodeEnv}-combined-${date}.json`),
+    path.join(logDir, `${env.nodeEnv}-error-${date}.log`),
+    path.join(logDir, `${env.nodeEnv}-combined-${date}.log`),
     path.join(logDir, `${env.nodeEnv}-audit-${date}.json`),
   ];
 

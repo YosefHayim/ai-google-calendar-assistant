@@ -42,7 +42,9 @@ export const useSpeechRecognition = (onFinalTranscription: (text: string) => voi
 
   // Check if MediaRecorder is supported (client-side only)
   useEffect(() => {
-    setSpeechRecognitionSupported('MediaRecorder' in window)
+    const supported = 'MediaRecorder' in window
+    console.log('[Voice] MediaRecorder supported:', supported)
+    setSpeechRecognitionSupported(supported)
   }, [])
 
   const cleanupRecording = useCallback(() => {
@@ -109,11 +111,14 @@ export const useSpeechRecognition = (onFinalTranscription: (text: string) => voi
   }, [cleanupRecording])
 
   const startRecording = useCallback(async () => {
+    console.log('[Voice] startRecording called, isRecording:', isRecording, 'isTranscribing:', isTranscribing)
     if (isRecording || isTranscribing) return
 
     try {
       // Request microphone access
+      console.log('[Voice] Requesting microphone access...')
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+      console.log('[Voice] Got microphone access')
       streamRef.current = stream
       setSpeechRecognitionError(null)
       audioChunksRef.current = []
@@ -170,12 +175,13 @@ export const useSpeechRecognition = (onFinalTranscription: (text: string) => voi
   }, [isRecording, isTranscribing, cleanupRecording, processAudio])
 
   const toggleRecording = useCallback(() => {
+    console.log('[Voice] toggleRecording called, isRecording:', isRecording, 'isTranscribing:', isTranscribing)
     if (isRecording) {
       stopRecording()
     } else {
       startRecording()
     }
-  }, [isRecording, stopRecording, startRecording])
+  }, [isRecording, isTranscribing, stopRecording, startRecording])
 
   return {
     isRecording: isRecording || isTranscribing,

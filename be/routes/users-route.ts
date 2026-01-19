@@ -21,6 +21,9 @@ import {
   contextualSchedulingSchema,
   crossPlatformSyncSchema,
   dailyBriefingSchema,
+  displayPreferencesSchema,
+  geoLocationSchema,
+  notificationSettingsSchema,
   otpVerificationSchema,
   preferenceKeyParamSchema,
   reminderPreferencesSchema,
@@ -140,6 +143,30 @@ router.put(
   validate(crossPlatformSyncSchema, "body"),
   userPreferencesController.updatePreference
 );
+
+// PUT /preferences/notification_settings - Update notification settings preference
+router.put(
+  "/preferences/notification_settings",
+  supabaseAuth(),
+  validate(notificationSettingsSchema, "body"),
+  userPreferencesController.updatePreference
+)
+
+// PUT /preferences/geo_location - Update geo location preference
+router.put(
+  "/preferences/geo_location",
+  supabaseAuth(),
+  validate(geoLocationSchema, "body"),
+  userPreferencesController.updatePreference
+)
+
+// PUT /preferences/display_preferences - Update display preferences (timezone, time format)
+router.put(
+  "/preferences/display_preferences",
+  supabaseAuth(),
+  validate(displayPreferencesSchema, "body"),
+  userPreferencesController.updatePreference
+)
 
 router.post(
   "/refresh",

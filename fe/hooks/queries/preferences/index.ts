@@ -13,8 +13,20 @@ import type {
   CrossPlatformSyncFormData,
   GeoLocationFormData,
   NotificationSettingsFormData,
+  DisplayPreferencesFormData,
 } from '@/lib/validations/preferences'
 import type { QueryHookOptions } from '../useQueryWrapper'
+
+export function useTimezonesList() {
+  return useQuery({
+    queryKey: queryKeys.timezones.list(),
+    queryFn: async () => {
+      const response = await preferencesService.getTimezonesList()
+      return response.data
+    },
+    staleTime: 24 * 60 * 60 * 1000,
+  })
+}
 
 /**
  * Hook to fetch Ally's Brain preference
@@ -437,6 +449,62 @@ export function useUpdateNotificationSettings() {
   return {
     updateNotificationSettings: mutation.mutate,
     updateNotificationSettingsAsync: mutation.mutateAsync,
+    isUpdating: mutation.isPending,
+    isError: mutation.isError,
+    error: mutation.error,
+    isSuccess: mutation.isSuccess,
+    reset: mutation.reset,
+  }
+}
+
+/**
+ * Hook to fetch Display Preferences
+ */
+export function useDisplayPreferences(options?: QueryHookOptions) {
+  const query = useQuery({
+    queryKey: queryKeys.preferences.displayPreferences(),
+    queryFn: async () => {
+      const response = await preferencesService.getDisplayPreferences()
+      return response.data
+    },
+    staleTime: options?.staleTime ?? QUERY_CONFIG.USER_STALE_TIME,
+    enabled: options?.enabled ?? true,
+    refetchOnWindowFocus: options?.refetchOnWindowFocus ?? false,
+    refetchOnMount: options?.refetchOnMount ?? true,
+  })
+
+  return {
+    data: query.data ?? null,
+    isLoading: query.isLoading,
+    isFetching: query.isFetching,
+    isError: query.isError,
+    error: query.error,
+    refetch: query.refetch,
+  }
+}
+
+/**
+ * Hook to update Display Preferences
+ */
+export function useUpdateDisplayPreferences() {
+  const queryClient = useQueryClient()
+
+  const mutation = useMutation({
+    mutationFn: (data: DisplayPreferencesFormData) => preferencesService.updateDisplayPreferences(data),
+    onSuccess: (response) => {
+      if (response.data) {
+        queryClient.setQueryData<PreferenceResponse<DisplayPreferencesFormData>>(
+          queryKeys.preferences.displayPreferences(),
+          response.data,
+        )
+      }
+      queryClient.invalidateQueries({ queryKey: queryKeys.preferences.list() })
+    },
+  })
+
+  return {
+    updateDisplayPreferences: mutation.mutate,
+    updateDisplayPreferencesAsync: mutation.mutateAsync,
     isUpdating: mutation.isPending,
     isError: mutation.isError,
     error: mutation.error,

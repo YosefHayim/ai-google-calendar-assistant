@@ -53,7 +53,7 @@ export default function HomePage() {
               <span className="hidden xs:inline">Telegram</span>
             </a>
             <a
-              href="/api/slack/oauth/install"
+              href={SOCIAL_LINKS.SLACK}
               className="inline-flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full bg-[#4A154B]/10 text-[#4A154B] dark:bg-[#E01E5A]/10 dark:text-[#E01E5A] hover:bg-[#4A154B]/20 dark:hover:bg-[#E01E5A]/20 transition-colors text-xs sm:text-sm font-medium touch-manipulation"
               aria-label="Add to Slack"
             >
@@ -61,7 +61,7 @@ export default function HomePage() {
               <span className="hidden xs:inline">Slack</span>
             </a>
             <a
-              href={`https://wa.me/message/VI5IQ3IXJUAVJ1`}
+              href={SOCIAL_LINKS.WHATSAPP}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366]/20 transition-colors text-xs sm:text-sm font-medium touch-manipulation"

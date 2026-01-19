@@ -20,7 +20,8 @@ export type PreferenceKey =
   | "daily_briefing"
   | "cross_platform_sync"
   | "geo_location"
-  | "notification_settings";
+  | "notification_settings"
+  | "display_preferences";
 
 export type AllyBrainPreference = {
   enabled: boolean;
@@ -78,6 +79,11 @@ export type NotificationSettingsPreference = {
   featureUpdates: NotificationChannel[];
 };
 
+export type DisplayPreference = {
+  timezone: string;
+  timeFormat: "12h" | "24h";
+};
+
 export type PreferenceValue =
   | AllyBrainPreference
   | ContextualSchedulingPreference
@@ -86,7 +92,8 @@ export type PreferenceValue =
   | DailyBriefingPreference
   | CrossPlatformSyncPreference
   | GeoLocationPreference
-  | NotificationSettingsPreference;
+  | NotificationSettingsPreference
+  | DisplayPreference;
 
 export type PreferenceResult<T> = {
   value: T;
@@ -120,6 +127,10 @@ export const PREFERENCE_DEFAULTS: Record<PreferenceKey, PreferenceValue> = {
     conflictAlerts: ["push"],
     featureUpdates: ["email"],
   },
+  display_preferences: {
+    timezone: "UTC",
+    timeFormat: "12h",
+  },
 };
 
 export const VALID_PREFERENCE_KEYS: PreferenceKey[] = [
@@ -131,6 +142,7 @@ export const VALID_PREFERENCE_KEYS: PreferenceKey[] = [
   "cross_platform_sync",
   "geo_location",
   "notification_settings",
+  "display_preferences",
 ];
 
 // ============================================
@@ -398,4 +410,13 @@ export async function getNotificationSettingsPreference(
     userId,
     "notification_settings"
   );
+}
+
+/**
+ * Get display_preferences preference
+ */
+export async function getDisplayPreference(
+  userId: string
+): Promise<DisplayPreference | null> {
+  return getPreference<DisplayPreference>(userId, "display_preferences");
 }

@@ -71,6 +71,13 @@ export const queryKeys = {
     crossPlatformSync: () => [...queryKeys.preferences.all, 'cross_platform_sync'] as const,
     geoLocation: () => [...queryKeys.preferences.all, 'geo_location'] as const,
     notificationSettings: () => [...queryKeys.preferences.all, 'notification_settings'] as const,
+    displayPreferences: () => [...queryKeys.preferences.all, 'display_preferences'] as const,
+  },
+
+  // Timezones queries
+  timezones: {
+    all: ['timezones'] as const,
+    list: () => [...queryKeys.timezones.all, 'list'] as const,
   },
 } as const
 

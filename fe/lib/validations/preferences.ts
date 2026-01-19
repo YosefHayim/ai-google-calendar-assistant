@@ -169,3 +169,18 @@ export const notificationSettingsDefaults: NotificationSettingsFormData = {
   conflictAlerts: ['push'],
   featureUpdates: ['email'],
 }
+
+export const TIME_FORMATS = ['12h', '24h'] as const
+export type TimeFormat = (typeof TIME_FORMATS)[number]
+
+export const displayPreferencesSchema = z.object({
+  timezone: z.string().min(1, 'Timezone is required'),
+  timeFormat: z.enum(TIME_FORMATS),
+})
+
+export type DisplayPreferencesFormData = z.infer<typeof displayPreferencesSchema>
+
+export const displayPreferencesDefaults: DisplayPreferencesFormData = {
+  timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+  timeFormat: '12h',
+}

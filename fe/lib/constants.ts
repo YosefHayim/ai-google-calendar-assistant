@@ -3,7 +3,7 @@
  */
 
 // Production backend URL (hardcoded)
-const PRODUCTION_BACKEND_URL = 'https://i3fzcpnmmk.eu-central-1.awsapprunner.com'
+const PRODUCTION_BACKEND_URL = 'https://be.askally.io'
 const LOCAL_BACKEND_URL = 'http://localhost:3000'
 
 /**
@@ -84,9 +84,10 @@ export const DATE_CONSTANTS = {
 
 // Social & Integration Links
 export const SOCIAL_LINKS = {
+  SLACK: `${ENV.API_BASE_URL}/api/slack/oauth/install`,
   TELEGRAM_BOT: 'https://t.me/ai_schedule_event_server_bot',
   DISCORD: 'https://discord.gg/ally',
-  WHATSAPP: 'https://wa.me/message/ally',
+  WHATSAPP: 'https://api.whatsapp.com/send/?phone=972525839496&text=Hi+Ally%21+I%27d+like+to+try+the+calendar+assistant.&type=phone_number&app_absent=0',
   EMAIL: 'mailto:hello@askally.io',
 } as const
 

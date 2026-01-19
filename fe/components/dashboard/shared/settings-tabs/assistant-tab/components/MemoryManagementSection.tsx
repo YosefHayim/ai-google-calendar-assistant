@@ -1,12 +1,13 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
 import { CalendarCheck, Database } from 'lucide-react'
-import { toast } from 'sonner'
 import { Card, CardContent } from '@/components/ui/card'
-import CinematicGlowToggle from '@/components/ui/cinematic-glow-toggle'
+import React, { useEffect, useState } from 'react'
 import { SettingsRow, SettingsSection, TabHeader } from '../../components'
 import { useContextualScheduling, useUpdateContextualScheduling } from '@/hooks/queries'
+
+import CinematicGlowToggle from '@/components/ui/cinematic-glow-toggle'
+import { toast } from 'sonner'
 
 interface MemoryManagementSectionProps {
   toggleId: string
@@ -58,14 +59,6 @@ export const MemoryManagementSection: React.FC<MemoryManagementSectionProps> = (
                 onChange={isUpdatingContextual ? () => {} : handleContextualToggle}
               />
             }
-          />
-
-          <SettingsRow
-            id="memory-stats"
-            title="Learned Patterns"
-            tooltip="Amount of scheduling patterns Ally has learned from your calendar activity"
-            icon={<Database size={18} className="text-slate-500 dark:text-slate-400" />}
-            control={<span className="text-sm text-muted-foreground dark:text-muted-foreground">{memoryUsage}</span>}
           />
         </SettingsSection>
       </CardContent>

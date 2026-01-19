@@ -40,11 +40,13 @@ export const preferenceKeyParamSchema = z.object({
       "daily_briefing",
       "cross_platform_sync",
       "geo_location",
+      "notification_settings",
+      "display_preferences",
     ],
     {
       errorMap: () => ({
         message:
-          "Invalid preference key. Must be 'ally_brain', 'contextual_scheduling', 'reminder_defaults', 'voice_preference', 'daily_briefing', 'cross_platform_sync', or 'geo_location'",
+          "Invalid preference key. Must be 'ally_brain', 'contextual_scheduling', 'reminder_defaults', 'voice_preference', 'daily_briefing', 'cross_platform_sync', 'geo_location', 'notification_settings', or 'display_preferences'",
       }),
     }
   ),
@@ -116,3 +118,22 @@ export const dailyBriefingSchema = z.object({
 });
 
 export type DailyBriefingBody = z.infer<typeof dailyBriefingSchema>;
+
+const notificationChannelSchema = z.enum(["push", "email", "telegram"])
+
+export const notificationSettingsSchema = z.object({
+  eventConfirmations: z.array(notificationChannelSchema),
+  conflictAlerts: z.array(notificationChannelSchema),
+  featureUpdates: z.array(notificationChannelSchema),
+})
+
+export type NotificationSettingsBody = z.infer<
+  typeof notificationSettingsSchema
+>
+
+export const displayPreferencesSchema = z.object({
+  timezone: ianaTimezoneSchema,
+  timeFormat: z.enum(["12h", "24h"]),
+})
+
+export type DisplayPreferencesBody = z.infer<typeof displayPreferencesSchema>

@@ -437,6 +437,12 @@ export const ENDPOINTS = {
   USER_PREFERENCES_NOTIFICATION_SETTINGS: '/api/users/preferences/notification_settings',
 
   /**
+   * Update display_preferences preference (timezone, time format)
+   * Methods: PUT
+   */
+  USER_PREFERENCES_DISPLAY: '/api/users/preferences/display_preferences',
+
+  /**
    * Submit contact form
    * Methods: POST
    * Body: multipart/form-data with name, email, subject, message, attachments[]
@@ -568,6 +574,12 @@ export const ENDPOINTS = {
   ADMIN_USER_IMPERSONATE: (id: string) => `/api/admin/users/${id}/impersonate`,
   ADMIN_USER_REVOKE_SESSIONS: (id: string) => `/api/admin/users/${id}/revoke-sessions`,
   ADMIN_BROADCAST: '/api/admin/broadcast',
+
+  // ============================================
+  // PUBLIC ENDPOINTS
+  // ============================================
+
+  TIMEZONES_LIST: '/api/timezones',
 } as const
 
 export type EndpointsType = typeof ENDPOINTS

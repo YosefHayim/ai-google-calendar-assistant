@@ -64,6 +64,9 @@ export {
   useUpdateGeoLocation,
   useNotificationSettings,
   useUpdateNotificationSettings,
+  useDisplayPreferences,
+  useUpdateDisplayPreferences,
+  useTimezonesList,
 } from './preferences'
 
 // Billing hooks

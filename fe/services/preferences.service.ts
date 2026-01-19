@@ -1,4 +1,4 @@
-import type { ApiResponse } from '@/types/api'
+import type { ApiResponse, TimezoneOption } from '@/types/api'
 import type {
   AllyBrainFormData,
   ContextualSchedulingFormData,
@@ -8,6 +8,7 @@ import type {
   CrossPlatformSyncFormData,
   GeoLocationFormData,
   NotificationSettingsFormData,
+  DisplayPreferencesFormData,
 } from '@/lib/validations/preferences'
 
 import { ENDPOINTS } from '@/lib/api/endpoints'
@@ -185,6 +186,28 @@ export const preferencesService = {
       ENDPOINTS.USER_PREFERENCES_NOTIFICATION_SETTINGS,
       value,
     )
+    return data
+  },
+
+  async getDisplayPreferences(): Promise<ApiResponse<PreferenceResponse<DisplayPreferencesFormData>>> {
+    const { data } = await apiClient.get<ApiResponse<PreferenceResponse<DisplayPreferencesFormData>>>(
+      ENDPOINTS.USER_PREFERENCES_BY_KEY('display_preferences'),
+    )
+    return data
+  },
+
+  async updateDisplayPreferences(
+    value: DisplayPreferencesFormData,
+  ): Promise<ApiResponse<PreferenceResponse<DisplayPreferencesFormData>>> {
+    const { data } = await apiClient.put<ApiResponse<PreferenceResponse<DisplayPreferencesFormData>>>(
+      ENDPOINTS.USER_PREFERENCES_DISPLAY,
+      value,
+    )
+    return data
+  },
+
+  async getTimezonesList(): Promise<ApiResponse<TimezoneOption[]>> {
+    const { data } = await apiClient.get<ApiResponse<TimezoneOption[]>>(ENDPOINTS.TIMEZONES_LIST)
     return data
   },
 }

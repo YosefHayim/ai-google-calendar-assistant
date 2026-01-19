@@ -53,8 +53,19 @@ export const AllyBrainSection: React.FC<AllyBrainSectionProps> = ({ toggleId }) 
     isRecording: isVoiceRecording,
     speechRecognitionSupported,
     speechRecognitionError,
+    interimTranscription,
     toggleRecording,
   } = useSpeechRecognition(handleVoiceTranscription)
+
+  console.log('[AllyBrainSection] Voice state:', { isVoiceRecording, speechRecognitionSupported, speechRecognitionError })
+
+  useEffect(() => {
+    if (speechRecognitionError) {
+      toast.error('Voice input error', {
+        description: speechRecognitionError,
+      })
+    }
+  }, [speechRecognitionError])
 
   const watchedEnabled = useWatch({ control, name: 'enabled' })
   const watchedInstructions = useWatch({ control, name: 'instructions' }) || ''
@@ -125,8 +136,11 @@ export const AllyBrainSection: React.FC<AllyBrainSectionProps> = ({ toggleId }) 
                       type="button"
                       variant="ghost"
                       size="sm"
-                      onClick={toggleRecording}
-                      disabled={!speechRecognitionSupported || !!speechRecognitionError}
+                      onClick={() => {
+                        console.log('[AllyBrainSection] Voice button clicked, speechRecognitionSupported:', speechRecognitionSupported)
+                        toggleRecording()
+                      }}
+                      disabled={!speechRecognitionSupported}
                       className={`h-8 px-2 gap-1.5 ${
                         isVoiceRecording
                           ? 'text-destructive hover:text-destructive'
@@ -135,11 +149,9 @@ export const AllyBrainSection: React.FC<AllyBrainSectionProps> = ({ toggleId }) 
                       title={
                         !speechRecognitionSupported
                           ? 'Voice input not supported'
-                          : speechRecognitionError
-                            ? speechRecognitionError
-                            : isVoiceRecording
-                              ? 'Stop recording'
-                              : 'Record voice instructions'
+                          : isVoiceRecording
+                            ? 'Stop recording'
+                            : 'Record voice instructions'
                       }
                     >
                       {isVoiceRecording ? (
@@ -155,6 +167,21 @@ export const AllyBrainSection: React.FC<AllyBrainSectionProps> = ({ toggleId }) 
                       )}
                     </Button>
                   </div>
+
+                  <AnimatePresence>
+                    {interimTranscription && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -5 }}
+                        className="flex items-center gap-2 text-xs text-muted-foreground"
+                      >
+                        <Loader2 size={12} className="animate-spin text-primary" />
+                        <span>{interimTranscription}</span>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
                   <textarea
                     {...register('instructions')}
                     id="instructions"

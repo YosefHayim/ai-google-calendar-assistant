@@ -8,7 +8,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { SettingsRow, SettingsDropdown, SettingsSection, type DropdownOption } from './components'
 import CinematicGlowToggle from '@/components/ui/cinematic-glow-toggle'
 import { getUserDisplayInfo, type UserData } from '@/lib/user-utils'
-import { useGeoLocation, useUpdateGeoLocation } from '@/hooks/queries'
+import { useGeoLocation, useUpdateGeoLocation, useDisplayPreferences, useUpdateDisplayPreferences, useTimezonesList } from '@/hooks/queries'
+
+const GEO_PERMISSION_KEY = 'ally_geo_permission_granted'
 
 interface GeneralTabProps {
   isDarkMode: boolean
@@ -23,21 +25,6 @@ const APPEARANCE_OPTIONS: DropdownOption[] = [
   { value: 'system', label: 'System', icon: <Monitor className="w-4 h-4" /> },
 ]
 
-const TIMEZONE_OPTIONS: DropdownOption[] = [
-  { value: 'Asia/Jerusalem', label: 'Jerusalem (IST)' },
-  { value: 'America/New_York', label: 'New York (EST)' },
-  { value: 'America/Los_Angeles', label: 'Los Angeles (PST)' },
-  { value: 'America/Chicago', label: 'Chicago (CST)' },
-  { value: 'Europe/London', label: 'London (GMT)' },
-  { value: 'Europe/Paris', label: 'Paris (CET)' },
-  { value: 'Europe/Berlin', label: 'Berlin (CET)' },
-  { value: 'Asia/Tokyo', label: 'Tokyo (JST)' },
-  { value: 'Asia/Shanghai', label: 'Shanghai (CST)' },
-  { value: 'Asia/Dubai', label: 'Dubai (GST)' },
-  { value: 'Australia/Sydney', label: 'Sydney (AEST)' },
-  { value: 'Pacific/Auckland', label: 'Auckland (NZST)' },
-]
-
 const TIME_FORMAT_OPTIONS: DropdownOption[] = [
   { value: '12h', label: '12-hour (AM/PM)' },
   { value: '24h', label: '24-hour' },
@@ -45,19 +32,36 @@ const TIME_FORMAT_OPTIONS: DropdownOption[] = [
 
 export const GeneralTab: React.FC<GeneralTabProps> = ({ isDarkMode, toggleTheme, userData }) => {
   const geoLocationToggleId = React.useId()
-  const [timeFormat, setTimeFormat] = useState('12h')
+  const [timeFormat, setTimeFormat] = useState<'12h' | '24h'>('12h')
   const [timezone, setTimezone] = useState('Asia/Jerusalem')
   const [appearance, setAppearance] = useState(isDarkMode ? 'dark' : 'light')
   const [geoLocationEnabled, setGeoLocationEnabled] = useState(false)
 
   const { data: geoLocationData, isLoading: isLoadingGeoLocation } = useGeoLocation()
   const { updateGeoLocation, isUpdating: isUpdatingGeoLocation } = useUpdateGeoLocation()
+  const { data: displayPreferencesData, isLoading: isLoadingDisplayPreferences } = useDisplayPreferences()
+  const { updateDisplayPreferences, isUpdating: isUpdatingDisplayPreferences } = useUpdateDisplayPreferences()
+  const { data: timezonesList, isLoading: isLoadingTimezones } = useTimezonesList()
+
+  const timezoneOptions: DropdownOption[] = React.useMemo(() => {
+    if (!timezonesList || timezonesList.length === 0) {
+      return [{ value: timezone, label: timezone }]
+    }
+    return timezonesList
+  }, [timezonesList, timezone])
 
   useEffect(() => {
     if (geoLocationData?.value) {
       setGeoLocationEnabled(geoLocationData.value.enabled)
     }
   }, [geoLocationData])
+
+  useEffect(() => {
+    if (displayPreferencesData?.value) {
+      setTimezone(displayPreferencesData.value.timezone)
+      setTimeFormat(displayPreferencesData.value.timeFormat)
+    }
+  }, [displayPreferencesData])
 
   const handleAppearanceChange = (value: string) => {
     setAppearance(value)
@@ -68,42 +72,89 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ isDarkMode, toggleTheme,
     }
   }
 
+  const handleTimezoneChange = (value: string) => {
+    setTimezone(value)
+    updateDisplayPreferences(
+      { timezone: value, timeFormat },
+      {
+        onSuccess: () => {
+          toast.success('Timezone updated')
+        },
+        onError: () => {
+          if (displayPreferencesData?.value) {
+            setTimezone(displayPreferencesData.value.timezone)
+          }
+          toast.error('Failed to update timezone')
+        },
+      },
+    )
+  }
+
+  const handleTimeFormatChange = (value: string) => {
+    const typedValue = value as '12h' | '24h'
+    setTimeFormat(typedValue)
+    updateDisplayPreferences(
+      { timezone, timeFormat: typedValue },
+      {
+        onSuccess: () => {
+          toast.success('Time format updated')
+        },
+        onError: () => {
+          if (displayPreferencesData?.value) {
+            setTimeFormat(displayPreferencesData.value.timeFormat)
+          }
+          toast.error('Failed to update time format')
+        },
+      },
+    )
+  }
+
   const handleGeoLocationToggle = async (checked: boolean) => {
     setGeoLocationEnabled(checked)
 
     if (checked && navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          updateGeoLocation(
-            {
-              enabled: true,
-              lastKnownLocation: {
-                latitude: position.coords.latitude,
-                longitude: position.coords.longitude,
-                timestamp: new Date().toISOString(),
-              },
+      const hasPermission = localStorage.getItem(GEO_PERMISSION_KEY) === 'true'
+
+      const saveLocation = (position: GeolocationPosition) => {
+        localStorage.setItem(GEO_PERMISSION_KEY, 'true')
+        updateGeoLocation(
+          {
+            enabled: true,
+            lastKnownLocation: {
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+              timestamp: new Date().toISOString(),
             },
-            {
-              onSuccess: () => {
-                toast.success('Real-time location enabled', {
-                  description: 'Ally will use your location to provide context for events.',
-                })
-              },
-              onError: () => {
-                setGeoLocationEnabled(false)
-                toast.error('Failed to enable location')
-              },
+          },
+          {
+            onSuccess: () => {
+              toast.success('Real-time location enabled', {
+                description: 'Ally will use your location to provide context for events.',
+              })
             },
-          )
-        },
-        () => {
-          setGeoLocationEnabled(false)
-          toast.error('Location access denied', {
-            description: 'Please enable location access in your browser settings.',
-          })
-        },
-      )
+            onError: () => {
+              setGeoLocationEnabled(false)
+              toast.error('Failed to enable location')
+            },
+          },
+        )
+      }
+
+      const handleError = () => {
+        localStorage.removeItem(GEO_PERMISSION_KEY)
+        setGeoLocationEnabled(false)
+        toast.error('Location access denied', {
+          description: 'Please enable location access in your browser settings.',
+        })
+      }
+
+      if (hasPermission) {
+        navigator.geolocation.getCurrentPosition(saveLocation, handleError, { timeout: 10000 })
+      } else {
+        navigator.geolocation.getCurrentPosition(saveLocation, handleError)
+      }
     } else {
+      localStorage.removeItem(GEO_PERMISSION_KEY)
       updateGeoLocation(
         { enabled: false },
         {
@@ -183,8 +234,8 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ isDarkMode, toggleTheme,
               <SettingsDropdown
                 id="timezone-dropdown"
                 value={timezone}
-                options={TIMEZONE_OPTIONS}
-                onChange={setTimezone}
+                options={timezoneOptions}
+                onChange={isUpdatingDisplayPreferences || isLoadingDisplayPreferences || isLoadingTimezones ? () => {} : handleTimezoneChange}
               />
             }
           />
@@ -199,7 +250,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ isDarkMode, toggleTheme,
                 id="time-format-dropdown"
                 value={timeFormat}
                 options={TIME_FORMAT_OPTIONS}
-                onChange={setTimeFormat}
+                onChange={isUpdatingDisplayPreferences || isLoadingDisplayPreferences ? () => {} : handleTimeFormatChange}
               />
             }
           />
