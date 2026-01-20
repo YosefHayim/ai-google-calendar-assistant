@@ -1,20 +1,26 @@
-import type { Request, Response } from "express";
-import { STATUS_RESPONSE } from "@/config/constants";
 import type {
   DismissAllGapsResponse,
   FillGapRequest,
   GapQueryParams,
   SkipGapRequest,
 } from "@/types";
+import type { Request, Response } from "express";
 import {
   analyzeGapsForUser,
   formatGapsForDisplay,
 } from "@/utils/calendar/gap-recovery";
 import { reqResAsyncHandler, sendR } from "@/utils/http";
 
+import { STATUS_RESPONSE } from "@/config/constants";
+
 /**
- * Get analyzed gaps from the user's calendar
- * GET /api/gaps
+ * Retrieves and analyzes scheduling gaps from the user's calendar.
+ * Identifies time slots where events could potentially be scheduled,
+ * providing insights for better time management and productivity.
+ *
+ * @param req - Express request with query parameters for gap analysis
+ * @param res - Express response object
+ * @returns Promise resolving to analyzed gaps with formatting options
  */
 const getGaps = reqResAsyncHandler(async (req: Request, res: Response) => {
   const userEmail = req.user?.email;
@@ -116,8 +122,15 @@ const getFormattedGaps = reqResAsyncHandler(
 );
 
 /**
- * Fill a gap with a new event
+ * Fills a scheduling gap by creating an event in the identified time slot.
  * POST /api/gaps/:gapId/fill
+ *
+ * Takes a gap ID and event details to create a new calendar event,
+ * effectively utilizing previously empty time for productive activities.
+ *
+ * @param req - Express request with gap ID in params and event details in body
+ * @param res - Express response object
+ * @returns Promise resolving to created event information or error response
  */
 const fillGap = reqResAsyncHandler(async (req: Request, res: Response) => {
   const _gapId = req.params.gapId;
@@ -142,8 +155,15 @@ const fillGap = reqResAsyncHandler(async (req: Request, res: Response) => {
 });
 
 /**
- * Skip a specific gap
+ * Marks a scheduling gap as skipped/dismissed.
  * POST /api/gaps/:gapId/skip
+ *
+ * Allows users to dismiss gaps they don't want to fill, preventing
+ * them from being suggested again in future gap analysis.
+ *
+ * @param req - Express request with gap ID in params and skip reason in body
+ * @param res - Express response object
+ * @returns Promise resolving to success confirmation or error response
  */
 const skipGap = reqResAsyncHandler(async (req: Request, res: Response) => {
   const _gapId = req.params.gapId;

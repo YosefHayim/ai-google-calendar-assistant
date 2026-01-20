@@ -1,6 +1,4 @@
 import type { Request, Response } from "express";
-import { STATUS_RESPONSE } from "@/config";
-import type { AffiliateStatus } from "@/services/affiliate-service";
 import {
   getAffiliateById as getAffiliateByIdService,
   getAffiliateDashboardUrls,
@@ -8,8 +6,19 @@ import {
   getAffiliateProgramSettings,
 } from "@/services/affiliate-service";
 import { reqResAsyncHandler, sendR } from "@/utils/http";
+
+import type { AffiliateStatus } from "@/services/affiliate-service";
+import { STATUS_RESPONSE } from "@/config";
 import { parsePaginationParams } from "@/utils/http/pagination";
 
+/**
+ * Retrieves paginated list of affiliates with optional filtering.
+ * Supports filtering by status and search terms, with pagination controls.
+ *
+ * @param req - Express request with query parameters for filtering and pagination
+ * @param res - Express response object
+ * @returns Promise resolving to paginated affiliate list or error response
+ */
 export const getAffiliates = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     const { page, limit } = parsePaginationParams(req.query);
@@ -26,6 +35,14 @@ export const getAffiliates = reqResAsyncHandler(
   }
 );
 
+/**
+ * Retrieves affiliate program configuration and dashboard URLs.
+ * Returns current program settings and links to external affiliate dashboards.
+ *
+ * @param _req - Express request object (unused)
+ * @param res - Express response object
+ * @returns Promise resolving to affiliate program settings and URLs
+ */
 export const getAffiliateSettings = reqResAsyncHandler(
   async (_req: Request, res: Response) => {
     const settings = getAffiliateProgramSettings();
@@ -40,6 +57,14 @@ export const getAffiliateSettings = reqResAsyncHandler(
   }
 );
 
+/**
+ * Retrieves detailed information for a specific affiliate by ID.
+ * Returns affiliate profile, statistics, and current status information.
+ *
+ * @param req - Express request with affiliate ID in route parameters
+ * @param res - Express response object
+ * @returns Promise resolving to affiliate details or not found error
+ */
 export const getAffiliateById = reqResAsyncHandler(
   async (req: Request, res: Response) => {
     const affiliate = await getAffiliateByIdService(req.params.id as string);

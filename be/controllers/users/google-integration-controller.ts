@@ -23,6 +23,17 @@ import { msToIso } from "@/utils/date/timestamp-utils";
 import { sendWelcomeEmail } from "@/services/notification-dispatcher";
 import { syncUserCalendarsAfterOAuth } from "@/utils/calendar/sync-calendars-after-oauth";
 
+/**
+ * Validates existing session and handles OAuth redirect flow.
+ * Checks if the current access token is valid, attempts refresh if needed,
+ * and redirects to frontend with appropriate authentication state.
+ *
+ * @param res - Express response object for cookie setting and redirection
+ * @param accessToken - Current access token to validate
+ * @param refreshToken - Optional refresh token for session renewal
+ * @param frontendUrl - Frontend URL to redirect to after authentication
+ * @returns Promise resolving to true if session is valid/active, false if authentication failed
+ */
 async function checkExistingSessionAndRedirect(
   res: Response,
   accessToken: string,

@@ -1,18 +1,19 @@
 import { InlineKeyboard, InputFile } from "grammy";
-import { generateSpeechForTelegram } from "@/utils/ai/text-to-speech";
-import { telegramConversation } from "@/utils/conversation/TelegramConversationAdapter";
-import { logger } from "@/utils/logger";
-import type { SupportedLocale } from "../i18n";
 import {
+  SUPPORTED_LOCALES,
   createTranslator,
   getTranslatorFromLanguageCode,
-  SUPPORTED_LOCALES,
 } from "../i18n";
+
 import type { GlobalContext } from "../init-bot";
 import { ResponseBuilder } from "../response-system";
-import { getVoicePreferenceForTelegram } from "./ally-brain";
-import { resetSession } from "./session";
+import type { SupportedLocale } from "../i18n";
 import { gatherUserKnowledge } from "./user-knowledge";
+import { generateSpeechForTelegram } from "@/utils/ai/text-to-speech";
+import { getVoicePreferenceForTelegram } from "./ally-brain";
+import { logger } from "@/utils/logger";
+import { resetSession } from "./session";
+import { telegramConversation } from "@/utils/conversation/TelegramConversationAdapter";
 
 /**
  * Get internal user ID from Telegram user ID.
@@ -71,6 +72,13 @@ const buildSectionsFromKeys = (
  *
  * @param ctx - Telegram bot context with session and translation data
  * @returns Promise that resolves when usage information is sent
+ */
+/**
+ * Handles the /usage command to display bot usage instructions and available commands.
+ * Shows categorized sections of commands with emojis and descriptions,
+ * organized by functionality (scheduling, querying, customization).
+ *
+ * @param ctx - Telegram bot context with session and translation information
  */
 export const handleUsageCommand = async (ctx: GlobalContext): Promise<void> => {
   const { t, direction } = getTranslatorFromLanguageCode(ctx.session.codeLang);

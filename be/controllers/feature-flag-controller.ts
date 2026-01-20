@@ -14,6 +14,14 @@ import { reqResAsyncHandler, sendR } from "@/utils/http";
 import type { FeatureFlagCheckContext } from "@/services/feature-flag-service";
 import { STATUS_RESPONSE } from "@/config/constants/http";
 
+/**
+ * Retrieves all feature flags in the system.
+ * Returns complete flag definitions including keys, descriptions, and current states.
+ *
+ * @param _req - Express request object (unused)
+ * @param res - Express response object
+ * @returns Promise resolving to array of all feature flags
+ */
 const getAllFlags = reqResAsyncHandler(async (_req: Request, res: Response) => {
   const flags = await getAllFeatureFlags();
   return sendR(res, STATUS_RESPONSE.SUCCESS, "Feature flags retrieved", flags);

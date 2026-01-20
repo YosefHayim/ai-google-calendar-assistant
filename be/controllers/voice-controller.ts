@@ -10,6 +10,15 @@ import {
 import { transcribeAudio } from "@/utils/ai/voice-transcription";
 import { reqResAsyncHandler, sendR } from "@/utils/http";
 
+/**
+ * Transcribes audio files to text using speech-to-text AI services.
+ * Accepts audio file uploads and returns the transcribed text content.
+ * Supports various audio formats and handles transcription errors gracefully.
+ *
+ * @param req - Express request with uploaded audio file
+ * @param res - Express response object
+ * @returns Promise resolving to transcription result or error response
+ */
 const transcribe = reqResAsyncHandler(async (req: Request, res: Response) => {
   if (!req.file) {
     return sendR(res, STATUS_RESPONSE.BAD_REQUEST, "Audio file is required.");
@@ -30,6 +39,15 @@ const transcribe = reqResAsyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+/**
+ * Synthesizes text to speech audio using AI text-to-speech services.
+ * Converts text input to audio output with configurable voice settings.
+ * Uses user preferences for voice selection when available, falls back to defaults.
+ *
+ * @param req - Express request with text and optional voice parameters
+ * @param res - Express response object that returns audio stream
+ * @returns Promise resolving to audio buffer or error response
+ */
 const synthesize = reqResAsyncHandler(async (req: Request, res: Response) => {
   const { text, voice: requestedVoice } = req.body as {
     text?: string;

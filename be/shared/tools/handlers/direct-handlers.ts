@@ -79,6 +79,14 @@ export async function validateUserHandler(
   }
 }
 
+/**
+ * Retrieves the user's default timezone setting.
+ * First checks the user's stored timezone preference, then falls back to
+ * Google Calendar's default timezone if not set locally.
+ *
+ * @param ctx - Handler context containing user email
+ * @returns Promise resolving to timezone information or UTC fallback
+ */
 export async function getTimezoneHandler(
   ctx: HandlerContext
 ): Promise<TimezoneResult> {
@@ -127,6 +135,14 @@ export type UserCalendar = {
   calendar_name: string;
 };
 
+/**
+ * Retrieves the user's configured calendar categories.
+ * Fetches all calendars associated with the user from the database,
+ * including calendar IDs and display names.
+ *
+ * @param email - User's email address
+ * @returns Promise resolving to array of user calendar objects
+ */
 export async function getCalendarCategoriesByEmail(
   email: string
 ): Promise<UserCalendar[]> {
@@ -153,6 +169,15 @@ export async function getCalendarCategoriesByEmail(
     }));
 }
 
+/**
+ * Intelligently selects the most appropriate calendar for an event.
+ * Uses AI-powered analysis of event details (title, description, location)
+ * to match events with the best calendar based on user preferences and patterns.
+ *
+ * @param params - Calendar selection parameters including event details
+ * @param ctx - Handler context containing user email
+ * @returns Promise resolving to selected calendar information with reasoning
+ */
 export async function selectCalendarHandler(
   params: SelectCalendarParams,
   ctx: HandlerContext
@@ -244,6 +269,15 @@ Which calendar number is the best match?`,
   }
 }
 
+/**
+ * Checks for scheduling conflicts in a specific calendar time slot.
+ * Validates whether a proposed time slot has any overlapping events
+ * in the specified calendar, essential for preventing double-bookings.
+ *
+ * @param params - Conflict checking parameters including time range and calendar
+ * @param ctx - Handler context containing user email
+ * @returns Promise resolving to conflict analysis with any overlapping events
+ */
 export async function checkConflictsHandler(
   params: CheckConflictsParams,
   ctx: HandlerContext
@@ -286,6 +320,16 @@ export async function checkConflictsHandler(
   }
 }
 
+/**
+ * Performs comprehensive pre-creation validation for calendar events.
+ * Combines user validation, timezone retrieval, calendar selection, and
+ * conflict checking in parallel for optimal performance. Essential validation
+ * step before event creation to ensure data integrity and user permissions.
+ *
+ * @param params - Event parameters to validate (summary, description, location, times)
+ * @param ctx - Handler context containing user email
+ * @returns Promise resolving to complete validation results including timezone and calendar
+ */
 export async function preCreateValidationHandler(
   params: PreCreateValidationParams,
   ctx: HandlerContext

@@ -6,6 +6,13 @@ import { checkUserAccess } from "@/services/lemonsqueezy-service";
 
 const SUBSCRIPTION_REQUIRED_CODE = "SUBSCRIPTION_REQUIRED";
 
+/**
+ * Middleware factory that creates subscription requirement checks.
+ * Validates user has active subscription or trial access before allowing
+ * access to premium features. Blocks requests from users without proper access.
+ *
+ * @returns Express middleware function that checks subscription status
+ */
 export const subscriptionGuard = () =>
   reqResAsyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {

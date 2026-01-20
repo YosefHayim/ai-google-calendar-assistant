@@ -93,7 +93,11 @@ function isWithinTimeWindow(
 }
 
 /**
- * Get today's date in YYYY-MM-DD format for a given timezone
+ * Gets today's date in YYYY-MM-DD format for a specific timezone.
+ * Accounts for timezone differences to ensure accurate date representation.
+ *
+ * @param timezone - IANA timezone identifier (e.g., "America/New_York")
+ * @returns Today's date in YYYY-MM-DD format for the specified timezone
  */
 function getTodayInTimezone(timezone: string): string {
   const now = new Date();
@@ -107,7 +111,11 @@ function getTodayInTimezone(timezone: string): string {
 }
 
 /**
- * Get start and end of day in ISO format for a given timezone
+ * Gets the start and end of the current day in ISO format for a specific timezone.
+ * Returns timeMin as midnight and timeMax as 23:59:59.999 for the given timezone.
+ *
+ * @param timezone - IANA timezone identifier (e.g., "America/New_York")
+ * @returns Object with timeMin and timeMax in ISO 8601 format
  */
 function getDayBoundsInTimezone(timezone: string): {
   timeMin: string;
@@ -140,7 +148,11 @@ function getDayBoundsInTimezone(timezone: string): {
 }
 
 /**
- * Get timezone offset in minutes
+ * Calculates the timezone offset in minutes from UTC for a given timezone.
+ * Positive values indicate timezones ahead of UTC, negative values behind.
+ *
+ * @param timezone - IANA timezone identifier (e.g., "America/New_York")
+ * @returns Timezone offset in minutes from UTC
  */
 function getTimezoneOffsetMinutes(timezone: string): number {
   const now = new Date();
@@ -150,7 +162,15 @@ function getTimezoneOffsetMinutes(timezone: string): number {
 }
 
 /**
- * Build email HTML template for daily briefing
+ * Builds HTML email template for daily calendar briefing.
+ * Creates a formatted HTML email containing today's events, schedule overview,
+ * and personalized insights for the user.
+ *
+ * @param userName - User's display name for personalization
+ * @param dateStr - Date string for the briefing (YYYY-MM-DD format)
+ * @param events - Array of formatted calendar events for today
+ * @param greeting - Localized greeting message
+ * @returns Complete HTML email template as string
  */
 function buildBriefingEmailHtml(
   userName: string,
@@ -315,7 +335,13 @@ function getGreeting(): string {
 }
 
 /**
- * Update lastSentDate for a user's daily_briefing preference
+ * Updates the last sent date for a user's daily briefing preference.
+ * Tracks when the last briefing was sent to prevent duplicate sends
+ * and manage briefing scheduling.
+ *
+ * @param userId - Unique identifier of the user
+ * @param date - Date string (YYYY-MM-DD) when the briefing was sent
+ * @returns Promise that resolves when the update is complete
  */
 async function updateLastSentDate(userId: string, date: string): Promise<void> {
   const { data: userData, error: fetchError } = await SUPABASE.from("users")
