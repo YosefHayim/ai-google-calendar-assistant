@@ -5,8 +5,8 @@ import {
   run,
 } from "@openai/agents";
 import { z } from "zod";
-import { MODELS } from "@/config";
 import { logger } from "@/utils/logger";
+import { MODELS } from "@/config";
 
 const MAX_INPUT_LENGTH = 5000;
 const LOG_SUBSTRING_LENGTH = 200;
@@ -27,6 +27,13 @@ type ConversationMessage = {
   name?: string;
 };
 
+/**
+ * Extracts user request content from text using predefined regex patterns.
+ * Looks for content wrapped in XML-like tags or following specific prefixes.
+ *
+ * @param text - The input text to extract request from
+ * @returns The extracted request string or null if no pattern matches
+ */
 const extractRequestFromText = (text: string): string | null => {
   for (const pattern of REQUEST_EXTRACTION_PATTERNS) {
     const match = text.match(pattern);
@@ -39,13 +46,18 @@ const extractRequestFromText = (text: string): string | null => {
 };
 
 /**
- * SECURITY: Extracts user's current request from conversation history to prevent context overflow.
- * Function call results (e.g., 100 calendar events JSON) would otherwise exceed the 5000 char limit.
+ * Extracts the user's current request from conversation input for guardrail processing.
+ * SECURITY: Prevents context overflow by extracting only the current user request,
+ * avoiding issues where function call results (e.g., 100 calendar events JSON)
+ * would exceed the 5000 character limit.
+ *
+ * @param input - Either a string or array of conversation messages
+ * @returns The extracted user request string, truncated if necessary
  */
 const extractUserRequestForGuardrail = (
   input: string | ConversationMessage[]
 ): string => {
-  console.log(
+  logger.info(
     "EXTRACT CALLED, input type:",
     typeof input,
     "length:",
@@ -53,7 +65,7 @@ const extractUserRequestForGuardrail = (
   );
   if (typeof input === "string") {
     const extracted = extractRequestFromText(input);
-    console.log("REGEX RESULT:", !!extracted, "captured:", extracted);
+    logger.info("REGEX RESULT:", !!extracted, "captured:", extracted);
     if (extracted) {
       return extracted;
     }
@@ -122,6 +134,13 @@ const INJECTION_PATTERNS = [
   /act\s+as\s+if\s+you\s+(have\s+no|don't\s+have)\s+restrictions?/i,
 ];
 
+/**
+ * Performs initial safety checks on input before processing through the full guardrail.
+ * Checks for input length limits and common injection patterns.
+ *
+ * @param input - The user input string to validate
+ * @returns Object indicating if input is safe and optional rejection reason
+ */
 export const preCheckInput = (
   input: string
 ): { safe: boolean; reason?: string } => {
@@ -211,6 +230,14 @@ const safetyCheckAgent = new Agent({
   outputType: SafetyCheckSchema,
 });
 
+/**
+ * Creates a standardized guardrail result object for OpenAI Agents SDK.
+ *
+ * @param guardrailName - The name/identifier of the guardrail
+ * @param tripwireTriggered - Whether the guardrail safety check was triggered
+ * @param outputInfo - Additional information about the guardrail check result
+ * @returns Formatted guardrail result object compatible with OpenAI Agents SDK
+ */
 const createGuardrailResult = (
   guardrailName: string,
   tripwireTriggered: boolean,
@@ -220,6 +247,11 @@ const createGuardrailResult = (
   output: { tripwireTriggered, outputInfo },
 });
 
+/**
+ * Input guardrail that enforces safety protocols for calendar AI operations.
+ * Prevents mass deletions, jailbreak attempts, PII exposure, and other unsafe actions.
+ * Uses a dedicated safety checking agent to analyze user requests against predefined rules.
+ */
 export const calendarSafetyGuardrail: InputGuardrail = {
   name: "Calendar Safety Protocols",
   runInParallel: false,

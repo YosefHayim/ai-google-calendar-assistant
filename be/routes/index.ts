@@ -40,6 +40,13 @@ import waitingListRoute from "./waiting-list-route";
 import webhooksRoute from "./webhooks-route";
 import whatsAppRoute from "./whatsapp-route";
 
+/**
+ * Initialize and mount all application routes on the Express app.
+ * Sets up health check endpoints, mounts all feature-specific route modules,
+ * and configures cross-platform routing for the multi-modal AI assistant.
+ *
+ * @param app - Express application instance to mount routes on
+ */
 export const initializeRoutes = (app: Express) => {
   // GET /health - Application health check
   app.get("/health", (_req, res) => {

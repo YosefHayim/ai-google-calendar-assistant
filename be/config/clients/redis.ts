@@ -43,10 +43,21 @@ redisClient.on("reconnecting", () => {
   logger.info("Redis: Reconnecting...");
 });
 
-// Check if Redis is connected and ready
+/**
+ * Checks if the Redis client is connected and ready for operations.
+ * Returns true only when the client is in 'ready' status, indicating
+ * it's fully connected and can accept commands.
+ *
+ * @returns True if Redis is connected and ready, false otherwise
+ */
 export const isRedisConnected = (): boolean => redisClient.status === "ready";
 
-// Graceful shutdown helper
+/**
+ * Gracefully disconnects the Redis client.
+ * Closes the connection and cleans up resources during application shutdown.
+ *
+ * @returns Promise that resolves when the Redis connection is closed
+ */
 export const disconnectRedis = async (): Promise<void> => {
   if (redisClient.status !== "end") {
     await redisClient.quit();

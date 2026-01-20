@@ -180,6 +180,13 @@ export const VALID_PREFERENCE_KEYS: PreferenceKey[] = [
 /**
  * Check if a key is a valid preference key
  */
+/**
+ * Type guard to validate if a string is a valid preference key.
+ * Ensures type safety when working with preference keys at runtime.
+ *
+ * @param key - The string to validate as a preference key
+ * @returns Type predicate indicating if the key is a valid PreferenceKey
+ */
 export function isValidPreferenceKey(key: string): key is PreferenceKey {
   return VALID_PREFERENCE_KEYS.includes(key as PreferenceKey);
 }

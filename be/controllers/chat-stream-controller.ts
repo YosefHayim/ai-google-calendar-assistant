@@ -3,22 +3,23 @@ import {
   type RunItemStreamEvent,
   type RunRawModelStreamEvent,
   run,
-} from "@openai/agents";
-import type { Request, Response } from "express";
-import { ORCHESTRATOR_AGENT } from "@/ai-agents/agents";
-import { createAgentSession } from "@/ai-agents/sessions/session-factory";
-import type { AgentContext } from "@/ai-agents/tool-registry";
-import { STATUS_RESPONSE } from "@/config";
-import { createCreditTransaction } from "@/services/credit-service";
-import { getAllyBrainPreference } from "@/services/user-preferences-service";
-import { unifiedContextStore } from "@/shared/context";
-import type { ImageContent } from "@/shared/llm";
+} from "@openai/agents"
+import type { Request, Response } from "express"
+import { ORCHESTRATOR_AGENT } from "@/ai-agents/agents"
+import { runDPO } from "@/ai-agents/dpo"
+import { createAgentSession } from "@/ai-agents/sessions/session-factory"
+import type { AgentContext } from "@/ai-agents/tool-registry"
+import { STATUS_RESPONSE } from "@/config"
+import { createCreditTransaction } from "@/services/credit-service"
+import { getAllyBrainPreference } from "@/services/user-preferences-service"
+import { unifiedContextStore } from "@/shared/context"
+import type { ImageContent } from "@/shared/llm"
 import {
   generateConversationTitle,
   summarizeMessages,
-} from "@/telegram-bot/utils/summarize";
-import { webConversation } from "@/utils/conversation/WebConversationAdapter";
-import { sendR } from "@/utils/http";
+} from "@/telegram-bot/utils/summarize"
+import { webConversation } from "@/utils/conversation/WebConversationAdapter"
+import { sendR } from "@/utils/http"
 import {
   endSSEStream,
   setupSSEHeaders,
@@ -31,15 +32,22 @@ import {
   writeTitleGenerated,
   writeToolComplete,
   writeToolStart,
-} from "@/utils/sse";
+} from "@/utils/sse"
 import {
   getWebRelevantContext,
   storeWebEmbeddingAsync,
-} from "@/utils/web-embeddings";
+} from "@/utils/web-embeddings"
 
 const EMBEDDING_THRESHOLD = 0.75;
 const EMBEDDING_LIMIT = 3;
 
+/**
+ * Parses tool output from AI agent responses, handling both string and object formats.
+ * Attempts to safely parse JSON strings while falling back gracefully for malformed data.
+ *
+ * @param output - Raw output from AI tool execution (string or object)
+ * @returns Parsed tool result with success status and messages, or null if parsing fails
+ */
 function parseToolOutput(
   output: unknown
 ): { success?: boolean; message?: string; newInstructions?: string } | null {
@@ -68,6 +76,14 @@ type PromptParams = {
   imageCount?: number;
 };
 
+/**
+ * Builds a comprehensive chat prompt with user context, conversation history, and semantic context.
+ * Incorporates user preferences, current time, and any custom instructions from Ally Brain.
+ * Prepares the complete context needed for the AI agent to provide personalized calendar assistance.
+ *
+ * @param params - Parameters for building the chat prompt
+ * @returns Promise resolving to the complete formatted prompt string
+ */
 async function buildChatPromptWithContext(
   params: PromptParams
 ): Promise<string> {
@@ -117,6 +133,19 @@ async function buildChatPromptWithContext(
   return parts.join("\n");
 }
 
+/**
+ * Handles OpenAI agent streaming responses for chat conversations.
+ * Manages the complete streaming lifecycle including agent handoffs, tool executions,
+ * and real-time updates via Server-Sent Events (SSE). Processes the AI response stream
+ * and forwards events to the client while tracking conversation state.
+ *
+ * @param res - Express response object for SSE streaming
+ * @param userId - Unique identifier of the authenticated user
+ * @param userEmail - Email address of the user for context
+ * @param conversationId - Unique identifier for the conversation session
+ * @param fullPrompt - Complete prompt with user context and conversation history
+ * @returns Promise resolving to the complete AI response text
+ */
 async function handleOpenAIStreaming(
   res: Response,
   userId: string,
@@ -220,6 +249,22 @@ type StreamingParams = {
   images?: ImageContent[];
 };
 
+/**
+ * Main handler for streaming chat responses with comprehensive context management.
+ * Orchestrates the complete chat flow including DPO optimization, semantic context retrieval,
+ * conversation management, and credit tracking. Handles both new conversations and
+ * continuation of existing ones with proper state management.
+ *
+ * @param params - Complete parameters for handling the streaming response
+ * @param params.res - Express response object for SSE streaming
+ * @param params.userId - Unique identifier of the authenticated user
+ * @param params.userEmail - Email address of the user for context
+ * @param params.message - The user's chat message
+ * @param params.conversationId - Existing conversation ID or null for new conversations
+ * @param params.isNewConversation - Whether this is the start of a new conversation
+ * @param params.fullPrompt - Complete prompt with user context and conversation history
+ * @param params.images - Optional array of image content attached to the message
+ */
 async function handleStreamingResponse(params: StreamingParams): Promise<void> {
   const {
     res,
@@ -249,23 +294,45 @@ async function handleStreamingResponse(params: StreamingParams): Promise<void> {
     return;
   }
 
-  await unifiedContextStore.setModality(userId, "chat");
-  await unifiedContextStore.touch(userId);
+  await unifiedContextStore.setModality(userId, "chat")
+  await unifiedContextStore.touch(userId)
 
-  let fullResponse = "";
-  let interactionSuccessful = false;
-  let finalConversationId = conversationId;
+  const dpoResult = await runDPO({
+    userId,
+    agentId: ORCHESTRATOR_AGENT.name,
+    userQuery: message,
+    basePrompt: fullPrompt,
+    userContext: undefined,
+    isShadowRun: false,
+  })
+
+  if (dpoResult.wasRejected) {
+    writeError(
+      res,
+      "Your request was flagged for safety review. Please rephrase your request.",
+      "REQUEST_REJECTED"
+    )
+    stopHeartbeat()
+    endSSEStream(res)
+    return
+  }
+
+  const effectivePrompt = dpoResult.effectivePrompt
+
+  let fullResponse = ""
+  let interactionSuccessful = false
+  let finalConversationId = conversationId
 
   try {
-    const tempConversationId = conversationId || `temp-${userId}-${Date.now()}`;
+    const tempConversationId = conversationId || `temp-${userId}-${Date.now()}`
 
     fullResponse = await handleOpenAIStreaming(
       res,
       userId,
       userEmail,
       tempConversationId,
-      fullPrompt
-    );
+      effectivePrompt
+    )
 
     if (fullResponse) {
       const messageImages = images?.map((img) => ({

@@ -23,8 +23,11 @@ const DAYS_IN_WEEK = 7;
 const DAYS_IN_MONTH = 30;
 
 /**
- * Get dashboard KPI stats via direct queries
- * Note: Subscription counts are no longer tracked locally - use LemonSqueezy dashboard
+ * Retrieves comprehensive dashboard KPI statistics for admin overview.
+ * Gathers user metrics, revenue data, and activity trends from the last 24 hours,
+ * 7 days, and 30 days. Uses parallel database queries for optimal performance.
+ *
+ * @returns Promise resolving to dashboard statistics including user counts, revenue, and activity metrics
  */
 export const getDashboardStats = async (): Promise<AdminDashboardStats> => {
   const now = new Date();
@@ -83,6 +86,13 @@ export const getDashboardStats = async (): Promise<AdminDashboardStats> => {
 /**
  * Get subscription distribution - returns static plan metadata
  * Actual subscriber counts now tracked via LemonSqueezy dashboard
+ */
+/**
+ * Returns subscription distribution data by plan type.
+ * Note: Currently returns empty counts since subscription data is managed externally by LemonSqueezy.
+ * This provides the structure for future integration with subscription analytics.
+ *
+ * @returns Array of subscription distribution objects with plan details and zeroed counts
  */
 export const getSubscriptionDistribution = (): SubscriptionDistribution[] => {
   const planSlugs: PlanSlug[] = ["starter", "pro", "executive"];
@@ -634,6 +644,14 @@ export const broadcastToUsers = async (
   return { sentTo: userIds.length };
 };
 
+/**
+ * Resolves target user IDs for broadcast notifications based on payload configuration.
+ * Either uses explicitly provided user IDs or applies filters to determine recipients.
+ * Falls back to all active users if no specific targeting is provided.
+ *
+ * @param payload - Broadcast payload containing targeting configuration
+ * @returns Promise resolving to array of user IDs that should receive the notification
+ */
 async function resolveTargetUserIds(
   payload: BroadcastPayload
 ): Promise<string[]> {
@@ -652,6 +670,14 @@ async function resolveTargetUserIds(
   return (users || []).map((u) => u.id);
 }
 
+/**
+ * Resolves user IDs based on filtering criteria for targeted broadcast notifications.
+ * Applies database filters for user status, role, subscription status, and activity dates.
+ * Builds and executes a Supabase query with the specified filters to find matching users.
+ *
+ * @param filters - Filter criteria for selecting target users
+ * @returns Promise resolving to array of user IDs matching the filter criteria
+ */
 async function resolveFilteredUserIds(
   filters: NonNullable<BroadcastPayload["filters"]>
 ): Promise<string[]> {

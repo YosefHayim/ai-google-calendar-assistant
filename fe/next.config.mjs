@@ -80,8 +80,7 @@ const nextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' https://accounts.google.com https://www.googletagmanager.com https://lmsqueezy.com",
-              "style-src 'self' https://fonts.googleapis.com",
+`script-src 'self' 'unsafe-inline' ${isDev && "'unsafe-eval'"} https://accounts.google.com https://www.googletagmanager.com https://lmsqueezy.com`,"style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "font-src 'self' https://fonts.gstatic.com",
               "img-src 'self' data: blob: https: http:",
               "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://accounts.google.com https://api.openai.com https://raw.githubusercontent.com https://*.awsapprunner.com https://*.ingest.sentry.io https://*.sentry.io https://*.posthog.com https://be.askally.io https://lmsqueezy.com",

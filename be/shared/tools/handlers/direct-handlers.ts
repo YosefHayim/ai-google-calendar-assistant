@@ -54,6 +54,13 @@ export type PreCreateValidationResult = {
   error?: string;
 };
 
+/**
+ * Validates user existence and access permissions.
+ * Checks if the user exists in the database and has proper authentication status.
+ *
+ * @param ctx - Handler context containing user email
+ * @returns Promise resolving to validation result with user existence status
+ */
 export async function validateUserHandler(
   ctx: HandlerContext
 ): Promise<ValidateUserResult> {

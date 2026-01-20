@@ -1,6 +1,7 @@
 import crypto from "node:crypto";
 import type { Request, Response } from "express";
 import { env, STATUS_RESPONSE } from "@/config";
+import { logger } from "@/utils/logger";
 import {
   isLemonSqueezyEnabled,
   LEMONSQUEEZY_CONFIG,
@@ -506,7 +507,7 @@ export const handleWebhook = async (
 
   const alreadyProcessed = await isWebhookEventProcessed(eventId);
   if (alreadyProcessed) {
-    console.log(`Webhook event ${eventId} already processed`);
+    logger.info(`Webhook event ${eventId} already processed`);
     res
       .status(STATUS_RESPONSE.SUCCESS)
       .json({ received: true, duplicate: true });
@@ -538,13 +539,13 @@ export const handleWebhook = async (
       case "subscription_payment_failed":
       case "subscription_payment_recovered":
       case "affiliate_created":
-        console.log(
+        logger.info(
           `Webhook event logged: ${eventName} for subscription ${event.data.id}`
         );
         break;
 
       default:
-        console.log(`Unhandled event type: ${eventName}`);
+        logger.info(`Unhandled event type: ${eventName}`);
     }
 
     await recordWebhookEvent({

@@ -46,6 +46,21 @@ export const isToday = (dateString: string): boolean =>
 const MIN_VALID_YEAR = 2020;
 const MAX_VALID_YEAR = 2100;
 
+/**
+ * @description Validates if a string represents a valid date/time within an acceptable range.
+ * Checks for non-empty strings, valid ISO parsing, and reasonable year bounds (2020-2100).
+ * @param {string} dt - The date/time string to validate (expected ISO format).
+ * @returns {boolean} True if the string is a valid date/time within acceptable bounds, false otherwise.
+ * @example
+ * // Valid ISO datetime
+ * const result = isValidDateTime('2026-01-15T10:30:00Z')
+ * // Returns: true
+ *
+ * @example
+ * // Invalid or out-of-range date
+ * const result = isValidDateTime('1999-01-01T00:00:00Z')
+ * // Returns: false (year too old)
+ */
 export const isValidDateTime = (dt: string): boolean => {
   if (!dt || dt.trim() === "") {
     return false;

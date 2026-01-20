@@ -51,6 +51,13 @@ export function getEmailFromContext(
   return email;
 }
 
+/**
+ * Creates a handler context object with user email for tool execution.
+ * Used to pass authenticated user context to shared tool handlers.
+ *
+ * @param email - The authenticated user's email address
+ * @returns Handler context object containing the user email
+ */
 function createHandlerContext(email: string): HandlerContext {
   return { email };
 }

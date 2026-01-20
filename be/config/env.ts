@@ -82,9 +82,24 @@ if (missingSecrets.length > 0) {
 // HELPER FUNCTIONS (Type-safe environment variable access)
 // ============================================================================
 
+/**
+ * Retrieves an optional environment variable value.
+ * Returns undefined if the variable is not set or empty.
+ *
+ * @param key - The environment variable name to retrieve
+ * @returns The environment variable value or undefined if not set
+ */
 const getOptional = (key: string): string | undefined =>
   process.env[key] || undefined;
 
+/**
+ * Retrieves a required environment variable value.
+ * Throws an error if the variable is not set or empty.
+ *
+ * @param key - The environment variable name to retrieve
+ * @returns The environment variable value
+ * @throws Error if the required environment variable is not set
+ */
 const getRequired = (key: string): string => {
   const value = process.env[key];
   if (!value) {

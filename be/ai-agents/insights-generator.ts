@@ -280,7 +280,10 @@ export async function generateInsightsWithRetry(
 }
 
 /**
- * Sleep utility for retry backoff
+ * Sleep utility for retry backoff delays.
+ *
+ * @param ms - Number of milliseconds to sleep
+ * @returns Promise that resolves after the specified delay
  */
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));

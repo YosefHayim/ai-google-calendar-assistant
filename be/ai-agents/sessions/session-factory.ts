@@ -1,5 +1,7 @@
 import type { AgentInputItem, Session } from "@openai/agents";
+
 import { MemorySession } from "@openai/agents";
+import { logger } from "@/utils/logger";
 
 // Note: SupabaseAgentSession removed - agent_sessions table was dropped for simpler architecture
 export type SessionType = "memory";
@@ -91,7 +93,7 @@ function createCompactionWrapper(
       // Check if we need to compact
       const allItems = await baseSession.getItems();
       if (allItems.length > maxItems) {
-        console.log(
+        logger.info(
           `[Session] Items (${allItems.length}) exceed maxItems (${maxItems}), compaction recommended`
         );
       }
