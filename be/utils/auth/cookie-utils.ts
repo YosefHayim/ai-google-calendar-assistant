@@ -1,6 +1,6 @@
 import type { CookieOptions, Response } from "express";
 
-import { env } from "@/config";
+import { env } from "@/config/env";
 
 export const ACCESS_TOKEN_COOKIE = "access_token";
 export const REFRESH_TOKEN_COOKIE = "refresh_token";

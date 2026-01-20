@@ -101,11 +101,11 @@ router.post(
 );
 
 /**
- * GET /api/storage/file/:bucket/:path(*)
+ * GET /api/storage/file/:bucket/:path*
  * Download/get file information
  */
 router.get(
-  "/file/:bucket/:path(*)",
+  "/file/:bucket/:path*",
   supabaseAuth(),
   reqResAsyncHandler(async (req, res) => {
     const bucket = req.params.bucket as string;
@@ -156,11 +156,11 @@ router.get(
 );
 
 /**
- * DELETE /api/storage/file/:bucket/:path(*)
+ * DELETE /api/storage/file/:bucket/:path*
  * Delete a file
  */
 router.delete(
-  "/file/:bucket/:path(*)",
+  "/file/:bucket/:path*",
   supabaseAuth(),
   reqResAsyncHandler(async (req, res) => {
     const bucket = req.params.bucket as string;

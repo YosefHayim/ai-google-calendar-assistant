@@ -4,9 +4,10 @@
  * @see https://developers.facebook.com/docs/whatsapp/cloud-api/webhooks/payload-security
  */
 
-import crypto from "node:crypto";
 import type { NextFunction, Request, Response } from "express";
-import { env } from "@/config";
+
+import crypto from "node:crypto";
+import { env } from "@/config/env";
 import { logger } from "@/utils/logger";
 
 const SIGNATURE_HEADER = "x-hub-signature-256";

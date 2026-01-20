@@ -1,6 +1,7 @@
 import crypto from "node:crypto";
 import type { Request, Response } from "express";
-import { env, STATUS_RESPONSE } from "@/config";
+import { env } from "@/config/env";
+import { STATUS_RESPONSE } from "@/config/constants/http";
 import { logger } from "@/utils/logger";
 import {
   isLemonSqueezyEnabled,

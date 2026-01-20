@@ -1,5 +1,5 @@
 import OpenAI from "openai";
-import { env } from "@/config";
+import { env } from "@/config/env";
 import { logger } from "@/utils/logger";
 
 const openai = new OpenAI({ apiKey: env.openAiApiKey });

@@ -1,8 +1,9 @@
+import { STATUS_RESPONSE } from "@/config/constants/http";
+import { env } from "@/config/env";
 import express from "express";
-import { webhookCallback } from "grammy";
-import { env, STATUS_RESPONSE } from "@/config";
 import { getBot } from "@/telegram-bot/init-bot";
 import { logger } from "@/utils/logger";
+import { webhookCallback } from "grammy";
 
 const router = express.Router();
 

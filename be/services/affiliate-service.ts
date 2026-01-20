@@ -1,4 +1,4 @@
-import { env } from "@/config";
+import { env } from "@/config/env";
 import { initializeLemonSqueezy } from "@/config/clients/lemonsqueezy";
 
 const LEMONSQUEEZY_API_BASE = "https://api.lemonsqueezy.com/v1";

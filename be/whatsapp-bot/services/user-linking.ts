@@ -3,12 +3,13 @@
  * Handles onboarding and account linking for WhatsApp users
  */
 
-import { env } from "@/config";
-import { SUPABASE } from "@/config/clients/supabase";
-import type { Database } from "@/database.types";
-import { logger } from "@/utils/logger";
-import type { WhatsAppInteractiveContent } from "../types";
 import { sendButtonMessage, sendTextMessage } from "./send-message";
+
+import type { Database } from "@/database.types";
+import { SUPABASE } from "@/config/clients/supabase";
+import type { WhatsAppInteractiveContent } from "../types";
+import { env } from "@/config/env";
+import { logger } from "@/utils/logger";
 
 type WhatsAppUser = Database["public"]["Tables"]["whatsapp_users"]["Row"];
 

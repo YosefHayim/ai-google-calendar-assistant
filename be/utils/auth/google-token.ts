@@ -1,6 +1,9 @@
-import { google } from "googleapis";
-import { env, OAUTH2CLIENT, REDIRECT_URI, SCOPES } from "@/config";
+import { REDIRECT_URI, env } from "@/config/env";
+
+import { OAUTH2CLIENT } from "@/config/clients/google-oauth";
+import { SCOPES } from "@/config/constants/google";
 import type { TokensProps } from "@/types";
+import { google } from "googleapis";
 import { isoToMs } from "../date/timestamp-utils";
 import { userRepository } from "../repositories/UserRepository";
 

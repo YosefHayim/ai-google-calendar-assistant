@@ -3,7 +3,7 @@
  * Sets up WhatsApp Cloud API webhook handlers and message processing
  */
 
-import { env } from "@/config";
+import { env } from "@/config/env";
 import { logger } from "@/utils/logger";
 
 /**

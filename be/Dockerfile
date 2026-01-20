@@ -107,6 +107,9 @@ COPY --from=builder --chown=appuser:appuser /app/dist ./dist
 # Copy public/static assets
 COPY --from=builder --chown=appuser:appuser /app/public ./public
 
+# Create logs directory with proper permissions
+RUN mkdir -p logs && chown appuser:appuser logs
+
 # Switch to non-privileged user
 USER appuser
 

@@ -1,16 +1,17 @@
-import { autoRetry } from "@grammyjs/auto-retry";
-import type { BotError, Context, SessionFlavor } from "grammy";
 import { Bot, session } from "grammy";
-import { env } from "@/config";
-import type { SessionData } from "@/types";
-import { logger } from "@/utils/logger";
-import { authTgHandler } from "../middleware/auth-tg-handler";
-import { googleTokenTgHandler } from "../middleware/google-token-tg-handler";
+import type { BotError, Context, SessionFlavor } from "grammy";
 import {
   authRateLimiter,
   messageRateLimiter,
 } from "../middleware/rate-limiter";
+
+import type { SessionData } from "@/types";
+import { authTgHandler } from "../middleware/auth-tg-handler";
+import { autoRetry } from "@grammyjs/auto-retry";
 import { createRedisSessionStorage } from "../middleware/redis-session-storage";
+import { env } from "@/config/env";
+import { googleTokenTgHandler } from "../middleware/google-token-tg-handler";
+import { logger } from "@/utils/logger";
 import { sessionExpiryMiddleware } from "../middleware/session-expiry";
 
 export type GlobalContext = SessionFlavor<SessionData> & Context;

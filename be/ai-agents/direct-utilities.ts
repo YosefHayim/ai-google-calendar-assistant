@@ -14,7 +14,7 @@ import {
 import { MODELS } from "@/config/constants/ai";
 import OpenAI from "openai";
 import type { calendar_v3 } from "googleapis";
-import { env } from "@/config";
+import { env } from "@/config/env";
 import { formatEventData as formatEvent } from "./utils";
 import isEmail from "validator/lib/isEmail";
 

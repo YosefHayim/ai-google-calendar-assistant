@@ -1,10 +1,10 @@
 import type { Request, Response } from "express";
 
 import OpenAI from "openai";
-import { z } from "zod";
-import { env } from "@/config";
 import { SUPABASE } from "@/config/clients";
+import { env } from "@/config/env";
 import sendR from "@/utils/send-response";
+import { z } from "zod";
 
 // Blog posts table is not yet in database.types.ts - use untyped queries
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

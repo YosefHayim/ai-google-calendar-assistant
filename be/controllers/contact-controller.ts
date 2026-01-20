@@ -1,9 +1,11 @@
 import type { Request, Response } from "express";
-import { Resend } from "resend";
-import { isEmail } from "validator";
-import { env, STATUS_RESPONSE } from "@/config";
-import { ContactFormEmail } from "@/emails";
 import { reqResAsyncHandler, sendR } from "@/utils/http";
+
+import { ContactFormEmail } from "@/emails";
+import { Resend } from "resend";
+import { STATUS_RESPONSE } from "@/config/constants/http";
+import { env } from "@/config/env";
+import { isEmail } from "validator";
 import { logger } from "@/utils/logger";
 
 const resend = new Resend(env.resend.apiKey);

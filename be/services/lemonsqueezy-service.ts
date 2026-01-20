@@ -11,7 +11,8 @@ import {
   updateSubscription,
   type Variant,
 } from "@lemonsqueezy/lemonsqueezy.js";
-import { env, SUPABASE } from "@/config";
+import { env } from "@/config/env";
+import { SUPABASE } from "@/config/clients/supabase";
 import {
   initializeLemonSqueezy,
   LEMONSQUEEZY_CONFIG,

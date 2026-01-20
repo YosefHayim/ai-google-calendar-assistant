@@ -4,11 +4,11 @@
  * @see https://developers.facebook.com/docs/development/create-an-app/app-dashboard/data-deletion-callback
  */
 
-import crypto from "node:crypto";
-import { env } from "@/config";
 import { SUPABASE } from "@/config/clients/supabase";
-import { unifiedContextStore } from "@/shared/context";
+import crypto from "node:crypto";
+import { env } from "@/config/env";
 import { logger } from "@/utils/logger";
+import { unifiedContextStore } from "@/shared/context";
 
 const getAppSecret = (): string | undefined =>
   env.integrations.whatsapp.appSecret;

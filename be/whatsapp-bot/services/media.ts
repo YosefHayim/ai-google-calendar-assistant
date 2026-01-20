@@ -4,12 +4,13 @@
  * @see https://developers.facebook.com/docs/whatsapp/cloud-api/reference/media
  */
 
-import { env } from "@/config";
-import { logger } from "@/utils/logger";
 import type {
   WhatsAppMediaUploadResponse,
   WhatsAppMediaUrlResponse,
 } from "../types";
+
+import { env } from "@/config/env";
+import { logger } from "@/utils/logger";
 
 type MediaDownloadResult = {
   success: boolean;

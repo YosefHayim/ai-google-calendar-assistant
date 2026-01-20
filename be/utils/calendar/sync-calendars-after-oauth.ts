@@ -1,5 +1,6 @@
 import { type calendar_v3, google } from "googleapis";
-import { env, REDIRECT_URI, SUPABASE } from "@/config";
+import { env, REDIRECT_URI } from "@/config/env";
+import { SUPABASE } from "@/config/clients/supabase";
 import type { Database } from "@/database.types";
 import { logger } from "../logger";
 

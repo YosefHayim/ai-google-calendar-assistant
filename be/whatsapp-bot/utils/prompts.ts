@@ -1,9 +1,9 @@
-import OpenAI from "openai";
-import { env } from "@/config";
-import { MODELS } from "@/config/constants/ai";
-import type { userAndAiMessageProps } from "@/types";
-import { logger } from "@/utils/logger";
 import type { AllyBrainPreference } from "./ally-brain";
+import { MODELS } from "@/config/constants/ai";
+import OpenAI from "openai";
+import { env } from "@/config/env";
+import { logger } from "@/utils/logger";
+import type { userAndAiMessageProps } from "@/types";
 
 const openai = new OpenAI({ apiKey: env.openAiApiKey });
 

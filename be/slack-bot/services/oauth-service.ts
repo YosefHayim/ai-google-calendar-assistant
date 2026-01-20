@@ -1,5 +1,6 @@
+import { SUPABASE } from "@/config/clients/supabase";
 import { WebClient } from "@slack/web-api";
-import { env, SUPABASE } from "@/config";
+import { env } from "@/config/env";
 import { logger } from "@/utils/logger";
 
 const SLACK_SCOPES = [

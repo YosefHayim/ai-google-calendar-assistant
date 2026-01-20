@@ -1,5 +1,7 @@
 import type { Request, Response } from "express";
-import { env, STATUS_RESPONSE, SUPABASE } from "@/config";
+import { env } from "@/config/env";
+import { STATUS_RESPONSE } from "@/config/constants/http";
+import { SUPABASE } from "@/config/clients/supabase";
 import type { DailyBriefingPreference } from "@/services/user-preferences-service";
 import { dispatchBriefing } from "@/utils/briefing/channel-dispatcher";
 import {

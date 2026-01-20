@@ -1,12 +1,8 @@
 import { render } from "@react-email/components";
 import { Resend } from "resend";
-import {
-  emitToUser,
-  env,
-  isUserConnected,
-  type NotificationPayload,
-  SUPABASE,
-} from "@/config";
+import { env } from "@/config/env";
+import { emitToUser, isUserConnected, type NotificationPayload } from "@/config/clients/socket-server";
+import { SUPABASE } from "@/config/clients/supabase";
 import { WelcomeEmail } from "@/emails/WelcomeEmail";
 import {
   getNotificationSettingsPreference,

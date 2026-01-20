@@ -1,6 +1,7 @@
 import type { Credentials, OAuth2Client } from "google-auth-library";
 import { type calendar_v3, google } from "googleapis";
-import { env, REDIRECT_URI } from "@/config";
+import { env } from "@/config/env";
+import { REDIRECT_URI } from "@/config/env";
 import type { TokensProps } from "@/types";
 import { updateUserSupabaseTokens } from "../auth/update-tokens-of-user";
 import { logger } from "../logger";

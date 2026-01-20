@@ -5,7 +5,7 @@ import {
   type SlackEventMiddlewareArgs,
 } from "@slack/bolt";
 import { WebClient } from "@slack/web-api";
-import { env } from "@/config";
+import { env } from "@/config/env";
 import { logger } from "@/utils/logger";
 import { parseAndRouteCommand } from "./handlers/commands";
 import {

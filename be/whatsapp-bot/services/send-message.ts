@@ -4,8 +4,6 @@
  * @see https://developers.facebook.com/docs/whatsapp/cloud-api/reference/messages
  */
 
-import { env } from "@/config";
-import { logger } from "@/utils/logger";
 import type {
   SendMediaOptions,
   SendMessageOptions,
@@ -14,6 +12,9 @@ import type {
   WhatsAppOutgoingMessage,
   WhatsAppSendMessageResponse,
 } from "../types";
+
+import { env } from "@/config/env";
+import { logger } from "@/utils/logger";
 
 const MAX_TEXT_LENGTH = 4096;
 const MAX_BUTTON_TITLE_LENGTH = 20;

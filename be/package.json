@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.2",
+    "@google/genai": "^1.38.0",
     "@google/generative-ai": "^0.24.1",
     "@grammyjs/auto-retry": "^2.0.2",
     "@grammyjs/commands": "^1.2.0",

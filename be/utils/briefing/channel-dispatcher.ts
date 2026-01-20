@@ -1,8 +1,9 @@
-import { Resend } from "resend";
-import { env, SUPABASE } from "@/config";
 import type { BriefingChannel } from "@/services/user-preferences-service";
-import { getClientForTeam } from "@/slack-bot/init-bot";
+import { Resend } from "resend";
+import { SUPABASE } from "@/config/clients/supabase";
+import { env } from "@/config/env";
 import { getBot } from "@/telegram-bot/init-bot";
+import { getClientForTeam } from "@/slack-bot/init-bot";
 import { logger } from "@/utils/logger";
 import { sendTextMessage } from "@/whatsapp-bot/services/send-message";
 

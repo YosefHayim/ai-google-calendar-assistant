@@ -6,7 +6,7 @@ import {
 } from "@openai/agents";
 import { z } from "zod";
 import { logger } from "@/utils/logger";
-import { MODELS } from "@/config";
+import { MODELS } from "@/config/constants/ai";
 
 const MAX_INPUT_LENGTH = 5000;
 const LOG_SUBSTRING_LENGTH = 200;

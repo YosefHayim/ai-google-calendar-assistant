@@ -1,4 +1,4 @@
-import { env } from "@/config";
+import { env } from "@/config/env";
 
 /**
  * Generates dynamic CORS origins based on the environment.

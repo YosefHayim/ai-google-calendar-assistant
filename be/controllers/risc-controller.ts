@@ -6,11 +6,13 @@
  */
 
 import type { Request, Response } from "express";
-import { env, STATUS_RESPONSE } from "@/config";
+import { reqResAsyncHandler, sendR } from "@/utils/http";
+
+import { STATUS_RESPONSE } from "@/config/constants/http";
+import { env } from "@/config/env";
+import { logger } from "@/utils/logger";
 import { processRiscEvents } from "@/utils/auth/risc-event-handlers";
 import { verifyRiscToken } from "@/utils/auth/risc-jwt-verifier";
-import { reqResAsyncHandler, sendR } from "@/utils/http";
-import { logger } from "@/utils/logger";
 
 /**
  * Handles incoming RISC Security Event Tokens from Google.

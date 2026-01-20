@@ -1,14 +1,17 @@
-import express from "express";
-import { env, STATUS_RESPONSE, SUPABASE } from "@/config";
-import { supabaseAuth } from "@/middlewares/supabase-auth";
-import { getSlackReceiver } from "@/slack-bot/init-bot";
 import {
   deactivateWorkspace,
   exchangeCodeForToken,
   generateInstallUrl,
 } from "@/slack-bot/services/oauth-service";
-import { sendR } from "@/utils/http";
+
+import { STATUS_RESPONSE } from "@/config/constants/http";
+import { SUPABASE } from "@/config/clients/supabase";
+import { env } from "@/config/env";
+import express from "express";
+import { getSlackReceiver } from "@/slack-bot/init-bot";
 import { logger } from "@/utils/logger";
+import { sendR } from "@/utils/http";
+import { supabaseAuth } from "@/middlewares/supabase-auth";
 
 const router = express.Router();
 
