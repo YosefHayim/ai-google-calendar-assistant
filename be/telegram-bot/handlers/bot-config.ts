@@ -61,7 +61,22 @@ export const configureSession = (bot: Bot<GlobalContext>): void => {
         pendingEmailChange: undefined,
         awaitingEmailChange: undefined,
       }),
-      getSessionKey: (ctx) => ctx.from?.id?.toString(),
+      getSessionKey: (ctx) => {
+        // For most updates, use the user ID from ctx.from
+        if (ctx.from?.id) {
+          return ctx.from.id.toString()
+        }
+
+        // For updates without from (like channel posts, or certain bot updates),
+        // use chat ID as fallback for session key
+        if (ctx.chat?.id) {
+          return `chat_${ctx.chat.id.toString()}`
+        }
+
+        // Last resort: use a default session key
+        // This ensures session middleware doesn't fail
+        return "unknown_session"
+      },
       storage: createRedisSessionStorage<SessionData>(),
     })
   )
