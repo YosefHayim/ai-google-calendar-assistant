@@ -1,0 +1,108 @@
+name: Weekly Workflow Cleanup
+
+on:
+  schedule:
+    - cron: "0 3 * * 0"  # Every Sunday at 03:00 UTC
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "List runs without deleting"
+        required: false
+        default: "false"
+      days_to_keep:
+        description: "Keep runs newer than X days"
+        required: false
+        default: "30"
+
+permissions:
+  actions: write
+  contents: read
+
+concurrency:
+  group: cleanup-workflow-runs
+  cancel-in-progress: false
+
+jobs:
+  cleanup:
+    name: Delete old workflow runs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete old workflow runs
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const currentRunId = context.runId;
+            const dryRun = '${{ github.event.inputs.dry_run }}' === 'true';
+            const daysToKeep = parseInt('${{ github.event.inputs.days_to_keep }}' || '30', 10);
+            const cutoffDate = new Date();
+            cutoffDate.setDate(cutoffDate.getDate() - daysToKeep);
+
+            const sleep = (ms) => new Promise(res => setTimeout(res, ms));
+
+            async function deleteWithRetry(run) {
+              const maxAttempts = 5;
+              let delay = 1000;
+              
+              for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+                try {
+                  if (dryRun) {
+                    core.info(`[dry-run] Would delete: ${run.name} #${run.run_number} (${run.created_at})`);
+                    return true;
+                  }
+                  await github.rest.actions.deleteWorkflowRun({ owner, repo, run_id: run.id });
+                  core.info(`Deleted: ${run.name} #${run.run_number}`);
+                  return true;
+                } catch (err) {
+                  const status = err.status || 0;
+                  const retriable = status === 429 || status === 502 || status === 503 || status === 504;
+                  
+                  if (!retriable || attempt === maxAttempts) {
+                    core.warning(`Failed to delete ${run.name} #${run.run_number}: ${err.message}`);
+                    return false;
+                  }
+                  
+                  core.info(`Rate limited, waiting ${delay}ms (attempt ${attempt}/${maxAttempts})`);
+                  await sleep(delay);
+                  delay = Math.min(delay * 2, 30000);
+                }
+              }
+              return false;
+            }
+
+            let deleted = 0, skipped = 0, failed = 0;
+
+            core.info(`Cleaning up workflow runs older than ${daysToKeep} days (before ${cutoffDate.toISOString()})`);
+            core.info(`Dry run: ${dryRun}`);
+
+            const iterator = github.paginate.iterator(
+              github.rest.actions.listWorkflowRunsForRepo,
+              { owner, repo, per_page: 100, status: 'completed' }
+            );
+
+            for await (const { data: runs } of iterator) {
+              for (const run of runs) {
+                if (run.id === currentRunId) {
+                  skipped++;
+                  continue;
+                }
+
+                const runDate = new Date(run.created_at);
+                if (runDate >= cutoffDate) {
+                  skipped++;
+                  continue;
+                }
+
+                const ok = await deleteWithRetry(run);
+                ok ? deleted++ : failed++;
+              }
+            }
+
+            const summary = `Deleted: ${deleted}, Skipped: ${skipped}, Failed: ${failed}`;
+            core.notice(summary);
+            
+            if (failed > 0) {
+              core.warning(`${failed} workflow runs failed to delete`);
+            }

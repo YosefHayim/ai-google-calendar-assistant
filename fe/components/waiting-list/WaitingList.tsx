@@ -14,16 +14,16 @@ import { useTranslation } from 'react-i18next'
 import { waitingListService } from '@/services/waiting-list-service'
 
 const platforms = [
-  { icon: Mic, label: 'Voice', delay: 0 },
-  { icon: MessageSquare, label: 'Web Chat', delay: 0.1 },
-  { icon: Send, label: 'Telegram', delay: 0.2 },
-  { icon: Smartphone, label: 'WhatsApp', delay: 0.3 },
+  { icon: Mic, key: 'voice', delay: 0 },
+  { icon: MessageSquare, key: 'chat', delay: 0.1 },
+  { icon: Send, key: 'telegram', delay: 0.2 },
+  { icon: Smartphone, key: 'whatsapp', delay: 0.3 },
 ]
 
 const trustIndicators = [
-  { icon: Shield, label: 'Enterprise-grade security' },
-  { icon: Zap, label: 'Sub-second response' },
-  { icon: Clock, label: 'Saves 5+ hrs/week' },
+  { icon: Shield, key: 'security' },
+  { icon: Zap, key: 'speed' },
+  { icon: Clock, key: 'timeSaved' },
 ]
 
 const WaitingList: React.FC = () => {
@@ -97,7 +97,7 @@ const WaitingList: React.FC = () => {
           transition={{ duration: 0.6, ease: 'easeOut' }}
           className="mb-8"
         >
-          <Badge
+            <Badge
             variant="outline"
             className="px-4 py-1.5 text-xs uppercase tracking-widest border-primary/30 text-primary bg-primary/5 dark:bg-primary/10 backdrop-blur-sm"
           >
@@ -105,17 +105,16 @@ const WaitingList: React.FC = () => {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
             </span>
-            Limited Early Access
+            {t('waitingList.limitedEarlyAccess')}
           </Badge>
         </motion.div>
 
         <h1 className="text-center text-5xl font-medium tracking-tight md:text-7xl lg:text-8xl text-foreground dark:text-primary-foreground leading-none">
-          Your Calendar, <br />
-          <span className="text-primary italic">Listening.</span>
+          {t('waitingList.titlePart1')} <br />
+          <span className="text-primary italic">{t('waitingList.titlePart2')}</span>
         </h1>
         <p className="mt-8 text-muted-foreground dark:text-muted-foreground text-xl font-medium max-w-lg mx-auto leading-relaxed">
-          Just say it. Ally schedules it. Across voice, chat, Telegram, and WhatsApp. No forms. No friction. Just you
-          and your time, finally working together.
+          {t('waitingList.subtitle')}
         </p>
 
         {/* Platform Icons Row */}
@@ -127,7 +126,7 @@ const WaitingList: React.FC = () => {
         >
           {platforms.map((platform, index) => (
             <motion.div
-              key={platform.label}
+              key={platform.key}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.4 + platform.delay }}
@@ -139,7 +138,7 @@ const WaitingList: React.FC = () => {
                 <div className="absolute inset-0 rounded-xl bg-primary/0 group-hover:bg-primary/5 blur-xl transition-all duration-300 pointer-events-none" />
               </div>
               <span className="text-[10px] uppercase tracking-wider text-muted-foreground dark:text-zinc-600 font-medium group-hover:text-zinc-600 dark:group-hover:text-muted-foreground transition-colors duration-300">
-                {platform.label}
+                {t(`waitingList.platforms.${platform.key}`)}
               </span>
             </motion.div>
           ))}
@@ -149,7 +148,7 @@ const WaitingList: React.FC = () => {
           <div className="flex flex-row w-full gap-2 items-center justify-center">
             <Input
               className="w-auto h-16 px-6 rounded-lg text-lg"
-              placeholder="Your name (optional)"
+              placeholder={t('waitingList.namePlaceholder')}
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -157,7 +156,7 @@ const WaitingList: React.FC = () => {
             />
             <Input
               className="w-auto h-16 px-6 rounded-lg text-lg"
-              placeholder="Email"
+              placeholder={t('waitingList.emailPlaceholder')}
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -166,7 +165,7 @@ const WaitingList: React.FC = () => {
             />
           </div>
           <InteractiveHoverButton
-            text={isSubmitting ? 'Joining...' : 'Get Early Access'}
+            text={isSubmitting ? t('waitingList.joining') : t('waitingList.getEarlyAccess')}
             className="w-full h-16 text-lg shadow-xl shadow-primary/20 max-w-full"
             type="submit"
             disabled={isSubmitting}
@@ -180,14 +179,14 @@ const WaitingList: React.FC = () => {
               className="mt-6 p-4 rounded-lg bg-primary/10 border-primary/20"
             >
               <p className="text-center text-primary font-medium">
-                You're <strong>#{position}</strong> on the waiting list!
+                {t('waitingList.positionMessage', { position })}
               </p>
             </motion.div>
           )}
         </form>
 
         <p className="mt-6 text-xs text-muted-foreground font-medium">
-          Join 2,000+ professionals reclaiming their time. We'll notify you the moment you're in.
+          {t('waitingList.footerText')}
         </p>
 
         {/* Trust Indicators */}
@@ -200,14 +199,14 @@ const WaitingList: React.FC = () => {
           <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4">
             {trustIndicators.map((indicator, index) => (
               <motion.div
-                key={indicator.label}
+                key={indicator.key}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.5, delay: 0.9 + index * 0.1 }}
                 className="flex items-center gap-2 text-muted-foreground dark:text-muted-foreground"
               >
                 <indicator.icon className="w-4 h-4" />
-                <span className="text-xs font-medium">{indicator.label}</span>
+                <span className="text-xs font-medium">{t(`waitingList.trustIndicators.${indicator.key}`)}</span>
               </motion.div>
             ))}
           </div>
@@ -216,7 +215,7 @@ const WaitingList: React.FC = () => {
 
       {/* Subtle bottom detail */}
       <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 text-xs uppercase tracking-widest text-zinc-300 dark:text-zinc-800 font-bold select-none">
-        The Future of Scheduling
+        {t('waitingList.footerTitle')}
       </div>
     </div>
   )

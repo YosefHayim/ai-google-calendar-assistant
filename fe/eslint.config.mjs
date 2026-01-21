@@ -76,6 +76,10 @@ export default [
       '@tanstack/query/exhaustive-deps': 'error',
       '@tanstack/query/stable-query-client': 'warn',
       '@tanstack/query/no-rest-destructuring': 'warn',
+      '@tanstack/query/no-unstable-deps': 'warn',
+      '@tanstack/query/infinite-query-property-order': 'warn',
+      '@tanstack/query/no-void-query-fn': 'error',
+      '@tanstack/query/mutation-property-order': 'warn',
     },
   }, // JavaScript-specific overrides
   {

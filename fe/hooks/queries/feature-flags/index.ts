@@ -50,6 +50,8 @@ export function useEnabledFeatureFlags(options?: QueryHookOptions) {
     staleTime: options?.staleTime ?? 5 * 60 * 1000,
     enabled: options?.enabled ?? true,
     refetchOnWindowFocus: options?.refetchOnWindowFocus ?? true,
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   })
 }
 

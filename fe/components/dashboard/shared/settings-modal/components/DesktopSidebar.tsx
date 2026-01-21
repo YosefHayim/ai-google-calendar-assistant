@@ -6,24 +6,28 @@ import { AllyLogo } from '@/components/shared/logo'
 import { Button } from '@/components/ui/button'
 import { LogOut } from 'lucide-react'
 import React from 'react'
-import { SETTINGS_TABS } from '../constants'
+import { useTranslation } from 'react-i18next'
+import { useSettingsTabs } from '../constants'
 
 interface DesktopSidebarProps {
   onSignOut?: () => void
 }
 
 export function DesktopSidebar({ onSignOut }: DesktopSidebarProps) {
+  const { t } = useTranslation()
+  const settingsTabs = useSettingsTabs()
+
   return (
     <div className="hidden sm:flex w-52 bg-secondary dark:bg-secondary/50 border-r border-border -border flex-col p-3 flex-shrink-0">
       <div className="flex items-center gap-2 mb-4 px-2">
         <div className="w-8 h-8 bg-secondary dark:bg-background rounded-md flex items-center justify-center text-primary-foreground">
           <AllyLogo className="w-5 h-5" />
         </div>
-        <h2 className="font-semibold text-foreground dark:text-primary-foreground text-sm">Ally Settings</h2>
+        <h2 className="font-semibold text-foreground dark:text-primary-foreground text-sm">{t('settings.title')}</h2>
       </div>
 
       <TabsList className="flex-1 flex flex-col h-full justify-start bg-transparent p-0 gap-1">
-        {SETTINGS_TABS.map((tab) => (
+        {settingsTabs.map((tab) => (
           <TabsTrigger
             key={tab.id}
             value={tab.id}
@@ -40,7 +44,7 @@ export function DesktopSidebar({ onSignOut }: DesktopSidebarProps) {
         onClick={onSignOut}
         className="w-full justify-start gap-2 px-2 py-1.5 text-muted-foreground text-xs font-medium mt-auto hover:bg-destructive/10 hover:text-destructive"
       >
-        <LogOut size={14} /> Sign Out
+        <LogOut size={14} /> {t('auth.signOut')}
       </Button>
     </div>
   )

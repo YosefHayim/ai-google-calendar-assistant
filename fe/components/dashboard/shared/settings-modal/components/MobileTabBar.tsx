@@ -3,13 +3,15 @@
 import { TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 import React from 'react'
-import { SETTINGS_TABS } from '../constants'
+import { useSettingsTabs } from '../constants'
 
 export function MobileTabBar() {
+  const settingsTabs = useSettingsTabs()
+
   return (
     <div className="flex sm:hidden border-b border-border flex-shrink-0 bg-secondary dark:bg-secondary/50">
       <TabsList className="flex w-full h-auto bg-transparent p-1 gap-1 overflow-x-auto">
-        {SETTINGS_TABS.map((tab) => (
+        {settingsTabs.map((tab) => (
           <TabsTrigger
             key={tab.id}
             value={tab.id}

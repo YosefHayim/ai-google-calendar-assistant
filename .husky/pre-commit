@@ -1,0 +1,20 @@
+#!/usr/bin/env sh
+
+# Get list of staged files
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM)
+
+# Check if any BE files are staged
+BE_FILES=$(echo "$STAGED_FILES" | grep "^be/" || true)
+if [ -n "$BE_FILES" ]; then
+  echo "Running lint-staged for backend..."
+  cd be && npx lint-staged
+  cd ..
+fi
+
+# Check if any FE files are staged
+FE_FILES=$(echo "$STAGED_FILES" | grep "^fe/" || true)
+if [ -n "$FE_FILES" ]; then
+  echo "Running lint-staged for frontend..."
+  cd fe && npx lint-staged
+  cd ..
+fi

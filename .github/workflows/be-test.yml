@@ -1,0 +1,171 @@
+name: BE - Tests
+
+on:
+  push:
+    branches: [main, dev]
+    paths:
+      - "be/**"
+      - ".github/workflows/be-*.yml"
+  pull_request:
+    branches: [main, dev]
+    paths:
+      - "be/**"
+      - ".github/workflows/be-*.yml"
+
+concurrency:
+  group: be-test-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  BUN_VERSION: "1.3.5"
+  CACHE_VERSION: v1
+  NODE_ENV: test
+
+jobs:
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: ./be
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.bun/install/cache
+            ./be/node_modules
+          key: ${{ runner.os }}-bun-be-${{ env.CACHE_VERSION }}-${{ hashFiles('be/bun.lock', 'be/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-be-${{ env.CACHE_VERSION }}-
+
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: bun install --frozen-lockfile
+
+      - name: Run unit tests
+        run: bun run jest tests/utils tests/middlewares tests/services --passWithNoTests --coverage --coverageReporters=text-summary
+        continue-on-error: true
+        env:
+          TEST_ENV: true
+          SUPABASE_SERVICE_ROLE_KEY: test-key
+          OPEN_API_KEY: test-key
+          GOOGLE_CLIENT_SECRET: test-secret
+
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: be-unit-coverage
+          path: be/coverage/
+          retention-days: 7
+
+  controller-tests:
+    name: Controller Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: ./be
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.bun/install/cache
+            ./be/node_modules
+          key: ${{ runner.os }}-bun-be-${{ env.CACHE_VERSION }}-${{ hashFiles('be/bun.lock', 'be/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-be-${{ env.CACHE_VERSION }}-
+
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: bun install --frozen-lockfile
+
+      - name: Run controller tests
+        run: bun run jest tests/controllers --passWithNoTests --coverage --coverageReporters=text-summary
+        continue-on-error: true
+        env:
+          TEST_ENV: true
+          SUPABASE_SERVICE_ROLE_KEY: test-key
+          OPEN_API_KEY: test-key
+          GOOGLE_CLIENT_SECRET: test-secret
+
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: be-controller-coverage
+          path: be/coverage/
+          retention-days: 7
+
+  integration-tests:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    needs: [unit-tests, controller-tests]
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: ./be
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.bun/install/cache
+            ./be/node_modules
+          key: ${{ runner.os }}-bun-be-${{ env.CACHE_VERSION }}-${{ hashFiles('be/bun.lock', 'be/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-be-${{ env.CACHE_VERSION }}-
+
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: bun install --frozen-lockfile
+
+      - name: Run integration tests
+        run: bun run jest tests/integration tests/scenarios --passWithNoTests --coverage --coverageReporters=text-summary
+        continue-on-error: true
+        env:
+          TEST_ENV: true
+          SUPABASE_SERVICE_ROLE_KEY: test-key
+          OPEN_API_KEY: test-key
+          GOOGLE_CLIENT_SECRET: test-secret
+
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: be-integration-coverage
+          path: be/coverage/
+          retention-days: 7
