@@ -3,20 +3,26 @@ import { CURRENT_MODEL, MODELS } from "@/config"
 import { HANDOFF_DESCRIPTIONS } from "./agent-handoff-descriptions"
 import { AGENT_INSTRUCTIONS } from "./agents-instructions"
 import { calendarSafetyGuardrail } from "./guardrails"
+import { getAgentPromptSync } from "./registry/agent-registry-service"
 import { AGENT_TOOLS, DIRECT_TOOLS } from "./tool-registry"
 
-// Model tiers for different agent complexity levels
-const FAST_MODEL = MODELS.GPT_4_1_NANO // Simple tool-calling agents (fast, cheap)
-const MEDIUM_MODEL = MODELS.GPT_4_1_MINI // Multi-tool orchestration
-// CURRENT_MODEL (GPT_5_MINI) used for complex reasoning/NLP
+const FAST_MODEL = MODELS.GPT_4_1_NANO
+const MEDIUM_MODEL = MODELS.GPT_4_1_MINI
+
+function getPrompt(
+  agentId: string,
+  fallbackKey: keyof typeof AGENT_INSTRUCTIONS
+): string {
+  return getAgentPromptSync(agentId) || AGENT_INSTRUCTIONS[fallbackKey]
+}
 
 export const AGENTS = {
-  // ═══════════════════════════════════════════════════════════════════════════
-  // ACTIVE AGENTS - Still used in handoff flows
-  // ═══════════════════════════════════════════════════════════════════════════
   generateGoogleAuthUrl: new Agent({
     name: "generate_google_auth_url_agent",
-    instructions: AGENT_INSTRUCTIONS.generateGoogleAuthUrl,
+    instructions: getPrompt(
+      "generate_google_auth_url_agent",
+      "generateGoogleAuthUrl"
+    ),
     model: FAST_MODEL,
     modelSettings: { toolChoice: "required" },
     handoffDescription: HANDOFF_DESCRIPTIONS.generateGoogleAuthUrl,
@@ -24,18 +30,14 @@ export const AGENTS = {
   }),
   registerUser: new Agent({
     name: "register_user_agent",
-    instructions: AGENT_INSTRUCTIONS.registerUser,
+    instructions: getPrompt("register_user_agent", "registerUser"),
     model: FAST_MODEL,
     modelSettings: { toolChoice: "required" },
     handoffDescription: HANDOFF_DESCRIPTIONS.registerUser,
     tools: [AGENT_TOOLS.register_user_via_db],
   }),
-
-  // ═══════════════════════════════════════════════════════════════════════════
-  // EVENT OPERATION AGENTS
-  // ═══════════════════════════════════════════════════════════════════════════
   updateEvent: new Agent({
-    instructions: AGENT_INSTRUCTIONS.updateEvent,
+    instructions: getPrompt("update_event_agent", "updateEvent"),
     name: "update_event_agent",
     model: FAST_MODEL,
     modelSettings: { toolChoice: "required" },
@@ -44,38 +46,35 @@ export const AGENTS = {
   }),
   deleteEvent: new Agent({
     name: "delete_event_agent",
-    instructions: AGENT_INSTRUCTIONS.deleteEvent,
+    instructions: getPrompt("delete_event_agent", "deleteEvent"),
     model: FAST_MODEL,
     modelSettings: { toolChoice: "required" },
     handoffDescription: HANDOFF_DESCRIPTIONS.deleteEvent,
     tools: [AGENT_TOOLS.delete_event],
   }),
-  /** Active: Required for natural language parsing */
   parseEventText: new Agent({
     name: "parse_event_text_agent",
-    model: CURRENT_MODEL, // Needs smarter model for NLP
-    instructions: AGENT_INSTRUCTIONS.parseEventText,
+    model: CURRENT_MODEL,
+    instructions: getPrompt("parse_event_text_agent", "parseEventText"),
   }),
 }
 
 export const HANDOFF_AGENTS = {
   createEventHandoff: new Agent({
     name: "create_event_handoff_agent",
-    model: MEDIUM_MODEL, // Multi-tool orchestration
+    model: MEDIUM_MODEL,
     modelSettings: { parallelToolCalls: true },
-    instructions: AGENT_INSTRUCTIONS.createEventHandoff,
+    instructions: getPrompt("create_event_handoff_agent", "createEventHandoff"),
     tools: [
-      // LLM-required: natural language parsing
       AGENTS.parseEventText.asTool({ toolName: "parse_event_text" }),
-      // DIRECT TOOLS: bypass AI agents for faster execution
-      DIRECT_TOOLS.pre_create_validation, // Combines: validate_user + get_timezone + select_calendar + check_conflicts
-      DIRECT_TOOLS.insert_event_direct, // Direct event insertion - no AI overhead
+      DIRECT_TOOLS.pre_create_validation,
+      DIRECT_TOOLS.insert_event_direct,
     ],
   }),
   updateEventHandoff: new Agent({
     name: "update_event_handoff_agent",
     model: MEDIUM_MODEL,
-    instructions: AGENT_INSTRUCTIONS.updateEventHandoff,
+    instructions: getPrompt("update_event_handoff_agent", "updateEventHandoff"),
     modelSettings: { toolChoice: "required" },
     tools: [
       AGENT_TOOLS.get_event,
@@ -86,7 +85,7 @@ export const HANDOFF_AGENTS = {
   deleteEventHandoff: new Agent({
     name: "delete_event_handoff_agent",
     model: MEDIUM_MODEL,
-    instructions: AGENT_INSTRUCTIONS.deleteEventHandoff,
+    instructions: getPrompt("delete_event_handoff_agent", "deleteEventHandoff"),
     tools: [
       AGENT_TOOLS.get_event,
       AGENTS.deleteEvent.asTool({ toolName: "delete_event" }),
@@ -95,25 +94,28 @@ export const HANDOFF_AGENTS = {
   registerUserHandoff: new Agent({
     name: "register_user_handoff_agent",
     model: MEDIUM_MODEL,
-    instructions: AGENT_INSTRUCTIONS.registerUserHandoff,
+    instructions: getPrompt(
+      "register_user_handoff_agent",
+      "registerUserHandoff"
+    ),
     tools: [
-      DIRECT_TOOLS.validate_user_direct, // Direct DB call, no AI overhead
-      AGENTS.registerUser.asTool({ toolName: "register_user" }), // Needed for actual registration
+      DIRECT_TOOLS.validate_user_direct,
+      AGENTS.registerUser.asTool({ toolName: "register_user" }),
     ],
   }),
 }
 
 export const ORCHESTRATOR_AGENT = new Agent({
   name: "calendar_orchestrator_agent",
-  model: CURRENT_MODEL, // Needs smarter model for intent understanding
+  model: CURRENT_MODEL,
   modelSettings: { parallelToolCalls: true },
-  instructions: AGENT_INSTRUCTIONS.orchestrator,
+  instructions: getPrompt("calendar_orchestrator_agent", "orchestrator"),
   tools: [
     HANDOFF_AGENTS.createEventHandoff.asTool({
       toolName: "create_event_handoff",
     }),
-    DIRECT_TOOLS.get_event_direct, // Direct event retrieval - preserves auth context
-    DIRECT_TOOLS.summarize_events, // Cheap summarization of raw event JSON
+    DIRECT_TOOLS.get_event_direct,
+    DIRECT_TOOLS.summarize_events,
     HANDOFF_AGENTS.updateEventHandoff.asTool({
       toolName: "update_event_handoff",
     }),
@@ -126,7 +128,7 @@ export const ORCHESTRATOR_AGENT = new Agent({
     AGENTS.generateGoogleAuthUrl.asTool({
       toolName: "generate_google_auth_url",
     }),
-    DIRECT_TOOLS.update_user_brain, // Adaptive memory - save permanent preferences
+    DIRECT_TOOLS.update_user_brain,
   ],
   inputGuardrails: [calendarSafetyGuardrail],
 })

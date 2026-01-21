@@ -18,6 +18,15 @@ import {
   updateUserRole,
   updateUserStatus,
 } from "@/domains/admin/controllers/admin-controller"
+import {
+  getAgentById,
+  getAgents,
+  getOptimizationHistory,
+  getOptimizationStats,
+  promoteOptimization,
+  refreshAgentCache,
+  updateAgentPrompt,
+} from "@/domains/admin/controllers/agent-registry-controller"
 import { adminAuth } from "@/domains/admin/middleware/admin-auth"
 import { supabaseAuth } from "@/domains/auth/middleware/supabase-auth"
 
@@ -121,5 +130,14 @@ router.get("/payments", getPaymentHistory)
 
 // Audit log endpoints
 router.get("/audit-logs", getAuditLogs)
+
+// Agent registry endpoints
+router.get("/agents", getAgents)
+router.get("/agents/:agentId", getAgentById)
+router.patch("/agents/:agentId/prompt", updateAgentPrompt)
+router.get("/agents/:agentId/optimizations", getOptimizationHistory)
+router.get("/agents/:agentId/stats", getOptimizationStats)
+router.post("/agents/cache/refresh", refreshAgentCache)
+router.post("/optimizations/:optimizationId/promote", promoteOptimization)
 
 export default router
