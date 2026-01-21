@@ -5,8 +5,8 @@ import {
   deactivateGoogleTokens,
   persistGoogleTokens,
   refreshGoogleAccessToken,
-} from "@/utils/auth/google-token";
-import { logger } from "@/utils/logger";
+} from "@/domains/auth/utils/google-token";
+import { logger } from "@/lib/logger";
 
 const EXPIRY_THRESHOLD_HOURS = 12;
 const SECONDS_PER_HOUR = 3600;

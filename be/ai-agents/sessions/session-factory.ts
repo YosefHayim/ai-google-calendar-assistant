@@ -1,7 +1,7 @@
 import type { AgentInputItem, Session } from "@openai/agents";
 
 import { MemorySession } from "@openai/agents";
-import { logger } from "@/utils/logger";
+import { logger } from "@/lib/logger";
 
 // Note: SupabaseAgentSession removed - agent_sessions table was dropped for simpler architecture
 export type SessionType = "memory";

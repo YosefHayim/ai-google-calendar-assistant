@@ -1,9 +1,9 @@
-import OpenAI from "openai";
-import { z } from "zod";
+import type { InsightsMetrics } from "@/domains/analytics/utils";
 import { MODELS } from "@/config";
+import OpenAI from "openai";
 import { env } from "@/config/env";
-import type { InsightsMetrics } from "@/utils/ai/insights-calculator";
-import { logger } from "@/utils/logger";
+import { logger } from "@/lib/logger";
+import { z } from "zod";
 
 // ============================================================================
 // CONSTANTS

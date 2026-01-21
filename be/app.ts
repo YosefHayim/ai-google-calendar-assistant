@@ -1,15 +1,15 @@
 import { STATUS_RESPONSE } from "@/config/constants/http";
-import { bootstrapServices } from "./utils/bootstrap";
+import { bootstrapServices } from "@/lib/bootstrap";
 import { createServer } from "node:http";
 import { env } from "@/config/env";
 import errorHandler from "@/middlewares/error-handler";
 import express from "express";
-import { handleShutdown } from "./utils/shutdown";
-import { initSocketServer } from "@/config/clients/socket-server";
+import { handleShutdown } from "@/lib/shutdown";
+import { initSocketServer } from "@/infrastructure/socket/socket-server";
 import { initializeMiddlewares } from "@/middlewares";
 import { initializeRoutes } from "@/routes";
-import { logger } from "@/utils/logger";
-import { sendR } from "@/utils/http";
+import { logger } from "@/lib/logger";
+import { sendR } from "@/lib/http";
 
 const app = express();
 const PORT = env.port;

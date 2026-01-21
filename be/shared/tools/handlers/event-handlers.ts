@@ -4,16 +4,16 @@ import { ACTION } from "@/config";
 import {
   dispatchEventConfirmation,
   type EventNotificationData,
-} from "@/services/notification-dispatcher";
+} from "@/domains/notifications/services/notification-dispatcher";
 import type { HandlerContext } from "@/shared/types";
-import { fetchCredentialsByEmail } from "@/utils/auth";
+import { fetchCredentialsByEmail } from "@/domains/auth/utils";
 import {
   eventsHandler,
   initUserSupabaseCalendarWithTokensAndUpdateTokens,
-} from "@/utils/calendar";
-import { getEvents } from "@/utils/calendar/get-events";
-import { isValidDateTime } from "@/utils/date/date-helpers";
-import { logger } from "@/utils/logger";
+} from "@/domains/calendar/utils";
+import { getEvents } from "@/domains/calendar/utils/get-events";
+import { isValidDateTime } from "@/lib/date/date-helpers";
+import { logger } from "@/lib/logger";
 import type {
   DeleteEventParams,
   EventTime,

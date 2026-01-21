@@ -4,9 +4,9 @@ import {
   PREFERENCE_DEFAULTS,
   updatePreference,
   type VoicePreference,
-} from "@/services/user-preferences-service";
-import { telegramConversation } from "@/utils/conversation/TelegramConversationAdapter";
-import { logger } from "@/utils/logger";
+} from "@/domains/settings/services/user-preferences-service";
+import { telegramConversation } from "@/domains/chat/utils/conversation/TelegramConversationAdapter";
+import { logger } from "@/lib/logger";
 
 const getUserIdFromTelegram = (telegramUserId: number) =>
   telegramConversation.getUserIdFromTelegram(telegramUserId);

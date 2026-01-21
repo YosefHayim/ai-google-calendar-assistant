@@ -1,5 +1,5 @@
 import type { Bot } from "grammy";
-import { generateGoogleAuthUrl } from "@/utils/auth";
+import { generateGoogleAuthUrl } from "@/domains/auth/utils";
 import {
   getTranslatorFromLanguageCode,
   SUPPORTED_LOCALES,

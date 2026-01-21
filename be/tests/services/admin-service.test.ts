@@ -26,7 +26,7 @@ import {
   sendPasswordResetEmail,
   updateUserRole,
   updateUserStatus,
-} from "../../services/admin-service";
+} from "@/domains/admin/services/admin-service";
 
 describe("Admin Service", () => {
   beforeEach(() => {

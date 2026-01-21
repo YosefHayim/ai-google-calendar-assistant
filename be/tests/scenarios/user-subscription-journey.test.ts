@@ -99,7 +99,7 @@ jest.mock("@lemonsqueezy/lemonsqueezy.js", () => ({
   lemonSqueezySetup: mockFn(),
 }));
 
-jest.mock("@/utils/http", () => ({
+jest.mock("@/lib/http", () => ({
   sendR: mockFn(),
   reqResAsyncHandler: <T extends (...args: unknown[]) => Promise<unknown>>(
     fn: T

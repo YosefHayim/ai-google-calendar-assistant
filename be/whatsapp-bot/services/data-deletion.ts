@@ -4,10 +4,10 @@
  * @see https://developers.facebook.com/docs/development/create-an-app/app-dashboard/data-deletion-callback
  */
 
-import { SUPABASE } from "@/config/clients/supabase";
+import { SUPABASE } from "@/infrastructure/supabase/supabase";
 import crypto from "node:crypto";
 import { env } from "@/config/env";
-import { logger } from "@/utils/logger";
+import { logger } from "@/lib/logger";
 import { unifiedContextStore } from "@/shared/context";
 
 const getAppSecret = (): string | undefined =>

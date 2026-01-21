@@ -31,7 +31,7 @@ jest.mock("@/config", () => ({
   },
 }));
 
-jest.mock("@/utils/http", () => ({
+jest.mock("@/lib/http", () => ({
   sendR: mockFn(),
   reqResAsyncHandler: <T extends (...args: unknown[]) => Promise<unknown>>(
     fn: T

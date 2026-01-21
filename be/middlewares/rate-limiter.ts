@@ -1,6 +1,6 @@
 import { STATUS_RESPONSE } from "@/config";
 import rateLimit from "express-rate-limit";
-import { sendR } from "@/utils/http";
+import { sendR } from "@/lib/http";
 
 /**
  * Rate limiter for authentication endpoints

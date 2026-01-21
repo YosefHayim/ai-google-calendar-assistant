@@ -1,4 +1,4 @@
-import { logger } from "@/utils/logger";
+import { logger } from "@/lib/logger";
 import type { AllyBrainPreference } from "./ally-brain";
 
 const MAX_PROMPT_LENGTH = 3500;

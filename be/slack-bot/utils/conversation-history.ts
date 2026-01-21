@@ -1,7 +1,7 @@
-import { SUPABASE } from "@/config/clients/supabase";
+import { SUPABASE } from "@/infrastructure/supabase/supabase";
 import type { userAndAiMessageProps } from "@/types";
-import { isToday } from "@/utils/date/date-helpers";
-import { logger } from "@/utils/logger";
+import { isToday } from "@/lib/date/date-helpers";
+import { logger } from "@/lib/logger";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const slackUsersTable = () => (SUPABASE as any).from("slack_users");

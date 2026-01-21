@@ -8,7 +8,7 @@ import { mockFn } from "../test-utils";
 const mockSendR = mockFn();
 
 // Mock modules
-jest.mock("@/utils/send-response", () => ({
+jest.mock("@/lib/send-response", () => ({
   default: mockSendR,
 }));
 

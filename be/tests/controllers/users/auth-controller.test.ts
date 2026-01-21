@@ -33,17 +33,17 @@ jest.mock("@/config", () => ({
   },
 }));
 
-jest.mock("@/utils/auth/cookie-utils", () => ({
+jest.mock("@/domains/auth/utils/cookie-utils", () => ({
   setAuthCookies: (...args: unknown[]) => mockSetAuthCookies(...args),
   clearAuthCookies: (...args: unknown[]) => mockClearAuthCookies(...args),
 }));
 
-jest.mock("@/utils/auth", () => ({
+jest.mock("@/domains/auth/utils", () => ({
   supabaseThirdPartySignInOrSignUp: (...args: unknown[]) =>
     mockSupabaseThirdPartySignInOrSignUp(...args),
 }));
 
-jest.mock("@/utils/http", () => ({
+jest.mock("@/lib/http", () => ({
   sendR: (...args: unknown[]) => mockSendR(...args),
   reqResAsyncHandler:
     <T extends (...args: unknown[]) => Promise<unknown>>(fn: T) =>
@@ -52,7 +52,7 @@ jest.mock("@/utils/http", () => ({
 }));
 
 // Import after mocks
-import { authController } from "@/controllers/users/auth-controller";
+import { authController } from "@/domains/auth/controllers/auth-controller";
 
 describe("authController", () => {
   let mockReq: Partial<Request> & { user?: any };

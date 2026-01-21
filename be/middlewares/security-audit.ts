@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 
-import { logger } from "@/utils/logger";
+import { logger } from "@/lib/logger";
 import { randomUUID } from "node:crypto";
 
 /**

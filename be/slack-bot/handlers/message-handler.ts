@@ -1,5 +1,5 @@
 import type { AllMiddlewareArgs, SlackEventMiddlewareArgs } from "@slack/bolt";
-import { logger } from "@/utils/logger";
+import { logger } from "@/lib/logger";
 import { handleSlackAuth } from "../middleware/auth-handler";
 
 import { checkRateLimit } from "../middleware/rate-limiter";

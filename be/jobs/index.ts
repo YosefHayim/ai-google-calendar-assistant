@@ -1,5 +1,5 @@
 import { isRedisConnected } from "@/config/clients";
-import { logger } from "@/utils/logger";
+import { logger } from "@/lib/logger";
 import { closeQueues, scheduleRecurringJobs } from "./queues";
 import { closeWorkers, startWorkers } from "./workers";
 

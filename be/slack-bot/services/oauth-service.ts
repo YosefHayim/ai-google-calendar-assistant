@@ -1,7 +1,7 @@
-import { SUPABASE } from "@/config/clients/supabase";
+import { SUPABASE } from "@/infrastructure/supabase/supabase";
 import { WebClient } from "@slack/web-api";
 import { env } from "@/config/env";
-import { logger } from "@/utils/logger";
+import { logger } from "@/lib/logger";
 
 const SLACK_SCOPES = [
   "app_mentions:read",

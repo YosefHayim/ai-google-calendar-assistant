@@ -5,10 +5,10 @@ import {
   formatEventReminder,
   getTelegramUsersForNotifications,
   sendTelegramNotification,
-} from "@/services/notification-service";
-import { initUserSupabaseCalendarWithTokensAndUpdateTokens } from "@/utils/calendar/init";
-import { logger } from "@/utils/logger";
-import { userRepository } from "@/utils/repositories/UserRepository";
+} from "@/domains/notifications/services/notification-service";
+import { initUserSupabaseCalendarWithTokensAndUpdateTokens } from "@/domains/calendar/utils/init";
+import { logger } from "@/lib/logger";
+import { userRepository } from "@/lib/repositories/UserRepository";
 
 const REMINDER_MINUTES_BEFORE = 15;
 const SECONDS_PER_MINUTE = 60;

@@ -8,7 +8,7 @@ import type { NextFunction, Request, Response } from "express";
 
 import crypto from "node:crypto";
 import { env } from "@/config/env";
-import { logger } from "@/utils/logger";
+import { logger } from "@/lib/logger";
 
 const SIGNATURE_HEADER = "x-hub-signature-256";
 const SIGNATURE_PREFIX = "sha256=";

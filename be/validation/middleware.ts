@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from "express";
 import { escape as escapeHtml, trim } from "validator";
 import { ZodError, type ZodSchema, z } from "zod";
 import { STATUS_RESPONSE } from "@/config";
-import { sendR } from "@/utils/http";
+import { sendR } from "@/lib/http";
 
 type ValidationTarget = "body" | "query" | "params";
 

@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import { STATUS_RESPONSE } from "@/config";
-import type { HttpError } from "@/utils/http";
-import { sendErrorResponse } from "@/utils/http";
+import type { HttpError } from "@/lib/http";
+import { sendErrorResponse } from "@/lib/http";
 
 /**
  * Extract HTTP status from error

@@ -4,8 +4,8 @@ import {
   type UserIntentCategory,
   createOptimizationHistory,
   getAgentConfig,
-} from "@/services/optimization-history-service"
-import { logger } from "@/utils/logger"
+} from "@/domains/analytics/services/optimization-history-service"
+import { logger } from "@/lib/logger"
 import { type OptimizerOutput, runOptimizer } from "./optimizer-agent"
 import { type JudgeOutput, runJudge } from "./judge-agent"
 

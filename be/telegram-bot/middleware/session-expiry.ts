@@ -1,5 +1,5 @@
 import type { MiddlewareFn } from "grammy";
-import { auditLogger } from "@/utils/audit-logger";
+import { auditLogger } from "@/lib/audit-logger";
 import type { GlobalContext } from "../init-bot";
 
 // Session TTL: 24 hours in milliseconds

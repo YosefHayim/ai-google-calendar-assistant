@@ -1,6 +1,6 @@
 import { describe, expect, it } from "@jest/globals";
 
-import { getEventDurationString } from "../../utils/calendar/duration";
+import { getEventDurationString } from "@/domains/calendar/utils/duration";
 
 describe("getEventDurationString", () => {
   describe("valid durations", () => {

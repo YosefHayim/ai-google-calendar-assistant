@@ -1,7 +1,7 @@
 import type { MiddlewareFn } from "grammy";
 import { InlineKeyboard } from "grammy";
 import type { TokensProps } from "@/types";
-import { AuditEventType, auditLogger } from "@/utils/audit-logger";
+import { AuditEventType, auditLogger } from "@/lib/audit-logger";
 import {
   checkTokenExpiry,
   deactivateGoogleTokens,
@@ -9,8 +9,8 @@ import {
   generateGoogleAuthUrl,
   persistGoogleTokens,
   refreshGoogleAccessToken,
-} from "@/utils/auth";
-import { logger } from "@/utils/logger";
+} from "@/domains/auth/utils";
+import { logger } from "@/lib/logger";
 import { getTranslatorFromLanguageCode } from "../i18n";
 import type { GlobalContext } from "../init-bot";
 

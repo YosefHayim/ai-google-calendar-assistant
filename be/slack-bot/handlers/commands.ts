@@ -2,7 +2,7 @@ import type {
   AllMiddlewareArgs,
   SlackCommandMiddlewareArgs,
 } from "@slack/bolt";
-import { logger } from "@/utils/logger";
+import { logger } from "@/lib/logger";
 import { handleSlackAuth } from "../middleware/auth-handler";
 import { SlackResponseBuilder } from "../utils/response-builder";
 import { getSession } from "../utils/session";

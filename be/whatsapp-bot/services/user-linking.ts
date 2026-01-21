@@ -6,10 +6,10 @@
 import { sendButtonMessage, sendTextMessage } from "./send-message";
 
 import type { Database } from "@/database.types";
-import { SUPABASE } from "@/config/clients/supabase";
+import { SUPABASE } from "@/infrastructure/supabase/supabase";
 import type { WhatsAppInteractiveContent } from "../types";
 import { env } from "@/config/env";
-import { logger } from "@/utils/logger";
+import { logger } from "@/lib/logger";
 
 type WhatsAppUser = Database["public"]["Tables"]["whatsapp_users"]["Row"];
 

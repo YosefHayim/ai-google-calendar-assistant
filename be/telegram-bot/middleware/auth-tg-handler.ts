@@ -1,8 +1,8 @@
 import type { MiddlewareFn } from "grammy";
 import validator from "validator";
 import { SUPABASE } from "@/config";
-import { auditLogger } from "@/utils/audit-logger";
-import { logger } from "@/utils/logger";
+import { auditLogger } from "@/lib/audit-logger";
+import { logger } from "@/lib/logger";
 import { getTranslatorFromLanguageCode } from "../i18n";
 import type { GlobalContext } from "../init-bot";
 import { resetRateLimit } from "./rate-limiter";

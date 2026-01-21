@@ -1,5 +1,5 @@
 import type { WebClient } from "@slack/web-api";
-import { logger } from "@/utils/logger";
+import { logger } from "@/lib/logger";
 
 const userEmailCache = new Map<string, string | null>();
 const CACHE_TTL_MS = 5 * 60 * 1000;

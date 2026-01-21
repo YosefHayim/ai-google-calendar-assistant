@@ -99,6 +99,14 @@ const BROWSER_LANG_TO_SUPPORTED: Record<string, SupportedLanguageCode> = {
   'en-CA': 'en',
 }
 
+/**
+ * Detects the user's current timezone using the browser's Intl API.
+ *
+ * Uses Intl.DateTimeFormat().resolvedOptions().timeZone to get the system's
+ * configured timezone. Falls back to empty string if detection fails.
+ *
+ * @returns The IANA timezone identifier (e.g., "America/New_York") or empty string on error
+ */
 export function getUserTimezone(): string {
   try {
     return Intl.DateTimeFormat().resolvedOptions().timeZone
@@ -107,14 +115,41 @@ export function getUserTimezone(): string {
   }
 }
 
+/**
+ * Maps an IANA timezone identifier to its corresponding country code.
+ *
+ * Uses a predefined mapping of timezones to ISO 3166-1 alpha-2 country codes.
+ * Returns null if the timezone is not in the mapping.
+ *
+ * @param timezone - The IANA timezone identifier (e.g., "Europe/Berlin")
+ * @returns The ISO country code (e.g., "DE") or null if not found
+ */
 export function getCountryFromTimezone(timezone: string): string | null {
   return TIMEZONE_TO_COUNTRY[timezone] ?? null
 }
 
+/**
+ * Maps an ISO country code to its primary supported language.
+ *
+ * Uses a predefined mapping of countries to their primary languages.
+ * Returns null if the country is not in the mapping or not supported.
+ *
+ * @param countryCode - The ISO 3166-1 alpha-2 country code (e.g., "DE")
+ * @returns The supported language code or null if not found
+ */
 export function getLanguageForCountry(countryCode: string): SupportedLanguageCode | null {
   return COUNTRY_TO_LANGUAGE[countryCode] ?? null
 }
 
+/**
+ * Maps a browser language string to a supported language code.
+ *
+ * Handles full locale strings (e.g., "en-US") and base language codes (e.g., "en").
+ * Falls back to base language if full locale is not supported.
+ *
+ * @param browserLang - The browser language string (e.g., "en-US", "de", "fr-CA")
+ * @returns The supported language code or null if not supported
+ */
 export function getLanguageFromBrowserLang(browserLang: string): SupportedLanguageCode | null {
   if (browserLang in BROWSER_LANG_TO_SUPPORTED) {
     return BROWSER_LANG_TO_SUPPORTED[browserLang]
@@ -128,6 +163,17 @@ export function getLanguageFromBrowserLang(browserLang: string): SupportedLangua
   return null
 }
 
+/**
+ * Detects the user's preferred language using timezone and browser settings.
+ *
+ * Attempts to determine language in order of preference:
+ * 1. Timezone-based detection (maps timezone → country → language)
+ * 2. Browser language settings (navigator.language and navigator.languages)
+ *
+ * Returns null if no supported language can be detected.
+ *
+ * @returns The detected supported language code or null
+ */
 export function detectUserLanguage(): SupportedLanguageCode | null {
   const timezone = getUserTimezone()
   if (timezone) {

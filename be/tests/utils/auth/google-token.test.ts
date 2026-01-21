@@ -36,11 +36,11 @@ jest.mock("googleapis", () => ({
   },
 }));
 
-jest.mock("@/utils/date/timestamp-utils", () => ({
+jest.mock("@/lib/date/timestamp-utils", () => ({
   isoToMs: (iso: string) => new Date(iso).getTime(),
 }));
 
-jest.mock("@/utils/repositories/UserRepository", () => ({
+jest.mock("@/lib/repositories/UserRepository", () => ({
   userRepository: {
     findUserWithGoogleTokens: (email: string) =>
       mockFindUserWithGoogleTokens(email),
@@ -61,7 +61,7 @@ import {
   NEAR_EXPIRY_BUFFER_MS,
   persistGoogleTokens,
   refreshGoogleAccessToken,
-} from "@/utils/auth/google-token";
+} from "@/domains/auth/utils/google-token";
 
 describe("Google Token Utilities", () => {
   beforeEach(() => {

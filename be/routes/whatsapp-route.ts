@@ -4,8 +4,8 @@
  */
 
 import express from "express";
-import { whatsAppController } from "@/controllers/whatsapp-controller";
-import { supabaseAuth } from "@/middlewares/supabase-auth";
+import { whatsAppController } from "@/domains/chat/controllers/whatsapp-controller";
+import { supabaseAuth } from "@/domains/auth/middleware/supabase-auth";
 import { webhookSignatureMiddleware } from "@/whatsapp-bot/services/webhook-security";
 
 const router = express.Router();

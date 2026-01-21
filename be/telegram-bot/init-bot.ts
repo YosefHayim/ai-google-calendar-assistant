@@ -1,7 +1,7 @@
 import { type RunnerHandle, run } from "@grammyjs/runner";
 import type { Bot } from "grammy";
 import { env } from "@/config/env";
-import { logger } from "@/utils/logger";
+import { logger } from "@/lib/logger";
 import {
   configureMiddleware,
   configureSession,

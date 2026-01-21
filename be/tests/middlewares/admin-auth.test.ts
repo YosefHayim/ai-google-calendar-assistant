@@ -17,7 +17,7 @@ jest.mock("@/config", () => ({
   },
 }));
 
-jest.mock("@/utils/http", () => ({
+jest.mock("@/lib/http", () => ({
   sendR: (...args: unknown[]) => mockSendR(...args),
   reqResAsyncHandler:
     <T extends (...args: unknown[]) => Promise<unknown>>(fn: T) =>
@@ -26,7 +26,7 @@ jest.mock("@/utils/http", () => ({
 }));
 
 // Import after mocks are defined
-import { type AdminRequest, adminAuth } from "../../middlewares/admin-auth";
+import { type AdminRequest, adminAuth } from "@/domains/admin/middleware/admin-auth";
 
 describe("adminAuth Middleware", () => {
   let mockRequest: Partial<AdminRequest> & { user?: any };

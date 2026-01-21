@@ -4,7 +4,7 @@
  */
 
 import { env } from "@/config/env";
-import { logger } from "@/utils/logger";
+import { logger } from "@/lib/logger";
 
 /**
  * Checks if WhatsApp integration is properly configured

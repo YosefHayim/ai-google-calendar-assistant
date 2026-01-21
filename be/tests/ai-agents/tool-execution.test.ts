@@ -34,24 +34,24 @@ jest.mock("@/config", () => ({
   SUPABASE: {},
 }));
 
-jest.mock("@/utils/calendar", () => ({
+jest.mock("@/domains/calendar/utils", () => ({
   eventsHandler: (...args: unknown[]) => mockEventsHandler(...args),
   initUserSupabaseCalendarWithTokensAndUpdateTokens: (tokens: unknown) =>
     mockInitUserSupabaseCalendarWithTokensAndUpdateTokens(tokens),
 }));
 
-jest.mock("@/utils/auth", () => ({
+jest.mock("@/domains/auth/utils", () => ({
   fetchCredentialsByEmail: (email: string) =>
     mockFetchCredentialsByEmail(email),
   generateGoogleAuthUrl: (options?: unknown) =>
     mockGenerateGoogleAuthUrl(options),
 }));
 
-jest.mock("@/utils/calendar/get-events", () => ({
+jest.mock("@/domains/calendar/utils/get-events", () => ({
   getEvents: (params: unknown) => mockGetEvents(params),
 }));
 
-jest.mock("@/utils/http", () => ({
+jest.mock("@/lib/http", () => ({
   asyncHandler: <T extends (...args: unknown[]) => Promise<unknown>>(fn: T) =>
     fn,
 }));

@@ -1,7 +1,7 @@
 import type { Api } from "grammy";
 import type { PhotoSize } from "grammy/types";
 import type { ImageContent } from "@/shared/llm";
-import { logger } from "@/utils/logger";
+import { logger } from "@/lib/logger";
 
 const MAX_IMAGES = 10;
 const MAX_IMAGE_SIZE_MB = 20;

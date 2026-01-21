@@ -1,14 +1,14 @@
 import type { calendar_v3 } from "googleapis";
 import isEmail from "validator/lib/isEmail";
 import { ACTION } from "@/config";
-import { fetchCredentialsByEmail, generateGoogleAuthUrl } from "@/utils/auth";
+import { fetchCredentialsByEmail, generateGoogleAuthUrl } from "@/domains/auth/utils";
 import {
   eventsHandler,
   initUserSupabaseCalendarWithTokensAndUpdateTokens,
-} from "@/utils/calendar";
-import { getEvents } from "@/utils/calendar/get-events";
-import { isValidDateTime } from "@/utils/date/date-helpers";
-import { asyncHandler } from "@/utils/http";
+} from "@/domains/calendar/utils";
+import { getEvents } from "@/domains/calendar/utils/get-events";
+import { isValidDateTime } from "@/lib/date/date-helpers";
+import { asyncHandler } from "@/lib/http";
 import { formatEventData, parseToolArguments } from "./utils";
 
 type Event = calendar_v3.Schema$Event;

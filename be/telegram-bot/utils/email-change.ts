@@ -1,7 +1,7 @@
 import { isEmail } from "validator";
 import { SUPABASE } from "@/config";
-import { auditLogger } from "@/utils/audit-logger";
-import { logger } from "@/utils/logger";
+import { auditLogger } from "@/lib/audit-logger";
+import { logger } from "@/lib/logger";
 import type { GlobalContext } from "../init-bot";
 
 const MINUTES_IN_EMAIL_CHANGE_EXPIRY = 10;

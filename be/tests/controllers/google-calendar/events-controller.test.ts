@@ -38,12 +38,12 @@ jest.mock("@/utils", () => ({
   formatDate: (date: Date, _includeTime?: boolean) => date.toISOString(),
 }));
 
-jest.mock("@/utils/cache/insights-cache", () => ({
+jest.mock("@/lib/cache/insights-cache", () => ({
   getCachedInsights: (...args: unknown[]) => mockGetCachedInsights(...args),
   setCachedInsights: (...args: unknown[]) => mockSetCachedInsights(...args),
 }));
 
-jest.mock("@/utils/http", () => ({
+jest.mock("@/lib/http", () => ({
   sendR: (...args: unknown[]) => mockSendR(...args),
   reqResAsyncHandler:
     <T extends (...args: unknown[]) => Promise<unknown>>(fn: T) =>
@@ -51,17 +51,17 @@ jest.mock("@/utils/http", () => ({
       Promise.resolve(fn(req, res, next)).catch(next),
 }));
 
-jest.mock("@/utils/ai/insights-calculator", () => ({
+jest.mock("@/domains/analytics/utils", () => ({
   calculateInsightsMetrics: (events: unknown, calendarMap: unknown) =>
     mockCalculateInsightsMetrics(events, calendarMap),
 }));
 
-jest.mock("@/utils/ai/quick-add-orchestrator", () => ({
+jest.mock("@/domains/analytics/utils", () => ({
   quickAddWithOrchestrator: (...args: unknown[]) =>
     mockQuickAddWithOrchestrator(...args),
 }));
 
-jest.mock("@/utils/auth/get-user-calendar-tokens", () => ({
+jest.mock("@/domains/auth/utils/get-user-calendar-tokens", () => ({
   fetchCredentialsByEmail: (email: string) =>
     mockFetchCredentialsByEmail(email),
 }));
@@ -71,17 +71,17 @@ jest.mock("@/ai-agents/insights-generator", () => ({
     mockGenerateInsightsWithRetry(...args),
 }));
 
-jest.mock("@/utils/calendar/get-events", () => ({
+jest.mock("@/domains/calendar/utils/get-events", () => ({
   getEvents: (params: unknown) => mockGetEvents(params),
 }));
 
-jest.mock("@/utils/calendar/init", () => ({
+jest.mock("@/domains/calendar/utils/init", () => ({
   initUserSupabaseCalendarWithTokensAndUpdateTokens: (tokenData: unknown) =>
     mockInitUserSupabaseCalendarWithTokensAndUpdateTokens(tokenData),
 }));
 
 // Import after mocks
-import eventsController from "@/controllers/google-calendar/events-controller";
+import eventsController from "@/domains/calendar/controllers/events-controller";
 
 describe("Events Controller", () => {
   let mockReq: Partial<Request> & { user?: any };

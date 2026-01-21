@@ -1,9 +1,9 @@
 import type { Bot } from "grammy";
 import { InputFile } from "grammy";
 import type { ImageContent } from "@/shared/llm";
-import { generateSpeechForTelegram } from "@/utils/ai/text-to-speech";
-import { transcribeAudio } from "@/utils/ai/voice-transcription";
-import { logger } from "@/utils/logger";
+import { generateSpeechForTelegram } from "@/domains/analytics/utils";
+import { transcribeAudio } from "@/domains/analytics/utils";
+import { logger } from "@/lib/logger";
 import { getTranslatorFromLanguageCode } from "../i18n";
 import {
   CANCEL_RESPONSES,

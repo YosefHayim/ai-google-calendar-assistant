@@ -1,5 +1,5 @@
 import { Worker } from "bullmq";
-import { logger } from "@/utils/logger";
+import { logger } from "@/lib/logger";
 import { bullmqConnection } from "./connection";
 import { handleAnalyticsAggregation } from "./handlers/analytics-aggregation";
 import {

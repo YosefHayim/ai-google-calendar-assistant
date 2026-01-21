@@ -3,8 +3,8 @@
  * Key pattern: `ctx:{userId}:{key}` with automatic TTL expiration.
  */
 
-import { isRedisConnected, redisClient } from "@/config/clients/redis";
-import { logger } from "@/utils/logger";
+import { isRedisConnected, redisClient } from "@/infrastructure/redis/redis";
+import { logger } from "@/lib/logger";
 
 export type Modality = "chat" | "voice" | "telegram" | "whatsapp" | "api";
 

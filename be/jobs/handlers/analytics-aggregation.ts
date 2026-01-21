@@ -1,6 +1,6 @@
 import type { Job } from "bullmq";
 import { SUPABASE } from "@/config/clients";
-import { logger } from "@/utils/logger";
+import { logger } from "@/lib/logger";
 
 const ACTIVE_USER_WINDOW_DAYS = 7;
 

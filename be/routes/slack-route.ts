@@ -5,13 +5,13 @@ import {
 } from "@/slack-bot/services/oauth-service";
 
 import { STATUS_RESPONSE } from "@/config/constants/http";
-import { SUPABASE } from "@/config/clients/supabase";
+import { SUPABASE } from "@/infrastructure/supabase/supabase";
 import { env } from "@/config/env";
 import express from "express";
 import { getSlackReceiver } from "@/slack-bot/init-bot";
-import { logger } from "@/utils/logger";
-import { sendR } from "@/utils/http";
-import { supabaseAuth } from "@/middlewares/supabase-auth";
+import { logger } from "@/lib/logger";
+import { sendR } from "@/lib/http";
+import { supabaseAuth } from "@/domains/auth/middleware/supabase-auth";
 
 const router = express.Router();
 

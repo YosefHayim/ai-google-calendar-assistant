@@ -16,7 +16,10 @@
     "outDir": "./dist",
     "rootDir": ".",
     "paths": {
-      "@/*": ["*"]
+      "@/*": ["*"],
+      "@domains/*": ["domains/*"],
+      "@infrastructure/*": ["infrastructure/*"],
+      "@lib/*": ["lib/*"]
     },
     "strictNullChecks": true
   },

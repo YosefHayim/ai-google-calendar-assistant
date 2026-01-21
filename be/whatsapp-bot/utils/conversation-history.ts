@@ -4,11 +4,11 @@
  * Similar to Telegram's conversation-history.ts but adapted for WhatsApp
  */
 
-import { SUPABASE } from "@/config/clients/supabase";
+import { SUPABASE } from "@/infrastructure/supabase/supabase";
 import type { Database } from "@/database.types";
 import type { userAndAiMessageProps } from "@/types";
-import { isToday } from "@/utils/date/date-helpers";
-import { logger } from "@/utils/logger";
+import { isToday } from "@/lib/date/date-helpers";
+import { logger } from "@/lib/logger";
 
 const MAX_CONTEXT_LENGTH = 1500;
 const MAX_SUMMARY_LENGTH = 1000;

@@ -9,8 +9,8 @@ import {
   PREFERENCE_DEFAULTS,
   updatePreference,
   type VoicePreference,
-} from "@/services/user-preferences-service";
-import { logger } from "@/utils/logger";
+} from "@/domains/settings/services/user-preferences-service";
+import { logger } from "@/lib/logger";
 import { getUserIdFromWhatsApp } from "./conversation-history";
 
 export type { AllyBrainPreference, VoicePreference };

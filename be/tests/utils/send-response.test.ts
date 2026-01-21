@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, type jest } from "@jest/globals";
 import type { Response } from "express";
-import sendR from "../../utils/send-response";
+import sendR from "@/lib/send-response";
 import { type AnyFn, mockFn } from "../test-utils";
 
 describe("sendR", () => {

@@ -6,8 +6,8 @@
  * After that, only pre-approved template messages can be sent.
  */
 
-import { SUPABASE } from "@/config/clients/supabase";
-import { logger } from "@/utils/logger";
+import { SUPABASE } from "@/infrastructure/supabase/supabase";
+import { logger } from "@/lib/logger";
 import { sendTemplateMessage, sendTextMessage } from "./send-message";
 
 const SECONDS_PER_MINUTE = 60;

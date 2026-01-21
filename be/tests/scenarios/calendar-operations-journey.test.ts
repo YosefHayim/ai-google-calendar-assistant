@@ -42,7 +42,7 @@ const mockTokenData = {
   token_type: "Bearer",
 };
 
-jest.mock("@/utils/calendar/init", () => ({
+jest.mock("@/domains/calendar/utils/init", () => ({
   createCalendarFromValidatedTokens: () => mockCalendar,
   initUserSupabaseCalendarWithTokensAndUpdateTokens: async () => mockCalendar,
 }));

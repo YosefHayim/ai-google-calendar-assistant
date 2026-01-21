@@ -1,5 +1,5 @@
 import type { MiddlewareFn } from "grammy";
-import { logger } from "@/utils/logger";
+import { logger } from "@/lib/logger";
 import type { GlobalContext } from "../init-bot";
 
 /**

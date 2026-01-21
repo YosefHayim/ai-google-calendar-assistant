@@ -1,7 +1,7 @@
 import type { WebClient } from "@slack/web-api";
 import validator from "validator";
 import { SUPABASE } from "@/config";
-import { logger } from "@/utils/logger";
+import { logger } from "@/lib/logger";
 import {
   getSession,
   type SlackSessionData,

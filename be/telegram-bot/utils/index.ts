@@ -1,8 +1,8 @@
-export { telegramConversation } from "@/utils/conversation/TelegramConversationAdapter";
+export { telegramConversation } from "@/domains/chat/utils/conversation/TelegramConversationAdapter";
 export type {
   ConversationContext,
   SummarizeFn,
-} from "@/utils/conversation/types";
+} from "@/domains/chat/utils/conversation/types";
 export * from "./ally-brain";
 export * from "./constants";
 export * from "./email-change";

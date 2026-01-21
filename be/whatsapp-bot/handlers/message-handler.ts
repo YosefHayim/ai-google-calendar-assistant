@@ -1,10 +1,10 @@
 import { InputGuardrailTripwireTriggered } from "@openai/agents";
 import { ORCHESTRATOR_AGENT } from "@/ai-agents/agents";
 import { unifiedContextStore } from "@/shared/context";
-import { activateAgent } from "@/utils/ai";
-import { generateSpeechForTelegram } from "@/utils/ai/text-to-speech";
-import { transcribeAudio } from "@/utils/ai/voice-transcription";
-import { logger } from "@/utils/logger";
+import { activateAgent } from "@/domains/analytics/utils";
+import { generateSpeechForTelegram } from "@/domains/analytics/utils";
+import { transcribeAudio } from "@/domains/analytics/utils";
+import { logger } from "@/lib/logger";
 import { updateLastActivity } from "../services/conversation-window";
 import { downloadVoiceMessage, uploadMedia } from "../services/media";
 import {

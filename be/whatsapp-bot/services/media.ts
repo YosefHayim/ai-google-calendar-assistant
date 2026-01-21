@@ -10,7 +10,7 @@ import type {
 } from "../types";
 
 import { env } from "@/config/env";
-import { logger } from "@/utils/logger";
+import { logger } from "@/lib/logger";
 
 type MediaDownloadResult = {
   success: boolean;

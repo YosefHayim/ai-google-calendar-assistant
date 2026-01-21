@@ -3,7 +3,7 @@ import {
   analyzeGapsForUser,
   fillGap as fillGapInternal,
   formatGapsForDisplay,
-} from "@/utils/calendar/gap-recovery";
+} from "@/domains/calendar/utils/gap-recovery";
 import type {
   AnalyzeGapsParams,
   FillGapParams,

@@ -1,6 +1,6 @@
 import type { Job } from "bullmq";
 import { SUPABASE } from "@/config/clients";
-import { logger } from "@/utils/logger";
+import { logger } from "@/lib/logger";
 
 const STALE_THRESHOLD_DAYS = 30;
 const DELETE_THRESHOLD_DAYS = 90;

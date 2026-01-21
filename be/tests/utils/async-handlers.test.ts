@@ -3,7 +3,7 @@ import type { NextFunction, Request, Response } from "express";
 import {
   asyncHandler,
   reqResAsyncHandler,
-} from "../../utils/http/async-handlers";
+} from "@/lib/http/async-handlers";
 import { type AnyFn, mockFn } from "../test-utils";
 
 describe("async-handlers", () => {

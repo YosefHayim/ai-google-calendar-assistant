@@ -1,5 +1,5 @@
 import { SUPABASE } from "@/config";
-import { logger } from "@/utils/logger";
+import { logger } from "@/lib/logger";
 
 const SUMMARY_PREVIEW_LENGTH = 100;
 const MAX_SUMMARIES_TO_SHOW = 3;

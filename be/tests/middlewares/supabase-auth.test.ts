@@ -8,20 +8,20 @@ const mockRefreshSupabaseSession = mockFn();
 const mockSetAuthCookies = mockFn();
 const mockSendR = mockFn();
 
-jest.mock("@/utils/auth/cookie-utils", () => ({
+jest.mock("@/domains/auth/utils/cookie-utils", () => ({
   ACCESS_TOKEN_COOKIE: "access_token",
   REFRESH_TOKEN_COOKIE: "refresh_token",
   setAuthCookies: (...args: unknown[]) => mockSetAuthCookies(...args),
 }));
 
-jest.mock("@/utils/auth/supabase-token", () => ({
+jest.mock("@/domains/auth/utils/supabase-token", () => ({
   validateSupabaseToken: (...args: unknown[]) =>
     mockValidateSupabaseToken(...args),
   refreshSupabaseSession: (...args: unknown[]) =>
     mockRefreshSupabaseSession(...args),
 }));
 
-jest.mock("@/utils/http", () => ({
+jest.mock("@/lib/http", () => ({
   sendR: (...args: unknown[]) => mockSendR(...args),
   reqResAsyncHandler:
     <T extends (...args: unknown[]) => Promise<unknown>>(fn: T) =>
@@ -36,7 +36,7 @@ jest.mock("@/config", () => ({
 }));
 
 // Import after mocks
-import { supabaseAuth } from "../../middlewares/supabase-auth";
+import { supabaseAuth } from "@/domains/auth/middleware/supabase-auth";
 
 describe("supabaseAuth Middleware", () => {
   let mockRequest: Partial<Request> & { user?: any };

@@ -2,20 +2,20 @@ import type { calendar_v3 } from "googleapis";
 import OpenAI from "openai";
 import isEmail from "validator/lib/isEmail";
 import { env } from "@/config/env";
-import { SUPABASE } from "@/config/clients/supabase";
+import { SUPABASE } from "@/infrastructure/supabase/supabase";
 import { MODELS } from "@/config/constants/ai";
 import {
   type ConflictCheckResult,
   categorizeError,
   type HandlerContext,
 } from "@/shared/types";
-import { fetchCredentialsByEmail } from "@/utils/auth";
+import { fetchCredentialsByEmail } from "@/domains/auth/utils";
 import {
   checkEventConflicts,
   checkEventConflictsAllCalendars,
   initUserSupabaseCalendarWithTokensAndUpdateTokens,
-} from "@/utils/calendar";
-import { userRepository } from "@/utils/repositories/UserRepository";
+} from "@/domains/calendar/utils";
+import { userRepository } from "@/lib/repositories/UserRepository";
 import type {
   CheckConflictsParams,
   PreCreateValidationParams,

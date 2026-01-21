@@ -6,7 +6,7 @@ import {
 } from "@slack/bolt";
 import { WebClient } from "@slack/web-api";
 import { env } from "@/config/env";
-import { logger } from "@/utils/logger";
+import { logger } from "@/lib/logger";
 import { parseAndRouteCommand } from "./handlers/commands";
 import {
   handleAppMention,

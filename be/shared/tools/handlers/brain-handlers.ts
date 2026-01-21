@@ -3,10 +3,10 @@ import {
   getPreference,
   PREFERENCE_DEFAULTS,
   updatePreference,
-} from "@/services/user-preferences-service";
+} from "@/domains/settings/services/user-preferences-service";
 import type { HandlerContext } from "@/shared/types";
-import { getUserIdByEmail } from "@/utils/auth/google-token";
-import { logger } from "@/utils/logger";
+import { getUserIdByEmail } from "@/domains/auth/utils/google-token";
+import { logger } from "@/lib/logger";
 
 export type UpdateUserBrainParams = {
   preference: string;

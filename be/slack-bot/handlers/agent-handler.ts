@@ -1,8 +1,8 @@
 import { InputGuardrailTripwireTriggered } from "@openai/agents";
 import { ORCHESTRATOR_AGENT } from "@/ai-agents/agents";
 import { unifiedContextStore } from "@/shared/context";
-import { activateAgent } from "@/utils/ai";
-import { logger } from "@/utils/logger";
+import { activateAgent } from "@/domains/analytics/utils";
+import { logger } from "@/lib/logger";
 import {
   buildContextPrompt,
   slackConversation,

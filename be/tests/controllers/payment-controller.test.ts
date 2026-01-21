@@ -41,7 +41,7 @@ jest.mock("@/config", () => ({
   },
 }));
 
-jest.mock("@/config/clients/lemonsqueezy", () => ({
+jest.mock("@/infrastructure/lemonsqueezy/lemonsqueezy", () => ({
   isLemonSqueezyEnabled: () => mockIsLemonSqueezyEnabled(),
   LEMONSQUEEZY_CONFIG: {
     TRIAL_DAYS: 14,
@@ -49,7 +49,7 @@ jest.mock("@/config/clients/lemonsqueezy", () => ({
   },
 }));
 
-jest.mock("@/services/lemonsqueezy-service", () => ({
+jest.mock("@/domains/payments/services/lemonsqueezy-service", () => ({
   getActivePlans: () => mockGetActivePlans(),
   getUserSubscription: (userId: string) => mockGetUserSubscription(userId),
   checkUserAccess: (userId: string) => mockCheckUserAccess(userId),
@@ -77,7 +77,7 @@ jest.mock("@/services/lemonsqueezy-service", () => ({
     mockHandleSubscriptionPaymentFailed(id),
 }));
 
-jest.mock("@/utils/http", () => ({
+jest.mock("@/lib/http", () => ({
   sendR: (...args: unknown[]) => mockSendR(...args),
   reqResAsyncHandler:
     <T extends (...args: unknown[]) => Promise<unknown>>(fn: T) =>
@@ -97,7 +97,7 @@ import {
   handleWebhook,
   initializeFreePlan,
   requestRefund,
-} from "@/controllers/payment-controller";
+} from "@/domains/payments/controllers/payment-controller";
 
 describe("Payment Controller", () => {
   let mockReq: Partial<Request> & { user?: any };

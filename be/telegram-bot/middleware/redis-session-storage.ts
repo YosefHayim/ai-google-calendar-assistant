@@ -1,6 +1,6 @@
 import type { StorageAdapter } from "grammy";
 import { isRedisConnected, redisClient } from "@/config";
-import { logger } from "@/utils/logger";
+import { logger } from "@/lib/logger";
 
 const SESSION_PREFIX = "tg:session:";
 const HOURS_IN_DAY = 24;

@@ -9,11 +9,11 @@ import type { GlobalContext } from "../init-bot";
 import { ResponseBuilder } from "../response-system";
 import type { SupportedLocale } from "../i18n";
 import { gatherUserKnowledge } from "./user-knowledge";
-import { generateSpeechForTelegram } from "@/utils/ai/text-to-speech";
+import { generateSpeechForTelegram } from "@/domains/analytics/utils";
 import { getVoicePreferenceForTelegram } from "./ally-brain";
-import { logger } from "@/utils/logger";
+import { logger } from "@/lib/logger";
 import { resetSession } from "./session";
-import { telegramConversation } from "@/utils/conversation/TelegramConversationAdapter";
+import { telegramConversation } from "@/domains/chat/utils/conversation/TelegramConversationAdapter";
 
 /**
  * Get internal user ID from Telegram user ID.
@@ -1299,7 +1299,7 @@ export const handleRescheduleSelection = async (
   await ctx.answerCallbackQuery(t("commands.reschedule.applying"));
 
   try {
-    const { applyReschedule } = await import("@/utils/calendar/reschedule.js");
+    const { applyReschedule } = await import("@/domains/calendar/utils/reschedule.js");
 
     const result = await applyReschedule({
       email: ctx.session.email!,

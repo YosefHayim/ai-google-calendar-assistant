@@ -11,7 +11,7 @@ import { autoRetry } from "@grammyjs/auto-retry";
 import { createRedisSessionStorage } from "../middleware/redis-session-storage";
 import { env } from "@/config/env";
 import { googleTokenTgHandler } from "../middleware/google-token-tg-handler";
-import { logger } from "@/utils/logger";
+import { logger } from "@/lib/logger";
 import { sessionExpiryMiddleware } from "../middleware/session-expiry";
 
 export type GlobalContext = SessionFlavor<SessionData> & Context;

@@ -7,7 +7,7 @@ import express from "express";
 import helmet from "helmet";
 import morgan from "morgan";
 import { ROUTES } from "@/config";
-import { getAllowedOrigins } from "@/utils/security/cors-config";
+import { getAllowedOrigins } from "@/lib/security/cors-config";
 import { apiRateLimiter } from "./rate-limiter";
 import { securityAuditMiddleware } from "./security-audit";
 

@@ -14,7 +14,7 @@ import type {
 } from "../types";
 
 import { env } from "@/config/env";
-import { logger } from "@/utils/logger";
+import { logger } from "@/lib/logger";
 
 const MAX_TEXT_LENGTH = 4096;
 const MAX_BUTTON_TITLE_LENGTH = 20;

@@ -21,7 +21,7 @@ const mockCreateAgentSession = mockFn();
 const mockGetAllyBrainPreference = mockFn();
 const mockSendR = mockFn();
 
-jest.mock("@/utils/conversation/WebConversationAdapter", () => ({
+jest.mock("@/domains/chat/utils/conversation/WebConversationAdapter", () => ({
   webConversation: {
     getOrCreateTodayContext: (userId: string) =>
       mockGetOrCreateTodayContext(userId),
@@ -48,7 +48,7 @@ jest.mock("@/telegram-bot/utils/summarize", () => ({
   summarizeMessages: mockSummarizeMessages,
 }));
 
-jest.mock("@/utils/web-embeddings", () => ({
+jest.mock("@/domains/chat/utils/web-embeddings", () => ({
   getWebRelevantContext: (...args: unknown[]) =>
     mockGetWebRelevantContext(...args),
   storeWebEmbeddingAsync: (...args: unknown[]) =>
@@ -68,7 +68,7 @@ jest.mock("@/ai-agents", () => ({
   ORCHESTRATOR_AGENT: { name: "orchestrator" },
 }));
 
-jest.mock("@/controllers/user-preferences-controller", () => ({
+jest.mock("@/domains/settings/controllers/user-preferences-controller", () => ({
   getAllyBrainPreference: (userId: string) =>
     mockGetAllyBrainPreference(userId),
 }));
@@ -83,7 +83,7 @@ jest.mock("@/config", () => ({
   },
 }));
 
-jest.mock("@/utils/http", () => ({
+jest.mock("@/lib/http", () => ({
   sendR: (...args: unknown[]) => mockSendR(...args),
   reqResAsyncHandler:
     <T extends (...args: unknown[]) => Promise<unknown>>(fn: T) =>
@@ -92,7 +92,7 @@ jest.mock("@/utils/http", () => ({
 }));
 
 // Import after mocks
-import { chatController } from "@/controllers/chat-controller";
+import { chatController } from "@/domains/chat/controllers/chat-controller";
 
 describe("Chat Controller", () => {
   let mockReq: Partial<Request> & { user?: any };

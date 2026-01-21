@@ -13,12 +13,12 @@ import {
   saveUserReminderPreferences,
   updateCalendarDefaultReminders,
   updateEventReminders,
-} from "@/utils/calendar";
+} from "@/domains/calendar/utils";
 import {
   analyzeGapsForUser,
   fillGap,
   formatGapsForDisplay,
-} from "@/utils/calendar/gap-recovery";
+} from "@/domains/calendar/utils/gap-recovery";
 import {
   checkConflictsDirect,
   getUserDefaultTimezoneDirect,

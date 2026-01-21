@@ -1,4 +1,4 @@
-import { logger } from "@/utils/logger";
+import { logger } from "@/lib/logger";
 import type { GlobalContext } from "../handlers/bot-config";
 
 const TYPING_INTERVAL_MS = 4000; // Telegram typing indicator lasts ~5 seconds

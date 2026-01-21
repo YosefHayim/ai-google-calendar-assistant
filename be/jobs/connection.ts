@@ -1,5 +1,5 @@
 import type { ConnectionOptions } from "bullmq";
-import { logger } from "@/utils/logger";
+import { logger } from "@/lib/logger";
 
 const REDIS_URL = process.env.REDIS_URL || "redis://localhost:6379";
 const DEFAULT_REDIS_PORT = 6379;
