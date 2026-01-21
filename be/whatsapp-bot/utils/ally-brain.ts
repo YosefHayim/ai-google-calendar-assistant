@@ -4,16 +4,23 @@
  */
 
 import {
-  type AllyBrainPreference,
   getPreference,
   PREFERENCE_DEFAULTS,
   updatePreference,
-  type VoicePreference,
 } from "@/domains/settings/services/user-preferences-service";
+import { SUPABASE } from "@/infrastructure/supabase/supabase";
 import { logger } from "@/lib/logger";
 import { getUserIdFromWhatsApp } from "./conversation-history";
 
-export type { AllyBrainPreference, VoicePreference };
+export type {
+  AllyBrainPreference,
+  VoicePreference,
+} from "@/domains/settings/services/user-preferences-service";
+
+type AllyBrainPreference =
+  import("@/domains/settings/services/user-preferences-service").AllyBrainPreference;
+type VoicePreference =
+  import("@/domains/settings/services/user-preferences-service").VoicePreference;
 
 const DEFAULT_ALLY_BRAIN =
   PREFERENCE_DEFAULTS.ally_brain as AllyBrainPreference;
@@ -107,6 +114,51 @@ export const updateVoicePreferenceForWhatsApp = async (
     return true;
   } catch (error) {
     logger.error(`WhatsApp: voice-preference: Failed to update: ${error}`);
+    return false;
+  }
+};
+
+const DEFAULT_LANGUAGE = "en";
+
+export const getLanguagePreferenceForWhatsApp = async (
+  phoneNumber: string
+): Promise<string> => {
+  try {
+    const { data, error } = await SUPABASE.from("whatsapp_users")
+      .select("language_code")
+      .eq("whatsapp_phone", phoneNumber)
+      .single();
+
+    if (error || !data?.language_code) {
+      return DEFAULT_LANGUAGE;
+    }
+
+    return data.language_code;
+  } catch (error) {
+    logger.error(`WhatsApp: language-preference: Failed to get: ${error}`);
+    return DEFAULT_LANGUAGE;
+  }
+};
+
+export const updateLanguagePreferenceForWhatsApp = async (
+  phoneNumber: string,
+  languageCode: string
+): Promise<boolean> => {
+  try {
+    const { error } = await SUPABASE.from("whatsapp_users")
+      .update({ language_code: languageCode })
+      .eq("whatsapp_phone", phoneNumber);
+
+    if (error) {
+      logger.error(
+        `WhatsApp: language-preference: Failed to update: ${error.message}`
+      );
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    logger.error(`WhatsApp: language-preference: Failed to update: ${error}`);
     return false;
   }
 };

@@ -374,11 +374,22 @@ export const markAsRead = async (messageId: string): Promise<boolean> => {
   }
 };
 
-/**
- * Sends a typing indicator (actually sends a read receipt which shows activity)
- */
 export const sendTypingIndicator = async (messageId: string): Promise<void> => {
   await markAsRead(messageId);
+};
+
+export const showProcessingIndicator = async (
+  to: string,
+  messageId: string
+): Promise<void> => {
+  await Promise.all([markAsRead(messageId), sendReaction(to, messageId, "⏳")]);
+};
+
+export const clearProcessingIndicator = async (
+  to: string,
+  messageId: string
+): Promise<void> => {
+  await sendReaction(to, messageId, "");
 };
 
 /**

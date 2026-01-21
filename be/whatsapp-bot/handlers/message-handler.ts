@@ -1,10 +1,12 @@
 import { InputGuardrailTripwireTriggered } from "@openai/agents";
 import { ORCHESTRATOR_AGENT } from "@/ai-agents/agents";
-import { unifiedContextStore } from "@/shared/context";
-import { activateAgent } from "@/domains/analytics/utils";
-import { generateSpeechForTelegram } from "@/domains/analytics/utils";
-import { transcribeAudio } from "@/domains/analytics/utils";
+import {
+  activateAgent,
+  generateSpeechForTelegram,
+  transcribeAudio,
+} from "@/domains/analytics/utils";
 import { logger } from "@/lib/logger";
+import { unifiedContextStore } from "@/shared/context";
 import { updateLastActivity } from "../services/conversation-window";
 import { downloadVoiceMessage, uploadMedia } from "../services/media";
 import {
@@ -29,6 +31,7 @@ import type {
 } from "../types";
 import {
   getAllyBrainForWhatsApp,
+  getLanguagePreferenceForWhatsApp,
   getVoicePreferenceForWhatsApp,
 } from "../utils/ally-brain";
 import {
@@ -114,11 +117,15 @@ export const handleTextMessage = async (
 
   const parsedCommand = parseCommand(text);
   if (parsedCommand) {
-    const commandResult = await handleCommand(parsedCommand.command, parsedCommand.args, {
-      from,
-      email: userEmail,
-      contactName,
-    });
+    const commandResult = await handleCommand(
+      parsedCommand.command,
+      parsedCommand.args,
+      {
+        from,
+        email: userEmail,
+        contactName,
+      }
+    );
     if (commandResult.handled) {
       return;
     }
@@ -160,8 +167,11 @@ const processNaturalLanguageMessage = async (
       .filter(Boolean)
       .join("\n\n");
 
-    const userId = await getUserIdFromWhatsApp(from);
-    const allyBrain = await getAllyBrainForWhatsApp(from);
+    const [userId, allyBrain, languageCode] = await Promise.all([
+      getUserIdFromWhatsApp(from),
+      getAllyBrainForWhatsApp(from),
+      getLanguagePreferenceForWhatsApp(from),
+    ]);
 
     if (userId) {
       await unifiedContextStore.setModality(userId, "whatsapp");
@@ -170,7 +180,7 @@ const processNaturalLanguageMessage = async (
 
     const prompt = buildAgentPromptWithContext(userEmail, text, fullContext, {
       allyBrain,
-      languageCode: "en",
+      languageCode,
     });
 
     const result = await activateAgent(ORCHESTRATOR_AGENT, prompt, {
