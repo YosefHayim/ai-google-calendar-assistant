@@ -29,7 +29,7 @@ export const subscriptionGuard = () =>
 
       const access = await checkUserAccess(userId, userEmail);
 
-      if (access.has_access) {
+      if (access.has_access || access.credits_remaining > 0) {
         return next();
       }
 

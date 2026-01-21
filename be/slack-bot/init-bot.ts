@@ -12,6 +12,7 @@ import {
   handleAppMention,
   handleSlackMessage,
 } from "./handlers/message-handler";
+import { handleFileShared } from "./handlers/voice-handler";
 import { getWorkspaceToken } from "./services/oauth-service";
 
 let app: App | null = null;
@@ -95,6 +96,12 @@ const initializeApp = (): { app: App; receiver: ExpressReceiver } => {
   app.event("app_mention", async (args) => {
     await handleAppMention(
       args as SlackEventMiddlewareArgs<"app_mention"> & AllMiddlewareArgs
+    );
+  });
+
+  app.event("file_shared", async (args) => {
+    await handleFileShared(
+      args as SlackEventMiddlewareArgs<"file_shared"> & AllMiddlewareArgs
     );
   });
 

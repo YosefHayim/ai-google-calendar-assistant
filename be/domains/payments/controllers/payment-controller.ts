@@ -532,18 +532,89 @@ export const handleWebhook = async (
       case "order_created":
       case "subscription_created":
       case "subscription_updated":
-      case "subscription_cancelled":
-      case "subscription_resumed":
-      case "subscription_expired":
-      case "subscription_paused":
-      case "subscription_unpaused":
-      case "subscription_payment_failed":
-      case "subscription_payment_recovered":
       case "affiliate_created":
         logger.info(
           `Webhook event logged: ${eventName} for subscription ${event.data.id}`
         );
         break;
+
+      case "subscription_cancelled": {
+        const cancelledEmail = String(attrs.user_email || "");
+        logger.info(
+          `Subscription cancelled for ${cancelledEmail || "unknown user"}`,
+          {
+            subscriptionId: event.data.id,
+            endsAt: attrs.ends_at,
+            cancelledAt: attrs.cancelled ? attrs.ends_at : null,
+          }
+        );
+        break;
+      }
+
+      case "subscription_expired": {
+        const expiredEmail = String(attrs.user_email || "");
+        logger.info(
+          `Subscription expired for ${expiredEmail || "unknown user"}`,
+          {
+            subscriptionId: event.data.id,
+            expiredAt: attrs.ends_at,
+          }
+        );
+        break;
+      }
+
+      case "subscription_paused": {
+        const pausedEmail = String(attrs.user_email || "");
+        logger.info(
+          `Subscription paused for ${pausedEmail || "unknown user"}`,
+          {
+            subscriptionId: event.data.id,
+            pausedAt: new Date().toISOString(),
+          }
+        );
+        break;
+      }
+
+      case "subscription_unpaused":
+      case "subscription_resumed": {
+        const resumedEmail = String(attrs.user_email || "");
+        logger.info(
+          `Subscription resumed for ${resumedEmail || "unknown user"}`,
+          {
+            subscriptionId: event.data.id,
+            resumedAt: new Date().toISOString(),
+          }
+        );
+        if (resumedEmail) {
+          await handleSubscriptionPaymentSuccess(resumedEmail);
+        }
+        break;
+      }
+
+      case "subscription_payment_failed": {
+        const failedEmail = String(attrs.user_email || "");
+        logger.warn(
+          `Subscription payment failed for ${failedEmail || "unknown user"}`,
+          {
+            subscriptionId: event.data.id,
+          }
+        );
+        break;
+      }
+
+      case "subscription_payment_recovered": {
+        const recoveredEmail = String(attrs.user_email || "");
+        logger.info(
+          `Subscription payment recovered for ${recoveredEmail || "unknown user"}`,
+          {
+            subscriptionId: event.data.id,
+          }
+        );
+        if (recoveredEmail) {
+          await handleSubscriptionPaymentSuccess(recoveredEmail);
+        }
+        break;
+      }
 
       default:
         logger.info(`Unhandled event type: ${eventName}`);

@@ -703,8 +703,20 @@ export const getBillingOverview = async (
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   );
 
+  let paymentMethod: PaymentMethodInfo | null = null;
+  if (subscription.cardBrand && subscription.cardLastFour) {
+    paymentMethod = {
+      id: `pm-${subscription.id}`,
+      brand: (subscription.cardBrand?.toLowerCase() || "unknown") as CardBrand,
+      last4: subscription.cardLastFour,
+      expiryMonth: 0,
+      expiryYear: 0,
+      isDefault: true,
+    };
+  }
+
   return {
-    paymentMethod: null,
+    paymentMethod,
     transactions,
   };
 };

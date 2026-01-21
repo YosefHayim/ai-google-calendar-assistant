@@ -105,7 +105,10 @@ interface ApiResponse<T> {
  */
 export const getPaymentStatus = async (): Promise<PaymentStatus> => {
   const response = await apiClient.get<ApiResponse<PaymentStatus>>(ENDPOINTS.PAYMENTS_STATUS)
-  return response.data.data!
+  if (!response.data.data) {
+    throw new Error('Failed to get payment status: No data returned')
+  }
+  return response.data.data
 }
 
 /**
@@ -121,7 +124,10 @@ export const getPlans = async (): Promise<Plan[]> => {
  */
 export const getSubscriptionStatus = async (): Promise<UserAccess> => {
   const response = await apiClient.get<ApiResponse<UserAccess>>(ENDPOINTS.PAYMENTS_SUBSCRIPTION)
-  return response.data.data!
+  if (!response.data.data) {
+    throw new Error('Failed to get subscription status: No data returned')
+  }
+  return response.data.data
 }
 
 /**
@@ -139,7 +145,10 @@ export const createSubscriptionCheckout = async (params: CheckoutParams): Promis
     ENDPOINTS.PAYMENTS_CHECKOUT,
     params,
   )
-  return response.data.data!.checkoutUrl
+  if (!response.data.data?.checkoutUrl) {
+    throw new Error('Failed to create checkout: No checkout URL returned')
+  }
+  return response.data.data.checkoutUrl
 }
 
 /**
@@ -150,7 +159,10 @@ export const createCreditPackCheckout = async (params: CreditPackCheckoutParams)
     ENDPOINTS.PAYMENTS_CHECKOUT_CREDITS,
     params,
   )
-  return response.data.data!.checkoutUrl
+  if (!response.data.data?.checkoutUrl) {
+    throw new Error('Failed to create credit pack checkout: No checkout URL returned')
+  }
+  return response.data.data.checkoutUrl
 }
 
 /**
@@ -158,7 +170,10 @@ export const createCreditPackCheckout = async (params: CreditPackCheckoutParams)
  */
 export const createBillingPortalSession = async (returnUrl?: string): Promise<string> => {
   const response = await apiClient.post<ApiResponse<{ portalUrl: string }>>(ENDPOINTS.PAYMENTS_PORTAL, { returnUrl })
-  return response.data.data!.portalUrl
+  if (!response.data.data?.portalUrl) {
+    throw new Error('Failed to create billing portal session: No portal URL returned')
+  }
+  return response.data.data.portalUrl
 }
 
 /**
@@ -198,7 +213,10 @@ export interface UpgradeResult {
  */
 export const upgradeSubscription = async (params: UpgradeParams): Promise<UpgradeResult> => {
   const response = await apiClient.post<ApiResponse<UpgradeResult>>(ENDPOINTS.PAYMENTS_UPGRADE, params)
-  return response.data.data!
+  if (!response.data.data) {
+    throw new Error('Failed to upgrade subscription: No data returned')
+  }
+  return response.data.data
 }
 
 // ============================================================================
@@ -237,7 +255,10 @@ export interface BillingOverview {
  */
 export const getBillingOverview = async (): Promise<BillingOverview> => {
   const response = await apiClient.get<ApiResponse<BillingOverview>>(ENDPOINTS.PAYMENTS_BILLING)
-  return response.data.data!
+  if (!response.data.data) {
+    throw new Error('Failed to get billing overview: No data returned')
+  }
+  return response.data.data
 }
 
 // ============================================================================
