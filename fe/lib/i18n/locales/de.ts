@@ -565,6 +565,15 @@ export const de: TranslationShape = {
     languageTooltip: 'Wählen Sie Ihre bevorzugte Sprache für die Benutzeroberfläche',
     general: 'Allgemein',
     generalDescription: 'Verwalten Sie Ihr Profil und Ihre Einstellungen',
+    tabs: {
+      general: 'Allgemein',
+      account: 'Abonnement',
+      integrations: 'Integrationen',
+      assistant: 'Ally-Gehirn',
+      notifications: 'Benachrichtigungen',
+      security: 'Sicherheit',
+      dataControls: 'Daten',
+    },
   },
 
   dialogs: {
@@ -812,6 +821,76 @@ export const de: TranslationShape = {
     },
   },
 
+  // Analytics
+  analytics: {
+    for: 'Analysen für',
+    tabs: {
+      overview: 'Übersicht',
+      patterns: 'Muster',
+      time: 'Zeit',
+      calendars: 'Kalender',
+      health: 'Gesundheit',
+    },
+  },
+
+  // Gaps Analysis
+  gaps: {
+    title: 'Lückenanalyse',
+    subtitle: 'Entdecken Sie Planungsmöglichkeiten in Ihrem Kalender',
+    refresh: 'Aktualisieren',
+    analyzing: 'Analysiere...',
+    potentialGaps: 'potenzielle Lücken identifiziert',
+    analyzingPeriod: 'Analysezeitraum:',
+    confidence: {
+      high: 'Hoch',
+      medium: 'Mittel',
+      low: 'Niedrig',
+    },
+    actions: {
+      selectCalendar: 'Kalender auswählen',
+      creating: 'Erstelle...',
+      createEvent: 'Ereignis erstellen',
+      skipping: 'Überspringe...',
+      skipGap: 'Lücke überspringen',
+    },
+  },
+
+  // Feature Carousel
+  featureCarousel: {
+    intelligentScheduling: {
+      title: 'Intelligente Terminplanung',
+      description: 'Ally orchestriert komplexe Meetings über Teams und Zeitzonen hinweg ohne Reibung.',
+    },
+    whatsappRelay: {
+      title: 'WhatsApp-Relais',
+      description: 'Der beliebteste Messenger der Welt, jetzt Ihre exekutive Kommandozeile. Privat, schnell und immer zugänglich.',
+    },
+    executiveDigests: {
+      title: 'Executive-Zusammenfassungen',
+      description: 'Verwandelt einstündige Transkripte in 5-minütige umsetzbare Zusammenfassungen und nächste Schritte.',
+    },
+    proactiveLogistics: {
+      title: 'Proaktive Logistik',
+      description: 'Überwacht Flüge und Fahrdienste, passt Ihren Zeitplan in Echtzeit bei Verspätungen an.',
+    },
+    focusProtection: {
+      title: 'Fokusschutz',
+      description: 'Schützt automatisch Ihre Deep-Work-Sessions und blockiert Unterbrechungen.',
+    },
+    conflictArbitrator: {
+      title: 'Konflikt-Schlichter',
+      description: 'Ally identifiziert Kalender-Überlappungen und schlägt proaktiv logische Lösungen vor.',
+    },
+    voiceToAction: {
+      title: 'Sprache zu Aktion',
+      description: 'Nehmen Sie Befehle unterwegs auf. Ally führt komplexe Aufgaben aus einfacher Audio aus.',
+    },
+    leverageAnalytics: {
+      title: 'Analytics nutzen',
+      description: 'Quantifizieren Sie Ihre Wirkung mit tiefen Einblicken in Ihre Produktivitätsmuster.',
+    },
+  },
+
   billing: {
     title: 'Abrechnung & Abonnement',
     subtitle: 'Verwalten Sie Ihr Abonnement und Ihre Rechnungsdetails',
@@ -1002,6 +1081,30 @@ export const de: TranslationShape = {
       // Waiting list
       waitingListWelcome: 'Willkommen auf der Warteliste!',
       waitingListError: 'Fehler',
+      waitingList: {
+        limitedEarlyAccess: 'Begrenzter Vorabzugang',
+        titlePart1: 'Ihr Kalender,',
+        titlePart2: 'aufmerksam.',
+        subtitle: 'Sagen Sie es einfach. Ally plant es. Über Stimme, Chat, Telegram und WhatsApp. Keine Formulare. Keine Reibung. Nur Sie und Ihre Zeit, endlich zusammen arbeitend.',
+        namePlaceholder: 'Ihr Name (optional)',
+        emailPlaceholder: 'E-Mail',
+        joining: 'Beitritt...',
+        getEarlyAccess: 'Vorabzugang erhalten',
+        positionMessage: 'Sie sind #{{position}} auf der Warteliste!',
+        footerText: 'Treten Sie mehr als 2.000 Fachleuten bei, die ihre Zeit zurückgewinnen. Wir benachrichtigen Sie, sobald Sie an der Reihe sind.',
+        footerTitle: 'Die Zukunft der Terminplanung',
+        trustIndicators: {
+          security: 'Unternehmenssicherheit',
+          speed: 'Untersekunden-Antwort',
+          timeSaved: 'Spart 5+ Std./Woche',
+        },
+        platforms: {
+          voice: 'Sprache',
+          chat: 'Web-Chat',
+          telegram: 'Telegram',
+          whatsapp: 'WhatsApp',
+        },
+      },
 
       // Admin
       userImpersonationFailed: 'Benutzeridentität konnte nicht übernommen werden',

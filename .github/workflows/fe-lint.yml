@@ -1,0 +1,61 @@
+name: FE - Lint & Type Check
+
+on:
+  push:
+    branches: [main, dev]
+    paths:
+      - "fe/**"
+      - ".github/workflows/fe-*.yml"
+  pull_request:
+    branches: [main, dev]
+    paths:
+      - "fe/**"
+      - ".github/workflows/fe-*.yml"
+
+concurrency:
+  group: fe-lint-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: "20"
+  CACHE_VERSION: v1
+
+jobs:
+  lint:
+    name: Lint & Type Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: ./fe
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.npm
+            ./fe/node_modules
+          key: ${{ runner.os }}-npm-fe-${{ env.CACHE_VERSION }}-${{ hashFiles('fe/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-fe-${{ env.CACHE_VERSION }}-
+
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm ci
+
+      - name: ESLint
+        run: npm run lint
+        continue-on-error: true
+
+      - name: TypeScript type check
+        run: npx tsc --noEmit

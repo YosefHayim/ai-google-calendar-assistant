@@ -562,6 +562,15 @@ export const ru: TranslationShape = {
     languageTooltip: 'Выберите предпочитаемый язык для интерфейса',
     general: 'Общие',
     generalDescription: 'Управляйте своим профилем и предпочтениями.',
+    tabs: {
+      general: 'Общие',
+      account: 'Подписка',
+      integrations: 'Интеграции',
+      assistant: 'Мозг Ally',
+      notifications: 'Уведомления',
+      security: 'Безопасность',
+      dataControls: 'Данные',
+    },
   },
 
   dialogs: {
@@ -802,6 +811,76 @@ export const ru: TranslationShape = {
     },
   },
 
+  // Analytics
+  analytics: {
+    for: 'Аналитика для',
+    tabs: {
+      overview: 'Обзор',
+      patterns: 'Шаблоны',
+      time: 'Время',
+      calendars: 'Календари',
+      health: 'Здоровье',
+    },
+  },
+
+  // Gaps Analysis
+  gaps: {
+    title: 'Анализ пробелов',
+    subtitle: 'Обнаружьте возможности планирования в вашем календаре',
+    refresh: 'Обновить',
+    analyzing: 'Анализ...',
+    potentialGaps: 'потенциальных пробелов обнаружено',
+    analyzingPeriod: 'Период анализа:',
+    confidence: {
+      high: 'Высокий',
+      medium: 'Средний',
+      low: 'Низкий',
+    },
+    actions: {
+      selectCalendar: 'Выбрать календарь',
+      creating: 'Создание...',
+      createEvent: 'Создать событие',
+      skipping: 'Пропуск...',
+      skipGap: 'Пропустить пробел',
+    },
+  },
+
+  // Feature Carousel
+  featureCarousel: {
+    intelligentScheduling: {
+      title: 'Интеллектуальное планирование',
+      description: 'Ally организует сложные встречи между командами и часовыми поясами без лишних хлопот.',
+    },
+    whatsappRelay: {
+      title: 'WhatsApp ретранслятор',
+      description: 'Самый популярный в мире мессенджер, теперь ваша исполнительная командная строка. Приватный, быстрый и всегда доступный.',
+    },
+    executiveDigests: {
+      title: 'Исполнительные дайджесты',
+      description: 'Превращает часовые транскрипты в 5-минутные действенные резюме и следующие шаги.',
+    },
+    proactiveLogistics: {
+      title: 'Проактивная логистика',
+      description: 'Мониторит рейсы и услуги такси, корректируя расписание в реальном времени при задержках.',
+    },
+    focusProtection: {
+      title: 'Защита фокуса',
+      description: 'Автоматически защищает ваши сессии глубокой работы и блокирует прерывания.',
+    },
+    conflictArbitrator: {
+      title: 'Арбитр конфликтов',
+      description: 'Ally идентифицирует пересечения в календаре и proactively предлагает логические решения.',
+    },
+    voiceToAction: {
+      title: 'Голос в действие',
+      description: 'Записывайте команды на ходу. Ally выполняет сложные задачи из простого аудио.',
+    },
+    leverageAnalytics: {
+      title: 'Использование аналитики',
+      description: 'Оценивайте своё влияние с глубокими инсайтами в паттерны вашей продуктивности.',
+    },
+  },
+
   billing: {
     title: 'Оплата и подписка',
     subtitle: 'Управление подпиской и платёжными данными',
@@ -990,6 +1069,30 @@ export const ru: TranslationShape = {
       // Waiting list
       waitingListWelcome: 'Добро пожаловать в список ожидания!',
       waitingListError: 'Ошибка',
+      waitingList: {
+        limitedEarlyAccess: 'Ограниченный ранний доступ',
+        titlePart1: 'Ваш календарь',
+        titlePart2: 'слушает.',
+        subtitle: 'Просто скажите это. Ally планирует это. Через голос, чат, Telegram и WhatsApp. Без форм. Без трения. Только вы и ваше время, наконец, работают вместе.',
+        namePlaceholder: 'Ваше имя (необязательно)',
+        emailPlaceholder: 'Электронная почта',
+        joining: 'Присоединение...',
+        getEarlyAccess: 'Получить ранний доступ',
+        positionMessage: 'Вы #{{position}} в списке ожидания!',
+        footerText: 'Присоединяйтесь к более чем 2,000 профессионалам, возвращающим свое время. Мы уведомим вас, как только вы будете в очереди.',
+        footerTitle: 'Будущее планирования',
+        trustIndicators: {
+          security: 'Безопасность корпоративного уровня',
+          speed: 'Ответ менее секунды',
+          timeSaved: 'Экономит 5+ часов в неделю',
+        },
+        platforms: {
+          voice: 'Голос',
+          chat: 'Веб-чат',
+          telegram: 'Telegram',
+          whatsapp: 'WhatsApp',
+        },
+      },
 
       // Admin
       userImpersonationFailed: 'Не удалось войти под видом пользователя',

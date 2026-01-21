@@ -1,0 +1,61 @@
+name: BE - Lint & Type Check
+
+on:
+  push:
+    branches: [main, dev]
+    paths:
+      - "be/**"
+      - ".github/workflows/be-*.yml"
+  pull_request:
+    branches: [main, dev]
+    paths:
+      - "be/**"
+      - ".github/workflows/be-*.yml"
+
+concurrency:
+  group: be-lint-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  BUN_VERSION: "1.1.38"
+  CACHE_VERSION: v1
+
+jobs:
+  lint:
+    name: Lint & Type Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: ./be
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.bun/install/cache
+            ./be/node_modules
+          key: ${{ runner.os }}-bun-be-${{ env.CACHE_VERSION }}-${{ hashFiles('be/bun.lock', 'be/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-be-${{ env.CACHE_VERSION }}-
+
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: bun install --frozen-lockfile
+
+      - name: Biome lint
+        run: bunx biome check .
+        continue-on-error: true
+
+      - name: TypeScript type check
+        run: bunx tsc --noEmit

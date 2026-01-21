@@ -568,6 +568,15 @@ export const fr: TranslationShape = {
     languageTooltip: "Choisissez votre langue préférée pour l'interface",
     general: 'Général',
     generalDescription: 'Gérez votre profil et vos préférences',
+    tabs: {
+      general: 'Général',
+      account: 'Abonnement',
+      integrations: 'Intégrations',
+      assistant: 'Cerveau d\'Ally',
+      notifications: 'Notifications',
+      security: 'Sécurité',
+      dataControls: 'Données',
+    },
   },
 
   dialogs: {
@@ -813,6 +822,76 @@ export const fr: TranslationShape = {
     },
   },
 
+  // Analytics
+  analytics: {
+    for: 'Analyses pour',
+    tabs: {
+      overview: 'Aperçu',
+      patterns: 'Motifs',
+      time: 'Temps',
+      calendars: 'Calendriers',
+      health: 'Santé',
+    },
+  },
+
+  // Gaps Analysis
+  gaps: {
+    title: 'Analyse des écarts',
+    subtitle: 'Découvrez les opportunités de planification dans votre calendrier',
+    refresh: 'Actualiser',
+    analyzing: 'Analyse...',
+    potentialGaps: 'écarts potentiels identifiés',
+    analyzingPeriod: 'Période d\'analyse:',
+    confidence: {
+      high: 'Élevé',
+      medium: 'Moyen',
+      low: 'Faible',
+    },
+    actions: {
+      selectCalendar: 'Sélectionner le calendrier',
+      creating: 'Création...',
+      createEvent: 'Créer un événement',
+      skipping: 'Ignorer...',
+      skipGap: 'Ignorer l\'écart',
+    },
+  },
+
+  // Feature Carousel
+  featureCarousel: {
+    intelligentScheduling: {
+      title: 'Planification intelligente',
+      description: 'Ally orchestre des réunions complexes entre équipes et fuseaux horaires sans friction.',
+    },
+    whatsappRelay: {
+      title: 'Relais WhatsApp',
+      description: 'Le messager le plus populaire au monde, désormais votre ligne de commande exécutive. Privé, rapide et toujours accessible.',
+    },
+    executiveDigests: {
+      title: 'Résumés exécutifs',
+      description: 'Transforme les transcriptions d\'une heure en résumés actionnables de 5 minutes et prochaines étapes.',
+    },
+    proactiveLogistics: {
+      title: 'Logistique proactive',
+      description: 'Surveille les vols et services de voiture, ajustant votre emploi du temps en temps réel pour les retards.',
+    },
+    focusProtection: {
+      title: 'Protection du focus',
+      description: 'Protège automatiquement vos sessions de travail profond et bloque les interruptions.',
+    },
+    conflictArbitrator: {
+      title: 'Arbitre de conflits',
+      description: 'Ally identifie les chevauchements de calendrier et suggère proactivement des résolutions logiques.',
+    },
+    voiceToAction: {
+      title: 'De la voix à l\'action',
+      description: 'Enregistrez des commandes en déplacement. Ally exécute des tâches complexes à partir d\'un simple audio.',
+    },
+    leverageAnalytics: {
+      title: 'Tirer parti des analyses',
+      description: 'Quantifiez votre impact avec des insights profonds sur vos modèles de productivité.',
+    },
+  },
+
   billing: {
     title: 'Facturation et abonnement',
     subtitle: 'Gérez votre abonnement et vos informations de facturation',
@@ -1004,6 +1083,30 @@ export const fr: TranslationShape = {
       // Waiting list
       waitingListWelcome: "Bienvenue sur la liste d'attente !",
       waitingListError: 'Erreur',
+      waitingList: {
+        limitedEarlyAccess: 'Accès Anticipé Limité',
+        titlePart1: 'Votre Calendrier,',
+        titlePart2: 'à l\'Écoute.',
+        subtitle: 'Dites-le simplement. Ally le programme. À travers la voix, le chat, Telegram et WhatsApp. Pas de formulaires. Pas de friction. Juste vous et votre temps, enfin travaillant ensemble.',
+        namePlaceholder: 'Votre nom (optionnel)',
+        emailPlaceholder: 'Email',
+        joining: 'Inscription...',
+        getEarlyAccess: 'Obtenir un Accès Anticipé',
+        positionMessage: 'Vous êtes #{{position}} sur la liste d\'attente !',
+        footerText: 'Rejoignez plus de 2 000 professionnels qui récupèrent leur temps. Nous vous notifierons dès que vous serez dans la file.',
+        footerTitle: 'L\'Avenir de la Planification',
+        trustIndicators: {
+          security: 'Sécurité de niveau entreprise',
+          speed: 'Réponse en moins d\'une seconde',
+          timeSaved: 'Économise 5+ heures/semaine',
+        },
+        platforms: {
+          voice: 'Voix',
+          chat: 'Chat Web',
+          telegram: 'Telegram',
+          whatsapp: 'WhatsApp',
+        },
+      },
 
       // Admin
       userImpersonationFailed: "Échec de l'emprunt d'identité utilisateur",

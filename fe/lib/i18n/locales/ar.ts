@@ -519,6 +519,28 @@ export const ar: TranslationShape = {
     },
   },
 
+  // Gaps Analysis
+  gaps: {
+    title: 'تحليل الفجوات',
+    subtitle: 'اكتشف فرص الجدولة في تقويمك',
+    refresh: 'تحديث',
+    analyzing: 'جاري التحليل...',
+    potentialGaps: 'فجوات محتملة تم تحديدها',
+    analyzingPeriod: 'فترة التحليل:',
+    confidence: {
+      high: 'عالي',
+      medium: 'متوسط',
+      low: 'منخفض',
+    },
+    actions: {
+      selectCalendar: 'اختر التقويم',
+      creating: 'جاري الإنشاء...',
+      createEvent: 'إنشاء حدث',
+      skipping: 'جاري التخطي...',
+      skipGap: 'تخطي الفجوة',
+    },
+  },
+
   settings: {
     title: 'الإعدادات',
     profile: 'الملف الشخصي',
@@ -544,6 +566,15 @@ export const ar: TranslationShape = {
     languageTooltip: 'اختر اللغة المفضلة للواجهة',
     general: 'عام',
     generalDescription: 'إدارة ملفك الشخصي وتفضيلاتك',
+    tabs: {
+      general: 'عام',
+      account: 'الاشتراك',
+      integrations: 'التكاملات',
+      assistant: 'دماغ Ally',
+      notifications: 'الإشعارات',
+      security: 'الأمان',
+      dataControls: 'البيانات',
+    },
   },
 
   dialogs: {
@@ -779,6 +810,54 @@ export const ar: TranslationShape = {
     },
   },
 
+  // Analytics
+  analytics: {
+    for: 'التحليلات لـ',
+    tabs: {
+      overview: 'نظرة عامة',
+      patterns: 'أنماط',
+      time: 'الوقت',
+      calendars: 'التقاويم',
+      health: 'الصحة',
+    },
+  },
+
+  // Feature Carousel
+  featureCarousel: {
+    intelligentScheduling: {
+      title: 'التخطيط الذكي',
+      description: 'أللي ينسق الاجتماعات المعقدة عبر الفرق والمناطق الزمنية بدون أي احتكاك.',
+    },
+    whatsappRelay: {
+      title: 'ريلي واتساب',
+      description: 'أشهر رسائل في العالم، الآن سطر الأوامر التنفيذي الخاص بك. خاص، سريع، ودائماً متاح.',
+    },
+    executiveDigests: {
+      title: 'الملخصات التنفيذية',
+      description: 'يحول التسجيلات الساعية إلى ملخصات عملية مدتها 5 دقائق والخطوات التالية.',
+    },
+    proactiveLogistics: {
+      title: 'اللوجستيات الاستباقية',
+      description: 'يراقب الرحلات وخدمات السيارات، يعدل جدولك في الوقت الفعلي للتأخيرات.',
+    },
+    focusProtection: {
+      title: 'حماية التركيز',
+      description: 'يحمي تلقائياً جلسات العمل العميق ويحجب المقاطعات.',
+    },
+    conflictArbitrator: {
+      title: 'محكم النزاعات',
+      description: 'أللي يحدد تداخلات التقويم ويقترح بشكل استباقي حلول منطقية.',
+    },
+    voiceToAction: {
+      title: 'من الصوت إلى العمل',
+      description: 'سجل الأوامر أثناء التنقل. أللي ينفذ المهام المعقدة من صوت بسيط.',
+    },
+    leverageAnalytics: {
+      title: 'استغلال التحليلات',
+      description: 'قيس تأثيرك مع رؤى عميقة لأنماط إنتاجيتك.',
+    },
+  },
+
   billing: {
     title: 'الفوترة والاشتراك',
     subtitle: 'إدارة اشتراكك وتفاصيل الفوترة',
@@ -932,6 +1011,30 @@ export const ar: TranslationShape = {
       calendarCreateFailedGeneric: 'فشل في إنشاء التقويم. يرجى المحاولة مرة أخرى.',
       waitingListWelcome: 'مرحباً بك في قائمة الانتظار!',
       waitingListError: 'خطأ',
+      waitingList: {
+        limitedEarlyAccess: 'وصول مبكر محدود',
+        titlePart1: 'تقويمك،',
+        titlePart2: 'يستمع.',
+        subtitle: 'قلها ببساطة. يجدولها آلي. عبر الصوت، الدردشة، تيليجرام، وواتساب. لا نماذج. لا احتكاك. فقط أنت ووقتك، أخيراً تعملان معاً.',
+        namePlaceholder: 'اسمك (اختياري)',
+        emailPlaceholder: 'البريد الإلكتروني',
+        joining: 'الانضمام...',
+        getEarlyAccess: 'احصل على وصول مبكر',
+        positionMessage: 'أنت #{{position}} في قائمة الانتظار!',
+        footerText: 'انضم إلى أكثر من 2,000 محترف يستعيدون وقتهم. سنخطرك فوراً عندما يأتي دورك.',
+        footerTitle: 'مستقبل الجدولة',
+        trustIndicators: {
+          security: 'أمان على مستوى المؤسسات',
+          speed: 'استجابة أقل من ثانية',
+          timeSaved: 'يوفر 5+ ساعات أسبوعياً',
+        },
+        platforms: {
+          voice: 'صوت',
+          chat: 'دردشة ويب',
+          telegram: 'تيليجرام',
+          whatsapp: 'واتساب',
+        },
+      },
       userImpersonationFailed: 'فشل في انتحال هوية المستخدم',
       userSessionsRevoked: 'تم إلغاء جلسات المستخدم',
       userSessionsRevokeFailed: 'فشل في إلغاء الجلسات',

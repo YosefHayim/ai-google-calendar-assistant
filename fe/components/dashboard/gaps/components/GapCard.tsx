@@ -23,6 +23,7 @@ import { Progress } from '@/components/ui/progress'
 import { Textarea } from '@/components/ui/textarea'
 import { motion } from 'framer-motion'
 import { useCalendars } from '@/hooks/queries/calendars'
+import { useTranslation } from 'react-i18next'
 
 interface GapCardProps {
   gap: GapCandidate
@@ -33,6 +34,7 @@ interface GapCardProps {
 }
 
 export function GapCard({ gap, index, onFillGap, onSkipGap, isLoading }: GapCardProps) {
+  const { t } = useTranslation()
   const [showFillDialog, setShowFillDialog] = useState(false)
   const [showSkipDialog, setShowSkipDialog] = useState(false)
   const [eventSummary, setEventSummary] = useState('')
@@ -70,9 +72,9 @@ export function GapCard({ gap, index, onFillGap, onSkipGap, isLoading }: GapCard
   }
 
   const getConfidenceLabel = (confidence: number) => {
-    if (confidence >= 0.8) return 'High'
-    if (confidence >= 0.6) return 'Medium'
-    return 'Low'
+    if (confidence >= 0.8) return t('gaps.confidence.high')
+    if (confidence >= 0.6) return t('gaps.confidence.medium')
+    return t('gaps.confidence.low')
   }
 
   return (
@@ -192,7 +194,7 @@ export function GapCard({ gap, index, onFillGap, onSkipGap, isLoading }: GapCard
                       <Label htmlFor="calendar">Calendar</Label>
                       <Select value={selectedCalendarId} onValueChange={setSelectedCalendarId}>
                         <SelectTrigger className="mt-1">
-                          <SelectValue placeholder="Select calendar" />
+                          <SelectValue placeholder={t('gaps.actions.selectCalendar')} />
                         </SelectTrigger>
                         <SelectContent>
                           {calendars.map((calendar) => (
@@ -207,7 +209,7 @@ export function GapCard({ gap, index, onFillGap, onSkipGap, isLoading }: GapCard
 
                   <div className="flex gap-2 pt-2">
                     <Button onClick={handleFillGap} disabled={!eventSummary.trim() || isLoading} className="flex-1">
-                      {isLoading ? 'Creating...' : 'Create Event'}
+                      {isLoading ? t('gaps.actions.creating') : t('gaps.actions.createEvent')}
                     </Button>
                     <Button variant="outline" onClick={() => setShowFillDialog(false)}>
                       Cancel
@@ -246,7 +248,7 @@ export function GapCard({ gap, index, onFillGap, onSkipGap, isLoading }: GapCard
 
                   <div className="flex gap-2 pt-2">
                     <Button onClick={handleSkipGap} disabled={isLoading} variant="outline" className="flex-1">
-                      {isLoading ? 'Skipping...' : 'Skip Gap'}
+                      {isLoading ? t('gaps.actions.skipping') : t('gaps.actions.skipGap')}
                     </Button>
                     <Button variant="ghost" onClick={() => setShowSkipDialog(false)}>
                       Cancel

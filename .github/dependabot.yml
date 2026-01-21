@@ -1,0 +1,98 @@
+version: 2
+
+updates:
+  - package-ecosystem: "npm"
+    directory: "/be"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "04:00"
+      timezone: "Asia/Jerusalem"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "backend"
+    commit-message:
+      prefix: "chore(be):"
+    ignore:
+      - dependency-name: "zod"
+        update-types: ["version-update:semver-major"]
+    groups:
+      dev-dependencies:
+        patterns:
+          - "@types/*"
+          - "typescript"
+          - "jest"
+          - "ts-jest"
+          - "@biomejs/*"
+          - "ultracite"
+        update-types:
+          - "minor"
+          - "patch"
+      openai:
+        patterns:
+          - "openai"
+          - "@openai/*"
+      supabase:
+        patterns:
+          - "@supabase/*"
+          - "supabase"
+
+  - package-ecosystem: "npm"
+    directory: "/fe"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "04:00"
+      timezone: "Asia/Jerusalem"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "frontend"
+    commit-message:
+      prefix: "chore(fe):"
+    groups:
+      react:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "@types/react"
+          - "@types/react-dom"
+      nextjs:
+        patterns:
+          - "next"
+          - "@next/*"
+          - "eslint-config-next"
+      tanstack:
+        patterns:
+          - "@tanstack/*"
+      radix:
+        patterns:
+          - "@radix-ui/*"
+      dev-dependencies:
+        patterns:
+          - "@types/*"
+          - "typescript"
+          - "eslint*"
+          - "prettier"
+        update-types:
+          - "minor"
+          - "patch"
+      tailwind:
+        patterns:
+          - "tailwindcss"
+          - "postcss"
+          - "autoprefixer"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "04:00"
+      timezone: "Asia/Jerusalem"
+    labels:
+      - "dependencies"
+      - "github-actions"
+    commit-message:
+      prefix: "chore(ci):"

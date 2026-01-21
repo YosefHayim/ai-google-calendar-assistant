@@ -6,7 +6,7 @@ import type { CalendarEvent } from '@/types/api'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ErrorState } from '@/components/ui/error-state'
 
-import { ANALYTICS_TABS, STORAGE_KEY, type TabId } from './constants'
+import { useAnalyticsTabs, STORAGE_KEY, type TabId } from './constants'
 import { AnalyticsHeader, AIInsightsSection } from './components'
 
 import AnalyticsDashboardSkeleton from '../AnalyticsDashboardSkeleton'
@@ -84,13 +84,14 @@ interface AnalyticsDashboardProps {
 }
 
 export function AnalyticsDashboard({ isLoading: initialLoading }: AnalyticsDashboardProps) {
+  const analyticsTabs = useAnalyticsTabs()
   const [activeTab, setActiveTabState] = useState<TabId>('overview')
   const [isHydrated, setIsHydrated] = useState(false)
 
   useEffect(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY)
-      if (stored && ANALYTICS_TABS.some((tab) => tab.id === stored)) {
+      if (stored && analyticsTabs.some((tab) => tab.id === stored)) {
         setActiveTabState(stored as TabId)
       }
     } catch {
@@ -213,7 +214,7 @@ export function AnalyticsDashboard({ isLoading: initialLoading }: AnalyticsDashb
 
       <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as TabId)} className="w-full">
         <TabsList className="grid w-full grid-cols-5 h-10 sm:h-11">
-          {ANALYTICS_TABS.map((tab) => (
+          {analyticsTabs.map((tab) => (
             <TabsTrigger
               key={tab.id}
               value={tab.id}

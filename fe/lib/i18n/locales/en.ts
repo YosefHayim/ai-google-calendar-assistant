@@ -597,6 +597,15 @@ export const en = {
     languageTooltip: 'Choose your preferred language for the interface',
     general: 'General',
     generalDescription: 'Manage your profile and preferences.',
+    tabs: {
+      general: 'General',
+      account: 'Subscription',
+      integrations: 'Integrations',
+      assistant: "Ally's Brain",
+      notifications: 'Notifications',
+      security: 'Security',
+      dataControls: 'Data',
+    },
   },
 
   // Dialogs
@@ -674,6 +683,38 @@ export const en = {
     next: 'Next',
     previous: 'Previous',
     finish: 'Finish',
+    steps: {
+      welcome: {
+        title: 'Welcome to Ally',
+        description: 'Your AI-powered calendar assistant',
+        content: 'Ally helps you manage your calendar effortlessly using natural language. Just tell Ally what you need, and it handles the rest.',
+        audioText: "Welcome to Ally, your AI-powered calendar assistant! I'm here to help you manage your schedule effortlessly. Let me show you around.",
+      },
+      chat: {
+        title: 'Chat with Ally',
+        description: 'Natural language scheduling',
+        content: 'Simply type or speak naturally. Say things like "Schedule a meeting with John tomorrow at 2pm" or "What do I have next week?" Ally understands context and handles complex requests.',
+        audioText: 'The chat interface is your main way to interact with me. Just type naturally, like you would text a friend. Say things like "Schedule lunch with Sarah tomorrow" or "What meetings do I have this week?"',
+      },
+      analytics: {
+        title: 'Track Your Time',
+        description: 'Insights into your schedule',
+        content: 'View detailed analytics about how you spend your time. Understand your meeting patterns, find opportunities to optimize, and maintain a healthy work-life balance.',
+        audioText: 'The analytics dashboard gives you powerful insights into how you spend your time. Track meeting patterns, identify busy periods, and optimize your schedule for better productivity.',
+      },
+      gaps: {
+        title: 'Recover Lost Time',
+        description: 'Find and fill schedule gaps',
+        content: 'Ally automatically identifies untracked time in your calendar. Review these gaps and quickly add events to keep an accurate record of your activities.',
+        audioText: "Gap recovery is a unique feature that helps you track where your time goes. I'll identify periods that aren't accounted for in your calendar, so you can fill them in and maintain an accurate schedule.",
+      },
+      complete: {
+        title: "You're All Set!",
+        description: 'Start managing your calendar',
+        content: "You're ready to use Ally! Remember, you can always access settings to customize your experience, connect additional calendars, or adjust notification preferences.",
+        audioText: "Congratulations! You're all set to start using Ally. If you ever need help, just ask me. I'm here to make your calendar management effortless. Let's get started!",
+      },
+    },
   },
 
   // Time/Date formatting
@@ -843,6 +884,76 @@ export const en = {
         'Capture thoughts and commands on the go. Ally transcribes, understands, and executes tasks instantly.',
       userMessage: '"Remind me to call investors at 4pm"',
       allyResponse: "Reminder set: 'Call investors' at 4:00 PM.",
+    },
+  },
+
+  // Analytics
+  analytics: {
+    for: 'Analytics for',
+    tabs: {
+      overview: 'Overview',
+      patterns: 'Patterns',
+      time: 'Time',
+      calendars: 'Calendars',
+      health: 'Health',
+    },
+  },
+
+  // Gaps Analysis
+  gaps: {
+    title: 'Gap Analysis',
+    subtitle: 'Discover scheduling opportunities in your calendar',
+    refresh: 'Refresh',
+    analyzing: 'Analyzing...',
+    potentialGaps: 'potential gaps identified',
+    analyzingPeriod: 'Analyzing period:',
+    confidence: {
+      high: 'High',
+      medium: 'Medium',
+      low: 'Low',
+    },
+    actions: {
+      selectCalendar: 'Select calendar',
+      creating: 'Creating...',
+      createEvent: 'Create Event',
+      skipping: 'Skipping...',
+      skipGap: 'Skip Gap',
+    },
+  },
+
+  // Feature Carousel
+  featureCarousel: {
+    intelligentScheduling: {
+      title: 'Intelligent Scheduling',
+      description: 'Ally orchestrates complex meetings across teams and timezones with zero friction.',
+    },
+    whatsappRelay: {
+      title: 'WhatsApp Relay',
+      description: "The world's most popular messenger, now your executive command line. Private, fast, and always accessible.",
+    },
+    executiveDigests: {
+      title: 'Executive Digests',
+      description: 'Turns hour-long transcripts into 5-minute actionable summaries and next steps.',
+    },
+    proactiveLogistics: {
+      title: 'Proactive Logistics',
+      description: 'Monitors flights and car services, adjusting your schedule in real-time for delays.',
+    },
+    focusProtection: {
+      title: 'Focus Protection',
+      description: 'Automatically shields your deep work sessions and blocks interruptions.',
+    },
+    conflictArbitrator: {
+      title: 'Conflict Arbitrator',
+      description: 'Ally identifies calendar overlaps and proactively suggests logical resolutions.',
+    },
+    voiceToAction: {
+      title: 'Voice-to-Action',
+      description: 'Record commands on the go. Ally executes complex tasks from simple audio.',
+    },
+    leverageAnalytics: {
+      title: 'Leverage Analytics',
+      description: 'Quantify your impact with deep insights into your productivity patterns.',
     },
   },
 
@@ -1056,6 +1167,30 @@ export const en = {
       // Waiting list
       waitingListWelcome: 'Welcome to the waiting list!',
       waitingListError: 'Error',
+      waitingList: {
+        limitedEarlyAccess: 'Limited Early Access',
+        titlePart1: 'Your Calendar,',
+        titlePart2: 'Listening.',
+        subtitle: 'Just say it. Ally schedules it. Across voice, chat, Telegram, and WhatsApp. No forms. No friction. Just you and your time, finally working together.',
+        namePlaceholder: 'Your name (optional)',
+        emailPlaceholder: 'Email',
+        joining: 'Joining...',
+        getEarlyAccess: 'Get Early Access',
+        positionMessage: 'You\'re #{{position}} on the waiting list!',
+        footerText: 'Join 2,000+ professionals reclaiming their time. We\'ll notify you the moment you\'re in.',
+        footerTitle: 'The Future of Scheduling',
+        trustIndicators: {
+          security: 'Enterprise-grade security',
+          speed: 'Sub-second response',
+          timeSaved: 'Saves 5+ hrs/week',
+        },
+        platforms: {
+          voice: 'Voice',
+          chat: 'Web Chat',
+          telegram: 'Telegram',
+          whatsapp: 'WhatsApp',
+        },
+      },
 
       // Admin
       userImpersonationFailed: 'Failed to impersonate user',
