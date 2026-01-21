@@ -141,7 +141,7 @@ describe("Error Recovery and Resilience", () => {
         attempts++;
         try {
           return await mockGoogleCalendarAPI.events.list();
-        } catch (error: unknown) {
+        } catch (error: any) {
           if (error.code === 403 && attempts < retryConfig.maxRetries) {
             const delay = Math.min(retryConfig.baseDelay * Math.pow(retryConfig.backoffMultiplier, attempts - 1), retryConfig.maxDelay);
             await new Promise((resolve) => setTimeout(resolve, delay));
@@ -220,7 +220,7 @@ describe("Error Recovery and Resilience", () => {
 
       const circuitBreaker = {
         failures: 0,
-        lastFailureTime: null,
+        lastFailureTime: null as number | null,
         state: "closed", // closed, open, half-open
         failureThreshold: 3,
         recoveryTimeout: 60000, // 1 minute

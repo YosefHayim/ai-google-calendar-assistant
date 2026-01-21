@@ -1,18 +1,28 @@
 import type {
   AllMiddlewareArgs,
   SlackCommandMiddlewareArgs,
-} from "@slack/bolt";
-import { logger } from "@/lib/logger";
+} from "@slack/bolt"
+import { logger } from "@/lib/logger"
 import {
   getAllyBrainForSlack,
   toggleAllyBrainEnabled,
   updateAllyBrainInstructions,
   clearAllyBrainInstructions,
-} from "../utils/ally-brain";
-import { handleSlackAuth } from "../middleware/auth-handler";
-import { SlackResponseBuilder } from "../utils/response-builder";
-import { getSession, updateSession } from "../utils/session";
-import { handleAgentRequest } from "./agent-handler";
+} from "../utils/ally-brain"
+import { handleSlackAuth } from "../middleware/auth-handler"
+import { SlackResponseBuilder } from "../utils/response-builder"
+import { getSession } from "../utils/session"
+import { handleAgentRequest } from "./agent-handler"
+
+const COMMAND_PREFIX_LENGTHS = {
+  CREATE: 7,
+  UPDATE: 7,
+  DELETE: 7,
+  SEARCH: 7,
+  FEEDBACK: 9,
+  BRAIN: 6,
+  BRAIN_SET: 4,
+} as const
 
 type CommandArgs = SlackCommandMiddlewareArgs & AllMiddlewareArgs;
 
@@ -87,7 +97,7 @@ export const handleHelpCommand = async (args: CommandArgs): Promise<void> => {
 };
 
 export const handleTodayCommand = async (args: CommandArgs): Promise<void> => {
-  const { command, client, respond } = args;
+  const { command, respond } = args
   const auth = await requireAuth(args);
   if (!(auth.authorized && auth.email)) {
     return;
@@ -585,6 +595,7 @@ export const handleSettingsCommand = async (
     .divider()
     .section("*Available Settings*")
     .bulletList([
+      "`/ally brain` - Manage AI preferences",
       "`/ally status` - Check connection status",
       "`/ally feedback <message>` - Send feedback to the team",
     ])
@@ -596,6 +607,135 @@ export const handleSettingsCommand = async (
     response_type: "ephemeral",
   });
 };
+
+type RespondFn = CommandArgs["respond"]
+
+const handleBrainToggle = async (
+  slackUserId: string,
+  enabled: boolean,
+  respond: RespondFn
+): Promise<boolean> => {
+  const success = await toggleAllyBrainEnabled(slackUserId, enabled)
+
+  let message: string
+  if (enabled) {
+    message = success ? "✅ Custom instructions enabled!" : "❌ Failed to enable. Please try again."
+  } else {
+    message = success ? "❌ Custom instructions disabled." : "❌ Failed to disable. Please try again."
+  }
+
+  await respond({ text: message, response_type: "ephemeral" })
+  return true
+}
+
+const handleBrainClear = async (
+  slackUserId: string,
+  respond: RespondFn
+): Promise<boolean> => {
+  const success = await clearAllyBrainInstructions(slackUserId)
+  await respond({
+    text: success ? "🗑️ Instructions cleared." : "❌ Failed to clear. Please try again.",
+    response_type: "ephemeral",
+  })
+  return true
+}
+
+const handleBrainSet = async (
+  slackUserId: string,
+  subcommand: string,
+  respond: RespondFn
+): Promise<boolean> => {
+  const instructions = subcommand.slice(COMMAND_PREFIX_LENGTHS.BRAIN_SET).trim()
+  if (!instructions) {
+    await respond({
+      text: "Please provide instructions. Example: `/ally brain set I prefer morning meetings`",
+      response_type: "ephemeral",
+    })
+    return true
+  }
+
+  const success = await updateAllyBrainInstructions(slackUserId, instructions)
+  await respond({
+    text: success
+      ? `✅ Instructions updated:\n_"${instructions}"_`
+      : "❌ Failed to update. Please try again.",
+    response_type: "ephemeral",
+  })
+  return true
+}
+
+const showBrainStatus = async (
+  slackUserId: string,
+  respond: RespondFn
+): Promise<void> => {
+  const allyBrain = await getAllyBrainForSlack(slackUserId)
+  const statusText = allyBrain?.enabled ? "✅ Enabled" : "❌ Disabled"
+  const instructions = allyBrain?.instructions || "_No custom instructions set yet._"
+
+  const response = SlackResponseBuilder.create()
+    .header("🧠", "Ally's Brain")
+    .section(
+      "Teach Ally about your preferences. These instructions will be remembered in every conversation."
+    )
+    .divider()
+    .field("Status", statusText)
+    .field("Current Instructions", instructions)
+    .divider()
+    .section("*Commands*")
+    .bulletList([
+      "`/ally brain` - Show current settings",
+      "`/ally brain enable` - Enable custom instructions",
+      "`/ally brain disable` - Disable custom instructions",
+      "`/ally brain set <instructions>` - Set new instructions",
+      "`/ally brain clear` - Clear all instructions",
+    ])
+    .context([
+      "Example: `/ally brain set I prefer morning meetings. My timezone is PST.`",
+    ])
+    .build()
+
+  await respond({
+    blocks: response.blocks,
+    text: response.text,
+    response_type: "ephemeral",
+  })
+}
+
+export const handleBrainCommand = async (
+  args: CommandArgs,
+  subcommand?: string
+): Promise<void> => {
+  const { command, respond } = args
+  const auth = await requireAuth(args)
+
+  if (!auth.authorized) {
+    return
+  }
+
+  const slackUserId = command.user_id
+
+  if (subcommand === "enable") {
+    await handleBrainToggle(slackUserId, true, respond)
+    return
+  }
+
+  if (subcommand === "disable") {
+    await handleBrainToggle(slackUserId, false, respond)
+    return
+  }
+
+  if (subcommand === "clear") {
+    await handleBrainClear(slackUserId, respond)
+    return
+  }
+
+  if (subcommand?.startsWith("set ")) {
+    await handleBrainSet(slackUserId, subcommand, respond)
+    return
+  }
+
+  await showBrainStatus(slackUserId, respond)
+}
 
 export const handleFeedbackCommand = async (
   args: CommandArgs,
@@ -680,23 +820,28 @@ export const parseAndRouteCommand = async (
   }
 
   if (text.startsWith("create ")) {
-    return handleCreateCommand(args, fullText.slice(7));
+    return handleCreateCommand(args, fullText.slice(COMMAND_PREFIX_LENGTHS.CREATE))
   }
 
   if (text.startsWith("update ")) {
-    return handleUpdateCommand(args, fullText.slice(7));
+    return handleUpdateCommand(args, fullText.slice(COMMAND_PREFIX_LENGTHS.UPDATE))
   }
 
   if (text.startsWith("delete ")) {
-    return handleDeleteCommand(args, fullText.slice(7));
+    return handleDeleteCommand(args, fullText.slice(COMMAND_PREFIX_LENGTHS.DELETE))
   }
 
   if (text.startsWith("search ")) {
-    return handleSearchCommand(args, fullText.slice(7));
+    return handleSearchCommand(args, fullText.slice(COMMAND_PREFIX_LENGTHS.SEARCH))
   }
 
   if (text.startsWith("feedback ")) {
-    return handleFeedbackCommand(args, fullText.slice(9));
+    return handleFeedbackCommand(args, fullText.slice(COMMAND_PREFIX_LENGTHS.FEEDBACK))
+  }
+
+  if (text === "brain" || text.startsWith("brain ")) {
+    const subcommand = text === "brain" ? undefined : fullText.slice(COMMAND_PREFIX_LENGTHS.BRAIN).trim()
+    return handleBrainCommand(args, subcommand)
   }
 
   const auth = await requireAuth(args);

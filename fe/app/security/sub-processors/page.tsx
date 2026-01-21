@@ -77,7 +77,7 @@ export default function SubProcessorsPage() {
                     </div>
                     <div>
                       <p className="font-medium text-foreground dark:text-primary-foreground mb-1">Location</p>
-                      <p className="text-zinc-600 dark:text-zinc-300">EU (Frankfurt) / US (East Coast)</p>
+                      <p className="text-zinc-600 dark:text-zinc-300">USA</p>
                     </div>
                     <div>
                       <p className="font-medium text-foreground dark:text-primary-foreground mb-1">Certification</p>
@@ -101,7 +101,7 @@ export default function SubProcessorsPage() {
                     </div>
                     <div>
                       <p className="font-medium text-foreground dark:text-primary-foreground mb-1">Location</p>
-                      <p className="text-zinc-600 dark:text-zinc-300">Global (multiple regions)</p>
+                      <p className="text-zinc-600 dark:text-zinc-300">USA</p>
                     </div>
                     <div>
                       <p className="font-medium text-foreground dark:text-primary-foreground mb-1">Certification</p>
@@ -125,7 +125,7 @@ export default function SubProcessorsPage() {
                     </div>
                     <div>
                       <p className="font-medium text-foreground dark:text-primary-foreground mb-1">Location</p>
-                      <p className="text-zinc-600 dark:text-zinc-300">EU / US</p>
+                      <p className="text-zinc-600 dark:text-zinc-300">USA</p>
                     </div>
                     <div>
                       <p className="font-medium text-foreground dark:text-primary-foreground mb-1">Certification</p>
@@ -134,6 +134,30 @@ export default function SubProcessorsPage() {
                     <div>
                       <p className="font-medium text-foreground dark:text-primary-foreground mb-1">Data Stored</p>
                       <p className="text-zinc-600 dark:text-zinc-300">Session data, temporary cache</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-muted dark:bg-secondary/50 rounded-lg p-6 border ">
+                  <h3 className="text-xl font-medium text-foreground dark:text-primary-foreground mb-3">
+                    Amazon Web Services (AWS)
+                  </h3>
+                  <div className="grid md:grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <p className="font-medium text-foreground dark:text-primary-foreground mb-1">Purpose</p>
+                      <p className="text-zinc-600 dark:text-zinc-300">Cloud hosting and infrastructure for the application backend</p>
+                    </div>
+                    <div>
+                      <p className="font-medium text-foreground dark:text-primary-foreground mb-1">Location</p>
+                      <p className="text-zinc-600 dark:text-zinc-300">USA</p>
+                    </div>
+                    <div>
+                      <p className="font-medium text-foreground dark:text-primary-foreground mb-1">Certification</p>
+                      <p className="text-zinc-600 dark:text-zinc-300">SOC 2, ISO 27001</p>
+                    </div>
+                    <div>
+                      <p className="font-medium text-foreground dark:text-primary-foreground mb-1">Data Stored</p>
+                      <p className="text-zinc-600 dark:text-zinc-300">Application infrastructure and temporary processing data</p>
                     </div>
                   </div>
                 </div>
@@ -149,16 +173,16 @@ export default function SubProcessorsPage() {
               <div className="space-y-6">
                 <div className="bg-muted dark:bg-secondary/50 rounded-lg p-6 border ">
                   <h3 className="text-xl font-medium text-foreground dark:text-primary-foreground mb-3">
-                    OpenAI
+                    OpenAI / Anthropic / Google Gemini
                   </h3>
                   <div className="grid md:grid-cols-2 gap-4 text-sm">
                     <div>
                       <p className="font-medium text-foreground dark:text-primary-foreground mb-1">Purpose</p>
-                      <p className="text-zinc-600 dark:text-zinc-300">AI language model processing for calendar assistance</p>
+                      <p className="text-zinc-600 dark:text-zinc-300">Large Language Model processing for AI assistant features</p>
                     </div>
                     <div>
                       <p className="font-medium text-foreground dark:text-primary-foreground mb-1">Location</p>
-                      <p className="text-zinc-600 dark:text-zinc-300">EU / US data centers</p>
+                      <p className="text-zinc-600 dark:text-zinc-300">USA</p>
                     </div>
                     <div>
                       <p className="font-medium text-foreground dark:text-primary-foreground mb-1">Certification</p>
@@ -182,7 +206,7 @@ export default function SubProcessorsPage() {
                     </div>
                     <div>
                       <p className="font-medium text-foreground dark:text-primary-foreground mb-1">Location</p>
-                      <p className="text-zinc-600 dark:text-zinc-300">EU-based processing</p>
+                      <p className="text-zinc-600 dark:text-zinc-300">USA</p>
                     </div>
                     <div>
                       <p className="font-medium text-foreground dark:text-primary-foreground mb-1">Certification</p>
@@ -215,6 +239,54 @@ export default function SubProcessorsPage() {
                     <div>
                       <p className="font-medium text-foreground dark:text-primary-foreground mb-1">Data Stored</p>
                       <p className="text-zinc-600 dark:text-zinc-300">Static assets, no user data</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-muted dark:bg-secondary/50 rounded-lg p-6 border ">
+                  <h3 className="text-xl font-medium text-foreground dark:text-primary-foreground mb-3">
+                    Resend
+                  </h3>
+                  <div className="grid md:grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <p className="font-medium text-foreground dark:text-primary-foreground mb-1">Purpose</p>
+                      <p className="text-zinc-600 dark:text-zinc-300">Sending transactional emails and notifications</p>
+                    </div>
+                    <div>
+                      <p className="font-medium text-foreground dark:text-primary-foreground mb-1">Location</p>
+                      <p className="text-zinc-600 dark:text-zinc-300">USA</p>
+                    </div>
+                    <div>
+                      <p className="font-medium text-foreground dark:text-primary-foreground mb-1">Certification</p>
+                      <p className="text-zinc-600 dark:text-zinc-300">SOC 2 certified</p>
+                    </div>
+                    <div>
+                      <p className="font-medium text-foreground dark:text-primary-foreground mb-1">Data Stored</p>
+                      <p className="text-zinc-600 dark:text-zinc-300">Email delivery logs and metadata</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-muted dark:bg-secondary/50 rounded-lg p-6 border ">
+                  <h3 className="text-xl font-medium text-foreground dark:text-primary-foreground mb-3">
+                    LiveKit
+                  </h3>
+                  <div className="grid md:grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <p className="font-medium text-foreground dark:text-primary-foreground mb-1">Purpose</p>
+                      <p className="text-zinc-600 dark:text-zinc-300">Real-time audio and voice processing for the AI assistant</p>
+                    </div>
+                    <div>
+                      <p className="font-medium text-foreground dark:text-primary-foreground mb-1">Location</p>
+                      <p className="text-zinc-600 dark:text-zinc-300">USA</p>
+                    </div>
+                    <div>
+                      <p className="font-medium text-foreground dark:text-primary-foreground mb-1">Certification</p>
+                      <p className="text-zinc-600 dark:text-zinc-300">Enterprise-grade security</p>
+                    </div>
+                    <div>
+                      <p className="font-medium text-foreground dark:text-primary-foreground mb-1">Data Stored</p>
+                      <p className="text-zinc-600 dark:text-zinc-300">Temporary audio streams, no permanent storage</p>
                     </div>
                   </div>
                 </div>

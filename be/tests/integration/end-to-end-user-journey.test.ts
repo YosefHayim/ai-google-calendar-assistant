@@ -814,7 +814,7 @@ describe("End-to-End User Journey Integration", () => {
       }
 
       expect(loadTest.autoScaling.triggered).toBe(true)
-      expect(loadTest.errorRate).toBeLessThan("1%")
+      expect(parseFloat(loadTest.errorRate)).toBeLessThan(1.0)
     })
 
     it("should provide comprehensive logging", () => {

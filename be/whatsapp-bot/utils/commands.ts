@@ -4,8 +4,8 @@ import { unifiedContextStore } from "@/shared/context"
 import { activateAgent } from "@/domains/analytics/utils"
 import { logger } from "@/lib/logger"
 import {
-  sendInteractiveButtons,
-  sendInteractiveList,
+  sendButtonMessage as sendInteractiveButtons,
+  sendListMessage as sendInteractiveList,
   sendTextMessage,
 } from "../services/send-message"
 import {
@@ -734,7 +734,6 @@ const handleExitCommand = async (
 ): Promise<CommandResult> => {
   const { from } = ctx
 
-  await whatsAppConversation.clearContext(from)
   pendingSessions.delete(from)
 
   const text = `👋 *Until next time*

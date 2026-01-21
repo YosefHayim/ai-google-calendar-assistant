@@ -941,7 +941,7 @@ describe("Analytics & Insights Dashboard Journey", () => {
       };
 
       expect(analyticsExport.sections).toHaveLength(5);
-      expect(analyticsExport.sections[0].data.totalHours).toBe(160);
+      expect((analyticsExport.sections[0].data as any).totalHours).toBe(160);
       expect(analyticsExport.metadata.dataPoints).toBe(2847);
     });
 

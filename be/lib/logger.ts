@@ -60,7 +60,7 @@ const clearLogFilesOnStartup = () => {
             fs.unlinkSync(filePath);
             logger.info(`Deleted old log file: ${file}`);
           } catch (error) {
-            logger.warn(`Failed to delete old log file: ${file}`, { error: error.message });
+            logger.warn(`Failed to delete old log file: ${file}`, { error: error instanceof Error ? error.message : String(error) });
           }
         }
       }
@@ -77,11 +77,11 @@ const clearLogFilesOnStartup = () => {
       try {
         fs.writeFileSync(logFile, "", { flag: "w" });
       } catch (error) {
-        logger.warn(`Failed to initialize today's log file: ${path.basename(logFile)}`, { error: error.message });
+        logger.warn(`Failed to initialize today's log file: ${path.basename(logFile)}`, { error: error instanceof Error ? error.message : String(error) });
       }
     }
   } catch (error) {
-    logger.warn("Failed to clean up old log files", { error: error.message });
+    logger.warn("Failed to clean up old log files", { error: error instanceof Error ? error.message : String(error) });
   }
 };
 

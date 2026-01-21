@@ -984,7 +984,7 @@ describe("Content Marketing Journey", () => {
             crawlErrors: 0,
           },
         },
-        content: {
+        contentAnalysis: {
           quality: {
             readability: 72, // Flesch score
             wordCount: 2280,
@@ -1012,7 +1012,7 @@ describe("Content Marketing Journey", () => {
       expect(contentAnalytics.performance.traffic.totalViews).toBe(15200)
       expect(contentAnalytics.audience.demographics.deviceTypes.desktop).toBe(0.58)
       expect(contentAnalytics.seo.rankings.primaryKeyword.position).toBe(8)
-      expect(contentAnalytics.content.quality.readability).toBe(72)
+      expect(contentAnalytics.contentAnalysis.quality.readability).toBe(72)
     })
 
     it("should validate content optimization recommendations", () => {
