@@ -1,5 +1,5 @@
 import type { TTSVoice } from '@/lib/validations/preferences'
-import { voiceService } from './voice.service'
+import { voiceService } from './voice-service'
 
 interface CacheEntry {
   audioBuffer: ArrayBuffer
