@@ -8,14 +8,17 @@ import { apiClient } from '@/lib/api/client'
 export type PlanSlug = string
 export type PlanInterval = 'monthly' | 'yearly'
 export type SubscriptionStatus =
+  | 'on_trial'
   | 'trialing'
   | 'active'
   | 'past_due'
   | 'canceled'
+  | 'cancelled'
   | 'unpaid'
   | 'incomplete'
   | 'incomplete_expired'
   | 'paused'
+  | 'expired'
 
 export interface Plan {
   id: string
@@ -65,6 +68,7 @@ export interface UserAccess {
   subscription_status: SubscriptionStatus | null
   plan_name: string | null
   plan_slug: string | null
+  interactions_used: number
   interactions_remaining: number | null
   credits_remaining: number
   trial_days_left: number | null

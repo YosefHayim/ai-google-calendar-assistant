@@ -11,6 +11,7 @@ interface CurrentPlanCardProps {
   planSlug: string | null | undefined
   planName: string | null | undefined
   subscriptionStatus: string | null | undefined
+  interactionsUsed: number | null | undefined
   interactionsRemaining: number | null | undefined
   trialDaysLeft: number | null | undefined
   isLoading: boolean
@@ -23,6 +24,7 @@ export function CurrentPlanCard({
   planSlug,
   planName,
   subscriptionStatus,
+  interactionsUsed,
   interactionsRemaining,
   trialDaysLeft,
   isLoading,
@@ -30,7 +32,7 @@ export function CurrentPlanCard({
   isHighlighted,
   isPopular,
 }: CurrentPlanCardProps) {
-  const isTrialing = subscriptionStatus === 'trialing'
+  const isTrialing = subscriptionStatus === 'on_trial' || subscriptionStatus === 'trialing'
   const getPlanIcon = () => {
     if (isHighlighted || planSlug?.includes('executive') || planSlug?.includes('sovereignty')) {
       return <Crown className="w-5 h-5 text-primary" />
@@ -90,15 +92,21 @@ export function CurrentPlanCard({
         </div>
         {(interactionsRemaining !== null && interactionsRemaining !== undefined) || isTrialing ? (
           <div className="mt-3 pt-3 border-t border-primary/10 space-y-2">
-            {interactionsRemaining !== null && interactionsRemaining !== undefined && (
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">AI Interactions</span>
+              <span className="font-medium text-foreground dark:text-white">
+                {isTrialing ? 'Unlimited' : `${interactionsRemaining} remaining`}
+              </span>
+            </div>
+            {isTrialing && interactionsUsed !== null && interactionsUsed !== undefined && (
               <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">AI Interactions</span>
-                <span className="font-medium text-foreground dark:text-white">{interactionsRemaining} remaining</span>
+                <span className="text-muted-foreground">Used during trial</span>
+                <span className="font-medium text-foreground dark:text-white">{interactionsUsed}</span>
               </div>
             )}
             {isTrialing && (
               <p className="text-xs text-muted-foreground dark:text-muted-foreground">
-                Your trial gives you full access. Choose a plan below to continue after your trial ends.
+                Your trial gives you unlimited access. Choose a plan below to continue after your trial ends.
               </p>
             )}
           </div>

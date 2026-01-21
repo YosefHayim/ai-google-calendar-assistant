@@ -92,6 +92,7 @@ export type UserAccess = {
   subscription_status: LemonSqueezySubscriptionStatus | null;
   plan_name: string | null;
   plan_slug: string | null;
+  interactions_used: number;
   interactions_remaining: number | null;
   credits_remaining: number;
   trial_days_left: number | null;
@@ -324,6 +325,7 @@ export const checkUserAccess = async (
       subscription_status: subscription?.status ?? null,
       plan_name: null,
       plan_slug: null,
+      interactions_used: usage.aiInteractionsUsed,
       interactions_remaining: null,
       credits_remaining: usage.creditsRemaining,
       trial_days_left: null,
@@ -338,7 +340,9 @@ export const checkUserAccess = async (
   const limits = getPlanLimits(planSlug);
 
   let trialDaysLeft: number | null = null;
-  if (subscription.status === "on_trial" && subscription.trialEndsAt) {
+  const isOnTrial = subscription.status === "on_trial";
+
+  if (isOnTrial && subscription.trialEndsAt) {
     const trialEnd = new Date(subscription.trialEndsAt);
     const now = new Date();
     trialDaysLeft = Math.max(
@@ -348,7 +352,7 @@ export const checkUserAccess = async (
   }
 
   let interactionsRemaining: number | null = null;
-  if (limits.aiInteractionsMonthly !== null) {
+  if (!isOnTrial && limits.aiInteractionsMonthly !== null) {
     interactionsRemaining = Math.max(
       0,
       limits.aiInteractionsMonthly - usage.aiInteractionsUsed
@@ -360,6 +364,7 @@ export const checkUserAccess = async (
     subscription_status: subscription.status,
     plan_name: subscription.productName,
     plan_slug: planSlug,
+    interactions_used: usage.aiInteractionsUsed,
     interactions_remaining: interactionsRemaining,
     credits_remaining: usage.creditsRemaining,
     trial_days_left: trialDaysLeft,
@@ -544,6 +549,13 @@ export const recordUsage = async (
   }
 
   const usage = await getUserUsage(userId);
+  const trialHasUnlimitedAccess = access.subscription_status === "on_trial";
+
+  if (trialHasUnlimitedAccess) {
+    await updateUserUsage(userId, usage.aiInteractionsUsed + quantity);
+    return true;
+  }
+
   const planSlug = access.plan_slug as PlanSlug;
   const limits = getPlanLimits(planSlug);
 
