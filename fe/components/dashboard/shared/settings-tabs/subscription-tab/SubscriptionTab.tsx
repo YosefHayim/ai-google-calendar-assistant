@@ -81,9 +81,11 @@ export const SubscriptionTab: React.FC = () => {
           return
         }
 
-        const isLinkedToProvider = access?.subscription?.isLinkedToProvider === true
+        const canUpgradeExisting =
+          access?.subscription?.isLinkedToProvider === true &&
+          access?.subscription_status === 'active'
 
-        if (isLinkedToProvider) {
+        if (canUpgradeExisting) {
           await upgradeSubscription({
             planSlug: plan.slug,
             interval: selectedFrequency as PlanInterval,
