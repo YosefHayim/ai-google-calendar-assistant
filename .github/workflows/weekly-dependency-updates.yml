@@ -51,7 +51,7 @@ jobs:
           bun install
 
       - name: Create PR for backend
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         with:
           branch: chore/weekly-be-updates
           title: "chore(be): weekly dependency updates"
@@ -92,7 +92,7 @@ jobs:
           npm install
 
       - name: Create PR for frontend
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         with:
           branch: chore/weekly-fe-updates
           title: "chore(fe): weekly dependency updates"
