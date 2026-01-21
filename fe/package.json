@@ -109,7 +109,7 @@
     "@tanstack/react-query-devtools": "^5.91.2",
     "@ternary-std/nextjs-webpack-component-tagger": "^0.8.1",
     "@testing-library/dom": "^10.4.0",
-    "@testing-library/react": "^16.1.0",
+    "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
     "@types/bun": "^1.2.13",
     "@types/d3": "7.4.3",
