@@ -41,7 +41,7 @@ jobs:
 
       - name: Cache dependencies
         id: cache-deps
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/.npm
@@ -51,7 +51,7 @@ jobs:
             ${{ runner.os }}-npm-fe-${{ env.CACHE_VERSION }}-
 
       - name: Cache Next.js build
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ./fe/.next/cache
           key: ${{ runner.os }}-nextjs-${{ env.CACHE_VERSION }}-${{ hashFiles('fe/package-lock.json') }}-${{ hashFiles('fe/**/*.ts', 'fe/**/*.tsx') }}
@@ -100,7 +100,7 @@ jobs:
 
       - name: Cache dependencies
         id: cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/.npm
