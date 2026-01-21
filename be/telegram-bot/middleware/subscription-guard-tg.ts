@@ -16,7 +16,7 @@ export const subscriptionGuardTelegram: MiddlewareFn<GlobalContext> = async (
     return next()
   }
 
-  const access = await checkUserAccess(userId, email)
+  const access = await checkUserAccess(String(userId), email)
 
   if (access.has_access || access.credits_remaining > 0) {
     return next()
