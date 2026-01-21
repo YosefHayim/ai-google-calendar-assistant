@@ -11,6 +11,7 @@ import {
   type HandlerContext,
   insertEventHandler,
   preCreateValidationHandler,
+  searchContactsHandler,
   selectCalendarHandler,
   updateEventHandler,
   updateUserBrainHandler,
@@ -18,6 +19,7 @@ import {
 } from "@/shared/tools/handlers"
 import { updateUserBrainSchema } from "@/shared/tools/schemas/brain-schemas"
 import { selectCalendarSchema } from "@/shared/tools/schemas/calendar-schemas"
+import { searchContactsToolSchema } from "@/shared/tools/schemas/contact-schemas"
 import {
   checkConflictsSchema,
   deleteEventSchema,
@@ -258,9 +260,24 @@ export const BRAIN_TOOLS = {
   }),
 }
 
+export const CONTACT_TOOLS = {
+  search_contacts: tool<typeof searchContactsToolSchema, AgentContext>({
+    name: "search_contacts",
+    description:
+      "Search the user's contacts by name or email to find people to invite to events. Returns matching contacts with their email, display name, and meeting history. Use this when the user mentions inviting someone by name (e.g., 'invite John', 'add Sarah to the meeting'). If multiple matches are found, present them to the user for confirmation.",
+    parameters: searchContactsToolSchema,
+    execute: async (params, runContext) => {
+      const email = getEmailFromContext(runContext, "search_contacts")
+      return searchContactsHandler(params, createHandlerContext(email))
+    },
+    errorFunction: (_, error) => `search_contacts: ${stringifyError(error)}`,
+  }),
+}
+
 export const SHARED_TOOLS = {
   ...EVENT_TOOLS,
   ...VALIDATION_TOOLS,
   ...GAP_TOOLS,
   ...BRAIN_TOOLS,
+  ...CONTACT_TOOLS,
 }

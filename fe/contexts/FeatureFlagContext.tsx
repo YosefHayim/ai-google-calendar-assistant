@@ -5,7 +5,7 @@ import { useEnabledFeatureFlags } from '@/hooks/queries'
 
 const FEATURE_FLAGS_STORAGE_KEY = 'ally_feature_flags_cache'
 const FEATURE_FLAGS_TIMESTAMP_KEY = 'ally_feature_flags_timestamp'
-const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000
+const CACHE_TTL_MS = 30 * 60 * 1000
 
 type FeatureFlagContextValue = {
   flags: Record<string, boolean>
@@ -32,7 +32,7 @@ function getCachedFlags(): Record<string, boolean> | null {
     if (!cached || !timestamp) return null
 
     const cacheAge = Date.now() - parseInt(timestamp, 10)
-    const cacheExpired = cacheAge > TWENTY_FOUR_HOURS_MS
+    const cacheExpired = cacheAge > CACHE_TTL_MS
 
     if (cacheExpired) {
       localStorage.removeItem(FEATURE_FLAGS_STORAGE_KEY)

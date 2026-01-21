@@ -9,6 +9,7 @@ import {
 import type { Express } from "express"
 import aclRoute from "@/domains/calendar/routes/acl-route"
 import adminRoute from "@/domains/admin/routes/admin-route"
+import contactsRoute from "@/domains/contacts/routes/contacts-route"
 import affiliateRoute from "@/domains/marketing/routes/affiliate-route"
 import blogRoute from "@/domains/marketing/routes/blog-route"
 import calendarListRoute from "@/domains/calendar/routes/calendar-list-route"
@@ -75,6 +76,7 @@ const routesConfig = {
   [ROUTES.GAPS]: gapsRoute,
   [ROUTES.TIMEZONES]: timezonesRoute,
   [ROUTES.STORAGE]: storageRoute,
+  [ROUTES.CONTACTS]: contactsRoute,
 }
 
 export const initializeRoutes = (app: Express) => {

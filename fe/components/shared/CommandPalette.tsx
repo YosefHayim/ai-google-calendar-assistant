@@ -20,6 +20,7 @@ import { useCallback, useEffect, useState } from 'react'
 
 import { Command } from 'cmdk'
 import { useAuthContext } from '@/contexts/AuthContext'
+import { useFeatureFlags } from '@/hooks/useFeatureFlags'
 import { useRouter } from 'next/navigation'
 
 interface CommandItem {
@@ -36,6 +37,7 @@ export function CommandPalette() {
   const [search, setSearch] = useState('')
   const router = useRouter()
   const { user, logout } = useAuthContext()
+  const { commandPalette } = useFeatureFlags()
 
   const isAdmin = user && 'role' in user && user.role === 'admin'
 
@@ -204,7 +206,7 @@ export function CommandPalette() {
     help: filteredCommands.filter((c) => c.group === 'help'),
   }
 
-  if (!open) return null
+  if (!commandPalette || !open) return null
 
   return (
     <div className="fixed inset-0 z-[9999]">

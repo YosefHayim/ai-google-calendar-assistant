@@ -43,6 +43,7 @@ export enum ROUTES {
   FEATURE_FLAGS = "/api/feature-flags",
   TIMEZONES = "/api/timezones",
   STORAGE = "/api/storage",
+  CONTACTS = "/api/contacts",
 }
 
 export enum PROVIDERS {
